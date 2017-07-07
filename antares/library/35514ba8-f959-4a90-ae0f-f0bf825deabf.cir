@@ -1,0 +1,67 @@
+<metaGraph _id='0'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' uuid='35514ba8-f959-4a90-ae0f-f0bf825deabf' name='Test IO'>
+          <elements>
+            <circuitInOut _id='3' id='1' delay='0' name='I1' type='inout' bitWidth='1'/>
+            <led _id='4' id='2' delay='0'/>
+            <digitalNet _id='5' id='3' delay='0'>
+              <ports>
+                <netPortRef verticeId='3' portId='1'/>
+                <netPortRef verticeId='4' portId='1'/>
+              </ports>
+            </digitalNet>
+          </elements>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='7'>
+          <components>
+            <circuitInOutView _id='10' id='1' modelId='3' representation='binary' orientation='west'>
+              <location>
+                <point x='287.0' y='238.0'/>
+              </location>
+            </circuitInOutView>
+            <ledView _id='9' id='2' rot='0' modelId='4' x='322.0' y='238.0' color='red'/>
+            <digitalEdgeView _id='8' id='3' modelId='5' layout='ortho' orig='10' origPort='1' origPortOutput='true' dest='9' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='287.0,238.0 322.0,238.0'/>
+              </shape>
+            </digitalEdgeView>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='11'>
+      <components>
+        <containerBox _id='17' id='1' x='140.0' y='140.0' w='56.0' h='56.0'/>
+        <originIndicator _id='16'>
+          <location>
+            <point x='126.0' y='168.0'/>
+          </location>
+        </originIndicator>
+        <digitalPortViewComp _id='14' id='3' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='15' x='140.0' y='168.0' dir='west' textPos='INTERNAL' portId='19'/>
+          </portView>
+        </digitalPortViewComp>
+        <controlViewComponent _id='12' id='4' rot='0' controlModelId='2'>
+          <controlView>
+            <ledView _id='13' id='4' rot='0' modelId='4' x='147.0' y='168.0' color='red'/>
+          </controlView>
+        </controlViewComponent>
+      </components>
+      <model>
+        <subGraphVertice _id='18' id='0' delay='0' name='Test IO' uuid='35514ba8-f959-4a90-ae0f-f0bf825deabf'>
+          <inputPorts>
+            <subCircuitPort _id='19' portId='1' name='I1' logic='positive' bitWidth='1' trigger='level' type='inout' representation='binary'/>
+          </inputPorts>
+          <outputPorts/>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

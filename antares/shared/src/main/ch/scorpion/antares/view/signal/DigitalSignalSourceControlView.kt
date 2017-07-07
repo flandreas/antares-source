@@ -1,0 +1,99 @@
+package ch.scorpion.antares.view.signal
+
+import ch.scorpion.antares.model.signal.*
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
+
+class DigitalSignalSourceControlView<T : DigitalSignalSource>(
+    styleProvider: StyleProvider,
+    override var controlId: String?,
+    signalRepresentation: DigitalSignalRepresentation,
+    model: T?
+) : AbstractNumberViewComponent<T>(styleProvider, "library.element.CircuitInOutControlView", model, Direction.EAST), ControlView<T> {
+
+    constructor(styleProvider: StyleProvider): this(styleProvider, null, DigitalSignalRepresentation.BINARY, null)
+    constructor(): this(DrawStyleModule.styleProvider)
+
+    init {
+        modelExchanged(null)
+    }
+
+    override fun modelExchanged(oldModel: T?) {
+        super.modelExchanged(oldModel)
+        if (model != null) {
+            updateView()
+        }
+    }
+
+    /** ---- [Storable] */
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        if (controlId != null) {
+            writer.writeString("controlId", controlId!!)
+        }
+        writer.writeInt("bitWidth", bitWidth.width)
+    }
+
+    override fun read(reader: StoreReader) {
+        if (reader.hasAttribute("controlId")) {
+            controlId = reader.readString("controlId")
+        }
+        bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+        super.read(reader)
+    }
+
+    /** ---- [AbstractVerticeView] */
+
+    override fun drawImpl(context: DrawContext) {
+        super.drawImpl(context)
+        drawNumberView(context, context.appContext == ApplicationMode.EXECUTE)
+    }
+
+    /** ---- [ControlView] interface */
+
+    override fun bindToModel(model: T) {
+        this.model = model
+    }
+
+    /** ---- [AbstractNumberViewComponent] */
+
+    /** The [BitWidth] to be used as long as this [DigitalSignalSourceControlView] is still unbound. */
+    private var _bitWidth: BitWidth = BitWidth.BW_1
+
+    override var bitWidth: BitWidth
+        get() {
+            if (model == null) {
+                return _bitWidth
+            }
+            return model!!.bitWidth
+        }
+        set(value) {
+            if (model == null) {
+                _bitWidth = value
+            } else {
+                model!!.bitWidth = value
+            }
+            updateView()
+        }
+
+    override val signal: DigitalSignal
+        get() {
+            if (model == null) {
+                return Word.allOf(bitWidth, Bit.False)
+            }
+            return model!!.signal!!
+        }
+
+    override val upperLeftBoundsEdge: Point2D
+        get() = Point2D(0.0, -numberView!!.height / 2 - insets)
+
+    override val insets: Int get() = 4
+}

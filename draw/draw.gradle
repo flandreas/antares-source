@@ -1,0 +1,56 @@
+/* gradle build file of the jabbah.draw module */
+
+apply plugin: 'kotlin'
+
+sourceSets {
+	main.kotlin.srcDirs += 'shared/src/main'
+	main.kotlin.srcDirs += 'jvm/src/main'
+	
+	test.kotlin.srcDirs += 'shared/src/test'
+	test.kotlin.srcDirs += 'jvm/src/test'
+
+	demo {
+		kotlin {
+			srcDirs += 'shared/src/demo'
+			srcDirs += 'jvm/src/demo'
+		}
+		resources.srcDirs += 'jvm/rsc'
+		compileClasspath += sourceSets.main.runtimeClasspath
+	}
+}
+
+repositories {
+	flatDir {
+		dirs '../lib'
+	}
+}
+
+dependencies {
+	compile project(':base')
+	compile project(':animation')
+
+	compile 'org.slf4j:slf4j-api:1.7.21'
+	compile 'org.slf4j:slf4j-log4j12:1.7.21'
+	compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+	compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+	testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-core:1.3'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    testCompile "org.mockito:mockito-core:2.7.2"
+	testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+	testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+	testCompile "com.nhaarman:mockito-kotlin:1.2.0"
+}
+
+task sharedMainJs(type:Exec) {
+	commandLine 'kotlinc-js', '-output', 'build/libs/draw.js', '-meta-info', '-libraries',
+			'../base/build/libs/base.meta.js:../animation/build/libs/animation.meta.js', 'shared/src/main'
+}
+
+task sharedDemoJs(type:Exec, dependsOn:sharedMainJs) {
+	commandLine 'kotlinc-js', '-output', 'build/libs/draw-demo.js', '-meta-info', '-libraries',
+			'../base/build/libs/base.meta.js:../animation/build/libs/animation.meta.js:build/libs/draw.meta.js', 'shared/src/demo'
+}
+
+classes.dependsOn sharedDemoJs

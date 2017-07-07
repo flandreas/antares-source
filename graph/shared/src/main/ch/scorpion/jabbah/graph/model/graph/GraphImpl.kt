@@ -1,0 +1,271 @@
+package ch.scorpion.jabbah.graph.model.graph
+
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.io.*
+import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.System
+
+/**
+ * A standard implementation of the [Graph] interface.
+ */
+open class GraphImpl(private val eventBus: EventBus) : Graph {
+
+    constructor(): this(BaseModule.eventBus)
+
+    private val _elements = mutableListOf<GraphElement>()
+
+    /** ---- [Graph] interface */
+
+    override var uuid: UUID = System.get().createUUID()
+
+    override var propagationDelay: Long? = null
+
+    override var name: String = Translations.getString("graph.name.unknown")
+        set(value) {
+            val oldValue = field
+            field = value
+            eventBus.post(GraphNameChangedEvent(this, oldValue, field))
+        }
+
+    override var shortDescription: String? = null
+
+    override var script: String? = null
+
+    override val elementsCount: Int
+        get() = _elements.size
+
+    override val elements: ImmutableList<GraphElement>
+        get() = ImmutableList(_elements)
+
+    override val graphInputs: ImmutableList<GraphInput<*>>
+        get() = ImmutableList(_elements
+                .filter { it is GraphInput<*> && it.portType == PortType.INPUT }
+                .map { it as GraphInput<*> })
+
+    override val graphOutputs: ImmutableList<GraphOutput<*>>
+        get() = ImmutableList(_elements
+                .filter { it is GraphOutput<*> && it.portType == PortType.OUTPUT }
+                .map { it as GraphOutput<*> })
+
+    override val graphInOuts: ImmutableList<BidirectionalGraphPort<*>>
+        get() = ImmutableList(_elements
+                .filter { it is BidirectionalGraphPort<*> && it.portType == PortType.INOUT }
+                .map { it as BidirectionalGraphPort<*> })
+
+    override val graphPorts: ImmutableList<GraphPort<*>>
+        get() = ImmutableList(_elements
+                .filter { it is GraphPort<*>}
+                .map { it as GraphPort<*> })
+
+    override fun accept(visitor: HierarchyVisitor): Boolean {
+        if (visitor.visitEnter(this)) {
+            for (e in _elements) {
+                if (!e.accept(visitor)) {
+                    break
+                }
+            }
+        }
+        return visitor.visitLeave(this)
+    }
+
+    override fun add(graphElement: GraphElement): Graph {
+        if (!_elements.contains(graphElement)) {
+            graphElement.id = getMaxId() + 1
+            ensureUniqueGraphPortName(graphElement)
+            _elements.add(graphElement)
+            handleGraphElementAdded(graphElement)
+            eventBus.post(GraphElementAddedEvent(this, graphElement))
+        }
+        return this
+    }
+
+    override fun remove(graphElement: GraphElement): Graph {
+        if (_elements.contains(graphElement)) {
+            if (graphElement is Net<*>) {
+                handleNetRemoved(graphElement)
+            } else if (graphElement is Vertice) {
+                handleVerticeRemoved(graphElement)
+            }
+            _elements.remove(graphElement)
+            handleGraphElementRemoved(graphElement)
+            eventBus.post(GraphElementRemovedEvent(this, graphElement))
+        }
+        return this
+    }
+
+    override fun clear(): Graph {
+        val iter = _elements.iterator()
+        for (e in iter) {
+            iter.remove()
+            handleGraphElementRemoved(e)
+            eventBus.post(GraphElementRemovedEvent(this, e))
+        }
+        return this
+    }
+
+    override fun contains(graphElement: GraphElement): Boolean {
+        return _elements.contains(graphElement)
+    }
+
+    override fun withId(id: Int): GraphElement? {
+        return _elements.firstOrNull { it.id == id }
+    }
+
+    override fun withStorableId(storableId: Int): GraphElement? {
+        return _elements.firstOrNull { it.storableId == storableId }
+    }
+
+    override fun executionStarted(signalHandler: SignalHandler) {
+        _elements.forEach { it.executionStarted(signalHandler) }
+    }
+
+    override fun executionStopped(signalHandler: SignalHandler) {
+        _elements.forEach { it.executionStopped(signalHandler) }
+    }
+
+    override fun bind(library: Library, storableCreator: StorableCreator) {
+        _elements.forEach { it.bind(library, storableCreator) }
+    }
+
+    override fun <T : Any> getGraphInput(name: String): GraphInput<T>? {
+        val input = graphInputs.filter { it.name == name }.firstOrNull()
+        if (input != null) {
+            return input as GraphInput<T>
+        }
+        return getGraphInputOutput(name) as GraphInput<T>?
+    }
+
+    override fun <T : Any> getGraphOutput(name: String): GraphOutput<T>? {
+        val output = graphOutputs.filter { it.name == name }.firstOrNull()
+        if (output != null) {
+            return output as GraphOutput<T>
+        }
+        return getGraphInputOutput(name) as GraphOutput<T>?
+    }
+
+    /** ---- [Storable] interface */
+
+    override var storableId: Int = 0
+
+    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+        // empty
+    }
+
+    override fun write(writer: StoreWriter) {
+        writer.writeString("uuid", uuid.toString())
+        writer.writeString("name", name)
+        shortDescription?.let { writer.writeString("shortDesc", it) }
+        script?.let { writer.writeString("script", it) }
+        propagationDelay?.let { writer.writeLong("propDelay", it) }
+        writer.writeStorables("elements", getStorableChildren())
+    }
+
+    override fun read(reader: StoreReader) {
+        uuid = System.get().createUUID(reader.readString("uuid"))
+        name = reader.readString("name")
+        if (reader.hasAttribute(("shortDesc"))) {
+            shortDescription = reader.readString("shortDesc")
+        }
+        if (reader.hasAttribute("script")) {
+            script = reader.readString("script")
+        }
+        if (reader.hasAttribute("propDelay")) {
+            propagationDelay = reader.readLong("propDelay")
+        }
+        _elements.clear()
+        reader.readStorables("elements").forEach {
+            _elements.add(it as GraphElement)
+            handleGraphElementAdded(it)
+        }
+    }
+
+    override fun getStorableChildren(): Iterator<Storable> {
+        return _elements.iterator()
+    }
+
+    /** ---- [GraphImpl] */
+
+    /** Called by this [GraphImpl] when a [GraphElement] has been added or read as [Storable].*/
+    protected open fun handleGraphElementAdded(graphElem: GraphElement) {
+        // empty
+    }
+
+    protected open fun handleGraphElementRemoved(graphElem: GraphElement) {
+        // empty
+    }
+
+    private fun handleNetRemoved(net: Net<*>) {
+        net.ports.toList().forEach { net.unconnect(it) }
+    }
+
+    private fun handleVerticeRemoved(vertice: Vertice) {
+        vertice.getInputs().filter { it.net != null }.forEach { it.net!!.unconnect(it) }
+        vertice.getOutputs().filter { it.net != null }.forEach { it.net!!.unconnect(it) }
+    }
+
+    private fun getMaxId(): Int {
+        if (elementsCount == 0) {
+            return 0
+        }
+        return _elements.maxBy { it.id }!!.id
+    }
+
+    private fun getGraphInputOutput(name: String): BidirectionalGraphPort<*>? {
+        val bla = graphInOuts
+        return bla.firstOrNull { it.name == name }
+    }
+
+    /** Creates unique names for [GraphPort]s.*/
+    private fun ensureUniqueGraphPortName(graphElement: GraphElement) {
+        if (graphElement is GraphPort<*>) {
+            when (graphElement.portType) {
+                PortType.INPUT -> graphElement.name = createUniqueGraphInputName()
+                PortType.OUTPUT -> graphElement.name = createUniqueGraphOutputName()
+                PortType.INOUT -> graphElement.name = createUniqueGraphInputOutputName()
+            }
+        }
+    }
+
+    private fun createUniqueGraphInputName(): String {
+        var name = "I" + (graphInputs.size + 1)
+        while (existsGraphInputName(name)) {
+            name += "1"
+        }
+        return name
+    }
+
+    private fun createUniqueGraphOutputName(): String {
+        var name = "O" + (graphOutputs.size + 1)
+        while (existsGraphOutputName(name)) {
+            name += "1"
+        }
+        return name
+    }
+
+    private fun createUniqueGraphInputOutputName(): String {
+        var name = "IO" + (graphInOuts.size + 1)
+        while (existsGraphInputOutputName(name)) {
+            name += "1"
+        }
+        return name
+    }
+
+    private fun existsGraphInputName(name: String): Boolean {
+        return graphInputs.any { it.name == name }
+    }
+
+    private fun existsGraphOutputName(name: String): Boolean {
+        return graphOutputs.any { it.name == name }
+    }
+
+    private fun existsGraphInputOutputName(name: String): Boolean {
+        return graphInOuts.any { it.name == name}
+    }
+}

@@ -1,0 +1,567 @@
+package ch.scorpion.antares.view.inout
+
+import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.inout.CircuitInOutImpl
+import ch.scorpion.antares.model.port.DigitalPort
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.signal.NumberView
+import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.GraphPort
+import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.KeyEvent
+import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.base.logger
+
+
+/**
+ * A [CircuitInOutView] is an arrow-like [GraphPortView] for digital [GraphPort]s.
+ */
+class CircuitInOutView(
+    styleProvider: StyleProvider,
+    model: CircuitInOut,
+    private val eventBus: EventBus
+) : AbstractVerticeView<CircuitInOut>(styleProvider, "library.element.CircuitInOut", model), GraphPortView<CircuitInOut>, ControlViewSource<CircuitInOut> {
+
+    constructor(styleProvider: StyleProvider, eventBus: EventBus): this(styleProvider, CircuitInOutImpl(), eventBus)
+    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider, BaseModule.eventBus)
+
+    companion object {
+        val PROP_INPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inputIcon"
+        val PROP_OUTPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.outputIcon"
+        val PROP_INOUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inoutIcon"
+        val LABEL_DIST = Look.SCALE
+        val LOG by logger()
+    }
+
+    var signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY
+        set(value) {
+            field = value
+            if (model!!.portType.isInput) {
+                (model!!.getOutput<DigitalSignal>() as DigitalPort).signalRepresentation = value
+            }
+            updateView()
+        }
+
+    var orientation: Direction = Direction.EAST
+        set(value) {
+            if (field != value) {
+                invalidate()
+                field = value
+                updateView()
+            }
+        }
+
+    override val boundingBox = Rectangle2D()
+
+    private val actorInteractionHandler = InteractionHandler()
+
+    private val label = Label(
+        font = font,
+        text = model.name)
+
+    /** Initialized in [updateView] */
+    private var arrowPath: ArrowPath? = null
+
+    /** Initialized in [updateView] */
+    private var numberView: NumberView? = null
+
+    override fun modelExchanged(oldModel: CircuitInOut?) {
+        super.modelExchanged(oldModel)
+        updateView()
+    }
+
+    /** ----  UI properties */
+
+    var name: String?
+        get() = model!!.name
+        set(value) {
+            model!!.name = value
+        }
+
+    var bitWidth: BitWidth
+        get() = model!!.bitWidth
+        set(value) {
+            invalidate()
+            model!!.bitWidth = value
+            updateView()
+        }
+
+    var portType: PortType
+        get() = model!!.portType
+        set(value) {
+            invalidate()
+            model!!.portType = value
+            updateView()
+        }
+
+    var description: TextProperty
+        get() = TextProperty(model!!.getPort<DigitalSignal>().description)
+        set(value) {
+            model!!.getPort<DigitalSignal>().description = value.text
+        }
+
+    /** ---- [GraphPortView] */
+
+    override val iconPath: String
+        get() = when(portType) {
+            PortType.INPUT -> BaseModule.properties.getString(PROP_INPUT_ICON_PATH)
+            PortType.OUTPUT -> BaseModule.properties.getString(PROP_OUTPUT_ICON_PATH)
+            PortType.INOUT -> BaseModule.properties.getString(PROP_INOUT_ICON_PATH)
+        }
+
+    /** ---- [ActorView] */
+
+    override fun getActorInteractionHandler(): ActorInteractionHandler? {
+        if (model!!.portType.isInput) {
+            return actorInteractionHandler
+        }
+        return null
+    }
+
+    /** ---- [Storable] */
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        writer.writePoint("location", location)
+        writer.writeString("representation", signalRepresentation.customName)
+        writer.writeString("orientation", orientation.customName)
+    }
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+        if (reader.hasElement("location")) {
+			location = reader.readPoint("location")
+		} else {
+			location = Point2D(reader.readDouble("x"), reader.readDouble("y"))
+		}
+        signalRepresentation = DigitalSignalRepresentation.withName(reader.readString("representation"))
+        orientation = Direction.withName(reader.readString("orientation"))
+    }
+
+    /** ---- [ControlViewSource] */
+
+    override val controlId: String? get() = "circuitInOut:$id"
+
+    override val controlName: String get() = "$type ${model!!.name}"
+
+    override fun createControlView(): ControlView<CircuitInOut> {
+        val controlView = DigitalSignalSourceControlView(styleProvider, controlId, signalRepresentation, model)
+        controlView.location = Point2D()
+        return controlView
+    }
+
+    /** ---- [Locatable] */
+
+    override var location: Point2D = Point2D()
+        set(value) {
+            invalidate()
+            field = value
+            updateBoundingBox()
+            update()
+        }
+
+    init {
+        modelExchanged(null)
+    }
+
+    /** ---- [Drawable] */
+
+    override fun getBoundingBoxImpl(): Rectangle2D {
+        return boundingBox
+    }
+
+    override fun contains(x: Double, y: Double): Boolean {
+        return rotate(boundingBox).contains(x, y)
+    }
+
+    override fun drawImpl(context: DrawContext) {
+        val oldColor = context.g.color
+
+        super.drawImpl(context)
+
+        if (context.appContext as ApplicationMode? === ApplicationMode.EXECUTE) {
+            drawSimulated(context)
+        } else {
+            if (context.useContextColors) {
+                drawEdited(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
+            } else {
+                drawEdited(context, foregroundColor, if (filled) backgroundColor else null)
+            }
+        }
+
+        context.g.color = oldColor
+    }
+
+    fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color?, stroke: Stroke) {
+        val translation = getArrowPathTranslation()
+        context.g.translate(translation.x, translation.y)
+
+        if (backgroundColor != null) {
+            context.g.color = backgroundColor
+            context.g.fill(arrowPath!!.path)
+        }
+        context.g.stroke = stroke
+        context.g.color = foregroundColor
+        context.g.draw(arrowPath!!.path)
+
+        context.g.translate(-translation.x, -translation.y)
+    }
+
+    private fun drawEdited(context: DrawContext, color: Color, backgroundColor: Color?) {
+        val oldStroke = context.g.stroke
+
+		drawShape(context, color, backgroundColor, stroke)
+
+		context.g.stroke = oldStroke
+
+		if (context.useContextColors) {
+			context.g.color = context.color!!.foregroundColor
+		} else {
+			context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
+		}
+
+		val translation = getArrowPathTranslation()
+		context.g.translate(translation.x, translation.y)
+		label.draw(context)
+		context.g.translate(-translation.x, -translation.y)
+    }
+
+    private fun drawSimulated(context: DrawContext) {
+        if (model!!.signal!!.getBitWidth().width > 1) {
+            drawEdited(context, model!!.signal!!.getColor().foregroundColor, backgroundColor)
+        } else {
+            drawEdited(context,
+                model!!.signal!!.getColor().backgroundColor,
+                model!!.signal!!.getColor().foregroundColor)
+        }
+
+        val translation = getArrowPathTranslation()
+        context.g.translate(translation.x, translation.y)
+        numberView!!.draw(context)
+        context.g.translate(-translation.x, -translation.y)
+    }
+
+    /** ---- [Component] */
+
+    /** Not rotatable, because orientation [Direction] is explicitly set. */
+    override val rotatable: Boolean get() = false
+
+    override val type: String?
+        get() = when(portType) {
+            PortType.INOUT -> Translations.getOptionalString("library.element.CircuitInOut.name")
+            PortType.INPUT -> Translations.getOptionalString("library.element.CircuitInput.name")
+            PortType.OUTPUT -> Translations.getOptionalString("library.element.CircuitOutput.name")
+        }
+
+    override val shortDescription: String?
+        get() = when (portType) {
+            PortType.INOUT -> Translations.getOptionalString("library.element.CircuitInOut.desc")
+            PortType.INPUT -> Translations.getOptionalString("library.element.CircuitInput.desc")
+            PortType.OUTPUT -> Translations.getOptionalString("library.element.CircuitOutput.desc")
+        }
+
+    override fun focusGained() {
+        numberView!!.focusGained()
+        super.focusGained()
+    }
+
+    override fun focusLost() {
+        numberView!!.focusLost()
+        super.focusLost()
+    }
+
+    /** ---- [AbstractGraphElementView] */
+
+    override fun handleStateChanged(event: GraphElementEvent) {
+		invalidate()
+		numberView!!.setSignal(model!!.signal!!)
+		label.text = StringUtils.orEmpty(name)
+		updateBoundingBox()
+		super.handleStateChanged(event)
+	}
+
+    /** ---- [CircuitInOutView] */
+
+    /**
+     * Returns the translation vector to be applied to the {@link ArrowPath} for drawing and bounding box calculation.
+     * @return the vector relative to this {@link VerticeView}'s origin
+     */
+    private fun getArrowPathTranslation(): Point2D {
+        return when (model!!.portType) {
+            PortType.INPUT -> orientation.multiply(-getOutput().unconnectedLength.toDouble())
+            PortType.INOUT,
+            PortType.OUTPUT -> Point2D(arrowPath!!.tailLocation)
+                    .multiply(-1.0)
+                    .add(orientation.multiply(getInput().unconnectedLength.toDouble()))
+            else -> orientation.multiply(-getOutput().unconnectedLength.toDouble())
+        }
+    }
+
+    /**
+     * Creates the {@link DigitalPortView} of this {@link AbstractCircuitInOutView}.
+     * @return the created {@link DigitalPortView}.
+     */
+    private fun createPortView(template: PortView<DigitalSignal>?): DigitalPortView {
+        when(model!!.portType) {
+            PortType.INPUT -> {
+                val portView = DigitalPortView(
+                    styleProvider = styleProvider,
+                    port = model!!.getPort(),
+                    direction = orientation,
+                    length = template?.length)
+                portView.setLocation(
+                    -portView.unconnectedLength * orientation.dx,
+                    -portView.unconnectedLength * orientation.dy)
+                return portView
+            }
+            PortType.INOUT, PortType.OUTPUT -> {
+                val portView = DigitalPortView(
+				styleProvider = styleProvider,
+				port = model!!.getInput(),
+				direction = orientation.opposite(),
+                length = template?.length)
+			portView.setLocation(
+				portView.unconnectedLength * orientation.dx,
+				portView.unconnectedLength * orientation.dy)
+                return portView
+            }
+        }
+    }
+
+    /**
+     * Updates the text, the location and the alignments of the external {@link Label} depending on the current
+     * orientation of this {@link AbstractCircuitInOutView}.
+     */
+    private fun updateLabel() {
+        when (model!!.portType) {
+            PortType.INOUT -> updateOutputLabel()
+            PortType.INPUT -> updateInputLabel()
+            PortType.OUTPUT -> updateOutputLabel()
+        }
+    }
+
+    private fun updateInputLabel() {
+        label.text = StringUtils.orEmpty(name)
+        label.location = Point2D(arrowPath!!.tailLocation)
+                .subtract(orientation.multiply(LABEL_DIST.toDouble()))
+        when (orientation) {
+            Direction.EAST -> {
+                label.horizontalAligment = Label.HorizontalAlignment.RIGHT
+                label.verticalAligment = Label.VerticalAlignment.CENTER
+            }
+            Direction.NORTH -> {
+                label.horizontalAligment = Label.HorizontalAlignment.CENTER
+                label.verticalAligment = Label.VerticalAlignment.TOP
+            }
+            Direction.WEST -> {
+                label.horizontalAligment = Label.HorizontalAlignment.LEFT
+                label.verticalAligment = Label.VerticalAlignment.CENTER
+            }
+            Direction.SOUTH -> {
+                label.horizontalAligment = Label.HorizontalAlignment.CENTER
+                label.verticalAligment = Label.VerticalAlignment.BOTTOM
+            }
+        }
+        updateBoundingBox()
+    }
+
+    private fun updateOutputLabel() {
+        label.text = StringUtils.orEmpty(name)
+        label.location = orientation.multiply(LABEL_DIST.toDouble())
+        when (orientation) {
+            Direction.EAST -> {
+                label.horizontalAligment = Label.HorizontalAlignment.LEFT
+                label.verticalAligment = Label.VerticalAlignment.CENTER
+            }
+            Direction.NORTH -> {
+                label.horizontalAligment = Label.HorizontalAlignment.CENTER
+                label.verticalAligment = Label.VerticalAlignment.BOTTOM
+            }
+            Direction.WEST -> {
+                label.horizontalAligment = Label.HorizontalAlignment.RIGHT
+                label.verticalAligment = Label.VerticalAlignment.CENTER
+            }
+            Direction.SOUTH -> {
+                label.horizontalAligment = Label.HorizontalAlignment.CENTER
+                label.verticalAligment = Label.VerticalAlignment.TOP
+            }
+        }
+        updateBoundingBox()
+    }
+
+    private fun updateBoundingBox() {
+        invalidate()
+
+		boundingBox.setFrame(location.x, location.y, 0.0, 0.0)
+		addPortViewsTo(boundingBox, null)
+
+		val pathBB = arrowPath!!.path.boundingBox
+		val pathTranslation = getArrowPathTranslation()
+		boundingBox.add(Rectangle2D(
+			location.x + pathBB.x + pathTranslation.x - 1,
+			location.y + pathBB.y + pathTranslation.y - 1,
+			pathBB.width + 2,
+			pathBB.height + 2))
+
+		val labelBB = label.boundingBox
+		boundingBox.add(Rectangle2D(
+			location.x + labelBB.x + pathTranslation.x - 1,
+			location.y + labelBB.y + pathTranslation.y - 1,
+			labelBB.width + 2,
+			labelBB.height + 2))
+
+		invalidate()
+    }
+
+    private fun updateView() {
+        invalidate()
+        isFocusable = model!!.portType.isInput
+
+        numberView = NumberView(signalRepresentation, bitWidth)
+        numberView!!.setSignal(model!!.signal!!)
+
+        arrowPath = ArrowPath.Companion.Builder(
+                orientation = orientation,
+                contentDimension = Dimension2D(numberView!!.widthInt, numberView!!.heigthInt))
+                .build(portType === PortType.INOUT)
+
+        numberView!!.setBounds(
+                arrowPath!!.contentLocation.x, arrowPath!!.contentLocation.y,
+                numberView!!.bounds.width, numberView!!.bounds.height)
+
+        val portView = getPortView(model!!.getPort<DigitalSignal>())
+        clearPortViews()
+        addPortView(createPortView(portView))
+
+        updateLabel()
+
+        invalidate()
+        update()
+
+        validate()
+    }
+
+    /**
+     * Returns the index of the digit at the specified absolute coordinates.
+     * @return the index of the digit at the specified absolute coordinates, if any.
+     */
+    private fun getDigitIndexAt(x: Double, y: Double): Int? {
+        if (numberView!!.digitCount == 1) {
+            // Use the entire arrow path as sensitive area
+            val pathTranslation = getArrowPathTranslation()
+            return if (arrowPath!!.path.contains(
+                    x - location.x - pathTranslation.x,
+                    y - location.y - pathTranslation.y))
+                0
+            else
+                null
+        }
+
+        return numberView!!.getDigitIndexAt(
+            x - location.x - arrowPath!!.contentLocation.x - getArrowPathTranslation().x,
+            y - location.y - arrowPath!!.contentLocation.y - getArrowPathTranslation().y)
+    }
+
+    /**
+     * Allows to toggle individual [Bit]s by clicking with the mouse.
+     */
+    private inner class InteractionHandler : ActorInteractionHandlerAdapter() {
+        override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+            if (!model!!.isToplevel) {
+                eventBus.post(ComponentMessage(source = this@CircuitInOutView, messageKey = "ch.scorpion.antares.msg.ChildGraphInputManipulation"))
+                return
+            }
+            val digitIndex = getDigitIndexAt(x, y)
+            if (digitIndex != null) {
+                if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
+                    // Toggle the binary digit
+                    var signal = model!!.signal as Word?
+                    if (signal == null) {
+                        signal = Word.allOf(bitWidth, Bit.Undefined)
+                    }
+                    var bit = signal.bitAt(digitIndex)
+                    if (!bit.isDefined) {
+                        bit = Bit.False
+                    }
+
+                    model!!.setIncomingSignal(signal.withBit(digitIndex, bit.not()), signalHandler)
+                }
+
+                // Set the focus on the selected digit
+                invalidate()
+                numberView!!.setFocusTo(digitIndex)
+                validate()
+            }
+        }
+
+        override fun keyPressed(signalHandler: SignalHandler, event: KeyEvent) {
+            if (!model!!.isToplevel) {
+                eventBus.post(ComponentMessage(source = this@CircuitInOutView, messageKey = "ch.scorpion.antares.msg.ChildGraphInputManipulation"))
+                return
+            }
+            if (numberView!!.focusIndex != null) {
+                LOG.debug("CircuitInOut: keyPressed '${event.key.toChar()}'")
+
+                if (event.key == KeyEvent.VK_LEFT) {
+                    invalidate()
+                    numberView!!.transferFocusLeft()
+                    validate()
+                } else if (event.key == KeyEvent.VK_RIGHT) {
+                    invalidate()
+                    numberView!!.transferFocusRight()
+                    validate()
+                } else {
+                    val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bits()), event.key.toChar())
+                    if (digitWord != null) {
+                        val newWord = (model!!.signal as Word).withSubwordValue(
+                                BitWidth.of(signalRepresentation.bits()),
+                                numberView!!.focusIndex!!,
+                                digitWord.getValue())
+
+                        model!!.setIncomingSignal(newWord, signalHandler)
+
+                        numberView!!.transferFocusRight()
+                    }
+                }
+            }
+        }
+    }
+}

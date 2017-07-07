@@ -1,0 +1,21 @@
+/* Multi-project build of jabbah */
+
+include 'base'
+include 'base-web'
+include 'io'
+include 'animation'
+include 'draw'
+include 'draw-web'
+include 'edit'
+include 'edit-web'
+include 'execution'
+include 'app'
+include 'graph'
+include 'antares'
+
+rootProject.name = 'jabbah'
+
+rootProject.children.each { project ->
+    String fileBaseName = project.name
+    project.buildFileName = "${fileBaseName}.gradle"
+}

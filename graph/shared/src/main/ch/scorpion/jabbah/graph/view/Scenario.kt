@@ -1,0 +1,55 @@
+package ch.scorpion.jabbah.graph.view
+
+import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.graph.script.ScriptGateway
+import ch.scorpion.jabbah.io.Storable
+
+/**
+ * A [Scenario] is a use case of a [GraphView] that is determined by the current state of [GraphView],
+ * for example by the current signals of the [InputPort]s.
+ *
+ * For example, an digital electronic SR Latch (implemented with NOR gates) supports the three scenarios "Set", "Reset"
+ * and "Store". The "Set" scenario is triggered when the S input is 1 while R is 0. The "Reset" scenario is triggered
+ * when the R input is 0 while S is 1. The "Store" scenario is triggered when both S and R are 0.
+ */
+interface Scenario : Storable {
+
+    /** Returns the identification of this [Scenario] that is unique within a [GraphView].*/
+    var id: Int
+
+    /**
+     * Returns the displayable name of this [Scenario]. Note that this name can be internationalized and should
+     * not be used for technical identifications.
+     */
+    var name: String
+
+    /** Returns the number of [ScenarioStep]s of this [Scenario].*/
+    val stepCount: Int
+
+    fun dispose()
+
+    /**
+     * Returns the condition that determines whether this {@link Scenario} is triggered depending on the current state
+     * of a [DrawingView] and its GraphView.
+     */
+    val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
+
+    /** Returns the [ScenarioStep]s of this [Scenario].*/
+    fun getScenarioSteps(): ImmutableList<ScenarioStep>
+
+    /** Returns the [ScenarioStep] with the specified id.*/
+    fun getStep(id: Int): ScenarioStep
+
+    /** Adds the specified [ScenarioStep] to this [Scenario]. */
+    fun addStep(step: ScenarioStep)
+
+    /** Removes the specified [ScenarioStep] from this [Scenario].*/
+    fun removeStep(step: ScenarioStep)
+}
+
+/**
+ * Signals that a particular [Scenario] has been detected in a [GraphView].
+ * The [Scenario] is `null`if the [Scenario] cannot be determined any more.
+ */
+data class ScenarioEvent(val graphView: GraphView<*>, val scenario: Scenario?)

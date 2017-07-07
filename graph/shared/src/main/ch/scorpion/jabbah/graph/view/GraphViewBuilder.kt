@@ -1,0 +1,63 @@
+package ch.scorpion.jabbah.graph.view
+
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.port.PortView
+
+/**
+ * Provides a convenient API for building [GraphView]s that contain connected [VerticeView]s.
+ * @param T the type of signal
+ */
+open class GraphViewBuilder<T: Any>() {
+
+    val graph: Graph = GraphModelModule.graphFactory.invoke()
+    val graphView: GraphView<GraphElementView<out GraphElement>> = GraphViewModule.createGraphView(graph)
+
+    fun build(): GraphView<GraphElementView<out GraphElement>> {
+        return graphView
+    }
+
+    fun <T: VerticeView<out Vertice>> addVertice(verticeView: T): T {
+        graphView.add(verticeView)
+        return verticeView
+    }
+
+    fun connect(from: VerticeView<out Vertice>, to: VerticeView<out Vertice>): EdgeView<T> {
+        return connect(from, to, to.vertice.getInput<T>())
+    }
+
+    fun connect(from: VerticeView<out Vertice>, to: VerticeView<out Vertice>, toPort: InputPort<T>): EdgeView<T> {
+        return GraphViewModule.graphViewConnectService.addConnection(
+                graphView, from.getPortView(from.vertice.getOutput())!!, to.getPortView(toPort)!!)
+    }
+
+    fun connectOpen(from: VerticeView<out Vertice>, toLocation: Point2D): EdgeView<T> {
+        val edgeView = GraphViewModule.getEdgeViewFactory<T>().createEdgeView()
+        edgeView.addSegmentPoint(Point2D())
+        edgeView.addSegmentPoint(Point2D())
+        graphView.add(edgeView)
+        GraphViewModule.graphViewConnectService.connectToOrigin(edgeView, from, from.vertice.getPort())
+        edgeView.moveDestinationEndPoint(toLocation.x, toLocation.y)
+        return edgeView
+    }
+
+    fun split(edgeView: EdgeView<T>, segmentIndex: Int, location: Point2D, dest: VerticeView<out Vertice>?): SplitEdgeViewResult<T> {
+        val newEdgeView = GraphViewModule.getEdgeViewFactory<T>().createEdgeView(edgeView.net!!)
+        newEdgeView.addSegmentPoint(location)
+        var portView: PortView<T>? = null
+        if (dest != null) {
+            portView = dest.getPortView(dest.model!!.getPort())
+        }
+        val result = GraphViewModule.graphViewConnectService.split(graphView, edgeView, segmentIndex, newEdgeView, portView)
+        if (dest == null) {
+            newEdgeView.addSegmentPoint(location)
+        }
+        return result
+    }
+}

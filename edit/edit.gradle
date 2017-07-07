@@ -1,0 +1,63 @@
+/* gradle build file of the ch.scorpion.jabbah.edit module */
+
+apply plugin: 'kotlin'
+
+sourceSets {
+    main.kotlin.srcDirs += 'shared/src/main'
+    main.resources.srcDirs += 'shared/rsc'
+    main.kotlin.srcDirs += 'jvm/src/main'
+
+    test.kotlin.srcDirs += 'shared/src/test'
+    test.resources.srcDirs += 'shared/rsc'
+    test.kotlin.srcDirs += 'jvm/src/test'
+
+    demo {
+        kotlin {
+            srcDirs += 'shared/src/demo'
+            srcDirs += 'jvm/src/demo'
+        }
+        compileClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+
+repositories {
+    flatDir {
+        dirs '../lib'
+    }
+}
+
+dependencies {
+    compile project(':base')
+    compile project(':animation')
+    compile project(':io')
+    compile project(':draw')
+
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-core:1.3'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    testCompile "org.mockito:mockito-core:2.7.2"
+    testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompile "com.nhaarman:mockito-kotlin:1.2.0"
+
+    // Depending on TestTranslationsBuilder
+    testCompile project(':base').sourceSets.test.output
+    // Depending on StyleProviderMockBuilder
+    testCompile project(':draw').sourceSets.test.output
+}
+
+task sharedMainJs(type:Exec) {
+    commandLine 'kotlinc-js', '-output', 'build/libs/edit.js', '-meta-info', '-libraries',
+            '../base/build/libs/base.meta.js:../io/build/libs/io.meta.js:../animation/build/libs/animation.meta.js:../draw/build/libs/draw.meta.js', 'shared/src/main'
+}
+
+task sharedDemoJs(type:Exec, dependsOn:sharedMainJs) {
+    commandLine 'kotlinc-js', '-output', 'build/libs/edit-demo.js', '-meta-info', '-libraries',
+            '../base/build/libs/base.meta.js:../io/build/libs/io.meta.js:../animation/build/libs/animation.meta.js:../draw/build/libs/draw.meta.js:build/libs/edit.meta.js', 'shared/src/demo'
+}
+
+classes.dependsOn sharedDemoJs

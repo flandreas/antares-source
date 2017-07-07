@@ -1,0 +1,144 @@
+package ch.scorpion.antares.view.gate
+
+import ch.scorpion.antares.model.Logic
+import ch.scorpion.antares.model.gate.TriStateBufferGate
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.Handedness
+import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.symbolstyle.SymbolStyle
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
+
+
+/**
+ * A view of a [TriStateBufferGate]
+ */
+class TriStateBufferGateView(
+    styleProvider: StyleProvider,
+    model: TriStateBufferGate
+) : DigitalComponentView<TriStateBufferGate>(styleProvider, "library.element.TriStateBuffer", model) {
+
+    constructor(styleProvider: StyleProvider): this(styleProvider, TriStateBufferGate())
+    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider)
+
+    var handedness: Handedness = Handedness.RIGHT
+        set(value) {
+            if (field != value) {
+                invalidate()
+                field = value
+                modelExchanged(model)
+                invalidate()
+                update()
+            }
+        }
+
+    init {
+        width = SymbolStyle.NOT_PATH.boundingBox.width
+        height = SymbolStyle.NOT_PATH.boundingBox.height
+        modelExchanged(null)
+    }
+
+    /** ---- [AbstractVerticeView] */
+
+    override fun modelExchanged(oldModel: TriStateBufferGate?) {
+        super.modelExchanged(oldModel)
+
+        val bounds = SymbolStyle.NOT_PATH.boundingBox
+
+        val inputPortView = DigitalPortView(
+            styleProvider = styleProvider,
+            port = model!!.getInput(),
+            direction = Direction.WEST)
+        inputPortView.setLocation(inputPortView.unconnectedLength.toDouble(), 0.0)
+        addPortView(inputPortView)
+
+        addPortView(DigitalPortView(
+            styleProvider = styleProvider,
+            port = model!!.getOutput(),
+            direction = Direction.EAST,
+            x = inputPortView.unconnectedLength + bounds.width.toInt(),
+            y = 0))
+
+        addPortView(DigitalPortView(
+            styleProvider = styleProvider,
+            port = model!!.getInput(2),
+            direction = getDirectionOfHandedness(),
+            x = (inputPortView.unconnectedLength + bounds.width / 2).toInt(),
+            y = if (handedness == Handedness.RIGHT) (bounds.height / 4).toInt() else (-bounds.height / 4).toInt()))
+    }
+
+    /** ---- [Storable] interface */
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        writer.writeString("controlOrientation", handedness.customName)
+    }
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+        if (reader.hasAttribute("controlOrientation")) {
+            handedness = Handedness.withName(reader.readString("controlOrientation"))
+        }
+    }
+
+    /** ---- [AbstractRectangularVerticeView] */
+
+    override fun getBoundingBoxImpl(): Rectangle2D {
+        val bbox = super.getBoundingBoxImpl()
+        return Rectangle2D(
+            bbox.x, bbox.y - (SymbolStyle.NOT_PATH.boundingBox.height - Look.SCALE) / 2,
+            bbox.width, bbox.height
+        )
+    }
+
+    override fun drawImpl(context: DrawContext) {
+        val oldColor = context.g.color
+        val bounds = SymbolStyle.NOT_PATH.boundingBox
+
+        super.drawImpl(context)
+
+        context.g.translate(getInput().unconnectedLength.toDouble(), -bounds.height / 2)
+        if (context.useContextColors) {
+            SymbolStyle.drawAmerican(x, y, bounds.height, SymbolStyle.NOT_PATH, context,
+                context.color!!.foregroundColor, context.color!!.backgroundColor, stroke, false)
+            GateMnemonic.drawTriStateBuffer(this, context, context.color!!.foregroundColor)
+        } else {
+            SymbolStyle.drawAmerican(x, y, bounds.height, SymbolStyle.NOT_PATH, context, foregroundColor,
+                backgroundColor, stroke, false)
+            GateMnemonic.drawTriStateBuffer(this, context, foregroundColor)
+        }
+        context.g.translate(-getInput().unconnectedLength.toDouble(), bounds.height / 2)
+        context.g.color = oldColor
+    }
+
+    /** ---- [TriStateBufferGateView] */
+
+    var enableLogic: Logic
+        get() = model!!.enableLogic
+        set(value) {
+            model!!.enableLogic = value
+        }
+
+    var bitWidth: BitWidth
+        get() = model!!.bitWidth
+        set(value) {
+            model!!.bitWidth = value
+        }
+
+    private fun getDirectionOfHandedness(): Direction {
+        return when(handedness) {
+            Handedness.RIGHT -> Direction.SOUTH
+            Handedness.LEFT -> Direction.NORTH
+        }
+    }
+}

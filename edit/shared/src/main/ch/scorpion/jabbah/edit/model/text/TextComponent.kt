@@ -1,0 +1,36 @@
+package ch.scorpion.jabbah.edit.model.text
+
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.Component
+
+
+/**
+ * A [Component] with text that can be interactively edited by the user.
+ */
+interface TextComponent : Component, RectangularShape {
+
+    var text: String
+
+    // Requested by the compiler due to multiple inheritance problem
+    override fun contains(x: Double, y: Double): Boolean {
+        throw UnsupportedOperationException("not implemented")
+    }
+}
+
+interface TextComponentFactory {
+
+    /**
+     * Creates a new platform-specific [TextComponent] implementation.
+     * @param text the text to be displayed
+     * @param location the location of the text baseline point
+     */
+    fun create(
+            text: String,
+            location: Point2D,
+            styleType: StyleType,
+            styleProvider: StyleProvider
+    ): TextComponent
+}

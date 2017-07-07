@@ -1,0 +1,57 @@
+package ch.scorpion.antares.model.gate
+
+import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.port.DigitalPort
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
+
+/**
+ * Forwards an input signal unchanged to the output.
+ */
+class BufferCalculator<T : Vertice> : VerticeCalculator<T> {
+
+    override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
+        vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
+    }
+}
+
+class BufferGate(bitWidth: BitWidth) : AbstractDigitalGate(CALCULATOR, InputCount.ONE) {
+    constructor(): this(BitWidth.BW_1)
+
+    companion object {
+        val CALCULATOR = BufferCalculator<BufferGate>()
+    }
+
+    var bitWidth: BitWidth = bitWidth
+        set(value) {
+            if (field != value) {
+                field = value
+                (getInput<DigitalSignal>() as DigitalPort).bitWidth = value
+                (getOutput<DigitalSignal>() as DigitalPort).bitWidth = value
+                stateChanged()
+            }
+        }
+
+    override val minInputCount: InputCount get() = InputCount.ONE
+    override val maxInputCount: InputCount get() = InputCount.ONE
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        writer.writeInt("bitWidth", bitWidth.width)
+    }
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+        if (reader.hasAttribute("bitWidth")) {
+            bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+        }
+    }
+}
+
+

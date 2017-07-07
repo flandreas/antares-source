@@ -1,0 +1,390 @@
+package ch.scorpion.jabbah.graph.view.graph
+
+import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.collection.ConcatIterator
+import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.collection.toImmutableList
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.exception.IllegalStateException
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
+import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.InputEventHandler
+import ch.scorpion.jabbah.draw.container.DrawableContainerInputEventHandler
+import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.edit.Snapper
+import ch.scorpion.jabbah.edit.model.DrawingImpl
+import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.graph.GraphReferenceResolver
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
+import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
+import ch.scorpion.jabbah.graph.view.connect.OutputToInputConnector
+import ch.scorpion.jabbah.graph.view.scenario.ScenariosImpl
+import ch.scorpion.jabbah.io.*
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.connect.InputToOutputOrEdgeConnector
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
+
+
+/**
+ * A standard implementation of the [GraphView] interface.
+ */
+class GraphViewImpl<T : GraphElementView<*>>(
+        override var graph: Graph?,
+        private val storableCloner: StorableCloner,
+        private val outputToInputConnector: OutputToInputConnector,
+        private val inputToOutputToInputConnector: InputToOutputOrEdgeConnector,
+        private val connectService: GraphViewConnectService,
+        private val eventBus: EventBus
+) : DrawingImpl<T>(), GraphView<T> {
+
+    constructor(): this(
+            GraphModelModule.graphFactory.invoke(),
+            IOModule.storableClonerProvider.invoke(),
+            GraphViewModule.outputToInputConnector,
+            GraphViewModule.inputToOutputOrEdgeConnector,
+            GraphViewModule.graphViewConnectService,
+            BaseModule.eventBus)
+
+    private val LOG by logger()
+
+    var name: String
+        get() = graph!!.name
+        set(value) {graph!!.name = value}
+
+    /** Resets the current [Scenario] and [ScenarioStep] when the [Scheduler] is activated or deactivated. */
+    private val schedulerActivationObserver: (SchedulerActivationStateEvent) -> Unit = {
+        currentScenario = null
+        currentScenarioStep = null
+    }
+
+    /** Manages the [NetView]s for all [Net]s of the [Graph].*/
+    private val netViewMap: MutableMap<Net<Any>, NetView<Any>> = mutableMapOf()
+
+    init {
+        eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationObserver)
+    }
+
+    /** ---- [Any] */
+
+    override fun toString(): String {
+        return graph?.name ?: ""
+    }
+
+    /** ---- UI properties */
+
+    var shortDescription: TextProperty
+        get() = TextProperty(graph!!.shortDescription)
+        set(value) {
+            graph!!.shortDescription = value.text
+        }
+
+    var propagationDelay: Long?
+        get() = graph!!.propagationDelay
+        set(value) {
+            graph!!.propagationDelay = value
+        }
+
+    var script: TextProperty
+        get() = TextProperty(graph!!.script)
+        set(value) {
+            graph!!.script = value.text
+        }
+
+    /** ---- [GraphView] interface */
+
+    override var snapper: Snapper? = null
+
+    override var scenarios: Scenarios = ScenariosImpl(this, eventBus)
+
+    override var currentScenario: Scenario? = null
+        set(value) {
+            if (value == field) {
+                return
+            }
+            field = value
+            if (value != null) {
+                LOG.debug("Scenario '${value.name}' set in Graph '$name'")
+            } else {
+                LOG.debug("No current Scenario in Graph '$name'")
+            }
+            eventBus.post(ScenarioEvent(this, value))
+        }
+
+    override var currentScenarioStep: ScenarioStep? = null
+        set(value) {
+            if (value == field) {
+                return
+            }
+            if (value != null && currentScenario == null) {
+                throw IllegalStateException("ScenarioStep without Scenario")
+            }
+            val oldValue = field
+            field = value
+            if (value != null) {
+                LOG.debug("ScenarioStep '${value.name}' of Scenario '${currentScenario!!.name}' set in Graph '$name'")
+            } else {
+                LOG.debug("No current ScenarioStep in Graph '$name'")
+            }
+            eventBus.post(ScenarioStepEvent(this, oldValue, value))
+        }
+
+    override fun dispose() {
+        for (graphElementView in getDrawables()) {
+            graphElementView.dispose()
+        }
+        scenarios.dispose()
+        eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationObserver)
+    }
+
+    override fun bind() {
+        for (graphElementView in getDrawables()) {
+            graphElementView.bind(graph!!)
+        }
+    }
+
+    override fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator): GraphView<T> {
+        LOG.trace("clone '${model.name}'for existing model")
+        val clone = storableCloner.clone(
+            this,
+            GlobalIdentityReflector,
+            storableCreator,
+            ReferenceResolverProxy(
+                GraphReferenceResolver(model),
+                ReferenceResolverImpl()
+            )
+        ) as GraphViewImpl<T>
+        clone.graph = model
+        return clone
+    }
+
+    override fun getEdgeViews(): ImmutableList<EdgeView<Any>> {
+        return getDrawables { it is EdgeView<*> } as ImmutableList<EdgeView<Any>>
+    }
+
+    override fun getEdgeView(port: Port<*>): EdgeView<Any>? {
+        return getEdgeViews().firstOrNull { it.originPort == port || it.destinationPort == port }
+    }
+
+    override fun getGraphPortViews(): ImmutableList<GraphPortView<GraphPort<Any>>> {
+        return getDrawables { it is GraphPortView<*> } as ImmutableList<GraphPortView<GraphPort<Any>>>
+    }
+
+    override fun getControlViewSources(): ImmutableList<ControlViewSource<Vertice>> {
+        return getDrawables { it is ControlViewSource<*> } as ImmutableList<ControlViewSource<Vertice>>
+    }
+
+    override fun getElementViews(element: GraphElement): ImmutableList<GraphElementView<*>> {
+        return getDrawables { it is GraphElementView<*> && it.model == element }
+    }
+
+    override fun getGraphPortView(portName: String): GraphPortView<GraphPort<Any>>? {
+        return getDrawable { it is GraphPortView<*> && it.model!!.name == portName} as GraphPortView<GraphPort<Any>>?
+    }
+
+    override fun getControlViewSource(controlId: String): ControlViewSource<Vertice>? {
+        return getDrawable { it is ControlViewSource<*> && it.controlId == controlId } as ControlViewSource<Vertice>?
+    }
+
+    /** ---- [Storable] interface */
+
+    override fun getStorableChildren(): Iterator<Storable> {
+        val list = mutableListOf<Storable>()
+        list.add(scenarios)
+        list.addAll(netViewMap.values)
+        return ConcatIterator(super.getStorableChildren(), list.iterator())
+    }
+
+    override fun write(writer: StoreWriter) {
+        writer.writeStorables("netViews", netViewMap.values.iterator())
+        if (!scenarios.isEmpty) {
+            writer.writeStorable("scenarios", scenarios)
+        }
+        super.write(writer)
+    }
+
+    override fun read(reader: StoreReader) {
+        netViewMap.clear()
+        for (netView in reader.readStorables("netViews")) {
+            reader.requestResolution(this, Reference(
+                name = "netView",
+                additionalInfo = netView,
+                resolveAfter = listOf(netView.storableId)
+            ))
+        }
+        if (reader.hasElement("scenarios")) {
+            scenarios = reader.readStorable("scenarios") as Scenarios
+            scenarios.graphView = this
+        }
+        super.read(reader)
+    }
+
+    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+        if (reference.name == "netView") {
+            // If NetViewElements are resolved BEFORE a NetView, a corresponding dummy NetView already
+            // exists in netViewMap and must be replaced by the one just read and resolved, because that one
+            // holds the essential properties.
+            val resolvedNetView = reference.additionalInfo as NetView<Any>
+            val existingNetView = netViewMap[resolvedNetView.net]
+            if (existingNetView != null) {
+                existingNetView.getElements().forEach {
+                    resolvedNetView.add(it)
+                }
+            }
+            addNetView(resolvedNetView)
+        }
+        super.resolve(reference, referenceResolver)
+    }
+
+    /** ---- [Drawable] interface */
+
+    override fun accept(visitor: HierarchyVisitor): Boolean {
+        if (visitor.visitEnter(this)) {
+            if (!graph!!.accept(visitor)) {
+                return visitor.visitLeave(this)
+            }
+            super.accept(visitor)
+        }
+        return visitor.visitLeave(this)
+    }
+
+    // ---- [DrawableContainerImpl] */
+
+    /**
+     * Returns first all [EdgeView]s and then all other [GraphElementView]s, so that [EdgeView]s don't
+     * overwrite [VerticeView] boundaries when being connected to them.
+     */
+    override fun drawablesInDrawingOrder(): ImmutableList<T> {
+        val drawables = mutableListOf<T>()
+        drawables.addAll(super.drawablesInDrawingOrder().filter { it is EdgeView<*> })
+        drawables.addAll(super.drawablesInDrawingOrder().filter { it !is EdgeView<*> })
+        return drawables.toImmutableList()
+    }
+
+    override fun createInputEventHandler(): InputEventHandler<InputEventContext> {
+        return GraphViewInputEventHandler() as InputEventHandler<InputEventContext>
+    }
+
+    /** Overridden in order to add the [GraphElement] to the [Graph] that this [GraphView] displays.*/
+    override fun add(drawable: T, index: Int): DrawableContainer<T> {
+        if (!contains(drawable)) {
+            if (!readingFromStore) {
+                if (drawable.model != null) {
+                    graph?.add(drawable.model!!)
+                }
+            }
+            if (drawable is NetViewElement<*>) {
+                addNetViewElement(drawable as NetViewElement<Any>)
+            }
+            return super.add(drawable, index)
+        }
+        return this
+    }
+
+    /** Overridden in order to remove the [GraphElement] from the [Graph] that this [GrapView] displays.*/
+    override fun remove(drawable: T): DrawableContainer<T> {
+        if (graph != null) {
+            if (drawable is EdgeView<*>) {
+                connectService.unconnect(drawable)
+            } else if (drawable is VerticeView<*>) {
+                connectService.unconnect(this, drawable)
+            }
+            if (drawable.model != null && getElementViews(drawable.model!!).size == 1) {
+                graph!!.remove(drawable.model!!)
+            }
+            if (drawable is NetViewElement<*>) {
+                removeNetViewElement(drawable as NetViewElement<Any>)
+            }
+        }
+        return super.remove(drawable)
+    }
+
+    override fun clear(): DrawableContainer<T> {
+        super.clear()
+        if (graph != null) {
+            // graph should only be `null` during deserialization
+            graph!!.clear()
+        }
+        return this
+    }
+
+    /** ---- [GraphViewImpl] */
+
+    private fun addNetView(netView: NetView<Any>) {
+        if (!netViewMap.containsKey(netView.net)) {
+            netViewMap.put(netView.net, netView)
+        }
+    }
+
+    private fun addNetViewElement(elem: NetViewElement<Any>) {
+        var netView = netViewMap[elem.net]
+        if (netView == null) {
+            netView = NetViewImpl(elem.net!!)
+            addNetView(netView)
+        }
+        netView.add(elem)
+    }
+
+    private fun removeNetViewElement(elem: NetViewElement<Any>) {
+        val netView = netViewMap[(elem.net)]
+        if (netView != null) {
+            netView.remove(elem)
+            if (netView.isEmpty) {
+                netViewMap.remove(netView.net)
+            }
+        }
+    }
+
+    /**
+     * Intercepts [MouseEvent]s on [VerticeView] in order to forward them to the injected connectors.
+     *
+     * This relieves the [VerticeView] implementations from the burden to provide constructor injection parameters
+     * for all kinds of connectors, for the [EdgeViewFactory] and lots of other injected objects.
+     */
+    private inner class GraphViewInputEventHandler : DrawableContainerInputEventHandler<T, EditInputEventContext>(this@GraphViewImpl) {
+
+        private var target: InputEventHandler<EditInputEventContext>? = null
+
+        override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+            if (target != null) {
+                target = target?.mouseMoved(context)
+                if (target != null) {
+                    return target
+                }
+            }
+
+            val drawable = getDrawableAt(context.x, context.y)
+            if (drawable is VerticeView<*>) {
+                val portView = drawable.getPortViewAt(context.x, context.y)
+                if (portView != null) {
+                    if (portView.port.portType.isOutput) {
+                        target = outputToInputConnector
+                        outputToInputConnector.useFor(drawable)
+                        target = outputToInputConnector.mouseMoved(context)
+                        if (target != null) {
+                            return target
+                        }
+                    } else if (portView.port.portType.isInput) {
+                        target = inputToOutputToInputConnector
+                        inputToOutputToInputConnector.useFor(drawable)
+                        target = inputToOutputToInputConnector
+                        if (target != null) {
+                            return target
+                        }
+                    }
+                }
+            }
+
+            return super.mouseMoved(context)
+        }
+    }
+}

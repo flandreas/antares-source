@@ -1,0 +1,12 @@
+.gradle
+antares.ini
+build/
+out/
+doc/model.mdj
+doc/model-img/
+.DS_Store
+.idea/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/libraries

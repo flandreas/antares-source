@@ -1,0 +1,27 @@
+apply plugin: 'kotlin2js'
+
+sourceSets {
+    main.kotlin.srcDirs += 'main/kotlin'
+
+    demo {
+        kotlin {
+            srcDirs += 'demo/helloedit/kotlin'
+        }
+        compileClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+
+dependencies {
+    compile files('../base/build/libs/base.meta.js')
+    compile files('../base-web/build/classes/main/base-web_main.meta.js')
+    compile files('../io/build/libs/io.meta.js')
+    compile files('../animation/build/libs/animation.meta.js')
+    compile files('../draw/build/libs/draw.meta.js')
+    compile files('../draw-web/build/classes/main/draw-web_main.meta.js')
+    compile files('../edit/build/libs/edit.meta.js')
+    compile files('../edit/build/libs/edit-demo.meta.js')
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+}
+
+// Without this, draw-edit_demo.meta.js will not be automatically built, for some reason..
+build.dependsOn demoClasses

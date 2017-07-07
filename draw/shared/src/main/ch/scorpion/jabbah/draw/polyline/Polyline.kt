@@ -1,0 +1,166 @@
+package ch.scorpion.jabbah.draw.polyline
+
+import ch.scorpion.jabbah.base.geom.Point2D
+
+/**
+ * A geometric figure consisting of a sequence of straight line segments.
+ */
+interface Polyline {
+
+    /** Holds the number of points of this [Polyline].*/
+    val pointsCount: Int
+
+    /** Holds the [LineTerminator] that is connected to the first point of this [Polyline].*/
+    var beginLineTerminator: LineTerminator?
+
+    /** Holds the [LineTerminator] that is connected to the last point of this [Polyline].*/
+    var endLineTerminator: LineTerminator?
+
+    /** Removes all points from this [Polyline].*/
+    fun clear()
+
+    /**
+     * Adds a new point with the specified coordinates to the end of this [Polyline].
+     * @param x the x coordinate of the new point
+     * @param y the y coordinate of the new point
+     */
+    fun addPoint(x: Double, y: Double): Polyline
+
+    /**
+     * Adds a new point with the specified coordinates to the end of this [Polyline].
+     */
+    fun addPoint(x: Int, y: Int): Polyline {
+        return addPoint(x.toDouble(), y.toDouble())
+    }
+
+    /**
+     * Adds a new point the specified index.
+     * @param index the index at which the new point is to be added, where `0` is the index of the first point.
+     * @param x the x coordinate of the point to set
+     * @param y the y coordinate of the point to set
+     */
+    fun addPointAt(index: Int, x: Double, y: Double): Polyline
+
+    /**
+     * Removes the point at the specified index.
+     * @param index the index of the point to be removed, where `0` is the index of the first point, and
+     *      `getPointsCount() - 1` is the index of the last point
+     * @throws IndexOutOfBoundsException if the index is out of bounds
+     */
+    fun removePoint(index: Int): Polyline
+
+    /**
+     * Returns the point at the specified index.
+     * @param index the index of the requested point, where `0` is the index of the first point, and
+     *      `getPointsCount() - 1` is the index of the last point
+     * @return the point at the specified index
+     * @throws IndexOutOfBoundsException if the index is out of bounds
+     */
+    fun getPointAt(index: Int): Point2D
+
+    /**
+     * Returns the first [Point].
+     * @throws IndexOutOfBoundsException if there is no [Point]
+     */
+    fun getFirstPoint(): Point2D {
+        return getPointAt(0)
+    }
+
+    /**
+     * Returns the last [Point].
+     * @throws IndexOutOfBoundsException if there is no [Point]
+     */
+    fun getLastPoint(): Point2D {
+        return getPointAt(pointsCount - 1)
+    }
+
+    /**
+     * Sets the coordinates of the point at the specified index.
+     * @param index the index of the points whose coordinates are to be set, where `0` is the index of the first
+     *      point, and `getPointsCount() - 1` is the index of the last point. If index is
+     *      `getPointsCount()`, a new point with the specified coordinates is added.
+     * @param x the x coordinate of the point to set
+     * @param y the y coordinate of the point to set
+     */
+    fun setPointAt(index: Int, x: Double, y: Double): Polyline
+
+    /**
+     * Replaces the point of this [Polyline] with the points in the specified list.
+     * @param points the list of new points for this Polyline.
+     */
+    fun setPoints(points: List<Point2D>): Polyline
+
+    /**
+     * Moves the entire [Polyline] to a new location.
+     *
+     * The location of an [Polyline] is defined a the location of the first point. Moves all points of this
+     * [Polyline] by the same offset.
+     * @param x the x coordinate of the new location
+     * @param y the y coordinate of the new location
+     */
+    fun setLocation(x: Double, y: Double): Polyline
+
+    /** Returns the width of the [Polyline]'s segment. This width influences the calculation of the bounding box. */
+    fun getLineWidth(): Double
+
+    /**
+     * Finds the index of the [Polyline] segment that contains the specified location while respecting the
+     * specified sensitive area.
+     * @param x the x coordinate of the location.
+     * @param y the y coordinate of the location.
+     * @param area the sensitive area.
+     * @return the index of the found segment, where 0 is the index of the first segment.
+     */
+    fun findSegment(x: Double, y: Double, area: Int): Int?
+
+    /**
+     * Finds the index of the [Point] that contains the specified location while respecting the specified
+     * sensitive area.
+     * @param x the x coordinate of the location.
+     * @param y the y coordinate of the location.
+     * @param area the sensitive area.
+     * @return the index of the found segment [Point], where 0 is the index of the first [Point].
+     */
+    fun findPoint(x: Double, y: Double, area: Int): Int?
+
+    /** Returns the center of the segment with the specified index. */
+    fun getCenterOfSegment(index: Int): Point2D
+
+    /**
+     * Compacts this [Polyline] by removing [Point]s that are at the same location as their predecessing
+     * [Point], unless the [Polyline] contains only two [Point]s.
+     * @return `true` if the [Polyline] has been changed while compacting
+     */
+    fun compact(): Boolean
+
+    /**
+     * Returns the geometrical length of this [Polyline], which is the sum of all segment lengths.
+     * @return the length of this [Polyline].
+     */
+    fun getLength(): Double
+
+    /**
+     * Returns the geometrical length of the specified segment.
+     * @param index the index of the segment
+     */
+    fun getSegmentLength(index: Int): Double
+
+    /**
+     * Returns the [Point]s of this [Polyline] between a startIndex, inclusive, and an end index, exclusive.
+     * @param startIndex the index to start with
+     * @param endIndex the end index, exclusive
+     * @return the [List] containing the requested [Point]s
+     */
+    fun getPoints(startIndex: Int, endIndex: Int): List<Point2D>
+
+    /**
+     * Determines whether the specified segment is orthogonal, i.e. is horizontal or vertical.
+     * @param index the index of the segment in question, where 0 is the index of the first segment.
+     * @return `true` if segment `index` is orthogonal.
+     */
+    fun isSegmentOrthogonal(index: Int): Boolean
+
+    fun mirrorHorizontally(x: Double)
+
+    fun mirrorVertically(y: Double)
+}

@@ -1,0 +1,81 @@
+package ch.scorpion.antares.model.net
+
+import ch.scorpion.antares.model.port.DigitalPort
+import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.PropertyChangeEvent
+import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.graph.model.DesignError
+import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.net.NetImpl
+
+/**
+ * Extends [NetImpl] to add the following responsibilities:
+ * - convert `null`signals to [Bit.False]
+ * - identify and propagate a design error if this [Net] connects [Port]s with incompatible [BitWidth]
+ */
+open class DigitalNet : NetImpl<DigitalSignal>() {
+
+    private val portPropertyListener = PortPropertyListener()
+
+    /** ---- [NetImpl] */
+
+    override val signal: DigitalSignal?
+        get() = super.signal ?: Word.allOf(bitWidth, Bit.False)
+
+    override var signalBuffer: DigitalSignal?
+        get() = super.signalBuffer ?: Word.allOf(bitWidth, Bit.False)
+        set(value) {super.signalBuffer = value}
+
+    /** ---- [GraphElement] */
+
+    override val designError: DesignError?
+        get() {
+            val occuringBitWidths = getOccuringBitWidths()
+            if (occuringBitWidths.size <= 1) {
+                return null
+            }
+            val bitWidthNames = occuringBitWidths.map { it.customName }.toSet()
+            return DesignError(Translations.getString("digitalnet.designError.text", bitWidthNames.joinToString(separator = ",")))
+        }
+
+    override val isError: Boolean
+        get() = super.isError || isDesignError
+
+    private val isDesignError: Boolean get() = getOccuringBitWidths().size > 1
+
+    private fun getOccuringBitWidths(): Set<BitWidth> {
+        return ports.map { (it as DigitalPort).bitWidth }.toSet()
+    }
+
+    /** ---- [Net] */
+
+    override fun connect(port: Port<DigitalSignal>) {
+        super.connect(port)
+        port.addPropertyChangeListener(portPropertyListener)
+    }
+
+    override fun unconnect(port: Port<*>) {
+        super.unconnect(port)
+        port.removePropertyChangeListener(portPropertyListener)
+    }
+
+    /** ---- [DigitalNet] */
+
+    val bitWidth: BitWidth
+        get() {
+            if (portsCount == 0) {
+                return BitWidth.BW_1
+            }
+            return ports.map { it as DigitalPort }.first().bitWidth
+        }
+
+    private inner class PortPropertyListener : PropertyChangeListener<Any> {
+        override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+            stateChanged()
+        }
+    }
+}

@@ -1,0 +1,128 @@
+package ch.scorpion.jabbah.edit.snap
+
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.ZoomPan
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleRepository
+import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.edit.Grid
+import ch.scorpion.jabbah.edit.Snapper
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
+
+/**
+ * A standard, simple implementation of a grid that defines a two dimensional array of points that are used for snapping
+ * in terms of a [Snapper].
+ *
+ * [GridImpl] delegates drawing of the grid points to a pluggable [GridPainter]. If the distance of these
+ * points falls below a certain minimum distance because of zooming, [GridImpl] doesn't draw these points any more.
+ */
+class GridImpl(
+    styleProvider: StyleProvider,
+    override var distance: Double,
+    override var paintFactor: Int
+) : AbstractSnapper(snapEnabled = true), Grid {
+
+    constructor(styleProvider: StyleProvider): this(
+            styleProvider,
+            BaseModule.properties.getFloat(Grid.PROP_GRID_DEFAULT_DISTANCE).toDouble(),
+            BaseModule.properties.getInt(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR))
+
+    constructor(): this(StyleRepository.INSTANCE)
+
+    private val LOG by logger()
+
+    /** The object that actually paints the grid dots.*/
+    private var gridPainter: GridPainter = DottedGridPainter(styleProvider.getStyle(StyleType.BACKGROUND))
+        set(value) {
+            invalidate()
+            field = value
+            updateGridPainterProperties()
+            invalidate()
+            validate()
+        }
+
+    /**
+     * A buffer object for requesting the current clip rectangle when drawing the grid. Used to avoid creating the
+     * [Rectangle2D] whenever a part of the [GridImpl] is redrawn.
+     */
+    private val clipBuffer: Rectangle2D = Rectangle2D()
+
+    /** ---- [Grid] interface */
+
+    override var view: View<EditInputEventContext>? = null
+        set(value) {
+            if (value == null) {
+                throw IllegalArgumentException("view must not be null")
+            }
+            field = value
+            zoomPan = field!!.zoomPan
+        }
+
+    override var zoomPan: ZoomPan? = null
+        set(value) {
+            LOG.debug("Set Grid ZoomPan to $value")
+            field = value
+            invalidate()
+            updateGridPainterProperties()
+            invalidate()
+        }
+
+    /** ---- [Drawable] */
+
+    override val boundingBox: Rectangle2D
+        get() {
+            if (view == null) {
+                return Rectangle2D()
+            }
+            return Rectangle2D(0.0, 0.0, view!!.width.toDouble(), view!!.height.toDouble())
+        }
+
+    override fun contains(x: Double, y: Double): Boolean = true
+
+    override fun draw(context: DrawContext) {
+        context.g.getClipBounds(clipBuffer)
+        if (zoomPan!!.zoomFactor * distance * paintFactor < BaseModule.properties.getInt(Grid.PROP_GRID_MIN_DISTANCE)) {
+            // Don't paint the grid if it is too dense
+            return
+        }
+        gridPainter.paint(context, clipBuffer)
+    }
+
+
+    /** ---- [AbstractSnapper] */
+
+    override fun doSnapX(x: Double): Double = snapValue(x)
+
+    override fun doSnapY(y: Double): Double = snapValue(y)
+
+    /** ---- [GridImpl] */
+
+    /**
+     * Snaps the specified number by calculating the minimum of the distances from the floor or ceiling grid point.
+     * @param d the number to be snapped
+     * @return the snapped number, which is a multiple of the current distance of the grid points
+     */
+    private fun snapValue(d: Double): Double {
+        val q = d / distance
+        val floor = Math.floor(q)
+        val ceil = floor + 1
+
+        if (q - floor < ceil - q) {
+            return floor * distance
+        }
+        return ceil * distance
+    }
+
+    private fun updateGridPainterProperties() {
+        gridPainter.distanceX = distance * paintFactor
+        gridPainter.distanceY = distance * paintFactor
+        gridPainter.zoomPan = zoomPan
+    }
+}

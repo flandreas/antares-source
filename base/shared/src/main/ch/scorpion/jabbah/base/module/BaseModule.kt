@@ -1,0 +1,27 @@
+package ch.scorpion.jabbah.base.module
+
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventBusImpl
+import ch.scorpion.jabbah.base.time.ControlledTimeService
+import ch.scorpion.jabbah.base.time.SystemSpeed
+import ch.scorpion.jabbah.base.time.TimeService
+
+/**
+ * Module definitions for the [jabbah.base] package.
+ */
+object BaseModule : AbstractModule() {
+
+	var properties: Properties = Properties()
+
+    var eventBus: EventBus = EventBusImpl()
+
+    val systemSpeed: SystemSpeed by lazy { SystemSpeed(properties, eventBus) }
+
+    var timeService: TimeService = ControlledTimeService()
+
+    override fun initialize() {
+        // empty
+    }
+}

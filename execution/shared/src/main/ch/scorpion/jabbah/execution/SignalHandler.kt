@@ -1,0 +1,45 @@
+package ch.scorpion.jabbah.execution
+
+import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.execution.actor.ActorData
+import kotlin.reflect.KClass
+
+/**
+ * The part of a [Scheduler] that is passed to [Actor]s in order to access the necessary part of the
+ * scheduling functionality.
+ */
+interface SignalHandler {
+
+    /**
+     * Determines whether the current execution environment performs deep execution of [Actor],
+     * i.e. whether exectution scripts of nested [Actor]s are ignored.
+     */
+    var isDeepExecution: Boolean
+
+    /** Returns the relative execution time, i.e. the relative time in nanoseconds since execution has been started.*/
+    val executionTime: Long
+
+    /** Creates a trace log entry for tracing signal propagation. This allows central trace enabling/disabling.*/
+    fun logTrace(clazz: KClass<*>, id: Int, msg: () -> String)
+
+    /**
+     * Asks this [SignalHandler] to recalculate the specified [Actor] after a given delay.
+     *
+     * @param actor the [Actor] to be recalculated after `delay` ns
+     * @param delay the delay in nanoseconds
+     * @param the [ActorData] to be returned in [Actor.act]
+     */
+    fun requestActingAfter(actor: Actor, delay: Long, data: ActorData)
+
+    /**
+     * Asks this [SignalHandler] to recalculate the specified [Actor] as soon as it will call
+     * [actingDone], and to avoid to increase the relative execution time in the meantime.
+     * @param actor the [Actor] to be recalculated
+     * @param the [ActorData] to be returned in [Actor.act]
+     */
+    fun requestActingTimeFreeze(actor: Actor, data: ActorData)
+
+    /** Informs this [SignalHandler] that the acting of the specified [Actor] is done.*/
+    fun actingDone(actor: Actor)
+
+}

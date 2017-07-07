@@ -1,0 +1,234 @@
+package ch.scorpion.jabbah.graph.view
+
+import ch.scorpion.jabbah.draw.DrawableListener
+import ch.scorpion.jabbah.draw.polyline.Polyline
+import ch.scorpion.jabbah.draw.polyline.PolylineShape
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
+import ch.scorpion.jabbah.graph.view.net.edge.Layout
+import ch.scorpion.jabbah.graph.view.net.node.NodeView
+
+/**
+ * An [EdgeView] is a part of a [NetView] that connects a [Port] of an origin [VerticeView]
+ * with the [Port] of a destination [VerticeView], where both the origin and the destination can be unset.
+ * An [EdgeView] is expected to be a [Polyline], without explicitly implementing that interface.
+ *
+ * An [EdgeView] is typically a [DrawableListener] of the [VerticeView] to which it is connected, and
+ * reacts to [DrawableListener.drawableUpdated] by initiating a re-layout of itself.
+ *
+ * @param <T> the type of signal
+ *
+ * TODO Refactor: Extract the read-only part of the [Polyline] interface and let [EdgeView] implement it
+ */
+interface EdgeView<T: Any> : NetViewElement<T> {
+
+    /** The [ConnectableView] from which this [EdgeView] originates.*/
+    var origin: ConnectableView?
+
+    /** The [Port] of the model of [origin] where this [EdgeView] originates.*/
+    var originPort: Port<T>?
+
+    /** The [ConnectableView] that is the destination of this [EdgeView].*/
+    var destination: ConnectableView?
+
+    /** The [Port] of the model of [destination] that is the destination of [EdgeView].*/
+    var destinationPort: Port<T>?
+
+    /** Returns the number of segment points of this [EdgeView].*/
+    val segmentPointCount: Int
+
+    /** Returns the geometrical length of this [EdgeView], which is the sum of all segment lengths. */
+    val length: Double
+
+    /**
+     * An [EdgeView] is degenerated if it contains less than two [Point2D]s, or all of its [Point2D]s are
+     * at the same location.
+     */
+    val isDegenerated: Boolean
+
+    /** An [EdgeView] is adjusted if the user has moved one of its segments after layout. */
+    var isAdjusted: Boolean
+
+    /** Determines how the segments of this [EdgeView] are automatically layouted, e.g. orthogonally.*/
+    var layout: Layout
+
+    /** Determines whether this [EdgeView] displays an arrow head at its destination. */
+    var isArrow: Boolean
+
+    /** Returns the destination [EdgeEndpointView] of this [EdgeView].*/
+    val originEndpointView: EdgeEndpointView
+
+    /** Returns the destination [EdgeEndpointView] of this [EdgeView]. */
+    val destinationEndpointView: EdgeEndpointView
+
+    /** Holds the [Point2D]s (in absolute coordinates) that define the segments of this [EdgeView].*/
+    val polyline: PolylineShape
+
+    /**
+     * Returns the [ConnectableView] that corresponds with the specified [Port], which can be either the
+     * [origin] or the [destination] [ConnectableView].
+     */
+    fun getConnectableView(port: Port<T>): ConnectableView?
+
+    /** Returns the start [Point2D] of the segment with the specified index.*/
+    fun getSegmentPoint(index: Int): Point2D
+
+    /** Adds the specified [Point2D] at the end of this [EdgeView].*/
+    fun addSegmentPoint(point: Point2D)
+
+    /** Adds the specified [Point2D] at the the given index.*/
+    fun addSegmentPoint(index: Int, point: Point2D)
+
+    /**
+     * Compacts this [EdgeView] by removing [Point2D]s that are at the same location as their predecessing
+     * [Point2D], or that are intermediate points of two parallel segments.
+     */
+    fun compact()
+
+    fun layoutOrigin()
+
+    fun layoutDestination()
+
+    /**
+     * Layouts the destination part of this [EdgeView] by using the specified destination [Direction].
+     * This is useful when the [EdgeView] has not yet been connected to a destination [Port], but should
+     * use a determined destination [Direction], for example while interactively dragging the destination point
+     * and snapping to a destination [Port].
+     */
+    fun layoutDestination(direction: Direction?)
+
+    /**
+     * Connects this [EdgeView] to the [Port] of the origin [ConnectableView].
+     * Note that this method does **NOT** establish the connection on the model layer.
+     * @param origin the [ConnectableView] from which this [EdgeView] originates, or `null` to
+     * disconnect this [EdgeView] from its former origin [ConnectableView].
+     */
+    fun connectToOrigin(origin: ConnectableView?, port: Port<T>?)
+
+    /**
+     * Connects this [EdgeView] to the [Port] of the destination [ConnectableView].
+     * Note that this method does **NOT** establish the connection on the model layer.
+     * @param destination the [ConnectableView] that is the destination of this [EdgeView], or `null`
+     * to disconnect this [EdgeView] fro its former destination [ConnectableView].
+     */
+    fun connectToDestination(destination: ConnectableView?, port: Port<T>?)
+
+    /** Moves the point with the specified index to a new location. */
+    fun movePoint(index: Int, x: Double, y: Double)
+
+    /**
+     * Moves the origin end point of an open [EdgeView] to the specified location while interactively connecting
+     * two [Vertice]s.
+     * @param x the x coordinate of the new end point location.
+     * @param y the y coordinate of the new end point location.
+     */
+    fun moveOriginEndPoint(x: Double, y: Double)
+
+    /**
+     * Moves the destination end point of an open [EdgeView] to the specified location while interactively
+     * connecting two [Vertice]s.
+     * @param x the x coordinate of the new end point location.
+     * @param y the y coordinate of the new end point location.
+     */
+    fun moveDestinationEndPoint(x: Double, y: Double)
+
+    /**
+     * Finds the index of the segment that contains the specified location.
+     * @param x the x coordinate of the location.
+     * @param y the y coordinate of the location.
+     * @return the index of the found segment, where 0 is the index of the first segment.
+     */
+    fun findSegment(x: Double, y: Double): Int?
+
+    /**
+     * Finds the index of the segment that contains the specified location while respecting the specified sensitive
+     * area.
+     * @param x the x coordinate of the location.
+     * @param y the y coordinate of the location.
+     * @param area the sensitive area.
+     * @return the index of the found segment, where 0 is the index of the first segment.
+     */
+    fun findSegment(x: Double, y: Double, area: Int): Int?
+
+    /**
+     * Finds the index of the segment [Point2D] that contains the specified location.
+     * @param x the x coordinate of the location.
+     * @param y the y coordinate of the location.
+     * @return the index of the found segment [Point2D], where 0 is the index of the first [Point2D].
+     */
+    fun findSegmentPoint(x: Double, y: Double, area: Int): Int?
+
+    /**
+     * Moves a segment of this [EdgeView] and returns information about the segment moving.
+     * @param segmentIndex the index of the segment that is to be moved.
+     * @param from the start location of the displacement vector
+     * @param to the end location of the displacement vector.
+     * @return the information about the segment moving.
+     */
+    fun moveSegment(segmentIndex: Int, from: Point2D, to: Point2D): MoveEdgeSegmentInfo
+
+    /**
+     * Moves a segment of this [EdgeView] and returns information about the segment moving.
+     * @param segmentIndex the index of the segment that is to be moved.
+     * @param offset the offset of the moving.
+     * @return the information about the segment moving.
+     */
+    fun moveSegment(segmentIndex: Int, offset: Double): MoveEdgeSegmentInfo
+
+    /**
+     * Returns the [Direction] of the segment with the specified index, if it is not degenerated.
+     * @param segmentIndex the index of the segment
+     * @return the [Direction] of the segment with index `segmentIndex`
+     */
+    fun getSegmentDirection(segmentIndex: Int): Direction?
+
+    /**
+     * Calculates the length of the longest [EdgeView] path starting with this [EdgeView].
+     * Traverses the entire net built by [NodeView] and their outgoing [EdgeView] that is reachable by this
+     * [EdgeView].
+     * @param reverse `false` if the [EdgeView] should be traversed from origin to destination, `true`
+     * if it should be traversed from destination to origin
+     * @return the length of the longest subnet starting with this [EdgeView].
+     */
+    fun calculateMaximumNetLength(reverse: Boolean): Double
+
+    /**
+     * Determines whether the specified segment is orthogonal, i.e. is horizontal or vertical.
+     * @param index the index of the segment in question, where 0 is the index of the first segment.
+     */
+    fun isSegmentOrthogonal(index: Int): Boolean
+
+    /**
+     * Splits this [EdgeView] at a particular segment and a particular (x,y) location.
+     *
+     * Trims the tail of this [EdgeView] at the specified segment and location, and returns the trimmed tail as a
+     * new [EdgeView].
+     * @param index the index of the segment where the splitting occurs
+     * @param splitLocation the location where the splitting occurs
+     * @param edgeViewCreator used to create the new [EdgeView] tail instance.
+     * @return the newly created [EdgeView] that represents the tail part that has been spit apart from this [EdgeView].
+     */
+    fun split(index: Int, splitLocation: Point2D, edgeViewCreator: (Net<*>) -> EdgeView<*>): EdgeView<*>
+
+    /**
+     * Joins this [EdgeView] with another adjacent [EdgeView].
+     * Adds all segment point of the adjacent [EdgeView] either at the head or the tail of this [EdgeView].
+     * Connects itself to the [ConnectableView] to the corresponding end of the adjacent [EdgeView]
+     * @param edgeView the [EdgeView] to join. Must be adjacent.
+     * @return the remaining [EdgeView]
+     * @throws IllegalArgumentException if `edgeView` is not adjacent
+     */
+    fun join(edgeView: EdgeView<T>): EdgeView<*>
+}
+
+/**
+ * Contains information being used while interactively dragging a segment of an [EdgeView].
+ * @property segmentIndex The new index of the segment being moved. Might change during move because of relayouts
+ * @property offset The number of pixels that the segment has been moved perpendicular to the segment
+ */
+data class MoveEdgeSegmentInfo(val segmentIndex: Int, val offset: Double)
+

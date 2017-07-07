@@ -1,0 +1,127 @@
+package ch.scorpion.jabbah.graph.view
+
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.model.AbstractComponent
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.model.GraphElementListener
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.Reference
+import ch.scorpion.jabbah.io.ReferenceResolver
+import ch.scorpion.jabbah.base.logger
+
+/**
+ * Abstract base implementation of the [GraphElementView] interface.
+ * @param T the type of the model [GraphElement]
+ */
+abstract class AbstractGraphElementView<T : GraphElement>(
+    styleProvider: StyleProvider,
+    styleType: StyleType,
+    model: T?
+) : AbstractComponent(styleProvider, styleType), GraphElementView<T> {
+
+    companion object {
+        val STORABLE_MODEL_ID = "modelId"
+    }
+
+    private val LOG by logger()
+
+    /** Listens for changes of the model [GraphElement] and updates this view accordingly.*/
+    private val modelListener = ModelListener()
+
+    /** Determines whether this [AbstractGraphElementView] is currently resolving persistent references.*/
+    protected var isResolving: Boolean = false
+        private set
+
+    /** ---- [GraphElementView] interface */
+
+    override var model: T? = model
+        set(value) {
+            val oldModel = field
+            field = value
+            modelExchanged(oldModel)
+        }
+
+    init {
+        model?.addGraphElementListener(modelListener)
+    }
+
+    override fun dispose() {
+        model?.removeGraphElementListener(modelListener)
+    }
+
+    /** ---- UI related properties */
+
+    var propagationDelay: Long
+        get() = model?.propagationDelay ?: 0
+        set(value) { model?.propagationDelay = value}
+
+    /** ---- [Storable] interface */
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        if (model != null) {
+            writer.writeInt(STORABLE_MODEL_ID, writer.provideIdentity(model!!))
+        }
+    }
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+        if (reader.hasAttribute(STORABLE_MODEL_ID)) {
+            reader.requestResolution(this, Reference(
+                    name = STORABLE_MODEL_ID,
+                    referenceId = reader.readInt(STORABLE_MODEL_ID),
+                    resolveAfter = listOf(reader.readInt(STORABLE_MODEL_ID))
+            ))
+        }
+    }
+
+    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+        isResolving = true
+        super.resolve(reference, referenceResolver)
+        if(STORABLE_MODEL_ID == reference.name) {
+            val storable = referenceResolver.getStorable(reference.referenceId)
+            if (storable is GraphElement) {
+                model = storable as T
+                LOG.debug("resolve ${model?.id}")
+            }
+        }
+        isResolving = false
+    }
+
+    override fun bind(graph: Graph) {
+        // empty
+    }
+
+    /** ---- [Component] interface */
+
+    override val fixStyleType: Boolean get() = true
+
+    /** ---- [AbstractGraphElementView] */
+
+    /**
+     * Called by this class whenever the underlying model [GraphElement] has been exchanged, for example during
+     * deserialising from persistent store (which must use the default constructor).
+     * @param oldModel the former [GraphElement] model instance.
+     */
+    protected open fun modelExchanged(oldModel: T?) {
+        oldModel?.removeGraphElementListener(modelListener)
+        model?.addGraphElementListener(modelListener)
+    }
+
+    protected open fun handleStateChanged(event: GraphElementEvent) {
+        invalidate()
+        // TODO This leads to a repainting of the entire GraphView.
+        // It should be sufficient to repaint the GraphView after a complete execution cycle
+        validate()
+    }
+
+    private inner class ModelListener : GraphElementListener {
+        override fun stateChanged(e: GraphElementEvent) {
+            handleStateChanged(e)
+        }
+    }
+}

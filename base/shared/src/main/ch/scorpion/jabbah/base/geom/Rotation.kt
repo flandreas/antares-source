@@ -1,0 +1,104 @@
+package ch.scorpion.jabbah.base.geom
+
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.base.MathClass
+
+/**
+ * Represents the main four orthogonal rotations in a plane.
+ */
+enum class Rotation(val customName: String, val angle: Double) {
+    R0("0", 0.0),
+    R90("90", 3 * MathClass.PI / 2),
+    R180("180", MathClass.PI),
+    R270("270", MathClass.PI / 2);
+
+    /** Holds the equivalent [AffineTransform] of this [Rotation].*/
+    private val transform: AffineTransform
+
+    init {
+        transform = AffineTransformImpl()
+        transform.rotate(angle)
+    }
+
+    companion object {
+        fun withName(name: String): Rotation {
+            for (value in values()) {
+                if (value.customName == name) {
+                    return value
+                }
+            }
+            throw IllegalArgumentException("unknown Rotation $name")
+        }
+    }
+
+    /** Returns the next clockwise [Rotation].*/
+    fun next(): Rotation {
+        return values()[(this.ordinal + 1) % 4]
+    }
+
+    /** Returns the opposite of this [Rotation].*/
+    fun opposite(): Rotation {
+        return values()[(this.ordinal + 2) % 4]
+    }
+
+    fun inverse(): Rotation {
+        return when (this) {
+            R0 -> R0
+            R90 -> R270
+            R180 -> R180
+            R270 -> R90
+        }
+    }
+
+    /** Rotates a [Point2D] with coordinates expressed as relative (0, 0).*/
+    @Suppress("unused")
+    fun rotatePoint(p: Point2D): Point2D {
+        return rotatePoint(p.x, p.y)
+    }
+
+    /** Rotates a (x,y) point with coordinates expressed as relative (0, 0).*/
+    fun rotatePoint(x: Double, y: Double): Point2D {
+        return when (this) {
+            R0 -> Point2D(x, y)
+            R90 -> Point2D(y, -x)
+            R180 -> Point2D(-x, -y)
+            R270 -> Point2D(-y, x)
+        }
+    }
+
+    /** Rotates a (x,y) point around the specified rotation center (pivot).*/
+    fun rotatePointAround(pivot: Point2D, x: Double, y: Double): Point2D {
+        val p = rotatePoint(x - pivot.x, y - pivot.y)
+        return Point2D(pivot.x + p.x, pivot.y + p.y)
+    }
+
+    /** Rotates a [Rectangle2D] around the specified pivot point (rotation center).*/
+    fun rotateRectangleAround(pivot: Point2D, rect: Rectangle2D): Rectangle2D {
+        val p1 = rotatePoint(rect.x - pivot.x, rect.y - pivot.y)
+        val p2 = rotatePoint(rect.x + rect.width - pivot.x, rect.y + rect.height - pivot.y)
+
+        val newRect = Rectangle2D(
+                Math.min(p1.x, p2.x),
+                Math.min(p1.y, p2.y),
+                Math.abs(p1.x - p2.x),
+                Math.abs(p1.y - p2.y))
+
+        newRect.setFrame(
+                newRect.x + pivot.x, newRect.y + pivot.y,
+                newRect.width, newRect.height)
+
+        return newRect
+    }
+
+    /** Rotates the specified [Direction] by as many degrees as this [Rotation] represents.*/
+    fun rotateDirection(dir: Direction): Direction {
+        var i = 0
+        var result = dir
+        while (i < ordinal) {
+            result = result.next()
+            i++
+        }
+        return result
+    }
+}

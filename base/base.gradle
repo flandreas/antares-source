@@ -1,0 +1,46 @@
+/* gradle build file of the jabbah.base module */
+
+apply plugin: 'kotlin'
+
+sourceSets {
+	main.kotlin.srcDirs += 'shared/src/main'
+	main.kotlin.srcDirs += 'jvm/src/main'
+
+	test.kotlin.srcDirs += 'shared/src/test'
+	test.kotlin.srcDirs += 'jvm/src/test'
+}
+
+repositories {
+	flatDir {
+		dirs '../lib'
+	}
+}
+
+dependencies {
+	compile 'org.slf4j:slf4j-api:1.7.21'
+	compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+	compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+	compile "l2fprod:l2fprod-common-all:7.3"
+	compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+
+	testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-core:1.3'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    testCompile "org.mockito:mockito-core:2.7.2"
+	testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+	testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+	testCompile "com.nhaarman:mockito-kotlin:1.2.0"
+}
+
+task testJar(type: Jar) {
+	from 'build/kotlin-classes/test'
+	into 'libs'
+	baseName = 'base-test'
+}
+
+task kotlin2js(type:Exec) {
+	commandLine 'kotlinc-js', '-output', 'build/libs/base.js', '-meta-info', 'shared/src/main'
+}
+
+classes.dependsOn kotlin2js
+jar.dependsOn testJar

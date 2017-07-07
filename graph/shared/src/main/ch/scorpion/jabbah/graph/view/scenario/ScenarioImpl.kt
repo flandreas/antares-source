@@ -1,0 +1,96 @@
+package ch.scorpion.jabbah.graph.view.scenario
+
+import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.collection.toImmutableList
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.graph.script.ScriptGateway
+import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.Scenario
+import ch.scorpion.jabbah.graph.view.ScenarioStep
+import ch.scorpion.jabbah.io.*
+
+/**
+ * Standard implementation of the [Scenario] interface.
+ */
+class ScenarioImpl(override var name: String = "", var conditionScript: String = "") : Scenario {
+
+    private val steps: MutableList<ScenarioStep> by lazy { mutableListOf<ScenarioStep>() }
+
+    private var isLoading: Boolean = false
+
+    var conditionProperty: TextProperty
+        get() = TextProperty(conditionScript)
+        set(value) { conditionScript = value.text!! }
+
+    /** ---- [Any] */
+
+    override fun toString(): String = name
+
+    /** ---- [Scenario] interface */
+
+    override var id: Int = 0
+
+    override val stepCount: Int get() = steps.size
+
+    override fun dispose() {
+        steps.forEach { it.dispose() }
+        steps.clear()
+    }
+
+    override val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
+        get() = {v,sg -> sg.condition(conditionScript, v)}
+
+    override fun getScenarioSteps(): ImmutableList<ScenarioStep> {
+        return steps.toImmutableList()
+    }
+
+    override fun getStep(id: Int): ScenarioStep {
+        return steps.first { it.id == id }
+    }
+
+    override fun addStep(step: ScenarioStep) {
+        if (!steps.contains(step)) {
+            step.scenario = this
+            if (!isLoading) {
+                step.id = steps.size + 1
+            }
+            steps.add(step)
+        }
+    }
+
+    override fun removeStep(step: ScenarioStep) {
+        steps.remove(step)
+    }
+
+    /** ---- [Storable] interface */
+
+    override var storableId: Int = 0
+
+    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+        // empty
+    }
+
+    override fun write(writer: StoreWriter) {
+        writer.writeInt("id", id)
+        writer.writeString("name", name)
+        writer.writeString("condition", conditionScript)
+        writer.writeStorables("steps", getStorableChildren())
+    }
+
+    override fun read(reader: StoreReader) {
+        isLoading = true
+        id = reader.readInt("id")
+        name = reader.readString("name")
+        conditionScript = reader.readString("condition")
+        for (step in reader.readStorables("steps")) {
+            addStep(step as ScenarioStep)
+        }
+        isLoading = false
+    }
+
+    override fun getStorableChildren(): Iterator<Storable> {
+        return steps.iterator()
+    }
+}

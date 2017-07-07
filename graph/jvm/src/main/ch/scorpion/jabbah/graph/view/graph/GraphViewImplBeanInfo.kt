@@ -1,0 +1,36 @@
+package ch.scorpion.jabbah.graph.view.graph
+
+import com.l2fprod.common.propertysheet.Property
+import ch.scorpion.jabbah.edit.AbstractBeanInfo
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.model.text.TextProperty
+
+
+
+/**
+ * A [BeanInfo] for [GraphViewImpl].
+ */
+class GraphViewImplBeanInfo : AbstractBeanInfo<GraphViewImpl<*>>() {
+
+    companion object {
+        private val name = PropertyImpl("graph.property.GraphViewImpl", String::class.java)
+        private val propDelay = PropertyImpl("element.property.propagationDelay", Long::class.java)
+        private val shortDesc = PropertyImpl("graph.property.GraphViewImpl.shortDescription", TextProperty::class.java)
+        private val script = PropertyImpl("graph.property.GraphViewImpl.script", TextProperty::class.java)
+    }
+
+    override fun addProperties(bean: GraphViewImpl<*>, editor: Editor, properties: MutableList<Property>) {
+        super.addProperties(bean, editor, properties)
+
+        name.bind(editor, { bean.name }, { bean.name = it!! })
+		propDelay.bind(editor, { bean.propagationDelay }, { bean.propagationDelay = it })
+		shortDesc.bind(editor, { bean.shortDescription }, { bean.shortDescription = it!! })
+		script.bind(editor, { bean.script }, { bean.script = it!! })
+
+		properties.add(name)
+		properties.add(propDelay)
+		properties.add(shortDesc)
+		properties.add(script)
+    }
+}

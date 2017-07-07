@@ -1,0 +1,35 @@
+package ch.scorpion.jabbah.base.event
+
+/**
+ * An event which indicates that the user has pressed a key.
+ */
+data class KeyEvent(override val source: Any, override val modifiers: Int = 0, val key: Int) : InputEvent {
+
+    companion object {
+
+        /** The following key codes are target specific and must be set in the setup of the corresponding Target system.*/
+
+        /** Key code of the non-numpad left arrow key */
+        var VK_LEFT = 0x00
+
+        /** Key code of the non-numpad right arrow key. */
+        var VK_RIGHT = 0x00
+    }
+}
+
+interface KeyListener {
+    fun keyTyped(e: KeyEvent)
+    fun keyPressed(e: KeyEvent)
+    fun keyReleased(e: KeyEvent)
+}
+
+/**
+ * An empty implementation of the [KeyListener] interface intended to be subclassed by classes that
+ * only need to implement some of the [KeyListener] event handling methods.
+ */
+open class KeyAdapter : KeyListener {
+    override fun keyTyped(e: KeyEvent) {}
+    override fun keyPressed(e: KeyEvent) {}
+    override fun keyReleased(e: KeyEvent) {}
+}
+

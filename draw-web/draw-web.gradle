@@ -1,0 +1,24 @@
+apply plugin: 'kotlin2js'
+
+sourceSets {
+    main.kotlin.srcDirs += 'main/kotlin'
+
+    demo {
+        kotlin {
+            srcDirs += 'demo/hellographics/kotlin'
+        }
+        compileClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+
+dependencies {
+    compile files('../base/build/libs/base.meta.js')
+    compile files('../base-web/build/classes/main/base-web_main.meta.js')
+    compile files('../draw/build/libs/draw.meta.js')
+    compile files('../draw/build/libs/draw-demo.meta.js')
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+}
+
+// Without this, draw-web_demo.meta.js will not be automatically built, for some reason..
+build.dependsOn demoClasses
+

@@ -1,0 +1,55 @@
+package ch.scorpion.jabbah.graph.view.editor
+
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.editor.EditorImpl
+import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.ControlViewSourceEvent
+import ch.scorpion.jabbah.graph.view.GraphPortView
+import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+
+/**
+ * An [Editor] for editing a [GraphView].
+ */
+class GraphEditor(
+    view: DrawingView<Drawing<Component>>,
+    connectService: GraphViewConnectService,
+    private val eventBus: EventBus
+) : EditorImpl(view) {
+
+    constructor(view: DrawingView<Drawing<Component>>): this(view, GraphViewModule.graphViewConnectService ,BaseModule.eventBus)
+
+    init {
+        AutoConnector(this, connectService, eventBus)
+    }
+
+    override fun handleComponentAdded(component: Component) {
+        if (component is GraphPortView<*>) {
+            eventBus.post(GraphPortViewEvent(GraphPortViewEvent.Type.ADD, component))
+        }
+        if (component is ControlViewSource<*>) {
+            eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.ADD, component as ControlViewSource<Vertice>))
+        }
+    }
+
+    override fun handleComponentRemoved(component: Component) {
+        if (component is GraphPortView<*>) {
+            eventBus.post(GraphPortViewEvent(GraphPortViewEvent.Type.REMOVE, component))
+        }
+        if (component is ControlViewSource<*>) {
+            eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.REMOVE, component as ControlViewSource<Vertice>))
+        }
+    }
+}
+
+/** Posted by [GraphEditor] whenever a [GraphPortView] has been added or removed. */
+class GraphPortViewEvent(val type: Type, val graphPortView: GraphPortView<*>) {
+    enum class Type {
+        ADD, REMOVE
+    }
+}

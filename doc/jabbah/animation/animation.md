@@ -1,0 +1,120 @@
+# Animation
+
+## Introduction
+
+The animation package `jabbah.animation` contains a simple framework for creating animations.
+Generally, an animation is a fluent, repeated change of a particular value. While most
+animations in `jabbah` are graphical, it is also possible to animate a value that doesn't have
+a visual representation.
+
+## Concepts
+
+### Overview
+The following graph shows the core abstractions of the `jabbah.animation` package.
+
+![Core Abstractions](../../model-img/svg/jabbah__animation__Animation Core Abstractions_11.svg)
+
+In order to explain how the core abstractions collaborate to produce an animation effect, consider
+a graphical application that wants to move a graphical figure from an origin point to a destination
+point using an animation.
+
+The value being animated is the location of the figure and is represented as a `Point2D`.
+To define the path of the figure, you implement a class that implements the `Sequence` interface.
+In this case, you can use the predefined `PointRange` class and instantiate it using
+the start and end location of the path.
+
+Next, you implement an `AnimationTask` that consumes the `Point2Ds` created by the `Sequence` and
+that uses the `Point2Ds` to update the location of the `Consumer` figure.
+ 
+Finally, you schedule the `AnimationTask` in an `Animator` instance and start the `AnimationTask`.
+The `Animator` will repeatedly call the `AnimationTask` driven by its `Timer`, until the `Sequence`
+finally runs out of `Point2Ds`, or until the `AnimationTask` is stopped programmatically.
+
+The `jabbah` framework contains various predefined `Sequence` and `AnimationTask` implementations
+you can use to achieve your particular animation goal. If they don't fit your needs, you can provide
+your own implementations.
+
+### Timing and Speed
+
+The overall goal of the design of the `jabbah.animation` framework is to produce smooth animations,
+i.e. changes of the animated value that appear to be smooth for a human observer. Hence, it is crucial
+that the steps between two values are not too large. How does the `Animator determine the size of these
+animation steps?
+
+First of all, the `Animator` runns at a fixed timing interval that is based on human perception capabilities.
+Humans perceive individual images as being smooth if they are changed not less often than about 25 times a second.
+As a consequence, the `Animator` attempts to ask every scheduled `AnimationTask` to produce new values
+every 1/25 of a second. We call this value the *Animator period*. Depending on the current system load,
+this goal might not always be reached.
+
+An `AnimationTask` has an individual duration in seconds. In the above example, the developer
+of the graphical application could choose that moving the figure between the origin and the destination
+location should last 1 second. Therefore, an `AnimationTask` has a *duration* property.
+
+During an animation, the `Sequence` has to produce values within the range it defines. In order to be
+able to calculate the distance between to individual values of this range, the `Sequence` must define
+its overal *size*. For a `Sequence` of integer values, this size is simply the difference between the
+range boundaries. For a `PointRange`, this size is the geometrical distance between the origin and
+the destination point.
+
+Given the Animator period, the system can now calculate the distance between two adjacent animated value.
+In every animation step, the `Sequence` is asked to provide the *next value* using the specified distance.
+Note that the *speed* of the animated value does only depend on the *size* of the `Sequence` and the *duration*
+of the `AnimationTask`, at least if the system is isRunning at full `SystemSpeed`. If the *size*
+of the `Sequence` is smaller, the *distance* between two animated values is smaller too.
+
+The following interaction diagram shows the collaborations between the core abstractions that are necessary
+during an individual animation step.
+
+![Interaction](../../model-img/svg/jabbah__animation__AnimatorImpl__Interaction1__Animation_12.svg)
+
+### SequenceType
+
+Basically, an `AnimationTask` runs as long as its `Sequence` yields values, or until the `AnimationTask` is
+stopped programmatically. You can use the `SequenceType` abstraction to control how a `Sequence` should behave
+when it has reached its upper boundary. The `jabbah.animation` framework currently supports the following `SequenceTypes`:
+
+* *Once*: The `Sequence` traverses its value range only once. The `AnimationTask` stops after having consumed
+the last value of the `Sequence`.
+* *Loop*: The `Sequence` restarts with its first value after it has returned the last value of the range.
+The `AnimationTask` runs forever.
+* *Oscillation*: After the `Sequence` has returned its last value, it continues by traversing its value range
+in the opposite direction, and vice versa for the first value of the range. The `AnimationTask` runs forever.
+
+Note that it is the responsibility of concrete `Sequence` implementations to implement the appropriate sequencer
+logic supporting the predefined `SequenceTypes`.
+
+### Composing Sequences
+
+The abstraction `CompositeSequence` allows you to build complex `Sequences` out of primitive ones.
+Consider that you want to move a graphical figure from the upper-left corner of the view to the upper-right corner,
+and then to the lower-right corner. Although it would be possible to implement a single `Sequence` that would
+generate the corresponding sequence of `Point2Ds`, it is much easier to compose two simple `PointRange` instances
+in a `CompositeSequence`. The `CompositeSequence` implements a combining sequencer that detects when the
+first `PointRange` has finished, and that automatically - and transparently - continues with the second `PointRange`.
+
+### Animation events
+
+Sometimes an application that uses animations wants to react to certain animation events. For example, a second
+animation has to be started after a first animation has isEnded. The application can register an `AnimationTaskListener`
+on an `AnimationTask` in order to get informed about central animation state changes. The `AnimationTaskListener`
+contains the following methods:
+
+* `scheduled()`: Called after an `AnimationTask` has been scheduled in an `Animator` for execution.
+* `started()`: Called after an `AnimationTask` has been started.
+* `stopped()`: Called after an `AnimationTask` has been stopped.
+
+### SystemSpeed dependency
+
+An application that uses the `jabbah` framework can alter the running speed of the system by using the `SystemSpeed` class
+of the `jabbah.base.time` package. Certain types of animations will want to adjust their animation speed to the current
+`SystemSpeed`, while others wont For example, a simulation application that use animations to visualize object flow will
+want to slow down the speed of its flowing objects, while animations used for UI effects (such as fading in and out of UI elements)
+should probably still run at normal speed.
+
+Therefore, `AnimationTask` contains the property *dependsOnSystemSpeed* that can be used to distinguish between these
+two behaviours. If an `AnimationTask` does depend on `SystemSpeed`, the `Animator` dynamically adjusts the *distance* used
+to drive such an `AnimationTask`. When the `SystemSpeed` falls down to 0, such an `AnimationTask` is suspended in order to
+avoid that the system wastes power trying to drive frozen animations. After the `SystemSpeed` has risen again,
+the `Animator` resumes the suspended `AnimationTasks`.
+

@@ -1,0 +1,23 @@
+/* gradle build file of the jabbah project */
+
+buildscript {
+    ext.kotlin_version = '1.1.0'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'idea'
+apply plugin: 'kotlin'
+
+allprojects {
+
+	repositories {
+		mavenCentral()
+	}
+	
+}
+

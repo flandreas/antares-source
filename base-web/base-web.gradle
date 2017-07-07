@@ -1,0 +1,13 @@
+apply plugin: 'kotlin2js'
+
+sourceSets {
+    main.kotlin.srcDirs += 'main/kotlin'
+}
+
+dependencies {
+    compile files('../base/build/libs/base.meta.js')
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+}
+
+// This packs main and demo into one file, but we want to keep them separate
+// compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/build/libs/base-web.js"

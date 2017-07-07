@@ -1,0 +1,67 @@
+package ch.scorpion.jabbah.graph.container
+
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.graph.library.LibraryHolder
+import ch.scorpion.jabbah.graph.view.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.view.container.ContainerEditor
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import java.awt.BorderLayout
+import java.awt.Dimension
+import java.awt.FlowLayout
+import java.awt.event.ActionEvent
+import javax.swing.AbstractAction
+import javax.swing.JButton
+import javax.swing.JPanel
+
+
+/**
+ * A [JPanel] for editing the look of an individual [SubGraphVerticeView] by overwriting the standard
+ * [ContainerDrawing] using a [ContainerEditor].
+ */
+class EditSubGraphVerticeViewPanel(
+    private val libraryHolder: LibraryHolder,
+    private val containerPanel: ContainerPanel,
+    private val subGraphVerticeView: SubGraphVerticeView<*>,
+    private val closeCallback: (EditSubGraphVerticeViewPanel) -> Unit
+) : JPanel() {
+
+    init {
+        buildUI()
+    }
+
+    fun initialize() {
+        containerPanel.initialize()
+    }
+
+    private fun buildUI() {
+        layout = BorderLayout()
+
+        fill()
+
+        containerPanel.preferredSize = Dimension(1000, 800)
+        add(containerPanel, BorderLayout.CENTER)
+
+        val buttonPanel = JPanel(FlowLayout(FlowLayout.LEFT))
+        buttonPanel.add(JButton(OkAction()))
+        buttonPanel.add(JButton(CancelAction()))
+        add(buttonPanel, BorderLayout.SOUTH)
+    }
+
+    private fun fill() {
+        val libraryGraph = libraryHolder.library.getMetaGraph(subGraphVerticeView.subGraphVertice!!.graphUUID!!)
+        containerPanel.setData(libraryGraph.graph!!.graphView!!, subGraphVerticeView.getEditableContainerDrawing())
+    }
+
+    private inner class OkAction : AbstractAction(Translations.getString("edit.action.ok.name")) {
+        override fun actionPerformed(e: ActionEvent?) {
+            subGraphVerticeView.setEditedContainerDrawing(containerPanel.editor.drawing as ContainerDrawing)
+            closeCallback.invoke(this@EditSubGraphVerticeViewPanel)
+        }
+    }
+
+    private inner class CancelAction : AbstractAction(Translations.getString("edit.action.cancel.name")) {
+        override fun actionPerformed(e: ActionEvent?) {
+            closeCallback.invoke(this@EditSubGraphVerticeViewPanel)
+        }
+    }
+}
