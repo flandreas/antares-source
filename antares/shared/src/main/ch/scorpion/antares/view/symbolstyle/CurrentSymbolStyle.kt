@@ -16,7 +16,6 @@ class CurrentSymbolStyle(
     var symbolStyle: SymbolStyle = initSymbolStyle
         set(value) {
             if (field != value) {
-                val oldValue = field
                 field = value
                 BaseModule.properties.set(SymbolStyle.PROP_SYMBOL_STYLE, field.customName)
                 eventBus.post(CurrentSymbolStyleChangedEvent(field))

@@ -1,22 +1,22 @@
 package ch.scorpion.antares.view.output
 
-import ch.scorpion.antares.model.output.SevenSegmentDisplay
-import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
-import ch.scorpion.antares.view.DigitalComponentView
-import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.port.DigitalPortView
-import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Graphics2D
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
@@ -24,11 +24,13 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.Graphics2D
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.antares.model.output.SevenSegmentDisplay
+import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
+import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.MathClass
 
 
 /**
@@ -279,12 +281,12 @@ class SevenSegmentDisplayView(
 
     private fun drawVerticalSegment(g: Graphics2D, value: Boolean, relX: Float, relY: Float) {
         g.translate(relX.toDouble(), relY.toDouble())
-        g.rotate(Math.PI / 2)
+        g.rotate(MathClass.PI / 2)
 
         g.color = getColor(value)
         g.fill(geom.path)
 
-        g.rotate(-Math.PI / 2)
+        g.rotate(-MathClass.PI / 2)
         g.translate(-relX.toDouble(), -relY.toDouble())
     }
 

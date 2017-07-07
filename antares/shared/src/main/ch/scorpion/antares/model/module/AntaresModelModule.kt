@@ -16,7 +16,6 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
-import javafx.scene.control.ToggleButton
 
 /**
  * Module definitions for the [ch.scorpion.antares.model] module.
@@ -46,7 +45,6 @@ object AntaresModelModule : AbstractModule() {
         typeMap.register("triStateBufferGate", TriStateBufferGate::class)
 
         typeMap.register("switch", Switch::class)
-        typeMap.register("toggleButton", ToggleButton::class)
         typeMap.register("clock", Clock::class)
         typeMap.register("led", LED::class)
         typeMap.register("sevenSegmentDisplay", SevenSegmentDisplay::class)

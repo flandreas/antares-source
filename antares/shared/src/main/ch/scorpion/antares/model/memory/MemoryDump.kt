@@ -12,17 +12,16 @@ object MemoryDump {
 
     /**
      * Writes the contents of the specified [Memory] into a new [String].
-     * TODO This will probably only work on the JVM platform?
      */
     fun write(memory: Memory, bitWidth: BitWidth): String {
         val builder = StringBuilder()
         val mask = BitOperation.power(bitWidth.width.toLong()) - 1L
-        val format = "%${Math.max(2, bitWidth.width / 4)}s"
+        val length = Math.max(2, bitWidth.width / 4)
 
         val cellIter = ZeroFiller(memory.getNonZeroCells())
         while (cellIter.hasNext()) {
             val cell = cellIter.next()
-            writePaddedHex(cell.value, mask, format, builder)
+            writePaddedHex(cell.value, mask, length, builder)
             if (cellIter.hasNext()) {
                 builder.append(' ')
             }
@@ -41,7 +40,11 @@ object MemoryDump {
         }
     }
 
-    private fun writePaddedHex(value: Long, mask: Long, format: String, target: StringBuilder) {
-        target.append(String.format(format, BitOperation.longToHex(value and mask).toUpperCase()).replace(' ', '0'))
+//    private fun writePaddedHex(value: Long, mask: Long, format: String, target: StringBuilder) {
+//        target.append(String.format(format, BitOperation.longToHex(value and mask).toUpperCase()).replace(' ', '0'))
+//    }
+
+    private fun writePaddedHex(value: Long, mask:Long, length: Int, builder: StringBuilder) {
+        builder.append(BitOperation.longToHex(value and mask).toUpperCase().padStart(length, '0'))
     }
 }

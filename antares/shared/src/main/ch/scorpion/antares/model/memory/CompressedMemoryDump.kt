@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.memory
 
+import ch.scorpion.jabbah.base.Math
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
 
@@ -17,7 +18,7 @@ object CompressedMemoryDump {
     fun write(memory: Memory, bitWidth: BitWidth): String {
         val builder = StringBuilder()
         val mask: Long = BitOperation.power(bitWidth.width.toLong()) - 1L
-		val format = "%${Math.max(2, bitWidth.width / 4)}s"
+        val length = Math.max(2, bitWidth.width / 4)
 
 		val cellIter = ZeroFiller(memory.getNonZeroCells())
 		if (!cellIter.hasNext()) {
@@ -33,7 +34,7 @@ object CompressedMemoryDump {
 				if (lastWrittenCell != null) {
                     builder.append(' ')
 				}
-				write(lastCell.value, cell.address - lastAddress - 1, mask, format, builder)
+				write(lastCell.value, cell.address - lastAddress - 1, mask, length, builder)
 				lastWrittenCell = lastCell
 			}
 
@@ -45,24 +46,23 @@ object CompressedMemoryDump {
 					builder.append(' ')
 				}
 
-				write(cell.value, cell.address - lastAddress - 1, mask, format, builder)
+				write(cell.value, cell.address - lastAddress - 1, mask, length, builder)
 			}
 		}
 
         return builder.toString()
     }
 
-    private fun write(value: Long, count: Int, mask: Long, format: String, builder: StringBuilder) {
+    private fun write(value: Long, count: Int, mask: Long, length: Int, builder: StringBuilder) {
         if (count > 1) {
-            builder.append(Integer.toString(count))
+            builder.append(count.toString())
             builder.append(CARDINALITY_DELIM)
         }
-        writePaddedHex(value, mask, format, builder)
+        writePaddedHex(value, mask, length, builder)
     }
 
-    private fun writePaddedHex(value: Long, mask: Long, format: String, builder: StringBuilder) {
-        builder.append(String.format(
-                format, java.lang.Long.toHexString(value and mask).toUpperCase()).replace(' ', '0'))
+    private fun writePaddedHex(value: Long, mask:Long, length: Int, builder: StringBuilder) {
+        builder.append(BitOperation.longToHex(value and mask).toUpperCase().padStart(length, '0'))
     }
 
     /**

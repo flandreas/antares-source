@@ -18,7 +18,7 @@ class DigitalPortFactory(private val styleProvider: StyleProvider) : PortFactory
     override fun <T : Any> createSubGraphPort(graphPort: GraphPort<T>): Port<T> {
         val subCircuitPort = SubCircuitPort(graphPort.portType, graphPort.name)
         subCircuitPort.bitWidth = (graphPort as CircuitInOut).bitWidth
-        subCircuitPort.signalRepresentation = (graphPort as CircuitInOut).signalRepresentation
+        subCircuitPort.signalRepresentation = graphPort.signalRepresentation
         return subCircuitPort as Port<T>
     }
 
