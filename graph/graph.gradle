@@ -8,6 +8,7 @@ sourceSets {
     main.kotlin.srcDirs += 'jvm/src/main'
 
     server.kotlin.srcDirs += 'jvm/src/server'
+    server.resources.srcDirs += 'shared/rsc'
 
     test.kotlin.srcDirs += 'shared/src/test'
     test.resources.srcDirs += 'shared/rsc'
@@ -30,9 +31,16 @@ dependencies {
     compile project(':app')
 
     compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.slf4j:slf4j-log4j12:1.7.21'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    compile "com.sparkjava:spark-core:2.5.5"
+
+    serverCompile 'org.slf4j:slf4j-api:1.7.21'
+    serverCompile 'org.slf4j:slf4j-log4j12:1.7.21'
+    serverCompile "commons-cli:commons-cli:1.3.1"
+    serverCompile "com.sparkjava:spark-core:2.5.5"
+    serverCompile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    serverCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-core:1.3'
@@ -50,6 +58,16 @@ dependencies {
     testCompile project(':edit').sourceSets.test.output
 }
 
+task serverJar(type: Jar) {
+    from 'jvm/src/server'
+    baseName = 'graph-server'
+    manifest {
+        attributes 'Main-Class': 'ch.scorpion.jabbah.graph.server.RestApi'
+    }
+}
+
+jar.dependsOn serverJar
+
 task sharedMainJs(type:Exec) {
     commandLine 'kotlinc-js', '-output', 'build/libs/graph.js', '-meta-info', '-libraries',
             '../base/build/libs/base.meta.js:' +
@@ -63,4 +81,10 @@ task sharedMainJs(type:Exec) {
 }
 
 classes.dependsOn sharedMainJs
+
+task runServer(type: JavaExec) {
+    classpath = sourceSets.server.runtimeClasspath
+    main = 'ch.scorpion.jabbah.graph.server.RestApi'
+    args '-d', '~'
+}
 
