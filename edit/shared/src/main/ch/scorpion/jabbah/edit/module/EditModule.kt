@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.edit.model.polyline.EditModelPolylineModule
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 import ch.scorpion.jabbah.edit.model.rectangle.EditModelRectangleModule
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
+import ch.scorpion.jabbah.edit.model.text.EditModelTextModule
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.TextComponentFactory
 import ch.scorpion.jabbah.edit.select.EditSelectModule
@@ -42,6 +43,7 @@ object EditModule : AbstractModule() {
         DrawModule.require()
         EditModelRectangleModule.require()
         EditModelPolylineModule.require()
+        EditModelTextModule.require()
         EditSnapModule.require()
         EditSelectModule.require()
         EditEditorModule.require()

@@ -20,10 +20,6 @@ import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.GraphScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
-import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.connect.*
 import ch.scorpion.jabbah.graph.view.container.*
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
@@ -42,8 +38,10 @@ import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
 import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.edit.style.EditTheme
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 
@@ -128,6 +126,7 @@ object GraphViewModule : AbstractModule() {
         factory.register(SelectionDrawingStrategy.REPLACE, PortViewComponent::class.simpleName!!, { SelectedColorSelectionModel(it) })
         factory.register(SelectionDrawingStrategy.REPLACE, ControlViewComponent::class.simpleName!!, { SelectedColorSelectionModel(it) })
         factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class.simpleName!!, { EdgeViewBelowSelectionModel(it as EdgeView<*>) })
+        factory.register(SelectionDrawingStrategy.ABOVE, GraphTextComponent::class.simpleName!!, { RectangularHandleSelectionModel(it as RectangularComponent) })
     }
 
     val graphViewConnectService: GraphViewConnectService by lazy {
