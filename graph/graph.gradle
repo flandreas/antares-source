@@ -7,6 +7,8 @@ sourceSets {
     main.resources.srcDirs += 'shared/rsc'
     main.kotlin.srcDirs += 'jvm/src/main'
 
+    server.kotlin.srcDirs += 'jvm/src/server'
+
     test.kotlin.srcDirs += 'shared/src/test'
     test.resources.srcDirs += 'shared/rsc'
     test.kotlin.srcDirs += 'jvm/src/test'
@@ -30,6 +32,7 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile "com.sparkjava:spark-core:2.5.5"
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-core:1.3'

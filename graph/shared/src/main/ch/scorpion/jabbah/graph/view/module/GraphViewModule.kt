@@ -126,7 +126,6 @@ object GraphViewModule : AbstractModule() {
         factory.register(SelectionDrawingStrategy.REPLACE, PortViewComponent::class.simpleName!!, { SelectedColorSelectionModel(it) })
         factory.register(SelectionDrawingStrategy.REPLACE, ControlViewComponent::class.simpleName!!, { SelectedColorSelectionModel(it) })
         factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class.simpleName!!, { EdgeViewBelowSelectionModel(it as EdgeView<*>) })
-        factory.register(SelectionDrawingStrategy.ABOVE, GraphTextComponent::class.simpleName!!, { RectangularHandleSelectionModel(it as RectangularComponent) })
     }
 
     val graphViewConnectService: GraphViewConnectService by lazy {

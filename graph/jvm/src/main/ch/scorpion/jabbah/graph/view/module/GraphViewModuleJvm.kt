@@ -9,7 +9,12 @@ import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.edit.DynamicPropertyEditorRegistry
+import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
+import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
+import ch.scorpion.jabbah.edit.select.EditSelectModule
+import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.script.ScriptEngineJvm
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -35,6 +40,7 @@ object GraphViewModuleJvm : AbstractModule() {
         ScriptModule.scriptEngineProvider = { ScriptEngineJvm() }
 
         fillProperties(BaseModule.properties)
+        configureSelectionModels(EditSelectModule.selectionModelFactory)
         configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
         configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
     }
@@ -68,5 +74,9 @@ object GraphViewModuleJvm : AbstractModule() {
         registry.registerEditor(NetViewStyle::class.java, NetViewStyleEditor::class.java)
         registry.register(Scenario::class.java, ScenarioPropertyEditorFactory())
         registry.register(ScenarioStep::class.java, ScenarioStepPropertyEditorFactory())
+    }
+
+    private fun configureSelectionModels(factory: SelectionModelFactory) {
+        factory.register(SelectionDrawingStrategy.ABOVE, GraphTextComponent::class.simpleName!!, { RectangularHandleSelectionModel(it as RectangularComponent) })
     }
 }
