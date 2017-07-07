@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.exception.NoSuchElementException
 
 /**
- * Extends [Properties] by accessor methods for types that are not available below [ch.scorpion.jabbah.base].
+ * Extends [Properties] by accessor methods for types that are not available in [ch.scorpion.jabbah.base].
  */
 class DrawProperties : Properties() {
 

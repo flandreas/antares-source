@@ -58,10 +58,6 @@ abstract class AbstractDesktopApplication(
 
     override lateinit var mainFrame: AbstractApplicationFrame
 
-    init {
-        loadProperties()
-    }
-
     /** ---- [Application] */
 
     override val applicationDataChanged: Boolean get() = mainFrame.applicationDataChanged
@@ -81,6 +77,8 @@ abstract class AbstractDesktopApplication(
     /** ---- [AbstractApplication] */
 
     override fun init() {
+        loadProperties()
+
         mainFrame = createMainFrame()
         mainFrame.jMenuBar = createMenuBarBuilder().menuBar
         DrawViewModule.viewManager.activeView = mainFrame.editor.view
