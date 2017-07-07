@@ -46,3 +46,18 @@ dependencies {
     // Depending on TestEditorBuilder
     testCompile project(':edit').sourceSets.test.output
 }
+
+task sharedMainJs(type:Exec) {
+    commandLine 'kotlinc-js', '-output', 'build/libs/graph.js', '-meta-info', '-libraries',
+            '../base/build/libs/base.meta.js:' +
+            '../io/build/libs/io.meta.js:' +
+            '../animation/build/libs/animation.meta.js:' +
+            '../draw/build/libs/draw.meta.js:' +
+            '../edit/build/libs/edit.meta.js:' +
+            '../app/build/libs/app.meta.js:' +
+            '../execution/build/libs/execution.meta.js',
+            'shared/src/main'
+}
+
+classes.dependsOn sharedMainJs
+

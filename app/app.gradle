@@ -36,3 +36,15 @@ dependencies {
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testCompile "com.nhaarman:mockito-kotlin:1.2.0"
 }
+
+task sharedMainJs(type:Exec) {
+    commandLine 'kotlinc-js', '-output', 'build/libs/app.js', '-meta-info', '-libraries',
+            '../base/build/libs/base.meta.js:' +
+            '../io/build/libs/io.meta.js:' +
+            '../animation/build/libs/animation.meta.js:' +
+            '../draw/build/libs/draw.meta.js:' +
+            '../edit/build/libs/edit.meta.js',
+            'shared/src/main'
+}
+
+classes.dependsOn sharedMainJs
