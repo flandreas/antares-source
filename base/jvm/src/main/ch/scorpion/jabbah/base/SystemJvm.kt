@@ -30,12 +30,6 @@ class SystemJvm : System {
     }
 
     override fun <T : Any> instantiate(clazz: KClass<T>): T {
-    	// THIS IS A HACK
-    	/*
-        if (clazz == PolylineShapeImpl::class) {
-            return createPolylineShape() as T
-        }
-        */
         return clazz.java.newInstance()
     }
     

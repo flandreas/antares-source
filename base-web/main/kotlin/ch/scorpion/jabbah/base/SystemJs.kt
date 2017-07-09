@@ -9,11 +9,15 @@ import ch.scorpion.jabbah.base.time.Timer
 import kotlin.js.Date
 import kotlin.reflect.KClass
 
+fun <T: Any> JsClass<T>.newInstance(): T {
+    inline fun callCtor(ctor: dynamic) = js("new ctor()")
+    return callCtor(asDynamic()) as T
+}
+
 /**
  * Implements the [System] interface on the JavaScript platform.
  */
-class SystemJs(private val instantiators: Map<KClass<out Any>, () -> Any>) : System {
-    constructor(): this(mapOf())
+class SystemJs() : System {
 
     /** ---- [System] interface */
 
@@ -34,7 +38,7 @@ class SystemJs(private val instantiators: Map<KClass<out Any>, () -> Any>) : Sys
     }
 
     override fun <T : Any> instantiate(clazz: KClass<T>): T {
-        return instantiators[clazz]!!.invoke() as T
+        return clazz.js.newInstance()
     }
 
     override fun createAffineTransform(): AffineTransform {

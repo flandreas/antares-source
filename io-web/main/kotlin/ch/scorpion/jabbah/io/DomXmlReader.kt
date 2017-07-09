@@ -5,14 +5,22 @@ import ch.scorpion.jabbah.base.loggerFor
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.get
+import org.w3c.dom.parsing.DOMParser
 
 /**
  * An [XmlReader] for reading W3C XML DOM documents.
  */
 class DomXmlReader(document: Document) : XmlReader {
 
+    constructor(str: String): this(DOMParser().parseFromString(str, "application/xml"))
+
     private val LOG by loggerFor(this)
     private val stack = Stack<Element>()
+
+    init {
+        stack.push(document.documentElement!!)
+    }
+
 
     /** ---- [XmlReader] interface */
 

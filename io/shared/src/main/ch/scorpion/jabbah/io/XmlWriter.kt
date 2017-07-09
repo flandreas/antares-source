@@ -16,15 +16,4 @@ interface XmlWriter {
     fun flush()
 
     fun setAttributeValue(name: String, value: String)
-//
-//
-//    fun writeString(name: String, value: String)
-//
-//    fun writeInt(name: String, value: Int)
-//
-//    fun writeDouble(name: String, value: Double)
-//
-//    fun writeBoolean(name: String, value: Boolean)
-//
-//    fun writeLong(name: String, value: Long)
 }

@@ -94,6 +94,6 @@ artifacts {
 task runServer(type: JavaExec) {
     classpath = sourceSets.server.runtimeClasspath
     main = 'ch.scorpion.jabbah.graph.server.RestApi'
-    args '-d', '~'
+    args '-d', '/Users/andreas'
 }
 
