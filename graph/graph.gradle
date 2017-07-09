@@ -22,13 +22,11 @@ repositories {
 }
 
 dependencies {
-    compile project(':base')
-    compile project(':animation')
-    compile project(':io')
-    compile project(':draw')
-    compile project(':edit')
     compile project(':execution')
+    compile project(path: ':execution', configuration:'web')
+
     compile project(':app')
+    compile project(path: ':app', configuration:'web')
 
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile 'org.slf4j:slf4j-log4j12:1.7.21'
@@ -58,6 +56,12 @@ dependencies {
     testCompile project(':edit').sourceSets.test.output
 }
 
+configurations {
+    web
+}
+
+def jsSharedFile = file('build/libs/graph.js')
+
 task serverJar(type: Jar) {
     from 'jvm/src/server'
     baseName = 'graph-server'
@@ -68,8 +72,8 @@ task serverJar(type: Jar) {
 
 jar.dependsOn serverJar
 
-task sharedMainJs(type:Exec) {
-    commandLine 'kotlinc-js', '-output', 'build/libs/graph.js', '-meta-info', '-libraries',
+task jsShared(type:Exec, dependsOn: configurations.compile) {
+    commandLine 'kotlinc-js', '-output', jsSharedFile, '-meta-info', '-libraries',
             '../base/build/libs/base.meta.js:' +
             '../io/build/libs/io.meta.js:' +
             '../animation/build/libs/animation.meta.js:' +
@@ -80,7 +84,12 @@ task sharedMainJs(type:Exec) {
             'shared/src/main'
 }
 
-classes.dependsOn sharedMainJs
+artifacts {
+    web archives(jsSharedFile) {
+        builtBy jsShared
+    }
+    archives serverJar
+}
 
 task runServer(type: JavaExec) {
     classpath = sourceSets.server.runtimeClasspath

@@ -3,6 +3,7 @@
 include 'base'
 include 'base-web'
 include 'io'
+include 'io-web'
 include 'animation'
 include 'draw'
 include 'draw-web'
@@ -12,6 +13,7 @@ include 'execution'
 include 'app'
 include 'graph'
 include 'antares'
+include 'antares-web'
 
 rootProject.name = 'jabbah'
 

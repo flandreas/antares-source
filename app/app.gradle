@@ -20,8 +20,8 @@ repositories {
 }
 
 dependencies {
-    compile project(':draw')
     compile project(':edit')
+    compile project(path: ':edit', configuration:'web')
 
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -37,8 +37,14 @@ dependencies {
     testCompile "com.nhaarman:mockito-kotlin:1.2.0"
 }
 
-task sharedMainJs(type:Exec) {
-    commandLine 'kotlinc-js', '-output', 'build/libs/app.js', '-meta-info', '-libraries',
+configurations {
+    web
+}
+
+def jsSharedFile = file('build/libs/app.js')
+
+task jsShared(type:Exec, dependsOn: configurations.compile) {
+    commandLine 'kotlinc-js', '-output', jsSharedFile, '-meta-info', '-libraries',
             '../base/build/libs/base.meta.js:' +
             '../io/build/libs/io.meta.js:' +
             '../animation/build/libs/animation.meta.js:' +
@@ -47,4 +53,8 @@ task sharedMainJs(type:Exec) {
             'shared/src/main'
 }
 
-classes.dependsOn sharedMainJs
+artifacts {
+    web archives(jsSharedFile) {
+        builtBy jsShared
+    }
+}

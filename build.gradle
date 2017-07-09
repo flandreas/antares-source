@@ -14,10 +14,10 @@ apply plugin: 'idea'
 apply plugin: 'kotlin'
 
 allprojects {
-
 	repositories {
 		mavenCentral()
 	}
-	
 }
+
+
 

@@ -2,10 +2,9 @@ apply plugin: 'kotlin2js'
 
 sourceSets {
     main.kotlin.srcDirs += 'main/kotlin'
-
     demo {
         kotlin {
-            srcDirs += 'demo/helloedit/kotlin'
+            srcDirs += 'demo/helloAntares/kotlin'
         }
         compileClasspath += sourceSets.main.runtimeClasspath
     }
@@ -20,6 +19,8 @@ dependencies {
     compile project(path: ':io', configuration: 'web')
     compile files('../io/build/libs/io.meta.js')
 
+    compile files('../io-web/build/classes/main/io-web_main.meta.js')
+
     compile project(path: ':animation', configuration: 'web')
     compile files('../animation/build/libs/animation.meta.js')
 
@@ -31,13 +32,20 @@ dependencies {
     compile project(path: ':edit', configuration: 'web')
     compile files('../edit/build/libs/edit.meta.js')
 
-    compile files('../edit/build/libs/edit-demo.meta.js')
+    compile files('../edit-web/build/classes/main/edit-web_main.meta.js')
 
-    compile project(path: ':draw-web')
-    compile project(path: ':io-web')
+    compile project(path: ':app', configuration: 'web')
+    compile files('../app/build/libs/app.meta.js')
+
+    compile project(path: ':graph', configuration: 'web')
+    compile files('../graph/build/libs/graph.meta.js')
+
+    compile project(path: ':antares', configuration: 'web')
+    compile files('../antares/build/libs/antares.meta.js')
+
+    compile project(path: ':edit-web')
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
 }
 
-// Without this, draw-edit_demo.meta.js will not be automatically built, for some reason..
 assemble.dependsOn demoClasses

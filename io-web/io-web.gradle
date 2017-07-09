@@ -7,9 +7,13 @@ sourceSets {
 dependencies {
     compile project(path: ':base', configuration: 'web')
     compile files('../base/build/libs/base.meta.js')
+
+    compile files('../base-web/build/classes/main/base-web_main.meta.js')
+
+    compile project(path: ':io', configuration: 'web')
+    compile files('../io/build/libs/io.meta.js')
+    
+    compile project(path: ':base-web')
+
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
 }
-
-// This doesn't work yet:
-// This packs main and demo into one file, but we want to keep them separate
-// compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/build/libs/base-web.js"

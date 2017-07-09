@@ -1,0 +1,54 @@
+package ch.scorpion.jabbah.antares.helloAntares
+
+import ch.scorpion.jabbah.draw.style.StyleRepository
+import ch.scorpion.jabbah.draw.view.CanvasJs
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.editor.EditEditorModule
+import ch.scorpion.jabbah.edit.model.DrawingImpl
+import ch.scorpion.jabbah.edit.module.EditModuleJs
+import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
+import ch.scorpion.jabbah.io.DomXmlReader
+import ch.scorpion.jabbah.io.StoreXmlReader
+import org.w3c.dom.Document
+import org.w3c.xhr.DOCUMENT
+import org.w3c.xhr.XMLHttpRequest
+import org.w3c.xhr.XMLHttpRequestResponseType
+import kotlin.properties.Delegates
+
+var editor by Delegates.notNull<Editor>()
+
+/**
+ * Loads an antares [GraphView] from the REST API and displays it.
+ */
+fun hello() {
+    EditModuleJs.require()
+
+    val drawing = GraphViewImpl<GraphElementView<*>>()
+
+    val canvas = CanvasJs("kotlinCanvas", { DrawingViewImpl<Drawing<Component>>(drawing as Drawing<Component>, it) }, StyleRepository.INSTANCE )
+    editor = EditEditorModule.createEditor(canvas.view as DrawingView<Drawing<Component>>)
+
+    canvas.repaint()
+
+    val request = XMLHttpRequest()
+
+    request.open("GET", "http://localhost:4567/hello/antares.cir", true)
+    request.responseType = XMLHttpRequestResponseType.DOCUMENT
+    request.overrideMimeType("text/xml")
+    request.onload = {
+        console.log(request.response)
+        handleResponse(request.responseXML!!)
+    }
+    request.send()
+}
+
+private fun handleResponse(doc: Document) {
+    val reader = DomXmlReader(doc)
+    val storeXmlReader = StoreXmlReader(reader)
+    editor.view.drawing = storeXmlReader.readStorable() as Drawing<Component>
+}

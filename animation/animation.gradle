@@ -1,4 +1,4 @@
-/* gradle build file of the jabbah.animation module */
+/* gradle build file of the ch.scorpion.jabbah.animation module */
 
 apply plugin: 'kotlin'
 
@@ -14,8 +14,13 @@ repositories {
 	}
 }
 
+configurations {
+	web
+}
+
 dependencies {
 	compile project(':base')
+	compile project(path: ':base', configuration:'web')
 
 	compile 'org.slf4j:slf4j-api:1.7.21'
 	compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -30,8 +35,16 @@ dependencies {
 	testCompile "com.nhaarman:mockito-kotlin:1.2.0"
 }
 
-task kotlin2js(type:Exec) {
-	commandLine 'kotlinc-js', '-output', 'build/libs/animation.js', '-meta-info', '-libraries', '../base/build/libs/base.meta.js', 'shared/src/main'
+def jsSharedFile = file('build/libs/animation.js')
+
+task jsShared(type:Exec, dependsOn: configurations.compile) {
+	commandLine 'kotlinc-js', '-output', jsSharedFile, '-meta-info', '-libraries',
+		'../base/build/libs/base.meta.js',
+		'shared/src/main'
 }
 
-classes.dependsOn kotlin2js
+artifacts {
+	web archives(jsSharedFile) {
+		builtBy jsShared
+	}
+}

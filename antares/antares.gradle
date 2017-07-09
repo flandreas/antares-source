@@ -17,14 +17,8 @@ repositories {
 }
 
 dependencies {
-    compile project(':base')
-    compile project(':animation')
-    compile project(':io')
-    compile project(':draw')
-    compile project(':edit')
-    compile project(':execution')
-    compile project(':app')
     compile project(':graph')
+    compile project(path: ':graph', configuration:'web')
 
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -47,8 +41,14 @@ dependencies {
     //testCompile project(':edit').sourceSets.test.output
 }
 
-task sharedMainJs(type:Exec) {
-    commandLine 'kotlinc-js', '-output', 'build/libs/antares.js', '-meta-info', '-libraries',
+configurations {
+    web
+}
+
+def jsSharedFile = file('build/libs/antares.js')
+
+task jsShared(type:Exec, dependsOn: configurations.compile) {
+    commandLine 'kotlinc-js', '-output', jsSharedFile, '-meta-info', '-libraries',
             '../base/build/libs/base.meta.js:' +
             '../io/build/libs/io.meta.js:' +
             '../animation/build/libs/animation.meta.js:' +
@@ -60,4 +60,8 @@ task sharedMainJs(type:Exec) {
             'shared/src/main'
 }
 
-classes.dependsOn sharedMainJs
+artifacts {
+    web archives(jsSharedFile) {
+        builtBy jsShared
+    }
+}
