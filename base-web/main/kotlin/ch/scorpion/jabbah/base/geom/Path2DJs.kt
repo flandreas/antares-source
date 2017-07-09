@@ -3,54 +3,56 @@ package ch.scorpion.jabbah.base.geom
 import org.w3c.dom.CanvasRenderingContext2D
 
 /**
- * A simple implementation of a [Path2D] to be rendered on a HTML canvas.
+ * A simple implementation of a [Path2 to be rendered on a HTML canvas.
  */
 class Path2DJs : Path {
 
     private val entries = mutableListOf<Entry>()
 
-    /** ---- [Path2D] interface */
+    /** ---- [Path] interface */
 
     override fun moveTo(x: Double, y: Double): Path {
-        entries.add(Entry(Command.MoveTo, Point2D(x, y)))
+        entries.add(Entry(MoveTo(Point2D(x, y))))
         return this
     }
 
     override fun moveTo(x: Int, y: Int): Path {
-        entries.add(Entry(Command.MoveTo, Point2D(x, y)))
+        entries.add(Entry(MoveTo(Point2D(x, y))))
         return this
     }
 
     override fun moveTo(x: Float, y: Float): Path {
-        entries.add(Entry(Command.MoveTo, Point2D(x.toDouble(), y.toDouble())))
+        entries.add(Entry(MoveTo(Point2D(x.toDouble(), y.toDouble()))))
         return this
     }
 
     override fun lineTo(x: Double, y: Double): Path {
-        entries.add(Entry(Command.LineTo, Point2D(x, y)))
+        entries.add(Entry(LineTo(Point2D(x, y))))
         return this
     }
 
     override fun lineTo(x: Int, y: Int): Path {
-        entries.add(Entry(Command.LineTo, Point2D(x, y)))
+        entries.add(Entry(LineTo(Point2D(x, y))))
         return this
     }
 
     override fun lineTo(x: Float, y: Float): Path {
-        entries.add(Entry(Command.LineTo, Point2D(x.toDouble(), y.toDouble())))
+        entries.add(Entry(LineTo(Point2D(x.toDouble(), y.toDouble()))))
         return this
     }
 
     override fun quadTo(x1: Double, y1: Double, x2: Double, y2: Double): Path {
-        throw UnsupportedOperationException("not implemented")
+        entries.add(Entry(QuadTo(Point2D(x1, x2), Point2D(x2, y2))))
+        return this
     }
 
     override fun quadTo(x1: Int, y1: Int, x2: Int, y2: Int): Path {
-        throw UnsupportedOperationException("not implemented")
+        entries.add(Entry(QuadTo(Point2D(x1, x2), Point2D(x2, y2))))
+        return this
     }
 
     override fun close(): Path {
-        entries.add(Entry(Command.ClosePath))
+        entries.add(Entry(ClosePath()))
         return this
     }
 
@@ -82,45 +84,54 @@ class Path2DJs : Path {
         }
     }
 
-    private fun addEntry(cmd: Command, p: Point2D?) {
-        entries.add(Entry(cmd, p))
-    }
-
     private fun lastMoveToEntry(): Entry? {
-        return entries.last { it.command == Command.MoveTo }
+        return entries.last { it.command is MoveTo }
     }
 
-    enum class Command() {
-        MoveTo() {
-            override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D, p: Point2D?) {
-                ctx.moveTo(p!!.x, p!!.y)
-            }
-        },
-        LineTo {
-            override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D, p: Point2D?) {
-                ctx.lineTo(p!!.x, p!!.y)
-            }
-        },
-        ClosePath {
-            override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D, p: Point2D?) {
-                path.lastMoveToEntry()?.let {
-                    ctx.lineTo(it.p!!.x, it.p!!.y)
-                }
-            }
-        };
-
-        abstract fun play(path: Path2DJs, ctx: CanvasRenderingContext2D, p: Point2D?)
+    private interface Command {
+        val p: Point2D?
+        fun play(path: Path2DJs, ctx: CanvasRenderingContext2D)
     }
 
-    private data class Entry (val command: Command, val p: Point2D? = null) {
+    private class MoveTo(override val p: Point2D) : Command {
+        override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
+            ctx.moveTo(p.x, p.y)
+        }
+    }
+
+    private class LineTo(override val p: Point2D): Command {
+        override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
+            ctx.lineTo(p.x, p.y)
+        }
+    }
+
+    private class QuadTo(private val controlPoint: Point2D, private val endPoint: Point2D) : Command {
+        override val p: Point2D? get() = endPoint
+        override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
+            ctx.quadraticCurveTo(controlPoint.x, controlPoint.y, endPoint.x, endPoint.y)
+        }
+    }
+
+    private class ClosePath : Command {
+        override val p: Point2D? get() = null
+        override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
+            path.lastMoveToEntry()?.let {
+                ctx.lineTo(it.p!!.x, it.p!!.y)
+            }
+        }
+    }
+
+    private data class Entry (val command: Command) {
+
+        val p: Point2D? get() = command.p
 
         fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
-            command.play(path, ctx, p)
+            command.play(path, ctx)
         }
 
         fun transform(transform: AffineTransform) {
             if (p != null) {
-                transform.transform(p, p)
+                transform.transform(p!!, p)
             }
         }
     }
