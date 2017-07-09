@@ -50,6 +50,8 @@ class SystemJs(private val instantiators: Map<KClass<out Any>, () -> Any>) : Sys
     }
 
     override fun createUUID(uuid: String?): UUID {
-        throw UnsupportedOperationException("not implemented")
+        // TODO Create an UUID with the same format as the one created by the JVM platform.
+        // We don't need this before editing functionality in the brower is required.
+        return UUID(Math.randomInt(10_000, 99_000).toString() + "-TEMP-UUID")
     }
 }

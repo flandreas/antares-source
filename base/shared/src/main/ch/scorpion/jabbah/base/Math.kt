@@ -47,6 +47,12 @@ open class MathClass {
     open fun random(): Double = throw UnsupportedOperationException()
 
     fun random(min: Double, max: Double) = random() * (max - min) + min
+
+    fun randomInt(min: Int, max: Int): Int {
+        val min = ceil(min.toDouble()).toInt()
+        val max = floor(max.toDouble()).toInt()
+        return floor(random() * (max - min + 1)).toInt() + min
+    }
 }
 
 var Math: MathClass = MathClass()
