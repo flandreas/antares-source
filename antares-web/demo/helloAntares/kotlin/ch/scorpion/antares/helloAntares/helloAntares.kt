@@ -1,5 +1,6 @@
-package ch.scorpion.jabbah.antares.helloAntares
+package ch.scorpion.antares.helloAntares
 
+import ch.scorpion.antares.module.AntaresModuleJs
 import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.edit.Component
@@ -26,7 +27,7 @@ var editor by Delegates.notNull<Editor>()
  * Loads an antares [GraphView] from the REST API and displays it.
  */
 fun hello() {
-    EditModuleJs.require()
+    AntaresModuleJs.require()
 
     val drawing = GraphViewImpl<GraphElementView<*>>()
 

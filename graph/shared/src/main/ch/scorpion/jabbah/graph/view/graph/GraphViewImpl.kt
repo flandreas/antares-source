@@ -156,7 +156,7 @@ class GraphViewImpl<T : GraphElementView<*>>(
         LOG.trace("clone '${model.name}'for existing model")
         val clone = storableCloner.clone(
             this,
-            GlobalIdentityReflector,
+            GlobalIdentityReflector(),
             storableCreator,
             ReferenceResolverProxy(
                 GraphReferenceResolver(model),

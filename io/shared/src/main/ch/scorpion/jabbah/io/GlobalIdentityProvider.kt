@@ -34,7 +34,7 @@ class GlobalIdentityCreator : GlobalIdentityProvider {
  * A [GlobalIdentityProvider] that reflects the identity of the registered [Storable]s that they already
  * possess.
  */
-object GlobalIdentityReflector : GlobalIdentityProvider {
+class GlobalIdentityReflector : GlobalIdentityProvider {
 
     override fun register(storable: Storable) {
         // empty

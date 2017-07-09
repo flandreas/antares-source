@@ -107,7 +107,7 @@ class Antares(
     }
 
     override fun init() {
-        AntaresJvmModule(this).require()
+        AntaresModuleJvm(this).require()
         LibraryModule.libraryHolder.library.load()
         fillStandardLibrary(LibraryModule.libraryHolder.library)
         UiUtil.setUIFont(FontUIResource(Look.UI_FONT.name, Look.UI_FONT.style, Look.UI_FONT.size))

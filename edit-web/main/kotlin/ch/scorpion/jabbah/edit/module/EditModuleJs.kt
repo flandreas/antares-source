@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.module
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.edit.model.text.TextComponentFactoryJs
+import ch.scorpion.jabbah.io.module.IOModuleJs
 import ch.scorpion.jabbah.module.DrawModuleJs
 
 /**
@@ -11,6 +12,7 @@ import ch.scorpion.jabbah.module.DrawModuleJs
 object EditModuleJs : AbstractModule() {
 
     override fun initialize() {
+        IOModuleJs.require()
         DrawModuleJs.require()
         EditModule.textComponentFactory = { TextComponentFactoryJs() }
         EditModule.require()

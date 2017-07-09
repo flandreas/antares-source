@@ -35,7 +35,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 /**
  * Module definitions for the [ch.scorpion.antares] module on the JVM target.
  */
-class AntaresJvmModule(val app: Antares) : AbstractModule() {
+class AntaresModuleJvm(val app: Antares) : AbstractModule() {
 
     override fun initialize() {
 

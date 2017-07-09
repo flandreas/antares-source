@@ -21,7 +21,7 @@ class StorableClonerJvm(val typeMap: TypeMap) : StorableCloner {
     }
 
     override fun clonePreservingIdentities(storable: Storable, storableCreator: StorableCreator): Storable {
-        return clone(storable, GlobalIdentityReflector, storableCreator, ReferenceResolverImpl())
+        return clone(storable, GlobalIdentityReflector(), storableCreator, ReferenceResolverImpl())
     }
 
     override fun cloneUsingCreator(storable: Storable, storableCreator: StorableCreator): Storable {
