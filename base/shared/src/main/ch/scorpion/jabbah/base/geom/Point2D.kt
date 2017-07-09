@@ -5,10 +5,9 @@ import ch.scorpion.jabbah.base.Math
 /**
  * The [Point2D] class defines a point representing a location in (x,y) coordinate space.
  */
-data class Point2D(var x: Double, var y: Double) {
+data class Point2D(var x: Double = 0.0, var y: Double = 0.0) {
     constructor(p: Point2D): this(p.x, p.y)
     constructor(x: Int, y: Int): this(x.toDouble(), y.toDouble())
-    constructor(): this(0.0, 0.0)
 
     override fun toString(): String = "Point2D($x,$y)"
 

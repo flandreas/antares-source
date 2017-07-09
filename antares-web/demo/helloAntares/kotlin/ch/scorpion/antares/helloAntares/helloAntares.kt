@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.module.EditModuleJs
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.io.DomXmlReader
@@ -51,5 +52,8 @@ fun hello() {
 private fun handleResponse(doc: Document) {
     val reader = DomXmlReader(doc)
     val storeXmlReader = StoreXmlReader(reader)
-    editor.view.drawing = storeXmlReader.readStorable() as Drawing<Component>
+
+    val metaGraph = storeXmlReader.readStorable() as MetaGraph
+
+    editor.view.drawing = metaGraph.graph!!.graphView!! as Drawing<Component>
 }

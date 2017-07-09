@@ -20,9 +20,11 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 /**
  * Indicates the location of the origin of the [Drawing] that represents the outer view of a container.
  */
-class OriginIndicator(styleProvider: StyleProvider, x: Double, y: Double) : AbstractComponent(styleProvider) {
-    constructor(x: Double, y: Double): this(DrawStyleModule.styleProvider, x, y)
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider, 0.0, 0.0)
+class OriginIndicator(
+        styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+        x: Double = 0.0,
+        y: Double = 0.0
+) : AbstractComponent(styleProvider) {
 
     companion object {
         val PROP_COLOR = "graph.containereditor.OriginIndicator.color"

@@ -29,14 +29,10 @@ import ch.scorpion.jabbah.draw.style.Themes
  * A view of an [LED].
  */
 class LEDView(
-    styleProvider: StyleProvider,
-    model: LED,
-    lightColor: LightColor
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    model: LED = LED(),
+    lightColor: LightColor = LEDView.DEFAULT_LIGHT_COLOR
 ) : DigitalComponentView<LED>(styleProvider, "library.element.LED", model), ControlView<LED>, ControlViewSource<LED>{
-
-    constructor(styleProvider: StyleProvider, lightColor: LightColor): this(styleProvider, LED(), lightColor)
-    constructor(styleProvider: StyleProvider): this(styleProvider, DEFAULT_LIGHT_COLOR)
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider, DEFAULT_LIGHT_COLOR)
 
     companion object {
         val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDView.iconPath"

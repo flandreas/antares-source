@@ -27,26 +27,12 @@ import ch.scorpion.jabbah.graph.view.style.EdgeStyle
  * Try to inject the aspect of varying color and stroke into [EdgeView] and [NodeView].
  */
 class DigitalEdgeView(
-    styleProvider: StyleProvider,
-    edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
-    origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-    destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
-    net: Net<DigitalSignal>
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    edgeToPortConnectorSupplier: () -> EdgeToPortConnector = { GraphViewModule.edgeToPortConnector },
+    origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector = { GraphViewModule.dragEdgeViewOriginConnector },
+    destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector = { GraphViewModule.dragEdgeViewDestinationConnector },
+    net: Net<DigitalSignal> = DigitalNet()
 ) : EdgeViewImpl<DigitalSignal>(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier, destEndpointConnectorSupplier, net) {
-
-    constructor(
-        styleProvider: StyleProvider,
-        edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
-        origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-        destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector
-    ): this(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier, destEndpointConnectorSupplier, DigitalNet())
-
-    @Suppress("unused")
-    constructor(): this(
-        DrawStyleModule.styleProvider,
-        {GraphViewModule.edgeToPortConnector},
-        {GraphViewModule.dragEdgeViewOriginConnector},
-        {GraphViewModule.dragEdgeViewDestinationConnector})
 
     override fun draw(context: DrawContext) {
         val oldColor = context.g.color

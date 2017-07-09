@@ -39,21 +39,13 @@ import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
  * A standard implementation of the [GraphView] interface.
  */
 class GraphViewImpl<T : GraphElementView<*>>(
-        override var graph: Graph?,
-        private val storableCloner: StorableCloner,
-        private val outputToInputConnector: OutputToInputConnector,
-        private val inputToOutputToInputConnector: InputToOutputOrEdgeConnector,
-        private val connectService: GraphViewConnectService,
-        private val eventBus: EventBus
+        override var graph: Graph? = GraphModelModule.graphFactory.invoke(),
+        private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
+        private val outputToInputConnector: OutputToInputConnector = GraphViewModule.outputToInputConnector,
+        private val inputToOutputToInputConnector: InputToOutputOrEdgeConnector = GraphViewModule.inputToOutputOrEdgeConnector,
+        private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
+        private val eventBus: EventBus = BaseModule.eventBus
 ) : DrawingImpl<T>(), GraphView<T> {
-
-    constructor(): this(
-            GraphModelModule.graphFactory.invoke(),
-            IOModule.storableClonerProvider.invoke(),
-            GraphViewModule.outputToInputConnector,
-            GraphViewModule.inputToOutputOrEdgeConnector,
-            GraphViewModule.graphViewConnectService,
-            BaseModule.eventBus)
 
     private val LOG by logger()
 

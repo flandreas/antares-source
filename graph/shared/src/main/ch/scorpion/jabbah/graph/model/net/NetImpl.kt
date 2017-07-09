@@ -173,9 +173,7 @@ open class NetImpl<T: Any> : AbstractGraphElement(), Net<T> {
     }
 
     /** Used for storing references to the [Port]s of a [Net].*/
-    class PortRef<T: Any>(val port: Port<T>?) : Storable {
-
-        @Suppress("unused") constructor(): this(null)
+    class PortRef<T: Any>(val port: Port<T>? = null) : Storable {
 
         override var storableId: Int = -1
 

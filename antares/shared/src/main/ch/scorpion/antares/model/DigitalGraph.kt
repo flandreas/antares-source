@@ -14,8 +14,7 @@ import ch.scorpion.jabbah.base.loggerFor
 /**
  * A [GraphImpl] that forwards [DigitalSignal]s.
  */
-class DigitalGraph(eventBus: EventBus) : GraphImpl(eventBus) {
-    constructor(): this(BaseModule.eventBus)
+class DigitalGraph(eventBus: EventBus = BaseModule.eventBus) : GraphImpl(eventBus) {
 
     private val LOG by loggerFor(this)
 

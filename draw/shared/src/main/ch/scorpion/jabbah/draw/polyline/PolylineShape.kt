@@ -16,8 +16,7 @@ interface PolylineShape : Polyline, Shape
  * An implementation of the [PolylineShape] interface
  * @property points the points of which this [Polyline] consists
  */
-class PolylineShapeImpl(pts: List<Point2D>? = null) : PolylineShape {
-    constructor(): this(mutableListOf())
+class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 
     companion object {
         /** Half of the size of the rectangle that is used for checking the containedness of a point.*/

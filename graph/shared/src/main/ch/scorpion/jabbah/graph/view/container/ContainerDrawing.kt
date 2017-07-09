@@ -33,22 +33,13 @@ import ch.scorpion.jabbah.base.loggerFor
  * A [Drawing] that contains the graphical representation of a [SubGraphVertice]' outside view.
  */
 class ContainerDrawing(
-    private val storableCreator: StorableCreator,
-    private val storableCloner: StorableCloner,
-    private val eventBus: EventBus,
-    private val scriptGateway: ScriptGateway,
-    private val libraryHolder: LibraryHolder,
-    private val styleProvider: StyleProvider
+    private val storableCreator: StorableCreator = IOModule.storableCreator,
+    private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
+    private val eventBus: EventBus = BaseModule.eventBus,
+    private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
+    private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+    private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : DrawingImpl<Component>() {
-
-    constructor(): this(
-        IOModule.storableCreator,
-        IOModule.storableClonerProvider.invoke(),
-        BaseModule.eventBus,
-        ScriptModule.scriptGateway,
-        LibraryModule.libraryHolder,
-        DrawStyleModule.styleProvider
-    )
 
     private val LOG by loggerFor(this)
 
@@ -106,7 +97,7 @@ class ContainerDrawing(
      */
     fun initialize() {
         add(RectangularComponent(140.0, 140.0, 70.0, 140.0))
-        add(OriginIndicator(140.0, 140.0))
+        add(OriginIndicator(x = 140.0, y = 140.0))
     }
 
     /**

@@ -47,7 +47,7 @@ class DomXmlReader(document: Document) : XmlReader {
 
     override fun descend(name: String) {
         LOG.debug("descend to '$name'")
-        stack.push(stack.peek().children.get(name)!!)
+        stack.push(stack.peek().getElementsByTagName(name)[0]!!)
     }
 
     override fun descend(index: Int) {

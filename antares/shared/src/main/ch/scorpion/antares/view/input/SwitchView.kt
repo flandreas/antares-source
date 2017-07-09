@@ -38,12 +38,9 @@ import ch.scorpion.jabbah.draw.style.Themes
  * A view representation of a [Switch] that supports persistent toggling between two states.
  */
 class SwitchView(
-    styleProvider: StyleProvider,
-    model: Switch
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    model: Switch = Switch()
 ) : DigitalComponentView<Switch>(styleProvider, "library.element.Switch", model), ControlView<Switch>, ControlViewSource<Switch> {
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, Switch())
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider)
 
     companion object {
         val LOG by logger()

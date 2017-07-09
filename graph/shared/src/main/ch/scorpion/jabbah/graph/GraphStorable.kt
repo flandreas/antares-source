@@ -11,8 +11,7 @@ import ch.scorpion.jabbah.io.*
 /**
  * Stores a [GraphView] and its [Graph].
  */
-class GraphStorable(var graphView: GraphView<*>? = null) : Storable {
-    constructor(): this(GraphViewModule.graphViewFactory.invoke())
+class GraphStorable(var graphView: GraphView<*>? = GraphViewModule.graphViewFactory.invoke()) : Storable {
 
     val model: Graph? get() = graphView?.graph
 

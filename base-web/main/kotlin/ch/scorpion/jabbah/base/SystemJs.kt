@@ -9,6 +9,10 @@ import ch.scorpion.jabbah.base.time.Timer
 import kotlin.js.Date
 import kotlin.reflect.KClass
 
+/**
+ * Supports creating new instances of a [JsClass].
+ * @see https://discuss.kotlinlang.org/t/creating-new-object-using-jsclass/2092
+ */
 fun <T: Any> JsClass<T>.newInstance(): T {
     inline fun callCtor(ctor: dynamic) = js("new ctor()")
     return callCtor(asDynamic()) as T

@@ -15,9 +15,7 @@ import ch.scorpion.jabbah.base.System
 /**
  * A standard implementation of the [Graph] interface.
  */
-open class GraphImpl(private val eventBus: EventBus) : Graph {
-
-    constructor(): this(BaseModule.eventBus)
+open class GraphImpl(private val eventBus: EventBus = BaseModule.eventBus) : Graph {
 
     private val _elements = mutableListOf<GraphElement>()
 
