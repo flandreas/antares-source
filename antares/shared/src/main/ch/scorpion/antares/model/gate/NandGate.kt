@@ -20,9 +20,7 @@ class NandCalculator<T : Vertice> : VerticeCalculator<T> {
     }
 }
 
-class NandGate(inputCount: InputCount): AbstractDigitalGate(CALCULATOR, inputCount) {
-
-    constructor(): this(InputCount.TWO)
+class NandGate(inputCount: InputCount = InputCount.TWO): AbstractDigitalGate(CALCULATOR, inputCount) {
 
     companion object {
         val CALCULATOR = NandCalculator<NandGate>()

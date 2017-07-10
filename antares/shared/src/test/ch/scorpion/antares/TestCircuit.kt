@@ -21,7 +21,7 @@ class TestCircuit {
 
     init {
         andGateView = builder.addVertice(AndGateView())
-        orGateView = builder.addVertice(OrGateView(OrGate(InputCount.THREE)))
+        orGateView = builder.addVertice(OrGateView(orGate = OrGate(InputCount.THREE)))
         wire = builder.connect(andGateView, orGateView)
     }
 }

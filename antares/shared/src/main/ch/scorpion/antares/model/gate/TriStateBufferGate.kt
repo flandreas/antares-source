@@ -29,11 +29,9 @@ class TriStateBufferCalculator : VerticeCalculator<TriStateBufferGate> {
 }
 
 class TriStateBufferGate(
-    bitWidth: BitWidth,
-    enableLogic: Logic
+    bitWidth: BitWidth = BitWidth.BW_1,
+    enableLogic: Logic = Logic.POSITIVE
 ) : CalculatingVertice(CALCULATOR) {
-
-    constructor(): this(BitWidth.BW_1, Logic.POSITIVE)
 
     companion object {
         val LOG by logger()

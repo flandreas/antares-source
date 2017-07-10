@@ -42,12 +42,12 @@ class Path2DJs : Path {
     }
 
     override fun quadTo(x1: Double, y1: Double, x2: Double, y2: Double): Path {
-        entries.add(Entry(QuadTo(Point2D(x1, x2), Point2D(x2, y2))))
+        entries.add(Entry(QuadTo(Point2D(x1, y1), Point2D(x2, y2))))
         return this
     }
 
     override fun quadTo(x1: Int, y1: Int, x2: Int, y2: Int): Path {
-        entries.add(Entry(QuadTo(Point2D(x1, x2), Point2D(x2, y2))))
+        entries.add(Entry(QuadTo(Point2D(x1, y1), Point2D(x2, y2))))
         return this
     }
 

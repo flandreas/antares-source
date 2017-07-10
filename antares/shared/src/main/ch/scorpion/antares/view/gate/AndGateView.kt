@@ -13,13 +13,10 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
  * A view of an [AndGate].
  */
 class AndGateView(
-    styleProvider: StyleProvider,
-    val currentSymbolStyle: CurrentSymbolStyle,
-    andGate: AndGate
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+    andGate: AndGate = AndGate()
 ) : AbstractDigitalGateView<AndGate>(styleProvider, "&", "library.element.AndGate", andGate) {
-
-    constructor(styleProvider: StyleProvider, currentSymbolStyle: CurrentSymbolStyle): this(styleProvider, currentSymbolStyle, AndGate())
-    constructor(): this(DrawStyleModule.styleProvider, AntaresViewModule.currentSymbolStyle)
 
     init {
         modelExchanged(null)

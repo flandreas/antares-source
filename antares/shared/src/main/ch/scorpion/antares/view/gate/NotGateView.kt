@@ -13,13 +13,10 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
  * A view of a [NotGate].
  */
 class NotGateView(
-    styleProvider: StyleProvider,
-    val currentSymbolStyle: CurrentSymbolStyle,
-    notGate: NotGate
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+    notGate: NotGate = NotGate()
 ) : AbstractDigitalGateView<NotGate>(styleProvider, "1", "library.element.NotGate", notGate) {
-
-    constructor(styleProvider: StyleProvider, currentSymbolStyle: CurrentSymbolStyle): this(styleProvider, currentSymbolStyle, NotGate())
-    constructor(): this(DrawStyleModule.styleProvider, AntaresViewModule.currentSymbolStyle)
 
     init {
         modelExchanged(null)

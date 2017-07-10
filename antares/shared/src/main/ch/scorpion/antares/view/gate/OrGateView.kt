@@ -13,14 +13,10 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
  * A view of a [OrGate].
  */
 class OrGateView(
-    styleProvider: StyleProvider,
-    currentSymbolStyle: CurrentSymbolStyle,
-    orGate: OrGate
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+    orGate: OrGate = OrGate()
 ) : AbstractOrLikeGateView<OrGate>(styleProvider, currentSymbolStyle, "≥1", "library.element.OrGate", orGate) {
-
-    constructor(styleProvider: StyleProvider, currentSymbolStyle: CurrentSymbolStyle): this(styleProvider, currentSymbolStyle, OrGate())
-    constructor(orGate: OrGate): this(DrawStyleModule.styleProvider, AntaresViewModule.currentSymbolStyle, orGate)
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider, AntaresViewModule.currentSymbolStyle)
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
         currentSymbolStyle.symbolStyle.drawOrGate(this, context, foregroundColor, backgroundColor, stroke)

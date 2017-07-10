@@ -13,13 +13,10 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
  * A view of an [NandGate].
  */
 class NandGateView(
-    styleProvider: StyleProvider,
-    val currentSymbolStyle: CurrentSymbolStyle,
-    nandGate: NandGate
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+    nandGate: NandGate = NandGate()
 ) : AbstractDigitalGateView<NandGate>(styleProvider, "&", "library.element.NandGate", nandGate) {
-
-    constructor(styleProvider: StyleProvider, currentSymbolStyle: CurrentSymbolStyle): this(styleProvider, currentSymbolStyle, NandGate())
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider, AntaresViewModule.currentSymbolStyle)
 
     init {
         modelExchanged(null)

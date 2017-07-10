@@ -11,12 +11,9 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
  * A view of a [DelayGate].
  */
 class DelayGateView(
-    styleProvider: StyleProvider,
-    delayGate: DelayGate
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    delayGate: DelayGate = DelayGate()
 ) : AbstractDigitalGateView<DelayGate>(styleProvider, delayGate.delay.toString(), "library.element.Delay", delayGate) {
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, DelayGate())
-    constructor(): this(DrawStyleModule.styleProvider)
 
     init {
         label!!.font = Look.INT_PIN_FONT

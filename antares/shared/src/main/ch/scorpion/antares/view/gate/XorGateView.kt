@@ -13,13 +13,10 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
  * A view of a [XorGate].
  */
 class XorGateView(
-        styleProvider: StyleProvider,
-        currentSymbolStyle: CurrentSymbolStyle,
-        xorGate: XorGate
+        styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+        currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+        xorGate: XorGate = XorGate()
 ) : AbstractOrLikeGateView<XorGate>(styleProvider, currentSymbolStyle, "=1", "library.element.XorGate", xorGate) {
-
-    constructor(styleProvider: StyleProvider, currentSymbolStyle: CurrentSymbolStyle): this(styleProvider, currentSymbolStyle, XorGate())
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider, AntaresViewModule.currentSymbolStyle)
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
         currentSymbolStyle.symbolStyle.drawXorGate(this, context, foregroundColor, backgroundColor, stroke)

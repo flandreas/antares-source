@@ -36,9 +36,7 @@ class XnorCalculator<T : Vertice> : VerticeCalculator<T> {
     }
 }
 
-class XnorGate(inputCount: InputCount) : AbstractDigitalGate(CALCULATOR, inputCount) {
-
-    constructor(): this(InputCount.TWO)
+class XnorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CALCULATOR, inputCount) {
 
     companion object {
         val CALCULATOR = XnorCalculator<XnorGate>()

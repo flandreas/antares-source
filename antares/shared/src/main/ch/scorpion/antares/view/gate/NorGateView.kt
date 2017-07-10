@@ -13,13 +13,10 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
  * A view of a [NorGate].
  */
 class NorGateView(
-    styleProvider: StyleProvider,
-    currentSymbolStyle: CurrentSymbolStyle,
-    norGate: NorGate
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+    norGate: NorGate = NorGate()
 ) : AbstractOrLikeGateView<NorGate>(styleProvider, currentSymbolStyle, "≥1", "library.element.NorGate", norGate) {
-
-    constructor(styleProvider: StyleProvider, currentSymbolStyle: CurrentSymbolStyle): this(styleProvider, currentSymbolStyle, NorGate())
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider, AntaresViewModule.currentSymbolStyle)
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
         currentSymbolStyle.symbolStyle.drawOrGate(this, context, foregroundColor, backgroundColor, stroke)
