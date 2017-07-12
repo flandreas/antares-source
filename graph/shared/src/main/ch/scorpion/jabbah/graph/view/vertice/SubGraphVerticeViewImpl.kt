@@ -38,26 +38,17 @@ import ch.scorpion.jabbah.base.logger
  * A standard implementation of the [SubGraphVerticeView] interface.
  */
 class SubGraphVerticeViewImpl(
-    graphElement: SubGraphVerticeRef?,
-    styleProvider: StyleProvider,
-    private val storableCloner: StorableCloner,
-    private val storableCreator: StorableCreator,
-    private val libraryHolder: LibraryHolder,
-    private val eventBus: EventBus
+    graphElement: SubGraphVerticeRef? = null,
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
+    private val storableCreator: StorableCreator = IOModule.storableCreator,
+    private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+    private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractVerticeView<SubGraphVerticeRef>(
         styleProvider,
         "library.element.SubGraphVerticeRef",
         graphElement
     ), SubGraphVerticeView<SubGraphVerticeRef> {
-
-    @Suppress("unused")
-    constructor(): this(
-        null,
-        DrawStyleModule.styleProvider,
-        IOModule.storableClonerProvider.invoke(),
-        IOModule.storableCreator,
-        LibraryModule.libraryHolder,
-        BaseModule.eventBus)
 
     companion object {
         val LOG by logger()

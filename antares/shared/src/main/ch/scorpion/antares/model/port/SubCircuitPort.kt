@@ -15,12 +15,9 @@ import ch.scorpion.jabbah.graph.model.SubGraphOutputPort
 import ch.scorpion.jabbah.io.*
 
 class SubCircuitPort(
-    portType: PortType,
+    portType: PortType = PortType.INPUT,
     name: String? = null
 ) : DigitalPortImpl(portType, name), Storable, SubGraphInputPort<DigitalSignal>, SubGraphOutputPort<DigitalSignal> {
-
-    constructor(portType: PortType): this(portType, null)
-    @Suppress("unused") constructor(): this(PortType.INPUT)
 
     /** ---- [SubGraphInputPort] */
 

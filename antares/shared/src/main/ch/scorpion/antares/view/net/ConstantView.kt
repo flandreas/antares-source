@@ -20,12 +20,9 @@ import ch.scorpion.jabbah.draw.graphics.Color
  * A view of a [Constant].
  */
 class ConstantView(
-    styleProvider: StyleProvider,
-    model: Constant
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    model: Constant = Constant()
 ) : AbstractNumberViewComponent<Constant>(styleProvider, "library.element.Constant", model, Direction.WEST) {
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, Constant())
-    constructor(): this(DrawStyleModule.styleProvider)
 
     init {
         modelExchanged(null)

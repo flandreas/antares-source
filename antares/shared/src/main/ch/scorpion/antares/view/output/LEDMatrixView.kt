@@ -36,14 +36,10 @@ import ch.scorpion.antares.view.port.DigitalPortView
  * A view of a [LEDMatrix].
  */
 class LEDMatrixView(
-    styleProvider: StyleProvider,
-    model: LEDMatrix,
-    lightColor: LightColor
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    model: LEDMatrix = LEDMatrix(),
+    lightColor: LightColor = DEFAULT_LIGHT_COLOR
 ) : DigitalComponentView<LEDMatrix>(styleProvider, "library.element.LEDMatrix", model), ControlView<LEDMatrix>, ControlViewSource<LEDMatrix> {
-
-    constructor(styleProvider: StyleProvider, model: LEDMatrix): this(styleProvider, model, DEFAULT_LIGHT_COLOR)
-    constructor(styleProvider: StyleProvider): this(styleProvider, LEDMatrix())
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider)
 
     companion object {
         val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDMatrixView.iconPath"

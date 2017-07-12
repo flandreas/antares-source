@@ -35,12 +35,9 @@ import ch.scorpion.jabbah.draw.style.Themes
  * mouse is released.
  */
 class ToggleButtonView(
-    styleProvider: StyleProvider,
-    model: Switch
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    model: Switch = Switch()
 ) : DigitalComponentView<Switch>(styleProvider, "library.element.Toggle", model), ControlViewSource<Switch>, ControlView<Switch> {
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, Switch())
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider)
 
     companion object {
         val PROP_ICON_PATH = "ch.scorpion.antares.view.input.ToggleButtonView.iconPath"

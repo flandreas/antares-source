@@ -22,12 +22,9 @@ import ch.scorpion.jabbah.io.Storable
  * A [Component] that wraps a [ControlView] in order to allow deferred reference to a [SubGraphVerticeView]'s model.
  */
 class ControlViewComponent(
-    styleProvider: StyleProvider,
-    controlView: ControlView<Vertice>?
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    controlView: ControlView<Vertice>? = null
 ) : AbstractComponent(styleProvider), ActorView {
-
-    constructor(controlView: ControlView<Vertice>?): this(DrawStyleModule.styleProvider, controlView)
-    @Suppress("unused") constructor(): this(null)
 
     var controlView: ControlView<Vertice>? = controlView
 

@@ -36,17 +36,15 @@ import ch.scorpion.jabbah.graph.view.style.GraphTheme
  * A view representation of a [DigitalPort], either input or output.
  */
 class DigitalPortView(
-        private val styleProvider: StyleProvider,
-        port: Port<DigitalSignal>,
+        private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+        port: Port<DigitalSignal> = DigitalPortImpl.createInput(),
         x: Int = 0,
         y: Int = 0,
-        direction: Direction,
+        direction: Direction = Direction.EAST,
         portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
         length: Int? = null,
         var predefinedConnectedLength: Int? = null
 ) : AbstractPortView<DigitalSignal>(port, x, y, direction, portLabelPosition, length ?: LENGTH) {
-
-    constructor(): this(styleProvider = DrawStyleModule.styleProvider, port = DigitalPortImpl.createInput(), direction = Direction.EAST)
 
     companion object {
         val DEBUG_GFX = false

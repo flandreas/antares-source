@@ -22,12 +22,9 @@ import ch.scorpion.jabbah.graph.ApplicationMode
  * A view representation of a [Tunnel].
  */
 class TunnelView(
-        styleProvider: StyleProvider,
-        model: Tunnel
+        styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+        model: Tunnel = Tunnel()
 ) : DigitalComponentView<Tunnel>(styleProvider, "library.element.Tunnel", model) {
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, Tunnel())
-    @Suppress("unused") constructor(): this (DrawStyleModule.styleProvider)
 
     companion object {
         val SIZE = 4 * 7

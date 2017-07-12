@@ -20,13 +20,10 @@ import ch.scorpion.jabbah.graph.view.net.node.NodeViewImpl
  * Try to inject the aspect of varying color and stroke into [EdgeView] and [NodeView].
  */
 class DigitalNodeView(
-    styleProvider: StyleProvider,
-    net: Net<DigitalSignal>,
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    net: Net<DigitalSignal> = DigitalNet(),
     netViewStyle: NetViewStyle? = null
 ) : NodeViewImpl<DigitalSignal>(styleProvider, net, netViewStyle) {
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, DigitalNet())
-    constructor(): this(DrawStyleModule.styleProvider)
 
     override fun draw(context: DrawContext) {
         val oldColor = context.g.color

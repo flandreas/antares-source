@@ -25,12 +25,9 @@ import ch.scorpion.jabbah.io.StoreWriter
  * A standard implementation of the {@link CircuitInOut} interface.
  */
 class CircuitInOutImpl(
-    val eventBus: EventBus,
-    portType: PortType
+    val eventBus: EventBus = BaseModule.eventBus,
+    portType: PortType = PortType.INPUT
 ) : CalculatingVertice(CALCULATOR), CircuitInOut {
-
-    constructor(eventBus: EventBus): this(eventBus, PortType.INPUT)
-    constructor(): this(BaseModule.eventBus)
 
     companion object {
 

@@ -18,11 +18,9 @@ import ch.scorpion.jabbah.io.StoreWriter
  * Splits a multi-bit [Net] into multiple [Net]s with smaller [BitWidth].
  */
 class Splitter(
-    bitWidth: BitWidth,
-    branchCount: Int
+    bitWidth: BitWidth = BitWidth.BW_8,
+    branchCount: Int = 4
 ) : CalculatingVertice(CALCULATOR) {
-
-    constructor(): this(BitWidth.BW_8, 4)
 
     companion object {
         val CALCULATOR = object : VerticeCalculator<Splitter> {

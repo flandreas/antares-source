@@ -25,12 +25,9 @@ import ch.scorpion.jabbah.draw.graphics.Color
  * A view of a [Concentrator].
  */
 class ConcentratorView(
-        styleProvider: StyleProvider,
-        model: Concentrator
+        styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+        model: Concentrator = Concentrator()
 ) : DigitalComponentView<Concentrator>(styleProvider, "library.element.Concentrator", model) {
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, Concentrator())
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider)
 
     companion object {
         val WIDTH = 2 * Look.GRID

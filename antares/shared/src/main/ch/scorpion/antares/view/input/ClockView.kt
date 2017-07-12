@@ -15,12 +15,9 @@ import ch.scorpion.jabbah.base.System
  * A view representation of a [Clock].
  */
 class ClockView(
-    styleProvider: StyleProvider,
-    model: Clock
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    model: Clock = Clock()
 ) : AbstractDigitalGateView<Clock>(styleProvider, "", "library.element.Clock", model) {
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, Clock())
-    constructor(): this(DrawStyleModule.styleProvider)
 
     companion object {
         val SEG_X = Look.SCALE

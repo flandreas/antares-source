@@ -9,8 +9,10 @@ import ch.scorpion.jabbah.io.*
 /**
  * A standard implementation of the [Scenarios] interface.
  */
-class ScenariosImpl(override var graphView: GraphView<*>?, val eventBus: EventBus) : Scenarios {
-    constructor(): this(null, BaseModule.eventBus)
+class ScenariosImpl(
+        override var graphView: GraphView<*>? = null,
+        val eventBus: EventBus = BaseModule.eventBus
+) : Scenarios {
 
     private val scenarios: MutableList<Scenario> by lazy { mutableListOf<Scenario>() }
 

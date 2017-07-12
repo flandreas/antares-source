@@ -23,12 +23,9 @@ import ch.scorpion.jabbah.draw.graphics.Color
  * A view of a [Splitter].
  */
 class SplitterView(
-    styleProvider: StyleProvider,
-    model: Splitter
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    model: Splitter = Splitter()
 ) : DigitalComponentView<Splitter>(styleProvider, "library.element.Splitter", model) {
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, Splitter())
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider)
 
     companion object {
         val WIDTH = 2 * Look.GRID

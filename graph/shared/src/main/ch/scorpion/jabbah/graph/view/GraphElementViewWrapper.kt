@@ -22,11 +22,9 @@ import ch.scorpion.jabbah.io.StoreWriter
  * which is not yet supported by Kotlin's built-in delegation.
  */
 class GraphElementViewWrapper<T : GraphElement>(
-    component: Component?,
-    styleProvider: StyleProvider) : AbstractGraphElementView<T>(styleProvider, GraphStyleType.VERTICE, null) {
-
-    constructor(component: Component?): this(component, DrawStyleModule.styleProvider)
-    @Suppress("unused") constructor(): this(null)
+    component: Component? = null,
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider
+) : AbstractGraphElementView<T>(styleProvider, GraphStyleType.VERTICE, null) {
 
     private var drawableOwner: DrawableOwner? = null
 

@@ -85,7 +85,8 @@ class OrthoPolyline(points: List<Point2D>) {
     /** Updates the bounding box according to the current points. */
     private fun updateBoundingBox() {
         if (_points.size > 0) {
-            _boundingBox.setFrame(_points[0].x, _points[0].y, 0.0, 0.0)
+            // Height and width of zero would make the Rectangle2D 'inital', which is wrong if first point is (0,0)
+            _boundingBox.setFrame(_points[0].x, _points[0].y, 1.0, 1.0)
         }
         _points.forEach { _boundingBox.add(it) }
         _boundingBox.setFrame(

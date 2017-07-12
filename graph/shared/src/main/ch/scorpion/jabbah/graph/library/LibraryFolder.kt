@@ -13,16 +13,13 @@ import ch.scorpion.jabbah.io.*
 import kotlin.reflect.KClass
 
 class LibraryFolder(
-    name: String?,
-    iconPath: String?,
-    val eventBus: EventBus,
-    val storableCloner: StorableCloner,
-    val storableCreator: StorableCreator,
-    val libraryService: LibraryService
+    name: String? = null,
+    iconPath: String? = null,
+    val eventBus: EventBus = BaseModule.eventBus,
+    val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
+    val storableCreator: StorableCreator = IOModule.storableCreator,
+    val libraryService: LibraryService = LibraryModule.libraryService
 ) : AbstractLibraryItem(iconPath), LibraryDirectory {
-
-    constructor(name: String?): this(name, null, BaseModule.eventBus, IOModule.storableClonerProvider.invoke(), IOModule.storableCreator, LibraryModule.libraryService)
-    @Suppress("unused") constructor(): this(null)
 
     private val items: MutableList<LibraryItem> = mutableListOf()
 

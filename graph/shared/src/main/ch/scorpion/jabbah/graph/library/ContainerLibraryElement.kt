@@ -16,23 +16,14 @@ import ch.scorpion.jabbah.base.logger
  * @property uuid the UUID of the reference [MetaGraph]
  */
 class ContainerLibraryElement(
-    var uuid: UUID,
-    override var name: String,
-    iconPath: String?,
-    val storableCloner: StorableCloner,
-    val storableCreator: StorableCreator,
-    val libraryService: LibraryService,
-    val eventBus: EventBus
+    var uuid: UUID = UUID("undefined"),
+    override var name: String = "",
+    iconPath: String? = null,
+    val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
+    val storableCreator: StorableCreator = IOModule.storableCreator,
+    val libraryService: LibraryService = LibraryModule.libraryService,
+    val eventBus: EventBus = BaseModule.eventBus
 ) : LibraryElement(iconPath) {
-
-    constructor(): this(
-        UUID("undefined"),
-        "",
-        null,
-        IOModule.storableClonerProvider.invoke(),
-        IOModule.storableCreator,
-        LibraryModule.libraryService,
-        BaseModule.eventBus)
 
     companion object {
         val LOG by logger()

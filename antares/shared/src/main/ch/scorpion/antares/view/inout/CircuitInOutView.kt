@@ -55,13 +55,10 @@ import ch.scorpion.jabbah.base.logger
  * A [CircuitInOutView] is an arrow-like [GraphPortView] for digital [GraphPort]s.
  */
 class CircuitInOutView(
-    styleProvider: StyleProvider,
-    model: CircuitInOut,
-    private val eventBus: EventBus
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    model: CircuitInOut = CircuitInOutImpl(),
+    private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractVerticeView<CircuitInOut>(styleProvider, "library.element.CircuitInOut", model), GraphPortView<CircuitInOut>, ControlViewSource<CircuitInOut> {
-
-    constructor(styleProvider: StyleProvider, eventBus: EventBus): this(styleProvider, CircuitInOutImpl(), eventBus)
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider, BaseModule.eventBus)
 
     companion object {
         val PROP_INPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inputIcon"

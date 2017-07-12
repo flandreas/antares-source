@@ -17,8 +17,7 @@ import ch.scorpion.jabbah.base.logger
 /**
  * Displays the value of a [DigitalSignal] within a circuit.
  */
-class Probe(hasOutput: Boolean) : CalculatingVertice(CALCULATOR), DigitalSignalSource {
-    constructor(): this(false)
+class Probe(hasOutput: Boolean = false) : CalculatingVertice(CALCULATOR), DigitalSignalSource {
 
     companion object {
         val LOG by logger()

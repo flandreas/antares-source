@@ -37,13 +37,10 @@ import ch.scorpion.jabbah.draw.graphics.Color
  * A view of a [RAM].
  */
 class RAMView(
-    styleProvider: StyleProvider,
-    private val eventBus: EventBus,
-    model: RAM
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    private val eventBus: EventBus = BaseModule.eventBus,
+    model: RAM = RAM()
 ) : DigitalComponentView<RAM>(styleProvider, "library.element.RAM", model) {
-
-    constructor(styleProvider: StyleProvider, eventBus: EventBus): this(styleProvider, eventBus, RAM())
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider, BaseModule.eventBus)
 
     companion object {
         val WIDTH = 24 * Look.GRID

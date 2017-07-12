@@ -38,13 +38,10 @@ import ch.scorpion.jabbah.draw.graphics.Color
  * A view of a [ROM].
  */
 class ROMView(
-    styleProvider: StyleProvider,
-    private val eventBus: EventBus,
-    model: ROM
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    private val eventBus: EventBus = BaseModule.eventBus,
+    model: ROM = ROM()
 ) : DigitalComponentView<ROM>(styleProvider, "library.element.ROM", model) {
-
-    constructor(styleProvider: StyleProvider, eventBus: EventBus): this(styleProvider, eventBus, ROM())
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider, BaseModule.eventBus)
 
     companion object {
         val WIDTH = 24 * Look.GRID

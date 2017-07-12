@@ -19,13 +19,10 @@ import ch.scorpion.jabbah.base.UUID
  * A [SubGraphVertice] implementation that is part of one [Graph] and references another [Graph] in the [Library].
  */
 class SubGraphVerticeRef(
-    val storableCloner: StorableCloner,
-    val libraryHolder: LibraryHolder,
-    val scriptGateway: ScriptGateway
+    val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
+    val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+    val scriptGateway: ScriptGateway = ScriptModule.scriptGateway
 ) : CalculatingVertice(CALCULATOR), SubGraphVertice {
-
-    @Suppress("unused")
-    constructor(): this(IOModule.storableClonerProvider.invoke(), LibraryModule.libraryHolder, ScriptModule.scriptGateway)
 
     companion object {
 

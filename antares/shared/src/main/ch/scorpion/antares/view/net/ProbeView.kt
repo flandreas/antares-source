@@ -24,12 +24,9 @@ import ch.scorpion.jabbah.base.module.BaseModule
  * A view of a [Probe].
  */
 class ProbeView(
-    styleProvider: StyleProvider,
-    probe: Probe
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    probe: Probe = Probe()
 ) : AbstractNumberViewComponent<Probe>(styleProvider, "library.element.Probe", probe, Direction.EAST), ControlViewSource<Probe> {
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, Probe())
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider)
 
     companion object {
         val PROP_ICON_PATH = "ch.scorpion.antares.view.net.ProbeView.iconPath"

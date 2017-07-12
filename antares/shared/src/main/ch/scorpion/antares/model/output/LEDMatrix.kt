@@ -26,9 +26,10 @@ import ch.scorpion.jabbah.base.loggerFor
  * significant [Bit] identifying the rightmost column. The row port receives a [Word] whose [Bit]s
  * address the matrix rows, with the least significant [Bit] identifying the bottom row.
  */
-class LEDMatrix(columnWidth: BitWidth, rowWidth: BitWidth) : CalculatingVertice(CALCULATOR) {
-
-    constructor(): this(DEF_COLUMN_WIDTH, DEF_ROW_WIDTH)
+class LEDMatrix(
+        columnWidth: BitWidth = LEDMatrix.DEF_COLUMN_WIDTH,
+        rowWidth: BitWidth = LEDMatrix.DEF_ROW_WIDTH
+) : CalculatingVertice(CALCULATOR) {
 
     companion object {
         val COLUMN_PORT_NAME = "C"

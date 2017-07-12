@@ -17,8 +17,9 @@ import ch.scorpion.jabbah.io.StoreWriter
 /**
  * A [Vertice] that produces a configurable constant [DigitalSignal] at its single output.
  */
-class Constant(value: Word) : CalculatingVertice(CALCULATOR) {
-    constructor(): this(Word.of(Bit.False))
+class Constant(
+        value: Word = Word.of(Bit.False)
+) : CalculatingVertice(CALCULATOR) {
 
     init {
         addPort(DigitalPortImpl.createOutput())

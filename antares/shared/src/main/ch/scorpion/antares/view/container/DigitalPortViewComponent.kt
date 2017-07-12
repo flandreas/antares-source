@@ -18,12 +18,9 @@ import ch.scorpion.jabbah.io.StoreWriter
  * to which PortViews should listen and invalidate themselves accordingly.
  */
 class DigitalPortViewComponent(
-    styleProvider: StyleProvider,
-    portView: DigitalPortView?
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    portView: DigitalPortView? = null
 ) : PortViewComponent<DigitalSignal>(styleProvider, portView) {
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, null)
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider)
 
     private val digitalPort: DigitalPort get() = port as DigitalPort
     private val digitalPortView: DigitalPortView get() = portView as DigitalPortView

@@ -21,23 +21,19 @@ import ch.scorpion.jabbah.draw.graphics.FontStyle
  * A [RectangularComponent] that contains a [Label] drawable.
  */
 class LabelComponent(
-    styleProvider: StyleProvider,
-    val label: Label
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    val label: Label = Label(
+            text = DEFAULT_TEXT,
+            font = LabelComponent.DEFAULT_FONT,
+            horizontalAlignment = Label.HorizontalAlignment.CENTER,
+            verticalAlignment = Label.VerticalAlignment.CENTER,
+            location = Point2D())
 ) : RectangularComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider) {
 
     companion object {
         val DEFAULT_TEXT = "text"
         val DEFAULT_FONT = FontImpl("SansSerif", FontStyle.PLAIN.value, 14)
     }
-
-    constructor(): this(DrawStyleModule.styleProvider)
-    constructor(styleProvider: StyleProvider): this(styleProvider, DEFAULT_TEXT)
-    constructor(styleProvider: StyleProvider, text: String): this(styleProvider, Label(
-        text = text,
-        font = DEFAULT_FONT,
-        horizontalAlignment = Label.HorizontalAlignment.CENTER,
-        verticalAlignment = Label.VerticalAlignment.CENTER,
-        location = Point2D()))
 
     init {
         DrawableOwner(this, label)

@@ -37,15 +37,11 @@ import ch.scorpion.jabbah.base.MathClass
  * A view of a [SevenSegmentDisplay].
  */
 class SevenSegmentDisplayView(
-    styleProvider: StyleProvider,
-    model: SevenSegmentDisplay,
-    lightColor: LightColor
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    model: SevenSegmentDisplay = SevenSegmentDisplay(),
+    lightColor: LightColor = DEFAULT_LIGHT_COLOR
 ) : DigitalComponentView<SevenSegmentDisplay>(styleProvider, "library.element.SevenSegmentDisplay", model),
         ControlView<SevenSegmentDisplay>, ControlViewSource<SevenSegmentDisplay> {
-
-    constructor(styleProvider: StyleProvider, model: SevenSegmentDisplay): this(styleProvider, model, DEFAULT_LIGHT_COLOR)
-    constructor(styleProvider: StyleProvider): this(styleProvider, SevenSegmentDisplay())
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider)
 
     companion object {
         val PROP_ICON_PATH = "ch.scorpion.antares.view.output.SevenSegmentDisplayView.iconPath"

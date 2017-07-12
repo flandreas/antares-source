@@ -12,14 +12,11 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 class DigitalSignalSourceControlView<T : DigitalSignalSource>(
-    styleProvider: StyleProvider,
-    override var controlId: String?,
-    signalRepresentation: DigitalSignalRepresentation,
-    model: T?
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    override var controlId: String? = null,
+    signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY,
+    model: T? = null
 ) : AbstractNumberViewComponent<T>(styleProvider, "library.element.CircuitInOutControlView", model, Direction.EAST), ControlView<T> {
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, null, DigitalSignalRepresentation.BINARY, null)
-    constructor(): this(DrawStyleModule.styleProvider)
 
     init {
         modelExchanged(null)

@@ -17,11 +17,9 @@ import ch.scorpion.jabbah.io.StoreWriter
  * Concentrates multiple [Net]s into one [Net] with a larger [BitWidth].
  */
 class Concentrator(
-    bitWidth: BitWidth,
-    branchCount: Int
+    bitWidth: BitWidth = BitWidth.BW_8,
+    branchCount: Int = 4
 ) : CalculatingVertice(CALCULATOR){
-
-    constructor(): this(BitWidth.BW_8, 4)
 
     companion object {
         val CALCULATOR = object : VerticeCalculator<Concentrator> {

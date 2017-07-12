@@ -20,11 +20,9 @@ import ch.scorpion.jabbah.io.StoreWriter
 /**
  * A standard implementation of a [Polyline] [Component].
  */
-class PolylineComponent private constructor(
-    val polyline: PolylineDrawable
+class PolylineComponent(
+    val polyline: PolylineDrawable = PolylineDrawable()
 ) : AbstractComponent(), Polyline by polyline, Stylable by polyline {
-
-    constructor(): this(PolylineDrawable())
 
     init {
         DrawableOwner(this, polyline)

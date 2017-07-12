@@ -15,14 +15,10 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
  * A view of a [BufferGate].
  */
 class BufferGateView(
-    styleProvider: StyleProvider,
-    val currentSymbolStyle: CurrentSymbolStyle,
-    bufferGate: BufferGate
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+    bufferGate: BufferGate = BufferGate()
 ) : AbstractDigitalGateView<BufferGate>(styleProvider, "1", "library.element.Buffer", bufferGate) {
-
-    constructor(styleProvider: StyleProvider, currentSymbolStyle: CurrentSymbolStyle): this(styleProvider, currentSymbolStyle, BufferGate())
-    @Suppress("unused") constructor(): this(DrawStyleModule.styleProvider, AntaresViewModule.currentSymbolStyle)
-
 
     init {
         modelExchanged(null)
