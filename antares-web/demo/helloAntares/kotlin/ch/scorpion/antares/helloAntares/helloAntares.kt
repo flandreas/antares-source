@@ -1,6 +1,7 @@
 package ch.scorpion.antares.helloAntares
 
 import ch.scorpion.antares.module.AntaresModuleJs
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.edit.Component
@@ -17,9 +18,11 @@ import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader
 import org.w3c.dom.Document
+import org.w3c.dom.HTMLInputElement
 import org.w3c.xhr.DOCUMENT
 import org.w3c.xhr.XMLHttpRequest
 import org.w3c.xhr.XMLHttpRequestResponseType
+import kotlin.browser.document
 import kotlin.properties.Delegates
 
 var editor by Delegates.notNull<Editor>()
@@ -34,12 +37,22 @@ fun hello() {
 
     val canvas = CanvasJs("kotlinCanvas", { DrawingViewImpl<Drawing<Component>>(drawing as Drawing<Component>, it) }, StyleRepository.INSTANCE )
     editor = EditEditorModule.createEditor(canvas.view as DrawingView<Drawing<Component>>)
-
     canvas.repaint()
+}
+
+fun handleLoad() {
+
+    val input = document.getElementById("fileName") as HTMLInputElement
+    val fileName = input.value
+
+    if (StringUtils.isEmpty(fileName)) {
+        js("alert('Enter a file name')")
+        return
+    }
 
     val request = XMLHttpRequest()
 
-    request.open("GET", "http://localhost:4567/hello/antares.cir", true)
+    request.open("GET", "http://localhost:4567/hello/$fileName", true)
     request.responseType = XMLHttpRequestResponseType.DOCUMENT
     request.overrideMimeType("text/xml")
     request.onload = {
@@ -47,6 +60,7 @@ fun hello() {
         handleResponse(request.responseXML!!)
     }
     request.send()
+
 }
 
 private fun handleResponse(doc: Document) {
