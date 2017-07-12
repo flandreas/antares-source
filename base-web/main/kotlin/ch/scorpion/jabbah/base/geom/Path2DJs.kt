@@ -12,41 +12,51 @@ class Path2DJs : Path {
     /** ---- [Path] interface */
 
     override fun moveTo(x: Double, y: Double): Path {
+        boundingBox.add(x, y)
         entries.add(Entry(MoveTo(Point2D(x, y))))
         return this
     }
 
     override fun moveTo(x: Int, y: Int): Path {
+        boundingBox.add(x.toDouble(), y.toDouble())
         entries.add(Entry(MoveTo(Point2D(x, y))))
         return this
     }
 
     override fun moveTo(x: Float, y: Float): Path {
+        boundingBox.add(x.toDouble(), y.toDouble())
         entries.add(Entry(MoveTo(Point2D(x.toDouble(), y.toDouble()))))
         return this
     }
 
     override fun lineTo(x: Double, y: Double): Path {
+        boundingBox.add(x, y)
         entries.add(Entry(LineTo(Point2D(x, y))))
         return this
     }
 
     override fun lineTo(x: Int, y: Int): Path {
+        boundingBox.add(x.toDouble(), y.toDouble())
         entries.add(Entry(LineTo(Point2D(x, y))))
         return this
     }
 
     override fun lineTo(x: Float, y: Float): Path {
+        boundingBox.add(x.toDouble(), y.toDouble())
         entries.add(Entry(LineTo(Point2D(x.toDouble(), y.toDouble()))))
         return this
     }
 
     override fun quadTo(x1: Double, y1: Double, x2: Double, y2: Double): Path {
+        boundingBox.add(x1.toDouble(), y1.toDouble())
+        boundingBox.add(x2.toDouble(), y2.toDouble())
         entries.add(Entry(QuadTo(Point2D(x1, y1), Point2D(x2, y2))))
         return this
     }
 
     override fun quadTo(x1: Int, y1: Int, x2: Int, y2: Int): Path {
+        boundingBox.add(x1.toDouble(), y1.toDouble())
+        boundingBox.add(x2.toDouble(), y2.toDouble())
         entries.add(Entry(QuadTo(Point2D(x1, y1), Point2D(x2, y2))))
         return this
     }
@@ -65,15 +75,15 @@ class Path2DJs : Path {
     override val boundingBox = Rectangle2D()
 
     override fun contains(x: Double, y: Double): Boolean {
-        return false
+        return boundingBox.contains(x, y)
     }
 
     override fun contains(x: Double, y: Double, width: Double, height: Double): Boolean {
-        return false
+        return boundingBox.contains(x, y, width, height)
     }
 
     override fun intersects(x: Double, y: Double, w: Double, h: Double): Boolean {
-        return false
+        return boundingBox.intersects(x, y, w, h)
     }
 
     /** ---- [Path2DJs] */

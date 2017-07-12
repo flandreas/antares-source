@@ -121,17 +121,26 @@ class Rectangle2DTest {
         assertThat(Rectangle2D(100, 100, 100, 100).outcode(0.0, 0.0), `is`(OUT_TOP or OUT_LEFT))
     }
 
+    @Test
     fun shouldIntersectLine() {
         val rect = Rectangle2D(100, 100, 100, 100)
-        assertThat(rect.intersectsLine(0.0, 50.0, 150.0, 50.0), `is`(true))
-        assertThat(rect.intersectsLine(150.0, 0.0, 150.0, 50.0), `is`(true))
-        assertThat(rect.intersectsLine(300.0, 150.0, 150.0, 50.0), `is`(true))
-        assertThat(rect.intersectsLine(150.0, 300.0, 150.0, 50.0), `is`(true))
+        assertThat(rect.intersectsLine(0.0, 150.0, 150.0, 150.0), `is`(true))
+        assertThat(rect.intersectsLine(150.0, 0.0, 150.0, 150.0), `is`(true))
+        assertThat(rect.intersectsLine(300.0, 150.0, 150.0, 150.0), `is`(true))
+        assertThat(rect.intersectsLine(150.0, 300.0, 150.0, 150.0), `is`(true))
     }
 
+    @Test
     fun shouldNotIntersectLine() {
         val rect = Rectangle2D(100, 100, 100, 100)
         assertThat(rect.intersectsLine(0.0, 0.0, 300.0, 0.0), `is`(false))
         assertThat(rect.intersectsLine(150.0, 0.0, 300.0, 0.0), `is`(false))
+    }
+
+    @Test
+    fun shouldAddFirstPoint() {
+        val rect = Rectangle2D()
+        rect.add(100, 100)
+        assertThat(rect.boundingBox as Rectangle2D, `is`(Rectangle2D(100, 100, 0, 0)))
     }
 }

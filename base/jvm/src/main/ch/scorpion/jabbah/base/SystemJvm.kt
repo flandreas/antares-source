@@ -1,11 +1,8 @@
 package ch.scorpion.jabbah.base
 
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.time.RealTimeTimerJvm
 import ch.scorpion.jabbah.base.time.Timer
-import ch.scorpion.jabbah.base.geom.AffineTransform
-import ch.scorpion.jabbah.base.geom.AffineTransformJvm
-import ch.scorpion.jabbah.base.geom.Path
-import ch.scorpion.jabbah.base.geom.Path2DJvm
 import kotlin.reflect.KClass
 
 /** Implements the [System] interface on the Java virtual machine platform.*/

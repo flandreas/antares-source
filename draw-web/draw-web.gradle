@@ -2,6 +2,7 @@ apply plugin: 'kotlin2js'
 
 sourceSets {
     main.kotlin.srcDirs += 'main/kotlin'
+    test.kotlin.srcDirs += 'test/kotlin'
 
     demo {
         kotlin {

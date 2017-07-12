@@ -32,6 +32,11 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
         }
     }
 
+    init {
+        // Initialize with identity
+        ctx.setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+    }
+
     /** ---- [Graphics2D] interface */
 
     /** HTML canvas doesn't support to change the antialias property. */
@@ -95,17 +100,17 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
 
     override fun scale(sx: Double, sy: Double) {
         transform.scale(sx, sy)
-        forwardTransform()
+        ctx.scale(sx, sy)
     }
 
     override fun translate(tx: Double, ty: Double) {
         transform.translate(tx, ty)
-        forwardTransform()
+        ctx.translate(tx, ty)
     }
 
     override fun rotate(theta: Double) {
         transform.rotate(theta)
-        forwardTransform()
+        ctx.rotate(theta)
     }
 
     override fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {

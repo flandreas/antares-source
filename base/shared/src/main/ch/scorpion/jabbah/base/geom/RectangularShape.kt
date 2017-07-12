@@ -29,6 +29,9 @@ interface RectangularShape : Shape {
     val width: Double
     val height: Double
 
+    /** Determines whether this [RectangularShape]'s geometry property are all zero.*/
+    val isInitial: Boolean get() = isEmpty && x <= 0 && y <= 0
+
     /** Determines whether this [RectangularShape] encloses no area.*/
     val isEmpty: Boolean get() = width <= 0 || height <= 0
 
@@ -75,12 +78,20 @@ interface RectangularShape : Shape {
      * @return this [RectangularShape] to support method chaining
      */
     fun add(x: Double, y: Double): RectangularShape {
-        val x1 = Math.min(minX, x)
-        val x2 = Math.max(maxX, x)
-        val y1 = Math.min(minY, y)
-        val y2 = Math.max(maxY, y)
-        setFrame(x1, y1, x2 - x1, y2 - y1)
+        if (isInitial) {
+            setFrame(x, y, 0.0, 0.0)
+        } else {
+            val x1 = Math.min(minX, x)
+            val x2 = Math.max(maxX, x)
+            val y1 = Math.min(minY, y)
+            val y2 = Math.max(maxY, y)
+            setFrame(x1, y1, x2 - x1, y2 - y1)
+        }
         return this
+    }
+
+    fun add(x: Int, y: Int): RectangularShape {
+        return add(x.toDouble(), y.toDouble())
     }
 
     fun add(p: Point2D): RectangularShape {
@@ -93,11 +104,15 @@ interface RectangularShape : Shape {
      * @return this [RectangularShape] to support method chaining
      */
     fun add(rect: RectangularShape): RectangularShape {
-        val x1 = Math.min(minX, rect.minX)
-        val x2 = Math.max(maxX, rect.maxX)
-        val y1 = Math.min(minY, rect.minY)
-        val y2 = Math.max(maxY, rect.maxY)
-        setFrame(x1, y1, x2 - x1, y2 - y1)
+        if (isInitial) {
+            setFrame(rect)
+        } else {
+            val x1 = Math.min(minX, rect.minX)
+            val x2 = Math.max(maxX, rect.maxX)
+            val y1 = Math.min(minY, rect.minY)
+            val y2 = Math.max(maxY, rect.maxY)
+            setFrame(x1, y1, x2 - x1, y2 - y1)
+        }
         return this
     }
 

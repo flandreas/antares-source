@@ -17,16 +17,16 @@ abstract class AbstractRectangularShape(
 
     companion object {
 
-        /** The bitmask that indicates that a point lies to the left of this [RectangularShape].*/
+        /** The bit-mask that indicates that a point lies to the left of this [RectangularShape].*/
         val OUT_LEFT = 1
 
-        /** The bitmask that indicates that a point lies above this [RectangularShape].*/
+        /** The bit-mask that indicates that a point lies above this [RectangularShape].*/
         val OUT_TOP = 2
 
-        /** The bitmask that indicates that a point lies to the right of this [RectangularShape].*/
+        /** The bit-mask that indicates that a point lies to the right of this [RectangularShape].*/
         val OUT_RIGHT = 4
 
-        /** The bitmask that indicates that a point lies below this [RectangularShape].*/
+        /** The bit-mask that indicates that a point lies below this [RectangularShape].*/
         val OUT_BOTTOM = 8
     }
 

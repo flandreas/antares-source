@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.base.logger
 
 enum class SymbolStyle(val customName: String) {
     EUROPEAN("IEC") {
