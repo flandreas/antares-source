@@ -145,7 +145,6 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
     }
 
     override fun fillRect(x: Int, y: Int, w: Int, h: Int) {
-        LOG.debug("Graphics2DJs.fillRect with ${ctx.fillStyle}")
         ctx.fillRect(x.toDouble() + 0.5, y.toDouble() + 0.5, w.toDouble(), h.toDouble())
     }
 
