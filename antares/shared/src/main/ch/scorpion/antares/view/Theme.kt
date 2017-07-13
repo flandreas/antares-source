@@ -35,10 +35,10 @@ class Theme(
         private val SELECTION_COLOR = Color.ORANGE
         private val SKY_BLUE = CompositeColor(foregroundColor = Color(69, 113, 180), backgroundColor = Color(220, 237, 250))
 
-        private val FONT = FontImpl("SansSerif", FontStyle.PLAIN.value, (2.5 * Look.SCALE).toInt())
-        val ANNOTATION_FONT = FontImpl("SansSerif", FontStyle.PLAIN.value, (1.4 * Look.SCALE).toInt())
-        val SIGNAL_FONT = FontImpl("SansSerif", FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
-        val EXPLANATION_FONT = FontImpl("SansSerif", FontStyle.PLAIN.value, 12)
+        private val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.5 * Look.SCALE).toInt())
+        val ANNOTATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.4 * Look.SCALE).toInt())
+        val SIGNAL_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
+        val EXPLANATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 12)
 
         val ANNOTATION_STROKE = Stroke(1.0f)
         private val HIGHLIGHT = CompositeColor(foregroundColor = Color.YELLOW, backgroundColor = Color.YELLOW)

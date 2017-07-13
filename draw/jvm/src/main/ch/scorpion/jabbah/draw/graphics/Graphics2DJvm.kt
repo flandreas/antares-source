@@ -48,7 +48,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         }
 
         fun toAwtFont(font: Font): java.awt.Font {
-            return java.awt.Font(font.name, fromFontStyle(font), font.size)
+            return java.awt.Font(font.family.javaName, fromFontStyle(font), font.size)
         }
     }
 
@@ -92,7 +92,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     override var font: Font
         get() {
             val f = g.font
-            return FontImpl(f.name, toFontStyle(f), f.size)
+            return FontImpl(FontFamily.fromJavaName(f.name), toFontStyle(f), f.size)
         }
         set(value) {
             g.font = toAwtFont(value)

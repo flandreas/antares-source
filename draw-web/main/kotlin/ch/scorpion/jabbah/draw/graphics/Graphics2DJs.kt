@@ -28,7 +28,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
         }
 
         fun toJsFont(font: Font): String {
-            return "${toJsFontStyle(font)} ${font.size}px ${font.name}"
+            return "${toJsFontStyle(font)} ${font.size}px ${font.family.jsName}"
         }
     }
 

@@ -21,7 +21,7 @@ object DrawModuleJvm : AbstractModule() {
         DrawModule.polylineShapeFactory = ::PolylineShapeJvm
 
         DrawModule.textRenderInfoFactory = { text, font ->
-            val awtFont = java.awt.Font(font.name, Graphics2DJvm.fromFontStyle(font), font.size)
+            val awtFont = java.awt.Font(font.family.javaName, Graphics2DJvm.fromFontStyle(font), font.size)
             val context = FontRenderContext(awtFont.transform, true, true)
             val rect = awtFont.getStringBounds(text, context)
             val lm = awtFont.getLineMetrics(text, context)

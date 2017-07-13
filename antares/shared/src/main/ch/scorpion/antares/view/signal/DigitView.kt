@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.style.Themes
@@ -26,7 +27,7 @@ class DigitView(
     companion object {
         val WIDTH = 20
         val HEIGHT = 20
-        val FONT = FontImpl("SansSerif", FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
+        val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
     }
 
     /** Controls whether this [DigitView] has the focus and should draw a focus border.*/

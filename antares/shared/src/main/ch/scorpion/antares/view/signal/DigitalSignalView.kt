@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.module.DrawModule
@@ -29,7 +30,7 @@ class DigitalSignalView(
 ) : AbstractRectangle(RoundRectangle2D(0.0, 0.0, calcWidth(bitWidth, representation), calcHeight(), ARCH_SIZE, ARCH_SIZE)), Locatable {
 
     companion object {
-        val FONT = FontImpl("SansSerif", FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
+        val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
         val V_INSET = 3
         val H_INSET = 4
         val ARCH_SIZE = 12.0

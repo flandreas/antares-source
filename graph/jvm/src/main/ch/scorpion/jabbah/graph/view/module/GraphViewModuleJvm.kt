@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
@@ -46,8 +47,8 @@ object GraphViewModuleJvm : AbstractModule() {
     }
 
     private fun fillProperties(properties: Properties) {
-        properties.predefine(NavigationStackView.PROP_FONT, FontImpl("Dialog", FontStyle.PLAIN.value, 11))
-        properties.predefine(NavigationStackView.PROP_HEAD_FONT, FontImpl("Dialog", FontStyle.BOLD.value, 11))
+        properties.predefine(NavigationStackView.PROP_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 11))
+        properties.predefine(NavigationStackView.PROP_HEAD_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.BOLD.value, 11))
         properties.predefine(NavigationStackView.PROP_BACKGROUND_COLOR, Color.WHITE)
         properties.predefine(NavigationStackView.PROP_BORDER_COLOR, Color(224, 224, 224))
         properties.predefine(NavigationStackView.PROP_TEXT_COLOR, Color.BLACK)

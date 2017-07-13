@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 
@@ -32,7 +33,7 @@ class LabelComponent(
 
     companion object {
         val DEFAULT_TEXT = "text"
-        val DEFAULT_FONT = FontImpl("SansSerif", FontStyle.PLAIN.value, 14)
+        val DEFAULT_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 14)
     }
 
     init {

@@ -37,6 +37,8 @@ fun hello() {
 
     val canvas = CanvasJs("kotlinCanvas", { DrawingViewImpl<Drawing<Component>>(drawing as Drawing<Component>, it) }, StyleRepository.INSTANCE )
     editor = EditEditorModule.createEditor(canvas.view as DrawingView<Drawing<Component>>)
+    editor.view.editable = false
+
     canvas.repaint()
 }
 
