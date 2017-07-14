@@ -9,8 +9,6 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
-import ch.scorpion.jabbah.edit.model.DrawingImpl
-import ch.scorpion.jabbah.edit.module.EditModuleJs
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -30,18 +28,20 @@ var editor by Delegates.notNull<Editor>()
 /**
  * Loads an antares [GraphView] from the REST API and displays it.
  */
+@Suppress("unused")
 fun hello() {
     AntaresModuleJs.require()
 
     val drawing = GraphViewImpl<GraphElementView<*>>()
 
-    val canvas = CanvasJs("kotlinCanvas", { DrawingViewImpl<Drawing<Component>>(drawing as Drawing<Component>, it) }, StyleRepository.INSTANCE )
+    val canvas = CanvasJs("kotlinCanvas", { DrawingViewImpl(drawing as Drawing<Component>, it) }, StyleRepository.INSTANCE )
     editor = EditEditorModule.createEditor(canvas.view as DrawingView<Drawing<Component>>)
     editor.view.editable = false
 
     canvas.repaint()
 }
 
+@Suppress("unused")
 fun handleLoad() {
 
     val input = document.getElementById("fileName") as HTMLInputElement
@@ -54,7 +54,7 @@ fun handleLoad() {
 
     val request = XMLHttpRequest()
 
-    request.open("GET", "http://localhost:4567/hello/$fileName", true)
+    request.open("GET", "http://localhost:4567/jabbah-graph/graphView/$fileName", true)
     request.responseType = XMLHttpRequestResponseType.DOCUMENT
     request.overrideMimeType("text/xml")
     request.onload = {

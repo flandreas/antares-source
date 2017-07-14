@@ -13,7 +13,7 @@ class RestApi(val cmdLine: CommandLine) {
 
     companion object {
 
-    val LOG = LoggerFactory.getLogger(RestApi::class.java)
+    val LOG = LoggerFactory.getLogger(RestApi::class.java)!!
 
         @JvmStatic fun main(args: Array<String>) {
             val options = defineOptions()
@@ -21,7 +21,7 @@ class RestApi(val cmdLine: CommandLine) {
                 RestApi(DefaultParser().parse(options, args))
             } catch (x: ParseException) {
                 LOG.error("Error while parsing options: '${x.message}'")
-                HelpFormatter().printHelp("Jabbah REST API", options)
+                HelpFormatter().printHelp("jabbah.graph REST API", options)
                 System.exit(1)
             }
         }
@@ -44,7 +44,7 @@ class RestApi(val cmdLine: CommandLine) {
         LOG.info("Jabbah REST API server started")
         LOG.info("Accessing drawings in directory '${cmdLine.getOptionValue("d")}'")
 
-        get("/hello/:name") {req, res ->
+        get("/jabbah-graph/graphView/:name") {req, res ->
             res.type("text/xml")
             getDrawing(req.params(":name"))
         }
