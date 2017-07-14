@@ -20,7 +20,7 @@ class LogSystemJs : LogSystem {
         TRACE
     }
 
-    var logLevel : LogLevel = LogLevel.DEBUG
+    var logLevel : LogLevel = LogLevel.INFO
 
     private inner class LoggerJs : Logger {
 

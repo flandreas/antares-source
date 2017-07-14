@@ -91,12 +91,11 @@ class StoreXmlWriter(
     }
 
     override fun writePoints(name: String, points: List<Point2D>) {
-        //TODO Use Kotlin StringBuilder after switching to Kotlin 1.1
-        var list = String()
+        var list = StringBuilder()
         for (i in 0..points.size - 1) {
-            list += "${points[i].x},${points[i].y} "
+            list.append("${points[i].x},${points[i].y} ")
         }
-        writeString(name, list.trim())
+        writeString(name, list.toString().trim())
     }
 
     override fun writePoints(outerElem: String, innerElem: String, attribute: String, points: List<Point2D>) {
