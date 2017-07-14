@@ -12,6 +12,7 @@ include 'edit-web'
 include 'execution'
 include 'app'
 include 'graph'
+include 'graph-web'
 include 'antares'
 include 'antares-web'
 

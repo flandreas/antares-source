@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
  */
 fun <T: Any> JsClass<T>.newInstance(): T {
     inline fun callCtor(ctor: dynamic) = js("new ctor()")
-    return callCtor(asDynamic()) as T
+    return callCtor(asDynamic())
 }
 
 /**

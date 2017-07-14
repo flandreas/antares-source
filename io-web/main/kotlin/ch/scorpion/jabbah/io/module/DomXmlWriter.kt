@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.io.XmlWriter
 import org.w3c.dom.Element
 import org.w3c.dom.XMLDocument
 import org.w3c.dom.parsing.XMLSerializer
+import kotlin.browser.document
 
 /**
  * An [XmlWriter] for writing W3C XML DOM documents.
@@ -16,8 +17,8 @@ class DomXmlWriter(private val consumer: (String) -> Unit) : XmlWriter {
 
     private val LOG by loggerFor(this)
 
-    /** Holds the XML document that is to be created and serialized into a [String]. */
-    private val document = XMLDocument()
+    /** Holds the XML xmlDoc that is to be created and serialized into a [String]. */
+    private var xmlDoc: XMLDocument? = null
 
     private val stack = Stack<Element>()
 
@@ -28,13 +29,18 @@ class DomXmlWriter(private val consumer: (String) -> Unit) : XmlWriter {
     }
 
     override fun addElementAndDescend(name: String) {
-        val child = document.createElement(name)
-        if (isRoot()) {
-            document.rootElement!!.appendChild(child)
-        } else {
-            stack.peek().appendChild(child)
+        try {
+            if (isRoot()) {
+                xmlDoc = document.implementation.createDocument(null, name, null)
+                stack.push(xmlDoc!!.documentElement!!)
+            } else {
+                val child = xmlDoc!!.createElement(name)
+                stack.peek().appendChild(child)
+                stack.push(child)
+            }
+        } catch(e: Throwable) {
+            LOG.error("DomXmlWriter: Error while descending to $name")
         }
-        stack.push(child)
     }
 
     override fun ascend() {
@@ -43,7 +49,7 @@ class DomXmlWriter(private val consumer: (String) -> Unit) : XmlWriter {
 
     override fun flush() {
         try {
-            consumer.invoke(XMLSerializer().serializeToString(document))
+            consumer.invoke(XMLSerializer().serializeToString(xmlDoc!!))
         } catch(e: Exception) {
             LOG.error("Error in flushing Document to XML string: ${e.message}")
         }

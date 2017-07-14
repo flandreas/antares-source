@@ -40,10 +40,12 @@ dependencies {
     compile project(path: ':graph', configuration: 'web')
     compile files('../graph/build/libs/graph.meta.js')
 
+    compile files('../graph-web/build/classes/main/graph-web_main.meta.js')
+
     compile project(path: ':antares', configuration: 'web')
     compile files('../antares/build/libs/antares.meta.js')
 
-    compile project(path: ':edit-web')
+    compile project(path: ':graph-web')
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
 }

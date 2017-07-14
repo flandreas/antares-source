@@ -13,7 +13,10 @@ class RestApi(val cmdLine: CommandLine) {
 
     companion object {
 
-    val LOG = LoggerFactory.getLogger(RestApi::class.java)!!
+        val LOG = LoggerFactory.getLogger(RestApi::class.java)!!
+
+        private val BASE_URL = "/jabbah-graph"
+        private val LIBRARY_FILE_NAME = "library.lib"
 
         @JvmStatic fun main(args: Array<String>) {
             val options = defineOptions()
@@ -36,22 +39,42 @@ class RestApi(val cmdLine: CommandLine) {
                     .hasArg()
                     .build())
 
+            options.addOption(Option.builder("l")
+                    .required()
+                    .longOpt("libraryDir")
+                    .desc("Library directory")
+                    .hasArg()
+                    .build())
+
             return options
         }
     }
 
     init {
-        LOG.info("Jabbah REST API server started")
+        LOG.info("Jabbah Graph REST API server started")
         LOG.info("Accessing drawings in directory '${cmdLine.getOptionValue("d")}'")
+        LOG.info("Accessing library in directory '${cmdLine.getOptionValue("l")}'")
 
-        get("/jabbah-graph/graphView/:name") {req, res ->
-            res.type("text/xml")
-            getDrawing(req.params(":name"))
+        /** Returns a GraphView with a given name as an XML string.*/
+        get("$BASE_URL/graphView/:name") { request, result ->
+            result.type("text/xml")
+            getFile(cmdLine.getOptionValue("d"), request.params(":name"))
+        }
+
+        /** Returns the Library as an XML string. */
+        get("$BASE_URL/library/contents") { request, result ->
+            result.type("text/xml")
+            getFile(cmdLine.getOptionValue("l"), LIBRARY_FILE_NAME)
+        }
+
+        get("$BASE_URL/library/graphView/:name") { request, result ->
+            result.type("text/xml")
+            getFile(cmdLine.getOptionValue("l"), "${request.params(":name")}.cir")
         }
     }
 
-    fun getDrawing(name: String): String? {
-        val path = Paths.get(cmdLine.getOptionValue("d"), name)
+    private fun getFile(dirPath: String, fileName: String): String? {
+        val path = Paths.get(dirPath, fileName)
         if (!Files.exists(path)) {
             LOG.error("Path '$path' doesn't exist")
             return null

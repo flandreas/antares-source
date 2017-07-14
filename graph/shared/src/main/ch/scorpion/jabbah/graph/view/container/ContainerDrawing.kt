@@ -121,8 +121,7 @@ class ContainerDrawing(
 
     /** Creates a copy of the [SubGraphVertice] model of this {@link ContainerDrawing}*/
     fun createSubGraphVertice(): SubGraphVertice {
-        val clonedDrawing: ContainerDrawing = storableCloner.cloneUsingCreator(this, storableCreator) as ContainerDrawing
-        return clonedDrawing.model
+        return storableCloner.cloneUsingCreator(this.model, storableCreator) as SubGraphVertice
     }
 
     /**

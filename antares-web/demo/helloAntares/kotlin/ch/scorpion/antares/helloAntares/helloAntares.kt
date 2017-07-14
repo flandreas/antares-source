@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.io.DomXmlReader
@@ -31,6 +32,8 @@ var editor by Delegates.notNull<Editor>()
 @Suppress("unused")
 fun hello() {
     AntaresModuleJs.require()
+
+    LibraryModule.libraryHolder.library.load()
 
     val drawing = GraphViewImpl<GraphElementView<*>>()
 

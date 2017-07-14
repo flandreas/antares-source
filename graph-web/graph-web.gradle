@@ -1,0 +1,30 @@
+apply plugin: 'kotlin2js'
+
+sourceSets {
+    main.kotlin.srcDirs += 'main/kotlin'
+    test.kotlin.srcDirs += 'test/kotlin'
+}
+
+dependencies {
+    compile project(path: ':base', configuration: 'web')
+    compile files('../base/build/libs/base.meta.js')
+
+    compile project(path: ':base-web')
+    compile files('../base-web/build/classes/main/base-web_main.meta.js')
+
+    compile project(path: ':io-web')
+    compile files('../io-web/build/classes/main/io-web_main.meta.js')
+
+    compile project(path: ':animation', configuration: 'web')
+    compile files('../animation/build/libs/animation.meta.js')
+
+    compile project(path: ':draw', configuration: 'web')
+    compile files('../draw/build/libs/draw.meta.js')
+
+    compile project(path: ':graph', configuration: 'web')
+    compile files('../graph/build/libs/graph.meta.js')
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+}
+
+
