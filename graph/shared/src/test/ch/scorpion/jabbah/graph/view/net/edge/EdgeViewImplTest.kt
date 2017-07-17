@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
@@ -36,6 +37,16 @@ class EdgeViewImplTest {
                 .withResource("test.name")
                 .withResource("graph.name.unknown")
                 .withResource("test.desc")
+    }
+
+    @Test
+    fun shouldUpdateBoundingBox() {
+        val ev = edgeViewFactory.createEdgeView()
+        ev.addSegmentPoint(Point2D(100, 100))
+        ev.addSegmentPoint(Point2D(200, 100))
+        ev.addSegmentPoint(Point2D(200, 200))
+        // Result includes line width
+        assertThat(ev.boundingBox as Rectangle2D, `is`(Rectangle2D(99, 99, 102, 102)))
     }
 
     @Test

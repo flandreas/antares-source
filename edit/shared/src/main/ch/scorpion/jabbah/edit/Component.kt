@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.io.Storable
 
 /**
@@ -17,7 +18,7 @@ import ch.scorpion.jabbah.io.Storable
  * - [Component]s can be selected
  * - [Component]s can be manipulated by an [Editor]
  */
-interface Component : Locatable, Snappable, Storable {
+interface Component : Locatable, Snappable, Storable, Stylable {
 
     /** Holds an identification being unique within the [ComponentContainer] that contains this [Component].*/
     var id: Int
@@ -33,12 +34,6 @@ interface Component : Locatable, Snappable, Storable {
      * Example: "Rectangle"
      */
     val type: String?
-
-    /**
-     * Holds the [StyleType] of this [Component].
-     * The setter throws an [IllegalStateException] if [fixStyleType] is true.
-     */
-    var styleType: StyleType
 
     /**
      * Determines whether this [Component]'s [StyleType] is determined by the implementing class and cannot be

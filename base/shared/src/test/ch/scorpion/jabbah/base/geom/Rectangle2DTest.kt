@@ -66,36 +66,36 @@ class Rectangle2DTest {
 
     @Test
     fun shouldContainLocation() {
-        var rect = Rectangle2D(0.0, 0.0, 100.0, 100.0)
-        assertTrue(rect.contains(0.0, 0.0));
-        assertTrue(rect.contains(100.0, 100.0));
-        assertTrue(rect.contains(50.0, 50.0));
+        val rect = Rectangle2D(0.0, 0.0, 100.0, 100.0)
+        assertTrue(rect.contains(0.0, 0.0))
+        assertTrue(rect.contains(100.0, 100.0))
+        assertTrue(rect.contains(50.0, 50.0))
     }
 
     @Test
     fun shouldNotContainLocation() {
-        var rect = Rectangle2D(0.0, 0.0, 100.0, 100.0)
-        assertFalse(rect.contains(-1.0, -1.0));
-        assertFalse(rect.contains(101.0, 100.0));
-        assertFalse(rect.contains(200.0, 200.0));
+        val rect = Rectangle2D(0.0, 0.0, 100.0, 100.0)
+        assertFalse(rect.contains(-1.0, -1.0))
+        assertFalse(rect.contains(101.0, 100.0))
+        assertFalse(rect.contains(200.0, 200.0))
     }
 
     @Test
     fun shouldBeEmpty() {
-        assertTrue(Rectangle2D(0.0, 0.0, 0.0, 100.0).isEmpty);
-        assertTrue(Rectangle2D(0.0, 0.0, 100.0, 0.0).isEmpty);
-        assertFalse(Rectangle2D(0.0, 0.0, 100.0, 100.0).isEmpty);
+        assertTrue(Rectangle2D(0.0, 0.0, 0.0, 0.0).isEmpty)
+        assertFalse(Rectangle2D(0.0, 0.0, 100.0, 0.0).isEmpty)
+        assertFalse(Rectangle2D(0.0, 0.0, 100.0, 100.0).isEmpty)
     }
 
     @Test
     fun shouldContainRectangle() {
         var rect = Rectangle2D(0.0, 0.0, 100.0, 100.0)
-        assertTrue(rect.contains(0.0, 0.0, 10.0, 10.0));
-        assertTrue(rect.contains(0.0, 0.0, 100.0, 100.0));
-        assertTrue(rect.contains(10.0, 10.0, 10.0, 10.0));
-        assertFalse(rect.contains(-1.0, 1.0, 100.0, 100.0));
-        assertFalse(rect.contains(0.0, 0.0, 200.0, 200.0));
-        assertFalse(rect.contains(200.0, 200.0, 100.0, 100.0));
+        assertTrue(rect.contains(0.0, 0.0, 10.0, 10.0))
+        assertTrue(rect.contains(0.0, 0.0, 100.0, 100.0))
+        assertTrue(rect.contains(10.0, 10.0, 10.0, 10.0))
+        assertFalse(rect.contains(-1.0, 1.0, 100.0, 100.0))
+        assertFalse(rect.contains(0.0, 0.0, 200.0, 200.0))
+        assertFalse(rect.contains(200.0, 200.0, 100.0, 100.0))
     }
 
     @Test

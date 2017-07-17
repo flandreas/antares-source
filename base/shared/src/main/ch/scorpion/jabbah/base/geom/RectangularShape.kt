@@ -30,10 +30,10 @@ interface RectangularShape : Shape {
     val height: Double
 
     /** Determines whether this [RectangularShape]'s geometry property are all zero.*/
-    val isInitial: Boolean get() = isEmpty && x <= 0 && y <= 0
+    val isInitial: Boolean get() = isEmpty && x == 0.0 && y == 0.0
 
     /** Determines whether this [RectangularShape] encloses no area.*/
-    val isEmpty: Boolean get() = width <= 0 || height <= 0
+    val isEmpty: Boolean get() = width <= 0 && height <= 0
 
     /** Contains the x coordinate of this [RectangularShape]'s center.  */
     val centerX: Double get() = x + width / 2.0

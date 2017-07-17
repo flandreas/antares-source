@@ -11,11 +11,8 @@ import ch.scorpion.jabbah.draw.graphics.Color
 class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 
     private companion object {
-
         private val DEBUG_GFX = false
 
-        // TODO Pluggable stroke
-        private val LINE_WIDTH = 1
     }
 
     override val boundingBox: Rectangle2D = Rectangle2D()
@@ -45,29 +42,33 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
             boundingBox.setFrame(edgeView.polyline.getPointAt(0).x, edgeView.polyline.getPointAt(0).y, 0.0, 0.0)
         }
         boundingBox.add(edgeView.polyline.boundingBox)
-        if (edgeView.origin == null) {
+        if (edgeView.origin != null) {
             boundingBox.add(edgeView.originEndpointView.boundingBox)
         }
-        if (edgeView.destination == null) {
+        if (edgeView.destination != null) {
             boundingBox.add(edgeView.destinationEndpointView.boundingBox)
         }
         boundingBox.setFrame(
-                boundingBox.x - LINE_WIDTH, boundingBox.y - LINE_WIDTH,
-                boundingBox.width + 2 * LINE_WIDTH, boundingBox.height + 2 * LINE_WIDTH)
+                boundingBox.x - edgeView.stroke.width, boundingBox.y - edgeView.stroke.width,
+                boundingBox.width + 2 * edgeView.stroke.width, boundingBox.height + 2 * edgeView.stroke.width)
     }
 
     /** ---- [EdgeViewLineStyling]  */
 
     private fun drawDebug(context: DrawContext) {
+        val oldColor = context.g.color
         for (i in 0..edgeView.polyline.pointsCount - 1 - 1) {
             val begin = edgeView.polyline.getPointAt(i)
             val end = edgeView.polyline.getPointAt(i + 1)
 
-            val oldColor = context.g.color
             context.g.color = Color.BLUE
             context.g.drawOval(begin.x.toInt() - 2, begin.y.toInt() - 2, 4, 4)
             context.g.drawOval(end.x.toInt() - 2, end.y.toInt() - 2, 4, 4)
-            context.g.color = oldColor
         }
+
+        context.g.color = Color.GRAY
+        context.g.draw(boundingBox)
+
+        context.g.color = oldColor
     }
 }
