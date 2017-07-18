@@ -20,14 +20,11 @@ import ch.scorpion.jabbah.io.ReferenceResolver
  * Extends [TextComponent] to restrict visibility to a particular [Scenario] or [ScenarioStep].
  */
 class GraphTextComponent(
-    text: String,
-    location: Point2D,
-    styleProvider: StyleProvider,
-    eventBus: EventBus
+    text: String = "",
+    location: Point2D = Point2D(),
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    eventBus: EventBus = BaseModule.eventBus
 ) : TextComponentJvm(text, location, GraphStyleType.EXPLANATION, styleProvider) {
-
-    constructor(text: String): this(text, Point2D(), DrawStyleModule.styleProvider, BaseModule.eventBus)
-    constructor(): this("")
 
     /**
      * If present, this [GraphTextComponent] is only visible if the [Scenario] is the same as the current

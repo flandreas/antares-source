@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.draw.graphics
 
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 
+typealias TextRenderInfoFactory = (String, Font) -> TextRenderInfo
+
 /**
  * Represents platform-specific geometrical information about how a text is rendered.
  */

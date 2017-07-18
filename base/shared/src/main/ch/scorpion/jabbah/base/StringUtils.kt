@@ -21,4 +21,9 @@ object StringUtils {
         }
         return s
     }
+
+    /** Counts the number of occurrences of a particular [Char] in a [String].*/
+    fun countChar(s: String, c: Char): Int {
+        return s.length - s.replace(c.toString(), "").length
+    }
 }
