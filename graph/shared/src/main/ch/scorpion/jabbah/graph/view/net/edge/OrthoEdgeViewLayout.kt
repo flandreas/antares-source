@@ -71,7 +71,10 @@ class OrthoEdgeViewLayout : EdgeViewLayout {
         override fun compare(s1: Solution, s2: Solution): Int {
             // First priority: Always prefer non-counter-directive solutions
             if (s1.isCounterDirective != s2.isCounterDirective) {
-                return s1.isCounterDirective.compareTo(s2.isCounterDirective)
+                // Workaround for Kotlin Bug KT-19177
+                //return s1.isCounterDirective.compareTo(s2.isCounterDirective)
+                return if (!s1.isCounterDirective && s2.isCounterDirective) -1
+                    else if (s1.isCounterDirective && !s2.isCounterDirective) 1 else 0
             }
 
             // Second priority: Smaller number of points
