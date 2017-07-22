@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base.geom
 
+import ch.scorpion.jabbah.base.Math
+
 /**
  * Represents a 2D affine transformation that performs a linear mapping from 2D coordinates to other 2D coordinates
  * that preserves the "straightness" and "parallelness" of lines.
@@ -16,6 +18,24 @@ interface AffineTransform {
 
     /** Returns the Y coordinate scaling element (m00) of the affine transformation matrix. */
     val scaleY: Double
+
+    /** Returns the X coordinate of the translation element (m02) of the 3x3 affine transformation matrix. */
+    val translateX: Double
+
+    /* Returns the Y coordinate of the translation element (m12) of the 3x3 affine transformation matrix. */
+    val translateY: Double
+
+    /** Returns the X coordinate shearing element (m01) of the 3x3 affine transformation matrix. */
+    val shearX: Double
+
+    /* Returns the Y coordinate shearing element (m10) of the 3x3 affine transformation matrix. */
+    val shearY: Double
+
+    /** Returns the determinant of the matrix representation of this [AffineTransform].*/
+    val determinant: Double
+
+    /** Returns the resulting scale factor if scaling is uniform, i.e. scaling in both directions are the same.*/
+    val uniformScale: Double get() = Math.sqrt(determinant)
 
     /** Returns the transformation matrix as an array of the form m00, m10, m01, m11, m02, m12.*/
     fun getMatrix(): DoubleArray
@@ -55,6 +75,7 @@ interface AffineTransform {
 
     /** Sets this [AffineTransform] to a rotation by angle [theta] around the center [anchorX],[anchorY].*/
     fun setToRotation(theta: Double, anchorX: Double, anchorY: Double)
+
 }
 
 class NonInvertibleTransformException(msg: String) : Throwable(msg)

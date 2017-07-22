@@ -42,7 +42,7 @@ object GateMnemonic {
      * Returns `true` only if the scale factors are above a certain limit. Returns always `false` if not [enabled].
      */
     fun isDisplayableFor(transform: AffineTransform): Boolean {
-        return enabled && transform.scaleX >= ZOOM_LIMIT && transform.scaleY >= ZOOM_LIMIT
+        return enabled && transform.uniformScale >= ZOOM_LIMIT
     }
 
     fun drawAnd(gateView: AndGateView, context: DrawContext, foreground: Color, background: Color) {

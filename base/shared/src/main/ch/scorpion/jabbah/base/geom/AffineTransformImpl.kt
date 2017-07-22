@@ -66,6 +66,16 @@ data class AffineTransformImpl (
 
     override val scaleY: Double get() = m11
 
+    override val translateX: Double get() = m02
+
+    override val translateY: Double get() = m12
+
+    override val shearX: Double get() = m01
+
+    override val shearY: Double get() = m10
+
+    override val determinant: Double get() = m00 * m11 - m01 * m10
+
     override fun setToIdentity() {
         m00 = 1.0
         m11 = 1.0

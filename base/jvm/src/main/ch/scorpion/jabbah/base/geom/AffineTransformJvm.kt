@@ -20,6 +20,16 @@ class AffineTransformJvm(val transform: java.awt.geom.AffineTransform) : AffineT
 
     override val scaleY: Double get() = transform.scaleY
 
+    override val translateX: Double get() = transform.translateX
+
+    override val translateY: Double get() = transform.translateY
+
+    override val shearX: Double get() = transform.shearX
+
+    override val shearY: Double get() = transform.shearY
+
+    override val determinant: Double get() = transform.determinant
+
     override fun translate(tx: Double, ty: Double) = transform.translate(tx, ty)
 
     override fun scale(sx: Double, sy: Double) = transform.scale(sx, sy)
