@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 import ch.scorpion.jabbah.edit.model.polyline.PolylineTool
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
+import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
 import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.execution.PauseExecutionAction
@@ -233,7 +234,10 @@ class GraphPanel(
         toolbar.addTool(editor.currentTool, "/img/pointer.gif", "Selektion")
         toolbar.addTool(RectangleTool(editor, { RectangularComponent() }, { GraphElementViewWrapper<Vertice>(it) }), "/img/rectangle.gif", "Selektion")
         toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }), "/img/polyline.gif", "Polylinie")
-        toolbar.addTool(TextTool(editor, { GraphTextComponent() }, { GraphElementViewWrapper<Vertice>(it)}), "/img/text.gif", "Text")
+        // TEST BEGIN
+        // toolbar.addTool(TextTool(editor, { GraphTextComponent() }, { GraphElementViewWrapper<Vertice>(it)}), "/img/text.gif", "Text")
+        toolbar.addTool(TextTool(editor, { SimpleTextComponent("This is a text") }, { GraphElementViewWrapper<Vertice>(it)}), "/img/text.gif", "Text")
+        // TEST END
 
         return toolbar
     }

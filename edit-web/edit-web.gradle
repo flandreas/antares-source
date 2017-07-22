@@ -39,5 +39,5 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
 }
 
-// Without this, draw-edit_demo.meta.js will not be automatically built, for some reason..
+// Without this, edit-web_demo.meta.js will not be automatically built, for some reason..
 assemble.dependsOn demoClasses

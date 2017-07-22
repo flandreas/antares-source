@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.EditModelRectangleModule
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
 import ch.scorpion.jabbah.edit.model.text.EditModelTextModule
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
+import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
 import ch.scorpion.jabbah.edit.model.text.TextComponentFactory
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.snap.EditSnapModule
@@ -60,5 +61,6 @@ object EditModule : AbstractModule() {
         typeMap.register("polyline", PolylineComponent::class)
         typeMap.register("polylineShape", PolylineShapeImpl::class)
         typeMap.register("label", LabelComponent::class)
+        typeMap.register("text", SimpleTextComponent::class)
     }
 }

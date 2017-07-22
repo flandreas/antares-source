@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.graphics
 
+import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
@@ -138,10 +139,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
     }
 
     override fun drawRoundRect(x: Int, y: Int, w: Int, h: Int, arcW: Int, arcH: Int) {
-        ctx.beginPath()
-        roundRect(x.toDouble(), y.toDouble(), w.toDouble(), h.toDouble(), arcW.toDouble(), arcH.toDouble())
-        ctx.stroke()
-        ctx.closePath()
+        drawRoundRect(x.toDouble(), y.toDouble(), w.toDouble(), h.toDouble(), arcW.toDouble(), arcH.toDouble())
     }
 
     override fun fillRect(x: Int, y: Int, w: Int, h: Int) {
@@ -153,10 +151,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
     }
 
     override fun fillRoundRect(x: Int, y: Int, w: Int, h: Int, arcW: Int, arcH: Int) {
-        ctx.beginPath()
-        roundRect(x.toDouble(), y.toDouble(), w.toDouble(), h.toDouble(), arcW.toDouble(), arcH.toDouble())
-        ctx.fill()
-        ctx.closePath()
+        fillRoundRect(x.toDouble(), y.toDouble(), w.toDouble(), h.toDouble(), arcW.toDouble(), arcH.toDouble())
     }
 
     override fun drawOval(x: Double, y: Double, w: Double, h: Double) {
@@ -188,6 +183,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
     override fun draw(shape: Shape) {
         when (shape) {
             is Rectangle2D -> drawRect(shape)
+            is RoundRectangle2D -> drawRoundRect(shape)
             is Path2DJs -> drawPath(shape)
             is PolylineShape -> drawPolyline(shape)
             else -> {
@@ -200,6 +196,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
     override fun fill(shape: Shape) {
         when (shape) {
             is Rectangle2D -> fillRect(shape)
+            is RoundRectangle2D -> fillRoundRect(shape)
             is Path2DJs -> fillPath(shape)
             is PolylineShape -> fillPoyline(shape)
             else -> {
@@ -234,7 +231,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
             CanvasLineCap.Companion.BUTT -> LineCap.BUTT
             CanvasLineCap.Companion.ROUND -> LineCap.ROUND
             CanvasLineCap.Companion.SQUARE -> LineCap.SQUARE
-            else -> throw IllegalArgumentException("unknown cap ${cap}")
+            else -> throw IllegalArgumentException("unknown cap $cap")
         }
     }
 
@@ -251,7 +248,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
             CanvasLineJoin.Companion.MITER -> LineJoin.MITER
             CanvasLineJoin.Companion.ROUND -> LineJoin.ROUND
             CanvasLineJoin.Companion.BEVEL -> LineJoin.BEVEL
-            else -> throw IllegalArgumentException("unknown join ${join}")
+            else -> throw IllegalArgumentException("unknown join $join")
         }
     }
 
@@ -264,7 +261,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
     }
 
     private fun toDash(dash: Array<Double>): FloatArray {
-        return Array<Float>(dash.size, {i -> dash[i].toFloat()}).toFloatArray()
+        return Array(dash.size, { i -> dash[i].toFloat()}).toFloatArray()
     }
 
     private fun fromDash(dash: FloatArray?): Array<Double> {
@@ -282,9 +279,12 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
         fillRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
     }
 
-    private fun roundRect(x: Double, y: Double, w: Double, h: Double, arcW: Double, arcH: Double) {
-        // Not yet implemented
-        ctx.rect(x, y, w, h)
+    private fun drawRoundRect(rect: RoundRectangle2D) {
+        drawRoundRect(rect.x, rect.y, rect.width, rect.height, rect.arcW, rect.arcH)
+    }
+
+    private fun fillRoundRect(rect: RoundRectangle2D) {
+        fillRoundRect(rect.x, rect.y, rect.width, rect.height, rect.arcW, rect.arcH)
     }
 
     private fun drawPath(path: Path2DJs) {
@@ -323,6 +323,32 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
         for (i in 1..polyline.pointsCount - 1) {
             ctx.lineTo(polyline.getPointAt(i).x, polyline.getPointAt(i).y)
         }
+    }
+
+    private fun drawRoundRect(x: Double, y: Double, w: Double, h: Double, arcW: Double, arcH: Double) {
+        ctx.beginPath()
+        playRoundRect(x, y, w, h, arcW, arcH)
+        ctx.stroke()
+    }
+
+    private fun fillRoundRect(x: Double, y: Double, w: Double, h: Double, arcW: Double, arcH: Double) {
+        ctx.beginPath()
+        playRoundRect(x, y, w, h, arcW, arcH)
+        ctx.fill()
+    }
+
+    private fun playRoundRect(x: Double, y: Double, w: Double, h: Double, arcW: Double, arcH: Double) {
+        val arcWW = Math.min(arcW, w / 2)
+        val arcHH = Math.min(arcH, h / 2)
+        ctx.moveTo(x, y + arcHH)
+        ctx.lineTo(x, y + h - arcHH)
+        ctx.quadraticCurveTo(x, y + h, x + arcWW, y + h)
+        ctx.lineTo(x + w - arcWW, y + h)
+        ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - arcHH)
+        ctx.lineTo(x + w, y + arcHH)
+        ctx.quadraticCurveTo(x + w, y, x + w - arcWW, y)
+        ctx.lineTo(x + arcWW, y)
+        ctx.quadraticCurveTo(x, y, x, y + arcHH)
     }
 
     private fun playEllipse(x: Double, y: Double, w: Double, h: Double) {

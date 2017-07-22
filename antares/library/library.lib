@@ -95,14 +95,15 @@
         <containerLibraryElement _id='61' name='NOP' uuid='cc6b2b47-de2e-4d82-9229-121cffddd85a'/>
         <containerLibraryElement _id='62' name='Outer NOP' uuid='afc510f0-5ef7-4175-8ed3-bf4bc6058e13'/>
         <containerLibraryElement _id='63' name='Ampel' uuid='0921d1db-d513-4dab-b39e-74f33b439312'/>
+        <containerLibraryElement _id='64' name='Test Text' uuid='6ef6759e-ce22-4d89-9935-7e6933a9eeb2'/>
       </items>
     </libraryFolder>
-    <libraryFolder _id='64' name='Test 2'>
+    <libraryFolder _id='65' name='Test 2'>
       <items/>
     </libraryFolder>
-    <libraryFolder _id='65' name='Zähler'>
+    <libraryFolder _id='66' name='Zähler'>
       <items>
-        <containerLibraryElement _id='66' name='Synch. Vorwärtszähler 3-Bit' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97'/>
+        <containerLibraryElement _id='67' name='Synch. Vorwärtszähler 3-Bit' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97'/>
       </items>
     </libraryFolder>
   </items>

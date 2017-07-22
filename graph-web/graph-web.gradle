@@ -24,6 +24,8 @@ dependencies {
     compile project(path: ':graph', configuration: 'web')
     compile files('../graph/build/libs/graph.meta.js')
 
+    compile project(path: ':edit-web')
+
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
 }
 

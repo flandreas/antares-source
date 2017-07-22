@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.edit.model.text
 
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.loggerFor
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
@@ -18,10 +20,14 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 class MultilineText(
         text: String,
         private val font: Font,
-        maxWidth: Int,
+        private val maxWidth: Int,
         private val lineHeight: Int = font.size,
         textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory
 ) {
+
+    private companion object {
+        val DEBUG_GFX = false
+    }
 
     val height: Int get() = lines.size * lineHeight
 
@@ -63,8 +69,16 @@ class MultilineText(
     fun draw(context: DrawContext, x: Int, y: Int) {
         var yy = y + ascent
         for (line in lines) {
-            context.g.drawString(line, x, y)
+            context.g.drawString(line, x, yy)
             yy += lineHeight
+        }
+
+        if (DEBUG_GFX) {
+            val oldColor = context.g.color
+            context.g.color = Color.GRAY
+            context.g.drawRect(x, y, maxWidth, height)
+            context.g.fillOval(x - 3, y - 3 + ascent, 6, 6)
+            context.g.color = oldColor
         }
     }
 }

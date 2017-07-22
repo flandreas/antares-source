@@ -16,5 +16,10 @@ object EditModelTextModule : AbstractModule() {
             SelectionDrawingStrategy.ABOVE,
             TextComponent::class.simpleName!!,
             { RectangularHandleSelectionModel(it as RectangularComponent) })
+
+        EditSelectModule.selectionModelFactory.register(
+            SelectionDrawingStrategy.ABOVE,
+            SimpleTextComponent::class.simpleName!!,
+            { RectangularHandleSelectionModel(it as RectangularComponent) })
     }
 }
