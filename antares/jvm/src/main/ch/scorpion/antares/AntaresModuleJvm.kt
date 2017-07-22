@@ -44,8 +44,8 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
         GraphModuleJvm.containerTreeViewFactory = { DigitalContainerTreeView() }
         GraphModuleJvm.graphNavigationPanelFactory = AntaresGraphNavigationPanelFactory()
 
-        AntaresViewModule.require()
         GraphModuleJvm.require()
+        AntaresViewModule.require()
 
         LibraryModule.libraryService = FileLibraryService(app.getLibraryDirectoryPath().toString())
         LibraryModule.libraryFactory = {
