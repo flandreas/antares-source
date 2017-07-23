@@ -10,7 +10,7 @@ const val ALT_GRAPH_MASK = 32
 /**
  * Abstract base class of events that indicate a user input.
  */
-interface InputEvent {
+interface InputEvent  {
 
     /** The component from where the event originates.*/
     val source: Any
@@ -29,4 +29,6 @@ interface InputEvent {
     val isAltGraphDown: Boolean get() = (modifiers and ALT_GRAPH_MASK) != 0
 
     val isMetaDown: Boolean get() = (modifiers and META_MASK) != 0
+
+    fun consume()
 }

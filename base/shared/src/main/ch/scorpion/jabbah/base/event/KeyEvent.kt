@@ -3,7 +3,9 @@ package ch.scorpion.jabbah.base.event
 /**
  * An event which indicates that the user has pressed a key.
  */
-data class KeyEvent(override val source: Any, override val modifiers: Int = 0, val key: Int) : InputEvent {
+interface KeyEvent : InputEvent {
+
+    val key: Int
 
     companion object {
 
@@ -16,6 +18,7 @@ data class KeyEvent(override val source: Any, override val modifiers: Int = 0, v
         var VK_RIGHT = 0x00
     }
 }
+
 
 interface KeyListener {
     fun keyTyped(e: KeyEvent)

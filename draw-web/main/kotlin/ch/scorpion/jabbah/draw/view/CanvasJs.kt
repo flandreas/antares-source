@@ -218,36 +218,37 @@ class CanvasJs(
     }
 }
 
-/**
- * Bridges [org.w3c.dom.events.MouseEvent] to the corresponding jabbah [MouseEvent]
- * and calls the registered [MouseListener].
- */
-private abstract class AbstractMouseEventBridge(val canvas: HTMLCanvasElement) : EventListener {
+private class MouseEventJs(private val canvas: HTMLCanvasElement, private val event: org.w3c.dom.events.MouseEvent) : MouseEvent {
 
-    val LOG by logger()
+    override val source: Any get() = canvas
 
-    fun convertEvent(event: org.w3c.dom.events.MouseEvent): MouseEvent {
-        return MouseEvent(
-                source = canvas,
-                modifiers = convertModifiers(event),
-                x = windowToCanvasX(event.clientX),
-                y = windowToCanvasY(event.clientY),
-                button = convertButton(event),
-                clickCount = if(event.type == "dblclick") 2 else 1
-        )
+    override val button: Button get() = convertButton()
+
+    override val clickCount: Int get() =if(event.type == "dblclick") 2 else 1
+
+    override val modifiers: Int get() = convertModifiers()
+
+    override val wheelRotation: Int
+        get() = if (event is org.w3c.dom.events.WheelEvent) event.deltaY.toInt() else 0
+
+    override val x: Int get() = windowToCanvasX(event.clientX)
+
+    override val y: Int get() = windowToCanvasY(event.clientY)
+
+    override fun consume() {
+        event.preventDefault()
     }
 
-    fun convertEvent(event: org.w3c.dom.events.WheelEvent): MouseEvent {
-        return MouseEvent(
-                source = canvas,
-                modifiers = convertModifiers(event),
-                x = windowToCanvasX(event.clientX),
-                y = windowToCanvasY(event.clientY),
-                button = convertButton(event),
-                wheelRotation = event.deltaY.toInt())
+    private fun convertButton(): Button {
+        return when(event.button.toInt()) {
+            0 -> Button.BUTTON1
+            1 -> Button.BUTTON2
+            2 -> Button.BUTTON3
+            else -> Button.NONE
+        }
     }
 
-    fun convertModifiers(event: org.w3c.dom.events.MouseEvent): Int {
+    private fun convertModifiers(): Int {
         var modifiers: Int = 0
         if (event.shiftKey) {
             modifiers = modifiers or ch.scorpion.jabbah.base.event.SHIFT_MASK
@@ -263,15 +264,6 @@ private abstract class AbstractMouseEventBridge(val canvas: HTMLCanvasElement) :
         }
 
         return modifiers
-    }
-
-    fun convertButton(event: org.w3c.dom.events.MouseEvent): Button {
-        return when(event.button.toInt()) {
-            0 -> Button.BUTTON1
-            1 -> Button.BUTTON2
-            2 -> Button.BUTTON3
-            else -> Button.NONE
-        }
     }
 
     fun windowToCanvasX(x: Int): Int {
@@ -285,11 +277,11 @@ private abstract class AbstractMouseEventBridge(val canvas: HTMLCanvasElement) :
     }
 }
 
-private class MouseEventBridge(val listener: MouseListener, canvas: HTMLCanvasElement)
-    : AbstractMouseEventBridge(canvas) {
+private class MouseEventBridge(val listener: MouseListener, private val canvas: HTMLCanvasElement)
+    : EventListener {
 
     override fun handleEvent(event: Event) {
-        val e = convertEvent(event as org.w3c.dom.events.MouseEvent)
+        val e = MouseEventJs(canvas, event as org.w3c.dom.events.MouseEvent)
         when(event.type) {
             "mousedown" -> listener.mousePressed(e)
             "mouseup" -> listener.mouseReleased(e)
@@ -299,64 +291,45 @@ private class MouseEventBridge(val listener: MouseListener, canvas: HTMLCanvasEl
     }
 }
 
-private class MouseMotionEventBridge(val listener: MouseMotionListener, canvas: HTMLCanvasElement)
-    : AbstractMouseEventBridge(canvas) {
+private class MouseMotionEventBridge(val listener: MouseMotionListener, private val canvas: HTMLCanvasElement)
+    : EventListener {
 
     private var pressed: Boolean = false
 
     override fun handleEvent(event: Event) {
-        val e = convertEvent(event as org.w3c.dom.events.MouseEvent)
+        val e = MouseEventJs(canvas, event as org.w3c.dom.events.MouseEvent)
         when (event.type) {
-            "mousedown" -> {
-                LOG.trace("MouseMotionEventBridge: mouseDown")
-                pressed = true
-            }
-            "mouseup" -> {
-                LOG.trace("MouseMotionEventBridge: mouseUp")
-                pressed = false
-            }
-            "mousemove" -> {
-                if (pressed) {
-                    LOG.trace("MouseMotionEventBridge: mouseDragged")
-                    listener.mouseDragged(e)
-                } else {
-                    LOG.trace("MouseMotionEventBridge: mouseMoved")
-                    listener.mouseMoved(e)
-                }
+            "mousedown" -> { pressed = true }
+            "mouseup" -> { pressed = false }
+            "mousemove" -> { if (pressed) { listener.mouseDragged(e) } else { listener.mouseMoved(e) }
             }
         }
     }
 }
 
-private class MouseWheelEventBridge(val listener: MouseWheelListener, canvas: HTMLCanvasElement)
-    : AbstractMouseEventBridge(canvas) {
+private class MouseWheelEventBridge(val listener: MouseWheelListener, private val canvas: HTMLCanvasElement)
+    : EventListener {
 
     override fun handleEvent(event: Event) {
         val w3cEvent = event as org.w3c.dom.events.WheelEvent
-        val e = convertEvent(w3cEvent)
+        val e = MouseEventJs(canvas, w3cEvent)
         listener.mouseWheelRotated(e)
     }
 }
 
-private class KeyEventBridge(val listener: KeyListener, val canvas: HTMLCanvasElement) : EventListener {
+private class KeyEventJs(private val canvas: HTMLCanvasElement, private val event: org.w3c.dom.events.KeyboardEvent) : KeyEvent {
 
-    override fun handleEvent(event: Event) {
-        val e = convertEvent(event as org.w3c.dom.events.KeyboardEvent)
-        when(event.type) {
-            "keydown" -> listener.keyPressed(e)
-            "keyup" -> listener.keyReleased(e)
-        }
+    override val key: Int get() = event.keyCode
+
+    override val source: Any get() = canvas
+
+    override val modifiers: Int get() = convertModifiers()
+
+    override fun consume() {
+        event.preventDefault()
     }
 
-    private fun convertEvent(event: org.w3c.dom.events.KeyboardEvent): KeyEvent {
-        return KeyEvent(
-                source = canvas,
-                modifiers = convertModifiers(event),
-                key = event.keyCode
-        )
-    }
-
-    fun convertModifiers(event: org.w3c.dom.events.KeyboardEvent): Int {
+    private fun convertModifiers(): Int {
         var modifiers: Int = 0
         if (event.shiftKey) {
             modifiers = modifiers or ch.scorpion.jabbah.base.event.SHIFT_MASK
@@ -372,5 +345,16 @@ private class KeyEventBridge(val listener: KeyListener, val canvas: HTMLCanvasEl
         }
 
         return modifiers
+    }
+}
+
+private class KeyEventBridge(val listener: KeyListener, val canvas: HTMLCanvasElement) : EventListener {
+
+    override fun handleEvent(event: Event) {
+        val e = KeyEventJs(canvas, event as org.w3c.dom.events.KeyboardEvent)
+        when(event.type) {
+            "keydown" -> listener.keyPressed(e)
+            "keyup" -> listener.keyReleased(e)
+        }
     }
 }

@@ -55,6 +55,7 @@ class ZoomPanController(val view: View<*>) {
 
         override fun mouseWheelRotated(e: MouseEvent) {
             view.navigator.multiplyZoomFactor(if (e.wheelRotation > 0) 0.9 else 1 / 0.9)
+            e.consume()
         }
     }
 }

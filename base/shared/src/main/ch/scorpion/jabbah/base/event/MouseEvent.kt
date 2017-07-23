@@ -12,18 +12,15 @@ enum class Button {
 /**
  * An event which indicates that a mouse action has occurred in a component.
  */
-data class MouseEvent(
-    override val source: Any,
-    override val modifiers: Int = 0,
-    val x: Int = 0,
-    val y: Int = 0,
-    val button: Button = Button.NONE,
-    val clickCount: Int = 0,
-    val wheelRotation: Int = 0
-    ) : InputEvent {
+interface MouseEvent : InputEvent {
+    val x: Int
+    val y: Int
+    val button: Button
+    val clickCount: Int
+    val wheelRotation: Int
     val location: Point2D get() = Point2D(x.toDouble(), y.toDouble())
-    constructor(source: Any, modifiers: Int, x: Int, y: Int): this(source, modifiers, x, y, Button.NONE)
 }
+
 
 interface MouseListener {
     fun mouseClicked(e: MouseEvent)

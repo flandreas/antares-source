@@ -18,9 +18,9 @@ import java.awt.Graphics2D
 import java.awt.event.MouseWheelEvent
 import javax.swing.JPanel
 import javax.swing.JComponent
-import java.awt.event.MouseEvent as JvmMouseEvent
-import java.awt.event.MouseWheelEvent as JvmMouseWheelEvent
-import java.awt.event.KeyEvent as JvmKeyEvent
+import java.awt.event.MouseEvent as AwtMouseEvent
+import java.awt.event.MouseWheelEvent as AwtMouseWheelEvent
+import java.awt.event.KeyEvent as AwtKeyEvent
 
 /**
  * Implements the [Canvas] interface on the JVM platform as a [JPanel].
@@ -175,122 +175,121 @@ class CanvasJvm(
     }
 }
 
+private class MouseEventJvm(
+    private val event: AwtMouseEvent
+) : MouseEvent {
 
-private abstract class AbstractMouseEventBridge {
+    override val source: Any get() = event.source
 
-    fun convertEvent(jvmEvent: JvmMouseEvent): MouseEvent {
-        return MouseEvent(
-                source = jvmEvent.component,
-                modifiers = jvmEvent.modifiers,
-                x = jvmEvent.x,
-                y = jvmEvent.y,
-                button = convertButton(jvmEvent.button),
-                clickCount = jvmEvent.clickCount
-        )
+    override val modifiers: Int get() = event.modifiers
+
+    override val x: Int get() = event.x
+
+    override val y: Int get() = event.y
+
+    override val button: Button get() = convertButton(event.button)
+
+    override val clickCount: Int get() = event.clickCount
+
+    override val wheelRotation: Int get() = if (event is AwtMouseWheelEvent) event.wheelRotation else 0
+
+    override fun consume() {
+        event.consume()
     }
 
-    fun convertEvent(jvmEvent: JvmMouseWheelEvent): MouseEvent {
-        return MouseEvent(
-                source = jvmEvent.component,
-                modifiers = jvmEvent.modifiers,
-                x = jvmEvent.x,
-                y = jvmEvent.y,
-                button = convertButton(jvmEvent.button),
-                wheelRotation = jvmEvent.wheelRotation
-        )
-    }
-
-    fun convertButton(jvmButton: Int): Button {
+    private fun convertButton(jvmButton: Int): Button {
         return when(jvmButton) {
-            JvmMouseEvent.NOBUTTON -> Button.NONE
-            JvmMouseEvent.BUTTON1 -> Button.BUTTON1
-            JvmMouseEvent.BUTTON2 -> Button.BUTTON2
-            JvmMouseEvent.BUTTON3 -> Button.BUTTON3
+            AwtMouseEvent.NOBUTTON -> Button.NONE
+            AwtMouseEvent.BUTTON1 -> Button.BUTTON1
+            AwtMouseEvent.BUTTON2 -> Button.BUTTON2
+            AwtMouseEvent.BUTTON3 -> Button.BUTTON3
             else -> throw IllegalArgumentException("unknown button $jvmButton")
         }
     }
 }
 
+private class KeyEventJvm(private val event: AwtKeyEvent) : KeyEvent {
+    override val source: Any get() = event.source
+    override val modifiers: Int get() = event.modifiers
+    override val key: Int get() = event.keyCode
+
+    override fun consume() {
+        event.consume()
+    }
+}
+
 private class KeyEventBridge(val listener: KeyListener) : java.awt.event.KeyListener {
 
-    override fun keyTyped(e: JvmKeyEvent?) {
+    override fun keyTyped(e: AwtKeyEvent?) {
         // empty
     }
 
-    override fun keyPressed(e: JvmKeyEvent?) {
+    override fun keyPressed(e: AwtKeyEvent?) {
         if (e != null) {
-            listener.keyPressed(convertEvent(e))
+            listener.keyPressed(KeyEventJvm(e))
         }
     }
 
-    override fun keyReleased(e: JvmKeyEvent?) {
+    override fun keyReleased(e: AwtKeyEvent?) {
         if (e != null) {
-            listener.keyReleased(convertEvent(e))
-        }
-    }
-
-    private fun convertEvent(jvmEvent: JvmKeyEvent): KeyEvent {
-        return KeyEvent(
-                source = jvmEvent.component,
-                modifiers = jvmEvent.modifiers,
-                key = jvmEvent.keyCode
-        )
-    }
-}
-
-private class MouseMotionEventBridge(val listener: MouseMotionListener) : AbstractMouseEventBridge(), java.awt.event.MouseMotionListener {
-
-    override fun mouseMoved(e: JvmMouseEvent?) {
-        if (e != null) {
-            listener.mouseMoved(convertEvent(e))
-        }
-    }
-
-    override fun mouseDragged(e: JvmMouseEvent?) {
-        if (e != null) {
-            listener.mouseDragged(convertEvent(e))
+            listener.keyReleased(KeyEventJvm(e))
         }
     }
 }
 
-private class MouseWheelEventBridge(val listener: MouseWheelListener) : AbstractMouseEventBridge(), java.awt.event.MouseWheelListener {
+private class MouseMotionEventBridge(val listener: MouseMotionListener) : java.awt.event.MouseMotionListener {
+
+    override fun mouseMoved(e: AwtMouseEvent?) {
+        if (e != null) {
+            listener.mouseMoved(MouseEventJvm(e))
+        }
+    }
+
+    override fun mouseDragged(e: AwtMouseEvent?) {
+        if (e != null) {
+            listener.mouseDragged(MouseEventJvm(e))
+        }
+    }
+}
+
+private class MouseWheelEventBridge(val listener: MouseWheelListener) : java.awt.event.MouseWheelListener {
 
     override fun mouseWheelMoved(e: MouseWheelEvent?) {
         if (e != null) {
-            listener.mouseWheelRotated(convertEvent(e))
+            listener.mouseWheelRotated(MouseEventJvm(e))
         }
     }
 }
 
-private class MouseEventBridge(val listener: MouseListener) : AbstractMouseEventBridge(), java.awt.event.MouseListener {
+private class MouseEventBridge(val listener: MouseListener) : java.awt.event.MouseListener {
 
-    override fun mouseEntered(e: JvmMouseEvent?) {
+    override fun mouseEntered(e: AwtMouseEvent?) {
         if (e != null) {
-            listener.mouseEntered(convertEvent(e))
+            listener.mouseEntered(MouseEventJvm(e))
         }
     }
 
-    override fun mouseClicked(e: JvmMouseEvent?) {
+    override fun mouseClicked(e: AwtMouseEvent?) {
         if (e != null) {
-            listener.mouseClicked(convertEvent(e))
+            listener.mouseClicked(MouseEventJvm(e))
         }
     }
 
-    override fun mouseReleased(e: JvmMouseEvent?) {
+    override fun mouseReleased(e: AwtMouseEvent?) {
         if (e != null) {
-            listener.mouseReleased(convertEvent(e))
+            listener.mouseReleased(MouseEventJvm(e))
         }
     }
 
-    override fun mouseExited(e: JvmMouseEvent?) {
+    override fun mouseExited(e: AwtMouseEvent?) {
         if (e != null) {
-            listener.mouseExited(convertEvent(e))
+            listener.mouseExited(MouseEventJvm(e))
         }
     }
 
-    override fun mousePressed(e: JvmMouseEvent?) {
+    override fun mousePressed(e: AwtMouseEvent?) {
         if (e != null) {
-            listener.mousePressed(convertEvent(e))
+            listener.mousePressed(MouseEventJvm(e))
         }
     }
 }
