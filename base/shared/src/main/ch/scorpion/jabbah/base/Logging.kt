@@ -18,18 +18,8 @@ import kotlin.reflect.KClass
 
 interface LogSystem {
 
-    /**
-     * Returns the [Logger] to be used for a particular object.
-     *
-     * If the JVM target would be the only target to be supported, this function would have a [KClass] as
-     * its only argument. Unfortunately, there is currently no pure Kotlin way to determine the [KClass] of
-     * an arbitrary Kotlin object. On the Java platform, one could use "something.javaClass.kotlin", which of course
-     * doesn't work in JavaScript. JetBrains says that there will be a "something::class" syntax in a future
-     * release of Kotlin.
-     *
-     * TODO Improve with future Kotlin versions
-     */
-    fun getLogger(obj: Any): Lazy<Logger>
+    /** Returns the [Logger] to be used for a particular object. */
+    fun getLogger(clazz: KClass<out Any>): Lazy<Logger>
 }
 
 var LOG_SYSTEM: LogSystem? = null
@@ -45,11 +35,11 @@ interface Logger {
 }
 
 fun <T: Any> T.logger(): Lazy<Logger> {
-    return LOG_SYSTEM!!.getLogger(this)
+    return LOG_SYSTEM!!.getLogger(this::class)
 }
 
 fun <T: Any> T.loggerFor(origin: T): Lazy<Logger> {
-    return LOG_SYSTEM!!.getLogger(origin)
+    return LOG_SYSTEM!!.getLogger(origin::class)
 }
 
 

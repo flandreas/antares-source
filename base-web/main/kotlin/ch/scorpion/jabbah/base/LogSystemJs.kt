@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base
 
+import kotlin.reflect.KClass
+
 /**
  * Implements the [LogSystem] interface on the JavaScript platform.
  */
@@ -7,7 +9,7 @@ class LogSystemJs : LogSystem {
 
     val logger: Lazy<Logger> = lazy { LoggerJs() }
 
-    override fun getLogger(obj: Any): Lazy<Logger> {
+    override fun getLogger(clazz: KClass<out Any>): Lazy<Logger> {
         return logger
     }
 
@@ -20,7 +22,7 @@ class LogSystemJs : LogSystem {
         TRACE
     }
 
-    var logLevel : LogLevel = LogLevel.INFO
+    var logLevel : LogLevel = LogLevel.DEBUG
 
     private inner class LoggerJs : Logger {
 

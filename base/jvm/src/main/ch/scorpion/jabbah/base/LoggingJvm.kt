@@ -9,8 +9,8 @@ import kotlin.reflect.companionObject
  */
 class LogSystemJVM : LogSystem {
 
-    override fun getLogger(obj: Any): Lazy<Logger> {
-        return lazy {LoggerJvm(LoggerFactory.getLogger(unwrapCompanionClass(obj.javaClass).name))}
+    override fun getLogger(clazz: KClass<out Any>): Lazy<Logger> {
+        return lazy {LoggerJvm(LoggerFactory.getLogger(unwrapCompanionClass(clazz.java).name))}
     }
 
     /** Unwrap companion class to enclosing class given a Java class.*/
