@@ -39,6 +39,7 @@ import ch.scorpion.jabbah.io.TypeMap
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
+import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
 import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.graph.view.*
@@ -99,6 +100,7 @@ object GraphViewModule : AbstractModule() {
         typeMap.register("subGraphVerticeViewRef", SubGraphVerticeViewImpl::class)
         typeMap.register("containerBox", RectangularComponent::class)
         typeMap.register("controlViewComponent", ControlViewComponent::class)
+        typeMap.register("graphTextComponent", SimpleTextComponent::class)
     }
 
     private fun configureStyleRepository(repository: StyleRepository) {
