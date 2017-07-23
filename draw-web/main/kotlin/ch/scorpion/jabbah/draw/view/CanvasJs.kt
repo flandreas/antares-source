@@ -180,7 +180,7 @@ class CanvasJs(
     }
 
     override fun setToolTipText(text: String?) {
-        // TODO Tooltip not yet supported
+        canvas.title = text ?: ""
     }
 
     /** ---- [CanvasJs] */

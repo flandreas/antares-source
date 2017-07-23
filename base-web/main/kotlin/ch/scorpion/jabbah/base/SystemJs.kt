@@ -54,7 +54,16 @@ class SystemJs() : System {
     }
 
     override fun buildToolTipText(title: String?, text: String?, width: Int?): String? {
-        throw UnsupportedOperationException("not implemented")
+        // TODO Improve formatting
+        val sb = StringBuilder("")
+        if (StringUtils.isNotEmpty(title)) {
+            sb.append(title)
+            sb.append(": ")
+        }
+        if (StringUtils.isNotEmpty(text)) {
+            sb.append(text)
+        }
+        return sb.toString()
     }
 
     override fun createUUID(uuid: String?): UUID {
