@@ -53,6 +53,7 @@ class EditSubGraphVerticeViewAction(
         })
 
         getDrawingView()!!.selectionManager.deselect(editedVerticeView!!)
+        editedVerticeView!!.invalidate()
 
         val panel = EditSubGraphVerticeViewPanel(
             libraryHolder,
@@ -74,6 +75,7 @@ class EditSubGraphVerticeViewAction(
     }
 
     private fun handleClosed() {
+        editedVerticeView!!.invalidate()
         getDrawingView()!!.selectionManager.select(editedVerticeView!!)
     }
 }

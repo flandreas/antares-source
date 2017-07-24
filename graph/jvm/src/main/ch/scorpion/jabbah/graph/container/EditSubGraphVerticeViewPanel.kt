@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.view.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.view.container.ContainerEditor
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import ch.scorpion.jabbah.io.IOModule
+import ch.scorpion.jabbah.io.StorableCloner
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
@@ -22,7 +24,8 @@ class EditSubGraphVerticeViewPanel(
     private val libraryHolder: LibraryHolder,
     private val containerPanel: ContainerPanel,
     private val subGraphVerticeView: SubGraphVerticeView<*>,
-    private val closeCallback: (EditSubGraphVerticeViewPanel) -> Unit
+    private val closeCallback: (EditSubGraphVerticeViewPanel) -> Unit,
+    private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke()
 ) : JPanel() {
 
     init {
@@ -49,7 +52,9 @@ class EditSubGraphVerticeViewPanel(
 
     private fun fill() {
         val libraryGraph = libraryHolder.library.getMetaGraph(subGraphVerticeView.subGraphVertice!!.graphUUID!!)
-        containerPanel.setData(libraryGraph.graph!!.graphView!!, subGraphVerticeView.getEditableContainerDrawing())
+        containerPanel.setData(
+                libraryGraph.graph!!.graphView!!,
+                storableCloner.clone(subGraphVerticeView.getEditableContainerDrawing()) as ContainerDrawing)
     }
 
     private inner class OkAction : AbstractAction(Translations.getString("edit.action.ok.name")) {

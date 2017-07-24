@@ -305,6 +305,7 @@ class SubGraphVerticeViewImpl(
         fillFromContainerDrawing(customizedContainerDrawing ?: getLibraryContainerDrawing())
         invalidate()
         validate()
+        update()
     }
 
     /** ---- [ActorView] */
