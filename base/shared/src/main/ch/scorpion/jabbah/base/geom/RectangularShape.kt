@@ -58,7 +58,7 @@ interface RectangularShape : Shape {
         setFrame(x + v.x, y + v.y, width, height)
         return this
     }
-
+    
     /** Sets the location and size of the outer bounds of this [RectangularShape].*/
     fun setFrame(x: Double, y: Double, width: Double, height: Double)
 

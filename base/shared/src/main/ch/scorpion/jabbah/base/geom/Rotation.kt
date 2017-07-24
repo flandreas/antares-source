@@ -74,7 +74,7 @@ enum class Rotation(val customName: String, val angle: Double) {
     }
 
     /** Rotates a [Rectangle2D] around the specified pivot point (rotation center).*/
-    fun rotateRectangleAround(pivot: Point2D, rect: Rectangle2D): Rectangle2D {
+    fun rotateRectangleAround(pivot: Point2D, rect: RectangularShape): Rectangle2D {
         val p1 = rotatePoint(rect.x - pivot.x, rect.y - pivot.y)
         val p2 = rotatePoint(rect.x + rect.width - pivot.x, rect.y + rect.height - pivot.y)
 

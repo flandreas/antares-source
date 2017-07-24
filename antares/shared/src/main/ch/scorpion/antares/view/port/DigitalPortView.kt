@@ -199,6 +199,9 @@ class DigitalPortView(
                 val bb = bitWidthAnnotation!!.boundingBox
                 bbox.add(Rectangle2D(locationX + bb.x, locationY + bb.y, bb.width, bb.height))
             }
+            if (hasInternalAnnotation) {
+                bbox.add(getInternalAnnotationBox()!!)
+            }
             bbox.add(location.toRect(1.0))
             bbox.add(connectionPoint.toRect(1.0))
             return bbox
@@ -368,5 +371,13 @@ class DigitalPortView(
             context.g.draw(EDGE_TRIGGER_PATH)
             context.g.rotate(-angle)
         }
+    }
+
+    private fun getInternalAnnotationBox(): RectangularShape? {
+        if (hasInternalAnnotation) {
+            val bb = direction.rotation.rotateRectangleAround(Point2D(), EDGE_TRIGGER_PATH.boundingBox)
+            return Rectangle2D(locationX + bb.x, locationY + bb.y, bb.width, bb.height)
+        }
+        return null
     }
 }
