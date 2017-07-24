@@ -2,8 +2,8 @@ package ch.scorpion.jabbah.base.geom
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.base.logger
 
 enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotation: Rotation) {
     EAST("east", 1, 0, Rotation.R0),
@@ -13,7 +13,7 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
 
     companion object {
 
-        private val LOG by logger()
+        private val LOG by logger(Direction.Companion::class)
 
         val ALL: Set<Direction> = setOf(EAST, NORTH, WEST, SOUTH)
 

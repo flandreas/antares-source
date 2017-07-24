@@ -6,9 +6,9 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.port.PortView
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 
 /**
  * Controls dragging an endpoint of an [EdgeView] towards an target [PortView] of a [VerticeView],
@@ -21,7 +21,7 @@ class DragEdgeViewEndpointHandler(
     val edgeViewEndpointType: EdgeViewEndpointType
 ) : AbstractConnectionPointHighlighter() {
 
-    private val LOG by logger()
+    private val LOG by logger(DragEdgeViewEndpointHandler::class)
 
     /** The [EdgeView] whose endpoint is being dragged. Set in [useFor]. */
     private var edgeView: EdgeView<*>? = null

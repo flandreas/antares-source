@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 
 /**
  * A matrix of light emitting dots with a row and column addressing input, designed
@@ -50,7 +50,7 @@ class LEDMatrix(
         addPort(DigitalPortImpl.createInput(Logic.POSITIVE, ROW_PORT_NAME, rowWidth))
     }
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(LEDMatrix::class)
 
     val columnPort: DigitalPort
         get() = getInput<DigitalSignal>(COLUMN_PORT_NAME) as DigitalPort

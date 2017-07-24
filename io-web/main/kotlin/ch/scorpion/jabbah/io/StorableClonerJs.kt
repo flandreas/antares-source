@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.io
 
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.io.module.DomXmlWriter
 
 /**
@@ -11,7 +11,7 @@ class StorableClonerJs(private val typeMap: TypeMap) : StorableCloner {
 
     constructor(): this(IOModule.typeMap)
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(StorableClonerJs::class)
 
     /** ---- [StorableCloner] interface */
 

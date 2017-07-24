@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.TextComponentFactory
 import ch.scorpion.jabbah.edit.module.EditModule
 
@@ -38,7 +38,7 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
         private val HEIGHT = 50.0
     }
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(ComponentMessageDisplayer::class)
 
     init {
         eventBus.register(ComponentMessage::class, this::handle)

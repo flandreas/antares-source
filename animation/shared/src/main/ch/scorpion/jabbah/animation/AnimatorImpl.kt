@@ -32,7 +32,7 @@ class AnimatorImpl(
     }
 
     private companion object {
-        val LOG by logger()
+        val LOG by logger(AnimatorImpl::class)
         // The default animation pulse in milliseconds
         val DEFAULT_PERIOD = 20
     }

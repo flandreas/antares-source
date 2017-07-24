@@ -16,7 +16,7 @@ class CommandManagerImpl(override val eventBus: EventBus) : CommandManager {
 
     constructor(): this(BaseModule.eventBus)
 
-    private val LOG by logger()
+    private val LOG by logger(CommandManagerImpl::class)
 
     private val undoStack = Stack<CommandTransaction>()
 

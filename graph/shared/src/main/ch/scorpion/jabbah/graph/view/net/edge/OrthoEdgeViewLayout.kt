@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.base.logger
 class OrthoEdgeViewLayout : EdgeViewLayout {
 
     companion object {
-        val LOG by logger()
+        val LOG by logger(OrthoEdgeViewLayout::class)
         // TODO Make configurable in order to align with GridImpl width
         val END_LENGTH = 14
     }

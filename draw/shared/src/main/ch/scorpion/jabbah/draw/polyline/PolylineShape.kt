@@ -23,8 +23,6 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
         val CONTAINS_SENSITIVITY = 2.0
     }
 
-    private val LOG by logger()
-
     private val points = mutableListOf<Point2D>()
 
     init {

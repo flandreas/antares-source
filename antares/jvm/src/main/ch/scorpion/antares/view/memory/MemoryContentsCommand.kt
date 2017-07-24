@@ -18,7 +18,7 @@ class MemoryContentsCommand(
 ) : AbstractCommand("ch.scorpion.antares.command.memoryContents", null) {
 
     companion object {
-        private val LOG by logger()
+        private val LOG by logger(MemoryContentsCommand::class)
     }
 
     private var oldContents: String? = null

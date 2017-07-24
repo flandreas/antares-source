@@ -11,7 +11,7 @@ import java.util.*
  */
 class ElectricXmlReader(inputStream: InputStream) : XmlReader {
 
-    private val LOG by logger()
+    private val LOG by logger(ElectricXmlReader::class)
 
     /** Holds the XML document that has been read from [inputStream] and parsed by Electric XML.*/
     private val document = Document(inputStream)

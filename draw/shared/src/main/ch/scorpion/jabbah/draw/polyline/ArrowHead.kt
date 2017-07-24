@@ -1,12 +1,9 @@
 package ch.scorpion.jabbah.draw.polyline
 
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.base.geom.*
-import ch.scorpion.jabbah.base.Math
-import ch.scorpion.jabbah.base.MathClass
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.logger
 
 /**
  * A special [LineTerminator] representing an arrow head.
@@ -38,7 +35,7 @@ class ArrowHead(
         val TRANSFORM = System.SYSTEM!!.createAffineTransform()
     }
 
-    val LOG by logger()
+    val LOG by logger(ArrowHead::class)
 
     /** Holds the location of the arrow head peek.*/
     private var location = Point2D()

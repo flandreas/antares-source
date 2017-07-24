@@ -5,12 +5,11 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.library.LibraryHolder
-import ch.scorpion.jabbah.base.logger
 import java.awt.datatransfer.DataFlavor
 import javax.swing.JOptionPane
 import ch.scorpion.jabbah.graph.view.GraphView
-import com.sun.xml.internal.ws.util.JAXWSUtils.getUUID
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 
@@ -26,7 +25,7 @@ class GraphPanelTransferHandler(
     private val libraryHolder: LibraryHolder
 ) : ComponentTransferHandler(editor, eventBus, flavour) {
 
-    private val LOG by logger()
+    private val LOG by logger(GraphPanelTransferHandler::class)
 
     override fun canImport(dropComponent: Component): Boolean {
         if (dropComponent !is GraphElementView<*>) {

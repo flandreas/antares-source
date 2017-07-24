@@ -30,7 +30,7 @@ class StoreXmlReader(
         IOModule.storableCreator,
         ReferenceResolverImpl())
 
-    private val LOG by logger()
+    private val LOG by logger(StoreXmlReader::class)
 
     /** ---- [StoreReader] interface */
 

@@ -18,7 +18,7 @@ class GraphViewConnectServiceImpl(
     val nodeViewFactorySupplier: () -> NodeViewFactory<Any>
 ) : GraphViewConnectService {
 
-    private val LOG by logger()
+    private val LOG by logger(GraphViewConnectServiceImpl::class)
 
     /** ---- [GraphViewConnectService] interface */
 

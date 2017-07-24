@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 
 /**
  * Standard implementation of the [ScenarioStep] interface.
@@ -24,7 +24,7 @@ class ScenarioStepImpl(
     @Suppress("unused")
     constructor(): this(ScriptModule.scriptGateway, "")
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(ScenarioStepImpl::class)
 
     /** The JavaScript predicate that determines whether this [ScenarioStep] is active. */
     private var conditionScript: String? = null

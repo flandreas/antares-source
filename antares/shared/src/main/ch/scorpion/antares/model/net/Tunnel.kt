@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 
 /**
  * A [Tunnel] forwards a signal to other [Tunnel]s with the same name without the
@@ -28,7 +28,7 @@ class Tunnel(
 ) : CalculatingVertice(CALCULATOR) {
 
     companion object {
-        private val LOG by loggerFor(this)
+        private val LOG by logger(Tunnel::class)
         val CALCULATOR = object : VerticeCalculator<Tunnel> {
             override fun calculate(vertice: Tunnel, data: GraphActorData, signalHandler: SignalHandler) {
                 (vertice.getPort<DigitalSignal>() as DigitalPort).isOutputDominant = true

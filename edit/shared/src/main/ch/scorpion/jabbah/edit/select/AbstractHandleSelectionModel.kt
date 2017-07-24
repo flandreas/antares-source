@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.base.logger
  */
 abstract class AbstractHandleSelectionModel<T: Component>(component: T): AbstractSelectionModel<T>(component), UnzoomableSelectionModel<T> {
 
-    private val LOG by logger()
+    private val LOG by logger(AbstractHandleSelectionModel::class)
 
     /** Holds all [Handle]s of which this [SelectionModel] consists. */
     private val handles: MutableList<Handle> = mutableListOf()

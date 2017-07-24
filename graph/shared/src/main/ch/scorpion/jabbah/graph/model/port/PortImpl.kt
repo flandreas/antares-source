@@ -1,9 +1,8 @@
 package ch.scorpion.jabbah.graph.model.port
 
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyChangeSupport
 import ch.scorpion.jabbah.graph.model.BidirectionalPort
@@ -16,8 +15,6 @@ import ch.scorpion.jabbah.graph.model.Port.Companion.PROP_NAME
 import ch.scorpion.jabbah.graph.model.Port.Companion.PROP_PORT_TYPE
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.logger
 import kotlin.reflect.KClass
 
 /**
@@ -33,7 +30,7 @@ open class PortImpl<T: Any>(
     constructor(portType: PortType, signalClass: KClass<T>? = null): this(portType, signalClass, null)
 
     companion object {
-        val LOG by logger()
+        val LOG by logger(PortImpl::class)
         fun <T: Any> createInput(signalClass: KClass<T>? = null, name: String? = null): PortImpl<T> = PortImpl(PortType.INPUT, signalClass, name)
         fun <T: Any> createOutput(signalClass: KClass<T>? = null, name: String? = null): PortImpl<T> = PortImpl(PortType.OUTPUT, signalClass, name)
         @Suppress("unused") fun <T: Any> createInOut(signalClass: KClass<T>? = null, name: String? = null): PortImpl<T> = PortImpl(PortType.INOUT, signalClass, name)

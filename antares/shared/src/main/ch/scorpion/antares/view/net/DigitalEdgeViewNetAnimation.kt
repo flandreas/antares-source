@@ -20,7 +20,7 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewPointSequence
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 
 /**
  * Organizes individual animations of bits flowing through a net of [DigitalEdgeView]s.
@@ -50,7 +50,7 @@ class DigitalEdgeViewNetAnimation(
         private val MAX_DURATION_MS = 300
     }
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(DigitalEdgeViewNetAnimation::class)
 
     private data class AnimationInfo(val animationTask: AnimationTask?, var startTime: Long, val remainingTime: Double)
 

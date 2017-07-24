@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.edit.select
 
-import ch.scorpion.jabbah.draw.DrawProperties
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
@@ -21,7 +20,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
  */
 class RectangularRubberBand : AbstractRectangle(Rectangle2D()), RubberBand {
 
-    val LOG by logger()
+    val LOG by logger(RectangularRubberBand::class)
 
     /** ---- [Unzoomable] interface */
 

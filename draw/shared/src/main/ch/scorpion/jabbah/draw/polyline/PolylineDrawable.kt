@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.module.DrawModule
 
@@ -23,7 +22,7 @@ class PolylineDrawable constructor(
 
     constructor(): this(DrawModule.polylineShapeFactory.invoke(null), StyleType.FIGURE, DrawStyleModule.styleProvider)
 
-    val LOG by logger()
+    val LOG by logger(PolylineDrawable::class)
 
     /** ---- [Locatable] interface */
 

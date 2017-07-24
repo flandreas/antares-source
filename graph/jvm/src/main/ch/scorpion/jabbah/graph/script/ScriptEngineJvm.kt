@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.script
 
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 import javax.script.Invocable
 import javax.script.ScriptEngineManager
 
@@ -9,7 +9,7 @@ import javax.script.ScriptEngineManager
  */
 class ScriptEngineJvm : ScriptEngine {
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(ScriptEngineJvm::class)
     private val engine = ScriptEngineManager().getEngineByName("nashorn")
     private var lastScript: String? = null
 

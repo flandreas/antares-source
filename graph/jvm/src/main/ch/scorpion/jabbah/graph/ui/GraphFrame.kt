@@ -40,7 +40,7 @@ class GraphFrame(
         Desktop, Container
     }
 
-    private val LOG by logger()
+    private val LOG by logger(GraphFrame::class)
 
     private val desktopAction = ViewDesktopAction(application, eventBus)
 

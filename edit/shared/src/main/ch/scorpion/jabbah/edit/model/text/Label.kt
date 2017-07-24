@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.draw.module.DrawModule
 
 
@@ -35,7 +34,7 @@ class Label(
 ) : AbstractDrawable() {
 
     companion object {
-        val LOG by logger()
+        val LOG by logger(Label::class)
         val DEBUG_GFX = false
         val NEGATION_SIGN = "!"
         val NEGATION_STROKE = Stroke(1.4f)

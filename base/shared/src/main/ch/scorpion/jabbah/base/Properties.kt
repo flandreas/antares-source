@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.base.exception.NoSuchElementException
  */
 open class Properties {
 
-    private val LOG by logger()
+    private val LOG by logger(Properties::class)
 
     /** Contains the predefined system properties as well as the user properties. Not persistent.*/
     private val allProperties: MutableMap<String,Any> by lazy { mutableMapOf<String,Any>() }

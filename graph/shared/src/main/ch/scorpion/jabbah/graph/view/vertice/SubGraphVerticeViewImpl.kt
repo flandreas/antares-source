@@ -51,7 +51,7 @@ class SubGraphVerticeViewImpl(
     ), SubGraphVerticeView<SubGraphVerticeRef> {
 
     companion object {
-        val LOG by logger()
+        val LOG by logger(SubGraphVerticeViewImpl::class)
     }
 
     /** Contains the [Drawable]s that make up the look of this [SubGraphVerticeView].*/

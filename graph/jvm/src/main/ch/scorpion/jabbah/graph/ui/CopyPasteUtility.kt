@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
@@ -24,7 +24,7 @@ import java.io.ByteArrayOutputStream
  */
 object CopyPasteUtility {
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(CopyPasteUtility::class)
 
     private val DEFAULT_DISTANCE_FACTOR = 3
 

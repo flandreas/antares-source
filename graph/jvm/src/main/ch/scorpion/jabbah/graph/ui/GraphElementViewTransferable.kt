@@ -14,8 +14,6 @@ class GraphElementViewTransferable(
     private val data: GraphElementView<GraphElement>
 ) : Transferable {
 
-    private val LOG by logger()
-
     companion object {
         val FLAVOR = DataFlavor("${DataFlavor.javaJVMLocalObjectMimeType};class=\"${String::class.java.name}\"")
     }

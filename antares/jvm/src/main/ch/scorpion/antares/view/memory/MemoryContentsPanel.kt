@@ -5,7 +5,7 @@ import ch.scorpion.antares.model.memory.MemoryDump
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.CommandManager
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
@@ -28,7 +28,7 @@ class MemoryContentsPanel(
     private val cmdManager: CommandManager
 ) : JPanel() {
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(MemoryContentsPanel::class)
 
     init {
         buildUI()

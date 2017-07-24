@@ -25,7 +25,7 @@ class FileLibraryService(
 
     constructor(directoryPath: String): this(directoryPath, "cir")
 
-    private val LOG by logger()
+    private val LOG by logger(FileLibraryService::class)
 
     /** ---- [LibraryService] */
 

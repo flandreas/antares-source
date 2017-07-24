@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.base.logger
 class ViewNavigatorImpl(val view: View<*>) : ViewNavigator {
 
     private companion object {
-        val LOG by logger()
+        val LOG by logger(ViewNavigatorImpl::class)
         val FIT_ZOOM_INSET: Int = 20
     }
 

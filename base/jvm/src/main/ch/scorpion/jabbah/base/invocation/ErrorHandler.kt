@@ -10,7 +10,7 @@ import javax.swing.SwingUtilities
 abstract class ErrorHandler {
 
     companion object {
-        private val LOG by logger()
+        private val LOG by logger(ErrorHandler.Companion::class)
 
         val implementation: ErrorHandler = InteractiveErrorHandler()
 

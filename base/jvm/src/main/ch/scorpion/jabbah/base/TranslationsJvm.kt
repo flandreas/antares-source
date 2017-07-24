@@ -8,7 +8,7 @@ import java.util.*
  */
 open class TranslationsJvm : TranslationsClass() {
 
-    val LOG by logger()
+    val LOG by logger(TranslationsJvm::class)
 
     override fun getString(key: String, vararg params: Any): String {
         return MessageFormat.format(getString(key, optional = false), *params)

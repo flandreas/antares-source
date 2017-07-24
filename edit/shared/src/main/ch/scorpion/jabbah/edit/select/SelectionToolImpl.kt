@@ -25,7 +25,7 @@ class SelectionToolImpl(
     val eventBus: EventBus
 ) : ToolAdapter(editor), SelectionTool {
 
-    private val LOG by logger()
+    private val LOG by logger(SelectionToolImpl::class)
 
     /** The target [InputEventHandler] to which events are forwarded during complex interactions.*/
     private var target: InputEventHandler<EditInputEventContext>? = null

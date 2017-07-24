@@ -37,7 +37,7 @@ interface Timer {
 /** A [Timer] whose timing events can be controlled by a [ControlledTimeService].*/
 class ControlledTimer(val timeService: ControlledTimeService) : Timer {
 
-    private val LOG by logger()
+    private val LOG by logger(ControlledTimer::class)
 
     /** The interval between two timer ticks in nanoseconds.*/
     private var interval: Int = 0

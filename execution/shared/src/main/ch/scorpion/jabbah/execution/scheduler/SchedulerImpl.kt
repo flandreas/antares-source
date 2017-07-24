@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 import kotlin.reflect.KClass
 
 /**
@@ -39,7 +39,7 @@ class SchedulerImpl(
         private val PROP_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
     }
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(SchedulerImpl::class)
 
     /** The queue of pending [Slot]s ordered by ascending execution time.*/
     private val queue = PriorityQueue<Slot>()

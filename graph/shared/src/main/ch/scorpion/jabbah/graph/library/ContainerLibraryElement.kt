@@ -26,7 +26,7 @@ class ContainerLibraryElement(
 ) : LibraryElement(iconPath) {
 
     companion object {
-        val LOG by logger()
+        val LOG by logger(ContainerLibraryElement::class)
     }
 
     /** Lazily initialized instance of the referenced [MetaGraph]. */

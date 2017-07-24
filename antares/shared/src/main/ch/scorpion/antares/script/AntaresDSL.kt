@@ -29,7 +29,7 @@ class CircuitViewBridge(
 ) {
 
     companion object {
-        val LOG by logger()
+        val LOG by logger(CircuitViewBridge::class)
     }
 
     /** Returns the name of the circuit model.*/

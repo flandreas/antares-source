@@ -23,7 +23,7 @@ abstract class AbstractDigitalGate(
 ) : CalculatingVertice(calculator) {
 
     companion object {
-        val LOG by logger()
+        val LOG by logger(AbstractDigitalGate::class)
         val DEF_MIN_INPUT_COUNT = InputCount.TWO
         val DEF_MAX_INPUT_COUNT = InputCount.EIGHT
     }

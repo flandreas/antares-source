@@ -49,7 +49,7 @@ class StyleRepository(override val predefinedColorProvider: PredefinedColorProvi
 
     constructor() : this(PredefinedColorRepository)
 
-    val LOG by logger()
+    val LOG by logger(StyleRepository::class)
 
     /** Maps the name of [StyleType] to the [StyleType] object.*/
     val typeMap: MutableMap<String, StyleType> by lazy { mutableMapOf<String, StyleType>() }

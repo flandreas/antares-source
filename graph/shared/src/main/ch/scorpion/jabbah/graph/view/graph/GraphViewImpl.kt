@@ -47,7 +47,7 @@ class GraphViewImpl<T : GraphElementView<*>>(
         private val eventBus: EventBus = BaseModule.eventBus
 ) : DrawingImpl<T>(), GraphView<T> {
 
-    private val LOG by logger()
+    private val LOG by logger(GraphViewImpl::class)
 
     var name: String
         get() = graph!!.name

@@ -39,7 +39,7 @@ enum class Layout(val customName: String, val inputEventHandler: EdgeViewInputEv
 
     companion object {
 
-        val LOG by logger()
+        val LOG by logger(Layout::class)
 
         fun withName(customName: String): Layout {
             for (i in 0..Layout.values().size - 1) {

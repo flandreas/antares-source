@@ -1,8 +1,6 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
-import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.checkArgument
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
@@ -25,8 +23,6 @@ import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
 import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.module.DrawModule
@@ -47,7 +43,7 @@ open class EdgeViewImpl<T: Any>(
 ) : AbstractNetViewElement<T>(styleProvider, net), EdgeView<T> {
 
     private companion object {
-        val LOG by logger()
+        val LOG by logger(EdgeViewImpl::class)
         val CONTAINS_SIZE = 4
     }
 

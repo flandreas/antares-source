@@ -19,7 +19,7 @@ import kotlin.NoSuchElementException
 open class NetImpl<T: Any> : AbstractGraphElement(), Net<T> {
 
     companion object {
-        private val LOG by logger()
+        private val LOG by logger(NetImpl::class)
     }
 
     /** Internal representation of the [ports] property.*/

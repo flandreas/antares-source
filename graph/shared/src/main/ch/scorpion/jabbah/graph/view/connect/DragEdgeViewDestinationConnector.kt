@@ -13,7 +13,7 @@ class DragEdgeViewDestinationConnector(
         private val connectServiceSupplier: () -> GraphViewConnectService
 ) : AbstractDragEdgeViewEndpointConnector(EdgeViewEndpointType.DESTINATION) {
 
-    private val LOG by logger()
+    private val LOG by logger(DragEdgeViewDestinationConnector::class)
 
     /** ---- [InputEventHandler] */
 

@@ -9,8 +9,6 @@ import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.signal.NumberView
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -36,7 +34,7 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
-import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
@@ -48,7 +46,6 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.view.*
-import ch.scorpion.jabbah.base.logger
 
 
 /**
@@ -65,7 +62,7 @@ class CircuitInOutView(
         val PROP_OUTPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.outputIcon"
         val PROP_INOUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inoutIcon"
         val LABEL_DIST = Look.SCALE
-        val LOG by logger()
+        val LOG by logger(CircuitInOutView::class)
     }
 
     var signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY

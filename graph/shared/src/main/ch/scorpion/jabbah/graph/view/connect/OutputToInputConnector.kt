@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.Port
@@ -26,7 +23,7 @@ class OutputToInputConnector(
     edgeViewFactorySupplier: () -> EdgeViewFactory<Any>
 ) : AbstractConnector(edgeViewFactorySupplier, DragEdgeViewEndpointHandler(EdgeViewEndpointType.DESTINATION)) {
 
-    private val LOG by logger()
+    private val LOG by logger(OutputToInputConnector::class)
 
     /** The [VerticeView] from which the new connection originates. */
     private var verticeView: VerticeView<*>? = null

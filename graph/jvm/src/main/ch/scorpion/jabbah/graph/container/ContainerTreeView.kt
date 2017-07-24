@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -175,7 +175,7 @@ open class ContainerTreeView(
     }
 
     private class ContainerTreeCellRenderer : DefaultTreeCellRenderer() {
-        private val LOG = loggerFor(this)
+        private val LOG = logger(ContainerTreeView::class)
         private val iconCache: MutableMap<String, Icon> = mutableMapOf()
 
         override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): java.awt.Component {

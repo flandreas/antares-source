@@ -13,7 +13,7 @@ import java.awt.RenderingHints
  */
 class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
-    private val LOG by logger()
+    private val LOG by logger(Graphics2DJvm::class)
 
     /** Buffer used in [getClipBounds]. */
     private val clipBounds: Rectangle = Rectangle()

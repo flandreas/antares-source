@@ -27,7 +27,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
         val STORABLE_MODEL_ID = "modelId"
     }
 
-    private val LOG by logger()
+    private val LOG by logger(AbstractGraphElementView::class)
 
     /** Listens for changes of the model [GraphElement] and updates this view accordingly.*/
     private val modelListener = ModelListener()

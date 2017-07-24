@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.edit.DrawingView
  */
 class DragEdgePointHandler : EdgeViewInputEventHandler() {
 
-    private val LOG by logger()
+    private val LOG by logger(DragEdgePointHandler::class)
 
     private var highlight: DragEdgePointHighlight? = null
 

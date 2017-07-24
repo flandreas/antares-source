@@ -15,7 +15,7 @@ enum class Size(val customName: String) {
 
     companion object {
 
-        private val LOG by logger()
+        private val LOG by logger(Size::class)
 
         fun withName(name: String): Size {
             for (size in Size.values()) {

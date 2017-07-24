@@ -31,7 +31,7 @@ class EdgeToPortConnector(
         private val EDGE_CORNER_DIST = 15
     }
 
-    private val LOG by logger()
+    private val LOG by logger(EdgeToPortConnector::class)
 
     /** The [EdgeView] from which new [EdgeView]s are branched by this connector. */
     private var branchedEdgeView: EdgeView<*>? = null

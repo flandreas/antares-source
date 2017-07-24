@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.base.logger
  */
 class DottedGridPainter(val style: Style) : GridPainter {
 
-    val LOG by logger()
+    val LOG by logger(DottedGridPainter::class)
 
     /** ---- [GridPainter] interface */
 

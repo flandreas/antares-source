@@ -12,7 +12,7 @@ import java.io.ByteArrayOutputStream
 
 class InteractiveErrorHandler : ErrorHandler() {
 
-    private val LOG by logger()
+    private val LOG by logger(InteractiveErrorHandler::class)
 
     private var frame: JFrame? = null
 

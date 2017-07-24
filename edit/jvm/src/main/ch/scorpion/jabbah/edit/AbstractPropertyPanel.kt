@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.edit
 import com.l2fprod.common.propertysheet.PropertySheetPanel
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.loggerFor
 import java.awt.BorderLayout
 import java.awt.Container
 import java.beans.PropertyDescriptor
@@ -21,7 +20,7 @@ abstract class AbstractPropertyPanel(
     sheetFactory: PropertySheetPanelFactory
 ) : JPanel() {
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(AbstractPropertyPanel::class)
 
     /** Displays the properties of the selected [Component].*/
     private val sheet: PropertySheetPanel

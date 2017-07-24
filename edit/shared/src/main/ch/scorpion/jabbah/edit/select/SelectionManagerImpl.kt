@@ -8,8 +8,8 @@ import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.DrawableContainerListener
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.logger
 
 /**
  * Standard implementation of the [SelectionManager] interface.
@@ -27,7 +27,7 @@ class SelectionManagerImpl(
     constructor(view: DrawingView<out Drawing<Component>>)
         : this(view, EditSelectModule.selectionModelProvider, BaseModule.eventBus)
 
-    private val LOG by logger()
+    private val LOG by logger(SelectionManagerImpl::class)
 
     init {
         view.addPropertyChangeListener(object : PropertyChangeListener<Any> {

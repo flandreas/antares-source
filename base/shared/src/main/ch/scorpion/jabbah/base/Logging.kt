@@ -8,7 +8,7 @@ import kotlin.reflect.KClass
  * Usage pattern:
  *
  *      class Something {
- *          private val LOG by logger()
+ *          private val LOG by logger(Something::class)
  *
  *          fun foo() {
  *              LOG.info("Hello from Something")
@@ -32,14 +32,21 @@ interface Logger {
     fun trace(msg: String)
     fun isDebugEnabled(): Boolean
     fun isTraceEnabled(): Boolean
+
+    fun setLogLevel(level: LogLevel?)
 }
 
-fun <T: Any> T.logger(): Lazy<Logger> {
-    return LOG_SYSTEM!!.getLogger(this::class)
+enum class LogLevel {
+    NONE,
+    ERROR,
+    WARN,
+    INFO,
+    DEBUG,
+    TRACE
 }
 
-fun <T: Any> T.loggerFor(origin: T): Lazy<Logger> {
-    return LOG_SYSTEM!!.getLogger(origin::class)
+fun <T: Any> logger(origin: KClass<T>): Lazy<Logger> {
+    return LOG_SYSTEM!!.getLogger(origin)
 }
 
 

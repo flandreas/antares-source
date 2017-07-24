@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.io
 
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.io.GlobalIdentityCreator
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
@@ -12,7 +11,7 @@ class StorableClonerJvm(val typeMap: TypeMap) : StorableCloner {
 
     constructor(): this(IOModule.typeMap)
 
-    private val LOG by logger()
+    private val LOG by logger(StorableClonerJvm::class)
 
     /** ---- [StorableCloner] interface */
 

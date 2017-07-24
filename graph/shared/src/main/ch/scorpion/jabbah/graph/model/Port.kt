@@ -5,8 +5,8 @@ import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.exception.IllegalStateException
+import ch.scorpion.jabbah.base.logger
 import kotlin.reflect.KClass
 
 /**
@@ -128,7 +128,7 @@ enum class PortType(val customName: String) {
     INOUT("inout");
 
     companion object {
-        private val LOG by logger()
+        private val LOG by logger(PortType::class)
 
         fun withName(customName: String): PortType {
             for (type in PortType.values()) {

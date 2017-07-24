@@ -11,8 +11,6 @@ import java.util.Stack
  */
 class ElectricXmlWriter(val outputStream: OutputStream) : XmlWriter {
 
-    private val LOG by logger()
-
     /** Holds the XML document that is to be written to [outputStream].*/
     private val document = Document()
 

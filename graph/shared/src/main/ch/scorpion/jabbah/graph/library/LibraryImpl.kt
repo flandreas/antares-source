@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 
 /**
  * Standard implementation of the [Library] interface.
@@ -58,7 +58,7 @@ class LibraryImpl(
         libraryFolder.dispose()
     }
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(LibraryImpl::class)
 
     /** ---- [Any] */
 

@@ -21,7 +21,7 @@ interface TimeService {
  */
 class ControlledTimeService : TimeService {
 
-    private val LOG by logger()
+    private val LOG by logger(ControlledTimeService::class)
 
     companion object {
         /** The name of the time property.*/

@@ -34,7 +34,7 @@ class TriStateBufferGate(
 ) : CalculatingVertice(CALCULATOR) {
 
     companion object {
-        val LOG by logger()
+        val LOG by logger(TriStateBufferGate::class)
         val ENABLE_PORT_NAME = "EN"
         val CALCULATOR = TriStateBufferCalculator()
     }

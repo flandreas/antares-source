@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.base.logger
  */
 class ReferenceResolverImpl : ReferenceResolver {
 
-    private val LOG by logger()
+    private val LOG by logger(ReferenceResolverImpl::class)
 
     /** Maps global persistent IDs to object references.*/
     private val map = mutableMapOf<Int, Storable>()

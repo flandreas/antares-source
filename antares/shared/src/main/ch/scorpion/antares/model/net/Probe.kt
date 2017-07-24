@@ -20,7 +20,7 @@ import ch.scorpion.jabbah.base.logger
 class Probe(hasOutput: Boolean = false) : CalculatingVertice(CALCULATOR), DigitalSignalSource {
 
     companion object {
-        val LOG by logger()
+        val LOG by logger(Probe::class)
         val CALCULATOR = object : VerticeCalculator<Probe> {
             override fun calculate(vertice: Probe, data: GraphActorData, signalHandler: SignalHandler) {
                 if (vertice.isLogging) {

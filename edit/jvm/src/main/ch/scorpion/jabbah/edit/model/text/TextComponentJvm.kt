@@ -19,7 +19,7 @@ import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -134,7 +134,7 @@ open class TextComponentJvm(
         }
     }
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(TextComponentJvm::class)
 
     override var text: String = text
         set(value) {

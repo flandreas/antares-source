@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.base.logger
  */
 class SelectionModelFactoryImpl : SelectionModelFactory {
 
-    private val LOG by logger()
+    private val LOG by logger(SelectionModelFactoryImpl::class)
 
     /** Contains the registered [Entries][Entry] for a particular [SelectionDrawingStrategy].*/
     private val registry: MutableMap<SelectionDrawingStrategy, MutableList<Entry>> = mutableMapOf()

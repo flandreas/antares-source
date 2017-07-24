@@ -36,7 +36,7 @@ class LibraryPreviewPanel(
     @Suppress("unused")
     constructor(libraryTreeView: LibraryTreeView): this(BaseModule.eventBus, libraryTreeView)
 
-    private val LOG by logger()
+    private val LOG by logger(LibraryPreviewPanel::class)
 
     /** Maps a [LibraryElement] to the instantiated [Component] to be displayed as preview.*/
     private val map: MutableMap<LibraryElement, Component> = mutableMapOf()

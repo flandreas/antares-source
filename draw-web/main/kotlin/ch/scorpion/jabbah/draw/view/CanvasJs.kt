@@ -26,7 +26,7 @@ class CanvasJs(
         styleProvider: StyleProvider
 ) : Canvas {
 
-    private val LOG by logger()
+    private val LOG by logger(CanvasJs::class)
 
     private val mouseListeners: MutableList<MouseEventBridge> by lazy {mutableListOf<MouseEventBridge>()}
     private val mouseMotionListeners: MutableList<MouseMotionEventBridge> by lazy {mutableListOf<MouseMotionEventBridge>()}

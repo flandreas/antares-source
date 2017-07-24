@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
  */
 class TypeMapImpl : TypeMap {
 
-    private val LOG by logger()
+    private val LOG by logger(TypeMapImpl::class)
 
     /** Maps a type name to its registered class.*/
     private val type2Class = mutableMapOf<String, KClass<out Any>>()

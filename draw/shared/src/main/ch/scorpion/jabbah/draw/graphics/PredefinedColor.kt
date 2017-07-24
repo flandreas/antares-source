@@ -32,7 +32,7 @@ interface PredefinedColorProvider {
  */
 object PredefinedColorRepository : PredefinedColorProvider {
 
-    val LOG by logger()
+    val LOG by logger(PredefinedColorRepository::class)
 
     /** Contains the registered [PredefinedColor]s.*/
     val colors: MutableList<PredefinedColor> by lazy { mutableListOf<PredefinedColor>()}

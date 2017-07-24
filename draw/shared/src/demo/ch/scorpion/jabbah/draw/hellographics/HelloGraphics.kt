@@ -15,7 +15,6 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.logger
 
 /**
  * A simple rectangular [Drawable].
@@ -45,7 +44,6 @@ class SimpleRectangle(bounds: Rectangle2D, val fillColor: Color) : AbstractRecta
 }
 
 class Controller(val canvas: Canvas, val model: Model) {
-    val LOG by logger()
     init {
         canvas.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
@@ -58,7 +56,6 @@ class Controller(val canvas: Canvas, val model: Model) {
 }
 
 class Model(dim: Dimension2D, rectCount: Int) {
-    val LOG by logger()
     val container = DrawableContainerImpl<Drawable>()
     val ball = SimpleRectangle(Rectangle2D(dim.width / 2, dim.height / 2, 10.0, 10.0), Color(0, 0, 0))
     val step = 1.0

@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.ScenarioEvent
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.graph.view.ScenarioStepEvent
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 
 /**
  *  Detects the start of a [Scenario] in an executing [Graph] and notifies this by posting a
@@ -29,7 +29,7 @@ class ScenarioDetector(
         private val eventBus: EventBus
 ) {
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(ScenarioDetector::class)
 
     private val schedulerEventHandler: EventHandler<SchedulerEvent> = {
         if (it.actor is GraphElement && view.drawing.graph!!.contains(it.actor as GraphElement)) {

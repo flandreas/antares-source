@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
@@ -36,7 +35,7 @@ import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.net.NetActorData
 import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.view.*
 
 /**
@@ -68,7 +67,7 @@ class GraphViewAnimator(
         AntaresViewModule.currentGraphViewAnimationType,
         DrawStyleModule.styleProvider)
 
-    val LOG by loggerFor(this)
+    val LOG by logger(GraphViewAnimator::class)
 
     /**
      * Maps a [Net] to all [DigitalEdgeViewNetAnimation]s currently running on it. Note that there can be

@@ -44,7 +44,7 @@ open class GraphNavigationPanel(
         private val scriptGateway: ScriptGateway
 ) : JPanel() {
 
-    private val LOG by logger()
+    private val LOG by logger(GraphNavigationPanel::class)
 
     private val navigationStackView = NavigationStackView()
 

@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities
  */
 class SwingInvocationHandler : InvocationHandler() {
 
-    private val LOG by logger()
+    private val LOG by logger(SwingInvocationHandler::class)
 
     override fun invokeImpl(doRun: Runnable) {
         BusyHandler.increment()

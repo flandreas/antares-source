@@ -43,7 +43,7 @@ class SwitchView(
 ) : DigitalComponentView<Switch>(styleProvider, "library.element.Switch", model), ControlView<Switch>, ControlViewSource<Switch> {
 
     companion object {
-        val LOG by logger()
+        val LOG by logger(SwitchView::class)
         val PROP_ICON_PATH = "ch.scorpion.antares.view.input.SwitchView.iconPath"
         val SIZE = 4 * Look.SCALE
         val COLOR_BORDER = Color.GRAY

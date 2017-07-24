@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 
 /**
  * Defines categories of [SystemSpeed].
@@ -41,7 +41,7 @@ class CurrentSystemSpeedCategory(
         eventBus.register(SystemSpeedEvent::class, { update() })
     }
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(CurrentSystemSpeedCategory::class)
 
     var systemSpeedCategory: SystemSpeedCategory = calculate()
 

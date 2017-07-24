@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.base.logger
 class RAMCalculator : VerticeCalculator<RAM> {
 
     companion object {
-        val LOG by logger()
+        val LOG by logger(RAMCalculator::class)
     }
 
     override fun calculate(vertice: RAM, data: GraphActorData, signalHandler: SignalHandler) {

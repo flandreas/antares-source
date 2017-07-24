@@ -30,7 +30,7 @@ abstract class AbstractPortView<T: Any>(
     unconnectedLength: Int
 ) : AbstractDrawable(), PortView<T>, Storable {
 
-    private val LOG by logger()
+    private val LOG by logger(AbstractPortView::class)
 
     override var location: Point2D = Point2D(x, y)
         set(value) {

@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.base.logger
  */
 class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelectionModel<PolylineComponent>(c) {
 
-    private val LOG by logger()
+    private val LOG by logger(PolylineHandleSelectionModel::class)
 
     /** Handles input events on an individual [Handle].*/
     private val pointHandler = PolylinePointInputEventHandler()

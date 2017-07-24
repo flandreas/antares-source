@@ -11,8 +11,7 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.loggerFor
-import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.logger
 
 
 /**
@@ -26,7 +25,7 @@ open class ViewImpl<C: InputEventContext>(
         val transformFactory: () -> AffineTransform
 ) : View<C> {
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(ViewImpl::class)
 
     private val controller: ZoomPanController = ZoomPanController(this)
 

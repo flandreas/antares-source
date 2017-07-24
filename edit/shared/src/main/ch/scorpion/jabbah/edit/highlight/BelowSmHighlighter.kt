@@ -23,7 +23,7 @@ class BelowSmHighlighter(
     /** Maps a highlighted [Component]s to its highlight [SelectionModel].*/
     private val highlights: MutableMap<Component, SelectionModel<Component>> by lazy { mutableMapOf<Component, SelectionModel<Component>>() }
 
-    private val LOG by logger()
+    private val LOG by logger(BelowSmHighlighter::class)
 
     /** ---- [Highlighter] interface */
 

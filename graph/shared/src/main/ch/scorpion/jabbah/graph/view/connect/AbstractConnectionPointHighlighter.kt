@@ -17,7 +17,7 @@ abstract class AbstractConnectionPointHighlighter(
     successor: InputEventHandler<EditInputEventContext>? = null
 ) : InputEventHandlerAdapter<EditInputEventContext>(successor) {
 
-    private val LOG by logger()
+    private val LOG by logger(AbstractConnectionPointHighlighter::class)
 
     /** The highlight of the currently snapped origin or destination [PortView], else `null`. */
     protected var portViewHighlight: ConnectionPointHighlight? = null

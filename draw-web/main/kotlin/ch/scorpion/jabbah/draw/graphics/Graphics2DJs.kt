@@ -11,7 +11,7 @@ import org.w3c.dom.*
  */
 class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
 
-    private val LOG by logger()
+    private val LOG by logger(Graphics2DJs::class)
 
     val clip: Rectangle2D = Rectangle2D()
 
@@ -268,7 +268,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
         if (dash == null) {
             return doubleArrayOf().toTypedArray()
         }
-        return Array<Double>(dash.size, {i -> dash[i].toDouble()})
+        return Array(dash.size, { i -> dash[i].toDouble()})
     }
 
     private fun drawRect(rect: Rectangle2D) {

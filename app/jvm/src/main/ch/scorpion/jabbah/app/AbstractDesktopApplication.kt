@@ -39,7 +39,7 @@ abstract class AbstractDesktopApplication(
     eventBus: EventBus
 ) : AbstractApplication(eventBus), DesktopApplication {
 
-    private val LOG by logger()
+    private val LOG by logger(AbstractDesktopApplication::class)
 
     private val commandLine: CommandLine by lazy {
         val options = Options()

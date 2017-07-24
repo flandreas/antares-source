@@ -12,8 +12,8 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.logger
 
 /**
  * A [SubGraphVertice] implementation that is part of one [Graph] and references another [Graph] in the [Library].
@@ -32,7 +32,7 @@ class SubGraphVerticeRef(
             }
         }
 
-        val LOG by logger()
+        val LOG by logger(SubGraphVerticeRef::class)
 
         /** Creates a new [SubGraphVerticeRef] using the data in the specified [SubGraphVertice].*/
         fun fromSubGraphVertice(

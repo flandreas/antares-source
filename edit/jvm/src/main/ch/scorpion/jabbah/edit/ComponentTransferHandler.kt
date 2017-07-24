@@ -26,7 +26,8 @@ open class ComponentTransferHandler(
     private val eventBus: EventBus,
     private val flavour: DataFlavor
 ) : TransferHandler() {
-    private val LOG by logger()
+
+    private val LOG by logger(ComponentTransferHandler::class)
 
     init {
         (editor.view.canvas as JComponent).dropTarget = object : DropTarget() {

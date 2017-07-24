@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.io.module
 
 import ch.scorpion.jabbah.base.collection.Stack
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.io.XmlWriter
 import org.w3c.dom.Element
 import org.w3c.dom.XMLDocument
@@ -15,7 +15,7 @@ import kotlin.browser.document
  */
 class DomXmlWriter(private val consumer: (String) -> Unit) : XmlWriter {
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(DomXmlWriter::class)
 
     /** Holds the XML xmlDoc that is to be created and serialized into a [String]. */
     private var xmlDoc: XMLDocument? = null

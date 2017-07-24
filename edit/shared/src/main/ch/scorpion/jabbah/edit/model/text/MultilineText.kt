@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.edit.model.text
 
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.loggerFor
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Graphics2D

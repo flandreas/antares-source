@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.io
 
 import ch.scorpion.jabbah.base.collection.Stack
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.get
@@ -14,7 +14,7 @@ class DomXmlReader(document: Document) : XmlReader {
 
     constructor(str: String): this(DOMParser().parseFromString(str, "application/xml"))
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(DomXmlReader::class)
     private val stack = Stack<Element>()
 
     init {

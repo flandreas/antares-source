@@ -26,7 +26,7 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 
 
 /**
@@ -41,7 +41,7 @@ class ContainerDrawing(
     private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : DrawingImpl<Component>() {
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(ContainerDrawing::class)
 
     var model: SubGraphVertice = SubGraphVerticeImpl()
         private set

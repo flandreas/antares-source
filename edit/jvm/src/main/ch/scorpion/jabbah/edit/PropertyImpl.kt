@@ -15,7 +15,7 @@ class PropertyImpl<V>(
 ) : AbstractProperty() {
 
     companion object {
-        val LOG by logger()
+        val LOG by logger(PropertyImpl::class)
     }
 
     private var editor: Editor? = null

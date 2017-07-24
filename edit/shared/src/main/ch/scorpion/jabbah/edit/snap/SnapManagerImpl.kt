@@ -17,7 +17,7 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 
     constructor(editor: Editor): this(editor, BaseModule.eventBus)
 
-    private val LOG by logger()
+    private val LOG by logger(SnapManagerImpl::class)
     private val ZERO_OFFSET = Point2D()
 
     /** The [Snapper]s that are orchestrated by this [SnapManager]. The [Snapper] at index 0 gets involved first.*/

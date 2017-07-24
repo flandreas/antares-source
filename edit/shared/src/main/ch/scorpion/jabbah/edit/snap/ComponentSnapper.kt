@@ -35,7 +35,7 @@ class ComponentSnapper(val editor: Editor, snapEnabled: Boolean) : AbstractSnapp
         val PROP_SNAP_HIGHLIGHT_STROKE = "edit.snap.highlight.stroke"
     }
 
-    private val LOG by logger()
+    private val LOG by logger(ComponentSnapper::class)
 
     private val GRAVITY = 15.0
     private val EMPTY_BBOX = Rectangle2D()

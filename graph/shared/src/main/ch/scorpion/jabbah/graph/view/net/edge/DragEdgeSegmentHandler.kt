@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
  */
 class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 
-    private val LOG by logger()
+    private val LOG by logger(DragEdgeSegmentHandler::class)
 
     private var lastX: Double = 0.0
     private var lastY: Double = 0.0

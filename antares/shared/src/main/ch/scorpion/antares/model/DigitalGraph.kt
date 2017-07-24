@@ -9,14 +9,14 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
-import ch.scorpion.jabbah.base.loggerFor
+import ch.scorpion.jabbah.base.logger
 
 /**
  * A [GraphImpl] that forwards [DigitalSignal]s.
  */
 class DigitalGraph(eventBus: EventBus = BaseModule.eventBus) : GraphImpl(eventBus) {
 
-    private val LOG by loggerFor(this)
+    private val LOG by logger(DigitalGraph::class)
 
     /** Forwards signal changes of a [Tunnel] to all other [Tunnel]s with the same name.*/
     private val tunnelHandler = TunnelHandler()

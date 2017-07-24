@@ -30,7 +30,7 @@ class ZoomPanController(val view: View<*>) {
     private val controller = Controller()
 
     inner class Controller : MouseAdapter() {
-        val LOG by logger()
+        val LOG by logger(ZoomPanController::class)
         var startPos: Point2D? = null
 
         override fun mousePressed(e: MouseEvent) {

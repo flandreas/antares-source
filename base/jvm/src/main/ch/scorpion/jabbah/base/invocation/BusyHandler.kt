@@ -32,7 +32,7 @@ import javax.swing.Timer
 class BusyHandler(val rootPaneContainer: RootPaneContainer, val stateBar: StateBar?) {
 
     companion object {
-        val LOG by logger()
+        val LOG by logger(BusyHandler.Companion::class)
 
         /** Stores all registered [BusyHandler]s.*/
         private val HANDLERS: MutableMap<RootPaneContainer, BusyHandler> = mutableMapOf()

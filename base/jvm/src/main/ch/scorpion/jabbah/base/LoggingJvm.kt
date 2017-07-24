@@ -10,7 +10,7 @@ import kotlin.reflect.companionObject
 class LogSystemJVM : LogSystem {
 
     override fun getLogger(clazz: KClass<out Any>): Lazy<Logger> {
-        return lazy {LoggerJvm(LoggerFactory.getLogger(unwrapCompanionClass(clazz.java).name))}
+        return lazy { LoggerJvm(LoggerFactory.getLogger(unwrapCompanionClass(clazz.java).name)) }
     }
 
     /** Unwrap companion class to enclosing class given a Java class.*/
@@ -21,11 +21,6 @@ class LogSystemJVM : LogSystem {
             ofClass
         }
     }
-
-    /** Unwrap companion class to enclosing class given a Kotlin class.*/
-    private fun <T: Any> unwrapCompanionClass(ofClass: KClass<T>): KClass<*> {
-        return unwrapCompanionClass(ofClass.java).kotlin
-    }
 }
 
 class LoggerJvm(val slf4jLogger: org.slf4j.Logger) : Logger {
@@ -34,6 +29,10 @@ class LoggerJvm(val slf4jLogger: org.slf4j.Logger) : Logger {
     override fun error(msg: String) = slf4jLogger.error(msg)
     override fun debug(msg: String) = slf4jLogger.debug(msg)
     override fun trace(msg: String) = slf4jLogger.trace(msg)
-    override fun isTraceEnabled(): Boolean = slf4jLogger.isTraceEnabled()
-    override fun isDebugEnabled(): Boolean = slf4jLogger.isDebugEnabled()
+    override fun isTraceEnabled(): Boolean = slf4jLogger.isTraceEnabled
+    override fun isDebugEnabled(): Boolean = slf4jLogger.isDebugEnabled
+
+    override fun setLogLevel(level: LogLevel?) {
+        throw UnsupportedOperationException("LogSystemJVM.setLogLevel) not supported for slf4j")
+    }
 }
