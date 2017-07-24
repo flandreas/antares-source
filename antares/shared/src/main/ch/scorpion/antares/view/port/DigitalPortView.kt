@@ -180,7 +180,7 @@ class DigitalPortView(
         context.g.translate(-locationX, -locationY)
 
         if (DEBUG_GFX) {
-            context.g.color = Color.YELLOW
+            context.g.color = Color.RED
             context.g.draw(boundingBox)
         }
 
