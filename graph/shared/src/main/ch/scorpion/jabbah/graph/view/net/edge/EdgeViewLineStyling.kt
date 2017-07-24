@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 
     private companion object {
-        private val DEBUG_GFX = false
+        private val DEBUG_GFX = true
 
     }
 
@@ -42,10 +42,10 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
             boundingBox.setFrame(edgeView.polyline.getPointAt(0).x, edgeView.polyline.getPointAt(0).y, 0.0, 0.0)
         }
         boundingBox.add(edgeView.polyline.boundingBox)
-        if (edgeView.origin != null) {
+        if (edgeView.origin == null) {
             boundingBox.add(edgeView.originEndpointView.boundingBox)
         }
-        if (edgeView.destination != null) {
+        if (edgeView.destination == null) {
             boundingBox.add(edgeView.destinationEndpointView.boundingBox)
         }
         boundingBox.setFrame(

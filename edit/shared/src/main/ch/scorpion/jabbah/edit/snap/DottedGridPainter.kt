@@ -40,11 +40,6 @@ class DottedGridPainter(val style: Style) : GridPainter {
             distanceX * Math.ceil(zoomPan!!.transform.viewToModelX(rect.maxX) / distanceX),
             distanceY * Math.ceil(zoomPan!!.transform.viewToModelY(rect.maxY) / distanceY)))
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Painting Grid within view rectangle $rect")
-            LOG.debug("Painting Grid within x1=${low.x},x2=${high.x} and y1=${low.y},y2=${high.y}")
-        }
-
         var x = low.x
         while (x <= high.x) {
             var y = low.y
