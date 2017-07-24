@@ -3,18 +3,23 @@ package ch.scorpion.jabbah.graph.container
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.view.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.view.container.ContainerEditor
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.Component
 import java.awt.event.ActionEvent
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
+import javax.swing.Action
 import javax.swing.JDialog
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
@@ -33,6 +38,10 @@ class EditSubGraphVerticeViewAction(
 
     private var editedVerticeView: SubGraphVerticeView<*>? = null
 
+    private var containerPanel: ContainerPanel? = null
+
+    private var oldActiveView: View<out InputEventContext>? = null
+
     override fun calculateEnabled(): Boolean {
         return getSelectionCount() == 1 && getSingleSelection() is SubGraphVerticeView<*>
     }
@@ -43,11 +52,10 @@ class EditSubGraphVerticeViewAction(
         val dialog = JDialog(frame, true)
         dialog.title = Translations.getString("graph.action.editSubGraphVerticeView.name")
         dialog.addWindowListener(object : WindowAdapter() {
-            override fun windowClosing(e: WindowEvent?) {
+            override fun windowClosing(we: WindowEvent?) {
                 handleClosed()
             }
-
-            override fun windowClosed(e: WindowEvent?) {
+            override fun windowClosed(we: WindowEvent?) {
                 handleClosed()
             }
         })
@@ -55,13 +63,15 @@ class EditSubGraphVerticeViewAction(
         getDrawingView()!!.selectionManager.deselect(editedVerticeView!!)
         editedVerticeView!!.invalidate()
 
-        val panel = EditSubGraphVerticeViewPanel(
-            libraryHolder,
-            ContainerPanel(
+        containerPanel = ContainerPanel(
                 GraphViewModule.containerEditorFactory.invoke(eventBus),
                 EditModuleJvm.propertySheetPanelFactory,
                 eventBus,
-                viewManager),
+                viewManager)
+
+        val panel = EditSubGraphVerticeViewPanel(
+            libraryHolder,
+            containerPanel!!,
             editedVerticeView!!,
             { dialog.dispose() }
         )
@@ -69,12 +79,18 @@ class EditSubGraphVerticeViewAction(
         dialog.contentPane.add(panel)
         dialog.pack()
         dialog.setLocationRelativeTo(frame)
-
         panel.initialize()
+
+        oldActiveView = viewManager.activeView
+        viewManager.registerView(containerPanel!!.editor.view)
+
         dialog.isVisible = true
     }
 
     private fun handleClosed() {
+        viewManager.unregisterView(containerPanel!!.editor.view)
+        viewManager.activeView = oldActiveView
+
         editedVerticeView!!.invalidate()
         getDrawingView()!!.selectionManager.select(editedVerticeView!!)
     }
