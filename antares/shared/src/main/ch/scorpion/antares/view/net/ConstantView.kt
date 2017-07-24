@@ -34,7 +34,6 @@ class ConstantView(
 			styleProvider = styleProvider,
 			port = model!!.getOutput(),
 			direction = Direction.WEST)
-		portView.setLocation(portView.length * orientation.dx, portView.length * orientation.dy)
 		addPortView(portView)
 		updateView()
     }
@@ -67,6 +66,13 @@ class ConstantView(
             Direction.WEST -> Point2D(-getOutput().length - numberView!!.width - 2 * insets, -numberView!!.height / 2 - insets)
         }
 
+    override fun updateViewImpl() {
+        getOutput().direction = orientation.opposite()
+        getOutput().setLocation(
+                getOutput().length * -getOutput().direction.dx,
+                getOutput().length * -getOutput().direction.dy)
+    }
+
     /** ---- [AbstractVerticeView] */
 
     override fun drawImpl(context: DrawContext) {
@@ -97,18 +103,5 @@ class ConstantView(
 
         context.g.stroke = oldStroke
         context.g.color = oldColor
-    }
-
-    /** ---- [ConstantView] */
-
-    fun drawSelected(context: DrawContext) {
-        draw(context, { drawImpl(it) })
-    }
-
-    override fun updateViewImpl() {
-        getOutput().direction = orientation.opposite()
-        getOutput().setLocation(
-            getOutput().length * -getOutput().direction.dx,
-            getOutput().length * -getOutput().direction.dy)
     }
 }

@@ -49,8 +49,6 @@ class ProbeView(
 			styleProvider = styleProvider,
 			port = model!!.getInput(),
 			direction = Direction.WEST)
-		inputPortView.setLocation(inputPortView.length * orientation.dx,
-			inputPortView.length * orientation.dy)
 		addPortView(inputPortView)
 
 		hasOutput = model!!.hasOutput
@@ -102,6 +100,11 @@ class ProbeView(
             Direction.WEST -> Point2D(-getInput().length - numberView!!.width - 2 * insets, -numberView!!.height / 2 - insets)
         }
 
+    override fun updateViewImpl() {
+        getInput().direction = orientation.opposite()
+        getInput().setLocation(getInput().length * orientation.dx, getInput().length * orientation.dy)
+    }
+
     /** ---- [ControlViewSource] */
 
     override val controlId: String get() = "probe:" + id
@@ -127,6 +130,8 @@ class ProbeView(
             drawEdited(context)
         }
     }
+
+    /** ---- [ProbeView] */
 
     private fun drawSimulated(context: DrawContext) {
         drawEdited(context)
