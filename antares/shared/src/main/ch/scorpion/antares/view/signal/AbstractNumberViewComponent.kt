@@ -23,7 +23,8 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
     styleProvider: StyleProvider,
     baseResourceKey: String,
     model: T?,
-    orientation: Direction
+    orientation: Direction,
+    signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY
 ) : DigitalComponentView<T>(styleProvider, baseResourceKey, model) {
 
     companion object {
@@ -38,7 +39,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
             }
         }
 
-    var signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY
+    var signalRepresentation: DigitalSignalRepresentation = signalRepresentation
         set(value) {
             if (value != field) {
                 field = value
