@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 
     private companion object {
-        private val DEBUG_GFX = true
+        private val DEBUG_GFX = false
 
     }
 
