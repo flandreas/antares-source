@@ -1,0 +1,69 @@
+<metaGraph _id='0'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' uuid='6faeb5b6-ce07-47fc-b48a-068e245668eb' name='Test Custom'>
+          <elements>
+            <subGraphVerticeRef _id='3' id='1' delay='0' name='NOP' uuid='cc6b2b47-de2e-4d82-9229-121cffddd85a'/>
+          </elements>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='4'>
+          <netViews/>
+          <components>
+            <subGraphVerticeViewRef _id='5' id='1' rot='0' modelId='3' x='-448.0' y='-266.0'>
+              <container>
+                <containerDrawing _id='6'>
+                  <components>
+                    <containerBox _id='12' id='1' style='figure' x='140.0' y='140.0' w='42.0' h='42.0'/>
+                    <originIndicator _id='11'>
+                      <location>
+                        <point x='161.0' y='126.0'/>
+                      </location>
+                    </originIndicator>
+                    <digitalPortViewComp _id='9' id='3' style='figure' showBitWidthAnnotation='true'>
+                      <portView>
+                        <digitalPortView _id='10' x='161.0' y='140.0' dir='north' textPos='internal' portId='14'/>
+                      </portView>
+                    </digitalPortViewComp>
+                    <digitalPortViewComp _id='7' id='4' style='figure' showBitWidthAnnotation='true'>
+                      <portView>
+                        <digitalPortView _id='8' x='182.0' y='161.0' dir='east' textPos='internal' portId='15'/>
+                      </portView>
+                    </digitalPortViewComp>
+                  </components>
+                  <model>
+                    <subGraphVertice _id='13' id='0' delay='0' name='NOP' uuid='cc6b2b47-de2e-4d82-9229-121cffddd85a'>
+                      <ports>
+                        <subCircuitPort _id='14' portId='1' name='I' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+                        <subCircuitPort _id='15' portId='2' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+                      </ports>
+                    </subGraphVertice>
+                  </model>
+                </containerDrawing>
+              </container>
+            </subGraphVerticeViewRef>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='17'>
+      <components>
+        <containerBox _id='19' id='1' style='figure' x='140.0' y='140.0' w='49.0' h='77.0'/>
+        <originIndicator _id='18'>
+          <location>
+            <point x='126.0' y='182.0'/>
+          </location>
+        </originIndicator>
+      </components>
+      <model>
+        <subGraphVertice _id='20' id='0' delay='0' name='Test Custom' uuid='6faeb5b6-ce07-47fc-b48a-068e245668eb'>
+          <ports/>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

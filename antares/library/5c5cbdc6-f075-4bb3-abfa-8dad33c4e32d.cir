@@ -56,10 +56,9 @@
       </components>
       <model>
         <subGraphVertice _id='18' id='0' delay='0' name='Test IO' uuid='5c5cbdc6-f075-4bb3-abfa-8dad33c4e32d'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='19' portId='1' name='I1' logic='positive' bitWidth='1' trigger='level' type='inout' representation='binary'/>
-          </inputPorts>
-          <outputPorts/>
+          <ports/>
         </subGraphVertice>
       </model>
     </containerDrawing>

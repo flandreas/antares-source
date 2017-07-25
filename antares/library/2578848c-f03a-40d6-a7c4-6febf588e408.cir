@@ -264,13 +264,11 @@
       </components>
       <model>
         <subGraphVertice _id='75' id='0' delay='0' name='Register 16-Bit' uuid='2578848c-f03a-40d6-a7c4-6febf588e408'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='76' portId='1' name='D' logic='positive' bitWidth='16' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='77' portId='2' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='78' portId='3' name='O' logic='positive' bitWidth='16' trigger='level' type='output' representation='hex'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

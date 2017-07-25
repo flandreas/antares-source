@@ -45,8 +45,8 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(100, 100))
         ev.addSegmentPoint(Point2D(200, 100))
         ev.addSegmentPoint(Point2D(200, 200))
-        // Result includes line width
-        assertThat(ev.boundingBox as Rectangle2D, `is`(Rectangle2D(99, 99, 102, 102)))
+        // Result includes line width and EdgeEndpointViews
+        assertThat(ev.boundingBox as Rectangle2D, `is`(Rectangle2D(92, 92, 116, 116)))
     }
 
     @Test

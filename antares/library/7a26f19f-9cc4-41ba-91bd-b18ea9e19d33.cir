@@ -473,17 +473,15 @@ switch(parseInt(elem.input(&quot;F0&quot;)) + 2*parseInt(elem.input(&quot;F1&quo
       </components>
       <model>
         <subGraphVertice _id='134' id='0' delay='0' name='ALU 1-Bit' uuid='7a26f19f-9cc4-41ba-91bd-b18ea9e19d33'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='135' portId='1' name='A' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='136' portId='2' name='B' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='137' portId='3' name='CI' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='138' portId='4' name='F0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='139' portId='5' name='F1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='140' portId='6' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='141' portId='7' name='CO' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

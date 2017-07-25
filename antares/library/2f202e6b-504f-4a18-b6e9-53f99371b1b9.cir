@@ -223,14 +223,12 @@
       </components>
       <model>
         <subGraphVertice _id='67' id='0' delay='0' name='2x 8-8 Multiplexer' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='68' portId='1' name='A' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='69' portId='2' name='B' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='70' portId='3' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='71' portId='4' name='O' logic='positive' bitWidth='8' trigger='level' type='output' representation='hex'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

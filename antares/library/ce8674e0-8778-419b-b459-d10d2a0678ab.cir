@@ -432,13 +432,11 @@
       </components>
       <model>
         <subGraphVertice _id='119' id='0' delay='0' name='Register 32-Bit' uuid='ce8674e0-8778-419b-b459-d10d2a0678ab'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='120' portId='1' name='D' logic='positive' bitWidth='32' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='121' portId='2' name='C' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='122' portId='3' name='O' logic='positive' bitWidth='32' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

@@ -447,10 +447,9 @@
       </components>
       <model>
         <subGraphVertice _id='134' id='0' delay='0' name='Display' uuid='bb6fafb2-d857-4b7d-8b50-c463e55f630f'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='135' portId='1' name='I' logic='positive' bitWidth='16' trigger='level' type='input' representation='hex'/>
-          </inputPorts>
-          <outputPorts/>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

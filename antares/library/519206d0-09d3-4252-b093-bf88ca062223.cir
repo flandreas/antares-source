@@ -191,15 +191,13 @@
       </components>
       <model>
         <subGraphVertice _id='56' id='0' delay='0' name='Clock' uuid='519206d0-09d3-4252-b093-bf88ca062223'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='57' portId='5' name='CLK' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='58' portId='1' name='C1' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='59' portId='2' name='C2' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='60' portId='3' name='C3' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='61' portId='4' name='C4' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

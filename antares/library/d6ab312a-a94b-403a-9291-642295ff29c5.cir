@@ -249,14 +249,12 @@ if (elem.portRaised(&quot;C&quot;)) {
       </components>
       <model>
         <subGraphVertice _id='72' id='0' delay='0' name='D-Flipflop' uuid='d6ab312a-a94b-403a-9291-642295ff29c5'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='73' portId='1' name='D' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='74' portId='2' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='75' portId='3' name='Q' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='76' portId='4' name='!Q' logic='negative' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

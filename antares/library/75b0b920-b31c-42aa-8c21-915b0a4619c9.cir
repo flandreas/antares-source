@@ -476,18 +476,16 @@
       </components>
       <model>
         <subGraphVertice _id='137' id='0' delay='0' name='Address Decoder' uuid='75b0b920-b31c-42aa-8c21-915b0a4619c9'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='138' portId='1' name='A' logic='positive' bitWidth='16' trigger='level' type='input' representation='hex'/>
             <subCircuitPort _id='139' portId='2' name='RD' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='140' portId='3' name='A RAM' logic='positive' bitWidth='8' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='141' portId='4' name='CS RAM' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='142' portId='5' name='A ROM' logic='positive' bitWidth='8' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='143' portId='6' name='CS ROM' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='144' portId='7' name='A PIO' logic='positive' bitWidth='2' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='145' portId='8' name='CS PIO' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

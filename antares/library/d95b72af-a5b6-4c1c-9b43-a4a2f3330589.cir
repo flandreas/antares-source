@@ -1214,15 +1214,13 @@
       </components>
       <model>
         <subGraphVertice _id='277' id='0' delay='0' name='BCD-7Seg Dec' uuid='d95b72af-a5b6-4c1c-9b43-a4a2f3330589'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='278' portId='2' name='A' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='279' portId='3' name='B' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='280' portId='4' name='C' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='281' portId='5' name='D' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='282' portId='1' name='a..g' logic='positive' bitWidth='8' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

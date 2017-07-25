@@ -187,13 +187,11 @@ elem.setOutputBit(&quot;O&quot;, a == b);'>
       </components>
       <model>
         <subGraphVertice _id='58' id='0' delay='0' name='Komparator 8-Bit' uuid='e5954353-6045-4cad-9e43-cb843fd679fc'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='59' portId='1' name='A' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
             <subCircuitPort _id='60' portId='2' name='B' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='61' portId='3' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

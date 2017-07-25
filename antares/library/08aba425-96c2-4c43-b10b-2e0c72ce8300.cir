@@ -202,15 +202,13 @@ elem.setOutputBit(&quot;CO&quot;, ha1c || ha2c);' propDelay='60'>
       </components>
       <model>
         <subGraphVertice _id='59' id='0' delay='0' name='Volladdierer' uuid='08aba425-96c2-4c43-b10b-2e0c72ce8300'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='60' portId='1' name='A' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='61' portId='2' name='B' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='62' portId='3' name='CI' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='63' portId='4' name='S' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='64' portId='5' name='CO' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

@@ -1062,17 +1062,15 @@ if (left) {
       </components>
       <model>
         <subGraphVertice _id='290' id='0' delay='0' name='Shifter 8-Bit' uuid='9eb38fe7-5844-4be6-9192-25104a077b0c'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='291' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='292' portId='2' name='CIR' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='293' portId='3' name='CIL' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='294' portId='4' name='F' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='295' portId='5' name='COR' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='296' portId='6' name='O' logic='positive' bitWidth='8' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='297' portId='7' name='COL' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

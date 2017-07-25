@@ -224,13 +224,11 @@
       </components>
       <model>
         <subGraphVertice _id='68' id='0' delay='0' name='Shifter' uuid='fb9d38b5-a3bf-43eb-bbd3-9ef586bd43f2'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='69' portId='1' name='D' logic='positive' bitWidth='16' trigger='level' type='input' representation='hex'/>
             <subCircuitPort _id='70' portId='2' name='F' logic='positive' bitWidth='2' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='71' portId='3' name='O' logic='positive' bitWidth='16' trigger='level' type='output' representation='hex'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

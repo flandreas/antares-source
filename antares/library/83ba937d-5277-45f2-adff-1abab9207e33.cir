@@ -551,14 +551,12 @@
       </components>
       <model>
         <subGraphVertice _id='158' id='0' delay='0' name='2x 4-4 Multiplexer' uuid='83ba937d-5277-45f2-adff-1abab9207e33'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='159' portId='1' name='B' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='160' portId='2' name='A' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='161' portId='3' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='162' portId='4' name='O' logic='positive' bitWidth='4' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

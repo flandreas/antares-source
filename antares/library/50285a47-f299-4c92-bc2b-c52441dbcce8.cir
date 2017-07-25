@@ -238,15 +238,13 @@
       </components>
       <model>
         <subGraphVertice _id='71' id='0' delay='0' name='SR-Flipflop' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='72' portId='1' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='73' portId='2' name='R' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='74' portId='3' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='75' portId='4' name='Q' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='76' portId='5' name='!Q' logic='negative' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

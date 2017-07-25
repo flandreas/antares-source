@@ -432,18 +432,16 @@
       </components>
       <model>
         <subGraphVertice _id='119' id='0' delay='0' name='4-1 Multiplexer' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='120' portId='1' name='I0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='121' portId='2' name='I1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='122' portId='3' name='I2' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='123' portId='4' name='I3' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='124' portId='6' name='S0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='125' portId='7' name='S1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='126' portId='5' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
           </outputPorts>
-        </subGraphVertice>
+        </ports>
       </model>
     </containerDrawing>
   </container>

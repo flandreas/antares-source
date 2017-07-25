@@ -419,13 +419,11 @@ elem.setOutputBit(&quot;CO&quot;, co);'>
       </components>
       <model>
         <subGraphVertice _id='124' id='0' delay='0' name='Inkrementierer 8-Bit' uuid='81e0ad9b-4678-4e79-aeef-8f59b153f2e3'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='125' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='126' portId='2' name='O' logic='positive' bitWidth='8' trigger='level' type='output' representation='hex'/>
             <subCircuitPort _id='127' portId='3' name='CO' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

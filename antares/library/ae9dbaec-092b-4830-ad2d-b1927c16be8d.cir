@@ -1869,18 +1869,16 @@
       </components>
       <model>
         <subGraphVertice _id='514' id='0' delay='0' name='Register File' uuid='ae9dbaec-092b-4830-ad2d-b1927c16be8d'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='515' portId='1' name='FA' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='516' portId='2' name='FB' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='517' portId='3' name='FC' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='518' portId='4' name='ENC' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='519' portId='5' name='C' logic='positive' bitWidth='16' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='520' portId='6' name='CLK' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='521' portId='7' name='A' logic='positive' bitWidth='16' trigger='level' type='output' representation='hex'/>
             <subCircuitPort _id='522' portId='8' name='B' logic='positive' bitWidth='16' trigger='level' type='output' representation='hex'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

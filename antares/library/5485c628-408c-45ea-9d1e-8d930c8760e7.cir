@@ -188,15 +188,13 @@
       </components>
       <model>
         <subGraphVertice _id='56' id='0' delay='0' name='JK-Master-Slave-Flipflop' uuid='5485c628-408c-45ea-9d1e-8d930c8760e7'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='57' portId='1' name='J' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='58' portId='2' name='K' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='59' portId='3' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='60' portId='4' name='Q' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='61' portId='5' name='!Q' logic='negative' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

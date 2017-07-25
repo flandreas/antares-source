@@ -79,10 +79,12 @@ interface GraphOutput<T: Any> : GraphPort<T> {
     fun setSubGraphOutputPort(port: SubGraphOutputPort<T>)
 }
 
-interface SubGraphInputPort<T: Any> : InputPort<T>, Storable {
+interface SubGraphPort<T: Any> : Port<T>, Storable
+
+interface SubGraphInputPort<T: Any> : InputPort<T>, SubGraphPort<T> {
 
     /** Binds this [SubGraphInputPort] to the [GraphInput] of the sub [Graph] to which it will forward signals.*/
     var graphInput: GraphInput<T>?
 }
 
-interface SubGraphOutputPort<T: Any> : OutputPort<T>, Storable
+interface SubGraphOutputPort<T: Any> : OutputPort<T>, SubGraphPort<T>

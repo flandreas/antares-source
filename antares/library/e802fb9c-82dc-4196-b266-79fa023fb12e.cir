@@ -265,13 +265,11 @@
       </components>
       <model>
         <subGraphVertice _id='76' id='0' delay='0' name='Register 4-Bit' uuid='e802fb9c-82dc-4196-b266-79fa023fb12e'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='77' portId='1' name='D' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='78' portId='2' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='79' portId='3' name='O' logic='positive' bitWidth='4' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

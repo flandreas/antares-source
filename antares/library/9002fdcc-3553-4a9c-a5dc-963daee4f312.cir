@@ -38,10 +38,9 @@
       </components>
       <model>
         <subGraphVertice _id='12' id='0' delay='0' name='Test InOut' uuid='9002fdcc-3553-4a9c-a5dc-963daee4f312'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='13' name='D' logic='positive' bitWidth='1' trigger='level' type='inout'/>
-          </inputPorts>
-          <outputPorts/>
+          <ports/>
         </subGraphVertice>
       </model>
     </containerDrawing>

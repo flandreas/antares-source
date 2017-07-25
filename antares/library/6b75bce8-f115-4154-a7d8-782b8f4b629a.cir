@@ -108,12 +108,10 @@
       </components>
       <model>
         <subGraphVertice _id='33' id='0' delay='0' name='Impulsglied (Neg)' uuid='6b75bce8-f115-4154-a7d8-782b8f4b629a'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='34' portId='1' name='I' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='35' portId='2' name='O' logic='negative' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

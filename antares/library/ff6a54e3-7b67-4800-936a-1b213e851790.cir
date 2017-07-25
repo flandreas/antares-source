@@ -661,14 +661,12 @@ elem.setOutputBit(&quot;O15&quot;, en &amp;&amp; val == 15);' propDelay='90'>
       </components>
       <model>
         <subGraphVertice _id='189' id='0' delay='0' name='4-16 Decoder' uuid='ff6a54e3-7b67-4800-936a-1b213e851790'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='190' portId='1' name='EN' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='191' portId='2' name='I0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='192' portId='3' name='I1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='193' portId='4' name='I2' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='194' portId='5' name='I3' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='195' portId='6' name='O0' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='196' portId='7' name='O1' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='197' portId='8' name='O2' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
@@ -685,7 +683,7 @@ elem.setOutputBit(&quot;O15&quot;, en &amp;&amp; val == 15);' propDelay='90'>
             <subCircuitPort _id='208' portId='19' name='O13' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='209' portId='20' name='O14' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='210' portId='21' name='O15' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

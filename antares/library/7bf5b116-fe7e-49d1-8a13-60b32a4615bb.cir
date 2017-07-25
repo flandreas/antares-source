@@ -566,16 +566,14 @@ elem.setOutputBit(&quot;N&quot;, elem.outputWord(&quot;O&quot;).bitAt(15).isSet(
       </components>
       <model>
         <subGraphVertice _id='155' id='0' delay='0' name='ALU 16-Bit' uuid='7bf5b116-fe7e-49d1-8a13-60b32a4615bb'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='156' portId='1' name='A' logic='positive' bitWidth='16' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='157' portId='2' name='B' logic='positive' bitWidth='16' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='158' portId='3' name='F' logic='positive' bitWidth='2' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='159' portId='4' name='O' logic='positive' bitWidth='16' trigger='level' type='output' representation='hex'/>
             <subCircuitPort _id='160' portId='5' name='N' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='161' portId='6' name='Z' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

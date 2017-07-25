@@ -60,13 +60,11 @@
       </components>
       <model>
         <subGraphVertice _id='20' id='0' delay='0' name='Test InOut' uuid='0e6b8dbd-0194-4fe4-80d5-44935be57bb3'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='21' name='D' logic='positive' bitWidth='1' trigger='level' type='inout'/>
             <subCircuitPort _id='22' name='I1' logic='positive' bitWidth='1' trigger='level' type='input'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='23' name='O1' logic='positive' bitWidth='1' trigger='level' type='output' representation='hex'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

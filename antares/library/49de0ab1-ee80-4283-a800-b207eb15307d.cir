@@ -786,11 +786,9 @@
       </components>
       <model>
         <subGraphVertice _id='239' id='0' delay='0' name='MIR' uuid='49de0ab1-ee80-4283-a800-b207eb15307d'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='240' portId='1' name='I' logic='positive' bitWidth='32' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='241' portId='2' name='CLK' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='242' portId='3' name='AMUX' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='243' portId='4' name='ADR' logic='positive' bitWidth='8' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='244' portId='5' name='A' logic='positive' bitWidth='4' trigger='level' type='output' representation='binary'/>
@@ -804,7 +802,7 @@
             <subCircuitPort _id='252' portId='13' name='SH' logic='positive' bitWidth='2' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='253' portId='14' name='ALU' logic='positive' bitWidth='2' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='254' portId='15' name='COND' logic='positive' bitWidth='2' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

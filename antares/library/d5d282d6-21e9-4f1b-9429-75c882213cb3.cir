@@ -304,15 +304,13 @@
       </components>
       <model>
         <subGraphVertice _id='87' id='0' delay='0' name='8-1 Multiplexer' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='88' portId='1' name='I' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='89' portId='3' name='S0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='90' portId='4' name='S1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='91' portId='5' name='S2' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='92' portId='2' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

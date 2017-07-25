@@ -268,17 +268,15 @@
       </components>
       <model>
         <subGraphVertice _id='80' id='0' delay='0' name='MBR' uuid='79d18538-9f8e-4d92-b249-d7f6beaa8970'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='81' portId='1' name='D' logic='positive' bitWidth='16' trigger='level' type='inout' representation='binary'/>
             <subCircuitPort _id='82' portId='2' name='CLK' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
             <subCircuitPort _id='83' portId='3' name='DI' logic='positive' bitWidth='16' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='84' portId='4' name='EN' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='85' portId='5' name='WR' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='86' portId='6' name='RD' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='87' portId='7' name='DO' logic='positive' bitWidth='16' trigger='level' type='output' representation='hex'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

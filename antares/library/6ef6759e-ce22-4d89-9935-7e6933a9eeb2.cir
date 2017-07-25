@@ -50,8 +50,7 @@
       </components>
       <model>
         <subGraphVertice _id='16' id='0' delay='0' name='Test Text' uuid='6ef6759e-ce22-4d89-9935-7e6933a9eeb2'>
-          <inputPorts/>
-          <outputPorts/>
+          <ports/>
         </subGraphVertice>
       </model>
     </containerDrawing>

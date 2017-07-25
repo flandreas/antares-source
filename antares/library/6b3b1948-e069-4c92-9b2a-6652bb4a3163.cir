@@ -243,14 +243,12 @@
       </components>
       <model>
         <subGraphVertice _id='70' id='0' delay='0' name='MSL' uuid='6b3b1948-e069-4c92-9b2a-6652bb4a3163'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='71' portId='1' name='N' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='72' portId='2' name='Z' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='73' portId='3' name='COND' logic='positive' bitWidth='2' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='74' portId='4' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

@@ -63,12 +63,10 @@
       </components>
       <model>
         <subGraphVertice _id='19' id='0' delay='0' name='NOP' uuid='cc6b2b47-de2e-4d82-9229-121cffddd85a'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='20' portId='1' name='I' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='21' portId='2' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

@@ -935,13 +935,11 @@ elem.setOutputBit(&quot;O7&quot;, en &amp;&amp; val == 7);' propDelay='43'>
       </components>
       <model>
         <subGraphVertice _id='229' id='0' delay='0' name='3-8 Decoder' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='230' portId='1' name='I0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='231' portId='2' name='I1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='232' portId='3' name='I2' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='233' portId='4' name='EN' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='234' portId='5' name='O0' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='235' portId='6' name='O1' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='236' portId='7' name='O2' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
@@ -950,7 +948,7 @@ elem.setOutputBit(&quot;O7&quot;, en &amp;&amp; val == 7);' propDelay='43'>
             <subCircuitPort _id='239' portId='10' name='O5' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='240' portId='11' name='O6' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='241' portId='12' name='O7' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

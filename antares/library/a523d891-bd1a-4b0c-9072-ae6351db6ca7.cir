@@ -263,13 +263,11 @@ elem.setOutputBit(&quot;O&quot;, a == b);'>
       </components>
       <model>
         <subGraphVertice _id='80' id='0' delay='0' name='Komparator 4-Bit' uuid='a523d891-bd1a-4b0c-9072-ae6351db6ca7'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='81' portId='1' name='A' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='82' portId='2' name='B' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='83' portId='3' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

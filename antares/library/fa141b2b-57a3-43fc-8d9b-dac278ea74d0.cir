@@ -620,19 +620,17 @@ elem.setOutputBit(&quot;N&quot;, elem.outputWord(&quot;O&quot;).bitAt(3).isSet()
       </components>
       <model>
         <subGraphVertice _id='163' id='0' delay='0' name='ALU 4-Bit' uuid='fa141b2b-57a3-43fc-8d9b-dac278ea74d0'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='164' portId='1' name='A' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='165' portId='2' name='B' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='166' portId='3' name='CI' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='167' portId='4' name='F0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='168' portId='5' name='F1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='169' portId='6' name='O' logic='positive' bitWidth='4' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='170' portId='7' name='CO' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='171' portId='8' name='N' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='172' portId='9' name='Z' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

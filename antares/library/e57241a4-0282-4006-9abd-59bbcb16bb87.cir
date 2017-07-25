@@ -241,14 +241,12 @@ elem.setOutputBit(&quot;!Q&quot;, true);
       </components>
       <model>
         <subGraphVertice _id='62' id='0' delay='0' name='SR Latch' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='63' portId='1' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='64' portId='2' name='R' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='65' portId='3' name='Q' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='66' portId='4' name='!Q' logic='negative' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

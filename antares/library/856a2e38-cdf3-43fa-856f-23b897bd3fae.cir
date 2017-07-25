@@ -378,8 +378,7 @@
       </components>
       <model>
         <subGraphVertice _id='93' id='0' delay='0' name='PIO' uuid='21648273-25d2-4071-b0cc-f3a75f945ef6'>
-          <inputPorts/>
-          <outputPorts/>
+          <ports/>
         </subGraphVertice>
       </model>
     </containerDrawing>

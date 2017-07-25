@@ -175,8 +175,7 @@
       </components>
       <model>
         <subGraphVertice _id='52' id='0' delay='0' name='Mikrocomputer' uuid='a0c0cc18-b2a3-4367-b268-c50c723468f0'>
-          <inputPorts/>
-          <outputPorts/>
+          <ports/>
         </subGraphVertice>
       </model>
     </containerDrawing>

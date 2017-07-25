@@ -1214,7 +1214,7 @@
       </components>
       <model>
         <subGraphVertice _id='320' id='0' delay='0' name='8x8 LED-Matrix mit Ctrl' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='321' portId='1' name='C' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='322' portId='2' name='I0' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='323' portId='3' name='I1' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
@@ -1224,8 +1224,7 @@
             <subCircuitPort _id='327' portId='7' name='I5' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='328' portId='8' name='I6' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='329' portId='9' name='I7' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts/>
+          <ports/>
         </subGraphVertice>
       </model>
     </containerDrawing>

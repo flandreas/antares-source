@@ -428,13 +428,11 @@
       </components>
       <model>
         <subGraphVertice _id='120' id='0' delay='0' name='Register 8-Bit' uuid='f8869bb7-cce3-4811-8f58-07eef9b04823'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='121' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='122' portId='2' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='123' portId='3' name='O' logic='positive' bitWidth='8' trigger='level' type='output' representation='hex'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

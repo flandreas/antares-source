@@ -147,14 +147,12 @@
       </components>
       <model>
         <subGraphVertice _id='46' id='0' delay='0' name='MAR' uuid='d3f947a8-f91d-4d0c-9c91-f95403fe3647'>
-          <inputPorts>
+          <ports>
             <subCircuitPort _id='47' portId='1' name='D' logic='positive' bitWidth='16' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='48' portId='2' name='CLK' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
             <subCircuitPort _id='49' portId='3' name='EN' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          </inputPorts>
-          <outputPorts>
             <subCircuitPort _id='50' portId='4' name='O' logic='positive' bitWidth='16' trigger='level' type='output' representation='hex'/>
-          </outputPorts>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>
