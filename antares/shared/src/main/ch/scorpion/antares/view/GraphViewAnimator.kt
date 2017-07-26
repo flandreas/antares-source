@@ -185,7 +185,6 @@ class GraphViewAnimator(
             drawingView = drawingView,
             animator = animator,
             scheduler = scheduler,
-            systemSpeed = systemSpeed,
             styleProvider = styleProvider
         ))
 
