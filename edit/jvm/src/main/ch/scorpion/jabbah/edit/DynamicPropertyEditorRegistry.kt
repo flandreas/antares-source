@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit
 import com.l2fprod.common.propertysheet.Property
 import com.l2fprod.common.propertysheet.PropertyEditorRegistry
 import java.beans.PropertyEditor
+import kotlin.jvm.Synchronized
 
 /**
  * Extension of [PropertyEditorRegistry] that allows to register suppliers of [PropertyEditor]s in order to

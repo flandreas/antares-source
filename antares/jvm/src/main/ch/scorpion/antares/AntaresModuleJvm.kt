@@ -16,10 +16,7 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.view.CanvasJvm
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.DynamicPropertyEditorRegistry
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.library.FileLibraryService
@@ -79,7 +76,7 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
 
     private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
         registry.registerEditor(LightColor::class.java, LightColorEditor::class.java)
-        registry.registerEditor(InputCount::class.java, InputCountEditor::class.java)
+        registry.register(InputCount::class.java, { InputCountEditor((it as PropertyImpl<InputCount>).filter) } )
         registry.registerEditor(Handedness::class.java, HandednessEditor::class.java)
         registry.registerEditor(Logic::class.java, LogicEditor::class.java)
         registry.registerEditor(Trigger::class.java, TriggerEditor::class.java)

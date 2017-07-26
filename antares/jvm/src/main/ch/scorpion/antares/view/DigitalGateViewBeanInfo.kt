@@ -15,7 +15,7 @@ open class DigitalGateViewBeanInfo : DigitalComponentBeanInfo<AbstractDigitalGat
 
     override fun addProperties(bean: AbstractDigitalGateView<*>, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
-        inputCount.bind(editor, {bean.chosenInputCount}, {bean.chosenInputCount = it!!}, !bean.model!!.isConnected)
+        inputCount.bind(editor, {bean.chosenInputCount}, {bean.chosenInputCount = it!!}, !bean.model!!.isConnected, { it.ordinal >= 2})
         outputPortName.bind(editor, {bean.outputPortName }, {bean.outputPortName = it})
         properties.add(inputCount)
         properties.add(outputPortName)

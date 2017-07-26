@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.view.gate.AbstractDigitalGateView
 import ch.scorpion.antares.view.output.LightColor
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import ch.scorpion.jabbah.base.swing.ColorIcon
@@ -42,9 +43,9 @@ class HandednessEditor : ComboBoxPropertyEditor() {
     }
 }
 
-class InputCountEditor : ComboBoxPropertyEditor() {
+class InputCountEditor(filter: (InputCount) -> Boolean = { _ -> true }) : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(InputCount.values().filter { it.ordinal >= InputCount.TWO.ordinal }.toTypedArray())
+        setAvailableValues(InputCount.values().filter { filter.invoke(it) }.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<InputCount>()
     }
 }
