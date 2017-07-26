@@ -24,23 +24,26 @@ import ch.scorpion.jabbah.base.logger
 
 /**
  * Organizes individual animations of bits flowing through a net of [DigitalEdgeView]s.
+ *
+ * Creates an [AnimationTask] that drives a [DigitalEdgeAnimationView] along the specified [DigitalEdgeView].
+ * The animation is not started right away. Start the animation by calling [start], which returns the created
+ * [AnimationTask] to allow the client to control the animation, such as stopping it.
+ *
+ * This [DigitalEdgeViewNetAnimation] is able to orchestrate [DigitalEdgeView]s that are split at a [DigitalNodeView].
+ * When the [DigitalEdgeAnimationView] runs into a [DigitalNodeView], the animation is split into an new, individual
+ * animation for every outgoing [DigitalEdgeView]. The speed of these individual animations is controlled so that
+ * all animations end at the same time, even if some of them have to travel along a shorter path than others.
+ * Therefore, animations on longer paths travel faster, while animations on shorter path travel slower.
  */
 class DigitalEdgeViewNetAnimation(
         val startEdgeView: DigitalEdgeView,
         val originPort: DigitalPort,
         val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-        val animator: Animator,
-        val scheduler: Scheduler,
-        val systemSpeed: SystemSpeed,
-        val styleProvider: StyleProvider
+        val animator: Animator = AnimationModule.animator,
+        val scheduler: Scheduler = ExecutionModule.scheduler,
+        val systemSpeed: SystemSpeed = BaseModule.systemSpeed,
+        val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) {
-
-    @Suppress("unused")
-    constructor(
-        startEdgeView: DigitalEdgeView,
-        originPort: DigitalPort,
-        drawingView: DrawingView<GraphView<GraphElementView<*>>>
-    ): this(startEdgeView, originPort, drawingView, AnimationModule.animator, ExecutionModule.scheduler, BaseModule.systemSpeed, DrawStyleModule.styleProvider)
 
     companion object {
         // Note that the effective duration of an Animation already depends on [SystemSpeed] as implemented by [Animator].
@@ -48,6 +51,11 @@ class DigitalEdgeViewNetAnimation(
         // (which is defined below 33% of maximum [SystemSpeed]), the durations here represent 3 times the effective time.
         private val MIN_DURATION_MS = 50
         private val MAX_DURATION_MS = 300
+
+        /** Returns 1 for maximum speed, 0 for halted.*/
+        fun normalizedSpeed(speed: Int): Double {
+            return Math.min(speed, SystemSpeedCategory.Explore.speedRange.last) / SystemSpeedCategory.Explore.speedRange.last.toDouble()
+        }
     }
 
     private val LOG by logger(DigitalEdgeViewNetAnimation::class)
@@ -65,6 +73,11 @@ class DigitalEdgeViewNetAnimation(
         setupEdgeAnimation(null, startEdgeView, startEdgeView.getConnectableView(originPort)!!)
     }
 
+    /**
+     * TODO What is the purpose of returning an [AnimationTask]? This task cannot be used for stopping the
+     * animation, because if the animation has been spit at a [DigitalNodeView], there are multiple additional tasks.
+     * It would be better to return nothing and to provide a stop() method that stops all running tasks.
+     */
     fun start(): AnimationTask {
         val animationInfo = predecessorMap[startEdgeView]!!
         animationInfo.startTime = System.get().currentTimeMillis()
@@ -72,6 +85,10 @@ class DigitalEdgeViewNetAnimation(
         return animationInfo.animationTask
     }
 
+    /**
+     * Creates a new animation for every outgoing [DigitalEdgeView] of the specified [NodeView], and registers
+     * them in [predecessorMap].
+     */
     private fun processNode(predecessor: DigitalEdgeView, nodeView: NodeView<*>) {
         nodeView.getEdgeViews()
             .filter { it != predecessor }
@@ -94,7 +111,7 @@ class DigitalEdgeViewNetAnimation(
         val remainingTime: Double = Math.max(1.0, if (predecessorInfo == null) {
             totalEdgeViewNetAnimationTime()
         } else {
-            predecessorInfo.remainingTime - normalizedSpeed() * (System.get().currentTimeMillis() - predecessorInfo.startTime)
+            predecessorInfo.remainingTime - normalizedSpeed(systemSpeed.speed) * (System.get().currentTimeMillis() - predecessorInfo.startTime)
         })
         val sequence: Sequence<Point2D> = if (isReverse) {
             EdgeViewPointSequence.reverseOf(edgeView)
@@ -124,18 +141,12 @@ class DigitalEdgeViewNetAnimation(
     }
 
     private fun totalEdgeViewNetAnimationTime(): Double {
-        val normalizedSpeed = normalizedSpeed()
+        val normalizedSpeed = normalizedSpeed(systemSpeed.speed)
         if (normalizedSpeed == 0.0) {
             return MAX_DURATION_MS.toDouble()
         } else {
             return MIN_DURATION_MS + (MAX_DURATION_MS - MIN_DURATION_MS) / normalizedSpeed
         }
-    }
-
-    /** Returns 1 for maximum speed, 0 for halted.*/
-    private fun normalizedSpeed(): Double {
-        val maxSpeed = SystemSpeedCategory.Explore.speedRange.last.toDouble()
-        return systemSpeed.speed / maxSpeed
     }
 
     /**

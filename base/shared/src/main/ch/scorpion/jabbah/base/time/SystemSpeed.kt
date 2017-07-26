@@ -8,10 +8,10 @@ import ch.scorpion.jabbah.base.module.BaseModule
 /**
  * Represents the overall speed at which a system runs between 0 percent and 100 percent.
  */
-class SystemSpeed(private val properties: Properties, private val eventBus: EventBus) {
-
-	@Suppress("unused")
-	constructor(): this(BaseModule.properties, BaseModule.eventBus)
+class SystemSpeed(
+    private val properties: Properties = BaseModule.properties,
+    private val eventBus: EventBus = BaseModule.eventBus
+) {
 
     companion object {
         /** The name of the [Int] speed property in [Properties].*/

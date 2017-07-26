@@ -31,12 +31,9 @@ enum class SystemSpeedCategory(val speedRange: IntRange) {
  * a [SystemSpeedCategoryEvent] on its [EventBus] if the value has changed.
  */
 class CurrentSystemSpeedCategory(
-    private val systemSpeed: SystemSpeed,
-    private val eventBus: EventBus
+    private val systemSpeed: SystemSpeed = BaseModule.systemSpeed,
+    private val eventBus: EventBus = BaseModule.eventBus
 ) {
-    @Suppress("unused")
-    constructor(): this(BaseModule.systemSpeed, BaseModule.eventBus)
-
     init {
         eventBus.register(SystemSpeedEvent::class, { update() })
     }
