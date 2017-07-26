@@ -14,13 +14,11 @@ import ch.scorpion.jabbah.base.logger
  * @param period the time in milliseconds between two animation pulses
  */
 class AnimatorImpl(
-    private val timer: Timer,
-    private val period: Int,
-    eventBus: EventBus
+        private val timer: Timer,
+        private val period: Int = AnimatorImpl.DEFAULT_PERIOD,
+        eventBus: EventBus = BaseModule.eventBus,
+        private val systemSpeed: SystemSpeed = BaseModule.systemSpeed
 ) : Animator {
-
-    constructor(timer: Timer, period: Int): this(timer, period, BaseModule.eventBus)
-    constructor(timer: Timer): this(timer, DEFAULT_PERIOD)
 
     init {
         timer.initialize(period, { animationStep()} )
@@ -52,7 +50,7 @@ class AnimatorImpl(
     override fun schedule(task: AnimationTask): AnimationTask {
         LOG.debug("Scheduling AnimationTask $task")
         task.addListener(taskListener)
-        jobs.add(AnimationJob(task, calculateDistance(task)))
+        jobs.add(AnimationJob(task, calculateDistance(task), systemSpeed))
         task.scheduled()
         return task
     }
@@ -132,7 +130,7 @@ class AnimatorImpl(
      * depend on [SystemSpeed]. If it does, the effectively used distance is shortened according to the
      * [SystemSpeed]'s current value.
      */
-    private class AnimationJob(val task: AnimationTask, private val maxDistance: Double) {
+    private class AnimationJob(val task: AnimationTask, private val maxDistance: Double, private val systemSpeed: SystemSpeed) {
 
         enum class State {
             Created,
@@ -179,7 +177,7 @@ class AnimatorImpl(
             if (!task.dependsOnSystemSpeed) {
                 return maxDistance
             }
-            val distance = BaseModule.systemSpeed.speed / 100.0 * maxDistance
+            val distance = systemSpeed.speed / 100.0 * maxDistance
             if (distance == 0.0) {
                 suspend()
             }

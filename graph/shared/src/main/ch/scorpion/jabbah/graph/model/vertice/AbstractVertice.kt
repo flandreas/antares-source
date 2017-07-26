@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
-import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.collection.ImmutableList
@@ -141,7 +140,10 @@ abstract class AbstractVertice : AbstractGraphElement(), Vertice {
 
     /** ---- [AbstractVertice] */
 
-    protected fun createActorData(inputPort: InputPort<*>?): VerticeActorData {
+    /**
+     * Visible for testing.
+     */
+    fun createActorData(inputPort: InputPort<*>?): VerticeActorData {
         return VerticeActorData(inputPort)
     }
 
@@ -179,7 +181,7 @@ abstract class AbstractVertice : AbstractGraphElement(), Vertice {
     }
 
     /** A "virtual" [GraphActorData] implementation that forwards the request for the signal to the corresponding [Port].*/
-    protected inner class VerticeActorData(override val changedPort: Port<*>?) : GraphActorData {
+    inner class VerticeActorData(override val changedPort: Port<*>?) : GraphActorData {
 
         override fun <T : Any> getSignal(portId: Int): T {
             return getInput<T>(portId).getIncomingSignal() as T
