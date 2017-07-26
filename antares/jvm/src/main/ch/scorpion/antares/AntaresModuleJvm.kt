@@ -1,6 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.InputPortNumber
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
@@ -66,6 +67,7 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
     private fun configurePropertyRenderer(registry: PropertyRendererRegistry) {
         registry.registerRenderer(ch.scorpion.antares.view.output.LightColor::class.java, LightColorRenderer::class.java)
         registry.registerRenderer(InputCount::class.java, EnumRenderer::class.java)
+        registry.registerRenderer(InputPortNumber::class.java, EnumRenderer::class.java)
         registry.registerRenderer(Handedness::class.java, EnumRenderer::class.java)
         registry.registerRenderer(Logic::class.java, EnumRenderer::class.java)
         registry.registerRenderer(Trigger::class.java, EnumRenderer::class.java)
@@ -77,6 +79,7 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
     private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
         registry.registerEditor(LightColor::class.java, LightColorEditor::class.java)
         registry.register(InputCount::class.java, { InputCountEditor((it as PropertyImpl<InputCount>).filter) } )
+        registry.register(InputPortNumber::class.java, { InputPortNumberEditor((it as PropertyImpl<InputPortNumber>).filter) })
         registry.registerEditor(Handedness::class.java, HandednessEditor::class.java)
         registry.registerEditor(Logic::class.java, LogicEditor::class.java)
         registry.registerEditor(Trigger::class.java, TriggerEditor::class.java)

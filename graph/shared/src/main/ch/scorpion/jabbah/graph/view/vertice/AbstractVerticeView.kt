@@ -280,6 +280,10 @@ abstract class AbstractVerticeView<T : Vertice>(
         }
     }
 
+    /**
+     * Calls [drawImpl(DrawContext,Boolean)] and uses the property [isShowPortViews] to determine
+     * whether the [PortView]s are to be drawn.
+     */
     protected open fun drawImpl(context: DrawContext) {
         drawImpl(context, isShowPortViews)
     }

@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.InputPortNumber
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
@@ -47,6 +48,13 @@ class InputCountEditor(filter: (InputCount) -> Boolean = { _ -> true }) : ComboB
     init {
         setAvailableValues(InputCount.values().filter { filter.invoke(it) }.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<InputCount>()
+    }
+}
+
+class InputPortNumberEditor(filter: (InputPortNumber) -> Boolean = { _ -> true }) : ComboBoxPropertyEditor() {
+    init {
+        setAvailableValues(InputPortNumber.values().filter { filter.invoke(it) }.toTypedArray())
+        (editor as JComboBox<*>).renderer = EnumRenderer<InputPortNumber>()
     }
 }
 

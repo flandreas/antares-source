@@ -233,7 +233,7 @@
                 <point x='350.0' y='756.0'/>
               </location>
             </circuitInOutView>
-            <andGateView _id='117' id='4' rot='0' modelId='6' x='504.0' y='182.0'/>
+            <andGateView _id='117' id='4' rot='0' modelId='6' x='504.0' y='182.0' dataPort='1'/>
             <splitterView _id='116' id='5' rot='0' modelId='7' x='196.0' y='189.0' handedness='left'/>
             <splitterView _id='115' id='6' rot='0' modelId='8' x='196.0' y='567.0' handedness='left'/>
             <digitalEdgeView _id='114' id='7' modelId='9' layout='ortho' orig='120' origPort='1' origPortOutput='true' dest='116' destPort='1' adjusted='false'>
@@ -246,13 +246,13 @@
                 <polylineShape points='168.0,567.0 210.0,567.0'/>
               </shape>
             </digitalEdgeView>
-            <andGateView _id='112' id='9' rot='0' modelId='11' x='504.0' y='238.0'/>
-            <andGateView _id='111' id='10' rot='0' modelId='12' x='504.0' y='294.0'/>
-            <andGateView _id='110' id='11' rot='0' modelId='13' x='504.0' y='350.0'/>
-            <andGateView _id='109' id='12' rot='0' modelId='14' x='504.0' y='434.0'/>
-            <andGateView _id='108' id='13' rot='0' modelId='15' x='504.0' y='490.0'/>
-            <andGateView _id='107' id='14' rot='0' modelId='16' x='504.0' y='546.0'/>
-            <andGateView _id='106' id='15' rot='0' modelId='17' x='504.0' y='602.0'/>
+            <andGateView _id='112' id='9' rot='0' modelId='11' x='504.0' y='238.0' dataPort='1'/>
+            <andGateView _id='111' id='10' rot='0' modelId='12' x='504.0' y='294.0' dataPort='1'/>
+            <andGateView _id='110' id='11' rot='0' modelId='13' x='504.0' y='350.0' dataPort='1'/>
+            <andGateView _id='109' id='12' rot='0' modelId='14' x='504.0' y='434.0' dataPort='1'/>
+            <andGateView _id='108' id='13' rot='0' modelId='15' x='504.0' y='490.0' dataPort='1'/>
+            <andGateView _id='107' id='14' rot='0' modelId='16' x='504.0' y='546.0' dataPort='1'/>
+            <andGateView _id='106' id='15' rot='0' modelId='17' x='504.0' y='602.0' dataPort='1'/>
             <notGateView _id='105' id='16' rot='90' modelId='18' x='392.0' y='651.0'/>
             <digitalEdgeView _id='104' id='17' modelId='19' layout='ortho' orig='118' origPort='1' origPortOutput='true' dest='78' adjusted='false'>
               <shape>
@@ -527,25 +527,25 @@
             <point x='182.0' y='196.0'/>
           </location>
         </originIndicator>
-        <polyline _id='156' id='1' style='figure' points='196.0,168.0 196.0,266.0 252.0,252.0 252.0,182.0 196.0,168.0' filled='true'/>
+        <polyline _id='156' id='1' style='figure' filled='true' points='196.0,168.0 196.0,266.0 252.0,252.0 252.0,182.0 196.0,168.0'/>
         <digitalPortViewComp _id='154' id='2' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='155' x='196.0' y='238.0' dir='west' textPos='INTERNAL' portId='159'/>
+            <digitalPortView _id='155' x='196.0' y='238.0' dir='west' textPos='internal' portId='159'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='152' id='3' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='153' x='196.0' y='196.0' dir='west' textPos='INTERNAL' portId='160'/>
+            <digitalPortView _id='153' x='196.0' y='196.0' dir='west' textPos='internal' portId='160'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='150' id='4' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='151' x='252.0' y='217.0' dir='east' textPos='INTERNAL' portId='162'/>
+            <digitalPortView _id='151' x='252.0' y='217.0' dir='east' textPos='internal' portId='162'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='148' id='5' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='149' x='224.0' y='259.0' dir='south' textPos='INTERNAL' portId='161'/>
+            <digitalPortView _id='149' x='224.0' y='259.0' dir='south' textPos='internal' portId='161'/>
           </portView>
         </digitalPortViewComp>
       </components>

@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
@@ -13,11 +14,11 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 class AndCalculator<T : Vertice> : VerticeCalculator<T> {
 
     companion object {
-        fun calculate(vertice: Vertice, data: GraphActorData): Bit {
+        fun calculate(vertice: Vertice, data: GraphActorData, portFilter: (InputPort<*>) -> Boolean = { true }): Bit {
             var value = true
             var undefined = false
 
-            for (port in vertice.getInputs()) {
+            for (port in vertice.getInputs().filter { portFilter(it) }) {
                 val signal = data.getSignal<DigitalSignal>(port.portId)!!
                 if (signal.bitAt(0) == Bit.Error) {
                     return Bit.Error
@@ -45,5 +46,9 @@ class AndGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CAL
     
     companion object {
         val CALCULATOR = AndCalculator<AndGate>()
+    }
+
+    fun calculate(portFilter: (InputPort<*>) -> Boolean): Bit {
+        return AndCalculator.calculate(this, createActorData(null), portFilter)
     }
 }

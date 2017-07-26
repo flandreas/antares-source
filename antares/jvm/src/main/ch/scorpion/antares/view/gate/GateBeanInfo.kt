@@ -1,7 +1,9 @@
 package ch.scorpion.antares.view.gate
 
+import ch.scorpion.antares.model.InputPortNumber
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.antares.model.Logic
+import ch.scorpion.antares.model.gate.AndGate
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalGateViewBeanInfo
 import ch.scorpion.antares.view.Handedness
@@ -11,7 +13,17 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
 import ch.scorpion.jabbah.base.geom.Direction
 
-@Suppress("unused") class AndGateViewBeanInfo : DigitalGateViewBeanInfo()
+@Suppress("unused") class AndGateViewBeanInfo : DigitalGateViewBeanInfo<AndGateView>() {
+    companion object {
+        val dataPort = PropertyImpl("element.property.AndGate.dataPort", InputPortNumber::class.java)
+    }
+
+    override fun addProperties(bean: AndGateView, editor: Editor, properties: MutableList<Property>) {
+        super.addProperties(bean, editor, properties)
+        dataPort.bind(editor, {bean.dataPort}, {bean.dataPort = it!!}, true, { it.id <= bean.chosenInputCount.count })
+        properties.add(dataPort)
+    }
+}
 
 @Suppress("unused") class BufferGateViewBeanInfo : DigitalComponentBeanInfo<BufferGateView>() {
     companion object {
@@ -45,13 +57,13 @@ import ch.scorpion.jabbah.base.geom.Direction
     }
 }
 
-@Suppress("unused") class NandGateViewBeanInfo : DigitalGateViewBeanInfo()
+@Suppress("unused") class NandGateViewBeanInfo : DigitalGateViewBeanInfo<NandGateView>()
 
-@Suppress("unused") class NorGateViewBeanInfo : DigitalGateViewBeanInfo()
+@Suppress("unused") class NorGateViewBeanInfo : DigitalGateViewBeanInfo<NorGateView>()
 
 @Suppress("unused") class NotGateViewBeanInfo : DigitalComponentBeanInfo<NotGateView>()
 
-@Suppress("unused") class OrGateViewBeanInfo : DigitalGateViewBeanInfo()
+@Suppress("unused") class OrGateViewBeanInfo : DigitalGateViewBeanInfo<OrGateView>()
 
 @Suppress("unused") class TriStateBufferGateViewBeanInfo : DigitalComponentBeanInfo<TriStateBufferGateView>() {
     companion object {
@@ -73,6 +85,6 @@ import ch.scorpion.jabbah.base.geom.Direction
     }
 }
 
-@Suppress("unused") class XnorGateViewBeanInfo : DigitalGateViewBeanInfo()
+@Suppress("unused") class XnorGateViewBeanInfo : DigitalGateViewBeanInfo<XnorGateView>()
 
-@Suppress("unused") class XorGateViewBeanInfo : DigitalGateViewBeanInfo()
+@Suppress("unused") class XorGateViewBeanInfo : DigitalGateViewBeanInfo<XnorGateView>()

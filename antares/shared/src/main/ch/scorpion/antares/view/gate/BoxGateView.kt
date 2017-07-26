@@ -77,6 +77,9 @@ open class BoxGateView<T : Vertice>(
         context.g.color = oldColor
     }
 
+    /**
+     * Draws the default european shape of this [BoxGateView] within a translated and rotated context.
+     */
     open fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
         drawEuropeanShape(context, foregroundColor, backgroundColor)
     }
