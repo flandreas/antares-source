@@ -9,7 +9,7 @@ class LogSystemJs : LogSystem {
 
     private val loggers = mutableMapOf<KClass<out Any>,Lazy<Logger>>()
 
-    private var rootLevel: LogLevel = LogLevel.INFO
+    private var rootLevel: LogLevel = LogLevel.WARN
 
     override fun getLogger(clazz: KClass<out Any>): Lazy<Logger> {
         return loggers.getOrPut(clazz, { lazy {LoggerJs()} })

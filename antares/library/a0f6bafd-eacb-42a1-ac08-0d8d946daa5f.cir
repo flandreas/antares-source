@@ -1,0 +1,49 @@
+<metaGraph _id='0'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' uuid='a0f6bafd-eacb-42a1-ac08-0d8d946daa5f' name='Single Input'>
+          <elements>
+            <circuitInOut _id='3' id='1' delay='0' name='A' type='input' bitWidth='1'/>
+          </elements>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='4'>
+          <netViews/>
+          <components>
+            <circuitInOutView _id='5' id='1' modelId='3' representation='binary' orientation='east'>
+              <location>
+                <point x='-280.0' y='-196.0'/>
+              </location>
+            </circuitInOutView>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='7'>
+      <components>
+        <containerBox _id='11' id='1' style='figure' x='140.0' y='140.0' w='42.0' h='56.0'/>
+        <originIndicator _id='10'>
+          <location>
+            <point x='126.0' y='168.0'/>
+          </location>
+        </originIndicator>
+        <digitalPortViewComp _id='8' id='3' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='9' x='140.0' y='168.0' dir='west' textPos='internal' portId='13'/>
+          </portView>
+        </digitalPortViewComp>
+      </components>
+      <model>
+        <subGraphVertice _id='12' id='0' delay='0' name='Single Input' uuid='a0f6bafd-eacb-42a1-ac08-0d8d946daa5f'>
+          <ports>
+            <subCircuitPort _id='13' portId='1' name='A' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+          </ports>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

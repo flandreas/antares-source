@@ -194,6 +194,9 @@ class SubGraphVerticeViewImpl(
         }
         if (reader.hasElement("container")) {
             customizedContainerDrawing = reader.readStorable("container") as ContainerDrawing
+            // TEST BEGIN
+            customizedContainerDrawing!!.areSubGraphPortsConsistent()
+            // TEST END
             reader.requestResolution(this, Reference(
                 name = "container",
                 referenceId = customizedContainerDrawing!!.storableId,

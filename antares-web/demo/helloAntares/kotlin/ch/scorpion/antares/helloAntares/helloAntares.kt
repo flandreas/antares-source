@@ -1,5 +1,6 @@
 package ch.scorpion.antares.helloAntares
 
+import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.module.AntaresModuleJs
 import ch.scorpion.jabbah.base.LOG_SYSTEM
 import ch.scorpion.jabbah.base.LogLevel
@@ -38,6 +39,7 @@ fun hello() {
     AntaresModuleJs.require()
 
     LOG_SYSTEM!!.getLogger(ContainerDrawing::class).value.setLogLevel(LogLevel.DEBUG)
+    LOG_SYSTEM!!.getLogger(SubCircuitPort::class).value.setLogLevel(LogLevel.DEBUG)
 
     LibraryModule.libraryHolder.library.load()
 

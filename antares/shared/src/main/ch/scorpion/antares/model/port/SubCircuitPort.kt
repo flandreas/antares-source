@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.collection.EmptyIterator
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphInput
 import ch.scorpion.jabbah.graph.model.PortType
@@ -18,6 +19,12 @@ class SubCircuitPort(
     portType: PortType = PortType.INPUT,
     name: String? = null
 ) : DigitalPortImpl(portType, name), Storable, SubGraphInputPort<DigitalSignal>, SubGraphOutputPort<DigitalSignal> {
+
+    private val LOG by logger(SubCircuitPort::class)
+
+    init {
+        LOG.debug("SubCircuitPort: new instance $this portType=$portType name=$name")
+    }
 
     /** ---- [SubGraphInputPort] */
 

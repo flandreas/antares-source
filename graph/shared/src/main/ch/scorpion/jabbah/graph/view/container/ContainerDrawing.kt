@@ -90,6 +90,22 @@ class ContainerDrawing(
     /** ---- [ContainerDrawing] */
 
     /**
+     * Checks if the [SubGraphPort]s of all [PortViewComponent]s is the same instance as
+     * the [SubGraphPort]s of the model [SubGraphVerticeViewImpl].
+     */
+    fun areSubGraphPortsConsistent(): Boolean {
+        for (c in getPortViewComponents()) {
+            val outer = c.portView!!.port
+            val inner = model.getPort<Any>(outer.name!!)
+            if (outer !== inner) {
+                LOG.warn("ContainerDrawing: inconsistent SubGraphPort instances for port $outer")
+                return false
+            }
+        }
+        return true
+    }
+
+    /**
      * Initializes this [ContainerDrawing] with a default [RectangularComponent] and a default [OriginIndicator].
      * This is only needed when a new, fresh instance is created. It is not needed if this [ContainerDrawing] is
      * read from persistent storage, as the [RectangularComponent] and the [OriginIndicator] are then read
