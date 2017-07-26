@@ -44,7 +44,7 @@ class HandednessEditor : ComboBoxPropertyEditor() {
 
 class InputCountEditor : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(InputCount.values())
+        setAvailableValues(InputCount.values().filter { it.ordinal >= InputCount.TWO.ordinal }.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<InputCount>()
     }
 }

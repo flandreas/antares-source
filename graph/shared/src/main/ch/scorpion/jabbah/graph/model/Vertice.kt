@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.base.exception.NoSuchElementException
 /**
  * A [Vertice] is a node in a [Graph] that can be connected with other [Vertice]s using [Net]s that are attached
  * to the [Vertice]' [Port]s.
+ *
+ * The IDs of [Port]s in a [Vertice] start with 1, i.e. the first [Port] of a [Vertice] has ID 1.
  */
 interface Vertice : GraphElement {
 
@@ -63,6 +65,7 @@ interface Vertice : GraphElement {
 
     /**
      * Returns the [Port] with the specified ID.
+     * @param id the ID of the [Port], with 1 identifying the first [Port]
      * @throws NoSuchElementException if no [Port] with the specified ID was found
      */
     fun <T: Any> getPort(id: Int): Port<T>
@@ -84,6 +87,7 @@ interface Vertice : GraphElement {
 
     /**
      * Returns the [InputPort] with the specified ID.
+     * @param id the ID of the [Port], with 1 identifying the first [Port]
      * @throws NoSuchElementException if no [InputPort] with the specified ID was found
      */
     fun <T: Any> getInput(id: Int): InputPort<T>
@@ -105,6 +109,7 @@ interface Vertice : GraphElement {
 
     /**
      * Returns the [OutputPort] with the specified ID.
+     * @param id the ID of the [Port], with 1 identifying the first [Port]
      * @throws NoSuchElementException if no [OutputPort] with the specified ID was found
      */
     fun <T: Any> getOutput(id: Int): OutputPort<T>

@@ -1,6 +1,5 @@
 package ch.scorpion.antares.view
 
-import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.view.gate.AbstractDigitalGateView
 import com.l2fprod.common.propertysheet.Property
