@@ -9,6 +9,12 @@ import ch.scorpion.jabbah.base.event.ActionListenerJvm
  */
 class RealTimeTimerJvm : Timer {
 
+    override var interval: Int
+        get() = timer?.delay ?: throw IllegalStateException("not yet initialized")
+        set(value) {
+            timer?.delay = value
+        }
+
     private var timer: javax.swing.Timer? = null
 
     override fun initialize(interval: Int, handler: (ActionEvent) -> Unit) {

@@ -9,18 +9,21 @@ import ch.scorpion.jabbah.base.logger
 
 /**
  * A timer abstraction to be used for implementing various types of timers for simulation processes,
- * such as realtime timers or test timers that allow precise control over time.
+ * such as real-time timers or test timers that allow precise control over time.
  *
  * A [Timer] repeatedly fires action events at the specified intervals.
  */
 interface Timer {
+
+    /** The time in milliseconds between two ticks.*/
+    var interval: Int
 
     /**
      * Initializes this [Timer] with an interval and the one and only [ActionListener] to which
      * timing events are sent.
      *
      * @param interval the interval in milliseconds
-     * @param listener the [ActionListener] to be called after every timing interval
+     * @param handler the handler of an [ActionEvent] to be called after every timing interval
      */
     fun initialize(interval: Int, handler: (ActionEvent) -> Unit)
 
@@ -37,10 +40,10 @@ interface Timer {
 /** A [Timer] whose timing events can be controlled by a [ControlledTimeService].*/
 class ControlledTimer(val timeService: ControlledTimeService) : Timer {
 
-    private val LOG by logger(ControlledTimer::class)
+    override var interval: Int = 0
 
     /** The interval between two timer ticks in nanoseconds.*/
-    private var interval: Int = 0
+    private val intervalNs: Int get() = interval * 1_000_000
 
     /** Determines whether this [Timer] is currently running.*/
     private var running: Boolean = false
@@ -107,7 +110,7 @@ class ControlledTimer(val timeService: ControlledTimeService) : Timer {
         }
 
         val now = timeService.nowNanos()
-        if (now >= lastTimerTime + interval) {
+        if (now >= lastTimerTime + intervalNs) {
             lastTimerTime = now
             fireActionPerformed(now)
         }

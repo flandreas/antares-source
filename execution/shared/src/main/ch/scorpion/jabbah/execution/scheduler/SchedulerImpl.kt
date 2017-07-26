@@ -16,26 +16,25 @@ import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.time.SystemSpeed
+import ch.scorpion.jabbah.base.time.SystemSpeedEvent
+import javax.swing.SwingUtilities
 import kotlin.reflect.KClass
 
 /**
  * Standard implementation of the [Scheduler] interface.
  */
 class SchedulerImpl(
-    private val timeService: TimeService,
-    timer: Timer,
-    private val eventBus: EventBus,
-    private val noiseGeneratorHolder: NoiseGeneratorHolder,
-    interval: Int = 1
+    private val timeService: TimeService = BaseModule.timeService,
+    timer: Timer = System.get().createTimer(),
+    private val eventBus: EventBus = BaseModule.eventBus,
+    private val noiseGeneratorHolder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
+    interval: Int = 1,
+    private val systemSpeed: SystemSpeed = BaseModule.systemSpeed
 ) : Scheduler {
 
-    constructor(): this(
-        BaseModule.timeService,
-        System.get().createTimer(),
-        BaseModule.eventBus,
-        ExecutionModule.noiseGeneratorHolder)
-
     companion object {
+        private val SLOWDOWN_FACTOR = 10
         private val PROP_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
     }
 
@@ -58,6 +57,10 @@ class SchedulerImpl(
 
     /** Holds the absolute real time in nanoseconds of when the execution has been started.*/
     private var realStartTime: Long = 0
+
+    init {
+        eventBus.register(SystemSpeedEvent::class, { task.adaptToSystemSpeed() })
+    }
 
     /** ---- [Scheduler] interface */
 
@@ -272,7 +275,7 @@ class SchedulerImpl(
     ) : ActionListener {
 
         init {
-            timer.initialize(interval, {actionPerformed(it)})
+            timer.initialize(calculateInterval(), { actionPerformed(it) })
         }
 
         override fun actionPerformed(event: ActionEvent) {
@@ -287,6 +290,12 @@ class SchedulerImpl(
                 executionStep()
             }
         }
+
+        fun adaptToSystemSpeed() {
+            SwingUtilities.invokeLater { timer.interval = calculateInterval() }
+        }
+
+        private fun calculateInterval(): Int = 1 + SLOWDOWN_FACTOR * (SystemSpeed.MAX_SPEED - systemSpeed.speed)
 
         fun startIfNeeded() {
             if (!isPaused && !queue.isEmpty && !timer.isRunning()) {
