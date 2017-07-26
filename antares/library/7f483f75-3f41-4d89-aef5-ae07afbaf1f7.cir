@@ -111,8 +111,8 @@
                 <point x='-168.0' y='-70.0'/>
               </location>
             </circuitInOutView>
-            <andGateView _id='33' id='10' rot='0' modelId='9' x='28.0' y='-126.0'/>
-            <andGateView _id='32' id='11' rot='0' modelId='10' x='28.0' y='-56.0'/>
+            <andGateView _id='33' id='10' rot='0' modelId='9' x='28.0' y='-126.0' dataPort='1'/>
+            <andGateView _id='32' id='11' rot='0' modelId='10' x='28.0' y='-56.0' dataPort='1'/>
             <orGateView _id='31' id='12' rot='0' modelId='11' x='133.0' y='-91.0'/>
             <digitalEdgeView _id='30' id='13' modelId='12' layout='ortho' orig='33' origPort='3' origPortOutput='true' dest='31' destPort='1' adjusted='false'>
               <shape>

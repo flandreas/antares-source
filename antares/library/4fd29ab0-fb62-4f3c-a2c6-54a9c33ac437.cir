@@ -185,10 +185,10 @@
                 <polylineShape points='42.0,168.0 42.0,14.0'/>
               </shape>
             </digitalEdgeView>
-            <andGateView _id='73' id='18' rot='0' modelId='11' x='210.0' y='-196.0'/>
-            <andGateView _id='72' id='19' rot='0' modelId='12' x='210.0' y='-126.0'/>
-            <andGateView _id='71' id='20' rot='0' modelId='13' x='210.0' y='-56.0'/>
-            <andGateView _id='70' id='21' rot='0' modelId='14' x='210.0' y='14.0'/>
+            <andGateView _id='73' id='18' rot='0' modelId='11' x='210.0' y='-196.0' dataPort='1'/>
+            <andGateView _id='72' id='19' rot='0' modelId='12' x='210.0' y='-126.0' dataPort='1'/>
+            <andGateView _id='71' id='20' rot='0' modelId='13' x='210.0' y='-56.0' dataPort='1'/>
+            <andGateView _id='70' id='21' rot='0' modelId='14' x='210.0' y='14.0' dataPort='1'/>
             <orGateView _id='69' id='22' rot='0' modelId='15' x='350.0' y='-91.0'/>
             <circuitInOutView _id='68' id='23' modelId='16' representation='binary' orientation='east'>
               <location>
@@ -440,8 +440,8 @@
             <subCircuitPort _id='124' portId='6' name='S0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='125' portId='7' name='S1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='126' portId='5' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-          </outputPorts>
-        </ports>
+          </ports>
+        </subGraphVertice>
       </model>
     </containerDrawing>
   </container>
