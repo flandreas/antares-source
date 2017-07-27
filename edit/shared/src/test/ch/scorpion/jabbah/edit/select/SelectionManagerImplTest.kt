@@ -38,7 +38,7 @@ class SelectionManagerImplTest {
         AnimationModule.animator)}, StyleRepository.INSTANCE)
 
     var selectionManager: SelectionManagerImpl
-    val rect = RectangularComponent(styleProvider = StyleRepository.INSTANCE, bounds = Rectangle2D(200, 200, 200, 100))
+    val rect = RectangularComponent(styleProvider = StyleRepository.INSTANCE, shape = Rectangle2D(200, 200, 200, 100))
 
     init {
         rect.preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
@@ -58,7 +58,7 @@ class SelectionManagerImplTest {
 
     @Test
     fun shouldSelectMultiple() {
-        val rect2 = RectangularComponent(styleProvider = StyleRepository.INSTANCE, bounds = Rectangle2D(200, 200, 200, 100))
+        val rect2 = RectangularComponent(styleProvider = StyleRepository.INSTANCE, shape = Rectangle2D(200, 200, 200, 100))
         rect2.preferredSelectionDrawingStrategy  = SelectionDrawingStrategy.BELOW
         drawing.add(rect2)
         selectionManager.select(listOf(rect, rect2))
@@ -71,7 +71,7 @@ class SelectionManagerImplTest {
 
     @Test
     fun shouldSelectAll() {
-        val rect2 = RectangularComponent(styleProvider = StyleRepository.INSTANCE, bounds = Rectangle2D(200, 200, 200, 100))
+        val rect2 = RectangularComponent(styleProvider = StyleRepository.INSTANCE, shape = Rectangle2D(200, 200, 200, 100))
         rect2.preferredSelectionDrawingStrategy  = SelectionDrawingStrategy.BELOW
         drawing.add(rect2)
         selectionManager.selectAll()
@@ -93,7 +93,7 @@ class SelectionManagerImplTest {
 
     @Test
     fun shouldDeselectMultiple() {
-        val rect2 = RectangularComponent(styleProvider = StyleRepository.INSTANCE, bounds = Rectangle2D(200, 200, 200, 100))
+        val rect2 = RectangularComponent(styleProvider = StyleRepository.INSTANCE, shape = Rectangle2D(200, 200, 200, 100))
         rect2.preferredSelectionDrawingStrategy  = SelectionDrawingStrategy.BELOW
         drawing.add(rect2)
         selectionManager.selectAll()
@@ -107,7 +107,7 @@ class SelectionManagerImplTest {
 
     @Test
     fun shouldDeselectAll() {
-        val rect2 = RectangularComponent(styleProvider = StyleRepository.INSTANCE, bounds = Rectangle2D(200, 200, 200, 100))
+        val rect2 = RectangularComponent(styleProvider = StyleRepository.INSTANCE, shape = Rectangle2D(200, 200, 200, 100))
         rect2.preferredSelectionDrawingStrategy  = SelectionDrawingStrategy.BELOW
         drawing.add(rect2)
         selectionManager.selectAll()

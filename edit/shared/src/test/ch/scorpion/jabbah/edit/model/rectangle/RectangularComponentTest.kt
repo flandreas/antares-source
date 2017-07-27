@@ -23,11 +23,11 @@ class RectangularComponentTest {
 
     @Test
     fun shouldReturnBounds() {
-        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), bounds = Rectangle2D(10, 20, 30, 40))
-        assertThat(rect.bounds.x, `is`(10.0))
-        assertThat(rect.bounds.y, `is`(20.0))
-        assertThat(rect.bounds.width, `is`(30.0))
-        assertThat(rect.bounds.height, `is`(40.0))
+        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(10, 20, 30, 40))
+        assertThat(rect.shape.x, `is`(10.0))
+        assertThat(rect.shape.y, `is`(20.0))
+        assertThat(rect.shape.width, `is`(30.0))
+        assertThat(rect.shape.height, `is`(40.0))
     }
 
     @Test
@@ -42,7 +42,7 @@ class RectangularComponentTest {
 
     @Test
     fun shouldSetLocation() {
-        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), bounds = Rectangle2D(10, 20, 30, 40))
+        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(10, 20, 30, 40))
         rect.location = Point2D(100, 200)
         assertThat(rect.x, `is`(100.0))
         assertThat(rect.y, `is`(200.0))
@@ -52,7 +52,7 @@ class RectangularComponentTest {
 
     @Test
     fun shouldCalculateBoundingBox() {
-        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), bounds = Rectangle2D(10, 20, 30, 40))
+        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(10, 20, 30, 40))
         assertThat(rect.boundingBox.x, `is`(9.0))
         assertThat(rect.boundingBox.y, `is`(19.0))
         assertThat(rect.boundingBox.width, `is`(32.0))
@@ -61,7 +61,7 @@ class RectangularComponentTest {
 
     @Test
     fun shouldMirrorHorizontally() {
-        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), bounds = Rectangle2D(10, 20, 30, 40))
+        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(10, 20, 30, 40))
         rect.mirrorHorizontally(0.0)
         assertThat(rect.x, `is`(-40.0))
         assertThat(rect.y, `is`(20.0))
@@ -71,7 +71,7 @@ class RectangularComponentTest {
 
     @Test
     fun shouldMirrorHVertically() {
-        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), bounds = Rectangle2D(10, 20, 30, 40))
+        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(10, 20, 30, 40))
         rect.mirrorVertically(0.0)
         assertThat(rect.x, `is`(10.0))
         assertThat(rect.y, `is`(-60.0))
@@ -81,13 +81,13 @@ class RectangularComponentTest {
 
     @Test
     fun shouldSnapX() {
-        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), bounds = Rectangle2D(10, 20, 30, 40))
+        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(10, 20, 30, 40))
         assertThat(rect.snappableX.toList(), `hasItems`(10.0, 25.0, 40.0))
     }
 
     @Test
     fun shouldSnapY() {
-        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), bounds = Rectangle2D(10, 20, 30, 40))
+        val rect = RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(10, 20, 30, 40))
         assertThat(rect.snappableY.toList(), `hasItems`(20.0, 40.0, 60.0))
     }
 

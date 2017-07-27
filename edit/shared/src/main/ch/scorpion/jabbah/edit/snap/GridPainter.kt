@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 
 /**
- * An interface for plugable classes that actually paint a [GridImpl] within the bounds of a rectangle.
+ * An interface for plugable classes that actually paint a [GridImpl] within the shape of a rectangle.
  */
 interface GridPainter {
 

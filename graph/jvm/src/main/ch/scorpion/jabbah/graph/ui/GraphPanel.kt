@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.geom.Ellipse2D
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
@@ -39,7 +40,6 @@ import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioPanel
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
-import ch.scorpion.jabbah.graph.view.GraphTextComponent
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Color
@@ -232,7 +232,8 @@ class GraphPanel(
         toolbar.addSeparator()
         // TODO I18N
         toolbar.addTool(editor.currentTool, "/img/pointer.gif", "Selektion")
-        toolbar.addTool(RectangleTool(editor, { RectangularComponent() }, { GraphElementViewWrapper<Vertice>(it) }), "/img/rectangle.gif", "Selektion")
+        toolbar.addTool(RectangleTool(editor, { RectangularComponent() }, { GraphElementViewWrapper<Vertice>(it) }), "/img/rectangle.png", "Rechteck")
+        toolbar.addTool(RectangleTool(editor, { RectangularComponent(shape = Ellipse2D()) }, { GraphElementViewWrapper<Vertice>(it) }), "/img/ellipse.png", "Ellipse")
         toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }), "/img/polyline.gif", "Polylinie")
         // TEST BEGIN
         // toolbar.addTool(TextTool(editor, { GraphTextComponent() }, { GraphElementViewWrapper<Vertice>(it)}), "/img/text.gif", "Text")

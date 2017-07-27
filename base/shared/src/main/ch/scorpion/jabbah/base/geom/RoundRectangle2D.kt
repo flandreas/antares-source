@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.base.geom
 
 /**
- * A [Rectangle2D] with round corners.
+ * A rectangle with round corners.
  */
 class RoundRectangle2D(
     x: Double,

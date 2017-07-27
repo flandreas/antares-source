@@ -47,7 +47,7 @@ class RectangularHandleSelectionModel(component: RectangularComponent) : Abstrac
     }
 
     override fun updateHandlesImpl() {
-        val r = component.bounds
+        val r = component.shape
         northWestHandle.setLocation(r.x, r.y)
         northHandle.setLocation(r.x + r.width / 2, r.y)
         northEastHandle.setLocation(r.x + r.width, r.y)
@@ -79,13 +79,13 @@ class RectangularHandleSelectionModel(component: RectangularComponent) : Abstrac
         // ---- EventHandler
 
         override fun dragHandleBegin(view: View<*>) {
-            oldBounds = Rectangle2D(component.bounds)
+            oldBounds = Rectangle2D(component.shape)
         }
 
         override fun dragHandleEnd(editor: Editor) {
-            if (oldBounds!! != component.bounds) {
+            if (oldBounds!! != component.shape) {
                 editor.commandManager.beginTransaction(
-                    ResizeRectangleCommand(editor, component, Rectangle2D(oldBounds!!), Rectangle2D(component.bounds)),
+                    ResizeRectangleCommand(editor, component, Rectangle2D(oldBounds!!), Rectangle2D(component.shape)),
                     register = true
                 )
                 editor.commandManager.commitTransaction()
@@ -101,7 +101,7 @@ class RectangularHandleSelectionModel(component: RectangularComponent) : Abstrac
         }
 
         override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-            val bounds = component.bounds
+            val bounds = component.shape
             val x = Math.min(context.x, bounds.maxX)
             val y = Math.min(context.y, bounds.maxY)
             component.setFrame(
@@ -121,7 +121,7 @@ class RectangularHandleSelectionModel(component: RectangularComponent) : Abstrac
         }
 
         override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-            val bounds = component.bounds
+            val bounds = component.shape
             val y = Math.min(context.y, bounds.maxY)
             component.setFrame(
                     bounds.x,
@@ -140,7 +140,7 @@ class RectangularHandleSelectionModel(component: RectangularComponent) : Abstrac
         }
 
         override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-            val bounds = component.bounds
+            val bounds = component.shape
             val x = Math.max(context.x, bounds.x)
             val y = Math.min(context.y, bounds.maxY)
             component.setFrame(
@@ -160,7 +160,7 @@ class RectangularHandleSelectionModel(component: RectangularComponent) : Abstrac
         }
 
         override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-            val bounds = component.bounds
+            val bounds = component.shape
             val x = Math.max(context.x, bounds.x)
             component.setFrame(
                     bounds.x,
@@ -179,7 +179,7 @@ class RectangularHandleSelectionModel(component: RectangularComponent) : Abstrac
         }
 
         override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-            val bounds = component.bounds
+            val bounds = component.shape
             val x = Math.max(context.x, bounds.x)
             val y = Math.max(context.y, bounds.y)
             component.setFrame(
@@ -199,7 +199,7 @@ class RectangularHandleSelectionModel(component: RectangularComponent) : Abstrac
         }
 
         override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-            val bounds = component.bounds
+            val bounds = component.shape
             val y = Math.max(context.y, bounds.y)
             component.setFrame(
                     bounds.x,
@@ -218,7 +218,7 @@ class RectangularHandleSelectionModel(component: RectangularComponent) : Abstrac
         }
 
         override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-            val bounds = component.bounds
+            val bounds = component.shape
             val x = Math.min(context.x, bounds.maxX)
             val y = Math.max(context.y, bounds.y)
             component.setFrame(
@@ -238,7 +238,7 @@ class RectangularHandleSelectionModel(component: RectangularComponent) : Abstrac
         }
 
         override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-            val bounds = component.bounds
+            val bounds = component.shape
             val x = Math.min(context.x, bounds.maxX)
             component.setFrame(
                     x,

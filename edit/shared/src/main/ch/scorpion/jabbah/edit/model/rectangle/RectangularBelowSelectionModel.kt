@@ -40,10 +40,10 @@ class RectangularBelowSelectionModel(component: RectangularComponent) : Abstract
     override fun componentUpdated() {
         invalidate()
         bounds.setFrame(
-                component.bounds.x - OUTSET,
-                component.bounds.y - OUTSET,
-                component.bounds.width + 2 * OUTSET,
-                component.bounds.height + 2 * OUTSET
+                component.shape.x - OUTSET,
+                component.shape.y - OUTSET,
+                component.shape.width + 2 * OUTSET,
+                component.shape.height + 2 * OUTSET
         )
         invalidate()
         validate()

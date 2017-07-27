@@ -1,13 +1,10 @@
 package ch.scorpion.jabbah.edit.snap
 
-import com.nhaarman.mockito_kotlin.mock
 import ch.scorpion.jabbah.draw.DrawTestRule
-import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleProviderMockBuilder
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.Assert.*
 import org.junit.ClassRule
 import org.junit.Test
@@ -25,8 +22,8 @@ class MultiComponentSnappableTest {
     @Test
     fun shouldSnapX() {
         val snapX = MultiComponentSnappable(listOf(
-            RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), bounds = Rectangle2D(0.0, 0.0, 20.0, 10.0)),
-            RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), bounds = Rectangle2D(100.0, 200.0, 20.0, 10.0))
+            RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(0.0, 0.0, 20.0, 10.0)),
+            RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(100.0, 200.0, 20.0, 10.0))
         )).snappableX
 
         // Didn't succeed in using hamcrest's containsInAnyOrder() method due to type inference problems
@@ -43,8 +40,8 @@ class MultiComponentSnappableTest {
     @Test
     fun shouldSnapY() {
         val snapY = MultiComponentSnappable(listOf(
-                RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), bounds = Rectangle2D(0.0, 0.0, 20.0, 10.0)),
-                RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), bounds = Rectangle2D(100.0, 200.0, 20.0, 10.0))
+                RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(0.0, 0.0, 20.0, 10.0)),
+                RectangularComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(100.0, 200.0, 20.0, 10.0))
         )).snappableY
 
         // Didn't succeed in using hamcrest's containsInAnyOrder() method due to type inference problems

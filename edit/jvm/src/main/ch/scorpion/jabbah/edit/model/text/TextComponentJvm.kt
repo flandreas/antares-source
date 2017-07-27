@@ -53,7 +53,7 @@ open class TextComponentJvm(
         location: Point2D,
         styleType: StyleType,
         styleProvider: StyleProvider
-) : RectangularComponent(styleType = styleType, styleProvider = styleProvider, bounds = Rectangle2D(location.x, location.y, 0.0, 0.0)),
+) : RectangularComponent(styleType = styleType, styleProvider = styleProvider, shape = Rectangle2D(location.x, location.y, 0.0, 0.0)),
     Transparent, TextComponent {
 
     constructor(text: String): this(text = text, location = Point2D(), styleType = StyleType.FIGURE, styleProvider = DrawStyleModule.styleProvider)
@@ -200,7 +200,7 @@ open class TextComponentJvm(
 
     override fun draw(context: DrawContext) {
         val oldClip = context.g.getClipBounds()
-        val b = bounds
+        val b = shape
 
         decorator.drawBackground(this, context)
 
@@ -221,25 +221,25 @@ open class TextComponentJvm(
     /** ---- [TextComponent] */
 
     /**
-     * Adjusts the size of this [TextComponent]'s bounds to the preferred size of the current text, expanded by
+     * Adjusts the size of this [TextComponent]'s shape to the preferred size of the current text, expanded by
      * the constant horizontal and vertical insets.
      *
-     * Currently, this method only changes the width and height of the bounds, but not its position. It should be
-     * considered whether or not this method should also change the position of the bounds, depending on the current
+     * Currently, this method only changes the width and height of the shape, but not its position. It should be
+     * considered whether or not this method should also change the position of the shape, depending on the current
      * alignment settings.
      */
     private fun adjustBounds() {
         // TODO change the position of the bounding box depending on alignment?
         // Note that TextEditTool uses its own adjustment strategy for inline editing,
         // which does change the position depending on alignment
-        val b = bounds
+        val b = shape
         val dim = measureText(text, Graphics2DJvm.toAwtFont(font), 1.0)
         setFrame(b.x, b.y, dim.width + 2 * INSET_X, dim.height + 2 * INSET_Y)
     }
 
     /** Adjust the size of the currently used text editor. */
     private fun adjustTextEditor(editor: Editor) {
-        val bounds = bounds
+        val bounds = shape
         val orig = editor.view.modelToView(Point2D(bounds.x + INSET_X, bounds.y + INSET_Y))
         TEXT_EDITOR.setBounds(
             orig.x.toInt(),
@@ -262,7 +262,7 @@ open class TextComponentJvm(
         StyleConstants.setForeground(attr, Graphics2DJvm.toAwtColor(transparent.applyTo(color.textColor)))
         StyleConstants.setAlignment(attr, StyleConstants.ALIGN_LEFT)
 
-        val bounds = bounds
+        val bounds = shape
         TEXT_PAINTER.setBounds(
                 bounds.x.toInt() + INSET_X,
                 bounds.y.toInt() + INSET_Y,

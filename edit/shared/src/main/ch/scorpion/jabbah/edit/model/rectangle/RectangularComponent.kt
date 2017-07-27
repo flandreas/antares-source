@@ -24,16 +24,16 @@ import ch.scorpion.jabbah.draw.graphics.Color
 open class RectangularComponent(
         styleType: StyleType = StyleType.FIGURE,
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-        val bounds: RectangularShape = Rectangle2D(0.0, 0.0, 0.0, 0.0)
-) : AbstractComponent(styleProvider, styleType), RectangularShape by bounds {
+        val shape: RectangularShape = Rectangle2D(0.0, 0.0, 0.0, 0.0)
+) : AbstractComponent(styleProvider, styleType), RectangularShape by shape {
 
-    constructor(x: Double, y: Double, w: Double, h: Double): this(bounds = Rectangle2D(x, y, w, h))
+    constructor(x: Double, y: Double, w: Double, h: Double): this(shape = Rectangle2D(x, y, w, h))
 
     /** ---- [RectangularShape] */
 
     override fun setFrame(x: Double, y: Double, width: Double, height: Double) {
         invalidate()
-        bounds.setFrame(x, y, width, height)
+        shape.setFrame(x, y, width, height)
         invalidate()
         update()
     }
@@ -80,7 +80,7 @@ open class RectangularComponent(
 
     override val boundingBox: Rectangle2D
         get() {
-            val bb = Rectangle2D(bounds.boundingBox)
+            val bb = Rectangle2D(shape.boundingBox)
             val lw = stroke.width
             bb.setFrame(
                 bb.x - lw,
@@ -92,7 +92,7 @@ open class RectangularComponent(
         }
 
     override fun contains(x: Double, y: Double): Boolean {
-        return bounds.contains(x, y)
+        return shape.contains(x, y)
     }
 
     override val canMirror: Boolean = true
@@ -115,8 +115,8 @@ open class RectangularComponent(
 
     private fun drawImpl(context: DrawContext, lineColor: Color, fillColor: Color?) {
         val oldColor = context.g.color
-        drawFill(context, bounds, fillColor)
-        drawStroke(context, bounds, lineColor, stroke)
+        drawFill(context, shape, fillColor)
+        drawStroke(context, shape, lineColor, stroke)
         context.g.color = oldColor
     }
 

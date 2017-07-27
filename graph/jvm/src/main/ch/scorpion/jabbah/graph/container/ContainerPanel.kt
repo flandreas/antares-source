@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.geom.Ellipse2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.view.FocusPanel
@@ -112,7 +113,8 @@ class ContainerPanel(
 
         toolbar.addTool(editor.currentTool, "/img/pointer.gif", "Selektion")
         toolbar.addTool(LabelTool(editor, { LabelComponent() }), "/img/text.gif", "Label")
-        toolbar.addTool(RectangleTool(editor, { RectangularComponent() }), "/img/rectangle.gif", "Selektion")
+        toolbar.addTool(RectangleTool(editor, { RectangularComponent() }), "/img/rectangle.png", "Rechteck")
+        toolbar.addTool(RectangleTool(editor, { RectangularComponent(shape = Ellipse2D()) }), "/img/ellipse.png", "Selektion")
         toolbar.addTool(PolylineTool(editor, { PolylineComponent() }), "/img/polyline.gif", "Polylinie")
 
         return toolbar

@@ -30,7 +30,7 @@ class SimpleTextComponent(
 ) : RectangularComponent(
         styleType = styleType,
         styleProvider = styleProvider,
-        bounds = Rectangle2D(location.x, location.y, 100.0, 50.0)
+        shape = Rectangle2D(location.x, location.y, 100.0, 50.0)
 ), TextComponent, Transparent {
 
     private companion object {
@@ -97,7 +97,7 @@ class SimpleTextComponent(
 
         context.g.font = font
         context.g.color = textColor
-        val b = bounds
+        val b = shape
 
         // TODO: Implement clipping in JavaScript platform
         // val oldClip = context.g.getClipBounds()

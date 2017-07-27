@@ -189,6 +189,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
             is RoundRectangle2D -> drawRoundRect(shape)
             is Path2DJvm -> g.draw(shape.path)
             is PolylineShapeJvm -> g.draw(shape)
+            is Ellipse2D -> drawEllipse(shape)
             else -> {
                 LOG.error("Unsupported shape $shape")
                 throw IllegalArgumentException("Unsupported shape " + shape.javaClass.name)
@@ -202,6 +203,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
             is RoundRectangle2D -> fillRoundRect(shape)
             is Path2DJvm -> g.fill(shape.path)
             is PolylineShapeJvm -> g.fill(shape)
+            is Ellipse2D -> fillEllipse(shape)
             else -> {
                 LOG.error("Unsupported shape $shape")
                 throw IllegalArgumentException("Unsupported shape " + shape.javaClass.name)
@@ -270,6 +272,14 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
     private fun fillRoundRect(rect: RoundRectangle2D) {
         fillRoundRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt(), rect.arcW.toInt(), rect.arcH.toInt())
+    }
+
+    private fun drawEllipse(e: Ellipse2D) {
+        g.draw(java.awt.geom.Ellipse2D.Double(e.x, e.y, e.width, e.height))
+    }
+
+    private fun fillEllipse(e: Ellipse2D) {
+        g.fill(java.awt.geom.Ellipse2D.Double(e.x, e.y, e.width, e.height))
     }
 
 }

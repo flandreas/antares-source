@@ -122,9 +122,9 @@ class Label(
         abstract fun opposite(): HorizontalAlignment
 
         /**
-         * Returns the x-coordinate of the text bounds relative to the [Label]'s location.
-         * @param baselineRect the text's bounds relative to the baseline.
-         * @return the x-coordinate of the text bounds.
+         * Returns the x-coordinate of the text shape relative to the [Label]'s location.
+         * @param baselineRect the text's shape relative to the baseline.
+         * @return the x-coordinate of the text shape.
          */
         abstract fun getX(baselineRect: Rectangle2D): Double
     }
@@ -148,9 +148,9 @@ class Label(
         internal abstract fun opposite(): VerticalAlignment
 
         /**
-         * Returns the y-coordinate of the text bounds relative to the [Label]'s location.
-         * @param baselineRect the text's bounds relative to the baseline.
-         * @return the y-coordinate of the text bounds.
+         * Returns the y-coordinate of the text shape relative to the [Label]'s location.
+         * @param baselineRect the text's shape relative to the baseline.
+         * @return the y-coordinate of the text shape.
          */
         internal abstract fun getY(baselineRect: Rectangle2D): Double
     }
