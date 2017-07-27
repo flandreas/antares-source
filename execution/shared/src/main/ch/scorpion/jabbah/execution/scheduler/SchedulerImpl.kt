@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import kotlin.reflect.KClass
 
 /**
@@ -28,7 +29,7 @@ class SchedulerImpl(
     timer: Timer = System.get().createTimer(),
     private val eventBus: EventBus = BaseModule.eventBus,
     private val noiseGeneratorHolder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
-    private val systemSpeed: SystemSpeed = BaseModule.systemSpeed
+    private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory
 ) : Scheduler {
 
     companion object {
@@ -270,7 +271,7 @@ class SchedulerImpl(
     private inner class Task(private val timer: Timer) : ActionListener {
 
         init {
-            timer.initialize(calculateInterval(), { actionPerformed(it) })
+            timer.initialize(calculateTimerInterval(), { actionPerformed(it) })
         }
 
         override fun actionPerformed(event: ActionEvent) {
@@ -287,10 +288,15 @@ class SchedulerImpl(
         }
 
         fun adaptToSystemSpeed() {
-            timer.interval = calculateInterval()
+            timer.interval = calculateTimerInterval()
         }
 
-        private fun calculateInterval(): Int = 1 + SLOWDOWN_FACTOR * (SystemSpeed.MAX_SPEED - systemSpeed.speed)
+        private fun calculateTimerInterval(): Int {
+            val interval = 1 +
+                    (1 + SLOWDOWN_FACTOR * currentSystemSpeedCategory.systemSpeedCategory.ordinal) * (SystemSpeed.MAX_SPEED - currentSystemSpeedCategory.systemSpeed.speed)
+            LOG.debug("SchedulerImpl: interval = $interval")
+            return interval
+        }
 
         fun startIfNeeded() {
             if (!isPaused && !queue.isEmpty && !timer.isRunning()) {
@@ -325,7 +331,9 @@ class SchedulerImpl(
                 updateRelativeTime(slot.relativeTime)
                 slot.isExecuted = true
                 for (request in slot.getRequests()) {
-                    logTrace(System.get().getClass(request.actor), request.actor.id, {"Executing"})
+                    if (LOG.isTraceEnabled()) {
+                        logTrace(System.get().getClass(request.actor), request.actor.id, { "Executing" })
+                    }
                     breakpoint = breakpoint || request.actor.isBreakpoint
                     if (request.actor.act(this@SchedulerImpl, request.actorData)) {
                         request.setDone()
