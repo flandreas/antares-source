@@ -6,14 +6,12 @@ import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.assertThat
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 
 /**
  * Unit tests for [ControlledTimer].
  */
-@Ignore
 class ControlledTimerTest {
 
     private var event: ActionEvent? = null

@@ -66,7 +66,7 @@ class ControlledTimer(val timeService: ControlledTimeService) : Timer {
 
     override fun initialize(interval: Int, handler: (ActionEvent) -> Unit) {
         ensureUninitialized()
-        this.interval = interval * 1_000_000
+        this.interval = interval
         this.handler = handler
     }
 
