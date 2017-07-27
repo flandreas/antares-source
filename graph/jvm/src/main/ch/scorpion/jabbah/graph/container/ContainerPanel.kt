@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ToolBar
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
@@ -110,13 +111,11 @@ class ContainerPanel(
     private fun createToolbar(editor: Editor): JToolBar {
         val toolbar = ToolBar(editor)
 
-        // TODO I18N
-
-        toolbar.addTool(editor.currentTool, "/img/pointer.gif", "Selektion")
-        toolbar.addTool(LabelTool(editor, { LabelComponent() }), "/img/text.gif", "Label")
-        toolbar.addTool(RectangleTool(editor, { RectangleComponent() }), "/img/rectangle.png", "Rechteck")
-        toolbar.addTool(RectangleTool(editor, { EllipseComponent() }), "/img/ellipse.png", "Selektion")
-        toolbar.addTool(PolylineTool(editor, { PolylineComponent() }), "/img/polyline.gif", "Polylinie")
+        toolbar.addTool(editor.currentTool, "/img/pointer.gif", Translations.getString("edit.tool.select"))
+        toolbar.addTool(LabelTool(editor, { LabelComponent() }), "/img/text.gif", Translations.getString("edit.component.label"))
+        toolbar.addTool(RectangleTool(editor, { RectangleComponent() }), "/img/rectangle.png", Translations.getString("edit.component.rectangle"))
+        toolbar.addTool(RectangleTool(editor, { EllipseComponent() }), "/img/ellipse.png", Translations.getString("edit.component.ellipse"))
+        toolbar.addTool(PolylineTool(editor, { PolylineComponent() }), "/img/polyline.gif", Translations.getString("edit.component.polyline"))
 
         return toolbar
     }

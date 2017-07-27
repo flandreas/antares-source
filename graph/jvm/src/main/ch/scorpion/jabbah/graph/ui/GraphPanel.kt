@@ -230,15 +230,16 @@ class GraphPanel(
     private fun createDrawingToolBar(): ToolBar {
         val toolbar = ToolBar(editor)
         toolbar.addSeparator()
-        // TODO I18N
-        toolbar.addTool(editor.currentTool, "/img/pointer.gif", "Selektion")
-        toolbar.addTool(RectangleTool(editor, { RectangleComponent() }, { GraphElementViewWrapper<Vertice>(it) }), "/img/rectangle.png", "Rechteck")
-        toolbar.addTool(RectangleTool(editor, { EllipseComponent() }, { GraphElementViewWrapper<Vertice>(it) }), "/img/ellipse.png", "Ellipse")
-        toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }), "/img/polyline.gif", "Polylinie")
-        // TEST BEGIN
-        // toolbar.addTool(TextTool(editor, { GraphTextComponent() }, { GraphElementViewWrapper<Vertice>(it)}), "/img/text.gif", "Text")
-        toolbar.addTool(TextTool(editor, { SimpleTextComponent("This is a text") }, { GraphElementViewWrapper<Vertice>(it)}), "/img/text.gif", "Text")
-        // TEST END
+
+        toolbar.addTool(editor.currentTool, "/img/pointer.gif", Translations.getString("edit.tool.select"))
+        toolbar.addTool(RectangleTool(editor, { RectangleComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
+                "/img/rectangle.png", Translations.getString("edit.component.rectangle"))
+        toolbar.addTool(RectangleTool(editor, { EllipseComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
+                "/img/ellipse.png", Translations.getString("edit.component.ellipse"))
+        toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
+                "/img/polyline.gif", Translations.getString("edit.component.polyline"))
+        toolbar.addTool(TextTool(editor, { SimpleTextComponent("This is a text") }, { GraphElementViewWrapper<Vertice>(it)}),
+                "/img/text.gif", Translations.getString("edit.component.text"))
 
         return toolbar
     }
@@ -251,7 +252,7 @@ class GraphPanel(
         button.text = null
         button.isFocusPainted = false
         button.icon = ImageIcon(GraphPanel::class.java.getResource("/img/snap.gif"))
-        button.toolTipText = "Snap"
+        button.toolTipText = Translations.getString("edit.tool.align")
 
         toolBar.add(button)
 

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.model.rectangle
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
@@ -131,7 +132,7 @@ open class RectangleComponent(
 
     constructor(x: Double, y: Double, w: Double, h: Double): this(shape = Rectangle2D(x, y, w, h))
 
-    override val type: String? get() = "edit.component.rectangle"
+    override val type: String? get() = Translations.getString("edit.component.rectangle")
 }
 
 class RoundRectangleComponent(
@@ -142,7 +143,7 @@ class RoundRectangleComponent(
 
     constructor(x: Double, y: Double, w: Double, h: Double, arcW: Double, arcH: Double): this(shape = RoundRectangle2D(x, y, w, h, arcW, arcH))
 
-    override val type: String? get() = "edit.component.roundrect"
+    override val type: String? get() = Translations.getString("edit.component.roundrect")
 }
 
 
@@ -154,5 +155,5 @@ class EllipseComponent(
 
     constructor(x: Double, y: Double, w: Double, h: Double): this(shape = Ellipse2D(x, y, w, h))
 
-    override val type: String? get() = "edit.component.ellipse"
+    override val type: String? get() = Translations.getString("edit.component.ellipse")
 }
