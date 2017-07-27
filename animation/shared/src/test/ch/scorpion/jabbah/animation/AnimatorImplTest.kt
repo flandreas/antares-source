@@ -15,6 +15,7 @@ import org.mockito.Mockito.*
 /**
  * Unit tests for [AnimatorImpl].
  */
+@Ignore
 class AnimatorImplTest {
 
     lateinit var timeService: ControlledTimeService

@@ -12,13 +12,35 @@ object EditModelRectangleModule : AbstractModule() {
     override fun initialize() {
         EditSelectModule.selectionModelFactory.register(
             SelectionDrawingStrategy.BELOW,
-            RectangularComponent::class.simpleName!!,
-            {RectangularBelowSelectionModel(it as RectangularComponent)})
+            RectangleComponent::class.simpleName!!,
+            { RectangularBelowSelectionModel(it as RectangularComponent)} )
 
         EditSelectModule.selectionModelFactory.register(
             SelectionDrawingStrategy.ABOVE,
-            RectangularComponent::class.simpleName!!,
+            RectangleComponent::class.simpleName!!,
             { RectangularHandleSelectionModel(it as RectangularComponent) }
+        )
+
+        EditSelectModule.selectionModelFactory.register(
+                SelectionDrawingStrategy.BELOW,
+                EllipseComponent::class.simpleName!!,
+                { RectangularBelowSelectionModel(it as RectangularComponent)} )
+
+        EditSelectModule.selectionModelFactory.register(
+                SelectionDrawingStrategy.ABOVE,
+                EllipseComponent::class.simpleName!!,
+                { RectangularHandleSelectionModel(it as RectangularComponent) }
+        )
+
+        EditSelectModule.selectionModelFactory.register(
+                SelectionDrawingStrategy.BELOW,
+                RoundRectangleComponent::class.simpleName!!,
+                { RectangularBelowSelectionModel(it as RectangularComponent)} )
+
+        EditSelectModule.selectionModelFactory.register(
+                SelectionDrawingStrategy.ABOVE,
+                RoundRectangleComponent::class.simpleName!!,
+                { RectangularHandleSelectionModel(it as RectangularComponent) }
         )
     }
 }

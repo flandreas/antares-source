@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
+import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -27,7 +27,7 @@ class SimpleTextComponent(
         styleType: StyleType = EditStyleType.MESSAGE,
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
         private val textRenderInfoFactory: (String, Font) -> TextRenderInfo = DrawModule.textRenderInfoFactory
-) : RectangularComponent(
+) : RectangleComponent(
         styleType = styleType,
         styleProvider = styleProvider,
         shape = Rectangle2D(location.x, location.y, 100.0, 50.0)
@@ -89,7 +89,7 @@ class SimpleTextComponent(
     /** ---- [Drawable] */
 
     override fun contains(x: Double, y: Double): Boolean {
-        return super<RectangularComponent>.contains(x, y)
+        return super<RectangleComponent>.contains(x, y)
     }
 
     override fun draw(context: DrawContext) {

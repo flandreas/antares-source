@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.DrawingImpl
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.library.LibraryHolder
@@ -27,6 +26,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 
 
 /**
@@ -106,13 +106,13 @@ class ContainerDrawing(
     }
 
     /**
-     * Initializes this [ContainerDrawing] with a default [RectangularComponent] and a default [OriginIndicator].
+     * Initializes this [ContainerDrawing] with a default [RectangleComponent] and a default [OriginIndicator].
      * This is only needed when a new, fresh instance is created. It is not needed if this [ContainerDrawing] is
-     * read from persistent storage, as the [RectangularComponent] and the [OriginIndicator] are then read
+     * read from persistent storage, as the [RectangleComponent] and the [OriginIndicator] are then read
      * from storage.
      */
     fun initialize() {
-        add(RectangularComponent(140.0, 140.0, 70.0, 140.0))
+        add(RectangleComponent(140.0, 140.0, 70.0, 140.0))
         add(OriginIndicator(x = 140.0, y = 140.0))
     }
 

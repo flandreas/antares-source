@@ -10,8 +10,7 @@ import ch.scorpion.jabbah.edit.PropertyImpl
 
 
 /** A [BeanInfo] for [RectangularComponent]. */
-@Suppress("unused")
-class RectangularComponentBeanInfo : AbstractBeanInfo<RectangularComponent>() {
+abstract class RectangularComponentBeanInfo<T: RectangularComponent> : AbstractBeanInfo<T>() {
 
     companion object {
         private val filled = PropertyImpl("edit.property.filled", Boolean::class.java)
@@ -19,7 +18,7 @@ class RectangularComponentBeanInfo : AbstractBeanInfo<RectangularComponent>() {
         private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
     }
 
-    override fun addProperties(bean: RectangularComponent, editor: Editor, properties: MutableList<Property>) {
+    override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
         filled.bind(editor, { bean.filled }, { bean.filled = it!! })
@@ -31,3 +30,12 @@ class RectangularComponentBeanInfo : AbstractBeanInfo<RectangularComponent>() {
         properties.add(color)
     }
 }
+
+@Suppress("unused")
+class RectangleComponentBeanInfo() : RectangularComponentBeanInfo<RectangleComponent>()
+
+@Suppress("unused")
+class EllipseComponentBeanInfo() : RectangularComponentBeanInfo<EllipseComponent>()
+
+@Suppress("unused")
+class RoundRectangleComponentBeanInfo() : RectangularComponentBeanInfo<RoundRectangleComponent>()

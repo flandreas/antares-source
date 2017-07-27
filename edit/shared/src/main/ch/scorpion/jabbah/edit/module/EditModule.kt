@@ -16,8 +16,7 @@ import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.polyline.EditModelPolylineModule
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
-import ch.scorpion.jabbah.edit.model.rectangle.EditModelRectangleModule
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
+import ch.scorpion.jabbah.edit.model.rectangle.*
 import ch.scorpion.jabbah.edit.model.text.EditModelTextModule
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
@@ -57,7 +56,9 @@ object EditModule : AbstractModule() {
 
     private fun configureTypeMap(typeMap: TypeMap) {
         typeMap.register("drawing", DrawingImpl::class)
-        typeMap.register("rectangle", RectangularComponent::class)
+        typeMap.register("rectangle", RectangleComponent::class)
+        typeMap.register("ellipse", EllipseComponent::class)
+        typeMap.register("roundrect", RoundRectangleComponent::class)
         typeMap.register("polyline", PolylineComponent::class)
         typeMap.register("polylineShape", PolylineShapeImpl::class)
         typeMap.register("label", LabelComponent::class)

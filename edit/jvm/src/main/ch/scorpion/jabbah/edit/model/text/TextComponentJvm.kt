@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -24,6 +23,7 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import java.awt.BasicStroke
 import java.awt.Component
 import java.awt.Container
@@ -53,7 +53,7 @@ open class TextComponentJvm(
         location: Point2D,
         styleType: StyleType,
         styleProvider: StyleProvider
-) : RectangularComponent(styleType = styleType, styleProvider = styleProvider, shape = Rectangle2D(location.x, location.y, 0.0, 0.0)),
+) : RectangleComponent(styleType = styleType, styleProvider = styleProvider, shape = Rectangle2D(location.x, location.y, 0.0, 0.0)),
     Transparent, TextComponent {
 
     constructor(text: String): this(text = text, location = Point2D(), styleType = StyleType.FIGURE, styleProvider = DrawStyleModule.styleProvider)
@@ -195,7 +195,7 @@ open class TextComponentJvm(
     /** ---- [Drawable] */
 
     override fun contains(x: Double, y: Double): Boolean {
-        return super<RectangularComponent>.contains(x, y)
+        return super<RectangleComponent>.contains(x, y)
     }
 
     override fun draw(context: DrawContext) {

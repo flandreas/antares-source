@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
+import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 
 /**
  * A [RectangularComponent] that contains a [Label] drawable.
@@ -29,7 +30,7 @@ class LabelComponent(
             horizontalAlignment = Label.HorizontalAlignment.CENTER,
             verticalAlignment = Label.VerticalAlignment.CENTER,
             location = Point2D())
-) : RectangularComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider) {
+) : RectangleComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider) {
 
     companion object {
         val DEFAULT_TEXT = "text"

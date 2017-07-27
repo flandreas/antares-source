@@ -11,14 +11,14 @@ class RealTimeTimerJs : Timer {
     /** The ID returned from `window.setInterval()`.*/
     private var id: Int? = null
 
-    private var interval: Int? = null
+    override var interval: Int = 0
 
     private var handler: ((ActionEvent) -> Unit)? = null
 
     /** ---- [Timer] interface */
 
     override fun initialize(interval: Int, handler: (ActionEvent) -> Unit) {
-        if (this.interval != null) {
+        if (this.interval > 0) {
             throw IllegalStateException("already initialized")
         }
         this.interval = interval
@@ -26,16 +26,16 @@ class RealTimeTimerJs : Timer {
     }
 
     override fun start() {
-        if (interval == null) {
+        if (interval == 0) {
             throw IllegalStateException("not yet initialized")
         }
         id = kotlin.browser.window.setInterval({
             handler!!(ActionEvent(kotlin.browser.window, 0, "timer", Date().getTime().toLong()))
-        }, interval!!)
+        }, interval)
     }
 
     override fun stop() {
-        if (interval == null) {
+        if (interval == 0) {
             throw IllegalStateException("not yet initialized")
         }
         kotlin.browser.window.clearInterval(id!!)

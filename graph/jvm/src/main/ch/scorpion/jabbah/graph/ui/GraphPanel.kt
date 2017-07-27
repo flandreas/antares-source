@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.geom.Ellipse2D
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
@@ -18,8 +17,9 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.PropertySheetPanelFactory
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 import ch.scorpion.jabbah.edit.model.polyline.PolylineTool
+import ch.scorpion.jabbah.edit.model.rectangle.EllipseComponent
+import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
 import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
 import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
@@ -232,8 +232,8 @@ class GraphPanel(
         toolbar.addSeparator()
         // TODO I18N
         toolbar.addTool(editor.currentTool, "/img/pointer.gif", "Selektion")
-        toolbar.addTool(RectangleTool(editor, { RectangularComponent() }, { GraphElementViewWrapper<Vertice>(it) }), "/img/rectangle.png", "Rechteck")
-        toolbar.addTool(RectangleTool(editor, { RectangularComponent(shape = Ellipse2D()) }, { GraphElementViewWrapper<Vertice>(it) }), "/img/ellipse.png", "Ellipse")
+        toolbar.addTool(RectangleTool(editor, { RectangleComponent() }, { GraphElementViewWrapper<Vertice>(it) }), "/img/rectangle.png", "Rechteck")
+        toolbar.addTool(RectangleTool(editor, { EllipseComponent() }, { GraphElementViewWrapper<Vertice>(it) }), "/img/ellipse.png", "Ellipse")
         toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }), "/img/polyline.gif", "Polylinie")
         // TEST BEGIN
         // toolbar.addTool(TextTool(editor, { GraphTextComponent() }, { GraphElementViewWrapper<Vertice>(it)}), "/img/text.gif", "Text")

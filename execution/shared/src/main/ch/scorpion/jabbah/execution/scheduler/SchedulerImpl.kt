@@ -18,7 +18,6 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
-import javax.swing.SwingUtilities
 import kotlin.reflect.KClass
 
 /**
@@ -292,7 +291,7 @@ class SchedulerImpl(
         }
 
         fun adaptToSystemSpeed() {
-            SwingUtilities.invokeLater { timer.interval = calculateInterval() }
+            timer.interval = calculateInterval()
         }
 
         private fun calculateInterval(): Int = 1 + SLOWDOWN_FACTOR * (SystemSpeed.MAX_SPEED - systemSpeed.speed)

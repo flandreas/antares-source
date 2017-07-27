@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.model.rectangle
 
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
@@ -10,9 +11,6 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Snappable
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -21,10 +19,10 @@ import ch.scorpion.jabbah.draw.graphics.Color
 /**
  * A [RectangularComponent] is a [Component] with a [RectangularShape].
  */
-open class RectangularComponent(
+abstract class RectangularComponent(
         styleType: StyleType = StyleType.FIGURE,
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-        val shape: RectangularShape = Rectangle2D(0.0, 0.0, 0.0, 0.0)
+        val shape: RectangularShape
 ) : AbstractComponent(styleProvider, styleType), RectangularShape by shape {
 
     constructor(x: Double, y: Double, w: Double, h: Double): this(shape = Rectangle2D(x, y, w, h))
@@ -63,8 +61,6 @@ open class RectangularComponent(
     }
 
     /** ---- [Component] interface */
-
-    override val type: String? get() = "edit.component.rectangle"
 
     override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy? = SelectionDrawingStrategy.ABOVE
 
@@ -125,4 +121,38 @@ open class RectangularComponent(
     override val snappableX: DoubleArray get() = doubleArrayOf(minX, centerX, maxX)
 
     override val snappableY: DoubleArray get() = doubleArrayOf(minY, centerY, maxY)
+}
+
+open class RectangleComponent(
+        styleType: StyleType = StyleType.FIGURE,
+        styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+        shape: Rectangle2D = Rectangle2D(0.0, 0.0, 0.0, 0.0)
+) : RectangularComponent(styleType, styleProvider, shape) {
+
+    constructor(x: Double, y: Double, w: Double, h: Double): this(shape = Rectangle2D(x, y, w, h))
+
+    override val type: String? get() = "edit.component.rectangle"
+}
+
+class RoundRectangleComponent(
+        styleType: StyleType = StyleType.FIGURE,
+        styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+        shape: RoundRectangle2D = RoundRectangle2D(0.0, 0.0, 0.0, 0.0, 10.0, 10.0)
+) : RectangularComponent(styleType, styleProvider, shape) {
+
+    constructor(x: Double, y: Double, w: Double, h: Double, arcW: Double, arcH: Double): this(shape = RoundRectangle2D(x, y, w, h, arcW, arcH))
+
+    override val type: String? get() = "edit.component.roundrect"
+}
+
+
+class EllipseComponent(
+        styleType: StyleType = StyleType.FIGURE,
+        styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+        shape: Ellipse2D = Ellipse2D(0.0, 0.0, 0.0, 0.0)
+) : RectangularComponent(styleType, styleProvider, shape) {
+
+    constructor(x: Double, y: Double, w: Double, h: Double): this(shape = Ellipse2D(x, y, w, h))
+
+    override val type: String? get() = "edit.component.ellipse"
 }
