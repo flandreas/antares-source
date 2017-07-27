@@ -28,7 +28,6 @@ class SchedulerImpl(
     timer: Timer = System.get().createTimer(),
     private val eventBus: EventBus = BaseModule.eventBus,
     private val noiseGeneratorHolder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
-    interval: Int = 1,
     private val systemSpeed: SystemSpeed = BaseModule.systemSpeed
 ) : Scheduler {
 
@@ -43,7 +42,7 @@ class SchedulerImpl(
     private val queue = PriorityQueue<Slot>()
 
     /** The object that is repeatedly called by the specified [Timer] in order to perform execution steps.*/
-    private val task = Task(timer, interval)
+    private val task = Task(timer)
 
     /** Determines whether this [Scheduler] is active or not.*/
     private var activationState: SchedulerActivationState = SchedulerActivationState.PASSIVE
@@ -268,10 +267,7 @@ class SchedulerImpl(
      * Repeatedly called by the [Timer] in order to perform an execution step.
      * @param interval the interval (in ms) at which the [Timer] calls this [Task]
      */
-    private inner class Task(
-        private val timer: Timer,
-        interval: Int
-    ) : ActionListener {
+    private inner class Task(private val timer: Timer) : ActionListener {
 
         init {
             timer.initialize(calculateInterval(), { actionPerformed(it) })
@@ -285,7 +281,7 @@ class SchedulerImpl(
 //                count++
 //            }
 
-            while (System.get().currentTimeMillis() - beginTime < 20) {
+            while (!queue.isEmpty && System.get().currentTimeMillis() - beginTime < 20) {
                 executionStep()
             }
         }

@@ -12,6 +12,7 @@ class RealTimeTimerJvm : Timer {
     override var interval: Int
         get() = timer?.delay ?: throw IllegalStateException("not yet initialized")
         set(value) {
+            timer?.initialDelay = value
             timer?.delay = value
         }
 
