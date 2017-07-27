@@ -47,6 +47,7 @@ import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.view.CurrentGraphViewAnimationType
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
+import ch.scorpion.jabbah.graph.view.net.edge.DragEdgePointHighlight
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 /**
@@ -113,6 +114,7 @@ object AntaresViewModule : AbstractModule() {
         properties.predefine(Handle.PROP_FILL_COLOR, Themes.get<GraphTheme>().selection.backgroundColor)
 
         properties.predefine(AutoConnectorHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.foregroundColor)
+        properties.predefine(DragEdgePointHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.foregroundColor)
 
         properties.predefine(CircuitInOutView.PROP_INPUT_ICON_PATH, "/img/input.png")
         properties.predefine(CircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")

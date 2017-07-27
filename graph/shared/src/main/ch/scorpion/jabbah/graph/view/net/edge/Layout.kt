@@ -30,7 +30,7 @@ enum class Layout(val customName: String, val inputEventHandler: EdgeViewInputEv
         }
     },
 
-    NONE("none", DragEdgeSegmentHandler()) {
+    NONE("none", DragEdgePointHandler()) {
         override fun layout(edgeView: EdgeView<*>, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
             val layout = NoneEdgeViewLayout()
             return layout.layout(edgeView, graphView, begin, end)

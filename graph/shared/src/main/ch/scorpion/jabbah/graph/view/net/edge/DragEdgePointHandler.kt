@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.graph.view.EdgeView
 
 /**
  * Supports dragging a segment point of an [EdgeView] when [Layout.NONE] is active.
@@ -20,18 +21,18 @@ class DragEdgePointHandler : EdgeViewInputEventHandler() {
     /** ---- [InputEventHandler] */
 
     override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        LOG.trace("mouseMoved");
+        LOG.trace("mouseMoved")
         if (edgeView!!.contains(context.x, context.y)) {
             if (highlight == null) {
-                displayHighlight(context.drawingView());
+                displayHighlight(context.drawingView())
             }
 
-            highlight!!.updateMouseLocation(context.x, context.y);
-            return this;
+            highlight!!.updateMouseLocation(context.x, context.y)
+            return this
         }
 
-        removeHighlight(context.drawingView());
-        return null;
+        removeHighlight(context.drawingView())
+        return null
     }
 
     override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
@@ -60,7 +61,7 @@ class DragEdgePointHandler : EdgeViewInputEventHandler() {
         if (oldLocation != null) {
             val newLocation = edgeView!!.getSegmentPoint(highlight!!.pointIndex!!)
             context.editor.commandManager.beginTransaction(MoveEdgePointCommand(
-                    context.editor, edgeView!!, highlight!!.pointIndex!!, newLocation.subtract(oldLocation!!)))
+                    context.editor, edgeView!!, highlight!!.pointIndex!!, newLocation.subtract(oldLocation!!)), register = true)
             context.editor.commandManager.commitTransaction()
         }
         oldLocation = null
