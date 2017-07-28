@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -113,12 +114,14 @@ class DigitalEdgeAnimationView(
         if (edgeView.netView!!.style == NetViewStyle.LINE) {
             if (reverseDirection) {
                 if (edgeView.origin is NodeView<*>) {
-                    artificialNodeView = DigitalNodeView(styleProvider, DummyNet(signal), NetViewStyle.LINE)
+                    artificialNodeView = DigitalNodeView(styleProvider, ExecutionModule.currentSystemSpeedCategory,
+                            DummyNet(signal), NetViewStyle.LINE)
                     artificialNodeView!!.location = edgeView.getSegmentPoint(0)
                 }
             } else {
                 if (edgeView.destination is NodeView<*>) {
-                    artificialNodeView = DigitalNodeView(styleProvider, DummyNet(signal), NetViewStyle.LINE)
+                    artificialNodeView = DigitalNodeView(styleProvider, ExecutionModule.currentSystemSpeedCategory,
+                            DummyNet(signal), NetViewStyle.LINE)
                     artificialNodeView!!.location = edgeView.getSegmentPoint(edgeView.segmentPointCount - 1)
                 }
             }

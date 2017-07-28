@@ -5,6 +5,8 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
@@ -21,15 +23,16 @@ import ch.scorpion.jabbah.graph.view.net.node.NodeViewImpl
  */
 class DigitalNodeView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
     net: Net<DigitalSignal> = DigitalNet(),
     netViewStyle: NetViewStyle? = null
-) : NodeViewImpl<DigitalSignal>(styleProvider, net, netViewStyle) {
+) : NodeViewImpl<DigitalSignal>(styleProvider, currentSystemSpeedCategory, net, netViewStyle) {
 
     override fun draw(context: DrawContext) {
         val oldColor = context.g.color
         val oldCompositeColor = context.color
 
-        if (context.appContext as ApplicationMode? === ApplicationMode.EXECUTE) {
+        if (context.appContext as ApplicationMode? === ApplicationMode.EXECUTE && showNetState()) {
             if (!model!!.isError) {
                 context.color = model!!.signal!!.getColor()
             }
@@ -44,14 +47,18 @@ class DigitalNodeView(
     }
 }
 
-class DigitalNodeViewFactory(private val styleProvider: StyleProvider) : NodeViewFactory<DigitalSignal> {
-    constructor(): this(DrawStyleModule.styleProvider)
+class DigitalNodeViewFactory(
+        private val styleProvider: StyleProvider,
+        private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
+) : NodeViewFactory<DigitalSignal> {
+
+    constructor(): this(DrawStyleModule.styleProvider, ExecutionModule.currentSystemSpeedCategory)
 
     override fun create(): NodeView<DigitalSignal> {
-        return DigitalNodeView(styleProvider)
+        return DigitalNodeView(styleProvider, currentSystemSpeedCategory)
     }
 
     override fun create(net: Net<DigitalSignal>): NodeView<DigitalSignal> {
-        return DigitalNodeView(styleProvider, net)
+        return DigitalNodeView(styleProvider, currentSystemSpeedCategory, net)
     }
 }

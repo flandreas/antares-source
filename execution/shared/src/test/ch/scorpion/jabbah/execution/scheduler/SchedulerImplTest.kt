@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.*
+import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import org.hamcrest.CoreMatchers.`is`
@@ -25,7 +26,6 @@ class SchedulerImplTest {
         @ClassRule @JvmField
         val testRule = ExecutionTestRule()
 
-        val SIM_INTERVAL = 10
         val MILLION = 1000000L
     }
 
@@ -38,8 +38,7 @@ class SchedulerImplTest {
             timeService,
             ControlledTimer(timeService),
             eventBus,
-            NoiseGeneratorHolder(NoNoiseGenerator(), eventBus),
-            SIM_INTERVAL
+            NoiseGeneratorHolder(NoNoiseGenerator(), eventBus)
         )
     }
 

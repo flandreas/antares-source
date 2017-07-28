@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
@@ -14,14 +15,17 @@ open class EdgeViewFactoryImpl<T: Any>(
     private val styleProvider: StyleProvider,
     private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
     private val originEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-    private val destinationEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector
+    private val destinationEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
+    private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
 ) :EdgeViewFactory<T> {
 
     override fun createEdgeView(): EdgeView<T> {
-        return EdgeViewImpl(styleProvider, edgeToPortConnectorSupplier, originEndpointConnectorSupplier, destinationEndpointConnectorSupplier)
+        return EdgeViewImpl(styleProvider, edgeToPortConnectorSupplier, originEndpointConnectorSupplier,
+                destinationEndpointConnectorSupplier, currentSystemSpeedCategory)
     }
 
     override fun createEdgeView(net: Net<T>): EdgeView<T> {
-        return EdgeViewImpl(styleProvider, edgeToPortConnectorSupplier, originEndpointConnectorSupplier, destinationEndpointConnectorSupplier, net)
+        return EdgeViewImpl(styleProvider, edgeToPortConnectorSupplier, originEndpointConnectorSupplier,
+                destinationEndpointConnectorSupplier, currentSystemSpeedCategory, net)
     }
 }

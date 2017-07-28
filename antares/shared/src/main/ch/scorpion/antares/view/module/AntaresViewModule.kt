@@ -44,6 +44,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.view.CurrentGraphViewAnimationType
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
@@ -71,13 +72,16 @@ object AntaresViewModule : AbstractModule() {
         GraphViewModule.portFactory = DigitalPortFactory(DrawStyleModule.styleProvider)
         val edgeViewFactory = DigitalEdgeViewFactory(
                 DrawStyleModule.styleProvider,
-                {GraphViewModule.edgeToPortConnector},
-                {GraphViewModule.dragEdgeViewOriginConnector},
-                {GraphViewModule.dragEdgeViewDestinationConnector}
+                { GraphViewModule.edgeToPortConnector },
+                { GraphViewModule.dragEdgeViewOriginConnector },
+                { GraphViewModule.dragEdgeViewDestinationConnector },
+                ExecutionModule.currentSystemSpeedCategory
         )
         GraphViewModule.setEdgeViewFactory(edgeViewFactory)
-        GraphViewModule.setNodeViewFactory(DigitalNodeViewFactory(DrawStyleModule.styleProvider))
-
+        GraphViewModule.setNodeViewFactory(DigitalNodeViewFactory(
+                DrawStyleModule.styleProvider,
+                ExecutionModule.currentSystemSpeedCategory)
+        )
 
         GraphViewModule.require()
         AnimationModule.require()

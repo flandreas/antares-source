@@ -27,6 +27,8 @@ import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.*
 
@@ -39,8 +41,9 @@ open class EdgeViewImpl<T: Any>(
     private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
     origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
     destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
+    currentSystemSpeedCategory: CurrentSystemSpeedCategory,
     net: Net<T>
-) : AbstractNetViewElement<T>(styleProvider, net), EdgeView<T> {
+) : AbstractNetViewElement<T>(styleProvider, currentSystemSpeedCategory, net), EdgeView<T> {
 
     private companion object {
         val LOG by logger(EdgeViewImpl::class)
@@ -51,15 +54,18 @@ open class EdgeViewImpl<T: Any>(
         styleProvider: StyleProvider,
         edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
         origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-        destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector
-    ): this(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier, destEndpointConnectorSupplier, NetImpl<T>())
+        destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
+        currentSystemSpeedCategory: CurrentSystemSpeedCategory
+    ): this(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier, destEndpointConnectorSupplier,
+            currentSystemSpeedCategory, NetImpl<T>())
 
     @Suppress("unused")
     constructor(): this(
         DrawStyleModule.styleProvider,
         {GraphViewModule.edgeToPortConnector},
         {GraphViewModule.dragEdgeViewOriginConnector},
-        {GraphViewModule.dragEdgeViewDestinationConnector}
+        {GraphViewModule.dragEdgeViewDestinationConnector},
+        ExecutionModule.currentSystemSpeedCategory
     )
 
     init {

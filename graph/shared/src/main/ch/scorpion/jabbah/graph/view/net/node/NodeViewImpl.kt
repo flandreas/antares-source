@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.net.NetImpl
@@ -30,12 +31,13 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 open class NodeViewImpl<T: Any>(
     styleProvider: StyleProvider,
+    currentSystemSpeedCategory: CurrentSystemSpeedCategory,
     net: Net<T>,
     netViewStyle: NetViewStyle?
-) : AbstractNetViewElement<T>(styleProvider, net), NodeView<T> {
+) : AbstractNetViewElement<T>(styleProvider, currentSystemSpeedCategory, net), NodeView<T> {
 
-    constructor(styleProvider: StyleProvider, net: Net<T>): this(styleProvider, net, null)
-    constructor(styleProvider: StyleProvider): this(styleProvider, NetImpl<T>())
+    constructor(styleProvider: StyleProvider, currentSystemSpeedCategory: CurrentSystemSpeedCategory, net: Net<T>): this(styleProvider, currentSystemSpeedCategory, net, null)
+    constructor(styleProvider: StyleProvider, currentSystemSpeedCategory: CurrentSystemSpeedCategory): this(styleProvider, currentSystemSpeedCategory, NetImpl<T>())
 
     /** Can be `null`during deserialization.*/
     private var styling: NodeViewStyling? = null

@@ -45,14 +45,13 @@ class AntaresGraphNavigationPanel(
     libraryHolder: LibraryHolder,
     storableCreator: StorableCreator,
     animator: Animator,
-    systemSpeed: SystemSpeed,
     systemSpeedCategory: CurrentSystemSpeedCategory,
     currentGraphViewAnimationType: CurrentGraphViewAnimationType,
     styleProvider: StyleProvider,
     scriptGateway: ScriptGateway
 ) : GraphNavigationPanel(isRoot, drawingView, viewManager, closeHandler, scheduler, animator, eventBus, libraryHolder, storableCreator, scriptGateway) {
 
-    private val graphAnimator = GraphViewAnimator(drawingView, scheduler, animator, systemSpeed, systemSpeedCategory, eventBus, currentGraphViewAnimationType, styleProvider)
+    private val graphAnimator = GraphViewAnimator(drawingView, scheduler, animator, systemSpeedCategory, eventBus, currentGraphViewAnimationType, styleProvider)
 
     init {
         eventBus.register(CurrentGraphAnimationTypeEvent::class, { drawingView.repaint() })
@@ -78,7 +77,6 @@ class AntaresGraphNavigationPanelFactory : GraphNavigationPanelFactory {
             libraryHolder: LibraryHolder,
             storableCreator: StorableCreator,
             animator: Animator,
-            systemSpeed: SystemSpeed,
             systemSpeedCategory: CurrentSystemSpeedCategory,
             currentGraphViewAnimationType: CurrentGraphViewAnimationType,
             styleProvider: StyleProvider,
@@ -86,7 +84,7 @@ class AntaresGraphNavigationPanelFactory : GraphNavigationPanelFactory {
     ): GraphNavigationPanel {
         return AntaresGraphNavigationPanel(
             isRoot, drawingView, viewManager, closeHandler, scheduler, eventBus, libraryHolder, storableCreator,
-                animator, systemSpeed, systemSpeedCategory, currentGraphViewAnimationType, styleProvider, scriptGateway
+                animator, systemSpeedCategory, currentGraphViewAnimationType, styleProvider, scriptGateway
         )
     }
 
@@ -103,7 +101,6 @@ class AntaresGraphNavigationPanelFactory : GraphNavigationPanelFactory {
             LibraryModule.libraryHolder,
             IOModule.storableCreator,
             AnimationModule.animator,
-            BaseModule.systemSpeed,
             ExecutionModule.currentSystemSpeedCategory,
             AntaresViewModule.currentGraphViewAnimationType,
             DrawStyleModule.styleProvider,

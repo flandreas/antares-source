@@ -43,6 +43,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
 import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
 import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.edit.style.EditTheme
+import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
@@ -137,7 +138,12 @@ object GraphViewModule : AbstractModule() {
                 { nodeViewFactory})}
 
     private var edgeViewFactoryImpl: EdgeViewFactory<Any> = EdgeViewFactoryImpl(
-                DrawStyleModule.styleProvider, { edgeToPortConnector}, {dragEdgeViewOriginConnector}, {dragEdgeViewDestinationConnector})
+            DrawStyleModule.styleProvider,
+            { edgeToPortConnector},
+            {dragEdgeViewOriginConnector},
+            {dragEdgeViewDestinationConnector},
+            ExecutionModule.currentSystemSpeedCategory
+    )
 
     fun <T: Any> getEdgeViewFactory(): EdgeViewFactory<T> {
         return edgeViewFactoryImpl as EdgeViewFactory<T>
@@ -147,7 +153,10 @@ object GraphViewModule : AbstractModule() {
         edgeViewFactoryImpl = factory as EdgeViewFactory<Any>
     }
 
-    private var nodeViewFactory: NodeViewFactory<Any> = NodeViewFactoryImpl(DrawStyleModule.styleProvider)
+    private var nodeViewFactory: NodeViewFactory<Any> = NodeViewFactoryImpl(
+            DrawStyleModule.styleProvider,
+            ExecutionModule.currentSystemSpeedCategory
+    )
 
     fun <T: Any> getNodeViewFactory(): NodeViewFactory<T> {
         return nodeViewFactory as NodeViewFactory<T>
