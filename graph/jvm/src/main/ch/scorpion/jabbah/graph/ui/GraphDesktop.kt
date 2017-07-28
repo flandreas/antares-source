@@ -27,18 +27,11 @@ import javax.swing.SwingUtilities
  * Manages a master [GraphPanel] and multiple slave [GraphNavigationPanel]s.
  */
 class GraphDesktop(
-    eventBus: EventBus,
-    viewManager: ViewManager,
-    graphNavigationPanelFactory: GraphNavigationPanelFactory,
-    private val scheduler: Scheduler
+    eventBus: EventBus = BaseModule.eventBus,
+    viewManager: ViewManager = DrawViewModule.viewManager,
+    graphNavigationPanelFactory: GraphNavigationPanelFactory = GraphModuleJvm.graphNavigationPanelFactory,
+    private val scheduler: Scheduler = ExecutionModule.scheduler
 ) : JPanel() {
-
-    constructor(): this(
-        BaseModule.eventBus,
-        DrawViewModule.viewManager,
-        GraphModuleJvm.graphNavigationPanelFactory,
-        ExecutionModule.scheduler
-    )
 
     private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
     private val sidePanel = JPanel()
@@ -54,6 +47,7 @@ class GraphDesktop(
         }
 
     init {
+        mainSplitPane.border = null
         sidePanel.layout = GridLayout(0, 1)
         layout = BorderLayout()
         eventBus.register(OpenSubGraphRequest::class, {

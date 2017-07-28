@@ -50,8 +50,8 @@ import javax.swing.*
 
 /**
  * A [JPanel] for editing and executing a root [GraphView]. It consists of a [LibraryPanel] at the left,
- * a [ComponentPropertyPanel] for editing the properties of the selected [Component] at the bottom left,
- * and a [GraphNavigationPanel] for editing the [GraphView] at the right.
+ * a [ComponentPropertyPanel] for editing the properties of the selected [Component] at the center-left,
+ * and a [GraphNavigationPanel] for editing the [GraphView] at the center-right.
  */
 class GraphPanel(
     val editor: Editor,
@@ -165,6 +165,9 @@ class GraphPanel(
         mainSplitPane.add(toolTabbedPane)
         mainSplitPane.add(graphNavigationPanel)
         mainSplitPane.dividerLocation = BaseModule.properties.getInt("graphPanel.mainSplitPos", 250)
+        // TEST BEGIN
+        mainSplitPane.border = null
+        // TEST END
 
         add(mainSplitPane, BorderLayout.CENTER)
     }
