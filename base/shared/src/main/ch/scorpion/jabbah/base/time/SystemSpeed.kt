@@ -9,9 +9,12 @@ import ch.scorpion.jabbah.base.module.BaseModule
  * Represents the overall speed at which a system runs between 0 percent and 100 percent.
  */
 class SystemSpeed(
-    private val properties: Properties = BaseModule.properties,
     private val eventBus: EventBus = BaseModule.eventBus
 ) {
+
+    init {
+        System.out.println("SystemSpeed")
+    }
 
     companion object {
         /** The name of the [Int] speed property in [Properties].*/
@@ -21,10 +24,10 @@ class SystemSpeed(
         val MAX_SPEED: Int = 100
     }
 
-    var speed = properties.getInt(PROP_SPEED, DEFAULT_SPEED)
+    var speed = BaseModule.properties.getInt(PROP_SPEED, DEFAULT_SPEED)
         set(value) {
             checkArgument(speed in 0..100, "SystemSpeed must be between 0 and 100")
-            properties.set(PROP_SPEED, value)
+            BaseModule.properties.set(PROP_SPEED, value)
             val oldSpeed = field
             field = value
             eventBus.post(SystemSpeedEvent(oldSpeed, field))

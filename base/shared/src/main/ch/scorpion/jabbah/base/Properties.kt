@@ -31,6 +31,11 @@ open class Properties {
         userProperties.clear()
     }
 
+    fun copyFrom(p: Properties) {
+        allProperties.putAll(p.allProperties)
+        userProperties.putAll(p.userProperties)
+    }
+
     /** Adds a predefined system property. Typically called at application start-up.*/
     fun predefine(name: String, value: Any) {
         allProperties.put(name, value)

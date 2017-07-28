@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import org.apache.commons.cli.*
@@ -58,6 +59,10 @@ abstract class AbstractDesktopApplication(
 
     override lateinit var mainFrame: AbstractApplicationFrame
 
+    init {
+        loadProperties()
+    }
+
     /** ---- [Application] */
 
     override val applicationDataChanged: Boolean get() = mainFrame.applicationDataChanged
@@ -77,8 +82,6 @@ abstract class AbstractDesktopApplication(
     /** ---- [AbstractApplication] */
 
     override fun init() {
-        loadProperties()
-
         mainFrame = createMainFrame()
         mainFrame.jMenuBar = createMenuBarBuilder().menuBar
         DrawViewModule.viewManager.activeView = mainFrame.editor.view
