@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.polyline.PolylineShapeJvm
 import java.awt.BasicStroke
 import java.awt.Rectangle
 import java.awt.RenderingHints
+import java.awt.geom.Area
 
 /**
  * Adapts a [java.awt.Graphics2D] object to the [Graphics2D] interface.
@@ -190,6 +191,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
             is Path2DJvm -> g.draw(shape.path)
             is PolylineShapeJvm -> g.draw(shape)
             is Ellipse2D -> drawEllipse(shape)
+            is Ring2D -> drawRing(shape)
             else -> {
                 LOG.error("Unsupported shape $shape")
                 throw IllegalArgumentException("Unsupported shape " + shape.javaClass.name)
@@ -204,6 +206,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
             is Path2DJvm -> g.fill(shape.path)
             is PolylineShapeJvm -> g.fill(shape)
             is Ellipse2D -> fillEllipse(shape)
+            is Ring2D -> drawRing(shape)
             else -> {
                 LOG.error("Unsupported shape $shape")
                 throw IllegalArgumentException("Unsupported shape " + shape.javaClass.name)
@@ -282,4 +285,11 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         g.fill(java.awt.geom.Ellipse2D.Double(e.x, e.y, e.width, e.height))
     }
 
+    private fun drawRing(r: Ring2D) {
+        val outer = java.awt.geom.Ellipse2D.Double(r.x, r.y, r.width, r.height)
+        val inner = java.awt.geom.Ellipse2D.Double(r.x + r.thickness, r.y + r.thickness, r.width - 2 * r.thickness, r.height - 2 * r.thickness)
+        val area = Area(outer)
+        area.subtract(Area(inner))
+        g.fill(area)
+    }
 }

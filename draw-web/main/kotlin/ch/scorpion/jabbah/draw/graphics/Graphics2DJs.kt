@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.graphics
 
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.base.MathClass
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
@@ -186,6 +187,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
             is RoundRectangle2D -> drawRoundRect(shape)
             is Path2DJs -> drawPath(shape)
             is PolylineShape -> drawPolyline(shape)
+            is Ring2D -> drawRing(shape)
             else -> {
                 LOG.error("Unsupported shape $shape")
                 throw IllegalArgumentException("Unsupported shape $shape")
@@ -199,6 +201,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
             is RoundRectangle2D -> fillRoundRect(shape)
             is Path2DJs -> fillPath(shape)
             is PolylineShape -> fillPoyline(shape)
+            is Ring2D -> drawRing(shape)
             else -> {
                 LOG.error("Unsupported shape $shape")
                 throw IllegalArgumentException("Unsupported shape $shape")
@@ -365,5 +368,19 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
         ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym)
         ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye)
         ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym)
+    }
+
+    private fun drawRing(ring: Ring2D) {
+        ctx.beginPath()
+        playRing(ring.x, ring.y, ring.width, ring.height, ring.thickness)
+    }
+
+    private fun playRing(x: Double, y: Double, w: Double, h: Double, thickness: Double) {
+        // NOTE: This implementation support only circular rings. Uses width as radius
+        if (w != h) {
+            LOG.warn("Graphics2DJs: requested ellipsoid ring, but only circular ring supported.")
+        }
+        ctx.arc(x + w/2, y + w / 2, w / 2, 0.0, MathClass.PI * 2, false)
+        ctx.arc(x + w/2, y + w / 2, w / 2, 0.0, MathClass.PI * 2, true)
     }
 }

@@ -12,10 +12,6 @@ class SystemSpeed(
     private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
-    init {
-        System.out.println("SystemSpeed")
-    }
-
     companion object {
         /** The name of the [Int] speed property in [Properties].*/
         private val PROP_SPEED = "jabbah.base.time.SystemSpeed"
