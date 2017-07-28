@@ -18,58 +18,34 @@ interface AttentionDrawer {
     fun drawAttentionTo(location: Point2D, view: DrawingView<*>, animator: Animator)
 }
 
-/**
- * An implementation of [AttentionDrawer] that draws a growing circle around the location.
- */
-class AttentionDrawerImpl : AttentionDrawer {
+class AttentionDrawerImpl() : AttentionDrawer {
 
     companion object {
         private val STROKE = Stroke()
         private val COLOR = Color.RED
-        private val DURATION = 250.0
-        private val MAX_RADIUS = 20.0
+        private val DURATION = 500.0
+        private val MAX_RADIUS = 30.0
     }
 
-    /** ---- [AttentionDrawer] interface */
-
     override fun drawAttentionTo(location: Point2D, view: DrawingView<*>, animator: Animator) {
-        val circle = GrowingCircle(location)
-        val circleAnimation = animator.schedule(
-            target = circle,
-            consumer = { circle.radius = it },
+        val ring = GrowingRing(location)
+        val animation = animator.schedule(
+            target = ring,
+            consumer = { ring.radius = it },
             sequence = DoubleRange(0.0, MAX_RADIUS, SequenceType.ONCE),
             duration = DURATION
         )
-
-        val ring = GrowingRingHole(location)
-        val ringAnimation = animator.schedule(
-            target = ring,
-            consumer = { ring.thickness = it },
-            sequence = DoubleRange(MAX_RADIUS, 0.0, SequenceType.ONCE),
-            duration = DURATION
-        )
-        ringAnimation.addListener(object : AnimationTaskAdapter() {
+        animation.addListener(object : AnimationTaskAdapter() {
             override fun ended(task: AnimationTask) {
                 view.ghostContainer.remove(ring)
                 view.ghostContainer.validate()
             }
         })
-
-        circle.zoomPan = view.zoomPan
-        view.ghostContainer.add(circle)
-
-        circleAnimation.addListener(object : AnimationTaskAdapter() {
-            override fun ended(task: AnimationTask) {
-                view.ghostContainer.remove(circle)
-                view.ghostContainer.add(ring)
-                ringAnimation.start()
-            }
-        })
-
-        circleAnimation.start()
+        view.ghostContainer.add(ring)
+        animation.start()
     }
 
-    private inner class GrowingCircle(center: Point2D) : AbstractRectangularUnzoomable(0.0, center) {
+    private inner class GrowingRing(center: Point2D) : AbstractRectangularUnzoomable(MAX_RADIUS, center) {
 
         override val lineWidth: Double get() = STROKE.width.toDouble()
 
@@ -84,26 +60,11 @@ class AttentionDrawerImpl : AttentionDrawer {
             context.g.stroke = STROKE
             context.g.color = COLOR
             val rect = getViewRectangle()
-            context.g.fillOval(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
-        }
-    }
-
-    private inner class GrowingRingHole(center: Point2D) : AbstractRectangularUnzoomable(MAX_RADIUS, center) {
-
-        override val lineWidth: Double get() = STROKE.width.toDouble()
-
-        var thickness: Double = MAX_RADIUS
-            set(value) {
-                invalidate()
-                field = value
-                invalidate()
-                validate()
+            val thickness = if (radius < MAX_RADIUS * 0.75) {
+                radius
+            } else {
+                MAX_RADIUS - radius
             }
-
-        override fun draw(context: DrawContext) {
-            context.g.stroke = STROKE
-            context.g.color = COLOR
-            val rect = getViewRectangle()
             context.g.draw(Ring2D(rect.x, rect.y, rect.width, rect.height, thickness))
         }
     }
