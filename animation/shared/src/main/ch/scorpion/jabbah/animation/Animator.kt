@@ -16,6 +16,14 @@ interface Animator {
      */
     fun schedule(task: AnimationTask): AnimationTask
 
+    fun <T> schedule(
+        target: Any,
+        consumer: AnimationTaskConsumer<T>,
+        sequence: Sequence<T>,
+        duration: Double,
+        dependsOnSystemSpeed: Boolean = false
+    ): AnimationTask
+
     /** Returns all scheduled [AnimationTask]s for the specified [target].*/
     fun getTasksForTarget(target: Any): Collection<AnimationTask>
 

@@ -47,3 +47,5 @@ interface AnimationTask {
      * Typically called by the [Animator].*/
     fun scheduled()
 }
+
+typealias AnimationTaskConsumer<T> = (T) -> Unit

@@ -55,6 +55,16 @@ class AnimatorImpl(
         return task
     }
 
+    override fun <T> schedule(
+        target: Any,
+        consumer: AnimationTaskConsumer<T>,
+        sequence: Sequence<T>,
+        duration: Double,
+        dependsOnSystemSpeed: Boolean
+    ): AnimationTask {
+        return schedule(AnimationTaskImpl(target, consumer, sequence, duration, dependsOnSystemSpeed))
+    }
+
     override fun getTasksForTarget(target: Any): Collection<AnimationTask> {
         val tasks = mutableSetOf<AnimationTask>()
         val jobList = jobs.toList()

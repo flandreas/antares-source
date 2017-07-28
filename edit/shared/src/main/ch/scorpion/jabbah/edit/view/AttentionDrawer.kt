@@ -34,10 +34,20 @@ class AttentionDrawerImpl : AttentionDrawer {
 
     override fun drawAttentionTo(location: Point2D, view: DrawingView<*>, animator: Animator) {
         val circle = GrowingCircle(location)
-        val circleAnimation = GrowingCircleAnimation(circle)
+        val circleAnimation = animator.schedule(
+            target = circle,
+            consumer = { circle.radius = it },
+            sequence = DoubleRange(0.0, MAX_RADIUS, SequenceType.ONCE),
+            duration = DURATION
+        )
 
         val ring = GrowingRingHole(location)
-        val ringAnimation = GrowingRingHoleAnimation(ring)
+        val ringAnimation = animator.schedule(
+            target = ring,
+            consumer = { ring.thickness = it },
+            sequence = DoubleRange(MAX_RADIUS, 0.0, SequenceType.ONCE),
+            duration = DURATION
+        )
         ringAnimation.addListener(object : AnimationTaskAdapter() {
             override fun ended(task: AnimationTask) {
                 view.ghostContainer.remove(ring)
@@ -55,18 +65,9 @@ class AttentionDrawerImpl : AttentionDrawer {
                 ringAnimation.start()
             }
         })
-        animator.schedule(circleAnimation)
-        animator.schedule(ringAnimation)
 
         circleAnimation.start()
     }
-
-    private inner class GrowingCircleAnimation(val circle: GrowingCircle) : AbstractAnimationTask<Double>(
-            target = circle,
-            consumer = { circle.radius = it},
-            sequence = DoubleRange(0.0, MAX_RADIUS, SequenceType.ONCE),
-            duration = DURATION
-    )
 
     private inner class GrowingCircle(center: Point2D) : AbstractRectangularUnzoomable(0.0, center) {
 
@@ -86,13 +87,6 @@ class AttentionDrawerImpl : AttentionDrawer {
             context.g.fillOval(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
         }
     }
-
-    private inner class GrowingRingHoleAnimation(val ring: GrowingRingHole) : AbstractAnimationTask<Double>(
-            target = ring,
-            consumer = { ring.thickness = it},
-            sequence = DoubleRange(MAX_RADIUS, 0.0, SequenceType.ONCE),
-            duration = DURATION
-    )
 
     private inner class GrowingRingHole(center: Point2D) : AbstractRectangularUnzoomable(MAX_RADIUS, center) {
 

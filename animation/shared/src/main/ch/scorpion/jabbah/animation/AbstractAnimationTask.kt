@@ -56,4 +56,10 @@ abstract class AbstractAnimationTask<T>(
     }
 }
 
-private typealias AnimationTaskConsumer<T> = (T) -> Unit
+class AnimationTaskImpl<T>(
+    target: Any,
+    consumer: AnimationTaskConsumer<T>,
+    sequence: Sequence<T>,
+    duration: Double,
+    dependsOnSystemSpeed: Boolean = false
+) : AbstractAnimationTask<T>(target, consumer, sequence, duration, dependsOnSystemSpeed)
