@@ -36,6 +36,8 @@ import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.net.NetActorData
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.view.*
 
 /**
@@ -185,6 +187,12 @@ class GraphViewAnimator(
             scheduler = scheduler,
             styleProvider = styleProvider
         ))
+
+        EditModule.attentionDrawerFactory.invoke().drawAttentionTo(
+                edgeView.polyline.getFirstPoint(),
+                drawingView,
+                animator
+        )
 
         LOG.trace("Registered EdgeView animation for EdgeView '${edgeView.id}'")
     }

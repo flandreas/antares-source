@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.drawable
 
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -10,15 +11,23 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
  *
  * The location of an [AbstractRectangularUnzoomable] is its center.
  */
-abstract class AbstractRectangularUnzoomable(val halfSize: Double) : AbstractDrawable(), Unzoomable {
+abstract class AbstractRectangularUnzoomable(halfSize: Double, location: Point2D = Point2D()) : AbstractDrawable(), Unzoomable {
 
     override var zoomPan: ZoomPan? = ZoomPan()
 
     /** Holds the center of the rectangle. */
-    var location: Point2D = Point2D()
+    var location: Point2D = location
         set(value) {
             invalidate()
             field = Point2D(value)
+            invalidate()
+            update()
+        }
+
+    var halfSize: Double = halfSize
+        set(value) {
+            invalidate()
+            field = value
             invalidate()
             update()
         }

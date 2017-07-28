@@ -53,8 +53,10 @@ interface Graphics2D {
 
     fun fillRoundRect(x: Int, y: Int, w: Int, h: Int, arcW: Int, arcH: Int)
 
+    /** Draws an oval within the rectangle defined by the upper-left corner (x,y) and the given width and height.*/
     fun drawOval(x: Int, y: Int, w: Int, h: Int)
 
+    /** Draws an oval within the rectangle defined by the upper-left corner (x,y) and the given width and height.*/
     fun drawOval(x: Double, y: Double, w: Double, h: Double)
 
     fun fillOval(x: Int, y: Int, w: Int, h: Int)

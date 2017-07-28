@@ -24,6 +24,8 @@ import ch.scorpion.jabbah.edit.model.text.TextComponentFactory
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.snap.EditSnapModule
 import ch.scorpion.jabbah.edit.style.EditTheme
+import ch.scorpion.jabbah.edit.view.AttentionDrawer
+import ch.scorpion.jabbah.edit.view.AttentionDrawerImpl
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
@@ -38,6 +40,9 @@ object EditModule : AbstractModule() {
     var textComponentFactory: () -> TextComponentFactory = { throw UnsupportedOperationException() }
 
     var drawingViewFactory: (Drawing<Component>, Canvas) -> DrawingView<Drawing<Component>> = { drawing, canvas -> DrawingViewImpl<Drawing<Component>>(drawing, canvas) }
+
+    /** Creates an [AttentionDrawer] that produces an animation for drawing the attention of the user to a particular location. */
+    val attentionDrawerFactory: () -> AttentionDrawer = { AttentionDrawerImpl() }
 
     override fun initialize() {
         DrawModule.require()

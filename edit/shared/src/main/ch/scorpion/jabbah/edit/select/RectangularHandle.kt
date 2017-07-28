@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.edit.select
 
-import ch.scorpion.jabbah.draw.DrawProperties
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
@@ -9,7 +8,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.EditInputEventContext
 
 /**
- * A [Handle] with a rectanguar shape.
+ * A [Handle] with a rectangular shape.
  *
  * [RectangularHandle] draws itself always in the same size, independent of the current zoom factor.
  */
