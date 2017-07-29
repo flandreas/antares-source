@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.view.ViewManager
@@ -40,6 +41,7 @@ class AntaresGraphNavigationPanel(
     drawingView: DrawingView<GraphView<GraphElementView<*>>>,
     viewManager: ViewManager,
     closeHandler: ((GraphNavigationPanel) -> Unit)?,
+    contextColor: CompositeColor?,
     scheduler: Scheduler,
     eventBus: EventBus,
     libraryHolder: LibraryHolder,
@@ -49,9 +51,11 @@ class AntaresGraphNavigationPanel(
     currentGraphViewAnimationType: CurrentGraphViewAnimationType,
     styleProvider: StyleProvider,
     scriptGateway: ScriptGateway
-) : GraphNavigationPanel(isRoot, drawingView, viewManager, closeHandler, scheduler, animator, eventBus, libraryHolder, storableCreator, scriptGateway) {
+) : GraphNavigationPanel(isRoot, drawingView, viewManager, closeHandler, contextColor, scheduler, animator, eventBus,
+        libraryHolder, storableCreator, scriptGateway) {
 
-    private val graphAnimator = GraphViewAnimator(drawingView, scheduler, animator, systemSpeedCategory, eventBus, currentGraphViewAnimationType, styleProvider)
+    private val graphAnimator = GraphViewAnimator(drawingView, scheduler, animator, systemSpeedCategory, eventBus,
+            currentGraphViewAnimationType, styleProvider)
 
     init {
         eventBus.register(CurrentGraphAnimationTypeEvent::class, { drawingView.repaint() })
@@ -72,6 +76,7 @@ class AntaresGraphNavigationPanelFactory : GraphNavigationPanelFactory {
             drawingView: DrawingView<GraphView<GraphElementView<*>>>,
             viewManager: ViewManager,
             closeHandler: ((GraphNavigationPanel) -> Unit)?,
+            contextColor: CompositeColor?,
             scheduler: Scheduler,
             eventBus: EventBus,
             libraryHolder: LibraryHolder,
@@ -83,8 +88,8 @@ class AntaresGraphNavigationPanelFactory : GraphNavigationPanelFactory {
             scriptGateway: ScriptGateway
     ): GraphNavigationPanel {
         return AntaresGraphNavigationPanel(
-            isRoot, drawingView, viewManager, closeHandler, scheduler, eventBus, libraryHolder, storableCreator,
-                animator, systemSpeedCategory, currentGraphViewAnimationType, styleProvider, scriptGateway
+            isRoot, drawingView, viewManager, closeHandler, contextColor, scheduler,
+            eventBus, libraryHolder, storableCreator, animator, systemSpeedCategory, currentGraphViewAnimationType, styleProvider, scriptGateway
         )
     }
 
@@ -93,10 +98,11 @@ class AntaresGraphNavigationPanelFactory : GraphNavigationPanelFactory {
             drawingView: DrawingView<GraphView<GraphElementView<*>>>,
             viewManager: ViewManager,
             closeHandler: ((GraphNavigationPanel) -> Unit)?,
+            contextColor: CompositeColor?,
             scheduler: Scheduler
     ): GraphNavigationPanel {
         return create(
-            isRoot, drawingView, viewManager, closeHandler, scheduler,
+            isRoot, drawingView, viewManager, closeHandler, contextColor, scheduler,
             BaseModule.eventBus,
             LibraryModule.libraryHolder,
             IOModule.storableCreator,

@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
+
 /**
  * Manages the highlighting of [Component]s in a [Drawing].
  *
@@ -13,7 +15,7 @@ interface Highlighter {
     val highlightCount: Int
 
     /** Highlights the specified [Component].*/
-    fun highlight(component: Component)
+    fun highlight(component: Component, color: CompositeColor? = null)
 
     /** Highlights all specified [Component]s.*/
     fun highlight(components: Collection<Component>)

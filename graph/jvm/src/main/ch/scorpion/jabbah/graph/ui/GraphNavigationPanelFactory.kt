@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
@@ -26,6 +27,7 @@ interface GraphNavigationPanelFactory {
             drawingView: DrawingView<GraphView<GraphElementView<*>>>,
             viewManager: ViewManager,
             closeHandler: ((GraphNavigationPanel) -> Unit)?,
+            contextColor: CompositeColor?,
             scheduler: Scheduler,
             eventBus: EventBus,
             libraryHolder: LibraryHolder,
@@ -42,6 +44,7 @@ interface GraphNavigationPanelFactory {
         drawingView: DrawingView<GraphView<GraphElementView<*>>>,
         viewManager: ViewManager,
         closeHandler: ((GraphNavigationPanel) -> Unit)?,
+        contextColor: CompositeColor?,
         scheduler: Scheduler
     ): GraphNavigationPanel
 }
@@ -52,6 +55,7 @@ class StandardGraphNavigationPanelFactory: GraphNavigationPanelFactory {
             drawingView: DrawingView<GraphView<GraphElementView<*>>>,
             viewManager: ViewManager,
             closeHandler: ((GraphNavigationPanel) -> Unit)?,
+            contextColor: CompositeColor?,
             scheduler: Scheduler,
             eventBus: EventBus,
             libraryHolder: LibraryHolder,
@@ -63,7 +67,8 @@ class StandardGraphNavigationPanelFactory: GraphNavigationPanelFactory {
             scriptGateway: ScriptGateway
     ): GraphNavigationPanel {
         return GraphNavigationPanel(
-            isRoot, drawingView, viewManager, closeHandler, scheduler, animator, eventBus, libraryHolder, storableCreator, scriptGateway)
+            isRoot, drawingView, viewManager, closeHandler, contextColor, scheduler, animator, eventBus, libraryHolder,
+                storableCreator, scriptGateway)
     }
 
     override fun create(
@@ -71,10 +76,11 @@ class StandardGraphNavigationPanelFactory: GraphNavigationPanelFactory {
             drawingView: DrawingView<GraphView<GraphElementView<*>>>,
             viewManager: ViewManager,
             closeHandler: ((GraphNavigationPanel) -> Unit)?,
+            contextColor: CompositeColor?,
             scheduler: Scheduler
     ): GraphNavigationPanel {
         return GraphNavigationPanel(
-            isRoot, drawingView, viewManager, closeHandler,
+            isRoot, drawingView, viewManager, closeHandler, contextColor,
             scheduler,
             AnimationModule.animator,
             BaseModule.eventBus,

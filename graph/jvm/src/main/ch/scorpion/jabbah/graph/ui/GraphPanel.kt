@@ -81,11 +81,12 @@ class GraphPanel(
     val libraryPropertyPanel: ComponentPropertyPanel
 
     val graphNavigationPanel = graphNavigationPanelFactory.create(
-        true,
-        editor.view as DrawingView<GraphView<GraphElementView<*>>>,
-        viewManager,
-        null,
-        scheduler)
+        isRoot = true,
+        drawingView = editor.view as DrawingView<GraphView<GraphElementView<*>>>,
+        viewManager = viewManager,
+        closeHandler = null,
+        contextColor = null,
+        scheduler = scheduler)
 
     private val drawingToolBar = createDrawingToolBar()
 
@@ -165,9 +166,7 @@ class GraphPanel(
         mainSplitPane.add(toolTabbedPane)
         mainSplitPane.add(graphNavigationPanel)
         mainSplitPane.dividerLocation = BaseModule.properties.getInt("graphPanel.mainSplitPos", 250)
-        // TEST BEGIN
         mainSplitPane.border = null
-        // TEST END
 
         add(mainSplitPane, BorderLayout.CENTER)
     }

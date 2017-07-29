@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
@@ -14,8 +16,10 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.draw.view.CanvasJvm
+import ch.scorpion.jabbah.edit.Highlighter
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.BorderLayout
 import java.awt.GridLayout
 import javax.swing.JPanel
@@ -34,8 +38,17 @@ class GraphDesktop(
 ) : JPanel() {
 
     private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+
     private val sidePanel = JPanel()
+
+    /** Contains all open [GraphNavigationPanel]s that are not the main one.*/
     private val slaveGraphNavigationPanels: MutableList<GraphNavigationPanel> = mutableListOf()
+
+    /** Used for determining a [CompositeColor] for referencing a [SubGraphVerticeView] and its open [GraphNavigationPanel].*/
+    private val referenceColorSequence = ReferenceColorSequenceProvider.provide()
+
+    /** Associates [SubGraphVerticeView] and their open [GraphNavigationPanel]s.*/
+    private val associations = mutableListOf<Association>()
 
     var masterGraphPanel: GraphPanel? = null
         set(value) {
@@ -60,15 +73,22 @@ class GraphDesktop(
                 val drawingView = graphCanvas.view as DrawingView<GraphView<GraphElementView<*>>>
                 drawingView.applicationContext = masterGraphPanel!!.editor.view.applicationContext
 
-                addGraphNavigationPanel(
-                        graphNavigationPanelFactory.create(
-                                isRoot = false,
-                                drawingView = drawingView,
-                                viewManager = viewManager,
-                                closeHandler = { closeGraphNavigationPanel(it) },
-                                scheduler = scheduler
-                        )
+                val refColor = referenceColorSequence.next()
+                val panel = graphNavigationPanelFactory.create(
+                        isRoot = false,
+                        drawingView = drawingView,
+                        viewManager = viewManager,
+                        closeHandler = { closeGraphNavigationPanel(it) },
+                        contextColor = refColor,
+                        scheduler = scheduler
                 )
+                associations.add(Association(it.subGraphVerticeView, panel, refColor))
+
+                addGraphNavigationPanel(panel)
+
+                // TODO Support drill-down from child panels as well!
+                masterGraphPanel!!.graphNavigationPanel.drawingView.highlighter.highlight(it.subGraphVerticeView, refColor)
+                masterGraphPanel!!.graphNavigationPanel.drawingView.repaint()
             }
         })
     }
@@ -106,9 +126,14 @@ class GraphDesktop(
         slaveGraphNavigationPanels.add(panel)
     }
 
-    fun closeGraphNavigationPanel(graphNavigationPanel: GraphNavigationPanel) {
-        graphNavigationPanel.dispose()
-        slaveGraphNavigationPanels.remove(graphNavigationPanel)
+    fun closeGraphNavigationPanel(panel: GraphNavigationPanel) {
+        val assoc = associations.first { assoc -> assoc.panel == panel }
+        masterGraphPanel!!.graphNavigationPanel.drawingView.highlighter.unhighlight(assoc.ref)
+        masterGraphPanel!!.graphNavigationPanel.drawingView.repaint()
+        referenceColorSequence.free(assoc.refColor)
+
+        panel.dispose()
+        slaveGraphNavigationPanels.remove(panel)
 
         if (slaveGraphNavigationPanels.isEmpty()) {
             remove(mainSplitPane)
@@ -117,7 +142,7 @@ class GraphDesktop(
             add(masterGraphPanel)
         }
 
-        sidePanel.remove(graphNavigationPanel)
+        sidePanel.remove(panel)
         revalidate()
         repaint()
     }
@@ -132,4 +157,10 @@ class GraphDesktop(
             }
         }
     }
+
+    /**
+     * Maintains an association between a [SubGraphVerticeView] and the [GraphNavigationPanel] that has been opened
+     * in this [GraphDesktop], along with the [CompositeColor] that is used as a visual referencde.
+     */
+    private data class Association(val ref: SubGraphVerticeView<*>, val panel: GraphNavigationPanel, val refColor: CompositeColor)
 }

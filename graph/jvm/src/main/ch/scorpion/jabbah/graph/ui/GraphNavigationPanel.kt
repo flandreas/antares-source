@@ -23,6 +23,8 @@ import ch.scorpion.jabbah.graph.view.ui.NavigationStackEvent
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import java.awt.*
 import javax.swing.*
 
@@ -36,6 +38,7 @@ open class GraphNavigationPanel(
         val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
         viewManager: ViewManager,
         closeHandler: ((GraphNavigationPanel) -> Unit)?,
+        contextBorderColor: CompositeColor? = null,
         private val scheduler: Scheduler,
         private val animator: Animator,
         private val eventBus: EventBus,
@@ -49,8 +52,6 @@ open class GraphNavigationPanel(
     private val navigationStackView = NavigationStackView()
 
     private val layeredPane = JLayeredPane()
-
-    private val focusPanel = FocusPanel(layeredPane, drawingView, viewManager)
 
     private var scenarioDetector: ScenarioDetector? = null
 
@@ -75,7 +76,7 @@ open class GraphNavigationPanel(
 
         setRootGraphView(drawingView.drawing)
 
-        buildUI(closeHandler)
+        buildUI(viewManager, contextBorderColor, closeHandler)
     }
 
     open fun dispose() {
@@ -197,7 +198,7 @@ open class GraphNavigationPanel(
         }
     }
 
-    private fun buildUI(closeHandler: ((GraphNavigationPanel) -> Unit)?) {
+    private fun buildUI(viewManager: ViewManager, contextColor: CompositeColor?, closeHandler: ((GraphNavigationPanel) -> Unit)?) {
         layeredPane.layout = LayerLayoutManager()
         layeredPane.add(drawingView.canvas as JComponent, JLayeredPane.DEFAULT_LAYER)
 
@@ -216,8 +217,15 @@ open class GraphNavigationPanel(
 
         val mainPanel = JPanel(BorderLayout())
         mainPanel.add(headerPanel, BorderLayout.NORTH)
-        mainPanel.add(focusPanel, BorderLayout.CENTER)
 
+        if (contextColor == null) {
+            mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
+        } else {
+            val borderPanel = JPanel(BorderLayout())
+            borderPanel.border = BorderFactory.createLineBorder(Graphics2DJvm.toAwtColor(contextColor.backgroundColor), 5, true)
+            borderPanel.add(layeredPane)
+            mainPanel.add(FocusPanel(borderPanel, drawingView, viewManager), BorderLayout.CENTER)
+        }
         layout = BorderLayout()
         add(mainPanel, BorderLayout.CENTER)
     }

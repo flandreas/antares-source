@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.drawable.Colorable
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 
 /**
  * An implementation of a [Highlighter] that uses the configured [SelectionModel]s of
@@ -30,9 +32,9 @@ class BelowSmHighlighter(
     override val highlightCount: Int
         get() = highlights.size
 
-    override fun highlight(component: Component) {
+    override fun highlight(component: Component, color: CompositeColor?) {
         if (!isHighlighted(component)) {
-            highlightImpl(component)
+            highlightImpl(component, color)
             drawingView.drawing.validate()
             postHighlightChangedEvent(listOf(component), true)
         }
@@ -80,12 +82,19 @@ class BelowSmHighlighter(
 
     /** ---- [BelowSmHighlighter] */
 
-    private fun highlightImpl(c: Component) {
+    private fun highlightImpl(c: Component, color: CompositeColor? = null) {
         LOG.debug("Highlight component '${c.id}'")
         val highlight = selectionModelProvider.provideFor(c, SelectionDrawingStrategy.BELOW)
         if (highlight == null) {
             LOG.error("No suitable highlight SelectionModel found for ${System.get().getClassName(c)}")
             return
+        }
+        if (color != null) {
+            if (highlight is Colorable) {
+                highlight.color = color
+            } else {
+                LOG.warn("BelowSmHighlighter: requested highlight color for non-colorable SelectionModel ${highlight::class.simpleName}")
+            }
         }
         highlights.put(c, highlight)
         drawingView.highlightContainer.add(highlight)

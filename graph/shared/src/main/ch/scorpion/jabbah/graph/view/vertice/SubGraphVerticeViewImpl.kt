@@ -33,6 +33,7 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortViewReuser
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 
 /**
  * A standard implementation of the [SubGraphVerticeView] interface.
