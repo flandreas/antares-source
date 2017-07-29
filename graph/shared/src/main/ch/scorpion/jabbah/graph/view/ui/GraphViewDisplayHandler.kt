@@ -40,7 +40,7 @@ class GraphViewDisplayHandler(
     }
 
     private fun updateActivationState() {
-        if (!scheduler.isActive && !view.editable) {
+        if (!scheduler.isActive) {
             view.addMouseListener(mouseHandler)
             view.addMouseMotionListener(mouseHandler)
         } else {

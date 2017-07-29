@@ -64,7 +64,9 @@ open class GraphNavigationPanel(
     init {
 
         GraphViewExecutionHandler(drawingView, scheduler, eventBus)
-        GraphViewDisplayHandler(drawingView, scheduler, eventBus)
+        if (!isRoot) {
+            GraphViewDisplayHandler(drawingView, scheduler, eventBus)
+        }
 
         eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
         eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
