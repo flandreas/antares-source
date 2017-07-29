@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.draw.view.CanvasJvm
-import ch.scorpion.jabbah.edit.Highlighter
+import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -73,6 +73,12 @@ class GraphDesktop(
         layout = BorderLayout()
         eventBus.register(OpenSubGraphRequest::class, { request ->
             if (request.quickMode) {
+                val assoc = associations.firstOrNull{ it.ref == request.subGraphVerticeView}
+                if (assoc != null) {
+                    eventBus.post(ComponentMessage(source = assoc.ref, messageKey = "graph.vertice.alreadyOpen.msg"))
+                    return@register
+                }
+
                 val subGraphView = request.subGraphVerticeView.createSubGraphView()
                 val graphCanvas = CanvasJvm({
                     val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>, it)
@@ -173,9 +179,15 @@ class GraphDesktop(
 
     /** Deassociate the specified open [GraphNavigationPanel] when it is being closed.*/
     private fun deassociate(panel: GraphNavigationPanel) {
-        val assoc = associations.first { assoc -> assoc.panel == panel }
-        assoc.sourcePanel.drawingView.highlighter.unhighlight(assoc.ref)
-        referenceColorSequence.free(assoc.refColor)
+        associationOf(panel).let {
+            it!!.sourcePanel.drawingView.highlighter.unhighlight(it!!.ref)
+            referenceColorSequence.free(it!!.refColor)
+            associations.remove(it)
+        }
+    }
+
+    private fun associationOf(panel: GraphNavigationPanel): Association? {
+        return associations.firstOrNull { assoc -> assoc.panel == panel }
     }
 
     private fun zoomViews(includeMasterView: Boolean) {
