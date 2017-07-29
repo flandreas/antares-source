@@ -32,7 +32,7 @@ import javax.swing.SwingUtilities
  * Manages a master [GraphPanel] and multiple slave [GraphNavigationPanel]s.
  */
 class GraphDesktop(
-    eventBus: EventBus = BaseModule.eventBus,
+    private val eventBus: EventBus = BaseModule.eventBus,
     viewManager: ViewManager = DrawViewModule.viewManager,
     graphNavigationPanelFactory: GraphNavigationPanelFactory = GraphModuleJvm.graphNavigationPanelFactory,
     private val scheduler: Scheduler = ExecutionModule.scheduler
@@ -53,12 +53,17 @@ class GraphDesktop(
     /** Associates [SubGraphVerticeView] and their open [GraphNavigationPanel]s.*/
     private val associations = mutableListOf<Association>()
 
+    /** Closes all slave panels when the edited root [GraphView] has changed.*/
+    private val editedGraphViewEventHandler: (EditedGraphViewEvent) -> Unit = { closeAllSlaves() }
+
     var masterGraphPanel: GraphPanel? = null
         set(value) {
             checkState(field == null)
             checkNotNull(value)
             checkState(slaveGraphNavigationPanels.size == 0)
+            field?.let { eventBus.unregister(EditedGraphViewEvent::class, editedGraphViewEventHandler)}
             field = value
+            field?.let { eventBus.register(EditedGraphViewEvent::class, editedGraphViewEventHandler) }
             add(field)
         }
 
@@ -131,24 +136,46 @@ class GraphDesktop(
     }
 
     fun closeGraphNavigationPanel(panel: GraphNavigationPanel) {
-        val assoc = associations.first { assoc -> assoc.panel == panel }
-        assoc.sourcePanel.drawingView.highlighter.unhighlight(assoc.ref)
-        assoc.sourcePanel.drawingView.repaint()
-        referenceColorSequence.free(assoc.refColor)
+        deassociate(panel)
 
         panel.dispose()
         slaveGraphNavigationPanels.remove(panel)
 
         if (slaveGraphNavigationPanels.isEmpty()) {
-            remove(mainSplitPane)
-            mainSplitPane.remove(mainSplitPane)
-            mainSplitPane.remove(sidePanel)
-            add(masterGraphPanel)
+            establishSingleView()
         }
 
         sidePanel.remove(panel)
         revalidate()
         repaint()
+    }
+
+    /** Closes all open slave [GraphNavigationPanel]s.*/
+    private fun closeAllSlaves() {
+        slaveGraphNavigationPanels.forEach {
+            deassociate(it)
+            it.dispose()
+        }
+        slaveGraphNavigationPanels.clear()
+        establishSingleView()
+        sidePanel.removeAll()
+        revalidate()
+        repaint()
+    }
+
+    /** Establish the UI for displaying only the root [GraphPanel].*/
+    private fun establishSingleView() {
+        remove(mainSplitPane)
+        mainSplitPane.remove(mainSplitPane)
+        mainSplitPane.remove(sidePanel)
+        add(masterGraphPanel)
+    }
+
+    /** Deassociate the specified open [GraphNavigationPanel] when it is being closed.*/
+    private fun deassociate(panel: GraphNavigationPanel) {
+        val assoc = associations.first { assoc -> assoc.panel == panel }
+        assoc.sourcePanel.drawingView.highlighter.unhighlight(assoc.ref)
+        referenceColorSequence.free(assoc.refColor)
     }
 
     private fun zoomViews(includeMasterView: Boolean) {
