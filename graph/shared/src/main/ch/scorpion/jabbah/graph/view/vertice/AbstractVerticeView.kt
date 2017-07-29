@@ -4,8 +4,7 @@ import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.Transparent.Companion.FULLY_OPAQUE
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -14,6 +13,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Snappable
@@ -32,6 +32,9 @@ import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
 
 /**
  * Abstract base implementation of the [VerticeView] interface.
@@ -41,6 +44,12 @@ abstract class AbstractVerticeView<T : Vertice>(
     baseResourceKey: String,
     model: T?
 ): AbstractGraphElementView<T>(styleProvider, GraphStyleType.VERTICE, model), VerticeView<T>, Transparent {
+
+    companion object {
+        private fun cannotOpenMsg(c: Component) {
+            BaseModule.eventBus.post(ComponentMessage(source = c, messageKey="graph.vertice.cannotOpen.msg"))
+        }
+    }
 
     init {
         style = styleProvider.getStyle(GraphStyleType.VERTICE)
@@ -196,6 +205,17 @@ abstract class AbstractVerticeView<T : Vertice>(
         draw(context, {drawImpl(it)})
     }
 
+    override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
+        return object : InputEventHandlerAdapter<InputEventContext>() {
+            override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
+                if (context.mouseEvent?.clickCount == 2) {
+                    cannotOpenMsg(this@AbstractVerticeView)
+                }
+                return null
+            }
+        }
+    }
+
     /** ---- [Component] interface */
 
     override val type: String? = Translations.getString("$baseResourceKey.name")
@@ -225,7 +245,13 @@ abstract class AbstractVerticeView<T : Vertice>(
     }
 
     override fun getActorInteractionHandler(): ActorInteractionHandler? {
-        return null
+        return object : ActorInteractionHandlerAdapter() {
+            override fun mouseClicked(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+                if (event.clickCount == 2) {
+                    cannotOpenMsg(this@AbstractVerticeView)
+                }
+            }
+        }
     }
 
     /** ---- [AbstractVerticeView] */
