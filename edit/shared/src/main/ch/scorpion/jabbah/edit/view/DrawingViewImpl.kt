@@ -53,6 +53,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
     /** Holds a [DrawableContainer] for every supported [SelectionDrawingStrategy].*/
     private val selectionContainers = mutableMapOf<SelectionDrawingStrategy, DrawableContainer<SelectionModel<Component>>>()
 
+    /** Used for managing [SelectionModel]s that are [Unzoomable]. */
     private val unzoomableSelectionContainers = mutableMapOf<SelectionDrawingStrategy, UnzoomableContainer<UnzoomableSelectionModel<Component>>>()
 
     /** The [DrawableDrawer] used for drawing the [Drawing].*/
@@ -102,12 +103,17 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
     override var drawing: T = drawing
         set(value) {
+            if (field === value) {
+                return
+            }
             val oldDrawing = this.drawing
             replaceDrawable(oldDrawing, value)
             field = value
             field.setDrawableDrawer(drawableDrawer)
 
-            // updatePreferredSize() ?
+            ghostContainer.clear()
+            animationContainer.clear()
+            highlightContainer.clear()
 
             applyDefaultZoomStrategy()
 

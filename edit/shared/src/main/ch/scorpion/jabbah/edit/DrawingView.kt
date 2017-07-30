@@ -32,7 +32,8 @@ interface DrawingView<T: Drawing<*>> : View<EditInputEventContext> {
 
     /**
      * Holds the [Drawing] as the main [ComponentContainer] in this [DrawingView].
-     * Sends a [PropertyChangeEvent] for [DrawingView.PROP_DRAWING] when changed.
+     * When changed, clears the contexts of all add-on [DrawableContainer]s and sends
+     * a [PropertyChangeEvent] for [DrawingView.PROP_DRAWING]
      */
     var drawing: T
 

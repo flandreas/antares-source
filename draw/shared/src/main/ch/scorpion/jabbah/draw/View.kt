@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.draw
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
@@ -27,10 +26,11 @@ interface View<C : InputEventContext> : ViewToModelTransform {
     /** Sets the application context to be added to the [DrawContext] being used by this [View].*/
     var applicationContext: Any?
 
+    @Suppress("UNCHECKED_CAST")
     fun <T> castedAppContext(): T? = applicationContext as T
 
     /**
-     * Asks this [View] to initialize itself after it has been layouted and become visible for the first time.
+     * Asks this [View] to initialize itself after it has been layed out and become visible for the first time.
      * Implementing classes should at least apply their default {@link ZoomStrategy}.
      */
     fun initialize()
@@ -133,9 +133,11 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
     /** ---- Navigation */
 
+    /** Holds the current zoom and pan of this [View].*/
     var zoomPan: ZoomPan
 
-    val zoomFactor: Double get() {return zoomPan.zoomFactor}
+    /** A shortcut for getting the zoom factor in [zoomPan].*/
+    val zoomFactor: Double get() = zoomPan.zoomFactor
 
     /** Provides methods to navigate in this [View] using zooming and panning.*/
     val navigator: ViewNavigator
@@ -149,6 +151,7 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
     /** ---- Content management */
 
+    /** Returns the number of [Drawable]s being displayed by this [View].*/
     val drawablesCount: Int
 
     /** Returns the [Drawable]s of this [View] in front-to-back order*/
