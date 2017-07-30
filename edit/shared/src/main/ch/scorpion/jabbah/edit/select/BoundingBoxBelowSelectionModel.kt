@@ -13,18 +13,14 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.drawable.Colorable
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 
-
 /**
  * A [SelectionModel] for [SelectionDrawingStrategy.BELOW] that draws a rounded rectangle that is slightly
  * larger than the [Component]'s bounding box.
  */
 class BoundingBoxBelowSelectionModel(
     component: Component,
-    private val styleProvider: StyleProvider
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractSelectionModel<Component>(component), Colorable {
-
-    @Suppress("unused")
-    constructor(component: Component): this(component, DrawStyleModule.styleProvider)
 
     companion object {
         /** The number of pixels to add to the [Component]'s bounding box at each side. */
@@ -46,7 +42,7 @@ class BoundingBoxBelowSelectionModel(
 
     /** ---- [Drawable] interface */
 
-    override val boundingBox: RectangularShape = bounds
+    override val boundingBox: RectangularShape get() =  bounds
 
     override fun contains(x: Double, y: Double): Boolean = bounds.contains(x, y)
 
