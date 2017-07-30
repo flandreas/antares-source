@@ -21,7 +21,7 @@ class AddGraphToLibraryAction(eventBus: EventBus) : AbstractAction("library.acti
         setEnabled(false)
 
         eventBus.register(ApplicationDataEvent::class, {
-            metaGraph = it.data as MetaGraph
+            metaGraph = it.newData as MetaGraph
         })
 
         eventBus.register(LibrarySelectionChangedEvent::class, {

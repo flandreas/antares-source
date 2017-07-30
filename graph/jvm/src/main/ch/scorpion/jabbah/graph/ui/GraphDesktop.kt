@@ -4,6 +4,9 @@ import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainerEvent
+import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -54,7 +57,20 @@ class GraphDesktop(
     private val associations = mutableListOf<Association>()
 
     /** Closes all slave panels when the edited root [GraphView] has changed.*/
-    private val editedGraphViewEventHandler: (EditedGraphViewEvent) -> Unit = { closeAllSlaves() }
+    private val editedGraphViewEventHandler: (EditedGraphViewEvent) -> Unit = {
+        it.oldGraphView.removeDrawableContainerListener(removeListener)
+        closeAllSlaves()
+        it.newGraphView.addDrawableContainerListener(removeListener)
+    }
+
+    /** Closes an open [GraphNavigationPanel] when the corresponding [SubGraphVerticeView] has been removed.*/
+    private val removeListener = object : DrawableContainerAdapter<GraphElementView<*>>() {
+        override fun drawableRemoved(event: DrawableContainerEvent<GraphElementView<*>>) {
+            associations.firstOrNull{ it.ref === event.child }?.let {
+                assoc -> closeGraphNavigationPanel(assoc.panel)
+            }
+        }
+    }
 
     var masterGraphPanel: GraphPanel? = null
         set(value) {

@@ -59,7 +59,7 @@ class ContainerPanel(
         editor.view.navigator.setZoomFactor(2.0)
 
         eventBus.register(ApplicationDataEvent::class, {
-            val metaGraph = it.data as MetaGraph
+            val metaGraph = it.newData as MetaGraph
             setData(metaGraph.graph!!.graphView!!, metaGraph.containerDrawing!!)
         })
 

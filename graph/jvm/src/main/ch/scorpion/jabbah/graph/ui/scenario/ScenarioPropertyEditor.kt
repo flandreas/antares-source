@@ -68,7 +68,7 @@ class ScenarioPropertyEditorFactory(eventBus: EventBus) : (Property) -> Property
 
     init {
         eventBus.register(EditedGraphViewEvent::class, {
-            graphView = it.graphView
+            graphView = it.newGraphView
         })
     }
 

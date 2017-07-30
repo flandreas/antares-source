@@ -134,12 +134,12 @@ class GraphPanel(
     }
 
     private fun handleApplicationDataChanged(event: ApplicationDataEvent) {
-        val metaGraph = event.data as MetaGraph
-        val graphView = metaGraph.graph!!.graphView as GraphView<GraphElementView<*>>
-        graphNavigationPanel.setRootGraphView(graphView)
-        scenarioPanel.graphView = graphView
+        val oldGraphView = (event.oldData as MetaGraph?)?.graph!!.graphView as GraphView<GraphElementView<*>>
+        val newGraphView = (event.newData as MetaGraph?)?.graph!!.graphView as GraphView<GraphElementView<*>>
+        graphNavigationPanel.setRootGraphView(newGraphView)
+        scenarioPanel.graphView = newGraphView
 
-        eventBus.post(EditedGraphViewEvent(graphView))
+        eventBus.post(EditedGraphViewEvent(oldGraphView, newGraphView))
     }
 
     private fun updateEditability() {
@@ -302,4 +302,4 @@ class GraphPanel(
 }
 
 /** Posted on [EventBus] when the currently (one and only) edited root [GraphView] changes. */
-class EditedGraphViewEvent(val graphView: GraphView<*>)
+class EditedGraphViewEvent(val oldGraphView: GraphView<GraphElementView<*>>, val newGraphView: GraphView<GraphElementView<*>>)

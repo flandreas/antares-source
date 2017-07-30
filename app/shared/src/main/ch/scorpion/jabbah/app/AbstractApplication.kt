@@ -19,8 +19,9 @@ abstract class AbstractApplication(
 
     override var applicationData: Storable? = null
     set(value) {
+        val oldField = field
         field = value
-        eventBus.post(ApplicationDataEvent(this, field))
+        eventBus.post(ApplicationDataEvent(this, oldField, field))
     }
 
     override var savable: Savable? = null

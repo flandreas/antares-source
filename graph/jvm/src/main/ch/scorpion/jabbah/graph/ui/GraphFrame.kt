@@ -80,7 +80,7 @@ class GraphFrame(
 
     private fun handle(event: ApplicationDataEvent) {
         LOG.debug("ApplicationDataChanged, setting GraphView in desktop")
-        val metaGraph = event.data as MetaGraph
+        val metaGraph = event.newData as MetaGraph
         desktop.masterGraphPanel!!.editor.view.drawing = metaGraph.graph!!.graphView as Drawing<Component>
 
         // TODO This shouldn't be here, but elsewhere..

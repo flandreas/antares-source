@@ -34,8 +34,8 @@ class SimpleEditorPanel(
     }
 
     fun handle(event: ApplicationDataEvent) {
-        if (event.data is Drawing<*>) {
-            editor.view.drawing = event.data as Drawing<Component>
+        if (event.newData is Drawing<*>) {
+            editor.view.drawing = event.newData as Drawing<Component>
         }
     }
 

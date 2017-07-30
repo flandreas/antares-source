@@ -68,7 +68,7 @@ class ScenarioStepPropertyEditorFactory(eventBus: EventBus) : (Property) -> Prop
 
     init {
         eventBus.register(EditedGraphViewEvent::class, {
-            graphView = it.graphView
+            graphView = it.newGraphView
         })
     }
 
