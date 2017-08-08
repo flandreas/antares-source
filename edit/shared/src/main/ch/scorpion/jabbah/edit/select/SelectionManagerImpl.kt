@@ -150,7 +150,7 @@ class SelectionManagerImpl(
         oldDrawing.removeDrawableContainerListener(componentRemoveListener)
         view.drawing.addDrawableContainerListener(componentRemoveListener)
 
-        view.removeAllSelectionModels()
+        view.content.removeAllSelectionModels()
 
 
         selectionMap.clear()
@@ -173,7 +173,7 @@ class SelectionManagerImpl(
             LOG.error("SelectionManagerImpl: No suitable SelectionModel found for ${System.SYSTEM!!.getClassName(component.selectableComponent)}")
             return
         }
-        view.addSelectionModel(selectionModel, strategy)
+        view.content.addSelectionModel(selectionModel, strategy)
         selectionMap.put(component, selectionModel)
         selectionModel.notifyAdded(view)
     }
@@ -183,7 +183,7 @@ class SelectionManagerImpl(
         val selectionModel = selectionMap[component]
         if (selectionModel != null) {
             selectionMap.remove(component)
-            view.removeSelectionModel(selectionModel)
+            view.content.removeSelectionModel(selectionModel)
             selectionModelProvider.release(selectionModel)
             selectionModel.notifyRemoved(view)
         }

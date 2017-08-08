@@ -175,6 +175,6 @@ interface View<C : InputEventContext> : ViewToModelTransform {
     /** Determines whether this [View] contains `drawable'.*/
     fun containsDrawable(drawable: Drawable): Boolean
 
-    /** Replaces `oldDrawable` by newDrawable]`.*/
+    /** Replaces `oldDrawable` by `newDrawable`.*/
     fun replaceDrawable(oldDrawable: Drawable, newDrawable: Drawable)
 }

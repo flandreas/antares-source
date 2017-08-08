@@ -82,7 +82,7 @@ open class ViewImpl<C: InputEventContext>(
         oldDrawable.removeDrawableListener(childListener)
         drawables[drawables.indexOf(oldDrawable)] = newDrawable
         newDrawable.addDrawableListener(childListener)
-        repaint()
+        //repaint()
     }
 
     /** ---- Geometry */

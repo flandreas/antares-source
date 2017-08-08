@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.edit
 
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import org.junit.rules.TestRule
 import org.junit.runner.Description

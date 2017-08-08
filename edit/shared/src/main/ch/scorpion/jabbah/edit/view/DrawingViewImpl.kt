@@ -35,8 +35,8 @@ class DrawingViewImpl<T: Drawing<Component>>(
         drawing: T,
         canvas: Canvas,
         transformFactory: () -> AffineTransform,
-        selectionManagerFactory: SelectionManagerFactory,
-        highlighterFactory: HighlighterFactory,
+        private val selectionManagerFactory: SelectionManagerFactory,
+        private val highlighterFactory: HighlighterFactory,
         eventBus: EventBus,
         animator: Animator
 ) : ViewImpl<EditInputEventContext>(canvas, transformFactory), DrawingView<T> {
@@ -50,23 +50,24 @@ class DrawingViewImpl<T: Drawing<Component>>(
         BaseModule.eventBus,
         AnimationModule.animator)
 
-    /** Holds a [DrawableContainer] for every supported [SelectionDrawingStrategy].*/
-    private val selectionContainers = mutableMapOf<SelectionDrawingStrategy, DrawableContainer<SelectionModel<Component>>>()
-
-    /** Used for managing [SelectionModel]s that are [Unzoomable]. */
-    private val unzoomableSelectionContainers = mutableMapOf<SelectionDrawingStrategy, UnzoomableContainer<UnzoomableSelectionModel<Component>>>()
-
     /** The [DrawableDrawer] used for drawing the [Drawing].*/
     private var drawableDrawer: DrawableDrawer<Component> = DrawingDrawer()
 
     /** Displays [ComponentMessage]s from [Component]s of the current [Drawing]. */
     private val componentMessageDisplayer = ComponentMessageDisplayer(this, eventBus, animator)
 
-    fun dispose() {
-        componentMessageDisplayer.dispose()
-    }
-
     /** ---- [DrawingView] interface */
+
+    override var content: DrawingViewContent<T> = createContent(drawing)
+        set(value) {
+            if (field === value) {
+                return
+            }
+            val oldDrawing = field.drawing
+            replaceContent(value)
+            field = value
+            firePropertyChange(DrawingView.PROP_DRAWING, oldDrawing, field.drawing)
+        }
 
     override var editable: Boolean = true
         set(value) {
@@ -77,9 +78,23 @@ class DrawingViewImpl<T: Drawing<Component>>(
             }
         }
 
-    override val selectionManager: SelectionManager = selectionManagerFactory.create(this)
+    override val selectionManager: SelectionManager = content.selectionManager
 
-    override val highlighter: Highlighter = highlighterFactory.create(this)
+    override val highlighter: Highlighter = content.highlighter
+
+    override val ghostContainer get() = content.ghostContainer
+
+    override val animationContainer get() = content.animationContainer
+
+    override val highlightContainer get() = content.highlightContainer
+
+    override var drawing: T
+        get() = content.drawing
+        set(value) {
+            content = createContent(value)
+            value.setDrawableDrawer(drawableDrawer)
+            applyDefaultZoomStrategy()
+        }
 
     override var showGrid: Boolean = false
         set(value) {
@@ -95,30 +110,10 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
     override var defaultSelectionDrawingStrategy = SelectionDrawingStrategy.REPLACE
 
-    override val ghostContainer = UnzoomableContainer<Unzoomable>()
-
-    override val animationContainer: DrawableContainer<Drawable>
-
-    override val highlightContainer: DrawableContainer<Drawable>
-
-    override var drawing: T = drawing
-        set(value) {
-            if (field === value) {
-                return
-            }
-            val oldDrawing = this.drawing
-            replaceDrawable(oldDrawing, value)
-            field = value
-            field.setDrawableDrawer(drawableDrawer)
-
-            ghostContainer.clear()
-            animationContainer.clear()
-            highlightContainer.clear()
-
-            applyDefaultZoomStrategy()
-
-            firePropertyChange(DrawingView.PROP_DRAWING, oldDrawing, field)
-        }
+    init {
+        setupContent()
+        showGrid = true
+    }
 
     override var dropComponent: Component? = null
         private set
@@ -141,34 +136,124 @@ class DrawingViewImpl<T: Drawing<Component>>(
         }
     }
 
-    init {
-        animationContainer = DrawableContainerImpl()
-        highlightContainer = DrawableContainerImpl()
+    override fun addDrawableDrawer(drawableDrawer: DrawableDrawer<Component>) {
+        drawableDrawer.successor = this.drawableDrawer
+        this.drawableDrawer = drawableDrawer
+        drawing.setDrawableDrawer(this.drawableDrawer)
+    }
 
+    override fun getComponentSelectionDrawingStrategy(component: Component): SelectionDrawingStrategy {
+        return component.preferredSelectionDrawingStrategy ?: defaultSelectionDrawingStrategy
+    }
+
+    /** ---- [View] interface */
+
+    override val contentBounds: RectangularShape get() = drawing.boundingBox
+
+    override fun removeDrawable(drawable: Drawable) {
+        // DrawingViewImpl has a fixed set of DrawableContainers
+        throw ch.scorpion.jabbah.base.exception.UnsupportedOperationException("Clients cannot remove Drawable from DrawingViewImpl")
+    }
+
+    override fun addDrawable(drawable: Drawable) {
+        // DrawingViewImpl has a fixed set of DrawableContainers
+        throw ch.scorpion.jabbah.base.exception.UnsupportedOperationException("Clients cannot add Drawable to DrawingViewImpl")
+    }
+
+    /** ---- [DrawingViewImpl] */
+
+    fun dispose() {
+        componentMessageDisplayer.dispose()
+    }
+
+    private fun createContent(drawing: T): DrawingViewContent<T> {
+        return DrawingViewContentImpl(drawing, selectionManagerFactory.create(this), highlighterFactory.create(this))
+    }
+
+    private fun setupContent() {
+        super.addDrawable(ghostContainer)
+        super.addDrawable(animationContainer)
+        super.addDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!)
+        super.addDrawable(content.unzoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!)
+        super.addDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.REPLACE)!!)
+        super.addDrawable(drawing)
+        super.addDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!)
+        super.addDrawable(highlightContainer)
+    }
+
+    private fun replaceContent(newContent: DrawingViewContent<T>) {
+        replaceDrawable(content.ghostContainer, newContent.ghostContainer)
+        replaceDrawable(content.animationContainer, newContent.animationContainer)
+        replaceDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!, newContent.zoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!)
+        replaceDrawable(content.unzoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!, newContent.unzoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!)
+        replaceDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.REPLACE)!!, newContent.zoomableSelectionContainerFor(SelectionDrawingStrategy.REPLACE)!!)
+        replaceDrawable(content.drawing, newContent.drawing)
+        replaceDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!, newContent.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!)
+        replaceDrawable(content.highlightContainer, newContent.highlightContainer)
+        repaint()
+    }
+
+    /** Adds or removed the [Grid] depending on the [showGrid] and [editable] properties.*/
+    private fun showGridIfNeeded() {
+        val gridNeeded = showGrid && editable
+        if (gridNeeded) {
+            if (!containsDrawable(grid)) {
+                super.addDrawable(grid)
+            }
+        } else {
+            super.removeDrawable(grid)
+        }
+        repaint()
+    }
+
+    /**
+     * The [DrawableDrawer] used for drawing the [Drawing]. Implements the drawing behaviour used for the
+     * different [SelectionDrawingStrategies][SelectionDrawingStrategy].
+     */
+    private inner class DrawingDrawer : AbstractDrawableDrawer<Component>() {
+        override fun process(context: DrawContext, drawable: Component) {
+            if (!selectionManager.isSelected(drawable) || getComponentSelectionDrawingStrategy(drawable) != SelectionDrawingStrategy.REPLACE) {
+                drawable.draw(context)
+            }
+            processDone(context, drawable)
+        }
+    }
+}
+
+private class DrawingViewContentImpl<out T: Drawing<*>>(
+        override val drawing: T,
+        override val selectionManager: SelectionManager,
+        override val highlighter: Highlighter
+) : DrawingViewContent<T> {
+
+    /** Holds a [DrawableContainer] for every supported [SelectionDrawingStrategy].*/
+    private val selectionContainers = mutableMapOf<SelectionDrawingStrategy, DrawableContainer<SelectionModel<Component>>>()
+
+    /** Used for managing [SelectionModel]s that are [Unzoomable]. */
+    private val unzoomableSelectionContainers = mutableMapOf<SelectionDrawingStrategy, UnzoomableContainer<UnzoomableSelectionModel<Component>>>()
+
+    init {
         selectionContainers.put(SelectionDrawingStrategy.ABOVE, DrawableContainerImpl<SelectionModel<Component>>())
         selectionContainers.put(SelectionDrawingStrategy.REPLACE, DrawableContainerImpl<SelectionModel<Component>>())
         selectionContainers.put(SelectionDrawingStrategy.BELOW, DrawableContainerImpl<SelectionModel<Component>>())
         unzoomableSelectionContainers.put(SelectionDrawingStrategy.ABOVE, UnzoomableContainer<UnzoomableSelectionModel<Component>>())
-
-        super.addDrawable(ghostContainer)
-        super.addDrawable(animationContainer)
-        super.addDrawable(selectionContainers[SelectionDrawingStrategy.ABOVE]!!)
-        super.addDrawable(unzoomableSelectionContainers[SelectionDrawingStrategy.ABOVE]!!)
-        super.addDrawable(selectionContainers[SelectionDrawingStrategy.REPLACE]!!)
-        super.addDrawable(drawing)
-        super.addDrawable(selectionContainers[SelectionDrawingStrategy.BELOW]!!)
-        super.addDrawable(highlightContainer)
-
-        showGrid = true
     }
+
+    /** ---- [DrawingViewContent] interface */
+
+    override val animationContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
+
+    override val ghostContainer: UnzoomableContainer<Unzoomable> = UnzoomableContainer()
+
+    override val highlightContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
 
     override fun addSelectionModel(selectionModel: SelectionModel<Component>, strategy: SelectionDrawingStrategy) {
         if (selectionModel is Unzoomable) {
             unzoomableSelectionContainers[strategy]?.add(selectionModel as UnzoomableSelectionModel<Component>)
-                ?: throw IllegalArgumentException("no suitable selection container found")
+                    ?: throw IllegalArgumentException("no suitable selection container found")
         } else {
             selectionContainers[strategy]?.add(selectionModel)
-                ?: throw IllegalArgumentException("no suitable selection container found")
+                    ?: throw IllegalArgumentException("no suitable selection container found")
         }
     }
 
@@ -197,55 +282,11 @@ class DrawingViewImpl<T: Drawing<Component>>(
         return false
     }
 
-    override fun addDrawableDrawer(drawableDrawer: DrawableDrawer<Component>) {
-        drawableDrawer.successor = this.drawableDrawer
-        this.drawableDrawer = drawableDrawer
-        drawing.setDrawableDrawer(this.drawableDrawer)
+    override fun zoomableSelectionContainerFor(strategy: SelectionDrawingStrategy): DrawableContainer<SelectionModel<Component>>? {
+        return selectionContainers[strategy]
     }
 
-    override fun getComponentSelectionDrawingStrategy(component: Component): SelectionDrawingStrategy {
-        return component.preferredSelectionDrawingStrategy ?: defaultSelectionDrawingStrategy
-    }
-
-    /** ---- [View] interface*/
-
-    override val contentBounds: RectangularShape get() = drawing.boundingBox
-
-    override fun removeDrawable(drawable: Drawable) {
-        // DrawingViewImpl has a fixed set of DrawableContainers
-        throw ch.scorpion.jabbah.base.exception.UnsupportedOperationException("Clients cannot remove Drawable from DrawingViewImpl")
-    }
-
-    override fun addDrawable(drawable: Drawable) {
-        // DrawingViewImpl has a fixed set of DrawableContainers
-        throw ch.scorpion.jabbah.base.exception.UnsupportedOperationException("Clients cannot add Drawable to DrawingViewImpl")
-    }
-
-    /** ---- [DrawingViewImpl] */
-
-    /** Adds or removed the [Grid] depending on the [showGrid] and [editable] properties.*/
-    private fun showGridIfNeeded() {
-        val gridNeeded = showGrid && editable
-        if (gridNeeded) {
-            if (!containsDrawable(grid)) {
-                super.addDrawable(grid)
-            }
-        } else {
-            super.removeDrawable(grid)
-        }
-        repaint()
-    }
-
-    /**
-     * The [DrawableDrawer] used for drawing the [Drawing]. Implements the drawing behaviour used for the
-     * different [SelectionDrawingStrategies][SelectionDrawingStrategy].
-     */
-    private inner class DrawingDrawer : AbstractDrawableDrawer<Component>() {
-        override fun process(context: DrawContext, drawable: Component) {
-            if (!selectionManager.isSelected(drawable) || getComponentSelectionDrawingStrategy(drawable) != SelectionDrawingStrategy.REPLACE) {
-                drawable.draw(context)
-            }
-            processDone(context, drawable)
-        }
+    override fun unzoomableSelectionContainerFor(strategy: SelectionDrawingStrategy): UnzoomableContainer<UnzoomableSelectionModel<Component>>? {
+        return unzoomableSelectionContainers[strategy]
     }
 }

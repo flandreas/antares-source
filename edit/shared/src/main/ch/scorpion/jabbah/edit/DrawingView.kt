@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.container.UnzoomableContainer
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.edit.select.UnzoomableSelectionModel
 
 
 /**
@@ -31,8 +32,16 @@ interface DrawingView<T: Drawing<*>> : View<EditInputEventContext> {
     var editable: Boolean
 
     /**
+     * Contains the [DrawingViewContent] that is currently being displayed by this [DrawingView].
+     * Set a new [DrawingViewContent] if the [Drawing] and its current selection and highlights should be restored,
+     * otherwise use the property [drawing] to set a new [Drawing] and to create a new [DrawingViewContent].
+     * Sends a [PropertyChangeEvent] for [DrawingView.PROP_DRAWING]
+     */
+    var content: DrawingViewContent<T>
+
+    /**
      * Holds the [Drawing] as the main [ComponentContainer] in this [DrawingView].
-     * When changed, clears the contexts of all add-on [DrawableContainer]s and sends
+     * When changed, creates a new [DrawingViewContent] for the new [Drawing] and sends
      * a [PropertyChangeEvent] for [DrawingView.PROP_DRAWING]
      */
     var drawing: T
@@ -65,18 +74,6 @@ interface DrawingView<T: Drawing<*>> : View<EditInputEventContext> {
     /** Returns the [Component] that has previously been set using [setDropComponent], if */
     val dropComponent: Component?
 
-    /** Adds the specified [SelectionModel] to the [DrawableContainer] related with the given [SelectionDrawingStrategy]. */
-    fun addSelectionModel(selectionModel: SelectionModel<Component>, strategy: SelectionDrawingStrategy)
-
-    /** Removes the specified [SelectionModel] from this [DrawingView].*/
-    fun removeSelectionModel(selectionModel: SelectionModel<Component>)
-
-    /** Removes all [SelectionModel]s from this [DrawingView].*/
-    fun removeAllSelectionModels()
-
-    /** Determines whether this [DrawingView] shows a [SelectionModel] for the specified [Component].*/
-    fun hasSelectionModelFor(component: Component): Boolean
-
     /**
      * Adds the specified [DrawableDrawer] at the head of the chain of [DrawableDrawer] responsible for drawing
      * the main [Drawing].
@@ -98,5 +95,43 @@ interface DrawingView<T: Drawing<*>> : View<EditInputEventContext> {
      * Removes the previously set [Component] if `null` is specified.
      */
     fun setDropComponent(component: Component?, location: Point2D?)
+}
 
+interface DrawingViewContent<out T: Drawing<*>> {
+
+    /** Holds the [Drawing] as the main [ComponentContainer] of this [DrawingViewContent].*/
+    val drawing: T
+
+    /** Allows selecting [Component]s in [drawing] for editing them.*/
+    val selectionManager: SelectionManager
+
+    /** Allows temporary highlighting of [Component]s in [drawing].*/
+    val highlighter: Highlighter
+
+    /** Holds the [DrawableContainer] for temporarily displaying [Unzoomable] graphical objects like ghosts.*/
+    val ghostContainer: UnzoomableContainer<Unzoomable>
+
+    /** Holds the [DrawableContainer] for rendering zoomed animations.*/
+    val animationContainer: DrawableContainer<Drawable>
+
+    /** Holds the [DrawableContainer] that contains the [Drawable]s that highlight [Component]s.*/
+    val highlightContainer: DrawableContainer<Drawable>
+
+    /** Adds the specified [SelectionModel] to the [DrawableContainer] related with the given [SelectionDrawingStrategy]. */
+    fun addSelectionModel(selectionModel: SelectionModel<Component>, strategy: SelectionDrawingStrategy)
+
+    /** Removes the specified [SelectionModel] from this [DrawingView].*/
+    fun removeSelectionModel(selectionModel: SelectionModel<Component>)
+
+    /** Removes all [SelectionModel]s from this [DrawingViewContent].*/
+    fun removeAllSelectionModels()
+
+    /** Determines whether this [DrawingView] shows a [SelectionModel] for the specified [Component].*/
+    fun hasSelectionModelFor(component: Component): Boolean
+
+    /** Returns the [DrawableContainer] that contains the zoomable [SelectionModel]s of the specified [SelectionDrawingStrategy].*/
+    fun zoomableSelectionContainerFor(strategy: SelectionDrawingStrategy): DrawableContainer<SelectionModel<Component>>?
+
+    /** Returns the [UnzoomableContainer] that contains the [UnzoomableSelectionModel] for the specified [SelectionDrawingStrategy].*/
+    fun unzoomableSelectionContainerFor(strategy: SelectionDrawingStrategy): UnzoomableContainer<UnzoomableSelectionModel<Component>>?
 }
