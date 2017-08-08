@@ -500,7 +500,7 @@ class CircuitInOutView(
     private inner class InteractionHandler : ActorInteractionHandlerAdapter() {
         override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
             if (!model!!.isToplevel) {
-                eventBus.post(ComponentMessage(source = this@CircuitInOutView, messageKey = "ch.scorpion.antares.msg.ChildGraphInputManipulation"))
+                eventBus.post(ComponentMessage(source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
                 return
             }
             val digitIndex = getDigitIndexAt(x, y)
