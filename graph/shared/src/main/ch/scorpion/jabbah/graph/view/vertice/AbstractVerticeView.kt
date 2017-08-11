@@ -284,6 +284,7 @@ abstract class AbstractVerticeView<T : Vertice>(
         return portViews.filter { it.direction == direction }.toCollection(mutableListOf<PortView<*>>()).toImmutableList()
     }
 
+    /** Adds all [PortView]s to the overall bounding box and the box used for 'contains' calculation.*/
     protected fun addPortViewsTo(boundingBox: Rectangle2D, containsBox: Rectangle2D?) {
         containsBox?.setFrame(boundingBox)
         for (pv in portViews) {
@@ -291,6 +292,10 @@ abstract class AbstractVerticeView<T : Vertice>(
         }
     }
 
+    /**
+     * Adds the bounding box of the specified [PortView] to the overall bounding box and the box
+     * used for 'contains' calculation.
+     */
     protected fun addPortViewTo(portView: PortView<*>, boundingBox: Rectangle2D, containsBox: Rectangle2D?) {
         val outset = BaseModule.properties.getInt(PROP_SENSITIVE_AREA)
         val bb = portView.boundingBox

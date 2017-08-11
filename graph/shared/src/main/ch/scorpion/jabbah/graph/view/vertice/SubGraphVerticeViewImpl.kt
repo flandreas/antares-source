@@ -379,7 +379,7 @@ class SubGraphVerticeViewImpl(
     }
 
     private fun updateBoxes() {
-        _boundingBox.setFrame(location.x, location.y, 0.0, 0.0)
+        _boundingBox.setFrame(0.0, 0.0, 0.0, 0.0)
         containsBox.setFrame(_boundingBox)
         addPortViewsTo(_boundingBox, containsBox)
 
