@@ -100,7 +100,10 @@ interface DrawingView<T: Drawing<*>> : View<EditInputEventContext> {
     fun setDropComponent(component: Component?, location: Point2D?)
 }
 
-interface DrawingViewContent<out T: Drawing<*>> {
+interface DrawingViewContent<T: Drawing<*>> {
+
+    /** The [DrawingView] that owns this [DrawingViewContent].*/
+    val drawingView: DrawingView<T>
 
     /** Holds the [Drawing] as the main [ComponentContainer] of this [DrawingViewContent].*/
     val drawing: T

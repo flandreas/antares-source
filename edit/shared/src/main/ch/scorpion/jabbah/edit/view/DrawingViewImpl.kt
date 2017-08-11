@@ -119,7 +119,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
         private set
 
     override fun createContent(drawing: T): DrawingViewContent<T> {
-        return DrawingViewContentImpl(drawing, selectionManagerFactory.create(this), highlighterFactory.create(this))
+        return DrawingViewContentImpl(this, drawing, selectionManagerFactory.create(this), highlighterFactory)
     }
 
     override fun setDropComponent(component: Component?, location: Point2D?) {

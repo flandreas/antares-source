@@ -14,18 +14,15 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
  * [SelectionDrawingStrategy.BELOW] for highlighting.
  */
 class BelowSmHighlighter(
-    private val selectionModelProvider: SelectionModelProvider,
-    private val eventBus: EventBus,
-    private val drawingView: DrawingView<out Drawing<Component>>
+    private val selectionModelProvider: SelectionModelProvider = EditSelectModule.selectionModelProvider,
+    private val eventBus: EventBus = BaseModule.eventBus,
+    private val content: DrawingViewContent<*>
 ) : Highlighter {
 
-    constructor(drawingView: DrawingView<out Drawing<Component>>)
-        : this(EditSelectModule.selectionModelProvider, BaseModule.eventBus, drawingView)
+    private val LOG by logger(BelowSmHighlighter::class)
 
     /** Maps a highlighted [Component]s to its highlight [SelectionModel].*/
     private val highlights: MutableMap<Component, SelectionModel<Component>> by lazy { mutableMapOf<Component, SelectionModel<Component>>() }
-
-    private val LOG by logger(BelowSmHighlighter::class)
 
     /** ---- [Highlighter] interface */
 
@@ -35,7 +32,7 @@ class BelowSmHighlighter(
     override fun highlight(component: Component, color: CompositeColor?) {
         if (!isHighlighted(component)) {
             highlightImpl(component, color)
-            drawingView.drawing.validate()
+            content.drawing.validate()
             postHighlightChangedEvent(listOf(component), true)
         }
     }
@@ -49,19 +46,19 @@ class BelowSmHighlighter(
                 newHighlights.add(it)
             }
         if (newHighlights.size > 0) {
-            drawingView.drawing.validate()
+            content.drawing.validate()
             postHighlightChangedEvent(newHighlights, true)
         }
     }
 
     override fun highlight(vararg ids: Int) {
-        highlight(drawingView.drawing.getDrawables { ids.contains(it.id) })
+        highlight(content.drawing.getDrawables { ids.contains(it.id) })
     }
 
     override fun unhighlight(component: Component) {
         if (isHighlighted(component)) {
             unhighlightImpl(component)
-            drawingView.drawing.validate()
+            content.drawing.validate()
             postHighlightChangedEvent(listOf(component), false)
         }
     }
@@ -71,7 +68,7 @@ class BelowSmHighlighter(
         list.addAll(highlights.keys)
         if (!list.isEmpty()) {
             list.forEach { unhighlightImpl(it) }
-            drawingView.drawing.validate()
+            content.drawing.validate()
             postHighlightChangedEvent(list, false)
         }
     }
@@ -97,21 +94,21 @@ class BelowSmHighlighter(
             }
         }
         highlights.put(c, highlight)
-        drawingView.highlightContainer.add(highlight)
+        content.highlightContainer.add(highlight)
     }
 
     private fun unhighlightImpl(c: Component) {
         LOG.debug("Unhighlight component '${c.id}'")
         val highlight = highlights[c]
         highlights.remove(c)
-        drawingView.highlightContainer.remove(highlight!!)
+        content.highlightContainer.remove(highlight!!)
     }
 
     private fun postHighlightChangedEvent(c: Collection<Component>, highlighted: Boolean) {
         eventBus.post(HighlightChangeEvent(
             highlighter = this,
-            view = drawingView,
+            content = content,
             components = c,
-            highighted = highlighted))
+            highlighted = highlighted))
     }
 }

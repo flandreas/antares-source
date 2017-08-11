@@ -9,8 +9,8 @@ import ch.scorpion.jabbah.edit.*
 object EditHighlightModule : AbstractModule() {
 
     var highlighterFactory = object : HighlighterFactory {
-        override fun create(view: DrawingView<out Drawing<Component>>): Highlighter {
-            return BelowSmHighlighter(view)
+        override fun create(content: DrawingViewContent<*>): Highlighter {
+            return BelowSmHighlighter(content = content)
         }
     }
 

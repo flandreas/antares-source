@@ -8,10 +8,11 @@ import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.select.UnzoomableSelectionModel
 
-class DrawingViewContentImpl<out T: Drawing<*>>(
+class DrawingViewContentImpl<T: Drawing<*>>(
+        override val drawingView: DrawingView<T>,
         override val drawing: T,
         override val selectionManager: SelectionManager,
-        override val highlighter: Highlighter
+        highlighterFactory: HighlighterFactory
 ) : DrawingViewContent<T> {
 
     /** Holds a [DrawableContainer] for every supported [SelectionDrawingStrategy].*/
@@ -28,6 +29,8 @@ class DrawingViewContentImpl<out T: Drawing<*>>(
     }
 
     /** ---- [DrawingViewContent] interface */
+
+    override val highlighter: Highlighter = highlighterFactory.create(this)
 
     override val animationContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
 

@@ -1,28 +1,25 @@
 package ch.scorpion.jabbah.edit.highlight
 
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Highlighter
+import ch.scorpion.jabbah.edit.*
 
 /**
  * Posted by a [Highlighter] on its [EventBus] whenever the current highlighting in a [DrawingView] has changed.
  */
 data class HighlightChangeEvent(
-    val view: DrawingView<out Drawing<Component>>,
+    val content: DrawingViewContent<*>,
     val highlighter: Highlighter,
     val type: Type,
     val components: Collection<Component>
 ) {
-    constructor(view: DrawingView<out Drawing<Component>>, highlighter: Highlighter, components: Collection<Component>, highighted: Boolean):
-        this(view, highlighter, if(highighted) Type.HIGHLIGHTED else Type.UNHIGHLIGHED, components)
+    constructor(content: DrawingViewContent<*>, highlighter: Highlighter, components: Collection<Component>, highlighted: Boolean):
+        this(content, highlighter, if(highlighted) Type.HIGHLIGHTED else Type.UNHIGHLIGHTED, components)
 
     enum class Type {
         HIGHLIGHTED,
-        UNHIGHLIGHED
+        UNHIGHLIGHTED
     }
 
     val highlighted: Boolean = type == Type.HIGHLIGHTED
-    val unhighlighted: Boolean = type == Type.UNHIGHLIGHED
+    val unhighlighted: Boolean = type == Type.UNHIGHLIGHTED
 }
