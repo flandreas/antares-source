@@ -9,7 +9,8 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
  */
 class RotateCommand(
         val component: Component,
-        val rotation: Rotation): AbstractCommand("edit.command.rotate", null) {
+        val rotation: Rotation
+): AbstractCommand("edit.command.rotate", null) {
 
     override fun execute() {
         component.rotation = rotation
@@ -17,6 +18,10 @@ class RotateCommand(
 
     override fun undo() {
         component.rotation = oldRotation
+    }
+
+    override fun validate() {
+        component.validate()
     }
 
     private val oldRotation = component.rotation
