@@ -74,6 +74,9 @@ interface DrawingView<T: Drawing<*>> : View<EditInputEventContext> {
     /** Returns the [Component] that has previously been set using [setDropComponent], if */
     val dropComponent: Component?
 
+    /** Creates a new [DrawingViewContent] for the specified [Drawing]*/
+    fun createContent(drawing: T): DrawingViewContent<T>
+
     /**
      * Adds the specified [DrawableDrawer] at the head of the chain of [DrawableDrawer] responsible for drawing
      * the main [Drawing].
@@ -116,6 +119,9 @@ interface DrawingViewContent<out T: Drawing<*>> {
 
     /** Holds the [DrawableContainer] that contains the [Drawable]s that highlight [Component]s.*/
     val highlightContainer: DrawableContainer<Drawable>
+
+    /** Frees this [DrawingViewContent] from usage and disposes all inner objects, including the [Drawing].*/
+    fun dispose()
 
     /** Adds the specified [SelectionModel] to the [DrawableContainer] related with the given [SelectionDrawingStrategy]. */
     fun addSelectionModel(selectionModel: SelectionModel<Component>, strategy: SelectionDrawingStrategy)

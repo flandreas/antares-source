@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
+import ch.scorpion.jabbah.graph.view.GraphElementView
 import java.awt.BorderLayout
 import java.awt.event.ActionEvent
 import javax.swing.*
@@ -81,7 +82,7 @@ class GraphFrame(
     private fun handle(event: ApplicationDataEvent) {
         LOG.debug("ApplicationDataChanged, setting GraphView in desktop")
         val metaGraph = event.newData as MetaGraph
-        desktop.masterGraphPanel!!.editor.view.drawing = metaGraph.graph!!.graphView as Drawing<Component>
+        desktop.masterGraphPanel!!.setGraphView(metaGraph.graph!!.graphView as GraphView<GraphElementView<*>>)
 
         // TODO This shouldn't be here, but elsewhere..
         metaGraph.graph!!.graphView!!.snapper = desktop.masterGraphPanel!!.editor.view.grid

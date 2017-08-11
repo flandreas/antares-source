@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
@@ -55,11 +56,11 @@ open class GraphNavigationPanel(
 
     private var scenarioDetector: ScenarioDetector? = null
 
-    private val openSubGraphRequestHandler: (OpenSubGraphRequest) -> Unit = {handle(it)}
-    private val navigationStackEventHandler: (NavigationStackEvent) -> Unit = {handle(it)}
-    private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = {handle(it)}
+    private val openSubGraphRequestHandler: (OpenSubGraphRequest) -> Unit = { handle(it) }
+    private val navigationStackEventHandler: (NavigationStackEvent) -> Unit = { handle(it) }
+    private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = { handle(it) }
     private val scenarioEventHandler: (ScenarioEvent) -> Unit = {handle(it)}
-    private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = {handle(it)}
+    private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
 
     init {
 
@@ -82,7 +83,7 @@ open class GraphNavigationPanel(
     }
 
     open fun dispose() {
-        drawingView.drawing.dispose()
+        drawingView.content.drawing.dispose()
         eventBus.unregister(OpenSubGraphRequest::class, openSubGraphRequestHandler)
         eventBus.unregister(NavigationStackEvent::class, navigationStackEventHandler)
         eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)
@@ -90,14 +91,16 @@ open class GraphNavigationPanel(
         eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
     }
 
+    /** Initializes the [NavigationStackView] with a root [DrawingViewContent].*/
     fun setRootGraphView(graphView: GraphView<GraphElementView<*>>) {
-        navigationStackView.navigationStack.rootGraphView = graphView
+        drawingView.drawing = graphView
+        navigationStackView.navigationStack.rootContent = drawingView.content
         scenarioDetector?.dispose()
         scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus)
     }
 
-    private fun getRootGraphView(): GraphView<GraphElementView<*>> {
-        return navigationStackView.navigationStack.rootGraphView!!
+    private fun getRootContent(): DrawingViewContent<GraphView<GraphElementView<*>>> {
+        return navigationStackView.navigationStack.rootContent!!
     }
 
     @Suppress("unused")
@@ -119,6 +122,11 @@ open class GraphNavigationPanel(
         }
     }
 
+    /** Finds the first [DrawingViewContent] in the navigation stack that fulfills the specified condition, if any.*/
+    fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<GraphView<GraphElementView<*>>>? {
+        return navigationStackView.navigationStack.find(condition)
+    }
+
     private fun handle(request: OpenSubGraphRequest) {
         LOG.debug("handling OpenSubGraphRequest by diving into SubGraphVerticeView")
 
@@ -135,7 +143,7 @@ open class GraphNavigationPanel(
                     request.subGraphVerticeView,
                     diver = {
                         navigationStackView.isEnabled = false
-                        navigationStackView.navigationStack.push(subGraphView as GraphView<GraphElementView<*>>)
+                        navigationStackView.navigationStack.push(drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>))
                     },
                     ender = { navigationStackView.isEnabled = true})
         }
@@ -145,8 +153,13 @@ open class GraphNavigationPanel(
         if (event.navigationStack !== navigationStackView.navigationStack) {
             return
         }
-        val graphView = navigationStackView.navigationStack.peek()
-        setGraphView(graphView)
+        if (navigationStackView.navigationStack.peek() == drawingView.content) {
+            return
+        }
+
+        drawingView.content = navigationStackView.navigationStack.peek()
+        drawingView.editable = navigationStackView.navigationStack.size == 1
+        updateDetached()
 
         invalidate()
         revalidate()
@@ -167,19 +180,13 @@ open class GraphNavigationPanel(
     private fun handle(event: SchedulerActivationStateEvent) {
         if (event.scheduler.isActive) {
             if (isRoot) {
-                getRootGraphView().graph!!.bind(libraryHolder.library, storableCreator)
+                getRootContent().drawing.graph!!.bind(libraryHolder.library, storableCreator)
             }
-            navigationStackView.forEach { it.bind() }
-            getRootGraphView().graph!!.executionStarted(event.scheduler)
+            navigationStackView.forEach { it.drawing.bind() }
+            getRootContent().drawing.graph!!.executionStarted(event.scheduler)
         } else {
-            getRootGraphView().graph!!.executionStopped(event.scheduler)
+            getRootContent().drawing.graph!!.executionStopped(event.scheduler)
         }
-    }
-
-    private fun setGraphView(graphView: GraphView<GraphElementView<*>>) {
-        drawingView.drawing = graphView
-        drawingView.editable = navigationStackView.navigationStack.size == 1
-        updateDetached()
     }
 
     /**

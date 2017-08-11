@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.edit.DrawingViewContent
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -27,15 +28,12 @@ import javax.swing.JComponent
 
 
 /**
- * A breadcrumb-like view of a [NavigationStack].
+ * A breadcrumb-like view of a [NavigationStack<GraphView>].
  */
 class NavigationStackView(
-    val navigationStack: NavigationStack,
-    eventBus: EventBus
+    val navigationStack: NavigationStack<GraphView<GraphElementView<*>>> = NavigationStack(BaseModule.eventBus),
+    eventBus: EventBus = BaseModule.eventBus
 ) : JPanel() {
-
-    constructor(navigationStack: NavigationStack): this(navigationStack, BaseModule.eventBus)
-    constructor(): this(NavigationStack(BaseModule.eventBus))
 
     companion object {
 
@@ -85,7 +83,7 @@ class NavigationStackView(
         })
 
         eventBus.register(GraphNameChangedEvent::class, {
-            if (navigationStack.rootGraphView != null && navigationStack.rootGraphView!!.graph == it.graph) {
+            if (navigationStack.rootContent != null && navigationStack.rootContent!!.drawing == it.graph) {
                 update()
             }
         })
@@ -121,9 +119,9 @@ class NavigationStackView(
 
     /** ---- [NavigationStackView] */
 
-    /** Executes the specified handler for each [GraphView] of this [NavigationStack].*/
-    fun forEach(action: (GraphView<GraphElementView<*>>) -> Unit) {
-        elements.forEach { action.invoke(it.graphView) }
+    /** Executes the specified handler for each [DrawingViewContent] of this [NavigationStack].*/
+    fun forEach(action: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Unit) {
+        elements.forEach { action.invoke(it.content) }
     }
 
     private fun update() {
@@ -133,8 +131,8 @@ class NavigationStackView(
 		var i = 0
 		val iter = navigationStack.iterator()
 		while (iter.hasNext()) {
-			val graphView = iter.next()
-			elements.add(createElement(graphView, i == 0, !iter.hasNext()))
+			val content = iter.next()
+			elements.add(createElement(content, i == 0, !iter.hasNext()))
 			i++
 		}
 
@@ -148,11 +146,10 @@ class NavigationStackView(
 		repaint()
     }
 
-    private fun createElement(graphView: GraphView<GraphElementView<*>>, first: Boolean, last: Boolean): Element {
-        val textRenderInfo = DrawModule.textRenderInfoFactory.invoke(graphView.graph!!.name, DrawModule.properties.getFont(PROP_FONT))
+    private fun createElement(content: DrawingViewContent<GraphView<GraphElementView<*>>>, first: Boolean, last: Boolean): Element {
+        val textRenderInfo = DrawModule.textRenderInfoFactory.invoke(content.drawing.graph!!.name, DrawModule.properties.getFont(PROP_FONT))
         val textLength = textRenderInfo.textBounds.width
-
-        return Element(graphView, if (first) createFirstPath(textLength) else createNonFirstPath(textLength), last)
+        return Element(content, if (first) createFirstPath(textLength) else createNonFirstPath(textLength), last)
     }
 
     private fun createFirstPath(textLength: Double): Path {
@@ -181,15 +178,15 @@ class NavigationStackView(
         return path
     }
 
-    /** An element of a [NavigationStackView] representing a single [GraphView].*/
+    /** An element of a [NavigationStackView] representing a single [DrawingViewContent].*/
     private inner class Element(
-        val graphView: GraphView<GraphElementView<*>>,
+        val content: DrawingViewContent<GraphView<GraphElementView<*>>>,
         val path: Path,
         val isHead: Boolean
     ) {
 
         private val label: Label = Label(
-                text = graphView.graph!!.name,
+                text = content.drawing.graph!!.name,
                 font = DrawModule.properties.getFont(PROP_FONT),
                 color = DrawModule.properties.getColor(PROP_TEXT_COLOR),
                 horizontalAlignment = Label.HorizontalAlignment.CENTER,
@@ -283,7 +280,7 @@ class NavigationStackView(
 
         override fun mousePressed(e: MouseEvent) {
             if (hoveredElement != null) {
-                navigationStack.navigateBackTo(hoveredElement!!.graphView)
+                navigationStack.navigateBackTo(hoveredElement!!.content)
             }
         }
 

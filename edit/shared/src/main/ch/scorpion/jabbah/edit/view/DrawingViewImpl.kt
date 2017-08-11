@@ -78,9 +78,9 @@ class DrawingViewImpl<T: Drawing<Component>>(
             }
         }
 
-    override val selectionManager: SelectionManager = content.selectionManager
+    override val selectionManager get() = content.selectionManager
 
-    override val highlighter: Highlighter = content.highlighter
+    override val highlighter get() = content.highlighter
 
     override val ghostContainer get() = content.ghostContainer
 
@@ -117,6 +117,10 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
     override var dropComponent: Component? = null
         private set
+
+    override fun createContent(drawing: T): DrawingViewContent<T> {
+        return DrawingViewContentImpl(drawing, selectionManagerFactory.create(this), highlighterFactory.create(this))
+    }
 
     override fun setDropComponent(component: Component?, location: Point2D?) {
         if (component != null) {
@@ -166,10 +170,6 @@ class DrawingViewImpl<T: Drawing<Component>>(
         componentMessageDisplayer.dispose()
     }
 
-    private fun createContent(drawing: T): DrawingViewContent<T> {
-        return DrawingViewContentImpl(drawing, selectionManagerFactory.create(this), highlighterFactory.create(this))
-    }
-
     private fun setupContent() {
         super.addDrawable(ghostContainer)
         super.addDrawable(animationContainer)
@@ -217,76 +217,5 @@ class DrawingViewImpl<T: Drawing<Component>>(
             }
             processDone(context, drawable)
         }
-    }
-}
-
-private class DrawingViewContentImpl<out T: Drawing<*>>(
-        override val drawing: T,
-        override val selectionManager: SelectionManager,
-        override val highlighter: Highlighter
-) : DrawingViewContent<T> {
-
-    /** Holds a [DrawableContainer] for every supported [SelectionDrawingStrategy].*/
-    private val selectionContainers = mutableMapOf<SelectionDrawingStrategy, DrawableContainer<SelectionModel<Component>>>()
-
-    /** Used for managing [SelectionModel]s that are [Unzoomable]. */
-    private val unzoomableSelectionContainers = mutableMapOf<SelectionDrawingStrategy, UnzoomableContainer<UnzoomableSelectionModel<Component>>>()
-
-    init {
-        selectionContainers.put(SelectionDrawingStrategy.ABOVE, DrawableContainerImpl<SelectionModel<Component>>())
-        selectionContainers.put(SelectionDrawingStrategy.REPLACE, DrawableContainerImpl<SelectionModel<Component>>())
-        selectionContainers.put(SelectionDrawingStrategy.BELOW, DrawableContainerImpl<SelectionModel<Component>>())
-        unzoomableSelectionContainers.put(SelectionDrawingStrategy.ABOVE, UnzoomableContainer<UnzoomableSelectionModel<Component>>())
-    }
-
-    /** ---- [DrawingViewContent] interface */
-
-    override val animationContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
-
-    override val ghostContainer: UnzoomableContainer<Unzoomable> = UnzoomableContainer()
-
-    override val highlightContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
-
-    override fun addSelectionModel(selectionModel: SelectionModel<Component>, strategy: SelectionDrawingStrategy) {
-        if (selectionModel is Unzoomable) {
-            unzoomableSelectionContainers[strategy]?.add(selectionModel as UnzoomableSelectionModel<Component>)
-                    ?: throw IllegalArgumentException("no suitable selection container found")
-        } else {
-            selectionContainers[strategy]?.add(selectionModel)
-                    ?: throw IllegalArgumentException("no suitable selection container found")
-        }
-    }
-
-    override fun removeSelectionModel(selectionModel: SelectionModel<Component>) {
-        selectionContainers.values.forEach { it.remove(selectionModel) }
-        if (selectionModel is UnzoomableSelectionModel) {
-            unzoomableSelectionContainers.values.forEach { it.remove(selectionModel) }
-        }
-    }
-
-    override fun removeAllSelectionModels() {
-        selectionContainers.values.forEach { it.clear() }
-    }
-
-    override fun hasSelectionModelFor(component: Component): Boolean {
-        selectionContainers.values.forEach {
-            if (!it.getDrawables().filter { it.component === component }.isEmpty()) {
-                return true
-            }
-        }
-        unzoomableSelectionContainers.values.forEach {
-            if (!it.getDrawables().filter { it.component === component }.isEmpty()) {
-                return true
-            }
-        }
-        return false
-    }
-
-    override fun zoomableSelectionContainerFor(strategy: SelectionDrawingStrategy): DrawableContainer<SelectionModel<Component>>? {
-        return selectionContainers[strategy]
-    }
-
-    override fun unzoomableSelectionContainerFor(strategy: SelectionDrawingStrategy): UnzoomableContainer<UnzoomableSelectionModel<Component>>? {
-        return unzoomableSelectionContainers[strategy]
     }
 }

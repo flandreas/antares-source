@@ -46,10 +46,6 @@ class ContainerDrawing(
     var model: SubGraphVertice = SubGraphVerticeImpl()
         private set
 
-    fun dispose() {
-        // empty
-    }
-
     /** ---- [DrawableContainer] interface */
 
     override fun add(drawable: Component, index: Int): DrawableContainer<Component> {

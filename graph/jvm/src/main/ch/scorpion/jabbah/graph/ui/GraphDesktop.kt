@@ -157,7 +157,7 @@ class GraphDesktop(
         slaveGraphNavigationPanels.add(panel)
     }
 
-    fun closeGraphNavigationPanel(panel: GraphNavigationPanel) {
+    private fun closeGraphNavigationPanel(panel: GraphNavigationPanel) {
         deassociate(panel)
 
         panel.dispose()
@@ -195,10 +195,14 @@ class GraphDesktop(
 
     /** Deassociate the specified open [GraphNavigationPanel] when it is being closed.*/
     private fun deassociate(panel: GraphNavigationPanel) {
-        associationOf(panel).let {
-            it!!.sourcePanel.drawingView.highlighter.unhighlight(it!!.ref)
-            referenceColorSequence.free(it!!.refColor)
-            associations.remove(it)
+        associationOf(panel).let { assoc ->
+            val content = assoc!!.sourcePanel.findContent { it.drawing.contains(assoc.ref) }
+            // BUG: This doesn't remove the HighlightModel from the highlight container if the source panel
+            // displays another (drill-down) DrawingViewContent, because the Highlighter uses the CURRENT
+            // DrawingViewContent for finding and removing the HighlightModel!
+            content?.highlighter?.unhighlight(assoc.ref)
+            referenceColorSequence.free(assoc.refColor)
+            associations.remove(assoc)
         }
     }
 

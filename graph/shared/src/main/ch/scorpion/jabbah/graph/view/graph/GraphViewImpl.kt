@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.container.DrawableContainerInputEventHandler
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.edit.model.DrawingImpl
@@ -130,14 +131,6 @@ class GraphViewImpl<T : GraphElementView<*>>(
             eventBus.post(ScenarioStepEvent(this, oldValue, value))
         }
 
-    override fun dispose() {
-        for (graphElementView in getDrawables()) {
-            graphElementView.dispose()
-        }
-        scenarios.dispose()
-        eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationObserver)
-    }
-
     override fun bind() {
         for (graphElementView in getDrawables()) {
             graphElementView.bind(graph!!)
@@ -247,6 +240,16 @@ class GraphViewImpl<T : GraphElementView<*>>(
             super.accept(visitor)
         }
         return visitor.visitLeave(this)
+    }
+
+    /** ---- [Drawing] interface */
+
+    override fun dispose() {
+        for (graphElementView in getDrawables()) {
+            graphElementView.dispose()
+        }
+        scenarios.dispose()
+        eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationObserver)
     }
 
     // ---- [DrawableContainerImpl] */

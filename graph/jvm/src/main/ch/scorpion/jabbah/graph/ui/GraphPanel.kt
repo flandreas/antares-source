@@ -107,7 +107,6 @@ class GraphPanel(
         (editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
         libraryPropertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
-        eventBus.register(ApplicationDataEvent::class, { handleApplicationDataChanged(it) })
         eventBus.register(ActiveViewChangedEvent::class, {
             updateEditability()
         })
@@ -133,12 +132,10 @@ class GraphPanel(
         return GraphPanelTransferHandler(editor, eventBus, GraphElementViewTransferable.FLAVOR, libraryHolder)
     }
 
-    private fun handleApplicationDataChanged(event: ApplicationDataEvent) {
-        val oldGraphView = (event.oldData as MetaGraph?)?.graph!!.graphView as GraphView<GraphElementView<*>>
-        val newGraphView = (event.newData as MetaGraph?)?.graph!!.graphView as GraphView<GraphElementView<*>>
+    fun setGraphView(newGraphView: GraphView<GraphElementView<*>>) {
+        val oldGraphView = graphNavigationPanel.drawingView.drawing
         graphNavigationPanel.setRootGraphView(newGraphView)
         scenarioPanel.graphView = newGraphView
-
         eventBus.post(EditedGraphViewEvent(oldGraphView, newGraphView))
     }
 

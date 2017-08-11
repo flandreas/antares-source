@@ -7,5 +7,8 @@ import ch.scorpion.jabbah.edit.Drawing
  * Standard implementation of the [Drawing] interface.
  */
 open class DrawingImpl<T : Component> : ComponentContainerImpl<T>(), Drawing<T> {
-    // empty so far
+
+    override fun dispose() {
+        // empty
+    }
 }

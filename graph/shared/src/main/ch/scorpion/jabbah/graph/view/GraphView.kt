@@ -14,6 +14,9 @@ import ch.scorpion.jabbah.io.Storable
  * When [GraphElementView]s are added to or removed from a [GraphView], the underlying [Graph] is
  * automatically updated with the [GraphElement] of the added or removed [GraphElementView].
  *
+ * Disposing a [GraphView] detaches it and all contained [GraphElementView]s from their models,
+ * and releases held resources.
+ *
  * @param T the type of [GraphElementView] that this [GraphView] contains and displays.
  */
 interface GraphView<T : GraphElementView<*>> : Drawing<T> {
@@ -35,12 +38,6 @@ interface GraphView<T : GraphElementView<*>> : Drawing<T> {
 
     /** The current [ScenarioStep] of this [GraphView], if any. Posts a [ScenarioStepEvent] if changed.*/
     var currentScenarioStep: ScenarioStep?
-
-    /**
-     * Disposes this [GraphView] by detaching itself and all contained [GraphElementView]s from their models,
-     * and by releasing all held resources.
-     */
-    fun dispose();
 
     /**
      * Asks this [GraphView] to make sure that all its [GraphElementView]s are properly bound to their models.
