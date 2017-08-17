@@ -77,9 +77,13 @@ class GraphViewConnectServiceImpl(
         connect(edgeView, outputPortView!!, inputPortView!!)
     }
 
-    override fun <T : Any> connect(edgeView: EdgeView<T>, origOutput: PortView<T>, destInput: PortView<T>) {
-        connectToOrigin(edgeView, origOutput.owner!!, origOutput.port);
-        connectToDestination(edgeView, destInput.owner!!, destInput.port);
+    override fun <T : Any> connect(edgeView: EdgeView<T>, origOutput: PortView<T>?, destInput: PortView<T>?) {
+        if (origOutput != null) {
+            connectToOrigin(edgeView, origOutput.owner!!, origOutput.port)
+        }
+        if (destInput != null) {
+            connectToDestination(edgeView, destInput.owner!!, destInput.port)
+        }
     }
 
     override fun <T : Any> unconnect(edgeView: EdgeView<T>): EdgeView<T>? {

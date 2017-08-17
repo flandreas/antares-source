@@ -46,7 +46,7 @@ interface GraphViewConnectService {
      * Connects the specified [EdgeView] with the [PortView] of an origin [VerticeView] and the input
      * [PortView] of a destination [VerticeView], and layouts the [EdgeView].
      */
-    fun <T: Any> connect(edgeView: EdgeView<T>, origOutput: PortView<T>, destInput: PortView<T>)
+    fun <T: Any> connect(edgeView: EdgeView<T>, origOutput: PortView<T>?, destInput: PortView<T>?)
 
     /**
      * Unconnects an [EdgeView] from the origin [Port] to which it it currently connected,
