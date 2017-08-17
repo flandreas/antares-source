@@ -861,8 +861,8 @@ open class EdgeViewImpl<T: Any>(
         }
 
         val newPoint = Point2D(
-                polyline.getFirstPoint().x + portView.direction.dx * portView.minSegmentLength,
-                polyline.getFirstPoint().y + portView.direction.dy * portView.minSegmentLength)
+                polyline.getFirstPoint().x + portView.relativeDirection.dx * portView.minSegmentLength,
+                polyline.getFirstPoint().y + portView.relativeDirection.dy * portView.minSegmentLength)
 
         polyline.addPointAt(1, newPoint.x, newPoint.y)
         return true
@@ -884,8 +884,8 @@ open class EdgeViewImpl<T: Any>(
         }
 
         val newPoint = Point2D(
-                polyline.getLastPoint().x + portView.direction.dx * portView.minSegmentLength,
-                polyline.getLastPoint().y + portView.direction.dy * portView.minSegmentLength)
+                polyline.getLastPoint().x + portView.relativeDirection.dx * portView.minSegmentLength,
+                polyline.getLastPoint().y + portView.relativeDirection.dy * portView.minSegmentLength)
 
         polyline.addPointAt(polyline.pointsCount - 1, newPoint.x, newPoint.y)
         return true

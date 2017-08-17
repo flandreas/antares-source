@@ -49,7 +49,14 @@ interface PortView<T: Any> : Drawable, Storable {
     /** The absolute {@link Direction} into which this {@link PortView} points when not being rotated. */
     var direction: Direction
 
-    /** The {@link Rotation} around the relative location of this {@link PortView} within the owning {@link VerticeView}.*/
+    /** Returns the [direction] rotated by [ownerRotation].*/
+    val relativeDirection: Direction get() = ownerRotation.rotateDirection(direction)
+
+    /**
+     * The {@link Rotation} around the relative location of this {@link PortView} within the owning {@link VerticeView}.
+     * Is the same as the `rotation` property of the owning [VerticeView]. Modelled as variable so that value updates
+     * from [VerticeView] can lead to an update of this [PortView].
+     */
     var ownerRotation: Rotation
 
     /**

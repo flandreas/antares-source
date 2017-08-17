@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
@@ -73,6 +74,20 @@ class MoveSegmentIntegrationTest {
         assertThat(splitResult.nodeView.location, `is`(Point2D(150, 50)))
         assertThat(splitResult.tailEdgeView.segmentPointCount, `is`(3))
         assertThat(splitResult.newEdgeView.segmentPointCount, `is`(3))
+    }
+
+    @Test
+    fun shouldMoveSegmentAtRotatedVertice() {
+        val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
+        val v2 = builder.addVertice(createVerticeView(200, 0, Direction.WEST))
+        v2.rotation = Rotation.R90
+        val ev = builder.connect(v1, v2)
+
+        ev.moveSegment(1, 20.0)
+        assertThat(ev.segmentPointCount, `is`(5))
+        for (i in 0..ev.segmentPointCount - 2) {
+            assertThat("Segment $i is not orthogonal", ev.isSegmentOrthogonal(i), `is`(true))
+        }
     }
 
     private fun createVerticeView(x: Int, y: Int, dir: Direction): TestVerticeView {

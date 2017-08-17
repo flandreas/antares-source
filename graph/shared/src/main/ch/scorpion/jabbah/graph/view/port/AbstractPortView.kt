@@ -79,11 +79,10 @@ abstract class AbstractPortView<T: Any>(
             update()
         }
 
-    override var ownerRotation: Rotation = Rotation.R0
+    override var ownerRotation: Rotation
+        get() = owner?.rotation ?: Rotation.R0
         set(value) {
             invalidate()
-            // TODO Is this really not needed?
-            // field = value
             modelChanged()
             invalidate()
             update()
