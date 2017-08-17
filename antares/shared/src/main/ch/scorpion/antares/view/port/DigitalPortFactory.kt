@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.view.container.PortViewComponent
+import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.view.port.PortFactory
 import ch.scorpion.jabbah.graph.view.port.PortView
 

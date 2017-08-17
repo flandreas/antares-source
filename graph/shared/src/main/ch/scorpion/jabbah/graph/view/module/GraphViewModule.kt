@@ -3,14 +3,12 @@ package ch.scorpion.jabbah.graph.view.module
 import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.BasicStyle
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
@@ -21,7 +19,7 @@ import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.GraphScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.connect.*
-import ch.scorpion.jabbah.graph.view.container.*
+import ch.scorpion.jabbah.graph.container.*
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.net.edge.*
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
@@ -39,13 +37,14 @@ import ch.scorpion.jabbah.io.TypeMap
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
 import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
 import ch.scorpion.jabbah.edit.select.BoundingBoxBelowSelectionModel
 import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.app.GraphViewService
+import ch.scorpion.jabbah.graph.view.app.GraphViewServiceImpl
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 
@@ -65,19 +64,26 @@ object GraphViewModule : AbstractModule() {
     val dragEdgeViewDestinationConnector: DragEdgeViewDestinationConnector by lazy { DragEdgeViewDestinationConnector({graphViewConnectService})}
 
     val edgeToPortConnector: EdgeToPortConnector by lazy { EdgeToPortConnector(
-            {graphViewConnectService},
+            {graphViewConnectService },
             {edgeViewFactoryImpl})
     }
 
     val outputToInputConnector: OutputToInputConnector by lazy { OutputToInputConnector(
-            { graphViewConnectService},
+            { graphViewConnectService },
             {edgeViewFactoryImpl})
     }
 
     val inputToOutputOrEdgeConnector: InputToOutputOrEdgeConnector by lazy { InputToOutputOrEdgeConnector(
-            { graphViewConnectService},
+            { graphViewConnectService },
             { edgeViewFactoryImpl})
     }
+
+    val graphViewConnectService: GraphViewConnectService by lazy {
+        GraphViewConnectServiceImpl(
+                { edgeViewFactoryImpl },
+                { nodeViewFactory})}
+
+    val graphViewService: GraphViewService = GraphViewServiceImpl(EditModule.commandManager)
 
     override fun initialize() {
         EditModule.require()
@@ -87,7 +93,9 @@ object GraphViewModule : AbstractModule() {
         fillProperties(BaseModule.properties)
         configureStyleRepository(StyleRepository.INSTANCE)
         configureSelectionModels(EditSelectModule.selectionModelFactory)
+
         ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptModule.scriptEngineProvider.invoke()) }
+        EditModule.drawingService = graphViewService
 
         Themes.register(GraphTheme())
     }
@@ -134,11 +142,6 @@ object GraphViewModule : AbstractModule() {
         factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class.simpleName!!, { EdgeViewBelowSelectionModel(it as EdgeView<*>) })
         factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class.simpleName!!, { BoundingBoxBelowSelectionModel(it) })
     }
-
-    val graphViewConnectService: GraphViewConnectService by lazy {
-        GraphViewConnectServiceImpl(
-                {edgeViewFactoryImpl},
-                { nodeViewFactory})}
 
     private var edgeViewFactoryImpl: EdgeViewFactory<Any> = EdgeViewFactoryImpl(
             DrawStyleModule.styleProvider,

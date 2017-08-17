@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.graph.view.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.UUID
 

@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.edit.SelectionModel
 import ch.scorpion.jabbah.edit.SelectionModelProvider
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.graph.view.container.ControlViewComponent
+import ch.scorpion.jabbah.graph.container.ControlViewComponent
 
 
 /**

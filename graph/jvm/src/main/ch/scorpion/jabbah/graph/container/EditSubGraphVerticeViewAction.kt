@@ -11,8 +11,6 @@ import ch.scorpion.jabbah.edit.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.view.container.ContainerDrawing
-import ch.scorpion.jabbah.graph.view.container.ContainerEditor
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.Component

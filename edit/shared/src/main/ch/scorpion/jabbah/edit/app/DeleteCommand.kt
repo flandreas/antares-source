@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.edit.editor
+package ch.scorpion.jabbah.edit.app
 
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.Drawing

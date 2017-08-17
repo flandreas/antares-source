@@ -92,23 +92,27 @@ class GraphViewConnectServiceImpl(
         return joinedDestEdgeView
     }
 
+    override fun unconnectEdgeViewOrigin(edgeView: EdgeView<Any>) {
+        if (edgeView.model != null && edgeView.originPort != null) {
+            edgeView.model!!.unconnect(edgeView.originPort!!)
+            edgeView.connectToOrigin(null, null)
+        }
+    }
+
+    override fun unconnectEdgeViewDestination(edgeView: EdgeView<Any>) {
+        if (edgeView.model != null && edgeView.destinationPort != null) {
+            edgeView.model!!.unconnect(edgeView.destinationPort!!)
+            edgeView.connectToDestination(null, null)
+        }
+    }
+
     override fun unconnect(graphView: GraphView<out GraphElementView<*>>, verticeView: VerticeView<*>) {
         graphView.getEdgeViews()
                 .filter { ev -> ev.origin === verticeView }
-                .forEach { ev ->
-                    val port = ev.originPort
-                    val net = ev.model
-                    net!!.unconnect(port!!)
-                    ev.connectToOrigin(null, null)
-                }
+                .forEach { ev -> unconnectEdgeViewOrigin(ev) }
         graphView.getEdgeViews()
                 .filter { ev -> ev.destination === verticeView }
-                .forEach { ev ->
-                    val port = ev.destinationPort
-                    val net = ev.model
-                    net!!.unconnect(port!!)
-                    ev.connectToDestination(null, null)
-                }
+                .forEach { ev -> unconnectEdgeViewDestination(ev) }
     }
 
     override fun <T : Any> addConnection(graphView: GraphView<GraphElementView<*>>, orig: VerticeView<*>, dest: VerticeView<*>): EdgeView<T> {

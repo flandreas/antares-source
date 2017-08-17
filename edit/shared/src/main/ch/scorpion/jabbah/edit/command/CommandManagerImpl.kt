@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandEvent
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.DrawingView
 
 /**
  * Standard implementation of the [CommandManager] interface.
@@ -42,6 +43,10 @@ class CommandManagerImpl(override val eventBus: EventBus) : CommandManager {
                 command.validate()
             }
         }
+    }
+
+    override fun beginTransaction(descriptionKey: String, drawingView: DrawingView<*>?) {
+        beginTransaction(TransactionCommand(descriptionKey, drawingView), true)
     }
 
     override fun execute(command: Command) {
@@ -156,6 +161,31 @@ class CommandManagerImpl(override val eventBus: EventBus) : CommandManager {
                 c.undo()
                 c.validate()
             }
+        }
+    }
+
+    /**
+     * A [Command] implementation that does nothing, but serves only as a dummy [Command]
+     * for holding inner transaction [Command]s.
+     *
+     * @param descriptionKey the translation key of the transaction's description
+     * @property drawingView the [DrawingView] to validate, if any
+     */
+    private class TransactionCommand(
+            descriptionKey: String,
+            private val drawingView: DrawingView<*>? = null
+    ) : AbstractCommand(descriptionKey, null) {
+
+        override fun execute() {
+            // empty
+        }
+
+        override fun undo() {
+            // empty
+        }
+
+        override fun validate() {
+            drawingView?.drawing?.validate()
         }
     }
 }

@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.app.DrawingService
+import ch.scorpion.jabbah.edit.app.DrawingServiceImpl
 import ch.scorpion.jabbah.edit.command.CommandManagerImpl
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
@@ -43,6 +45,8 @@ object EditModule : AbstractModule() {
 
     /** Creates an [AttentionDrawer] that produces an animation for drawing the attention of the user to a particular location. */
     val attentionDrawerFactory: () -> AttentionDrawer = { AttentionDrawerImpl() }
+
+    var drawingService: DrawingService = DrawingServiceImpl()
 
     override fun initialize() {
         DrawModule.require()

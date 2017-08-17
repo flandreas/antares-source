@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.view.container
+package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.edit.SelectionModel

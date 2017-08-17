@@ -29,6 +29,13 @@ interface CommandManager {
     fun beginTransaction(command: Command, register: Boolean = false)
 
     /**
+     * Begins a new transaction by creating a dummy [Command] with the specified description.
+     * @param descriptionKey the translation key of the transaction's description
+     * @property drawingView the [DrawingView] to validate, if any
+     */
+    fun beginTransaction(descriptionKey: String, drawingView: DrawingView<*>? = null)
+
+    /**
      * Executes the specified [Command] and registers it with the current transaction.
      * @throws IllegalStateException if there is no current transaction
      */

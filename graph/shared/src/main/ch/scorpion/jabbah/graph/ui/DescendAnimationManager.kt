@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.view.ui
+package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.animation.*
 import ch.scorpion.jabbah.draw.View

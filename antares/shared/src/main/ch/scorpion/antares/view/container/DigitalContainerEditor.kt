@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.graph.view.container.ContainerEditor
+import ch.scorpion.jabbah.graph.container.ContainerEditor
 
 class DigitalContainerEditor(
     view: DrawingView<Drawing<Component>>,

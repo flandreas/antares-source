@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.model.OneDownAction
 import ch.scorpion.jabbah.edit.model.OneUpAction
 import ch.scorpion.jabbah.edit.model.SelectAllAction
 import ch.scorpion.jabbah.edit.model.ToBackAction
+import ch.scorpion.jabbah.edit.module.EditModule
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JMenu
 import javax.swing.JMenuBar
@@ -52,7 +53,7 @@ open class MenuBarBuilder(val application: DesktopApplication, val eventBus: Eve
         menu.add(JMenuItem(UndoAction(BaseModule.eventBus, application.mainFrame.editor.commandManager)))
         menu.add(JMenuItem(RedoAction(BaseModule.eventBus, application.mainFrame.editor.commandManager)))
         menu.addSeparator()
-        menu.add(JMenuItem(DeleteAction(DrawViewModule.viewManager, application.mainFrame.editor.commandManager)))
+        menu.add(JMenuItem(DeleteAction(DrawViewModule.viewManager, EditModule.drawingService)))
         menu.add(JMenuItem(RotateAction(DrawViewModule.viewManager, application.mainFrame.editor.commandManager, BaseModule.eventBus)))
         menu.addSeparator()
         menu.add(JMenuItem(SelectAllAction(eventBus, DrawViewModule.viewManager)))

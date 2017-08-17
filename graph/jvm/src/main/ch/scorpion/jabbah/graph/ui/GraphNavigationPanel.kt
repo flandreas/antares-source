@@ -17,10 +17,6 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.ScenarioEvent
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
-import ch.scorpion.jabbah.graph.view.ui.GraphViewDisplayHandler
-import ch.scorpion.jabbah.graph.view.ui.DescendAnimationManager
-import ch.scorpion.jabbah.graph.view.ui.GraphViewExecutionHandler
-import ch.scorpion.jabbah.graph.view.ui.NavigationStackEvent
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.base.logger

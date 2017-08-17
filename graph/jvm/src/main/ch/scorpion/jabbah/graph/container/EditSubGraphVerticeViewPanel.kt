@@ -2,8 +2,6 @@ package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.library.LibraryHolder
-import ch.scorpion.jabbah.graph.view.container.ContainerDrawing
-import ch.scorpion.jabbah.graph.view.container.ContainerEditor
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner

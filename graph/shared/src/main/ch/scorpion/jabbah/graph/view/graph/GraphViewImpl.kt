@@ -288,11 +288,6 @@ class GraphViewImpl<T : GraphElementView<*>>(
     /** Overridden in order to remove the [GraphElement] from the [Graph] that this [GrapView] displays.*/
     override fun remove(drawable: T): DrawableContainer<T> {
         if (graph != null) {
-            if (drawable is EdgeView<*>) {
-                connectService.unconnect(drawable)
-            } else if (drawable is VerticeView<*>) {
-                connectService.unconnect(this, drawable)
-            }
             if (drawable.model != null && getElementViews(drawable.model!!).size == 1) {
                 graph!!.remove(drawable.model!!)
             }

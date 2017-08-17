@@ -9,9 +9,6 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.*
-import ch.scorpion.jabbah.graph.view.container.ContainerDrawing
-import ch.scorpion.jabbah.graph.view.container.ControlViewComponent
-import ch.scorpion.jabbah.graph.view.container.PortViewComponent
 import ch.scorpion.jabbah.graph.view.editor.GraphPortViewEvent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortFactory

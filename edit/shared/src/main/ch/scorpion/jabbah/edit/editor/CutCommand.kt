@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.app.DeleteCommand
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 
 @Suppress("unused")

@@ -17,17 +17,12 @@ import ch.scorpion.jabbah.edit.model.polyline.PolylineTool
 import ch.scorpion.jabbah.edit.model.rectangle.EllipseComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.LabelTool
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.container.ContainerDrawing
-import ch.scorpion.jabbah.graph.view.container.ContainerEditor
-import ch.scorpion.jabbah.graph.view.container.ControlViewComponent
-import ch.scorpion.jabbah.graph.view.container.PortViewComponent
 import java.awt.BorderLayout
 import javax.swing.*
 

@@ -4,7 +4,6 @@ import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.module.AntaresModuleJs
 import ch.scorpion.jabbah.base.LOG_SYSTEM
 import ch.scorpion.jabbah.base.LogLevel
-import ch.scorpion.jabbah.base.LogSystemJs
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.draw.view.CanvasJs
@@ -17,7 +16,7 @@ import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader

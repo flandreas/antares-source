@@ -25,8 +25,8 @@ import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
-import ch.scorpion.jabbah.graph.view.container.ContainerDrawing
-import ch.scorpion.jabbah.graph.view.container.ContainerEditor
+import ch.scorpion.jabbah.graph.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 

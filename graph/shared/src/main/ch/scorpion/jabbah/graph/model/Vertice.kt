@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.base.exception.NoSuchElementException
 interface Vertice : GraphElement {
 
     /**
-     * The name of this [Vertice]. Is often provided by the user and can serve to distinguish two [Vertices] of the same type
+     * The name of this [Vertice]. Is often provided by the user and can serve to distinguish two [Vertice]s of the same type
      * It can also be empty. Example: "A".
      */
     var name: String?

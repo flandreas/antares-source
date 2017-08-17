@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.view.ui
+package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.edit.Editor

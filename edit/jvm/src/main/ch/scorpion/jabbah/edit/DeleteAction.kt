@@ -1,7 +1,8 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.edit.editor.DeleteCommand
+import ch.scorpion.jabbah.edit.app.DrawingService
+import ch.scorpion.jabbah.edit.module.EditModule
 import javax.swing.Action
 import java.awt.event.ActionEvent
 
@@ -10,16 +11,15 @@ import java.awt.event.ActionEvent
  */
 class DeleteAction(
         viewManager: ViewManager,
-        val commandManager: CommandManager
+        private val drawingService: DrawingService = EditModule.drawingService
 ) : AbstractSelectionAwareAction("edit.action.delete", viewManager) {
 
     override fun actionPerformed(e: ActionEvent?) {
         val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
-        commandManager.beginTransaction(DeleteCommand(
-                drawingView,
+        drawingService.delete(
                 drawingView.selectionManager.selection
                         .filter { it.deletable }
-                        .toCollection(mutableListOf<Component>())))
-        commandManager.commitTransaction()
+                        .toCollection(mutableListOf<Component>()),
+                drawingView)
     }
 }
