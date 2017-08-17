@@ -72,29 +72,4 @@ class GraphViewImplTest {
         assertThat(graphView.contains(verticeView), `is`(false))
         assertThat(graphView.graph!!.contains(verticeView.vertice), `is`(false))
     }
-
-    @Test
-    fun shouldUnconnectWhenRemovingEdgeView() {
-        val testGraph = TestGraphView(BaseModule.eventBus)
-        testGraph.graphView.remove(testGraph.ev)
-
-        assertThat(testGraph.ev.origin, `is`(nullValue()))
-        assertThat(testGraph.ev.destination, `is`(nullValue()))
-    }
-
-    @Test
-    fun shouldUnconnectWhenRemovingOriginVerticeView() {
-        val testGraph = TestGraphView(BaseModule.eventBus)
-        testGraph.graphView.remove(testGraph.vv1)
-
-        assertThat(testGraph.ev.origin, `is`(nullValue()))
-    }
-
-    @Test
-    fun shouldUnconnectWhenRemovingDestinationVerticeView() {
-        val testGraph = TestGraphView(BaseModule.eventBus)
-        testGraph.graphView.remove(testGraph.vv2)
-
-        assertThat(testGraph.ev.destination, `is`(nullValue()))
-    }
 }

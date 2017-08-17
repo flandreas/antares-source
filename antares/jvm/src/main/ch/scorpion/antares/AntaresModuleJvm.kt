@@ -27,7 +27,10 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerEditor
+import ch.scorpion.jabbah.graph.view.GraphTextComponent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.io.IOModule
+import ch.scorpion.jabbah.io.TypeMap
 
 
 /**
@@ -51,6 +54,7 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
         }
         LibraryModule.libraryHolder = LibraryHolder(LibraryModule.libraryFactory.invoke())
 
+        configureTypeMap(IOModule.typeMap)
         configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
         configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
     }
@@ -62,6 +66,10 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
             drawingView
         })
         return DigitalContainerEditor(containerCanvas.view as DrawingView<Drawing<Component>>, eventBus)
+    }
+
+    private fun configureTypeMap(typeMap: TypeMap) {
+        typeMap.register("text", GraphTextComponent::class)
     }
 
     private fun configurePropertyRenderer(registry: PropertyRendererRegistry) {

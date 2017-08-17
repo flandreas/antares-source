@@ -46,7 +46,6 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.view.CurrentGraphViewAnimationType
-import ch.scorpion.jabbah.graph.view.GraphTextComponent
 import ch.scorpion.jabbah.graph.view.net.edge.DragEdgePointHighlight
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
@@ -143,8 +142,6 @@ object AntaresViewModule : AbstractModule() {
     }
 
     private fun configureTypeMap(typeMap: TypeMap) {
-        typeMap.register("text", GraphTextComponent::class)
-
         typeMap.register("circuitInOutView", CircuitInOutView::class)
         typeMap.register("digitalEdgeView", DigitalEdgeView::class)
         typeMap.register("digitalNodeView", DigitalNodeView::class)
