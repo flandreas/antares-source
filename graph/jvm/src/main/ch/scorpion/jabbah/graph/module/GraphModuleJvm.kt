@@ -27,13 +27,14 @@ object GraphModuleJvm : AbstractModule() {
     override fun initialize() {
         BaseModuleJvm.require()
 
-        registerTypes(IOModule.typeMap)
         ScriptModule.scriptEngineProvider = { ScriptEngineJvm() }
         ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptModule.scriptEngineProvider.invoke()) }
         ScriptModule.require()
         ExecutionModule.require()
         EditModuleJvm.require()
         GraphViewModuleJvm.require()
+
+        registerTypes(IOModule.typeMap)
     }
 
     private fun registerTypes(typeMap: TypeMap) {
