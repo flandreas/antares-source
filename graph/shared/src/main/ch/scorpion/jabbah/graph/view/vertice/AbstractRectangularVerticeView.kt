@@ -1,18 +1,25 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
+import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.draw.DrawableAdapter
+import ch.scorpion.jabbah.draw.DrawableEvent
+import ch.scorpion.jabbah.edit.model.AbstractComponent
+import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.Storable
 
 /**
  * A rectangular shaped [VerticeView] implementation that adds the bounding boxes of all [PortView]s to its
@@ -24,7 +31,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  * whose location is at the connection point of one of the [PortView]s and **not** at the upper-left
  * corner of a rectangular box.
  *
- * @param T the type of the model [Vertice] that this [VerticeView] displays
+ * @param T the type of the model [Vertice] that this [AbstractRectangularVerticeView] displays
  */
 abstract class AbstractRectangularVerticeView<T : Vertice>(
     styleProvider: StyleProvider,
@@ -55,6 +62,13 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 
     /** Contains the rectangular area that responds to [contains] method calls. Always kept in sync with the geometry.*/
     private val containsBox = Rectangle2D()
+
+    /** Listens for geometry updates on [PortView]s and initiates bounding box recalculation.*/
+    private val portViewUpdateListener = object : DrawableAdapter() {
+        override fun drawableUpdated(event: DrawableEvent) {
+            updateBoxes()
+        }
+    }
 
     /** ---- [Locatable] interface  */
 
@@ -111,11 +125,13 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 
     override fun addPortView(portView: PortView<*>) {
         super.addPortView(portView)
+        portView.addDrawableListener(portViewUpdateListener)
         updateBoxes()
     }
 
     override fun removePortView(portView: PortView<*>) {
         super.removePortView(portView)
+        portView.removeDrawableListener(portViewUpdateListener)
         updateBoxes()
     }
 

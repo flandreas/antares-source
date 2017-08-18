@@ -33,10 +33,13 @@ interface PortView<T: Any> : Drawable, Storable {
         val PROP_HIGHLIGHT = "graph.view.portView.hightlight"
     }
 
-    /** The [Port] that this [PortView] displays.*/
+    /** The [Port] that this [PortView] displays. Must be one of the [Port]s of the [owner]'s [Vertice].*/
     var port: Port<T>
 
-    /** The [VerticeView] that owns this [PortView]. [port] must be one of the [Port]s of the [VerticeView]'s [Vertice].*/
+    /**
+     * The [VerticeView] that owns this [PortView]. Needed for rotation behaviour and for determining
+     * the connection point while connecting.
+     */
     var owner: VerticeView<*>?
 
     /** The relative location of this [PortView] within the owning [VerticeView].*/
