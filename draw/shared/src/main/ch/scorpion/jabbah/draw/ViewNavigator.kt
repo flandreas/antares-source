@@ -13,8 +13,6 @@ interface ViewNavigator {
      *
      * A zoom factor of 1.0 represents no zooming (100%). Zoom factors smaller than 1.0 result in drawings that are
      * displayed smaller than normal. For example, a zoom factor of 0.5 displays the drawing in half the original size.
-     *
-     * Notifies all registered [PropertyChangeListener]s that property [.PROP_ZOOM_FACTOR] has changed.
      * @param zoomFactor the new zoom factor, where 1.0 represents unzoomed views
      * @throws IllegalArgumentException if zoomFactor is smaller than or equal to 0
      */

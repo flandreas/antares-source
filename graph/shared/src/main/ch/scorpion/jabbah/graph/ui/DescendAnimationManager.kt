@@ -27,6 +27,7 @@ class DescendAnimationManager(val animator: Animator) {
      * Starts an asynchronous animation that descends into the specified [SubGraphVerticeView].
      * @param diver the code to be executed when the outer animation has finished and before
      * the inner animation is started. This is typically code that exchanges the [DrawingView] in a [View]
+     * @param ender the code to be executed when the overall animation has ended
      */
     fun descendInto(drawingView: DrawingView<*>,
         subGraphVerticeView: SubGraphVerticeView<*>,

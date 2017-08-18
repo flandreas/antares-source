@@ -145,14 +145,19 @@ open class GraphNavigationPanel(
         val subGraphView = request.subGraphVerticeView.createSubGraphView()
 
         if (!request.quickMode) {
+            drawingView.userZoomEnabled = false
+            navigationStackView.isEnabled = false
             DescendAnimationManager(animator).descendInto(
                     drawingView,
                     request.subGraphVerticeView,
                     diver = {
-                        navigationStackView.isEnabled = false
                         navigationStackView.navigationStack.push(drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>))
                     },
-                    ender = { navigationStackView.isEnabled = true})
+                    ender = {
+                        navigationStackView.isEnabled = true
+                        drawingView.userZoomEnabled = true
+                    }
+            )
         }
     }
 

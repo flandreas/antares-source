@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.PropertyChangeEvent
+import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
@@ -23,6 +25,14 @@ abstract class AbstractViewAction(
         val PROP_ZOOM_STEP = "view.command.zoom.step"
     }
 
+    private val viewPropertyListener = object : PropertyChangeListener<Any> {
+        override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+            if (View.PROP_USER_ZOOM_ENABLED == e.name) {
+                updateEnabledness()
+            }
+        }
+    }
+
     init {
         eventBus.register(ActiveViewChangedEvent::class, {
             activeViewChanged(it.oldView, it.newView)
@@ -30,7 +40,13 @@ abstract class AbstractViewAction(
     }
 
     protected open fun activeViewChanged(oldView: View<out InputEventContext>?, newView: View<out InputEventContext>?) {
-        isEnabled = viewManager.activeView != null
+        oldView?.removePropertyChangeListener(viewPropertyListener)
+        updateEnabledness()
+        newView?.addPropertyChangeListener(viewPropertyListener)
+    }
+
+    private fun updateEnabledness() {
+        isEnabled = viewManager.activeView != null && viewManager.activeView!!.userZoomEnabled
     }
 }
 

@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.base.logger
 /**
  * A default implementation of the [ViewNavigator] interface.
  */
-class ViewNavigatorImpl(val view: View<*>) : ViewNavigator {
+class ViewNavigatorImpl(private val view: View<*>) : ViewNavigator {
 
     private companion object {
         val LOG by logger(ViewNavigatorImpl::class)

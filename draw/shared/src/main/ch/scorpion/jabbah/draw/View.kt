@@ -14,8 +14,12 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2D
 interface View<C : InputEventContext> : ViewToModelTransform {
 
     companion object {
+
         /** The name of the [ZoomPan] property in [PropertyChangeEvent]s.*/
         val PROP_ZOOM_PAN = "PROP_ZOOM_PAN"
+
+        /** The name of the [userZoomEnabled] property in [PropertyChangeEvent]s.*/
+        val PROP_USER_ZOOM_ENABLED = "PROP_USER_ZOOM_ENABLED"
     }
 
     /** The [Canvas] that renders this [View].*/
@@ -133,7 +137,10 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
     /** ---- Navigation */
 
-    /** Holds the current zoom and pan of this [View].*/
+    /**
+     * Holds the current zoom and pan of this [View].
+     * When changed, notifies all registered [PropertyChangeListener]s that property [PROP_ZOOM_PAN] has changed.
+     */
     var zoomPan: ZoomPan
 
     /** A shortcut for getting the zoom factor in [zoomPan].*/
@@ -147,6 +154,13 @@ interface View<C : InputEventContext> : ViewToModelTransform {
      * (which is the responsibility of subclasses, because [View] doesn't define a main content).
      */
     var defaultZoomStrategy: ZoomStrategy
+
+    /**
+     * Determines whether the user can manually change the [ZoomPan] of this [View]. While this is typically allowed,
+     * there are situations when it isn't allowed, for example during zoom animations.
+     * When changed, notifies all registered [PropertyChangeListener]s that property [PROP_USER_ZOOM_ENABLED] has changed.
+     */
+    var userZoomEnabled: Boolean
 
 
     /** ---- Content management */

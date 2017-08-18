@@ -267,6 +267,14 @@ open class ViewImpl<C: InputEventContext>(
             firePropertyChange(View.PROP_ZOOM_PAN, oldValue, newValue)
         }
 
+    override var userZoomEnabled: Boolean = true
+        set(value) {
+            if (field != value) {
+                field = value
+                firePropertyChange(View.PROP_USER_ZOOM_ENABLED, !field, field)
+            }
+        }
+
     protected fun applyDefaultZoomStrategy() {
         defaultZoomStrategy.apply(navigator)
     }
