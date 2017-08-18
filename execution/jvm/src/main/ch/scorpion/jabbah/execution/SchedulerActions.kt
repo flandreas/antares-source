@@ -71,6 +71,7 @@ class ExecutionDepthAction(
 
     private fun updateState() {
         putValue(Action.SELECTED_KEY, scheduler.isDeepExecution)
+        isEnabled = !scheduler.isActive
     }
 
     override fun actionPerformed(e: ActionEvent?) {
