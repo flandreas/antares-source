@@ -407,10 +407,21 @@ object GateMnemonic {
         context.g.drawOval(s(0.75), s(3.75), s(0.5) + 1, s(0.5) + 1)
     }
 
+    /**
+     * Determines whether gate mnemonics have to be drawn (depending on the [InputCount] and the zoom level,
+     * and prepares drawing by setting up the coordinate system origin if drawing is required.
+     */
     private fun begin(gateView: DigitalComponentView<*>, context: DrawContext): Boolean {
         if (isDisplayableFor(context.g.transform) && gateView.model!!.inputCount <= 2) {
+            if (gateView is BoxGateView<*>) {
+                gateView.labelStyle = BoxGateView.LabelStyle.SMALL_UPPER_LEFT
+            }
             context.g.translate(gateView.x, gateView.y)
             return true
+        }
+        if (gateView is BoxGateView<*>) {
+            // TODO Remember old labelStyle and re-establish in [end]
+            gateView.labelStyle = BoxGateView.LabelStyle.LARGE_CENTERED
         }
         return false
     }

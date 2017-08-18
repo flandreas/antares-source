@@ -41,6 +41,7 @@ interface Font {
     fun isItalic(): Boolean
 
     fun deriveFont(style: FontStyle): Font
+    fun deriveFont(size: Int): Font
 }
 
 data class FontImpl (
@@ -54,5 +55,9 @@ data class FontImpl (
 
     override fun deriveFont(style: FontStyle): Font {
         return copy(style = style.value)
+    }
+
+    override fun deriveFont(size: Int): Font {
+        return copy(size = size)
     }
 }

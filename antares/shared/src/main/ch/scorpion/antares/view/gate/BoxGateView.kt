@@ -35,6 +35,50 @@ open class BoxGateView<T : Vertice>(
     vertice: T
 ) : DigitalComponentView<T>(styleProvider, baseResourceKey, vertice) {
 
+    /** Represents the supported styles for the [Label] of a [BoxGateView].*/
+    enum class LabelStyle {
+
+        /**
+         * Positions the [Label] within the box by centering it horizontally and placing it at one-third of the
+         * height.
+         */
+        LARGE_CENTERED {
+            override fun updateLabel(box: BoxGateView<*>) {
+                box.label?.let {
+                    box.label.font = box.font
+                    box.label.ownerRotation = box.rotation
+                    box.label.horizontalAligment = Label.HorizontalAlignment.CENTER
+                    box.label.verticalAligment = Label.VerticalAlignment.CENTER
+                    box.label.location = when(box.rotation) {
+                        Rotation.R0 -> Point2D(box.x + box.width / 2, box.y + box.height / 3)
+                        Rotation.R180 -> Point2D(box.x + box.width / 2, box.y + 2 * box.height / 3)
+                        Rotation.R90 -> Point2D(box.x + 2 * box.width / 3, box.y + box.height / 2)
+                        Rotation.R270 -> Point2D(box.x + box.width / 3, box.y + box.height / 2)
+                    }
+                }
+            }
+        },
+
+        SMALL_UPPER_LEFT {
+            override fun updateLabel(box: BoxGateView<*>) {
+                box.label?.let {
+                    box.label.font = box.font.deriveFont((box.font.size * FONT_SIZE_FACTOR).toInt())
+                    box.label.ownerRotation = box.rotation
+                    box.label.horizontalAligment = Label.HorizontalAlignment.RIGHT
+                    box.label.verticalAligment = Label.VerticalAlignment.TOP
+                    box.label.location = Point2D(box.bounds.maxX - SMALL_LABEL_INSET, box.bounds.minY + SMALL_LABEL_INSET)
+                }
+            }
+        };
+
+        companion object {
+            val SMALL_LABEL_INSET = 3
+            val FONT_SIZE_FACTOR = 0.6
+        }
+
+        abstract fun updateLabel(box: BoxGateView<*>)
+    }
+
     companion object {
         val MIN_WIDTH = 6
         val MIN_HEIGHT = 8
@@ -46,6 +90,19 @@ open class BoxGateView<T : Vertice>(
         /** The distance between [Port]s if the number of [Port]s is bigger than two. */
         val SMALL_PORT_DISTANCE = 2
     }
+
+    /** Holds the current [LabelStyle] used for positioning and sizing the label of this [BoxGateView].*/
+    var labelStyle: LabelStyle = LabelStyle.LARGE_CENTERED
+        set(value) {
+            if (field == value) {
+                return
+            }
+            invalidate()
+            field = value
+            field.updateLabel(this)
+            invalidate()
+            validate()
+        }
 
     /** The text displayed inside the box representing the name of the [Vertice]. */
     protected val label: Label?
@@ -102,7 +159,7 @@ open class BoxGateView<T : Vertice>(
         get() = super.rotation
         set(value) {
             super.rotation = value
-            positionLabel()
+            labelStyle.updateLabel(this)
         }
 
     /** ---- [AbstractRectangularVerticeView] */
@@ -178,7 +235,7 @@ open class BoxGateView<T : Vertice>(
             portView.location = portView.location.subtract(origin)
         }
 
-        positionLabel()
+        labelStyle.updateLabel(this)
 
         updateBoxes()
         invalidate()
@@ -189,21 +246,5 @@ open class BoxGateView<T : Vertice>(
             return BIG_PORT_DISTANCE
         }
         return SMALL_PORT_DISTANCE
-    }
-
-    /**
-     * Positions the [Label] within the box by centering it horizontally and placing it at one-third of the
-     * height.
-     */
-    private fun positionLabel() {
-        label?.let {
-            label.ownerRotation = rotation
-            label.location = when(rotation) {
-                Rotation.R0 -> Point2D(x + width / 2, y + height / 3)
-                Rotation.R180 -> Point2D(x + width / 2, y + 2 * height / 3)
-                Rotation.R90 -> Point2D(x + 2 * width / 3, y + height / 2)
-                Rotation.R270 -> Point2D(x + width / 3, y + height / 2)
-            }
-        }
     }
 }
