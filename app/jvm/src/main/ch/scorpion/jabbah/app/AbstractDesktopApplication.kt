@@ -26,6 +26,7 @@ import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.nio.file.FileSystems
 import java.nio.file.Path
@@ -90,7 +91,17 @@ abstract class AbstractDesktopApplication(
             if (commandLine.argList.size == 0) {
                 newFile()
             } else {
-                openFile(commandLine.argList[0])
+                try {
+                    openFile(commandLine.argList[0])
+                } catch(e: FileNotFoundException) {
+                    JOptionPane.showConfirmDialog(
+                            mainFrame,
+                            Translations.getString("application.fileNotFound.text", commandLine.argList[0]),
+                            Translations.getString("application.fileNotFound.title"),
+                            JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.ERROR_MESSAGE)
+                    newFile()
+                }
             }
         }
     }
