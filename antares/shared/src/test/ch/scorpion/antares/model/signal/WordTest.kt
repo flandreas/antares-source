@@ -1,11 +1,15 @@
 package ch.scorpion.antares.model.signal
 
+import ch.scorpion.antares.AntaresModuleJvm
+import ch.scorpion.antares.view.AntaresThemes
 import ch.scorpion.antares.view.Theme
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 
 
@@ -16,7 +20,8 @@ class WordTest {
 
     @Before
     fun setup() {
-        BaseModuleJvm.require()
+        DrawModuleJvm.require()
+        AntaresThemes.install()
     }
 
     @Test
@@ -61,9 +66,16 @@ class WordTest {
 
     @Test
     fun shouldSetSubword() {
-        assertThat(Word.of(BitWidth.BW_4, 15L).withSubwordValue(BitWidth.BW_2, 0, 1L), `is`(Word.of(BitWidth.BW_4, 13L)))
-        assertThat(Word.of(BitWidth.BW_4, 15L).withSubwordValue(BitWidth.BW_2, 1, 1L), `is`(Word.of(BitWidth.BW_4, 7L)))
-        assertThat(Word.of(BitWidth.BW_8, 0L).withSubwordValue(BitWidth.BW_4, 1, 2L), `is`(Word.of(BitWidth.BW_8, 32L)))
+        assertThat(Word.of(BitWidth.BW_4, 15L).withSubwordValue(Word.of(BitWidth.BW_2, 1L), 0), `is`(Word.of(BitWidth.BW_4, 13L)))
+        assertThat(Word.of(BitWidth.BW_4, 15L).withSubwordValue(Word.of(BitWidth.BW_2, 1L), 1), `is`(Word.of(BitWidth.BW_4, 7L)))
+        assertThat(Word.of(BitWidth.BW_8, 0L).withSubwordValue(Word.of(BitWidth.BW_4, 2L), 1), `is`(Word.of(BitWidth.BW_8, 32L)))
+    }
+
+    @Test
+    fun shouldSetSubwordWiderThanOrigWord() {
+        // Use case: We have a two-bit word of value 0, and we want to enter the value 1 at the left-most position.
+        // The value has been entered as a hex number, which is 4 bits wide. We expect the value to be truncated.
+        assertThat(Word.of(BitWidth.BW_2, 0L).withSubwordValue(Word.of(BitWidth.BW_4, 1L), 0), `is`(Word.of(BitWidth.BW_2, 1L)))
     }
 
     @Test

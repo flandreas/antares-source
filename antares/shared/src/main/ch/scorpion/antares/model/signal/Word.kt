@@ -213,20 +213,20 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
     /**
      * Creates a copy of this [Word] and sets the specified sub-word in the copy.
      *
-     * @param subwordWidth the width of [value]
-     * @param index the index of the replaced sub-word of [subwordWidth]. For example, an 8-Bit word consists of
+     * @param subword the [Word] to be set in the copy of this [Word]
+     * @param index the index of the replaced sub-word. For example, an 8-Bit word consists of
      * two sub-words with index 0 (bits 0..3) and index 1 (bits 4..7)
-     * @param value the value of the sub-word to be replaced in the copy of this [Word]
      */
-    fun withSubwordValue(subwordWidth: BitWidth, index: Int, value: Long): Word {
-        val subword = Word.of(subwordWidth, value)
+    fun withSubwordValue(subword: Word, index: Int): Word {
         val resultBits = mutableListOf<Bit>()
-        val minBitIndex = index * subwordWidth.width
-
         resultBits.addAll(this.bits)
+
+        val minBitIndex = index * subword.bitWidth.width
         var subwordIndex = 0
-        for (resultIndex in minBitIndex..minBitIndex + subwordWidth.width - 1) {
-            resultBits[resultIndex] = subword.bitAt(subwordIndex++)
+        if (minBitIndex < this.bitWidth.width) {
+            for (resultIndex in minBitIndex..Math.min(bitWidth.width - 1, minBitIndex + subword.bitWidth.width - 1)) {
+                resultBits[resultIndex] = subword.bitAt(subwordIndex++)
+            }
         }
         return Word(resultBits)
     }

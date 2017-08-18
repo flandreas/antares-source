@@ -546,13 +546,8 @@ class CircuitInOutView(
                 } else {
                     val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bits()), event.key.toChar())
                     if (digitWord != null) {
-                        val newWord = (model!!.signal as Word).withSubwordValue(
-                                BitWidth.of(signalRepresentation.bits()),
-                                numberView!!.focusIndex!!,
-                                digitWord.getValue())
-
+                        val newWord = (model!!.signal as Word).withSubwordValue(digitWord, numberView!!.focusIndex!!)
                         model!!.setIncomingSignal(newWord, signalHandler)
-
                         numberView!!.transferFocusRight()
                     }
                 }
