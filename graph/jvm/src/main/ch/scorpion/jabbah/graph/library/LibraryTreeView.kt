@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import java.awt.Component
@@ -45,9 +47,11 @@ class LibraryTreeView(
         dropMode = DropMode.ON
 
         // TODO Update TreeModel selectively
-        eventBus.register(LibraryItemAddedEvent::class, {updateLibrary()})
-        eventBus.register(LibraryItemRemovedEvent::class, {updateLibrary()})
-        eventBus.register(LibraryItemUpdatedEvent::class, {updateLibrary()})
+        eventBus.register(LibraryItemAddedEvent::class, { updateLibrary() })
+        eventBus.register(LibraryItemRemovedEvent::class, { updateLibrary() })
+        eventBus.register(LibraryItemUpdatedEvent::class, { updateLibrary() })
+        
+        eventBus.register(ApplicationModeEvent::class, { dragEnabled = it.applicationMode === ApplicationMode.EDIT })
     }
 
     companion object {
