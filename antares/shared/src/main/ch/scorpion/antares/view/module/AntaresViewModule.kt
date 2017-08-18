@@ -54,7 +54,7 @@ import ch.scorpion.jabbah.graph.view.style.GraphTheme
  */
 object AntaresViewModule : AbstractModule() {
 
-    val currentSymbolStyle: CurrentSymbolStyle = CurrentSymbolStyle(SymbolStyle.AMERICAN)
+    val currentSymbolStyle: CurrentSymbolStyle = CurrentSymbolStyle()
     val currentGraphViewAnimationType: CurrentGraphViewAnimationType by lazy { CurrentGraphViewAnimationType() }
 
     override fun initialize() {
