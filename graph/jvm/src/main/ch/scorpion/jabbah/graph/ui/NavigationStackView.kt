@@ -223,7 +223,7 @@ class NavigationStackView(
                 label.font = DrawModule.properties.getFont(PROP_FONT)
                 label.color = if (isHover) DrawModule.properties.getColor(PROP_HOVER_TEXT_COLOR) else DrawModule.properties.getColor(PROP_TEXT_COLOR)
             }
-            label.draw(DrawContext(g))
+            label.draw(DrawContext(g = g))
             g.translate(-location.x, -location.y)
         }
 

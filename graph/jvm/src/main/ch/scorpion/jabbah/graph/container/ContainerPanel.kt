@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.LabelTool
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -70,6 +71,7 @@ class ContainerPanel(
 
     fun initialize() {
         editor.view.initialize()
+        editor.view.applicationContext = GraphApplicationContext()
     }
 
     fun setData(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {

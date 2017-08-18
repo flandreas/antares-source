@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -50,9 +49,22 @@ class AntaresGraphNavigationPanel(
     systemSpeedCategory: CurrentSystemSpeedCategory,
     currentGraphViewAnimationType: CurrentGraphViewAnimationType,
     styleProvider: StyleProvider,
-    scriptGateway: ScriptGateway
-) : GraphNavigationPanel(isRoot, drawingView, viewManager, closeHandler, contextColor, scheduler, animator, eventBus,
-        libraryHolder, storableCreator, scriptGateway) {
+    scriptGateway: ScriptGateway,
+    currentSystemSpeedCategory: CurrentSystemSpeedCategory
+) : GraphNavigationPanel(
+        isRoot,
+        drawingView,
+        viewManager,
+        closeHandler,
+        contextColor,
+        scheduler,
+        animator,
+        eventBus,
+        libraryHolder,
+        storableCreator,
+        scriptGateway,
+        currentSystemSpeedCategory
+) {
 
     private val graphAnimator = GraphViewAnimator(drawingView, scheduler, animator, systemSpeedCategory, eventBus,
             currentGraphViewAnimationType, styleProvider)
@@ -85,11 +97,25 @@ class AntaresGraphNavigationPanelFactory : GraphNavigationPanelFactory {
             systemSpeedCategory: CurrentSystemSpeedCategory,
             currentGraphViewAnimationType: CurrentGraphViewAnimationType,
             styleProvider: StyleProvider,
-            scriptGateway: ScriptGateway
+            scriptGateway: ScriptGateway,
+            currentSystemSpeedCategory: CurrentSystemSpeedCategory
     ): GraphNavigationPanel {
         return AntaresGraphNavigationPanel(
-            isRoot, drawingView, viewManager, closeHandler, contextColor, scheduler,
-            eventBus, libraryHolder, storableCreator, animator, systemSpeedCategory, currentGraphViewAnimationType, styleProvider, scriptGateway
+                isRoot,
+                drawingView,
+                viewManager,
+                closeHandler,
+                contextColor,
+                scheduler,
+                eventBus,
+                libraryHolder,
+                storableCreator,
+                animator,
+                systemSpeedCategory,
+                currentGraphViewAnimationType,
+                styleProvider,
+                scriptGateway,
+                currentSystemSpeedCategory
         )
     }
 
@@ -110,6 +136,7 @@ class AntaresGraphNavigationPanelFactory : GraphNavigationPanelFactory {
             ExecutionModule.currentSystemSpeedCategory,
             AntaresViewModule.currentGraphViewAnimationType,
             DrawStyleModule.styleProvider,
-            ScriptModule.scriptGateway)
+            ScriptModule.scriptGateway,
+            ExecutionModule.currentSystemSpeedCategory)
     }
 }

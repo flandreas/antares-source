@@ -4,11 +4,11 @@ import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.library.LibraryHolder
@@ -36,7 +36,8 @@ interface GraphNavigationPanelFactory {
             systemSpeedCategory: CurrentSystemSpeedCategory,
             currentGraphViewAnimationType: CurrentGraphViewAnimationType,
             styleProvider: StyleProvider,
-            scriptGateway: ScriptGateway
+            scriptGateway: ScriptGateway,
+            currentSystemSpeedCategory: CurrentSystemSpeedCategory
     ): GraphNavigationPanel
 
     fun create(
@@ -64,11 +65,12 @@ class StandardGraphNavigationPanelFactory: GraphNavigationPanelFactory {
             systemSpeedCategory: CurrentSystemSpeedCategory,
             currentGraphViewAnimationType: CurrentGraphViewAnimationType,
             styleProvider: StyleProvider,
-            scriptGateway: ScriptGateway
+            scriptGateway: ScriptGateway,
+            currentSystemSpeedCategory: CurrentSystemSpeedCategory
     ): GraphNavigationPanel {
         return GraphNavigationPanel(
             isRoot, drawingView, viewManager, closeHandler, contextColor, scheduler, animator, eventBus, libraryHolder,
-                storableCreator, scriptGateway)
+                storableCreator, scriptGateway, currentSystemSpeedCategory)
     }
 
     override fun create(
@@ -86,6 +88,7 @@ class StandardGraphNavigationPanelFactory: GraphNavigationPanelFactory {
             BaseModule.eventBus,
             LibraryModule.libraryHolder,
             IOModule.storableCreator,
-            ScriptModule.scriptGateway)
+            ScriptModule.scriptGateway,
+            ExecutionModule.currentSystemSpeedCategory)
     }
 }

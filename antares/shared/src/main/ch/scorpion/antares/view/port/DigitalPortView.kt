@@ -7,7 +7,6 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -29,6 +28,8 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 
@@ -127,8 +128,9 @@ class DigitalPortView(
 
     override fun draw(context: DrawContext) {
         val origColor = context.g.color
+        val appContext = context.castedAppContext<GraphApplicationContext>()!!
 
-        if (ApplicationMode.EXECUTE == context.castedAppContext<ApplicationMode>()) {
+        if (ApplicationMode.EXECUTE == appContext.mode && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
             if (port.net == null || !port.net!!.isError) {
                 context.g.color = when (port.portType) {
                     PortType.INOUT -> getDigitalPort().dominantSignal.getColor().foregroundColor
@@ -243,6 +245,11 @@ class DigitalPortView(
     override val minSegmentLength: Int get() = LENGTH
 
     /** ---- [DigitalPortView] */
+
+    // TODO Refactor (DRY): Same logic as in [AbstractNetViewElement]
+    private fun showNetState(systemSpeedCategory: SystemSpeedCategory): Boolean {
+        return systemSpeedCategory > SystemSpeedCategory.Use
+    }
 
     private fun getDigitalPort(): DigitalPort {
         return port as DigitalPort

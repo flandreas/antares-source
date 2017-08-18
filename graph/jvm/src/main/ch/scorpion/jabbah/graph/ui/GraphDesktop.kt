@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
@@ -101,7 +100,6 @@ class GraphDesktop(
                     drawingView
                 })
                 val drawingView = graphCanvas.view as DrawingView<GraphView<GraphElementView<*>>>
-                drawingView.applicationContext = masterGraphPanel!!.editor.view.applicationContext
 
                 val refColor = referenceColorSequence.next()
                 panelContaining(request.subGraphVerticeView)?.let {

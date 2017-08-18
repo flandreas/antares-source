@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 
 /**
  * A view representation of a [Tunnel].
@@ -93,7 +94,7 @@ class TunnelView(
         // Draw the PortView above the border
         super.drawImpl(context)
 
-        if (ApplicationMode.EXECUTE == context.castedAppContext<ApplicationMode>()) {
+        if (ApplicationMode.EXECUTE == context.castedAppContext<GraphApplicationContext>()!!.mode) {
             context.g.color = model!!.getInOrOutSignal().getColor().foregroundColor
         }
         context.g.fillOval(xInt + SIZE / 4, yInt + SIZE / 4, SIZE / 2, SIZE / 2)

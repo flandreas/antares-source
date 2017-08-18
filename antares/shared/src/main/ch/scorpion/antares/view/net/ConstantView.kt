@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 
 
 /**
@@ -78,7 +79,7 @@ class ConstantView(
     override fun drawImpl(context: DrawContext) {
         super.drawImpl(context)
         drawBody(context)
-        drawNumberView(context, context.appContext as ApplicationMode? === ApplicationMode.EXECUTE)
+        drawNumberView(context, ApplicationMode.EXECUTE === context.castedAppContext<GraphApplicationContext>()!!.mode)
     }
 
     private fun drawBody(context: DrawContext) {

@@ -20,8 +20,12 @@ import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import java.awt.*
 import javax.swing.*
 
@@ -41,7 +45,8 @@ open class GraphNavigationPanel(
         private val eventBus: EventBus,
         private val libraryHolder: LibraryHolder,
         private val storableCreator: StorableCreator,
-        private val scriptGateway: ScriptGateway
+        private val scriptGateway: ScriptGateway,
+        private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
 ) : JPanel() {
 
     private val LOG by logger(GraphNavigationPanel::class)
@@ -52,11 +57,14 @@ open class GraphNavigationPanel(
 
     private var scenarioDetector: ScenarioDetector? = null
 
+    private var currentMode: ApplicationMode = if (scheduler.isActive) ApplicationMode.EXECUTE else ApplicationMode.EDIT
+
     private val openSubGraphRequestHandler: (OpenSubGraphRequest) -> Unit = { handle(it) }
     private val navigationStackEventHandler: (NavigationStackEvent) -> Unit = { handle(it) }
     private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = { handle(it) }
     private val scenarioEventHandler: (ScenarioEvent) -> Unit = {handle(it)}
     private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
+    private val systemSpeedHandler: (SystemSpeedEvent) -> Unit = { handle(it) }
 
     init {
 
@@ -70,12 +78,14 @@ open class GraphNavigationPanel(
         eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
         eventBus.register(ScenarioEvent::class, scenarioEventHandler)
         eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+        eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
 
         drawingView.showGrid = isRoot
 
         setRootGraphView(drawingView.drawing)
 
         buildUI(viewManager, contextBorderColor, closeHandler)
+        propagateApplicationContext()
     }
 
     open fun dispose() {
@@ -85,6 +95,7 @@ open class GraphNavigationPanel(
         eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)
         eventBus.unregister(ScenarioEvent::class, scenarioEventHandler)
         eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+        eventBus.unregister(SystemSpeedEvent::class, systemSpeedHandler)
     }
 
     /** Initializes the [NavigationStackView] with a root [DrawingViewContent].*/
@@ -162,7 +173,8 @@ open class GraphNavigationPanel(
     }
 
     private fun handle(event: ApplicationModeEvent) {
-        drawingView.applicationContext = event.applicationMode
+        currentMode = event.applicationMode
+        propagateApplicationContext()
         updateDetached()
     }
 
@@ -183,6 +195,14 @@ open class GraphNavigationPanel(
         } else {
             getRootContent().drawing.graph!!.executionStopped(event.scheduler)
         }
+    }
+
+    private fun handle(event: SystemSpeedEvent) {
+        propagateApplicationContext()
+    }
+
+    private fun propagateApplicationContext() {
+        drawingView.applicationContext = GraphApplicationContext(currentMode, currentSystemSpeedCategory)
     }
 
     /**

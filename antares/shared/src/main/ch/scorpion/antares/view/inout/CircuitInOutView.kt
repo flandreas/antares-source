@@ -45,6 +45,7 @@ import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.*
 
 
@@ -211,7 +212,7 @@ class CircuitInOutView(
 
         super.drawImpl(context)
 
-        if (context.appContext as ApplicationMode? === ApplicationMode.EXECUTE) {
+        if (ApplicationMode.EXECUTE === context.castedAppContext<GraphApplicationContext>()!!.mode) {
             drawSimulated(context)
         } else {
             if (context.useContextColors) {

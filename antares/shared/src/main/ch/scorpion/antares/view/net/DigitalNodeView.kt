@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -32,7 +33,7 @@ class DigitalNodeView(
         val oldColor = context.g.color
         val oldCompositeColor = context.color
 
-        if (context.appContext as ApplicationMode? === ApplicationMode.EXECUTE && showNetState()) {
+        if (ApplicationMode.EXECUTE == context.castedAppContext<GraphApplicationContext>()!!.mode && showNetState()) {
             if (!model!!.isError) {
                 context.color = model!!.signal!!.getColor()
             }

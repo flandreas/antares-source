@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 
 
 /**
@@ -124,7 +125,7 @@ class ProbeView(
 
     override fun drawImpl(context: DrawContext) {
         super.drawImpl(context)
-        if (context.appContext as ApplicationMode? === ApplicationMode.EXECUTE) {
+        if (ApplicationMode.EXECUTE === context.castedAppContext<GraphApplicationContext>()!!.mode) {
             drawSimulated(context)
         } else {
             drawEdited(context)

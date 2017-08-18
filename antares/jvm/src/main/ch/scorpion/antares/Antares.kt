@@ -30,7 +30,6 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -143,7 +142,7 @@ class Antares(
             drawingView
         })
         val graphEditor = GraphEditor(graphCanvas.view as DrawingView<Drawing<Component>>)
-        val graphPanel = GraphPanel(graphEditor, viewManager)
+        val graphPanel = GraphPanel(editor = graphEditor, viewManager = viewManager)
         graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
         val containerPanel = ContainerPanel(GraphViewModule.containerEditorFactory.invoke(eventBus), viewManager)
 

@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -53,23 +52,23 @@ import javax.swing.*
  * and a [GraphNavigationPanel] for editing the [GraphView] at the center-right.
  */
 class GraphPanel(
-    val editor: Editor,
-    val eventBus: EventBus,
-    val libraryHolder: LibraryHolder,
-    private val viewManager: ViewManager,
-    graphNavigationPanelFactory: GraphNavigationPanelFactory,
-    var scheduler: Scheduler,
-    propertySheetFactory: PropertySheetPanelFactory
+        val editor: Editor,
+        val eventBus: EventBus,
+        val libraryHolder: LibraryHolder,
+        private val viewManager: ViewManager,
+        graphNavigationPanelFactory: GraphNavigationPanelFactory,
+        var scheduler: Scheduler,
+        propertySheetFactory: PropertySheetPanelFactory
 ) : JPanel() {
 
     constructor(editor: Editor, viewManager: ViewManager): this(
-        editor,
-        BaseModule.eventBus,
-        LibraryModule.libraryHolder,
-        viewManager,
-        GraphModuleJvm.graphNavigationPanelFactory,
-        ExecutionModule.scheduler,
-        EditModuleJvm.propertySheetPanelFactory)
+            editor,
+            BaseModule.eventBus,
+            LibraryModule.libraryHolder,
+            viewManager,
+            GraphModuleJvm.graphNavigationPanelFactory,
+            ExecutionModule.scheduler,
+            EditModuleJvm.propertySheetPanelFactory)
 
     private val modeToggleAction = ToggleModeAction(scheduler, eventBus)
 
@@ -106,9 +105,7 @@ class GraphPanel(
         (editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
         libraryPropertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
-        eventBus.register(ActiveViewChangedEvent::class, {
-            updateEditability()
-        })
+        eventBus.register(ActiveViewChangedEvent::class, { updateEditability() })
 
         editor.view.addPropertyChangeListener(object : PropertyChangeListener<Any>{
             override fun propertyChanged(e: PropertyChangeEvent<Any>) {
@@ -169,7 +166,6 @@ class GraphPanel(
 
     private fun setMode(mode: ApplicationMode, init: Boolean) {
         currentMode = mode
-        editor.view.applicationContext = mode
 
         when(currentMode) {
             ApplicationMode.EDIT -> {
@@ -188,7 +184,6 @@ class GraphPanel(
                 })
             }
         }
-
     }
 
     private fun createExecutionToolBar(): JToolBar {

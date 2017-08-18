@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import java.awt.*
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -155,7 +156,7 @@ class LibraryPreviewPanel(
             }
 
             if (selection != null) {
-                drawableDrawer.process(DrawContext(Graphics2DJvm(g2), ApplicationMode.EDIT), selection!!)
+                drawableDrawer.process(DrawContext(Graphics2DJvm(g2), GraphApplicationContext()), selection!!)
             }
 
             if (scale != 1.0) {

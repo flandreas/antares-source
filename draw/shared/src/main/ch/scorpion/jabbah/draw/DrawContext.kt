@@ -7,9 +7,7 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2D
 /**
  * A context used in all drawing activities.
  */
-open class DrawContext(val g: Graphics2D, val appContext: Any?) {
-
-    constructor(g: Graphics2D): this(g, null)
+open class DrawContext(val g: Graphics2D, val appContext: Any? = null) {
 
     /** Instructs a [Drawable] to use the colors of this [DrawContext] instead of its own colors.*/
     var useContextColors: Boolean = false
