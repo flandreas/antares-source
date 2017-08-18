@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.port
 
 import ch.scorpion.antares.model.Logic
+import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -56,6 +57,9 @@ class SubCircuitPort(
         writer.writeString("trigger", trigger.customName)
         writer.writeString("type", portType.customName)
         writer.writeString("representation", signalRepresentation.customName)
+        if (outputAnnotation != OutputAnnotation.NONE) {
+            writer.writeString("outputAnnotation", outputAnnotation!!.customName)
+        }
     }
 
     override fun read(reader: StoreReader) {
@@ -77,6 +81,9 @@ class SubCircuitPort(
         if (reader.hasAttribute("representation")) {
             // TODO Legacy file support. In new files, portId has always to be there!
             signalRepresentation = DigitalSignalRepresentation.withName(reader.readString("representation"))
+        }
+        if (reader.hasAttribute("outputAnnotation")) {
+            outputAnnotation = OutputAnnotation.withName(reader.readString("outputAnnotation"))
         }
     }
 

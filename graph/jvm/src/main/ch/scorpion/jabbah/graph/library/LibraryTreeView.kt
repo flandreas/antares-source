@@ -50,7 +50,7 @@ class LibraryTreeView(
         eventBus.register(LibraryItemAddedEvent::class, { updateLibrary() })
         eventBus.register(LibraryItemRemovedEvent::class, { updateLibrary() })
         eventBus.register(LibraryItemUpdatedEvent::class, { updateLibrary() })
-        
+
         eventBus.register(ApplicationModeEvent::class, { dragEnabled = it.applicationMode === ApplicationMode.EDIT })
     }
 

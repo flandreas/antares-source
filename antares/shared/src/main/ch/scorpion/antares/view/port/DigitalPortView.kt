@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.port
 
 import ch.scorpion.antares.model.Logic
+import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
@@ -59,6 +60,17 @@ class DigitalPortView(
             .moveTo(0.0, -INTERNAL_ANNOTATION_SIZE / 2.0)
             .lineTo(-INTERNAL_ANNOTATION_SIZE, 0)
             .lineTo(0, INTERNAL_ANNOTATION_SIZE / 2)
+
+        val MASTER_SLAVE_PATH: Path = System.get().createPath()
+                .moveTo(-INTERNAL_ANNOTATION_SIZE, -INTERNAL_ANNOTATION_SIZE / 2 + 1)
+                .lineTo(-INTERNAL_ANNOTATION_SIZE / 2, -INTERNAL_ANNOTATION_SIZE / 2 + 1)
+                .lineTo(-INTERNAL_ANNOTATION_SIZE / 2, INTERNAL_ANNOTATION_SIZE / 2 - 1)
+
+        val TRI_STATE_PATH: Path = System.get().createPath()
+                .moveTo(-INTERNAL_ANNOTATION_SIZE, -INTERNAL_ANNOTATION_SIZE / 2 + 1)
+                .lineTo(- 3 , -INTERNAL_ANNOTATION_SIZE / 2 + 1)
+                .lineTo(-INTERNAL_ANNOTATION_SIZE / 2 - 1.5, INTERNAL_ANNOTATION_SIZE / 2 - 1.0)
+                .close()
     }
 
     /** Determines whether this [DigitalPortView] shows an annotation that indicates the [DigitalPort]'s [BitWidth].*/
@@ -76,12 +88,13 @@ class DigitalPortView(
 
     private var bitWidthAnnotation: BitWidthAnnotation? = null
 
-    /**
-     * Should be overwritten by subclasses if the have an internal annotation to be drawn.
-     * @return `true` if this [DigitalPortView] has an internal annotation to be drawn
-     */
-    private val hasInternalAnnotation: Boolean
+    /** Determines whether this [DigitalPortView] has an internal input annotation to be drawn.*/
+    private val hasInternalInputAnnotation: Boolean
         get() = (port as DigitalPort).trigger == Trigger.EDGE
+
+    /** Determines whether this [DigitalPortView] has an internal output annotation to be drawn.*/
+    private val hasInternalOutputAnnotation: Boolean
+        get() = (port as DigitalPort).outputAnnotation != OutputAnnotation.NONE
 
     init {
         buildPortLabel()
@@ -166,8 +179,11 @@ class DigitalPortView(
         drawLogic(context)
 
         context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.ANNOTATION).color).foregroundColor
-        if (hasInternalAnnotation) {
-            drawInternalAnnotation(context)
+        if (hasInternalInputAnnotation) {
+            drawInternalInputAnnotation(context)
+        }
+        if (hasInternalOutputAnnotation) {
+            drawInternalOutputAnnotation(context)
         }
 
         portLabel?.let {
@@ -201,8 +217,11 @@ class DigitalPortView(
                 val bb = bitWidthAnnotation!!.boundingBox
                 bbox.add(Rectangle2D(locationX + bb.x, locationY + bb.y, bb.width, bb.height))
             }
-            if (hasInternalAnnotation) {
-                bbox.add(getInternalAnnotationBox()!!)
+            if (hasInternalInputAnnotation) {
+                bbox.add(getInternalInputAnnotationBox()!!)
+            }
+            if (hasInternalOutputAnnotation) {
+                bbox.add(getInternalOutputAnnotationBox()!!)
             }
             bbox.add(location.toRect(1.0))
             bbox.add(connectionPoint.toRect(1.0))
@@ -326,7 +345,12 @@ class DigitalPortView(
     }
 
     private fun getInternalLabelLocation(direction: Direction): Point2D {
-        val ia = if (hasInternalAnnotation) INTERNAL_ANNOTATION_SIZE else 0
+        val ia = when(port.portType) {
+            PortType.INOUT -> 0
+            PortType.INPUT -> if (hasInternalInputAnnotation) INTERNAL_ANNOTATION_SIZE else 0
+            PortType.OUTPUT -> if (hasInternalOutputAnnotation) INTERNAL_ANNOTATION_SIZE else 0
+        }
+
         when (direction) {
             Direction.WEST -> return Point2D(INT_BORDER_DIST + ia, 0)
             Direction.EAST -> return Point2D(-INT_BORDER_DIST - ia, 0)
@@ -368,11 +392,11 @@ class DigitalPortView(
     }
 
     /**
-     * Draws the internal annotation of this [DigitalPortView], if any.
-     * This method it automatically called if [hasInternalAnnotation] returns `true`.
+     * Draws the internal input annotation of this [DigitalPortView], if any.
+     * This method it automatically called if [hasInternalInputAnnotation] returns `true`.
      */
-    private fun drawInternalAnnotation(context: DrawContext) {
-        if (hasInternalAnnotation) {
+    private fun drawInternalInputAnnotation(context: DrawContext) {
+        if (hasInternalInputAnnotation) {
             val angle = direction.rotation.angle
             context.g.rotate(angle)
             context.g.draw(EDGE_TRIGGER_PATH)
@@ -380,11 +404,36 @@ class DigitalPortView(
         }
     }
 
-    private fun getInternalAnnotationBox(): RectangularShape? {
-        if (hasInternalAnnotation) {
+    private fun getInternalInputAnnotationBox(): RectangularShape? {
+        if (hasInternalInputAnnotation) {
             val bb = direction.rotation.rotateRectangleAround(Point2D(), EDGE_TRIGGER_PATH.boundingBox)
             return Rectangle2D(locationX + bb.x, locationY + bb.y, bb.width, bb.height)
         }
         return null
+    }
+
+    private fun drawInternalOutputAnnotation(context: DrawContext) {
+        if (hasInternalOutputAnnotation) {
+            val angle = direction.rotation.angle
+            context.g.rotate(angle)
+            context.g.draw(getOutputAnnotationPath()!!)
+            context.g.rotate(-angle)
+        }
+    }
+
+    private fun getInternalOutputAnnotationBox(): RectangularShape? {
+        if (hasInternalOutputAnnotation) {
+            val bb = direction.rotation.rotateRectangleAround(Point2D(), getOutputAnnotationPath()!!.boundingBox)
+            return Rectangle2D(locationX + bb.x, locationY + bb.y, bb.width, bb.height)
+        }
+        return null
+    }
+
+    private fun getOutputAnnotationPath(): Path? {
+        return when((port as DigitalPort).outputAnnotation) {
+            OutputAnnotation.TRI_STATE -> TRI_STATE_PATH
+            OutputAnnotation.MASTER_SLAVE -> MASTER_SLAVE_PATH
+            else -> null
+        }
     }
 }

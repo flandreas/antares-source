@@ -1,13 +1,9 @@
 package ch.scorpion.antares.view
 
-import ch.scorpion.antares.model.InputCount
-import ch.scorpion.antares.model.InputPortNumber
-import ch.scorpion.antares.model.Logic
-import ch.scorpion.antares.model.Trigger
+import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.antares.view.gate.AbstractDigitalGateView
 import ch.scorpion.antares.view.output.LightColor
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import ch.scorpion.jabbah.base.swing.ColorIcon
@@ -90,6 +86,13 @@ class SevenSegmentDisplaySchemeEditor : ComboBoxPropertyEditor() {
     init {
         setAvailableValues(SevenSegmentDisplayScheme.values())
         (editor as JComboBox<*>).renderer = EnumRenderer<SevenSegmentDisplayScheme>()
+    }
+}
+
+class OutputAnnotationEditor : ComboBoxPropertyEditor() {
+    init {
+        setAvailableValues(OutputAnnotation.values())
+        (editor as JComboBox<*>).renderer = EnumRenderer<OutputAnnotation>()
     }
 }
 

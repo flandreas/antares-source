@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.port
 
 import ch.scorpion.antares.model.Logic
+import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -18,6 +19,7 @@ interface DigitalPort : InputPort<DigitalSignal>, OutputPort<DigitalSignal> {
         val PROP_BIT_WIDTH = "bitWidth"
         val PROP_SIGNAL_REPRESENTATION = "signalRepresentation"
         val PROP_TRIGGER = "trigger"
+        val PROP_OUTPUT_ANNOTATION = "outputAnnotation"
     }
 
     /** Holds the type of [Logic] of this [DigitalPort].*/
@@ -29,6 +31,8 @@ interface DigitalPort : InputPort<DigitalSignal>, OutputPort<DigitalSignal> {
     var trigger: Trigger
 
     var signalRepresentation: DigitalSignalRepresentation
+
+    var outputAnnotation: OutputAnnotation
 
     val defaultDigitalSignal: DigitalSignal
 

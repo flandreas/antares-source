@@ -1,9 +1,6 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.model.InputCount
-import ch.scorpion.antares.model.InputPortNumber
-import ch.scorpion.antares.model.Logic
-import ch.scorpion.antares.model.Trigger
+import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
@@ -82,6 +79,7 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
         registry.registerRenderer(BitWidth::class.java, EnumRenderer::class.java)
         registry.registerRenderer(DigitalSignalRepresentation::class.java, EnumRenderer::class.java)
         registry.registerRenderer(SevenSegmentDisplayScheme::class.java, EnumRenderer::class.java)
+        registry.registerRenderer(OutputAnnotation::class.java, EnumRenderer::class.java)
     }
 
     private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -94,5 +92,6 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
         registry.registerEditor(BitWidth::class.java, BitWidthEditor::class.java)
         registry.registerEditor(DigitalSignalRepresentation::class.java, DigitalSignalRepresentationEditor::class.java)
         registry.registerEditor(SevenSegmentDisplayScheme::class.java, SevenSegmentDisplaySchemeEditor::class.java)
+        registry.registerEditor(OutputAnnotation::class.java, OutputAnnotationEditor::class.java)
     }
 }

@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.container
 
 import ch.scorpion.antares.model.Logic
+import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -57,6 +58,15 @@ class DigitalPortViewComponent(
         set(value) {
             portView!!.invalidate()
             digitalPortView.portLabelPosition = value
+            portView!!.invalidate()
+            portView!!.validate()
+        }
+
+    var outputAnnotation: OutputAnnotation
+        get() = digitalPort.outputAnnotation
+        set(value) {
+            portView!!.invalidate()
+            digitalPort.outputAnnotation = value
             portView!!.invalidate()
             portView!!.validate()
         }

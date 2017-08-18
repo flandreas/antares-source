@@ -1,9 +1,11 @@
 package ch.scorpion.antares.model.port
 
 import ch.scorpion.antares.model.Logic
+import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_BIT_WIDTH
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_LOGIC
+import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_OUTPUT_ANNOTATION
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_SIGNAL_REPRESENTATION
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_TRIGGER
 import ch.scorpion.antares.model.signal.*
@@ -88,24 +90,39 @@ open class DigitalPortImpl(
 
     override var bitWidth: BitWidth = bitWidth
         set(value) {
-            clear()
-            val oldValue = field
-            field = value
-            changeSupport.fire(PROP_BIT_WIDTH, oldValue, field)
+            if (field != value) {
+                clear()
+                val oldValue = field
+                field = value
+                changeSupport.fire(PROP_BIT_WIDTH, oldValue, field)
+            }
         }
 
     override var logic: Logic = logic
         set(value) {
-            val oldValue = field
-            field = value
-            changeSupport.fire(PROP_LOGIC, oldValue, field)
+            if (field != value) {
+                val oldValue = field
+                field = value
+                changeSupport.fire(PROP_LOGIC, oldValue, field)
+            }
         }
 
     override var trigger: Trigger = Trigger.LEVEL
         set(value) {
-            val oldValue = field
-            field = value
-            changeSupport.fire(PROP_TRIGGER, oldValue, field)
+            if (field != value) {
+                val oldValue = field
+                field = value
+                changeSupport.fire(PROP_TRIGGER, oldValue, field)
+            }
+        }
+
+    override var outputAnnotation: OutputAnnotation = OutputAnnotation.NONE
+        set(value) {
+            if (field != value) {
+                val oldValue = field
+                field = value
+                changeSupport.fire(PROP_OUTPUT_ANNOTATION, oldValue, field)
+            }
         }
 
     override var signalRepresentation: DigitalSignalRepresentation = signalRepresentation

@@ -69,8 +69,8 @@
             <netView _id='42' modelId='9' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='34' id='1' rot='0' modelId='3' x='-378.0' y='-168.0' mirrorH='false' mirrorV='false'/>
-            <subGraphVerticeViewRef _id='33' id='2' rot='0' modelId='4' x='-238.0' y='-168.0' mirrorH='false' mirrorV='false'/>
+            <subGraphVerticeViewRef _id='34' id='1' rot='0' modelId='3' x='-378.0' y='-168.0'/>
+            <subGraphVerticeViewRef _id='33' id='2' rot='0' modelId='4' x='-238.0' y='-168.0'/>
             <circuitInOutView _id='32' id='3' modelId='5' representation='binary' orientation='east'>
               <location>
                 <point x='-420.0' y='-168.0'/>
@@ -162,27 +162,27 @@
         </originIndicator>
         <digitalPortViewComp _id='52' id='3' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='53' x='140.0' y='154.0' dir='west' textPos='INTERNAL' portId='57'/>
+            <digitalPortView _id='53' x='140.0' y='154.0' dir='west' textPos='internal' portId='57'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='50' id='4' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='51' x='140.0' y='210.0' dir='west' textPos='INTERNAL' portId='58'/>
+            <digitalPortView _id='51' x='140.0' y='210.0' dir='west' textPos='internal' portId='58'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='48' id='5' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='49' x='140.0' y='182.0' dir='west' textPos='INTERNAL' portId='59'/>
+            <digitalPortView _id='49' x='140.0' y='182.0' dir='west' textPos='internal' portId='59'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='46' id='6' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='47' x='196.0' y='154.0' dir='east' textPos='INTERNAL' portId='60'/>
+            <digitalPortView _id='47' x='196.0' y='154.0' dir='east' textPos='hide' portId='60'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='44' id='7' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='45' x='196.0' y='210.0' dir='east' textPos='INTERNAL' portId='61'/>
+            <digitalPortView _id='45' x='196.0' y='210.0' dir='east' textPos='hide' portId='61'/>
           </portView>
         </digitalPortViewComp>
       </components>
@@ -192,8 +192,8 @@
             <subCircuitPort _id='57' portId='1' name='J' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='58' portId='2' name='K' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='59' portId='3' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
-            <subCircuitPort _id='60' portId='4' name='Q' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='61' portId='5' name='!Q' logic='negative' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='60' portId='4' name='Q' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary' outputAnnotation='masterSlave'/>
+            <subCircuitPort _id='61' portId='5' name='!Q' logic='negative' bitWidth='1' trigger='level' type='output' representation='binary' outputAnnotation='masterSlave'/>
           </ports>
         </subGraphVertice>
       </model>
