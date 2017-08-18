@@ -107,7 +107,7 @@ class AndGateView(
         if (ApplicationMode.EXECUTE == appContext.mode && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
             context.g.color = model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!.getColor().foregroundColor
         } else {
-            context.g.color = DATA_PATH_COLOR.foregroundColor
+            context.g.color = context.choose(DATA_PATH_COLOR).foregroundColor
         }
 
         context.g.drawLine(
