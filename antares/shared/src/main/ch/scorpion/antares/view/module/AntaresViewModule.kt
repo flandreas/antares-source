@@ -104,7 +104,6 @@ object AntaresViewModule : AbstractModule() {
         properties.predefine(Style.PROP_STROKE, Themes.get<GraphTheme>().vertice.stroke)
         properties.predefine(Style.PROP_FONT, Themes.get<GraphTheme>().vertice.font)
 
-        properties.predefine(SymbolStyle.PROP_SYMBOL_STYLE, SymbolStyle.AMERICAN)
         properties.predefine(Grid.PROP_GRID_DEFAULT_DISTANCE, Look.GRID)
         properties.predefine(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR, 2)
         properties.predefine(ComponentSnapper.PROP_SNAP_HIGHLIGHT_COLOR, Themes.get<GraphTheme>().selection.foregroundColor)
