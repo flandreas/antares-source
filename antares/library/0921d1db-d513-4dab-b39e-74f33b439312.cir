@@ -98,7 +98,7 @@
         <subGraphVertice _id='31' id='0' delay='0' name='Ampel' uuid='0921d1db-d513-4dab-b39e-74f33b439312'>
           <ports>
             <subCircuitPort _id='32' portId='1' name='I1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-          <ports/>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>

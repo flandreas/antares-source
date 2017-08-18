@@ -148,7 +148,7 @@
         <subGraphVertice _id='45' id='0' delay='0' name='Test Control Repaint' uuid='ae36df36-0b7b-45e3-ac5e-e17c6fa44415'>
           <ports>
             <subCircuitPort _id='46' portId='1' name='I1' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
-          <ports/>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>
