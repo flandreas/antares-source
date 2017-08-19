@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.draw.graphics
 
-import ch.scorpion.jabbah.draw.graphics.Color
-
 /**
  * A [CompositeColor] is a defined set of harmonic colors to be used for drawing graphical objects.
  *

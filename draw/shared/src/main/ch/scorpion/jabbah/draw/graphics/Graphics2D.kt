@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Shape
 
 /**
- * Represents a target-specific context for graphical opertions.
+ * Represents a target-specific context for graphical operations.
  */
 interface Graphics2D {
 
