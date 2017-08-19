@@ -3,9 +3,8 @@ package ch.scorpion.jabbah.edit
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.edit.CommandEvent
-import ch.scorpion.jabbah.edit.CommandManager
 import java.awt.event.ActionEvent
+import javax.swing.Action
 
 /**
  * An [Action] for redoing the las [Command] transaction in a [CommandManager].
@@ -31,13 +30,9 @@ class RedoAction(
         isEnabled = commandManager.canRedo()
         val desc = commandManager.getRedoDescription()
         if (desc != null) {
-            setName(Translations.getString(getNameContextKey(), desc))
+            name = Translations.getString("edit.action.redo.name.context", desc)
         } else {
-            setName(Translations.getString(getNameKey()))
+            name = Translations.getString("edit.action.redo.name")
         }
-    }
-
-    private fun getNameContextKey(): String {
-        return "${getNameKey()}.context"
     }
 }

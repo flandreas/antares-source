@@ -3,9 +3,8 @@ package ch.scorpion.jabbah.edit
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.edit.CommandEvent
-import ch.scorpion.jabbah.edit.CommandManager
 import java.awt.event.ActionEvent
+import javax.swing.Action
 
 /**
  * An [Action] for undoing the las [Command] transaction in a [CommandManager].
@@ -31,13 +30,9 @@ class UndoAction(
         isEnabled = commandManager.canUndo()
         val desc = commandManager.getUndoDescription()
         if (desc != null) {
-            setName(Translations.getString(getNameContextKey(), desc))
+            name = Translations.getString("edit.action.undo.name.context", desc)
         } else {
-            setName(Translations.getString(getNameKey()))
+            name = Translations.getString("edit.action.undo.name")
         }
-    }
-
-    private fun getNameContextKey(): String {
-        return "${getNameKey()}.context"
     }
 }
