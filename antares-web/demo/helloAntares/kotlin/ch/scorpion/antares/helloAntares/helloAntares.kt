@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -46,6 +47,7 @@ fun hello() {
 
     val canvas = CanvasJs("kotlinCanvas", { DrawingViewImpl(drawing as Drawing<Component>, it) }, StyleRepository.INSTANCE )
     editor = EditEditorModule.createEditor(canvas.view as DrawingView<Drawing<Component>>)
+    editor.view.applicationContext = GraphApplicationContext()
     editor.view.editable = false
 
     canvas.repaint()
