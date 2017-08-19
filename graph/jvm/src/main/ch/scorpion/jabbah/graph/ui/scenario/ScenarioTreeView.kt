@@ -55,7 +55,7 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
                 selectionModel.clearSelection()
                 isEnabled = false
             } else {
-                isEditable = true
+                isEnabled = true
             }
         })
     }
@@ -75,10 +75,7 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
      */
     val selectedScenario: Scenario?
         get() {
-            val path = selectionPath
-            if (path == null) {
-                return null
-            }
+            val path = selectionPath ?: return null
             val selectedObj = (path.lastPathComponent as DefaultMutableTreeNode).userObject
             if (selectedObj is Scenario) {
                 return selectedObj
@@ -89,12 +86,9 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
         }
 
     /** Returns the currently selected [ScenarioStep], if any.*/
-    val selectedSenarioStep: ScenarioStep?
+    val selectedScenarioStep: ScenarioStep?
         get() {
-            val path = selectionPath
-            if (path == null) {
-                return null
-            }
+            val path = selectionPath ?: return null
             val selectedObj = (path.lastPathComponent as DefaultMutableTreeNode).userObject
             if (selectedObj is ScenarioStep) {
                 return selectedObj

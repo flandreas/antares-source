@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertySheetPanelFactory
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.ScenarioStep
@@ -14,7 +15,7 @@ import javax.swing.JScrollPane
 
 /**
  * Allows to inspect and manipulate the [Scenario]s and [ScenarioStep]s of a [Graph]
- * by displaying a [ScenarioTreeView] and a [PropertyPanel].
+ * by displaying a [ScenarioTreeView] and a [ScenarioPropertyPanel].
  *
  * Updates the [GraphView]'s [Scenario] and [ScenarioStep] whenever the user changes the
  * selection in the [ScenarioTreeView], and posts a [ScenarioSelectionEvent] on the provided
@@ -22,11 +23,9 @@ import javax.swing.JScrollPane
  */
 class ScenarioPanel(
     editor: Editor,
-    private val eventBus: EventBus,
-    sheetFactory: PropertySheetPanelFactory
+    private val eventBus: EventBus = BaseModule.eventBus,
+    sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel() {
-
-    constructor(editor: Editor): this(editor, BaseModule.eventBus, EditModuleJvm.propertySheetPanelFactory)
 
     private val treeView = ScenarioTreeView(eventBus)
     private val propertyPanel = ScenarioPropertyPanel(editor, sheetFactory, eventBus)
@@ -41,7 +40,7 @@ class ScenarioPanel(
     init {
         treeView.addTreeSelectionListener {
             val scenario = treeView.selectedScenario
-            val scenarioStep = treeView.selectedSenarioStep
+            val scenarioStep = treeView.selectedScenarioStep
             graphView?.currentScenario = scenario
             graphView?.currentScenarioStep = scenarioStep
             eventBus.post(ScenarioSelectionEvent(graphView!!, scenario, scenarioStep))
