@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 
@@ -35,8 +36,7 @@ class TunnelView(
     private val label = HorizontalLabel(
             owner = this,
             relLocation = Point2D(SIZE / 2 + (DigitalPortView.LENGTH + SIZE / 2) + LABEL_DIST, 0),
-            font = font,
-            color = color.textColor
+            font = font
     )
 
     init {
@@ -79,6 +79,7 @@ class TunnelView(
 
     override fun draw(context: DrawContext) {
         super.draw(context)
+        context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
         label.draw(context)
     }
 

@@ -31,7 +31,7 @@ class HorizontalLabel(
 
     var text: String
         get() = label.text
-        set(value) {label.text = value}
+        set(value) { label.text = value }
 
     val boundingBox: Rectangle2D get() {
         return label.boundingBox

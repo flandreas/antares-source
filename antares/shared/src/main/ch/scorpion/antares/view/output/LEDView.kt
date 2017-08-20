@@ -23,6 +23,7 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 
 /**
@@ -53,8 +54,7 @@ class LEDView(
     private val label = HorizontalLabel(
             owner = this,
             relLocation = Point2D(SIZE + DigitalPortView.LENGTH + LABEL_DIST, 0),
-            font = font,
-            color = color.textColor)
+            font = font)
 
     init {
         modelExchanged(null)
@@ -148,6 +148,7 @@ class LEDView(
 
     override fun draw(context: DrawContext) {
         super.draw(context)
+        context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
         label.draw(context)
     }
 
