@@ -150,6 +150,7 @@ open class GraphNavigationPanel(
         if (!request.quickMode) {
             drawingView.userZoomEnabled = false
             navigationStackView.isEnabled = false
+            navigationStackView.navigationStack.peek().zoomPan = drawingView.zoomPan
             DescendAnimationManager(animator).descendInto(
                     drawingView,
                     request.subGraphVerticeView,

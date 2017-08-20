@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.view
 
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
+import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.draw.container.UnzoomableContainer
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
@@ -29,6 +30,8 @@ class DrawingViewContentImpl<T: Drawing<*>>(
     }
 
     /** ---- [DrawingViewContent] interface */
+
+    override var zoomPan: ZoomPan = drawingView.zoomPan
 
     override val highlighter: Highlighter = highlighterFactory.create(this)
 
