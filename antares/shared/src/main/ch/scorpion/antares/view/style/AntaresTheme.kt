@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.graph.view.style.GraphTheme
 class AntaresTheme(
         name: String = DEF_NAME,
         styleRepository: StyleRepository = DrawStyleModule.styleProvider,
+        referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
+        referenceColors: List<CompositeColor> = DEF_REF_COLORS,
         background: Style = DEF_BACKGROUND,
         figure: Style = DEF_FIGURE,
         selection: CompositeColor = DEF_SELECTION,
@@ -30,8 +32,20 @@ class AntaresTheme(
         val focus: Style = DEF_FOCUS
 
 ) : GraphTheme(
-        name, styleRepository, background, figure, selection, highlight, message,
-        vertice, edge, annotation, explanation, subsystem
+        name,
+        styleRepository,
+        referenceColorSequenceProvider,
+        referenceColors,
+        background,
+        figure,
+        selection,
+        highlight,
+        message,
+        vertice,
+        edge,
+        annotation,
+        explanation,
+        subsystem
 ){
     companion object {
         val DEF_ZERO = CompositeColor(foregroundColor = Color(0, 115, 15), backgroundColor = Color.BLACK, textColor = Color.WHITE)

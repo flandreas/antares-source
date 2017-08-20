@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule
+import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 
 interface Theme {
     val name: String
@@ -68,19 +70,28 @@ object Themes {
 data class ThemeEvent(val currentTheme: Theme)
 
 open class DrawTheme(
-    override val name: String = DEF_NAME,
-    protected val styleRepository: StyleRepository = DrawStyleModule.styleProvider,
-    val background: Style = DEF_BACKGROUND,
-    val figure: Style = DEF_FIGURE
+        override val name: String = DEF_NAME,
+        protected val styleRepository: StyleRepository = DrawStyleModule.styleProvider,
+        protected val referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
+        val referenceColors: List<CompositeColor> = DEF_REF_COLORS,
+        val background: Style = DEF_BACKGROUND,
+        val figure: Style = DEF_FIGURE
 ) : Theme {
 
     companion object {
         val DEF_NAME = "default"
         val DEF_BACKGROUND = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
         val DEF_FIGURE = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
+        val DEF_REF_COLORS = listOf<CompositeColor>(
+                DrawGraphicsModule.RED,
+                DrawGraphicsModule.BLUE,
+                DrawGraphicsModule.GREEN,
+                DrawGraphicsModule.YELLOW
+        )
     }
 
     override fun activate() {
+        referenceColorSequenceProvider.replaceColors(referenceColors)
         styleRepository.registerStyle(StyleType.BACKGROUND, background)
         styleRepository.registerStyle(StyleType.FIGURE, figure)
     }

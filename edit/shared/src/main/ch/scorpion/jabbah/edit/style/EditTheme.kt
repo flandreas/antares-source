@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.style
 
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.style.*
 
 /**
@@ -10,12 +11,21 @@ import ch.scorpion.jabbah.draw.style.*
 open class EditTheme(
         name: String = DEF_NAME,
         styleRepository: StyleRepository = DrawStyleModule.styleProvider,
+        referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
+        referenceColors: List<CompositeColor> = DEF_REF_COLORS,
         background: Style = DEF_BACKGROUND,
         figure: Style = DEF_FIGURE,
         val selection: CompositeColor = DEF_SELECTION,
         val highlight: Style = DEF_HIGHLIGHT,
         val message: Style = DEF_MESSAGE
-) : DrawTheme(name, styleRepository, background, figure) {
+) : DrawTheme(
+        name,
+        styleRepository,
+        referenceColorSequenceProvider,
+        referenceColors,
+        background,
+        figure
+) {
 
     companion object {
         val DEF_SELECTION = CompositeColor(Color.ORANGE, Color.WHITE, Color.ORANGE)

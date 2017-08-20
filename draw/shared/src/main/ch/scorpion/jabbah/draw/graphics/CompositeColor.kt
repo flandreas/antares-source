@@ -10,4 +10,11 @@ package ch.scorpion.jabbah.draw.graphics
 data class CompositeColor(
         val foregroundColor: Color = Color.BLACK,
         val backgroundColor: Color = Color.WHITE,
-        val textColor: Color = foregroundColor)
+        val textColor: Color = foregroundColor) {
+
+    /**
+     * Creates a new [CompositeColor] by exchanging [foregroundColor] and [backgroundColor] of this [CompositeColor],
+     * and setting the [textColor] from the new [foregroundColor].
+     */
+    fun exchange(): CompositeColor = CompositeColor(backgroundColor, foregroundColor, backgroundColor)
+}

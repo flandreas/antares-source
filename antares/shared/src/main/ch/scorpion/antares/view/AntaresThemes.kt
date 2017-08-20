@@ -65,8 +65,7 @@ object AntaresThemes {
                 message = BasicStyle(
                         color = ERROR,
                         font = EXPLANATION_FONT,
-                        stroke = ANNOTATION_STROKE
-                ),
+                        stroke = ANNOTATION_STROKE),
                 vertice = BasicStyle(
                         color = SKY_BLUE,
                         stroke = BOX_STROKE,
@@ -128,6 +127,12 @@ object AntaresThemes {
         val highlightColor = Color(129, 123, 22)
         return AntaresTheme(
                 name = "CRT",
+                referenceColors = listOf<CompositeColor>(
+                        CompositeColor(Color(236, 35, 46), Color(120, 3, 7)),
+                        CompositeColor(Color(72, 186, 233), Color(3, 16, 139)),
+                        CompositeColor(Color(115, 191, 91), Color(7, 87, 9)),
+                        CompositeColor(Color(245, 235, 62), Color(67, 69, 10))
+                ),
                 highlight = BasicStyle(
                         color = CompositeColor(
                                 backgroundColor = highlightColor,

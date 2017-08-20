@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.style
 
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.style.EditTheme
 
@@ -10,6 +11,8 @@ import ch.scorpion.jabbah.edit.style.EditTheme
 open class GraphTheme(
         name: String = DEF_NAME,
         styleRepository: StyleRepository = DrawStyleModule.styleProvider,
+        referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
+        referenceColors: List<CompositeColor> = DEF_REF_COLORS,
         background: Style = DEF_BACKGROUND,
         figure: Style = DEF_FIGURE,
         selection: CompositeColor = DEF_SELECTION,
@@ -20,7 +23,17 @@ open class GraphTheme(
         val annotation: Style = DEF_ANNOTATION,
         val explanation: Style = DEF_EXPLANATION,
         val subsystem: Style = DEF_SUBSYSTEM
-) : EditTheme(name, styleRepository, background, figure, selection) {
+) : EditTheme(
+        name,
+        styleRepository,
+        referenceColorSequenceProvider,
+        referenceColors,
+        background,
+        figure,
+        selection,
+        highlight,
+        message
+) {
 
     companion object {
         val DEF_VERTICE = BasicStyle()

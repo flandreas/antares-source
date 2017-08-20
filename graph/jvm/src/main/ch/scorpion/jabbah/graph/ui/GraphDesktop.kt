@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
+import ch.scorpion.jabbah.draw.style.ThemeEvent
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
@@ -50,7 +51,7 @@ class GraphDesktop(
     private val slaveGraphNavigationPanels: MutableList<GraphNavigationPanel> = mutableListOf()
 
     /** Used for determining a [CompositeColor] for referencing a [SubGraphVerticeView] and its open [GraphNavigationPanel].*/
-    private val referenceColorSequence = ReferenceColorSequenceProvider.provide()
+    private var referenceColorSequence = ReferenceColorSequenceProvider.provide()
 
     /** Associates [SubGraphVerticeView] and their open [GraphNavigationPanel]s.*/
     private val associations = mutableListOf<Association>()
@@ -86,6 +87,14 @@ class GraphDesktop(
         mainSplitPane.border = null
         sidePanel.layout = GridLayout(0, 1)
         layout = BorderLayout()
+
+        // [ReferenceColorSequenceProvider]s can't deal with changing [Theme]s, so close all open slaves
+        // and create a new [ReferenceColorSequence] when the current [Theme] has changed.
+        eventBus.register(ThemeEvent::class, {
+            closeAllSlaves()
+            referenceColorSequence = ReferenceColorSequenceProvider.provide()
+        })
+
         eventBus.register(OpenSubGraphRequest::class, { request ->
             if (request.quickMode) {
                 val assoc = associations.firstOrNull{ it.ref == request.subGraphVerticeView}
