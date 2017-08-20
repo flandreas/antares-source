@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.draw.style.ThemeEvent
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JPanel
@@ -18,6 +19,8 @@ class LibraryPanel(
     val libraryPreviewPanel = LibraryPreviewPanel(eventBus, libraryTreeView)
 
     init {
+        eventBus.register(ThemeEvent::class, { repaint() })
+
         layout = BorderLayout()
         val treeViewScrollPane = JScrollPane(
                 libraryTreeView,

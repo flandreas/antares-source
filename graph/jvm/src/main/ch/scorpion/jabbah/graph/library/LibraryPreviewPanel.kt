@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.base.logger
@@ -56,8 +55,8 @@ class LibraryPreviewPanel(
         descriptionArea.preferredSize = Dimension(150, 50)
         descriptionArea.background = BACKGROUND_COLOR
 
-        eventBus.register(LibrarySelectionChangedEvent::class, {handleLibrarySelectionChanged(it)})
-        eventBus.register(LibraryItemUpdatedEvent::class, {map.remove(it.item)})
+        eventBus.register(LibrarySelectionChangedEvent::class, { handleLibrarySelectionChanged(it) })
+        eventBus.register(LibraryItemUpdatedEvent::class, { map.remove(it.item) })
 
         buildUI()
 
