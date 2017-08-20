@@ -1,5 +1,6 @@
 package ch.scorpion.antares
 
+import ch.scorpion.antares.view.AntaresThemes
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
@@ -30,5 +31,6 @@ class AntaresTestRule : TestRule {
     private fun configure() {
         GraphModuleJvm.require()
         AntaresViewModule.require()
+        AntaresThemes.install()
     }
 }

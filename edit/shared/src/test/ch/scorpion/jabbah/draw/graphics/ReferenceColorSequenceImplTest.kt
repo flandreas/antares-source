@@ -6,11 +6,11 @@ import org.junit.Test
 import org.hamcrest.CoreMatchers.`is`
 
 /**
- * Unit tests for [ReferenceColorSequence]
+ * Unit tests for [ReferenceColorSequenceImpl].
  */
-class ReferenceColorSequenceTest {
+class ReferenceColorSequenceImplTest {
 
-    private val sequence = ReferenceColorSequence(listOf(
+    private val sequence = ReferenceColorSequenceImpl(listOf(
         CompositeColor(foregroundColor = Color.BLACK),
         CompositeColor(foregroundColor = Color.WHITE))
     )

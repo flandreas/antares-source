@@ -50,7 +50,7 @@ interface ReferenceColorSequence {
  * An implementation of [ReferenceColorSequence] that uses a copy of the colors in [ReferenceColorSequenceProvider].
  * This implementation doesn't react to changes of reference [CompositeColor]s when changing the current [Theme].
  */
-private class ReferenceColorSequenceImpl(private val colors: List<CompositeColor>) : ReferenceColorSequence {
+class ReferenceColorSequenceImpl(private val colors: List<CompositeColor>) : ReferenceColorSequence {
 
     private val usages = colors.map { Usage(it, 0)}
 
