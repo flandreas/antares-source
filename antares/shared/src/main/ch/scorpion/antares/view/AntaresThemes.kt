@@ -46,7 +46,7 @@ object AntaresThemes {
 
     private fun winter(): Theme {
         return AntaresTheme(
-                name = "winter",
+                name = "Winter",
                 background = BasicStyle(
                         color = CompositeColor(
                                 foregroundColor = Color.GRAY,
@@ -127,7 +127,7 @@ object AntaresThemes {
         )
         val highlightColor = Color(129, 123, 22)
         return AntaresTheme(
-                name = "crt",
+                name = "CRT",
                 highlight = BasicStyle(
                         color = CompositeColor(
                                 backgroundColor = highlightColor,

@@ -89,6 +89,9 @@ object GraphViewModule : AbstractModule() {
         EditModule.require()
         AppModule.require()
         GraphModelModule.require()
+
+        Themes.register(GraphTheme())
+
         configureTypeMap(IOModule.typeMap)
         fillProperties(BaseModule.properties)
         configureStyleRepository(StyleRepository.INSTANCE)
@@ -96,8 +99,6 @@ object GraphViewModule : AbstractModule() {
 
         ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptModule.scriptEngineProvider.invoke()) }
         EditModule.drawingService = graphViewService
-
-        Themes.register(GraphTheme())
     }
 
     private fun configureTypeMap(typeMap: TypeMap) {

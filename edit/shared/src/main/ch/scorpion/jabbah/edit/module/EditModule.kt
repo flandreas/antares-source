@@ -57,10 +57,10 @@ object EditModule : AbstractModule() {
         EditSelectModule.require()
         EditEditorModule.require()
 
-        configureTypeMap(IOModule.typeMap)
-
         Translations.addBundle("jabbah-edit")
         Themes.register(EditTheme())
+
+        configureTypeMap(IOModule.typeMap)
     }
 
     private fun configureTypeMap(typeMap: TypeMap) {

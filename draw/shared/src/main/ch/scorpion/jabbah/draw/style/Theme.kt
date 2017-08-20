@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.style
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
@@ -17,19 +18,21 @@ interface Theme {
 
 object Themes {
 
+    private const val PROP_THEME = "ch.scorpion.antares.view.theme"
     private val themes = mutableListOf<Theme>(DrawTheme())
 
     private var _current: Theme = themes[0]
     set(value) {
         field = value
         field.activate()
-        BaseModule.eventBus.post(ThemeEvent(_current))
     }
 
     val current: Theme get() = _current
 
     fun setCurrent(name: String) {
         _current = get(name) ?: throw NoSuchElementException("No theme with name '$name' defined")
+        BaseModule.properties.set(PROP_THEME, name)
+        BaseModule.eventBus.post(ThemeEvent(_current))
     }
 
     fun <T: Theme> get(): T {
@@ -49,7 +52,13 @@ object Themes {
         if (themes != null && themes.size > 0) {
             this.themes.clear()
             this.themes.addAll(themes)
-            _current = this.themes[0]
+
+            val storedThemeName = BaseModule.properties.getString(PROP_THEME, "")
+            if (StringUtils.isNotEmpty(storedThemeName) && this.themes.firstOrNull { it.name == storedThemeName } != null) {
+                setCurrent(storedThemeName)
+            } else {
+                _current = this.themes[0]
+            }
         }
     }
 
