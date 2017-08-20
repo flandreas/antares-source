@@ -33,20 +33,34 @@ class GraphViewDisplayHandler(
         eventBus.register(SchedulerActivationStateEvent::class, { updateActivationState() })
         view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
             override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-                updateActivationState()
+                if (e.name == DrawingView.PROP_DRAWING || e.name == DrawingView.PROP_EDITABLE) {
+                    updateActivationState()
+                }
             }
         })
         updateActivationState()
     }
 
+    fun dispose() {
+        passivate()
+    }
+
     private fun updateActivationState() {
-        if (!scheduler.isActive) {
-            view.addMouseListener(mouseHandler)
-            view.addMouseMotionListener(mouseHandler)
+        if (!scheduler.isActive && !view.editable) {
+            activate()
         } else {
-            view.removeMouseListener(mouseHandler)
-            view.removeMouseMotionListener(mouseHandler)
+            passivate()
         }
+    }
+
+    private fun activate() {
+        view.addMouseListener(mouseHandler)
+        view.addMouseMotionListener(mouseHandler)
+    }
+
+    private fun passivate() {
+        view.removeMouseListener(mouseHandler)
+        view.removeMouseMotionListener(mouseHandler)
     }
 
     private inner class MouseHandler : MouseAdapter() {

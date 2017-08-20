@@ -56,16 +56,28 @@ class GraphViewExecutionHandler(
         updateActivationState()
     }
 
+    fun dispose() {
+        passivate()
+    }
+
     private fun updateActivationState() {
         if (scheduler.isActive) {
-            view.addMouseListener(mouseHandler)
-            view.addMouseMotionListener(mouseHandler)
-            view.addKeyListener(keyHandler)
+            activate()
         } else {
-            view.removeMouseListener(mouseHandler)
-            view.removeMouseMotionListener(mouseHandler)
-            view.removeKeyListener(keyHandler)
+            passivate()
         }
+    }
+
+    private fun activate() {
+        view.addMouseListener(mouseHandler)
+        view.addMouseMotionListener(mouseHandler)
+        view.addKeyListener(keyHandler)
+    }
+
+    private fun passivate() {
+        view.removeMouseListener(mouseHandler)
+        view.removeMouseMotionListener(mouseHandler)
+        view.removeKeyListener(keyHandler)
     }
 
     private inner class MouseHandler: MouseAdapter() {

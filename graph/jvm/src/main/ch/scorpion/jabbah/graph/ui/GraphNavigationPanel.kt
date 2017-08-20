@@ -66,13 +66,13 @@ open class GraphNavigationPanel(
     private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
     private val systemSpeedHandler: (SystemSpeedEvent) -> Unit = { handle(it) }
 
+    /** Forwards input events to the [GraphView] while executing.*/
+    private val graphViewExecutionHandler = GraphViewExecutionHandler(drawingView, scheduler, eventBus)
+
+    /** Forwards input events to the [GraphView] while displaying (i.e. NOT executing) and NOT being editable.*/
+    private val graphViewDisplayHandler = GraphViewDisplayHandler(drawingView, scheduler, eventBus)
+
     init {
-
-        GraphViewExecutionHandler(drawingView, scheduler, eventBus)
-        if (!isRoot) {
-            GraphViewDisplayHandler(drawingView, scheduler, eventBus)
-        }
-
         eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
         eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
         eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
@@ -80,7 +80,7 @@ open class GraphNavigationPanel(
         eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
         eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
 
-        drawingView.showGrid = isRoot
+        drawingView.editable = drawingView.editable && isRoot
 
         setRootGraphView(drawingView.drawing)
 
@@ -90,6 +90,9 @@ open class GraphNavigationPanel(
 
     open fun dispose() {
         drawingView.content.drawing.dispose()
+        graphViewExecutionHandler.dispose()
+        graphViewDisplayHandler.dispose()
+
         eventBus.unregister(OpenSubGraphRequest::class, openSubGraphRequestHandler)
         eventBus.unregister(NavigationStackEvent::class, navigationStackEventHandler)
         eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)
@@ -170,7 +173,7 @@ open class GraphNavigationPanel(
         }
 
         drawingView.content = navigationStackView.navigationStack.peek()
-        drawingView.editable = navigationStackView.navigationStack.size == 1
+        drawingView.editable = isRoot && navigationStackView.navigationStack.size == 1
         updateDetached()
 
         invalidate()
