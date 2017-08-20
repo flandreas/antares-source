@@ -176,14 +176,8 @@ object AntaresThemes {
                 zero = ZERO,
                 one = ONE,
                 undefined = UNDEFINED,
-                wordZero = CompositeColor(
-                        foregroundColor = Color.WHITE,
-                        backgroundColor = Color.DARK_GRAY,
-                        textColor = Color.BLACK),
-                word = CompositeColor(
-                        foregroundColor = Color.WHITE,
-                        backgroundColor = Color.GRAY,
-                        textColor = Color.BLACK),
+                wordZero = ZERO,
+                word = ONE,
                 error = ERROR,
                 focus = BasicStyle(
                         color = CompositeColor(
