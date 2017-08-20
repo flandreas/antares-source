@@ -11,8 +11,8 @@ import javax.swing.KeyStroke
  */
 abstract class AbstractAction(
         name: String,
-        description: String?,
-        accelerator: String?
+        description: String? = null,
+        accelerator: String? = null
 ) : javax.swing.AbstractAction() {
 
     constructor(baseName: String): this(

@@ -1,10 +1,18 @@
 package ch.scorpion.jabbah.draw.style
 
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 
 interface Theme {
     val name: String
+
+    /**
+     * Notifies this [Theme] that is has become the current one in [Themes].
+     * Implementations should activate themselves by registering all their [Style]s
+     * with [StyleRepository].
+     */
+    fun activate()
 }
 
 object Themes {
@@ -12,6 +20,11 @@ object Themes {
     private val themes = mutableListOf<Theme>(DrawTheme())
 
     private var _current: Theme = themes[0]
+    set(value) {
+        field = value
+        field.activate()
+        BaseModule.eventBus.post(ThemeEvent(_current))
+    }
 
     val current: Theme get() = _current
 
@@ -39,15 +52,27 @@ object Themes {
             _current = this.themes[0]
         }
     }
+
+    fun allThemes(): Iterator<Theme> = themes.iterator()
 }
+
+data class ThemeEvent(val currentTheme: Theme)
 
 open class DrawTheme(
     override val name: String = DEF_NAME,
-    val background: Style = DEF_BACKGROUND
+    protected val styleRepository: StyleRepository = DrawStyleModule.styleProvider,
+    val background: Style = DEF_BACKGROUND,
+    val figure: Style = DEF_FIGURE
 ) : Theme {
 
     companion object {
         val DEF_NAME = "default"
         val DEF_BACKGROUND = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
+        val DEF_FIGURE = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
+    }
+
+    override fun activate() {
+        styleRepository.registerStyle(StyleType.BACKGROUND, background)
+        styleRepository.registerStyle(StyleType.FIGURE, figure)
     }
 }

@@ -1,9 +1,7 @@
 package ch.scorpion.antares.view.style
 
 import ch.scorpion.jabbah.draw.graphics.*
-import ch.scorpion.jabbah.draw.style.BasicStyle
-import ch.scorpion.jabbah.draw.style.Style
-import ch.scorpion.jabbah.draw.style.Theme
+import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.graph.view.style.EdgeStyle
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
@@ -12,14 +10,16 @@ import ch.scorpion.jabbah.graph.view.style.GraphTheme
  */
 class AntaresTheme(
         name: String = DEF_NAME,
+        styleRepository: StyleRepository = DrawStyleModule.styleProvider,
         background: Style = DEF_BACKGROUND,
+        figure: Style = DEF_FIGURE,
         selection: CompositeColor = DEF_SELECTION,
+        highlight: Style = DEF_HIGHLIGHT,
+        message: Style = DEF_MESSAGE,
         vertice: Style = DEF_VERTICE,
         edge: EdgeStyle = DEF_EDGE,
         annotation: Style = DEF_ANNOTATION,
         explanation: Style = DEF_EXPLANATION,
-        highlight: Style = DEF_HIGHTLIGHT,
-        message: Style = DEF_MESSAGE,
         subsystem: Style = DEF_SUBSYSTEM,
         val zero: CompositeColor = DEF_ZERO,
         val one: CompositeColor = DEF_ONE,
@@ -30,7 +30,8 @@ class AntaresTheme(
         val focus: Style = DEF_FOCUS
 
 ) : GraphTheme(
-    name, background, selection, vertice, edge, annotation, explanation, highlight, message, subsystem
+        name, styleRepository, background, figure, selection, highlight, message,
+        vertice, edge, annotation, explanation, subsystem
 ){
     companion object {
         val DEF_ZERO = CompositeColor(foregroundColor = Color(0, 115, 15), backgroundColor = Color.BLACK, textColor = Color.WHITE)

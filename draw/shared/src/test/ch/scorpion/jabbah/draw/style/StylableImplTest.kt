@@ -39,14 +39,14 @@ class StylableImplTest {
     @Test
     fun shouldUseStyleForegroundColor() {
         StyleRepository.INSTANCE.registerStyle(StyleType.FIGURE, specifiedStyle)
-        val stylable = StylableImpl(style = specifiedStyle, styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
+        val stylable = StylableImpl(styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
         assertThat(stylable.foregroundColor, `is`(`sameInstance`(specifiedStyle.color.foregroundColor)))
     }
 
     @Test
     fun shouldUseCustomForegroundColor() {
         StyleRepository.INSTANCE.registerStyle(StyleType.FIGURE, specifiedStyle)
-        val stylable = StylableImpl(style = specifiedStyle, customColor = customColor, styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
+        val stylable = StylableImpl(customColor = customColor, styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
         assertThat(stylable.foregroundColor, `is`(`sameInstance`(customColor.color.foregroundColor)))
     }
 

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.MenuBarBuilder
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.ExecutionDepthAction
@@ -39,6 +40,15 @@ open class GraphMenuBarBuilder(application: DesktopApplication, eventBus: EventB
         menu.addSeparator()
         menu.add(JMenuItem(OpenGraphNavigationPanelAction(DrawViewModule.viewManager, eventBus)))
         menu.add(JMenuItem(EditSubGraphVerticeViewAction()))
+    }
+
+    override fun fillViewMenu(menu: JMenu) {
+        super.fillViewMenu(menu)
+        val themesMenu = JMenu(Translations.getString("graph.action.themes.name"))
+        for (theme in Themes.allThemes()) {
+            themesMenu.add(JCheckBoxMenuItem(ThemeAction(theme)))
+        }
+        menu.add(themesMenu)
     }
 
     protected open fun fillExecutionMenu(menu: JMenu): JMenu {

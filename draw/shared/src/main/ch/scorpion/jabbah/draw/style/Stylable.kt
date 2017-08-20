@@ -30,7 +30,7 @@ interface Stylable {
 
     var styleType: StyleType
 
-    var style: Style
+    val style: Style
 
     var filled: Boolean
 
@@ -56,7 +56,6 @@ class StylableImpl(
         override var invalidator: (() -> Unit)? = null,
         styleType: StyleType,
         val styleProvider: StyleProvider,
-        override var style: Style = styleProvider.getStyle(styleType),
         filled: Boolean = true,
         customColor: PredefinedColor? = null,
         customStroke: Stroke? = null,
@@ -68,10 +67,11 @@ class StylableImpl(
             if (field != value) {
                 invalidator?.invoke()
                 field = value
-                style = styleProvider.getStyle(field)
                 invalidator?.invoke()
             }
         }
+
+    override val style: Style get() = styleProvider.getStyle(styleType)
 
     override var filled: Boolean = filled
         set(value) {

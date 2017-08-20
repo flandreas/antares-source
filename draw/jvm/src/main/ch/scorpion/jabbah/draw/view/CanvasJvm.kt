@@ -7,12 +7,10 @@ import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.draw.style.Style
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.style.*
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.event.MouseWheelEvent
@@ -30,7 +28,8 @@ import java.awt.event.KeyEvent as AwtKeyEvent
  */
 class CanvasJvm(
         viewFactory: (Canvas) -> View<out InputEventContext>,
-        styleProvider: StyleProvider
+        private val styleProvider: StyleProvider,
+        eventBus: EventBus = BaseModule.eventBus
 ) : JPanel(), Canvas {
 
     constructor(viewFactory: (Canvas) -> View<out InputEventContext>): this(viewFactory, DrawStyleModule.styleProvider)
@@ -43,11 +42,16 @@ class CanvasJvm(
     override val view: View<*>
 
     init {
-        val color = styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
-        background = java.awt.Color(color.red, color.green, color.blue, color.alpha)
+        eventBus.register(ThemeEvent::class, { installBackgroundColor() })
+        installBackgroundColor()
+
         layout = null
         view = viewFactory.invoke(this)
         view.initialize()
+    }
+
+    private fun installBackgroundColor()  {
+        background = Graphics2DJvm.toAwtColor(styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor)
     }
 
     override var backgroundColor: Color

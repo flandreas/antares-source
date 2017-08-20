@@ -15,7 +15,6 @@ import ch.scorpion.antares.view.port.DigitalPortFactory
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
-import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
@@ -29,14 +28,12 @@ import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.select.Handle
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.edit.snap.ComponentSnapper
-import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.container.OriginIndicator
 import ch.scorpion.jabbah.graph.view.editor.AutoConnectorHighlight
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewBelowSelectionModel
-import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 import ch.scorpion.jabbah.draw.graphics.Stroke
@@ -86,15 +83,11 @@ object AntaresViewModule : AbstractModule() {
         AntaresModelModule.require()
 
         customizeProperties(BaseModule.properties)
-        AntaresThemes.install()
-
-        configureStyles(DrawStyleModule.styleProvider)
 
         configureTypeMap(IOModule.typeMap)
         configureSelectionModels(EditSelectModule.selectionModelFactory)
 
         ScriptModule.scriptGatewayProvider = { AntaresScriptGateway() }
-
     }
 
     private fun customizeProperties(properties: Properties) {
@@ -126,18 +119,6 @@ object AntaresViewModule : AbstractModule() {
         properties.predefine(LEDView.PROP_ICON_PATH, "/img/led.png")
         properties.predefine(LEDMatrixView.PROP_ICON_PATH, "/img/led-matrix.png")
         properties.predefine(SevenSegmentDisplayView.PROP_ICON_PATH, "/img/7segment.png")
-    }
-
-    private fun configureStyles(repository: StyleRepository) {
-        repository.registerStyle(StyleType.BACKGROUND, Themes.get<GraphTheme>().background)
-        repository.registerStyle(StyleType.FIGURE, Themes.get<GraphTheme>().vertice)
-        repository.registerStyle(EditStyleType.HIGHLIGHT, Themes.get<GraphTheme>().highlight)
-        repository.registerStyle(EditStyleType.MESSAGE, Themes.get<GraphTheme>().message)
-        repository.registerStyle(GraphStyleType.VERTICE, Themes.get<GraphTheme>().vertice)
-        repository.registerStyle(GraphStyleType.EDGE, Themes.get<GraphTheme>().edge)
-        repository.registerStyle(GraphStyleType.ANNOTATION, Themes.get<GraphTheme>().annotation)
-        repository.registerStyle(GraphStyleType.EXPLANATION, Themes.get<GraphTheme>().explanation)
-        repository.registerStyle(GraphStyleType.SUBSYSTEM, Themes.get<GraphTheme>().subsystem)
     }
 
     private fun configureTypeMap(typeMap: TypeMap) {

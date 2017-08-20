@@ -51,10 +51,6 @@ abstract class AbstractVerticeView<T : Vertice>(
         }
     }
 
-    init {
-        style = styleProvider.getStyle(GraphStyleType.VERTICE)
-    }
-
     /** Holds the graphical representations of all the model's [Port]s.*/
     private val portViews: MutableList<PortView<*>> = mutableListOf()
 

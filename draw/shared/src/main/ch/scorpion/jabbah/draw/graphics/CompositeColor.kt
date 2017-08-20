@@ -10,4 +10,4 @@ package ch.scorpion.jabbah.draw.graphics
 data class CompositeColor(
         val foregroundColor: Color = Color.BLACK,
         val backgroundColor: Color = Color.WHITE,
-        val textColor: Color = Color.BLACK)
+        val textColor: Color = foregroundColor)

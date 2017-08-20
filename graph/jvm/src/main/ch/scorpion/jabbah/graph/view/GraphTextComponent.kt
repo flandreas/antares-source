@@ -49,7 +49,6 @@ class GraphTextComponent(
         }
 
     init {
-        style = styleProvider.getStyle(GraphStyleType.EXPLANATION)
         eventBus.register(ScenarioStepEvent::class, {
             if (it.graphView === parent) {
                 invalidate()

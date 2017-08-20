@@ -1,5 +1,6 @@
 package ch.scorpion.antares
 
+import ch.scorpion.antares.view.AntaresThemes
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.gate.*
@@ -110,6 +111,7 @@ class Antares(
         LibraryModule.libraryHolder.library.load()
         fillStandardLibrary(LibraryModule.libraryHolder.library)
         UiUtil.setUIFont(FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size))
+        AntaresThemes.install()
         super.init()
     }
 

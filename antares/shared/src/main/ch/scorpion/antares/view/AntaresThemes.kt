@@ -54,6 +54,10 @@ object AntaresThemes {
                                 textColor = Color.BLACK),
                         font = FONT,
                         stroke = ANNOTATION_STROKE),
+                figure = BasicStyle(
+                        color = SKY_BLUE,
+                        stroke = BOX_STROKE,
+                        font = FONT),
                 highlight = BasicStyle(
                         color = HIGHLIGHT,
                         font = FONT,
@@ -136,6 +140,10 @@ object AntaresThemes {
                                 textColor = color.foregroundColor),
                         stroke = ANNOTATION_STROKE,
                         font = ANNOTATION_FONT),
+                figure = BasicStyle(
+                        color = color,
+                        stroke = BOX_STROKE,
+                        font = FONT),
                 vertice = BasicStyle(
                         color = color,
                         stroke = BOX_STROKE,

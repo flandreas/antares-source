@@ -21,10 +21,6 @@ abstract class AbstractNetViewElement<T: Any>(
     model: Net<T>
 ) : AbstractGraphElementView<Net<T>>(styleProvider, GraphStyleType.EDGE, model), NetViewElement<T> {
 
-    init {
-        style = styleProvider.getStyle(GraphStyleType.EDGE)
-    }
-
     override val net: Net<T>? get() = model
 
     override var netView: NetView<T>? = null
@@ -47,5 +43,4 @@ abstract class AbstractNetViewElement<T: Any>(
     protected fun showNetState(): Boolean {
         return currentSystemSpeedCategory.systemSpeedCategory > SystemSpeedCategory.Use
     }
-
 }
