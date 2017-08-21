@@ -1,0 +1,27 @@
+package ch.scorpion.jabbah.draw.graphics
+
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.logger
+import javax.swing.ImageIcon
+
+class ImageJvm(override val path: String) : Image {
+
+    companion object {
+        private val LOG by logger(ImageJvm::class)
+    }
+
+    val imageIcon: ImageIcon
+
+    init {
+        val resource = ImageJvm::class.java.getResource(path)
+        if (resource == null) {
+            LOG.error("Image '$path' not found")
+            throw IllegalArgumentException("Image '$path' not found")
+        }
+        imageIcon = ImageIcon(resource)
+    }
+
+    override val width: Int get() = imageIcon.iconWidth
+
+    override val height: Int get() = imageIcon.iconHeight
+}
