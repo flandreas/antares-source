@@ -37,6 +37,8 @@ import ch.scorpion.jabbah.io.TypeMap
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
+import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
 import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
 import ch.scorpion.jabbah.edit.select.BoundingBoxBelowSelectionModel
 import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
@@ -45,6 +47,7 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.app.GraphViewService
 import ch.scorpion.jabbah.graph.view.app.GraphViewServiceImpl
+import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 
@@ -113,6 +116,7 @@ object GraphViewModule : AbstractModule() {
         typeMap.register("containerBox", RectangleComponent::class)
         typeMap.register("controlViewComponent", ControlViewComponent::class)
         typeMap.register("graphTextComponent", SimpleTextComponent::class)
+        typeMap.register("oscilloscope", OscilloscopeView::class)
     }
 
     private fun configureStyleRepository(repository: StyleRepository) {
@@ -134,6 +138,8 @@ object GraphViewModule : AbstractModule() {
     }
 
     private fun configureSelectionModels(factory: SelectionModelFactory) {
+        factory.register(SelectionDrawingStrategy.ABOVE, OscilloscopeView::class.simpleName!!, { RectangularHandleSelectionModel(it as RectangularComponent )})
+
         factory.register(SelectionDrawingStrategy.REPLACE, SubGraphVerticeViewImpl::class.simpleName!!,
             { SubGraphVerticeViewImplSelectionModel(it as SubGraphVerticeViewImpl, EditSelectModule.selectionModelProvider) })
         factory.register(SelectionDrawingStrategy.REPLACE, OriginIndicator::class.simpleName!!, { OriginIndicatorSelectionModel(it as OriginIndicator)})

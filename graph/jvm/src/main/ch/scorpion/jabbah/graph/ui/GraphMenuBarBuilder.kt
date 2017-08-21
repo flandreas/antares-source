@@ -49,6 +49,7 @@ open class GraphMenuBarBuilder(application: DesktopApplication, eventBus: EventB
             themesMenu.add(JCheckBoxMenuItem(ThemeAction(theme)))
         }
         menu.add(themesMenu)
+        menu.add(JCheckBoxMenuItem(OscilloscopeAction(DrawViewModule.viewManager, eventBus)))
     }
 
     protected open fun fillExecutionMenu(menu: JMenu): JMenu {

@@ -225,6 +225,10 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         return r
     }
 
+    override fun drawImage(image: Image, x: Int, y: Int) {
+        g.drawImage((image as ImageJvm).imageIcon.image, x, y, null)
+    }
+
     /** ---- [Graphics2DJvm] */
 
     private fun toLineCap(cap: Int): LineCap {

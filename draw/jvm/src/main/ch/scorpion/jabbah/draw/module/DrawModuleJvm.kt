@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.graphics.ImageJvm
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfo
 import ch.scorpion.jabbah.draw.polyline.PolylineShapeJvm
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
@@ -27,6 +28,8 @@ object DrawModuleJvm : AbstractModule() {
             val lm = awtFont.getLineMetrics(text, context)
             TextRenderInfo(Rectangle2D(rect.x, rect.y, rect.width, rect.height), lm.ascent.toDouble())
         }
+
+        DrawModule.imageLoader = { ImageJvm(it) }
 
         DrawModule.require()
 

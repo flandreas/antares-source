@@ -67,6 +67,9 @@ interface Graphics2D {
 
     fun drawString(s: String, x: Int, y: Int)
 
+    /** Draws an [Image] at the upper-left corner (x,y).*/
+    fun drawImage(image: Image, x: Int, y: Int)
+
     /** Draws the specified [Shape] with the current [Color].*/
     fun draw(shape: Shape)
 

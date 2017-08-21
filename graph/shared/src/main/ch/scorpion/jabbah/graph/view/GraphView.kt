@@ -39,6 +39,9 @@ interface GraphView<T : GraphElementView<*>> : Drawing<T> {
     /** The current [ScenarioStep] of this [GraphView], if any. Posts a [ScenarioStepEvent] if changed.*/
     var currentScenarioStep: ScenarioStep?
 
+    /** Controls whether this [GraphView] displays its [OscilloscopeView].*/
+    var isOscilloscopeDisplayed: Boolean
+
     /**
      * Asks this [GraphView] to make sure that all its [GraphElementView]s are properly bound to their models.
      *
@@ -84,3 +87,6 @@ interface GraphView<T : GraphElementView<*>> : Drawing<T> {
 
     // TODO Add Scenario methods
 }
+
+/** Posted on the [EventBus] of a [GraphView] when its [OscilloscopeView] changes its visibility.*/
+data class OscilloscopeDisplayedEvent(val graphView: GraphView<*>)

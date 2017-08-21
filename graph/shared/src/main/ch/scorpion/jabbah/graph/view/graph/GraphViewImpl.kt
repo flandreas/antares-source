@@ -34,6 +34,7 @@ import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.connect.InputToOutputOrEdgeConnector
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
+import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 
 
 /**
@@ -59,6 +60,10 @@ class GraphViewImpl<T : GraphElementView<*>>(
         currentScenario = null
         currentScenarioStep = null
     }
+
+    private var oscilloscope: OscilloscopeView? = null
+
+    private var oscilloscopeWrapper: GraphElementViewWrapper<Vertice>? = null
 
     /** Manages the [NetView]s for all [Net]s of the [Graph].*/
     private val netViewMap: MutableMap<Net<Any>, NetView<Any>> = mutableMapOf()
@@ -129,6 +134,20 @@ class GraphViewImpl<T : GraphElementView<*>>(
                 LOG.debug("No current ScenarioStep in Graph '$name'")
             }
             eventBus.post(ScenarioStepEvent(this, oldValue, value))
+        }
+
+    override var isOscilloscopeDisplayed: Boolean = false
+        set(value) {
+            if (field == value) {
+                return
+            }
+            field = value
+            if (field) {
+                displayOscilloscope()
+            } else {
+                hideOscilloscope()
+            }
+            eventBus.post(this)
         }
 
     override fun bind() {
@@ -332,6 +351,21 @@ class GraphViewImpl<T : GraphElementView<*>>(
                 netViewMap.remove(netView.net)
             }
         }
+    }
+
+    /** Ensures that the [OscilloscopeView] exists and is added as a [Component] to this [GraphView].*/
+    private fun displayOscilloscope() {
+        if (oscilloscope == null) {
+            oscilloscope = OscilloscopeView()
+            oscilloscopeWrapper= GraphElementViewWrapper<Vertice>(oscilloscope)
+        }
+        add(oscilloscopeWrapper as T)
+        validate()
+    }
+
+    private fun hideOscilloscope() {
+        remove(oscilloscopeWrapper as T)
+        validate()
     }
 
     /**
