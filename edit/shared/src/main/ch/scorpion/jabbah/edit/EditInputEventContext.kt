@@ -16,7 +16,7 @@ class EditInputEventContext(
 ) : InputEventContext(editor.view, mouseEvent, keyEvent, x, y) {
 
     /** Returns a copy of this [EditInputEventContext] with other x and y coordinates*/
-    fun withXY(x: Double, y: Double): EditInputEventContext {
+    override fun withXY(x: Double, y: Double): EditInputEventContext {
         return EditInputEventContext(
             editor = this.editor,
             mouseEvent = this.mouseEvent,

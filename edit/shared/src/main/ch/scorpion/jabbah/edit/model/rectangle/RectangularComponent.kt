@@ -92,6 +92,10 @@ abstract class RectangularComponent(
         return shape.contains(x, y)
     }
 
+    override fun contains(p: Point2D): Boolean {
+        return shape.contains(p)
+    }
+
     override val canMirror: Boolean = true
 
     override fun mirrorHorizontally(x: Double) {

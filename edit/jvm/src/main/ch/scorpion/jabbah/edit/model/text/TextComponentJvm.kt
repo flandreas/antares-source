@@ -198,6 +198,10 @@ open class TextComponentJvm(
         return super<RectangleComponent>.contains(x, y)
     }
 
+    override fun contains(p: Point2D): Boolean {
+        return super<RectangleComponent>.contains(p)
+    }
+
     override fun draw(context: DrawContext) {
         val oldClip = context.g.getClipBounds()
         val b = shape

@@ -11,11 +11,16 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.exception.IndexOutOfBoundsException
 import ch.scorpion.jabbah.base.exception.NoSuchElementException
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.drawable.Locatable
 
 /**
  * Standard implementation of the [DrawableContainer] interface.
  */
-open class DrawableContainerImpl<T: Drawable> : AbstractDrawable(), DrawableContainer<T> {
+open class DrawableContainerImpl<T: Drawable>(
+        override var location: Point2D = Point2D(),
+        val useLocation: Boolean = false
+) : AbstractDrawable(), DrawableContainer<T>, Locatable {
 
     override val drawablesCount: Int get() = children.size
 
@@ -39,7 +44,11 @@ open class DrawableContainerImpl<T: Drawable> : AbstractDrawable(), DrawableCont
      * Holds an [InputEventHandler] that dispatches input events to the [Drawable] whose
      * [contains] methods returns `true` for the events location.
      */
-    private val inputEventHandler: InputEventHandler<InputEventContext> = createInputEventHandler()
+    private val inputEventHandler: InputEventHandler<InputEventContext> = if (useLocation) {
+        LocatableInputEventHandler(this, createInputEventHandler())
+    } else {
+        createInputEventHandler()
+    }
 
     open protected fun createInputEventHandler(): InputEventHandler<InputEventContext> {
         return DrawableContainerInputEventHandler(this)
@@ -63,10 +72,16 @@ open class DrawableContainerImpl<T: Drawable> : AbstractDrawable(), DrawableCont
     }
 
     override fun draw(context: DrawContext) {
+        if (useLocation) {
+            context.g.translate(location.x, location.y)
+        }
         drawablesInDrawingOrder().forEach {
             if (it.visible) {
                 drawableDrawer.process(context, it)
             }
+        }
+        if (useLocation) {
+            context.g.translate(-location.x, -location.y)
         }
     }
 

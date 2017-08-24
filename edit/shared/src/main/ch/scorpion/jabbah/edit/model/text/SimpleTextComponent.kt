@@ -92,6 +92,10 @@ class SimpleTextComponent(
         return super<RectangleComponent>.contains(x, y)
     }
 
+    override fun contains(p: Point2D): Boolean {
+        return super<RectangleComponent>.contains(p)
+    }
+
     override fun draw(context: DrawContext) {
         decorator.drawBackground(this, context)
 

@@ -34,6 +34,11 @@ interface TextComponent : Component, RectangularShape {
     override fun contains(x: Double, y: Double): Boolean {
         throw UnsupportedOperationException("not implemented")
     }
+
+    // Requested by the compiler due to multiple inheritance problem
+    override fun contains(p: Point2D): Boolean {
+        throw UnsupportedOperationException("not implemented")
+    }
 }
 
 interface TextComponentFactory {

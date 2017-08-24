@@ -1,5 +1,8 @@
 package ch.scorpion.jabbah.draw
 
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.drawable.Locatable
+
 /**
  * Handles mouse and key inputs that are targeted at a [Drawable] in a [View].
  *
@@ -63,5 +66,43 @@ open class InputEventHandlerAdapter<in T : InputEventContext>(
 
     override fun keyReleased(context: T): InputEventHandler<T>? {
         return successor?.keyReleased(context)
+    }
+}
+
+class LocatableInputEventHandler<in T : InputEventContext>(
+        private val locatable: Locatable,
+        private val successor: InputEventHandler<T>
+) : InputEventHandler<T> {
+
+    companion object {
+        private val LOG by logger(LocatableInputEventHandler::class)
+    }
+
+    override fun mouseClicked(context: T): InputEventHandler<T>? {
+        return successor.mouseClicked(context.withXY(context.location.subtract(locatable.location)) as T)
+    }
+
+    override fun mouseMoved(context: T): InputEventHandler<T>? {
+        return successor.mouseMoved(context.withXY(context.location.subtract(locatable.location)) as T)
+    }
+
+    override fun mousePressed(context: T): InputEventHandler<T>? {
+        return successor.mousePressed(context.withXY(context.location.subtract(locatable.location)) as T)
+    }
+
+    override fun mouseDragged(context: T): InputEventHandler<T>? {
+        return successor.mouseDragged(context.withXY(context.location.subtract(locatable.location)) as T)
+    }
+
+    override fun mouseReleased(context: T): InputEventHandler<T>? {
+        return successor.mouseReleased(context.withXY(context.location.subtract(locatable.location)) as T)
+    }
+
+    override fun keyPressed(context: T): InputEventHandler<T>? {
+        return successor.keyPressed(context)
+    }
+
+    override fun keyReleased(context: T): InputEventHandler<T>? {
+        return successor.keyReleased(context)
     }
 }

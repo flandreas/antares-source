@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 
 /**
@@ -59,6 +60,9 @@ interface Drawable {
 
     /** Determines whether the location with the specified coordinates is located within this [Drawable]. */
     fun contains(x: Double, y: Double): Boolean
+
+    /** Determines whether the specified [Point2D] is located within this [Drawable]. */
+    fun contains(p: Point2D): Boolean = contains(p.x, p.y)
 
     /**
      * Notifies this [Drawable] that is has been added to a [DrawableContainer].
