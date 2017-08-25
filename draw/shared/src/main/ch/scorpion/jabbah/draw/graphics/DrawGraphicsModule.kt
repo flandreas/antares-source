@@ -14,7 +14,7 @@ object DrawGraphicsModule : AbstractModule() {
     val RED = CompositeColor(backgroundColor = Color(248, 170, 145), foregroundColor = Color(236, 35, 46))
     val BLUE = CompositeColor(backgroundColor = Color(185, 223, 245), foregroundColor = Color(72, 186, 233))
     val GREEN = CompositeColor(backgroundColor = Color(198, 226, 184), foregroundColor = Color(115, 191, 91))
-    val YELLOW = CompositeColor(backgroundColor = Color(251, 245, 183), foregroundColor = Color(245, 235, 62))
+    val YELLOW = CompositeColor(backgroundColor = Color(251, 245, 183), foregroundColor = Color(254, 209, 58))
 
     /** ---- [AbstractModule] */
 
