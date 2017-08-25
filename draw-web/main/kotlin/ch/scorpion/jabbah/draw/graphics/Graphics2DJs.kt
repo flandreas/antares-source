@@ -222,6 +222,10 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
         ctx.fillText(s, x.toDouble(), y.toDouble())
     }
 
+    override fun drawImage(image: Image, x: Int, y: Int) {
+        ctx.drawImage(image.path, x.toDouble(), y.toDouble())
+    }
+
     /** ---- [Graphics2DJs] */
 
     private fun forwardTransform() {
