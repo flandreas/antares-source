@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Icon
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -18,6 +19,7 @@ class IconButton(
 
     companion object {
         private val LOG by logger(IconButton::class)
+        private val STROKE = Stroke(1.5f)
     }
 
     private val handler = Handler()
@@ -26,7 +28,7 @@ class IconButton(
 
     /** ---- [RectangularDrawable] */
 
-    override val lineWidth: Double get() = 0.0
+    override val lineWidth: Double get() = STROKE.width.toDouble()
 
     /** ---- [Drawable] interface */
 
@@ -42,6 +44,7 @@ class IconButton(
         } else {
             context.g.color = styleProvider.getStyle(StyleType.FIGURE).color.foregroundColor
         }
+        context.g.stroke = STROKE
         icon.draw(context, Point2D(x, y))
     }
 
@@ -55,6 +58,7 @@ class IconButton(
         override fun mouseMoved(context: InputEventContext): InputEventHandler<InputEventContext>? {
             if (contains(context.x, context.y)) {
                 if (!isHovering) {
+                    LOG.debug("IconButton: start hover mode")
                     isHovering = true
                     invalidate()
                     validate()
@@ -63,6 +67,7 @@ class IconButton(
             }
 
             if (isHovering) {
+                LOG.debug("IconButton: stop hover mode")
                 isHovering = false
                 invalidate()
                 validate()
