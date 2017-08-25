@@ -48,16 +48,17 @@ class Path2DJs : Path {
     }
 
     override fun quadTo(x1: Double, y1: Double, x2: Double, y2: Double): Path {
-        boundingBox.add(x1.toDouble(), y1.toDouble())
-        boundingBox.add(x2.toDouble(), y2.toDouble())
+        boundingBox.add(x1, y1)
+        boundingBox.add(x2, y2)
         entries.add(Entry(QuadTo(Point2D(x1, y1), Point2D(x2, y2))))
         return this
     }
 
-    override fun quadTo(x1: Int, y1: Int, x2: Int, y2: Int): Path {
-        boundingBox.add(x1.toDouble(), y1.toDouble())
-        boundingBox.add(x2.toDouble(), y2.toDouble())
-        entries.add(Entry(QuadTo(Point2D(x1, y1), Point2D(x2, y2))))
+    override fun curveTo(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Path {
+        boundingBox.add(x1, y1)
+        boundingBox.add(x2, y2)
+        boundingBox.add(x3, y3)
+        entries.add(Entry(CurveTo(Point2D(x1, y1), Point2D(x2, y2), Point2D(x3, y3))))
         return this
     }
 
@@ -119,6 +120,13 @@ class Path2DJs : Path {
         override val p: Point2D? get() = endPoint
         override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
             ctx.quadraticCurveTo(controlPoint.x, controlPoint.y, endPoint.x, endPoint.y)
+        }
+    }
+
+    private class CurveTo(private val cp1: Point2D, private val cp2: Point2D, private val endPoint: Point2D) : Command {
+        override val p: Point2D? get() = endPoint
+        override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
+            ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, endPoint.x, endPoint.y)
         }
     }
 
