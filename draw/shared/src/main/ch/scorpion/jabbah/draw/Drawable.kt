@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.draw
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
@@ -23,7 +22,7 @@ interface Drawable {
     /** Determines whether this [Drawable] can be mirrored horizontally and vertically.*/
     val canMirror: Boolean
 
-    /** Accepts a [HiearchyVisitor] to visit this [Drawable] and possible hierarchy children.*/
+    /** Accepts a [HierarchyVisitor] to visit this [Drawable] and possible hierarchy children.*/
     fun accept(visitor: HierarchyVisitor): Boolean
 
     /**
@@ -89,9 +88,9 @@ interface Drawable {
     /**
      * Returns a short description of this [Drawable] to be displayed as a tool tip.
      *
-     * @param the x-coordinate of the mouse position
-     * @param the y-coordinate of the mouse position
-     * @param the width in pixels to which multi-line text is to be formatted, or `null` if no width is to be enforced
+     * @param x x-coordinate of the mouse position
+     * @param y y-coordinate of the mouse position
+     * @param width the width in pixels to which multi-line text is to be formatted, or `null` if no width is to be enforced
      * @return the tool tip text of this [Drawable]], or `null`if this [Drawable] doesn't want to display a
      *      text at the specified location.
      */

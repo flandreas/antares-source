@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.base.logger
 
 /**
  * Standard implementation of a [SelectionTool].
+ * Uses a [RubberBandHandler] for selecting multiple [Component]s at a time.
  */
 class SelectionToolImpl(
     editor: Editor,

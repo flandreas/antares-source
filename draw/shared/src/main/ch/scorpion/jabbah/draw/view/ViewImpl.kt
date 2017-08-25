@@ -100,6 +100,10 @@ open class ViewImpl<C: InputEventContext>(
         return bbox
     }
 
+    /** ---- Event handling */
+
+    private val handler: InputEventHandler<C> = EventHandler()
+
     override fun requestFocus() {
         canvas.requestViewFocus()
     }
@@ -108,7 +112,7 @@ open class ViewImpl<C: InputEventContext>(
         canvas.setToolTipText(text)
     }
 
-    override fun getInputEventHandler(e: InputEvent): InputEventHandler<C> = EventHandler()
+    override fun getInputEventHandler(e: InputEvent): InputEventHandler<C> = handler
 
     override fun addMouseListener(l: MouseListener) {
         canvas.addMouseListener(l)

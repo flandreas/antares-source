@@ -15,7 +15,8 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
  *
  * A [DrawableContainer] doesn't register itself as [DrawableListener] on every [Drawable] it contains.
  * It rather expects that a [Drawable] maintains a reference to its parent [DrawableContainer] and calls
- * the appropriate handle()-methods of its parent [DrawableContainer] whenever needed.
+ * the appropriate handle()-methods of its parent [DrawableContainer] whenever needed. This design allows
+ * domain logic to search for other [Drawable]s in a particular [Drawable]'s [DrawableContainer].
  *
  * @param T the type of [Drawable]s that this [DrawableContainer] contains
  */

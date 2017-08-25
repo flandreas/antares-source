@@ -3,9 +3,13 @@ package ch.scorpion.jabbah.draw
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.graphics.Cursor
 
 /**
  * An argument object for [InputEventHandler]s.
+ *
+ * @property view the [View] in which the object that owns this [InputEventHandler] is displayed. Used for
+ * accessing [View] properties, such as changing the [Cursor] during input handling.
  */
 open class InputEventContext(
     val view: View<*>,

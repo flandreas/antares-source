@@ -4,7 +4,7 @@ package ch.scorpion.jabbah.draw
 interface DrawableListener {
 
     /**
-     * Gets called whenever a [Drawable] has been invaliated, i.e. whenever it has changed its
+     * Gets called whenever a [Drawable] has been invalidated, i.e. whenever it has changed its
      * graphical representation and should therefore be repainted.
      */
     fun drawableInvalidated(event: DrawableEvent)
