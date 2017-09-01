@@ -71,12 +71,7 @@ class SelectionToolImpl(
     override fun mouseMoved(e: MouseEvent, x: Double, y: Double) {
         LOG.trace("SelectionToolImpl: mouseMoved to $x,$y")
 
-        val component = editor.drawing.getDrawableAt(x, y)
-        if (component != null) {
-            editor.view.setToolTipText(component.getToolTipText(x, y, 150))
-        } else {
-            editor.view.setToolTipText(null)
-        }
+        editor.view.setToolTipText(editor.drawing.getToolTipText(x, y, 150))
 
         if (target != null) {
             target = target?.mouseMoved(mouseEventContext(e, x, y))
@@ -85,7 +80,7 @@ class SelectionToolImpl(
             }
         }
         target = editor.view.getInputEventHandler(e).mouseMoved(mouseEventContext(e, x, y))
-        updateCursor(component)
+        updateCursor(editor.drawing.getDrawableAt(x, y))
     }
 
     override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
@@ -164,7 +159,7 @@ class SelectionToolImpl(
                     multiComponentSnappable = MultiComponentSnappable(selection)
                 }
                 offset = editor.snapManager.snap(multiComponentSnappable!!, dx, dy)
-            } else {
+            } else if (selection.size == 1) {
                 offset = editor.snapManager.snap(selection.first(), dx, dy)
             }
         }

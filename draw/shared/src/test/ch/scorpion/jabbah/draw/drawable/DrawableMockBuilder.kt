@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.draw.drawable
 
-import com.nhaarman.mockito_kotlin.mock
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import com.nhaarman.mockito_kotlin.*
 import org.mockito.Mockito
 
 /**
@@ -19,6 +19,16 @@ class DrawableMockBuilder {
 
     fun invisible(): DrawableMockBuilder {
         Mockito.`when`(drawable.visible).thenReturn(false)
+        return this
+    }
+
+    fun contains(x: Double, y: Double): DrawableMockBuilder {
+        whenever(drawable.contains(eq(x), eq(y))).thenReturn(true)
+        return this
+    }
+
+    fun tooltip(s: String): DrawableMockBuilder {
+        Mockito.`when`(drawable.getToolTipText(any(), any(), any())).thenReturn(s)
         return this
     }
 

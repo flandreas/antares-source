@@ -32,4 +32,9 @@ data class Color(val red: Int, val green: Int, val blue: Int, val alpha: Int) {
             Math.max((blue * FACTOR).toInt(), 0)
         )
     }
+
+    /** Returns a new [Color] with the same RGB values as this [Color], but with the specified alpha value.*/
+    fun withAlpha(alpha: Int): Color {
+        return Color(red, green, blue, alpha)
+    }
 }

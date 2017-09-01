@@ -86,7 +86,12 @@ open class DrawTheme(
                 DrawGraphicsModule.RED,
                 DrawGraphicsModule.BLUE,
                 DrawGraphicsModule.GREEN,
-                DrawGraphicsModule.YELLOW
+                DrawGraphicsModule.YELLOW,
+                DrawGraphicsModule.VIOLET,
+                DrawGraphicsModule.PINK,
+                DrawGraphicsModule.GRAY,
+                DrawGraphicsModule.WHITE,
+                DrawGraphicsModule.BLACK
         )
     }
 

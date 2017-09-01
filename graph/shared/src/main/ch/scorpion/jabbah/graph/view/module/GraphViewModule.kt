@@ -37,6 +37,7 @@ import ch.scorpion.jabbah.io.TypeMap
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import ch.scorpion.jabbah.edit.model.rectangle.RectangularBelowSelectionModel
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
 import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
@@ -138,8 +139,6 @@ object GraphViewModule : AbstractModule() {
     }
 
     private fun configureSelectionModels(factory: SelectionModelFactory) {
-        factory.register(SelectionDrawingStrategy.ABOVE, OscilloscopeView::class.simpleName!!, { RectangularHandleSelectionModel(it as RectangularComponent )})
-
         factory.register(SelectionDrawingStrategy.REPLACE, SubGraphVerticeViewImpl::class.simpleName!!,
             { SubGraphVerticeViewImplSelectionModel(it as SubGraphVerticeViewImpl, EditSelectModule.selectionModelProvider) })
         factory.register(SelectionDrawingStrategy.REPLACE, OriginIndicator::class.simpleName!!, { OriginIndicatorSelectionModel(it as OriginIndicator)})
@@ -148,6 +147,7 @@ object GraphViewModule : AbstractModule() {
 
         factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class.simpleName!!, { EdgeViewBelowSelectionModel(it as EdgeView<*>) })
         factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class.simpleName!!, { BoundingBoxBelowSelectionModel(it) })
+        factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class.simpleName!!, { RectangularBelowSelectionModel(it as RectangularComponent) })
     }
 
     private var edgeViewFactoryImpl: EdgeViewFactory<Any> = EdgeViewFactoryImpl(

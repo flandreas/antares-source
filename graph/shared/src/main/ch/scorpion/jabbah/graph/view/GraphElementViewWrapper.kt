@@ -83,6 +83,10 @@ class GraphElementViewWrapper<T : GraphElement>(
         return _component!!.contains(x, y)
     }
 
+    override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
+        return _component!!.getToolTipText(x, y, width)
+    }
+
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
         return _component!!.getInputEventHandler(context)
     }

@@ -44,11 +44,7 @@ open class DrawableContainerImpl<T: Drawable>(
      * Holds an [InputEventHandler] that dispatches input events to the [Drawable] whose
      * [contains] methods returns `true` for the events location.
      */
-    private val inputEventHandler: InputEventHandler<InputEventContext> = if (useLocation) {
-        LocatableInputEventHandler(this, createInputEventHandler())
-    } else {
-        createInputEventHandler()
-    }
+    private val inputEventHandler: InputEventHandler<InputEventContext> = createInputEventHandler()
 
     open protected fun createInputEventHandler(): InputEventHandler<InputEventContext> {
         return DrawableContainerInputEventHandler(this)
@@ -91,7 +87,19 @@ open class DrawableContainerImpl<T: Drawable>(
     }
 
     override fun contains(x: Double, y: Double): Boolean {
+        if (useLocation) {
+            val location = Point2D(x, y).subtract(this.location)
+            return children.any { it.visible && it.contains(location) }
+        }
         return children.any { it.visible && it.contains(x, y) }
+    }
+
+    override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
+        if (useLocation) {
+            val l = Point2D(x, y).subtract(this.location)
+            return getDrawableAt(x, y)?.getToolTipText(l.x, l.y, width) ?: super.getToolTipText(l.x, l.y, width)
+        }
+        return getDrawableAt(x, y)?.getToolTipText(x, y, width) ?: super.getToolTipText(x, y, width)
     }
 
     /** ---- [DrawableContainer] interface */
@@ -167,7 +175,10 @@ open class DrawableContainerImpl<T: Drawable>(
     }
 
     override fun getDrawableAt(x: Double, y: Double): T? {
-        return children.filter({it.visible && it.contains(x, y)}).firstOrNull()
+        if (useLocation) {
+            return children.filter({ it.visible && it.contains(Point2D(x, y).subtract(location))}).firstOrNull()
+        }
+        return children.filter({ it.visible && it.contains(x, y) } ).firstOrNull()
     }
 
     override fun getDrawables(): ImmutableList<T> {

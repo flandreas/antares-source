@@ -2,8 +2,8 @@ package ch.scorpion.jabbah.draw
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
-import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.drawable.Locatable
 
 /**
  * A [DrawableContainer] is a [Drawable] that contains other [Drawable]s.
@@ -18,11 +18,16 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
  * the appropriate handle()-methods of its parent [DrawableContainer] whenever needed. This design allows
  * domain logic to search for other [Drawable]s in a particular [Drawable]'s [DrawableContainer].
  *
+ * Coordinates used by [DrawableContainer] methods are expressed relative to the origin of the coordinate system
+ * of the [View] that displays this [DrawableContainer], or in the coordinate system of the [DrawableContainer]
+ * that contains this [DrawableContainer] as a child [Drawable]. This ensures semantic consistency of the
+ * [DrawableContainer] methods and those inherited from [Drawable].
+ *
  * @param T the type of [Drawable]s that this [DrawableContainer] contains
  */
-interface DrawableContainer<T : Drawable> : Drawable {
+interface DrawableContainer<T : Drawable> : Drawable, Locatable {
 
-    /** Holds the number of [Drawable]s this [DrawableContainer] contains.*/
+    /** Returns the number of [Drawable]s this [DrawableContainer] contains.*/
     val drawablesCount: Int
 
     /**
@@ -86,7 +91,12 @@ interface DrawableContainer<T : Drawable> : Drawable {
     /** Returns an [Iterator] over all [Drawable]s in reverse stacking order, i.e. the bottommost [Drawable] is returned first.*/
     fun backToFrontIterator(): Iterator<T>
 
-    /** Returns the first [Drawable] (in stacking order) that contains the specified location.*/
+    /**
+     * Returns the first visible [Drawable] (in stacking order) that contains the specified location,
+     * expressed relative to the environment's coordinate system origin (either a [View] or a parent [DrawableContainer]).
+     * If the [Drawable] at the specified location is a [DrawableContainer], this method must **not** return any
+     * inner [Drawable] at that location. This method rather returns only direct children.
+     */
     fun getDrawableAt(x: Double, y: Double): T?
 
     fun getDrawables(): ImmutableList<T>

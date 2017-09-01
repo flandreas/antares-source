@@ -7,13 +7,24 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 
 /**
  * A [Drawable] is an object with a graphical representation.
+ *
+ * A [Drawable] can be directly contained in a [View], or it can be a child of a [DrawableContainer].
+ * All geometric coordinates used by [Drawable] are expressed in the corresponding model coordinate space
+ * of either the [View] (if contained directly) or the [DrawableContainer] that contains this [Drawable].
+ * For example, a rectangle [Drawable] of width and height 10 whose top-left corner is located at (100,100)
+ * contains the [Point2D] (105,105), but does **not** contain the [Point2D] (5,5) in terms of its
+ * [contains] methods.
  */
 interface Drawable {
 
     /** The parent [DrawableContainer] that contains this [Drawable].*/
     val parent: DrawableContainer<*>?
 
-    /** The rectangular area that completely contains this [Drawable].*/
+    /**
+     * The rectangular area in model coordinate space that completely contains this [Drawable].
+     * The bounding box is used for invalidation and repainting. Therefore, make sure that the bounding
+     * box of a figure [Drawable] (e.g. a rectangle) includes the width of any border stroke used for painting.
+     */
     val boundingBox: RectangularShape
 
     /** Determines if this [Drawable] is visible, i.e. whether is painted or not.*/

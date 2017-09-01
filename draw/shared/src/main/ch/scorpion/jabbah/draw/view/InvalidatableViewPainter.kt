@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ViewPainter
@@ -14,6 +13,7 @@ import ch.scorpion.jabbah.base.Math
  */
 class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
 
+    /** Keeps track of the current accumulated invalid region in model coordinate space.*/
     var dirtyRegion: Rectangle2D? = null
         private set
 

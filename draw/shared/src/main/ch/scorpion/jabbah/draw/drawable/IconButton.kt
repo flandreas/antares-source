@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 /** An implementation of a simple button as a [Drawable] that uses an [Icon] for rendering.*/
 class IconButton(
         private val icon: Icon,
+        private val action: () -> Unit,
         location: Point2D = Point2D(),
         private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangle(location.x, location.y, icon.dim.width, icon.dim.height) {
@@ -21,6 +22,15 @@ class IconButton(
         private val LOG by logger(IconButton::class)
         private val STROKE = Stroke(1.5f)
     }
+
+    var enabled: Boolean = true
+        set(value) {
+            if (field != value) {
+                field = value
+                invalidate()
+                validate()
+            }
+        }
 
     private val handler = Handler()
 
@@ -41,6 +51,8 @@ class IconButton(
         if (isHovering) {
             // TODO Configurable
             context.g.color = Color.ORANGE
+        } else if (!enabled) {
+            context.g.color = styleProvider.getStyle(StyleType.FIGURE).color.foregroundColor.withAlpha(128)
         } else {
             context.g.color = styleProvider.getStyle(StyleType.FIGURE).color.foregroundColor
         }
@@ -52,12 +64,29 @@ class IconButton(
         return handler
     }
 
+    override fun update() {
+        isHovering = false
+        super.update()
+    }
+
+    override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
+        // TEST BEGIN
+        return buildToolTipText("IconButton", "Hello!", width)
+        // TEST END
+    }
+
     /** ---- [IconButton] */
+
+    var location: Point2D
+        get() = Point2D(x, y)
+        set(value) {
+            setBounds(value.x, value.y, width, height)
+        }
 
     private inner class Handler : InputEventHandlerAdapter<InputEventContext>() {
         override fun mouseMoved(context: InputEventContext): InputEventHandler<InputEventContext>? {
             if (contains(context.x, context.y)) {
-                if (!isHovering) {
+                if (!isHovering && enabled) {
                     LOG.debug("IconButton: start hover mode")
                     isHovering = true
                     invalidate()
@@ -71,6 +100,13 @@ class IconButton(
                 isHovering = false
                 invalidate()
                 validate()
+            }
+            return null
+        }
+
+        override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
+            if (enabled) {
+                action.invoke()
             }
             return null
         }
