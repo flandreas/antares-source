@@ -37,6 +37,7 @@ class OscilloscopeView(
                 addRow()
                 validate()
             },
+            tooltipKey = "graph.action.oscilloscope.addRow.name",
             location = Point2D(10, TITLE_HEIGHT + 15))
 
     private val refColorSequence = referenceColorSequenceProvider.provide()
@@ -131,6 +132,7 @@ class OscilloscopeView(
         init {
             add(IconButton(
                     icon = RemoveIcon(Dimension2D(20, 20)),
+                    tooltipKey = "graph.action.oscilloscope.removeRow.name",
                     location = Point2D(10, 0),
                     action = { removeRow(probeView.rowNumber) }))
             add(probeView)

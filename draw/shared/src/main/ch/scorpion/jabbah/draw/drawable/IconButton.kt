@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.drawable
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.*
@@ -10,11 +11,14 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 
-/** An implementation of a simple button as a [Drawable] that uses an [Icon] for rendering.*/
+/**
+ * An implementation of a simple button as a [Drawable] that uses an [Icon] for rendering.
+ */
 class IconButton(
         private val icon: Icon,
         private val action: () -> Unit,
         location: Point2D = Point2D(),
+        private val tooltipKey: String? = null,
         private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangle(location.x, location.y, icon.dim.width, icon.dim.height) {
 
@@ -70,9 +74,10 @@ class IconButton(
     }
 
     override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
-        // TEST BEGIN
-        return buildToolTipText("IconButton", "Hello!", width)
-        // TEST END
+        if (tooltipKey != null) {
+            return Translations.getString(tooltipKey)
+        }
+        return null
     }
 
     /** ---- [IconButton] */

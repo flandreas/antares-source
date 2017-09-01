@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventContext
@@ -68,6 +69,10 @@ class OscilloscopeProbeView(
 
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
         return handler
+    }
+
+    override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
+        return Translations.getString("graph.action.oscilloscope.dragProbe.name")
     }
 
     /** ---- [OscilloscopeProbeView] */

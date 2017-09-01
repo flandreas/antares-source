@@ -71,8 +71,6 @@ class SelectionToolImpl(
     override fun mouseMoved(e: MouseEvent, x: Double, y: Double) {
         LOG.trace("SelectionToolImpl: mouseMoved to $x,$y")
 
-        editor.view.setToolTipText(editor.drawing.getToolTipText(x, y, 150))
-
         if (target != null) {
             target = target?.mouseMoved(mouseEventContext(e, x, y))
             if (target != null) {
@@ -80,7 +78,10 @@ class SelectionToolImpl(
             }
         }
         target = editor.view.getInputEventHandler(e).mouseMoved(mouseEventContext(e, x, y))
-        updateCursor(editor.drawing.getDrawableAt(x, y))
+        editor.view.setToolTipText(editor.drawing.getToolTipText(x, y, 150))
+        if (target == null) {
+            updateCursor(editor.drawing.getDrawableAt(x, y))
+        }
     }
 
     override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
