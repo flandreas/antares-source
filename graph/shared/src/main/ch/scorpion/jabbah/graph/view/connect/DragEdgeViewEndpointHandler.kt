@@ -47,7 +47,7 @@ class DragEdgeViewEndpointHandler(
         }
 
         val pv = (destVerticeView).getPortViewAt(context.x, context.y)
-        if (pv == null || pv.port.isConnected || !edgeViewEndpointType.canConnectTo(pv.port.portType)) {
+        if (pv == null || pv.port.isConnected || !pv.connectable || !edgeViewEndpointType.canConnectTo(pv.port.portType)) {
             exitTargetPortView(context.drawingView())
             return this
         }

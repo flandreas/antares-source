@@ -42,6 +42,13 @@ interface PortView<T: Any> : Drawable, Storable {
      */
     var owner: VerticeView<*>?
 
+    /**
+     * Determines whether an [EdgeView] can be connected to this [PortView]. This will generally be `true`,
+     * but there are cases when you want to design a [VerticeView] with invisible [PortView]s, such as the
+     * probes of an oscilloscope that connect only on the model layer, but not on the view layer.
+     */
+    val connectable: Boolean
+
     /** The relative location of this [PortView] within the owning [VerticeView].*/
     var location: Point2D
 

@@ -11,8 +11,9 @@ class GenericPortView<T: Any>(
         x: Int,
         y: Int,
         direction: Direction,
-        portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL
-) : AbstractPortView<T>(port, x, y, direction, portLabelPosition, 0) {
+        portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
+        connectable: Boolean = false
+) : AbstractPortView<T>(port, x, y, direction, portLabelPosition, 0, connectable) {
 
     override fun contains(x: Double, y: Double): Boolean = false
 

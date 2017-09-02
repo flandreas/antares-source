@@ -27,7 +27,8 @@ abstract class AbstractPortView<T: Any>(
     y: Int,
     direction: Direction,
     open var portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
-    unconnectedLength: Int
+    unconnectedLength: Int,
+    override val connectable: Boolean = true
 ) : AbstractDrawable(), PortView<T>, Storable {
 
     private val LOG by logger(AbstractPortView::class)

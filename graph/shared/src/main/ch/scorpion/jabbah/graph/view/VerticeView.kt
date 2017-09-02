@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 
 /**
  * Represents a graphical representation of a [Vertice].
+ * After completion of construction, a [VerticeView] must have at least one [PortView], because features
+ * like snapping try to determine connection points, which are derived from [PortView].
  * @param T the type of [Vertice] that this [VerticeView] graphically represents.
  */
 interface VerticeView<T : Vertice> : GraphElementView<T>, ConnectableView, ActorView {

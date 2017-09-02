@@ -389,7 +389,7 @@ class GraphViewImpl<T : GraphElementView<*>>(
             val drawable = getDrawableAt(context.x, context.y)
             if (drawable is VerticeView<*>) {
                 val portView = drawable.getPortViewAt(context.x, context.y)
-                if (portView != null) {
+                if (portView != null && portView.connectable) {
                     if (portView.port.portType.isOutput) {
                         target = outputToInputConnector
                         outputToInputConnector.useFor(drawable)
