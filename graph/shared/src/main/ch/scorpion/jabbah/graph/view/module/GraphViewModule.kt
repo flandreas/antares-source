@@ -48,6 +48,7 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.app.GraphViewService
 import ch.scorpion.jabbah.graph.view.app.GraphViewServiceImpl
+import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeProbeViewComponent
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
@@ -144,6 +145,7 @@ object GraphViewModule : AbstractModule() {
         factory.register(SelectionDrawingStrategy.REPLACE, OriginIndicator::class.simpleName!!, { OriginIndicatorSelectionModel(it as OriginIndicator)})
         factory.register(SelectionDrawingStrategy.REPLACE, PortViewComponent::class.simpleName!!, { SelectedColorSelectionModel(it) })
         factory.register(SelectionDrawingStrategy.REPLACE, ControlViewComponent::class.simpleName!!, { SelectedColorSelectionModel(it) })
+        factory.register(SelectionDrawingStrategy.REPLACE, OscilloscopeProbeViewComponent::class.simpleName!!, { SelectedColorSelectionModel(it) })
 
         factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class.simpleName!!, { EdgeViewBelowSelectionModel(it as EdgeView<*>) })
         factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class.simpleName!!, { BoundingBoxBelowSelectionModel(it) })

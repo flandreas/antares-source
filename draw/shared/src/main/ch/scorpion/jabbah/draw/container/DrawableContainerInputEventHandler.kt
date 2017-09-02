@@ -28,6 +28,25 @@ open class DrawableContainerInputEventHandler<T: Drawable, C : InputEventContext
         return null
     }
 
+    override fun mouseDragged(context: C): InputEventHandler<C>? {
+        val drawable = container.getDrawableAt(context.x, context.y)
+        if (drawable != null) {
+            val localContext = localContext(context)
+            return drawable.getInputEventHandler(localContext).mouseDragged(localContext)
+        }
+        return null
+    }
+
+    override fun mouseReleased(context: C): InputEventHandler<C>? {
+        val drawable = container.getDrawableAt(context.x, context.y)
+        if (drawable != null) {
+            val localContext = localContext(context)
+            return drawable.getInputEventHandler(localContext).mouseReleased(localContext)
+        }
+        return null
+    }
+
+
     override fun mouseClicked(context: C): InputEventHandler<C>? {
         val drawable = container.getDrawableAt(context.x, context.y)
         if (drawable != null) {

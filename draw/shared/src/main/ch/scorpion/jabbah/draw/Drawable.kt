@@ -79,7 +79,7 @@ interface Drawable {
      * As a reaction, this [Drawable] should store a reference to that parent [DrawableContainer] in order
      * to be able to call the parent's invalidate and repaint methods.
      */
-    fun handleAdded(container: DrawableContainer<*>)
+    fun <T: Drawable> handleAdded(container: DrawableContainer<T>)
 
     /** Notifies this [Drawable] that it has been removed from its parent [DrawableContainer].*/
     fun <T: Drawable> handleRemoved(container: DrawableContainer<T>)

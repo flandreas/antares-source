@@ -140,7 +140,7 @@ class SelectionToolImpl(
             return
         }
 
-        LOG.trace("SelectionTool: drag to $x,$y")
+        LOG.trace("SelectionTool: drag to $x,$y, target is $target")
 
         if (target != null) {
             target = target?.mouseDragged(mouseEventContext(e, x, y))

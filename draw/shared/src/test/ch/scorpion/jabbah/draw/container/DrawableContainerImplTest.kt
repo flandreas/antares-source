@@ -214,7 +214,7 @@ class DrawableContainerImplTest {
     }
 
     @Test
-    fun shouldDispatchMoveMovedToNestedDrawable() {
+    fun shouldDispatchMouseMovedToNestedDrawable() {
         val view = mock<View<InputEventContext>>()
         val context = InputEventContext(view = view, x = 125.0, y = 125.0)
 
@@ -228,8 +228,25 @@ class DrawableContainerImplTest {
         assertThat(rect.mouseMoved, `is`(true))
     }
 
+    @Test
+    fun shouldDispatchMousePressedToNestedDrawable() {
+        val view = mock<View<InputEventContext>>()
+        val context = InputEventContext(view = view, x = 125.0, y = 125.0)
+
+        val rect = TestRectangle(Rectangle2D(20, 20, 10, 10))
+        val innerContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
+        innerContainer.add(rect)
+        container.add(innerContainer)
+
+        container.getInputEventHandler(context).mousePressed(context)
+
+        assertThat(rect.mousePressed, `is`(true))
+    }
+
+
     private class TestRectangle(shape: RectangularShape) : AbstractRectangle(shape) {
-        var mouseMoved: Boolean = false
+        var mouseMoved = false
+        var mousePressed = false
         private val handler = Handler()
 
         override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> = handler
@@ -241,6 +258,14 @@ class DrawableContainerImplTest {
             override fun mouseMoved(context: InputEventContext): InputEventHandler<InputEventContext>? {
                 if(this@TestRectangle.contains(context.x, context.y)) {
                     mouseMoved = true
+                    return this
+                }
+                return null
+            }
+
+            override fun mousePressed(context: InputEventContext): InputEventHandler<InputEventContext>? {
+                if(this@TestRectangle.contains(context.x, context.y)) {
+                    mousePressed = true
                     return this
                 }
                 return null

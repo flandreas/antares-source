@@ -26,6 +26,8 @@ class GraphElementViewWrapper<T : GraphElement>(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractGraphElementView<T>(styleProvider, GraphStyleType.VERTICE, null) {
 
+    val component: Component? get() = _component
+
     private var drawableOwner: DrawableOwner? = null
 
     private var _component: Component? = null
@@ -91,7 +93,7 @@ class GraphElementViewWrapper<T : GraphElement>(
         return _component!!.getInputEventHandler(context)
     }
 
-    override fun handleAdded(container: DrawableContainer<*>) {
+    override fun <T: Drawable> handleAdded(container: DrawableContainer<T>) {
         _component!!.handleAdded(container)
     }
 

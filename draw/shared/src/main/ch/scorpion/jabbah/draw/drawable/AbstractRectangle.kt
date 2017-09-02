@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.drawable
 
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -17,6 +18,14 @@ abstract class AbstractRectangle(val shape: RectangularShape) : AbstractDrawable
 
     /** Constructs this [AbstractRectangle] with an empty [Rectangle2D] shape.*/
     constructor(): this(0.0, 0.0, 0.0, 0.0)
+
+    /** ---- [Locatable] */
+
+    override var location: Point2D
+        get() = Point2D(x, y)
+        set(value) {
+            setBounds(value.x, value.y, width, height)
+        }
 
     /** ---- [AbstractDrawable] */
 

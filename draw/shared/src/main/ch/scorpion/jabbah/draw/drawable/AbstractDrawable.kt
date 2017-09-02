@@ -71,7 +71,7 @@ abstract class AbstractDrawable : Drawable {
         requestRedraw()
     }
 
-    override fun handleAdded(container: DrawableContainer<*>) {
+    override fun <T: Drawable> handleAdded(container: DrawableContainer<T>) {
         _parent = container
     }
 

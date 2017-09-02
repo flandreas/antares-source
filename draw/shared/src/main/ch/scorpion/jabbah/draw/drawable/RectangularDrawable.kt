@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 /**
  * Defines properties and methods common to all rectangular graphical objects.
  */
-interface RectangularDrawable {
+interface RectangularDrawable : Locatable {
 
     val bounds: RectangularShape
 

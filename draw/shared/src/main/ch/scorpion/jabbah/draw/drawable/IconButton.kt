@@ -18,7 +18,7 @@ class IconButton(
         private val icon: Icon,
         private val action: () -> Unit,
         location: Point2D = Point2D(),
-        private val tooltipKey: String? = null,
+        var tooltipKey: String? = null,
         private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangle(location.x, location.y, icon.dim.width, icon.dim.height) {
 
@@ -75,18 +75,12 @@ class IconButton(
 
     override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
         if (tooltipKey != null) {
-            return Translations.getString(tooltipKey)
+            return Translations.getString(tooltipKey!!)
         }
         return null
     }
 
     /** ---- [IconButton] */
-
-    var location: Point2D
-        get() = Point2D(x, y)
-        set(value) {
-            setBounds(value.x, value.y, width, height)
-        }
 
     private inner class Handler : InputEventHandlerAdapter<InputEventContext>() {
         override fun mouseMoved(context: InputEventContext): InputEventHandler<InputEventContext>? {

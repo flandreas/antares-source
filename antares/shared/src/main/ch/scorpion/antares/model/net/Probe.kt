@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.base.logger
@@ -76,8 +77,8 @@ class Probe(hasOutput: Boolean = false) : CalculatingVertice(CALCULATOR), Digita
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeInt("bitWidth", bitWidth.width);
-        writer.writeBoolean("hasOutput", hasOutput);
+        writer.writeInt("bitWidth", bitWidth.width)
+        writer.writeBoolean("hasOutput", hasOutput)
     }
 
     override fun read(reader: StoreReader) {
@@ -86,7 +87,7 @@ class Probe(hasOutput: Boolean = false) : CalculatingVertice(CALCULATOR), Digita
         hasOutput = reader.readBoolean("hasOutput")
     }
 
-    /** ---- [Proble] */
+    /** ---- [Probe] */
 
     private fun setSignal(signal: DigitalSignal, signalHandler: SignalHandler) {
         stateChanged()
@@ -94,5 +95,4 @@ class Probe(hasOutput: Boolean = false) : CalculatingVertice(CALCULATOR), Digita
             getOutput<DigitalSignal>().setOutgoingSignalBuffered(signal, signalHandler)
         }
     }
-
 }
