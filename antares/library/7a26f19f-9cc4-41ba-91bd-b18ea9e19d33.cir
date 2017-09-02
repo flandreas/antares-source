@@ -219,10 +219,10 @@ switch(parseInt(elem.input(&quot;F0&quot;)) + 2*parseInt(elem.input(&quot;F1&quo
             <andGateView _id='90' id='5' rot='0' modelId='7' x='469.0' y='280.0'/>
             <notGateView _id='89' id='6' rot='0' modelId='8' x='469.0' y='532.0'/>
             <subGraphVerticeViewRef _id='88' id='7' rot='0' modelId='9' x='504.0' y='630.0' label='DEC'/>
-            <andGateView _id='87' id='8' rot='0' modelId='10' x='742.0' y='168.0'/>
-            <andGateView _id='86' id='9' rot='0' modelId='11' x='742.0' y='294.0'/>
-            <andGateView _id='85' id='10' rot='0' modelId='12' x='742.0' y='420.0'/>
-            <andGateView _id='84' id='11' rot='0' modelId='13' x='742.0' y='546.0'/>
+            <andGateView _id='87' id='8' rot='0' modelId='10' x='742.0' y='168.0' dataPort='1'/>
+            <andGateView _id='86' id='9' rot='0' modelId='11' x='742.0' y='294.0' dataPort='1'/>
+            <andGateView _id='85' id='10' rot='0' modelId='12' x='742.0' y='420.0' dataPort='1'/>
+            <andGateView _id='84' id='11' rot='0' modelId='13' x='742.0' y='546.0' dataPort='1'/>
             <circuitInOutView _id='83' id='12' modelId='14' representation='binary' orientation='east'>
               <location>
                 <point x='294.0' y='630.0'/>
@@ -386,9 +386,9 @@ switch(parseInt(elem.input(&quot;F0&quot;)) + 2*parseInt(elem.input(&quot;F1&quo
                 <polylineShape points='462.0,210.0 896.0,210.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='48' id='53' modelId='25' layout='ortho' orig='88' origPort='4' origPortOutput='true' dest='43' adjusted='true'>
+            <digitalEdgeView _id='48' id='53' modelId='25' layout='ortho' orig='88' origPort='4' origPortOutput='true' dest='43' adjusted='false'>
               <shape>
-                <polylineShape points='602.0,602.0 616.0,602.0'/>
+                <polylineShape points='588.0,602.0 616.0,602.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='47' id='54' modelId='38' layout='ortho' orig='83' origPort='1' origPortOutput='true' dest='88' destPort='1' adjusted='false'>
