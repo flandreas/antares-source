@@ -8,9 +8,10 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbe
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.connect.AbstractConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
@@ -46,6 +47,9 @@ class OscilloscopeProbeVerticeView<T: Any>(
 
     private val drawable = OscilloscopeProbeViewDrawable(Point2D(0.0, -OscilloscopeProbeViewDrawable.SIZE), rowNumber, color, styleProvider)
 
+    /** The [EdgeView] to which this [OscilloscopeProbeVerticeView] is connected.*/
+    private var edgeView: EdgeView<T>? = null
+
     private val handler = Handler()
 
     private val moveLastLocation = Point2D()
@@ -72,6 +76,15 @@ class OscilloscopeProbeVerticeView<T: Any>(
         drawable.draw(context)
     }
 
+    /** ---- [AbstractGraphElementView] */
+
+    override fun handleStateChanged(event: GraphElementEvent) {
+        LOG.debug("State of ProbeView changed")
+        super.handleStateChanged(event)
+    }
+
+    /** ---- [OscilloscopeProbeVerticeView] */
+
     private inner class Handler : AbstractConnectionPointHighlighter() {
 
         override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
@@ -97,11 +110,9 @@ class OscilloscopeProbeVerticeView<T: Any>(
             validate()
 
             // Sensing EdgeView
-            val connPoint = getPortConnectionPoint(model!!.getPort<Any>())
-            val edgeView = context.drawingView().drawing.getDrawable { it.contains(connPoint) && it is EdgeView<*> }
-            if (edgeView != null) {
+            if (findEdgeView(context) != null) {
                 LOG.debug("OscilloscopeProbeVerticeView found EdgeView at ${context.x},${context.y}")
-                displayPortViewHighlight(context.drawingView(), connPoint)
+                displayPortViewHighlight(context.drawingView(), connectionPoint())
             } else {
                 removePortViewHighlight(context.drawingView())
             }
@@ -112,8 +123,27 @@ class OscilloscopeProbeVerticeView<T: Any>(
         override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
             LOG.debug("OscilloscopeProbeVerticeView released ${context.x},${context.y}")
             removePortViewHighlight(context.drawingView())
-            // TODO Create Command
+
+            // TODO Create Commands
+
+            val newEdgeView = findEdgeView(context) as EdgeView<T>?
+            if (edgeView != null && edgeView !== newEdgeView) {
+                edgeView!!.model!!.unconnect(model!!.getPort<T>())
+            }
+            if (newEdgeView != null) {
+                newEdgeView.model!!.connect(model!!.getPort<T>())
+            }
+            edgeView = newEdgeView
+
             return null
+        }
+
+        private fun findEdgeView(context: EditInputEventContext): EdgeView<*>? {
+            return context.drawingView().drawing.getDrawable { it.contains(connectionPoint()) && it is EdgeView<*> } as EdgeView<*>?
+        }
+
+        private fun connectionPoint(): Point2D {
+            return getPortConnectionPoint(model!!.getPort<Any>())
         }
     }
 }

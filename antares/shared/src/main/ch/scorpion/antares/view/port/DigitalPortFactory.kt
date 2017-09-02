@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.port
 
 import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
@@ -14,6 +15,10 @@ import ch.scorpion.jabbah.graph.view.port.PortFactory
 import ch.scorpion.jabbah.graph.view.port.PortView
 
 class DigitalPortFactory(private val styleProvider: StyleProvider) : PortFactory {
+
+    override fun <T : Any> createPort(portType: PortType): Port<T> {
+        return DigitalPortImpl.createPort(portType) as Port<T>
+    }
 
     override fun <T : Any> createSubGraphPort(graphPort: GraphPort<T>): Port<T> {
         val subCircuitPort = SubCircuitPort(graphPort.portType, graphPort.name)
