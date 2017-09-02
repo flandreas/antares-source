@@ -51,17 +51,13 @@ class OscilloscopeProbeView(
     private val drawable = OscilloscopeProbeViewDrawable(location, rowNumber, color, styleProvider)
 
     /**
-     * The wrapper of the [OscilloscopeProbeView] to be dragged into the [GraphView].
+     * The [OscilloscopeProbeVerticeView] to be dragged into the [GraphView].
      * Exists during dragging, and when being contained in the [GraphView]
      */
-    //private var componentWrapper: GraphElementViewWrapper<GraphElement>? = null
     private var vertice: OscilloscopeProbeVerticeView<Any>? = null
 
-    /** Set to `false` if [componentWrapper] has been dragged into the [GraphView].*/
-    //private var componentWrapperPresent = true
+    /** Set to `false` if [vertice] has been dragged into the [GraphView].*/
     private var verticePresent = true
-
-    private val moveLastLocation = Point2D()
 
     /** ---- [Drawable] */
 
@@ -90,8 +86,8 @@ class OscilloscopeProbeView(
     }
 
     /**
-     * Handles hovering on this [OscilloscopeProbeView] and dragging of [OscilloscopeProbeVerticeView]
-     * into the [GraphView].
+     * Handles hovering on this [OscilloscopeProbeView] and delegates to the [InputEventHandler] of
+     * its [OscilloscopeProbeVerticeView] to control dragging into the [GraphView].
      */
     private inner class Handler : InputEventHandlerAdapter<EditInputEventContext>() {
 
@@ -126,33 +122,10 @@ class OscilloscopeProbeView(
             verticePresent = false
             vertice = OscilloscopeProbeVerticeView(rowNumber = rowNumber, color = color, styleProvider = styleProvider)
             vertice!!.location = origLocSource.invoke().add(location).add(Point2D(0.0, height))
-            moveLastLocation.setLocation(context.location)
             context.editor.drawing.add(vertice!!)
 
             validate()
-            return this
-        }
-
-        override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-            LOG.debug("OscilloscopeProbeView drag ${context.x},${context.y}")
-            vertice!!.moveBy(context.x - moveLastLocation.x, context.y - moveLastLocation.y)
-            vertice!!.validate()
-            moveLastLocation.setLocation(context.x, context.y)
-            return this
-        }
-
-        override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-            LOG.debug("OscilloscopeProbeView released ${context.x},${context.y}")
-            if (!verticePresent) {
-                return null
-            }
-            invalidate()
-            drawable.filled = true
-            verticePresent = true
-            context.editor.drawing.remove(vertice!!)
-            vertice = null
-            validate()
-            return null
+            return vertice!!.getInputEventHandler(context).mousePressed(context)
         }
     }
 }

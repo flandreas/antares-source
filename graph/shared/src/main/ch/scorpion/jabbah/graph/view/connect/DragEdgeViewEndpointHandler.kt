@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.base.logger
 
 /**
  * Controls dragging an endpoint of an [EdgeView] towards an target [PortView] of a [VerticeView],
- * which an be either an input or an output.
+ * which can be either an input or an output.
  *
  * Designed as a single instance being used by multiple [EdgeView]s. Therefore, determine the [EdgeView] on which
  * this [DragEdgeViewEndpointHandler] operates by calling [useFor] before every usage.
