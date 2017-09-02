@@ -139,9 +139,9 @@ class OscilloscopeView(
         addButton.tooltipKey = if (addButton.enabled) "graph.action.oscilloscope.addRow.name" else "graph.action.oscilloscope.addRow.limit"
     }
 
-    private fun findProbeViewInDrawing(rowNumber: Int): GraphElementViewWrapper<GraphElement>? {
-        return parent!!.getDrawable { it is GraphElementViewWrapper<*> && it.component is OscilloscopeProbeViewComponent && (it.component as OscilloscopeProbeViewComponent).rowNumber == rowNumber }
-                as GraphElementViewWrapper<GraphElement>?
+    private fun findProbeViewInDrawing(rowNumber: Int): OscilloscopeProbeVerticeView<*>? {
+        return parent!!.getDrawable { it is OscilloscopeProbeVerticeView<*> && it.rowNumber == rowNumber }
+                as OscilloscopeProbeVerticeView<*>?
     }
 
     /**
@@ -183,10 +183,9 @@ class OscilloscopeView(
     private inner class RemoveListener : DrawableContainerAdapter<Drawable>() {
         override fun drawableRemoved(event: DrawableContainerEvent<Drawable>) {
             super.drawableRemoved(event)
-            if (event.child is GraphElementViewWrapper<*> && (event.child as GraphElementViewWrapper<*>).component is OscilloscopeProbeViewComponent) {
+            if (event.child is OscilloscopeProbeVerticeView<*>) {
                 LOG.debug("Removed OscilloscopeProbeView from drawing")
-                val wrapper = event.child as GraphElementViewWrapper<*>
-                val comp = wrapper.component as OscilloscopeProbeViewComponent
+                val comp = event.child as OscilloscopeProbeVerticeView<*>
                 rows[comp.rowNumber - 1].handleProbeViewRemovedFromDrawing()
             }
         }

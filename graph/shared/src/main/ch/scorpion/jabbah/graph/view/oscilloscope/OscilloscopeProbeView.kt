@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
@@ -34,8 +35,8 @@ class OscilloscopeProbeView(
         get() = drawable.rowNumber
         set(value) {
             drawable.rowNumber = value
-            if (componentWrapper != null) {
-                (componentWrapper!!.component as OscilloscopeProbeViewComponent).rowNumber = value
+            if (vertice != null) {
+                vertice!!.rowNumber = value
             }
         }
 
@@ -53,10 +54,12 @@ class OscilloscopeProbeView(
      * The wrapper of the [OscilloscopeProbeView] to be dragged into the [GraphView].
      * Exists during dragging, and when being contained in the [GraphView]
      */
-    private var componentWrapper: GraphElementViewWrapper<GraphElement>? = null
+    //private var componentWrapper: GraphElementViewWrapper<GraphElement>? = null
+    private var vertice: OscilloscopeProbeVerticeView<Any>? = null
 
     /** Set to `false` if [componentWrapper] has been dragged into the [GraphView].*/
-    private var componentWrapperPresent = true
+    //private var componentWrapperPresent = true
+    private var verticePresent = true
 
     private val moveLastLocation = Point2D()
 
@@ -80,14 +83,14 @@ class OscilloscopeProbeView(
 
     fun handleProbeViewRemovedFromDrawing() {
         invalidate()
-        componentWrapperPresent = true
+        verticePresent = true
         drawable.filled = true
-        componentWrapper = null
+        vertice = null
         validate()
     }
 
     /**
-     * Handles hovering on this [OscilloscopeProbeView] and dragging of the wrapper of [OscilloscopeProbeViewComponent]
+     * Handles hovering on this [OscilloscopeProbeView] and dragging of [OscilloscopeProbeVerticeView]
      * into the [GraphView].
      */
     private inner class Handler : InputEventHandlerAdapter<EditInputEventContext>() {
@@ -113,21 +116,18 @@ class OscilloscopeProbeView(
 
         override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
             LOG.debug("OscilloscopeProbeView pressed ${context.x},${context.y}")
-            if (!componentWrapperPresent) {
+            if (!verticePresent) {
                 return null
             }
             invalidate()
 
             drawable.filled = false
             drawable.highlighted = false
-            componentWrapperPresent = false
-            componentWrapper = GraphElementViewWrapper<GraphElement>(
-                    OscilloscopeProbeViewComponent(rowNumber, color, styleProvider),
-                    styleProvider
-            )
-            componentWrapper!!.location = origLocSource.invoke().add(location)
+            verticePresent = false
+            vertice = OscilloscopeProbeVerticeView(rowNumber = rowNumber, color = color, styleProvider = styleProvider)
+            vertice!!.location = origLocSource.invoke().add(location).add(Point2D(0.0, height))
             moveLastLocation.setLocation(context.location)
-            context.editor.drawing.add(componentWrapper!!)
+            context.editor.drawing.add(vertice!!)
 
             validate()
             return this
@@ -135,21 +135,22 @@ class OscilloscopeProbeView(
 
         override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
             LOG.debug("OscilloscopeProbeView drag ${context.x},${context.y}")
-            componentWrapper!!.moveBy(context.x - moveLastLocation.x, context.y - moveLastLocation.y)
+            vertice!!.moveBy(context.x - moveLastLocation.x, context.y - moveLastLocation.y)
+            vertice!!.validate()
             moveLastLocation.setLocation(context.x, context.y)
             return this
         }
 
         override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
             LOG.debug("OscilloscopeProbeView released ${context.x},${context.y}")
-            if (!componentWrapperPresent) {
+            if (!verticePresent) {
                 return null
             }
             invalidate()
             drawable.filled = true
-            componentWrapperPresent = true
-            context.editor.drawing.remove(componentWrapper!!)
-            componentWrapper = null
+            verticePresent = true
+            context.editor.drawing.remove(vertice!!)
+            vertice = null
             validate()
             return null
         }

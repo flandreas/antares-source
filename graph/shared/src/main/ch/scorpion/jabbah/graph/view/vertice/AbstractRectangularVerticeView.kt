@@ -32,6 +32,10 @@ import ch.scorpion.jabbah.io.Storable
  * corner of a rectangular box.
  *
  * @param T the type of the model [Vertice] that this [AbstractRectangularVerticeView] displays
+ * @param x the x-coordinate of the upper-left rectangle corner, relative to [location]
+ * @param y the y-coordinate of the upper-left rectangle corner, relative to [location]
+ * @param w the width of the rectangle
+ * @param h the height of the rectangle
  */
 abstract class AbstractRectangularVerticeView<T : Vertice>(
     styleProvider: StyleProvider,
@@ -72,7 +76,7 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 
     /** ---- [Locatable] interface  */
 
-    /** Holds the absolute location of this [AbstractRectangularVerticeView] as defined by the upper-left corner. */
+    /** Holds the absolute location of this [AbstractRectangularVerticeView], which must not necessarily be the upper-left corner. */
     override var location: Point2D = Point2D()
         set(value) {
             invalidate()
