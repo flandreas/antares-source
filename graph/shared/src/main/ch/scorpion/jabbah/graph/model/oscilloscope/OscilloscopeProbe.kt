@@ -1,12 +1,9 @@
 package ch.scorpion.jabbah.graph.model.oscilloscope
 
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
-import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef.Companion.CALCULATOR
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortFactory
@@ -19,13 +16,27 @@ import ch.scorpion.jabbah.graph.view.port.PortFactory
  */
 class OscilloscopeProbe<T: Any>(
         portFactory: PortFactory = GraphViewModule.portFactory
-) : CalculatingVertice(object : VerticeCalculator<OscilloscopeProbe<T>> {
-        override fun calculate(vertice: OscilloscopeProbe<T>, data: GraphActorData, signalHandler: SignalHandler) {
-            vertice.stateChanged(signalHandler)
-        }
-    }
-) {
+) : AbstractVertice() {
+
+    val history = SignalHistory<T>()
+
     init {
         addPort(portFactory.createPort<T>(PortType.INPUT))
+    }
+
+    /** ---- [Vertice] interface */
+
+    override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
+        stateChanged(signalHandler)
+        if (input.getIncomingSignal() != null) {
+            history.add(input.getIncomingSignal() as T, signalHandler.executionTime)
+        }
+    }
+
+    /** ---- [Actor] interface */
+
+    override fun executionStarted(signalHandler: SignalHandler) {
+        super.executionStarted(signalHandler)
+        history.clear()
     }
 }

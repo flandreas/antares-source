@@ -15,20 +15,21 @@ import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
-import ch.scorpion.jabbah.graph.model.GraphElement
-import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 class OscilloscopeView(
+        private val factory: OscilloscopeViewFactory = GraphViewModule.oscilloscopeViewFactory,
         referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider
 ) : RectangularComponent(shape = Rectangle2D(0, 0, WIDTH, DEF_HEIGHT)) {
 
     companion object {
         private val LOG by logger(OscilloscopeView::class)
-        private const val WIDTH = 400
+        private const val WIDTH = 500
         private const val DEF_HEIGHT = 200
         private const val TITLE_HEIGHT = 40
-        private const val ROW_HEIGHT = 40
         private const val MAX_ROW_NUMBER = 9
+        private const val ROW_INSET = 10
+        private const val ICON_BUTTON_SIZE = 20
     }
 
     private val container = DrawableContainerImpl<Drawable>(useLocation = true)
@@ -36,7 +37,7 @@ class OscilloscopeView(
     private val rows = mutableListOf<RowView>()
 
     private val addButton = IconButton(
-            icon = AddIcon(Dimension2D(20, 20)),
+            icon = AddIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
             action = {
                 addRow()
                 validate()
@@ -53,6 +54,7 @@ class OscilloscopeView(
         for (row in 0..3) {
             addRow()
         }
+        adjustSize()
 
         DrawableOwner(this, container)
     }
@@ -97,16 +99,16 @@ class OscilloscopeView(
     /** ---- [OscilloscopeView] */
 
     private fun adjustSize() {
-        addButton.location = Point2D(addButton.location.x, (TITLE_HEIGHT + rows.size * ROW_HEIGHT).toDouble())
+        updateAddButtonLocation()
         invalidate()
-        setFrame(x, y, WIDTH.toDouble(), (TITLE_HEIGHT + (rows.size + 1) * ROW_HEIGHT).toDouble())
+        setFrame(x, y, WIDTH.toDouble(), (TITLE_HEIGHT + (rows.size + 1) * factory.rowHeight).toDouble())
         invalidate()
         update()
     }
 
     private fun addRow() {
-        val y = TITLE_HEIGHT + rows.size * ROW_HEIGHT
-        val rowView = RowView(rows.size + 1, Point2D(0, y), refColorSequence.next())
+        val y = TITLE_HEIGHT + rows.size * factory.rowHeight
+        val rowView = RowView(rows.size + 1, Point2D(0, y), refColorSequence.next(), factory)
         rows.add(rowView)
         container.add(rowView)
         updateAddButtonState()
@@ -127,11 +129,15 @@ class OscilloscopeView(
 
     private fun rearrangeFromIndex(index: Int) {
         for (i in index - 1 ..rows.size - 1) {
-            rows[i].location = Point2D(rows[i].location.x, rows[i].location.y - ROW_HEIGHT)
+            rows[i].location = Point2D(rows[i].location.x, rows[i].location.y - factory.rowHeight)
             rows[i].rowNumber = i + 1
         }
-        addButton.location = Point2D(addButton.location.x, addButton.location.y - ROW_HEIGHT)
+        updateAddButtonLocation()
         updateAddButtonState()
+    }
+
+    private fun updateAddButtonLocation() {
+        addButton.location = Point2D(addButton.location.x, TITLE_HEIGHT + (rows.size + 0.5) * factory.rowHeight - addButton.height / 2)
     }
 
     private fun updateAddButtonState() {
@@ -150,22 +156,29 @@ class OscilloscopeView(
     private inner class RowView(
             rowNumber: Int,
             location: Point2D,
-            val color: CompositeColor
+            val color: CompositeColor,
+            factory: OscilloscopeViewFactory
     ) : DrawableContainerImpl<Drawable>(location = location, useLocation = true) {
 
+        private val drawer = factory.createSignalHistoryDrawer()
+
         private val probeView = OscilloscopeProbeView(
-                Point2D(40, -15),
-                rowNumber,
-                color,
-                { this@OscilloscopeView.location.add(this.location) })
+                location = Point2D(2.0 * ROW_INSET + ICON_BUTTON_SIZE, factory.rowHeight / 2 - OscilloscopeProbeViewDrawable.SIZE / 2),
+                rowNumber = rowNumber,
+                color = color,
+                origLocSource = { this@OscilloscopeView.location.add(this.location) })
 
         init {
             add(IconButton(
-                    icon = RemoveIcon(Dimension2D(20, 20)),
+                    icon = RemoveIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
                     tooltipKey = "graph.action.oscilloscope.removeRow.name",
-                    location = Point2D(10, 0),
+                    location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2),
                     action = { removeRow(probeView.rowNumber) }))
             add(probeView)
+
+            val drawerX = 3.0 * ROW_INSET + ICON_BUTTON_SIZE + probeView.width
+            drawer.setBounds(drawerX, 0.0, WIDTH - drawerX - ROW_INSET, factory.rowHeight.toDouble())
+            add(drawer)
         }
 
         var rowNumber: Int

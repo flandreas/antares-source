@@ -39,7 +39,6 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularBelowSelectionModel
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
 import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
 import ch.scorpion.jabbah.edit.select.BoundingBoxBelowSelectionModel
 import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
@@ -48,8 +47,10 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.app.GraphViewService
 import ch.scorpion.jabbah.graph.view.app.GraphViewServiceImpl
+import ch.scorpion.jabbah.graph.view.oscilloscope.UndefinedOscilloscopeViewFactory
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeProbeVerticeView
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
+import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeViewFactory
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 
@@ -89,6 +90,9 @@ object GraphViewModule : AbstractModule() {
                 { nodeViewFactory})}
 
     val graphViewService: GraphViewService = GraphViewServiceImpl(EditModule.commandManager)
+
+    /** Must be specified by higher application layers.*/
+    var oscilloscopeViewFactory : OscilloscopeViewFactory = UndefinedOscilloscopeViewFactory()
 
     override fun initialize() {
         EditModule.require()

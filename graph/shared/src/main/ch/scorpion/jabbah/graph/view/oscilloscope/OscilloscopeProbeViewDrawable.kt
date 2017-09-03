@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -22,19 +23,22 @@ class OscilloscopeProbeViewDrawable(
 ) : AbstractRectangle(location.x, location.y, SIZE, SIZE) {
 
     companion object {
-        val SIZE = 42.0
+        val F = 7.0
+        val SIZE = 5 * F
 
         private val PATH = System.get().createPath()
-                .moveTo(0.0, 42.0)
-                .lineTo(7.0, 21.0)
-                .curveTo(16.0, 0.0, 42.0, 28.0, 21.0, 35.0)
+                .moveTo(0.0, SIZE)
+//                .lineTo(1 * F, 3 * F)
+//                .curveTo(2 * F, 0.0, SIZE, 4 * F, 3 * F, 5 * F)
+                .lineTo(1 * F, 2 * F)
+                .curveTo(2.0 * F, -3 * F, 8 * F, 3.0 * F, 3 * F, 4 * F)
                 .close()
     }
 
     private val label = Label(
             text = rowNumber.toString(),
             font = styleProvider.getStyle(GraphStyleType.VERTICE).font,
-            location = Point2D(18, 26)
+            location = Point2D(20, 17)
     )
 
     var highlighted = false
