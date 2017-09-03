@@ -8,9 +8,9 @@ import ch.scorpion.jabbah.graph.model.Port
 
 class GenericPortView<T: Any>(
         port: Port<T>,
-        x: Int,
-        y: Int,
-        direction: Direction,
+        x: Int = 0,
+        y: Int = 0,
+        direction: Direction = Direction.SOUTH,
         portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
         connectable: Boolean = false
 ) : AbstractPortView<T>(port, x, y, direction, portLabelPosition, 0, connectable) {

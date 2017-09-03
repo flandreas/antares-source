@@ -14,11 +14,17 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.port.GenericPortView
+import ch.scorpion.jabbah.graph.view.port.PortFactory
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
+import ch.scorpion.jabbah.io.Reference
+import ch.scorpion.jabbah.io.ReferenceResolver
 
 class OscilloscopeView(
+        private val portFactory: PortFactory = GraphViewModule.portFactory,
         private val factory: OscilloscopeViewFactory = GraphViewModule.oscilloscopeViewFactory,
         referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
         model: Oscilloscope = Oscilloscope(),
@@ -62,9 +68,9 @@ class OscilloscopeView(
     init {
         preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
         container.add(addButton)
-        for (row in 0..3) {
-            addRow()
-        }
+//        for (row in 0..3) {
+//            addRow()
+//        }
         adjustSize()
 
         DrawableOwner(this, container)
@@ -111,6 +117,18 @@ class OscilloscopeView(
             container.location = value
         }
 
+    /** ---- [Storable] interface */
+
+    override fun resolutionDone() {
+        super.resolutionDone()
+        for (i in 1..model!!.portsCount) {
+            addPortView(GenericPortView<Any>(model!!.getPort(i.toString())))
+            addRowView(i)
+        }
+        updateAddButtonState()
+        adjustSize()
+    }
+
     /** ---- [OscilloscopeView] */
 
     private fun adjustSize() {
@@ -122,13 +140,24 @@ class OscilloscopeView(
     }
 
     private fun addRow() {
+        val newRowNumber = rows.size + 1
+
+        val port = portFactory.createPort<Any>(PortType.INPUT)
+        port.name = newRowNumber.toString()
+        model!!.addPort(port)
+        addPortView(GenericPortView<Any>(port))
+
         invalidate()
-        val y = TITLE_HEIGHT + rows.size * factory.rowHeight
-        val rowView = RowView(rows.size + 1, Point2D(0, y), refColorSequence.next(), factory)
-        rows.add(rowView)
-        container.add(rowView)
+        addRowView(newRowNumber)
         updateAddButtonState()
         adjustSize()
+    }
+
+    private fun addRowView(rowNumber: Int) {
+        val y = TITLE_HEIGHT + rows.size * factory.rowHeight
+        val rowView = RowView(rowNumber, Point2D(0, y), refColorSequence.next(), factory)
+        rows.add(rowView)
+        container.add(rowView)
     }
 
     /** Removes the row with the specified index, starting with 1.*/
@@ -138,6 +167,12 @@ class OscilloscopeView(
         container.remove(row)
         refColorSequence.free(row.color)
         findProbeViewInDrawing(row.rowNumber)?.let { (parent as DrawableContainer<Component>)?.remove(it) }
+
+        val port = model!!.getPort<Any>(index.toString())
+        val portView = getPortView(port)
+        removePortView(portView!!)
+        model!!.removePort(port)
+
         rearrangeFromIndex(index)
         adjustSize()
         validate()

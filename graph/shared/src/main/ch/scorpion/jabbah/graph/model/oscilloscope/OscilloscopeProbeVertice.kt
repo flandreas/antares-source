@@ -14,29 +14,20 @@ import ch.scorpion.jabbah.graph.view.port.PortFactory
  *
  * TODO Refactoring: Split PortFactory into model and view parts to avoid dependency on GraphViewModule!
  */
-class OscilloscopeProbe<T: Any>(
+class OscilloscopeProbeVertice<T: Any>(
+        name: String? = null,
         portFactory: PortFactory = GraphViewModule.portFactory
 ) : AbstractVertice() {
 
-    val history = SignalHistory<T>()
-
     init {
-        addPort(portFactory.createPort<T>(PortType.INPUT))
+        val port = portFactory.createPort<T>(PortType.INPUT)
+        port.name = name
+        addPort(port)
     }
 
     /** ---- [Vertice] interface */
 
     override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
         stateChanged(signalHandler)
-        if (input.getIncomingSignal() != null) {
-            history.add(input.getIncomingSignal() as T, signalHandler.executionTime)
-        }
-    }
-
-    /** ---- [Actor] interface */
-
-    override fun executionStarted(signalHandler: SignalHandler) {
-        super.executionStarted(signalHandler)
-        history.clear()
     }
 }

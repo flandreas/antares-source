@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
 import ch.scorpion.jabbah.graph.model.net.NetImpl
+import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeImpl
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -46,6 +47,7 @@ object GraphModelModule : AbstractModule() {
         typeMap.register("netPortRef", NetImpl.PortRef::class)
         typeMap.register("subGraphVertice", SubGraphVerticeImpl::class)
         typeMap.register("subGraphVerticeRef", SubGraphVerticeRef::class)
+        typeMap.register("oscilloscope", Oscilloscope::class)
 
         typeMap.register("scenarios", ScenariosImpl::class)
         typeMap.register("scenario", ScenarioImpl::class)

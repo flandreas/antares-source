@@ -120,7 +120,7 @@ object GraphViewModule : AbstractModule() {
         typeMap.register("containerBox", RectangleComponent::class)
         typeMap.register("controlViewComponent", ControlViewComponent::class)
         typeMap.register("graphTextComponent", SimpleTextComponent::class)
-        typeMap.register("oscilloscope", OscilloscopeView::class)
+        typeMap.register("oscilloscopeView", OscilloscopeView::class)
     }
 
     private fun configureStyleRepository(repository: StyleRepository) {

@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbe
+import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.connect.AbstractConnectionPointHighlighter
@@ -19,14 +19,14 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 /**
  * The location of this [OscilloscopeProbeVerticeView] as a [Locatable] is the tip of the bubble shape, which is also
  * the connection point.
- * @param T the type of signal that this [OscilloscopeProbeVerticeView]'s [OscilloscopeProbe] can consume.
+ * @param T the type of signal that this [OscilloscopeProbeVerticeView]'s [OscilloscopeProbeVertice] can consume.
  */
 class OscilloscopeProbeVerticeView<T: Any>(
         rowNumber: Int,
         color: CompositeColor,
-        model: OscilloscopeProbe<T>? = OscilloscopeProbe(),
+        model: OscilloscopeProbeVertice<T>? = OscilloscopeProbeVertice(name = rowNumber.toString()),
         styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : AbstractRectangularVerticeView<OscilloscopeProbe<T>>(styleProvider, "graph.component.oscilloscope.port", model) {
+) : AbstractRectangularVerticeView<OscilloscopeProbeVertice<T>>(styleProvider, "graph.component.oscilloscope.port", model) {
 
     companion object {
         private val LOG by logger(OscilloscopeProbeVerticeView::class)
@@ -66,7 +66,7 @@ class OscilloscopeProbeVerticeView<T: Any>(
 
     /** ---- [AbstractRectangularVerticeView] */
 
-    override fun modelExchanged(oldModel: OscilloscopeProbe<T>?) {
+    override fun modelExchanged(oldModel: OscilloscopeProbeVertice<T>?) {
         super.modelExchanged(oldModel)
         addPortView(GenericPortView<T>(model!!.getInput(), 0, 0, Direction.SOUTH))
     }

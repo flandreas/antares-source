@@ -1,23 +1,29 @@
 package ch.scorpion.jabbah.graph.model.graph
 
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
+import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.System
 
 /**
  * A standard implementation of the [Graph] interface.
  */
 open class GraphImpl(private val eventBus: EventBus = BaseModule.eventBus) : Graph {
 
+    companion object {
+        private val LOG by logger(GraphImpl::class)
+    }
+
     private val _elements = mutableListOf<GraphElement>()
+
+    /** Forwards signal changes of a [OscilloscopeProbeVertice] to the [Oscilloscope].*/
+    private val oscilloscopeProbeHandler = OscilloscopeProbeHandler()
 
     /** ---- [Graph] interface */
 
@@ -192,11 +198,17 @@ open class GraphImpl(private val eventBus: EventBus = BaseModule.eventBus) : Gra
 
     /** Called by this [GraphImpl] when a [GraphElement] has been added or read as [Storable].*/
     protected open fun handleGraphElementAdded(graphElem: GraphElement) {
-        // empty
+        if (graphElem is OscilloscopeProbeVertice<*>) {
+            LOG.debug("GraphImpl: added OscilloscopeProbeVertice ${graphElem.getInput<Any>().name} to GraphImpl")
+            graphElem.addGraphElementListener(oscilloscopeProbeHandler)
+        }
     }
 
     protected open fun handleGraphElementRemoved(graphElem: GraphElement) {
-        // empty
+        if (graphElem is OscilloscopeProbeVertice<*>) {
+            LOG.debug("GraphImpl: removed OscilloscopeProbeVertice ${graphElem.getInput<Any>().name} from GraphImpl")
+            graphElem.removeGraphElementListener(oscilloscopeProbeHandler)
+        }
     }
 
     private fun handleNetRemoved(net: Net<*>) {
@@ -265,5 +277,21 @@ open class GraphImpl(private val eventBus: EventBus = BaseModule.eventBus) : Gra
 
     private fun existsGraphInputOutputName(name: String): Boolean {
         return graphInOuts.any { it.name == name}
+    }
+
+    private fun getOscilloscope(): Oscilloscope? {
+        return elements.firstOrNull() { it is Oscilloscope } as Oscilloscope?
+    }
+
+    /** Forwards signal changes of a [OscilloscopeProbeVertice] to the [Oscilloscope].*/
+    private inner class OscilloscopeProbeHandler : GraphElementListener {
+        override fun stateChanged(e: GraphElementEvent) {
+            LOG.debug("OscilloscopeProbeHandler: stateChanged")
+            val probePort = (e.element as OscilloscopeProbeVertice<*>).getInput<Any>()
+            if (probePort.getIncomingSignal() != null && e.signalHandler != null) {
+                val oscilloscopePort = getOscilloscope()?.getPort<Any>(probePort.name!!) as InputPort<Any>
+                oscilloscopePort.setIncomingSignal(probePort.getIncomingSignal(), e.signalHandler)
+            }
+        }
     }
 }

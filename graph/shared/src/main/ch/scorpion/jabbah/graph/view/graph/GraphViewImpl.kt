@@ -63,8 +63,6 @@ class GraphViewImpl<T : GraphElementView<*>>(
 
     private var oscilloscope: OscilloscopeView? = null
 
-    private var oscilloscopeWrapper: GraphElementViewWrapper<Vertice>? = null
-
     /** Manages the [NetView]s for all [Net]s of the [Graph].*/
     private val netViewMap: MutableMap<Net<Any>, NetView<Any>> = mutableMapOf()
 
@@ -357,14 +355,13 @@ class GraphViewImpl<T : GraphElementView<*>>(
     private fun displayOscilloscope() {
         if (oscilloscope == null) {
             oscilloscope = OscilloscopeView()
-            oscilloscopeWrapper= GraphElementViewWrapper<Vertice>(oscilloscope)
         }
-        add(oscilloscopeWrapper as T)
+        add(oscilloscope as T)
         validate()
     }
 
     private fun hideOscilloscope() {
-        remove(oscilloscopeWrapper as T)
+        remove(oscilloscope as T)
         validate()
     }
 
