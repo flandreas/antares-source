@@ -253,11 +253,11 @@ class OscilloscopeView(
         }
 
         fun bindDrawer() {
-            drawer.bind(model!!.getSignalHistory(rowNumber.toString())!!, timeline)
+            drawer.bind(model!!.getSignalHistory(rowNumber.toString())!!, timeline, color)
         }
 
         fun unbindDrawer() {
-            drawer.bind(null, null)
+            drawer.bind(null, null, color)
         }
     }
 
@@ -276,7 +276,7 @@ class OscilloscopeView(
     private inner class Timeline : SignalHistoryTimeline {
 
         override fun getX(time: Long): Double {
-            return (model!!.maxTime - time).toDouble() / 100
+            return (model!!.maxTime - time).toDouble() / 2
         }
     }
 }

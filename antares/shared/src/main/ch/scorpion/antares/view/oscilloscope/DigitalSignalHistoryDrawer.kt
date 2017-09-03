@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistory
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoryEntry
 import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryDrawer
@@ -21,6 +22,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
     private var signalHistory: SignalHistory<DigitalSignal>? = null
     private var timeline: SignalHistoryTimeline? = null
+    private var color: CompositeColor? = null
 
     /** ---- [RectangularDrawable] interface*/
 
@@ -28,9 +30,14 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
     override fun draw(context: DrawContext) {
 
-        if (signalHistory == null || timeline == null) {
+        context.g.color = Color.BLACK
+        context.g.fill(bounds)
+
+        if (signalHistory == null || timeline == null || color == null) {
             return
         }
+
+        context.g.color = color!!.foregroundColor
 
         var lastPoint = Point2D()
         var lastEntry: SignalHistoryEntry<DigitalSignal>? = null
@@ -40,6 +47,10 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
             } else {
                 val nextX = bounds.maxX - timeline!!.getX(entry.time)
                 val nextY = signalY(entry)
+
+                if (nextX < bounds.minX) {
+                    break
+                }
 
                 LOG.debug("DigitalSignalHistoryDrawer: time=${entry.time}, nextX=$nextX, nextY=$nextY")
 
@@ -63,8 +74,9 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
     /** ---- [SignalHistoryDrawer] interface */
 
-    override fun bind(signalHistory: SignalHistory<Any>?, timeline: SignalHistoryTimeline?) {
+    override fun bind(signalHistory: SignalHistory<Any>?, timeline: SignalHistoryTimeline?, color: CompositeColor) {
         this.signalHistory = signalHistory as SignalHistory<DigitalSignal>?
         this.timeline = timeline
+        this.color = color
     }
 }
