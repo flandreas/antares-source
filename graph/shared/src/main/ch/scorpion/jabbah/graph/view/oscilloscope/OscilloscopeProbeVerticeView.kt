@@ -30,11 +30,14 @@ class OscilloscopeProbeVerticeView<T: Any>(
 
     companion object {
         private val LOG by logger(OscilloscopeProbeVerticeView::class)
+        private val CONN_POINT_SIZE = 4.0
     }
 
     init {
         modelExchanged(null)
-        setBounds(0.0, -OscilloscopeProbeViewDrawable.SIZE, OscilloscopeProbeViewDrawable.SIZE, OscilloscopeProbeViewDrawable.SIZE)
+        setBounds(
+                -CONN_POINT_SIZE, -OscilloscopeProbeViewDrawable.SIZE,
+                OscilloscopeProbeViewDrawable.SIZE + CONN_POINT_SIZE, OscilloscopeProbeViewDrawable.SIZE + CONN_POINT_SIZE)
     }
 
     var rowNumber: Int
@@ -74,6 +77,15 @@ class OscilloscopeProbeVerticeView<T: Any>(
     override fun drawImpl(context: DrawContext, drawPortViews: Boolean) {
         super.drawImpl(context, drawPortViews)
         drawable.draw(context)
+        if (model!!.isConnected) {
+            val connPoint = connectionPoint().subtract(location)
+            context.g.color = context.choose(drawable.color).foregroundColor
+            context.g.fillOval(
+                connPoint.x - CONN_POINT_SIZE,
+                connPoint.y - CONN_POINT_SIZE,
+                2.0 * CONN_POINT_SIZE,
+                2.0 * CONN_POINT_SIZE)
+        }
     }
 
     /** ---- [AbstractGraphElementView] */
@@ -84,6 +96,11 @@ class OscilloscopeProbeVerticeView<T: Any>(
     }
 
     /** ---- [OscilloscopeProbeVerticeView] */
+
+    /** Returns the connection point at the tip of the drop shape in absolute coordinates.*/
+    private fun connectionPoint(): Point2D {
+        return getPortConnectionPoint(model!!.getPort<Any>())
+    }
 
     private inner class Handler : AbstractConnectionPointHighlighter() {
 
@@ -126,24 +143,24 @@ class OscilloscopeProbeVerticeView<T: Any>(
 
             // TODO Create Commands
 
+            invalidate()
             val newEdgeView = findEdgeView(context) as EdgeView<T>?
             if (edgeView != null && edgeView !== newEdgeView) {
                 edgeView!!.model!!.unconnect(model!!.getPort<T>())
             }
-            if (newEdgeView != null) {
+            if (newEdgeView != null && newEdgeView !== edgeView) {
                 newEdgeView.model!!.connect(model!!.getPort<T>())
             }
             edgeView = newEdgeView
+
+            invalidate()
+            validate()
 
             return null
         }
 
         private fun findEdgeView(context: EditInputEventContext): EdgeView<*>? {
             return context.drawingView().drawing.getDrawable { it.contains(connectionPoint()) && it is EdgeView<*> } as EdgeView<*>?
-        }
-
-        private fun connectionPoint(): Point2D {
-            return getPortConnectionPoint(model!!.getPort<Any>())
         }
     }
 }

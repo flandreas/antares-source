@@ -14,11 +14,13 @@ import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
-/** The graphical figure used in probe views.*/
+/**
+ * The graphical figure used in probe views.
+ */
 class OscilloscopeProbeViewDrawable(
         location: Point2D,
         rowNumber: Int,
-        private val color: CompositeColor,
+        val color: CompositeColor,
         private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangle(location.x, location.y, SIZE, SIZE) {
 
@@ -28,8 +30,6 @@ class OscilloscopeProbeViewDrawable(
 
         private val PATH = System.get().createPath()
                 .moveTo(0.0, SIZE)
-//                .lineTo(1 * F, 3 * F)
-//                .curveTo(2 * F, 0.0, SIZE, 4 * F, 3 * F, 5 * F)
                 .lineTo(1 * F, 2 * F)
                 .curveTo(2.0 * F, -3 * F, 8 * F, 3.0 * F, 3 * F, 4 * F)
                 .close()
