@@ -260,7 +260,7 @@ class SevenSegmentDisplayView(
         val scaledFactor: Int get() = (factor * Look.SCALE).toInt()
     }
 
-    fun drawSelected(context: DrawContext) {
+    override fun drawSelected(context: DrawContext) {
         draw(context) { c ->
             super.drawImpl(c)
             context.g.color = context.color!!.foregroundColor

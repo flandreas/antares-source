@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw
 
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.drawable.Locatable
 
 /**
@@ -68,3 +67,4 @@ open class InputEventHandlerAdapter<in T : InputEventContext>(
         return successor?.keyReleased(context)
     }
 }
+

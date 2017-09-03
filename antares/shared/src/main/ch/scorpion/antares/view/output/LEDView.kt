@@ -159,7 +159,7 @@ class LEDView(
 
     /** ---- [LEDView] */
 
-    fun drawSelected(context: DrawContext) {
+    override fun drawSelected(context: DrawContext) {
         context.g.color = context.color!!.foregroundColor
         draw(context) { c ->
             super.drawImpl(c)

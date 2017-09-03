@@ -269,7 +269,7 @@ class LEDMatrixView(
 
     /** ---- [LEDMatrixView] */
 
-    fun drawSelected(context: DrawContext) {
+    override fun drawSelected(context: DrawContext) {
         draw(context) {
             super.drawImpl(it)
             context.g.stroke = stroke

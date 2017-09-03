@@ -1,9 +1,7 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
@@ -12,15 +10,28 @@ import ch.scorpion.jabbah.draw.drawable.IconButton
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Icon
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
+import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 
 class OscilloscopeView(
         private val factory: OscilloscopeViewFactory = GraphViewModule.oscilloscopeViewFactory,
-        referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider
-) : RectangularComponent(shape = Rectangle2D(0, 0, WIDTH, DEF_HEIGHT)) {
+        referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
+        model: Oscilloscope = Oscilloscope(),
+        styleProvider: StyleProvider = DrawStyleModule.styleProvider
+) : AbstractRectangularVerticeView<Oscilloscope>(
+        styleProvider,
+        "graph.component.oscilloscope",
+        model,
+        x = 0.0,
+        y = 0.0,
+        w = WIDTH.toDouble(),
+        h = DEF_HEIGHT.toDouble()
+) {
 
     companion object {
         private val LOG by logger(OscilloscopeView::class)
@@ -59,20 +70,10 @@ class OscilloscopeView(
         DrawableOwner(this, container)
     }
 
-    /** ---- [Component] interface */
-
-    override val type: String? get() = Translations.getString("graph.component.oscilloscope")
-
     /** ---- [Drawable] */
 
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
         return container.getInputEventHandler(context)
-    }
-
-    override fun draw(context: DrawContext) {
-        super.draw(context)
-        context.g.drawString("Oscilloscope", x.toInt() + 10, y.toInt() + 20)
-        container.draw(context)
     }
 
     override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
@@ -89,24 +90,39 @@ class OscilloscopeView(
         container.removeDrawableContainerListener(removeListener as DrawableContainerListener<T>)
     }
 
-    /** ---- [RectangularComponent] */
+    /** ---- [AbstractRectangularVerticeView] */
 
-    override fun setFrame(x: Double, y: Double, width: Double, height: Double) {
-        super.setFrame(x, y, width, height)
-        container.location = location
+    override fun draw(context: DrawContext) {
+        super.draw(context)
+        context.g.translate(location.x, location.y)
+        context.g.color = context.choose(color).backgroundColor
+        context.g.fill(bounds)
+        context.g.color = context.choose(color).foregroundColor
+        context.g.draw(bounds)
+        context.g.drawString("Oscilloscope", x.toInt() + 10, y.toInt() + 20)
+        context.g.translate(-location.x, -location.y)
+        container.draw(context)
     }
+
+    override var location: Point2D
+        get() = super.location
+        set(value) {
+            super.location = value
+            container.location = value
+        }
 
     /** ---- [OscilloscopeView] */
 
     private fun adjustSize() {
         updateAddButtonLocation()
         invalidate()
-        setFrame(x, y, WIDTH.toDouble(), (TITLE_HEIGHT + (rows.size + 1) * factory.rowHeight).toDouble())
+        setBounds(0.0, 0.0, WIDTH.toDouble(), (TITLE_HEIGHT + (rows.size + 1) * factory.rowHeight).toDouble())
         invalidate()
         update()
     }
 
     private fun addRow() {
+        invalidate()
         val y = TITLE_HEIGHT + rows.size * factory.rowHeight
         val rowView = RowView(rows.size + 1, Point2D(0, y), refColorSequence.next(), factory)
         rows.add(rowView)

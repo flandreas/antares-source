@@ -129,7 +129,7 @@ class ToggleButtonView(
 
     /** ---- [ToggleButtonView] */
 
-    fun drawSelected(context: DrawContext) {
+    override fun drawSelected(context: DrawContext) {
         draw(context, {
             super.drawImpl(it)
             context.g.color = context.color!!.foregroundColor

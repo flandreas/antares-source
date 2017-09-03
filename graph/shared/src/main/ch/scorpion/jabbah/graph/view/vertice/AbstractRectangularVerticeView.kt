@@ -9,14 +9,18 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.DrawableAdapter
 import ch.scorpion.jabbah.draw.DrawableEvent
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.AbstractComponent
+import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
@@ -183,6 +187,15 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 
     /** ---- [AbstractRectangularVerticeView] */
 
+    open fun drawSelected(context: DrawContext) {
+        draw(context) { c->
+            super.drawImpl(c)
+            context.g.color = Themes.get<GraphTheme>().selection.foregroundColor
+            context.g.stroke = stroke
+            context.g.draw(bounds)
+        }
+    }
+
     /**
      * Determines whether the width and height attributes should be stored by this [Storable], or whether
      * subclasses calculate the size by themselves. The default ist `false`
@@ -211,5 +224,20 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
             height + 2 * (lineWidth + outset)
         )
         addPortViewsTo(_boundingBox, containsBox)
+    }
+}
+
+class RectangularVerticeViewSelectionModel(c: AbstractRectangularVerticeView<*>) : AbstractSelectionModel<AbstractRectangularVerticeView<*>>(c) {
+
+    override val boundingBox: RectangularShape get() = component.boundingBox
+
+    override fun draw(context: DrawContext) {
+        component.drawSelected(context)
+    }
+
+    override fun contains(x: Double, y: Double): Boolean = component.contains(x, y)
+
+    override fun componentUpdated() {
+        validate()
     }
 }
