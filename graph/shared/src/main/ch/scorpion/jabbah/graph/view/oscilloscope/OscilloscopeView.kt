@@ -14,14 +14,13 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
 import ch.scorpion.jabbah.graph.view.port.PortFactory
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
-import ch.scorpion.jabbah.io.Reference
-import ch.scorpion.jabbah.io.ReferenceResolver
 
 class OscilloscopeView(
         private val portFactory: PortFactory = GraphViewModule.portFactory,
@@ -65,12 +64,11 @@ class OscilloscopeView(
 
     private val removeListener = RemoveListener()
 
+    private val timeline = Timeline()
+
     init {
         preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
         container.add(addButton)
-//        for (row in 0..3) {
-//            addRow()
-//        }
         adjustSize()
 
         DrawableOwner(this, container)
@@ -116,6 +114,18 @@ class OscilloscopeView(
             super.location = value
             container.location = value
         }
+
+    /** ---- [AbstractGraphElementView] */
+
+    override fun handleExecutionStarted(signalHandler: SignalHandler) {
+        super.handleExecutionStarted(signalHandler)
+        rows.forEach { it.bindDrawer() }
+    }
+
+    override fun handleExecutionStopped(signalHandler: SignalHandler) {
+        super.handleExecutionStopped(signalHandler)
+        rows.forEach { it.unbindDrawer() }
+    }
 
     /** ---- [Storable] interface */
 
@@ -241,6 +251,14 @@ class OscilloscopeView(
         fun handleProbeViewRemovedFromDrawing() {
             probeView.handleProbeViewRemovedFromDrawing()
         }
+
+        fun bindDrawer() {
+            drawer.bind(model!!.getSignalHistory(rowNumber.toString())!!, timeline)
+        }
+
+        fun unbindDrawer() {
+            drawer.bind(null, null)
+        }
     }
 
     /** Listens for removals of [OscilloscopeProbeView]s in order to put them back in the list.*/
@@ -252,6 +270,13 @@ class OscilloscopeView(
                 val comp = event.child as OscilloscopeProbeVerticeView<*>
                 rows[comp.rowNumber - 1].handleProbeViewRemovedFromDrawing()
             }
+        }
+    }
+
+    private inner class Timeline : SignalHistoryTimeline {
+
+        override fun getX(time: Long): Double {
+            return (model!!.maxTime - time).toDouble() / 100
         }
     }
 }

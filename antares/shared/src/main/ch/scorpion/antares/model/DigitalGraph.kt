@@ -46,7 +46,7 @@ class DigitalGraph(eventBus: EventBus = BaseModule.eventBus) : GraphImpl(eventBu
     }
 
     /** Forwards signal changes of a [Tunnel] to all other [Tunnel]s with the same name.*/
-    private inner class TunnelHandler : GraphElementListener {
+    private inner class TunnelHandler : GraphElementAdapter() {
         override fun stateChanged(e: GraphElementEvent) {
             if (e.signalHandler != null) {
                 val tunnel = e.element as Tunnel

@@ -63,8 +63,13 @@ class SignalHistory<T: Any> {
         }
     }
 
-    /** Iterates the [SignalHistoryEntries][SignalHistoryEntry] since the specified execution time.*/
-    fun getEntries(startTime: Long): Iterator<SignalHistoryEntry<T>> {
+    /** Iterates the [SignalHistoryEntries][SignalHistoryEntry] since the specified execution time in ascending time order.*/
+    fun getEntriesSince(startTime: Long): Iterator<SignalHistoryEntry<T>> {
         return list.filter { it.time >= startTime }.iterator()
+    }
+
+    /** Iterates the [SignalHistoryEntries][SignalHistoryEntry] in reverse order, starting with the newest entry.*/
+    fun getReverseEntriesUntil(startTime: Long): Iterator<SignalHistoryEntry<T>> {
+        return list.asReversed().filter { it.time >= startTime }.iterator()
     }
 }

@@ -97,6 +97,7 @@ abstract class AbstractGraphElement : GraphElement {
 
     override fun executionStarted(signalHandler: SignalHandler) {
         executionError = null
+        listeners?.forEach { it.executionStarted(signalHandler) }
     }
 
     override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
@@ -113,6 +114,7 @@ abstract class AbstractGraphElement : GraphElement {
 
     override fun executionStopped(signalHandler: SignalHandler) {
         executionError = null
+        listeners?.forEach { it.executionStopped(signalHandler) }
     }
 
     /** ---- [AbstractGraphElement] */

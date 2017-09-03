@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.oscilloscope
 
+import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.InputPort
@@ -31,6 +32,9 @@ class Oscilloscope(
     /** Maps a probe row number (starting with "1") to its [SignalHistory].*/
     private val signalHistories = mutableMapOf<String,SignalHistory<Any>>()
 
+    var maxTime: Long = 0
+        private set
+
     /** ---- [AbstractVertice] */
 
     override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
@@ -59,11 +63,14 @@ class Oscilloscope(
 
     override fun executionStarted(signalHandler: SignalHandler) {
         signalHistories.clear()
+        maxTime = 0
         getPorts().forEach { signalHistories.put(it.name!!, SignalHistory()) }
+        super.executionStarted(signalHandler)
     }
 
     override fun executionStopped(signalHandler: SignalHandler) {
         signalHistories.clear()
+        super.executionStopped(signalHandler)
     }
 
     /** ---- [Oscilloscope] */
@@ -73,8 +80,9 @@ class Oscilloscope(
     }
 
     private fun storeSignal(input: InputPort<*>, signalHandler: SignalHandler) {
-        signalHistories.get(input.name!!)!!.add(
-                SignalHistoryEntry(input.getIncomingSignal()!!, signalHandler.executionTime)
-        )
+        val signal = input.getIncomingSignal()!!
+        LOG.debug("Oscilloscope: storing signal '$signal' at time ${signalHandler.executionTime}")
+        signalHistories.get(input.name!!)!!.add(SignalHistoryEntry(signal, signalHandler.executionTime))
+        maxTime = Math.max(maxTime, signalHandler.executionTime)
     }
 }

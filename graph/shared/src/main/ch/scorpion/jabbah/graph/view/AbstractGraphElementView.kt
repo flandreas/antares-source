@@ -3,15 +3,13 @@ package ch.scorpion.jabbah.graph.view
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.model.AbstractComponent
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphElement
-import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.model.GraphElementListener
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.ReferenceResolver
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.*
 
 /**
  * Abstract base implementation of the [GraphElementView] interface.
@@ -119,9 +117,25 @@ abstract class AbstractGraphElementView<T : GraphElement>(
         validate()
     }
 
-    private inner class ModelListener : GraphElementListener {
+    protected open fun handleExecutionStarted(signalHandler: SignalHandler) {
+        // empty
+    }
+
+    protected open fun handleExecutionStopped(signalHandler: SignalHandler) {
+        // empty
+    }
+
+    private inner class ModelListener : GraphElementAdapter() {
         override fun stateChanged(e: GraphElementEvent) {
             handleStateChanged(e)
+        }
+
+        override fun executionStarted(signalHandler: SignalHandler) {
+            handleExecutionStarted(signalHandler)
+        }
+
+        override fun executionStopped(signalHandler: SignalHandler) {
+            handleExecutionStopped(signalHandler)
         }
     }
 }

@@ -51,4 +51,12 @@ class GraphElementEvent(val element: GraphElement, val signalHandler: SignalHand
 /** Listens for [GraphElementEvent]s from [GraphElement]s.*/
 interface GraphElementListener {
     fun stateChanged(e: GraphElementEvent)
+    fun executionStarted(signalHandler: SignalHandler)
+    fun executionStopped(signalHandler: SignalHandler)
+}
+
+open class GraphElementAdapter : GraphElementListener {
+    override fun stateChanged(e: GraphElementEvent) { }
+    override fun executionStarted(signalHandler: SignalHandler) { }
+    override fun executionStopped(signalHandler: SignalHandler) { }
 }
