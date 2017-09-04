@@ -20,6 +20,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
         private val SIGNAL_HEIGHT = 10
         private val BACKGROUND_COLOR = Color.BLACK
         private val AXIS_COLOR = Color(64, 64, 64)
+        private val START_SIZE = 4.0
     }
 
     private var signalHistory: SignalHistory<DigitalSignal>? = null
@@ -51,21 +52,28 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
         var lastPoint = Point2D()
         var lastEntry: SignalHistoryEntry<DigitalSignal>? = null
         for (entry in signalHistory!!.getReverseEntriesUntil(0)) {
+            val x = bounds.maxX - timeline!!.getX(entry.time)
+            val y = signalY(entry)
             if (lastEntry == null) {
-                lastPoint = Point2D(bounds.maxX, signalY(entry))
+                // Right border
+                lastPoint = Point2D(x, y)
+                context.g.drawLine(bounds.maxX, y, x, y)
+                context.g.fillOval(bounds.maxX - START_SIZE, y - START_SIZE, 2 * START_SIZE, 2 * START_SIZE)
             } else {
-                val nextX = bounds.maxX - timeline!!.getX(entry.time)
-                val nextY = signalY(entry)
+                val nextX = x
+                val nextY = y
 
                 if (nextX < bounds.minX) {
-                    context.g.drawLine(lastPoint.x, lastPoint.y, bounds.minX, lastPoint.y)
+                    // Left border
+                    // TODO The following doesnt work. How to finish at the left border?
+                    //context.g.drawLine(lastPoint.x, lastPoint.y, bounds.minX, lastPoint.y)
                     break
                 }
 
                 //LOG.debug("DigitalSignalHistoryDrawer: time=${entry.time}, nextX=$nextX, nextY=$nextY")
 
-                context.g.drawLine(lastPoint.x, lastPoint.y, nextX, lastPoint.y)
-                context.g.drawLine(nextX, lastPoint.y, nextX, nextY)
+                context.g.drawLine(lastPoint.x, lastPoint.y, lastPoint.x, nextY)
+                context.g.drawLine(lastPoint.x, nextY, nextX, nextY)
 
                 lastPoint = Point2D(nextX, nextY)
             }
