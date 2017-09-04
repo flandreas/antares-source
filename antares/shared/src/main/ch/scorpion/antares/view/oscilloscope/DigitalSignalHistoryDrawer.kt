@@ -18,6 +18,8 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
     companion object {
         private val LOG by logger(DigitalSignalHistoryDrawer::class)
         private val SIGNAL_HEIGHT = 10
+        private val BACKGROUND_COLOR = Color.BLACK
+        private val AXIS_COLOR = Color(64, 64, 64)
     }
 
     private var signalHistory: SignalHistory<DigitalSignal>? = null
@@ -30,29 +32,37 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
     override fun draw(context: DrawContext) {
 
-        context.g.color = Color.BLACK
+        // Draw background
+        context.g.color = BACKGROUND_COLOR
         context.g.fill(bounds)
+        context.g.draw(bounds)
+
+        // Draw axis
+        context.g.color = AXIS_COLOR
+        context.g.drawLine(bounds.maxX, bounds.height / 2, bounds.minX, bounds.height / 2)
 
         if (signalHistory == null || timeline == null || color == null) {
             return
         }
 
+        // Draw curve
         context.g.color = color!!.foregroundColor
 
         var lastPoint = Point2D()
         var lastEntry: SignalHistoryEntry<DigitalSignal>? = null
         for (entry in signalHistory!!.getReverseEntriesUntil(0)) {
             if (lastEntry == null) {
-                lastPoint = Point2D(bounds.maxX - timeline!!.getX(entry.time), signalY(entry))
+                lastPoint = Point2D(bounds.maxX, signalY(entry))
             } else {
                 val nextX = bounds.maxX - timeline!!.getX(entry.time)
                 val nextY = signalY(entry)
 
                 if (nextX < bounds.minX) {
+                    context.g.drawLine(lastPoint.x, lastPoint.y, bounds.minX, lastPoint.y)
                     break
                 }
 
-                LOG.debug("DigitalSignalHistoryDrawer: time=${entry.time}, nextX=$nextX, nextY=$nextY")
+                //LOG.debug("DigitalSignalHistoryDrawer: time=${entry.time}, nextX=$nextX, nextY=$nextY")
 
                 context.g.drawLine(lastPoint.x, lastPoint.y, nextX, lastPoint.y)
                 context.g.drawLine(nextX, lastPoint.y, nextX, nextY)

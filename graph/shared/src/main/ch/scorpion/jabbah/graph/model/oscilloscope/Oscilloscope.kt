@@ -38,7 +38,6 @@ class Oscilloscope(
     /** ---- [AbstractVertice] */
 
     override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
-        LOG.debug("Oscilloscope: inputChanged of rowNumber ${input.name}")
         storeSignal(input, signalHandler)
         stateChanged(signalHandler)
     }
@@ -81,7 +80,7 @@ class Oscilloscope(
 
     private fun storeSignal(input: InputPort<*>, signalHandler: SignalHandler) {
         val signal = input.getIncomingSignal()!!
-        LOG.debug("Oscilloscope: storing signal '$signal' at time ${signalHandler.executionTime}")
+        LOG.debug("Oscilloscope ${input.name}: storing signal '$signal' at time ${signalHandler.executionTime}")
         signalHistories.get(input.name!!)!!.add(SignalHistoryEntry(signal, signalHandler.executionTime))
         maxTime = Math.max(maxTime, signalHandler.executionTime)
     }
