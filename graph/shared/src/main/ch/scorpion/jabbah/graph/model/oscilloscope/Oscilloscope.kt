@@ -19,7 +19,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  * [Oscilloscope] has a variable amount of [InputPort]s. Changes of values at the [InputPort]
  * are not processed through the [SignalHandler], but directly communicated to registered [GraphElementListener]s.
  *
- * TODO Refactoring: Split PortFactory into model and view part (module dependecy)
+ * TODO Refactoring: Split PortFactory into model and view part (module dependency)
  */
 class Oscilloscope(
         private val portFactory: PortFactory = GraphViewModule.portFactory
@@ -30,8 +30,9 @@ class Oscilloscope(
     }
 
     /** Maps a probe row number (starting with "1") to its [SignalHistory].*/
-    private val signalHistories = mutableMapOf<String,SignalHistory<Any>>()
+    private val signalHistories = mutableMapOf<String,SignalHistoryImpl<Any>>()
 
+    /** Holds the largest time of all [SignalHistoryEntry] in all [SignalHistories][SignalHistory].*/
     var maxTime: Long = 0
         private set
 
@@ -63,7 +64,7 @@ class Oscilloscope(
     override fun executionStarted(signalHandler: SignalHandler) {
         signalHistories.clear()
         maxTime = 0
-        getPorts().forEach { signalHistories.put(it.name!!, SignalHistory()) }
+        getPorts().forEach { signalHistories.put(it.name!!, SignalHistoryImpl()) }
         super.executionStarted(signalHandler)
     }
 
@@ -76,6 +77,14 @@ class Oscilloscope(
 
     fun getSignalHistory(rowNumber: String): SignalHistory<Any>? {
         return signalHistories.get(rowNumber)
+    }
+
+    /**
+     * Removes all entries from all [SignalHistories][SignalHistory] of this [Oscilloscope]
+     * that are older than the specified time.
+     */
+    fun truncate(time: Long) {
+        signalHistories.forEach { it.value.truncate(time) }
     }
 
     private fun storeSignal(input: InputPort<*>, signalHandler: SignalHandler) {

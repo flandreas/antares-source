@@ -40,12 +40,13 @@ class OscilloscopeView(
 
     companion object {
         private val LOG by logger(OscilloscopeView::class)
-        private const val WIDTH = 500
+        private const val WIDTH = 700
         private const val DEF_HEIGHT = 200
         private const val TITLE_HEIGHT = 40
         private const val MAX_ROW_NUMBER = 9
         private const val ROW_INSET = 10
         private const val ICON_BUTTON_SIZE = 20
+        private const val MIN_SIGNAL_WIDTH = 30
     }
 
     private val container = DrawableContainerImpl<Drawable>(useLocation = true)
@@ -276,6 +277,9 @@ class OscilloscopeView(
     private inner class Timeline : SignalHistoryTimeline {
 
         override fun getX(time: Long): Double {
+            if (model!!.portsCount == 1) {
+                return (model!!.maxTime - time).toDouble() / model!!.getSignalHistory("1")!!.minDelay * MIN_SIGNAL_WIDTH
+            }
             return (model!!.maxTime - time).toDouble() / 2
         }
     }
