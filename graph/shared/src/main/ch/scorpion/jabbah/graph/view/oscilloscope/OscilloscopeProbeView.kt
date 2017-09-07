@@ -40,6 +40,21 @@ class OscilloscopeProbeView(
             }
         }
 
+    /**
+     * The [OscilloscopeProbeVerticeView] to be dragged into the [GraphView].
+     * Exists during dragging, and when being contained in the [GraphView].
+     * Can be set by [OscilloscopeView] while reading from persistent store.
+     */
+    var vertice: OscilloscopeProbeVerticeView<Any>? = null
+        set(value) {
+            if (field !== value) {
+                field = value
+                verticePresent = false
+                drawable.filled = false
+            }
+        }
+
+
     private val handler = Handler()
 
     private var isHovering: Boolean
@@ -49,12 +64,6 @@ class OscilloscopeProbeView(
         }
 
     private val drawable = OscilloscopeProbeViewDrawable(location, rowNumber, color, styleProvider)
-
-    /**
-     * The [OscilloscopeProbeVerticeView] to be dragged into the [GraphView].
-     * Exists during dragging, and when being contained in the [GraphView]
-     */
-    private var vertice: OscilloscopeProbeVerticeView<Any>? = null
 
     /** Set to `false` if [vertice] has been dragged into the [GraphView].*/
     private var verticePresent = true
@@ -120,6 +129,7 @@ class OscilloscopeProbeView(
             drawable.filled = false
             drawable.highlighted = false
             verticePresent = false
+
             vertice = OscilloscopeProbeVerticeView(rowNumber = rowNumber, color = color, styleProvider = styleProvider)
             vertice!!.location = origLocSource.invoke().add(location).add(Point2D(0.0, height))
             context.editor.drawing.add(vertice!!)

@@ -161,7 +161,7 @@ abstract class AbstractDesktopApplication(
                     applicationData = drawing
                     savable = FileSavable.withPath(filePath)
                 } catch (e: Throwable) {
-                    LOG.error("Error while opening '$filePath': ${e.message}")
+                    LOG.error("Error while opening '$filePath': ${e.cause}")
                 }
             }
         }

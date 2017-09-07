@@ -20,7 +20,7 @@ import ch.scorpion.jabbah.graph.view.style.GraphTheme
 class OscilloscopeProbeViewDrawable(
         location: Point2D,
         rowNumber: Int,
-        val color: CompositeColor,
+        color: CompositeColor,
         private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangle(location.x, location.y, SIZE, SIZE) {
 
@@ -50,6 +50,15 @@ class OscilloscopeProbeViewDrawable(
             if (field != value) {
                 field = value
                 label.text = field.toString()
+            }
+        }
+
+    var color: CompositeColor = color
+        set(value) {
+            if (field != value) {
+                invalidate()
+                field = value
+                validate()
             }
         }
 

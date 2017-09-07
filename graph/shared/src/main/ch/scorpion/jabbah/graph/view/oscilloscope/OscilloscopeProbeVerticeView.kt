@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.connect.AbstractConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
+import ch.scorpion.jabbah.io.*
 
 /**
  * The location of this [OscilloscopeProbeVerticeView] as a [Locatable] is the tip of the bubble shape, which is also
@@ -22,8 +23,8 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
  * @param T the type of signal that this [OscilloscopeProbeVerticeView]'s [OscilloscopeProbeVertice] can consume.
  */
 class OscilloscopeProbeVerticeView<T: Any>(
-        rowNumber: Int,
-        color: CompositeColor,
+        rowNumber: Int = 1,
+        color: CompositeColor = CompositeColor(),
         model: OscilloscopeProbeVertice<T>? = OscilloscopeProbeVertice(name = rowNumber.toString()),
         styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangularVerticeView<OscilloscopeProbeVertice<T>>(styleProvider, "graph.component.oscilloscope.port", model) {
@@ -41,11 +42,18 @@ class OscilloscopeProbeVerticeView<T: Any>(
     }
 
     var rowNumber: Int
-        get() = drawable.rowNumber
+        get() = model!!.getPort<Any>().name!!.toInt()
         set(value) {
             invalidate()
+            model!!.getPort<T>().name = value.toString()
             drawable.rowNumber = value
             validate()
+        }
+
+    var refColor: CompositeColor
+        get() = drawable.color
+        set(value) {
+            drawable.color = value
         }
 
     private val drawable = OscilloscopeProbeViewDrawable(Point2D(0.0, -OscilloscopeProbeViewDrawable.SIZE), rowNumber, color, styleProvider)
@@ -65,6 +73,36 @@ class OscilloscopeProbeVerticeView<T: Any>(
 
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
         return handler as InputEventHandler<T>
+    }
+
+    /** ---- [Storable] interface */
+
+    override fun resolutionDone() {
+        super.resolutionDone()
+        drawable.rowNumber = rowNumber
+    }
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        if (edgeView != null) {
+            writer.writeInt("edgeView", writer.provideIdentity(edgeView!!))
+        }
+    }
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+        if (reader.hasAttribute("edgeView")) {
+            reader.requestResolution(this, Reference(
+                    name = "edgeView",
+                    referenceId = reader.readInt("edgeView")))
+        }
+    }
+
+    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+        super.resolve(reference, referenceResolver)
+        if (reference.name == "edgeView") {
+            edgeView = referenceResolver.getStorable(reference.referenceId) as EdgeView<T>
+        }
     }
 
     /** ---- [AbstractRectangularVerticeView] */

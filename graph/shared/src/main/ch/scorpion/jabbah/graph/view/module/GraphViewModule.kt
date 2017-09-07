@@ -121,6 +121,7 @@ object GraphViewModule : AbstractModule() {
         typeMap.register("controlViewComponent", ControlViewComponent::class)
         typeMap.register("graphTextComponent", SimpleTextComponent::class)
         typeMap.register("oscilloscopeView", OscilloscopeView::class)
+        typeMap.register("oscilloscopeProbeView", OscilloscopeProbeVerticeView::class)
     }
 
     private fun configureStyleRepository(repository: StyleRepository) {
@@ -151,7 +152,6 @@ object GraphViewModule : AbstractModule() {
 
         factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class.simpleName!!, { EdgeViewBelowSelectionModel(it as EdgeView<*>) })
         factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class.simpleName!!, { BoundingBoxBelowSelectionModel(it) })
-        //factory.register(SelectionDrawingStrategy.REPLACE, OscilloscopeView::class.simpleName!!, { RectangularVerticeViewSelectionModel(it as AbstractRectangularVerticeView<*>) })
         factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class.simpleName!!, { BoundingBoxBelowSelectionModel(it) })
     }
 

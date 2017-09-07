@@ -138,6 +138,12 @@ class OscilloscopeView(
         }
         updateAddButtonState()
         adjustSize()
+
+        parent!!
+                .getDrawables { it is OscilloscopeProbeVerticeView<*> }
+                .map { it as OscilloscopeProbeVerticeView<Any> }
+                .sortedBy { it.rowNumber }
+                .forEach { rows[it.rowNumber - 1].loadedWith(it) }
     }
 
     /** ---- [OscilloscopeView] */
@@ -248,6 +254,11 @@ class OscilloscopeView(
             set(value) {
                 probeView.rowNumber = value
             }
+
+        fun loadedWith(vertice: OscilloscopeProbeVerticeView<Any>) {
+            probeView.vertice = vertice
+            probeView.vertice!!.refColor = color
+        }
 
         fun handleProbeViewRemovedFromDrawing() {
             probeView.handleProbeViewRemovedFromDrawing()
