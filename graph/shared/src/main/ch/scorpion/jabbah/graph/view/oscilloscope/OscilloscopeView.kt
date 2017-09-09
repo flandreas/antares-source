@@ -2,24 +2,30 @@ package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
+import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.IconButton
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Icon
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
 import ch.scorpion.jabbah.graph.view.port.PortFactory
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 
 class OscilloscopeView(
@@ -47,19 +53,15 @@ class OscilloscopeView(
         private const val ROW_INSET = 10
         private const val ICON_BUTTON_SIZE = 20
         private const val MIN_SIGNAL_WIDTH = 30
+        private const val DISPLAY_X = ROW_INSET + 2 * ICON_BUTTON_SIZE
+        private const val DISPLAY_WIDTH = WIDTH - 2 * ROW_INSET - 2 * ICON_BUTTON_SIZE
     }
 
     private val container = DrawableContainerImpl<Drawable>(useLocation = true)
 
     private val rows = mutableListOf<RowView>()
 
-    private val addButton = IconButton(
-            icon = AddIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
-            action = {
-                addRow()
-                validate()
-            },
-            location = Point2D(10, TITLE_HEIGHT + 15))
+    private val scaleRow = ScaleRow(Point2D())
 
     private val refColorSequence = referenceColorSequenceProvider.provide()
 
@@ -69,7 +71,7 @@ class OscilloscopeView(
 
     init {
         preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
-        container.add(addButton)
+        container.add(scaleRow)
         adjustSize()
 
         DrawableOwner(this, container)
@@ -136,7 +138,7 @@ class OscilloscopeView(
             addPortView(GenericPortView<Any>(model!!.getPort(i.toString())))
             addRowView(i)
         }
-        updateAddButtonState()
+        scaleRow.updateAddButtonState()
         adjustSize()
 
         parent!!
@@ -149,7 +151,7 @@ class OscilloscopeView(
     /** ---- [OscilloscopeView] */
 
     private fun adjustSize() {
-        updateAddButtonLocation()
+        scaleRow.updateLocation()
         invalidate()
         setBounds(0.0, 0.0, WIDTH.toDouble(), (TITLE_HEIGHT + (rows.size + 1) * factory.rowHeight).toDouble())
         invalidate()
@@ -162,11 +164,11 @@ class OscilloscopeView(
         val port = portFactory.createPort<Any>(PortType.INPUT)
         port.name = newRowNumber.toString()
         model!!.addPort(port)
-        addPortView(GenericPortView<Any>(port))
+        addPortView(GenericPortView(port))
 
         invalidate()
         addRowView(newRowNumber)
-        updateAddButtonState()
+        scaleRow.updateAddButtonState()
         adjustSize()
     }
 
@@ -200,22 +202,76 @@ class OscilloscopeView(
             rows[i].location = Point2D(rows[i].location.x, rows[i].location.y - factory.rowHeight)
             rows[i].rowNumber = i + 1
         }
-        updateAddButtonLocation()
-        updateAddButtonState()
-    }
-
-    private fun updateAddButtonLocation() {
-        addButton.location = Point2D(addButton.location.x, TITLE_HEIGHT + (rows.size + 0.5) * factory.rowHeight - addButton.height / 2)
-    }
-
-    private fun updateAddButtonState() {
-        addButton.enabled = rows.size < MAX_ROW_NUMBER
-        addButton.tooltipKey = if (addButton.enabled) "graph.action.oscilloscope.addRow.name" else "graph.action.oscilloscope.addRow.limit"
+        scaleRow.updateLocation()
+        scaleRow.updateAddButtonState()
     }
 
     private fun findProbeViewInDrawing(rowNumber: Int): OscilloscopeProbeVerticeView<*>? {
         return parent!!.getDrawable { it is OscilloscopeProbeVerticeView<*> && it.rowNumber == rowNumber }
                 as OscilloscopeProbeVerticeView<*>?
+    }
+
+    /** [SimpleScale] is currently only drawn if there is only a single row.*/
+    private inner class SimpleScale(shape: RectangularShape) : AbstractRectangle(shape) {
+
+        private val label = Label(
+                text = "Test",
+                font = Themes.get<GraphTheme>().annotation.font,
+                color = color.textColor,
+                horizontalAlignment = Label.HorizontalAlignment.CENTER,
+                verticalAlignment = Label.VerticalAlignment.BOTTOM,
+                location = Point2D(x + width / 2, y + height / 2 - 5)
+        )
+
+        override val lineWidth: Double get() = 0.0
+
+        override fun draw(context: DrawContext) {
+            if (model != null && model!!.portsCount == 1 && model!!.getSignalHistory("1") != null) {
+                val minDelay = model!!.getSignalHistory("1")!!.minDelay
+                val length = timeline.getDx(minDelay)
+                val x1 = x + width / 2 - length / 2
+                val x2 = x + width / 2 + length / 2
+                val y = y + height / 2
+
+                context.g.color = color.foregroundColor
+                context.g.font = font
+                context.g.drawLine(x1, y, x2, y)
+                context.g.drawLine(x1, y - 3, x1, y + 3)
+                context.g.drawLine(x2, y - 3, x2, y + 3)
+
+                label.text = "${minDelay.toString()} ns"
+                label.draw(context)
+            }
+        }
+    }
+
+    private inner class ScaleRow(
+            location: Point2D
+    ) : DrawableContainerImpl<Drawable>(location = location, useLocation =  true) {
+
+        private val addButton = IconButton(
+        icon = AddIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
+        action = {
+            addRow()
+            validate()
+        },
+        location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2))
+
+        private val scale = SimpleScale(Rectangle2D(DISPLAY_X, 0, DISPLAY_WIDTH, factory.rowHeight))
+
+        init {
+            add(addButton)
+            add(scale)
+        }
+
+        fun updateAddButtonState() {
+            addButton.enabled = rows.size < MAX_ROW_NUMBER
+            addButton.tooltipKey = if (addButton.enabled) "graph.action.oscilloscope.addRow.name" else "graph.action.oscilloscope.addRow.limit"
+        }
+
+        fun updateLocation() {
+            location = Point2D(0, TITLE_HEIGHT + factory.rowHeight * rows.size)
+        }
     }
 
     /**
@@ -287,9 +343,13 @@ class OscilloscopeView(
 
     private inner class Timeline : SignalHistoryTimeline {
 
+        override fun getDx(duration: Long): Double {
+            return (duration / model!!.getSignalHistory("1")!!.minDelay * MIN_SIGNAL_WIDTH).toDouble()
+        }
+
         override fun getX(time: Long): Double {
             if (model!!.portsCount == 1) {
-                return (model!!.maxTime - time).toDouble() / model!!.getSignalHistory("1")!!.minDelay * MIN_SIGNAL_WIDTH
+                return getDx(model!!.maxTime - time)
             }
             return (model!!.maxTime - time).toDouble() / 2
         }

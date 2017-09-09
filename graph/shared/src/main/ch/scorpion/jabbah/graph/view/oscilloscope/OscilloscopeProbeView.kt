@@ -88,9 +88,9 @@ class OscilloscopeProbeView(
 
     fun handleProbeViewRemovedFromDrawing() {
         invalidate()
+        vertice = null
         verticePresent = true
         drawable.filled = true
-        vertice = null
         validate()
     }
 
