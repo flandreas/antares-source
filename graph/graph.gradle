@@ -54,6 +54,8 @@ dependencies {
     testCompile project(':draw').sourceSets.test.output
     // Depending on TestEditorBuilder
     testCompile project(':edit').sourceSets.test.output
+    // Depending on SignalHandlerMockBuilder
+    testCompile project(':execution').sourceSets.test.output
 }
 
 configurations {

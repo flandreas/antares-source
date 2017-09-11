@@ -22,6 +22,8 @@ interface SignalHistory<out T: Any> {
     /** Returns the minimum time delay between any two subsequent entries, [Long.MAX_VALUE] if no entries available.*/
     val minDelay: Long
 
+    fun last(): SignalHistoryEntry<T>
+
     fun lastOrNull(): SignalHistoryEntry<T>?
 
     /** Iterates the [SignalHistoryEntries][SignalHistoryEntry] since the specified execution time in ascending time order.*/
@@ -58,6 +60,10 @@ class SignalHistoryImpl<T: Any> : SignalHistory<T> {
     /** Iterates the [SignalHistoryEntries][SignalHistoryEntry] in reverse order, starting with the newest entry.*/
     override fun getReverseEntriesUntil(startTime: Long): Iterator<SignalHistoryEntry<T>> {
         return list.asReversed().filter { it.time >= startTime }.iterator()
+    }
+
+    override fun last(): SignalHistoryEntry<T> {
+        return list.last()
     }
 
     /** Returns the last [SignalHistoryEntry], i.e. the one with the most recent time.*/

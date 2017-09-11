@@ -20,6 +20,8 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -52,7 +54,7 @@ class OscilloscopeView(
         private const val MAX_ROW_NUMBER = 9
         private const val ROW_INSET = 10
         private const val ICON_BUTTON_SIZE = 20
-        private const val MIN_SIGNAL_WIDTH = 30
+        private const val MIN_SIGNAL_WIDTH = 15.0
         private const val DISPLAY_X = ROW_INSET + 2 * ICON_BUTTON_SIZE
         private const val DISPLAY_WIDTH = WIDTH - 2 * ROW_INSET - 2 * ICON_BUTTON_SIZE
     }
@@ -67,7 +69,8 @@ class OscilloscopeView(
 
     private val removeListener = RemoveListener()
 
-    private val timeline = Timeline()
+    /** Replaced if model changes when reading from persistent store.*/
+    private var timeline = OscilloscopeViewTimeline(model, MIN_SIGNAL_WIDTH)
 
     init {
         preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
@@ -75,6 +78,11 @@ class OscilloscopeView(
         adjustSize()
 
         DrawableOwner(this, container)
+    }
+
+    override fun modelExchanged(oldModel: Oscilloscope?) {
+        super.modelExchanged(oldModel)
+        timeline = OscilloscopeViewTimeline(model!!, MIN_SIGNAL_WIDTH)
     }
 
     /** ---- [Drawable] */
@@ -226,9 +234,17 @@ class OscilloscopeView(
         override val lineWidth: Double get() = 0.0
 
         override fun draw(context: DrawContext) {
-            if (model != null && model!!.portsCount == 1 && model!!.getSignalHistory("1") != null) {
-                val minDelay = model!!.getSignalHistory("1")!!.minDelay
-                val length = timeline.getDx(minDelay)
+            if (context.castedAppContext<GraphApplicationContext>()!!.mode != ApplicationMode.EXECUTE) {
+                return
+            }
+            val deltaTime = when (model!!.portsCount) {
+                0 -> 0
+                1 -> model!!.getSignalHistory("1")!!.minDelay
+                else -> model!!.minDiffTime
+            }
+            if (deltaTime > 0) {
+                val length = timeline.getDx(deltaTime)
+
                 val x1 = x + width / 2 - length / 2
                 val x2 = x + width / 2 + length / 2
                 val y = y + height / 2
@@ -239,7 +255,7 @@ class OscilloscopeView(
                 context.g.drawLine(x1, y - 3, x1, y + 3)
                 context.g.drawLine(x2, y - 3, x2, y + 3)
 
-                label.text = "${minDelay.toString()} ns"
+                label.text = "${deltaTime.toString()} ns"
                 label.draw(context)
             }
         }
@@ -340,19 +356,29 @@ class OscilloscopeView(
             }
         }
     }
+}
 
-    private inner class Timeline : SignalHistoryTimeline {
+class OscilloscopeViewTimeline(
+        private val model: Oscilloscope,
+        private val minSignalWidth: Double
+) : SignalHistoryTimeline {
 
-        override fun getDx(duration: Long): Double {
-            return (duration / model!!.getSignalHistory("1")!!.minDelay * MIN_SIGNAL_WIDTH).toDouble()
-        }
-
-        override fun getX(time: Long): Double {
-            if (model!!.portsCount == 1) {
-                return getDx(model!!.maxTime - time)
+    override fun getDx(duration: Long): Double {
+        return when (model.portsCount) {
+            0 -> 0.0
+            1 -> duration / model.getSignalHistory("1")!!.minDelay * minSignalWidth
+            else -> {
+                if (model.minDiffTime == Long.MAX_VALUE) {
+                    duration / model.overallMinDelay * minSignalWidth
+                } else {
+                    duration / model.minDiffTime * minSignalWidth
+                }
             }
-            return (model!!.maxTime - time).toDouble() / 2
         }
+    }
+
+    override fun getX(time: Long): Double {
+        return getDx(model.maxTime - time)
     }
 }
 

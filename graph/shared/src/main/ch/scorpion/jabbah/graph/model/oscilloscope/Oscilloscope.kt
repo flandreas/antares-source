@@ -32,8 +32,21 @@ class Oscilloscope(
     /** Maps a probe row number (starting with "1") to its [SignalHistory].*/
     private val signalHistories = mutableMapOf<String,SignalHistoryImpl<Any>>()
 
-    /** Holds the largest time of all [SignalHistoryEntry] in all [SignalHistories][SignalHistory].*/
+    /**
+     * Holds the maximum time of all [SignalHistoryEntry] in all [SignalHistories][SignalHistory]
+     * or 0 if not determined.
+     */
     var maxTime: Long = 0
+        private set
+
+    /**
+     * Holds the minimum non-zero time between two signals in any [SignalHistories][SignalHistory],
+     * or [Long.MAX_VALUE] if not determined.
+     */
+    var minDiffTime: Long = Long.MAX_VALUE
+        private set
+
+    var overallMinDelay: Long = Long.MAX_VALUE
         private set
 
     /** ---- [AbstractVertice] */
@@ -64,6 +77,9 @@ class Oscilloscope(
     override fun executionStarted(signalHandler: SignalHandler) {
         signalHistories.clear()
         maxTime = 0
+        minDiffTime = Long.MAX_VALUE
+        overallMinDelay  = Long.MAX_VALUE
+
         getPorts().forEach { signalHistories.put(it.name!!, SignalHistoryImpl()) }
         super.executionStarted(signalHandler)
     }
@@ -89,8 +105,31 @@ class Oscilloscope(
 
     private fun storeSignal(input: InputPort<*>, signalHandler: SignalHandler) {
         val signal = input.getIncomingSignal()!!
+        val history = signalHistories.get(input.name!!)!!
         LOG.debug("Oscilloscope ${input.name}: storing signal '$signal' at time ${signalHandler.executionTime}")
-        signalHistories.get(input.name!!)!!.add(SignalHistoryEntry(signal, signalHandler.executionTime))
-        maxTime = Math.max(maxTime, signalHandler.executionTime)
+        history.add(SignalHistoryEntry(signal, signalHandler.executionTime))
+        updateMaxTime(signalHandler.executionTime)
+        updateMinDiffTime(signalHandler.executionTime)
+        updateOverallMinDelay(history.minDelay)
+    }
+
+    private fun updateMaxTime(now: Long) {
+        maxTime = Math.max(maxTime, now)
+        LOG.debug("Oscilloscope: maxTime = $maxTime")
+    }
+
+    private fun updateMinDiffTime(now: Long) {
+        val minSignalHistory = signalHistories.values
+                .filter { it.size > 0 && it.last().time != now}
+                .minBy { now - it.last().time }
+        if (minSignalHistory != null) {
+            minDiffTime = Math.min(minDiffTime, now - minSignalHistory.last().time)
+        }
+        LOG.debug("Oscilloscope: minDiffTime = $minDiffTime")
+    }
+
+    private fun updateOverallMinDelay(minDelay: Long) {
+        overallMinDelay = Math.min(overallMinDelay, minDelay)
+        LOG.debug("Oscilloscope: overallMinDelay = $overallMinDelay")
     }
 }

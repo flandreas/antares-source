@@ -17,10 +17,11 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
     companion object {
         private val LOG by logger(DigitalSignalHistoryDrawer::class)
-        private val SIGNAL_HEIGHT = 10
+        private val SIGNAL_HEIGHT = 15.0
         private val BACKGROUND_COLOR = Color.BLACK
         private val AXIS_COLOR = Color(64, 64, 64)
         private val START_SIZE = 4.0
+        private val FILL_SIGNAL = false
     }
 
     private var signalHistory: SignalHistory<DigitalSignal>? = null
@@ -47,8 +48,6 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
         }
 
         // Draw curve
-        context.g.color = color!!.foregroundColor
-
         var lastPoint = Point2D()
         var lastEntry: SignalHistoryEntry<DigitalSignal>? = null
         for (entry in signalHistory!!.getReverseEntriesUntil(0)) {
@@ -57,25 +56,36 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
             if (lastEntry == null) {
                 // Right border
                 lastPoint = Point2D(x, y)
-                context.g.drawLine(bounds.maxX, y, x, y)
+                val effNextX = Math.max(x, bounds.minX)
+                if (FILL_SIGNAL) {
+                    context.g.color = color!!.backgroundColor
+                    context.g.fillRect(effNextX, y, bounds.maxX - effNextX, bounds.height / 2 - y)
+                }
+                context.g.color = color!!.foregroundColor
+                context.g.drawLine(bounds.maxX, y, effNextX, y)
                 context.g.fillOval(bounds.maxX - START_SIZE, y - START_SIZE, 2 * START_SIZE, 2 * START_SIZE)
+
+                if (x <= bounds.minX) {
+                    break
+                }
             } else {
                 val nextX = x
                 val nextY = y
+                val effNextX = Math.max(nextX, bounds.minX)
 
-                if (nextX < bounds.minX) {
-                    // Left border
-                    // TODO The following doesnt work. How to finish at the left border?
-                    //context.g.drawLine(lastPoint.x, lastPoint.y, bounds.minX, lastPoint.y)
+                if (FILL_SIGNAL) {
+                    context.g.color = color!!.backgroundColor
+                    context.g.fillRect(effNextX, nextY, lastPoint.x - effNextX, bounds.height / 2 - nextY)
+                }
+                context.g.color = color!!.foregroundColor
+                context.g.drawLine(lastPoint.x, lastPoint.y, lastPoint.x, nextY)
+                context.g.drawLine(lastPoint.x, nextY, effNextX, nextY)
+
+                if (nextX <= bounds.minX) {
                     break
                 }
 
-                //LOG.debug("DigitalSignalHistoryDrawer: time=${entry.time}, nextX=$nextX, nextY=$nextY")
-
-                context.g.drawLine(lastPoint.x, lastPoint.y, lastPoint.x, nextY)
-                context.g.drawLine(lastPoint.x, nextY, nextX, nextY)
-
-                lastPoint = Point2D(nextX, nextY)
+                lastPoint = Point2D(effNextX, nextY)
             }
 
             lastEntry = entry
