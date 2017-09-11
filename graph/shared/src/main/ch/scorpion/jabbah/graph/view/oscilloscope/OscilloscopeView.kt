@@ -29,6 +29,8 @@ import ch.scorpion.jabbah.graph.view.port.GenericPortView
 import ch.scorpion.jabbah.graph.view.port.PortFactory
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 class OscilloscopeView(
         private val portFactory: PortFactory = GraphViewModule.portFactory,
@@ -59,6 +61,14 @@ class OscilloscopeView(
         private const val DISPLAY_WIDTH = WIDTH - 2 * ROW_INSET - 2 * ICON_BUTTON_SIZE
     }
 
+    var timelineScale: Double
+        get() = timeline.scale
+        set(value) {
+            invalidate()
+            timeline.scale = value
+            validate()
+        }
+
     private val container = DrawableContainerImpl<Drawable>(useLocation = true)
 
     private val rows = mutableListOf<RowView>()
@@ -70,7 +80,7 @@ class OscilloscopeView(
     private val removeListener = RemoveListener()
 
     /** Replaced if model changes when reading from persistent store.*/
-    private var timeline = OscilloscopeViewTimeline(model, MIN_SIGNAL_WIDTH)
+    private var timeline = OscilloscopeViewTimeline(1.0, model, MIN_SIGNAL_WIDTH)
 
     init {
         preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
@@ -82,7 +92,7 @@ class OscilloscopeView(
 
     override fun modelExchanged(oldModel: Oscilloscope?) {
         super.modelExchanged(oldModel)
-        timeline = OscilloscopeViewTimeline(model!!, MIN_SIGNAL_WIDTH)
+        timeline = OscilloscopeViewTimeline(timelineScale, model!!, MIN_SIGNAL_WIDTH)
     }
 
     /** ---- [Drawable] */
@@ -139,6 +149,18 @@ class OscilloscopeView(
     }
 
     /** ---- [Storable] interface */
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        writer.writeDouble("scale", timelineScale)
+    }
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+        if (reader.hasAttribute("scale")) {
+            timelineScale = reader.readDouble("scale")
+        }
+    }
 
     override fun resolutionDone() {
         super.resolutionDone()
@@ -243,7 +265,7 @@ class OscilloscopeView(
                 else -> model!!.minDiffTime
             }
             if (deltaTime > 0) {
-                val length = timeline.getDx(deltaTime)
+                val length = timeline.getDx(deltaTime) / timelineScale
 
                 val x1 = x + width / 2 - length / 2
                 val x2 = x + width / 2 + length / 2
@@ -255,7 +277,7 @@ class OscilloscopeView(
                 context.g.drawLine(x1, y - 3, x1, y + 3)
                 context.g.drawLine(x2, y - 3, x2, y + 3)
 
-                label.text = "${deltaTime.toString()} ns"
+                label.text = "${Math.round(deltaTime / timelineScale).toString()} ns"
                 label.draw(context)
             }
         }
@@ -359,12 +381,13 @@ class OscilloscopeView(
 }
 
 class OscilloscopeViewTimeline(
+        override var scale: Double,
         private val model: Oscilloscope,
         private val minSignalWidth: Double
 ) : SignalHistoryTimeline {
 
     override fun getDx(duration: Long): Double {
-        return when (model.portsCount) {
+        return scale * when (model.portsCount) {
             0 -> 0.0
             1 -> duration / model.getSignalHistory("1")!!.minDelay * minSignalWidth
             else -> {
