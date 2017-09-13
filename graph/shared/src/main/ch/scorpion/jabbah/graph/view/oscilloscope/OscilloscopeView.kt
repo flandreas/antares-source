@@ -359,11 +359,16 @@ class OscilloscopeView(
         }
 
         fun bindDrawer() {
-            drawer.bind(model!!.getSignalHistory(rowNumber.toString())!!, timeline, color)
+            drawer.bind(
+                    model!!.getSignalHistory(rowNumber.toString())!!,
+                    model!!.getSignalHistory("1"),
+                    timeline,
+                    color
+            )
         }
 
         fun unbindDrawer() {
-            drawer.bind(null, null, color)
+            drawer.bind(null, null, null, color)
         }
     }
 

@@ -8,5 +8,10 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistory
 interface SignalHistoryDrawer : RectangularDrawable {
 
     /** Binds this [SignalHistoryDrawer] with the data source it displays. */
-    fun bind(signalHistory: SignalHistory<Any>?, timeline: SignalHistoryTimeline?, color: CompositeColor)
+    fun bind(
+            signalHistory: SignalHistory<Any>?,
+            gridSignalHistory: SignalHistory<Any>?,
+            timeline: SignalHistoryTimeline?,
+            color: CompositeColor
+    )
 }

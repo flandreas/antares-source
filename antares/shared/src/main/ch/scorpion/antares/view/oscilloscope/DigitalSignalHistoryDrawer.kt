@@ -25,6 +25,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
     }
 
     private var signalHistory: SignalHistory<DigitalSignal>? = null
+    private var gridSignalHistory: SignalHistory<DigitalSignal>? = null
     private var timeline: SignalHistoryTimeline? = null
     private var color: CompositeColor? = null
 
@@ -39,12 +40,23 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
         context.g.fill(bounds)
         context.g.draw(bounds)
 
-        // Draw axis
+        // Draw horizontal axis
         context.g.color = AXIS_COLOR
         context.g.drawLine(bounds.maxX, bounds.height / 2, bounds.minX, bounds.height / 2)
 
         if (signalHistory == null || timeline == null || color == null) {
             return
+        }
+
+        if (gridSignalHistory != null) {
+            // Draw vertical grid lines
+            for (entry in gridSignalHistory!!.getReverseEntriesUntil(0)) {
+                val x = Math.max(bounds.maxX - timeline!!.getX(entry.time), bounds.minX)
+                if (x <= bounds.minX) {
+                    break
+                }
+                context.g.drawLine(x, bounds.minY, x, bounds.maxY)
+            }
         }
 
         // Draw curve
@@ -58,10 +70,12 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
                 lastPoint = Point2D(x, y)
                 val effNextX = Math.max(x, bounds.minX)
                 if (FILL_SIGNAL) {
-                    context.g.color = color!!.backgroundColor
+                    context.g.color = color!!.foregroundColor
                     context.g.fillRect(effNextX, y, bounds.maxX - effNextX, bounds.height / 2 - y)
+                    context.g.color = color!!.backgroundColor
+                } else {
+                    context.g.color = color!!.foregroundColor
                 }
-                context.g.color = color!!.foregroundColor
                 context.g.drawLine(bounds.maxX, y, effNextX, y)
                 context.g.fillOval(bounds.maxX - START_SIZE, y - START_SIZE, 2 * START_SIZE, 2 * START_SIZE)
 
@@ -74,10 +88,12 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
                 val effNextX = Math.max(nextX, bounds.minX)
 
                 if (FILL_SIGNAL) {
-                    context.g.color = color!!.backgroundColor
+                    context.g.color = color!!.foregroundColor
                     context.g.fillRect(effNextX, nextY, lastPoint.x - effNextX, bounds.height / 2 - nextY)
+                    context.g.color = color!!.backgroundColor
+                } else {
+                    context.g.color = color!!.foregroundColor
                 }
-                context.g.color = color!!.foregroundColor
                 context.g.drawLine(lastPoint.x, lastPoint.y, lastPoint.x, nextY)
                 context.g.drawLine(lastPoint.x, nextY, effNextX, nextY)
 
@@ -102,8 +118,14 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
     /** ---- [SignalHistoryDrawer] interface */
 
-    override fun bind(signalHistory: SignalHistory<Any>?, timeline: SignalHistoryTimeline?, color: CompositeColor) {
+    override fun bind(
+            signalHistory: SignalHistory<Any>?,
+            gridSignalHistory: SignalHistory<Any>?,
+            timeline: SignalHistoryTimeline?,
+            color: CompositeColor
+    ) {
         this.signalHistory = signalHistory as SignalHistory<DigitalSignal>?
+        this.gridSignalHistory = gridSignalHistory as SignalHistory<DigitalSignal>?
         this.timeline = timeline
         this.color = color
     }
