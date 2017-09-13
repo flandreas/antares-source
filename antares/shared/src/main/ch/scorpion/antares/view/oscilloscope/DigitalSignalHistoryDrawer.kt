@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.oscilloscope
 
-import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistory
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoryEntry
 import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryDrawer
 import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryTimeline
+import ch.scorpion.antares.model.signal.DigitalSignal
 
 class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHistoryDrawer {
 

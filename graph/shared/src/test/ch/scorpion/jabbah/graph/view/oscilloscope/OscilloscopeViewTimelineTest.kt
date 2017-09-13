@@ -21,7 +21,7 @@ class OscilloscopeViewTimelineTest {
         BaseModuleJvm.require()
         signalHandler = SignalHandlerMockBuilder()
         oscilloscope = Oscilloscope()
-        timeline = OscilloscopeViewTimeline(oscilloscope, 5.0)
+        timeline = OscilloscopeViewTimeline(scale = 1.0, model = oscilloscope, minSignalWidth = 5.0)
     }
 
     @Test
@@ -59,7 +59,7 @@ class OscilloscopeViewTimelineTest {
         input("1", 1001, false)
         input("1", 2002, true)
         input("2", 2033, false)
-        assertThat(timeline.getX(0), `is`(480.0))
+        assertThat(timeline.getX(0), `is`(325.0))
     }
 
     private fun createPorts(portsCount: Int) {
