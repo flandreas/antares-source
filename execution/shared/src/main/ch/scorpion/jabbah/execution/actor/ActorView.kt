@@ -31,6 +31,8 @@ interface ActorInteractionHandler {
 
     fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double)
 
+    fun mouseDragged(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double)
+
     fun mouseReleased(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double)
 
     fun mouseClicked(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double)
@@ -45,6 +47,10 @@ open class ActorInteractionHandlerAdapter : ActorInteractionHandler {
     }
 
     override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+        // empty
+    }
+
+    override fun mouseDragged(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
         // empty
     }
 

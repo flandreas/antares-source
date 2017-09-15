@@ -93,7 +93,7 @@ class GraphViewExecutionHandler(
                 view.setToolTipText(null)
             }
 
-            if (actorView != null && actorView.getActorInteractionHandler() != null) {
+            if (actorView?.getActorInteractionHandler() != null) {
                 view.setCursor(Cursor.HAND)
             } else {
                 view.setCursor(Cursor.DEFAULT)
@@ -109,11 +109,26 @@ class GraphViewExecutionHandler(
             val y = view.viewToModelY(e.y.toDouble())
 
             val actorView = getActorViewAt(x, y)
-            if (actorView != null && actorView.getActorInteractionHandler() != null) {
+            if (actorView?.getActorInteractionHandler() != null) {
                 if (actorView is Component && actorView.isFocusable) {
                     actorView.requestFocus()
                 }
                 actorView.getActorInteractionHandler()!!.mousePressed(scheduler.signalHandler, e, x, y)
+                view.drawing.validate()
+            }
+        }
+
+        override fun mouseDragged(e: MouseEvent) {
+            if (e.button !== Button.BUTTON1) {
+                return
+            }
+
+            val x = view.viewToModelX(e.x.toDouble())
+            val y = view.viewToModelY(e.y.toDouble())
+
+            val actorView = getActorViewAt(x, y)
+            if (actorView?.getActorInteractionHandler() != null) {
+                actorView.getActorInteractionHandler()!!.mouseDragged(scheduler.signalHandler, e, x, y)
                 view.drawing.validate()
             }
         }
@@ -127,7 +142,7 @@ class GraphViewExecutionHandler(
             val y = view.viewToModelY(e.y.toDouble())
 
             val actorView = getActorViewAt(x, y)
-            if (actorView != null && actorView.getActorInteractionHandler() != null) {
+            if (actorView?.getActorInteractionHandler() != null) {
                 actorView.getActorInteractionHandler()!!.mouseReleased(scheduler.signalHandler, e, x, y)
                 view.drawing.validate()
             }
@@ -142,7 +157,7 @@ class GraphViewExecutionHandler(
             val y = view.viewToModelY(e.y.toDouble())
 
             val actorView = getActorViewAt(x, y)
-            if (actorView != null && actorView.getActorInteractionHandler() != null) {
+            if (actorView?.getActorInteractionHandler() != null) {
                 actorView.getActorInteractionHandler()!!.mouseClicked(scheduler.signalHandler, e, x, y)
                 view.drawing.validate()
             }

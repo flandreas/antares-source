@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -21,15 +22,20 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
 import ch.scorpion.jabbah.graph.view.port.PortFactory
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -87,6 +93,8 @@ class OscilloscopeView(
     /** Replaced if model changes when reading from persistent store.*/
     private var timeline = OscilloscopeViewTimeline(1.0, model, MIN_SIGNAL_WIDTH)
 
+    private val actorHandler = ActorHandler()
+
     init {
         preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
         container.add(scaleRow)
@@ -122,6 +130,13 @@ class OscilloscopeView(
 
     /** ---- [AbstractRectangularVerticeView] */
 
+    override var location: Point2D
+        get() = super.location
+        set(value) {
+            super.location = value
+            container.location = value
+        }
+
     override fun draw(context: DrawContext) {
         super.draw(context)
         context.g.translate(location.x, location.y)
@@ -134,12 +149,9 @@ class OscilloscopeView(
         container.draw(context)
     }
 
-    override var location: Point2D
-        get() = super.location
-        set(value) {
-            super.location = value
-            container.location = value
-        }
+    override fun getActorInteractionHandler(): ActorInteractionHandler? {
+        return actorHandler
+    }
 
     /** ---- [AbstractGraphElementView] */
 
@@ -204,7 +216,7 @@ class OscilloscopeView(
         rows.removeAt(rowNumber - 1)
         container.remove(row)
         refColorSequence.free(row.color)
-        findProbeViewInDrawing(row.rowNumber)?.let { (parent as DrawableContainer<Component>)?.remove(it) }
+        findProbeViewInDrawing(row.rowNumber)?.let { (parent as DrawableContainer<Component>).remove(it) }
 
         val port = model!!.getPort<Any>(rowNumber.toString())
         val portView = getPortView(port)
@@ -241,7 +253,7 @@ class OscilloscopeView(
      * become row numbers 3 and 4, and their location is updated accordingly.
      */
     private fun rearrangeFromRowNumber(rowNumber: Int) {
-        for (i in rowNumber - 1 ..rows.size - 1) {
+        for (i in rowNumber - 1 until rows.size) {
             rows[i].location = Point2D(rows[i].location.x, rows[i].location.y - factory.rowHeight)
             rows[i].rowNumber = i + 1
             model!!.getPort<Any>((i + 2).toString()).name = (i + 1).toString()
@@ -255,7 +267,6 @@ class OscilloscopeView(
                 as OscilloscopeProbeVerticeView<*>?
     }
 
-    /** [SimpleScale] is currently only drawn if there is only a single row.*/
     private inner class SimpleScale(shape: RectangularShape) : AbstractRectangle(shape) {
 
         private val label = Label(
@@ -291,7 +302,7 @@ class OscilloscopeView(
                 context.g.drawLine(x1, y - 3, x1, y + 3)
                 context.g.drawLine(x2, y - 3, x2, y + 3)
 
-                label.text = "${Math.round(deltaTime / timelineScale).toString()} ns"
+                label.text = "${Math.round(deltaTime / timelineScale)} ns"
                 label.draw(context)
             }
         }
@@ -395,6 +406,32 @@ class OscilloscopeView(
                 LOG.debug("Removed OscilloscopeProbeView from drawing")
                 val comp = event.child as OscilloscopeProbeVerticeView<*>
                 findRowView(comp.rowNumber)?.handleProbeViewRemovedFromDrawing()
+            }
+        }
+    }
+
+    private inner class ActorHandler : ActorInteractionHandlerAdapter() {
+
+        private var startLocation = Point2D()
+        private var startScale: Double = 1.0
+
+        override fun mouseClicked(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+            if (event.clickCount == 2) {
+                timelineScale = 1.0
+            }
+        }
+
+        override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+            startLocation = Point2D(x, y).subtract(container.location)
+            startScale = timelineScale
+        }
+
+        override fun mouseDragged(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+            val newLocation = Point2D(x, y).subtract(container.location)
+            if (scaleRow.contains(newLocation)) {
+                val dist = startLocation.subtract(newLocation).x
+                LOG.debug("OscilloscopeView: actor mouseDragged, dx = $dist")
+                timelineScale = Math.max(0.1, startScale + Math.floor(10 * dist / 50) / 10)
             }
         }
     }
