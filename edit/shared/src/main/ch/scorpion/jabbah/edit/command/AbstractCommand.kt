@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.edit.Editor
  */
 abstract class AbstractCommand(
     descriptionKey: String,
-    val editor: Editor?
+    val editor: Editor? = null
 ) : Command {
 
     private val _description = Translations.getString(descriptionKey)

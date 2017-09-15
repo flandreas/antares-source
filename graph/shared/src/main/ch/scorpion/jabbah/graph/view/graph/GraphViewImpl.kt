@@ -134,19 +134,6 @@ class GraphViewImpl<T : GraphElementView<*>>(
             eventBus.post(ScenarioStepEvent(this, oldValue, value))
         }
 
-    override var isOscilloscopeDisplayed: Boolean = false
-        set(value) {
-            if (field == value) {
-                return
-            }
-            field = value
-            if (field) {
-                displayOscilloscope()
-            } else {
-                hideOscilloscope()
-            }
-            eventBus.post(this)
-        }
 
     override fun bind() {
         for (graphElementView in getDrawables()) {
@@ -349,20 +336,6 @@ class GraphViewImpl<T : GraphElementView<*>>(
                 netViewMap.remove(netView.net)
             }
         }
-    }
-
-    /** Ensures that the [OscilloscopeView] exists and is added as a [Component] to this [GraphView].*/
-    private fun displayOscilloscope() {
-        if (oscilloscope == null) {
-            oscilloscope = OscilloscopeView()
-        }
-        add(oscilloscope as T)
-        validate()
-    }
-
-    private fun hideOscilloscope() {
-        remove(oscilloscope as T)
-        validate()
     }
 
     /**

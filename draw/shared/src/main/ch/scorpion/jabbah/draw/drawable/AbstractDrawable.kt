@@ -32,7 +32,7 @@ abstract class AbstractDrawable : Drawable {
         set(value) {
             if (value != visible) {
                 invalidate()
-                visible = value
+                field = value
                 validate()
             }
         }

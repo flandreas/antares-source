@@ -45,6 +45,8 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.app.GraphViewService
 import ch.scorpion.jabbah.graph.view.app.GraphViewServiceImpl
+import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
+import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewServiceImpl
 import ch.scorpion.jabbah.graph.view.oscilloscope.UndefinedOscilloscopeViewFactory
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeProbeVerticeView
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
@@ -91,6 +93,8 @@ object GraphViewModule : AbstractModule() {
 
     /** Must be specified by higher application layers.*/
     var oscilloscopeViewFactory : OscilloscopeViewFactory = UndefinedOscilloscopeViewFactory()
+
+    val oscilloscopeViewService : OscilloscopeViewService = OscilloscopeViewServiceImpl(EditModule.commandManager, BaseModule.eventBus)
 
     override fun initialize() {
         EditModule.require()
