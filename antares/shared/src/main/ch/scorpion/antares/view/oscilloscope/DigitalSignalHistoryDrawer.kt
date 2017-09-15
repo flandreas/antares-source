@@ -20,10 +20,14 @@ import ch.scorpion.jabbah.graph.view.style.GraphTheme
 class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHistoryDrawer {
 
     companion object {
+
+        /** The height of an individual row to be used in [OscilloscopeView].*/
+        val ROW_HEIGHT: Int = 40
+
         private val LOG by logger(DigitalSignalHistoryDrawer::class)
 
         /** The maximum height the signal, i.e. the vertical distance in model coordinates between 0 and 1 signals.*/
-        private val SIGNAL_HEIGHT = 15.0
+        private val SIGNAL_HEIGHT = 20.0
 
         /** The color used for drawing the background.*/
         private val BACKGROUND_COLOR = Color.BLACK
@@ -74,7 +78,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
         // Draw horizontal axis
         context.g.color = AXIS_COLOR
-        context.g.drawLine(rightBorder, bounds.height / 2, bounds.minX, bounds.height / 2)
+        context.g.drawLine(rightBorder, baseLineY, bounds.minX, baseLineY)
 
         if (signalHistory == null || timeline == null || color == null) {
             return
@@ -116,6 +120,8 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
     private val rightBorder: Double get() =  bounds.maxX - 20
 
+    private val baseLineY: Double get() = bounds.maxY - 10
+
     private fun drawCurve(context: DrawContext) {
         val singleBit = signalHistory!!.last().signal.getBitWidth().width == 1
         var lastPoint = Point2D()
@@ -135,7 +141,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
                     // Draw signal value
                     multiBitLabel.text = entry.signal.toHexString()
                     multiBitLabel.horizontalAligment = Label.HorizontalAlignment.LEFT
-                    multiBitLabel.location = Point2D(effNextX + MULTIBIT_INSET, bounds.centerY - SIGNAL_HEIGHT / 2)
+                    multiBitLabel.location = Point2D(effNextX + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT / 2)
                     multiBitLabel.draw(context)
                 }
 
@@ -154,7 +160,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
                     // Draw signal value
                     multiBitLabel.text = entry.signal.toHexString()
                     multiBitLabel.horizontalAligment = Label.HorizontalAlignment.CENTER
-                    multiBitLabel.location = Point2D(effNextX + (lastPoint.x - effNextX) / 2, bounds.centerY - SIGNAL_HEIGHT / 2)
+                    multiBitLabel.location = Point2D(effNextX + (lastPoint.x - effNextX) / 2, baseLineY - SIGNAL_HEIGHT / 2)
                     multiBitLabel.draw(context)
                 }
 
@@ -172,7 +178,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
     private fun drawSingleBitRightBorder(context: DrawContext, xL: Double, y: Double) {
         if (FILL_SIGNAL) {
             context.g.color = color!!.foregroundColor
-            context.g.fillRect(xL, y, rightBorder - xL, bounds.height / 2 - y)
+            context.g.fillRect(xL, y, rightBorder - xL, baseLineY - y)
             context.g.color = color!!.backgroundColor
         } else {
             context.g.color = color!!.foregroundColor
@@ -185,21 +191,21 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
         context.g.color = color!!.foregroundColor
         if (xL <= rightBorder - START_SIZE - MULTIBIT_INSET) {
             // Upper and lower line
-            context.g.drawLine(rightBorder, bounds.centerY - SIGNAL_HEIGHT, xL + MULTIBIT_INSET, bounds.centerY - SIGNAL_HEIGHT)
-            context.g.drawLine(rightBorder, bounds.centerY, xL + MULTIBIT_INSET, bounds.centerY)
+            context.g.drawLine(rightBorder, baseLineY - SIGNAL_HEIGHT, xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
+            context.g.drawLine(rightBorder, baseLineY, xL + MULTIBIT_INSET, baseLineY)
 
             // Left arrow head
-            context.g.drawLine(xL + MULTIBIT_INSET, bounds.centerY - SIGNAL_HEIGHT, xL, bounds.centerY - SIGNAL_HEIGHT / 2)
-            context.g.drawLine(xL + MULTIBIT_INSET, bounds.centerY, xL, bounds.centerY - SIGNAL_HEIGHT / 2)
+            context.g.drawLine(xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT, xL, baseLineY - SIGNAL_HEIGHT / 2)
+            context.g.drawLine(xL + MULTIBIT_INSET, baseLineY, xL, baseLineY - SIGNAL_HEIGHT / 2)
         }
 
-        context.g.fillOval(rightBorder - START_SIZE, bounds.centerY - SIGNAL_HEIGHT / 2 - START_SIZE, 2 * START_SIZE, 2 * START_SIZE)
+        context.g.fillOval(rightBorder - START_SIZE, baseLineY - SIGNAL_HEIGHT / 2 - START_SIZE, 2 * START_SIZE, 2 * START_SIZE)
     }
 
     private fun drawSingleBitSegment(context: DrawContext, xR: Double, yR: Double, xL: Double, yL: Double) {
         if (FILL_SIGNAL) {
             context.g.color = color!!.foregroundColor
-            context.g.fillRect(xL, yL, xR - xL, bounds.height / 2 - yL)
+            context.g.fillRect(xL, yL, xR - xL, baseLineY - yL)
             context.g.color = color!!.backgroundColor
         } else {
             context.g.color = color!!.foregroundColor
@@ -212,23 +218,23 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
         context.g.color = color!!.foregroundColor
 
         // Right arrow head
-        context.g.drawLine(xR, bounds.centerY - SIGNAL_HEIGHT / 2, xR - MULTIBIT_INSET, bounds.centerY - SIGNAL_HEIGHT)
-        context.g.drawLine(xR, bounds.centerY - SIGNAL_HEIGHT / 2, xR - MULTIBIT_INSET, bounds.centerY)
+        context.g.drawLine(xR, baseLineY - SIGNAL_HEIGHT / 2, xR - MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
+        context.g.drawLine(xR, baseLineY - SIGNAL_HEIGHT / 2, xR - MULTIBIT_INSET, baseLineY)
 
         // Upper and lower line
-        context.g.drawLine(xR - MULTIBIT_INSET, bounds.centerY - SIGNAL_HEIGHT, xL + MULTIBIT_INSET, bounds.centerY - SIGNAL_HEIGHT)
-        context.g.drawLine(xR - MULTIBIT_INSET, bounds.centerY, xL + MULTIBIT_INSET, bounds.centerY)
+        context.g.drawLine(xR - MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT, xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
+        context.g.drawLine(xR - MULTIBIT_INSET, baseLineY, xL + MULTIBIT_INSET, baseLineY)
 
         // Left arrow head
-        context.g.drawLine(xL + MULTIBIT_INSET, bounds.centerY - SIGNAL_HEIGHT, xL, bounds.centerY - SIGNAL_HEIGHT / 2)
-        context.g.drawLine(xL + MULTIBIT_INSET, bounds.centerY, xL, bounds.centerY - SIGNAL_HEIGHT / 2)
+        context.g.drawLine(xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT, xL, baseLineY - SIGNAL_HEIGHT / 2)
+        context.g.drawLine(xL + MULTIBIT_INSET, baseLineY, xL, baseLineY - SIGNAL_HEIGHT / 2)
     }
 
     private fun signalY(entry: SignalHistoryEntry<DigitalSignal>): Double {
         return if (entry.signal.bitAt(0).isSet) {
-            bounds.height / 2 - SIGNAL_HEIGHT
+            baseLineY - SIGNAL_HEIGHT
         } else {
-            bounds.height / 2
+            baseLineY
         }
     }
 }

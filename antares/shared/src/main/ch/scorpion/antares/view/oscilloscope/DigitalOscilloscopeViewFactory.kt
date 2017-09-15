@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryDrawer
 
 class DigitalOscilloscopeViewFactory : OscilloscopeViewFactory {
 
-    override val rowHeight: Int get() = 50
+    override val rowHeight: Int get() = DigitalSignalHistoryDrawer.ROW_HEIGHT
 
     override fun createSignalHistoryDrawer(): SignalHistoryDrawer {
         return DigitalSignalHistoryDrawer()
