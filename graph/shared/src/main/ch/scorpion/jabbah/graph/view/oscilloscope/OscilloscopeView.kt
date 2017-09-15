@@ -215,6 +215,11 @@ class OscilloscopeView(
         adjustSize()
     }
 
+    /** Finds the [RowView] for the specified row number, if existing.*/
+    private fun findRowView(rowNumber: Int): RowView? {
+        return rows.firstOrNull { it.rowNumber == rowNumber }
+    }
+
     private fun adjustSize() {
         scaleRow.updateLocation()
         invalidate()
@@ -378,14 +383,18 @@ class OscilloscopeView(
         }
     }
 
-    /** Listens for removals of [OscilloscopeProbeView]s in order to put them back in the list.*/
+    /**
+     * Listens for removals of [OscilloscopeProbeVerticeView]s in order to put them back in the list.
+     * This is only necessary if the [OscilloscopeProbeVerticeView] has been directly removed in the [GraphView]
+     * and not indirectly by removing an [OscilloscopeProbeView] from this [OscilloscopeView].
+     */
     private inner class RemoveListener : DrawableContainerAdapter<Drawable>() {
         override fun drawableRemoved(event: DrawableContainerEvent<Drawable>) {
             super.drawableRemoved(event)
             if (event.child is OscilloscopeProbeVerticeView<*>) {
                 LOG.debug("Removed OscilloscopeProbeView from drawing")
                 val comp = event.child as OscilloscopeProbeVerticeView<*>
-                rows[comp.rowNumber - 1].handleProbeViewRemovedFromDrawing()
+                findRowView(comp.rowNumber)?.handleProbeViewRemovedFromDrawing()
             }
         }
     }
