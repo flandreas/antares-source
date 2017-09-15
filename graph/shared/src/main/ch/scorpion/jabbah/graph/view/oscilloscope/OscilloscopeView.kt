@@ -23,8 +23,8 @@ import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
+import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
 import ch.scorpion.jabbah.graph.view.port.PortFactory
@@ -34,6 +34,7 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 class OscilloscopeView(
+        private val service: OscilloscopeViewService = GraphViewModule.oscilloscopeViewService,
         private val portFactory: PortFactory = GraphViewModule.portFactory,
         private val factory: OscilloscopeViewFactory = GraphViewModule.oscilloscopeViewFactory,
         referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
@@ -69,6 +70,9 @@ class OscilloscopeView(
             timeline.scale = value
             validate()
         }
+
+    /** Returns the number of rows of this [OscilloscopeView].*/
+    val rowsCount: Int get() = rows.size
 
     private val container = DrawableContainerImpl<Drawable>(useLocation = true)
 
@@ -181,15 +185,7 @@ class OscilloscopeView(
 
     /** ---- [OscilloscopeView] */
 
-    private fun adjustSize() {
-        scaleRow.updateLocation()
-        invalidate()
-        setBounds(0.0, 0.0, WIDTH.toDouble(), (TITLE_HEIGHT + (rows.size + 1) * factory.rowHeight).toDouble())
-        invalidate()
-        update()
-    }
-
-    private fun addRow() {
+    fun addRow() {
         val newRowNumber = rows.size + 1
 
         val port = portFactory.createOscilloscopeProbePort<Any>(newRowNumber.toString())
@@ -202,15 +198,8 @@ class OscilloscopeView(
         adjustSize()
     }
 
-    private fun addRowView(rowNumber: Int) {
-        val y = TITLE_HEIGHT + rows.size * factory.rowHeight
-        val rowView = RowView(rowNumber, Point2D(0, y), refColorSequence.next(), factory)
-        rows.add(rowView)
-        container.add(rowView)
-    }
-
     /** Removes the row with the specified index, starting with 1.*/
-    private fun removeRow(index: Int) {
+    fun removeRow(index: Int) {
         val row = rows[index - 1]
         rows.removeAt(index - 1)
         container.remove(row)
@@ -224,7 +213,21 @@ class OscilloscopeView(
 
         rearrangeFromIndex(index)
         adjustSize()
-        validate()
+    }
+
+    private fun adjustSize() {
+        scaleRow.updateLocation()
+        invalidate()
+        setBounds(0.0, 0.0, WIDTH.toDouble(), (TITLE_HEIGHT + (rows.size + 1) * factory.rowHeight).toDouble())
+        invalidate()
+        update()
+    }
+
+    private fun addRowView(rowNumber: Int) {
+        val y = TITLE_HEIGHT + rows.size * factory.rowHeight
+        val rowView = RowView(rowNumber, Point2D(0, y), refColorSequence.next(), factory)
+        rows.add(rowView)
+        container.add(rowView)
     }
 
     private fun rearrangeFromIndex(index: Int) {
@@ -288,12 +291,9 @@ class OscilloscopeView(
     ) : DrawableContainerImpl<Drawable>(location = location, useLocation =  true) {
 
         private val addButton = IconButton(
-        icon = AddIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
-        action = {
-            addRow()
-            validate()
-        },
-        location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2))
+            icon = AddIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
+            action = { service.addRow(this@OscilloscopeView) },
+            location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2))
 
         private val scale = SimpleScale(Rectangle2D(DISPLAY_X, 0, DISPLAY_WIDTH, factory.rowHeight))
 
@@ -335,7 +335,7 @@ class OscilloscopeView(
                     icon = RemoveIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
                     tooltipKey = "graph.action.oscilloscope.removeRow.name",
                     location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2),
-                    action = { removeRow(probeView.rowNumber) }))
+                    action = { service.removeRow(probeView.rowNumber, this@OscilloscopeView) }))
             add(probeView)
 
             val drawerX = 3.0 * ROW_INSET + ICON_BUTTON_SIZE + probeView.width

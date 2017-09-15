@@ -36,6 +36,12 @@ interface OscilloscopeViewService {
      */
     fun displayOscilloscope(display: Boolean, graphView: GraphView<GraphElementView<*>>)
 
+    /** Adds a new row at the end of the specified [OscilloscopeView]*/
+    fun addRow(oscilloscopeView: OscilloscopeView)
+
+    /** Removes a row from the specified [OscilloscopeView].*/
+    fun removeRow(index: Int, oscilloscopeView: OscilloscopeView)
+
 }
 
 /**
@@ -73,6 +79,16 @@ class OscilloscopeViewServiceImpl(
         } else {
             commandManager.beginTransaction(HideOscilloscopeCommand(existed, graphView, this))
         }
+        commandManager.commitTransaction()
+    }
+
+    override fun addRow(oscilloscopeView: OscilloscopeView) {
+        commandManager.beginTransaction(AddRowCommand(oscilloscopeView))
+        commandManager.commitTransaction()
+    }
+
+    override fun removeRow(index: Int, oscilloscopeView: OscilloscopeView) {
+        commandManager.beginTransaction(RemoveRowCommand(index, oscilloscopeView))
         commandManager.commitTransaction()
     }
 
@@ -136,6 +152,34 @@ class OscilloscopeViewServiceImpl(
 
         override fun execute() { service.hideOscilloscopeImpl(!existed, graphView) }
         override fun undo() { service.displayOscilloscopeImpl(!existed, graphView) }
+    }
+
+    private class AddRowCommand(
+            private val oscilloscopeView: OscilloscopeView
+    ) : AbstractCommand("graph.command.addOscilloscopeRow") {
+
+        override fun execute() {
+            oscilloscopeView.addRow()
+        }
+
+        override fun undo() {
+            oscilloscopeView.removeRow(oscilloscopeView.rowsCount)
+        }
+    }
+
+    private class RemoveRowCommand(
+            private val index: Int,
+            private val oscilloscopeView: OscilloscopeView
+    ) : AbstractCommand("graph.command.removeOscilloscopeRow") {
+
+        override fun execute() {
+            oscilloscopeView.removeRow(index)
+        }
+
+        override fun undo() {
+            // TODO Should add the new row at the old index!
+            oscilloscopeView.addRow()
+        }
     }
 }
 
