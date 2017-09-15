@@ -198,20 +198,20 @@ class OscilloscopeView(
         adjustSize()
     }
 
-    /** Removes the row with the specified index, starting with 1.*/
-    fun removeRow(index: Int) {
-        val row = rows[index - 1]
-        rows.removeAt(index - 1)
+    /** Removes the row with the specified rowNumber, starting with 1.*/
+    fun removeRow(rowNumber: Int) {
+        val row = rows[rowNumber - 1]
+        rows.removeAt(rowNumber - 1)
         container.remove(row)
         refColorSequence.free(row.color)
         findProbeViewInDrawing(row.rowNumber)?.let { (parent as DrawableContainer<Component>)?.remove(it) }
 
-        val port = model!!.getPort<Any>(index.toString())
+        val port = model!!.getPort<Any>(rowNumber.toString())
         val portView = getPortView(port)
         removePortView(portView!!)
         model!!.removePort(port)
 
-        rearrangeFromIndex(index)
+        rearrangeFromRowNumber(rowNumber)
         adjustSize()
     }
 
@@ -230,10 +230,16 @@ class OscilloscopeView(
         container.add(rowView)
     }
 
-    private fun rearrangeFromIndex(index: Int) {
-        for (i in index - 1 ..rows.size - 1) {
+    /**
+     * Rearranges the rows after the row with the specified row number (starting with 1) has been deleted.
+     * For example, if row with number 3 out of 5 has been deleted, the rows with former row number 4 and 5 now
+     * become row numbers 3 and 4, and their location is updated accordingly.
+     */
+    private fun rearrangeFromRowNumber(rowNumber: Int) {
+        for (i in rowNumber - 1 ..rows.size - 1) {
             rows[i].location = Point2D(rows[i].location.x, rows[i].location.y - factory.rowHeight)
             rows[i].rowNumber = i + 1
+            model!!.getPort<Any>((i + 2).toString()).name = (i + 1).toString()
         }
         scaleRow.updateLocation()
         scaleRow.updateAddButtonState()
