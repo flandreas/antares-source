@@ -50,7 +50,7 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
     private val isDesignError: Boolean get() = getOccurringBitWidths().size > 1
 
     private fun getOccurringBitWidths(): Set<BitWidth> {
-        return ports.map { (it as DigitalPort).bitWidth }.toSet()
+        return ports.map { it as DigitalPort }.filter { !it.isAdaptive }.map { it.bitWidth }.toSet()
     }
 
     /** ---- [Net] */

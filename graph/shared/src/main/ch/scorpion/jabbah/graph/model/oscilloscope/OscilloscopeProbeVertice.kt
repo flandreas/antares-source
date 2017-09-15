@@ -23,7 +23,7 @@ class OscilloscopeProbeVertice<T: Any>(
     init {
         val port = portFactory.createPort<T>(PortType.INPUT)
         port.name = name
-        addPort(port)
+        addPort(portFactory.createOscilloscopeProbePort<T>(name))
     }
 
     /** ---- [Vertice] interface */

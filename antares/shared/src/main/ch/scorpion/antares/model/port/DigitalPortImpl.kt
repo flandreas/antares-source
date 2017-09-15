@@ -37,7 +37,7 @@ open class DigitalPortImpl(
             return createPort(PortType.INPUT)
         }
 
-        fun createInput(name: String): DigitalPort {
+        fun createInput(name: String?): DigitalPort {
             return DigitalPortImpl(PortType.INPUT, name)
         }
 
@@ -146,6 +146,8 @@ open class DigitalPortImpl(
                 getIncomingSignal()!!
             }
         }
+
+    override var isAdaptive: Boolean = false
 
     /** ---- [Port] interface */
 

@@ -192,8 +192,7 @@ class OscilloscopeView(
     private fun addRow() {
         val newRowNumber = rows.size + 1
 
-        val port = portFactory.createPort<Any>(PortType.INPUT)
-        port.name = newRowNumber.toString()
+        val port = portFactory.createOscilloscopeProbePort<Any>(newRowNumber.toString())
         model!!.addPort(port)
         addPortView(GenericPortView(port))
 

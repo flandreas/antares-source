@@ -30,24 +30,34 @@ class DigitalNetTest {
 
     @Test
     fun shouldNotYieldErrorWithSinglePorts() {
-        val edge = DigitalNet()
-        edge.connect(DigitalPortImpl.createInput(Logic.POSITIVE, "p1", BitWidth.BW_4))
-        assertThat(edge.isError, `is`(false))
+        val net = DigitalNet()
+        net.connect(DigitalPortImpl.createInput(Logic.POSITIVE, "p1", BitWidth.BW_4))
+        assertThat(net.isError, `is`(false))
     }
 
     @Test
     fun shouldNotYieldErrorWithEqualBitWidthPorts() {
-        val edge = DigitalNet()
-        edge.connect(DigitalPortImpl.createInput(Logic.POSITIVE, "p1", BitWidth.BW_4))
-        edge.connect(DigitalPortImpl.createInput(Logic.POSITIVE, "p2", BitWidth.BW_4))
-        assertThat(edge.isError, `is`(false))
+        val net = DigitalNet()
+        net.connect(DigitalPortImpl.createInput(Logic.POSITIVE, "p1", BitWidth.BW_4))
+        net.connect(DigitalPortImpl.createInput(Logic.POSITIVE, "p2", BitWidth.BW_4))
+        assertThat(net.isError, `is`(false))
     }
 
     @Test
     fun shouldYieldErrorWithDifferentBitWidthPorts() {
-        val edge = DigitalNet()
-        edge.connect(DigitalPortImpl.createInput(Logic.POSITIVE, "p1", BitWidth.BW_4))
-        edge.connect(DigitalPortImpl.createInput(Logic.POSITIVE, "p2", BitWidth.BW_8))
-        assertThat(edge.isError, `is`(true))
+        val net = DigitalNet()
+        net.connect(DigitalPortImpl.createInput(Logic.POSITIVE, "p1", BitWidth.BW_4))
+        net.connect(DigitalPortImpl.createInput(Logic.POSITIVE, "p2", BitWidth.BW_8))
+        assertThat(net.isError, `is`(true))
+    }
+
+    @Test
+    fun shouldRecognizeAdaptivePort() {
+        val net = DigitalNet()
+        val adaptivePort = DigitalPortImpl.createInput(Logic.POSITIVE, "p1", BitWidth.BW_1)
+        adaptivePort.isAdaptive = true
+        net.connect(DigitalPortImpl.createInput(Logic.POSITIVE, "p2", BitWidth.BW_2))
+        net.connect(adaptivePort)
+        assertThat(net.isError, `is`(false))
     }
 }

@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.port
 
 import ch.scorpion.antares.model.inout.CircuitInOut
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -11,6 +12,7 @@ import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.container.PortViewComponent
+import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.view.port.PortFactory
 import ch.scorpion.jabbah.graph.view.port.PortView
 
@@ -42,5 +44,11 @@ class DigitalPortFactory(private val styleProvider: StyleProvider) : PortFactory
 
     override fun <T : Any> createPortViewComponent(portView: PortView<T>): PortViewComponent<T> {
         return DigitalPortViewComponent(styleProvider, portView as DigitalPortView) as PortViewComponent<T>
+    }
+
+    override fun <T : Any> createOscilloscopeProbePort(name: String?): InputPort<T> {
+        val port = DigitalPortImpl.createInput(name)
+        port.isAdaptive = true
+        return port as InputPort<T>
     }
 }

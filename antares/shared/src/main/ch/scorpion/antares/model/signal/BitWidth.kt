@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.exception.IllegalArgumentException
  * Defines the supported [DigitalSignal] widths.
  */
 enum class BitWidth(val width: Int, val size: String) {
+    BW_0(0, "0"),
     BW_1(1, "1"),
     BW_2(2, "4"),
     BW_4(4, "16"),
