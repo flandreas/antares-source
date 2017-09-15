@@ -57,14 +57,6 @@ class OscilloscopeViewServiceImpl(
         return ov != null && ov.visible
     }
 
-    /**
-     * Logic:
-     * 1. If not existing:
-     * 1a. Create OscilloscopeView
-     * 1.b. Add OscilloscopeView to Graph
-     * 2. Make OscilloscopeView visible
-     * 3. Make all ProbeVerticeViews visible
-     */
     override fun displayOscilloscope(display: Boolean, graphView: GraphView<GraphElementView<*>>) {
         val existed = findOscilloscopeView(graphView) != null
         if (display) {

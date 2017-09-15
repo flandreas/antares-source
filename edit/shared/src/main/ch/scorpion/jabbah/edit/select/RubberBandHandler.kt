@@ -28,7 +28,7 @@ class RubberBandHandler(val rubberBand: RubberBand) : InputEventHandlerAdapter<E
                 context.drawingView().selectionManager.deselect(selection)
                 selection.clear()
                 context.drawingView().drawing.getDrawables()
-                    .filter { rubberBand.contains(it.boundingBox) }
+                    .filter { it.visible && rubberBand.contains(it.boundingBox) }
                     .forEach { selection.add(it) }
                 context.drawingView().selectionManager.select(selection)
             }
@@ -46,7 +46,7 @@ class RubberBandHandler(val rubberBand: RubberBand) : InputEventHandlerAdapter<E
 
             override fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext) {
                 context.drawingView().drawing.getDrawables()
-                    .filter { rubberBand.contains(it.boundingBox) }
+                    .filter { it.visible && rubberBand.contains(it.boundingBox) }
                     .forEach { context.drawingView().selectionManager.select(it) }
             }
         };
