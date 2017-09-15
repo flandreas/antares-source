@@ -11,6 +11,7 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import org.hamcrest.CoreMatchers.`is`
+import org.junit.Rule
 
 /**
  * Unit tests for [CommandManagerImpl].
