@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.app
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Command
@@ -14,6 +15,9 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeProbeVerticeView
 
+/**
+ * Application-level services related with [OscilloscopeView].
+ */
 interface OscilloscopeViewService {
 
     /**
@@ -48,7 +52,12 @@ class OscilloscopeViewServiceImpl(
         private val eventBus: EventBus = BaseModule.eventBus
 ) : OscilloscopeViewService {
 
-    private val LOG by logger(OscilloscopeViewServiceImpl::class)
+    companion object {
+        private val LOG by logger(OscilloscopeViewServiceImpl::class)
+
+        /** The vertical distance between the [GraphView]'s bounding box when positioning [OscilloscopeView].*/
+        private val DISTANCE = 20.0
+    }
 
     /** ---- [OscilloscopeViewService] */
 
@@ -77,11 +86,18 @@ class OscilloscopeViewServiceImpl(
         return graphView.getDrawables { it is OscilloscopeProbeVerticeView<*> }
     }
 
+    /** Positions [OscilloscopeView] right beneath [GraphView]'s bounding box.*/
+    private fun positionOscilloscope(ov: OscilloscopeView, graphView: GraphView<GraphElementView<*>>) {
+        val bbox = graphView.boundingBox
+        ov.location = Point2D(bbox.centerX - ov.width / 2, bbox.maxY + DISTANCE)
+    }
+
     private fun displayOscilloscopeImpl(create: Boolean, graphView: GraphView<GraphElementView<*>>) {
         if (create) {
             LOG.debug("OscilloscopeViewService: display Oscilloscope by creating")
-            graphView.add(OscilloscopeView())
-            // TODO Positioning
+            val ov = OscilloscopeView()
+            positionOscilloscope(ov, graphView)
+            graphView.add(ov)
         } else {
             LOG.debug("OscilloscopeViewService: display Oscilloscope by making visible")
             findOscilloscopeView(graphView)!!.visible = true
