@@ -8,8 +8,10 @@ import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.DesignError
 import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 
 /**
@@ -34,20 +36,20 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 
     override val designError: DesignError?
         get() {
-            val occuringBitWidths = getOccuringBitWidths()
-            if (occuringBitWidths.size <= 1) {
+            val occurringBitWidths = getOccurringBitWidths()
+            if (occurringBitWidths.size <= 1) {
                 return null
             }
-            val bitWidthNames = occuringBitWidths.map { it.customName }.toSet()
+            val bitWidthNames = occurringBitWidths.map { it.customName }.toSet()
             return DesignError(Translations.getString("digitalnet.designError.text", bitWidthNames.joinToString(separator = ",")))
         }
 
     override val isError: Boolean
         get() = super.isError || isDesignError
 
-    private val isDesignError: Boolean get() = getOccuringBitWidths().size > 1
+    private val isDesignError: Boolean get() = getOccurringBitWidths().size > 1
 
-    private fun getOccuringBitWidths(): Set<BitWidth> {
+    private fun getOccurringBitWidths(): Set<BitWidth> {
         return ports.map { (it as DigitalPort).bitWidth }.toSet()
     }
 
