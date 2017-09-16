@@ -106,6 +106,7 @@
     <libraryFolder _id='68' name='Zähler'>
       <items>
         <containerLibraryElement _id='69' name='Synch. Vorwärtszähler 3-Bit' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97'/>
+        <containerLibraryElement _id='70' name='Sync. BCD-Zähler 4-Bit' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'/>
       </items>
     </libraryFolder>
   </items>
