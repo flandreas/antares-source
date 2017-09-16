@@ -165,7 +165,10 @@ object AntaresThemes {
                         stroke = ANNOTATION_STROKE,
                         font = ANNOTATION_FONT),
                 explanation = BasicStyle(
-                        color = EXPLANATION,
+                        color = CompositeColor(
+                                foregroundColor = Color(50, 232, 42),
+                                backgroundColor = Color(2, 46, 8)
+                        ),
                         stroke = ANNOTATION_STROKE,
                         font = FONT),
                 message = BasicStyle(
