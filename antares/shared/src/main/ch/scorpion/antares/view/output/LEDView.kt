@@ -131,7 +131,7 @@ class LEDView(
 
     override fun rotationChanged(newRotation: Rotation) {
         super.rotationChanged(newRotation)
-        label.orientation = orientation
+        label.rotationChanged()
     }
 
     /** ---- [AbstractDrawable] */
@@ -193,7 +193,7 @@ class LEDView(
     private fun updateLabel() {
         invalidate()
         label.text = StringUtils.orEmpty(name)
-        label.orientation = orientation
+        label.rotationChanged()
         invalidate()
     }
 }

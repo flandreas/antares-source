@@ -79,7 +79,7 @@ class TunnelView(
 
     override fun draw(context: DrawContext) {
         super.draw(context)
-        context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
+        context.g.color = context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).textColor
         label.draw(context)
     }
 
@@ -113,7 +113,7 @@ class TunnelView(
 
     override fun rotationChanged(newRotation: Rotation) {
         super.rotationChanged(newRotation)
-        label.orientation = orientation
+        label.rotationChanged()
     }
 
     /** ---- [TunnelView] */
@@ -121,7 +121,7 @@ class TunnelView(
     private fun updateLabel() {
         invalidate()
         label.text = StringUtils.orEmpty(name)
-        label.orientation = orientation
+        label.rotationChanged()
         invalidate()
     }
 }

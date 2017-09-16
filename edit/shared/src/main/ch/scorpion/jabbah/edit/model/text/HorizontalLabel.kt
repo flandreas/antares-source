@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Font
+import ch.scorpion.jabbah.edit.Component
 
 /**
  * A wrapper around a [Label] that can be used as a description at the outside of an object,
@@ -21,8 +22,9 @@ import ch.scorpion.jabbah.draw.graphics.Font
  * centered and aligned to this position
  */
 class HorizontalLabel(
-        private val owner: Locatable,
+        private val owner: Component,
         private val relLocation: Point2D,
+        private val orientation: Direction = Direction.EAST,
         text: String? = null,
         font: Font,
         color: Color? = null) {
@@ -37,13 +39,15 @@ class HorizontalLabel(
         return label.boundingBox
     }
 
-    /** Updated by the owning object whenever its orientation has changed.*/
-    var orientation: Direction = Direction.EAST
-        set(value) {
-            field = value
-            updateLocation()
-            updateAlignment()
-        }
+    init {
+        updateLocation()
+        updateAlignment()
+    }
+
+    fun rotationChanged() {
+        updateLocation()
+        updateAlignment()
+    }
 
     /** Draws the contained [Label] using an unrotated and untranslated [DrawContext].*/
     fun draw(context: DrawContext) {
@@ -53,11 +57,11 @@ class HorizontalLabel(
     }
 
     private fun updateLocation() {
-        label.location = orientation.rotation.rotatePoint(relLocation.x, relLocation.y)
+        label.location = owner.rotation.rotatePoint(relLocation.x, relLocation.y)
     }
 
     private fun updateAlignment() {
-        when(orientation) {
+        when(owner.rotation.rotateDirection(orientation)) {
             Direction.EAST -> label.alignment = Label.Alignment(Label.HorizontalAlignment.LEFT, Label.VerticalAlignment.CENTER)
             Direction.WEST -> label.alignment = Label.Alignment(Label.HorizontalAlignment.RIGHT, Label.VerticalAlignment.CENTER)
             Direction.NORTH -> label.alignment = Label.Alignment(Label.HorizontalAlignment.CENTER, Label.VerticalAlignment.BOTTOM)

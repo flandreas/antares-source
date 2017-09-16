@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -19,10 +20,6 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
@@ -31,7 +28,9 @@ import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
 
 
 /**
@@ -50,12 +49,19 @@ class SwitchView(
         val COLOR_CASE = Color.WHITE
         val BORDER_WIDTH = 3
         val DIAMETER = 12
+        val LABEL_DIST = Look.SCALE
     }
 
     /** Handles mouse interactions during execution*/
     private val actorInteractionHandler = InteractionHandler()
 
     private val signalLabel: Label
+
+    private val label = HorizontalLabel(
+            owner = this,
+            relLocation = Point2D(-(SIZE + DigitalPortView.LENGTH + LABEL_DIST), 0),
+            orientation = Direction.WEST,
+            font = font)
 
     init {
         isFocusable = true
@@ -79,13 +85,17 @@ class SwitchView(
             direction = Direction.EAST)
         portView.setLocation(-portView.length.toDouble(), 0.0)
         addPortView(portView)
+        updateLabel()
     }
 
     /** ---- UI properties */
 
     var name: String?
         get() = model!!.name
-        set(value) {model!!.name = value}
+        set(value) {
+            model!!.name = value
+            updateLabel()
+        }
 
     /** ---- [ActorView] interface */
 
@@ -95,20 +105,33 @@ class SwitchView(
 
     /** ---- [Component] */
 
-    override var rotation: Rotation
-        get() = super.rotation
-        set(value) {
-            super.rotation = value
-            signalLabel.ownerRotation = rotation
-        }
-
     override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
         get() = SelectionDrawingStrategy.REPLACE
         set(value) {
             throw UnsupportedOperationException()
         }
 
+    override fun rotationChanged(newRotation: Rotation) {
+        super.rotationChanged(newRotation)
+        signalLabel.ownerRotation = rotation
+        label.rotationChanged()
+    }
+
     /** ---- [AbstractDrawable] */
+
+    override val boundingBox: Rectangle2D
+        get() {
+            val bb = super.boundingBox
+            val lbb = label.boundingBox.moveBy(location)
+            bb.add(lbb)
+            return bb
+        }
+
+    override fun draw(context: DrawContext) {
+        super.draw(context)
+        context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
+        label.draw(context)
+    }
 
     override fun drawImpl(context: DrawContext) {
         val oldColor = context.g.color
@@ -153,13 +176,14 @@ class SwitchView(
     /** ---- [SwitchView] */
 
     override fun drawSelected(context: DrawContext) {
+        context.g.color = context.color!!.foregroundColor
         draw(context, {
             super.drawImpl(it)
-            context.g.color = context.color!!.foregroundColor
             context.g.drawRect(xInt, yInt, SIZE, SIZE)
             context.g.drawRoundRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
                     SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH, DIAMETER, DIAMETER)
         })
+        label.draw(context)
     }
 
     private fun drawBodyDigital(context: DrawContext) {
@@ -188,6 +212,13 @@ class SwitchView(
             context.g.drawRect(xInt + BORDER_WIDTH - 1, yInt + BORDER_WIDTH - 1,
                     SIZE - 2 * BORDER_WIDTH + 2, SIZE - 2 * BORDER_WIDTH + 2)
         }
+    }
+
+    private fun updateLabel() {
+        invalidate()
+        label.text = StringUtils.orEmpty(name)
+        label.rotationChanged()
+        invalidate()
     }
 
     private inner class InteractionHandler : ActorInteractionHandlerAdapter() {
