@@ -52,17 +52,6 @@ class SimpleTextComponent(
             transparent.transparency = value
         }
 
-    /** ---- [Stylable] */
-
-    override var styleType: StyleType
-        get() = super.styleType
-        set(value) {
-            super.styleType = value
-            decorator.backgroundColor = backgroundColor
-            decorator.foregroundColor = foregroundColor
-            decorator.stroke = stroke
-        }
-
     /** ---- [Storable] interface */
 
     override fun write(writer: StoreWriter) {
@@ -123,9 +112,7 @@ class SimpleTextComponent(
 
     private var decorator: TextComponentDecorator = RectangularShapeTextComponentDecorator(
             shape = RoundRectangle2D(0.0, 0.0, 0.0, 0.0, 20.0, 20.0),
-            backgroundColor = backgroundColor,
-            foregroundColor = foregroundColor,
-            stroke = stroke,
+            stylable = this,
             transparent = transparent
     )
 

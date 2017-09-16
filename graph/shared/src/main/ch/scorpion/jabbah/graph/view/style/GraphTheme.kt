@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.graph.view.style
 
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.style.*
+import ch.scorpion.jabbah.edit.select.Handle
 import ch.scorpion.jabbah.edit.style.EditTheme
 
 /**
@@ -50,5 +52,8 @@ open class GraphTheme(
         styleRepository.registerStyle(GraphStyleType.ANNOTATION, annotation)
         styleRepository.registerStyle(GraphStyleType.EXPLANATION, explanation)
         styleRepository.registerStyle(GraphStyleType.SUBSYSTEM, subsystem)
+
+        BaseModule.properties.set(Handle.PROP_BORDER_COLOR, selection.foregroundColor)
+        BaseModule.properties.set(Handle.PROP_FILL_COLOR, selection.backgroundColor)
     }
 }

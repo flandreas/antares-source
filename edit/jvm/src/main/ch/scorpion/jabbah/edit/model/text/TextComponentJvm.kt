@@ -159,26 +159,13 @@ open class TextComponentJvm(
     // TODO Use Styles to determine Colors!
     private var decorator: TextComponentDecorator = RectangularShapeTextComponentDecorator(
         shape = RoundRectangle2D(0.0, 0.0, 0.0, 0.0, 20.0, 20.0),
-        backgroundColor = backgroundColor,
-        foregroundColor = foregroundColor,
-        stroke = stroke,
+        stylable = this,
         transparent = transparent
     )
 
     init {
         adjustBounds()
     }
-
-    /** ---- [Stylable] */
-
-    override var styleType: StyleType
-        get() = super.styleType
-        set(value) {
-            super.styleType = value
-            decorator.backgroundColor = backgroundColor
-            decorator.foregroundColor = foregroundColor
-            decorator.stroke = stroke
-        }
 
     /** ---- [Storable] interface */
 
@@ -264,6 +251,7 @@ open class TextComponentJvm(
         StyleConstants.setBold(attr, awtFont.isBold)
         StyleConstants.setItalic(attr, awtFont.isItalic)
         StyleConstants.setForeground(attr, Graphics2DJvm.toAwtColor(transparent.applyTo(color.textColor)))
+        StyleConstants.setBackground(attr, Graphics2DJvm.toAwtColor(transparent.applyTo(color.backgroundColor)))
         StyleConstants.setAlignment(attr, StyleConstants.ALIGN_LEFT)
 
         val bounds = shape
