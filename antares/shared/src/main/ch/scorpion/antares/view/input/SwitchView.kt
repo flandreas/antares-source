@@ -45,8 +45,6 @@ class SwitchView(
         val LOG by logger(SwitchView::class)
         val PROP_ICON_PATH = "ch.scorpion.antares.view.input.SwitchView.iconPath"
         val SIZE = 4 * Look.SCALE
-        val COLOR_BORDER = Color.GRAY
-        val COLOR_CASE = Color.WHITE
         val BORDER_WIDTH = 3
         val DIAMETER = 12
         val LABEL_DIST = Look.SCALE
@@ -188,7 +186,7 @@ class SwitchView(
 
     private fun drawBodyDigital(context: DrawContext) {
         val fillColor = Bit.of(model!!.isOn).color.foregroundColor
-        context.g.color = COLOR_CASE
+        context.g.color = color.backgroundColor
         context.g.fillRect(xInt, yInt, SIZE, SIZE)
 
         context.g.color = fillColor
@@ -201,7 +199,7 @@ class SwitchView(
         signalLabel.text = Bit.of(model!!.isOn).toHexString()
         signalLabel.draw(context)
 
-        context.g.color = COLOR_BORDER
+        context.g.color = color.foregroundColor
         context.g.drawRect(x.toInt(), y.toInt(), SIZE, SIZE)
     }
 
