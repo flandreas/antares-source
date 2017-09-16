@@ -154,7 +154,6 @@ class EdgeToPortConnector(
                 targetPortView = getEndpointHandler().targetPortView,
                 nodeView = splitResult!!.nodeView)
 
-        context.editor.commandManager.beginTransaction(splitCmd, register = true)
-        context.editor.commandManager.commitTransaction()
+        context.editor.commandManager.register(splitCmd)
     }
 }

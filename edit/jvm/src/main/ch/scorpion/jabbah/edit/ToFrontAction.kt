@@ -17,7 +17,6 @@ class ToFrontAction(
 
     override fun actionPerformed(e: ActionEvent?) {
         val drawing = (viewManager.activeView as DrawingView<Drawing<Component>>).drawing
-        cmdManager.beginTransaction(ToFrontCommand(drawing, getSelection()))
-        cmdManager.commitTransaction()
+        cmdManager.execute(ToFrontCommand(drawing, getSelection()))
     }
 }

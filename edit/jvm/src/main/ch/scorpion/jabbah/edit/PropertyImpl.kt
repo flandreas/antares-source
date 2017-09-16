@@ -83,8 +83,7 @@ class PropertyImpl<V>(
         val newValue = value as V
         if (oldValue != newValue) {
             try {
-                editor!!.commandManager.beginTransaction(PropertyCommand(editor!!, baseKey, getter!!, setter!!, newValue), register = true)
-                editor!!.commandManager.commitTransaction()
+                editor!!.commandManager.register(PropertyCommand(editor!!, baseKey, getter!!, setter!!, newValue))
                 setter!!.invoke(newValue)
             } catch (t: Throwable) {
                 LOG.error("PropertyImpl: Error in executing PropertyCommand: ${t.message}")

@@ -84,11 +84,8 @@ class RectangularHandleSelectionModel(component: RectangularComponent) : Abstrac
 
         override fun dragHandleEnd(editor: Editor) {
             if (oldBounds!! != component.shape) {
-                editor.commandManager.beginTransaction(
-                    ResizeRectangleCommand(editor, component, Rectangle2D(oldBounds!!), Rectangle2D(component.shape)),
-                    register = true
-                )
-                editor.commandManager.commitTransaction()
+                editor.commandManager.register(
+                    ResizeRectangleCommand(editor, component, Rectangle2D(oldBounds!!), Rectangle2D(component.shape)))
             }
         }
     }

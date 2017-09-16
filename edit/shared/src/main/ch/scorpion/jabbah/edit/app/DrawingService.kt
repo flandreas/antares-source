@@ -25,7 +25,6 @@ open class DrawingServiceImpl(
     /** ---- [DrawingService] interface */
 
     override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>) {
-        commandManager.beginTransaction(DeleteCommand(drawingView, components))
-        commandManager.commitTransaction()
+        commandManager.execute(DeleteCommand(drawingView, components))
     }
 }

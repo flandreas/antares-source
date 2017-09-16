@@ -1,88 +1,97 @@
 package ch.scorpion.jabbah.edit.command
 
+import ch.scorpion.jabbah.base.TestTranslationsBuilder
+import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.EditTestRule
+import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*
+import org.hamcrest.CoreMatchers.`is`
+import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Test
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.reset
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
-import ch.scorpion.jabbah.base.exception.IllegalStateException
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Rule
 
-/**
- * Unit tests for [CommandManagerImpl].
- */
+/** Unit tests for [CommandManagerImpl].*/
 class CommandManagerImplTest {
 
     companion object {
-        @ClassRule @JvmField
+        @ClassRule
+        @JvmField
         val editTestRule = EditTestRule()
+    }
+
+    @Before
+    fun setup() {
+        TestTranslationsBuilder().withAnyKey()
     }
 
     private val cmdManager = CommandManagerImpl()
 
     @Test(expected = IllegalStateException::class)
-    fun shouldNotAllowNestedTransaction() {
-        cmdManager.beginTransaction(command("A"))
-        cmdManager.beginTransaction(command("B"))
-    }
-
-    @Test(expected = IllegalStateException::class)
-    fun shouldNotCommitInexistingTransaction() {
+    fun shouldNotCommitInexistentTransaction() {
         cmdManager.commitTransaction()
     }
 
     @Test
-    fun shouldBeginExecuteTransaction() {
-        val cmd = command("A")
-        cmdManager.beginTransaction(cmd)
+    fun shouldAutoCommitExecute() {
+        val cmd = command()
+        cmdManager.execute(cmd)
         verify(cmd).execute()
-        verify(cmd).validate()
-    }
-
-    @Test
-    fun shouldBeginRegisterTransaction() {
-        val cmd = command("A")
-        cmdManager.beginTransaction(cmd, register = true)
-        verify(cmd).registered()
-    }
-
-    @Test
-    fun shouldNotBeUndoableBeforeCommit() {
-        val cmd = command("A")
-        cmdManager.beginTransaction(cmd)
-        assertThat(cmdManager.canUndo(), `is`(false))
-    }
-
-    @Test
-    fun shouldCommitTransaction() {
-        val cmd = command("A")
-        cmdManager.beginTransaction(cmd)
-        cmdManager.commitTransaction()
         assertThat(cmdManager.canUndo(), `is`(true))
     }
 
     @Test
-    fun shouldExecuteCommandInTransaction() {
-        val cmdA = command("A")
-        val cmdB = command("B")
-        cmdManager.beginTransaction(cmdA)
-        cmdManager.execute(cmdB)
-        verify(cmdB).execute()
-        verify(cmdB).validate()
+    fun shouldAutoCommitRegister() {
+        val cmd = command()
+        cmdManager.register(cmd)
+        verify(cmd, never()).execute()
+        assertThat(cmdManager.canUndo(), `is`(true))
     }
 
     @Test
-    fun shouldRegisterCommandInTransaction() {
-        val cmdA = command("A")
-        val cmdB = command("B")
-        cmdManager.beginTransaction(cmdA)
-        cmdManager.register(cmdB)
-        verify(cmdB).registered()
+    fun shouldDoSingleTransaction() {
+        val cmd = command()
+        cmdManager.beginTransaction(cmd)
+        cmdManager.commitTransaction()
+        verify(cmd).execute()
+        assertThat(cmdManager.canUndo(), `is`(true))
+    }
+
+    @Test
+    fun shouldExecuteCommandInExistingTransaction() {
+        val cmd1 = command()
+        val cmd2 = command()
+        cmdManager.beginTransaction(cmd1)
+        cmdManager.execute(cmd2)
+        cmdManager.commitTransaction()
+        verify(cmd1).execute()
+        verify(cmd2).execute()
+        assertThat(cmdManager.canUndo(), `is`(true))
+    }
+
+    @Test
+    fun shouldNotCommitInnerTransation() {
+        val cmd1 = command()
+        val cmd2 = command()
+        cmdManager.beginTransaction(cmd1)
+        cmdManager.beginTransaction(cmd2)
+        cmdManager.commitTransaction()
+        verify(cmd1).execute()
+        verify(cmd2).execute()
+        assertThat(cmdManager.canUndo(), `is`(false))
+    }
+
+    @Test
+    fun shouldCommitOuterTransation() {
+        val cmd1 = command()
+        val cmd2 = command()
+        cmdManager.beginTransaction(cmd1)
+        cmdManager.beginTransaction(cmd2)
+        cmdManager.commitTransaction()
+        cmdManager.commitTransaction()
+        verify(cmd1).execute()
+        verify(cmd2).execute()
+        assertThat(cmdManager.canUndo(), `is`(true))
     }
 
     @Test
@@ -132,7 +141,7 @@ class CommandManagerImplTest {
         assertThat(cmdManager.canRedo(), `is`(false))
     }
 
-    private fun command(desc: String): Command {
+    private fun command(desc: String = "Cmd"): Command {
         val command = mock<Command>()
         whenever(command.getDescription()).thenReturn(desc)
         return command

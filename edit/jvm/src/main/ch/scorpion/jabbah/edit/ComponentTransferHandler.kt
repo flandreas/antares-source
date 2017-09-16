@@ -107,8 +107,7 @@ open class ComponentTransferHandler(
         LOG.debug("importData")
         try {
             val command = AddCommand(editor, elementView)
-            editor.commandManager.beginTransaction(command)
-            editor.commandManager.commitTransaction()
+            editor.commandManager.execute(command)
             eventBus.post(DropEvent(editor, elementView))
             editor.view.selectionManager.deselectAll()
             editor.view.selectionManager.select(elementView)

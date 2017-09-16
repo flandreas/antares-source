@@ -68,11 +68,8 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
         override fun dragHandleEnd(editor: Editor) {
             val index = getIndexOf(focusHandle!!)
             val newLocation = component.getPointAt(index)
-            editor.commandManager.beginTransaction(
-                MovePolylinePointCommand(component, editor, index, oldLocation, newLocation),
-                register = true
-            )
-            editor.commandManager.commitTransaction()
+            editor.commandManager.register(
+                MovePolylinePointCommand(component, editor, index, oldLocation, newLocation))
         }
 
         /** Adds an additional [Point2D] by double-clicking.*/
@@ -81,9 +78,8 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
                 component.findSegment(context.x, context.y, 10)?.let {
                     LOG.debug("Add handle $it")
                     val snap = context.editor.snapManager.snap(context.x, context.y)
-                    context.editor.commandManager.beginTransaction(
+                    context.editor.commandManager.execute(
                         AddPolylinePointCommand(component, context.editor, it + 1, Point2D(snap.x + context.x, snap.y + context.y)))
-                    context.editor.commandManager.commitTransaction()
                 }
             }
             return null

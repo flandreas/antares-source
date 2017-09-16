@@ -26,16 +26,17 @@ class CommandManagerImpl(override val eventBus: EventBus) : CommandManager {
     /** Holds the current [CommandTransaction].*/
     private var transaction: CommandTransaction? = null
 
+    private var level: Int = 0
+
     /** ---- [CommandManager] interface */
 
     override fun beginTransaction(command: Command, register: Boolean) {
-        if (transaction != null) {
-            throw IllegalStateException("nested transactions not supported")
+        if (transaction == null) {
+            transaction = CommandTransaction()
         }
-        LOG.debug("CommandManagerImpl: begin transaction '${command.getDescription()}'")
-        transaction = CommandTransaction()
-        transaction!!.add(command)
+        level++
         transaction?.let {
+            it.add(command)
             if (register) {
                 command.registered()
             } else {
@@ -51,11 +52,10 @@ class CommandManagerImpl(override val eventBus: EventBus) : CommandManager {
 
     override fun execute(command: Command) {
         if (transaction == null) {
-            throw IllegalStateException("no transaction")
-        }
-        LOG.debug("CommandManagerImpl: execute command '${command.getDescription()}'")
-        transaction?.let {
-            it.add(command)
+            beginTransaction(command, register = false)
+            commitTransaction()
+        } else {
+            transaction!!.add(command)
             command.execute()
             command.validate()
         }
@@ -63,12 +63,11 @@ class CommandManagerImpl(override val eventBus: EventBus) : CommandManager {
 
     override fun register(command: Command) {
         if (transaction == null) {
-            throw IllegalStateException("no transaction")
-        }
-        LOG.debug("CommandManagerImpl: register command '${command.getDescription()}'")
-        transaction?.let {
-            it.add(command)
-            command.registered()
+            beginTransaction(command, register = true)
+            commitTransaction()
+        } else {
+            transaction!!.add(command)
+            command.validate()
         }
     }
 
@@ -76,14 +75,22 @@ class CommandManagerImpl(override val eventBus: EventBus) : CommandManager {
         if (transaction == null) {
             throw IllegalStateException("no transaction")
         }
-        LOG.debug("CommandManagerImpl: commit transaction '${transaction!!.headCommand.getDescription()}'")
-        undoStack.push(transaction!!)
-        eventBus.post(CommandEvent(this))
-        transaction = null
+        level--
+        if (level == 0) {
+            LOG.debug("CommandManagerImpl: commit transaction '${transaction!!.headCommand.getDescription()}'")
+            undoStack.push(transaction!!)
+            eventBus.post(CommandEvent(this))
+            transaction = null
+        }
     }
 
     override fun rollbackTransaction() {
-        throw UnsupportedOperationException("not implemented")
+        if (transaction == null) {
+            throw IllegalStateException("no transaction")
+        }
+        transaction!!.undo()
+        level = 0
+        transaction = null
     }
 
     override fun canUndo(): Boolean {
@@ -131,6 +138,9 @@ class CommandManagerImpl(override val eventBus: EventBus) : CommandManager {
     }
 
     override fun reset() {
+        if (transaction != null) {
+            throw IllegalStateException("cannot reset while in transaction")
+        }
         undoStack.clear()
         redoStack.clear()
         eventBus.post(CommandEvent(this))

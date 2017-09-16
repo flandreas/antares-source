@@ -17,7 +17,6 @@ class ToBackAction(
 
     override fun actionPerformed(e: ActionEvent?) {
         val drawing = (viewManager.activeView as DrawingView<Drawing<Component>>).drawing
-        cmdManager.beginTransaction(ToBackCommand(drawing, getSelection()))
-        cmdManager.commitTransaction()
+        cmdManager.execute(ToBackCommand(drawing, getSelection()))
     }
 }

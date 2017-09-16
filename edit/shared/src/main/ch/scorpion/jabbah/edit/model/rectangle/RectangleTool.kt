@@ -97,8 +97,7 @@ class RectangleTool<T : RectangularComponent>(
         }
 
         editor.view.selectionManager.select(addedComponent)
-        editor.commandManager.beginTransaction(AddCommand(editor, addedComponent))
-        editor.commandManager.commitTransaction()
+        editor.commandManager.execute(AddCommand(editor, addedComponent))
         editor.toolDone()
     }
 }

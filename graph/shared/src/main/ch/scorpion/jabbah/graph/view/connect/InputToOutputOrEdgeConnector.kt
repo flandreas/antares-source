@@ -109,7 +109,7 @@ class InputToOutputOrEdgeConnector(
         context.drawingView().drawing.remove(edgeView!!)
 
         val targetPortView = getEndpointHandler().targetPortView
-        context.editor.commandManager.beginTransaction(
+        context.editor.commandManager.execute(
                 ConnectCommand(
                         editor = context.editor,
                         connectService = connectServiceSupplier.invoke(),
@@ -118,7 +118,6 @@ class InputToOutputOrEdgeConnector(
                         origPort = targetPortView?.port,
                         destConnectableView = destPortView?.owner,
                         destPort = destPortView?.port))
-        context.editor.commandManager.commitTransaction()
         context.drawingView().selectionManager.select(edgeView!!)
     }
 }

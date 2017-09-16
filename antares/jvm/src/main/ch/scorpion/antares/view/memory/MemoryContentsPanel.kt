@@ -52,7 +52,7 @@ class MemoryContentsPanel(
         override fun actionPerformed(e: ActionEvent?) {
             val fileChooser = JFileChooser()
             if (fileChooser.showOpenDialog(this@MemoryContentsPanel) == JFileChooser.APPROVE_OPTION) {
-                cmdManager.beginTransaction(MemoryContentsCommand(memory, dataWidth, fileChooser.selectedFile!!.absolutePath))
+                cmdManager.execute(MemoryContentsCommand(memory, dataWidth, fileChooser.selectedFile!!.absolutePath))
             }
         }
     }

@@ -75,21 +75,18 @@ class OscilloscopeViewServiceImpl(
     override fun displayOscilloscope(display: Boolean, graphView: GraphView<GraphElementView<*>>) {
         val existed = findOscilloscopeView(graphView) != null
         if (display) {
-            commandManager.beginTransaction(DisplayOscilloscopeCommand(existed, graphView, this))
+            commandManager.execute(DisplayOscilloscopeCommand(existed, graphView, this))
         } else {
-            commandManager.beginTransaction(HideOscilloscopeCommand(existed, graphView, this))
+            commandManager.execute(HideOscilloscopeCommand(existed, graphView, this))
         }
-        commandManager.commitTransaction()
     }
 
     override fun addRow(oscilloscopeView: OscilloscopeView) {
-        commandManager.beginTransaction(AddRowCommand(oscilloscopeView))
-        commandManager.commitTransaction()
+        commandManager.execute(AddRowCommand(oscilloscopeView))
     }
 
     override fun removeRow(index: Int, oscilloscopeView: OscilloscopeView) {
-        commandManager.beginTransaction(RemoveRowCommand(index, oscilloscopeView))
-        commandManager.commitTransaction()
+        commandManager.execute(RemoveRowCommand(index, oscilloscopeView))
     }
 
     /** ---- [OscilloscopeViewServiceImpl] */

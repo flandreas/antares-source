@@ -15,8 +15,7 @@ class RotateAction(
 ) : AbstractSelectionAwareAction("edit.action.rotate", viewManager, eventBus) {
 
     override fun actionPerformed(e: ActionEvent?) {
-        commandManager.beginTransaction(RotateCommand(getSingleSelection()!!, getSingleSelection()!!.rotation.next()))
-        commandManager.commitTransaction()
+        commandManager.execute(RotateCommand(getSingleSelection()!!, getSingleSelection()!!.rotation.next()))
     }
 
     override fun calculateEnabled(): Boolean {

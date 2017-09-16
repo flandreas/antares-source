@@ -30,8 +30,7 @@ class LabelTool(
         val offset = editor.snapManager.snap(x, y)
         label.location = Point2D(x + offset.x, y + offset.y)
 
-        editor.commandManager.beginTransaction(AddCommand(editor, label))
-        editor.commandManager.commitTransaction()
+        editor.commandManager.execute(AddCommand(editor, label))
 
         editor.view.selectionManager.deselectAll()
         editor.view.selectionManager.select(label)

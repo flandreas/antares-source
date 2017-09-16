@@ -42,7 +42,6 @@ class AddScenarioAction(
         if (StringUtils.isEmpty(name)) {
             return
         }
-        cmdManager.beginTransaction(AddScenarioCommand(graphView!!, ScenarioImpl(name)))
-        cmdManager.commitTransaction()
+        cmdManager.execute(AddScenarioCommand(graphView!!, ScenarioImpl(name)))
     }
 }

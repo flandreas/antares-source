@@ -45,8 +45,7 @@ object CopyPasteUtility {
         cmdManager: CommandManager
     ) {
         copy(view.drawing as GraphView, components, typeMap)
-        cmdManager.beginTransaction(CutCommand(view, components.toList()))
-        cmdManager.commitTransaction()
+        cmdManager.execute(CutCommand(view, components.toList()))
     }
 
     fun copy(
@@ -121,8 +120,7 @@ object CopyPasteUtility {
                         }
                         components.add(c)
                     }
-                    cmdManager.beginTransaction(PasteCommand(view, components))
-                    cmdManager.commitTransaction()
+                    cmdManager.execute(PasteCommand(view, components))
                 }
             } catch(e: Exception) {
                 LOG.error("Error while reading Components from clipboard: ${e.message}")

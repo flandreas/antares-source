@@ -59,8 +59,7 @@ class PolylineTool(
             instance!!.addPoint(x + offset.x, y + offset.y)
         } else if (e.clickCount == 2) {
             instance!!.removePoint(instance!!.pointsCount - 1)
-            editor.commandManager.beginTransaction(AddCommand(editor, addedComponent))
-            editor.commandManager.commitTransaction()
+            editor.commandManager.execute(AddCommand(editor, addedComponent))
             editor.toolDone()
             editor.view.selectionManager.select(addedComponent)
             instance = null

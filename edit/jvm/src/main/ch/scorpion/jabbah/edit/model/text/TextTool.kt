@@ -34,8 +34,7 @@ class TextTool(
 
         editor.view.selectionManager.deselectAll()
         val addedComponent = getAddedComponent(instance)
-        editor.commandManager.beginTransaction(AddCommand(editor, addedComponent))
-        editor.commandManager.commitTransaction()
+        editor.commandManager.execute(AddCommand(editor, addedComponent))
         editor.view.selectionManager.select(addedComponent)
 
         editor.toolDone()

@@ -189,12 +189,10 @@ class SelectionToolImpl(
         if (movedReferenceComponent != null) {
             if (moveStartLocation != movedReferenceComponent?.location) {
                 try {
-                    editor.commandManager.beginTransaction(MoveCommand(
+                    editor.commandManager.register(MoveCommand(
                         editor,
                         editor.view.selectionManager.selection,
-                        movedReferenceComponent!!.location.subtract(moveStartLocation)
-                    ), register = true)
-                    editor.commandManager.commitTransaction()
+                        movedReferenceComponent!!.location.subtract(moveStartLocation)))
                 } catch(e: Throwable) {
                     LOG.error("SelectionToolImpl.mouseReleased(): error '${e.message}'")
                     editor.commandManager.rollbackTransaction()

@@ -52,8 +52,7 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
     override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         LOG.trace("mouseReleased at " + Point2D(context.x, context.y))
         if (totalOffset != 0.0) {
-            context.editor.commandManager.beginTransaction(MoveSegmentCommand(context.editor, edgeView!!, segmentIndex!!, totalOffset), register = true)
-            context.editor.commandManager.commitTransaction()
+            context.editor.commandManager.register(MoveSegmentCommand(context.editor, edgeView!!, segmentIndex!!, totalOffset))
         }
         return null
     }

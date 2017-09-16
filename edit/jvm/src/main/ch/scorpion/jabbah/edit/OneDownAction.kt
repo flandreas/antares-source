@@ -17,7 +17,6 @@ class OneDownAction(
 
     override fun actionPerformed(e: ActionEvent?) {
         val drawing = (viewManager.activeView as DrawingView<Drawing<Component>>).drawing
-        cmdManager.beginTransaction(OneDownCommand(drawing, getSelection()))
-        cmdManager.commitTransaction()
+        cmdManager.execute(OneDownCommand(drawing, getSelection()))
     }
 }
