@@ -17,17 +17,19 @@ object AntaresThemes {
     private val SKY_BLUE = CompositeColor(foregroundColor = Color(69, 113, 180), backgroundColor = Color(220, 237, 250))
 
     private val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.5 * Look.SCALE).toInt())
-    val ANNOTATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.4 * Look.SCALE).toInt())
-    val SIGNAL_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
-    val EXPLANATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 12)
+    private val ANNOTATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.4 * Look.SCALE).toInt())
+    private val EXPLANATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 12)
 
-    val ANNOTATION_STROKE = Stroke(1.0f)
+    private val ANNOTATION_STROKE = Stroke(1.0f)
     private val HIGHLIGHT = CompositeColor(foregroundColor = Color.YELLOW, backgroundColor = Color.YELLOW)
     private val HIGHLIGHT_STROKE = Stroke(10.0f)
     private val BOX_STROKE = Stroke(1.5f, LineCap.ROUND, LineJoin.ROUND)
     private val LINE_STROKE = Stroke(1.2f)
     private val BUS_STROKE = Stroke(3.0f, LineCap.BUTT, LineJoin.ROUND)
-    private val EXPLANATION = CompositeColor(foregroundColor = Color(252, 205, 90), backgroundColor = Color(255, 255, 223))
+    private val EXPLANATION = CompositeColor(
+            foregroundColor = Color(252, 205, 90),
+            backgroundColor = Color(255, 255, 223),
+            textColor = Color.BLACK)
     private val SUBSYSTEM_STROKE = Stroke(1.0f, LineCap.BUTT, LineJoin.MITER, 5.0f, floatArrayOf(5.0f), 0.0f)
 
     private val ZERO = CompositeColor(foregroundColor = Color(0, 115, 15), backgroundColor = Color.BLACK, textColor = Color.WHITE)
@@ -127,7 +129,7 @@ object AntaresThemes {
         val highlightColor = Color(129, 123, 22)
         return AntaresTheme(
                 name = "CRT",
-                referenceColors = listOf<CompositeColor>(
+                referenceColors = listOf(
                         CompositeColor(Color(236, 35, 46), Color(120, 3, 7)),
                         CompositeColor(Color(72, 186, 233), Color(3, 16, 139)),
                         CompositeColor(Color(115, 191, 91), Color(7, 87, 9)),
