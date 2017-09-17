@@ -1,11 +1,8 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
@@ -56,9 +53,15 @@ abstract class AbstractConnector(
         view.selectionManager.select(edgeView!!)
     }
 
+    /*
     protected open fun cancel(view: DrawingView<Drawing<Component>>) {
         view.drawing.remove(edgeView!!)
         removePortViewHighlight(view)
+    }
+    */
+    protected open fun cancel(editor: Editor) {
+        editor.view.drawing.remove(edgeView!!)
+        removePortViewHighlight(editor.view)
     }
 
     /**

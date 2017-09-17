@@ -1,10 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
@@ -15,6 +11,7 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 
@@ -29,6 +26,7 @@ class EdgeToPortConnector(
 
     companion object {
         private val EDGE_CORNER_DIST = 15
+        private val MIN_DIST = 10
     }
 
     private val LOG by logger(EdgeToPortConnector::class)
@@ -38,9 +36,6 @@ class EdgeToPortConnector(
 
     /** The index of the [EdgeView] segment at which splitting takes place.*/
     private var branchedSegmentIndex: Int? = null
-
-    /** The [NodeView] being created when splitting.*/
-    private var nodeView: NodeView<*>? = null
 
     private var splitResult: SplitEdgeViewResult<*>? = null
 
@@ -57,7 +52,8 @@ class EdgeToPortConnector(
         if (branchedEdgeView!!.getSegmentPoint(segmentIndex).distance(context.x, context.y) <= EDGE_CORNER_DIST) {
             x = branchedEdgeView!!.getSegmentPoint(segmentIndex).x
             y = branchedEdgeView!!.getSegmentPoint(segmentIndex).y
-        } else if (segmentIndex < branchedEdgeView!!.segmentPointCount - 2 && branchedEdgeView!!.getSegmentPoint(segmentIndex + 1).distance(context.x, context.y) <= EDGE_CORNER_DIST) {
+        } else if (segmentIndex < branchedEdgeView!!.segmentPointCount - 2
+                && branchedEdgeView!!.getSegmentPoint(segmentIndex + 1).distance(context.x, context.y) <= EDGE_CORNER_DIST) {
             x = branchedEdgeView!!.getSegmentPoint(segmentIndex + 1).x
             y = branchedEdgeView!!.getSegmentPoint(segmentIndex + 1).y
         }
@@ -86,10 +82,7 @@ class EdgeToPortConnector(
     override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         LOG.trace("mousePressed at (${context.x},${context.y})")
 
-        val snapResult = snap(context)
-        if (snapResult == null) {
-            return null
-        }
+        val snapResult = snap(context) ?: return null
         branchedSegmentIndex = snapResult.segmentIndex
 
         beginConnecting(context.drawingView())
@@ -108,9 +101,18 @@ class EdgeToPortConnector(
         if (isValidEdgeView()) {
             completeConnecting(context)
         } else {
-            cancel(context.drawingView())
+            cancel(context.editor)
         }
         return null
+    }
+
+    /** ---- [AbstractConnector] */
+
+    override fun cancel(editor: Editor) {
+        val cmd = createSlitEdgeViewCommand(editor)
+        cmd.registered()
+        cmd.undo()
+        super.cancel(editor)
     }
 
     /** ---- [EdgeToPortConnector] */
@@ -144,16 +146,18 @@ class EdgeToPortConnector(
                     getEndpointHandler().targetPortView!!.port as Port<Any>)
         }
 
-        val splitCmd = SplitEdgeViewCommand(
-                editor = context.editor,
+        context.editor.commandManager.register(createSlitEdgeViewCommand(context.editor))
+    }
+
+    private fun createSlitEdgeViewCommand(editor: Editor): Command {
+        return SplitEdgeViewCommand(
+                editor = editor,
                 connectService = connectServiceSupplier.invoke(),
-                graphView = context.drawingView().drawing as GraphView<GraphElementView<*>>,
+                graphView = editor.view.drawing as GraphView<GraphElementView<*>>,
                 origEdgeView = branchedEdgeView!!,
                 segmentIndex = branchedSegmentIndex!!,
                 newEdgeView = edgeView!!,
                 targetPortView = getEndpointHandler().targetPortView,
                 nodeView = splitResult!!.nodeView)
-
-        context.editor.commandManager.register(splitCmd)
     }
 }

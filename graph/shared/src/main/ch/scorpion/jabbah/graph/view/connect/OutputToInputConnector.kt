@@ -87,7 +87,7 @@ class OutputToInputConnector(
         if (isValidEdgeView()) {
             completeConnecting(context)
         } else {
-            cancel(context.drawingView())
+            cancel(context.editor)
         }
 
         return null
