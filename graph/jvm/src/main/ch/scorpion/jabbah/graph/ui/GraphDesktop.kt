@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.draw.view.CanvasJvm
+import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
@@ -67,7 +68,10 @@ class GraphDesktop(
     private val removeListener = object : DrawableContainerAdapter<GraphElementView<*>>() {
         override fun drawableRemoved(event: DrawableContainerEvent<GraphElementView<*>>) {
             associations.firstOrNull{ it.ref === event.child }?.let {
-                assoc -> closeGraphNavigationPanel(assoc.panel)
+                assoc -> {
+                    closeGraphNavigationPanel(assoc.panel)
+                    deassociate(assoc, assoc.sourcePanel.drawingView.content)
+                }.invoke()
             }
         }
     }
@@ -200,17 +204,24 @@ class GraphDesktop(
         add(masterGraphPanel)
     }
 
-    /** Deassociate the specified open [GraphNavigationPanel] when it is being closed.*/
+    /**
+     * Deassociate the specified open [GraphNavigationPanel] when it is being closed.
+     * Checks all existing [Association]s for the [DrawingViewContent]s that contains the associating [SubGraphVerticeView],
+     * and removes that [Association].
+     */
     private fun deassociate(panel: GraphNavigationPanel) {
         associationOf(panel).let { assoc ->
             val content = assoc!!.sourcePanel.findContent { it.drawing.contains(assoc.ref) }
-            // BUG: This doesn't remove the HighlightModel from the highlight container if the source panel
-            // displays another (drill-down) DrawingViewContent, because the Highlighter uses the CURRENT
-            // DrawingViewContent for finding and removing the HighlightModel!
-            content?.highlighter?.unhighlight(assoc.ref)
-            referenceColorSequence.free(assoc.refColor)
-            associations.remove(assoc)
+            if (content != null) {
+                deassociate(assoc, content!!)
+            }
         }
+    }
+
+    private fun deassociate(assoc: Association, content: DrawingViewContent<*>) {
+        content.highlighter.unhighlight(assoc.ref)
+        referenceColorSequence.free(assoc.refColor)
+        associations.remove(assoc)
     }
 
     private fun associationOf(panel: GraphNavigationPanel): Association? {
