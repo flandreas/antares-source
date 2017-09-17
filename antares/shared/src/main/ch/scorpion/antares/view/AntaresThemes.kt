@@ -21,8 +21,7 @@ object AntaresThemes {
     private val EXPLANATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 12)
 
     private val ANNOTATION_STROKE = Stroke(1.0f)
-    private val HIGHLIGHT = CompositeColor(foregroundColor = Color.YELLOW, backgroundColor = Color.YELLOW)
-    private val HIGHLIGHT_STROKE = Stroke(10.0f)
+    private val HIGHLIGHT_STROKE = Stroke(10.0f, LineCap.ROUND, LineJoin.ROUND)
     private val BOX_STROKE = Stroke(1.5f, LineCap.ROUND, LineJoin.ROUND)
     private val LINE_STROKE = Stroke(1.2f)
     private val BUS_STROKE = Stroke(3.0f, LineCap.BUTT, LineJoin.ROUND)
@@ -47,6 +46,7 @@ object AntaresThemes {
     }
 
     private fun winter(): Theme {
+        val highlightColor = CompositeColor(foregroundColor = Color.YELLOW, backgroundColor = Color.YELLOW)
         return AntaresTheme(
                 name = "Winter",
                 background = BasicStyle(
@@ -61,7 +61,7 @@ object AntaresThemes {
                         stroke = BOX_STROKE,
                         font = FONT),
                 highlight = BasicStyle(
-                        color = HIGHLIGHT,
+                        color = highlightColor,
                         font = FONT,
                         stroke = HIGHLIGHT_STROKE),
                 message = BasicStyle(
@@ -126,7 +126,9 @@ object AntaresThemes {
                 foregroundColor = ZERO.foregroundColor,
                 backgroundColor = Color.BLACK
         )
-        val highlightColor = Color(129, 123, 22)
+        // dark orange
+        val highlightColor = Color(102, 61, 0)
+
         return AntaresTheme(
                 name = "CRT",
                 referenceColors = listOf(
