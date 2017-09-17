@@ -170,7 +170,7 @@ object AntaresThemes {
                                 backgroundColor = Color(2, 46, 8)
                         ),
                         stroke = ANNOTATION_STROKE,
-                        font = FONT),
+                        font = EXPLANATION_FONT),
                 message = BasicStyle(
                         color = EXPLANATION,
                         stroke = ANNOTATION_STROKE,
