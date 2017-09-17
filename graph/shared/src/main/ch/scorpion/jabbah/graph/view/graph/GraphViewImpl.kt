@@ -258,17 +258,6 @@ class GraphViewImpl<T : GraphElementView<*>>(
 
     // ---- [DrawableContainerImpl] */
 
-    /**
-     * Returns first all [EdgeView]s and then all other [GraphElementView]s, so that [EdgeView]s don't
-     * overwrite [VerticeView] boundaries when being connected to them.
-     */
-    override fun drawablesInDrawingOrder(): ImmutableList<T> {
-        val drawables = mutableListOf<T>()
-        drawables.addAll(super.drawablesInDrawingOrder().filter { it is EdgeView<*> })
-        drawables.addAll(super.drawablesInDrawingOrder().filter { it !is EdgeView<*> })
-        return drawables.toImmutableList()
-    }
-
     override fun createInputEventHandler(): InputEventHandler<InputEventContext> {
         return GraphViewInputEventHandler() as InputEventHandler<InputEventContext>
     }
