@@ -127,8 +127,12 @@ interface PortView<T: Any> : Drawable, Storable {
     /**
      * Notifies this [PortView] that an [EdgeView] has disconnected its [Net] from the [Port] of
      * this [PortView]. As a reaction, this [PortView] could update its geometry, if necessary.
+     * This method also supports unconnecting when the [EdgeView] is not known, which is used e.g.
+     * during copy/paste. This is needed in order to reset the length to the unconnected length.
+     * However, this is an exceptional use case; normally, you should provide the [EdgeView] from which
+     * to unconnect this [PortView].
      */
-    fun handleUnconnect(edgeView: EdgeView<T>)
+    fun handleUnconnect(edgeView: EdgeView<T>?)
 
     /**
      * Reuse properties from another [PortView].

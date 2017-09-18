@@ -12,6 +12,8 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.view.port.PortView
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
@@ -19,7 +21,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 /**
- * An utility class that provides methods for copying a collection of [Components]s to the system clipboard,
+ * An utility class that provides methods for copying a collection of [Component]s to the system clipboard,
  * and pasting them back into the current [Drawing].
  */
 object CopyPasteUtility {
@@ -48,10 +50,18 @@ object CopyPasteUtility {
         cmdManager.execute(CutCommand(view, components.toList()))
     }
 
+    /**
+     * Copies the selected [Component]s to the system clipboard as a [String] with the [Storable] XML
+     * representation.
+     *
+     * Note that this implementation restricts the copied [GraphElementView]s to the selected one, but
+     * copies much more that needed from the model layer; in fact, it copies the entire model contents.
+     * Stripping is done when pasting the clipboard contents again.
+     */
     fun copy(
         graphView: GraphView<*>,
         components: Collection<Component>,
-        typeMap: TypeMap
+        typeMap: TypeMap = IOModule.typeMap
     ) {
         ByteArrayOutputStream().use {
             try {
@@ -60,7 +70,7 @@ object CopyPasteUtility {
                     xmlWriter,
                     typeMap,
                     GlobalIdentityCreator(),
-                    { !(it is GraphElementView<*>) || components.contains(it) }
+                    { c -> c !is GraphElementView<*> || components.contains(c) }
                 )
                 val graphStorable = GraphStorable(graphView)
                 writer.writeStorable(graphStorable)
@@ -80,9 +90,9 @@ object CopyPasteUtility {
 
     fun paste(
         view: DrawingView<Drawing<Component>>,
-        storableCreator: StorableCreator,
-        typeMap: TypeMap,
-        cmdManager: CommandManager
+        storableCreator: StorableCreator = IOModule.storableCreator,
+        typeMap: TypeMap = IOModule.typeMap,
+        cmdManager: CommandManager = EditModule.commandManager
     ) {
         // Read the contents from the clipboard
         val transferable = Toolkit.getDefaultToolkit().systemClipboard.getContents(null)
@@ -95,7 +105,7 @@ object CopyPasteUtility {
             try {
                 val xmlReader = ElectricXmlReader(it)
                 val reader = StoreXmlReader(xmlReader, typeMap, storableCreator)
-                val storable = reader.readStorable()
+                val copy = reader.readStorable()
                 val dislocation: Point2D = if (pastedAnchorComponent != null) {
                     pasteCount++
                     pastedAnchorComponent!!.location.subtract(origAnchorComponent!!.location).multiply(pasteCount.toDouble())
@@ -105,20 +115,19 @@ object CopyPasteUtility {
                             DEFAULT_DISTANCE_FACTOR * view.grid.distance)
                 }
 
-                if (storable is GraphStorable) {
-                    val copy =  storable
+                if (copy is GraphStorable) {
                     val components = mutableListOf<Component>()
-                    for (c in copy.graphView!!.backToFrontIterator()) {
-                        if (c is VerticeView) {
-                            strip(c.vertice, copy.graphView!!)
+                    for (cv in copy.graphView!!.backToFrontIterator()) {
+                        if (cv is VerticeView) {
+                            strip(cv, copy.graphView!!)
                         }
-                        if (pastedAnchorComponent == null && origAnchorComponent!!.location == c.location) {
-                            pastedAnchorComponent = c
+                        if (pastedAnchorComponent == null && origAnchorComponent!!.location == cv.location) {
+                            pastedAnchorComponent = cv
                         }
-                        if (!(c is EdgeView<*>)) {
-                            c.moveBy(dislocation.x, dislocation.y)
+                        if (cv !is EdgeView<*>) {
+                            cv.moveBy(dislocation.x, dislocation.y)
                         }
-                        components.add(c)
+                        components.add(cv)
                     }
                     cmdManager.execute(PasteCommand(view, components))
                 }
@@ -133,12 +142,13 @@ object CopyPasteUtility {
      * Disconnects all [Port]s of a [Vertice] from [Net]s that don't have a
      * corresponding [EdgeView] in the specified [GraphView].
      */
-    private fun strip(vertice: Vertice, graphView: GraphView<*>) {
-        for (port in vertice.getPorts()) {
-            if (port.net != null) {
-                val edgeViews = graphView.getElementViews(port.net!!)
+    private fun strip(verticeView: VerticeView<*>, graphView: GraphView<*>) {
+        for (pv in verticeView.getPortViews()) {
+            if (pv.port.net != null) {
+                val edgeViews = graphView.getElementViews(pv.port.net!!)
                 if (edgeViews.isEmpty()) {
-                    port.disconnect()
+                    pv.port.disconnect()
+                    (pv as PortView<Any>).handleUnconnect(null)
                 }
             }
         }
