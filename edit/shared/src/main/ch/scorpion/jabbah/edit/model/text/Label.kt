@@ -29,7 +29,7 @@ class Label(
         horizontalAlignment: HorizontalAlignment = DEFAULT_HORIZONTAL_ALIGNMENT,
         verticalAlignment: VerticalAlignment = DEFAULT_VERTICAL_ALIGNMENT,
         location:Point2D = Point2D(),
-        private val rotationDisplayStrategy: RotationDisplayStrategy = Label.RotationDisplayStrategy.IGNORE,
+        rotationDisplayStrategy: RotationDisplayStrategy = Label.RotationDisplayStrategy.IGNORE,
         val rotation: Rotation = Rotation.R0
 ) : AbstractDrawable() {
 
@@ -84,6 +84,14 @@ class Label(
             _horizontalAlignment = value.horizontal
             _verticalAlignment = value.vertical
             updateGeometry()
+        }
+
+    var rotationDisplayStrategy: RotationDisplayStrategy = rotationDisplayStrategy
+        set(value) {
+            if (field != value) {
+                field = value
+                invalidate()
+            }
         }
 
     /** Only used for unrotating the drawn text if the rotation angle is 180 degrees */
@@ -161,6 +169,7 @@ class Label(
     /** Defines how a [Label] reacts to a [Rotation] when drawing itself. */
     enum class RotationDisplayStrategy {
 
+        /** Doesn't react to owner rotation, i.e. the label text is fully rotated.*/
         IGNORE {
             override fun beforeDraw(context: DrawContext, label: Label) {
                 // empty
@@ -171,6 +180,34 @@ class Label(
             }
         },
 
+        /**
+         * Rotates the label text so that it is horizontal (when rotated 0 or 180 degrees),
+         * or so that it is written from upwards and can be read from left (when rotated 90 or 270 degrees)
+         */
+        ROTATE_HALF {
+            override fun beforeDraw(context: DrawContext, label: Label) {
+                context.g.translate(label.bounds.centerX, label.bounds.centerY)
+                context.g.rotate(calculateRotation(label).angle)
+                context.g.translate(-label.bounds.centerX, -label.bounds.centerY)
+            }
+
+            override fun afterDraw(context: DrawContext, label: Label) {
+                context.g.translate(label.bounds.centerX, label.bounds.centerY)
+                context.g.rotate(calculateRotation(label).angle)
+                context.g.translate(-label.bounds.centerX, -label.bounds.centerY)
+            }
+
+            private fun calculateRotation(label: Label): Rotation {
+                return when (label.ownerRotation) {
+                    Rotation.R0 -> Rotation.R0
+                    Rotation.R180 -> Rotation.R180
+                    Rotation.R90 -> Rotation.R0
+                    Rotation.R270 -> Rotation.R180
+                }
+            }
+        },
+
+        /** Keeps the label text always horizontal.*/
         KEEP_HORIZONTAL {
             override fun beforeDraw(context: DrawContext, label: Label) {
                 context.g.translate(label.bounds.centerX, label.bounds.centerY)

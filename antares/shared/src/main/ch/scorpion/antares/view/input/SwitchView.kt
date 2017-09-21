@@ -25,12 +25,17 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
+import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 
 /**
@@ -38,7 +43,8 @@ import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
  */
 class SwitchView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    model: Switch = Switch()
+    model: Switch = Switch(),
+    private val textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory
 ) : DigitalComponentView<Switch>(styleProvider, "library.element.Switch", model), ControlView<Switch>, ControlViewSource<Switch> {
 
     companion object {
@@ -48,14 +54,36 @@ class SwitchView(
         val BORDER_WIDTH = 3
         val DIAMETER = 12
         val LABEL_DIST = Look.SCALE
+        val LABEL_INSET = 4.0
     }
+
+    var labelPosition: VerticeLabelPosition = VerticeLabelPosition.EXTERNAL
+        set(value) {
+            invalidate()
+            field = value
+            setBounds(calculateBounds())
+            updateLabelGeometries()
+            invalidate()
+            update()
+            validate()
+        }
 
     /** Handles mouse interactions during execution*/
     private val actorInteractionHandler = InteractionHandler()
 
-    private val signalLabel: Label
+    /**
+     * The [Label] that displays the signal for [VerticeLabelPosition.EXTERNAL], or the name of this [SwitchView]
+     * for [VerticeLabelPosition.INTERNAL].
+     */
+    private val internalLabel: Label = Label(
+            font = font,
+            text = "",
+            location = Point2D(DigitalPortView.LENGTH - SIZE / 2.0, 0.0),
+            horizontalAlignment = Label.HorizontalAlignment.CENTER,
+            verticalAlignment = Label.VerticalAlignment.CENTER,
+            rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL)
 
-    private val label = HorizontalLabel(
+    private val externalLabel = HorizontalLabel(
             owner = this,
             relLocation = Point2D(-(SIZE + DigitalPortView.LENGTH + LABEL_DIST), 0),
             orientation = Direction.WEST,
@@ -64,15 +92,25 @@ class SwitchView(
     init {
         isFocusable = true
         modelExchanged(null)
-        signalLabel = Label(
-            font = font,
-            text = "",
-            location = Point2D(-getOutput().length - SIZE / 2.0, 0.0),
-            horizontalAlignment = Label.HorizontalAlignment.CENTER,
-            verticalAlignment = Label.VerticalAlignment.CENTER,
-            rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL)
+        setBounds(calculateBounds())
+    }
 
-        setBounds(-getOutput().length - SIZE, -SIZE / 2, SIZE, SIZE)
+    /**
+     * Calculates the bounds of this [SwitchView] depending on the [labelPosition] and the
+     * current externalLabel text
+     */
+    private fun calculateBounds(): RectangularShape {
+        val width = calculateWidth()
+        return Rectangle2D(-DigitalPortView.LENGTH - width, -SIZE / 2, width, SIZE)
+    }
+
+    private fun updateLabelGeometries() {
+        internalLabel.location = Point2D(bounds.centerX, bounds.centerY)
+        if (labelPosition == VerticeLabelPosition.INTERNAL) {
+            internalLabel.rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF
+        } else {
+            internalLabel.rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL
+        }
     }
 
     override fun modelExchanged(oldModel: Switch?) {
@@ -83,7 +121,7 @@ class SwitchView(
             direction = Direction.EAST)
         portView.setLocation(-portView.length.toDouble(), 0.0)
         addPortView(portView)
-        updateLabel()
+        updateLabels()
     }
 
     /** ---- UI properties */
@@ -92,8 +130,25 @@ class SwitchView(
         get() = model!!.name
         set(value) {
             model!!.name = value
-            updateLabel()
+            updateLabels()
+            validate()
         }
+
+    /** ---- [Storable] interface */
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        if (labelPosition != VerticeLabelPosition.EXTERNAL) {
+            writer.writeString("labelPos", labelPosition.customName)
+        }
+    }
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+        if (reader.hasAttribute("labelPos")) {
+            labelPosition = VerticeLabelPosition.withName(reader.readString("labelPos"))
+        }
+    }
 
     /** ---- [ActorView] interface */
 
@@ -111,8 +166,8 @@ class SwitchView(
 
     override fun rotationChanged(newRotation: Rotation) {
         super.rotationChanged(newRotation)
-        signalLabel.ownerRotation = rotation
-        label.rotationChanged()
+        internalLabel.ownerRotation = rotation
+        updateLabels()
     }
 
     /** ---- [AbstractDrawable] */
@@ -120,15 +175,21 @@ class SwitchView(
     override val boundingBox: Rectangle2D
         get() {
             val bb = super.boundingBox
-            val lbb = label.boundingBox.moveBy(location)
+            val lbb = externalLabel.boundingBox.moveBy(location)
             bb.add(lbb)
             return bb
         }
 
     override fun draw(context: DrawContext) {
         super.draw(context)
-        context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
-        label.draw(context)
+        if (labelPosition != VerticeLabelPosition.INTERNAL) {
+            context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
+        } else {
+            context.g.color = if (model!!.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor
+        }
+        if (labelPosition == VerticeLabelPosition.EXTERNAL) {
+            externalLabel.draw(context)
+        }
     }
 
     override fun drawImpl(context: DrawContext) {
@@ -162,6 +223,8 @@ class SwitchView(
         val clone = SwitchView(styleProvider, model!!)
         clone.isShowPortViews = false
         clone.location = Point2D()
+        clone.name = name
+        clone.labelPosition = labelPosition
         return clone
     }
 
@@ -171,36 +234,46 @@ class SwitchView(
         this.model = model
     }
 
+
     /** ---- [SwitchView] */
 
     override fun drawSelected(context: DrawContext) {
         context.g.color = context.color!!.foregroundColor
         draw(context, {
             super.drawImpl(it)
-            context.g.drawRect(xInt, yInt, SIZE, SIZE)
+            context.g.drawRect(xInt, yInt, width.toInt(), SIZE)
             context.g.drawRoundRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-                    SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH, DIAMETER, DIAMETER)
+                    width.toInt() - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH, DIAMETER, DIAMETER)
+            if (labelPosition == VerticeLabelPosition.INTERNAL) {
+                internalLabel.draw(context)
+            }
         })
-        label.draw(context)
+        if (labelPosition == VerticeLabelPosition.EXTERNAL) {
+            externalLabel.draw(context)
+        }
     }
 
     private fun drawBodyDigital(context: DrawContext) {
         val fillColor = Bit.of(model!!.isOn).color.foregroundColor
         context.g.color = color.backgroundColor
-        context.g.fillRect(xInt, yInt, SIZE, SIZE)
+        context.g.fillRect(xInt, yInt, widthInt, heigthInt)
 
         context.g.color = fillColor
         context.g.drawRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-                SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+                widthInt - 2 * BORDER_WIDTH, heigthInt - 2 * BORDER_WIDTH)
         context.g.fillRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-                SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
-
-        signalLabel.color = if (model!!.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor
-        signalLabel.text = Bit.of(model!!.isOn).toHexString()
-        signalLabel.draw(context)
+                widthInt - 2 * BORDER_WIDTH, heigthInt - 2 * BORDER_WIDTH)
 
         context.g.color = color.foregroundColor
-        context.g.drawRect(x.toInt(), y.toInt(), SIZE, SIZE)
+        context.g.drawRect(x.toInt(), y.toInt(), widthInt, heigthInt)
+
+        internalLabel.color = if (model!!.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor
+        if (labelPosition == VerticeLabelPosition.INTERNAL) {
+            internalLabel.text = StringUtils.orEmpty(model!!.name)
+        } else {
+            internalLabel.text = Bit.of(model!!.isOn).toHexString()
+        }
+        internalLabel.draw(context)
     }
 
     private fun drawFocus(context: DrawContext) {
@@ -208,15 +281,36 @@ class SwitchView(
             context.g.color = Themes.get<AntaresTheme>().focus.color.foregroundColor
             context.g.stroke = Themes.get<AntaresTheme>().focus.stroke
             context.g.drawRect(xInt + BORDER_WIDTH - 1, yInt + BORDER_WIDTH - 1,
-                    SIZE - 2 * BORDER_WIDTH + 2, SIZE - 2 * BORDER_WIDTH + 2)
+                    widthInt - 2 * BORDER_WIDTH + 2, heigthInt - 2 * BORDER_WIDTH + 2)
         }
     }
 
-    private fun updateLabel() {
+    private fun updateLabels() {
         invalidate()
-        label.text = StringUtils.orEmpty(name)
-        label.rotationChanged()
+        if (labelPosition == VerticeLabelPosition.INTERNAL) {
+            internalLabel.text = StringUtils.orEmpty(name)
+        } else {
+            externalLabel.text = StringUtils.orEmpty(name)
+            externalLabel.rotationChanged()
+        }
+        setBounds(calculateBounds())
+        updateLabelGeometries()
         invalidate()
+    }
+
+    /**
+     * Calculates the width of this [SwitchView] depending on the current externalLabel and
+     * the [VerticeLabelPosition]. If [labelPosition] is [VerticeLabelPosition.INTERNAL],
+     * the width is calculated as the smallest integer multiple of [SIZE] that contains the
+     * externalLabel when drawn with the current font.
+     */
+    private fun calculateWidth(): Int {
+        if (labelPosition != VerticeLabelPosition.INTERNAL || StringUtils.isEmpty(model!!.name)) {
+            return SIZE
+        }
+        val tri = textRenderInfoFactory.invoke(model!!.name!!, font)
+        val requiredSpace = tri.textBounds.width + 2 * LABEL_INSET
+        return (SIZE * Math.max(1.0, Math.ceil(requiredSpace / SIZE))).toInt()
     }
 
     private inner class InteractionHandler : ActorInteractionHandlerAdapter() {

@@ -26,6 +26,7 @@ import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.net.edge.Layout
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
+import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
 import ch.scorpion.jabbah.io.IOModuleJvm
 import com.l2fprod.common.propertysheet.PropertyRendererRegistry
 
@@ -64,6 +65,7 @@ object GraphViewModuleJvm : AbstractModule() {
         registry.registerRenderer(Layout::class.java, EnumRenderer::class.java)
         registry.registerRenderer(PortType::class.java, EnumRenderer::class.java)
         registry.registerRenderer(PortLabelPosition::class.java, EnumRenderer::class.java)
+        registry.registerRenderer(VerticeLabelPosition::class.java, EnumRenderer::class.java)
         registry.registerRenderer(NetViewStyle::class.java, EnumRenderer::class.java)
 
     }
@@ -72,6 +74,7 @@ object GraphViewModuleJvm : AbstractModule() {
         registry.registerEditor(Layout::class.java, LayoutEditor::class.java)
         registry.registerEditor(PortType::class.java, PortTypeEditor::class.java)
         registry.registerEditor(PortLabelPosition::class.java, PortLabelPositionEditor::class.java)
+        registry.registerEditor(VerticeLabelPosition::class.java, VerticeLabelPositionEditor::class.java)
         registry.registerEditor(NetViewStyle::class.java, NetViewStyleEditor::class.java)
         registry.register(Scenario::class.java, ScenarioPropertyEditorFactory())
         registry.register(ScenarioStep::class.java, ScenarioStepPropertyEditorFactory())

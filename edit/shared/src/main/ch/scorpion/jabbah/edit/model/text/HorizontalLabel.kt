@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -23,8 +22,8 @@ import ch.scorpion.jabbah.edit.Component
  */
 class HorizontalLabel(
         private val owner: Component,
-        private val relLocation: Point2D,
-        private val orientation: Direction = Direction.EAST,
+        relLocation: Point2D,
+        orientation: Direction? = Direction.EAST,
         text: String? = null,
         font: Font,
         color: Color? = null) {
@@ -38,6 +37,22 @@ class HorizontalLabel(
     val boundingBox: Rectangle2D get() {
         return label.boundingBox
     }
+
+    var orientation: Direction? = orientation
+        set(value) {
+            if (field != value) {
+                field = value
+                updateAlignment()
+            }
+        }
+
+    var relLocation: Point2D = relLocation
+        set(value) {
+            if (field != value) {
+                field = value
+                updateLocation()
+            }
+        }
 
     init {
         updateLocation()
@@ -61,11 +76,15 @@ class HorizontalLabel(
     }
 
     private fun updateAlignment() {
-        when(owner.rotation.rotateDirection(orientation)) {
-            Direction.EAST -> label.alignment = Label.Alignment(Label.HorizontalAlignment.LEFT, Label.VerticalAlignment.CENTER)
-            Direction.WEST -> label.alignment = Label.Alignment(Label.HorizontalAlignment.RIGHT, Label.VerticalAlignment.CENTER)
-            Direction.NORTH -> label.alignment = Label.Alignment(Label.HorizontalAlignment.CENTER, Label.VerticalAlignment.BOTTOM)
-            Direction.SOUTH -> label.alignment = Label.Alignment(Label.HorizontalAlignment.CENTER, Label.VerticalAlignment.TOP)
+        if (orientation == null) {
+            label.alignment = Label.Alignment(Label.HorizontalAlignment.CENTER, Label.VerticalAlignment.CENTER)
+        } else {
+            when (owner.rotation.rotateDirection(orientation!!)) {
+                Direction.EAST -> label.alignment = Label.Alignment(Label.HorizontalAlignment.LEFT, Label.VerticalAlignment.CENTER)
+                Direction.WEST -> label.alignment = Label.Alignment(Label.HorizontalAlignment.RIGHT, Label.VerticalAlignment.CENTER)
+                Direction.NORTH -> label.alignment = Label.Alignment(Label.HorizontalAlignment.CENTER, Label.VerticalAlignment.BOTTOM)
+                Direction.SOUTH -> label.alignment = Label.Alignment(Label.HorizontalAlignment.CENTER, Label.VerticalAlignment.TOP)
+            }
         }
     }
 }

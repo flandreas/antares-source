@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.view.port
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.geom.Direction
 
 /**
  * Determines the position of a {@link PortView} label in relation to the owning [VerticeView].
