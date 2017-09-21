@@ -116,7 +116,6 @@ object AntaresViewModule : AbstractModule() {
         properties.predefine(CircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")
         properties.predefine(CircuitInOutView.PROP_INOUT_ICON_PATH, "/img/inout.png")
         properties.predefine(SwitchView.PROP_ICON_PATH, "/img/switch.png")
-        properties.predefine(ToggleButtonView.PROP_ICON_PATH, "/img/toggle.png")
         properties.predefine(ProbeView.PROP_ICON_PATH, "/img/probe.png")
         properties.predefine(LEDView.PROP_ICON_PATH, "/img/led.png")
         properties.predefine(LEDMatrixView.PROP_ICON_PATH, "/img/led-matrix.png")
@@ -142,7 +141,6 @@ object AntaresViewModule : AbstractModule() {
         typeMap.register("triStateBufferGateView", TriStateBufferGateView::class)
 
         typeMap.register("switchView", SwitchView::class)
-        typeMap.register("toggleButtonView", ToggleButtonView::class)
         typeMap.register("clockView", ClockView::class)
         typeMap.register("ledView", LEDView::class)
         typeMap.register("sevenSegmentDisplayView", SevenSegmentDisplayView::class)
@@ -194,7 +192,6 @@ object AntaresViewModule : AbstractModule() {
         factory.register(SelectionDrawingStrategy.BELOW, DelayGateView::class.simpleName!!, {BoxGateViewBelowSelectionModel(it as BoxGateView<*>)})
 
         factory.register(SelectionDrawingStrategy.REPLACE, SwitchView::class.simpleName!!, {SwitchViewSelectionModel(it as SwitchView)})
-        factory.register(SelectionDrawingStrategy.REPLACE, ToggleButtonView::class.simpleName!!, {ToggleButtonViewSelectionModel(it as ToggleButtonView)})
         factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class.simpleName!!, {SelectedColorSelectionModel(it)})
         factory.register(SelectionDrawingStrategy.REPLACE, CircuitInOutView::class.simpleName!!, {SelectedColorSelectionModel(it)})
 

@@ -134,6 +134,13 @@ class SwitchView(
             validate()
         }
 
+    /**
+     * Controls the interactive behaviour of this [SwitchView]. If set to `true`, the [Switch]
+     * stays in the new state when the user releases the mouse button. If set to `false`,
+     * the [Switch] returns to 0 state.
+     */
+    var toggle: Boolean = true
+
     /** ---- [Storable] interface */
 
     override fun write(writer: StoreWriter) {
@@ -141,12 +148,18 @@ class SwitchView(
         if (labelPosition != VerticeLabelPosition.EXTERNAL) {
             writer.writeString("labelPos", labelPosition.customName)
         }
+        if (!toggle) {
+            writer.writeBoolean("toggle", toggle)
+        }
     }
 
     override fun read(reader: StoreReader) {
         super.read(reader)
         if (reader.hasAttribute("labelPos")) {
             labelPosition = VerticeLabelPosition.withName(reader.readString("labelPos"))
+        }
+        if (reader.hasAttribute("toggle")) {
+            toggle = reader.readBoolean("toggle")
         }
     }
 
@@ -316,6 +329,12 @@ class SwitchView(
     private inner class InteractionHandler : ActorInteractionHandlerAdapter() {
         override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
             model!!.toggle(signalHandler)
+        }
+
+        override fun mouseReleased(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+            if (!toggle) {
+                model!!.toggle(signalHandler)
+            }
         }
 
         override fun keyPressed(signalHandler: SignalHandler, event: KeyEvent) {

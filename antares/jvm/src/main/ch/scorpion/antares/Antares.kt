@@ -7,7 +7,6 @@ import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.input.ClockView
 import ch.scorpion.antares.view.input.SwitchView
-import ch.scorpion.antares.view.input.ToggleButtonView
 import ch.scorpion.antares.view.memory.MemoryContentsPanel
 import ch.scorpion.antares.view.memory.OpenMemoryContentsRequest
 import ch.scorpion.antares.view.memory.RAMView
@@ -191,7 +190,6 @@ class Antares(
             view
         }
         input.addBaseElement("Switch", "library.element.Switch", "/img/switch.png", storableCreator, SwitchView::class)
-        input.addBaseElement("Switch", "library.element.Toggle", "/img/toggle.png", storableCreator, ToggleButtonView::class)
         input.addBaseElement("Clock", "library.element.Clock", "/img/clock.png", storableCreator, ClockView::class)
 
         val output = ensureLibraryFolder(library, Translations.getString("library.folder.output"))

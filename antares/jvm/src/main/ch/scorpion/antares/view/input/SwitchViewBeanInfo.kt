@@ -13,21 +13,19 @@ class SwitchViewBeanInfo : DigitalComponentBeanInfo<SwitchView>() {
 
     companion object {
         private val name = PropertyImpl("element.property", String::class.java)
+        private val toggle = PropertyImpl("element.property.Switch.toggle", Boolean::class.java)
         private val labelPosition = PropertyImpl("graph.property.VerticeLabelPosition", VerticeLabelPosition::class.java)
-
     }
 
     override fun addProperties(bean: SwitchView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
         name.bind(editor, { bean.name }, { bean.name = it })
+        toggle.bind(editor, { bean.toggle }, { bean.toggle = it!! })
         labelPosition.bind(editor, { bean.labelPosition }, { bean.labelPosition = it!! })
 
         properties.add(name)
+        properties.add(toggle)
         properties.add(labelPosition)
     }
 }
-
-/** A [BeanInfo] for [ToggleButtonView] */
-@Suppress("unused")
-class ToggleButtonViewBeanInfo : DigitalComponentBeanInfo<ToggleButtonView>()
