@@ -32,9 +32,12 @@ import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 /**
  * Abstract base implementation of the [VerticeView] interface.
@@ -61,7 +64,14 @@ abstract class AbstractVerticeView<T : Vertice>(
      * This implementation returns `false` by default. Might be overwritten by subclasses.
      * @return `true` if this [AbstractVerticeView] stores its [PortView]s.
      */
-    protected val arePortViewsStored: Boolean get() = false
+    private val arePortViewsStored: Boolean get() = false
+
+    /** Displays information while the model of this [VerticeView] is executed.*/
+    private val exectionInfoLabel = Label(
+            text = "",
+            font = font,
+            horizontalAlignment = Label.HorizontalAlignment.CENTER,
+            verticalAlignment = Label.VerticalAlignment.BOTTOM)
 
     /** ---- [VerticeView] interface */
 
@@ -174,8 +184,16 @@ abstract class AbstractVerticeView<T : Vertice>(
 
     /** ---- [Drawable] */
 
+    private val plainBoundingBox get() = rotate(getBoundingBoxImpl())
+
     override val boundingBox: Rectangle2D
-        get() = rotate(getBoundingBoxImpl())
+        get() {
+            val bbox = plainBoundingBox
+            if (isExecutionInfoDrawn()) {
+                bbox.add(exectionInfoLabel.boundingBox)
+            }
+            return bbox
+        }
 
     override fun accept(visitor: HierarchyVisitor): Boolean {
         if (visitor.visitEnter(this)) {
@@ -277,7 +295,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
     /** Returns the [PortView]s that point to the specified [Direction].*/
     protected fun getPortViewsOfDirection(direction: Direction): ImmutableList<PortView<*>> {
-        return portViews.filter { it.direction == direction }.toCollection(mutableListOf<PortView<*>>()).toImmutableList()
+        return portViews.filter { it.direction == direction }.toCollection(mutableListOf()).toImmutableList()
     }
 
     /** Adds all [PortView]s to the overall bounding box and the box used for 'contains' calculation.*/
@@ -350,6 +368,12 @@ abstract class AbstractVerticeView<T : Vertice>(
         context.g.rotate(-rotation.angle)
         context.g.translate(-location.x, -location.y)
 
+        // Draw propagation delay above bounding box if in waiting state
+        if (isExecutionInfoDrawn()) {
+            configureExecutionInfoLabel()
+            exectionInfoLabel.draw(context)
+        }
+
         // DEBUG BEGIN
 //        context.g.color = Color.RED
 //        context.g.draw(boundingBox)
@@ -359,27 +383,46 @@ abstract class AbstractVerticeView<T : Vertice>(
         context.g.color = oldColor
     }
 
+    private fun isExecutionInfoDrawn(): Boolean {
+        return model != null && model!!.waiting
+    }
+
+    /**
+     * Configures and updates the [Label] that displays the execution info text above the bounding box.
+     * Since [AbstractVerticeView] doesn't update itself when the [Vertice]'s execution state has changed,
+     * this method must always be called before using [exectionInfoLabel].
+     */
+    private fun configureExecutionInfoLabel() {
+        val bbox = plainBoundingBox
+        val text = "${propagationDelay.toString()} ns"
+        val style = Themes.get<GraphTheme>().annotation
+        exectionInfoLabel.font = style.font
+        exectionInfoLabel.text = text
+        exectionInfoLabel.color = getColorWithTransparency(style.color.textColor)
+        exectionInfoLabel.location = Point2D(bbox.centerX.toInt(), bbox.minY.toInt() - 3)
+    }
+
     protected fun rotate(rect: Rectangle2D): Rectangle2D {
         return rotation.rotateRectangleAround(location, rect)
     }
 
     /** Rotates the specified point around the location of this [VerticeView] by its [Rotation]..*/
-    protected fun rotate(p: Point2D): Point2D {
+    private fun rotate(p: Point2D): Point2D {
         return rotate(p.x, p.y)
     }
 
     /** Rotates the specified (x,y) point around the location of this [VerticeView] by its [Rotation].*/
-    protected fun rotate(x: Double, y: Double): Point2D {
+    private fun rotate(x: Double, y: Double): Point2D {
         return rotation.rotatePointAround(location, x, y)
     }
 
     /** Rotates the specified (x,y) point around the location of this [VerticeView] by the inverse of its [Rotation].*/
-    protected fun rotateBack(x: Double, y: Double): Point2D {
+    private fun rotateBack(x: Double, y: Double): Point2D {
         return rotation.inverse().rotatePointAround(location, x, y)
     }
 
     /** Rotates the specified [Direction] by the [Rotation] of this [VerticeView].*/
-    protected fun rotate(direction: Direction): Direction {
+    private fun rotate(direction: Direction): Direction {
         return rotation.rotateDirection(direction)
     }
 }
