@@ -45,7 +45,7 @@ abstract class AbstractVertice : AbstractGraphElement(), Vertice {
         signalHandler.logTrace(System.get().getClass(this), id,
             {"input changed to ${dataToString()}, will calculate at ${signalHandler.executionTime + propagationDelay} ns"})
 
-        actorSupport.requestActingAfter(signalHandler, propagationDelay, createActorData(input))
+        requestActingAfter(signalHandler, propagationDelay, createActorData(input))
         stateChanged(signalHandler)
     }
 

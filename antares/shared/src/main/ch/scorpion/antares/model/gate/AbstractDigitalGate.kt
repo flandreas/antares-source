@@ -67,7 +67,7 @@ abstract class AbstractDigitalGate(
 
     override fun executionStarted(signalHandler: SignalHandler) {
         super.executionStarted(signalHandler)
-        actorSupport.requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+        requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
     }
 
     /** ---- [AbstractDigitalGate] */

@@ -63,7 +63,7 @@ class CircuitInOutImpl(
     override fun setIncomingSignal(signal: DigitalSignal?, signalHandler: SignalHandler) {
         this.signal = signal
         stateChanged()
-        actorSupport.requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, this.signal))
+        requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, this.signal))
     }
 
     /** ---- [GraphOutput] */

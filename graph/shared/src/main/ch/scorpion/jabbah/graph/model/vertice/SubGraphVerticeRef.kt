@@ -94,7 +94,7 @@ class SubGraphVerticeRef(
         if (isDeepExecution(signalHandler)) {
             graph?.executionStarted(signalHandler)
         } else {
-            actorSupport.requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, null))
+            requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, null))
         }
     }
 

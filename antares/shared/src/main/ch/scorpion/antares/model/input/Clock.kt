@@ -74,7 +74,7 @@ class Clock : AbstractDigitalGate(CALCULATOR, InputCount.ZERO) {
         getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(this.isOn), signalHandler)
         stateChanged()
         if (isEnabled) {
-            actorSupport.requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+            requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
         }
     }
 }

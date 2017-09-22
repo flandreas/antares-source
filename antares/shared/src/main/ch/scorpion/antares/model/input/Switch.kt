@@ -54,6 +54,6 @@ class Switch : CalculatingVertice(CALCULATOR) {
     fun setOn(signalHandler: SignalHandler, on: Boolean) {
         this.isOn = on
         stateChanged()
-        actorSupport.requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, Word.of(isOn)))
+        requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, Word.of(isOn)))
     }
 }

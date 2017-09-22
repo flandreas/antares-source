@@ -56,7 +56,7 @@ class Constant(
 
     override fun executionStarted(signalHandler: SignalHandler) {
         super.executionStarted(signalHandler)
-        actorSupport.requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(getOutput<DigitalSignal>(), value))
+        requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(getOutput<DigitalSignal>(), value))
     }
 
     /** ---- [Storable] interface */

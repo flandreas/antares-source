@@ -264,6 +264,9 @@ class SchedulerImplTest {
 
         override val id: Int get() = 0
 
+        override var state: ActorState = ActorState.NonExecuting
+            private set
+
         override var propagationDelay: Long = 100L
 
         override val isBreakpoint: Boolean
@@ -278,10 +281,11 @@ class SchedulerImplTest {
         }
 
         override fun executionStarted(signalHandler: SignalHandler) {
-            // empty
+            state = ActorState.Idle
         }
 
         override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
+            state = ActorState.Acting
             actingCalled = true
             return false
         }
@@ -291,11 +295,12 @@ class SchedulerImplTest {
         }
 
         override fun actingDone(signalHandler: SignalHandler, data: ActorData) {
+            state = ActorState.Idle
             signalHandler.requestActingAfter(target, targetPropDelay, createActorData())
         }
 
         override fun executionStopped(signalHandler: SignalHandler) {
-           // empty
+           state = ActorState.NonExecuting
         }
     }
 }

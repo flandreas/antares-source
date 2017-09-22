@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.execution.actor
 
-import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 
 /**
  * Represents an object that can request a [Scheduler] to be scheduled for acting.
@@ -10,11 +10,20 @@ interface Actor {
 
     val id: Int
 
+    /** The execution state of this [Actor].*/
+    val state: ActorState
+
+    val idle: Boolean get() = state == ActorState.Idle
+
+    val waiting: Boolean get() = state == ActorState.Waiting
+
+    val acting: Boolean get() = state == ActorState.Acting
+
     /**
      * Returns the propagation delay (in nanoseconds), i.e. the time this [Actor] requires to recalculate
      * its new state after its prerequisites have changed.
      */
-    var propagationDelay: Long;
+    var propagationDelay: Long
 
     /** Determines whether this [Actor] acts as breakpoint when [Scheduler] performs a stepwise execution.*/
     val isBreakpoint: Boolean
@@ -56,4 +65,11 @@ interface Actor {
      * after overall execution has been stopped.
      */
     fun executionStopped(signalHandler: SignalHandler)
+}
+
+enum class ActorState {
+    NonExecuting,
+    Idle,
+    Waiting,
+    Acting
 }

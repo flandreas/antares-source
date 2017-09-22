@@ -4,9 +4,7 @@ import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.collection.EmptyIterator
-import ch.scorpion.jabbah.execution.actor.ActorData
-import ch.scorpion.jabbah.execution.actor.ActorListener
-import ch.scorpion.jabbah.execution.actor.ActorSupport
+import ch.scorpion.jabbah.execution.actor.*
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.model.DesignError
 import ch.scorpion.jabbah.graph.model.GraphElement
@@ -23,7 +21,7 @@ abstract class AbstractGraphElement : GraphElement {
     private var listeners: MutableList<GraphElementListener>? = null
 
     /** Manages [Actor] behaviour on behalf of this [GraphElement].*/
-    protected val actorSupport: ActorSupport by lazy{ ActorSupport(this) }
+    private val actorSupport: ActorSupport by lazy{ ActorSupport(this) }
 
     /** ---- [GraphElement] interface */
 
@@ -82,10 +80,13 @@ abstract class AbstractGraphElement : GraphElement {
 
     /** ---- [Actor] interface */
 
+    private var _state: ActorState = ActorState.NonExecuting
+
     override var propagationDelay: Long = 0
 
-    override val isBreakpoint: Boolean
-        get() = actorSupport.hasListeners
+    override val state: ActorState get() = _state
+
+    override val isBreakpoint: Boolean get() = actorSupport.hasListeners
 
     override fun addActorListener(l: ActorListener) {
         actorSupport.addListener(l)
@@ -96,11 +97,13 @@ abstract class AbstractGraphElement : GraphElement {
     }
 
     override fun executionStarted(signalHandler: SignalHandler) {
+        _state = ActorState.Idle
         executionError = null
         listeners?.forEach { it.executionStarted(signalHandler) }
     }
 
     override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
+        _state = ActorState.Acting
         return actorSupport.notifyActed(signalHandler, data)
     }
 
@@ -109,15 +112,30 @@ abstract class AbstractGraphElement : GraphElement {
     }
 
     override fun actingDone(signalHandler: SignalHandler, data: ActorData) {
-        // empty
+        _state = ActorState.Idle
     }
 
     override fun executionStopped(signalHandler: SignalHandler) {
         executionError = null
         listeners?.forEach { it.executionStopped(signalHandler) }
+        _state = ActorState.NonExecuting
     }
 
     /** ---- [AbstractGraphElement] */
+
+    protected fun requestActingAfter(signalHandler: SignalHandler, delay: Long, data: ActorData) {
+        _state = ActorState.Waiting
+        actorSupport.requestActingAfter(signalHandler, delay, data)
+    }
+
+    protected fun requestActingTimeFreeze(signalHandler: SignalHandler, data: ActorData) {
+        _state = ActorState.Waiting
+        actorSupport.requestActingTimeFreeze(signalHandler, data)
+    }
+
+    fun notifyActed(signalHandler: SignalHandler, data: ActorData): Boolean {
+        return actorSupport.notifyActed(signalHandler, data)
+    }
 
     /** Notifies all registered [GraphElementListener]s that the state of this [GraphElement] has changed.*/
     protected fun stateChanged(signalHandler: SignalHandler? = null) {

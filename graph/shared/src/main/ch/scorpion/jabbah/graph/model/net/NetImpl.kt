@@ -100,7 +100,7 @@ open class NetImpl<T: Any> : AbstractGraphElement(), Net<T> {
             signalBuffer = signal
             val data = NetActorData(signal, origin)
             if (withDelay) {
-                actorSupport.requestActingTimeFreeze(signalHandler, data)
+                requestActingTimeFreeze(signalHandler, data)
             } else {
                 actingDone(signalHandler, data)
             }
@@ -110,7 +110,7 @@ open class NetImpl<T: Any> : AbstractGraphElement(), Net<T> {
     /** ---- [Actor] interface */
 
     override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
-        return actorSupport.notifyActed(signalHandler, data)
+        return notifyActed(signalHandler, data)
     }
 
     override fun executionStarted(signalHandler: SignalHandler) {

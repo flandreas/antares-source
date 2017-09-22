@@ -32,6 +32,6 @@ open class CalculatingVertice(private val calculator: VerticeCalculator<*>) : Ab
         (calculator as VerticeCalculator<CalculatingVertice>).calculate(this, data as GraphActorData, signalHandler)
         getOutputs().forEach { it.flush(signalHandler) }
         stateChanged(signalHandler)
-        return actorSupport.notifyActed(signalHandler, data)
+        return notifyActed(signalHandler, data)
     }
 }

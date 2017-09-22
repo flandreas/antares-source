@@ -6,12 +6,17 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.base.logger
@@ -33,7 +38,7 @@ class Tunnel(
             override fun calculate(vertice: Tunnel, data: GraphActorData, signalHandler: SignalHandler) {
                 (vertice.getPort<DigitalSignal>() as DigitalPort).isOutputDominant = true
                 LOG.debug("Calculate Tunnel ${vertice.id} with signal '${data.getSignal<DigitalSignal>(1)}', outputDominant = ${(vertice.getPort<DigitalSignal>() as DigitalPort).isOutputDominant}")
-                vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(data.getSignal<DigitalSignal>(1), signalHandler)
+                vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
             }
         }
     }
@@ -63,7 +68,7 @@ class Tunnel(
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeInt("bitWidth", bitWidth.width);
+        writer.writeInt("bitWidth", bitWidth.width)
     }
 
     override fun read(reader: StoreReader) {
@@ -76,19 +81,19 @@ class Tunnel(
     override fun executionStarted(signalHandler: SignalHandler) {
         super.executionStarted(signalHandler)
         val signal = Word.allOf(bitWidth, Bit.Undefined)
-        actorSupport.requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
+        requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
     }
 
     /** ---- [Tunnel] */
 
     /**
-     * Called by the owning [Graph] after reception of a [TunnelSignalEvent] for a [Tunnel]
+     * Called by the owning [Graph] after detection of a signal change from a [Tunnel]
      * with the same name like this [Tunnel].
      */
     fun setSignal(signal: DigitalSignal, signalHandler: SignalHandler) {
         if (signal != getOutput<DigitalSignal>().getOutgoingSignal()) {
             LOG.debug("Tunnel $id: setSignal '$signal'")
-            actorSupport.requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
+            requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, signal))
         }
     }
 
