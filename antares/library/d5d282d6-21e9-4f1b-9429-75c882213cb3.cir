@@ -143,12 +143,12 @@
             </digitalEdgeView>
             <circuitInOutView _id='52' id='6' modelId='8' representation='binary' orientation='north'>
               <location>
-                <point x='84.0' y='308.0'/>
+                <point x='-133.0' y='308.0'/>
               </location>
             </circuitInOutView>
-            <digitalEdgeView _id='51' id='7' modelId='9' layout='ortho' orig='52' origPort='1' origPortOutput='true' dest='55' destPort='2' adjusted='false'>
+            <digitalEdgeView _id='51' id='7' modelId='9' layout='ortho' orig='52' origPort='1' origPortOutput='true' dest='55' destPort='2' adjusted='true'>
               <shape>
-                <polylineShape points='84.0,322.0 84.0,77.0'/>
+                <polylineShape points='-133.0,322.0 -133.0,294.0 84.0,294.0 84.0,77.0'/>
               </shape>
             </digitalEdgeView>
             <circuitInOutView _id='50' id='8' modelId='10' representation='binary' orientation='north'>
