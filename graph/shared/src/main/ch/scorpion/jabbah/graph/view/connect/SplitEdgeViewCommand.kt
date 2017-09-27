@@ -30,7 +30,7 @@ class SplitEdgeViewCommand(
     }
 
     override fun undo() {
-        origEdgeView = connectService.unconnect(result!!.newEdgeView)!!
+        origEdgeView = connectService.unconnect(result!!.newEdgeView)!!.joinedEdgeView
         graphView.remove(result!!.newEdgeView);
     }
 

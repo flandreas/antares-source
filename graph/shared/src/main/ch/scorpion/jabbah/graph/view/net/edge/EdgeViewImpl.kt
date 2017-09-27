@@ -737,10 +737,12 @@ open class EdgeViewImpl<T: Any>(
             }
         }
         compact()
-        connectToDestination(tail.destination, tail.destinationPort)
+        val destination = tail.destination
+        val destinationPort = tail.destinationPort
         if (tail.destination != null) {
             tail.connectToDestination(null, null)
         }
+        connectToDestination(destination, destinationPort)
         return this
     }
 
@@ -751,10 +753,12 @@ open class EdgeViewImpl<T: Any>(
             }
         }
         compact()
-        connectToOrigin(head.origin, head.originPort)
+        val origin = head.origin
+        val originPort = head.originPort
         if (head.origin != null) {
             head.connectToOrigin(null, null)
         }
+        connectToOrigin(origin, originPort)
         return this
     }
 
@@ -916,7 +920,7 @@ open class EdgeViewImpl<T: Any>(
 
     /**
      * Listens for geometry updates of the [ConnectableView]s to which this [EdgeView] is connected and
-     * initiates a relayout when they are changed.
+     * initiates a re-layout when they are changed.
      */
     private inner class ConnectableViewListener : DrawableAdapter() {
         override fun drawableUpdated(event: DrawableEvent) {

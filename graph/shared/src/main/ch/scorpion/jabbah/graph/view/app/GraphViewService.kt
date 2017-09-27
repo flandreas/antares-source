@@ -10,8 +10,10 @@ import ch.scorpion.jabbah.edit.app.DrawingServiceImpl
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
+import ch.scorpion.jabbah.graph.view.connect.JoinEdgeViewsResult
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortView
 
@@ -25,8 +27,7 @@ interface GraphViewService : DrawingService {
 
 class GraphViewServiceImpl(
         private val commandManager: CommandManager = EditModule.commandManager,
-        private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
-        private val eventBus: EventBus = BaseModule.eventBus
+        private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
 ) : DrawingServiceImpl(commandManager), GraphViewService {
 
     /** ---- [DrawingService] interface */
@@ -38,7 +39,7 @@ class GraphViewServiceImpl(
             if (component is VerticeView<*>) {
                 unconnectDeletedVerticeView(component, drawingView)
             } else if (component is EdgeView<*>) {
-                unconnectDeletedEdgeView(component as EdgeView<Any>, drawingView)
+                unconnectDeletedEdgeView(component as EdgeView<Any>, drawingView.drawing as GraphView<GraphElementView<*>>)
             }
         }
 
@@ -57,27 +58,37 @@ class GraphViewServiceImpl(
                 .forEach { ev -> commandManager.execute(UnconnectEdgeViewDestinationCommand(connectService, ev)) }
     }
 
-    private fun unconnectDeletedEdgeView(edgeView: EdgeView<Any>, drawingView: DrawingView<Drawing<Component>>) {
-        commandManager.execute(UnconnectEdgeViewCommand(connectService, edgeView))
+    private fun unconnectDeletedEdgeView(edgeView: EdgeView<Any>, graphView: GraphView<GraphElementView<*>>) {
+        commandManager.execute(UnconnectEdgeViewCommand(connectService, graphView, edgeView))
     }
 }
 
 private class UnconnectEdgeViewCommand(
         private val connectService: GraphViewConnectService,
+        private val graphView: GraphView<GraphElementView<*>>,
         private val edgeView: EdgeView<Any>
 ) : AbstractCommand("graph.command.unconnectEdgeView", null) {
 
     private val origPortView: PortView<Any>? =
-            if (edgeView.originPort != null) edgeView.origin!!.getPortView<Any>(edgeView.originPort!!) else null
+            if (edgeView.originPort != null) edgeView.origin!!.getPortView(edgeView.originPort!!) else null
     private val destPortView: PortView<Any>? =
-            if (edgeView.destinationPort != null) edgeView.destination!!.getPortView<Any>(edgeView.destinationPort!!) else null
+            if (edgeView.destinationPort != null) edgeView.destination!!.getPortView(edgeView.destinationPort!!) else null
+
+    private var joinResults: JoinEdgeViewsResult<Any>? = null
 
     override fun execute() {
-        connectService.unconnect(edgeView)
+        joinResults = connectService.unconnect(edgeView)
     }
 
     override fun undo() {
-        connectService.connect<Any>(edgeView, origPortView, destPortView)
+        if (joinResults == null) {
+            connectService.connect(edgeView, origPortView, destPortView)
+        } else {
+            if (joinResults != null) {
+                connectService.split(graphView, joinResults!!.joinedEdgeView, joinResults!!.segmentIndex,
+                        joinResults!!.removedEdgeView, joinResults!!.targetPortView)
+            }
+        }
     }
 }
 

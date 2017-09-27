@@ -20,9 +20,9 @@ interface GraphViewConnectService {
 
     /**
      * Unconnects an [EdgeView] from its origin [ConnectableView].
-     * @return the joined [EdgeView] that might result when unconnecting an [EdgeView] from a [NodeView]
+     * @return the information that results if unconnecting an [EdgeView] from a [NodeView]
      */
-    fun <T: Any> unconnectFromOrigin(edgeView: EdgeView<T>): EdgeView<T>?
+    fun <T: Any> unconnectFromOrigin(edgeView: EdgeView<T>): JoinEdgeViewsResult<T>?
 
     /**
      * Connects the destination of an existing [EdgeView] with a particular [Port] of a
@@ -32,9 +32,9 @@ interface GraphViewConnectService {
 
     /**
      * Unconnects an [EdgeView] from its destination [ConnectableView].
-     * @return the joined [EdgeView] that might result when unconnecting an [EdgeView] from a [NodeView]
+     * @return the information that results if unconnecting an [EdgeView] from a [NodeView]
      */
-    fun <T: Any> unconnectFromDestination(edgeView: EdgeView<T>): EdgeView<T>?
+    fun <T: Any> unconnectFromDestination(edgeView: EdgeView<T>): JoinEdgeViewsResult<T>?
 
     /**
      * Connects the specified [EdgeView] with the first [OutputPort] of the origin [VerticeView] and
@@ -68,9 +68,9 @@ interface GraphViewConnectService {
      * If the [EdgeView] is connected to [NodeView]s that have only two [EdgeView]s remaining after
      * unconnecting, those [NodeView]s are removed as well, and the remaining [EdgeView]s get joined.
      * @param edgeView the [EdgeView] to unconnect
-     * @return the joined [EdgeView] that might result when unconnecting an [EdgeView] from a [NodeView]
+     * @return the information that results when unconnecting an [EdgeView] from a [NodeView]
      */
-    fun <T: Any> unconnect(edgeView: EdgeView<T>): EdgeView<T>?
+    fun <T: Any> unconnect(edgeView: EdgeView<T>): JoinEdgeViewsResult<T>?
 
     /**
      * Unconnects all [PortView]s of a [VerticeView] from the [EdgeView]s to which it is
@@ -85,23 +85,36 @@ interface GraphViewConnectService {
      * [OutputPort] of the origin [VerticeView] and the first [InputPort] of the destination
      * [VerticeView], and layouts the [EdgeView].
      */
-    fun <T: Any> addConnection(graphView: GraphView<GraphElementView<*>>, orig: VerticeView<*>, dest: VerticeView<*>): EdgeView<T>
+    fun <T: Any> addConnection(
+            graphView: GraphView<GraphElementView<*>>,
+            orig: VerticeView<*>,
+            dest: VerticeView<*>
+    ): EdgeView<T>
 
     /**
      * Creates a new [EdgeView] in the specified [GraphView] and connects it with the output
      * [PortView] of an origin [VerticeView] and the input [PortView] of a destination
      * [VerticeView], and layouts the [EdgeView].
      */
-    fun <T: Any> addConnection(graphView: GraphView<GraphElementView<*>>, origOutput: PortView<T>, destInput: PortView<T>): EdgeView<T>
+    fun <T: Any> addConnection(
+            graphView: GraphView<GraphElementView<*>>,
+            origOutput: PortView<T>,
+            destInput: PortView<T>
+    ): EdgeView<T>
 
     /**
-     * Splits an existings [EdgeView], inserts a [NodeView] at the split location, and connects the
-     * [NodeView] with a destination [InputPort], if available.
+     * Splits an existing [EdgeView], inserts a [NodeView] at the begin location of `graphView`,
+     * and connects the [NodeView] with a destination [InputPort], if available.
      *
      * The created [NodeView] is placed at the first segment point of the [newEdgeView].
      */
-    fun <T: Any> split(graphView: GraphView<GraphElementView<*>>, splittedEdgeView: EdgeView<T>, splitSegmentIndex: Int,
-              newEdgeView: EdgeView<T>, destInput: PortView<T>?): SplitEdgeViewResult<T>
+    fun <T: Any> split(
+            graphView: GraphView<GraphElementView<*>>,
+            splittedEdgeView: EdgeView<T>,
+            splitSegmentIndex: Int,
+            newEdgeView: EdgeView<T>,
+            destInput: PortView<T>?
+    ): SplitEdgeViewResult<T>
 
     /**
      * Removes a [NodeView] from a [GraphView] and joins the outgoing [EdgeView]s.
@@ -112,4 +125,13 @@ interface GraphViewConnectService {
 }
 
 /** Represents the result of splitting an [EdgeView].*/
-data class SplitEdgeViewResult<T: Any>(val newEdgeView: EdgeView<T>, val tailEdgeView: EdgeView<T>, val nodeView: NodeView<T>)
+data class SplitEdgeViewResult<T: Any>(
+        val newEdgeView: EdgeView<T>,
+        val tailEdgeView: EdgeView<T>,
+        val nodeView: NodeView<T>)
+
+data class JoinEdgeViewsResult<T: Any>(
+        val joinedEdgeView: EdgeView<T>,
+        val segmentIndex: Int,
+        val removedEdgeView: EdgeView<T>,
+        val targetPortView: PortView<T>?)
