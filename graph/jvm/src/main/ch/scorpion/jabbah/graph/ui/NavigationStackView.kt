@@ -81,7 +81,7 @@ class NavigationStackView(
         })
 
         eventBus.register(GraphNameChangedEvent::class, {
-            if (navigationStack.rootContent != null && navigationStack.rootContent!!.drawing == it.graph) {
+            if (navigationStack.rootContent != null && navigationStack.rootContent!!.drawing.graph == it.graph) {
                 update()
             }
         })
