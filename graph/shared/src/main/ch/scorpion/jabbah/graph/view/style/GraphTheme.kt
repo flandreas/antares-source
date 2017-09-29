@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.edit.style.EditTheme
  */
 open class GraphTheme(
         name: String = DEF_NAME,
-        styleRepository: StyleRepository = DrawStyleModule.styleProvider,
+        supportsWhiteBackground: Boolean = DEF_SUPPORTS_WHITE_BACKGROUND,
         referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
         referenceColors: List<CompositeColor> = DEF_REF_COLORS,
         background: Style = DEF_BACKGROUND,
@@ -27,7 +27,7 @@ open class GraphTheme(
         val subsystem: Style = DEF_SUBSYSTEM
 ) : EditTheme(
         name,
-        styleRepository,
+        supportsWhiteBackground,
         referenceColorSequenceProvider,
         referenceColors,
         background,
@@ -45,8 +45,8 @@ open class GraphTheme(
         val DEF_SUBSYSTEM = BasicStyle()
     }
 
-    override fun activate() {
-        super.activate()
+    override fun activateIn(styleRepository: StyleRepository) {
+        super.activateIn(styleRepository)
         styleRepository.registerStyle(GraphStyleType.VERTICE, vertice)
         styleRepository.registerStyle(GraphStyleType.EDGE, edge)
         styleRepository.registerStyle(GraphStyleType.ANNOTATION, annotation)

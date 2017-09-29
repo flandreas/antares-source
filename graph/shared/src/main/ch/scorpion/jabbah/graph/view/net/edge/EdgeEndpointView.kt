@@ -20,7 +20,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 class EdgeEndpointView(
         private val edgeView: EdgeView<*>,
         private val connectorSupplier: () -> AbstractDragEdgeViewEndpointConnector,
-        val styleProvider: StyleProvider
+        styleProvider: StyleProvider
 ) : AbstractStyledDrawable(GraphStyleType.EDGE, styleProvider), Locatable {
 
     companion object {

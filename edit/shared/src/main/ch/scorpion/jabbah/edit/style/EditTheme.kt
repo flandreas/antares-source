@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.draw.style.*
  */
 open class EditTheme(
         name: String = DEF_NAME,
-        styleRepository: StyleRepository = DrawStyleModule.styleProvider,
+        supportsWhiteBackground: Boolean = DEF_SUPPORTS_WHITE_BACKGROUND,
         referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
         referenceColors: List<CompositeColor> = DEF_REF_COLORS,
         background: Style = DEF_BACKGROUND,
@@ -20,7 +20,7 @@ open class EditTheme(
         val message: Style = DEF_MESSAGE
 ) : DrawTheme(
         name,
-        styleRepository,
+        supportsWhiteBackground,
         referenceColorSequenceProvider,
         referenceColors,
         background,
@@ -33,8 +33,8 @@ open class EditTheme(
         val DEF_MESSAGE = BasicStyle(CompositeColor(foregroundColor = Color(252, 205, 90), backgroundColor = Color(255, 255, 223)))
     }
 
-    override fun activate() {
-        super.activate()
+    override fun activateIn(styleRepository: StyleRepository) {
+        super.activateIn(styleRepository)
         styleRepository.registerStyle(EditStyleType.HIGHLIGHT, highlight)
         styleRepository.registerStyle(EditStyleType.MESSAGE, message)
     }

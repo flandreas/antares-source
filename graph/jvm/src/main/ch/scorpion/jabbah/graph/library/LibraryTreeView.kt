@@ -123,9 +123,9 @@ class LibraryTreeView(
         override fun getIconWidth(): Int = 28
 
         override fun paintIcon(c: Component?, g: Graphics?, x: Int, y: Int) {
-            g?.color = Graphics2DJvm.toAwtColor(Themes.get<GraphTheme>().vertice.color.backgroundColor)
+            g?.color = Graphics2DJvm.toAwtColor(Themes.getUITheme<GraphTheme>().vertice.color.backgroundColor)
             g?.fillRect(5, 5, 14, 18)
-            g?.color = Graphics2DJvm.toAwtColor(Themes.get<GraphTheme>().vertice.color.foregroundColor)
+            g?.color = Graphics2DJvm.toAwtColor(Themes.getUITheme<GraphTheme>().vertice.color.foregroundColor)
             g?.drawRect(5, 5, 14, 18)
 
             g?.drawLine(5, 10, 1, 10)

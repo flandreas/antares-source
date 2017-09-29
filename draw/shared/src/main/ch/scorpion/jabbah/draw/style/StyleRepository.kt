@@ -34,28 +34,21 @@ interface StyleProvider {
 /**
  * An implementation of the [StyleProvider] interface that allows to register [Style]s.
  */
-class StyleRepository(override val predefinedColorProvider: PredefinedColorProvider) : StyleProvider {
+class StyleRepository(
+        override val predefinedColorProvider: PredefinedColorProvider = PredefinedColorRepository
+) : StyleProvider {
 
     companion object {
         var INSTANCE: StyleRepository = StyleRepository()
-
-        /** Returns a [StyleRepository] filled with the basic 'draw' [Style]s, mainly for testing purposes. */
-        fun basic(): StyleRepository {
-            return StyleRepository()
-                .registerStyle(StyleType.BACKGROUND, BasicStyle())
-                .registerStyle(StyleType.FIGURE, BasicStyle())
-        }
     }
 
-    constructor() : this(PredefinedColorRepository)
-
-    val LOG by logger(StyleRepository::class)
+    private val LOG by logger(StyleRepository::class)
 
     /** Maps the name of [StyleType] to the [StyleType] object.*/
-    val typeMap: MutableMap<String, StyleType> by lazy { mutableMapOf<String, StyleType>() }
+    private val typeMap: MutableMap<String, StyleType> by lazy { mutableMapOf<String, StyleType>() }
 
     /** Maps a [StyleType] to the [Style] to be used for that [StyleType].*/
-    val styleMap: MutableMap<StyleType, Style> by lazy { mutableMapOf<StyleType, Style>()}
+    private val styleMap: MutableMap<StyleType, Style> by lazy { mutableMapOf<StyleType, Style>()}
 
     /** ---- [StyleProvider] interface */
 

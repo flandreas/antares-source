@@ -18,8 +18,10 @@ import ch.scorpion.jabbah.io.*
 /**
  * Base implementation of [Component] to be used for subclassing concrete [Component] implementations.
  */
-abstract class AbstractComponent(val styleProvider: StyleProvider, styleType: StyleType)
-    : AbstractStyledDrawable(styleType, styleProvider), Component {
+abstract class AbstractComponent(
+        styleProvider: StyleProvider,
+        styleType: StyleType
+) : AbstractStyledDrawable(styleType, styleProvider), Component {
 
     constructor(styleProvider: StyleProvider): this(styleProvider, StyleType.FIGURE)
     constructor(): this(DrawStyleModule.styleProvider)

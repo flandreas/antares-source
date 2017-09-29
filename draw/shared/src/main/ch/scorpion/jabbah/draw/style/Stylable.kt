@@ -10,6 +10,8 @@ interface Stylable {
 
     var invalidator: (() -> Unit)?
 
+    var styleProvider: StyleProvider
+
     /** Returns the custom color, or else the style color, or else the default color from the [Properties]. */
     val color: CompositeColor
 
@@ -55,7 +57,7 @@ interface Stylable {
 class StylableImpl(
         override var invalidator: (() -> Unit)? = null,
         styleType: StyleType,
-        val styleProvider: StyleProvider,
+        override var styleProvider: StyleProvider,
         filled: Boolean = true,
         customColor: PredefinedColor? = null,
         customStroke: Stroke? = null,

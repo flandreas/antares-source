@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.graph.view.style.GraphTheme
 object AntaresThemes {
 
     private val SELECTION_COLOR = Color.ORANGE
-    private val SKY_BLUE = CompositeColor(foregroundColor = Color(69, 113, 180), backgroundColor = Color(220, 237, 250))
 
     private val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.5 * Look.SCALE).toInt())
     private val ANNOTATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.4 * Look.SCALE).toInt())
@@ -40,15 +39,16 @@ object AntaresThemes {
     private val FOCUS_COLOR = Color(48, 131, 251)
     private val FOCUS_STROKE = Stroke(1.0f, LineCap.BUTT, LineJoin.MITER, 1.0f, floatArrayOf(2.0f, 1.0f), 0.0f)
 
-
     fun install() {
-        Themes.register(winter(), crt())
+        Themes.register(blackAndWhite(), winter(), crt())
     }
 
     private fun winter(): Theme {
         val highlightColor = CompositeColor(foregroundColor = Color.YELLOW, backgroundColor = Color.YELLOW)
+        val skyBlue = CompositeColor(foregroundColor = Color(69, 113, 180), backgroundColor = Color(220, 237, 250))
         return AntaresTheme(
                 name = "Winter",
+                supportsWhiteBackground = true,
                 background = BasicStyle(
                         color = CompositeColor(
                                 foregroundColor = Color.GRAY,
@@ -57,7 +57,7 @@ object AntaresThemes {
                         font = FONT,
                         stroke = ANNOTATION_STROKE),
                 figure = BasicStyle(
-                        color = SKY_BLUE,
+                        color = skyBlue,
                         stroke = BOX_STROKE,
                         font = FONT),
                 highlight = BasicStyle(
@@ -69,7 +69,7 @@ object AntaresThemes {
                         font = EXPLANATION_FONT,
                         stroke = ANNOTATION_STROKE),
                 vertice = BasicStyle(
-                        color = SKY_BLUE,
+                        color = skyBlue,
                         stroke = BOX_STROKE,
                         font = FONT),
                 edge = EdgeStyle(
@@ -82,9 +82,9 @@ object AntaresThemes {
                         font = ANNOTATION_FONT),
                 annotation = BasicStyle(
                         color = CompositeColor(
-                                foregroundColor = SKY_BLUE.foregroundColor,
-                                backgroundColor = SKY_BLUE.backgroundColor,
-                                textColor = SKY_BLUE.foregroundColor),
+                                foregroundColor = skyBlue.foregroundColor,
+                                backgroundColor = skyBlue.backgroundColor,
+                                textColor = skyBlue.foregroundColor),
                         stroke = ANNOTATION_STROKE,
                         font = ANNOTATION_FONT),
                 explanation = BasicStyle(
@@ -131,6 +131,7 @@ object AntaresThemes {
 
         return AntaresTheme(
                 name = "CRT",
+                supportsWhiteBackground = false,
                 referenceColors = listOf(
                         CompositeColor(Color(236, 35, 46), Color(120, 3, 7)),
                         CompositeColor(Color(72, 186, 233), Color(3, 16, 139)),
@@ -198,5 +199,80 @@ object AntaresThemes {
                         stroke = FOCUS_STROKE
                 )
         )
+    }
+
+    private fun blackAndWhite(): Theme {
+        val highlightColor = CompositeColor(foregroundColor = Color.YELLOW, backgroundColor = Color.YELLOW)
+        val figureColor = CompositeColor(foregroundColor = Color.BLACK, backgroundColor = Color.WHITE)
+        return AntaresTheme(
+                name = "Black & White",
+                supportsWhiteBackground = true,
+                background = BasicStyle(
+                        color = CompositeColor(
+                                foregroundColor = Color.GRAY,
+                                backgroundColor = Color.WHITE,
+                                textColor = Color.BLACK),
+                        font = FONT,
+                        stroke = ANNOTATION_STROKE),
+                figure = BasicStyle(
+                        color = figureColor,
+                        stroke = BOX_STROKE,
+                        font = FONT),
+                highlight = BasicStyle(
+                        color = highlightColor,
+                        font = FONT,
+                        stroke = HIGHLIGHT_STROKE),
+                message = BasicStyle(
+                        color = ERROR,
+                        font = EXPLANATION_FONT,
+                        stroke = ANNOTATION_STROKE),
+                vertice = BasicStyle(
+                        color = figureColor,
+                        stroke = BOX_STROKE,
+                        font = FONT),
+                edge = EdgeStyle(
+                        color = CompositeColor(
+                                foregroundColor = Color.BLACK,
+                                backgroundColor = Color(232, 232, 232),
+                                textColor = Color.BLACK),
+                        stroke = LINE_STROKE,
+                        busStroke = BUS_STROKE,
+                        font = ANNOTATION_FONT),
+                annotation = BasicStyle(
+                        color = figureColor,
+                        stroke = ANNOTATION_STROKE,
+                        font = ANNOTATION_FONT),
+                explanation = BasicStyle(
+                        color = EXPLANATION,
+                        stroke = ANNOTATION_STROKE,
+                        font = EXPLANATION_FONT),
+                subsystem = BasicStyle(
+                        color = CompositeColor(
+                                foregroundColor = Color.GRAY,
+                                backgroundColor = Color(224, 224, 128)),
+                        font = FONT,
+                        stroke = SUBSYSTEM_STROKE),
+                selection = CompositeColor(
+                        foregroundColor = SELECTION_COLOR,
+                        textColor = SELECTION_COLOR,
+                        backgroundColor = Color.WHITE),
+                zero = ZERO,
+                one = ONE,
+                undefined = UNDEFINED,
+                wordZero = CompositeColor(
+                        foregroundColor = Color.BLACK,
+                        backgroundColor = Color(232, 232, 232),
+                        textColor = Color.WHITE),
+                word = CompositeColor(
+                        foregroundColor = Color.GRAY,
+                        backgroundColor = Color(232, 232, 232),
+                        textColor = Color.WHITE),
+                error = ERROR,
+                focus = BasicStyle(
+                        color = CompositeColor(
+                                foregroundColor = FOCUS_COLOR
+                        ),
+                        stroke = FOCUS_STROKE
+                ))
     }
 }

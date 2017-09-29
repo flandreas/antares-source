@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import java.awt.*
 import java.awt.event.ComponentAdapter
@@ -26,7 +27,7 @@ import javax.swing.JTextPane
  */
 class LibraryPreviewPanel(
     eventBus: EventBus,
-    val libraryTreeView: LibraryTreeView
+    private val libraryTreeView: LibraryTreeView
 ) : JPanel() {
 
     companion object {
@@ -122,6 +123,7 @@ class LibraryPreviewPanel(
 
     private fun updateSelectionImpl(component: Component) {
         selection = component
+        selection!!.styleProvider = Themes.uiStyleProvider
         componentDisplay.updateLayout()
         descriptionArea.text = selection!!.getToolTipText(0.0, 0.0, null)
     }
