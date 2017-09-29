@@ -184,7 +184,7 @@ class EdgeViewImplTest {
     }
 
     @Test
-    fun shouldJoinTail() {
+    fun shouldJoinOtherHeadWithTail() {
         val ev1 = edgeViewFactory.createEdgeView()
         ev1.addSegmentPoint(Point2D(0, 0))
         ev1.addSegmentPoint(Point2D(100, 0))
@@ -209,7 +209,7 @@ class EdgeViewImplTest {
     }
 
     @Test
-    fun shouldJoinHead() {
+    fun shouldJoinOtherTailWithHead() {
         val ev1 = edgeViewFactory.createEdgeView()
         ev1.addSegmentPoint(Point2D(0, 0))
         ev1.addSegmentPoint(Point2D(100, 0))
@@ -231,6 +231,34 @@ class EdgeViewImplTest {
 
         assertThat(ev2.origin as TestVerticeView, `is`(vv))
         assertThat(ev1.origin, `is`(nullValue()))
+    }
+
+    @Test
+    fun shouldJoinOtherHeadWithHead() {
+        val ev1 = edgeViewFactory.createEdgeView()
+        ev1.addSegmentPoint(Point2D(0, 0))
+        ev1.addSegmentPoint(Point2D(100, 0))
+        graphView.add(ev1)
+
+        val ev2 = edgeViewFactory.createEdgeView(ev1.model!!)
+        ev2.addSegmentPoint(Point2D(0, 0))
+        ev2.addSegmentPoint(Point2D(-100, 0))
+        graphView.add(ev2)
+
+        val vv1 = TestVerticeView(DrawStyleModule.styleProvider)
+        ev1.connectToDestination(vv1, vv1.model!!.getOutput<Boolean>())
+
+        val vv2 = TestVerticeView(DrawStyleModule.styleProvider)
+        ev2.connectToDestination(vv2, vv2.model!!.getOutput<Boolean>())
+
+        ev1.join(ev2)
+
+        assertThat(ev1.segmentPointCount, `is`(2))
+        assertThat(ev1.getSegmentPoint(0), `is`(Point2D(-100, 0)))
+        assertThat(ev1.getSegmentPoint(1), `is`(Point2D(100, 0)))
+
+        assertThat(ev1.origin as TestVerticeView, `is`(vv2))
+        assertThat(ev1.destination as TestVerticeView, `is`(vv1))
     }
 
     @Test

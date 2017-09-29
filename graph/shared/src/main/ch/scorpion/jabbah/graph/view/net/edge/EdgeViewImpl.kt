@@ -520,11 +520,13 @@ open class EdgeViewImpl<T: Any>(
         return tail
     }
 
-    override fun join(edgeView: EdgeView<T>): EdgeView<*> {
-        if (getSegmentPoint(segmentPointCount - 1) == edgeView.getSegmentPoint(0)) {
-            return joinTail(edgeView)
-        } else if (getSegmentPoint(0) == edgeView.getSegmentPoint(edgeView.segmentPointCount - 1)) {
-            return joinHead(edgeView)
+    override fun join(other: EdgeView<T>): EdgeView<*> {
+        if (polyline.getLastPoint() == other.polyline.getFirstPoint()) {
+            return joinOtherHeadWithTail(other)
+        } else if (polyline.getFirstPoint() == other.polyline.getLastPoint()) {
+            return joinOtherTailWithHead(other)
+        } else if (polyline.getFirstPoint() == other.polyline.getFirstPoint()) {
+            return joinOtherHeadWithHead(other)
         } else {
             throw IllegalArgumentException("joined EdgeView is not adjacent")
         }
@@ -730,33 +732,49 @@ open class EdgeViewImpl<T: Any>(
 
     /** ---- [EdgeViewImpl] */
 
-    private fun joinTail(tail: EdgeView<T>): EdgeView<*> {
-        for (i in 0..tail.segmentPointCount - 1) {
-            if (getSegmentPoint(segmentPointCount - 1) != tail.getSegmentPoint(i)) {
-                addSegmentPoint(tail.getSegmentPoint(i))
+    private fun joinOtherHeadWithHead(other: EdgeView<T>): EdgeView<*> {
+        for (i in 0 until other.segmentPointCount) {
+            if (polyline.getFirstPoint() != other.getSegmentPoint(i)) {
+                addSegmentPoint(0, other.getSegmentPoint(i))
             }
         }
         compact()
-        val destination = tail.destination
-        val destinationPort = tail.destinationPort
-        if (tail.destination != null) {
-            tail.connectToDestination(null, null)
+        val origin = other.destination
+        val originPort = other.destinationPort
+        if (other.destination != null) {
+            other.connectToDestination(null, null)
+        }
+        connectToOrigin(origin, originPort)
+        return this
+    }
+
+    private fun joinOtherHeadWithTail(other: EdgeView<T>): EdgeView<*> {
+        for (i in 0 until other.segmentPointCount) {
+            if (polyline.getLastPoint() != other.getSegmentPoint(i)) {
+                addSegmentPoint(other.getSegmentPoint(i))
+            }
+        }
+        compact()
+        val destination = other.destination
+        val destinationPort = other.destinationPort
+        if (other.destination != null) {
+            other.connectToDestination(null, null)
         }
         connectToDestination(destination, destinationPort)
         return this
     }
 
-    private fun joinHead(head: EdgeView<T>): EdgeView<*> {
-        for (i in head.segmentPointCount - 1 downTo 0) {
-            if (getSegmentPoint(0) != head.getSegmentPoint(i)) {
-                addSegmentPoint(0, head.getSegmentPoint(i))
+    private fun joinOtherTailWithHead(other: EdgeView<T>): EdgeView<*> {
+        for (i in other.segmentPointCount - 1 downTo 0) {
+            if (polyline.getFirstPoint() != other.getSegmentPoint(i)) {
+                addSegmentPoint(0, other.getSegmentPoint(i))
             }
         }
         compact()
-        val origin = head.origin
-        val originPort = head.originPort
-        if (head.origin != null) {
-            head.connectToOrigin(null, null)
+        val origin = other.origin
+        val originPort = other.originPort
+        if (other.origin != null) {
+            other.connectToOrigin(null, null)
         }
         connectToOrigin(origin, originPort)
         return this
