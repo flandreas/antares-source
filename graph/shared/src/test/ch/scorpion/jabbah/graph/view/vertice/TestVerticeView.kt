@@ -13,26 +13,27 @@ import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
  * directed to [Direction.EAST].
  */
 class TestVerticeView(
-        styleProvider: StyleProvider,
-        vertice: TestVertice,
-        loc: Point2D,
-        val inputDirection: Direction,
-        val portViewLength: Int
-        ) : AbstractRectangularVerticeView<TestVertice>(styleProvider, "test", vertice){
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, TestVertice(), Point2D(), Direction.WEST, 0)
-    constructor(vertice: TestVertice): this(DrawStyleModule.styleProvider, vertice, Point2D(), Direction.WEST, 0)
-    constructor(location: Point2D): this(DrawStyleModule.styleProvider, TestVertice(), location, Direction.WEST, 0)
-    constructor(): this(TestVertice())
+        private val name: String = "",
+        styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+        vertice: TestVertice = TestVertice(),
+        loc: Point2D = Point2D(),
+        private val inputDirection: Direction = Direction.WEST,
+        private val outputDirection: Direction = Direction.EAST,
+        private val portViewLength: Int = 0
+) : AbstractRectangularVerticeView<TestVertice>(styleProvider, "test", vertice){
 
     init {
         location = loc
         modelExchanged(null)
     }
 
+    override fun toString(): String {
+        return "TestVerticeView $name"
+    }
+
     override fun modelExchanged(oldModel: TestVertice?) {
         super.modelExchanged(oldModel)
         addPortView(TestPortView(model!!.getInput<Boolean>(), inputDirection, PortLabelPosition.INTERNAL, portViewLength))
-        addPortView(TestPortView(model!!.getOutput<Boolean>(), Direction.EAST, PortLabelPosition.INTERNAL, portViewLength))
+        addPortView(TestPortView(model!!.getOutput<Boolean>(), outputDirection, PortLabelPosition.INTERNAL, portViewLength))
     }
 }

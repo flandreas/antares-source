@@ -68,6 +68,9 @@ interface EdgeView<T: Any> : NetViewElement<T> {
     /** Holds the [Point2D]s (in absolute coordinates) that define the segments of this [EdgeView].*/
     val polyline: PolylineShape
 
+    /** Indicates the combination of [Port]s an [EdgeView] is connected with.*/
+    val connectionState: EdgeViewConnectionState
+
     /**
      * Returns the [ConnectableView] that corresponds with the specified [Port], which can be either the
      * [origin] or the [destination] [ConnectableView].
@@ -223,6 +226,25 @@ interface EdgeView<T: Any> : NetViewElement<T> {
      * @throws IllegalArgumentException if `edgeView` is not adjacent
      */
     fun join(edgeView: EdgeView<T>): EdgeView<*>
+}
+
+/**
+ * Indicates the combination of [Port]s an [EdgeView] is connected with.
+ * Connections to [NodeView] are ignored, because they don't have [Port]s.
+ */
+enum class EdgeViewConnectionState {
+    /** None of both ends is connected*/
+    Unconnected,
+    /** One end is connected with an [InputPort], the other end is open.*/
+    Input,
+    /** One end is connected with an [OutputPort], the other end is open.*/
+    Output,
+    /** One end is connected with an [InputPort], the other end is connected with an [OutputPort].*/
+    InputOutput,
+    /** Both ends are connected with [InputPort]s, which can result from deleting a segment leading to a [NodeView].*/
+    InputInput,
+    /** Both ends are connected with [OutputPorts]s, which can result from deleting a segment leading to a [NodeView].*/
+    OutputOutput
 }
 
 /**

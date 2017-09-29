@@ -104,7 +104,7 @@ interface GraphViewConnectService {
 
     /**
      * Splits an existing [EdgeView], inserts a [NodeView] at the begin location of `graphView`,
-     * and connects the [NodeView] with a destination [InputPort], if available.
+     * and connects the [NodeView] with a destination [Port], if available.
      *
      * The created [NodeView] is placed at the first segment point of the [newEdgeView].
      */
@@ -113,7 +113,7 @@ interface GraphViewConnectService {
             splittedEdgeView: EdgeView<T>,
             splitSegmentIndex: Int,
             newEdgeView: EdgeView<T>,
-            destInput: PortView<T>?
+            destPort: PortView<T>?
     ): SplitEdgeViewResult<T>
 
     /**

@@ -144,6 +144,6 @@ class OrthoEdgeViewLayoutIntegrationTest {
 
 
     private fun createVerticeView(x: Int, y: Int, dir: Direction): TestVerticeView {
-        return TestVerticeView(DrawStyleModule.styleProvider, TestVertice(), Point2D(x, y), dir, 20)
+        return TestVerticeView(loc = Point2D(x, y), inputDirection =  dir, portViewLength = 20)
     }
 }

@@ -15,8 +15,8 @@ class TestGraphView(eventBus: EventBus) : TestGraph(eventBus) {
     constructor(): this(BaseModule.eventBus)
 
     val graphView = GraphViewModule.createGraphView<GraphElementView<*>>()
-    val vv1: TestVerticeView = TestVerticeView(v1)
-    val vv2: TestVerticeView = TestVerticeView(v2)
+    val vv1: TestVerticeView = TestVerticeView(vertice = v1, name = "1")
+    val vv2: TestVerticeView = TestVerticeView(vertice = v2, name = "2")
     val ev: EdgeView<Boolean> = GraphViewModule.getEdgeViewFactory<Boolean>().createEdgeView(net)
 
     init {

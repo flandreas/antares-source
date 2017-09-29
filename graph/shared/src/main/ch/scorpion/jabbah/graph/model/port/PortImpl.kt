@@ -38,6 +38,10 @@ open class PortImpl<T: Any>(
 
     protected val changeSupport = PropertyChangeSupport<Any>(this)
 
+    override fun toString(): String {
+        return "PortImpl ${portType.name} $name"
+    }
+
     /** ---- [Port] interface */
 
     override var portId: Int = 0

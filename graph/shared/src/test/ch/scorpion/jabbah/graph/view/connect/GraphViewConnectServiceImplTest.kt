@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.TestTranslationsBuilder
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.EdgeView
@@ -38,12 +39,9 @@ class GraphViewConnectServiceImplTest {
             .withResource("test.name")
             .withResource("graph.name.unknown")
             .withResource("test.desc")
-        vv1 = TestVerticeView(DrawStyleModule.styleProvider)
-        vv2 = TestVerticeView(DrawStyleModule.styleProvider)
-        vv3 = TestVerticeView(DrawStyleModule.styleProvider)
-        vv1.location = Point2D(100, 100)
-        vv2.location = Point2D(200, 200)
-        vv3.location = Point2D(200, 100)
+        vv1 = TestVerticeView(name = "1", loc = Point2D(100, 100))
+        vv2 = TestVerticeView(name = "2", loc = Point2D(200, 200))
+        vv3 = TestVerticeView(name = "3", loc = Point2D(200, 100))
         gv.add(vv1).add(vv2).add(vv3)
     }
 
@@ -86,7 +84,7 @@ class GraphViewConnectServiceImplTest {
         val ev2 = edgeViewFactory.createEdgeView(ev1.model!!)
         ev2.addSegmentPoint(Point2D(150, 100))
 
-        val result = split(ev1, ev2)
+        val result = splitToInput(ev1, ev2)
 
         // Model assertions
         assertThat(gv.graph!!.elementsCount, `is`(4))
@@ -111,13 +109,54 @@ class GraphViewConnectServiceImplTest {
         assertThat(result.tailEdgeView.getSegmentPoint(0), `is`(result.nodeView.location))
     }
 
+    /** Split an [EdgeView] that connects two [InputPort]s (which can result from deleting segments).*/
+    @Test
+    fun shouldSplitInIn() {
+        vv1 = TestVerticeView(name = "1", loc = Point2D(100, 100), inputDirection = Direction.EAST)
+        vv2 = TestVerticeView(name = "2", loc = Point2D(200, 200))
+        vv3 = TestVerticeView(name = "3", loc = Point2D(200, 100))
+
+        val ev1 = service.addConnection(
+                gv,
+                vv1.getPortView(vv1.model!!.getInput<Boolean>())!!,
+                vv2.getPortView(vv2.model!!.getInput<Boolean>())!!)
+        val ev2 = edgeViewFactory.createEdgeView(ev1.model!!)
+        ev2.addSegmentPoint(Point2D(150, 100))
+
+        val result = splitToOutput(ev1, ev2)
+
+        // Model assertions
+        assertThat(gv.graph!!.elementsCount, `is`(4))
+        assertThat(ev1.model, `is`(sameInstance(result.tailEdgeView.model)))
+        assertThat(ev1.model, `is`(sameInstance(result.nodeView.model)))
+        assertThat(ev1.model, `is`(sameInstance(ev2.model)))
+
+        assertThat(ev1.model!!.isConnectedWith(vv1.model!!.getInput()), `is`(true))
+        assertThat(ev1.model!!.isConnectedWith(vv2.model!!.getInput()), `is`(true))
+        assertThat(ev1.model!!.isConnectedWith(vv3.model!!.getOutput()), `is`(true))
+
+        // View assertions
+        assertThat(gv.drawablesCount, `is`(7))
+
+        assertThat(ev1.origin as NodeView<Boolean>, `is`(sameInstance(result.nodeView)))
+        assertThat(ev1.destination as TestVerticeView, `is`(sameInstance(vv1)))
+        assertThat(ev1.getSegmentPoint(0), `is`(result.nodeView.location))
+
+        assertThat(ev2.origin as TestVerticeView, `is`(sameInstance(vv3)))
+        assertThat(ev2.destination as NodeView<Boolean>, `is`(sameInstance(result.nodeView)))
+
+        assertThat(result.tailEdgeView.origin as NodeView<Boolean>, `is`(result.nodeView))
+        assertThat(result.tailEdgeView.destination as TestVerticeView, `is`(vv2))
+        assertThat(result.tailEdgeView.getSegmentPoint(0), `is`(result.nodeView.location))
+    }
+
     @Test
     fun shouldRemoveNodeView() {
         val ev1 = service.addConnection<Boolean>(gv, vv1, vv2)
         val ev2 = edgeViewFactory.createEdgeView(ev1.model!!)
         gv.add(ev2)
         ev2.addSegmentPoint(Point2D(150, 100))
-        val result = split(ev1, ev2)
+        val result = splitToInput(ev1, ev2)
         ev2.connectToOrigin(null, null)
 
         val remainingEV = service.removeNodeView(gv, result.nodeView)
@@ -130,8 +169,13 @@ class GraphViewConnectServiceImplTest {
         assertThat(gv.contains(result.nodeView), `is`(false))
     }
 
-    private fun split(splittedEdgeView: EdgeView<Boolean>, newEdgeView: EdgeView<Boolean>): SplitEdgeViewResult<Boolean> {
+    private fun splitToInput(splittedEdgeView: EdgeView<Boolean>, newEdgeView: EdgeView<Boolean>): SplitEdgeViewResult<Boolean> {
         val vv3InputPort = vv3.model!!.getInput<Boolean>()
         return service.split(gv, splittedEdgeView, 1, newEdgeView, vv3.getPortView(vv3InputPort))
+    }
+
+    private fun splitToOutput(splittedEdgeView: EdgeView<Boolean>, newEdgeView: EdgeView<Boolean>): SplitEdgeViewResult<Boolean> {
+        val vv3OutputPort = vv3.model!!.getOutput<Boolean>()
+        return service.split(gv, splittedEdgeView, 1, newEdgeView, vv3.getPortView(vv3OutputPort))
     }
 }

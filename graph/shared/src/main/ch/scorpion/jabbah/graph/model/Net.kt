@@ -51,3 +51,4 @@ interface Net<T: Any> : GraphElement {
     fun setSignal(signal: T?, origin: OutputPort<T>, signalHandler: SignalHandler, withDelay: Boolean)
 
 }
+

@@ -46,7 +46,7 @@ class GraphViewImplTest {
 
     @Test
     fun shouldAddToModel() {
-        val verticeView = TestVerticeView(TestVertice())
+        val verticeView = TestVerticeView()
         graphView.add(verticeView)
 
         assertThat(graphView.contains(verticeView), `is`(true))
@@ -55,7 +55,7 @@ class GraphViewImplTest {
 
     @Test
     fun shouldRemoveFromModel() {
-        val verticeView = TestVerticeView(TestVertice())
+        val verticeView = TestVerticeView()
         graphView.add(verticeView)
         graphView.remove(verticeView)
 
@@ -65,7 +65,7 @@ class GraphViewImplTest {
 
     @Test
     fun shouldClearModel() {
-        val verticeView = TestVerticeView(TestVertice())
+        val verticeView = TestVerticeView()
         graphView.add(verticeView)
         graphView.clear()
 

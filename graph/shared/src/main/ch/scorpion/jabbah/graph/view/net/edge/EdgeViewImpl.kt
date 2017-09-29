@@ -12,11 +12,6 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.net.NetImpl
-import ch.scorpion.jabbah.graph.view.NetViewElement
-import ch.scorpion.jabbah.graph.view.ConnectableView
-import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.MoveEdgeSegmentInfo
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
@@ -29,6 +24,8 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.*
 
@@ -136,6 +133,37 @@ open class EdgeViewImpl<T: Any>(
             invalidate()
             update()
         }
+
+    override val connectionState: EdgeViewConnectionState
+        get() {
+            return if (originPort != null) {
+                if (destinationPort != null) {
+                    if (originPort!!.portType.isInput) {
+                        if (destinationPort!!.portType.isInput) {
+                            EdgeViewConnectionState.InputInput
+                        } else {
+                            EdgeViewConnectionState.InputOutput
+                        }
+                    } else {
+                        if (destinationPort!!.portType.isInput) {
+                            EdgeViewConnectionState.InputOutput
+                        } else {
+                            EdgeViewConnectionState.OutputOutput
+                        }
+                    }
+                } else {
+                    portToEdgeViewConnectionState(originPort!!)
+                }
+            } else if (destinationPort != null) {
+                    portToEdgeViewConnectionState(destinationPort!!)
+            } else {
+                EdgeViewConnectionState.Unconnected
+            }
+        }
+
+    private fun portToEdgeViewConnectionState(port: Port<*>): EdgeViewConnectionState {
+        return if(port.portType.isInput) EdgeViewConnectionState.Input else EdgeViewConnectionState.Output
+    }
 
     override fun getConnectableView(port: Port<T>): ConnectableView? {
         if (port == originPort) {
@@ -510,11 +538,24 @@ open class EdgeViewImpl<T: Any>(
         tail.isAdjusted = this.isAdjusted
         tail.isArrow = this.isArrow
 
-        val dest = destination
-        val destPort = destinationPort
-        if (dest != null) {
-            connectToDestination(null, null)
-            tail.connectToDestination(dest, destPort)
+        val oldConnectionState = connectionState
+        val oldDest = destination
+        val oldDestPort = destinationPort
+
+        if (oldConnectionState == EdgeViewConnectionState.InputInput) {
+            val orig = origin
+            val origPort = originPort
+            if (orig != null) {
+                connectToOrigin(null, null)
+                connectToDestination(orig, origPort)
+            }
+        }
+
+        if (oldDest != null) {
+            if (oldConnectionState != EdgeViewConnectionState.InputInput) {
+                connectToDestination(null, null)
+            }
+            tail.connectToDestination(oldDest, oldDestPort)
         }
 
         return tail

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.view.EdgeViewConnectionState
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -195,7 +196,7 @@ class EdgeViewImplTest {
         ev2.addSegmentPoint(Point2D(200, 0))
         graphView.add(ev2)
 
-        val vv = TestVerticeView(DrawStyleModule.styleProvider)
+        val vv = TestVerticeView()
         ev2.connectToDestination(vv, vv.model!!.getInput<Boolean>())
 
         ev1.join(ev2)
@@ -220,7 +221,7 @@ class EdgeViewImplTest {
         ev2.addSegmentPoint(Point2D(200, 0))
         graphView.add(ev2)
 
-        val vv = TestVerticeView(DrawStyleModule.styleProvider)
+        val vv = TestVerticeView()
         ev1.connectToOrigin(vv, vv.model!!.getOutput<Boolean>())
 
         ev2.join(ev1)
@@ -245,10 +246,10 @@ class EdgeViewImplTest {
         ev2.addSegmentPoint(Point2D(-100, 0))
         graphView.add(ev2)
 
-        val vv1 = TestVerticeView(DrawStyleModule.styleProvider)
+        val vv1 = TestVerticeView()
         ev1.connectToDestination(vv1, vv1.model!!.getOutput<Boolean>())
 
-        val vv2 = TestVerticeView(DrawStyleModule.styleProvider)
+        val vv2 = TestVerticeView()
         ev2.connectToDestination(vv2, vv2.model!!.getOutput<Boolean>())
 
         ev1.join(ev2)
@@ -284,5 +285,57 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(200, 0))
 
         assertThat(ev.findSegment(150.0, 50.0, 1), `is`(0))
+    }
+
+    @Test
+    fun shouldDetectUnconnectedConnectionState() {
+        val ev = edgeViewFactory.createEdgeView()
+        assertThat(ev.connectionState, `is`(EdgeViewConnectionState.Unconnected))
+    }
+
+    @Test
+    fun shouldDetectInputConnectionState() {
+        val ev = edgeViewFactory.createEdgeView()
+        val vv = TestVerticeView()
+        ev.connectToDestination(vv, vv.model!!.getInput())
+        assertThat(ev.connectionState, `is`(EdgeViewConnectionState.Input))
+    }
+
+    @Test
+    fun shouldDetectOutputConnectionState() {
+        val ev = edgeViewFactory.createEdgeView()
+        val vv = TestVerticeView()
+        ev.connectToDestination(vv, vv.model!!.getOutput())
+        assertThat(ev.connectionState, `is`(EdgeViewConnectionState.Output))
+    }
+
+    @Test
+    fun shouldDetectInputOutputConnectionState() {
+        val ev = edgeViewFactory.createEdgeView()
+        val vv1 = TestVerticeView()
+        val vv2 = TestVerticeView()
+        ev.connectToOrigin(vv1, vv1.model!!.getOutput())
+        ev.connectToDestination(vv2, vv2.model!!.getInput())
+        assertThat(ev.connectionState, `is`(EdgeViewConnectionState.InputOutput))
+    }
+
+    @Test
+    fun shouldDetectInputInputConnectionState() {
+        val ev = edgeViewFactory.createEdgeView()
+        val vv1 = TestVerticeView()
+        val vv2 = TestVerticeView()
+        ev.connectToOrigin(vv1, vv1.model!!.getInput())
+        ev.connectToDestination(vv2, vv2.model!!.getInput())
+        assertThat(ev.connectionState, `is`(EdgeViewConnectionState.InputInput))
+    }
+
+    @Test
+    fun shouldDetectOutputOutputConnectionState() {
+        val ev = edgeViewFactory.createEdgeView()
+        val vv1 = TestVerticeView()
+        val vv2 = TestVerticeView()
+        ev.connectToOrigin(vv1, vv1.model!!.getOutput())
+        ev.connectToDestination(vv2, vv2.model!!.getOutput())
+        assertThat(ev.connectionState, `is`(EdgeViewConnectionState.OutputOutput))
     }
 }
