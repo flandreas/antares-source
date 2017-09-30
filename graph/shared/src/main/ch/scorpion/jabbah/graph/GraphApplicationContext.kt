@@ -12,4 +12,6 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 data class GraphApplicationContext(
         val mode: ApplicationMode = ApplicationMode.EDIT,
         val systemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory
-)
+) {
+    val isExecute: Boolean get() = mode == ApplicationMode.EXECUTE
+}

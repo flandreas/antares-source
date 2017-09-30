@@ -33,6 +33,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -210,7 +211,9 @@ class SwitchView(
         val oldColor = context.g.color
         super.drawImpl(context)
         drawBodyDigital(context)
-        drawFocus(context)
+        if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+            drawFocus(context)
+        }
         context.g.color = oldColor
     }
 
