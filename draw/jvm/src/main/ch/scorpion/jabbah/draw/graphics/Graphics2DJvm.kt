@@ -16,6 +16,11 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
     private val LOG by logger(Graphics2DJvm::class)
 
+    private val LINE = java.awt.geom.Line2D.Double()
+    private val RECT = java.awt.geom.Rectangle2D.Double()
+    private val ELLIPSE = java.awt.geom.Ellipse2D.Double()
+    private val ROUND_RECT = java.awt.geom.RoundRectangle2D.Double()
+
     /** Buffer used in [getClipBounds]. */
     private val clipBounds: Rectangle = Rectangle()
 
@@ -133,7 +138,8 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     }
 
     override fun drawLine(x1: Double, y1: Double, x2: Double, y2: Double) {
-        g.drawLine(x1.toInt(), y1.toInt(), x2.toInt(), y2.toInt())
+        LINE.setLine(x1, y1, x2, y2)
+        g.draw(LINE)
     }
 
     override fun drawRect(x: Int, y: Int, w: Int, h: Int) {
@@ -141,7 +147,8 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     }
 
     override fun drawRect(x: Double, y: Double, w: Double, h: Double) {
-        g.drawRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
+        RECT.setFrame(x, y, w, h)
+        g.draw(RECT)
     }
 
     override fun drawRoundRect(x: Int, y: Int, w: Int, h: Int, arcW: Int, arcH: Int) {
@@ -153,7 +160,8 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     }
 
     override fun fillRect(x: Double, y: Double, w: Double, h: Double) {
-        g.fillRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
+        RECT.setFrame(x, y, w, h)
+        g.fill(RECT)
     }
 
     override fun fillRoundRect(x: Int, y: Int, w: Int, h: Int, arcW: Int, arcH: Int) {
@@ -165,7 +173,8 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     }
 
     override fun drawOval(x: Double, y: Double, w: Double, h: Double) {
-        g.drawOval(x.toInt(), y.toInt(), w.toInt(), h.toInt())
+        ELLIPSE.setFrame(x, y, w, h)
+        g.draw(ELLIPSE)
     }
 
     override fun fillOval(x: Int, y: Int, w: Int, h: Int) {
@@ -173,7 +182,8 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     }
 
     override fun fillOval(x: Double, y: Double, w: Double, h: Double) {
-        g.fillOval(x.toInt(), y.toInt(), w.toInt(), h.toInt())
+        ELLIPSE.setFrame(x, y, w, h)
+        g.fill(ELLIPSE)
     }
 
     override fun drawDot(x: Int, y: Int) {
@@ -266,27 +276,33 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     }
 
     private fun drawRect(rect: Rectangle2D) {
-        drawRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
+        RECT.setFrame(rect.x, rect.y, rect.width, rect.height)
+        g.draw(RECT)
     }
 
     private fun fillRect(rect: Rectangle2D) {
-        fillRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
+        RECT.setFrame(rect.x, rect.y, rect.width, rect.height)
+        g.fill(RECT)
     }
 
     private fun drawRoundRect(rect: RoundRectangle2D) {
-        drawRoundRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt(), rect.arcW.toInt(), rect.arcH.toInt())
+        ROUND_RECT.setRoundRect(rect.x, rect.y, rect.width, rect.height, rect.arcW, rect.arcH)
+        g.draw(ROUND_RECT)
     }
 
     private fun fillRoundRect(rect: RoundRectangle2D) {
-        fillRoundRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt(), rect.arcW.toInt(), rect.arcH.toInt())
+        ROUND_RECT.setRoundRect(rect.x, rect.y, rect.width, rect.height, rect.arcW, rect.arcH)
+        g.fill(ROUND_RECT)
     }
 
     private fun drawEllipse(e: Ellipse2D) {
-        g.draw(java.awt.geom.Ellipse2D.Double(e.x, e.y, e.width, e.height))
+        ELLIPSE.setFrame(e.x, e.y, e.width, e.height)
+        g.draw(ELLIPSE)
     }
 
     private fun fillEllipse(e: Ellipse2D) {
-        g.fill(java.awt.geom.Ellipse2D.Double(e.x, e.y, e.width, e.height))
+        ELLIPSE.setFrame(e.x, e.y, e.width, e.height)
+        g.fill(ELLIPSE)
     }
 
     private fun drawRing(r: Ring2D) {
