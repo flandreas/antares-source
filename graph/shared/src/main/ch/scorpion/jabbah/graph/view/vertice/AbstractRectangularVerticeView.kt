@@ -128,6 +128,7 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
     /** ---- [AbstractVerticeView] */
 
     override fun getBoundingBoxImpl(): Rectangle2D {
+        updateBoxes()
         return _boundingBox
     }
 
@@ -203,8 +204,11 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
      */
     protected open val storeSize: Boolean = false
 
-    /** Returns the number of pixels to be added at each side of the rectangle when calculating the bounding box.*/
-    protected open val outset: Int get() = 0
+    /** Returns the number of model units to be added at the corresponding side of the rectangle when calculating the bounding box.*/
+    protected open val outsetLeft: Int get() = 0
+    protected open val outsetRight: Int get() = 0
+    protected open val outsetTop: Int get() = 0
+    protected open val outsetBottom: Int get() = 0
 
     protected fun setDimension(w: Double, h: Double) {
         invalidate()
@@ -218,10 +222,10 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 
     protected fun updateBoxes() {
         _boundingBox.setFrame(
-            location.x + x - lineWidth - outset,
-            location.y + y - lineWidth - outset,
-            width + 2 * (lineWidth + outset),
-            height + 2 * (lineWidth + outset)
+            location.x + x - lineWidth - outsetLeft,
+            location.y + y - lineWidth - outsetTop,
+            width + 2 * lineWidth + outsetLeft + outsetRight,
+            height + 2 * lineWidth + outsetTop + outsetBottom
         )
         addPortViewsTo(_boundingBox, containsBox)
     }

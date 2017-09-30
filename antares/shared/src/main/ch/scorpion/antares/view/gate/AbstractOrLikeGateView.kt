@@ -31,9 +31,21 @@ abstract class AbstractOrLikeGateView<T : AbstractDigitalGate>(
         return portView
     }
 
-    override val outset: Int
+    override val outsetLeft: Int
         get() = when(currentSymbolStyle.symbolStyle) {
-            SymbolStyle.AMERICAN -> Look.SCALE
+            SymbolStyle.AMERICAN -> 2 * Look.SCALE
+            SymbolStyle.EUROPEAN -> 0
+        }
+
+    override val outsetTop: Int
+        get() = when(currentSymbolStyle.symbolStyle) {
+            SymbolStyle.AMERICAN -> -Look.SCALE
+            SymbolStyle.EUROPEAN -> 0
+        }
+
+    override val outsetBottom: Int
+        get() = when(currentSymbolStyle.symbolStyle) {
+            SymbolStyle.AMERICAN -> -Look.SCALE
             SymbolStyle.EUROPEAN -> 0
         }
 }

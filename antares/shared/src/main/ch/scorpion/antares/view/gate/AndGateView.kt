@@ -26,9 +26,9 @@ import ch.scorpion.jabbah.io.Storable
  */
 class AndGateView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+    currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
     andGate: AndGate = AndGate()
-) : AbstractDigitalGateView<AndGate>(styleProvider, "&", "library.element.AndGate", andGate) {
+) : AbstractAndLikeGateView<AndGate>(styleProvider, currentSymbolStyle, "&", "library.element.AndGate", andGate) {
 
     companion object {
         // TODO Refactor: Use [StyleProvider] instead of [Themes] to access style information

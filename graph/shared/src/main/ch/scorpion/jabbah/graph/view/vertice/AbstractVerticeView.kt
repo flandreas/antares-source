@@ -376,8 +376,9 @@ abstract class AbstractVerticeView<T : Vertice>(
 
         // DEBUG BEGIN
 //        context.g.color = Color.RED
+//        context.g.stroke = Stroke(0.5f)
 //        context.g.draw(boundingBox)
-//        context.g.fillOval((location.x - 3).toInt(), (location.y - 3).toInt(), 6, 6)
+//        context.g.fillOval((location.x - 2).toInt(), (location.y - 2).toInt(), 4, 4)
         // DEBUG END
 
         context.g.color = oldColor

@@ -14,9 +14,9 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
  */
 class NandGateView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+    currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
     nandGate: NandGate = NandGate()
-) : AbstractDigitalGateView<NandGate>(styleProvider, "&", "library.element.NandGate", nandGate) {
+) : AbstractAndLikeGateView<NandGate>(styleProvider, currentSymbolStyle, "&", "library.element.NandGate", nandGate) {
 
     init {
         modelExchanged(null)
