@@ -109,12 +109,17 @@ class GraphViewConnectServiceImpl(
         if (originJoinResults != null) {
             return originJoinResults
         }
-        // Rebuild JoinEdgeViewsResult in order to include origPortView (which has been reset by unconnectFromOrigin)
-        return JoinEdgeViewsResult(
-                destJoinResults!!.joinedEdgeView,
-                destJoinResults.segmentIndex,
-                destJoinResults.removedEdgeView,
-                origPortView)
+
+        if (destJoinResults != null) {
+            // Rebuild JoinEdgeViewsResult in order to include origPortView (which has been reset by unconnectFromOrigin)
+            return JoinEdgeViewsResult(
+                    destJoinResults.joinedEdgeView,
+                    destJoinResults.segmentIndex,
+                    destJoinResults.removedEdgeView,
+                    origPortView)
+        }
+
+        return null
     }
 
     override fun unconnectEdgeViewOrigin(edgeView: EdgeView<Any>) {

@@ -79,6 +79,33 @@ class GraphViewConnectServiceImplTest {
     }
 
     @Test
+    fun shouldUnconnectOpenBeginEdgeView() {
+        val ev = edgeViewFactory.createEdgeView()
+        ev.addSegmentPoint(Point2D(100, 100))
+        ev.addSegmentPoint(Point2D(200, 100))
+        gv.add(ev)
+        service.connectToDestination(ev, vv1, vv1.model!!.getInput())
+
+        service.unconnect(ev)
+        assertThat(ev.destination, `is`(nullValue()))
+        assertThat(ev.destinationPort, `is`(nullValue()))
+    }
+
+    @Test
+    fun shouldUnconnectOpenDestinationEdgeView() {
+        val ev = edgeViewFactory.createEdgeView()
+        ev.addSegmentPoint(Point2D(100, 100))
+        ev.addSegmentPoint(Point2D(200, 100))
+        gv.add(ev)
+        service.connectToOrigin(ev, vv1, vv1.model!!.getOutput())
+
+        service.unconnect(ev)
+
+        assertThat(ev.origin, `is`(nullValue()))
+        assertThat(ev.originPort, `is`(nullValue()))
+    }
+
+    @Test
     fun shouldSplit() {
         val ev1 = service.addConnection<Boolean>(gv, vv1, vv2)
         val ev2 = edgeViewFactory.createEdgeView(ev1.model!!)
