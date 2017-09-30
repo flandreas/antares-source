@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.time.ControlledTimer
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
@@ -39,7 +40,7 @@ abstract class AbstractCircuitTest {
         eventBus = EventBusImpl()
         timeService = ControlledTimeService()
         timer = ControlledTimer(timeService)
-        scheduler = SchedulerImpl(timeService, timer, eventBus, NoiseGeneratorHolder())
+        scheduler = SchedulerImpl(timeService, timer, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()))
     }
 
     abstract fun getCircuitView(): GraphView<GraphElementView<*>>

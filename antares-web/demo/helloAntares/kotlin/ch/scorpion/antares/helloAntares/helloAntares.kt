@@ -2,6 +2,7 @@ package ch.scorpion.antares.helloAntares
 
 import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.module.AntaresModuleJs
+import ch.scorpion.antares.view.AntaresThemes
 import ch.scorpion.jabbah.base.LOG_SYSTEM
 import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.StringUtils
@@ -37,6 +38,7 @@ var editor by Delegates.notNull<Editor>()
 @Suppress("unused")
 fun hello() {
     AntaresModuleJs.require()
+    AntaresThemes.install()
 
     LOG_SYSTEM!!.getLogger(ContainerDrawing::class).value.setLogLevel(LogLevel.DEBUG)
     LOG_SYSTEM!!.getLogger(SubCircuitPort::class).value.setLogLevel(LogLevel.DEBUG)

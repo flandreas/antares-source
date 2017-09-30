@@ -17,7 +17,7 @@ dependencies {
     compile files('../base/build/libs/base.meta.js')
 
     compile project(path: ':base-web')
-    compile files('../base-web/build/classes/main/base-web_main.meta.js')
+    compile files('../base-web/build/classes/main/base-web.meta.js')
 
     compile project(path: ':animation', configuration: 'web')
     compile files('../animation/build/libs/animation.meta.js')

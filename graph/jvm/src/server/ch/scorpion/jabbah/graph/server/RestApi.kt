@@ -55,6 +55,8 @@ class RestApi(val cmdLine: CommandLine) {
         LOG.info("Accessing drawings in directory '${cmdLine.getOptionValue("d")}'")
         LOG.info("Accessing library in directory '${cmdLine.getOptionValue("l")}'")
 
+        staticFiles.externalLocation("/Users/andreas/Documents/scorpion2/jabbah")
+
         /** Returns a GraphView with a given name as an XML string.*/
         get("$BASE_URL/graphView/:name") { request, result ->
             result.type("text/xml")

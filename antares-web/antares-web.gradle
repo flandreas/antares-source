@@ -14,12 +14,12 @@ dependencies {
     compile project(path: ':base', configuration: 'web')
     compile files('../base/build/libs/base.meta.js')
 
-    compile files('../base-web/build/classes/main/base-web_main.meta.js')
+    compile files('../base-web/build/classes/main/base-web.meta.js')
 
     compile project(path: ':io', configuration: 'web')
     compile files('../io/build/libs/io.meta.js')
 
-    compile files('../io-web/build/classes/main/io-web_main.meta.js')
+    compile files('../io-web/build/classes/main/io-web.meta.js')
 
     compile project(path: ':animation', configuration: 'web')
     compile files('../animation/build/libs/animation.meta.js')
@@ -30,12 +30,12 @@ dependencies {
     compile project(path: ':draw', configuration: 'web')
     compile files('../draw/build/libs/draw.meta.js')
 
-    compile files('../draw-web/build/classes/main/draw-web_main.meta.js')
+    compile files('../draw-web/build/classes/main/draw-web.meta.js')
 
     compile project(path: ':edit', configuration: 'web')
     compile files('../edit/build/libs/edit.meta.js')
 
-    compile files('../edit-web/build/classes/main/edit-web_main.meta.js')
+    compile files('../edit-web/build/classes/main/edit-web.meta.js')
 
     compile project(path: ':app', configuration: 'web')
     compile files('../app/build/libs/app.meta.js')
@@ -43,7 +43,7 @@ dependencies {
     compile project(path: ':graph', configuration: 'web')
     compile files('../graph/build/libs/graph.meta.js')
 
-    compile files('../graph-web/build/classes/main/graph-web_main.meta.js')
+    compile files('../graph-web/build/classes/main/graph-web.meta.js')
 
     compile project(path: ':antares', configuration: 'web')
     compile files('../antares/build/libs/antares.meta.js')
