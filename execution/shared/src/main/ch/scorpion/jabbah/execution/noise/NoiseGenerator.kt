@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.execution.noise
 
+import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 
@@ -29,11 +30,19 @@ class NoNoiseGenerator : AbstractNoiseGenerator("simulator.noiseGenerator.none")
     }
 }
 
+class RandomNoiseGenerator : AbstractNoiseGenerator("simulator.noiseGenerator.random") {
+
+    override fun noise(bound: Int): Int {
+        return Math.randomInt(0, bound)
+    }
+}
+
 class NoiseGeneratorChangedEvent(val current: NoiseGenerator)
 
-class NoiseGeneratorHolder(current: NoiseGenerator, private val eventBus: EventBus) {
-    constructor(eventBus: EventBus): this(NoNoiseGenerator(), eventBus)
-    constructor(): this(BaseModule.eventBus)
+class NoiseGeneratorHolder(
+        current: NoiseGenerator,
+        private val eventBus: EventBus = BaseModule.eventBus
+) {
 
     var current: NoiseGenerator = current
         set(value) {

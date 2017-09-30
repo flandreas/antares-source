@@ -8,6 +8,10 @@ import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.execution.NoiseMenu
+import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
+import ch.scorpion.jabbah.execution.noise.RandomNoiseGenerator
 import ch.scorpion.jabbah.graph.ui.GraphMenuBarBuilder
 import javax.swing.ButtonGroup
 import javax.swing.JCheckBoxMenuItem
@@ -43,6 +47,7 @@ class AntaresMenuBarBuilder(application: DesktopApplication, eventBus: EventBus)
     override fun fillExecutionMenu(menu: JMenu): JMenu {
         super.fillExecutionMenu(menu)
         menu.add(JCheckBoxMenuItem(GraphViewAnimationAction(AntaresViewModule.currentGraphViewAnimationType, eventBus)))
+        menu.add(NoiseMenu(listOf(ExecutionModule.noNoiseGenerator, ExecutionModule.randomNoiseGenerator)))
         return menu
     }
 }

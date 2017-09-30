@@ -2,7 +2,9 @@ package ch.scorpion.jabbah.execution.module
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
+import ch.scorpion.jabbah.execution.noise.RandomNoiseGenerator
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
@@ -12,7 +14,11 @@ import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
  */
 object ExecutionModule : AbstractModule() {
 
-    val noiseGeneratorHolder: NoiseGeneratorHolder by lazy { NoiseGeneratorHolder() }
+    val noNoiseGenerator = NoNoiseGenerator()
+
+    val randomNoiseGenerator = RandomNoiseGenerator()
+
+    val noiseGeneratorHolder: NoiseGeneratorHolder by lazy { NoiseGeneratorHolder(noNoiseGenerator) }
 
     val scheduler: Scheduler by lazy { SchedulerImpl() }
 
