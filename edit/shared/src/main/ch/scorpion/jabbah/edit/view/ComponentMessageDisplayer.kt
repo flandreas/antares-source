@@ -5,22 +5,18 @@ import ch.scorpion.jabbah.animation.AnimationTaskAdapter
 import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentAnimation
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.text.TextComponent
-import ch.scorpion.jabbah.edit.style.EditStyleType
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.model.text.TextComponentFactory
-import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.draw.container.UnzoomableContainer
+import ch.scorpion.jabbah.draw.drawable.Unzoomable
 
 /**
  * Displays [ComponentMessage]s in a [DrawingView].
@@ -28,12 +24,11 @@ import ch.scorpion.jabbah.edit.module.EditModule
 class ComponentMessageDisplayer<T: Drawing<Component>>(
     private val drawingView: DrawingView<T>,
     private val eventBus: EventBus,
-    private val animator: Animator,
-    private val textComponentFactory: TextComponentFactory = EditModule.textComponentFactory.invoke()
+    private val animator: Animator
 ) {
 
     companion object {
-        private val INSET = 10
+        private val INSET = 10.0
         private val WIDTH = 200.0
         private val HEIGHT = 50.0
     }
@@ -53,10 +48,9 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
             return
         }
         val text = Translations.getString(msg.messageKey)
-        val component = textComponentFactory.create(text, Point2D(), EditStyleType.MESSAGE ,DrawStyleModule.styleProvider)
-        component.setFrame(calculateBounds(msg.source, text))
+        val messageView = ComponentMessageView(text = text, yDist = INSET, frame = calculateBounds(msg.source, text))
 
-        FadeInOut(component, drawingView, animator)
+        FadeInOut(messageView, drawingView.ghostContainer, animator)
     }
 
     /**
@@ -65,27 +59,25 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
      */
     private fun calculateBounds(source: Component, @Suppress("UNUSED_PARAMETER") text: String): Rectangle2D {
         val bbox = source.boundingBox
-        return Rectangle2D(bbox.x, bbox.maxY + INSET, WIDTH, HEIGHT)
+        return Rectangle2D(bbox.x, bbox.maxY, WIDTH, HEIGHT)
     }
 
-    private inner class FadeInOut<T: Drawing<Component>>(
-        component: Component,
-        drawingView: DrawingView<T>,
-        animator: Animator
+    private inner class FadeInOut(
+            messageView: ComponentMessageView,
+            container: UnzoomableContainer<Unzoomable>,
+            animator: Animator
     ) {
 
         init {
-            if (component !is Transparent) {
-                throw IllegalArgumentException("component must be Transparent")
-            }
-            component.transparency = Transparent.FULLY_TRANSPARENT
-            drawingView.animationContainer.add(component)
+            messageView.transparency = Transparent.FULLY_TRANSPARENT
+            container.add(messageView)
+            container.validate()
 
-            val fadeOutAnimation = TransparentAnimation.fadeOut(component, 600.0)
+            val fadeOutAnimation = TransparentAnimation.fadeOut(messageView, 600.0)
             fadeOutAnimation.addListener(object : AnimationTaskAdapter() {
                 override fun ended(task: AnimationTask) {
-                    LOG.debug("remove component")
-                    drawingView.animationContainer.remove(component)
+                    LOG.debug("remove MessageView")
+                    container.remove(messageView)
                 }
             })
             animator.schedule(fadeOutAnimation)
@@ -97,7 +89,7 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
                 timer.stop()
             })
 
-            val fadeInAnimation = TransparentAnimation.fadeIn(component, 300.0)
+            val fadeInAnimation = TransparentAnimation.fadeIn(messageView, 300.0)
             fadeInAnimation.addListener(object : AnimationTaskAdapter() {
                 override fun ended(task: AnimationTask) {
                     LOG.debug("start timer")

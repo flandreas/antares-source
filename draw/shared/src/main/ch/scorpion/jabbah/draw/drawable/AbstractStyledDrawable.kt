@@ -5,7 +5,10 @@ import ch.scorpion.jabbah.draw.style.*
 /**
  * Enhances [AbstractDrawable] with support for [Stylable].
  */
-abstract class AbstractStyledDrawable(stylable: Stylable) : AbstractDrawable(), Stylable by stylable {
+abstract class AbstractStyledDrawable(
+        stylable: Stylable
+) : AbstractDrawable(), Stylable by stylable {
+
     constructor(
         styleType: StyleType,
         styleProvider: StyleProvider

@@ -11,7 +11,10 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
  *
  * The location of an [AbstractRectangularUnzoomable] is its center.
  */
-abstract class AbstractRectangularUnzoomable(halfSize: Double, location: Point2D = Point2D()) : AbstractDrawable(), Unzoomable {
+abstract class AbstractRectangularUnzoomable(
+        halfSize: Double,
+        location: Point2D = Point2D()
+) : AbstractDrawable(), Unzoomable {
 
     override var zoomPan: ZoomPan? = ZoomPan()
 

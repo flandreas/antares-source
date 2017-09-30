@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.model.text
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
@@ -90,9 +91,9 @@ class SimpleTextComponent(
 
         context.g.font = font
         context.g.color = textColor
-        val b = shape
 
         // TODO: Implement clipping in JavaScript platform
+        // val b = shape
         // val oldClip = context.g.getClipBounds()
         //(context.g as Graphics2DJvm).g.setClip(b.x.toInt(), b.y.toInt(), b.width.toInt(), b.height.toInt())
         multilineText.draw(context, x.toInt() + INSET_X, y.toInt() + INSET_Y)
@@ -121,6 +122,6 @@ class SimpleTextComponent(
     }
 
     private fun updateMultilineText() {
-        multilineText = MultilineText(text, font, width.toInt() - 2 * INSET_X, font.size)
+        multilineText = MultilineText(text, font, width.toInt() - 2 * INSET_X, font.size, textRenderInfoFactory)
     }
 }

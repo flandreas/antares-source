@@ -2,6 +2,9 @@ package ch.scorpion.jabbah.draw.drawable
 
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.ZoomPan
+import ch.scorpion.jabbah.draw.graphics.Graphics2D
+import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.ViewPainter
 
 /**
  * [Unzoomable]s can be implemented by those [Drawable]s that are added as view slides to an [View],
