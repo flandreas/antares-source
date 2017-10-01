@@ -33,7 +33,6 @@ class SchedulerImpl(
 ) : Scheduler {
 
     companion object {
-        private val SLOWDOWN_FACTOR = 10
         private val PROP_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
     }
 
@@ -107,13 +106,13 @@ class SchedulerImpl(
             throw IllegalStateException("cannot step when not paused")
         }
         do {
-            val result = task.executionStep()
+            val result = executionStep()
         } while (result.recalculated && !result.breakpoint)
     }
 
     override fun proceedTo(time: Long) {
         while (!queue.isEmpty && executionTime < time) {
-            task.executionStep()
+            executionStep()
         }
     }
 
@@ -264,26 +263,74 @@ class SchedulerImpl(
         return slot
     }
 
-    /**
-     * Repeatedly called by the [Timer] in order to perform an execution step.
-     * @param interval the interval (in ms) at which the [Timer] calls this [Task]
-     */
+    /** Executes all [Request]s of the next executable [Slot].*/
+    private fun executionStep(): ExecutionStepResult {
+        val slot: Slot = getNextExecutableSlot() ?: return ExecutionStepResult(recalculated = false, breakpoint = false)
+
+        LOG.trace("Execution step at $relativeTime ns, queue size is ${queue.size}")
+
+        // Resynchronize relative time with real time
+        if (!slot.timeFreeze) {
+            updateRelativeTime(getRelativeRealTime())
+        }
+
+        var recalculated = false
+        var breakpoint = false
+
+        // When stepping, we don't wait for real time. When not in stepping mode, we wait until
+        // real time has reached the simulation time, so that [Actors] like slow timers have a chance
+        // to seem to behave in real time.
+
+        if (isPaused || slot.relativeTime <= relativeTime) {
+            updateRelativeTime(slot.relativeTime)
+            slot.isExecuted = true
+            for (request in slot.getRequests()) {
+                if (LOG.isTraceEnabled()) {
+                    logTrace(System.get().getClass(request.actor), request.actor.id, { "Executing" })
+                }
+                breakpoint = breakpoint || request.actor.isBreakpoint
+                if (request.actor.act(this@SchedulerImpl, request.actorData)) {
+                    request.setDone()
+                }
+            }
+            if (slot.isDone) {
+                removeSlot(slot)
+            }
+            recalculated = true
+        } else {
+            updateRelativeTime(Math.min(getRelativeRealTime(), slot.relativeTime))
+        }
+        postSchedulerStateEvent()
+        return ExecutionStepResult(recalculated, breakpoint)
+    }
+
+    /** Repeatedly called by the [Timer] in order to perform an execution step.*/
     private inner class Task(private val timer: Timer) : ActionListener {
+
+        private val SLOWDOWN_FACTOR = 0.5
 
         init {
             timer.initialize(calculateTimerInterval(), { actionPerformed(it) })
         }
 
+        /**
+         * Called by the [Timer] that drives this [Task].
+         *
+         * Due to the types in the interface of a [Timer], the interval of a [Timer] can't be smaller than 1 ms.
+         * If the system should run at maximum speed, this interval is too long. We therefore perform more than
+         * one execution step at a single timer tick.
+         */
         override fun actionPerformed(event: ActionEvent) {
-            val beginTime = System.get().currentTimeMillis()
-
-//            var count = 0
-//            while (count < 100 && executionStep().recalculated) {
-//                count++
-//            }
-
-            while (!queue.isEmpty && System.get().currentTimeMillis() - beginTime < 20) {
-                executionStep()
+            if (currentSystemSpeedCategory.systemSpeed.isMaximum) {
+                val beginTime = System.get().currentTimeMillis()
+                while (!queue.isEmpty && System.get().currentTimeMillis() - beginTime < 20) {
+                    executionStep()
+                }
+            } else {
+                var count = 0
+                while (count < 10 && executionStep().recalculated) {
+                    count++
+                }
             }
         }
 
@@ -292,8 +339,7 @@ class SchedulerImpl(
         }
 
         private fun calculateTimerInterval(): Int {
-            val interval = 1 +
-                    (1 + SLOWDOWN_FACTOR * currentSystemSpeedCategory.systemSpeedCategory.ordinal) * (SystemSpeed.MAX_SPEED - currentSystemSpeedCategory.systemSpeed.speed)
+            val interval = Math.max(1.0, SLOWDOWN_FACTOR * (SystemSpeed.MAX_SPEED - currentSystemSpeedCategory.systemSpeed.speed)).toInt()
             LOG.debug("SchedulerImpl: interval = $interval")
             return interval
         }
@@ -308,46 +354,6 @@ class SchedulerImpl(
         fun stop() {
             LOG.trace("Stopping timer")
            timer.stop()
-        }
-
-        fun executionStep(): ExecutionStepResult {
-            val slot: Slot = getNextExecutableSlot() ?: return ExecutionStepResult(recalculated = false, breakpoint = false)
-
-            LOG.trace("Execution step at $relativeTime ns, queue size is ${queue.size}")
-
-            // Resynchronize relative time with real time
-            if (!slot.timeFreeze) {
-                updateRelativeTime(getRelativeRealTime())
-            }
-
-            var recalculated = false
-            var breakpoint = false
-
-            // When stepping, we don't wait for real time. When not in stepping mode, we wait until
-            // real time has reached the simulation time, so that [Actors] like slow timers have a chance
-            // to seem to behave in real time.
-
-            if (isPaused || slot.relativeTime <= relativeTime) {
-                updateRelativeTime(slot.relativeTime)
-                slot.isExecuted = true
-                for (request in slot.getRequests()) {
-                    if (LOG.isTraceEnabled()) {
-                        logTrace(System.get().getClass(request.actor), request.actor.id, { "Executing" })
-                    }
-                    breakpoint = breakpoint || request.actor.isBreakpoint
-                    if (request.actor.act(this@SchedulerImpl, request.actorData)) {
-                        request.setDone()
-                    }
-                }
-                if (slot.isDone) {
-                    removeSlot(slot)
-                }
-                recalculated = true
-            } else {
-                updateRelativeTime(Math.min(getRelativeRealTime(), slot.relativeTime))
-            }
-            postSchedulerStateEvent()
-            return ExecutionStepResult(recalculated, breakpoint)
         }
     }
 

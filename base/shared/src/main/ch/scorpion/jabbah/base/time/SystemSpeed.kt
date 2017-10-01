@@ -28,6 +28,8 @@ class SystemSpeed(
             field = value
             eventBus.post(SystemSpeedEvent(oldSpeed, field))
         }
+
+    val isMaximum: Boolean get() = speed == MAX_SPEED
 }
 
 /** Posted by [SystemSpeed] when the current speed has changed. */
