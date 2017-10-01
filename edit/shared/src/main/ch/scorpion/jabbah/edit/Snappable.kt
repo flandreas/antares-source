@@ -38,9 +38,9 @@ interface SnappableY {
 }
 
 data class SnappableXCoordinate(override val x: Double) : SnappableX {
-    override fun accept(other: SnappableX): Boolean = true
+    override fun accept(other: SnappableX): Boolean = other is SnappableXCoordinate
 }
 
 data class SnappableYCoordinate(override val y: Double) : SnappableY {
-    override fun accept(other: SnappableY): Boolean = true
+    override fun accept(other: SnappableY): Boolean = other is SnappableYCoordinate
 }
