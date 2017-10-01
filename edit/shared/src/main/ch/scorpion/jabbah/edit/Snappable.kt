@@ -10,11 +10,15 @@ package ch.scorpion.jabbah.edit
  */
 interface Snappable {
 
-    /** Holds the x-coordinates at which this [Snappable] wants to be snapped, or an empty array if this [Component]
-     * doesn't want to be snapped at x-coordinates.*/
+    /**
+     * Holds the x-coordinates at which this [Snappable] wants to be snapped, or an empty array if this [Snappable]
+     * doesn't want to be snapped at x-coordinates.
+     */
     val snappableX: DoubleArray
 
-    /** Holds the y-coordinates at which this [Snappable] wants to be snapped, or an empty array if this [Component]
-     * doesn't want to be snapped at y-coordinates.*/
+    /**
+     * Holds the y-coordinates at which this [Snappable] wants to be snapped, or an empty array if this [Snappable]
+     * doesn't want to be snapped at y-coordinates.
+     */
     val snappableY: DoubleArray
 }

@@ -77,11 +77,11 @@ interface SnapManager {
     fun snapY(x: Double, y: Double): Double
 
     /**
-     * Snaps an [Snappable] and returns the offset that must be added to the specified coordinate in order to
+     * Snaps a [Snappable] and returns the offset that must be added to the specified coordinate in order to
      * satisfy the snapping constraints.
      *
      * This method takes an optional dislocation vector defined by dx and dy, which is virtually added to the location
-     * of the [Snappable]. This is especially useful when moving a [Component] should be snapped.
+     * of the [Snappable]. This is especially useful when moving of a [Component] should be snapped.
      *
      * @param snappable the [Snappable] to be snapped
      * @param dx the x coordinate of the optional dislocation vector

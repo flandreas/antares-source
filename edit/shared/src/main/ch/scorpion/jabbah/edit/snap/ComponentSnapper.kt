@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
@@ -31,14 +32,15 @@ class ComponentSnapper(val editor: Editor, snapEnabled: Boolean) : AbstractSnapp
         /** The name of the [Color] property in [DrawProperties] for the highlight color.  */
         val PROP_SNAP_HIGHLIGHT_COLOR = "edit.snap.highlight.color"
 
-        /** The name of the [BasicStroke] property in [DrawProperties] for the hightlight stroke.  */
+        /** The name of the [Stroke] property in [DrawProperties] for the hightlight stroke.  */
         val PROP_SNAP_HIGHLIGHT_STROKE = "edit.snap.highlight.stroke"
+
+        private val LOG by logger(ComponentSnapper::class)
+
+        private val GRAVITY = 15.0
+
+        private val EMPTY_BBOX = Rectangle2D()
     }
-
-    private val LOG by logger(ComponentSnapper::class)
-
-    private val GRAVITY = 15.0
-    private val EMPTY_BBOX = Rectangle2D()
 
     /** ---- State  */
 
@@ -86,10 +88,6 @@ class ComponentSnapper(val editor: Editor, snapEnabled: Boolean) : AbstractSnapp
                     continue
                 }
 
-//                if (editor.view.selectionManager.isSelected(comp)) {
-//                    continue
-//                }
-
                 dx = snappableX[i] - x
                 if (Math.abs(dx) < Math.abs(minSnapDX)) {
                     minSnapDX = dx
@@ -124,10 +122,6 @@ class ComponentSnapper(val editor: Editor, snapEnabled: Boolean) : AbstractSnapp
                 if (snappableY[i] < y - GRAVITY || snappableY[i] > y + GRAVITY) {
                     continue
                 }
-
-//                if (editor.view.selectionManager.isSelected(comp)) {
-//                    continue
-//                }
 
                 dy = snappableY[i] - y
                 if (Math.abs(dy) < Math.abs(minSnapDY)) {
