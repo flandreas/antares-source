@@ -14,11 +14,33 @@ interface Snappable {
      * Holds the x-coordinates at which this [Snappable] wants to be snapped, or an empty array if this [Snappable]
      * doesn't want to be snapped at x-coordinates.
      */
-    val snappableX: DoubleArray
+    val snappableX: Array<SnappableX>
 
     /**
      * Holds the y-coordinates at which this [Snappable] wants to be snapped, or an empty array if this [Snappable]
      * doesn't want to be snapped at y-coordinates.
      */
-    val snappableY: DoubleArray
+    val snappableY: Array<SnappableY>
+}
+
+interface SnappableX {
+
+    val x: Double
+
+    fun accept(other: SnappableX): Boolean
+}
+
+interface SnappableY {
+
+    val y: Double
+
+    fun accept(other: SnappableY): Boolean
+}
+
+data class SnappableXCoordinate(override val x: Double) : SnappableX {
+    override fun accept(other: SnappableX): Boolean = true
+}
+
+data class SnappableYCoordinate(override val y: Double) : SnappableY {
+    override fun accept(other: SnappableY): Boolean = true
 }

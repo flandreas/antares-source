@@ -8,15 +8,12 @@ import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.Snappable
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.edit.*
 
 /**
  * Snaps at the [Component]s of a [Drawing] by using their [Snappable] interface for querying
@@ -68,10 +65,10 @@ class ComponentSnapper(val editor: Editor, snapEnabled: Boolean) : AbstractSnapp
      * Calculates the x snapping offset according to the [Component] that yields the smallest
      * snappable distance from the specified location.
      */
-    override fun doSnapX(x: Double): Double {
+    override fun doSnapX(initSnappableX: SnappableX, initDx: Double): Double {
         var minSnapDX = Double.MAX_VALUE
         var minSnapX = Double.MAX_VALUE
-        var snappableX: DoubleArray
+        var otherSnappableX: Array<SnappableX>
         var dx: Double
 
         val iter = editor.drawing.frontToBackIterator()
@@ -82,16 +79,20 @@ class ComponentSnapper(val editor: Editor, snapEnabled: Boolean) : AbstractSnapp
                 continue
             }
 
-            snappableX = comp.snappableX
-            for (i in snappableX.indices) {
-                if (snappableX[i] < x - GRAVITY || snappableX[i] > x + GRAVITY) {
+            otherSnappableX = comp.snappableX
+            for (i in otherSnappableX.indices) {
+                if (!initSnappableX.accept(otherSnappableX[i])) {
                     continue
                 }
 
-                dx = snappableX[i] - x
+                if (otherSnappableX[i].x < initDx + initSnappableX.x - GRAVITY || otherSnappableX[i].x > initDx + initSnappableX.x + GRAVITY) {
+                    continue
+                }
+
+                dx = otherSnappableX[i].x - (initDx + initSnappableX.x)
                 if (Math.abs(dx) < Math.abs(minSnapDX)) {
                     minSnapDX = dx
-                    minSnapX = snappableX[i]
+                    minSnapX = otherSnappableX[i].x
                 }
             }
         }
@@ -103,10 +104,10 @@ class ComponentSnapper(val editor: Editor, snapEnabled: Boolean) : AbstractSnapp
      * Calculates the y snapping offset according to the [Component] that yields the smallest
      * snappable distance from the specified location.
      */
-    override fun doSnapY(y: Double): Double {
+    override fun doSnapY(initSnappableY: SnappableY, initDy: Double): Double {
         var minSnapDY = Double.MAX_VALUE
         var minSnapY = Double.MAX_VALUE
-        var snappableY: DoubleArray
+        var otherSnappableY: Array<SnappableY>
         var dy: Double
 
         val iter = editor.drawing.frontToBackIterator()
@@ -117,16 +118,20 @@ class ComponentSnapper(val editor: Editor, snapEnabled: Boolean) : AbstractSnapp
                 continue
             }
 
-            snappableY = comp.snappableY
-            for (i in snappableY.indices) {
-                if (snappableY[i] < y - GRAVITY || snappableY[i] > y + GRAVITY) {
+            otherSnappableY = comp.snappableY
+            for (i in otherSnappableY.indices) {
+                if (!initSnappableY.accept(otherSnappableY[i])) {
                     continue
                 }
 
-                dy = snappableY[i] - y
+                if (otherSnappableY[i].y < initDy + initSnappableY.y - GRAVITY || otherSnappableY[i].y > initDy + initSnappableY.y + GRAVITY) {
+                    continue
+                }
+
+                dy = otherSnappableY[i].y - (initDy + initSnappableY.y)
                 if (Math.abs(dy) < Math.abs(minSnapDY)) {
                     minSnapDY = dy
-                    minSnapY = snappableY[i]
+                    minSnapY = otherSnappableY[i].y
                 }
             }
         }

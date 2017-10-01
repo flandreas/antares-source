@@ -157,6 +157,10 @@ enum class PortType(val customName: String) {
         }
     }
 
+    fun isCompatibleWith(other: PortType): Boolean {
+        return this == INOUT || other == INPUT || reverse() == other
+    }
+
     val isInput: Boolean get() = this == INPUT || this == INOUT
     val isOutput: Boolean get() = this == OUTPUT || this == INOUT
 

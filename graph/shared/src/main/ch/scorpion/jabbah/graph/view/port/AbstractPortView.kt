@@ -15,6 +15,8 @@ import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.SnappableX
+import ch.scorpion.jabbah.edit.SnappableY
 
 
 /**
@@ -168,6 +170,28 @@ abstract class AbstractPortView<T: Any>(
         }
         invalidate()
         update()
+    }
+
+    /** ---- [SnappableX] interface */
+
+    /** Delegate to owner to apply translation and rotation.*/
+    override val x: Double get() = owner!!.getPortConnectionPoint(port).x
+
+    override fun accept(other: SnappableX): Boolean {
+        return other is PortView<*>
+                && other.relativeDirection.opposite() == relativeDirection
+                && port.portType.isCompatibleWith(other.port.portType)
+    }
+
+    /** ---- [SnappableY] interface */
+
+    /** Delegate to owner to apply translation and rotation.*/
+    override val y: Double get() = owner!!.getPortConnectionPoint(port).y
+
+    override fun accept(other: SnappableY): Boolean {
+        return other is PortView<*>
+                && other.relativeDirection.opposite() == relativeDirection
+                && port.portType.isCompatibleWith(other.port.portType)
     }
 
     /** ---- [Any] */

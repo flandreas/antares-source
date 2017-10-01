@@ -7,12 +7,10 @@ import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.polyline.Polyline
 import ch.scorpion.jabbah.draw.polyline.PolylineDrawable
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Snappable
-import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -68,18 +66,18 @@ class PolylineComponent(
 
     /** ---- [Snappable] interface */
 
-    override val snappableX: DoubleArray
+    override val snappableX: Array<SnappableX>
         get() {
             if(pointsCount > 0) {
-                return doubleArrayOf(getPointAt(0).x)
+                return arrayOf(SnappableXCoordinate(polyline.getFirstPoint().x))
             }
             return super.snappableX
         }
 
-    override val snappableY: DoubleArray
+    override val snappableY: Array<SnappableY>
         get() {
             if(pointsCount > 0) {
-                return doubleArrayOf(getPointAt(0).y)
+                return arrayOf(SnappableYCoordinate(polyline.getFirstPoint().y))
             }
             return super.snappableY
         }

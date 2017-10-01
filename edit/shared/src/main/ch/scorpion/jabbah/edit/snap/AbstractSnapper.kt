@@ -1,11 +1,9 @@
 package ch.scorpion.jabbah.edit.snap
 
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
-import ch.scorpion.jabbah.edit.Snapper
-import ch.scorpion.jabbah.edit.SnapResult
-import ch.scorpion.jabbah.edit.Snappable
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.edit.*
 
 /**
  * An abstract implementation of the [Snapper] interface that can be used as a base class for developing custom
@@ -24,7 +22,7 @@ abstract class AbstractSnapper(override var snapEnabled: Boolean = true) : Abstr
 
     override fun snapX(x: Double, result: SnapResult) {
         if (snapEnabled) {
-            val newX = doSnapX(x)
+            val newX = doSnapX(SnappableXCoordinate(x), 0.0)
             if (newX != Double.MAX_VALUE) {
                 result.addDx(newX - x, newX, this)
             }
@@ -33,7 +31,7 @@ abstract class AbstractSnapper(override var snapEnabled: Boolean = true) : Abstr
 
     override fun snapY(y: Double, result: SnapResult) {
         if (snapEnabled) {
-            val newY = doSnapY(y)
+            val newY = doSnapY(SnappableYCoordinate(y), 0.0)
             if (newY != Double.MAX_VALUE) {
                 result.addDy(newY - y, newY, this)
             }
@@ -57,8 +55,8 @@ abstract class AbstractSnapper(override var snapEnabled: Boolean = true) : Abstr
         var minSnapX = 0.0
 
         for (i in snappableX.indices) {
-            val newX = doSnapX(snappableX[i] + dx)
-            val dX = newX - (snappableX[i] + dx)
+            val newX = doSnapX(snappableX[i], dx)
+            val dX = newX - (snappableX[i].x + dx)
             if (Math.abs(dX) < Math.abs(minSnapDX)) {
                 minSnapX = newX
                 minSnapDX = dX
@@ -79,8 +77,8 @@ abstract class AbstractSnapper(override var snapEnabled: Boolean = true) : Abstr
         var minSnapY = 0.0
 
         for (i in snappableY.indices) {
-            val newY = doSnapY(snappableY[i] + dy)
-            val dY = newY - (snappableY[i] + dy)
+            val newY = doSnapY(snappableY[i], dy)
+            val dY = newY - (snappableY[i].y + dy)
             if (Math.abs(dY) < Math.abs(minSnapDY)) {
                 minSnapY = newY
                 minSnapDY = dY
@@ -108,7 +106,7 @@ abstract class AbstractSnapper(override var snapEnabled: Boolean = true) : Abstr
      * @return the snapped x coordinate, or [Double.MAX_VALUE] if the x coordinate
      *      could not be snapped by this [Snapper], because it is out of range.
      */
-    protected abstract fun doSnapX(x: Double): Double
+    protected abstract fun doSnapX(initSnappableX: SnappableX, initDx: Double): Double
 
     /**
      * Snaps the specified y coordinate.
@@ -117,6 +115,6 @@ abstract class AbstractSnapper(override var snapEnabled: Boolean = true) : Abstr
      * @return the snapped y coordinate, or [Double.MAX_VALUE] if the y coordinate
      *      could not be snapped by this [Snapper], because it is out of range.
      */
-    protected abstract fun doSnapY(y: Double): Double
+    protected abstract fun doSnapY(initSnappableY: SnappableY, initDy: Double): Double
 
 }

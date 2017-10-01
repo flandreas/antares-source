@@ -30,12 +30,12 @@ class MultiComponentSnappableTest {
         // Didn't succeed in using hamcrest's containsInAnyOrder() method due to type inference problems
 
         assertThat(snapX.size, `is`(6))
-        assertThat(snapX[0], `is`(0.0))
-        assertThat(snapX[1], `is`(10.0))
-        assertThat(snapX[2], `is`(20.0))
-        assertThat(snapX[3], `is`(100.0))
-        assertThat(snapX[4], `is`(110.0))
-        assertThat(snapX[5], `is`(120.0))
+        assertThat(snapX[0].x, `is`(0.0))
+        assertThat(snapX[1].x, `is`(10.0))
+        assertThat(snapX[2].x, `is`(20.0))
+        assertThat(snapX[3].x, `is`(100.0))
+        assertThat(snapX[4].x, `is`(110.0))
+        assertThat(snapX[5].x, `is`(120.0))
     }
 
     @Test
@@ -48,11 +48,11 @@ class MultiComponentSnappableTest {
         // Didn't succeed in using hamcrest's containsInAnyOrder() method due to type inference problems
 
         assertThat(snapY.size, `is`(6))
-        assertThat(snapY[0], `is`(0.0))
-        assertThat(snapY[1], `is`(5.0))
-        assertThat(snapY[2], `is`(10.0))
-        assertThat(snapY[3], `is`(200.0))
-        assertThat(snapY[4], `is`(205.0))
-        assertThat(snapY[5], `is`(210.0))
+        assertThat(snapY[0].y, `is`(0.0))
+        assertThat(snapY[1].y, `is`(5.0))
+        assertThat(snapY[2].y, `is`(10.0))
+        assertThat(snapY[3].y, `is`(200.0))
+        assertThat(snapY[4].y, `is`(205.0))
+        assertThat(snapY[5].y, `is`(210.0))
     }
 }

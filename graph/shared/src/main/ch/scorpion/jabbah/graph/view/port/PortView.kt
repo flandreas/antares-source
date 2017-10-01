@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.edit.SnappableX
+import ch.scorpion.jabbah.edit.SnappableY
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -16,7 +18,7 @@ import ch.scorpion.jabbah.io.Storable
  * A part of a [VerticeView] that represents a graphical representation of a [Port].
  * @param T the type of signal that this [PortView]'s [Port] can consume or produce.
  */
-interface PortView<T: Any> : Drawable, Storable {
+interface PortView<T: Any> : Drawable, Storable, SnappableX, SnappableY {
 
     companion object {
 

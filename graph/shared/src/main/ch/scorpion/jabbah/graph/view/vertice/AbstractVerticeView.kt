@@ -15,8 +15,6 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Snappable
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.InputPort
@@ -33,6 +31,7 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -160,22 +159,22 @@ abstract class AbstractVerticeView<T : Vertice>(
 
     /** ---- [Snappable] interface */
 
-    override val snappableX: DoubleArray
+    override val snappableX: Array<SnappableX>
         get() {
-            val list = mutableListOf<Double>()
-            model!!.getPorts().forEach {
-                list.add(getUnconnectedPortConnectionPoint(it).x)
-            }
-            return list.toDoubleArray()
+            val list = mutableListOf<SnappableX>()
+            model!!.getPorts()
+                    .filter { !it.isConnected }
+                    .forEach { list.add(getPortView(it)!!) }
+            return list.toTypedArray()
         }
 
-    override val snappableY: DoubleArray
+    override val snappableY: Array<SnappableY>
         get() {
-            val list = mutableListOf<Double>()
-            model!!.getPorts().forEach {
-                list.add(getUnconnectedPortConnectionPoint(it).y)
-            }
-            return list.toDoubleArray()
+            val list = mutableListOf<SnappableY>()
+            model!!.getPorts()
+                    .filter { !it.isConnected }
+                    .forEach { list.add(getPortView(it)!!) }
+            return list.toTypedArray()
         }
 
     private fun getUnconnectedPortConnectionPoint(port: Port<*>): Point2D {

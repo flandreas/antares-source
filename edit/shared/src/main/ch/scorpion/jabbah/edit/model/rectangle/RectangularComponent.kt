@@ -8,14 +8,12 @@ import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Snappable
-import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.edit.*
 
 /**
  * A [RectangularComponent] is a [Component] with a [RectangularShape].
@@ -123,9 +121,15 @@ abstract class RectangularComponent(
 
     /** ---- [Snappable] interface */
 
-    override val snappableX: DoubleArray get() = doubleArrayOf(minX, centerX, maxX)
+    override val snappableX: Array<SnappableX> get() = arrayOf<SnappableX>(
+            SnappableXCoordinate(minX),
+            SnappableXCoordinate(centerX),
+            SnappableXCoordinate(maxX))
 
-    override val snappableY: DoubleArray get() = doubleArrayOf(minY, centerY, maxY)
+    override val snappableY: Array<SnappableY> get() = arrayOf<SnappableY>(
+            SnappableYCoordinate(minY),
+            SnappableYCoordinate(centerY),
+            SnappableYCoordinate(maxY))
 }
 
 open class RectangleComponent(

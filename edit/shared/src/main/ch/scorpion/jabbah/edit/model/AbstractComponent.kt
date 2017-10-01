@@ -7,12 +7,9 @@ import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.FocusManager
-import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
-import ch.scorpion.jabbah.edit.Snappable
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -29,9 +26,6 @@ abstract class AbstractComponent(
     /** ---- [Component] interface */
 
     override var id: Int = 0
-    set(value) {
-        field = value
-    }
 
     override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy? = null
 
@@ -64,9 +58,9 @@ abstract class AbstractComponent(
 
     /** ---- [Snappable] interface */
 
-    override val snappableX: DoubleArray get() = doubleArrayOf(location.x)
+    override val snappableX: Array<SnappableX> get() = arrayOf(SnappableXCoordinate(location.x))
 
-    override val snappableY: DoubleArray get() = doubleArrayOf(location.y)
+    override val snappableY: Array<SnappableY> get() = arrayOf(SnappableYCoordinate(location.y))
 
     override val propertyOwner: Any get() = this
 

@@ -82,13 +82,13 @@ class RectangularComponentTest {
     @Test
     fun shouldSnapX() {
         val rect = RectangleComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(10, 20, 30, 40))
-        assertThat(rect.snappableX.toList(), `hasItems`(10.0, 25.0, 40.0))
+        assertThat(rect.snappableX.map { it.x }.toList(), `hasItems`(10.0, 25.0, 40.0))
     }
 
     @Test
     fun shouldSnapY() {
         val rect = RectangleComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(10, 20, 30, 40))
-        assertThat(rect.snappableY.toList(), `hasItems`(20.0, 40.0, 60.0))
+        assertThat(rect.snappableY.map { it.y }.toList(), `hasItems`(20.0, 40.0, 60.0))
     }
 
     @Test

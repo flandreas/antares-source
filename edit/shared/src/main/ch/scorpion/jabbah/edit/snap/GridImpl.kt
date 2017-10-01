@@ -8,13 +8,11 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.edit.Grid
-import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.*
 
 /**
  * A standard, simple implementation of a grid that defines a two dimensional array of points that are used for snapping
@@ -98,9 +96,9 @@ class GridImpl(
 
     /** ---- [AbstractSnapper] */
 
-    override fun doSnapX(x: Double): Double = snapValue(x)
+    override fun doSnapX(initSnappableX: SnappableX, initDx: Double): Double = snapValue(initSnappableX.x + initDx)
 
-    override fun doSnapY(y: Double): Double = snapValue(y)
+    override fun doSnapY(initSnappableY: SnappableY, initDy: Double): Double = snapValue(initSnappableY.y + initDy)
 
     /** ---- [GridImpl] */
 
