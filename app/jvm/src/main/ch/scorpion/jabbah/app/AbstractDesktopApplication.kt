@@ -120,7 +120,8 @@ abstract class AbstractDesktopApplication(
 
     override fun saveAs(): Boolean {
         val fileChooser = JFileChooser()
-        fileChooser.isAcceptAllFileFilterUsed = false
+        fileChooser.isAcceptAllFileFilterUsed = true
+        fileChooser.isFileHidingEnabled = true
         fileChooser.fileFilter = ApplicationFileFilter(this)
         if (savable is FileSavable) {
             if (!(savable as FileSavable).filePath.isNullOrEmpty()) {
