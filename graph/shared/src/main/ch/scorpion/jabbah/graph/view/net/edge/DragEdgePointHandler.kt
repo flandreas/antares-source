@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.view.EdgeView
 
@@ -28,6 +29,11 @@ class DragEdgePointHandler : EdgeViewInputEventHandler() {
             }
 
             highlight!!.updateMouseLocation(context.x, context.y)
+            if (highlight!!.pointIndex != null) {
+                context.view.setCursor(Cursor.CROSSHAIR)
+            } else {
+                context.view.setCursor(Cursor.DEFAULT)
+            }
             return this
         }
 

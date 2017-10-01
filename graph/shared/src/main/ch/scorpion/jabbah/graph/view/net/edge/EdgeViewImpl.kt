@@ -586,12 +586,22 @@ open class EdgeViewImpl<T: Any>(
         get() = Point2D(polyline.getFirstPoint())
 
     override fun prepareMoveBy(components: Collection<Locatable>) {
-        suspendOriginLayout = origin != null && components.contains(origin as Component)
-        suspendDestinationLayout = destination != null && components.contains(destination as Component)
+        val originMoves = origin != null && components.contains(origin as Locatable)
+        val destMoves = destination != null && components.contains(destination as Locatable)
+        val thisMoves = originMoves && destMoves
+
+        suspendOriginLayout = originMoves && thisMoves
+        suspendDestinationLayout = destMoves && thisMoves
     }
 
     override fun moveBy(dx: Double, dy: Double) {
         LOG.debug("moveBy")
+
+        // An EdgeView does only move if all ConnectableView it is connected to are moved as well
+        if (origin != null && !suspendOriginLayout || destination != null && !suspendDestinationLayout) {
+            return
+        }
+
         if (origin == null) {
             originEndpointView.moveBy(dx, dy)
         }
