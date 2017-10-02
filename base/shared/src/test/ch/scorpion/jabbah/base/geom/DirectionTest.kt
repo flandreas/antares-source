@@ -69,4 +69,28 @@ class DirectionTest {
         assertThat(Direction.WEST.opposite(), `is`(Direction.EAST))
         assertThat(Direction.SOUTH.opposite(), `is`(Direction.NORTH))
     }
+
+    @Test
+    fun shouldBeHorizontal() {
+        assertThat(Direction.EAST.isHorizontal(), `is`(true))
+        assertThat(Direction.WEST.isHorizontal(), `is`(true))
+    }
+
+    @Test
+    fun shouldNotBeHorizontal() {
+        assertThat(Direction.NORTH.isHorizontal(), `is`(false))
+        assertThat(Direction.SOUTH.isHorizontal(), `is`(false))
+    }
+
+    @Test
+    fun shouldBeVertical() {
+        assertThat(Direction.NORTH.isVertical(), `is`(true))
+        assertThat(Direction.SOUTH.isVertical(), `is`(true))
+    }
+
+    @Test
+    fun shouldNotBeVertical() {
+        assertThat(Direction.WEST.isVertical(), `is`(false))
+        assertThat(Direction.EAST.isVertical(), `is`(false))
+    }
 }

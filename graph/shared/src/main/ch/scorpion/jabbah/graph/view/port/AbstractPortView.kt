@@ -179,7 +179,8 @@ abstract class AbstractPortView<T: Any>(
 
     override fun accept(other: SnappableX): Boolean {
         return other is PortView<*>
-                && other.relativeDirection.opposite() == relativeDirection
+                && relativeDirection.isVertical()
+                && relativeDirection == other.relativeDirection.opposite()
                 && port.portType.isCompatibleWith(other.port.portType)
     }
 
@@ -190,7 +191,8 @@ abstract class AbstractPortView<T: Any>(
 
     override fun accept(other: SnappableY): Boolean {
         return other is PortView<*>
-                && other.relativeDirection.opposite() == relativeDirection
+                && relativeDirection.isHorizontal()
+                && relativeDirection == other.relativeDirection.opposite()
                 && port.portType.isCompatibleWith(other.port.portType)
     }
 
