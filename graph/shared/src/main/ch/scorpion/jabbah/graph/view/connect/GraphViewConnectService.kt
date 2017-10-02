@@ -94,7 +94,7 @@ interface GraphViewConnectService {
     /**
      * Creates a new [EdgeView] in the specified [GraphView] and connects it with the output
      * [PortView] of an origin [VerticeView] and the input [PortView] of a destination
-     * [VerticeView], and layouts the [EdgeView].
+     * [VerticeView], adds it to the [GraphView], and layouts the [EdgeView].
      */
     fun <T: Any> addConnection(
             graphView: GraphView<GraphElementView<*>>,
@@ -107,6 +107,7 @@ interface GraphViewConnectService {
      * and connects the [NodeView] with a destination [Port], if available.
      *
      * The created [NodeView] is placed at the first segment point of the [newEdgeView].
+     * Adds the [newEdgeView] to the [graphView].
      */
     fun <T: Any> split(
             graphView: GraphView<GraphElementView<*>>,

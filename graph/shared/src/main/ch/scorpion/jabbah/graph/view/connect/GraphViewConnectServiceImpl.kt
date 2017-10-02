@@ -186,11 +186,11 @@ class GraphViewConnectServiceImpl(
         // Update view of head part of EdgeView that is being split
         val origSplittedEVConnState = splittedEdgeView.connectionState
         when(origSplittedEVConnState) {
-            EdgeViewConnectionState.Input, EdgeViewConnectionState.Unconnected -> {
+            EdgeViewConnectionState.Input -> {
                 nodeView.location = newEdgeView.polyline.getLastPoint()
                 connectToOrigin(splittedEdgeView, nodeView, null, true)
             }
-            EdgeViewConnectionState.Output -> {
+            EdgeViewConnectionState.Output, EdgeViewConnectionState.Unconnected -> {
                 nodeView.location = newEdgeView.polyline.getFirstPoint()
                 connectToDestination(splittedEdgeView, nodeView, null, true)
             }
