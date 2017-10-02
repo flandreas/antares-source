@@ -277,7 +277,9 @@ class GraphPanel(
             updateState()
             editor.addPropertyChangeListener(object : PropertyChangeListener<Any> {
                 override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-                    updateState()
+                    if (e.name == Editor.PROP_COMPONENT_SNAP) {
+                        updateState()
+                    }
                 }
             })
         }

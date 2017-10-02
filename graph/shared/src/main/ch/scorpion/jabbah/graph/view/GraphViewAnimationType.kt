@@ -12,7 +12,8 @@ enum class GraphViewAnimationType(val customName: String) {
         val PROP_GRAPH_VIEW_ANIMATION_TYPE = "graph.view.graphViewAnimationType"
 
         fun withName(customName: String): GraphViewAnimationType {
-            return GraphViewAnimationType.values().firstOrNull { it.customName == customName } ?: throw IllegalArgumentException("unknown type '$customName'")
+            return GraphViewAnimationType.values().firstOrNull { it.customName == customName }
+                    ?: throw IllegalArgumentException("unknown type '$customName'")
         }
     }
 }
@@ -24,19 +25,17 @@ class CurrentGraphViewAnimationType(
         private val eventBus: EventBus
 ) {
 
-    companion object {
-        private val PROP_NAME = "antares.view.CurrentGraphViewAnimationType"
-    }
-
     constructor(initGraphViewAnimationType: GraphViewAnimationType): this(initGraphViewAnimationType, BaseModule.eventBus)
-    constructor(): this(GraphViewAnimationType.withName(BaseModule.properties.getString(PROP_NAME, GraphViewAnimationType.None.customName)))
+
+    constructor(): this(GraphViewAnimationType.withName(BaseModule.properties.getString(
+            GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE, GraphViewAnimationType.None.customName)))
 
     var graphViewAnimationType: GraphViewAnimationType = initGraphViewAnimationType
         set(value) {
             if (field == value) {
                 return
             }
-            BaseModule.properties.set(PROP_NAME, value.customName)
+            BaseModule.properties.set(GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE, value.customName)
             field = value
             eventBus.post(CurrentGraphAnimationTypeEvent(field))
         }

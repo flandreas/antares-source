@@ -29,7 +29,7 @@ open class EditorImpl(
 
     private val changeSupport = PropertyChangeSupport<Any>(this)
 
-    private val componentSnapper = ComponentSnapper(this, false)
+    private val componentSnapper = ComponentSnapper(this)
 
     /** ---- [Editor] interface */
 

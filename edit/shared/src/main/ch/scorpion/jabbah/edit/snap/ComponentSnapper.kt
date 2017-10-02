@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.*
 
@@ -19,18 +20,20 @@ import ch.scorpion.jabbah.edit.*
  * Snaps at the [Component]s of a [Drawing] by using their [Snappable] interface for querying
  * their desired snap locations.
  */
-class ComponentSnapper(val editor: Editor, snapEnabled: Boolean) : AbstractSnapper(snapEnabled) {
-
-    @Suppress("unused")
-    constructor(editor: Editor) : this(editor, true)
+class ComponentSnapper(
+        val editor: Editor
+) : AbstractSnapper(BaseModule.properties.getBooleanSetting(SETTING_ENABLED, false)) {
 
     companion object {
 
         /** The name of the [Color] property in [DrawProperties] for the highlight color.  */
         val PROP_SNAP_HIGHLIGHT_COLOR = "edit.snap.highlight.color"
 
-        /** The name of the [Stroke] property in [DrawProperties] for the hightlight stroke.  */
+        /** The name of the [Stroke] property in [DrawProperties] for the highlight stroke.  */
         val PROP_SNAP_HIGHLIGHT_STROKE = "edit.snap.highlight.stroke"
+
+        /** The name of the [Boolean] property in the [DrawProperties] for the enabled property. */
+        private val SETTING_ENABLED = "edit.componentSnap.enabled"
 
         private val LOG by logger(ComponentSnapper::class)
 
@@ -60,6 +63,15 @@ class ComponentSnapper(val editor: Editor, snapEnabled: Boolean) : AbstractSnapp
     }
 
     /** ---- {@link Snapper} interface */
+
+    override var snapEnabled: Boolean
+        get() = super.snapEnabled
+        set(value) {
+            if (value != snapEnabled) {
+                super.snapEnabled = value
+                BaseModule.properties.set(SETTING_ENABLED, value)
+            }
+        }
 
     /**
      * Calculates the x snapping offset according to the [Component] that yields the smallest

@@ -77,6 +77,15 @@ open class Properties {
         return userProperties.keys.iterator()
     }
 
+    /** TODO This should really be in a separate Settings class.*/
+    fun getBooleanSetting(name: String, default: Boolean): Boolean {
+        val setting: String? = getOptional(name)
+        if (StringUtils.isEmpty(setting)) {
+            return default
+        }
+        return setting?.toUpperCase() == "TRUE"
+    }
+
     protected fun <T> get(name: String, defaultValue: T? = null): T {
         val value = get(name) as T
         if (value != null) {
