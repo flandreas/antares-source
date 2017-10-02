@@ -74,6 +74,14 @@ class ContainerPanel(
         editor.view.applicationContext = GraphApplicationContext()
     }
 
+    /** Notifies this [ContainerPanel] that is has been activated and that it is now visible.*/
+    fun activated() {
+        // Update the UI of the JTree in order to recalculate the width of the TreeRenderer's JLabels,
+        // which are obviously cached by the JTree's UIManager. The tree nodes display the names of domain object,
+        // and these names might have been changed while the ContainerPanel wasn't active
+        treeView.updateUI()
+    }
+
     fun setData(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
         this.graphView = graphView
         editor.view.drawing.removeDrawableContainerListener(balancer)
@@ -93,6 +101,7 @@ class ContainerPanel(
         val treeViewScrollPanel = JScrollPane(treeView, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
 
         val leftSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+        leftSplitPane.border = null
         leftSplitPane.dividerLocation = 600
         leftSplitPane.add(treeViewScrollPanel)
         leftSplitPane.add(propertyPanel)

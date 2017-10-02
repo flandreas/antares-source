@@ -131,6 +131,7 @@ class GraphFrame(
 
             displayedView = DisplayedView.Container
             viewManager.activeView = containerPanel.editor.view
+            containerPanel.activated()
             eventBus.post(GraphFrameEvent(this, displayedView))
         }
     }
