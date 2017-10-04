@@ -43,6 +43,9 @@ object Themes {
         set(value) {
             if (field != value) {
                 field = value
+                // BUG This illegally overwrites the values in the singleton Properties with values of the UITheme,
+                // which is not desired e.g. for Handle.PROP_FILL_COLOR. Example: black in Theme "CRT", white in Theme "Black & White"
+                // Seems like UIThemes are a bad concept!
                 field.activateIn(uiStyleProvider as StyleRepository)
             }
         }

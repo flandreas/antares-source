@@ -14,19 +14,7 @@ import ch.scorpion.jabbah.base.time.TimeService
  */
 object BaseModule : AbstractModule() {
 
-    /**
-     * Clients should NOT keep a reference to the [Properties] in this property, because it might be replaced
-     * with another implementation while bootstrapping.
-     * TODO Refactoring: Find a way to solve this better
-     */
-	var properties: Properties = Properties()
-        // Copy all current content to the new [Properties] object, which allows replacing this [Properties] object
-        // (which has already been loaded from persistent store) with a more specific implementation from a
-        // higher level module while bootstrapping.
-        set(value) {
-            value.copyFrom(field)
-            field = value
-        }
+	val properties: Properties = Properties()
 
     var settings: Settings = Settings()
 

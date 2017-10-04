@@ -46,7 +46,7 @@ open class Properties {
         return getOptional<T>(name) ?: throw NoSuchElementException("no property '$name'")
     }
 
-    protected fun <T> getOptional(name: String): T? {
+    open fun <T> getOptional(name: String): T? {
         return values.get(name) as T?
     }
 }

@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.draw.view.DrawViewModule
  */
 object DrawModule : AbstractModule() {
 
-    var properties: DrawProperties = DrawProperties()
+    var properties: DrawProperties = DrawProperties(BaseModule.properties)
 
     /**
      * Creates a [PolylineShape] for the specified [Point2D]s. Must be implemented platform-specifically.
@@ -33,8 +33,6 @@ object DrawModule : AbstractModule() {
     var imageLoader: ImageLoader = { throw UnsupportedOperationException() }
 
     override fun initialize() {
-        BaseModule.properties = properties
-
         BaseModule.require()
         DrawGraphicsModule.require()
         DrawStyleModule.require()
