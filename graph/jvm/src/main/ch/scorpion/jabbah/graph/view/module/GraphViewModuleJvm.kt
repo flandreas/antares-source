@@ -48,17 +48,17 @@ object GraphViewModuleJvm : AbstractModule() {
     }
 
     private fun fillProperties(properties: Properties) {
-        properties.predefine(NavigationStackView.PROP_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 11))
-        properties.predefine(NavigationStackView.PROP_HEAD_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.BOLD.value, 11))
-        properties.predefine(NavigationStackView.PROP_BACKGROUND_COLOR, Color.WHITE)
-        properties.predefine(NavigationStackView.PROP_BORDER_COLOR, Color(224, 224, 224))
-        properties.predefine(NavigationStackView.PROP_TEXT_COLOR, Color.BLACK)
-        properties.predefine(NavigationStackView.PROP_HOVER_BACKGROUND_COLOR, Color.GRAY)
-        properties.predefine(NavigationStackView.PROP_HOVER_BORDER_COLOR, Color.GRAY)
-        properties.predefine(NavigationStackView.PROP_HOVER_TEXT_COLOR, Color.WHITE)
-        properties.predefine(NavigationStackView.PROP_HEAD_BACKGROUND_COLOR, Color.LIGHT_GRAY)
-        properties.predefine(NavigationStackView.PROP_HEAD_BORDER_COLOR, Color.LIGHT_GRAY)
-        properties.predefine(NavigationStackView.PROP_HEAD_TEXT_COLOR, Color.BLACK)
+        properties.set(NavigationStackView.PROP_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 11))
+        properties.set(NavigationStackView.PROP_HEAD_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.BOLD.value, 11))
+        properties.set(NavigationStackView.PROP_BACKGROUND_COLOR, Color.WHITE)
+        properties.set(NavigationStackView.PROP_BORDER_COLOR, Color(224, 224, 224))
+        properties.set(NavigationStackView.PROP_TEXT_COLOR, Color.BLACK)
+        properties.set(NavigationStackView.PROP_HOVER_BACKGROUND_COLOR, Color.GRAY)
+        properties.set(NavigationStackView.PROP_HOVER_BORDER_COLOR, Color.GRAY)
+        properties.set(NavigationStackView.PROP_HOVER_TEXT_COLOR, Color.WHITE)
+        properties.set(NavigationStackView.PROP_HEAD_BACKGROUND_COLOR, Color.LIGHT_GRAY)
+        properties.set(NavigationStackView.PROP_HEAD_BORDER_COLOR, Color.LIGHT_GRAY)
+        properties.set(NavigationStackView.PROP_HEAD_TEXT_COLOR, Color.BLACK)
     }
 
     private fun configurePropertyRenderer(registry: PropertyRendererRegistry) {

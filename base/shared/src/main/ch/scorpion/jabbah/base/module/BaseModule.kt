@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.base.module
 
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.time.ControlledTimeService
@@ -26,6 +27,8 @@ object BaseModule : AbstractModule() {
             value.copyFrom(field)
             field = value
         }
+
+    var settings: Settings = Settings()
 
     var eventBus: EventBus = EventBusImpl()
 

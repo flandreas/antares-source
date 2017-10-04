@@ -54,7 +54,7 @@ object Themes {
 
     fun setCurrent(name: String) {
         _current = get(name) ?: throw NoSuchElementException("No theme with name '$name' defined")
-        BaseModule.properties.set(PROP_THEME, name)
+        BaseModule.settings.set(PROP_THEME, name)
         BaseModule.eventBus.post(ThemeEvent(_current))
     }
 
@@ -88,7 +88,7 @@ object Themes {
             this.themes.clear()
             this.themes.addAll(themes)
 
-            val storedThemeName = BaseModule.properties.getString(PROP_THEME, "")
+            val storedThemeName = BaseModule.settings.getString(PROP_THEME, "")
             if (StringUtils.isNotEmpty(storedThemeName) && this.themes.firstOrNull { it.name == storedThemeName } != null) {
                 setCurrent(storedThemeName)
             } else {

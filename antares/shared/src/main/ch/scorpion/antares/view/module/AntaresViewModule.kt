@@ -93,33 +93,33 @@ object AntaresViewModule : AbstractModule() {
     }
 
     private fun customizeProperties(properties: Properties) {
-        properties.predefine(Style.PROP_FOREGROUND_COLOR, Themes.get<GraphTheme>().vertice.color.foregroundColor)
-        properties.predefine(Style.PROP_BACKGROUND_COLOR, Themes.get<GraphTheme>().vertice.color.backgroundColor)
-        properties.predefine(Style.PROP_TEXT_COLOR, Themes.get<GraphTheme>().vertice.color.textColor)
-        properties.predefine(Style.PROP_STROKE, Themes.get<GraphTheme>().vertice.stroke)
-        properties.predefine(Style.PROP_FONT, Themes.get<GraphTheme>().vertice.font)
+        properties.set(Style.PROP_FOREGROUND_COLOR, Themes.get<GraphTheme>().vertice.color.foregroundColor)
+        properties.set(Style.PROP_BACKGROUND_COLOR, Themes.get<GraphTheme>().vertice.color.backgroundColor)
+        properties.set(Style.PROP_TEXT_COLOR, Themes.get<GraphTheme>().vertice.color.textColor)
+        properties.set(Style.PROP_STROKE, Themes.get<GraphTheme>().vertice.stroke)
+        properties.set(Style.PROP_FONT, Themes.get<GraphTheme>().vertice.font)
 
-        properties.predefine(Grid.PROP_GRID_DEFAULT_DISTANCE, Look.GRID)
-        properties.predefine(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR, 2)
-        properties.predefine(ComponentSnapper.PROP_SNAP_HIGHLIGHT_COLOR, Themes.get<GraphTheme>().selection.foregroundColor)
-        properties.predefine(ComponentSnapper.PROP_SNAP_HIGHLIGHT_STROKE, Stroke(0.5f))
+        properties.set(Grid.PROP_GRID_DEFAULT_DISTANCE, Look.GRID)
+        properties.set(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR, 2)
+        properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_COLOR, Themes.get<GraphTheme>().selection.foregroundColor)
+        properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_STROKE, Stroke(0.5f))
 
-        properties.predefine(OriginIndicator.PROP_SELECTION_COLOR, Themes.get<GraphTheme>().selection.foregroundColor)
+        properties.set(OriginIndicator.PROP_SELECTION_COLOR, Themes.get<GraphTheme>().selection.foregroundColor)
 
-        properties.predefine(Handle.PROP_BORDER_COLOR, Themes.get<GraphTheme>().selection.foregroundColor)
-        properties.predefine(Handle.PROP_FILL_COLOR, Themes.get<GraphTheme>().selection.backgroundColor)
+        properties.set(Handle.PROP_BORDER_COLOR, Themes.get<GraphTheme>().selection.foregroundColor)
+        properties.set(Handle.PROP_FILL_COLOR, Themes.get<GraphTheme>().selection.backgroundColor)
 
-        properties.predefine(AutoConnectorHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.foregroundColor)
-        properties.predefine(DragEdgePointHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.foregroundColor)
+        properties.set(AutoConnectorHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.foregroundColor)
+        properties.set(DragEdgePointHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.foregroundColor)
 
-        properties.predefine(CircuitInOutView.PROP_INPUT_ICON_PATH, "/img/input.png")
-        properties.predefine(CircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")
-        properties.predefine(CircuitInOutView.PROP_INOUT_ICON_PATH, "/img/inout.png")
-        properties.predefine(SwitchView.PROP_ICON_PATH, "/img/switch.png")
-        properties.predefine(ProbeView.PROP_ICON_PATH, "/img/probe.png")
-        properties.predefine(LEDView.PROP_ICON_PATH, "/img/led.png")
-        properties.predefine(LEDMatrixView.PROP_ICON_PATH, "/img/led-matrix.png")
-        properties.predefine(SevenSegmentDisplayView.PROP_ICON_PATH, "/img/7segment.png")
+        properties.set(CircuitInOutView.PROP_INPUT_ICON_PATH, "/img/input.png")
+        properties.set(CircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")
+        properties.set(CircuitInOutView.PROP_INOUT_ICON_PATH, "/img/inout.png")
+        properties.set(SwitchView.PROP_ICON_PATH, "/img/switch.png")
+        properties.set(ProbeView.PROP_ICON_PATH, "/img/probe.png")
+        properties.set(LEDView.PROP_ICON_PATH, "/img/led.png")
+        properties.set(LEDMatrixView.PROP_ICON_PATH, "/img/led-matrix.png")
+        properties.set(SevenSegmentDisplayView.PROP_ICON_PATH, "/img/7segment.png")
     }
 
     private fun configureTypeMap(typeMap: TypeMap) {

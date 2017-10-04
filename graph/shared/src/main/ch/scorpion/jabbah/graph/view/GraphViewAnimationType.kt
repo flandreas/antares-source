@@ -22,12 +22,10 @@ data class CurrentGraphAnimationTypeEvent(val graphViewAnimationType: GraphViewA
 
 class CurrentGraphViewAnimationType(
         initGraphViewAnimationType: GraphViewAnimationType,
-        private val eventBus: EventBus
+        private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
-    constructor(initGraphViewAnimationType: GraphViewAnimationType): this(initGraphViewAnimationType, BaseModule.eventBus)
-
-    constructor(): this(GraphViewAnimationType.withName(BaseModule.properties.getString(
+    constructor(): this(GraphViewAnimationType.withName(BaseModule.settings.getString(
             GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE, GraphViewAnimationType.None.customName)))
 
     var graphViewAnimationType: GraphViewAnimationType = initGraphViewAnimationType
@@ -35,7 +33,7 @@ class CurrentGraphViewAnimationType(
             if (field == value) {
                 return
             }
-            BaseModule.properties.set(GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE, value.customName)
+            BaseModule.settings.set(GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE, value.customName)
             field = value
             eventBus.post(CurrentGraphAnimationTypeEvent(field))
         }

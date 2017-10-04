@@ -17,11 +17,11 @@ object EditSnapModule : AbstractModule() {
     }
 
     private fun fillProperties(properties: Properties) {
-        properties.predefine(Grid.PROP_GRID_DEFAULT_DISTANCE, 10)
-        properties.predefine(Grid.PROP_GRID_MIN_DISTANCE, 8)
-        properties.predefine(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR, 2)
+        properties.set(Grid.PROP_GRID_DEFAULT_DISTANCE, 10)
+        properties.set(Grid.PROP_GRID_MIN_DISTANCE, 8)
+        properties.set(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR, 2)
 
-        properties.predefine(ComponentSnapper.PROP_SNAP_HIGHLIGHT_COLOR, Color.ORANGE)
-        properties.predefine(ComponentSnapper.PROP_SNAP_HIGHLIGHT_STROKE, Stroke(1.0f))
+        properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_COLOR, Color.ORANGE)
+        properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_STROKE, Stroke(1.0f))
     }
 }

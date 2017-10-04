@@ -29,11 +29,11 @@ object GateMnemonic {
     private val SWITCH_STROKE = Stroke(width = 1.5f)
     private val ZOOM_LIMIT = 2.0
 
-    var enabled: Boolean = BaseModule.properties.getString(PROP_ENABLED, "false") == "true"
+    var enabled: Boolean = BaseModule.settings.getString(PROP_ENABLED, "false") == "true"
         set(value) {
             if (field != value) {
                 field = value
-                BaseModule.properties.set(PROP_ENABLED, field)
+                BaseModule.settings.set(PROP_ENABLED, field)
                 BaseModule.eventBus.post(GateMnemonicsEvent())
             }
         }

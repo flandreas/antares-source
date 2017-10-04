@@ -120,8 +120,8 @@ class GraphPanel(
     }
 
     fun dispose() {
-        BaseModule.properties.set("graphPanel.mainSplitPos", mainSplitPane.dividerLocation)
-        BaseModule.properties.set("graphPanel.librarySplitPos", librarySplitPane.dividerLocation)
+        BaseModule.settings.set("graphPanel.mainSplitPos", mainSplitPane.dividerLocation)
+        BaseModule.settings.set("graphPanel.librarySplitPos", librarySplitPane.dividerLocation)
     }
 
     private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler {
@@ -148,7 +148,7 @@ class GraphPanel(
         librarySplitPane.border = null
         librarySplitPane.add(libraryPanel)
         librarySplitPane.add(libraryPropertyPanel)
-        librarySplitPane.dividerLocation = BaseModule.properties.getInt("graphPanel.librarySplitPos", 700)
+        librarySplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 700)
 
         val toolTabbedPane = JTabbedPane()
         toolTabbedPane.border = null
@@ -158,7 +158,7 @@ class GraphPanel(
 
         mainSplitPane.add(toolTabbedPane)
         mainSplitPane.add(graphNavigationPanel)
-        mainSplitPane.dividerLocation = BaseModule.properties.getInt("graphPanel.mainSplitPos", 250)
+        mainSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.mainSplitPos", 250)
         mainSplitPane.border = null
 
         add(mainSplitPane, BorderLayout.CENTER)

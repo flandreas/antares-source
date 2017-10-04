@@ -26,7 +26,7 @@ class StylableImplTest {
 
         @BeforeClass @JvmStatic
         fun setup() {
-            DrawModule.properties.predefine(Style.PROP_FOREGROUND_COLOR, propertyColor)
+            DrawModule.properties.set(Style.PROP_FOREGROUND_COLOR, propertyColor)
         }
     }
 

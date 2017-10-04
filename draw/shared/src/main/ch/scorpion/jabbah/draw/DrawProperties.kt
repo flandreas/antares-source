@@ -12,19 +12,19 @@ import ch.scorpion.jabbah.base.exception.NoSuchElementException
  */
 class DrawProperties : Properties() {
 
-    fun getFont(name: String, defaultValue: Font? = null): Font {
-        return get(name, defaultValue)
+    fun getFont(name: String): Font {
+        return get(name)
     }
 
-    fun getColor(name: String, defaultValue: Color? = null): Color {
-        return get(name, defaultValue)
+    fun getColor(name: String): Color {
+        return get(name)
     }
 
     fun getOptionalColor(name: String): Color? {
         return getOptional(name)
     }
 
-    fun getStroke(name: String, defaultValue: Stroke? = null): Stroke {
-        return get(name, defaultValue)
+    fun getStroke(name: String): Stroke {
+        return get(name)
     }
 }

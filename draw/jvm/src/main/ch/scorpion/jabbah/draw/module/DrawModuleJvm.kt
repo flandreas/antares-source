@@ -37,6 +37,6 @@ object DrawModuleJvm : AbstractModule() {
     }
 
     private fun fillProperties(properties: Properties) {
-        properties.predefine(AbstractViewAction.PROP_ZOOM_STEP, 1.5f)
+        properties.set(AbstractViewAction.PROP_ZOOM_STEP, 1.5f)
     }
 }

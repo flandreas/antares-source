@@ -137,13 +137,13 @@ object GraphViewModule : AbstractModule() {
     }
 
     private fun fillProperties(properties: Properties) {
-        properties.predefine(PortView.PROP_SENSITIVE_AREA, 10)
-        properties.predefine(PortView.PROP_HIGHLIGHT, ConnectionPointHighlightCircle())
-        properties.predefine(DragEdgePointHighlight.PROP_COLOR, Color.BLACK)
-        properties.predefine(DragEdgePointHighlight.PROP_HALF_SIZE, 6)
-        properties.predefine(ConnectionPointHighlightCircle.PROP_COLOR, Themes.get<EditTheme>().selection.foregroundColor)
-        properties.predefine(OriginIndicator.PROP_COLOR, Color.BLUE)
-        properties.predefine(OriginIndicator.PROP_SELECTION_COLOR, Color.RED)
+        properties.set(PortView.PROP_SENSITIVE_AREA, 10)
+        properties.set(PortView.PROP_HIGHLIGHT, ConnectionPointHighlightCircle())
+        properties.set(DragEdgePointHighlight.PROP_COLOR, Color.BLACK)
+        properties.set(DragEdgePointHighlight.PROP_HALF_SIZE, 6)
+        properties.set(ConnectionPointHighlightCircle.PROP_COLOR, Themes.get<EditTheme>().selection.foregroundColor)
+        properties.set(OriginIndicator.PROP_COLOR, Color.BLUE)
+        properties.set(OriginIndicator.PROP_SELECTION_COLOR, Color.RED)
     }
 
     private fun configureSelectionModels(factory: SelectionModelFactory) {

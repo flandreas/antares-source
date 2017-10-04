@@ -6,98 +6,94 @@ import ch.scorpion.jabbah.base.exception.NoSuchElementException
 /**
  * Contains system-wide available properties defined as name/value pairs.
  *
- * Distinguishes between predefined system properties, which are not persistent, and persistent user-defined properties
- * that can overwrite the system properties.
- *
  * All explicit getter functions without a default parameter throw a [NoSuchElementException]
  * if the value is absent.
- *
- * TODO Provide methods to load and store user properties
- * TODO Design: Separate system properties and user settings
  */
 open class Properties {
 
-    private val LOG by logger(Properties::class)
+    companion object {
+        private val LOG by logger(Properties::class)
+    }
 
-    /** Contains the predefined system properties as well as the user properties. Not persistent.*/
-    private val allProperties: MutableMap<String,Any> by lazy { mutableMapOf<String,Any>() }
+    private val values: MutableMap<String,Any> by lazy { mutableMapOf<String,Any>() }
 
-    /** Contains only the user properties. Persistent.*/
-    private val userProperties: MutableMap<String,Any> by lazy { mutableMapOf<String,Any>() }
+    fun getString(name: String): String {
+        return get(name)
+    }
 
-    /** Resets this [Properties] object by clearing all contained properties. Uses for testing.*/
-    fun reset() {
-        allProperties.clear()
-        userProperties.clear()
+    fun getBoolean(name: String): Boolean {
+        return get(name)
+    }
+
+    fun getInt(name: String): Int {
+        return get(name)
+    }
+
+    fun getFloat(name: String): Float {
+        return get(name)
     }
 
     fun copyFrom(p: Properties) {
-        allProperties.putAll(p.allProperties)
-        userProperties.putAll(p.userProperties)
+        values.putAll(p.values)
     }
 
     /** Adds a predefined system property. Typically called at application start-up.*/
-    fun predefine(name: String, value: Any) {
-        allProperties.put(name, value)
+    fun set(name: String, value: Any) {
+        values.put(name, value)
+    }
+
+    fun <T> get(name: String): T {
+        return getOptional<T>(name) ?: throw NoSuchElementException("no property '$name'")
+    }
+
+    protected fun <T> getOptional(name: String): T? {
+        return values.get(name) as T?
+    }
+}
+
+class Settings {
+
+    companion object {
+        private val LOG by logger(Settings::class)
+    }
+
+    private val values: MutableMap<String, String> by lazy { mutableMapOf<String,String>() }
+
+    fun getString(name: String, defaultValue: String): String {
+        return getOptional(name) ?: defaultValue
+    }
+
+    fun getBoolean(name: String, defaultValue: Boolean): Boolean {
+        val setting: String? = getOptional(name)
+        if (StringUtils.isEmpty(setting)) {
+            return defaultValue
+        }
+        return setting?.toUpperCase() == "TRUE"
+    }
+
+    fun getInt(name: String, defaultValue: Int): Int {
+        return getOptional(name)?.toInt() ?: defaultValue
+    }
+
+    fun getFloat(name: String, defaultValue: Float): Float {
+        throw UnsupportedOperationException("not implemented")
+    }
+
+    fun getKeys(): Iterator<String> {
+        return values.keys.iterator()
+    }
+
+    fun get(name: String): String {
+        return values[name]!!
     }
 
     /** Adds a user-defined property.*/
     fun set(name: String, value: Any) {
         LOG.debug("Setting $name to $value")
-        userProperties.put(name, value)
-        allProperties.put(name, value)
+        values.put(name, value.toString())
     }
 
-    fun getString(name: String, defaultValue: String? = null): String {
-        return get(name, defaultValue)
-    }
-
-    @Suppress("unused")
-    fun getBoolean(name: String, defaultValue: Boolean? = null): Boolean {
-        return get(name, defaultValue)
-    }
-
-    fun getInt(name: String, defaultValue: Int? = null): Int {
-        val value = get(name) ?: return defaultValue!!
-        if (value is Int) {
-            return value
-        }
-        return (value as String).toInt()
-    }
-
-    fun getFloat(name: String, defaultValue: Float? = null): Float {
-        return get(name, defaultValue)
-    }
-
-    fun get(name: String): Any? {
-        return allProperties.get(name)
-    }
-
-    fun getUserPropertyKeys(): Iterator<String> {
-        return userProperties.keys.iterator()
-    }
-
-    /** TODO This should really be in a separate Settings class.*/
-    fun getBooleanSetting(name: String, default: Boolean): Boolean {
-        val setting: String? = getOptional(name)
-        if (StringUtils.isEmpty(setting)) {
-            return default
-        }
-        return setting?.toUpperCase() == "TRUE"
-    }
-
-    protected fun <T> get(name: String, defaultValue: T? = null): T {
-        val value = get(name) as T
-        if (value != null) {
-            return value
-        }
-        if (defaultValue != null) {
-            return defaultValue
-        }
-        throw NoSuchElementException("no property '$name'")
-    }
-
-    protected fun <T> getOptional(name: String): T? {
-        return get(name) as T
+    private fun getOptional(name: String): String? {
+        return values[name]
     }
 }

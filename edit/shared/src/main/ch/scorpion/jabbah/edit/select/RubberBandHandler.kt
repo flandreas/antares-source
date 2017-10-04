@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
  *
  * @param rubberBand the drawable [RubberBand] that is controlled by this [RubberBandHandler]
  */
-class RubberBandHandler(val rubberBand: RubberBand) : InputEventHandlerAdapter<EditInputEventContext>() {
+class RubberBandHandler(private val rubberBand: RubberBand) : InputEventHandlerAdapter<EditInputEventContext>() {
 
     companion object {
         val PROP_SELECT_STRATEGY = "edit.select.rubberBandHandler.selectionStrategy"
@@ -59,7 +59,7 @@ class RubberBandHandler(val rubberBand: RubberBand) : InputEventHandlerAdapter<E
 
     }
 
-    val selectionStrategy: SelectionStrategy = BaseModule.properties.get(PROP_SELECT_STRATEGY) as SelectionStrategy
+    private val selectionStrategy: SelectionStrategy = BaseModule.properties.get(PROP_SELECT_STRATEGY)
 
     /** ---- [InputEventHandler] */
 

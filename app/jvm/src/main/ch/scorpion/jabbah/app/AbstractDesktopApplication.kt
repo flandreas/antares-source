@@ -18,7 +18,6 @@ import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import org.apache.commons.cli.*
@@ -61,7 +60,7 @@ abstract class AbstractDesktopApplication(
     override lateinit var mainFrame: AbstractApplicationFrame
 
     init {
-        loadProperties()
+        loadSettings()
     }
 
     /** ---- [Application] */
@@ -171,7 +170,7 @@ abstract class AbstractDesktopApplication(
     /** ---- [AbstractDesktopApplication] */
 
     protected open fun createMainFrame(): AbstractApplicationFrame {
-        val canvas: Canvas = CanvasJvm({ DrawingViewImpl<Drawing<Component>>(DrawingImpl<Component>(), it) })
+        val canvas: Canvas = CanvasJvm({ DrawingViewImpl(DrawingImpl(), it) })
         val editor: Editor = EditEditorModule.createEditor(canvas.view as DrawingView<Drawing<Component>>)
         return SimpleApplicationFrame(this, editor, emptyList())
     }
@@ -223,15 +222,15 @@ abstract class AbstractDesktopApplication(
             JOptionPane.YES_NO_CANCEL_OPTION,
             JOptionPane.QUESTION_MESSAGE)
 
-        when(answer) {
-            JOptionPane.NO_OPTION -> return true
-            JOptionPane.CANCEL_OPTION -> return false
-            JOptionPane.YES_OPTION -> return savable?.save(this) ?: true
+        return when(answer) {
+            JOptionPane.NO_OPTION -> true
+            JOptionPane.CANCEL_OPTION -> false
+            JOptionPane.YES_OPTION -> savable?.save(this) ?: true
             else -> throw IllegalStateException("unsupported answer")
         }
     }
 
-    private fun getPropertiesPath(): Path {
+    private fun getSettingsPath(): Path {
         return FileSystems.getDefault().getPath(getHomeDirectoryPath().toString(), systemName + ".ini")
     }
 
@@ -252,15 +251,15 @@ abstract class AbstractDesktopApplication(
         return FileSystems.getDefault().getPath(System.getProperty("user.home"), systemName)
     }
 
-    private fun loadProperties() {
-        val path = getPropertiesPath()
-        LOG.debug("Loading properties from '$path'")
+    private fun loadSettings() {
+        val path = getSettingsPath()
+        LOG.debug("Loading settings from '$path'")
         FileInputStream(path.toString()).use {
             try {
-                val properties = java.util.Properties()
-                properties.load(it)
-                for (key in properties.keys) {
-                    BaseModule.properties.set(key as String, properties[key]!!)
+                val settings = java.util.Properties()
+                settings.load(it)
+                for (key in settings.keys) {
+                    BaseModule.settings.set(key as String, settings[key]!!)
                 }
             } catch (x: Throwable) {
                 LOG.error("Could not load properties: ${x.message}")
@@ -269,14 +268,14 @@ abstract class AbstractDesktopApplication(
     }
 
     private fun storeProperties() {
-        val path = getPropertiesPath()
-        LOG.debug("Storing properties in $path")
+        val path = getSettingsPath()
+        LOG.debug("Storing settings in $path")
         FileOutputStream(path.toString()).use {
             try {
                 ensureHomeDirectory()
                 val properties = java.util.Properties()
-                for (key in BaseModule.properties.getUserPropertyKeys()) {
-                    properties.setProperty(key, BaseModule.properties.get(key).toString())
+                for (key in BaseModule.settings.getKeys()) {
+                    properties.setProperty(key, BaseModule.settings.get(key))
                 }
                 properties.store(it, null)
             } catch (x: Throwable) {

@@ -22,7 +22,7 @@ import ch.scorpion.jabbah.edit.*
  */
 class ComponentSnapper(
         val editor: Editor
-) : AbstractSnapper(BaseModule.properties.getBooleanSetting(SETTING_ENABLED, false)) {
+) : AbstractSnapper(BaseModule.settings.getBoolean(SETTING_ENABLED, false)) {
 
     companion object {
 
@@ -69,7 +69,7 @@ class ComponentSnapper(
         set(value) {
             if (value != snapEnabled) {
                 super.snapEnabled = value
-                BaseModule.properties.set(SETTING_ENABLED, value)
+                BaseModule.settings.set(SETTING_ENABLED, value)
             }
         }
 

@@ -14,16 +14,16 @@ class SystemSpeed(
 
     companion object {
         /** The name of the [Int] speed property in [Properties].*/
-        private val PROP_SPEED = "jabbah.base.time.SystemSpeed"
+        private val SETTING_SPEED = "jabbah.base.time.SystemSpeed"
         val DEFAULT_SPEED: Int = 80
         val MIN_SPEED: Int = 0
         val MAX_SPEED: Int = 100
     }
 
-    var speed = BaseModule.properties.getInt(PROP_SPEED, DEFAULT_SPEED)
+    var speed = BaseModule.settings.getInt(SETTING_SPEED, DEFAULT_SPEED)
         set(value) {
             checkArgument(speed in 0..100, "SystemSpeed must be between 0 and 100")
-            BaseModule.properties.set(PROP_SPEED, value)
+            BaseModule.settings.set(SETTING_SPEED, value)
             val oldSpeed = field
             field = value
             eventBus.post(SystemSpeedEvent(oldSpeed, field))

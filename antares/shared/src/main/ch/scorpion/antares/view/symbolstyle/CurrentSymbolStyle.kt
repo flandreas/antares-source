@@ -9,19 +9,16 @@ import ch.scorpion.jabbah.base.module.BaseModule
  */
 class CurrentSymbolStyle(
     initSymbolStyle: SymbolStyle,
-    private var eventBus: EventBus
+    private var eventBus: EventBus = BaseModule.eventBus
 ) {
-    /** Initializes [CurrentSymbolStyle] with the specified [SymbolStyle].*/
-    constructor(initSymbolStyle: SymbolStyle): this(initSymbolStyle, BaseModule.eventBus)
-
     /** Initializes [CurrentSymbolStyle] with the [SymbolStyle] stored in the [Properties].*/
-    constructor(): this(SymbolStyle.withName(BaseModule.properties.getString(SymbolStyle.PROP_SYMBOL_STYLE, SymbolStyle.AMERICAN.customName)))
+    constructor(): this(SymbolStyle.withName(BaseModule.settings.getString(SymbolStyle.PROP_SYMBOL_STYLE, SymbolStyle.AMERICAN.customName)))
 
     var symbolStyle: SymbolStyle = initSymbolStyle
         set(value) {
             if (field != value) {
                 field = value
-                BaseModule.properties.set(SymbolStyle.PROP_SYMBOL_STYLE, field.customName)
+                BaseModule.settings.set(SymbolStyle.PROP_SYMBOL_STYLE, field.customName)
                 eventBus.post(CurrentSymbolStyleChangedEvent(field))
             }
         }

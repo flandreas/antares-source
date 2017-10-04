@@ -118,13 +118,13 @@ class SchedulerImpl(
 
     /** ---- [SignalHandler] interface */
 
-    override var isDeepExecution: Boolean = BaseModule.properties.getString(PROP_EXECUTION_DEPTH, "true") == "true"
+    override var isDeepExecution: Boolean = BaseModule.settings.getString(PROP_EXECUTION_DEPTH, "true") == "true"
         set(value) {
             if (field == value) {
                 return
             }
             field = value
-            BaseModule.properties.set(PROP_EXECUTION_DEPTH, field)
+            BaseModule.settings.set(PROP_EXECUTION_DEPTH, field)
             eventBus.post(ExecutionDepthEvent(this, field))
         }
 

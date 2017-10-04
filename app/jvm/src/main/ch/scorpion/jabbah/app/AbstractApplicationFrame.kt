@@ -32,10 +32,10 @@ abstract class AbstractApplicationFrame(
         eventBus.register(CurrentSavableEvent::class, {updateTitle()})
 
         setBounds(
-            BaseModule.properties.getInt("application.frame.x", 100),
-            BaseModule.properties.getInt("application.frame.y", 100),
-            BaseModule.properties.getInt("application.frame.w", 1200),
-            BaseModule.properties.getInt("application.frame.h", 1000)
+            BaseModule.settings.getInt("application.frame.x", 100),
+            BaseModule.settings.getInt("application.frame.y", 100),
+            BaseModule.settings.getInt("application.frame.w", 1200),
+            BaseModule.settings.getInt("application.frame.h", 1000)
         )
 
         buildUI(toolbars)
@@ -43,10 +43,10 @@ abstract class AbstractApplicationFrame(
 
     override fun dispose() {
         super.dispose()
-        BaseModule.properties.set("application.frame.x", x)
-        BaseModule.properties.set("application.frame.y", y)
-        BaseModule.properties.set("application.frame.w", width)
-        BaseModule.properties.set("application.frame.h", height)
+        BaseModule.settings.set("application.frame.x", x)
+        BaseModule.settings.set("application.frame.y", y)
+        BaseModule.settings.set("application.frame.w", width)
+        BaseModule.settings.set("application.frame.h", height)
     }
 
     /** ---- [AbstractApplicationFrame] */

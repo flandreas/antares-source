@@ -24,11 +24,11 @@ object DrawStyleModule : AbstractModule() {
     /** ---- [DrawStyleModule] */
 
     private fun fillProperties(properties: Properties) {
-        properties.predefine(Style.PROP_FOREGROUND_COLOR, Color.BLACK)
-        properties.predefine(Style.PROP_BACKGROUND_COLOR, Color.WHITE)
-        properties.predefine(Style.PROP_TEXT_COLOR, Color.BLACK)
-        properties.predefine(Style.PROP_STROKE, Stroke())
-        properties.predefine(Style.PROP_FONT, FontImpl())
+        properties.set(Style.PROP_FOREGROUND_COLOR, Color.BLACK)
+        properties.set(Style.PROP_BACKGROUND_COLOR, Color.WHITE)
+        properties.set(Style.PROP_TEXT_COLOR, Color.BLACK)
+        properties.set(Style.PROP_STROKE, Stroke())
+        properties.set(Style.PROP_FONT, FontImpl())
     }
 
     private fun configureStyleRepository(repository: StyleRepository) {
