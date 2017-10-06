@@ -586,12 +586,12 @@ open class EdgeViewImpl<T: Any>(
         get() = Point2D(polyline.getFirstPoint())
 
     override fun prepareMoveBy(components: Collection<Locatable>) {
-        val originMoves = origin != null && components.contains(origin as Locatable)
-        val destMoves = destination != null && components.contains(destination as Locatable)
-        val thisMoves = originMoves && destMoves
+        val originIfExistsMoves = origin == null || components.contains(origin as Locatable)
+        val destIfExistsMoves = destination == null || components.contains(destination as Locatable)
+        val thisMoves = originIfExistsMoves && destIfExistsMoves
 
-        suspendOriginLayout = originMoves && thisMoves
-        suspendDestinationLayout = destMoves && thisMoves
+        suspendOriginLayout = originIfExistsMoves && thisMoves
+        suspendDestinationLayout = destIfExistsMoves && thisMoves
     }
 
     override fun moveBy(dx: Double, dy: Double) {

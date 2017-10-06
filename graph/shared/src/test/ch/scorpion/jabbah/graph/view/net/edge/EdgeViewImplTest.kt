@@ -338,4 +338,61 @@ class EdgeViewImplTest {
         ev.connectToDestination(vv2, vv2.model!!.getOutput())
         assertThat(ev.connectionState, `is`(EdgeViewConnectionState.OutputOutput))
     }
+
+    @Test
+    fun shouldNotMoveIndividually() {
+        val vv1 = TestVerticeView(loc = Point2D(0, 0), outputDirection = Direction.EAST)
+        val vv2 = TestVerticeView(loc = Point2D(100, 0), inputDirection = Direction.WEST)
+        graphView.add(vv1)
+        graphView.add(vv2)
+        val ev = edgeViewFactory.createEdgeView()
+        ev.addSegmentPoint(Point2D(0, 0))
+        ev.addSegmentPoint(Point2D(100, 0))
+        graphView.add(ev)
+        ev.connectToOrigin(vv1, vv1.model!!.getOutput())
+        ev.connectToDestination(vv2, vv2.model!!.getOutput())
+
+        ev.prepareMoveBy(listOf(ev))
+        ev.moveBy(0.0, 50.0)
+
+        assertThat(ev.getSegmentPoint(0), `is`(Point2D(0, 0)))
+        assertThat(ev.getSegmentPoint(1), `is`(Point2D(100, 0)))
+    }
+
+    @Test
+    fun shouldMoveWithConnectableViews() {
+        val vv1 = TestVerticeView(loc = Point2D(0, 0), outputDirection = Direction.EAST)
+        val vv2 = TestVerticeView(loc = Point2D(100, 0), inputDirection = Direction.WEST)
+        graphView.add(vv1)
+        graphView.add(vv2)
+        val ev = edgeViewFactory.createEdgeView()
+        ev.addSegmentPoint(Point2D(0, 0))
+        ev.addSegmentPoint(Point2D(100, 0))
+        graphView.add(ev)
+        ev.connectToOrigin(vv1, vv1.model!!.getOutput())
+        ev.connectToDestination(vv2, vv2.model!!.getOutput())
+
+        ev.prepareMoveBy(listOf(vv1, vv2, ev))
+        ev.moveBy(0.0, 50.0)
+
+        assertThat(ev.getSegmentPoint(0), `is`(Point2D(0, 50)))
+        assertThat(ev.getSegmentPoint(1), `is`(Point2D(100, 50)))
+    }
+
+    @Test
+    fun shouldMoveUnaryConnected() {
+        val vv1 = TestVerticeView(loc = Point2D(0, 0), outputDirection = Direction.EAST)
+        graphView.add(vv1)
+        val ev = edgeViewFactory.createEdgeView()
+        ev.addSegmentPoint(Point2D(0, 0))
+        ev.addSegmentPoint(Point2D(100, 0))
+        graphView.add(ev)
+        ev.connectToOrigin(vv1, vv1.model!!.getOutput())
+
+        ev.prepareMoveBy(listOf(vv1, ev))
+        ev.moveBy(0.0, 50.0)
+
+        assertThat(ev.getSegmentPoint(0), `is`(Point2D(0, 50)))
+        assertThat(ev.getSegmentPoint(1), `is`(Point2D(100, 50)))
+    }
 }
