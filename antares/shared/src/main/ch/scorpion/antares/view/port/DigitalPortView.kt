@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -386,6 +387,7 @@ class DigitalPortView(
             context.g.color = context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor
             context.g.fillOval(logicX, logicY, LOGIC_SIZE, LOGIC_SIZE)
 
+            context.g.stroke = Themes.get<AntaresTheme>().figure.stroke
             context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.VERTICE).color).foregroundColor
             context.g.drawOval(logicX, logicY, LOGIC_SIZE, LOGIC_SIZE)
         }
