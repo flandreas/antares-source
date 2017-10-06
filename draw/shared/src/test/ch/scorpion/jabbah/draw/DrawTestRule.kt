@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw
 
+import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.module.DrawModule
 import org.junit.rules.TestRule
 import org.junit.runner.Description
@@ -24,6 +25,7 @@ open class DrawTestRule : TestRule {
     }
 
     fun configure() {
+        BaseModuleJvm.require()
         DrawModule.require()
     }
 }

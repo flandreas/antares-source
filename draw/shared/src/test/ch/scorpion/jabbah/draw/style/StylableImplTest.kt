@@ -21,20 +21,12 @@ class StylableImplTest {
 
         @ClassRule @JvmField
         val drawTestRule = DrawTestRule()
-
-        val propertyColor = Color(0, 0, 0)
-
-        @BeforeClass @JvmStatic
-        fun setup() {
-            DrawModule.properties.set(Style.PROP_FOREGROUND_COLOR, propertyColor)
-        }
     }
 
 
-    val styleColor = CompositeColor()
-    val customColor = PredefinedColor("test", "testKey", CompositeColor())
-    val unspecifiedStyle = BasicStyle()
-    val specifiedStyle = BasicStyle(color = styleColor)
+    private val styleColor = CompositeColor()
+    private val customColor = PredefinedColor("test", "testKey", CompositeColor())
+    private val specifiedStyle = BasicStyle(color = styleColor)
 
     @Test
     fun shouldUseStyleForegroundColor() {
@@ -51,8 +43,10 @@ class StylableImplTest {
     }
 
     @Test
-    fun shouldUsePropertyColor() {
-        StyleRepository.INSTANCE.registerStyle(StyleType.FIGURE, unspecifiedStyle)
+    fun shouldUseStyleColor() {
+        val propertyColor = Color(1, 2, 3)
+        DrawModule.properties.set(Style.PROP_FOREGROUND_COLOR, propertyColor)
+        StyleRepository.INSTANCE.registerStyle(StyleType.FIGURE, BasicStyle())
         val stylable = StylableImpl(styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
         assertThat(stylable.foregroundColor, `is`(`sameInstance`(propertyColor)))
     }

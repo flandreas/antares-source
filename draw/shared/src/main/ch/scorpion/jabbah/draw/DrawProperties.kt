@@ -32,4 +32,8 @@ class DrawProperties(
     override fun <T> getOptional(name: String): T? {
         return target.getOptional(name)
     }
+
+    override fun set(name: String, value: Any) {
+        target.set(name, value)
+    }
 }
