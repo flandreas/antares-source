@@ -37,22 +37,16 @@ open class DrawableContainerImpl<T: Drawable>(
 
     private var drawableDrawer: DrawableDrawer<T> = DefaultDrawableDrawer()
 
-    /** Allows to temporarily disable the notification of [DrawableContainerListener]s.*/
-    private val eventsEnabled: Boolean = true
-
     /**
      * Holds an [InputEventHandler] that dispatches input events to the [Drawable] whose
      * [contains] methods returns `true` for the events location.
      */
     private val inputEventHandler: InputEventHandler<InputEventContext> = createInputEventHandler()
 
-    open protected fun createInputEventHandler(): InputEventHandler<InputEventContext> {
-        return DrawableContainerInputEventHandler(this)
-    }
+    open protected fun createInputEventHandler(): InputEventHandler<InputEventContext> =
+            DrawableContainerInputEventHandler(this)
 
-    override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-        return inputEventHandler
-    }
+    override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> = inputEventHandler
 
     /** ---- [Drawable] interface */
 
@@ -82,9 +76,7 @@ open class DrawableContainerImpl<T: Drawable>(
     }
 
     /** Returns the [Drawable]s in the order they should be drawn.*/
-    protected open fun drawablesInDrawingOrder(): ImmutableList<T> {
-        return children.asReversed().toImmutableList()
-    }
+    protected open fun drawablesInDrawingOrder(): ImmutableList<T> = children.asReversed().toImmutableList()
 
     override fun contains(x: Double, y: Double): Boolean {
         if (useLocation) {
@@ -162,9 +154,7 @@ open class DrawableContainerImpl<T: Drawable>(
         return this
     }
 
-    override fun frontToBackIterator(): Iterator<T> {
-        return children.iterator()
-    }
+    override fun frontToBackIterator(): Iterator<T> = children.iterator()
 
     override fun backToFrontIterator(): Iterator<T> {
         val iter = children.listIterator(children.size)
@@ -176,22 +166,17 @@ open class DrawableContainerImpl<T: Drawable>(
 
     override fun getDrawableAt(x: Double, y: Double): T? {
         if (useLocation) {
-            return children.filter({ it.visible && it.contains(Point2D(x, y).subtract(location))}).firstOrNull()
+            return children.firstOrNull({ it.visible && it.contains(Point2D(x, y).subtract(location))})
         }
-        return children.filter({ it.visible && it.contains(x, y) } ).firstOrNull()
+        return children.firstOrNull({ it.visible && it.contains(x, y) })
     }
 
-    override fun getDrawables(): ImmutableList<T> {
-        return children.toImmutableList()
-    }
+    override fun getDrawables(): ImmutableList<T> = children.toImmutableList()
 
-    override fun getDrawables(predicate: (T) -> Boolean): ImmutableList<T> {
-        return children.filter(predicate).toImmutableList()
-    }
+    override fun getDrawables(predicate: (T) -> Boolean): ImmutableList<T> =
+            children.filter(predicate).toImmutableList()
 
-    override fun getDrawable(predicate: (T) -> Boolean): T? {
-        return children.filter(predicate).firstOrNull()
-    }
+    override fun getDrawable(predicate: (T) -> Boolean): T? = children.firstOrNull(predicate)
 
     override fun handleDrawableInvalidated(drawable: Drawable, region: RectangularShape) {
         invalidate(region)
@@ -253,17 +238,13 @@ open class DrawableContainerImpl<T: Drawable>(
     /** ---- [DrawableContainerImpl] */
 
     private fun notifyDrawableAdded(drawable: T) {
-        if (eventsEnabled) {
-            val event = DrawableContainerEvent(this, drawable)
-            containerListeners.forEach { it.drawableAdded(event) }
-        }
+        val event = DrawableContainerEvent(this, drawable)
+        containerListeners.forEach { it.drawableAdded(event) }
     }
 
     private fun notifyDrawableRemoved(drawable: T) {
-        if (eventsEnabled) {
-            val event = DrawableContainerEvent(this, drawable)
-            containerListeners.forEach { it.drawableRemoved(event) }
-        }
+        val event = DrawableContainerEvent(this, drawable)
+        containerListeners.forEach { it.drawableRemoved(event) }
     }
 
     /**
