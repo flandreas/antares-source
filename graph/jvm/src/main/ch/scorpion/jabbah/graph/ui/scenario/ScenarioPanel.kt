@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import java.awt.BorderLayout
+import java.awt.Dimension
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 
@@ -46,6 +47,9 @@ class ScenarioPanel(
             eventBus.post(ScenarioSelectionEvent(graphView!!, scenario, scenarioStep))
 
         }
+        treeView.preferredSize = Dimension(300, treeView.preferredSize.height)
+        propertyPanel.preferredSize = Dimension(300, propertyPanel.preferredSize.height)
+
         buildUI()
     }
 

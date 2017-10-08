@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.graph.container.ContainerPanel
 import ch.scorpion.jabbah.graph.model.GraphNameChangedEvent
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.view.GraphElementView

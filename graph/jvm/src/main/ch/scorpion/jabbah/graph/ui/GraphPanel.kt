@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.ComponentPropertyPanel
@@ -90,6 +91,8 @@ class GraphPanel(
 
     private val settingsToolBar = createSettingsToolBar()
 
+    private val sidebarPane: SidebarPane = SidebarPane()
+
     val toolbars: List<JToolBar> = listOf(
             createExecutionToolBar(),
             drawingToolBar,
@@ -150,18 +153,15 @@ class GraphPanel(
         librarySplitPane.add(libraryPropertyPanel)
         librarySplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 700)
 
-        val toolTabbedPane = JTabbedPane()
-        toolTabbedPane.border = null
-        toolTabbedPane.background = Color(238, 238, 238)
-        toolTabbedPane.addTab(Translations.getString("graph.library.title"), librarySplitPane)
-        toolTabbedPane.addTab(Translations.getString("graph.scenarios.title"), scenarioPanel)
+        sidebarPane.add(Translations.getString("graph.scenarios.title"), scenarioPanel)
 
-        mainSplitPane.add(toolTabbedPane)
+        mainSplitPane.add(librarySplitPane)
         mainSplitPane.add(graphNavigationPanel)
         mainSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.mainSplitPos", 250)
         mainSplitPane.border = null
 
         add(mainSplitPane, BorderLayout.CENTER)
+        add(sidebarPane, BorderLayout.EAST)
     }
 
     private fun setMode(mode: ApplicationMode, init: Boolean) {
