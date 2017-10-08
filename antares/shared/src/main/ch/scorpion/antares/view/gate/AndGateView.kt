@@ -63,10 +63,8 @@ class AndGateView(
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
         currentSymbolStyle.symbolStyle.drawAndGate(this, context, foregroundColor, backgroundColor, stroke)
         if (dataPort != InputPortNumber.NONE) {
-            labelStyle = BoxGateView.LabelStyle.SMALL_UPPER_LEFT
             drawDataFlow(context)
         } else {
-            labelStyle = BoxGateView.LabelStyle.LARGE_CENTERED
             GateMnemonic.drawAnd(this, context, foregroundColor, backgroundColor)
         }
     }
