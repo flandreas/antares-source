@@ -23,13 +23,9 @@ abstract class AbstractConnector(
 
     /** ---- [InputEventHandler] */
 
-    override fun keyPressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        return this
-    }
+    override fun keyPressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? = this
 
-    override fun keyReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        return this
-    }
+    override fun keyReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? = this
 
     /** ---- [AbstractConnector] */
 
@@ -60,6 +56,8 @@ abstract class AbstractConnector(
     }
     */
     protected open fun cancel(editor: Editor) {
+        edgeView?.connectToOrigin(null, null)
+        edgeView?.connectToDestination(null, null)
         editor.view.drawing.remove(edgeView!!)
         removePortViewHighlight(editor.view)
     }
@@ -68,7 +66,5 @@ abstract class AbstractConnector(
      * Determines whether the [EdgeView] that is being added by this [AbstractConnector]
      * is valid, i.e. that it exists and has a non-zero length.
      */
-    protected fun isValidEdgeView(): Boolean {
-        return edgeView != null && edgeView!!.length > 0.0
-    }
+    protected fun isValidEdgeView(): Boolean = edgeView != null && edgeView!!.length > 0.0
 }
