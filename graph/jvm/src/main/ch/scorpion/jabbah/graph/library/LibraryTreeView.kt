@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import java.awt.Component
 import java.awt.Graphics
@@ -114,23 +115,6 @@ class LibraryTreeView(
 
         private fun getIcon(iconPath: String): Icon {
             return iconCache.getOrPut(iconPath, { ImageIcon(LibraryTreeView::class.java.getResource(iconPath)) })
-        }
-    }
-
-    /** Defines an artificial [Icon] to be used as tree icon for [ContainerLibraryElement]s.*/
-    private class ContainerLibraryElementIcon : Icon {
-        override fun getIconHeight(): Int = 28
-        override fun getIconWidth(): Int = 28
-
-        override fun paintIcon(c: Component?, g: Graphics?, x: Int, y: Int) {
-            g?.color = Graphics2DJvm.toAwtColor(Themes.getUITheme<GraphTheme>().vertice.color.backgroundColor)
-            g?.fillRect(5, 5, 14, 18)
-            g?.color = Graphics2DJvm.toAwtColor(Themes.getUITheme<GraphTheme>().vertice.color.foregroundColor)
-            g?.drawRect(5, 5, 14, 18)
-
-            g?.drawLine(5, 10, 1, 10)
-            g?.drawLine(5, 20, 1, 20)
-            g?.drawLine(21, 14, 25, 14)
         }
     }
 }

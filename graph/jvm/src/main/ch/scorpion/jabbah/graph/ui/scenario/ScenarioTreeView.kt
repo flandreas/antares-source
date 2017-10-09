@@ -4,10 +4,15 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.*
+import java.awt.Component
+import javax.swing.ImageIcon
+import javax.swing.JLabel
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
+import javax.swing.tree.DefaultTreeCellRenderer
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreeModel
 
@@ -18,6 +23,9 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
     @Suppress("unused") constructor(): this(BaseModule.eventBus)
 
     init {
+
+        setCellRenderer(Renderer())
+        setRowHeight(24)
 
         // [Scenario] to this [ScenarioTreeView]
         eventBus.register(ScenarioAddedEvent::class, {
@@ -126,5 +134,32 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
             }
         }
         return null
+    }
+
+    private class Renderer : DefaultTreeCellRenderer() {
+
+        companion object {
+            private val elementIcon = ContainerLibraryElementIcon()
+            private val scenarioIcon = ImageIcon(ScenarioTreeView::class.java.getResource("/img/scenario-20.png"))
+            private val stepIcon = ImageIcon(ScenarioTreeView::class.java.getResource("/img/step-20.png"))
+        }
+
+        override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
+            val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
+
+            val userObject = (value as DefaultMutableTreeNode).userObject
+            if (userObject is Scenario) {
+                component.icon = scenarioIcon
+                component.disabledIcon = scenarioIcon
+            } else if (userObject is ScenarioStep) {
+                component.icon = stepIcon
+                component.disabledIcon = stepIcon
+            } else if (userObject is GraphView<*>) {
+                component.icon = elementIcon
+                component.disabledIcon = elementIcon
+            }
+
+            return component
+        }
     }
 }
