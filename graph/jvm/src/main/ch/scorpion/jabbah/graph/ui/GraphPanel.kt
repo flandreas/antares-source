@@ -91,7 +91,7 @@ class GraphPanel(
 
     private val settingsToolBar = createSettingsToolBar()
 
-    private val sidebarPane: SidebarPane = SidebarPane()
+    private val sidebarPane: SidebarPane = SidebarPane({ sidebarPaneChanged() })
 
     val toolbars: List<JToolBar> = listOf(
             createExecutionToolBar(),
@@ -101,6 +101,8 @@ class GraphPanel(
     private val librarySplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
     private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+
+    private val sidebarSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
     private var currentMode: ApplicationMode = ApplicationMode.EDIT
 
@@ -153,7 +155,7 @@ class GraphPanel(
         librarySplitPane.add(libraryPropertyPanel)
         librarySplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 700)
 
-        sidebarPane.add(Translations.getString("graph.scenarios.title"), scenarioPanel)
+        sidebarPane.add(Translations.getString("graph.scenarios.title"), "/img/scenarios-16.png", scenarioPanel)
 
         mainSplitPane.add(librarySplitPane)
         mainSplitPane.add(graphNavigationPanel)
@@ -162,6 +164,25 @@ class GraphPanel(
 
         add(mainSplitPane, BorderLayout.CENTER)
         add(sidebarPane, BorderLayout.EAST)
+    }
+
+    /** Handles changes of the ´isOpen´ property of the [SidebarPane]. */
+    private fun sidebarPaneChanged() {
+        if (sidebarPane.isOpen) {
+            removeAll()
+            sidebarSplitPane.add(mainSplitPane)
+            sidebarSplitPane.add(sidebarPane)
+            sidebarSplitPane.dividerLocation = mainSplitPane.width - 200
+            add(sidebarSplitPane)
+        } else {
+            removeAll()
+            sidebarSplitPane.remove(sidebarPane)
+            sidebarSplitPane.remove(mainSplitPane)
+            add(mainSplitPane, BorderLayout.CENTER)
+            add(sidebarPane, BorderLayout.EAST)
+        }
+        revalidate()
+        repaint()
     }
 
     private fun setMode(mode: ApplicationMode, init: Boolean) {

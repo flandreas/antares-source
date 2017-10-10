@@ -7,11 +7,22 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
 
-class SidebarPane : JPanel() {
+/**
+ * A [JPanel] that stacks multiple collapsed views at the right side, allowing the user to display one of
+ * them on demand.
+ *
+ * @property isOpenChangeHandler a callback called by [SidebarPane] whenever the [isOpen] property has changed,
+ * which allows the owner of this [SidebarPane] to adjust its view, if necessary (such as using this [SidebarPane]
+ * within a [JSplitPane], if it is open).
+ */
+class SidebarPane(private val isOpenChangeHandler: () -> Unit) : JPanel() {
 
     companion object {
         private val LOG by logger(SidebarPane::class)
     }
+
+    /** Determines whether this [SidebarPane] is currently open, i.e. whether it displayes one if its content views.*/
+    val isOpen: Boolean get() = current != null
 
     /** The [JPanel] at the right side containing the vertical [JLabel]s. */
     private val labelPanel = JPanel()
@@ -34,8 +45,13 @@ class SidebarPane : JPanel() {
         initUI()
     }
 
-    fun add(name: String, content: JComponent) {
-        val entry = Entry(name, content)
+    /**
+     * Adds a new content view to this [SidebarPane].
+     * @param name the translated name of the content to be displayed in the vertical button (if the content is closed)
+     * or in the title bar (if the content is closed).
+     */
+    fun add(name: String, iconPath: String, content: JComponent) {
+        val entry = Entry(name, ImageIcon(SidebarPane::class.java.getResource(iconPath)), content)
         entries.add(entry)
         entry.label.addMouseListener(labelListener)
         labelPanel.add(entry.label)
@@ -63,8 +79,8 @@ class SidebarPane : JPanel() {
         add(contentPanel, BorderLayout.CENTER)
     }
 
-    private data class Entry(val name: String, val content: JComponent) {
-        val label: JLabel = VerticalLabel.create(name)
+    private data class Entry(val name: String, private val icon: Icon, val content: JComponent) {
+        val label: JLabel = VerticalLabel.create(name, icon)
 
         init {
             label.border = BorderFactory.createEmptyBorder(5, 10, 5, 10)
@@ -76,6 +92,8 @@ class SidebarPane : JPanel() {
 
     private fun activate(entry: Entry?) {
         LOG.debug("SidebarPanel: activate entry ${entry?.name}")
+        val changed = current != entry
+
         if (current != null) {
             contentPanel.remove(headerPanel)
             contentPanel.remove(current!!.content)
@@ -87,6 +105,9 @@ class SidebarPane : JPanel() {
             contentPanel.add(headerPanel, BorderLayout.NORTH)
             contentPanel.add(current!!.content, BorderLayout.CENTER)
             current!!.label.background = background.darker()
+        }
+        if (changed) {
+            isOpenChangeHandler.invoke()
         }
         revalidate()
         repaint()
