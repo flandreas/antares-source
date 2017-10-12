@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.io.Storable
 
@@ -20,8 +21,8 @@ interface ScenarioStep : Storable {
      */
     var name: String
 
-    /** The [Scenario] to which this [ScenarioStep] belongs.*/
-    var scenario: Scenario
+    /** The text to be displayed above the explained [GraphView] when this [ScenarioStep] is active.*/
+    var description: TextProperty
 
     /**
      * Returns the condition that determines whether this {@link ScenarioStep} is triggered depending on the current state

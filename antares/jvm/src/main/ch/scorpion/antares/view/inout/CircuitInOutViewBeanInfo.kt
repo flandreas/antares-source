@@ -37,12 +37,12 @@ class CircuitInOutViewBeanInfo : AbstractBeanInfo<CircuitInOutView>() {
 		signalRep.bind(editor, { bean.signalRepresentation }, { bean.signalRepresentation = it!! })
 		description.bind(editor, { bean.description}, { bean.description = it!! })
 
-		properties.add(id);
-		properties.add(name);
-		properties.add(portType);
-		properties.add(orientation);
-		properties.add(bitWidth);
-		properties.add(signalRep);
-		properties.add(description);
+		properties.add(id)
+		properties.add(name)
+		properties.add(portType)
+		properties.add(orientation)
+		properties.add(bitWidth)
+		properties.add(signalRep)
+		properties.add(description)
     }
 }

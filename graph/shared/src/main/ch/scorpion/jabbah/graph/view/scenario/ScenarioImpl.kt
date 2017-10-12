@@ -14,7 +14,10 @@ import ch.scorpion.jabbah.io.*
 /**
  * Standard implementation of the [Scenario] interface.
  */
-class ScenarioImpl(override var name: String = "", var conditionScript: String = "") : Scenario {
+class ScenarioImpl(
+        override var name: String = "",
+        private var conditionScript: String = ""
+) : Scenario {
 
     private val steps: MutableList<ScenarioStep> by lazy { mutableListOf<ScenarioStep>() }
 
@@ -32,6 +35,8 @@ class ScenarioImpl(override var name: String = "", var conditionScript: String =
 
     override var id: Int = 0
 
+    override var description: TextProperty = TextProperty(null)
+
     override val stepCount: Int get() = steps.size
 
     override fun dispose() {
@@ -40,19 +45,14 @@ class ScenarioImpl(override var name: String = "", var conditionScript: String =
     }
 
     override val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
-        get() = {v,sg -> sg.condition(conditionScript, v)}
+        get() = { v,sg -> sg.condition(conditionScript, v) }
 
-    override fun getScenarioSteps(): ImmutableList<ScenarioStep> {
-        return steps.toImmutableList()
-    }
+    override fun getScenarioSteps(): ImmutableList<ScenarioStep> = steps.toImmutableList()
 
-    override fun getStep(id: Int): ScenarioStep {
-        return steps.first { it.id == id }
-    }
+    override fun getStep(id: Int): ScenarioStep = steps.first { it.id == id }
 
     override fun addStep(step: ScenarioStep) {
         if (!steps.contains(step)) {
-            step.scenario = this
             if (!isLoading) {
                 step.id = steps.size + 1
             }
@@ -75,6 +75,7 @@ class ScenarioImpl(override var name: String = "", var conditionScript: String =
     override fun write(writer: StoreWriter) {
         writer.writeInt("id", id)
         writer.writeString("name", name)
+        description.text?.let { writer.writeString("desc", description.text!!) }
         writer.writeString("condition", conditionScript)
         writer.writeStorables("steps", getStorableChildren())
     }
@@ -83,6 +84,7 @@ class ScenarioImpl(override var name: String = "", var conditionScript: String =
         isLoading = true
         id = reader.readInt("id")
         name = reader.readString("name")
+        description = TextProperty(reader.readOptionalString("desc"))
         conditionScript = reader.readString("condition")
         for (step in reader.readStorables("steps")) {
             addStep(step as ScenarioStep)
@@ -90,7 +92,5 @@ class ScenarioImpl(override var name: String = "", var conditionScript: String =
         isLoading = false
     }
 
-    override fun getStorableChildren(): Iterator<Storable> {
-        return steps.iterator()
-    }
+    override fun getStorableChildren(): Iterator<Storable> = steps.iterator()
 }

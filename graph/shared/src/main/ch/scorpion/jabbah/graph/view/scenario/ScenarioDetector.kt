@@ -1,7 +1,10 @@
 package ch.scorpion.jabbah.graph.view.scenario
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.scheduler.*
 import ch.scorpion.jabbah.graph.model.Graph
@@ -14,10 +17,16 @@ import ch.scorpion.jabbah.graph.view.ScenarioEvent
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.graph.view.ScenarioStepEvent
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
+import ch.scorpion.jabbah.draw.drawable.Unzoomable
+import ch.scorpion.jabbah.edit.model.text.FlexibleTextView
+import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 /**
- *  Detects the start of a [Scenario] in an executing [Graph] and notifies this by posting a
- * [ScenarioEvent] on the [EventBus].
+ *  Detects the start of a [Scenario] or a [ScenarioStep] in an executing [Graph] and propagates this
+ *  by setting the corresponding properties of the associated [GraphView], which in turn posts
+ *  a [ScenarioEvent] or a [ScenarioStepEvent] on its [EventBus].
  *
  * A [ScenarioDetector] is only active if the [Scheduler]'s [SchedulerRunningState] is
  * [SchedulerRunningState.PAUSED], that is if the executing is stepping.
@@ -29,26 +38,51 @@ class ScenarioDetector(
         private val eventBus: EventBus
 ) {
 
-    private val LOG by logger(ScenarioDetector::class)
+    companion object {
+        private val LOG by logger(ScenarioDetector::class)
+
+        private val SCENARIO_STEP_DESC_WIDTH = 400
+
+        private val DESC_DISTANCE = 20
+
+        private val DESC_UNZOOMABLE = false
+    }
 
     private val schedulerEventHandler: EventHandler<SchedulerEvent> = {
         if (it.actor is GraphElement && view.drawing.graph!!.contains(it.actor as GraphElement)) {
             detect()
         }
     }
+
     private val schedulerActivateStateHandler: EventHandler<SchedulerActivationStateEvent> = { updateActive() }
+
     private val schedulerRunningStateHandler: EventHandler<SchedulerRunningStateEvent> = { updateActive() }
+
+    private val scenarioEventHandler: EventHandler<ScenarioEvent> = {
+        hideScenarioDesc()
+        it.scenario?.let { displayScenarioDesc(it) }
+    }
+
     private val scenarioStepEventHandler: EventHandler<ScenarioStepEvent> = {
         it.oldStep?.passivate(view)
+        hideScenarioStepDesc()
+        it.newStep?.let { displayScenarioStepDesc(it) }
         it.newStep?.activate(view)
     }
 
     private var isActive: Boolean = false
 
+    /** The currently displayed description of a [Scenario], if any.*/
+    private var scenarioDesc: FlexibleTextView? = null
+
+    /** The currently displayed description of a [ScenarioStep], if any.*/
+    private var scenarioStepDesc: FlexibleTextView? = null
+
     init {
         eventBus.register(SchedulerEvent::class, schedulerEventHandler)
         eventBus.register(SchedulerActivationStateEvent::class, schedulerActivateStateHandler)
         eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
+        eventBus.register(ScenarioEvent::class, scenarioEventHandler)
         eventBus.register(ScenarioStepEvent::class, scenarioStepEventHandler)
 
         updateActive()
@@ -59,6 +93,7 @@ class ScenarioDetector(
         eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivateStateHandler)
         eventBus.unregister(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
         eventBus.unregister(ScenarioStepEvent::class, scenarioStepEventHandler)
+        eventBus.unregister(ScenarioEvent::class, scenarioEventHandler)
     }
 
     private fun detect() {
@@ -95,5 +130,69 @@ class ScenarioDetector(
             LOG.debug("ScenarioDetector: detected ScenarioStep '${scenarioStep.name}'")
         }
         view.drawing.currentScenarioStep = scenarioStep
+    }
+
+    private fun displayScenarioDesc(scenario: Scenario) {
+        if (StringUtils.isNotEmpty(scenario.description.text)) {
+            scenarioDesc = FlexibleTextView(
+                    scenario.description.text!!,
+                    calculateScenarioDescAnchor(),
+                    Direction.NORTH,
+                    SCENARIO_STEP_DESC_WIDTH,
+                    DESC_UNZOOMABLE,
+                    GraphStyleType.EXPLANATION)
+            if (DESC_UNZOOMABLE) view.ghostContainer.add(scenarioDesc!!) else view.animationContainer.add(scenarioDesc!!)
+            scenarioDesc!!.validate()
+        }
+    }
+
+    private fun displayScenarioStepDesc(scenarioStep: ScenarioStep) {
+        if (StringUtils.isNotEmpty(scenarioStep.description.text)) {
+            scenarioStepDesc = FlexibleTextView(
+                    scenarioStep.description.text!!,
+                    calculateScenarioStepDescAnchor(),
+                    Direction.SOUTH,
+                    SCENARIO_STEP_DESC_WIDTH,
+                    DESC_UNZOOMABLE,
+                    GraphStyleType.EXPLANATION)
+            if (DESC_UNZOOMABLE) view.ghostContainer.add(scenarioStepDesc!!) else view.animationContainer.add(scenarioStepDesc!!)
+            scenarioStepDesc!!.validate()
+        }
+    }
+
+    private fun hideScenarioDesc() {
+        if (scenarioDesc != null) {
+            if (DESC_UNZOOMABLE) {
+                view.ghostContainer.remove(scenarioDesc!!)
+                view.ghostContainer.validate()
+            } else {
+                view.animationContainer.remove(scenarioDesc!!)
+                view.animationContainer.validate()
+            }
+            scenarioDesc = null
+        }
+    }
+
+    private fun hideScenarioStepDesc() {
+        if (scenarioStepDesc != null) {
+            if (DESC_UNZOOMABLE) {
+                view.ghostContainer.remove(scenarioStepDesc!!)
+                view.ghostContainer.validate()
+            } else {
+                view.animationContainer.remove(scenarioStepDesc!!)
+                view.animationContainer.validate()
+            }
+            scenarioStepDesc = null
+        }
+    }
+
+    private fun calculateScenarioDescAnchor(): Point2D {
+        val bounds = view.contentBounds
+        return Point2D(bounds.centerX, bounds.minY - DESC_DISTANCE)
+    }
+
+    private fun calculateScenarioStepDescAnchor(): Point2D {
+        val bounds = view.contentBounds
+        return Point2D(bounds.centerX, bounds.maxY + DESC_DISTANCE)
     }
 }

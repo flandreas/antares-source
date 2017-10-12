@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.io.Storable
 
@@ -23,6 +24,9 @@ interface Scenario : Storable {
      * not be used for technical identifications.
      */
     var name: String
+
+    /** The text to be displayed above the explained [GraphView] when this [Scenario] is active.*/
+    var description: TextProperty
 
     /** Returns the number of [ScenarioStep]s of this [Scenario].*/
     val stepCount: Int

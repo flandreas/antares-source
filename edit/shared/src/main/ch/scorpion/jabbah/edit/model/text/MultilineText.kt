@@ -19,12 +19,12 @@ class MultilineText(
         text: String,
         private val font: Font,
         private val maxWidth: Int,
-        private val lineHeight: Int = font.size,
         textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory
 ) {
 
     private companion object {
         val DEBUG_GFX = false
+        private val LINE_DIST = 5
     }
 
     val height: Int get() = lines.size * lineHeight
@@ -32,6 +32,8 @@ class MultilineText(
     private val lines = mutableListOf<String>()
 
     private val ascent: Int
+
+    private val lineHeight: Int = font.size + LINE_DIST
 
     init {
         var lAscent = 0

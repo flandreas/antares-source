@@ -109,7 +109,7 @@ class SimpleTextComponent(
 
     /** ---- [SimpleTextComponent] */
 
-    private var multilineText = MultilineText(text, font, width.toInt() - 2 * INSET_X, font.size)
+    private var multilineText = MultilineText(text, font, width.toInt() - 2 * INSET_X)
 
     private var decorator: TextComponentDecorator = RectangularShapeTextComponentDecorator(
             shape = RoundRectangle2D(0.0, 0.0, 0.0, 0.0, 20.0, 20.0),
@@ -122,6 +122,6 @@ class SimpleTextComponent(
     }
 
     private fun updateMultilineText() {
-        multilineText = MultilineText(text, font, width.toInt() - 2 * INSET_X, font.size, textRenderInfoFactory)
+        multilineText = MultilineText(text, font, width.toInt() - 2 * INSET_X, textRenderInfoFactory)
     }
 }

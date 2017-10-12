@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.edit.model.text.TextProperty
 class ScenarioStepImplBeanInfo : AbstractBeanInfo<ScenarioStepImpl>() {
 
     private val name = PropertyImpl("graph.property.scenario.name", String::class.java)
+    private val description = PropertyImpl("edit.property.description", TextProperty::class.java)
     private val condition = PropertyImpl("graph.property.scenario.condition", TextProperty::class.java)
     private val onEntry = PropertyImpl("graph.property.scenario.onEntry", TextProperty::class.java)
     private val onExit = PropertyImpl("graph.property.scenario.onExit", TextProperty::class.java)
@@ -21,11 +22,13 @@ class ScenarioStepImplBeanInfo : AbstractBeanInfo<ScenarioStepImpl>() {
         super.addProperties(bean, editor, properties)
 
         name.bind(editor, { bean.name }, { bean.name = it!! })
+        description.bind(editor, { bean.description}, { bean.description = it!! })
 		condition.bind(editor, { bean.conditionProperty}, { bean.conditionProperty = it!! })
         onEntry.bind(editor, { bean.onEntryProperty}, { bean.onEntryProperty = it!! })
         onExit.bind(editor, { bean.onExitProperty}, { bean.onExitProperty = it!! })
 
 		properties.add(name)
+        properties.add(description)
 		properties.add(condition)
 		properties.add(onEntry)
 		properties.add(onExit)

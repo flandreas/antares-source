@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
@@ -24,7 +23,9 @@ class ScenarioStepImpl(
     @Suppress("unused")
     constructor(): this(ScriptModule.scriptGateway, "")
 
-    private val LOG by logger(ScenarioStepImpl::class)
+    companion object {
+        private val LOG by logger(ScenarioStepImpl::class)
+    }
 
     /** The JavaScript predicate that determines whether this [ScenarioStep] is active. */
     private var conditionScript: String? = null
@@ -37,9 +38,7 @@ class ScenarioStepImpl(
 
     /** ---- [Any] */
 
-    override fun toString(): String {
-        return name
-    }
+    override fun toString(): String = name
 
     /** ---- UI editable properties */
 
@@ -59,9 +58,7 @@ class ScenarioStepImpl(
 
     override var id: Int = 0
 
-    override var scenario: Scenario
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-        set(value) {}
+    override var description: TextProperty = TextProperty(null)
 
     override val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
         get() = { v, sg -> if (StringUtils.isNotEmpty(conditionScript)) sg.condition(conditionScript!!, v) else false}
@@ -99,6 +96,7 @@ class ScenarioStepImpl(
     override fun write(writer: StoreWriter) {
         writer.writeInt("id", id)
         writer.writeString("name", name)
+        description.text?.let { writer.writeString("desc", description.text!!) }
         conditionScript?.let { writer.writeString("condition", conditionScript!!)}
         onEntryScript?.let { writer.writeString("onEntry", onEntryScript!!) }
         onExitScript?.let {writer.writeString("onExit", onExitScript!!) }
@@ -107,6 +105,7 @@ class ScenarioStepImpl(
     override fun read(reader: StoreReader) {
         id = reader.readInt("id")
         name = reader.readString("name")
+        description = TextProperty(reader.readOptionalString("desc"))
         conditionScript = reader.readOptionalString("condition")
         onEntryScript = reader.readOptionalString("onEntry")
         onExitScript = reader.readOptionalString("onExit")

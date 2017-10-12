@@ -35,7 +35,7 @@ class ComponentMessageView(
 
     private val shape = Rectangle2D(frame.x, frame.y, frame.width, frame.height)
 
-    private val multilineText = MultilineText(text, font, frame.width.toInt() - 2 * INSET_X, font.size)
+    private val multilineText = MultilineText(text, font, frame.width.toInt() - 2 * INSET_X)
 
     /** ---- [Transparent] interface */
 
