@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.edit.model.polyline.PolylineTool
 import ch.scorpion.jabbah.edit.model.rectangle.EllipseComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
+import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.execution.PauseExecutionAction
@@ -38,7 +39,6 @@ import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioPanel
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
-import ch.scorpion.jabbah.graph.view.GraphTextComponent
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Color
@@ -73,11 +73,11 @@ class GraphPanel(
 
     private val modeToggleAction = ToggleModeAction(scheduler, eventBus)
 
+    private val scenarioPanel = ScenarioPanel(editor, eventBus, propertySheetFactory)
+
+    private val libraryPropertyPanel: ComponentPropertyPanel
+
     val libraryPanel = LibraryPanel(eventBus, libraryHolder)
-
-    val scenarioPanel = ScenarioPanel(editor, eventBus, propertySheetFactory)
-
-    val libraryPropertyPanel: ComponentPropertyPanel
 
     val graphNavigationPanel = graphNavigationPanelFactory.create(
         isRoot = true,
@@ -129,9 +129,8 @@ class GraphPanel(
         BaseModule.settings.set("graphPanel.librarySplitPos", librarySplitPane.dividerLocation)
     }
 
-    private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler {
-        return GraphPanelTransferHandler(editor, eventBus, GraphElementViewTransferable.FLAVOR, libraryHolder)
-    }
+    private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
+            GraphPanelTransferHandler(editor, eventBus, GraphElementViewTransferable.FLAVOR, libraryHolder)
 
     fun setGraphView(newGraphView: GraphView<GraphElementView<*>>) {
         val oldGraphView = graphNavigationPanel.drawingView.drawing
@@ -252,7 +251,7 @@ class GraphPanel(
                 "/img/ellipse.png", Translations.getString("edit.component.ellipse"))
         toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
                 "/img/polyline.gif", Translations.getString("edit.component.polyline"))
-        toolbar.addTool(TextTool(editor, { GraphTextComponent("Text") }, { GraphElementViewWrapper<Vertice>(it)}),
+        toolbar.addTool(TextTool(editor, { TextComponentJvm("Text") }, { GraphElementViewWrapper<Vertice>(it)}),
                 "/img/text.gif", Translations.getString("edit.component.text"))
 
         return toolbar

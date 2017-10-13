@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.library.FileLibraryService
@@ -24,7 +25,6 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerEditor
-import ch.scorpion.jabbah.graph.view.GraphTextComponent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
@@ -66,7 +66,7 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
     }
 
     private fun configureTypeMap(typeMap: TypeMap) {
-        typeMap.register("text", GraphTextComponent::class)
+        typeMap.register("text", TextComponentJvm::class)
     }
 
     private fun configurePropertyRenderer(registry: PropertyRendererRegistry) {

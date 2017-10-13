@@ -10,10 +10,7 @@ import ch.scorpion.jabbah.graph.script.ScriptEngineJvm
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.ui.GraphNavigationPanelFactory
 import ch.scorpion.jabbah.graph.ui.StandardGraphNavigationPanelFactory
-import ch.scorpion.jabbah.graph.view.GraphTextComponent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
-import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.TypeMap
 
 /**
  * Module definitions for the [ch.scorpion.jabbah.graph] module on the JVM platform.
@@ -33,11 +30,5 @@ object GraphModuleJvm : AbstractModule() {
         ExecutionModule.require()
         EditModuleJvm.require()
         GraphViewModuleJvm.require()
-
-        registerTypes(IOModule.typeMap)
-    }
-
-    private fun registerTypes(typeMap: TypeMap) {
-        typeMap.register("graphTextComponent", GraphTextComponent::class)
     }
 }
