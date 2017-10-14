@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base.swing
 import ch.scorpion.jabbah.base.logger
 import java.awt.BorderLayout
 import java.awt.Color
+import java.awt.Component
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
@@ -85,6 +86,7 @@ class SidebarPane(private val isOpenChangeHandler: () -> Unit) : JPanel() {
         init {
             label.border = BorderFactory.createEmptyBorder(5, 10, 5, 10)
             label.isOpaque = true
+            label.alignmentX = Component.CENTER_ALIGNMENT
         }
     }
 
@@ -138,7 +140,11 @@ class SidebarPane(private val isOpenChangeHandler: () -> Unit) : JPanel() {
         }
 
         override fun mouseClicked(e: MouseEvent?) {
-            activate(getEntry(e!!.source as JLabel))
+            if (isOpen) {
+                activate(null)
+            } else {
+                activate(getEntry(e!!.source as JLabel))
+            }
         }
 
         private fun isCurrent(e: MouseEvent): Boolean {

@@ -62,23 +62,23 @@ class VerticalLabelUI(private val clockwise: Boolean = true) : BasicLabelUI() {
         paintIconRect.y = 0
         paintIconRect.x = 0
 
-        val clippedText = layoutCL(label, fm, text, icon, paintViewRect, paintIconRect, paintIconRect)
+        val clippedText = layoutCL(label, fm, text, icon, paintViewRect, paintIconRect, paintTextRect)
 
         val g2 = g as Graphics2D
         val oldTransform = g2.transform
         if (clockwise) {
             g2.rotate(Math.PI / 2)
-            g2.translate(0, -c.getWidth())
+            g2.translate(-0, -c.getWidth())
         } else {
             g2.rotate(-Math.PI / 2)
             g2.translate(-c.getHeight(), 0)
         }
 
-        icon?.paintIcon(c, g, paintIconRect.x, paintIconRect.y)
+        icon?.paintIcon(c, g, paintIconRect.x, paintIconRect.y + 3)
 
         if (text != null) {
-            val textX = paintTextRect.x + paintViewInsets.left
-            val textY = paintTextRect.y + paintViewInsets.top + fm.ascent
+            val textX = paintTextRect.x
+            val textY = paintTextRect.y + fm.ascent + 3
 
             if (label.isEnabled) {
                 paintEnabledText(label, g, clippedText, textX, textY)
