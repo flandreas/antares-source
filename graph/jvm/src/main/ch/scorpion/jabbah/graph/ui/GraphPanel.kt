@@ -134,9 +134,7 @@ class GraphPanel(
     fun dispose() {
         BaseModule.settings.set("graphPanel.mainSplitPos", mainSplitPane.dividerLocation)
         BaseModule.settings.set("graphPanel.librarySplitPos", librarySplitPane.dividerLocation)
-        if (sidebarDividerLocation > 0) {
-            BaseModule.settings.set("graphPanel.sidebarSplitPos", sidebarDividerLocation)
-        }
+        BaseModule.settings.set("graphPanel.sidebarSplitPos", sidebarSplitPane.dividerLocation)
     }
 
     private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
@@ -184,6 +182,7 @@ class GraphPanel(
             sidebarSplitPane.add(mainSplitPane)
             sidebarSplitPane.add(sidebarPane)
             sidebarSplitPane.dividerLocation = if (sidebarDividerLocation > 0) sidebarDividerLocation else mainSplitPane.width - DEF_SIDEBAR_WIDTH
+            sidebarDividerLocation = sidebarSplitPane.dividerLocation
             add(sidebarSplitPane)
         } else {
             sidebarDividerLocation = sidebarSplitPane.dividerLocation
