@@ -41,7 +41,6 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
-import java.awt.Color
 import java.awt.Dimension
 import java.awt.event.ActionEvent
 import javax.swing.*
@@ -63,7 +62,7 @@ class GraphPanel(
 ) : JPanel() {
 
     companion object {
-        private val DEF_SIDEBAR_WIDTH = 200
+        private val DEF_SIDEBAR_SIZE = 200
     }
 
     constructor(editor: Editor, viewManager: ViewManager): this(
@@ -76,6 +75,8 @@ class GraphPanel(
             EditModuleJvm.propertySheetPanelFactory)
 
     private val modeToggleAction = ToggleModeAction(scheduler, eventBus)
+
+    private val mainPanel = JPanel(BorderLayout())
 
     private val scenarioPanel = ScenarioPanel(editor, eventBus, propertySheetFactory)
 
@@ -95,7 +96,9 @@ class GraphPanel(
 
     private val settingsToolBar = createSettingsToolBar()
 
-    private val sidebarPane: SidebarPane = SidebarPane({ sidebarPaneChanged() })
+    private val rightSidebarPane: SidebarPane = SidebarPane(SidebarPane.Orientation.Vertical, { rightSidebarPaneChanged() })
+
+    private val bottomSidebarPane = SidebarPane(SidebarPane.Orientation.Horizontal, { bottomSidebarPaneChanged() })
 
     val toolbars: List<JToolBar> = listOf(
             createExecutionToolBar(),
@@ -106,10 +109,15 @@ class GraphPanel(
 
     private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
-    private val sidebarSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+    private val rightSidebarSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
-    /** Holds the location of [sidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
-    private var sidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.sidebarSplitPos", -1)
+    private val bottonSidebarSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+
+    /** Holds the location of [rightSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
+    private var rightSidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.rightSidebarSplitPos", -1)
+
+    /** Holds the location of [bottonSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
+    private var bottomSidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.bottomSidebarSplitPos", -1)
 
     private var currentMode: ApplicationMode = ApplicationMode.EDIT
 
@@ -134,7 +142,7 @@ class GraphPanel(
     fun dispose() {
         BaseModule.settings.set("graphPanel.mainSplitPos", mainSplitPane.dividerLocation)
         BaseModule.settings.set("graphPanel.librarySplitPos", librarySplitPane.dividerLocation)
-        BaseModule.settings.set("graphPanel.sidebarSplitPos", sidebarSplitPane.dividerLocation)
+        BaseModule.settings.set("graphPanel.sidebarSplitPos", rightSidebarSplitPane.dividerLocation)
     }
 
     private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
@@ -162,43 +170,78 @@ class GraphPanel(
         librarySplitPane.add(libraryPropertyPanel)
         librarySplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 700)
 
-        sidebarSplitPane.border = null
-        sidebarSplitPane.resizeWeight = 1.0
+        rightSidebarSplitPane.border = null
+        rightSidebarSplitPane.resizeWeight = 1.0
+
+        bottonSidebarSplitPane.border = null
+        bottonSidebarSplitPane.resizeWeight = 1.0
 
         val usecasesDummy = JLabel(Translations.getString("application.notYetImplemented.text"))
         usecasesDummy.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
         usecasesDummy.verticalAlignment = JLabel.TOP
 
-        sidebarPane.add(Translations.getString("graph.scenarios.title"), "/img/scenarios-16.png", scenarioPanel)
-        sidebarPane.add(Translations.getString("graph.usecases.title"), "/img/usecase-16.png", usecasesDummy)
+        val issuesDummy = JLabel(Translations.getString("application.notYetImplemented.text"))
+        issuesDummy.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        issuesDummy.horizontalAlignment = JLabel.LEFT
+
+        rightSidebarPane.add(Translations.getString("graph.scenarios.title"), "/img/scenarios-16.png", scenarioPanel)
+        rightSidebarPane.add(Translations.getString("graph.usecases.title"), "/img/usecase-16.png", usecasesDummy)
+
+        bottomSidebarPane.add(Translations.getString("graph.issues.title"), "/img/issue-16.png", issuesDummy)
 
         mainSplitPane.add(librarySplitPane)
         mainSplitPane.add(graphNavigationPanel)
         mainSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.mainSplitPos", 250)
         mainSplitPane.border = null
 
-        add(mainSplitPane, BorderLayout.CENTER)
-        add(sidebarPane, BorderLayout.EAST)
+        mainPanel.add(mainSplitPane, BorderLayout.CENTER)
+        mainPanel.add(rightSidebarPane, BorderLayout.EAST)
+        mainPanel.add(bottomSidebarPane, BorderLayout.SOUTH)
+
+        add(mainPanel, BorderLayout.CENTER)
     }
 
-    /** Handles changes of the ´isOpen´ property of the [SidebarPane]. */
-    private fun sidebarPaneChanged() {
-        if (sidebarPane.isOpen) {
-            removeAll()
-            sidebarSplitPane.remove(sidebarPane)
-            sidebarSplitPane.remove(mainSplitPane)
-            sidebarSplitPane.add(mainSplitPane)
-            sidebarSplitPane.add(sidebarPane)
-            sidebarSplitPane.dividerLocation = if (sidebarDividerLocation > 0) sidebarDividerLocation else mainSplitPane.width - DEF_SIDEBAR_WIDTH
-            sidebarDividerLocation = sidebarSplitPane.dividerLocation
-            add(sidebarSplitPane)
+    /** Handles changes of the ´isOpen´ property of the [rightSidebarPane]. */
+    private fun rightSidebarPaneChanged() {
+        if (rightSidebarPane.isOpen) {
+            mainPanel.removeAll()
+            rightSidebarSplitPane.remove(rightSidebarPane)
+            rightSidebarSplitPane.remove(mainSplitPane)
+            rightSidebarSplitPane.add(mainSplitPane)
+            rightSidebarSplitPane.add(rightSidebarPane)
+            rightSidebarSplitPane.dividerLocation = if (rightSidebarDividerLocation > 0) rightSidebarDividerLocation else mainSplitPane.width - DEF_SIDEBAR_SIZE
+            rightSidebarDividerLocation = rightSidebarSplitPane.dividerLocation
+            mainPanel.add(rightSidebarSplitPane, BorderLayout.CENTER)
         } else {
-            sidebarDividerLocation = sidebarSplitPane.dividerLocation
+            rightSidebarDividerLocation = rightSidebarSplitPane.dividerLocation
+            mainPanel.removeAll()
+            rightSidebarSplitPane.remove(rightSidebarPane)
+            rightSidebarSplitPane.remove(mainSplitPane)
+            mainPanel.add(mainSplitPane, BorderLayout.CENTER)
+            mainPanel.add(rightSidebarPane, BorderLayout.EAST)
+        }
+        revalidate()
+        repaint()
+    }
+
+    /** Handles changes of the ´isOpen´ property of the [bottomSidebarPane]. */
+    private fun bottomSidebarPaneChanged() {
+        if (bottomSidebarPane.isOpen) {
             removeAll()
-            sidebarSplitPane.remove(sidebarPane)
-            sidebarSplitPane.remove(mainSplitPane)
-            add(mainSplitPane, BorderLayout.CENTER)
-            add(sidebarPane, BorderLayout.EAST)
+            bottonSidebarSplitPane.remove(mainPanel)
+            bottonSidebarSplitPane.remove(bottomSidebarPane)
+            bottonSidebarSplitPane.add(mainPanel)
+            bottonSidebarSplitPane.add(bottomSidebarPane)
+            bottonSidebarSplitPane.dividerLocation = if(bottomSidebarDividerLocation > 0) bottomSidebarDividerLocation else mainPanel.height - DEF_SIDEBAR_SIZE
+            bottomSidebarDividerLocation = bottonSidebarSplitPane.dividerLocation
+            add(bottonSidebarSplitPane, BorderLayout.CENTER)
+        } else {
+            bottomSidebarDividerLocation = bottonSidebarSplitPane.dividerLocation
+            removeAll()
+            bottonSidebarSplitPane.remove(mainPanel)
+            bottonSidebarSplitPane.remove(bottomSidebarPane)
+            add(mainPanel, BorderLayout.CENTER)
+            add(bottomSidebarPane, BorderLayout.SOUTH)
         }
         revalidate()
         repaint()

@@ -16,10 +16,15 @@ import javax.swing.*
  * which allows the owner of this [SidebarPane] to adjust its view, if necessary (such as using this [SidebarPane]
  * within a [JSplitPane], if it is open).
  */
-class SidebarPane(private val isOpenChangeHandler: () -> Unit) : JPanel() {
+class SidebarPane(private val orientation: Orientation, private val isOpenChangeHandler: () -> Unit) : JPanel() {
 
     companion object {
         private val LOG by logger(SidebarPane::class)
+    }
+
+    enum class Orientation {
+        Horizontal,
+        Vertical
     }
 
     /** Determines whether this [SidebarPane] is currently open, i.e. whether it displays one if its content views.*/
@@ -52,7 +57,7 @@ class SidebarPane(private val isOpenChangeHandler: () -> Unit) : JPanel() {
      * or in the title bar (if the content is closed).
      */
     fun add(name: String, iconPath: String, content: JComponent) {
-        val entry = Entry(name, ImageIcon(SidebarPane::class.java.getResource(iconPath)), content)
+        val entry = createEntry(name, ImageIcon(SidebarPane::class.java.getResource(iconPath)), content)
         entries.add(entry)
         entry.label.addMouseListener(labelListener)
         labelPanel.add(entry.label)
@@ -66,7 +71,10 @@ class SidebarPane(private val isOpenChangeHandler: () -> Unit) : JPanel() {
 
         val collapseButton = JButton()
         collapseButton.addActionListener({ collapse() })
-        collapseButton.icon = ImageIcon(SidebarPane::class.java.getResource("/img/double-arrow-right-16.png"))
+        collapseButton.icon = when (orientation) {
+            Orientation.Vertical -> ImageIcon(SidebarPane::class.java.getResource("/img/double-arrow-right-16.png"))
+            Orientation.Horizontal -> ImageIcon(SidebarPane::class.java.getResource("/img/double-arrow-down-16.png"))
+        }
         collapseButton.border = BorderFactory.createEmptyBorder()
         collapseButton.toolTipText = "Hide"
         headerPanel.add(collapseButton)
@@ -74,20 +82,43 @@ class SidebarPane(private val isOpenChangeHandler: () -> Unit) : JPanel() {
 
         contentPanel.layout = BorderLayout()
 
-        labelPanel.layout = BoxLayout(labelPanel, BoxLayout.Y_AXIS)
         layout = BorderLayout()
-        add(labelPanel, BorderLayout.EAST)
-        add(contentPanel, BorderLayout.CENTER)
+        when (orientation) {
+            Orientation.Vertical -> {
+                labelPanel.layout = BoxLayout(labelPanel, BoxLayout.Y_AXIS)
+                add(labelPanel, BorderLayout.EAST)
+                add(contentPanel, BorderLayout.CENTER)
+            }
+            Orientation.Horizontal -> {
+                labelPanel.layout = BoxLayout(labelPanel, BoxLayout.X_AXIS)
+                add(labelPanel, BorderLayout.SOUTH)
+                add(contentPanel, BorderLayout.CENTER)
+            }
+        }
     }
 
-    private data class Entry(val name: String, private val icon: Icon, val content: JComponent) {
-        val label: JLabel = VerticalLabel.create(name, icon)
-
-        init {
-            label.border = BorderFactory.createEmptyBorder(5, 10, 5, 10)
-            label.isOpaque = true
-            label.alignmentX = Component.CENTER_ALIGNMENT
+    private fun createEntry(name: String, icon: Icon, content: JComponent): Entry {
+        when (orientation) {
+            Orientation.Vertical -> {
+                val label = VerticalLabel.create(name, icon)
+                label.border = BorderFactory.createEmptyBorder(5, 10, 5, 10)
+                label.isOpaque = true
+                label.verticalAlignment = SwingConstants.TOP
+                return Entry(label, content)
+            }
+            Orientation.Horizontal -> {
+                val label = JLabel(name)
+                label.border = BorderFactory.createEmptyBorder(5, 10, 5, 10)
+                label.icon = icon
+                label.isOpaque = true
+                label.verticalAlignment = SwingConstants.TOP
+                return Entry(label, content)
+            }
         }
+    }
+
+    private data class Entry(val label: JLabel, val content: JComponent) {
+        val name: String = label.text
     }
 
     private fun getEntry(label: JLabel): Entry = entries.first { it.label === label }
