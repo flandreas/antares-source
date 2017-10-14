@@ -58,6 +58,7 @@ class ScenarioDetector(
     private val scenarioEventHandler: EventHandler<ScenarioEvent> = {
         hideScenarioDesc()
         it.scenario?.let { displayScenarioDesc(it) }
+        view.repaint()
     }
 
     private val scenarioStepEventHandler: EventHandler<ScenarioStepEvent> = {
@@ -69,6 +70,7 @@ class ScenarioDetector(
             highlightScenarioStep(it)
         }
         it.newStep?.activate(view)
+        view.repaint()
     }
 
     private var isActive: Boolean = false
