@@ -107,10 +107,7 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
     private fun createScenarioTreeModel(): TreeModel {
         val rootNode = DefaultMutableTreeNode(graphView)
         for (scenario in graphView!!.scenarios.getScenarios()) {
-            val scenarioNode = addScenario(scenario, rootNode)
-            for (step in scenario.getScenarioSteps()) {
-                addScenarioStep(step, scenarioNode)
-            }
+            addScenario(scenario, rootNode)
         }
         return DefaultTreeModel(rootNode)
     }
