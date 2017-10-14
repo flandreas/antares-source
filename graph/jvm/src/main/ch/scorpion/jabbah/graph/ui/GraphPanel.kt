@@ -62,6 +62,10 @@ class GraphPanel(
         propertySheetFactory: PropertySheetPanelFactory
 ) : JPanel() {
 
+    companion object {
+        private val DEF_SIDEBAR_WIDTH = 200
+    }
+
     constructor(editor: Editor, viewManager: ViewManager): this(
             editor,
             BaseModule.eventBus,
@@ -104,6 +108,9 @@ class GraphPanel(
 
     private val sidebarSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
+    /** Holds the location of [sidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
+    private var sidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.sidebarSplitPos", -1)
+
     private var currentMode: ApplicationMode = ApplicationMode.EDIT
 
     init {
@@ -127,6 +134,9 @@ class GraphPanel(
     fun dispose() {
         BaseModule.settings.set("graphPanel.mainSplitPos", mainSplitPane.dividerLocation)
         BaseModule.settings.set("graphPanel.librarySplitPos", librarySplitPane.dividerLocation)
+        if (sidebarDividerLocation > 0) {
+            BaseModule.settings.set("graphPanel.sidebarSplitPos", sidebarDividerLocation)
+        }
     }
 
     private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
@@ -154,6 +164,8 @@ class GraphPanel(
         librarySplitPane.add(libraryPropertyPanel)
         librarySplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 700)
 
+        sidebarSplitPane.resizeWeight = 1.0
+
         sidebarPane.add(Translations.getString("graph.scenarios.title"), "/img/scenarios-16.png", scenarioPanel)
 
         mainSplitPane.add(librarySplitPane)
@@ -171,9 +183,10 @@ class GraphPanel(
             removeAll()
             sidebarSplitPane.add(mainSplitPane)
             sidebarSplitPane.add(sidebarPane)
-            sidebarSplitPane.dividerLocation = mainSplitPane.width - 200
+            sidebarSplitPane.dividerLocation = if (sidebarDividerLocation > 0) sidebarDividerLocation else mainSplitPane.width - DEF_SIDEBAR_WIDTH
             add(sidebarSplitPane)
         } else {
+            sidebarDividerLocation = sidebarSplitPane.dividerLocation
             removeAll()
             sidebarSplitPane.remove(sidebarPane)
             sidebarSplitPane.remove(mainSplitPane)
