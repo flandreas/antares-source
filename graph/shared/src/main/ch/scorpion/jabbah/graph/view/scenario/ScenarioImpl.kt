@@ -52,17 +52,23 @@ class ScenarioImpl(
     override fun getStep(id: Int): ScenarioStep = steps.first { it.id == id }
 
     override fun addStep(step: ScenarioStep) {
+        addStep(step, steps.size)
+    }
+
+    override fun addStep(step: ScenarioStep, index: Int) {
         if (!steps.contains(step)) {
             if (!isLoading) {
                 step.id = steps.size + 1
             }
-            steps.add(step)
+            steps.add(index, step)
         }
     }
 
     override fun removeStep(step: ScenarioStep) {
         steps.remove(step)
     }
+
+    override fun indexOf(step: ScenarioStep): Int = steps.indexOf(step)
 
     /** ---- [Storable] interface */
 

@@ -38,7 +38,7 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
         // Removes the [TreeNode] that represents a removed [Scenario]
         eventBus.register(ScenarioRemovedEvent::class, {
             if (it.graphView === this.graphView) {
-                model = createTreeModel(graphView!!)
+                removeScenario(it.scenario)
             }
         })
 
@@ -54,7 +54,7 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
         // Removes the [TreeNode] that represents a removed [ScenarioStep]
         eventBus.register(ScenarioStepRemovedEvent::class, {
             if (it.graphView === this.graphView) {
-                model = createTreeModel(graphView!!)
+                removeScenarioStep(it.scenario, it.scenarioStep)
             }
         })
 
@@ -118,6 +118,9 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
     private fun addScenario(scenario:Scenario, rootNode: DefaultMutableTreeNode): DefaultMutableTreeNode {
         val scenarioNode = DefaultMutableTreeNode(scenario)
         rootNode.add(scenarioNode)
+        for (step in scenario.getScenarioSteps()) {
+            addScenarioStep(step, scenarioNode)
+        }
         return scenarioNode
     }
 
@@ -127,6 +130,24 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
         return scenarioNode
     }
 
+    private fun removeScenario(scenario: Scenario) {
+        val rootNode = model!!.root as DefaultMutableTreeNode
+        val index = getScenarioIndex(scenario)
+        if (index >= 0) {
+            val child = rootNode.remove(index)
+            (model as DefaultTreeModel).nodesWereRemoved(rootNode, intArrayOf(index), arrayOf(child))
+        }
+    }
+
+    private fun removeScenarioStep(scenario: Scenario, scenarioStep: ScenarioStep) {
+        val scenarioNode = findScenarioNode(scenario)
+        val index = getScenarioStepIndex(scenarioNode!!, scenarioStep)
+        if (index >= 0) {
+            val child = scenarioNode.remove(index)
+            (model as DefaultTreeModel).nodesWereRemoved(scenarioNode, intArrayOf(index), arrayOf(child))
+        }
+    }
+
     private fun findScenarioNode(scenario: Scenario): DefaultMutableTreeNode? {
         for (e in (model.root as DefaultMutableTreeNode).depthFirstEnumeration()) {
             if ((e as DefaultMutableTreeNode).userObject == scenario) {
@@ -134,6 +155,27 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
             }
         }
         return null
+    }
+
+    private fun getScenarioIndex(scenario: Scenario): Int {
+        val rootNode = model!!.root as DefaultMutableTreeNode
+        for (index in 0 until rootNode.childCount) {
+            val item = (rootNode.getChildAt(index) as DefaultMutableTreeNode).userObject as Scenario
+            if (item == scenario) {
+                return index
+            }
+        }
+        return -1
+    }
+
+    private fun getScenarioStepIndex(scenarioNode: DefaultMutableTreeNode, scenarioStep: ScenarioStep): Int {
+        for (index in 0 until scenarioNode.childCount) {
+            val item = (scenarioNode.getChildAt(index) as DefaultMutableTreeNode).userObject as ScenarioStep
+            if (item == scenarioStep) {
+                return index
+            }
+        }
+        return -1
     }
 
     private class Renderer : DefaultTreeCellRenderer() {

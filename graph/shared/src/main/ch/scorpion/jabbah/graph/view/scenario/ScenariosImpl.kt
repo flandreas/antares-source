@@ -38,9 +38,13 @@ class ScenariosImpl(
     }
 
     override fun add(scenario: Scenario) {
+        add(scenario, scenarios.size)
+    }
+
+    override fun add(scenario: Scenario, index: Int) {
         // TODO Ensure name uniqueness
         scenario.id = scenarios.size + 1
-        scenarios.add(scenario)
+        scenarios.add(index, scenario)
         eventBus.post(ScenarioAddedEvent(graphView!!, scenario))
     }
 
@@ -50,7 +54,11 @@ class ScenariosImpl(
     }
 
     override fun addStep(scenario: Scenario, step: ScenarioStep) {
-        scenario.addStep(step)
+        addStep(scenario, step, scenario.stepCount)
+    }
+
+    override fun addStep(scenario: Scenario, step: ScenarioStep, index: Int) {
+        scenario.addStep(step, index)
         eventBus.post(ScenarioStepAddedEvent(graphView!!, scenario, step))
     }
 
@@ -58,6 +66,10 @@ class ScenariosImpl(
         scenario.removeStep(step)
         eventBus.post(ScenarioStepRemovedEvent(graphView!!, scenario, step))
     }
+
+    override fun indexOfScenario(scenario: Scenario): Int = scenarios.indexOf(scenario)
+
+    override fun indexOfStep(scenario: Scenario, step: ScenarioStep): Int = scenario.indexOf(step)
 
     /** ---- [Storable] interface */
 

@@ -48,8 +48,14 @@ interface Scenario : Storable {
     /** Adds the specified [ScenarioStep] to this [Scenario]. */
     fun addStep(step: ScenarioStep)
 
+    /** Adds the specified [ScenarioStep] at index `index`.*/
+    fun addStep(step: ScenarioStep, index: Int)
+
     /** Removes the specified [ScenarioStep] from this [Scenario].*/
     fun removeStep(step: ScenarioStep)
+
+    /** Returns the index of `step` in this [Scenario], starting with 0.*/
+    fun indexOf(step: ScenarioStep): Int
 }
 
 /**

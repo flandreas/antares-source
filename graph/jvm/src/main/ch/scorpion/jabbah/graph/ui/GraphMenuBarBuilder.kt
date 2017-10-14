@@ -14,6 +14,9 @@ import ch.scorpion.jabbah.graph.library.AddLibraryFolderAction
 import ch.scorpion.jabbah.graph.library.DeleteContainerLibraryElementAction
 import ch.scorpion.jabbah.graph.library.EditContainerLibraryElementAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioAction
+import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioStepAction
+import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioAction
+import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioStepAction
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JMenu
 import javax.swing.JMenuBar
@@ -67,6 +70,9 @@ open class GraphMenuBarBuilder(application: DesktopApplication, eventBus: EventB
 
     protected open fun fillScenariosMenu(menu: JMenu): JMenu {
         menu.add(JMenuItem(AddScenarioAction(eventBus, EditModule.commandManager)))
+        menu.add(JMenuItem(AddScenarioStepAction(eventBus, EditModule.commandManager)))
+        menu.add(JMenuItem(DeleteScenarioAction(eventBus, EditModule.commandManager)))
+        menu.add(JMenuItem(DeleteScenarioStepAction(eventBus, EditModule.commandManager)))
         return menu
     }
 }

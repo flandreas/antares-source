@@ -23,11 +23,19 @@ interface Scenarios : Storable {
 
     fun add(scenario: Scenario)
 
+    fun add(scenario: Scenario, index: Int)
+
     fun remove(scenario: Scenario)
 
     fun addStep(scenario: Scenario, step: ScenarioStep)
 
+    fun addStep(scenario: Scenario, step: ScenarioStep, index: Int)
+
     fun removeStep(scenario: Scenario, step: ScenarioStep)
+
+    fun indexOfScenario(scenario: Scenario): Int
+
+    fun indexOfStep(scenario: Scenario, step: ScenarioStep): Int
 }
 
 data class ScenarioAddedEvent(val graphView: GraphView<*>, val scenario: Scenario)
