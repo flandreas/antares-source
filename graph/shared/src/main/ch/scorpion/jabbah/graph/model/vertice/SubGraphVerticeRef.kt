@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.script.Script
 
 /**
  * A [SubGraphVertice] implementation that is part of one [Graph] and references another [Graph] in the [Library].
@@ -28,7 +29,7 @@ class SubGraphVerticeRef(
 
         val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
             override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
-                vertice.scriptGateway.exec(vertice.getGraphIfPresent()!!.script!!, vertice, data, signalHandler)
+                vertice.scriptGateway.exec(Script(code = vertice.getGraphIfPresent()!!.script!!, origin = "SubGraph '${vertice.name}'", context = "Logic"), vertice, data, signalHandler)
             }
         }
 

@@ -39,25 +39,25 @@ class GraphDSLTest {
 
     @Test
     fun test() {
-        ScriptModule.scriptEngineProvider.invoke().eval("print('Hello World from Nashorn')")
+        ScriptModule.scriptEngineProvider.invoke().eval(Script(code = "print('Hello World from Nashorn')", origin="Test"))
     }
 
     @Test
     fun shouldAccessGraphName() {
-        val result = gateway.exec("return graph.name()", view) as String
+        val result = gateway.exec(Script(code ="return graph.name()", origin = "Test"), view) as String
         assertThat(result, `is`("AnyString"))
     }
 
     @Test
     fun shouldAccessGraphElement() {
-        val result = gateway.exec("return graph.elem(1).id()", view) as Int
+        val result = gateway.exec(Script(code ="return graph.elem(1).id()", origin = "Test"), view) as Int
         assertThat(result, `is`(1))
     }
 
     @Test
     fun shouldAccessOutputValue() {
         graphView.v1.getOutput<Boolean>().setOutgoingSignal(true, signalHandler)
-        val result = gateway.exec("return graph.elem(1).output()", view) as Boolean
+        val result = gateway.exec(Script(code ="return graph.elem(1).output()", origin = "Test"), view) as Boolean
         assertThat(result, `is`(true))
     }
 }

@@ -19,10 +19,10 @@ interface ScriptGateway {
      * @param view the [DrawingView] that represents the execution context.
      * @return the object that is returned by the script
      */
-    fun exec(script: String, view: DrawingView<GraphView<GraphElementView<*>>>): Any?
+    fun exec(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Any?
 
     /** Executes a javascript [script] based on the the current state of a [Vertice].*/
-    fun exec(script: String, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler)
+    fun exec(script: Script, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler)
 
     /**
      * Evaluates a javascript condition based on the current state of a [DrawingView].
@@ -30,5 +30,5 @@ interface ScriptGateway {
      * @param view the [DrawingView] representing the evaluation context.
      * @return `true` if the condition could be satisfied
      */
-    fun condition(script: String, view: DrawingView<GraphView<GraphElementView<*>>>): Boolean
+    fun condition(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Boolean
 }

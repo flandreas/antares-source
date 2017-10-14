@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -45,7 +46,7 @@ class ScenarioImpl(
     }
 
     override val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
-        get() = { v,sg -> sg.condition(conditionScript, v) }
+        get() = { v,sg -> sg.condition(Script(code = conditionScript, origin = "Scenario '$name'", context = "Condition"), v) }
 
     override fun getScenarioSteps(): ImmutableList<ScenarioStep> = steps.toImmutableList()
 

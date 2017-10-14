@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.script.Script
 
 /**
  * Standard implementation of the [ScenarioStep] interface.
@@ -72,7 +73,8 @@ class ScenarioStepImpl(
     }
 
     override val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
-        get() = { v, sg -> if (StringUtils.isNotEmpty(conditionScript)) sg.condition(conditionScript!!, v) else false}
+        get() = { v, sg -> if (StringUtils.isNotEmpty(conditionScript)) sg.condition(
+                Script(code = conditionScript!!, origin = "ScenarioStep '$name'", context = "condition"), v) else false}
 
     override fun dispose() {
         // empty
@@ -82,7 +84,7 @@ class ScenarioStepImpl(
         if (StringUtils.isNotEmpty(onEntryScript)) {
             try {
                 LOG.debug("Activate ScenarioStep '$name'")
-                scriptGateway.exec(onEntryScript!!, view)
+                scriptGateway.exec(Script(code = onEntryScript!!, origin = "ScenarioStep '$name'", context = "onEntry"), view)
             } catch (e: Throwable) {
                 LOG.error("Error in onEntry script of ScenarioStep '$name'")
             }
@@ -93,7 +95,7 @@ class ScenarioStepImpl(
         if (StringUtils.isNotEmpty(onExitScript)) {
             try {
                 LOG.debug("Passivate ScenarioStep '$name'")
-                scriptGateway.exec(onExitScript!!, view)
+                scriptGateway.exec(Script(code = onExitScript!!, origin = "ScenarioStep '$name'", context = "onExit"), view)
             } catch (e: Throwable) {
                 LOG.error("Error in onExit script of ScenarioStep '$name'")
             }

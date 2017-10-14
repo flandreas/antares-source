@@ -196,9 +196,9 @@ class GraphPanel(
 
         mainPanel.add(mainSplitPane, BorderLayout.CENTER)
         mainPanel.add(rightSidebarPane, BorderLayout.EAST)
-        mainPanel.add(bottomSidebarPane, BorderLayout.SOUTH)
 
         add(mainPanel, BorderLayout.CENTER)
+        add(bottomSidebarPane, BorderLayout.SOUTH)
     }
 
     /** Handles changes of the ´isOpen´ property of the [rightSidebarPane]. */

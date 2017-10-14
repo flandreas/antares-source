@@ -1,5 +1,6 @@
 package ch.scorpion.antares.script
 
+import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptEngine
 
 /**
@@ -8,7 +9,7 @@ import ch.scorpion.jabbah.graph.script.ScriptEngine
  */
 class ScriptEngineJs : ScriptEngine {
 
-    override fun eval(script: String) {
+    override fun eval(script: Script) {
         // TODO Argument of js() must be a constant String??
         js("TODO")
     }

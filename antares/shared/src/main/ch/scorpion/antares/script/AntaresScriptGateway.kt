@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptEngine
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -36,20 +37,18 @@ class AntaresScriptGateway(private val engine: ScriptEngine, eventBus: EventBus)
 
     /** ---- [ScriptGateway] interface */
 
-    override fun exec(script: String, view: DrawingView<GraphView<GraphElementView<*>>>): Any? {
-        val code = GRAPH_WRAPPER.replaceFirst("\$BODY", script)
-        engine.eval(code)
+    override fun exec(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Any? {
+        engine.eval(script.copy(code = GRAPH_WRAPPER.replaceFirst("\$BODY", script.code)))
         return engine.invoke("execGraph", CircuitViewBridge(view, null))
     }
 
-    override fun exec(script: String, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler) {
-        val code = VERTICE_WRAPPER.replaceFirst("\$BODY", script)
-        engine.eval(code)
+    override fun exec(script: Script, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler) {
+        engine.eval(script.copy(code = VERTICE_WRAPPER.replaceFirst("\$BODY", script.code)))
         engine.invoke("execVertice", CircuitElemModelBridge(vertice, signalHandler, data, store))
     }
 
-    override fun condition(script: String, view: DrawingView<GraphView<GraphElementView<*>>>): Boolean {
-        if (StringUtils.isEmpty(script)) {
+    override fun condition(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Boolean {
+        if (StringUtils.isEmpty(script.code)) {
             return false
         }
         return exec(script, view) as Boolean

@@ -6,7 +6,7 @@ package ch.scorpion.jabbah.graph.script
 interface ScriptEngine {
 
     /** Evaluates (executes) the specified javascript. Primarily used for defining functions.*/
-    fun eval(script: String)
+    fun eval(script: Script)
 
     /** Invokes the function with the specified name and provides the given arguments.*/
     fun invoke(name: String, vararg args: Any): Any?

@@ -1,30 +1,58 @@
 package ch.scorpion.jabbah.graph.script
 
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.model.issue.IssueImpl
+import ch.scorpion.jabbah.graph.model.issue.IssueSeverity
 import javax.script.Invocable
 import javax.script.ScriptEngineManager
+import javax.script.ScriptException
 
 /**
  * Implements [ScriptEngine] using the JVM "nashorn" engine.
  */
-class ScriptEngineJvm : ScriptEngine {
+class ScriptEngineJvm(
+        private val eventBus: EventBus = BaseModule.eventBus
+) : ScriptEngine {
 
     private val LOG by logger(ScriptEngineJvm::class)
     private val engine = ScriptEngineManager().getEngineByName("nashorn")
-    private var lastScript: String? = null
+    private var lastScript: Script? = null
 
-    override fun eval(script: String) {
+    override fun eval(script: Script) {
         lastScript = script
-        engine.eval(script)
+        try {
+            engine.eval(script.code)
+        } catch (e: ScriptException) {
+            LOG.debug("ScriptException while defining JS function: '${e.message}'")
+            postIssue(script, e)
+        } catch (e: Throwable) {
+            LOG.error("General error while defining JS function: '${e.message}'")
+            throw e
+        }
     }
 
     override fun invoke(name: String, vararg args: Any): Any? {
         try {
             return (engine as Invocable).invokeFunction(name, *args)
+        } catch (e: ScriptException) {
+            LOG.debug("ScriptException while defining JS function: '${e.message}'")
+            postIssue(lastScript!!, e)
+            return null
         } catch (e: Throwable) {
             LOG.error("Error while invoking JS function '$name': ${e.message}")
             LOG.error("Invoked '$name' for the following script\n: $lastScript")
             throw e
         }
+    }
+
+    private fun postIssue(script: Script, e: ScriptException) {
+        eventBus.post(IssueImpl(
+                severity = IssueSeverity.Error,
+                name = "JS Script",
+                description = "${e.message}",
+                origin = script.origin,
+                context = script.context))
     }
 }
