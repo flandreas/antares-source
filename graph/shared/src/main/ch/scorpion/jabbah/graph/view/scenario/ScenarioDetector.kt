@@ -17,9 +17,6 @@ import ch.scorpion.jabbah.graph.view.ScenarioEvent
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.graph.view.ScenarioStepEvent
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawableContainer
-import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.edit.model.text.FlexibleTextView
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
@@ -65,8 +62,12 @@ class ScenarioDetector(
 
     private val scenarioStepEventHandler: EventHandler<ScenarioStepEvent> = {
         it.oldStep?.passivate(view)
+        unhighlightScenarioStep()
         hideScenarioStepDesc()
-        it.newStep?.let { displayScenarioStepDesc(it) }
+        it.newStep?.let {
+            displayScenarioStepDesc(it)
+            highlightScenarioStep(it)
+        }
         it.newStep?.activate(view)
     }
 
@@ -77,6 +78,9 @@ class ScenarioDetector(
 
     /** The currently displayed description of a [ScenarioStep], if any.*/
     private var scenarioStepDesc: FlexibleTextView? = null
+
+    /** The IDs of the currently highlighted [Component]s, if any.*/
+    private var highlightIds: List<Int>? = null
 
     init {
         eventBus.register(SchedulerEvent::class, schedulerEventHandler)
@@ -185,6 +189,25 @@ class ScenarioDetector(
             scenarioStepDesc = null
         }
     }
+
+    /** Highlight the [Component]s as required by the specified [ScenarioStep].*/
+    private fun highlightScenarioStep(scenarioStep: ScenarioStep) {
+        highlightIds = scenarioStep.highlightIdsAsInt
+        if (!highlightIds!!.isEmpty()) {
+            view.highlighter.highlight(*highlightIds!!.toIntArray())
+        }
+    }
+
+    /** Removes the highlights that have been added by the current [ScenarioStep].*/
+    private fun unhighlightScenarioStep() {
+        highlightIds?.let {
+            if (!it.isEmpty()) {
+                view.highlighter.unhighlight(*it.toIntArray())
+            }
+        }
+    }
+
+    /** Unhighlight the [Component]s that have been highlighted by the specified [ScenarioStep].*/
 
     private fun calculateScenarioDescAnchor(): Point2D {
         val bounds = view.contentBounds

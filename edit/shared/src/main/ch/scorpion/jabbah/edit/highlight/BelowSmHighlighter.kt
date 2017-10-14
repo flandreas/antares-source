@@ -32,7 +32,7 @@ class BelowSmHighlighter(
     override fun highlight(component: Component, color: CompositeColor?) {
         if (!isHighlighted(component)) {
             highlightImpl(component, color)
-            content.drawing.validate()
+            content.highlightContainer.validate()
             postHighlightChangedEvent(listOf(component), true)
         }
     }
@@ -46,7 +46,7 @@ class BelowSmHighlighter(
                 newHighlights.add(it)
             }
         if (newHighlights.size > 0) {
-            content.drawing.validate()
+            content.highlightContainer.validate()
             postHighlightChangedEvent(newHighlights, true)
         }
     }
@@ -58,9 +58,27 @@ class BelowSmHighlighter(
     override fun unhighlight(component: Component) {
         if (isHighlighted(component)) {
             unhighlightImpl(component)
-            content.drawing.validate()
+            content.highlightContainer.validate()
             postHighlightChangedEvent(listOf(component), false)
         }
+    }
+
+    override fun unhighlight(components: Collection<Component>) {
+        val oldHighlights = mutableListOf<Component>()
+        components
+                .filter { isHighlighted(it) }
+                .forEach {
+                    unhighlightImpl(it)
+                    oldHighlights.add(it)
+                }
+        if (oldHighlights.size > 0) {
+            content.highlightContainer.validate()
+            postHighlightChangedEvent(oldHighlights, false)
+        }
+    }
+
+    override fun unhighlight(vararg ids: Int) {
+        unhighlight(content.drawing.getDrawables { ids.contains(it.id) })
     }
 
     override fun unhighlightAll() {
@@ -68,7 +86,7 @@ class BelowSmHighlighter(
         list.addAll(highlights.keys)
         if (!list.isEmpty()) {
             list.forEach { unhighlightImpl(it) }
-            content.drawing.validate()
+            content.highlightContainer.validate()
             postHighlightChangedEvent(list, false)
         }
     }

@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.io.Storable
@@ -23,6 +25,15 @@ interface ScenarioStep : Storable {
 
     /** The text to be displayed above the explained [GraphView] when this [ScenarioStep] is active.*/
     var description: TextProperty
+
+    /** The comma-separated, persistent list of [Component] IDs to be highlighted when this [ScenarioStep] is active*/
+    var highlightIds: String?
+
+    /**
+     * Returns the [List] of [Component] IDs to be highlighted when this [ScenarioStep] is active.
+     * @throws IllegalStateException if `highlightIds` contains data in an illegal format
+     */
+    val highlightIdsAsInt: List<Int>
 
     /**
      * Returns the condition that determines whether this {@link ScenarioStep} is triggered depending on the current state
@@ -47,6 +58,7 @@ interface ScenarioStep : Storable {
      * current [Scenario].
      */
     fun passivate(view: DrawingView<GraphView<GraphElementView<*>>>)
+
 }
 
 /**

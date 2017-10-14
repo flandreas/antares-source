@@ -36,6 +36,9 @@ class ScenarioStepImpl(
     /** The JavaScript expressions to be executed when this {@link ScenarioStep} is passivated. */
     private var onExitScript: String? = null
 
+    /** Caches the parsed highlight IDs of `highlightIds' as [Int].*/
+    private var highlightIntIdsCache: List<Int>? = null
+
     /** ---- [Any] */
 
     override fun toString(): String = name
@@ -59,6 +62,14 @@ class ScenarioStepImpl(
     override var id: Int = 0
 
     override var description: TextProperty = TextProperty(null)
+
+    override var highlightIds: String? = null
+    set(value) {
+        if (field != value) {
+            field = value
+            highlightIntIdsCache = null
+        }
+    }
 
     override val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
         get() = { v, sg -> if (StringUtils.isNotEmpty(conditionScript)) sg.condition(conditionScript!!, v) else false}
@@ -89,6 +100,20 @@ class ScenarioStepImpl(
         }
     }
 
+    override val highlightIdsAsInt: List<Int>
+        get() {
+            if (highlightIntIdsCache == null) {
+                highlightIntIdsCache = mutableListOf()
+                if (StringUtils.isNotEmpty(highlightIds)) {
+                    highlightIds!!
+                            .split(delimiters = ',')
+                            .map { it.trim().toInt() }
+                            .forEach { (highlightIntIdsCache as MutableList<Int>).add(it) }
+                }
+            }
+            return highlightIntIdsCache!!
+        }
+
     /** ---- [Storable] interface */
 
     override var storableId: Int = 0
@@ -97,6 +122,7 @@ class ScenarioStepImpl(
         writer.writeInt("id", id)
         writer.writeString("name", name)
         description.text?.let { writer.writeString("desc", description.text!!) }
+        highlightIds?.let { writer.writeString("highlightIds", it) }
         conditionScript?.let { writer.writeString("condition", conditionScript!!)}
         onEntryScript?.let { writer.writeString("onEntry", onEntryScript!!) }
         onExitScript?.let {writer.writeString("onExit", onExitScript!!) }
@@ -106,6 +132,7 @@ class ScenarioStepImpl(
         id = reader.readInt("id")
         name = reader.readString("name")
         description = TextProperty(reader.readOptionalString("desc"))
+        highlightIds = reader.readOptionalString("highlightIds")
         conditionScript = reader.readOptionalString("condition")
         onEntryScript = reader.readOptionalString("onEntry")
         onExitScript = reader.readOptionalString("onExit")

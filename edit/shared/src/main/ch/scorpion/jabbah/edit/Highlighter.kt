@@ -26,6 +26,12 @@ interface Highlighter {
     /** Unhighlights the specified [Component].*/
     fun unhighlight(component: Component)
 
+    /** Unhighlights the specified [Component]s. */
+    fun unhighlight(components: Collection<Component>)
+
+    /** Unhighlights the [Component]s with the specified IDs.*/
+    fun unhighlight(vararg ids: Int)
+
     /** Unhighlights all currently highlighted [Component]s.*/
     fun unhighlightAll()
 
