@@ -162,9 +162,15 @@ class GraphPanel(
         librarySplitPane.add(libraryPropertyPanel)
         librarySplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 700)
 
+        sidebarSplitPane.border = null
         sidebarSplitPane.resizeWeight = 1.0
 
+        val usecasesDummy = JLabel(Translations.getString("application.notYetImplemented.text"))
+        usecasesDummy.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        usecasesDummy.verticalAlignment = JLabel.TOP
+
         sidebarPane.add(Translations.getString("graph.scenarios.title"), "/img/scenarios-16.png", scenarioPanel)
+        sidebarPane.add(Translations.getString("graph.usecases.title"), "/img/usecase-16.png", usecasesDummy)
 
         mainSplitPane.add(librarySplitPane)
         mainSplitPane.add(graphNavigationPanel)
@@ -179,6 +185,8 @@ class GraphPanel(
     private fun sidebarPaneChanged() {
         if (sidebarPane.isOpen) {
             removeAll()
+            sidebarSplitPane.remove(sidebarPane)
+            sidebarSplitPane.remove(mainSplitPane)
             sidebarSplitPane.add(mainSplitPane)
             sidebarSplitPane.add(sidebarPane)
             sidebarSplitPane.dividerLocation = if (sidebarDividerLocation > 0) sidebarDividerLocation else mainSplitPane.width - DEF_SIDEBAR_WIDTH

@@ -22,7 +22,7 @@ class SidebarPane(private val isOpenChangeHandler: () -> Unit) : JPanel() {
         private val LOG by logger(SidebarPane::class)
     }
 
-    /** Determines whether this [SidebarPane] is currently open, i.e. whether it displayes one if its content views.*/
+    /** Determines whether this [SidebarPane] is currently open, i.e. whether it displays one if its content views.*/
     val isOpen: Boolean get() = current != null
 
     /** The [JPanel] at the right side containing the vertical [JLabel]s. */
@@ -140,10 +140,11 @@ class SidebarPane(private val isOpenChangeHandler: () -> Unit) : JPanel() {
         }
 
         override fun mouseClicked(e: MouseEvent?) {
-            if (isOpen) {
+            val clickedEntry = getEntry(e!!.source as JLabel)
+            if (isOpen && clickedEntry == current) {
                 activate(null)
             } else {
-                activate(getEntry(e!!.source as JLabel))
+                activate(clickedEntry)
             }
         }
 
