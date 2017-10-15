@@ -14,57 +14,52 @@ import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeCellRenderer
 import javax.swing.tree.DefaultTreeModel
-import javax.swing.tree.TreeModel
 
 /**
- * Displays the [Scenario] tree of a [Graph].
+ * Displays the [Scenario] tree of a [GraphView].
  */
 class ScenarioTreeView(eventBus: EventBus) : JTree() {
     @Suppress("unused") constructor(): this(BaseModule.eventBus)
 
     init {
 
-        setCellRenderer(Renderer())
+        setCellRenderer(ScenarioTreeRenderer())
         setRowHeight(24)
 
-        // [Scenario] to this [ScenarioTreeView]
+        // Adds a [Scenario] to this [ScenarioTreeView]
         eventBus.register(ScenarioAddedEvent::class, {
             if (it.graphView === this.graphView) {
-                addScenario(it.scenario, model.root as DefaultMutableTreeNode)
-                (model as DefaultTreeModel).reload()
+                scenarioTreeModel.addScenario(it.scenario)
             }
         })
 
         // Removes the [TreeNode] that represents a removed [Scenario]
         eventBus.register(ScenarioRemovedEvent::class, {
             if (it.graphView === this.graphView) {
-                removeScenario(it.scenario)
+                scenarioTreeModel.removeScenario(it.scenario)
             }
         })
 
         // Adds an added [ScenarioStep] to this [ScenarioTreeView]
         eventBus.register(ScenarioStepAddedEvent::class, {
             if (it.graphView === this.graphView) {
-                val scenarioNode = findScenarioNode(it.scenario)
-                addScenarioStep(it.scenarioStep, scenarioNode!!)
-                (model as DefaultTreeModel).reload()
+                scenarioTreeModel.addScenarioStep(it.scenario, it.scenarioStep)
             }
         })
 
         // Removes the [TreeNode] that represents a removed [ScenarioStep]
         eventBus.register(ScenarioStepRemovedEvent::class, {
             if (it.graphView === this.graphView) {
-                removeScenarioStep(it.scenario, it.scenarioStep)
+                scenarioTreeModel.removeScenarioStep(it.scenario, it.scenarioStep)
             }
         })
 
+        // Disables this [ScenarioTreeView] when the [Scheduler] is active.
         eventBus.register(SchedulerActivationStateEvent::class, {
             if (it.scheduler.isActive) {
                 selectionModel.clearSelection()
-                isEnabled = false
-            } else {
-                isEnabled = true
             }
+            isEnabled = !it.scheduler.isActive
         })
     }
 
@@ -73,7 +68,7 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
         set(value) {
             if (field != value) {
                 field = value
-                model = createScenarioTreeModel()
+                model = ScenarioTreeModel(field!!)
             }
         }
 
@@ -104,78 +99,85 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
             return null
         }
 
-    private fun createScenarioTreeModel(): TreeModel {
-        val rootNode = DefaultMutableTreeNode(graphView)
-        for (scenario in graphView!!.scenarios.getScenarios()) {
-            addScenario(scenario, rootNode)
+    /** Casts the generic model property to [ScenarioTreeModel]. */
+    private val scenarioTreeModel: ScenarioTreeModel get() = model!! as ScenarioTreeModel
+
+    /** Extends [DefaultTreeModel] to add custom model manipulation methods. */
+    private class ScenarioTreeModel(graphView: GraphView<*>) : DefaultTreeModel(DefaultMutableTreeNode(graphView)) {
+
+        private val graphViewNode: DefaultMutableTreeNode get() = root as DefaultMutableTreeNode
+
+        init {
+            graphView.scenarios.getScenarios().forEach { addScenario(it) }
+            nodeStructureChanged(root)
         }
-        return DefaultTreeModel(rootNode)
-    }
 
-    private fun addScenario(scenario:Scenario, rootNode: DefaultMutableTreeNode): DefaultMutableTreeNode {
-        val scenarioNode = DefaultMutableTreeNode(scenario)
-        rootNode.add(scenarioNode)
-        for (step in scenario.getScenarioSteps()) {
-            addScenarioStep(step, scenarioNode)
+        fun addScenario(scenario:Scenario) {
+            val scenarioNode = DefaultMutableTreeNode(scenario)
+            graphViewNode.add(scenarioNode)
+            scenario.getScenarioSteps().forEach { addScenarioStep(it, scenarioNode) }
+            nodesWereInserted(graphViewNode, intArrayOf(graphViewNode.siblingCount - 1))
         }
-        return scenarioNode
-    }
 
-    private fun addScenarioStep(scenarioStep: ScenarioStep, scenarioNode: DefaultMutableTreeNode): DefaultMutableTreeNode {
-        val scenarioStepNode = DefaultMutableTreeNode(scenarioStep)
-        scenarioNode.add(scenarioStepNode)
-        return scenarioNode
-    }
-
-    private fun removeScenario(scenario: Scenario) {
-        val rootNode = model!!.root as DefaultMutableTreeNode
-        val index = getScenarioIndex(scenario)
-        if (index >= 0) {
-            val child = rootNode.remove(index)
-            (model as DefaultTreeModel).nodesWereRemoved(rootNode, intArrayOf(index), arrayOf(child))
+        fun addScenarioStep(scenario: Scenario, step: ScenarioStep) {
+            addScenarioStep(step, findScenarioNode(scenario)!!)
         }
-    }
 
-    private fun removeScenarioStep(scenario: Scenario, scenarioStep: ScenarioStep) {
-        val scenarioNode = findScenarioNode(scenario)
-        val index = getScenarioStepIndex(scenarioNode!!, scenarioStep)
-        if (index >= 0) {
-            val child = scenarioNode.remove(index)
-            (model as DefaultTreeModel).nodesWereRemoved(scenarioNode, intArrayOf(index), arrayOf(child))
+        fun addScenarioStep(step: ScenarioStep, scenarioNode: DefaultMutableTreeNode) {
+            scenarioNode.add(DefaultMutableTreeNode(step))
+            nodesWereInserted(scenarioNode, intArrayOf(scenarioNode.childCount - 1))
         }
-    }
 
-    private fun findScenarioNode(scenario: Scenario): DefaultMutableTreeNode? {
-        for (e in (model.root as DefaultMutableTreeNode).depthFirstEnumeration()) {
-            if ((e as DefaultMutableTreeNode).userObject == scenario) {
-                return e
+        fun removeScenario(scenario: Scenario) {
+            val index = getScenarioIndex(scenario)
+            if (index >= 0) {
+                val child = graphViewNode.remove(index)
+                nodesWereRemoved(graphViewNode, intArrayOf(index), arrayOf(child))
             }
         }
-        return null
-    }
 
-    private fun getScenarioIndex(scenario: Scenario): Int {
-        val rootNode = model!!.root as DefaultMutableTreeNode
-        for (index in 0 until rootNode.childCount) {
-            val item = (rootNode.getChildAt(index) as DefaultMutableTreeNode).userObject as Scenario
-            if (item == scenario) {
-                return index
+        fun removeScenarioStep(scenario: Scenario, scenarioStep: ScenarioStep) {
+            val scenarioNode = findScenarioNode(scenario)
+            val index = getScenarioStepIndex(scenarioNode!!, scenarioStep)
+            if (index >= 0) {
+                val child = scenarioNode.remove(index)
+                nodesWereRemoved(scenarioNode, intArrayOf(index), arrayOf(child))
             }
         }
-        return -1
-    }
 
-    private fun getScenarioStepIndex(scenarioNode: DefaultMutableTreeNode, scenarioStep: ScenarioStep): Int {
-        for (index in 0 until scenarioNode.childCount) {
-            val item = (scenarioNode.getChildAt(index) as DefaultMutableTreeNode).userObject as ScenarioStep
-            if (item == scenarioStep) {
-                return index
+        private fun findScenarioNode(scenario: Scenario): DefaultMutableTreeNode? {
+            for (e in graphViewNode.depthFirstEnumeration()) {
+                if ((e as DefaultMutableTreeNode).userObject == scenario) {
+                    return e
+                }
             }
+            return null
         }
-        return -1
+
+        private fun getScenarioIndex(scenario: Scenario): Int {
+            for (index in 0 until graphViewNode.childCount) {
+                val item = (graphViewNode.getChildAt(index) as DefaultMutableTreeNode).userObject as Scenario
+                if (item == scenario) {
+                    return index
+                }
+            }
+            return -1
+        }
+
+        private fun getScenarioStepIndex(scenarioNode: DefaultMutableTreeNode, scenarioStep: ScenarioStep): Int {
+            for (index in 0 until scenarioNode.childCount) {
+                val item = (scenarioNode.getChildAt(index) as DefaultMutableTreeNode).userObject as ScenarioStep
+                if (item == scenarioStep) {
+                    return index
+                }
+            }
+            return -1
+        }
+
     }
 
-    private class Renderer : DefaultTreeCellRenderer() {
+    /** Adds custom icons to the tree nodes.*/
+    private class ScenarioTreeRenderer : DefaultTreeCellRenderer() {
 
         companion object {
             private val elementIcon = ContainerLibraryElementIcon()
@@ -187,15 +189,19 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
             val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
 
             val userObject = (value as DefaultMutableTreeNode).userObject
-            if (userObject is Scenario) {
-                component.icon = scenarioIcon
-                component.disabledIcon = scenarioIcon
-            } else if (userObject is ScenarioStep) {
-                component.icon = stepIcon
-                component.disabledIcon = stepIcon
-            } else if (userObject is GraphView<*>) {
-                component.icon = elementIcon
-                component.disabledIcon = elementIcon
+            when (userObject) {
+                is Scenario -> {
+                    component.icon = scenarioIcon
+                    component.disabledIcon = scenarioIcon
+                }
+                is ScenarioStep -> {
+                    component.icon = stepIcon
+                    component.disabledIcon = stepIcon
+                }
+                is GraphView<*> -> {
+                    component.icon = elementIcon
+                    component.disabledIcon = elementIcon
+                }
             }
 
             return component
