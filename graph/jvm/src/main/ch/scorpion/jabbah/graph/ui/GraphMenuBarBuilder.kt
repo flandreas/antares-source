@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.ExecutionDepthAction
+import ch.scorpion.jabbah.execution.StopOnIssueAction
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.library.AddGraphToLibraryAction
 import ch.scorpion.jabbah.graph.library.AddLibraryFolderAction
@@ -57,6 +58,7 @@ open class GraphMenuBarBuilder(application: DesktopApplication, eventBus: EventB
 
     protected open fun fillExecutionMenu(menu: JMenu): JMenu {
         menu.add(JCheckBoxMenuItem(ExecutionDepthAction()))
+        menu.add(JCheckBoxMenuItem(StopOnIssueAction()))
         return menu
     }
 

@@ -57,11 +57,9 @@ class StepExecutionAction(
 
 /** Toggles the [SignalHandler.isDeepExecution] property of a [Scheduler].*/
 class ExecutionDepthAction(
-    val scheduler: Scheduler,
-    eventBus: EventBus
+    val scheduler: Scheduler = ExecutionModule.scheduler,
+    eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("simulator.action.deepSimulation") {
-
-    constructor(): this(ExecutionModule.scheduler, BaseModule.eventBus)
 
     init {
         eventBus.register(SchedulerActivationStateEvent::class, { updateState() })
@@ -76,5 +74,26 @@ class ExecutionDepthAction(
 
     override fun actionPerformed(e: ActionEvent?) {
         scheduler.isDeepExecution = getValue(Action.SELECTED_KEY) as Boolean
+    }
+}
+
+/** Toggles the [Scheduler.isStopOnIssue] property. */
+class StopOnIssueAction(
+    private val scheduler: Scheduler = ExecutionModule.scheduler,
+    eventBus: EventBus = BaseModule.eventBus
+) : AbstractSchedulerAction("simulator.action.stopOnIssue") {
+
+    init {
+        eventBus.register(StopOnIssueEvent::class, { updateState() })
+        updateState()
+    }
+
+    override fun actionPerformed(e: ActionEvent?) {
+        scheduler.isStopOnIssue = getValue(Action.SELECTED_KEY) as Boolean
+    }
+
+    private fun updateState() {
+        putValue(Action.SELECTED_KEY, scheduler.isStopOnIssue)
+        isEnabled = !scheduler.isActive
     }
 }

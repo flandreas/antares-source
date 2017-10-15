@@ -107,7 +107,10 @@ class ScenarioDetector(
             view.drawing.currentScenario = view.drawing.scenarios.getScenarios().firstOrNull {
                 it.condition.invoke(view, scriptGateway)
             }
+        }
 
+        // An occurred Issue could have deactivated the Scheduler
+        if (isActive) {
             val scenario = view.drawing.currentScenario
             if (scenario != null) {
                 setCurrentScenarioStep(scenario.getScenarioSteps().firstOrNull {
@@ -130,12 +133,14 @@ class ScenarioDetector(
     }
 
     private fun setCurrentScenarioStep(scenarioStep: ScenarioStep?) {
-        if (scenarioStep == null) {
-            LOG.debug("ScenarioDetector: no current ScenarioStep")
-        } else {
-            LOG.debug("ScenarioDetector: detected ScenarioStep '${scenarioStep.name}'")
+        if (isActive) {
+            if (scenarioStep == null) {
+                LOG.debug("ScenarioDetector: no current ScenarioStep")
+            } else {
+                LOG.debug("ScenarioDetector: detected ScenarioStep '${scenarioStep.name}'")
+            }
+            view.drawing.currentScenarioStep = scenarioStep
         }
-        view.drawing.currentScenarioStep = scenarioStep
     }
 
     private fun displayScenarioDesc(scenario: Scenario) {

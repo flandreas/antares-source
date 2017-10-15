@@ -1,12 +1,13 @@
-package ch.scorpion.jabbah.graph.ui
+package ch.scorpion.jabbah.execution
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.model.issue.IssueCollector
-import ch.scorpion.jabbah.graph.model.issue.IssueCollectorEvent
-import ch.scorpion.jabbah.graph.model.issue.IssueSeverity
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.execution.issue.Issue
+import ch.scorpion.jabbah.execution.issue.IssueCollector
+import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
+import ch.scorpion.jabbah.execution.issue.IssueSeverity
+import ch.scorpion.jabbah.execution.module.ExecutionModule
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.ImageIcon
@@ -18,7 +19,7 @@ import javax.swing.table.DefaultTableCellRenderer
 
 /** Displays the current [Issue]s of an [IssueCollector] as a table.*/
 class IssuesPanel(
-        private val issueCollector: IssueCollector = GraphModelModule.issueCollector,
+        private val issueCollector: IssueCollector = ExecutionModule.issueCollector,
         private val eventBus: EventBus = BaseModule.eventBus
 ) : JPanel() {
 

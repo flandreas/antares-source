@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.execution.module
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.noise.RandomNoiseGenerator
@@ -23,6 +24,8 @@ object ExecutionModule : AbstractModule() {
     val scheduler: Scheduler by lazy { SchedulerImpl() }
 
     val currentSystemSpeedCategory: CurrentSystemSpeedCategory by lazy { CurrentSystemSpeedCategory() }
+
+    val issueCollector: IssueCollector = IssueCollector(eventBus = BaseModule.eventBus, clearOnExecutionStart = true)
 
     override fun initialize() {
         BaseModule.require()

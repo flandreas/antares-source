@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
-import ch.scorpion.jabbah.graph.model.issue.IssueCollector
+import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
@@ -40,8 +40,6 @@ object GraphModelModule : AbstractModule() {
     }
 
     var graphFactory: () -> Graph = { GraphImpl() }
-
-    val issueCollector: IssueCollector = IssueCollector(eventBus = BaseModule.eventBus, clearOnExecutionStart = true)
 
     private fun configureTypeMap(typeMap: TypeMap) {
         typeMap.register("graph", GraphImpl::class)

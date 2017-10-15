@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.execution.scheduler
 
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.execution.issue.Issue
 
 /**
  * A [Scheduler] receives requests of [Actor]s that want to be acting at a specific time in the future.
@@ -17,6 +18,9 @@ interface Scheduler : SignalHandler {
     var isActive: Boolean
 
     var isPaused: Boolean
+
+    /** Determines whether this [Scheduler] stops execution when an [Issue] occurs while executing. */
+    var isStopOnIssue: Boolean
 
     fun step()
 
@@ -45,3 +49,6 @@ class SchedulerStateEvent(val numberOfRemainingSlots: Int, val relativeTime: Lon
 
 /** Posted by a [Scheduler] when the execution depth changes.*/
 class ExecutionDepthEvent(val scheduler: Scheduler, val deepSimulation: Boolean)
+
+/** Posted by a [Scheduler] when the [Scheduler.isStopOnIssue] property changes.*/
+class StopOnIssueEvent(val scheduler: Scheduler, val isStopOnIssue: Boolean)

@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.script
 
-import ch.scorpion.jabbah.graph.model.issue.Issue
+import ch.scorpion.jabbah.execution.issue.Issue
 
 /**
  * Represents a script to be executed by [ScriptEngine].

@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
+import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import kotlin.reflect.KClass
 
@@ -33,10 +34,10 @@ class SchedulerImpl(
 ) : Scheduler {
 
     companion object {
-        private val PROP_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
+        private val SETTING_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
+        private val SETTING_STOP_ON_ISSUE = "execution.scheduler.stopOnIssue"
+        private val LOG by logger(SchedulerImpl::class)
     }
-
-    private val LOG by logger(SchedulerImpl::class)
 
     /** The queue of pending [Slot]s ordered by ascending execution time.*/
     private val queue = PriorityQueue<Slot>()
@@ -58,15 +59,20 @@ class SchedulerImpl(
 
     init {
         eventBus.register(SystemSpeedEvent::class, { task.adaptToSystemSpeed() })
+        eventBus.register(IssueCollectorEvent::class, {
+            if (isActive && isStopOnIssue && it.issue != null ) {
+                // TODO Post an event to inform the rest of the world that the execution has been stopped due to an Issue
+                isActive = false
+                LOG.debug("SchedulerImpl: execution stopped due to Issue")
+            }
+        })
     }
 
     /** ---- [Scheduler] interface */
 
-    override val signalHandler: SignalHandler
-        get() = this
+    override val signalHandler: SignalHandler get() = this
 
-    override val numberOfRemainingSlots: Int
-        get() = queue.size
+    override val numberOfRemainingSlots: Int get() = queue.size
 
     override var isActive: Boolean
         get() = activationState == SchedulerActivationState.ACTIVE
@@ -98,6 +104,16 @@ class SchedulerImpl(
             eventBus.post(SchedulerRunningStateEvent(this))
         }
 
+    override var isStopOnIssue: Boolean = BaseModule.settings.getBoolean(SETTING_STOP_ON_ISSUE, true)
+        set(value) {
+            if (field == value) {
+                return
+            }
+            field = value
+            BaseModule.settings.set(SETTING_STOP_ON_ISSUE, field)
+            eventBus.post(StopOnIssueEvent(this, field))
+        }
+
     override fun step() {
         if (!isActive) {
             throw IllegalStateException("cannot step when not active")
@@ -118,18 +134,17 @@ class SchedulerImpl(
 
     /** ---- [SignalHandler] interface */
 
-    override var isDeepExecution: Boolean = BaseModule.settings.getString(PROP_EXECUTION_DEPTH, "true") == "true"
+    override var isDeepExecution: Boolean = BaseModule.settings.getBoolean(SETTING_EXECUTION_DEPTH, true)
         set(value) {
             if (field == value) {
                 return
             }
             field = value
-            BaseModule.settings.set(PROP_EXECUTION_DEPTH, field)
+            BaseModule.settings.set(SETTING_EXECUTION_DEPTH, field)
             eventBus.post(ExecutionDepthEvent(this, field))
         }
 
-    override val executionTime: Long
-        get() = relativeTime
+    override val executionTime: Long get() = relativeTime
 
     override fun logTrace(clazz: KClass<*>, id: Int, msg: () -> String) {
         // TEST BEGIN
@@ -251,9 +266,7 @@ class SchedulerImpl(
         this.relativeTime = relativeTime
     }
 
-    private fun getRelativeRealTime(): Long {
-        return timeService.nowNanos() - realStartTime
-    }
+    private fun getRelativeRealTime(): Long = timeService.nowNanos() - realStartTime
 
     private fun getNextExecutableSlot(): Slot? {
         val slot = queue.peek()
@@ -400,13 +413,9 @@ class SchedulerImpl(
             requests.add(Request(actor, data))
         }
 
-        override fun compareTo(other: Slot): Int {
-            return relativeTime.compareTo(other.relativeTime)
-        }
+        override fun compareTo(other: Slot): Int = relativeTime.compareTo(other.relativeTime)
 
-        fun getRequests(): Iterable<Request> {
-            return requests
-        }
+        fun getRequests(): Iterable<Request> = requests
 
         /**
          * Adds the specified [Actor] and its [ActorData] as a new [Request] to this [Slot].
@@ -425,9 +434,7 @@ class SchedulerImpl(
             findRequest(actor)?.setDone()
         }
 
-        fun findRequest(actor: Actor): Request? {
-            return requests.find { it.actor === actor }
-        }
+        fun findRequest(actor: Actor): Request? = requests.find { it.actor === actor }
     }
 
     private inner class Request(

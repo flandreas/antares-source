@@ -3,8 +3,8 @@ package ch.scorpion.jabbah.graph.script
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.model.issue.IssueImpl
-import ch.scorpion.jabbah.graph.model.issue.IssueSeverity
+import ch.scorpion.jabbah.execution.issue.IssueImpl
+import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import javax.script.Invocable
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException

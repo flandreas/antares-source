@@ -1,14 +1,13 @@
-package ch.scorpion.jabbah.graph.model.issue
+package ch.scorpion.jabbah.execution.issue
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
-import ch.scorpion.jabbah.graph.model.Graph
 
 /**
  * An [Issue] represents a situation that requires the attention of the user.
- * For example, this could be an error that occurs during the execution of a [Graph] due to a buggy JavaScript snippet.
+ * For example, this could be an error that occurs during execution due to a buggy JavaScript snippet.
  * [Issue]s are raised by posting them on [EventBus], on which interested consumer listen for them.
  */
 interface Issue {
