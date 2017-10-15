@@ -121,6 +121,9 @@ class GraphPanel(
 
     private var currentMode: ApplicationMode = ApplicationMode.EDIT
 
+    /** Displays the current [Issue]s. */
+    private val issuesPanel = IssuesPanel()
+
     init {
         (editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
         libraryPropertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
@@ -180,14 +183,10 @@ class GraphPanel(
         usecasesDummy.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
         usecasesDummy.verticalAlignment = JLabel.TOP
 
-        val issuesDummy = JLabel(Translations.getString("application.notYetImplemented.text"))
-        issuesDummy.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        issuesDummy.horizontalAlignment = JLabel.LEFT
-
         rightSidebarPane.add(Translations.getString("graph.scenarios.title"), "/img/scenarios-16.png", scenarioPanel)
         rightSidebarPane.add(Translations.getString("graph.usecases.title"), "/img/usecase-16.png", usecasesDummy)
 
-        bottomSidebarPane.add(Translations.getString("graph.issues.title"), "/img/issue-16.png", issuesDummy)
+        bottomSidebarPane.add(Translations.getString("graph.issues.title"), "/img/issue-16.png", issuesPanel)
 
         mainSplitPane.add(librarySplitPane)
         mainSplitPane.add(graphNavigationPanel)

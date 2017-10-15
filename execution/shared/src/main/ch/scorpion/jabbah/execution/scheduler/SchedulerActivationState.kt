@@ -5,7 +5,7 @@ package ch.scorpion.jabbah.execution.scheduler
  */
 enum class SchedulerActivationState {
 
-    /** The [Scheduler] has been startet.*/
+    /** The [Scheduler] has been started.*/
     ACTIVE,
 
     /** The [Scheduler] has not yet been started, or has been stopped again.*/
