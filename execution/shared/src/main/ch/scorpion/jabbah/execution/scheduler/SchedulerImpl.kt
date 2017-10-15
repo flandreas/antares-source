@@ -61,9 +61,9 @@ class SchedulerImpl(
         eventBus.register(SystemSpeedEvent::class, { task.adaptToSystemSpeed() })
         eventBus.register(IssueCollectorEvent::class, {
             if (isActive && isStopOnIssue && it.issue != null ) {
-                // TODO Post an event to inform the rest of the world that the execution has been stopped due to an Issue
                 isActive = false
                 LOG.debug("SchedulerImpl: execution stopped due to Issue")
+                eventBus.post(ExecutionStoppedOnIssueEvent(this))
             }
         })
     }

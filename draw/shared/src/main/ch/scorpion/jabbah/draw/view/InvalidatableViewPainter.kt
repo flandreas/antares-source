@@ -29,7 +29,7 @@ class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
 
     override fun invalidateRegion(region: RectangularShape?, ghost: Boolean) {
         if (region == null) {
-            dirtyRegion = Rectangle2D(0.0, 0.0, view.width.toDouble(), view.height.toDouble())
+            dirtyRegion = null
         } else {
             dirtyRegion = dirtyRegion?.add(region) as Rectangle2D? ?: Rectangle2D(region)
         }
@@ -38,17 +38,13 @@ class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
     /** ---- [InvalidatableViewPainter] */
 
     private fun repaintDirtyRegion() {
-        if (dirtyRegion != null) {
-            dirtyRegion?.let { value ->
-                val p1 = view.modelToView(Point2D(value.minX, value.minY))
-                val p2 = view.modelToView(Point2D(value.maxX, value.maxY))
-                val x1 = Math.floor(p1.x).toInt()
-                val y1 = Math.floor(p1.y).toInt()
-                val x2 = Math.ceil(p2.x).toInt()
-                val y2 = Math.ceil(p2.y).toInt()
-                view.repaint(x1 - 1, y1 - 1, x2 - x1 + 2, y2 - y1 + 2)
-                dirtyRegion = null
-            }
-        }
+            val p1 = if (dirtyRegion != null) view.modelToView(Point2D(dirtyRegion!!.minX, dirtyRegion!!.minY)) else Point2D(0, 0)
+            val p2 = if (dirtyRegion != null) view.modelToView(Point2D(dirtyRegion!!.maxX, dirtyRegion!!.maxY)) else Point2D(view.width, view.height)
+            val x1 = Math.floor(p1.x).toInt()
+            val y1 = Math.floor(p1.y).toInt()
+            val x2 = Math.ceil(p2.x).toInt()
+            val y2 = Math.ceil(p2.y).toInt()
+            view.repaint(x1 - 1, y1 - 1, x2 - x1 + 2, y2 - y1 + 2)
+            dirtyRegion = null
     }
 }

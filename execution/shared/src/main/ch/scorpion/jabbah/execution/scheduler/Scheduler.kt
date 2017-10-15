@@ -52,3 +52,6 @@ class ExecutionDepthEvent(val scheduler: Scheduler, val deepSimulation: Boolean)
 
 /** Posted by a [Scheduler] when the [Scheduler.isStopOnIssue] property changes.*/
 class StopOnIssueEvent(val scheduler: Scheduler, val isStopOnIssue: Boolean)
+
+/** Posted by a [Scheduler] if execution had been stopped due to an [Issue]. */
+class ExecutionStoppedOnIssueEvent(val scheduler: Scheduler)

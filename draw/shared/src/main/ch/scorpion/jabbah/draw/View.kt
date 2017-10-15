@@ -58,6 +58,17 @@ interface View<C : InputEventContext> : ViewToModelTransform {
     /** Controls whether this [View] uses anti-aliasing for painting.*/
     var antialiasing: Boolean
 
+    /**
+     * Contains [Drawable]s that are painted above the [Drawing] on the [View] level.
+     * This is like a slide that lies above all other [DrawableContainer]s. Its [Drawable]s
+     * use the coordinate system of the [View] and not the one of the [Drawing], and they
+     * are never zoomed. It can be used for displaying UI controls, or for displaying system wide messages
+     * that are not related with a particular [Component] in the [Drawing]. Unlike all other [DrawableContainer]s,
+     * this one is not part of the [DrawingView]'s [DrawingViewContent], i.e. it is not replaced when
+     * replacing the [Drawing].o
+     */
+    val overlayContainer: DrawableContainer<Drawable>
+
     /** Sets the current cursor of this [View].*/
     fun setCursor(cursor: Cursor)
 

@@ -5,11 +5,8 @@ import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
-import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
-import ch.scorpion.jabbah.draw.drawable.Unzoomable
-import ch.scorpion.jabbah.draw.container.UnzoomableContainer
 import ch.scorpion.jabbah.draw.view.ViewImpl
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.DrawingView.Companion.PROP_EDITABLE
@@ -17,7 +14,6 @@ import ch.scorpion.jabbah.edit.DrawingView.Companion.PROP_SHOW_GRID
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.select.EditSelectModule
-import ch.scorpion.jabbah.edit.select.UnzoomableSelectionModel
 import ch.scorpion.jabbah.edit.snap.GridImpl
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape

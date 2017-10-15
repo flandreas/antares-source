@@ -11,12 +11,14 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.edit.model.text.TextComponent
-import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.container.UnzoomableContainer
-import ch.scorpion.jabbah.draw.drawable.Unzoomable
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
+import ch.scorpion.jabbah.edit.model.text.FlexibleTextView
+import ch.scorpion.jabbah.edit.style.EditStyleType
 
 /**
  * Displays [ComponentMessage]s in a [DrawingView].
@@ -28,12 +30,9 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
 ) {
 
     companion object {
+        private val LOG by logger(ComponentMessageDisplayer::class)
         private val INSET = 10.0
-        private val WIDTH = 200.0
-        private val HEIGHT = 50.0
     }
-
-    private val LOG by logger(ComponentMessageDisplayer::class)
 
     init {
         eventBus.register(ComponentMessage::class, this::handle)
@@ -44,34 +43,41 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
     }
 
     private fun handle(msg: ComponentMessage) {
-        if (!drawingView.drawing.contains(msg.source)) {
+        if (msg.source != null && !drawingView.drawing.contains(msg.source)) {
             return
         }
         val text = Translations.getString(msg.messageKey)
-        val messageView = ComponentMessageView(text = text, yDist = INSET, frame = calculateBounds(msg.source, text))
+        val messageView = FlexibleTextView(
+                text = text,
+                anchor = calculateAnchorPoint(msg),
+                direction = Direction.SOUTH,
+                styleType = EditStyleType.MESSAGE)
 
-        FadeInOut(messageView, drawingView.ghostContainer, animator)
+        val container = if (msg.source == null) drawingView.overlayContainer else drawingView.ghostContainer as DrawableContainer<Drawable>
+
+        container.add(messageView)
+        container.validate()
+
+        FadeInOut(messageView, container, animator)
     }
 
-    /**
-     * TODO: The height of the [TextComponent] should adjust itself according to the width of the box
-     * and the text size.
-     */
-    private fun calculateBounds(source: Component, @Suppress("UNUSED_PARAMETER") text: String): Rectangle2D {
-        val bbox = source.boundingBox
-        return Rectangle2D(bbox.x, bbox.maxY, WIDTH, HEIGHT)
+    private fun calculateAnchorPoint(msg: ComponentMessage): Point2D {
+        if (msg.source == null) {
+            return Point2D(drawingView.width / 2, drawingView.height / 2)
+        } else {
+            val bbox = msg.source.boundingBox
+            return Point2D(bbox.centerX, bbox.maxY + INSET)
+        }
     }
 
     private inner class FadeInOut(
-            messageView: ComponentMessageView,
-            container: UnzoomableContainer<Unzoomable>,
+            messageView: Transparent,
+            container: DrawableContainer<Drawable>,
             animator: Animator
     ) {
 
         init {
             messageView.transparency = Transparent.FULLY_TRANSPARENT
-            container.add(messageView)
-            container.validate()
 
             val fadeOutAnimation = TransparentAnimation.fadeOut(messageView, 600.0)
             fadeOutAnimation.addListener(object : AnimationTaskAdapter() {

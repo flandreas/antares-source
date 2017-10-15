@@ -15,6 +15,8 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.PropertySheetPanelFactory
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 import ch.scorpion.jabbah.edit.model.polyline.PolylineTool
 import ch.scorpion.jabbah.edit.model.rectangle.EllipseComponent
@@ -28,6 +30,7 @@ import ch.scorpion.jabbah.execution.PauseExecutionAction
 import ch.scorpion.jabbah.execution.StepExecutionAction
 import ch.scorpion.jabbah.execution.SystemSpeedSlider
 import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.scheduler.ExecutionStoppedOnIssueEvent
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.ApplicationMode
@@ -130,6 +133,12 @@ class GraphPanel(
         libraryPropertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
         eventBus.register(ActiveViewChangedEvent::class, { updateEditability() })
+        eventBus.register(ExecutionStoppedOnIssueEvent::class, {
+            eventBus.post(ComponentMessage(
+                    type = ComponentMessageType.Error,
+                    source = null,
+                    messageKey = "execution.scheduler.stoppedDueToIssue.msg"))
+        })
 
         editor.view.addPropertyChangeListener(object : PropertyChangeListener<Any>{
             override fun propertyChanged(e: PropertyChangeEvent<Any>) {

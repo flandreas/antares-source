@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 
 
 /**
@@ -167,6 +168,8 @@ open class ViewImpl<C: InputEventContext>(
             repaint()
         }
 
+    override val overlayContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
+
     val painter: ViewPainter = InvalidatableViewPainter(this)
 
     /* Listens for [DrawableEvent]s from child [Drawable]s.*/
@@ -178,6 +181,29 @@ open class ViewImpl<C: InputEventContext>(
         }
 
         override fun drawableRequestRedraw(event: DrawableEvent) {
+            painter.repaintView()
+        }
+
+        override fun drawableUpdated(event: DrawableEvent) {
+            // empty
+        }
+    }
+
+    /** Listens for [DrawableEvent]s from the [overlayContainer].*/
+    private val overlayListener = OverlayListener()
+
+    /**
+     * We cannot use [ChildListener] for invalidating the view, because that one operates on model coordinates,
+     * but the overlay container operates on view coordinates. Hence, we must invalidate the entire [View].
+     */
+    inner class OverlayListener : DrawableListener {
+        override fun drawableInvalidated(event: DrawableEvent) {
+            LOG.debug("OverlayListener: drawableInvalidated")
+            painter.invalidateRegion(null, false)
+        }
+
+        override fun drawableRequestRedraw(event: DrawableEvent) {
+            LOG.debug("OverlayListener: drawableRequestRedraw")
             painter.repaintView()
         }
 
@@ -220,6 +246,9 @@ open class ViewImpl<C: InputEventContext>(
         }
 
         context.g.transform = oldTransform
+
+        overlayContainer.draw(context)
+
         context.g.restore()
     }
 
@@ -340,6 +369,10 @@ open class ViewImpl<C: InputEventContext>(
         createViewGeometry(zoomFactor).transform.transform(p)
 
     /** ---- [ViewImpl] */
+
+    init {
+        overlayContainer.addDrawableListener(overlayListener)
+    }
 
     private inner class EventHandler<in T : InputEventContext> : InputEventHandlerAdapter<T>() {
         private var target: InputEventHandler<T>? = null

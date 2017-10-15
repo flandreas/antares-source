@@ -21,8 +21,6 @@ import ch.scorpion.jabbah.edit.Drawing
  * a facing direction. For example, when using [Direction.NORTH] as facing direction, the [RectangularShape]
  * is growing towards north, and the anchor point is at the middle of the lower edge of the [RectangularShape].
  * This can be used for placing a description above the contents of a [Drawing].
- *
- * TODO Replace [ComponentMessageView], which is now obsolete, by this class
  */
 class FlexibleTextView(
         text: String,
