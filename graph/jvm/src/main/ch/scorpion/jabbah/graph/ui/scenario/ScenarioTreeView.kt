@@ -11,11 +11,9 @@ import ch.scorpion.jabbah.graph.view.*
 import java.awt.Component
 import javax.swing.ImageIcon
 import javax.swing.JLabel
+import javax.swing.JPopupMenu
 import javax.swing.JTree
-import javax.swing.tree.DefaultMutableTreeNode
-import javax.swing.tree.DefaultTreeCellRenderer
-import javax.swing.tree.DefaultTreeModel
-import javax.swing.tree.TreeNode
+import javax.swing.tree.*
 
 /**
  * Displays the [Scenario] tree of a [GraphView].
@@ -23,7 +21,16 @@ import javax.swing.tree.TreeNode
 class ScenarioTreeView(eventBus: EventBus) : JTree() {
     @Suppress("unused") constructor(): this(BaseModule.eventBus)
 
+    private val graphViewPopupMenu = JPopupMenu()
+
+    private val scenarioPopupMenu = JPopupMenu()
+
+    private val scenarioStepPopupMenu = JPopupMenu()
+
     init {
+
+        selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
+        selectionModel.addTreeSelectionListener { setupPopupMenu(it.newLeadSelectionPath) }
 
         setCellRenderer(ScenarioTreeRenderer())
         setRowHeight(24)
@@ -65,6 +72,13 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
             }
             isEnabled = !it.scheduler.isActive
         })
+
+        graphViewPopupMenu.add(AddScenarioAction())
+
+        scenarioPopupMenu.add(AddScenarioStepAction())
+        scenarioPopupMenu.add(DeleteScenarioAction())
+
+        scenarioStepPopupMenu.add(DeleteScenarioStepAction())
     }
 
     /** Holds the [GraphView] whose [Graph] is the source of the [Scenario] tree.*/
@@ -105,6 +119,21 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
 
     /** Casts the generic model property to [ScenarioTreeModel]. */
     private val scenarioTreeModel: ScenarioTreeModel get() = model!! as ScenarioTreeModel
+
+    /** Setup the popup menu according to the currently selected [TreeNode]' user object.*/
+    private fun setupPopupMenu(newSelectionPath: TreePath?) {
+        if (newSelectionPath == null) {
+            componentPopupMenu = null
+            return
+        }
+
+        componentPopupMenu = when ((newSelectionPath.lastPathComponent as DefaultMutableTreeNode).userObject) {
+            is GraphView<*> -> graphViewPopupMenu
+            is Scenario -> scenarioPopupMenu
+            is ScenarioStep -> scenarioStepPopupMenu
+            else -> null
+        }
+    }
 
     /** Extends [DefaultTreeModel] to add custom model manipulation methods. */
     private class ScenarioTreeModel(graphView: GraphView<*>) : DefaultTreeModel(DefaultMutableTreeNode(graphView)) {

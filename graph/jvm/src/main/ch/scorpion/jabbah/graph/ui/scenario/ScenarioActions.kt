@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.model.Graph
@@ -22,8 +23,8 @@ import javax.swing.JOptionPane
  * Asks the user for the name of a new [Scenario] and adds it to the current [Graph].
  */
 class AddScenarioAction(
-        eventBus: EventBus,
-        private val cmdManager: CommandManager
+        eventBus: EventBus = BaseModule.eventBus,
+        private val cmdManager: CommandManager = EditModule.commandManager
 ) : AbstractAction("scenarios.action.addScenario") {
 
     private var graphView: GraphView<*>? = null
@@ -54,7 +55,7 @@ class AddScenarioAction(
  * Asks the user for the name of a new [ScenarioStep] and adds it to the current [Scenario].
  */
 class AddScenarioStepAction(
-        eventBus: EventBus,
+        eventBus: EventBus = BaseModule.eventBus,
         private val cmdManager: CommandManager = EditModule.commandManager,
         private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway
 ) : AbstractAction("scenarios.action.addScenarioStep") {
@@ -86,7 +87,7 @@ class AddScenarioStepAction(
 
 /** Deletes the currently selected [Scenario]. */
 class DeleteScenarioAction(
-        eventBus: EventBus,
+        eventBus: EventBus = BaseModule.eventBus,
         private val cmdManager: CommandManager = EditModule.commandManager
 ) : AbstractAction("scenarios.action.deleteScenario") {
 
@@ -116,7 +117,7 @@ class DeleteScenarioAction(
 
 /** Deletes the currently selected [ScenarioStep]. */
 class DeleteScenarioStepAction(
-        eventBus: EventBus,
+        eventBus: EventBus = BaseModule.eventBus,
         private val cmdManager: CommandManager = EditModule.commandManager
 ) : AbstractAction("scenarios.action.deleteScenarioStep") {
 
