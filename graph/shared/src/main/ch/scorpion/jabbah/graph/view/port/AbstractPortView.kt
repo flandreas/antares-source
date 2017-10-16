@@ -98,6 +98,8 @@ abstract class AbstractPortView<T: Any>(
             location.x + unconnectedLength * direction.dx,
             location.y + unconnectedLength * direction.dy)
 
+    override var edgeViewWidth: Int = 1
+
     /** Listens for property changes of [port] and updates this [PortView] accordingly.*/
     private val portListener = PortListener()
 
@@ -152,6 +154,7 @@ abstract class AbstractPortView<T: Any>(
 
     override fun handleConnect(edgeView: EdgeView<T>) {
         invalidate()
+        edgeViewWidth = edgeView.width
         length = getConnectedLength()
         invalidate()
         update()
@@ -159,6 +162,7 @@ abstract class AbstractPortView<T: Any>(
 
     override fun handleUnconnect(edgeView: EdgeView<T>?) {
         invalidate()
+        edgeViewWidth = 0
         length = unconnectedLength
         if (edgeView != null) {
             val connectionPoint = owner!!.getPortConnectionPoint(port)

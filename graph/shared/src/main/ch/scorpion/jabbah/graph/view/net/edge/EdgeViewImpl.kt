@@ -119,6 +119,8 @@ open class EdgeViewImpl<T: Any>(
 
     override val length: Double get() = polyline.getLength()
 
+    override val width: Int get() = styling.width
+
     override var isAdjusted: Boolean = false
 
     override var isArrow: Boolean = false
@@ -670,6 +672,8 @@ open class EdgeViewImpl<T: Any>(
         invalidate()
         styling = netView!!.style.createEdgeViewStyling(styleProvider, this)
         styling.updateBoundingBox()
+        origin?.handleEdgeViewWidthChanged(this)
+        destination?.handleEdgeViewWidthChanged(this)
         invalidate()
         validate()
     }

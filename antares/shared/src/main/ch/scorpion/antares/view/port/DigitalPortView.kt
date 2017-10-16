@@ -104,6 +104,15 @@ class DigitalPortView(
 
     /** ---- [AbstractPortView] */
 
+    override var edgeViewWidth: Int
+        get() = super.edgeViewWidth
+        set(value) {
+            if (super.edgeViewWidth != value) {
+                super.edgeViewWidth = value
+                buildPortLabel()
+            }
+        }
+
     override fun modelChanged() {
         super.modelChanged()
         buildPortLabel()
@@ -308,42 +317,47 @@ class DigitalPortView(
         }
         return Label(
             horizontalAlignment = getHorizontalExternalLabelAlignment(direction),
-            verticalAlignment = Label.VerticalAlignment.BOTTOM,
+            verticalAlignment = getVerticalExternalLabelAlignment(),
             font = Look.EXT_PIN_FONT,
             text = port.name,
             location = getExternalLabelLocation(direction),
             rotation = rotation)
     }
 
-    private fun getHorizontalInternalLabelAlignment(direction: Direction): Label.HorizontalAlignment {
+    private fun getHorizontalInternalLabelAlignment(direction: Direction): Label.HorizontalAlignment =
         when (direction) {
-            Direction.WEST -> return Label.HorizontalAlignment.LEFT
-            Direction.EAST -> return Label.HorizontalAlignment.RIGHT
-            Direction.NORTH -> return Label.HorizontalAlignment.CENTER
-            Direction.SOUTH -> return Label.HorizontalAlignment.CENTER
+            Direction.WEST -> Label.HorizontalAlignment.LEFT
+            Direction.EAST -> Label.HorizontalAlignment.RIGHT
+            Direction.NORTH -> Label.HorizontalAlignment.CENTER
+            Direction.SOUTH -> Label.HorizontalAlignment.CENTER
             else -> throw IllegalStateException("unknown Direction " + direction)
         }
-    }
 
-    private fun getHorizontalExternalLabelAlignment(direction: Direction): Label.HorizontalAlignment {
+    private fun getHorizontalExternalLabelAlignment(direction: Direction): Label.HorizontalAlignment =
         when (direction) {
-            Direction.WEST -> return Label.HorizontalAlignment.RIGHT
-            Direction.EAST -> return Label.HorizontalAlignment.LEFT
-            Direction.NORTH -> return Label.HorizontalAlignment.LEFT
-            Direction.SOUTH -> return Label.HorizontalAlignment.RIGHT
+            Direction.WEST -> Label.HorizontalAlignment.RIGHT
+            Direction.EAST -> Label.HorizontalAlignment.LEFT
+            Direction.NORTH -> Label.HorizontalAlignment.LEFT
+            Direction.SOUTH -> Label.HorizontalAlignment.RIGHT
             else -> throw IllegalStateException("unknown Direction " + direction)
         }
-    }
 
-    private fun getVerticalInternalLabelAlignment(direction: Direction): Label.VerticalAlignment {
+    private fun getVerticalInternalLabelAlignment(direction: Direction): Label.VerticalAlignment =
         when (direction) {
-            Direction.WEST -> return Label.VerticalAlignment.CENTER
-            Direction.EAST -> return Label.VerticalAlignment.CENTER
-            Direction.NORTH -> return Label.VerticalAlignment.TOP
-            Direction.SOUTH -> return Label.VerticalAlignment.BOTTOM
+            Direction.WEST -> Label.VerticalAlignment.CENTER
+            Direction.EAST -> Label.VerticalAlignment.CENTER
+            Direction.NORTH -> Label.VerticalAlignment.TOP
+            Direction.SOUTH -> Label.VerticalAlignment.BOTTOM
             else -> throw IllegalStateException("unknown Direction " + direction)
         }
-    }
+
+    private val centerExternalLabel: Boolean get() = port.isConnected && edgeViewWidth > Look.EXT_PIN_FONT.size
+
+    private fun getVerticalExternalLabelAlignment(): Label.VerticalAlignment =
+            if (centerExternalLabel)
+                Label.VerticalAlignment.CENTER
+            else
+                Label.VerticalAlignment.BOTTOM
 
     private fun getInternalLabelLocation(direction: Direction): Point2D {
         val ia = when(port.portType) {
@@ -352,21 +366,21 @@ class DigitalPortView(
             PortType.OUTPUT -> if (hasInternalOutputAnnotation) INTERNAL_ANNOTATION_SIZE else 0
         }
 
-        when (direction) {
-            Direction.WEST -> return Point2D(INT_BORDER_DIST + ia, 0)
-            Direction.EAST -> return Point2D(-INT_BORDER_DIST - ia, 0)
-            Direction.NORTH -> return Point2D(0, INT_BORDER_DIST + ia)
-            Direction.SOUTH -> return Point2D(0, -INT_BORDER_DIST - ia)
+        return when (direction) {
+            Direction.WEST -> Point2D(INT_BORDER_DIST + ia, 0)
+            Direction.EAST -> Point2D(-INT_BORDER_DIST - ia, 0)
+            Direction.NORTH -> Point2D(0, INT_BORDER_DIST + ia)
+            Direction.SOUTH -> Point2D(0, -INT_BORDER_DIST - ia)
             else -> throw IllegalStateException("unknown Direction " + direction)
         }
     }
 
     private fun getExternalLabelLocation(direction: Direction): Point2D {
-        when (direction) {
-            Direction.WEST -> return Point2D(-EXT_BORDER_DIST, 0)
-            Direction.EAST -> return Point2D(EXT_BORDER_DIST, 0)
-            Direction.NORTH -> return Point2D(0, -EXT_BORDER_DIST)
-            Direction.SOUTH -> return Point2D(0, EXT_BORDER_DIST)
+        return when (direction) {
+            Direction.WEST -> Point2D(-EXT_BORDER_DIST, 0)
+            Direction.EAST -> Point2D(EXT_BORDER_DIST, 0)
+            Direction.NORTH -> Point2D(0, -EXT_BORDER_DIST)
+            Direction.SOUTH -> Point2D(0, EXT_BORDER_DIST)
             else -> throw IllegalStateException("unknown Direction " + direction)
         }
     }
@@ -431,11 +445,10 @@ class DigitalPortView(
         return null
     }
 
-    private fun getOutputAnnotationPath(): Path? {
-        return when((port as DigitalPort).outputAnnotation) {
+    private fun getOutputAnnotationPath(): Path? =
+        when((port as DigitalPort).outputAnnotation) {
             OutputAnnotation.TRI_STATE -> TRI_STATE_PATH
             OutputAnnotation.MASTER_SLAVE -> MASTER_SLAVE_PATH
             else -> null
         }
-    }
 }

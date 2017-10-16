@@ -238,6 +238,10 @@ open class NodeViewImpl<T: Any>(
         // empty
     }
 
+    override fun handleEdgeViewWidthChanged(edgeView: EdgeView<*>) {
+        // empty
+    }
+
     override fun <G : Any> getPortView(port: Port<G>): PortView<G>? {
         return null
     }

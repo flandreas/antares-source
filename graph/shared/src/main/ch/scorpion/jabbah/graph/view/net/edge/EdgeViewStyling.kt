@@ -9,6 +9,12 @@ import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 /** An abstraction being able to draw an [EdgeView] with a particular [NetViewStyle].*/
 interface EdgeViewStyling {
 
+    /**
+     * The width of segments drawn by this [EdgeViewStyling]. Uses e.g. by [PortView]s to adjust
+     * the position of external labels.
+     */
+    val width: Int
+
     val boundingBox: Rectangle2D
 
     /**

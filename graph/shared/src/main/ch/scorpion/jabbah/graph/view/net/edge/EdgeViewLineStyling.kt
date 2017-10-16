@@ -15,6 +15,8 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 
     }
 
+    override val width: Int get() = edgeView.style.stroke.width.toInt()
+
     override val boundingBox: Rectangle2D = Rectangle2D()
 
     override fun draw(context: DrawContext) {

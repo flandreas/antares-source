@@ -101,6 +101,18 @@ interface PortView<T: Any> : Drawable, Storable, SnappableX, SnappableY {
      */
     val minSegmentLength: Int
 
+    /**
+     * This property contains the width of the [EdgeView] connected to this [PortView], and is
+     * used to fine-tune the location of an external label of this [PortView]. This property is established
+     * by this [PortView] in [handleConnect], but it is the responsibility of the connected [EdgeView] to update
+     * it whenever its width changes.
+     *
+     * In an alternative design, the [PortView] would query the width of a connected [EdgeView] and adjust
+     * its external label position accordingly. This would have required to keep a reference to the [EdgeView],
+     * which is something we try to avoid.
+     */
+    var edgeViewWidth: Int
+
     /** Disposes this [PortView] by detaching it from its model and releasing all resources.*/
     fun dispose()
 

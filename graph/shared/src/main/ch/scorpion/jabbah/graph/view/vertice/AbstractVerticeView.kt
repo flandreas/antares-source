@@ -15,10 +15,6 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.view.EdgeView
@@ -36,6 +32,7 @@ import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 /**
@@ -130,6 +127,10 @@ abstract class AbstractVerticeView<T : Vertice>(
             it.handleUnconnect(edgeView)
             invalidate()
         }
+    }
+
+    override fun handleEdgeViewWidthChanged(edgeView: EdgeView<*>) {
+        getNetPortViews(edgeView.model!!).forEach { it.edgeViewWidth = edgeView.width }
     }
 
     /** ---- [ConnectableView] */
@@ -427,4 +428,7 @@ abstract class AbstractVerticeView<T : Vertice>(
     private fun rotate(direction: Direction): Direction {
         return rotation.rotateDirection(direction)
     }
+
+    /** Returns all [PortView]s of this [VerticeView] whose [Port]s are connected to the specified [Net].*/
+    private fun getNetPortViews(net: Net<*>): Collection<PortView<*>> = portViews.filter { it.port.net === net }
 }

@@ -45,6 +45,12 @@ interface EdgeView<T: Any> : NetViewElement<T> {
     val length: Double
 
     /**
+     * Returns the width of segments of this [EdgeView]. Depends on the [EdgeViewStyling] of this [EdgeView]
+     * and is typically the width of the [Stroke] used for drawing this [EdgeView].
+     */
+    val width: Int
+
+    /**
      * An [EdgeView] is degenerated if it contains less than two [Point2D]s, or all of its [Point2D]s are
      * at the same location.
      */
