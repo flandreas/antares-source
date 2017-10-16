@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -13,6 +14,7 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.view.VerticeView
 import java.awt.*
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -125,7 +127,8 @@ class LibraryPreviewPanel(
         selection = component
         selection!!.styleProvider = Themes.uiStyleProvider
         componentDisplay.updateLayout()
-        descriptionArea.text = selection!!.getToolTipText(0.0, 0.0, null)
+        //descriptionArea.text = selection!!.getToolTipText(0.0, 0.0, null)
+        descriptionArea.text = System.get().buildToolTipText(selection!!.type, (selection as VerticeView<*>).shortDescription, null)
     }
 
     /** Displays the graphical preview of the selected {@link Component}. */
