@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui.scenario
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
@@ -14,6 +15,7 @@ import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeCellRenderer
 import javax.swing.tree.DefaultTreeModel
+import javax.swing.tree.TreeNode
 
 /**
  * Displays the [Scenario] tree of a [GraphView].
@@ -29,7 +31,8 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
         // Adds a [Scenario] to this [ScenarioTreeView]
         eventBus.register(ScenarioAddedEvent::class, {
             if (it.graphView === this.graphView) {
-                scenarioTreeModel.addScenario(it.scenario)
+                val scenarioNode = scenarioTreeModel.addScenario(it.scenario)
+                selectionPath = JTreeUtil.getPath(scenarioNode)
             }
         })
 
@@ -43,7 +46,8 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
         // Adds an added [ScenarioStep] to this [ScenarioTreeView]
         eventBus.register(ScenarioStepAddedEvent::class, {
             if (it.graphView === this.graphView) {
-                scenarioTreeModel.addScenarioStep(it.scenario, it.scenarioStep)
+                val stepNode = scenarioTreeModel.addScenarioStep(it.scenario, it.scenarioStep)
+                selectionPath = JTreeUtil.getPath(stepNode)
             }
         })
 
@@ -112,20 +116,23 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
             nodeStructureChanged(root)
         }
 
-        fun addScenario(scenario:Scenario) {
+        fun addScenario(scenario:Scenario): TreeNode {
             val scenarioNode = DefaultMutableTreeNode(scenario)
             graphViewNode.add(scenarioNode)
             scenario.getScenarioSteps().forEach { addScenarioStep(it, scenarioNode) }
-            nodesWereInserted(graphViewNode, intArrayOf(graphViewNode.siblingCount - 1))
+            nodesWereInserted(graphViewNode, intArrayOf(graphViewNode.childCount - 1))
+            return scenarioNode
         }
 
-        fun addScenarioStep(scenario: Scenario, step: ScenarioStep) {
-            addScenarioStep(step, findScenarioNode(scenario)!!)
+        fun addScenarioStep(scenario: Scenario, step: ScenarioStep): TreeNode {
+            return addScenarioStep(step, findScenarioNode(scenario)!!)
         }
 
-        fun addScenarioStep(step: ScenarioStep, scenarioNode: DefaultMutableTreeNode) {
-            scenarioNode.add(DefaultMutableTreeNode(step))
+        fun addScenarioStep(step: ScenarioStep, scenarioNode: DefaultMutableTreeNode): TreeNode {
+            val newNode = DefaultMutableTreeNode(step)
+            scenarioNode.add(newNode)
             nodesWereInserted(scenarioNode, intArrayOf(scenarioNode.childCount - 1))
+            return newNode
         }
 
         fun removeScenario(scenario: Scenario) {
