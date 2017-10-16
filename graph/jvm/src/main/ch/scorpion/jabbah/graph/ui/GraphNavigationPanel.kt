@@ -106,7 +106,7 @@ open class GraphNavigationPanel(
         drawingView.drawing = graphView
         navigationStackView.navigationStack.rootContent = drawingView.content
         scenarioDetector?.dispose()
-        scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus)
+        scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus, currentSystemSpeedCategory)
     }
 
     private fun getRootContent(): DrawingViewContent<GraphView<GraphElementView<*>>> {

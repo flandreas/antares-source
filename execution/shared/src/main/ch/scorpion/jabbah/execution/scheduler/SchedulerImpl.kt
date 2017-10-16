@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import kotlin.reflect.KClass
 
 /**
@@ -203,11 +204,9 @@ class SchedulerImpl(
     /** ---- [SchedulerImpl] */
 
     private fun postSchedulerEvent(actor: Actor, type: SchedulerEvent.Type) {
-        // TODO The ScenarioDetector is currently the only consumer of SimulationEvents. ScenarioDetector
-        // is only active when the simulation is in stepping mode. For performance reasons, we therefore avoid sending
+        // Is only active when exploring the system. For performance reasons, we therefore avoid sending
         // unnecessary (and costly) events.
-        // Enable scenario detection only for slow simulations, e.g. when stepping through the simulation
-        if (isActive && isPaused) {
+        if (isActive && currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Explore) {
             eventBus.post(SchedulerEvent(type, this, actor))
         }
     }

@@ -18,6 +18,9 @@ import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.graph.view.ScenarioStepEvent
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.FlexibleTextView
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategoryEvent
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 /**
@@ -32,7 +35,8 @@ class ScenarioDetector(
         private val view: DrawingView<GraphView<GraphElementView<*>>>,
         private val scheduler: Scheduler,
         private val scriptGateway: ScriptGateway,
-        private val eventBus: EventBus
+        private val eventBus: EventBus,
+        private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
 ) {
 
     companion object {
@@ -51,9 +55,9 @@ class ScenarioDetector(
         }
     }
 
-    private val schedulerActivateStateHandler: EventHandler<SchedulerActivationStateEvent> = { updateActive() }
+    private val systemSpeedCategoryHandler: EventHandler<SystemSpeedCategoryEvent> = { updateActive() }
 
-    private val schedulerRunningStateHandler: EventHandler<SchedulerRunningStateEvent> = { updateActive() }
+    private val schedulerActivateStateHandler: EventHandler<SchedulerActivationStateEvent> = { updateActive() }
 
     private val scenarioEventHandler: EventHandler<ScenarioEvent> = {
         hideScenarioDesc()
@@ -85,9 +89,9 @@ class ScenarioDetector(
     private var highlightIds: List<Int>? = null
 
     init {
+        eventBus.register(SystemSpeedCategoryEvent::class, systemSpeedCategoryHandler)
         eventBus.register(SchedulerEvent::class, schedulerEventHandler)
         eventBus.register(SchedulerActivationStateEvent::class, schedulerActivateStateHandler)
-        eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
         eventBus.register(ScenarioEvent::class, scenarioEventHandler)
         eventBus.register(ScenarioStepEvent::class, scenarioStepEventHandler)
 
@@ -95,9 +99,9 @@ class ScenarioDetector(
     }
 
     fun dispose() {
+        eventBus.unregister(SystemSpeedCategoryEvent::class, systemSpeedCategoryHandler)
         eventBus.unregister(SchedulerEvent::class, schedulerEventHandler)
         eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivateStateHandler)
-        eventBus.unregister(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
         eventBus.unregister(ScenarioStepEvent::class, scenarioStepEventHandler)
         eventBus.unregister(ScenarioEvent::class, scenarioEventHandler)
     }
@@ -124,7 +128,7 @@ class ScenarioDetector(
 
     private fun updateActive() {
         val oldValue = isActive
-        isActive = scheduler.isActive && scheduler.isPaused
+        isActive = scheduler.isActive && currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Explore
         if (isActive != oldValue) {
             LOG.debug("ScenarioDetector: active = '$isActive'")
             view.drawing.currentScenario = null
