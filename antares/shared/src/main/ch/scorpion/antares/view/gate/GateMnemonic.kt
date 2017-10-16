@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.gate
 
+import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.DigitalComponentView
@@ -27,7 +28,7 @@ object GateMnemonic {
     private val FONT = FontImpl(size = 8)
     private val LINE_STROKE = Stroke(width = 0.5f)
     private val SWITCH_STROKE = Stroke(width = 1.5f)
-    private val ZOOM_LIMIT = 2.0
+    private val ZOOM_LIMIT = 1.6
 
     var enabled: Boolean = BaseModule.settings.getString(PROP_ENABLED, "false") == "true"
         set(value) {
@@ -42,9 +43,7 @@ object GateMnemonic {
      * Determines whether [GateMnemonic] should be displayed for the current scale factors in the specified [AffineTransform].
      * Returns `true` only if the scale factors are above a certain limit. Returns always `false` if not [enabled].
      */
-    fun isDisplayableFor(transform: AffineTransform): Boolean {
-        return enabled && transform.uniformScale >= ZOOM_LIMIT
-    }
+    private fun isDisplayableFor(transform: AffineTransform): Boolean = enabled && transform.uniformScale >= ZOOM_LIMIT
 
     fun drawAnd(gateView: AndGateView, context: DrawContext, foreground: Color, background: Color) {
         if (!begin(gateView, context)) {
@@ -430,7 +429,5 @@ object GateMnemonic {
         context.g.translate(-gateView.x, -gateView.y)
     }
 
-    private fun s(d: Double): Double {
-        return d * Look.SCALE
-    }
+    private fun s(d: Double): Double = d * Look.SCALE
 }
