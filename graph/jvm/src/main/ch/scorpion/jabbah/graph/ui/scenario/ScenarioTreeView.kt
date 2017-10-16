@@ -1,25 +1,40 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
+import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.scenario.MoveScenarioStepCommand
 import java.awt.Component
-import javax.swing.ImageIcon
-import javax.swing.JLabel
-import javax.swing.JPopupMenu
-import javax.swing.JTree
+import java.awt.datatransfer.DataFlavor
+import java.awt.datatransfer.Transferable
+import java.awt.datatransfer.UnsupportedFlavorException
+import javax.swing.*
 import javax.swing.tree.*
 
 /**
- * Displays the [Scenario] tree of a [GraphView].
+ * Displays the [Scenario] and [ScenarioStep] tree of a [GraphView].
+ *
+ * Draws custom icons for the [TreeNode]s that indicate the type of custom object associated with the [TreeNode].
+ * Installs a [JPopupMenu] on every [TreeNode] that allows the user to add new objects, or to remove existing ones.
+ * Supports moving [ScenarioStep]s within the same [Scenario] using drag & drop.
  */
-class ScenarioTreeView(eventBus: EventBus) : JTree() {
+class ScenarioTreeView(
+        eventBus: EventBus = BaseModule.eventBus,
+        private val commandManager: CommandManager = EditModule.commandManager
+) : JTree() {
     @Suppress("unused") constructor(): this(BaseModule.eventBus)
+
+    companion object {
+        private val LOG by logger(ScenarioTreeView::class)
+    }
 
     private val graphViewPopupMenu = JPopupMenu()
 
@@ -34,6 +49,10 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
 
         setCellRenderer(ScenarioTreeRenderer())
         setRowHeight(24)
+
+        dragEnabled = true
+        dropMode = DropMode.INSERT
+        transferHandler = ScenarioDndTransferHandler()
 
         // Adds a [Scenario] to this [ScenarioTreeView]
         eventBus.register(ScenarioAddedEvent::class, {
@@ -62,6 +81,14 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
         eventBus.register(ScenarioStepRemovedEvent::class, {
             if (it.graphView === this.graphView) {
                 scenarioTreeModel.removeScenarioStep(it.scenario, it.scenarioStep)
+            }
+        })
+
+        // Moves a [ScenarioStep] to another position within the same [Scenario]
+        eventBus.register(ScenarioStepMovedEvent::class, {
+            if (it.graphView === this.graphView) {
+                val stepNode = scenarioTreeModel.moveScenarioStep(it.scenario, it.scenarioStep, it.index)
+                selectionPath = JTreeUtil.getPath(stepNode)
             }
         })
 
@@ -135,6 +162,81 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
         }
     }
 
+    private class ScenarioTransferable(val node: DefaultMutableTreeNode) : Transferable {
+
+        companion object {
+            val FLAVOR = DataFlavor("${DataFlavor.javaJVMLocalObjectMimeType};class=\"${String::class.java.name}\"")
+        }
+
+        override fun getTransferData(flavor: DataFlavor?): Any {
+            if (flavor != FLAVOR) {
+                throw UnsupportedFlavorException(flavor)
+            }
+            return node
+        }
+
+        override fun isDataFlavorSupported(flavor: DataFlavor?): Boolean = flavor == FLAVOR
+
+        override fun getTransferDataFlavors(): Array<DataFlavor> = arrayOf(FLAVOR)
+
+    }
+
+    /** Implements drag & drop behaviour for [ScenarioTreeView].*/
+    private inner class ScenarioDndTransferHandler() : TransferHandler() {
+
+        override fun getSourceActions(c: JComponent?): Int = COPY
+
+        override fun canImport(support: TransferSupport?): Boolean {
+            if (support == null || !support.isDataFlavorSupported(ScenarioTransferable.FLAVOR)) {
+                return false
+            }
+            if (!support.isDrop) {
+                return false
+            }
+
+            val scenarioStepNode = support.transferable.getTransferData(ScenarioTransferable.FLAVOR) as DefaultMutableTreeNode
+            val dropLoc = support.dropLocation as JTree.DropLocation
+            LOG.debug("ScenarioTreeView dropLoc: $dropLoc")
+
+            // ScenarioStep can only be moved within its Scenario
+            if (dropLoc.path == null || scenarioStepNode.parent != dropLoc.path.lastPathComponent || dropLoc.childIndex < 0) {
+                return false
+            }
+
+            return true
+        }
+
+        override fun importData(support: TransferSupport?): Boolean {
+            if (support == null || !support.isDataFlavorSupported(ScenarioTransferable.FLAVOR)) {
+                return false
+            }
+            if (!support.isDrop) {
+                return false
+            }
+
+            LOG.debug("ScenarioTreeView: importData")
+            val scenarioStepNode = support.transferable.getTransferData(ScenarioTransferable.FLAVOR) as DefaultMutableTreeNode
+            val dropLoc = support.dropLocation as JTree.DropLocation
+
+            commandManager.execute(MoveScenarioStepCommand(
+                    graphView!!,
+                    (dropLoc.path.lastPathComponent as DefaultMutableTreeNode).userObject as Scenario,
+                    scenarioStepNode.userObject as ScenarioStep,
+                    dropLoc.childIndex))
+
+            return true
+        }
+
+        override fun createTransferable(c: JComponent?): Transferable? {
+            val tree = c as JTree
+            val treeNode = tree.selectionPath.lastPathComponent as DefaultMutableTreeNode
+            if (treeNode.userObject !is ScenarioStep) {
+                return null
+            }
+            return ScenarioTransferable(treeNode)
+        }
+    }
+
     /** Extends [DefaultTreeModel] to add custom model manipulation methods. */
     private class ScenarioTreeModel(graphView: GraphView<*>) : DefaultTreeModel(DefaultMutableTreeNode(graphView)) {
 
@@ -165,10 +267,11 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
         }
 
         fun removeScenario(scenario: Scenario) {
+            val scenarioNode = findScenarioNode(scenario)
             val index = getScenarioIndex(scenario)
             if (index >= 0) {
-                val child = graphViewNode.remove(index)
-                nodesWereRemoved(graphViewNode, intArrayOf(index), arrayOf(child))
+                graphViewNode.remove(index)
+                nodesWereRemoved(graphViewNode, intArrayOf(index), arrayOf(scenarioNode))
             }
         }
 
@@ -176,14 +279,35 @@ class ScenarioTreeView(eventBus: EventBus) : JTree() {
             val scenarioNode = findScenarioNode(scenario)
             val index = getScenarioStepIndex(scenarioNode!!, scenarioStep)
             if (index >= 0) {
-                val child = scenarioNode.remove(index)
-                nodesWereRemoved(scenarioNode, intArrayOf(index), arrayOf(child))
+                scenarioNode.remove(index)
+                nodeStructureChanged(scenarioNode)
             }
+        }
+
+        fun moveScenarioStep(scenario: Scenario, scenarioStep: ScenarioStep, index: Int): TreeNode {
+            val scenarioNode = findScenarioNode(scenario)
+            val scenarioStepNode = findScenarioStepNode(scenarioStep)
+            val oldIndex = getScenarioStepIndex(scenarioNode!!, scenarioStep)
+            if (index >= 0) {
+                scenarioNode.remove(oldIndex)
+                scenarioNode.insert(scenarioStepNode, index)
+                nodeStructureChanged(scenarioNode)
+            }
+            return scenarioStepNode!!
         }
 
         private fun findScenarioNode(scenario: Scenario): DefaultMutableTreeNode? {
             for (e in graphViewNode.depthFirstEnumeration()) {
                 if ((e as DefaultMutableTreeNode).userObject == scenario) {
+                    return e
+                }
+            }
+            return null
+        }
+
+        private fun findScenarioStepNode(scenarioStep: ScenarioStep): DefaultMutableTreeNode? {
+            for (e in graphViewNode.depthFirstEnumeration()) {
+                if ((e as DefaultMutableTreeNode).userObject == scenarioStep) {
                     return e
                 }
             }

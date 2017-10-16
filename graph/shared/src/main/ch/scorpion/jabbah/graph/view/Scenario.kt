@@ -54,6 +54,9 @@ interface Scenario : Storable {
     /** Removes the specified [ScenarioStep] from this [Scenario].*/
     fun removeStep(step: ScenarioStep)
 
+    /** Moves the specified [ScenarioStep] to a new position within this [Scenario].*/
+    fun moveStep(step: ScenarioStep, newIndex: Int)
+
     /** Returns the index of `step` in this [Scenario], starting with 0.*/
     fun indexOf(step: ScenarioStep): Int
 }

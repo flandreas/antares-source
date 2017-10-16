@@ -67,6 +67,11 @@ class ScenariosImpl(
         eventBus.post(ScenarioStepRemovedEvent(graphView!!, scenario, step))
     }
 
+    override fun moveStep(scenario: Scenario, step: ScenarioStep, index: Int) {
+        scenario.moveStep(step, index)
+        eventBus.post(ScenarioStepMovedEvent(graphView!!, scenario, step, index))
+    }
+
     override fun indexOfScenario(scenario: Scenario): Int = scenarios.indexOf(scenario)
 
     override fun indexOfStep(scenario: Scenario, step: ScenarioStep): Int = scenario.indexOf(step)

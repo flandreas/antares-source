@@ -33,6 +33,8 @@ interface Scenarios : Storable {
 
     fun removeStep(scenario: Scenario, step: ScenarioStep)
 
+    fun moveStep(scenario: Scenario, step: ScenarioStep, index: Int)
+
     fun indexOfScenario(scenario: Scenario): Int
 
     fun indexOfStep(scenario: Scenario, step: ScenarioStep): Int
@@ -43,3 +45,4 @@ data class ScenarioRemovedEvent(val graphView: GraphView<*>, val scenario: Scena
 
 data class ScenarioStepAddedEvent(val graphView: GraphView<*>, val scenario: Scenario, val scenarioStep: ScenarioStep)
 data class ScenarioStepRemovedEvent(val graphView: GraphView<*>, val scenario: Scenario, val scenarioStep: ScenarioStep)
+data class ScenarioStepMovedEvent(val graphView: GraphView<*>, val scenario: Scenario, val scenarioStep: ScenarioStep, val index: Int)

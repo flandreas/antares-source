@@ -73,3 +73,22 @@ class DeleteScenarioStepCommand(
         graphView.scenarios.addStep(scenario, scenarioStep, index)
     }
 }
+
+/** Moves a [ScenarioStep] within its [Scenario], i.e. changes the position in the ordered list.*/
+class MoveScenarioStepCommand(
+        private val graphView: GraphView<*>,
+        private val scenario: Scenario,
+        private val scenarioStep: ScenarioStep,
+        private val newIndex: Int
+) : AbstractCommand("scenario.command.scenarioStep.move") {
+
+    private val oldIndex: Int = graphView.scenarios.indexOfStep(scenario, scenarioStep)
+
+    override fun execute() {
+        graphView.scenarios.moveStep(scenario, scenarioStep, newIndex)
+    }
+
+    override fun undo() {
+        graphView.scenarios.moveStep(scenario, scenarioStep, oldIndex)
+    }
+}

@@ -69,6 +69,15 @@ class ScenarioImpl(
         steps.remove(step)
     }
 
+    override fun moveStep(step: ScenarioStep, newIndex: Int) {
+        val oldIndex = indexOf(step)
+        if (oldIndex < 0 || newIndex == oldIndex) {
+            return
+        }
+        steps.remove(step)
+        steps.add(newIndex, step)
+    }
+
     override fun indexOf(step: ScenarioStep): Int = steps.indexOf(step)
 
     /** ---- [Storable] interface */
