@@ -16,7 +16,6 @@ class DelayGateView(
 ) : AbstractDigitalGateView<DelayGate>(styleProvider, delayGate.delay.toString(), "library.element.Delay", delayGate) {
 
     init {
-        label!!.font = Look.INT_PIN_FONT
         modelExchanged(null)
     }
 
@@ -34,6 +33,7 @@ class DelayGateView(
 
     override fun drawImpl(context: DrawContext) {
         val oldColor = context.g.color
+        label!!.font = Look.INT_PIN_FONT
         super.drawImpl(context)
 
         if (context.useContextColors) {
