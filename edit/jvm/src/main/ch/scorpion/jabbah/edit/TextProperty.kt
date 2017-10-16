@@ -127,11 +127,15 @@ class TextPropertyEditor(private val property: PropertyImpl<*>) : AbstractProper
 
         init {
             layout = BorderLayout()
-            preferredSize = Dimension(400, 500)
 
-            val scrollPane = JScrollPane(textArea)
-            scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+            textArea.wrapStyleWord = true
+            textArea.lineWrap = true
+
+            val scrollPane = JScrollPane()
+            scrollPane.setViewportView(textArea)
+            scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
             scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+            scrollPane.preferredSize = Dimension(400, 500)
             add(scrollPane, BorderLayout.CENTER)
 
             val buttonPanel = JPanel(FlowLayout(FlowLayout.CENTER))
