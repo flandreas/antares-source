@@ -125,9 +125,6 @@ object GateMnemonic {
         val signal2 = gateView.model!!.getInput<DigitalSignal>(2).getIncomingSignal()!!.bitAt(0)
         val signalOut = gateView.model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!
 
-        val color1 = if (isExec) signal1.invert(invert1).color.foregroundColor else foreground
-        val color2 = if (isExec) signalOut.getColor().foregroundColor else foreground
-
         // Internal connection
         context.g.font = FONT
         context.g.stroke = LINE_STROKE
@@ -155,9 +152,12 @@ object GateMnemonic {
 
         val portX = gateView.getPortViews()[0].connectionPoint.x - gateView.x
 
+        val color1 = if (isExec) signal1.invert(invert1).color.foregroundColor else foreground
+        val color2 = if (isExec) signalOut.getColor().foregroundColor else foreground
+
         // Input 1
         context.g.stroke = LINE_STROKE
-        context.g.color = foreground
+        context.g.color = if (isExec) signal1.color.foregroundColor else foreground
         context.g.drawLine(portX, s(2.0), s(2.0), s(2.0))
         context.g.drawLine(s(2.0), s(2.0), s(2.0), y1)
         context.g.stroke = SWITCH_STROKE
@@ -166,7 +166,7 @@ object GateMnemonic {
 
         // Input 2
         context.g.stroke = LINE_STROKE
-        context.g.color = foreground
+        context.g.color = if (isExec) signal2.color.foregroundColor else foreground
         context.g.drawLine(portX, s(6.0), s(3.5), s(6.0))
         context.g.drawLine(s(3.5), s(6.0), s(3.5), y2)
         context.g.stroke = SWITCH_STROKE
@@ -219,7 +219,7 @@ object GateMnemonic {
         val y1l = if (signal1.isSet) yl else yl - s(0.5)
 
         context.g.stroke = LINE_STROKE
-        context.g.color = foreground
+        context.g.color = if (isExec) signal1.color.foregroundColor else foreground
         context.g.drawLine(portX.toDouble(), s(2.0), s(2.0), s(2.0))
         context.g.drawLine(s(2.0), s(2.0), s(2.0), y1l)
         context.g.stroke = SWITCH_STROKE
@@ -241,7 +241,7 @@ object GateMnemonic {
         }
 
         context.g.stroke = LINE_STROKE
-        context.g.color = foreground
+        context.g.color = if (isExec) signal2.color.foregroundColor else foreground
         if (invert) {
             context.g.drawLine(portX.toDouble(), s(6.0), s(0.5), s(6.0))
             context.g.drawLine(s(0.5), s(6.0), s(0.5), s(2.5))
@@ -308,7 +308,7 @@ object GateMnemonic {
 
         // Input 1
         context.g.stroke = LINE_STROKE
-        context.g.color = foreground
+        context.g.color = if (isExec) signal1.color.foregroundColor else foreground
         context.g.drawLine(portX, s(2.0), s(2.75), s(2.0))
         context.g.drawLine(s(2.75), s(2.0), s(2.75), y1)
         context.g.stroke = SWITCH_STROKE
@@ -317,7 +317,7 @@ object GateMnemonic {
 
         // Input 2
         context.g.stroke = LINE_STROKE
-        context.g.color = foreground
+        context.g.color = if (isExec) signal2.color.foregroundColor else foreground
         context.g.drawLine(portX, s(6.0), s(2.75), s(6.0))
         context.g.drawLine(s(2.75), s(6.0), s(2.75), y2)
         context.g.stroke = SWITCH_STROKE
@@ -349,7 +349,7 @@ object GateMnemonic {
 
         // Input
         context.g.stroke = LINE_STROKE
-        context.g.color = foreground
+        context.g.color = if (isExec) signal.color.foregroundColor else foreground
         context.g.drawLine(portX, s(4.0), s(0.5), s(4.0))
         context.g.drawLine(s(0.5), s(4.0), s(0.5), yu)
         context.g.drawLine(s(0.5), yu, s(2.75), yu)
@@ -388,7 +388,7 @@ object GateMnemonic {
         context.g.color = if (isExec) signal.color.foregroundColor else foreground
         context.g.drawLine(0.0, s(3.0), s(2.5), s(3.0))
         // Segment 'control'
-        context.g.color = foreground
+        context.g.color = if (isExec) control.color.foregroundColor else foreground
         context.g.drawLine(s(3.0), s(4.5), s(3.0), if (control.isSet) s(3.0) else s(3.5))
         // Segment 'output'
         context.g.color = if (isExec) signalOut.color.foregroundColor else foreground
