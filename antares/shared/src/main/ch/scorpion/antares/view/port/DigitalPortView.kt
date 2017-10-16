@@ -99,7 +99,7 @@ class DigitalPortView(
 
     init {
         buildPortLabel()
-        buildBitWidthAnnotationLabel()
+        buildBitWidthAnnotation()
     }
 
     /** ---- [AbstractPortView] */
@@ -110,13 +110,14 @@ class DigitalPortView(
             if (super.edgeViewWidth != value) {
                 super.edgeViewWidth = value
                 buildPortLabel()
+                buildBitWidthAnnotation()
             }
         }
 
     override fun modelChanged() {
         super.modelChanged()
         buildPortLabel()
-        buildBitWidthAnnotationLabel()
+        buildBitWidthAnnotation()
     }
 
     override fun getConnectedLength(): Int {
@@ -143,7 +144,7 @@ class DigitalPortView(
             length = LENGTH
             predefinedConnectedLength = null
             buildPortLabel()
-            buildBitWidthAnnotationLabel()
+            buildBitWidthAnnotation()
         }
     }
 
@@ -284,9 +285,9 @@ class DigitalPortView(
         return port as DigitalPort
     }
 
-    private fun buildBitWidthAnnotationLabel() {
+    private fun buildBitWidthAnnotation() {
         if (getDigitalPort().bitWidth != BitWidth.BW_1) {
-            bitWidthAnnotation = BitWidthAnnotation(getDigitalPort().bitWidth, direction)
+            bitWidthAnnotation = BitWidthAnnotation(getDigitalPort().bitWidth, direction, centerExternalLabel)
         } else {
             bitWidthAnnotation = null
         }

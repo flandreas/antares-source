@@ -19,7 +19,8 @@ import ch.scorpion.jabbah.draw.style.Themes
  */
 class BitWidthAnnotation(
     bitWidth: BitWidth,
-    val direction: Direction
+    private val direction: Direction,
+    private val centerLabel: Boolean
 ) : AbstractDrawable() {
 
     companion object {
@@ -41,12 +42,14 @@ class BitWidthAnnotation(
 
     override fun draw(context: DrawContext) {
         label.draw(context)
-		context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
-		val lineStart = getLineStart()
-        val lineEnd = getLineEnd(lineStart)
-		context.g.drawLine(
-			lineStart.x.toInt(), lineStart.y.toInt(),
-            lineEnd.x.toInt(), lineEnd.y.toInt())
+        if (!centerLabel) {
+            context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
+            val lineStart = getLineStart()
+            val lineEnd = getLineEnd(lineStart)
+            context.g.drawLine(
+                    lineStart.x.toInt(), lineStart.y.toInt(),
+                    lineEnd.x.toInt(), lineEnd.y.toInt())
+        }
     }
 
     override val boundingBox: Rectangle2D get() {
@@ -57,9 +60,7 @@ class BitWidthAnnotation(
         return bbox
     }
 
-    override fun contains(x: Double, y: Double): Boolean {
-        return label.contains(x, y)
-    }
+    override fun contains(x: Double, y: Double): Boolean = label.contains(x, y)
 
     /** ---- [BitWidthAnnotation] */
 
@@ -77,47 +78,37 @@ class BitWidthAnnotation(
         return 2 * LINE_WIDTH_HALF
     }
 
-    private fun getLineEnd(lineStart: Point2D): Point2D {
-        return Point2D(lineStart.x - getLineBoxWidth(), lineStart.y + getLineBoxHeight())
+    private fun getLineEnd(lineStart: Point2D): Point2D =
+            Point2D(lineStart.x - getLineBoxWidth(), lineStart.y + getLineBoxHeight())
+
+    private fun getHorizontalLabelAlignment(): Label.HorizontalAlignment = when (direction) {
+        Direction.WEST, Direction.EAST -> Label.HorizontalAlignment.CENTER
+        Direction.NORTH, Direction.SOUTH -> if (centerLabel) Label.HorizontalAlignment.CENTER else Label.HorizontalAlignment.LEFT
+        else -> throw IllegalStateException("unknown Direction $direction")
     }
 
-    private fun getHorizontalLabelAlignment(): Label.HorizontalAlignment {
-        when (direction) {
-            Direction.WEST -> return Label.HorizontalAlignment.CENTER
-            Direction.EAST -> return Label.HorizontalAlignment.CENTER
-            Direction.NORTH -> return Label.HorizontalAlignment.LEFT
-            Direction.SOUTH -> return Label.HorizontalAlignment.LEFT
-            else -> throw IllegalStateException("unknown Direction " + direction)
-        }
-    }
-
-    private fun getVerticalLabelAlignment(): Label.VerticalAlignment {
-        when (direction) {
-            Direction.WEST -> return Label.VerticalAlignment.TOP
-            Direction.EAST -> return Label.VerticalAlignment.TOP
-            Direction.NORTH -> return Label.VerticalAlignment.CENTER
-            Direction.SOUTH -> return Label.VerticalAlignment.CENTER
-            else -> throw IllegalStateException("unknown Direction " + direction)
-        }
+    private fun getVerticalLabelAlignment(): Label.VerticalAlignment = when (direction) {
+        Direction.WEST, Direction.EAST -> if (centerLabel) Label.VerticalAlignment.CENTER else Label.VerticalAlignment.TOP
+        Direction.NORTH, Direction.SOUTH -> Label.VerticalAlignment.CENTER
+        else -> throw IllegalStateException("unknown Direction $direction")
     }
 
     private fun getLabelLocation(): Point2D {
-        when (direction) {
-            Direction.WEST -> return Point2D(-2 * Look.SCALE * LINE_POS_X_FACT, LABEL_EDGE_DIST)
-            Direction.EAST -> return Point2D(2 * Look.SCALE * LINE_POS_X_FACT, LABEL_EDGE_DIST)
-            Direction.NORTH -> return Point2D(LABEL_EDGE_DIST, -2 * Look.SCALE * LINE_POS_X_FACT)
-            Direction.SOUTH -> return Point2D(LABEL_EDGE_DIST, 2 * Look.SCALE * LINE_POS_X_FACT)
-            else -> throw IllegalStateException("unknown Direction " + direction)
+        val labelEdgeDist = if (centerLabel) 0.0 else LABEL_EDGE_DIST
+        return when (direction) {
+            Direction.WEST -> Point2D(-2 * Look.SCALE * LINE_POS_X_FACT, labelEdgeDist)
+            Direction.EAST -> Point2D(2 * Look.SCALE * LINE_POS_X_FACT, labelEdgeDist)
+            Direction.NORTH -> Point2D(labelEdgeDist, -2 * Look.SCALE * LINE_POS_X_FACT)
+            Direction.SOUTH -> Point2D(labelEdgeDist, 2 * Look.SCALE * LINE_POS_X_FACT)
+            else -> throw IllegalStateException("unknown Direction $direction")
         }
     }
 
-    private fun getLineStart(): Point2D {
-        when (direction) {
-            Direction.WEST -> return Point2D(LINE_POS_X_FACT * -2 * Look.SCALE + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
-            Direction.EAST -> return Point2D(LINE_POS_X_FACT * 2 * Look.SCALE + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
-            Direction.NORTH -> return Point2D(LINE_HEIGHT_HALF, -2 * Look.SCALE * LINE_POS_X_FACT - LINE_WIDTH_HALF)
-            Direction.SOUTH -> return Point2D(LINE_HEIGHT_HALF, 2 * Look.SCALE * LINE_POS_X_FACT - LINE_WIDTH_HALF)
-            else -> throw IllegalStateException("unknown Direction " + direction)
-        }
+    private fun getLineStart(): Point2D = when (direction) {
+        Direction.WEST -> Point2D(LINE_POS_X_FACT * -2 * Look.SCALE + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
+        Direction.EAST -> Point2D(LINE_POS_X_FACT * 2 * Look.SCALE + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
+        Direction.NORTH -> Point2D(LINE_HEIGHT_HALF, -2 * Look.SCALE * LINE_POS_X_FACT - LINE_WIDTH_HALF)
+        Direction.SOUTH -> Point2D(LINE_HEIGHT_HALF, 2 * Look.SCALE * LINE_POS_X_FACT - LINE_WIDTH_HALF)
+        else -> throw IllegalStateException("unknown Direction $direction")
     }
 }
