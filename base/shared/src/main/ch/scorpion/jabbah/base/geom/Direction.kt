@@ -44,7 +44,9 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
          */
         fun of(p1: Point2D, p2: Point2D): Direction {
             try {
-                return of(Math.signum(p2.x - p1.x).toInt(), Math.signum(p2.y - p1.y).toInt())
+                return of(
+                        Math.signum(Math.round(p2.x - p1.x).toDouble()).toInt(),
+                        Math.signum(Math.round(p2.y - p1.y).toDouble()).toInt())
             } catch (e: IllegalArgumentException) {
                 LOG.error("Cannot determine Direction from $p1 to $p2")
                 throw e
@@ -69,61 +71,41 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
 
     }
 
-    override fun toString(): String {
-        return when (this) {
-            EAST -> Translations.getString("graph.property.direction.east.name")
-            NORTH -> Translations.getString("graph.property.direction.north.name")
-            WEST -> Translations.getString("graph.property.direction.west.name")
-            SOUTH -> Translations.getString("graph.property.direction.south.name")
-        }
+    override fun toString(): String = when (this) {
+        EAST -> Translations.getString("graph.property.direction.east.name")
+        NORTH -> Translations.getString("graph.property.direction.north.name")
+        WEST -> Translations.getString("graph.property.direction.west.name")
+        SOUTH -> Translations.getString("graph.property.direction.south.name")
     }
 
     /** Returns the next counter-clockwise [Direction].*/
-    fun next(): Direction {
-        return Direction.values()[(this.ordinal + 1) % 4];
-    }
+    fun next(): Direction = Direction.values()[(this.ordinal + 1) % 4]
 
-    fun previous(): Direction {
-        return Direction.values()[(this.ordinal + 3) % 4];
-    }
+    fun previous(): Direction = Direction.values()[(this.ordinal + 3) % 4]
 
     /** Returns the opposite of this [Direction].*/
-    fun opposite(): Direction {
-        return Direction.values()[(this.ordinal + 2) % 4];
-    }
+    fun opposite(): Direction = Direction.values()[(this.ordinal + 2) % 4]
 
     /** Returns the result of mirroring this [Direction] horizontally, i.e. mirroring at a vertical axis.*/
-    fun mirrorHorizontally(): Direction {
-        return when(this) {
-            NORTH, SOUTH -> this
-            EAST, WEST -> opposite()
-        }
+    fun mirrorHorizontally(): Direction = when(this) {
+        NORTH, SOUTH -> this
+        EAST, WEST -> opposite()
     }
 
     /** Returns the result of mirroring this [Direction] vertically, i.e. mirroring at a horizontal axis.*/
-    fun mirrorVertically(): Direction {
-        return when (this) {
-            NORTH, SOUTH -> opposite()
-            EAST, WEST -> this
-        }
+    fun mirrorVertically(): Direction = when (this) {
+        NORTH, SOUTH -> opposite()
+        EAST, WEST -> this
     }
 
-    fun abs(): Direction {
-        return of(Math.abs(dx), Math.abs(dy))
-    }
+    fun abs(): Direction = of(Math.abs(dx), Math.abs(dy))
 
     /** Multiplies this [Direction] by the specified value and returns the result as a [Point2D].*/
-    fun multiply(value: Double): Point2D {
-        return Point2D(dx * value, dy * value)
-    }
+    fun multiply(value: Double): Point2D = Point2D(dx * value, dy * value)
 
-    fun isHorizontal(): Boolean {
-        return dy == 0
-    }
+    fun isHorizontal(): Boolean = dy == 0
 
-    fun isVertical(): Boolean {
-        return dx == 0
-    }
+    fun isVertical(): Boolean = dx == 0
 
     /** Determines the [Turn] that distinguish this [Direction] from the specified [Direction].*/
     fun determineTurn(newDirection: Direction): Turn {
@@ -140,12 +122,10 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
     }
 
     /** Return the new [Direction] when turning from this [Direction].*/
-    fun turn(turn: Turn): Direction {
-        return when(turn) {
-            Turn.AROUND -> opposite()
-            Turn.LEFT -> next()
-            Turn.RIGHT -> previous()
-            Turn.NONE -> this
-        }
+    fun turn(turn: Turn): Direction = when(turn) {
+        Turn.AROUND -> opposite()
+        Turn.LEFT -> next()
+        Turn.RIGHT -> previous()
+        Turn.NONE -> this
     }
 }

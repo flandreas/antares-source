@@ -93,4 +93,9 @@ class DirectionTest {
         assertThat(Direction.WEST.isVertical(), `is`(false))
         assertThat(Direction.EAST.isVertical(), `is`(false))
     }
+
+    @Test
+    fun shouldAvoidRoundingIssues() {
+        assertThat(Direction.of(Point2D(-224.0, -111.999999999), Point2D(10.0, -112.0)), `is`(Direction.EAST))
+    }
 }

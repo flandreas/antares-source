@@ -33,10 +33,10 @@ class OrthoEdgeViewLayout : EdgeViewLayout {
 
         // Create possible solutions by first creating a Point list that only contains the first and last segments,
         // and by then completing these list in all possible ways, which yields the different solutions.
-        createSolution(solutions, begin, end, {a,b -> createD(a, b, graphView.snapper)})
-        createSolution(solutions, begin, end, {a,b -> createC(a, b, graphView.snapper)})
-        createSolution(solutions, begin, end, {a,b -> createB(a, b)})
-        createSolution(solutions, begin, end, {a,b -> createA(a, b)})
+        createSolutions(solutions, begin, end, { a, b -> createD(a, b, graphView.snapper)})
+        createSolutions(solutions, begin, end, { a, b -> createC(a, b, graphView.snapper)})
+        createSolutions(solutions, begin, end, { a, b -> createB(a, b)})
+        createSolutions(solutions, begin, end, { a, b -> createA(a, b)})
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("OrthoEdgeViewLayout solutions:")
@@ -61,9 +61,7 @@ class OrthoEdgeViewLayout : EdgeViewLayout {
 
     /** ---- [OrthoEdgeViewLayout] */
 
-    private fun createFallbackSolution(begin: Point2D, end: Point2D): List<Point2D> {
-        return listOf(begin, end)
-    }
+    private fun createFallbackSolution(begin: Point2D, end: Point2D): List<Point2D> = listOf(begin, end)
 
     /** Compares two [Solution]s in respect of the original [EdgeView] for which they solve the layout problem.*/
     private class SolutionEvaluator(private val edgeView: EdgeView<*>?) : Comparator<Solution> {
@@ -108,7 +106,7 @@ class OrthoEdgeViewLayout : EdgeViewLayout {
         }
     }
 
-    private fun createSolution(
+    private fun createSolutions(
         solutions: MutableList<Solution>,
         begin: LayoutBoundary,
         end: LayoutBoundary,
@@ -142,13 +140,9 @@ class OrthoEdgeViewLayout : EdgeViewLayout {
         }
     }
 
-    private fun createA(p1: Point2D, p2: Point2D): List<Point2D> {
-        return listOf(Point2D(p1.x, p2.y))
-    }
+    private fun createA(p1: Point2D, p2: Point2D): List<Point2D> = listOf(Point2D(p1.x, p2.y))
 
-    private fun createB(p1: Point2D, p2: Point2D): List<Point2D> {
-        return listOf(Point2D(p2.x, p1.y))
-    }
+    private fun createB(p1: Point2D, p2: Point2D): List<Point2D> = listOf(Point2D(p2.x, p1.y))
 
     private fun createC(p1: Point2D, p2: Point2D, snapper: Snapper?): List<Point2D> {
         val list = mutableListOf<Point2D>()
