@@ -24,7 +24,7 @@ interface Theme {
      * Implementations should activateIn themselves by registering all their [Style]s
      * with the [StyleRepository].
      */
-    fun activateIn(styleRepository: StyleRepository)
+    fun activateIn(styleRepository: StyleRepository, styleOnly: Boolean)
 }
 
 object Themes {
@@ -35,7 +35,7 @@ object Themes {
     private var _current: Theme = themes[0]
         set(value) {
             field = value
-            field.activateIn(DrawStyleModule.styleProvider)
+            field.activateIn(DrawStyleModule.styleProvider, styleOnly = false)
             _uiTheme = determineUITheme()
         }
 
@@ -43,10 +43,7 @@ object Themes {
         set(value) {
             if (field != value) {
                 field = value
-                // BUG This illegally overwrites the values in the singleton Properties with values of the UITheme,
-                // which is not desired e.g. for Handle.PROP_FILL_COLOR. Example: black in Theme "CRT", white in Theme "Black & White"
-                // Seems like UIThemes are a bad concept!
-                field.activateIn(uiStyleProvider as StyleRepository)
+                field.activateIn(uiStyleProvider as StyleRepository, styleOnly = true)
             }
         }
 
@@ -133,8 +130,10 @@ open class DrawTheme(
         )
     }
 
-    override fun activateIn(styleRepository: StyleRepository) {
-        referenceColorSequenceProvider.replaceColors(referenceColors)
+    override fun activateIn(styleRepository: StyleRepository, styleOnly: Boolean) {
+        if (!styleOnly) {
+            referenceColorSequenceProvider.replaceColors(referenceColors)
+        }
         styleRepository.registerStyle(StyleType.BACKGROUND, background)
         styleRepository.registerStyle(StyleType.FIGURE, figure)
     }

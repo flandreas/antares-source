@@ -45,15 +45,17 @@ open class GraphTheme(
         val DEF_SUBSYSTEM = BasicStyle()
     }
 
-    override fun activateIn(styleRepository: StyleRepository) {
-        super.activateIn(styleRepository)
+    override fun activateIn(styleRepository: StyleRepository, styleOnly: Boolean) {
+        super.activateIn(styleRepository, styleOnly)
         styleRepository.registerStyle(GraphStyleType.VERTICE, vertice)
         styleRepository.registerStyle(GraphStyleType.EDGE, edge)
         styleRepository.registerStyle(GraphStyleType.ANNOTATION, annotation)
         styleRepository.registerStyle(GraphStyleType.EXPLANATION, explanation)
         styleRepository.registerStyle(GraphStyleType.SUBSYSTEM, subsystem)
 
-        BaseModule.properties.set(Handle.PROP_BORDER_COLOR, selection.foregroundColor)
-        BaseModule.properties.set(Handle.PROP_FILL_COLOR, selection.backgroundColor)
+        if (!styleOnly) {
+            BaseModule.properties.set(Handle.PROP_BORDER_COLOR, selection.foregroundColor)
+            BaseModule.properties.set(Handle.PROP_FILL_COLOR, selection.backgroundColor)
+        }
     }
 }

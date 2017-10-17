@@ -33,8 +33,8 @@ open class EditTheme(
         val DEF_MESSAGE = BasicStyle(CompositeColor(foregroundColor = Color(252, 205, 90), backgroundColor = Color(255, 255, 223)))
     }
 
-    override fun activateIn(styleRepository: StyleRepository) {
-        super.activateIn(styleRepository)
+    override fun activateIn(styleRepository: StyleRepository, styleOnly: Boolean) {
+        super.activateIn(styleRepository, styleOnly)
         styleRepository.registerStyle(EditStyleType.HIGHLIGHT, highlight)
         styleRepository.registerStyle(EditStyleType.MESSAGE, message)
     }
