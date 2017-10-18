@@ -27,8 +27,8 @@ class FocusPanel(
 ) : JPanel() {
 
     companion object {
-        val focusBorder = BorderFactory.createLineBorder(UIManager.getColor("Focus.color"), 1)
-        val nonFocusBorder = BorderFactory.createEmptyBorder(1, 1, 1, 1)
+        val focusBorder = BorderFactory.createLineBorder(UIManager.getColor("Focus.color"), 1)!!
+        val nonFocusBorder = BorderFactory.createEmptyBorder(1, 1, 1, 1)!!
     }
 
     init {
@@ -58,10 +58,10 @@ class FocusPanel(
     }
 
     private fun updateFocusBorder() {
-        if ((view.canvas as JComponent).isFocusOwner) {
-            border = focusBorder
+        border = if ((view.canvas as JComponent).isFocusOwner) {
+            focusBorder
         } else {
-            border = nonFocusBorder
+            nonFocusBorder
         }
     }
 }

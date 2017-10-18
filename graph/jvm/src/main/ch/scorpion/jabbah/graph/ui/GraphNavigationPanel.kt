@@ -28,6 +28,7 @@ import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import java.awt.*
 import javax.swing.*
+import javax.swing.border.Border
 
 
 /**
@@ -37,7 +38,7 @@ import javax.swing.*
 open class GraphNavigationPanel(
         val isRoot: Boolean,
         val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-        viewManager: ViewManager,
+        private val viewManager: ViewManager,
         closeHandler: ((GraphNavigationPanel) -> Unit)?,
         contextBorderColor: CompositeColor? = null,
         private val scheduler: Scheduler,
@@ -49,7 +50,13 @@ open class GraphNavigationPanel(
         private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
 ) : JPanel() {
 
-    private val LOG by logger(GraphNavigationPanel::class)
+    companion object {
+        private val LOG by logger(GraphNavigationPanel::class)
+    }
+
+    private val mainPanel = JPanel(BorderLayout())
+
+    private val headerPanel = JPanel()
 
     private val navigationStackView = NavigationStackView()
 
@@ -72,6 +79,33 @@ open class GraphNavigationPanel(
     /** Forwards input events to the [GraphView] while displaying (i.e. NOT executing) and NOT being editable.*/
     private val graphViewDisplayHandler = GraphViewDisplayHandler(drawingView, scheduler, eventBus)
 
+    var contextColor: CompositeColor? = null
+        set(value) {
+            if (field == value) {
+                return
+            }
+            if (field == null) {
+                // Add context color border
+                mainPanel.removeAll()
+                mainPanel.add(headerPanel, BorderLayout.NORTH)
+                val borderPanel = JPanel(BorderLayout())
+                borderPanel.border = createContextColorBorder(value!!)
+                borderPanel.add(layeredPane)
+                mainPanel.add(FocusPanel(borderPanel, drawingView, viewManager), BorderLayout.CENTER)
+            } else if (value == null) {
+                // Remove context color border
+                mainPanel.removeAll()
+                mainPanel.add(headerPanel, BorderLayout.NORTH)
+                mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
+            } else {
+                // Exchange context color border
+                (mainPanel.getComponent(0) as JComponent).border = createContextColorBorder(value)
+            }
+            revalidate()
+            repaint()
+        }
+
+
     init {
         eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
         eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
@@ -84,7 +118,7 @@ open class GraphNavigationPanel(
 
         setRootGraphView(drawingView.drawing)
 
-        buildUI(viewManager, contextBorderColor, closeHandler)
+        buildUI(contextBorderColor, closeHandler)
         propagateApplicationContext()
     }
 
@@ -109,9 +143,8 @@ open class GraphNavigationPanel(
         scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus, currentSystemSpeedCategory)
     }
 
-    private fun getRootContent(): DrawingViewContent<GraphView<GraphElementView<*>>> {
-        return navigationStackView.navigationStack.rootContent!!
-    }
+    private fun getRootContent(): DrawingViewContent<GraphView<GraphElementView<*>>> =
+            navigationStackView.navigationStack.rootContent!!
 
     @Suppress("unused")
     fun setGlassPaneComponent(component: JComponent) {
@@ -133,9 +166,8 @@ open class GraphNavigationPanel(
     }
 
     /** Finds the first [DrawingViewContent] in the navigation stack that fulfills the specified condition, if any.*/
-    fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<GraphView<GraphElementView<*>>>? {
-        return navigationStackView.navigationStack.find(condition)
-    }
+    fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<GraphView<GraphElementView<*>>>? =
+            navigationStackView.navigationStack.find(condition)
 
     private fun handle(request: OpenSubGraphRequest) {
         LOG.debug("handling OpenSubGraphRequest by diving into SubGraphVerticeView")
@@ -219,11 +251,10 @@ open class GraphNavigationPanel(
      * i.e. whether it doesn't show accurate signal states due to shallow execution.
      */
     private fun updateDetached() {
-        if (
-                (!isRoot || navigationStackView.navigationStack.size > 1)
-                && scheduler.isActive
-                && !scheduler.isDeepExecution
-                && StringUtils.isNotEmpty(drawingView.drawing.graph!!.script)
+        if ((!isRoot || navigationStackView.navigationStack.size > 1)
+            && scheduler.isActive
+            && !scheduler.isDeepExecution
+            && StringUtils.isNotEmpty(drawingView.drawing.graph!!.script)
         ) {
             // TODO Make color configurable after feature has passed experimental stage
             drawingView.overlayColor = Color(255, 255, 255, 192)
@@ -232,11 +263,13 @@ open class GraphNavigationPanel(
         }
     }
 
-    private fun buildUI(viewManager: ViewManager, contextColor: CompositeColor?, closeHandler: ((GraphNavigationPanel) -> Unit)?) {
+    private fun createContextColorBorder(contextColor: CompositeColor): Border =
+            BorderFactory.createLineBorder(Graphics2DJvm.toAwtColor(contextColor.backgroundColor), 5, true)
+
+    private fun buildUI(contextColor: CompositeColor?, closeHandler: ((GraphNavigationPanel) -> Unit)?) {
         layeredPane.layout = LayerLayoutManager()
         layeredPane.add(drawingView.canvas as JComponent, JLayeredPane.DEFAULT_LAYER)
 
-        val headerPanel = JPanel()
         headerPanel.layout = BoxLayout(headerPanel, BoxLayout.LINE_AXIS)
         headerPanel.add(navigationStackView)
         if (closeHandler != null) {
@@ -249,17 +282,11 @@ open class GraphNavigationPanel(
             headerPanel.add(closeButton)
         }
 
-        val mainPanel = JPanel(BorderLayout())
         mainPanel.add(headerPanel, BorderLayout.NORTH)
 
-        if (contextColor == null) {
-            mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
-        } else {
-            val borderPanel = JPanel(BorderLayout())
-            borderPanel.border = BorderFactory.createLineBorder(Graphics2DJvm.toAwtColor(contextColor.backgroundColor), 5, true)
-            borderPanel.add(layeredPane)
-            mainPanel.add(FocusPanel(borderPanel, drawingView, viewManager), BorderLayout.CENTER)
-        }
+        mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
+        this.contextColor = contextColor
+
         layout = BorderLayout()
         add(mainPanel, BorderLayout.CENTER)
     }
@@ -270,20 +297,17 @@ open class GraphNavigationPanel(
         override fun layoutContainer(parent: Container?) {
             synchronized(parent!!.treeLock) {
                 if (parent.componentCount > 0) {
-                    for (i in 0..parent.componentCount - 1) {
+                    for (i in 0 until parent.componentCount) {
                         parent.getComponent(i).setBounds(0, 0, parent.width, parent.height)
                     }
                 }
             }
         }
 
-        override fun preferredLayoutSize(parent: Container?): Dimension {
-            return (drawingView.canvas as JComponent).preferredSize
-        }
+        override fun preferredLayoutSize(parent: Container?): Dimension =
+                (drawingView.canvas as JComponent).preferredSize
 
-        override fun minimumLayoutSize(parent: Container?): Dimension {
-           return Dimension()
-        }
+        override fun minimumLayoutSize(parent: Container?): Dimension = Dimension()
 
         override fun addLayoutComponent(name: String?, comp: Component?) {
             // empty

@@ -37,6 +37,9 @@ interface Highlighter {
 
     /** Determines whether a particular [Component] is currently highlighted.*/
     fun isHighlighted(component: Component): Boolean
+
+    /** Replace a given highlight [CompositeColor] by a corresponding new one. */
+    fun replaceColor(oldColor: CompositeColor, newColor: CompositeColor)
 }
 
 interface HighlighterFactory {

@@ -7,8 +7,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.ReferenceColorEvent
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
-import ch.scorpion.jabbah.draw.style.ThemeEvent
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
@@ -42,7 +42,9 @@ class GraphDesktop(
     private val scheduler: Scheduler = ExecutionModule.scheduler
 ) : JPanel() {
 
-    private val LOG by logger(GraphDesktop::class)
+    companion object {
+        private val LOG by logger(GraphDesktop::class)
+    }
 
     private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
@@ -92,11 +94,17 @@ class GraphDesktop(
         sidePanel.layout = GridLayout(0, 1)
         layout = BorderLayout()
 
-        // [ReferenceColorSequenceProvider]s can't deal with changing [Theme]s, so close all open slaves
-        // and create a new [ReferenceColorSequence] when the current [Theme] has changed.
-        eventBus.register(ThemeEvent::class, {
-            closeAllSlaves()
-            referenceColorSequence = ReferenceColorSequenceProvider.provide()
+        // Replace reference color in all Associations
+        eventBus.register(ReferenceColorEvent::class, { event ->
+            val newAssociations = associations.map { assoc -> assoc.copy(refColor = event.getNewColorFor(assoc.refColor)!!) }
+            associations.clear()
+            associations.addAll(newAssociations)
+            associations.forEach { assoc ->
+                assoc.panel.contextColor = assoc.refColor
+                event.replacements.forEach { assoc.panel.drawingView.highlighter.replaceColor(it.oldColor, it.newColor) }
+            }
+            event.replacements.forEach { masterGraphPanel!!.graphNavigationPanel.drawingView.highlighter.replaceColor(it.oldColor, it.newColor) }
+
         })
 
         eventBus.register(OpenSubGraphRequest::class, { request ->
@@ -139,9 +147,7 @@ class GraphDesktop(
         masterGraphPanel?.dispose()
     }
 
-    fun getToolBars(): List<JToolBar> {
-        return masterGraphPanel!!.toolbars
-    }
+    fun getToolBars(): List<JToolBar> = masterGraphPanel!!.toolbars
 
     private fun addGraphNavigationPanel(panel: GraphNavigationPanel) {
         if (slaveGraphNavigationPanels.isEmpty()) {
@@ -213,7 +219,7 @@ class GraphDesktop(
         associationOf(panel).let { assoc ->
             val content = assoc!!.sourcePanel.findContent { it.drawing.contains(assoc.ref) }
             if (content != null) {
-                deassociate(assoc, content!!)
+                deassociate(assoc, content)
             }
         }
     }
@@ -224,9 +230,8 @@ class GraphDesktop(
         associations.remove(assoc)
     }
 
-    private fun associationOf(panel: GraphNavigationPanel): Association? {
-        return associations.firstOrNull { assoc -> assoc.panel == panel }
-    }
+    private fun associationOf(panel: GraphNavigationPanel): Association? =
+            associations.firstOrNull { assoc -> assoc.panel == panel }
 
     private fun zoomViews(includeMasterView: Boolean) {
         SwingUtilities.invokeLater {

@@ -19,7 +19,9 @@ class BelowSmHighlighter(
     private val content: DrawingViewContent<*>
 ) : Highlighter {
 
-    private val LOG by logger(BelowSmHighlighter::class)
+    companion object {
+        private val LOG by logger(BelowSmHighlighter::class)
+    }
 
     /** Maps a highlighted [Component]s to its highlight [SelectionModel].*/
     private val highlights: MutableMap<Component, SelectionModel<Component>> by lazy { mutableMapOf<Component, SelectionModel<Component>>() }
@@ -91,8 +93,13 @@ class BelowSmHighlighter(
         }
     }
 
-    override fun isHighlighted(component: Component): Boolean {
-        return highlights.containsKey(component)
+    override fun isHighlighted(component: Component): Boolean = highlights.containsKey(component)
+
+    override fun replaceColor(oldColor: CompositeColor, newColor: CompositeColor) {
+        highlights.values
+                .filter { it is Colorable && it.color == oldColor }
+                .map { it as Colorable }
+                .forEach { it.color = newColor }
     }
 
     /** ---- [BelowSmHighlighter] */

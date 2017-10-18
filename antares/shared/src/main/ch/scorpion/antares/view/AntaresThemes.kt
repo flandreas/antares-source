@@ -133,11 +133,24 @@ object AntaresThemes {
                 name = "CRT",
                 supportsWhiteBackground = false,
                 referenceColors = listOf(
+                        // Red
                         CompositeColor(Color(236, 35, 46), Color(120, 3, 7)),
+                        // Blue
                         CompositeColor(Color(72, 186, 233), Color(3, 16, 139)),
+                        // Green
                         CompositeColor(Color(115, 191, 91), Color(7, 87, 9)),
-                        CompositeColor(Color(245, 235, 62), Color(67, 69, 10))
-                ),
+                        // Yellow
+                        CompositeColor(Color(245, 235, 62), Color(67, 69, 10)),
+                        // Violet
+                        CompositeColor(Color(125, 108, 171), Color(55, 14, 91)),
+                        // Pink
+                        CompositeColor(Color(188, 126, 179), Color(104, 8, 89)),
+                        // Blue-Green
+                        CompositeColor(Color(90, 196, 194), Color(13, 110, 110)),
+                        // Yellow-Orange
+                        CompositeColor(Color(247, 164, 49), Color(152, 103, 22)),
+                        // Black
+                        CompositeColor(Color(234, 234, 234), Color(32, 32, 32))),
                 highlight = BasicStyle(
                         color = CompositeColor(
                                 backgroundColor = highlightColor,
