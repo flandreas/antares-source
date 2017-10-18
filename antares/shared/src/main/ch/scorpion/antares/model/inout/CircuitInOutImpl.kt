@@ -118,7 +118,7 @@ class CircuitInOutImpl(
         portType = PortType.withName(reader.readString("type"))
         bitWidth = BitWidth.of(reader.readInt("bitWidth"))
         if (reader.hasAttribute(("desc"))) {
-            shortDescription = reader.readString("desc")
+            portDescription = reader.readString("desc")
         }
     }
 
