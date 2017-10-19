@@ -362,7 +362,7 @@ class SubGraphVerticeViewImpl(
         drawables.clear()
         clearPortViews()
 
-        containerDrawing.fillSubGraphVerticeViewRef(this)
+        containerDrawing.fillSubGraphVerticeView(this)
         reuser.reuse()
 
         if (StringUtils.isNotEmpty(label)) {

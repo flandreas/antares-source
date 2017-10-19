@@ -124,10 +124,10 @@ class ContainerDrawing(
         return getControlViewComponents().firstOrNull{it.controlView!!.controlId == controlId}
     }
 
-    fun createSubGraphVerticeViewRef(): SubGraphVerticeView<SubGraphVerticeRef> {
+    fun createSubGraphVerticeView(): SubGraphVerticeView<SubGraphVerticeRef> {
         val model = SubGraphVerticeRef.fromSubGraphVertice(createSubGraphVertice(), storableCloner, libraryHolder, scriptGateway)
         val view = SubGraphVerticeViewImpl(model, styleProvider, storableCloner, storableCreator, libraryHolder, eventBus)
-        fillSubGraphVerticeViewRef(view)
+        fillSubGraphVerticeView(view)
         return view
     }
 
@@ -140,7 +140,7 @@ class ContainerDrawing(
      * Fills the specified [SubGraphVerticeView] with all visible [Drawable]s of this
      * [ContainerDrawing], thus providing the look that has been designed by the library designer.
      */
-    fun fillSubGraphVerticeViewRef(view: SubGraphVerticeView<SubGraphVerticeRef>) {
+    fun fillSubGraphVerticeView(view: SubGraphVerticeView<SubGraphVerticeRef>) {
         LOG.debug("ContainerDrawing: filling SubGraphVerticeViewRef name:${model.name} storableId:${model.storableId}, uuid:${model.graphUUID}")
 
         val clonedDrawing = storableCloner.cloneUsingCreator(this, storableCreator) as ContainerDrawing

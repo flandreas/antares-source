@@ -128,10 +128,12 @@ class CircuitInOutView(
         }
 
     var description: TextProperty
-        get() = TextProperty(model!!.getPort<DigitalSignal>().description)
-        set(value) {
-            model!!.getPort<DigitalSignal>().description = value.text
-        }
+        get() = TextProperty(portDescription)
+        set(value) { portDescription = value.text }
+
+    private var portDescription: String?
+        get() = model!!.getPort<DigitalSignal>().description
+        set(value) { model!!.getPort<DigitalSignal>().description = value }
 
     /** ---- [GraphPortView] */
 
@@ -287,10 +289,15 @@ class CircuitInOutView(
         }
 
     override val shortDescription: String?
-        get() = when (portType) {
-            PortType.INOUT -> Translations.getOptionalString("library.element.CircuitInOut.desc")
-            PortType.INPUT -> Translations.getOptionalString("library.element.CircuitInput.desc")
-            PortType.OUTPUT -> Translations.getOptionalString("library.element.CircuitOutput.desc")
+        get() {
+            if (StringUtils.isNotEmpty(portDescription)) {
+                return portDescription
+            }
+            return when (portType) {
+                PortType.INOUT -> Translations.getOptionalString("library.element.CircuitInOut.desc")
+                PortType.INPUT -> Translations.getOptionalString("library.element.CircuitInput.desc")
+                PortType.OUTPUT -> Translations.getOptionalString("library.element.CircuitOutput.desc")
+            }
         }
 
     override fun focusGained() {
