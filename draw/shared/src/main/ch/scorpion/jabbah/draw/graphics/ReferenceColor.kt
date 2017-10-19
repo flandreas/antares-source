@@ -65,7 +65,7 @@ interface ReferenceColorSequence {
  * This implementation doesn't react to changes of reference [CompositeColor]s when changing the current [Theme].
  * @Deprecated Use [FlexibleReferenceColorSequenceImpl] instead
  */
-private class ReferenceColorSequenceImpl(private val colors: List<CompositeColor>) : ReferenceColorSequence {
+class ReferenceColorSequenceImpl(private val colors: List<CompositeColor>) : ReferenceColorSequence {
 
     private val usages = colors.map { Usage(it, 0)}
 
@@ -94,7 +94,7 @@ private class ReferenceColorSequenceImpl(private val colors: List<CompositeColor
  * An implementation of [ReferenceColorSequence] that accesses the colors in [ReferenceColorSequenceProvider].
  * Therefore, it is robust when changing the current [Theme] and its reference [CompositeColor]s.
  */
-private class FlexibleReferenceColorSequenceImpl : ReferenceColorSequence {
+class FlexibleReferenceColorSequenceImpl : ReferenceColorSequence {
 
     private val usages = (0 until ReferenceColorSequenceProvider.colorCount).map { Usage(it, 0) }
 
