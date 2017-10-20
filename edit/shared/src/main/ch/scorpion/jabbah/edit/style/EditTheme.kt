@@ -1,9 +1,11 @@
 package ch.scorpion.jabbah.edit.style
 
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.style.*
+import ch.scorpion.jabbah.edit.select.RubberBand
 
 /**
  * Adds more [Theme] properties for the [ch.scorpion.jabbah.edit] module.
@@ -37,5 +39,10 @@ open class EditTheme(
         super.activateIn(styleRepository, styleOnly)
         styleRepository.registerStyle(EditStyleType.HIGHLIGHT, highlight)
         styleRepository.registerStyle(EditStyleType.MESSAGE, message)
+
+        if (!styleOnly) {
+            BaseModule.properties.set(RubberBand.PROP_FILL_PAINT, selection.foregroundColor.withAlpha(32))
+            BaseModule.properties.set(RubberBand.PROP_STROKE_PAINT, selection.foregroundColor)
+        }
     }
 }
