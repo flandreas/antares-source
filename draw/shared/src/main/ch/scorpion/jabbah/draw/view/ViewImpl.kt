@@ -107,6 +107,10 @@ open class ViewImpl<C: InputEventContext>(
 
     private val handler: InputEventHandler<C> = EventHandler()
 
+    override fun dispatchEvent(e: InputEvent) {
+        canvas.dispatchEvent(e)
+    }
+
     override fun requestFocus() {
         canvas.requestViewFocus()
     }

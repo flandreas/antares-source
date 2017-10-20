@@ -25,7 +25,7 @@ interface ViewNavigator {
     fun multiplyZoomFactor(factor: Double)
 
     /** Pans the [View] by the given delta offset.*/
-    fun pan(dx: Int, dy: Int)
+    fun panBy(dx: Int, dy: Int)
 
     /**
      * Sets the coordinates of the [View] to be displayed at the upper left-hand corner of the view.

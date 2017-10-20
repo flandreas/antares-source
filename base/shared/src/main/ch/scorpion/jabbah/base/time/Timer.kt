@@ -117,6 +117,6 @@ class ControlledTimer(val timeService: ControlledTimeService) : Timer {
     }
 
     private fun fireActionPerformed(now: Long) {
-        handler!!(ActionEvent(source = this, modifiers = 0, action = "timer", time = now))
+        handler!!(ActionEvent(event = this, source = this, modifiers = 0, action = "timer", time = now))
     }
 }

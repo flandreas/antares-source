@@ -183,6 +183,10 @@ class CanvasJs(
         canvas.title = text ?: ""
     }
 
+    override fun dispatchEvent(e: InputEvent) {
+        // TOD Not yet implemented
+    }
+
     /** ---- [CanvasJs] */
 
     fun paint() {
@@ -218,7 +222,10 @@ class CanvasJs(
     }
 }
 
-private class MouseEventJs(private val canvas: HTMLCanvasElement, private val event: org.w3c.dom.events.MouseEvent) : MouseEvent {
+private class MouseEventJs(
+        private val canvas: HTMLCanvasElement,
+        override val event: org.w3c.dom.events.MouseEvent
+) : MouseEvent {
 
     override val source: Any get() = canvas
 
@@ -317,7 +324,10 @@ private class MouseWheelEventBridge(val listener: MouseWheelListener, private va
     }
 }
 
-private class KeyEventJs(private val canvas: HTMLCanvasElement, private val event: org.w3c.dom.events.KeyboardEvent) : KeyEvent {
+private class KeyEventJs(
+        private val canvas: HTMLCanvasElement,
+        override val event: org.w3c.dom.events.KeyboardEvent
+) : KeyEvent {
 
     override val key: Int get() = event.keyCode
 

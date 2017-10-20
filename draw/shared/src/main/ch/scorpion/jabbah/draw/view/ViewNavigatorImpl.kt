@@ -37,7 +37,7 @@ class ViewNavigatorImpl(private val view: View<*>) : ViewNavigator {
         }
     }
 
-    override fun pan(dx: Int, dy: Int) {
+    override fun panBy(dx: Int, dy: Int) {
         setZoomPan(ZoomPan(view, view.zoomFactor, Point2D(
                 view.zoomPan.panOrigin.x - dx / view.zoomFactor,
                 view.zoomPan.panOrigin.y - dy / view.zoomFactor)))

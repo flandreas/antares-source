@@ -11,7 +11,7 @@ class ActionListenerJvm(val handler: (ch.scorpion.jabbah.base.event.ActionEvent)
 
     override fun actionPerformed(e: ActionEvent?) {
         if (e != null) {
-            handler(ch.scorpion.jabbah.base.event.ActionEvent(e.source, e.modifiers, e.actionCommand ?: "", e.`when`))
+            handler(ch.scorpion.jabbah.base.event.ActionEvent(e, e.source, e.modifiers, e.actionCommand ?: "", e.`when`))
         }
     }
 }

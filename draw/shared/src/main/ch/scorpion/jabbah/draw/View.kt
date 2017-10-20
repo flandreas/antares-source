@@ -111,6 +111,12 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
     /** ---- Event handling */
 
+    /**
+     * Dispatches the platform-specific event in the specified cross-platform [InputEvent]
+     * to the platform's event handling. Typical implementations will delegate to the corresponding method in [Canvas]
+     */
+    fun dispatchEvent(e: InputEvent)
+
     /** Request the event focus from the window system for this [View] in order to receive key events.*/
     fun requestFocus()
 

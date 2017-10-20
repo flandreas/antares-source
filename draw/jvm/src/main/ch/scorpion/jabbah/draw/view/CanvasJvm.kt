@@ -153,6 +153,10 @@ class CanvasJvm(
         }
     }
 
+    override fun dispatchEvent(e: InputEvent) {
+        dispatchEvent(e.event as java.awt.event.InputEvent)
+    }
+
     /** ---- [JComponent] */
 
     override fun paintComponent(g: Graphics?) {
@@ -175,7 +179,7 @@ class CanvasJvm(
 }
 
 private class MouseEventJvm(
-    private val event: AwtMouseEvent
+    override val event: AwtMouseEvent
 ) : MouseEvent {
 
     override val source: Any get() = event.source
@@ -207,7 +211,7 @@ private class MouseEventJvm(
     }
 }
 
-private class KeyEventJvm(private val event: AwtKeyEvent) : KeyEvent {
+private class KeyEventJvm(override val event: AwtKeyEvent) : KeyEvent {
     override val source: Any get() = event.source
     override val modifiers: Int get() = event.modifiers
     override val key: Int get() = event.keyCode

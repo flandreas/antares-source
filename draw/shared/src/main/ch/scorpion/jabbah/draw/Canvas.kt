@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.draw
 
-import ch.scorpion.jabbah.base.event.KeyListener
-import ch.scorpion.jabbah.base.event.MouseListener
-import ch.scorpion.jabbah.base.event.MouseMotionListener
-import ch.scorpion.jabbah.base.event.MouseWheelListener
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.base.geom.Dimension2D
@@ -51,4 +48,6 @@ interface Canvas {
     fun removeKeyListener(l: KeyListener)
 
     fun setToolTipText(text: String?)
+
+    fun dispatchEvent(e: InputEvent)
 }

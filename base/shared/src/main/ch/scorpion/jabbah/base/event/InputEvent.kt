@@ -8,9 +8,12 @@ const val ALT_MASK = 8
 const val ALT_GRAPH_MASK = 32
 
 /**
- * Abstract base class of events that indicate a user input.
+ * Abstract cross-platform base class of events that indicate a user input.
  */
 interface InputEvent  {
+
+    /** The platform event wrapped by this [InputEvent].*/
+    val event: Any
 
     /** The component from where the event originates.*/
     val source: Any
