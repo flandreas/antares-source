@@ -52,7 +52,7 @@ class MetaGraph(graph: GraphStorable? = null, containerDrawing: ContainerDrawing
                 name = "container",
                 referenceId = aContainerDrawing.storableId,
                 additionalInfo = aContainerDrawing,
-                resolveAfter = listOf(aContainerDrawing.storableId)))
+                resolveAfter = listOf(aContainerDrawing.storableId, aGraph.storableId)))
     }
 
     override fun getStorableChildren(): Iterator<Storable> {
@@ -65,6 +65,7 @@ class MetaGraph(graph: GraphStorable? = null, containerDrawing: ContainerDrawing
         }
         if (reference.name == "container") {
             containerDrawing = reference.additionalInfo as ContainerDrawing
+            containerDrawing!!.completeFromGraph(graph!!.model!!)
         }
     }
 

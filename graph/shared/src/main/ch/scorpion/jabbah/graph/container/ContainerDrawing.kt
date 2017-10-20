@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import ch.scorpion.jabbah.graph.model.Graph
 
 
 /**
@@ -86,6 +87,26 @@ class ContainerDrawing(
     /** ---- [ContainerDrawing] */
 
     /**
+     * Complete this [DrawableContainer] with information from the corresponding [Graph].
+     *
+     * This method is called by [GraphStorable] after reading from persistent store. It completes
+     * the model of this [DrawableContainer] with information from [Graph] objects, such as description
+     * of [GraphPort]s. These informations are needed by [DrawableContainer] when filling
+     * [SubGraphVerticeView]s for that [Graph].
+     *
+     * Of course, this method is not cool. It conflicts with the design goal that ]SubGraphVerticeView]
+     * can be constructed soley with information from [DrawableContainer], without using the [Graph].
+     * However, this goal may be out of reach anyway, and making information such as port description
+     * reduntand in the [Graph] and the [DrawableContainer] (especially if they support I18N in the futuer!)
+     * isn't cool either.
+     */
+    fun completeFromGraph(graph: Graph) {
+        model.getPorts().forEach {
+            it.description = graph.getGraphPort<Any>(it.name!!)!!.portDescription
+        }
+    }
+
+    /**
      * Checks if the [SubGraphPort]s of all [PortViewComponent]s is the same instance as
      * the [SubGraphPort]s of the model [SubGraphVerticeViewImpl].
      */
@@ -133,7 +154,13 @@ class ContainerDrawing(
 
     /** Creates a copy of the [SubGraphVertice] model of this {@link ContainerDrawing}*/
     fun createSubGraphVertice(): SubGraphVertice {
-        return storableCloner.cloneUsingCreator(this.model, storableCreator) as SubGraphVertice
+        val subGraphVertice = storableCloner.cloneUsingCreator(this.model, storableCreator) as SubGraphVertice
+        // The port descriptions are NOT copied when cloning, because they are not part of the persistent state
+        // the Container's SubGraphVertice (see documentation of completeFromGraph()). Therefore, copy them now.
+        subGraphVertice.getPorts().forEach {
+            it.description = this.model.getPort<Any>(it.name!!).description
+        }
+        return subGraphVertice
     }
 
     /**

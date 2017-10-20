@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.view.port
 
-import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
@@ -34,7 +34,9 @@ abstract class AbstractPortView<T: Any>(
     override val connectable: Boolean = true
 ) : AbstractDrawable(), PortView<T>, Storable {
 
-    private val LOG by logger(AbstractPortView::class)
+    companion object {
+        private val LOG by logger(AbstractPortView::class)
+    }
 
     override var location: Point2D = Point2D(x, y)
         set(value) {
@@ -230,7 +232,10 @@ abstract class AbstractPortView<T: Any>(
     }
 
     override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
-        return buildToolTipText()
+        return System.get().buildToolTipText(
+                buildToolTipTitle(),
+                buildToolTipContent(),
+                width)
     }
 
     /** ---- [Storable] interface */
@@ -285,11 +290,12 @@ abstract class AbstractPortView<T: Any>(
         // empty
     }
 
-    protected fun buildToolTipText(): String {
-        if (StringUtils.isNotEmpty(port.description)) {
-            return port.description!!
-        }
+    protected fun buildToolTipTitle(): String {
         return "${port.portType.toString()} '${port.name}'"
+    }
+
+    protected open fun buildToolTipContent(): String {
+        return port.description!!
     }
 
     private inner class PortListener : PropertyChangeListener<Any> {

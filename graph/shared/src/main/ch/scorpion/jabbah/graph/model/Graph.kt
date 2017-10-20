@@ -99,6 +99,9 @@ interface Graph : Storable {
     /** Binds all [GraphElement]s of this [Graph] using the specified [Library].*/
     fun bind(library: Library, storableCreator: StorableCreator)
 
+    /** Returns the [GraphPort] with the specified name.*/
+    fun <T: Any> getGraphPort(name: String): GraphPort<T>?
+
     /** Returns the [GraphInput] or the [BidirectionalPort] with the specified name.*/
     fun <T: Any> getGraphInput(name: String): GraphInput<T>?
 

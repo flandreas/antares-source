@@ -138,6 +138,10 @@ open class GraphImpl(private val eventBus: EventBus = BaseModule.eventBus) : Gra
         _elements.forEach { it.bind(library, storableCreator) }
     }
 
+    override fun <T : Any> getGraphPort(name: String): GraphPort<T>? {
+        return _elements.filter { it is GraphPort<*> && it.name == name}.firstOrNull() as GraphPort<T>?
+    }
+
     override fun <T : Any> getGraphInput(name: String): GraphInput<T>? {
         val input = graphInputs.filter { it.name == name }.firstOrNull()
         if (input != null) {

@@ -243,16 +243,8 @@ class DigitalPortView(
         return boundingBox.contains(x, y)
     }
 
-    override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
-        return System.get().buildToolTipText(
-            buildToolTipText(),
-            StringBuilder()
-                .append("<p/>")
-                .append("BitWidth: ")
-                .append(getDigitalPort().bitWidth.width)
-                .toString(),
-            width
-        )
+    override fun buildToolTipContent(): String {
+        return "${super.buildToolTipContent()}<p/>BitWidth: ${getDigitalPort().bitWidth.width}"
     }
 
     /** ---- [AbstractPortView] */
