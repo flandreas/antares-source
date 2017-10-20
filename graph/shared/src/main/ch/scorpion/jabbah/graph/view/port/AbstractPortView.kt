@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.port
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
@@ -295,7 +296,7 @@ abstract class AbstractPortView<T: Any>(
     }
 
     protected open fun buildToolTipContent(): String {
-        return port.description!!
+        return StringUtils.orEmpty(port.description)
     }
 
     private inner class PortListener : PropertyChangeListener<Any> {

@@ -162,21 +162,16 @@ class CanvasJvm(
 
     /** ---- [CanvasJvm] */
 
-    private fun mouseEventBridgeOf(l: MouseListener): MouseEventBridge? {
-        return mouseListeners.filter { it.listener === l }.firstOrNull()
-    }
+    private fun mouseEventBridgeOf(l: MouseListener): MouseEventBridge? =
+            mouseListeners.firstOrNull { it.listener === l }
 
-    private fun mouseMotionEventBridgeOf(l: MouseMotionListener): MouseMotionEventBridge? {
-        return mouseMotionListeners.filter { it.listener === l }.firstOrNull()
-    }
+    private fun mouseMotionEventBridgeOf(l: MouseMotionListener): MouseMotionEventBridge? =
+            mouseMotionListeners.firstOrNull { it.listener === l }
 
-    private fun mouseWheelEventBridgeOf(l: MouseWheelListener): MouseWheelEventBridge? {
-        return mouseWheelListeners.filter { it.listener === l }.firstOrNull()
-    }
+    private fun mouseWheelEventBridgeOf(l: MouseWheelListener): MouseWheelEventBridge? =
+            mouseWheelListeners.firstOrNull { it.listener === l }
 
-    private fun keyEventBridgeOf(l: KeyListener): KeyEventBridge? {
-        return keyListeners.filter { it.listener === l }.firstOrNull()
-    }
+    private fun keyEventBridgeOf(l: KeyListener): KeyEventBridge? = keyListeners.firstOrNull { it.listener === l }
 }
 
 private class MouseEventJvm(
@@ -195,7 +190,7 @@ private class MouseEventJvm(
 
     override val clickCount: Int get() = event.clickCount
 
-    override val wheelRotation: Int get() = if (event is AwtMouseWheelEvent) event.wheelRotation else 0
+    override val wheelRotation: Int get() = (event as? AwtMouseWheelEvent)?.wheelRotation ?: 0
 
     override fun consume() {
         event.consume()

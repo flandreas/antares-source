@@ -23,10 +23,12 @@ import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
  */
 open class ViewImpl<C: InputEventContext>(
         override val canvas: Canvas,
-        val transformFactory: () -> AffineTransform
+        private val transformFactory: () -> AffineTransform
 ) : View<C> {
 
-    private val LOG by logger(ViewImpl::class)
+    companion object {
+        private val LOG by logger(ViewImpl::class)
+    }
 
     private val controller: ZoomPanController = ZoomPanController(this)
 
@@ -95,7 +97,7 @@ open class ViewImpl<C: InputEventContext>(
     override val contentBounds: RectangularShape
         get() = calculateCombinedBoundingBox()
 
-    protected fun calculateCombinedBoundingBox(): Rectangle2D {
+    private fun calculateCombinedBoundingBox(): Rectangle2D {
         val bbox = Rectangle2D()
         drawables.forEach { bbox.add(it.boundingBox) }
         return bbox
@@ -168,7 +170,7 @@ open class ViewImpl<C: InputEventContext>(
             repaint()
         }
 
-    override val overlayContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
+    override final val overlayContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
 
     val painter: ViewPainter = InvalidatableViewPainter(this)
 
