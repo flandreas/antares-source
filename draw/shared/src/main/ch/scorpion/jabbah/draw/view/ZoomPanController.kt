@@ -119,7 +119,8 @@ class ZoomPanController(val view: View<*>) {
         }
 
         private fun pan() {
-            val panDirection = panDirection(event.location).multiply(AUTOPAN_SIZE.toDouble())
+            val dir = if (event.button == Button.BUTTON1) 1 else -1
+            val panDirection = panDirection(event.location).multiply(dir * AUTOPAN_SIZE.toDouble())
             view.navigator.panBy(panDirection.x.toInt(), panDirection.y.toInt())
             view.dispatchEvent(event)
         }
