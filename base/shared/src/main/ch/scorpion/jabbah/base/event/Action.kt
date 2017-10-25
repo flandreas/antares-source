@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.base.event
 
 class ActionEvent(
-        override val event: Any,
+        override val event: Any?,
         override val source: Any,
         override val modifiers: Int,
         val action: String,

@@ -26,7 +26,7 @@ import ch.scorpion.jabbah.base.logger
 class InputToOutputOrEdgeConnector(
         private val connectServiceSupplier: () -> GraphViewConnectService,
         edgeViewFactorySupplier: () -> EdgeViewFactory<Any>
-) : AbstractConnector(edgeViewFactorySupplier, DragEdgeViewEndpointHandler(EdgeViewEndpointType.ORIGIN)) {
+) : AbstractCreateEdgeViewConnector(edgeViewFactorySupplier, EdgeViewEndpointType.ORIGIN) {
 
     private val LOG by logger(InputToOutputOrEdgeConnector::class)
 

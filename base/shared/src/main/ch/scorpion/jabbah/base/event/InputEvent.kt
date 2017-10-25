@@ -13,7 +13,7 @@ const val ALT_GRAPH_MASK = 32
 interface InputEvent  {
 
     /** The platform event wrapped by this [InputEvent].*/
-    val event: Any
+    val event: Any?
 
     /** The component from where the event originates.*/
     val source: Any

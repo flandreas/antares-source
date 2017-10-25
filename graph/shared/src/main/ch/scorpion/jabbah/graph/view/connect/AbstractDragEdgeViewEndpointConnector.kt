@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -20,6 +21,10 @@ abstract class AbstractDragEdgeViewEndpointConnector(
     private val endpointType: EdgeViewEndpointType
 ) : AbstractConnectionPointHighlighter(DragEdgeViewEndpointHandler(endpointType)) {
 
+    companion object {
+        private val LOG by logger(AbstractDragEdgeViewEndpointConnector::class)
+    }
+
     /** The [EdgeView] whose endpoint is being dragged. */
     protected var edgeView: EdgeView<*>? = null
 
@@ -29,6 +34,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
     /** ---- [InputEventHandler] */
 
     override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+        LOG.trace("AbstractDragEdgeViewEndpointConnector.mouseMoved")
         if (endpointType.getEndpoint(edgeView!!).contains(context.x, context.y)) {
             displayPortViewHighlight(context.drawingView(), getEndpointView().location)
             return this
@@ -40,10 +46,11 @@ abstract class AbstractDragEdgeViewEndpointConnector(
             return null
         }
 
-        return this
+        return null
     }
 
     override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+        LOG.debug("AbstractDragEdgeViewEndpointConnector.mousePressed")
         removePortViewHighlight(context.drawingView())
         oldLocation = getEndpointView().location
         context.drawingView().selectionManager.deselectAll()

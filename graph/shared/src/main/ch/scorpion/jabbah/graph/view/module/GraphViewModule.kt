@@ -84,6 +84,10 @@ object GraphViewModule : AbstractModule() {
             { edgeViewFactoryImpl})
     }
 
+    val reconnectOriginConnector: ReconnectOriginConnector by lazy { ReconnectOriginConnector({ graphViewConnectService })}
+
+    val reconnectDestinationConnector: ReconnectDestinationConnector by lazy { ReconnectDestinationConnector({ graphViewConnectService }) }
+
     val graphViewConnectService: GraphViewConnectService by lazy {
         GraphViewConnectServiceImpl(
                 { edgeViewFactoryImpl },
@@ -189,7 +193,8 @@ object GraphViewModule : AbstractModule() {
     }
 
     fun <T: GraphElementView<*>> createGraphView(graph: Graph = GraphModelModule.graphFactory.invoke()): GraphView<T> {
-        return GraphViewImpl(graph, IOModule.storableClonerProvider.invoke(), outputToInputConnector, inputToOutputOrEdgeConnector, graphViewConnectService, BaseModule.eventBus)
+        return GraphViewImpl(graph, IOModule.storableClonerProvider.invoke(), outputToInputConnector, inputToOutputOrEdgeConnector,
+                reconnectOriginConnector, reconnectDestinationConnector, graphViewConnectService, BaseModule.eventBus)
     }
 
     fun createContainerDrawing(): ContainerDrawing {

@@ -23,7 +23,7 @@ class DragEdgeViewDestinationConnector(
     }
 
     override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        LOG.debug("mouseReleased at (${context.x},${context.y})")
+        LOG.debug("DragEdgeViewDestinationConnector.mouseReleased at (${context.x},${context.y})")
         super.mouseReleased(context)
 
         val moveCmd = MoveDestinationEndpointCommand(

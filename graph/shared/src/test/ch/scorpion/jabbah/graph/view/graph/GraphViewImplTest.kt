@@ -41,6 +41,8 @@ class GraphViewImplTest {
             IOModule.storableClonerProvider.invoke(),
             GraphViewModule.outputToInputConnector,
             GraphViewModule.inputToOutputOrEdgeConnector,
+            GraphViewModule.reconnectOriginConnector,
+            GraphViewModule.reconnectDestinationConnector,
             GraphViewModule.graphViewConnectService,
             BaseModule.eventBus)
 

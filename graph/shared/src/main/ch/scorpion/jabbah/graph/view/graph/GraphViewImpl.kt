@@ -25,13 +25,11 @@ import ch.scorpion.jabbah.graph.model.graph.GraphReferenceResolver
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
-import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
-import ch.scorpion.jabbah.graph.view.connect.OutputToInputConnector
 import ch.scorpion.jabbah.graph.view.scenario.ScenariosImpl
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.connect.InputToOutputOrEdgeConnector
+import ch.scorpion.jabbah.graph.view.connect.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
@@ -44,7 +42,9 @@ class GraphViewImpl<T : GraphElementView<*>>(
         override var graph: Graph? = GraphModelModule.graphFactory.invoke(),
         private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
         private val outputToInputConnector: OutputToInputConnector = GraphViewModule.outputToInputConnector,
-        private val inputToOutputToInputConnector: InputToOutputOrEdgeConnector = GraphViewModule.inputToOutputOrEdgeConnector,
+        private val inputToOutputOrEdgeConnector: InputToOutputOrEdgeConnector = GraphViewModule.inputToOutputOrEdgeConnector,
+        private val reconnectOriginConnector: ReconnectOriginConnector = GraphViewModule.reconnectOriginConnector,
+        private val reconnectDestinationConnector: ReconnectDestinationConnector = GraphViewModule.reconnectDestinationConnector,
         private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
         private val eventBus: EventBus = BaseModule.eventBus
 ) : DrawingImpl<T>(), GraphView<T> {
@@ -364,19 +364,31 @@ class GraphViewImpl<T : GraphElementView<*>>(
                 val portView = drawable.getPortViewAt(context.x, context.y)
                 if (portView != null && portView.connectable) {
                     if (portView.port.portType.isOutput) {
-                        target = outputToInputConnector
-                        outputToInputConnector.useFor(drawable)
-                        target = outputToInputConnector.mouseMoved(context)
-                        if (target != null) {
-                            return target
+                        if (portView.port.isConnected) {
+                            LOG.debug("GraphViewImpl: delegating mouseMoved to ReconnectOriginConnector")
+                            reconnectOriginConnector.useFor(getEdgeView(portView.port)!!)
+                            target = reconnectOriginConnector
+                        } else {
+                            LOG.debug("GraphViewImpl: delegating mouseMoved to OutputToInputConnector")
+                            target = outputToInputConnector
+                            outputToInputConnector.useFor(drawable)
                         }
                     } else if (portView.port.portType.isInput) {
-                        target = inputToOutputToInputConnector
-                        inputToOutputToInputConnector.useFor(drawable)
-                        target = inputToOutputToInputConnector
-                        if (target != null) {
-                            return target
+                        if (portView.port.isConnected) {
+                            LOG.debug("GraphViewImpl: delegating mouseMoved to ReconnectDestinationConnector")
+                            reconnectDestinationConnector.useFor(getEdgeView(portView.port)!!)
+                            target = reconnectDestinationConnector
+                        } else {
+                            LOG.debug("GraphViewImpl: delegating mouseMoved to InputToOutpu")
+                            target = inputToOutputOrEdgeConnector
+                            inputToOutputOrEdgeConnector.useFor(drawable)
                         }
+                    }
+                    if (target != null) {
+                        target = target!!.mouseMoved(context)
+                    }
+                    if (target != null) {
+                        return target
                     }
                 }
             }

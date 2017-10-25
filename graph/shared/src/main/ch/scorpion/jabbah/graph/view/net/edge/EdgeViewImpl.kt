@@ -24,7 +24,6 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.*
@@ -34,12 +33,12 @@ import ch.scorpion.jabbah.io.*
  * A standard implementation of the [EdgeView] interface
  */
 open class EdgeViewImpl<T: Any>(
-    styleProvider: StyleProvider,
-    private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
-    origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-    destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
-    currentSystemSpeedCategory: CurrentSystemSpeedCategory,
-    net: Net<T>
+        styleProvider: StyleProvider,
+        private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
+        origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
+        destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
+        currentSystemSpeedCategory: CurrentSystemSpeedCategory,
+        net: Net<T>
 ) : AbstractNetViewElement<T>(styleProvider, currentSystemSpeedCategory, net), EdgeView<T> {
 
     private companion object {
@@ -48,11 +47,11 @@ open class EdgeViewImpl<T: Any>(
     }
 
     constructor(
-        styleProvider: StyleProvider,
-        edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
-        origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-        destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
-        currentSystemSpeedCategory: CurrentSystemSpeedCategory
+            styleProvider: StyleProvider,
+            edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
+            origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
+            destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
+            currentSystemSpeedCategory: CurrentSystemSpeedCategory
     ): this(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier, destEndpointConnectorSupplier,
             currentSystemSpeedCategory, NetImpl<T>())
 

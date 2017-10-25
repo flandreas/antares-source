@@ -12,11 +12,11 @@ import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
  * Standard implementation of the [EdgeViewFactory] interface.
  */
 open class EdgeViewFactoryImpl<T: Any>(
-    private val styleProvider: StyleProvider,
-    private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
-    private val originEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-    private val destinationEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
-    private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
+        private val styleProvider: StyleProvider,
+        private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
+        private val originEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
+        private val destinationEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
+        private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
 ) :EdgeViewFactory<T> {
 
     override fun createEdgeView(): EdgeView<T> {

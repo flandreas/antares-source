@@ -22,7 +22,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 class EdgeToPortConnector(
     private val connectServiceSupplier: () -> GraphViewConnectService,
     edgeViewFactorySupplier: () -> EdgeViewFactory<Any>
-) : AbstractConnector(edgeViewFactorySupplier, DragEdgeViewEndpointHandler(EdgeViewEndpointType.DESTINATION)) {
+) : AbstractCreateEdgeViewConnector(edgeViewFactorySupplier, EdgeViewEndpointType.DESTINATION) {
 
     companion object {
         private val EDGE_CORNER_DIST = 15
@@ -106,7 +106,7 @@ class EdgeToPortConnector(
         return null
     }
 
-    /** ---- [AbstractConnector] */
+    /** ---- [AbstractCreateEdgeViewConnector] */
 
     override fun cancel(editor: Editor) {
         val cmd = createSlitEdgeViewCommand(editor)

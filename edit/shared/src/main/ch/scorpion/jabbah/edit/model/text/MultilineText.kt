@@ -22,9 +22,9 @@ class MultilineText(
         textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory
 ) {
 
-    private companion object {
-        val DEBUG_GFX = false
-        private val LINE_DIST = 5
+    companion object {
+        private val DEBUG_GFX = false
+        val LINE_DIST = 5
     }
 
     val height: Int get() = lines.size * lineHeight

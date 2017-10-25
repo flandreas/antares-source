@@ -18,13 +18,13 @@ class MultilineTextTest {
     @Test
     fun shouldWrapEveryWord() {
         val text = MultilineText("This is a test", FontImpl(size = 10), 15, textRenderInfoFactory = textRenderInfoFactory())
-        assertThat(text.height, `is`(4 * 10))
+        assertThat(text.height, `is`(4 * (10 + MultilineText.LINE_DIST)))
     }
 
     @Test
     fun shouldWrapEverySecondWord() {
         val text = MultilineText("This is a test", FontImpl(size = 10), 25, textRenderInfoFactory = textRenderInfoFactory())
-        assertThat(text.height, `is`(2 * 10))
+        assertThat(text.height, `is`(2 * (10 + MultilineText.LINE_DIST)))
     }
 
     private fun textRenderInfoFactory(): TextRenderInfoFactory {

@@ -70,11 +70,11 @@ class DigitalEdgeView(
 }
 
 class DigitalEdgeViewFactory(
-    private val styleProvider: StyleProvider,
-    private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
-    private val origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-    private val destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
-    private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
+        private val styleProvider: StyleProvider,
+        private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
+        private val origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
+        private val destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
+        private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
 ) : EdgeViewFactory<DigitalSignal> {
 
     override fun createEdgeView(): EdgeView<DigitalSignal> {

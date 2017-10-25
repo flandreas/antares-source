@@ -32,7 +32,7 @@ class DragEdgeViewEndpointHandler(
     /** ---- [InputEventHandler] */
 
     override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        LOG.trace("mouseDragged to (${context.x},${context.y})")
+        LOG.trace("DragEdgeViewEndpointHandler.mouseDragged to (${context.x},${context.y})")
 
         if (targetPortView == null) {
             val snap = context.editor.snapManager.snap(context.x, context.y)
@@ -75,6 +75,7 @@ class DragEdgeViewEndpointHandler(
     }
 
     override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+        LOG.debug("DragEdgeViewEndpointHandler.mouseReleased")
         removePortViewHighlight(context.drawingView())
         return null
     }

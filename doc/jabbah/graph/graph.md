@@ -9,7 +9,7 @@ TODO
 
 [**model:**](model/model.md) TODO
 
-[**view:**](view/view.md) TODO
+[**view:**](view/graph-view.md) TODO
 
 [**script:**](script/script.md) TODO
 

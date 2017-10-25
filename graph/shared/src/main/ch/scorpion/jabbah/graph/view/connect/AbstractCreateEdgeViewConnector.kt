@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 
@@ -13,10 +14,10 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
  * Abstract base implementation of an [InputEventHandler] that creates a new [EdgeView]
  * to connect [ConnectableView]s.
  */
-abstract class AbstractConnector(
+abstract class AbstractCreateEdgeViewConnector(
     private val edgeViewFactorySupplier: () -> EdgeViewFactory<Any>,
-    successor: InputEventHandler<EditInputEventContext>?
-) : AbstractConnectionPointHighlighter(successor) {
+    endpointType: EdgeViewEndpointType
+) : AbstractConnectionPointHighlighter(DragEdgeViewEndpointHandler(endpointType)) {
 
     /** The new [EdgeView] that is being dragged, `null` before mouse has been pressed */
     protected var edgeView: EdgeView<Any>? = null
@@ -27,7 +28,7 @@ abstract class AbstractConnector(
 
     override fun keyReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? = this
 
-    /** ---- [AbstractConnector] */
+    /** ---- [AbstractCreateEdgeViewConnector] */
 
     /**
      * Creates the [EdgeView] to be used for connecting and adds it to the [Drawing].
@@ -63,7 +64,7 @@ abstract class AbstractConnector(
     }
 
     /**
-     * Determines whether the [EdgeView] that is being added by this [AbstractConnector]
+     * Determines whether the [EdgeView] that is being added by this [AbstractCreateEdgeViewConnector]
      * is valid, i.e. that it exists and has a non-zero length.
      */
     protected fun isValidEdgeView(): Boolean = edgeView != null && edgeView!!.length > 0.0
