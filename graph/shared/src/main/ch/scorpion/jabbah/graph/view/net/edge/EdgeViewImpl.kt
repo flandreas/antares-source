@@ -603,12 +603,8 @@ open class EdgeViewImpl<T: Any>(
             return
         }
 
-        if (origin == null) {
-            originEndpointView.moveBy(dx, dy)
-        }
-        if (destination == null) {
-            destinationEndpointView.moveBy(dx, dy)
-        }
+        originEndpointView.moveBy(dx, dy)
+        destinationEndpointView.moveBy(dx, dy)
 
         // This leads to setLocation() which does the invalidation and update things, so there
         // is no need to do it here as well
