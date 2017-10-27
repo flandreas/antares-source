@@ -105,20 +105,16 @@ open class BoxGateView<T : Vertice>(
         }
 
     /** The text displayed inside the box representing the name of the [Vertice]. */
-    protected val label: Label?
-
-    init {
-        if (StringUtils.isNotEmpty(text)) {
-            label = Label(
+    protected val label: Label? = if (StringUtils.isNotEmpty(text)) {
+        Label(
                 text = text,
                 font = font,
                 horizontalAlignment = Label.HorizontalAlignment.CENTER,
                 verticalAlignment = Label.VerticalAlignment.CENTER,
                 location = Point2D(),
                 rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL)
-        } else {
-            label = null
-        }
+    } else {
+        null
     }
 
     /** ---- [Drawable] interface */
@@ -143,12 +139,12 @@ open class BoxGateView<T : Vertice>(
 
     fun drawEuropeanShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
 		context.g.color = backgroundColor
-		context.g.fillRect(xInt, yInt, widthInt, heigthInt)
+		context.g.fillRect(xInt, yInt, widthInt, heightInt)
 
 		context.g.color = foregroundColor
 
 		context.g.stroke = stroke
-		context.g.drawRect(xInt, yInt, widthInt, heigthInt)
+		context.g.drawRect(xInt, yInt, widthInt, heightInt)
 
         label?.draw(context)
     }

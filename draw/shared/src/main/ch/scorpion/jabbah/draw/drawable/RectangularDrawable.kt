@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw.drawable
 
-import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 
 /**
@@ -16,7 +15,7 @@ interface RectangularDrawable : Locatable {
 
     var height: Double
 
-    val heigthInt: Int get() = height.toInt()
+    val heightInt: Int get() = height.toInt()
 
     val x: Double get() = bounds.x
 

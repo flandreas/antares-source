@@ -8,11 +8,13 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -55,8 +57,8 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeString("representation", signalRepresentation.customName);
-        writer.writeString("orientation", orientation.customName);
+        writer.writeString("representation", signalRepresentation.customName)
+        writer.writeString("orientation", orientation.customName)
     }
 
     override fun read(reader: StoreReader) {
@@ -106,7 +108,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 
         numberView!!.setBounds(
                 xInt + insets, yInt + insets,
-                numberView!!.widthInt, numberView!!.heigthInt)
+                numberView!!.widthInt, numberView!!.heightInt)
 
         updateViewImpl()
 

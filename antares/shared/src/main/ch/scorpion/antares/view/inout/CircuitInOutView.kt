@@ -42,6 +42,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
@@ -164,11 +165,11 @@ class CircuitInOutView(
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        if (reader.hasElement("location")) {
-			location = reader.readPoint("location")
-		} else {
-			location = Point2D(reader.readDouble("x"), reader.readDouble("y"))
-		}
+        location = if (reader.hasElement("location")) {
+            reader.readPoint("location")
+        } else {
+            Point2D(reader.readDouble("x"), reader.readDouble("y"))
+        }
         signalRepresentation = DigitalSignalRepresentation.withName(reader.readString("representation"))
         orientation = Direction.withName(reader.readString("orientation"))
     }
@@ -462,7 +463,7 @@ class CircuitInOutView(
 
         arrowPath = ArrowPath.Companion.Builder(
                 orientation = orientation,
-                contentDimension = Dimension2D(numberView!!.widthInt, numberView!!.heigthInt))
+                contentDimension = Dimension2D(numberView!!.widthInt, numberView!!.heightInt))
                 .build(portType === PortType.INOUT)
 
         numberView!!.setBounds(
