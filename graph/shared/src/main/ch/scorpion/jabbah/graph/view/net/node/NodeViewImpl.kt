@@ -198,9 +198,9 @@ open class NodeViewImpl<T: Any>(
             prefVerticalDirections.add(Direction.NORTH)
             prefVerticalDirections.add(Direction.SOUTH)
         } else if (refPoint.x > location.x) {
-            prefVerticalDirections.add(Direction.EAST)
+            prefHorizontalDirections.add(Direction.EAST)
         } else {
-            prefVerticalDirections.add(Direction.WEST)
+            prefHorizontalDirections.add(Direction.WEST)
         }
 
         if (refPoint.y == location.y) {

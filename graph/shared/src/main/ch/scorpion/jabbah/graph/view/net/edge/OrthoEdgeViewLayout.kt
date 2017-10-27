@@ -45,6 +45,7 @@ class OrthoEdgeViewLayout : EdgeViewLayout {
 
         if (solutions.size == 0) {
             // begin and end must both be collinear and counter-directive
+            LOG.debug("OrthoEdgeViewLayout: using fallback solution")
             return createFallbackSolution(begin.point, end.point)
         }
         if (solutions.size == 1) {

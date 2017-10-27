@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.port.PortView
 
 
 /**
@@ -23,7 +24,7 @@ enum class EdgeViewEndpointType {
         }
 
         override fun layout(edgeView: EdgeView<*>, direction: Direction?) {
-            edgeView.layoutOrigin()
+            edgeView.layoutOrigin(direction)
         }
 
         override fun getEndpoint(edgeView: EdgeView<*>): EdgeEndpointView {
@@ -36,6 +37,10 @@ enum class EdgeViewEndpointType {
 
         override fun getLocation(edgeView: EdgeView<*>): Point2D {
             return edgeView.polyline.getFirstPoint()
+        }
+
+        override fun getDirectionForPortView(portView: PortView<*>): Direction {
+            return portView.relativeDirection
         }
     },
 
@@ -65,6 +70,9 @@ enum class EdgeViewEndpointType {
             return edgeView.polyline.getLastPoint()
         }
 
+        override fun getDirectionForPortView(portView: PortView<*>): Direction {
+            return portView.relativeDirection.opposite()
+        }
     };
 
     /** Determines whether and endpoint of this type can connect to a [Port] of the specified [PortType].*/
@@ -83,6 +91,15 @@ enum class EdgeViewEndpointType {
      * Only available for orthogonal [EdgeView]s.
      */
     abstract fun getDirection(edgeView: EdgeView<*>): Direction?
+
+    /**
+     * Returns the desired [Direction] of the segment at the corresponding endpoint
+     * that fits the [Direction] of the specified [PortView]. This is used for layout.
+     * Example: The origin segment connected to a [PortView] facing [Direction.EAST] should also
+     * face [Direction.EAST], while a destination segment connected to the same [PortView]
+     * should face [Direction.WEST].
+     */
+    abstract fun getDirectionForPortView(portView: PortView<*>): Direction
 
     abstract fun getLocation(edgeView: EdgeView<*>): Point2D
 }

@@ -63,10 +63,8 @@ class DragEdgeViewEndpointHandler(
             edgeViewEndpointType.moveTo(edgeView!!, Point2D(connPointAbs.x, connPointAbs.y))
 
             // Layout EdgeView
-            val direction = targetPortView!!.owner!!
-                    .rotation
-                    .rotateDirection(targetPortView!!.direction)
-                    .opposite()
+            val direction = edgeViewEndpointType.getDirectionForPortView(targetPortView!!)
+
             edgeViewEndpointType.layout(edgeView!!, direction)
             edgeView?.validate()
         }

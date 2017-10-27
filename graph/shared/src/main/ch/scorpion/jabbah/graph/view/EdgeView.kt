@@ -100,6 +100,14 @@ interface EdgeView<T: Any> : NetViewElement<T> {
 
     fun layoutOrigin()
 
+    /**
+     * Layouts the origin part of this [EdgeView] by using the specified origin [Direction].
+     * This is useful when the [EdgeView] has not yet been connected to a origin [Port], but should
+     * use a determined origin [Direction], for example while interactively dragging the origin point
+     * and snapping to a origin [Port].
+     */
+    fun layoutOrigin(direction: Direction?)
+
     fun layoutDestination()
 
     /**

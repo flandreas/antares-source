@@ -67,9 +67,9 @@ class OrthoEdgeViewLayoutTest {
                         directions = setOf(Direction.EAST),
                         isPort = true))
 
-		assertThat(points.size, `is`(2));
-		assertThat(points.get(0), `is`(Point2D(100, 0)));
-		assertThat(points.get(1), `is`(Point2D(0, 0)));
+		assertThat(points.size, `is`(2))
+		assertThat(points[0], `is`(Point2D(100, 0)))
+		assertThat(points[1], `is`(Point2D(0, 0)))
     }
 
     @Test
@@ -86,6 +86,23 @@ class OrthoEdgeViewLayoutTest {
                         directions = setOf(Direction.EAST),
                         isPort = true))
 
-        assertThat(points.size, `is`(2));
+        assertThat(points.size, `is`(2))
+    }
+
+    @Test
+    fun layoutSouthOpen() {
+        val points = layout.layout(
+                null,
+                graphView,
+                LayoutBoundary(
+                        point = Point2D(0, 0),
+                        directions = setOf(Direction.EAST),
+                        isPort = true),
+                LayoutBoundary(
+                        point = Point2D(100, 100),
+                        directions = setOf(Direction.WEST),
+                        isPort = false))
+
+        assertThat(points.size, `is`(3))
     }
 }

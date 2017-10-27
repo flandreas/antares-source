@@ -83,4 +83,13 @@ class NodeViewImplTest {
         assertThat(splitResult.nodeView.getEdgeView(Direction.EAST), `is`(sameInstance(splitResult.tailEdgeView)))
         assertThat(splitResult.nodeView.getEdgeView(Direction.SOUTH), `is`(sameInstance(splitResult.newEdgeView)))
     }
+
+    @Test
+    fun shouldCalculatePortConnectionLayoutDirections() {
+        val set = splitResult.nodeView.getPortConnectionLayoutDirections(splitResult.newEdgeView, null, Point2D(200, 200))
+        assertThat(set.contains(Direction.SOUTH), `is`(true))
+        assertThat(set.contains(Direction.NORTH), `is`(false))
+        assertThat(set.contains(Direction.EAST), `is`(false))
+        assertThat(set.contains(Direction.WEST), `is`(false))
+    }
 }

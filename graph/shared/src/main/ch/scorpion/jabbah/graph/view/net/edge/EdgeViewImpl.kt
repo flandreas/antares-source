@@ -418,15 +418,20 @@ open class EdgeViewImpl<T: Any>(
     }
 
     override fun layoutOrigin() {
+        layoutOrigin(null)
+    }
+
+    override fun layoutOrigin(direction: Direction?) {
+        LOG.debug("EdgeViewImpl: layoutOrigin")
         if (!isAdjusted) {
-            layoutAll(null, null)
+            layoutAll(direction, null)
             return
         }
         val originPoint = getLayoutOriginPoint()
         if (originPoint != null) {
             val destPointIndex = Math.min(2, polyline.pointsCount - 1)
-            val refPoint = Point2D(polyline.getPointAt(destPointIndex))
-            val originDirs = getOriginDirections(refPoint)
+            val destPoint = Point2D(polyline.getPointAt(destPointIndex))
+            val originDirs = if (direction == null) getOriginDirections(destPoint) else setOf(direction)
             val destDir = getSegmentDirection(destPointIndex - 1)
             val list = mutableListOf<Point2D>()
             list.addAll(layout.layout(
@@ -435,11 +440,11 @@ open class EdgeViewImpl<T: Any>(
                     LayoutBoundary(
                             point = originPoint,
                             directions = originDirs,
-                            isPort = true),
+                            isPort = origin != null || direction != null),
                     LayoutBoundary(
-                            point = refPoint,
+                            point = destPoint,
                             directions = destDir?.let { setOf(destDir) } ?: setOf(),
-                            isPort = destPointIndex == polyline.pointsCount - 1)))
+                            isPort = destination != null)))
 
             list.addAll(polyline.getPoints(destPointIndex, polyline.pointsCount))
 
@@ -463,6 +468,7 @@ open class EdgeViewImpl<T: Any>(
     }
 
     override fun layoutDestination(direction: Direction?) {
+        LOG.trace("EdgeViewImpl: layoutDestination")
         if (!isAdjusted) {
             layoutAll(null, direction)
             return
@@ -480,11 +486,11 @@ open class EdgeViewImpl<T: Any>(
                     LayoutBoundary(
                             point = origPoint,
                             directions = origDir?.let { setOf(origDir) } ?: setOf(),
-                            isPort = origPointIndex == 0),
+                            isPort = origin != null),
                     LayoutBoundary(
                             point = destPoint,
                             directions = destDirs,
-                            isPort = true)))
+                            isPort = destination != null || direction != null)))
             list.addAll(0, polyline.getPoints(0, origPointIndex))
 
             invalidate()
@@ -831,6 +837,7 @@ open class EdgeViewImpl<T: Any>(
     }
 
     private fun layoutAll(originDir: Direction?, destDir: Direction?) {
+        LOG.trace("EdgeViewImpl: layoutAll, originDir=$originDir, destDir=$destDir")
         val originPoint = getLayoutOriginPoint()
         val originDirs: Set<Direction>
         val destPoint = getLayoutDestinationPoint()
@@ -848,11 +855,11 @@ open class EdgeViewImpl<T: Any>(
                     LayoutBoundary(
                             point = originPoint,
                             directions = originDirs,
-                            isPort = true),
+                            isPort = origin != null || originDir != null),
                     LayoutBoundary(
                             point = destPoint,
                             directions = destDirs,
-                            isPort = true))
+                            isPort = destination != null || destDir != null))
 
             polyline.clear()
             polyline.setPoints(layoutedPoints)
