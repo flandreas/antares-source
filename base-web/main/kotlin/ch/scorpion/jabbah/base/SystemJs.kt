@@ -53,7 +53,7 @@ class SystemJs() : System {
         return Path2DJs()
     }
 
-    override fun buildToolTipText(title: String?, text: String?, width: Int?): String? {
+    override fun buildToolTipText(title: String?, text: String?): String? {
         // TODO Improve formatting
         val sb = StringBuilder("")
         if (StringUtils.isNotEmpty(title)) {

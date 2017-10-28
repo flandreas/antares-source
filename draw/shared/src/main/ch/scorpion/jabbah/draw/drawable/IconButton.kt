@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.drawable
 
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
@@ -73,9 +74,9 @@ class IconButton(
         super.update()
     }
 
-    override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
+    override fun getTooltip(x: Double, y: Double): Tooltip? {
         if (tooltipKey != null) {
-            return Translations.getString(tooltipKey!!)
+            return Tooltip(Translations.getString(tooltipKey!!), x, y)
         }
         return null
     }

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.container
 
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -99,8 +100,7 @@ class ControlViewComponent(
 
     override fun getActorInteractionHandler(): ActorInteractionHandler? = controlView!!.getActorInteractionHandler()
 
-    override fun getExecutionToolTipText(x: Double, y: Double, width: Int?): String?
-        = controlView!!.getExecutionToolTipText(x, y, width)
+    override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = controlView!!.getExecutionTooltip(x, y)
 
     /** ---- [ControlViewComponent] */
 

@@ -48,7 +48,7 @@ class GraphViewExecutionHandler(
     private val tooltipHandler = TooltipHandler(
             eventBus,
             { c, x, y -> getActorViewAt(x, y) as Drawable? },
-            { d, x, y -> (d as ActorView).getExecutionToolTipText(x, y, null )})
+            { d, x, y -> (d as ActorView).getExecutionTooltip(x, y ) })
 
     /** Returns the [ActorView] in [view] at the specified location, if any.*/
     private fun getActorViewAt(x: Double, y: Double): ActorView? {

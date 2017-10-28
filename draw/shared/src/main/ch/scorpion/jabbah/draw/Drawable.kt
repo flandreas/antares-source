@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
@@ -97,13 +98,12 @@ interface Drawable {
     fun mirrorVertically(y: Double)
 
     /**
-     * Returns a short description of this [Drawable] to be displayed as a tool tip.
+     * Returns a short description of this [Drawable] represented as a [Tooltip].
      *
      * @param x x-coordinate of the mouse position
      * @param y y-coordinate of the mouse position
-     * @param width the width in pixels to which multi-line text is to be formatted, or `null` if no width is to be enforced
-     * @return the tool tip text of this [Drawable]], or `null`if this [Drawable] doesn't want to display a
+     * @return the [Tooltip] of this [Drawable], or `null`if this [Drawable] doesn't want to display a
      *      text at the specified location.
      */
-    fun getToolTipText(x: Double, y: Double, width: Int?): String?
+    fun getTooltip(x: Double, y: Double): Tooltip?
 }

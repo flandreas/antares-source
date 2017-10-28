@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -114,8 +115,8 @@ class OscilloscopeView(
         return container.getInputEventHandler(context)
     }
 
-    override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
-        return container.getToolTipText(x, y, width)
+    override fun getTooltip(x: Double, y: Double): Tooltip? {
+        return container.getTooltip(x, y)
     }
 
     override fun <T: Drawable> handleAdded(container: DrawableContainer<T>) {

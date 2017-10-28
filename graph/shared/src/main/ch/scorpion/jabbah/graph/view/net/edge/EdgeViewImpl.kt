@@ -630,9 +630,9 @@ open class EdgeViewImpl<T: Any>(
         return findSegment(x, y) != null
     }
 
-    override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
-        val designError = net!!.designError ?: return super.getToolTipText(x, y, width)
-        return designError.description
+    override fun getTooltip(x: Double, y: Double): Tooltip? {
+        val designError = net!!.designError ?: return super.getTooltip(x, y)
+        return Tooltip(designError.description, x, y)
     }
 
     override fun accept(visitor: HierarchyVisitor): Boolean {

@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
@@ -209,12 +211,13 @@ abstract class AbstractVerticeView<T : Vertice>(
         return visitor.visitLeave(this)
     }
 
-    override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
+    override fun getTooltip(x: Double, y: Double): Tooltip? {
         val portView = getPortViewAt(x, y)
         if (portView != null) {
-            return portView.getToolTipText(x, y, width)
+            return portView.getTooltip(x, y)
         }
-        return buildToolTipText(type, shortDescription, width)
+        val text = buildToolTipText(type, shortDescription)
+        return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, plainBoundingBox.centerX, plainBoundingBox.maxY) else null
     }
 
     override fun draw(context: DrawContext) {
@@ -256,8 +259,13 @@ abstract class AbstractVerticeView<T : Vertice>(
 
     /** ---- [ActorView] interface */
 
-    override fun getExecutionToolTipText(x: Double, y: Double, width: Int?): String? {
-        return getPortViewAt(x, y)?.getExecutionToolTipText(x, y, width) ?: buildToolTipText(type, shortDescription, width)
+    override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
+        val portTooltip = getPortViewAt(x, y)?.getExecutionTooltip(x, y)
+        if (portTooltip != null) {
+            return portTooltip
+        }
+        val text = buildToolTipText(type, shortDescription)
+        return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, x, y) else null
     }
 
     override fun getActorInteractionHandler(): ActorInteractionHandler? {

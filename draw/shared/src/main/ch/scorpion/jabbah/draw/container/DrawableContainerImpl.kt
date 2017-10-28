@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.container
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.draw.*
@@ -86,12 +87,12 @@ open class DrawableContainerImpl<T: Drawable>(
         return children.any { it.visible && it.contains(x, y) }
     }
 
-    override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
+    override fun getTooltip(x: Double, y: Double): Tooltip? {
         if (useLocation) {
             val l = Point2D(x, y).subtract(this.location)
-            return getDrawableAt(x, y)?.getToolTipText(l.x, l.y, width) ?: super.getToolTipText(l.x, l.y, width)
+            return getDrawableAt(x, y)?.getTooltip(l.x, l.y) ?: super.getTooltip(l.x, l.y)
         }
-        return getDrawableAt(x, y)?.getToolTipText(x, y, width) ?: super.getToolTipText(x, y, width)
+        return getDrawableAt(x, y)?.getTooltip(x, y) ?: super.getTooltip(x, y)
     }
 
     /** ---- [DrawableContainer] interface */

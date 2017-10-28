@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
 import ch.scorpion.jabbah.graph.model.Port
@@ -161,9 +162,8 @@ interface PortView<T: Any> : Drawable, Storable, SnappableX, SnappableY {
      * Returns a short description of this [PortView] to be displayed as a tool tip during execution.
      * @param x the x-coordinate of the mouse position
      * @param y the y-coordinate of the mouse position
-     * @param width the width in pixels to which multi-line text is to be formatted, or `null` if to width is to be enforced
      * @return the tool tip text of this [PortView].
      */
-    fun getExecutionToolTipText(x: Double, y: Double, width: Int?): String?
+    fun getExecutionTooltip(x: Double, y: Double): Tooltip?
 
 }

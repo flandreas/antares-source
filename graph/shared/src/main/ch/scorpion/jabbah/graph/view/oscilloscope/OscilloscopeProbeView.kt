@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
@@ -14,9 +14,7 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
 
 /** The probe view that is contained in a row of a [OscilloscopeView].*/
 class OscilloscopeProbeView(
@@ -80,8 +78,8 @@ class OscilloscopeProbeView(
         return handler as InputEventHandler<T>
     }
 
-    override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
-        return Translations.getString("graph.action.oscilloscope.dragProbe.name")
+    override fun getTooltip(x: Double, y: Double): Tooltip? {
+        return Tooltip(Translations.getString("graph.action.oscilloscope.dragProbe.name"), x, y)
     }
 
     /** ---- [OscilloscopeProbeView] */

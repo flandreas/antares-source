@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.execution.actor
 
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -19,10 +20,9 @@ interface ActorView {
      * Returns a short description of this [ActorView] to be displayed as a tool tip during simulation.
      * @param x the x-coordinate of the mouse position
      * @param y the y-coordinate of the mouse position
-     * @param width the width in pixels to which multi-line text is to be formatted, or `null` if no width is to be enforced
      * @return the tool tip text of this [ActorView].
      */
-    fun getExecutionToolTipText(x: Double, y: Double, width: Int?): String?
+    fun getExecutionTooltip(x: Double, y: Double): Tooltip?
 }
 
 interface ActorInteractionHandler {

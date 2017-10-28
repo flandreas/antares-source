@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.draw.drawable
 
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.Tooltip
 import com.nhaarman.mockito_kotlin.*
 import org.mockito.Mockito
 
@@ -28,7 +29,7 @@ class DrawableMockBuilder {
     }
 
     fun tooltip(s: String): DrawableMockBuilder {
-        Mockito.`when`(drawable.getToolTipText(any(), any(), any())).thenReturn(s)
+        Mockito.`when`(drawable.getTooltip(any(), any())).thenReturn(Tooltip(s, 0.0, 0.0))
         return this
     }
 

@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
@@ -10,10 +11,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.Timer
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawableContainer
-import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.ZoomPan
+import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.ArrowBubble
 import ch.scorpion.jabbah.draw.drawable.MultilineText
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
@@ -28,12 +26,12 @@ import ch.scorpion.jabbah.draw.style.StyleType
  * @property origin the [Drawable] for which the tooltip is to be displayed, or `null`if the tooltip
  * should be hidden
  * @property view the [View] in which [origin] is displayed
- * @property text the text to be displayed in the tooltip, or `null` if the tooltip should be hidden
+ * @property tooltip the [Tooltip] to be displayed in [view], or `null` if the tooltip should be hidden
  */
 data class TooltipEvent(
         val origin: Drawable?,
         val view: View<*>,
-        val text: String?
+        val tooltip: Tooltip?
 )
 
 /**
@@ -49,7 +47,7 @@ data class TooltipEvent(
 class TooltipHandler(
         private val eventBus: EventBus,
         private val drawableRetriever: (DrawableContainer<*>, Double, Double) -> Drawable? = { c,x,y -> c.getDrawableAt(x, y) },
-        private val tooltipAccessor: (Drawable, Double, Double) -> String? = { d,x,y -> d.getToolTipText(x, y, null) }
+        private val tooltipAccessor: (Drawable, Double, Double) -> Tooltip? = { d, x, y -> d.getTooltip(x, y) }
 ) {
 
     private var tooltipDrawable: Drawable? = null
@@ -62,7 +60,6 @@ class TooltipHandler(
      * if none of its [Drawable] is interested in handling a mouse moved event.
      */
     fun handle(view: View<*>, container: DrawableContainer<*>, x: Double, y: Double) {
-        //val drawable = container.getDrawableAt(x, y)
         val drawable = drawableRetriever.invoke(container, x, y)
 
         if (drawable == null) {
@@ -72,19 +69,18 @@ class TooltipHandler(
                 tooltipText = null
             }
         } else {
-            //val text = drawable.getToolTipText(x, y, null)
-            val text = tooltipAccessor.invoke(drawable, x, y)
-            if (StringUtils.isEmpty(text)) {
+            val tooltip = tooltipAccessor.invoke(drawable, x, y)
+            if (StringUtils.isEmpty(tooltip?.text)) {
                 if (tooltipDrawable != null) {
                     tooltipDrawable = null
                     tooltipText = null
                     eventBus.post(TooltipEvent(null, view, null))
                 }
             } else {
-                if (drawable !== tooltipDrawable || text != tooltipText) {
+                if (drawable !== tooltipDrawable || tooltip?.text != tooltipText) {
                     tooltipDrawable = drawable
-                    tooltipText = text
-                    eventBus.post(TooltipEvent(drawable, view, tooltipText))
+                    tooltipText = tooltip?.text
+                    eventBus.post(TooltipEvent(drawable, view, tooltip))
                 }
             }
         }
@@ -99,7 +95,7 @@ class TooltipHandler(
 private data class TooltipRequest(
         val origin: Drawable,
         val view: View<*>,
-        val text: String
+        val tooltip: Tooltip
 )
 
 /** Holds the view data of a currently displayed tooltip. */
@@ -161,7 +157,7 @@ object TooltipManager {
     }
 
     private fun handle(event: TooltipEvent) {
-        if (event.origin == null || StringUtils.isEmpty(event.text)) {
+        if (event.origin == null || event.tooltip == null) {
             tooltipDismissed()
         } else {
             tooltipRequested(event)
@@ -172,8 +168,8 @@ object TooltipManager {
         if (tooltipView != null) {
             tooltipDismissed()
         }
-        LOG.debug("TooltipManager.tooltipRequested '${event.text}'")
-        request = TooltipRequest(event.origin!!, event.view, event.text!!)
+        LOG.debug("TooltipManager.tooltipRequested '${event.tooltip!!.text}'")
+        request = TooltipRequest(event.origin!!, event.view, event.tooltip!!)
         timer.start()
     }
 
@@ -192,7 +188,7 @@ object TooltipManager {
         LOG.debug("TooltipManager.displayImpl")
         request?.let {
             disposeTooltip()
-            tooltipView = TooltipView(createArrowBubble(it.origin, it.view, it.text), it.view)
+            tooltipView = TooltipView(createArrowBubble(it.tooltip, it.view), it.view)
             it.view.overlayContainer.add(tooltipView!!.arrowBubble)
             it.view.overlayContainer.validate()
             it.view.addPropertyChangeListener(zoomPanListener)
@@ -211,24 +207,23 @@ object TooltipManager {
         tooltipView = null
     }
 
-    private fun createArrowBubble(origin: Drawable, view: View<*>, text: String): ArrowBubble {
+    private fun createArrowBubble(tooltip: Tooltip, view: View<*>): ArrowBubble {
         val font = styleProvider.getStyle(StyleType.TOOLTIP).font
-        val textRenderInfo = textRenderInfoFactory.measureHtmlText(text, font, WIDTH)
+        val textRenderInfo = textRenderInfoFactory.measureHtmlText(tooltip.text, font, WIDTH)
         val width = Math.max(MIN_WIDTH, textRenderInfo.textBounds.width.toInt()).toDouble()
 
-        val multilineText = MultilineText(text = text, font = font, maxWidth = width, asHtml = true)
+        val multilineText = MultilineText(text = tooltip.text, font = font, maxWidth = width, asHtml = true)
         multilineText.setBounds(0, 0, width.toInt(), textRenderInfo.textBounds.height.toInt())
 
         return ArrowBubble(
                 multilineText,
-                view.modelToView(calculateBubbleLocation(origin)),
+                view.modelToView(calculateBubbleLocation(tooltip.location)),
                 StyleType.TOOLTIP,
                 styleProvider
         )
     }
 
-    private fun calculateBubbleLocation(origin: Drawable): Point2D {
-        val bounds = origin.boundingBox
-        return Point2D(bounds.centerX, bounds.maxY + Y_DIST)
+    private fun calculateBubbleLocation(location: Point2D): Point2D {
+        return Point2D(location.x, location.y + Y_DIST)
     }
 }

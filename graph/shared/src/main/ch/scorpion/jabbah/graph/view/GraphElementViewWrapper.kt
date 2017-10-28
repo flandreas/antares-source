@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -66,12 +67,9 @@ class GraphElementViewWrapper<T : GraphElement>(
 
     /** ---- [Drawable] */
 
-    override val boundingBox: RectangularShape
-        get() = _component!!.boundingBox
+    override val boundingBox: RectangularShape get() = _component!!.boundingBox
 
-
-    override val type: String?
-        get() = _component!!.type
+    override val type: String? get() = _component!!.type
 
     override var visible: Boolean
         get() = _component!!.visible
@@ -81,17 +79,12 @@ class GraphElementViewWrapper<T : GraphElement>(
         _component!!.draw(context)
     }
 
-    override fun contains(x: Double, y: Double): Boolean {
-        return _component!!.contains(x, y)
-    }
+    override fun contains(x: Double, y: Double): Boolean = _component!!.contains(x, y)
 
-    override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
-        return _component!!.getToolTipText(x, y, width)
-    }
+    override fun getTooltip(x: Double, y: Double): Tooltip? = _component!!.getTooltip(x, y)
 
-    override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-        return _component!!.getInputEventHandler(context)
-    }
+    override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
+            _component!!.getInputEventHandler(context)
 
     override fun <T: Drawable> handleAdded(container: DrawableContainer<T>) {
         _component!!.handleAdded(container)

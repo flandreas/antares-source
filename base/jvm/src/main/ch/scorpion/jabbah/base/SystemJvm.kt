@@ -45,7 +45,7 @@ class SystemJvm : System {
         return UUID(uuid)
     }
 
-    override fun buildToolTipText(title: String?, text: String?, width: Int?): String? {
+    override fun buildToolTipText(title: String?, text: String?): String? {
         val sb = StringBuilder()
 
         if (title == null || "" == title) {
@@ -55,10 +55,6 @@ class SystemJvm : System {
         val hasText = !(text == null || "" == text)
 
         sb.append("<html>")
-
-        if (width != null && hasText) {
-            sb.append("<div style=\"width: " + width.toString() + "px; text-justification: justify;\">")
-        }
 
         sb.append("<strong>")
 
@@ -70,10 +66,6 @@ class SystemJvm : System {
 
         if (hasText) {
             sb.append(text)
-        }
-
-        if (width != null && hasText) {
-            sb.append("</div>")
         }
 
         sb.append("</html>")

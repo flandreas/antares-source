@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.geom.Shape
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Tooltip
 
 /**
  * An abstract base implementation of the [Drawable] interface.
@@ -88,9 +89,7 @@ abstract class AbstractDrawable : Drawable {
         throw UnsupportedOperationException("not implemented")
     }
 
-    override fun getToolTipText(x: Double, y: Double, width: Int?): String? {
-        return null
-    }
+    override fun getTooltip(x: Double, y: Double): Tooltip? = null
 
     /** ---- AbstractDrawable */
 
@@ -135,8 +134,8 @@ abstract class AbstractDrawable : Drawable {
         }
     }
 
-    protected fun buildToolTipText(title: String?, text: String?, width: Int?): String? {
-        return System.get().buildToolTipText(title, text, width)
+    protected fun buildToolTipText(title: String?, text: String?): String? {
+        return System.get().buildToolTipText(title, text)
     }
 
     /**
