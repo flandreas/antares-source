@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.draw.view.TooltipHandler
 
 
 /**
@@ -28,6 +29,9 @@ class GraphViewDisplayHandler(
 ) {
 
     private val mouseHandler = MouseHandler()
+
+    /** Gateway to the tooltip system.*/
+    private val tooltipHandler: TooltipHandler = TooltipHandler(eventBus)
 
     init {
         eventBus.register(SchedulerActivationStateEvent::class, { updateActivationState() })
@@ -71,11 +75,7 @@ class GraphViewDisplayHandler(
             val y = view.viewToModelY(e.y.toDouble())
 
             val drawable = view.drawing.getDrawableAt(x, y)
-            if (drawable != null) {
-                view.setToolTipText(drawable.getToolTipText(x, y, 150))
-            } else {
-                view.setToolTipText(null)
-            }
+            tooltipHandler.handle(view, view.drawing, x, y)
 
             if (drawable != null && drawable is SubGraphVerticeView<*>) {
                 view.setCursor(Cursor.HAND)
@@ -86,6 +86,8 @@ class GraphViewDisplayHandler(
 
         /** Forwards a click with button 1 to a [SubGraphVerticeView] at the mouse location, if any. */
         override fun mouseClicked(e: MouseEvent) {
+            tooltipHandler.clear(view)
+
             if (e.button != Button.BUTTON1) {
                 return
             }

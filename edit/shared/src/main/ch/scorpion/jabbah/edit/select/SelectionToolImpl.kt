@@ -15,18 +15,21 @@ import ch.scorpion.jabbah.edit.tool.ToolAdapter
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.view.TooltipHandler
 
 /**
  * Standard implementation of a [SelectionTool].
  * Uses a [RubberBandHandler] for selecting multiple [Component]s at a time.
  */
 class SelectionToolImpl(
-    editor: Editor,
-    val rubberBandHandler: RubberBandHandler,
-    val eventBus: EventBus
+        editor: Editor,
+        private val rubberBandHandler: RubberBandHandler,
+        val eventBus: EventBus
 ) : ToolAdapter(editor), SelectionTool {
 
-    private val LOG by logger(SelectionToolImpl::class)
+    companion object {
+        private val LOG by logger(SelectionToolImpl::class)
+    }
 
     /** The target [InputEventHandler] to which events are forwarded during complex interactions.*/
     private var target: InputEventHandler<EditInputEventContext>? = null
@@ -42,6 +45,9 @@ class SelectionToolImpl(
 
     /** Support for snapping multiple [Component]s while being moved. Initialized when starting to drag.*/
     private var multiComponentSnappable: MultiComponentSnappable? = null
+
+    /** Gateway to the tooltip system.*/
+    private val tooltipHandler: TooltipHandler = TooltipHandler(eventBus)
 
     /** ---- [Tool] interface */
 
@@ -78,13 +84,15 @@ class SelectionToolImpl(
             }
         }
         target = editor.view.getInputEventHandler(e).mouseMoved(mouseEventContext(e, x, y))
-        editor.view.setToolTipText(editor.drawing.getToolTipText(x, y, 150))
         if (target == null) {
             updateCursor(editor.drawing.getDrawableAt(x, y))
+            tooltipHandler.handle(editor.view, editor.drawing, x, y)
         }
     }
 
     override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
+        tooltipHandler.clear(editor.view)
+
         if (e.button != Button.BUTTON1) {
             return
         }

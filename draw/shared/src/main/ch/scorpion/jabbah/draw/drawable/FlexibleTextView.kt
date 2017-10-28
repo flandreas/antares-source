@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.edit.model.text
+package ch.scorpion.jabbah.draw.drawable
 
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -8,11 +8,9 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.ZoomPan
-import ch.scorpion.jabbah.draw.drawable.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.Drawing
 
 /**
  * A non-editable text view with a fixed width that adjusts its height according to the text to display.
@@ -20,7 +18,7 @@ import ch.scorpion.jabbah.edit.Drawing
  * The anchor of the surrounding [RectangularShape] is determined relative to an anchor point and
  * a facing direction. For example, when using [Direction.NORTH] as facing direction, the [RectangularShape]
  * is growing towards north, and the anchor point is at the middle of the lower edge of the [RectangularShape].
- * This can be used for placing a description above the contents of a [Drawing].
+ * This can be used for placing a description above the contents of a [Drawable].
  */
 class FlexibleTextView(
         text: String,
@@ -46,7 +44,7 @@ class FlexibleTextView(
         private val INSET_Y = 10
     }
 
-    private val multilineText = MultilineText(text, font, width)
+    private val multilineText = MultilineText(text, font, width.toDouble())
 
     private val shape = Rectangle2D()
 
@@ -89,7 +87,11 @@ class FlexibleTextView(
 
         context.g.font = font
         context.g.color = transparent.applyTo(textColor)
-        multilineText.draw(context, r.x.toInt() + INSET_X, r.y.toInt() + INSET_Y)
+
+        context.g.translate(r.x + INSET_X, r.y + INSET_Y)
+        multilineText.draw(context)
+        context.g.translate(-(r.x + INSET_X), -(r.y + INSET_Y))
+
     }
 
     override fun contains(x: Double, y: Double): Boolean = shape.contains(x, y)

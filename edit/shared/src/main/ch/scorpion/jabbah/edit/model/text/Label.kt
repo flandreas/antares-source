@@ -298,7 +298,7 @@ class Label(
     /** ---- [Label] */
 
     private fun updateGeometry() {
-        val textRenderInfo = DrawModule.textRenderInfoFactory.invoke(displayableText, font)
+        val textRenderInfo = DrawModule.textRenderInfoFactory.measureSingleLineText(displayableText, font)
 
         bounds.setFrame(
             location.x + horizontalAligment.getX(textRenderInfo.textBounds) - BOUNDS_INSET,

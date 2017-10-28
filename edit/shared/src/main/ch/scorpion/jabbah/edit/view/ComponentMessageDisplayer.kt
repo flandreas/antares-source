@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
-import ch.scorpion.jabbah.edit.model.text.FlexibleTextView
+import ch.scorpion.jabbah.draw.drawable.FlexibleTextView
 import ch.scorpion.jabbah.edit.style.EditStyleType
 
 /**

@@ -27,7 +27,14 @@ object DrawModule : AbstractModule() {
      * Creates a [TextRenderInfo] for a particular text [String] and the [Font] to be used for rendering.
      * Must be implemented platform-specifically.
      */
-    var textRenderInfoFactory: TextRenderInfoFactory = { _, _ -> throw UnsupportedOperationException() }
+    var textRenderInfoFactory: TextRenderInfoFactory = object : TextRenderInfoFactory {
+        override fun measureHtmlText(text: String, font: Font, width: Int): TextRenderInfo {
+            throw UnsupportedOperationException("not implemented")
+        }
+        override fun measureSingleLineText(text: String, font: Font): TextRenderInfo {
+            throw UnsupportedOperationException("not implemented")
+        }
+    }
 
     /** Loads an [Image] from the specified path. Must be implemented platform-specifically. */
     var imageLoader: ImageLoader = { throw UnsupportedOperationException() }

@@ -12,6 +12,7 @@ open class StyleType(val name: String, val descriptionKey: String) {
     companion object {
         val FIGURE: StyleType = StyleType("figure", "draw.styleType.figure.name")
         val BACKGROUND: StyleType = StyleType("background", "draw.styleType.background.name")
+        val TOOLTIP: StyleType = StyleType("tooltip", "draw.styleType.tooltip.name")
     }
 
     val description: String get() = Translations.getString(descriptionKey)

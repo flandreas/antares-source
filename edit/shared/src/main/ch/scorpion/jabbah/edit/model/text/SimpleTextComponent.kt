@@ -5,10 +5,10 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.MultilineText
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
-import ch.scorpion.jabbah.draw.graphics.Font
-import ch.scorpion.jabbah.draw.graphics.TextRenderInfo
+import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -27,7 +27,7 @@ class SimpleTextComponent(
         location: Point2D = Point2D(),
         styleType: StyleType = EditStyleType.MESSAGE,
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-        private val textRenderInfoFactory: (String, Font) -> TextRenderInfo = DrawModule.textRenderInfoFactory
+        private val textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory
 ) : RectangleComponent(
         styleType = styleType,
         styleProvider = styleProvider,
@@ -96,7 +96,9 @@ class SimpleTextComponent(
         // val b = shape
         // val oldClip = context.g.getClipBounds()
         //(context.g as Graphics2DJvm).g.setClip(b.x.toInt(), b.y.toInt(), b.width.toInt(), b.height.toInt())
-        multilineText.draw(context, x.toInt() + INSET_X, y.toInt() + INSET_Y)
+        context.g.translate(x + INSET_X, y + INSET_Y)
+        multilineText.draw(context)
+        context.g.translate(-(x + INSET_X), -(y + INSET_Y))
         //(context.g as Graphics2DJvm).g.setClip(oldClip.x.toInt(), oldClip.y.toInt(), oldClip.width.toInt(), oldClip.height.toInt())
 
         decorator.drawForeground(this, context)
@@ -109,7 +111,7 @@ class SimpleTextComponent(
 
     /** ---- [SimpleTextComponent] */
 
-    private var multilineText = MultilineText(text, font, width.toInt() - 2 * INSET_X)
+    private var multilineText = MultilineText(text, font, (width.toInt() - 2 * INSET_X).toDouble())
 
     private var decorator: TextComponentDecorator = RectangularShapeTextComponentDecorator(
             shape = RoundRectangle2D(0.0, 0.0, 0.0, 0.0, 20.0, 20.0),
@@ -122,6 +124,6 @@ class SimpleTextComponent(
     }
 
     private fun updateMultilineText() {
-        multilineText = MultilineText(text, font, width.toInt() - 2 * INSET_X, textRenderInfoFactory)
+        multilineText = MultilineText(text, font, (width.toInt() - 2 * INSET_X).toDouble(), Point2D(), textRenderInfoFactory)
     }
 }

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
@@ -14,6 +15,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.draw.view.TooltipHandler
 
 
 /**
@@ -41,6 +43,12 @@ class GraphViewExecutionHandler(
 
     /** Handles [KeyEvent]s on [view] during execution.*/
     private val keyHandler = KeyHandler()
+
+    /** Gateway to the custom tooltip system.*/
+    private val tooltipHandler = TooltipHandler(
+            eventBus,
+            { c, x, y -> getActorViewAt(x, y) as Drawable? },
+            { d, x, y -> (d as ActorView).getExecutionToolTipText(x, y, null )})
 
     /** Returns the [ActorView] in [view] at the specified location, if any.*/
     private fun getActorViewAt(x: Double, y: Double): ActorView? {
@@ -87,11 +95,7 @@ class GraphViewExecutionHandler(
             val y = view.viewToModelY(e.y.toDouble())
 
             val actorView = getActorViewAt(x, y)
-            if (actorView != null) {
-                view.setToolTipText(actorView.getExecutionToolTipText(x, y, 150))
-            } else {
-                view.setToolTipText(null)
-            }
+            tooltipHandler.handle(view, view.drawing, x, y)
 
             if (actorView?.getActorInteractionHandler() != null) {
                 view.setCursor(Cursor.HAND)
@@ -101,6 +105,8 @@ class GraphViewExecutionHandler(
         }
 
         override fun mousePressed(e: MouseEvent) {
+            tooltipHandler.clear(view)
+
             if (e.button !== Button.BUTTON1) {
                 return
             }

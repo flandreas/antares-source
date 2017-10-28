@@ -67,6 +67,9 @@ interface Graphics2D {
 
     fun drawString(s: String, x: Int, y: Int)
 
+    /** Draws a text that can even contain HTML in fixed width block. */
+    fun drawText(s: String, x: Int, y: Int, w: Int)
+
     /** Draws an [Image] at the upper-left corner (x,y).*/
     fun drawImage(image: Image, x: Int, y: Int)
 

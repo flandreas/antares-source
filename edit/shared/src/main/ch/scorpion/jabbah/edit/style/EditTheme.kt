@@ -17,6 +17,7 @@ open class EditTheme(
         referenceColors: List<CompositeColor> = DEF_REF_COLORS,
         background: Style = DEF_BACKGROUND,
         figure: Style = DEF_FIGURE,
+        tooltip: Style = DEF_TOOLTIP,
         val selection: CompositeColor = DEF_SELECTION,
         val highlight: Style = DEF_HIGHLIGHT,
         val message: Style = DEF_MESSAGE
@@ -26,7 +27,8 @@ open class EditTheme(
         referenceColorSequenceProvider,
         referenceColors,
         background,
-        figure
+        figure,
+        tooltip
 ) {
 
     companion object {

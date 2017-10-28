@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.view.ScenarioEvent
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.graph.view.ScenarioStepEvent
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.model.text.FlexibleTextView
+import ch.scorpion.jabbah.draw.drawable.FlexibleTextView
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategoryEvent

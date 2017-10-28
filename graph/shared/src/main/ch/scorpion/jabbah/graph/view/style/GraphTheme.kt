@@ -17,6 +17,7 @@ open class GraphTheme(
         referenceColors: List<CompositeColor> = DEF_REF_COLORS,
         background: Style = DEF_BACKGROUND,
         figure: Style = DEF_FIGURE,
+        tooltip: Style = DEF_TOOLTIP,
         selection: CompositeColor = DEF_SELECTION,
         highlight: Style = DEF_HIGHLIGHT,
         message: Style = DEF_MESSAGE,
@@ -32,6 +33,7 @@ open class GraphTheme(
         referenceColors,
         background,
         figure,
+        tooltip,
         selection,
         highlight,
         message

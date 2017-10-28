@@ -145,7 +145,7 @@ class NavigationStackView(
     }
 
     private fun createElement(content: DrawingViewContent<GraphView<GraphElementView<*>>>, first: Boolean, last: Boolean): Element {
-        val textRenderInfo = DrawModule.textRenderInfoFactory.invoke(content.drawing.graph!!.name, DrawModule.properties.getFont(PROP_FONT))
+        val textRenderInfo = DrawModule.textRenderInfoFactory.measureSingleLineText(content.drawing.graph!!.name, DrawModule.properties.getFont(PROP_FONT))
         val textLength = textRenderInfo.textBounds.width
         return Element(content, if (first) createFirstPath(textLength) else createNonFirstPath(textLength), last)
     }

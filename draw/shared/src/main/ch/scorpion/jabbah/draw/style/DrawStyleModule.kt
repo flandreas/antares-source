@@ -34,5 +34,6 @@ object DrawStyleModule : AbstractModule() {
     private fun configureStyleRepository(repository: StyleRepository) {
         repository.registerStyle(StyleType.BACKGROUND, BasicStyle())
         repository.registerStyle(StyleType.FIGURE, BasicStyle())
+        repository.registerStyle(StyleType.TOOLTIP, BasicStyle())
     }
 }

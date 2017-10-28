@@ -325,7 +325,7 @@ class SwitchView(
         if (labelPosition != VerticeLabelPosition.INTERNAL || StringUtils.isEmpty(model!!.name)) {
             return SIZE
         }
-        val tri = textRenderInfoFactory.invoke(model!!.name!!, font)
+        val tri = textRenderInfoFactory.measureSingleLineText(model!!.name!!, font)
         val requiredSpace = tri.textBounds.width + 2 * LABEL_INSET
         return (SIZE * Math.max(1.0, Math.ceil(requiredSpace / SIZE))).toInt()
     }

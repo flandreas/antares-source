@@ -41,7 +41,7 @@ class DigitalSignalView(
 
         fun calcWidth(bitWidth: BitWidth, representation: DigitalSignalRepresentation): Double {
             val digitCount = Math.max(1, bitWidth.width / representation.bits())
-            val textRenderInfo = DrawModule.textRenderInfoFactory.invoke("0".repeat(digitCount), FONT)
+            val textRenderInfo = DrawModule.textRenderInfoFactory.measureSingleLineText("0".repeat(digitCount), FONT)
             return Math.ceil(textRenderInfo.textBounds.width).toInt() + 2.0 * H_INSET
 
         }

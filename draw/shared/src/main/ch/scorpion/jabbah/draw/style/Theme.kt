@@ -109,7 +109,8 @@ open class DrawTheme(
         protected val referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
         val referenceColors: List<CompositeColor> = DEF_REF_COLORS,
         val background: Style = DEF_BACKGROUND,
-        val figure: Style = DEF_FIGURE
+        val figure: Style = DEF_FIGURE,
+        val tooltip: Style = DEF_TOOLTIP
 ) : Theme {
 
     companion object {
@@ -117,6 +118,8 @@ open class DrawTheme(
         val DEF_SUPPORTS_WHITE_BACKGROUND = true
         val DEF_BACKGROUND = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
         val DEF_FIGURE = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
+        val DEF_TOOLTIP = BasicStyle(CompositeColor(foregroundColor = Color(249, 214, 54),
+                backgroundColor = Color(255, 253, 219), textColor = Color.BLACK))
         val DEF_REF_COLORS = listOf<CompositeColor>(
                 DrawGraphicsModule.RED,
                 DrawGraphicsModule.BLUE,
@@ -136,5 +139,6 @@ open class DrawTheme(
         }
         styleRepository.registerStyle(StyleType.BACKGROUND, background)
         styleRepository.registerStyle(StyleType.FIGURE, figure)
+        styleRepository.registerStyle(StyleType.TOOLTIP, tooltip)
     }
 }

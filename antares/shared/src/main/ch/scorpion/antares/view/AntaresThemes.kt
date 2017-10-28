@@ -39,6 +39,8 @@ object AntaresThemes {
     private val FOCUS_COLOR = Color(48, 131, 251)
     private val FOCUS_STROKE = Stroke(1.0f, LineCap.BUTT, LineJoin.MITER, 1.0f, floatArrayOf(2.0f, 1.0f), 0.0f)
 
+    private val TOOLTIP_STROKE = Stroke(1.0f)
+
     fun install() {
         Themes.register(blackAndWhite(), winter(), crt())
     }
@@ -60,6 +62,9 @@ object AntaresThemes {
                         color = skyBlue,
                         stroke = BOX_STROKE,
                         font = FONT),
+                tooltip = BasicStyle(
+                        color = EXPLANATION,
+                        stroke = TOOLTIP_STROKE),
                 highlight = BasicStyle(
                         color = highlightColor,
                         font = FONT,
@@ -129,6 +134,11 @@ object AntaresThemes {
         // dark orange
         val highlightColor = Color(102, 61, 0)
 
+        val explanationColor = CompositeColor(
+                foregroundColor = Color(50, 232, 42),
+                backgroundColor = Color(2, 46, 8)
+        )
+
         return AntaresTheme(
                 name = "CRT",
                 supportsWhiteBackground = false,
@@ -167,6 +177,10 @@ object AntaresThemes {
                         color = color,
                         stroke = BOX_STROKE,
                         font = FONT),
+                tooltip = BasicStyle(
+                        color = explanationColor,
+                        stroke = TOOLTIP_STROKE
+                ),
                 vertice = BasicStyle(
                         color = color,
                         stroke = BOX_STROKE,
@@ -181,10 +195,7 @@ object AntaresThemes {
                         stroke = ANNOTATION_STROKE,
                         font = ANNOTATION_FONT),
                 explanation = BasicStyle(
-                        color = CompositeColor(
-                                foregroundColor = Color(50, 232, 42),
-                                backgroundColor = Color(2, 46, 8)
-                        ),
+                        color = explanationColor,
                         stroke = ANNOTATION_STROKE,
                         font = EXPLANATION_FONT),
                 message = BasicStyle(

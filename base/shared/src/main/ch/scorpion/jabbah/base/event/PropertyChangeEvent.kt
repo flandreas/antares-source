@@ -30,7 +30,7 @@ class PropertyChangeSupport<T: Any>(val source: Any) {
     fun remove(l: PropertyChangeListener<T>) = listeners.remove(l)
 
     /** Sends the specified [PropertyChangeEvent] to all registered [PropertyChangeListener]s.*/
-    fun fire(event: PropertyChangeEvent<T>) = listeners.forEach { it.propertyChanged(event) }
+    private fun fire(event: PropertyChangeEvent<T>) = listeners.toList().forEach { it.propertyChanged(event) }
 
     /** Sends a [PropertyChangeEvent] with the specified values to all registered [PropertyChangeListener]s.*/
     fun fire(name: String, oldValue: T?, newValue: T?) = fire(PropertyChangeEvent(source, name, oldValue, newValue))
