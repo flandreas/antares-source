@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87' name='SR Latch' script='var s = elem.inputBit(&quot;S&quot;);
+        <graph _id='2' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87' name='SR Latch' shortDesc='Nicht-taktgesteuertes NOR-Latch mit Setzeingang S und Rücksetzeingang R' script='var s = elem.inputBit(&quot;S&quot;);
 var r = elem.inputBit(&quot;R&quot;);
 
 if (!s &amp;&amp; !r) {
@@ -27,10 +27,10 @@ elem.setOutputBit(&quot;!Q&quot;, true);
           <elements>
             <norGate _id='3' id='1' delay='8' inputCount='2'/>
             <norGate _id='4' id='2' delay='11' inputCount='2'/>
-            <circuitInOut _id='5' id='3' delay='0' name='S' type='input' bitWidth='1'/>
-            <circuitInOut _id='6' id='4' delay='0' name='R' type='input' bitWidth='1'/>
-            <circuitInOut _id='7' id='5' delay='0' name='Q' type='output' bitWidth='1'/>
-            <circuitInOut _id='8' id='6' delay='0' name='!Q' type='output' bitWidth='1'/>
+            <circuitInOut _id='5' id='3' delay='0' name='S' type='input' bitWidth='1' desc='Setzt (Set) das Latch auf den gespeicherten Wert 1'/>
+            <circuitInOut _id='6' id='4' delay='0' name='R' type='input' bitWidth='1' desc='Zurücksetzen (Reset) auf den gespeicherten Wert 0'/>
+            <circuitInOut _id='7' id='5' delay='0' name='Q' type='output' bitWidth='1' desc='Gibt den gespeicherten Wert aus'/>
+            <circuitInOut _id='8' id='6' delay='0' name='!Q' type='output' bitWidth='1' desc='Gib die Negation des gespeicherten Werts aus'/>
             <digitalNet _id='9' id='7' delay='0'>
               <ports>
                 <netPortRef verticeId='5' portId='1'/>
