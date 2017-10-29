@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.truthtable.TruthTableModel
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.OutputPort
@@ -24,6 +25,12 @@ class NandGate(inputCount: InputCount = InputCount.TWO): AbstractDigitalGate(CAL
 
     companion object {
         val CALCULATOR = NandCalculator<NandGate>()
+
+        val TRUTH_TABLE = TruthTableModel(2, 1)
+                .define(intArrayOf(0, 0), 1)
+                .define(intArrayOf(0, 1), 1)
+                .define(intArrayOf(1, 0), 1)
+                .define(intArrayOf(1, 1), 0)
     }
 
     override fun createOutputPort(): OutputPort<DigitalSignal> {

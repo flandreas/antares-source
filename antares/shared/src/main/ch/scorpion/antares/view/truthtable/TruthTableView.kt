@@ -14,10 +14,10 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 /**
  * A [Drawable] view of a [TruthTableModel].
@@ -27,10 +27,10 @@ import ch.scorpion.jabbah.graph.model.Vertice
  * and for determining column names according to the [Vertice]' port names
  */
 class TruthTableView(
-    private val model: TruthTableModel,
-    private val vertice: Vertice,
-    private val styleType: StyleType,
-    private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
+        private val model: TruthTableModel,
+        private val vertice: Vertice,
+        private val styleType: StyleType = GraphStyleType.EXPLANATION,
+        private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangle() {
 
     companion object {

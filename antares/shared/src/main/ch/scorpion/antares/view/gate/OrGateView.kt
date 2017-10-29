@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
-import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 /**
  * A view of a [OrGate].
@@ -24,7 +23,7 @@ class OrGateView(
 
     private val explanation: DrawableExplanation by lazy {
         DrawableExplanation(
-                TruthTableView(OrGate.TRUTH_TABLE, model!!, GraphStyleType.EXPLANATION),
+                TruthTableView(OrGate.TRUTH_TABLE, model!!),
                 Point2D(boundingBox.centerX, boundingBox.minY))
     }
 

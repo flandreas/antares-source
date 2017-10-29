@@ -5,9 +5,12 @@ import ch.scorpion.antares.model.gate.AndGate
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
+import ch.scorpion.antares.view.truthtable.TruthTableView
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.checkArgument
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.DrawableExplanation
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -49,8 +52,19 @@ class AndGateView(
             update()
         }
 
+    private val explanation: DrawableExplanation by lazy {
+        DrawableExplanation(
+                TruthTableView(AndGate.TRUTH_TABLE, model!!),
+                Point2D(boundingBox.centerX, boundingBox.minY))
+    }
+
+
     init {
         modelExchanged(null)
+    }
+
+    override fun getExplanation(x: Double, y: Double): DrawableExplanation? {
+        return if (model!!.inputCount == 2) explanation else null
     }
 
     override fun modelExchanged(oldModel: AndGate?) {
