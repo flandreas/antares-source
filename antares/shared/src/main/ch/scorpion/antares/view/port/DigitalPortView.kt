@@ -50,7 +50,7 @@ class DigitalPortView(
 ) : AbstractPortView<DigitalSignal>(port, x, y, direction, portLabelPosition, length ?: LENGTH) {
 
     companion object {
-        val DEBUG_GFX = true
+        val DEBUG_GFX = false
         val LENGTH: Int = 2 * Look.SCALE
         val INT_BORDER_DIST = 5
         val EXT_BORDER_DIST = 4
@@ -278,10 +278,10 @@ class DigitalPortView(
     }
 
     private fun buildBitWidthAnnotation() {
-        if (getDigitalPort().bitWidth != BitWidth.BW_1) {
-            bitWidthAnnotation = BitWidthAnnotation(getDigitalPort().bitWidth, direction, centerExternalLabel)
+        bitWidthAnnotation = if (getDigitalPort().bitWidth != BitWidth.BW_1) {
+            BitWidthAnnotation(getDigitalPort().bitWidth, direction, centerExternalLabel)
         } else {
-            bitWidthAnnotation = null
+            null
         }
     }
 
