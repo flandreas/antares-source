@@ -46,10 +46,12 @@ class FlexibleTextView(
 
     private val multilineText = MultilineText(text, font, width.toDouble())
 
+    /** The shape representing the overall box (including insets) in model coordinates, but excluding stroke widths.*/
     private val shape = Rectangle2D()
 
     /** ---- [Locatable] */
 
+    /** Represents the location of the anchor position in model coordinates. */
     override var location: Point2D = anchor
         set(value) {
             invalidate()
@@ -63,11 +65,13 @@ class FlexibleTextView(
     override val boundingBox: RectangularShape
         get() {
             if (isUnzoomable) {
+                val p = calculateBoxCorner(location, 1 / zoomPan!!.zoomFactor)
                 return Rectangle2D(
-                        shape.x - stroke.width,
-                        shape.y - stroke.width / zoomPan!!.zoomFactor,
+                        p.x - stroke.width,
+                        p.y - stroke.width,
                         shape.width / zoomPan!!.zoomFactor + 2 * stroke.width,
-                        shape.height / zoomPan!!.zoomFactor + 2 * stroke.width)
+                        shape.height / zoomPan!!.zoomFactor + 2 * stroke.width
+                )
             }
             return Rectangle2D(
                     shape.x - stroke.width,
@@ -99,6 +103,16 @@ class FlexibleTextView(
     /** ---- [Unzoomable] interface */
 
     override var zoomPan: ZoomPan? = ZoomPan()
+        set(value) {
+            if (field == value) {
+                return
+            }
+            invalidate()
+            field = value
+            updateGeometry()
+            invalidate()
+            update()
+        }
 
     /** ---- [Transparent] interface */
 
@@ -114,31 +128,34 @@ class FlexibleTextView(
         updateGeometry()
     }
 
+    /** Calculates the geometry of this [FlexibleTextView] in model coordinates and stores it in [shape]. */
     private fun updateGeometry() {
-        val rectCorner = calculateRectCorner(location)
-        shape.setFrame(rectCorner.x, rectCorner.y, boxWidth, boxHeight)
+        val boxCorner = calculateBoxCorner(location, 1.0)
+        shape.setFrame(boxCorner.x, boxCorner.y, boxWidth, boxHeight)
     }
 
-    private fun calculateRectCorner(anchor: Point2D): Point2D {
+    /** Calculates the upper-left corner of the surrounding box in view coordinates.*/
+    private fun calculateBoxCorner(anchor: Point2D, f: Double): Point2D {
         return when(direction) {
             Direction.NORTH -> {
-                Point2D(anchor.x - width / 2 - INSET_X, anchor.y - multilineText.height - 2 * INSET_Y)
+                Point2D(anchor.x - (width / 2 + INSET_X) * f, anchor.y - (multilineText.height + 2 * INSET_Y) * f)
             }
             Direction.SOUTH -> {
-                Point2D(anchor.x - width / 2 - INSET_X, anchor.y)
+                Point2D(anchor.x - (width / 2 + INSET_X) * f, anchor.y)
             }
             Direction.WEST -> {
-                Point2D(anchor.x - boxWidth,anchor.y - boxHeight / 2)
+                Point2D(anchor.x - boxWidth * f,anchor.y - boxHeight / 2 * f)
             }
             Direction.EAST -> {
-                Point2D(anchor.x, anchor.y - boxHeight / 2)
+                Point2D(anchor.x, anchor.y - boxHeight / 2 * f)
             }
         }
     }
 
+    /** Transform [shape] to view coordinates using the current [zoomPan]. */
     private fun getViewRectangle(): Rectangle2D {
         val anchorView = zoomPan!!.transform.modelToView(location)
-        val p = calculateRectCorner(anchorView)
+        val p = calculateBoxCorner(anchorView, 1.0)
         return Rectangle2D(p.x, p.y, shape.width, shape.height)
     }
 

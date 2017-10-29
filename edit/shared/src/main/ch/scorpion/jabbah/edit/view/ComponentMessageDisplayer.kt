@@ -62,11 +62,11 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
     }
 
     private fun calculateAnchorPoint(msg: ComponentMessage): Point2D {
-        if (msg.source == null) {
-            return Point2D(drawingView.width / 2, drawingView.height / 2)
+        return if (msg.source == null) {
+            Point2D(drawingView.width / 2, drawingView.height / 2)
         } else {
             val bbox = msg.source.boundingBox
-            return Point2D(bbox.centerX, bbox.maxY + INSET)
+            Point2D(bbox.centerX, bbox.maxY + INSET)
         }
     }
 
