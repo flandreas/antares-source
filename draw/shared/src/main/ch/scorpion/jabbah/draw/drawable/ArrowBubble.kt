@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 class ArrowBubble(
         private val content: RectangularDrawable,
         private val location: Point2D,
+        private val isBelow: Boolean = true,
         styleType: StyleType,
         styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractStyledDrawable(styleType, styleProvider) {
@@ -55,7 +56,12 @@ class ArrowBubble(
     private val rightWidth: Double get() = width - LEFT_WIDTH
 
     /** The upper-left corner of [content] in the local, relative coordinate system. */
-    private val contentLocation: Point2D get() = Point2D(-LEFT_WIDTH + INSET, TIP_HEIGHT + INSET)
+    private val contentLocation: Point2D get() =
+        if (isBelow) {
+            Point2D(-LEFT_WIDTH + INSET, TIP_HEIGHT + INSET)
+        } else {
+            Point2D(-LEFT_WIDTH + INSET, -height + INSET)
+        }
 
     init {
         content.setBounds(contentLocation.x, contentLocation.y, content.width, content.height)
@@ -85,7 +91,9 @@ class ArrowBubble(
 
     /** ---- [ArrowBubble] */
 
-    private fun createPath(): Path {
+    private fun createPath(): Path = if (isBelow) createBelowPath() else createAbovePath()
+
+    private fun createBelowPath(): Path {
         return System.get().createPath()
                 .moveTo(0, 0)
                 .lineTo(TIP_WIDTH / 2, TIP_HEIGHT)
@@ -98,6 +106,22 @@ class ArrowBubble(
                 .lineTo(-LEFT_WIDTH, TIP_HEIGHT + ARC_SIZE)
                 .quadTo(-LEFT_WIDTH, TIP_HEIGHT, -LEFT_WIDTH + ARC_SIZE, TIP_HEIGHT)
                 .lineTo(-TIP_WIDTH / 2, TIP_HEIGHT)
+                .close()
+    }
+
+    private fun createAbovePath(): Path {
+        return System.get().createPath()
+                .moveTo(0, 0)
+                .lineTo(-TIP_WIDTH / 2, -TIP_HEIGHT)
+                .lineTo(-LEFT_WIDTH + ARC_SIZE, -TIP_HEIGHT)
+                .quadTo(-LEFT_WIDTH, -TIP_HEIGHT, -LEFT_WIDTH, -TIP_HEIGHT - ARC_SIZE)
+                .lineTo(-LEFT_WIDTH, -height + ARC_SIZE)
+                .quadTo(-LEFT_WIDTH, -height, -LEFT_WIDTH + ARC_SIZE, -height)
+                .lineTo(rightWidth - ARC_SIZE, -height)
+                .quadTo(rightWidth, -height, rightWidth, -height + ARC_SIZE)
+                .lineTo(rightWidth, -TIP_HEIGHT - ARC_SIZE)
+                .quadTo(rightWidth, -TIP_HEIGHT, rightWidth - ARC_SIZE, -TIP_HEIGHT)
+                .lineTo(TIP_WIDTH / 2, -TIP_HEIGHT)
                 .close()
     }
 }

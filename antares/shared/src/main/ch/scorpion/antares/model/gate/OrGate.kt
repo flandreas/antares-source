@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.truthtable.TruthTableModel
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -13,6 +14,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
  * Performs a logical "OR" function with the current input signals of a [Vertice].
  */
 class OrCalculator<T: Vertice> : VerticeCalculator<T> {
+
     override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
         val outputPort = vertice.getOutput<DigitalSignal>()
         var allUndefined = true
@@ -37,5 +39,11 @@ class OrGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CALC
 
     companion object {
         val CALCULATOR = OrCalculator<OrGate>()
+
+        val TRUTH_TABLE = TruthTableModel(2, 1)
+                .define(intArrayOf(0, 0), 0)
+                .define(intArrayOf(0, 1), 1)
+                .define(intArrayOf(1, 0), 1)
+                .define(intArrayOf(1, 1), 1)
     }
 }

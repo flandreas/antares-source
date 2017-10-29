@@ -1,0 +1,115 @@
+package ch.scorpion.antares.model.truthtable
+
+import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.BitOperation
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.checkArgument
+import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.base.exception.IllegalStateException
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.checkState
+import java.util.*
+
+typealias Bits = Array<Bit>
+
+/**
+ * A [TruthTableModel] documents all possible combinations of input [Bit]s and the corresponding output [Bit]s
+ * of a digital [Vertice].
+ */
+class TruthTableModel(val inputCount: Int, val outputCount: Int) {
+
+    private val _rows: MutableList<Row> = mutableListOf()
+
+    val rows: List<Row> get() = _rows
+
+    init {
+        predefineRows()
+    }
+
+    /**
+     * Defines a row for the specified input [Bit]s and the single output [Bit].
+     * Only applicable if [outputCount] is 1.
+     * @return this to support method chaining
+     * @throws IllegalStateException if [outputCount] is not 1
+     * @throws IllegalArgumentException if the size of [input] is not [inputCount]
+     */
+    fun define(input: Bits, output: Bit): TruthTableModel {
+        checkArgument(input.size == inputCount, "number of inputs must match inputCount of model")
+        checkState(outputCount == 1, "can only be used if outputCount of model is 1")
+        define(input, arrayOf(output))
+        return this
+    }
+
+    /**
+     * Defines a row for the specified input and output [Bits].
+     * @return this to support method chaining
+     * @throws IllegalArgumentException if the sizes of [input] or [ouput] don't match the corresponding column numbers
+     */
+    fun define(input: Bits, output: Bits): TruthTableModel {
+        checkArgument(input.size == inputCount, "number of inputs must match inputCount of model")
+        checkArgument(output.size == outputCount, "number of outputs must match outputCount of model")
+        _rows[rowIndex(input)] = Row(input, output)
+        return this
+    }
+
+    /**
+     * Convenience method for defining [TruthTableModel] for a single output with 0 and 1 instead of [Bits].
+     * @throws IllegalStateException if [outputCount] is not 1
+     * @return this to support method chaining
+     */
+    fun define(input: IntArray, output: Int): TruthTableModel {
+        return define(input, intArrayOf(output))
+    }
+
+    /**
+     * Convenience method for defining [TruthTableModel] with 0 and 1 instead of [Bits].
+     * @return this to support method chaining
+     * @throws IllegalArgumentException if the sizes of [input] or [ouput] don't match the corresponding column numbers
+     */
+    fun define(input: IntArray, output: IntArray): TruthTableModel {
+        return define(intsToBits(input), intsToBits(output))
+    }
+
+    /** Returns the output [Bits] for the specified input [Bits] combination.*/
+    fun outputOf(input: Bits): Bits {
+        return getRow(input).output
+    }
+
+    /** Convenience method for accessing _rows with 0 and 1 arrays instead of [Bits].*/
+    fun outputOf(input: IntArray): IntArray {
+        return bitsToInts(outputOf(intsToBits(input)))
+    }
+
+    /** Creates and registers a [Row] with zero outputs for every possible input combination.*/
+    private fun predefineRows() {
+        (0 until BitOperation.power(inputCount.toLong())).mapTo(_rows) {
+            Row(Word.of(BitWidth.of(inputCount), it.toLong()).bits.toTypedArray(),
+                    Word.of(BitWidth.of(outputCount), 0L).bits.toTypedArray())
+        }
+    }
+
+    private fun getRow(input: Bits): Row {
+        return _rows.first { Arrays.equals(it.input, input) }
+    }
+
+    fun rowIndex(input: Bits): Int {
+        return _rows.indexOfFirst { Arrays.equals(it.input, input) }
+    }
+
+    /**
+     * Converts an [Array] of 0 and 1 to the corresponding [Bits] array.
+     * The result contains [Bit.False] for every input number that is not 1.
+     */
+    private fun intsToBits(ints: IntArray): Bits = Array<Bit>(ints.size, { Bit.of(ints[it]) })
+
+    /**
+     * Converts an [Array] of [Bit]s to the corresponding [Int] array with 0 and 1.
+     * @throws KotlinNullPointerException if a [Bit] is undefined
+     */
+    private fun bitsToInts(bits: Bits): IntArray {
+        return IntArray(bits.size, { bits[it].numericalValue })
+    }
+
+    data class Row(val input: Bits, val output: Bits)
+}

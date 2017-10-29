@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 
 /**
  * A [Drawable] is an object with a graphical representation.
@@ -98,7 +99,8 @@ interface Drawable {
     fun mirrorVertically(y: Double)
 
     /**
-     * Returns a short description of this [Drawable] represented as a [Tooltip].
+     * Returns a short textual description of this [Drawable] represented as a [Tooltip].
+     * The description can contain HTML text.
      *
      * @param x x-coordinate of the mouse position
      * @param y y-coordinate of the mouse position
@@ -106,4 +108,16 @@ interface Drawable {
      *      text at the specified location.
      */
     fun getTooltip(x: Double, y: Double): Tooltip?
+
+    /**
+     * Returns an epic, graphical explanation of this [Drawable] to be displayed when the user hovers over
+     * this [Drawable] with the mouse.
+     */
+    fun getExplanation(x: Double, y: Double): DrawableExplanation?
 }
+
+/**
+ * A location-sensitive, graphical description of an object that can be displayed as popup in a view
+ * when the user hovers over the object with the mouse.
+ */
+data class DrawableExplanation(val explanation: RectangularDrawable, val location: Point2D)
