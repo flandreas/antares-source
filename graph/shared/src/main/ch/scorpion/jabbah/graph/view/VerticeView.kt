@@ -37,9 +37,12 @@ interface VerticeView<T : Vertice> : GraphElementView<T>, ConnectableView, Actor
     /** Returns the [PortView]s of this [VerticeView].*/
     fun getPortViews(): ImmutableList<PortView<*>>
 
+    /** Returns the [PortView] that contains the specified absolute location, also respecting the label of the [PortView].*/
+    fun getPortViewAt(x: Double, y: Double): PortView<*>?
+
     /**
-     * Returns the [PortView] at the specified absolute location.
+     * Returns the [PortView] whose connection point is at the specified absolute location.
      * @return the [PortView] at `(x, y)`, if any.
      */
-    fun getPortViewAt(x: Double, y: Double): PortView<*>?
+    fun getPortViewAtConnectionPoint(x: Double, y: Double): PortView<*>?
 }

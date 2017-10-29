@@ -39,7 +39,7 @@ class OutputToInputConnector(
 
     override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         if (verticeView!!.contains(context.x, context.y)) {
-            val pv = verticeView!!.getPortViewAt(context.x, context.y)
+            val pv = verticeView!!.getPortViewAtConnectionPoint(context.x, context.y)
 
             if (pv != null && !pv.port.isConnected && pv.port.portType.isOutput) {
 

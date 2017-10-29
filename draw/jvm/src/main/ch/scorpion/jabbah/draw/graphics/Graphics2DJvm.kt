@@ -237,8 +237,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     }
 
     override fun drawText(s: String, x: Int, y: Int, w: Int) {
-        LOG.debug("Graphics2DJvm: drawText '$s'")
-        val oldClip = g.getClipBounds()
+        val oldClip = g.clipBounds
         setupTextPainter(s, g.font, g.color, x, y, w, 1000)
         g.setClip(x, y, w, Int.MAX_VALUE)
         g.translate(x, y)

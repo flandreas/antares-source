@@ -193,6 +193,7 @@ object TooltipManager {
             it.view.overlayContainer.validate()
             it.view.addPropertyChangeListener(zoomPanListener)
             request = null
+            timer.stop()
         }
     }
 

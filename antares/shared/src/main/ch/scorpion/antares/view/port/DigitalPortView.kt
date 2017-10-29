@@ -50,7 +50,7 @@ class DigitalPortView(
 ) : AbstractPortView<DigitalSignal>(port, x, y, direction, portLabelPosition, length ?: LENGTH) {
 
     companion object {
-        val DEBUG_GFX = false
+        val DEBUG_GFX = true
         val LENGTH: Int = 2 * Look.SCALE
         val INT_BORDER_DIST = 5
         val EXT_BORDER_DIST = 4

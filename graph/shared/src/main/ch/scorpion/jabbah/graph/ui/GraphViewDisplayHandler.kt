@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.DrawingView
@@ -27,6 +28,10 @@ class GraphViewDisplayHandler(
         private val scheduler: Scheduler,
         eventBus: EventBus
 ) {
+
+    companion object {
+        private val LOG by logger(GraphViewDisplayHandler::class)
+    }
 
     private val mouseHandler = MouseHandler()
 
@@ -71,6 +76,7 @@ class GraphViewDisplayHandler(
 
         /** Displays the hand cursor if the mouse is over a [SubGraphVerticeView] */
         override fun mouseMoved(e: MouseEvent) {
+            LOG.trace("GraphViewDisplayHandler.mouseMoved")
             val x = view.viewToModelX(e.x.toDouble())
             val y = view.viewToModelY(e.y.toDouble())
 

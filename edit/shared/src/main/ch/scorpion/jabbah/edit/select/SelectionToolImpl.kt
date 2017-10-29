@@ -86,8 +86,8 @@ class SelectionToolImpl(
         target = editor.view.getInputEventHandler(e).mouseMoved(mouseEventContext(e, x, y))
         if (target == null) {
             updateCursor(editor.drawing.getDrawableAt(x, y))
-            tooltipHandler.handle(editor.view, editor.drawing, x, y)
         }
+        tooltipHandler.handle(editor.view, editor.drawing, x, y)
     }
 
     override fun mousePressed(e: MouseEvent, x: Double, y: Double) {

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Component
@@ -38,6 +39,10 @@ class GraphViewExecutionHandler(
         eventBus: EventBus
 ) {
 
+    companion object {
+        private val LOG by logger(GraphViewExecutionHandler::class)
+    }
+
     /** Handles [MouseEvent]s on [view] during execution.*/
     private val mouseHandler = MouseHandler()
 
@@ -47,7 +52,7 @@ class GraphViewExecutionHandler(
     /** Gateway to the custom tooltip system.*/
     private val tooltipHandler = TooltipHandler(
             eventBus,
-            { c, x, y -> getActorViewAt(x, y) as Drawable? },
+            { _, x, y -> getActorViewAt(x, y) as Drawable? },
             { d, x, y -> (d as ActorView).getExecutionTooltip(x, y ) })
 
     /** Returns the [ActorView] in [view] at the specified location, if any.*/

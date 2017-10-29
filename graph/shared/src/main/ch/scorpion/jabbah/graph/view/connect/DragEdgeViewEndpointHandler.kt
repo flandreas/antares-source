@@ -21,7 +21,9 @@ class DragEdgeViewEndpointHandler(
     val edgeViewEndpointType: EdgeViewEndpointType
 ) : AbstractConnectionPointHighlighter() {
 
-    private val LOG by logger(DragEdgeViewEndpointHandler::class)
+    companion object {
+        private val LOG by logger(DragEdgeViewEndpointHandler::class)
+    }
 
     /** The [EdgeView] whose endpoint is being dragged. Set in [useFor]. */
     private var edgeView: EdgeView<*>? = null
@@ -46,7 +48,7 @@ class DragEdgeViewEndpointHandler(
             return this
         }
 
-        val pv = (destVerticeView).getPortViewAt(context.x, context.y)
+        val pv = (destVerticeView).getPortViewAtConnectionPoint(context.x, context.y)
         if (pv == null || pv.port.isConnected || !pv.connectable || !edgeViewEndpointType.canConnectTo(pv.port.portType)) {
             exitTargetPortView(context.drawingView())
             return this

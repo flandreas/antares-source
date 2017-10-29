@@ -102,9 +102,14 @@ abstract class AbstractVerticeView<T : Vertice>(
         return portViews.toImmutableList()
     }
 
-    override fun getPortViewAt(x: Double, y: Double): PortView<*>? {
+    override fun getPortViewAtConnectionPoint(x: Double, y: Double): PortView<*>? {
         val p = rotateBack(x, y)
         return portViews.firstOrNull { it.containsConnectionPoint(p.x - location.x, p.y - location.y) }
+    }
+
+    override fun getPortViewAt(x: Double, y: Double): PortView<*>? {
+        val p = rotateBack(x, y)
+        return portViews.firstOrNull { it.contains(p.x - location.x, p.y - location.y) || it.containsConnectionPoint(x, y)}
     }
 
     override fun <G : Any> getPortView(port: Port<G>): PortView<G>? {
@@ -260,7 +265,7 @@ abstract class AbstractVerticeView<T : Vertice>(
     /** ---- [ActorView] interface */
 
     override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
-        val portTooltip = getPortViewAt(x, y)?.getExecutionTooltip(x, y)
+        val portTooltip = getPortViewAtConnectionPoint(x, y)?.getExecutionTooltip(x, y)
         if (portTooltip != null) {
             return portTooltip
         }
