@@ -17,9 +17,20 @@ typealias Bits = Array<Bit>
  * A [TruthTableModel] documents all possible combinations of input [Bit]s and the corresponding output [Bit]s
  * of a digital [Vertice].
  */
-class TruthTableModel(val inputCount: Int, val outputCount: Int) {
+class TruthTableModel(val inputColumNames: List<String>, val outputColumnNames: List<String>) {
+
+    constructor(inputCount: Int, outputCount: Int): this(defaultInputColumNames(inputCount), defaultOutputColumNames(outputCount))
+
+    companion object {
+        fun defaultInputColumNames(inputCount: Int): List<String> = (0 until inputCount).map { ('A'.toInt() + it).toChar().toString() }
+        fun defaultOutputColumNames(outputCount: Int): List<String> = (1..outputCount).map { "O$it" }
+    }
 
     private val _rows: MutableList<Row> = mutableListOf()
+
+    val inputCount: Int get() = inputColumNames.size
+
+    val outputCount: Int get() = outputColumnNames.size
 
     val rows: List<Row> get() = _rows
 
@@ -44,7 +55,7 @@ class TruthTableModel(val inputCount: Int, val outputCount: Int) {
     /**
      * Defines a row for the specified input and output [Bits].
      * @return this to support method chaining
-     * @throws IllegalArgumentException if the sizes of [input] or [ouput] don't match the corresponding column numbers
+     * @throws IllegalArgumentException if the sizes of [input] or [output] don't match the corresponding column numbers
      */
     fun define(input: Bits, output: Bits): TruthTableModel {
         checkArgument(input.size == inputCount, "number of inputs must match inputCount of model")
@@ -83,10 +94,17 @@ class TruthTableModel(val inputCount: Int, val outputCount: Int) {
 
     /** Creates and registers a [Row] with zero outputs for every possible input combination.*/
     private fun predefineRows() {
+        /*
         (0 until BitOperation.power(inputCount.toLong())).mapTo(_rows) {
             Row(Word.of(BitWidth.of(inputCount), it.toLong()).bits.toTypedArray(),
                     Word.of(BitWidth.of(outputCount), 0L).bits.toTypedArray())
         }
+        */
+        (0 until BitOperation.power(inputCount.toLong())).mapTo(_rows) { Row(
+                Bit.listFromInt(it, inputCount).toTypedArray(),
+                Bit.listFromInt(0, outputCount).toTypedArray()
+        )}
+
     }
 
     private fun getRow(input: Bits): Row {
@@ -101,7 +119,7 @@ class TruthTableModel(val inputCount: Int, val outputCount: Int) {
      * Converts an [Array] of 0 and 1 to the corresponding [Bits] array.
      * The result contains [Bit.False] for every input number that is not 1.
      */
-    private fun intsToBits(ints: IntArray): Bits = Array<Bit>(ints.size, { Bit.of(ints[it]) })
+    private fun intsToBits(ints: IntArray): Bits = Array(ints.size, { Bit.of(ints[it]) })
 
     /**
      * Converts an [Array] of [Bit]s to the corresponding [Int] array with 0 and 1.

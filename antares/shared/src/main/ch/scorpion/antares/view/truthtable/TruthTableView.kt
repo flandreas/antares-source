@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Font
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -41,6 +42,8 @@ class TruthTableView(
         build()
     }
 
+    private val stroke: Stroke = Stroke(0.5f)
+
     private val font: Font get() = styleProvider.getStyle(styleType).font
 
     private val textColor: Color get() = styleProvider.getStyle(styleType).color.textColor
@@ -65,19 +68,47 @@ class TruthTableView(
         val currentRow = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) getCurrentRowIndex() else -1
         if (currentRow >= 0) {
             context.g.color = highlightColor
-            context.g.fillRect(location.x, location.y + currentRow * rowHeight, width, rowHeight.toDouble())
+            context.g.fillRect(location.x, location.y + (currentRow + 1) * rowHeight, width, rowHeight.toDouble())
         }
 
-        var y: Int = rowHeight / 2
+        drawColumnHeaders(context)
+
+        var y: Int = (rowHeight * 1.5).toInt()
         model.rows.forEachIndexed { index, row ->
             drawRow(row, index == currentRow, y, context)
             y += rowHeight
         }
+
         context.g.color = textColor
+        context.g.stroke = stroke
+
+        // Horizontal line separating headers and rows
+        context.g.drawLine(location.x, location.y + rowHeight, location.x + widthInt, location.y + rowHeight)
+
+        // Vertical line separating inputs and outputs
         context.g.drawLine(
                 location.x + model.inputCount * COL_WIDTH, location.y,
                 location.x + model.inputCount * COL_WIDTH, location.y + heightInt
         )
+    }
+
+    private fun drawColumnHeaders(context: DrawContext) {
+        context.g.color = textColor
+        var x: Int = COL_WIDTH / 2
+        model.inputColumNames.reversed().forEach {
+            drawColumnHeader(it, x, context)
+            x += COL_WIDTH
+        }
+        model.outputColumnNames.reversed().forEach {
+            drawColumnHeader(it, x, context)
+            x += COL_WIDTH
+        }
+    }
+
+    private fun drawColumnHeader(name: String, x: Int, context: DrawContext) {
+        label.text = name
+        label.location = Point2D(location.x + x, location.y + rowHeight / 2)
+        label.draw(context)
     }
 
     private fun drawRow(row: TruthTableModel.Row, isCurrent: Boolean, y: Int, context: DrawContext) {
@@ -120,6 +151,6 @@ class TruthTableView(
     /** ---- [TruthTableView] */
 
     private fun build() {
-        setBounds(0, 0, (model.inputCount + model.outputCount) * COL_WIDTH, model.rows.size * rowHeight)
+        setBounds(0, 0, (model.inputCount + model.outputCount) * COL_WIDTH, (model.rows.size + 1) * rowHeight)
     }
 }

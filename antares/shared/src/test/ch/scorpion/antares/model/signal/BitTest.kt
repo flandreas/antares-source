@@ -68,4 +68,12 @@ class BitTest {
         assertThat(Bit.Error.not(), `is`(Bit.Error))
         assertThat(Bit.Undefined.not(), `is`(Bit.Undefined))
     }
+
+    @Test
+    fun shouldConvertIntToBitList() {
+        val list: List<Bit> = Bit.listFromInt(5, 3)
+        assertThat(list[0], `is`(Bit.True))
+        assertThat(list[1], `is`(Bit.False))
+        assertThat(list[2], `is`(Bit.True))
+    }
 }
