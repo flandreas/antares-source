@@ -95,7 +95,7 @@ class TruthTableView(
     private fun drawColumnHeaders(context: DrawContext) {
         context.g.color = textColor
         var x: Int = COL_WIDTH / 2
-        model.inputColumNames.reversed().forEach {
+        model.inputColumnNames.reversed().forEach {
             drawColumnHeader(it, x, context)
             x += COL_WIDTH
         }

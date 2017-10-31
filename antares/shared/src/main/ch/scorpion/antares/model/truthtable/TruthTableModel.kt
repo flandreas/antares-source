@@ -2,8 +2,6 @@ package ch.scorpion.antares.model.truthtable
 
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.base.exception.IllegalStateException
@@ -17,18 +15,18 @@ typealias Bits = Array<Bit>
  * A [TruthTableModel] documents all possible combinations of input [Bit]s and the corresponding output [Bit]s
  * of a digital [Vertice].
  */
-class TruthTableModel(val inputColumNames: List<String>, val outputColumnNames: List<String>) {
+class TruthTableModel(val inputColumnNames: List<String>, val outputColumnNames: List<String>) {
 
-    constructor(inputCount: Int, outputCount: Int): this(defaultInputColumNames(inputCount), defaultOutputColumNames(outputCount))
+    constructor(inputCount: Int, outputCount: Int): this(defaultInputColumnNames(inputCount), defaultOutputColumnNames(outputCount))
 
     companion object {
-        fun defaultInputColumNames(inputCount: Int): List<String> = (0 until inputCount).map { ('A'.toInt() + it).toChar().toString() }
-        fun defaultOutputColumNames(outputCount: Int): List<String> = (1..outputCount).map { "O$it" }
+        fun defaultInputColumnNames(inputCount: Int): List<String> = (0 until inputCount).map { ('A'.toInt() + it).toChar().toString() }
+        fun defaultOutputColumnNames(outputCount: Int): List<String> = if (outputCount == 1) listOf("O") else (1..outputCount).map { "O$it" }
     }
 
     private val _rows: MutableList<Row> = mutableListOf()
 
-    val inputCount: Int get() = inputColumNames.size
+    val inputCount: Int get() = inputColumnNames.size
 
     val outputCount: Int get() = outputColumnNames.size
 
@@ -76,7 +74,7 @@ class TruthTableModel(val inputColumNames: List<String>, val outputColumnNames: 
     /**
      * Convenience method for defining [TruthTableModel] with 0 and 1 instead of [Bits].
      * @return this to support method chaining
-     * @throws IllegalArgumentException if the sizes of [input] or [ouput] don't match the corresponding column numbers
+     * @throws IllegalArgumentException if the sizes of [input] or [output] don't match the corresponding column numbers
      */
     fun define(input: IntArray, output: IntArray): TruthTableModel {
         return define(intsToBits(input), intsToBits(output))

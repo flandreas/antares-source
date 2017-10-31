@@ -13,11 +13,19 @@ class TruthTableModelTest {
     @Test
     fun shouldAssignDefaultColumnNames() {
         val model = TruthTableModel(3, 2)
-        assertThat(model.inputColumNames[0], `is`("A"))
-        assertThat(model.inputColumNames[1], `is`("B"))
-        assertThat(model.inputColumNames[2], `is`("C"))
+        assertThat(model.inputColumnNames[0], `is`("A"))
+        assertThat(model.inputColumnNames[1], `is`("B"))
+        assertThat(model.inputColumnNames[2], `is`("C"))
         assertThat(model.outputColumnNames[0], `is`("O1"))
         assertThat(model.outputColumnNames[1], `is`("O2"))
+    }
+
+    @Test
+    fun singleOutputShouldHaveUnnumberedColumnName() {
+        val model = TruthTableModel(2, 1)
+        assertThat(model.inputColumnNames[0], `is`("A"))
+        assertThat(model.inputColumnNames[1], `is`("B"))
+        assertThat(model.outputColumnNames[0], `is`("O"))
     }
 
     @Test
