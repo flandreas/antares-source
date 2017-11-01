@@ -146,7 +146,7 @@ object TooltipManager {
     private val Y_DIST = 10
 
     /** The time (in ms) of delaying the displaying of the textTooltip. */
-    private val DELAY = 2000
+    private val DELAY = 1500
 
     private val tooltipEventHandler: EventHandler<TooltipEvent> = { handle(it) }
 
