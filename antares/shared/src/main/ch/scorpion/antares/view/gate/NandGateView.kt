@@ -21,18 +21,21 @@ class NandGateView(
     nandGate: NandGate = NandGate()
 ) : AbstractAndLikeGateView<NandGate>(styleProvider, currentSymbolStyle, "&", "library.element.NandGate", nandGate) {
 
-    private val explanation: DrawableExplanation by lazy {
-        DrawableExplanation(
-                TruthTableView(NandGate.TRUTH_TABLE, model!!),
-                Point2D(boundingBox.centerX, boundingBox.minY))
+    companion object {
+        private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
+                TruthTableView(NandGate.TRUTH_TABLE, null), Point2D())
     }
 
     init {
         modelExchanged(null)
     }
 
-    override fun getExplanation(x: Double, y: Double): DrawableExplanation? {
-        return if (model!!.inputCount == 2) explanation else null
+    override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
+        return if (model!!.inputCount == 2) {
+            EXPLANATION.explanation.vertice = model
+            EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
+            EXPLANATION
+        } else null
     }
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {

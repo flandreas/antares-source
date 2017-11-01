@@ -21,14 +21,17 @@ class XnorGateView(
         xnorGate: XnorGate = XnorGate()
 ) : AbstractOrLikeGateView<XnorGate>(styleProvider, currentSymbolStyle, "=1", "library.element.XnorGate", xnorGate) {
 
-    private val explanation: DrawableExplanation by lazy {
-        DrawableExplanation(
-                TruthTableView(XnorGate.TRUTH_TABLE, model!!),
-                Point2D(boundingBox.centerX, boundingBox.minY))
+    companion object {
+        private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
+                TruthTableView(XnorGate.TRUTH_TABLE, null), Point2D())
     }
 
-    override fun getExplanation(x: Double, y: Double): DrawableExplanation? {
-        return if (model!!.inputCount == 2) explanation else null
+    override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
+        return if (model!!.inputCount == 2) {
+            EXPLANATION.explanation.vertice = model
+            EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
+            EXPLANATION
+        } else null
     }
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {

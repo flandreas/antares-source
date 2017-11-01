@@ -26,10 +26,14 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
  * @property model the [TruthTableModel] defining the input and output associations
  * @property vertice the [Vertice] to be used for highlighting the actual signal values in the rendered view,
  * and for determining column names according to the [Vertice]' port names
+ *
+ * @property vertice the [Vertice] whose [Port] values are used to determine the current row.
+ * Can be `null` in order to support usage scenarios where instances of [TruthTableView] instances are shared
+ * between multiple [Vertice]s, as [TruthTableView] is mainly presumed to be used as a flyweight.
  */
 class TruthTableView(
         private val model: TruthTableModel,
-        private val vertice: Vertice,
+        var vertice: Vertice? = null,
         private val styleType: StyleType = GraphStyleType.EXPLANATION,
         private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangle() {
@@ -137,8 +141,11 @@ class TruthTableView(
      * values of the [vertice].
      */
     private fun getCurrentRowIndex(): Int {
+        if (vertice == null) {
+            return -1;
+        }
         val signals = mutableListOf<Bit>()
-        vertice.getInputs()
+        vertice!!.getInputs()
                 .map { it as InputPort<DigitalSignal> }
                 .forEach { signals.add(it.getIncomingSignal()!!.bitAt(0)) }
         return model.rowIndex(Array<Bit>(signals.size, { signals[it] }))

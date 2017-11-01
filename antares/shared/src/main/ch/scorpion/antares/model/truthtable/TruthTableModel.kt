@@ -92,12 +92,6 @@ class TruthTableModel(val inputColumnNames: List<String>, val outputColumnNames:
 
     /** Creates and registers a [Row] with zero outputs for every possible input combination.*/
     private fun predefineRows() {
-        /*
-        (0 until BitOperation.power(inputCount.toLong())).mapTo(_rows) {
-            Row(Word.of(BitWidth.of(inputCount), it.toLong()).bits.toTypedArray(),
-                    Word.of(BitWidth.of(outputCount), 0L).bits.toTypedArray())
-        }
-        */
         (0 until BitOperation.power(inputCount.toLong())).mapTo(_rows) { Row(
                 Bit.listFromInt(it, inputCount).toTypedArray(),
                 Bit.listFromInt(0, outputCount).toTypedArray()

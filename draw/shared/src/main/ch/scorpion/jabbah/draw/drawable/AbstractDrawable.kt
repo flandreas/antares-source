@@ -91,7 +91,7 @@ abstract class AbstractDrawable : Drawable {
 
     override fun getTooltip(x: Double, y: Double): Tooltip? = null
 
-    override fun getExplanation(x: Double, y: Double): DrawableExplanation? = null
+    override fun getExplanation(x: Double, y: Double): DrawableExplanation<RectangularDrawable>? = null
 
     /** ---- AbstractDrawable */
 

@@ -113,11 +113,11 @@ interface Drawable {
      * Returns an epic, graphical explanation of this [Drawable] to be displayed when the user hovers over
      * this [Drawable] with the mouse.
      */
-    fun getExplanation(x: Double, y: Double): DrawableExplanation?
+    fun getExplanation(x: Double, y: Double): DrawableExplanation<*>?
 }
 
 /**
  * A location-sensitive, graphical description of an object that can be displayed as popup in a view
  * when the user hovers over the object with the mouse.
  */
-data class DrawableExplanation(val explanation: RectangularDrawable, val location: Point2D)
+data class DrawableExplanation<out T: RectangularDrawable>(val explanation: T, var location: Point2D)

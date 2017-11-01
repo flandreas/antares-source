@@ -21,10 +21,9 @@ class OrGateView(
     orGate: OrGate = OrGate()
 ) : AbstractOrLikeGateView<OrGate>(styleProvider, currentSymbolStyle, "≥1", "library.element.OrGate", orGate) {
 
-    private val explanation: DrawableExplanation by lazy {
-        DrawableExplanation(
-                TruthTableView(OrGate.TRUTH_TABLE, model!!),
-                Point2D(boundingBox.centerX, boundingBox.minY))
+    companion object {
+        private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
+                TruthTableView(OrGate.TRUTH_TABLE, null), Point2D())
     }
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
@@ -32,7 +31,11 @@ class OrGateView(
         GateMnemonic.drawOr(this, context, foregroundColor, backgroundColor)
     }
 
-    override fun getExplanation(x: Double, y: Double): DrawableExplanation? {
-        return if (model!!.inputCount == 2) explanation else null
+    override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
+        return if (model!!.inputCount == 2) {
+            EXPLANATION.explanation.vertice = model
+            EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
+            EXPLANATION
+        } else null
     }
 }

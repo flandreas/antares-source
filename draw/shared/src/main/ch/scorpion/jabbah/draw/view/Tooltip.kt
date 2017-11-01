@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -14,6 +15,7 @@ import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.ArrowBubble
 import ch.scorpion.jabbah.draw.drawable.MultilineText
+import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -32,7 +34,7 @@ private data class TooltipEvent(
         val origin: Drawable?,
         val view: View<*>,
         val tooltip: Tooltip?,
-        val explanation: DrawableExplanation?
+        val explanation: DrawableExplanation<RectangularDrawable>?
 )
 
 /**
@@ -51,7 +53,7 @@ class TooltipHandler(
         private val eventBus: EventBus,
         private val drawableRetriever: (DrawableContainer<*>, Double, Double) -> Drawable? = { c,x,y -> c.getDrawableAt(x, y) },
         private val tooltipAccessor: (Drawable, Double, Double) -> Tooltip? = { d, x, y -> d.getTooltip(x, y) },
-        private val explanationAccessor: (Drawable, Double, Double) -> DrawableExplanation? = { d, x, y -> d.getExplanation(x, y) }
+        private val explanationAccessor: (Drawable, Double, Double) -> DrawableExplanation<RectangularDrawable>? = { d, x, y -> d.getExplanation(x, y) }
 ) {
 
     /**
@@ -66,7 +68,7 @@ class TooltipHandler(
      */
     private var lastTooltipText: String? = null
 
-    private var lastExplanation: DrawableExplanation? = null
+    private var lastExplanation: DrawableExplanation<RectangularDrawable>? = null
 
     /**
      * Handles mouse moves events in the client of the tooltip system and requests tooltip displaying
@@ -119,7 +121,7 @@ private data class TooltipRequest(
         val origin: Drawable,
         val view: View<*>,
         val tooltip: Tooltip?,
-        val explanation: DrawableExplanation?
+        val explanation: DrawableExplanation<RectangularDrawable>?
 )
 
 /** Holds the view data of a currently displayed [Tooltip] or [DrawableExplanation]. */
@@ -271,9 +273,9 @@ object TooltipManager {
 
     private fun calculateTextBubbleLocation(location: Point2D): Point2D = Point2D(location.x, location.y + Y_DIST)
 
-    private fun createExplanationArrowBubble(explanation: DrawableExplanation, view: View<*>): ArrowBubble {
+    private fun createExplanationArrowBubble(explanation: DrawableExplanation<RectangularDrawable>, view: View<*>): ArrowBubble {
         return ArrowBubble(
-                explanation.explanation!!,
+                explanation.explanation,
                 view.modelToView(calculateExplanationBubbleLocation(explanation.location)),
                 false,
                 StyleType.TOOLTIP,

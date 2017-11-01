@@ -21,17 +21,23 @@ class NotGateView(
     notGate: NotGate = NotGate()
 ) : AbstractDigitalGateView<NotGate>(styleProvider, "1", "library.element.NotGate", notGate) {
 
+    companion object {
+        private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
+                TruthTableView(NotGate.TRUTH_TABLE, null), Point2D())
+    }
+
+
     init {
         modelExchanged(null)
     }
 
-    private val explanation: DrawableExplanation by lazy {
-        DrawableExplanation(
-                TruthTableView(NotGate.TRUTH_TABLE, model!!),
-                Point2D(boundingBox.centerX, boundingBox.minY))
+    override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
+        return if (model!!.inputCount == 2) {
+            EXPLANATION.explanation.vertice = model
+            EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
+            EXPLANATION
+        } else null
     }
-
-    override fun getExplanation(x: Double, y: Double): DrawableExplanation? = explanation
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
         currentSymbolStyle.symbolStyle.drawNotGate(this, context, foregroundColor, backgroundColor, stroke)

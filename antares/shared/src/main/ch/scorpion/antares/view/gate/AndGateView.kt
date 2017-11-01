@@ -34,6 +34,9 @@ class AndGateView(
 ) : AbstractAndLikeGateView<AndGate>(styleProvider, currentSymbolStyle, "&", "library.element.AndGate", andGate) {
 
     companion object {
+        private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
+                TruthTableView(AndGate.TRUTH_TABLE, null), Point2D())
+
         // TODO Refactor: Use [StyleProvider] instead of [Themes] to access style information
         private val CLOSED_DATA_PATH_STROKE = Stroke(width = Themes.get<GraphTheme>().edge.stroke.width)
         private val OPEN_DATA_PATH_STROKE = Stroke(width = Themes.get<GraphTheme>().edge.stroke.width, dash = floatArrayOf(5.0f), dashPhase = 0f)
@@ -52,19 +55,16 @@ class AndGateView(
             update()
         }
 
-    private val explanation: DrawableExplanation by lazy {
-        DrawableExplanation(
-                TruthTableView(AndGate.TRUTH_TABLE, model!!),
-                Point2D(boundingBox.centerX, boundingBox.minY))
-    }
-
-
     init {
         modelExchanged(null)
     }
 
-    override fun getExplanation(x: Double, y: Double): DrawableExplanation? {
-        return if (model!!.inputCount == 2) explanation else null
+    override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
+        return if (model!!.inputCount == 2) {
+            EXPLANATION.explanation.vertice = model
+            EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
+            EXPLANATION
+        } else null
     }
 
     override fun modelExchanged(oldModel: AndGate?) {
