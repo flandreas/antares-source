@@ -138,7 +138,7 @@ class LEDView(
 
     override val boundingBox: Rectangle2D
         get() {
-            val bb = super.boundingBox
+            val bb = Rectangle2D(super.boundingBox)
             val lbb = label.boundingBox.moveBy(location)
             bb.add(lbb)
             return bb

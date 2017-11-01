@@ -38,6 +38,11 @@ abstract class AbstractDrawable : Drawable {
             }
         }
 
+    /** Empty implementation.*/
+    override fun dispose() {
+        // empty
+    }
+
     override fun accept(visitor: HierarchyVisitor): Boolean {
         return visitor.visit(this)
     }

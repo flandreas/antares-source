@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.io.Storable
 
 /**
  * A part of a [VerticeView] that represents a graphical representation of a [Port].
+ * Implementing classes should override [dispose] to detach from its model and releasing all resources
  * @param T the type of signal that this [PortView]'s [Port] can consume or produce.
  */
 interface PortView<T: Any> : Drawable, Storable, SnappableX, SnappableY {
@@ -113,9 +114,6 @@ interface PortView<T: Any> : Drawable, Storable, SnappableX, SnappableY {
      * which is something we try to avoid.
      */
     var edgeViewWidth: Int
-
-    /** Disposes this [PortView] by detaching it from its model and releasing all resources.*/
-    fun dispose()
 
     /** Sets the relative location of this [PortView] within the owning [VerticeView].*/
     fun setLocation(x: Double, y: Double)

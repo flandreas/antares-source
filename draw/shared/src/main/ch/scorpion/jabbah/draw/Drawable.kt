@@ -39,6 +39,13 @@ interface Drawable {
     fun accept(visitor: HierarchyVisitor): Boolean
 
     /**
+     * Informs this [Drawable] that it is not actively used any more.
+     * Implementing classes should release references to other objects, and especially de-register from listening
+     * to events. However, it might be that a disposes [Drawable] might be re-activated later.
+     */
+    fun dispose()
+
+    /**
      * Returns the [InputEventHandler] that handles input events for this [Drawable].
      * If a [Drawable] doesn't want to handle input events at all, it can return an empty implementation that
      * could be statically provided by an abstract skeleton implementation.

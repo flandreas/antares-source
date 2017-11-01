@@ -65,6 +65,7 @@ class ArrowBubble(
 
     init {
         content.setBounds(contentLocation.x, contentLocation.y, content.width, content.height)
+        DrawableOwner(this, content)
     }
 
     /** ----  [AbstractDrawable] */

@@ -8,11 +8,16 @@ import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.logger
 
 /**
  * An abstract base implementation of the [Vertice] interface.
  */
 abstract class AbstractVertice : AbstractGraphElement(), Vertice {
+
+    companion object {
+        private val LOG by logger(AbstractVertice::class)
+    }
 
     /** Contains all [Port]s of this [Vertice].*/
     private val ports = mutableListOf<Port<*>>()
@@ -42,8 +47,12 @@ abstract class AbstractVertice : AbstractGraphElement(), Vertice {
         get() = ports.any { it.isConnected }
 
     override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
-        signalHandler.logTrace(System.get().getClass(this), id,
-            {"input changed to ${dataToString()}, will calculate at ${signalHandler.executionTime + propagationDelay} ns"})
+        if (LOG.isTraceEnabled()) {
+            signalHandler.logTrace(
+                    System.get().getClass(this),
+                    id,
+                    { "input changed to ${dataToString()}, will calculate at ${signalHandler.executionTime + propagationDelay} ns" })
+        }
 
         requestActingAfter(signalHandler, propagationDelay, createActorData(input))
         stateChanged(signalHandler)

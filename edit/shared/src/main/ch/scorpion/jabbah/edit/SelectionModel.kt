@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.draw.Drawable
  * [SelectionModel] instances are designed to potentially be cached and reused for different [Component]
  * instances of the same class.
  *
+ * Implementing classes should detach from its [Component] in [dispose].
+ *
  * [SelectionModel]s are provided by instances of [SelectionModelProvider].
  * @param T the type of the [Component] this [SelectionModel] selects
  */
@@ -22,11 +24,6 @@ interface SelectionModel<out T : Component> : Drawable {
      * Implementing classes should adjust their geometry and start listening for geometry updates of the [Component].
      */
     fun setup()
-
-    /**
-     * Disposes this [SelectionModel]. Implementing classes should detach from its [Component].
-     */
-    fun dispose()
 
     /**
      * Notifies this [SelectionModel] that it has been added to the selection container of the specified

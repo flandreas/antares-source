@@ -16,8 +16,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 /**
@@ -33,7 +32,7 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
  */
 class TruthTableView(
         private val model: TruthTableModel,
-        var vertice: Vertice? = null,
+        vertice: Vertice?,
         private val styleType: StyleType = GraphStyleType.EXPLANATION,
         private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangle() {
@@ -42,8 +41,22 @@ class TruthTableView(
         private val COL_WIDTH = 25
     }
 
+    var vertice: Vertice? = null
+        set(value) {
+            if (field != null) {
+                field!!.removeGraphElementListener(verticeListener)
+            }
+            if (field !== value) {
+                field = value
+            }
+            if (field != null) {
+                field!!.addGraphElementListener(verticeListener)
+            }
+        }
+
     init {
         build()
+        this.vertice = vertice
     }
 
     private val stroke: Stroke = Stroke(0.5f)
@@ -66,7 +79,25 @@ class TruthTableView(
             verticalAlignment = Label.VerticalAlignment.CENTER
     )
 
+    /** Listens for state changes of [vertice] and invalidates this [TruthTableView] to react to signal changes.*/
+    private val verticeListener: GraphElementListener = object : GraphElementAdapter() {
+        override fun stateChanged(e: GraphElementEvent) {
+            invalidate()
+            validate()
+        }
+    }
+
     /** ---- [Drawable] interface */
+
+    /**
+     * Called by clients when this [TruthTableView] is not actively used any more.
+     * De-registers itself from listening to model updates, but keeps its [TruthTableModel], because this
+     * [TruthTableView] might be reused later for a different [Vertice].
+     * */
+    override fun dispose() {
+        vertice?.removeGraphElementListener(verticeListener)
+        vertice = null
+    }
 
     override fun draw(context: DrawContext) {
         val currentRow = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) getCurrentRowIndex() else -1
