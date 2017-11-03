@@ -16,8 +16,11 @@ abstract class AbstractRectangle(val shape: RectangularShape) : AbstractDrawable
     /** Constructs this [AbstractRectangle] with a [Rectangle2D] shape.*/
     constructor(x: Double, y: Double, w: Double, h: Double) : this(Rectangle2D(x, y, w, h))
 
+    /** Constructs this [AbstractRectangle] with a [Rectangle2D] shape.*/
+    constructor(x: Int, y: Int, w: Int, h: Int) : this(Rectangle2D(x, y, w, h))
+
     /** Constructs this [AbstractRectangle] with an empty [Rectangle2D] shape.*/
-    constructor(): this(0.0, 0.0, 0.0, 0.0)
+    constructor() : this(0.0, 0.0, 0.0, 0.0)
 
     /** ---- [Locatable] */
 
@@ -33,8 +36,8 @@ abstract class AbstractRectangle(val shape: RectangularShape) : AbstractDrawable
     override val boundingBox: Rectangle2D
         get() {
             return Rectangle2D(
-                bounds.x - lineWidth, bounds.y - lineWidth,
-                bounds.width + 2 * lineWidth, bounds.height + 2 * lineWidth)
+                    bounds.x - lineWidth, bounds.y - lineWidth,
+                    bounds.width + 2 * lineWidth, bounds.height + 2 * lineWidth)
         }
 
     override fun contains(x: Double, y: Double): Boolean {
