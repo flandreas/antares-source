@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.view
 
+import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Tooltip

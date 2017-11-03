@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.checkState
-import java.util.*
 
 typealias Bits = Array<Bit>
 
@@ -100,11 +99,11 @@ class TruthTableModel(val inputColumnNames: List<String>, val outputColumnNames:
     }
 
     private fun getRow(input: Bits): Row {
-        return _rows.first { Arrays.equals(it.input, input) }
+        return _rows.first { it.input contentDeepEquals input }
     }
 
     fun rowIndex(input: Bits): Int {
-        return _rows.indexOfFirst { Arrays.equals(it.input, input) }
+        return _rows.indexOfFirst { it.input contentDeepEquals input }
     }
 
     /**
