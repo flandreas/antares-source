@@ -53,12 +53,6 @@ interface AffineTransform {
     fun transform(ptSrc: Point2D): Point2D
 
     /**
-     * Transforms the specified [ptSrc] and stores the result in [ptDst]. If [ptDst] is `null`, a new [Point2D] is created.
-     * @return the result of the transformation, which is either the updated [ptDst] or the newly created [Point2D].
-     */
-    fun transform(ptSrc: Point2D, ptDst: Point2D?): Point2D
-
-    /**
      * Inverse transforms the specified [Point2D] and returns the new [Point2D].
      * @throws NonInvertibleTransformException if this [AffineTransform] is in a non-invertible state
      */

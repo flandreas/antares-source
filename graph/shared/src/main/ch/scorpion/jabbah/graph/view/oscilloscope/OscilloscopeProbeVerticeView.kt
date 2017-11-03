@@ -63,7 +63,7 @@ class OscilloscopeProbeVerticeView<T: Any>(
 
     private val handler = Handler()
 
-    private val moveLastLocation = Point2D()
+    private var moveLastLocation = Point2D()
 
     /** ---- [Component] interface */
 
@@ -144,7 +144,7 @@ class OscilloscopeProbeVerticeView<T: Any>(
 
         override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
             LOG.debug("OscilloscopeProbeVerticeView pressed ${context.x},${context.y}")
-            moveLastLocation.setLocation(context.location)
+            moveLastLocation = Point2D(context.location)
             return this
         }
 
@@ -161,7 +161,7 @@ class OscilloscopeProbeVerticeView<T: Any>(
 
             // Perform drag
             moveBy(dx + offset.x, dy + offset.y)
-            moveLastLocation.setLocation(context.x + offset.x, context.y + offset.y)
+            moveLastLocation = Point2D(context.x + offset.x, context.y + offset.y)
             validate()
 
             // Sensing EdgeView

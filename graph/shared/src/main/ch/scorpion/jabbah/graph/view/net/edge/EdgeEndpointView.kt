@@ -36,7 +36,7 @@ class EdgeEndpointView(
     override var location: Point2D = Point2D()
         set(value) {
             invalidate()
-            location.setLocation(value.x, value.y)
+            field = Point2D(value.x, value.y)
             updateGeometry()
             invalidate()
             update()

@@ -158,7 +158,7 @@ open class EditorImpl(
         }
 
         override fun mousePressed(e: MouseEvent) {
-            pressedLocation.setLocation(e.x.toDouble(), e.y.toDouble())
+            pressedLocation = Point2D(e.x.toDouble(), e.y.toDouble())
             currentTool.mousePressed(e, view.viewToModelX(e.x.toDouble()), view.viewToModelY(e.y.toDouble()))
         }
 

@@ -104,7 +104,7 @@ class Label(
     private val bounds = Rectangle2D()
 
     /** The point at which the text's baseline starts relative to the location.*/
-    private val baselinePoint = Point2D()
+    private var baselinePoint = Point2D()
 
     init {
         displayableText = calculateDisplayableText()
@@ -307,7 +307,7 @@ class Label(
             textRenderInfo.textBounds.height + 2 * BOUNDS_INSET
         )
 
-        baselinePoint.setLocation(bounds.x + BOUNDS_INSET, bounds.y + textRenderInfo.ascent)
+        baselinePoint = Point2D(bounds.x + BOUNDS_INSET, bounds.y + textRenderInfo.ascent)
 
         validate()
         update()

@@ -11,9 +11,9 @@ import ch.scorpion.jabbah.base.Math
  * See https://docs.oracle.com/javase/8/docs/api/java/awt/geom/AffineTransform.html
  */
 data class AffineTransformImpl (
-        var m00: Double = 0.0, var m10: Double = 0.0,
-        var m01: Double = 0.0, var m11: Double = 0.0,
-        var m02: Double = 0.0, var m12: Double = 0.0) : AffineTransform {
+        private var m00: Double = 0.0, private var m10: Double = 0.0,
+        private var m01: Double = 0.0, private var m11: Double = 0.0,
+        private var m02: Double = 0.0, private var m12: Double = 0.0) : AffineTransform {
 
     var type: Int = TYPE_UNKNOWN
     var state: Int = APPLY_IDENTITY
@@ -124,17 +124,21 @@ data class AffineTransformImpl (
             type = TYPE_QUADRANT_ROTATION
         } else {
             cos = Math.cos(theta)
-            if (cos == -1.0) {
-                sin = 0.0
-                state = APPLY_SCALE
-                type = TYPE_QUADRANT_ROTATION
-            } else if (cos == 1.0) {
-                sin = 0.0
-                state = APPLY_IDENTITY
-                type = TYPE_IDENTITY
-            } else {
-                state = APPLY_SHEAR or APPLY_SCALE
-                type = TYPE_GENERAL_ROTATION
+            when (cos) {
+                -1.0 -> {
+                    sin = 0.0
+                    state = APPLY_SCALE
+                    type = TYPE_QUADRANT_ROTATION
+                }
+                1.0 -> {
+                    sin = 0.0
+                    state = APPLY_IDENTITY
+                    type = TYPE_IDENTITY
+                }
+                else -> {
+                    state = APPLY_SHEAR or APPLY_SCALE
+                    type = TYPE_GENERAL_ROTATION
+                }
             }
         }
         m00 = cos
@@ -322,98 +326,27 @@ data class AffineTransformImpl (
     }
 
     override fun transform(ptSrc: Point2D): Point2D {
-        val ptDst = Point2D()
-        // Copy source coords into local variables in case src == dst
+        // Copy source coordinates into local variables in case src == dst
         val x = ptSrc.x
         val y = ptSrc.y
-        when (state) {
-            APPLY_SHEAR or APPLY_SCALE or APPLY_TRANSLATE -> {
-                ptDst.setLocation(x * m00 + y * m01 + m02,
-                        x * m10 + y * m11 + m12)
-                return ptDst
-            }
-            APPLY_SHEAR or APPLY_SCALE -> {
-                ptDst.setLocation(x * m00 + y * m01, x * m10 + y * m11)
-                return ptDst
-            }
-            APPLY_SHEAR or APPLY_TRANSLATE -> {
-                ptDst.setLocation(y * m01 + m02, x * m10 + m12)
-                return ptDst
-            }
-            APPLY_SHEAR -> {
-                ptDst.setLocation(y * m01, x * m10)
-                return ptDst
-            }
-            APPLY_SCALE or APPLY_TRANSLATE -> {
-                ptDst.setLocation(x * m00 + m02, y * m11 + m12)
-                return ptDst
-            }
-            APPLY_SCALE -> {
-                ptDst.setLocation(x * m00, y * m11)
-                return ptDst
-            }
-            APPLY_TRANSLATE -> {
-                ptDst.setLocation(x + m02, y + m12)
-                return ptDst
-            }
-            APPLY_IDENTITY -> {
-                ptDst.setLocation(x, y)
-                return ptDst
-            }
-            else -> return ptSrc
-        }
-    }
-
-    override fun transform(ptSrc: Point2D, ptDst: Point2D?): Point2D {
-        val result: Point2D = ptDst ?: Point2D()
-        // Copy source coords into local variables in case src == dst
-        val x = ptSrc.x
-        val y = ptSrc.y
-        when (state) {
-            APPLY_SHEAR or APPLY_SCALE or APPLY_TRANSLATE -> {
-                result.setLocation(x * m00 + y * m01 + m02, x * m10 + y * m11 + m12)
-                return result
-            }
-            APPLY_SHEAR or APPLY_SCALE -> {
-                result.setLocation(x * m00 + y * m01, x * m10 + y * m11)
-                return result
-            }
-            APPLY_SHEAR or APPLY_TRANSLATE -> {
-                result.setLocation(y * m01 + m02, x * m10 + m12)
-                return result
-            }
-            APPLY_SHEAR -> {
-                result.setLocation(y * m01, x * m10)
-                return result
-            }
-            APPLY_SCALE or APPLY_TRANSLATE -> {
-                result.setLocation(x * m00 + m02, y * m11 + m12)
-                return result
-            }
-            APPLY_SCALE -> {
-                result.setLocation(x * m00, y * m11)
-                return result
-            }
-            APPLY_TRANSLATE -> {
-                result.setLocation(x + m02, y + m12)
-                return result
-            }
-            APPLY_IDENTITY -> {
-                result.setLocation(x, y)
-                return result
-            }
-            else -> {
-                throw IllegalStateException("missing case in transform state switch")
-            }
+        return when (state) {
+            APPLY_SHEAR or APPLY_SCALE or APPLY_TRANSLATE -> Point2D(x * m00 + y * m01 + m02,x * m10 + y * m11 + m12)
+            APPLY_SHEAR or APPLY_SCALE -> Point2D(x * m00 + y * m01, x * m10 + y * m11)
+            APPLY_SHEAR or APPLY_TRANSLATE -> Point2D(y * m01 + m02, x * m10 + m12)
+            APPLY_SHEAR -> Point2D(y * m01, x * m10)
+            APPLY_SCALE or APPLY_TRANSLATE -> Point2D(x * m00 + m02, y * m11 + m12)
+            APPLY_SCALE -> Point2D(x * m00, y * m11)
+            APPLY_TRANSLATE -> Point2D(x + m02, y + m12)
+            APPLY_IDENTITY -> Point2D(x, y)
+            else -> Point2D()
         }
     }
 
     override fun inverseTransform(ptSrc: Point2D): Point2D {
-        val ptDst = Point2D()
         // Copy source coords into local variables in case src == dst
         var x = ptSrc.x
         var y = ptSrc.y
-        when (state) {
+        return when (state) {
             APPLY_SHEAR or APPLY_SCALE or APPLY_TRANSLATE -> {
                 x -= m02
                 y -= m12
@@ -421,9 +354,7 @@ data class AffineTransformImpl (
                 if (Math.abs(det) <= Double.MIN_VALUE) {
                     throw NonInvertibleTransformException("Determinant is " + det)
                 }
-                ptDst.setLocation((x * m11 - y * m01) / det,
-                        (y * m00 - x * m10) / det)
-                return ptDst
+                Point2D((x * m11 - y * m01) / det, (y * m00 - x * m10) / det)
             }
         /* NOBREAK */
             APPLY_SHEAR or APPLY_SCALE -> {
@@ -431,8 +362,7 @@ data class AffineTransformImpl (
                 if (Math.abs(det) <= Double.MIN_VALUE) {
                     throw NonInvertibleTransformException("Determinant is " + det)
                 }
-                ptDst.setLocation((x * m11 - y * m01) / det, (y * m00 - x * m10) / det)
-                return ptDst
+                Point2D((x * m11 - y * m01) / det, (y * m00 - x * m10) / det)
             }
             APPLY_SHEAR or APPLY_TRANSLATE -> {
                 x -= m02
@@ -440,16 +370,14 @@ data class AffineTransformImpl (
                 if (m01 == 0.0 || m10 == 0.0) {
                     throw NonInvertibleTransformException("Determinant is 0")
                 }
-                ptDst.setLocation(y / m10, x / m01)
-                return ptDst
+                Point2D(y / m10, x / m01)
             }
         /* NOBREAK */
             APPLY_SHEAR -> {
                 if (m01 == 0.0 || m10 == 0.0) {
                     throw NonInvertibleTransformException("Determinant is 0")
                 }
-                ptDst.setLocation(y / m10, x / m01)
-                return ptDst
+                Point2D(y / m10, x / m01)
             }
             APPLY_SCALE or APPLY_TRANSLATE -> {
                 x -= m02
@@ -457,26 +385,22 @@ data class AffineTransformImpl (
                 if (m00 == 0.0 || m11 == 0.0) {
                     throw NonInvertibleTransformException("Determinant is 0")
                 }
-                ptDst.setLocation(x / m00, y / m11)
-                return ptDst
+                Point2D(x / m00, y / m11)
             }
         /* NOBREAK */
             APPLY_SCALE -> {
                 if (m00 == 0.0 || m11 == 0.0) {
                     throw NonInvertibleTransformException("Determinant is 0")
                 }
-                ptDst.setLocation(x / m00, y / m11)
-                return ptDst
+                Point2D(x / m00, y / m11)
             }
             APPLY_TRANSLATE -> {
-                ptDst.setLocation(x - m02, y - m12)
-                return ptDst
+                Point2D(x - m02, y - m12)
             }
             APPLY_IDENTITY -> {
-                ptDst.setLocation(x, y)
-                return ptDst
+                Point2D(x, y)
             }
-            else -> return ptDst
+            else -> return Point2D()
         }
     }
 

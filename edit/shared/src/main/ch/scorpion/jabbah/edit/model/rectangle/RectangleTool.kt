@@ -49,7 +49,7 @@ class RectangleTool<T : RectangularComponent>(
     private var addedComponent by Delegates.notNull<Component>()
 
     /** The location where the mouse is initially pressed.*/
-    private val anchorLocation = Point2D()
+    private var anchorLocation = Point2D()
 
     /** ---- [Tool] interface */
 
@@ -63,7 +63,7 @@ class RectangleTool<T : RectangularComponent>(
         instance = createComponent()
 
         val offset = editor.snapManager.snap(x, y)
-        anchorLocation.setLocation(x + offset.x, y + offset.y)
+        anchorLocation = Point2D(x + offset.x, y + offset.y)
         instance.setFrame(anchorLocation.x, anchorLocation.y, 0.0, 0.0)
 
         editor.view.selectionManager.deselectAll()

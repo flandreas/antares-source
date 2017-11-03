@@ -31,7 +31,7 @@ interface Handle : Drawable, Unzoomable {
     var location: Point2D
 
     fun setLocation(x: Double, y: Double) {
-        location.setLocation(x, y)
+        location = Point2D(x, y)
     }
 
 }

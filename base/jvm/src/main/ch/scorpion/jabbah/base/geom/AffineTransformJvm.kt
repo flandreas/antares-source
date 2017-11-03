@@ -65,15 +65,4 @@ class AffineTransformJvm(val transform: java.awt.geom.AffineTransform) : AffineT
     override fun setToTranslation(tx: Double, ty: Double) {
         transform.setToTranslation(tx, ty)
     }
-
-    override fun transform(ptSrc: Point2D, ptDst: Point2D?): Point2D {
-        val dest = if (ptDst != null) java.awt.geom.Point2D.Double(ptDst.x, ptDst.y) else null
-        val result = transform.transform(java.awt.geom.Point2D.Double(ptSrc.x, ptSrc.y), dest)
-
-        if (ptDst != null) {
-            ptDst.setLocation(result.x, result.y)
-            return ptDst
-        }
-        return Point2D(result.x, result.y)
-    }
 }

@@ -23,7 +23,7 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
     /** The [Snapper]s that are orchestrated by this [SnapManager]. The [Snapper] at index 0 gets involved first.*/
     private val snappers: MutableList<Snapper> = mutableListOf<Snapper>()
 
-    /** Used for cummulating snap rsults that are produces by the individual [Snapper]s.*/
+    /** Used for cumulating snap results that are produces by the individual [Snapper]s.*/
     private val result = SnapResult()
 
     /** The [Drawable] that highlights the currently snapped x coordinate, if any.*/
@@ -58,7 +58,6 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 
     override fun snap(x: Double, y: Double): Point2D {
         if (!snapEnabled) {
-            ZERO_OFFSET.setLocation(0.0, 0.0)
             return ZERO_OFFSET
         }
 

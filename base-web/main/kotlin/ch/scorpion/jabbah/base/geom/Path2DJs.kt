@@ -100,57 +100,70 @@ class Path2DJs : Path {
     }
 
     private interface Command {
-        val p: Point2D?
         fun play(path: Path2DJs, ctx: CanvasRenderingContext2D)
+        fun transform(transform: AffineTransform)
     }
 
-    private class MoveTo(override val p: Point2D) : Command {
+    private class MoveTo(var p: Point2D) : Command {
         override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
             ctx.moveTo(p.x, p.y)
         }
+        override fun transform(transform: AffineTransform) {
+            p = transform.transform(p)
+        }
     }
 
-    private class LineTo(override val p: Point2D): Command {
+    private class LineTo(var p: Point2D): Command {
         override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
             ctx.lineTo(p.x, p.y)
         }
-    }
-
-    private class QuadTo(private val controlPoint: Point2D, private val endPoint: Point2D) : Command {
-        override val p: Point2D? get() = endPoint
-        override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
-            ctx.quadraticCurveTo(controlPoint.x, controlPoint.y, endPoint.x, endPoint.y)
+        override fun transform(transform: AffineTransform) {
+            p = transform.transform(p)
         }
     }
 
-    private class CurveTo(private val cp1: Point2D, private val cp2: Point2D, private val endPoint: Point2D) : Command {
-        override val p: Point2D? get() = endPoint
+    private class QuadTo(private var controlPoint: Point2D, private var endPoint: Point2D) : Command {
+        override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
+            ctx.quadraticCurveTo(controlPoint.x, controlPoint.y, endPoint.x, endPoint.y)
+        }
+        override fun transform(transform: AffineTransform) {
+            controlPoint = transform.transform(controlPoint)
+            endPoint = transform.transform(endPoint)
+        }
+    }
+
+    private class CurveTo(private var cp1: Point2D, private var cp2: Point2D, private var endPoint: Point2D) : Command {
         override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
             ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, endPoint.x, endPoint.y)
+        }
+
+        override fun transform(transform: AffineTransform) {
+            cp1 = transform.transform(cp1)
+            cp2 = transform.transform(cp2)
+            endPoint = transform.transform(endPoint)
         }
     }
 
     private class ClosePath : Command {
-        override val p: Point2D? get() = null
         override fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
             path.lastMoveToEntry()?.let {
-                ctx.lineTo(it.p!!.x, it.p!!.y)
+                ctx.lineTo((it.command as MoveTo).p.x, it.command.p.y)
             }
+        }
+
+        override fun transform(transform: AffineTransform) {
+            // empty
         }
     }
 
     private data class Entry (val command: Command) {
-
-        val p: Point2D? get() = command.p
 
         fun play(path: Path2DJs, ctx: CanvasRenderingContext2D) {
             command.play(path, ctx)
         }
 
         fun transform(transform: AffineTransform) {
-            if (p != null) {
-                transform.transform(p!!, p)
-            }
+            command.transform(transform)
         }
     }
 }

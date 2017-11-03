@@ -129,8 +129,8 @@ class SelectionToolImpl(
             }
 
             movedReferenceComponent = component
-            moveStartLocation.setLocation(movedReferenceComponent!!.location)
-            moveLastLocation.setLocation(x, y)
+            moveStartLocation = Point2D(movedReferenceComponent!!.location)
+            moveLastLocation = Point2D(x, y)
 
             editor.view.setCursor(Cursor.HAND)
         } else {
@@ -179,7 +179,7 @@ class SelectionToolImpl(
         selection.forEach { it.completeMoveBy() }
 
         eventBus.post(DragEvent(editor, selection))
-        moveLastLocation.setLocation(x + offset!!.x, y + offset.y)
+        moveLastLocation = Point2D(x + offset!!.x, y + offset.y)
         editor.drawing.validate()
     }
 

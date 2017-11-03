@@ -4,8 +4,7 @@ import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Shape
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.draw.graphics.Graphics2D
 
 /**
  * A [Polyline] implementation that can be rendered as a shape by the [Graphics2D] engine.
@@ -41,7 +40,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
                 return bbox
             }
             bbox.setFrame(points[0].x, points[0].y, 0.0, 0.0)
-            for (i in 1..pointsCount - 1) {
+            for (i in 1 until pointsCount) {
                 bbox.add(points[i])
             }
             if (beginLineTerminator != null) {
@@ -133,11 +132,9 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
         if (pointsCount == 0) {
             return this
         }
-        var dx = x - points[0].x
-        var dy = y - points[0].y
-        for (p in points) {
-            p.setLocation(p.x + dx, p.y + dy)
-        }
+        val dx = x - points[0].x
+        val dy = y - points[0].y
+        points.toList().forEachIndexed { index, p ->  points[index] = Point2D(p.x + dx, p.y + dy)}
         updateLineTerminatorLocations()
         return this
     }
@@ -149,12 +146,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 
     override fun findSegment(x: Double, y: Double, area: Int): Int? {
         val rect = Rectangle2D(x - area, y - area, 2 * area.toDouble(), 2 * area.toDouble())
-        for (i in 0..pointsCount - 2) {
-            if (intersectsSegment(i, rect)) {
-                return i
-            }
-        }
-        return null
+        return (0..pointsCount - 2).firstOrNull { intersectsSegment(it, rect) }
     }
 
     override fun findPoint(x: Double, y: Double, area: Int): Int? {
@@ -208,19 +200,11 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
     }
 
     override fun mirrorHorizontally(x: Double) {
-        val mirroredList = mutableListOf<Point2D>()
-        for (p in points) {
-            mirroredList.add(p.mirrorHorizontally(x))
-        }
-        setPoints(mirroredList)
+        setPoints(points.map { it.mirrorHorizontally(x) })
     }
 
     override fun mirrorVertically(y: Double) {
-        val mirroredList = mutableListOf<Point2D>()
-        for (p in points) {
-            mirroredList.add(p.mirrorVertically(y))
-        }
-        setPoints(mirroredList)
+        setPoints(points.map { it.mirrorVertically(y) })
     }
 
     /** ---- [PolylineShape]  */
@@ -235,12 +219,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
     }
 
     private fun intersects(r: Rectangle2D): Boolean {
-        for (i in 0..pointsCount - 2) {
-            if (intersectsSegment(i, r)) {
-                return true
-            }
-        }
-        return false
+        return (0..pointsCount - 2).any { intersectsSegment(it, r) }
     }
 
     /**

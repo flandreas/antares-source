@@ -4,27 +4,13 @@ import ch.scorpion.jabbah.base.Math
 
 /**
  * The [Point2D] class defines a point representing a location in (x,y) coordinate space.
+ * Designed to be immutable.
  */
-data class Point2D(var x: Double = 0.0, var y: Double = 0.0) {
+data class Point2D(val x: Double = 0.0, val y: Double = 0.0) {
     constructor(p: Point2D): this(p.x, p.y)
     constructor(x: Int, y: Int): this(x.toDouble(), y.toDouble())
 
     override fun toString(): String = "Point2D($x,$y)"
-
-    /** Sets the location of this [Point2D] to the specified location.*/
-    fun setLocation(x: Double, y: Double): Point2D {
-        this.x = x
-        this.y = y
-        return this
-    }
-
-    /** Sets the location of this [Point2D] to the specified [Point2D]'s location.*/
-    fun setLocation(p: Point2D): Point2D {
-        setLocation(p.x, p.y)
-        return this
-    }
-
-    fun setLocation(x: Int, y: Int): Point2D = setLocation(x.toDouble(), y.toDouble())
 
     /** Returns the square of the distance from this [Point2D] to a specified location.*/
     fun distanceSq(x: Double, y: Double): Double{
@@ -33,7 +19,7 @@ data class Point2D(var x: Double = 0.0, var y: Double = 0.0) {
         return px * px + py * py
     }
 
-    /** Returns the sqare of the distance from this [Point2D] to a specified other [Point2D].*/
+    /** Returns the square of the distance from this [Point2D] to a specified other [Point2D].*/
     fun distanceSq(p: Point2D): Double = distanceSq(p.x, p.y)
 
     /** Returns the distance from this [Point2D] to a specified location.*/

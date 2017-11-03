@@ -79,7 +79,7 @@ class ArrowHead(
         TRANSFORM.setToIdentity()
         val rot = Geometry.angle(orientation, location)
         TRANSFORM.setToRotation(rotation - rot, location.x, location.y)
-        TRANSFORM.transform(lineEnd, lineEnd)
+        lineEnd = TRANSFORM.transform(lineEnd)
         shape.transform(TRANSFORM)
         rotation = rot
         invalidate()
@@ -94,9 +94,9 @@ class ArrowHead(
 
     private fun setLocationImpl(x: Double, y: Double) {
         TRANSFORM.setToTranslation(x - location.x, y - location.y)
-        location.setLocation(x, y)
+        location = Point2D(x, y)
         shape.transform(TRANSFORM)
-        TRANSFORM.transform(lineEnd, lineEnd)
+        lineEnd = TRANSFORM.transform(lineEnd)
     }
 
     private fun createShape(): Path {
@@ -105,12 +105,12 @@ class ArrowHead(
         path.lineTo(-length, -width)
         if (compactness == 1.0f) {
             path.lineTo(-length, width)
-            lineEnd.setLocation(-length, 0)
+            lineEnd = Point2D(-length, 0)
         } else {
             val innerLength = length * compactness
             path.lineTo(-innerLength.toDouble(), 0.0)
             path.lineTo(-length, width)
-            lineEnd.setLocation(-innerLength.toDouble(), 0.0)
+            lineEnd = Point2D(-innerLength.toDouble(), 0.0)
         }
         path.close()
         return path

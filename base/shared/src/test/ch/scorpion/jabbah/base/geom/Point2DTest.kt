@@ -29,16 +29,6 @@ class Point2DTest {
     }
 
     @Test
-    fun shouldSetLocation() {
-        assertEquals(Point2D(10.0, 20.0), Point2D().setLocation(10.0, 20.0))
-    }
-
-    @Test
-    fun shouldSetPoint() {
-        assertEquals(Point2D(10.0, 20.0), Point2D().setLocation(Point2D(10.0, 20.0)))
-    }
-
-    @Test
     fun shouldCalculateDistanceSq() {
         assertEquals(25.0, Point2D(0.0, 0.0).distanceSq(3.0, 4.0), 0.1)
     }
