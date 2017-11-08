@@ -36,7 +36,6 @@ import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.net.NetActorData
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.view.*
 
@@ -48,12 +47,12 @@ import ch.scorpion.jabbah.graph.view.*
  * which requires [TransparentAnimation] of executing [GraphElement]s.
  */
 class GraphViewAnimator(
-        val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-        val scheduler: Scheduler,
-        val animator: Animator,
-        val systemSpeedCategory: CurrentSystemSpeedCategory,
+        private val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+        private val scheduler: Scheduler,
+        private val animator: Animator,
+        private val systemSpeedCategory: CurrentSystemSpeedCategory,
         val eventBus: EventBus,
-        val currentGraphAnimationType: CurrentGraphViewAnimationType,
+        private val currentGraphAnimationType: CurrentGraphViewAnimationType,
         val styleProvider: StyleProvider
 ) : ActorListener {
 
@@ -67,7 +66,9 @@ class GraphViewAnimator(
         AntaresViewModule.currentGraphViewAnimationType,
         DrawStyleModule.styleProvider)
 
-    val LOG by logger(GraphViewAnimator::class)
+    companion object {
+        private val LOG by logger(GraphViewAnimator::class)
+    }
 
     /**
      * Maps a [Net] to all [DigitalEdgeViewNetAnimation]s currently running on it. Note that there can be
@@ -232,6 +233,7 @@ class GraphViewAnimator(
         // has been requested and this Actor waits to be scheduled by the Scheduler.
 
         if (elementViews.size == 1 && elementViews[0] is Transparent) {
+            LOG.debug("GraphViewAnimator: start glow animation")
             val transparent = elementViews[0] as Transparent
             val glowAnimation = TransparentAnimation.glow(transparent, 300.0)
             glowAnimation.addListener(object : AnimationTaskAdapter() {
@@ -259,7 +261,7 @@ class GraphViewAnimator(
     }
 
     private fun registerAnimation(net: Net<*>, animation: DigitalEdgeViewNetAnimation) {
-        netAnimationMap.getOrPut(net, { mutableListOf<DigitalEdgeViewNetAnimation>() }).add(animation)
+        netAnimationMap.getOrPut(net, { mutableListOf() }).add(animation)
     }
 
     private fun unregisterAnimation(net: Net<*>, animation: DigitalEdgeViewNetAnimation) {
@@ -275,6 +277,7 @@ class GraphViewAnimator(
     /** Determines whether an animation is to be shown while [VerticeView]s are calculating. */
     private fun requireVerticeGlowAnimation(): Boolean {
         return currentGraphAnimationType.graphViewAnimationType == GraphViewAnimationType.Animation
+            && scheduler.isPaused
     }
 
     /** ---- [GraphViewAnimator] */
