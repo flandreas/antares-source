@@ -82,7 +82,7 @@ class TooltipHandler(
         if (drawable == null) {
             if (lastTooltipDrawable != null) {
                 eventBus.post(TooltipEvent(null, view, null, null))
-                lastTooltipDrawable?.dispose()
+                lastExplanation?.explanation?.dispose()
                 lastTooltipDrawable = null
                 lastTooltipText = null
                 lastExplanation = null
@@ -94,7 +94,7 @@ class TooltipHandler(
         val explanation = explanationAccessor.invoke(drawable, x, y)
         if (StringUtils.isEmpty(tooltip?.text) && explanation == null) {
             if (lastTooltipDrawable != null || lastExplanation != null) {
-                lastTooltipDrawable?.dispose()
+                lastExplanation?.explanation?.dispose()
                 lastTooltipDrawable = null
                 lastTooltipText = null
                 lastExplanation = null
