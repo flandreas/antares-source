@@ -18,10 +18,10 @@ class DeleteContainerLibraryElementAction(
     private var libraryTreeView: LibraryTreeView? = null
 
     init {
-        enabled = false
+        isEnabled = false
         eventBus.register(LibrarySelectionChangedEvent::class, {
             libraryTreeView = it.libraryTreeView
-            enabled = libraryTreeView!!.getSelectedItem() is LibraryDirectory
+            isEnabled = libraryTreeView!!.getSelectedItem() !is LibraryDirectory
         })
     }
 
@@ -33,7 +33,7 @@ class DeleteContainerLibraryElementAction(
             getValue(Action.NAME) as String,
             JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)
         {
-            val folder = (libraryTreeView!!.selectionPath.parentPath.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryFolder
+            val folder = (libraryTreeView!!.selectionPath.parentPath.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryDirectory
             folder.remove(libraryItem!!)
         }
     }
