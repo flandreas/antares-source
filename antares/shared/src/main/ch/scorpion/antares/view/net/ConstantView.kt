@@ -11,10 +11,10 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 
 /**
@@ -23,7 +23,13 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 class ConstantView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: Constant = Constant()
-) : AbstractNumberViewComponent<Constant>(styleProvider, "library.element.Constant", model, Direction.WEST) {
+) : AbstractNumberViewComponent<Constant>(
+        styleProvider = styleProvider,
+        baseResourceKey = "library.element.Constant",
+        model = model,
+        orientation = Direction.WEST,
+        drawDigitBorder = false
+) {
 
     init {
         modelExchanged(null)
@@ -79,14 +85,15 @@ class ConstantView(
     override fun drawImpl(context: DrawContext) {
         super.drawImpl(context)
         drawBody(context)
-        drawNumberView(context, ApplicationMode.EXECUTE === context.castedAppContext<GraphApplicationContext>()!!.mode)
+        //drawNumberView(context, ApplicationMode.EXECUTE === context.castedAppContext<GraphApplicationContext>()!!.mode)
+        drawNumberView(context, false)
     }
 
     private fun drawBody(context: DrawContext) {
         if (context.useContextColors) {
             drawBody(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
         } else {
-            drawBody(context, foregroundColor, if (filled) backgroundColor else null)
+            drawBody(context, foregroundColor, Themes.get<GraphTheme>().background.color.backgroundColor)
         }
     }
 

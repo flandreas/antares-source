@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -16,13 +17,17 @@ import ch.scorpion.jabbah.draw.style.Themes
 
 /**
  * Displays a single binary digit of a [DigitalSignal] as text.
+ *
+ * @param x the x coordinate of the upper-left corner
+ * @param y the y coordinate of the upper-left corner
  */
 class DigitView(
     val representation: DigitalSignalRepresentation,
     val index: Int,
     x: Double,
-    y: Double
-) : AbstractRectangle(x.toDouble(), y.toDouble(), WIDTH.toDouble(), HEIGHT.toDouble()) {
+    y: Double,
+    private val drawBorder: Boolean = true
+) : AbstractRectangle(x, y, WIDTH.toDouble(), HEIGHT.toDouble()) {
 
     companion object {
         val WIDTH = 20
@@ -53,7 +58,7 @@ class DigitView(
         setBounds(x, y, WIDTH.toDouble(), HEIGHT.toDouble())
     }
 
-    /** ---- [RectangularDrawable] */
+    /** ---- [AbstractRectangle] */
 
     override val lineWidth: Double get() = 0.0
 
@@ -76,16 +81,16 @@ class DigitView(
             context.g.color = signalDigit.getColor().foregroundColor
             context.g.fillRect(xInt + 1, yInt, WIDTH - 2, HEIGHT - 1)
         } else {
-            context.g.color = context.choose(Themes.get<AntaresTheme>().annotation.color).foregroundColor
-            context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
-            context.g.drawRect(xInt + 1, yInt, WIDTH - 2, HEIGHT - 1)
+            if (drawBorder) {
+                context.g.color = context.choose(Themes.get<AntaresTheme>().annotation.color).foregroundColor
+                context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
+                context.g.drawRect(xInt + 1, yInt, WIDTH - 2, HEIGHT - 1)
+            }
         }
-        label.color = if (isOn) {
-            signalDigit.getColor().textColor
-        } else if (context.useContextColors) {
-            context.color!!.textColor
-        } else {
-            oldColor
+        label.color = when {
+            isOn -> signalDigit.getColor().textColor
+            context.useContextColors -> context.color!!.textColor
+            else -> oldColor
         }
 
 		label.draw(context)

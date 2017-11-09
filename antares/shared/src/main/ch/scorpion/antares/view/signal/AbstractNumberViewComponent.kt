@@ -26,7 +26,8 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
     baseResourceKey: String,
     model: T?,
     orientation: Direction,
-    signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY
+    signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY,
+    private val drawDigitBorder: Boolean = true
 ) : DigitalComponentView<T>(styleProvider, baseResourceKey, model) {
 
     companion object {
@@ -98,7 +99,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
     protected fun updateView() {
         invalidate()
 
-        numberView = NumberView(signalRepresentation, bitWidth)
+        numberView = NumberView(signalRepresentation, bitWidth, drawDigitBorder)
         numberView!!.setSignal(signal)
 
         val upperLeftBoundsEdge = upperLeftBoundsEdge

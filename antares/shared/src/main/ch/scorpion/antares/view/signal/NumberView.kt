@@ -17,8 +17,9 @@ import ch.scorpion.jabbah.draw.style.Themes
  * Displays a digital number with individual [DigitView]s.
  */
 class NumberView(
-    representation: DigitalSignalRepresentation,
-    bitWidth: BitWidth
+        representation: DigitalSignalRepresentation,
+        bitWidth: BitWidth,
+        drawDigitBorder: Boolean = true
 ) : AbstractRectangle() {
 
     companion object {
@@ -37,7 +38,7 @@ class NumberView(
         private set
 
     init {
-        buildUI(representation, bitWidth)
+        buildUI(representation, bitWidth, drawDigitBorder)
     }
 
     /** ---- [AbstractRectangle] */
@@ -124,13 +125,13 @@ class NumberView(
         }
     }
 
-    private fun buildUI(representation: DigitalSignalRepresentation, bitWidth: BitWidth) {
+    private fun buildUI(representation: DigitalSignalRepresentation, bitWidth: BitWidth, drawDigitBorder: Boolean) {
         val bounds = Rectangle2D(0, 0, 0, 0)
         var x = 0.0
         var y = 0.0
         val max = Math.max(1, bitWidth.width / representation.bits()) - 1
         for (i in max downTo 0) {
-            val digitView = DigitView(representation, i, x.toDouble(), y.toDouble())
+            val digitView = DigitView(representation, i, x, y, drawDigitBorder)
             digitViews.add(0, digitView)
             x += digitView.width.toInt()
 
