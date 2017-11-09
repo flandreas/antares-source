@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -51,7 +52,7 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 
     override fun drawImpl(context: DrawContext) {
         super.drawImpl(context)
-        drawNumberView(context, context.appContext == ApplicationMode.EXECUTE)
+        drawNumberView(context, context.castedAppContext<GraphApplicationContext>()!!.isExecute)
     }
 
     /** ---- [ControlView] interface */
