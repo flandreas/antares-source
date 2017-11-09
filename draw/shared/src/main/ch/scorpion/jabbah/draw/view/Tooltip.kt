@@ -104,7 +104,7 @@ class TooltipHandler(
         }
 
         if (drawable !== lastTooltipDrawable || tooltip?.text != lastTooltipText || explanation?.explanation !== lastExplanation?.explanation) {
-            lastTooltipDrawable?.dispose()
+            lastExplanation?.explanation?.dispose()
             lastTooltipDrawable = drawable
             lastTooltipText = tooltip?.text
             lastExplanation = explanation
