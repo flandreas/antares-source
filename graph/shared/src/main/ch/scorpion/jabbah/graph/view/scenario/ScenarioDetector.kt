@@ -150,7 +150,7 @@ class ScenarioDetector(
     private fun displayScenarioDesc(scenario: Scenario) {
         if (StringUtils.isNotEmpty(scenario.description.text)) {
             scenarioDesc = FlexibleTextView(
-                    scenario.description.text!!,
+                    StringUtils.replaceNegation(scenario.description.text!!),
                     calculateScenarioDescAnchor(),
                     Direction.NORTH,
                     SCENARIO_STEP_DESC_WIDTH,
@@ -164,7 +164,7 @@ class ScenarioDetector(
     private fun displayScenarioStepDesc(scenarioStep: ScenarioStep) {
         if (StringUtils.isNotEmpty(scenarioStep.description.text)) {
             scenarioStepDesc = FlexibleTextView(
-                    scenarioStep.description.text!!,
+                    StringUtils.replaceNegation(scenarioStep.description.text!!),
                     calculateScenarioStepDescAnchor(),
                     Direction.SOUTH,
                     SCENARIO_STEP_DESC_WIDTH,

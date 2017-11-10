@@ -36,8 +36,6 @@ class Label(
     companion object {
         val LOG by logger(Label::class)
         val DEBUG_GFX = false
-        val NEGATION_SIGN = "!"
-        val NEGATION_STROKE = Stroke(1.4f)
         val DEFAULT_HORIZONTAL_ALIGNMENT = HorizontalAlignment.CENTER
         val DEFAULT_VERTICAL_ALIGNMENT = VerticalAlignment.CENTER
         val BOUNDS_INSET = 1
@@ -277,15 +275,6 @@ class Label(
 
         context.g.drawString(displayableText, baselinePoint.x.toInt(), baselinePoint.y.toInt())
 
-        if (text.startsWith(NEGATION_SIGN)) {
-            val oldStroke = context.g.stroke
-            context.g.drawLine(
-                bounds.x.toInt(), bounds.y.toInt(),
-                bounds.maxX.toInt(), bounds.y.toInt()
-            )
-            context.g.stroke = oldStroke
-        }
-
         context.g.translate(location.x, location.y)
         context.g.rotate(-rotation.angle)
         context.g.translate(-location.x, -location.y)
@@ -313,11 +302,5 @@ class Label(
         update()
     }
 
-    private fun calculateDisplayableText(): String {
-        if (text.startsWith(NEGATION_SIGN)) {
-            return text.substring(1)
-        }
-        return text
-    }
-
+    private fun calculateDisplayableText(): String = StringUtils.replaceNegation(text)
 }

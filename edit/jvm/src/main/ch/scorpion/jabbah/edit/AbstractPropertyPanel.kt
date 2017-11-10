@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit
 
 import com.l2fprod.common.propertysheet.PropertySheetPanel
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import java.awt.BorderLayout
 import java.awt.Container
@@ -20,10 +21,12 @@ abstract class AbstractPropertyPanel(
     sheetFactory: PropertySheetPanelFactory
 ) : JPanel() {
 
-    private val LOG by logger(AbstractPropertyPanel::class)
+    companion object {
+        private val LOG by logger(AbstractPropertyPanel::class)
+    }
 
     /** Displays the properties of the selected [Component].*/
-    private val sheet: PropertySheetPanel
+    private val sheet: PropertySheetPanel = sheetFactory.create()
 
     /** Displays the title that identifies the selected [Component].*/
     private val label: JLabel
@@ -32,7 +35,6 @@ abstract class AbstractPropertyPanel(
     private var propertyObject: Any? = null
 
     init {
-        sheet = sheetFactory.create()
         sheet.addPropertySheetChangeListener {
             if (propertyObject != null) {
                 sheet.writeToObject(propertyObject)
@@ -64,7 +66,7 @@ abstract class AbstractPropertyPanel(
             val beanInfoClass = Class.forName(bean.javaClass.name + "BeanInfo")
             val beanInfo = beanInfoClass.newInstance() as AbstractBeanInfo<Any>
 
-            sheet.setProperties(beanInfo.getProperties(bean, editor))
+            sheet.properties = beanInfo.getProperties(bean, editor)
             sheet.readFromObject(bean)
 
             val table = getTable()
@@ -72,17 +74,17 @@ abstract class AbstractPropertyPanel(
             propertyObject = bean
             updateLabel()
         } catch (e: Throwable) {
-            LOG.debug("Could not instantiate Properties for ${bean.javaClass.simpleName}: Exception ${e.toString()}")
+            LOG.debug("Could not instantiate Properties for ${bean.javaClass.simpleName}: Exception $e")
             clearProperties()
         }
     }
 
     private fun adjustTableHeights(table: JTable) {
         try {
-            for (row in 0..table.rowCount - 1) {
+            for (row in 0 until table.rowCount) {
                 var rowHeight = table.rowHeight
 
-                for (column in 0..table.columnCount - 1) {
+                for (column in 0 until table.columnCount) {
                     val comp = table.prepareRenderer(table.getCellRenderer(row, column), row, column)
                     rowHeight = Math.max(rowHeight, comp.preferredSize.height)
                 }
@@ -99,19 +101,16 @@ abstract class AbstractPropertyPanel(
     }
 
     private fun updateLabel() {
-        // TODO I18N
         if (propertyObject == null) {
             label.text = ""
         } else {
-            val sb = StringBuilder("Eigenschaften von \"")
             val description = getDescription(propertyObject!!)
-            if (StringUtils.isEmpty(description)) {
-                sb.append("<undefiniert>")
+            val beanDescription = if (StringUtils.isEmpty(description)) {
+                Translations.getString("edit.property.bean.undefined")
             } else {
-                sb.append(description)
+                StringUtils.replaceNegation(description!!)
             }
-            sb.append("\"")
-            label.text = sb.toString()
+            label.text = Translations.getString("edit.property.bean", beanDescription)
         }
     }
 }

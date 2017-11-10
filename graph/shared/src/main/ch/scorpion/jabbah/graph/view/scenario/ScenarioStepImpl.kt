@@ -42,7 +42,7 @@ class ScenarioStepImpl(
 
     /** ---- [Any] */
 
-    override fun toString(): String = name
+    override fun toString(): String = StringUtils.replaceNegation(name)
 
     /** ---- UI editable properties */
 

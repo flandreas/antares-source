@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.scenario
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.edit.DrawingView
@@ -30,7 +31,7 @@ class ScenarioImpl(
 
     /** ---- [Any] */
 
-    override fun toString(): String = name
+    override fun toString(): String = StringUtils.replaceNegation(name)
 
     /** ---- [Scenario] interface */
 

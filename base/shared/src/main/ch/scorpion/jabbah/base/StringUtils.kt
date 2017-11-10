@@ -5,6 +5,9 @@ package ch.scorpion.jabbah.base
  */
 object StringUtils {
 
+    private val NEGATION_SIGN = '!'
+    val OVERLINE = '\u0305'
+
     fun isBlank(s: String?): Boolean {
         return s == null || s.isBlank()
     }
@@ -25,5 +28,9 @@ object StringUtils {
     /** Counts the number of occurrences of a particular [Char] in a [String].*/
     fun countChar(s: String, c: Char): Int {
         return s.length - s.replace(c.toString(), "").length
+    }
+
+    fun replaceNegation(s: String): String {
+        return s.replace("$NEGATION_SIGN(.)".toRegex(), "${'$'}1" + OVERLINE)
     }
 }
