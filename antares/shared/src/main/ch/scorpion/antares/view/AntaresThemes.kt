@@ -99,7 +99,7 @@ object AntaresThemes {
                 subsystem = BasicStyle(
                         color = CompositeColor(
                                 foregroundColor = Color.GRAY,
-                                backgroundColor = Color(224, 224, 128)),
+                                backgroundColor = Color(224, 224, 224)),
                         font = FONT,
                         stroke = SUBSYSTEM_STROKE),
                 selection = CompositeColor(
@@ -273,7 +273,7 @@ object AntaresThemes {
                 subsystem = BasicStyle(
                         color = CompositeColor(
                                 foregroundColor = Color.GRAY,
-                                backgroundColor = Color(224, 224, 128)),
+                                backgroundColor = Color(224, 224, 224)),
                         font = FONT,
                         stroke = SUBSYSTEM_STROKE),
                 selection = CompositeColor(
