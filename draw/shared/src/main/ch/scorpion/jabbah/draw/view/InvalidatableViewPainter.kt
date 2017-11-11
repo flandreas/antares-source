@@ -7,20 +7,40 @@ import ch.scorpion.jabbah.draw.ViewPainter
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.base.time.Timer
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.logger
 
 /**
  * [InvalidatableViewPainter] keeps track of all invalidated areas and repaints only those.
  */
 class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
 
+    companion object {
+        private val LOG by logger(InvalidatableViewPainter::class)
+
+        /** The number of repaints per second.*/
+        private val REPAINT_FREQUENCY = 40
+    }
+
     /** Keeps track of the current accumulated invalid region in model coordinate space.*/
     var dirtyRegion: Rectangle2D? = null
         private set
 
+    private val timer: Timer = System.get().createTimer()
+
+    init {
+        timer.initialize(1000 / REPAINT_FREQUENCY, {
+            repaintDirtyRegion()
+            timer.stop()
+        })
+    }
+
     /** ---- [ViewPainter] interface */
 
     override fun repaintView() {
-        repaintDirtyRegion()
+        //repaintDirtyRegion()
+        startTimerIfNeeded()
     }
 
     override fun paintView(context: DrawContext) {
@@ -48,5 +68,11 @@ class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
             val y2 = Math.ceil(p2.y).toInt()
             view.repaint(x1 - 1, y1 - 1, x2 - x1 + 2, y2 - y1 + 2)
             dirtyRegion = null
+    }
+
+    private fun startTimerIfNeeded() {
+        if (!timer.isRunning()) {
+            timer.start()
+        }
     }
 }

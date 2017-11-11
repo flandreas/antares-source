@@ -2,9 +2,9 @@
 
 === Introduction
 
-=== Module structure
-
 TODO
+
+=== Module structure
 
 image::../../model-img/svg/jabbah__draw__Draw Package Overview_1.svg[]
 
@@ -14,7 +14,7 @@ abstract interface of drawing methods that are implemented in the supported plat
 * <<style.adoc#, *style:*>> Contains concepts that allow an application to establish coherent visual styles for its
 graphical objects, and to enable the user to switch between predefined themes.
 * <<drawable.adoc#, *drawable:*>> Contains abstract `Drawable` implementations as well as some reusable, common-purpose
-`Drawables` such as `IconButton` or `RectangularDrawble`.
+`Drawables` such as `IconButton` or `RectangularDrawable`.
 * <<container.adoc#, *container:*>> Contains `DrawableContainer` implementations.
 * <<view.adoc#, *view:*>> Contains `View` implementations and classes for zooming and navigation within a `View`.
 * <<polyline.adoc#, *polyline:*>>: Contains interfaces and classes for polyline `Drawable`s.
@@ -36,7 +36,7 @@ whenever the `Drawable` needs repainting, or when its geometry has changed. `Vie
 their repainting processes.
 
 <<container.adoc#, *DrawableContainer:*>> `DrawableContainers` are composites of `Drawable`s and maintain a
-configurable stacking order of the `Drawables` they contain. A `DrawableContainer` is involded in repainting
+configurable stacking order of the `Drawables` they contain. A `DrawableContainer` is involved in repainting
 of its `Drawables` as well as in dispatching input events to them.
 
 <<container.adoc#, *DrawableContainerListener:*>> `DrawableContainerListeners` are used to get involved whenever
@@ -46,12 +46,12 @@ of its `Drawables` as well as in dispatching input events to them.
 
 <<view.adoc#, *View:*>> A `View` is the gateway between `Drawables` that need to be displayed to the user, and
 the `Canvas` that implements platform-specific displaying features, such as a HTML canvas in a browser or a
-`JComponent` on the JVM platform. `Views`implement zooming and panning, and they are involved in input event
+`JComponent` on the JVM platform. `Views` implement zooming and panning, and they are involved in input event
 dispatching, incorporating view-to-model coordinate transformations.
 
 <<view.adoc#, *Canvas:*>> A `Canvas` is the interface to a platform-specific rendering device. Separating `View`
 from `Canvas` allows to provide complex `View` implementations (including coordinate transformations and in-`View`
-navigation) in a platform-independant way.
+navigation) in a platform-independent way.
 
 == Cross-cutting Concerns
 

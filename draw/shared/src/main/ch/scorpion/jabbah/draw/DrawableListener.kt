@@ -10,8 +10,8 @@ interface DrawableListener {
     fun drawableInvalidated(event: DrawableEvent)
 
     /**
-     * Gets called whenever updates and invalidations of a [Drawable] have been finished, and any
-     * that renders the listened [Drawable] can be repainted.
+     * Gets called whenever updates and invalidations of a [Drawable] have been finished, and any [View]
+     * that displays the listened [Drawable] can be repainted.
      */
     fun drawableRequestRedraw(event: DrawableEvent)
 
