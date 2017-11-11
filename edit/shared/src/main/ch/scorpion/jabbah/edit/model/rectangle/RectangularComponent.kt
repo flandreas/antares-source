@@ -77,12 +77,12 @@ abstract class AbstractRectangularComponent(
 
     /** ---- [Snappable] interface */
 
-    override val snappableX: Array<SnappableX> get() = arrayOf<SnappableX>(
+    override val snappableX: Array<SnappableX> get() = arrayOf(
             SnappableXCoordinate(minX),
             SnappableXCoordinate(centerX),
             SnappableXCoordinate(maxX))
 
-    override val snappableY: Array<SnappableY> get() = arrayOf<SnappableY>(
+    override val snappableY: Array<SnappableY> get() = arrayOf(
             SnappableYCoordinate(minY),
             SnappableYCoordinate(centerY),
             SnappableYCoordinate(maxY))
@@ -204,14 +204,14 @@ abstract class RectangularComponent(
         if (context.useContextColors) {
             drawImpl(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
         } else {
-            drawImpl(context, foregroundColor, if (filled) backgroundColor else null)
+            drawImpl(context, if (stroked) foregroundColor else null, if (filled) backgroundColor else null)
         }
     }
 
-    private fun drawImpl(context: DrawContext, lineColor: Color, fillColor: Color?) {
+    private fun drawImpl(context: DrawContext, strokeColor: Color?, fillColor: Color?) {
         val oldColor = context.g.color
         drawFill(context, shape, fillColor)
-        drawStroke(context, shape, lineColor, stroke)
+        drawStroke(context, shape, strokeColor, stroke)
         context.g.color = textColor
         context.g.translate(x, y)
         label.draw(context)
@@ -227,7 +227,7 @@ abstract class RectangularComponent(
             VerticalAlignment.CENTER -> height / 2
             VerticalAlignment.TOP -> TEXT_INSET.toDouble()
         }
-        label.location = Point2D(width / 2, y.toDouble())
+        label.location = Point2D(width / 2, y)
     }
 }
 

@@ -85,6 +85,12 @@ abstract class AbstractComponent(
         if (rotatable) {
             writer.writeString("rot", rotation.customName)
         }
+        if (!filled) {
+            writer.writeBoolean("filled", filled)
+        }
+        if (!stroked) {
+            writer.writeBoolean("stroked", stroked)
+        }
     }
 
     override fun read(reader: StoreReader) {
@@ -99,6 +105,12 @@ abstract class AbstractComponent(
         }
         if (reader.hasAttribute("color")) {
             customColor = styleProvider.predefinedColorProvider.withName(reader.readString("color"))
+        }
+        if (reader.hasAttribute("filled")) {
+            filled = reader.readBoolean("filled")
+        }
+        if (reader.hasAttribute("stroked")) {
+            stroked = reader.readBoolean("stroked")
         }
     }
 

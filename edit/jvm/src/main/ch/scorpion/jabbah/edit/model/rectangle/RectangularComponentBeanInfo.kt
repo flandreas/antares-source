@@ -15,6 +15,7 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : AbstractB
 
     companion object {
         private val filled = PropertyImpl("edit.property.filled", Boolean::class.java)
+        private val stroked = PropertyImpl("edit.property.stroked", Boolean::class.java)
         private val styleType = PropertyImpl("graph.styleType", StyleType::class.java)
         private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
         private val text = PropertyImpl("edit.property.text", String::class.java)
@@ -25,12 +26,14 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : AbstractB
         super.addProperties(bean, editor, properties)
 
         filled.bind(editor, { bean.filled }, { bean.filled = it!! })
+        stroked.bind(editor, { bean.stroked }, { bean.stroked = it!! })
         styleType.bind(editor, { bean.styleType }, { bean.styleType = it!! })
         color.bind(editor, { bean.customColor}, { bean.customColor = it })
         text.bind(editor, { bean.text }, { bean.text = it!!} )
         alignment.bind(editor, { bean.alignment }, { bean.alignment = it!! })
 
         properties.add(filled)
+        properties.add(stroked)
         properties.add(styleType)
         properties.add(color)
         properties.add(text)

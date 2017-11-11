@@ -86,15 +86,11 @@ class PolylineComponent(
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeBoolean("filled", filled)
         writer.writePoints("points", polyline.getPoints(0, polyline.pointsCount))
     }
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        if (reader.hasAttribute("filled")) {
-            filled = reader.readBoolean("filled")
-        }
         polyline.setPoints(reader.readPoints("points"))
     }
 }

@@ -62,6 +62,7 @@ class LabelComponent(
         if (!context.useContextColors) {
             context.g.color = foregroundColor
         }
+        label.font = font
         label.draw(context)
     }
 

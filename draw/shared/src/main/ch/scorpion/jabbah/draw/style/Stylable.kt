@@ -36,6 +36,8 @@ interface Stylable {
 
     var filled: Boolean
 
+    var stroked: Boolean
+
     /** Contains the optional custom [PredefinedColor] that overwrites the color of the [Style].*/
     var customColor: PredefinedColor?
 
@@ -59,6 +61,7 @@ class StylableImpl(
         styleType: StyleType,
         override var styleProvider: StyleProvider,
         filled: Boolean = true,
+        stroked: Boolean = true,
         customColor: PredefinedColor? = null,
         customStroke: Stroke? = null,
         customFont: Font? = null
@@ -76,6 +79,15 @@ class StylableImpl(
     override val style: Style get() = styleProvider.getStyle(styleType)
 
     override var filled: Boolean = filled
+        set(value) {
+            if (field != value) {
+                invalidator?.invoke()
+                field = value
+                invalidator?.invoke()
+            }
+        }
+
+    override var stroked: Boolean = stroked
         set(value) {
             if (field != value) {
                 invalidator?.invoke()

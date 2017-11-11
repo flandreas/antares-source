@@ -192,7 +192,9 @@ open class TextComponentJvm(
         val oldClip = context.g.getClipBounds()
         val b = shape
 
-        decorator.drawBackground(this, context)
+        if (filled) {
+            decorator.drawBackground(this, context)
+        }
 
         setupTextPainter()
         (context.g as Graphics2DJvm).g.setClip(b.x.toInt(), b.y.toInt(), b.width.toInt(), b.height.toInt())
@@ -201,7 +203,9 @@ open class TextComponentJvm(
         context.g.translate(-TEXT_PAINTER.x.toDouble(), -TEXT_PAINTER.y.toDouble())
         (context.g as Graphics2DJvm).g.setClip(oldClip.x.toInt(), oldClip.y.toInt(), oldClip.width.toInt(), oldClip.height.toInt())
 
-        decorator.drawForeground(this, context)
+        if (stroked) {
+            decorator.drawForeground(this, context)
+        }
     }
 
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
