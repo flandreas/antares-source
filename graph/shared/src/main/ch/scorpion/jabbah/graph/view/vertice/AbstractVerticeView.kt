@@ -34,6 +34,8 @@ import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
@@ -65,7 +67,7 @@ abstract class AbstractVerticeView<T : Vertice>(
     private val arePortViewsStored: Boolean get() = false
 
     /** Displays information while the model of this [VerticeView] is executed.*/
-    private val exectionInfoLabel = Label(
+    private val executionInfoLabel = Label(
             text = "",
             font = font,
             horizontalAlignment = Label.HorizontalAlignment.CENTER,
@@ -198,8 +200,8 @@ abstract class AbstractVerticeView<T : Vertice>(
     override val boundingBox: Rectangle2D
         get() {
             val bbox = plainBoundingBox
-            if (isExecutionInfoDrawn()) {
-                bbox.add(exectionInfoLabel.boundingBox)
+            if (isExecutionInfoDrawn(true)) {
+                bbox.add(executionInfoLabel.boundingBox)
             }
             return bbox
         }
@@ -384,9 +386,9 @@ abstract class AbstractVerticeView<T : Vertice>(
         context.g.translate(-location.x, -location.y)
 
         // Draw propagation delay above bounding box if in waiting state
-        if (isExecutionInfoDrawn()) {
+        if (isExecutionInfoDrawn(context.castedAppContext<GraphApplicationContext>()!!.systemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore)) {
             configureExecutionInfoLabel()
-            exectionInfoLabel.draw(context)
+            executionInfoLabel.draw(context)
         }
 
         // DEBUG BEGIN
@@ -399,23 +401,23 @@ abstract class AbstractVerticeView<T : Vertice>(
         context.g.color = oldColor
     }
 
-    private fun isExecutionInfoDrawn(): Boolean {
-        return model != null && model!!.waiting
+    private fun isExecutionInfoDrawn(requiredBySystemSpeed: Boolean): Boolean {
+        return requiredBySystemSpeed && model != null && model!!.waiting
     }
 
     /**
      * Configures and updates the [Label] that displays the execution info text above the bounding box.
      * Since [AbstractVerticeView] doesn't update itself when the [Vertice]'s execution state has changed,
-     * this method must always be called before using [exectionInfoLabel].
+     * this method must always be called before using [executionInfoLabel].
      */
     private fun configureExecutionInfoLabel() {
         val bbox = plainBoundingBox
         val text = "${propagationDelay.toString()} ns"
         val style = Themes.get<GraphTheme>().annotation
-        exectionInfoLabel.font = style.font
-        exectionInfoLabel.text = text
-        exectionInfoLabel.color = getColorWithTransparency(style.color.textColor)
-        exectionInfoLabel.location = Point2D(bbox.centerX.toInt(), bbox.minY.toInt() - 3)
+        executionInfoLabel.font = style.font
+        executionInfoLabel.text = text
+        executionInfoLabel.color = getColorWithTransparency(style.color.textColor)
+        executionInfoLabel.location = Point2D(bbox.centerX.toInt(), bbox.minY.toInt() - 3)
     }
 
     protected fun rotate(rect: Rectangle2D): Rectangle2D {

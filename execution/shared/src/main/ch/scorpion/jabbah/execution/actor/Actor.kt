@@ -41,8 +41,8 @@ interface Actor {
     fun executionStarted(signalHandler: SignalHandler)
 
     /**
-     * Called by execution environment} to let this [Actor] act
-     * .
+     * Called by execution environment} to let this [Actor] act.
+     *
      * @param signalHandler the [SignalHandler] to be used to pass along to other [Actor]s.
      * @param data the [ActorData] this [Actor] has provided when calling [SignalHandler.requestActingAfter].
      * @return `true` if execution has been completed, `false` if this [Actor] has more to do
