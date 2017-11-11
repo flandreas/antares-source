@@ -1,6 +1,0 @@
-# Execution
-
-## Overview
-
-## Interaction
-![Package Overview](../../model-img/svg/jabbah__execution__Collaboration1__Interaction1__Execution_12.svg)
