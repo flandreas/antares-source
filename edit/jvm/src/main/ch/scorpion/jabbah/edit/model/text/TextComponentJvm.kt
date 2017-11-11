@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.model.text
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
@@ -23,7 +24,7 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import java.awt.BasicStroke
 import java.awt.Component
 import java.awt.Container
@@ -33,7 +34,6 @@ import javax.swing.JTextPane
 import javax.swing.border.LineBorder
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
-import javax.swing.plaf.metal.MetalBorders.TextFieldBorder
 import javax.swing.text.SimpleAttributeSet
 import javax.swing.text.StyleConstants
 
@@ -53,7 +53,7 @@ open class TextComponentJvm(
         location: Point2D,
         styleType: StyleType,
         styleProvider: StyleProvider
-) : RectangleComponent(styleType = styleType, styleProvider = styleProvider, shape = Rectangle2D(location.x, location.y, 0.0, 0.0)),
+) : AbstractRectangularComponent(styleType = styleType, styleProvider = styleProvider, shape = Rectangle2D(location.x, location.y, 0.0, 0.0)),
     Transparent, TextComponent {
 
     constructor(text: String): this(text = text, location = Point2D(), styleType = StyleType.FIGURE, styleProvider = DrawStyleModule.styleProvider)
@@ -156,7 +156,6 @@ open class TextComponentJvm(
             transparent.transparency = value
         }
 
-    // TODO Use Styles to determine Colors!
     private var decorator: TextComponentDecorator = RectangularShapeTextComponentDecorator(
         shape = RoundRectangle2D(0.0, 0.0, 0.0, 0.0, 20.0, 20.0),
         stylable = this,
@@ -182,11 +181,11 @@ open class TextComponentJvm(
     /** ---- [Drawable] */
 
     override fun contains(x: Double, y: Double): Boolean {
-        return super<RectangleComponent>.contains(x, y)
+        return super<AbstractRectangularComponent>.contains(x, y)
     }
 
     override fun contains(p: Point2D): Boolean {
-        return super<RectangleComponent>.contains(p)
+        return super<AbstractRectangularComponent>.contains(p)
     }
 
     override fun draw(context: DrawContext) {
@@ -208,6 +207,10 @@ open class TextComponentJvm(
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
         return eventHandler as InputEventHandler<T>
     }
+
+    /** ---- [Component] interface */
+
+    override val type: String? get() = Translations.getString("edit.component.text")
 
     /** ---- [TextComponent] */
 

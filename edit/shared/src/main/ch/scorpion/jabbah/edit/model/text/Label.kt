@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Font
-import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.logger
@@ -108,61 +107,6 @@ class Label(
         displayableText = calculateDisplayableText()
         updateGeometry()
     }
-
-    enum class HorizontalAlignment {
-        LEFT {
-            override fun opposite(): HorizontalAlignment = RIGHT
-            override fun getX(baselineRect: Rectangle2D): Double = baselineRect.x
-        },
-
-        CENTER {
-            override fun opposite() = CENTER
-            override fun getX(baselineRect: Rectangle2D): Double = baselineRect.x - baselineRect.width / 2
-        },
-
-        RIGHT {
-            override fun opposite(): HorizontalAlignment = LEFT
-            override fun getX(baselineRect: Rectangle2D): Double = baselineRect.x - baselineRect.width
-        };
-
-        abstract fun opposite(): HorizontalAlignment
-
-        /**
-         * Returns the x-coordinate of the text shape relative to the [Label]'s location.
-         * @param baselineRect the text's shape relative to the baseline.
-         * @return the x-coordinate of the text shape.
-         */
-        abstract fun getX(baselineRect: Rectangle2D): Double
-    }
-
-    enum class VerticalAlignment {
-        BOTTOM {
-            override fun opposite(): VerticalAlignment = TOP
-            override fun getY(baselineRect: Rectangle2D): Double = baselineRect.height
-        },
-
-        CENTER {
-            override fun opposite(): VerticalAlignment = CENTER
-            override fun getY(baselineRect: Rectangle2D): Double = baselineRect.height / 2
-        },
-
-        TOP {
-            override fun opposite(): VerticalAlignment = BOTTOM
-            override fun getY(baselineRect: Rectangle2D): Double = 0.0
-        };
-
-        internal abstract fun opposite(): VerticalAlignment
-
-        /**
-         * Returns the y-coordinate of the text shape relative to the [Label]'s location.
-         * @param baselineRect the text's shape relative to the baseline.
-         * @return the y-coordinate of the text shape.
-         */
-        internal abstract fun getY(baselineRect: Rectangle2D): Double
-    }
-
-    /** Used to update horizontal and vertical alignment at once. */
-    data class Alignment(val horizontal: HorizontalAlignment, val vertical: VerticalAlignment)
 
     /** Defines how a [Label] reacts to a [Rotation] when drawing itself. */
     enum class RotationDisplayStrategy {

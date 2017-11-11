@@ -30,6 +30,8 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
@@ -317,40 +319,40 @@ class DigitalPortView(
             rotation = rotation)
     }
 
-    private fun getHorizontalInternalLabelAlignment(direction: Direction): Label.HorizontalAlignment =
+    private fun getHorizontalInternalLabelAlignment(direction: Direction): HorizontalAlignment =
         when (direction) {
-            Direction.WEST -> Label.HorizontalAlignment.LEFT
-            Direction.EAST -> Label.HorizontalAlignment.RIGHT
-            Direction.NORTH -> Label.HorizontalAlignment.CENTER
-            Direction.SOUTH -> Label.HorizontalAlignment.CENTER
+            Direction.WEST -> HorizontalAlignment.LEFT
+            Direction.EAST -> HorizontalAlignment.RIGHT
+            Direction.NORTH -> HorizontalAlignment.CENTER
+            Direction.SOUTH -> HorizontalAlignment.CENTER
             else -> throw IllegalStateException("unknown Direction " + direction)
         }
 
-    private fun getHorizontalExternalLabelAlignment(direction: Direction): Label.HorizontalAlignment =
+    private fun getHorizontalExternalLabelAlignment(direction: Direction): HorizontalAlignment =
         when (direction) {
-            Direction.WEST -> Label.HorizontalAlignment.RIGHT
-            Direction.EAST -> Label.HorizontalAlignment.LEFT
-            Direction.NORTH -> Label.HorizontalAlignment.LEFT
-            Direction.SOUTH -> Label.HorizontalAlignment.RIGHT
+            Direction.WEST -> HorizontalAlignment.RIGHT
+            Direction.EAST -> HorizontalAlignment.LEFT
+            Direction.NORTH -> HorizontalAlignment.LEFT
+            Direction.SOUTH -> HorizontalAlignment.RIGHT
             else -> throw IllegalStateException("unknown Direction " + direction)
         }
 
-    private fun getVerticalInternalLabelAlignment(direction: Direction): Label.VerticalAlignment =
+    private fun getVerticalInternalLabelAlignment(direction: Direction): VerticalAlignment =
         when (direction) {
-            Direction.WEST -> Label.VerticalAlignment.CENTER
-            Direction.EAST -> Label.VerticalAlignment.CENTER
-            Direction.NORTH -> Label.VerticalAlignment.TOP
-            Direction.SOUTH -> Label.VerticalAlignment.BOTTOM
+            Direction.WEST -> VerticalAlignment.CENTER
+            Direction.EAST -> VerticalAlignment.CENTER
+            Direction.NORTH -> VerticalAlignment.TOP
+            Direction.SOUTH -> VerticalAlignment.BOTTOM
             else -> throw IllegalStateException("unknown Direction " + direction)
         }
 
     private val centerExternalLabel: Boolean get() = port.isConnected && edgeViewWidth > Look.EXT_PIN_FONT.size
 
-    private fun getVerticalExternalLabelAlignment(): Label.VerticalAlignment =
+    private fun getVerticalExternalLabelAlignment(): VerticalAlignment =
             if (centerExternalLabel)
-                Label.VerticalAlignment.CENTER
+                VerticalAlignment.CENTER
             else
-                Label.VerticalAlignment.BOTTOM
+                VerticalAlignment.BOTTOM
 
     private fun getInternalLabelLocation(direction: Direction): Point2D {
         val ia = when(port.portType) {

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.model.text
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
@@ -13,7 +14,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -28,7 +29,7 @@ class SimpleTextComponent(
         styleType: StyleType = EditStyleType.MESSAGE,
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
         private val textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory
-) : RectangleComponent(
+) : AbstractRectangularComponent(
         styleType = styleType,
         styleProvider = styleProvider,
         shape = Rectangle2D(location.x, location.y, 100.0, 50.0)
@@ -65,6 +66,10 @@ class SimpleTextComponent(
         text = reader.readString("text")
     }
 
+    /** ---- [Component] interface */
+
+    override val type: String? get() = Translations.getString("edit.component.text")
+
     /** ---- [TextComponent] interface */
 
     override var text: String = text
@@ -79,11 +84,11 @@ class SimpleTextComponent(
     /** ---- [Drawable] */
 
     override fun contains(x: Double, y: Double): Boolean {
-        return super<RectangleComponent>.contains(x, y)
+        return super<AbstractRectangularComponent>.contains(x, y)
     }
 
     override fun contains(p: Point2D): Boolean {
-        return super<RectangleComponent>.contains(p)
+        return super<AbstractRectangularComponent>.contains(p)
     }
 
     override fun draw(context: DrawContext) {

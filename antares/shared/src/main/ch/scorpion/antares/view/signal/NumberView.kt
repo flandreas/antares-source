@@ -12,6 +12,8 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 /**
  * Displays a digital number with individual [DigitView]s.
@@ -141,8 +143,8 @@ class NumberView(
                         location = Point2D(x + BYTE_LABEL_HOR_GAP, y + digitView.height),
                         font = Look.EXT_PIN_FONT,
                         color = Themes.get<AntaresTheme>().vertice.color.textColor,
-                        horizontalAlignment = Label.HorizontalAlignment.LEFT,
-                        verticalAlignment = Label.VerticalAlignment.BOTTOM))
+                        horizontalAlignment = HorizontalAlignment.LEFT,
+                        verticalAlignment = VerticalAlignment.BOTTOM))
                 x = 0.0
                 y += digitView.height.toInt()
             } else if (i % 4 == 0 && i > 0) {

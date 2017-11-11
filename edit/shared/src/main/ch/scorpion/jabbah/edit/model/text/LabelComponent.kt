@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
-import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 
 /**
  * A [RectangularComponent] that contains a [Label] drawable.
@@ -27,10 +27,10 @@ class LabelComponent(
     val label: Label = Label(
             text = DEFAULT_TEXT,
             font = LabelComponent.DEFAULT_FONT,
-            horizontalAlignment = Label.HorizontalAlignment.CENTER,
-            verticalAlignment = Label.VerticalAlignment.CENTER,
+            horizontalAlignment = HorizontalAlignment.CENTER,
+            verticalAlignment = VerticalAlignment.CENTER,
             location = Point2D())
-) : RectangleComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider) {
+) : AbstractRectangularComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider), TextComponent {
 
     companion object {
         val DEFAULT_TEXT = "text"
@@ -43,7 +43,7 @@ class LabelComponent(
 
     /** ---- UI properties */
 
-    var text: String
+    override var text: String
         get() = label.text
         set(value) {
             label.text = value
@@ -55,6 +55,8 @@ class LabelComponent(
     override val boundingBox: Rectangle2D get() = label.boundingBox
 
     override fun contains(x: Double, y: Double): Boolean = label.contains(x, y)
+
+    override fun contains(p: Point2D): Boolean = label.contains(p)
 
     override fun draw(context: DrawContext) {
         if (!context.useContextColors) {

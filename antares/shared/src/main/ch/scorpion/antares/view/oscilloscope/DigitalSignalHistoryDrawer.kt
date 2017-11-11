@@ -14,7 +14,9 @@ import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryDrawer
 import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryTimeline
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHistoryDrawer {
@@ -61,8 +63,8 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
     private val multiBitLabel = Label(
             text = "",
             font = Themes.get<GraphTheme>().annotation.font,
-            horizontalAlignment = Label.HorizontalAlignment.CENTER,
-            verticalAlignment = Label.VerticalAlignment.CENTER
+            horizontalAlignment = HorizontalAlignment.CENTER,
+            verticalAlignment = VerticalAlignment.CENTER
     )
 
     /** ---- [RectangularDrawable] interface*/
@@ -140,7 +142,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
                     drawMultiBitRightBorder(context, effNextX)
                     // Draw signal value
                     multiBitLabel.text = entry.signal.toHexString()
-                    multiBitLabel.horizontalAligment = Label.HorizontalAlignment.LEFT
+                    multiBitLabel.horizontalAligment = HorizontalAlignment.LEFT
                     multiBitLabel.location = Point2D(effNextX + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT / 2)
                     multiBitLabel.draw(context)
                 }
@@ -159,7 +161,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
                     drawMultiBitSegment(context, xR = lastPoint.x, xL = effNextX)
                     // Draw signal value
                     multiBitLabel.text = entry.signal.toHexString()
-                    multiBitLabel.horizontalAligment = Label.HorizontalAlignment.CENTER
+                    multiBitLabel.horizontalAligment = HorizontalAlignment.CENTER
                     multiBitLabel.location = Point2D(effNextX + (lastPoint.x - effNextX) / 2, baseLineY - SIGNAL_HEIGHT / 2)
                     multiBitLabel.draw(context)
                 }

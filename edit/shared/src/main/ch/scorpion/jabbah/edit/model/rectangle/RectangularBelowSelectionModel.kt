@@ -9,9 +9,9 @@ import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.Color
 
 /**
- * A [SelectionModel] for [RectangularComponent] to be used with [SelectionDrawingStrategy.Below].
+ * A [SelectionModel] for [AbstractRectangularComponent] to be used with [SelectionDrawingStrategy.Below].
  */
-class RectangularBelowSelectionModel(component: RectangularComponent) : AbstractSelectionModel<RectangularComponent>(component) {
+class RectangularBelowSelectionModel(component: AbstractRectangularComponent) : AbstractSelectionModel<AbstractRectangularComponent>(component) {
 
     companion object {
         // TODO Use Style to determine outset and color

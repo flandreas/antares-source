@@ -41,7 +41,9 @@ import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -387,20 +389,20 @@ class CircuitInOutView(
                 .subtract(orientation.multiply(LABEL_DIST.toDouble()))
         when (orientation) {
             Direction.EAST -> {
-                label.horizontalAligment = Label.HorizontalAlignment.RIGHT
-                label.verticalAligment = Label.VerticalAlignment.CENTER
+                label.horizontalAligment = HorizontalAlignment.RIGHT
+                label.verticalAligment = VerticalAlignment.CENTER
             }
             Direction.NORTH -> {
-                label.horizontalAligment = Label.HorizontalAlignment.CENTER
-                label.verticalAligment = Label.VerticalAlignment.TOP
+                label.horizontalAligment = HorizontalAlignment.CENTER
+                label.verticalAligment = VerticalAlignment.TOP
             }
             Direction.WEST -> {
-                label.horizontalAligment = Label.HorizontalAlignment.LEFT
-                label.verticalAligment = Label.VerticalAlignment.CENTER
+                label.horizontalAligment = HorizontalAlignment.LEFT
+                label.verticalAligment = VerticalAlignment.CENTER
             }
             Direction.SOUTH -> {
-                label.horizontalAligment = Label.HorizontalAlignment.CENTER
-                label.verticalAligment = Label.VerticalAlignment.BOTTOM
+                label.horizontalAligment = HorizontalAlignment.CENTER
+                label.verticalAligment = VerticalAlignment.BOTTOM
             }
         }
         updateBoundingBox()
@@ -411,20 +413,20 @@ class CircuitInOutView(
         label.location = orientation.multiply(LABEL_DIST.toDouble())
         when (orientation) {
             Direction.EAST -> {
-                label.horizontalAligment = Label.HorizontalAlignment.LEFT
-                label.verticalAligment = Label.VerticalAlignment.CENTER
+                label.horizontalAligment = HorizontalAlignment.LEFT
+                label.verticalAligment = VerticalAlignment.CENTER
             }
             Direction.NORTH -> {
-                label.horizontalAligment = Label.HorizontalAlignment.CENTER
-                label.verticalAligment = Label.VerticalAlignment.BOTTOM
+                label.horizontalAligment = HorizontalAlignment.CENTER
+                label.verticalAligment = VerticalAlignment.BOTTOM
             }
             Direction.WEST -> {
-                label.horizontalAligment = Label.HorizontalAlignment.RIGHT
-                label.verticalAligment = Label.VerticalAlignment.CENTER
+                label.horizontalAligment = HorizontalAlignment.RIGHT
+                label.verticalAligment = VerticalAlignment.CENTER
             }
             Direction.SOUTH -> {
-                label.horizontalAligment = Label.HorizontalAlignment.CENTER
-                label.verticalAligment = Label.VerticalAlignment.TOP
+                label.horizontalAligment = HorizontalAlignment.CENTER
+                label.verticalAligment = VerticalAlignment.TOP
             }
         }
         updateBoundingBox()

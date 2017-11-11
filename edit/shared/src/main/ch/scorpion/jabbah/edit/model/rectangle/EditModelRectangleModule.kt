@@ -13,34 +13,34 @@ object EditModelRectangleModule : AbstractModule() {
         EditSelectModule.selectionModelFactory.register(
             SelectionDrawingStrategy.BELOW,
             RectangleComponent::class.simpleName!!,
-            { RectangularBelowSelectionModel(it as RectangularComponent)} )
+            { RectangularBelowSelectionModel(it as AbstractRectangularComponent)} )
 
         EditSelectModule.selectionModelFactory.register(
             SelectionDrawingStrategy.ABOVE,
             RectangleComponent::class.simpleName!!,
-            { RectangularHandleSelectionModel(it as RectangularComponent) }
+            { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
         )
 
         EditSelectModule.selectionModelFactory.register(
                 SelectionDrawingStrategy.BELOW,
                 EllipseComponent::class.simpleName!!,
-                { RectangularBelowSelectionModel(it as RectangularComponent)} )
+                { RectangularBelowSelectionModel(it as AbstractRectangularComponent)} )
 
         EditSelectModule.selectionModelFactory.register(
                 SelectionDrawingStrategy.ABOVE,
                 EllipseComponent::class.simpleName!!,
-                { RectangularHandleSelectionModel(it as RectangularComponent) }
+                { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
         )
 
         EditSelectModule.selectionModelFactory.register(
                 SelectionDrawingStrategy.BELOW,
                 RoundRectangleComponent::class.simpleName!!,
-                { RectangularBelowSelectionModel(it as RectangularComponent)} )
+                { RectangularBelowSelectionModel(it as AbstractRectangularComponent)} )
 
         EditSelectModule.selectionModelFactory.register(
                 SelectionDrawingStrategy.ABOVE,
                 RoundRectangleComponent::class.simpleName!!,
-                { RectangularHandleSelectionModel(it as RectangularComponent) }
+                { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
         )
     }
 }

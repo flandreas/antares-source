@@ -32,7 +32,9 @@ import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
 import ch.scorpion.jabbah.io.Storable
@@ -81,8 +83,8 @@ class SwitchView(
             font = font,
             text = "",
             location = Point2D(DigitalPortView.LENGTH - SIZE / 2.0, 0.0),
-            horizontalAlignment = Label.HorizontalAlignment.CENTER,
-            verticalAlignment = Label.VerticalAlignment.CENTER,
+            horizontalAlignment = HorizontalAlignment.CENTER,
+            verticalAlignment = VerticalAlignment.CENTER,
             rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL)
 
     private val externalLabel = HorizontalLabel(

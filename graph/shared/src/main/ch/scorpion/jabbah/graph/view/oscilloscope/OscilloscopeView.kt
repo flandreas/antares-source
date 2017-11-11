@@ -21,7 +21,9 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
@@ -274,8 +276,8 @@ class OscilloscopeView(
                 text = "Test",
                 font = Themes.get<GraphTheme>().annotation.font,
                 color = color.textColor,
-                horizontalAlignment = Label.HorizontalAlignment.CENTER,
-                verticalAlignment = Label.VerticalAlignment.BOTTOM,
+                horizontalAlignment = HorizontalAlignment.CENTER,
+                verticalAlignment = VerticalAlignment.BOTTOM,
                 location = Point2D(x + width / 2, y + height / 2 - 5)
         )
 

@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.edit.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
+import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
@@ -82,6 +82,6 @@ object GraphViewModuleJvm : AbstractModule() {
     }
 
     private fun configureSelectionModels(factory: SelectionModelFactory) {
-        factory.register(SelectionDrawingStrategy.ABOVE, TextComponentJvm::class.simpleName!!, { RectangularHandleSelectionModel(it as RectangularComponent) })
+        factory.register(SelectionDrawingStrategy.ABOVE, TextComponentJvm::class.simpleName!!, { RectangularHandleSelectionModel(it as AbstractRectangularComponent) })
     }
 }

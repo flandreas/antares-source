@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.base.Math
 /**
  * A [SelectionModel] consisting of [Handle]s to be used for selecting and manipulating a [RectangularComponent].
  */
-class RectangularHandleSelectionModel(component: RectangularComponent) : AbstractHandleSelectionModel<RectangularComponent>(component) {
+class RectangularHandleSelectionModel(component: AbstractRectangularComponent) : AbstractHandleSelectionModel<AbstractRectangularComponent>(component) {
 
     /** ---- State  */
 

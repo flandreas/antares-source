@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
  */
 class ResizeRectangleCommand(
     editor: Editor,
-    val rectangle: RectangularComponent,
+    val rectangle: AbstractRectangularComponent,
     val oldBounds: Rectangle2D,
     val newBounds: Rectangle2D
 ) : AbstractCommand("edit.model.rectangle.resize", editor) {

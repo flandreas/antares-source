@@ -18,6 +18,8 @@ import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 /**
  * A graphical, circular representation of a [DigitalSignal].
@@ -58,8 +60,8 @@ class DigitalSignalView(
         text = representation.represent(signal),
         font = FONT,
         color = signal.getColor().textColor,
-        horizontalAlignment = Label.HorizontalAlignment.CENTER,
-        verticalAlignment = Label.VerticalAlignment.CENTER,
+        horizontalAlignment = HorizontalAlignment.CENTER,
+        verticalAlignment = VerticalAlignment.CENTER,
         location = Point2D(0, 0))
 
     /** ---- [AbstractRectangle] */

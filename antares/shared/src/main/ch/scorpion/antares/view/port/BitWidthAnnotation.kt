@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 
 /**
@@ -81,15 +83,15 @@ class BitWidthAnnotation(
     private fun getLineEnd(lineStart: Point2D): Point2D =
             Point2D(lineStart.x - getLineBoxWidth(), lineStart.y + getLineBoxHeight())
 
-    private fun getHorizontalLabelAlignment(): Label.HorizontalAlignment = when (direction) {
-        Direction.WEST, Direction.EAST -> Label.HorizontalAlignment.CENTER
-        Direction.NORTH, Direction.SOUTH -> if (centerLabel) Label.HorizontalAlignment.CENTER else Label.HorizontalAlignment.LEFT
+    private fun getHorizontalLabelAlignment(): HorizontalAlignment = when (direction) {
+        Direction.WEST, Direction.EAST -> HorizontalAlignment.CENTER
+        Direction.NORTH, Direction.SOUTH -> if (centerLabel) HorizontalAlignment.CENTER else HorizontalAlignment.LEFT
         else -> throw IllegalStateException("unknown Direction $direction")
     }
 
-    private fun getVerticalLabelAlignment(): Label.VerticalAlignment = when (direction) {
-        Direction.WEST, Direction.EAST -> if (centerLabel) Label.VerticalAlignment.CENTER else Label.VerticalAlignment.TOP
-        Direction.NORTH, Direction.SOUTH -> Label.VerticalAlignment.CENTER
+    private fun getVerticalLabelAlignment(): VerticalAlignment = when (direction) {
+        Direction.WEST, Direction.EAST -> if (centerLabel) VerticalAlignment.CENTER else VerticalAlignment.TOP
+        Direction.NORTH, Direction.SOUTH -> VerticalAlignment.CENTER
         else -> throw IllegalStateException("unknown Direction $direction")
     }
 

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.model.rectangle
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
@@ -14,17 +15,21 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 /**
- * A [RectangularComponent] is a [Component] with a [RectangularShape].
+ * An abstract [Component] implementation that has a [RectangularShape].
+ *
+ * [AbstractRectangularComponent] provides a changeable rectangular geometry, but doesn't draw itself.
+ * It can be used as a base class for implementing various rectangular [Component]s.
+ * [AbstractRectangularComponent] does not contain text.
  */
-abstract class RectangularComponent(
+abstract class AbstractRectangularComponent(
         styleType: StyleType = StyleType.FIGURE,
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-        val shape: RectangularShape
+        val shape: RectangularShape = Rectangle2D()
 ) : AbstractComponent(styleProvider, styleType), RectangularShape by shape {
-
-    constructor(x: Double, y: Double, w: Double, h: Double): this(shape = Rectangle2D(x, y, w, h))
 
     /** ---- [RectangularShape] */
 
@@ -38,30 +43,6 @@ abstract class RectangularComponent(
     override fun setFrame(rect: RectangularShape) {
         this.setFrame(rect.x, rect.y, rect.width, rect.height)
     }
-
-    /** ---- [Storable] interface */
-
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        writer.writeDouble("x", x)
-        writer.writeDouble("y", y)
-        writer.writeDouble("w", width)
-        writer.writeDouble("h", height)
-    }
-
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        setFrame(
-            reader.readDouble("x"),
-            reader.readDouble("y"),
-            reader.readDouble("w"),
-            reader.readDouble("h")
-        )
-    }
-
-    /** ---- [Component] interface */
-
-    override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy? = SelectionDrawingStrategy.ABOVE
 
     /** ---- [Locatable] interface */
 
@@ -78,10 +59,10 @@ abstract class RectangularComponent(
             val bb = Rectangle2D(shape.boundingBox)
             val lw = stroke.width
             bb.setFrame(
-                bb.x - lw,
-                bb.y - lw,
-                bb.width + 2 * lw,
-                bb.height + 2 * lw
+                    bb.x - lw,
+                    bb.y - lw,
+                    bb.width + 2 * lw,
+                    bb.height + 2 * lw
             )
             return bb
         }
@@ -93,6 +74,121 @@ abstract class RectangularComponent(
     override fun contains(p: Point2D): Boolean {
         return shape.contains(p)
     }
+
+    /** ---- [Snappable] interface */
+
+    override val snappableX: Array<SnappableX> get() = arrayOf<SnappableX>(
+            SnappableXCoordinate(minX),
+            SnappableXCoordinate(centerX),
+            SnappableXCoordinate(maxX))
+
+    override val snappableY: Array<SnappableY> get() = arrayOf<SnappableY>(
+            SnappableYCoordinate(minY),
+            SnappableYCoordinate(centerY),
+            SnappableYCoordinate(maxY))
+
+    /** ---- [Storable] interface */
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        writer.writeDouble("x", x)
+        writer.writeDouble("y", y)
+        writer.writeDouble("w", width)
+        writer.writeDouble("h", height)
+    }
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+        setFrame(
+                reader.readDouble("x"),
+                reader.readDouble("y"),
+                reader.readDouble("w"),
+                reader.readDouble("h")
+        )
+    }
+
+    /** ---- [Component] interface */
+
+    override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy? = SelectionDrawingStrategy.ABOVE
+}
+
+/**
+ * A [RectangularComponent] is an [AbstractRectangularComponent] with a singe line text label
+ * whose vertical alignment relative to the rectangle box can be chosen.
+ */
+abstract class RectangularComponent(
+        styleType: StyleType = StyleType.FIGURE,
+        styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+        shape: RectangularShape
+) : AbstractRectangularComponent(styleType, styleProvider, shape) {
+
+    companion object {
+        // The distance between the rectangle border and the text box (if at top or at bottom)
+        private val TEXT_INSET: Int = 10
+    }
+
+    constructor(x: Double, y: Double, w: Double, h: Double): this(shape = Rectangle2D(x, y, w, h))
+
+    private val label = Label("", font)
+
+    /** ---- Editable properties */
+
+    var text: String
+        get() = label.text
+        set(value) {
+            if (label.text == value) {
+                return
+            }
+            invalidate()
+            label.text = value
+            invalidate()
+        }
+
+    var alignment: VerticalAlignment
+        get() = label.verticalAligment
+        set(value) {
+            if (label.verticalAligment != value) {
+                invalidate()
+                label.verticalAligment = value
+                updateLabelLocation()
+                invalidate()
+            }
+        }
+
+    init {
+        updateLabelLocation()
+    }
+
+    /** ---- [RectangularShape] */
+
+    override fun setFrame(x: Double, y: Double, width: Double, height: Double) {
+        super.setFrame(x, y, width, height)
+        updateLabelLocation()
+    }
+
+    /** ---- [Storable] interface */
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        if (StringUtils.isNotEmpty(text)) {
+            writer.writeString("text", text)
+        }
+        if (alignment != VerticalAlignment.CENTER) {
+            writer.writeString("vAlign", alignment.customName)
+        }
+    }
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+        if (reader.hasAttribute("text")) {
+            text = reader.readString("text")
+        }
+        if (reader.hasAttribute("vAlign")) {
+            alignment = VerticalAlignment.withName(reader.readString("vAlign"))
+        }
+    }
+
+    /** ---- [Drawable] interface */
 
     override val canMirror: Boolean = true
 
@@ -116,20 +212,23 @@ abstract class RectangularComponent(
         val oldColor = context.g.color
         drawFill(context, shape, fillColor)
         drawStroke(context, shape, lineColor, stroke)
+        context.g.color = textColor
+        context.g.translate(x, y)
+        label.draw(context)
+        context.g.translate(-x, -y)
         context.g.color = oldColor
     }
 
-    /** ---- [Snappable] interface */
+    /** ---- [AbstractRectangularComponent] */
 
-    override val snappableX: Array<SnappableX> get() = arrayOf<SnappableX>(
-            SnappableXCoordinate(minX),
-            SnappableXCoordinate(centerX),
-            SnappableXCoordinate(maxX))
-
-    override val snappableY: Array<SnappableY> get() = arrayOf<SnappableY>(
-            SnappableYCoordinate(minY),
-            SnappableYCoordinate(centerY),
-            SnappableYCoordinate(maxY))
+    private fun updateLabelLocation() {
+        val y: Double = when(alignment) {
+            VerticalAlignment.BOTTOM -> height - TEXT_INSET
+            VerticalAlignment.CENTER -> height / 2
+            VerticalAlignment.TOP -> TEXT_INSET.toDouble()
+        }
+        label.location = Point2D(width / 2, y.toDouble())
+    }
 }
 
 open class RectangleComponent(
@@ -141,6 +240,7 @@ open class RectangleComponent(
     constructor(x: Double, y: Double, w: Double, h: Double): this(shape = Rectangle2D(x, y, w, h))
 
     override val type: String? get() = Translations.getString("edit.component.rectangle")
+
 }
 
 class RoundRectangleComponent(

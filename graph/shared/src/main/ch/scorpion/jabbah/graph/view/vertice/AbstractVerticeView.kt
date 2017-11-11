@@ -31,7 +31,9 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
@@ -70,8 +72,8 @@ abstract class AbstractVerticeView<T : Vertice>(
     private val executionInfoLabel = Label(
             text = "",
             font = font,
-            horizontalAlignment = Label.HorizontalAlignment.CENTER,
-            verticalAlignment = Label.VerticalAlignment.BOTTOM)
+            horizontalAlignment = HorizontalAlignment.CENTER,
+            verticalAlignment = VerticalAlignment.BOTTOM)
 
     /** ---- [VerticeView] interface */
 
@@ -412,7 +414,7 @@ abstract class AbstractVerticeView<T : Vertice>(
      */
     private fun configureExecutionInfoLabel() {
         val bbox = plainBoundingBox
-        val text = "${propagationDelay.toString()} ns"
+        val text = "$propagationDelay ns"
         val style = Themes.get<GraphTheme>().annotation
         executionInfoLabel.font = style.font
         executionInfoLabel.text = text

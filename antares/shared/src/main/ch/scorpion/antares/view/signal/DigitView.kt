@@ -14,6 +14,8 @@ import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 /**
  * Displays a single binary digit of a [DigitalSignal] as text.
@@ -42,8 +44,8 @@ class DigitView(
         text = "",
         font = FONT,
         color = Themes.get<AntaresTheme>().zero.textColor,
-        horizontalAlignment = Label.HorizontalAlignment.CENTER,
-        verticalAlignment = Label.VerticalAlignment.CENTER,
+        horizontalAlignment = HorizontalAlignment.CENTER,
+        verticalAlignment = VerticalAlignment.CENTER,
         location = Point2D(WIDTH / 2, HEIGHT / 2))
 
     /** The [DigitalSignal] whose digit at [index] is displayed by this [DigitView]. */

@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.edit.module
 
 import ch.scorpion.jabbah.base.AbstractModule
-import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.DirectionEditor
 import ch.scorpion.jabbah.base.swing.EnumRenderer
@@ -11,13 +10,14 @@ import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.StyleTypeEditor
 import ch.scorpion.jabbah.draw.style.StyleTypeRenderer
-import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.SizeEditor
+import ch.scorpion.jabbah.edit.model.VerticalAlignmentEditor
 import ch.scorpion.jabbah.edit.model.text.TextComponent
 import ch.scorpion.jabbah.edit.model.text.TextComponentFactoryJvm
 import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.IOModuleJvm
 import ch.scorpion.jabbah.io.TypeMap
@@ -53,6 +53,7 @@ object EditModuleJvm : AbstractModule() {
         registry.registerRenderer(PredefinedColor::class.java, PredefinedColorRenderer::class.java)
         registry.registerRenderer(Size::class.java, EnumRenderer::class.java)
         registry.registerRenderer(StyleType::class.java, StyleTypeRenderer::class.java)
+        registry.registerRenderer(VerticalAlignment::class.java, EnumRenderer::class.java)
         registry.registerRenderer(TextProperty::class.java, TextPropertyRenderer::class.java)
     }
 
@@ -60,6 +61,7 @@ object EditModuleJvm : AbstractModule() {
         registry.registerEditor(Direction::class.java, DirectionEditor::class.java)
         registry.registerEditor(Size::class.java, SizeEditor::class.java)
         registry.registerEditor(StyleType::class.java, StyleTypeEditor::class.java)
+        registry.registerEditor(VerticalAlignment::class.java, VerticalAlignmentEditor::class.java)
         registry.register(PredefinedColor::class.java, { PredefinedColorEditor(PredefinedColorRepository) })
         registry.register(TextProperty::class.java, TextPropertyEditorFactory())
     }

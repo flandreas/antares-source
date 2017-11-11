@@ -19,6 +19,8 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 /**
  * A box-like [VerticeView] that automatically adjusts its size according to its [DigitalPortView]s, and
@@ -47,8 +49,8 @@ open class BoxGateView<T : Vertice>(
                 box.label?.let {
                     box.label.font = box.font
                     box.label.ownerRotation = box.rotation
-                    box.label.horizontalAligment = Label.HorizontalAlignment.CENTER
-                    box.label.verticalAligment = Label.VerticalAlignment.CENTER
+                    box.label.horizontalAligment = HorizontalAlignment.CENTER
+                    box.label.verticalAligment = VerticalAlignment.CENTER
                     box.label.location = when(box.rotation) {
                         Rotation.R0 -> Point2D(box.x + box.width / 2, box.y + box.height / 3)
                         Rotation.R180 -> Point2D(box.x + box.width / 2, box.y + 2 * box.height / 3)
@@ -64,8 +66,8 @@ open class BoxGateView<T : Vertice>(
                 box.label?.let {
                     box.label.font = box.font.deriveFont((box.font.size * FONT_SIZE_FACTOR).toInt())
                     box.label.ownerRotation = box.rotation
-                    box.label.horizontalAligment = Label.HorizontalAlignment.RIGHT
-                    box.label.verticalAligment = Label.VerticalAlignment.TOP
+                    box.label.horizontalAligment = HorizontalAlignment.RIGHT
+                    box.label.verticalAligment = VerticalAlignment.TOP
                     box.label.location = Point2D(box.bounds.maxX - SMALL_LABEL_INSET, box.bounds.minY + SMALL_LABEL_INSET)
                 }
             }
@@ -109,8 +111,8 @@ open class BoxGateView<T : Vertice>(
         Label(
                 text = text,
                 font = font,
-                horizontalAlignment = Label.HorizontalAlignment.CENTER,
-                verticalAlignment = Label.VerticalAlignment.CENTER,
+                horizontalAlignment = HorizontalAlignment.CENTER,
+                verticalAlignment = VerticalAlignment.CENTER,
                 location = Point2D(),
                 rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL)
     } else {

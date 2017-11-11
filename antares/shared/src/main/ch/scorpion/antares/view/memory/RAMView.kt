@@ -31,6 +31,8 @@ import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.ReferenceResolver
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 
 /**
@@ -71,8 +73,8 @@ class RAMView(
     private val label = Label(
             font = font,
             text = buildLabelText(),
-            horizontalAlignment = Label.HorizontalAlignment.CENTER,
-            verticalAlignment = Label.VerticalAlignment.CENTER,
+            horizontalAlignment = HorizontalAlignment.CENTER,
+            verticalAlignment = VerticalAlignment.CENTER,
             location = Point2D(x + width / 2, y + LABEL_VERTICAL_FACTOR * height)
     )
 

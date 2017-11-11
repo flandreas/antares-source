@@ -46,7 +46,7 @@ class HorizontalLabel(
             }
         }
 
-    var relLocation: Point2D = relLocation
+    private var relLocation: Point2D = relLocation
         set(value) {
             if (field != value) {
                 field = value
@@ -77,13 +77,13 @@ class HorizontalLabel(
 
     private fun updateAlignment() {
         if (orientation == null) {
-            label.alignment = Label.Alignment(Label.HorizontalAlignment.CENTER, Label.VerticalAlignment.CENTER)
+            label.alignment = Alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
         } else {
             when (owner.rotation.rotateDirection(orientation!!)) {
-                Direction.EAST -> label.alignment = Label.Alignment(Label.HorizontalAlignment.LEFT, Label.VerticalAlignment.CENTER)
-                Direction.WEST -> label.alignment = Label.Alignment(Label.HorizontalAlignment.RIGHT, Label.VerticalAlignment.CENTER)
-                Direction.NORTH -> label.alignment = Label.Alignment(Label.HorizontalAlignment.CENTER, Label.VerticalAlignment.BOTTOM)
-                Direction.SOUTH -> label.alignment = Label.Alignment(Label.HorizontalAlignment.CENTER, Label.VerticalAlignment.TOP)
+                Direction.EAST -> label.alignment = Alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER)
+                Direction.WEST -> label.alignment = Alignment(HorizontalAlignment.RIGHT, VerticalAlignment.CENTER)
+                Direction.NORTH -> label.alignment = Alignment(HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM)
+                Direction.SOUTH -> label.alignment = Alignment(HorizontalAlignment.CENTER, VerticalAlignment.TOP)
             }
         }
     }

@@ -14,6 +14,8 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.DrawingViewContent
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -187,8 +189,8 @@ class NavigationStackView(
                 text = content.drawing.graph!!.name,
                 font = DrawModule.properties.getFont(PROP_FONT),
                 color = DrawModule.properties.getColor(PROP_TEXT_COLOR),
-                horizontalAlignment = Label.HorizontalAlignment.CENTER,
-                verticalAlignment = Label.VerticalAlignment.CENTER,
+                horizontalAlignment = HorizontalAlignment.CENTER,
+                verticalAlignment = VerticalAlignment.CENTER,
                 location = Point2D(path.boundingBox.centerX, path.boundingBox.centerY))
 
         var location: Point2D = Point2D()

@@ -161,12 +161,12 @@
           <components>
             <graphElement _id='104'>
               <component>
-                <containerBox id='0' style='subsystem' x='-105.0' y='-308.0' w='175.0' h='280.0'/>
+                <containerBox id='0' style='subsystem' x='-105.0' y='-322.0' w='175.0' h='294.0' text='Master' vAlign='top'/>
               </component>
             </graphElement>
             <graphElement _id='103'>
               <component>
-                <containerBox id='0' style='subsystem' x='224.0' y='-308.0' w='161.0' h='280.0'/>
+                <containerBox id='0' style='subsystem' x='210.0' y='-322.0' w='182.0' h='294.0' text='Slave' vAlign='top'/>
               </component>
             </graphElement>
             <nandGateView _id='102' id='1' rot='0' modelId='3' x='-140.0' y='-266.0'/>
@@ -251,10 +251,10 @@
               </shape>
             </digitalEdgeView>
             <notGateView _id='81' id='22' rot='90' modelId='18' x='-70.0' y='42.0'/>
-            <notGateView _id='80' id='23' rot='270' modelId='19' x='-70.0' y='-336.0'/>
+            <notGateView _id='80' id='23' rot='270' modelId='19' x='-70.0' y='-350.0'/>
             <digitalEdgeView _id='79' id='24' modelId='20' layout='ortho' orig='80' origPort='2' origPortOutput='true' dest='85' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='-70.0,-342.0 -70.0,-280.0 -42.0,-280.0'/>
+                <polylineShape points='-70.0,-356.0 -70.0,-280.0 -42.0,-280.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='78' id='25' modelId='21' layout='ortho' orig='81' origPort='2' origPortOutput='true' dest='83' destPort='3' adjusted='false'>
@@ -388,12 +388,12 @@
             </digitalEdgeView>
             <circuitInOutView _id='49' id='54' modelId='35' representation='binary' orientation='south'>
               <location>
-                <point x='-70.0' y='-406.0'/>
+                <point x='-70.0' y='-420.0'/>
               </location>
             </circuitInOutView>
             <digitalEdgeView _id='48' id='55' modelId='36' layout='ortho' orig='49' origPort='1' origPortOutput='true' dest='80' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='-70.0,-420.0 -70.0,-392.0'/>
+                <polylineShape points='-70.0,-434.0 -70.0,-406.0'/>
               </shape>
             </digitalEdgeView>
             <circuitInOutView _id='47' id='56' modelId='37' representation='binary' orientation='north'>

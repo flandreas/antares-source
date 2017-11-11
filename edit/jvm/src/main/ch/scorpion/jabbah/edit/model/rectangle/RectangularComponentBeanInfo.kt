@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 
 /** A [BeanInfo] for [RectangularComponent]. */
@@ -16,6 +17,8 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : AbstractB
         private val filled = PropertyImpl("edit.property.filled", Boolean::class.java)
         private val styleType = PropertyImpl("graph.styleType", StyleType::class.java)
         private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
+        private val text = PropertyImpl("edit.property.text", String::class.java)
+        private val alignment = PropertyImpl("edit.property.verticalAlignment", VerticalAlignment::class.java)
     }
 
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
@@ -24,10 +27,14 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : AbstractB
         filled.bind(editor, { bean.filled }, { bean.filled = it!! })
         styleType.bind(editor, { bean.styleType }, { bean.styleType = it!! })
         color.bind(editor, { bean.customColor}, { bean.customColor = it })
+        text.bind(editor, { bean.text }, { bean.text = it!!} )
+        alignment.bind(editor, { bean.alignment }, { bean.alignment = it!! })
 
         properties.add(filled)
         properties.add(styleType)
         properties.add(color)
+        properties.add(text)
+        properties.add(alignment)
     }
 }
 
