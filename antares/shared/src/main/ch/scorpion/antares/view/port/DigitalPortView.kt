@@ -29,6 +29,8 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
@@ -104,6 +106,14 @@ class DigitalPortView(
         buildBitWidthAnnotation()
     }
 
+    /** ---- [Transparent] interface */
+
+    private val transparent = TransparentImpl(this)
+
+    override var transparency: Int
+        get() = transparent.transparency
+        set(value) { transparent.transparency = value }
+
     /** ---- [AbstractPortView] */
 
     override var edgeViewWidth: Int
@@ -158,11 +168,11 @@ class DigitalPortView(
 
         if (ApplicationMode.EXECUTE == appContext.mode && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
             if (port.net == null || !port.net!!.isError) {
-                context.g.color = when (port.portType) {
+                context.g.color = transparent.applyTo(when (port.portType) {
                     PortType.INOUT -> getDigitalPort().dominantSignal.getColor().foregroundColor
                     PortType.INPUT -> getDigitalPort().getIncomingSignal()!!.getColor().foregroundColor
                     PortType.OUTPUT -> getDigitalPort().getOutgoingSignal()!!.getColor().foregroundColor
-                }
+                })
             }
         } else {
             if (context.useContextColors) {
@@ -200,11 +210,11 @@ class DigitalPortView(
         }
 
         portLabel?.let {
-            if (portLabelPosition == PortLabelPosition.EXTERNAL) {
-                context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).textColor
+            context.g.color = transparent.applyTo(if (portLabelPosition == PortLabelPosition.EXTERNAL) {
+                context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).textColor
             } else {
-                context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.ANNOTATION).color).textColor
-            }
+                context.choose(styleProvider.getStyle(GraphStyleType.ANNOTATION).color).textColor
+            })
             portLabel?.draw(context)
         }
 
@@ -393,11 +403,11 @@ class DigitalPortView(
             logicX += LOGIC_SIZE * direction.previous().dx / 2
             logicY += LOGIC_SIZE * direction.previous().dy / 2
 
-            context.g.color = context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor
+            context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor)
             context.g.fillOval(logicX, logicY, LOGIC_SIZE, LOGIC_SIZE)
 
             context.g.stroke = Themes.get<AntaresTheme>().figure.stroke
-            context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.VERTICE).color).foregroundColor
+            context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(GraphStyleType.VERTICE).color).foregroundColor)
             context.g.drawOval(logicX, logicY, LOGIC_SIZE, LOGIC_SIZE)
         }
     }

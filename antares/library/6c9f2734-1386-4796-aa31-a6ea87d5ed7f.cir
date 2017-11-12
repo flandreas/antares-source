@@ -2,7 +2,8 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='6c9f2734-1386-4796-aa31-a6ea87d5ed7f' name='Custom NOT'>
+        <graph _id='2' uuid='6c9f2734-1386-4796-aa31-a6ea87d5ed7f' name='Custom NOT' script='var i = elem.inputBit(&quot;I&quot;);
+elem.setOutputBit(&quot;O&quot;, !i);'>
           <elements>
             <notGate _id='3' id='1' delay='20' inputCount='1'/>
             <circuitInOut _id='4' id='2' delay='0' name='I' type='input' bitWidth='1' desc='Dies ist ein Eingang'/>

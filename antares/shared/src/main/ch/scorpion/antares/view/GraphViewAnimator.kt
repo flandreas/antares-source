@@ -13,7 +13,6 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.drawable.TransparentAnimation
@@ -195,7 +194,7 @@ class GraphViewAnimator(
                 animator
         )
 
-        LOG.trace("Registered EdgeView animation for EdgeView '${edgeView.id}'")
+        LOG.trace("GraphViewAnimator: Registered EdgeView animation for EdgeView '${edgeView.id}'")
     }
 
     private fun handleNetActed(net: Net<*>) {
@@ -203,7 +202,7 @@ class GraphViewAnimator(
         // and start them. If there are no pending net animations, the acted Net belongs to a SubVertice
         // whose views are not displayed by the GraphView managed by this SimulationDriver.
 
-        LOG.trace("Handling SimulationEvent for Net '${net.id}'")
+        LOG.trace("GraphViewAnimator: Handling SimulationEvent for Net '${net.id}'")
 
         if (!requireEdgeViewAnimation()) {
             scheduler.signalHandler.actingDone(net)
@@ -223,9 +222,15 @@ class GraphViewAnimator(
     private fun handleGraphElementActingRequested(graphElement: GraphElement) {
         LOG.trace("GraphViewAnimator: handleGraphElementActingRequested for GraphElement '${graphElement.id}'")
 
-        if (!requireVerticeGlowAnimation() || graphElement.propagationDelay == 0L) {
+        if (!requireVerticeGlowAnimation()) {
+            LOG.trace("GraphViewAnimator: VerticeView doesn't require glow animation")
             return
         }
+        if (graphElement.propagationDelay == 0L) {
+            LOG.trace("GraphViewAnimator: VerticeView would require glow animation, but propDelay is 0")
+            return
+        }
+
         val elementViews = drawingView.drawing.getElementViews(graphElement)
 
         // If the ElementView that displays the Actor for which an acting has been requested

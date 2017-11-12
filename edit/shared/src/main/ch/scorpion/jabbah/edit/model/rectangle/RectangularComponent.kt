@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -120,7 +122,7 @@ abstract class RectangularComponent(
         styleType: StyleType = StyleType.FIGURE,
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
         shape: RectangularShape
-) : AbstractRectangularComponent(styleType, styleProvider, shape) {
+) : AbstractRectangularComponent(styleType, styleProvider, shape), Transparent {
 
     companion object {
         // The distance between the rectangle border and the text box (if at top or at bottom)
@@ -158,6 +160,14 @@ abstract class RectangularComponent(
     init {
         updateLabelLocation()
     }
+
+    /** ---- [Transparent] interface */
+
+    private val transparent = TransparentImpl(this)
+
+    override var transparency: Int
+        get() = transparent.transparency
+        set(value) { transparent.transparency = value }
 
     /** ---- [RectangularShape] */
 
@@ -204,7 +214,7 @@ abstract class RectangularComponent(
         if (context.useContextColors) {
             drawImpl(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
         } else {
-            drawImpl(context, if (stroked) foregroundColor else null, if (filled) backgroundColor else null)
+            drawImpl(context, if (stroked) transparent.applyTo(foregroundColor) else null, if (filled) transparent.applyTo(backgroundColor) else null)
         }
     }
 
@@ -212,7 +222,7 @@ abstract class RectangularComponent(
         val oldColor = context.g.color
         drawFill(context, shape, fillColor)
         drawStroke(context, shape, strokeColor, stroke)
-        context.g.color = textColor
+        context.g.color = transparent.applyTo(textColor)
         context.g.translate(x, y)
         label.draw(context)
         context.g.translate(-x, -y)

@@ -33,6 +33,7 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortViewReuser
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.drawable.Transparent
 
 /**
  * A standard implementation of the [SubGraphVerticeView] interface.
@@ -125,6 +126,15 @@ class SubGraphVerticeViewImpl(
                 labelComponent.text = field?: ""
                 invalidate()
             }
+        }
+
+    /** ---- [Transparent] */
+
+    override var transparency: Int
+        get() = super.transparency
+        set(value) {
+            super.transparency = value
+            drawables.filter { it is Transparent }.map { it as Transparent }.forEach { it.transparency = value }
         }
 
     /** ---- [Drawable] */

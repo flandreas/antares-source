@@ -41,6 +41,9 @@ class TransparentImpl(val owner: Drawable) : Transparent, Drawable by owner {
 
     /** Applies the transparency to the specified [Color] and returns the new [Color].*/
     fun applyTo(color: Color): Color {
+        if (color.alpha == transparency) {
+            return color
+        }
         return Color(color, transparency)
     }
 }

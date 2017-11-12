@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Math
-import ch.scorpion.jabbah.base.logger
 
 enum class SymbolStyle(val customName: String) {
     EUROPEAN("IEC") {
@@ -148,6 +147,7 @@ enum class SymbolStyle(val customName: String) {
             val vOffset = (height - 2 * Look.SCALE - path.boundingBox.height) / 2
 
             if (vOffset > 0) {
+                context.g.color = foregroundColor
                 context.g.drawLine(
                         x.toInt(), (y + Look.SCALE).toInt(),
                         x.toInt(), (y + height - Look.SCALE).toInt())

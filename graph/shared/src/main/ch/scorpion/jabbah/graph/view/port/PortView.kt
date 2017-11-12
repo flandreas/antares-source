@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
 import ch.scorpion.jabbah.graph.model.Port
@@ -20,7 +21,7 @@ import ch.scorpion.jabbah.io.Storable
  * Implementing classes should override [dispose] to detach from its model and releasing all resources
  * @param T the type of signal that this [PortView]'s [Port] can consume or produce.
  */
-interface PortView<T: Any> : Drawable, Storable, SnappableX, SnappableY {
+interface PortView<T: Any> : Drawable, Storable, SnappableX, SnappableY, Transparent {
 
     companion object {
 

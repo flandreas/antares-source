@@ -14,6 +14,8 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
@@ -30,7 +32,7 @@ class LabelComponent(
             horizontalAlignment = HorizontalAlignment.CENTER,
             verticalAlignment = VerticalAlignment.CENTER,
             location = Point2D())
-) : AbstractRectangularComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider), TextComponent {
+) : AbstractRectangularComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider), TextComponent, Transparent {
 
     companion object {
         val DEFAULT_TEXT = "text"
@@ -50,6 +52,14 @@ class LabelComponent(
             setFrame(label.boundingBox)
         }
 
+    /** ---- [Transparent] interface */
+
+    private val transparent = TransparentImpl(this)
+
+    override var transparency: Int
+        get() = transparent.transparency
+        set(value) { transparent.transparency = value }
+
     /** ---- [Drawable] */
 
     override val boundingBox: Rectangle2D get() = label.boundingBox
@@ -60,7 +70,7 @@ class LabelComponent(
 
     override fun draw(context: DrawContext) {
         if (!context.useContextColors) {
-            context.g.color = foregroundColor
+            context.g.color = transparent.applyTo(foregroundColor)
         }
         label.font = font
         label.draw(context)

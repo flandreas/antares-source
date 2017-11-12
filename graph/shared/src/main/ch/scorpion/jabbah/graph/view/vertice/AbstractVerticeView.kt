@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.draw.drawable.Transparent
-import ch.scorpion.jabbah.draw.drawable.Transparent.Companion.FULLY_OPAQUE
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -16,6 +15,7 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -26,7 +26,6 @@ import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.*
@@ -159,15 +158,14 @@ abstract class AbstractVerticeView<T : Vertice>(
 
     /** ---- [Transparent] interface */
 
-    override var transparency: Int = FULLY_OPAQUE
-        set(value) {
-            field = value
-            invalidate()
-        }
+    protected val transparent = TransparentImpl(this)
 
-    protected fun getColorWithTransparency(color: Color): Color {
-        return Color(color.red, color.green, color.blue, transparency)
-    }
+    override var transparency: Int
+        get() = transparent.transparency
+        set(value) {
+            transparent.transparency = value
+            portViews.forEach { it.transparency = value }
+        }
 
     /** ---- [Snappable] interface */
 
@@ -418,7 +416,7 @@ abstract class AbstractVerticeView<T : Vertice>(
         val style = Themes.get<GraphTheme>().annotation
         executionInfoLabel.font = style.font
         executionInfoLabel.text = text
-        executionInfoLabel.color = getColorWithTransparency(style.color.textColor)
+        executionInfoLabel.color = transparent.applyTo(style.color.textColor)
         executionInfoLabel.location = Point2D(bbox.centerX.toInt(), bbox.minY.toInt() - 3)
     }
 

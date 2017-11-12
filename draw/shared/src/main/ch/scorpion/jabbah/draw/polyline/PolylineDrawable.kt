@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.module.DrawModule
 
 /**
@@ -18,7 +20,7 @@ class PolylineDrawable constructor(
         val shape: PolylineShape,
         styleType: StyleType,
         styleProvider: StyleProvider
-): AbstractStyledDrawable(styleType, styleProvider), Polyline, Locatable {
+): AbstractStyledDrawable(styleType, styleProvider), Polyline, Locatable, Transparent {
 
     constructor(): this(DrawModule.polylineShapeFactory.invoke(null), StyleType.FIGURE, DrawStyleModule.styleProvider)
 
@@ -42,6 +44,14 @@ class PolylineDrawable constructor(
         update()
     }
 
+    /** ---- [Transparent] interface */
+
+    private val transparent = TransparentImpl(this)
+
+    override var transparency: Int
+        get() = transparent.transparency
+        set(value) { transparent.transparency = value }
+
     /** ---- [Drawable] interface */
 
     override val boundingBox: RectangularShape
@@ -56,7 +66,7 @@ class PolylineDrawable constructor(
         if (context.useContextColors) {
             drawImpl(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
         } else {
-            drawImpl(context, foregroundColor, if (filled) backgroundColor else null)
+            drawImpl(context, transparent.applyTo(foregroundColor), if (filled) transparent.applyTo(backgroundColor) else null)
         }
     }
 

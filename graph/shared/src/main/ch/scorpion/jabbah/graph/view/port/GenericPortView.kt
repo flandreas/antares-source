@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.graph.model.Port
 
 class GenericPortView<T: Any>(
@@ -14,6 +15,8 @@ class GenericPortView<T: Any>(
         portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
         connectable: Boolean = false
 ) : AbstractPortView<T>(port, x, y, direction, portLabelPosition, 0, connectable) {
+
+    override var transparency: Int = Transparent.FULLY_OPAQUE
 
     override fun contains(x: Double, y: Double): Boolean = false
 

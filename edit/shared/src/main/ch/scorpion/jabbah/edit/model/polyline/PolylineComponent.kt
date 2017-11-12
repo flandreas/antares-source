@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.polyline.PolylineDrawable
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -20,7 +21,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class PolylineComponent(
     val polyline: PolylineDrawable = PolylineDrawable()
-) : AbstractComponent(), Polyline by polyline, Stylable by polyline {
+) : AbstractComponent(), Polyline by polyline, Stylable by polyline, Transparent {
 
     init {
         DrawableOwner(this, polyline)
@@ -30,7 +31,13 @@ class PolylineComponent(
 
     override var location: Point2D
         get() = polyline.location
-        set(value) {polyline.location = value}
+        set(value) { polyline.location = value }
+
+    /** ---- [Transparent] interface */
+
+    override var transparency: Int
+        get() = polyline.transparency
+        set(value) { polyline.transparency = value }
 
     /** ---- [Drawable] interface */
 

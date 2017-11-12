@@ -125,9 +125,9 @@ open class BoxGateView<T : Vertice>(
         super.drawImpl(context)
         val oldColor = context.g.color
         if (context.useContextColors) {
-            drawShape(context, getColorWithTransparency(context.color!!.foregroundColor), context.color!!.backgroundColor, stroke)
+            drawShape(context, transparent.applyTo(context.color!!.foregroundColor), transparent.applyTo(context.color!!.backgroundColor), stroke)
         } else {
-            drawShape(context, getColorWithTransparency(foregroundColor), backgroundColor, stroke)
+            drawShape(context, transparent.applyTo(foregroundColor), transparent.applyTo(backgroundColor), stroke)
         }
         context.g.color = oldColor
     }

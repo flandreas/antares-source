@@ -29,7 +29,9 @@ class SubGraphVerticeRef(
 
         val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
             override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
-                vertice.scriptGateway.exec(Script(code = vertice.getGraphIfPresent()!!.script!!, origin = "SubGraph '${vertice.name}'", context = "Logic"), vertice, data, signalHandler)
+                if (!vertice.isDeepExecution(signalHandler)) {
+                    vertice.scriptGateway.exec(Script(code = vertice.getGraphIfPresent()!!.script!!, origin = "SubGraph '${vertice.name}'", context = "Logic"), vertice, data, signalHandler)
+                }
             }
         }
 
@@ -114,10 +116,11 @@ class SubGraphVerticeRef(
         if (isDeepExecution(signalHandler)) {
             val graphInput = (input as SubGraphInputPort<Any>).graphInput
             graphInput!!.setIncomingSignal(input.getIncomingSignal(), signalHandler)
-        } else {
-            // This will eventually call the VerticeCalculator which executes the script
-            super.inputChanged(input, signalHandler)
         }
+        // This will eventually call the VerticeCalculator which will execute the script (if not deeply executing).
+        // Event if deeply executing, we need to request acting, because only that will initiate
+        // calculation animations for this [SubGraphVerticeRef] on the view layer.
+        super.inputChanged(input, signalHandler)
     }
 
     /** ---- [SubGraphVertice] */
