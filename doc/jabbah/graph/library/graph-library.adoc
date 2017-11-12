@@ -1,5 +1,18 @@
 == Library
 
+=== High level requirements
+
+* A `CoreDeveloper` wants to provide a rich `Library` of reusable `Graphs` an `Author` can consume from, thus increasing
+the usability of his application.
+* A `CoreDeveloper` wants to add new elementary items to predefined `Libraries` when he releases a new version of the software.
+* An `Author` wants to have access to a rich `Library` of reusable `Graphs` in order to avoid the need to re-invent
+the wheel when designing his own `Graphs`.
+* An `Author` wants to define his own rich `Library` from scratch, if he is not pleased with the predefined `Libraries`.
+* An `Author` wants to extend a predefined `Library` with his own `Graphs`.
+* An `Author` wants to maintain multiple `Libraries` to consume from in different types of projects.
+* A `Teacher` wants to compose exercises based on a reduced `Library`, so that a `Student` is forced to use only
+basic items when working on the exercise.
+
 === Overview
 
 image::../../../model-img/svg/jabbah__graph__library__Library Overview_7.svg[]

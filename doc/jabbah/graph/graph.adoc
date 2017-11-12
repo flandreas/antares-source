@@ -4,7 +4,12 @@
 
 TODO
 
+=== Actor Model
+
+image::../../model-img/svg/jabbah__graph__Actor Model__Actor Model_19.svg[]
+
 === Module Overview
+
 image::../../model-img/svg/jabbah__graph__Graph Package Overview_6.svg[]
 
 <<model/model.adoc#, *model:*>> TODO
