@@ -2,8 +2,44 @@
 
 === Introduction
 
-TODO
+The `Repainting` system is responsible for updating the `View` whenever a `Drawable` it displays has changed.
+A change of a `Drawable` can be geometrical (such as the change of the location or the shape of a `Drawable`),
+or a `Drawable` simply could have changed it look (such as its color).
+
+The design of the `Repainting` system relies on separation of concerns. A `Drawable` doesn't even have to know
+that it is being rendered in a `View`. Instead, it just declares that it has become invalid, or that it needs
+to become valid again, which means that it wishes to present itself to the user in its new look or its new
+position or shape. A `View` listens to these declarations, keeps track of invalid regions, and redraws itself
+when appropriate.
 
 === Core abstractions
 
-image::../../model-img/svg/jabbah__draw__Repainting__Repainting Core Abstractions_17.svg[]
+image::../../model-img/svg/jabbah__draw__Repainting__Repainting Core Abstractions_5.svg[]
+
+*Drawable:* A `Drawable` is a graphical object that can change over time. It maintains a "bounding box", which
+is `RectangularShape` that entirely encloses the rendered area of a `Drawable`. When a `Drawable` declares itself
+as being invalid, it expresses that its bounding box needs repainting.
+
+*DrawableListener:* A `DrawableListener` listens to invalidation and validation statements of a `Drawable` and
+reacts accordingly. Using `DrawableListeners` decouples `Drawables` from `Views`, because a `Drawable` doesn't
+have to ask a `View` for repainting. Instead, it sends a `DrawableEvent` in its `invalidate()` and `validate()`
+methods, which is handled by `DrawableListeners`.
+
+*View/ViewImpl:* A `View` is responsible for actually displaying `Drawables` in a platform-neutral way. It
+consists of a `DrawableListener` objects that listens to `DrawableEvents` from all `Drawables` it displays.
+This "child listener" then delegates to the `View` 's `ViewPainter`.
+
+*ViewPainter:* The `ViewPainter` is responsible for maintaining the accumulated dirty region of a `View`
+Whenever a `Drawable` has declared its bounding box as invalid, the region of the bounding box is added
+to the overall dirty region by the `ViewPainter`. When a validation request arrives, the `ViewPainter` asks
+the `View` to repaint the overall dirty area.
+
+*Canvas:* A `Canvas` represents the platform-dependant part of a `View`. On the JVM platform, the corresponding
+implementation is the class `CanvasJvm`, and on the JavaScript platform, it is the class `CanvasJs`. The
+`Canvas` implementation binds the generic `View` to the native window system and provides transformation
+of native events (such as mouse or key events) to the corresponding, platform-neutral events of the
+`Jabbah` framework.
+
+=== Interactions
+
+image::../../model-img/svg/jabbah__draw__Repainting__Interaction1__Repaiting_18.svg[]
