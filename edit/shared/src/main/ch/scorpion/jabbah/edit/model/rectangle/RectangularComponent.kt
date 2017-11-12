@@ -77,6 +77,16 @@ abstract class AbstractRectangularComponent(
         return shape.contains(p)
     }
 
+    override val canMirror: Boolean = true
+
+    override fun mirrorHorizontally(x: Double) {
+        setFrame(Point2D(this.x + width, this.y).mirrorHorizontally(x).x, this.y, width, height)
+    }
+
+    override fun mirrorVertically(y: Double) {
+        setFrame(this.x, Point2D(this.x, this.y + height).mirrorVertically(y).y, width, height)
+    }
+
     /** ---- [Snappable] interface */
 
     override val snappableX: Array<SnappableX> get() = arrayOf(
@@ -199,16 +209,6 @@ abstract class RectangularComponent(
     }
 
     /** ---- [Drawable] interface */
-
-    override val canMirror: Boolean = true
-
-    override fun mirrorHorizontally(x: Double) {
-        setFrame(Point2D(this.x + width, this.y).mirrorHorizontally(x).x, this.y, width, height)
-    }
-
-    override fun mirrorVertically(y: Double) {
-        setFrame(this.x, Point2D(this.x, this.y + height).mirrorVertically(y).y, width, height)
-    }
 
     override fun draw(context: DrawContext) {
         if (context.useContextColors) {
