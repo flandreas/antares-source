@@ -201,7 +201,7 @@ class DigitalPortView(
 
         drawLogic(context)
 
-        context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.ANNOTATION).color).foregroundColor
+        context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(GraphStyleType.ANNOTATION).color).foregroundColor)
         if (hasInternalInputAnnotation) {
             drawInternalInputAnnotation(context)
         }
