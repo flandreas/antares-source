@@ -72,7 +72,6 @@ class LabelComponent(
         if (!context.useContextColors) {
             context.g.color = transparent.applyTo(foregroundColor)
         }
-        label.font = font
         label.draw(context)
     }
 
