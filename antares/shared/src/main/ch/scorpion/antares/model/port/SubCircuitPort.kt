@@ -14,8 +14,12 @@ import ch.scorpion.jabbah.graph.model.GraphInput
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.SubGraphInputPort
 import ch.scorpion.jabbah.graph.model.SubGraphOutputPort
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.io.*
 
+/**
+ * TODO Code duplication with [SubGraphPortImpl].
+ */
 class SubCircuitPort(
     portType: PortType = PortType.INPUT,
     name: String? = null
@@ -27,16 +31,18 @@ class SubCircuitPort(
         LOG.debug("SubCircuitPort: new instance $this portType=$portType name=$name")
     }
 
-    /** ---- [SubGraphInputPort] */
+    /** ---- [SubGraphInputPort] interface */
 
     /** Holds the link to the [GraphInput] of the inner [Graph]. Is explicitly set during the execution binding process. */
     override var graphInput: GraphInput<DigitalSignal>? = null
 
-    /** ---- [PortImpl] */
+    /** ---- [SubGraphOutputPort] interface */
 
-    override fun setOutgoingSignalBuffered(signal: DigitalSignal?, signalHandler: SignalHandler) {
-        super.setOutgoingSignalBuffered(signal, signalHandler)
-        owner!!.outputChanged(this, signalHandler)
+    override fun propagateSignal(signal: DigitalSignal, signalHandler: SignalHandler) {
+        setOutgoingSignalBuffered(signal, signalHandler)
+        if (owner is SubGraphVertice) {
+            (owner as SubGraphVertice).propagateOutput(this, signal, signalHandler)
+        }
     }
 
     /** ---- [Storable] interface */

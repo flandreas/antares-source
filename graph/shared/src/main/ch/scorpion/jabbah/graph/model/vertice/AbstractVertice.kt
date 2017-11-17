@@ -153,7 +153,7 @@ abstract class AbstractVertice : AbstractGraphElement(), Vertice {
      * Visible for testing.
      */
     fun createActorData(inputPort: InputPort<*>?): VerticeActorData {
-        return VerticeActorData(inputPort)
+        return VerticeActorData(inputPort, true)
     }
 
     /**
@@ -190,7 +190,7 @@ abstract class AbstractVertice : AbstractGraphElement(), Vertice {
     }
 
     /** A "virtual" [GraphActorData] implementation that forwards the request for the signal to the corresponding [Port].*/
-    inner class VerticeActorData(override val changedPort: Port<*>?) : GraphActorData {
+    inner class VerticeActorData(override val changedPort: Port<*>?, override val isInput: Boolean = true) : GraphActorData {
 
         override fun <T : Any> getSignal(portId: Int): T {
             return getInput<T>(portId).getIncomingSignal() as T

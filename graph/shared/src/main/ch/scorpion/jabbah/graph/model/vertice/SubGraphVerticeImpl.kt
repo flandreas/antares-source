@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
 
 /**
@@ -33,6 +34,10 @@ class SubGraphVerticeImpl : CalculatingVertice(EmptyVerticeCalculator), SubGraph
 
     override fun getGraph(library: Library, storableCreator: StorableCreator): Graph {
         return graph!!
+    }
+
+    override fun <T : Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler) {
+        // Not needed here
     }
 
     /** ---- [Storable] */

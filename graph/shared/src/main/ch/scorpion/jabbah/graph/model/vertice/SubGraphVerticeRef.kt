@@ -29,7 +29,7 @@ class SubGraphVerticeRef(
 
         val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
             override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
-                if (!vertice.isDeepExecution(signalHandler)) {
+                if (data.isInput && !vertice.isDeepExecution(signalHandler)) {
                     vertice.scriptGateway.exec(Script(code = vertice.getGraphIfPresent()!!.script!!, origin = "SubGraph '${vertice.name}'", context = "Logic"), vertice, data, signalHandler)
                 }
             }
@@ -67,6 +67,14 @@ class SubGraphVerticeRef(
 
     override var graphUUID: UUID? = null
 
+    override fun <T: Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler) {
+        LOG.trace("SubGraphVerticeRef: propagateOutput for Output '${outputPort.name}'")
+        // Invoke SignalHandler in order to enable breakpoint on the SubGraphOutputPort
+        signalHandler.requestActingAfter(this, 1, VerticeActorData(outputPort, isInput = false))
+        outputPort.setOutgoingSignalBuffered(signal, signalHandler)
+        outputChanged(outputPort, signalHandler)
+    }
+
     /** ---- [Storable] interface */
 
     override fun write(writer: StoreWriter) {
@@ -97,7 +105,7 @@ class SubGraphVerticeRef(
         if (isDeepExecution(signalHandler)) {
             graph?.executionStarted(signalHandler)
         } else {
-            requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, null))
+            requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, null, true))
         }
     }
 

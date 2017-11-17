@@ -166,9 +166,9 @@ class SchedulerImpl(
     override fun actingDone(actor: Actor) {
         logTrace(System.get().getClass(actor), actor.id, {"Acting done"})
         val slot = queue.peek()
-        if (slot != null && slot.isExecuted) {
+        if (slot != null) {
             val request = slot.findRequest(actor)
-            if (request != null) {
+            if (request != null && request.isActing) {
                 actor.actingDone(this, request.actorData)
             }
             slot.actingDone(actor)
@@ -197,6 +197,7 @@ class SchedulerImpl(
                 addSlot(Slot(schedulingTime, timeFreeze, actor, data))
                 postSchedulerStateEvent()
             }
+            task.startIfNeeded()
         }
         postSchedulerEvent(actor, SchedulerEvent.Type.REQUESTED)
     }
@@ -218,9 +219,6 @@ class SchedulerImpl(
     private fun addSlot(slot: Slot) {
         LOG.trace("Add slot at ${slot.relativeTime}")
         queue.add(slot)
-        if (!isPaused) {
-            task.startIfNeeded()
-        }
     }
 
     /** Removes the [Slot] at the head of the queue.*/
@@ -295,16 +293,18 @@ class SchedulerImpl(
 
         if (isPaused || slot.relativeTime <= relativeTime) {
             updateRelativeTime(slot.relativeTime)
-            slot.isExecuted = true
-            for (request in slot.getRequests()) {
+            slot.getRequests().filter { it.isActable }.forEach {
                 if (LOG.isTraceEnabled()) {
-                    logTrace(System.get().getClass(request.actor), request.actor.id, { "Executing" })
+                    logTrace(System.get().getClass(it.actor), it.actor.id, { "Executing" })
                 }
-                breakpoint = breakpoint || request.actor.isBreakpoint
-                if (request.actor.act(this@SchedulerImpl, request.actorData)) {
-                    request.setDone()
+                breakpoint = breakpoint || it.actor.isBreakpoint
+                if (it.actor.act(this@SchedulerImpl, it.actorData)) {
+                    it.setDone()
+                } else {
+                    it.setActing()
                 }
             }
+
             if (slot.isDone) {
                 removeSlot(slot)
             }
@@ -365,7 +365,7 @@ class SchedulerImpl(
 
         fun stop() {
             LOG.trace("Stopping timer")
-           timer.stop()
+            timer.stop()
         }
     }
 
@@ -395,11 +395,9 @@ class SchedulerImpl(
             data: ActorData
     ) : Comparable<Slot> {
 
-        var isExecuted: Boolean = false
+        val isExecutable: Boolean get() = requests.any { it.isActable }
 
-        val isExecutable: Boolean get() = !isExecuted
-
-        val isDone: Boolean get() = requests.all { it.done }
+        val isDone: Boolean get() = requests.all { it.isDone }
 
         /**
          * Contains the [Actor]s to the scheduled at the specified [relativeTime]. A particular [Actor]
@@ -441,16 +439,27 @@ class SchedulerImpl(
         var actorData: ActorData
     ) {
 
-        private var _done: Boolean = false
+        private var _isActing: Boolean = false
 
-        val done: Boolean
-            get() = _done
+        private var _isDone: Boolean = false
+
+        /** `true` if [actor] has already been asked to execute*/
+        val isActing: Boolean get() = _isActing
+
+        /** `true` if [actor] has already answered with `done`.*/
+        val isDone: Boolean get() = _isDone
+
+        val isActable: Boolean get() = !isActing && !isDone
+
+        fun setActing() {
+            _isActing = true
+        }
 
         fun setDone() {
-            if (_done) {
+            if (_isDone) {
                 return
             }
-            _done = true
+            _isDone = true
             postSchedulerEvent(actor, SchedulerEvent.Type.DONE)
         }
     }

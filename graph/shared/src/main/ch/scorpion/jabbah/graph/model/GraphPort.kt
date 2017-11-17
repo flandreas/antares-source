@@ -87,4 +87,7 @@ interface SubGraphInputPort<T: Any> : InputPort<T>, SubGraphPort<T> {
     var graphInput: GraphInput<T>?
 }
 
-interface SubGraphOutputPort<T: Any> : OutputPort<T>, SubGraphPort<T>
+interface SubGraphOutputPort<T: Any> : OutputPort<T>, SubGraphPort<T> {
+
+    fun propagateSignal(signal: T, signalHandler: SignalHandler)
+}

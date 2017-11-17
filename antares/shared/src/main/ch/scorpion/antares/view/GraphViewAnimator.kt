@@ -29,13 +29,9 @@ import ch.scorpion.jabbah.execution.scheduler.*
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategoryEvent
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphElement
-import ch.scorpion.jabbah.graph.model.Net
-import ch.scorpion.jabbah.graph.model.net.NetActorData
-import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.*
 
 /**
@@ -141,8 +137,8 @@ class GraphViewAnimator(
 
     override fun actingRequested(actor: Actor, signalHandler: SignalHandler, data: ActorData) {
         if (actor is Net<*>) {
-            handleNetActingRequested(actor, (data as NetActorData<*>).changedPort as DigitalPort)
-        } else {
+            handleNetActingRequested(actor, (data as GraphActorData).changedPort as DigitalPort)
+        } else if ((data as GraphActorData).isInput) {
             handleGraphElementActingRequested(actor as GraphElement)
         }
     }

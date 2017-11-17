@@ -182,10 +182,14 @@ class CircuitInOutImpl(
             PortType.INOUT -> if (fromOutside) {
                 getOutput<Any>().setOutgoingSignalBuffered(signal, signalHandler)
             } else {
-                _subGraphOutputPort?.setOutgoingSignalBuffered(signal, signalHandler)
+                propagateToSubGraphOutputPort(signal, signalHandler)
             }
             PortType.INPUT -> getOutput<Any>().setOutgoingSignalBuffered(signal, signalHandler)
-            PortType.OUTPUT -> _subGraphOutputPort?.setOutgoingSignalBuffered(signal, signalHandler)
+            PortType.OUTPUT -> propagateToSubGraphOutputPort(signal, signalHandler)
         }
+    }
+
+    private fun propagateToSubGraphOutputPort(signal: DigitalSignal, signalHandler: SignalHandler) {
+        _subGraphOutputPort?.propagateSignal(signal, signalHandler)
     }
 }

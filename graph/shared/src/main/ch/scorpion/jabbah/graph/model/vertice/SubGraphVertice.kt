@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.SubGraphOutputPort
 
 /**
  * A [Vertice] that contains an inner [Graph], thus enabling recursively nested [Graph] structures.
@@ -28,4 +30,6 @@ interface SubGraphVertice : Vertice {
 
     /** Returns the contained [Graph] by loading and copying it from the specified [Library] if not already loaded.*/
     fun getGraph(library: Library, storableCreator: StorableCreator): Graph
+
+    fun <T: Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler)
 }

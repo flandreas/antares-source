@@ -7,15 +7,14 @@ import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.port.AbstractPortView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 
-/**
- * Created by andreas on 23.02.17.
- */
 class TestPortView<T: Any>(
         port: Port<T>,
         direction: Direction,
         portLabelPosition: PortLabelPosition,
         length: Int
 ) : AbstractPortView<T>(port, 0, 0, direction, portLabelPosition, length) {
+
+    override var transparency: Int = 0
 
     override val boundingBox: Rectangle2D
         get() {
@@ -27,7 +26,7 @@ class TestPortView<T: Any>(
 
     override var storableId: Int
         get() = throw UnsupportedOperationException()
-        set(value) {}
+        set(value) { }
 
     override fun draw(context: DrawContext) {
         // empty
