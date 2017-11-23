@@ -30,6 +30,9 @@ interface Scheduler : SignalHandler {
      * @param time the relative execution time (in nanoseconds) to proceed to
      */
     fun proceedTo(time: Long)
+
+    /** Prints the pending scheduling request to the DEBUG log. */
+    fun printSchedule()
 }
 
 /** Posted by a [Scheduler] during execution phase.*/

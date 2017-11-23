@@ -133,6 +133,11 @@ class SchedulerImpl(
         }
     }
 
+    override fun printSchedule() {
+        LOG.debug("SchedulerImpl: Scheduling queue at $relativeTime ns")
+        queue.elements().forEach { it.print() }
+    }
+
     /** ---- [SignalHandler] interface */
 
     override var isDeepExecution: Boolean = BaseModule.settings.getBoolean(SETTING_EXECUTION_DEPTH, true)
@@ -387,6 +392,8 @@ class SchedulerImpl(
      * this [Slot]. This is used for supporting animated [Actor]s, which might take a
      * long time until their acting is done, but this time should not be accounted as execution time, because
      * if it would, other (faster) [Actor]s would pass by, which is not desired.
+     * @param actor the [Actor] for which the first [Request] is added to this [Slot]
+     * @paran data the [ActorData] of the first [Request] to be added to this [Slot]
      */
     private inner class Slot(
             val relativeTime: Long,
@@ -432,6 +439,12 @@ class SchedulerImpl(
         }
 
         fun findRequest(actor: Actor): Request? = requests.find { it.actor === actor }
+
+        /** Prints this [Slot] to the DEBUG log.*/
+        fun print() {
+            LOG.debug("\tSlot at $relativeTime ns with ${requests.size} requests, timeFreeze=$timeFreeze")
+            requests.forEach { it.print() }
+        }
     }
 
     private inner class Request(
@@ -461,6 +474,11 @@ class SchedulerImpl(
             }
             _isDone = true
             postSchedulerEvent(actor, SchedulerEvent.Type.DONE)
+        }
+
+        /** Prints this [Request] to the DEBUG log.*/
+        fun print() {
+            LOG.debug("\t\tRequest for ${actor::class.simpleName} with ID ${actor.id}, isActing=$_isActing, isDone=$_isDone")
         }
     }
 }

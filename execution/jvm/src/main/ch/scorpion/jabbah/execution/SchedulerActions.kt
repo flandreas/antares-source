@@ -97,3 +97,12 @@ class StopOnIssueAction(
         isEnabled = !scheduler.isActive
     }
 }
+
+class PrintScheduleAction(
+        private val scheduler: Scheduler = ExecutionModule.scheduler
+) : AbstractSchedulerAction("simulator.action.print") {
+
+    override fun actionPerformed(e: ActionEvent?) {
+        scheduler.printSchedule()
+    }
+}

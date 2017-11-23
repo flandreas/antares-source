@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.view.NextRepaintingObserverLogAction
 import ch.scorpion.jabbah.draw.view.PreviousRepaintingObserverLogAction
 import ch.scorpion.jabbah.draw.view.RunRepaintingObserverAction
 import ch.scorpion.jabbah.execution.NoiseMenu
+import ch.scorpion.jabbah.execution.PrintScheduleAction
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.RandomNoiseGenerator
@@ -62,6 +63,8 @@ class AntaresMenuBarBuilder(application: DesktopApplication, eventBus: EventBus)
         menu.add(JCheckBoxMenuItem(RunRepaintingObserverAction()))
         menu.add(JMenuItem(PreviousRepaintingObserverLogAction()))
         menu.add(JMenuItem(NextRepaintingObserverLogAction()))
+        menu.addSeparator()
+        menu.add(JMenuItem(PrintScheduleAction()))
         return menu
     }
 }
