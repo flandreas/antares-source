@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
@@ -32,6 +33,7 @@ import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.ReferenceResolver
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
@@ -46,14 +48,20 @@ class ROMView(
 ) : DigitalComponentView<ROM>(styleProvider, "library.element.ROM", model) {
 
     companion object {
-        val WIDTH = 24 * Look.GRID
-        val HEIGHT = 12 * Look.GRID
-        val LABEL_VERTICAL_FACTOR = 0.3f
-    }
 
-    init {
-        modelExchanged(null)
-        setBounds((getPortView(model.getAddressInput()) as DigitalPortView).length, -HEIGHT / 2, WIDTH, HEIGHT)
+        /** The width of a ROMView box if the contents are not displayed.*/
+        val MIN_WIDTH = 24 * Look.GRID
+
+        /** The height of a ROMView box if the contents are not displayed.*/
+        val MIN_HEIGHT = 12 * Look.GRID
+
+        /** The horizontal inset between the outer box and the contents box.*/
+        val HORIZONTAL_CONTENTS_INSET = 20
+
+        /** The vertical inset between the outer box and the contents box.*/
+        val VERTICAL_CONTENTS_INSET = 40
+
+        val LABEL_INSET = 20
     }
 
     private val inputEventHandler = DoubleClickHandler()
@@ -75,9 +83,10 @@ class ROMView(
             font = font,
             text = buildLabelText(),
             horizontalAlignment = HorizontalAlignment.CENTER,
-            verticalAlignment = VerticalAlignment.CENTER,
-            location = Point2D(x + width / 2, y + LABEL_VERTICAL_FACTOR * height)
+            verticalAlignment = VerticalAlignment.CENTER
     )
+
+    private var contentsView = AddressableContentsView(model)
 
     override fun modelExchanged(oldModel: ROM?) {
         super.modelExchanged(oldModel)
@@ -93,21 +102,33 @@ class ROMView(
 			styleProvider = styleProvider,
 			port = model!!.getChipSelectInput(),
 			direction = Direction.SOUTH)
-		csPV.setLocation(csPV.length + WIDTH / 2, HEIGHT / 2)
+		csPV.setLocation(csPV.length + MIN_WIDTH / 2, MIN_HEIGHT / 2)
 		addPortView(csPV)
 
 		val dataPV = DigitalPortView(
 			styleProvider = styleProvider,
 			port = model!!.getDataOutput(),
 			direction = Direction.EAST)
-		dataPV.setLocation(dataPV.length+ WIDTH, 0)
+		dataPV.setLocation(dataPV.length+ MIN_WIDTH, 0)
 		addPortView(dataPV)
+
+        if (model != null) {
+            contentsView = AddressableContentsView(
+                    addressable = model!!,
+                    rowsCount = contentRowsCount,
+                    columnsCount = contentColumnsCount)
+        }
+    }
+
+    init {
+        modelExchanged(null)
+        updateGeometry()
     }
 
     /** ---- UI properties */
 
     var addressWidth: BitWidth
-        get() = model!!.getAddressWidth()
+        get() = model!!.addressWidth
         set(value) {
             invalidate()
             model!!.setAddressWidth(value)
@@ -116,7 +137,7 @@ class ROMView(
         }
 
     var dataWidth: BitWidth
-        get() = model!!.getDataWidth()
+        get() = model!!.dataWidth
         set(value) {
             invalidate()
             model!!.setDataWidth(value)
@@ -124,36 +145,92 @@ class ROMView(
             validate()
         }
 
+    var showContents: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                updateGeometry()
+                validate()
+            }
+        }
+
+    var contentRowsCount: Int
+        get() = contentsView.rowsCount
+        set(value) {
+            if (value != contentRowsCount) {
+                contentsView.rowsCount = value
+                updateGeometry()
+                validate()
+            }
+        }
+
+    var contentColumnsCount: Int
+        get() = contentsView.columnsCount
+        set(value) {
+            if (value != contentColumnsCount) {
+                contentsView.columnsCount = value
+                updateGeometry()
+                validate()
+            }
+        }
+
     /** ---- [Storable] interface */
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
+        if (showContents) {
+            writer.writeBoolean("showContents", showContents)
+        }
         if (text != null) {
             writer.writeString("text", text!!)
         }
+        writer.writeInt("contentRowsCount", contentRowsCount)
+        writer.writeInt("contentColumnsCount", contentColumnsCount)
     }
 
     override fun read(reader: StoreReader) {
         super.read(reader)
+        if (reader.hasAttribute("showContents")) {
+            reader.requestResolution(this, Reference(
+                    name = "showContents",
+                    additionalInfo = reader.readBoolean("showContents"),
+                    resolveAfter = listOf(reader.readInt("modelId"))))
+        }
         val tempText = if (reader.hasAttribute("text")) reader.readString("text") else null
 		// The default text depends on model data, so resolve the text after the model has been read
 		reader.requestResolution(this, Reference(
 			name = "text",
 			additionalInfo = tempText,
 			resolveAfter = listOf(reader.readInt("modelId"))))
+        if (reader.hasAttribute("contentRowsCount")) {
+            contentRowsCount = reader.readInt("contentRowsCount")
+        }
+        if (reader.hasAttribute("contentColumnsCount")) {
+            contentColumnsCount = reader.readInt("contentColumnsCount")
+        }
     }
 
     override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
         super.resolve(reference, referenceResolver)
         if (reference.name == "text") {
 			text = reference.additionalInfo as String?
-		}
+		} else if (reference.name == "showContents") {
+            showContents = reference.additionalInfo as Boolean
+        }
+    }
+
+    /** ---- [Component] */
+
+    override fun rotationChanged(newRotation: Rotation) {
+        super.rotationChanged(newRotation)
+        updateGeometry()
     }
 
     /** ---- [AbstractGraphElementView] */
 
     override fun handleStateChanged(event: GraphElementEvent) {
         label.text = if (text == null) buildLabelText() else text!!
+        contentsView.handleCurrentAddressChanged()
         super.handleStateChanged(event)
     }
 
@@ -180,6 +257,16 @@ class ROMView(
 
 		label.draw(context)
 
+        if (showContents) {
+            context.g.translate(contentsView.x, contentsView.y)
+            context.g.rotate(rotation.inverse().angle)
+            context.g.translate(-contentsView.x, -contentsView.y)
+            contentsView.draw(context)
+            context.g.translate(contentsView.x, contentsView.y)
+            context.g.rotate(-rotation.inverse().angle)
+            context.g.translate(-contentsView.x, -contentsView.y)
+        }
+
 		context.g.color = oldColor
 		context.g.stroke = oldStroke
 
@@ -200,12 +287,69 @@ class ROMView(
 
     /** ---- [ROMView] */
 
+    private fun updateGeometry() {
+        invalidate()
+        contentsView.updateGeometry()
+
+        val addressPV = getPortView(model!!.getAddressInput())!!
+        val x = addressPV.unconnectedLength
+
+        val totalHeight = Look.scaleToDoubleGrid(calculateHeight())
+        val totalWidth = Look.scaleToDoubleGrid(calculateWidth())
+        setBounds(x, -totalHeight / 2, totalWidth, totalHeight)
+
+        if (showContents) {
+            contentsView.location = calculateContentsLocation()
+        }
+        label.location = Point2D(x + width / 2.0, y + LABEL_INSET)
+
+        addressPV.setLocation(addressPV.unconnectedLength, 0)
+
+        val dataPV = getPortView(model!!.getDataOutput())!!
+        dataPV.setLocation(dataPV.unconnectedLength + width, 0.0)
+
+        getPortView(model!!.getChipSelectInput())!!.setLocation(x + width / 2, height / 2)
+
+        invalidate()
+    }
+
+    private fun calculateContentsLocation(): Point2D {
+        return when(rotation) {
+            Rotation.R0 -> Point2D(x + width / 2 - contentsView.width / 2, -contentsView.height / 2)
+            Rotation.R90 -> Point2D(x + width / 2 + contentsView.height / 2, y + height / 2 - contentsView.width / 2)
+            Rotation.R180 -> Point2D(x + width / 2 + contentsView.width / 2, contentsView.height / 2)
+            Rotation.R270 -> Point2D(x + width / 2 - contentsView.height / 2, contentsView.width / 2)
+        }
+    }
+
+    private fun calculateWidth(): Int {
+        return if (showContents) {
+            Math.max(MIN_WIDTH, when (rotation) {
+                Rotation.R0, Rotation.R180 -> (contentsView.width + 2 * HORIZONTAL_CONTENTS_INSET).toInt()
+                Rotation.R90, Rotation.R270 -> (contentsView.height + 2 * HORIZONTAL_CONTENTS_INSET).toInt()
+            })
+        } else {
+            MIN_WIDTH
+        }
+    }
+
+    private fun calculateHeight(): Int {
+        return if (showContents) {
+            Math.max(MIN_HEIGHT, when (rotation) {
+                Rotation.R0, Rotation.R180 -> (contentsView.height + 2 * VERTICAL_CONTENTS_INSET).toInt()
+                Rotation.R90, Rotation.R270 -> (contentsView.width + 2 * VERTICAL_CONTENTS_INSET).toInt()
+            })
+        } else {
+            MIN_HEIGHT
+        }
+    }
+
     private fun buildLabelText(): String {
         return "ROM ${addressWidth.size}x${dataWidth.width}"
     }
 
     private fun requestOpenMemoryContents(event: MouseEvent) {
-        eventBus.post(OpenMemoryContentsRequest(model!!.memory, model!!.getAddressWidth(), model!!.getDataWidth(), event))
+        eventBus.post(OpenMemoryContentsRequest(model!!.memory, model!!.addressWidth, model!!.dataWidth, event))
     }
 
     private inner class DoubleClickHandler : InputEventHandlerAdapter<EditInputEventContext>() {
@@ -225,5 +369,4 @@ class ROMView(
             }
         }
     }
-
 }

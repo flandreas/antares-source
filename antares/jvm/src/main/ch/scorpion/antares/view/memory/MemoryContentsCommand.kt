@@ -15,7 +15,7 @@ class MemoryContentsCommand(
         private val memory: Memory,
         private val bitWidth: BitWidth,
         private val filePath: String
-) : AbstractCommand("ch.scorpion.antares.command.memoryContents", null) {
+) : AbstractCommand("antares.command.memoryContents", null) {
 
     companion object {
         private val LOG by logger(MemoryContentsCommand::class)

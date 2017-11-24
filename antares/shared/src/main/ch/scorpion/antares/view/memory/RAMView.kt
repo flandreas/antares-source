@@ -129,7 +129,7 @@ class RAMView(
     /** ---- UI properties */
 
     var addressWidth: BitWidth
-        get() = model!!.getAddressWidth()
+        get() = model!!.addressWidth
         set(value) {
             invalidate()
             model!!.setAddressWidth(value)
@@ -138,7 +138,7 @@ class RAMView(
         }
 
     var dataWidth: BitWidth
-        get() = model!!.getDataWidth()
+        get() = model!!.dataWidth
         set(value) {
             invalidate()
             model!!.setDataWidth(value)
@@ -236,7 +236,7 @@ class RAMView(
     }
 
     private fun requestOpenMemoryContents(event: MouseEvent) {
-        eventBus.post(OpenMemoryContentsRequest(model!!.memory, model!!.getAddressWidth(), model!!.getDataWidth(), event))
+        eventBus.post(OpenMemoryContentsRequest(model!!.memory, model!!.addressWidth, model!!.dataWidth, event))
     }
 
     private inner class DoubleClickHandler : InputEventHandlerAdapter<EditInputEventContext>() {

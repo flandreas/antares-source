@@ -132,12 +132,12 @@
             <netView _id='94' modelId='9' style='block'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='77' id='1' rot='0' modelId='3' x='266.0' y='455.0' mirrorH='false' mirrorV='true'/>
+            <subGraphVerticeViewRef _id='77' id='1' rot='0' modelId='3' x='266.0' y='455.0' mirrorV='true' label='CPU'/>
             <clockView _id='76' id='2' rot='0' modelId='4' x='126.0' y='350.0'/>
             <ramView _id='75' id='4' rot='270' modelId='5' x='560.0' y='301.0'/>
-            <romView _id='74' id='5' rot='270' modelId='6' x='798.0' y='301.0'/>
-            <subGraphVerticeViewRef _id='73' id='6' rot='0' modelId='7' x='1022.0' y='315.0' mirrorH='false' mirrorV='false'/>
-            <subGraphVerticeViewRef _id='72' id='7' rot='0' modelId='8' x='686.0' y='98.0' mirrorH='false' mirrorV='false'/>
+            <romView _id='74' id='5' rot='270' modelId='6' x='798.0' y='301.0' showContents='true' contentRowsCount='6' contentColumnsCount='1'/>
+            <subGraphVerticeViewRef _id='73' id='6' rot='0' modelId='7' x='1022.0' y='315.0' label='PIO'/>
+            <subGraphVerticeViewRef _id='72' id='7' rot='0' modelId='8' x='686.0' y='98.0' label='Address Decoder'/>
             <digitalEdgeView _id='71' id='17' modelId='9' layout='ortho' orig='77' origPort='2' origPortOutput='true' dest='69' adjusted='true'>
               <shape>
                 <polylineShape points='266.0,441.0 266.0,630.0 560.0,630.0'/>
@@ -258,7 +258,7 @@
                 <polylineShape points='952.0,595.0 952.0,399.0 980.0,399.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='47' id='51' rot='0' modelId='19' x='1113.0' y='399.0' mirrorH='false' mirrorV='false'/>
+            <subGraphVerticeViewRef _id='47' id='51' rot='0' modelId='19' x='1113.0' y='399.0'/>
             <digitalEdgeView _id='46' id='52' modelId='20' layout='ortho' orig='73' origPort='2' origPortOutput='true' dest='47' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='1064.0,399.0 1127.0,399.0'/>

@@ -4,13 +4,14 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
+import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
-import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -18,7 +19,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 /**
  * Represents a random access (i.e. writable) memory whose address width and data width can be specified.
  */
-class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()) {
+class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addressable {
 
     companion object {
         val ADDRESS_PORT_NAME = "A"
@@ -56,12 +57,33 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()) {
         this.hasClock = hasClock
     }
 
+    /** ---- [Addressable] interface */
+
+    override val currentAddress: Int get() = getAddressInput().getIncomingSignal()?.toInt() ?: 0
+
+    override val maxAddress: Int get() = getAddressInput().bitWidth.power() - 1
+
+    override val data: Long
+        get() {
+            val address = currentAddress
+            if (address >= 0) {
+                return memory.read(address)
+            }
+            return 0
+        }
+
+    override val addressWidth: BitWidth get() = getAddressInput().bitWidth
+
+    override val dataWidth: BitWidth get() = getDataPort().bitWidth
+
+    override fun dataAt(address: Int): Long = memory.read(address)
+
     /** ---- [Storable] */
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeString("addressBitWidth", getAddressWidth().customName)
-        writer.writeString("dataBitWidth", getDataWidth().customName)
+        writer.writeString("addressBitWidth", addressWidth.customName)
+        writer.writeString("dataBitWidth", dataWidth.customName)
         writer.writeBoolean("clock", hasClock)
     }
 
@@ -76,7 +98,7 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()) {
 
     override fun executionStarted(signalHandler: SignalHandler) {
         super.executionStarted(signalHandler)
-        getDataPort().setOutgoingSignal(Word.undefined(getDataWidth()), signalHandler)
+        getDataPort().setOutgoingSignal(Word.undefined(dataWidth), signalHandler)
     }
 
     /** ---- [RAM] */
@@ -108,15 +130,9 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()) {
         return addressInput as DigitalPort
     }
 
-    fun getDataPort(): DigitalPort {
-        val dataOutput = getPort<DigitalSignal>(DATA_PORT_NAME)
-        return dataOutput as DigitalPort
-    }
+    fun getDataPort(): DigitalPort = getPort<DigitalSignal>(DATA_PORT_NAME) as DigitalPort
 
-    fun getWriteInput(): DigitalPort {
-        val writePort = getPort<DigitalSignal>(WRITE_PORT_NAME)
-        return writePort as DigitalPort
-    }
+    fun getWriteInput(): DigitalPort = getPort<DigitalSignal>(WRITE_PORT_NAME) as DigitalPort
 
     fun getClearInput(): DigitalPort {
         val clearPort = getPort<DigitalSignal>(CLEAR_PORT_NAME)
@@ -130,17 +146,7 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()) {
         return getPort<DigitalSignal>(CLOCK_PORT_NAME) as DigitalPort
     }
 
-    fun getAddressWidth(): BitWidth {
-        return getAddressInput().bitWidth
-    }
-
-    fun getDataWidth(): BitWidth {
-        return getDataPort().bitWidth
-    }
-
-    fun read(address: Int): Long? {
-        return memory.read(address)
-    }
+    fun read(address: Int): Long? = memory.read(address)
 
     fun write(address: Int, value: Long) {
         memory.write(address, value)

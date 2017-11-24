@@ -73,4 +73,17 @@ class ROMTest {
         val dataOutput = rom.getOutput<DigitalSignal>(ROM.DATA_PORT_NAME)
         assertThat(dataOutput.getOutgoingSignal() as Word, `is`(Word.error(BitWidth.BW_8)))
     }
+
+    @Test
+    fun shouldGetCurrentAddress() {
+        rom.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 16L), signalHandler)
+        assertThat(rom.currentAddress, `is`(16))
+    }
+
+    @Test
+    fun shouldGetCurrentData() {
+        rom.write(1, 255)
+        rom.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
+        assertThat(rom.data, `is`(255L))
+    }
 }

@@ -13,9 +13,17 @@ data class CompositeColor(
         val textColor: Color = foregroundColor
 ) {
 
+    val disabledTextColor: Color get() = Color(
+            Math.ceil((backgroundColor.red + textColor.red) / 2.0).toInt(),
+            Math.ceil((backgroundColor.green + textColor.green) / 2.0).toInt(),
+            Math.ceil((backgroundColor.blue + textColor.blue) / 2.0).toInt()
+    )
+
+
     /**
      * Creates a new [CompositeColor] by exchanging [foregroundColor] and [backgroundColor] of this [CompositeColor],
      * and setting the [textColor] from the new [foregroundColor].
      */
     fun exchange(): CompositeColor = CompositeColor(backgroundColor, foregroundColor, backgroundColor)
+
 }
