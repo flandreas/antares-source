@@ -5,7 +5,7 @@
 TODO
 
 === Module Overview
-image::../../model-img/svg/jabbah__edit__Edit Package Overview_5.svg[]
+image::../../model-img/svg/jabbah__edit__Edit Package Overview_8.svg[]
 
 * <<edit-interfaces.adoc#, *edit:*>> Contains all important interfaces, which allows to reduce module dependencies.
 
@@ -39,6 +39,6 @@ and specialized property editors.
 
 === Core Abstractions
 
-image::../../model-img/svg/jabbah__edit__Edit Core Abstractions_4.svg[]
+image::../../model-img/svg/jabbah__edit__Edit Core Abstractions_7.svg[]
 
 TODO Explain

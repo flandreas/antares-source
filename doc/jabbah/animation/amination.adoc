@@ -13,7 +13,7 @@ a visual representation.
 
 The following graph shows the core abstractions of the `jabbah.animation` package.
 
-image::../../model-img/svg/jabbah__animation__Animation Core Abstractions_14.svg[]
+image::../../model-img/svg/jabbah__animation__Animation Core Abstractions_17.svg[]
 
 In order to explain how the core abstractions collaborate to produce an animation effect, consider
 a graphical application that wants to move a graphical figure from an origin point to a destination
@@ -67,7 +67,7 @@ of the `Sequence` is smaller, the *distance* between two animated values is smal
 The following interaction diagram shows the collaborations between the core abstractions that are necessary
 during an individual animation step.
 
-image::../../model-img/svg/jabbah__animation__AnimatorImpl__Interaction1__Animation_12.svg[]
+image::../../model-img/svg/jabbah__animation__AnimatorImpl__Interaction1__Animation_18.svg[]
 
 ==== SequenceType
 

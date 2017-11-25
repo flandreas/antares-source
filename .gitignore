@@ -4,6 +4,7 @@ build/
 out/
 doc/model.mdj
 doc/model-img/
+doc/graffle-img
 .DS_Store
 .idea/
 .idea/workspace.xml
