@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view
 
+import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle

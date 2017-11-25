@@ -18,4 +18,6 @@ interface Addressable {
     val dataWidth: BitWidth
 
     fun dataAt(address: Int): Long
+
+    fun disassemblyAt(address: Int): String
 }

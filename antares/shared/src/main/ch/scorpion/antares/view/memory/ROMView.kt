@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
@@ -35,6 +36,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 
@@ -173,6 +175,12 @@ class ROMView(
                 validate()
             }
         }
+
+    var disassemblerConfig: TextProperty
+        get() = TextProperty(model!!.disassemblerConfig)
+        set(value) { model!!.disassemblerConfig = value.text!! }
+
+    var showDisassembler: Boolean = false
 
     /** ---- [Storable] interface */
 

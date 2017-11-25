@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
@@ -44,6 +45,11 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
     val memory = Memory()
 
+    /**
+     * A newline-separated list of [Disassembler] configurations consisting of operations in the form "regex=op".
+     */
+    var disassemblerConfig: String = ""
+
     init {
         addPort(DigitalPortImpl.createInput(Logic.POSITIVE, ADDRESS_PORT_NAME, BitWidth.BW_8))
         addPort(DigitalPortImpl.createInput(CHIP_SELECT_PORT_NAME))
@@ -72,6 +78,8 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
     override fun dataAt(address: Int): Long = memory.read(address)
 
+    override fun disassemblyAt(address: Int): String = "TODO"
+
     /** ---- [Storable] */
 
     override fun write(writer: StoreWriter) {
@@ -79,6 +87,9 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
         writer.writeString("addressBitWidth", addressWidth.customName)
         writer.writeString("dataBitWidth", dataWidth.customName)
         writer.writeString("content", CompressedMemoryDump.write(memory, dataWidth))
+        if (StringUtils.isNotEmpty(disassemblerConfig)) {
+            writer.writeString("disassembler", disassemblerConfig)
+        }
     }
 
     override fun read(reader: StoreReader) {
@@ -86,6 +97,7 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
         setAddressWidth(BitWidth.withName(reader.readString("addressBitWidth")))
 		setDataWidth(BitWidth.withName(reader.readString("dataBitWidth")))
         CompressedMemoryDump.read(memory, reader.readString("content"))
+        disassemblerConfig = reader.readOptionalString("disassembler") ?: ""
     }
 
     /** ---- [ROM]  */

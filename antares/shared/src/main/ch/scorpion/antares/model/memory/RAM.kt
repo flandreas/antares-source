@@ -78,6 +78,8 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
     override fun dataAt(address: Int): Long = memory.read(address)
 
+    override fun disassemblyAt(address: Int): String = ""
+
     /** ---- [Storable] */
 
     override fun write(writer: StoreWriter) {

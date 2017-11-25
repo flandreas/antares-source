@@ -5,6 +5,7 @@ import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.model.text.TextProperty
 
 
 /**
@@ -19,6 +20,8 @@ class ROMViewBeanInfo : DigitalComponentBeanInfo<ROMView>() {
         private val showContents = PropertyImpl("element.property.ROM.showContents", Boolean::class.java)
         private val contentRowsCount = PropertyImpl("element.property.ROM.rowsCount", Int::class.java)
         private val contentColumnsCount = PropertyImpl("element.property.ROM.columnsCount", Int::class.java)
+        private val disassemblerConfig = PropertyImpl("element.property.ROM.disassemblerConfig", TextProperty::class.java)
+        private val showDisassembler = PropertyImpl("element.property.ROM.disassemblerDisplay", Boolean::class.java)
     }
 
     override fun addProperties(bean: ROMView, editor: Editor, properties: MutableList<Property>) {
@@ -31,6 +34,8 @@ class ROMViewBeanInfo : DigitalComponentBeanInfo<ROMView>() {
         if (bean.showContents) {
             contentRowsCount.bind(editor, { bean.contentRowsCount }, { bean.contentRowsCount = it!! })
             contentColumnsCount.bind(editor, { bean.contentColumnsCount }, { bean.contentColumnsCount = it!! })
+            disassemblerConfig.bind(editor, { bean.disassemblerConfig }, { bean.disassemblerConfig = it!! })
+            showDisassembler.bind(editor, { bean.showDisassembler }, { bean.showDisassembler = it!! })
         }
 
         properties.add(addressBitWidth)
@@ -40,6 +45,8 @@ class ROMViewBeanInfo : DigitalComponentBeanInfo<ROMView>() {
         if (bean.showContents) {
             properties.add(contentRowsCount)
             properties.add(contentColumnsCount)
+            properties.add(disassemblerConfig)
+            properties.add(showDisassembler)
         }
     }
 }
