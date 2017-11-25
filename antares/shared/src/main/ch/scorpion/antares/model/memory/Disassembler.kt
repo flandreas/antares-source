@@ -19,6 +19,10 @@ class Disassembler {
 
     private val operations = mutableListOf<Operation>()
 
+    fun reset() {
+        operations.clear()
+    }
+
     /** Adds an operation consisting of a regex pattern and a replacement result.*/
     fun operation(pattern: String, result: String): Disassembler {
         operations.add(Operation(pattern.trim().toRegex(), result.trim()))

@@ -34,6 +34,7 @@ class AddressableContentsView(
         private val addressable: Addressable,
         rowsCount: Int = DEFAULT_ROWS_COUNT,
         columnsCount: Int = DEFAULT_COLUMNS_COUNT,
+        showDisassembler: Boolean = DEFAULT_SHOW_DISASSEMBLER,
         private val styleType: StyleType = GraphStyleType.ANNOTATION,
         private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangle() {
@@ -41,6 +42,7 @@ class AddressableContentsView(
     companion object {
         private val DEFAULT_ROWS_COUNT = 4
         private val DEFAULT_COLUMNS_COUNT = 1
+        private val DEFAULT_SHOW_DISASSEMBLER = false
         private val MAX_ROWS_COUNT = 10
         private val MAX_COLUMNS_COUNT = 16
         private val HORIZONTAL_INSET = 5
@@ -76,6 +78,9 @@ class AddressableContentsView(
     /** The width of the data column in view coordinates. Determined in [updateGeometry].*/
     private var dataColumnWidth: Int = 0
 
+    /** The width of the disassembly column in view coordinates. Determined in [updateGeometry].*/
+    private var disassemblyColumnWidth: Int = 0
+
     /** The height of a row in view coordinates. Determined in [updateGeometry].*/
     private var rowHeight: Int = 0
 
@@ -98,10 +103,25 @@ class AddressableContentsView(
             }
         }
 
+    /** Contains the number of data columns to display.*/
     var columnsCount: Int = columnsCount
         set(value) {
             if (field != value) {
                 checkArgument(value in 1..MAX_COLUMNS_COUNT)
+                invalidate()
+                field = value
+                updateGeometry()
+            }
+        }
+
+    /**
+     * Determines whether the disassembly information should be displayed.
+     * If set to `true`, the property [columnsCount] is implicitly overridden to a value of 1, because disassembly
+     * information is displayed as an additional column for a one and only data column
+     */
+    var showDisassembler: Boolean = showDisassembler
+        set(value) {
+            if (field != value) {
                 invalidate()
                 field = value
                 updateGeometry()
@@ -116,7 +136,7 @@ class AddressableContentsView(
 
     override fun draw(context: DrawContext) {
         var y: Double = location.y + 0.5 * rowHeight
-        (firstAddress .. Math.min(firstAddress + rowsCount * columnsCount - 1, addressable.maxAddress) step columnsCount).forEach {
+        (firstAddress .. Math.min(firstAddress + rowsCount * effectiveColumnCount - 1, addressable.maxAddress) step effectiveColumnCount).forEach {
             drawRow(it, y, context)
             y += rowHeight
         }
@@ -126,7 +146,7 @@ class AddressableContentsView(
         context.g.drawRect(
                 bounds.x + HORIZONTAL_INSET + addressColumnWidth + COL_DIST / 2.0,
                 bounds.y,
-                columnsCount * (dataColumnWidth + COL_DIST).toDouble(),
+                effectiveDataAreaWidth.toDouble(),
                 height
         )
     }
@@ -141,15 +161,28 @@ class AddressableContentsView(
 
     private val dataDigitCount = Math.max(1, addressable.dataWidth.width / 4)
 
+    private val effectiveColumnCount: Int get() = if (showDisassembler) 1 else columnsCount
+
+    private val effectiveDataAreaWidth: Int get() = if (showDisassembler) {
+        COL_DIST + dataColumnWidth + COL_DIST + disassemblyColumnWidth
+    } else {
+        columnsCount * (COL_DIST + dataColumnWidth)
+    }
+
     fun updateGeometry() {
         addressColumnWidth = DrawModule.textRenderInfoFactory.measureSingleLineText("0".repeat(addressDigitCount), font).textBounds.width.toInt()
         dataColumnWidth = DrawModule.textRenderInfoFactory.measureSingleLineText("0".repeat(dataDigitCount), font).textBounds.width.toInt()
         rowHeight = DrawModule.textRenderInfoFactory.measureSingleLineText("0", font).textBounds.height.toInt() + 5
+        disassemblyColumnWidth = if (showDisassembler) {
+            DrawModule.textRenderInfoFactory.measureSingleLineText("0".repeat(addressable.disassemblyWidth), font).textBounds.width.toInt()
+        } else {
+            0
+        }
 
         setBounds(
                 0,
                 0,
-                HORIZONTAL_INSET + addressColumnWidth + columnsCount * (COL_DIST + dataColumnWidth) + HORIZONTAL_INSET,
+                HORIZONTAL_INSET + addressColumnWidth + effectiveDataAreaWidth + HORIZONTAL_INSET,
                 + rowsCount * rowHeight)
     }
 
@@ -174,7 +207,7 @@ class AddressableContentsView(
 
         // Draw data cells
         x += addressColumnWidth + COL_DIST
-        (address until address + columnsCount).forEach { cellAddress ->
+        (address until address + effectiveColumnCount).forEach { cellAddress ->
             val isCurrent = cellAddress == addressable.currentAddress && context.castedAppContext<GraphApplicationContext>()!!.isExecute
             if (isCurrent) {
                 context.g.color = backgroundColorCurrent
@@ -193,6 +226,13 @@ class AddressableContentsView(
             dataLabel.draw(context)
 
             x += dataColumnWidth + COL_DIST
+        }
+
+        if (showDisassembler) {
+            context.g.color = context.choose(styleProvider.getStyle(styleType).color).textColor
+            dataLabel.text = addressable.disassemblyAt(address)
+            dataLabel.location = Point2D(x, y)
+            dataLabel.draw(context)
         }
     }
 

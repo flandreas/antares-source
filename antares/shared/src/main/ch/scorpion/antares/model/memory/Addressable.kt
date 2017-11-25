@@ -17,6 +17,9 @@ interface Addressable {
 
     val dataWidth: BitWidth
 
+    /** Returns the maximum number of characters of all disassembly values.*/
+    val disassemblyWidth: Int
+
     fun dataAt(address: Int): Long
 
     fun disassemblyAt(address: Int): String

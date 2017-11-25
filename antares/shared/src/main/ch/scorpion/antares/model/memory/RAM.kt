@@ -76,6 +76,8 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
     override val dataWidth: BitWidth get() = getDataPort().bitWidth
 
+    override val disassemblyWidth: Int get() = 0
+
     override fun dataAt(address: Int): Long = memory.read(address)
 
     override fun disassemblyAt(address: Int): String = ""

@@ -118,7 +118,8 @@ class ROMView(
             contentsView = AddressableContentsView(
                     addressable = model!!,
                     rowsCount = contentRowsCount,
-                    columnsCount = contentColumnsCount)
+                    columnsCount = contentColumnsCount,
+                    showDisassembler = showDisassembler)
         }
     }
 
@@ -180,7 +181,15 @@ class ROMView(
         get() = TextProperty(model!!.disassemblerConfig)
         set(value) { model!!.disassemblerConfig = value.text!! }
 
-    var showDisassembler: Boolean = false
+    var showDisassembler: Boolean
+        get() = contentsView.showDisassembler
+        set(value) {
+            if (value != showDisassembler) {
+                contentsView.showDisassembler = value
+                updateGeometry()
+                validate()
+            }
+        }
 
     /** ---- [Storable] interface */
 
@@ -194,6 +203,7 @@ class ROMView(
         }
         writer.writeInt("contentRowsCount", contentRowsCount)
         writer.writeInt("contentColumnsCount", contentColumnsCount)
+        writer.writeBoolean("showDisassembler", showDisassembler)
     }
 
     override fun read(reader: StoreReader) {
@@ -215,6 +225,9 @@ class ROMView(
         }
         if (reader.hasAttribute("contentColumnsCount")) {
             contentColumnsCount = reader.readInt("contentColumnsCount")
+        }
+        if (reader.hasAttribute("showDisassembler")) {
+            showDisassembler = reader.readBoolean("showDisassembler")
         }
     }
 

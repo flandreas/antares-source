@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -49,6 +50,19 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
      * A newline-separated list of [Disassembler] configurations consisting of operations in the form "regex=op".
      */
     var disassemblerConfig: String = ""
+        set(value) {
+            field = value
+            resetDisassembler()
+            disassembleAll()
+        }
+
+    private val disassembler = Disassembler()
+
+    /** Maps a memory cell address to its disassembly string.*/
+    private val disassembly = mutableMapOf<Int,String>()
+
+    /** Contains the number of characters of the longest disassembly entry.*/
+    private var _disassemblyWidth: Int = 0
 
     init {
         addPort(DigitalPortImpl.createInput(Logic.POSITIVE, ADDRESS_PORT_NAME, BitWidth.BW_8))
@@ -76,9 +90,11 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
     override val dataWidth: BitWidth get() = getDataOutput().bitWidth
 
+    override val disassemblyWidth: Int get() = _disassemblyWidth
+
     override fun dataAt(address: Int): Long = memory.read(address)
 
-    override fun disassemblyAt(address: Int): String = "TODO"
+    override fun disassemblyAt(address: Int): String = disassembly.getOrElse(address, { "" })
 
     /** ---- [Storable] */
 
@@ -138,5 +154,32 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
     fun write(address: Int, value: Long) {
         memory.write(address, value)
+        disassembleCell(address)
+    }
+
+    private fun resetDisassembler() {
+        disassembler.reset()
+        resetDisassembly()
+    }
+
+    private fun resetDisassembly() {
+        _disassemblyWidth = 0
+        disassembly.clear()
+    }
+
+    private fun disassembleAll() {
+        resetDisassembly()
+        if (disassemblerConfig.isBlank()) {
+            return
+        }
+        disassembler.operations(disassemblerConfig)
+        memory.getNonZeroCells().forEach { disassembleCell(it.address) }
+    }
+
+    private fun disassembleCell(address: Int) {
+        val value = BitOperation.longToHex(memory.read(address)).padStart(dataWidth.width / 4, '0')
+        val d = disassembler.disassemble(value)
+        disassembly[address] = d
+        _disassemblyWidth = Math.max(_disassemblyWidth, disassembly[address]!!.length)
     }
 }
