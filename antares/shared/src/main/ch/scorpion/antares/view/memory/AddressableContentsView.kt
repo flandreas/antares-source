@@ -29,6 +29,8 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
  *
  * @property addressable the [Addressable] whose contents are displayed
  * @property rowsCount the number of rows to display
+ * @property columnsCount the number of columns to display
+ * @property showDisassembler determines whether each data cell should be disassembled
  */
 class AddressableContentsView(
         private val addressable: Addressable,

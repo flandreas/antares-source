@@ -17,9 +17,9 @@ class ROMViewBeanInfo : DigitalComponentBeanInfo<ROMView>() {
         private val addressBitWidth = PropertyImpl("element.property.addressBitWidth", BitWidth::class.java)
         private val dataBitWidth = PropertyImpl("element.property.dataBitWidth", BitWidth::class.java)
         private val text = PropertyImpl("graph.property.label", String::class.java)
-        private val showContents = PropertyImpl("element.property.ROM.showContents", Boolean::class.java)
-        private val contentRowsCount = PropertyImpl("element.property.ROM.rowsCount", Int::class.java)
-        private val contentColumnsCount = PropertyImpl("element.property.ROM.columnsCount", Int::class.java)
+        private val showContents = PropertyImpl("element.property.Addressable.showContents", Boolean::class.java)
+        private val contentRowsCount = PropertyImpl("element.property.Addressable.rowsCount", Int::class.java)
+        private val contentColumnsCount = PropertyImpl("element.property.Addressable.columnsCount", Int::class.java)
         private val disassemblerConfig = PropertyImpl("element.property.ROM.disassemblerConfig", TextProperty::class.java)
         private val showDisassembler = PropertyImpl("element.property.ROM.disassemblerDisplay", Boolean::class.java)
     }
