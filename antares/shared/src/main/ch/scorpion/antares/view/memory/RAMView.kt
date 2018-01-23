@@ -341,6 +341,8 @@ class RAMView(
         getPortView(model!!.getClearInput())!!.setLocation(x + CLEAR_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
 
         invalidate()
+
+        update()
     }
 
     private fun calculateContentsLocation(): Point2D {

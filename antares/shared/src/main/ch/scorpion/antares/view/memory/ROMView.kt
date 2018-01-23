@@ -332,6 +332,8 @@ class ROMView(
         getPortView(model!!.getChipSelectInput())!!.setLocation(x + width / 2, height / 2)
 
         invalidate()
+
+        update()
     }
 
     private fun calculateContentsLocation(): Point2D {
