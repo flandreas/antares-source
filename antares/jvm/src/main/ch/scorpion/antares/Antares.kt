@@ -54,6 +54,7 @@ import org.apache.commons.cli.Options
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import javax.swing.JDialog
+import javax.swing.UIManager
 import javax.swing.plaf.FontUIResource
 
 
@@ -106,6 +107,10 @@ class Antares(
     }
 
     override fun init() {
+        if (System.getProperty("os.name", "").startsWith("Mac OS")) {
+            UIManager.setLookAndFeel("org.violetlib.aqua.AquaLookAndFeel");
+        }
+
         AntaresModuleJvm(this).require()
         LibraryModule.libraryHolder.library.load()
         fillStandardLibrary(LibraryModule.libraryHolder.library)
