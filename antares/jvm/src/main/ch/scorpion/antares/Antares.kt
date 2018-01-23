@@ -107,9 +107,11 @@ class Antares(
     }
 
     override fun init() {
-        if (System.getProperty("os.name", "").startsWith("Mac OS")) {
-            UIManager.setLookAndFeel("org.violetlib.aqua.AquaLookAndFeel");
-        }
+        // VAqua brings to many new problems, such as property sheet not working any more
+        // Temporarily disabled, looking for another solution to JToggleButton problem..
+//        if (System.getProperty("os.name", "").startsWith("Mac OS")) {
+//            UIManager.setLookAndFeel("org.violetlib.aqua.AquaLookAndFeel");
+//        }
 
         AntaresModuleJvm(this).require()
         LibraryModule.libraryHolder.library.load()
