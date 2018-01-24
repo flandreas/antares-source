@@ -24,7 +24,7 @@ class DeleteContainerLibraryElementAction(
         isEnabled = false
         eventBus.register(LibrarySelectionChangedEvent::class, {
             libraryTreeView = it.libraryTreeView
-            isEnabled = libraryTreeView!!.getSelectedItem() !is LibraryDirectory
+            isEnabled = libraryTreeView!!.getSelectedItem() is ContainerLibraryElement
         })
     }
 
