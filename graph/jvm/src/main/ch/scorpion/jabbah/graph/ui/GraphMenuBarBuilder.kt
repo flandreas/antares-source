@@ -10,10 +10,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.ExecutionDepthAction
 import ch.scorpion.jabbah.execution.StopOnIssueAction
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
-import ch.scorpion.jabbah.graph.library.AddGraphToLibraryAction
-import ch.scorpion.jabbah.graph.library.AddLibraryFolderAction
-import ch.scorpion.jabbah.graph.library.DeleteContainerLibraryElementAction
-import ch.scorpion.jabbah.graph.library.EditContainerLibraryElementAction
+import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioAction
@@ -64,6 +61,7 @@ open class GraphMenuBarBuilder(application: DesktopApplication, eventBus: EventB
 
     protected open fun fillLibraryMenu(menu: JMenu): JMenu {
         menu.add(JMenuItem(AddLibraryFolderAction()))
+        menu.add(JMenuItem(NewGraphAction()))
         menu.add(JMenuItem(AddGraphToLibraryAction()))
         menu.add(JMenuItem(EditContainerLibraryElementAction(application, eventBus)))
         menu.add(JMenuItem(DeleteContainerLibraryElementAction(eventBus)))

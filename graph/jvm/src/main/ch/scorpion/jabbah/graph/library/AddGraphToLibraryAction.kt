@@ -10,23 +10,15 @@ import java.awt.event.ActionEvent
 /**
  * Adds the current [MetaGraph] as a [ContainerLibraryElement] to the currently selected [LibraryDirectory].
  */
-class AddGraphToLibraryAction(eventBus: EventBus) : AbstractAction("library.action.addToLibrary") {
+class AddGraphToLibraryAction(eventBus: EventBus) : AbstractLibraryFolderAction("library.action.addToLibrary", eventBus) {
 
     constructor(): this(BaseModule.eventBus)
 
-    private var libraryTreeView: LibraryTreeView? = null
     private var metaGraph: MetaGraph? = null
 
     init {
-        setEnabled(false)
-
         eventBus.register(ApplicationDataEvent::class, {
             metaGraph = it.newData as MetaGraph
-        })
-
-        eventBus.register(LibrarySelectionChangedEvent::class, {
-            libraryTreeView = it.libraryTreeView
-            setEnabled(libraryTreeView!!.getSelectedItem() is LibraryDirectory)
         })
     }
 

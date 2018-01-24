@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -13,19 +12,9 @@ import javax.swing.JOptionPane
  * Asks the user for the name of the new [LibraryDirectory] and adds a new [LibraryDirectory] as a child of
  * the currently selected [LibraryDirectory].
  */
-class AddLibraryFolderAction(eventBus: EventBus) : AbstractAction("library.action.addFolder") {
+class AddLibraryFolderAction(eventBus: EventBus) : AbstractLibraryFolderAction("library.action.addFolder", eventBus) {
 
     constructor(): this(BaseModule.eventBus)
-
-    private var libraryTreeView: LibraryTreeView? = null
-
-    init {
-        isEnabled = false
-        eventBus.register(LibrarySelectionChangedEvent::class, {
-            libraryTreeView = it.libraryTreeView
-            isEnabled = libraryTreeView!!.getSelectedItem() is LibraryDirectory
-        })
-    }
 
     override fun actionPerformed(e: ActionEvent?) {
         val name = JOptionPane.showInputDialog(
