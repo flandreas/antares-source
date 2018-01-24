@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
 import java.awt.event.ActionEvent
 import javax.swing.Action
 import javax.swing.JOptionPane
@@ -14,6 +15,8 @@ import javax.swing.tree.DefaultMutableTreeNode
 class DeleteContainerLibraryElementAction(
     eventBus: EventBus
 ) : AbstractAction("graph.action.deleteContainerLibraryElement") {
+
+    constructor() : this(BaseModule.eventBus)
 
     private var libraryTreeView: LibraryTreeView? = null
 

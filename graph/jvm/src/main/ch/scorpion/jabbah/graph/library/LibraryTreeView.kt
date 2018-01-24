@@ -14,12 +14,9 @@ import java.awt.Component
 import java.awt.Graphics
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import javax.swing.tree.DefaultMutableTreeNode
-import javax.swing.tree.DefaultTreeCellRenderer
 import java.awt.event.InputEvent
 import javax.swing.*
-import javax.swing.tree.DefaultTreeModel
-import javax.swing.tree.TreeModel
+import javax.swing.tree.*
 
 /**
  * Displays the {@link Library} as a tree.
@@ -36,7 +33,14 @@ class LibraryTreeView(
     @Suppress("unused")
     constructor(): this(BaseModule.eventBus, LibraryModule.libraryHolder)
 
+    private val directoryPopupMenu = JPopupMenu()
+
+    private val containerPopupMenu = JPopupMenu()
+
     init {
+        selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
+        selectionModel.addTreeSelectionListener { setupPopupMenu(it.newLeadSelectionPath) }
+
         transferHandler = LibraryElementTransferHandler()
 
         setRowHeight(24)
@@ -53,6 +57,12 @@ class LibraryTreeView(
         eventBus.register(LibraryItemUpdatedEvent::class, { updateLibrary() })
 
         eventBus.register(ApplicationModeEvent::class, { dragEnabled = it.applicationMode === ApplicationMode.EDIT })
+
+        directoryPopupMenu.add(AddLibraryFolderAction())
+        directoryPopupMenu.add(NewGraphAction())
+        directoryPopupMenu.add(AddGraphToLibraryAction())
+
+        containerPopupMenu.add(DeleteContainerLibraryElementAction())
     }
 
     companion object {
@@ -94,6 +104,19 @@ class LibraryTreeView(
             if (e.clickCount == 2 && getSelectedItem() is ContainerLibraryElement) {
                 eventBus.post(OpenContainerLibraryElementRequest(getSelectedItem() as ContainerLibraryElement, e))
             }
+        }
+    }
+
+    /** Setup the popup menu according to the currently selected [TreeNode]' user object.*/
+    private fun setupPopupMenu(newSelectionPath: TreePath?) {
+        if (newSelectionPath == null) {
+            componentPopupMenu = null
+            return
+        }
+        componentPopupMenu = when ((newSelectionPath.lastPathComponent as DefaultMutableTreeNode).userObject) {
+            is LibraryFolder -> directoryPopupMenu
+            is LibraryDirectory -> directoryPopupMenu
+            else -> containerPopupMenu
         }
     }
 
