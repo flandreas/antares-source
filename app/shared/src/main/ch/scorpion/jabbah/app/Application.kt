@@ -3,7 +3,8 @@ package ch.scorpion.jabbah.app
 import ch.scorpion.jabbah.io.Storable
 
 /**
- * Created by andreas on 13.02.17.
+ * The main class of a running application program, and the main point for controlling
+ * the application data that is managed by this application.
  */
 interface Application {
 
@@ -24,6 +25,8 @@ interface Application {
 
     /** Determines whether the current application data has been changed.*/
     val applicationDataChanged: Boolean
+
+    val mostRecentSavables: SavableHistory
 
     /** Starts this [Application] by initializing it and by loading predefined content.*/
     fun start()

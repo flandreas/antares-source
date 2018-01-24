@@ -23,15 +23,18 @@ import javax.swing.JMenuItem
 open class MenuBarBuilder(val application: DesktopApplication, val eventBus: EventBus) {
 
     val menuBar = JMenuBar()
-    val fileMenu = JMenu(Translations.getString("application.menu.file"))
-    val editMenu = JMenu(Translations.getString("application.menu.edit"))
-    val viewMenu = JMenu(Translations.getString("application.menu.view"))
+    private val fileMenu = JMenu(Translations.getString("application.menu.file"))
+    private val editMenu = JMenu(Translations.getString("application.menu.edit"))
+    private val viewMenu = JMenu(Translations.getString("application.menu.view"))
+    private val openRecentMenu = JMenu(Translations.getString("file.action.openRecent.name"))
 
     init {
         fillFileMenu(fileMenu)
         fillEditMenu(editMenu)
         fillViewMenu(viewMenu)
         fillMenuBar(menuBar)
+
+        eventBus.register(SavableHistoryEvent::class, { updateOpenRecentMenu() })
     }
 
     protected open fun fillMenuBar(menuBar: JMenuBar) {
@@ -43,9 +46,10 @@ open class MenuBarBuilder(val application: DesktopApplication, val eventBus: Eve
     protected open fun fillFileMenu(menu: JMenu) {
         menu.add(JMenuItem(NewFileAction(application)))
         menu.add(JMenuItem(OpenFileAction(application)))
+        menu.add(openRecentMenu)
         menu.add(JMenuItem(SaveFileAction(application)))
         menu.add(JMenuItem(SaveFileAsAction(application)))
-        menu.addSeparator();
+        menu.addSeparator()
         menu.add(JMenuItem(QuitApplicationAction(application)))
     }
 
@@ -74,5 +78,13 @@ open class MenuBarBuilder(val application: DesktopApplication, val eventBus: Eve
         menu.add(JMenuItem(ZoomFitAction(DrawViewModule.viewManager, BaseModule.eventBus)))
         menu.addSeparator()
         menu.add(JCheckBoxMenuItem(GridAction(DrawViewModule.viewManager, BaseModule.eventBus)))
+    }
+
+    private fun updateOpenRecentMenu() {
+        openRecentMenu.removeAll()
+        application.mostRecentSavables.savables.forEach {
+            openRecentMenu.add(JMenuItem(OpenRecentFileAction(it, application)))
+        }
+        openRecentMenu.isEnabled = application.mostRecentSavables.size > 0
     }
 }

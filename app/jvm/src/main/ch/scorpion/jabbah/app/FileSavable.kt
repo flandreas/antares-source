@@ -1,12 +1,13 @@
 package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.exception.IllegalStateException
 import java.util.*
 
 /**
  * A [Savable] that saves application data into a [File] of a file system.
  */
-class FileSavable(val filePath: String?) : Savable {
+data class FileSavable(val filePath: String?) : Savable {
 
     companion object {
 
@@ -35,8 +36,15 @@ class FileSavable(val filePath: String?) : Savable {
             return sb.toString()
         }
 
-    override val defined: Boolean
-        get() = filePath != null && !filePath.isEmpty()
+    override val defined: Boolean get() = filePath != null && !filePath.isEmpty()
+
+    override fun open(application: Application): Boolean {
+        val desktopApplication = application as DesktopApplication
+        if (!defined) {
+            throw IllegalStateException("cannot open undefined FileSavable")
+        }
+        return desktopApplication.openFile(filePath!!)
+    }
 
     override fun save(application: Application): Boolean {
         val desktopApplication = application as DesktopApplication

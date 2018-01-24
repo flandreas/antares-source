@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.graph.MetaGraph
 
 /**
@@ -14,6 +15,10 @@ class LibrarySavable(val metaGraph: MetaGraph, val element: ContainerLibraryElem
         get() = "${Translations.getString("library.saveable.prefix")} \"${element.name}\""
 
     override val defined: Boolean get() = true
+
+    override fun open(application: Application): Boolean {
+        throw UnsupportedOperationException("cannot open LibrarySavable in Application: not supported")
+    }
 
     override fun save(application: Application): Boolean {
         element.saveMetaGraph(metaGraph)

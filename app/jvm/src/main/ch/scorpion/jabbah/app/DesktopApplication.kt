@@ -15,7 +15,7 @@ interface DesktopApplication : Application {
 
     fun saveFile(filePath: String)
 
-    fun openFile(filePath: String)
+    fun openFile(filePath: String): Boolean
 
     fun quit()
 }

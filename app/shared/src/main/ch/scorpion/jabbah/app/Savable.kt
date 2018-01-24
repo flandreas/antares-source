@@ -6,17 +6,24 @@ package ch.scorpion.jabbah.app
 interface Savable {
 
     /**
-     * Holds the description of this [Savable* that can be displayed in the UI, such as a file name to be
+     * Holds the description of this [Savable] that can be displayed in the UI, such as a file name to be
      * displayed in a main frame's title bar.
      */
     val description: String
 
     /**
-     * Determines whether this [Savable] is completly defined, i.e. it can be saved without further interaction
+     * Determines whether this [Savable] is completely defined, i.e. it can be saved without further interaction
      * with the user, such as asking for a file name.
-     * @return `true` if this [Savable]] is completly defined.
+     * @return `true` if this [Savable]] is completely defined.
      */
     val defined: Boolean
+
+    /**
+     * Opens this [Savable] in the specified [Application].
+     * @param application the [Application] in which this [Savable] is opened.
+     * @return `true` if this [Savable] has been opened, `false` if the open process has been aborted by the user
+     */
+    fun open(application: Application): Boolean
 
     /**
      * Saves this [Savable] using the specified [Application].

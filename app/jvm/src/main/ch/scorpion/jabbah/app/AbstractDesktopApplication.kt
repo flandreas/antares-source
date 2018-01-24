@@ -59,6 +59,17 @@ abstract class AbstractDesktopApplication(
 
     override lateinit var mainFrame: AbstractApplicationFrame
 
+    override val mostRecentSavables: SavableHistory = SavableHistory()
+
+    override var savable: Savable?
+        get() = super.savable
+        set(value) {
+            super.savable = value
+            if (value != null) {
+                mostRecentSavables.register(value)
+            }
+        }
+
     init {
         loadSettings()
     }
@@ -152,7 +163,7 @@ abstract class AbstractDesktopApplication(
         }
     }
 
-    override fun openFile(filePath: String) {
+    override fun openFile(filePath: String): Boolean {
         if (canReplaceSavable("file.action.open.name")) {
             FileInputStream(filePath).use {
                 try {
@@ -160,11 +171,14 @@ abstract class AbstractDesktopApplication(
                     val drawing = storeReader.readStorable()
                     applicationData = drawing
                     savable = FileSavable.withPath(filePath)
+                    return true
                 } catch (e: Throwable) {
                     LOG.error("Error while opening '$filePath': ${e.cause}")
+                    return false
                 }
             }
         }
+        return false
     }
 
     /** ---- [AbstractDesktopApplication] */
