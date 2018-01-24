@@ -22,6 +22,8 @@ class ZoomPanController(val view: View<*>) {
         private val AUTOPAN_TIMER_DELAY = 50
         private val AUTOPAN_SIZE = 10
         private val AUTOPAN_REGION = 50
+        private val ZOOM_OUT_CHANGE_FACTOR = 0.9
+        private val MIN_ZOOM_FACTOR = 0.05
     }
 
     var enabled: Boolean = false
@@ -46,6 +48,16 @@ class ZoomPanController(val view: View<*>) {
 
     inner class Controller : MouseAdapter() {
 
+        private fun isZoomOutWheelRotation(e: MouseEvent) = e.wheelRotation > 0
+
+        private fun zoomChangeFactorFromWheelRotation(e: MouseEvent): Double {
+            val zoomChangeFactor = if (isZoomOutWheelRotation(e)) ZOOM_OUT_CHANGE_FACTOR else 1 / ZOOM_OUT_CHANGE_FACTOR
+            val newZoomFactor = zoomChangeFactor * view.zoomFactor
+            if (newZoomFactor >= MIN_ZOOM_FACTOR) {
+                return zoomChangeFactor
+            }
+            return 1.0
+        }
 
         override fun mousePressed(e: MouseEvent) {
             if (e.button != Button.BUTTON2) {
@@ -74,7 +86,7 @@ class ZoomPanController(val view: View<*>) {
         }
 
         override fun mouseWheelRotated(e: MouseEvent) {
-            view.navigator.multiplyZoomFactor(if (e.wheelRotation > 0) 0.9 else 1 / 0.9)
+            view.navigator.multiplyZoomFactor(zoomChangeFactorFromWheelRotation(e))
             e.consume()
         }
     }
