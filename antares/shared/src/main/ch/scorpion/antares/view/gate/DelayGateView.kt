@@ -17,6 +17,7 @@ class DelayGateView(
 
     init {
         modelExchanged(null)
+        customFont = Look.ANNOTATION_FONT
     }
 
     var delay: Long
@@ -33,7 +34,6 @@ class DelayGateView(
 
     override fun drawImpl(context: DrawContext) {
         val oldColor = context.g.color
-        label!!.font = Look.INT_PIN_FONT
         super.drawImpl(context)
 
         if (context.useContextColors) {

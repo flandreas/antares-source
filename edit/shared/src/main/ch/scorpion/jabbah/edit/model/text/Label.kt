@@ -23,7 +23,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
  */
 class Label(
         text: String?,
-        var font: Font,
+        font: Font,
         var color: Color? = null,
         horizontalAlignment: HorizontalAlignment = DEFAULT_HORIZONTAL_ALIGNMENT,
         verticalAlignment: VerticalAlignment = DEFAULT_VERTICAL_ALIGNMENT,
@@ -48,39 +48,56 @@ class Label(
             updateGeometry()
         }
 
+    var font: Font = font
+        set(value) {
+            if (field != value) {
+                invalidate()
+                field = value
+                updateGeometry()
+            }
+        }
+
     var location: Point2D = location
         get() = Point2D(field)
         set(value) {
-            invalidate()
-            field = value
-            updateGeometry()
+            if (field != value) {
+                invalidate()
+                field = value
+                updateGeometry()
+            }
         }
 
     private var _horizontalAlignment: HorizontalAlignment = horizontalAlignment
     var horizontalAligment: HorizontalAlignment
         get() = _horizontalAlignment
         set(value) {
-            invalidate()
-            _horizontalAlignment = value
-            updateGeometry()
+            if (_horizontalAlignment != value) {
+                invalidate()
+                _horizontalAlignment = value
+                updateGeometry()
+            }
         }
 
     private var _verticalAlignment: VerticalAlignment = verticalAlignment
     var verticalAligment: VerticalAlignment
         get() = _verticalAlignment
         set(value) {
-            invalidate()
-            _verticalAlignment = value
-            updateGeometry()
+            if (verticalAligment != value) {
+                invalidate()
+                _verticalAlignment = value
+                updateGeometry()
+            }
         }
 
     var alignment: Alignment
         get() = Alignment(horizontalAligment, verticalAligment)
         set(value) {
-            invalidate()
-            _horizontalAlignment = value.horizontal
-            _verticalAlignment = value.vertical
-            updateGeometry()
+            if (alignment != value) {
+                invalidate()
+                _horizontalAlignment = value.horizontal
+                _verticalAlignment = value.vertical
+                updateGeometry()
+            }
         }
 
     var rotationDisplayStrategy: RotationDisplayStrategy = rotationDisplayStrategy
@@ -242,8 +259,9 @@ class Label(
 
         baselinePoint = Point2D(bounds.x + BOUNDS_INSET, bounds.y + textRenderInfo.ascent)
 
-        validate()
+        invalidate()
         update()
+        validate()
     }
 
     private fun calculateDisplayableText(): String = StringUtils.replaceNegation(text)
