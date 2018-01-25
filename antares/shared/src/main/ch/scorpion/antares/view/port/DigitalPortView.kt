@@ -101,6 +101,8 @@ class DigitalPortView(
     private val hasInternalOutputAnnotation: Boolean
         get() = (port as DigitalPort).outputAnnotation != OutputAnnotation.NONE
 
+    private val hasExternalAnnotation: Boolean get() = (port as DigitalPort).logic == Logic.NEGATIVE
+
     init {
         buildPortLabel()
         buildBitWidthAnnotation()
@@ -220,6 +222,7 @@ class DigitalPortView(
 
         context.g.translate(-locationX, -locationY)
 
+        @Suppress("ConstantConditionIf")
         if (DEBUG_GFX) {
             context.g.color = Color.RED
             context.g.draw(boundingBox)
@@ -381,11 +384,12 @@ class DigitalPortView(
     }
 
     private fun getExternalLabelLocation(direction: Direction): Point2D {
+        val ea = if (hasExternalAnnotation) LOGIC_SIZE else 0
         return when (direction) {
-            Direction.WEST -> Point2D(-EXT_BORDER_DIST, 0)
-            Direction.EAST -> Point2D(EXT_BORDER_DIST, 0)
-            Direction.NORTH -> Point2D(0, -EXT_BORDER_DIST)
-            Direction.SOUTH -> Point2D(0, EXT_BORDER_DIST)
+            Direction.WEST -> Point2D(-EXT_BORDER_DIST - ea, 0)
+            Direction.EAST -> Point2D(EXT_BORDER_DIST + ea, 0)
+            Direction.NORTH -> Point2D(0, -EXT_BORDER_DIST - ea)
+            Direction.SOUTH -> Point2D(0, EXT_BORDER_DIST + ea)
             else -> throw IllegalStateException("unknown Direction " + direction)
         }
     }
