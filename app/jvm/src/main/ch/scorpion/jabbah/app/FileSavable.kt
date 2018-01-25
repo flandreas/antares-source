@@ -38,6 +38,8 @@ data class FileSavable(val filePath: String?) : Savable {
 
     override val defined: Boolean get() = filePath != null && !filePath.isEmpty()
 
+    override val supportsMostRecent: Boolean get() = true
+
     override fun open(application: Application): Boolean {
         val desktopApplication = application as DesktopApplication
         if (!defined) {

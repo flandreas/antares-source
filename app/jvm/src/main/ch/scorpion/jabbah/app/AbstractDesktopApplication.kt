@@ -65,7 +65,7 @@ abstract class AbstractDesktopApplication(
         get() = super.savable
         set(value) {
             super.savable = value
-            if (value != null) {
+            if (value != null && value.supportsMostRecent && value.defined) {
                 mostRecentSavables.register(value)
             }
         }

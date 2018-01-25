@@ -16,6 +16,8 @@ class LibrarySavable(val metaGraph: MetaGraph, val element: ContainerLibraryElem
 
     override val defined: Boolean get() = true
 
+    override val supportsMostRecent: Boolean get() = false
+
     override fun open(application: Application): Boolean {
         throw UnsupportedOperationException("cannot open LibrarySavable in Application: not supported")
     }

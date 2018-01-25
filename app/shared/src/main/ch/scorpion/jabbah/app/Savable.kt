@@ -18,6 +18,9 @@ interface Savable {
      */
     val defined: Boolean
 
+    /** Determines whether this [Savable] can be added to the "Most Recent" file menu.*/
+    val supportsMostRecent: Boolean
+
     /**
      * Opens this [Savable] in the specified [Application].
      * @param application the [Application] in which this [Savable] is opened.
