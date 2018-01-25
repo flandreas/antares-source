@@ -19,7 +19,7 @@ abstract class AbstractApplicationAction(
             application: DesktopApplication
     ) : this(
             Translations.getString("$baseName.name"),
-            null,
-            null,
+            Translations.getOptionalString("$baseName.desc"),
+            Translations.getOptionalString("$baseName.accelerator"),
             application)
 }

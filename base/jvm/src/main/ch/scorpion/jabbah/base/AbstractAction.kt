@@ -15,10 +15,16 @@ abstract class AbstractAction(
         accelerator: String? = null
 ) : javax.swing.AbstractAction() {
 
+    companion object {
+        protected fun translatedName(baseName: String): String = Translations.getString("$baseName.name")
+        protected fun translatedDesc(baseName: String): String? = Translations.getOptionalString("$baseName.desc")
+        protected fun translatedAccelerator(baseName: String): String? = Translations.getOptionalString("$baseName.accelerator")
+    }
+
     constructor(baseName: String): this(
-            Translations.getString("$baseName.name"),
-            Translations.getOptionalString("$baseName.desc"),
-            Translations.getOptionalString("$baseName.accelerator")
+            translatedName(baseName),
+            translatedDesc(baseName),
+            translatedAccelerator(baseName)
     )
 
     var name: String
