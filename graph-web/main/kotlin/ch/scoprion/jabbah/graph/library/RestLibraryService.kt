@@ -58,6 +58,10 @@ class RestLibraryService : LibraryService {
         throw UnsupportedOperationException("not implemented")
     }
 
+    override fun exportLibrary(fileName: String, locationPath: String?) {
+        throw UnsupportedOperationException("not implemented")
+    }
+
     /** ---- [RestLibraryService] */
 
     private fun handleLibraryResponse(library: Library, doc: Document) {

@@ -16,6 +16,7 @@ import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Test
 import java.io.File
+import java.nio.file.Files
 
 /**
  * Scenario (integration) tests for [Library] and corresponding classes.
@@ -31,7 +32,8 @@ class LibraryTest {
 
     @Before
     fun setup() {
-        val file = File.createTempFile("library", ".lib")
+        val dir = Files.createTempDirectory("library")
+        val file = File.createTempFile("library", ".lib", dir.toFile())
         TestTranslationsBuilder().withAnyKey()
         LibraryModule.libraryService = FileLibraryService(file.parent)
         LibraryModule.libraryHolder.l = LibraryImpl(file.toPath().fileName.toString(), file.toPath().parent.toString())
@@ -99,6 +101,13 @@ class LibraryTest {
 
         var graphStorable = GraphStorable(circuitView)
         graphStorable = IOModule.storableClonerProvider.invoke().cloneUsingCreator(graphStorable, IOModule.storableCreator) as GraphStorable
+    }
+
+    @Test
+    fun shouldExportLibrary() {
+        TestLibraryBuilder().addCustomNot(LibraryModule.libraryHolder.library)
+        val file = File.createTempFile("library", ".zip")
+        LibraryModule.libraryService.exportLibrary(file.name, file.parent)
     }
 
     private fun storeAndLoad(library: LibraryImpl): Library {

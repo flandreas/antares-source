@@ -18,6 +18,8 @@ interface LibraryService {
 
     fun storeLibrary(library: Library, fileName: String, locationPath: String? = null)
 
+    fun exportLibrary(fileName: String, locationPath: String? = null)
+
 }
 
 /** Null pattern.*/
@@ -39,6 +41,10 @@ class UnimplementedLibraryService : LibraryService{
     }
 
     override fun storeLibrary(library: Library, fileName: String, locationPath: String?) {
+        throw UnsupportedOperationException("not implemented")
+    }
+
+    override fun exportLibrary(fileName: String, locationPath: String?) {
         throw UnsupportedOperationException("not implemented")
     }
 

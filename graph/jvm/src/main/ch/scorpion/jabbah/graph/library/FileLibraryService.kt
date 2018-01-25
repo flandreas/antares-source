@@ -12,6 +12,8 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.nio.file.FileSystems
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 /**
  * An implementation of [LibraryService] that stores the libraries in the local file system.
@@ -98,6 +100,17 @@ class FileLibraryService(
         }
     }
 
+    override fun exportLibrary(fileName: String, locationPath: String?) {
+        val path = FileSystems.getDefault().getPath(locationPath, fileName).toString()
+        LOG.debug("Exporting library to $path")
+        FileOutputStream(path).use { output ->
+            ZipOutputStream(output).use {
+                val fileToZip = File(directoryPath)
+                zipFile(fileToZip, fileToZip.name, it)
+            }
+        }
+    }
+
     /** ---- [FileLibraryService] */
 
     private fun buildMetaGraphFilePath(uuid: UUID): String {
@@ -106,5 +119,30 @@ class FileLibraryService(
 
     private fun buildLibraryFilePath(locationPath: String, fileName: String): String {
         return  FileSystems.getDefault().getPath(locationPath, fileName).toString()
+    }
+
+    private fun zipFile(file: File, fileName: String, zipOut: ZipOutputStream) {
+        if (file.isHidden) {
+            return
+        }
+        LOG.debug(".. zipping $fileName")
+        if (file.isDirectory) {
+            for (childFile in file.listFiles()) {
+                zipFile(childFile, "$fileName/${childFile.name}", zipOut)
+            }
+            return
+        }
+        FileInputStream(file).use {
+            val zipEntry = ZipEntry(fileName)
+            zipOut.putNextEntry(zipEntry)
+            val buffer = ByteArray(1024, { 0 })
+            var length = 0
+            do {
+                length = it.read(buffer)
+                if (length > 0) {
+                    zipOut.write(buffer, 0, length)
+                }
+            } while (length > 0)
+        }
     }
 }
