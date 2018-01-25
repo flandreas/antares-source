@@ -34,7 +34,7 @@ class LibraryImpl(
     private val eventBus: EventBus
 ) : Library, LibraryDirectory by libraryFolder {
 
-    constructor(fileName: String, locationPath: String?): this(
+    constructor(fileName: String, locationPath: String? = null): this(
         fileName, locationPath, LibraryFolder(Translations.getString("library.library.name")),
         IOModule.storableCreator, LibraryModule.libraryService, BaseModule.eventBus)
 
