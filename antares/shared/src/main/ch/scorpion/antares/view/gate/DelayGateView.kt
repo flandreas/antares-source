@@ -16,8 +16,8 @@ class DelayGateView(
 ) : AbstractDigitalGateView<DelayGate>(styleProvider, delayGate.delay.toString(), "library.element.Delay", delayGate) {
 
     init {
-        modelExchanged(null)
         customFont = Look.ANNOTATION_FONT
+        modelExchanged(null)
     }
 
     var delay: Long
