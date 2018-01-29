@@ -86,6 +86,10 @@ open class DigitalPortImpl(
      */
     private var defaultBit: Bit? = null
 
+    override fun toString(): String {
+        return super<PortImpl>.toString() + " BitWidth=$bitWidth"
+    }
+
     /** ---- [DigitalPort] interface */
 
     override var bitWidth: BitWidth = bitWidth

@@ -38,6 +38,8 @@ class CircuitInOutImpl(
         }
     }
 
+    private var readingFromStore = false
+
     /** ---- [GraphPort] interface */
 
     /** Captures the [DigitalSignal] that has been process last, either as input or as output. */
@@ -114,11 +116,16 @@ class CircuitInOutImpl(
     }
 
     override fun read(reader: StoreReader) {
-        super.read(reader)
-        portType = PortType.withName(reader.readString("type"))
-        bitWidth = BitWidth.of(reader.readInt("bitWidth"))
-        if (reader.hasAttribute(("desc"))) {
-            portDescription = reader.readString("desc")
+        try {
+            readingFromStore = true
+            super.read(reader)
+            portType = PortType.withName(reader.readString("type"))
+            bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+            if (reader.hasAttribute(("desc"))) {
+                portDescription = reader.readString("desc")
+            }
+        } finally {
+            readingFromStore = false
         }
     }
 
@@ -151,7 +158,9 @@ class CircuitInOutImpl(
             if (value != getDigitalPort().signalRepresentation) {
                 val oldValue = getDigitalPort().signalRepresentation
                 getDigitalPort().signalRepresentation = value
-                eventBus.post(CircuitInOutSignalRepresentationChanged(this, oldValue, value))
+                if (!readingFromStore) {
+                    eventBus.post(CircuitInOutSignalRepresentationChanged(this, oldValue, value))
+                }
             }
         }
 
@@ -164,7 +173,9 @@ class CircuitInOutImpl(
                 signal = null
                 val oldValue = getDigitalPort().bitWidth
                 getDigitalPort().bitWidth = value
-                eventBus.post(CircuitInOutBitWidthChanged(this, oldValue, value))
+                if (!readingFromStore) {
+                    eventBus.post(CircuitInOutBitWidthChanged(this, oldValue, value))
+                }
             }
         }
 
