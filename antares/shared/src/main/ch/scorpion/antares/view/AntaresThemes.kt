@@ -130,12 +130,14 @@ object AntaresThemes {
                 foregroundColor = ZERO.foregroundColor,
                 backgroundColor = Color.BLACK
         )
+
+        var veryDarkGreen = Color(2, 46, 8)
         // dark orange
         val highlightColor = Color(102, 61, 0)
 
         val explanationColor = CompositeColor(
                 foregroundColor = Color(50, 232, 42),
-                backgroundColor = Color(2, 46, 8)
+                backgroundColor = veryDarkGreen
         )
 
         return AntaresTheme(
@@ -185,7 +187,10 @@ object AntaresThemes {
                         stroke = BOX_STROKE,
                         font = FONT),
                 edge = EdgeStyle(
-                        color = color,
+                        color = CompositeColor(
+                                foregroundColor = ZERO.foregroundColor,
+                                backgroundColor = veryDarkGreen
+                        ),
                         stroke = LINE_STROKE,
                         busStroke = BUS_STROKE,
                         font = Look.ANNOTATION_FONT),
@@ -212,8 +217,14 @@ object AntaresThemes {
                 zero = ZERO,
                 one = ONE,
                 undefined = UNDEFINED,
-                wordZero = ZERO,
-                word = ONE,
+                wordZero = CompositeColor(
+                        foregroundColor = ZERO.foregroundColor,
+                        backgroundColor = veryDarkGreen
+                ),
+                word = CompositeColor(
+                        ONE.foregroundColor,
+                        backgroundColor = veryDarkGreen
+                ),
                 error = ERROR,
                 focus = BasicStyle(
                         color = CompositeColor(
