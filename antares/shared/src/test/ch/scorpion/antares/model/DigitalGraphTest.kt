@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.TestTranslationsBuilder
 import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
@@ -9,6 +10,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import org.hamcrest.CoreMatchers
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Test
 
@@ -20,6 +22,11 @@ class DigitalGraphTest {
     companion object {
         @ClassRule @JvmField
         val rule = AntaresTestRule()
+    }
+
+    @Before
+    fun setup() {
+        TestTranslationsBuilder().withAnyKey()
     }
 
     @Test
