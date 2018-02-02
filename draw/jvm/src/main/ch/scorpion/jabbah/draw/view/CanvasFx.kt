@@ -1,0 +1,268 @@
+package ch.scorpion.jabbah.draw.view
+
+import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.Canvas
+import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.draw.graphics.Graphics2DFx
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import javafx.event.EventHandler
+import javafx.scene.input.MouseButton
+import javafx.scene.input.MouseEvent
+import javafx.scene.input.ScrollEvent
+
+class CanvasFx(
+        private val canvas: javafx.scene.canvas.Canvas,
+        viewFactory: (Canvas) -> View<out InputEventContext>,
+        styleProvider: StyleProvider
+) : Canvas {
+
+    companion object {
+        private val LOG by logger(CanvasFx::class)
+    }
+
+    private val g = Graphics2DFx(canvas.graphicsContext2D)
+
+    private val mouseListeners: MutableList<MouseEventBridge> by lazy { mutableListOf<MouseEventBridge>() }
+    private val mouseMotionListeners: MutableList<MouseMotionEventBridge> by lazy { mutableListOf<MouseMotionEventBridge>() }
+    private val mouseWheelListeners: MutableList<MouseWheelEventBridge> by lazy { mutableListOf<MouseWheelEventBridge>() }
+
+    override val view = viewFactory.invoke(this)
+
+    init {
+        view.initialize()
+    }
+
+    override val dimension: Dimension2D get() = Dimension2D(canvas.width, canvas.height)
+
+    override var backgroundColor: Color
+        get() {
+            // TODO
+            return Color.WHITE
+        }
+        set(value) {
+            // TODO
+        }
+
+    override fun requestViewFocus() {
+        throw UnsupportedOperationException("not implemented")
+    }
+
+    override fun setCursor(cursor: Cursor) {
+        throw UnsupportedOperationException("not implemented")
+    }
+
+    override fun repaint() {
+        repaint(0, 0, Math.ceil(canvas.width).toInt(), Math.ceil(canvas.height).toInt())
+    }
+
+    override fun repaint(x: Int, y: Int, width: Int, height: Int) {
+        //LOG.debug("CanvasFx.repaint $x,$y,$width,$height")
+        g.g.clearRect(0.0, 0.0, canvas.width, canvas.height)
+        view.paint(g)
+    }
+
+    override fun addMouseListener(l: MouseListener) {
+        LOG.debug("CanvasFx: addMouseListener")
+        var bridge = mouseEventBridgeOf(l)
+        if (bridge == null) {
+            bridge = MouseEventBridge(l)
+            mouseListeners.add(bridge)
+            canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, bridge)
+            canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, bridge)
+            canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, bridge)
+            canvas.addEventHandler(MouseEvent.MOUSE_ENTERED, bridge)
+            canvas.addEventHandler(MouseEvent.MOUSE_EXITED, bridge)
+        }
+    }
+
+    override fun removeMouseListener(l: MouseListener) {
+        val bridge = mouseEventBridgeOf(l)
+        if (bridge != null) {
+            mouseListeners.remove(bridge)
+            canvas.removeEventHandler(MouseEvent.MOUSE_CLICKED, bridge)
+            canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, bridge)
+            canvas.removeEventHandler(MouseEvent.MOUSE_RELEASED, bridge)
+            canvas.removeEventHandler(MouseEvent.MOUSE_ENTERED, bridge)
+            canvas.removeEventHandler(MouseEvent.MOUSE_EXITED, bridge)
+        }
+    }
+
+    override fun addMouseMotionListener(l: MouseMotionListener) {
+        var bridge = mouseMotionEventBridgeOf(l)
+        if (bridge == null) {
+            bridge = MouseMotionEventBridge(l)
+            mouseMotionListeners.add(bridge)
+            canvas.addEventHandler(MouseEvent.MOUSE_MOVED, bridge)
+            canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, bridge)
+        }
+    }
+
+    override fun removeMouseMotionListener(l: MouseMotionListener) {
+        val bridge = mouseMotionEventBridgeOf(l)
+        if (bridge != null) {
+            mouseMotionListeners.remove(bridge)
+            canvas.removeEventHandler(MouseEvent.MOUSE_MOVED, bridge)
+            canvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, bridge)
+        }
+    }
+
+    override fun addMouseWheelListener(l: MouseWheelListener) {
+        LOG.info("CanvasFx.addMouseWheelListener")
+        var bridge = mouseWheelEventBridgeOf(l)
+        if (bridge == null) {
+            bridge = MouseWheelEventBridge(l)
+            mouseWheelListeners.add(bridge)
+            canvas.addEventHandler(ScrollEvent.SCROLL, bridge)
+        }
+    }
+
+    override fun removeMouseWheelListener(l: MouseWheelListener) {
+        val bridge = mouseWheelEventBridgeOf(l)
+        if (bridge != null) {
+            mouseWheelListeners.remove(bridge)
+            canvas.removeEventHandler(ScrollEvent.SCROLL, bridge)
+        }
+    }
+
+    override fun addKeyListener(l: KeyListener) {
+        // TODO
+    }
+
+    override fun removeKeyListener(l: KeyListener) {
+        // TODO
+    }
+
+    override fun setToolTipText(text: String?) {
+        // TODO
+    }
+
+    override fun dispatchEvent(e: InputEvent) {
+        // TODO
+    }
+
+    /** ---- [CanvasFx] */
+
+    private class MouseEventJx(override val event: MouseEvent) : ch.scorpion.jabbah.base.event.MouseEvent {
+
+        override val x: Int get() = event.x.toInt()
+        override val y: Int get() = event.y.toInt()
+        override val button: Button get() = convertButton()
+        override val clickCount: Int get() = event.clickCount
+        override val wheelRotation: Int get() = 0
+        override val source: Any get() = event.source
+        override val modifiers: Int get() = convertModifiers()
+
+        override fun consume() {
+            event.consume()
+        }
+
+        private fun convertButton(): Button {
+            return when(event.button) {
+                MouseButton.NONE -> Button.NONE
+                MouseButton.PRIMARY -> Button.BUTTON1
+                MouseButton.MIDDLE -> Button.BUTTON2
+                MouseButton.SECONDARY -> Button.BUTTON3
+            }
+        }
+
+        private fun convertModifiers(): Int {
+            var modifiers: Int = 0
+            if (event.isShiftDown) {
+                modifiers = modifiers or ch.scorpion.jabbah.base.event.SHIFT_MASK
+            }
+            if (event.isControlDown) {
+                modifiers = modifiers or ch.scorpion.jabbah.base.event.CTRL_MASK
+            }
+            if (event.isMetaDown) {
+                modifiers = modifiers or ch.scorpion.jabbah.base.event.META_MASK
+            }
+            if (event.isAltDown) {
+                modifiers = modifiers or ch.scorpion.jabbah.base.event.ALT_MASK
+            }
+
+            return modifiers
+        }
+    }
+
+    private class ScrollEventJx(private val scrollEvent: ScrollEvent) : ch.scorpion.jabbah.base.event.MouseEvent {
+
+        override val x: Int get() = scrollEvent.x.toInt()
+        override val y: Int get() = scrollEvent.y.toInt()
+        override val button: Button get() = Button.NONE
+        override val clickCount: Int get() = 0
+        override val wheelRotation: Int get() = -scrollEvent.deltaY.toInt()
+        override val event: Any? get() = scrollEvent
+        override val source: Any get() = scrollEvent.source
+        override val modifiers: Int get() = convertModifiers()
+
+        override fun consume() {
+            scrollEvent.consume()
+        }
+
+        private fun convertModifiers(): Int {
+            var modifiers: Int = 0
+            if (scrollEvent.isShiftDown) {
+                modifiers = modifiers or ch.scorpion.jabbah.base.event.SHIFT_MASK
+            }
+            if (scrollEvent.isControlDown) {
+                modifiers = modifiers or ch.scorpion.jabbah.base.event.CTRL_MASK
+            }
+            if (scrollEvent.isMetaDown) {
+                modifiers = modifiers or ch.scorpion.jabbah.base.event.META_MASK
+            }
+            if (scrollEvent.isAltDown) {
+                modifiers = modifiers or ch.scorpion.jabbah.base.event.ALT_MASK
+            }
+
+            return modifiers
+        }
+    }
+
+    private fun mouseEventBridgeOf(l: MouseListener): MouseEventBridge? = mouseListeners.firstOrNull { it.listener == l }
+
+    private fun mouseMotionEventBridgeOf(l: MouseMotionListener): MouseMotionEventBridge? = mouseMotionListeners.firstOrNull { it.listener == l }
+
+    private fun mouseWheelEventBridgeOf(l: MouseWheelListener): MouseWheelEventBridge? = mouseWheelListeners.firstOrNull { it.listener == l }
+
+    private inner class MouseEventBridge(val listener: MouseListener) : EventHandler<MouseEvent> {
+        override fun handle(event: MouseEvent?) {
+            if (event != null) {
+                when (event.eventType) {
+                    MouseEvent.MOUSE_CLICKED -> listener.mouseClicked(MouseEventJx(event))
+                    MouseEvent.MOUSE_PRESSED -> listener.mousePressed(MouseEventJx(event))
+                    MouseEvent.MOUSE_RELEASED -> listener.mouseReleased(MouseEventJx(event))
+                    MouseEvent.MOUSE_ENTERED -> listener.mouseEntered(MouseEventJx(event))
+                    MouseEvent.MOUSE_EXITED -> listener.mouseExited(MouseEventJx(event))
+                }
+            }
+        }
+    }
+
+    private inner class MouseMotionEventBridge(val listener: MouseMotionListener) : EventHandler<MouseEvent> {
+        override fun handle(event: MouseEvent?) {
+            if (event != null) {
+                when (event.eventType) {
+                    MouseEvent.MOUSE_MOVED -> listener.mouseMoved(MouseEventJx(event))
+                    MouseEvent.MOUSE_DRAGGED -> listener.mouseDragged(MouseEventJx(event))
+                }
+            }
+        }
+    }
+
+    private inner class MouseWheelEventBridge(val listener: MouseWheelListener) : EventHandler<ScrollEvent> {
+        override fun handle(event: ScrollEvent?) {
+            if (event != null) {
+                when (event.eventType) {
+                    ScrollEvent.SCROLL -> listener.mouseWheelRotated(ScrollEventJx(event))
+                }
+            }
+        }
+    }
+}
+

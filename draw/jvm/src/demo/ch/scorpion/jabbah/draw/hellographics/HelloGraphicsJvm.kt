@@ -7,7 +7,6 @@ import javax.swing.JFrame
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.draw.view.ViewImpl
-import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.AffineTransformJvm
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
@@ -29,7 +28,7 @@ class HelloGraphicsJvm : JFrame() {
             helloGraphics.addWindowListener(object : WindowAdapter() {
                 override fun windowOpened(e: WindowEvent?) {
                     val timer = ch.scorpion.jabbah.base.System.SYSTEM!!.createTimer()
-                    timer.initialize(10, { model.moveBall(canvas)})
+                    timer.initialize(10, { model.animateBall(canvas)})
                     timer.start()
                 }
                 override fun windowClosing(e: WindowEvent?) {
@@ -41,7 +40,7 @@ class HelloGraphicsJvm : JFrame() {
     }
 
     init {
-        model = Model(Dimension2D(800.0, 600.0), 100)
+        model = Model()
         canvas = CanvasJvm({ ViewImpl(it, { AffineTransformJvm() }) }, StyleRepository.INSTANCE)
         canvas.view.addDrawable(model.container)
         canvas.view.navigator.setZoomFactor(1.0)
@@ -51,6 +50,6 @@ class HelloGraphicsJvm : JFrame() {
         contentPane.layout = BorderLayout()
         contentPane.add(canvas)
         setBounds(100, 100, 800, 600)
-        title = "Hello Graphics"
+        title = "Hello Swing Graphics"
     }
 }

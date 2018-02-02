@@ -19,12 +19,11 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 /**
  * A simple rectangular [Drawable].
  */
-class SimpleRectangle(bounds: Rectangle2D, val fillColor: Color) : AbstractRectangle(bounds), Locatable {
+class SimpleRectangle(bounds: Rectangle2D, private val fillColor: Color) : AbstractRectangle(bounds), Locatable {
 
     @Suppress("unused") constructor(bounds: Rectangle2D): this(bounds, Color(255, 255, 255))
 
-    override val lineWidth: Double
-        get() = 1.0
+    override val lineWidth: Double get() = 1.0
 
     override var location: Point2D
         set(value) {
@@ -55,35 +54,57 @@ class Controller(val canvas: Canvas, val model: Model) {
     }
 }
 
-class Model(dim: Dimension2D, rectCount: Int) {
+class Model(
+    private val dim: Dimension2D = Dimension2D(800, 600),
+    rectangleCount: Int = 100
+) {
+    companion object {
+        private val BALL_SIZE = 10.0
+        private val BALL_COLOR = Color.BLACK
+        private val MIN_WIDTH = 50.0
+        private val MAX_WIDTH = 300.0
+        private val MIN_HEIGHT = 50.0
+        private val MAX_HEIGHT = 300.0
+    }
+
     val container = DrawableContainerImpl<Drawable>()
-    val ball = SimpleRectangle(Rectangle2D(dim.width / 2, dim.height / 2, 10.0, 10.0), Color(0, 0, 0))
-    val step = 1.0
-    var dirX = step
-    var dirY = step
+    private val ball = SimpleRectangle(Rectangle2D(dim.width / 2, dim.height / 2, BALL_SIZE, BALL_SIZE), BALL_COLOR)
+    private val step = 1.0
+    private var dirX = step
+    private var dirY = step
 
     init {
-        for(i in 1..rectCount) {
-            container.add(SimpleRectangle(Rectangle2D(
-                    Math.random(0.0, dim.width),
-                    Math.random(0.0, dim.height),
-                    Math.random(50.0, 300.0),
-                    Math.random(50.0, 200.0)),
-                    Color(
-                            Math.random(0.0, 255.0).toInt(),
-                            Math.random(0.0, 255.0).toInt(),
-                            Math.random(0.0, 255.0).toInt(),
-                            Math.random(0.0, 255.0).toInt()))
-            )
+        addBorder()
+        addContent(rectangleCount)
+        addBall(ball)
+    }
+
+    private fun addBorder() {
+        container.add(SimpleRectangle(Rectangle2D(0.0, 0.0, dim.width, dim.height), Color.WHITE))
+    }
+
+    private fun addContent(rectCount: Int) {
+        for (i in 1..rectCount) {
+            val width = Math.random(MIN_WIDTH, MAX_WIDTH)
+            val height = Math.random(MIN_HEIGHT, MAX_HEIGHT)
+            val centerX = Math.random(width / 2, dim.width - width / 2)
+            val centerY = Math.random(height / 2, dim.height - height / 2)
+
+            val color = Color(
+                    Math.random(0.0, 255.0).toInt(),
+                    Math.random(0.0, 255.0).toInt(),
+                    Math.random(0.0, 255.0).toInt(),
+                    Math.random(0.0, 255.0).toInt())
+
+            container.add(SimpleRectangle(Rectangle2D(centerX - width / 2, centerY - height / 2, width, height), color))
         }
+    }
+
+    private fun addBall(ball: Drawable) {
         container.add(ball)
     }
 
-    fun moveBall(canvas: Canvas) {
-        val zoomFactor = canvas.view.zoomFactor
-        val ballBoundsM = ball.bounds
-        val viewBoundsM = Dimension2D(canvas.dimension.width / zoomFactor, canvas.dimension.height / zoomFactor)
-
+    fun animateBall(canvas: Canvas) {
         var x = ball.location.x
         var y = ball.location.y
 
@@ -95,12 +116,12 @@ class Model(dim: Dimension2D, rectCount: Int) {
             y = 0.0 + ball.bounds.height / 2
             dirY = step
         }
-        if (x + dirX > viewBoundsM.width - ball.bounds.width / 2) {
-            x = viewBoundsM.width - ballBoundsM.width / 2
+        if (x + dirX > dim.width - ball.bounds.width / 2) {
+            x = dim.width - ball.bounds.width / 2
             dirX = -step
         }
-        if (y + dirY > viewBoundsM.height - ball.bounds.height / 2) {
-            y = viewBoundsM.height - ballBoundsM.height / 2
+        if (y + dirY > dim.height - ball.bounds.height / 2) {
+            y = dim.height - ball.bounds.height / 2
             dirY = -step
         }
 

@@ -10,7 +10,7 @@ import org.w3c.dom.*
 /**
  * Bridges [Graphics2D] methods to [CanvasRenderingContext2D] functionality.
  */
-class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
+class Graphics2DJs(val ctx: CanvasRenderingContext2D) : AbstractGraphics2D() {
 
     private val LOG by logger(Graphics2DJs::class)
 
@@ -18,7 +18,7 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
 
     companion object {
 
-        fun toJsFontStyle(font: Font): String {
+        private fun toJsFontStyle(font: Font): String {
             val sb = StringBuilder()
             if (font.isBold()) {
                 sb.append("bold ")
@@ -39,6 +39,44 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
         ctx.setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
     }
 
+    /** ---- Path rendering methods */
+
+    override fun beginPath() {
+        ctx.beginPath()
+    }
+
+    override fun moveTo(x: Double, y: Double) {
+        ctx.moveTo(x, y)
+    }
+
+    override fun lineTo(x: Double, y: Double) {
+        ctx.lineTo(x, y)
+    }
+
+    override fun quadraticCurveTo(xc: Double, yc: Double, x1: Double, y1: Double) {
+        ctx.quadraticCurveTo(xc, yc, x1, y1)
+    }
+
+    override fun bezierCurveTo(xc1: Double, yc1: Double, xc2: Double, yc2: Double, x1: Double, y1: Double) {
+        ctx.bezierCurveTo(xc1, yc1, xc2, yc2, x1, y1)
+    }
+
+    override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
+        ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise)
+    }
+
+    override fun strokePath() {
+        ctx.stroke()
+    }
+
+    override fun fillPath() {
+        ctx.fill()
+    }
+
+    override fun closePath() {
+        ctx.closePath()
+    }
+
     /** ---- [Graphics2D] interface */
 
     /** HTML canvas doesn't support to change the antialias property. */
@@ -56,7 +94,6 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
         }
 
     override var color: Color = Color(0, 0, 0, 255)
-        get() = field
         set(value) {
             field = value
             val alpha =
@@ -116,19 +153,19 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
     }
 
     override fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {
-        ctx.beginPath()
-        ctx.moveTo(x1.toDouble(), y1.toDouble())
-        ctx.lineTo(x2.toDouble(), y2.toDouble())
-        ctx.stroke()
-        ctx.closePath()
+        beginPath()
+        moveTo(x1.toDouble(), y1.toDouble())
+        lineTo(x2.toDouble(), y2.toDouble())
+        strokePath()
+        closePath()
     }
 
     override fun drawLine(x1: Double, y1: Double, x2: Double, y2: Double) {
-        ctx.beginPath()
-        ctx.moveTo(x1, y1)
-        ctx.lineTo(x2, y2)
-        ctx.stroke()
-        ctx.closePath()
+        beginPath()
+        moveTo(x1, y1)
+        lineTo(x2, y2)
+        strokePath()
+        closePath()
     }
 
     override fun drawRect(x: Int, y: Int, w: Int, h: Int) {
@@ -183,29 +220,15 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
 
     override fun draw(shape: Shape) {
         when (shape) {
-            is Rectangle2D -> drawRect(shape)
-            is RoundRectangle2D -> drawRoundRect(shape)
             is Path2DJs -> drawPath(shape)
-            is PolylineShape -> drawPolyline(shape)
-            is Ring2D -> drawRing(shape)
-            else -> {
-                LOG.error("Unsupported shape $shape")
-                throw IllegalArgumentException("Unsupported shape $shape")
-            }
+            else -> super.draw(shape)
         }
     }
 
     override fun fill(shape: Shape) {
         when (shape) {
-            is Rectangle2D -> fillRect(shape)
-            is RoundRectangle2D -> fillRoundRect(shape)
             is Path2DJs -> fillPath(shape)
-            is PolylineShape -> fillPoyline(shape)
-            is Ring2D -> drawRing(shape)
-            else -> {
-                LOG.error("Unsupported shape $shape")
-                throw IllegalArgumentException("Unsupported shape $shape")
-            }
+            else -> super.fill(shape)
         }
     }
 
@@ -283,22 +306,6 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
         return Array(dash.size, { i -> dash[i].toDouble()})
     }
 
-    private fun drawRect(rect: Rectangle2D) {
-        drawRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
-    }
-
-    private fun fillRect(rect: Rectangle2D) {
-        fillRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
-    }
-
-    private fun drawRoundRect(rect: RoundRectangle2D) {
-        drawRoundRect(rect.x, rect.y, rect.width, rect.height, rect.arcW, rect.arcH)
-    }
-
-    private fun fillRoundRect(rect: RoundRectangle2D) {
-        fillRoundRect(rect.x, rect.y, rect.width, rect.height, rect.arcW, rect.arcH)
-    }
-
     private fun drawPath(path: Path2DJs) {
         ctx.beginPath()
         path.play(ctx)
@@ -311,85 +318,5 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : Graphics2D {
         path.play(ctx)
         ctx.fill()
         ctx.closePath()
-    }
-
-    private fun drawPolyline(polyline: PolylineShape) {
-        ctx.beginPath()
-        playPolyline(polyline)
-        ctx.stroke()
-        ctx.closePath()
-    }
-
-    private fun fillPoyline(polyline: PolylineShape) {
-        ctx.beginPath()
-        playPolyline(polyline)
-        ctx.fill()
-        ctx.closePath()
-    }
-
-    private fun playPolyline(polyline: PolylineShape) {
-        if (polyline.pointsCount < 2) {
-            return
-        }
-        ctx.moveTo(polyline.getPointAt(0).x, polyline.getPointAt(0).y)
-        for (i in 1..polyline.pointsCount - 1) {
-            ctx.lineTo(polyline.getPointAt(i).x, polyline.getPointAt(i).y)
-        }
-    }
-
-    private fun drawRoundRect(x: Double, y: Double, w: Double, h: Double, arcW: Double, arcH: Double) {
-        ctx.beginPath()
-        playRoundRect(x, y, w, h, arcW, arcH)
-        ctx.stroke()
-    }
-
-    private fun fillRoundRect(x: Double, y: Double, w: Double, h: Double, arcW: Double, arcH: Double) {
-        ctx.beginPath()
-        playRoundRect(x, y, w, h, arcW, arcH)
-        ctx.fill()
-    }
-
-    private fun playRoundRect(x: Double, y: Double, w: Double, h: Double, arcW: Double, arcH: Double) {
-        val arcWW = Math.min(arcW, w / 2)
-        val arcHH = Math.min(arcH, h / 2)
-        ctx.moveTo(x, y + arcHH)
-        ctx.lineTo(x, y + h - arcHH)
-        ctx.quadraticCurveTo(x, y + h, x + arcWW, y + h)
-        ctx.lineTo(x + w - arcWW, y + h)
-        ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - arcHH)
-        ctx.lineTo(x + w, y + arcHH)
-        ctx.quadraticCurveTo(x + w, y, x + w - arcWW, y)
-        ctx.lineTo(x + arcWW, y)
-        ctx.quadraticCurveTo(x, y, x, y + arcHH)
-    }
-
-    private fun playEllipse(x: Double, y: Double, w: Double, h: Double) {
-        val kappa = 0.5522848
-        val ox = (w / 2) * kappa
-        val oy = (h / 2) * kappa
-        val xe = x + w
-        val ye = y + h
-        val xm = x + w / 2
-        val ym = y + h / 2
-
-        ctx.moveTo(x, ym)
-        ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y)
-        ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym)
-        ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye)
-        ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym)
-    }
-
-    private fun drawRing(ring: Ring2D) {
-        ctx.beginPath()
-        playRing(ring.x, ring.y, ring.width, ring.height, ring.thickness)
-    }
-
-    private fun playRing(x: Double, y: Double, w: Double, h: Double, thickness: Double) {
-        // NOTE: This implementation support only circular rings. Uses width as radius
-        if (w != h) {
-            LOG.warn("Graphics2DJs: requested ellipsoid ring, but only circular ring supported.")
-        }
-        ctx.arc(x + w/2, y + w / 2, w / 2, 0.0, MathClass.PI * 2, false)
-        ctx.arc(x + w/2, y + w / 2, w / 2, 0.0, MathClass.PI * 2, true)
     }
 }
