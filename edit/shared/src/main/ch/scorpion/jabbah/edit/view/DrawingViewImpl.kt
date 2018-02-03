@@ -30,21 +30,12 @@ import ch.scorpion.jabbah.base.System
 class DrawingViewImpl<T: Drawing<Component>>(
         drawing: T,
         canvas: Canvas,
-        transformFactory: () -> AffineTransform,
-        private val selectionManagerFactory: SelectionManagerFactory,
-        private val highlighterFactory: HighlighterFactory,
-        eventBus: EventBus,
-        animator: Animator
+        transformFactory: () -> AffineTransform = { System.get().createAffineTransform() },
+        private val selectionManagerFactory: SelectionManagerFactory = EditSelectModule.selectionManagerFactory,
+        private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,
+        eventBus: EventBus = BaseModule.eventBus,
+        animator: Animator = AnimationModule.animator
 ) : ViewImpl<EditInputEventContext>(canvas, transformFactory), DrawingView<T> {
-
-    constructor(drawing: T, canvas: Canvas): this(
-        drawing,
-        canvas,
-        { System.get().createAffineTransform() },
-        EditSelectModule.selectionManagerFactory,
-        EditHighlightModule.highlighterFactory,
-        BaseModule.eventBus,
-        AnimationModule.animator)
 
     /** The [DrawableDrawer] used for drawing the [Drawing].*/
     private var drawableDrawer: DrawableDrawer<Component> = DrawingDrawer()

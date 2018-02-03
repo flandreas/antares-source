@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.time.Timer
 import kotlin.reflect.KClass
 
 /** Implements the [System] interface on the Java virtual machine platform.*/
-class SystemJvm : System {
+class SystemJvm(private val useJavaFX: Boolean = false) : System {
 
     /** ---- [System] interface */
     
@@ -31,10 +31,16 @@ class SystemJvm : System {
     }
     
     override fun createAffineTransform(): AffineTransform {
+        if (useJavaFX) {
+            return AffineTransformFx()
+        }
         return AffineTransformJvm()
     }
     
     override fun createPath(): Path {
+        if (useJavaFX) {
+            return Path2DFx()
+        }
         return Path2DJvm()
     }
 

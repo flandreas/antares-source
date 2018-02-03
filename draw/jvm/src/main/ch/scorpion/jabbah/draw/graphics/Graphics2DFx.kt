@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.draw.graphics
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.geom.AffineTransform
-import ch.scorpion.jabbah.base.geom.AffineTransformFx
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Shape
+import ch.scorpion.jabbah.base.geom.*
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.shape.StrokeLineCap
 import javafx.scene.shape.StrokeLineJoin
@@ -248,6 +245,20 @@ class Graphics2DFx(var g: GraphicsContext) : AbstractGraphics2D() {
         fillRect(x, y, 1, 1)
     }
 
+    override fun draw(shape: Shape) {
+        when (shape) {
+            is Path2DFx -> drawPath(shape)
+            else -> super.draw(shape)
+        }
+    }
+
+    override fun fill(shape: Shape) {
+        when (shape) {
+            is Path2DFx -> fillPath(shape)
+            else -> super.fill(shape)
+        }
+    }
+
     override fun drawString(s: String, x: Int, y: Int) {
         g.fillText(s, x.toDouble(), y.toDouble())
     }
@@ -268,5 +279,19 @@ class Graphics2DFx(var g: GraphicsContext) : AbstractGraphics2D() {
     override fun getClipBounds(r: Rectangle2D): Rectangle2D {
         r.setFrame(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height)
         return r
+    }
+
+    private fun drawPath(path: Path2DFx) {
+        g.beginPath()
+        path.play(g)
+        g.stroke()
+        g.closePath()
+    }
+
+    private fun fillPath(path: Path2DFx) {
+        g.beginPath()
+        path.play(g)
+        g.fill()
+        g.closePath()
     }
 }

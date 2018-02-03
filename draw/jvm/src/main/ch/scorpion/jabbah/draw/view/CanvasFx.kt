@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DFx
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import javafx.event.EventHandler
 import javafx.scene.input.MouseButton
@@ -19,7 +20,7 @@ import javafx.scene.input.ScrollEvent
 class CanvasFx(
         private val canvas: javafx.scene.canvas.Canvas,
         viewFactory: (Canvas) -> View<out InputEventContext>,
-        styleProvider: StyleProvider
+        styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : Canvas {
 
     companion object {
@@ -50,11 +51,25 @@ class CanvasFx(
         }
 
     override fun requestViewFocus() {
-        throw UnsupportedOperationException("not implemented")
+        // TODO
     }
 
     override fun setCursor(cursor: Cursor) {
-        throw UnsupportedOperationException("not implemented")
+        when (cursor) {
+            Cursor.DEFAULT -> canvas.cursor = javafx.scene.Cursor.DEFAULT
+            Cursor.WAIT -> canvas.cursor = javafx.scene.Cursor.WAIT
+            Cursor.HAND -> canvas.cursor = javafx.scene.Cursor.HAND
+            Cursor.CROSSHAIR -> canvas.cursor = javafx.scene.Cursor.CROSSHAIR
+            Cursor.NW_RESIZE -> canvas.cursor = javafx.scene.Cursor.NW_RESIZE
+            Cursor.N_RESIZE -> canvas.cursor = javafx.scene.Cursor.N_RESIZE
+            Cursor.NE_RESIZE -> canvas.cursor = javafx.scene.Cursor.NE_RESIZE
+            Cursor.E_RESIZE -> canvas.cursor = javafx.scene.Cursor.E_RESIZE
+            Cursor.SE_RESIZE -> canvas.cursor = javafx.scene.Cursor.SE_RESIZE
+            Cursor.S_RESIZE -> canvas.cursor = javafx.scene.Cursor.S_RESIZE
+            Cursor.SW_RESIZE -> canvas.cursor = javafx.scene.Cursor.SE_RESIZE
+            Cursor.W_RESIZE -> canvas.cursor = javafx.scene.Cursor.W_RESIZE
+            Cursor.TEXT -> canvas.cursor = javafx.scene.Cursor.TEXT
+        }
     }
 
     override fun repaint() {
@@ -62,9 +77,10 @@ class CanvasFx(
     }
 
     override fun repaint(x: Int, y: Int, width: Int, height: Int) {
-        //LOG.debug("CanvasFx.repaint $x,$y,$width,$height")
-        g.g.clearRect(0.0, 0.0, canvas.width, canvas.height)
-        view.paint(g)
+        if (view != null) {
+            g.g.clearRect(0.0, 0.0, canvas.width, canvas.height)
+            view.paint(g)
+        }
     }
 
     override fun addMouseListener(l: MouseListener) {
