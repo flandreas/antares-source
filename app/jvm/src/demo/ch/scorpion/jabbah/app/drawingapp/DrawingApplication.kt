@@ -38,7 +38,7 @@ class DrawingApplication : javafx.application.Application() {
 			AppModule.require()
 			System.SYSTEM = SystemJvm(useJavaFX = true)
 
-			launch(DrawingApplication::class.java)
+			launch(DrawingApplication::class.java, *args)
 		}
 	}
 
