@@ -18,12 +18,15 @@ class MenuBarBuilderFx(
     private val fileMenu = Menu(Translations.getString("application.menu.file"))
     private val editMenu = Menu(Translations.getString("application.menu.edit"))
     private val viewMenu = Menu(Translations.getString("application.menu.view"))
+	private val openRecentMenu = Menu(Translations.getString("file.action.openRecent.name"))
 
     init {
         fillFileMenu(fileMenu)
         fillEditMenu(editMenu)
         fillViewMenu(viewMenu)
         fillMenuBar(menuBar)
+
+	    eventBus.register(SavableHistoryEvent::class, { updateOpenRecentMenu() })
     }
 
     protected open fun fillMenuBar(menuBar: MenuBar) {
@@ -35,6 +38,7 @@ class MenuBarBuilderFx(
     protected open fun fillFileMenu(menu: Menu) {
         menu.items.add(ActionWrapperFx.wrap(MenuItem(), NewFileAction(application)))
 	    menu.items.add(ActionWrapperFx.wrap(MenuItem(), OpenFileAction(application)))
+	    menu.items.add(openRecentMenu)
 	    menu.items.add(ActionWrapperFx.wrap(MenuItem(), SaveFileAction(application)))
 	    menu.items.add(ActionWrapperFx.wrap(MenuItem(), SaveFileAsAction(application)))
 	    menu.items.add(SeparatorMenuItem())
@@ -67,4 +71,12 @@ class MenuBarBuilderFx(
         menu.items.add(SeparatorMenuItem())
         menu.items.add(ActionWrapperFx.wrap(CheckMenuItem(), GridAction()))
     }
+
+	private fun updateOpenRecentMenu() {
+		openRecentMenu.items.clear()
+		application.mostRecentSavables.savables.forEach {
+			openRecentMenu.items.add(ActionWrapperFx.wrap(MenuItem(), OpenRecentFileAction(it, application)))
+		}
+		openRecentMenu.isDisable = application.mostRecentSavables.size == 0
+	}
 }
