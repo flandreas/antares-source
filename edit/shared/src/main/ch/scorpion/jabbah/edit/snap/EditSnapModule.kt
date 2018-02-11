@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
 
 /**
- * Module definitions for the [jabbah.edit.snap] module.
+ * Module definitions for the [ch.scorpion.jabbah.edit.snap] module.
  */
 object EditSnapModule : AbstractModule() {
 
@@ -22,6 +22,6 @@ object EditSnapModule : AbstractModule() {
         properties.set(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR, 2)
 
         properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_COLOR, Color.ORANGE)
-        properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_STROKE, Stroke(1.0f))
+        properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_STROKE, Stroke(0.5f))
     }
 }
