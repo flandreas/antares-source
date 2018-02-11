@@ -102,6 +102,8 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
     /** ---- [Graphics2D] interface */
 
+    override val supportClipping: Boolean get() = true
+
     override fun save() {
         val copy = g.create() as java.awt.Graphics2D
         stack.push(g)

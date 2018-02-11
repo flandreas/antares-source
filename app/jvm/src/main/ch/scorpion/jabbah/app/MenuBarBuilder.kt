@@ -1,17 +1,11 @@
 package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.app.action.*
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.view.*
-import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.model.OneDownAction
-import ch.scorpion.jabbah.edit.model.OneUpAction
-import ch.scorpion.jabbah.edit.model.SelectAllAction
-import ch.scorpion.jabbah.edit.model.ToBackAction
-import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.edit.app.*
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JMenu
 import javax.swing.JMenuBar
@@ -44,46 +38,46 @@ open class MenuBarBuilder(val application: DesktopApplication, val eventBus: Eve
     }
 
     protected open fun fillFileMenu(menu: JMenu) {
-        menu.add(JMenuItem(NewFileAction(application)))
-        menu.add(JMenuItem(OpenFileAction(application)))
+        menu.add(JMenuItem(ActionWrapperSwing(NewFileAction(application))))
+        menu.add(JMenuItem(ActionWrapperSwing(OpenFileAction(application))))
         menu.add(openRecentMenu)
-        menu.add(JMenuItem(SaveFileAction(application)))
-        menu.add(JMenuItem(SaveFileAsAction(application)))
+        menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(application))))
+        menu.add(JMenuItem(ActionWrapperSwing(SaveFileAsAction(application))))
         menu.addSeparator()
-        menu.add(JMenuItem(QuitApplicationAction(application)))
+        menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(application))))
     }
 
     protected open fun fillEditMenu(menu: JMenu) {
-        menu.add(JMenuItem(UndoAction(BaseModule.eventBus, application.mainFrame.editor.commandManager)))
-        menu.add(JMenuItem(RedoAction(BaseModule.eventBus, application.mainFrame.editor.commandManager)))
+        menu.add(JMenuItem(ActionWrapperSwing(UndoAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(RedoAction())))
         menu.addSeparator()
-        menu.add(JMenuItem(DeleteAction(DrawViewModule.viewManager, EditModule.drawingService)))
-        menu.add(JMenuItem(RotateAction(DrawViewModule.viewManager, application.mainFrame.editor.commandManager, BaseModule.eventBus)))
+        menu.add(JMenuItem(ActionWrapperSwing(DeleteAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(RotateAction())))
         menu.addSeparator()
-        menu.add(JMenuItem(SelectAllAction(eventBus, DrawViewModule.viewManager)))
+        menu.add(JMenuItem(ActionWrapperSwing(SelectAllAction())))
         menu.addSeparator()
         val arrangeMenu = JMenu(Translations.getString("edit.action.stackingOrder.name"))
-        arrangeMenu.add(JMenuItem(ToFrontAction(DrawViewModule.viewManager, application.mainFrame.editor.commandManager, BaseModule.eventBus)))
-        arrangeMenu.add(JMenuItem(OneUpAction(DrawViewModule.viewManager, application.mainFrame.editor.commandManager, BaseModule.eventBus)))
-        arrangeMenu.add(JMenuItem(OneDownAction(DrawViewModule.viewManager, application.mainFrame.editor.commandManager, BaseModule.eventBus)))
-        arrangeMenu.add(JMenuItem(ToBackAction(DrawViewModule.viewManager, application.mainFrame.editor.commandManager, BaseModule.eventBus)))
+        arrangeMenu.add(JMenuItem(ActionWrapperSwing(ToFrontAction())))
+        arrangeMenu.add(JMenuItem(ActionWrapperSwing(OneUpAction())))
+        arrangeMenu.add(JMenuItem(ActionWrapperSwing(OneDownAction())))
+        arrangeMenu.add(JMenuItem(ActionWrapperSwing(ToBackAction())))
         menu.add(arrangeMenu)
     }
 
     protected open fun fillViewMenu(menu: JMenu) {
-        menu.add(JMenuItem(ZoomInAction(DrawViewModule.viewManager, BaseModule.eventBus)))
-        menu.add(JMenuItem(ZoomNormalAction(DrawViewModule.viewManager, BaseModule.eventBus)))
-        menu.add(JMenuItem(ZoomOutAction(DrawViewModule.viewManager, BaseModule.eventBus)))
-        menu.add(JMenuItem(ZoomCenterAction(DrawViewModule.viewManager, BaseModule.eventBus)))
-        menu.add(JMenuItem(ZoomFitAction(DrawViewModule.viewManager, BaseModule.eventBus)))
+        menu.add(JMenuItem(ActionWrapperSwing(ZoomInAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(ZoomNormalAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(ZoomOutAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(ZoomCenterAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(ZoomFitAction())))
         menu.addSeparator()
-        menu.add(JCheckBoxMenuItem(GridAction(DrawViewModule.viewManager, BaseModule.eventBus)))
+        menu.add(JCheckBoxMenuItem(ActionWrapperSwing(GridAction())))
     }
 
     private fun updateOpenRecentMenu() {
         openRecentMenu.removeAll()
         application.mostRecentSavables.savables.forEach {
-            openRecentMenu.add(JMenuItem(OpenRecentFileAction(it, application)))
+            openRecentMenu.add(JMenuItem(ActionWrapperSwing(OpenRecentFileAction(it, application))))
         }
         openRecentMenu.isEnabled = application.mostRecentSavables.size > 0
     }

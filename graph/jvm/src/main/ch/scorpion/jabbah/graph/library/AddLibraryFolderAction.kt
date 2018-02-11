@@ -4,8 +4,6 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import java.awt.event.ActionEvent
-import javax.swing.Action
 import javax.swing.JOptionPane
 
 /**
@@ -16,11 +14,11 @@ class AddLibraryFolderAction(eventBus: EventBus) : AbstractLibraryFolderAction("
 
     constructor(): this(BaseModule.eventBus)
 
-    override fun actionPerformed(e: ActionEvent?) {
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
         val name = JOptionPane.showInputDialog(
             libraryTreeView,
             Translations.getString("library.action.addFolder.question"),
-            getValue(Action.NAME) as String,
+            name as String,
             JOptionPane.QUESTION_MESSAGE
         )
 

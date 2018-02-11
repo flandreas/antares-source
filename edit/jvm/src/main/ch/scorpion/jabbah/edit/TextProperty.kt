@@ -2,10 +2,10 @@ package ch.scorpion.jabbah.edit
 
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.edit.model.text.TextProperty
 import java.awt.*
 import java.awt.Component
-import java.awt.event.ActionEvent
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.beans.PropertyEditor
@@ -139,18 +139,18 @@ class TextPropertyEditor(private val property: PropertyImpl<*>) : AbstractProper
             add(scrollPane, BorderLayout.CENTER)
 
             val buttonPanel = JPanel(FlowLayout(FlowLayout.CENTER))
-            buttonPanel.add(JButton(object : AbstractAction("edit.action.ok") {
-                override fun actionPerformed(e: ActionEvent?) {
+            buttonPanel.add(JButton(ActionWrapperSwing(object : AbstractAction("edit.action.ok") {
+                override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
                     property.value = TextProperty(textArea.text)
                     property.writeToBean()
                     closeHandler.invoke()
                 }
-            }))
-            buttonPanel.add(JButton(object : AbstractAction("edit.action.cancel") {
-                override fun actionPerformed(e: ActionEvent?) {
+            })))
+            buttonPanel.add(JButton(ActionWrapperSwing(object : AbstractAction("edit.action.cancel") {
+                override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
                     closeHandler.invoke()
                 }
-            }))
+            })))
             add(buttonPanel, BorderLayout.SOUTH)
         }
     }

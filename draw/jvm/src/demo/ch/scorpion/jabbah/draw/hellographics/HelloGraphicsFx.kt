@@ -30,7 +30,7 @@ class HelloGraphicsFx : Application() {
     override fun start(primaryStage: Stage?) {
         val model = Model()
         val canvas = Canvas()
-        val canvasFx = CanvasFx(canvas, { ViewImpl(it, { AffineTransformFx() }) }, StyleRepository.INSTANCE)
+        val canvasFx = CanvasFx(canvas, { ViewImpl(it, { AffineTransformFx() }) })
 
         canvasFx.view.addDrawable(model.container)
         canvasFx.view.navigator.setZoomFactor(1.0)

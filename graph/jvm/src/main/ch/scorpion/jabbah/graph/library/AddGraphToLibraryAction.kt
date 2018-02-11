@@ -1,11 +1,9 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.ApplicationDataEvent
-import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
-import java.awt.event.ActionEvent
 
 /**
  * Adds the current [MetaGraph] as a [ContainerLibraryElement] to the currently selected [LibraryDirectory].
@@ -22,7 +20,7 @@ class AddGraphToLibraryAction(eventBus: EventBus) : AbstractLibraryFolderAction(
         })
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
         val directory = libraryTreeView!!.getSelectedItem() as LibraryDirectory
         directory.addContainerElement(metaGraph!!)
     }

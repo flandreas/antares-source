@@ -1,11 +1,11 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import java.awt.event.ActionEvent
-import javax.swing.Action
+import ch.scorpion.jabbah.draw.view.RepaintingObserver.isEnabled
 import javax.swing.JOptionPane
 import javax.swing.tree.DefaultMutableTreeNode
 
@@ -28,16 +28,17 @@ class DeleteContainerLibraryElementAction(
         })
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        val libraryItem = libraryTreeView!!.getSelectedItem()
-        if (JOptionPane.showConfirmDialog(
-            null,
-            Translations.getString("graph.action.deleteContainerLibraryElement.question", libraryTreeView!!.getSelectedItem()!!),
-            getValue(Action.NAME) as String,
-            JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)
-        {
-            val folder = (libraryTreeView!!.selectionPath.parentPath.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryDirectory
-            folder.remove(libraryItem!!)
-        }
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+	    // TODO Port UI to JavaFX
+	    val libraryItem = libraryTreeView!!.getSelectedItem()
+	    if (JOptionPane.showConfirmDialog(
+		    null,
+		    Translations.getString("graph.action.deleteContainerLibraryElement.question", libraryTreeView!!.getSelectedItem()!!),
+		    name,
+		    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)
+	    {
+		    val folder = (libraryTreeView!!.selectionPath.parentPath.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryDirectory
+		    folder.remove(libraryItem!!)
+	    }
     }
 }

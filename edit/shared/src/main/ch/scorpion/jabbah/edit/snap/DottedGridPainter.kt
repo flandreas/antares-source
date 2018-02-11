@@ -44,7 +44,6 @@ class DottedGridPainter(val style: Style) : GridPainter {
         while (x <= high.x) {
             var y = low.y
             while (y <= high.y) {
-                //context.g.fillRect(x.toInt(), y.toInt(), 1, 1)
                 context.g.drawDot(x.toInt(), y.toInt())
                 y += dy
             }

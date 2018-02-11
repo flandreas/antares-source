@@ -1,17 +1,14 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
-import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import java.awt.Component
-import java.awt.Graphics
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.event.InputEvent
@@ -58,11 +55,11 @@ class LibraryTreeView(
 
         eventBus.register(ApplicationModeEvent::class, { dragEnabled = it.applicationMode === ApplicationMode.EDIT })
 
-        directoryPopupMenu.add(AddLibraryFolderAction())
-        directoryPopupMenu.add(NewGraphAction())
-        directoryPopupMenu.add(AddGraphToLibraryAction())
+        directoryPopupMenu.add(ActionWrapperSwing(AddLibraryFolderAction()))
+        directoryPopupMenu.add(ActionWrapperSwing(NewGraphAction()))
+        directoryPopupMenu.add(ActionWrapperSwing(AddGraphToLibraryAction()))
 
-        containerPopupMenu.add(DeleteContainerLibraryElementAction())
+        containerPopupMenu.add(ActionWrapperSwing(DeleteContainerLibraryElementAction()))
     }
 
     companion object {

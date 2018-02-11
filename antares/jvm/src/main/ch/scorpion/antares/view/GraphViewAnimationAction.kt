@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -7,8 +8,6 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.CurrentGraphAnimationTypeEvent
 import ch.scorpion.jabbah.graph.view.CurrentGraphViewAnimationType
 import ch.scorpion.jabbah.graph.view.GraphViewAnimationType
-import java.awt.event.ActionEvent
-import javax.swing.Action
 
 /**
  * An [Action] for activating or deactivating [GraphView] animation by changing [CurrentGraphViewAnimationType].
@@ -24,11 +23,12 @@ class GraphViewAnimationAction(
     }
 
     private fun updateState() {
-        putValue(Action.SELECTED_KEY, currentGraphViewAnimationType.graphViewAnimationType == GraphViewAnimationType.Animation)
+        selected =currentGraphViewAnimationType.graphViewAnimationType == GraphViewAnimationType.Animation
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        currentGraphViewAnimationType.graphViewAnimationType = if (getValue(Action.SELECTED_KEY) as Boolean)
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+        currentGraphViewAnimationType.graphViewAnimationType = if (selected)
             GraphViewAnimationType.Animation else GraphViewAnimationType.None
     }
+
 }

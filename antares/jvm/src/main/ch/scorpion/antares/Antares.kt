@@ -17,6 +17,7 @@ import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.antares.view.output.SevenSegmentDisplayView
 import ch.scorpion.jabbah.app.AbstractApplicationFrame
 import ch.scorpion.jabbah.app.AbstractDesktopApplication
+import ch.scorpion.jabbah.app.AbstractDesktopApplicationSwing
 import ch.scorpion.jabbah.app.MenuBarBuilder
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -54,7 +55,6 @@ import org.apache.commons.cli.Options
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import javax.swing.JDialog
-import javax.swing.UIManager
 import javax.swing.plaf.FontUIResource
 
 
@@ -63,18 +63,11 @@ import javax.swing.plaf.FontUIResource
  */
 class Antares(
     args: Array<String>,
-    eventBus: EventBus,
-    private val viewManager: ViewManager,
-    val storableCreator: StorableCreator,
-    val schedulerProvider: () -> Scheduler
-) : AbstractDesktopApplication(args, eventBus) {
-
-    constructor(args: Array<String>): this(
-        args,
-        BaseModule.eventBus,
-        DrawViewModule.viewManager,
-        IOModule.storableCreator,
-        { ExecutionModule.scheduler })
+    eventBus: EventBus = BaseModule.eventBus,
+    private val viewManager: ViewManager = DrawViewModule.viewManager,
+    private val storableCreator: StorableCreator = IOModule.storableCreator,
+    private val schedulerProvider: () -> Scheduler = { ExecutionModule.scheduler }
+) : AbstractDesktopApplicationSwing(args, eventBus) {
 
     companion object {
 

@@ -2,10 +2,7 @@ package ch.scorpion.jabbah.draw.graphics
 
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.MathClass
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Ring2D
-import ch.scorpion.jabbah.base.geom.RoundRectangle2D
-import ch.scorpion.jabbah.base.geom.Shape
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
 
@@ -24,6 +21,7 @@ abstract class AbstractGraphics2D : Graphics2D {
         when (shape) {
             is Rectangle2D -> drawRect(shape)
             is RoundRectangle2D -> drawRoundRect(shape)
+            is Ellipse2D -> drawEllipse(shape)
             is PolylineShape -> drawPolyline(shape)
             is Ring2D -> drawRing(shape)
             else -> {
@@ -37,6 +35,7 @@ abstract class AbstractGraphics2D : Graphics2D {
         when (shape) {
             is Rectangle2D -> fillRect(shape)
             is RoundRectangle2D -> fillRoundRect(shape)
+            is Ellipse2D -> fillEllipse(shape)
             is PolylineShape -> fillPoyline(shape)
             is Ring2D -> drawRing(shape)
             else -> {
@@ -99,6 +98,18 @@ abstract class AbstractGraphics2D : Graphics2D {
     protected fun drawRing(ring: Ring2D) {
         beginPath()
         playRing(ring.x, ring.y, ring.width, ring.height, ring.thickness)
+    }
+
+    protected fun drawEllipse(ellipse: Ellipse2D) {
+        beginPath()
+        playEllipse(ellipse.x, ellipse.y, ellipse.width, ellipse.height)
+        strokePath()
+    }
+
+    protected fun fillEllipse(ellipse: Ellipse2D) {
+        beginPath()
+        playEllipse(ellipse.x, ellipse.y, ellipse.width, ellipse.height)
+        fillPath()
     }
 
     protected fun drawPolyline(polyline: PolylineShape) {

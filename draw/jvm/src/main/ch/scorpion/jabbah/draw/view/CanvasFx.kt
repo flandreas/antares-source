@@ -10,17 +10,15 @@ import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DFx
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
 import javafx.event.EventHandler
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
+import javafx.scene.layout.Region
 
 class CanvasFx(
-        private val canvas: javafx.scene.canvas.Canvas,
-        viewFactory: (Canvas) -> View<out InputEventContext>,
-        styleProvider: StyleProvider = DrawStyleModule.styleProvider
+        val canvas: javafx.scene.canvas.Canvas,
+        viewFactory: (Canvas) -> View<out InputEventContext>
 ) : Canvas {
 
     companion object {
@@ -35,20 +33,14 @@ class CanvasFx(
 
     override val view = viewFactory.invoke(this)
 
+    override val dimension: Dimension2D get() = Dimension2D(canvas.width, canvas.height)
+
+    /** In JavaFX, the background color is rendered by the [Region] that contains this [Canvas], and not by the [Canvas] itself.*/
+    override var backgroundColor: Color = Color.WHITE
+
     init {
         view.initialize()
     }
-
-    override val dimension: Dimension2D get() = Dimension2D(canvas.width, canvas.height)
-
-    override var backgroundColor: Color
-        get() {
-            // TODO
-            return Color.WHITE
-        }
-        set(value) {
-            // TODO
-        }
 
     override fun requestViewFocus() {
         // TODO
@@ -66,7 +58,7 @@ class CanvasFx(
             Cursor.E_RESIZE -> canvas.cursor = javafx.scene.Cursor.E_RESIZE
             Cursor.SE_RESIZE -> canvas.cursor = javafx.scene.Cursor.SE_RESIZE
             Cursor.S_RESIZE -> canvas.cursor = javafx.scene.Cursor.S_RESIZE
-            Cursor.SW_RESIZE -> canvas.cursor = javafx.scene.Cursor.SE_RESIZE
+            Cursor.SW_RESIZE -> canvas.cursor = javafx.scene.Cursor.SW_RESIZE
             Cursor.W_RESIZE -> canvas.cursor = javafx.scene.Cursor.W_RESIZE
             Cursor.TEXT -> canvas.cursor = javafx.scene.Cursor.TEXT
         }

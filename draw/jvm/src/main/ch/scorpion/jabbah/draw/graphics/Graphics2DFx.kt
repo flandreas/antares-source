@@ -122,6 +122,8 @@ class Graphics2DFx(var g: GraphicsContext) : AbstractGraphics2D() {
 
     /** ---- [Graphics2D] interface */
 
+    override val supportClipping: Boolean get() = false
+
     override var transform: AffineTransform
         get() = AffineTransformFx(g.transform)
         set(value) {

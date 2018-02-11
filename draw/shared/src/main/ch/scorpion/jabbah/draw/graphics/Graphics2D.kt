@@ -20,6 +20,8 @@ interface Graphics2D {
 
     var antialiasing: Boolean
 
+    val supportClipping: Boolean
+
     /* Saves the current state of this [Graphics2D] onto a stack.*/
     fun save()
 

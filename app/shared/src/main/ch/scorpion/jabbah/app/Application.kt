@@ -28,12 +28,21 @@ interface Application {
 
     val mostRecentSavables: SavableHistory
 
-    /** Starts this [Application] by initializing it and by loading predefined content.*/
+    /**
+     * Starts this [Application] by initializing it, by loading predefined content, and by displaying its primary view.
+     * This method is typically implemented in a platform-specific layer.
+     */
     fun start()
 
     fun newFile()
 
     fun save()
 
-    fun open(storable: Storable, savable: Savable)
+	fun saveAs(): Boolean
+
+	fun open(storable: Storable, savable: Savable)
+
+	/** Asks the user to choose a [Savable] and opens it.*/
+	fun open()
+
 }

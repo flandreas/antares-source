@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.ToolBar
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
@@ -287,13 +288,13 @@ class GraphPanel(
         modeToggleButton.toolTipText = modeToggleAction.getValue(Action.LONG_DESCRIPTION) as String?
         modeToggleButton.isFocusPainted = false
 
-        val pauseToggleButton = JToggleButton(PauseExecutionAction(scheduler, eventBus))
+        val pauseToggleButton = JToggleButton(ActionWrapperSwing(PauseExecutionAction(scheduler, eventBus)))
         pauseToggleButton.text = null
         modeToggleButton.isFocusPainted = false
         pauseToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/PauseOff-24.png"))
         pauseToggleButton.selectedIcon = ImageIcon(GraphPanel::class.java.getResource("/img/PauseOff-24.png"))
 
-        val stepButton = JButton(StepExecutionAction(scheduler, eventBus))
+        val stepButton = JButton(ActionWrapperSwing(StepExecutionAction(scheduler, eventBus)))
         stepButton.text = null
         stepButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/Resume-24.png"))
 

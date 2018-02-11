@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
 class TextTool(
     editor: Editor,
     factory: () -> TextComponent,
-    adder: (TextComponent) -> Component
+    adder: (TextComponent) -> Component = { it }
 ) : AbstractComponentTool<TextComponent>(editor, factory, adder) {
 
     override fun activate() {

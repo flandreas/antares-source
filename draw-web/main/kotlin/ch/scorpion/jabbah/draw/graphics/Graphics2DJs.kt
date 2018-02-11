@@ -79,6 +79,8 @@ class Graphics2DJs(val ctx: CanvasRenderingContext2D) : AbstractGraphics2D() {
 
     /** ---- [Graphics2D] interface */
 
+    override val supportClipping: Boolean get() = false
+
     /** HTML canvas doesn't support to change the antialias property. */
     override var antialiasing: Boolean = true
 

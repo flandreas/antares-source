@@ -31,15 +31,16 @@ class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
 
     init {
         timer.initialize(1000 / REPAINT_FREQUENCY, {
-            repaintDirtyRegion()
             timer.stop()
+            System.SYSTEM!!.invokeLater {
+                repaintDirtyRegion()
+            }
         })
     }
 
     /** ---- [ViewPainter] interface */
 
     override fun repaintView() {
-        //repaintDirtyRegion()
         startTimerIfNeeded()
     }
 

@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.command.CommandManagerImpl
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 
 /**
@@ -19,6 +19,6 @@ object EditEditorModule : AbstractModule() {
 
     @Suppress("unused")
     fun createEditor(view: DrawingView<Drawing<Component>>): Editor {
-        return EditorImpl(view, CommandManagerImpl(), EditSelectModule.selectionToolFactory)
+        return EditorImpl(view, EditModule.commandManager, EditSelectModule.selectionToolFactory)
     }
 }

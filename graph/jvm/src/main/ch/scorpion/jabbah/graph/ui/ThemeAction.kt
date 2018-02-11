@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.Theme
 import ch.scorpion.jabbah.draw.style.ThemeEvent
-import java.awt.event.ActionEvent
 
 import ch.scorpion.jabbah.draw.style.Themes
 import javax.swing.Action
@@ -14,18 +13,18 @@ import javax.swing.Action
 class ThemeAction(
         private val theme: Theme,
         eventBus: EventBus = BaseModule.eventBus
-) : AbstractAction(name = theme.name) {
+) : AbstractAction(name = theme.name, description = null, accelerator = null) {
 
     init {
         eventBus.register(ThemeEvent::class, { updateState() })
         updateState()
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        Themes.setCurrent(theme.name)
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+	    Themes.setCurrent(theme.name)
     }
 
     private fun updateState() {
-        putValue(Action.SELECTED_KEY, theme === Themes.current)
+        selected = theme === Themes.current
     }
 }

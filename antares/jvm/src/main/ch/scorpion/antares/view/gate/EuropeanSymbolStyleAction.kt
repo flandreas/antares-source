@@ -4,11 +4,10 @@ import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyleChangedEvent
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import java.awt.event.ActionEvent
-import javax.swing.Action
 
 /**
  * An [Action] for setting the [CurrentSymbolStyle] to [CurrentSymbolStyle.EUROPEAN].
@@ -25,11 +24,11 @@ class EuropeanSymbolStyleAction(
         updateState()
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        currentSymbolStyle.symbolStyle = SymbolStyle.EUROPEAN
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+	    currentSymbolStyle.symbolStyle = SymbolStyle.EUROPEAN
     }
 
     private fun updateState() {
-        putValue(Action.SELECTED_KEY, currentSymbolStyle.symbolStyle == SymbolStyle.EUROPEAN)
+        selected = currentSymbolStyle.symbolStyle == SymbolStyle.EUROPEAN
     }
 }

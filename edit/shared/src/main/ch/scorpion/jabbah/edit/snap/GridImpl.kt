@@ -85,12 +85,18 @@ class GridImpl(
     override fun contains(x: Double, y: Double): Boolean = true
 
     override fun draw(context: DrawContext) {
-        context.g.getClipBounds(clipBuffer)
         if (zoomPan!!.zoomFactor * distance * paintFactor < BaseModule.properties.getInt(Grid.PROP_GRID_MIN_DISTANCE)) {
             // Don't paint the grid if it is too dense
             return
         }
-        gridPainter.paint(context, clipBuffer)
+        if (context.g.supportClipping) {
+            context.g.getClipBounds(clipBuffer)
+            gridPainter.paint(context, clipBuffer)
+        } else {
+            if (view != null) {
+                gridPainter.paint(context, Rectangle2D(0, 0, view!!.width, view!!.height))
+            }
+        }
     }
 
 

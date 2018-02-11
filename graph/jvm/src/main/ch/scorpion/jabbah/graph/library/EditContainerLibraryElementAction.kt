@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.action.AbstractApplicationAction
 import ch.scorpion.jabbah.base.event.EventBus
-import java.awt.event.ActionEvent
 
 /**
  * An [Action] for opening the [ContainerLibraryElement] that is currently selected in the
@@ -18,11 +17,10 @@ class EditContainerLibraryElementAction(
     private var libraryTreeView: LibraryTreeView? = null
 
     init {
-        setEnabled(false)
-
+        enabled = false
         eventBus.register(LibrarySelectionChangedEvent::class, {
             libraryTreeView = it.libraryTreeView
-            setEnabled(libraryTreeView!!.getSelectedItem() is ContainerLibraryElement)
+            enabled = libraryTreeView!!.getSelectedItem() is ContainerLibraryElement
         })
 
         eventBus.register(OpenContainerLibraryElementRequest::class, {
@@ -30,7 +28,7 @@ class EditContainerLibraryElementAction(
         })
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
         openAsSavable()
     }
 

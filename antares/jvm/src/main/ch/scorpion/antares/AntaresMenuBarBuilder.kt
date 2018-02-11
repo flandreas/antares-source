@@ -6,6 +6,7 @@ import ch.scorpion.antares.view.gate.EuropeanSymbolStyleAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.app.DesktopApplication
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.view.EnableRepaintingObserverAction
@@ -15,8 +16,6 @@ import ch.scorpion.jabbah.draw.view.RunRepaintingObserverAction
 import ch.scorpion.jabbah.execution.NoiseMenu
 import ch.scorpion.jabbah.execution.PrintScheduleAction
 import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
-import ch.scorpion.jabbah.execution.noise.RandomNoiseGenerator
 import ch.scorpion.jabbah.graph.ui.GraphMenuBarBuilder
 import javax.swing.*
 
@@ -36,8 +35,8 @@ class AntaresMenuBarBuilder(application: DesktopApplication, eventBus: EventBus)
 
         val symbolStyleMenu = JMenu(Translations.getString("antares.action.symbolStyle"))
 
-        val americanMenuItem = JRadioButtonMenuItem(AmericanSymbolStyleAction())
-        val europeanMenuItem = JRadioButtonMenuItem(EuropeanSymbolStyleAction())
+        val americanMenuItem = JRadioButtonMenuItem(ActionWrapperSwing(AmericanSymbolStyleAction()))
+        val europeanMenuItem = JRadioButtonMenuItem(ActionWrapperSwing(EuropeanSymbolStyleAction()))
         val group = ButtonGroup()
         group.add(americanMenuItem)
         group.add(europeanMenuItem)
@@ -48,23 +47,23 @@ class AntaresMenuBarBuilder(application: DesktopApplication, eventBus: EventBus)
         menu.addSeparator()
         menu.add(symbolStyleMenu)
 
-        menu.add(JCheckBoxMenuItem(GateMnemonicAction(eventBus)))
+        menu.add(JCheckBoxMenuItem(ActionWrapperSwing(GateMnemonicAction(eventBus))))
     }
 
     override fun fillExecutionMenu(menu: JMenu): JMenu {
         super.fillExecutionMenu(menu)
-        menu.add(JCheckBoxMenuItem(GraphViewAnimationAction(AntaresViewModule.currentGraphViewAnimationType, eventBus)))
+        menu.add(JCheckBoxMenuItem(ActionWrapperSwing(GraphViewAnimationAction(AntaresViewModule.currentGraphViewAnimationType, eventBus))))
         menu.add(NoiseMenu(listOf(ExecutionModule.noNoiseGenerator, ExecutionModule.randomNoiseGenerator)))
         return menu
     }
 
     fun fillDevelopmentMenu(menu: JMenu): JMenu {
-        menu.add(JCheckBoxMenuItem(EnableRepaintingObserverAction()))
-        menu.add(JCheckBoxMenuItem(RunRepaintingObserverAction()))
-        menu.add(JMenuItem(PreviousRepaintingObserverLogAction()))
-        menu.add(JMenuItem(NextRepaintingObserverLogAction()))
+        menu.add(JCheckBoxMenuItem(ActionWrapperSwing(EnableRepaintingObserverAction())))
+        menu.add(JCheckBoxMenuItem(ActionWrapperSwing(RunRepaintingObserverAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(PreviousRepaintingObserverLogAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(NextRepaintingObserverLogAction())))
         menu.addSeparator()
-        menu.add(JMenuItem(PrintScheduleAction()))
+        menu.add(JMenuItem(ActionWrapperSwing(PrintScheduleAction())))
         return menu
     }
 }

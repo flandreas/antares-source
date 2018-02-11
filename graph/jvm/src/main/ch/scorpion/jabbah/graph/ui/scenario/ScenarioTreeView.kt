@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -100,12 +101,12 @@ class ScenarioTreeView(
             isEnabled = !it.scheduler.isActive
         })
 
-        graphViewPopupMenu.add(AddScenarioAction())
+        graphViewPopupMenu.add(ActionWrapperSwing(AddScenarioAction()))
 
-        scenarioPopupMenu.add(AddScenarioStepAction())
-        scenarioPopupMenu.add(DeleteScenarioAction())
+        scenarioPopupMenu.add(ActionWrapperSwing(AddScenarioStepAction()))
+        scenarioPopupMenu.add(ActionWrapperSwing(DeleteScenarioAction()))
 
-        scenarioStepPopupMenu.add(DeleteScenarioStepAction())
+        scenarioStepPopupMenu.add(ActionWrapperSwing(DeleteScenarioStepAction()))
     }
 
     /** Holds the [GraphView] whose [Graph] is the source of the [Scenario] tree.*/

@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.*
-import java.awt.event.ActionEvent
 import javax.swing.Action
 
 /**
@@ -25,10 +24,10 @@ class PauseExecutionAction(
     }
 
     private fun updateState() {
-        putValue(Action.SELECTED_KEY, scheduler.isPaused)
+        selected = scheduler.isPaused
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
         scheduler.isPaused = !scheduler.isPaused
     }
 }
@@ -43,15 +42,15 @@ class StepExecutionAction(
         eventBus.register(SchedulerRunningStateEvent::class, { updateEnabledness(scheduler.numberOfRemainingSlots) })
         eventBus.register(SchedulerActivationStateEvent::class, { updateEnabledness(scheduler.numberOfRemainingSlots) })
         eventBus.register(SchedulerStateEvent::class, { updateEnabledness(it.numberOfRemainingSlots) })
-        isEnabled = false
+        enabled = false
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        scheduler.step()
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		scheduler.step()
+	}
 
     private fun updateEnabledness(numberOfRemainingSlots: Int) {
-        isEnabled = scheduler.isPaused && scheduler.isActive && numberOfRemainingSlots > 0
+        enabled = scheduler.isPaused && scheduler.isActive && numberOfRemainingSlots > 0
     }
 }
 
@@ -68,13 +67,13 @@ class ExecutionDepthAction(
     }
 
     private fun updateState() {
-        putValue(Action.SELECTED_KEY, scheduler.isDeepExecution)
-        isEnabled = !scheduler.isActive
+        selected = scheduler.isDeepExecution
+        enabled = !scheduler.isActive
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        scheduler.isDeepExecution = getValue(Action.SELECTED_KEY) as Boolean
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		scheduler.isDeepExecution = selected
+	}
 }
 
 /** Toggles the [Scheduler.isStopOnIssue] property. */
@@ -88,13 +87,13 @@ class StopOnIssueAction(
         updateState()
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        scheduler.isStopOnIssue = getValue(Action.SELECTED_KEY) as Boolean
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		scheduler.isStopOnIssue = selected
+	}
 
     private fun updateState() {
-        putValue(Action.SELECTED_KEY, scheduler.isStopOnIssue)
-        isEnabled = !scheduler.isActive
+        selected = scheduler.isStopOnIssue
+        enabled = !scheduler.isActive
     }
 }
 
@@ -102,7 +101,7 @@ class PrintScheduleAction(
         private val scheduler: Scheduler = ExecutionModule.scheduler
 ) : AbstractSchedulerAction("simulator.action.print") {
 
-    override fun actionPerformed(e: ActionEvent?) {
-        scheduler.printSchedule()
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		scheduler.printSchedule()
+	}
 }

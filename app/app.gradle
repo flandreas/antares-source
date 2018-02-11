@@ -10,6 +10,14 @@ sourceSets {
     test.kotlin.srcDirs += 'shared/src/test'
     test.resources.srcDirs += 'shared/rsc'
     test.kotlin.srcDirs += 'jvm/src/test'
+
+    demo {
+        kotlin {
+            srcDirs += "jvm/src/demo"
+        }
+        resources.srcDirs += 'jvm/rsc'
+        compileClasspath += sourceSets.main.runtimeClasspath
+    }
 }
 
 repositories {

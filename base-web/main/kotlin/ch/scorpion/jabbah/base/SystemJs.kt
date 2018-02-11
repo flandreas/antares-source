@@ -71,4 +71,10 @@ class SystemJs() : System {
         // We don't need this before editing functionality in the brower is required.
         return UUID(Math.randomInt(10_000, 99_000).toString() + "-TEMP-UUID")
     }
+
+    override fun invokeLater(invocable: () -> Unit) {
+        invocable.invoke()
+    }
+
+    override fun getActionAcceleratorKey(baseName: String): String = "$baseName.accelerator"
 }

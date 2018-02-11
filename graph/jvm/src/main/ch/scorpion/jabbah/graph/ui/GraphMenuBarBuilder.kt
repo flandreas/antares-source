@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.MenuBarBuilder
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.style.Themes
@@ -35,44 +36,44 @@ open class GraphMenuBarBuilder(application: DesktopApplication, eventBus: EventB
     override fun fillEditMenu(menu: JMenu) {
         super.fillEditMenu(menu)
         menu.addSeparator()
-        menu.add(JMenuItem(CutAction()))
-        menu.add(JMenuItem(CopyAction()))
-        menu.add(JMenuItem(PasteAction()))
+        menu.add(JMenuItem(ActionWrapperSwing(CutAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(CopyAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(PasteAction())))
         menu.addSeparator()
-        menu.add(JMenuItem(OpenGraphNavigationPanelAction(DrawViewModule.viewManager, eventBus)))
-        menu.add(JMenuItem(EditSubGraphVerticeViewAction()))
+        menu.add(JMenuItem(ActionWrapperSwing(OpenGraphNavigationPanelAction(DrawViewModule.viewManager, eventBus))))
+        menu.add(JMenuItem(ActionWrapperSwing(EditSubGraphVerticeViewAction())))
     }
 
     override fun fillViewMenu(menu: JMenu) {
         super.fillViewMenu(menu)
         val themesMenu = JMenu(Translations.getString("graph.action.themes.name"))
         for (theme in Themes.allThemes()) {
-            themesMenu.add(JCheckBoxMenuItem(ThemeAction(theme)))
+            themesMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(ThemeAction(theme))))
         }
         menu.add(themesMenu)
-        menu.add(JCheckBoxMenuItem(OscilloscopeAction(DrawViewModule.viewManager, eventBus)))
+        menu.add(JCheckBoxMenuItem(ActionWrapperSwing(OscilloscopeAction(DrawViewModule.viewManager, eventBus))))
     }
 
     protected open fun fillExecutionMenu(menu: JMenu): JMenu {
-        menu.add(JCheckBoxMenuItem(ExecutionDepthAction()))
-        menu.add(JCheckBoxMenuItem(StopOnIssueAction()))
+        menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ExecutionDepthAction())))
+        menu.add(JCheckBoxMenuItem(ActionWrapperSwing(StopOnIssueAction())))
         return menu
     }
 
     protected open fun fillLibraryMenu(menu: JMenu): JMenu {
-        menu.add(JMenuItem(AddLibraryFolderAction()))
-        menu.add(JMenuItem(NewGraphAction()))
-        menu.add(JMenuItem(AddGraphToLibraryAction()))
-        menu.add(JMenuItem(EditContainerLibraryElementAction(application, eventBus)))
-        menu.add(JMenuItem(DeleteContainerLibraryElementAction(eventBus)))
+        menu.add(JMenuItem(ActionWrapperSwing(AddLibraryFolderAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(NewGraphAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(AddGraphToLibraryAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(EditContainerLibraryElementAction(application, eventBus))))
+        menu.add(JMenuItem(ActionWrapperSwing(DeleteContainerLibraryElementAction(eventBus))))
         return menu
     }
 
     protected open fun fillScenariosMenu(menu: JMenu): JMenu {
-        menu.add(JMenuItem(AddScenarioAction(eventBus, EditModule.commandManager)))
-        menu.add(JMenuItem(AddScenarioStepAction(eventBus, EditModule.commandManager)))
-        menu.add(JMenuItem(DeleteScenarioAction(eventBus, EditModule.commandManager)))
-        menu.add(JMenuItem(DeleteScenarioStepAction(eventBus, EditModule.commandManager)))
+        menu.add(JMenuItem(ActionWrapperSwing(AddScenarioAction(eventBus, EditModule.commandManager))))
+        menu.add(JMenuItem(ActionWrapperSwing(AddScenarioStepAction(eventBus, EditModule.commandManager))))
+        menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioAction(eventBus, EditModule.commandManager))))
+        menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioStepAction(eventBus, EditModule.commandManager))))
         return menu
     }
 }

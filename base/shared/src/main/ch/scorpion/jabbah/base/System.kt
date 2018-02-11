@@ -40,4 +40,12 @@ interface System {
 
     fun createUUID(uuid: String? = null): UUID
 
+    fun invokeLater(invocable: () -> Unit)
+
+    /**
+     * Returns the system-dependent translation key for an Action with the given base name.
+     * Example: Returns "file.action.new.accelerator" for the base name "file.action.new".
+     */
+    fun getActionAcceleratorKey(baseName: String): String
+
 }

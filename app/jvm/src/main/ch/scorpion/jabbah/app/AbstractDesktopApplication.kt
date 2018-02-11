@@ -1,10 +1,6 @@
 package ch.scorpion.jabbah.app
 
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.IllegalStateException
-import ch.scorpion.jabbah.base.invocation.BusyHandler
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
@@ -21,18 +17,12 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import org.apache.commons.cli.*
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
-import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.nio.file.FileSystems
 import java.nio.file.Path
-import javax.swing.JFileChooser
-import javax.swing.JOptionPane
 import java.nio.file.Files
-import javax.swing.SwingUtilities
 
 /** Abstract base implementation of the [DesktopApplication] interface. */
 abstract class AbstractDesktopApplication(
@@ -42,7 +32,7 @@ abstract class AbstractDesktopApplication(
 
     private val LOG by logger(AbstractDesktopApplication::class)
 
-    private val commandLine: CommandLine by lazy {
+    protected val commandLine: CommandLine by lazy {
         val options = Options()
         defineOptions(options)
         var cmdLine: CommandLine? = null
@@ -56,8 +46,6 @@ abstract class AbstractDesktopApplication(
         }
         cmdLine!!
     }
-
-    override lateinit var mainFrame: AbstractApplicationFrame
 
     override val mostRecentSavables: SavableHistory = SavableHistory()
 
@@ -74,47 +62,7 @@ abstract class AbstractDesktopApplication(
         loadSettings()
     }
 
-    /** ---- [Application] */
-
-    override val applicationDataChanged: Boolean get() = mainFrame.applicationDataChanged
-
-    override fun start() {
-        SwingUtilities.invokeLater {
-            init()
-            mainFrame.addWindowListener(object : WindowAdapter() {
-                override fun windowClosing(e: WindowEvent?) {
-                    quit()
-                }
-            })
-            mainFrame.isVisible = true
-        }
-    }
-
     /** ---- [AbstractApplication] */
-
-    override fun init() {
-        mainFrame = createMainFrame()
-        mainFrame.jMenuBar = createMenuBarBuilder().menuBar
-        DrawViewModule.viewManager.activeView = mainFrame.editor.view
-        BusyHandler.register(mainFrame, null)
-        SwingUtilities.invokeLater {
-            if (commandLine.argList.size == 0) {
-                newFile()
-            } else {
-                try {
-                    openFile(commandLine.argList[0])
-                } catch(e: FileNotFoundException) {
-                    JOptionPane.showConfirmDialog(
-                            mainFrame,
-                            Translations.getString("application.fileNotFound.text", commandLine.argList[0]),
-                            Translations.getString("application.fileNotFound.title"),
-                            JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.ERROR_MESSAGE)
-                    newFile()
-                }
-            }
-        }
-    }
 
     override fun createNewSavable(): Savable {
         return FileSavable.undefined()
@@ -126,25 +74,6 @@ abstract class AbstractDesktopApplication(
         if (canReplaceSavable("file.action.quit.name")) {
             shutdown()
         }
-    }
-
-    override fun saveAs(): Boolean {
-        val fileChooser = JFileChooser()
-        fileChooser.isAcceptAllFileFilterUsed = true
-        fileChooser.isFileHidingEnabled = true
-        fileChooser.fileFilter = ApplicationFileFilter(this)
-        if (savable is FileSavable) {
-            if (!(savable as FileSavable).filePath.isNullOrEmpty()) {
-                fileChooser.selectedFile = File((savable as FileSavable).filePath)
-            }
-        }
-
-        if (fileChooser.showSaveDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
-            saveFile(fileChooser.selectedFile.absolutePath)
-            return true
-        }
-
-        return false
     }
 
     override fun saveFile(filePath: String) {
@@ -183,6 +112,8 @@ abstract class AbstractDesktopApplication(
 
     /** ---- [AbstractDesktopApplication] */
 
+    protected abstract fun shutdownUI()
+
     protected open fun createMainFrame(): AbstractApplicationFrame {
         val canvas: Canvas = CanvasJvm({ DrawingViewImpl(DrawingImpl(), it) })
         val editor: Editor = EditEditorModule.createEditor(canvas.view as DrawingView<Drawing<Component>>)
@@ -196,7 +127,7 @@ abstract class AbstractDesktopApplication(
     protected fun shutdown() {
         LOG.info("Shutting $displayName down")
         // TODO Provide service for loading/storing Properties
-        mainFrame.dispose()
+        shutdownUI()
         storeProperties()
         System.exit(0)
     }
@@ -224,26 +155,6 @@ abstract class AbstractDesktopApplication(
         // empty
     }
 
-    override fun canReplaceSavable(actionKey: String): Boolean {
-        if (!applicationDataChanged) {
-            return true
-        }
-
-        val answer =JOptionPane.showConfirmDialog(
-            mainFrame,
-            Translations.getString("application.unsavedData.question"),
-            Translations.getString(actionKey),
-            JOptionPane.YES_NO_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE)
-
-        return when(answer) {
-            JOptionPane.NO_OPTION -> true
-            JOptionPane.CANCEL_OPTION -> false
-            JOptionPane.YES_OPTION -> savable?.save(this) ?: true
-            else -> throw IllegalStateException("unsupported answer")
-        }
-    }
-
     private fun getSettingsPath(): Path {
         return FileSystems.getDefault().getPath(getHomeDirectoryPath().toString(), systemName + ".ini")
     }
@@ -268,17 +179,21 @@ abstract class AbstractDesktopApplication(
     private fun loadSettings() {
         val path = getSettingsPath()
         LOG.debug("Loading settings from '$path'")
-        FileInputStream(path.toString()).use {
-            try {
-                val settings = java.util.Properties()
-                settings.load(it)
-                for (key in settings.keys) {
-                    BaseModule.settings.set(key as String, settings[key]!!)
-                }
-            } catch (x: Throwable) {
-                LOG.error("Could not load properties: ${x.message}")
-            }
-        }
+	    try {
+		    FileInputStream(path.toString()).use {
+			    try {
+				    val settings = java.util.Properties()
+				    settings.load(it)
+				    for (key in settings.keys) {
+					    BaseModule.settings.set(key as String, settings[key]!!)
+				    }
+			    } catch (x: Throwable) {
+				    LOG.error("Could not load properties: ${x.message}")
+			    }
+		    }
+	    } catch (x: FileNotFoundException) {
+		    // empty
+	    }
     }
 
     private fun storeProperties() {

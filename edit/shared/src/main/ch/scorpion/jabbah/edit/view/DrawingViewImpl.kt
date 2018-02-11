@@ -99,6 +99,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
     init {
         setupContent()
+        grid.view = this
         showGrid = true
     }
 

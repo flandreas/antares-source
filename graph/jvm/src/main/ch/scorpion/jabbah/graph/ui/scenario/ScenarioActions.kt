@@ -15,8 +15,6 @@ import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.graph.view.scenario.*
 import java.awt.Frame
-import java.awt.event.ActionEvent
-import javax.swing.Action
 import javax.swing.JOptionPane
 
 /**
@@ -32,22 +30,22 @@ class AddScenarioAction(
     init {
         eventBus.register(ScenarioSelectionEvent::class, {
             graphView = it.graphView
-            isEnabled = it.scenario == null && it.scenarioStep == null
+            enabled = it.scenario == null && it.scenarioStep == null
         })
-        isEnabled = false
+        enabled = false
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        val name = JOptionPane.showInputDialog(
-                Frame.getFrames()[0],
-                Translations.getString("scenarios.action.addScenario.question"),
-                getValue(Action.NAME) as String,
-                JOptionPane.QUESTION_MESSAGE
-        )
-        if (StringUtils.isEmpty(name)) {
-            return
-        }
-        cmdManager.execute(AddScenarioCommand(graphView!!, ScenarioImpl(name)))
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+	    val name = JOptionPane.showInputDialog(
+		    Frame.getFrames()[0],
+		    Translations.getString("scenarios.action.addScenario.question"),
+		    name,
+		    JOptionPane.QUESTION_MESSAGE
+	    )
+	    if (StringUtils.isEmpty(name)) {
+		    return
+	    }
+	    cmdManager.execute(AddScenarioCommand(graphView!!, ScenarioImpl(name)))
     }
 }
 
@@ -67,22 +65,22 @@ class AddScenarioStepAction(
         eventBus.register(ScenarioSelectionEvent::class, {
             graphView = it.graphView
             scenario = it.scenario
-            isEnabled = graphView != null && scenario != null && it.scenarioStep == null
+            enabled = graphView != null && scenario != null && it.scenarioStep == null
         })
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        val name = JOptionPane.showInputDialog(
-                Frame.getFrames()[0],
-                Translations.getString("scenarios.action.addScenarioStep.question"),
-                getValue(Action.NAME) as String,
-                JOptionPane.QUESTION_MESSAGE
-        )
-        if (StringUtils.isEmpty(name)) {
-            return
-        }
-        cmdManager.execute(AddScenarioStepCommand(graphView!!, scenario!!, ScenarioStepImpl(scriptGateway, name)))
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		val name = JOptionPane.showInputDialog(
+			Frame.getFrames()[0],
+			Translations.getString("scenarios.action.addScenarioStep.question"),
+			name,
+			JOptionPane.QUESTION_MESSAGE
+		)
+		if (StringUtils.isEmpty(name)) {
+			return
+		}
+		cmdManager.execute(AddScenarioStepCommand(graphView!!, scenario!!, ScenarioStepImpl(scriptGateway, name)))
+	}
 }
 
 /** Deletes the currently selected [Scenario]. */
@@ -98,21 +96,21 @@ class DeleteScenarioAction(
         eventBus.register(ScenarioSelectionEvent::class, {
             graphView = it.graphView
             scenario = it.scenario
-            isEnabled = graphView != null && scenario != null && it.scenarioStep == null
+            enabled = graphView != null && scenario != null && it.scenarioStep == null
         })
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        if (JOptionPane.showConfirmDialog(
-                Frame.getFrames()[0],
-                Translations.getString("scenarios.action.deleteScenario.question", scenario!!.name),
-                Translations.getString("scenarios.action.deleteScenario.name"),
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION)
-        {
-            cmdManager.execute(DeleteScenarioCommand(graphView!!, scenario!!))
-        }
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		if (JOptionPane.showConfirmDialog(
+			Frame.getFrames()[0],
+			Translations.getString("scenarios.action.deleteScenario.question", scenario!!.name),
+			Translations.getString("scenarios.action.deleteScenario.name"),
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION)
+		{
+			cmdManager.execute(DeleteScenarioCommand(graphView!!, scenario!!))
+		}
+	}
 }
 
 /** Deletes the currently selected [ScenarioStep]. */
@@ -130,19 +128,19 @@ class DeleteScenarioStepAction(
             graphView = it.graphView
             scenario = it.scenario
             scenarioStep = it.scenarioStep
-            isEnabled = graphView != null && scenario != null && it.scenarioStep != null
+            enabled = graphView != null && scenario != null && it.scenarioStep != null
         })
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        if (JOptionPane.showConfirmDialog(
-                Frame.getFrames()[0],
-                Translations.getString("scenarios.action.deleteScenarioStep.question", scenarioStep!!.name, scenario!!.name),
-                Translations.getString("scenarios.action.deleteScenarioStep.name"),
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION)
-        {
-            cmdManager.execute(DeleteScenarioStepCommand(graphView!!, scenario!!, scenarioStep!!))
-        }
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		if (JOptionPane.showConfirmDialog(
+			Frame.getFrames()[0],
+			Translations.getString("scenarios.action.deleteScenarioStep.question", scenarioStep!!.name, scenario!!.name),
+			Translations.getString("scenarios.action.deleteScenarioStep.name"),
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION)
+		{
+			cmdManager.execute(DeleteScenarioStepCommand(graphView!!, scenario!!, scenarioStep!!))
+		}
+	}
 }

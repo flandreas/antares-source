@@ -3,13 +3,12 @@ package ch.scorpion.jabbah.draw.hellographics
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.AffineTransformImpl
 import ch.scorpion.jabbah.base.geom.Dimension2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModuleJs
-import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.draw.view.ViewImpl
+import ch.scorpion.jabbah.draw.view.ZoomPanController
 
 fun hello() {
 
@@ -27,6 +26,6 @@ fun hello() {
     canvas.paint()
 
     val timer = System.SYSTEM!!.createTimer()
-    timer.initialize(20, { model.moveBall(canvas)} )
+    timer.initialize(20, { model.animateBall(canvas)} )
     timer.start()
 }

@@ -20,10 +20,10 @@ abstract class AbstractLibraryFolderAction(
         private set
 
     init {
-        isEnabled = false
+        enabled = false
         eventBus.register(LibrarySelectionChangedEvent::class, {
             libraryTreeView = it.libraryTreeView
-            isEnabled = libraryTreeView!!.getSelectedItem() is LibraryDirectory
+            enabled = libraryTreeView!!.getSelectedItem() is LibraryDirectory
         })
     }
 }

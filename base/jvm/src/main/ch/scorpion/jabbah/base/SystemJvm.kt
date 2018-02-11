@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.base
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.time.RealTimeTimerJvm
 import ch.scorpion.jabbah.base.time.Timer
+import javafx.application.Platform
+import javax.swing.SwingUtilities
 import kotlin.reflect.KClass
 
 /** Implements the [System] interface on the Java virtual machine platform.*/
@@ -76,5 +78,20 @@ class SystemJvm(private val useJavaFX: Boolean = false) : System {
 
         sb.append("</html>")
         return sb.toString()
+    }
+
+    override fun invokeLater(invocable: () -> Unit) {
+        if (useJavaFX) {
+            Platform.runLater(invocable)
+        } else {
+            SwingUtilities.invokeLater { invocable.invoke() }
+        }
+    }
+
+    override fun getActionAcceleratorKey(baseName: String): String {
+        if (useJavaFX) {
+            return "$baseName.accelerator.fx"
+        }
+        return "$baseName.accelerator"
     }
 }

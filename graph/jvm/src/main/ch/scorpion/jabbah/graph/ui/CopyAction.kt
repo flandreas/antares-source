@@ -4,29 +4,26 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.edit.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
-import java.awt.event.ActionEvent
 
 /**
  * An [Action] for copying the selected [Component]s to the clipboard.
  */
 class CopyAction(
-    eventBus: EventBus,
-    viewManager: ViewManager,
-    val typeMap: TypeMap
-) : AbstractSelectionAwareAction("edit.action.copy", viewManager, eventBus) {
+    eventBus: EventBus = BaseModule.eventBus,
+    viewManager: ViewManager = DrawViewModule.viewManager,
+    val typeMap: TypeMap = IOModule.typeMap
+) : AbstractSelectionAwareAction("edit.action.copy", eventBus, viewManager) {
 
-    constructor(): this(BaseModule.eventBus, DrawViewModule.viewManager, IOModule.typeMap)
-
-    override fun actionPerformed(e: ActionEvent?) {
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
         val drawingView = viewManager.activeView as DrawingView<*>
         CopyPasteUtility.copy(
-            drawingView.drawing as GraphView<*>,
-            drawingView.selectionManager.selection,
-            typeMap)
+                drawingView.drawing as GraphView<*>,
+                drawingView.selectionManager.selection,
+                typeMap)
     }
 }

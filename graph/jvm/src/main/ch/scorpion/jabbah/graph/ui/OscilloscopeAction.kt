@@ -1,24 +1,24 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
+import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.OscilloscopeDisplayedEvent
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeDisplayEvent
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import java.awt.event.ActionEvent
-import javax.swing.Action
 
-/** An [Action] for toggeling the visibility of the currently active [DrawingView]'s [GraphView].*/
+/** An [Action] for toggling the visibility of the currently active [DrawingView]'s [GraphView].*/
 class OscilloscopeAction(
-        viewManager: ViewManager,
-        eventBus: EventBus,
+        viewManager: ViewManager = DrawViewModule.viewManager,
+        eventBus: EventBus = BaseModule.eventBus,
         private val service: OscilloscopeViewService = GraphViewModule.oscilloscopeViewService
 ) : AbstractViewAction("graph.action.oscilloscope", eventBus, viewManager) {
 
@@ -26,11 +26,11 @@ class OscilloscopeAction(
         eventBus.register(OscilloscopeDisplayEvent::class, { updateState() })
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
         val view = viewManager.activeView
         if (view is DrawingView<*>) {
             val graphView = ((viewManager.activeView as DrawingView<*>).drawing) as GraphView<GraphElementView<*>>
-            service.displayOscilloscope(getValue(Action.SELECTED_KEY) as Boolean, graphView)
+            service.displayOscilloscope(selected, graphView)
         }
     }
 
@@ -40,9 +40,8 @@ class OscilloscopeAction(
     }
 
     private fun updateState() {
-            putValue(Action.SELECTED_KEY, viewManager.activeView is DrawingView<*>
+            selected = viewManager.activeView is DrawingView<*>
                     && (viewManager.activeView as DrawingView<*>).drawing is GraphView<*>
                     && service.isOscilloscopeDisplayed((viewManager.activeView as DrawingView<*>).drawing as GraphView<GraphElementView<*>>)
-            )
     }
 }

@@ -7,14 +7,13 @@ import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.edit.AbstractSelectionAwareAction
+import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.Component
-import java.awt.event.ActionEvent
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import javax.swing.Action
@@ -27,10 +26,10 @@ import javax.swing.SwingUtilities
  * [ContainerDrawing] using a [ContainerEditor] in a dialog.
  */
 class EditSubGraphVerticeViewAction(
-    eventBus: EventBus,
-    viewManager: ViewManager,
+    private val eventBus: EventBus = BaseModule.eventBus,
+    viewManager: ViewManager = DrawViewModule.viewManager,
     private val libraryHolder: LibraryHolder
-) : AbstractSelectionAwareAction("graph.action.editSubGraphVerticeView", viewManager, eventBus) {
+) : AbstractSelectionAwareAction("graph.action.editSubGraphVerticeView", eventBus, viewManager) {
 
     constructor(): this(BaseModule.eventBus, DrawViewModule.viewManager, LibraryModule.libraryHolder)
 
@@ -43,7 +42,8 @@ class EditSubGraphVerticeViewAction(
     override fun calculateEnabled(): Boolean {
         return getSelectionCount() == 1 && getSingleSelection() is SubGraphVerticeView<*>
     }
-    override fun actionPerformed(e: ActionEvent?) {
+
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
         editedVerticeView = getSingleSelection() as SubGraphVerticeView<*>
 
         val frame = SwingUtilities.getRoot(getDrawingView()!!.canvas as Component) as JFrame

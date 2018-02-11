@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.action.AbstractApplicationAction
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -13,12 +14,10 @@ import ch.scorpion.jabbah.graph.container.ContainerPanel
 import ch.scorpion.jabbah.graph.model.GraphNameChangedEvent
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import java.awt.BorderLayout
-import java.awt.event.ActionEvent
 import javax.swing.*
 
 
@@ -40,9 +39,9 @@ class GraphFrame(
 
     private val LOG by logger(GraphFrame::class)
 
-    private val desktopAction = ViewDesktopAction(application, eventBus)
+    private val desktopAction = ViewDesktopAction(this, application, eventBus)
 
-    private val containerAction = ViewContainerAction(application, eventBus)
+    private val containerAction = ViewContainerAction(this, application, eventBus)
 
     private val mainToolBar: JToolBar
 
@@ -141,12 +140,12 @@ class GraphFrame(
         val toolbar = JToolBar()
         toolbar.isFloatable = false
 
-        val viewDesktopButton = JToggleButton(desktopAction)
+        val viewDesktopButton = JToggleButton(ActionWrapperSwing(desktopAction))
         viewDesktopButton.icon = ImageIcon(GraphFrame::class.java.getResource("/img/drawing-24.png"))
         viewDesktopButton.text = null
         toolbar.add(viewDesktopButton)
 
-        val viewContainerButton = JToggleButton(containerAction)
+        val viewContainerButton = JToggleButton(ActionWrapperSwing(containerAction))
         viewContainerButton.icon = ImageIcon(GraphFrame::class.java.getResource("/img/container-24.png"))
         viewContainerButton.text = null
         toolbar.add(viewContainerButton)
@@ -163,35 +162,37 @@ class GraphFrame(
 }
 
 class ViewDesktopAction(
+    private val graphFrame: GraphFrame,
     app: DesktopApplication,
     eventBus: EventBus
 ) : AbstractApplicationAction("view.action.desktop", app) {
 
     init {
         eventBus.register(GraphFrameEvent::class, {
-            putValue(Action.SELECTED_KEY, it.displayedView == GraphFrame.DisplayedView.Desktop)
+            selected = it.displayedView == GraphFrame.DisplayedView.Desktop
         })
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        (application.mainFrame as GraphFrame).showDesktop()
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+        graphFrame.showDesktop()
     }
 }
 
 class ViewContainerAction(
+    private val graphFrame: GraphFrame,
     app: DesktopApplication,
     eventBus: EventBus
 ) : AbstractApplicationAction("view.action.container", app) {
 
-    init {
+	init {
         eventBus.register(GraphFrameEvent::class, {
-            putValue(Action.SELECTED_KEY, it.displayedView == GraphFrame.DisplayedView.Container)
+	        selected = it.displayedView == GraphFrame.DisplayedView.Container
         })
     }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        (application.mainFrame as GraphFrame).showContainer()
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		graphFrame.showContainer()
+	}
 }
 
 /** Posted by [GraphFrame] when [GraphFrame.DisplayedView] has changed.*/

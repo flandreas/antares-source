@@ -13,23 +13,19 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.io.TypeMap
-import java.awt.event.ActionEvent
 
 /**
  * An [Action] for pasting [Component]s from the clipboard into the [Drawing] of the current [DrawingView].
  */
 class PasteAction(
-        eventBus: EventBus,
-        viewManager: ViewManager,
-        private val typeMap: TypeMap,
-        private val storableCreator: StorableCreator,
-        private val cmdManager: CommandManager
+        eventBus: EventBus = BaseModule.eventBus,
+        viewManager: ViewManager = DrawViewModule.viewManager,
+        private val typeMap: TypeMap = IOModule.typeMap,
+        private val storableCreator: StorableCreator = IOModule.storableCreator,
+        private val cmdManager: CommandManager = EditModule.commandManager
 ) : AbstractViewAction("edit.action.paste", eventBus, viewManager) {
 
-    constructor(): this(BaseModule.eventBus, DrawViewModule.viewManager, IOModule.typeMap,
-        IOModule.storableCreator, EditModule.commandManager)
-
-    override fun actionPerformed(e: ActionEvent?) {
+    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
         val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
         CopyPasteUtility.paste(drawingView, storableCreator, typeMap, cmdManager)
     }
