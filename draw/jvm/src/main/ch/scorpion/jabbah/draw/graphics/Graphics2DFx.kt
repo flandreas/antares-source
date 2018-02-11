@@ -17,6 +17,8 @@ class Graphics2DFx(var g: GraphicsContext) : AbstractGraphics2D() {
 
     companion object {
 
+	    private val EMPTY_DASHES = arrayOf<Double>()
+
         private fun toFxFontPosture(font: Font): FontPosture {
             if (font.isItalic()) {
                 return FontPosture.ITALIC
@@ -153,7 +155,7 @@ class Graphics2DFx(var g: GraphicsContext) : AbstractGraphics2D() {
                 cap = toLineCap(g.lineCap),
                 join = toLineJoin(g.lineJoin),
                 miterLimit = g.miterLimit.toFloat(),
-                dash = toDash(g.lineDashes.toTypedArray()),
+                dash = toDash(if(g.lineDashes == null) EMPTY_DASHES else g.lineDashes.toTypedArray()),
                 dashPhase = g.lineDashOffset.toFloat())
         set(value) {
             g.lineWidth = value.width.toDouble()

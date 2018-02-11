@@ -338,7 +338,7 @@ class GraphPanel(
         button.text = null
         button.isFocusPainted = false
         button.icon = ImageIcon(GraphPanel::class.java.getResource("/img/snap.gif"))
-        button.toolTipText = Translations.getString("edit.tool.align")
+        button.toolTipText = Translations.getString("edit.tool.align.name")
 
         toolBar.add(button)
 
