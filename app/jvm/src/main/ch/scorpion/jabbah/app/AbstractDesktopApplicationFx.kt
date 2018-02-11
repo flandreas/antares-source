@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
@@ -10,10 +11,11 @@ import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.stage.FileChooser
 import javafx.stage.Stage
+import java.io.File
 import java.io.FileNotFoundException
 
 abstract class AbstractDesktopApplicationFx(
-	protected val primaryStage: Stage,
+	private val primaryStage: Stage,
 	args: Array<String>,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractDesktopApplication(args, eventBus) {
@@ -25,7 +27,9 @@ abstract class AbstractDesktopApplicationFx(
 	}
 
 	override fun open() {
-		val file = FileChooser().showOpenDialog(primaryStage)
+		val fileChooser = FileChooser()
+		fileChooser.extensionFilters.addAll(FileChooser.ExtensionFilter(displayName, "*.$fileExtension"))
+		val file = fileChooser.showOpenDialog(primaryStage)
 		if (file != null) {
 			openFile(file.absolutePath)
 		}
@@ -33,7 +37,16 @@ abstract class AbstractDesktopApplicationFx(
 
 	override fun saveAs(): Boolean {
 		val fileChooser = FileChooser()
-		// TODO Select file if available
+		fileChooser.extensionFilters.addAll(FileChooser.ExtensionFilter(displayName, "*.$fileExtension"))
+
+		if (savable is FileSavable) {
+			if (StringUtils.isNotEmpty((savable as FileSavable).filePath)) {
+				val file = File((savable as FileSavable).filePath)
+				fileChooser.initialDirectory = file.parentFile!!
+				fileChooser.initialFileName = file.name
+			}
+		}
+
 		val file = fileChooser.showSaveDialog(primaryStage)
 		if (file != null) {
 			saveFile(file.absolutePath)
