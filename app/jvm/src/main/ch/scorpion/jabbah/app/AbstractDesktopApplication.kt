@@ -199,9 +199,9 @@ abstract class AbstractDesktopApplication(
     private fun storeProperties() {
         val path = getSettingsPath()
         LOG.debug("Storing settings in $path")
+	    ensureHomeDirectory()
         FileOutputStream(path.toString()).use {
             try {
-                ensureHomeDirectory()
                 val properties = java.util.Properties()
                 for (key in BaseModule.settings.getKeys()) {
                     properties.setProperty(key, BaseModule.settings.get(key))
