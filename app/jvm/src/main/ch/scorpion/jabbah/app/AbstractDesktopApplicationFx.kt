@@ -15,15 +15,26 @@ import java.io.File
 import java.io.FileNotFoundException
 
 abstract class AbstractDesktopApplicationFx(
-	private val primaryStage: Stage,
+	protected val primaryStage: Stage,
 	args: Array<String>,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractDesktopApplication(args, eventBus) {
+
+	protected val storedWidth = BaseModule.settings.getInt("application.frame.w", 1000).toDouble()
+	protected val storedHeight = BaseModule.settings.getInt("application.frame.h", 800).toDouble()
+
+	init {
+		primaryStage.x = BaseModule.settings.getInt("application.frame.x", 100).toDouble()
+		primaryStage.y = BaseModule.settings.getInt("application.frame.y", 100).toDouble()
+		primaryStage.width = storedWidth
+		primaryStage.height = storedHeight
+	}
 
 	/** ---- [Application] */
 
 	override fun start() {
 		init()
+
 	}
 
 	override fun open() {
@@ -100,6 +111,10 @@ abstract class AbstractDesktopApplicationFx(
 	/** ---- [AbstractDesktopApplication] */
 
 	override fun shutdownUI() {
+		BaseModule.settings.set("application.frame.x", primaryStage.x.toInt())
+		BaseModule.settings.set("application.frame.y", primaryStage.y.toInt())
+		BaseModule.settings.set("application.frame.w", primaryStage.width.toInt())
+		BaseModule.settings.set("application.frame.h", primaryStage.height.toInt())
 		Platform.exit()
 	}
 

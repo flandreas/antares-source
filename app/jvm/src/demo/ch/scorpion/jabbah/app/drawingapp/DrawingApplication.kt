@@ -95,7 +95,7 @@ class DrawingApplication : javafx.application.Application() {
 			content.children.addAll(MenuBarBuilderFx(this).menuBar, ToolBarBuilderFx(editor).build(), holder)
 
 			primaryStage.title = displayName
-			primaryStage.scene = Scene(content, 800.0, 600.0)
+			primaryStage.scene = Scene(content)
 			primaryStage.show()
 			editor.view.navigator.fitMaxNormal()
 			DrawViewModule.viewManager.activeView = editor.view
