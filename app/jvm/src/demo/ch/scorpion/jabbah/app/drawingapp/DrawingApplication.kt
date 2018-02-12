@@ -85,14 +85,21 @@ class DrawingApplication : javafx.application.Application() {
 
 		override fun fillPrimaryStage(primaryStage: Stage) {
 			val content = VBox()
+			val menuBar = MenuBarBuilderFx(this).menuBar
+			val toolBar = ToolBarBuilderFx(editor).build()
+
 			(editor.view.canvas as CanvasFx).canvas.widthProperty().bind(content.widthProperty())
-			(editor.view.canvas as CanvasFx).canvas.heightProperty().bind(content.heightProperty())
+			(editor.view.canvas as CanvasFx).canvas.heightProperty().bind(
+				content.heightProperty().subtract(menuBar.heightProperty().add(toolBar.heightProperty())))
+
+			(editor.view.canvas as CanvasFx).canvas.widthProperty().addListener { _ -> editor.view.repaint() }
+			(editor.view.canvas as CanvasFx).canvas.heightProperty().addListener { _ -> editor.view.repaint() }
 
 			val holder = StackPane()
 			holder.children.add((editor.view.canvas as CanvasFx).canvas)
 			BackgroundInstaller(DrawStyleModule.styleProvider, holder)
 
-			content.children.addAll(MenuBarBuilderFx(this).menuBar, ToolBarBuilderFx(editor).build(), holder)
+			content.children.addAll(menuBar, toolBar, holder)
 
 			primaryStage.title = displayName
 			primaryStage.scene = Scene(content)
