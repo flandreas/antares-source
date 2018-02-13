@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 class PasteCommand(
     private val drawingView: DrawingView<Drawing<Component>>,
     private val components: List<Component>
-) : AbstractCommand("graph.command.paste", null) {
+) : AbstractCommand("edit.command.paste", null) {
 
     override fun execute() {
         for (c in components) {

@@ -21,7 +21,7 @@ class CopyAction(
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
         val drawingView = viewManager.activeView as DrawingView<*>
-        CopyPasteUtility.copy(
+        CopyPasteUtilitySwing.copy(
                 drawingView.drawing as GraphView<*>,
                 drawingView.selectionManager.selection,
                 typeMap)

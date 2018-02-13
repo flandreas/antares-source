@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 class CutCommand(
     drawingView: DrawingView<Drawing<Component>>,
     components: List<Component>
-) : AbstractCommand("graph.command.cut", null) {
+) : AbstractCommand("edit.command.cut", null) {
 
     private val deleteCmd = DeleteCommand(drawingView, components)
 

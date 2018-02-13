@@ -23,7 +23,7 @@ class CutAction(
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
         val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
-        CopyPasteUtility.cut(
+        CopyPasteUtilitySwing.cut(
                 drawingView,
                 drawingView.selectionManager.selection,
                 typeMap,

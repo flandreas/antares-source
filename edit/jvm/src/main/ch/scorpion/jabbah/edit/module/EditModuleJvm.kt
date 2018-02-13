@@ -42,6 +42,7 @@ object EditModuleJvm : AbstractModule() {
         registerTypes(IOModule.typeMap)
 
         EditModule.textComponentFactory = { TextComponentFactoryJvm() }
+	    EditModule.copyPasteUtility = CopyPasteUtilityFx()
         EditModule.require()
 
         configurePropertyRenderer(propertyRendererRegistry)

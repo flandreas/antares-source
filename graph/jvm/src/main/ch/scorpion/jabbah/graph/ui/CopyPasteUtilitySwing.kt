@@ -24,9 +24,9 @@ import java.io.ByteArrayOutputStream
  * An utility class that provides methods for copying a collection of [Component]s to the system clipboard,
  * and pasting them back into the current [Drawing].
  */
-object CopyPasteUtility {
+object CopyPasteUtilitySwing {
 
-    private val LOG by logger(CopyPasteUtility::class)
+    private val LOG by logger(CopyPasteUtilitySwing::class)
 
     private val DEFAULT_DISTANCE_FACTOR = 3
 

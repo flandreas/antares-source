@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.app.CopyPasteUtility
 import ch.scorpion.jabbah.edit.app.DrawingService
 import ch.scorpion.jabbah.edit.app.DrawingServiceImpl
 import ch.scorpion.jabbah.edit.command.CommandManagerImpl
@@ -47,6 +48,8 @@ object EditModule : AbstractModule() {
     val attentionDrawerFactory: () -> AttentionDrawer = { AttentionDrawerImpl() }
 
     var drawingService: DrawingService = DrawingServiceImpl()
+
+    lateinit var copyPasteUtility: CopyPasteUtility
 
     override fun initialize() {
         DrawModule.require()

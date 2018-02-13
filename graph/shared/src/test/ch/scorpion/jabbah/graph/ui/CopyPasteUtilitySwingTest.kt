@@ -14,8 +14,8 @@ import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Test
 
-/** Unit tests for [CopyPasteUtility]. */
-class CopyPasteUtilityTest {
+/** Unit tests for [CopyPasteUtilitySwing]. */
+class CopyPasteUtilitySwingTest {
 
     companion object {
         @ClassRule @JvmField
@@ -42,10 +42,10 @@ class CopyPasteUtilityTest {
     }
 
     /** Creates a [TestGraphView] and performs a copy/paste for its [TestVerticeView] vv2.*/
-    fun copyPaste(): TestGraphView {
+    private fun copyPaste(): TestGraphView {
         val testGraphView = TestGraphView()
-        CopyPasteUtility.copy(testGraphView.graphView, listOf(testGraphView.vv2))
-        CopyPasteUtility.paste(DrawingViewMockBuilder().withDrawing(testGraphView.graphView).build())
+        CopyPasteUtilitySwing.copy(testGraphView.graphView, listOf(testGraphView.vv2))
+        CopyPasteUtilitySwing.paste(DrawingViewMockBuilder().withDrawing(testGraphView.graphView).build())
         return testGraphView
     }
 

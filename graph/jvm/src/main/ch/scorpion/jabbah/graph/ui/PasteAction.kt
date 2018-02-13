@@ -27,6 +27,6 @@ class PasteAction(
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
         val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
-        CopyPasteUtility.paste(drawingView, storableCreator, typeMap, cmdManager)
+        CopyPasteUtilitySwing.paste(drawingView, storableCreator, typeMap, cmdManager)
     }
 }
