@@ -24,6 +24,7 @@ abstract class AbstractDesktopApplicationFx(
 	protected val storedHeight = BaseModule.settings.getInt("application.frame.h", 800).toDouble()
 
 	init {
+		eventBus.register(CurrentSavableEvent::class, { updateTitle() })
 		primaryStage.x = BaseModule.settings.getInt("application.frame.x", 100).toDouble()
 		primaryStage.y = BaseModule.settings.getInt("application.frame.y", 100).toDouble()
 		primaryStage.width = storedWidth
@@ -121,5 +122,10 @@ abstract class AbstractDesktopApplicationFx(
 	/** ---- [AbstractDesktopApplicationFx] */
 
 	abstract fun fillPrimaryStage(primaryStage: Stage)
+
+	private fun updateTitle() {
+		val savableName = savable?.description ?: ""
+		primaryStage.title = "$displayName - $savableName"
+	}
 
 }
