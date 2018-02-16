@@ -12,10 +12,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.ThemeEvent
 import ch.scorpion.jabbah.draw.view.CanvasFx
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
@@ -103,10 +100,16 @@ class DrawingApplication : javafx.application.Application() {
 			(editor.view.canvas as CanvasFx).canvas.widthProperty().addListener { _ -> editor.view.repaint() }
 			(editor.view.canvas as CanvasFx).canvas.heightProperty().addListener { _ -> editor.view.repaint() }
 
-			val holder = StackPane()
-			holder.children.add((editor.view.canvas as CanvasFx).canvas)
-			BackgroundInstaller(DrawStyleModule.styleProvider, holder)
+			/*
+			val holder = SplitPane()
+			holder.items.add(ComponentPropertyPaneFx(editor))
+			holder.items.add(StackPane((editor.view.canvas as CanvasFx).canvas))
+			*/
+			val holder = BorderPane()
+			holder.left = ComponentPropertyPaneFx(editor)
+			holder.center = (editor.view.canvas as CanvasFx).canvas
 
+			BackgroundInstaller(DrawStyleModule.styleProvider, holder)
 			content.children.addAll(menuBar, toolBar, holder)
 
 			primaryStage.title = displayName

@@ -17,7 +17,7 @@ class PolylineComponentBeanInfo : AbstractBeanInfo<PolylineComponent>() {
 
     companion object {
         private val filled = PropertyImpl("edit.property.filled", Boolean::class.java)
-        private val styleType = PropertyImpl("graph.styleType", StyleType::class.java)
+        private val styleType = PropertyImpl("draw.styleType", StyleType::class.java)
         private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
     }
 

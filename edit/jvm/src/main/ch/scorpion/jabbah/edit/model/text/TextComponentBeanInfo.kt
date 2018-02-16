@@ -18,7 +18,7 @@ abstract class TextComponentBeanInfo<T : TextComponent>(
     companion object {
         private val filled = PropertyImpl("edit.property.filled", Boolean::class.java)
         private val stroked = PropertyImpl("edit.property.stroked", Boolean::class.java)
-        private val styleType = PropertyImpl("graph.styleType", StyleType::class.java)
+        private val styleType = PropertyImpl("draw.styleType", StyleType::class.java)
         private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
         private val text = PropertyImpl("edit.property.TextComponent.text", String::class.java)
     }
