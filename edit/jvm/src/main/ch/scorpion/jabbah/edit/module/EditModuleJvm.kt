@@ -4,8 +4,7 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.DirectionEditor
 import ch.scorpion.jabbah.base.swing.EnumRenderer
-import ch.scorpion.jabbah.draw.graphics.PredefinedColor
-import ch.scorpion.jabbah.draw.graphics.PredefinedColorRepository
+import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.StyleTypeEditor
@@ -74,6 +73,7 @@ object EditModuleJvm : AbstractModule() {
 
 	private fun registerPropertyEditorsFx(registry: PropertyEditorRegistryFx) {
 		registry.register(StyleType::class.java, StyleTypeEditorFx::class.java)
+		registry.register(PredefinedColor::class.java, PredefinedColorEditorFx::class.java)
 	}
 
     private fun registerTypes(typeMap: TypeMap) {

@@ -19,6 +19,14 @@ class Graphics2DFx(var g: GraphicsContext) : AbstractGraphics2D() {
 
 	    private val EMPTY_DASHES = arrayOf<Double>()
 
+	    fun toFxColor(color: Color): javafx.scene.paint.Color {
+		    val alpha =
+			    if (color.alpha == 255) 1.0
+			    else if (color.alpha == 0) 0.0
+			    else color.alpha / 255.0
+		    return javafx.scene.paint.Color.rgb(color.red, color.green, color.blue, alpha)
+	    }
+
         private fun toFxFontPosture(font: Font): FontPosture {
             if (font.isItalic()) {
                 return FontPosture.ITALIC
@@ -139,11 +147,7 @@ class Graphics2DFx(var g: GraphicsContext) : AbstractGraphics2D() {
         set(value) {
             if (field != value) {
                 field = value
-                val alpha =
-                        if (value.alpha == 255) 1.0
-                        else if (value.alpha == 0) 0.0
-                        else value.alpha / 255.0
-                val fxColor = javafx.scene.paint.Color.rgb(value.red, value.green, value.blue, alpha)
+                val fxColor = toFxColor(value)
                 g.fill = fxColor
                 g.stroke = fxColor
             }

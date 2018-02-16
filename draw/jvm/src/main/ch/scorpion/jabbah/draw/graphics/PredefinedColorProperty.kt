@@ -1,16 +1,21 @@
-package ch.scorpion.jabbah.edit
+package ch.scorpion.jabbah.draw.graphics
 
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.ColorIcon
-import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.draw.graphics.PredefinedColor
-import ch.scorpion.jabbah.draw.graphics.PredefinedColorProvider
+import javafx.beans.value.ObservableValue
+import javafx.scene.control.ComboBox
+import javafx.scene.control.ListCell
+import javafx.scene.control.ListView
+import javafx.scene.shape.Rectangle
+import javafx.util.Callback
+import org.controlsfx.control.PropertySheet
+import org.controlsfx.property.editor.AbstractPropertyEditor
 import java.awt.Component
 import javax.swing.*
 import javax.swing.table.TableCellRenderer
 
-
+// TODO Remove when Swing is not used any more
 class PredefinedColorRenderer : DefaultListCellRenderer(), TableCellRenderer {
 
     private val colorIcon = ColorIcon()
@@ -57,6 +62,7 @@ class PredefinedColorRenderer : DefaultListCellRenderer(), TableCellRenderer {
     }
 }
 
+// TODO Remove when Swing is not used any more
 class PredefinedColorEditor(colorProvider: PredefinedColorProvider) : ComboBoxPropertyEditor() {
     init {
         val list = mutableListOf<PredefinedColor?>(null)
@@ -64,4 +70,41 @@ class PredefinedColorEditor(colorProvider: PredefinedColorProvider) : ComboBoxPr
         setAvailableValues(list.toTypedArray())
         (editor as JComboBox<*>).renderer = PredefinedColorRenderer()
     }
+}
+
+object PredefinedColorRendererFx : Callback<ListView<PredefinedColor>, ListCell<PredefinedColor>> {
+	override fun call(param: ListView<PredefinedColor>?): ListCell<PredefinedColor> {
+		return object : ListCell<PredefinedColor>() {
+			override fun updateItem(item: PredefinedColor?, empty: Boolean) {
+				super.updateItem(item, empty)
+				if (item == null || empty) {
+					text = Translations.getString("edit.style.property.fromStyle.name")
+					graphic = null
+				} else {
+					val rect = Rectangle(10.0, 10.0, Graphics2DFx.toFxColor(item.color.backgroundColor))
+					rect.stroke = Graphics2DFx.toFxColor(item.color.foregroundColor)
+					text = item.toString()
+					graphic = rect
+				}
+			}
+		}
+	}
+}
+
+class PredefinedColorEditorFx(
+	item: PropertySheet.Item
+) : AbstractPropertyEditor<PredefinedColor,ComboBox<PredefinedColor>>(item, ComboBox()) {
+
+	init {
+		val colors = mutableListOf<PredefinedColor?>(null)
+		colors.addAll(PredefinedColorRepository.provideAll())
+		editor.items.setAll(colors)
+		editor.cellFactory = PredefinedColorRendererFx
+	}
+
+	override fun setValue(value: PredefinedColor?) {
+		editor.value = value
+	}
+
+	override fun getObservableValue(): ObservableValue<PredefinedColor> = editor.valueProperty()
 }
