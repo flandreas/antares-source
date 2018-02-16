@@ -82,6 +82,7 @@ abstract class AbstractDesktopApplicationFx(
 					val alert = Alert(Alert.AlertType.ERROR)
 					alert.title = Translations.getString("application.fileNotFound.title")
 					alert.contentText = Translations.getString("application.fileNotFound.text", commandLine.argList[0])
+					alert.initOwner(primaryStage)
 					alert.showAndWait()
 					newFile()
 				}
@@ -99,6 +100,7 @@ abstract class AbstractDesktopApplicationFx(
 		alert.headerText = null
 		alert.contentText = Translations.getString("application.unsavedData.question")
 		alert.buttonTypes.setAll(ButtonType.YES, ButtonType.NO, ButtonType.CANCEL)
+		alert.initOwner(primaryStage)
 		val answer = alert.showAndWait().get()
 
 		return when(answer) {

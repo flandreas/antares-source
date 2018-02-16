@@ -21,12 +21,14 @@ import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.io.Storable
+import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Stage
+import javafx.stage.WindowEvent
 
 class DrawingApplication : javafx.application.Application() {
 
@@ -52,7 +54,7 @@ class DrawingApplication : javafx.application.Application() {
 	}
 
 	override fun stop() {
-		app.quit()
+		app.stop()
 	}
 
 	/** ---- [DrawingApplication] */
@@ -73,6 +75,12 @@ class DrawingApplication : javafx.application.Application() {
 				editor.view.drawing = it.newData as Drawing<Component>
 			})
 			fillPrimaryStage(primaryStage)
+
+			primaryStage.onCloseRequest = EventHandler<WindowEvent> {
+				if (!canReplaceSavable("file.action.quit.name")) {
+					it.consume()
+				}
+			}
 		}
 
 		/** ---- [Application] */
@@ -110,6 +118,12 @@ class DrawingApplication : javafx.application.Application() {
 
 		override fun createNewApplicationData(): Storable {
 			return DrawingImpl<Component>()
+		}
+
+		/** ---- [DrawingApplicationJabbah] */
+
+		fun stop() {
+			shutdown()
 		}
 
 		private inner class BackgroundInstaller(private val styleProvider: StyleProvider, private val region: Region) {
