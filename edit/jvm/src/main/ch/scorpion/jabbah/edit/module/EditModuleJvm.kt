@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.draw.graphics.PredefinedColorRepository
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.StyleTypeEditor
+import ch.scorpion.jabbah.draw.style.StyleTypeEditorFx
 import ch.scorpion.jabbah.draw.style.StyleTypeRenderer
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.Size
@@ -32,6 +33,8 @@ object EditModuleJvm : AbstractModule() {
 
     val propertyEditorRegistry = DynamicPropertyEditorRegistry()
 
+	val propertyEditorRegistryFx = PropertyEditorRegistryFx()
+
     var propertySheetPanelFactory: PropertySheetPanelFactory = PropertySheetPanelFactoryImpl(
             propertyRendererRegistry, propertyEditorRegistry)
 
@@ -47,6 +50,8 @@ object EditModuleJvm : AbstractModule() {
 
         configurePropertyRenderer(propertyRendererRegistry)
         configurePropertyEditors(propertyEditorRegistry)
+
+	    registerPropertyEditorsFx(propertyEditorRegistryFx)
     }
 
     private fun configurePropertyRenderer(registry: PropertyRendererRegistry) {
@@ -66,6 +71,10 @@ object EditModuleJvm : AbstractModule() {
         registry.register(PredefinedColor::class.java, { PredefinedColorEditor(PredefinedColorRepository) })
         registry.register(TextProperty::class.java, TextPropertyEditorFactory())
     }
+
+	private fun registerPropertyEditorsFx(registry: PropertyEditorRegistryFx) {
+		registry.register(StyleType::class.java, StyleTypeEditorFx::class.java)
+	}
 
     private fun registerTypes(typeMap: TypeMap) {
         typeMap.register("text", TextComponent::class)

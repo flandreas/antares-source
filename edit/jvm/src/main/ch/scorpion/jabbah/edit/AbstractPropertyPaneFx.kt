@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import com.l2fprod.common.propertysheet.Property
 import javafx.beans.value.ObservableValue
 import javafx.scene.control.Label
@@ -29,6 +30,7 @@ abstract class AbstractPropertyPaneFx(
 	private var propertyObject: Any? = null
 
 	init {
+		sheet.propertyEditorFactory = EditModuleJvm.propertyEditorRegistryFx
 		children.add(label)
 		children.add(sheet)
 	}

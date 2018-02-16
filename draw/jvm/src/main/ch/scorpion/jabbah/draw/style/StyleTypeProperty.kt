@@ -1,16 +1,18 @@
 package ch.scorpion.jabbah.draw.style
 
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
 import java.awt.Component
 import javax.swing.DefaultListCellRenderer
 import javax.swing.JComboBox
 import javax.swing.JList
 import javax.swing.JTable
 import javax.swing.table.TableCellRenderer
-import ch.scorpion.jabbah.draw.style.StyleType
+import javafx.beans.value.ObservableValue
+import javafx.scene.control.ComboBox
+import org.controlsfx.control.PropertySheet
+import org.controlsfx.property.editor.AbstractPropertyEditor
 
+// TODO Remove when Swing is not used any more
 class StyleTypeEditor(styleProvider: StyleProvider) : ComboBoxPropertyEditor() {
 
     constructor(): this(DrawStyleModule.styleProvider)
@@ -21,6 +23,26 @@ class StyleTypeEditor(styleProvider: StyleProvider) : ComboBoxPropertyEditor() {
     }
 }
 
+class StyleTypeEditorFx(
+	item: PropertySheet.Item
+) : AbstractPropertyEditor<StyleType,ComboBox<StyleType>>(item, ComboBox()) {
+
+	private val styleProvider = DrawStyleModule.styleProvider
+
+	init {
+		editor.items.setAll(styleProvider.getStyleTypes())
+	}
+
+	override fun setValue(value: StyleType?) {
+		editor.value = value
+	}
+
+	override fun getObservableValue(): ObservableValue<StyleType> {
+		return editor.valueProperty()
+	}
+}
+
+// TODO Remove when Swing is not used any more
 class StyleTypeRenderer : DefaultListCellRenderer(), TableCellRenderer {
 
     override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
