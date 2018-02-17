@@ -1,24 +1,23 @@
 package ch.scorpion.jabbah.edit.editor
 
-import ch.scorpion.jabbah.edit.Command
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 
 /**
  * A [Command] for adding a [Component] to a [Drawing].
  */
 class AddCommand(
-    editor: Editor,
+    private val drawingView: DrawingView<Drawing<Component>>,
     val component: Component
-) : AbstractCommand("edit.command.add", editor){
+) : AbstractCommand("edit.command.add", null) {
+
+    constructor(editor: Editor, component: Component): this(editor.view, component)
 
     override fun execute() {
-        editor!!.drawing.add(component)
+        drawingView.drawing.add(component)
     }
 
     override fun undo() {
-        editor!!.drawing.remove(component)
+        drawingView.drawing.remove(component)
     }
 }

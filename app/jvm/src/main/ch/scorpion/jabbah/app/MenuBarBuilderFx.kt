@@ -55,6 +55,8 @@ class MenuBarBuilderFx(
 	    menu.items.add(SeparatorMenuItem())
         menu.items.add(ActionWrapperFx.wrap(MenuItem(), DeleteAction()))
         menu.items.add(ActionWrapperFx.wrap(MenuItem(), RotateAction()))
+	    menu.items.add(ActionWrapperFx.wrap(MenuItem(), GroupComponentsAction()))
+	    menu.items.add(ActionWrapperFx.wrap(MenuItem(), UngroupComponentsAction()))
         menu.items.add(SeparatorMenuItem())
         menu.items.add(ActionWrapperFx.wrap(MenuItem(), SelectAllAction()))
         menu.items.add(SeparatorMenuItem())

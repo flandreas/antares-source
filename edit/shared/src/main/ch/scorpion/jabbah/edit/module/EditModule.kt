@@ -17,6 +17,8 @@ import ch.scorpion.jabbah.edit.app.DrawingServiceImpl
 import ch.scorpion.jabbah.edit.command.CommandManagerImpl
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
+import ch.scorpion.jabbah.edit.model.group.EditModelGroupModule
+import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.model.polyline.EditModelPolylineModule
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 import ch.scorpion.jabbah.edit.model.rectangle.*
@@ -56,6 +58,7 @@ object EditModule : AbstractModule() {
         EditModelRectangleModule.require()
         EditModelPolylineModule.require()
         EditModelTextModule.require()
+	    EditModelGroupModule.require()
         EditSnapModule.require()
         EditSelectModule.require()
         EditEditorModule.require()
@@ -75,5 +78,6 @@ object EditModule : AbstractModule() {
         typeMap.register("polylineShape", PolylineShapeImpl::class)
         typeMap.register("label", LabelComponent::class)
         typeMap.register("text", SimpleTextComponent::class)
+        typeMap.register("group", GroupComponent::class)
     }
 }

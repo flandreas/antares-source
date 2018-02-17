@@ -106,7 +106,7 @@ open class ComponentTransferHandler(
     private fun importElement(elementView: Component, eventBus: EventBus) {
         LOG.debug("importData")
         try {
-            val command = AddCommand(editor, elementView)
+            val command = AddCommand(editor.view, elementView)
             editor.commandManager.execute(command)
             eventBus.post(DropEvent(editor, elementView))
             editor.view.selectionManager.deselectAll()

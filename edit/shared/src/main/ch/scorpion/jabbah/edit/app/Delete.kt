@@ -41,6 +41,8 @@ class DeleteCommand(
         private val components: List<Component>
 ) : AbstractCommand("edit.command.delete", null) {
 
+    constructor(drawingView: DrawingView<Drawing<Component>>, component: Component): this(drawingView, mutableListOf(component))
+
     override fun execute() {
         for (c in components) {
             drawingView.drawing.remove(c)
