@@ -49,8 +49,12 @@ abstract class AbstractPropertyPaneFx(
 	}
 
 	protected fun updateProperties(bean: Any) {
+		updateProperties(bean, bean.javaClass.name + "BeanInfo")
+	}
+
+	protected fun updateProperties(bean: Any, classPath: String) {
 		try {
-			val beanInfoClass = Class.forName(bean.javaClass.name + "BeanInfo")
+			val beanInfoClass = Class.forName(classPath)
 			val beanInfo = beanInfoClass.newInstance() as AbstractBeanInfo<Any>
 
 			sheet.items.setAll(beanInfo.getProperties(bean, editor).map { PropertyWrapper(it, bean) })

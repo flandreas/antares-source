@@ -21,20 +21,20 @@ class ToolBarBuilderFx(private val editor: Editor) {
 		val toolbar = ToolBar()
 
 		toolbar.items.add(ActionWrapperFx.imageButton(ToggleButton(),
-			ToolAction("edit.tool.select", editor.currentTool, editor, "/img/pointer.gif")))
+			ToolAction("edit.tool.select", editor.currentTool, editor, "/img/pointer24.png")))
 		toolbar.items.add(ActionWrapperFx.imageButton(ToggleButton(),
-			ToolAction("edit.tool.rectangle", RectangleTool(editor, { RectangleComponent() } ), editor, "/img/rectangle.png")))
+			ToolAction("edit.tool.rectangle", RectangleTool(editor, { RectangleComponent() } ), editor, "/img/rectangle24.png")))
 		toolbar.items.add(ActionWrapperFx.imageButton(ToggleButton(),
-			ToolAction("edit.tool.ellipse", RectangleTool(editor, { EllipseComponent() } ), editor, "/img/ellipse.png")))
+			ToolAction("edit.tool.ellipse", RectangleTool(editor, { EllipseComponent() } ), editor, "/img/oval24.png")))
 		toolbar.items.add(ActionWrapperFx.imageButton(ToggleButton(),
-			ToolAction("edit.tool.polyline", PolylineTool(editor, { PolylineComponent() } ), editor, "/img/polyline.gif")))
+			ToolAction("edit.tool.polyline", PolylineTool(editor, { PolylineComponent() } ), editor, "/img/polyline24.png")))
 		toolbar.items.add(ActionWrapperFx.imageButton(ToggleButton(),
-			ToolAction("edit.tool.text", TextTool(editor, { TextComponentJvm("Text") } ), editor, "/img/text.gif")))
+			ToolAction("edit.tool.text", TextTool(editor, { TextComponentJvm("Text") } ), editor, "/img/text24.png")))
 
 		toolbar.items.add(Separator())
 
 		val snapAction = ComponentSnapAction(editor)
-		snapAction.imagePath = "/img/snap.gif"
+		snapAction.imagePath = "/img/align24.png"
 		toolbar.items.add(ActionWrapperFx.imageButton(ToggleButton(), snapAction))
 
 		return toolbar

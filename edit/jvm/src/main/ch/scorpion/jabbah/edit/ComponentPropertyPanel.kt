@@ -51,6 +51,10 @@ class ComponentPropertyPanel(
     }
 
     private fun updateComponentProperties(component: Component) {
-        updateProperties(component.propertyOwner)
+        if (component.beanInfoClassName != null) {
+            updateProperties(component.propertyOwner, component.beanInfoClassName!!)
+        } else {
+            updateProperties(component.propertyOwner)
+        }
     }
 }

@@ -62,8 +62,12 @@ abstract class AbstractPropertyPanel(
     }
 
     protected fun updateProperties(bean: Any) {
+	    updateProperties(bean, bean.javaClass.name + "BeanInfo")
+    }
+
+    protected fun updateProperties(bean: Any, classPath: String) {
         try {
-            val beanInfoClass = Class.forName(bean.javaClass.name + "BeanInfo")
+            val beanInfoClass = Class.forName(classPath)
             val beanInfo = beanInfoClass.newInstance() as AbstractBeanInfo<Any>
 
             sheet.properties = beanInfo.getProperties(bean, editor)
@@ -74,7 +78,7 @@ abstract class AbstractPropertyPanel(
             propertyObject = bean
             updateLabel()
         } catch (e: Throwable) {
-            LOG.debug("Could not instantiate Properties for ${bean.javaClass.simpleName}: Exception $e")
+            LOG.debug("Could not instantiate Properties for $classPath: Exception $e")
             clearProperties()
         }
     }

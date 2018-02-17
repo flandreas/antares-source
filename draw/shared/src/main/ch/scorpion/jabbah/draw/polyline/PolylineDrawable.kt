@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.polyline
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable
@@ -25,6 +26,12 @@ class PolylineDrawable constructor(
     constructor(): this(DrawModule.polylineShapeFactory.invoke(null), StyleType.FIGURE, DrawStyleModule.styleProvider)
 
     val LOG by logger(PolylineDrawable::class)
+
+	/** ---- [Any] */
+
+    override fun toString(): String {
+        return Translations.getString("edit.component.polyline")
+    }
 
     /** ---- [Locatable] interface */
 

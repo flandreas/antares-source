@@ -71,6 +71,8 @@ class PolylineComponent(
      */
     override val propertyOwner: Any get() = polyline
 
+    override val beanInfoClassName: String? get() = "ch.scorpion.jabbah.edit.model.polyline.PolylineDrawableBeanInfo"
+
     /** ---- [Snappable] interface */
 
     override val snappableX: Array<SnappableX>

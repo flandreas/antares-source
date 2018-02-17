@@ -101,7 +101,9 @@ class DrawingApplication : javafx.application.Application() {
 			(editor.view.canvas as CanvasFx).canvas.widthProperty().addListener { _ -> editor.view.repaint() }
 			(editor.view.canvas as CanvasFx).canvas.heightProperty().addListener { _ -> editor.view.repaint() }
 
-			val scrollPane = ScrollPane(ComponentPropertyPaneFx(editor))
+			val propertyPane = ComponentPropertyPaneFx(editor)
+			propertyPane.padding = Insets(10.0, 10.0, 10.0, 10.0)
+			val scrollPane = ScrollPane(propertyPane)
 			scrollPane.hbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
 			scrollPane.vbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
 			scrollPane.prefViewportWidth = 350.0
