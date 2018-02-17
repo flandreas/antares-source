@@ -95,16 +95,38 @@ class PredefinedColorEditorFx(
 	item: PropertySheet.Item
 ) : AbstractPropertyEditor<PredefinedColor,ComboBox<PredefinedColor>>(item, ComboBox()) {
 
+	companion object {
+		/**
+		 * [ComboBox] doesn't work with `null` values, so use a "null pattern" object for displaying
+		 * and replace with `null` when transferring from and to property.
+		 */
+		private val nullPredefinedColor = PredefinedColor("null", "edit.style.property.fromStyle.name", CompositeColor())
+	}
+
 	init {
-		val colors = mutableListOf<PredefinedColor?>(null)
+		val colors = mutableListOf<PredefinedColor?>(nullPredefinedColor)
 		colors.addAll(PredefinedColorRepository.provideAll())
 		editor.items.setAll(colors)
 		editor.cellFactory = PredefinedColorRendererFx
+		editor.buttonCell = PredefinedColorRendererFx.call(null)
 	}
 
 	override fun setValue(value: PredefinedColor?) {
-		editor.value = value
+		if (value == null) {
+			editor.value = nullPredefinedColor
+		} else {
+			editor.value = value
+		}
 	}
 
-	override fun getObservableValue(): ObservableValue<PredefinedColor> = editor.valueProperty()
+	override fun getValue(): PredefinedColor? {
+		if (super.getValue() === nullPredefinedColor) {
+			return null
+		}
+		return super.getValue()
+	}
+
+	override fun getObservableValue(): ObservableValue<PredefinedColor> {
+		return editor.valueProperty()
+	}
 }

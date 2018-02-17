@@ -22,6 +22,7 @@ import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
+import javafx.scene.control.ScrollPane
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Stage
@@ -100,13 +101,13 @@ class DrawingApplication : javafx.application.Application() {
 			(editor.view.canvas as CanvasFx).canvas.widthProperty().addListener { _ -> editor.view.repaint() }
 			(editor.view.canvas as CanvasFx).canvas.heightProperty().addListener { _ -> editor.view.repaint() }
 
-			/*
-			val holder = SplitPane()
-			holder.items.add(ComponentPropertyPaneFx(editor))
-			holder.items.add(StackPane((editor.view.canvas as CanvasFx).canvas))
-			*/
+			val scrollPane = ScrollPane(ComponentPropertyPaneFx(editor))
+			scrollPane.hbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
+			scrollPane.vbarPolicy = ScrollPane.ScrollBarPolicy.AS_NEEDED
+			scrollPane.prefViewportWidth = 350.0
+
 			val holder = BorderPane()
-			holder.left = ComponentPropertyPaneFx(editor)
+			holder.left = scrollPane
 			holder.center = (editor.view.canvas as CanvasFx).canvas
 
 			BackgroundInstaller(DrawStyleModule.styleProvider, holder)

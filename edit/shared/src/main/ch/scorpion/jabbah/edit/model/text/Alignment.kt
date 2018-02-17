@@ -48,19 +48,19 @@ enum class HorizontalAlignment(val customName: String) {
 }
 
 enum class VerticalAlignment(val customName: String) {
-    BOTTOM("bottom") {
-        override fun opposite(): VerticalAlignment = TOP
-        override fun getY(baselineRect: Rectangle2D): Double = baselineRect.height
-    },
-
-    CENTER("center") {
-        override fun opposite(): VerticalAlignment = CENTER
-        override fun getY(baselineRect: Rectangle2D): Double = baselineRect.height / 2
-    },
-
     TOP("top") {
         override fun opposite(): VerticalAlignment = BOTTOM
         override fun getY(baselineRect: Rectangle2D): Double = 0.0
+    },
+
+	CENTER("center") {
+		override fun opposite(): VerticalAlignment = CENTER
+		override fun getY(baselineRect: Rectangle2D): Double = baselineRect.height / 2
+	},
+
+	BOTTOM("bottom") {
+        override fun opposite(): VerticalAlignment = TOP
+        override fun getY(baselineRect: Rectangle2D): Double = baselineRect.height
     };
 
     companion object {

@@ -31,6 +31,8 @@ abstract class AbstractPropertyPaneFx(
 
 	init {
 		sheet.propertyEditorFactory = EditModuleJvm.propertyEditorRegistryFx
+		sheet.isSearchBoxVisible = false
+		sheet.isModeSwitcherVisible = false
 		children.add(label)
 		children.add(sheet)
 	}
