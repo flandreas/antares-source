@@ -38,7 +38,7 @@ open class DrawingServiceImpl(
     }
 
 	override fun group(components: List<Component>, drawingView: DrawingView<Drawing<Component>>) {
-		checkArgument(components.size > 2, "grouping requires at least two Components")
+		checkArgument(components.size >= 2, "grouping requires at least two Components")
 		val group = GroupComponent(components)
 		commandManager.beginTransaction("edit.command.group", drawingView)
 		components.forEach { commandManager.execute(DeleteCommand(drawingView, it)) }
