@@ -9,10 +9,12 @@ import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
  */
 object BaseModuleJvm : AbstractModule() {
 
+	var useJavaFx: Boolean = false
+
 	override fun initialize() {
 		defineKeyCodes()
 
-		System.SYSTEM = SystemJvm()
+		System.SYSTEM = SystemJvm(useJavaFx)
 		Math = MathJvm()
 		LOG_SYSTEM = LogSystemJVM()
 		Translations = TranslationsJvm()
@@ -20,9 +22,22 @@ object BaseModuleJvm : AbstractModule() {
 		BaseModule.timeService = RealTimeServiceJvm()
 		BaseModule.require()
 	}
-	
+
 	private fun defineKeyCodes() {
-		KeyEvent.VK_LEFT = 0x25
-        KeyEvent.VK_RIGHT = 0x27
+		if (useJavaFx) {
+			defineKeyCodesFx()
+		} else {
+			defineKeyCodesSwing()
+		}
+	}
+	
+	private fun defineKeyCodesSwing() {
+		KeyEvent.VK_LEFT = java.awt.event.KeyEvent.VK_LEFT
+        KeyEvent.VK_RIGHT = java.awt.event.KeyEvent.VK_RIGHT
+		KeyEvent.VK_ESCAPE = java.awt.event.KeyEvent.VK_ESCAPE
+	}
+
+	private fun defineKeyCodesFx() {
+		// TODO
 	}
 }

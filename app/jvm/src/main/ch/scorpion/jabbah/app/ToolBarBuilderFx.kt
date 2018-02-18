@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.ActionWrapperFx
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.app.ComponentSnapAction
 import ch.scorpion.jabbah.edit.app.ToolAction
+import ch.scorpion.jabbah.edit.model.QuadCurveTool
+import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 import ch.scorpion.jabbah.edit.model.polyline.PolylineTool
 import ch.scorpion.jabbah.edit.model.rectangle.EllipseComponent
@@ -28,6 +30,9 @@ class ToolBarBuilderFx(private val editor: Editor) {
 			ToolAction("edit.tool.ellipse", RectangleTool(editor, { EllipseComponent() } ), editor, "/img/oval24.png")))
 		toolbar.items.add(ActionWrapperFx.imageButton(ToggleButton(),
 			ToolAction("edit.tool.polyline", PolylineTool(editor, { PolylineComponent() } ), editor, "/img/polyline24.png")))
+		toolbar.items.add(ActionWrapperFx.imageButton(ToggleButton(),
+			ToolAction("edit.tool.curve", QuadCurveTool(editor, { QuadCurveComponent() } ), editor, "/img/curve24.png")))
+
 		toolbar.items.add(ActionWrapperFx.imageButton(ToggleButton(),
 			ToolAction("edit.tool.text", TextTool(editor, { TextComponentJvm("Text") } ), editor, "/img/text24.png")))
 

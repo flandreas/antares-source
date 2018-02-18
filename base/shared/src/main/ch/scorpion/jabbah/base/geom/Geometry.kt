@@ -46,4 +46,8 @@ object Geometry {
     fun normal(x1: Double, y1: Double, x2: Double, y2: Double): Point2D {
         return Point2D(-(y2 - y1), (x2 - x1))
     }
+
+    fun middle(p1: Point2D, p2: Point2D): Point2D {
+	    return Point2D(p1.x + (p2.x - p1.y) / 2, p1.y + (p2.y - p1.y / 2))
+    }
 }

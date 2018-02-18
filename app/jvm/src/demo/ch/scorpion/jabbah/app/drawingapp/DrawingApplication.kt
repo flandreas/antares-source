@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.SystemJvm
 import ch.scorpion.jabbah.base.geom.AffineTransformFx
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -34,9 +35,9 @@ class DrawingApplication : javafx.application.Application() {
 		private val FILE_EXTENSION = "draw"
 
 		@JvmStatic fun main(args: Array<String>) {
+			BaseModuleJvm.useJavaFx = true
 			EditModuleJvm.require()
 			AppModule.require()
-			System.SYSTEM = SystemJvm(useJavaFX = true)
 
 			launch(DrawingApplication::class.java, *args)
 		}

@@ -6,7 +6,7 @@ package ch.scorpion.jabbah.base.geom
  */
 interface Shape {
 
-    /** The rectangular region that entirely encloses this [Shape].*/
+    /** Returns a copy of the rectangular region that entirely encloses this [Shape].*/
     val boundingBox: RectangularShape
 
     /** Tests if the specified coordinates are inside the boundary of this [Shape].*/

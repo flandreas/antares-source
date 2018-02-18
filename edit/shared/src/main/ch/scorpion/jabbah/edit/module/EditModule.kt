@@ -17,6 +17,8 @@ import ch.scorpion.jabbah.edit.app.DrawingServiceImpl
 import ch.scorpion.jabbah.edit.command.CommandManagerImpl
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
+import ch.scorpion.jabbah.edit.model.curve.EditModuleQuadCurveModule
+import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
 import ch.scorpion.jabbah.edit.model.group.EditModelGroupModule
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.model.polyline.EditModelPolylineModule
@@ -59,6 +61,7 @@ object EditModule : AbstractModule() {
         EditModelPolylineModule.require()
         EditModelTextModule.require()
 	    EditModelGroupModule.require()
+		EditModuleQuadCurveModule.require()
         EditSnapModule.require()
         EditSelectModule.require()
         EditEditorModule.require()
@@ -79,5 +82,6 @@ object EditModule : AbstractModule() {
         typeMap.register("label", LabelComponent::class)
         typeMap.register("text", SimpleTextComponent::class)
         typeMap.register("group", GroupComponent::class)
+        typeMap.register("quadCurve", QuadCurveComponent::class)
     }
 }
