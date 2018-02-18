@@ -1,7 +1,12 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.Math
-import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.event.InputEvent
+import ch.scorpion.jabbah.base.event.KeyListener
+import ch.scorpion.jabbah.base.event.MouseListener
+import ch.scorpion.jabbah.base.event.MouseMotionListener
+import ch.scorpion.jabbah.base.event.MouseWheelListener
+import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Canvas
@@ -11,6 +16,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DFx
 import javafx.event.EventHandler
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
@@ -30,6 +36,7 @@ class CanvasFx(
     private val mouseListeners: MutableList<MouseEventBridge> by lazy { mutableListOf<MouseEventBridge>() }
     private val mouseMotionListeners: MutableList<MouseMotionEventBridge> by lazy { mutableListOf<MouseMotionEventBridge>() }
     private val mouseWheelListeners: MutableList<MouseWheelEventBridge> by lazy { mutableListOf<MouseWheelEventBridge>() }
+	private val keyListeners: MutableList<KeyEventBridge> by lazy { mutableListOf<KeyEventBridge>() }
 
     override val view = viewFactory.invoke(this)
 
@@ -39,11 +46,12 @@ class CanvasFx(
     override var backgroundColor: Color = Color.WHITE
 
     init {
+	    canvas.isFocusTraversable = true
         view.initialize()
     }
 
     override fun requestViewFocus() {
-        // TODO
+        canvas.requestFocus()
     }
 
     override fun setCursor(cursor: Cursor) {
@@ -139,11 +147,22 @@ class CanvasFx(
     }
 
     override fun addKeyListener(l: KeyListener) {
-        // TODO
+        var bridge = keyEventBridgeOf(l)
+	    if (bridge == null) {
+		    bridge = KeyEventBridge(l)
+		    keyListeners.add(bridge)
+		    canvas.addEventHandler(KeyEvent.KEY_PRESSED, bridge)
+		    canvas.addEventHandler(KeyEvent.KEY_RELEASED, bridge)
+	    }
     }
 
     override fun removeKeyListener(l: KeyListener) {
-        // TODO
+        val bridge = keyEventBridgeOf(l)
+	    if (bridge != null) {
+		    keyListeners.remove(bridge)
+		    canvas.removeEventHandler(KeyEvent.KEY_PRESSED, bridge)
+		    canvas.removeEventHandler(KeyEvent.KEY_RELEASED, bridge)
+	    }
     }
 
     override fun setToolTipText(text: String?) {
@@ -214,7 +233,7 @@ class CanvasFx(
         }
 
         private fun convertModifiers(): Int {
-            var modifiers: Int = 0
+            var modifiers = 0
             if (scrollEvent.isShiftDown) {
                 modifiers = modifiers or ch.scorpion.jabbah.base.event.SHIFT_MASK
             }
@@ -237,6 +256,8 @@ class CanvasFx(
     private fun mouseMotionEventBridgeOf(l: MouseMotionListener): MouseMotionEventBridge? = mouseMotionListeners.firstOrNull { it.listener == l }
 
     private fun mouseWheelEventBridgeOf(l: MouseWheelListener): MouseWheelEventBridge? = mouseWheelListeners.firstOrNull { it.listener == l }
+
+	private fun keyEventBridgeOf(l: KeyListener): KeyEventBridge? = keyListeners.firstOrNull { it.listener == l }
 
     private inner class MouseEventBridge(val listener: MouseListener) : EventHandler<MouseEvent> {
         override fun handle(event: MouseEvent?) {
@@ -272,5 +293,51 @@ class CanvasFx(
             }
         }
     }
+
+    private class KeyEventFx(
+	    override val event: KeyEvent
+    ) : ch.scorpion.jabbah.base.event.KeyEvent {
+
+	    override val key: Int get() = event.code.ordinal
+
+	    override val source: Any get() = event.source
+
+	    override val modifiers: Int get() = convertModifiers()
+
+	    override fun consume() {
+		    event.consume()
+	    }
+
+	    private fun convertModifiers(): Int {
+		    var modifiers = 0
+		    if (event.isShiftDown) {
+			    modifiers = modifiers or ch.scorpion.jabbah.base.event.SHIFT_MASK
+		    }
+		    if (event.isControlDown) {
+			    modifiers = modifiers or ch.scorpion.jabbah.base.event.CTRL_MASK
+		    }
+		    if (event.isMetaDown) {
+			    modifiers = modifiers or ch.scorpion.jabbah.base.event.META_MASK
+		    }
+		    if (event.isAltDown) {
+			    modifiers = modifiers or ch.scorpion.jabbah.base.event.ALT_MASK
+		    }
+
+		    return modifiers
+	    }
+    }
+
+	private class KeyEventBridge(val listener: KeyListener) : EventHandler<KeyEvent> {
+		override fun handle(event: KeyEvent?) {
+			LOG.debug("KeyEvent $event")
+			if (event != null) {
+				val e = KeyEventFx(event)
+				when (event.eventType) {
+					KeyEvent.KEY_PRESSED -> listener.keyPressed(e)
+					KeyEvent.KEY_RELEASED -> listener.keyReleased(e)
+				}
+			}
+		}
+	}
 }
 

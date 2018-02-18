@@ -2,8 +2,6 @@ package ch.scorpion.jabbah.app.drawingapp
 
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.app.module.AppModule
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.SystemJvm
 import ch.scorpion.jabbah.base.geom.AffineTransformFx
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
@@ -13,6 +11,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.ThemeEvent
 import ch.scorpion.jabbah.draw.view.CanvasFx
 import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.draw.view.FocusPaneFx
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
@@ -111,7 +110,7 @@ class DrawingApplication : javafx.application.Application() {
 
 			val holder = BorderPane()
 			holder.left = scrollPane
-			holder.center = (editor.view.canvas as CanvasFx).canvas
+			holder.center = FocusPaneFx(editor.view)
 
 			BackgroundInstaller(DrawStyleModule.styleProvider, holder)
 			content.children.addAll(menuBar, toolBar, holder)

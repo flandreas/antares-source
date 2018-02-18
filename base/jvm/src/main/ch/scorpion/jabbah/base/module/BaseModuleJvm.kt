@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base.module
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
+import javafx.scene.input.KeyCode
 
 /**
  * Setup of the [ch.scorpion.jabbah.base] module for the JVM target.
@@ -38,6 +39,8 @@ object BaseModuleJvm : AbstractModule() {
 	}
 
 	private fun defineKeyCodesFx() {
-		// TODO
+		KeyEvent.VK_LEFT = KeyCode.LEFT.ordinal
+		KeyEvent.VK_RIGHT = KeyCode.RIGHT.ordinal
+		KeyEvent.VK_ESCAPE = KeyCode.ESCAPE.ordinal
 	}
 }

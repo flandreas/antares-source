@@ -59,8 +59,7 @@ class QuadCurveTool(
 		if (clickedCount == 3) {
 			editor.commandManager.register(AddCommand(editor, addedComponent))
 			editor.view.selectionManager.select(addedComponent)
-			editor.toolDone()
-			clickedCount = 0
+			terminateTool()
 		}
 	}
 
@@ -77,12 +76,14 @@ class QuadCurveTool(
 		}
 	}
 
-	override fun keyTyped(e: KeyEvent) {
-		if (e.key == KeyEvent.VK_ESCAPE && clickedCount > 0) {
-			editor.drawing.remove(addedComponent)
-			editor.drawing.validate()
+	override fun keyPressed(e: KeyEvent) {
+		if (e.key == KeyEvent.VK_ESCAPE) {
+			if (clickedCount > 0) {
+				editor.drawing.remove(addedComponent)
+				editor.drawing.validate()
+			}
+			terminateTool()
 		}
-		editor.toolDone()
 	}
 
 	/** ---- [QuadCurveTool] */
@@ -94,5 +95,10 @@ class QuadCurveTool(
 			3 -> listOf(instance.points[0], clickedLocation, instance.points[2])
 			else -> throw IllegalArgumentException("")
 		}
+	}
+
+	private fun terminateTool() {
+		editor.toolDone()
+		clickedCount = 0
 	}
 }

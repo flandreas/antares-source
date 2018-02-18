@@ -18,6 +18,8 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.PropertySheetPanelFactory
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.edit.model.QuadCurveTool
+import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 import ch.scorpion.jabbah.edit.model.polyline.PolylineTool
 import ch.scorpion.jabbah.edit.model.rectangle.EllipseComponent
@@ -324,8 +326,10 @@ class GraphPanel(
                 "/img/ellipse.png", Translations.getString("edit.component.ellipse"))
         toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
                 "/img/polyline.gif", Translations.getString("edit.component.polyline"))
-        toolbar.addTool(TextTool(editor, { TextComponentJvm("Text") }, { GraphElementViewWrapper<Vertice>(it)}),
-                "/img/text.gif", Translations.getString("edit.component.text"))
+	    toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
+		    "/img/polyline.gif", Translations.getString("edit.component.polyline"))
+        toolbar.addTool(QuadCurveTool(editor, { QuadCurveComponent() }, { GraphElementViewWrapper<Vertice>(it)}),
+                "/img/curve24.png", Translations.getString("edit.component.quadraticCurve"))
 
         return toolbar
     }
