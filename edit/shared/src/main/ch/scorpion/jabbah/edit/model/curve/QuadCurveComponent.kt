@@ -55,7 +55,7 @@ class QuadCurveComponent(points: List<Point2D>) : AbstractComponent(), Transpare
 			setPointsImpl(value)
 		}
 
-	override val type: String? get() = Translations.getString("edit.component.curve")
+	override val type: String? get() = Translations.getString("edit.component.quadraticCurve")
 
 	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
 		get() = SelectionDrawingStrategy.ABOVE
@@ -82,13 +82,6 @@ class QuadCurveComponent(points: List<Point2D>) : AbstractComponent(), Transpare
 		} else {
 			drawImpl(context, transparent.applyTo(foregroundColor), if (filled) transparent.applyTo(backgroundColor) else null)
 		}
-
-		// DEBUG BEGIN
-        context.g.color = Color.RED
-        context.g.stroke = Stroke(0.5f)
-        context.g.draw(boundingBox)
-		// DEBUG END
-
 	}
 
 	override fun contains(x: Double, y: Double): Boolean = path.contains(x, y)

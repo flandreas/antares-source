@@ -13,8 +13,7 @@ interface Shape {
     fun contains(x: Double, y: Double): Boolean
 
     /** Tests if the specified [Point2D] is inside the boundary of this [Shape].*/
-    fun contains(p: Point2D): Boolean
-        = contains(p.x, p.y)
+    fun contains(p: Point2D): Boolean = contains(p.x, p.y)
 
     /** Tests if the interior of this [Shape] entirely contains the specified rectangular area.*/
     fun contains(x: Double, y: Double, width: Double, height: Double): Boolean

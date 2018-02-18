@@ -48,6 +48,9 @@ class Path2DFx : Path {
         }
 
     override fun contains(x: Double, y: Double): Boolean {
+        // TEST BEGIN
+        path.isPickOnBounds = true
+        // TEST END
         return path.contains(x, y)
     }
 
