@@ -59,336 +59,339 @@ import javax.swing.*
  * and a [GraphNavigationPanel] for editing the [GraphView] at the center-right.
  */
 class GraphPanel(
-        val editor: Editor,
-        val eventBus: EventBus,
-        val libraryHolder: LibraryHolder,
-        private val viewManager: ViewManager,
-        graphNavigationPanelFactory: GraphNavigationPanelFactory,
-        var scheduler: Scheduler,
-        propertySheetFactory: PropertySheetPanelFactory
+	val editor: Editor,
+	val eventBus: EventBus,
+	val libraryHolder: LibraryHolder,
+	private val viewManager: ViewManager,
+	graphNavigationPanelFactory: GraphNavigationPanelFactory,
+	var scheduler: Scheduler,
+	propertySheetFactory: PropertySheetPanelFactory
 ) : JPanel() {
 
-    companion object {
-        private val DEF_SIDEBAR_SIZE = 200
-    }
+	companion object {
+		private val DEF_SIDEBAR_SIZE = 200
+	}
 
-    constructor(editor: Editor, viewManager: ViewManager): this(
-            editor,
-            BaseModule.eventBus,
-            LibraryModule.libraryHolder,
-            viewManager,
-            GraphModuleJvm.graphNavigationPanelFactory,
-            ExecutionModule.scheduler,
-            EditModuleJvm.propertySheetPanelFactory)
+	constructor(editor: Editor, viewManager: ViewManager) : this(
+		editor,
+		BaseModule.eventBus,
+		LibraryModule.libraryHolder,
+		viewManager,
+		GraphModuleJvm.graphNavigationPanelFactory,
+		ExecutionModule.scheduler,
+		EditModuleJvm.propertySheetPanelFactory)
 
-    private val modeToggleAction = ToggleModeAction(scheduler, eventBus)
+	private val modeToggleAction = ToggleModeAction(scheduler, eventBus)
 
-    private val mainPanel = JPanel(BorderLayout())
+	private val mainPanel = JPanel(BorderLayout())
 
-    private val scenarioPanel = ScenarioPanel(editor, eventBus, propertySheetFactory)
+	private val scenarioPanel = ScenarioPanel(editor, eventBus, propertySheetFactory)
 
-    private val libraryPropertyPanel: ComponentPropertyPanel
+	private val libraryPropertyPanel: ComponentPropertyPanel
 
-    val libraryPanel = LibraryPanel(eventBus, libraryHolder)
+	val libraryPanel = LibraryPanel(eventBus, libraryHolder)
 
-    val graphNavigationPanel = graphNavigationPanelFactory.create(
-        isRoot = true,
-        drawingView = editor.view as DrawingView<GraphView<GraphElementView<*>>>,
-        viewManager = viewManager,
-        closeHandler = null,
-        contextColor = null,
-        scheduler = scheduler)
+	val graphNavigationPanel = graphNavigationPanelFactory.create(
+		isRoot = true,
+		drawingView = editor.view as DrawingView<GraphView<GraphElementView<*>>>,
+		viewManager = viewManager,
+		closeHandler = null,
+		contextColor = null,
+		scheduler = scheduler)
 
-    private val drawingToolBar = createDrawingToolBar()
+	private val drawingToolBar = createDrawingToolBar()
 
-    private val settingsToolBar = createSettingsToolBar()
+	private val settingsToolBar = createSettingsToolBar()
 
-    private val rightSidebarPane: SidebarPane = SidebarPane(SidebarPane.Orientation.Vertical, { rightSidebarPaneChanged() })
+	private val rightSidebarPane: SidebarPane = SidebarPane(SidebarPane.Orientation.Vertical, { rightSidebarPaneChanged() })
 
-    private val bottomSidebarPane = SidebarPane(SidebarPane.Orientation.Horizontal, { bottomSidebarPaneChanged() })
+	private val bottomSidebarPane = SidebarPane(SidebarPane.Orientation.Horizontal, { bottomSidebarPaneChanged() })
 
-    val toolbars: List<JToolBar> = listOf(
-            createExecutionToolBar(),
-            drawingToolBar,
-            settingsToolBar)
+	val toolbars: List<JToolBar> = listOf(
+		createExecutionToolBar(),
+		drawingToolBar,
+		settingsToolBar)
 
-    private val librarySplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+	private val librarySplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-    private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
-    private val rightSidebarSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+	private val rightSidebarSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
-    private val bottonSidebarSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+	private val bottonSidebarSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-    /** Holds the location of [rightSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
-    private var rightSidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.rightSidebarSplitPos", -1)
+	/** Holds the location of [rightSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
+	private var rightSidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.rightSidebarSplitPos", -1)
 
-    /** Holds the location of [bottonSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
-    private var bottomSidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.bottomSidebarSplitPos", -1)
+	/** Holds the location of [bottonSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
+	private var bottomSidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.bottomSidebarSplitPos", -1)
 
-    private var currentMode: ApplicationMode = ApplicationMode.EDIT
+	private var currentMode: ApplicationMode = ApplicationMode.EDIT
 
-    /** Displays the current [Issue]s. */
-    private val issuesPanel = IssuesPanel()
+	/** Displays the current [Issue]s. */
+	private val issuesPanel = IssuesPanel()
 
-    init {
-        (editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
-        libraryPropertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
+	init {
+		(editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
+		libraryPropertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
-        eventBus.register(ActiveViewChangedEvent::class, { updateEditability() })
-        eventBus.register(ExecutionStoppedOnIssueEvent::class, {
-            eventBus.post(ComponentMessage(
-                    type = ComponentMessageType.Error,
-                    source = null,
-                    messageKey = "execution.scheduler.stoppedDueToIssue.msg"))
-        })
+		eventBus.register(ActiveViewChangedEvent::class, { updateEditability() })
+		eventBus.register(ExecutionStoppedOnIssueEvent::class, {
+			eventBus.post(ComponentMessage(
+				type = ComponentMessageType.Error,
+				source = null,
+				messageKey = "execution.scheduler.stoppedDueToIssue.msg"))
+		})
 
-        editor.view.addPropertyChangeListener(object : PropertyChangeListener<Any>{
-            override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-                if (e.name == DrawingView.PROP_EDITABLE) {
-                    updateEditability()
-                }
-            }
-        })
+		editor.view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
+			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+				if (e.name == DrawingView.PROP_EDITABLE) {
+					updateEditability()
+				}
+			}
+		})
 
-        buildUI()
-        setMode(ApplicationMode.EDIT, true)
-    }
+		buildUI()
+		setMode(ApplicationMode.EDIT, true)
+	}
 
-    fun dispose() {
-        BaseModule.settings.set("graphPanel.mainSplitPos", mainSplitPane.dividerLocation)
-        BaseModule.settings.set("graphPanel.librarySplitPos", librarySplitPane.dividerLocation)
-        BaseModule.settings.set("graphPanel.sidebarSplitPos", rightSidebarSplitPane.dividerLocation)
-    }
+	fun dispose() {
+		BaseModule.settings.set("graphPanel.mainSplitPos", mainSplitPane.dividerLocation)
+		BaseModule.settings.set("graphPanel.librarySplitPos", librarySplitPane.dividerLocation)
+		BaseModule.settings.set("graphPanel.sidebarSplitPos", rightSidebarSplitPane.dividerLocation)
+	}
 
-    private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
-            GraphPanelTransferHandler(editor, eventBus, GraphElementViewTransferable.FLAVOR, libraryHolder)
+	private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
+		GraphPanelTransferHandler(editor, eventBus, GraphElementViewTransferable.FLAVOR, libraryHolder)
 
-    fun setGraphView(newGraphView: GraphView<GraphElementView<*>>) {
-        val oldGraphView = graphNavigationPanel.drawingView.drawing
-        graphNavigationPanel.setRootGraphView(newGraphView)
-        scenarioPanel.graphView = newGraphView
-        eventBus.post(EditedGraphViewEvent(oldGraphView, newGraphView))
-    }
+	fun setGraphView(newGraphView: GraphView<GraphElementView<*>>) {
+		val oldGraphView = graphNavigationPanel.drawingView.drawing
+		graphNavigationPanel.setRootGraphView(newGraphView)
+		scenarioPanel.graphView = newGraphView
+		eventBus.post(EditedGraphViewEvent(oldGraphView, newGraphView))
+	}
 
-    private fun updateEditability() {
-        val editable = viewManager.activeView === editor.view && editor.view.editable
-        drawingToolBar.isEnabled = editable
-        settingsToolBar.isEnabled = editable
-        editor.active = editable && scheduler.isActive == false
-    }
+	private fun updateEditability() {
+		val editable = viewManager.activeView === editor.view && editor.view.editable
+		drawingToolBar.isEnabled = editable
+		settingsToolBar.isEnabled = editable
+		editor.active = editable && scheduler.isActive == false
+	}
 
-    private fun buildUI() {
-        layout = BorderLayout()
+	private fun buildUI() {
+		layout = BorderLayout()
 
-        librarySplitPane.border = null
-        librarySplitPane.add(libraryPanel)
-        librarySplitPane.add(libraryPropertyPanel)
-        librarySplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 700)
+		librarySplitPane.border = null
+		librarySplitPane.add(libraryPanel)
+		librarySplitPane.add(libraryPropertyPanel)
+		librarySplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 700)
 
-        rightSidebarSplitPane.border = null
-        rightSidebarSplitPane.resizeWeight = 1.0
+		rightSidebarSplitPane.border = null
+		rightSidebarSplitPane.resizeWeight = 1.0
 
-        bottonSidebarSplitPane.border = null
-        bottonSidebarSplitPane.resizeWeight = 1.0
+		bottonSidebarSplitPane.border = null
+		bottonSidebarSplitPane.resizeWeight = 1.0
 
-        val usecasesDummy = JLabel(Translations.getString("application.notYetImplemented.text"))
-        usecasesDummy.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        usecasesDummy.verticalAlignment = JLabel.TOP
+		val usecasesDummy = JLabel(Translations.getString("application.notYetImplemented.text"))
+		usecasesDummy.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
+		usecasesDummy.verticalAlignment = JLabel.TOP
 
-        rightSidebarPane.add(Translations.getString("graph.scenarios.title"), "/img/scenarios-16.png", scenarioPanel)
-        rightSidebarPane.add(Translations.getString("graph.usecases.title"), "/img/usecase-16.png", usecasesDummy)
+		rightSidebarPane.add(Translations.getString("graph.scenarios.title"), "/img/scenarios-16.png", scenarioPanel)
+		rightSidebarPane.add(Translations.getString("graph.usecases.title"), "/img/usecase-16.png", usecasesDummy)
 
-        bottomSidebarPane.add(Translations.getString("graph.issues.title"), "/img/issue-16.png", issuesPanel)
+		bottomSidebarPane.add(Translations.getString("graph.issues.title"), "/img/issue-16.png", issuesPanel)
 
-        mainSplitPane.add(librarySplitPane)
-        mainSplitPane.add(graphNavigationPanel)
-        mainSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.mainSplitPos", 250)
-        mainSplitPane.border = null
+		mainSplitPane.add(librarySplitPane)
+		mainSplitPane.add(graphNavigationPanel)
+		mainSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.mainSplitPos", 250)
+		mainSplitPane.border = null
 
-        mainPanel.add(mainSplitPane, BorderLayout.CENTER)
-        mainPanel.add(rightSidebarPane, BorderLayout.EAST)
+		mainPanel.add(mainSplitPane, BorderLayout.CENTER)
+		mainPanel.add(rightSidebarPane, BorderLayout.EAST)
 
-        add(mainPanel, BorderLayout.CENTER)
-        add(bottomSidebarPane, BorderLayout.SOUTH)
-    }
+		add(mainPanel, BorderLayout.CENTER)
+		add(bottomSidebarPane, BorderLayout.SOUTH)
+	}
 
-    /** Handles changes of the ´isOpen´ property of the [rightSidebarPane]. */
-    private fun rightSidebarPaneChanged() {
-        if (rightSidebarPane.isOpen) {
-            mainPanel.removeAll()
-            rightSidebarSplitPane.remove(rightSidebarPane)
-            rightSidebarSplitPane.remove(mainSplitPane)
-            rightSidebarSplitPane.add(mainSplitPane)
-            rightSidebarSplitPane.add(rightSidebarPane)
-            rightSidebarSplitPane.dividerLocation = if (rightSidebarDividerLocation > 0) rightSidebarDividerLocation else mainSplitPane.width - DEF_SIDEBAR_SIZE
-            rightSidebarDividerLocation = rightSidebarSplitPane.dividerLocation
-            mainPanel.add(rightSidebarSplitPane, BorderLayout.CENTER)
-        } else {
-            rightSidebarDividerLocation = rightSidebarSplitPane.dividerLocation
-            mainPanel.removeAll()
-            rightSidebarSplitPane.remove(rightSidebarPane)
-            rightSidebarSplitPane.remove(mainSplitPane)
-            mainPanel.add(mainSplitPane, BorderLayout.CENTER)
-            mainPanel.add(rightSidebarPane, BorderLayout.EAST)
-        }
-        revalidate()
-        repaint()
-    }
+	/** Handles changes of the ´isOpen´ property of the [rightSidebarPane]. */
+	private fun rightSidebarPaneChanged() {
+		if (rightSidebarPane.isOpen) {
+			mainPanel.removeAll()
+			rightSidebarSplitPane.remove(rightSidebarPane)
+			rightSidebarSplitPane.remove(mainSplitPane)
+			rightSidebarSplitPane.add(mainSplitPane)
+			rightSidebarSplitPane.add(rightSidebarPane)
+			rightSidebarSplitPane.dividerLocation = if (rightSidebarDividerLocation > 0) rightSidebarDividerLocation else mainSplitPane.width - DEF_SIDEBAR_SIZE
+			rightSidebarDividerLocation = rightSidebarSplitPane.dividerLocation
+			mainPanel.add(rightSidebarSplitPane, BorderLayout.CENTER)
+		} else {
+			rightSidebarDividerLocation = rightSidebarSplitPane.dividerLocation
+			mainPanel.removeAll()
+			rightSidebarSplitPane.remove(rightSidebarPane)
+			rightSidebarSplitPane.remove(mainSplitPane)
+			mainPanel.add(mainSplitPane, BorderLayout.CENTER)
+			mainPanel.add(rightSidebarPane, BorderLayout.EAST)
+		}
+		revalidate()
+		repaint()
+	}
 
-    /** Handles changes of the ´isOpen´ property of the [bottomSidebarPane]. */
-    private fun bottomSidebarPaneChanged() {
-        if (bottomSidebarPane.isOpen) {
-            removeAll()
-            bottonSidebarSplitPane.remove(mainPanel)
-            bottonSidebarSplitPane.remove(bottomSidebarPane)
-            bottonSidebarSplitPane.add(mainPanel)
-            bottonSidebarSplitPane.add(bottomSidebarPane)
-            bottonSidebarSplitPane.dividerLocation = if(bottomSidebarDividerLocation > 0) bottomSidebarDividerLocation else mainPanel.height - DEF_SIDEBAR_SIZE
-            bottomSidebarDividerLocation = bottonSidebarSplitPane.dividerLocation
-            add(bottonSidebarSplitPane, BorderLayout.CENTER)
-        } else {
-            bottomSidebarDividerLocation = bottonSidebarSplitPane.dividerLocation
-            removeAll()
-            bottonSidebarSplitPane.remove(mainPanel)
-            bottonSidebarSplitPane.remove(bottomSidebarPane)
-            add(mainPanel, BorderLayout.CENTER)
-            add(bottomSidebarPane, BorderLayout.SOUTH)
-        }
-        revalidate()
-        repaint()
-    }
+	/** Handles changes of the ´isOpen´ property of the [bottomSidebarPane]. */
+	private fun bottomSidebarPaneChanged() {
+		if (bottomSidebarPane.isOpen) {
+			removeAll()
+			bottonSidebarSplitPane.remove(mainPanel)
+			bottonSidebarSplitPane.remove(bottomSidebarPane)
+			bottonSidebarSplitPane.add(mainPanel)
+			bottonSidebarSplitPane.add(bottomSidebarPane)
+			bottonSidebarSplitPane.dividerLocation = if (bottomSidebarDividerLocation > 0) bottomSidebarDividerLocation else mainPanel.height - DEF_SIDEBAR_SIZE
+			bottomSidebarDividerLocation = bottonSidebarSplitPane.dividerLocation
+			add(bottonSidebarSplitPane, BorderLayout.CENTER)
+		} else {
+			bottomSidebarDividerLocation = bottonSidebarSplitPane.dividerLocation
+			removeAll()
+			bottonSidebarSplitPane.remove(mainPanel)
+			bottonSidebarSplitPane.remove(bottomSidebarPane)
+			add(mainPanel, BorderLayout.CENTER)
+			add(bottomSidebarPane, BorderLayout.SOUTH)
+		}
+		revalidate()
+		repaint()
+	}
 
-    private fun setMode(mode: ApplicationMode, init: Boolean) {
-        currentMode = mode
+	private fun setMode(mode: ApplicationMode, init: Boolean) {
+		currentMode = mode
 
-        when(currentMode) {
-            ApplicationMode.EDIT -> {
-                if (!init) {
-                    scheduler.isActive = false
-                }
-                editor.active = true
-                eventBus.post(ApplicationModeEvent(currentMode))
-            }
-            ApplicationMode.EXECUTE -> {
-                editor.view.selectionManager.deselectAll()
-                editor.active = false
-                InvocationHandler.invoke(Runnable {
-                    scheduler.isActive = true
-                    eventBus.post(ApplicationModeEvent(currentMode))
-                })
-            }
-        }
-    }
+		when (currentMode) {
+			ApplicationMode.EDIT -> {
+				if (!init) {
+					scheduler.isActive = false
+				}
+				editor.active = true
+				eventBus.post(ApplicationModeEvent(currentMode))
+			}
+			ApplicationMode.EXECUTE -> {
+				editor.view.selectionManager.deselectAll()
+				editor.active = false
+				InvocationHandler.invoke(Runnable {
+					scheduler.isActive = true
+					eventBus.post(ApplicationModeEvent(currentMode))
+				})
+			}
+		}
+	}
 
-    private fun createExecutionToolBar(): JToolBar {
-        val modeToggleButton = JToggleButton(modeToggleAction)
-        modeToggleButton.text = null
-        modeToggleButton.isFocusPainted = false
-        modeToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/powerOff-24.png"))
-        modeToggleButton.selectedIcon = ImageIcon(GraphPanel::class.java.getResource("/img/powerOff-24.png"))
-        modeToggleButton.toolTipText = modeToggleAction.getValue(Action.LONG_DESCRIPTION) as String?
-        modeToggleButton.isFocusPainted = false
+	private fun createExecutionToolBar(): JToolBar {
+		val modeToggleButton = JToggleButton(modeToggleAction)
+		modeToggleButton.text = null
+		modeToggleButton.isFocusPainted = false
+		modeToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/powerOff-24.png"))
+		modeToggleButton.selectedIcon = ImageIcon(GraphPanel::class.java.getResource("/img/powerOff-24.png"))
+		modeToggleButton.toolTipText = modeToggleAction.getValue(Action.LONG_DESCRIPTION) as String?
+		modeToggleButton.isFocusPainted = false
 
-        val pauseToggleButton = JToggleButton(ActionWrapperSwing(PauseExecutionAction(scheduler, eventBus)))
-        pauseToggleButton.text = null
-        modeToggleButton.isFocusPainted = false
-        pauseToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/PauseOff-24.png"))
-        pauseToggleButton.selectedIcon = ImageIcon(GraphPanel::class.java.getResource("/img/PauseOff-24.png"))
+		val pauseToggleButton = JToggleButton(ActionWrapperSwing(PauseExecutionAction(scheduler, eventBus)))
+		pauseToggleButton.text = null
+		modeToggleButton.isFocusPainted = false
+		pauseToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/PauseOff-24.png"))
+		pauseToggleButton.selectedIcon = ImageIcon(GraphPanel::class.java.getResource("/img/PauseOff-24.png"))
 
-        val stepButton = JButton(ActionWrapperSwing(StepExecutionAction(scheduler, eventBus)))
-        stepButton.text = null
-        stepButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/Resume-24.png"))
+		val stepButton = JButton(ActionWrapperSwing(StepExecutionAction(scheduler, eventBus)))
+		stepButton.text = null
+		stepButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/Resume-24.png"))
 
-        val speedSlider = SystemSpeedSlider()
-        speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
+		val speedSlider = SystemSpeedSlider()
+		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
 
-        val mainToolBar = JToolBar()
-        mainToolBar.isFloatable = false
-        mainToolBar.isRollover = true
-        mainToolBar.addSeparator()
-        mainToolBar.add(modeToggleButton)
-        mainToolBar.add(pauseToggleButton)
-        mainToolBar.add(stepButton)
-        mainToolBar.add(speedSlider)
+		val mainToolBar = JToolBar()
+		mainToolBar.isFloatable = false
+		mainToolBar.isRollover = true
+		mainToolBar.addSeparator()
+		mainToolBar.add(modeToggleButton)
+		mainToolBar.add(pauseToggleButton)
+		mainToolBar.add(stepButton)
+		mainToolBar.add(speedSlider)
 
-        return mainToolBar
-    }
+		return mainToolBar
+	}
 
-    private fun createDrawingToolBar(): ToolBar {
-        val toolbar = ToolBar(editor)
-        toolbar.addSeparator()
+	private fun createDrawingToolBar(): ToolBar {
+		val toolbar = ToolBar(editor)
+		toolbar.addSeparator()
 
-        toolbar.addTool(editor.currentTool, "/img/pointer.gif", Translations.getString("edit.tool.select"))
-        toolbar.addTool(RectangleTool(editor, { RectangleComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
-                "/img/rectangle.png", Translations.getString("edit.component.rectangle"))
-        toolbar.addTool(RectangleTool(editor, { EllipseComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
-                "/img/ellipse.png", Translations.getString("edit.component.ellipse"))
-        toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
-                "/img/polyline.gif", Translations.getString("edit.component.polyline"))
-	    toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
-		    "/img/polyline.gif", Translations.getString("edit.component.polyline"))
-        toolbar.addTool(QuadCurveTool(editor, { QuadCurveComponent() }, { GraphElementViewWrapper<Vertice>(it)}),
-                "/img/curve24.png", Translations.getString("edit.component.quadraticCurve"))
+		toolbar.addTool(editor.currentTool, "/img/pointer.gif", Translations.getString("edit.tool.select"))
+		toolbar.addTool(RectangleTool(editor, { RectangleComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
+			"/img/rectangle.png", Translations.getString("edit.component.rectangle"))
+		toolbar.addTool(RectangleTool(editor, { EllipseComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
+			"/img/ellipse.png", Translations.getString("edit.component.ellipse"))
+		toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
+			"/img/polyline.gif", Translations.getString("edit.component.polyline"))
+		toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
+			"/img/polyline.gif", Translations.getString("edit.component.polyline"))
+		toolbar.addTool(QuadCurveTool(editor, { QuadCurveComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
+			"/img/curve24.png", Translations.getString("edit.component.quadraticCurve"))
+		toolbar.addTool(TextTool(editor, { TextComponentJvm("Text") }, { GraphElementViewWrapper<Vertice>(it) }),
+			"/img/text.gif", Translations.getString("edit.component.text"))
 
-        return toolbar
-    }
+		return toolbar
+	}
 
-    private fun createSettingsToolBar(): ToolBar {
-        val toolBar = ToolBar(editor)
-        toolBar.addSeparator()
-        val action = ToggleComponentSnapAction()
-        val button = JToggleButton(action)
-        button.text = null
-        button.isFocusPainted = false
-        button.icon = ImageIcon(GraphPanel::class.java.getResource("/img/snap.gif"))
-        button.toolTipText = Translations.getString("edit.tool.align.name")
+	private fun createSettingsToolBar(): ToolBar {
+		val toolBar = ToolBar(editor)
+		toolBar.addSeparator()
+		val action = ToggleComponentSnapAction()
+		val button = JToggleButton(action)
+		button.text = null
+		button.isFocusPainted = false
+		button.icon = ImageIcon(GraphPanel::class.java.getResource("/img/snap.gif"))
+		button.toolTipText = Translations.getString("edit.tool.align.name")
 
-        toolBar.add(button)
+		toolBar.add(button)
 
-        return toolBar
-    }
+		return toolBar
+	}
 
-    /** Toggles a [Scheduler] on and off.*/
-    private inner class ToggleModeAction(private val scheduler: Scheduler, eventBus: EventBus) : AbstractAction() {
-        init {
-            updateState()
-            eventBus.register(SchedulerActivationStateEvent::class, { updateState() })
+	/** Toggles a [Scheduler] on and off.*/
+	private inner class ToggleModeAction(private val scheduler: Scheduler, eventBus: EventBus) : AbstractAction() {
+		init {
+			updateState()
+			eventBus.register(SchedulerActivationStateEvent::class, { updateState() })
 
-        }
-        override fun actionPerformed(e: ActionEvent?) {
-            if (scheduler.isActive) {
-                setMode(ApplicationMode.EDIT, false)
-            } else {
-                setMode(ApplicationMode.EXECUTE, false)
-            }
-        }
+		}
 
-        private fun updateState() {
-            putValue(Action.SELECTED_KEY, scheduler.isActive)
-        }
-    }
+		override fun actionPerformed(e: ActionEvent?) {
+			if (scheduler.isActive) {
+				setMode(ApplicationMode.EDIT, false)
+			} else {
+				setMode(ApplicationMode.EXECUTE, false)
+			}
+		}
 
-    private inner class ToggleComponentSnapAction : AbstractAction() {
-        init {
-            updateState()
-            editor.addPropertyChangeListener(object : PropertyChangeListener<Any> {
-                override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-                    if (e.name == Editor.PROP_COMPONENT_SNAP) {
-                        updateState()
-                    }
-                }
-            })
-        }
+		private fun updateState() {
+			putValue(Action.SELECTED_KEY, scheduler.isActive)
+		}
+	}
 
-        override fun actionPerformed(e: ActionEvent?) {
-            editor.componentSnap = !editor.componentSnap
-        }
+	private inner class ToggleComponentSnapAction : AbstractAction() {
+		init {
+			updateState()
+			editor.addPropertyChangeListener(object : PropertyChangeListener<Any> {
+				override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+					if (e.name == Editor.PROP_COMPONENT_SNAP) {
+						updateState()
+					}
+				}
+			})
+		}
 
-        private fun updateState() {
-            putValue(Action.SELECTED_KEY, editor.componentSnap)
-        }
-    }
+		override fun actionPerformed(e: ActionEvent?) {
+			editor.componentSnap = !editor.componentSnap
+		}
+
+		private fun updateState() {
+			putValue(Action.SELECTED_KEY, editor.componentSnap)
+		}
+	}
 }
 
 /** Posted on [EventBus] when the currently (one and only) edited root [GraphView] changes. */

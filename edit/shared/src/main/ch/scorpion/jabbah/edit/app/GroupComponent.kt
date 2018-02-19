@@ -31,7 +31,7 @@ class GroupComponentsAction(
 	}
 }
 
-/** An [Action] for un-grouping the selected [GrouComponent].*/
+/** An [Action] for un-grouping the selected [GroupComponent].*/
 class UngroupComponentsAction(
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager = DrawViewModule.viewManager,
@@ -41,11 +41,11 @@ class UngroupComponentsAction(
 	override fun execute(event: ActionEvent) {
 		val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
 		drawingService.ungroup(
-			drawingView.selectionManager.selection.first() as GroupComponent,
+			getSingleSelection()!!.propertyOwner as GroupComponent,
 			drawingView)
 	}
 
 	override fun calculateEnabled(): Boolean {
-		return getSelectionCount() == 1 && getSingleSelection() is GroupComponent
+		return getSelectionCount() == 1 && getSingleSelection()!!.propertyOwner is GroupComponent
 	}
 }

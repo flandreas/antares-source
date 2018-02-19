@@ -15,9 +15,10 @@ import ch.scorpion.jabbah.edit.module.EditModule
  */
 interface DrawingService {
 
-    /**
-     * Deletes the specified [Component] from its [Drawing].
-     */
+	/** Adds the specified [Component] to a [DrawingView]'s [Drawing].*/
+	fun add(component: Component, drawingView: DrawingView<Drawing<Component>>)
+
+    /** Deletes the specified [Component] from its [Drawing].*/
     fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>)
 
 	/** Replaces the specified [Component]s with a newly created [GroupComponent].*/
@@ -33,6 +34,10 @@ open class DrawingServiceImpl(
 
 	/** ---- [DrawingService] interface */
 
+	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>) {
+		commandManager.execute(AddCommand(drawingView, component))
+	}
+
     override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>) {
         commandManager.execute(DeleteCommand(drawingView, components))
     }
@@ -42,14 +47,14 @@ open class DrawingServiceImpl(
 		val group = GroupComponent(components)
 		commandManager.beginTransaction("edit.command.group", drawingView)
 		components.forEach { commandManager.execute(DeleteCommand(drawingView, it)) }
-		commandManager.execute(AddCommand(drawingView, group))
+		add(group, drawingView)
 		commandManager.commitTransaction()
 		drawingView.selectionManager.select(group)
 	}
 
 	override fun ungroup(component: GroupComponent, drawingView: DrawingView<Drawing<Component>>) {
 		commandManager.beginTransaction("edit.command.ungroup", drawingView)
-		commandManager.execute(DeleteCommand(drawingView, component))
+		delete(listOf(component), drawingView)
 		component.components.asReversed().forEach { commandManager.execute(AddCommand(drawingView, it)) }
 		commandManager.commitTransaction()
 		drawingView.selectionManager.select(component.components)
