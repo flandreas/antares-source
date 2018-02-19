@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
-import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -108,6 +108,12 @@ class QuadCurveComponent(points: List<Point2D>) : AbstractComponent(), Transpare
 		super.write(writer)
 		writer.writePoints("points", points)
 	}
+
+	/** ---- [Snappable] interface */
+
+	override val snappableX: Array<SnappableX> get() = arrayOf(SnappableXCoordinate(points[0].x), SnappableXCoordinate(points[2].x))
+
+	override val snappableY: Array<SnappableY> get() = arrayOf(SnappableYCoordinate(points[0].y), SnappableYCoordinate(points[2].y))
 
 	/** ---- [QuadCurveComponent] */
 
