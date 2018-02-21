@@ -94,6 +94,8 @@ class DrawingApplication : javafx.application.Application() {
 			val menuBar = MenuBarBuilderFx(this).menuBar
 			val toolBar = ToolBarBuilderFx(editor).build()
 
+			menuBar.isUseSystemMenuBar = true
+
 			(editor.view.canvas as CanvasFx).canvas.widthProperty().bind(content.widthProperty())
 			(editor.view.canvas as CanvasFx).canvas.heightProperty().bind(
 				content.heightProperty().subtract(menuBar.heightProperty().add(toolBar.heightProperty())))
