@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.edit.app.*
 import javafx.scene.control.*
 
-class MenuBarBuilderFx(
+open class MenuBarBuilderFx(
     private val application: DesktopApplication,
     private val eventBus: EventBus = BaseModule.eventBus
 ) {

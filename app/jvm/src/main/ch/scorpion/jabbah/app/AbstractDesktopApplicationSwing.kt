@@ -5,7 +5,16 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.Canvas
+import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.editor.EditEditorModule
+import ch.scorpion.jabbah.edit.model.DrawingImpl
+import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.io.File
@@ -116,5 +125,17 @@ abstract class AbstractDesktopApplicationSwing(
 
 	override fun shutdownUI() {
 		mainFrame.dispose()
+	}
+
+	/** ---- [AbstractDesktopApplicationSwing] */
+
+	protected open fun createMenuBarBuilder(): MenuBarBuilder {
+		return MenuBarBuilder(this, eventBus)
+	}
+
+	protected open fun createMainFrame(): AbstractApplicationFrame {
+		val canvas: Canvas = CanvasJvm({ DrawingViewImpl(DrawingImpl(), it) })
+		val editor: Editor = EditEditorModule.createEditor(canvas.view as DrawingView<Drawing<Component>>)
+		return SimpleApplicationFrame(this, editor, emptyList())
 	}
 }
