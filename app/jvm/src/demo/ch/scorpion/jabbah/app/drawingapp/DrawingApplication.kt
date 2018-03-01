@@ -74,6 +74,7 @@ class DrawingApplication : javafx.application.Application() {
 			})
 			fillPrimaryStage(primaryStage)
 
+			// TODO Move to super class
 			primaryStage.onCloseRequest = EventHandler<WindowEvent> {
 				if (!canReplaceSavable("file.action.quit.name")) {
 					it.consume()

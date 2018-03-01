@@ -1,18 +1,33 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.view.AntaresThemes
+import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.jabbah.app.AbstractDesktopApplicationFx
+import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.module.AppModule
+import ch.scorpion.jabbah.base.geom.AffineTransformFx
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.draw.view.CanvasFx
+import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.editor.EditEditorModule
+import ch.scorpion.jabbah.edit.model.DrawingImpl
+import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.uifx.GraphPaneFx
+import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.Storable
 import javafx.event.EventHandler
 import javafx.scene.Scene
-import javafx.scene.control.Button
-import javafx.scene.layout.BorderPane
+import javafx.scene.canvas.Canvas
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import javafx.stage.WindowEvent
@@ -45,9 +60,22 @@ class AntaresFx : javafx.application.Application() {
 		args: Array<String>
 	) : AbstractDesktopApplicationFx(primaryStage, args), Antares {
 
+		private var editor: Editor
 
 		init {
 			AntaresModuleJvm(this).require()
+
+			LibraryModule.libraryHolder.library.load()
+			fillStandardLibrary(LibraryModule.libraryHolder.library, IOModule.storableCreator)
+			AntaresThemes.install()
+
+			val canvas = Canvas()
+			val canvasFx = CanvasFx(canvas, { DrawingViewImpl(DrawingImpl<Component>(), it, { AffineTransformFx() }) })
+			editor = EditEditorModule.createEditor(canvasFx.view as DrawingView<Drawing<Component>>)
+			BaseModule.eventBus.register(ApplicationDataEvent::class, {
+				(editor.view as DrawingView<GraphView<GraphElementView<*>>>).drawing = (it.newData as MetaGraph).graph!!.graphView as GraphView<GraphElementView<*>>
+			})
+
 			fillPrimaryStage(primaryStage)
 
 			// TODO Move to super class
@@ -62,15 +90,6 @@ class AntaresFx : javafx.application.Application() {
 
 		// TODO
 		override val applicationDataChanged: Boolean get() = false
-
-		/** ---- [AbstractApplication] */
-
-		override fun init() {
-			LibraryModule.libraryHolder.library.load()
-			fillStandardLibrary(LibraryModule.libraryHolder.library, IOModule.storableCreator)
-			AntaresThemes.install()
-			super.init()
-		}
 
 		/** ---- [AbstractDesktopApplication] */
 
@@ -102,15 +121,20 @@ class AntaresFx : javafx.application.Application() {
 			val menuBar = AntaresMenuBarBuilderFx(this).menuBar
 			menuBar.isUseSystemMenuBar = true
 
-			val holder = BorderPane()
-			holder.center = Button("Test")
+			(editor.view.canvas as CanvasFx).canvas.widthProperty().bind(content.widthProperty())
+			(editor.view.canvas as CanvasFx).canvas.heightProperty().bind(
+				content.heightProperty().subtract(menuBar.heightProperty()))
 
-			content.children.addAll(menuBar, holder)
+			(editor.view.canvas as CanvasFx).canvas.widthProperty().addListener { _ -> editor.view.repaint() }
+			(editor.view.canvas as CanvasFx).canvas.heightProperty().addListener { _ -> editor.view.repaint() }
+
+			content.children.addAll(menuBar, GraphPaneFx(editor, DigitalComponentViewDrawer()).node)
 
 			primaryStage.title = displayName
 			primaryStage.scene = Scene(content)
 			primaryStage.show()
-		}
 
+			DrawViewModule.viewManager.activeView = editor.view
+		}
 	}
 }
