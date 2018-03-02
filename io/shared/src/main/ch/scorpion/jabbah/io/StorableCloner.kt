@@ -6,16 +6,20 @@ package ch.scorpion.jabbah.io
  */
 interface StorableCloner {
 
-    fun clone(storable: Storable): Storable
+	fun serialize(storable: Storable): String
 
-    fun clonePreservingIdentities(storable: Storable, storableCreator: StorableCreator): Storable
+	fun deserialize(s: String): Storable
 
-    fun cloneUsingCreator(storable: Storable, storableCreator: StorableCreator): Storable
+	fun clone(storable: Storable): Storable
 
-    fun clone(
-        storable: Storable,
-        identityProvider: GlobalIdentityProvider,
-        storableCreator: StorableCreator,
-        referenceResolver: ReferenceResolver
-    ): Storable
+	fun clonePreservingIdentities(storable: Storable, storableCreator: StorableCreator): Storable
+
+	fun cloneUsingCreator(storable: Storable, storableCreator: StorableCreator): Storable
+
+	fun clone(
+		storable: Storable,
+		identityProvider: GlobalIdentityProvider,
+		storableCreator: StorableCreator,
+		referenceResolver: ReferenceResolver
+	): Storable
 }

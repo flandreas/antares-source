@@ -7,41 +7,49 @@ import ch.scorpion.jabbah.io.module.DomXmlWriter
  * A [StorableCloner] implementation for the JavaScript platform.
  * TODO Refactor: Extract methods common to JVM implementation into base class.
  */
-class StorableClonerJs(private val typeMap: TypeMap) : StorableCloner {
+class StorableClonerJs(private val typeMap: TypeMap = IOModule.typeMap) : StorableCloner {
 
-    constructor(): this(IOModule.typeMap)
+	companion object {
+		private val LOG by logger(StorableClonerJs::class)
+	}
 
-    private val LOG by logger(StorableClonerJs::class)
+	/** ---- [StorableCloner] interface */
 
-    /** ---- [StorableCloner] interface */
+	override fun serialize(storable: Storable): String {
+		throw UnsupportedOperationException("not implemented")
+	}
 
-    override fun clone(storable: Storable): Storable {
-        return clone(storable, GlobalIdentityCreator(), IOModule.storableCreator, ReferenceResolverImpl())
-    }
+	override fun deserialize(s: String): Storable {
+		throw UnsupportedOperationException("not implemented")
+	}
 
-    override fun clonePreservingIdentities(storable: Storable, storableCreator: StorableCreator): Storable {
-        return clone(storable, GlobalIdentityReflector(), storableCreator, ReferenceResolverImpl())
-    }
+	override fun clone(storable: Storable): Storable {
+		return clone(storable, GlobalIdentityCreator(), IOModule.storableCreator, ReferenceResolverImpl())
+	}
 
-    override fun cloneUsingCreator(storable: Storable, storableCreator: StorableCreator): Storable {
-        return clone(storable, GlobalIdentityCreator(), storableCreator, ReferenceResolverImpl())
-    }
+	override fun clonePreservingIdentities(storable: Storable, storableCreator: StorableCreator): Storable {
+		return clone(storable, GlobalIdentityReflector(), storableCreator, ReferenceResolverImpl())
+	}
 
-    override fun clone(storable: Storable, identityProvider: GlobalIdentityProvider, storableCreator: StorableCreator, referenceResolver: ReferenceResolver): Storable {
-        try {
-            var buffer: String? = null
-            val xmlWriter = DomXmlWriter({ buffer = it})
-            val writer = StoreXmlWriter(xmlWriter, typeMap, identityProvider)
-            writer.writeStorable(storable)
+	override fun cloneUsingCreator(storable: Storable, storableCreator: StorableCreator): Storable {
+		return clone(storable, GlobalIdentityCreator(), storableCreator, ReferenceResolverImpl())
+	}
 
-            LOG.debug(buffer?: "empty")
+	override fun clone(storable: Storable, identityProvider: GlobalIdentityProvider, storableCreator: StorableCreator, referenceResolver: ReferenceResolver): Storable {
+		try {
+			var buffer: String? = null
+			val xmlWriter = DomXmlWriter({ buffer = it })
+			val writer = StoreXmlWriter(xmlWriter, typeMap, identityProvider)
+			writer.writeStorable(storable)
 
-            val xmlReader = DomXmlReader(buffer!!)
-            val reader = StoreXmlReader(xmlReader, typeMap, storableCreator, referenceResolver)
-            return reader.readStorable()
-        } catch (x: Throwable) {
-            LOG.error("Error while cloning Storable: ${x.message}")
-            throw x
-        }
-    }
+			LOG.debug(buffer ?: "empty")
+
+			val xmlReader = DomXmlReader(buffer!!)
+			val reader = StoreXmlReader(xmlReader, typeMap, storableCreator, referenceResolver)
+			return reader.readStorable()
+		} catch (x: Throwable) {
+			LOG.error("Error while cloning Storable: ${x.message}")
+			throw x
+		}
+	}
 }

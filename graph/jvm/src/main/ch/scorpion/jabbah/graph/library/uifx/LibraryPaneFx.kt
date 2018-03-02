@@ -9,16 +9,18 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2DFx
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.ComponentDataFormat
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.library.LibraryDirectory
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.io.IOModule
 import javafx.application.Platform
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -27,9 +29,12 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.control.Label
 import javafx.scene.control.TitledPane
 import javafx.scene.control.Tooltip
+import javafx.scene.input.ClipboardContent
+import javafx.scene.input.TransferMode
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
+import java.nio.ByteBuffer
 
 /**
  * A controller of a [Node] for displaying the contents of a [Library].
@@ -113,6 +118,7 @@ class LibraryElementNode(
 	init {
 		buildUI()
 		layout()
+		setupDragSource()
 		draw()
 		if (StringUtils.isNotEmpty(component.shortDescription)) {
 			Tooltip.install(_node, Tooltip(component.shortDescription))
@@ -149,5 +155,24 @@ class LibraryElementNode(
 		g.scale(scale, scale)
 		drawableDrawer.process(DrawContext(g, GraphApplicationContext()), component)
 		g.scale(1 / scale, 1 / scale)
+	}
+
+	private fun setupDragSource() {
+		node.setOnDragDetected {
+			LOG.debug("LibraryElementNode: starting drag")
+			val dragboard = node.startDragAndDrop(TransferMode.COPY)
+
+			val content = ClipboardContent()
+			//val data = ComponentSerializableFx(component as GraphElementView<GraphElement>)
+			val data = IOModule.storableClonerProvider.invoke().serialize(component)
+
+			val buffer = ByteBuffer.allocate(10)
+			buffer.putInt(42)
+
+			content.put(ComponentDataFormat, data)
+			dragboard.setContent(content)
+
+			it.consume()
+		}
 	}
 }
