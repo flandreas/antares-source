@@ -28,6 +28,7 @@ import ch.scorpion.jabbah.io.Storable
 import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
+import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import javafx.stage.WindowEvent
@@ -55,12 +56,18 @@ class AntaresFx : javafx.application.Application() {
 		app.start()
 	}
 
+	override fun stop() {
+		app.stop()
+	}
+
 	private inner class AntaresApplication(
 		primaryStage: Stage,
 		args: Array<String>
 	) : AbstractDesktopApplicationFx(primaryStage, args), Antares {
 
 		private var editor: Editor
+
+		private lateinit var graphPane: GraphPaneFx
 
 		init {
 			AntaresModuleJvm(this).require()
@@ -84,6 +91,10 @@ class AntaresFx : javafx.application.Application() {
 					it.consume()
 				}
 			}
+		}
+
+		fun stop() {
+			shutdown()
 		}
 
 		/** ---- [Application] */
@@ -114,21 +125,22 @@ class AntaresFx : javafx.application.Application() {
 			return MetaGraph()
 		}
 
+		override fun shutdownUI() {
+			graphPane.dispose()
+			super.shutdownUI()
+		}
+
 		/** ---- [AbstractDesktopApplicationFx] */
 
 		override fun fillPrimaryStage(primaryStage: Stage) {
-			val content = VBox()
+			val content = BorderPane()
 			val menuBar = AntaresMenuBarBuilderFx(this).menuBar
 			menuBar.isUseSystemMenuBar = true
 
-			(editor.view.canvas as CanvasFx).canvas.widthProperty().bind(content.widthProperty())
-			(editor.view.canvas as CanvasFx).canvas.heightProperty().bind(
-				content.heightProperty().subtract(menuBar.heightProperty()))
+			graphPane = GraphPaneFx(editor, DigitalComponentViewDrawer())
+			content.top = menuBar
+			content.center = graphPane.node
 
-			(editor.view.canvas as CanvasFx).canvas.widthProperty().addListener { _ -> editor.view.repaint() }
-			(editor.view.canvas as CanvasFx).canvas.heightProperty().addListener { _ -> editor.view.repaint() }
-
-			content.children.addAll(menuBar, GraphPaneFx(editor, DigitalComponentViewDrawer()).node)
 
 			primaryStage.title = displayName
 			primaryStage.scene = Scene(content)

@@ -45,6 +45,11 @@ class FocusPaneFx(
 		center = getFxCanvas()
 		border = nonFocusBorder
 
+		getFxCanvas().widthProperty().bind(this.widthProperty())
+		getFxCanvas().heightProperty().bind(this.heightProperty())
+
+		getFxCanvas().widthProperty().addListener { _ -> view.repaint() }
+		getFxCanvas().heightProperty().addListener { _ -> view.repaint() }
 	}
 
 	private fun getFxCanvas(): Canvas = (view.canvas as CanvasFx).canvas

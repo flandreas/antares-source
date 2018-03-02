@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import javafx.application.Application
 import javafx.application.Platform
@@ -19,6 +20,10 @@ abstract class AbstractDesktopApplicationFx(
 	args: Array<String>,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractDesktopApplication(args, eventBus) {
+
+	companion object {
+		private val LOG by logger(AbstractDesktopApplicationFx::class)
+	}
 
 	protected val storedWidth = BaseModule.settings.getInt("application.frame.w", 1000).toDouble()
 	protected val storedHeight = BaseModule.settings.getInt("application.frame.h", 800).toDouble()
@@ -118,6 +123,12 @@ abstract class AbstractDesktopApplicationFx(
 		BaseModule.settings.set("application.frame.y", primaryStage.y.toInt())
 		BaseModule.settings.set("application.frame.w", primaryStage.width.toInt())
 		BaseModule.settings.set("application.frame.h", primaryStage.height.toInt())
+	}
+
+	override fun shutdown() {
+		LOG.info("Shutting $displayName down")
+		shutdownUI()
+		storeProperties()
 		Platform.exit()
 	}
 

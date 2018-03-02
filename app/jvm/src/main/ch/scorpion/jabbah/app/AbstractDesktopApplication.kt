@@ -112,7 +112,7 @@ abstract class AbstractDesktopApplication(
 
 	protected abstract fun shutdownUI()
 
-	protected fun shutdown() {
+	protected open fun shutdown() {
 		LOG.info("Shutting $displayName down")
 		// TODO Provide service for loading/storing Properties
 		shutdownUI()
@@ -176,7 +176,7 @@ abstract class AbstractDesktopApplication(
 		}
 	}
 
-	private fun storeProperties() {
+	protected fun storeProperties() {
 		val path = getSettingsPath()
 		LOG.debug("Storing settings in $path")
 		ensureHomeDirectory()

@@ -44,18 +44,18 @@ class LibraryPaneFx(
 		private val LOG by logger(LibraryPaneFx::class)
 	}
 
-	private lateinit var _node: Pane
-	val node: Node get() = _node
+	private lateinit var _node: VBox
+	val node: VBox get() = _node
 
-	private lateinit var drawableDrawer: DrawableDrawer<Component>
-
-	init {
-		drawableDrawer = if (outerDrawableDrawer == null) {
+	private var drawableDrawer: DrawableDrawer<Component> =
+		if (outerDrawableDrawer == null) {
 			DefaultDrawableDrawer<Component>()
 		} else {
 			outerDrawableDrawer.successor = DefaultDrawableDrawer<Component>()
 			outerDrawableDrawer
 		}
+
+	init {
 		buildUI()
 	}
 
@@ -63,6 +63,7 @@ class LibraryPaneFx(
 
 	private fun buildUI() {
 		_node = VBox()
+		_node.isFillWidth = true
 		fillNodes()
 	}
 
