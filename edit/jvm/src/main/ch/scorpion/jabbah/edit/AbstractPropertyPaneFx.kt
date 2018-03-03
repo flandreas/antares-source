@@ -80,6 +80,10 @@ abstract class AbstractPropertyPaneFx(
 		}
 	}
 
+	/**
+	 * Wraps a [Property] to implement the [PropertySheet.Item] interface.
+	 * TODO: Once the migration to JavaFX has been completed, get rid of the l2fprod Property class.
+	 */
 	private inner class PropertyWrapper(private val property: Property, private val bean: Any) : PropertySheet.Item {
 
 		override fun setValue(value: Any?) {
@@ -102,5 +106,7 @@ abstract class AbstractPropertyPaneFx(
 		override fun getObservableValue(): Optional<ObservableValue<out Any>> = Optional.empty()
 
 		override fun getCategory(): String? = property.category
+
+		override fun isEditable(): Boolean = property.isEditable
 	}
 }
