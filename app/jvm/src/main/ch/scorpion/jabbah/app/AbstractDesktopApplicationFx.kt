@@ -140,5 +140,4 @@ abstract class AbstractDesktopApplicationFx(
 		val savableName = savable?.description ?: ""
 		primaryStage.title = "$displayName - $savableName"
 	}
-
 }

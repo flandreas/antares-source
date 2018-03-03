@@ -50,6 +50,8 @@ class FocusPaneFx(
 
 		getFxCanvas().widthProperty().addListener { _ -> view.repaint() }
 		getFxCanvas().heightProperty().addListener { _ -> view.repaint() }
+
+		BackgroundInstallerFx(this)
 	}
 
 	private fun getFxCanvas(): Canvas = (view.canvas as CanvasFx).canvas

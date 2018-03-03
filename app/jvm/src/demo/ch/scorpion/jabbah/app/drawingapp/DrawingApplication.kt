@@ -5,10 +5,7 @@ import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.geom.AffineTransformFx
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.draw.style.ThemeEvent
+import ch.scorpion.jabbah.draw.view.BackgroundInstallerFx
 import ch.scorpion.jabbah.draw.view.CanvasFx
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.FocusPaneFx
@@ -24,7 +21,6 @@ import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.*
-import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.WindowEvent
 
@@ -115,7 +111,7 @@ class DrawingApplication : javafx.application.Application() {
 			holder.left = scrollPane
 			holder.center = FocusPaneFx(editor.view)
 
-			BackgroundInstaller(DrawStyleModule.styleProvider, holder)
+			BackgroundInstallerFx(holder)
 			content.children.addAll(menuBar, toolBar, holder)
 
 			primaryStage.title = displayName
@@ -133,19 +129,6 @@ class DrawingApplication : javafx.application.Application() {
 
 		fun stop() {
 			shutdown()
-		}
-
-		private inner class BackgroundInstaller(private val styleProvider: StyleProvider, private val region: Region) {
-
-			init {
-				BaseModule.eventBus.register(ThemeEvent::class, { installBackgroundColor() })
-				installBackgroundColor()
-			}
-
-			private fun installBackgroundColor() {
-				val color = styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
-				region.background = Background(BackgroundFill(Color.rgb(color.red, color.green, color.blue), CornerRadii.EMPTY, Insets.EMPTY))
-			}
 		}
 	}
 }
