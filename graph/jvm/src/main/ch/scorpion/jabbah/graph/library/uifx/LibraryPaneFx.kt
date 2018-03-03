@@ -29,6 +29,7 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.control.Label
 import javafx.scene.control.TitledPane
 import javafx.scene.control.Tooltip
+import javafx.scene.image.WritableImage
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.HBox
@@ -102,6 +103,7 @@ class LibraryElementNode(
 		private val LOG by logger(LibraryElementNode::class)
 		private val CANVAS_WIDTH = 60.0
 		private val CANVAS_HEIGHT = 60.0
+		private val DUMMY_IMAGE = WritableImage(1, 1)
 	}
 
 	private lateinit var _node: HBox
@@ -161,9 +163,9 @@ class LibraryElementNode(
 		node.setOnDragDetected {
 			LOG.debug("LibraryElementNode: starting drag")
 			val dragboard = node.startDragAndDrop(TransferMode.COPY)
+			dragboard.setDragView(DUMMY_IMAGE, 0.0, 0.0)
 
 			val content = ClipboardContent()
-			//val data = ComponentSerializableFx(component as GraphElementView<GraphElement>)
 			val data = IOModule.storableClonerProvider.invoke().serialize(component)
 
 			val buffer = ByteBuffer.allocate(10)
