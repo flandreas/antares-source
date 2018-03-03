@@ -5,6 +5,8 @@ import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.jabbah.app.AbstractDesktopApplicationFx
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.module.AppModule
+import ch.scorpion.jabbah.base.fx.ResizableCanvasFx
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.style.Themes
@@ -43,6 +45,7 @@ class AntaresFx : javafx.application.Application() {
 			AppModule.require()
 			launch(AntaresFx::class.java, *args)
 		}
+
 	}
 
 	private lateinit var app: AntaresApplication
@@ -63,6 +66,8 @@ class AntaresFx : javafx.application.Application() {
 		args: Array<String>
 	) : AbstractDesktopApplicationFx(primaryStage, args), Antares {
 
+		private val LOG by logger(AntaresApplication::class)
+
 		private var editor: Editor
 
 		private lateinit var graphPane: GraphPaneFx
@@ -74,10 +79,14 @@ class AntaresFx : javafx.application.Application() {
 			fillStandardLibrary(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 			AntaresThemes.install()
 
-			val canvas = Canvas()
+			val canvas = ResizableCanvasFx()
 			val canvasFx = CanvasFx(canvas, {
 				EditModule.drawingViewFactory.invoke(DrawingImpl<Component>(), it)
 			})
+			canvas.repaintCallback = {
+				LOG.debug("AntaresFX: repaintCallback")
+				canvasFx.repaint()
+			}
 			editor = EditEditorModule.createEditor(canvasFx.view as DrawingView<Drawing<Component>>)
 
 			BaseModule.eventBus.register(ApplicationDataEvent::class, {

@@ -23,7 +23,7 @@ class FocusPaneFx(
 ) : BorderPane() {
 	companion object {
 		private val focusBorder = Border(BorderStroke(Graphics2DFx.toFxColor(Color(3, 158, 211)), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.DEFAULT_WIDTHS))
-		private val nonFocusBorder = Border(BorderStroke(Graphics2DFx.toFxColor(Color.BLACK), BorderStrokeStyle.NONE, CornerRadii.EMPTY, BorderStroke.THIN))
+		private val nonFocusBorder = Border(BorderStroke(Graphics2DFx.toFxColor(Color.BLACK), BorderStrokeStyle.NONE, CornerRadii.EMPTY, BorderStroke.DEFAULT_WIDTHS))
 	}
 
 	init {
@@ -45,11 +45,11 @@ class FocusPaneFx(
 		center = getFxCanvas()
 		border = nonFocusBorder
 
-		getFxCanvas().widthProperty().bind(this.widthProperty())
-		getFxCanvas().heightProperty().bind(this.heightProperty())
+		//getFxCanvas().widthProperty().bind(this.widthProperty().subtract(focusBorder.insets.left + focusBorder.insets.right))
+		//getFxCanvas().heightProperty().bind(this.heightProperty().subtract(focusBorder.insets.top + focusBorder.insets.bottom))
 
-		getFxCanvas().widthProperty().addListener { _ -> view.repaint() }
-		getFxCanvas().heightProperty().addListener { _ -> view.repaint() }
+		//getFxCanvas().widthProperty().addListener { _ -> view.repaint() }
+		//getFxCanvas().heightProperty().addListener { _ -> view.repaint() }
 
 		BackgroundInstallerFx(this)
 	}
