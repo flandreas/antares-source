@@ -31,7 +31,7 @@ open class ComponentDropHandlerFx(
 			LOG.debug("ComponentDropHandlerFx: onDragEntered")
 			val transferData = it.dragboard.getContent(ComponentDataFormat)
 			if (transferData != null && transferData is String) {
-				component = IOModule.storableClonerProvider.invoke().deserialize(transferData) as Component
+				component = extractComponent(transferData)
 				forwardComponent(Point2D(it.x, it.y))
 			}
 			it.consume()
@@ -61,6 +61,10 @@ open class ComponentDropHandlerFx(
 			}
 			it.consume()
 		}
+	}
+
+	protected open fun extractComponent(transferData: String): Component {
+		return IOModule.storableClonerProvider.invoke().deserialize(transferData) as Component
 	}
 
 	protected open fun canImport(dropComponent: Component): Boolean {

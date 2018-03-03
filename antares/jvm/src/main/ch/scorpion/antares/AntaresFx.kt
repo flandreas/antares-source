@@ -5,7 +5,6 @@ import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.jabbah.app.AbstractDesktopApplicationFx
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.module.AppModule
-import ch.scorpion.jabbah.base.geom.AffineTransformFx
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.style.Themes
@@ -17,7 +16,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
-import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.uifx.GraphPaneFx
@@ -29,7 +28,6 @@ import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import javafx.stage.WindowEvent
 import org.apache.commons.cli.CommandLine
@@ -77,8 +75,11 @@ class AntaresFx : javafx.application.Application() {
 			AntaresThemes.install()
 
 			val canvas = Canvas()
-			val canvasFx = CanvasFx(canvas, { DrawingViewImpl(DrawingImpl<Component>(), it, { AffineTransformFx() }) })
+			val canvasFx = CanvasFx(canvas, {
+				EditModule.drawingViewFactory.invoke(DrawingImpl<Component>(), it)
+			})
 			editor = EditEditorModule.createEditor(canvasFx.view as DrawingView<Drawing<Component>>)
+
 			BaseModule.eventBus.register(ApplicationDataEvent::class, {
 				(editor.view as DrawingView<GraphView<GraphElementView<*>>>).drawing = (it.newData as MetaGraph).graph!!.graphView as GraphView<GraphElementView<*>>
 			})

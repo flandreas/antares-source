@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2DFx
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentDataFormat
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.library.LibraryDirectory
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryHolder
@@ -20,6 +21,7 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.IOModule
 import javafx.application.Platform
 import javafx.geometry.Insets
@@ -33,9 +35,7 @@ import javafx.scene.image.WritableImage
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.HBox
-import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
-import java.nio.ByteBuffer
 
 /**
  * A controller of a [Node] for displaying the contents of a [Library].
@@ -117,6 +117,8 @@ class LibraryElementNode(
 
 	private var scale = 1.0
 
+	private val transferData: String = createTransferData()
+
 	init {
 		buildUI()
 		layout()
@@ -166,15 +168,16 @@ class LibraryElementNode(
 			dragboard.setDragView(DUMMY_IMAGE, 0.0, 0.0)
 
 			val content = ClipboardContent()
-			val data = IOModule.storableClonerProvider.invoke().serialize(component)
-
-			val buffer = ByteBuffer.allocate(10)
-			buffer.putInt(42)
-
-			content.put(ComponentDataFormat, data)
+			content.put(ComponentDataFormat, transferData)
 			dragboard.setContent(content)
 
 			it.consume()
 		}
+	}
+
+	private fun createTransferData(): String {
+		val graphView = GraphViewModule.createGraphView<GraphElementView<*>>()
+		graphView.add(component)
+		return IOModule.storableClonerProvider.invoke().serialize(GraphStorable(graphView))
 	}
 }
