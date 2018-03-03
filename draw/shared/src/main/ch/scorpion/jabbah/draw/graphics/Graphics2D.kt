@@ -34,7 +34,7 @@ interface Graphics2D {
     /** Concatenates the current [AffineTransform] with a translation transformation.*/
     fun translate(tx: Double, ty: Double)
 
-    /** Concatenates the current [AffineTransform] with a rotation transformation.*/
+    /** Concatenates the current [AffineTransform] with a rotation transformation according to the given angle in radians.*/
     fun rotate(theta: Double)
 
     /** Draws a line between the points (x1, y1) and (x2, y2) in this [Graphics2D]'s current coordinate system.*/

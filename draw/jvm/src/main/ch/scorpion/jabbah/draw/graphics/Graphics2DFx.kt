@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.graphics
 
+import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.*
 import javafx.scene.canvas.GraphicsContext
@@ -198,7 +199,7 @@ class Graphics2DFx(var g: GraphicsContext) : AbstractGraphics2D() {
     }
 
     override fun rotate(theta: Double) {
-        g.rotate(theta)
+        g.rotate(Math.toDegrees(theta))
     }
 
     override fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {
