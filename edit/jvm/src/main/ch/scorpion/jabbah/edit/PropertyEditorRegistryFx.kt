@@ -12,6 +12,21 @@ import org.controlsfx.property.editor.PropertyEditor
 class PropertyEditorRegistryFx : DefaultPropertyEditorFactory() {
 
 	companion object {
+
+		private val NUMERIC_TYPES = listOf<Class<*>>(
+			java.lang.Long::class.java,
+			java.lang.Integer::class.java,
+			java.lang.Double::class.java,
+			java.lang.Float::class.java,
+			Long::class.javaPrimitiveType!!,
+			Int::class.javaPrimitiveType!!,
+			Double::class.javaPrimitiveType!!,
+			Float::class.javaPrimitiveType!!)
+
+		fun isNumber(type: Class<*>): Boolean {
+			return NUMERIC_TYPES.contains(type)
+		}
+
 		fun installAutoSelectAll(control: TextInputControl) {
 			control.focusedProperty().addListener { _: ObservableValue<out Boolean>, _: Boolean, newValue: Boolean ->
 				if (newValue) {
@@ -29,6 +44,10 @@ class PropertyEditorRegistryFx : DefaultPropertyEditorFactory() {
 
 		if (item.type == String::class.java) {
 			return createTextEditor(item)
+		}
+
+		if (isNumber(item.type)) {
+			return createNumberEditor(item)
 		}
 
 		val editor = super.call(item)
@@ -69,6 +88,15 @@ class PropertyEditorRegistryFx : DefaultPropertyEditorFactory() {
 				return control.textProperty()
 			}
 
+		}
+	}
+
+	private fun createNumberEditor(property: PropertySheet.Item): PropertyEditor<*> {
+		return object : OptionalNumericEditor(property) {
+
+			init {
+				installAutoSelectAll(control)
+			}
 		}
 	}
 }
