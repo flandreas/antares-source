@@ -1,35 +1,18 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.view.AntaresThemes
-import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.jabbah.app.AbstractDesktopApplicationFx
-import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.module.AppModule
-import ch.scorpion.jabbah.base.fx.ResizableCanvasFx
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.draw.view.CanvasFx
-import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.editor.EditEditorModule
-import ch.scorpion.jabbah.edit.model.DrawingImpl
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.uifx.GraphPaneFx
-import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.uifx.GraphUIFx
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.Storable
 import javafx.event.EventHandler
 import javafx.scene.Scene
-import javafx.scene.canvas.Canvas
-import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
 import javafx.stage.WindowEvent
 import org.apache.commons.cli.CommandLine
@@ -68,9 +51,7 @@ class AntaresFx : javafx.application.Application() {
 
 		private val LOG by logger(AntaresApplication::class)
 
-		private var editor: Editor
-
-		private lateinit var graphPane: GraphPaneFx
+		private var ui: GraphUIFx
 
 		init {
 			AntaresModuleJvm(this).require()
@@ -79,19 +60,7 @@ class AntaresFx : javafx.application.Application() {
 			fillStandardLibrary(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 			AntaresThemes.install()
 
-			val canvas = ResizableCanvasFx()
-			val canvasFx = CanvasFx(canvas, {
-				EditModule.drawingViewFactory.invoke(DrawingImpl<Component>(), it)
-			})
-			canvas.repaintCallback = {
-				LOG.debug("AntaresFX: repaintCallback")
-				canvasFx.repaint()
-			}
-			editor = EditEditorModule.createEditor(canvasFx.view as DrawingView<Drawing<Component>>)
-
-			BaseModule.eventBus.register(ApplicationDataEvent::class, {
-				(editor.view as DrawingView<GraphView<GraphElementView<*>>>).drawing = (it.newData as MetaGraph).graph!!.graphView as GraphView<GraphElementView<*>>
-			})
+			ui = GraphUIFx(this, AntaresMenuBarBuilderFx(this))
 
 			fillPrimaryStage(primaryStage)
 
@@ -136,27 +105,16 @@ class AntaresFx : javafx.application.Application() {
 		}
 
 		override fun shutdownUI() {
-			graphPane.dispose()
+			ui.dispose()
 			super.shutdownUI()
 		}
 
 		/** ---- [AbstractDesktopApplicationFx] */
 
 		override fun fillPrimaryStage(primaryStage: Stage) {
-			val content = BorderPane()
-			val menuBar = AntaresMenuBarBuilderFx(this).menuBar
-			menuBar.isUseSystemMenuBar = true
-
-			graphPane = GraphPaneFx(editor, DigitalComponentViewDrawer())
-			content.top = menuBar
-			content.center = graphPane.node
-
-
 			primaryStage.title = displayName
-			primaryStage.scene = Scene(content)
+			primaryStage.scene = Scene(ui.node)
 			primaryStage.show()
-
-			DrawViewModule.viewManager.activeView = editor.view
 		}
 	}
 }

@@ -26,169 +26,170 @@ import javax.swing.*
  * a [GraphDesktop] and a [ContainerPanel] for editing the outside view of the main [GraphView].
  */
 class GraphFrame(
-    application: DesktopApplication,
-    val containerPanel: ContainerPanel,
-    private val eventBus: EventBus,
-    val viewManager: ViewManager,
-    scheduler: Scheduler
+	application: DesktopApplication,
+	val containerPanel: ContainerPanel,
+	private val eventBus: EventBus,
+	val viewManager: ViewManager,
+	scheduler: Scheduler
 ) : AbstractApplicationFrame(application) {
 
-    enum class DisplayedView {
-        Desktop, Container
-    }
+	enum class DisplayedView {
+		Desktop, Container
+	}
 
-    private val LOG by logger(GraphFrame::class)
+	private val LOG by logger(GraphFrame::class)
 
-    private val desktopAction = ViewDesktopAction(this, application, eventBus)
+	private val desktopAction = ViewDesktopAction(this, application, eventBus)
 
-    private val containerAction = ViewContainerAction(this, application, eventBus)
+	private val containerAction = ViewContainerAction(this, application, eventBus)
 
-    private val mainToolBar: JToolBar
+	private val mainToolBar: JToolBar
 
-    private val toolbarPanel: JPanel
+	private val toolbarPanel: JPanel
 
-    private var displayedView: DisplayedView = DisplayedView.Container
+	private var displayedView: DisplayedView = DisplayedView.Container
 
-    val desktop = GraphDesktop(eventBus, viewManager, GraphModuleJvm.graphNavigationPanelFactory, scheduler)
+	val desktop = GraphDesktop(eventBus, viewManager, GraphModuleJvm.graphNavigationPanelFactory, scheduler)
 
 
-    init {
-        eventBus.register(ApplicationDataEvent::class, { handle(it) })
-        eventBus.register(GraphNameChangedEvent:: class, { handle(it) })
+	init {
+		eventBus.register(ApplicationDataEvent::class, { handle(it) })
+		eventBus.register(GraphNameChangedEvent::class, { handle(it) })
 
-        toolbarPanel = JPanel()
-        toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
-        mainToolBar = createMainToolBar()
+		toolbarPanel = JPanel()
+		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
+		mainToolBar = createMainToolBar()
 
-        showDesktop()
-    }
+		showDesktop()
+	}
 
-    override val editor: Editor
-        get() = desktop.masterGraphPanel!!.editor
+	override val editor: Editor
+		get() = desktop.masterGraphPanel!!.editor
 
-    override fun dispose() {
-        super.dispose()
-        desktop.dispose()
-    }
+	override fun dispose() {
+		super.dispose()
+		desktop.dispose()
+	}
 
-    /** ---- [AbstractApplicationFrame] */
+	/** ---- [AbstractApplicationFrame] */
 
-    /** The application data has changed if there are undoable [Command]s in the [CommandManager].*/
-    override val applicationDataChanged: Boolean
-        get() = desktop.masterGraphPanel!!.editor.commandManager.canUndo()
+	/** The application data has changed if there are undoable [Command]s in the [CommandManager].*/
+	override val applicationDataChanged: Boolean
+		get() = desktop.masterGraphPanel!!.editor.commandManager.canUndo()
 
-    /** ---- [GraphFrame] */
+	/** ---- [GraphFrame] */
 
-    private fun handle(event: ApplicationDataEvent) {
-        LOG.debug("ApplicationDataChanged, setting GraphView in desktop")
-        val metaGraph = event.newData as MetaGraph
-        desktop.masterGraphPanel!!.setGraphView(metaGraph.graph!!.graphView as GraphView<GraphElementView<*>>)
+	// TODO Refactor: There is no reason why GraphDesktop is updated here, but ContainerPanel updates itself?
+	private fun handle(event: ApplicationDataEvent) {
+		LOG.debug("ApplicationDataChanged, setting GraphView in desktop")
+		val metaGraph = event.newData as MetaGraph
+		desktop.masterGraphPanel!!.setGraphView(metaGraph.graph!!.graphView as GraphView<GraphElementView<*>>)
 
-        // TODO This shouldn't be here, but elsewhere..
-        metaGraph.graph!!.graphView!!.snapper = desktop.masterGraphPanel!!.editor.view.grid
-    }
+		// TODO This shouldn't be here, but elsewhere..
+		metaGraph.graph!!.graphView!!.snapper = desktop.masterGraphPanel!!.editor.view.grid
+	}
 
-    private fun handle(event: GraphNameChangedEvent) {
-        if (event.graph === (desktop.masterGraphPanel!!.editor.view.drawing as GraphView<*>).graph!!) {
-            containerPanel.setGraphName(event.newName)
-        }
-    }
+	private fun handle(event: GraphNameChangedEvent) {
+		if (event.graph === (desktop.masterGraphPanel!!.editor.view.drawing as GraphView<*>).graph!!) {
+			containerPanel.setGraphName(event.newName)
+		}
+	}
 
-    fun showDesktop() {
-        if (displayedView == DisplayedView.Desktop) {
-            return
-        }
-        SwingUtilities.invokeLater {
-            contentPane.removeAll()
-            fillToolbarPanel(desktop.getToolBars())
-            contentPane.add(toolbarPanel, BorderLayout.NORTH)
-            contentPane.add(desktop, BorderLayout.CENTER)
-            invalidate()
-            revalidate()
-            repaint()
+	fun showDesktop() {
+		if (displayedView == DisplayedView.Desktop) {
+			return
+		}
+		SwingUtilities.invokeLater {
+			contentPane.removeAll()
+			fillToolbarPanel(desktop.getToolBars())
+			contentPane.add(toolbarPanel, BorderLayout.NORTH)
+			contentPane.add(desktop, BorderLayout.CENTER)
+			invalidate()
+			revalidate()
+			repaint()
 
-            displayedView = DisplayedView.Desktop
-            viewManager.activeView = desktop.masterGraphPanel!!.editor.view
-            eventBus.post(GraphFrameEvent(this, displayedView))
-        }
-    }
+			displayedView = DisplayedView.Desktop
+			viewManager.activeView = desktop.masterGraphPanel!!.editor.view
+			eventBus.post(GraphFrameEvent(this, displayedView))
+		}
+	}
 
-    fun showContainer() {
-        if (displayedView == DisplayedView.Container) {
-            return
-        }
+	fun showContainer() {
+		if (displayedView == DisplayedView.Container) {
+			return
+		}
 
-        SwingUtilities.invokeLater {
-            contentPane.removeAll()
-            fillToolbarPanel(containerPanel.toolbars)
-            contentPane.add(toolbarPanel, BorderLayout.NORTH)
-            contentPane.add(containerPanel, BorderLayout.CENTER)
-            invalidate()
-            revalidate()
-            repaint()
+		SwingUtilities.invokeLater {
+			contentPane.removeAll()
+			fillToolbarPanel(containerPanel.toolbars)
+			contentPane.add(toolbarPanel, BorderLayout.NORTH)
+			contentPane.add(containerPanel, BorderLayout.CENTER)
+			invalidate()
+			revalidate()
+			repaint()
 
-            containerPanel.initialize()
+			containerPanel.initialize()
 
-            displayedView = DisplayedView.Container
-            viewManager.activeView = containerPanel.editor.view
-            containerPanel.activated()
-            eventBus.post(GraphFrameEvent(this, displayedView))
-        }
-    }
+			displayedView = DisplayedView.Container
+			viewManager.activeView = containerPanel.editor.view
+			containerPanel.activated()
+			eventBus.post(GraphFrameEvent(this, displayedView))
+		}
+	}
 
-    private fun createMainToolBar(): JToolBar {
-        val toolbar = JToolBar()
-        toolbar.isFloatable = false
+	private fun createMainToolBar(): JToolBar {
+		val toolbar = JToolBar()
+		toolbar.isFloatable = false
 
-        val viewDesktopButton = JToggleButton(ActionWrapperSwing(desktopAction))
-        viewDesktopButton.icon = ImageIcon(GraphFrame::class.java.getResource("/img/drawing-24.png"))
-        viewDesktopButton.text = null
-        toolbar.add(viewDesktopButton)
+		val viewDesktopButton = JToggleButton(ActionWrapperSwing(desktopAction))
+		viewDesktopButton.icon = ImageIcon(GraphFrame::class.java.getResource("/img/drawing-24.png"))
+		viewDesktopButton.text = null
+		toolbar.add(viewDesktopButton)
 
-        val viewContainerButton = JToggleButton(ActionWrapperSwing(containerAction))
-        viewContainerButton.icon = ImageIcon(GraphFrame::class.java.getResource("/img/container-24.png"))
-        viewContainerButton.text = null
-        toolbar.add(viewContainerButton)
+		val viewContainerButton = JToggleButton(ActionWrapperSwing(containerAction))
+		viewContainerButton.icon = ImageIcon(GraphFrame::class.java.getResource("/img/container-24.png"))
+		viewContainerButton.text = null
+		toolbar.add(viewContainerButton)
 
-        return toolbar
-    }
+		return toolbar
+	}
 
-    private fun fillToolbarPanel(toolbars: List<JToolBar>) {
-        toolbarPanel.removeAll()
-        toolbarPanel.add(mainToolBar)
-        toolbars.forEach { toolbarPanel.add(it) }
-        toolbarPanel.add(Box.createHorizontalGlue())
-    }
+	private fun fillToolbarPanel(toolbars: List<JToolBar>) {
+		toolbarPanel.removeAll()
+		toolbarPanel.add(mainToolBar)
+		toolbars.forEach { toolbarPanel.add(it) }
+		toolbarPanel.add(Box.createHorizontalGlue())
+	}
 }
 
 class ViewDesktopAction(
-    private val graphFrame: GraphFrame,
-    app: DesktopApplication,
-    eventBus: EventBus
+	private val graphFrame: GraphFrame,
+	app: DesktopApplication,
+	eventBus: EventBus
 ) : AbstractApplicationAction("view.action.desktop", app) {
 
-    init {
-        eventBus.register(GraphFrameEvent::class, {
-            selected = it.displayedView == GraphFrame.DisplayedView.Desktop
-        })
-    }
+	init {
+		eventBus.register(GraphFrameEvent::class, {
+			selected = it.displayedView == GraphFrame.DisplayedView.Desktop
+		})
+	}
 
-    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-        graphFrame.showDesktop()
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		graphFrame.showDesktop()
+	}
 }
 
 class ViewContainerAction(
-    private val graphFrame: GraphFrame,
-    app: DesktopApplication,
-    eventBus: EventBus
+	private val graphFrame: GraphFrame,
+	app: DesktopApplication,
+	eventBus: EventBus
 ) : AbstractApplicationAction("view.action.container", app) {
 
 	init {
-        eventBus.register(GraphFrameEvent::class, {
-	        selected = it.displayedView == GraphFrame.DisplayedView.Container
-        })
-    }
+		eventBus.register(GraphFrameEvent::class, {
+			selected = it.displayedView == GraphFrame.DisplayedView.Container
+		})
+	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		graphFrame.showContainer()
