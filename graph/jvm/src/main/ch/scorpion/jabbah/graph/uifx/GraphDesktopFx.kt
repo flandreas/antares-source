@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.uifx
 
 import ch.scorpion.jabbah.app.ApplicationDataEvent
+import ch.scorpion.jabbah.app.ToolBarBuilderFx
 import ch.scorpion.jabbah.base.fx.ResizableCanvasFx
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -15,7 +16,9 @@ import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
 import ch.scorpion.jabbah.graph.view.GraphView
 import javafx.scene.Node
 import javafx.scene.control.ToolBar
@@ -31,8 +34,7 @@ class GraphDesktopFx(
 	private lateinit var graphPaneFx: GraphPaneFx
 	val node: Node get() = graphPaneFx.node
 
-	// TODO
-	val toolbars: List<ToolBar> = listOf()
+	val toolbars: List<ToolBar> = mutableListOf()
 
 	private lateinit var editor: Editor
 
@@ -53,6 +55,7 @@ class GraphDesktopFx(
 
 		// TODO How to establish ComponentViewDrawer?
 		graphPaneFx = GraphPaneFx(editor)
+		(toolbars as MutableList<ToolBar>).add(ToolBarBuilderFx(editor, { GraphElementViewWrapper<Vertice>(it)} ).build())
 	}
 
 	fun activated() {
