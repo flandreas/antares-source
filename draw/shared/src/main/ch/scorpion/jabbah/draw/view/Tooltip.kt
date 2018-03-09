@@ -186,8 +186,6 @@ object TooltipManager {
 
     var styleProvider: StyleProvider = DrawStyleModule.styleProvider
 
-    var textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory
-
     init {
         eventBus.register(TooltipEvent::class, tooltipEventHandler)
         timer.initialize(DELAY, { displayImpl() })
@@ -260,7 +258,7 @@ object TooltipManager {
 
     private fun createTextArrowBubble(tooltip: Tooltip, view: View<*>): ArrowBubble {
         val font = styleProvider.getStyle(StyleType.TOOLTIP).font
-        val textRenderInfo = textRenderInfoFactory.measureHtmlText(tooltip.text, font, WIDTH)
+        val textRenderInfo = DrawModule.textRenderInfoFactory.measureHtmlText(tooltip.text, font, WIDTH)
         val width = Math.max(MIN_WIDTH, textRenderInfo.textBounds.width.toInt()).toDouble()
 
         val multilineText = MultilineText(text = tooltip.text, font = font, maxWidth = width, asHtml = true)
