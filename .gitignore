@@ -5,6 +5,7 @@ out/
 doc/model.mdj
 doc/model-img/
 doc/graffle-img
+antares-web/node_modules
 .DS_Store
 .idea/
 .idea/workspace.xml

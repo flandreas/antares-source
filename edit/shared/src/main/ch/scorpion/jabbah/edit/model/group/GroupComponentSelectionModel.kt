@@ -37,7 +37,7 @@ class GroupComponentSelectionModel(
 		context.selectionColor = Themes.get<EditTheme>().selection
 		context.g.color = context.selectionColor!!.foregroundColor
 		context.color = context.selectionColor
-		component.components.forEach { selectionModels[it]!!.draw(context) }
+		component.components.asReversed().forEach { selectionModels[it]!!.draw(context) }
 
 		context.useContextColors = oldUseContextColors
 	}
