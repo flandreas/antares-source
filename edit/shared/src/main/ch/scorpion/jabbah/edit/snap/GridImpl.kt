@@ -37,7 +37,7 @@ class GridImpl(
     private val LOG by logger(GridImpl::class)
 
     /** The object that actually paints the grid dots.*/
-    private var gridPainter: GridPainter = DottedGridPainter(styleProvider.getStyle(StyleType.BACKGROUND))
+    private var gridPainter: GridPainter = LineGridPainter(styleProvider)
         set(value) {
             invalidate()
             field = value

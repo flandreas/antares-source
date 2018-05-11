@@ -3,9 +3,12 @@ package ch.scorpion.jabbah.edit.snap
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.Grid
 
 /**
- * An interface for plugable classes that actually paint a [GridImpl] within the shape of a rectangle.
+ * An interface for pluggable classes that actually paint a [GridImpl] within the shape of a rectangle.
+ * [GridPainter]s use the foreground color of [StyleType.BACKGROUND] for painting.
  */
 interface GridPainter {
 

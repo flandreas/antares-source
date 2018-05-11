@@ -52,7 +52,7 @@ object AntaresThemes {
                 supportsWhiteBackground = true,
                 background = BasicStyle(
                         color = CompositeColor(
-                                foregroundColor = Color.GRAY,
+                                foregroundColor = Color(232, 232, 232),
                                 backgroundColor = Color.WHITE,
                                 textColor = Color.BLACK),
                         font = FONT,
@@ -169,7 +169,7 @@ object AntaresThemes {
                         stroke = HIGHLIGHT_STROKE),
                 background = BasicStyle(
                         color = CompositeColor(
-                                foregroundColor = Color.GRAY.darker(),
+                                foregroundColor = Color(32, 32, 32),
                                 backgroundColor = Color.BLACK,
                                 textColor = color.foregroundColor),
                         stroke = ANNOTATION_STROKE,
@@ -243,7 +243,7 @@ object AntaresThemes {
                 supportsWhiteBackground = true,
                 background = BasicStyle(
                         color = CompositeColor(
-                                foregroundColor = Color.GRAY,
+                                foregroundColor = Color(232, 232, 232),
                                 backgroundColor = Color.WHITE,
                                 textColor = Color.BLACK),
                         font = FONT,
