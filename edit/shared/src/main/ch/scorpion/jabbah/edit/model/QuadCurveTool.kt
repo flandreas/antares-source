@@ -49,8 +49,11 @@ class QuadCurveTool(
 		val location = Point2D(x, y).add(editor.snapManager.snap(x, y))
 		if (clickedCount == 1) {
 			instance = QuadCurveComponent(createPoints(location))
+
+			editor.view.selectionManager.deselectAll()
 			addedComponent = getAddedComponent(instance)
 			editor.drawing.add(addedComponent)
+			editor.view.selectionManager.select(addedComponent)
 			addedComponent.validate()
 		} else {
 			instance.points = createPoints(location)

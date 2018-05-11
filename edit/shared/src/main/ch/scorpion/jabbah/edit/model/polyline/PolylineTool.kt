@@ -52,8 +52,11 @@ class PolylineTool(
             if (instance == null) {
                 instance = createComponent()
                 instance!!.addPoint(x + offset.x, y + offset.y)
+
+	            editor.view.selectionManager.deselectAll()
                 addedComponent = getAddedComponent(instance as PolylineComponent)
                 editor.drawing.add(addedComponent)
+                editor.view.selectionManager.select(addedComponent)
             }
             // add the dangling point that will be moved around
             instance!!.addPoint(x + offset.x, y + offset.y)
