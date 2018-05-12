@@ -36,18 +36,18 @@ import javax.swing.border.Border
  * to navigate within the [GraphView] hierarchy.
  */
 open class GraphNavigationPanel(
-        val isRoot: Boolean,
-        val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-        private val viewManager: ViewManager,
-        closeHandler: ((GraphNavigationPanel) -> Unit)?,
-        contextBorderColor: CompositeColor? = null,
-        private val scheduler: Scheduler,
-        private val animator: Animator,
-        private val eventBus: EventBus,
-        private val libraryHolder: LibraryHolder,
-        private val storableCreator: StorableCreator,
-        private val scriptGateway: ScriptGateway,
-        private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
+    private val isRoot: Boolean,
+    val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+    private val viewManager: ViewManager,
+    closeHandler: ((GraphNavigationPanel) -> Unit)?,
+    contextBorderColor: CompositeColor? = null,
+    private val scheduler: Scheduler,
+    private val animator: Animator,
+    private val eventBus: EventBus,
+    private val libraryHolder: LibraryHolder,
+    private val storableCreator: StorableCreator,
+    private val scriptGateway: ScriptGateway,
+    private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
 ) : JPanel() {
 
     companion object {
@@ -84,22 +84,24 @@ open class GraphNavigationPanel(
             if (field == value) {
                 return
             }
-            if (field == null) {
-                // Add context color border
-                mainPanel.removeAll()
-                mainPanel.add(headerPanel, BorderLayout.NORTH)
-                val borderPanel = JPanel(BorderLayout())
-                borderPanel.border = createContextColorBorder(value!!)
-                borderPanel.add(layeredPane)
-                mainPanel.add(FocusPanel(borderPanel, drawingView, viewManager), BorderLayout.CENTER)
-            } else if (value == null) {
-                // Remove context color border
-                mainPanel.removeAll()
-                mainPanel.add(headerPanel, BorderLayout.NORTH)
-                mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
-            } else {
-                // Exchange context color border
-                (mainPanel.getComponent(0) as JComponent).border = createContextColorBorder(value)
+            when {
+                field == null -> {
+                    // Add context color border
+                    mainPanel.removeAll()
+                    mainPanel.add(headerPanel, BorderLayout.NORTH)
+                    val borderPanel = JPanel(BorderLayout())
+                    borderPanel.border = createContextColorBorder(value!!)
+                    borderPanel.add(layeredPane)
+                    mainPanel.add(FocusPanel(borderPanel, drawingView, viewManager), BorderLayout.CENTER)
+                }
+                value == null -> {
+                    // Remove context color border
+                    mainPanel.removeAll()
+                    mainPanel.add(headerPanel, BorderLayout.NORTH)
+                    mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
+                }
+                else -> // Exchange context color border
+                    (mainPanel.getComponent(0) as JComponent).border = createContextColorBorder(value)
             }
             revalidate()
             repaint()
@@ -154,6 +156,7 @@ open class GraphNavigationPanel(
         repaint()
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     fun removeGlassPaneComponent() {
         val components = layeredPane.getComponentsInLayer(JLayeredPane.DRAG_LAYER)
         if (components != null) {
@@ -189,7 +192,7 @@ open class GraphNavigationPanel(
                     diver = {
                         navigationStackView.navigationStack.push(drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>))
                     },
-                    ender = {
+                    terminator = {
                         navigationStackView.isEnabled = true
                         drawingView.userZoomEnabled = true
                     }
@@ -238,7 +241,7 @@ open class GraphNavigationPanel(
         }
     }
 
-    private fun handle(event: SystemSpeedEvent) {
+    private fun handle(@Suppress("UNUSED_PARAMETER") event: SystemSpeedEvent) {
         propagateApplicationContext()
     }
 

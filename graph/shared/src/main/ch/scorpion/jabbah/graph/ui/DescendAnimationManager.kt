@@ -17,29 +17,29 @@ class DescendAnimationManager(val animator: Animator) {
     @Suppress("unused") constructor(): this(AnimationModule.animator)
 
     companion object {
-        private val ZOOM_DURATION = 1_000.0
-        private val OUTER_END_ZOOM_FACTOR = 16.0
-        private val INNER_START_ZOOM_FACTOR = 0.3
-        private val INNER_END_ZOOM_FACTOR = 1.0
+        private const val ZOOM_DURATION = 1_000.0
+        private const val OUTER_END_ZOOM_FACTOR = 16.0
+        private const val INNER_START_ZOOM_FACTOR = 0.3
+        private const val INNER_END_ZOOM_FACTOR = 1.0
     }
 
     /**
      * Starts an asynchronous animation that descends into the specified [SubGraphVerticeView].
      * @param diver the code to be executed when the outer animation has finished and before
      * the inner animation is started. This is typically code that exchanges the [DrawingView] in a [View]
-     * @param ender the code to be executed when the overall animation has ended
+     * @param terminator the code to be executed when the overall animation has ended
      */
     fun descendInto(drawingView: DrawingView<*>,
         subGraphVerticeView: SubGraphVerticeView<*>,
         diver: (SubGraphVerticeView<*>) -> Unit,
-        ender: () -> Unit
+        terminator: () -> Unit
     ) {
         animator
-            .schedule(createOuterAnimation(drawingView, subGraphVerticeView, diver, ender))
+            .schedule(createOuterAnimation(drawingView, subGraphVerticeView, diver, terminator))
             .start()
     }
 
-    private fun createInnerAnimation(drawingView: DrawingView<*>, ender: () -> Unit): ZoomPanAnimation {
+    private fun createInnerAnimation(drawingView: DrawingView<*>, terminator: () -> Unit): ZoomPanAnimation {
         val animation = ZoomPanAnimation(
             drawingView,
             INNER_END_ZOOM_FACTOR,
@@ -47,7 +47,7 @@ class DescendAnimationManager(val animator: Animator) {
         )
         animation.addListener(object: AnimationTaskAdapter() {
             override fun ended(task: AnimationTask) {
-                ender.invoke()
+                terminator.invoke()
             }
         })
         return animation
@@ -57,7 +57,7 @@ class DescendAnimationManager(val animator: Animator) {
         drawingView: DrawingView<*>,
         subGraphVerticeView: SubGraphVerticeView<*>,
         diver: (SubGraphVerticeView<*>) -> Unit,
-        ender: () -> Unit): ZoomPanAnimation
+        terminator: () -> Unit): ZoomPanAnimation
     {
         val animation = ZoomPanAnimation(
             drawingView,
@@ -70,7 +70,7 @@ class DescendAnimationManager(val animator: Animator) {
             override fun ended(task: AnimationTask) {
                 diver.invoke(subGraphVerticeView)
                 drawingView.navigator.panCenter(INNER_START_ZOOM_FACTOR)
-                val innerAnimation = createInnerAnimation(drawingView, ender)
+                val innerAnimation = createInnerAnimation(drawingView, terminator)
                 animator.schedule(innerAnimation)
                 innerAnimation.start()
             }
