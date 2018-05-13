@@ -53,12 +53,12 @@ class SwitchView(
 
     companion object {
         val LOG by logger(SwitchView::class)
-        val PROP_ICON_PATH = "ch.scorpion.antares.view.input.SwitchView.iconPath"
-        val SIZE = 4 * Look.SCALE
-        val BORDER_WIDTH = 3
-        val DIAMETER = 12
-        val LABEL_DIST = Look.SCALE
-        val LABEL_INSET = 4.0
+        const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.SwitchView.iconPath"
+        const val SIZE = 4 * Look.SCALE
+        const val BORDER_WIDTH = 3
+        const val DIAMETER = 12
+        const val LABEL_DIST = Look.SCALE
+        const val LABEL_INSET = 4.0
     }
 
     var labelPosition: VerticeLabelPosition = VerticeLabelPosition.EXTERNAL
@@ -278,13 +278,15 @@ class SwitchView(
         context.g.fillRect(xInt, yInt, widthInt, heightInt)
 
         context.g.color = fillColor
+	    /*
         context.g.drawRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
                 widthInt - 2 * BORDER_WIDTH, heightInt - 2 * BORDER_WIDTH)
+        */
         context.g.fillRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
                 widthInt - 2 * BORDER_WIDTH, heightInt - 2 * BORDER_WIDTH)
 
         context.g.color = color.foregroundColor
-        context.g.drawRect(x.toInt(), y.toInt(), widthInt, heightInt)
+        context.g.drawRect(xInt, yInt, widthInt, heightInt)
 
         internalLabel.color = if (model!!.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor
         if (labelPosition == VerticeLabelPosition.INTERNAL) {

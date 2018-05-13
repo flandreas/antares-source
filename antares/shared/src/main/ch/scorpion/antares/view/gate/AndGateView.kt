@@ -36,11 +36,6 @@ class AndGateView(
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
                 TruthTableView(AndGate.TRUTH_TABLE, null), Point2D())
-
-        // TODO Refactor: Use [StyleProvider] instead of [Themes] to access style information
-        private val CLOSED_DATA_PATH_STROKE = Stroke(width = Themes.get<GraphTheme>().edge.stroke.width)
-        private val OPEN_DATA_PATH_STROKE = Stroke(width = Themes.get<GraphTheme>().edge.stroke.width, dash = floatArrayOf(5.0f), dashPhase = 0f)
-        private val DATA_PATH_COLOR = Themes.get<GraphTheme>().edge.color
     }
 
     var dataPort: InputPortNumber = InputPortNumber.NONE
@@ -109,25 +104,31 @@ class AndGateView(
         if (ApplicationMode.EXECUTE == appContext.mode) {
             val controlState = model!!.calculate { it.portId != dataPort.id }
             if (controlState.isSet) {
-                context.g.stroke = CLOSED_DATA_PATH_STROKE
+                context.g.stroke = createClosedDataPathStroke()
             } else {
-                context.g.stroke = OPEN_DATA_PATH_STROKE
+                context.g.stroke = createOpenDataPathStroke()
             }
 
         } else {
-            context.g.stroke = OPEN_DATA_PATH_STROKE
+            context.g.stroke = createOpenDataPathStroke()
         }
 
         if (ApplicationMode.EXECUTE == appContext.mode && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
             context.g.color = model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!.getColor().foregroundColor
         } else {
-            context.g.color = context.choose(DATA_PATH_COLOR).foregroundColor
+	        context.g.color = context.choose(Themes.get<GraphTheme>().edge.color).foregroundColor
         }
 
         context.g.drawLine(
             dataPortView.locationX, dataPortView.locationY,
             outputPortView.locationX, outputPortView.locationY)
     }
+
+	// TODO Refactor: Use [StyleProvider] instead of [Themes] to access style information
+
+	private fun createOpenDataPathStroke() = Stroke(width = Themes.get<GraphTheme>().edge.stroke.width, dash = floatArrayOf(5.0f), dashPhase = 0f)
+
+	private fun createClosedDataPathStroke() = Stroke(width = Themes.get<GraphTheme>().edge.stroke.width)
 
     // TODO Refactor (DRY): Same logic as in [AbstractNetViewElement]
     private fun showNetState(systemSpeedCategory: SystemSpeedCategory): Boolean {
