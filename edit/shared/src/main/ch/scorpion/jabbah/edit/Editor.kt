@@ -11,19 +11,19 @@ interface Editor {
     companion object {
 
         /** The name of the 'tool lock' property in [PropertyChangeEvent]s.*/
-        val PROP_LOCK_TOOL = "lockTool"
+        const val PROP_LOCK_TOOL = "lockTool"
 
         /** The name of the default [Tool] property in [PropertyChangeEvent]s.*/
-        val PROP_DEFAULT_TOOL = "defaultTool"
+        const val PROP_DEFAULT_TOOL = "defaultTool"
 
         /** The name of the current [Tool] property in [PropertyChangeEvent]s.*/
-        val PROP_CURRENT_TOOL = "currentTool"
+        const val PROP_CURRENT_TOOL = "currentTool"
 
         /** The name of the 'active' property in [PropertyChangeEvent]s.*/
-        val PROP_ACTIVE = "active"
+        const val PROP_ACTIVE = "active"
 
         /** The name of the [PropertyChangeEvent] event that determines whether component snap is active.*/
-        val PROP_COMPONENT_SNAP = "componentSnap"
+        const val PROP_COMPONENT_SNAP = "componentSnap"
     }
 
     /** Holds the current [Drawing] being edited by this [Editor].*/

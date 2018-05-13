@@ -209,7 +209,7 @@ open class GraphNavigationPanel(
         }
 
         drawingView.content = navigationStackView.navigationStack.peek()
-        drawingView.editable = isRoot && navigationStackView.navigationStack.size == 1
+	    updateDrawingViewEditability()
         updateDetached()
 
         invalidate()
@@ -219,6 +219,7 @@ open class GraphNavigationPanel(
     private fun handle(event: ApplicationModeEvent) {
         currentMode = event.applicationMode
         propagateApplicationContext()
+	    updateDrawingViewEditability()
         updateDetached()
     }
 
@@ -243,6 +244,10 @@ open class GraphNavigationPanel(
 
     private fun handle(@Suppress("UNUSED_PARAMETER") event: SystemSpeedEvent) {
         propagateApplicationContext()
+    }
+
+    private fun updateDrawingViewEditability() {
+	    drawingView.editable = isRoot && navigationStackView.navigationStack.size == 1 && !scheduler.isActive
     }
 
     private fun propagateApplicationContext() {
