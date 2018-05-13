@@ -29,8 +29,8 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 
         init {
             for (bitWidth in BitWidth.values()) {
-                UNDEFINED.put(bitWidth, Word(createListWithBit(bitWidth, Bit.Undefined)))
-                ERROR.put(bitWidth, Word(createListWithBit(bitWidth, Bit.Error)))
+	            UNDEFINED[bitWidth] = Word(createListWithBit(bitWidth, Bit.Undefined))
+	            ERROR[bitWidth] = Word(createListWithBit(bitWidth, Bit.Error))
             }
         }
 
@@ -67,7 +67,7 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
             if (value == null) {
                 return undefined(bitWidth)
             }
-            return Word((0..bitWidth.width - 1).map { Bit.of(BitOperation.getBitAt(value, it)) })
+            return Word((0 until bitWidth.width).map { Bit.of(BitOperation.getBitAt(value, it)) })
         }
 
         /** Combines the specified [Word]s into a single [Word].*/
@@ -90,7 +90,7 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
         /** Creates a list with all the same [Bit]s of the length as defined by the specified [BitWidth].*/
         private fun createListWithBit(bitWidth: BitWidth, bit: Bit): List<Bit> {
             val list = mutableListOf<Bit>()
-            for (i in 0..bitWidth.width - 1) {
+            for (i in 0 until bitWidth.width) {
                 list.add(bit)
             }
             return list
@@ -145,9 +145,15 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
         return bitWidth
     }
 
-    override fun not(): DigitalSignal = Word((0..getBitWidth().width - 1).map { bitAt(it).not() })
+    override fun not(): DigitalSignal = Word((0 until getBitWidth().width).map { bitAt(it).not() })
 
-    override fun and(signal: DigitalSignal): DigitalSignal = Word((0..getBitWidth().width - 1).map { bitAt(it).and(signal.bitAt(it)) })
+	override fun flip(index: Int): DigitalSignal {
+		return Word((0 until getBitWidth().width).map {
+			if (it == index) bitAt(it).not() else bitAt(it)
+		})
+	}
+
+    override fun and(signal: DigitalSignal): DigitalSignal = Word((0 until getBitWidth().width).map { bitAt(it).and(signal.bitAt(it)) })
 
     override fun bitAt(index: Int): Bit {
         return bits[index]

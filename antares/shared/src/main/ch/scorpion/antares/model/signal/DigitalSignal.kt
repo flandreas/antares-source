@@ -19,6 +19,8 @@ interface DigitalSignal {
 
     fun bitAt(index: Int): Bit
 
+    fun flip(index: Int): DigitalSignal
+
     fun getSubword(subwordWidth: BitWidth, index: Int): Word
 
     /**

@@ -36,11 +36,13 @@ object BaseModuleJvm : AbstractModule() {
 		KeyEvent.VK_LEFT = java.awt.event.KeyEvent.VK_LEFT
         KeyEvent.VK_RIGHT = java.awt.event.KeyEvent.VK_RIGHT
 		KeyEvent.VK_ESCAPE = java.awt.event.KeyEvent.VK_ESCAPE
+		KeyEvent.VK_ENTER = java.awt.event.KeyEvent.VK_ENTER
 	}
 
 	private fun defineKeyCodesFx() {
 		KeyEvent.VK_LEFT = KeyCode.LEFT.ordinal
 		KeyEvent.VK_RIGHT = KeyCode.RIGHT.ordinal
 		KeyEvent.VK_ESCAPE = KeyCode.ESCAPE.ordinal
+		KeyEvent.VK_ENTER = KeyCode.ENTER.ordinal
 	}
 }

@@ -62,9 +62,9 @@ class CircuitInOutView(
 ) : AbstractVerticeView<CircuitInOut>(styleProvider, "library.element.CircuitInOut", model), GraphPortView<CircuitInOut>, ControlViewSource<CircuitInOut> {
 
     companion object {
-        val PROP_INPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inputIcon"
-        val PROP_OUTPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.outputIcon"
-        val PROP_INOUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inoutIcon"
+        const val PROP_INPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inputIcon"
+        const val PROP_OUTPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.outputIcon"
+        const val PROP_INOUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inoutIcon"
         val LABEL_DIST = Look.SCALE
         val LOG by logger(CircuitInOutView::class)
     }
@@ -553,6 +553,11 @@ class CircuitInOutView(
                     invalidate()
                     numberView!!.transferFocusRight()
                     validate()
+                } else if (event.key == KeyEvent.VK_ENTER) {
+	                if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
+		                val newWord = (model!!.signal as Word).flip(numberView!!.focusIndex!!)
+		                model!!.setIncomingSignal(newWord, signalHandler)
+	                }
                 } else {
                     val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bits()), event.key.toChar())
                     if (digitWord != null) {

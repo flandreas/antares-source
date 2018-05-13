@@ -19,6 +19,9 @@ interface KeyEvent : InputEvent {
 
         /** Key code of the escape key.*/
         var VK_ESCAPE = 0x00
+
+	    /** Key code of the ENTER key.*/
+        var VK_ENTER = 0x00
     }
 }
 

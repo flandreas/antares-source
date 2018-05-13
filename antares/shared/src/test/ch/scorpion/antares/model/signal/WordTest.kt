@@ -129,4 +129,9 @@ class WordTest {
         assertThat(Word.of(false).not() as Word, `is`(Word.of(true)))
         assertThat(Word.of(BitWidth.BW_8, 255L).not() as Word, `is`(Word.of(BitWidth.BW_8, 0L)))
     }
+
+    @Test
+    fun shouldFlipBit() {
+        assertThat(Word.of(BitWidth.BW_4, 12L).flip(3) as Word, `is`(Word.of(BitWidth.BW_4, 4)))
+    }
 }
