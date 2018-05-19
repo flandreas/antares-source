@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.InputEventContext
@@ -34,6 +36,9 @@ class CanvasJs(
     private val keyListeners: MutableList<KeyEventBridge> by lazy { mutableListOf<KeyEventBridge>()}
 
     override var backgroundColor: Color = styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
+
+    override val mouseLocation: Point2D
+        get() = throw UnsupportedOperationException("getting mouseLocation not yet implemented")
 
     override val view: View<out InputEventContext>
 

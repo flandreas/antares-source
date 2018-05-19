@@ -8,14 +8,17 @@ import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.style.*
 import java.awt.Graphics
 import java.awt.Graphics2D
+import java.awt.MouseInfo
 import java.awt.event.MouseWheelEvent
 import javax.swing.JPanel
 import javax.swing.JComponent
+import javax.swing.SwingUtilities
 import java.awt.event.MouseEvent as AwtMouseEvent
 import java.awt.event.MouseWheelEvent as AwtMouseWheelEvent
 import java.awt.event.KeyEvent as AwtKeyEvent
@@ -62,6 +65,13 @@ class CanvasJvm(
 
     override val dimension: Dimension2D
         get() = Dimension2D(width.toDouble(), height.toDouble())
+
+    override val mouseLocation: Point2D
+        get() {
+	        val location = MouseInfo.getPointerInfo().location
+	        SwingUtilities.convertPointFromScreen(location, this)
+	        return Point2D(location.x, location.y)
+        }
 
     override fun requestViewFocus() {
         super.requestFocusInWindow()

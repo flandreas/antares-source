@@ -53,6 +53,12 @@ class RectangularReplaceSelectionModel(
 		validate()
 	}
 
+	override fun notifyAdded(view: DrawingView<*>) {
+		if (contains(view.viewToModel(view.canvas.mouseLocation))) {
+			displayHandles(view)
+		}
+	}
+
 	override fun notifyRemoved(view: DrawingView<*>) {
 		view.ghostContainer.remove(handleSelectionModel)
 	}

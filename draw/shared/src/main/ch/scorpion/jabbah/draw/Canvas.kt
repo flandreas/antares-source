@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.geom.Point2D
 
 /**
  * Represents a target-specific rectangular drawing area.
@@ -18,6 +19,9 @@ interface Canvas {
 
     /** The background [Color] of this [Canvas].*/
     var backgroundColor: Color
+
+    /** Returns the current location of the mouse pointer.*/
+    val mouseLocation: Point2D
 
     /** Request the event focus from the window system for this [View] in order to receive key events.*/
     fun requestViewFocus()

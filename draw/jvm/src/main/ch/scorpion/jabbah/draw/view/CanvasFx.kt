@@ -7,7 +7,9 @@ import ch.scorpion.jabbah.base.event.MouseListener
 import ch.scorpion.jabbah.base.event.MouseMotionListener
 import ch.scorpion.jabbah.base.event.MouseWheelListener
 import ch.scorpion.jabbah.base.event.Button
+import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.InputEventContext
@@ -44,6 +46,9 @@ class CanvasFx(
 
     /** In JavaFX, the background color is rendered by the [Region] that contains this [Canvas], and not by the [Canvas] itself.*/
     override var backgroundColor: Color = Color.WHITE
+
+    override val mouseLocation: Point2D
+        get() = throw UnsupportedOperationException("getting mouseLocation not yet implemented")
 
     init {
 	    canvas.isFocusTraversable = true
