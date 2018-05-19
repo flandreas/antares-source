@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.base.logger
 
 /**
- * Represents the supported strategies for layouting the segments of an [EdgeView].
+ * Represents the supported strategies for laying out the segments of an [EdgeView].
  */
 enum class Layout(val customName: String, val inputEventHandler: EdgeViewInputEventHandler) {
 
@@ -42,13 +42,13 @@ enum class Layout(val customName: String, val inputEventHandler: EdgeViewInputEv
         val LOG by logger(Layout::class)
 
         fun withName(customName: String): Layout {
-            for (i in 0..Layout.values().size - 1) {
+            for (i in 0 until Layout.values().size) {
                 if (values()[i].customName == customName) {
                     return values()[i]
                 }
             }
             LOG.error("Unknown Layout $customName")
-            throw IllegalArgumentException("Unknown Layout " + customName)
+            throw IllegalArgumentException("Unknown Layout $customName")
         }
     }
 

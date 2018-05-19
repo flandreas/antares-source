@@ -13,7 +13,9 @@ import ch.scorpion.jabbah.base.logger
  */
 abstract class AbstractHandleSelectionModel<T: Component>(component: T): AbstractSelectionModel<T>(component), UnzoomableSelectionModel<T> {
 
-    private val LOG by logger(AbstractHandleSelectionModel::class)
+    companion object {
+        private val LOG by logger(AbstractHandleSelectionModel::class)
+    }
 
     /** Holds all [Handle]s of which this [SelectionModel] consists. */
     private val handles: MutableList<Handle> = mutableListOf()
@@ -73,7 +75,7 @@ abstract class AbstractHandleSelectionModel<T: Component>(component: T): Abstrac
      * Creates an [InputEventHandler] that is used by this [SelectionModel] to handle all incoming input
      * events. Extending classes can use [EventHandler] as a base class for implementing appropriate event handlers.
      */
-    abstract protected fun createInputEventHandler(): InputEventHandler<EditInputEventContext>
+    protected abstract fun createInputEventHandler(): InputEventHandler<EditInputEventContext>
 
     /**
      * Calculates the number of required [Handle]s based on the current state of the [Component] that is
@@ -81,13 +83,13 @@ abstract class AbstractHandleSelectionModel<T: Component>(component: T): Abstrac
      * The returned value is used check whether the number of needed [Handle]s has been changed, and the
      * [Handle]s maintained by this [AbstractHandleSelectionModel] should be recreated.
      */
-    abstract protected fun calculateRequiredHandlesCount(): Int
+    protected abstract fun calculateRequiredHandlesCount(): Int
 
     /**
      * Updates all handles according to the current zoom factor and the geometry of the current selected
      * [Component].
      */
-    abstract protected fun updateHandlesImpl()
+    protected abstract fun updateHandlesImpl()
 
     /**
      * Adds a new [Handle] at the end of the list of already added [Handle]s.
@@ -110,7 +112,7 @@ abstract class AbstractHandleSelectionModel<T: Component>(component: T): Abstrac
 
     protected fun getIndexOf(handle: Handle): Int = handles.indexOf(handle)
 
-    protected fun getHandleAt(x: Double, y: Double): Handle? = handles.filter { it.contains(x, y) }.firstOrNull()
+    protected fun getHandleAt(x: Double, y: Double): Handle? = handles.firstOrNull { it.contains(x, y) }
 
     protected fun clearHandles() {
         handles.clear()
@@ -122,7 +124,7 @@ abstract class AbstractHandleSelectionModel<T: Component>(component: T): Abstrac
             return
         }
         boundingBoxBuffer.setFrame(handles[0].boundingBox)
-        for (i in 1..handles.size - 1) {
+        for (i in 1 until handles.size) {
             boundingBoxBuffer.add(handles[i].boundingBox)
         }
     }
@@ -139,7 +141,7 @@ abstract class AbstractHandleSelectionModel<T: Component>(component: T): Abstrac
     open inner class EventHandler : InputEventHandlerAdapter<EditInputEventContext>() {
 
         /**
-         * Holds the [Handle] that has currenty the focus. Is set in [mousePressed] if the mouse is inside
+         * Holds the [Handle] that has currently the focus. Is set in [mousePressed] if the mouse is inside
          * one of the [Handle]s. Set to `null`otherwise.
          */
         var focusHandle: Handle? = null
@@ -153,7 +155,7 @@ abstract class AbstractHandleSelectionModel<T: Component>(component: T): Abstrac
          *
          * Before this method gets called, the focus handle is set to the [Handle] that is manipulated.
          */
-        open protected fun dragHandleBegin(view: View<*>) {
+        protected open fun dragHandleBegin(view: View<*>) {
             // empty
         }
 
@@ -162,9 +164,9 @@ abstract class AbstractHandleSelectionModel<T: Component>(component: T): Abstrac
          * implementation is empty. Extending classes can overwrite this method in order to creating undoable
          * [Command]s.
          *
-         * When this method gets called, the foucs handle is still set to the [Handle] that has been manipulated.
+         * When this method gets called, the focus handle is still set to the [Handle] that has been manipulated.
          */
-        open protected fun dragHandleEnd(editor: Editor) {
+        protected open fun dragHandleEnd(editor: Editor) {
             // empty
         }
 

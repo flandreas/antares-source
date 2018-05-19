@@ -13,7 +13,9 @@ import ch.scorpion.jabbah.graph.view.EdgeView
  */
 class DragEdgePointHandler : EdgeViewInputEventHandler() {
 
-    private val LOG by logger(DragEdgePointHandler::class)
+    companion object {
+        private val LOG by logger(DragEdgePointHandler::class)
+    }
 
     private var highlight: DragEdgePointHighlight? = null
 

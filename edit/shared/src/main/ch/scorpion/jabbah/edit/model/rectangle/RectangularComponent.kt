@@ -118,10 +118,6 @@ abstract class AbstractRectangularComponent(
                 reader.readDouble("h")
         )
     }
-
-    /** ---- [Component] interface */
-
-    override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy? = SelectionDrawingStrategy.ABOVE
 }
 
 /**
@@ -250,7 +246,6 @@ open class RectangleComponent(
     constructor(x: Double, y: Double, w: Double, h: Double): this(shape = Rectangle2D(x, y, w, h))
 
     override val type: String? get() = Translations.getString("edit.component.rectangle")
-
 }
 
 class RoundRectangleComponent(

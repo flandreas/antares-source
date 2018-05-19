@@ -1,22 +1,23 @@
 package ch.scorpion.jabbah.edit.model.rectangle
 
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.edit.SelectionModel
-import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
-import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
-import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.SelectionModel
+import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
+import ch.scorpion.jabbah.edit.style.EditTheme
 
 /**
- * A [SelectionModel] for [AbstractRectangularComponent] to be used with [SelectionDrawingStrategy.Below].
+ * A [SelectionModel] for [AbstractRectangularComponent] to be used with [SelectionDrawingStrategy.BELOW].
  */
-class RectangularBelowSelectionModel(component: AbstractRectangularComponent) : AbstractSelectionModel<AbstractRectangularComponent>(component) {
+class RectangularBelowSelectionModel(
+	component: AbstractRectangularComponent
+) : AbstractSelectionModel<AbstractRectangularComponent>(component) {
 
     companion object {
-        // TODO Use Style to determine outset and color
-        val OUTSET: Int = 5
-        val COLOR: Color = Color.ORANGE
+        private const val OUTSET: Int = 5
     }
 
     private val bounds: Rectangle2D = Rectangle2D()
@@ -27,7 +28,7 @@ class RectangularBelowSelectionModel(component: AbstractRectangularComponent) : 
         get() = Rectangle2D(bounds.x - 1, bounds.y - 1, bounds.width + 2, bounds.height + 2)
 
     override fun draw(context: DrawContext) {
-        context.g.color = COLOR
+        context.g.color = Themes.get<EditTheme>().selection.foregroundColor
         context.g.fillRect(bounds.x.toInt(), bounds.y.toInt(), bounds.width.toInt(), bounds.height.toInt())
     }
 

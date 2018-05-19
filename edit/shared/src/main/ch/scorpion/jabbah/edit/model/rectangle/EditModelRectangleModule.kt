@@ -22,6 +22,12 @@ object EditModelRectangleModule : AbstractModule() {
         )
 
         EditSelectModule.selectionModelFactory.register(
+            SelectionDrawingStrategy.REPLACE,
+            RectangleComponent::class.simpleName!!,
+            { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
+        )
+
+        EditSelectModule.selectionModelFactory.register(
                 SelectionDrawingStrategy.BELOW,
                 EllipseComponent::class.simpleName!!,
                 { RectangularBelowSelectionModel(it as AbstractRectangularComponent)} )
@@ -32,7 +38,13 @@ object EditModelRectangleModule : AbstractModule() {
                 { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
         )
 
-        EditSelectModule.selectionModelFactory.register(
+	    EditSelectModule.selectionModelFactory.register(
+		    SelectionDrawingStrategy.REPLACE,
+		    EllipseComponent::class.simpleName!!,
+		    { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
+	    )
+
+	    EditSelectModule.selectionModelFactory.register(
                 SelectionDrawingStrategy.BELOW,
                 RoundRectangleComponent::class.simpleName!!,
                 { RectangularBelowSelectionModel(it as AbstractRectangularComponent)} )
@@ -42,5 +54,11 @@ object EditModelRectangleModule : AbstractModule() {
                 RoundRectangleComponent::class.simpleName!!,
                 { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
         )
+
+	    EditSelectModule.selectionModelFactory.register(
+		    SelectionDrawingStrategy.REPLACE,
+		    RoundRectangleComponent::class.simpleName!!,
+		    { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
+	    )
     }
 }
