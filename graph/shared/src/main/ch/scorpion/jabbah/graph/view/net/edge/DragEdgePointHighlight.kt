@@ -19,13 +19,13 @@ class DragEdgePointHighlight(private val edgeView: EdgeView<*>) : AbstractDrawab
     companion object {
 
         /** The name of {@link Paint} property in {@link Properties} that determines the {@link Paint} of the drawn square.*/
-        val PROP_COLOR = "graph.view.DragEdgePointHighlight.color"
+        const val PROP_COLOR = "graph.view.DragEdgePointHighlight.color"
 
         /** The name of the {@link Integer} property in {@link Properties} that determines the size of the drawn square.*/
-        val PROP_HALF_SIZE = "graph.view.DragEdgePointHighlight.size"
+        const val PROP_HALF_SIZE = "graph.view.DragEdgePointHighlight.size"
     }
 
-    /** The index of the [Point2D] to be highlighted, if any. */
+    /** The index of the [Point2D] to be manipulated, if any. */
     var pointIndex: Int? = null
 
     /** ---- [Unzoomable] interface */
@@ -48,11 +48,7 @@ class DragEdgePointHighlight(private val edgeView: EdgeView<*>) : AbstractDrawab
 
         for (i in 1..edgeView.segmentPointCount - 2) {
             val p = zoomPan!!.transform.modelToView(edgeView.getSegmentPoint(i))
-            if (pointIndex != null && pointIndex == i) {
-                context.g.fillRect(p.x.toInt() - size, p.y.toInt() - size, 2 * size, 2 * size)
-            } else {
-                context.g.drawRect(p.x.toInt() - size, p.y.toInt() - size, 2 * size, 2 * size)
-            }
+            context.g.drawRect(p.x.toInt() - size, p.y.toInt() - size, 2 * size, 2 * size)
         }
         context.g.color = oldColor
     }

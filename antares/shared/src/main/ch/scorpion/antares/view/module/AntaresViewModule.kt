@@ -46,6 +46,7 @@ import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.view.CurrentGraphViewAnimationType
 import ch.scorpion.jabbah.graph.view.net.edge.DragEdgePointHighlight
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewReplaceSelectionModel
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 /**
@@ -162,7 +163,7 @@ object AntaresViewModule : AbstractModule() {
         factory.register(SelectionDrawingStrategy.REPLACE, DigitalSignalSourceControlView::class.simpleName!!, {SelectedColorSelectionModel(it)})
 
         factory.register(SelectionDrawingStrategy.REPLACE, LabelComponent::class.simpleName!!, {SelectedColorSelectionModel(it)})
-        factory.register(SelectionDrawingStrategy.REPLACE, DigitalEdgeView::class.simpleName!!, {SelectedColorSelectionModel(it)})
+        factory.register(SelectionDrawingStrategy.REPLACE, DigitalEdgeView::class.simpleName!!, { EdgeViewReplaceSelectionModel(it as EdgeView<*>) })
         factory.register(SelectionDrawingStrategy.BELOW, DigitalEdgeView::class.simpleName!!, { EdgeViewBelowSelectionModel(it as EdgeView<*>) })
 
         factory.register(SelectionDrawingStrategy.REPLACE, SplitterView::class.simpleName!!, {SelectedColorSelectionModel(it)})

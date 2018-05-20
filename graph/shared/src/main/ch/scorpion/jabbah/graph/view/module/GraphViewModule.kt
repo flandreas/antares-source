@@ -151,6 +151,7 @@ object GraphViewModule : AbstractModule() {
     }
 
     private fun configureSelectionModels(factory: SelectionModelFactory) {
+        factory.register(SelectionDrawingStrategy.REPLACE, EdgeViewImpl::class.simpleName!!, { EdgeViewReplaceSelectionModel(it as EdgeView<*>)})
         factory.register(SelectionDrawingStrategy.REPLACE, SubGraphVerticeViewImpl::class.simpleName!!,
             { SubGraphVerticeViewImplSelectionModel(it as SubGraphVerticeViewImpl, EditSelectModule.selectionModelProvider) })
         factory.register(SelectionDrawingStrategy.REPLACE, OriginIndicator::class.simpleName!!, { OriginIndicatorSelectionModel(it as OriginIndicator)})

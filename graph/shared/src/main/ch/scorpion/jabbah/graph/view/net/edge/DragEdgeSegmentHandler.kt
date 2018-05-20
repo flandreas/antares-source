@@ -1,9 +1,11 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.graphics.Cursor
 
 /**
  * Supports dragging individual orthogonal segments of a {@link EdgeView}.
@@ -18,6 +20,23 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
     private var totalOffset: Double = 0.0
 
     /** ---- [InputEventHandler] */
+
+	override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+	    LOG.debug("DragEdgeSegmentHandler: mouseMoved")
+	    val segment = edgeView!!.findSegment(context.x, context.y)
+	    if (segment != null) {
+		    val direction = edgeView!!.getSegmentDirection(segment)
+		    LOG.debug("DragEdgeSegmentHandler: direction is $direction")
+		    when (direction) {
+			    Direction.EAST, Direction.WEST -> context.view.setCursor(Cursor.N_RESIZE)
+			    Direction.SOUTH, Direction.NORTH -> context.view.setCursor(Cursor.W_RESIZE)
+			    else -> context.view.setCursor(Cursor.DEFAULT)
+		    }
+		    return this
+	    }
+	    context.view.setCursor(Cursor.DEFAULT)
+		return super.mouseMoved(context)
+	}
 
     override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         LOG.trace("mousePressed at (${context.x},${context.y})")

@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.edit.style.EditTheme
 /**
  * A [SelectionModel] that renders a [Component] in the selection color as of [EditTheme.selection].
  */
-class SelectedColorSelectionModel<T : Component>(component: T) : AbstractSelectionModel<T>(component){
+open class SelectedColorSelectionModel<T : Component>(component: T) : AbstractSelectionModel<T>(component){
 
     override fun draw(context: DrawContext) {
         val oldColor = context.g.color

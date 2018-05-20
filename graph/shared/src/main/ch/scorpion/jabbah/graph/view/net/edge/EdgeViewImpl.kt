@@ -657,8 +657,7 @@ open class EdgeViewImpl<T: Any>(
                 return edgeToPortConnectorSupplier.invoke() as InputEventHandler<T>
             }
         }
-        layout.inputEventHandler.edgeView = this
-        return layout.inputEventHandler as InputEventHandler<T>
+        return super.getInputEventHandler(context)
     }
 
     override fun draw(context: DrawContext) {
