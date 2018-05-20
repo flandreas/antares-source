@@ -42,6 +42,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.view.CurrentGraphViewAnimationType
 import ch.scorpion.jabbah.graph.view.net.edge.DragEdgePointHighlight
