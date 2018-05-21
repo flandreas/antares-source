@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.base
 
 import org.slf4j.LoggerFactory
 import kotlin.reflect.KClass
-import kotlin.reflect.companionObject
+import kotlin.reflect.full.companionObject
 
 /**
  * Bridges the logging system to slf4j.

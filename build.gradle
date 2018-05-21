@@ -1,7 +1,7 @@
 /* gradle build file of the jabbah project */
 
 buildscript {
-    ext.kotlin_version = '1.1.51'
+    ext.kotlin_version = '1.2.30'
     repositories {
         mavenCentral()
         jcenter()
