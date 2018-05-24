@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.model.graph
 
 import com.nhaarman.mockito_kotlin.mock
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.graph.model.*
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
@@ -25,7 +26,7 @@ class GraphImplTest {
 
     @Test
     fun shouldClear() {
-        val graph = GraphImpl(mock<EventBus>())
+        val graph = GraphImpl(mock())
                 .add(TestVertice())
                 .add(TestVertice())
                 .clear()
@@ -36,7 +37,7 @@ class GraphImplTest {
     fun shouldSetGraphElementId() {
         val v1 = TestVertice()
         val v2 = TestVertice()
-        val graph = GraphImpl(mock<EventBus>())
+        val graph = GraphImpl(mock())
         graph.add(v1)
         graph.add(v2)
 
@@ -46,7 +47,7 @@ class GraphImplTest {
 
     @Test
     fun shouldBeStorable() {
-        val testGraph = TestGraph(mock<EventBus>())
+        val testGraph = TestGraph(mock())
         val clone = IOModule.storableClonerProvider.invoke().clone(testGraph.graph) as Graph
 
         val v1: Vertice = clone.withId(1)!! as Vertice
@@ -58,7 +59,7 @@ class GraphImplTest {
 
     @Test
     fun shouldUnconnectEdgeWhenRemovingOriginVertice() {
-        val testGraph = TestGraph(mock<EventBus>())
+        val testGraph = TestGraph(mock())
 
         testGraph.graph.remove(testGraph.v1)
 
@@ -68,7 +69,7 @@ class GraphImplTest {
 
     @Test
     fun shouldUnconnectEdgeWhenRemovingDestinationVertice() {
-        val testGraph = TestGraph(mock<EventBus>())
+        val testGraph = TestGraph(mock())
 
         testGraph.graph.remove(testGraph.v2)
 
@@ -78,7 +79,7 @@ class GraphImplTest {
 
     @Test
     fun shouldUnconnectOutputPortWhenRemovingNet() {
-        val testGraph = TestGraph(mock<EventBus>())
+        val testGraph = TestGraph(mock())
 
         testGraph.graph.remove(testGraph.net)
 
@@ -90,7 +91,7 @@ class GraphImplTest {
 
     @Test
     fun shouldCreateUniqueGraphInputName() {
-        val testGraph = GraphImpl(mock<EventBus>())
+        val testGraph = GraphImpl(mock())
 
         val in1 = GraphInputImpl(PortImpl.createOutput(Boolean::class))
         testGraph.add(in1)
@@ -103,7 +104,7 @@ class GraphImplTest {
 
     @Test
     fun shouldCreateUniqueGraphOutputName() {
-        val testGraph = GraphImpl(mock<EventBus>())
+        val testGraph = GraphImpl(mock())
 
         val out1 = GraphOutputImpl(PortImpl.createInput(Boolean::class))
         testGraph.add(out1)
@@ -116,7 +117,7 @@ class GraphImplTest {
 
     @Test
     fun shouldCreateUniqueGraphInputOutputName() {
-        val testGraph = GraphImpl(mock<EventBus>())
+        val testGraph = GraphImpl(mock())
 
         val `in` = GraphInputImpl(PortImpl.createOutput(Boolean::class))
         testGraph.add(`in`)
@@ -126,4 +127,37 @@ class GraphImplTest {
         assertThat(`in`.name, `is`("I1"))
         assertThat(out.name, `is`("O1"))
     }
+
+	@Test
+    fun shouldNotChangeUniqueInputName() {
+		val eventBus = EventBusImpl()
+		val testGraph = GraphImpl(eventBus)
+
+		val `in` = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I99")
+		testGraph.add(`in`)
+
+		assertThat(`in`.name, `is`("I99"))
+    }
+
+	@Test
+	fun shouldNotChangeUniqueOutputName() {
+		val eventBus = EventBusImpl()
+		val testGraph = GraphImpl(eventBus)
+
+		val out = GraphInputImpl(PortImpl.createInput(Boolean::class), "O99")
+		testGraph.add(out)
+
+		assertThat(out.name, `is`("O99"))
+	}
+
+	@Test
+	fun shouldNotChangeUniqueInOutName() {
+		val eventBus = EventBusImpl()
+		val testGraph = GraphImpl(eventBus)
+
+		val inout = GraphInputImpl(PortImpl.createInOut(Boolean::class), "IO99")
+		testGraph.add(inout)
+
+		assertThat(inout.name, `is`("IO99"))
+	}
 }

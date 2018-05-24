@@ -4,13 +4,15 @@ import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.OutputPort
 
 /**
  * Can be plugged into a [CalculatingVertice] to calculate new signals on the [Vertice]' [OutputPort]
- * whenever a signal has arrived on one of the [Vertice]' [InputPorts]s.
+ * whenever a signal has arrived on one of the [Vertice]' [InputPort]s.
  * @param <T> the type of [CalculatingVertice] that this [VerticeCalculator] calculates.
  */
-interface VerticeCalculator<T: Vertice> {
+interface VerticeCalculator<in T: Vertice> {
 
     /** Calculates and sets the [OutputPort]s of a [Vertice]. */
     fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler)
@@ -24,9 +26,12 @@ object EmptyVerticeCalculator : VerticeCalculator<CalculatingVertice> {
     }
 }
 
-open class CalculatingVertice(private val calculator: VerticeCalculator<*>) : AbstractVertice() {
+open class CalculatingVertice(
+    private val calculator: VerticeCalculator<*>,
+    name: String? = null
+) : AbstractVertice(name) {
 
-    constructor(): this(EmptyVerticeCalculator)
+    constructor(name: String? = null): this(EmptyVerticeCalculator, name)
 
     override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
         (calculator as VerticeCalculator<CalculatingVertice>).calculate(this, data as GraphActorData, signalHandler)

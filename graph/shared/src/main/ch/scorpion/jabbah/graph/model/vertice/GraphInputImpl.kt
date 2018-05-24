@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
+import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.GraphInput
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.PortType
@@ -10,7 +11,7 @@ import ch.scorpion.jabbah.graph.model.SubGraphInputPort
 /**
  * A standard implementation of the [GraphInput] interface whose [PortType] cannot be changed.
  */
-class GraphInputImpl<T: Any>(outputPort: OutputPort<T>) : CalculatingVertice(), GraphInput<T> {
+class GraphInputImpl<T: Any>(outputPort: OutputPort<T>, name: String? = null) : CalculatingVertice(name), GraphInput<T> {
 
     init {
         propagationDelay = 0

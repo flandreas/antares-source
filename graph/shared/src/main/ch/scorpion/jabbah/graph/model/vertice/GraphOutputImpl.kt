@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.graph.model.*
 /**
  * A standard implementation of the [GraphOutput] interface whose [PortType] cannot be changed.
  */
-class GraphOutputImpl<T: Any>(inputPort: InputPort<T>) : CalculatingVertice(), GraphOutput<T> {
+class GraphOutputImpl<T: Any>(inputPort: InputPort<T>, name: String? = null) : CalculatingVertice(name), GraphOutput<T> {
 
     init {
         propagationDelay = 0

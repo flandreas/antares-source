@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model
 
+import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.io.IOModule
 import org.junit.rules.TestRule
@@ -25,6 +26,7 @@ class GraphModelTestRule : TestRule {
     }
 
     fun configure() {
+        BaseModuleJvm.require()
         IOModule.typeMap.register("testVertice", TestVertice::class)
         GraphModelModule.require()
     }

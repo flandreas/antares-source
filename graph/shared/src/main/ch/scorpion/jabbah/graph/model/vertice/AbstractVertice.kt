@@ -1,19 +1,21 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
 
 /**
  * An abstract base implementation of the [Vertice] interface.
  */
-abstract class AbstractVertice : AbstractGraphElement(), Vertice {
+abstract class AbstractVertice(name: String? = null) : AbstractGraphElement(), Vertice {
 
     companion object {
         private val LOG by logger(AbstractVertice::class)
@@ -26,7 +28,7 @@ abstract class AbstractVertice : AbstractGraphElement(), Vertice {
 
     /** ---- [Vertice] interface */
 
-    override var name: String? = null
+    override var name: String? = name
         set(value) {
             if (value != field) {
                 field = value
@@ -157,7 +159,7 @@ abstract class AbstractVertice : AbstractGraphElement(), Vertice {
     }
 
     /**
-     * Clears all [Ports], i.e. removes them from this [AbstractVertice].
+     * Clears all [Port]s, i.e. removes them from this [AbstractVertice].
      * This method should only be called when instantiating [AbstractVertice]s as [Storable]s, which must
      * use the default constructor of leaf classes and therefore redo the standard [Port] setup in non-default
      * constructors.
@@ -181,12 +183,11 @@ abstract class AbstractVertice : AbstractGraphElement(), Vertice {
     }
 
     private fun dataToString(): String {
-        // TODO Kotlin equivalent for StringBuilder()?
-        var s: String = ""
+        val s = StringBuilder()
         for (input in getInputs()) {
-            s += "${input.portId.toString()}: ${input.getIncomingSignal()} "
+            s.append("${input.portId}: ${input.getIncomingSignal()} ")
         }
-        return s
+        return s.toString()
     }
 
     /** A "virtual" [GraphActorData] implementation that forwards the request for the signal to the corresponding [Port].*/

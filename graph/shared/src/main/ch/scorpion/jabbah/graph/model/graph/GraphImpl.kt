@@ -139,11 +139,11 @@ open class GraphImpl(private val eventBus: EventBus = BaseModule.eventBus) : Gra
     }
 
     override fun <T : Any> getGraphPort(name: String): GraphPort<T>? {
-        return _elements.filter { it is GraphPort<*> && it.name == name}.firstOrNull() as GraphPort<T>?
+        return _elements.firstOrNull { it is GraphPort<*> && it.name == name} as GraphPort<T>?
     }
 
     override fun <T : Any> getGraphInput(name: String): GraphInput<T>? {
-        val input = graphInputs.filter { it.name == name }.firstOrNull()
+        val input = graphInputs.firstOrNull { it.name == name }
         if (input != null) {
             return input as GraphInput<T>
         }
@@ -151,7 +151,7 @@ open class GraphImpl(private val eventBus: EventBus = BaseModule.eventBus) : Gra
     }
 
     override fun <T : Any> getGraphOutput(name: String): GraphOutput<T>? {
-        val output = graphOutputs.filter { it.name == name }.firstOrNull()
+        val output = graphOutputs.firstOrNull { it.name == name }
         if (output != null) {
             return output as GraphOutput<T>
         }
@@ -238,7 +238,7 @@ open class GraphImpl(private val eventBus: EventBus = BaseModule.eventBus) : Gra
 
     /** Creates unique names for [GraphPort]s.*/
     private fun ensureUniqueGraphPortName(graphElement: GraphElement) {
-        if (graphElement is GraphPort<*>) {
+        if (graphElement is GraphPort<*> && graphElement.name == null) {
             when (graphElement.portType) {
                 PortType.INPUT -> graphElement.name = createUniqueGraphInputName()
                 PortType.OUTPUT -> graphElement.name = createUniqueGraphOutputName()
