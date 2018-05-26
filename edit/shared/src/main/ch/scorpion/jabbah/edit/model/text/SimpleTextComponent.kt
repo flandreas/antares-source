@@ -14,8 +14,8 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
-import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -26,7 +26,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 class SimpleTextComponent(
         text: String = "",
         location: Point2D = Point2D(),
-        styleType: StyleType = EditStyleType.MESSAGE,
+        styleType: StyleType = StyleType.FIGURE,
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
         private val textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory
 ) : AbstractRectangularComponent(
@@ -38,10 +38,10 @@ class SimpleTextComponent(
     private companion object {
 
         /** The horizontal inset between the bounding box and the text.  */
-        private val INSET_X = 10
+        private const val INSET_X = 10
 
         /** The vertical inset between the bounding box and the text.  */
-        private val INSET_Y = 10
+        private const val INSET_Y = 10
     }
 
     /** ---- [Transparent] interface */

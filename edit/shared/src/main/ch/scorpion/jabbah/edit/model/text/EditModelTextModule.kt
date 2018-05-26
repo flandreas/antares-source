@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
+import ch.scorpion.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 
 /**
@@ -21,5 +22,10 @@ object EditModelTextModule : AbstractModule() {
             SelectionDrawingStrategy.ABOVE,
             SimpleTextComponent::class.simpleName!!,
             { RectangularHandleSelectionModel(it as AbstractRectangularComponent) })
+
+        EditSelectModule.selectionModelFactory.register(
+            SelectionDrawingStrategy.REPLACE,
+            SimpleTextComponent::class.simpleName!!,
+            { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) })
     }
 }

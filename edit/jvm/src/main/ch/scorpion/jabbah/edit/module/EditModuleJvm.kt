@@ -14,10 +14,11 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.SizeEditor
 import ch.scorpion.jabbah.edit.model.VerticalAlignmentEditor
-import ch.scorpion.jabbah.edit.model.text.TextComponent
-import ch.scorpion.jabbah.edit.model.text.TextComponentFactoryJvm
-import ch.scorpion.jabbah.edit.model.text.TextProperty
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
+import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
+import ch.scorpion.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
+import ch.scorpion.jabbah.edit.model.text.*
+import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.IOModuleJvm
 import ch.scorpion.jabbah.io.TypeMap
@@ -51,6 +52,7 @@ object EditModuleJvm : AbstractModule() {
         configurePropertyEditors(propertyEditorRegistry)
 
 	    registerPropertyEditorsFx(propertyEditorRegistryFx)
+	    registerSelectionModels();
     }
 
     private fun configurePropertyRenderer(registry: PropertyRendererRegistry) {
@@ -78,5 +80,12 @@ object EditModuleJvm : AbstractModule() {
 
     private fun registerTypes(typeMap: TypeMap) {
         typeMap.register("text", TextComponent::class)
+    }
+
+    private fun registerSelectionModels() {
+	    EditSelectModule.selectionModelFactory.register(
+		    SelectionDrawingStrategy.REPLACE,
+		    TextComponentJvm::class.simpleName!!,
+		    { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) })
     }
 }

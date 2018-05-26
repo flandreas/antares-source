@@ -19,15 +19,17 @@ import ch.scorpion.jabbah.base.logger
  * @param eventBus the [EventBus] on which [SelectionChangeEvent]s are posted by this [SelectionManager]
  */
 class SelectionManagerImpl(
-        val view: DrawingView<out Drawing<Component>>,
-        val selectionModelProvider: SelectionModelProvider,
-        val eventBus: EventBus
+	val view: DrawingView<out Drawing<Component>>,
+	private val selectionModelProvider: SelectionModelProvider,
+	val eventBus: EventBus
 ) : SelectionManager {
 
     constructor(view: DrawingView<out Drawing<Component>>)
         : this(view, EditSelectModule.selectionModelProvider, BaseModule.eventBus)
 
-    private val LOG by logger(SelectionManagerImpl::class)
+	companion object {
+        private val LOG by logger(SelectionManagerImpl::class)
+	}
 
     init {
         view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
@@ -154,7 +156,7 @@ class SelectionManagerImpl(
 
 
         selectionMap.clear()
-        postSelectionChanged(emptyList<Component>(), selected = false)
+        postSelectionChanged(emptyList(), selected = false)
     }
 
     private fun postSelectionChanged(components: Collection<Component>, selected: Boolean) {
@@ -170,11 +172,12 @@ class SelectionManagerImpl(
             selectionModel = selectionModelProvider.provideFor(component, strategy)
         }
         if (selectionModel == null) {
-            LOG.error("SelectionManagerImpl: No suitable SelectionModel found for ${System.SYSTEM!!.getClassName(component.selectableComponent)}")
+            LOG.error("SelectionManagerImpl: No suitable SelectionModel found for " +
+                "${System.SYSTEM!!.getClassName(component.selectableComponent)} and strategy $strategy")
             return
         }
         view.content.addSelectionModel(selectionModel, strategy)
-        selectionMap.put(component, selectionModel)
+	    selectionMap[component] = selectionModel
         selectionModel.notifyAdded(view)
     }
 
