@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.base.geom.AffineTransform
+import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.Stroke
@@ -24,11 +25,11 @@ class GateMnemonicsEvent
  */
 object GateMnemonic {
 
-    private val PROP_ENABLED = "ch.scorpion.antares.view.GateMnemonics"
+    private const val PROP_ENABLED = "ch.scorpion.antares.view.GateMnemonics"
     private val FONT = FontImpl(size = 8)
     private val LINE_STROKE = Stroke(width = 0.5f)
     private val SWITCH_STROKE = Stroke(width = 1.5f)
-    private val ZOOM_LIMIT = 1.6
+    private const val ZOOM_LIMIT = 1.6
 
     var enabled: Boolean = BaseModule.settings.getString(PROP_ENABLED, "false") == "true"
         set(value) {
@@ -117,6 +118,10 @@ object GateMnemonic {
         end(gateView, context)
     }
 
+	private fun transparent (transparent: Transparent, color: Color): Color {
+		return Transparent.applyTo(transparent.transparency, color)
+	}
+
     private fun drawSerial(gateView: DigitalComponentView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean) {
         val isExec = ApplicationMode.EXECUTE == context.castedAppContext<GraphApplicationContext>()!!.mode
 
@@ -128,14 +133,14 @@ object GateMnemonic {
         context.g.font = FONT
         context.g.stroke = LINE_STROKE
         // Segment 1
-        context.g.color = if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else foreground)
         context.g.drawLine(s(1.0), s(4.0), s(1.5), s(4.0))
-        drawSource(context, isExec, foreground, background)
+        drawSource(gateView, context, isExec, foreground, background)
         // Segment 2
-        context.g.color = if (isExec) signal1.invert(invert1).color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal1.invert(invert1).color.foregroundColor else foreground)
         context.g.drawLine(s(2.5), s(4.0), s(3.0), s(4.0))
         // Segment 3
-        context.g.color = if (isExec) signalOut.bitAt(0).color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signalOut.bitAt(0).color.foregroundColor else foreground)
         context.g.drawLine(s(4.0), s(4.0), s(6.0), s(4.0))
 
         val y1 = if (invert1) {
@@ -156,20 +161,20 @@ object GateMnemonic {
 
         // Input 1
         context.g.stroke = LINE_STROKE
-        context.g.color = if (isExec) signal1.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal1.color.foregroundColor else foreground)
         context.g.drawLine(portX, s(2.0), s(2.0), s(2.0))
         context.g.drawLine(s(2.0), s(2.0), s(2.0), y1)
         context.g.stroke = SWITCH_STROKE
-        context.g.color = color1
+        context.g.color = transparent(gateView, color1)
         context.g.drawLine(s(1.5) + 1, y1, s(2.5) - 1, y1)
 
         // Input 2
         context.g.stroke = LINE_STROKE
-        context.g.color = if (isExec) signal2.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal2.color.foregroundColor else foreground)
         context.g.drawLine(portX, s(6.0), s(3.5), s(6.0))
         context.g.drawLine(s(3.5), s(6.0), s(3.5), y2)
         context.g.stroke = SWITCH_STROKE
-        context.g.color = color2
+        context.g.color = transparent(gateView, color2)
         context.g.drawLine(s(3.0) + 1, y2, s(4.0) - 1, y2)
     }
 
@@ -187,28 +192,28 @@ object GateMnemonic {
         context.g.font = FONT
         context.g.stroke = LINE_STROKE
         // Segment 1
-        context.g.color = if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else foreground)
         context.g.drawLine(s(1.0), s(4.0), s(1.0), yu)
         context.g.drawLine(s(1.0), yu, s(1.5), yu)
         context.g.drawLine(s(1.0), s(4.0), s(1.0), yl)
         context.g.drawLine(s(1.0), yl, s(1.5), yl)
-        drawSource(context, isExec, foreground, background)
+        drawSource(gateView, context, isExec, foreground, background)
         // Segment 2.upper
-        context.g.color = if (isExec) signal1.not().color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal1.not().color.foregroundColor else foreground)
         context.g.drawLine(s(2.5), yu, s(3.0), yu)
         // Segment 2.lower
-        context.g.color = if (isExec) signal1.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal1.color.foregroundColor else foreground)
         context.g.drawLine(s(2.5), yl, s(3.0), yl)
         // Segment 3.upper
-        context.g.color = if (isExec) Bit.of(!signal1.isSet && signal2.invert(invert).isSet).color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) Bit.of(!signal1.isSet && signal2.invert(invert).isSet).color.foregroundColor else foreground)
         context.g.drawLine(s(4.0), yu, s(4.5), yu)
         context.g.drawLine(s(4.5), yu, s(4.5), s(4.0))
         // Segment 3.lower
-        context.g.color = if (isExec) Bit.of(signal1.isSet && !signal2.invert(invert).isSet).color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) Bit.of(signal1.isSet && !signal2.invert(invert).isSet).color.foregroundColor else foreground)
         context.g.drawLine(s(4.0), yl, s(4.5), yl)
         context.g.drawLine(s(4.5), yl, s(4.5), s(4.0))
         // Segment 4
-        context.g.color = if (isExec) signalOut.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signalOut.color.foregroundColor else foreground)
         context.g.drawLine(s(4.5), s(4.0), s(6.0), s(4.0))
 
         val portX = (gateView.getPortViews()[0].connectionPoint.x - gateView.x).toInt()
@@ -218,13 +223,13 @@ object GateMnemonic {
         val y1l = if (signal1.isSet) yl else yl - s(0.5)
 
         context.g.stroke = LINE_STROKE
-        context.g.color = if (isExec) signal1.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal1.color.foregroundColor else foreground)
         context.g.drawLine(portX.toDouble(), s(2.0), s(2.0), s(2.0))
         context.g.drawLine(s(2.0), s(2.0), s(2.0), y1l)
         context.g.stroke = SWITCH_STROKE
-        context.g.color = if (isExec) signal1.not().color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal1.not().color.foregroundColor else foreground)
         context.g.drawLine(s(1.5) + 1, y1u, s(2.5) - 1, y1u)
-        context.g.color = if (isExec) signal1.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal1.color.foregroundColor else foreground)
         context.g.drawLine(s(1.5) + 1, y1l, s(2.5) - 1, y1l)
 
         // Input 2
@@ -240,7 +245,7 @@ object GateMnemonic {
         }
 
         context.g.stroke = LINE_STROKE
-        context.g.color = if (isExec) signal2.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal2.color.foregroundColor else foreground)
         if (invert) {
             context.g.drawLine(portX.toDouble(), s(6.0), s(0.5), s(6.0))
             context.g.drawLine(s(0.5), s(6.0), s(0.5), s(2.5))
@@ -251,9 +256,9 @@ object GateMnemonic {
             context.g.drawLine(s(3.5) + 1, s(6.0), s(3.5) + 1, y2u)
         }
         context.g.stroke = SWITCH_STROKE
-        context.g.color = if (isExec) Bit.of(signal1.isSet && !signal2.invert(invert).isSet).color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) Bit.of(signal1.isSet && !signal2.invert(invert).isSet).color.foregroundColor else foreground)
         context.g.drawLine(s(3.0) + 1, y2l, s(4.0) - 1, y2l)
-        context.g.color = if (isExec) Bit.of(!signal1.isSet && signal2.invert(invert).isSet).color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) Bit.of(!signal1.isSet && signal2.invert(invert).isSet).color.foregroundColor else foreground)
         context.g.drawLine(s(3.0) + 1, y2u, s(4.0) - 1, y2u)
     }
 
@@ -274,22 +279,22 @@ object GateMnemonic {
         context.g.font = FONT
         context.g.stroke = LINE_STROKE
         // Segment 1
-        context.g.color = if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else foreground)
         context.g.drawLine(s(1.0), s(4.0), s(1.0), yu)
         context.g.drawLine(s(1.0), yu, s(2.25), yu)
         context.g.drawLine(s(1.0), s(4.0), s(1.0), yl)
         context.g.drawLine(s(1.0), yl, s(2.25), yl)
-        drawSource(context, isExec, foreground, background)
+        drawSource(gateView, context, isExec, foreground, background)
         // Segment 2.1
-        context.g.color = if (isExec) signal1.invert(invert1).color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal1.invert(invert1).color.foregroundColor else foreground)
         context.g.drawLine(s(3.25), yu, s(4.5), yu)
         context.g.drawLine(s(4.5), yu, s(4.5), s(4.0))
         // Segment 2.2
-        context.g.color = if (isExec) signal2.invert(invert2).color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal2.invert(invert2).color.foregroundColor else foreground)
         context.g.drawLine(s(3.25), yl, s(4.5), yl)
         context.g.drawLine(s(4.5), yl, s(4.5), s(4.0))
         // Segment 2.out
-        context.g.color = if (isExec) signalOut.bitAt(0).color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signalOut.bitAt(0).color.foregroundColor else foreground)
         context.g.drawLine(s(4.5), s(4.0), s(6.0), s(4.0))
 
         val portX = (gateView.getPortViews()[0].connectionPoint.x - gateView.x)
@@ -307,20 +312,20 @@ object GateMnemonic {
 
         // Input 1
         context.g.stroke = LINE_STROKE
-        context.g.color = if (isExec) signal1.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal1.color.foregroundColor else foreground)
         context.g.drawLine(portX, s(2.0), s(2.75), s(2.0))
         context.g.drawLine(s(2.75), s(2.0), s(2.75), y1)
         context.g.stroke = SWITCH_STROKE
-        context.g.color = color1
+        context.g.color = transparent(gateView, color1)
         context.g.drawLine(s(2.25) + 1, y1, s(3.25) - 1, y1)
 
         // Input 2
         context.g.stroke = LINE_STROKE
-        context.g.color = if (isExec) signal2.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal2.color.foregroundColor else foreground)
         context.g.drawLine(portX, s(6.0), s(2.75), s(6.0))
         context.g.drawLine(s(2.75), s(6.0), s(2.75), y2)
         context.g.stroke = SWITCH_STROKE
-        context.g.color = color2
+        context.g.color = transparent(gateView, color2)
         context.g.drawLine(s(2.25) + 1, y2, s(3.25) - 1, y2)
     }
 
@@ -336,11 +341,11 @@ object GateMnemonic {
         context.g.font = FONT
         context.g.stroke = LINE_STROKE
         // Segment 1
-        context.g.color = if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else foreground)
         context.g.drawLine(s(1.0), s(4.0), s(2.25), s(4.0))
-        drawSource(context, isExec, foreground, background)
+        drawSource(gateView, context, isExec, foreground, background)
         // Segment 2
-        context.g.color = if (isExec) signalOut.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signalOut.color.foregroundColor else foreground)
         context.g.drawLine(s(3.25), s(4.0), s(6.0), s(4.0))
 
         val portX = (gateView.getPortViews()[0].connectionPoint.x - gateView.x)
@@ -348,13 +353,13 @@ object GateMnemonic {
 
         // Input
         context.g.stroke = LINE_STROKE
-        context.g.color = if (isExec) signal.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal.color.foregroundColor else foreground)
         context.g.drawLine(portX, s(4.0), s(0.5), s(4.0))
         context.g.drawLine(s(0.5), s(4.0), s(0.5), yu)
         context.g.drawLine(s(0.5), yu, s(2.75), yu)
         context.g.drawLine(s(2.75), yu, s(2.75), y)
         context.g.stroke = SWITCH_STROKE
-        context.g.color = if(isExec) signalOut.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if(isExec) signalOut.color.foregroundColor else foreground)
         context.g.drawLine(s(2.25) + 1, y, s(3.25) - 1, y)
     }
 
@@ -363,7 +368,7 @@ object GateMnemonic {
         val signal = gateView.model!!.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
         val portX = (gateView.getPortViews()[0].connectionPoint.x - gateView.x)
         context.g.stroke = LINE_STROKE
-        context.g.color = if(isExec) signal.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if(isExec) signal.color.foregroundColor else foreground)
         context.g.drawLine(portX, s(4.0), s(6.0), s(4.0))
     }
 
@@ -378,19 +383,19 @@ object GateMnemonic {
         context.g.font = FONT
         context.g.stroke = LINE_STROKE
         // Segment 'undefined'
-        context.g.color = if (isExec) Themes.get<AntaresTheme>().undefined.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) Themes.get<AntaresTheme>().undefined.foregroundColor else foreground)
         context.g.drawLine(s(1.0), s(4.0), s(2.5), s(4.0))
         context.g.fillOval(s(0.75), s(3.75), s(0.5) + 1, s(0.5) + 1)
-        context.g.color = if (isExec) Themes.get<AntaresTheme>().undefined.backgroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) Themes.get<AntaresTheme>().undefined.backgroundColor else foreground)
         context.g.drawOval(s(0.75), s(3.75), s(0.5) + 1, s(0.5) + 1)
         // Segment 'signal'
-        context.g.color = if (isExec) signal.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signal.color.foregroundColor else foreground)
         context.g.drawLine(0.0, s(3.0), s(2.5), s(3.0))
         // Segment 'control'
-        context.g.color = if (isExec) control.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) control.color.foregroundColor else foreground)
         context.g.drawLine(s(3.0), s(4.5), s(3.0), if (control.isSet) s(3.0) else s(3.5))
         // Segment 'output'
-        context.g.color = if (isExec) signalOut.color.foregroundColor else foreground
+        context.g.color = transparent(gateView, if (isExec) signalOut.color.foregroundColor else foreground)
         context.g.drawLine(s(3.5), s(3.0), s(6.0), s(3.0))
 
         // Switch
@@ -399,10 +404,10 @@ object GateMnemonic {
 
     }
 
-    private fun drawSource(context: DrawContext, isExec: Boolean, foreground: Color, background: Color) {
-        context.g.color = if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else background
+    private fun drawSource(transparent: Transparent, context: DrawContext, isExec: Boolean, foreground: Color, background: Color) {
+        context.g.color = transparent(transparent, if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else background)
         context.g.fillOval(s(0.75), s(3.75), s(0.5) + 1, s(0.5) + 1)
-        context.g.color = if (isExec) Themes.get<AntaresTheme>().one.backgroundColor else foreground
+        context.g.color = transparent(transparent, if (isExec) Themes.get<AntaresTheme>().one.backgroundColor else foreground)
         context.g.drawOval(s(0.75), s(3.75), s(0.5) + 1, s(0.5) + 1)
     }
 

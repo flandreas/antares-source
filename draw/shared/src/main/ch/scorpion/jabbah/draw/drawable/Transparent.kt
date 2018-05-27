@@ -14,8 +14,15 @@ import ch.scorpion.jabbah.draw.graphics.Color
 interface Transparent : Drawable {
 
     companion object {
-        val FULLY_TRANSPARENT = 0
-        val FULLY_OPAQUE = 255
+        const val FULLY_TRANSPARENT = 0
+        const val FULLY_OPAQUE = 255
+
+	    fun applyTo(transparency: Int, color: Color): Color {
+		    if (color.alpha == transparency) {
+			    return color
+		    }
+		    return Color(color, transparency)
+	    }
     }
 
     /**
@@ -39,11 +46,8 @@ class TransparentImpl(val owner: Drawable) : Transparent, Drawable by owner {
             owner.invalidate()
         }
 
-    /** Applies the transparency to the specified [Color] and returns the new [Color].*/
-    fun applyTo(color: Color): Color {
-        if (color.alpha == transparency) {
-            return color
-        }
-        return Color(color, transparency)
-    }
+	/** Applies the transparency to the specified [Color] and returns the new [Color].*/
+	fun applyTo(color: Color): Color {
+		return Transparent.applyTo(transparency, color)
+	}
 }
