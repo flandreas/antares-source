@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.model.*
@@ -24,6 +26,21 @@ open class GraphImpl(private val eventBus: EventBus = BaseModule.eventBus) : Gra
 
     /** Forwards signal changes of a [OscilloscopeProbeVertice] to the [Oscilloscope].*/
     private val oscilloscopeProbeHandler = OscilloscopeProbeHandler()
+
+	private val graphPortNameChangedHandler: EventHandler<GraphPortNameChanged<Any>> = {
+		LOG.debug("GraphImpl: handling GraphPortNameChanged")
+		if (it.newName != null && contains(it.graphPort) && existsGraphPortNameExcluding(it.newName, it.graphPort)) {
+			throw VetoException()
+		}
+	}
+
+	init {
+		eventBus.register(GraphPortNameChanged::class, graphPortNameChangedHandler)
+	}
+
+	fun dispose() {
+		eventBus.unregister(GraphPortNameChanged::class, graphPortNameChangedHandler)
+	}
 
     /** ---- [Graph] interface */
 
@@ -238,50 +255,31 @@ open class GraphImpl(private val eventBus: EventBus = BaseModule.eventBus) : Gra
 
     /** Creates unique names for [GraphPort]s.*/
     private fun ensureUniqueGraphPortName(graphElement: GraphElement) {
-        if (graphElement is GraphPort<*> && graphElement.name == null) {
-            when (graphElement.portType) {
-                PortType.INPUT -> graphElement.name = createUniqueGraphInputName()
-                PortType.OUTPUT -> graphElement.name = createUniqueGraphOutputName()
-                PortType.INOUT -> graphElement.name = createUniqueGraphInputOutputName()
-            }
-        }
+	    if (graphElement is GraphPort<*> ) {
+		    when (graphElement.portType) {
+			    PortType.INPUT -> ensureUniqueGraphPortName("I", graphInputs, graphElement)
+			    PortType.OUTPUT -> ensureUniqueGraphPortName("O", graphOutputs, graphElement)
+			    PortType.INOUT -> ensureUniqueGraphPortName("IO", graphInOuts, graphElement)
+		    }
+	    }
     }
 
-    private fun createUniqueGraphInputName(): String {
-        var name = "I" + (graphInputs.size + 1)
-        while (existsGraphInputName(name)) {
-            name += "1"
-        }
-        return name
-    }
+	private fun ensureUniqueGraphPortName(prefix: String, graphPorts: ImmutableList<GraphPort<*>>, graphPort: GraphPort<*>) {
+		var name = graphPort.name
+		if (name == null || existsGraphPortNameExcluding(name, graphPort)) {
+			name = prefix + (graphPorts.size + 1)
+		}
+		while (existsGraphPortNameExcluding(name, graphPort)) {
+			name += "1"
+		}
+		if (graphPort.name != name) {
+			graphPort.name = name
+		}
+	}
 
-    private fun createUniqueGraphOutputName(): String {
-        var name = "O" + (graphOutputs.size + 1)
-        while (existsGraphOutputName(name)) {
-            name += "1"
-        }
-        return name
-    }
-
-    private fun createUniqueGraphInputOutputName(): String {
-        var name = "IO" + (graphInOuts.size + 1)
-        while (existsGraphInputOutputName(name)) {
-            name += "1"
-        }
-        return name
-    }
-
-    private fun existsGraphInputName(name: String): Boolean {
-        return graphInputs.any { it.name == name }
-    }
-
-    private fun existsGraphOutputName(name: String): Boolean {
-        return graphOutputs.any { it.name == name }
-    }
-
-    private fun existsGraphInputOutputName(name: String): Boolean {
-        return graphInOuts.any { it.name == name}
-    }
+	private fun existsGraphPortNameExcluding(name: String, excludedGraphPort: GraphPort<Any>): Boolean {
+		return graphPorts.any { it != excludedGraphPort && it.name == name }
+	}
 
     private fun getOscilloscope(): Oscilloscope? {
         return elements.firstOrNull() { it is Oscilloscope } as Oscilloscope?

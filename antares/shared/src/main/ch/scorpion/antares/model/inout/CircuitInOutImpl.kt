@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.*
-import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
+import ch.scorpion.jabbah.graph.model.vertice.AbstractGraphPort
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -22,12 +22,13 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 
 /**
- * A standard implementation of the {@link CircuitInOut} interface.
+ * A standard implementation of the [CircuitInOut] interface.
  */
 class CircuitInOutImpl(
     val eventBus: EventBus = BaseModule.eventBus,
+    name: String? = null,
     portType: PortType = PortType.INPUT
-) : CalculatingVertice(CALCULATOR), CircuitInOut {
+) : AbstractGraphPort<DigitalSignal>(DigitalPortImpl(portType.reverse()), name, CALCULATOR), CircuitInOut {
 
     companion object {
 
@@ -53,10 +54,6 @@ class CircuitInOutImpl(
                 getDigitalPort().portType = value.reverse()
             }
         }
-
-    init {
-        addPort(DigitalPortImpl(portType.reverse()))
-    }
 
     /** ---- [GraphInput] interface */
 
@@ -128,27 +125,6 @@ class CircuitInOutImpl(
             readingFromStore = false
         }
     }
-
-    /** ---- [Vertice] interface */
-
-    override var name: String?
-        get() = super.name
-        set(value) {
-            if (super.name != value) {
-                val oldName = super.name
-                super.name = value
-                stateChanged()
-                eventBus.postVetoable(
-                    event = GraphPortNameChanged(this, oldName, value),
-                    undoEvent = GraphPortNameChanged(this, value, oldName),
-                    vetoHandler = {
-                        super.name = oldName
-                        stateChanged()
-                        // TODO Post an application error event that can be displayed to the user as an info
-                    }
-                )
-            }
-        }
 
     /** ---- [CircuitInOut] interface */
 

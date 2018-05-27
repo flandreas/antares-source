@@ -1,19 +1,20 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.*
 
 /**
  * A standard implementation of the [GraphOutput] interface whose [PortType] cannot be changed.
  */
-class GraphOutputImpl<T: Any>(inputPort: InputPort<T>, name: String? = null) : CalculatingVertice(name), GraphOutput<T> {
-
-    init {
-        propagationDelay = 0
-        addPort(inputPort)
-    }
+class GraphOutputImpl<T: Any>(
+    inputPort: InputPort<T>,
+    name: String? = null,
+    eventBus: EventBus = BaseModule.eventBus
+) : AbstractGraphPort<T>(port = inputPort, name = name, calculator = GraphOutputImplCalculator, eventBus = eventBus), GraphOutput<T> {
 
     private var subGraphOutputPort: SubGraphOutputPort<T>? = null
 

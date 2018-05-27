@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.model.graph
 
 import com.nhaarman.mockito_kotlin.mock
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.graph.model.*
 import org.hamcrest.CoreMatchers.`is`
@@ -102,6 +101,19 @@ class GraphImplTest {
         assertThat(in2.name, `is`("I2"))
     }
 
+	@Test
+	fun shouldCreateUniqueGraphInputNameForExisting() {
+		val testGraph = GraphImpl(mock())
+
+		val in1 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1")
+		testGraph.add(in1)
+		val in2 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1")
+		testGraph.add(in2)
+
+		assertThat(in1.name, `is`("I1"))
+		assertThat(in2.name, `is`("I2"))
+	}
+
     @Test
     fun shouldCreateUniqueGraphOutputName() {
         val testGraph = GraphImpl(mock())
@@ -130,10 +142,9 @@ class GraphImplTest {
 
 	@Test
     fun shouldNotChangeUniqueInputName() {
-		val eventBus = EventBusImpl()
-		val testGraph = GraphImpl(eventBus)
-
+		val testGraph = GraphImpl(EventBusImpl())
 		val `in` = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I99")
+
 		testGraph.add(`in`)
 
 		assertThat(`in`.name, `is`("I99"))
@@ -141,10 +152,9 @@ class GraphImplTest {
 
 	@Test
 	fun shouldNotChangeUniqueOutputName() {
-		val eventBus = EventBusImpl()
-		val testGraph = GraphImpl(eventBus)
-
+		val testGraph = GraphImpl(EventBusImpl())
 		val out = GraphInputImpl(PortImpl.createInput(Boolean::class), "O99")
+
 		testGraph.add(out)
 
 		assertThat(out.name, `is`("O99"))
@@ -152,12 +162,37 @@ class GraphImplTest {
 
 	@Test
 	fun shouldNotChangeUniqueInOutName() {
-		val eventBus = EventBusImpl()
-		val testGraph = GraphImpl(eventBus)
-
+		val testGraph = GraphImpl(EventBusImpl())
 		val inout = GraphInputImpl(PortImpl.createInOut(Boolean::class), "IO99")
+
 		testGraph.add(inout)
 
 		assertThat(inout.name, `is`("IO99"))
+	}
+
+	@Test
+	fun shouldAllowUniquePortNameChange () {
+		val eventBus = EventBusImpl()
+		val testGraph = GraphImpl(eventBus)
+		testGraph.add(GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1", eventBus))
+		val in2 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I2", eventBus)
+		testGraph.add(in2)
+
+		in2.name = "I3"
+
+		assertThat(in2.name, `is`("I3"))
+	}
+
+	@Test
+	fun shouldPreventNonUniquePortNameChange() {
+		val eventBus = EventBusImpl()
+		val testGraph = GraphImpl(eventBus)
+		testGraph.add(GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1", eventBus))
+		val in2 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I2", eventBus)
+		testGraph.add(in2)
+
+		in2.name = "I1"
+
+		assertThat(in2.name, `is`("I2"))
 	}
 }
