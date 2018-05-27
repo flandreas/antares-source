@@ -35,8 +35,8 @@ class SchedulerImpl(
 ) : Scheduler {
 
     companion object {
-        private val SETTING_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
-        private val SETTING_STOP_ON_ISSUE = "execution.scheduler.stopOnIssue"
+        private const val SETTING_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
+        private const val SETTING_STOP_ON_ISSUE = "execution.scheduler.stopOnIssue"
         private val LOG by logger(SchedulerImpl::class)
     }
 

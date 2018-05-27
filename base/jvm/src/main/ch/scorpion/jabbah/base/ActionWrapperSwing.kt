@@ -25,6 +25,11 @@ class ActionWrapperSwing(private val action: ch.scorpion.jabbah.base.Action) : j
 				}
 			}
 		})
+		addPropertyChangeListener {
+			when (it.propertyName) {
+				javax.swing.Action.SELECTED_KEY -> action.selected = it.newValue as Boolean
+			}
+		}
 	}
 
 	private fun update() {
