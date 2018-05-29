@@ -31,12 +31,12 @@ class GraphDesktopFx(
 		private val LOG by logger(GraphDesktopFx::class)
 	}
 
-	private lateinit var graphPaneFx: GraphPaneFx
+	private var graphPaneFx: GraphPaneFx
 	val node: Node get() = graphPaneFx.node
 
 	val toolbars: List<ToolBar> = mutableListOf()
 
-	private lateinit var editor: Editor
+	private var editor: Editor
 
 	init {
 		val canvas = ResizableCanvasFx()

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.execution
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -24,7 +25,7 @@ class NoiseMenu(
     }
 
     private fun add(noiseGenerator: NoiseGenerator, buttonGroup: ButtonGroup, holder: NoiseGeneratorHolder, eventBus: EventBus) {
-        val menuItem = JRadioButtonMenuItem(ActionWrapperSwing(NoiseGeneratorAction(noiseGenerator)))
+        val menuItem = JRadioButtonMenuItem(ActionWrapperSwing(NoiseGeneratorAction(noiseGenerator, holder, eventBus)))
         buttonGroup.add(menuItem)
         add(menuItem)
     }

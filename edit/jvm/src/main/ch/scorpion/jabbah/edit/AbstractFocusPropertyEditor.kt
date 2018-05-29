@@ -14,10 +14,10 @@ import org.controlsfx.control.PropertySheet
  * @param T the type of the property value being edited
  * @param C the type of the [Node] used to edit the property
  */
-abstract class AbstractFocusPropertyEditor<T, C : Node>(
+abstract class AbstractFocusPropertyEditor<T, out C : Node>(
 	protected val property: PropertySheet.Item,
 	protected val control: C,
-	private val readonly: Boolean = !property.isEditable
+	readonly: Boolean = !property.isEditable
 ) : PropertyEditor<T> {
 
 	private var suspendUpdate: Boolean = false
@@ -41,10 +41,10 @@ abstract class AbstractFocusPropertyEditor<T, C : Node>(
 
 	private fun installPropertyListener() {
 		if (property.observableValue.isPresent) {
-			property.observableValue.get().addListener { o: ObservableValue<out Any>, oldValue: Any, newValue: Any ->
+			property.observableValue.get().addListener { _: ObservableValue<out Any>, _: Any, _: Any ->
 				if (!suspendUpdate) {
 					suspendUpdate = true
-					this@AbstractFocusPropertyEditor.setValue(property.value as T)
+					this@AbstractFocusPropertyEditor.value = property.value as T
 					suspendUpdate = false
 				}
 			}

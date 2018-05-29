@@ -8,8 +8,8 @@ import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 open class MathClass {
 
 	companion object {
-		val PI: Double = 3.14159265358979323846
-		val E: Double = 2.7182818284590452354
+		const val PI: Double = 3.14159265358979323846
+		const val E: Double = 2.7182818284590452354
 	}
 
 	open fun min(a: Double, b: Double): Double = throw UnsupportedOperationException()

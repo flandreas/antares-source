@@ -13,19 +13,19 @@ import java.math.BigInteger
  */
 class NumericField(cls: Class<out Number>) : TextField() {
 
-	private val value: NumericValidator<out Number>
+	private val value: NumericValidator<Number>
 
 	init {
 
-		if (cls == Byte::class.javaPrimitiveType || cls == Byte::class.java || cls == Short::class.javaPrimitiveType || cls == Short::class.java ||
+		value = if (cls == Byte::class.javaPrimitiveType || cls == Byte::class.java || cls == Short::class.javaPrimitiveType || cls == Short::class.java ||
 			cls == Int::class.javaPrimitiveType || cls == Int::class.java || cls == Long::class.javaPrimitiveType || cls == Long::class.java ||
 			cls == BigInteger::class.java) {
-			value = LongValidator(this)
+			LongValidator(this)
 		} else {
-			value = DoubleValidator(this)
+			DoubleValidator(this)
 		}
 
-		focusedProperty().addListener { observable, oldValue, newValue ->
+		focusedProperty().addListener { _, _, newValue ->
 			if (!newValue) {
 				value.value = value.toNumber(text)
 			}
@@ -62,7 +62,7 @@ class NumericField(cls: Class<out Number>) : TextField() {
 	}
 
 
-	private interface NumericValidator<T : Number> : NumberExpression {
+	private interface NumericValidator<out T : Number> : NumberExpression {
 		fun setValue(num: Number)
 		fun toNumber(s: String?): T
 

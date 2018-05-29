@@ -82,10 +82,8 @@ class CanvasFx(
     }
 
     override fun repaint(x: Int, y: Int, width: Int, height: Int) {
-        if (view != null) {
-            g.g.clearRect(0.0, 0.0, canvas.width, canvas.height)
-            view.paint(g)
-        }
+        g.g.clearRect(0.0, 0.0, canvas.width, canvas.height)
+        view.paint(g)
     }
 
     override fun addMouseListener(l: MouseListener) {
@@ -204,7 +202,7 @@ class CanvasFx(
         }
 
         private fun convertModifiers(): Int {
-            var modifiers: Int = 0
+            var modifiers = 0
             if (event.isShiftDown) {
                 modifiers = modifiers or ch.scorpion.jabbah.base.event.SHIFT_MASK
             }

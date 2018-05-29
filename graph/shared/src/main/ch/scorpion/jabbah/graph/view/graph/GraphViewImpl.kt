@@ -173,7 +173,7 @@ class GraphViewImpl<T : GraphElementView<*>>(
     }
 
     override fun getElementViews(element: GraphElement): ImmutableList<GraphElementView<*>> {
-        return getDrawables { it is GraphElementView<*> && it.model == element }
+        return getDrawables { it.model == element }
     }
 
     override fun getGraphPortView(portName: String): GraphPortView<GraphPort<Any>>? {

@@ -9,14 +9,14 @@ import java.nio.file.Paths
 /**
  * The server that implements the REST API using spark.
  */
-class RestApi(val cmdLine: CommandLine) {
+class RestApi(private val cmdLine: CommandLine) {
 
     companion object {
 
         val LOG = LoggerFactory.getLogger(RestApi::class.java)!!
 
-        private val BASE_URL = "/jabbah-graph"
-        private val LIBRARY_FILE_NAME = "library.lib"
+        private const val BASE_URL = "/jabbah-graph"
+        private const val LIBRARY_FILE_NAME = "library.lib"
 
         @JvmStatic fun main(args: Array<String>) {
             val options = defineOptions()
@@ -64,7 +64,7 @@ class RestApi(val cmdLine: CommandLine) {
         }
 
         /** Returns the Library as an XML string. */
-        get("$BASE_URL/library/contents") { request, result ->
+        get("$BASE_URL/library/contents") { _, result ->
             result.type("text/xml")
             getFile(cmdLine.getOptionValue("l"), LIBRARY_FILE_NAME)
         }
