@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.CurrentSavableEvent
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
@@ -9,6 +11,7 @@ import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import java.awt.Component
+import java.awt.Font
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.event.InputEvent
@@ -34,6 +37,15 @@ class LibraryTreeView(
 
     private val containerPopupMenu = JPopupMenu()
 
+	private var currentSavable: LibrarySavable? = null
+		set(value) {
+			if (field != value) {
+				field = value
+				invalidate()
+				repaint()
+			}
+		}
+
     init {
         selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
         selectionModel.addTreeSelectionListener { setupPopupMenu(it.newLeadSelectionPath) }
@@ -54,6 +66,7 @@ class LibraryTreeView(
         eventBus.register(LibraryItemUpdatedEvent::class, { updateLibrary() })
 
         eventBus.register(ApplicationModeEvent::class, { dragEnabled = it.applicationMode === ApplicationMode.EDIT })
+	    eventBus.register(CurrentSavableEvent::class, { handle(it) })
 
         directoryPopupMenu.add(ActionWrapperSwing(AddLibraryFolderAction()))
         directoryPopupMenu.add(ActionWrapperSwing(NewGraphAction()))
@@ -117,18 +130,31 @@ class LibraryTreeView(
         }
     }
 
-    private class Renderer : DefaultTreeCellRenderer() {
+	private fun handle(event: CurrentSavableEvent) {
+		if (event.savable is LibrarySavable) {
+			currentSavable = event.savable as LibrarySavable
+		} else {
+			currentSavable = null
+		}
+	}
+
+    private inner class Renderer : DefaultTreeCellRenderer() {
 
         private val iconCache: MutableMap<String, Icon> = mutableMapOf()
         private val containerLibElemIcon = ContainerLibraryElementIcon()
+	    private val currentContainerLibElemIcon = ContainerLibraryElementIcon(current = true)
 
         override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
             val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
             val iconPath = ((value as DefaultMutableTreeNode).userObject as LibraryItem).iconPath
+	        component.font = this@LibraryTreeView.font
             if (StringUtils.isNotEmpty(iconPath)) {
                 component.icon = getIcon(iconPath!!)
             } else if (value.userObject is ContainerLibraryElement) {
                 component.icon = containerLibElemIcon
+		        if (currentSavable != null && currentSavable!!.element == value.userObject) {
+			        component.icon = currentContainerLibElemIcon
+		        }
             }
             return component
         }
