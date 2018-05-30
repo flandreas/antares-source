@@ -44,7 +44,7 @@ open class DrawableContainerImpl<T: Drawable>(
      */
     private val inputEventHandler: InputEventHandler<InputEventContext> = createInputEventHandler()
 
-    open protected fun createInputEventHandler(): InputEventHandler<InputEventContext> =
+    protected open fun createInputEventHandler(): InputEventHandler<InputEventContext> =
             DrawableContainerInputEventHandler(this)
 
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> = inputEventHandler
@@ -188,6 +188,7 @@ open class DrawableContainerImpl<T: Drawable>(
     }
 
     override fun handleDrawableUpdated(drawable: Drawable) {
+        updateBoundingBox()
         if (!boundingBox.contains(drawable.boundingBox)) {
             update()
         }

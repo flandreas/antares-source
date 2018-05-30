@@ -16,7 +16,10 @@ import ch.scorpion.jabbah.draw.view.DrawViewModule
  */
 object DrawModule : AbstractModule() {
 
-    var properties: DrawProperties = DrawProperties(BaseModule.properties)
+	/** Flag for enabling debug graphics.*/
+    var debugGfx = false
+
+	var properties: DrawProperties = DrawProperties(BaseModule.properties)
 
     /**
      * Creates a [PolylineShape] for the specified [Point2D]s. Must be implemented platform-specifically.

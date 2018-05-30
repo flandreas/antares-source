@@ -36,13 +36,13 @@ class LEDView(
 ) : DigitalComponentView<LED>(styleProvider, "library.element.LED", model), ControlView<LED>, ControlViewSource<LED>{
 
     companion object {
-        val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDView.iconPath"
+        const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDView.iconPath"
         val DEFAULT_LIGHT_COLOR = LightColor.RED
-        val SIZE = 4 * Look.SCALE
+        const val SIZE = 4 * Look.SCALE
         val COLOR_BORDER = Color.DARK_GRAY
         val COLOR_CASE = Color.DARK_GRAY
-        val BORDER_WIDTH = 3
-        val LABEL_DIST = Look.SCALE
+        const val BORDER_WIDTH = 3
+        const val LABEL_DIST = Look.SCALE
     }
 
     var lightColor: LightColor = lightColor
@@ -195,6 +195,7 @@ class LEDView(
         label.text = StringUtils.orEmpty(name)
         label.rotationChanged()
         invalidate()
+        update()
     }
 }
 

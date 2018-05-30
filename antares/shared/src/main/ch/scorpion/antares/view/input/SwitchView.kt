@@ -317,6 +317,7 @@ class SwitchView(
         setBounds(calculateBounds())
         updateLabelGeometries()
         invalidate()
+        update()
     }
 
     /**
