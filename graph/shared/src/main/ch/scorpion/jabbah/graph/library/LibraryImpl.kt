@@ -21,22 +21,22 @@ import ch.scorpion.jabbah.base.logger
  * [LibraryFolder] directly into the existing [LibraryFolder] instance, without instantiating it.
  *
  * @property fileName the file name under which this [Library] is stored in persistent storage
- * @property locationPath the fully qualified path (including directories, without fileName) at which this [Library] is stored
+ * @property locationPath the fully qualified path (including directories, without fileName) at which this [Library] is stored.
  *      On some target platforms, this property might not be used
  *
  */
 class LibraryImpl(
     val fileName: String,
-    val locationPath: String?,
-    override val libraryFolder: LibraryFolder,
-    private val storableCreator: StorableCreator,
-    private val libraryService: LibraryService,
-    private val eventBus: EventBus
+    val locationPath: String? = null,
+    override val libraryFolder: LibraryFolder = LibraryFolder(Translations.getString("library.library.name")),
+    private val storableCreator: StorableCreator = IOModule.storableCreator,
+    private val libraryService: LibraryService = LibraryModule.libraryService,
+    private val eventBus: EventBus = BaseModule.eventBus
 ) : Library, LibraryDirectory by libraryFolder {
 
-    constructor(fileName: String, locationPath: String? = null): this(
-        fileName, locationPath, LibraryFolder(Translations.getString("library.library.name")),
-        IOModule.storableCreator, LibraryModule.libraryService, BaseModule.eventBus)
+	companion object {
+		private val LOG by logger(LibraryImpl::class)
+	}
 
     private val libraryItemAddedHandler: EventHandler<LibraryItemAddedEvent> = { if (containsLibraryDirectory(it.parent)) store() }
     private val libraryItemRemovedHandler: EventHandler<LibraryItemRemovedEvent> = { if (containsLibraryDirectory(it.parent)) store() }
@@ -57,8 +57,6 @@ class LibraryImpl(
 
         libraryFolder.dispose()
     }
-
-    private val LOG by logger(LibraryImpl::class)
 
     /** ---- [Any] */
 
@@ -137,7 +135,7 @@ class LibraryImpl(
         return graphFinder.result
     }
 
-    /** Binds all [LibraryItem]s of this [Library] to this [Library] by calling [LibraryItem.bindTo]*/
+    /** Binds all [LibraryItem]s of this [Library] to this [Library] by calling [LibraryItem.bindTo]. */
     private fun bindLibraryItems() {
         this.accept(object : EmptyHierarchyVisitor() {
             override fun visitEnter(node: Any): Boolean {

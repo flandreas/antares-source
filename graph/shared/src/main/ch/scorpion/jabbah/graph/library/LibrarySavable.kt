@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.graph.MetaGraph
 class LibrarySavable(val metaGraph: MetaGraph, val element: ContainerLibraryElement) : Savable {
 
     override val description: String
-        get() = "${Translations.getString("library.saveable.prefix")} \"${element.name}\""
+        get() = "${Translations.getString("library.savable.prefix")} \"${element.name}\""
 
     override val defined: Boolean get() = true
 

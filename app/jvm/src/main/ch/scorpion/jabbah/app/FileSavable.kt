@@ -24,7 +24,7 @@ data class FileSavable(val filePath: String?) : Savable {
 
     override val description: String
         get() {
-            val sb = StringBuilder(Translations.getString("application.fileSaveable.prefix"))
+            val sb = StringBuilder(Translations.getString("application.fileSaveble.prefix"))
             if (filePath == null) {
                 sb.append(" <")
                 sb.append(Translations.getString("application.title.unknown"))
