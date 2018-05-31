@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
-import ch.scorpion.jabbah.graph.library.FileLibraryService
+import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -44,7 +44,7 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
 		GraphModuleJvm.require()
 		AntaresViewModule.require()
 
-		LibraryModule.libraryService = FileLibraryService(app.libraryDirectoryPath.toString())
+		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(app.libraryDirectoryPath.toString())
 		LibraryModule.libraryFactory = {
 			LibraryImpl(app.libraryFileName, app.libraryDirectoryPath.toString())
 		}

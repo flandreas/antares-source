@@ -10,15 +10,16 @@ import javax.swing.JOptionPane
  * Asks the user for the name of the new [LibraryDirectory] and adds a new [LibraryDirectory] as a child of
  * the currently selected [LibraryDirectory].
  */
-class AddLibraryFolderAction(eventBus: EventBus) : AbstractLibraryFolderAction("library.action.addFolder", eventBus) {
-
-    constructor(): this(BaseModule.eventBus)
+class AddLibraryFolderAction(
+	private val libraryService: LibraryService = LibraryModule.libraryService.invoke(),
+    eventBus: EventBus = BaseModule.eventBus
+) : AbstractLibraryFolderAction("library.action.addFolder", eventBus) {
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
         val name = JOptionPane.showInputDialog(
             libraryTreeView,
             Translations.getString("library.action.addFolder.question"),
-            name as String,
+	        name,
             JOptionPane.QUESTION_MESSAGE
         )
 
@@ -27,6 +28,6 @@ class AddLibraryFolderAction(eventBus: EventBus) : AbstractLibraryFolderAction("
         }
 
         val directory = libraryTreeView!!.getSelectedItem() as LibraryDirectory
-        directory.addFolder(name)
+	    libraryService.addFolder(libraryTreeView!!.libraryHolder.library, name, directory)
     }
 }

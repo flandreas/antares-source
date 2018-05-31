@@ -9,7 +9,12 @@ import ch.scorpion.jabbah.graph.MetaGraph
 /**
  * Saves the edited [MetaGraph] of a [ContainerLibraryElement] in the containing [LibraryDirectory].
  */
-class LibrarySavable(val metaGraph: MetaGraph, val element: ContainerLibraryElement) : Savable {
+class LibrarySavable(
+    val metaGraph: MetaGraph,
+    val element: ContainerLibraryElement,
+    private val library: Library = LibraryModule.libraryHolder.library,
+    private val service: LibraryService = LibraryModule.libraryService.invoke()
+) : Savable {
 
     override val description: String
         get() = "${Translations.getString("library.savable.prefix")} \"${element.name}\""
@@ -23,7 +28,7 @@ class LibrarySavable(val metaGraph: MetaGraph, val element: ContainerLibraryElem
     }
 
     override fun save(application: Application): Boolean {
-        element.saveMetaGraph(metaGraph)
+	    service.updateContainerLibraryElement(library, metaGraph, element)
         return true
     }
 }

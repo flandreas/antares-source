@@ -14,7 +14,9 @@ object LibraryModule : AbstractModule() {
 
     var libraryHolder: LibraryHolder = LibraryHolder()
 
-    var libraryService: LibraryService = UnimplementedLibraryService()
+    var libraryPersistenceService: LibraryPersistenceService = UnimplementedLibraryPersistenceService()
+
+	var libraryService: () -> LibraryService = { LibraryServiceImpl() }
 
     override fun initialize() {
         configureTypeMap(IOModule.typeMap)

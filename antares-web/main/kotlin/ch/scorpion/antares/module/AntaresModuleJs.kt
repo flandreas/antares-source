@@ -1,6 +1,6 @@
 package ch.scorpion.antares.module
 
-import ch.scoprion.jabbah.graph.library.RestLibraryService
+import ch.scoprion.jabbah.graph.library.RestLibraryPersistenceService
 import ch.scorpion.antares.script.ScriptEngineJs
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.AbstractModule
@@ -20,7 +20,7 @@ object AntaresModuleJs : AbstractModule() {
         EditModuleJs.require()
         AntaresViewModule.require()
 
-        LibraryModule.libraryService = RestLibraryService()
+        LibraryModule.libraryPersistenceService = RestLibraryPersistenceService()
         LibraryModule.libraryFactory = { LibraryImpl("library.lib", null) }
         LibraryModule.libraryHolder = LibraryHolder(LibraryModule.libraryFactory.invoke())
     }

@@ -4,24 +4,22 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.library.LibraryFolder
-import ch.scorpion.jabbah.graph.library.LibraryService
+import ch.scorpion.jabbah.graph.library.LibraryPersistenceService
 import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader
 import org.w3c.dom.Document
-import org.w3c.xhr.DOCUMENT
 import org.w3c.xhr.XMLHttpRequest
-import org.w3c.xhr.XMLHttpRequestResponseType
 
 /**
- * An implementation of [LibraryService] that calls the REST services of [ch.scorpion.jabbah.graph].
+ * An implementation of [LibraryPersistenceService] that calls the REST services of [ch.scorpion.jabbah.graph].
  */
-class RestLibraryService : LibraryService {
+class RestLibraryPersistenceService : LibraryPersistenceService {
 
     companion object {
         private val BASE_URL = "http://localhost:4567/jabbah-graph"
     }
 
-    /** ---- [LibraryService] */
+    /** ---- [LibraryPersistenceService] */
 
     override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
         val request = XMLHttpRequest()
@@ -62,7 +60,7 @@ class RestLibraryService : LibraryService {
         throw UnsupportedOperationException("not implemented")
     }
 
-    /** ---- [RestLibraryService] */
+    /** ---- [RestLibraryPersistenceService] */
 
     private fun handleLibraryResponse(library: Library, doc: Document) {
         val libraryFolder = StoreXmlReader(DomXmlReader(doc)).readStorable() as LibraryFolder

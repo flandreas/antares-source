@@ -10,7 +10,8 @@ import ch.scorpion.jabbah.base.event.EventBus
  */
 class EditContainerLibraryElementAction(
     application: DesktopApplication,
-    eventBus: EventBus
+    eventBus: EventBus,
+    private val service: LibraryService = LibraryModule.libraryService.invoke()
 ) : AbstractApplicationAction("graph.action.editContainerLibraryElement", application) {
 
     /** Holds the [LibraryTreeView] that issued the last selection event. */
@@ -37,7 +38,7 @@ class EditContainerLibraryElementAction(
      */
     private fun openAsSavable() {
         val element = libraryTreeView!!.getSelectedItem() as ContainerLibraryElement
-        val metaGraph = element.openMetaGraph()
+	    val metaGraph = service.getMetaGraph(libraryTreeView!!.libraryHolder.library, element)
         application.open(metaGraph, LibrarySavable(metaGraph, element))
     }
 }

@@ -16,23 +16,23 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 /**
- * An implementation of [LibraryService] that stores the libraries in the local file system.
+ * An implementation of [LibraryPersistenceService] that stores the libraries in the local file system.
  *
  * @property directoryPath the absolute path of the file system directory where the libraries are located
  */
-class FileLibraryService(
+class FileLibraryPersistenceService(
     private val directoryPath: String,
     private val metaGraphFileExtension: String
-) : LibraryService {
+) : LibraryPersistenceService {
 
     constructor(directoryPath: String): this(directoryPath, "cir")
 
-    private val LOG by logger(FileLibraryService::class)
+    private val LOG by logger(FileLibraryPersistenceService::class)
 
-    /** ---- [LibraryService] */
+    /** ---- [LibraryPersistenceService] */
 
     override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
-        LOG.debug("FileLibraryService: load MetaGraph '$uuid'")
+        LOG.debug("FileLibraryPersistenceService: load MetaGraph '$uuid'")
         val filePath = buildMetaGraphFilePath(uuid)
         FileInputStream(filePath).use {
             try {
@@ -49,7 +49,7 @@ class FileLibraryService(
     }
 
     override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
-        LOG.debug("FileLibraryService: store MetaGraph '${metaGraph.uuid}'")
+        LOG.debug("FileLibraryPersistenceService: store MetaGraph '${metaGraph.uuid}'")
         val filePath = buildMetaGraphFilePath(metaGraph.uuid)
         FileOutputStream(filePath).use {
             try {
@@ -63,7 +63,7 @@ class FileLibraryService(
     }
 
     override fun deleteContainerLibraryElement(library: Library, uuid: UUID) {
-        LOG.debug("FileLibraryService: delete MetaGraph '$uuid'")
+        LOG.debug("FileLibraryPersistenceService: delete MetaGraph '$uuid'")
         File(buildMetaGraphFilePath(uuid)).delete()
     }
 
@@ -111,7 +111,7 @@ class FileLibraryService(
         }
     }
 
-    /** ---- [FileLibraryService] */
+    /** ---- [FileLibraryPersistenceService] */
 
     private fun buildMetaGraphFilePath(uuid: UUID): String {
         return "$directoryPath${System.getProperty("file.separator")}$uuid.$metaGraphFileExtension"

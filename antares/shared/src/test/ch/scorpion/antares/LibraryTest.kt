@@ -35,14 +35,14 @@ class LibraryTest {
         val dir = Files.createTempDirectory("library")
         val file = File.createTempFile("library", ".lib", dir.toFile())
         TestTranslationsBuilder().withAnyKey()
-        LibraryModule.libraryService = FileLibraryService(file.parent)
+        LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parent)
         LibraryModule.libraryHolder.l = LibraryImpl(file.toPath().fileName.toString(), file.toPath().parent.toString())
     }
 
     @Test
     fun shouldStoreAndLoadLibraryWithSubGraph() {
         val customNot = TestLibraryBuilder().addCustomNot(LibraryModule.libraryHolder.library)
-        val restoredLibrary = storeAndLoad(LibraryModule.libraryHolder.library as LibraryImpl)
+        val restoredLibrary = storeAndLoad(LibraryModule.libraryHolder.library as LibraryImpl, LibraryModule.libraryService.invoke())
         assertThat(libraryHolder.library, `is`(not(sameInstance(restoredLibrary))))
         LibraryModule.libraryHolder.l = restoredLibrary
         restoredLibrary.getMetaGraph(customNot.uuid)
@@ -69,7 +69,7 @@ class LibraryTest {
         val customNot = TestLibraryBuilder().addCustomNot(libraryHolder.library)
         val customNand = TestLibraryBuilder().addCustomNand(libraryHolder.library)
 
-        val restoredLibrary = storeAndLoad(libraryHolder.library as LibraryImpl)
+        val restoredLibrary = storeAndLoad(libraryHolder.library as LibraryImpl, LibraryModule.libraryService.invoke())
         LibraryModule.libraryHolder.l = restoredLibrary
 
         restoredLibrary.getMetaGraph(customNot.uuid)
@@ -107,11 +107,11 @@ class LibraryTest {
     fun shouldExportLibrary() {
         TestLibraryBuilder().addCustomNot(LibraryModule.libraryHolder.library)
         val file = File.createTempFile("library", ".zip")
-        LibraryModule.libraryService.exportLibrary(file.name, file.parent)
+        LibraryModule.libraryPersistenceService.exportLibrary(file.name, file.parent)
     }
 
-    private fun storeAndLoad(library: LibraryImpl): Library {
-        library.store()
+    private fun storeAndLoad(library: LibraryImpl, service: LibraryService): Library {
+        service.storeLibrary(library)
         val loadedLibrary = LibraryImpl(library.fileName, library.locationPath)
         loadedLibrary.load()
         return loadedLibrary

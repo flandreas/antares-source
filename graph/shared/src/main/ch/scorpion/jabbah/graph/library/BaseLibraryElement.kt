@@ -51,10 +51,6 @@ class BaseLibraryElement(
 
     /** ---- [LibraryElement] */
 
-    override fun handleRemoved() {
-        // empty
-    }
-
     override fun <T : GraphElement> getNewInstance(): GraphElementView<T> {
         if (supplier != null) {
             return supplier.invoke() as GraphElementView<T>

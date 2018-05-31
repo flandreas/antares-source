@@ -27,7 +27,7 @@ import javax.swing.tree.*
  */
 class LibraryTreeView(
     private val eventBus: EventBus,
-    private val libraryHolder: LibraryHolder
+    val libraryHolder: LibraryHolder
 ) : JTree(createLibraryTreeModel(libraryHolder.library)) {
 
     @Suppress("unused")

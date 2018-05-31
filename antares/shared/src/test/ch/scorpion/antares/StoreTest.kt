@@ -5,7 +5,7 @@ import ch.scorpion.antares.view.gate.OrGateView
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.GraphStorable
-import ch.scorpion.jabbah.graph.library.FileLibraryService
+import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.io.IOModule
@@ -31,7 +31,7 @@ class StoreTest {
     fun setup() {
         val file = File.createTempFile("library", ".lib")
         TestTranslationsBuilder().withAnyKey()
-        LibraryModule.libraryService = FileLibraryService(file.parent)
+        LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parent)
         LibraryModule.libraryHolder.l = LibraryImpl(file.name, file.path)
     }
 

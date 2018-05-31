@@ -13,10 +13,9 @@ import javax.swing.tree.DefaultMutableTreeNode
  * An [Action] for deleting the currently selected [ContainerLibraryElement].
  */
 class DeleteContainerLibraryElementAction(
-    eventBus: EventBus
+	private val service: LibraryService = LibraryModule.libraryService.invoke(),
+    eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("graph.action.deleteContainerLibraryElement") {
-
-    constructor() : this(BaseModule.eventBus)
 
     private var libraryTreeView: LibraryTreeView? = null
 
@@ -38,7 +37,7 @@ class DeleteContainerLibraryElementAction(
 		    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)
 	    {
 		    val folder = (libraryTreeView!!.selectionPath.parentPath.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryDirectory
-		    folder.remove(libraryItem!!)
+		    service.removeLibraryItem(libraryTreeView!!.libraryHolder.library, libraryItem!!, folder)
 	    }
     }
 }

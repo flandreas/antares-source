@@ -39,10 +39,4 @@ interface LibraryItem : Storable {
      */
     fun dispose()
 
-    /**
-     * Called by an owning [LibraryItem] after this [LibraryItem] has been removed.
-     * Implementations should delete any physical assets associated with them, such as persistent files, if any.
-     */
-    fun handleRemoved()
-
 }

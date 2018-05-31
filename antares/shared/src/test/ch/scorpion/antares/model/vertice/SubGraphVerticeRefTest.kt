@@ -3,7 +3,7 @@ package ch.scorpion.antares.model.vertice
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestLibraryBuilder
 import ch.scorpion.antares.TestTranslationsBuilder
-import ch.scorpion.jabbah.graph.library.FileLibraryService
+import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -30,7 +30,7 @@ class SubGraphVerticeRefTest {
     fun setup() {
         val file = File.createTempFile("library", ".lib")
         TestTranslationsBuilder().withAnyKey()
-        LibraryModule.libraryService = FileLibraryService(file.parentFile.absolutePath)
+        LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
         LibraryModule.libraryHolder.l = LibraryImpl(file.name, file.parentFile.absolutePath)
     }
 

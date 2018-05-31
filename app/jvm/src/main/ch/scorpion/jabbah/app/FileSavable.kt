@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalStateException
-import java.util.*
 
 /**
  * A [Savable] that saves application data into a [File] of a file system.
@@ -24,7 +23,7 @@ data class FileSavable(val filePath: String?) : Savable {
 
     override val description: String
         get() {
-            val sb = StringBuilder(Translations.getString("application.fileSaveble.prefix"))
+            val sb = StringBuilder(Translations.getString("application.fileSavable.prefix"))
             if (filePath == null) {
                 sb.append(" <")
                 sb.append(Translations.getString("application.title.unknown"))

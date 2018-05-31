@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.Graph
@@ -17,7 +16,7 @@ import ch.scorpion.jabbah.base.logger
  *
  * Since we want to implement the [LibraryDirectory] interface by delegation to the [libraryFolder] property,
  * we cannot exchange the property value when reading the library from persistent store, because in Kotlin
- * the delegate is bound at instantiation time. Instead, [LibraryService] loads the contents of the [Library]'s
+ * the delegate is bound at instantiation time. Instead, [LibraryPersistenceService] loads the contents of the [Library]'s
  * [LibraryFolder] directly into the existing [LibraryFolder] instance, without instantiating it.
  *
  * @property fileName the file name under which this [Library] is stored in persistent storage
@@ -26,35 +25,23 @@ import ch.scorpion.jabbah.base.logger
  *
  */
 class LibraryImpl(
-    val fileName: String,
-    val locationPath: String? = null,
-    override val libraryFolder: LibraryFolder = LibraryFolder(Translations.getString("library.library.name")),
-    private val storableCreator: StorableCreator = IOModule.storableCreator,
-    private val libraryService: LibraryService = LibraryModule.libraryService,
-    private val eventBus: EventBus = BaseModule.eventBus
+	override val fileName: String,
+	override val locationPath: String? = null,
+	override val libraryFolder: LibraryFolder = LibraryFolder(Translations.getString("library.library.name")),
+	private val storableCreator: StorableCreator = IOModule.storableCreator,
+	private val libraryPersistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : Library, LibraryDirectory by libraryFolder {
 
 	companion object {
 		private val LOG by logger(LibraryImpl::class)
 	}
 
-    private val libraryItemAddedHandler: EventHandler<LibraryItemAddedEvent> = { if (containsLibraryDirectory(it.parent)) store() }
-    private val libraryItemRemovedHandler: EventHandler<LibraryItemRemovedEvent> = { if (containsLibraryDirectory(it.parent)) store() }
-    private val libraryItemUpdatedHandler: EventHandler<LibraryItemUpdatedEvent> = { if (it.library === this) store() }
-
     init {
-        eventBus.register(LibraryItemAddedEvent::class, libraryItemAddedHandler)
-        eventBus.register(LibraryItemRemovedEvent::class, libraryItemRemovedHandler)
-        eventBus.register(LibraryItemUpdatedEvent::class, libraryItemUpdatedHandler)
-
         libraryFolder.bindTo(this)
     }
 
     override fun dispose() {
-        eventBus.unregister(LibraryItemAddedEvent::class, libraryItemAddedHandler)
-        eventBus.unregister(LibraryItemRemovedEvent::class, libraryItemRemovedHandler)
-        eventBus.unregister(LibraryItemUpdatedEvent::class, libraryItemUpdatedHandler)
-
         libraryFolder.dispose()
     }
 
@@ -68,14 +55,14 @@ class LibraryImpl(
 
     override var isLoading: Boolean = false
 
-    override fun getMetaGraph(uuid: UUID): MetaGraph {
+    override fun getMetaGraph(uuid: UUID, service: LibraryService): MetaGraph {
         LOG.debug("LibraryImpl: Retrieve MetaGraph for UUID '${uuid.id}'")
-        return findContainerLibraryElementFor(uuid)!!.openMetaGraph()
+	    return service.getMetaGraph(this, findContainerLibraryElementFor(uuid)!!)
     }
 
-    override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? {
-        val metaGraph = findContainerLibraryElementFor(uuid) ?: return null
-        return metaGraph.openMetaGraph()
+    override fun getOptionalMetaGraph(uuid: UUID, service: LibraryService): MetaGraph? {
+        val element = findContainerLibraryElementFor(uuid) ?: return null
+	    return service.getMetaGraph(this, element)
     }
 
     override fun containsMetaGraph(uuid: UUID): Boolean {
@@ -85,7 +72,7 @@ class LibraryImpl(
     override fun load() {
         try {
             isLoading = true
-            libraryService.loadLibrary(this, fileName, locationPath)
+            libraryPersistenceService.loadLibrary(this, fileName, locationPath)
             bindLibraryItems()
         } catch (e: Throwable) {
             LOG.error("LibraryImpl: Error while loading library: ${e.message}")
@@ -95,12 +82,8 @@ class LibraryImpl(
         }
     }
 
-    override fun store() {
-        libraryService.storeLibrary(this, fileName, locationPath)
-    }
-
-    override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
-        val metaGraph = getMetaGraph(graphUUID)
+    override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID, service: LibraryService): Boolean {
+        val metaGraph = getMetaGraph(graphUUID, service)
         if (metaGraph.graph!!.model!!.uuid == graphElementUUID) {
             return true
         }

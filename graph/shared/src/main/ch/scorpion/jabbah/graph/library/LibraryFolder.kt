@@ -6,11 +6,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.model.GraphElement
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.io.*
-import kotlin.reflect.KClass
 
 class LibraryFolder(
     name: String? = null,
@@ -18,7 +14,7 @@ class LibraryFolder(
     val eventBus: EventBus = BaseModule.eventBus,
     val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
     val storableCreator: StorableCreator = IOModule.storableCreator,
-    val libraryService: LibraryService = LibraryModule.libraryService
+    val libraryPersistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService
 ) : AbstractLibraryItem(iconPath), LibraryDirectory {
 
     private val items: MutableList<LibraryItem> = mutableListOf()
@@ -52,10 +48,6 @@ class LibraryFolder(
         items.forEach { it.dispose() }
     }
 
-    override fun handleRemoved() {
-        throw UnsupportedOperationException("removing of entire LibraryFolders is not yet implemented")
-    }
-
     /** ---- [Storable] interface */
 
     override var storableId: Int = 0
@@ -87,33 +79,14 @@ class LibraryFolder(
 		}
     }
 
-    override fun addBaseElement(name: String, translationKey: String, iconPath: String?, storableCreator: StorableCreator?, clazz: KClass<out GraphElementView<*>>): BaseLibraryElement {
-        val elem = BaseLibraryElement(name, translationKey, iconPath, storableCreator, clazz)
-        add(elem)
-        return elem
-    }
-
-    override fun addBaseElement(name: String, translationKey: String, iconPath: String?, supplier: () -> GraphElementView<out GraphElement>): BaseLibraryElement {
-        val elem = BaseLibraryElement(name, translationKey, iconPath, null, null, supplier)
-        add(elem)
-        return elem
-    }
-
     /** ---- [LibraryDirectory]  */
 
     override fun add(item: LibraryItem) {
-        item.bindTo(library!!)
-        items.add(findInsertIndex(item), item)
-        eventBus.post(LibraryItemAddedEvent(this, item))
+	    items.add(findInsertIndex(item), item)
     }
 
-    override fun remove(item: LibraryItem) {
-        if (items.contains(item)) {
-            item.handleRemoved()
-            item.dispose()
-            items.remove(item)
-            eventBus.post(LibraryItemRemovedEvent(this, item))
-        }
+    override fun remove(item: LibraryItem): Boolean {
+	    return items.remove(item)
     }
 
     override fun contains(item: LibraryItem): Boolean {
@@ -128,36 +101,11 @@ class LibraryFolder(
         return items.toImmutableList()
     }
 
-    override fun addContainerElement(metaGraph: MetaGraph): ContainerLibraryElement {
-        val elem = ContainerLibraryElement(
-            uuid = metaGraph.uuid,
-            name = metaGraph.name,
-            iconPath = null,
-            storableCloner = storableCloner,
-            storableCreator = storableCreator,
-            libraryService = libraryService,
-            eventBus = eventBus)
-        elem.bindTo(library!!)
-        elem.saveMetaGraph(metaGraph)
-        add(elem)
-        return elem
-    }
-
-    override fun addFolder(name: String): LibraryFolder {
-        return addFolderImpl(name)
-    }
-
     /** ---- [LibraryFolder] */
 
     fun replaceWith(libraryFolder: LibraryFolder) {
         items.clear()
         items.addAll(libraryFolder.items)
-    }
-
-    private fun addFolderImpl(name: String): LibraryFolder {
-        val folder = LibraryFolder(name)
-        add(folder)
-        return folder
     }
 
     /**
