@@ -32,7 +32,7 @@ class StoreTest {
         val file = File.createTempFile("library", ".lib")
         TestTranslationsBuilder().withAnyKey()
         LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parent)
-        LibraryModule.libraryHolder.l = LibraryImpl(file.name, file.path)
+        LibraryModule.libraryHolder.l = LibraryImpl("test")
     }
 
     @Test

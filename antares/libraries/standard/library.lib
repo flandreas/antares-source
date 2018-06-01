@@ -1,0 +1,118 @@
+<libraryFolder _id='0' name='standard'>
+  <items>
+    <libraryFolder _id='1' name='Netz'>
+      <items/>
+    </libraryFolder>
+    <libraryFolder _id='2' name='Grundelemente'>
+      <items>
+        <containerLibraryElement _id='3' name='Impulsglied' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5'/>
+        <containerLibraryElement _id='4' name='Impulsglied (Neg)' uuid='6b75bce8-f115-4154-a7d8-782b8f4b629a'/>
+      </items>
+    </libraryFolder>
+    <libraryFolder _id='5' name='Eingabe'>
+      <items/>
+    </libraryFolder>
+    <libraryFolder _id='6' name='Ausgabe'>
+      <items>
+        <containerLibraryElement _id='7' name='8x8 LED-Matrix mit Ctrl' uuid='8cb1ea46-2a0d-4a1d-87af-02487049a050'/>
+      </items>
+    </libraryFolder>
+    <libraryFolder _id='8' name='Speicher'>
+      <items>
+        <containerLibraryElement _id='9' name='Register 4-Bit' uuid='e802fb9c-82dc-4196-b266-79fa023fb12e'/>
+        <containerLibraryElement _id='10' name='Register 16-Bit' uuid='2578848c-f03a-40d6-a7c4-6febf588e408'/>
+        <containerLibraryElement _id='11' name='Register 32-Bit' uuid='ce8674e0-8778-419b-b459-d10d2a0678ab'/>
+        <containerLibraryElement _id='12' name='Register 8-Bit' uuid='f8869bb7-cce3-4811-8f58-07eef9b04823'/>
+      </items>
+    </libraryFolder>
+    <libraryFolder _id='13' name='Arithmetik'>
+      <items>
+        <containerLibraryElement _id='14' name='Halbaddierer' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
+        <containerLibraryElement _id='15' name='Volladdierer' uuid='08aba425-96c2-4c43-b10b-2e0c72ce8300'/>
+        <containerLibraryElement _id='16' name='Inkrementierer 8-Bit' uuid='81e0ad9b-4678-4e79-aeef-8f59b153f2e3'/>
+        <containerLibraryElement _id='17' name='Shifter 8-Bit' uuid='9eb38fe7-5844-4be6-9192-25104a077b0c'/>
+        <containerLibraryElement _id='18' name='Shifter 16-Bit' uuid='c79ec2d7-ed8a-4be3-b334-49f8a9ee3779'/>
+        <containerLibraryElement _id='19' name='Komparator 4-Bit' uuid='a523d891-bd1a-4b0c-9072-ae6351db6ca7'/>
+        <containerLibraryElement _id='20' name='Komparator 8-Bit' uuid='e5954353-6045-4cad-9e43-cb843fd679fc'/>
+      </items>
+    </libraryFolder>
+    <libraryFolder _id='21' name='Codec'>
+      <items>
+        <containerLibraryElement _id='22' name='2-4 Decoder' uuid='326eba0f-e139-4786-b1e8-99610ec33bc9'/>
+        <containerLibraryElement _id='23' name='3-8 Decoder' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92'/>
+        <containerLibraryElement _id='24' name='4-16 Decoder' uuid='ff6a54e3-7b67-4800-936a-1b213e851790'/>
+        <containerLibraryElement _id='25' name='BCD-7Seg Dec' uuid='d95b72af-a5b6-4c1c-9b43-a4a2f3330589'/>
+        <containerLibraryElement _id='26' name='BCD-7Seg Hex' uuid='9eab72cb-2347-4bb1-9c22-40911beba7d4'/>
+      </items>
+    </libraryFolder>
+    <libraryFolder _id='27' name='Microcomputer Project'>
+      <items>
+        <libraryFolder _id='28' name='Microprocessor'>
+          <items>
+            <containerLibraryElement _id='29' name='ALU 1-Bit' uuid='7a26f19f-9cc4-41ba-91bd-b18ea9e19d33'/>
+            <containerLibraryElement _id='30' name='ALU 4-Bit' uuid='fa141b2b-57a3-43fc-8d9b-dac278ea74d0'/>
+            <containerLibraryElement _id='31' name='ALU 16-Bit' uuid='7bf5b116-fe7e-49d1-8a13-60b32a4615bb'/>
+            <containerLibraryElement _id='32' name='MIR' uuid='49de0ab1-ee80-4283-a800-b207eb15307d'/>
+            <containerLibraryElement _id='33' name='CPU' uuid='6d95ca5e-6be3-4dc4-a175-aff70fb8c3bc'/>
+            <containerLibraryElement _id='34' name='Register File' uuid='ae9dbaec-092b-4830-ad2d-b1927c16be8d'/>
+            <containerLibraryElement _id='35' name='Shifter' uuid='fb9d38b5-a3bf-43eb-bbd3-9ef586bd43f2'/>
+            <containerLibraryElement _id='36' name='MAR' uuid='d3f947a8-f91d-4d0c-9c91-f95403fe3647'/>
+            <containerLibraryElement _id='37' name='MBR' uuid='79d18538-9f8e-4d92-b249-d7f6beaa8970'/>
+            <containerLibraryElement _id='38' name='MSL' uuid='6b3b1948-e069-4c92-9b2a-6652bb4a3163'/>
+            <containerLibraryElement _id='39' name='Clock' uuid='519206d0-09d3-4252-b093-bf88ca062223'/>
+          </items>
+        </libraryFolder>
+        <containerLibraryElement _id='40' name='Address Decoder' uuid='75b0b920-b31c-42aa-8c21-915b0a4619c9'/>
+        <containerLibraryElement _id='41' name='PIO' uuid='21648273-25d2-4071-b0cc-f3a75f945ef6'/>
+        <containerLibraryElement _id='42' name='Microcomputer' uuid='8eef51ac-7c2d-4e37-b7c1-732514265fba'/>
+        <containerLibraryElement _id='43' name='Display' uuid='bb6fafb2-d857-4b7d-8b50-c463e55f630f'/>
+      </items>
+    </libraryFolder>
+    <libraryFolder _id='44' name='Flipflops'>
+      <items>
+        <containerLibraryElement _id='45' name='D-Flipflop' uuid='d6ab312a-a94b-403a-9291-642295ff29c5'/>
+        <containerLibraryElement _id='46' name='SR Latch' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87'/>
+        <containerLibraryElement _id='47' name='SR-Flipflop' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'/>
+        <containerLibraryElement _id='48' name='JK-Flipflop (Neg)' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'/>
+        <containerLibraryElement _id='49' name='JK-Flipflop' uuid='204aeecf-cdca-4678-8c36-f8a834922966'/>
+        <containerLibraryElement _id='50' name='JK-Master-Slave-Flipflop' uuid='5485c628-408c-45ea-9d1e-8d930c8760e7'/>
+        <containerLibraryElement _id='51' name='SR-Flipflop PRE/CLR' uuid='d34d3483-be1d-432b-a949-7f68e0ee756b'/>
+        <containerLibraryElement _id='52' name='JK-MS-Flipflop PRE/CLR' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
+        <containerLibraryElement _id='53' name='D-Flipflop PRE/CLR' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733'/>
+      </items>
+    </libraryFolder>
+    <libraryFolder _id='54' name='Plexer'>
+      <items>
+        <containerLibraryElement _id='55' name='2x 4-4 Multiplexer' uuid='83ba937d-5277-45f2-adff-1abab9207e33'/>
+        <containerLibraryElement _id='56' name='2x 8-8 Multiplexer' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9'/>
+        <containerLibraryElement _id='57' name='2x 16-16 Multiplexer' uuid='06e7b5c3-daad-4019-8a8f-945a9215cab6'/>
+        <containerLibraryElement _id='58' name='4-1 Multiplexer' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'/>
+        <containerLibraryElement _id='59' name='2-1 Multiplexer' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7'/>
+        <containerLibraryElement _id='60' name='8-1 Multiplexer' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3'/>
+      </items>
+    </libraryFolder>
+    <libraryFolder _id='61' name='Test'>
+      <items>
+        <containerLibraryElement _id='62' name='Test Control Repaint' uuid='ae36df36-0b7b-45e3-ac5e-e17c6fa44415'/>
+        <containerLibraryElement _id='63' name='Custom NOT' uuid='6c9f2734-1386-4796-aa31-a6ea87d5ed7f'/>
+        <containerLibraryElement _id='64' name='NOP' uuid='cc6b2b47-de2e-4d82-9229-121cffddd85a'/>
+        <containerLibraryElement _id='65' name='Outer NOP' uuid='afc510f0-5ef7-4175-8ed3-bf4bc6058e13'/>
+        <containerLibraryElement _id='66' name='Ampel' uuid='0921d1db-d513-4dab-b39e-74f33b439312'/>
+        <containerLibraryElement _id='67' name='Test Text' uuid='6ef6759e-ce22-4d89-9935-7e6933a9eeb2'/>
+        <containerLibraryElement _id='68' name='Test Custom' uuid='6faeb5b6-ce07-47fc-b48a-068e245668eb'/>
+        <containerLibraryElement _id='69' name='Single Input' uuid='a0f6bafd-eacb-42a1-ac08-0d8d946daa5f'/>
+        <containerLibraryElement _id='70' name='Stoppuhr' uuid='eb2ff37b-57fb-4005-9601-7f7fbaa433c1'/>
+        <containerLibraryElement _id='71' name='Custom NOR' uuid='269574a4-cd85-444a-9414-16c06442d5b3'/>
+      </items>
+    </libraryFolder>
+    <libraryFolder _id='72' name='Test 2'>
+      <items/>
+    </libraryFolder>
+    <libraryFolder _id='73' name='Zähler'>
+      <items>
+        <containerLibraryElement _id='74' name='Synch. Vorwärtszähler 3-Bit' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97'/>
+        <containerLibraryElement _id='75' name='Sync. BCD-Zähler 4-Bit' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'/>
+      </items>
+    </libraryFolder>
+  </items>
+</libraryFolder>

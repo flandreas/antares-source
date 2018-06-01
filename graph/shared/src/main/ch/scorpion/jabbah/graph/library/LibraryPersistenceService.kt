@@ -14,9 +14,9 @@ interface LibraryPersistenceService {
 
     fun deleteContainerLibraryElement(library: Library, uuid: UUID)
 
-    fun loadLibrary(library: Library, fileName: String, locationPath: String? = null)
+    fun loadLibrary(library: Library)
 
-    fun storeLibrary(library: Library, fileName: String, locationPath: String? = null)
+    fun storeLibrary(library: Library)
 
     fun exportLibrary(fileName: String, locationPath: String? = null)
 
@@ -36,11 +36,11 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService{
         throw UnsupportedOperationException("not implemented")
     }
 
-    override fun loadLibrary(library: Library, fileName: String, locationPath: String?) {
+    override fun loadLibrary(library: Library) {
         throw UnsupportedOperationException("not implemented")
     }
 
-    override fun storeLibrary(library: Library, fileName: String, locationPath: String?) {
+    override fun storeLibrary(library: Library) {
         throw UnsupportedOperationException("not implemented")
     }
 

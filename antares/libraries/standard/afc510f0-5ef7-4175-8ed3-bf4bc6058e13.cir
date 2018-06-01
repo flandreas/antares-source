@@ -1,0 +1,88 @@
+<metaGraph _id='0'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' uuid='afc510f0-5ef7-4175-8ed3-bf4bc6058e13' name='Outer NOP' propDelay='5'>
+          <elements>
+            <subGraphVerticeRef _id='3' id='1' delay='1' name='NOP' uuid='cc6b2b47-de2e-4d82-9229-121cffddd85a'/>
+            <circuitInOut _id='4' id='2' delay='0' name='A' type='input' bitWidth='1'/>
+            <circuitInOut _id='5' id='3' delay='0' name='B' type='output' bitWidth='1'/>
+            <digitalNet _id='6' id='4' delay='0'>
+              <ports>
+                <netPortRef verticeId='4' portId='1'/>
+                <netPortRef verticeId='3' portId='1'/>
+              </ports>
+            </digitalNet>
+            <digitalNet _id='7' id='5' delay='0'>
+              <ports>
+                <netPortRef verticeId='3' portId='2'/>
+                <netPortRef verticeId='5' portId='1'/>
+              </ports>
+            </digitalNet>
+          </elements>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='8'>
+          <netViews>
+            <netView _id='15' modelId='6' style='line'/>
+            <netView _id='16' modelId='7' style='line'/>
+          </netViews>
+          <components>
+            <subGraphVerticeViewRef _id='13' id='1' rot='0' modelId='3' x='-231.0' y='-168.0'/>
+            <circuitInOutView _id='12' id='2' modelId='4' representation='binary' orientation='east'>
+              <location>
+                <point x='-280.0' y='-168.0'/>
+              </location>
+            </circuitInOutView>
+            <circuitInOutView _id='11' id='3' modelId='5' representation='binary' orientation='east'>
+              <location>
+                <point x='-105.0' y='-168.0'/>
+              </location>
+            </circuitInOutView>
+            <digitalEdgeView _id='10' id='4' modelId='6' layout='ortho' orig='12' origPort='1' origPortOutput='true' dest='13' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='-294.0,-168.0 -210.0,-168.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalEdgeView _id='9' id='5' modelId='7' layout='ortho' orig='13' origPort='2' origPortOutput='true' dest='11' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='-168.0,-168.0 -91.0,-168.0'/>
+              </shape>
+            </digitalEdgeView>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='17'>
+      <components>
+        <containerBox _id='23' id='1' style='figure' x='140.0' y='140.0' w='49.0' h='56.0'/>
+        <originIndicator _id='22'>
+          <location>
+            <point x='119.0' y='168.0'/>
+          </location>
+        </originIndicator>
+        <digitalPortViewComp _id='20' id='3' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='21' x='140.0' y='168.0' dir='west' textPos='internal' portId='25'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='18' id='4' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='19' x='189.0' y='168.0' dir='east' textPos='internal' portId='26'/>
+          </portView>
+        </digitalPortViewComp>
+      </components>
+      <model>
+        <subGraphVertice _id='24' id='0' delay='0' name='Outer NOP' uuid='afc510f0-5ef7-4175-8ed3-bf4bc6058e13'>
+          <ports>
+            <subCircuitPort _id='25' portId='1' name='A' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='26' portId='2' name='B' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+          </ports>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

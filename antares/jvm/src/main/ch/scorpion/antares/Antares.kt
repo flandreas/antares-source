@@ -30,7 +30,7 @@ interface Antares : DesktopApplication {
 		private const val DISPLAY_NAME = "Antares"
 		private const val SYSTEM_NAME = "antares"
 		private const val FILE_EXTENSION_NAME = "cir"
-		private const val DEFAULT_LIB_DIRECTORY = "library"
+		private const val DEFAULT_LIB_DIRECTORY = "libraries"
 		private const val DEFAULT_PROJECT_DIRECTORY = "projects"
 		private const val DEFAULT_LIB_FILENAME = "library.lib"
 	}

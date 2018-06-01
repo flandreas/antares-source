@@ -36,7 +36,7 @@ class LibraryTest {
         val file = File.createTempFile("library", ".lib", dir.toFile())
         TestTranslationsBuilder().withAnyKey()
         LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parent)
-        LibraryModule.libraryHolder.l = LibraryImpl(file.toPath().fileName.toString(), file.toPath().parent.toString())
+        LibraryModule.libraryHolder.l = LibraryImpl("test")
     }
 
     @Test
@@ -112,7 +112,7 @@ class LibraryTest {
 
     private fun storeAndLoad(library: LibraryImpl, service: LibraryService): Library {
         service.storeLibrary(library)
-        val loadedLibrary = LibraryImpl(library.fileName, library.locationPath)
+        val loadedLibrary = LibraryImpl("test")
         loadedLibrary.load()
         return loadedLibrary
     }

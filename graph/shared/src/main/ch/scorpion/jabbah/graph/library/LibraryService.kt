@@ -92,7 +92,7 @@ class LibraryServiceImpl(
 
 	override fun storeLibrary(library: Library) {
 		LOG.debug("LibraryServiceImpl: Storing Library")
-		persistenceService.storeLibrary(library, library.fileName, library.locationPath)
+		persistenceService.storeLibrary(library)
 	}
 
 	override fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory) {

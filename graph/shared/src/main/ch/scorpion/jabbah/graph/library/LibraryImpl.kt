@@ -18,16 +18,10 @@ import ch.scorpion.jabbah.base.logger
  * we cannot exchange the property value when reading the library from persistent store, because in Kotlin
  * the delegate is bound at instantiation time. Instead, [LibraryPersistenceService] loads the contents of the [Library]'s
  * [LibraryFolder] directly into the existing [LibraryFolder] instance, without instantiating it.
- *
- * @property fileName the file name under which this [Library] is stored in persistent storage
- * @property locationPath the fully qualified path (including directories, without fileName) at which this [Library] is stored.
- *      On some target platforms, this property might not be used
- *
  */
 class LibraryImpl(
-	override val fileName: String,
-	override val locationPath: String? = null,
-	override val libraryFolder: LibraryFolder = LibraryFolder(Translations.getString("library.library.name")),
+    name: String,
+	override val libraryFolder: LibraryFolder = LibraryFolder(name),
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val libraryPersistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService,
 	private val eventBus: EventBus = BaseModule.eventBus
@@ -72,7 +66,7 @@ class LibraryImpl(
     override fun load() {
         try {
             isLoading = true
-            libraryPersistenceService.loadLibrary(this, fileName, locationPath)
+            libraryPersistenceService.loadLibrary(this)
             bindLibraryItems()
         } catch (e: Throwable) {
             LOG.error("LibraryImpl: Error while loading library: ${e.message}")

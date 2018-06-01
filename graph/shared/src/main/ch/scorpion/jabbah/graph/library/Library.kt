@@ -8,15 +8,6 @@ import ch.scorpion.jabbah.base.UUID
 
 interface Library : LibraryDirectory {
 
-	/** The file name under which this [Library] is stored in persistent storage. */
-	val fileName: String
-
-	/**
-	 * The fully qualified path (including directories, without fileName) at which this [Library] is stored.
-	 * On some target platforms, this property might not be used
-	 **/
-	val locationPath: String?
-
     val libraryFolder: LibraryFolder
 
     /** Determines whether this [Library] is currently loading from persistent store.*/

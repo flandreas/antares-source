@@ -1,0 +1,63 @@
+<metaGraph _id='0'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' uuid='6faeb5b6-ce07-47fc-b48a-068e245668eb' name='Test Custom'>
+          <elements>
+            <subGraphVerticeRef _id='3' id='1' delay='0' name='Single Input' uuid='a0f6bafd-eacb-42a1-ac08-0d8d946daa5f'/>
+          </elements>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='4'>
+          <netViews/>
+          <components>
+            <subGraphVerticeViewRef _id='5' id='1' rot='0' modelId='3' x='-770.0' y='-406.0'>
+              <container>
+                <containerDrawing _id='6'>
+                  <components>
+                    <containerBox _id='10' id='1' style='figure' x='140.0' y='140.0' w='42.0' h='35.0'/>
+                    <originIndicator _id='9'>
+                      <location>
+                        <point x='161.0' y='126.0'/>
+                      </location>
+                    </originIndicator>
+                    <digitalPortViewComp _id='7' id='3' style='figure' showBitWidthAnnotation='true'>
+                      <portView>
+                        <digitalPortView _id='8' x='161.0' y='140.0' dir='north' textPos='internal' portId='12'/>
+                      </portView>
+                    </digitalPortViewComp>
+                  </components>
+                  <model>
+                    <subGraphVertice _id='11' id='0' delay='0' name='Single Input' uuid='a0f6bafd-eacb-42a1-ac08-0d8d946daa5f'>
+                      <ports>
+                        <subCircuitPort _id='12' portId='1' name='A' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+                      </ports>
+                    </subGraphVertice>
+                  </model>
+                </containerDrawing>
+              </container>
+            </subGraphVerticeViewRef>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='14'>
+      <components>
+        <containerBox _id='16' id='1' style='figure' x='140.0' y='140.0' w='49.0' h='77.0'/>
+        <originIndicator _id='15'>
+          <location>
+            <point x='126.0' y='182.0'/>
+          </location>
+        </originIndicator>
+      </components>
+      <model>
+        <subGraphVertice _id='17' id='0' delay='0' name='Test Custom' uuid='6faeb5b6-ce07-47fc-b48a-068e245668eb'>
+          <ports/>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

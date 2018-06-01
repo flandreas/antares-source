@@ -12,6 +12,7 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.nio.file.FileSystems
+import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -22,7 +23,8 @@ import java.util.zip.ZipOutputStream
  */
 class FileLibraryPersistenceService(
     private val directoryPath: String,
-    private val metaGraphFileExtension: String = "cir"
+    private val metaGraphFileExtension: String = "cir",
+    private val libraryFileName: String = "library.lib"
 ) : LibraryPersistenceService {
 
     companion object {
@@ -33,7 +35,7 @@ class FileLibraryPersistenceService(
 
     override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
         LOG.debug("FileLibraryPersistenceService: load MetaGraph '$uuid'")
-        val filePath = buildMetaGraphFilePath(uuid)
+        val filePath = buildMetaGraphFilePath(library.name, uuid)
         FileInputStream(filePath).use {
             try {
                 val storeReader = StoreXmlReader(ElectricXmlReader(it))
@@ -50,7 +52,8 @@ class FileLibraryPersistenceService(
 
     override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
         LOG.debug("FileLibraryPersistenceService: store MetaGraph '${metaGraph.uuid}'")
-        val filePath = buildMetaGraphFilePath(metaGraph.uuid)
+	    ensureLibraryDirectory(library.name)
+	    val filePath = buildMetaGraphFilePath(library.name, metaGraph.uuid)
         FileOutputStream(filePath).use {
             try {
                 val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
@@ -64,11 +67,11 @@ class FileLibraryPersistenceService(
 
     override fun deleteContainerLibraryElement(library: Library, uuid: UUID) {
         LOG.debug("FileLibraryPersistenceService: delete MetaGraph '$uuid'")
-        File(buildMetaGraphFilePath(uuid)).delete()
+        File(buildMetaGraphFilePath(library.name, uuid)).delete()
     }
 
-    override fun loadLibrary(library: Library, fileName: String, locationPath: String?) {
-        val path = buildLibraryFilePath(locationPath!!, fileName)
+    override fun loadLibrary(library: Library) {
+	    val path = buildLibraryFilePath(library.name)
         LOG.debug("Loading library from $path")
         FileInputStream(path).use {
             try {
@@ -82,8 +85,9 @@ class FileLibraryPersistenceService(
         }
     }
 
-    override fun storeLibrary(library: Library, fileName: String, locationPath: String?) {
-        val path = buildLibraryFilePath(locationPath!!, fileName)
+    override fun storeLibrary(library: Library) {
+	    ensureLibraryDirectory(library.name)
+        val path = buildLibraryFilePath(library.name)
         try {
             FileOutputStream(path).use {
                 try {
@@ -113,13 +117,20 @@ class FileLibraryPersistenceService(
 
     /** ---- [FileLibraryPersistenceService] */
 
-    private fun buildMetaGraphFilePath(uuid: UUID): String {
-        return "$directoryPath${System.getProperty("file.separator")}$uuid.$metaGraphFileExtension"
+    private fun buildMetaGraphFilePath(libraryName: String, uuid: UUID): String {
+	    return FileSystems.getDefault().getPath(directoryPath, libraryName, "$uuid.$metaGraphFileExtension").toString()
     }
 
-    private fun buildLibraryFilePath(locationPath: String, fileName: String): String {
-        return  FileSystems.getDefault().getPath(locationPath, fileName).toString()
+    private fun buildLibraryFilePath(libraryName: String): String {
+		return FileSystems.getDefault().getPath(directoryPath, libraryName, libraryFileName).toString()
     }
+
+	private fun ensureLibraryDirectory(libraryName: String) {
+		val path = FileSystems.getDefault().getPath(directoryPath, libraryName)
+		if (!Files.exists(path)) {
+			Files.createDirectory(path)
+		}
+	}
 
     private fun zipFile(file: File, fileName: String, zipOut: ZipOutputStream) {
         if (file.isHidden) {

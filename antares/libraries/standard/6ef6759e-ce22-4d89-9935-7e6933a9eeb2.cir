@@ -1,0 +1,58 @@
+<metaGraph _id='0'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' uuid='6ef6759e-ce22-4d89-9935-7e6933a9eeb2' name='Test Text'>
+          <elements>
+            <andGate _id='3' id='1' delay='20' inputCount='2'/>
+            <notGate _id='4' id='2' delay='20' inputCount='1'/>
+            <digitalNet _id='5' id='3' delay='0'>
+              <ports>
+                <netPortRef verticeId='3' portId='3'/>
+                <netPortRef verticeId='4' portId='1'/>
+              </ports>
+            </digitalNet>
+          </elements>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='6'>
+          <netViews>
+            <netView _id='12' modelId='5' style='line'/>
+          </netViews>
+          <components>
+            <graphElement _id='10'>
+              <component>
+                <text id='0' style='message' x='-210.0' y='-273.0' w='154.0' h='84.0' text='This is a text'/>
+              </component>
+            </graphElement>
+            <andGateView _id='9' id='1' rot='0' modelId='3' x='-175.0' y='-140.0'/>
+            <notGateView _id='8' id='2' rot='0' modelId='4' x='-28.0' y='-119.0'/>
+            <digitalEdgeView _id='7' id='3' modelId='5' layout='ortho' orig='9' origPort='3' origPortOutput='true' dest='8' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='-189.0,-140.0 -133.0,-140.0 -133.0,-119.0 -84.0,-119.0'/>
+              </shape>
+            </digitalEdgeView>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='13'>
+      <components>
+        <containerBox _id='15' id='1' style='figure' x='140.0' y='140.0' w='70.0' h='140.0'/>
+        <originIndicator _id='14'>
+          <location>
+            <point x='140.0' y='140.0'/>
+          </location>
+        </originIndicator>
+      </components>
+      <model>
+        <subGraphVertice _id='16' id='0' delay='0' name='Test Text' uuid='6ef6759e-ce22-4d89-9935-7e6933a9eeb2'>
+          <ports/>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

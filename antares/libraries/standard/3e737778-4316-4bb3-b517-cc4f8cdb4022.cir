@@ -1,0 +1,72 @@
+<metaGraph _id='0'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' uuid='3e737778-4316-4bb3-b517-cc4f8cdb4022' name='Test New Port'>
+          <elements>
+            <circuitInOut _id='3' id='1' delay='0' name='O1' type='output' bitWidth='1'/>
+            <circuitInOut _id='4' id='2' delay='0' name='O2' type='output' bitWidth='1'/>
+            <circuitInOut _id='5' id='3' delay='0' name='I1' type='input' bitWidth='1'/>
+          </elements>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='7'>
+          <components>
+            <circuitInOutView _id='10' id='1' modelId='3' representation='binary' orientation='east'>
+              <location>
+                <point x='294.0' y='168.0'/>
+              </location>
+            </circuitInOutView>
+            <circuitInOutView _id='9' id='2' modelId='4' representation='binary' orientation='east'>
+              <location>
+                <point x='294.0' y='224.0'/>
+              </location>
+            </circuitInOutView>
+            <circuitInOutView _id='8' id='3' modelId='5' representation='binary' orientation='east'>
+              <location>
+                <point x='210.0' y='196.0'/>
+              </location>
+            </circuitInOutView>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='11'>
+      <components>
+        <containerBox _id='19' id='1' x='140.0' y='140.0' w='70.0' h='70.0'/>
+        <originIndicator _id='18'>
+          <location>
+            <point x='224.0' y='161.0'/>
+          </location>
+        </originIndicator>
+        <digitalPortViewComp _id='16' id='3' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='17' x='210.0' y='161.0' dir='east' textPos='INTERNAL' portId='22'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='14' id='4' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='15' x='210.0' y='182.0' dir='east' textPos='INTERNAL' portId='23'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='12' id='5' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='13' x='140.0' y='175.0' dir='west' textPos='INTERNAL' portId='21'/>
+          </portView>
+        </digitalPortViewComp>
+      </components>
+      <model>
+        <subGraphVertice _id='20' id='0' delay='0' name='Test New Port' uuid='3e737778-4316-4bb3-b517-cc4f8cdb4022'>
+          <ports>
+            <subCircuitPort _id='21' portId="3" name='I1' logic='positive' bitWidth='1' trigger='level' type='input'/>
+            <subCircuitPort _id='22' portId="1" name='O1' logic='positive' bitWidth='1' trigger='level' type='output'/>
+            <subCircuitPort _id='23' portId="2" name='O2' logic='positive' bitWidth='1' trigger='level' type='output'/>
+          </ports>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

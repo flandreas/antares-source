@@ -31,7 +31,7 @@ class SubGraphVerticeRefTest {
         val file = File.createTempFile("library", ".lib")
         TestTranslationsBuilder().withAnyKey()
         LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
-        LibraryModule.libraryHolder.l = LibraryImpl(file.name, file.parentFile.absolutePath)
+        LibraryModule.libraryHolder.l = LibraryImpl("test")
     }
 
     @Test
