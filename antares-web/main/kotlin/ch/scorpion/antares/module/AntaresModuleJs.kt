@@ -21,7 +21,7 @@ object AntaresModuleJs : AbstractModule() {
         AntaresViewModule.require()
 
         LibraryModule.libraryPersistenceService = RestLibraryPersistenceService()
-        LibraryModule.libraryFactory = { LibraryImpl("library.lib", null) }
-        LibraryModule.libraryHolder = LibraryHolder(LibraryModule.libraryFactory.invoke())
+        LibraryModule.libraryFactory = { LibraryImpl(it) }
+        LibraryModule.libraryHolder = LibraryHolder(LibraryModule.libraryFactory.invoke("standard"))
     }
 }

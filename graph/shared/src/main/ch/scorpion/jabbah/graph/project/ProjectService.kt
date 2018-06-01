@@ -3,8 +3,11 @@ package ch.scorpion.jabbah.graph.project
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.graph.library.Library
 
-interface ProjectPersistenceService {
+typealias Project = Library
+
+interface ProjectService {
 
 	/** Returns the names of all stored projects.*/
 	fun getProjectNames(): ImmutableList<String>
@@ -17,10 +20,17 @@ interface ProjectPersistenceService {
 	 * @throws IllegalArgumentException if a project with name [name] doesn't exist
 	 */
 	fun open(projectName: String): MetaGraph
+
+	/**
+	 * Creates a new [Project] with the given name and stores it in persistent store.
+	 * @return the created [Project]
+	 * @throws IllegalArgumentException if a project with name [projectName] already exists
+	 */
+	fun create(projectName: String): Project
 }
 
 /** Null pattern */
-class UnimplementedProjectPersistenceService : ProjectPersistenceService {
+class UnimplementedProjectService : ProjectService {
 
 	override fun getProjectNames(): ImmutableList<String> {
 		throw UnsupportedOperationException("not implemented")
@@ -34,4 +44,7 @@ class UnimplementedProjectPersistenceService : ProjectPersistenceService {
 		throw UnsupportedOperationException("not implemented")
 	}
 
+	override fun create(projectName: String): Project {
+		throw UnsupportedOperationException("not implemented")
+	}
 }

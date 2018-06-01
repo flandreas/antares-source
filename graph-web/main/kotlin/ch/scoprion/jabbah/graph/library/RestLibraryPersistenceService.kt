@@ -41,7 +41,7 @@ class RestLibraryPersistenceService : LibraryPersistenceService {
         throw UnsupportedOperationException("not implemented")
     }
 
-    override fun loadLibrary(library: Library, fileName: String, locationPath: String?) {
+    override fun loadLibrary(library: Library) {
         val request = XMLHttpRequest()
         request.open("GET", "$BASE_URL/library/contents", async = false)
         //request.responseType = XMLHttpRequestResponseType.DOCUMENT
@@ -52,7 +52,7 @@ class RestLibraryPersistenceService : LibraryPersistenceService {
         request.send()
     }
 
-    override fun storeLibrary(library: Library, fileName: String, locationPath: String?) {
+    override fun storeLibrary(library: Library) {
         throw UnsupportedOperationException("not implemented")
     }
 

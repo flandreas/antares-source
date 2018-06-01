@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
-import java.awt.Frame
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
@@ -16,7 +15,7 @@ import javax.swing.*
  * Displays a list of all existing project names and allows the user to open a project.
  */
 class ProjectPersistencePanel(
-	private val service: ProjectPersistenceService = ProjectModule.projectPersistenceService,
+	private val service: ProjectService = ProjectModule.projectService,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
 
@@ -94,19 +93,19 @@ class ProjectPersistencePanel(
 		override fun execute(event: ActionEvent) {
 			LOG.debug("ProjectPersistencePanel: new project")
 			while (true) {
-				val name = JOptionPane.showInputDialog(
+				val projectName = JOptionPane.showInputDialog(
 					this@ProjectPersistencePanel,
 					Translations.getString("project.dialog.new.name.dialog.desc"),
 					Translations.getString("project.dialog.new.name.dialog.title"),
 					JOptionPane.QUESTION_MESSAGE
 				)
-				if (StringUtils.isEmpty(name)) {
+				if (StringUtils.isEmpty(projectName)) {
 					return
 				}
-				if (service.exists(name)) {
+				if (service.exists(projectName)) {
 					if (JOptionPane.showConfirmDialog(
 						this@ProjectPersistencePanel,
-						Translations.getString("project.dialog.new.duplicate.msg", name),
+						Translations.getString("project.dialog.new.duplicate.msg", projectName),
 						Translations.getString("project.dialog.new.name.dialog.title"),
 						JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
@@ -119,6 +118,7 @@ class ProjectPersistencePanel(
 			}
 
 			LOG.debug("ProjectPersistencePanel: creating new project '$name'")
+			service.create(name)
 			closeHandler.invoke()
 		}
 	}

@@ -25,7 +25,7 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerEditor
-import ch.scorpion.jabbah.graph.project.FileProjectPersistenceService
+import ch.scorpion.jabbah.graph.project.FileProjectService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.IOModule
@@ -51,10 +51,18 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
 			metaGraphFileExtension = app.fileExtension,
 			libraryFileName = app.libraryFileName
 		)
-		LibraryModule.libraryFactory = { LibraryImpl("standard") }
-		LibraryModule.libraryHolder = LibraryHolder(LibraryModule.libraryFactory.invoke())
+		LibraryModule.libraryFactory = { LibraryImpl(it) }
+		LibraryModule.libraryHolder = LibraryHolder(LibraryModule.libraryFactory.invoke("standard"))
 
-		ProjectModule.projectPersistenceService = FileProjectPersistenceService(app.projectsDirectoryPath.toString())
+		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(
+			directoryPath = app.projectsDirectoryPath.toString(),
+			metaGraphFileExtension = app.fileExtension,
+			libraryFileName = app.libraryFileName
+		)
+		ProjectModule.projectService = FileProjectService(
+			directoryPath = app.projectsDirectoryPath.toString(),
+			newMetaGraphNameTranslationKey = "graph.name.unknown"
+		)
 
 		configureTypeMap(IOModule.typeMap)
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)

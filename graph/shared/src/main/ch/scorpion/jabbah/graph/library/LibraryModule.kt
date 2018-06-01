@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.io.TypeMap
  */
 object LibraryModule : AbstractModule() {
 
-    var libraryFactory: () -> Library = {throw UnsupportedOperationException()}
+    var libraryFactory: (String) -> Library = { throw UnsupportedOperationException() }
 
     var libraryHolder: LibraryHolder = LibraryHolder()
 
