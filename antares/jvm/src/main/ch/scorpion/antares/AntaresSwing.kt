@@ -111,7 +111,7 @@ class AntaresSwing(
 	}
 
 	override fun createMenuBarBuilder(): MenuBarBuilder {
-		return AntaresMenuBarBuilder(this, eventBus)
+		return AntaresMenuBarBuilder(mainFrame, eventBus)
 	}
 
 	override fun createMainFrame(): AbstractApplicationFrame {

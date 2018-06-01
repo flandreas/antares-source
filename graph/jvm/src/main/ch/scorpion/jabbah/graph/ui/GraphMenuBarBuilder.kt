@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.AbstractApplicationFrame
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.MenuBarBuilder
 import ch.scorpion.jabbah.base.ActionWrapperSwing
@@ -12,6 +13,7 @@ import ch.scorpion.jabbah.execution.ExecutionDepthAction
 import ch.scorpion.jabbah.execution.StopOnIssueAction
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.project.ShowProjectsDialogAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioAction
@@ -24,13 +26,18 @@ import javax.swing.JMenuItem
 /**
  * Adds [ch.scorpion.jabbah.graph] related menus to [MenuBarBuilder].
  */
-open class GraphMenuBarBuilder(application: DesktopApplication, eventBus: EventBus) : MenuBarBuilder(application, eventBus) {
+open class GraphMenuBarBuilder(frame: AbstractApplicationFrame, eventBus: EventBus) : MenuBarBuilder(frame, eventBus) {
 
     override fun fillMenuBar(menuBar: JMenuBar) {
         super.fillMenuBar(menuBar)
         menuBar.add(fillLibraryMenu(JMenu(Translations.getString("application.menu.library"))))
         menuBar.add(fillScenariosMenu(JMenu(Translations.getString("application.menu.scenarios"))))
         menuBar.add(fillExecutionMenu(JMenu(Translations.getString("application.menu.simulation"))))
+    }
+
+    override fun fillAdditionalFileMenu(menu: JMenu) {
+        super.fillAdditionalFileMenu(menu)
+	    menu.add(JMenuItem(ActionWrapperSwing(ShowProjectsDialogAction(frame))))
     }
 
     override fun fillEditMenu(menu: JMenu) {
@@ -64,7 +71,7 @@ open class GraphMenuBarBuilder(application: DesktopApplication, eventBus: EventB
         menu.add(JMenuItem(ActionWrapperSwing(AddLibraryFolderAction())))
         menu.add(JMenuItem(ActionWrapperSwing(NewGraphAction())))
         menu.add(JMenuItem(ActionWrapperSwing(AddGraphToLibraryAction())))
-        menu.add(JMenuItem(ActionWrapperSwing(EditContainerLibraryElementAction(application, eventBus))))
+        menu.add(JMenuItem(ActionWrapperSwing(EditContainerLibraryElementAction(frame.application, eventBus))))
         menu.add(JMenuItem(ActionWrapperSwing(DeleteContainerLibraryElementAction(LibraryModule.libraryService.invoke(), eventBus))))
         return menu
     }

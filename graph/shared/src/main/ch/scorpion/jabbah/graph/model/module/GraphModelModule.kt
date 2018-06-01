@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeImpl
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioImpl
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioStepImpl
@@ -32,6 +33,7 @@ object GraphModelModule : AbstractModule() {
         IOModule.require()
         ExecutionModule.require()
         LibraryModule.require()
+        ProjectModule.require()
         ScriptModule.require()
 
         configureTypeMap(IOModule.typeMap)

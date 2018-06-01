@@ -13,15 +13,10 @@ import javax.swing.WindowConstants
  * A standard application [JFrame] that contains a [SimpleEditorPanel] in the center of its layout.
  */
 abstract class AbstractApplicationFrame(
-    val application: Application,
-    eventBus: EventBus,
-    toolbars: List<ToolBar>
+    val application: DesktopApplication,
+    eventBus: EventBus = BaseModule.eventBus,
+    toolbars: List<ToolBar> = emptyList()
 ) : JFrame() {
-
-    constructor(application: Application): this(application, BaseModule.eventBus, emptyList())
-
-    @Suppress("unused")
-    constructor(application: Application, toolbars: List<ToolBar>): this(application, BaseModule.eventBus, toolbars)
 
     abstract val editor: Editor
 

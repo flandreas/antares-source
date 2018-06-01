@@ -5,6 +5,7 @@ import ch.scorpion.antares.view.gate.AmericanSymbolStyleAction
 import ch.scorpion.antares.view.gate.EuropeanSymbolStyleAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
 import ch.scorpion.antares.view.module.AntaresViewModule
+import ch.scorpion.jabbah.app.AbstractApplicationFrame
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
@@ -23,7 +24,7 @@ import javax.swing.*
 /**
  * Adds [antares] related menus to the [MenuBarBuilder].
  */
-class AntaresMenuBarBuilder(application: DesktopApplication, eventBus: EventBus) : GraphMenuBarBuilder(application, eventBus) {
+class AntaresMenuBarBuilder(frame: AbstractApplicationFrame, eventBus: EventBus) : GraphMenuBarBuilder(frame, eventBus) {
 
     override fun fillMenuBar(menuBar: JMenuBar) {
         super.fillMenuBar(menuBar)

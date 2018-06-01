@@ -27,11 +27,12 @@ import kotlin.reflect.KClass
 interface Antares : DesktopApplication {
 
 	companion object {
-		private val DISPLAY_NAME = "Antares"
-		private val SYSTEM_NAME = "antares"
-		private val FILE_EXTENSION_NAME = "cir"
-		private val DEFAULT_LIB_DIRECTORY = "library"
-		private val DEFAULT_LIB_FILENAME = "library.lib"
+		private const val DISPLAY_NAME = "Antares"
+		private const val SYSTEM_NAME = "antares"
+		private const val FILE_EXTENSION_NAME = "cir"
+		private const val DEFAULT_LIB_DIRECTORY = "library"
+		private const val DEFAULT_PROJECT_DIRECTORY = "projects"
+		private const val DEFAULT_LIB_FILENAME = "library.lib"
 	}
 
 	/** ---- [DesktopApplication] */
@@ -43,6 +44,8 @@ interface Antares : DesktopApplication {
 	override val fileExtension: String get() = FILE_EXTENSION_NAME
 
 	/** ---- [Antares] */
+
+	val projectsDirectoryPath: Path get() = FileSystems.getDefault().getPath(homeDirectoryPath.toString(), DEFAULT_PROJECT_DIRECTORY)
 
 	val libraryDirectoryPath: Path get() = FileSystems.getDefault().getPath(homeDirectoryPath.toString(), DEFAULT_LIB_DIRECTORY)
 

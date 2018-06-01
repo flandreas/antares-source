@@ -22,12 +22,12 @@ import java.util.zip.ZipOutputStream
  */
 class FileLibraryPersistenceService(
     private val directoryPath: String,
-    private val metaGraphFileExtension: String
+    private val metaGraphFileExtension: String = "cir"
 ) : LibraryPersistenceService {
 
-    constructor(directoryPath: String): this(directoryPath, "cir")
-
-    private val LOG by logger(FileLibraryPersistenceService::class)
+    companion object {
+        private val LOG by logger(FileLibraryPersistenceService::class)
+    }
 
     /** ---- [LibraryPersistenceService] */
 
@@ -136,8 +136,8 @@ class FileLibraryPersistenceService(
             val zipEntry = ZipEntry(fileName)
             zipOut.putNextEntry(zipEntry)
             val buffer = ByteArray(1024, { 0 })
-            var length = 0
-            do {
+	        var length: Int
+	        do {
                 length = it.read(buffer)
                 if (length > 0) {
                     zipOut.write(buffer, 0, length)

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import java.awt.event.ActionEvent
+import java.awt.event.MouseEvent
 import javax.swing.KeyStroke
 
 /**
@@ -11,6 +12,24 @@ import javax.swing.KeyStroke
  * or buttons. No need for subclassing.
  */
 class ActionWrapperSwing(private val action: ch.scorpion.jabbah.base.Action) : javax.swing.AbstractAction() {
+
+	companion object {
+		fun toJabbahActionEvent(e: ActionEvent): ch.scorpion.jabbah.base.event.ActionEvent =
+			ch.scorpion.jabbah.base.event.ActionEvent(
+				event = e,
+				source = e.source,
+				modifiers = e.modifiers,
+				action = e.actionCommand ?: "",
+				time = e.`when`)
+
+		fun toJabbaActionEvent(e: MouseEvent): ch.scorpion.jabbah.base.event.ActionEvent =
+			ch.scorpion.jabbah.base.event.ActionEvent(
+				event = e,
+				source = e.source,
+				modifiers = e.modifiers,
+				action = "",
+				time = e.`when`)
+	}
 
 	init {
 		update()
@@ -43,12 +62,6 @@ class ActionWrapperSwing(private val action: ch.scorpion.jabbah.base.Action) : j
 	}
 
 	override fun actionPerformed(e: ActionEvent?) {
-		action.execute(ch.scorpion.jabbah.base.event.ActionEvent(
-			event = e,
-			source = e!!.source,
-			modifiers = e.modifiers,
-			action = e.actionCommand ?: "",
-			time = e.`when`
-		))
+		action.execute(toJabbahActionEvent(e!!))
 	}
 }

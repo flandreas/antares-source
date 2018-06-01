@@ -25,6 +25,8 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerEditor
+import ch.scorpion.jabbah.graph.project.FileProjectPersistenceService
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
@@ -49,6 +51,8 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
 			LibraryImpl(app.libraryFileName, app.libraryDirectoryPath.toString())
 		}
 		LibraryModule.libraryHolder = LibraryHolder(LibraryModule.libraryFactory.invoke())
+
+		ProjectModule.projectPersistenceService = FileProjectPersistenceService(app.projectsDirectoryPath.toString())
 
 		configureTypeMap(IOModule.typeMap)
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
