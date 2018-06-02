@@ -93,6 +93,18 @@ class LibraryFolder(
         return items.any { it.name == item.name }
     }
 
+	override fun containsRecursively(item: LibraryItem): Boolean {
+		return items.any {
+			if (it.name == item.name) {
+				true
+			} else if (it is LibraryDirectory) {
+				it.containsRecursively(item)
+			} else {
+				false
+			}
+		}
+	}
+
     override fun get(name: String): LibraryItem? {
         return items.firstOrNull { it.name == name }
     }

@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.graph.library.Library
 
@@ -16,10 +15,10 @@ interface ProjectService {
 	fun exists(projectName: String): Boolean
 
 	/**
-	 * Opens and loads the [MetaGraph] project with the specified name.
-	 * @throws IllegalArgumentException if a project with name [name] doesn't exist
+	 * Opens and loads the [Project] with the specified name.
+	 * @throws IllegalArgumentException if a project with name [projectName] doesn't exist
 	 */
-	fun open(projectName: String): MetaGraph
+	fun open(projectName: String): Project
 
 	/**
 	 * Creates a new [Project] with the given name and stores it in persistent store.
@@ -40,7 +39,7 @@ class UnimplementedProjectService : ProjectService {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun open(projectName: String): MetaGraph {
+	override fun open(projectName: String): Project {
 		throw UnsupportedOperationException("not implemented")
 	}
 

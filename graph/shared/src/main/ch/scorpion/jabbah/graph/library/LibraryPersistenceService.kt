@@ -50,4 +50,4 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService{
 
 }
 
-class LibraryServiceException(msg: String? = null): Throwable(msg)
+class LibraryPersistenceServiceException(msg: String? = null): Throwable(msg)

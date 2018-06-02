@@ -24,7 +24,8 @@ class LibraryImpl(
 	override val libraryFolder: LibraryFolder = LibraryFolder(name),
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val libraryPersistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService,
-	private val eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus,
+    private val descriptionKey: String = "library.library.name"
 ) : Library, LibraryDirectory by libraryFolder {
 
 	companion object {
@@ -42,7 +43,7 @@ class LibraryImpl(
     /** ---- [Any] */
 
     override fun toString(): String {
-        return name
+        return "${Translations.getString(descriptionKey)} \"$name\""
     }
 
     /** ---- [Library] interface */

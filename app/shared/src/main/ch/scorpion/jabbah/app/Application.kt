@@ -34,15 +34,18 @@ interface Application {
      */
     fun start()
 
+	/** Creates a new [applicationData] object and resets the current [Savable].*/
     fun newFile()
 
+	/** Saves the current [applicationData] at the location indicated by [savable].*/
     fun save()
 
+	/** Asks the user to define a [Savable] and uses it to save the current [applicationData].*/
 	fun saveAs(): Boolean
 
+	/** Registers the specified [Storable] as current [applicationData] and the specified [Savable] as current [savable].*/
 	fun open(storable: Storable, savable: Savable)
 
 	/** Asks the user to choose a [Savable] and opens it.*/
 	fun open()
-
 }

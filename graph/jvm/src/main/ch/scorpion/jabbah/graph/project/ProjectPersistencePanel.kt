@@ -16,6 +16,7 @@ import javax.swing.*
  */
 class ProjectPersistencePanel(
 	private val service: ProjectService = ProjectModule.projectService,
+	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
 
@@ -76,9 +77,15 @@ class ProjectPersistencePanel(
 
 	private val selectedProjectName: String? get() = projectNameList.selectedValue
 
+	private fun openProject(project: Project) {
+		projectHolder.p = project
+		// TODO Open default MetaGraph of opened project
+	}
+
 	private inner class OpenAction : AbstractAction("project.dialog.open.action") {
 		override fun execute(event: ActionEvent) {
 			LOG.debug("ProjectPersistencePanel: open project '$selectedProjectName'")
+			openProject(service.open(projectNameList.selectedValue))
 			closeHandler.invoke()
 		}
 	}
@@ -92,8 +99,9 @@ class ProjectPersistencePanel(
 	private inner class NewAction : AbstractAction("project.dialog.new.action") {
 		override fun execute(event: ActionEvent) {
 			LOG.debug("ProjectPersistencePanel: new project")
+			var projectName: String
 			while (true) {
-				val projectName = JOptionPane.showInputDialog(
+				projectName = JOptionPane.showInputDialog(
 					this@ProjectPersistencePanel,
 					Translations.getString("project.dialog.new.name.dialog.desc"),
 					Translations.getString("project.dialog.new.name.dialog.title"),
@@ -117,8 +125,8 @@ class ProjectPersistencePanel(
 				}
 			}
 
-			LOG.debug("ProjectPersistencePanel: creating new project '$name'")
-			service.create(name)
+			LOG.debug("ProjectPersistencePanel: creating new project '$projectName'")
+			openProject(service.create(projectName))
 			closeHandler.invoke()
 		}
 	}

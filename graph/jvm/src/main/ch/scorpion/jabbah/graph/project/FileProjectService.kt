@@ -21,7 +21,7 @@ import java.util.stream.Collectors
  */
 class FileProjectService(
 	private val directoryPath: String,
-	private val libraryFactory: (String) -> Library = LibraryModule.libraryFactory,
+	private val projectFactory: (String) -> Library = ProjectModule.projectFactory,
 	private val libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
 	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name"
 ) : ProjectService {
@@ -45,8 +45,11 @@ class FileProjectService(
 			.collect(Collectors.toList()))
 	}
 
-	override fun open(projectName: String): MetaGraph {
-		throw UnsupportedOperationException("not implemented")
+	override fun open(projectName: String): Project {
+		if (!exists(projectName)) {
+			throw IllegalArgumentException("project name '$projectName' doesn't exists")
+		}
+		return libraryService.loadLibrary(projectFactory.invoke(projectName))
 	}
 
 	override fun create(projectName: String): Project {
@@ -54,7 +57,7 @@ class FileProjectService(
 			throw IllegalArgumentException("project name '$projectName' already exists")
 		}
 		LOG.debug("FileProjectService: creating new project '$projectName'")
-		val project = libraryFactory.invoke(projectName)
+		val project = projectFactory.invoke(projectName)
 		libraryService.storeLibrary(project)
 
 		val metaGraph = MetaGraph()
@@ -63,5 +66,4 @@ class FileProjectService(
 
 		return project
 	}
-
 }

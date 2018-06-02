@@ -14,6 +14,8 @@ interface LibraryDirectory : LibraryItem {
 
 	fun contains(item: LibraryItem): Boolean
 
+	fun containsRecursively(item: LibraryItem): Boolean
+
 	fun get(name: String): LibraryItem?
 
 	fun getItems(): ImmutableList<LibraryItem>

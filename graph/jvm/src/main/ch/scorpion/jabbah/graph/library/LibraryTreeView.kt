@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import java.awt.Component
 import java.awt.Font
@@ -26,18 +27,16 @@ import javax.swing.tree.*
  * - A [OpenContainerLibraryElementRequest] when the user double clicks on a [ContainerLibraryElement]
  */
 class LibraryTreeView(
-    private val eventBus: EventBus,
-    val libraryHolder: LibraryHolder
-) : JTree(createLibraryTreeModel(libraryHolder.library)) {
-
-    @Suppress("unused")
-    constructor(): this(BaseModule.eventBus, LibraryModule.libraryHolder)
+    private val eventBus: EventBus = BaseModule.eventBus,
+    val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+    val projectHolder: ProjectHolder = ProjectModule.projectHolder
+) : JTree(createLibraryTreeModel(libraryHolder.library, projectHolder.project)) {
 
     private val directoryPopupMenu = JPopupMenu()
 
     private val containerPopupMenu = JPopupMenu()
 
-	private var currentSavable: LibrarySavable? = null
+	private var currentSavable: Savable? = null
 		set(value) {
 			if (field != value) {
 				field = value
@@ -53,8 +52,9 @@ class LibraryTreeView(
         transferHandler = LibraryElementTransferHandler()
 
         setRowHeight(24)
+	    isRootVisible = false
         setCellRenderer(Renderer())
-        addTreeSelectionListener({eventBus.post(LibrarySelectionChangedEvent(this))})
+        addTreeSelectionListener({ eventBus.post(LibrarySelectionChangedEvent(this)) })
         addMouseListener(DoubleClickListener())
 
         dragEnabled = true
@@ -64,6 +64,7 @@ class LibraryTreeView(
         eventBus.register(LibraryItemAddedEvent::class, { updateLibrary() })
         eventBus.register(LibraryItemRemovedEvent::class, { updateLibrary() })
         eventBus.register(LibraryItemUpdatedEvent::class, { updateLibrary() })
+	    eventBus.register(ProjectEvent::class, { updateLibrary() })
 
         eventBus.register(ApplicationModeEvent::class, { dragEnabled = it.applicationMode === ApplicationMode.EDIT })
 	    eventBus.register(CurrentSavableEvent::class, { handle(it) })
@@ -73,14 +74,26 @@ class LibraryTreeView(
         directoryPopupMenu.add(ActionWrapperSwing(AddGraphToLibraryAction()))
 
         containerPopupMenu.add(ActionWrapperSwing(DeleteContainerLibraryElementAction()))
+
+	    expandRow(0)
     }
 
     companion object {
 
-        fun createLibraryTreeModel(library: Library): TreeModel {
-            val node = DefaultMutableTreeNode(library)
-            addItems(node, library)
-            return DefaultTreeModel(node)
+        fun createLibraryTreeModel(library: Library, project: Project?): TreeModel {
+	        val root = DefaultMutableTreeNode()
+
+	        if (project != null) {
+		        val projectNode = DefaultMutableTreeNode(project)
+		        addItems(projectNode, project)
+		        root.add(projectNode)
+	        }
+
+	        val libraryNode = DefaultMutableTreeNode(library)
+            addItems(libraryNode, library)
+	        root.add(libraryNode)
+
+            return DefaultTreeModel(root)
         }
 
         private fun addItems(parent: DefaultMutableTreeNode, directory: LibraryDirectory) {
@@ -105,7 +118,7 @@ class LibraryTreeView(
 
     private fun updateLibrary() {
         SwingUtilities.invokeLater {
-            model = createLibraryTreeModel(libraryHolder.library)
+            model = createLibraryTreeModel(libraryHolder.library, projectHolder.project)
         }
     }
 
@@ -131,8 +144,8 @@ class LibraryTreeView(
     }
 
 	private fun handle(event: CurrentSavableEvent) {
-		if (event.savable is LibrarySavable) {
-			currentSavable = event.savable as LibrarySavable
+		if (event.savable is LibrarySavable || event.savable is ProjectSavable) {
+			currentSavable = event.savable
 		} else {
 			currentSavable = null
 		}
@@ -146,16 +159,21 @@ class LibraryTreeView(
 
         override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
             val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
-            val iconPath = ((value as DefaultMutableTreeNode).userObject as LibraryItem).iconPath
-	        component.font = this@LibraryTreeView.font
-            if (StringUtils.isNotEmpty(iconPath)) {
-                component.icon = getIcon(iconPath!!)
-            } else if (value.userObject is ContainerLibraryElement) {
-                component.icon = containerLibElemIcon
-		        if (currentSavable != null && currentSavable!!.element == value.userObject) {
-			        component.icon = currentContainerLibElemIcon
+	        if ((value as DefaultMutableTreeNode).userObject != null) {
+		        val iconPath = (value.userObject as LibraryItem).iconPath
+		        component.font = this@LibraryTreeView.font
+		        if (StringUtils.isNotEmpty(iconPath)) {
+			        component.icon = getIcon(iconPath!!)
+		        } else if (value.userObject is ContainerLibraryElement) {
+			        component.icon = containerLibElemIcon
+			        if (
+				        currentSavable is LibrarySavable && (currentSavable as LibrarySavable).element == value.userObject ||
+				        currentSavable is ProjectSavable && (currentSavable as ProjectSavable).element == value.userObject
+			        ) {
+				        component.icon = currentContainerLibElemIcon
+			        }
 		        }
-            }
+	        }
             return component
         }
 

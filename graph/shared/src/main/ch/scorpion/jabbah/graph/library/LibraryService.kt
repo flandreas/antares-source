@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -9,6 +10,10 @@ import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.io.StorableCreator
 
 interface LibraryService {
+
+	fun loadLibrary(name: String): Library
+
+	fun loadLibrary(library: Library): Library
 
 	fun storeLibrary(library: Library)
 
@@ -79,6 +84,7 @@ data class LibraryItemUpdatedEvent(
 
 class LibraryServiceImpl(
 	private val persistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService,
+	private val libraryFactory: (String) -> Library = LibraryModule.libraryFactory,
 	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus
@@ -88,7 +94,22 @@ class LibraryServiceImpl(
 		private val LOG by logger(LibraryServiceImpl::class)
 	}
 
+
 	/** ---- [LibraryService] interface */
+
+	override fun loadLibrary(name: String): Library {
+		return loadLibrary(libraryFactory.invoke(name))
+	}
+
+	override fun loadLibrary(library: Library): Library {
+		try {
+			LOG.debug("LibraryServiceImpl: Loading Library '${library.name}'")
+			persistenceService.loadLibrary(library)
+			return library
+		} catch(e: LibraryPersistenceServiceException) {
+			throw IllegalArgumentException("library not found")
+		}
+	}
 
 	override fun storeLibrary(library: Library) {
 		LOG.debug("LibraryServiceImpl: Storing Library")
@@ -174,5 +195,4 @@ class LibraryServiceImpl(
 			LOG.debug("LibraryServiceImpl: Loaded MetaGraph '${element.metaGraph!!.name}' ${element.uuid}")
 		}
 	}
-
 }

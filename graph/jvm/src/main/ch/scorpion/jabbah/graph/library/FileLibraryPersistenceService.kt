@@ -42,10 +42,10 @@ class FileLibraryPersistenceService(
                 return storeReader.readStorable() as MetaGraph
             } catch (e: FileNotFoundException) {
                 LOG.error("Library file '$filePath' not found")
-                throw LibraryServiceException()
+                throw LibraryPersistenceServiceException()
             } catch (e: Throwable) {
                 LOG.error("Error while loading MetaGraph file from '$filePath': ${e.message}")
-                throw LibraryServiceException()
+                throw LibraryPersistenceServiceException()
             }
         }
     }
