@@ -51,7 +51,7 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
 			metaGraphFileExtension = app.fileExtension,
 			libraryFileName = app.libraryFileName
 		)
-		LibraryModule.libraryFactory = { LibraryImpl(it) }
+		LibraryModule.libraryFactory = { LibraryImpl(it, libraryService = LibraryModule.libraryService.invoke()) }
 		LibraryModule.libraryHolder = LibraryHolder(LibraryModule.libraryFactory.invoke("standard"))
 
 		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(

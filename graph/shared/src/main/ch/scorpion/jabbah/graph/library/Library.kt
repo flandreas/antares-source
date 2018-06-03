@@ -10,15 +10,17 @@ interface Library : LibraryDirectory {
 
     val libraryFolder: LibraryFolder
 
-    /** Determines whether this [Library] is currently loading from persistent store.*/
-    val isLoading: Boolean
-
+	/**
+	 * The [LibraryService] to use when operation on this [Library]. Needed in order to be able to distinguish
+	 * between different service implementations for libraries and projects.
+	 */
+	val libraryService: LibraryService
 
     /** Returns the entire [MetaGraph] with the specified [UUID], including the view representations. */
-    fun getMetaGraph(uuid: UUID, service: LibraryService = LibraryModule.libraryService.invoke()): MetaGraph
+    fun getMetaGraph(uuid: UUID): MetaGraph
 
     /** Returns the entire [MetaGraph] with the specified [UUID] if it exists, or `null` otherwise. */
-    fun getOptionalMetaGraph(uuid: UUID, service: LibraryService = LibraryModule.libraryService.invoke()): MetaGraph?
+    fun getOptionalMetaGraph(uuid: UUID): MetaGraph?
 
     /** Checks whether a [MetaGraph] with [uuid] exists in this [Library]. */
     fun containsMetaGraph(uuid: UUID): Boolean
@@ -26,12 +28,13 @@ interface Library : LibraryDirectory {
     /** Replaces the contents of this [Library] with the content of the specified [LibraryFolder].*/
     fun replaceContentsWith(libraryFolder: LibraryFolder)
 
-    fun load()
-
     /**
      * Determines whether a [Graph] contains directly or recursively a [GraphElement]
      * with the specified UUID.
      */
-    fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID, service: LibraryService = LibraryModule.libraryService.invoke()): Boolean
+    fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean
+
+    /** Binds all [LibraryItem]s of this [Library] to this [Library] by calling [LibraryItem.bindTo]. */
+    fun bindLibraryItems()
 
 }

@@ -22,9 +22,8 @@ import ch.scorpion.jabbah.base.logger
 class LibraryImpl(
     name: String,
 	override val libraryFolder: LibraryFolder = LibraryFolder(name),
+    override val libraryService: LibraryService,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
-	private val libraryPersistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService,
-	private val eventBus: EventBus = BaseModule.eventBus,
     private val descriptionKey: String = "library.library.name"
 ) : Library, LibraryDirectory by libraryFolder {
 
@@ -48,37 +47,22 @@ class LibraryImpl(
 
     /** ---- [Library] interface */
 
-    override var isLoading: Boolean = false
-
-    override fun getMetaGraph(uuid: UUID, service: LibraryService): MetaGraph {
+    override fun getMetaGraph(uuid: UUID): MetaGraph {
         LOG.debug("LibraryImpl: Retrieve MetaGraph for UUID '${uuid.id}'")
-	    return service.getMetaGraph(this, findContainerLibraryElementFor(uuid)!!)
+	    return libraryService.getMetaGraph(this, findContainerLibraryElementFor(uuid)!!)
     }
 
-    override fun getOptionalMetaGraph(uuid: UUID, service: LibraryService): MetaGraph? {
+    override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? {
         val element = findContainerLibraryElementFor(uuid) ?: return null
-	    return service.getMetaGraph(this, element)
+	    return libraryService.getMetaGraph(this, element)
     }
 
     override fun containsMetaGraph(uuid: UUID): Boolean {
         return findContainerLibraryElementFor(uuid) != null
     }
 
-    override fun load() {
-        try {
-            isLoading = true
-            libraryPersistenceService.loadLibrary(this)
-            bindLibraryItems()
-        } catch (e: Throwable) {
-            LOG.error("LibraryImpl: Error while loading library: ${e.message}")
-            throw e
-        } finally {
-            isLoading = false
-        }
-    }
-
-    override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID, service: LibraryService): Boolean {
-        val metaGraph = getMetaGraph(graphUUID, service)
+    override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
+        val metaGraph = getMetaGraph(graphUUID)
         if (metaGraph.graph!!.model!!.uuid == graphElementUUID) {
             return true
         }
@@ -91,6 +75,24 @@ class LibraryImpl(
 
     override fun replaceContentsWith(libraryFolder: LibraryFolder) {
         this.libraryFolder.replaceWith(libraryFolder)
+    }
+
+    override fun bindLibraryItems() {
+        this.accept(object : EmptyHierarchyVisitor() {
+            override fun visitEnter(node: Any): Boolean {
+                if (node is LibraryItem) {
+                    node.bindTo(this@LibraryImpl)
+                }
+                return true
+            }
+
+            override fun visit(node: Any): Boolean {
+                if (node is LibraryItem) {
+                    node.bindTo(this@LibraryImpl)
+                }
+                return true
+            }
+        })
     }
 
     /** ---- [LibraryImpl] */
@@ -111,25 +113,6 @@ class LibraryImpl(
         val graphFinder = GraphFinder(uuid)
         libraryFolder.accept(graphFinder)
         return graphFinder.result
-    }
-
-    /** Binds all [LibraryItem]s of this [Library] to this [Library] by calling [LibraryItem.bindTo]. */
-    private fun bindLibraryItems() {
-        this.accept(object : EmptyHierarchyVisitor() {
-            override fun visitEnter(node: Any): Boolean {
-                if (node is LibraryItem) {
-                    node.bindTo(this@LibraryImpl)
-                }
-                return true
-            }
-
-            override fun visit(node: Any): Boolean {
-                if (node is LibraryItem) {
-                    node.bindTo(this@LibraryImpl)
-                }
-                return true
-            }
-        })
     }
 
     /**

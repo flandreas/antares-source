@@ -16,7 +16,7 @@ object ProjectModule : AbstractModule() {
 
 	var projectService: ProjectService = UnimplementedProjectService()
 
-	val projectFactory: (String) -> Project = { LibraryImpl(name = it,descriptionKey = "project.project.name") }
+	val projectFactory: (String) -> Project = { LibraryImpl(name = it, libraryService = projectLibraryService.invoke(), descriptionKey = "project.project.name") }
 
 	override fun initialize() {
 		// empty

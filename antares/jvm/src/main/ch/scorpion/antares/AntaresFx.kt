@@ -56,7 +56,7 @@ class AntaresFx : javafx.application.Application() {
 		init {
 			AntaresModuleJvm(this).require()
 
-			LibraryModule.libraryHolder.library.load()
+			LibraryModule.libraryService.invoke().loadLibrary(LibraryModule.libraryHolder.library)
 			fillStandardLibrary(LibraryModule.libraryHolder.library, LibraryModule.libraryService.invoke(), IOModule.storableCreator)
 			AntaresThemes.install()
 

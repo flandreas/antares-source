@@ -105,6 +105,7 @@ class LibraryServiceImpl(
 		try {
 			LOG.debug("LibraryServiceImpl: Loading Library '${library.name}'")
 			persistenceService.loadLibrary(library)
+			library.bindLibraryItems()
 			return library
 		} catch(e: LibraryPersistenceServiceException) {
 			throw IllegalArgumentException("library not found")
@@ -185,7 +186,6 @@ class LibraryServiceImpl(
 			uuid = metaGraph.uuid,
 			name = metaGraph.name,
 			iconPath = null,
-			libraryPersistenceService = persistenceService,
 			eventBus = eventBus)
 	}
 

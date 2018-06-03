@@ -3,10 +3,8 @@ package ch.scorpion.jabbah.graph.project
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
+import java.awt.*
 
-import java.awt.BorderLayout
-import java.awt.Dimension
-import java.awt.FlowLayout
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
@@ -35,6 +33,7 @@ class ProjectPersistencePanel(
 	}
 
 	private val projectNameList = JList<String>(loadProjectNames())
+	private val currentProjectFont = projectNameList.font.deriveFont(Font.BOLD)
 	private val openAction = OpenAction()
 
 	init {
@@ -51,7 +50,7 @@ class ProjectPersistencePanel(
 	}
 
 	private fun updateActions() {
-		openAction.enabled = !projectNameList.isSelectionEmpty
+		openAction.enabled = !projectNameList.isSelectionEmpty && projectNameList.selectedValue != projectHolder.p?.name
 	}
 
 	private fun buildUI() {
@@ -67,6 +66,8 @@ class ProjectPersistencePanel(
 		buttonPanel.add(JButton(ActionWrapperSwing(NewAction())))
 		buttonPanel.add(JButton(ActionWrapperSwing(CancelAction())))
 		add(buttonPanel, BorderLayout.SOUTH)
+
+		projectNameList.cellRenderer = ProjectListRenderer()
 	}
 
 	private fun loadProjectNames(): ListModel<String> {
@@ -80,6 +81,20 @@ class ProjectPersistencePanel(
 	private fun openProject(project: Project) {
 		projectHolder.p = project
 		// TODO Open default MetaGraph of opened project
+	}
+
+	private inner class ProjectListRenderer : DefaultListCellRenderer() {
+
+		override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
+			val renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
+			val name = value as String
+			if (name == projectHolder.project?.name) {
+				renderer.font = currentProjectFont
+			} else {
+				renderer.font = projectNameList.font
+			}
+			return renderer
+		}
 	}
 
 	private inner class OpenAction : AbstractAction("project.dialog.open.action") {

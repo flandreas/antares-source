@@ -19,7 +19,6 @@ class ContainerLibraryElement(
 	var uuid: UUID = UUID("undefined"),
 	override var name: String = "",
 	iconPath: String? = null,
-	val libraryPersistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService,
 	val eventBus: EventBus = BaseModule.eventBus
 ) : LibraryElement(iconPath) {
 
@@ -61,7 +60,7 @@ class ContainerLibraryElement(
 
     override fun <T : GraphElement> getNewInstance(): GraphElementView<T> {
         LOG.debug("Create new instance of '$name'")
-	    LibraryModule.libraryService.invoke().getMetaGraph(library!!, this)
+	    library!!.libraryService.getMetaGraph(library!!, this)
 
         val instance = metaGraph!!.containerDrawing!!.createSubGraphVerticeView()
         instance.model!!.shortDescription = metaGraph!!.graph!!.model!!.shortDescription

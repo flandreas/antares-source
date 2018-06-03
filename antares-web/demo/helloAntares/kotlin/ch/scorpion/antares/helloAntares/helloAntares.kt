@@ -43,7 +43,7 @@ fun hello() {
     LOG_SYSTEM!!.getLogger(ContainerDrawing::class).value.setLogLevel(LogLevel.DEBUG)
     LOG_SYSTEM!!.getLogger(SubCircuitPort::class).value.setLogLevel(LogLevel.DEBUG)
 
-    LibraryModule.libraryHolder.library.load()
+    LibraryModule.libraryService.invoke().loadLibrary(LibraryModule.libraryHolder.library)
 
     val drawing = GraphViewImpl<GraphElementView<*>>()
 
