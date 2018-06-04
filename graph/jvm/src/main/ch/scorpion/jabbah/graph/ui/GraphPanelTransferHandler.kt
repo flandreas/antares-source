@@ -10,9 +10,10 @@ import javax.swing.JOptionPane
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
-
+import java.awt.datatransfer.Transferable
 
 
 /**
@@ -27,22 +28,27 @@ class GraphPanelTransferHandler(
 
     private val LOG by logger(GraphPanelTransferHandler::class)
 
-    override fun canImport(dropComponent: Component): Boolean {
-        if (dropComponent !is GraphElementView<*>) {
-            return super.canImport(dropComponent)
+    override fun canImport(dropComponent: Component, transferable: Transferable): Boolean {
+        if (dropComponent !is GraphElementView<*> || transferable !is GraphElementViewTransferable) {
+            return super.canImport(dropComponent, transferable)
         }
         if (!editor.view.editable) {
             return false
         }
 
         if (dropComponent.model !is SubGraphVertice) {
-            return super.canImport(dropComponent)
+            return super.canImport(dropComponent, transferable)
         }
 
-        val dropVertice = dropComponent.model as SubGraphVertice?
-        val dropGraph = libraryHolder.library.getMetaGraph(dropVertice!!.graphUUID!!).graph!!.model
+	    if (transferable.libraryElement !is ContainerLibraryElement) {
+		    return super.canImport(dropComponent, transferable)
+	    }
 
-        val canImport = !libraryHolder.library.graphContainsRecursively(
+        val dropVertice = dropComponent.model as SubGraphVertice?
+        //val dropGraph = libraryHolder.library.getMetaGraph(dropVertice!!.graphUUID!!).graph!!.model
+	    val dropGraph = transferable.libraryElement.library!!.getMetaGraph(dropVertice!!.graphUUID!!).graph!!.model
+
+        val canImport = !transferable.libraryElement.library!!.graphContainsRecursively(
                 dropGraph!!.uuid,
                 (editor.drawing as GraphView<*>).graph!!.uuid)
 

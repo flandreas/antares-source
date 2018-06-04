@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.select.DragEvent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import java.awt.datatransfer.DataFlavor
+import java.awt.datatransfer.Transferable
 import java.awt.dnd.DropTarget
 import java.awt.dnd.DropTargetDragEvent
 import java.awt.dnd.DropTargetDropEvent
@@ -27,7 +28,12 @@ open class ComponentTransferHandler(
     private val flavour: DataFlavor
 ) : TransferHandler() {
 
-    private val LOG by logger(ComponentTransferHandler::class)
+	companion object {
+        private val LOG by logger(ComponentTransferHandler::class)
+	}
+
+	/** Preserves the [Transferable] until the final drop action.*/
+	private var transferable: Transferable? = null
 
     init {
         (editor.view.canvas as JComponent).dropTarget = object : DropTarget() {
@@ -36,6 +42,7 @@ open class ComponentTransferHandler(
                 try {
                     val transferData = dtde?.transferable?.getTransferData(flavour)
                     if (transferData is Component) {
+	                    transferable = dtde.transferable
                         setComponent(transferData, Point2D(dtde.location.x, dtde.location.y))
                     }
                 } catch (e: Exception) {
@@ -66,11 +73,13 @@ open class ComponentTransferHandler(
                 super.drop(dtde)
                 try {
                     val dropComponent = editor.view.dropComponent
+	                val localTransferable = transferable
                     InvocationHandler.invoke(Runnable {
-                        if (dropComponent != null && canImport(dropComponent)) {
+                        if (dropComponent != null && canImport(dropComponent, localTransferable!!)) {
                             SwingUtilities.invokeLater { importElement(dropComponent, eventBus) }
                         }
                         editor.view.setDropComponent(null, null)
+	                    transferable = null
                     })
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -96,10 +105,10 @@ open class ComponentTransferHandler(
     /**
      * Checks whether the specified [Component] is allowed to be imported into the current [Editor]'s
      * [Drawing].
-     * Sublclasses might overwrite this method with runtime-intensive logic, hence this method should be called
+     * Subclasses might overwrite this method with runtime-intensive logic, hence this method should be called
      * within a [InvocationHandler].
      */
-    protected open fun canImport(dropComponent: Component): Boolean {
+    protected open fun canImport(dropComponent: Component, transferable: Transferable): Boolean {
         return true
     }
 

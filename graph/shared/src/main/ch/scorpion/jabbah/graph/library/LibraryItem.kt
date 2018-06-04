@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.io.Storable
  */
 interface LibraryItem : Storable {
 
+    val library: Library?
+
     /**
      * Determines whether this [LibraryItem] is fixed.
      * Fixed [LibraryItem]s are provided by the application and cannot be changed or deleted by the user, which is

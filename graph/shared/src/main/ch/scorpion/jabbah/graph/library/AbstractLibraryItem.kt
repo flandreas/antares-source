@@ -9,13 +9,15 @@ abstract class AbstractLibraryItem(
 
     @Suppress("unused") constructor(): this(null)
 
-    protected var library: Library? = null
+    private var _library: Library? = null
+
+    override val library: Library? get() = _library
 
     override fun bindTo(library: Library) {
-        this.library = library
+        _library = library
     }
 
     override fun dispose() {
-        library = null
+        _library = null
     }
 }

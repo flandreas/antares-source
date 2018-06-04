@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.library.LibraryElement
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 import java.awt.datatransfer.UnsupportedFlavorException
@@ -11,7 +12,8 @@ import java.awt.datatransfer.UnsupportedFlavorException
  * A drag&drop [Transferable] for [GraphElementView]s.
  */
 class GraphElementViewTransferable(
-    private val data: GraphElementView<GraphElement>
+    private val data: GraphElementView<GraphElement>,
+    val libraryElement: LibraryElement
 ) : Transferable {
 
     companion object {
