@@ -53,16 +53,15 @@ class EditContainerLibraryElementAction(
     }
 
     private fun openAsSavable(element: ContainerLibraryElement) {
-        if (libraryTreeView!!.libraryHolder.library.containsRecursively(element)) {
-	        val metaGraph = libraryService.getMetaGraph(libraryTreeView!!.libraryHolder.library, element)
-	        application.open(metaGraph, LibrarySavable(metaGraph, element))
-        } else if (libraryTreeView!!.projectHolder.project?.containsRecursively(element) == true) {
-	        val metaGraph = projectService.getMetaGraph(libraryTreeView!!.projectHolder.project!!, element)
-	        application.open(metaGraph, ProjectSavable(metaGraph, element))
-
-        } else {
-			LOG.error("EditContainerLibraryElementAction: Inconsistent state, unknown ContainerLibraryElement, cannot open")
-	        throw IllegalStateException()
-        }
+	    val library = element.library!!
+	    val metaGraph = library.libraryService.getMetaGraph(library, element)
+	    if (library == LibraryModule.libraryHolder.library) {
+		    application.open(metaGraph, LibrarySavable(metaGraph, element))
+	    } else if (library == ProjectModule.projectHolder.project) {
+		    application.open(metaGraph, ProjectSavable(metaGraph, element))
+	    } else {
+		    LOG.error("EditContainerLibraryElementAction: Inconsistent state, unknown ContainerLibraryElement, cannot open")
+		    throw IllegalStateException()
+	    }
     }
 }

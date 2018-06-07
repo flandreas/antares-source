@@ -20,116 +20,138 @@ import ch.scorpion.jabbah.base.logger
  * [LibraryFolder] directly into the existing [LibraryFolder] instance, without instantiating it.
  */
 class LibraryImpl(
-    name: String,
+	name: String,
 	override val libraryFolder: LibraryFolder = LibraryFolder(name),
-    override val libraryService: LibraryService,
+	override val libraryService: LibraryService,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
-    private val descriptionKey: String = "library.library.name"
+	private val descriptionKey: String = "library.library.name"
 ) : Library, LibraryDirectory by libraryFolder {
 
 	companion object {
 		private val LOG by logger(LibraryImpl::class)
 	}
 
-    init {
-        libraryFolder.bindTo(this)
-    }
+	init {
+		libraryFolder.bindTo(this)
+	}
 
-    override fun dispose() {
-        libraryFolder.dispose()
-    }
+	override fun dispose() {
+		libraryFolder.dispose()
+	}
 
-    /** ---- [Any] */
+	/** ---- [Any] */
 
-    override fun toString(): String {
-        return "${Translations.getString(descriptionKey)} \"$name\""
-    }
+	override fun toString(): String {
+		return "${Translations.getString(descriptionKey)} \"$name\""
+	}
 
-    /** ---- [Library] interface */
+	/** ---- [Library] interface */
 
-    override fun getMetaGraph(uuid: UUID): MetaGraph {
-        LOG.debug("LibraryImpl: Retrieve MetaGraph for UUID '${uuid.id}'")
-	    return libraryService.getMetaGraph(this, findContainerLibraryElementFor(uuid)!!)
-    }
+	override fun getMetaGraph(uuid: UUID): MetaGraph {
+		LOG.debug("LibraryImpl: Retrieve MetaGraph for UUID '${uuid.id}'")
+		return libraryService.getMetaGraph(this, findContainerLibraryElementFor(uuid)!!)
+	}
 
-    override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? {
-        val element = findContainerLibraryElementFor(uuid) ?: return null
-	    return libraryService.getMetaGraph(this, element)
-    }
+	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? {
+		val element = findContainerLibraryElementFor(uuid) ?: return null
+		return libraryService.getMetaGraph(this, element)
+	}
 
-    override fun containsMetaGraph(uuid: UUID): Boolean {
-        return findContainerLibraryElementFor(uuid) != null
-    }
+	override fun containsMetaGraph(uuid: UUID): Boolean {
+		return findContainerLibraryElementFor(uuid) != null
+	}
 
-    override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
-        val metaGraph = getMetaGraph(graphUUID)
-        if (metaGraph.graph!!.model!!.uuid == graphElementUUID) {
-            return true
-        }
-        return SubGraphVerticeLocator(
-            graph = metaGraph.graph!!.model!!,
-            library = this,
-            storableCreator = storableCreator
-        ).contains(graphElementUUID)
-    }
+	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
+		val metaGraph = getMetaGraph(graphUUID)
+		if (metaGraph.graph!!.model!!.uuid == graphElementUUID) {
+			return true
+		}
+		return SubGraphVerticeLocator(
+			graph = metaGraph.graph!!.model!!,
+			library = this,
+			storableCreator = storableCreator
+		).contains(graphElementUUID)
+	}
 
-    override fun replaceContentsWith(libraryFolder: LibraryFolder) {
-        this.libraryFolder.replaceWith(libraryFolder)
-    }
+	override fun replaceContentsWith(libraryFolder: LibraryFolder) {
+		this.libraryFolder.replaceWith(libraryFolder)
+	}
 
-    override fun bindLibraryItems() {
-        this.accept(object : EmptyHierarchyVisitor() {
-            override fun visitEnter(node: Any): Boolean {
-                if (node is LibraryItem) {
-                    node.bindTo(this@LibraryImpl)
-                }
-                return true
-            }
+	override fun bindLibraryItems() {
+		this.accept(object : EmptyHierarchyVisitor() {
+			override fun visitEnter(node: Any): Boolean {
+				if (node is LibraryItem) {
+					node.bindTo(this@LibraryImpl)
+				}
+				return true
+			}
 
-            override fun visit(node: Any): Boolean {
-                if (node is LibraryItem) {
-                    node.bindTo(this@LibraryImpl)
-                }
-                return true
-            }
-        })
-    }
+			override fun visit(node: Any): Boolean {
+				if (node is LibraryItem) {
+					node.bindTo(this@LibraryImpl)
+				}
+				return true
+			}
+		})
+	}
 
-    /** ---- [LibraryImpl] */
+	/** Returns the [ContainerLibraryElement] to be openend when this [Library] is openend.*/
+	override fun getDefaultElement(): ContainerLibraryElement? {
+		val finder = DefaultElementFinder()
+		accept(finder)
+		return finder.result
+	}
 
-    /** Determines whether this [Library] contains the specified [LibraryDirectory].*/
-    private fun containsLibraryDirectory(directory: LibraryDirectory): Boolean {
-        return accept(object : EmptyHierarchyVisitor() {
-            override fun visitEnter(node: Any): Boolean {
-                return node != directory
-            }
-        })
-    }
+	/** ---- [LibraryImpl] */
 
-    /**
-     * Finds the [ContainerLibraryElement] in this [Library] which contains the [Graph] with the specified [UUID].
-     */
-    private fun findContainerLibraryElementFor(uuid: UUID): ContainerLibraryElement? {
-        val graphFinder = GraphFinder(uuid)
-        libraryFolder.accept(graphFinder)
-        return graphFinder.result
-    }
+	/** Determines whether this [Library] contains the specified [LibraryDirectory].*/
+	private fun containsLibraryDirectory(directory: LibraryDirectory): Boolean {
+		return accept(object : EmptyHierarchyVisitor() {
+			override fun visitEnter(node: Any): Boolean {
+				return node != directory
+			}
+		})
+	}
 
-    /**
-     * Traverses the [Library] tree until it finds the [ContainerLibraryElement]
-     * which contains the [Graph] with the specified [UUID], if any.
-     */
-    private class GraphFinder(private val uuid: UUID) : EmptyHierarchyVisitor() {
+	/**
+	 * Finds the [ContainerLibraryElement] in this [Library] which contains the [Graph] with the specified [UUID].
+	 */
+	private fun findContainerLibraryElementFor(uuid: UUID): ContainerLibraryElement? {
+		val graphFinder = GraphFinder(uuid)
+		libraryFolder.accept(graphFinder)
+		return graphFinder.result
+	}
 
-        /** Holds the result, if any.*/
-        var result: ContainerLibraryElement? = null
+	/**
+	 * Traverses the [Library] tree until it finds the [ContainerLibraryElement]
+	 * which contains the [Graph] with the specified [UUID], if any.
+	 */
+	private class GraphFinder(private val uuid: UUID) : EmptyHierarchyVisitor() {
 
-        override fun visitEnter(node: Any): Boolean {
-            if (node is ContainerLibraryElement && node.uuid == uuid) {
-                result = node
-                return false
-            }
-            return true
-        }
-    }
+		/** Holds the result, if any.*/
+		var result: ContainerLibraryElement? = null
+
+		override fun visitEnter(node: Any): Boolean {
+			if (node is ContainerLibraryElement && node.uuid == uuid) {
+				result = node
+				return false
+			}
+			return true
+		}
+	}
+
+	/** Returns the very first [ContainerLibraryElement] of this [Library].*/
+	private class DefaultElementFinder : EmptyHierarchyVisitor() {
+
+		/** Holds the result, if any.*/
+		var result: ContainerLibraryElement? = null
+
+		override fun visitEnter(node: Any): Boolean {
+			if (result == null && node is ContainerLibraryElement) {
+				result = node
+				return false
+			}
+			return true
+		}
+	}
 }

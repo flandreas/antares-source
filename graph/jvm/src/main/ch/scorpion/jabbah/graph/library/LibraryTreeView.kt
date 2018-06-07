@@ -125,7 +125,7 @@ class LibraryTreeView(
     private inner class DoubleClickListener : MouseAdapter() {
         override fun mousePressed(e: MouseEvent) {
             if (e.clickCount == 2 && getSelectedItem() is ContainerLibraryElement) {
-                eventBus.post(OpenContainerLibraryElementRequest(getSelectedItem() as ContainerLibraryElement, e))
+                eventBus.post(OpenContainerLibraryElementRequest(getSelectedItem() as ContainerLibraryElement))
             }
         }
     }
@@ -197,4 +197,4 @@ data class LibrarySelectionChangedEvent(val libraryTreeView: LibraryTreeView)
  * @property inputEvent the [InputEvent] with which the user tried to open the [ContainerLibraryElement]. Can be used to
  * implement different application level UI strategies based e.g. on the pressed key.
  */
-data class OpenContainerLibraryElementRequest(val element: ContainerLibraryElement, val inputEvent: InputEvent)
+data class OpenContainerLibraryElementRequest(val element: ContainerLibraryElement)

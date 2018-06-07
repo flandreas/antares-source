@@ -37,4 +37,10 @@ interface Library : LibraryDirectory {
     /** Binds all [LibraryItem]s of this [Library] to this [Library] by calling [LibraryItem.bindTo]. */
     fun bindLibraryItems()
 
+	/**
+	 * The [ContainerLibraryElement] to be openened by default (if required) when this [Library] is opened.
+	 * The current implementation simply returns the first element (if existing).
+	 */
+	fun getDefaultElement(): ContainerLibraryElement?
+
 }

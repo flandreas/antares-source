@@ -17,7 +17,7 @@ package ch.scorpion.jabbah.base
  *              while (iter.hasNext() {
  *                  if (!iter.next().accept(v) {
  *                      break;
- *                     }
+ *                  }
  *              }
  *          }
  *          return v.visitLeave(this);
@@ -25,7 +25,7 @@ package ch.scorpion.jabbah.base
  *
  * The accept method of a leaf node should be implemented as follows:
  *
- *      boolean accept(HiearchyVisitor v) {
+ *      boolean accept(HierarchyVisitor v) {
  *          return v.visit(this);
  *      }
  *

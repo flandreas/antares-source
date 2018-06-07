@@ -3,6 +3,9 @@ package ch.scorpion.jabbah.graph.project
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 import java.awt.*
 
 import java.awt.event.MouseAdapter
@@ -15,7 +18,8 @@ import javax.swing.*
 class ProjectPersistencePanel(
 	private val service: ProjectService = ProjectModule.projectService,
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
-	private val closeHandler: () -> Unit
+	private val closeHandler: () -> Unit,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : JPanel() {
 
 	companion object {
@@ -80,7 +84,10 @@ class ProjectPersistencePanel(
 
 	private fun openProject(project: Project) {
 		projectHolder.p = project
-		// TODO Open default MetaGraph of opened project
+		val defaultElement = project.getDefaultElement()
+		if (defaultElement != null) {
+			eventBus.post(OpenContainerLibraryElementRequest(defaultElement))
+		}
 	}
 
 	private inner class ProjectListRenderer : DefaultListCellRenderer() {
