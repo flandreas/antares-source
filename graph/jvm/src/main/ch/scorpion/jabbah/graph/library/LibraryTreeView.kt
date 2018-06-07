@@ -6,16 +6,16 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.JTreeUtil
+import ch.scorpion.jabbah.base.swing.JTreeUtil.findTreeNode
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import java.awt.Component
-import java.awt.Font
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.awt.event.InputEvent
 import javax.swing.*
 import javax.swing.tree.*
 
@@ -68,6 +68,7 @@ class LibraryTreeView(
 
         eventBus.register(ApplicationModeEvent::class, { dragEnabled = it.applicationMode === ApplicationMode.EDIT })
 	    eventBus.register(CurrentSavableEvent::class, { handle(it) })
+	    eventBus.register(OpenContainerLibraryElementRequest::class, { handle(it) })
 
         directoryPopupMenu.add(ActionWrapperSwing(AddLibraryFolderAction()))
         directoryPopupMenu.add(ActionWrapperSwing(NewGraphAction()))
@@ -151,6 +152,19 @@ class LibraryTreeView(
 		}
 	}
 
+	/**
+	 * Expand the [JTree] to the node that contains the opened [ContainerLibraryElement].
+	 * This is primarily needed when the request originates from opening a [Project].
+	 */
+	private fun handle(event: OpenContainerLibraryElementRequest) {
+		SwingUtilities.invokeLater {
+			val node = findTreeNode(treeModel.root as TreeNode, { (it as DefaultMutableTreeNode).userObject == event.element })
+			if (node != null) {
+				selectionPath = JTreeUtil.getPath(node)
+			}
+		}
+	}
+
     private inner class Renderer : DefaultTreeCellRenderer() {
 
         private val iconCache: MutableMap<String, Icon> = mutableMapOf()
@@ -194,7 +208,5 @@ data class LibrarySelectionChangedEvent(val libraryTreeView: LibraryTreeView)
  * [MetaGraph] of the selected [ContainerLibraryElement] is to be presented to the user.
  *
  * @property element the [ContainerLibraryElement] whose [MetaGraph] is to be opened
- * @property inputEvent the [InputEvent] with which the user tried to open the [ContainerLibraryElement]. Can be used to
- * implement different application level UI strategies based e.g. on the pressed key.
  */
 data class OpenContainerLibraryElementRequest(val element: ContainerLibraryElement)
