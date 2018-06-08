@@ -59,9 +59,8 @@ class LibraryTreeView(
         dragEnabled = true
         dropMode = DropMode.ON
 
-        // TODO Update TreeModel selectively
-        eventBus.register(LibraryItemAddedEvent::class, { reloadLibrary() })
-        eventBus.register(LibraryItemRemovedEvent::class, { reloadLibrary() })
+        eventBus.register(LibraryItemAddedEvent::class, { handle(it) })
+        eventBus.register(LibraryItemRemovedEvent::class, { handle(it) })
         eventBus.register(LibraryItemUpdatedEvent::class, { handle(it) })
 	    eventBus.register(ProjectEvent::class, { reloadLibrary() })
 
@@ -164,14 +163,33 @@ class LibraryTreeView(
 		}
 	}
 
+	private fun handle(event: LibraryItemAddedEvent) {
+		val parent = findTreeNode(event.parent)
+		parent.add(DefaultMutableTreeNode(event.item))
+		(model as DefaultTreeModel).nodesWereInserted(parent, intArrayOf(parent.childCount - 1))
+	}
+
 	/**
 	 * Updates the user object of the [TreeNode] that contains the updated [LibraryItem] with the new one.
 	 * This is necessary to reflect the possibly changed [LibraryItem] name in the [TreeNode].
 	 */
 	private fun handle(event: LibraryItemUpdatedEvent) {
-		val node = JTreeUtil.findTreeNode(model.root as TreeNode, { (it as DefaultMutableTreeNode).userObject == event.item }) as MutableTreeNode
+		val node = findTreeNode(event.item)
 		node.setUserObject(event.item)
 		(model as DefaultTreeModel).nodeChanged(node)
+	}
+
+	private fun handle(event: LibraryItemRemovedEvent) {
+		val node = findTreeNode(event.item)
+		val parent = node.parent
+		val nodeIndex = parent.getIndex(node)
+		node.removeFromParent()
+		(model as DefaultTreeModel).nodesWereRemoved(parent, intArrayOf(nodeIndex), arrayOf(node))
+	}
+
+	/** Finds the [TreeNode] that contains the specified [LibraryItem] as user object.*/
+	private fun findTreeNode(item: LibraryItem): DefaultMutableTreeNode {
+		return JTreeUtil.findTreeNode(model.root as TreeNode, { (it as DefaultMutableTreeNode).userObject == item }) as DefaultMutableTreeNode
 	}
 
     private inner class Renderer : DefaultTreeCellRenderer() {

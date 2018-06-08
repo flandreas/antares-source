@@ -16,7 +16,10 @@ import ch.scorpion.jabbah.io.*
 /**
  * A standard implementation of the [Graph] interface.
  */
-open class GraphImpl(private val eventBus: EventBus = BaseModule.eventBus) : Graph {
+open class GraphImpl(
+	name: String = Translations.getString("graph.name.unknown"),
+    private val eventBus: EventBus = BaseModule.eventBus
+) : Graph {
 
     companion object {
         private val LOG by logger(GraphImpl::class)
@@ -48,7 +51,7 @@ open class GraphImpl(private val eventBus: EventBus = BaseModule.eventBus) : Gra
 
     override var propagationDelay: Long? = null
 
-    override var name: String = Translations.getString("graph.name.unknown")
+    override var name: String = name
         set(value) {
             val oldValue = field
             field = value

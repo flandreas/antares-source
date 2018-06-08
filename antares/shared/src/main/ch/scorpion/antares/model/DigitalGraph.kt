@@ -14,9 +14,11 @@ import ch.scorpion.jabbah.base.logger
 /**
  * A [GraphImpl] that forwards [DigitalSignal]s.
  */
-class DigitalGraph(eventBus: EventBus = BaseModule.eventBus) : GraphImpl(eventBus) {
+class DigitalGraph(eventBus: EventBus = BaseModule.eventBus) : GraphImpl(eventBus = eventBus) {
 
-    private val LOG by logger(DigitalGraph::class)
+    companion object {
+        private val LOG by logger(DigitalGraph::class)
+    }
 
     /** Forwards signal changes of a [Tunnel] to all other [Tunnel]s with the same name.*/
     private val tunnelHandler = TunnelHandler()
