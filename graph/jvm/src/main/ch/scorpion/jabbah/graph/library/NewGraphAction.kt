@@ -29,6 +29,8 @@ class NewGraphAction(
 	    val library = directory.library!!
 	    val metaGraph = MetaGraph()
 	    metaGraph.graph!!.model!!.name = name
-	    library.libraryService.addContainerLibraryElement(library, metaGraph, directory)
+
+	    val element = library.libraryService.addContainerLibraryElement(library, metaGraph, directory)
+		eventBus.post(OpenContainerLibraryElementRequest(element))
     }
 }

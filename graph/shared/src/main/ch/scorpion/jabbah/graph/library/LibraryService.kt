@@ -48,8 +48,9 @@ interface LibraryService {
 	 * Creates a new [ContainerLibraryElement] for holding the specified [MetaGraph], add it to the [LibraryDirectory],
 	 * and stores the [MetaGraph] as well as the [Library] persistently.
 	 * Posts a [LibraryItemAddedEvent] on this [LibraryService]'s [EventBus].
+	 * @return the created [ContainerLibraryElement]
 	 */
-	fun addContainerLibraryElement(library: Library, metaGraph: MetaGraph, directory: LibraryDirectory)
+	fun addContainerLibraryElement(library: Library, metaGraph: MetaGraph, directory: LibraryDirectory): ContainerLibraryElement
 
 	/**
 	 * Clones the specified [MetaGraph], uses it as the new [MetaGraph] of the specified [ContainerLibraryElement],
@@ -154,11 +155,12 @@ class LibraryServiceImpl(
 		return addFolder(library, name, directory)
 	}
 
-	override fun addContainerLibraryElement(library: Library, metaGraph: MetaGraph, directory: LibraryDirectory) {
+	override fun addContainerLibraryElement(library: Library, metaGraph: MetaGraph, directory: LibraryDirectory): ContainerLibraryElement {
 		LOG.debug("LibraryServiceImpl: Adding ContainerLibraryElement")
 		val element = createContainerLibraryElement(metaGraph)
 		storeContainerLibraryElement(library, metaGraph, element)
 		addLibraryItem(library, element, directory)
+		return element
 	}
 
 	override fun updateContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement) {

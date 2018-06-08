@@ -11,7 +11,7 @@ import javax.swing.Action
  */
 abstract class AbstractLibraryFolderAction(
         actionBaseName: String,
-        eventBus: EventBus
+        protected val eventBus: EventBus
 ) : AbstractAction(actionBaseName) {
 
     protected constructor(actionBaseName: String): this(actionBaseName, BaseModule.eventBus)
