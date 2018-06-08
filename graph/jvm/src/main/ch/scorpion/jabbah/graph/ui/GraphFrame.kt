@@ -2,21 +2,20 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.AbstractApplicationFrame
 import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.action.AbstractApplicationAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.container.ContainerPanel
 import ch.scorpion.jabbah.graph.model.GraphNameChangedEvent
-import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
-import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import javax.swing.*
 
@@ -53,7 +52,6 @@ class GraphFrame(
 
 
 	init {
-		eventBus.register(ApplicationDataEvent::class, { handle(it) })
 		eventBus.register(GraphNameChangedEvent::class, { handle(it) })
 
 		toolbarPanel = JPanel()
@@ -78,16 +76,6 @@ class GraphFrame(
 		get() = desktop.masterGraphPanel!!.editor.commandManager.canUndo()
 
 	/** ---- [GraphFrame] */
-
-	// TODO Refactor: There is no reason why GraphDesktop is updated here, but ContainerPanel updates itself?
-	private fun handle(event: ApplicationDataEvent) {
-		LOG.debug("ApplicationDataChanged, setting GraphView in desktop")
-		val metaGraph = event.newData as MetaGraph
-		desktop.masterGraphPanel!!.setGraphView(metaGraph.graph!!.graphView as GraphView<GraphElementView<*>>)
-
-		// TODO This shouldn't be here, but elsewhere..
-		metaGraph.graph!!.graphView!!.snapper = desktop.masterGraphPanel!!.editor.view.grid
-	}
 
 	private fun handle(event: GraphNameChangedEvent) {
 		if (event.graph === (desktop.masterGraphPanel!!.editor.view.drawing as GraphView<*>).graph!!) {

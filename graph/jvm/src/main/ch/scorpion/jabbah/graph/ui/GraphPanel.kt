@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
@@ -7,6 +8,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
@@ -38,6 +40,7 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryPanel
@@ -69,7 +72,8 @@ class GraphPanel(
 ) : JPanel() {
 
 	companion object {
-		private val DEF_SIDEBAR_SIZE = 200
+		private val LOG by logger(GraphPanel::class)
+		private const val DEF_SIDEBAR_SIZE = 200
 	}
 
 	constructor(editor: Editor, viewManager: ViewManager) : this(
@@ -135,6 +139,12 @@ class GraphPanel(
 		(editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
 		libraryPropertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
+		eventBus.register(ApplicationDataEvent::class, {
+			LOG.debug("GraphPanel: ApplicationDataChanged, setting GraphView in desktop")
+			val metaGraph = it.newData as MetaGraph
+			setGraphView(metaGraph.graph!!.graphView as GraphView<GraphElementView<*>>)
+			metaGraph.graph!!.graphView!!.snapper = editor.view.grid
+		})
 		eventBus.register(ActiveViewChangedEvent::class, { updateEditability() })
 		eventBus.register(ExecutionStoppedOnIssueEvent::class, {
 			eventBus.post(ComponentMessage(
@@ -164,7 +174,7 @@ class GraphPanel(
 	private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
 		GraphPanelTransferHandler(editor, eventBus, GraphElementViewTransferable.FLAVOR, libraryHolder)
 
-	fun setGraphView(newGraphView: GraphView<GraphElementView<*>>) {
+	private fun setGraphView(newGraphView: GraphView<GraphElementView<*>>) {
 		val oldGraphView = graphNavigationPanel.drawingView.drawing
 		graphNavigationPanel.setRootGraphView(newGraphView)
 		scenarioPanel.graphView = newGraphView
