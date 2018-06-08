@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.app.AbstractDesktopApplicationSwing
 import ch.scorpion.jabbah.app.MenuBarBuilder
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
@@ -27,6 +28,7 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.container.ContainerPanel
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.project.OpenProjectRequest
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphPanel
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -57,10 +59,6 @@ class AntaresSwing(
 ) : AbstractDesktopApplicationSwing(args, eventBus), Antares {
 
 	companion object {
-
-		val DEFAULT_LIB_DIRECTORY = "library"
-		val DEFAULT_LIB_FILENAME = "library.lib"
-
 		@JvmStatic
 		fun main(args: Array<String>) {
 			BaseModuleJvm.require()
@@ -70,6 +68,11 @@ class AntaresSwing(
 
 	init {
 		eventBus.register(OpenMemoryContentsRequest::class, { handle(it) })
+		eventBus.register(OpenProjectRequest::class, {
+			if (!canReplaceSavable("project.action.open.name")) {
+				throw VetoException()
+			}
+		} )
 	}
 
 	/** ---- [AbstractDesktopApplication] */

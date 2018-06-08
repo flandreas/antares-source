@@ -35,7 +35,7 @@ abstract class AbstractGraphPort<T: Any>(
 				eventBus.postVetoable(
 					event = GraphPortNameChanged(this, oldName, value),
 					undoEvent = GraphPortNameChanged(this, value, oldName),
-					vetoHandler = {
+					elseHandler = {
 						super.name = oldName
 						stateChanged()
 						// TODO Post an application error event that can be displayed to the user as an info

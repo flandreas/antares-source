@@ -11,6 +11,15 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
 
 /**
+ * Represents a request to open the [MetaGraph] of a [ContainerLibraryElement].
+ * It is up to higher level application classes to decide how the
+ * [MetaGraph] of the selected [ContainerLibraryElement] is to be presented to the user.
+ *
+ * @property element the [ContainerLibraryElement] whose [MetaGraph] is to be opened
+ */
+data class OpenContainerLibraryElementRequest(val element: ContainerLibraryElement)
+
+/**
  * A [LibraryElement] that contains a [MetaGraph].
  *
  * @property uuid the UUID of the reference [MetaGraph]

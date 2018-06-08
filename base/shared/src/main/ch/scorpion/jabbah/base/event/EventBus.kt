@@ -27,10 +27,12 @@ interface EventBus {
     /**
      * Posts an event by calling all handlers that have been registered for the class of the event.
      * If one of the handlers throws a [VetoException], the specified [undoEvent] is sent to all handlers
-     * that have already processes the event, and the specified [vetoHandler] is called in order to give
+     * that have already processed the event, and the specified [vetoHandler] is called in order to give
      * the initiator of the event a chance to undo things.
+     * @param thenHandler the code to be executed if no veto occurred
+     * @param elsehandler the code to be executed if a veto occurred
      */
-    fun postVetoable(event: Any, undoEvent: Any, vetoHandler: VetoHandler<Any>)
+    fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any> = {}, elseHandler: VetoHandler<Any> = {})
 }
 
 class EventBusImpl : EventBus {
@@ -59,16 +61,17 @@ class EventBusImpl : EventBus {
         registrations.get(event::class.simpleName)?.toList()?.forEach { it.invoke(event) }
     }
 
-    override fun postVetoable(event: Any, undoEvent: Any, vetoHandler: VetoHandler<Any>) {
+    override fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any>, elseHandler: VetoHandler<Any>) {
         val successHandlers = mutableListOf<EventHandler<Any>>()
         try {
             registrations.get(event::class.simpleName)?.forEach {
                 it.invoke(event)
                 successHandlers.add(it)
             }
+	        thenHandler.invoke(event)
         } catch (x: VetoException) {
             successHandlers.forEach {it.invoke(undoEvent)}
-            vetoHandler.invoke(event)
+            elseHandler.invoke(event)
         }
     }
 

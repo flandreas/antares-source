@@ -30,6 +30,7 @@ class ProjectSavable(
 
 	override fun save(application: Application): Boolean {
 		service.updateContainerLibraryElement(project, metaGraph, element)
+		application.savable = this
 		return true
 	}
 }

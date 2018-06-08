@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.JTreeUtil.findTreeNode
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
-import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import java.awt.Component
@@ -61,10 +60,10 @@ class LibraryTreeView(
         dropMode = DropMode.ON
 
         // TODO Update TreeModel selectively
-        eventBus.register(LibraryItemAddedEvent::class, { updateLibrary() })
-        eventBus.register(LibraryItemRemovedEvent::class, { updateLibrary() })
-        eventBus.register(LibraryItemUpdatedEvent::class, { updateLibrary() })
-	    eventBus.register(ProjectEvent::class, { updateLibrary() })
+        eventBus.register(LibraryItemAddedEvent::class, { reloadLibrary() })
+        eventBus.register(LibraryItemRemovedEvent::class, { reloadLibrary() })
+        eventBus.register(LibraryItemUpdatedEvent::class, { reloadLibrary() })
+	    eventBus.register(ProjectEvent::class, { reloadLibrary() })
 
         eventBus.register(ApplicationModeEvent::class, { dragEnabled = it.applicationMode === ApplicationMode.EDIT })
 	    eventBus.register(CurrentSavableEvent::class, { handle(it) })
@@ -117,7 +116,7 @@ class LibraryTreeView(
         return (path.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryItem
     }
 
-    private fun updateLibrary() {
+    private fun reloadLibrary() {
         SwingUtilities.invokeLater {
             model = createLibraryTreeModel(libraryHolder.library, projectHolder.project)
         }
@@ -201,12 +200,3 @@ class LibraryTreeView(
  * Posted on a [LibraryTreeView]'s [EventBus] if the current selection in this [LibraryTreeView] has changed.
  */
 data class LibrarySelectionChangedEvent(val libraryTreeView: LibraryTreeView)
-
-/**
- * Represents a request to open the [MetaGraph] of a [ContainerLibraryElement].
- * This request is posted by [LibraryTreeView]. It is up to higher level application classes to decide how the
- * [MetaGraph] of the selected [ContainerLibraryElement] is to be presented to the user.
- *
- * @property element the [ContainerLibraryElement] whose [MetaGraph] is to be opened
- */
-data class OpenContainerLibraryElementRequest(val element: ContainerLibraryElement)

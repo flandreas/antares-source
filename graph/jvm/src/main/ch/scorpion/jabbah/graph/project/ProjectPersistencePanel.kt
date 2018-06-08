@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 import java.awt.*
 
 import java.awt.event.MouseAdapter
@@ -82,14 +81,6 @@ class ProjectPersistencePanel(
 
 	private val selectedProjectName: String? get() = projectNameList.selectedValue
 
-	private fun openProject(project: Project) {
-		projectHolder.p = project
-		val defaultElement = project.getDefaultElement()
-		if (defaultElement != null) {
-			eventBus.post(OpenContainerLibraryElementRequest(defaultElement))
-		}
-	}
-
 	private inner class ProjectListRenderer : DefaultListCellRenderer() {
 
 		override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
@@ -107,7 +98,7 @@ class ProjectPersistencePanel(
 	private inner class OpenAction : AbstractAction("project.dialog.open.action") {
 		override fun execute(event: ActionEvent) {
 			LOG.debug("ProjectPersistencePanel: open project '$selectedProjectName'")
-			openProject(service.open(projectNameList.selectedValue))
+			service.open(projectNameList.selectedValue)
 			closeHandler.invoke()
 		}
 	}
@@ -148,7 +139,7 @@ class ProjectPersistencePanel(
 			}
 
 			LOG.debug("ProjectPersistencePanel: creating new project '$projectName'")
-			openProject(service.create(projectName))
+			service.open(service.create(projectName))
 			closeHandler.invoke()
 		}
 	}

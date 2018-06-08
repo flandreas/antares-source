@@ -114,7 +114,10 @@ abstract class AbstractDesktopApplicationSwing(
 			JOptionPane.QUESTION_MESSAGE)
 
 		return when(answer) {
-			JOptionPane.NO_OPTION -> true
+			JOptionPane.NO_OPTION -> {
+				savable = null
+				true
+			}
 			JOptionPane.CANCEL_OPTION -> false
 			JOptionPane.YES_OPTION -> savable?.save(this) ?: true
 			else -> throw IllegalStateException("unsupported answer")

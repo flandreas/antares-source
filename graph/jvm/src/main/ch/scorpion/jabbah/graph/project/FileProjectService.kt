@@ -2,17 +2,17 @@ package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
-import ch.scorpion.jabbah.graph.library.Library
-import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.library.LibraryService
+import ch.scorpion.jabbah.graph.library.*
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Collectors
+import javax.swing.SwingUtilities
 
 /**
  * A [ProjectService] that uses the local file system to store projects.
@@ -23,7 +23,9 @@ class FileProjectService(
 	private val directoryPath: String,
 	private val projectFactory: (String) -> Library = ProjectModule.projectFactory,
 	private val libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
-	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name"
+	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name",
+	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : ProjectService {
 
 	companion object {
@@ -45,7 +47,7 @@ class FileProjectService(
 			.collect(Collectors.toList()))
 	}
 
-	override fun open(projectName: String): Project {
+	override fun load(projectName: String): Project {
 		if (!exists(projectName)) {
 			throw IllegalArgumentException("project name '$projectName' doesn't exists")
 		}
@@ -65,5 +67,25 @@ class FileProjectService(
 		libraryService.addContainerLibraryElement(project, metaGraph, project)
 
 		return project
+	}
+
+	override fun open(projectName: String): Project {
+		val project = load(projectName)
+		open(project)
+		return project
+	}
+
+	override fun open(project: Project) {
+		eventBus.postVetoable(
+			event = OpenProjectRequest(project),
+			undoEvent = OpenProjectRequest(projectHolder.project),
+			thenHandler = {
+				projectHolder.p = project
+				val defaultElement = project.getDefaultElement()
+				if (defaultElement != null) {
+					eventBus.post(OpenContainerLibraryElementRequest(defaultElement))
+				}
+			}
+		)
 	}
 }
