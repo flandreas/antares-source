@@ -62,7 +62,7 @@ class LibraryTreeView(
         // TODO Update TreeModel selectively
         eventBus.register(LibraryItemAddedEvent::class, { reloadLibrary() })
         eventBus.register(LibraryItemRemovedEvent::class, { reloadLibrary() })
-        eventBus.register(LibraryItemUpdatedEvent::class, { reloadLibrary() })
+        eventBus.register(LibraryItemUpdatedEvent::class, { handle(it) })
 	    eventBus.register(ProjectEvent::class, { reloadLibrary() })
 
         eventBus.register(ApplicationModeEvent::class, { dragEnabled = it.applicationMode === ApplicationMode.EDIT })
@@ -162,6 +162,16 @@ class LibraryTreeView(
 				selectionPath = JTreeUtil.getPath(node)
 			}
 		}
+	}
+
+	/**
+	 * Updates the user object of the [TreeNode] that contains the updated [LibraryItem] with the new one.
+	 * This is necessary to reflect the possibly changed [LibraryItem] name in the [TreeNode].
+	 */
+	private fun handle(event: LibraryItemUpdatedEvent) {
+		val node = JTreeUtil.findTreeNode(model.root as TreeNode, { (it as DefaultMutableTreeNode).userObject == event.item }) as MutableTreeNode
+		node.setUserObject(event.item)
+		(model as DefaultTreeModel).nodeChanged(node)
 	}
 
     private inner class Renderer : DefaultTreeCellRenderer() {
