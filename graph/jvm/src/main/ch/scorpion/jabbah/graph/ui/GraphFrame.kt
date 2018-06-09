@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.graph.container.ContainerPanel
 import ch.scorpion.jabbah.graph.model.GraphNameChangedEvent
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import java.awt.BorderLayout
 import javax.swing.*
 
@@ -26,7 +27,6 @@ import javax.swing.*
  */
 class GraphFrame(
 	application: DesktopApplication,
-	val containerPanel: ContainerPanel,
 	private val eventBus: EventBus,
 	val viewManager: ViewManager,
 	scheduler: Scheduler
@@ -48,8 +48,9 @@ class GraphFrame(
 
 	private var displayedView: DisplayedView = DisplayedView.Container
 
-	val desktop = GraphDesktop(eventBus, viewManager, GraphModuleJvm.graphNavigationPanelFactory, scheduler)
+	private val containerPanel = ContainerPanel(GraphViewModule.containerEditorFactory.invoke(eventBus), viewManager)
 
+	val desktop = GraphDesktop(eventBus, viewManager, GraphModuleJvm.graphNavigationPanelFactory, scheduler)
 
 	init {
 		eventBus.register(GraphNameChangedEvent::class, { handle(it) })

@@ -103,7 +103,7 @@ class GraphDesktop(
                 assoc.panel.contextColor = assoc.refColor
                 event.replacements.forEach { assoc.panel.drawingView.highlighter.replaceColor(it.oldColor, it.newColor) }
             }
-            event.replacements.forEach { masterGraphPanel!!.graphNavigationPanel.drawingView.highlighter.replaceColor(it.oldColor, it.newColor) }
+            event.replacements.forEach { masterGraphPanel!!.graphEditPanel.graphNavigationPanel.drawingView.highlighter.replaceColor(it.oldColor, it.newColor) }
 
         })
 
@@ -236,7 +236,7 @@ class GraphDesktop(
     private fun zoomViews(includeMasterView: Boolean) {
         SwingUtilities.invokeLater {
             if (includeMasterView) {
-                masterGraphPanel!!.graphNavigationPanel.drawingView.navigator.fitMaxNormal()
+                masterGraphPanel!!.graphEditPanel.graphNavigationPanel.drawingView.navigator.fitMaxNormal()
             }
             for (panel in slaveGraphNavigationPanels) {
                 panel.drawingView.navigator.fitMaxNormal()
@@ -248,8 +248,8 @@ class GraphDesktop(
      * Finds the [GraphNavigationPanel] that contains the specified [SubGraphVerticeView].
      */
     private fun panelContaining(vv: SubGraphVerticeView<*>): GraphNavigationPanel? {
-        if (masterGraphPanel!!.graphNavigationPanel.drawingView.drawing.contains(vv)) {
-            return masterGraphPanel!!.graphNavigationPanel
+        if (masterGraphPanel!!.graphEditPanel.graphNavigationPanel.drawingView.drawing.contains(vv)) {
+            return masterGraphPanel!!.graphEditPanel.graphNavigationPanel
         }
         return slaveGraphNavigationPanels.firstOrNull { it.drawingView.drawing.contains(vv) }
     }

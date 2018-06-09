@@ -87,27 +87,15 @@ class GraphPanel(
 
 	private val modeToggleAction = ToggleModeAction(scheduler, eventBus)
 
-	private val mainPanel = JPanel(BorderLayout())
-
-	private val scenarioPanel = ScenarioPanel(editor, eventBus, propertySheetFactory)
+	val graphEditPanel = GraphEditPanel(editor, scheduler, viewManager, graphNavigationPanelFactory, propertySheetFactory, eventBus)
 
 	private val libraryPropertyPanel: ComponentPropertyPanel
 
 	val libraryPanel = LibraryPanel(eventBus, libraryHolder)
 
-	val graphNavigationPanel = graphNavigationPanelFactory.create(
-		isRoot = true,
-		drawingView = editor.view as DrawingView<GraphView<GraphElementView<*>>>,
-		viewManager = viewManager,
-		closeHandler = null,
-		contextColor = null,
-		scheduler = scheduler)
-
 	private val drawingToolBar = createDrawingToolBar()
 
 	private val settingsToolBar = createSettingsToolBar()
-
-	private val rightSidebarPane: SidebarPane = SidebarPane(SidebarPane.Orientation.Vertical, { rightSidebarPaneChanged() })
 
 	private val bottomSidebarPane = SidebarPane(SidebarPane.Orientation.Horizontal, { bottomSidebarPaneChanged() })
 
@@ -120,12 +108,7 @@ class GraphPanel(
 
 	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
-	private val rightSidebarSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
-
 	private val bottonSidebarSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
-
-	/** Holds the location of [rightSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
-	private var rightSidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.rightSidebarSplitPos", -1)
 
 	/** Holds the location of [bottonSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
 	private var bottomSidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.bottomSidebarSplitPos", -1)
@@ -142,7 +125,7 @@ class GraphPanel(
 		eventBus.register(ApplicationDataEvent::class, {
 			LOG.debug("GraphPanel: ApplicationDataChanged, setting GraphView in desktop")
 			val metaGraph = it.newData as MetaGraph
-			setGraphView(metaGraph.graph!!.graphView as GraphView<GraphElementView<*>>)
+			graphEditPanel.setGraphView(metaGraph.graph!!.graphView as GraphView<GraphElementView<*>>)
 			metaGraph.graph!!.graphView!!.snapper = editor.view.grid
 		})
 		eventBus.register(ActiveViewChangedEvent::class, { updateEditability() })
@@ -168,18 +151,10 @@ class GraphPanel(
 	fun dispose() {
 		BaseModule.settings.set("graphPanel.mainSplitPos", mainSplitPane.dividerLocation)
 		BaseModule.settings.set("graphPanel.librarySplitPos", librarySplitPane.dividerLocation)
-		BaseModule.settings.set("graphPanel.sidebarSplitPos", rightSidebarSplitPane.dividerLocation)
 	}
 
 	private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
 		GraphPanelTransferHandler(editor, eventBus, GraphElementViewTransferable.FLAVOR, libraryHolder)
-
-	private fun setGraphView(newGraphView: GraphView<GraphElementView<*>>) {
-		val oldGraphView = graphNavigationPanel.drawingView.drawing
-		graphNavigationPanel.setRootGraphView(newGraphView)
-		scenarioPanel.graphView = newGraphView
-		eventBus.post(EditedGraphViewEvent(oldGraphView, newGraphView))
-	}
 
 	private fun updateEditability() {
 		val editable = viewManager.activeView === editor.view && editor.view.editable
@@ -196,73 +171,37 @@ class GraphPanel(
 		librarySplitPane.add(libraryPropertyPanel)
 		librarySplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 700)
 
-		rightSidebarSplitPane.border = null
-		rightSidebarSplitPane.resizeWeight = 1.0
-
 		bottonSidebarSplitPane.border = null
 		bottonSidebarSplitPane.resizeWeight = 1.0
-
-		val usecasesDummy = JLabel(Translations.getString("application.notYetImplemented.text"))
-		usecasesDummy.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
-		usecasesDummy.verticalAlignment = JLabel.TOP
-
-		rightSidebarPane.add(Translations.getString("graph.scenarios.title"), "/img/scenarios-16.png", scenarioPanel)
-		rightSidebarPane.add(Translations.getString("graph.usecases.title"), "/img/usecase-16.png", usecasesDummy)
 
 		bottomSidebarPane.add(Translations.getString("graph.issues.title"), "/img/issue-16.png", issuesPanel)
 
 		mainSplitPane.add(librarySplitPane)
-		mainSplitPane.add(graphNavigationPanel)
+		mainSplitPane.add(graphEditPanel)
 		mainSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.mainSplitPos", 250)
 		mainSplitPane.border = null
 
-		mainPanel.add(mainSplitPane, BorderLayout.CENTER)
-		mainPanel.add(rightSidebarPane, BorderLayout.EAST)
-
-		add(mainPanel, BorderLayout.CENTER)
+		add(mainSplitPane, BorderLayout.CENTER)
 		add(bottomSidebarPane, BorderLayout.SOUTH)
-	}
-
-	/** Handles changes of the ´isOpen´ property of the [rightSidebarPane]. */
-	private fun rightSidebarPaneChanged() {
-		if (rightSidebarPane.isOpen) {
-			mainPanel.removeAll()
-			rightSidebarSplitPane.remove(rightSidebarPane)
-			rightSidebarSplitPane.remove(mainSplitPane)
-			rightSidebarSplitPane.add(mainSplitPane)
-			rightSidebarSplitPane.add(rightSidebarPane)
-			rightSidebarSplitPane.dividerLocation = if (rightSidebarDividerLocation > 0) rightSidebarDividerLocation else mainSplitPane.width - DEF_SIDEBAR_SIZE
-			rightSidebarDividerLocation = rightSidebarSplitPane.dividerLocation
-			mainPanel.add(rightSidebarSplitPane, BorderLayout.CENTER)
-		} else {
-			rightSidebarDividerLocation = rightSidebarSplitPane.dividerLocation
-			mainPanel.removeAll()
-			rightSidebarSplitPane.remove(rightSidebarPane)
-			rightSidebarSplitPane.remove(mainSplitPane)
-			mainPanel.add(mainSplitPane, BorderLayout.CENTER)
-			mainPanel.add(rightSidebarPane, BorderLayout.EAST)
-		}
-		revalidate()
-		repaint()
 	}
 
 	/** Handles changes of the ´isOpen´ property of the [bottomSidebarPane]. */
 	private fun bottomSidebarPaneChanged() {
 		if (bottomSidebarPane.isOpen) {
 			removeAll()
-			bottonSidebarSplitPane.remove(mainPanel)
+			bottonSidebarSplitPane.remove(mainSplitPane)
 			bottonSidebarSplitPane.remove(bottomSidebarPane)
-			bottonSidebarSplitPane.add(mainPanel)
+			bottonSidebarSplitPane.add(mainSplitPane)
 			bottonSidebarSplitPane.add(bottomSidebarPane)
-			bottonSidebarSplitPane.dividerLocation = if (bottomSidebarDividerLocation > 0) bottomSidebarDividerLocation else mainPanel.height - DEF_SIDEBAR_SIZE
+			bottonSidebarSplitPane.dividerLocation = if (bottomSidebarDividerLocation > 0) bottomSidebarDividerLocation else mainSplitPane.height - DEF_SIDEBAR_SIZE
 			bottomSidebarDividerLocation = bottonSidebarSplitPane.dividerLocation
 			add(bottonSidebarSplitPane, BorderLayout.CENTER)
 		} else {
 			bottomSidebarDividerLocation = bottonSidebarSplitPane.dividerLocation
 			removeAll()
-			bottonSidebarSplitPane.remove(mainPanel)
+			bottonSidebarSplitPane.remove(mainSplitPane)
 			bottonSidebarSplitPane.remove(bottomSidebarPane)
-			add(mainPanel, BorderLayout.CENTER)
+			add(mainSplitPane, BorderLayout.CENTER)
 			add(bottomSidebarPane, BorderLayout.SOUTH)
 		}
 		revalidate()
