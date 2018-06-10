@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -25,27 +26,28 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.GridLayout
 import javax.swing.JPanel
 import javax.swing.JSplitPane
 import javax.swing.SwingUtilities
 
 /**
- * Manages a master [GraphPanel] and multiple slave [GraphNavigationPanel]s.
+ * Manages a master [GraphEditPanel] and multiple slave [GraphNavigationPanel]s.
  */
 class GraphDesktop(
 	private val graphEditPanel: GraphEditPanel,
-    private val eventBus: EventBus = BaseModule.eventBus,
-    viewManager: ViewManager = DrawViewModule.viewManager,
-    graphNavigationPanelFactory: GraphNavigationPanelFactory = GraphModuleJvm.graphNavigationPanelFactory,
-    private val scheduler: Scheduler = ExecutionModule.scheduler
+	private val eventBus: EventBus = BaseModule.eventBus,
+	viewManager: ViewManager = DrawViewModule.viewManager,
+	graphNavigationPanelFactory: GraphNavigationPanelFactory = GraphModuleJvm.graphNavigationPanelFactory,
+	private val scheduler: Scheduler = ExecutionModule.scheduler
 ) : JPanel() {
 
     companion object {
         private val LOG by logger(GraphDesktop::class)
     }
 
-    private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
     /** The [JPanel] at the right side containing all slave views, if any. */
     private val sidePanel = JPanel()
@@ -61,9 +63,9 @@ class GraphDesktop(
 
     /** Closes all slave panels when the edited root [GraphView] has changed.*/
     private val editedGraphViewEventHandler: (EditedGraphViewEvent) -> Unit = {
-        it.oldGraphView.removeDrawableContainerListener(removeListener)
-        closeAllSlaves()
-        it.newGraphView.addDrawableContainerListener(removeListener)
+        it.oldGraphView?.removeDrawableContainerListener(removeListener)
+        closeAllSlavesImpl()
+        it.newGraphView?.addDrawableContainerListener(removeListener)
     }
 
     /** Closes an open [GraphNavigationPanel] when the corresponding [SubGraphVerticeView] has been removed.*/
@@ -82,8 +84,20 @@ class GraphDesktop(
         mainSplitPane.border = null
         sidePanel.layout = GridLayout(0, 1)
         layout = BorderLayout()
+	    background = Color.GRAY
 
 	    eventBus.register(EditedGraphViewEvent::class, editedGraphViewEventHandler)
+
+	    eventBus.register(ApplicationDataEvent::class, {
+		    if (it.newData == null) {
+			    closeAll()
+		    } else if (it.oldData == null) {
+			    establishSingleView()
+			    invalidate()
+			    revalidate()
+			    repaint()
+		    }
+	    })
 
         // Replace reference color in all Associations
         eventBus.register(ReferenceColorEvent::class, { event ->
@@ -165,6 +179,7 @@ class GraphDesktop(
         slaveGraphNavigationPanels.add(panel)
     }
 
+
     private fun closeGraphNavigationPanel(panel: GraphNavigationPanel) {
         deassociate(panel)
 
@@ -182,16 +197,27 @@ class GraphDesktop(
 
     /** Closes all open slave [GraphNavigationPanel]s.*/
     private fun closeAllSlaves() {
-        slaveGraphNavigationPanels.forEach {
-            deassociate(it)
-            it.dispose()
-        }
-        slaveGraphNavigationPanels.clear()
+		closeAllSlavesImpl()
         establishSingleView()
-        sidePanel.removeAll()
         revalidate()
         repaint()
     }
+
+	private fun closeAll() {
+		closeAllSlavesImpl()
+		removeAll()
+		revalidate()
+		repaint()
+	}
+
+	private fun closeAllSlavesImpl() {
+		slaveGraphNavigationPanels.forEach {
+			deassociate(it)
+			it.dispose()
+		}
+		slaveGraphNavigationPanels.clear()
+		sidePanel.removeAll()
+	}
 
     /** Establish the UI for displaying only the root [GraphPanel].*/
     private fun establishSingleView() {

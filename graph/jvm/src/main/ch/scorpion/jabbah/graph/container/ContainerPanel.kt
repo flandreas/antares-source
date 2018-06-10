@@ -25,6 +25,7 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
+import java.awt.Color
 import javax.swing.*
 
 /**
@@ -49,14 +50,23 @@ class ContainerPanel(
 
     private val propertyPanel: ComponentPropertyPanel
 
+	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+
     val toolbars: ImmutableList<JToolBar> = listOf(createToolbar(editor)).toImmutableList()
 
     init {
         editor.view.navigator.setZoomFactor(2.0)
 
         eventBus.register(ApplicationDataEvent::class, {
-            val metaGraph = it.newData as MetaGraph
-            setData(metaGraph.graph!!.graphView!!, metaGraph.containerDrawing!!)
+            if (it.newData == null) {
+				removeAll()
+            } else {
+	            if (it.oldData == null) {
+		            add(mainSplitPane)
+	            }
+	            val metaGraph = it.newData as MetaGraph
+	            setData(metaGraph.graph!!.graphView!!, metaGraph.containerDrawing!!)
+            }
         })
 
         propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
@@ -97,6 +107,7 @@ class ContainerPanel(
 
     private fun buildUI(viewManager: ViewManager) {
         layout = BorderLayout()
+	    background = Color.GRAY
 
         val treeViewScrollPanel = JScrollPane(treeView, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
 
@@ -106,7 +117,6 @@ class ContainerPanel(
         leftSplitPane.add(treeViewScrollPanel)
         leftSplitPane.add(propertyPanel)
 
-        val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
         mainSplitPane.dividerLocation = 250
         mainSplitPane.add(leftSplitPane)
         mainSplitPane.add(FocusPanel(editor.view.canvas as JComponent, editor.view, viewManager))

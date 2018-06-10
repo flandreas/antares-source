@@ -13,6 +13,7 @@ abstract class AbstractApplication(
 
     init {
         configureCustomModules()
+	    eventBus.register(CloseApplicationDataRequest::class, { close() })
     }
 
     /** ---- [Application] interface */
@@ -51,6 +52,13 @@ abstract class AbstractApplication(
         savable?.save(this)
         // Re-set property in order to post CurrentSavableEvent
         savable = savable
+    }
+
+    override fun close() {
+	    if (canReplaceSavable("file.action.close.name")) {
+		    applicationData = null
+		    savable = null
+	    }
     }
 
     /** ---- [AbstractApplication] */

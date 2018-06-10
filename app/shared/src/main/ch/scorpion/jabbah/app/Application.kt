@@ -48,4 +48,7 @@ interface Application {
 
 	/** Asks the user to choose a [Savable] and opens it.*/
 	fun open()
+
+	/** Closes the current [applicationData]. */
+	fun close()
 }

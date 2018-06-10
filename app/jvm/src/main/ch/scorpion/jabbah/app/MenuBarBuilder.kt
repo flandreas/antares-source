@@ -45,6 +45,7 @@ open class MenuBarBuilder(val frame: AbstractApplicationFrame, val eventBus: Eve
         menu.add(JMenuItem(ActionWrapperSwing(SaveFileAsAction(frame.application))))
         menu.addSeparator()
 	    fillAdditionalFileMenu(menu)
+        menu.add(JMenuItem(ActionWrapperSwing(CloseFileAction(frame.application))))
         menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))
     }
 

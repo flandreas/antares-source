@@ -23,7 +23,13 @@ abstract class AbstractLibraryFolderAction(
         enabled = false
         eventBus.register(LibrarySelectionChangedEvent::class, {
             libraryTreeView = it.libraryTreeView
-            enabled = libraryTreeView!!.getSelectedItem() is LibraryDirectory
+            updateEnabledness()
         })
     }
+
+	protected fun updateEnabledness() {
+		enabled = calculateEnabledness()
+	}
+
+	protected open fun calculateEnabledness(): Boolean = libraryTreeView?.getSelectedItem() is LibraryDirectory
 }

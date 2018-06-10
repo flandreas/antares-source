@@ -125,7 +125,7 @@ class AntaresSwing(
 			drawingView
 		})
 		val graphEditor = GraphEditor(graphCanvas.view as DrawingView<Drawing<Component>>)
-		val graphPanel = GraphPanel(editor = graphEditor, viewManager = viewManager)
+		val graphPanel = GraphPanel(application = this, editor = graphEditor, viewManager = viewManager)
 		graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
 
 		val graphFrame = GraphFrame(this, graphPanel, eventBus, viewManager, schedulerProvider.invoke())

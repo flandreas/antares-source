@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataEvent
+import ch.scorpion.jabbah.app.CloseApplicationDataRequest
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
@@ -62,13 +64,14 @@ import javax.swing.*
  * and a [GraphNavigationPanel] for editing the [GraphView] at the center-right.
  */
 class GraphPanel(
+	application: Application,
 	val editor: Editor,
-	val eventBus: EventBus,
-	val libraryHolder: LibraryHolder,
+	val eventBus: EventBus = BaseModule.eventBus,
+	val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val viewManager: ViewManager,
-	graphNavigationPanelFactory: GraphNavigationPanelFactory,
-	var scheduler: Scheduler,
-	propertySheetFactory: PropertySheetPanelFactory
+	graphNavigationPanelFactory: GraphNavigationPanelFactory = GraphModuleJvm.graphNavigationPanelFactory,
+	var scheduler: Scheduler = ExecutionModule.scheduler,
+	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel() {
 
 	companion object {
@@ -76,18 +79,10 @@ class GraphPanel(
 		private const val DEF_SIDEBAR_SIZE = 200
 	}
 
-	constructor(editor: Editor, viewManager: ViewManager) : this(
-		editor,
-		BaseModule.eventBus,
-		LibraryModule.libraryHolder,
-		viewManager,
-		GraphModuleJvm.graphNavigationPanelFactory,
-		ExecutionModule.scheduler,
-		EditModuleJvm.propertySheetPanelFactory)
-
 	private val modeToggleAction = ToggleModeAction(scheduler, eventBus)
 
-	private val graphEditPanel: GraphEditPanel = GraphEditPanel(editor, scheduler, viewManager, graphNavigationPanelFactory, propertySheetFactory, eventBus)
+	private val graphEditPanel: GraphEditPanel = GraphEditPanel(editor, scheduler, viewManager, graphNavigationPanelFactory,
+		propertySheetFactory, { eventBus.post(CloseApplicationDataRequest(editor.drawing)) }, eventBus)
 
 	private val desktop : GraphDesktop = GraphDesktop(graphEditPanel, eventBus, viewManager, graphNavigationPanelFactory, scheduler)
 
@@ -126,12 +121,19 @@ class GraphPanel(
 		libraryPropertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
 		eventBus.register(ApplicationDataEvent::class, {
-			LOG.debug("GraphPanel: ApplicationDataChanged, setting GraphView in desktop")
-			val metaGraph = it.newData as MetaGraph
-			graphEditPanel.setGraphView(metaGraph.graph!!.graphView as GraphView<GraphElementView<*>>)
-			metaGraph.graph!!.graphView!!.snapper = editor.view.grid
+			if (it.newData != null) {
+				LOG.debug("GraphPanel: ApplicationDataChanged, setting GraphView in GraphEditPanel")
+				val metaGraph = it.newData as MetaGraph
+				graphEditPanel.setGraphView(metaGraph.graph!!.graphView as GraphView<GraphElementView<*>>)
+				metaGraph.graph!!.graphView!!.snapper = editor.view.grid
+			} else {
+				LOG.debug("GraphPanel: ApplicationDataChanged, using dummy GraphView in GraphEditPanel")
+				graphEditPanel.setGraphView(null)
+			}
 		})
+
 		eventBus.register(ActiveViewChangedEvent::class, { updateEditability() })
+
 		eventBus.register(ExecutionStoppedOnIssueEvent::class, {
 			eventBus.post(ComponentMessage(
 				type = ComponentMessageType.Error,
@@ -347,4 +349,4 @@ class GraphPanel(
 }
 
 /** Posted on [EventBus] when the currently (one and only) edited root [GraphView] changes. */
-class EditedGraphViewEvent(val oldGraphView: GraphView<GraphElementView<*>>, val newGraphView: GraphView<GraphElementView<*>>)
+class EditedGraphViewEvent(val oldGraphView: GraphView<GraphElementView<*>>?, val newGraphView: GraphView<GraphElementView<*>>?)

@@ -68,6 +68,10 @@ abstract class AbstractApplicationFrame(
     }
 
     private fun updateTitle() {
-        title = "${application.displayName} - ${application.savable?.description ?: ""}"
+        title = if (application.savable != null) {
+            "${application.displayName} - ${application.savable?.description ?: ""}"
+        } else {
+            application.displayName
+        }
     }
 }

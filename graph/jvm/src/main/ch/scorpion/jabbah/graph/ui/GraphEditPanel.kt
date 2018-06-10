@@ -30,6 +30,7 @@ class GraphEditPanel(
 	viewManager: ViewManager,
 	graphNavigationPanelFactory: GraphNavigationPanelFactory,
 	propertySheetFactory: PropertySheetPanelFactory,
+	closeHandler: (GraphNavigationPanel) -> Unit,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : JPanel(){
 
@@ -42,7 +43,7 @@ class GraphEditPanel(
 		isRoot = true,
 		drawingView = editor.view as DrawingView<GraphView<GraphElementView<*>>>,
 		viewManager = viewManager,
-		closeHandler = null,
+		closeHandler = closeHandler,
 		contextColor = null,
 		scheduler = scheduler)
 
@@ -63,10 +64,12 @@ class GraphEditPanel(
 		BaseModule.settings.set("graphPanel.sidebarSplitPos", sidebarSplitPane.dividerLocation)
 	}
 
-	fun setGraphView(newGraphView: GraphView<GraphElementView<*>>) {
+	fun setGraphView(newGraphView: GraphView<GraphElementView<*>>?) {
 		val oldGraphView = graphNavigationPanel.drawingView.drawing
-		graphNavigationPanel.setRootGraphView(newGraphView)
-		scenarioPanel.graphView = newGraphView
+		if (newGraphView != null) {
+			graphNavigationPanel.setRootGraphView(newGraphView)
+			scenarioPanel.graphView = newGraphView
+		}
 		eventBus.post(EditedGraphViewEvent(oldGraphView, newGraphView))
 	}
 

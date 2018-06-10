@@ -17,7 +17,8 @@ class AddGraphToLibraryAction(
 
     init {
         eventBus.register(ApplicationDataEvent::class, {
-            metaGraph = it.newData as MetaGraph
+            metaGraph = it.newData as MetaGraph?
+	        updateEnabledness()
         })
     }
 
@@ -25,4 +26,6 @@ class AddGraphToLibraryAction(
         val directory = libraryTreeView!!.getSelectedItem() as LibraryDirectory
 	    service.addContainerLibraryElement(libraryTreeView!!.libraryHolder.library, metaGraph!!, directory)
     }
+
+	override fun calculateEnabledness(): Boolean = super.calculateEnabledness() && metaGraph != null
 }
