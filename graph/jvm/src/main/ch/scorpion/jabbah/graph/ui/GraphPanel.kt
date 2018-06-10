@@ -30,6 +30,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
+import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.execution.IssuesPanel
 import ch.scorpion.jabbah.execution.PauseExecutionAction
 import ch.scorpion.jabbah.execution.StepExecutionAction
@@ -46,7 +47,6 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryPanel
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
-import ch.scorpion.jabbah.graph.ui.scenario.ScenarioPanel
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -87,7 +87,9 @@ class GraphPanel(
 
 	private val modeToggleAction = ToggleModeAction(scheduler, eventBus)
 
-	val graphEditPanel = GraphEditPanel(editor, scheduler, viewManager, graphNavigationPanelFactory, propertySheetFactory, eventBus)
+	private val graphEditPanel: GraphEditPanel = GraphEditPanel(editor, scheduler, viewManager, graphNavigationPanelFactory, propertySheetFactory, eventBus)
+
+	private val desktop : GraphDesktop = GraphDesktop(graphEditPanel, eventBus, viewManager, graphNavigationPanelFactory, scheduler)
 
 	private val libraryPropertyPanel: ComponentPropertyPanel
 
@@ -119,6 +121,7 @@ class GraphPanel(
 	private val issuesPanel = IssuesPanel()
 
 	init {
+
 		(editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
 		libraryPropertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
@@ -177,7 +180,7 @@ class GraphPanel(
 		bottomSidebarPane.add(Translations.getString("graph.issues.title"), "/img/issue-16.png", issuesPanel)
 
 		mainSplitPane.add(librarySplitPane)
-		mainSplitPane.add(graphEditPanel)
+		mainSplitPane.add(desktop)
 		mainSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.mainSplitPos", 250)
 		mainSplitPane.border = null
 

@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.action.AbstractApplicationAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
@@ -14,7 +13,6 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.container.ContainerPanel
 import ch.scorpion.jabbah.graph.model.GraphNameChangedEvent
-import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import java.awt.BorderLayout
@@ -27,6 +25,7 @@ import javax.swing.*
  */
 class GraphFrame(
 	application: DesktopApplication,
+	private val graphPanel: GraphPanel,
 	private val eventBus: EventBus,
 	val viewManager: ViewManager,
 	scheduler: Scheduler
@@ -35,8 +34,6 @@ class GraphFrame(
 	enum class DisplayedView {
 		Desktop, Container
 	}
-
-	private val LOG by logger(GraphFrame::class)
 
 	private val desktopAction = ViewDesktopAction(this, application, eventBus)
 
@@ -50,8 +47,6 @@ class GraphFrame(
 
 	private val containerPanel = ContainerPanel(GraphViewModule.containerEditorFactory.invoke(eventBus), viewManager)
 
-	val desktop = GraphDesktop(eventBus, viewManager, GraphModuleJvm.graphNavigationPanelFactory, scheduler)
-
 	init {
 		eventBus.register(GraphNameChangedEvent::class, { handle(it) })
 
@@ -63,23 +58,23 @@ class GraphFrame(
 	}
 
 	override val editor: Editor
-		get() = desktop.masterGraphPanel!!.editor
+		get() = graphPanel.editor
 
 	override fun dispose() {
 		super.dispose()
-		desktop.dispose()
+		graphPanel.dispose()
 	}
 
 	/** ---- [AbstractApplicationFrame] */
 
 	/** The application data has changed if there are undoable [Command]s in the [CommandManager].*/
 	override val applicationDataChanged: Boolean
-		get() = desktop.masterGraphPanel!!.editor.commandManager.canUndo()
+		get() = graphPanel.editor.commandManager.canUndo()
 
 	/** ---- [GraphFrame] */
 
 	private fun handle(event: GraphNameChangedEvent) {
-		if (event.graph === (desktop.masterGraphPanel!!.editor.view.drawing as GraphView<*>).graph!!) {
+		if (event.graph === (graphPanel.editor.view.drawing as GraphView<*>).graph!!) {
 			containerPanel.setGraphName(event.newName)
 		}
 	}
@@ -90,15 +85,15 @@ class GraphFrame(
 		}
 		SwingUtilities.invokeLater {
 			contentPane.removeAll()
-			fillToolbarPanel(desktop.getToolBars())
+			fillToolbarPanel(graphPanel.toolbars)
 			contentPane.add(toolbarPanel, BorderLayout.NORTH)
-			contentPane.add(desktop, BorderLayout.CENTER)
+			contentPane.add(graphPanel, BorderLayout.CENTER)
 			invalidate()
 			revalidate()
 			repaint()
 
 			displayedView = DisplayedView.Desktop
-			viewManager.activeView = desktop.masterGraphPanel!!.editor.view
+			viewManager.activeView = graphPanel.editor.view
 			eventBus.post(GraphFrameEvent(this, displayedView))
 		}
 	}

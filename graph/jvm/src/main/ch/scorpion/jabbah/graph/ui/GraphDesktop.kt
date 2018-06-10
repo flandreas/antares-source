@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -9,33 +8,33 @@ import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorEvent
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
+import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
-import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
+import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.BorderLayout
 import java.awt.GridLayout
 import javax.swing.JPanel
 import javax.swing.JSplitPane
-import javax.swing.JToolBar
 import javax.swing.SwingUtilities
 
 /**
  * Manages a master [GraphPanel] and multiple slave [GraphNavigationPanel]s.
  */
 class GraphDesktop(
+	private val graphEditPanel: GraphEditPanel,
     private val eventBus: EventBus = BaseModule.eventBus,
     viewManager: ViewManager = DrawViewModule.viewManager,
     graphNavigationPanelFactory: GraphNavigationPanelFactory = GraphModuleJvm.graphNavigationPanelFactory,
@@ -48,6 +47,7 @@ class GraphDesktop(
 
     private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
+    /** The [JPanel] at the right side containing all slave views, if any. */
     private val sidePanel = JPanel()
 
     /** Contains all open [GraphNavigationPanel]s that are not the main one.*/
@@ -78,21 +78,12 @@ class GraphDesktop(
         }
     }
 
-    var masterGraphPanel: GraphPanel? = null
-        set(value) {
-            checkState(field == null)
-            checkNotNull(value)
-            checkState(slaveGraphNavigationPanels.size == 0)
-            field?.let { eventBus.unregister(EditedGraphViewEvent::class, editedGraphViewEventHandler)}
-            field = value
-            field?.let { eventBus.register(EditedGraphViewEvent::class, editedGraphViewEventHandler) }
-            add(field)
-        }
-
     init {
         mainSplitPane.border = null
         sidePanel.layout = GridLayout(0, 1)
         layout = BorderLayout()
+
+	    eventBus.register(EditedGraphViewEvent::class, editedGraphViewEventHandler)
 
         // Replace reference color in all Associations
         eventBus.register(ReferenceColorEvent::class, { event ->
@@ -103,7 +94,7 @@ class GraphDesktop(
                 assoc.panel.contextColor = assoc.refColor
                 event.replacements.forEach { assoc.panel.drawingView.highlighter.replaceColor(it.oldColor, it.newColor) }
             }
-            event.replacements.forEach { masterGraphPanel!!.graphEditPanel.graphNavigationPanel.drawingView.highlighter.replaceColor(it.oldColor, it.newColor) }
+            event.replacements.forEach { graphEditPanel.graphNavigationPanel.drawingView.highlighter.replaceColor(it.oldColor, it.newColor) }
 
         })
 
@@ -141,19 +132,19 @@ class GraphDesktop(
                 } ?: LOG.error("GraphDesktop: SubGraphVerticeView for OpenSubGraphRequest not found in open panels")
             }
         })
+
+	    add(graphEditPanel)
     }
 
     fun dispose() {
-        masterGraphPanel?.dispose()
+	    graphEditPanel.dispose()
     }
-
-    fun getToolBars(): List<JToolBar> = masterGraphPanel!!.toolbars
 
     private fun addGraphNavigationPanel(panel: GraphNavigationPanel) {
         if (slaveGraphNavigationPanels.isEmpty()) {
-            remove(masterGraphPanel)
+            remove(graphEditPanel)
             sidePanel.add(panel)
-            mainSplitPane.leftComponent = masterGraphPanel
+            mainSplitPane.leftComponent = graphEditPanel
             mainSplitPane.rightComponent = sidePanel
             add(mainSplitPane)
 
@@ -207,7 +198,7 @@ class GraphDesktop(
         remove(mainSplitPane)
         mainSplitPane.remove(mainSplitPane)
         mainSplitPane.remove(sidePanel)
-        add(masterGraphPanel)
+        add(graphEditPanel)
     }
 
     /**
@@ -236,7 +227,7 @@ class GraphDesktop(
     private fun zoomViews(includeMasterView: Boolean) {
         SwingUtilities.invokeLater {
             if (includeMasterView) {
-                masterGraphPanel!!.graphEditPanel.graphNavigationPanel.drawingView.navigator.fitMaxNormal()
+                graphEditPanel.graphNavigationPanel.drawingView.navigator.fitMaxNormal()
             }
             for (panel in slaveGraphNavigationPanels) {
                 panel.drawingView.navigator.fitMaxNormal()
@@ -248,8 +239,8 @@ class GraphDesktop(
      * Finds the [GraphNavigationPanel] that contains the specified [SubGraphVerticeView].
      */
     private fun panelContaining(vv: SubGraphVerticeView<*>): GraphNavigationPanel? {
-        if (masterGraphPanel!!.graphEditPanel.graphNavigationPanel.drawingView.drawing.contains(vv)) {
-            return masterGraphPanel!!.graphEditPanel.graphNavigationPanel
+        if (graphEditPanel.graphNavigationPanel.drawingView.drawing.contains(vv)) {
+            return graphEditPanel.graphNavigationPanel
         }
         return slaveGraphNavigationPanels.firstOrNull { it.drawingView.drawing.contains(vv) }
     }
