@@ -2,14 +2,11 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.io.*
 
 /**
  * Standard implementation of the [Library] interface.
@@ -30,6 +27,14 @@ class LibraryImpl(
 	companion object {
 		private val LOG by logger(LibraryImpl::class)
 	}
+
+	/**
+	 * Can't be stored locally, because delegation would not work any more (cannot change delegated object).
+	 * As a workaround, store it in [LibraryFolder].
+	 */
+	override var defaultElementUUID: UUID?
+		get() = libraryFolder.defaultElementUUID
+		set(value) { libraryFolder.defaultElementUUID = value }
 
 	init {
 		libraryFolder.bindTo(this)
@@ -75,6 +80,7 @@ class LibraryImpl(
 
 	override fun replaceContentsWith(libraryFolder: LibraryFolder) {
 		this.libraryFolder.replaceWith(libraryFolder)
+		this.libraryFolder.defaultElementUUID = libraryFolder.defaultElementUUID
 	}
 
 	override fun bindLibraryItems() {
@@ -95,9 +101,14 @@ class LibraryImpl(
 		})
 	}
 
-	/** Returns the [ContainerLibraryElement] to be openend when this [Library] is openend.*/
+	/** Returns the [ContainerLibraryElement] to be opened when this [Library] is openend.*/
 	override fun getDefaultElement(): ContainerLibraryElement? {
-		val finder = DefaultElementFinder()
+		if (defaultElementUUID == null) {
+			val finder = DefaultElementFinder()
+			accept(finder)
+			return finder.result
+		}
+		val finder = GraphFinder(defaultElementUUID!!)
 		accept(finder)
 		return finder.result
 	}

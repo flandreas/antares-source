@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
@@ -63,6 +64,9 @@ interface LibraryService {
 	 * Returns the [MetaGraph] of a [ContainerLibraryElement], loading it if not already loaded.
 	 */
 	fun getMetaGraph(library: Library, element: ContainerLibraryElement): MetaGraph
+
+	/** Sets the [UUID] of the [ContainerLibraryElement] to be opened when the [Library] is opened, and makes the change persistent.*/
+	fun setDefaultElement(library: Library, uuid: UUID?)
 }
 
 /** Posted on [EventBus] when a [LibraryItem] has been added to a [LibraryDirectory].*/
@@ -131,6 +135,9 @@ class LibraryServiceImpl(
 		if (directory.remove(item)) {
 			if (item is ContainerLibraryElement) {
 				persistenceService.deleteContainerLibraryElement(library, item.uuid)
+				if (library.defaultElementUUID == item.uuid) {
+					library.defaultElementUUID = null
+				}
 			} else if (item is LibraryFolder) {
 				throw UnsupportedOperationException("removing of entire LibraryFolders is not yet implemented")
 			}
@@ -172,6 +179,14 @@ class LibraryServiceImpl(
 	override fun getMetaGraph(library: Library, element: ContainerLibraryElement): MetaGraph {
 		ensureMetaGraph(library, element)
 		return element.metaGraph!!
+	}
+
+	override fun setDefaultElement(library: Library, uuid: UUID?) {
+		if (library.defaultElementUUID != uuid) {
+			LOG.debug("LibraryServiceImpl: Setting default element to '$uuid'")
+			library.defaultElementUUID = uuid
+			storeLibrary(library)
+		}
 	}
 
 	/** ---- [LibraryServiceImpl] */

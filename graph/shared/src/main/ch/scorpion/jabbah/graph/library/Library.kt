@@ -8,6 +8,9 @@ import ch.scorpion.jabbah.base.UUID
 
 interface Library : LibraryDirectory {
 
+	/** The UUID of the [ContainerLibraryElement] to be opened per default.*/
+	var defaultElementUUID: UUID?
+
     val libraryFolder: LibraryFolder
 
 	/**
@@ -38,7 +41,7 @@ interface Library : LibraryDirectory {
     fun bindLibraryItems()
 
 	/**
-	 * The [ContainerLibraryElement] to be openened by default (if required) when this [Library] is opened.
+	 * The [ContainerLibraryElement] to be opened by default (if required) when this [Library] is opened.
 	 * The current implementation simply returns the first element (if existing).
 	 */
 	fun getDefaultElement(): ContainerLibraryElement?

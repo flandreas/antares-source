@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import java.awt.Component
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import java.awt.font.TextAttribute
 import javax.swing.*
 import javax.swing.tree.*
 
@@ -73,6 +74,7 @@ class LibraryTreeView(
         directoryPopupMenu.add(ActionWrapperSwing(AddGraphToLibraryAction()))
 
         containerPopupMenu.add(ActionWrapperSwing(DeleteContainerLibraryElementAction()))
+	    containerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(DefaultContainerLibraryElementAction())))
 
 	    expandRow(0)
     }
@@ -197,6 +199,7 @@ class LibraryTreeView(
         private val iconCache: MutableMap<String, Icon> = mutableMapOf()
         private val containerLibElemIcon = ContainerLibraryElementIcon()
 	    private val currentContainerLibElemIcon = ContainerLibraryElementIcon(current = true)
+	    private val defaultElemFont = this@LibraryTreeView.font.deriveFont(mapOf(TextAttribute.UNDERLINE to TextAttribute.UNDERLINE_ON))
 
         override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
             val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
@@ -207,11 +210,11 @@ class LibraryTreeView(
 			        component.icon = getIcon(iconPath!!)
 		        } else if (value.userObject is ContainerLibraryElement) {
 			        component.icon = containerLibElemIcon
-			        if (
-				        currentSavable is LibrarySavable && (currentSavable as LibrarySavable).element == value.userObject ||
-				        currentSavable is ProjectSavable && (currentSavable as ProjectSavable).element == value.userObject
-			        ) {
+			        if (isCurrentElement(value.userObject as ContainerLibraryElement)) {
 				        component.icon = currentContainerLibElemIcon
+			        }
+			        if (isDefaultElement(value.userObject as ContainerLibraryElement)) {
+				        component.font = defaultElemFont
 			        }
 		        }
 	        }
@@ -221,6 +224,15 @@ class LibraryTreeView(
         private fun getIcon(iconPath: String): Icon {
             return iconCache.getOrPut(iconPath, { ImageIcon(LibraryTreeView::class.java.getResource(iconPath)) })
         }
+
+	    private fun isCurrentElement(element: ContainerLibraryElement): Boolean {
+		    return currentSavable is LibrarySavable && (currentSavable as LibrarySavable).element == element ||
+			    currentSavable is ProjectSavable && (currentSavable as ProjectSavable).element == element
+	    }
+
+	    private fun isDefaultElement(element: ContainerLibraryElement): Boolean {
+		    return element.library!!.defaultElementUUID == element.uuid
+	    }
     }
 }
 

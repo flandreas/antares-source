@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.app.DesktopApplication
-import ch.scorpion.jabbah.app.action.AbstractApplicationAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
@@ -16,26 +15,15 @@ import ch.scorpion.jabbah.graph.project.ProjectSavable
  * TODO The logic implemented by this Action should rather be in a business domain libraryService.
  */
 class EditContainerLibraryElementAction(
-    application: DesktopApplication,
-    eventBus: EventBus,
-    private val libraryService: LibraryService = LibraryModule.libraryService.invoke(),
-    private val projectService: LibraryService = ProjectModule.projectLibraryService.invoke()
-) : AbstractApplicationAction("graph.action.editContainerLibraryElement", application) {
+    private val application: DesktopApplication,
+    eventBus: EventBus
+) : AbstractContainerLibraryElementAction("graph.action.editContainerLibraryElement", eventBus) {
 
 	companion object {
 		private val LOG by logger(EditContainerLibraryElementAction::class)
 	}
 
-    /** Holds the [LibraryTreeView] that issued the last selection event. */
-    private var libraryTreeView: LibraryTreeView? = null
-
     init {
-        enabled = false
-        eventBus.register(LibrarySelectionChangedEvent::class, {
-            libraryTreeView = it.libraryTreeView
-            enabled = libraryTreeView!!.getSelectedItem() is ContainerLibraryElement
-        })
-
         eventBus.register(OpenContainerLibraryElementRequest::class, {
             openAsSavable(it.element)
         })

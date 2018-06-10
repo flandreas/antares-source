@@ -1,11 +1,9 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.view.RepaintingObserver.isEnabled
 import javax.swing.JOptionPane
 import javax.swing.tree.DefaultMutableTreeNode
 
@@ -13,19 +11,8 @@ import javax.swing.tree.DefaultMutableTreeNode
  * An [Action] for deleting the currently selected [ContainerLibraryElement].
  */
 class DeleteContainerLibraryElementAction(
-	private val service: LibraryService = LibraryModule.libraryService.invoke(),
     eventBus: EventBus = BaseModule.eventBus
-) : AbstractAction("graph.action.deleteContainerLibraryElement") {
-
-    private var libraryTreeView: LibraryTreeView? = null
-
-    init {
-        isEnabled = false
-        eventBus.register(LibrarySelectionChangedEvent::class, {
-            libraryTreeView = it.libraryTreeView
-            isEnabled = libraryTreeView!!.getSelectedItem() is ContainerLibraryElement
-        })
-    }
+) : AbstractContainerLibraryElementAction("graph.action.deleteContainerLibraryElement", eventBus) {
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 	    // TODO Port UI to JavaFX
@@ -37,7 +24,8 @@ class DeleteContainerLibraryElementAction(
 		    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)
 	    {
 		    val folder = (libraryTreeView!!.selectionPath.parentPath.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryDirectory
-		    service.removeLibraryItem(libraryTreeView!!.libraryHolder.library, libraryItem!!, folder)
+		    val library = libraryItem!!.library!!
+		    library.libraryService.removeLibraryItem(libraryItem.library!!, libraryItem, folder)
 	    }
     }
 }

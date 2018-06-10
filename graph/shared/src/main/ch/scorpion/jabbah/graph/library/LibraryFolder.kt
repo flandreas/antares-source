@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
@@ -19,7 +20,9 @@ class LibraryFolder(
 
     private val items: MutableList<LibraryItem> = mutableListOf()
 
-    /** ---- [Any] */
+	var defaultElementUUID: UUID? = null
+
+	/** ---- [Any] */
 
     override fun toString(): String {
         return name
@@ -54,11 +57,17 @@ class LibraryFolder(
 
     override fun write(writer: StoreWriter) {
         writer.writeString("name", name)
+	    if (defaultElementUUID != null) {
+		    writer.writeString("defaultElement", defaultElementUUID.toString())
+	    }
         writer.writeStorables("items", getStorableChildren())
     }
 
     override fun read(reader: StoreReader) {
         name = reader.readString("name")
+	    if (reader.hasAttribute("defaultElement")) {
+		    defaultElementUUID = UUID(reader.readString("defaultElement"))
+	    }
         items.clear()
         for (item in reader.readStorables("items")) {
             reader.requestResolution(this, Reference(

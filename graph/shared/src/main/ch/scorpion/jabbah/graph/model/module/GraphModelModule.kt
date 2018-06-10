@@ -6,10 +6,10 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
-import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
@@ -44,7 +44,7 @@ object GraphModelModule : AbstractModule() {
     var graphFactory: () -> Graph = { GraphImpl() }
 
     private fun configureTypeMap(typeMap: TypeMap) {
-        typeMap.register("graph", GraphImpl::class)
+	    typeMap.register("graph", GraphImpl::class)
         typeMap.register("metaGraph", MetaGraph::class)
         typeMap.register("graphStorable", GraphStorable::class)
         typeMap.register("net", NetImpl::class)
@@ -57,5 +57,6 @@ object GraphModelModule : AbstractModule() {
         typeMap.register("scenarios", ScenariosImpl::class)
         typeMap.register("scenario", ScenarioImpl::class)
         typeMap.register("scenarioStep", ScenarioStepImpl::class)
+
     }
 }
