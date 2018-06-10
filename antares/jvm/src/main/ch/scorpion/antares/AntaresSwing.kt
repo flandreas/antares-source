@@ -27,6 +27,8 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.container.ContainerPanel
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.library.LibraryItemRemovedEvent
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.OpenProjectRequest
 import ch.scorpion.jabbah.graph.ui.GraphFrame
@@ -73,6 +75,11 @@ class AntaresSwing(
 				throw VetoException()
 			}
 		} )
+		eventBus.register(LibraryItemRemovedEvent::class, {
+			if (it.item is ContainerLibraryElement && (it.item as ContainerLibraryElement).metaGraph == applicationData) {
+				close()
+			}
+		})
 	}
 
 	/** ---- [AbstractDesktopApplication] */
