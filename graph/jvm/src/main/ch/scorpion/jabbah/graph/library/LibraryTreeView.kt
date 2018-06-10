@@ -63,7 +63,7 @@ class LibraryTreeView(
         eventBus.register(LibraryItemAddedEvent::class, { handle(it) })
         eventBus.register(LibraryItemRemovedEvent::class, { handle(it) })
         eventBus.register(LibraryItemUpdatedEvent::class, { handle(it) })
-	    eventBus.register(ProjectEvent::class, { reloadLibrary() })
+	    eventBus.register(ProjectEvent::class, { handle(it) })
 
         eventBus.register(ApplicationModeEvent::class, { dragEnabled = it.applicationMode === ApplicationMode.EDIT })
 	    eventBus.register(CurrentSavableEvent::class, { handle(it) })
@@ -166,9 +166,10 @@ class LibraryTreeView(
 	}
 
 	private fun handle(event: LibraryItemAddedEvent) {
-		val parent = findTreeNode(event.parent)
-		parent.add(DefaultMutableTreeNode(event.item))
-		(model as DefaultTreeModel).nodesWereInserted(parent, intArrayOf(parent.childCount - 1))
+		findOptionalTreeNode(event.parent)?.let {
+			it.add(DefaultMutableTreeNode(event.item))
+			(model as DefaultTreeModel).nodesWereInserted(it, intArrayOf(it.childCount - 1))
+		}
 	}
 
 	/**
@@ -189,12 +190,58 @@ class LibraryTreeView(
 		(model as DefaultTreeModel).nodesWereRemoved(parent, intArrayOf(nodeIndex), arrayOf(node))
 	}
 
-	/** Finds the [TreeNode] that contains the specified [LibraryItem] as user object.*/
-	private fun findTreeNode(item: LibraryItem): DefaultMutableTreeNode {
-		return JTreeUtil.findTreeNode(model.root as TreeNode, { (it as DefaultMutableTreeNode).userObject == item }) as DefaultMutableTreeNode
+	private fun handle(event: ProjectEvent) {
+		if (event.project != null) {
+			openProject(event.project)
+		} else {
+			closeProject()
+		}
 	}
 
-    private inner class Renderer : DefaultTreeCellRenderer() {
+	private fun openProject(project: Project) {
+		val root = model.root as DefaultMutableTreeNode
+		val oldProjectNode = getProjectNode()
+		val newProjectNode = DefaultMutableTreeNode(project)
+		addItems(newProjectNode, project)
+
+		if (oldProjectNode == null) {
+			root.insert(newProjectNode, 0)
+			(model as DefaultTreeModel).nodesWereInserted(root, intArrayOf(0))
+		} else {
+			root.remove(0)
+			root.insert(newProjectNode, 0)
+			(model as DefaultTreeModel).nodesChanged(root, intArrayOf(0))
+		}
+	}
+
+	private fun closeProject() {
+		val projectNode = getProjectNode()
+		if (projectNode != null) {
+			val root = model.root as DefaultMutableTreeNode
+			root.remove(0)
+			(model as DefaultTreeModel).nodesWereRemoved(root, intArrayOf(0), arrayOf(projectNode))
+		}
+	}
+
+	private fun getProjectNode(): DefaultMutableTreeNode? {
+		val root = model.root as DefaultMutableTreeNode
+		if (root.childCount > 1) {
+			return root.getChildAt(0) as DefaultMutableTreeNode
+		}
+		return null
+	}
+
+	/** Finds the [TreeNode] that contains the specified [LibraryItem] as user object.*/
+	private fun findTreeNode(item: LibraryItem): DefaultMutableTreeNode {
+		return findOptionalTreeNode(item)!!
+	}
+
+	private fun findOptionalTreeNode(item: LibraryItem): DefaultMutableTreeNode? {
+		return JTreeUtil.findTreeNode(model.root as TreeNode, { (it as DefaultMutableTreeNode).userObject == item }) as DefaultMutableTreeNode?
+	}
+
+
+	private inner class Renderer : DefaultTreeCellRenderer() {
 
         private val iconCache: MutableMap<String, Icon> = mutableMapOf()
         private val containerLibElemIcon = ContainerLibraryElementIcon()
@@ -231,7 +278,7 @@ class LibraryTreeView(
 	    }
 
 	    private fun isDefaultElement(element: ContainerLibraryElement): Boolean {
-		    return element.library!!.defaultElementUUID == element.uuid
+		    return element.library?.defaultElementUUID == element.uuid
 	    }
     }
 }
