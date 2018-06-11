@@ -1,11 +1,15 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.InputEventHandler
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.ConnectableView
@@ -18,11 +22,13 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
  * or leaves the [EdgeView] open-ended.
  */
 class ReconnectDestinationConnector(
-        private val connectServiceSupplier: () -> GraphViewConnectService = { GraphViewModule.graphViewConnectService }
+        private val connectServiceSupplier: () -> GraphViewConnectService = { GraphViewModule.graphViewConnectService },
+        private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractDragEdgeViewEndpointConnector(EdgeViewEndpointType.DESTINATION) {
 
     companion object {
         private val LOG by logger(ReconnectDestinationConnector::class)
+	    private const val MIN_DRAG_DISTANCE = 10
     }
     /** The [ConnectableView] to which the destination of the [EdgeView] was previously connected. */
     private var destination: ConnectableView? = null
@@ -30,11 +36,18 @@ class ReconnectDestinationConnector(
     /** The [Port] to which the destination of the [EdgeView] was previously connected. */
     private var destinationPort: Port<Any>? = null
 
+	/**
+	 * The location where the mouse was pressed. Used to rollback the unconnect action if the user
+	 * didn't drag the mouse far enough, assuming that he clicked accidentally.
+	 */
+    private var pressLocation: Point2D = Point2D()
+
     /** ---- [InputEventHandler] */
 
     override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         destination = edgeView!!.destination
         destinationPort = edgeView!!.destinationPort as Port<Any>
+	    pressLocation = Point2D(context.x, context.y)
 
         connectServiceSupplier.invoke().unconnectFromDestination(edgeView!!)
 
@@ -74,7 +87,13 @@ class ReconnectDestinationConnector(
                         newPort = newPort
                 ),
                 register = true)
-        context.editor.commandManager.commitTransaction()
+
+	    if (pressLocation.distance(context.x, context.y) < MIN_DRAG_DISTANCE) {
+		    context.editor.commandManager.rollbackTransaction()
+		    eventBus.post(ComponentMessage(source = destination as Component, messageKey = "graph.reconnect.abort.msg"))
+	    } else {
+		    context.editor.commandManager.commitTransaction()
+	    }
 
         return null
     }
