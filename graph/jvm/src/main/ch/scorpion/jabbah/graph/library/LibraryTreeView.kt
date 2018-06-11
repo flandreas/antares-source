@@ -27,9 +27,9 @@ import javax.swing.tree.*
  * - A [OpenContainerLibraryElementRequest] when the user double clicks on a [ContainerLibraryElement]
  */
 class LibraryTreeView(
-    private val eventBus: EventBus = BaseModule.eventBus,
-    val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-    val projectHolder: ProjectHolder = ProjectModule.projectHolder
+	private val eventBus: EventBus = BaseModule.eventBus,
+	val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+	projectHolder: ProjectHolder = ProjectModule.projectHolder
 ) : JTree(createLibraryTreeModel(libraryHolder.library, projectHolder.project)) {
 
     private val directoryPopupMenu = JPopupMenu()
@@ -117,12 +117,6 @@ class LibraryTreeView(
         return (path.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryItem
     }
 
-    private fun reloadLibrary() {
-        SwingUtilities.invokeLater {
-            model = createLibraryTreeModel(libraryHolder.library, projectHolder.project)
-        }
-    }
-
     private inner class DoubleClickListener : MouseAdapter() {
         override fun mousePressed(e: MouseEvent) {
             if (e.clickCount == 2 && getSelectedItem() is ContainerLibraryElement) {
@@ -145,10 +139,10 @@ class LibraryTreeView(
     }
 
 	private fun handle(event: CurrentSavableEvent) {
-		if (event.savable is LibrarySavable || event.savable is ProjectSavable) {
-			currentSavable = event.savable
+		currentSavable = if (event.savable is LibrarySavable || event.savable is ProjectSavable) {
+			event.savable
 		} else {
-			currentSavable = null
+			null
 		}
 	}
 
@@ -178,7 +172,7 @@ class LibraryTreeView(
 	 */
 	private fun handle(event: LibraryItemUpdatedEvent) {
 		val node = findTreeNode(event.item)
-		node.setUserObject(event.item)
+		node.userObject = event.item
 		(model as DefaultTreeModel).nodeChanged(node)
 	}
 
@@ -209,8 +203,9 @@ class LibraryTreeView(
 			(model as DefaultTreeModel).nodesWereInserted(root, intArrayOf(0))
 		} else {
 			root.remove(0)
+			(model as DefaultTreeModel).nodesWereRemoved(root, intArrayOf(0), arrayOf(oldProjectNode))
 			root.insert(newProjectNode, 0)
-			(model as DefaultTreeModel).nodesChanged(root, intArrayOf(0))
+			(model as DefaultTreeModel).nodesWereInserted(root, intArrayOf(0))
 		}
 	}
 
