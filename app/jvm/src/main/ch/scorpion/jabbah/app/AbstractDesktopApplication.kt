@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.ElectricXmlReader
 import ch.scorpion.jabbah.io.ElectricXmlWriter
 import ch.scorpion.jabbah.io.StoreXmlReader
@@ -74,12 +76,16 @@ abstract class AbstractDesktopApplication(
 		}
 	}
 
-	override fun saveFile(filePath: String) {
-		var lFilePath = filePath
+	/**
+	 * Implements [DesktopApplication.saveTo] by interpreting `identification` as a file system path
+	 * and by storing the current [Storable] in a file at that path.
+	 */
+	override fun saveTo(identification: String) {
+		var lFilePath = identification
 		if (!lFilePath.endsWith(fileExtension)) {
-			lFilePath = lFilePath + "." + fileExtension
+			lFilePath = "$lFilePath.$fileExtension"
 		}
-		FileOutputStream(filePath).use {
+		FileOutputStream(lFilePath).use {
 			try {
 				val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
 				storeWriter.writeStorable(applicationData!!)
@@ -90,19 +96,28 @@ abstract class AbstractDesktopApplication(
 		}
 	}
 
-	override fun openFile(filePath: String): Boolean {
+	/**
+	 * Implements [DesktopApplication.openFrom] by interpreting `identification` as a file system path
+	 * and by reading the single [Storable] contained in the file located at that path.
+	 * @throws FileNotFoundException if the file at path `identification` doesn't exist
+	 */
+	override fun openFrom(identification: String): Boolean {
 		if (canReplaceSavable("file.action.open.name")) {
-			FileInputStream(filePath).use {
-				try {
-					val storeReader = StoreXmlReader(ElectricXmlReader(it))
-					val drawing = storeReader.readStorable()
-					applicationData = drawing
-					savable = FileSavable.withPath(filePath)
-					return true
-				} catch (e: Throwable) {
-					LOG.error("Error while opening '$filePath': ${e.cause}")
-					return false
+			try {
+				FileInputStream(identification).use {
+					return try {
+						val storeReader = StoreXmlReader(ElectricXmlReader(it))
+						val drawing = storeReader.readStorable()
+						applicationData = drawing
+						savable = FileSavable.withPath(identification)
+						true
+					} catch (e: Throwable) {
+						LOG.error("Error while opening '$identification': ${e.cause}")
+						false
+					}
 				}
+			} catch (e: FileNotFoundException) {
+				throw IllegalArgumentException()
 			}
 		}
 		return false
@@ -144,7 +159,7 @@ abstract class AbstractDesktopApplication(
 	}
 
 	private fun getSettingsPath(): Path {
-		return FileSystems.getDefault().getPath(homeDirectoryPath.toString(), systemName + ".ini")
+		return FileSystems.getDefault().getPath(homeDirectoryPath.toString(), "$systemName.ini")
 	}
 
 	/** Ensures that the application home directory exists by creating it if it doesn't. */

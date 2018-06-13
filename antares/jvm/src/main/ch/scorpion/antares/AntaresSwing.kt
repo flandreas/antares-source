@@ -5,6 +5,7 @@ import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.memory.MemoryContentsPanel
 import ch.scorpion.antares.view.memory.OpenMemoryContentsRequest
+import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.AbstractApplicationFrame
 import ch.scorpion.jabbah.app.AbstractDesktopApplication
 import ch.scorpion.jabbah.app.AbstractDesktopApplicationSwing
@@ -26,17 +27,16 @@ import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.container.ContainerPanel
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryItemRemovedEvent
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.OpenProjectRequest
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphPanel
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.editor.GraphEditor
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
@@ -51,7 +51,6 @@ import javax.swing.plaf.FontUIResource
  * The main application class of the Antares digital circuit editor and simulator desktop application,
  * implemented using Swing classes. Will be replaced by [AntaresFx].
  */
-@Deprecated("Don't use Swing any more", ReplaceWith("AntaresFx"))
 class AntaresSwing(
 	args: Array<String>,
 	eventBus: EventBus = BaseModule.eventBus,
@@ -127,7 +126,7 @@ class AntaresSwing(
 	override fun createMainFrame(): AbstractApplicationFrame {
 		// TODO Extract GraphEditor creation to factory in module
 		val graphCanvas = CanvasJvm({
-			val drawingView = DrawingViewImpl<Drawing<Component>>(GraphViewImpl<GraphElementView<*>>() as Drawing<Component>, it)
+			val drawingView = DrawingViewImpl(GraphViewImpl<GraphElementView<*>>() as Drawing<Component>, it)
 			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
 			drawingView
 		})
@@ -135,12 +134,16 @@ class AntaresSwing(
 		val graphPanel = GraphPanel(application = this, editor = graphEditor, viewManager = viewManager)
 		graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
 
-		val graphFrame = GraphFrame(this, graphPanel, eventBus, viewManager, schedulerProvider.invoke())
-
-		return graphFrame
+		return GraphFrame(this, graphPanel, eventBus, viewManager, schedulerProvider.invoke())
 	}
 
-	/** ---- [AntraresSwing] */
+	/** Implements [DesktopApplication.openFrom] by interpreting `identification` as a project name.*/
+	override fun openFrom(identification: String): Boolean {
+		ProjectModule.projectService.open(identification)
+		return true
+	}
+
+	/** ---- [AntaresSwing] */
 
 	private fun handle(event: OpenMemoryContentsRequest) {
 		val dialog = JDialog(mainFrame, true)

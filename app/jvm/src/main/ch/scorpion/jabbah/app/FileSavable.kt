@@ -44,13 +44,13 @@ data class FileSavable(val filePath: String?) : Savable {
         if (!defined) {
             throw IllegalStateException("cannot open undefined FileSavable")
         }
-        return desktopApplication.openFile(filePath!!)
+        return desktopApplication.openFrom(filePath!!)
     }
 
     override fun save(application: Application): Boolean {
         val desktopApplication = application as DesktopApplication
         if (defined) {
-            desktopApplication.saveFile(filePath!!)
+            desktopApplication.saveTo(filePath!!)
             return true
         }
         return desktopApplication.saveAs()

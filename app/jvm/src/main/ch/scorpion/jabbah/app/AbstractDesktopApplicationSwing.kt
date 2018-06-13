@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -18,7 +19,6 @@ import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.io.File
-import java.io.FileNotFoundException
 import javax.swing.JFileChooser
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
@@ -58,7 +58,7 @@ abstract class AbstractDesktopApplicationSwing(
 		}
 
 		if (fileChooser.showSaveDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
-			saveFile(fileChooser.selectedFile.absolutePath)
+			saveTo(fileChooser.selectedFile.absolutePath)
 			return true
 		}
 
@@ -71,7 +71,7 @@ abstract class AbstractDesktopApplicationSwing(
 		fileChooser.fileFilter = ApplicationFileFilter(this)
 
 		if (fileChooser.showOpenDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
-			openFile(fileChooser.selectedFile.absolutePath)
+			openFrom(fileChooser.selectedFile.absolutePath)
 		}
 	}
 
@@ -87,8 +87,8 @@ abstract class AbstractDesktopApplicationSwing(
 				newFile()
 			} else {
 				try {
-					openFile(commandLine.argList[0])
-				} catch(e: FileNotFoundException) {
+					openFrom(commandLine.argList[0])
+				} catch(e: IllegalArgumentException) {
 					JOptionPane.showConfirmDialog(
 						mainFrame,
 						Translations.getString("application.fileNotFound.text", commandLine.argList[0]),

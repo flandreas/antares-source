@@ -48,7 +48,7 @@ abstract class AbstractDesktopApplicationFx(
 		fileChooser.extensionFilters.addAll(FileChooser.ExtensionFilter(displayName, "*.$fileExtension"))
 		val file = fileChooser.showOpenDialog(primaryStage)
 		if (file != null) {
-			openFile(file.absolutePath)
+			openFrom(file.absolutePath)
 		}
 	}
 
@@ -66,7 +66,7 @@ abstract class AbstractDesktopApplicationFx(
 
 		val file = fileChooser.showSaveDialog(primaryStage)
 		if (file != null) {
-			saveFile(file.absolutePath)
+			saveTo(file.absolutePath)
 			return true
 		}
 		return false
@@ -82,7 +82,7 @@ abstract class AbstractDesktopApplicationFx(
 				newFile()
 			} else {
 				try {
-					openFile(commandLine.argList[0])
+					openFrom(commandLine.argList[0])
 				} catch (e: FileNotFoundException) {
 					val alert = Alert(Alert.AlertType.ERROR)
 					alert.title = Translations.getString("application.fileNotFound.title")
