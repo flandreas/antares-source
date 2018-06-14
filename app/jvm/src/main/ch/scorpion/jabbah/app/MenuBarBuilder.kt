@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.edit.app.*
 import javax.swing.JCheckBoxMenuItem
+import javax.swing.JFrame
 import javax.swing.JMenu
 import javax.swing.JMenuBar
 import javax.swing.JMenuItem
@@ -29,6 +30,12 @@ open class MenuBarBuilder(val frame: AbstractApplicationFrame, val eventBus: Eve
         fillMenuBar(menuBar)
 
         eventBus.register(SavableHistoryEvent::class, { updateOpenRecentMenu() })
+	    eventBus.register(CurrentSavableEvent::class, {
+		    // Make a [Savable] that has just been closed visible in the menu
+		    if (it.savable == null) {
+			    updateOpenRecentMenu()
+		    }
+	    })
     }
 
     protected open fun fillMenuBar(menuBar: JMenuBar) {
