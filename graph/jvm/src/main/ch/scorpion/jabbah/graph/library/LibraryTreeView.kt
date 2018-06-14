@@ -36,6 +36,8 @@ class LibraryTreeView(
 
     private val containerPopupMenu = JPopupMenu()
 
+	private val projectRootMenu = JPopupMenu()
+
 	private var currentSavable: Savable? = null
 		set(value) {
 			if (field != value) {
@@ -69,9 +71,18 @@ class LibraryTreeView(
 	    eventBus.register(CurrentSavableEvent::class, { handle(it) })
 	    eventBus.register(OpenContainerLibraryElementRequest::class, { handle(it) })
 
-        directoryPopupMenu.add(ActionWrapperSwing(AddLibraryFolderAction()))
-        directoryPopupMenu.add(ActionWrapperSwing(NewGraphAction()))
-        directoryPopupMenu.add(ActionWrapperSwing(AddGraphToLibraryAction()))
+	    val addLibraryFolderAction = AddLibraryFolderAction()
+	    val newGraphAction = NewGraphAction()
+	    val addGraphToLibraryAction = AddGraphToLibraryAction()
+
+	    projectRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
+	    projectRootMenu.add(ActionWrapperSwing(newGraphAction))
+	    projectRootMenu.add(ActionWrapperSwing(addGraphToLibraryAction))
+	    projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
+
+	    directoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
+	    directoryPopupMenu.add(ActionWrapperSwing(newGraphAction))
+	    directoryPopupMenu.add(ActionWrapperSwing(addGraphToLibraryAction))
 
         containerPopupMenu.add(ActionWrapperSwing(DeleteContainerLibraryElementAction()))
 	    containerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(DefaultContainerLibraryElementAction())))
@@ -132,6 +143,7 @@ class LibraryTreeView(
             return
         }
         componentPopupMenu = when ((newSelectionPath.lastPathComponent as DefaultMutableTreeNode).userObject) {
+	        is Project -> projectRootMenu
             is LibraryFolder -> directoryPopupMenu
             is LibraryDirectory -> directoryPopupMenu
             else -> containerPopupMenu

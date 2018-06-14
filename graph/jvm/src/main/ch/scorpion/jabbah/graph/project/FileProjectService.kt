@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
+import org.apache.commons.io.FileUtils
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -102,5 +103,35 @@ class FileProjectService(
 				}
 			}
 		)
+	}
+
+	override fun delete(projectName: String) {
+		if (projectHolder.project != null && projectHolder.project!!.name == projectName) {
+			closeImpl { deleteImpl(projectName) }
+		} else {
+			deleteImpl(projectName)
+		}
+	}
+
+	private fun deleteImpl(projectName: String) {
+		FileUtils.forceDelete(FileSystems.getDefault().getPath(directoryPath, projectName).toFile())
+	}
+
+	override fun close() {
+		closeImpl {}
+	}
+
+	private fun closeImpl(additionalThenHandler: () -> Unit) {
+		val project = projectHolder.project
+		if (project != null) {
+			eventBus.postVetoable(
+				event = CloseProjectRequest(project),
+				undoEvent = OpenProjectRequest(project),
+				thenHandler = {
+					projectHolder.p = null
+					additionalThenHandler.invoke()
+				}
+			)
+		}
 	}
 }

@@ -38,6 +38,7 @@ class ProjectPersistencePanel(
 	private val projectNameList = JList<String>(loadProjectNames())
 	private val currentProjectFont = projectNameList.font.deriveFont(Font.BOLD)
 	private val openAction = OpenAction()
+	private val deleteAction = DeleteAction()
 
 	init {
 		projectNameList.addListSelectionListener { updateActions() }
@@ -54,11 +55,12 @@ class ProjectPersistencePanel(
 
 	private fun updateActions() {
 		openAction.enabled = !projectNameList.isSelectionEmpty && projectNameList.selectedValue != projectHolder.p?.name
+		deleteAction.enabled = !projectNameList.isSelectionEmpty
 	}
 
 	private fun buildUI() {
 		layout = BorderLayout()
-		preferredSize = Dimension(300, 300)
+		preferredSize = Dimension(400, 500)
 		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
 		val scrollPane = JScrollPane(projectNameList)
@@ -67,6 +69,7 @@ class ProjectPersistencePanel(
 		val buttonPanel = JPanel(FlowLayout(FlowLayout.LEFT))
 		buttonPanel.add(JButton(ActionWrapperSwing(openAction)))
 		buttonPanel.add(JButton(ActionWrapperSwing(NewAction())))
+		buttonPanel.add(JButton(ActionWrapperSwing(deleteAction)))
 		buttonPanel.add(JButton(ActionWrapperSwing(CancelAction())))
 		add(buttonPanel, BorderLayout.SOUTH)
 
@@ -77,6 +80,10 @@ class ProjectPersistencePanel(
 		val list = DefaultListModel<String>()
 		service.getProjectNames().forEach { list.addElement(it) }
 		return list
+	}
+
+	private fun refreshProjectNames() {
+		projectNameList.model = loadProjectNames()
 	}
 
 	private val selectedProjectName: String? get() = projectNameList.selectedValue
@@ -141,6 +148,21 @@ class ProjectPersistencePanel(
 			LOG.debug("ProjectPersistencePanel: creating new project '$projectName'")
 			service.open(service.create(projectName))
 			closeHandler.invoke()
+		}
+	}
+
+	private inner class DeleteAction : AbstractAction("project.dialog.delete.action") {
+		override fun execute(event: ActionEvent) {
+			if (JOptionPane.showConfirmDialog(
+				this@ProjectPersistencePanel,
+				Translations.getString("project.dialog.delete.confirm.msg", selectedProjectName!!),
+				Translations.getString("project.dialog.delete.action.name"),
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
+			) {
+				service.delete(selectedProjectName!!)
+				refreshProjectNames()
+			}
 		}
 	}
 }

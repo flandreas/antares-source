@@ -15,6 +15,13 @@ typealias Project = Library
  */
 data class OpenProjectRequest (val project: Project?)
 
+/**
+ * Posted on [EventBus] when the currently open [Project] is to be closed.
+ * Subscribers for this event can raise their veto, such as the application class that keeps track of
+ * changes of the current [Project]'s open [MetaGraph].
+ */
+data class CloseProjectRequest (val project: Project)
+
 interface ProjectService {
 
 	/** Returns the names of all stored projects.*/
@@ -47,6 +54,12 @@ interface ProjectService {
 
 	/** Opens the specified [Project] and [ContainerLibraryElement].*/
 	fun open(projectName: String, containerLibraryElement: UUID)
+
+	/** Deletes the Project] with the specified name.*/
+	fun delete(projectName: String)
+
+	/** Closes the currently open [Project].*/
+	fun close()
 }
 
 /** Null pattern */
@@ -77,6 +90,14 @@ class UnimplementedProjectService : ProjectService {
 	}
 
 	override fun open(projectName: String, containerLibraryElement: UUID) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun delete(projectName: String) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun close() {
 		throw UnsupportedOperationException("not implemented")
 	}
 }

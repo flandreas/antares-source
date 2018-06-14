@@ -22,6 +22,7 @@ dependencies {
 	compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 	compile "l2fprod:l2fprod-common-all:7.3"
 	compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    compile "commons-io:commons-io:2.6"
 
 	testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-core:1.3'

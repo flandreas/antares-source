@@ -31,9 +31,7 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryItemRemovedEvent
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.project.OpenProjectRequest
-import ch.scorpion.jabbah.graph.project.ProjectModule
-import ch.scorpion.jabbah.graph.project.ProjectSavable
+import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphPanel
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -76,6 +74,16 @@ class AntaresSwing(
 				throw VetoException()
 			}
 		} )
+		eventBus.register(CloseProjectRequest::class, {
+			if (savable is ProjectSavable && (savable as ProjectSavable).project == it.project && !canReplaceSavable("project.action.close.name")) {
+				throw VetoException()
+			}
+		})
+		eventBus.register(ProjectEvent::class, {
+			if (it.project == null && savable is ProjectSavable) {
+				close()
+			}
+		})
 		eventBus.register(LibraryItemRemovedEvent::class, {
 			if (it.item is ContainerLibraryElement && (it.item as ContainerLibraryElement).metaGraph == applicationData) {
 				close()
