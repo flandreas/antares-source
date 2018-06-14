@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.app.AbstractApplicationFrame
 import ch.scorpion.jabbah.app.AbstractDesktopApplication
 import ch.scorpion.jabbah.app.AbstractDesktopApplicationSwing
 import ch.scorpion.jabbah.app.MenuBarBuilder
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.VetoException
@@ -32,6 +33,7 @@ import ch.scorpion.jabbah.graph.library.LibraryItemRemovedEvent
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.OpenProjectRequest
 import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.project.ProjectSavable
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphPanel
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -141,6 +143,30 @@ class AntaresSwing(
 	override fun openFrom(identification: String): Boolean {
 		ProjectModule.projectService.open(identification)
 		return true
+	}
+
+	override fun handleShutdown() {
+		super.handleShutdown()
+		if (savable is ProjectSavable) {
+			BaseModule.settings.set("application.project", (savable as ProjectSavable).project.name)
+		} else {
+			BaseModule.settings.remove("application.project")
+		}
+	}
+
+	override fun openInitialSavable() {
+		if (commandLine.argList.size > 0) {
+			super.openInitialSavable()
+			return
+		}
+
+		val projectName = BaseModule.settings.getString("application.project", "")
+		if (StringUtils.isNotEmpty(projectName)) {
+			openFrom(projectName)
+			return
+		}
+
+		newFile()
 	}
 
 	/** ---- [AntaresSwing] */

@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.graph.library.*
 class ProjectSavable(
 	val metaGraph: MetaGraph,
 	val element: ContainerLibraryElement,
-	private val project: Project = ProjectModule.projectHolder.project!!,
+	val project: Project = ProjectModule.projectHolder.project!!,
 	private val libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
 	private val projectService: ProjectService = ProjectModule.projectService
 ) : Savable {

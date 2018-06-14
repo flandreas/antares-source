@@ -84,6 +84,10 @@ class Settings {
         values.put(name, value.toString())
     }
 
+    fun remove(name: String) {
+        values.remove(name)
+    }
+
     private fun getOptional(name: String): String? {
         return values[name]
     }

@@ -127,11 +127,20 @@ abstract class AbstractDesktopApplication(
 
 	protected abstract fun shutdownUI()
 
+	/**
+	 * Called by [AbstractDesktopApplication.shutdown] before the settings are stored.
+	 * This implementation is empty. Subclasses can overwrite this method e.g. to store application level settings.
+	 */
+	protected open fun handleShutdown() {
+		// empty
+	}
+
 	protected open fun shutdown() {
 		LOG.info("Shutting $displayName down")
 		// TODO Provide service for loading/storing Properties
+		handleShutdown()
 		shutdownUI()
-		storeProperties()
+		storeSettings()
 		System.exit(0)
 	}
 
@@ -191,7 +200,7 @@ abstract class AbstractDesktopApplication(
 		}
 	}
 
-	protected fun storeProperties() {
+	protected fun storeSettings() {
 		val path = getSettingsPath()
 		LOG.debug("Storing settings in $path")
 		ensureHomeDirectory()

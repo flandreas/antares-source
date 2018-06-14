@@ -128,7 +128,7 @@ abstract class AbstractDesktopApplicationFx(
 	override fun shutdown() {
 		LOG.info("Shutting $displayName down")
 		shutdownUI()
-		storeProperties()
+		storeSettings()
 		Platform.exit()
 	}
 

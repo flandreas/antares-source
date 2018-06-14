@@ -83,21 +83,7 @@ abstract class AbstractDesktopApplicationSwing(
 		DrawViewModule.viewManager.activeView = mainFrame.editor.view
 		BusyHandler.register(mainFrame, null)
 		SwingUtilities.invokeLater {
-			if (commandLine.argList.size == 0) {
-				newFile()
-			} else {
-				try {
-					openFrom(commandLine.argList[0])
-				} catch(e: IllegalArgumentException) {
-					JOptionPane.showConfirmDialog(
-						mainFrame,
-						Translations.getString("application.fileNotFound.text", commandLine.argList[0]),
-						Translations.getString("application.fileNotFound.title"),
-						JOptionPane.DEFAULT_OPTION,
-						JOptionPane.ERROR_MESSAGE)
-					newFile()
-				}
-			}
+			openInitialSavable()
 		}
 	}
 
@@ -121,6 +107,28 @@ abstract class AbstractDesktopApplicationSwing(
 			JOptionPane.CANCEL_OPTION -> false
 			JOptionPane.YES_OPTION -> savable?.save(this) ?: true
 			else -> throw IllegalStateException("unsupported answer")
+		}
+	}
+
+	/**
+	 * Opens the [Savable] to be initially available when the application starts.
+	 * This implementation used the command line argument, or opens a new file if no command line argument is available.
+	 */
+	protected open fun openInitialSavable() {
+		if (commandLine.argList.size == 0) {
+			newFile()
+		} else {
+			try {
+				openFrom(commandLine.argList[0])
+			} catch(e: IllegalArgumentException) {
+				JOptionPane.showConfirmDialog(
+					mainFrame,
+					Translations.getString("application.fileNotFound.text", commandLine.argList[0]),
+					Translations.getString("application.fileNotFound.title"),
+					JOptionPane.DEFAULT_OPTION,
+					JOptionPane.ERROR_MESSAGE)
+				newFile()
+			}
 		}
 	}
 
