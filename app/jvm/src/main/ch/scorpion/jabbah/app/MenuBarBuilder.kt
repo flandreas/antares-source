@@ -85,7 +85,9 @@ open class MenuBarBuilder(val frame: AbstractApplicationFrame, val eventBus: Eve
     private fun updateOpenRecentMenu() {
         openRecentMenu.removeAll()
         frame.application.mostRecentSavables.savables.forEach {
-            openRecentMenu.add(JMenuItem(ActionWrapperSwing(OpenRecentFileAction(it, frame.application))))
+            if (it != frame.application.savable) {
+	            openRecentMenu.add(JMenuItem(ActionWrapperSwing(OpenRecentFileAction(it, frame.application))))
+            }
         }
         openRecentMenu.isEnabled = frame.application.mostRecentSavables.size > 0
     }

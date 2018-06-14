@@ -18,8 +18,9 @@ class LibrarySavable(
     private val eventBus: EventBus = BaseModule.eventBus
 ) : Savable {
 
-    override val description: String
-        get() = "${Translations.getString("library.savable.prefix")} \"${element.name}\""
+	/** ---- [Savable] */
+
+    override val description: String get() = "${Translations.getString("library.savable.prefix")} \"${element.name}\""
 
     override val defined: Boolean get() = true
 
@@ -34,4 +35,13 @@ class LibrarySavable(
 	    service.updateContainerLibraryElement(library, metaGraph, element)
         return true
     }
+
+	/** ---- [Any] */
+
+	override fun equals(other: Any?): Boolean {
+		if (other !is LibrarySavable) {
+			return false
+		}
+		return library.name == other.library.name && element.uuid == other.element.uuid
+	}
 }

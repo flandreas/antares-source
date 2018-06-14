@@ -17,8 +17,18 @@ class ProjectSavable(
 	private val projectService: ProjectService = ProjectModule.projectService
 ) : Savable {
 
-	override val description: String
-		get() = "${Translations.getString("project.savable.prefix")} \"${element.name}\""
+	/** ---- [Any] */
+
+	override fun equals(other: Any?): Boolean {
+		if (other !is ProjectSavable) {
+			return false
+		}
+		return project.name == other.project.name && element.uuid == other.element.uuid
+	}
+
+	/** ---- [Savable] */
+
+	override val description: String get() = "${Translations.getString("project.savable.prefix")} \"${element.name}\""
 
 	override val defined: Boolean get() = true
 

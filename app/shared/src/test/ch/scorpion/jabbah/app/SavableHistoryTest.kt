@@ -48,13 +48,24 @@ class SavableHistoryTest {
     }
 
     @Test
-    fun shouldNotAddDuplicates() {
+    fun shouldNotAddReferencialDuplicates() {
         val history = SavableHistory(maxSize = 2)
         history.register(SAVABLE_1)
         history.register(SAVABLE_1)
 
         assertThat(history.size, `is`(1))
         assertThat(history.savables[0] as FileSavable, `is`(SAVABLE_1))
+    }
+
+	@Test
+    fun shouldNotAddStructuralDuplicates() {
+		val history = SavableHistory(maxSize = 2)
+		val savable1 = FileSavable("/Documents/savable1")
+		history.register(SAVABLE_1)
+		history.register(savable1)
+
+		assertThat(history.size, `is`(1))
+		assertThat(history.savables[0] as FileSavable, `is`(savable1))
     }
 
     @Test
