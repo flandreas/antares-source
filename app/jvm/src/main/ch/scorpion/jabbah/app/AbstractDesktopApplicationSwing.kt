@@ -141,7 +141,7 @@ abstract class AbstractDesktopApplicationSwing(
 	/** ---- [AbstractDesktopApplicationSwing] */
 
 	protected open fun createMenuBarBuilder(): MenuBarBuilder {
-		return MenuBarBuilder(mainFrame, eventBus)
+		return MenuBarBuilder(frame = mainFrame, eventBus = eventBus)
 	}
 
 	protected open fun createMainFrame(): AbstractApplicationFrame {

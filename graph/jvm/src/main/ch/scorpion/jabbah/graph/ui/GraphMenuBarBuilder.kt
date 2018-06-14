@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.AbstractApplicationFrame
-import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.MenuBarBuilder
+import ch.scorpion.jabbah.app.action.CloseFileAction
+import ch.scorpion.jabbah.app.action.QuitApplicationAction
+import ch.scorpion.jabbah.app.action.SaveFileAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -26,7 +28,10 @@ import javax.swing.JMenuItem
 /**
  * Adds [ch.scorpion.jabbah.graph] related menus to [MenuBarBuilder].
  */
-open class GraphMenuBarBuilder(frame: AbstractApplicationFrame, eventBus: EventBus) : MenuBarBuilder(frame, eventBus) {
+open class GraphMenuBarBuilder(
+	frame: AbstractApplicationFrame,
+	eventBus: EventBus
+) : MenuBarBuilder(frame = frame, eventBus = eventBus) {
 
     override fun fillMenuBar(menuBar: JMenuBar) {
         super.fillMenuBar(menuBar)
@@ -35,10 +40,14 @@ open class GraphMenuBarBuilder(frame: AbstractApplicationFrame, eventBus: EventB
         menuBar.add(fillExecutionMenu(JMenu(Translations.getString("application.menu.simulation"))))
     }
 
-    override fun fillAdditionalFileMenu(menu: JMenu) {
-        super.fillAdditionalFileMenu(menu)
-	    menu.add(JMenuItem(ActionWrapperSwing(ShowProjectsDialogAction(frame))))
-    }
+	override fun fillFileMenu(menu: JMenu) {
+		menu.add(JMenuItem(ActionWrapperSwing(ShowProjectsDialogAction(frame))))
+		menu.add(openRecentMenu)
+		menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(frame.application))))
+		menu.addSeparator()
+		menu.add(JMenuItem(ActionWrapperSwing(CloseFileAction(frame.application))))
+		menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))
+	}
 
     override fun fillEditMenu(menu: JMenu) {
         super.fillEditMenu(menu)

@@ -15,13 +15,16 @@ import javax.swing.JMenuItem
 /**
  * Builds and fills a [JMenuBar] for the main [JFrame] of a [DesktopApplication].
  */
-open class MenuBarBuilder(val frame: AbstractApplicationFrame, val eventBus: EventBus) {
+open class MenuBarBuilder(
+	val frame: AbstractApplicationFrame,
+	val eventBus: EventBus
+) {
 
     val menuBar = JMenuBar()
     private val fileMenu = JMenu(Translations.getString("application.menu.file"))
     private val editMenu = JMenu(Translations.getString("application.menu.edit"))
     private val viewMenu = JMenu(Translations.getString("application.menu.view"))
-    private val openRecentMenu = JMenu(Translations.getString("file.action.openRecent.name"))
+    protected val openRecentMenu = JMenu(Translations.getString("file.action.openRecent.name"))
 
     init {
         fillFileMenu(fileMenu)
@@ -45,19 +48,14 @@ open class MenuBarBuilder(val frame: AbstractApplicationFrame, val eventBus: Eve
     }
 
     protected open fun fillFileMenu(menu: JMenu) {
-        menu.add(JMenuItem(ActionWrapperSwing(NewFileAction(frame.application))))
-        menu.add(JMenuItem(ActionWrapperSwing(OpenFileAction(frame.application))))
+	    menu.add(JMenuItem(ActionWrapperSwing(NewFileAction(frame.application))))
+	    menu.add(JMenuItem(ActionWrapperSwing(OpenFileAction(frame.application))))
         menu.add(openRecentMenu)
         menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(frame.application))))
-        menu.add(JMenuItem(ActionWrapperSwing(SaveFileAsAction(frame.application))))
+	    menu.add(JMenuItem(ActionWrapperSwing(SaveFileAsAction(frame.application))))
         menu.addSeparator()
-	    fillAdditionalFileMenu(menu)
         menu.add(JMenuItem(ActionWrapperSwing(CloseFileAction(frame.application))))
         menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))
-    }
-
-    protected open fun fillAdditionalFileMenu(menu: JMenu) {
-        // empty
     }
 
     protected open fun fillEditMenu(menu: JMenu) {
