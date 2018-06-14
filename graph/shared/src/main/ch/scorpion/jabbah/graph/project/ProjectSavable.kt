@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.project
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
 
@@ -14,7 +13,8 @@ class ProjectSavable(
 	val metaGraph: MetaGraph,
 	val element: ContainerLibraryElement,
 	private val project: Project = ProjectModule.projectHolder.project!!,
-	private val service: LibraryService = ProjectModule.projectLibraryService.invoke()
+	private val libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
+	private val projectService: ProjectService = ProjectModule.projectService
 ) : Savable {
 
 	override val description: String
@@ -22,14 +22,15 @@ class ProjectSavable(
 
 	override val defined: Boolean get() = true
 
-	override val supportsMostRecent: Boolean get() = false
+	override val supportsMostRecent: Boolean get() = true
 
 	override fun open(application: Application): Boolean {
-		throw UnsupportedOperationException("cannot open LibrarySavable in Application: not supported")
+		projectService.open(project.name, element.uuid)
+		return true
 	}
 
 	override fun save(application: Application): Boolean {
-		service.updateContainerLibraryElement(project, metaGraph, element)
+		libraryService.updateContainerLibraryElement(project, metaGraph, element)
 		application.savable = this
 		return true
 	}

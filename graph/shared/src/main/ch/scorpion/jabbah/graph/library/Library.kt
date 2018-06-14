@@ -28,6 +28,9 @@ interface Library : LibraryDirectory {
     /** Checks whether a [MetaGraph] with [uuid] exists in this [Library]. */
     fun containsMetaGraph(uuid: UUID): Boolean
 
+	/** Returns the [ContainerLibraryElement] with the specified [UUID].*/
+	fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement?
+
     /** Replaces the contents of this [Library] with the content of the specified [LibraryFolder].*/
     fun replaceContentsWith(libraryFolder: LibraryFolder)
 

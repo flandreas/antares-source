@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.graph.project
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 
 typealias Project = Library
 
@@ -35,13 +37,16 @@ interface ProjectService {
 	fun create(projectName: String): Project
 
 	/**
-	 * Loads and opens the [Project] with the specified name.
+	 * Loads and opens the [Project] with the specified name, and opens its default [ContainerLibraryElement].
 	 * @throws IllegalArgumentException if a project with name [projectName] doesn't exist
 	 */
 	fun open(projectName: String): Project
 
-	/** Opens the specified [Project] in the current [Application].*/
+	/** Opens the specified [Project] and its default [ContainerLibraryElement].*/
 	fun open(project: Project)
+
+	/** Opens the specified [Project] and [ContainerLibraryElement].*/
+	fun open(projectName: String, containerLibraryElement: UUID)
 }
 
 /** Null pattern */
@@ -68,6 +73,10 @@ class UnimplementedProjectService : ProjectService {
 	}
 
 	override fun open(project: Project) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun open(projectName: String, containerLibraryElement: UUID) {
 		throw UnsupportedOperationException("not implemented")
 	}
 }

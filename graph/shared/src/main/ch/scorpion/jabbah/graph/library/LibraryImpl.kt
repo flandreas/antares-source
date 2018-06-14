@@ -113,6 +113,10 @@ class LibraryImpl(
 		return finder.result
 	}
 
+	override fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement? {
+		return findContainerLibraryElementFor(uuid)
+	}
+
 	/** ---- [LibraryImpl] */
 
 	/** Determines whether this [Library] contains the specified [LibraryDirectory].*/

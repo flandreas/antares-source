@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -23,11 +24,11 @@ class DefaultContainerLibraryElementAction(
 	}
 
 	override fun handleSelectionChanged() {
-		if (libraryTreeView!!.getSelectedItem() is ContainerLibraryElement) {
+		selected = if (libraryTreeView!!.getSelectedItem() is ContainerLibraryElement) {
 			val elem = libraryTreeView!!.getSelectedItem() as ContainerLibraryElement
-			selected = elem.library!!.defaultElementUUID == elem.uuid
+			elem.library?.defaultElementUUID == elem.uuid
 		} else {
-			selected = false
+			false
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
@@ -12,7 +13,6 @@ import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Collectors
-import javax.swing.SwingUtilities
 
 /**
  * A [ProjectService] that uses the local file system to store projects.
@@ -81,9 +81,24 @@ class FileProjectService(
 			undoEvent = OpenProjectRequest(projectHolder.project),
 			thenHandler = {
 				projectHolder.p = project
-				val defaultElement = project.getDefaultElement()
-				if (defaultElement != null) {
-					eventBus.post(OpenContainerLibraryElementRequest(defaultElement))
+				val element = project.getDefaultElement()
+				if (element != null) {
+					eventBus.post(OpenContainerLibraryElementRequest(element))
+				}
+			}
+		)
+	}
+
+	override fun open(projectName: String, containerLibraryElement: UUID) {
+		val project = load(projectName)
+		eventBus.postVetoable(
+			event = OpenProjectRequest(project),
+			undoEvent = OpenProjectRequest(projectHolder.project),
+			thenHandler = {
+				projectHolder.p = project
+				val element = project.getContainerLibraryElement(containerLibraryElement)
+				if (element != null) {
+					eventBus.post(OpenContainerLibraryElementRequest(element))
 				}
 			}
 		)

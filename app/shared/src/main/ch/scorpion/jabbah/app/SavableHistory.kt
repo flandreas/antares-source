@@ -4,16 +4,16 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
- * Maintains a list of the most recently saved [Savable]s in order to be able to re-open the quickly.
+ * Maintains a list of the most recently saved [Savable]s in order to be able to re-open them quickly.
  * Posts a [SavableHistoryEvent] whenever its state has changed.
  */
 class SavableHistory(
-        private val maxSize: Int = MAX_SIZE,
-        private val eventBus: EventBus = BaseModule.eventBus
+    private val maxSize: Int = MAX_SIZE,
+    private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
     companion object {
-        private val MAX_SIZE = 4
+        private const val MAX_SIZE = 4
     }
 
     /**
