@@ -273,22 +273,17 @@ class SwitchView(
     }
 
     private fun drawBodyDigital(context: DrawContext) {
-        val fillColor = Bit.of(model!!.isOn).color.foregroundColor
-        context.g.color = color.backgroundColor
+        context.g.color = transparent.applyTo(color.backgroundColor)
         context.g.fillRect(xInt, yInt, widthInt, heightInt)
 
-        context.g.color = fillColor
-	    /*
-        context.g.drawRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-                widthInt - 2 * BORDER_WIDTH, heightInt - 2 * BORDER_WIDTH)
-        */
+        context.g.color = transparent.applyTo(Bit.of(model!!.isOn).color.foregroundColor)
         context.g.fillRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
                 widthInt - 2 * BORDER_WIDTH, heightInt - 2 * BORDER_WIDTH)
 
-        context.g.color = color.foregroundColor
+        context.g.color = transparent.applyTo(color.foregroundColor)
         context.g.drawRect(xInt, yInt, widthInt, heightInt)
 
-        internalLabel.color = if (model!!.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor
+        internalLabel.color = transparent.applyTo(if (model!!.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
         if (labelPosition == VerticeLabelPosition.INTERNAL) {
             internalLabel.text = StringUtils.orEmpty(model!!.name)
         } else {
@@ -299,7 +294,7 @@ class SwitchView(
 
     private fun drawFocus(context: DrawContext) {
         if (isFocusOwner) {
-            context.g.color = Themes.get<AntaresTheme>().focus.color.foregroundColor
+            context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)
             context.g.stroke = Themes.get<AntaresTheme>().focus.stroke
             context.g.drawRect(xInt + BORDER_WIDTH - 1, yInt + BORDER_WIDTH - 1,
                     widthInt - 2 * BORDER_WIDTH + 2, heightInt - 2 * BORDER_WIDTH + 2)
