@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable

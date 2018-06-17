@@ -4,9 +4,9 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.graph.library.LibraryHolder
 import java.awt.datatransfer.DataFlavor
 import javax.swing.JOptionPane
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
@@ -54,21 +54,18 @@ class GraphPanelTransferHandler(
 	    }
 
         val dropVertice = dropComponent.model as SubGraphVertice?
-	    val dropGraph = data.libraryElement.library!!.getMetaGraph(dropVertice!!.graphUUID!!).graph!!.model
+	    val targetUUID = (editor.drawing as GraphView<*>).graph!!.uuid
 
-        val canImport = !data.libraryElement.library!!.graphContainsRecursively(
-                dropGraph!!.uuid,
-                (editor.drawing as GraphView<*>).graph!!.uuid)
-
-        if (!canImport) {
+        if (data.libraryElement.library!!.graphContainsRecursively(dropVertice!!.graphUUID!!, targetUUID)) {
             LOG.debug("Preventing dropping '${dropVertice.name}' in order to prevent Graph cycle")
             JOptionPane.showMessageDialog(
                 null,
                 Translations.getString("graph.cycleError.msg"),
                 Translations.getString("graph.action.addElementToGraph.name"),
                 JOptionPane.ERROR_MESSAGE)
+	        return false
         }
 
-        return canImport
+        return true
     }
 }
