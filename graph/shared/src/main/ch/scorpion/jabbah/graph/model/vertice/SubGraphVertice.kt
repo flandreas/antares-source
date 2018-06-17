@@ -1,11 +1,11 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
-import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.SubGraphOutputPort
 
 /**
@@ -28,8 +28,8 @@ interface SubGraphVertice : Vertice {
      */
     fun getGraphIfPresent(): Graph?
 
-    /** Returns the contained [Graph] by loading and copying it from the specified [Library] if not already loaded.*/
-    fun getGraph(library: Library, storableCreator: StorableCreator): Graph
+    /** Returns the contained [Graph] by loading and copying it from the specified [MetaGraphRepository] if not already loaded.*/
+    fun getGraph(repository: MetaGraphRepository, storableCreator: StorableCreator): Graph
 
     fun <T: Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler)
 }

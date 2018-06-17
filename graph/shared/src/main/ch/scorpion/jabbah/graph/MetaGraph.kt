@@ -4,7 +4,40 @@ import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.project.Project
 
+interface MetaGraphRepository {
+
+	/** Returns the entire [MetaGraph] with the specified [UUID], including the view representations. */
+	fun getMetaGraph(uuid: UUID): MetaGraph
+
+	/** Returns the entire [MetaGraph] with the specified [UUID] if it exists, or `null` otherwise. */
+	fun getOptionalMetaGraph(uuid: UUID): MetaGraph?
+
+	/** Checks whether a [MetaGraph] with [uuid] exists in this [MetaGraphRepository]. */
+	fun containsMetaGraph(uuid: UUID): Boolean
+}
+
+/** Combines the current [Library] and the current [Project] (if any) to a single [MetaGraphRepository].*/
+class CombinedMetaGraphRepository : MetaGraphRepository {
+
+	/** Returns the entire [MetaGraph] with the specified [UUID], including the view representations. */
+	override fun getMetaGraph(uuid: UUID): MetaGraph {
+		return LibraryModule.libraryHolder.library.getOptionalMetaGraph(uuid) ?: ProjectModule.projectHolder.project!!.getMetaGraph(uuid)
+	}
+
+	/** Returns the entire [MetaGraph] with the specified [UUID] if it exists, or `null` otherwise. */
+	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? {
+		return LibraryModule.libraryHolder.library.getOptionalMetaGraph(uuid) ?: ProjectModule.projectHolder.project!!.getOptionalMetaGraph(uuid)
+	}
+
+	/** Checks whether a [MetaGraph] with [uuid] exists in this [MetaGraphRepository]. */
+	override fun containsMetaGraph(uuid: UUID): Boolean {
+		return LibraryModule.libraryHolder.library.containsMetaGraph(uuid) || ProjectModule.projectHolder.project!!.containsMetaGraph(uuid)
+	}
+}
 
 /**
  * Combines a [GraphStorable] and a [ContainerDrawing] as a [Storable].

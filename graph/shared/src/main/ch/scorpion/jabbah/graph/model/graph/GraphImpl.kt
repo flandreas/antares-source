@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
@@ -154,8 +154,8 @@ open class GraphImpl(
         _elements.forEach { it.executionStopped(signalHandler) }
     }
 
-    override fun bind(library: Library, storableCreator: StorableCreator) {
-        _elements.forEach { it.bind(library, storableCreator) }
+    override fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator) {
+        _elements.forEach { it.bind(repository, storableCreator) }
     }
 
     override fun <T : Any> getGraphPort(name: String): GraphPort<T>? {

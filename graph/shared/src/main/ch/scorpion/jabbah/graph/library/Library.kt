@@ -4,9 +4,10 @@ import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 
 
-interface Library : LibraryDirectory {
+interface Library : LibraryDirectory, MetaGraphRepository {
 
 	/** The UUID of the [ContainerLibraryElement] to be opened per default.*/
 	var defaultElementUUID: UUID?
@@ -18,15 +19,6 @@ interface Library : LibraryDirectory {
 	 * between different service implementations for libraries and projects.
 	 */
 	val libraryService: LibraryService
-
-    /** Returns the entire [MetaGraph] with the specified [UUID], including the view representations. */
-    fun getMetaGraph(uuid: UUID): MetaGraph
-
-    /** Returns the entire [MetaGraph] with the specified [UUID] if it exists, or `null` otherwise. */
-    fun getOptionalMetaGraph(uuid: UUID): MetaGraph?
-
-    /** Checks whether a [MetaGraph] with [uuid] exists in this [Library]. */
-    fun containsMetaGraph(uuid: UUID): Boolean
 
 	/** Returns the [ContainerLibraryElement] with the specified [UUID].*/
 	fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement?
@@ -48,5 +40,16 @@ interface Library : LibraryDirectory {
 	 * The current implementation simply returns the first element (if existing).
 	 */
 	fun getDefaultElement(): ContainerLibraryElement?
+
+	/** ---- [MetaGraphRepository] */
+
+	/** Returns the entire [MetaGraph] with the specified [UUID], including the view representations. */
+	override fun getMetaGraph(uuid: UUID): MetaGraph
+
+	/** Returns the entire [MetaGraph] with the specified [UUID] if it exists, or `null` otherwise. */
+	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph?
+
+	/** Checks whether a [MetaGraph] with [uuid] exists in this [Library]. */
+	override fun containsMetaGraph(uuid: UUID): Boolean
 
 }

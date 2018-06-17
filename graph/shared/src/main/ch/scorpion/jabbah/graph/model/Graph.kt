@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 
 /**
  * A [Graph] is mainly a collection of [GraphElement]s.
@@ -96,8 +97,8 @@ interface Graph : Storable {
     /** Called by the execution environment after the execution has been stopped.*/
     fun executionStopped(signalHandler: SignalHandler)
 
-    /** Binds all [GraphElement]s of this [Graph] using the specified [Library].*/
-    fun bind(library: Library, storableCreator: StorableCreator)
+    /** Binds all [GraphElement]s of this [Graph] using the specified [MetaGraphRepository].*/
+    fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator)
 
     /** Returns the [GraphPort] with the specified name.*/
     fun <T: Any> getGraphPort(name: String): GraphPort<T>?

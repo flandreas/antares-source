@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
-import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
@@ -11,6 +10,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.*
 
 /**
@@ -18,7 +18,9 @@ import ch.scorpion.jabbah.graph.model.*
  */
 class SubGraphVerticeImpl : CalculatingVertice(EmptyVerticeCalculator), SubGraphVertice {
 
-    private val LOG by logger(SubGraphVerticeImpl::class)
+    companion object {
+        private val LOG by logger(SubGraphVerticeImpl::class)
+    }
 
     // TODO Not used any more?
     private val graph: Graph? = null
@@ -32,7 +34,7 @@ class SubGraphVerticeImpl : CalculatingVertice(EmptyVerticeCalculator), SubGraph
         return graph
     }
 
-    override fun getGraph(library: Library, storableCreator: StorableCreator): Graph {
+    override fun getGraph(repository: MetaGraphRepository, storableCreator: StorableCreator): Graph {
         return graph!!
     }
 

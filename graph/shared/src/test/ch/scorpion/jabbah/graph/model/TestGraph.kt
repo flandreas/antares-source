@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.graph.model.net.NetImpl
  */
 open class TestGraph(eventBus: EventBus) {
 
-    val graph = GraphImpl(eventBus)
+    val graph = GraphImpl(eventBus = eventBus)
     val v1: TestVertice
     val v2: TestVertice
     val net: Net<Boolean>

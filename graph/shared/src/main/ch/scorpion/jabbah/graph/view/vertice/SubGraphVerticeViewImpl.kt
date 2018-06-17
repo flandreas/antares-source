@@ -21,8 +21,6 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.graph.library.LibraryHolder
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
@@ -34,6 +32,8 @@ import ch.scorpion.jabbah.graph.view.port.PortViewReuser
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 
 /**
  * A standard implementation of the [SubGraphVerticeView] interface.
@@ -43,7 +43,7 @@ class SubGraphVerticeViewImpl(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
     private val storableCreator: StorableCreator = IOModule.storableCreator,
-    private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+    private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
     private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractVerticeView<SubGraphVerticeRef>(
         styleProvider,
@@ -221,7 +221,7 @@ class SubGraphVerticeViewImpl(
         if (STORABLE_MODEL_ID == reference.name) {
             if (customizedContainerDrawing == null) {
                 // TODO Support for requesting only the ContainerDrawing from the LibraryImpl
-                val graph = libraryHolder.library.getMetaGraph(model!!.graphUUID!!)
+                val graph = repository.getMetaGraph(model!!.graphUUID!!)
                 fillFromContainerDrawing(graph.containerDrawing!!)
                 model!!.shortDescription = graph.graph!!.model!!.shortDescription
             }
@@ -239,7 +239,7 @@ class SubGraphVerticeViewImpl(
         // in the ContainerDrawings have resolved their model SubCircuitPort. We cannot make more sure than doing
         // it after all resolutions have been done.
         if (customizedContainerDrawing != null) {
-            val graph = libraryHolder.library.getMetaGraph(model!!.graphUUID!!)
+            val graph = repository.getMetaGraph(model!!.graphUUID!!)
             fillFromContainerDrawing(customizedContainerDrawing!!)
             model!!.shortDescription = graph.graph!!.model!!.shortDescription
         }
@@ -299,7 +299,7 @@ class SubGraphVerticeViewImpl(
     }
 
     override fun createSubGraphView(): GraphView<GraphElementView<SubGraphVerticeRef>> {
-        val libraryGraph = libraryHolder.library.getMetaGraph(subGraphVertice!!.graphUUID!!)
+        val libraryGraph = repository.getMetaGraph(subGraphVertice!!.graphUUID!!)
         val graphView = libraryGraph.graph!!.graphView!!.cloneForExistingModel(getGraph(), storableCreator)
         graphView.bind()
         return graphView as GraphView<GraphElementView<SubGraphVerticeRef>>
@@ -360,7 +360,7 @@ class SubGraphVerticeViewImpl(
     }
 
     private fun getGraph(): Graph {
-        return subGraphVertice!!.getGraph(libraryHolder.library, storableCreator)
+        return subGraphVertice!!.getGraph(repository, storableCreator)
     }
 
     private fun getLabelComponent(): LabelComponent? {
@@ -383,7 +383,7 @@ class SubGraphVerticeViewImpl(
     }
 
     private fun getLibraryContainerDrawing(): ContainerDrawing {
-        val libraryGraph = libraryHolder.library.getMetaGraph(subGraphVertice!!.graphUUID!!)
+        val libraryGraph = repository.getMetaGraph(subGraphVertice!!.graphUUID!!)
         return storableCloner.clonePreservingIdentities(libraryGraph.containerDrawing!!, storableCreator) as ContainerDrawing
     }
 
@@ -430,7 +430,7 @@ class SubGraphVerticeViewImpl(
     private inner class DoubleClickExecutionHandler: ActorInteractionHandlerAdapter() {
         override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
             val actorView = getActorViewAt(x - location.x, y - location.y)
-            if (actorView != null && actorView.getActorInteractionHandler() != null) {
+            if (actorView?.getActorInteractionHandler() != null) {
                 actorView.getActorInteractionHandler()!!.mousePressed(signalHandler, event, x - location.x, y - location.y)
             } else {
                 super.mousePressed(signalHandler, event, x, y)
@@ -438,7 +438,7 @@ class SubGraphVerticeViewImpl(
         }
         override fun mouseReleased(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
             val actorView = getActorViewAt(x - location.x, y - location.y)
-            if (actorView != null && actorView.getActorInteractionHandler() != null) {
+            if (actorView?.getActorInteractionHandler() != null) {
                 actorView.getActorInteractionHandler()!!.mouseReleased(signalHandler, event, x - location.x, y - location.y)
             } else {
                 super.mouseReleased(signalHandler, event, x, y)

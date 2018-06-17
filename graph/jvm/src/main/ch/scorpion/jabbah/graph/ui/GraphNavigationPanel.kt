@@ -26,6 +26,7 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import java.awt.*
 import javax.swing.*
 import javax.swing.border.Border
@@ -44,7 +45,7 @@ open class GraphNavigationPanel(
     private val scheduler: Scheduler,
     private val animator: Animator,
     private val eventBus: EventBus,
-    private val libraryHolder: LibraryHolder,
+    private val repository: MetaGraphRepository,
     private val storableCreator: StorableCreator,
     private val scriptGateway: ScriptGateway,
     private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
@@ -233,7 +234,7 @@ open class GraphNavigationPanel(
     private fun handle(event: SchedulerActivationStateEvent) {
         if (event.scheduler.isActive) {
             if (isRoot) {
-                getRootContent().drawing.graph!!.bind(libraryHolder.library, storableCreator)
+                getRootContent().drawing.graph!!.bind(repository, storableCreator)
             }
             navigationStackView.forEach { it.drawing.bind() }
             getRootContent().drawing.graph!!.executionStarted(event.scheduler)

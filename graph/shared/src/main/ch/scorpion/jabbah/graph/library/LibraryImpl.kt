@@ -73,7 +73,7 @@ class LibraryImpl(
 		}
 		return SubGraphVerticeLocator(
 			graph = metaGraph.graph!!.model!!,
-			library = this,
+			repository = this,
 			storableCreator = storableCreator
 		).contains(graphElementUUID)
 	}

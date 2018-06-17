@@ -2,11 +2,13 @@ package ch.scorpion.jabbah.graph.model.module
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.graph.CombinedMetaGraphRepository
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.library.LibraryImpl
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
@@ -27,6 +29,8 @@ import ch.scorpion.jabbah.io.TypeMap
  * Module definitions for the [ch.scorpion.jabbah.graph.model] module.
  */
 object GraphModelModule : AbstractModule() {
+
+    val metaGraphRepository:  MetaGraphRepository = CombinedMetaGraphRepository()
 
     override fun initialize() {
         BaseModule.require()

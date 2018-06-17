@@ -11,8 +11,8 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import ch.scorpion.jabbah.graph.library.LibraryHolder
-import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.CurrentGraphViewAnimationType
@@ -30,7 +30,7 @@ interface GraphNavigationPanelFactory {
             contextColor: CompositeColor?,
             scheduler: Scheduler,
             eventBus: EventBus,
-            libraryHolder: LibraryHolder,
+            repository: MetaGraphRepository,
             storableCreator: StorableCreator,
             animator: Animator,
             systemSpeedCategory: CurrentSystemSpeedCategory,
@@ -59,7 +59,7 @@ class StandardGraphNavigationPanelFactory: GraphNavigationPanelFactory {
             contextColor: CompositeColor?,
             scheduler: Scheduler,
             eventBus: EventBus,
-            libraryHolder: LibraryHolder,
+            repository: MetaGraphRepository,
             storableCreator: StorableCreator,
             animator: Animator,
             systemSpeedCategory: CurrentSystemSpeedCategory,
@@ -69,7 +69,7 @@ class StandardGraphNavigationPanelFactory: GraphNavigationPanelFactory {
             currentSystemSpeedCategory: CurrentSystemSpeedCategory
     ): GraphNavigationPanel {
         return GraphNavigationPanel(
-            isRoot, drawingView, viewManager, closeHandler, contextColor, scheduler, animator, eventBus, libraryHolder,
+            isRoot, drawingView, viewManager, closeHandler, contextColor, scheduler, animator, eventBus, repository,
                 storableCreator, scriptGateway, currentSystemSpeedCategory)
     }
 
@@ -86,7 +86,7 @@ class StandardGraphNavigationPanelFactory: GraphNavigationPanelFactory {
             scheduler,
             AnimationModule.animator,
             BaseModule.eventBus,
-            LibraryModule.libraryHolder,
+            GraphModelModule.metaGraphRepository,
             IOModule.storableCreator,
             ScriptModule.scriptGateway,
             ExecutionModule.currentSystemSpeedCategory)

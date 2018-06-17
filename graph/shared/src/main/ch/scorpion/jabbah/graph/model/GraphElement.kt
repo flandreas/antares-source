@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
 
@@ -39,10 +39,10 @@ interface GraphElement : Storable, Actor {
 
     /**
      * Asks this [GraphElement] to bind itself with referenced sub [Graph]s, if applicable.
-     * @param library the [Library] from which sub [Graph]s are retrieved
-     * @param storableCreator the [StorableCreator] to be used when cloning [Graph]s from the [Library].
+     * @param repository the [MetaGraphRepository] from which sub [Graph]s are retrieved
+     * @param storableCreator the [StorableCreator] to be used when cloning [Graph]s from the [MetaGraphRepository].
      */
-    fun bind(library: Library, storableCreator: StorableCreator)
+    fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator)
 }
 
 /** An event sent by a [GraphElement] whenever its state has changed. */

@@ -6,14 +6,14 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.library.Library
-import ch.scorpion.jabbah.graph.library.LibraryHolder
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.Script
 
 /**
@@ -21,7 +21,7 @@ import ch.scorpion.jabbah.graph.script.Script
  */
 class SubGraphVerticeRef(
     val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
-    val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+    val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
     val scriptGateway: ScriptGateway = ScriptModule.scriptGateway
 ) : CalculatingVertice(CALCULATOR), SubGraphVertice {
 
@@ -41,10 +41,10 @@ class SubGraphVerticeRef(
         fun fromSubGraphVertice(
             subGraphVertice: SubGraphVertice,
             storableCloner: StorableCloner,
-            libraryHolder: LibraryHolder,
+            repository: MetaGraphRepository,
             scriptGateway: ScriptGateway
         ): SubGraphVerticeRef {
-            val verticeRef = SubGraphVerticeRef(storableCloner, libraryHolder, scriptGateway)
+            val verticeRef = SubGraphVerticeRef(storableCloner, repository, scriptGateway)
             verticeRef.graphUUID = subGraphVertice.graphUUID
             verticeRef.name = subGraphVertice.name
             verticeRef.fillFrom(subGraphVertice)
@@ -85,7 +85,7 @@ class SubGraphVerticeRef(
     override fun read(reader: StoreReader) {
         graphUUID = UUID(reader.readString("uuid"))
 
-        val metaGraph = libraryHolder.library.getMetaGraph(graphUUID!!)
+        val metaGraph = repository.getMetaGraph(graphUUID!!)
         val containerDrawing = metaGraph.containerDrawing
         name = metaGraph.name
         shortDescription = metaGraph.graph!!.model!!.shortDescription
@@ -137,17 +137,17 @@ class SubGraphVerticeRef(
         return graph
     }
 
-    override fun bind(library: Library, storableCreator: StorableCreator) {
-        super.bind(library, storableCreator)
-        graph = getGraph(library, storableCreator)
-        graph!!.bind(library, storableCreator)
+    override fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator) {
+        super.bind(repository, storableCreator)
+        graph = getGraph(repository, storableCreator)
+        graph!!.bind(repository, storableCreator)
     }
 
-    override fun getGraph(library: Library, storableCreator: StorableCreator): Graph {
+    override fun getGraph(repository: MetaGraphRepository, storableCreator: StorableCreator): Graph {
         if (graph != null) {
             return graph!!
         }
-        val subGraph = library.getMetaGraph(graphUUID!!)
+        val subGraph = repository.getMetaGraph(graphUUID!!)
         val cloneGraph = storableCloner.clonePreservingIdentities(subGraph.graph!!.model!!, storableCreator)
         graph = cloneGraph as Graph
 

@@ -27,7 +27,9 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 
 
 /**
@@ -38,7 +40,7 @@ class ContainerDrawing(
     private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
     private val eventBus: EventBus = BaseModule.eventBus,
     private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
-    private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+    private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
     private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : DrawingImpl<Component>() {
 
@@ -146,8 +148,8 @@ class ContainerDrawing(
     }
 
     fun createSubGraphVerticeView(): SubGraphVerticeView<SubGraphVerticeRef> {
-        val model = SubGraphVerticeRef.fromSubGraphVertice(createSubGraphVertice(), storableCloner, libraryHolder, scriptGateway)
-        val view = SubGraphVerticeViewImpl(model, styleProvider, storableCloner, storableCreator, libraryHolder, eventBus)
+        val model = SubGraphVerticeRef.fromSubGraphVertice(createSubGraphVertice(), storableCloner, repository, scriptGateway)
+        val view = SubGraphVerticeViewImpl(model, styleProvider, storableCloner, storableCreator, repository, eventBus)
         fillSubGraphVerticeView(view)
         return view
     }

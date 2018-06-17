@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.execution.actor.*
-import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.DesignError
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
@@ -52,7 +52,7 @@ abstract class AbstractGraphElement : GraphElement {
         }
     }
 
-    override fun bind(library: Library, storableCreator: StorableCreator) {
+    override fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator) {
         // empty
     }
 

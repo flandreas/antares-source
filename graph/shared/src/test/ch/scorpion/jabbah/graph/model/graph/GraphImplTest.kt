@@ -142,7 +142,7 @@ class GraphImplTest {
 
 	@Test
     fun shouldNotChangeUniqueInputName() {
-		val testGraph = GraphImpl(EventBusImpl())
+		val testGraph = GraphImpl(eventBus = EventBusImpl())
 		val `in` = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I99")
 
 		testGraph.add(`in`)
@@ -152,7 +152,7 @@ class GraphImplTest {
 
 	@Test
 	fun shouldNotChangeUniqueOutputName() {
-		val testGraph = GraphImpl(EventBusImpl())
+		val testGraph = GraphImpl(eventBus = EventBusImpl())
 		val out = GraphInputImpl(PortImpl.createInput(Boolean::class), "O99")
 
 		testGraph.add(out)
@@ -162,7 +162,7 @@ class GraphImplTest {
 
 	@Test
 	fun shouldNotChangeUniqueInOutName() {
-		val testGraph = GraphImpl(EventBusImpl())
+		val testGraph = GraphImpl(eventBus = EventBusImpl())
 		val inout = GraphInputImpl(PortImpl.createInOut(Boolean::class), "IO99")
 
 		testGraph.add(inout)
@@ -173,7 +173,7 @@ class GraphImplTest {
 	@Test
 	fun shouldAllowUniquePortNameChange () {
 		val eventBus = EventBusImpl()
-		val testGraph = GraphImpl(eventBus)
+		val testGraph = GraphImpl(eventBus = eventBus)
 		testGraph.add(GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1", eventBus))
 		val in2 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I2", eventBus)
 		testGraph.add(in2)
@@ -186,7 +186,7 @@ class GraphImplTest {
 	@Test
 	fun shouldPreventNonUniquePortNameChange() {
 		val eventBus = EventBusImpl()
-		val testGraph = GraphImpl(eventBus)
+		val testGraph = GraphImpl(eventBus = eventBus)
 		testGraph.add(GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1", eventBus))
 		val in2 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I2", eventBus)
 		testGraph.add(in2)

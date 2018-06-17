@@ -16,8 +16,8 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import ch.scorpion.jabbah.graph.library.LibraryHolder
-import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.ui.GraphNavigationPanel
@@ -43,7 +43,7 @@ class AntaresGraphNavigationPanel(
     contextColor: CompositeColor?,
     scheduler: Scheduler,
     eventBus: EventBus,
-    libraryHolder: LibraryHolder,
+    repository: MetaGraphRepository,
     storableCreator: StorableCreator,
     animator: Animator,
     systemSpeedCategory: CurrentSystemSpeedCategory,
@@ -60,7 +60,7 @@ class AntaresGraphNavigationPanel(
         scheduler,
         animator,
         eventBus,
-        libraryHolder,
+        repository,
         storableCreator,
         scriptGateway,
         currentSystemSpeedCategory
@@ -91,7 +91,7 @@ class AntaresGraphNavigationPanelFactory : GraphNavigationPanelFactory {
             contextColor: CompositeColor?,
             scheduler: Scheduler,
             eventBus: EventBus,
-            libraryHolder: LibraryHolder,
+            repository: MetaGraphRepository,
             storableCreator: StorableCreator,
             animator: Animator,
             systemSpeedCategory: CurrentSystemSpeedCategory,
@@ -108,7 +108,7 @@ class AntaresGraphNavigationPanelFactory : GraphNavigationPanelFactory {
                 contextColor,
                 scheduler,
                 eventBus,
-                libraryHolder,
+                repository,
                 storableCreator,
                 animator,
                 systemSpeedCategory,
@@ -130,7 +130,7 @@ class AntaresGraphNavigationPanelFactory : GraphNavigationPanelFactory {
         return create(
             isRoot, drawingView, viewManager, closeHandler, contextColor, scheduler,
             BaseModule.eventBus,
-            LibraryModule.libraryHolder,
+            GraphModelModule.metaGraphRepository,
             IOModule.storableCreator,
             AnimationModule.animator,
             ExecutionModule.currentSystemSpeedCategory,

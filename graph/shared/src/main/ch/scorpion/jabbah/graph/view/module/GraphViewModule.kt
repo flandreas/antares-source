@@ -204,7 +204,7 @@ object GraphViewModule : AbstractModule() {
             IOModule.storableClonerProvider.invoke(),
             BaseModule.eventBus,
             ScriptModule.scriptGateway,
-            LibraryModule.libraryHolder,
+            GraphModelModule.metaGraphRepository,
             DrawStyleModule.styleProvider)
     }
 }
