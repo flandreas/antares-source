@@ -174,7 +174,7 @@ class AntaresSwing(
 			return
 		}
 
-		newFile()
+		close()
 	}
 
 	/** ---- [AntaresSwing] */
