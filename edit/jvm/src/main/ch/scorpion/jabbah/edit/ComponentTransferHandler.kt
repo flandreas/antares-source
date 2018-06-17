@@ -35,12 +35,16 @@ open class ComponentTransferHandler(
 	/** Preserves the [Transferable] until the final drop action.*/
 	private var transferable: Transferable? = null
 
+    protected open fun extractTransferData (transferData: Any?): Any? {
+        return transferData
+    }
+
     init {
         (editor.view.canvas as JComponent).dropTarget = object : DropTarget() {
-            override fun dragEnter(dtde: DropTargetDragEvent?) {
+            override fun dragEnter(dtde: DropTargetDragEvent) {
                 super.dragEnter(dtde)
                 try {
-                    val transferData = dtde?.transferable?.getTransferData(flavour)
+                    val transferData = extractTransferData(dtde.transferable.getTransferData(flavour))
                     if (transferData is Component) {
 	                    transferable = dtde.transferable
                         setComponent(transferData, Point2D(dtde.location.x, dtde.location.y))
@@ -55,10 +59,10 @@ open class ComponentTransferHandler(
                 editor.view.setDropComponent(null, null)
             }
 
-            override fun dragOver(dtde: DropTargetDragEvent?) {
+            override fun dragOver(dtde: DropTargetDragEvent) {
                 super.dragOver(dtde)
                 try {
-                    val transferData = dtde?.transferable?.getTransferData(flavour)
+                    val transferData = extractTransferData(dtde.transferable.getTransferData(flavour))
                     if (transferData is Component) {
                         setComponent(transferData, Point2D(dtde.location.x, dtde.location.y))
                         eventBus.post(DragEvent(editor, listOf(transferData)))
@@ -69,7 +73,7 @@ open class ComponentTransferHandler(
 
             }
 
-            override fun drop(dtde: DropTargetDropEvent?) {
+            override fun drop(dtde: DropTargetDropEvent) {
                 super.drop(dtde)
                 try {
                     val dropComponent = editor.view.dropComponent

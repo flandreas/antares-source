@@ -159,7 +159,7 @@ class GraphPanel(
 	}
 
 	private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
-		GraphPanelTransferHandler(editor, eventBus, GraphElementViewTransferable.FLAVOR, libraryHolder)
+		GraphPanelTransferHandler(editor, eventBus, GraphElementViewTransferable.FLAVOR)
 
 	private fun updateEditability() {
 		val editable = viewManager.activeView === editor.view && editor.view.editable
@@ -190,7 +190,7 @@ class GraphPanel(
 		add(bottomSidebarPane, BorderLayout.SOUTH)
 	}
 
-	/** Handles changes of the ´isOpen´ property of the [bottomSidebarPane]. */
+	/** Handles changes of the ï¿½isOpenï¿½ property of the [bottomSidebarPane]. */
 	private fun bottomSidebarPaneChanged() {
 		if (bottomSidebarPane.isOpen) {
 			removeAll()

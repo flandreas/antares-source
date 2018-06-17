@@ -43,7 +43,7 @@ class LibraryElementTransferHandler : TransferHandler() {
         dragImage = DUMMY_IMAGE
         dragImageOffset = java.awt.Point(0, 0)
 
-        return GraphElementViewTransferable(newInstance, libraryElement)
+        return GraphElementViewTransferable.of(newInstance, libraryElement)
     }
 
     override fun importData(support: TransferHandler.TransferSupport): Boolean {

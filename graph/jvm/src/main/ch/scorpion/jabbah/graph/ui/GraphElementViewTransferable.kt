@@ -12,12 +12,14 @@ import java.awt.datatransfer.UnsupportedFlavorException
  * A drag&drop [Transferable] for [GraphElementView]s.
  */
 class GraphElementViewTransferable(
-    private val data: GraphElementView<GraphElement>,
-    val libraryElement: LibraryElement
+    private val data: GraphElementViewTransferableData
 ) : Transferable {
 
     companion object {
         val FLAVOR = DataFlavor("${DataFlavor.javaJVMLocalObjectMimeType};class=\"${String::class.java.name}\"")
+	    fun of(graphElementView: GraphElementView<GraphElement>, libraryElement: LibraryElement): GraphElementViewTransferable {
+		    return GraphElementViewTransferable(GraphElementViewTransferableData(graphElementView, libraryElement))
+	    }
     }
 
     /** ---- [Transferable] */
@@ -37,3 +39,8 @@ class GraphElementViewTransferable(
         return data
     }
 }
+
+data class GraphElementViewTransferableData(
+	val graphElementView: GraphElementView<GraphElement>,
+	val libraryElement: LibraryElement
+)
