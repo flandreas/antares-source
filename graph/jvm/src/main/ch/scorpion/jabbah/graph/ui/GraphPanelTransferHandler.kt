@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import java.awt.datatransfer.Transferable
 
 
@@ -57,7 +58,7 @@ class GraphPanelTransferHandler(
 	    val targetUUID = (editor.drawing as GraphView<*>).graph!!.uuid
 
         if (data.libraryElement.library!!.graphContainsRecursively(dropVertice!!.graphUUID!!, targetUUID)) {
-            LOG.debug("Preventing dropping '${dropVertice.name}' in order to prevent Graph cycle")
+            LOG.debug("Prevent dropping '${dropVertice.name}' in order to prevent Graph cycle")
             JOptionPane.showMessageDialog(
                 null,
                 Translations.getString("graph.cycleError.msg"),
@@ -65,6 +66,16 @@ class GraphPanelTransferHandler(
                 JOptionPane.ERROR_MESSAGE)
 	        return false
         }
+
+	    if (data.libraryElement.library == ProjectModule.projectHolder.project && data.libraryElement.library!!.getOptionalMetaGraph(targetUUID) == null) {
+		    LOG.debug("Prevent dropping project component into library graph")
+		    JOptionPane.showMessageDialog(
+			    null,
+			    Translations.getString("graph.dependencyError.msg"),
+			    Translations.getString("graph.action.addElementToGraph.name"),
+			    JOptionPane.ERROR_MESSAGE)
+		    return false
+	    }
 
         return true
     }
