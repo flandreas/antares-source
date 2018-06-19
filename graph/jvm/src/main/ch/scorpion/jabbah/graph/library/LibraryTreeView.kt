@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
@@ -54,13 +55,14 @@ class LibraryTreeView(
         transferHandler = LibraryElementTransferHandler()
 
         setRowHeight(24)
-	    isRootVisible = false
+	    isRootVisible = true
         setCellRenderer(Renderer())
         addTreeSelectionListener({ eventBus.post(LibrarySelectionChangedEvent(this)) })
         addMouseListener(DoubleClickListener())
 
         dragEnabled = true
         dropMode = DropMode.ON
+	    showsRootHandles = true
 
         eventBus.register(LibraryItemAddedEvent::class, { handle(it) })
         eventBus.register(LibraryItemRemovedEvent::class, { handle(it) })
@@ -93,7 +95,7 @@ class LibraryTreeView(
     companion object {
 
         fun createLibraryTreeModel(library: Library, project: Project?): TreeModel {
-	        val root = DefaultMutableTreeNode()
+	        val root = DefaultMutableTreeNode(Translations.getString("graph.desktop.name"))
 
 	        if (project != null) {
 		        val projectNode = DefaultMutableTreeNode(project)
@@ -125,7 +127,10 @@ class LibraryTreeView(
 
     fun getSelectedItem(): LibraryItem? {
         val path = selectionPath ?: return null
-        return (path.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryItem
+	    if ((path.lastPathComponent as DefaultMutableTreeNode).userObject is LibraryItem?) {
+		    return (path.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryItem?
+	    }
+        return null
     }
 
     private inner class DoubleClickListener : MouseAdapter() {
@@ -254,10 +259,14 @@ class LibraryTreeView(
         private val containerLibElemIcon = ContainerLibraryElementIcon()
 	    private val currentContainerLibElemIcon = ContainerLibraryElementIcon(current = true)
 	    private val defaultElemFont = this@LibraryTreeView.font.deriveFont(mapOf(TextAttribute.UNDERLINE to TextAttribute.UNDERLINE_ON))
+		private val projectIcon = ImageIcon(LibraryTreeView::class.java.getResource("/img/project-24.png"))
+		private val libraryIcon = ImageIcon(LibraryTreeView::class.java.getResource("/img/library-24.png"))
+		private val folderIcon = ImageIcon(LibraryTreeView::class.java.getResource("/img/folder-20.png"))
+		private val desktopIcon = ImageIcon(LibraryTreeView::class.java.getResource("/img/table-20.png"))
 
         override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
             val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
-	        if ((value as DefaultMutableTreeNode).userObject != null) {
+	        if ((value as DefaultMutableTreeNode).userObject is LibraryItem) {
 		        val iconPath = (value.userObject as LibraryItem).iconPath
 		        component.font = this@LibraryTreeView.font
 		        if (StringUtils.isNotEmpty(iconPath)) {
@@ -270,7 +279,17 @@ class LibraryTreeView(
 			        if (isDefaultElement(value.userObject as ContainerLibraryElement)) {
 				        component.font = defaultElemFont
 			        }
+		        } else if (value.userObject is Library) {
+			        if (value.userObject == libraryHolder.library) {
+				        component.icon = libraryIcon
+			        } else {
+				        component.icon = projectIcon
+			        }
+		        } else if (value.userObject is LibraryFolder) {
+			        component.icon = folderIcon
 		        }
+	        } else {
+		        component.icon = desktopIcon
 	        }
             return component
         }
