@@ -52,7 +52,7 @@ class LibraryTreeView(
         selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
         selectionModel.addTreeSelectionListener { setupPopupMenu(it.newLeadSelectionPath) }
 
-        transferHandler = LibraryElementTransferHandler()
+        transferHandler = LibraryTreeViewTransferHandler(this)
 
         setRowHeight(24)
 	    isRootVisible = true

@@ -2,14 +2,12 @@ package ch.scorpion.jabbah.graph.model.module
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.CombinedMetaGraphRepository
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
 import ch.scorpion.jabbah.graph.model.net.NetImpl
@@ -17,7 +15,7 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeImpl
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.repository.RepositoryModule
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioImpl
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioStepImpl
@@ -36,8 +34,7 @@ object GraphModelModule : AbstractModule() {
         BaseModule.require()
         IOModule.require()
         ExecutionModule.require()
-        LibraryModule.require()
-        ProjectModule.require()
+        RepositoryModule.require()
         ScriptModule.require()
 
         configureTypeMap(IOModule.typeMap)

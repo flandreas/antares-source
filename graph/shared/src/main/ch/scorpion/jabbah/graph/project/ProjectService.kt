@@ -24,6 +24,9 @@ data class CloseProjectRequest (val project: Project)
 
 interface ProjectService {
 
+	/** Returns the currently open [Project], if any.*/
+	val currentProject: Project?
+
 	/** Returns the names of all stored projects.*/
 	fun getProjectNames(): ImmutableList<String>
 
@@ -64,6 +67,8 @@ interface ProjectService {
 
 /** Null pattern */
 class UnimplementedProjectService : ProjectService {
+
+	override val currentProject: Project? get() = throw UnsupportedOperationException("not implemented")
 
 	override fun getProjectNames(): ImmutableList<String> {
 		throw UnsupportedOperationException("not implemented")

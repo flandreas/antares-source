@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -11,6 +13,9 @@ import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.io.StorableCreator
 
 interface LibraryService {
+
+	/** Returns the current [Library].*/
+	val currentLibrary: Library?
 
 	fun loadLibrary(name: String): Library
 
@@ -67,6 +72,12 @@ interface LibraryService {
 
 	/** Sets the [UUID] of the [ContainerLibraryElement] to be opened when the [Library] is opened, and makes the change persistent.*/
 	fun setDefaultElement(library: Library, uuid: UUID?)
+
+	/**
+	 * Returns the [LibraryDirectory] in [Library] that directly contains the specified [LibraryItem].
+	 * @throws IllegalArgumentException if none is found
+	 */
+	fun getDirectoryOf(library: Library, item: LibraryItem): LibraryDirectory
 }
 
 /** Posted on [EventBus] when a [LibraryItem] has been added to a [LibraryDirectory].*/
@@ -88,6 +99,7 @@ data class LibraryItemUpdatedEvent(
 )
 
 class LibraryServiceImpl(
+	private val libraryAccessor: () -> Library? = { LibraryModule.libraryHolder.library },
 	private val persistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService,
 	private val libraryFactory: (String) -> Library = LibraryModule.libraryFactory,
 	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
@@ -99,8 +111,9 @@ class LibraryServiceImpl(
 		private val LOG by logger(LibraryServiceImpl::class)
 	}
 
-
 	/** ---- [LibraryService] interface */
+
+	override val currentLibrary: Library? get() = libraryAccessor.invoke()
 
 	override fun loadLibrary(name: String): Library {
 		return loadLibrary(libraryFactory.invoke(name))
@@ -189,6 +202,16 @@ class LibraryServiceImpl(
 		}
 	}
 
+	override fun getDirectoryOf(library: Library, item: LibraryItem): LibraryDirectory {
+		val finder = LibraryItemFinder(item)
+		library.accept(finder)
+		if (finder.result != null) {
+			return finder.result!!
+		}
+		LOG.debug("LibraryServiceImpl: could't find owing LibraryDirectory of LibraryItem")
+		throw IllegalStateException()
+	}
+
 	/** ---- [LibraryServiceImpl] */
 
 	private fun storeContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement) {
@@ -210,6 +233,19 @@ class LibraryServiceImpl(
 		if (element.metaGraph == null) {
 			element.updateMetaGraph(persistenceService.loadMetaGraph(library, element.uuid))
 			LOG.debug("LibraryServiceImpl: Loaded MetaGraph '${element.metaGraph!!.name}' ${element.uuid}")
+		}
+	}
+
+	/** Finds the [LibraryDirectory] that directly contains `item`.*/
+	private class LibraryItemFinder(private val item: LibraryItem) : EmptyHierarchyVisitor() {
+		var result: LibraryDirectory? = null
+
+		override fun visitEnter(node: Any): Boolean {
+			if (node is LibraryDirectory && node.contains(item)) {
+				result = node
+				return false
+			}
+			return true
 		}
 	}
 }

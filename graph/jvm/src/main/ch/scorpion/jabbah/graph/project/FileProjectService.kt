@@ -35,6 +35,8 @@ class FileProjectService(
 
 	/** ---- [ProjectService] interface */
 
+	override val currentProject: Project? get() = projectHolder.project
+
 	override fun exists(projectName: String): Boolean {
 		val path = FileSystems.getDefault().getPath(directoryPath, projectName)
 		return Files.exists(path)
