@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.repository
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.project.ProjectModule
 
 /**
@@ -13,9 +14,14 @@ interface RepositoryService {
 	/**
 	 * Moves the specified [ContainerLibraryElement] to another [LibraryDirectory], which can be in the same
 	 * or in another [Library].
+	 * @throws LibraryDependencyException if a [ContainerLibraryElement] is moved from a [Project] to the
+	 * current [Library], but contains [Project] [MetaGraph]s.
 	 */
 	fun move(elem: ContainerLibraryElement, destination: LibraryDirectory)
 }
+
+/** Indicates that an operation would result in a [Library] containing elements that depend on a [Project].*/
+class LibraryDependencyException(val subGraphVertice: SubGraphVertice) : Throwable()
 
 /** Standard implementation of the [RepositoryService] interface.*/
 class RepositoryServiceImpl(
@@ -38,11 +44,31 @@ class RepositoryServiceImpl(
 		LOG.debug("RepositoryServiceImpl: moving '${elem.name}' in '${origService.currentLibrary?.name}' "
 			+ "to '${destination.name}' in '${destService.currentLibrary?.name}'")
 
-		val origDirectory = origService.getDirectoryOf(origService.currentLibrary!!, elem)
+		if (isMoveFromProjectToLibrary(elem, destination)) {
+			checkLibraryDependency(elem)
+		}
 
+		val origDirectory = origService.getDirectoryOf(origService.currentLibrary!!, elem)
 		destService.addContainerLibraryElement(destService.currentLibrary!!, elem.metaGraph!!, destination)
 		origService.removeLibraryItem(origService.currentLibrary!!, elem, origDirectory)
 	}
+
+	/**
+	 * Checks if `elem` contains a [SubGraphVertice] that references a [Project] [MetaGraph].
+	 * @throws LibraryDependencyException if it does
+	 */
+	private fun checkLibraryDependency(elem: ContainerLibraryElement) {
+		val projectSubGraphVertice = elem.metaGraph!!.graph!!.model!!.elements
+			.filter { it is SubGraphVertice }
+			.map { it as SubGraphVertice }
+			.firstOrNull { projectLibraryService.currentLibrary!!.containsMetaGraph(it.graphUUID!!) }
+		if (projectSubGraphVertice != null) {
+			throw LibraryDependencyException(projectSubGraphVertice)
+		}
+	}
+
+	private fun isMoveFromProjectToLibrary(elem: ContainerLibraryElement, destination: LibraryDirectory): Boolean =
+		elem.library === projectLibraryService.currentLibrary && destination.library === libraryService.currentLibrary
 
 	/** ---- [RepositoryServiceImpl] */
 

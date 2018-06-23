@@ -1,14 +1,18 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.repository.LibraryDependencyException
 import ch.scorpion.jabbah.graph.repository.RepositoryModule
 import ch.scorpion.jabbah.graph.repository.RepositoryService
 import ch.scorpion.jabbah.graph.ui.GraphElementViewTransferable
 import ch.scorpion.jabbah.graph.ui.GraphElementViewTransferableData
+import java.awt.Frame
 import java.awt.datatransfer.Transferable
 import java.awt.image.BufferedImage
 import javax.swing.JComponent
+import javax.swing.JOptionPane
 import javax.swing.JTree
 import javax.swing.TransferHandler
 import javax.swing.tree.DefaultMutableTreeNode
@@ -66,8 +70,18 @@ class LibraryTreeViewTransferHandler(
 	    getDropLibraryDirectory(support)?.let {
 		    val elem = extractTransferElement(support) as ContainerLibraryElement
 		    val dest = getDropLibraryDirectory(support)
-		    repositoryService.move(elem, dest!!)
-		    return true
+		    return try {
+			    repositoryService.move(elem, dest!!)
+			    true
+		    } catch (e: LibraryDependencyException) {
+			    JOptionPane.showConfirmDialog(
+				    Frame.getFrames()[0],
+				    Translations.getString("repository.move.dependencyError.msg", e.subGraphVertice.name!!),
+				    Translations.getString("repository.move.name"),
+				    JOptionPane.DEFAULT_OPTION,
+				    JOptionPane.ERROR_MESSAGE)
+			    false
+		    }
 	    }
 
 	    return false

@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.graph.script.Script
  * A [SubGraphVertice] implementation that is part of one [Graph] and references another [Graph] in the [Library].
  */
 class SubGraphVerticeRef(
+    graphUUID: UUID? = null,
     val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
     val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
     val scriptGateway: ScriptGateway = ScriptModule.scriptGateway
@@ -44,7 +45,7 @@ class SubGraphVerticeRef(
             repository: MetaGraphRepository,
             scriptGateway: ScriptGateway
         ): SubGraphVerticeRef {
-            val verticeRef = SubGraphVerticeRef(storableCloner, repository, scriptGateway)
+            val verticeRef = SubGraphVerticeRef(null, storableCloner, repository, scriptGateway)
             verticeRef.graphUUID = subGraphVertice.graphUUID
             verticeRef.name = subGraphVertice.name
             verticeRef.fillFrom(subGraphVertice)
@@ -65,7 +66,7 @@ class SubGraphVerticeRef(
 
     /** ---- [SubGraphVertice] */
 
-    override var graphUUID: UUID? = null
+    override var graphUUID: UUID? = graphUUID
 
     override fun <T: Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler) {
         LOG.trace("SubGraphVerticeRef: propagateOutput for Output '${outputPort.name}'")

@@ -29,12 +29,15 @@ class TestLibraryBuilder(
 		return this
 	}
 
+	/** Creates a new [MetaGraph] for a model with the given name and adds it to the current [LibraryDirectory].*/
 	fun addContainerLibraryElement(name: String): TestLibraryBuilder {
-		//val elem = ContainerLibraryElement(name = name)
 		val metaGraph = MetaGraph()
 		metaGraph.graph!!.model!!.name = name
-		//elem.updateMetaGraph(metaGraph)
-		//stack.peek().add(elem)
+		return addContainerLibraryElement(metaGraph)
+	}
+
+	/** Adds the specified [MetaGraph] to the current [LibraryDirectory].*/
+	fun addContainerLibraryElement(metaGraph: MetaGraph): TestLibraryBuilder {
 		library.libraryService.addContainerLibraryElement(library, metaGraph, stack.peek())
 		return this
 	}

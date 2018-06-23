@@ -1,8 +1,12 @@
 package ch.scorpion.jabbah.graph.repository
 
 import ch.scorpion.jabbah.base.TestTranslationsBuilder
+import ch.scorpion.jabbah.graph.GraphStorable
+import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.*
-import ch.scorpion.jabbah.graph.model.GraphModelTestRule
+import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import com.nhaarman.mockito_kotlin.mock
 import org.hamcrest.CoreMatchers.*
@@ -32,6 +36,8 @@ class RepositoryServiceImplTest {
 	@Before
 	fun setup() {
 		TestTranslationsBuilder().withAnyKey()
+		LibraryModule.libraryHolder.l = libraryBuilder.library
+		ProjectModule.projectHolder.p = projectBuilder.library
 	}
 
 	@Test
@@ -49,5 +55,24 @@ class RepositoryServiceImplTest {
 		assertThat(project.getRecursively("Element"), `is`(nullValue()))
 		assertThat(library.getRecursively("Element"), `is`(notNullValue()))
 		assertThat((library.getRecursively("Directory") as LibraryDirectory).contains(library.getRecursively("Element") as LibraryItem), `is`(true))
+	}
+
+	@Test(expected = LibraryDependencyException::class)
+	fun shouldNotMoveProjectDependenciesToLibrary() {
+		projectBuilder.addContainerLibraryElement("ReferencedVertice")
+		val referencedVertice = projectBuilder.library.get("ReferencedVertice") as ContainerLibraryElement
+		val graphViewBuilder = GraphViewBuilder<Boolean>()
+		graphViewBuilder.reference(referencedVertice.uuid)
+		val referencingMetaGraph = MetaGraph(GraphStorable(graphViewBuilder.graphView), ContainerDrawing())
+		referencingMetaGraph.graph!!.model!!.name = "ReferencingVertice"
+		projectBuilder.addContainerLibraryElement(referencingMetaGraph)
+
+		try {
+			service.move(projectBuilder.library.get("ReferencingVertice") as ContainerLibraryElement, libraryBuilder.library as LibraryDirectory)
+		} catch (e: LibraryDependencyException) {
+			assertThat(projectBuilder.library.get("ReferencingVertice") as ContainerLibraryElement?, `is`(notNullValue()))
+			assertThat(libraryBuilder.library.get("ReferencingVertice") as ContainerLibraryElement?, `is`(nullValue()))
+			throw e
+		}
 	}
 }

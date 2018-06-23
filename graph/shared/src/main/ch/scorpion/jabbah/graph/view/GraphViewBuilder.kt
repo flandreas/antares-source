@@ -1,14 +1,18 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 
 /**
  * Provides a convenient API for building [GraphView]s that contain connected [VerticeView]s.
@@ -45,6 +49,12 @@ open class GraphViewBuilder<T: Any>() {
         GraphViewModule.graphViewConnectService.connectToOrigin(edgeView, from, from.vertice.getPort())
         edgeView.moveDestinationEndPoint(toLocation.x, toLocation.y)
         return edgeView
+    }
+
+    fun reference(uuid: UUID): SubGraphVerticeView<SubGraphVerticeRef> {
+		val vv = SubGraphVerticeViewImpl(SubGraphVerticeRef(graphUUID = uuid))
+	    graphView.add(vv)
+	    return vv
     }
 
     fun split(edgeView: EdgeView<T>, segmentIndex: Int, location: Point2D, dest: VerticeView<out Vertice>?): SplitEdgeViewResult<T> {
