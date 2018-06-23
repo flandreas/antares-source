@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
@@ -12,10 +13,7 @@ import ch.scorpion.jabbah.io.*
 class LibraryFolder(
     name: String? = null,
     iconPath: String? = null,
-    val eventBus: EventBus = BaseModule.eventBus,
-    val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
-    val storableCreator: StorableCreator = IOModule.storableCreator,
-    val libraryPersistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService
+    val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryItem(iconPath), LibraryDirectory {
 
     private val items: MutableList<LibraryItem> = mutableListOf()
@@ -122,6 +120,12 @@ class LibraryFolder(
         return items.toImmutableList()
     }
 
+	override fun getRecursively(name: String): LibraryItem? {
+		val finder=  NamedItemFinder(name)
+		accept(finder)
+		return finder.result
+	}
+
     /** ---- [LibraryFolder] */
 
     fun replaceWith(libraryFolder: LibraryFolder) {
@@ -142,5 +146,20 @@ class LibraryFolder(
 			i++
 		}
 		return i
+	}
+
+	/** Finds the first [LibraryItem] with a particular name. Note that names are not unique within a [Library].*/
+	private class NamedItemFinder(private val name: String) : EmptyHierarchyVisitor() {
+
+		/** Holds the result, if any.*/
+		var result: LibraryItem? = null
+
+		override fun visitEnter(node: Any): Boolean {
+			if (result == null && node is LibraryItem && node.name == name) {
+				result = node
+				return false
+			}
+			return true
+		}
 	}
 }

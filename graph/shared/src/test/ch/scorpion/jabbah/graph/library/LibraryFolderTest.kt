@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
-import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.*
 import org.junit.ClassRule
 import org.junit.Test
@@ -35,5 +35,27 @@ class LibraryFolderTest {
 
 		assertThat(folder.contains(item), `is`(false))
 		assertThat(folder.containsRecursively(item), `is`(true))
+	}
+
+	@Test
+	fun shouldGetDirectly() {
+		val folder = LibraryFolder("test")
+		val item = LibraryFolder("item")
+		val item2 = LibraryFolder("item2")
+
+		folder.add(item)
+		assertThat(folder.get("item") as LibraryFolder, sameInstance(item))
+	}
+
+	@Test
+	fun shouldGetRecursively() {
+		val folder = LibraryFolder("test")
+		val folder2 = LibraryFolder("folder2")
+		val item = LibraryFolder("item")
+		folder.add(folder2)
+		folder2.add(item)
+
+		assertThat(folder.getRecursively("item") as LibraryFolder?, sameInstance(item))
+		assertThat(folder.getRecursively("bla") as LibraryFolder?, `is`(nullValue()));
 	}
 }
