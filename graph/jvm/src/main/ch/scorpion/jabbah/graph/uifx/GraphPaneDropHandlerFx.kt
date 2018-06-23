@@ -38,7 +38,7 @@ class GraphPaneDropHandlerFx(
 		}
 
 		val dropVertice = dropComponent.model as SubGraphVertice?
-		val dropGraph = libraryHolder.library.getMetaGraph(dropVertice!!.graphUUID!!).graph!!.model
+		val dropGraph = libraryHolder.library.getMetaGraph(dropVertice!!.graphUUID!!).graph.model
 
 		val canImport = !libraryHolder.library.graphContainsRecursively(
 			dropGraph!!.uuid,

@@ -44,7 +44,7 @@ class SubGraphVerticeRefTest {
 
         customNOT.model!!.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 
-        val libraryGraph = LibraryModule.libraryHolder.library.getMetaGraph(customNOT.model!!.graphUUID!!).graph!!.model!!
+        val libraryGraph = LibraryModule.libraryHolder.library.getMetaGraph(customNOT.model!!.graphUUID!!).graph.model!!
         val customGraph = customNOT.model!!.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 
         for (i in 1..5) {
@@ -65,7 +65,7 @@ class SubGraphVerticeRefTest {
 
         customNAND.model!!.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 
-        val libraryGraph = LibraryModule.libraryHolder.library.getMetaGraph(customNAND.model!!.graphUUID!!).graph!!.model!!
+        val libraryGraph = LibraryModule.libraryHolder.library.getMetaGraph(customNAND.model!!.graphUUID!!).graph.model!!
         val customGraph = customNAND.model!!.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 
         for (i in 1..6) {

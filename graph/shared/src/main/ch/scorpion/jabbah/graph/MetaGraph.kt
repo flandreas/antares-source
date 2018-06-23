@@ -42,25 +42,31 @@ class CombinedMetaGraphRepository : MetaGraphRepository {
 /**
  * Combines a [GraphStorable] and a [ContainerDrawing] as a [Storable].
  */
-class MetaGraph(graph: GraphStorable? = null, containerDrawing: ContainerDrawing? = null) : Storable {
-    constructor(): this(GraphStorable(), ContainerDrawing())
+class MetaGraph(graph: GraphStorable = GraphStorable(), containerDrawing: ContainerDrawing = ContainerDrawing()) : Storable {
 
-    var graph: GraphStorable? = graph
+	companion object {
+		fun withName(name: String): MetaGraph {
+			val metaGraph = MetaGraph()
+			metaGraph.graph.model!!.name = name
+			metaGraph.containerDrawing.model.name = name
+			return metaGraph
+		}
+	}
+
+    var graph: GraphStorable = graph
         private set
 
-    var containerDrawing: ContainerDrawing? = containerDrawing
+    var containerDrawing: ContainerDrawing = containerDrawing
         private set
 
-    val name: String get() = graph!!.model!!.name
+    val name: String get() = graph.model!!.name
 
-    val uuid: UUID get() = graph!!.model!!.uuid
+    val uuid: UUID get() = graph.model!!.uuid
 
     init {
-        if (containerDrawing != null) {
-            containerDrawing.model.name = name
-            containerDrawing.model.graphUUID = uuid
-            containerDrawing.initialize()
-        }
+        containerDrawing.model.name = name
+        containerDrawing.model.graphUUID = uuid
+        containerDrawing.initialize()
     }
 
     /** ---- [Storable] interface */
@@ -68,8 +74,8 @@ class MetaGraph(graph: GraphStorable? = null, containerDrawing: ContainerDrawing
     override var storableId: Int = 0
 
     override fun write(writer: StoreWriter) {
-        writer.writeStorable("graph", graph!!)
-        writer.writeStorable("container", containerDrawing!!)
+        writer.writeStorable("graph", graph)
+        writer.writeStorable("container", containerDrawing)
     }
 
     override fun read(reader: StoreReader) {
@@ -89,7 +95,7 @@ class MetaGraph(graph: GraphStorable? = null, containerDrawing: ContainerDrawing
     }
 
     override fun getStorableChildren(): Iterator<Storable> {
-        return listOf(graph!!, containerDrawing!!).iterator()
+        return listOf(graph, containerDrawing).iterator()
     }
 
     override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
@@ -98,7 +104,7 @@ class MetaGraph(graph: GraphStorable? = null, containerDrawing: ContainerDrawing
         }
         if (reference.name == "container") {
             containerDrawing = reference.additionalInfo as ContainerDrawing
-            containerDrawing!!.completeFromGraph(graph!!.model!!)
+            containerDrawing.completeFromGraph(graph.model!!)
         }
     }
 
@@ -106,10 +112,10 @@ class MetaGraph(graph: GraphStorable? = null, containerDrawing: ContainerDrawing
 
     fun accept(visitor: HierarchyVisitor): Boolean {
         if (visitor.visitEnter(this)) {
-            if (!graph!!.accept(visitor)) {
+            if (!graph.accept(visitor)) {
                 return visitor.visitLeave(this)
             }
-            if (!containerDrawing!!.accept(visitor)) {
+            if (!containerDrawing.accept(visitor)) {
                 return visitor.visitLeave(this)
             }
         }

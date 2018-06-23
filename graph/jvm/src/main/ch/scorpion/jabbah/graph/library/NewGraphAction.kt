@@ -9,7 +9,7 @@ import java.awt.Frame
 import javax.swing.JOptionPane
 
 /**
- * Creates a new, empty [Graph] as a child of the currently selected [LibraryDirectory].
+ * Creates a new [ContainerLibraryElement] with an empty [MetaGraph] as a child of the currently selected [LibraryDirectory].
  */
 class NewGraphAction(
     eventBus: EventBus = BaseModule.eventBus
@@ -27,8 +27,7 @@ class NewGraphAction(
 	    }
         val directory = libraryTreeView!!.getSelectedItem() as LibraryDirectory
 	    val library = directory.library!!
-	    val metaGraph = MetaGraph()
-	    metaGraph.graph!!.model!!.name = name
+	    val metaGraph = MetaGraph.withName(name)
 
 	    val element = library.libraryService.addContainerLibraryElement(library, metaGraph, directory)
 		eventBus.post(OpenContainerLibraryElementRequest(element))

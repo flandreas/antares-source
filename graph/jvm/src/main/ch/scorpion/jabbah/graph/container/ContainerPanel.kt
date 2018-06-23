@@ -40,7 +40,7 @@ class ContainerPanel(
 
     constructor(editor: ContainerEditor, viewManager: ViewManager): this(editor, EditModuleJvm.propertySheetPanelFactory, BaseModule.eventBus, viewManager)
 
-    /** The [TreeView] containing all objects of [graphView] that have not yet been added to the [ContainerDrawing].*/
+    /** The [ContainerTreeView] containing all objects of [graphView] that have not yet been added to the [ContainerDrawing].*/
     private val treeView = GraphModuleJvm.containerTreeViewFactory.invoke()
 
     /** The [GraphView] whose outside view is edited by this [ContainerPanel]. Defined in [setData]. */
@@ -65,7 +65,7 @@ class ContainerPanel(
 		            add(mainSplitPane)
 	            }
 	            val metaGraph = it.newData as MetaGraph
-	            setData(metaGraph.graph!!.graphView!!, metaGraph.containerDrawing!!)
+	            setData(metaGraph.graph.graphView!!, metaGraph.containerDrawing)
             }
         })
 

@@ -66,7 +66,7 @@ class FileProjectService(
 		libraryService.storeLibrary(project)
 
 		val metaGraph = MetaGraph()
-		metaGraph.graph!!.model!!.name = Translations.getString(newMetaGraphNameTranslationKey)
+		metaGraph.graph.model!!.name = Translations.getString(newMetaGraphNameTranslationKey)
 		libraryService.addContainerLibraryElement(project, metaGraph, project)
 
 		return project

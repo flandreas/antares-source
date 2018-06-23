@@ -64,7 +64,7 @@ class RepositoryServiceImplTest {
 		val graphViewBuilder = GraphViewBuilder<Boolean>()
 		graphViewBuilder.reference(referencedVertice.uuid)
 		val referencingMetaGraph = MetaGraph(GraphStorable(graphViewBuilder.graphView), ContainerDrawing())
-		referencingMetaGraph.graph!!.model!!.name = "ReferencingVertice"
+		referencingMetaGraph.graph.model!!.name = "ReferencingVertice"
 		projectBuilder.addContainerLibraryElement(referencingMetaGraph)
 
 		try {

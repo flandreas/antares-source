@@ -89,13 +89,13 @@ class SubGraphVerticeRef(
         val metaGraph = repository.getMetaGraph(graphUUID!!)
         val containerDrawing = metaGraph.containerDrawing
         name = metaGraph.name
-        shortDescription = metaGraph.graph!!.model!!.shortDescription
-        fillFrom(containerDrawing!!.createSubGraphVertice())
+        shortDescription = metaGraph.graph.model!!.shortDescription
+        fillFrom(containerDrawing.createSubGraphVertice())
 
         super.read(reader)
 
-        if (metaGraph.graph!!.model!!.propagationDelay != null) {
-            propagationDelay = metaGraph.graph!!.model!!.propagationDelay!!
+        if (metaGraph.graph.model!!.propagationDelay != null) {
+            propagationDelay = metaGraph.graph.model!!.propagationDelay!!
         }
     }
 
@@ -149,7 +149,7 @@ class SubGraphVerticeRef(
             return graph!!
         }
         val subGraph = repository.getMetaGraph(graphUUID!!)
-        val cloneGraph = storableCloner.clonePreservingIdentities(subGraph.graph!!.model!!, storableCreator)
+        val cloneGraph = storableCloner.clonePreservingIdentities(subGraph.graph.model!!, storableCreator)
         graph = cloneGraph as Graph
 
         for (input in getSubGraphInputPorts()) {

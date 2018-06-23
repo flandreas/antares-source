@@ -68,11 +68,11 @@ class LibraryImpl(
 
 	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
 		val metaGraph = getMetaGraph(graphUUID)
-		if (metaGraph.graph!!.model!!.uuid == graphElementUUID) {
+		if (metaGraph.graph.model!!.uuid == graphElementUUID) {
 			return true
 		}
 		return SubGraphVerticeLocator(
-			graph = metaGraph.graph!!.model!!,
+			graph = metaGraph.graph.model!!,
 			repository = this,
 			storableCreator = storableCreator
 		).contains(graphElementUUID)

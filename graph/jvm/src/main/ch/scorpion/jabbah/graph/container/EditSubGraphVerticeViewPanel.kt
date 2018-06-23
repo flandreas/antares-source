@@ -51,7 +51,7 @@ class EditSubGraphVerticeViewPanel(
     private fun fill() {
         val libraryGraph = libraryHolder.library.getMetaGraph(subGraphVerticeView.subGraphVertice!!.graphUUID!!)
         containerPanel.setData(
-                libraryGraph.graph!!.graphView!!,
+                libraryGraph.graph.graphView!!,
                 storableCloner.clone(subGraphVerticeView.getEditableContainerDrawing()) as ContainerDrawing)
     }
 

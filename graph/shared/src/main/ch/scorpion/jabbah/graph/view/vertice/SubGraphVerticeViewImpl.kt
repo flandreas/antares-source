@@ -222,8 +222,8 @@ class SubGraphVerticeViewImpl(
             if (customizedContainerDrawing == null) {
                 // TODO Support for requesting only the ContainerDrawing from the LibraryImpl
                 val graph = repository.getMetaGraph(model!!.graphUUID!!)
-                fillFromContainerDrawing(graph.containerDrawing!!)
-                model!!.shortDescription = graph.graph!!.model!!.shortDescription
+                fillFromContainerDrawing(graph.containerDrawing)
+                model!!.shortDescription = graph.graph.model!!.shortDescription
             }
         }
         if ("mirrorH" == reference.name) {
@@ -241,7 +241,7 @@ class SubGraphVerticeViewImpl(
         if (customizedContainerDrawing != null) {
             val graph = repository.getMetaGraph(model!!.graphUUID!!)
             fillFromContainerDrawing(customizedContainerDrawing!!)
-            model!!.shortDescription = graph.graph!!.model!!.shortDescription
+            model!!.shortDescription = graph.graph.model!!.shortDescription
         }
     }
 
@@ -300,7 +300,7 @@ class SubGraphVerticeViewImpl(
 
     override fun createSubGraphView(): GraphView<GraphElementView<SubGraphVerticeRef>> {
         val libraryGraph = repository.getMetaGraph(subGraphVertice!!.graphUUID!!)
-        val graphView = libraryGraph.graph!!.graphView!!.cloneForExistingModel(getGraph(), storableCreator)
+        val graphView = libraryGraph.graph.graphView!!.cloneForExistingModel(getGraph(), storableCreator)
         graphView.bind()
         return graphView as GraphView<GraphElementView<SubGraphVerticeRef>>
     }

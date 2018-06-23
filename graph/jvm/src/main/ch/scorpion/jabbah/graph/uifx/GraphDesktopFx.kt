@@ -50,7 +50,7 @@ class GraphDesktopFx(
 		editor = EditEditorModule.createEditor(canvasFx.view as DrawingView<Drawing<Component>>)
 
 		BaseModule.eventBus.register(ApplicationDataEvent::class, {
-			(editor.view as DrawingView<GraphView<GraphElementView<*>>>).drawing = (it.newData as MetaGraph).graph!!.graphView as GraphView<GraphElementView<*>>
+			(editor.view as DrawingView<GraphView<GraphElementView<*>>>).drawing = (it.newData as MetaGraph).graph.graphView as GraphView<GraphElementView<*>>
 		})
 
 		// TODO How to establish ComponentViewDrawer?

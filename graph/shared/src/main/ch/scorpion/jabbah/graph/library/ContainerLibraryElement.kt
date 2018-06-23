@@ -71,10 +71,10 @@ class ContainerLibraryElement(
         LOG.debug("Create new instance of '$name'")
 	    library!!.libraryService.getMetaGraph(library!!, this)
 
-        val instance = metaGraph!!.containerDrawing!!.createSubGraphVerticeView()
-        instance.model!!.shortDescription = metaGraph!!.graph!!.model!!.shortDescription
-        if (metaGraph!!.graph!!.model!!.propagationDelay != null) {
-            instance.model!!.propagationDelay = metaGraph!!.graph!!.model!!.propagationDelay!!
+        val instance = metaGraph!!.containerDrawing.createSubGraphVerticeView()
+        instance.model!!.shortDescription = metaGraph!!.graph.model!!.shortDescription
+        if (metaGraph!!.graph.model!!.propagationDelay != null) {
+            instance.model!!.propagationDelay = metaGraph!!.graph.model!!.propagationDelay!!
         }
         @Suppress("UNCHECKED_CAST")
         return instance as GraphElementView<T>

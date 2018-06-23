@@ -124,8 +124,8 @@ class GraphPanel(
 			if (it.newData != null) {
 				LOG.debug("GraphPanel: ApplicationDataChanged, setting GraphView in GraphEditPanel")
 				val metaGraph = it.newData as MetaGraph
-				graphEditPanel.setGraphView(metaGraph.graph!!.graphView as GraphView<GraphElementView<*>>)
-				metaGraph.graph!!.graphView!!.snapper = editor.view.grid
+				graphEditPanel.setGraphView(metaGraph.graph.graphView as GraphView<GraphElementView<*>>)
+				metaGraph.graph.graphView!!.snapper = editor.view.grid
 			} else {
 				LOG.debug("GraphPanel: ApplicationDataChanged, using dummy GraphView in GraphEditPanel")
 				graphEditPanel.setGraphView(null)

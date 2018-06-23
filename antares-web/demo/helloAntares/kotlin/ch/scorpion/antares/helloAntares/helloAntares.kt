@@ -85,5 +85,5 @@ private fun handleResponse(doc: Document) {
 
     val metaGraph = storeXmlReader.readStorable() as MetaGraph
 
-    editor.view.drawing = metaGraph.graph!!.graphView!! as Drawing<Component>
+    editor.view.drawing = metaGraph.graph.graphView!! as Drawing<Component>
 }
