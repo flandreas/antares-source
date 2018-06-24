@@ -84,7 +84,7 @@ class GraphDesktop(
         mainSplitPane.border = null
         sidePanel.layout = GridLayout(0, 1)
         layout = BorderLayout()
-	    background = Color.GRAY
+	    background = Color.GRAY.brighter()
 
 	    eventBus.register(EditedGraphViewEvent::class, editedGraphViewEventHandler)
 
