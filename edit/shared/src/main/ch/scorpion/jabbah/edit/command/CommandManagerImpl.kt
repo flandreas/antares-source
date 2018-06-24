@@ -13,11 +13,13 @@ import ch.scorpion.jabbah.edit.DrawingView
 /**
  * Standard implementation of the [CommandManager] interface.
  */
-class CommandManagerImpl(override val eventBus: EventBus) : CommandManager {
+class CommandManagerImpl(
+	override val eventBus: EventBus = BaseModule.eventBus
+) : CommandManager {
 
-    constructor(): this(BaseModule.eventBus)
-
-    private val LOG by logger(CommandManagerImpl::class)
+	companion object {
+        private val LOG by logger(CommandManagerImpl::class)
+	}
 
     private val undoStack = Stack<CommandTransaction>()
 
@@ -29,6 +31,9 @@ class CommandManagerImpl(override val eventBus: EventBus) : CommandManager {
     private var level: Int = 0
 
     /** ---- [CommandManager] interface */
+
+    override val applicationDataChanged: Boolean
+        get() = undoStack.items.reversed().firstOrNull { it.changesApplicationData } != null
 
     override fun beginTransaction(command: Command, register: Boolean) {
         if (transaction == null) {
@@ -150,9 +155,11 @@ class CommandManagerImpl(override val eventBus: EventBus) : CommandManager {
 
     private class CommandTransaction {
 
+	    private val commands = mutableListOf<Command>()
+
         val headCommand: Command get() = commands.first()
 
-        private val commands = mutableListOf<Command>()
+	    val changesApplicationData: Boolean get() = commands.find { it.changesApplicationData } != null
 
         fun add(command: Command) {
             commands.add(command)

@@ -17,6 +17,9 @@ interface CommandManager {
     /** The [EventBus] used by this [CommandManager].*/
     val eventBus: EventBus
 
+	/** Determines whether this [CommandManager] contains any undoable [Command] with propert [Command.changesApplicationData] being set.*/
+    val applicationDataChanged: Boolean
+
     /**
      * Begins a new transaction with the specified [Command] as its head, and executes or registers the [Command]
      * depending on the [register] property.

@@ -5,9 +5,11 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.project.Project
 
 /**
  * A service for managing the repository, which is the combination of the [Project] and the [Library].
@@ -106,13 +108,11 @@ class RepositoryServiceImpl(
 class MoveRepositoryItemCommand(
 	private val origService: LibraryService,
 	private val destService: LibraryService,
-	elem: ContainerLibraryElement,
+	private var elem: ContainerLibraryElement,
 	private val origDir: LibraryDirectory,
 	private val origPos: Int,
 	private val destDir: LibraryDirectory
-) : AbstractCommand("repository.move.name") {
-
-	private var elem: ContainerLibraryElement = elem
+) : AbstractCommand(descriptionKey = "repository.move.name", changesApplicationData = false) {
 
 	override fun execute() {
 		val newElem = destService.addContainerLibraryElement(destService.currentLibrary!!, elem.metaGraph!!, destDir)

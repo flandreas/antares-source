@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.container.ContainerPanel
 import ch.scorpion.jabbah.graph.model.GraphNameChangedEvent
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -27,8 +26,7 @@ class GraphFrame(
 	application: DesktopApplication,
 	private val graphPanel: GraphPanel,
 	private val eventBus: EventBus,
-	val viewManager: ViewManager,
-	scheduler: Scheduler
+	val viewManager: ViewManager
 ) : AbstractApplicationFrame(application) {
 
 	enum class DisplayedView {
@@ -69,7 +67,7 @@ class GraphFrame(
 
 	/** The application data has changed if there are undoable [Command]s in the [CommandManager].*/
 	override val applicationDataChanged: Boolean
-		get() = graphPanel.editor.commandManager.canUndo()
+		get() = graphPanel.editor.commandManager.applicationDataChanged
 
 	/** ---- [GraphFrame] */
 

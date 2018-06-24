@@ -9,16 +9,17 @@ import ch.scorpion.jabbah.edit.Editor
  */
 abstract class AbstractCommand(
     descriptionKey: String,
-    val editor: Editor? = null
+    val editor: Editor? = null,
+    override val changesApplicationData: Boolean = true
 ) : Command {
 
     private val _description = Translations.getString(descriptionKey)
 
-    override fun getDescription(): String = _description
-
     /** ---- [Command] interface */
 
-    override fun validate() {
+    override fun getDescription(): String = _description
+
+	override fun validate() {
         editor?.drawing?.validate()
     }
 

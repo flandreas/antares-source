@@ -55,8 +55,7 @@ class AntaresSwing(
 	args: Array<String>,
 	eventBus: EventBus = BaseModule.eventBus,
 	private val viewManager: ViewManager = DrawViewModule.viewManager,
-	private val storableCreator: StorableCreator = IOModule.storableCreator,
-	private val schedulerProvider: () -> Scheduler = { ExecutionModule.scheduler }
+	private val storableCreator: StorableCreator = IOModule.storableCreator
 ) : AbstractDesktopApplicationSwing(args, eventBus), Antares {
 
 	companion object {
@@ -144,7 +143,7 @@ class AntaresSwing(
 		val graphPanel = GraphPanel(application = this, editor = graphEditor, viewManager = viewManager)
 		graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
 
-		return GraphFrame(this, graphPanel, eventBus, viewManager, schedulerProvider.invoke())
+		return GraphFrame(this, graphPanel, eventBus, viewManager)
 	}
 
 	/** Implements [DesktopApplication.openFrom] by interpreting `identification` as a project name.*/

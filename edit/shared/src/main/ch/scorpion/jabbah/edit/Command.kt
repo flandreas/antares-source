@@ -7,6 +7,14 @@ import ch.scorpion.jabbah.draw.View
  */
 interface Command {
 
+	/**
+	 * Determines whether this [Command] changes application data that is saved in persistent storage.
+	 * Most [Command]s will have this property set to `true`, but some might not. The application data state
+	 * is considered to be dirty if the corresponding [CommandManager] contains undoable [Command] with this
+	 * property set.
+	 */
+    val changesApplicationData: Boolean
+
     /**
      * Returns a description of what this [Command] does, for example "Move".
      *
