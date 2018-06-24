@@ -254,7 +254,7 @@ class LibraryTreeView(
 			{
 				val userObject = (it as DefaultMutableTreeNode).userObject
 				if (userObject is Library) {
-					userObject.libraryFolder == item
+					userObject.libraryFolder == item || userObject == item
 				} else {
 					userObject == item
 				}
