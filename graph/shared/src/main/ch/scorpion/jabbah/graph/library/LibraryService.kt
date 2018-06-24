@@ -27,7 +27,7 @@ interface LibraryService {
 	 * Adds a [LibraryItem] at the end position of a [LibraryDirectory] and makes the change persistent.
 	 * Posts a [LibraryItemAddedEvent] on this [LibraryService]'s [EventBus].
 	 */
-	fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory)
+	fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory, index: Int? = null)
 
 	/**
 	 * Removes a [LibraryItem] from a [LibraryDirectory] and makes the change persistent.
@@ -56,7 +56,7 @@ interface LibraryService {
 	 * Posts a [LibraryItemAddedEvent] on this [LibraryService]'s [EventBus].
 	 * @return the created [ContainerLibraryElement]
 	 */
-	fun addContainerLibraryElement(library: Library, metaGraph: MetaGraph, directory: LibraryDirectory): ContainerLibraryElement
+	fun addContainerLibraryElement(library: Library, metaGraph: MetaGraph, directory: LibraryDirectory, index: Int? = null): ContainerLibraryElement
 
 	/**
 	 * Clones the specified [MetaGraph], uses it as the new [MetaGraph] of the specified [ContainerLibraryElement],
@@ -135,10 +135,14 @@ class LibraryServiceImpl(
 		persistenceService.storeLibrary(library)
 	}
 
-	override fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory) {
+	override fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory, index: Int?) {
 		LOG.debug("LibraryServiceImpl: Adding LibraryItem")
 		item.bindTo(library)
-		directory.add(item)
+		if (index != null) {
+			directory.add(index, item)
+		} else {
+			directory.add(item)
+		}
 		storeLibrary(library)
 		eventBus.post(LibraryItemAddedEvent(directory, item))
 	}
@@ -175,11 +179,11 @@ class LibraryServiceImpl(
 		return addFolder(library, name, directory)
 	}
 
-	override fun addContainerLibraryElement(library: Library, metaGraph: MetaGraph, directory: LibraryDirectory): ContainerLibraryElement {
+	override fun addContainerLibraryElement(library: Library, metaGraph: MetaGraph, directory: LibraryDirectory, index: Int?): ContainerLibraryElement {
 		LOG.debug("LibraryServiceImpl: Adding ContainerLibraryElement")
 		val element = createContainerLibraryElement(metaGraph)
 		storeContainerLibraryElement(library, metaGraph, element)
-		addLibraryItem(library, element, directory)
+		addLibraryItem(library, element, directory, index)
 		return element
 	}
 

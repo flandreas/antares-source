@@ -249,7 +249,17 @@ class LibraryTreeView(
 	}
 
 	private fun findOptionalTreeNode(item: LibraryItem): DefaultMutableTreeNode? {
-		return JTreeUtil.findTreeNode(model.root as TreeNode, { (it as DefaultMutableTreeNode).userObject == item }) as DefaultMutableTreeNode?
+		return JTreeUtil.findTreeNode(
+			model.root as TreeNode,
+			{
+				val userObject = (it as DefaultMutableTreeNode).userObject
+				if (userObject is Library) {
+					userObject.libraryFolder == item
+				} else {
+					userObject == item
+				}
+			}
+		) as DefaultMutableTreeNode?
 	}
 
 

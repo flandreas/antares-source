@@ -92,6 +92,10 @@ class LibraryFolder(
 	    items.add(findInsertIndex(item), item)
     }
 
+	override fun add(index: Int, item: LibraryItem) {
+		items.add(index, item)
+	}
+
     override fun remove(item: LibraryItem): Boolean {
 	    return items.remove(item)
     }
@@ -124,6 +128,10 @@ class LibraryFolder(
 		val finder=  NamedItemFinder(name)
 		accept(finder)
 		return finder.result
+	}
+
+	override fun indexOf(item: LibraryItem): Int {
+		return items.indexOf(item)
 	}
 
     /** ---- [LibraryFolder] */

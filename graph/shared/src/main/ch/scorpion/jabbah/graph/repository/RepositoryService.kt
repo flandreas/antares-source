@@ -2,6 +2,9 @@ package ch.scorpion.jabbah.graph.repository
 
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.project.ProjectModule
@@ -26,7 +29,8 @@ class LibraryDependencyException(val subGraphVertice: SubGraphVertice) : Throwab
 /** Standard implementation of the [RepositoryService] interface.*/
 class RepositoryServiceImpl(
 	private val libraryService: LibraryService = LibraryModule.libraryService.invoke(),
-	private val projectLibraryService: LibraryService = ProjectModule.projectLibraryService.invoke()
+	private val projectLibraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
+	private val commandManager: CommandManager = EditModule.commandManager
 ) : RepositoryService {
 
 	companion object {
@@ -48,9 +52,17 @@ class RepositoryServiceImpl(
 			checkLibraryDependency(elem)
 		}
 
-		val origDirectory = origService.getDirectoryOf(origService.currentLibrary!!, elem)
-		destService.addContainerLibraryElement(destService.currentLibrary!!, elem.metaGraph!!, destination)
-		origService.removeLibraryItem(origService.currentLibrary!!, elem, origDirectory)
+		val origDir = origService.getDirectoryOf(origService.currentLibrary!!, elem)
+
+		commandManager.beginTransaction(MoveRepositoryItemCommand(
+			origService = origService,
+			destService = destService,
+			elem = elem,
+			origDir = origDir,
+			origPos = origDir.indexOf(elem),
+			destDir = destination
+		))
+		commandManager.commitTransaction()
 	}
 
 	/**
@@ -88,5 +100,29 @@ class RepositoryServiceImpl(
 			return projectLibraryService
 		}
 		throw IllegalStateException("neither current Library nor current Project own item")
+	}
+}
+
+class MoveRepositoryItemCommand(
+	private val origService: LibraryService,
+	private val destService: LibraryService,
+	elem: ContainerLibraryElement,
+	private val origDir: LibraryDirectory,
+	private val origPos: Int,
+	private val destDir: LibraryDirectory
+) : AbstractCommand("repository.move.name") {
+
+	private var elem: ContainerLibraryElement = elem
+
+	override fun execute() {
+		val newElem = destService.addContainerLibraryElement(destService.currentLibrary!!, elem.metaGraph!!, destDir)
+		origService.removeLibraryItem(origService.currentLibrary!!, elem, origDir)
+		elem = newElem
+	}
+
+	override fun undo() {
+		val newElem = origService.addContainerLibraryElement(origService.currentLibrary!!, elem.metaGraph!!, origDir, origPos)
+		destService.removeLibraryItem(destService.currentLibrary!!, elem, destDir)
+		elem = newElem
 	}
 }
