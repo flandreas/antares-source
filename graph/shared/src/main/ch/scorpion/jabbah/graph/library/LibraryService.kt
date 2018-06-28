@@ -12,6 +12,10 @@ import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.io.StorableCreator
 
+/**
+ * Provides methods for accessing and manipulating a [Library].
+ * Implementations will use a [LibraryPersistenceService] to make these manipulations persistent.
+ */
 interface LibraryService {
 
 	/** Returns the current [Library].*/
@@ -32,6 +36,7 @@ interface LibraryService {
 	/**
 	 * Removes a [LibraryItem] from a [LibraryDirectory] and makes the change persistent.
 	 * Posts a [LibraryItemRemovedEvent] on this [LibraryService]'s [EventBus].
+	 * @throws IllegalStateException is `item` is a non-empty [LibraryDirectory]
 	 */
 	fun removeLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory)
 
@@ -136,7 +141,7 @@ class LibraryServiceImpl(
 	}
 
 	override fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory, index: Int?) {
-		LOG.debug("LibraryServiceImpl: Adding LibraryItem")
+		LOG.debug("LibraryServiceImpl: Adding LibraryItem ${item.name}'")
 		item.bindTo(library)
 		if (index != null) {
 			directory.add(index, item)
@@ -148,7 +153,7 @@ class LibraryServiceImpl(
 	}
 
 	override fun removeLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory) {
-		LOG.debug("LibraryServiceImpl: Removing LibraryItem")
+		LOG.debug("LibraryServiceImpl: Removing LibraryItem '${item.name}'")
 		if (directory.remove(item)) {
 			if (item is ContainerLibraryElement) {
 				persistenceService.deleteContainerLibraryElement(library, item.uuid)
@@ -156,7 +161,10 @@ class LibraryServiceImpl(
 					library.defaultElementUUID = null
 				}
 			} else if (item is LibraryFolder) {
-				throw UnsupportedOperationException("removing of entire LibraryFolders is not yet implemented")
+				if (!item.isEmpty()) {
+					LOG.debug("LibraryServiceImpl: Refusing to delete non-empty LibraryFolder")
+					throw IllegalStateException("can't delete non-empty LibraryFolder")
+				}
 			}
 			item.dispose()
 			storeLibrary(library)
@@ -165,7 +173,7 @@ class LibraryServiceImpl(
 	}
 
 	override fun addFolder(library: Library, name: String, directory: LibraryDirectory): LibraryDirectory {
-		LOG.debug("LibraryServiceImpl: Adding new Folder")
+		LOG.debug("LibraryServiceImpl: Adding new Folder '$name'")
 		val folder = LibraryFolder(name)
 		addLibraryItem(library, folder, directory)
 		return folder
@@ -216,7 +224,7 @@ class LibraryServiceImpl(
 		if (finder.result != null) {
 			return finder.result!!
 		}
-		LOG.debug("LibraryServiceImpl: could't find owing LibraryDirectory of LibraryItem")
+		LOG.debug("LibraryServiceImpl: could't find owning LibraryDirectory of LibraryItem")
 		throw IllegalStateException()
 	}
 

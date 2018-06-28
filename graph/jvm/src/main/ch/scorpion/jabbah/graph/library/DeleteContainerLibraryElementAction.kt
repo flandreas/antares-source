@@ -23,9 +23,8 @@ class DeleteContainerLibraryElementAction(
 		    name,
 		    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)
 	    {
-		    val folder = (libraryTreeView!!.selectionPath.parentPath.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryDirectory
 		    val library = libraryItem!!.library!!
-		    library.libraryService.removeLibraryItem(libraryItem.library!!, libraryItem, folder)
+		    library.libraryService.removeLibraryItem(libraryItem.library!!, libraryItem, folderOfSelectedItem as LibraryDirectory)
 	    }
     }
 }

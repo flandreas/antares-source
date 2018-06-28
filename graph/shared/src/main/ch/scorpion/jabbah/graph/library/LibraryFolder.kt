@@ -88,9 +88,12 @@ class LibraryFolder(
 
     /** ---- [LibraryDirectory]  */
 
+	override fun isEmpty(): Boolean = items.isEmpty()
+
     override fun add(item: LibraryItem) {
 	    items.add(findInsertIndex(item), item)
     }
+
 
 	override fun add(index: Int, item: LibraryItem) {
 		items.add(index, item)

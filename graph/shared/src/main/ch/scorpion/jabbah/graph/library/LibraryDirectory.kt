@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 
 interface LibraryDirectory : LibraryItem {
 
+	fun isEmpty(): Boolean
+
 	fun add(item: LibraryItem)
 
 	fun add(index: Int, item: LibraryItem)

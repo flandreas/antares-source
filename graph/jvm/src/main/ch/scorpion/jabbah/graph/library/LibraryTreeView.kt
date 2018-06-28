@@ -85,6 +85,7 @@ class LibraryTreeView(
 	    directoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 	    directoryPopupMenu.add(ActionWrapperSwing(newGraphAction))
 	    directoryPopupMenu.add(ActionWrapperSwing(addGraphToLibraryAction))
+	    directoryPopupMenu.add(ActionWrapperSwing(DeleteLibraryFolderAction()))
 
         containerPopupMenu.add(ActionWrapperSwing(DeleteContainerLibraryElementAction()))
 	    containerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(DefaultContainerLibraryElementAction())))

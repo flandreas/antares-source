@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.EventBus
 import javax.swing.Action
+import javax.swing.tree.DefaultMutableTreeNode
 
 /**
  * A base class for implementing [Action]s that operate on items of [LibraryTreeView].
@@ -15,6 +16,11 @@ abstract class AbstractLibraryAction(
 
 	protected var libraryTreeView: LibraryTreeView? = null
 		private set
+
+	protected val selectedItem: LibraryItem? get() = libraryTreeView?.getSelectedItem()
+
+	protected val folderOfSelectedItem: LibraryItem? get() =
+		(libraryTreeView!!.selectionPath.parentPath.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryItem?
 
 	init {
 		enabled = false
@@ -47,7 +53,7 @@ abstract class AbstractLibraryFolderAction(
 	eventBus: EventBus
 ) : AbstractLibraryAction(actionBaseName, eventBus) {
 
-	override fun calculateEnabledness(): Boolean = libraryTreeView?.getSelectedItem() is LibraryDirectory
+	override fun calculateEnabledness(): Boolean = selectedItem is LibraryDirectory
 }
 
 /** An [Action] that is only enabled if the selected item is a [ContainerLibraryElement].*/
@@ -55,5 +61,5 @@ abstract class AbstractContainerLibraryElementAction(
 	actionBaseName: String,
 	eventBus: EventBus
 ) : AbstractLibraryAction(actionBaseName, eventBus) {
-	override fun calculateEnabledness(): Boolean = libraryTreeView?.getSelectedItem() is ContainerLibraryElement
+	override fun calculateEnabledness(): Boolean = selectedItem is ContainerLibraryElement
 }
