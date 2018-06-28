@@ -156,7 +156,7 @@ class LibraryTreeView(
     }
 
 	private fun handle(event: CurrentSavableEvent) {
-		currentSavable = if (event.savable is LibrarySavable || event.savable is ProjectSavable) {
+		currentSavable = if (event.savable is AbstractLibrarySavable) {
 			event.savable
 		} else {
 			null
@@ -309,8 +309,7 @@ class LibraryTreeView(
         }
 
 	    private fun isCurrentElement(element: ContainerLibraryElement): Boolean {
-		    return currentSavable is LibrarySavable && (currentSavable as LibrarySavable).element == element ||
-			    currentSavable is ProjectSavable && (currentSavable as ProjectSavable).element == element
+		    return currentSavable is AbstractLibrarySavable && (currentSavable as AbstractLibrarySavable).element == element
 	    }
 
 	    private fun isDefaultElement(element: ContainerLibraryElement): Boolean {

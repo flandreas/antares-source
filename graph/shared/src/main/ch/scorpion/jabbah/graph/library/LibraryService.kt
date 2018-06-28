@@ -189,7 +189,11 @@ class LibraryServiceImpl(
 
 	override fun updateContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement) {
 		LOG.debug("LibraryServiceImpl: Updating ContainerLibraryElement")
+		val nameChanged = metaGraph.name != element.name
 		storeContainerLibraryElement(library, metaGraph, element)
+		if (nameChanged) {
+			storeLibrary(library)
+		}
 		eventBus.post(LibraryItemUpdatedEvent(library, element))
 	}
 

@@ -11,20 +11,16 @@ import ch.scorpion.jabbah.graph.MetaGraph
  * Saves the edited [MetaGraph] of a [ContainerLibraryElement] in the containing [LibraryDirectory].
  */
 class LibrarySavable(
-    val metaGraph: MetaGraph,
-    val element: ContainerLibraryElement,
+    metaGraph: MetaGraph,
+    element: ContainerLibraryElement,
     private val library: Library = LibraryModule.libraryHolder.library,
-    private val service: LibraryService = LibraryModule.libraryService.invoke(),
+    val service: LibraryService = LibraryModule.libraryService.invoke(),
     private val eventBus: EventBus = BaseModule.eventBus
-) : Savable {
+) : AbstractLibrarySavable(metaGraph, element, service) {
 
 	/** ---- [Savable] */
 
     override val description: String get() = "${Translations.getString("library.savable.prefix")} \"${element.name}\""
-
-    override val defined: Boolean get() = true
-
-    override val supportsMostRecent: Boolean get() = true
 
     override fun open(application: Application): Boolean {
         eventBus.post(OpenContainerLibraryElementRequest(element))

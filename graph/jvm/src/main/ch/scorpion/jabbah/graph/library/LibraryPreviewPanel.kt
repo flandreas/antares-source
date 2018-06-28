@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
@@ -34,6 +35,10 @@ class LibraryPreviewPanel(
 
     companion object {
         private val BACKGROUND_COLOR = Color.WHITE
+    }
+
+    init {
+        eventBus.register(CurrentSavableEvent::class, { updateWithSelectedItem() })
     }
 
     @Suppress("unused")
@@ -89,19 +94,22 @@ class LibraryPreviewPanel(
         if (e.libraryTreeView !== this.libraryTreeView) {
             return
         }
-
-        val selectedItem = libraryTreeView.getSelectedItem()
-        if (selectedItem !is LibraryElement) {
-            updateSelection(null)
-        } else {
-            try {
-                updateSelection(selectedItem)
-            } catch (e: Exception) {
-                LOG.error("Exception when handling LibraryImpl selection change: ${e.message}")
-            }
-        }
-        repaint()
+		updateWithSelectedItem()
     }
+
+	private fun updateWithSelectedItem() {
+		val selectedItem = libraryTreeView.getSelectedItem()
+		if (selectedItem !is LibraryElement) {
+			updateSelection(null)
+		} else {
+			try {
+				updateSelection(selectedItem)
+			} catch (e: Exception) {
+				LOG.error("Exception when handling LibraryImpl selection change: ${e.message}")
+			}
+		}
+		repaint()
+	}
 
     private fun updateSelection(libraryElement: LibraryElement?) {
         if (libraryElement == null) {
