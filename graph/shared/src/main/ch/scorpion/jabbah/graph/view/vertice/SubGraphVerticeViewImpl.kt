@@ -221,10 +221,15 @@ class SubGraphVerticeViewImpl(
         if (STORABLE_MODEL_ID == reference.name) {
             if (customizedContainerDrawing == null) {
                 // TODO Support for requesting only the ContainerDrawing from the LibraryImpl
-                val graph = repository.getMetaGraph(model!!.graphUUID!!)
-                fillFromContainerDrawing(graph.containerDrawing)
-                model!!.shortDescription = graph.graph.model!!.shortDescription
+                val graph = repository.getOptionalMetaGraph(model!!.graphUUID!!)
+                if (graph != null) {
+                    fillFromContainerDrawing(graph.containerDrawing)
+                    model!!.shortDescription = graph.graph.model!!.shortDescription
+                }
             }
+	        if (model!!.designError != null) {
+		        fillDesignErrorRepresentation()
+	        }
         }
         if ("mirrorH" == reference.name) {
             isHorizontallyMirrored = reference.additionalInfo as Boolean
@@ -238,7 +243,7 @@ class SubGraphVerticeViewImpl(
         // Make sure that SubGraphVerticeView is filled from ContainerDrawing AFTER the PortViewComponents
         // in the ContainerDrawings have resolved their model SubCircuitPort. We cannot make more sure than doing
         // it after all resolutions have been done.
-        if (customizedContainerDrawing != null) {
+        if (customizedContainerDrawing != null && model!!.designError == null) {
             val graph = repository.getMetaGraph(model!!.graphUUID!!)
             fillFromContainerDrawing(customizedContainerDrawing!!)
             model!!.shortDescription = graph.graph.model!!.shortDescription
@@ -382,9 +387,15 @@ class SubGraphVerticeViewImpl(
         updateBoxes()
     }
 
+	private fun fillDesignErrorRepresentation() {
+		drawables.clear()
+		drawables.add(BrokenReferenceView(styleProvider))
+		updateBoxes()
+	}
+
     private fun getLibraryContainerDrawing(): ContainerDrawing {
         val libraryGraph = repository.getMetaGraph(subGraphVertice!!.graphUUID!!)
-        return storableCloner.clonePreservingIdentities(libraryGraph.containerDrawing!!, storableCreator) as ContainerDrawing
+        return storableCloner.clonePreservingIdentities(libraryGraph.containerDrawing, storableCreator) as ContainerDrawing
     }
 
     private fun updateBoxes() {

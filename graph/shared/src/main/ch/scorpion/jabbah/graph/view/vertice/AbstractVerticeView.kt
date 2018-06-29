@@ -122,24 +122,31 @@ abstract class AbstractVerticeView<T : Vertice>(
         return portViews.filter { it.port == port }.map { it as PortView<G> }.firstOrNull()
     }
 
-    override fun getPort(portId: Int): Port<*> {
+    override fun getPort(portId: Int): Port<*>? {
+        if (model!!.designError != null) {
+            return null
+        }
         return model!!.getPort<Any>(portId)
     }
 
     override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?) {
-        getPortView(port!!)?.let {
-            invalidate()
-            it.handleConnect(edgeView)
-            invalidate()
-        }
+	    if (port != null) {
+	        getPortView(port)?.let {
+	            invalidate()
+	            it.handleConnect(edgeView)
+	            invalidate()
+	        }
+	    }
     }
 
     override fun <G : Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?) {
-        getPortView(port!!)?.let {
-            invalidate()
-            it.handleUnconnect(edgeView)
-            invalidate()
-        }
+	    if (port != null) {
+	        getPortView(port)?.let {
+	            invalidate()
+	            it.handleUnconnect(edgeView)
+	            invalidate()
+	        }
+	    }
     }
 
     override fun handleEdgeViewWidthChanged(edgeView: EdgeView<*>) {
@@ -147,6 +154,8 @@ abstract class AbstractVerticeView<T : Vertice>(
     }
 
     /** ---- [ConnectableView] */
+
+	override val isConnectable: Boolean get() = model!!.designError == null
 
     override fun getPortConnectionPoint(port: Port<*>?): Point2D {
         return rotate(getPortView(port!!)!!.connectionPoint.add(location))

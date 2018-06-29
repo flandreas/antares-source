@@ -765,10 +765,12 @@ open class EdgeViewImpl<T: Any>(
                 port = cv.getPort(ref.portId)
             }
 
-            if ("orig" == reference.name) {
-                connectToOrigin(cv, port as Port<T>?)
-            } else {
-                connectToDestination(cv, port as Port<T>?)
+            if (cv.isConnectable) {
+                if ("orig" == reference.name) {
+                    connectToOrigin(cv, port as Port<T>?)
+                } else {
+                    connectToDestination(cv, port as Port<T>?)
+                }
             }
         }
     }

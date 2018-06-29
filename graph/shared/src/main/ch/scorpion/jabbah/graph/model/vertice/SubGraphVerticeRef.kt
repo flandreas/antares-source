@@ -21,9 +21,9 @@ import ch.scorpion.jabbah.graph.script.Script
  */
 class SubGraphVerticeRef(
     graphUUID: UUID? = null,
-    val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
-    val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
-    val scriptGateway: ScriptGateway = ScriptModule.scriptGateway
+    private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
+    private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
+    private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway
 ) : CalculatingVertice(CALCULATOR), SubGraphVertice {
 
     companion object {
@@ -54,6 +54,11 @@ class SubGraphVerticeRef(
     }
 
     private var graph: Graph? = null
+
+	/** Can be set during [read] if reference to [MetaGraph] is broken. */
+	private var _designError: DesignError? = null
+
+	override val designError: DesignError? get() = _designError
 
     /** ---- [GraphElement] interface */
 
@@ -86,16 +91,24 @@ class SubGraphVerticeRef(
     override fun read(reader: StoreReader) {
         graphUUID = UUID(reader.readString("uuid"))
 
-        val metaGraph = repository.getMetaGraph(graphUUID!!)
-        val containerDrawing = metaGraph.containerDrawing
-        name = metaGraph.name
-        shortDescription = metaGraph.graph.model!!.shortDescription
-        fillFrom(containerDrawing.createSubGraphVertice())
+        val metaGraph = repository.getOptionalMetaGraph(graphUUID!!)
+        if (metaGraph != null) {
+            val containerDrawing = metaGraph.containerDrawing
+            name = metaGraph.name
+            shortDescription = metaGraph.graph.model!!.shortDescription
+            fillFrom(containerDrawing.createSubGraphVertice())
 
-        super.read(reader)
+            super.read(reader)
 
-        if (metaGraph.graph.model!!.propagationDelay != null) {
-            propagationDelay = metaGraph.graph.model!!.propagationDelay!!
+            if (metaGraph.graph.model!!.propagationDelay != null) {
+                propagationDelay = metaGraph.graph.model!!.propagationDelay!!
+            }
+        } else {
+	        // Broken reference to library component
+	        LOG.warn("SubGraphVerticeRef: broken reference $graphUUID")
+	        super.read(reader)
+	        _designError = DesignError("Broken reference")
+
         }
     }
 

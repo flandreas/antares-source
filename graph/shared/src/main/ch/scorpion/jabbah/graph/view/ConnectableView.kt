@@ -16,6 +16,13 @@ interface ConnectableView : Drawable, Storable {
 
     val id: Int
 
+	/**
+	 * Determines whether this [ConnectableView] is currently connectable.
+	 * Implementations will typically be connectable. If a [VerticeView]'s model contains a broken link,
+	 * it is regarded as "not being connectable", and [EdgeView] should not connect to it when being loaded.
+	 */
+    val isConnectable: Boolean get() = true
+
     /**
      * Returns the absolute location of the connection point of the specified [Port].
      * @param port the [Port] whose connection point is requested.

@@ -159,7 +159,11 @@ open class NetImpl<T: Any> : AbstractGraphElement(), Net<T> {
                 _ports.add(port)
                 port.connectTo(this)
             } catch (e: NoSuchElementException) {
-                LOG.error("NetImpl: Couldn't resolve Port $portId of Vertice ${System.get().getClassName(vertice)} with storableID ${vertice.storableId}")
+	            // If vertice has a DesignError, we assume that it is a SubGraphVerticeRef with a broken reference,
+	            // and we can't connect this Net that Vertice
+                if (vertice.designError == null) {
+	                LOG.error("NetImpl: Couldn't resolve Port $portId of Vertice ${System.get().getClassName(vertice)} with storableID ${vertice.storableId}")
+                }
             }
         }
     }
