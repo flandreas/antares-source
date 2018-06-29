@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.VetoException
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
@@ -25,8 +26,6 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryItemRemovedEvent
@@ -148,7 +147,9 @@ class AntaresSwing(
 
 	/** Implements [DesktopApplication.openFrom] by interpreting `identification` as a project name.*/
 	override fun openFrom(identification: String): Boolean {
-		ProjectModule.projectService.open(identification)
+		InvocationHandler.invoke(Runnable() {
+			ProjectModule.projectService.open(identification)
+		})
 		return true
 	}
 
