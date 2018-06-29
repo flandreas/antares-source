@@ -9,20 +9,48 @@ import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.System.Companion.SYSTEM
+import ch.scorpion.jabbah.base.geom.Path
+import ch.scorpion.jabbah.graph.model.PortType
 
 /** Draws an [EdgeView] in [NetViewStyle.BLOCK]. */
 class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 
     private companion object {
         val HALF_WIDTH = NetViewStyle.BLOCK_HW
-        val ARROW_LENGTH = 10
-        val ARROW_WIDTH = 5
-        val ARROW_PATH = SYSTEM!!.createPath()
-            .moveTo(-ARROW_LENGTH, -HALF_WIDTH)
-            .lineTo(-ARROW_LENGTH, -HALF_WIDTH - ARROW_WIDTH)
-            .lineTo(0, 0)
-            .lineTo(-ARROW_LENGTH, HALF_WIDTH + ARROW_WIDTH)
-            .lineTo(-ARROW_LENGTH, HALF_WIDTH)
+        const val ARROW_LENGTH = 10
+        const val ARROW_WIDTH = 5
+	    const val ARROW_DIST = 5
+	    const val REVERSE_ARROW_LENGTH = 4
+	    const val DOUBLE_ARROW_LENGTH = ARROW_LENGTH + ARROW_DIST + REVERSE_ARROW_LENGTH
+
+	    val ARROW_PATH = buildSingleArrowPath(SYSTEM!!.createPath().moveTo(-ARROW_LENGTH, -HALF_WIDTH))
+
+	    val DOUBLE_ARROW_PATH = buildDoubleArrowPath(SYSTEM!!.createPath().moveTo(-DOUBLE_ARROW_LENGTH, -HALF_WIDTH))
+
+	    private fun buildSingleArrowPath(path: Path): Path {
+		    path
+			    .lineTo(-ARROW_LENGTH, -HALF_WIDTH - ARROW_WIDTH)
+			    .lineTo(0, 0)
+			    .lineTo(-ARROW_LENGTH, HALF_WIDTH + ARROW_WIDTH)
+			    .lineTo(-ARROW_LENGTH, HALF_WIDTH)
+		    return path
+	    }
+
+	    private fun buildDoubleArrowPath(path: Path): Path {
+		    path
+			    .lineTo(-DOUBLE_ARROW_LENGTH + REVERSE_ARROW_LENGTH, -HALF_WIDTH - ARROW_WIDTH)
+			    .lineTo(-DOUBLE_ARROW_LENGTH + REVERSE_ARROW_LENGTH, -HALF_WIDTH)
+			    .lineTo(-ARROW_LENGTH, -HALF_WIDTH)
+
+		    buildSingleArrowPath(path)
+
+			path
+				.lineTo(-DOUBLE_ARROW_LENGTH + REVERSE_ARROW_LENGTH, HALF_WIDTH)
+				.lineTo(-DOUBLE_ARROW_LENGTH + REVERSE_ARROW_LENGTH, HALF_WIDTH + ARROW_WIDTH)
+				.lineTo(-DOUBLE_ARROW_LENGTH, HALF_WIDTH)
+
+		    return path
+	    }
     }
 
     /** ---- [EdgeViewStyling] */
@@ -46,10 +74,10 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
 
                 context.g.fillRect(minX.toInt(), minY.toInt(), (maxX - minX).toInt(), (maxY - minY).toInt())
 
-                if (isOriginArrow()) {
+                if (getOriginArrowOverallLength() > 0) {
                     drawArrow(context, EdgeViewEndpointType.ORIGIN, true)
                 }
-                if (isDestinationArrow()) {
+                if (getDestinationArrowOverallLength() > 0) {
                     drawArrow(context, EdgeViewEndpointType.DESTINATION, true)
                 }
             }
@@ -63,10 +91,10 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
                 context.g.drawLine(beginL.x.toInt(), beginL.y.toInt(), endL.x.toInt(), endL.y.toInt())
                 context.g.drawLine(beginR.x.toInt(), beginR.y.toInt(), endR.x.toInt(), endR.y.toInt())
 
-                if (isOriginArrow()) {
+                if (getOriginArrowOverallLength() > 0) {
                     drawArrow(context, EdgeViewEndpointType.ORIGIN, false)
                 }
-                if (isDestinationArrow()) {
+                if (getDestinationArrowOverallLength() > 0) {
                     drawArrow(context, EdgeViewEndpointType.DESTINATION, false)
                 }
             }
@@ -88,7 +116,7 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
                 boundingBox.width + 2 * HALF_WIDTH,
                 boundingBox.height + 2 * HALF_WIDTH + NetViewStyle.BLOCK_BORDER_STROKE.width)
 
-        if (isDestinationArrow()) {
+        if (getDestinationArrowOverallLength() > 0) {
             boundingBox.setFrame(
                     boundingBox.x - ARROW_WIDTH, boundingBox.y - ARROW_WIDTH,
                     boundingBox.width + 2 * ARROW_WIDTH, boundingBox.height + 2 * ARROW_WIDTH)
@@ -121,16 +149,18 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
             var beginL = begin
             var beginR = begin
 
+	        val originArrowOverallLength = getOriginArrowOverallLength()
+	        val destinationArrowOverallLength = getDestinationArrowOverallLength()
             when (incomingTurn) {
                 Turn.AROUND,
                     // fallthrough
-                Turn.NONE -> if (isOriginArrow()) {
+                Turn.NONE -> if (originArrowOverallLength > 0) {
                     beginL = Point2D(
-                            begin.x + dir.next().dx * HALF_WIDTH + dir.dx * ARROW_LENGTH,
-                            begin.y + dir.next().dy * HALF_WIDTH + dir.dy * ARROW_LENGTH)
+                            begin.x + dir.next().dx * HALF_WIDTH + dir.dx * originArrowOverallLength,
+                            begin.y + dir.next().dy * HALF_WIDTH + dir.dy * originArrowOverallLength)
                     beginR = Point2D(
-                            begin.x + dir.previous().dx * HALF_WIDTH + dir.dx * ARROW_LENGTH,
-                            begin.y + dir.previous().dy * HALF_WIDTH + dir.dy * ARROW_LENGTH)
+                            begin.x + dir.previous().dx * HALF_WIDTH + dir.dx * originArrowOverallLength,
+                            begin.y + dir.previous().dy * HALF_WIDTH + dir.dy * originArrowOverallLength)
                 } else if (edgeView.origin is NodeView<*>) {
                     beginL = Point2D(
                             begin.x + (dir.next().dx + dir.dx) * HALF_WIDTH,
@@ -175,13 +205,13 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
             when (outgoingTurn) {
                 Turn.AROUND,
                     // fallthrough
-                Turn.NONE -> if (isDestinationArrow()) {
+                Turn.NONE -> if (destinationArrowOverallLength > 0) {
                     endL = Point2D(
-                            end.x + dir.next().dx * HALF_WIDTH - dir.dx * ARROW_LENGTH,
-                            end.y + dir.next().dy * HALF_WIDTH - dir.dy * ARROW_LENGTH)
+                            end.x + dir.next().dx * HALF_WIDTH - dir.dx * destinationArrowOverallLength,
+                            end.y + dir.next().dy * HALF_WIDTH - dir.dy * destinationArrowOverallLength)
                     endR = Point2D(
-                            end.x + dir.previous().dx * HALF_WIDTH - dir.dx * ARROW_LENGTH,
-                            end.y + dir.previous().dy * HALF_WIDTH - dir.dy * ARROW_LENGTH)
+                            end.x + dir.previous().dx * HALF_WIDTH - dir.dx * destinationArrowOverallLength,
+                            end.y + dir.previous().dy * HALF_WIDTH - dir.dy * destinationArrowOverallLength)
                 } else if (edgeView.destination is NodeView<*>) {
                     endL = Point2D(
                             end.x + (dir.next().dx + dir.opposite().dx) * HALF_WIDTH,
@@ -227,28 +257,69 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
         when (endpointType) {
             EdgeViewEndpointType.ORIGIN -> angle = endpointType.getDirection(edgeView)!!.opposite().rotation.angle
             EdgeViewEndpointType.DESTINATION -> angle = endpointType.getDirection(edgeView)!!.rotation.angle
-            else -> {
-            }
         }
 
         context.g.translate(location.x, location.y)
         context.g.rotate(angle)
 
         if (fill) {
-            context.g.fill(ARROW_PATH)
+            context.g.fill(getArrowPath(endpointType))
         } else {
-            context.g.draw(ARROW_PATH)
+            context.g.draw(getArrowPath(endpointType))
         }
 
         context.g.rotate(-angle)
         context.g.translate(-location.x, -location.y)
     }
 
-    private fun isOriginArrow(): Boolean {
-        return edgeView.isArrow && edgeView.originPort != null && edgeView.originPort!!.portType.isInput
+    private fun getOriginArrowOverallLength(): Int {
+	    if (edgeView.isArrow && edgeView.originPort != null) {
+		    return when (edgeView.originPort!!.portType) {
+			    PortType.INPUT -> ARROW_LENGTH
+			    PortType.INOUT -> DOUBLE_ARROW_LENGTH
+			    PortType.OUTPUT -> 0
+		    }
+	    }
+	    return 0
     }
 
-    private fun isDestinationArrow(): Boolean {
-        return edgeView.isArrow && edgeView.destinationPort != null && edgeView.destinationPort!!.portType.isInput
+	private fun getOriginArrow(): Path? {
+		if (edgeView.isArrow && edgeView.originPort != null) {
+			return when (edgeView.originPort!!.portType) {
+				PortType.INPUT -> ARROW_PATH
+				PortType.INOUT -> DOUBLE_ARROW_PATH
+				PortType.OUTPUT -> null
+			}
+		}
+		return null
+	}
+
+    private fun getDestinationArrowOverallLength(): Int {
+	    if (edgeView.isArrow && edgeView.destinationPort != null) {
+		    return when (edgeView.destinationPort!!.portType) {
+			    PortType.INPUT -> ARROW_LENGTH
+			    PortType.INOUT -> DOUBLE_ARROW_LENGTH
+			    PortType.OUTPUT -> 0
+		    }
+	    }
+	    return 0
     }
+
+	private fun getDestinationArrow(): Path? {
+		if (edgeView.isArrow && edgeView.destinationPort != null) {
+			return when (edgeView.destinationPort!!.portType) {
+				PortType.INPUT -> ARROW_PATH
+				PortType.INOUT -> DOUBLE_ARROW_PATH
+				PortType.OUTPUT -> null
+			}
+		}
+		return null
+	}
+
+	private fun getArrowPath(endpointType: EdgeViewEndpointType): Path {
+		return when (endpointType) {
+			EdgeViewEndpointType.ORIGIN -> getOriginArrow()!!
+			EdgeViewEndpointType.DESTINATION -> getDestinationArrow()!!
+		}
+	}
 }

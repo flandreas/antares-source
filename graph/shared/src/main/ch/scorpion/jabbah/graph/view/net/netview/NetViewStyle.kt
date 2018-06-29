@@ -37,12 +37,12 @@ enum class NetViewStyle(val customName: String) {
 
     companion object {
 
-        val BLOCK_BORDER_STROKE = Stroke()
+        val BLOCK_BORDER_STROKE = Stroke(0.5f)
 
-        val BLOCK_HW = 10
+        const val BLOCK_HW = 10
 
         fun withName(customName: String): NetViewStyle {
-            for (i in 0..values().size - 1) {
+            for (i in 0 until values().size) {
                 if (values()[i].customName == customName) {
                     return values()[i]
                 }
@@ -52,10 +52,10 @@ enum class NetViewStyle(val customName: String) {
     }
 
     override fun toString(): String {
-        when (this) {
+        return when (this) {
             // TODO Rename to netViewStyle
-            BLOCK -> return Translations.getString("graph.property.edgeViewLineStyle.block.name")
-            LINE -> return Translations.getString("graph.property.edgeViewLineStyle.line.name")
+            BLOCK -> Translations.getString("graph.property.edgeViewLineStyle.block.name")
+            LINE -> Translations.getString("graph.property.edgeViewLineStyle.line.name")
         }
     }
 
