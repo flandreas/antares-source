@@ -27,6 +27,7 @@ class DigitalComponentViewDrawer(successor: DrawableDrawer<Component>?) : Abstra
     }
 
     override fun process(context: DrawContext, drawable: Component) {
+	    val oldUseContextColor = context.useContextColors
         if (drawable is GraphElementView<*> && drawable.model != null && drawable.model!!.isError) {
             context.useContextColors = true
             context.g.color = Themes.get<AntaresTheme>().error.foregroundColor
@@ -37,6 +38,8 @@ class DigitalComponentViewDrawer(successor: DrawableDrawer<Component>?) : Abstra
             context.selectionColor = Themes.get<GraphTheme>().selection
         }
         context.g.stroke = Themes.get<GraphTheme>().edge.stroke
-        processDone(context, drawable)
+        nextProcessor(context, drawable)
+
+	    context.useContextColors = oldUseContextColor
     }
 }

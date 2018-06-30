@@ -204,7 +204,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
             if (!selectionManager.isSelected(drawable) || getComponentSelectionDrawingStrategy(drawable) != SelectionDrawingStrategy.REPLACE) {
                 drawable.draw(context)
             }
-            processDone(context, drawable)
+            nextProcessor(context, drawable)
         }
     }
 }

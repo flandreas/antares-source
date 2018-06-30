@@ -11,6 +11,6 @@ class DefaultDrawableDrawer<T : Drawable> : AbstractDrawableDrawer<T>() {
 
     override fun process(context: DrawContext, drawable: T) {
         drawable.draw(context)
-        processDone(context, drawable)
+        nextProcessor(context, drawable)
     }
 }

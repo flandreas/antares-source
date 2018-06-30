@@ -30,23 +30,26 @@ class BrokenReferenceView(
 
 	private val font: Font get() = styleProvider.getStyle(StyleType.FIGURE).font
 
-	private val foreground: Color get() = styleProvider.getStyle(StyleType.FIGURE).color.foregroundColor
+	private val foregroundColor: Color get() = styleProvider.getStyle(StyleType.FIGURE).color.foregroundColor
 
-	private val background: Color get() = styleProvider.getStyle(StyleType.BACKGROUND).color.foregroundColor
+	private val backgroundColor: Color get() = styleProvider.getStyle(StyleType.BACKGROUND).color.foregroundColor
+
+	private val textColor: Color get() = styleProvider.getStyle(StyleType.FIGURE).color.textColor
 
 	private val label: Label = Label(
 		text ="?",
 		font = font,
-		color = foreground,
+		color = textColor,
 		location = Point2D(bounds.centerX, bounds.centerY)
 	)
 
 	override fun draw(context: DrawContext) {
 		drawRectangle(
 			context,
-			if (context.useContextColors) context.color!!.foregroundColor else foreground,
-			if (context.useContextColors) context.color!!.backgroundColor else background,
+			if (context.useContextColors) context.color!!.foregroundColor else foregroundColor,
+			if (context.useContextColors) context.color!!.backgroundColor else backgroundColor,
 			stroke)
+		label.color = if (context.useContextColors) context.color!!.textColor else textColor
 		label.draw(context)
 	}
 

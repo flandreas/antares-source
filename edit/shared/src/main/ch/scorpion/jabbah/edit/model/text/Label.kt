@@ -223,9 +223,12 @@ class Label(
             context.g.fillOval((location.x - 2).toInt(), (location.y - 2).toInt(), 4, 4)
         }
 
-        if (!context.useContextColors && color != null) {
-            context.g.color = color!!
+        context.g.color = if (context.useContextColors) {
+            context.color!!.textColor
+        } else {
+	        color  ?: context.g.color
         }
+
         context.g.font = font
 
         rotationDisplayStrategy.beforeDraw(context, this)
