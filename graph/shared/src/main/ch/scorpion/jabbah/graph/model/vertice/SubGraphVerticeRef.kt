@@ -58,6 +58,8 @@ class SubGraphVerticeRef(
 	/** Can be set during [read] if reference to [MetaGraph] is broken. */
 	private var _designError: DesignError? = null
 
+    private val hasDesignError: Boolean get() = designError != null
+
 	override val designError: DesignError? get() = _designError
 
     /** ---- [GraphElement] interface */
@@ -116,11 +118,13 @@ class SubGraphVerticeRef(
 
     override fun executionStarted(signalHandler: SignalHandler) {
         super.executionStarted(signalHandler)
-        if (isDeepExecution(signalHandler)) {
-            graph?.executionStarted(signalHandler)
-        } else {
-            requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, null, true))
-        }
+	    if (!hasDesignError) {
+		    if (isDeepExecution(signalHandler)) {
+			    graph?.executionStarted(signalHandler)
+		    } else {
+			    requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, null, true))
+		    }
+	    }
     }
 
     override fun executionStopped(signalHandler: SignalHandler) {
@@ -153,8 +157,10 @@ class SubGraphVerticeRef(
 
     override fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator) {
         super.bind(repository, storableCreator)
-        graph = getGraph(repository, storableCreator)
-        graph!!.bind(repository, storableCreator)
+	    if (!hasDesignError) {
+		    graph = getGraph(repository, storableCreator)
+		    graph!!.bind(repository, storableCreator)
+	    }
     }
 
     override fun getGraph(repository: MetaGraphRepository, storableCreator: StorableCreator): Graph {

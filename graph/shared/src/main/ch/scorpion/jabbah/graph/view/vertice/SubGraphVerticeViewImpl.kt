@@ -267,8 +267,10 @@ class SubGraphVerticeViewImpl(
 
     override fun bind(graph: Graph) {
         super.bind(graph)
-        val innerGraph = getGraph()
-        getControlViewComponents().forEach { it.bindToGraph(innerGraph) }
+        if (model!!.designError == null) {
+	        val innerGraph = getGraph()
+	        getControlViewComponents().forEach { it.bindToGraph(innerGraph) }
+        }
     }
 
     /** ---- [AbstractVerticeView] */
