@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
-import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -20,6 +19,7 @@ import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
@@ -53,6 +53,7 @@ open class GraphNavigationPanel(
 
     companion object {
         private val LOG by logger(GraphNavigationPanel::class)
+	    val PROP_OVERLAY_COLOR = "graph.ui.GraphNavigationPanel.overlayColor"
     }
 
     private val mainPanel = JPanel(BorderLayout())
@@ -123,6 +124,8 @@ open class GraphNavigationPanel(
 
         buildUI(contextBorderColor, closeHandler)
         propagateApplicationContext()
+
+        updateDetached()
     }
 
     open fun dispose() {
@@ -260,15 +263,14 @@ open class GraphNavigationPanel(
      * i.e. whether it doesn't show accurate signal states due to shallow execution.
      */
     private fun updateDetached() {
-        if ((!isRoot || navigationStackView.navigationStack.size > 1)
+	    drawingView.overlayColor = if ((!isRoot || navigationStackView.navigationStack.size > 1)
             && scheduler.isActive
             && !scheduler.isDeepExecution
             && StringUtils.isNotEmpty(drawingView.drawing.graph!!.script)
         ) {
-            // TODO Make color configurable after feature has passed experimental stage
-            drawingView.overlayColor = Color(255, 255, 255, 192)
+            BaseModule.properties.get<Color>(PROP_OVERLAY_COLOR)
         } else {
-            drawingView.overlayColor = null
+            null
         }
     }
 

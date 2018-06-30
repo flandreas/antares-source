@@ -22,4 +22,13 @@ class PropertiesTest {
         properties.set("name", "ABC")
         assertThat(properties.getString("name"), `is`("ABC"))
     }
+
+	@Test
+    fun shouldGetObject() {
+		val properties = Properties()
+		properties.set("myObject", SomeObject(1, 2))
+		assertThat(properties.get<SomeObject>("myObject"), `is`(SomeObject(1, 2)))
+    }
+
+	data class SomeObject(val a: Int, val b: Int)
 }
