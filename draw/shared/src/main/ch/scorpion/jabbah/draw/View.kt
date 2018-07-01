@@ -16,10 +16,10 @@ interface View<C : InputEventContext> : ViewToModelTransform {
     companion object {
 
         /** The name of the [ZoomPan] property in [PropertyChangeEvent]s.*/
-        val PROP_ZOOM_PAN = "PROP_ZOOM_PAN"
+        const val PROP_ZOOM_PAN = "PROP_ZOOM_PAN"
 
         /** The name of the [userZoomEnabled] property in [PropertyChangeEvent]s.*/
-        val PROP_USER_ZOOM_ENABLED = "PROP_USER_ZOOM_ENABLED"
+        const val PROP_USER_ZOOM_ENABLED = "PROP_USER_ZOOM_ENABLED"
     }
 
     /** The [Canvas] that renders this [View].*/
@@ -65,7 +65,7 @@ interface View<C : InputEventContext> : ViewToModelTransform {
      * are never zoomed. It can be used for displaying UI controls, or for displaying system wide messages
      * that are not related with a particular [Component] in the [Drawing]. Unlike all other [DrawableContainer]s,
      * this one is not part of the [DrawingView]'s [DrawingViewContent], i.e. it is not replaced when
-     * replacing the [Drawing].o
+     * replacing the [Drawing].
      */
     val overlayContainer: DrawableContainer<Drawable>
 
@@ -179,6 +179,12 @@ interface View<C : InputEventContext> : ViewToModelTransform {
      * When changed, notifies all registered [PropertyChangeListener]s that property [PROP_USER_ZOOM_ENABLED] has changed.
      */
     var userZoomEnabled: Boolean
+
+	/**
+	 * Determines whether auto-panning is enabled in this [View].
+	 * Auto-panning automatically pans this [View] when the user drags the mouse near the border of the [View].
+	 */
+    var autoPanningEnabled: Boolean
 
 
     /** ---- Content management */

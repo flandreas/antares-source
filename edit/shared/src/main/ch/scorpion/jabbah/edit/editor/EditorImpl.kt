@@ -24,7 +24,7 @@ open class EditorImpl(
     constructor(view: DrawingView<Drawing<Component>>): this(view, EditModule.commandManager, EditSelectModule.selectionToolFactory)
 
     companion object {
-        val DRAG_THRESHOLD = 15
+        const val DRAG_THRESHOLD = 15
     }
 
     private val changeSupport = PropertyChangeSupport<Any>(this)
@@ -52,6 +52,7 @@ open class EditorImpl(
                 view.removeMouseMotionListener(mouseEventDelegator)
                 view.removeKeyListener(keyEventDelegator)
             }
+            view.autoPanningEnabled = active
             changeSupport.fire(Editor.PROP_ACTIVE, oldValue, field)
         }
 
@@ -120,7 +121,7 @@ open class EditorImpl(
      * This implementation does nothing. Intended to be overridden by subclasses.
      * @param component the [Component] that has been added.
      */
-    open protected fun handleComponentAdded(component: Component) {
+    protected open fun handleComponentAdded(component: Component) {
         // empty
     }
 
@@ -131,7 +132,7 @@ open class EditorImpl(
      * This implementation does nothing. Intended to be overridden by subclasses.
      * @param component the [Component] that has been removed.
      */
-    open protected fun handleComponentRemoved(component: Component) {
+    protected open fun handleComponentRemoved(component: Component) {
         // empty
     }
 

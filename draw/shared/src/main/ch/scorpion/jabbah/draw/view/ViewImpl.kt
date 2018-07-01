@@ -174,7 +174,7 @@ open class ViewImpl<C: InputEventContext>(
             repaint()
         }
 
-    override final val overlayContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
+    final override val overlayContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
 
     val painter: ViewPainter = InvalidatableViewPainter(this)
 
@@ -313,6 +313,10 @@ open class ViewImpl<C: InputEventContext>(
                 firePropertyChange(View.PROP_USER_ZOOM_ENABLED, !field, field)
             }
         }
+
+    override var autoPanningEnabled: Boolean
+        get() = controller.autoPanningEnabled
+        set(value) { controller.autoPanningEnabled = value }
 
     protected fun applyDefaultZoomStrategy() {
         defaultZoomStrategy.apply(navigator)

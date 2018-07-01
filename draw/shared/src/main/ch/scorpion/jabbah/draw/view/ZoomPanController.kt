@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Vector2D
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.time.Timer
 
 /**
@@ -18,12 +17,11 @@ import ch.scorpion.jabbah.base.time.Timer
 class ZoomPanController(val view: View<*>) {
 
     companion object {
-        private val LOG by logger(ZoomPanController::class)
-        private val AUTOPAN_TIMER_DELAY = 50
-        private val AUTOPAN_SIZE = 10
-        private val AUTOPAN_REGION = 50
-        private val ZOOM_OUT_CHANGE_FACTOR = 0.9
-        private val MIN_ZOOM_FACTOR = 0.05
+        private const val AUTOPAN_TIMER_DELAY = 50
+        private const val AUTOPAN_SIZE = 10
+        private const val AUTOPAN_REGION = 50
+        private const val ZOOM_OUT_CHANGE_FACTOR = 0.9
+        private const val MIN_ZOOM_FACTOR = 0.05
     }
 
     var enabled: Boolean = false
@@ -39,6 +37,10 @@ class ZoomPanController(val view: View<*>) {
             }
             field = value
         }
+
+	var autoPanningEnabled: Boolean
+		get() = autoPanning.enabled
+		set(value) { autoPanning.enabled = value }
 
     private val controller = Controller()
 
@@ -96,6 +98,8 @@ class ZoomPanController(val view: View<*>) {
         private val timer: Timer = System.get().createTimer()
         private var event: MouseEvent = EmptyMouseEvent()
 
+        var enabled: Boolean = true
+
         init {
             timer.initialize(AUTOPAN_TIMER_DELAY, { pan() })
         }
@@ -114,7 +118,9 @@ class ZoomPanController(val view: View<*>) {
         }
 
         fun activate() {
-            view.addMouseMotionListener(this)
+	        if (enabled) {
+		        view.addMouseMotionListener(this)
+	        }
         }
 
         fun deactivate() {
