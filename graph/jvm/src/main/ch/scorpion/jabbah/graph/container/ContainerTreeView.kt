@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.graph.container
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.graph.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.*
@@ -25,6 +27,10 @@ open class ContainerTreeView(
     eventBus: EventBus
 ) : JTree() {
     constructor(): this(GraphViewModule.portFactory, DrawStyleModule.styleProvider, BaseModule.eventBus)
+
+	companion object {
+		private val LOG = logger(ContainerTreeView::class)
+	}
 
     /** The root node that contains the [PortViewComponent]s. Will be set in [update]. */
     private var portsNode: DefaultMutableTreeNode? = null
@@ -58,8 +64,8 @@ open class ContainerTreeView(
     /** Updates the [TreeModel] by comparing data from [GraphView] and [ContainerDrawing].*/
     fun update(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
         // TODO I18N
-        portsNode = DefaultMutableTreeNode("Ports")
-        controlsNode = DefaultMutableTreeNode("Controls")
+        portsNode = DefaultMutableTreeNode(Translations.getString("graph.component.ports"))
+        controlsNode = DefaultMutableTreeNode(Translations.getString("graph.component.controls"))
         model = createTreeModel(graphView, containerDrawing)
     }
 
@@ -120,7 +126,7 @@ open class ContainerTreeView(
 
     private fun findGraphPortViewIndex(portName: String): Int? {
         if (portsNode != null) {
-            for (index in 0..portsNode!!.childCount - 1) {
+            for (index in 0 until portsNode!!.childCount) {
                 val item = (portsNode!!.getChildAt(index) as DefaultMutableTreeNode).userObject as ContainerTreeItem
                 if (item.id.invoke() == portName) {
                     return index
@@ -132,7 +138,7 @@ open class ContainerTreeView(
 
     private fun findControlViewSourceIndex(controlId: String): Int? {
         if (portsNode != null) {
-            for (index in 0..controlsNode!!.childCount - 1) {
+            for (index in 0 until controlsNode!!.childCount) {
                 val item = (controlsNode!!.getChildAt(index) as DefaultMutableTreeNode).userObject as ContainerTreeItem
                 if (item.id.invoke() == controlId) {
                     return index
@@ -171,11 +177,11 @@ open class ContainerTreeView(
             .forEach { addControlViewSource(it) }
     }
 
-    private class ContainerTreeCellRenderer : DefaultTreeCellRenderer() {
-        private val LOG = logger(ContainerTreeView::class)
+    private inner class ContainerTreeCellRenderer : DefaultTreeCellRenderer() {
         private val iconCache: MutableMap<String, Icon> = mutableMapOf()
+	    private val folderIcon = ImageIcon(LibraryTreeView::class.java.getResource("/img/folder-20.png"))
 
-        override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): java.awt.Component {
+	    override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): java.awt.Component {
             val treeNode = value as DefaultMutableTreeNode
             val label = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus) as JLabel
             if (treeNode.userObject is ContainerTreeItem) {
@@ -183,6 +189,8 @@ open class ContainerTreeView(
                 if ((treeNode.userObject as ContainerTreeItem).iconPath.invoke() != "") {
                     label.icon = getIcon((treeNode.userObject as ContainerTreeItem).iconPath.invoke())
                 }
+            } else if (treeNode === portsNode || treeNode === controlsNode) {
+	            label.icon = folderIcon
             }
             return label
         }
