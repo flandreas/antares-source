@@ -4,10 +4,10 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.draw.ZoomStrategyType
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
 import ch.scorpion.jabbah.graph.view.editor.GraphPortViewEvent
@@ -23,7 +23,6 @@ open class ContainerEditor(
     init {
         view.defaultZoomStrategy = ZoomStrategy(ZoomStrategyType.VALUE, 2.0)
         view.drawing = ContainerDrawing()
-        view.defaultSelectionDrawingStrategy = SelectionDrawingStrategy.ABOVE
 
         eventBus.register(GraphPortViewEvent::class, {
             if (it.type == GraphPortViewEvent.Type.REMOVE) {
