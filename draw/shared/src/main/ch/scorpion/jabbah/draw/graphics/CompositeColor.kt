@@ -27,4 +27,13 @@ data class CompositeColor(
      */
     fun exchange(): CompositeColor = CompositeColor(backgroundColor, foregroundColor, backgroundColor)
 
+	/** Creates a new [CompositeColor] having the same color than this one, except the specified foreground color.*/
+	fun withForeground(color: Color): CompositeColor = CompositeColor(color, backgroundColor, textColor)
+
+	/** Creates a new [CompositeColor] having the same color than this one, except the specified background color.*/
+    fun withBackground(color: Color): CompositeColor = CompositeColor(foregroundColor, color, textColor)
+
+	/** Creates a new [CompositeColor] having the same color than this one, except the specified text color.*/
+	fun withTextColor(color: Color): CompositeColor = CompositeColor(foregroundColor, backgroundColor, color)
+
 }

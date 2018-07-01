@@ -214,16 +214,18 @@ object AntaresThemes {
                 selection = CompositeColor(
                         foregroundColor = SELECTION_COLOR,
                         backgroundColor = Color.BLACK),
-                zero = ZERO,
+                zero = ZERO.withBackground(ZERO.foregroundColor),
                 one = ONE,
                 undefined = UNDEFINED,
                 wordZero = CompositeColor(
                         foregroundColor = ZERO.foregroundColor,
-                        backgroundColor = veryDarkGreen
+                        backgroundColor = veryDarkGreen,
+	                    textColor = ZERO.textColor
                 ),
                 word = CompositeColor(
-                        ONE.foregroundColor,
-                        backgroundColor = veryDarkGreen
+                        foregroundColor = ONE.foregroundColor,
+                        backgroundColor = veryDarkGreen,
+                        textColor = ONE.textColor
                 ),
                 error = ERROR,
                 focus = BasicStyle(
