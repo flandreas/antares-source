@@ -21,16 +21,21 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
     /** Is automatically set to ´true´ if all [Bit]s are [Bit.Undefined]. */
     private val undefined: Boolean = bits.all { it == Bit.Undefined }
 
-
     companion object {
 
         private val UNDEFINED: MutableMap<BitWidth, Word> = mutableMapOf()
         private val ERROR: MutableMap<BitWidth, Word> = mutableMapOf()
+	    private val FALSE: MutableMap<BitWidth, Word> = mutableMapOf()
+	    private val TRUE: MutableMap<BitWidth, Word> = mutableMapOf()
+	    private val ZERO_WIDTH_1 = Word(listOf(Bit.False))
+	    private val ONE_WIDTH_1 = Word(listOf(Bit.True))
 
         init {
             for (bitWidth in BitWidth.values()) {
 	            UNDEFINED[bitWidth] = Word(createListWithBit(bitWidth, Bit.Undefined))
 	            ERROR[bitWidth] = Word(createListWithBit(bitWidth, Bit.Error))
+	            FALSE[bitWidth] = Word(createListWithBit(bitWidth, Bit.False))
+	            TRUE[bitWidth] = Word(createListWithBit(bitWidth, Bit.True))
             }
         }
 
@@ -44,22 +49,40 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
             return ERROR[bitWidth]!!
         }
 
+	    /** Returns a [Word] of the specified [BitWidth] with all [Bit]s in `false` state. */
+	    fun falseValue(bitWidth: BitWidth): Word {
+		    return FALSE[bitWidth]!!
+	    }
+
+	    /** Returns a [Word] of the specified [BitWidth] with all [Bit]s in `true` state. */
+	    fun trueValue(bitWidth: BitWidth): Word {
+		    return TRUE[bitWidth]!!
+	    }
+
         /** Returns a [Word] of the specified width with all the same [Bit]s.*/
         fun allOf(bitWidth: BitWidth, bit: Bit): Word {
+	        return when(bit) {
+		        Bit.Undefined -> undefined(bitWidth)
+		        Bit.Error -> error(bitWidth)
+		        Bit.False -> falseValue(bitWidth)
+		        Bit.True -> trueValue(bitWidth)
+	        }
+	        /*
             if (!bit.isDefined) {
                 return undefined(bitWidth)
             }
             return Word(createListWithBit(bitWidth, bit))
+            */
         }
 
         /** Returns a [Word] consisting of a single [Bit] with the specified value.*/
         fun of(bitValue: Boolean): Word {
-            return of(Bit.of(bitValue))
+	        return if (bitValue) ONE_WIDTH_1 else ZERO_WIDTH_1
         }
 
         /** Returns a [Word] consisting of a single [Bit] with the specified value.*/
         fun of(bit: Bit): Word {
-            return Word(listOf(bit))
+	        return if (bit.isSet) ONE_WIDTH_1 else ZERO_WIDTH_1
         }
 
         /** Returns a [Word] that represents the specified value as a binary word of th specified width.*/
