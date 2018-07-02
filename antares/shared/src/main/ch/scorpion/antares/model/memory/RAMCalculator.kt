@@ -18,9 +18,9 @@ class RAMCalculator : VerticeCalculator<RAM> {
 
     override fun calculate(vertice: RAM, data: GraphActorData, signalHandler: SignalHandler) {
         if (vertice.hasClock) {
-            calculateClocked(vertice, data, signalHandler);
+            calculateClocked(vertice, data, signalHandler)
         } else {
-            calculateUnclocked(vertice, data, signalHandler);
+            calculateUnclocked(vertice, data, signalHandler)
         }
     }
 
@@ -78,6 +78,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
         }
 
         if (data.changedPort === ram.getAddressInput()) {
+	        ram.currentSelectedAddress = ram.getAddressInput().getIncomingSignal()!!.toInt()!!
             readOrWrite(ram, signalHandler)
         }
 

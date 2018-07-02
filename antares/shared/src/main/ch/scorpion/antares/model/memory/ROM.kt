@@ -22,9 +22,9 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
     companion object {
 
-        val ADDRESS_PORT_NAME = "A"
-        val CHIP_SELECT_PORT_NAME = "CS"
-        val DATA_PORT_NAME = "D"
+        const val ADDRESS_PORT_NAME = "A"
+        const val CHIP_SELECT_PORT_NAME = "CS"
+        const val DATA_PORT_NAME = "D"
 
         val CALCULATOR = object : VerticeCalculator<ROM> {
             override fun calculate(vertice: ROM, data: GraphActorData, signalHandler: SignalHandler) {
@@ -34,8 +34,8 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
                     if (addressInt == null) {
                         vertice.getDataOutput().setOutgoingSignalBuffered(Word.error(vertice.dataWidth), signalHandler)
                     } else {
-                        val value = vertice.read(addressInt)
-                        vertice.getDataOutput().setOutgoingSignalBuffered(Word.of(vertice.dataWidth, value), signalHandler)
+	                    vertice.currentSelectedAddress = addressInt
+                        vertice.getDataOutput().setOutgoingSignalBuffered(Word.of(vertice.dataWidth, vertice.read(addressInt)), signalHandler)
                     }
                 } else {
                     vertice.getDataOutput().setOutgoingSignalBuffered(Word.undefined(vertice.dataWidth), signalHandler)
@@ -56,7 +56,13 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
             disassembleAll()
         }
 
-    private val disassembler = Disassembler()
+	/**
+	 * Represents the last value of the address input, but gets only updated when the chip is selected (CS).
+	 * Can be used for displaying the "current" (i.e. last) selected address.
+	 */
+	var currentSelectedAddress: Int = 0
+
+	private val disassembler = Disassembler()
 
     /** Maps a memory cell address to its disassembly string.*/
     private val disassembly = mutableMapOf<Int,String>()
@@ -73,7 +79,8 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
     /** ---- [Addressable] interface */
 
-    override val currentAddress: Int get() = getAddressInput().getIncomingSignal()?.toInt() ?: 0
+    //override val currentAddress: Int get() = getAddressInput().getIncomingSignal()?.toInt() ?: 0
+    override val currentAddress: Int get() = currentSelectedAddress
 
     override val maxAddress: Int get() = getAddressInput().bitWidth.power() - 1
 

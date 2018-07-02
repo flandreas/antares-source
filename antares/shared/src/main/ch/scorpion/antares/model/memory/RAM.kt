@@ -4,7 +4,6 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
@@ -22,13 +21,12 @@ import ch.scorpion.jabbah.io.StoreWriter
 class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addressable {
 
     companion object {
-        val ADDRESS_PORT_NAME = "A"
-        val CHIP_SELECT_PORT_NAME = "CS"
-        val DATA_PORT_NAME = "D"
-        val WRITE_PORT_NAME = "WR"
-        val CLEAR_PORT_NAME = "CLR"
-        val CLOCK_PORT_NAME = "CLK"
-
+        const val ADDRESS_PORT_NAME = "A"
+        const val CHIP_SELECT_PORT_NAME = "CS"
+        const val DATA_PORT_NAME = "D"
+        const val WRITE_PORT_NAME = "WR"
+        const val CLEAR_PORT_NAME = "CLR"
+        const val CLOCK_PORT_NAME = "CLK"
     }
 
     val memory = Memory()
@@ -48,6 +46,12 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
             }
         }
 
+	/**
+	 * Represents the last value of the address input, but gets only updated when the chip is selected (CS).
+	 * Can be used for displaying the "current" (i.e. last) selected address.
+	 */
+	var currentSelectedAddress: Int = 0
+
     init {
         addPort(DigitalPortImpl.createInput(Logic.POSITIVE, ADDRESS_PORT_NAME, BitWidth.BW_8))
         addPort(DigitalPortImpl.createInput(CHIP_SELECT_PORT_NAME))
@@ -59,7 +63,8 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
     /** ---- [Addressable] interface */
 
-    override val currentAddress: Int get() = getAddressInput().getIncomingSignal()?.toInt() ?: 0
+    //override val currentAddress: Int get() = getAddressInput().getIncomingSignal()?.toInt() ?: 0
+    override val currentAddress: Int get() = currentSelectedAddress
 
     override val maxAddress: Int get() = getAddressInput().bitWidth.power() - 1
 
@@ -102,6 +107,7 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
     override fun executionStarted(signalHandler: SignalHandler) {
         super.executionStarted(signalHandler)
+	    currentSelectedAddress = 0
         getDataPort().setOutgoingSignal(Word.undefined(dataWidth), signalHandler)
     }
 

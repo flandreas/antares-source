@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.memory
 
 import ch.scorpion.antares.model.memory.RAM
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
@@ -23,6 +24,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -48,13 +50,13 @@ class RAMView(
 ) : DigitalComponentView<RAM>(styleProvider, "library.element.RAM", model) {
 
     companion object {
-        val WIDTH = 24 * Look.GRID
-        val HEIGHT = 12 * Look.GRID
-        val LABEL_VERTICAL_FACTOR = 0.3f
-        val CLOCK_PORT_X_FACTOR = 6
-        val CS_PORT_X_FACTOR = 10
-        val WRITE_PORT_X_FACTOR = 14
-        val CLEAR_PORT_X_FACTOR = 18
+        const val WIDTH = 24 * Look.GRID
+        const val HEIGHT = 12 * Look.GRID
+        const val LABEL_VERTICAL_FACTOR = 0.3f
+        const val CLOCK_PORT_X_FACTOR = 6
+        const val CS_PORT_X_FACTOR = 10
+        const val WRITE_PORT_X_FACTOR = 14
+        const val CLEAR_PORT_X_FACTOR = 18
     }
 
     private val inputEventHandler = DoubleClickHandler()
@@ -257,7 +259,9 @@ class RAMView(
 
     override fun handleStateChanged(event: GraphElementEvent) {
         label.text = if (text == null) buildLabelText() else text!!
-        contentsView.handleCurrentAddressChanged()
+	    if (model!!.getChipSelectInput().getIncomingSignal() == Word.of(true)) {
+		    contentsView.handleCurrentAddressChanged()
+	    }
         super.handleStateChanged(event)
     }
 
@@ -335,7 +339,9 @@ class RAMView(
         val dataPV = getPortView(model!!.getDataPort())!!
         dataPV.setLocation(dataPV.unconnectedLength + width, 0.0)
 
-        getPortView(model!!.getClockInput()!!)!!.setLocation(x + CLOCK_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
+	    if (model!!.hasClock) {
+		    getPortView(model!!.getClockInput()!!)!!.setLocation(x + CLOCK_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
+	    }
         getPortView(model!!.getChipSelectInput())!!.setLocation(x + CS_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
         getPortView(model!!.getWriteInput())!!.setLocation(x + WRITE_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
         getPortView(model!!.getClearInput())!!.setLocation(x + CLEAR_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
