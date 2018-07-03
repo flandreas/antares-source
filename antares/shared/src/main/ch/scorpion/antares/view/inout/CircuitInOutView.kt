@@ -87,6 +87,13 @@ class CircuitInOutView(
             }
         }
 
+	/**
+	 * Controls the interactive behaviour of this [CircuitInOutView]. If set to `true`, it
+	 * stays in the new state when the user releases the mouse button. If set to `false`,
+	 * it returns to 0 state.
+	 */
+	var toggle: Boolean = true
+
     override val boundingBox = Rectangle2D()
 
     private val actorInteractionHandler = InteractionHandler()
@@ -163,6 +170,9 @@ class CircuitInOutView(
         writer.writePoint("location", location)
         writer.writeString("representation", signalRepresentation.customName)
         writer.writeString("orientation", orientation.customName)
+	    if (!toggle) {
+		    writer.writeBoolean("toggle", toggle)
+	    }
     }
 
     override fun read(reader: StoreReader) {
@@ -174,6 +184,9 @@ class CircuitInOutView(
         }
         signalRepresentation = DigitalSignalRepresentation.withName(reader.readString("representation"))
         orientation = Direction.withName(reader.readString("orientation"))
+	    if (reader.hasAttribute("toggle")) {
+		    toggle = reader.readBoolean("toggle")
+	    }
     }
 
     /** ---- [ControlViewSource] */
@@ -509,33 +522,44 @@ class CircuitInOutView(
      * Allows to toggle individual [Bit]s by clicking with the mouse.
      */
     private inner class InteractionHandler : ActorInteractionHandlerAdapter() {
+
         override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
             if (!model!!.isToplevel) {
                 eventBus.post(ComponentMessage(source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
                 return
             }
-            val digitIndex = getDigitIndexAt(x, y)
-            if (digitIndex != null) {
-                if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
-                    // Toggle the binary digit
-                    var signal = model!!.signal as Word?
-                    if (signal == null) {
-                        signal = Word.allOf(bitWidth, Bit.Undefined)
-                    }
-                    var bit = signal.bitAt(digitIndex)
-                    if (!bit.isDefined) {
-                        bit = Bit.False
-                    }
-
-                    model!!.setIncomingSignal(signal.withBit(digitIndex, bit.not()), signalHandler)
-                }
-
-                // Set the focus on the selected digit
-                invalidate()
-                numberView!!.setFocusTo(digitIndex)
-                validate()
-            }
+			toggle(signalHandler, event, x, y)
         }
+
+	    override fun mouseReleased(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+		    if (!toggle) {
+			    toggle(signalHandler, event, x, y)
+		    }
+	    }
+
+	    private fun toggle(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+		    val digitIndex = getDigitIndexAt(x, y)
+		    if (digitIndex != null) {
+			    if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
+				    // Toggle the binary digit
+				    var signal = model!!.signal as Word?
+				    if (signal == null) {
+					    signal = Word.allOf(bitWidth, Bit.Undefined)
+				    }
+				    var bit = signal.bitAt(digitIndex)
+				    if (!bit.isDefined) {
+					    bit = Bit.False
+				    }
+
+				    model!!.setIncomingSignal(signal.withBit(digitIndex, bit.not()), signalHandler)
+			    }
+
+			    // Set the focus on the selected digit
+			    invalidate()
+			    numberView!!.setFocusTo(digitIndex)
+			    validate()
+		    }
+	    }
 
         override fun keyPressed(signalHandler: SignalHandler, event: KeyEvent) {
             if (!model!!.isToplevel) {

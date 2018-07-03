@@ -23,6 +23,7 @@ class CircuitInOutViewBeanInfo : AbstractBeanInfo<CircuitInOutView>() {
         private val bitWidth = PropertyImpl("element.property.bitWidth", BitWidth::class.java)
         private val orientation = PropertyImpl("graph.property.direction", Direction::class.java)
         private val signalRep = PropertyImpl("element.property.DigitalSignalRepresentation", DigitalSignalRepresentation::class.java)
+	    private val toggle = PropertyImpl("element.property.Switch.toggle", Boolean::class.java)
         private val description = PropertyImpl("edit.property.description", TextProperty::class.java)
     }
 
@@ -35,6 +36,7 @@ class CircuitInOutViewBeanInfo : AbstractBeanInfo<CircuitInOutView>() {
 		orientation.bind(editor, { bean.orientation }, { bean.orientation = it!! })
 		bitWidth.bind(editor, { bean.bitWidth }, { bean.bitWidth = it!! })
 		signalRep.bind(editor, { bean.signalRepresentation }, { bean.signalRepresentation = it!! })
+	    toggle.bind(editor, { bean.toggle }, { bean.toggle = it!! })
 		description.bind(editor, { bean.description}, { bean.description = it!! })
 
 		properties.add(id)
@@ -43,6 +45,7 @@ class CircuitInOutViewBeanInfo : AbstractBeanInfo<CircuitInOutView>() {
 		properties.add(orientation)
 		properties.add(bitWidth)
 		properties.add(signalRep)
+	    properties.add(toggle)
 		properties.add(description)
     }
 }
