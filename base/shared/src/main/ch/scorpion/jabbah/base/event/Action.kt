@@ -11,6 +11,8 @@ class ActionEvent(
     override fun consume() {
         // empty
     }
+
+	override fun isConsumed(): Boolean = false
 }
 
 interface ActionListener {

@@ -251,6 +251,8 @@ private class MouseEventJs(
         event.preventDefault()
     }
 
+	override fun isConsumed(): Boolean = event.defaultPrevented
+
     private fun convertButton(): Button {
         return when(event.button.toInt()) {
             0 -> Button.BUTTON1
@@ -344,7 +346,9 @@ private class KeyEventJs(
         event.preventDefault()
     }
 
-    private fun convertModifiers(): Int {
+	override fun isConsumed(): Boolean = event.defaultPrevented
+
+	private fun convertModifiers(): Int {
         var modifiers: Int = 0
         if (event.shiftKey) {
             modifiers = modifiers or ch.scorpion.jabbah.base.event.SHIFT_MASK

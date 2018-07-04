@@ -459,9 +459,14 @@ class SubGraphVerticeViewImpl(
         }
 
         override fun mouseClicked(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
-            if (event.clickCount == 2) {
-                requestOpenSubGraph(event)
-            }
+	        val actorView = getActorViewAt(x - location.x, y - location.y)
+	        if (actorView?.getActorInteractionHandler() != null) {
+		        actorView.getActorInteractionHandler()!!.mouseClicked(signalHandler, event, x - location.x, y - location.y)
+	        } else {
+		        if (event.clickCount == 2) {
+			        requestOpenSubGraph(event)
+		        }
+	        }
         }
     }
 }

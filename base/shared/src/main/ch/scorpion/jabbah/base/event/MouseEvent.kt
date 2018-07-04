@@ -21,7 +21,7 @@ interface MouseEvent : InputEvent {
     val location: Point2D get() = Point2D(x.toDouble(), y.toDouble())
 }
 
-/** A platform-independent empty implentation of [MouseEvent] to be used when applying the "null pattern".*/
+/** A platform-independent empty implementation of [MouseEvent] to be used when applying the "null pattern".*/
 class EmptyMouseEvent : MouseEvent {
 
     override val event: Any get() = this
@@ -36,6 +36,10 @@ class EmptyMouseEvent : MouseEvent {
     override fun consume() {
         // empty
     }
+
+	override fun isConsumed(): Boolean {
+		return false
+	}
 }
 
 

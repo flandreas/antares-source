@@ -331,13 +331,16 @@ class SwitchView(
     }
 
     private inner class InteractionHandler : ActorInteractionHandlerAdapter() {
+
         override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
             model!!.toggle(signalHandler)
+	        event.consume()
         }
 
         override fun mouseReleased(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
             if (!toggle) {
                 model!!.toggle(signalHandler)
+	            event.consume()
             }
         }
 

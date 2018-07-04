@@ -34,4 +34,6 @@ interface InputEvent  {
     val isMetaDown: Boolean get() = (modifiers and META_MASK) != 0
 
     fun consume()
+
+	fun isConsumed(): Boolean
 }

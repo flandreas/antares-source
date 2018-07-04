@@ -192,6 +192,8 @@ class CanvasFx(
             event.consume()
         }
 
+	    override fun isConsumed(): Boolean = event.isConsumed
+
         private fun convertButton(): Button {
             return when(event.button) {
                 MouseButton.NONE -> Button.NONE
@@ -235,7 +237,9 @@ class CanvasFx(
             scrollEvent.consume()
         }
 
-        private fun convertModifiers(): Int {
+	    override fun isConsumed(): Boolean = scrollEvent.isConsumed
+
+	    private fun convertModifiers(): Int {
             var modifiers = 0
             if (scrollEvent.isShiftDown) {
                 modifiers = modifiers or ch.scorpion.jabbah.base.event.SHIFT_MASK
@@ -310,6 +314,8 @@ class CanvasFx(
 	    override fun consume() {
 		    event.consume()
 	    }
+
+	    override fun isConsumed(): Boolean = event.isConsumed
 
 	    private fun convertModifiers(): Int {
 		    var modifiers = 0

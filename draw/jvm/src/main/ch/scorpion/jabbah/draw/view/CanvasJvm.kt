@@ -210,6 +210,8 @@ private class MouseEventJvm(
         event.consume()
     }
 
+	override fun isConsumed(): Boolean = event.isConsumed
+
     private fun convertButton(jvmButton: Int): Button {
         return when(jvmButton) {
             AwtMouseEvent.NOBUTTON -> Button.NONE
@@ -229,6 +231,8 @@ private class KeyEventJvm(override val event: AwtKeyEvent) : KeyEvent {
     override fun consume() {
         event.consume()
     }
+
+	override fun isConsumed(): Boolean = event.isConsumed
 }
 
 private class KeyEventBridge(val listener: KeyListener) : java.awt.event.KeyListener {
