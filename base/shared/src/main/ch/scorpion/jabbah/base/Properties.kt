@@ -35,7 +35,7 @@ open class Properties {
 
     /** Adds a predefined system property. Typically called at application start-up.*/
     open fun set(name: String, value: Any) {
-        values.put(name, value)
+	    values[name] = value
     }
 
     fun <T> get(name: String): T {
@@ -43,7 +43,8 @@ open class Properties {
     }
 
     open fun <T> getOptional(name: String): T? {
-        return values.get(name) as T?
+	    @Suppress("UNCHECKED_CAST")
+	    return values[name] as T?
     }
 }
 
@@ -81,7 +82,7 @@ class Settings {
 
     /** Adds a user-defined property.*/
     fun set(name: String, value: Any) {
-        values.put(name, value.toString())
+	    values[name] = value.toString()
     }
 
     fun remove(name: String) {

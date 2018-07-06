@@ -12,6 +12,7 @@ import javax.swing.table.TableCellRenderer
 open class EnumRenderer<T : Enum<T>> : DefaultListCellRenderer(), TableCellRenderer {
 
     override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
+		@Suppress("UNCHECKED_CAST")
         setValue(value as T)
 
 		if (isSelected) {
@@ -26,6 +27,7 @@ open class EnumRenderer<T : Enum<T>> : DefaultListCellRenderer(), TableCellRende
     }
 
     override fun getTableCellRendererComponent(table: JTable, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
+		@Suppress("UNCHECKED_CAST")
         setValue(value as T)
 
 		if (isSelected) {

@@ -29,7 +29,7 @@ class SystemJvm(private val useJavaFX: Boolean = false) : System {
     }
 
     override fun <T : Any> instantiate(clazz: KClass<T>): T {
-        return clazz.java.newInstance()
+        return clazz.java.getDeclaredConstructor().newInstance()
     }
     
     override fun createAffineTransform(): AffineTransform {

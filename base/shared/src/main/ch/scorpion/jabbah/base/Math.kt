@@ -51,9 +51,11 @@ open class MathClass {
 	fun random(min: Double, max: Double) = random() * (max - min) + min
 
 	fun randomInt(min: Int, max: Int): Int {
-		val min = ceil(min.toDouble()).toInt()
-		val max = floor(max.toDouble()).toInt()
-		return floor(random() * (max - min + 1)).toInt() + min
+		kotlin.math.abs(42)
+
+		val minCeil = ceil(min.toDouble()).toInt()
+		val maxFloor = floor(max.toDouble()).toInt()
+		return floor(random() * (maxFloor - minCeil + 1)).toInt() + minCeil
 	}
 }
 

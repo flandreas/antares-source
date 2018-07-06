@@ -26,7 +26,7 @@ class ActionWrapperSwing(private val action: ch.scorpion.jabbah.base.Action) : j
 			ch.scorpion.jabbah.base.event.ActionEvent(
 				event = e,
 				source = e.source,
-				modifiers = e.modifiers,
+				modifiers = e.modifiersEx,
 				action = "",
 				time = e.`when`)
 	}

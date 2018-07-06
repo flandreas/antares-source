@@ -27,10 +27,10 @@ interface EventBus {
     /**
      * Posts an event by calling all handlers that have been registered for the class of the event.
      * If one of the handlers throws a [VetoException], the specified [undoEvent] is sent to all handlers
-     * that have already processed the event, and the specified [vetoHandler] is called in order to give
+     * that have already processed the event, and the specified [elseHandler] is called in order to give
      * the initiator of the event a chance to undo things.
      * @param thenHandler the code to be executed if no veto occurred
-     * @param elsehandler the code to be executed if a veto occurred
+     * @param elseHandler the code to be executed if a veto occurred
      */
     fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any> = {}, elseHandler: VetoHandler<Any> = {})
 }
@@ -43,13 +43,14 @@ class EventBusImpl : EventBus {
     /** ---- [EventBus] interface */
 
     override fun <T: Any> register(eventClass: KClass<out T>, handler: EventHandler<T>) {
-        registrations.getOrPut(
-            eventClass.simpleName!!,
-            { mutableListOf<(Any) -> Unit>()})
-        .add(handler as (Any) -> Unit)
+        @Suppress("UNCHECKED_CAST")
+        registrations
+	        .getOrPut(eventClass.simpleName!!) { mutableListOf()}
+	        .add(handler as (Any) -> Unit)
     }
 
     override fun <T : Any> unregister(eventClass: KClass<out T>, handler: EventHandler<T>) {
+	    @Suppress("UNCHECKED_CAST")
         unregister(eventClass.simpleName!!, handler as EventHandler<Any>)
     }
 
@@ -58,13 +59,13 @@ class EventBusImpl : EventBus {
     }
 
     override fun post(event: Any) {
-        registrations.get(event::class.simpleName)?.toList()?.forEach { it.invoke(event) }
+        registrations[event::class.simpleName]?.toList()?.forEach { it.invoke(event) }
     }
 
     override fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any>, elseHandler: VetoHandler<Any>) {
         val successHandlers = mutableListOf<EventHandler<Any>>()
         try {
-            registrations.get(event::class.simpleName)?.forEach {
+            registrations[event::class.simpleName]?.forEach {
                 it.invoke(event)
                 successHandlers.add(it)
             }
