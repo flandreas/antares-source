@@ -4,10 +4,8 @@ import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.Canvas
 import java.awt.BorderLayout
-import java.awt.event.FocusAdapter
-import java.awt.event.FocusEvent
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
+import java.awt.event.*
+import java.awt.event.MouseEvent.BUTTON1
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -33,18 +31,24 @@ class FocusPanel(
 
     init {
         (view.canvas as JComponent).addFocusListener(object : FocusAdapter() {
-            override fun focusGained(e: FocusEvent?) {
-                updateFocusBorder()
-                viewManager.activeView = view
+            override fun focusGained(e: FocusEvent) {
+	            if (!e.isTemporary) {
+		            updateFocusBorder()
+		            viewManager.activeView = view
+	            }
             }
 
-            override fun focusLost(e: FocusEvent?) {
-                updateFocusBorder()
+            override fun focusLost(e: FocusEvent) {
+	            if (!e.isTemporary) {
+		            updateFocusBorder()
+	            }
             }
         })
         (view.canvas as JComponent).addMouseListener(object : MouseAdapter() {
-            override fun mousePressed(e: MouseEvent?) {
-                view.requestFocus()
+            override fun mousePressed(e: MouseEvent) {
+	            if (e.button == BUTTON1) {
+		            view.requestFocus()
+	            }
             }
         })
 

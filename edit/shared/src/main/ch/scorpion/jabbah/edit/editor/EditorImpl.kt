@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.EditSelectModule
-import ch.scorpion.jabbah.edit.select.SelectionToolFactory
+import ch.scorpion.jabbah.edit.SelectionToolFactory
 import ch.scorpion.jabbah.edit.snap.ComponentSnapper
 import ch.scorpion.jabbah.edit.snap.SnapManagerImpl
 import ch.scorpion.jabbah.base.geom.Point2D

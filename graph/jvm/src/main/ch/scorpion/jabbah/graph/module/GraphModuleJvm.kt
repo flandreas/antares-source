@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.container.ContainerTreeView
 import ch.scorpion.jabbah.graph.script.GraphScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptEngineJvm
 import ch.scorpion.jabbah.graph.script.ScriptModule
+import ch.scorpion.jabbah.graph.ui.GraphContextMenuProvider
 import ch.scorpion.jabbah.graph.ui.GraphNavigationPanel
 import ch.scorpion.jabbah.graph.ui.GraphNavigationPanelFactory
 import ch.scorpion.jabbah.graph.ui.StandardGraphNavigationPanelFactory
@@ -25,6 +26,7 @@ object GraphModuleJvm : AbstractModule() {
 
     var containerTreeViewFactory : () -> ContainerTreeView = { ContainerTreeView() }
 
+
     override fun initialize() {
         BaseModuleJvm.require()
 
@@ -34,8 +36,11 @@ object GraphModuleJvm : AbstractModule() {
         ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptModule.scriptEngineProvider.invoke()) }
         ScriptModule.require()
         ExecutionModule.require()
+
         EditModuleJvm.require()
+
         GraphViewModuleJvm.require()
+	    EditModuleJvm.contextMenuProvider = { GraphContextMenuProvider() }
     }
 
     private fun fillProperties(properties: Properties) {

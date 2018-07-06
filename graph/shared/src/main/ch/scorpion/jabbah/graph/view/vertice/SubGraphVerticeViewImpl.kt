@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.collection.ConcatIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
+import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.InputEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
@@ -153,10 +154,10 @@ class SubGraphVerticeViewImpl(
     }
 
     fun drawWithDrawableDrawer(context: DrawContext, drawableDrawer: (Drawable) -> Unit) {
-        draw(context, {
-            drawables.forEach { drawableDrawer.invoke(it) }
-            super.drawImpl(it)
-        })
+        draw(context) {
+	        drawables.forEach { drawableDrawer.invoke(it) }
+	        super.drawImpl(it)
+        }
     }
 
     /** ---- [Storable] */
@@ -432,7 +433,7 @@ class SubGraphVerticeViewImpl(
 
     private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {
         override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
-            if (context.mouseEvent!!.clickCount == 2) {
+            if (context.mouseEvent!!.button == Button.BUTTON1 && context.mouseEvent!!.clickCount == 2) {
                 requestOpenSubGraph(context.mouseEvent!!)
                 return null
             }

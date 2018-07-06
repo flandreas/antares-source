@@ -43,7 +43,7 @@ abstract class AbstractSelectionAwareAction(
     }
 
     protected fun getSelectionCount(): Int {
-        return (viewManager.activeView as DrawingView<*>).selectionManager.selectionCount
+        return (viewManager.activeView as DrawingView<*>?)?.selectionManager?.selectionCount ?: 0
     }
 
     /**

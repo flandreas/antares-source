@@ -6,16 +6,13 @@ import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Tool
-import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.snap.MultiComponentSnappable
 import ch.scorpion.jabbah.edit.tool.ToolAdapter
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.view.TooltipHandler
+import ch.scorpion.jabbah.edit.*
 
 /**
  * Standard implementation of a [SelectionTool].
@@ -93,6 +90,12 @@ class SelectionToolImpl(
     override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
         tooltipHandler.clear(editor.view)
 
+	    if (e.button == Button.BUTTON3) {
+		    eventBus.post(ContextActionRequest(editor))
+		    e.consume()
+		    return
+	    }
+
         if (e.button != Button.BUTTON1) {
             return
         }
@@ -160,7 +163,7 @@ class SelectionToolImpl(
         val dx = x - moveLastLocation.x
         val dy = y - moveLastLocation.y
         val selection = editor.view.selectionManager.selection
-        var offset: Point2D? = Point2D()
+        var offset = Point2D()
 
         if (editor.snapManager.snapEnabled) {
             if (selection.size > 1) {
@@ -175,11 +178,11 @@ class SelectionToolImpl(
 
         // Move all selected [Components] by the same snapped offset
         selection.forEach { it.prepareMoveBy(selection) }
-        selection.forEach { it.moveBy(dx + offset!!.x, dy + offset!!.y) }
+        selection.forEach { it.moveBy(dx + offset.x, dy + offset.y) }
         selection.forEach { it.completeMoveBy() }
 
         eventBus.post(DragEvent(editor, selection))
-        moveLastLocation = Point2D(x + offset!!.x, y + offset.y)
+        moveLastLocation = Point2D(x + offset.x, y + offset.y)
         editor.drawing.validate()
     }
 

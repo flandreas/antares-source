@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
+import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -240,13 +241,13 @@ abstract class AbstractVerticeView<T : Vertice>(
     }
 
     override fun draw(context: DrawContext) {
-        draw(context, {drawImpl(it)})
+        draw(context) {drawImpl(it)}
     }
 
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
         return object : InputEventHandlerAdapter<InputEventContext>() {
             override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
-                if (context.mouseEvent?.clickCount == 2) {
+                if (context.mouseEvent?.button == Button.BUTTON1 && context.mouseEvent?.clickCount == 2) {
                     cannotOpenMsg(this@AbstractVerticeView)
                 }
                 return null
