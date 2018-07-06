@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.draw.view
 
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.mock
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.base.geom.Rectangle2D

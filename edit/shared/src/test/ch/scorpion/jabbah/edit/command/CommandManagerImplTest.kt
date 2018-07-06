@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.EditTestRule
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import org.junit.Assert.*
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Before

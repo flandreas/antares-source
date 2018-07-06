@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.edit
 
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 
 /** A builder for [DrawingView] mocks*/
 class DrawingViewMockBuilder {

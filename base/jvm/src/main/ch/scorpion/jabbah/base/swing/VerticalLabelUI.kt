@@ -14,7 +14,7 @@ class VerticalLabel {
                 horizontalAlignment: Int = SwingConstants.LEFT
         ): JLabel {
             val label = JLabel(text, icon, horizontalAlignment)
-            label.ui = VerticalLabelUI.labelUI
+	        label.setUI(VerticalLabelUI.labelUI)
             return label
         }
     }

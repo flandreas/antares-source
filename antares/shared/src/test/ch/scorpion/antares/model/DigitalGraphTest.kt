@@ -5,7 +5,7 @@ import ch.scorpion.antares.TestTranslationsBuilder
 import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.mock
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import org.hamcrest.CoreMatchers

@@ -67,12 +67,6 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 		        Bit.False -> falseValue(bitWidth)
 		        Bit.True -> trueValue(bitWidth)
 	        }
-	        /*
-            if (!bit.isDefined) {
-                return undefined(bitWidth)
-            }
-            return Word(createListWithBit(bitWidth, bit))
-            */
         }
 
         /** Returns a [Word] consisting of a single [Bit] with the specified value.*/
@@ -82,7 +76,12 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 
         /** Returns a [Word] consisting of a single [Bit] with the specified value.*/
         fun of(bit: Bit): Word {
-	        return if (bit.isSet) ONE_WIDTH_1 else ZERO_WIDTH_1
+	        return when(bit) {
+		        Bit.Undefined -> undefined(BitWidth.BW_1)
+		        Bit.Error -> error(BitWidth.BW_1)
+		        Bit.False -> falseValue(BitWidth.BW_1)
+		        Bit.True -> trueValue(BitWidth.BW_1)
+	        }
         }
 
         /** Returns a [Word] that represents the specified value as a binary word of th specified width.*/

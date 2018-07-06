@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.draw.drawable.MultilineText
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfo
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.*
 import org.junit.Test

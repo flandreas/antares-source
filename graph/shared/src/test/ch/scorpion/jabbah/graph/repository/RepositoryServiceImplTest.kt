@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.mock
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.*
 import org.junit.Before

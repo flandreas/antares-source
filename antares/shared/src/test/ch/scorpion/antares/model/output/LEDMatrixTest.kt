@@ -3,7 +3,7 @@ package ch.scorpion.antares.model.output
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.Word
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.mock
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
 import org.hamcrest.CoreMatchers.`is`

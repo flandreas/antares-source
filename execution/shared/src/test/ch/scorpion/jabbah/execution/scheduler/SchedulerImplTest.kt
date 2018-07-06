@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.execution.scheduler
 
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import ch.scorpion.jabbah.execution.ExecutionTestRule
 import org.junit.Assert.*
 import org.junit.ClassRule

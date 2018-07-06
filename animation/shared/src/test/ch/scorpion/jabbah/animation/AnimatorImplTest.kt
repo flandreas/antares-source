@@ -1,14 +1,13 @@
 package ch.scorpion.jabbah.animation
 
-import com.nhaarman.mockito_kotlin.whenever
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.mock
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.*
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mockito.*
 

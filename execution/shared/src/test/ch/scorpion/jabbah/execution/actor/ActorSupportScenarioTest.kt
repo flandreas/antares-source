@@ -1,9 +1,9 @@
 package ch.scorpion.jabbah.execution.actor
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.times
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
 import ch.scorpion.jabbah.execution.ExecutionTestRule
 import ch.scorpion.jabbah.execution.SignalHandler
 import org.junit.ClassRule

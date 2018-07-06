@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.model.graph
 
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.mock
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.graph.model.*
 import org.hamcrest.CoreMatchers.`is`

@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.mock
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.*
 import org.junit.ClassRule

@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.edit.model
 
-import com.nhaarman.mockito_kotlin.times
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentMockBuilder
 import ch.scorpion.jabbah.edit.module.EditModuleJvm

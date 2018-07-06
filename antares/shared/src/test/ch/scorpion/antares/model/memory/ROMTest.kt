@@ -4,7 +4,7 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.mock
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import org.hamcrest.CoreMatchers.`is`
@@ -77,6 +77,8 @@ class ROMTest {
     @Test
     fun shouldGetCurrentAddress() {
         rom.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 16L), signalHandler)
+	    rom.getChipSelectInput().setIncomingSignal(Word.of(BitWidth.BW_1, 1L), signalHandler)
+	    calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
         assertThat(rom.currentAddress, `is`(16))
     }
 
@@ -84,6 +86,8 @@ class ROMTest {
     fun shouldGetCurrentData() {
         rom.write(1, 255)
         rom.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
+	    rom.getChipSelectInput().setIncomingSignal(Word.of(BitWidth.BW_1, 1L), signalHandler)
+	    calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
         assertThat(rom.data, `is`(255L))
     }
 }

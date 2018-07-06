@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.draw.style
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 
 /**
  * A builder for mocks of [StyleProvider].
