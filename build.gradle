@@ -1,7 +1,7 @@
 /* gradle build file of the jabbah project */
 
 buildscript {
-    ext.kotlin_version = '1.2.30'
+    ext.kotlin_version = '1.2.51'
     ext.mockito_version = '2.19.0'
     ext.mockito_kotlin_version = '2.0.0-RC1'
     repositories {
