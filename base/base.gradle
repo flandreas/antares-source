@@ -33,26 +33,10 @@ dependencies {
 	testCompile "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockito_kotlin_version"
 }
 
-configurations {
-	web
-}
-
 task testJar(type: Jar) {
 	from 'build/kotlin-classes/test'
 	into 'libs'
 	baseName = 'base-test'
-}
-
-def jsSharedFile = file('build/libs/base.js')
-
-task jsShared(type:Exec, dependsOn: configurations.compile) {
-	commandLine 'kotlinc-js', '-output', jsSharedFile, '-meta-info', 'shared/src/main'
-}
-
-artifacts {
-	web archives(jsSharedFile) {
-		builtBy jsShared
-	}
 }
 
 artifacts {

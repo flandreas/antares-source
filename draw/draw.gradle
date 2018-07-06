@@ -27,9 +27,9 @@ repositories {
 
 dependencies {
 	compile project(':base')
-	compile project(path: ':base', configuration:'web')
+	compile project(path: ':base')
 	compile project(':animation')
-	compile project(path: ':animation', configuration:'web')
+	compile project(path: ':animation')
 
 	compile "org.controlsfx:controlsfx:8.40.14"
 	compile 'org.slf4j:slf4j-api:1.7.21'
@@ -44,38 +44,4 @@ dependencies {
 	testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
 	testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testCompile "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockito_kotlin_version"
-}
-
-configurations {
-	web
-}
-
-def jsSharedFile = file('build/libs/draw.js')
-def jsDemoFile = file('build/libs/draw-demo.js')
-
-task jsShared(type:Exec, dependsOn: configurations.compile) {
-	commandLine 'kotlinc-js', '-output', jsSharedFile, '-meta-info', '-libraries',
-			'../base/build/libs/base.meta.js:' +
-			'../animation/build/libs/animation.meta.js',
-			'shared/src/main'
-}
-
-task jsDemo(type:Exec, dependsOn: jsShared) {
-	commandLine 'kotlinc-js', '-output', jsDemoFile, '-meta-info', '-libraries',
-			'../base/build/libs/base.meta.js:' +
-			'../animation/build/libs/animation.meta.js:' +
-			'build/libs/draw.meta.js',
-			'shared/src/demo'
-}
-
-artifacts {
-	web archives(jsSharedFile) {
-		builtBy jsShared
-	}
-}
-
-artifacts {
-	web archives(jsDemoFile) {
-		builtBy jsDemo
-	}
 }

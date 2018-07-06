@@ -23,10 +23,10 @@ repositories {
 
 dependencies {
     compile project(':execution')
-    compile project(path: ':execution', configuration:'web')
+    compile project(path: ':execution')
 
     compile project(':app')
-    compile project(path: ':app', configuration:'web')
+    compile project(path: ':app')
 
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile 'org.slf4j:slf4j-log4j12:1.7.21'
@@ -58,12 +58,6 @@ dependencies {
     testCompile project(':execution').sourceSets.test.output
 }
 
-configurations {
-    web
-}
-
-def jsSharedFile = file('build/libs/graph.js')
-
 task serverJar(type: Jar) {
     from 'jvm/src/server'
     baseName = 'graph-server'
@@ -74,22 +68,7 @@ task serverJar(type: Jar) {
 
 jar.dependsOn serverJar
 
-task jsShared(type:Exec, dependsOn: configurations.compile) {
-    commandLine 'kotlinc-js', '-output', jsSharedFile, '-meta-info', '-libraries',
-            '../base/build/libs/base.meta.js:' +
-            '../io/build/libs/io.meta.js:' +
-            '../animation/build/libs/animation.meta.js:' +
-            '../draw/build/libs/draw.meta.js:' +
-            '../edit/build/libs/edit.meta.js:' +
-            '../app/build/libs/app.meta.js:' +
-            '../execution/build/libs/execution.meta.js',
-            'shared/src/main'
-}
-
 artifacts {
-    web archives(jsSharedFile) {
-        builtBy jsShared
-    }
     archives serverJar
 }
 

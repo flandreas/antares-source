@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     compile project(':base')
-    compile project(path: ':base', configuration:'web')
+    compile project(path: ':base')
 
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -38,22 +38,4 @@ dependencies {
     testCompile project(':base').sourceSets.test.output
     // Depending on StyleProviderMockBuilder
     testCompile project(':draw').sourceSets.test.output
-}
-
-configurations {
-    web
-}
-
-def jsSharedFile = file('build/libs/execution.js')
-
-task jsShared(type:Exec, dependsOn: configurations.compile) {
-    commandLine 'kotlinc-js', '-output', jsSharedFile, '-meta-info', '-libraries',
-            '../base/build/libs/base.meta.js',
-            'shared/src/main'
-}
-
-artifacts {
-    web archives(jsSharedFile) {
-        builtBy jsShared
-    }
 }

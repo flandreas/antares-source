@@ -25,7 +25,7 @@ class GraphImplTest {
 
     @Test
     fun shouldClear() {
-        val graph = GraphImpl(mock())
+        val graph = GraphImpl(eventBus = mock())
                 .add(TestVertice())
                 .add(TestVertice())
                 .clear()
@@ -36,7 +36,7 @@ class GraphImplTest {
     fun shouldSetGraphElementId() {
         val v1 = TestVertice()
         val v2 = TestVertice()
-        val graph = GraphImpl(mock())
+        val graph = GraphImpl(eventBus = mock())
         graph.add(v1)
         graph.add(v2)
 
@@ -46,7 +46,7 @@ class GraphImplTest {
 
     @Test
     fun shouldBeStorable() {
-        val testGraph = TestGraph(mock())
+        val testGraph = TestGraph(eventBus = mock())
         val clone = IOModule.storableClonerProvider.invoke().clone(testGraph.graph) as Graph
 
         val v1: Vertice = clone.withId(1)!! as Vertice
@@ -58,7 +58,7 @@ class GraphImplTest {
 
     @Test
     fun shouldUnconnectEdgeWhenRemovingOriginVertice() {
-        val testGraph = TestGraph(mock())
+        val testGraph = TestGraph(eventBus = mock())
 
         testGraph.graph.remove(testGraph.v1)
 
@@ -68,7 +68,7 @@ class GraphImplTest {
 
     @Test
     fun shouldUnconnectEdgeWhenRemovingDestinationVertice() {
-        val testGraph = TestGraph(mock())
+        val testGraph = TestGraph(eventBus = mock())
 
         testGraph.graph.remove(testGraph.v2)
 
@@ -78,7 +78,7 @@ class GraphImplTest {
 
     @Test
     fun shouldUnconnectOutputPortWhenRemovingNet() {
-        val testGraph = TestGraph(mock())
+        val testGraph = TestGraph(eventBus = mock())
 
         testGraph.graph.remove(testGraph.net)
 
@@ -90,7 +90,7 @@ class GraphImplTest {
 
     @Test
     fun shouldCreateUniqueGraphInputName() {
-        val testGraph = GraphImpl(mock())
+        val testGraph = GraphImpl(eventBus = mock())
 
         val in1 = GraphInputImpl(PortImpl.createOutput(Boolean::class))
         testGraph.add(in1)
@@ -103,7 +103,7 @@ class GraphImplTest {
 
 	@Test
 	fun shouldCreateUniqueGraphInputNameForExisting() {
-		val testGraph = GraphImpl(mock())
+		val testGraph = GraphImpl(eventBus = mock())
 
 		val in1 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1")
 		testGraph.add(in1)
@@ -116,7 +116,7 @@ class GraphImplTest {
 
     @Test
     fun shouldCreateUniqueGraphOutputName() {
-        val testGraph = GraphImpl(mock())
+        val testGraph = GraphImpl(eventBus = mock())
 
         val out1 = GraphOutputImpl(PortImpl.createInput(Boolean::class))
         testGraph.add(out1)
@@ -129,7 +129,7 @@ class GraphImplTest {
 
     @Test
     fun shouldCreateUniqueGraphInputOutputName() {
-        val testGraph = GraphImpl(mock())
+        val testGraph = GraphImpl(eventBus = mock())
 
         val `in` = GraphInputImpl(PortImpl.createOutput(Boolean::class))
         testGraph.add(`in`)

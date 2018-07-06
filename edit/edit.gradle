@@ -28,10 +28,10 @@ repositories {
 
 dependencies {
     compile project(':io')
-    compile project(path: ':io', configuration:'web')
+    compile project(path: ':io')
 
     compile project(':draw')
-    compile project(path: ':draw', configuration:'web')
+    compile project(path: ':draw')
 
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -50,42 +50,4 @@ dependencies {
     testCompile project(':base').sourceSets.test.output
     // Depending on StyleProviderMockBuilder
     testCompile project(':draw').sourceSets.test.output
-}
-
-configurations {
-    web
-}
-
-def jsSharedFile = file('build/libs/edit.js')
-def jsDemoFile = file('build/libs/edit-demo.js')
-
-task jsShared(type:Exec, dependsOn: configurations.compile) {
-    commandLine 'kotlinc-js', '-output', jsSharedFile, '-meta-info', '-libraries',
-            '../base/build/libs/base.meta.js:' +
-            '../io/build/libs/io.meta.js:' +
-            '../animation/build/libs/animation.meta.js:' +
-            '../draw/build/libs/draw.meta.js',
-            'shared/src/main'
-}
-
-task jsDemo(type:Exec, dependsOn: jsShared) {
-    commandLine 'kotlinc-js', '-output', jsDemoFile, '-meta-info', '-libraries',
-            '../base/build/libs/base.meta.js:' +
-            '../io/build/libs/io.meta.js:' +
-            '../animation/build/libs/animation.meta.js:' +
-            '../draw/build/libs/draw.meta.js:' +
-            'build/libs/edit.meta.js',
-            'shared/src/demo'
-}
-
-artifacts {
-    web archives(jsSharedFile) {
-        builtBy jsShared
-    }
-}
-
-artifacts {
-    archives(jsDemoFile) {
-        builtBy jsDemo
-    }
 }

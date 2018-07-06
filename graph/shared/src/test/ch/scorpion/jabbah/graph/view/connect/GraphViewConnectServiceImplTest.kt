@@ -77,7 +77,7 @@ class GraphViewConnectServiceImplTest {
         service.unconnect(gv, vv2)
 
         assertThat(ev.destination, `is`(nullValue()))
-        assertThat(vv2.getPort(1).net, `is`(nullValue()))
+        assertThat(vv2.getPort(1)?.net, `is`(nullValue()))
     }
 
     @Test

@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     compile project(':graph')
-    compile project(path: ':graph', configuration:'web')
+    compile project(path: ':graph')
 
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile 'vaqua:VAqua:4.0.0'
@@ -40,29 +40,4 @@ dependencies {
     //testCompile project(':draw').sourceSets.test.output
     // Depending on TestEditorBuilder
     //testCompile project(':edit').sourceSets.test.output
-}
-
-configurations {
-    web
-}
-
-def jsSharedFile = file('build/libs/antares.js')
-
-task jsShared(type:Exec, dependsOn: configurations.compile) {
-    commandLine 'kotlinc-js', '-output', jsSharedFile, '-meta-info', '-libraries',
-            '../base/build/libs/base.meta.js:' +
-            '../io/build/libs/io.meta.js:' +
-            '../animation/build/libs/animation.meta.js:' +
-            '../draw/build/libs/draw.meta.js:' +
-            '../edit/build/libs/edit.meta.js:' +
-            '../app/build/libs/app.meta.js:' +
-            '../execution/build/libs/execution.meta.js:' +
-            '../graph/build/libs/graph.meta.js',
-            'shared/src/main'
-}
-
-artifacts {
-    web archives(jsSharedFile) {
-        builtBy jsShared
-    }
 }

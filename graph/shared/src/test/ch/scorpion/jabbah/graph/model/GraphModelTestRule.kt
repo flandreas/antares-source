@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.graph.script.GraphScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptEngineJvm
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.io.IOModule
+import ch.scorpion.jabbah.io.IOModuleJvm
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -29,7 +30,8 @@ class GraphModelTestRule : TestRule {
     }
 
     fun configure() {
-        BaseModuleJvm.require()
+	    BaseModuleJvm.require()
+	    IOModuleJvm.require()
         IOModule.typeMap.register("testVertice", TestVertice::class)
         ScriptModule.scriptEngineProvider = { ScriptEngineJvm() }
         ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptModule.scriptEngineProvider.invoke()) }
