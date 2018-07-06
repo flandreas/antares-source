@@ -1,7 +1,8 @@
 package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.graph.library.LibraryHolder
+import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
@@ -19,7 +20,7 @@ import javax.swing.JPanel
  * [ContainerDrawing] using a [ContainerEditor].
  */
 class EditSubGraphVerticeViewPanel(
-    private val libraryHolder: LibraryHolder,
+	private val metaGraphRepository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
     private val containerPanel: ContainerPanel,
     private val subGraphVerticeView: SubGraphVerticeView<*>,
     private val closeCallback: (EditSubGraphVerticeViewPanel) -> Unit,
@@ -49,7 +50,7 @@ class EditSubGraphVerticeViewPanel(
     }
 
     private fun fill() {
-        val libraryGraph = libraryHolder.library.getMetaGraph(subGraphVerticeView.subGraphVertice!!.graphUUID!!)
+        val libraryGraph = metaGraphRepository.getMetaGraph(subGraphVerticeView.subGraphVertice!!.graphUUID!!)
         containerPanel.setData(
                 libraryGraph.graph.graphView!!,
                 storableCloner.clone(subGraphVerticeView.getEditableContainerDrawing()) as ContainerDrawing)

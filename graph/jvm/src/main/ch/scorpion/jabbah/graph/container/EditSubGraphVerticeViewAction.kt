@@ -9,8 +9,8 @@ import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
-import ch.scorpion.jabbah.graph.library.LibraryHolder
-import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.Component
@@ -28,10 +28,8 @@ import javax.swing.SwingUtilities
 class EditSubGraphVerticeViewAction(
     private val eventBus: EventBus = BaseModule.eventBus,
     viewManager: ViewManager = DrawViewModule.viewManager,
-    private val libraryHolder: LibraryHolder
+    private val metaGraphRepository: MetaGraphRepository = GraphModelModule.metaGraphRepository
 ) : AbstractSelectionAwareAction("graph.action.editSubGraphVerticeView", eventBus, viewManager) {
-
-    constructor(): this(BaseModule.eventBus, DrawViewModule.viewManager, LibraryModule.libraryHolder)
 
     private var editedVerticeView: SubGraphVerticeView<*>? = null
 
@@ -68,7 +66,7 @@ class EditSubGraphVerticeViewAction(
                 viewManager)
 
         val panel = EditSubGraphVerticeViewPanel(
-            libraryHolder,
+            metaGraphRepository,
             containerPanel!!,
             editedVerticeView!!,
             { dialog.dispose() }
