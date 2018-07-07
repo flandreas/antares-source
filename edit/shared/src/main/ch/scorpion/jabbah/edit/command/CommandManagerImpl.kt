@@ -4,11 +4,8 @@ import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.Command
-import ch.scorpion.jabbah.edit.CommandEvent
-import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.*
 
 /**
  * Standard implementation of the [CommandManager] interface.
@@ -31,6 +28,14 @@ class CommandManagerImpl(
     private var level: Int = 0
 
     /** ---- [CommandManager] interface */
+
+	override var active: Boolean = true
+		set(value) {
+			if (value != field) {
+				field = value
+				eventBus.post(CommandManagerActiveEvent(this))
+			}
+		}
 
     override val applicationDataChanged: Boolean
         get() = undoStack.items.reversed().firstOrNull { it.changesApplicationData } != null

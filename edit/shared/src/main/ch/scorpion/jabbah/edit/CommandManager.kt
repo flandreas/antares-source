@@ -1,7 +1,14 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
+
+/** Posted by a [CommandManager] on its [EventBus] whenever a [Command] has been registered, done or undone.*/
+data class CommandEvent(val commandManager: CommandManager)
+
+/** Posted by a [CommandManager] on its [EventBus] whenever its 'active' state has changed.*/
+data class CommandManagerActiveEvent(val commandManager: CommandManager)
 
 /**
  * Manages a list of [Command]s that can be played back and forth to support undoability and redoablity of these
@@ -14,10 +21,20 @@ import ch.scorpion.jabbah.base.exception.IllegalStateException
  */
 interface CommandManager {
 
+	/**
+	 * Determines whether this [CommandManager] is active.
+	 * A [CommandManager] can be set 'inactive' by other systems that create [Command]s, such as [Editor]s.
+	 * This property is primarily used for disabling undo and redo [Action]s.
+	 */
+	var active: Boolean
+
     /** The [EventBus] used by this [CommandManager].*/
     val eventBus: EventBus
 
-	/** Determines whether this [CommandManager] contains any undoable [Command] with propert [Command.changesApplicationData] being set.*/
+	/**
+	 * Determines whether this [CommandManager] contains any undoable [Command] with property
+	 * [Command.changesApplicationData] being set.
+	 */
     val applicationDataChanged: Boolean
 
     /**

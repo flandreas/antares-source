@@ -42,6 +42,7 @@ import ch.scorpion.jabbah.edit.select.BoundingBoxBelowSelectionModel
 import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.app.GraphViewService
 import ch.scorpion.jabbah.graph.view.app.GraphViewServiceImpl
@@ -114,6 +115,8 @@ object GraphViewModule : AbstractModule() {
 
         ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptModule.scriptEngineProvider.invoke()) }
         EditModule.drawingService = graphViewService
+
+	    BaseModule.eventBus.register(SchedulerActivationStateEvent::class) { EditModule.commandManager.active = !it.scheduler.isActive}
     }
 
     private fun configureTypeMap(typeMap: TypeMap) {

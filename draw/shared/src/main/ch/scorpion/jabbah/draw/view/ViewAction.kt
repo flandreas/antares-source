@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.view
 
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.EventBus
@@ -21,32 +22,34 @@ abstract class AbstractViewAction(
 
     companion object {
         /** The name of the zoom step [Float] in [Properties]. */
-        val PROP_ZOOM_STEP = "view.command.zoom.step"
+        const val PROP_ZOOM_STEP = "view.command.zoom.step"
     }
 
     init {
-        eventBus.register(ActiveViewChangedEvent::class, {
-            activeViewChanged(it.oldView, it.newView)
-        })
+        eventBus.register(ActiveViewChangedEvent::class) { activeViewChanged(it.oldView, it.newView) }
     }
 
     private val viewPropertyListener = object : PropertyChangeListener<Any> {
         override fun propertyChanged(e: PropertyChangeEvent<Any>) {
             if (View.PROP_USER_ZOOM_ENABLED == e.name) {
-                updateEnabledness()
+	            updateEnabled()
             }
         }
     }
 
     protected open fun activeViewChanged(oldView: View<out InputEventContext>?, newView: View<out InputEventContext>?) {
         oldView?.removePropertyChangeListener(viewPropertyListener)
-        updateEnabledness()
+	    updateEnabled()
         newView?.addPropertyChangeListener(viewPropertyListener)
     }
 
-    private fun updateEnabledness() {
-        enabled = viewManager.activeView != null && viewManager.activeView!!.userZoomEnabled
+    protected fun updateEnabled() {
+        enabled = calculateEnabled()
     }
+
+	protected open fun calculateEnabled(): Boolean {
+		return viewManager.activeView != null && viewManager.activeView!!.userZoomEnabled
+	}
 }
 
 /** An action for zooming the currently active [View] to normal size and panning to the center.*/
@@ -85,7 +88,7 @@ class ZoomOutAction(
 }
 
 /**
- * An action for zooming and panning the currently active [View] such that the [Drawing] fills the entire
+ * An action for zooming and panning the currently active [View] such that the content fills the entire
  * available view space.
  */
 class ZoomFitAction(

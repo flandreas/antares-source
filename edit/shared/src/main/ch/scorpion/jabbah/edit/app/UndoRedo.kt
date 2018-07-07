@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandEvent
 import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.CommandManagerActiveEvent
 import ch.scorpion.jabbah.edit.module.EditModule
 
 /**
@@ -21,7 +22,8 @@ class UndoAction(
 
     init {
         enabled = false
-        eventBus.register(CommandEvent::class, { update(it) })
+        eventBus.register(CommandEvent::class) { update(it) }
+	    eventBus.register(CommandManagerActiveEvent::class) { updateEnabledness() }
     }
 
     override fun execute(event: ActionEvent) {
@@ -32,14 +34,18 @@ class UndoAction(
         if (event.commandManager != this.commandManager) {
             return
         }
-        enabled = commandManager.canUndo()
+        updateEnabledness()
         val desc = commandManager.getUndoDescription()
-        if (desc != null) {
-            name = Translations.getString("edit.action.undo.name.context", desc)
-        } else {
-            name = Translations.getString("edit.action.undo.name")
-        }
+	    name = if (desc != null) {
+		    Translations.getString("edit.action.undo.name.context", desc)
+	    } else {
+		    Translations.getString("edit.action.undo.name")
+	    }
     }
+
+	private fun updateEnabledness() {
+		enabled = commandManager.canUndo() && commandManager.active
+	}
 }
 
 class RedoAction(
@@ -49,7 +55,8 @@ class RedoAction(
 
     init {
         enabled = false
-        eventBus.register(CommandEvent::class, { update(it) })
+        eventBus.register(CommandEvent::class) { update(it) }
+	    eventBus.register(CommandManagerActiveEvent::class) { updateEnabledness() }
     }
 
     override fun execute(event: ActionEvent) {
@@ -60,12 +67,16 @@ class RedoAction(
         if (event.commandManager != this.commandManager) {
             return
         }
-        enabled = commandManager.canRedo()
+        updateEnabledness()
         val desc = commandManager.getRedoDescription()
-        if (desc != null) {
-            name = Translations.getString("edit.action.redo.name.context", desc)
-        } else {
-            name = Translations.getString("edit.action.redo.name")
-        }
+	    name = if (desc != null) {
+		    Translations.getString("edit.action.redo.name.context", desc)
+	    } else {
+		    Translations.getString("edit.action.redo.name")
+	    }
     }
+
+	private fun updateEnabledness() {
+		enabled = commandManager.canRedo() && commandManager.active
+	}
 }

@@ -22,29 +22,24 @@ abstract class AbstractSelectionAwareAction(
 ) : AbstractViewAction(baseName, eventBus, viewManager) {
 
     init {
-        eventBus.register(SelectionChangeEvent::class, { handleSelectionChanged(it) })
-        enabled = false
+        eventBus.register(SelectionChangeEvent::class) { updateEnabled() }
+	    enabled = false
     }
 
     /** ---- [AbstractViewAction] */
 
     override fun activeViewChanged(oldView: View<out InputEventContext>?, newView: View<out InputEventContext>?) {
-        enabled = viewManager.activeView != null && calculateEnabled()
+	    updateEnabled()
     }
 
     /** ---- [AbstractSelectionAwareAction] */
 
-    protected fun handleSelectionChanged(@Suppress("UNUSED_PARAMETER") event: SelectionChangeEvent) {
-        enabled = calculateEnabled()
-    }
+	override fun calculateEnabled(): Boolean {
+		return super.calculateEnabled() && getSelectionCount() > 0
+	}
 
-    protected open fun calculateEnabled(): Boolean {
-        return getSelectionCount() > 0
-    }
-
-    protected fun getSelectionCount(): Int {
-        return (viewManager.activeView as DrawingView<*>?)?.selectionManager?.selectionCount ?: 0
-    }
+    protected fun getSelectionCount(): Int =
+	    (viewManager.activeView as DrawingView<*>?)?.selectionManager?.selectionCount ?: 0
 
     /**
      * Returns the one and only selected [Component] or 'null' if none
@@ -57,12 +52,9 @@ abstract class AbstractSelectionAwareAction(
         return (viewManager.activeView as DrawingView<*>).selectionManager.selection.first()
     }
 
-    protected fun getSelection(): Collection<Component> {
-        return (viewManager.activeView as DrawingView<*>).selectionManager.selection
-    }
+    protected fun getSelection(): Collection<Component> =
+	    (viewManager.activeView as DrawingView<*>).selectionManager.selection
 
-    protected fun getDrawingView(): DrawingView<*>? {
-        return viewManager.activeView as DrawingView<*>
-    }
+    protected fun getDrawingView(): DrawingView<*>? = viewManager.activeView as DrawingView<*>
 
 }
