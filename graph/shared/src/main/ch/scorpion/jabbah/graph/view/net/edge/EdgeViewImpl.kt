@@ -43,7 +43,7 @@ open class EdgeViewImpl<T: Any>(
 
     private companion object {
         val LOG by logger(EdgeViewImpl::class)
-        val CONTAINS_SIZE = 4
+        const val CONTAINS_SIZE = 4
     }
 
     constructor(
@@ -444,7 +444,7 @@ open class EdgeViewImpl<T: Any>(
                     LayoutBoundary(
                             point = destPoint,
                             directions = destDir?.let { setOf(destDir) } ?: setOf(),
-                            isPort = destination != null)))
+                            isPort = destination != null && destPointIndex == polyline.pointsCount - 1)))
 
             list.addAll(polyline.getPoints(destPointIndex, polyline.pointsCount))
 
@@ -486,7 +486,7 @@ open class EdgeViewImpl<T: Any>(
                     LayoutBoundary(
                             point = origPoint,
                             directions = origDir?.let { setOf(origDir) } ?: setOf(),
-                            isPort = origin != null),
+                            isPort = origin != null && origPointIndex == 0),
                     LayoutBoundary(
                             point = destPoint,
                             directions = destDirs,
@@ -568,13 +568,13 @@ open class EdgeViewImpl<T: Any>(
         return tail
     }
 
-    override fun join(other: EdgeView<T>): EdgeView<*> {
-        if (polyline.getLastPoint() == other.polyline.getFirstPoint()) {
-            return joinOtherHeadWithTail(other)
-        } else if (polyline.getFirstPoint() == other.polyline.getLastPoint()) {
-            return joinOtherTailWithHead(other)
-        } else if (polyline.getFirstPoint() == other.polyline.getFirstPoint()) {
-            return joinOtherHeadWithHead(other)
+    override fun join(edgeView: EdgeView<T>): EdgeView<*> {
+        if (polyline.getLastPoint() == edgeView.polyline.getFirstPoint()) {
+            return joinOtherHeadWithTail(edgeView)
+        } else if (polyline.getFirstPoint() == edgeView.polyline.getLastPoint()) {
+            return joinOtherTailWithHead(edgeView)
+        } else if (polyline.getFirstPoint() == edgeView.polyline.getFirstPoint()) {
+            return joinOtherHeadWithHead(edgeView)
         } else {
             throw IllegalArgumentException("joined EdgeView is not adjacent")
         }
@@ -918,11 +918,11 @@ open class EdgeViewImpl<T: Any>(
     }
 
     private fun updateAdjusted() {
-        if (origin is NodeView<*> || destination is NodeView<*>) {
-            isAdjusted = isAdjusted && polyline.pointsCount > 2
-        } else {
-            isAdjusted = isAdjusted && polyline.pointsCount > 3
-        }
+	    isAdjusted = if (origin is NodeView<*> || destination is NodeView<*>) {
+		    isAdjusted && polyline.pointsCount > 2
+	    } else {
+		    isAdjusted && polyline.pointsCount > 3
+	    }
     }
 
     /**

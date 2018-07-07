@@ -3,11 +3,15 @@ package ch.scorpion.jabbah.graph.view
 import ch.scorpion.jabbah.draw.DrawableListener
 import ch.scorpion.jabbah.draw.polyline.Polyline
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
 import ch.scorpion.jabbah.graph.view.net.edge.Layout
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -56,10 +60,14 @@ interface EdgeView<T: Any> : NetViewElement<T> {
      */
     val isDegenerated: Boolean
 
-    /** An [EdgeView] is adjusted if the user has moved one of its segments after layout. */
+    /**
+     * An [EdgeView] is adjusted if the user has moved one of its segments after layout.
+     * Moving a [VerticeView] connected to one end of an adjusted [VerticeView] only updates the layout
+     * of the connected segment, not the entire [EdgeView].
+     */
     var isAdjusted: Boolean
 
-    /** Determines how the segments of this [EdgeView] are automatically layouted, e.g. orthogonally.*/
+    /** Determines how the segments of this [EdgeView] are automatically laid out, e.g. orthogonally.*/
     var layout: Layout
 
     /** Determines whether this [EdgeView] displays an arrow head at its destination. */
@@ -93,7 +101,7 @@ interface EdgeView<T: Any> : NetViewElement<T> {
     fun addSegmentPoint(index: Int, point: Point2D)
 
     /**
-     * Compacts this [EdgeView] by removing [Point2D]s that are at the same location as their predecessing
+     * Compacts this [EdgeView] by removing [Point2D]s that are at the same location as their predecessor
      * [Point2D], or that are intermediate points of two parallel segments.
      */
     fun compact()
@@ -257,13 +265,13 @@ enum class EdgeViewConnectionState {
     InputOutput,
     /** Both ends are connected with [InputPort]s, which can result from deleting a segment leading to a [NodeView].*/
     InputInput,
-    /** Both ends are connected with [OutputPorts]s, which can result from deleting a segment leading to a [NodeView].*/
+    /** Both ends are connected with [OutputPort]s, which can result from deleting a segment leading to a [NodeView].*/
     OutputOutput
 }
 
 /**
  * Contains information being used while interactively dragging a segment of an [EdgeView].
- * @property segmentIndex The new index of the segment being moved. Might change during move because of relayouts
+ * @property segmentIndex The new index of the segment being moved. Might change during move because of re-layouts
  * @property offset The number of pixels that the segment has been moved perpendicular to the segment
  */
 data class MoveEdgeSegmentInfo(val segmentIndex: Int, val offset: Double)

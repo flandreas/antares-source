@@ -90,6 +90,30 @@ class MoveSegmentIntegrationTest {
         }
     }
 
+	@Test
+	fun shouldNotCurlOrigin() {
+		val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
+		val v2 = builder.addVertice(createVerticeView(200, 200, Direction.WEST))
+		val ev = builder.connect(v1, v2)
+
+		ev.moveSegment(0, -20.0)
+		v1.moveBy(0.0, -20.0)
+
+		assertThat(ev.segmentPointCount, `is`(4))
+	}
+
+	@Test
+	fun shouldNotCurlDestination() {
+		val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
+		val v2 = builder.addVertice(createVerticeView(200, 200, Direction.WEST))
+		val ev = builder.connect(v1, v2)
+
+		ev.moveSegment(2, 20.0)
+		v2.moveBy(0.0, 20.0)
+
+		assertThat(ev.segmentPointCount, `is`(4))
+	}
+
     private fun createVerticeView(x: Int, y: Int, dir: Direction): TestVerticeView {
         return TestVerticeView(loc = Point2D(x, y), inputDirection = dir, portViewLength = 20)
     }
