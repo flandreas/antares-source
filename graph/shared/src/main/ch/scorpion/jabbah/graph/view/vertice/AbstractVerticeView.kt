@@ -448,7 +448,7 @@ abstract class AbstractVerticeView<T : Vertice>(
     }
 
     /** Rotates the specified (x,y) point around the location of this [VerticeView] by the inverse of its [Rotation].*/
-    private fun rotateBack(x: Double, y: Double): Point2D {
+    protected fun rotateBack(x: Double, y: Double): Point2D {
         return rotation.inverse().rotatePointAround(location, x, y)
     }
 

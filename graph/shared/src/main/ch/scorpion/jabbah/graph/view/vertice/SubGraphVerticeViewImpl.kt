@@ -428,7 +428,8 @@ class SubGraphVerticeViewImpl(
     }
 
     private fun getActorViewAt(x: Double, y: Double): ActorView? {
-        return drawables.filter {  it is ActorView && it.contains(x, y) }.map { it as ActorView }.firstOrNull()
+	    val p = rotateBack(x, y).subtract(location)
+        return drawables.filter {  it is ActorView && it.contains(p) }.map { it as ActorView }.firstOrNull()
     }
 
     private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {
@@ -443,7 +444,7 @@ class SubGraphVerticeViewImpl(
 
     private inner class DoubleClickExecutionHandler: ActorInteractionHandlerAdapter() {
         override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
-            val actorView = getActorViewAt(x - location.x, y - location.y)
+	        val actorView = getActorViewAt(x, y)
             if (actorView?.getActorInteractionHandler() != null) {
                 actorView.getActorInteractionHandler()!!.mousePressed(signalHandler, event, x - location.x, y - location.y)
             } else {
@@ -451,8 +452,8 @@ class SubGraphVerticeViewImpl(
             }
         }
         override fun mouseReleased(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
-            val actorView = getActorViewAt(x - location.x, y - location.y)
-            if (actorView?.getActorInteractionHandler() != null) {
+	        val actorView = getActorViewAt(x, y)
+	        if (actorView?.getActorInteractionHandler() != null) {
                 actorView.getActorInteractionHandler()!!.mouseReleased(signalHandler, event, x - location.x, y - location.y)
             } else {
                 super.mouseReleased(signalHandler, event, x, y)
@@ -460,7 +461,7 @@ class SubGraphVerticeViewImpl(
         }
 
         override fun mouseClicked(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
-	        val actorView = getActorViewAt(x - location.x, y - location.y)
+	        val actorView = getActorViewAt(x, y)
 	        if (actorView?.getActorInteractionHandler() != null) {
 		        actorView.getActorInteractionHandler()!!.mouseClicked(signalHandler, event, x - location.x, y - location.y)
 	        } else {
