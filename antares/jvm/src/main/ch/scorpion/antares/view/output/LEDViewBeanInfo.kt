@@ -26,4 +26,8 @@ class LEDViewBeanInfo : DigitalComponentBeanInfo<LEDView>() {
         properties.add(name)
         properties.add(lightColor)
     }
+
+	override var isShowColor: Boolean
+		get() = false
+		set(value) { super.isShowColor = value}
 }

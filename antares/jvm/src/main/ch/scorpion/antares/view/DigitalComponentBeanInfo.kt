@@ -31,8 +31,11 @@ open class DigitalComponentBeanInfo<T : DigitalComponentView<*>> : AbstractBeanI
             properties.add(propDelay)
         }
         properties.add(orientation)
-        properties.add(color)
+	    if (isShowColor) {
+		    properties.add(color)
+	    }
     }
 
     protected open var isShowPropagationDelay: Boolean = true
+	protected open var isShowColor: Boolean = true
 }
