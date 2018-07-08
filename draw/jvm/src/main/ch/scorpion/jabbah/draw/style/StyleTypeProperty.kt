@@ -18,7 +18,7 @@ class StyleTypeEditor(styleProvider: StyleProvider) : ComboBoxPropertyEditor() {
     constructor(): this(DrawStyleModule.styleProvider)
 
     init {
-        setAvailableValues(styleProvider.getStyleTypes().toTypedArray())
+        setAvailableValues(styleProvider.getChoosableStyleTypes().toTypedArray())
         (editor as JComboBox<*>).renderer = StyleTypeRenderer()
     }
 }
@@ -30,7 +30,7 @@ class StyleTypeEditorFx(
 	private val styleProvider = DrawStyleModule.styleProvider
 
 	init {
-		editor.items.setAll(styleProvider.getStyleTypes())
+		editor.items.setAll(styleProvider.getChoosableStyleTypes())
 	}
 
 	override fun setValue(value: StyleType?) {

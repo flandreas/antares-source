@@ -43,7 +43,7 @@ open class EditTheme(
         super.activateIn(styleRepository, styleOnly)
         styleRepository.registerStyle(EditStyleType.HIGHLIGHT, highlight)
         styleRepository.registerStyle(EditStyleType.MESSAGE_INFO, messageInfo)
-	    styleRepository.registerStyle(EditStyleType.MESSAGE_EROR, messageError)
+	    styleRepository.registerStyle(EditStyleType.MESSAGE_ERROR, messageError)
 
         if (!styleOnly) {
             BaseModule.properties.set(RubberBand.PROP_FILL_PAINT, selection.foregroundColor.withAlpha(32))

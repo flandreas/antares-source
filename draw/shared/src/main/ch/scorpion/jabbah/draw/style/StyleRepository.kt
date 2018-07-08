@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.style
 
+import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableSet
 import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.draw.graphics.PredefinedColorProvider
@@ -29,6 +30,9 @@ interface StyleProvider {
      * Returns all registered [StyleType]s as a [Set].
      */
     fun getStyleTypes(): Set<StyleType>
+
+	/** Returns the [StyleType] that can be chosen by the user, i.e. those whose property [StyleType.isSystem] is not set.*/
+	fun getChoosableStyleTypes(): Set<StyleType>
 }
 
 /**
@@ -73,6 +77,10 @@ class StyleRepository(
     override fun getStyleTypes(): Set<StyleType> {
         return styleMap.keys.toImmutableSet()
     }
+
+	override fun getChoosableStyleTypes(): Set<StyleType> {
+		return styleMap.keys.filter { !it.isSystem }.toSet()
+	}
 
     /** ---- [StyleRepository] */
 

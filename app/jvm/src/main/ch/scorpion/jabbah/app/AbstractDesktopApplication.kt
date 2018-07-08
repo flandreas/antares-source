@@ -25,9 +25,7 @@ abstract class AbstractDesktopApplication(
 	eventBus: EventBus
 ) : AbstractApplication(eventBus), DesktopApplication {
 
-	companion object {
-		private val LOG by logger(AbstractDesktopApplication::class)
-	}
+	private val LOG by logger(AbstractDesktopApplication::class)
 
 	protected val commandLine: CommandLine by lazy {
 		val options = Options()

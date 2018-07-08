@@ -75,7 +75,7 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
 	private fun determineStyleType(msgType: ComponentMessageType): StyleType {
 		return when(msgType) {
 			ComponentMessageType.Info -> EditStyleType.MESSAGE_INFO
-			ComponentMessageType.Error -> EditStyleType.MESSAGE_EROR
+			ComponentMessageType.Error -> EditStyleType.MESSAGE_ERROR
 		}
 	}
 
