@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -116,7 +117,7 @@ class GraphDesktop(
             if (request.quickMode) {
                 val assoc = associations.firstOrNull{ it.ref == request.subGraphVerticeView}
                 if (assoc != null) {
-                    eventBus.post(ComponentMessage(source = assoc.ref, messageKey = "graph.vertice.alreadyOpen.msg"))
+                    eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = assoc.ref, messageKey = "graph.vertice.alreadyOpen.msg"))
                     return@register
                 }
 

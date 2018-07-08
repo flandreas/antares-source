@@ -20,7 +20,8 @@ open class EditTheme(
         tooltip: Style = DEF_TOOLTIP,
         val selection: CompositeColor = DEF_SELECTION,
         val highlight: Style = DEF_HIGHLIGHT,
-        val message: Style = DEF_MESSAGE
+        val messageInfo: Style = DEF_MESSAGE_INFO,
+        val messageError: Style = DEF_MESSAGE_ERROR
 ) : DrawTheme(
         name,
         supportsWhiteBackground,
@@ -34,13 +35,15 @@ open class EditTheme(
     companion object {
         val DEF_SELECTION = CompositeColor(Color.ORANGE, Color.WHITE, Color.ORANGE)
         val DEF_HIGHLIGHT = BasicStyle(CompositeColor(Color.YELLOW, Color.YELLOW, Color.BLACK))
-        val DEF_MESSAGE = BasicStyle(CompositeColor(foregroundColor = Color(252, 205, 90), backgroundColor = Color(255, 255, 223)))
+        val DEF_MESSAGE_ERROR = BasicStyle(CompositeColor(foregroundColor = Color(252, 205, 90), backgroundColor = Color(255, 255, 223), textColor = Color.BLACK))
+	    val DEF_MESSAGE_INFO = BasicStyle(CompositeColor(backgroundColor = Color(198, 226, 184), foregroundColor = Color(115, 191, 91), textColor = Color.BLACK))
     }
 
     override fun activateIn(styleRepository: StyleRepository, styleOnly: Boolean) {
         super.activateIn(styleRepository, styleOnly)
         styleRepository.registerStyle(EditStyleType.HIGHLIGHT, highlight)
-        styleRepository.registerStyle(EditStyleType.MESSAGE, message)
+        styleRepository.registerStyle(EditStyleType.MESSAGE_INFO, messageInfo)
+	    styleRepository.registerStyle(EditStyleType.MESSAGE_EROR, messageError)
 
         if (!styleOnly) {
             BaseModule.properties.set(RubberBand.PROP_FILL_PAINT, selection.foregroundColor.withAlpha(32))

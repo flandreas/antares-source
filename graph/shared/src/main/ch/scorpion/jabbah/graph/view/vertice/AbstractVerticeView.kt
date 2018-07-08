@@ -34,6 +34,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
@@ -55,7 +56,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
     companion object {
         private fun cannotOpenMsg(c: Component) {
-            BaseModule.eventBus.post(ComponentMessage(source = c, messageKey="graph.vertice.cannotOpen.msg"))
+            BaseModule.eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = c, messageKey="graph.vertice.cannotOpen.msg"))
         }
     }
 

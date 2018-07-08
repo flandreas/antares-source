@@ -19,6 +19,5 @@ data class ComponentMessage(
 
 enum class ComponentMessageType {
     Info,
-    Warning,
     Error
 }

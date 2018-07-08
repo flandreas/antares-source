@@ -20,7 +20,8 @@ open class GraphTheme(
         tooltip: Style = DEF_TOOLTIP,
         selection: CompositeColor = DEF_SELECTION,
         highlight: Style = DEF_HIGHLIGHT,
-        message: Style = DEF_MESSAGE,
+        messageInfo: Style = DEF_MESSAGE_INFO,
+        messageError: Style = DEF_MESSAGE_ERROR,
         val vertice: Style = DEF_VERTICE,
         val edge: EdgeStyle = DEF_EDGE,
         val annotation: Style = DEF_ANNOTATION,
@@ -36,7 +37,8 @@ open class GraphTheme(
         tooltip,
         selection,
         highlight,
-        message
+        messageInfo,
+		messageError
 ) {
 
     companion object {

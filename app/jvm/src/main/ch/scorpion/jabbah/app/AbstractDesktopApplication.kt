@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.io.StoreXmlReader
 import ch.scorpion.jabbah.io.StoreXmlWriter
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import org.apache.commons.cli.*
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -23,7 +25,9 @@ abstract class AbstractDesktopApplication(
 	eventBus: EventBus
 ) : AbstractApplication(eventBus), DesktopApplication {
 
-	private val LOG by logger(AbstractDesktopApplication::class)
+	companion object {
+		private val LOG by logger(AbstractDesktopApplication::class)
+	}
 
 	protected val commandLine: CommandLine by lazy {
 		val options = Options()
@@ -90,6 +94,7 @@ abstract class AbstractDesktopApplication(
 				val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
 				storeWriter.writeStorable(applicationData!!)
 				savable = FileSavable.withPath(lFilePath)
+				eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "application.data.saved.msg"))
 			} catch (e: Throwable) {
 				LOG.error("Error while saving '$lFilePath': ${e.message}")
 			}

@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.io.Storable
 
 /**
@@ -13,7 +15,7 @@ abstract class AbstractApplication(
 
     init {
         configureCustomModules()
-	    eventBus.register(CloseApplicationDataRequest::class, { close() })
+	    eventBus.register(CloseApplicationDataRequest::class) { close() }
     }
 
     /** ---- [Application] interface */
@@ -52,6 +54,7 @@ abstract class AbstractApplication(
         savable?.save(this)
         // Re-set property in order to post CurrentSavableEvent
         savable = savable
+	    eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "application.data.saved.msg"))
     }
 
     override fun close() {
@@ -79,7 +82,7 @@ abstract class AbstractApplication(
     protected abstract fun createNewSavable(): Savable
 
     /** Called from the constructor to allow subclasses to require custom modules.*/
-    protected fun configureCustomModules() {
+    private fun configureCustomModules() {
         // empty
     }
 

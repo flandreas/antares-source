@@ -18,6 +18,8 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.drawable.FlexibleTextView
+import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.style.EditStyleType
 
 /**
@@ -31,7 +33,7 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
 
     companion object {
         private val LOG by logger(ComponentMessageDisplayer::class)
-        private val INSET = 10.0
+        private const val INSET = 10.0
     }
 
     init {
@@ -51,7 +53,7 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
                 text = text,
                 anchor = calculateAnchorPoint(msg),
                 direction = Direction.SOUTH,
-                styleType = EditStyleType.MESSAGE)
+                styleType = determineStyleType(msg.type))
 
         val container = if (msg.source == null) drawingView.overlayContainer else drawingView.ghostContainer as DrawableContainer<Drawable>
 
@@ -69,6 +71,13 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
             Point2D(bbox.centerX, bbox.maxY + INSET)
         }
     }
+
+	private fun determineStyleType(msgType: ComponentMessageType): StyleType {
+		return when(msgType) {
+			ComponentMessageType.Info -> EditStyleType.MESSAGE_INFO
+			ComponentMessageType.Error -> EditStyleType.MESSAGE_EROR
+		}
+	}
 
     private inner class FadeInOut(
             messageView: Transparent,
@@ -89,13 +98,13 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
             animator.schedule(fadeOutAnimation)
 
             val timer = System.get().createTimer()
-            timer.initialize(2000, {
-                LOG.debug("start fade out animation")
-                fadeOutAnimation.start()
-                timer.stop()
-            })
+            timer.initialize(2000) {
+	            LOG.debug("start fade out animation")
+	            fadeOutAnimation.start()
+	            timer.stop()
+            }
 
-            val fadeInAnimation = TransparentAnimation.fadeIn(messageView, 300.0)
+	        val fadeInAnimation = TransparentAnimation.fadeIn(messageView, 300.0)
             fadeInAnimation.addListener(object : AnimationTaskAdapter() {
                 override fun ended(task: AnimationTask) {
                     LOG.debug("start timer")

@@ -33,6 +33,7 @@ object AntaresThemes {
     private val ONE = CompositeColor(foregroundColor = Color(0, 255, 0), backgroundColor = Color(0, 115, 15), textColor = Color.BLACK)
     private val UNDEFINED = CompositeColor(foregroundColor = Color(40, 125, 249), backgroundColor = Color.BLACK, textColor = Color.WHITE)
     private val ERROR = CompositeColor(foregroundColor = Color.RED, backgroundColor = Color(255, 214, 214), textColor = Color.BLACK)
+	private val INFO = CompositeColor(backgroundColor = Color(198, 226, 184), foregroundColor = Color(115, 191, 91), textColor = Color.BLACK)
 
     /** This should be taken from the current focus color of the System/Target.*/
     private val FOCUS_COLOR = Color(48, 131, 251)
@@ -68,10 +69,14 @@ object AntaresThemes {
                         color = highlightColor,
                         font = FONT,
                         stroke = HIGHLIGHT_STROKE),
-                message = BasicStyle(
+                messageError = BasicStyle(
                         color = ERROR,
                         font = EXPLANATION_FONT,
                         stroke = ANNOTATION_STROKE),
+		        messageInfo = BasicStyle(
+			            color = INFO,
+			            font = EXPLANATION_FONT,
+			            stroke = ANNOTATION_STROKE),
                 vertice = BasicStyle(
                         color = skyBlue,
                         stroke = BOX_STROKE,
@@ -131,7 +136,7 @@ object AntaresThemes {
                 backgroundColor = Color.BLACK
         )
 
-        var veryDarkGreen = Color(2, 46, 8)
+        val veryDarkGreen = Color(2, 46, 8)
         // dark orange
         val highlightColor = Color(102, 61, 0)
 
@@ -202,10 +207,14 @@ object AntaresThemes {
                         color = explanationColor,
                         stroke = ANNOTATION_STROKE,
                         font = EXPLANATION_FONT),
-                message = BasicStyle(
+                messageError = BasicStyle(
                         color = EXPLANATION,
                         stroke = ANNOTATION_STROKE,
                         font = EXPLANATION_FONT),
+		        messageInfo = BasicStyle(
+				        color = INFO,
+				        font = EXPLANATION_FONT,
+				        stroke = ANNOTATION_STROKE),
                 subsystem = BasicStyle(
                         color = CompositeColor(
                                 foregroundColor = Color(13, 116, 15),
@@ -258,10 +267,14 @@ object AntaresThemes {
                         color = highlightColor,
                         font = FONT,
                         stroke = HIGHLIGHT_STROKE),
-                message = BasicStyle(
+                messageError = BasicStyle(
                         color = ERROR,
                         font = EXPLANATION_FONT,
                         stroke = ANNOTATION_STROKE),
+		        messageInfo = BasicStyle(
+			            color = INFO,
+			            font = EXPLANATION_FONT,
+			            stroke = ANNOTATION_STROKE),
                 vertice = BasicStyle(
                         color = figureColor,
                         stroke = BOX_STROKE,

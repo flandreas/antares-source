@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.ConnectableView
@@ -91,7 +92,7 @@ class ReconnectOriginConnector(
 
 	    if (pressLocation.distance(context.x, context.y) < MIN_DRAG_DISTANCE) {
 		    context.editor.commandManager.rollbackTransaction()
-		    eventBus.post(ComponentMessage(source = origin as Component, messageKey = "graph.reconnect.abort.msg"))
+		    eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = origin as Component, messageKey = "graph.reconnect.abort.msg"))
 	    } else {
 		    context.editor.commandManager.commitTransaction()
 	    }

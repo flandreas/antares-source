@@ -41,6 +41,7 @@ import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
@@ -65,7 +66,7 @@ class CircuitInOutView(
         const val PROP_INPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inputIcon"
         const val PROP_OUTPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.outputIcon"
         const val PROP_INOUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inoutIcon"
-        val LABEL_DIST = Look.SCALE
+        const val LABEL_DIST = Look.SCALE
         val LOG by logger(CircuitInOutView::class)
     }
 
@@ -525,19 +526,19 @@ class CircuitInOutView(
 
         override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
             if (!model!!.isToplevel) {
-                eventBus.post(ComponentMessage(source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
+                eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
                 return
             }
-			toggle(signalHandler, event, x, y)
+			toggle(signalHandler, x, y)
         }
 
 	    override fun mouseReleased(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
 		    if (!toggle) {
-			    toggle(signalHandler, event, x, y)
+			    toggle(signalHandler, x, y)
 		    }
 	    }
 
-	    private fun toggle(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+	    private fun toggle(signalHandler: SignalHandler, x: Double, y: Double) {
 		    val digitIndex = getDigitIndexAt(x, y)
 		    if (digitIndex != null) {
 			    if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
@@ -563,7 +564,7 @@ class CircuitInOutView(
 
         override fun keyPressed(signalHandler: SignalHandler, event: KeyEvent) {
             if (!model!!.isToplevel) {
-                eventBus.post(ComponentMessage(source = this@CircuitInOutView, messageKey = "ch.scorpion.antares.msg.ChildGraphInputManipulation"))
+                eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@CircuitInOutView, messageKey = "ch.scorpion.antares.msg.ChildGraphInputManipulation"))
                 return
             }
             if (numberView!!.focusIndex != null) {

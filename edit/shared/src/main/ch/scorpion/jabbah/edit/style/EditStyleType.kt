@@ -9,6 +9,7 @@ open class EditStyleType(name: String, descriptionKey: String) : StyleType(name,
 
     companion object {
         val HIGHLIGHT = EditStyleType("highlight", "edit.styleType.highlight.name")
-        val MESSAGE = EditStyleType("message", "edit.styleType.message.name")
+        val MESSAGE_INFO = EditStyleType("message-info", "edit.styleType.message-info.name")
+	    val MESSAGE_EROR = EditStyleType("message-error", "edit.styleType.message-error.name")
     }
 }
