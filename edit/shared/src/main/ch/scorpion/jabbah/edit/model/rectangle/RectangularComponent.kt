@@ -153,11 +153,11 @@ abstract class RectangularComponent(
         }
 
     var alignment: VerticalAlignment
-        get() = label.verticalAligment
+        get() = label.verticalAlignment
         set(value) {
-            if (label.verticalAligment != value) {
+            if (label.verticalAlignment != value) {
                 invalidate()
-                label.verticalAligment = value
+                label.verticalAlignment = value
                 updateLabelLocation()
                 invalidate()
             }

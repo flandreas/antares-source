@@ -4,16 +4,12 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.module.DrawModule
 
 /**
  * An [EdgeViewStyling] that draws an [EdgeView] as thin lines.
  */
 class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
-
-    private companion object {
-        private val DEBUG_GFX = false
-
-    }
 
     override val width: Int get() = edgeView.style.stroke.width.toInt()
 
@@ -23,7 +19,7 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
         context.g.color = context.color!!.foregroundColor
         context.g.draw(edgeView.polyline)
 
-        if (DEBUG_GFX) {
+        if (DrawModule.debugGfx) {
             drawDebug(context)
         }
 
@@ -59,11 +55,13 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 
     private fun drawDebug(context: DrawContext) {
         val oldColor = context.g.color
-        for (i in 0..edgeView.polyline.pointsCount - 1 - 1) {
+	    val oldStroke = context.g.stroke
+        context.g.color = Color.GREEN
+	    context.g.stroke = DrawModule.DEBUG_STROKE
+        for (i in 0 until edgeView.polyline.pointsCount - 1) {
             val begin = edgeView.polyline.getPointAt(i)
             val end = edgeView.polyline.getPointAt(i + 1)
 
-            context.g.color = Color.BLUE
             context.g.drawOval(begin.x.toInt() - 2, begin.y.toInt() - 2, 4, 4)
             context.g.drawOval(end.x.toInt() - 2, end.y.toInt() - 2, 4, 4)
         }
@@ -72,5 +70,6 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
         context.g.draw(boundingBox)
 
         context.g.color = oldColor
+	    context.g.stroke = oldStroke
     }
 }

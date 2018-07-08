@@ -26,11 +26,11 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.ReferenceResolver
 import ch.scorpion.jabbah.io.StoreReader
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
@@ -54,12 +54,11 @@ class DigitalPortView(
 ) : AbstractPortView<DigitalSignal>(port, x, y, direction, portLabelPosition, length ?: LENGTH) {
 
     companion object {
-        val DEBUG_GFX = false
-        val LENGTH: Int = 2 * Look.SCALE
-        val INT_BORDER_DIST = 5
-        val EXT_BORDER_DIST = 4
-        val LOGIC_SIZE = (2 * Look.SCALE / 1.7f).toInt()
-        val INTERNAL_ANNOTATION_SIZE = (LOGIC_SIZE * 1.25).toInt()
+        const val LENGTH: Int = 2 * Look.SCALE
+        const val INT_BORDER_DIST = 5
+        const val EXT_BORDER_DIST = 4
+        const val LOGIC_SIZE = (2 * Look.SCALE / 1.7f).toInt()
+        const val INTERNAL_ANNOTATION_SIZE = (LOGIC_SIZE * 1.25).toInt()
 
         val EDGE_TRIGGER_PATH: Path = System.get().createPath()
             .moveTo(0.0, -INTERNAL_ANNOTATION_SIZE / 2.0)
@@ -222,11 +221,7 @@ class DigitalPortView(
 
         context.g.translate(-locationX, -locationY)
 
-        @Suppress("ConstantConditionIf")
-        if (DEBUG_GFX) {
-            context.g.color = Color.RED
-            context.g.draw(boundingBox)
-        }
+	    DrawModule.drawDebugBoundingBox(this, context.g, DrawModule.DEBUG_BBOX_COLOR_SECONDARY)
 
         context.g.color = origColor
     }
@@ -338,7 +333,7 @@ class DigitalPortView(
             Direction.EAST -> HorizontalAlignment.RIGHT
             Direction.NORTH -> HorizontalAlignment.CENTER
             Direction.SOUTH -> HorizontalAlignment.CENTER
-            else -> throw IllegalStateException("unknown Direction " + direction)
+            else -> throw IllegalStateException("unknown Direction $direction")
         }
 
     private fun getHorizontalExternalLabelAlignment(direction: Direction): HorizontalAlignment =
@@ -347,7 +342,7 @@ class DigitalPortView(
             Direction.EAST -> HorizontalAlignment.LEFT
             Direction.NORTH -> HorizontalAlignment.LEFT
             Direction.SOUTH -> HorizontalAlignment.RIGHT
-            else -> throw IllegalStateException("unknown Direction " + direction)
+            else -> throw IllegalStateException("unknown Direction $direction")
         }
 
     private fun getVerticalInternalLabelAlignment(direction: Direction): VerticalAlignment =
@@ -356,7 +351,7 @@ class DigitalPortView(
             Direction.EAST -> VerticalAlignment.CENTER
             Direction.NORTH -> VerticalAlignment.TOP
             Direction.SOUTH -> VerticalAlignment.BOTTOM
-            else -> throw IllegalStateException("unknown Direction " + direction)
+            else -> throw IllegalStateException("unknown Direction $direction")
         }
 
     private val centerExternalLabel: Boolean get() = port.isConnected && edgeViewWidth > Look.EXT_PIN_FONT.size
@@ -379,7 +374,7 @@ class DigitalPortView(
             Direction.EAST -> Point2D(-INT_BORDER_DIST - ia, 0)
             Direction.NORTH -> Point2D(0, INT_BORDER_DIST + ia)
             Direction.SOUTH -> Point2D(0, -INT_BORDER_DIST - ia)
-            else -> throw IllegalStateException("unknown Direction " + direction)
+            else -> throw IllegalStateException("unknown Direction $direction")
         }
     }
 
@@ -390,7 +385,7 @@ class DigitalPortView(
             Direction.EAST -> Point2D(EXT_BORDER_DIST + ea, 0)
             Direction.NORTH -> Point2D(0, -EXT_BORDER_DIST - ea)
             Direction.SOUTH -> Point2D(0, EXT_BORDER_DIST + ea)
-            else -> throw IllegalStateException("unknown Direction " + direction)
+            else -> throw IllegalStateException("unknown Direction $direction")
         }
     }
 

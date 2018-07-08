@@ -49,8 +49,8 @@ open class BoxGateView<T : Vertice>(
                 box.label?.let {
                     box.label.font = box.font
                     box.label.ownerRotation = box.rotation
-                    box.label.horizontalAligment = HorizontalAlignment.CENTER
-                    box.label.verticalAligment = VerticalAlignment.CENTER
+                    box.label.horizontalAlignment = HorizontalAlignment.CENTER
+                    box.label.verticalAlignment = VerticalAlignment.CENTER
                     box.label.location = when(box.rotation) {
                         Rotation.R0 -> Point2D(box.x + box.width / 2, box.y + box.height / 3)
                         Rotation.R180 -> Point2D(box.x + box.width / 2, box.y + 2 * box.height / 3)
@@ -66,25 +66,25 @@ open class BoxGateView<T : Vertice>(
                 box.label?.let {
                     box.label.font = box.font.deriveFont((box.font.size * FONT_SIZE_FACTOR).toInt())
                     box.label.ownerRotation = box.rotation
-                    box.label.horizontalAligment = HorizontalAlignment.RIGHT
-                    box.label.verticalAligment = VerticalAlignment.TOP
+                    box.label.horizontalAlignment = HorizontalAlignment.RIGHT
+                    box.label.verticalAlignment = VerticalAlignment.TOP
                     box.label.location = Point2D(box.bounds.maxX - SMALL_LABEL_INSET, box.bounds.minY + SMALL_LABEL_INSET)
                 }
             }
         };
 
         companion object {
-            val SMALL_LABEL_INSET = 3
-            val FONT_SIZE_FACTOR = 0.6
+            const val SMALL_LABEL_INSET = 3
+            const val FONT_SIZE_FACTOR = 0.6
         }
 
         abstract fun updateLabel(box: BoxGateView<*>)
     }
 
     companion object {
-        val MIN_WIDTH = 6
-        val MIN_HEIGHT = 8
-        val PIN_INSET = 2
+        const val MIN_WIDTH = 6
+        const val MIN_HEIGHT = 8
+        const val PIN_INSET = 2
 
         /** The distance between [Port]s if the number of [Port]s is smaller than three. */
         val BIG_PORT_DISTANCE = 4

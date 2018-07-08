@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Font
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 
@@ -27,8 +26,7 @@ class MultilineText(
 ) : AbstractRectangle(), Locatable {
 
     companion object {
-        private val DEBUG_GFX = false
-        val LINE_DIST = 5.0
+        const val LINE_DIST = 5.0
     }
 
     private val lines = mutableListOf<String>()
@@ -43,17 +41,17 @@ class MultilineText(
         for (car in text.split('\n')) {
             var line = ""
             for (word in car.split(' ')) {
-                val testLine = line + word + " "
+                val testLine = "$line$word "
                 val textRenderInfo = textRenderInfoFactory.measureSingleLineText(testLine, font)
                 val testWidth = textRenderInfo.textBounds.width
                 lAscent = textRenderInfo.ascent.toInt()
 
-                if (testWidth > maxWidth) {
-                    lines.add(line)
-                    line = word + " "
-                } else {
-                    line = testLine
-                }
+	            line = if (testWidth > maxWidth) {
+		            lines.add(line)
+		            "$word "
+	            } else {
+		            testLine
+	            }
             }
 
             lines.add(line)
@@ -81,13 +79,7 @@ class MultilineText(
             }
         }
 
-        if (DEBUG_GFX) {
-            val oldColor = context.g.color
-            context.g.color = Color.GRAY
-            context.g.drawRect(location.x, location.y, maxWidth, height)
-            context.g.fillOval(location.x.toInt() - 3, location.y.toInt() - 3 + ascent, 6, 6)
-            context.g.color = oldColor
-        }
+	    DrawModule.drawDebugBoundingBox(this, context.g)
     }
 
     override fun contains(x: Double, y: Double): Boolean {

@@ -17,7 +17,6 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -29,7 +28,6 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
-import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.*
@@ -405,12 +403,7 @@ abstract class AbstractVerticeView<T : Vertice>(
             executionInfoLabel.draw(context)
         }
 
-        if (DrawModule.debugGfx) {
-            context.g.color = Color.RED
-            context.g.stroke = Stroke(0.5f)
-            context.g.draw(boundingBox)
-            context.g.fillOval((location.x - 2).toInt(), (location.y - 2).toInt(), 4, 4)
-        }
+	    DrawModule.drawLocatableDebugBoundingBox(this, context.g)
 
         context.g.color = oldColor
     }

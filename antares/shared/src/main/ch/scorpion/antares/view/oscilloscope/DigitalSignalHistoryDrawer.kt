@@ -24,12 +24,12 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
     companion object {
 
         /** The height of an individual row to be used in [OscilloscopeView].*/
-        val ROW_HEIGHT: Int = 40
+        const val ROW_HEIGHT: Int = 40
 
         private val LOG by logger(DigitalSignalHistoryDrawer::class)
 
         /** The maximum height the signal, i.e. the vertical distance in model coordinates between 0 and 1 signals.*/
-        private val SIGNAL_HEIGHT = 20.0
+        private const val SIGNAL_HEIGHT = 20.0
 
         /** The color used for drawing the background.*/
         private val BACKGROUND_COLOR = Color.BLACK
@@ -38,13 +38,13 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
         private val AXIS_COLOR = Color(64, 64, 64)
 
         /** The half size of the dot that marks the start of the signal curve, and therefore the current time.*/
-        private val START_SIZE = 2.0
+        private const val START_SIZE = 2.0
 
         /** The horizontal inset used when drawing the arrow head of a multi-bit signal curve.*/
-        private val MULTIBIT_INSET = 3.0
+        private const val MULTIBIT_INSET = 3.0
 
         /** Determines whether signal curves are filled.*/
-        private val FILL_SIGNAL = false
+        private const val FILL_SIGNAL = false
     }
 
     /** The [SignalHistory] drawn by this [DigitalSignalHistoryDrawer].*/
@@ -142,7 +142,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
                     drawMultiBitRightBorder(context, effNextX)
                     // Draw signal value
                     multiBitLabel.text = entry.signal.toHexString()
-                    multiBitLabel.horizontalAligment = HorizontalAlignment.LEFT
+                    multiBitLabel.horizontalAlignment = HorizontalAlignment.LEFT
                     multiBitLabel.location = Point2D(effNextX + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT / 2)
                     multiBitLabel.draw(context)
                 }
@@ -161,7 +161,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
                     drawMultiBitSegment(context, xR = lastPoint.x, xL = effNextX)
                     // Draw signal value
                     multiBitLabel.text = entry.signal.toHexString()
-                    multiBitLabel.horizontalAligment = HorizontalAlignment.CENTER
+                    multiBitLabel.horizontalAlignment = HorizontalAlignment.CENTER
                     multiBitLabel.location = Point2D(effNextX + (lastPoint.x - effNextX) / 2, baseLineY - SIGNAL_HEIGHT / 2)
                     multiBitLabel.draw(context)
                 }

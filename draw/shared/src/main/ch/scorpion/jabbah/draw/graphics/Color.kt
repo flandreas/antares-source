@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.base.Math
 data class Color(val red: Int, val green: Int, val blue: Int, val alpha: Int) {
 
     companion object {
-        private val FACTOR = 0.7
+        private const val FACTOR = 0.7
 
         val BLACK = Color(0, 0, 0)
         val WHITE = Color(255, 255, 255)
@@ -19,6 +19,7 @@ data class Color(val red: Int, val green: Int, val blue: Int, val alpha: Int) {
         val LIGHT_GRAY = Color(192, 192, 192)
         val BLUE = Color(0, 0, 255)
         val YELLOW = Color(255, 255, 0)
+	    val GREEN = Color(18, 138, 58)
     }
 
     constructor(red: Int, green: Int, blue: Int) : this(red, green, blue, 255)

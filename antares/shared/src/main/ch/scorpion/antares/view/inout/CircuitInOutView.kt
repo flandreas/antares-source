@@ -403,20 +403,20 @@ class CircuitInOutView(
                 .subtract(orientation.multiply(LABEL_DIST.toDouble()))
         when (orientation) {
             Direction.EAST -> {
-                label.horizontalAligment = HorizontalAlignment.RIGHT
-                label.verticalAligment = VerticalAlignment.CENTER
+                label.horizontalAlignment = HorizontalAlignment.RIGHT
+                label.verticalAlignment = VerticalAlignment.CENTER
             }
             Direction.NORTH -> {
-                label.horizontalAligment = HorizontalAlignment.CENTER
-                label.verticalAligment = VerticalAlignment.TOP
+                label.horizontalAlignment = HorizontalAlignment.CENTER
+                label.verticalAlignment = VerticalAlignment.TOP
             }
             Direction.WEST -> {
-                label.horizontalAligment = HorizontalAlignment.LEFT
-                label.verticalAligment = VerticalAlignment.CENTER
+                label.horizontalAlignment = HorizontalAlignment.LEFT
+                label.verticalAlignment = VerticalAlignment.CENTER
             }
             Direction.SOUTH -> {
-                label.horizontalAligment = HorizontalAlignment.CENTER
-                label.verticalAligment = VerticalAlignment.BOTTOM
+                label.horizontalAlignment = HorizontalAlignment.CENTER
+                label.verticalAlignment = VerticalAlignment.BOTTOM
             }
         }
         updateBoundingBox()
@@ -427,20 +427,20 @@ class CircuitInOutView(
         label.location = orientation.multiply(LABEL_DIST.toDouble())
         when (orientation) {
             Direction.EAST -> {
-                label.horizontalAligment = HorizontalAlignment.LEFT
-                label.verticalAligment = VerticalAlignment.CENTER
+                label.horizontalAlignment = HorizontalAlignment.LEFT
+                label.verticalAlignment = VerticalAlignment.CENTER
             }
             Direction.NORTH -> {
-                label.horizontalAligment = HorizontalAlignment.CENTER
-                label.verticalAligment = VerticalAlignment.BOTTOM
+                label.horizontalAlignment = HorizontalAlignment.CENTER
+                label.verticalAlignment = VerticalAlignment.BOTTOM
             }
             Direction.WEST -> {
-                label.horizontalAligment = HorizontalAlignment.RIGHT
-                label.verticalAligment = VerticalAlignment.CENTER
+                label.horizontalAlignment = HorizontalAlignment.RIGHT
+                label.verticalAlignment = VerticalAlignment.CENTER
             }
             Direction.SOUTH -> {
-                label.horizontalAligment = HorizontalAlignment.CENTER
-                label.verticalAligment = VerticalAlignment.TOP
+                label.horizontalAlignment = HorizontalAlignment.CENTER
+                label.verticalAlignment = VerticalAlignment.TOP
             }
         }
         updateBoundingBox()

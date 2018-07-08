@@ -34,10 +34,9 @@ class Label(
 
     companion object {
         val LOG by logger(Label::class)
-        val DEBUG_GFX = false
         val DEFAULT_HORIZONTAL_ALIGNMENT = HorizontalAlignment.CENTER
         val DEFAULT_VERTICAL_ALIGNMENT = VerticalAlignment.CENTER
-        val BOUNDS_INSET = 1
+        const val BOUNDS_INSET = 1
     }
 
     var text: String = text ?: ""
@@ -68,7 +67,7 @@ class Label(
         }
 
     private var _horizontalAlignment: HorizontalAlignment = horizontalAlignment
-    var horizontalAligment: HorizontalAlignment
+    var horizontalAlignment: HorizontalAlignment
         get() = _horizontalAlignment
         set(value) {
             if (_horizontalAlignment != value) {
@@ -79,10 +78,10 @@ class Label(
         }
 
     private var _verticalAlignment: VerticalAlignment = verticalAlignment
-    var verticalAligment: VerticalAlignment
+    var verticalAlignment: VerticalAlignment
         get() = _verticalAlignment
         set(value) {
-            if (verticalAligment != value) {
+            if (verticalAlignment != value) {
                 invalidate()
                 _verticalAlignment = value
                 updateGeometry()
@@ -90,7 +89,7 @@ class Label(
         }
 
     var alignment: Alignment
-        get() = Alignment(horizontalAligment, verticalAligment)
+        get() = Alignment(horizontalAlignment, verticalAlignment)
         set(value) {
             if (alignment != value) {
                 invalidate()
@@ -199,13 +198,13 @@ class Label(
 
     override fun mirrorHorizontally(x: Double) {
         location = location.mirrorHorizontally(x)
-        horizontalAligment = horizontalAligment.opposite()
+        horizontalAlignment = horizontalAlignment.opposite()
         updateGeometry()
     }
 
     override fun mirrorVertically(y: Double) {
         location = location.mirrorVertically(y)
-        verticalAligment = verticalAligment.opposite()
+        verticalAlignment = verticalAlignment.opposite()
         updateGeometry()
     }
 
@@ -216,12 +215,7 @@ class Label(
 
         val oldColor = context.g.color
 
-        if (DEBUG_GFX) {
-            context.g.color = Color.GRAY
-            context.g.draw(boundingBox)
-            context.g.color = Color.RED
-            context.g.fillOval((location.x - 2).toInt(), (location.y - 2).toInt(), 4, 4)
-        }
+	    DrawModule.drawDebugBoundingBox(this, context.g, Color.GRAY)
 
         context.g.color = if (context.useContextColors) {
             context.color!!.textColor
@@ -254,8 +248,8 @@ class Label(
         val textRenderInfo = DrawModule.textRenderInfoFactory.measureSingleLineText(displayableText, font)
 
         bounds.setFrame(
-            location.x + horizontalAligment.getX(textRenderInfo.textBounds) - BOUNDS_INSET,
-            location.y - verticalAligment.getY(textRenderInfo.textBounds) - BOUNDS_INSET,
+            location.x + horizontalAlignment.getX(textRenderInfo.textBounds) - BOUNDS_INSET,
+            location.y - verticalAlignment.getY(textRenderInfo.textBounds) - BOUNDS_INSET,
             textRenderInfo.textBounds.width + 2 * BOUNDS_INSET,
             textRenderInfo.textBounds.height + 2 * BOUNDS_INSET
         )

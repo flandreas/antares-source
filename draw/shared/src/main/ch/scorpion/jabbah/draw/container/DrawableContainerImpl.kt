@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.base.exception.IndexOutOfBoundsException
 import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.module.DrawModule
 
 /**
  * Standard implementation of the [DrawableContainer] interface.
@@ -71,6 +72,7 @@ open class DrawableContainerImpl<T: Drawable>(
                 drawableDrawer.process(context, it)
             }
         }
+	    DrawModule.drawLocatableDebugBoundingBox(this, context.g)
         if (useLocation) {
             context.g.translate(-location.x, -location.y)
         }
@@ -167,9 +169,9 @@ open class DrawableContainerImpl<T: Drawable>(
 
     override fun getDrawableAt(x: Double, y: Double): T? {
         if (useLocation) {
-            return children.firstOrNull({ it.visible && it.contains(Point2D(x, y).subtract(location))})
+            return children.firstOrNull { it.visible && it.contains(Point2D(x, y).subtract(location))}
         }
-        return children.firstOrNull({ it.visible && it.contains(x, y) })
+        return children.firstOrNull { it.visible && it.contains(x, y) }
     }
 
     override fun getDrawables(): ImmutableList<T> = children.toImmutableList()
