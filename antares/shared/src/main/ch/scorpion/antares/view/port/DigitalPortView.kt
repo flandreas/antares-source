@@ -402,11 +402,11 @@ class DigitalPortView(
             logicX += LOGIC_SIZE * direction.previous().dx / 2
             logicY += LOGIC_SIZE * direction.previous().dy / 2
 
-            context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor)
+            context.g.color = transparent.applyTo(context.choose(context.styleColor(styleProvider.getStyle(StyleType.BACKGROUND).color)).backgroundColor)
             context.g.fillOval(logicX, logicY, LOGIC_SIZE, LOGIC_SIZE)
 
             context.g.stroke = Themes.get<AntaresTheme>().figure.stroke
-            context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(GraphStyleType.VERTICE).color).foregroundColor)
+            context.g.color = transparent.applyTo(context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.VERTICE).color)).foregroundColor)
             context.g.drawOval(logicX, logicY, LOGIC_SIZE, LOGIC_SIZE)
         }
     }

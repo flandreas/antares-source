@@ -122,7 +122,11 @@ open class BoxGateView<T : Vertice>(
     /** ---- [Drawable] interface */
 
     override fun drawImpl(context: DrawContext) {
+	    val oldStylable = context.stylable
+	    context.stylable = this
         super.drawImpl(context)
+	    context.stylable = oldStylable
+
         val oldColor = context.g.color
         if (context.useContextColors) {
             drawShape(context, transparent.applyTo(context.color!!.foregroundColor), transparent.applyTo(context.color!!.backgroundColor), stroke)

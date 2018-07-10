@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
+import ch.scorpion.jabbah.draw.style.Stylable
 
 /**
  * A context used in all drawing activities.
@@ -14,6 +15,12 @@ open class DrawContext(val g: Graphics2D, val appContext: Any? = null) {
 
     /** The [Color] used for drawing if [useContextColors] is `true`.*/
     var color: CompositeColor? = null
+
+	/**
+	 * The optional [Stylable] to be used as a source for styling information like [Color].
+	 * Can be used by composite object to let outer components control how inner components are drawn.
+	 */
+	var stylable: Stylable? = null
 
     var selectionColor: CompositeColor? = null
 
@@ -28,4 +35,12 @@ open class DrawContext(val g: Graphics2D, val appContext: Any? = null) {
     fun <T> castedAppContext(): T? {
         return appContext as T?
     }
+
+	/**
+	 * Returns the [CompositeColor] of the [Stylable] of this [DrawContext], or the specified [CompositeColor]
+	 * if no [Stylable] is set.
+	 */
+	fun styleColor(defaultColor: CompositeColor): CompositeColor {
+		return stylable?.color ?: defaultColor
+	}
 }
