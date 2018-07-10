@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.MouseAdapter
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Vector2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.base.time.Timer
 
@@ -17,6 +18,7 @@ import ch.scorpion.jabbah.base.time.Timer
 class ZoomPanController(val view: View<*>) {
 
     companion object {
+	    private val LOG by logger(ZoomPanController::class)
         private const val AUTOPAN_TIMER_DELAY = 50
         private const val AUTOPAN_SIZE = 10
         private const val AUTOPAN_REGION = 50
@@ -53,11 +55,14 @@ class ZoomPanController(val view: View<*>) {
         private fun isZoomOutWheelRotation(e: MouseEvent) = e.wheelRotation > 0
 
         private fun zoomChangeFactorFromWheelRotation(e: MouseEvent): Double {
-            val zoomChangeFactor = if (isZoomOutWheelRotation(e)) ZOOM_OUT_CHANGE_FACTOR else 1 / ZOOM_OUT_CHANGE_FACTOR
-            val newZoomFactor = zoomChangeFactor * view.zoomFactor
-            if (newZoomFactor >= MIN_ZOOM_FACTOR) {
-                return zoomChangeFactor
-            }
+	        if (e.wheelRotation != 0 && e.modifiers == 0) {
+		        val zoomChangeFactor = if (isZoomOutWheelRotation(e)) ZOOM_OUT_CHANGE_FACTOR else 1 / ZOOM_OUT_CHANGE_FACTOR
+		        val newZoomFactor = zoomChangeFactor * view.zoomFactor
+		        LOG.trace("ZoomPanController: zoomChangeFactor=$zoomChangeFactor, newZoomFactor=$newZoomFactor")
+		        if (newZoomFactor >= MIN_ZOOM_FACTOR) {
+			        return zoomChangeFactor
+		        }
+	        }
             return 1.0
         }
 
@@ -88,7 +93,10 @@ class ZoomPanController(val view: View<*>) {
         }
 
         override fun mouseWheelRotated(e: MouseEvent) {
-            view.navigator.multiplyZoomFactor(zoomChangeFactorFromWheelRotation(e))
+	        LOG.trace("ZoomPanController: mouseWheelRotated by ${e.wheelRotation}, modifiers=${e.modifiers}")
+	        if (e.modifiers == 0) {
+		        view.navigator.multiplyZoomFactor(zoomChangeFactorFromWheelRotation(e))
+	        }
             e.consume()
         }
     }
