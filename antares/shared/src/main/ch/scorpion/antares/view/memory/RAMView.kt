@@ -66,7 +66,7 @@ class RAMView(
      * The text to be used for overwriting the default [RAMView] text, if any. If `null` no overwriting
      * takes place. Can also be set to an empty [String] in order to hide the predefined label.
      */
-    private var text: String? = null
+    var text: String? = null
         set(value) {
             if (value != text) {
                 field = value

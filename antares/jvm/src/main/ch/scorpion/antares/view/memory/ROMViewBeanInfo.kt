@@ -2,15 +2,16 @@ package ch.scorpion.antares.view.memory
 
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
-import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
 import ch.scorpion.jabbah.edit.model.text.TextProperty
-
+import com.l2fprod.common.propertysheet.Property
+import java.beans.BeanInfo
 
 /**
  * A [BeanInfo] for [ROMView].
  */
+@Suppress("unused")
 class ROMViewBeanInfo : DigitalComponentBeanInfo<ROMView>() {
 
     companion object {

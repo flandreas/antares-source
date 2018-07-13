@@ -2,18 +2,21 @@ package ch.scorpion.antares.view.memory
 
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
-import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
+import com.l2fprod.common.propertysheet.Property
+import java.beans.BeanInfo
 
 /**
  * A [BeanInfo] for [RAMView].
  */
+@Suppress("unused")
 class RAMViewBeanInfo : DigitalComponentBeanInfo<RAMView>() {
 
     companion object {
         private val addressBitWidth = PropertyImpl("element.property.addressBitWidth", BitWidth::class.java)
         private val dataBitWidth = PropertyImpl("element.property.dataBitWidth", BitWidth::class.java)
+	    private val text = PropertyImpl("graph.property.label", String::class.java)
         private val clock = PropertyImpl("element.property.RAM.clock", Boolean::class.java)
         private val showContents = PropertyImpl("element.property.Addressable.showContents", Boolean::class.java)
         private val contentRowsCount = PropertyImpl("element.property.Addressable.rowsCount", Int::class.java)
@@ -25,6 +28,7 @@ class RAMViewBeanInfo : DigitalComponentBeanInfo<RAMView>() {
 
         addressBitWidth.bind(editor, { bean.addressWidth }, { bean.addressWidth = it!! })
         dataBitWidth.bind(editor, { bean.dataWidth}, { bean.dataWidth = it!! })
+	    text.bind(editor, { bean.text}, { bean.text = it })
         clock.bind(editor, { bean.hasClock}, { bean.hasClock = it!! })
         showContents.bind(editor, { bean.showContents }, { bean.showContents = it!! })
         if (bean.showContents) {
@@ -35,6 +39,7 @@ class RAMViewBeanInfo : DigitalComponentBeanInfo<RAMView>() {
 
         properties.add(addressBitWidth)
         properties.add(dataBitWidth)
+	    properties.add(text)
         properties.add(clock)
         properties.add(showContents)
         if (bean.showContents) {
