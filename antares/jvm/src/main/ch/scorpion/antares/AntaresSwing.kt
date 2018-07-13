@@ -58,6 +58,9 @@ class AntaresSwing(
 ) : AbstractDesktopApplicationSwing(args, eventBus), Antares {
 
 	companion object {
+
+		private const val PROP_APPLICATION_PROJECT = "application.project"
+
 		@JvmStatic
 		fun main(args: Array<String>) {
 			BaseModuleJvm.require()
@@ -66,27 +69,27 @@ class AntaresSwing(
 	}
 
 	init {
-		eventBus.register(OpenMemoryContentsRequest::class, { handle(it) })
-		eventBus.register(OpenProjectRequest::class, {
+		eventBus.register(OpenMemoryContentsRequest::class) { handle(it) }
+		eventBus.register(OpenProjectRequest::class) {
 			if (!canReplaceSavable("project.action.open.name")) {
 				throw VetoException()
 			}
-		} )
-		eventBus.register(CloseProjectRequest::class, {
+		}
+		eventBus.register(CloseProjectRequest::class) {
 			if (savable is ProjectSavable && (savable as ProjectSavable).project == it.project && !canReplaceSavable("project.action.close.name")) {
 				throw VetoException()
 			}
-		})
-		eventBus.register(ProjectEvent::class, {
+		}
+		eventBus.register(ProjectEvent::class) {
 			if (it.project == null && savable is ProjectSavable) {
 				close()
 			}
-		})
-		eventBus.register(LibraryItemRemovedEvent::class, {
+		}
+		eventBus.register(LibraryItemRemovedEvent::class) {
 			if (it.item is ContainerLibraryElement && (it.item as ContainerLibraryElement).metaGraph == applicationData) {
 				close()
 			}
-		})
+		}
 	}
 
 	/** ---- [AbstractDesktopApplication] */
@@ -96,12 +99,6 @@ class AntaresSwing(
 	}
 
 	override fun init() {
-		// VAqua brings too many new problems, such as property sheet not working any more
-		// Temporarily disabled, looking for another solution to JToggleButton problem..
-//        if (System.getProperty("os.name", "").startsWith("Mac OS")) {
-//            UIManager.setLookAndFeel("org.violetlib.aqua.AquaLookAndFeel");
-//        }
-
 		AntaresModuleJvm(this).require()
 		LibraryModule.libraryService.invoke().loadLibrary(LibraryModule.libraryHolder.library)
 		fillStandardLibrary(LibraryModule.libraryHolder.library, LibraryModule.libraryService.invoke(), storableCreator)
@@ -133,11 +130,11 @@ class AntaresSwing(
 
 	override fun createMainFrame(): AbstractApplicationFrame {
 		// TODO Extract GraphEditor creation to factory in module
-		val graphCanvas = CanvasJvm({
+		val graphCanvas = CanvasJvm {
 			val drawingView = DrawingViewImpl(GraphViewImpl<GraphElementView<*>>() as Drawing<Component>, it)
 			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
 			drawingView
-		})
+		}
 		val graphEditor = GraphEditor(graphCanvas.view as DrawingView<Drawing<Component>>)
 		val graphPanel = GraphPanel(application = this, editor = graphEditor, viewManager = viewManager)
 		graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
@@ -147,7 +144,7 @@ class AntaresSwing(
 
 	/** Implements [DesktopApplication.openFrom] by interpreting `identification` as a project name.*/
 	override fun openFrom(identification: String): Boolean {
-		InvocationHandler.invoke(Runnable() {
+		InvocationHandler.invoke(Runnable {
 			ProjectModule.projectService.open(identification)
 		})
 		return true
@@ -156,9 +153,9 @@ class AntaresSwing(
 	override fun handleShutdown() {
 		super.handleShutdown()
 		if (savable is ProjectSavable) {
-			BaseModule.settings.set("application.project", (savable as ProjectSavable).project.name)
-		} else {
-			BaseModule.settings.remove("application.project")
+			BaseModule.settings.set(PROP_APPLICATION_PROJECT, (savable as ProjectSavable).project.name)
+		} else if (savable != null) {
+			BaseModule.settings.remove(PROP_APPLICATION_PROJECT)
 		}
 	}
 
@@ -168,7 +165,7 @@ class AntaresSwing(
 			return
 		}
 
-		val projectName = BaseModule.settings.getString("application.project", "")
+		val projectName = BaseModule.settings.getString(PROP_APPLICATION_PROJECT, "")
 		if (StringUtils.isNotEmpty(projectName)) {
 			openFrom(projectName)
 			return
