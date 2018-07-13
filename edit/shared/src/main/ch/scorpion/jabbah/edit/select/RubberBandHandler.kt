@@ -15,18 +15,28 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 class RubberBandHandler(private val rubberBand: RubberBand) : InputEventHandlerAdapter<EditInputEventContext>() {
 
     companion object {
-        val PROP_SELECT_STRATEGY = "edit.select.rubberBandHandler.selectionStrategy"
+        const val PROP_SELECT_STRATEGY = "edit.select.rubberBandHandler.selectionStrategy"
     }
 
     enum class SelectionStrategy {
 
         /** Updates the selection on every mouse drag. */
         SELECT_ON_DRAG {
+
+	        override fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext) {
+		        if (!context.mouseEvent!!.isShiftDown) {
+			        selection.clear()
+			        selection.addAll(context.drawingView().selectionManager.selection)
+		        }
+	        }
+
             override fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext) {
                 // TODO This is a pretty inefficient solution that turns the CPU crazy due to heavy
                 // repainting and calculation load. Check if there is a more efficient solution.
-                context.drawingView().selectionManager.deselect(selection)
-                selection.clear()
+	            if (!context.mouseEvent!!.isShiftDown) {
+		            context.drawingView().selectionManager.deselect(selection)
+	            }
+	            selection.clear()
                 context.drawingView().drawing.getDrawables()
                     .filter { it.visible && rubberBand.contains(it.boundingBox) }
                     .forEach { selection.add(it) }
@@ -34,12 +44,16 @@ class RubberBandHandler(private val rubberBand: RubberBand) : InputEventHandlerA
             }
 
             override fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext) {
-                // empty
+	            // empty
             }
         },
 
         /** Updates the selection not before the mouse has been released.*/
         SELECT_ON_RELEASE {
+
+	        override fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext) {
+		        // empty
+	        }
             override fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext) {
                 // empty
             }
@@ -54,6 +68,7 @@ class RubberBandHandler(private val rubberBand: RubberBand) : InputEventHandlerA
         /** Holds the current selection that is updated in the [SELECT_ON_DRAG] strategy.*/
         val selection = mutableListOf<Component>()
 
+	    abstract fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext)
         abstract fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext)
         abstract fun mouseReleased(rubberBand: RubberBand, context: EditInputEventContext)
 
@@ -65,6 +80,7 @@ class RubberBandHandler(private val rubberBand: RubberBand) : InputEventHandlerA
 
     override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         super.mousePressed(context)
+	    selectionStrategy.mousePressed(rubberBand, context)
         return rubberBand.inputEventHandler.mousePressed(context)
     }
 
