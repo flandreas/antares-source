@@ -7,6 +7,11 @@ import ch.scorpion.jabbah.base.Math
  * Designed to be immutable.
  */
 data class Point2D(val x: Double = 0.0, val y: Double = 0.0) {
+
+	companion object {
+		val ZERO = Point2D()
+	}
+
     constructor(p: Point2D): this(p.x, p.y)
     constructor(x: Int, y: Int): this(x.toDouble(), y.toDouble())
 

@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.event.Button
-import ch.scorpion.jabbah.base.event.EmptyMouseEvent
-import ch.scorpion.jabbah.base.event.MouseAdapter
-import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Vector2D
 import ch.scorpion.jabbah.base.logger
@@ -13,7 +10,7 @@ import ch.scorpion.jabbah.base.time.Timer
 
 /**
  * Allows the user to zoom in a [View] by using the mouse wheel and to pan in the [View] by dragging with the
- * middle mouse button.
+ * middle mouse button (or by making scroll gestures on the track pad while pressing ALT).
  */
 class ZoomPanController(val view: View<*>) {
 
@@ -24,6 +21,7 @@ class ZoomPanController(val view: View<*>) {
         private const val AUTOPAN_REGION = 50
         private const val ZOOM_OUT_CHANGE_FACTOR = 0.9
         private const val MIN_ZOOM_FACTOR = 0.05
+	    private const val MOUSE_WHEEL_PAN_FACTOR = 5
     }
 
     var enabled: Boolean = false
@@ -48,11 +46,11 @@ class ZoomPanController(val view: View<*>) {
 
     private val autoPanning = AutoPanning()
 
-    var startPos: Point2D? = null
+    var startPos: Point2D = Point2D.ZERO
 
     inner class Controller : MouseAdapter() {
 
-        private fun isZoomOutWheelRotation(e: MouseEvent) = e.wheelRotation > 0
+	    private fun isZoomOutWheelRotation(e: MouseEvent) = e.wheelRotation > 0
 
         private fun zoomChangeFactorFromWheelRotation(e: MouseEvent): Double {
 	        if (e.wheelRotation != 0 && e.modifiers == 0) {
@@ -66,18 +64,30 @@ class ZoomPanController(val view: View<*>) {
             return 1.0
         }
 
+	    private fun panVectorFromWheelRotation(e: MouseEvent): Point2D {
+		    if (e.wheelRotation != 0) {
+			    return if (e.isShiftDown) {
+				    Point2D(e.wheelRotation * MOUSE_WHEEL_PAN_FACTOR, 0)
+			    } else {
+				    Point2D(0, e.wheelRotation * MOUSE_WHEEL_PAN_FACTOR)
+			    }
+		    }
+		    return Point2D.ZERO
+	    }
+
+	    /** ---- [MouseAdapter] */
+
         override fun mousePressed(e: MouseEvent) {
             if (e.button != Button.BUTTON2) {
                 return
             }
-            startPos = Point2D(e.x.toDouble(), e.y.toDouble())
+            startPan(e.location)
         }
 
         override fun mouseReleased(e: MouseEvent) {
             if (e.button != Button.BUTTON3) {
                 autoPanning.deactivate()
             }
-            startPos = null
         }
 
         override fun mouseDragged(e: MouseEvent) {
@@ -87,18 +97,31 @@ class ZoomPanController(val view: View<*>) {
             if (e.button != Button.BUTTON2) {
                 return
             }
-            val delta = Point2D(e.x - startPos!!.x, e.y - startPos!!.y)
-            view.navigator.panBy(delta.x.toInt(), delta.y.toInt())
-            startPos = Point2D(e.x.toDouble(), e.y.toDouble())
+	        pan(e.location)
         }
 
         override fun mouseWheelRotated(e: MouseEvent) {
 	        LOG.trace("ZoomPanController: mouseWheelRotated by ${e.wheelRotation}, modifiers=${e.modifiers}")
 	        if (e.modifiers == 0) {
 		        view.navigator.multiplyZoomFactor(zoomChangeFactorFromWheelRotation(e))
+	        } else if (e.isAltDown) {
+		        startPos = Point2D.ZERO
+		        pan(panVectorFromWheelRotation(e))
 	        }
             e.consume()
         }
+
+	    /** ---- [ZoomPanController] */
+
+	    private fun startPan(pos: Point2D) {
+		    startPos = pos
+	    }
+
+	    private fun pan(pos: Point2D) {
+		   val  delta = pos.subtract(startPos)
+		    view.navigator.panBy(delta.x.toInt(), delta.y.toInt())
+		    startPos = pos
+	    }
     }
 
     inner class AutoPanning : MouseAdapter() {
@@ -109,7 +132,7 @@ class ZoomPanController(val view: View<*>) {
         var enabled: Boolean = true
 
         init {
-            timer.initialize(AUTOPAN_TIMER_DELAY, { pan() })
+            timer.initialize(AUTOPAN_TIMER_DELAY) { pan() }
         }
 
         override fun mouseDragged(e: MouseEvent) {
