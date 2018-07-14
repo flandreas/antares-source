@@ -21,13 +21,13 @@ import ch.scorpion.jabbah.draw.style.StyleType
  * This can be used for placing a description above the contents of a [Drawable].
  */
 class FlexibleTextView(
-        text: String,
-        anchor: Point2D,
-        private val direction: Direction,
-        private val width: Int = DEFAULT_WIDTH,
-        private val isUnzoomable: Boolean = true,
-        styleType: StyleType,
-        styleProvider: StyleProvider = DrawStyleModule.styleProvider
+	text: String,
+	anchor: Point2D,
+	private val direction: Direction,
+	private val width: Int = DEFAULT_WIDTH,
+	private val isUnzoomable: Boolean = true,
+	styleType: StyleType = StyleType.FIGURE,
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractStyledDrawable(styleType, styleProvider), Transparent, Unzoomable, Locatable {
 
     private companion object {
@@ -35,13 +35,13 @@ class FlexibleTextView(
         private val LOG by logger(FlexibleTextView::class)
 
         /** The default width of a [FlexibleTextView] if none is specified upon construction.*/
-        private val DEFAULT_WIDTH = 200
+        private const val DEFAULT_WIDTH = 200
 
         /** The horizontal inset between the surrounding rectangle and the text.  */
-        private val INSET_X = 10
+        private const val INSET_X = 10
 
         /** The vertical inset between the surrounding rectangle and the text.  */
-        private val INSET_Y = 10
+        private const val INSET_Y = 10
     }
 
     private val multilineText = MultilineText(text, font, width.toDouble())
@@ -55,6 +55,7 @@ class FlexibleTextView(
     override var location: Point2D = anchor
         set(value) {
             invalidate()
+	        field = value
             updateGeometry()
             invalidate()
             update()

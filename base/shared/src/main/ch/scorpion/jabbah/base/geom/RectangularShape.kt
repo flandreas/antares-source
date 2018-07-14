@@ -53,6 +53,12 @@ interface RectangularShape : Shape {
     /** Contains the maximum y coordinate of this [RectangularShape].*/
     val maxY: Double get() = y + height
 
+	/** Contains the top-left edge of this [RectangularShape].*/
+	val topLeft: Point2D get() = Point2D(minX, minY)
+
+	/** Contains the bottom-right edge of this [RectangularShape].*/
+	val bottomRight: Point2D get() = Point2D(maxX, maxY)
+
     /** Moves this [RectangularShape] by the specified translation vector.*/
     fun moveBy(v: Point2D): RectangularShape {
         setFrame(x + v.x, y + v.y, width, height)

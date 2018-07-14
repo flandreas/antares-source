@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.draw
 
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -26,6 +27,6 @@ open class DrawTestRule : TestRule {
 
     fun configure() {
         BaseModuleJvm.require()
-        DrawModule.require()
+        DrawModuleJvm.require()
     }
 }

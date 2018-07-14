@@ -34,7 +34,7 @@ interface View<C : InputEventContext> : ViewToModelTransform {
     fun <T> castedAppContext(): T? = applicationContext as T
 
     /**
-     * Asks this [View] to initialize itself after it has been layed out and become visible for the first time.
+     * Asks this [View] to initialize itself after it has been laid out and become visible for the first time.
      * Implementing classes should at least apply their default {@link ZoomStrategy}.
      */
     fun initialize()
@@ -59,13 +59,12 @@ interface View<C : InputEventContext> : ViewToModelTransform {
     var antialiasing: Boolean
 
     /**
-     * Contains [Drawable]s that are painted above the [Drawing] on the [View] level.
+     * Contains [Drawable]s that are painted above the main content on the [View] level.
      * This is like a slide that lies above all other [DrawableContainer]s. Its [Drawable]s
-     * use the coordinate system of the [View] and not the one of the [Drawing], and they
+     * use the coordinate system of the [View] and not the one of the main content, and they
      * are never zoomed. It can be used for displaying UI controls, or for displaying system wide messages
-     * that are not related with a particular [Component] in the [Drawing]. Unlike all other [DrawableContainer]s,
-     * this one is not part of the [DrawingView]'s [DrawingViewContent], i.e. it is not replaced when
-     * replacing the [Drawing].
+     * that are not related with a particular [Drawable] in the main content. Unlike all other [DrawableContainer]s,
+     * this one is not part of the [View]'s main content, i.e. it is not replaced when replacing the main content.
      */
     val overlayContainer: DrawableContainer<Drawable>
 

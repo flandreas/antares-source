@@ -564,7 +564,7 @@ class CircuitInOutView(
 
         override fun keyPressed(signalHandler: SignalHandler, event: KeyEvent) {
             if (!model!!.isToplevel) {
-                eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@CircuitInOutView, messageKey = "ch.scorpion.antares.msg.ChildGraphInputManipulation"))
+                eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
                 return
             }
             if (numberView!!.focusIndex != null) {
