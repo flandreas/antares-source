@@ -563,10 +563,6 @@ class CircuitInOutView(
 	    }
 
         override fun keyPressed(signalHandler: SignalHandler, event: KeyEvent) {
-            if (!model!!.isToplevel) {
-                eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
-                return
-            }
             if (numberView!!.focusIndex != null) {
                 LOG.debug("CircuitInOut: keyPressed '${event.key.toChar()}'")
 
@@ -578,14 +574,14 @@ class CircuitInOutView(
                     invalidate()
                     numberView!!.transferFocusRight()
                     validate()
-                } else if (event.key == KeyEvent.VK_ENTER) {
+                } else if (event.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
 	                if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
 		                val newWord = (model!!.signal as Word).flip(numberView!!.focusIndex!!)
 		                model!!.setIncomingSignal(newWord, signalHandler)
 	                }
                 } else {
                     val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bits()), event.key.toChar())
-                    if (digitWord != null) {
+                    if (digitWord != null && checkTopLevelKey()) {
                         val newWord = (model!!.signal as Word).withSubwordValue(digitWord, numberView!!.focusIndex!!)
                         model!!.setIncomingSignal(newWord, signalHandler)
                         numberView!!.transferFocusRight()
@@ -593,5 +589,13 @@ class CircuitInOutView(
                 }
             }
         }
+
+	    private fun checkTopLevelKey(): Boolean {
+		    if (!model!!.isToplevel) {
+			    eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
+			    return false
+		    }
+		    return true
+	    }
     }
 }
