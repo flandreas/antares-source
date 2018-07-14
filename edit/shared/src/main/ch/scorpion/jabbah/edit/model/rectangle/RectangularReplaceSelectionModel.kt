@@ -15,9 +15,36 @@ import ch.scorpion.jabbah.edit.style.EditTheme
 /**
  * A [SelectionModel] for [AbstractRectangularComponent] to be used with [SelectionDrawingStrategy.REPLACE].
  */
-class RectangularReplaceSelectionModel(
-	component: AbstractRectangularComponent
+open class RectangularReplaceSelectionModel(
+	component: AbstractRectangularComponent,
+	private val drawStrategy: DrawStrategy = DrawStrategy.SHAPE
 ) : AbstractSelectionModel<AbstractRectangularComponent>(component) {
+
+	enum class DrawStrategy {
+
+		/** Draws only the shape of the [Component] in selection color.*/
+		SHAPE {
+			override fun draw(component: AbstractRectangularComponent, context: DrawContext) {
+				context.g.color = Themes.get<EditTheme>().selection.foregroundColor
+				context.g.draw(component.shape)
+			}
+		},
+
+		/** Draws the entire [Component] in selection color.*/
+		COMPONENT {
+			override fun draw(component: AbstractRectangularComponent, context: DrawContext) {
+				val oldUseContextColor = context.useContextColors
+				val oldContextColor = context.color
+				context.useContextColors = true
+				context.color = Themes.get<EditTheme>().selection
+				component.draw(context)
+				context.useContextColors = oldUseContextColor
+				context.color = oldContextColor
+			}
+		};
+
+		abstract fun draw(component: AbstractRectangularComponent, context: DrawContext)
+	}
 
 	companion object {
 		private val LOG by logger(RectangularReplaceSelectionModel::class)
@@ -35,8 +62,7 @@ class RectangularReplaceSelectionModel(
 		get() = component.boundingBox.expandBy(component.stroke.width.toDouble())
 
 	override fun draw(context: DrawContext) {
-		context.g.color = Themes.get<EditTheme>().selection.foregroundColor
-		context.g.draw(component.shape)
+		drawStrategy.draw(component, context)
 	}
 
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {

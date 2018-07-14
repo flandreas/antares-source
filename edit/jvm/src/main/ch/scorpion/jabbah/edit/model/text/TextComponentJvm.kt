@@ -196,7 +196,7 @@ open class TextComponentJvm(
             decorator.drawBackground(this, context)
         }
 
-        setupTextPainter()
+        setupTextPainter(context)
         (context.g as Graphics2DJvm).g.setClip(b.x.toInt(), b.y.toInt(), b.width.toInt(), b.height.toInt())
         context.g.translate(TEXT_PAINTER.x.toDouble(), TEXT_PAINTER.y.toDouble())
         TEXT_PAINTER.paint((context.g as Graphics2DJvm).g)
@@ -249,7 +249,7 @@ open class TextComponentJvm(
     /**
      * Sets up the shared instance of the [TEXT_PAINTER] object with everything it needs to properly render the text.
      */
-    private fun setupTextPainter() {
+    private fun setupTextPainter(context: DrawContext) {
         val attr = SimpleAttributeSet()
         val awtFont = Graphics2DJvm.toAwtFont(font)
 
@@ -257,8 +257,10 @@ open class TextComponentJvm(
         StyleConstants.setFontSize(attr, awtFont.size)
         StyleConstants.setBold(attr, awtFont.isBold)
         StyleConstants.setItalic(attr, awtFont.isItalic)
-        StyleConstants.setForeground(attr, Graphics2DJvm.toAwtColor(transparent.applyTo(color.textColor)))
-        StyleConstants.setBackground(attr, Graphics2DJvm.toAwtColor(transparent.applyTo(color.backgroundColor)))
+        StyleConstants.setForeground(attr, Graphics2DJvm.toAwtColor(
+	        if (context.useContextColors) context.color!!.textColor else transparent.applyTo(color.textColor)))
+        StyleConstants.setBackground(attr, Graphics2DJvm.toAwtColor(
+	        if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(color.backgroundColor)))
         StyleConstants.setAlignment(attr, StyleConstants.ALIGN_LEFT)
 
         val bounds = shape

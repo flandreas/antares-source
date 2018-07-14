@@ -25,14 +25,14 @@ class RectangularShapeTextComponentDecorator(
     override fun drawBackground(component: TextComponent, context: DrawContext) {
         if (stylable.filled) {
             adjustShape(component)
-            context.g.color = transparent.applyTo(stylable.backgroundColor)
+            context.g.color = if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(stylable.backgroundColor)
             context.g.fill(shape)
         }
     }
 
     override fun drawForeground(component: TextComponent, context: DrawContext) {
         adjustShape(component)
-        context.g.color = transparent.applyTo(stylable.foregroundColor)
+        context.g.color = if (context.useContextColors) context.color!!.foregroundColor else transparent.applyTo(stylable.foregroundColor)
         context.g.stroke = stylable.stroke
         context.g.draw(shape)
     }
