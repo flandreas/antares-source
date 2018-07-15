@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.base.swing
 
-import java.util.*
 import javax.swing.JTree
 import javax.swing.tree.TreeModel
 import javax.swing.tree.TreeNode
@@ -21,7 +20,7 @@ object JTreeUtil {
         return TreePath(nodes.toTypedArray())
     }
 
-	/** Finds the first [TreeNode] in the subtree rooted in ´treeNode´ that fulfills the specified condition.*/
+	/** Finds the first [TreeNode] in the subtree rooted in `treeNode` that fulfills the specified condition.*/
 	fun findTreeNode(treeNode: TreeNode, cond: (TreeNode) -> Boolean): TreeNode? {
 		if (cond.invoke(treeNode)) {
 			return treeNode
@@ -34,5 +33,27 @@ object JTreeUtil {
 			}
 		}
 		return null
+	}
+
+	fun expandAll(tree: JTree, parent: TreePath) {
+		val node = parent.lastPathComponent as TreeNode
+		if (node.childCount >= 0) {
+			for (child in node.children()) {
+				val path = parent.pathByAddingChild(child)
+				expandAll(tree, path)
+			}
+		}
+		tree.expandPath(parent)
+	}
+
+	fun collapseAll(tree: JTree, parent: TreePath) {
+		val node = parent.lastPathComponent as TreeNode
+		if (node.childCount >= 0) {
+			for (child in node.children()) {
+				val path = parent.pathByAddingChild(child)
+				collapseAll(tree, path)
+			}
+		}
+		tree.collapsePath(parent)
 	}
 }

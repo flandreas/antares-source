@@ -33,6 +33,8 @@ class LibraryTreeView(
 	projectHolder: ProjectHolder = ProjectModule.projectHolder
 ) : JTree(createLibraryTreeModel(libraryHolder.library, projectHolder.project)) {
 
+	private val desktopPopupMenu = JPopupMenu()
+
     private val directoryPopupMenu = JPopupMenu()
 
     private val containerPopupMenu = JPopupMenu()
@@ -57,31 +59,42 @@ class LibraryTreeView(
         setRowHeight(24)
 	    isRootVisible = true
         setCellRenderer(Renderer())
-        addTreeSelectionListener({ eventBus.post(LibrarySelectionChangedEvent(this)) })
-        addMouseListener(DoubleClickListener())
+        addTreeSelectionListener { eventBus.post(LibrarySelectionChangedEvent(this)) }
+	    addMouseListener(DoubleClickListener())
 
         dragEnabled = true
         dropMode = DropMode.ON
 	    showsRootHandles = true
 
-        eventBus.register(LibraryItemAddedEvent::class, { handle(it) })
-        eventBus.register(LibraryItemRemovedEvent::class, { handle(it) })
-        eventBus.register(LibraryItemUpdatedEvent::class, { handle(it) })
-	    eventBus.register(ProjectEvent::class, { handle(it) })
+        eventBus.register(LibraryItemAddedEvent::class) { handle(it) }
+	    eventBus.register(LibraryItemRemovedEvent::class) { handle(it) }
+	    eventBus.register(LibraryItemUpdatedEvent::class) { handle(it) }
+	    eventBus.register(ProjectEvent::class) { handle(it) }
 
-        eventBus.register(ApplicationModeEvent::class, { dragEnabled = it.applicationMode === ApplicationMode.EDIT })
-	    eventBus.register(CurrentSavableEvent::class, { handle(it) })
-	    eventBus.register(OpenContainerLibraryElementRequest::class, { handle(it) })
+	    eventBus.register(ApplicationModeEvent::class) { dragEnabled = it.applicationMode === ApplicationMode.EDIT }
+	    eventBus.register(CurrentSavableEvent::class) { handle(it) }
+	    eventBus.register(OpenContainerLibraryElementRequest::class) { handle(it) }
 
+	    val expandAllAction = ExpandAllAction()
+	    val collapseAllAction = CollapseAllAction()
 	    val addLibraryFolderAction = AddLibraryFolderAction()
 	    val newGraphAction = NewGraphAction()
 	    val addGraphToLibraryAction = AddGraphToLibraryAction()
 
+	    desktopPopupMenu.add(ActionWrapperSwing(expandAllAction))
+	    desktopPopupMenu.add(ActionWrapperSwing(collapseAllAction))
+
+	    projectRootMenu.add(ActionWrapperSwing(expandAllAction))
+	    projectRootMenu.add(ActionWrapperSwing(collapseAllAction))
+	    projectRootMenu.addSeparator()
 	    projectRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 	    projectRootMenu.add(ActionWrapperSwing(newGraphAction))
 	    projectRootMenu.add(ActionWrapperSwing(addGraphToLibraryAction))
 	    projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
 
+	    directoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
+	    directoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
+	    directoryPopupMenu.addSeparator()
 	    directoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 	    directoryPopupMenu.add(ActionWrapperSwing(newGraphAction))
 	    directoryPopupMenu.add(ActionWrapperSwing(addGraphToLibraryAction))
@@ -150,9 +163,12 @@ class LibraryTreeView(
         }
         componentPopupMenu = when ((newSelectionPath.lastPathComponent as DefaultMutableTreeNode).userObject) {
 	        is Project -> projectRootMenu
+	        is Library -> directoryPopupMenu
             is LibraryFolder -> directoryPopupMenu
             is LibraryDirectory -> directoryPopupMenu
-            else -> containerPopupMenu
+	        is ContainerLibraryElement -> containerPopupMenu
+	        is String -> desktopPopupMenu
+            else -> null
         }
     }
 
@@ -170,7 +186,7 @@ class LibraryTreeView(
 	 */
 	private fun handle(event: OpenContainerLibraryElementRequest) {
 		SwingUtilities.invokeLater {
-			val node = findTreeNode(treeModel.root as TreeNode, { (it as DefaultMutableTreeNode).userObject == event.element })
+			val node = findTreeNode(treeModel.root as TreeNode) { (it as DefaultMutableTreeNode).userObject == event.element }
 			if (node != null) {
 				selectionPath = JTreeUtil.getPath(node)
 			}
@@ -250,17 +266,14 @@ class LibraryTreeView(
 	}
 
 	private fun findOptionalTreeNode(item: LibraryItem): DefaultMutableTreeNode? {
-		return JTreeUtil.findTreeNode(
-			model.root as TreeNode,
-			{
-				val userObject = (it as DefaultMutableTreeNode).userObject
-				if (userObject is Library) {
-					userObject.libraryFolder == item || userObject == item
-				} else {
-					userObject == item
-				}
+		return JTreeUtil.findTreeNode(model.root as TreeNode) {
+			val userObject = (it as DefaultMutableTreeNode).userObject
+			if (userObject is Library) {
+				userObject.libraryFolder == item || userObject == item
+			} else {
+				userObject == item
 			}
-		) as DefaultMutableTreeNode?
+		} as DefaultMutableTreeNode?
 	}
 
 
@@ -306,7 +319,7 @@ class LibraryTreeView(
         }
 
         private fun getIcon(iconPath: String): Icon {
-            return iconCache.getOrPut(iconPath, { ImageIcon(LibraryTreeView::class.java.getResource(iconPath)) })
+            return iconCache.getOrPut(iconPath) { ImageIcon(LibraryTreeView::class.java.getResource(iconPath)) }
         }
 
 	    private fun isCurrentElement(element: ContainerLibraryElement): Boolean {
