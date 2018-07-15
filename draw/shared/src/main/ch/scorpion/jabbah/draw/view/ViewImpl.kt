@@ -12,7 +12,9 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
+import ch.scorpion.jabbah.draw.style.ThemeEvent
 
 
 /**
@@ -23,7 +25,8 @@ import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
  */
 open class ViewImpl<C: InputEventContext>(
         override val canvas: Canvas,
-        private val transformFactory: () -> AffineTransform
+        private val transformFactory: () -> AffineTransform,
+        private val eventBus: EventBus = BaseModule.eventBus
 ) : View<C> {
 
     companion object {
@@ -36,6 +39,15 @@ open class ViewImpl<C: InputEventContext>(
     private val drawables: MutableList<Drawable> = mutableListOf()
 
     private val changeSupport = PropertyChangeSupport<Any>(this)
+
+	private val themeListener: (ThemeEvent) -> Unit = {
+		invalidate()
+		repaint()
+	}
+
+	init {
+		eventBus.register(ThemeEvent::class, themeListener)
+	}
 
     /** ---- Life cycle */
 
@@ -50,6 +62,10 @@ open class ViewImpl<C: InputEventContext>(
         applyDefaultZoomStrategy()
         controller.enabled = true
     }
+
+	override fun dispose() {
+		eventBus.unregister(ThemeEvent::class, themeListener)
+	}
 
     /** ---- Content management */
 
@@ -389,30 +405,30 @@ open class ViewImpl<C: InputEventContext>(
 
         override fun mouseMoved(context: T): InputEventHandler<T>? {
             var destination: InputEventHandler<T>? = null
-            drawables.firstOrNull({
-                destination = it.getInputEventHandler(context).mouseMoved(context)
-                destination != null
-            })
-            return destination
+            drawables.firstOrNull {
+	            destination = it.getInputEventHandler(context).mouseMoved(context)
+	            destination != null
+            }
+	        return destination
         }
 
         override fun mouseClicked(context: T): InputEventHandler<T>? {
             var destination: InputEventHandler<T>? = null
-            drawables.firstOrNull({
-                destination = it.getInputEventHandler(context).mouseClicked(context)
-                destination != null
-            })
-            target = destination
+            drawables.firstOrNull {
+	            destination = it.getInputEventHandler(context).mouseClicked(context)
+	            destination != null
+            }
+	        target = destination
             return destination
         }
 
         override fun mousePressed(context: T): InputEventHandler<T>? {
             var destination: InputEventHandler<T>? = null
-            drawables.firstOrNull({
-                destination = it.getInputEventHandler(context).mousePressed(context)
-                destination != null
-            })
-            target = destination
+            drawables.firstOrNull {
+	            destination = it.getInputEventHandler(context).mousePressed(context)
+	            destination != null
+            }
+	        target = destination
             return destination
         }
 

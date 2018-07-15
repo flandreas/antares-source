@@ -35,7 +35,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
         private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,
         eventBus: EventBus = BaseModule.eventBus,
         animator: Animator = AnimationModule.animator
-) : ViewImpl<EditInputEventContext>(canvas, transformFactory), DrawingView<T> {
+) : ViewImpl<EditInputEventContext>(canvas, transformFactory, eventBus), DrawingView<T> {
 
     /** The [DrawableDrawer] used for drawing the [Drawing].*/
     private var drawableDrawer: DrawableDrawer<Component> = DrawingDrawer()
@@ -142,7 +142,12 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
     override val contentBounds: RectangularShape get() = drawing.boundingBox
 
-    override fun removeDrawable(drawable: Drawable) {
+	override fun dispose() {
+		super.dispose()
+		componentMessageDisplayer.dispose()
+	}
+
+	override fun removeDrawable(drawable: Drawable) {
         // DrawingViewImpl has a fixed set of DrawableContainers
         throw ch.scorpion.jabbah.base.exception.UnsupportedOperationException("Clients cannot remove Drawable from DrawingViewImpl")
     }
@@ -153,10 +158,6 @@ class DrawingViewImpl<T: Drawing<Component>>(
     }
 
     /** ---- [DrawingViewImpl] */
-
-    fun dispose() {
-        componentMessageDisplayer.dispose()
-    }
 
     private fun setupContent() {
         super.addDrawable(ghostContainer)

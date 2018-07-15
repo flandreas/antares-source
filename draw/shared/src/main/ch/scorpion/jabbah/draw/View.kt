@@ -43,6 +43,8 @@ interface View<C : InputEventContext> : ViewToModelTransform {
      */
     fun initialize()
 
+	fun dispose()
+
     /** ----  Geometry */
 
     /** The width of this [View] in view space.*/
