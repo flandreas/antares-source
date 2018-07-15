@@ -135,7 +135,7 @@ class SelectionToolImpl(
             moveStartLocation = Point2D(movedReferenceComponent!!.location)
             moveLastLocation = Point2D(x, y)
 
-            editor.view.setCursor(Cursor.HAND)
+	        target = editor.view.getInputEventHandler(e).mousePressed(mouseEventContext(e, x, y))
         } else {
             if (!e.isShiftDown) {
                 editor.view.selectionManager.deselectAll()

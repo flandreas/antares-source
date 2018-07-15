@@ -12,7 +12,9 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
  */
 class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 
-    private val LOG by logger(DragEdgeSegmentHandler::class)
+	companion object {
+        private val LOG by logger(DragEdgeSegmentHandler::class)
+	}
 
     private var lastX: Double = 0.0
     private var lastY: Double = 0.0
@@ -25,17 +27,23 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 	    LOG.debug("DragEdgeSegmentHandler: mouseMoved")
 	    val segment = edgeView!!.findSegment(context.x, context.y)
 	    if (segment != null) {
-		    val direction = edgeView!!.getSegmentDirection(segment)
-		    LOG.debug("DragEdgeSegmentHandler: direction is $direction")
-		    when (direction) {
-			    Direction.EAST, Direction.WEST -> context.view.setCursor(Cursor.N_RESIZE)
-			    Direction.SOUTH, Direction.NORTH -> context.view.setCursor(Cursor.W_RESIZE)
-			    else -> context.view.setCursor(Cursor.DEFAULT)
-		    }
+		    updateCursor(segment, context)
 		    return this
 	    }
 	    context.view.setCursor(Cursor.DEFAULT)
 		return super.mouseMoved(context)
+	}
+
+	private fun updateCursor(segmentIndex: Int?, context: EditInputEventContext) {
+		if (segmentIndex != null) {
+			val direction = edgeView!!.getSegmentDirection(segmentIndex)
+			LOG.debug("DragEdgeSegmentHandler: direction is $direction")
+			when (direction) {
+				Direction.EAST, Direction.WEST -> context.view.setCursor(Cursor.N_RESIZE)
+				Direction.SOUTH, Direction.NORTH -> context.view.setCursor(Cursor.W_RESIZE)
+				else -> context.view.setCursor(Cursor.DEFAULT)
+			}
+		}
 	}
 
     override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
@@ -43,6 +51,7 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
         lastX = context.x + context.editor.snapManager.snapX(context.x, context.y)
         lastY = context.y + context.editor.snapManager.snapY(context.x, context.y)
         segmentIndex = edgeView!!.findSegment(context.x, context.y)
+	    updateCursor(segmentIndex, context)
         totalOffset = 0.0
         return this
     }
