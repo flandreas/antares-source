@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.InputEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -128,6 +129,12 @@ class SubGraphVerticeViewImpl(
                 invalidate()
             }
         }
+
+	var orientation: Direction
+		get() = Direction.of(rotation)
+		set(value) {
+			rotation = value.rotation
+		}
 
     /** ---- [Transparent] */
 
