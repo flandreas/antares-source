@@ -15,6 +15,10 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
     companion object {
 
+	    const val PROP_MIN_ZOOM_FACTOR = "draw.view.minZoomFactor"
+
+	    const val PROP_MAX_ZOOM_FACTOR = "draw.view.maxZoomFactor"
+
         /** The name of the [ZoomPan] property in [PropertyChangeEvent]s.*/
         const val PROP_ZOOM_PAN = "PROP_ZOOM_PAN"
 

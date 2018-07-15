@@ -1,10 +1,12 @@
 package ch.scorpion.jabbah.draw.view
 
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Vector2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.base.time.Timer
 
@@ -20,7 +22,6 @@ class ZoomPanController(val view: View<*>) {
         private const val AUTOPAN_SIZE = 10
         private const val AUTOPAN_REGION = 50
         private const val ZOOM_OUT_CHANGE_FACTOR = 0.9
-        private const val MIN_ZOOM_FACTOR = 0.05
 	    private const val MOUSE_WHEEL_PAN_FACTOR = 5
     }
 
@@ -57,7 +58,7 @@ class ZoomPanController(val view: View<*>) {
 		        val zoomChangeFactor = if (isZoomOutWheelRotation(e)) ZOOM_OUT_CHANGE_FACTOR else 1 / ZOOM_OUT_CHANGE_FACTOR
 		        val newZoomFactor = zoomChangeFactor * view.zoomFactor
 		        LOG.trace("ZoomPanController: zoomChangeFactor=$zoomChangeFactor, newZoomFactor=$newZoomFactor")
-		        if (newZoomFactor >= MIN_ZOOM_FACTOR) {
+		        if (newZoomFactor >= BaseModule.properties.getFloat(View.PROP_MIN_ZOOM_FACTOR) && newZoomFactor <= BaseModule.properties.getFloat(View.PROP_MAX_ZOOM_FACTOR)) {
 			        return zoomChangeFactor
 		        }
 	        }
