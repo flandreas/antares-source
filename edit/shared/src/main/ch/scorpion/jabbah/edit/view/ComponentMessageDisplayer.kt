@@ -63,8 +63,10 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
                 direction = Direction.SOUTH,
                 styleType = determineStyleType(msg.type))
 
-	    val makeVisibleOffset = getMakeVisibleOffset(messageView)
-		messageView.moveBy(makeVisibleOffset.x, makeVisibleOffset.y)
+	    if (msg.source != null) {
+		    val makeVisibleOffset = getMakeVisibleOffset(messageView)
+		    messageView.moveBy(makeVisibleOffset.x, makeVisibleOffset.y)
+	    }
 
         val container = if (msg.source == null) drawingView.overlayContainer else drawingView.ghostContainer as DrawableContainer<Drawable>
 
