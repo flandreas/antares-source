@@ -12,7 +12,8 @@ class ExpandAllAction(
 ) : AbstractLibraryAction("library.action.expandAll", eventBus) {
 
 	override fun calculateEnabledness(): Boolean {
-		return (libraryTreeView!!.selectionPath.lastPathComponent as DefaultMutableTreeNode).childCount > 0
+		return libraryTreeView!!.selectionPath != null &&
+			(libraryTreeView!!.selectionPath.lastPathComponent as DefaultMutableTreeNode).childCount > 0
 	}
 
 	override fun execute(event: ActionEvent) {
@@ -26,7 +27,8 @@ class CollapseAllAction(
 ) : AbstractLibraryAction("library.action.collapseAll", eventBus) {
 
 	override fun calculateEnabledness(): Boolean {
-		return (libraryTreeView!!.selectionPath.lastPathComponent as DefaultMutableTreeNode).childCount > 0
+		return libraryTreeView!!.selectionPath != null &&
+			(libraryTreeView!!.selectionPath.lastPathComponent as DefaultMutableTreeNode).childCount > 0
 	}
 
 	override fun execute(event: ActionEvent) {
