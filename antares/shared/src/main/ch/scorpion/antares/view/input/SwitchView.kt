@@ -6,36 +6,34 @@ import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.event.KeyEvent
-import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.*
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
-import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
-import ch.scorpion.jabbah.graph.view.ControlView
-import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
+import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -258,16 +256,16 @@ class SwitchView(
 
     override fun drawSelected(context: DrawContext) {
         context.g.color = context.color!!.foregroundColor
-        draw(context, {
-            super.drawImpl(it)
-            context.g.drawRect(xInt, yInt, width.toInt(), SIZE)
-            context.g.drawRoundRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-                    width.toInt() - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH, DIAMETER, DIAMETER)
-            if (labelPosition == VerticeLabelPosition.INTERNAL) {
-                internalLabel.draw(context)
-            }
-        })
-        if (labelPosition == VerticeLabelPosition.EXTERNAL) {
+        draw(context) {
+	        super.drawImpl(it)
+	        context.g.drawRect(xInt, yInt, width.toInt(), SIZE)
+	        context.g.drawRoundRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
+		        width.toInt() - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH, DIAMETER, DIAMETER)
+	        if (labelPosition == VerticeLabelPosition.INTERNAL) {
+		        internalLabel.draw(context)
+	        }
+        }
+	    if (labelPosition == VerticeLabelPosition.EXTERNAL) {
             externalLabel.draw(context)
         }
     }
@@ -330,25 +328,25 @@ class SwitchView(
         return (SIZE * Math.max(1.0, Math.ceil(requiredSpace / SIZE))).toInt()
     }
 
-    private inner class InteractionHandler : ActorInteractionHandlerAdapter() {
+    private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
 
-        override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
-            model!!.toggle(signalHandler)
-	        event.consume()
+        override fun mousePressed(context: ActorInteractionContext) {
+            model!!.toggle(context.signalHandler)
+	        context.mouseEvent?.consume()
         }
 
-        override fun mouseReleased(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+        override fun mouseReleased(context: ActorInteractionContext) {
             if (!toggle) {
-                model!!.toggle(signalHandler)
-	            event.consume()
+                model!!.toggle(context.signalHandler)
+	            context.mouseEvent?.consume()
             }
         }
 
-        override fun keyPressed(signalHandler: SignalHandler, event: KeyEvent) {
-            when(event.key) {
-                '0'.toInt() -> model!!.setOn(signalHandler, false)
-                '1'.toInt() -> model!!.setOn(signalHandler, true)
-                '\n'.toInt() -> model!!.toggle(signalHandler)
+        override fun keyPressed(context: ActorInteractionContext) {
+            when(context.keyEvent?.key) {
+                '0'.toInt() -> model!!.setOn(context.signalHandler, false)
+                '1'.toInt() -> model!!.setOn(context.signalHandler, true)
+                '\n'.toInt() -> model!!.toggle(context.signalHandler)
             }
         }
     }

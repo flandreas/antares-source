@@ -22,6 +22,9 @@ dependencies {
     compile project(':base')
     compile project(path: ':base')
 
+    compile project(':draw')
+    compile project(path: ':draw')
+
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"

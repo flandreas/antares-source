@@ -5,39 +5,35 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.MouseEvent
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.InputEventContext
-import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
-import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
-import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StoreReader
-import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Reference
-import ch.scorpion.jabbah.io.ReferenceResolver
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.InputEventHandler
+import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.io.*
 
 
 /**
@@ -52,18 +48,18 @@ class ROMView(
     companion object {
 
         /** The width of a ROMView box if the contents are not displayed.*/
-        val MIN_WIDTH = 24 * Look.GRID
+        const val MIN_WIDTH = 24 * Look.GRID
 
         /** The height of a ROMView box if the contents are not displayed.*/
-        val MIN_HEIGHT = 12 * Look.GRID
+        const val MIN_HEIGHT = 12 * Look.GRID
 
         /** The horizontal inset between the outer box and the contents box.*/
-        val HORIZONTAL_CONTENTS_INSET = 20
+        const val HORIZONTAL_CONTENTS_INSET = 20
 
         /** The vertical inset between the outer box and the contents box.*/
-        val VERTICAL_CONTENTS_INSET = 40
+        const val VERTICAL_CONTENTS_INSET = 40
 
-        val LABEL_INSET = 20
+        const val LABEL_INSET = 20
     }
 
     private val inputEventHandler = DoubleClickHandler()
@@ -385,10 +381,10 @@ class ROMView(
         }
     }
 
-    private inner class DoubleClickActorHandler : ActorInteractionHandlerAdapter() {
-        override fun mouseClicked(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
-            if (event.clickCount == 2) {
-                requestOpenMemoryContents(event)
+    private inner class DoubleClickActorHandler : ClickableActorInteractionHandlerAdapter() {
+        override fun mouseClicked(context: ActorInteractionContext) {
+            if (context.mouseEvent!!.clickCount == 2) {
+                requestOpenMemoryContents(context.mouseEvent!!)
             }
         }
     }

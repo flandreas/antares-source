@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.Tooltip
-import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -25,13 +24,14 @@ import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
@@ -413,23 +413,23 @@ class OscilloscopeView(
         }
     }
 
-    private inner class ActorHandler : ActorInteractionHandlerAdapter() {
+    private inner class ActorHandler : ClickableActorInteractionHandlerAdapter() {
 
         private var startLocation = Point2D()
         private var startScale: Double = 1.0
 
-        override fun mouseClicked(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
-            if (event.clickCount == 2) {
+        override fun mouseClicked(context: ActorInteractionContext) {
+            if (context.mouseEvent!!.clickCount == 2) {
                 timelineScale = 1.0
             }
         }
 
-        override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+        override fun mousePressed(context: ActorInteractionContext) {
             startLocation = Point2D(x, y).subtract(container.location)
             startScale = timelineScale
         }
 
-        override fun mouseDragged(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+        override fun mouseDragged(context: ActorInteractionContext) {
             val newLocation = Point2D(x, y).subtract(container.location)
             if (scaleRow.contains(newLocation)) {
                 val dist = startLocation.subtract(newLocation).x

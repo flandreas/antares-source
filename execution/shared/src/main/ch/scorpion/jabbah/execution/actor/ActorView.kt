@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.execution.actor
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.execution.SignalHandler
 
 /**
@@ -25,46 +27,89 @@ interface ActorView {
     fun getExecutionTooltip(x: Double, y: Double): Tooltip?
 }
 
+interface ActorInteractionContext {
+
+	val signalHandler: SignalHandler
+	val view: View<*>
+	val mouseEvent: MouseEvent?
+	val keyEvent: KeyEvent?
+	val x: Double
+	val y: Double
+
+	/** Returns a copy of this [ActorInteractionContext] with other x and y coordinates*/
+	fun withXY(x: Double, y: Double): ActorInteractionContext
+}
+
+class ActorInteractionContextImpl(
+	override val signalHandler: SignalHandler,
+	override val view: View<*>,
+	override val mouseEvent: MouseEvent? = null,
+	override val keyEvent: KeyEvent? = null,
+	override val x: Double = 0.0,
+	override val y: Double = 0.0
+) : ActorInteractionContext {
+
+	/** Returns a copy of this [ActorInteractionContext] with other x and y coordinates*/
+	override fun withXY(x: Double, y: Double): ActorInteractionContext {
+		return ActorInteractionContextImpl(
+			signalHandler = signalHandler,
+			view = view,
+			mouseEvent = this.mouseEvent,
+			keyEvent = this.keyEvent,
+			x = x,
+			y = y
+		)
+	}
+}
+
 interface ActorInteractionHandler {
 
-    fun mouseMoved(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double)
+    fun mouseMoved(context: ActorInteractionContext)
 
-    fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double)
+    fun mousePressed(context: ActorInteractionContext)
 
-    fun mouseDragged(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double)
+    fun mouseDragged(context: ActorInteractionContext)
 
-    fun mouseReleased(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double)
+    fun mouseReleased(context: ActorInteractionContext)
 
-    fun mouseClicked(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double)
+    fun mouseClicked(context: ActorInteractionContext)
 
-    fun keyPressed(signalHandler: SignalHandler, event: KeyEvent)
+    fun keyPressed(context: ActorInteractionContext)
 }
 
 open class ActorInteractionHandlerAdapter : ActorInteractionHandler {
 
-    override fun mouseMoved(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+    override fun mouseMoved(context: ActorInteractionContext) {
         // empty
     }
 
-    override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+    override fun mousePressed(context: ActorInteractionContext) {
         // empty
     }
 
-    override fun mouseDragged(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+    override fun mouseDragged(context: ActorInteractionContext) {
         // empty
     }
 
-    override fun mouseReleased(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+    override fun mouseReleased(context: ActorInteractionContext) {
         // empty
     }
 
-    override fun mouseClicked(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+    override fun mouseClicked(context: ActorInteractionContext) {
         // empty
     }
 
-    override fun keyPressed(signalHandler: SignalHandler, event: KeyEvent) {
+    override fun keyPressed(context: ActorInteractionContext) {
         // empty
     }
+}
+
+/** An [ActorInteractionHandlerAdapter] that displays [Cursor.HAND] in [mouseMoved].*/
+open class ClickableActorInteractionHandlerAdapter : ActorInteractionHandlerAdapter() {
+
+	override fun mouseMoved(context: ActorInteractionContext) {
+		context.view.setCursor(Cursor.HAND)
+	}
 }
 
 @Suppress("unused")

@@ -7,35 +7,32 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.InputEvent
-import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
-import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
-import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
-import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.execution.actor.*
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ControlViewComponent
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortViewReuser
 import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.drawable.Transparent
-import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 
 /**
  * A standard implementation of the [SubGraphVerticeView] interface.
@@ -449,31 +446,31 @@ class SubGraphVerticeViewImpl(
         }
     }
 
-    private inner class DoubleClickExecutionHandler: ActorInteractionHandlerAdapter() {
-        override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
-	        val actorView = getActorViewAt(x, y)
+    private inner class DoubleClickExecutionHandler: ClickableActorInteractionHandlerAdapter() {
+        override fun mousePressed(context: ActorInteractionContext) {
+	        val actorView = getActorViewAt(context.x, context.y)
             if (actorView?.getActorInteractionHandler() != null) {
-                actorView.getActorInteractionHandler()!!.mousePressed(signalHandler, event, x - location.x, y - location.y)
+                actorView.getActorInteractionHandler()!!.mousePressed(context.withXY(context.x - location.x, context.y - location.y))
             } else {
-                super.mousePressed(signalHandler, event, x, y)
+                super.mousePressed(context)
             }
         }
-        override fun mouseReleased(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
-	        val actorView = getActorViewAt(x, y)
+        override fun mouseReleased(context: ActorInteractionContext) {
+	        val actorView = getActorViewAt(context.x, context.y)
 	        if (actorView?.getActorInteractionHandler() != null) {
-                actorView.getActorInteractionHandler()!!.mouseReleased(signalHandler, event, x - location.x, y - location.y)
+                actorView.getActorInteractionHandler()!!.mouseReleased(context.withXY(context.x - location.x, context.y - location.y))
             } else {
-                super.mouseReleased(signalHandler, event, x, y)
+                super.mouseReleased(context)
             }
         }
 
-        override fun mouseClicked(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
-	        val actorView = getActorViewAt(x, y)
+        override fun mouseClicked(context: ActorInteractionContext) {
+	        val actorView = getActorViewAt(context.x, context.y)
 	        if (actorView?.getActorInteractionHandler() != null) {
-		        actorView.getActorInteractionHandler()!!.mouseClicked(signalHandler, event, x - location.x, y - location.y)
+		        actorView.getActorInteractionHandler()!!.mouseClicked(context.withXY(context.x - location.x, context.y - location.y))
 	        } else {
-		        if (event.clickCount == 2) {
-			        requestOpenSubGraph(event)
+		        if (context.mouseEvent!!.clickCount == 2) {
+			        requestOpenSubGraph(context.mouseEvent!!)
 		        }
 	        }
         }

@@ -2,12 +2,16 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.FocusManager
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContextImpl
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -49,6 +53,11 @@ class GraphViewExecutionHandler(
             eventBus,
             { _, x, y -> getActorViewAt(x, y) as Drawable? },
             { d, x, y -> (d as ActorView).getExecutionTooltip(x, y ) })
+
+	private val context = ReusableActorInteractionContext(
+		signalHandler = scheduler.signalHandler,
+		view = view
+	)
 
     /** Returns the [ActorView] in [view] at the specified location, if any.*/
     private fun getActorViewAt(x: Double, y: Double): ActorView? {
@@ -98,7 +107,7 @@ class GraphViewExecutionHandler(
             tooltipHandler.handle(view, view.drawing, x, y)
 
             if (actorView?.getActorInteractionHandler() != null) {
-                view.setCursor(Cursor.HAND)
+	            actorView.getActorInteractionHandler()!!.mouseMoved(mouseEventContext(e, x, y))
             } else {
                 view.setCursor(Cursor.DEFAULT)
             }
@@ -120,7 +129,7 @@ class GraphViewExecutionHandler(
 				        if (it is Component && it.isFocusable) {
 					        it.requestFocus()
 				        }
-				        it.getActorInteractionHandler()!!.mousePressed(scheduler.signalHandler, e, x, y)
+				        it.getActorInteractionHandler()!!.mousePressed(mouseEventContext(e, x, y))
 				        view.drawing.validate()
 			        }
 		        }
@@ -137,7 +146,7 @@ class GraphViewExecutionHandler(
 
             val actorView = getActorViewAt(x, y)
             if (actorView?.getActorInteractionHandler() != null) {
-                actorView.getActorInteractionHandler()!!.mouseDragged(scheduler.signalHandler, e, x, y)
+                actorView.getActorInteractionHandler()!!.mouseDragged(mouseEventContext(e, x, y))
                 view.drawing.validate()
             }
         }
@@ -152,7 +161,7 @@ class GraphViewExecutionHandler(
 
             val actorView = getActorViewAt(x, y)
             if (actorView?.getActorInteractionHandler() != null) {
-                actorView.getActorInteractionHandler()!!.mouseReleased(scheduler.signalHandler, e, x, y)
+                actorView.getActorInteractionHandler()!!.mouseReleased(mouseEventContext(e, x, y))
                 view.drawing.validate()
             }
         }
@@ -167,14 +176,23 @@ class GraphViewExecutionHandler(
 
             val actorView = getActorViewAt(x, y)
             if (actorView?.getActorInteractionHandler() != null) {
-                actorView.getActorInteractionHandler()!!.mouseClicked(scheduler.signalHandler, e, x, y)
+                actorView.getActorInteractionHandler()!!.mouseClicked(mouseEventContext(e, x, y))
                 view.drawing.validate()
             }
         }
+
+	    private fun mouseEventContext(e: MouseEvent, x: Double, y: Double): ActorInteractionContext {
+		    context.mouseEvent = e
+		    context.keyEvent = null
+		    context.x = x
+		    context.y = y
+		    return context
+	    }
     }
 
     /** Performs a single execution step if [Scheduler] is currently paused (i.e. if in single step mode). */
     private inner class KeyHandler : KeyAdapter() {
+
         override fun keyPressed(e: KeyEvent) {
             if (e.key == ' '.toInt()) {
                 if (scheduler.isPaused) {
@@ -182,8 +200,34 @@ class GraphViewExecutionHandler(
                 }
             }
             if (FocusManager.focusOwner is ActorView) {
-                (FocusManager.focusOwner as ActorView).getActorInteractionHandler()?.keyPressed(scheduler.signalHandler, e)
+                (FocusManager.focusOwner as ActorView).getActorInteractionHandler()?.keyPressed(keyEventContext(e))
             }
         }
+
+	    private fun keyEventContext(e: KeyEvent): ActorInteractionContext {
+		    context.mouseEvent = null
+		    context.keyEvent = e
+		    context.x = 0.0
+		    context.y = 0.0
+		    return context
+	    }
     }
+
+	/** Used to avoid object creation for every event.*/
+	private inner class ReusableActorInteractionContext(
+		override val signalHandler: SignalHandler,
+		override val view: View<*>,
+		override var mouseEvent: MouseEvent? = null,
+		override var keyEvent: KeyEvent? = null,
+		override var x: Double = 0.0,
+		override var y: Double = 0.0
+	) : ActorInteractionContext {
+
+		/** Returns a copy of this [ActorInteractionContext] with other x and y coordinates*/
+		override fun withXY(x: Double, y: Double): ActorInteractionContext {
+			context.x = x
+			context.y = y
+			return context
+		}
+	}
 }

@@ -10,34 +10,27 @@ import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.MouseEvent
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.InputEventContext
-import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.InputEventHandler
+import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.execution.actor.*
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
-import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StoreReader
-import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Reference
-import ch.scorpion.jabbah.io.ReferenceResolver
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.io.*
 
 
 /**
@@ -400,10 +393,10 @@ class RAMView(
         }
     }
 
-    private inner class DoubleClickActorHandler : ActorInteractionHandlerAdapter() {
-        override fun mouseClicked(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
-            if (event.clickCount == 2) {
-                requestOpenMemoryContents(event)
+    private inner class DoubleClickActorHandler : ClickableActorInteractionHandlerAdapter() {
+        override fun mouseClicked(context: ActorInteractionContext) {
+            if (context.mouseEvent!!.clickCount == 2) {
+                requestOpenMemoryContents(context.mouseEvent!!)
             }
         }
     }

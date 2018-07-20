@@ -3,54 +3,52 @@ package ch.scorpion.antares.view.inout
 import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.port.DigitalPort
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
 import ch.scorpion.antares.view.signal.NumberView
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.*
 import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.GraphPort
+import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.GraphPortView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.Stroke
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
-import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.KeyEvent
-import ch.scorpion.jabbah.base.event.MouseEvent
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.edit.model.ComponentMessageType
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.TextProperty
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
-import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
-import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.view.*
 
 
 /**
@@ -522,19 +520,25 @@ class CircuitInOutView(
     /**
      * Allows to toggle individual [Bit]s by clicking with the mouse.
      */
-    private inner class InteractionHandler : ActorInteractionHandlerAdapter() {
+    private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
 
-        override fun mousePressed(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+	    override fun mouseMoved(context: ActorInteractionContext) {
+		    if (model!!.isToplevel) {
+				super.mouseMoved(context)
+		    }
+	    }
+
+        override fun mousePressed(context: ActorInteractionContext) {
             if (!model!!.isToplevel) {
                 eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
                 return
             }
-			toggle(signalHandler, x, y)
+			toggle(context.signalHandler, context.x, context.y)
         }
 
-	    override fun mouseReleased(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
+	    override fun mouseReleased(context: ActorInteractionContext) {
 		    if (!toggle) {
-			    toggle(signalHandler, x, y)
+			    toggle(context.signalHandler, context.x, context.y)
 		    }
 	    }
 
@@ -562,28 +566,28 @@ class CircuitInOutView(
 		    }
 	    }
 
-        override fun keyPressed(signalHandler: SignalHandler, event: KeyEvent) {
+        override fun keyPressed(context: ActorInteractionContext) {
             if (numberView!!.focusIndex != null) {
-                LOG.debug("CircuitInOut: keyPressed '${event.key.toChar()}'")
+                LOG.debug("CircuitInOut: keyPressed '${context.keyEvent!!.key.toChar()}'")
 
-                if (event.key == KeyEvent.VK_LEFT) {
+                if (context.keyEvent!!.key == KeyEvent.VK_LEFT) {
                     invalidate()
                     numberView!!.transferFocusLeft()
                     validate()
-                } else if (event.key == KeyEvent.VK_RIGHT) {
+                } else if (context.keyEvent!!.key == KeyEvent.VK_RIGHT) {
                     invalidate()
                     numberView!!.transferFocusRight()
                     validate()
-                } else if (event.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
+                } else if (context.keyEvent!!.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
 	                if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
 		                val newWord = (model!!.signal as Word).flip(numberView!!.focusIndex!!)
-		                model!!.setIncomingSignal(newWord, signalHandler)
+		                model!!.setIncomingSignal(newWord, context.signalHandler)
 	                }
                 } else {
-                    val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bits()), event.key.toChar())
+                    val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bits()), context.keyEvent!!.key.toChar())
                     if (digitWord != null && checkTopLevelKey()) {
                         val newWord = (model!!.signal as Word).withSubwordValue(digitWord, numberView!!.focusIndex!!)
-                        model!!.setIncomingSignal(newWord, signalHandler)
+                        model!!.setIncomingSignal(newWord, context.signalHandler)
                         numberView!!.transferFocusRight()
                     }
                 }

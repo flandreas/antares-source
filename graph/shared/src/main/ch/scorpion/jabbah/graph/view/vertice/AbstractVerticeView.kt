@@ -7,28 +7,17 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.Button
-import ch.scorpion.jabbah.base.event.MouseEvent
-import ch.scorpion.jabbah.draw.drawable.Transparent
-import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.ConnectableView
-import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.graph.view.port.PortView
-import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
-import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.ComponentMessage
@@ -36,12 +25,22 @@ import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
-import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.graph.view.ConnectableView
+import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
+import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
+import ch.scorpion.jabbah.io.Storable
 
 /**
  * Abstract base implementation of the [VerticeView] interface.
@@ -289,8 +288,8 @@ abstract class AbstractVerticeView<T : Vertice>(
 
     override fun getActorInteractionHandler(): ActorInteractionHandler? {
         return object : ActorInteractionHandlerAdapter() {
-            override fun mouseClicked(signalHandler: SignalHandler, event: MouseEvent, x: Double, y: Double) {
-                if (event.clickCount == 2) {
+            override fun mouseClicked(context: ActorInteractionContext) {
+                if (context.mouseEvent!!.clickCount == 2) {
                     cannotOpenMsg(this@AbstractVerticeView)
                 }
             }
