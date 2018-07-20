@@ -1,22 +1,21 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.FocusManager
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.draw.view.TooltipHandler
 
 
 /**
@@ -38,10 +37,6 @@ class GraphViewExecutionHandler(
         private val scheduler: Scheduler,
         eventBus: EventBus
 ) {
-
-    companion object {
-        private val LOG by logger(GraphViewExecutionHandler::class)
-    }
 
     /** Handles [MouseEvent]s on [view] during execution.*/
     private val mouseHandler = MouseHandler()
@@ -65,8 +60,8 @@ class GraphViewExecutionHandler(
     }
 
     init {
-        eventBus.register(SchedulerActivationStateEvent::class, { updateActivationState() })
-        updateActivationState()
+        eventBus.register(SchedulerActivationStateEvent::class) { updateActivationState() }
+	    updateActivationState()
     }
 
     fun dispose() {
@@ -112,21 +107,24 @@ class GraphViewExecutionHandler(
         override fun mousePressed(e: MouseEvent) {
             tooltipHandler.clear(view)
 
-            if (e.button !== Button.BUTTON1) {
+            if (e.button == Button.BUTTON2) {
                 return
             }
 
             val x = view.viewToModelX(e.x.toDouble())
             val y = view.viewToModelY(e.y.toDouble())
 
-            val actorView = getActorViewAt(x, y)
-            if (actorView?.getActorInteractionHandler() != null) {
-                if (actorView is Component && actorView.isFocusable) {
-                    actorView.requestFocus()
-                }
-                actorView.getActorInteractionHandler()!!.mousePressed(scheduler.signalHandler, e, x, y)
-                view.drawing.validate()
-            }
+	        getActorViewAt(x, y)?.let {
+		        if (e.button == Button.BUTTON1) {
+			        if (it.getActorInteractionHandler() != null) {
+				        if (it is Component && it.isFocusable) {
+					        it.requestFocus()
+				        }
+				        it.getActorInteractionHandler()!!.mousePressed(scheduler.signalHandler, e, x, y)
+				        view.drawing.validate()
+			        }
+		        }
+	        }
         }
 
         override fun mouseDragged(e: MouseEvent) {

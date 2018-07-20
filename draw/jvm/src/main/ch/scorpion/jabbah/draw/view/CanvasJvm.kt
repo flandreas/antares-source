@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.style.*
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -18,7 +19,10 @@ import java.awt.MouseInfo
 import java.awt.event.MouseWheelEvent
 import javax.swing.JPanel
 import javax.swing.JComponent
+import javax.swing.JPopupMenu
 import javax.swing.SwingUtilities
+import javax.swing.event.PopupMenuEvent
+import javax.swing.event.PopupMenuListener
 import java.awt.event.MouseEvent as AwtMouseEvent
 import java.awt.event.MouseWheelEvent as AwtMouseWheelEvent
 import java.awt.event.KeyEvent as AwtKeyEvent
@@ -30,9 +34,9 @@ import java.awt.event.KeyEvent as AwtKeyEvent
  * @param styleProvider provides the [Style] that yields the background color of this [Canvas]
  */
 class CanvasJvm(
-        viewFactory: (Canvas) -> View<out InputEventContext>,
+    viewFactory: (Canvas) -> View<out InputEventContext>,
         private val styleProvider: StyleProvider,
-        eventBus: EventBus = BaseModule.eventBus
+    eventBus: EventBus = BaseModule.eventBus
 ) : JPanel(), Canvas {
 
     constructor(viewFactory: (Canvas) -> View<out InputEventContext>): this(viewFactory, DrawStyleModule.styleProvider)
@@ -42,15 +46,33 @@ class CanvasJvm(
     private val mouseWheelListeners: MutableList<MouseWheelEventBridge> by lazy { mutableListOf<MouseWheelEventBridge>()}
     private val keyListeners: MutableList<KeyEventBridge> by lazy { mutableListOf<KeyEventBridge>()}
 
+	private val contextMenu = JPopupMenu()
+
     override val view: View<*>
 
     init {
-        eventBus.register(ThemeEvent::class, { installBackgroundColor() })
-        installBackgroundColor()
+        eventBus.register(ThemeEvent::class) { installBackgroundColor() }
+	    installBackgroundColor()
 
         layout = null
         view = viewFactory.invoke(this)
         view.initialize()
+
+	    componentPopupMenu = contextMenu
+	    contextMenu.addPopupMenuListener(object : PopupMenuListener {
+		    override fun popupMenuWillBecomeInvisible(e: PopupMenuEvent?) {}
+		    override fun popupMenuCanceled(e: PopupMenuEvent?) {}
+		    override fun popupMenuWillBecomeVisible(e: PopupMenuEvent?) {
+			    //val mousePos = Frame.getFrames()[0].mousePosition
+			    val mousePos = mousePosition
+			    DrawModuleJvm.contextMenuProvider.fillContextMenu(
+				    view,
+				    view.viewToModelX(mousePos.getX()),
+				    view.viewToModelY(mousePos.getY()),
+				    contextMenu)
+		    }
+	    })
+
     }
 
     private fun installBackgroundColor()  {

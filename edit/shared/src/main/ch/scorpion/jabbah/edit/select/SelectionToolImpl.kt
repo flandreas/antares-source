@@ -90,12 +90,6 @@ class SelectionToolImpl(
     override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
         tooltipHandler.clear(editor.view)
 
-	    if (e.button == Button.BUTTON3) {
-		    eventBus.post(ContextActionRequest(editor))
-		    e.consume()
-		    return
-	    }
-
         if (e.button != Button.BUTTON1) {
             return
         }

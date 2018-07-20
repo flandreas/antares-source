@@ -14,14 +14,15 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  */
 class OpenGraphNavigationPanelAction(
         viewManager: ViewManager = DrawViewModule.viewManager,
-        private val eventBus: EventBus = BaseModule.eventBus
+        private val eventBus: EventBus = BaseModule.eventBus,
+        var subGraphVerticeView: SubGraphVerticeView<*>? = null
 ) : AbstractSelectionAwareAction("graph.action.openSubGraph", eventBus, viewManager) {
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-        eventBus.post(OpenSubGraphRequest(getSingleSelection() as SubGraphVerticeView<*>, quickMode = true))
+        eventBus.post(OpenSubGraphRequest(subGraphVerticeView ?: getSingleSelection() as SubGraphVerticeView<*>, quickMode = true))
     }
 
     override fun calculateEnabled(): Boolean {
-        return getSelectionCount() == 1 && getSingleSelection() is SubGraphVerticeView<*>
+        return if (subGraphVerticeView != null) true else getSelectionCount() == 1 && getSingleSelection() is SubGraphVerticeView<*>
     }
 }

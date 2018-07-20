@@ -2,14 +2,14 @@ package ch.scorpion.jabbah.edit.view
 
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.view.ContextMenuProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.app.*
 import javax.swing.JMenu
 import javax.swing.JPopupMenu
 
-interface ContextMenuProvider {
-	fun fillContextMenu(selection: Collection<Component>, popupMenu: JPopupMenu)
-}
 
 open class EditContextMenuProvider : ContextMenuProvider {
 
@@ -24,7 +24,11 @@ open class EditContextMenuProvider : ContextMenuProvider {
 		private val oneUpAction = OneUpAction()
 	}
 
-	override fun fillContextMenu(selection: Collection<Component>, popupMenu: JPopupMenu) {
+	override fun fillContextMenu(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {
+		fillContextMenu((view as DrawingView<*>).selectionManager.selection, menu)
+	}
+
+	private fun fillContextMenu(selection: Collection<Component>, popupMenu: JPopupMenu) {
 		popupMenu.removeAll()
 		if (selection.size == 1) {
 			addActions(popupMenu)

@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.edit.module
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.DirectionEditor
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
@@ -19,8 +18,6 @@ import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.select.EditSelectModule
-import ch.scorpion.jabbah.edit.view.ContextActionRequestHandlerJvm
-import ch.scorpion.jabbah.edit.view.ContextMenuProvider
 import ch.scorpion.jabbah.edit.view.EditContextMenuProvider
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.IOModuleJvm
@@ -41,19 +38,17 @@ object EditModuleJvm : AbstractModule() {
     var propertySheetPanelFactory: PropertySheetPanelFactory = PropertySheetPanelFactoryImpl(
             propertyRendererRegistry, propertyEditorRegistry)
 
-	var contextMenuProvider: () -> ContextMenuProvider = { EditContextMenuProvider() }
-
-	private val contextActionRequestHandler = ContextActionRequestHandlerJvm(BaseModule.eventBus)
-
     override fun initialize() {
         DrawModuleJvm.require()
         IOModuleJvm.require()
 
         registerTypes(IOModule.typeMap)
 
+        EditModule.require()
         EditModule.textComponentFactory = { TextComponentFactoryJvm() }
 	    EditModule.copyPasteUtility = CopyPasteUtilityFx()
-        EditModule.require()
+
+	    DrawModuleJvm.contextMenuProvider = EditContextMenuProvider()
 
         configurePropertyRenderer(propertyRendererRegistry)
         configurePropertyEditors(propertyEditorRegistry)

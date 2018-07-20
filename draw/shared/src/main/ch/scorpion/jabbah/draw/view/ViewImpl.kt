@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.ThemeEvent
 
 
@@ -266,6 +267,13 @@ open class ViewImpl<C: InputEventContext>(
             context.g.color = overlayColor!!
             context.g.fillRect(0.0, 0.0, canvas.dimension.width, canvas.dimension.height)
         }
+
+	    if (DrawModule.debugGfx) {
+		    context.g.color = DrawModule.DEBUG_BBOX_COLOR_SECONDARY
+		    val originView = modelToView(Point2D.ZERO)
+		    context.g.drawLine(originView.x, 0.0, originView.x, height.toDouble())
+			context.g.drawLine(0.0, originView.y, width.toDouble(), originView.y)
+	    }
 
         context.g.transform = oldTransform
 
