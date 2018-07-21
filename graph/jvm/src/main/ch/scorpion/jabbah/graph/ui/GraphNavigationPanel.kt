@@ -53,7 +53,7 @@ open class GraphNavigationPanel(
 
     companion object {
         private val LOG by logger(GraphNavigationPanel::class)
-	    val PROP_OVERLAY_COLOR = "graph.ui.GraphNavigationPanel.overlayColor"
+	    const val PROP_OVERLAY_COLOR = "graph.ui.GraphNavigationPanel.overlayColor"
     }
 
     private val mainPanel = JPanel(BorderLayout())
@@ -144,13 +144,13 @@ open class GraphNavigationPanel(
     /** Initializes the [NavigationStackView] with a root [DrawingViewContent].*/
     fun setRootGraphView(graphView: GraphView<GraphElementView<*>>) {
         drawingView.drawing = graphView
-        navigationStackView.navigationStack.rootContent = drawingView.content
+        navigationStackView.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)
         scenarioDetector?.dispose()
         scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus, currentSystemSpeedCategory)
     }
 
-    private fun getRootContent(): DrawingViewContent<GraphView<GraphElementView<*>>> =
-            navigationStackView.navigationStack.rootContent!!
+    private fun getRootEntry(): NavigationStackEntry<GraphView<GraphElementView<*>>> =
+            navigationStackView.navigationStack.rootEntry!!
 
     @Suppress("unused")
     fun setGlassPaneComponent(component: JComponent) {
@@ -172,12 +172,12 @@ open class GraphNavigationPanel(
         }
     }
 
-    /** Finds the first [DrawingViewContent] in the navigation stack that fulfills the specified condition, if any.*/
-    fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<GraphView<GraphElementView<*>>>? =
+    /** Finds the first [NavigationStackEntry] in the navigation stack that fulfills the specified condition, if any.*/
+    fun findEntry(condition: (NavigationStackEntry<GraphView<GraphElementView<*>>>) -> Boolean): NavigationStackEntry<GraphView<GraphElementView<*>>>? =
             navigationStackView.navigationStack.find(condition)
 
     private fun handle(request: OpenSubGraphRequest) {
-        LOG.debug("handling OpenSubGraphRequest by diving into SubGraphVerticeView")
+        LOG.debug("GraphNavigationPanel: handling OpenSubGraphRequest by descending into SubGraphVerticeView")
 
         val graphView = drawingView.drawing
         if (!graphView.contains(request.subGraphVerticeView)) {
@@ -189,12 +189,14 @@ open class GraphNavigationPanel(
         if (!request.quickMode) {
             drawingView.userZoomEnabled = false
             navigationStackView.isEnabled = false
-            navigationStackView.navigationStack.peek().zoomPan = drawingView.zoomPan
+            navigationStackView.navigationStack.peek().content.zoomPan = drawingView.zoomPan
             DescendAnimationManager(animator).descendInto(
                     drawingView,
                     request.subGraphVerticeView,
-                    diver = {
-                        navigationStackView.navigationStack.push(drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>))
+                    descender = {
+                        navigationStackView.navigationStack.push(NavigationStackEntry(
+	                        subGraphVerticeView = request.subGraphVerticeView,
+	                        content = drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>)))
                     },
                     terminator = {
                         navigationStackView.isEnabled = true
@@ -208,17 +210,51 @@ open class GraphNavigationPanel(
         if (event.navigationStack !== navigationStackView.navigationStack) {
             return
         }
-        if (navigationStackView.navigationStack.peek() == drawingView.content) {
+        if (navigationStackView.navigationStack.peek().content === drawingView.content) {
             return
         }
 
-        drawingView.content = navigationStackView.navigationStack.peek()
-	    updateDrawingViewEditability()
-        updateDetached()
+	    if (!event.isExpansion) {
+		    ascendFrom(event.entries)
+	    } else {
+		    drawingView.content = navigationStackView.navigationStack.peek().content
+		    updateDrawingViewEditability()
+		    updateDetached()
 
-        invalidate()
-        revalidate()
+		    invalidate()
+		    revalidate()
+	    }
     }
+
+	private fun ascendFrom(entries: List<NavigationStackEntry<*>>) {
+		drawingView.userZoomEnabled = false
+		navigationStackView.isEnabled = false
+		DescendAnimationManager(animator).ascendFrom(
+			drawingView = drawingView,
+			subGraphVerticeView = entries.last().subGraphVerticeView!!,
+			endZoomFactor = 1.0,
+			ascender = {
+				drawingView.content = if (entries.size > 1) {
+					entries[entries.size - 2].content as DrawingViewContent<GraphView<GraphElementView<*>>>
+				} else {
+					navigationStackView.navigationStack.peek().content
+				}
+			},
+			terminator = if (entries.size == 1) {
+				{
+					updateDrawingViewEditability()
+					updateDetached()
+
+					navigationStackView.isEnabled = true
+					drawingView.userZoomEnabled = true
+				}
+			} else {
+				{
+					ascendFrom(entries.subList(0, entries.size - 1 ))
+				}
+			}
+		)
+	}
 
     private fun handle(event: ApplicationModeEvent) {
         currentMode = event.applicationMode
@@ -237,12 +273,12 @@ open class GraphNavigationPanel(
     private fun handle(event: SchedulerActivationStateEvent) {
         if (event.scheduler.isActive) {
             if (isRoot) {
-                getRootContent().drawing.graph!!.bind(repository, storableCreator)
+                getRootEntry().content.drawing.graph!!.bind(repository, storableCreator)
             }
-            navigationStackView.forEach { it.drawing.bind() }
-            getRootContent().drawing.graph!!.executionStarted(event.scheduler)
+            navigationStackView.forEach { it.content.drawing.bind() }
+            getRootEntry().content.drawing.graph!!.executionStarted(event.scheduler)
         } else {
-            getRootContent().drawing.graph!!.executionStopped(event.scheduler)
+            getRootEntry().content.drawing.graph!!.executionStopped(event.scheduler)
         }
     }
 

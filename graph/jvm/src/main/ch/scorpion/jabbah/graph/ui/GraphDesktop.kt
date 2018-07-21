@@ -89,7 +89,7 @@ class GraphDesktop(
 
 	    eventBus.register(EditedGraphViewEvent::class, editedGraphViewEventHandler)
 
-	    eventBus.register(ApplicationDataEvent::class, {
+	    eventBus.register(ApplicationDataEvent::class) {
 		    if (it.newData == null) {
 			    closeAll()
 		    } else if (it.oldData == null) {
@@ -98,55 +98,55 @@ class GraphDesktop(
 			    revalidate()
 			    repaint()
 		    }
-	    })
+	    }
 
-        // Replace reference color in all Associations
-        eventBus.register(ReferenceColorEvent::class, { event ->
-            val newAssociations = associations.map { assoc -> assoc.copy(refColor = event.getNewColorFor(assoc.refColor)!!) }
-            associations.clear()
-            associations.addAll(newAssociations)
-            associations.forEach { assoc ->
-                assoc.panel.contextColor = assoc.refColor
-                event.replacements.forEach { assoc.panel.drawingView.highlighter.replaceColor(it.oldColor, it.newColor) }
-            }
-            event.replacements.forEach { graphEditPanel.graphNavigationPanel.drawingView.highlighter.replaceColor(it.oldColor, it.newColor) }
+	    // Replace reference color in all Associations
+        eventBus.register(ReferenceColorEvent::class) { event ->
+	        val newAssociations = associations.map { assoc -> assoc.copy(refColor = event.getNewColorFor(assoc.refColor)!!) }
+	        associations.clear()
+	        associations.addAll(newAssociations)
+	        associations.forEach { assoc ->
+		        assoc.panel.contextColor = assoc.refColor
+		        event.replacements.forEach { assoc.panel.drawingView.highlighter.replaceColor(it.oldColor, it.newColor) }
+	        }
+	        event.replacements.forEach { graphEditPanel.graphNavigationPanel.drawingView.highlighter.replaceColor(it.oldColor, it.newColor) }
 
-        })
+        }
 
-        eventBus.register(OpenSubGraphRequest::class, { request ->
-            if (request.quickMode) {
-                val assoc = associations.firstOrNull{ it.ref == request.subGraphVerticeView}
-                if (assoc != null) {
-                    eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = assoc.ref, messageKey = "graph.vertice.alreadyOpen.msg"))
-                    return@register
-                }
+	    eventBus.register(OpenSubGraphRequest::class) { request ->
+		    if (request.quickMode) {
+			    val assoc = associations.firstOrNull{ it.ref == request.subGraphVerticeView}
+			    if (assoc != null) {
+				    eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = assoc.ref, messageKey = "graph.vertice.alreadyOpen.msg"))
+				    return@register
+			    }
 
-                val subGraphView = request.subGraphVerticeView.createSubGraphView()
-                val graphCanvas = CanvasJvm({
-                    val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>, it)
-                    drawingView
-                })
-                val drawingView = graphCanvas.view as DrawingView<GraphView<GraphElementView<*>>>
+			    val subGraphView = request.subGraphVerticeView.createSubGraphView()
+			    val graphCanvas = CanvasJvm {
+				    val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>, it)
+				    drawingView
+			    }
+			    val drawingView = graphCanvas.view as DrawingView<GraphView<GraphElementView<*>>>
 
-                val refColor = referenceColorSequence.next()
-                panelContaining(request.subGraphVerticeView)?.let {
-                    val newPanel = graphNavigationPanelFactory.create(
-                            isRoot = false,
-                            drawingView = drawingView,
-                            viewManager = viewManager,
-                            closeHandler = { closeGraphNavigationPanel(it) },
-                            contextColor = refColor,
-                            scheduler = scheduler
-                    )
-                    associations.add(Association(it, request.subGraphVerticeView, newPanel, refColor))
+			    val refColor = referenceColorSequence.next()
+			    panelContaining(request.subGraphVerticeView)?.let {
+				    val newPanel = graphNavigationPanelFactory.create(
+					    isRoot = false,
+					    drawingView = drawingView,
+					    viewManager = viewManager,
+					    closeHandler = { closeGraphNavigationPanel(it) },
+					    contextColor = refColor,
+					    scheduler = scheduler
+				    )
+				    associations.add(Association(it, request.subGraphVerticeView, newPanel, refColor))
 
-                    addGraphNavigationPanel(newPanel)
+				    addGraphNavigationPanel(newPanel)
 
-                    it.drawingView.highlighter.highlight(request.subGraphVerticeView, refColor)
-                    it.drawingView.repaint()
-                } ?: LOG.error("GraphDesktop: SubGraphVerticeView for OpenSubGraphRequest not found in open panels")
-            }
-        })
+				    it.drawingView.highlighter.highlight(request.subGraphVerticeView, refColor)
+				    it.drawingView.repaint()
+			    } ?: LOG.error("GraphDesktop: SubGraphVerticeView for OpenSubGraphRequest not found in open panels")
+		    }
+	    }
 
 	    add(graphEditPanel)
     }
@@ -235,9 +235,9 @@ class GraphDesktop(
      */
     private fun deassociate(panel: GraphNavigationPanel) {
         associationOf(panel).let { assoc ->
-            val content = assoc!!.sourcePanel.findContent { it.drawing.contains(assoc.ref) }
-            if (content != null) {
-                deassociate(assoc, content)
+            val entry = assoc!!.sourcePanel.findEntry { it.content.drawing.contains(assoc.ref) }
+            if (entry != null) {
+                deassociate(assoc, entry.content)
             }
         }
     }

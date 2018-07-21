@@ -37,36 +37,36 @@ class NavigationStackView(
 
     companion object {
 
-        val PROP_FONT = "graph.ui.NavigationStackView.font"
+        const val PROP_FONT = "graph.ui.NavigationStackView.font"
 
-        val PROP_HEAD_FONT = "graph.ui.NavigationStackView.headFont"
+        const val PROP_HEAD_FONT = "graph.ui.NavigationStackView.headFont"
 
-        val PROP_BACKGROUND_COLOR = "graph.ui.NavigationStackView.backgroundColor"
+        const val PROP_BACKGROUND_COLOR = "graph.ui.NavigationStackView.backgroundColor"
 
-        val PROP_HOVER_BACKGROUND_COLOR = "graph.ui.NavigationStackView.hoverBackgroundColor"
+        const val PROP_HOVER_BACKGROUND_COLOR = "graph.ui.NavigationStackView.hoverBackgroundColor"
 
-        val PROP_HEAD_BACKGROUND_COLOR = "graph.ui.NavigationStackView.headBackgroundColor"
+        const val PROP_HEAD_BACKGROUND_COLOR = "graph.ui.NavigationStackView.headBackgroundColor"
 
-        val PROP_BORDER_COLOR = "graph.ui.NavigationStackView.borderColor"
+        const val PROP_BORDER_COLOR = "graph.ui.NavigationStackView.borderColor"
 
-        val PROP_HOVER_BORDER_COLOR = "graph.ui.NavigationStackView.hoverBorderColor"
+        const val PROP_HOVER_BORDER_COLOR = "graph.ui.NavigationStackView.hoverBorderColor"
 
-        val PROP_HEAD_BORDER_COLOR = "graph.ui.NavigationStackView.headBorderColor"
+        const val PROP_HEAD_BORDER_COLOR = "graph.ui.NavigationStackView.headBorderColor"
 
-        val PROP_TEXT_COLOR = "graph.ui.NavigationStackView.textColor"
+        const val PROP_TEXT_COLOR = "graph.ui.NavigationStackView.textColor"
 
-        val PROP_HOVER_TEXT_COLOR = "graph.ui.NavigationStackView.hoverTextColor"
+        const val PROP_HOVER_TEXT_COLOR = "graph.ui.NavigationStackView.hoverTextColor"
 
-        val PROP_HEAD_TEXT_COLOR = "graph.ui.NavigationStackView.headTextColor"
+        const val PROP_HEAD_TEXT_COLOR = "graph.ui.NavigationStackView.headTextColor"
 
         /** The fix height of this view.  */
-        private val HEIGHT = 26
+        private const val HEIGHT = 26
 
-        private val INSETS = 5
+        private const val INSETS = 5
 
-        private val ELEMENT_DISTANCE = 8
+        private const val ELEMENT_DISTANCE = 8
 
-        private val TEXT_INSET = 15
+        private const val TEXT_INSET = 15
     }
 
     private val elements: MutableList<Element> = mutableListOf()
@@ -76,19 +76,19 @@ class NavigationStackView(
     init {
         isEnabled = true
 
-        eventBus.register(NavigationStackEvent::class, {
-            if (it.navigationStack == navigationStack) {
-                update()
-            }
-        })
+        eventBus.register(NavigationStackEvent::class) {
+	        if (it.navigationStack == navigationStack) {
+		        update()
+	        }
+        }
 
-        eventBus.register(GraphNameChangedEvent::class, {
-            if (navigationStack.rootContent != null && navigationStack.rootContent!!.drawing.graph == it.graph) {
-                update()
-            }
-        })
+	    eventBus.register(GraphNameChangedEvent::class) {
+	        if (navigationStack.rootEntry != null && navigationStack.rootEntry!!.content.drawing.graph == it.graph) {
+		        update()
+	        }
+        }
 
-        border = BorderFactory.createEmptyBorder(INSETS, INSETS, INSETS, INSETS)
+	    border = BorderFactory.createEmptyBorder(INSETS, INSETS, INSETS, INSETS)
         update()
     }
 
@@ -120,8 +120,8 @@ class NavigationStackView(
     /** ---- [NavigationStackView] */
 
     /** Executes the specified handler for each [DrawingViewContent] of this [NavigationStack].*/
-    fun forEach(action: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Unit) {
-        elements.forEach { action.invoke(it.content) }
+    fun forEach(action: (NavigationStackEntry<GraphView<GraphElementView<*>>>) -> Unit) {
+        elements.forEach { action.invoke(it.entry) }
     }
 
     private fun update() {
@@ -146,10 +146,10 @@ class NavigationStackView(
 		repaint()
     }
 
-    private fun createElement(content: DrawingViewContent<GraphView<GraphElementView<*>>>, first: Boolean, last: Boolean): Element {
-        val textRenderInfo = DrawModule.textRenderInfoFactory.measureSingleLineText(content.drawing.graph!!.name, DrawModule.properties.getFont(PROP_FONT))
+    private fun createElement(entry: NavigationStackEntry<GraphView<GraphElementView<*>>>, first: Boolean, last: Boolean): Element {
+        val textRenderInfo = DrawModule.textRenderInfoFactory.measureSingleLineText(entry.content.drawing.graph!!.name, DrawModule.properties.getFont(PROP_FONT))
         val textLength = textRenderInfo.textBounds.width
-        return Element(content, if (first) createFirstPath(textLength) else createNonFirstPath(textLength), last)
+        return Element(entry, if (first) createFirstPath(textLength) else createNonFirstPath(textLength), last)
     }
 
     private fun createFirstPath(textLength: Double): Path {
@@ -180,13 +180,13 @@ class NavigationStackView(
 
     /** An element of a [NavigationStackView] representing a single [DrawingViewContent].*/
     private inner class Element(
-        val content: DrawingViewContent<GraphView<GraphElementView<*>>>,
+        val entry: NavigationStackEntry<GraphView<GraphElementView<*>>>,
         val path: Path,
         val isHead: Boolean
     ) {
 
         private val label: Label = Label(
-                text = content.drawing.graph!!.name,
+                text = entry.content.drawing.graph!!.name,
                 font = DrawModule.properties.getFont(PROP_FONT),
                 color = DrawModule.properties.getColor(PROP_TEXT_COLOR),
                 horizontalAlignment = HorizontalAlignment.CENTER,
@@ -207,13 +207,12 @@ class NavigationStackView(
             }
             g.fill(path)
 
-            val borderColor: Color?
-            if (isHead) {
-                borderColor = DrawModule.properties.getColor(PROP_HEAD_BORDER_COLOR)
-            } else {
-                borderColor = if (isHover) DrawModule.properties.getColor(PROP_HOVER_BORDER_COLOR) else DrawModule.properties.getOptionalColor(PROP_BORDER_COLOR)
-            }
-            if (borderColor != null) {
+            val borderColor: Color? = if (isHead) {
+		        DrawModule.properties.getColor(PROP_HEAD_BORDER_COLOR)
+	        } else {
+		        if (isHover) DrawModule.properties.getColor(PROP_HOVER_BORDER_COLOR) else DrawModule.properties.getOptionalColor(PROP_BORDER_COLOR)
+	        }
+	        if (borderColor != null) {
                 g.color = borderColor
                 g.draw(path)
             }
@@ -249,12 +248,11 @@ class NavigationStackView(
                 newHoveredElement = element
             }
 
-            val changed: Boolean
-            if (newHoveredElement != null) {
-                changed = newHoveredElement != hoveredElement
-            } else {
-                changed = hoveredElement != null
-            }
+	        val changed = if (newHoveredElement != null) {
+		        newHoveredElement != hoveredElement
+	        } else {
+		        hoveredElement != null
+	        }
 
             if (hoveredElement != null) {
                 hoveredElement!!.isHover = false
@@ -280,7 +278,7 @@ class NavigationStackView(
 
         override fun mousePressed(e: MouseEvent) {
             if (hoveredElement != null) {
-                navigationStack.navigateBackTo(hoveredElement!!.content)
+                navigationStack.navigateBackTo(hoveredElement!!.entry)
             }
         }
 

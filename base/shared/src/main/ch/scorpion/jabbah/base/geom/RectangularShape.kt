@@ -53,6 +53,8 @@ interface RectangularShape : Shape {
     /** Contains the maximum y coordinate of this [RectangularShape].*/
     val maxY: Double get() = y + height
 
+	val center: Point2D get() = Point2D(centerX, centerY)
+
 	/** Contains the top-left edge of this [RectangularShape].*/
 	val topLeft: Point2D get() = Point2D(minX, minY)
 

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.view
 
+import ch.scorpion.jabbah.animation.AbstractAnimationTask
 import ch.scorpion.jabbah.animation.DoubleRange
 import ch.scorpion.jabbah.animation.Sequence
 import ch.scorpion.jabbah.base.exception.NoSuchElementException
@@ -11,7 +12,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
  * Represents a [Sequence] of [ZoomPan] values to be used to created animations of [ZoomPan] changes.
  *
  * @property view the [View] to be zoomed and panned
- * @property endZoomFactor the zoomFactor at the end of the animation
+ * @param endZoomFactor the zoomFactor at the end of the animation
  * @property toBeCentered the [Point2D] within [view] that will be centered at the end of the animation
  */
 class ZoomPanRange(
@@ -67,3 +68,15 @@ class ZoomPanRange(
         )
     }
 }
+
+/** Animates the change of a [ZoomPan] within a [ZoomPanRange] */
+class ZoomPanAnimation(
+	view: View<*>,
+	endZoomFactor: Double,
+	toBeCentered: Point2D,
+	duration: Double
+) : AbstractAnimationTask<ZoomPan>(
+	view,
+	{ view.navigator.setZoomPan(it) },
+	ZoomPanRange(view, endZoomFactor, toBeCentered),
+	duration)
