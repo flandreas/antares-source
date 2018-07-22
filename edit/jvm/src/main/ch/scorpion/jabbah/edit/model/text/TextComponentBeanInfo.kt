@@ -2,10 +2,11 @@ package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.draw.style.StyleType
-import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
+import com.l2fprod.common.propertysheet.Property
+import java.beans.BeanInfo
 
 /**
  * A [BeanInfo] for [TextComponent].
@@ -20,7 +21,6 @@ abstract class TextComponentBeanInfo<T : TextComponent>(
         private val stroked = PropertyImpl("edit.property.stroked", Boolean::class.java)
         private val styleType = PropertyImpl("draw.styleType", StyleType::class.java)
         private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
-        private val text = PropertyImpl("edit.property.TextComponent.text", String::class.java)
     }
 
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
@@ -32,7 +32,6 @@ abstract class TextComponentBeanInfo<T : TextComponent>(
         }
         styleType.bind(editor, { bean.styleType }, { bean.styleType = it!! })
         color.bind(editor, { bean.customColor}, { bean.customColor = it })
-        text.bind(editor, { bean.text }, { bean.text = it!! })
 
         if (fillAndStroke) {
             properties.add(filled)
@@ -40,11 +39,32 @@ abstract class TextComponentBeanInfo<T : TextComponent>(
         }
         properties.add(styleType)
         properties.add(color)
-        properties.add(text)
     }
 }
 @Suppress("unused")
-class LabelComponentBeanInfo : TextComponentBeanInfo<LabelComponent>(fillAndStroke = false)
+class LabelComponentBeanInfo : TextComponentBeanInfo<LabelComponent>(fillAndStroke = false) {
+
+	companion object {
+		private val text = PropertyImpl("edit.property.TextComponent.text", String::class.java)
+	}
+
+	override fun addProperties(bean: LabelComponent, editor: Editor, properties: MutableList<Property>) {
+		super.addProperties(bean, editor, properties)
+		text.bind(editor, { bean.text }, { bean.text = it!! })
+		properties.add(text)
+	}
+}
 
 @Suppress("unused")
-class TextComponentJvmBeanInfo : TextComponentBeanInfo<TextComponentJvm>()
+class TextComponentJvmBeanInfo : TextComponentBeanInfo<TextComponentJvm>() {
+
+	companion object {
+		private val text = PropertyImpl("edit.property.TextComponent.text", TextProperty::class.java)
+	}
+
+	override fun addProperties(bean: TextComponentJvm, editor: Editor, properties: MutableList<Property>) {
+		super.addProperties(bean, editor, properties)
+		text.bind(editor, { bean.textProperty }, { bean.textProperty = it!! })
+		properties.add(text)
+	}
+}

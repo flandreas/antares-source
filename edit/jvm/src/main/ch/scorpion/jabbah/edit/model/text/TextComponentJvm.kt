@@ -60,11 +60,14 @@ open class TextComponentJvm(
     @Suppress("unused") constructor(): this("")
 
     private companion object {
-        /** The horizontal inset between the bounding box and the text.  */
-        private val INSET_X = 10
+
+	    private val LOG by logger(TextComponentJvm::class)
+
+	    /** The horizontal inset between the bounding box and the text.  */
+        private const val INSET_X = 10
 
         /** The vertical inset between the bounding box and the text.  */
-        private val INSET_Y = 10
+        private const val INSET_Y = 10
 
         /**
          * A shared instance of the [JTextPane][javax.swing.JTextPane] that is used for painting
@@ -134,8 +137,6 @@ open class TextComponentJvm(
         }
     }
 
-    private val LOG by logger(TextComponentJvm::class)
-
     override var text: String = text
         set(value) {
             invalidate()
@@ -143,6 +144,10 @@ open class TextComponentJvm(
             invalidate()
             validate()
         }
+
+	var textProperty: TextProperty
+		get() = TextProperty(text)
+		set(value) { text = value.text ?: "" }
 
     private val eventHandler = EventHandler()
 
