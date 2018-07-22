@@ -57,9 +57,14 @@ class DigitalEdgeView(
             context.color = context.choose(color)
         }
 
-        context.g.stroke = stroke
         if ((model as DigitalNet).bitWidth.width > 1) {
             context.g.stroke = (style as EdgeStyle).busStroke
+        } else {
+	        context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+		        (style as EdgeStyle).executionStroke
+	        } else {
+		        stroke
+	        }
         }
 
         super.draw(context)

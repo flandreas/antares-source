@@ -11,5 +11,6 @@ class EdgeStyle(
         color: CompositeColor = CompositeColor(),
         stroke: Stroke = Stroke(),
         font: Font = FontImpl(),
-        val busStroke: Stroke = Stroke()
+        val busStroke: Stroke = Stroke(),
+        val executionStroke: Stroke = stroke
 ) : BasicStyle(color, stroke, font), Style

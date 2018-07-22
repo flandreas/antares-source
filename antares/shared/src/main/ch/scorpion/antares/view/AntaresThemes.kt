@@ -21,7 +21,8 @@ object AntaresThemes {
     private val ANNOTATION_STROKE = Stroke(1.0f)
     private val HIGHLIGHT_STROKE = Stroke(10.0f, LineCap.ROUND, LineJoin.ROUND)
     private val BOX_STROKE = Stroke(1.5f, LineCap.ROUND, LineJoin.ROUND)
-    private val LINE_STROKE = Stroke(1.2f)
+    private val LINE_STROKE = Stroke(1.0f)
+	private val LINE_EXECUTION_STROKE = Stroke(1.3f)
     private val BUS_STROKE = Stroke(3.0f, LineCap.BUTT, LineJoin.ROUND)
     private val EXPLANATION = CompositeColor(
             foregroundColor = Color(252, 205, 90),
@@ -89,6 +90,7 @@ object AntaresThemes {
                                 backgroundColor = Color(232, 232, 232),
                                 textColor = Color.BLACK),
                         stroke = LINE_STROKE,
+	                    executionStroke = LINE_EXECUTION_STROKE,
                         busStroke = BUS_STROKE,
                         font = Look.ANNOTATION_FONT),
                 annotation = BasicStyle(
@@ -199,6 +201,7 @@ object AntaresThemes {
                                 backgroundColor = veryDarkGreen
                         ),
                         stroke = LINE_STROKE,
+	                    executionStroke = LINE_EXECUTION_STROKE,
                         busStroke = BUS_STROKE,
                         font = Look.ANNOTATION_FONT),
                 annotation = BasicStyle(
@@ -288,6 +291,7 @@ object AntaresThemes {
                                 backgroundColor = Color(232, 232, 232),
                                 textColor = Color.BLACK),
                         stroke = LINE_STROKE,
+	                    executionStroke = LINE_EXECUTION_STROKE,
                         busStroke = BUS_STROKE,
                         font = Look.ANNOTATION_FONT),
                 annotation = BasicStyle(

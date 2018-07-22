@@ -36,6 +36,7 @@ import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.view.style.EdgeStyle
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 
@@ -187,7 +188,11 @@ class DigitalPortView(
             if (getDigitalPort().bitWidth.width > 1) {
                 context.g.stroke = Themes.get<GraphTheme>().edge.busStroke
             } else {
-                context.g.stroke = Themes.get<GraphTheme>().edge.stroke
+	            context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+		            Themes.get<GraphTheme>().edge.executionStroke
+	            } else {
+		            Themes.get<GraphTheme>().edge.stroke
+	            }
             }
 
             val connPoint = connectionPoint
