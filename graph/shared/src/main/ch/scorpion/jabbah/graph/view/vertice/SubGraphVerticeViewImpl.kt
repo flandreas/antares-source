@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
+import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.execution.actor.*
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -132,6 +133,10 @@ class SubGraphVerticeViewImpl(
 		set(value) {
 			rotation = value.rotation
 		}
+
+	var descriptionProperty: TextProperty
+		get() = model!!.descriptionProperty
+		set(value) { model!!.descriptionProperty = value }
 
     /** ---- [Transparent] */
 

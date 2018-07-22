@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.Script
@@ -62,6 +63,13 @@ class SubGraphVerticeRef(
 
 	override val designError: DesignError? get() = _designError
 
+	/**
+	 * Represents a short description that is valid for this very instance of [SubGraphVerticeRef].
+	 * Generally, the description of a [SubGraphVerticeRef] is the short description of the referenced [Graph].
+	 * The property [descriptionProperty] is used to overrride [shortDescription] with a more specific value.
+	 */
+	var descriptionProperty: TextProperty = TextProperty()
+
     /** ---- [GraphElement] interface */
 
     override fun accept(visitor: HierarchyVisitor): Boolean {
@@ -88,10 +96,12 @@ class SubGraphVerticeRef(
     override fun write(writer: StoreWriter) {
         super.write(writer)
         writer.writeString("uuid", graphUUID!!.id)
+	    descriptionProperty.text?.let { writer.writeString("desc", descriptionProperty.text!!) }
     }
 
     override fun read(reader: StoreReader) {
         graphUUID = UUID(reader.readString("uuid"))
+	    descriptionProperty = TextProperty(reader.readOptionalString("desc"))
 
         val metaGraph = repository.getOptionalMetaGraph(graphUUID!!)
         if (metaGraph != null) {
@@ -135,7 +145,13 @@ class SubGraphVerticeRef(
     /** ---- [AbstractVertice] */
 
     override var shortDescription: String?
-        get() = graph?.shortDescription ?: super.shortDescription
+	    get() {
+		    if (descriptionProperty.isNotEmpty()) {
+			    return descriptionProperty.text
+		    } else {
+			    return graph?.shortDescription ?: super.shortDescription
+		    }
+	    }
         set(value) {super.shortDescription = value}
 
     override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
