@@ -220,6 +220,7 @@ abstract class RectangularComponent(
         drawStroke(context, shape, strokeColor, stroke)
         context.g.color = transparent.applyTo(textColor)
         context.g.translate(x, y)
+	    label.font = font
         label.draw(context)
         context.g.translate(-x, -y)
         context.g.color = oldColor

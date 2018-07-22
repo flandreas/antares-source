@@ -27,6 +27,8 @@ object AntaresThemes {
             foregroundColor = Color(252, 205, 90),
             backgroundColor = Color(255, 255, 223),
             textColor = Color.BLACK)
+	private val SUBSYSTEM_COLOR = Color(244, 244, 244)
+	private val SUBSYSTEM_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.8 * Look.SCALE).toInt())
     private val SUBSYSTEM_STROKE = Stroke(1.0f, LineCap.BUTT, LineJoin.MITER, 5.0f, floatArrayOf(5.0f), 0.0f)
 
     private val ZERO = CompositeColor(foregroundColor = Color(0, 115, 15), backgroundColor = Color.BLACK, textColor = Color.WHITE)
@@ -103,8 +105,8 @@ object AntaresThemes {
                 subsystem = BasicStyle(
                         color = CompositeColor(
                                 foregroundColor = Color.GRAY,
-                                backgroundColor = Color(224, 224, 224)),
-                        font = FONT,
+                                backgroundColor = SUBSYSTEM_COLOR),
+                        font = SUBSYSTEM_FONT,
                         stroke = SUBSYSTEM_STROKE),
                 selection = CompositeColor(
                         foregroundColor = SELECTION_COLOR,
@@ -216,6 +218,7 @@ object AntaresThemes {
 				        font = EXPLANATION_FONT,
 				        stroke = ANNOTATION_STROKE),
                 subsystem = BasicStyle(
+	                    font = SUBSYSTEM_FONT,
                         color = CompositeColor(
                                 foregroundColor = Color(13, 116, 15),
                                 backgroundColor = Color(5, 40, 7)),
@@ -298,8 +301,8 @@ object AntaresThemes {
                 subsystem = BasicStyle(
                         color = CompositeColor(
                                 foregroundColor = Color.GRAY,
-                                backgroundColor = Color(224, 224, 224)),
-                        font = FONT,
+                                backgroundColor = SUBSYSTEM_COLOR),
+                        font = SUBSYSTEM_FONT,
                         stroke = SUBSYSTEM_STROKE),
                 selection = CompositeColor(
                         foregroundColor = SELECTION_COLOR,
