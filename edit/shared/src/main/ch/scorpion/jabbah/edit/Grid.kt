@@ -12,13 +12,13 @@ interface Grid : Snapper, Unzoomable {
     companion object {
 
         /** The name of the default grid distance [Int] property in [Properties]. */
-        val PROP_GRID_DEFAULT_DISTANCE = "edit.grid.distance.default"
+        const val PROP_GRID_DEFAULT_DISTANCE = "edit.grid.distance.default"
 
         /** The name of the minimal grid distance [Int] property in [Properties]. */
-        val PROP_GRID_MIN_DISTANCE = "edit.grid.distance.min"
+        const val PROP_GRID_MIN_DISTANCE = "edit.grid.distance.min"
 
         /** The name of the default paint factor [Int] property in [Properties]. */
-        val PROP_GRID_DEFAULT_PAINT_FACTOR = "edit.grid.paintFactor.default"
+        const val PROP_GRID_DEFAULT_PAINT_FACTOR = "edit.grid.paintFactor.default"
     }
 
     /** The [View] to which this [Grid] belongs. Only `null` until initialized. */

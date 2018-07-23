@@ -1,17 +1,16 @@
 package ch.scorpion.jabbah.edit.snap
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.ZoomPan
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleRepository
-import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.ZoomPan
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.edit.*
 
 /**
@@ -22,19 +21,14 @@ import ch.scorpion.jabbah.edit.*
  * points falls below a certain minimum distance because of zooming, [GridImpl] doesn't draw these points any more.
  */
 class GridImpl(
-    styleProvider: StyleProvider,
-    override var distance: Double,
-    override var paintFactor: Int
+    styleProvider: StyleProvider = StyleRepository.INSTANCE,
+    override var distance: Double = BaseModule.properties.getFloat(Grid.PROP_GRID_DEFAULT_DISTANCE).toDouble(),
+    override var paintFactor: Int = BaseModule.properties.getInt(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR)
 ) : AbstractSnapper(snapEnabled = true), Grid {
 
-    constructor(styleProvider: StyleProvider): this(
-            styleProvider,
-            BaseModule.properties.getFloat(Grid.PROP_GRID_DEFAULT_DISTANCE).toDouble(),
-            BaseModule.properties.getInt(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR))
-
-    constructor(): this(StyleRepository.INSTANCE)
-
-    private val LOG by logger(GridImpl::class)
+	companion object {
+        private val LOG by logger(GridImpl::class)
+	}
 
     /** The object that actually paints the grid dots.*/
     private var gridPainter: GridPainter = LineGridPainter(styleProvider)
