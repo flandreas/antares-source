@@ -120,16 +120,17 @@ open class DrawTheme(
         val DEF_FIGURE = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
         val DEF_TOOLTIP = BasicStyle(CompositeColor(foregroundColor = Color(249, 214, 54),
                 backgroundColor = Color(255, 253, 219), textColor = Color.BLACK))
+	    private const val REF_COLOR_ALPHA = 144
         val DEF_REF_COLORS = listOf<CompositeColor>(
-                DrawGraphicsModule.RED,
-                DrawGraphicsModule.BLUE,
-                DrawGraphicsModule.GREEN,
-                DrawGraphicsModule.YELLOW,
-                DrawGraphicsModule.VIOLET,
-                DrawGraphicsModule.PINK,
-                DrawGraphicsModule.GRAY,
-                DrawGraphicsModule.WHITE,
-                DrawGraphicsModule.BLACK
+                DrawGraphicsModule.RED.withAlpha(REF_COLOR_ALPHA),
+                DrawGraphicsModule.BLUE.withAlpha(REF_COLOR_ALPHA),
+                DrawGraphicsModule.GREEN.withAlpha(REF_COLOR_ALPHA),
+                DrawGraphicsModule.YELLOW.withAlpha(REF_COLOR_ALPHA),
+                DrawGraphicsModule.VIOLET.withAlpha(REF_COLOR_ALPHA),
+                DrawGraphicsModule.PINK.withAlpha(REF_COLOR_ALPHA),
+                DrawGraphicsModule.GRAY.withAlpha(REF_COLOR_ALPHA),
+                DrawGraphicsModule.WHITE.withAlpha(REF_COLOR_ALPHA),
+                DrawGraphicsModule.BLACK.withAlpha(REF_COLOR_ALPHA)
         )
     }
 

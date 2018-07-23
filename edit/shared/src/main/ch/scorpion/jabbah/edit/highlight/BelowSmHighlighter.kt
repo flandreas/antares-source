@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Colorable
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 
@@ -101,6 +102,10 @@ class BelowSmHighlighter(
                 .map { it as Colorable }
                 .forEach { it.color = newColor }
     }
+
+	override fun getHighlightFor(component: Component): Drawable? {
+		return highlights[component]
+	}
 
     /** ---- [BelowSmHighlighter] */
 

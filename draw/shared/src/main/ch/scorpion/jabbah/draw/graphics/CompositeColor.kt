@@ -36,4 +36,6 @@ data class CompositeColor(
 	/** Creates a new [CompositeColor] having the same color than this one, except the specified text color.*/
 	fun withTextColor(color: Color): CompositeColor = CompositeColor(foregroundColor, backgroundColor, color)
 
+	fun withAlpha(alpha: Int): CompositeColor = CompositeColor(foregroundColor.withAlpha(alpha), backgroundColor.withAlpha(alpha), textColor.withAlpha(alpha))
+
 }

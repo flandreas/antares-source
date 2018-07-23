@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 
 /**
@@ -40,6 +41,8 @@ interface Highlighter {
 
     /** Replace a given highlight [CompositeColor] by a corresponding new one. */
     fun replaceColor(oldColor: CompositeColor, newColor: CompositeColor)
+
+	fun getHighlightFor(component: Component): Drawable?
 }
 
 interface HighlighterFactory {

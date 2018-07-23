@@ -202,10 +202,14 @@ class DrawingViewImpl<T: Drawing<Component>>(
      */
     private inner class DrawingDrawer : AbstractDrawableDrawer<Component>() {
         override fun process(context: DrawContext, drawable: Component) {
-            if (!selectionManager.isSelected(drawable) || getComponentSelectionDrawingStrategy(drawable) != SelectionDrawingStrategy.REPLACE) {
-                drawable.draw(context)
-            }
-            nextProcessor(context, drawable)
+
+	        content.highlighter.getHighlightFor(drawable)?.draw(context)
+
+	        if (!selectionManager.isSelected(drawable) || getComponentSelectionDrawingStrategy(drawable) != SelectionDrawingStrategy.REPLACE) {
+		        drawable.draw(context)
+	        }
+
+	        nextProcessor(context, drawable)
         }
     }
 }
