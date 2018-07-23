@@ -132,6 +132,7 @@ open class GraphNavigationPanel(
         drawingView.content.drawing.dispose()
         graphViewExecutionHandler.dispose()
         graphViewDisplayHandler.dispose()
+	    scenarioDetector?.dispose()
 
         eventBus.unregister(OpenSubGraphRequest::class, openSubGraphRequestHandler)
         eventBus.unregister(NavigationStackEvent::class, navigationStackEventHandler)

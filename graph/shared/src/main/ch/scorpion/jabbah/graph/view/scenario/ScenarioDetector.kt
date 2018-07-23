@@ -66,21 +66,25 @@ class ScenarioDetector(
     private val schedulerActivateStateHandler: EventHandler<SchedulerActivationStateEvent> = { updateActive() }
 
     private val scenarioEventHandler: EventHandler<ScenarioEvent> = {
-        hideScenarioDesc()
-        it.scenario?.let { displayScenarioDesc(it) }
-        view.repaint()
+	    if (it.graphView === view.drawing) {
+		    hideScenarioDesc()
+		    it.scenario?.let { displayScenarioDesc(it) }
+		    view.repaint()
+	    }
     }
 
     private val scenarioStepEventHandler: EventHandler<ScenarioStepEvent> = {
-        it.oldStep?.passivate(view)
-        unhighlightScenarioStep()
-        hideScenarioStepDesc()
-        it.newStep?.let {
-            displayScenarioStepDesc(it)
-            highlightScenarioStep(it)
-        }
-        it.newStep?.activate(view)
-        view.repaint()
+	    if (it.graphView === view.drawing) {
+		    it.oldStep?.passivate(view)
+		    unhighlightScenarioStep()
+		    hideScenarioStepDesc()
+		    it.newStep?.let {
+			    displayScenarioStepDesc(it)
+			    highlightScenarioStep(it)
+		    }
+		    it.newStep?.activate(view)
+		    view.repaint()
+	    }
     }
 
     private var isActive: Boolean = false
@@ -114,9 +118,11 @@ class ScenarioDetector(
 
     private fun detect() {
         if (isActive) {
-            view.drawing.currentScenario = view.drawing.scenarios.getScenarios().firstOrNull {
+            val detectedScenario = view.drawing.scenarios.getScenarios().firstOrNull {
                 it.condition.invoke(view, scriptGateway)
             }
+	        LOG.debug("ScenarioDetector: detected Scenario '${detectedScenario?.name}'")
+	        view.drawing.currentScenario = detectedScenario
         }
 
         // An occurred Issue could have deactivated the Scheduler
