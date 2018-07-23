@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.edit
 import com.l2fprod.common.propertysheet.PropertySheetPanel
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.PropertyChangeEvent
+import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import java.awt.BorderLayout
 import java.awt.Container
@@ -35,6 +37,17 @@ abstract class AbstractPropertyPanel(
     private var propertyObject: Any? = null
 
     init {
+	    editor.addPropertyChangeListener(object : PropertyChangeListener<Any> {
+		    override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			    if (e.name == Editor.PROP_ACTIVE) {
+				    if (editor.active) {
+					    updateProperties(editor.drawing)
+				    } else {
+					    clearProperties()
+				    }
+			    }
+		    }
+	    })
         sheet.addPropertySheetChangeListener {
             if (propertyObject != null) {
                 sheet.writeToObject(propertyObject)
