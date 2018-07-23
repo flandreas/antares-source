@@ -26,8 +26,8 @@ elem.setOutputBit(&quot;C&quot;, a &amp;&amp; b);
                 <netPortRef verticeId='6' portId='2'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='9' id='7' delay='0' name='S' type='output' bitWidth='1'/>
-            <circuitInOut _id='10' id='8' delay='0' name='C' type='output' bitWidth='1'/>
+            <circuitInOut _id='9' id='7' delay='0' name='S' type='output' bitWidth='1' desc='Die arithmetische Summe A + B'/>
+            <circuitInOut _id='10' id='8' delay='0' name='C' type='output' bitWidth='1' desc='Übertrags-Bit (&quot;Carry&quot;)'/>
             <digitalNet _id='11' id='9' delay='0'>
               <ports>
                 <netPortRef verticeId='9' portId='1'/>
@@ -46,11 +46,28 @@ elem.setOutputBit(&quot;C&quot;, a &amp;&amp; b);
       <view>
         <graphView _id='13'>
           <netViews>
-            <netView _id='31' modelId='7' style='line'/>
-            <netView _id='32' modelId='12' style='line'/>
-            <netView _id='33' modelId='11' style='line'/>
-            <netView _id='34' modelId='8' style='line'/>
+            <netView _id='35' modelId='7' style='line'/>
+            <netView _id='36' modelId='12' style='line'/>
+            <netView _id='37' modelId='11' style='line'/>
+            <netView _id='38' modelId='8' style='line'/>
           </netViews>
+          <scenarios>
+            <scenarios _id='30'>
+              <scenarios>
+                <scenario _id='31' id='1' name='Null' desc='Wenn beide EIngänge 0 sind, ist sowohl die Summe als auch der Übertrag 0.' condition='return circuit.input(&quot;A&quot;) == &quot;0&quot; &amp;&amp; circuit.input(&quot;B&quot;) == &quot;0&quot;;'>
+                  <steps/>
+                </scenario>
+                <scenario _id='32' id='2' name='Nur einer 1' desc='Wenn nur einer der beiden Eingänge 1 ist, ist die Summe 1 und der Übertrag 0.' condition='return circuit.input(&quot;A&quot;) == &quot;0&quot; &amp;&amp; circuit.input(&quot;B&quot;) == &quot;1&quot; || circuit.input(&quot;A&quot;) == &quot;1&quot; &amp;&amp; circuit.input(&quot;B&quot;) == &quot;0&quot; ;'>
+                  <steps/>
+                </scenario>
+                <scenario _id='33' id='3' name='Übertrag' desc='Weil der Ausgang eines XOR-Gates nur dann 1 ist, wenn beide Eingänge verschieden ist, ist die Summe 0, wenn beide Eingänge 1 sind. Dafür ist der Übertrag gesetzt.' condition='return circuit.input(&quot;A&quot;) == &quot;1&quot; &amp;&amp; circuit.input(&quot;B&quot;) == &quot;1&quot;;'>
+                  <steps>
+                    <scenarioStep _id='34' id='1' name='Highlight AND' desc='Das AND-Gate sorgt dafür, dass der Übertrag C nur dann 1 ist, wenn beide Dateneingänge 1 sind.' highlightIds='4' condition='return true;'/>
+                  </steps>
+                </scenario>
+              </scenarios>
+            </scenarios>
+          </scenarios>
           <components>
             <xorGateView _id='29' id='1' rot='0' modelId='3' x='294.0' y='112.0'/>
             <circuitInOutView _id='28' id='2' modelId='4' representation='binary' orientation='east'>
@@ -130,47 +147,47 @@ elem.setOutputBit(&quot;C&quot;, a &amp;&amp; b);
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='35'>
+    <containerDrawing _id='39'>
       <components>
-        <containerBox _id='46' id='1' style='figure' x='140.0' y='140.0' w='56.0' h='70.0'/>
-        <originIndicator _id='45'>
+        <containerBox _id='50' id='1' style='figure' x='140.0' y='140.0' w='56.0' h='70.0'/>
+        <originIndicator _id='49'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
         </originIndicator>
-        <digitalPortViewComp _id='43' id='3' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='47' id='3' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='44' x='140.0' y='154.0' dir='west' textPos='INTERNAL' portId='48'/>
+            <digitalPortView _id='48' x='140.0' y='154.0' dir='west' textPos='internal' portId='52'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='41' id='4' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='45' id='4' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='42' x='140.0' y='196.0' dir='west' textPos='INTERNAL' portId='49'/>
+            <digitalPortView _id='46' x='140.0' y='196.0' dir='west' textPos='internal' portId='53'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='39' id='5' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='43' id='5' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='40' x='196.0' y='154.0' dir='east' textPos='INTERNAL' portId='50'/>
+            <digitalPortView _id='44' x='196.0' y='154.0' dir='east' textPos='internal' portId='54'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='37' id='6' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='41' id='6' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='38' x='196.0' y='196.0' dir='east' textPos='INTERNAL' portId='51'/>
+            <digitalPortView _id='42' x='196.0' y='196.0' dir='east' textPos='internal' portId='55'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='36' text='HA'>
+        <label _id='40' text='HA'>
           <location>
             <point x='168.0' y='175.0'/>
           </location>
         </label>
       </components>
       <model>
-        <subGraphVertice _id='47' id='0' delay='0' name='Halbaddierer' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'>
+        <subGraphVertice _id='51' id='0' delay='0' name='Halbaddierer' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'>
           <ports>
-            <subCircuitPort _id='48' portId='1' name='A' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='49' portId='2' name='B' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='50' portId='3' name='S' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='51' portId='4' name='C' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='52' portId='1' name='A' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='53' portId='2' name='B' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='54' portId='3' name='S' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='55' portId='4' name='C' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
           </ports>
         </subGraphVertice>
       </model>
