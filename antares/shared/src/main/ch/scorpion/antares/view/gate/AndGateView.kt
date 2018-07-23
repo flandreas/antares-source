@@ -46,6 +46,7 @@ class AndGateView(
             checkArgument(value.id <= model!!.chosenInputCount.count, "InputPortNumber must not be larger than InputCount")
             invalidate()
             field = value
+	        labelStyle = if (dataPort == InputPortNumber.NONE) LabelStyle.LARGE_CENTERED else LabelStyle.SMALL_UPPER_LEFT
             invalidate()
             update()
         }
