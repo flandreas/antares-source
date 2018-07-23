@@ -215,7 +215,7 @@ open class GraphNavigationPanel(
             return
         }
 
-	    if (!event.isExpansion) {
+	    if (!event.isExpansion && !event.quickMode) {
 		    ascendFrom(event.entries)
 	    } else {
 		    drawingView.content = navigationStackView.navigationStack.peek().content

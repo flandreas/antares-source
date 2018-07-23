@@ -73,7 +73,7 @@ class NavigationStack<T: Drawing<*>>(val eventBus: EventBus = BaseModule.eventBu
     }
 
     /** Navigates back to the specified [NavigationStackEntry]. */
-    fun navigateBackTo(entry: NavigationStackEntry<T>) {
+    fun navigateBackTo(entry: NavigationStackEntry<T>, quickMode: Boolean = false) {
         if (!entries.contains(entry)) {
             throw NoSuchElementException()
         }
@@ -81,7 +81,7 @@ class NavigationStack<T: Drawing<*>>(val eventBus: EventBus = BaseModule.eventBu
         while (entries[entries.size - 1] != entry) {
 	        removedEntries.add(0, removeHead())
         }
-        postNavigationStackEvent(isExpansion = false, entries = removedEntries)
+        postNavigationStackEvent(isExpansion = false, entries = removedEntries, quickMode = quickMode)
     }
 
     /** Finds the first [NavigationStackEntry] that fulfills the specified condition, if any.*/
@@ -96,14 +96,24 @@ class NavigationStack<T: Drawing<*>>(val eventBus: EventBus = BaseModule.eventBu
 	    return entry
     }
 
-    private fun postNavigationStackEvent(isExpansion: Boolean, entries: List<NavigationStackEntry<*>>) {
-        eventBus.post(NavigationStackEvent(isExpansion, this, entries))
+    private fun postNavigationStackEvent(isExpansion: Boolean, entries: List<NavigationStackEntry<*>>, quickMode: Boolean = false) {
+        eventBus.post(NavigationStackEvent(isExpansion, this, entries, quickMode))
     }
 }
 
-/** Posted by {@link NavigationStack} whenever its head has changed.*/
+/**
+ * Posted by {@link NavigationStack} whenever its head has changed.
+ * @property isExpansion `true` if the [NavigationStack] has been expanded, `false` if it has been reduced
+ * @property navigationStack the [NavigationStack] where this [NavigationStackEvent] comes from
+ * @property entries the list of [NavigationStackEntry] that have been added (in case of an expansion) or removed
+ *      (in case of a reduction). The last element of the list is current (in case of an expansion) or the former
+ *      (in case of a reduction) head.
+ * @property quickMode `true` if the user wishes that the resulting view changes happen quickly, for example
+ *      without time-consuming animations.
+ */
 data class NavigationStackEvent(
 	val isExpansion: Boolean,
 	val navigationStack: NavigationStack<*>,
-	val entries: List<NavigationStackEntry<*>>
+	val entries: List<NavigationStackEntry<*>>,
+	val quickMode: Boolean = false
 )

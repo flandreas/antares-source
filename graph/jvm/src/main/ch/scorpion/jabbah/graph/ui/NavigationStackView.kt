@@ -278,7 +278,7 @@ class NavigationStackView(
 
         override fun mousePressed(e: MouseEvent) {
             if (hoveredElement != null) {
-                navigationStack.navigateBackTo(hoveredElement!!.entry)
+                navigationStack.navigateBackTo(hoveredElement!!.entry, e.isAltDown)
             }
         }
 
