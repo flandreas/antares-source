@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.exception.NoSuchElementException
 
 /**
  * Contains system-wide available properties defined as name/value pairs.
+ * These properties are established by the application at startup, and are not made persistent.
  *
  * All explicit getter functions without a default parameter throw a [NoSuchElementException]
  * if the value is absent.
@@ -48,6 +49,10 @@ open class Properties {
     }
 }
 
+/**
+ * Contains settings the user changes while using the system, such as position and size of the main application window.
+ * These settings are made persistent, and are re-established the next time the application is used.
+ */
 class Settings {
 
     private val values: MutableMap<String, String> by lazy { mutableMapOf<String,String>() }

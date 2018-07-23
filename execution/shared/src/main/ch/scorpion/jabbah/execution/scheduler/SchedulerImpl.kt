@@ -35,9 +35,12 @@ class SchedulerImpl(
 ) : Scheduler {
 
     companion object {
+	    /** The name of the limit [SystemSpeedCategory] in [Properties] for sending [SchedulerEvent]s.*/
+	    const val PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT = "execution.scheduler.eventSystemSpeedLimit"
+
+        private val LOG by logger(SchedulerImpl::class)
         private const val SETTING_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
         private const val SETTING_STOP_ON_ISSUE = "execution.scheduler.stopOnIssue"
-        private val LOG by logger(SchedulerImpl::class)
     }
 
     /** The queue of pending [Slot]s ordered by ascending execution time.*/
@@ -59,14 +62,14 @@ class SchedulerImpl(
     private var realStartTime: Long = 0
 
     init {
-        eventBus.register(SystemSpeedEvent::class, { task.adaptToSystemSpeed() })
-        eventBus.register(IssueCollectorEvent::class, {
-            if (isActive && isStopOnIssue && it.issue != null ) {
-                isActive = false
-                LOG.debug("SchedulerImpl: execution stopped due to Issue")
-                eventBus.post(ExecutionStoppedOnIssueEvent(this))
-            }
-        })
+        eventBus.register(SystemSpeedEvent::class) { task.adaptToSystemSpeed() }
+	    eventBus.register(IssueCollectorEvent::class) {
+	        if (isActive && isStopOnIssue && it.issue != null ) {
+		        isActive = false
+		        LOG.debug("SchedulerImpl: execution stopped due to Issue")
+		        eventBus.post(ExecutionStoppedOnIssueEvent(this))
+	        }
+        }
     }
 
     /** ---- [Scheduler] interface */
@@ -169,8 +172,8 @@ class SchedulerImpl(
     }
 
     override fun actingDone(actor: Actor) {
-        logTrace(System.get().getClass(actor), actor.id, {"Acting done"})
-        val slot = queue.peek()
+        logTrace(System.get().getClass(actor), actor.id) {"Acting done"}
+	    val slot = queue.peek()
         if (slot != null) {
             val request = slot.findRequest(actor)
             if (request != null && request.isActing) {
@@ -188,8 +191,8 @@ class SchedulerImpl(
         if (!isActive) {
             return
         }
-        logTrace(System.get().getClass(actor), actor.id, {"Request to act after $delay ns"})
-        if (delay == 0L) {
+        logTrace(System.get().getClass(actor), actor.id) {"Request to act after $delay ns"}
+	    if (delay == 0L) {
             actor.act(this, data)
         } else {
             // TODO Implement adaptive Task scheduling (i.e. vary the time between ticks)
@@ -212,7 +215,7 @@ class SchedulerImpl(
     private fun postSchedulerEvent(actor: Actor, type: SchedulerEvent.Type) {
         // Is only active when exploring the system. For performance reasons, we therefore avoid sending
         // unnecessary (and costly) events.
-        if (isActive && currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Explore) {
+        if (isActive && currentSystemSpeedCategory.systemSpeedCategory >= BaseModule.properties.get(PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT)) {
             eventBus.post(SchedulerEvent(type, this, actor))
         }
     }
@@ -300,7 +303,7 @@ class SchedulerImpl(
             updateRelativeTime(slot.relativeTime)
             slot.getRequests().filter { it.isActable }.forEach {
                 if (LOG.isTraceEnabled()) {
-                    logTrace(System.get().getClass(it.actor), it.actor.id, { "Executing" })
+                    logTrace(System.get().getClass(it.actor), it.actor.id) { "Executing" }
                 }
                 breakpoint = breakpoint || it.actor.isBreakpoint
                 if (it.actor.act(this@SchedulerImpl, it.actorData)) {
@@ -327,7 +330,7 @@ class SchedulerImpl(
         private val SLOWDOWN_FACTOR = 0.5
 
         init {
-            timer.initialize(calculateTimerInterval(), { actionPerformed(it) })
+            timer.initialize(calculateTimerInterval()) { actionPerformed(it) }
         }
 
         /**

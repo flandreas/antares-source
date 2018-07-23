@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.scenario
 
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -17,6 +18,7 @@ import ch.scorpion.jabbah.graph.view.ScenarioEvent
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.graph.view.ScenarioStepEvent
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.drawable.FlexibleTextView
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
@@ -40,13 +42,17 @@ class ScenarioDetector(
 ) {
 
     companion object {
+
+	    /** The name of the limit [SystemSpeedCategory] in [Properties]. */
+	    public val PROP_LIMIT_SYSTEM_SPEED_CATEGORY = "graph.view.scenario.detector.systemSpeedCategoryLimit"
+
         private val LOG by logger(ScenarioDetector::class)
 
-        private val SCENARIO_STEP_DESC_WIDTH = 400
+        private const val SCENARIO_STEP_DESC_WIDTH = 400
 
-        private val DESC_DISTANCE = 20
+        private const val DESC_DISTANCE = 20
 
-        private val DESC_UNZOOMABLE = false
+        private const val DESC_UNZOOMABLE = false
     }
 
     private val schedulerEventHandler: EventHandler<SchedulerEvent> = {
@@ -128,7 +134,7 @@ class ScenarioDetector(
 
     private fun updateActive() {
         val oldValue = isActive
-        isActive = scheduler.isActive && currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Explore
+        isActive = scheduler.isActive && currentSystemSpeedCategory.systemSpeedCategory >= BaseModule.properties.get(PROP_LIMIT_SYSTEM_SPEED_CATEGORY)
         if (isActive != oldValue) {
             LOG.debug("ScenarioDetector: active = '$isActive'")
             view.drawing.currentScenario = null

@@ -19,7 +19,7 @@ Used in all `Scenario` use cases. The statements in the table below are accessib
 
 |`input(<Name>)`
 |Returns the signal of the `GraphInput with the specified name.
-|`circuit.input("I")`
+|`return circuit.input("I") == "1"`
 
 |`output(<Name>)`
 |Returns the signal of the `GraphOutput` with the specified name.

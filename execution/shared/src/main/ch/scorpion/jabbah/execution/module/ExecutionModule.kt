@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.execution.module
 
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
@@ -9,6 +10,7 @@ import ch.scorpion.jabbah.execution.noise.RandomNoiseGenerator
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 
 /**
  * Module definitions for the [ch.scorpion.jabbah.execution] module
@@ -29,5 +31,10 @@ object ExecutionModule : AbstractModule() {
 
     override fun initialize() {
         BaseModule.require()
+	    fillProperties(BaseModule.properties)
     }
+
+	private fun fillProperties(properties: Properties) {
+		properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe)
+	}
 }

@@ -43,6 +43,8 @@ import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.app.GraphViewService
 import ch.scorpion.jabbah.graph.view.app.GraphViewServiceImpl
@@ -52,6 +54,7 @@ import ch.scorpion.jabbah.graph.view.oscilloscope.UndefinedOscilloscopeViewFacto
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeProbeVerticeView
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeViewFactory
+import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 
@@ -151,6 +154,9 @@ object GraphViewModule : AbstractModule() {
         properties.set(ConnectionPointHighlightCircle.PROP_COLOR, Themes.get<EditTheme>().selection.foregroundColor)
         properties.set(OriginIndicator.PROP_COLOR, Color.BLUE)
         properties.set(OriginIndicator.PROP_SELECTION_COLOR, Color.RED)
+
+	    properties.set(ScenarioDetector.PROP_LIMIT_SYSTEM_SPEED_CATEGORY, SystemSpeedCategory.Observe)
+	    properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe)
     }
 
     private fun configureSelectionModels(factory: SelectionModelFactory) {
