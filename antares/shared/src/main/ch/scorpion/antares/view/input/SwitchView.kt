@@ -175,7 +175,7 @@ class SwitchView(
 
     override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
         get() = SelectionDrawingStrategy.REPLACE
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw UnsupportedOperationException()
         }
 
@@ -258,7 +258,9 @@ class SwitchView(
         context.g.color = context.color!!.foregroundColor
         draw(context) {
 	        super.drawImpl(it)
+	        context.g.stroke = stroke
 	        context.g.drawRect(xInt, yInt, width.toInt(), SIZE)
+	        context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
 	        context.g.drawRoundRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
 		        width.toInt() - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH, DIAMETER, DIAMETER)
 	        if (labelPosition == VerticeLabelPosition.INTERNAL) {
@@ -279,6 +281,7 @@ class SwitchView(
                 widthInt - 2 * BORDER_WIDTH, heightInt - 2 * BORDER_WIDTH)
 
         context.g.color = transparent.applyTo(color.foregroundColor)
+	    context.g.stroke = stroke
         context.g.drawRect(xInt, yInt, widthInt, heightInt)
 
         internalLabel.color = transparent.applyTo(if (model!!.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)

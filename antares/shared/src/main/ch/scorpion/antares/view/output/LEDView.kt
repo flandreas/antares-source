@@ -163,7 +163,9 @@ class LEDView(
         context.g.color = context.color!!.foregroundColor
         draw(context) { c ->
             super.drawImpl(c)
+	        context.g.stroke = stroke
             context.g.drawOval(xInt, yInt, SIZE, SIZE)
+	        context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
             context.g.drawOval(
                 xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
                 SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
@@ -173,6 +175,7 @@ class LEDView(
 
     private fun drawBody(context: DrawContext) {
         context.g.color = COLOR_CASE
+	    context.g.stroke = stroke
         context.g.fillOval(xInt, yInt, SIZE, SIZE)
         context.g.color = COLOR_BORDER
         context.g.drawOval(xInt, yInt, SIZE, SIZE)
