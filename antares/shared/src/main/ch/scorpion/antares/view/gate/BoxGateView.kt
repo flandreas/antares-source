@@ -87,10 +87,10 @@ open class BoxGateView<T : Vertice>(
         const val PIN_INSET = 2
 
         /** The distance between [Port]s if the number of [Port]s is smaller than three. */
-        val BIG_PORT_DISTANCE = 4
+        const val BIG_PORT_DISTANCE = 4
 
         /** The distance between [Port]s if the number of [Port]s is bigger than two. */
-        val SMALL_PORT_DISTANCE = 2
+        const val SMALL_PORT_DISTANCE = 2
     }
 
     /** Holds the current [LabelStyle] used for positioning and sizing the label of this [BoxGateView].*/
@@ -140,10 +140,10 @@ open class BoxGateView<T : Vertice>(
      * Draws the default european shape of this [BoxGateView] within a translated and rotated context.
      */
     open fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-        drawEuropeanShape(context, foregroundColor, backgroundColor)
+        drawEuropeanShape(context, foregroundColor, backgroundColor, stroke)
     }
 
-    fun drawEuropeanShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
+    fun drawEuropeanShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 		context.g.color = backgroundColor
 		context.g.fillRect(xInt, yInt, widthInt, heightInt)
 

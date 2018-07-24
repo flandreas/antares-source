@@ -11,30 +11,35 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Math
 
+/**
+ * [SymbolStyle] represents international standards for drawing digital gates.
+ * The user can globally switch between the supported [SymbolStyle]s.
+ */
 enum class SymbolStyle(val customName: String) {
+
     EUROPEAN("IEC") {
         override fun drawAndGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-            drawEuropean(gate, context, foregroundColor, backgroundColor)
+            drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
         }
 
         override fun drawOrGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-            drawEuropean(gate, context, foregroundColor, backgroundColor)
+            drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
         }
 
         override fun drawXorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-            drawEuropean(gate, context, foregroundColor, backgroundColor)
+            drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
         }
 
         override fun drawXnorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-            drawEuropean(gate, context, foregroundColor, backgroundColor)
+            drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
         }
 
         override fun drawNotGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-            drawEuropean(gate, context, foregroundColor, backgroundColor)
+            drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
         }
 
         override fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-            drawEuropean(gate, context, foregroundColor, backgroundColor)
+            drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
         }
 
         override fun getOrShapeConnectedPortViewLength(gate: BoxGateView<*>, index: Int): Int {
@@ -75,26 +80,22 @@ enum class SymbolStyle(val customName: String) {
 				return (2 * Look.SCALE * 0.35).toInt()
 			}
 			val distanceFromMiddle = Math.abs((inputCount - 1) / 2.0 - index)
-			if (distanceFromMiddle == 0.0) {
-				return (2 * Look.SCALE * 0.15).toInt()
-			} else if (distanceFromMiddle <= 0.5) {
-				return (2 * Look.SCALE * 0.2).toInt()
-			} else if (distanceFromMiddle == 1.0) {
-				return (2 * Look.SCALE * 0.35).toInt()
-			} else if (distanceFromMiddle == 1.5) {
-				return (2 * Look.SCALE * 0.5).toInt()
-			} else {
-				return 0
-			}
+	        return when {
+		        distanceFromMiddle == 0.0 -> (2 * Look.SCALE * 0.15).toInt()
+		        distanceFromMiddle <= 0.5 -> (2 * Look.SCALE * 0.2).toInt()
+		        distanceFromMiddle == 1.0 -> (2 * Look.SCALE * 0.35).toInt()
+		        distanceFromMiddle == 1.5 -> (2 * Look.SCALE * 0.5).toInt()
+		        else -> 0
+	        }
         }
     };
 
     companion object {
 
         /** The name of the [String] property in [Properties] designating the [SymbolStyle]'s name. */
-        val PROP_SYMBOL_STYLE = "ch.scorpion.antares.view.symbolStyle"
+        const val PROP_SYMBOL_STYLE = "ch.scorpion.antares.view.symbolStyle"
 
-        val EXCLUSIVE_OFFSET = 6.0
+        private const val EXCLUSIVE_OFFSET = 6.0
 
         fun withName(customName: String): SymbolStyle {
             for (symbolStyle in SymbolStyle.values()) {
@@ -122,7 +123,7 @@ enum class SymbolStyle(val customName: String) {
                 .quadTo(0.5 * Look.SCALE, 4.0 * Look.SCALE, -Look.SCALE.toDouble(), Look.SCALE.toDouble())
                 .close()
 
-        val EXCLUSIV_PATH = System.get().createPath()
+        private val EXCLUSIVE_PATH = System.get().createPath()
                 .moveTo(-Look.SCALE - EXCLUSIVE_OFFSET, 7 * Look.SCALE.toDouble())
                 .quadTo(0.5 * Look.SCALE - EXCLUSIVE_OFFSET, 4.0 * Look.SCALE, -Look.SCALE - EXCLUSIVE_OFFSET, Look.SCALE.toDouble())
 
@@ -133,8 +134,8 @@ enum class SymbolStyle(val customName: String) {
                 .lineTo(0, Look.SCALE)
                 .close()
 
-        private fun drawEuropean(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
-            gate.drawEuropeanShape(context, foregroundColor, backgroundColor)
+        private fun drawEuropean(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+            gate.drawEuropeanShape(context, foregroundColor, backgroundColor, stroke)
         }
 
         fun drawAmerican(gate: BoxGateView<*>, path: Path, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
@@ -142,7 +143,7 @@ enum class SymbolStyle(val customName: String) {
         }
 
         fun drawAmerican(x: Double, y: Double, height: Double, path: Path, context: DrawContext, foregroundColor: Color,
-                         backgroundColor: Color, stroke: Stroke, exclusiv: Boolean) {
+                         backgroundColor: Color, stroke: Stroke, exclusive: Boolean) {
 
             val vOffset = (height - 2 * Look.SCALE - path.boundingBox.height) / 2
 
@@ -160,8 +161,8 @@ enum class SymbolStyle(val customName: String) {
             context.g.stroke = stroke
             context.g.draw(path)
 
-            if (exclusiv) {
-                context.g.draw(EXCLUSIV_PATH)
+            if (exclusive) {
+                context.g.draw(EXCLUSIVE_PATH)
             }
 
             context.g.translate(-x, -y - vOffset)

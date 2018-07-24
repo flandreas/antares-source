@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.gate
 
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.SelectionModel
@@ -12,6 +13,8 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 
 /**
  * A [SelectionModel] for [SelectionDrawingStrategy.BELOW] of [BoxGateView]s.
+ * It draws the outline of the [BoxGateView] with a very thick [Stroke], which looks like the [SelectionModel] would
+ * be slightly bigger than the [BoxGateView].
  */
 class BoxGateViewBelowSelectionModel(
     component: BoxGateView<*>,
@@ -28,14 +31,14 @@ class BoxGateViewBelowSelectionModel(
     override val boundingBox: RectangularShape = bounds
 
     override fun draw(context: DrawContext) {
-        component.draw(context, {
-            val style = styleProvider.getStyle(EditStyleType.HIGHLIGHT)
-            component.drawShape(
-                it,
-                style.color.foregroundColor,
-                style.color.backgroundColor,
-                style.stroke)
-        })
+        component.draw(context) {
+	        val style = styleProvider.getStyle(EditStyleType.HIGHLIGHT)
+	        component.drawShape(
+		        it,
+		        style.color.foregroundColor,
+		        style.color.backgroundColor,
+		        style.stroke)
+        }
     }
 
     override fun componentUpdated() {
@@ -56,6 +59,5 @@ class BoxGateViewBelowSelectionModel(
     /** ---- [BoxGateViewBelowSelectionModel] */
 
     private val strokeWidth: Float = styleProvider.getStyle(EditStyleType.HIGHLIGHT).stroke.width
-
 
 }
