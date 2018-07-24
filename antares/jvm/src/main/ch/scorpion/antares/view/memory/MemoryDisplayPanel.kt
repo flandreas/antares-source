@@ -1,9 +1,7 @@
 package ch.scorpion.antares.view.memory
 
-import ch.scorpion.jabbah.base.Math
+import ch.scorpion.antares.model.memory.Addressable
 import ch.scorpion.antares.model.memory.Memory
-import ch.scorpion.antares.model.signal.BitOperation
-import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
 import java.awt.BorderLayout
@@ -11,7 +9,6 @@ import java.awt.Component
 import java.awt.FlowLayout
 import java.awt.Font
 import javax.swing.*
-import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableCellRenderer
 
@@ -19,16 +16,14 @@ import javax.swing.table.TableCellRenderer
  * Displays the value of the individual cells of a [Memory].
  */
 class MemoryDisplayPanel(
-    memory: Memory,
-    addressBitWidth: BitWidth,
-    dataWidth: BitWidth
+	addressable: Addressable
 ) : JPanel() {
 
 	private val layouts = arrayOf<MemoryDisplayLayout>(
-		FixedWidthLayout(1, memory, addressBitWidth, dataWidth),
-		FixedWidthLayout(4, memory, addressBitWidth, dataWidth),
-		FixedWidthLayout(8, memory, addressBitWidth, dataWidth),
-		FixedWidthLayout(16, memory, addressBitWidth, dataWidth)
+		FixedWidthLayout(1, addressable),
+		FixedWidthLayout(4, addressable),
+		FixedWidthLayout(8, addressable),
+		FixedWidthLayout(16, addressable)
 	)
 
     private val table = JTable(layouts[1].createTableModel())

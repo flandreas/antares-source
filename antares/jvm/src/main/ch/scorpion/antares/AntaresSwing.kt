@@ -179,7 +179,7 @@ class AntaresSwing(
 
 	private fun handle(event: OpenMemoryContentsRequest) {
 		val dialog = JDialog(mainFrame, true)
-		val contentsPanel = MemoryContentsPanel(event.memory, event.addressWidth, event.dataWidth, mainFrame.editor.commandManager) { dialog.isVisible = false }
+		val contentsPanel = MemoryContentsPanel(event.memory, event.addressable, mainFrame.editor.commandManager) { dialog.isVisible = false }
 		dialog.title = Translations.getString("antares.action.memory.contents.title", event.name)
 		dialog.contentPane.add(contentsPanel)
 		dialog.pack()

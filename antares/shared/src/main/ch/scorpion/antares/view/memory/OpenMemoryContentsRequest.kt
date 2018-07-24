@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.memory
 
+import ch.scorpion.antares.model.memory.Addressable
 import ch.scorpion.antares.model.memory.Memory
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.event.InputEvent
@@ -10,7 +11,6 @@ import ch.scorpion.jabbah.base.event.InputEvent
 data class OpenMemoryContentsRequest(
 	val name: String,
     val memory: Memory,
-    val addressWidth: BitWidth,
-    val dataWidth: BitWidth,
+	val addressable: Addressable,
     val inputEvent: InputEvent
 )

@@ -1,7 +1,6 @@
 package ch.scorpion.antares.model.memory
 
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
 
 /**
  * An [Addressable] is an object that consists of addressable cells, each containing data content
@@ -13,7 +12,7 @@ interface Addressable {
     val currentAddress: Int
 
     /**
-     * Returns the maximum (i.e. the largest) address of this [Addressable]. Note that the minumum (i.e. the smallest)
+     * Returns the maximum (i.e. the largest) address of this [Addressable]. Note that the minimum (i.e. the smallest)
      * address is always 0. */
     val maxAddress: Int
 
@@ -33,6 +32,7 @@ interface Addressable {
     fun dataAt(address: Int): Long
 
     /** Disassembles the data at the specified address and returns the result, or returns an empty
-     * [String] if this [Addressable] doesn't support disassembling.*/
+     * [String] if this [Addressable] doesn't support disassembling.
+     */
     fun disassemblyAt(address: Int): String
 }

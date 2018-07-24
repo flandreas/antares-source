@@ -380,7 +380,7 @@ class RAMView(
     }
 
     private fun requestOpenMemoryContents(event: MouseEvent) {
-        eventBus.post(OpenMemoryContentsRequest(label.text, model!!.memory, model!!.addressWidth, model!!.dataWidth, event))
+        eventBus.post(OpenMemoryContentsRequest(label.text, model!!.memory, model!!, event))
     }
 
     private inner class DoubleClickHandler : InputEventHandlerAdapter<EditInputEventContext>() {
