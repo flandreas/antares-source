@@ -4,64 +4,90 @@ import ch.scorpion.jabbah.base.Math
 import ch.scorpion.antares.model.memory.Memory
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
 import java.awt.BorderLayout
-import javax.swing.JPanel
-import javax.swing.JScrollPane
-import javax.swing.JTable
+import java.awt.Component
+import java.awt.FlowLayout
+import java.awt.Font
+import javax.swing.*
 import javax.swing.table.AbstractTableModel
+import javax.swing.table.DefaultTableCellRenderer
+import javax.swing.table.TableCellRenderer
 
 /**
  * Displays the value of the individual cells of a [Memory].
  */
 class MemoryDisplayPanel(
-    private val memory: Memory,
+    memory: Memory,
     addressBitWidth: BitWidth,
-    dataWidth: BitWidth,
-    private val cellsPerRow: Int = DEFAULT_CELLS_PER_ROW
+    dataWidth: BitWidth
 ) : JPanel() {
 
-    companion object {
-        private val DEFAULT_CELLS_PER_ROW = 16
-    }
+	private val layouts = arrayOf<MemoryDisplayLayout>(
+		FixedWidthLayout(1, memory, addressBitWidth, dataWidth),
+		FixedWidthLayout(4, memory, addressBitWidth, dataWidth),
+		FixedWidthLayout(8, memory, addressBitWidth, dataWidth),
+		FixedWidthLayout(16, memory, addressBitWidth, dataWidth)
+	)
 
-    private val rowCount: Int = Math.ceil((addressBitWidth.power() / cellsPerRow).toDouble()).toInt()
-    private val mask: Int = BitOperation.power(dataWidth.width.toLong()) - 1
-    private val format = "%${Math.max(2, dataWidth.width / 4)}s"
-    private val table = JTable(MemoryTableModel())
+    private val table = JTable(layouts[1].createTableModel())
+	private val scrollPane = JScrollPane(table)
+	private val layoutComboBox = JComboBox<MemoryDisplayLayout>(layouts)
+	private val selectedMemoryDisplayLayout: MemoryDisplayLayout get() = layoutComboBox.selectedItem as MemoryDisplayLayout
+	private val tableCellRenderer = DefaultTableCellRenderer()
 
     init {
         buildUI()
+	    layoutComboBox.addActionListener { updateMemoryDisplayLayout(selectedMemoryDisplayLayout) }
+	    updateMemoryDisplayLayout(selectedMemoryDisplayLayout)
     }
+
+	fun refresh() {
+		table.invalidate()
+		table.revalidate()
+		table.repaint()
+	}
 
     private fun buildUI() {
         layout = BorderLayout()
-        val scrollPane = JScrollPane(table)
-        val rowHeaderTable = RowHeaderTable(table, { Integer.toHexString(it * cellsPerRow).toUpperCase()})
-        scrollPane.setRowHeaderView(rowHeaderTable)
-        scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowHeaderTable.getTableHeader())
+
+	    table.font = Font("Monospaced", Font.PLAIN, table.font.size)
+	    table.tableHeader.reorderingAllowed = false
+	    table.autoResizeMode = JTable.AUTO_RESIZE_OFF
+	    table.tableHeader.defaultRenderer = HeaderRenderer(table)
+
+	    tableCellRenderer.horizontalAlignment = JLabel.RIGHT
+
+	    val memoryLayoutPanel = JPanel(FlowLayout(FlowLayout.LEFT))
+	    memoryLayoutPanel.add(JLabel(Translations.getString("antares.memory.layout.selector.name")))
+	    memoryLayoutPanel.add(layoutComboBox)
+
+	    add(memoryLayoutPanel, BorderLayout.NORTH)
         add(scrollPane, BorderLayout.CENTER)
     }
 
-    private inner class MemoryTableModel : AbstractTableModel() {
+	private fun updateMemoryDisplayLayout(memoryDisplayLayout: MemoryDisplayLayout) {
+		table.model = memoryDisplayLayout.createTableModel()
 
-        /** ---- [AbstractTableModel] */
+		val rowHeaderTable = RowHeaderTable(table) { Integer.toHexString(it * memoryDisplayLayout.cellsPerRow).toUpperCase() }
+		scrollPane.setRowHeaderView(rowHeaderTable)
+		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowHeaderTable.tableHeader)
 
-        override fun getRowCount(): Int {
-            return this@MemoryDisplayPanel.rowCount
-        }
+		table.columnModel.columns.asSequence().forEach { it.cellRenderer = tableCellRenderer }
+	}
 
-        override fun getColumnCount(): Int {
-            return cellsPerRow
-        }
+	/** Establishes right-aligned column headers.*/
+	private class HeaderRenderer(table: JTable) : TableCellRenderer {
 
-        override fun getValueAt(rowIndex: Int, columnIndex: Int): Any {
-            val value = memory.read(rowIndex * cellsPerRow + columnIndex)
-            return String.format(format, java.lang.Long.toHexString(value and mask.toLong()).toUpperCase())
-        }
+		private val renderer: DefaultTableCellRenderer = table.tableHeader.defaultRenderer as DefaultTableCellRenderer
 
-        override fun getColumnName(column: Int): String {
-            return Integer.toHexString(column).toUpperCase()
-        }
-    }
+		init {
+			renderer.horizontalAlignment = JLabel.RIGHT
+		}
+
+		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
+			return renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
+		}
+	}
 }

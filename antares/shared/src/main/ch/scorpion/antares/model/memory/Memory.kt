@@ -8,11 +8,11 @@ import ch.scorpion.jabbah.base.exception.NoSuchElementException
  * The memory space is lazy initialized. Segments are allocated on demand
  * @property segmentSize the size of a segment
  */
-class Memory(val segmentSize: Int) {
+class Memory(private val segmentSize: Int) {
     constructor(): this(DEFAULT_SEGMENT_SIZE)
 
     companion object {
-        private val DEFAULT_SEGMENT_SIZE = 256
+        private const val DEFAULT_SEGMENT_SIZE = 256
     }
 
     private val segments: MutableMap<Int, Segment> = mutableMapOf()
@@ -48,7 +48,7 @@ class Memory(val segmentSize: Int) {
 		var segment = segments[baseAddress]
 		if (segment == null) {
 			segment = Segment(baseAddress)
-			segments.put(baseAddress, segment)
+			segments[baseAddress] = segment
 		}
 		return segment
 	}
@@ -96,11 +96,11 @@ class Memory(val segmentSize: Int) {
             init {
                 sortedAddresses.addAll(data.keys)
                 sortedAddresses.sort()
-                if (sortedAddresses.isEmpty()) {
-                    addressIndex = null
-                } else {
-                    addressIndex = 0
-                }
+	            addressIndex = if (sortedAddresses.isEmpty()) {
+		            null
+	            } else {
+		            0
+	            }
             }
 
             override fun hasNext(): Boolean {
@@ -113,11 +113,11 @@ class Memory(val segmentSize: Int) {
                 }
                 val address = sortedAddresses[addressIndex!!]
                 val currentValue = currentValue()
-                if (addressIndex!! < sortedAddresses.size - 1) {
-                    addressIndex = addressIndex!! + 1
-                } else {
-                    addressIndex = null
-                }
+	            addressIndex = if (addressIndex!! < sortedAddresses.size - 1) {
+		            addressIndex!! + 1
+	            } else {
+		            null
+	            }
                 return MemoryCell(baseAddress + address, currentValue)
             }
 

@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.event.InputEvent
  * Represents a request to open and display the contents of a [Memory].
  */
 data class OpenMemoryContentsRequest(
+	val name: String,
     val memory: Memory,
     val addressWidth: BitWidth,
     val dataWidth: BitWidth,

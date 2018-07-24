@@ -25,10 +25,17 @@ class MemoryContentsPanel(
     private val memory: Memory,
     private val addressWidth: BitWidth,
     private val dataWidth: BitWidth,
-    private val cmdManager: CommandManager
+    private val cmdManager: CommandManager,
+    private val closeHandler: () -> Unit
 ) : JPanel() {
 
-    private val LOG by logger(MemoryContentsPanel::class)
+	companion object {
+        private val LOG by logger(MemoryContentsPanel::class)
+		private const val PREF_WIDTH = 800
+		private const val PREF_HEIGHT = 500
+	}
+
+	private val memoryDisplayPanel = MemoryDisplayPanel(memory, addressWidth, dataWidth)
 
     init {
         buildUI()
@@ -38,26 +45,42 @@ class MemoryContentsPanel(
         layout = BorderLayout()
 
         val contentsView = JPanel(BorderLayout())
-        contentsView.preferredSize = Dimension(300, 500)
-        contentsView.add(MemoryDisplayPanel(memory, addressWidth, dataWidth))
+        contentsView.preferredSize = Dimension(PREF_WIDTH, PREF_HEIGHT)
+        contentsView.add(memoryDisplayPanel)
         add(contentsView, BorderLayout.CENTER)
 
         val buttonPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-        buttonPanel.add(JButton(LoadAction()))
-        buttonPanel.add(JButton(SaveAction()))
+	    buttonPanel.add(JButton(CloseAction()))
+        buttonPanel.add(JButton(ImportAction()))
+        buttonPanel.add(JButton(ExportAction()))
+	    buttonPanel.add(JButton(ClearAction()))
         add(buttonPanel, BorderLayout.SOUTH)
     }
 
-    private inner class LoadAction : AbstractAction(Translations.getString("antares.action.memory.load.name")) {
+	private inner class CloseAction : AbstractAction(Translations.getString("file.action.close.name")) {
+		override fun actionPerformed(e: ActionEvent?) {
+			closeHandler.invoke()
+		}
+	}
+
+    private inner class ImportAction : AbstractAction(Translations.getString("antares.action.memory.import.name")) {
         override fun actionPerformed(e: ActionEvent?) {
             val fileChooser = JFileChooser()
             if (fileChooser.showOpenDialog(this@MemoryContentsPanel) == JFileChooser.APPROVE_OPTION) {
                 cmdManager.execute(MemoryContentsCommand(memory, dataWidth, fileChooser.selectedFile!!.absolutePath))
+	            memoryDisplayPanel.refresh()
             }
         }
     }
 
-    private inner class SaveAction : AbstractAction(Translations.getString("antares.action.memory.save.name")) {
+	private inner class ClearAction : AbstractAction(Translations.getString("antares.action.memory.clear.name")) {
+		override fun actionPerformed(e: ActionEvent?) {
+			cmdManager.execute(MemoryClearCommand(memory, dataWidth))
+			memoryDisplayPanel.refresh()
+		}
+	}
+
+    private inner class ExportAction : AbstractAction(Translations.getString("antares.action.memory.export.name")) {
         override fun actionPerformed(e: ActionEvent?) {
             val fileChooser = JFileChooser()
             if (fileChooser.showSaveDialog(this@MemoryContentsPanel) == JFileChooser.APPROVE_OPTION) {
@@ -65,7 +88,7 @@ class MemoryContentsPanel(
                 try {
                     Files.write(Paths.get(fileChooser.selectedFile.absolutePath), contents.toByteArray())
                 } catch (e: Throwable) {
-                    LOG.error("Errow while saving memory to '${fileChooser.selectedFile.absolutePath}'")
+                    LOG.error("Error while exporting memory to '${fileChooser.selectedFile.absolutePath}'")
                 }
             }
         }

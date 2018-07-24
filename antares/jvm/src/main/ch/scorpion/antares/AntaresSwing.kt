@@ -43,6 +43,7 @@ import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import javax.swing.JDialog
+import javax.swing.SwingUtilities
 import javax.swing.plaf.FontUIResource
 
 
@@ -178,9 +179,9 @@ class AntaresSwing(
 
 	private fun handle(event: OpenMemoryContentsRequest) {
 		val dialog = JDialog(mainFrame, true)
-		dialog.title = Translations.getString("antares.action.memory.contents.title")
-		dialog.contentPane.add(
-			MemoryContentsPanel(event.memory, event.addressWidth, event.dataWidth, mainFrame.editor.commandManager))
+		val contentsPanel = MemoryContentsPanel(event.memory, event.addressWidth, event.dataWidth, mainFrame.editor.commandManager) { dialog.isVisible = false }
+		dialog.title = Translations.getString("antares.action.memory.contents.title", event.name)
+		dialog.contentPane.add(contentsPanel)
 		dialog.pack()
 		dialog.setLocationRelativeTo(mainFrame)
 		dialog.isVisible = true
