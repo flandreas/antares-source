@@ -5,11 +5,7 @@ import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.memory.MemoryContentsPanel
 import ch.scorpion.antares.view.memory.OpenMemoryContentsRequest
-import ch.scorpion.jabbah.app.DesktopApplication
-import ch.scorpion.jabbah.app.AbstractApplicationFrame
-import ch.scorpion.jabbah.app.AbstractDesktopApplication
-import ch.scorpion.jabbah.app.AbstractDesktopApplicationSwing
-import ch.scorpion.jabbah.app.MenuBarBuilder
+import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -43,7 +39,6 @@ import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import javax.swing.JDialog
-import javax.swing.SwingUtilities
 import javax.swing.plaf.FontUIResource
 
 
@@ -137,7 +132,7 @@ class AntaresSwing(
 			drawingView
 		}
 		val graphEditor = GraphEditor(graphCanvas.view as DrawingView<Drawing<Component>>)
-		val graphPanel = GraphPanel(application = this, editor = graphEditor, viewManager = viewManager)
+		val graphPanel = GraphPanel(editor = graphEditor, viewManager = viewManager)
 		graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
 
 		return GraphFrame(this, graphPanel, eventBus, viewManager)

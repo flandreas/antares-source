@@ -64,7 +64,6 @@ import javax.swing.*
  * and a [GraphNavigationPanel] for editing the [GraphView] at the center-right.
  */
 class GraphPanel(
-	application: Application,
 	val editor: Editor,
 	val eventBus: EventBus = BaseModule.eventBus,
 	val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
@@ -94,7 +93,7 @@ class GraphPanel(
 
 	private val settingsToolBar = createSettingsToolBar()
 
-	private val bottomSidebarPane = SidebarPane(SidebarPane.Orientation.Horizontal, { bottomSidebarPaneChanged() })
+	private val bottomSidebarPane = SidebarPane(SidebarPane.Orientation.Horizontal) { bottomSidebarPaneChanged() }
 
 	val toolbars: List<JToolBar> = listOf(
 		createExecutionToolBar(),
@@ -120,7 +119,7 @@ class GraphPanel(
 		(editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
 		libraryPropertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
-		eventBus.register(ApplicationDataEvent::class, {
+		eventBus.register(ApplicationDataEvent::class) {
 			if (it.newData != null) {
 				LOG.debug("GraphPanel: ApplicationDataChanged, setting GraphView in GraphEditPanel")
 				val metaGraph = it.newData as MetaGraph
@@ -130,16 +129,16 @@ class GraphPanel(
 				LOG.debug("GraphPanel: ApplicationDataChanged, using dummy GraphView in GraphEditPanel")
 				graphEditPanel.setGraphView(null)
 			}
-		})
+		}
 
-		eventBus.register(ActiveViewChangedEvent::class, { updateEditability() })
+		eventBus.register(ActiveViewChangedEvent::class) { updateEditability() }
 
-		eventBus.register(ExecutionStoppedOnIssueEvent::class, {
+		eventBus.register(ExecutionStoppedOnIssueEvent::class) {
 			eventBus.post(ComponentMessage(
 				type = ComponentMessageType.Error,
 				source = null,
 				messageKey = "execution.scheduler.stoppedDueToIssue.msg"))
-		})
+		}
 
 		editor.view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
 			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
@@ -278,8 +277,6 @@ class GraphPanel(
 			"/img/rectangle.png", Translations.getString("edit.component.rectangle"))
 		toolbar.addTool(RectangleTool(editor, { EllipseComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
 			"/img/ellipse.png", Translations.getString("edit.component.ellipse"))
-		toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
-			"/img/polyline.gif", Translations.getString("edit.component.polyline"))
 		toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
 			"/img/polyline.gif", Translations.getString("edit.component.polyline"))
 		toolbar.addTool(QuadCurveTool(editor, { QuadCurveComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
