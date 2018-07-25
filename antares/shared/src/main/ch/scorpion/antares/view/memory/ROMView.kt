@@ -21,7 +21,6 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.TextProperty
@@ -111,6 +110,7 @@ class ROMView(
 		addPortView(dataPV)
 
         if (model != null) {
+	        label.text = buildLabelText()
             contentsView = AddressableContentsView(
                     addressable = model!!,
                     rowsCount = contentRowsCount,
@@ -293,7 +293,7 @@ class ROMView(
     /** ---- [AbstractVerticeView] */
 
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-        return inputEventHandler as InputEventHandler<T>
+        return inputEventHandler
     }
 
     /** ---- [ActorView] */

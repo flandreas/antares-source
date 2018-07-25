@@ -22,11 +22,13 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
-import ch.scorpion.jabbah.execution.actor.*
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -124,6 +126,7 @@ class RAMView(
         addPortView(clearPV)
 
         if (model != null) {
+	        label.text = buildLabelText()
             contentsView = AddressableContentsView(
                     addressable = model!!,
                     rowsCount = contentRowsCount,
@@ -300,7 +303,7 @@ class RAMView(
     /** ---- [AbstractVerticeView] */
 
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-        return inputEventHandler as InputEventHandler<T>
+        return inputEventHandler
     }
 
     /** ---- [ActorView] */
