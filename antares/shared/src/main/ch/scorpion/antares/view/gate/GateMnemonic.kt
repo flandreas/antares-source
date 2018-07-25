@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.DigitalComponentView
+import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -114,7 +115,10 @@ object GateMnemonic {
         if (!begin(gateView, context)) {
             return
         }
-        drawTriState(gateView, context, foreground)
+	    when (gateView.handedness) {
+		    Handedness.RIGHT -> drawTriStateRight(gateView, context, foreground)
+		    Handedness.LEFT -> drawTriStateLeft(gateView, context, foreground)
+	    }
         end(gateView, context)
     }
 
@@ -372,7 +376,7 @@ object GateMnemonic {
         context.g.drawLine(portX, s(4.0), s(6.0), s(4.0))
     }
 
-    private fun drawTriState(gateView: TriStateBufferGateView, context: DrawContext, foreground: Color) {
+    private fun drawTriStateRight(gateView: TriStateBufferGateView, context: DrawContext, foreground: Color) {
         val isExec = ApplicationMode.EXECUTE == context.castedAppContext<GraphApplicationContext>()!!.mode
 
         val signal = gateView.model!!.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
@@ -401,10 +405,40 @@ object GateMnemonic {
         // Switch
         context.g.stroke = SWITCH_STROKE
         context.g.drawLine(s(2.5), if (control.isSet) s(3.0) else s(4.0), s(3.5), s(3.0))
-
     }
 
-    private fun drawSource(transparent: Transparent, context: DrawContext, isExec: Boolean, foreground: Color, background: Color) {
+	private fun drawTriStateLeft(gateView: TriStateBufferGateView, context: DrawContext, foreground: Color) {
+		val isExec = ApplicationMode.EXECUTE == context.castedAppContext<GraphApplicationContext>()!!.mode
+
+		val signal = gateView.model!!.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
+		val control = gateView.model!!.getInput<DigitalSignal>(2).getIncomingSignal()!!.bitAt(0)
+		val signalOut = gateView.model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
+
+		// Internal connection
+		context.g.font = FONT
+		context.g.stroke = LINE_STROKE
+		// Segment 'undefined'
+		context.g.color = transparent(gateView, if (isExec) Themes.get<AntaresTheme>().undefined.foregroundColor else foreground)
+		context.g.drawLine(s(1.0), s(2.0), s(2.5), s(2.0))
+		context.g.fillOval(s(0.75), s(1.75), s(0.5) + 1, s(0.5) + 1)
+		context.g.color = transparent(gateView, if (isExec) Themes.get<AntaresTheme>().undefined.backgroundColor else foreground)
+		context.g.drawOval(s(0.75), s(1.75), s(0.5) + 1, s(0.5) + 1)
+		// Segment 'signal'
+		context.g.color = transparent(gateView, if (isExec) signal.color.foregroundColor else foreground)
+		context.g.drawLine(0.0, s(3.0), s(2.5), s(3.0))
+		// Segment 'control'
+		context.g.color = transparent(gateView, if (isExec) control.color.foregroundColor else foreground)
+		context.g.drawLine(s(3.0), s(1.5), s(3.0), if (control.isSet) s(3.0) else s(2.5))
+		// Segment 'output'
+		context.g.color = transparent(gateView, if (isExec) signalOut.color.foregroundColor else foreground)
+		context.g.drawLine(s(3.5), s(3.0), s(6.0), s(3.0))
+
+		// Switch
+		context.g.stroke = SWITCH_STROKE
+		context.g.drawLine(s(2.5), if (control.isSet) s(3.0) else s(2.0), s(3.5), s(3.0))
+	}
+
+	private fun drawSource(transparent: Transparent, context: DrawContext, isExec: Boolean, foreground: Color, background: Color) {
         context.g.color = transparent(transparent, if (isExec) Themes.get<AntaresTheme>().one.foregroundColor else background)
         context.g.fillOval(s(0.75), s(3.75), s(0.5) + 1, s(0.5) + 1)
         context.g.color = transparent(transparent, if (isExec) Themes.get<AntaresTheme>().one.backgroundColor else foreground)
