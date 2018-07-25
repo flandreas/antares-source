@@ -8,6 +8,16 @@ import ch.scorpion.jabbah.base.geom.Point2D
  */
 interface Locatable : Drawable {
 
+	companion object {
+
+		/** Moves a [Collection] of [Locatable]s all by the same offset.*/
+		fun moveLocatables(locatables: Collection<Locatable>, offset: Point2D) {
+			locatables.forEach { it.prepareMoveBy(locatables) }
+			locatables.forEach { it.moveBy(offset.x, offset.y) }
+			locatables.forEach { it.completeMoveBy() }
+		}
+	}
+
     /** The [Point2D] at which this [Locatable] is located.*/
     var location: Point2D
 

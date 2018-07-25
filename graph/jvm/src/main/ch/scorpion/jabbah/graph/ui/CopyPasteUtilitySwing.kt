@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.view.port.PortView
 import java.awt.Toolkit
@@ -124,12 +125,10 @@ object CopyPasteUtilitySwing {
                         if (pastedAnchorComponent == null && origAnchorComponent!!.location == cv.location) {
                             pastedAnchorComponent = cv
                         }
-                        if (cv !is EdgeView<*>) {
-                            cv.moveBy(dislocation.x, dislocation.y)
-                        }
                         components.add(cv)
                     }
-                    cmdManager.execute(PasteCommand(view, components))
+	                Locatable.moveLocatables(components, dislocation)
+	                cmdManager.execute(PasteCommand(view, components))
                 }
             } catch(e: Exception) {
                 LOG.error("Error while reading Components from clipboard: ${e.message}")

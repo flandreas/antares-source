@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.tool.ToolAdapter
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.*
 
@@ -171,9 +172,7 @@ class SelectionToolImpl(
         }
 
         // Move all selected [Components] by the same snapped offset
-        selection.forEach { it.prepareMoveBy(selection) }
-        selection.forEach { it.moveBy(dx + offset.x, dy + offset.y) }
-        selection.forEach { it.completeMoveBy() }
+	    Locatable.moveLocatables(selection, Point2D(dx + offset.x, dy + offset.y))
 
         eventBus.post(DragEvent(editor, selection))
         moveLastLocation = Point2D(x + offset.x, y + offset.y)
