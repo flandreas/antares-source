@@ -379,14 +379,14 @@ class RAMView(
         return "RAM ${addressWidth.size}x${dataWidth.width}"
     }
 
-    private fun requestOpenMemoryContents(event: MouseEvent) {
-        eventBus.post(OpenMemoryContentsRequest(label.text, model!!.memory, model!!, event))
+    private fun requestOpenMemoryContents(event: MouseEvent, readonly: Boolean) {
+        eventBus.post(OpenMemoryContentsRequest(label.text, model!!.memory, model!!, event, readonly))
     }
 
-    private inner class DoubleClickHandler : InputEventHandlerAdapter<EditInputEventContext>() {
-        override fun mouseClicked(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+    private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {
+        override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
             if (context.mouseEvent!!.clickCount == 2) {
-                requestOpenMemoryContents(context.mouseEvent!!)
+                requestOpenMemoryContents(context.mouseEvent!!, context.readonly)
                 return null
             }
             return super.mouseClicked(context)
@@ -396,7 +396,7 @@ class RAMView(
     private inner class DoubleClickActorHandler : ClickableActorInteractionHandlerAdapter() {
         override fun mouseClicked(context: ActorInteractionContext) {
             if (context.mouseEvent!!.clickCount == 2) {
-                requestOpenMemoryContents(context.mouseEvent!!)
+                requestOpenMemoryContents(context.mouseEvent!!, true)
             }
         }
     }

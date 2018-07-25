@@ -25,6 +25,7 @@ class MemoryContentsPanel(
 	private val memory: Memory,
 	private val addressable: Addressable,
 	private val cmdManager: CommandManager,
+	readonly: Boolean = false,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
 
@@ -37,10 +38,10 @@ class MemoryContentsPanel(
 	private val memoryDisplayPanel = MemoryDisplayPanel(addressable)
 
     init {
-        buildUI()
+        buildUI(readonly)
     }
 
-    private fun buildUI() {
+    private fun buildUI(readonly: Boolean) {
         layout = BorderLayout()
 
         val contentsView = JPanel(BorderLayout())
@@ -50,9 +51,13 @@ class MemoryContentsPanel(
 
         val buttonPanel = JPanel(FlowLayout(FlowLayout.LEFT))
 	    buttonPanel.add(JButton(CloseAction()))
-        buttonPanel.add(JButton(ImportAction()))
+	    if (!readonly) {
+		    buttonPanel.add(JButton(ImportAction()))
+	    }
         buttonPanel.add(JButton(ExportAction()))
-	    buttonPanel.add(JButton(ClearAction()))
+	    if (!readonly) {
+		    buttonPanel.add(JButton(ClearAction()))
+	    }
         add(buttonPanel, BorderLayout.SOUTH)
     }
 

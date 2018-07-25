@@ -12,5 +12,6 @@ data class OpenMemoryContentsRequest(
 	val name: String,
     val memory: Memory,
 	val addressable: Addressable,
-    val inputEvent: InputEvent
+    val inputEvent: InputEvent,
+	val readonly: Boolean
 )

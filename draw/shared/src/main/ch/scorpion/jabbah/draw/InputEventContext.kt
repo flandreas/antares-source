@@ -16,7 +16,8 @@ open class InputEventContext(
     val mouseEvent: MouseEvent? = null,
     val keyEvent: KeyEvent? = null,
     val x: Double = 0.0,
-    val y: Double = 0.0
+    val y: Double = 0.0,
+    val readonly: Boolean = false
 ) {
     val location: Point2D get() = Point2D(x, y)
 

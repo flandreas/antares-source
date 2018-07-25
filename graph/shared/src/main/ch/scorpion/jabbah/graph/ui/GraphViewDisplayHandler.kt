@@ -39,8 +39,8 @@ class GraphViewDisplayHandler(
     private val tooltipHandler: TooltipHandler = TooltipHandler(eventBus)
 
     init {
-        eventBus.register(SchedulerActivationStateEvent::class, { updateActivationState() })
-        view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
+        eventBus.register(SchedulerActivationStateEvent::class) { updateActivationState() }
+	    view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
             override fun propertyChanged(e: PropertyChangeEvent<Any>) {
                 if (e.name == DrawingView.PROP_DRAWING || e.name == DrawingView.PROP_EDITABLE) {
                     updateActivationState()
@@ -83,7 +83,7 @@ class GraphViewDisplayHandler(
             val drawable = view.drawing.getDrawableAt(x, y)
             tooltipHandler.handle(view, view.drawing, x, y)
 
-            if (drawable != null && drawable is SubGraphVerticeView<*>) {
+            if (drawable != null /*&& drawable is SubGraphVerticeView<*>*/) {
                 view.setCursor(Cursor.HAND)
             } else {
                 view.setCursor(Cursor.DEFAULT)
@@ -102,12 +102,13 @@ class GraphViewDisplayHandler(
             val y = view.viewToModelY(e.y.toDouble())
 
             val drawable = view.drawing.getDrawableAt(x, y)
-            if (drawable != null && drawable is SubGraphVerticeView) {
+            if (drawable != null /*&& drawable is SubGraphVerticeView*/) {
                 val context = InputEventContext(
-                        view = view,
-                        mouseEvent = e,
-                        x = x,
-                        y = y)
+                    view = view,
+                    mouseEvent = e,
+                    x = x,
+                    y = y,
+	                readonly = true)
                 drawable.getInputEventHandler(context).mouseClicked(context)
                 view.drawing.validate()
             }
