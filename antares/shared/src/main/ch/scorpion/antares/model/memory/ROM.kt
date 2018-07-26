@@ -100,9 +100,11 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
     override fun dataAt(address: Int): Long = memory.read(address)
 
-    override fun disassemblyAt(address: Int): String = disassembly.getOrElse(address, { "" })
+    override fun disassemblyAt(address: Int): String = disassembly.getOrElse(address) { "" }
 
-    /** ---- [Storable] */
+	override fun commentAt(address: Int): String? = memory.readComment(address)
+
+	/** ---- [Storable] */
 
     override fun write(writer: StoreWriter) {
         super.write(writer)

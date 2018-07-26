@@ -3,22 +3,22 @@ package ch.scorpion.antares.model.memory
 /**
  * Fills the gaps in the [MemoryCell] address space iterated by the {@link Iterator} which is returned by
  * [Memory] with zero value [MemoryCell]s. This is used to turn the fragmented and segmented memory space into
- * a continious stream of [MemoryCell]s, independent of their values.
+ * a continuous stream of [MemoryCell]s, independent of their values.
  *
  * @param iter the original [Iterator] that produces holes in the sequence of [MemoryCell], because it yields
  * only those [MemoryCell]s with a non-zero value.
  */
-class ZeroFiller(val iter: Iterator<MemoryCell>) : Iterator<MemoryCell> {
+class ZeroFiller(private val iter: Iterator<MemoryCell>) : Iterator<MemoryCell> {
 
     private var nextCell: MemoryCell?
     private var lastAddress: Int = -1
 
     init {
-        if (iter.hasNext()) {
-            nextCell = iter.next()
-        } else {
-            nextCell = null
-        }
+	    nextCell = if (iter.hasNext()) {
+		    iter.next()
+	    } else {
+		    null
+	    }
     }
 
     override fun hasNext(): Boolean {

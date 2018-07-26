@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.memory
 
 import ch.scorpion.antares.AntaresTestRule
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.*
 import org.junit.ClassRule
 import org.junit.Test
@@ -29,7 +30,7 @@ class MemoryTest {
     /** ---- Read/Write tests */
 
     @Test
-    fun shouldReadAndWrite() {
+    fun shouldWriteAndRead() {
         val memory = Memory(8)
         memory.write(3, 4)
         memory.write(4, 255)
@@ -56,7 +57,33 @@ class MemoryTest {
         assertThat(memory.read(2), `is`(35L))
     }
 
-    /** ---- NonZeroIterator tests */
+	@Test
+	fun shouldWriteAndReadCrossingSegments() {
+		val memory = Memory(8)
+
+		for (i in 0 until 16) {
+			memory.write(i, i.toLong())
+		}
+		for (i in 0 until 16) {
+			assertThat(memory.read(i), `is`(i.toLong()))
+		}
+	}
+
+	@Test
+	fun shouldWriteAndReadCommentedCrossingSegments() {
+		val memory = Memory(8)
+
+		for (i in 0 until 16) {
+			memory.writeCommentedValue(i, i.toLong(), "Comment $i")
+		}
+		for (i in 0 until 16) {
+			assertThat(memory.read(i), `is`(i.toLong()))
+			assertThat(memory.readComment(i), `is`("Comment $i"))
+		}
+	}
+
+
+	/** ---- NonZeroIterator tests */
 
     @Test
     fun shouldNotIterateEmptyMemory() {
@@ -108,4 +135,56 @@ class MemoryTest {
         }
         assertThat(iter.hasNext(), `is`(false))
     }
+
+	/** ---- Comment tests */
+
+	@Test
+	fun shouldWriteCommentInValuelessCell() {
+		val memory = Memory(8)
+		memory.writeComment(3, "This is address 3")
+		assertThat(memory.readComment(3), `is`("This is address 3"))
+	}
+
+	@Test
+	fun shouldWriteCommentInValueCell() {
+		val memory = Memory(8)
+		memory.write(3, 4)
+		memory.writeComment(3, "The value of 3 is 4")
+		assertThat(memory.read(3), `is`(4L))
+		assertThat(memory.readComment(3), `is`("The value of 3 is 4"))
+	}
+
+	@Test
+	fun shouldWriteWithComment() {
+		val memory = Memory(8)
+		memory.writeCommentedValue(3, 4, "The value of 3 is 4")
+		assertThat(memory.read(3), `is`(4L))
+		assertThat(memory.readComment(3), `is`("The value of 3 is 4"))
+	}
+
+	@Test
+	fun shouldOnlyChangeValue() {
+		val memory = Memory(8)
+		memory.write(3, 4)
+		memory.writeComment(3, "The value of 3 is 4")
+		memory.write(3, 5)
+		assertThat(memory.readComment(3), `is`("The value of 3 is 4"))
+	}
+
+	@Test
+	fun shouldOnlyChangeComment() {
+		val memory = Memory(8)
+		memory.write(3, 4)
+		memory.writeComment(3, "The value of 3 is 4")
+		assertThat(memory.read(3), `is`(4L))
+	}
+
+	@Test
+	fun shouldDeleteComment() {
+		val memory = Memory(8)
+		memory.write(3, 4)
+		memory.writeComment(3, "The value of 3 is 4")
+		memory.writeComment(3, null)
+		assertThat(memory.readComment(3), nullValue())
+	}
 }

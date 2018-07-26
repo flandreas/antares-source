@@ -31,6 +31,9 @@ interface Addressable {
     /** Returns the data at the specified address.*/
     fun dataAt(address: Int): Long
 
+	/** Returns the comment at the specified address.*/
+	fun commentAt(address: Int): String?
+
     /** Disassembles the data at the specified address and returns the result, or returns an empty
      * [String] if this [Addressable] doesn't support disassembling.
      */

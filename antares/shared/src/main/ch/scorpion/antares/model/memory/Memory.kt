@@ -18,8 +18,12 @@ class Memory(private val segmentSize: Int) {
     private val segments: MutableMap<Int, Segment> = mutableMapOf()
 
     fun read(address: Int): Long {
-        return getSegment(address).read(address % segmentSize)
+        return getSegment(address).readValue(address % segmentSize)
     }
+
+	fun readComment(address: Int): String? {
+		return getSegment(address).readComment(address % segmentSize)
+	}
 
     fun write(address: Int, vararg values: Long) {
         var lAddress = address
@@ -28,12 +32,19 @@ class Memory(private val segmentSize: Int) {
         }
     }
 
-    fun writeSingleValue(address: Int, value: Long) {
-        if (value == 0L && !hasSegment(address)) {
-            return
-        }
-        getSegment(address).write(address % segmentSize, value)
-    }
+	fun writeComment(address: Int, comment: String?) {
+		if (comment == null && !hasSegment(address)) {
+			return
+		}
+		getSegment(address).writeComment(address % segmentSize, comment)
+	}
+
+	fun writeCommentedValue(address: Int, value: Long, comment: String?) {
+		if (value == 0L && comment == null && !hasSegment(address)) {
+			return
+		}
+		getSegment(address).writeCommentedValue(address % segmentSize, value, comment)
+	}
 
     fun getNonZeroCells(): Iterator<MemoryCell> {
         return NonZeroCellIterator()
@@ -43,7 +54,14 @@ class Memory(private val segmentSize: Int) {
 		segments.clear()
 	}
 
-    private fun getSegment(address: Int): Segment {
+	private fun writeSingleValue(address: Int, value: Long) {
+		if (value == 0L && !hasSegment(address)) {
+			return
+		}
+		getSegment(address).writeValue(address % segmentSize, value)
+	}
+
+	private fun getSegment(address: Int): Segment {
 		val baseAddress = address / segmentSize * segmentSize
 		var segment = segments[baseAddress]
 		if (segment == null) {
@@ -57,6 +75,9 @@ class Memory(private val segmentSize: Int) {
 		return segments[address / segmentSize] != null
 	}
 
+	/** Holds the internal data representation of an individual cell.*/
+	private data class CellData(val value: Long, val comment: String?)
+
     /**
      * Represents the unit of space allocation of a [Memory] object. It has a base
      * address and a fixed size. [Segment] stores only values that are different from 0 (zero).
@@ -64,30 +85,68 @@ class Memory(private val segmentSize: Int) {
      */
     private class Segment(val baseAddress: Int) {
 
-        /** Maps the address relative to the base address to the stored value at that address. */
-        private val data: MutableMap<Int,Long> = mutableMapOf()
+        /** Maps the address relative to the base address to the stored [CellData] at that address. */
+        private val data: MutableMap<Int,CellData> = mutableMapOf()
 
  		/** Reads the value at a relative segment address. */
-		fun read(address: Int): Long {
-            return data[address] ?: 0
+		fun readValue(address: Int): Long {
+            return data[address]?.value ?: 0
 		}
 
-		/** Writes a value at at relative sgement address. */
-		fun write(address: Int, value: Long) {
+	    /** Reads the comment at a relative segment address. */
+	    fun readComment(address: Int): String? {
+		    return data[address]?.comment
+	    }
+
+		/** Writes a value at a relative segment address. */
+		fun writeValue(address: Int, value: Long) {
+			val cell = data[address]
 			if (value == 0L) {
-				if (data[address] != null) {
+				if (cell != null && cell.comment == null) {
 					data.remove(address)
+				} else {
+					data[address] = CellData(value, cell?.comment)
 				}
 			} else {
-				data[address] = value
+				data[address] = CellData(value, cell?.comment)
 			}
 		}
+
+	    /** Writes a comment at a relative segment address. */
+	    fun writeComment(address: Int, comment: String?) {
+		    val cell = data[address]
+		    if (comment == null) {
+			    if (cell != null && cell.value == 0L) {
+				    data.remove(address)
+			    } else {
+				    data[address] = CellData(cell!!.value, comment)
+			    }
+		    } else {
+			    data[address] = CellData(cell?.value ?: 0, comment)
+		    }
+	    }
+
+	    fun writeCommentedValue(address: Int, value: Long, comment: String?) {
+		    val cell = data[address]
+		    if (value == 0L && comment == null) {
+			    if (cell != null) {
+				    data.remove(address)
+			    } else {
+				    data[address] = CellData(value, comment)
+			    }
+		    } else {
+			    data[address] = CellData(value, comment)
+		    }
+	    }
 
         fun getNonZeroCellIterator(): Iterator<MemoryCell> {
             return NonZeroCellIterator()
         }
 
-        /** Returns only those [MemoryCell]s of this [Segment] that have a value different from 0 (i.e. that exist).*/
+        /**
+         * Returns only those [MemoryCell]s of this [Segment] that have a value different from 0
+         * or a non-empty comment (i.e. cells that exist).
+         */
         private inner class NonZeroCellIterator : Iterator<MemoryCell> {
 
             private val sortedAddresses: MutableList<Int> = mutableListOf()
@@ -113,18 +172,22 @@ class Memory(private val segmentSize: Int) {
                 }
                 val address = sortedAddresses[addressIndex!!]
                 val currentValue = currentValue()
+	            val currentComment = currentComment()
 	            addressIndex = if (addressIndex!! < sortedAddresses.size - 1) {
 		            addressIndex!! + 1
 	            } else {
 		            null
 	            }
-                return MemoryCell(baseAddress + address, currentValue)
+                return MemoryCell(baseAddress + address, currentValue, currentComment)
             }
 
             private fun currentValue(): Long {
-                return read(sortedAddresses[addressIndex!!])
+                return readValue(sortedAddresses[addressIndex!!])
             }
 
+	        private fun currentComment(): String? {
+		        return readComment(sortedAddresses[addressIndex!!])
+	        }
         }
     }
 

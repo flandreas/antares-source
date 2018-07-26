@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.memory
 import ch.scorpion.antares.model.memory.Memory
 import ch.scorpion.antares.model.memory.MemoryDump
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.base.logger
 import java.nio.file.Files
@@ -26,7 +27,7 @@ class MemoryContentsCommand(
     override fun execute() {
         oldContents = MemoryDump.write(memory, bitWidth)
         try {
-            MemoryDump.read(memory, String(Files.readAllBytes(Paths.get(filePath))))
+            MemoryDump.readNewlineSeparated(memory, String(Files.readAllBytes(Paths.get(filePath))))
         } catch(e: Throwable) {
             LOG.error("Error while reading memory from file '$filePath'")
             throw e

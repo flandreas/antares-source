@@ -113,4 +113,83 @@ class MemoryDumpTest {
 
         MemoryDump.read(memory, "10C00000\n00106000\nB013001C\n24143313\n3414040B\n30000409\n10C03000\n10400000\nF0110000")
     }
+
+	/** ---- Comment tests */
+
+	@Test
+	fun shouldWriteComment() {
+		val memory = Memory()
+		memory.write(0, 4)
+		memory.writeCommentedValue(1, 255, "Comment1")
+		memory.write(2, 8)
+
+		assertThat(MemoryDump.write(memory, BitWidth.BW_8), `is`("04 FF:Comment1 08"))
+	}
+
+	@Test
+	fun shouldReadComment() {
+		val memory = Memory()
+
+		MemoryDump.read(memory, "04 FF:Comment1 08")
+
+		assertThat(memory.read(0), `is`(4L))
+		assertThat(memory.read(1), `is`(255L))
+		assertThat(memory.readComment(1), `is`("Comment1"))
+		assertThat(memory.read(2), `is`(8L))
+	}
+
+	@Test
+	fun shouldWriteEscapedComment() {
+		val memory = Memory()
+		memory.write(0, 4)
+		memory.writeCommentedValue(1, 255, "Bla:Blu Bli")
+		memory.write(2, 8)
+
+		assertThat(MemoryDump.write(memory, BitWidth.BW_8), `is`("04 FF:Bla\\:Blu\\ Bli 08"))
+	}
+
+	@Test
+	fun shouldReadEscapedComment() {
+		val memory = Memory()
+
+		MemoryDump.read(memory, "04 FF:Bla\\:Blu\\ Bli 08")
+
+		assertThat(memory.read(0), `is`(4L))
+		assertThat(memory.read(1), `is`(255L))
+		assertThat(memory.readComment(1), `is`("Bla:Blu Bli"))
+		assertThat(memory.read(2), `is`(8L))
+	}
+
+	@Test
+	fun shouldReadExtendedExample() {
+		val data = """
+			|7000:Initialize I at 0800
+			|1800
+			|7065:Initialize L at 0801
+			|1801
+			|7000:Initialize S at 0802
+			|1802
+			|7001:Initialize ONE at 0803
+			|1803
+			|0801:IF (I == L) THEN GOTO END
+			|3800
+			|5013
+			|0802:S = S + I
+			|2800
+			|1802
+			|1FFE:Output S
+			|0800:I = I + 1
+			|2803
+			|1800
+			|6008:GOTO LOOP
+			|FF00:Stop program
+		""".trimMargin()
+
+		val memory = Memory()
+
+		MemoryDump.readNewlineSeparated(memory, data)
+
+		assertThat(memory.read(0), `is`("7000".toLong(16)))
+		assertThat(memory.readComment(0), `is`("Initialize I at 0800"))
+	}
 }

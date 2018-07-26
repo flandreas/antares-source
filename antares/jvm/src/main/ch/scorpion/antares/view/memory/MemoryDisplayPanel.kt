@@ -4,10 +4,8 @@ import ch.scorpion.antares.model.memory.Addressable
 import ch.scorpion.antares.model.memory.Memory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
-import java.awt.BorderLayout
-import java.awt.Component
-import java.awt.FlowLayout
-import java.awt.Font
+import com.l2fprod.common.swing.renderer.DefaultCellRenderer
+import java.awt.*
 import javax.swing.*
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableCellRenderer
@@ -29,13 +27,12 @@ class MemoryDisplayPanel(
     private val table = JTable(layouts[1].createTableModel())
 	private val scrollPane = JScrollPane(table)
 	private val layoutComboBox = JComboBox<MemoryDisplayLayout>(layouts)
-	private val selectedMemoryDisplayLayout: MemoryDisplayLayout get() = layoutComboBox.selectedItem as MemoryDisplayLayout
-	private val tableCellRenderer = DefaultTableCellRenderer()
+	private val memoryDisplayLayout: MemoryDisplayLayout get() = layoutComboBox.selectedItem as MemoryDisplayLayout
 
     init {
         buildUI()
-	    layoutComboBox.addActionListener { updateMemoryDisplayLayout(selectedMemoryDisplayLayout) }
-	    updateMemoryDisplayLayout(selectedMemoryDisplayLayout)
+	    layoutComboBox.addActionListener { updateMemoryDisplayLayout(memoryDisplayLayout) }
+	    updateMemoryDisplayLayout(memoryDisplayLayout)
     }
 
 	fun refresh() {
@@ -50,9 +47,6 @@ class MemoryDisplayPanel(
 	    table.font = Font("Monospaced", Font.PLAIN, table.font.size)
 	    table.tableHeader.reorderingAllowed = false
 	    table.autoResizeMode = JTable.AUTO_RESIZE_OFF
-	    table.tableHeader.defaultRenderer = HeaderRenderer(table)
-
-	    tableCellRenderer.horizontalAlignment = JLabel.RIGHT
 
 	    val memoryLayoutPanel = JPanel(FlowLayout(FlowLayout.LEFT))
 	    memoryLayoutPanel.add(JLabel(Translations.getString("antares.memory.layout.selector.name")))
@@ -69,20 +63,30 @@ class MemoryDisplayPanel(
 		scrollPane.setRowHeaderView(rowHeaderTable)
 		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowHeaderTable.tableHeader)
 
-		table.columnModel.columns.asSequence().forEach { it.cellRenderer = tableCellRenderer }
+		table.columnModel.columns.asSequence().forEach {
+			val tableCellRenderer = DefaultTableCellRenderer()
+			tableCellRenderer.horizontalAlignment = memoryDisplayLayout.columnAlignment(it.modelIndex)
+			it.cellRenderer = tableCellRenderer
+		}
+
+		table.tableHeader.defaultRenderer = HeaderRenderer(table)
 	}
 
 	/** Establishes right-aligned column headers.*/
-	private class HeaderRenderer(table: JTable) : TableCellRenderer {
+	private inner class HeaderRenderer(table: JTable) : TableCellRenderer {
 
-		private val renderer: DefaultTableCellRenderer = table.tableHeader.defaultRenderer as DefaultTableCellRenderer
+		private val renderers: MutableList<DefaultTableCellRenderer> = mutableListOf()
 
 		init {
-			renderer.horizontalAlignment = JLabel.RIGHT
+			for (column in 0 until table.model.columnCount) {
+				val renderer = DefaultCellRenderer()
+				renderer.horizontalAlignment = memoryDisplayLayout.columnAlignment(column)
+				renderers.add(renderer)
+			}
 		}
 
 		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
-			return renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
+			return renderers[column].getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
 		}
 	}
 }

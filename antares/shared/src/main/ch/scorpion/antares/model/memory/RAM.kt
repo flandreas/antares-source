@@ -63,7 +63,6 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
     /** ---- [Addressable] interface */
 
-    //override val currentAddress: Int get() = getAddressInput().getIncomingSignal()?.toInt() ?: 0
     override val currentAddress: Int get() = currentSelectedAddress
 
     override val maxAddress: Int get() = getAddressInput().bitWidth.power() - 1
@@ -87,7 +86,9 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
     override fun disassemblyAt(address: Int): String = ""
 
-    /** ---- [Storable] */
+	override fun commentAt(address: Int): String? = memory.readComment(address)
+
+	/** ---- [Storable] */
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
