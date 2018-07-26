@@ -72,7 +72,7 @@ open class DrawableContainerImpl<T: Drawable>(
                 drawableDrawer.process(context, it)
             }
         }
-	    DrawModule.drawLocatableDebugBoundingBox(this, context.g)
+	    DrawModule.drawLocatableDebugBoundingBox(this, context)
         if (useLocation) {
             context.g.translate(-location.x, -location.y)
         }

@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.DrawProperties
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
@@ -65,10 +66,10 @@ object DrawModule : AbstractModule() {
 		}
 	}
 
-	fun drawLocatableDebugBoundingBox(locatable: Locatable, g: Graphics2D, color: Color = DEBUG_BBOX_COLOR) {
+	fun drawLocatableDebugBoundingBox(locatable: Locatable, context: DrawContext, color: Color = DEBUG_BBOX_COLOR) {
 		if (debugGfx) {
-			drawDebugBoundingBox(locatable, g, color)
-			g.fillOval((locatable.location.x - 2).toInt(), (locatable.location.y - 2).toInt(), 4, 4)
+			drawDebugBoundingBox(locatable, context.g, color)
+			context.g.fillOval((locatable.location.x - 2).toInt(), (locatable.location.y - 2).toInt(), 4, 4)
 
 		}
 	}

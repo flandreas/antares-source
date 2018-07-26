@@ -402,7 +402,7 @@ abstract class AbstractVerticeView<T : Vertice>(
             executionInfoLabel.draw(context)
         }
 
-	    DrawModule.drawLocatableDebugBoundingBox(this, context.g)
+	    DrawModule.drawLocatableDebugBoundingBox(this, context)
 
         context.g.color = oldColor
     }
