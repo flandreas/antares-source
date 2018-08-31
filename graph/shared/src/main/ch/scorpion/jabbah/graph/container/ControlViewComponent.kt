@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -98,7 +99,7 @@ class ControlViewComponent(
 
     /** ---- [ActorView] */
 
-    override fun getActorInteractionHandler(): ActorInteractionHandler? = controlView!!.getActorInteractionHandler()
+    override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? = controlView!!.getActorInteractionHandler(context)
 
     override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = controlView!!.getExecutionTooltip(x, y)
 

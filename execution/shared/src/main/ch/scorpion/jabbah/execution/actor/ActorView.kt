@@ -16,7 +16,7 @@ interface ActorView {
      * Returns the [ActorInteractionHandler] that handles user interactions on this [ActorView],
      * or ´null` if this [ActorView] doesn't react to input events during execution.
      */
-    fun getActorInteractionHandler(): ActorInteractionHandler?
+    fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler?
 
     /**
      * Returns a short description of this [ActorView] to be displayed as a tool tip during simulation.
@@ -62,53 +62,60 @@ class ActorInteractionContextImpl(
 	}
 }
 
+/**
+ * A part of an [ActorView] that handles input events.
+ *
+ * All [ActorInteractionHandler] methods return the [ActorInteractionHandler] that should receive the next mouse input
+ * (including this handler itself), or `null` if the next recipient cannot be determined.
+ */
 interface ActorInteractionHandler {
 
-    fun mouseMoved(context: ActorInteractionContext)
+    fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler?
 
-    fun mousePressed(context: ActorInteractionContext)
+    fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler?
 
-    fun mouseDragged(context: ActorInteractionContext)
+    fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler?
 
-    fun mouseReleased(context: ActorInteractionContext)
+    fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler?
 
-    fun mouseClicked(context: ActorInteractionContext)
+    fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler?
 
-    fun keyPressed(context: ActorInteractionContext)
+    fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler?
 }
 
 open class ActorInteractionHandlerAdapter : ActorInteractionHandler {
 
-    override fun mouseMoved(context: ActorInteractionContext) {
-        // empty
+    override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
+        return null
     }
 
-    override fun mousePressed(context: ActorInteractionContext) {
-        // empty
+    override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
+	    return null
     }
 
-    override fun mouseDragged(context: ActorInteractionContext) {
-        // empty
+    override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler? {
+	    return null
     }
 
-    override fun mouseReleased(context: ActorInteractionContext) {
-        // empty
+    override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
+	    return null
     }
 
-    override fun mouseClicked(context: ActorInteractionContext) {
-        // empty
+    override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+	    return null
     }
 
-    override fun keyPressed(context: ActorInteractionContext) {
-        // empty
+    override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
+	    return null
     }
 }
 
 /** An [ActorInteractionHandlerAdapter] that displays [Cursor.HAND] in [mouseMoved].*/
 open class ClickableActorInteractionHandlerAdapter : ActorInteractionHandlerAdapter() {
 
-	override fun mouseMoved(context: ActorInteractionContext) {
+	override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 		context.view.setCursor(Cursor.HAND)
+		return null
 	}
 }
 

@@ -41,4 +41,10 @@ class MathJvm : MathClass() {
 	override fun random(): Double = java.lang.Math.random()
 
 	override fun toDegrees(radians: Double): Double = java.lang.Math.toDegrees(radians)
+
+	override fun ln(a: Double): Double = java.lang.Math.log(a)
+
+	override fun log10(a: Double): Double = java.lang.Math.log10(a)
+
+	override fun power(a: Double, b: Double): Double = java.lang.Math.pow(a, b)
 }

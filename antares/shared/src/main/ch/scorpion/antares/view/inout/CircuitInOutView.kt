@@ -155,7 +155,7 @@ class CircuitInOutView(
 
     /** ---- [ActorView] */
 
-    override fun getActorInteractionHandler(): ActorInteractionHandler? {
+    override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
         if (model!!.portType.isInput) {
             return actorInteractionHandler
         }
@@ -522,24 +522,27 @@ class CircuitInOutView(
      */
     private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
 
-	    override fun mouseMoved(context: ActorInteractionContext) {
+	    override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 		    if (model!!.isToplevel) {
-				super.mouseMoved(context)
+				return super.mouseMoved(context)
 		    }
+		    return null
 	    }
 
-        override fun mousePressed(context: ActorInteractionContext) {
+        override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
             if (!model!!.isToplevel) {
                 eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
-                return
+                return null
             }
 			toggle(context.signalHandler, context.x, context.y)
+	        return null
         }
 
-	    override fun mouseReleased(context: ActorInteractionContext) {
+	    override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 		    if (!toggle) {
 			    toggle(context.signalHandler, context.x, context.y)
 		    }
+		    return null
 	    }
 
 	    private fun toggle(signalHandler: SignalHandler, x: Double, y: Double) {
@@ -566,7 +569,7 @@ class CircuitInOutView(
 		    }
 	    }
 
-        override fun keyPressed(context: ActorInteractionContext) {
+        override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
             if (numberView!!.focusIndex != null) {
                 LOG.debug("CircuitInOut: keyPressed '${context.keyEvent!!.key.toChar()}'")
 
@@ -592,6 +595,7 @@ class CircuitInOutView(
                     }
                 }
             }
+            return null
         }
 
 	    private fun checkTopLevelKey(): Boolean {

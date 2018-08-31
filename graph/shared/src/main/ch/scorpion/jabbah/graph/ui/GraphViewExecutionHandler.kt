@@ -1,17 +1,16 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.view.TooltipHandler
-import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.FocusManager
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
-import ch.scorpion.jabbah.execution.actor.ActorInteractionContextImpl
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -42,6 +41,10 @@ class GraphViewExecutionHandler(
         eventBus: EventBus
 ) {
 
+	companion object {
+		private val LOG by logger(GraphViewExecutionHandler::class)
+	}
+
     /** Handles [MouseEvent]s on [view] during execution.*/
     private val mouseHandler = MouseHandler()
 
@@ -59,13 +62,12 @@ class GraphViewExecutionHandler(
 		view = view
 	)
 
+	/** The target [ActorInteractionHandler] to which the next event is forwarded during complex interactions.*/
+	private var target: ActorInteractionHandler? = null
+
     /** Returns the [ActorView] in [view] at the specified location, if any.*/
     private fun getActorViewAt(x: Double, y: Double): ActorView? {
-        val drawable = view.drawing.getDrawableAt(x, y)
-        if (drawable != null && drawable is ActorView) {
-            return drawable
-        }
-        return null
+	    return view.getInnerDrawableAt(x, y) { it is ActorView } as ActorView?
     }
 
     init {
@@ -102,15 +104,21 @@ class GraphViewExecutionHandler(
         override fun mouseMoved(e: MouseEvent) {
             val x = view.viewToModelX(e.x.toDouble())
             val y = view.viewToModelY(e.y.toDouble())
+	        val context = mouseEventContext(e, x, y)
 
-            val actorView = getActorViewAt(x, y)
-            tooltipHandler.handle(view, view.drawing, x, y)
+	        if (target != null) {
+		        target = target!!.mouseMoved(context)
+		        if (target != null) {
+			        return
+		        }
+	        }
 
-            if (actorView?.getActorInteractionHandler() != null) {
-	            actorView.getActorInteractionHandler()!!.mouseMoved(mouseEventContext(e, x, y))
-            } else {
-                view.setCursor(Cursor.DEFAULT)
-            }
+	        val actorViewAt = getActorViewAt(x, y)
+	        target = actorViewAt?.getActorInteractionHandler(context)?.mouseMoved(context)
+	        if (actorViewAt == null) {
+		        view.setCursor(Cursor.DEFAULT)
+	        }
+	        tooltipHandler.handle(view, view.drawing, x, y)
         }
 
         override fun mousePressed(e: MouseEvent) {
@@ -122,17 +130,19 @@ class GraphViewExecutionHandler(
 
             val x = view.viewToModelX(e.x.toDouble())
             val y = view.viewToModelY(e.y.toDouble())
+	        val context = mouseEventContext(e, x, y)
 
-	        getActorViewAt(x, y)?.let {
-		        if (e.button == Button.BUTTON1) {
-			        if (it.getActorInteractionHandler() != null) {
-				        if (it is Component && it.isFocusable) {
-					        it.requestFocus()
-				        }
-				        it.getActorInteractionHandler()!!.mousePressed(mouseEventContext(e, x, y))
-				        view.drawing.validate()
-			        }
+	        if (target != null) {
+		        target = target?.mousePressed(context)
+		        if (target != null) {
+			        return
 		        }
+	        }
+
+	        val actorViewAt = getActorViewAt(x, y)
+	        target = actorViewAt?.getActorInteractionHandler(context)?.mousePressed(context)
+	        if (actorViewAt == null) {
+		        view.setCursor(Cursor.DEFAULT)
 	        }
         }
 
@@ -141,14 +151,22 @@ class GraphViewExecutionHandler(
                 return
             }
 
-            val x = view.viewToModelX(e.x.toDouble())
-            val y = view.viewToModelY(e.y.toDouble())
+	        val x = view.viewToModelX(e.x.toDouble())
+	        val y = view.viewToModelY(e.y.toDouble())
+	        val context = mouseEventContext(e, x, y)
 
-            val actorView = getActorViewAt(x, y)
-            if (actorView?.getActorInteractionHandler() != null) {
-                actorView.getActorInteractionHandler()!!.mouseDragged(mouseEventContext(e, x, y))
-                view.drawing.validate()
-            }
+	        if (target != null) {
+		        target = target?.mouseDragged(context)
+		        if (target != null) {
+			        return
+		        }
+	        }
+
+	        val actorViewAt = getActorViewAt(x, y)
+	        target = actorViewAt?.getActorInteractionHandler(context)?.mouseDragged(context)
+	        if (actorViewAt == null) {
+		        view.setCursor(Cursor.DEFAULT)
+	        }
         }
 
         override fun mouseReleased(e: MouseEvent) {
@@ -158,12 +176,13 @@ class GraphViewExecutionHandler(
 
             val x = view.viewToModelX(e.x.toDouble())
             val y = view.viewToModelY(e.y.toDouble())
+	        val context = mouseEventContext(e, x, y)
 
-            val actorView = getActorViewAt(x, y)
-            if (actorView?.getActorInteractionHandler() != null) {
-                actorView.getActorInteractionHandler()!!.mouseReleased(mouseEventContext(e, x, y))
-                view.drawing.validate()
-            }
+	        if (target != null) {
+		        target = target?.mouseReleased(context)
+	        }
+	        target = null
+	        view.setCursor(Cursor.DEFAULT)
         }
 
         override fun mouseClicked(e: MouseEvent) {
@@ -173,12 +192,15 @@ class GraphViewExecutionHandler(
 
             val x = view.viewToModelX(e.x.toDouble())
             val y = view.viewToModelY(e.y.toDouble())
+	        val context = mouseEventContext(e, x, y)
 
-            val actorView = getActorViewAt(x, y)
-            if (actorView?.getActorInteractionHandler() != null) {
-                actorView.getActorInteractionHandler()!!.mouseClicked(mouseEventContext(e, x, y))
-                view.drawing.validate()
-            }
+	        if (target != null) {
+		        target = target?.mouseClicked(context)
+		        return
+	        }
+
+	        val actorViewAt = getActorViewAt(x, y)
+	        target = actorViewAt?.getActorInteractionHandler(context)?.mouseClicked(context)
         }
 
 	    private fun mouseEventContext(e: MouseEvent, x: Double, y: Double): ActorInteractionContext {
@@ -200,7 +222,8 @@ class GraphViewExecutionHandler(
                 }
             }
             if (FocusManager.focusOwner is ActorView) {
-                (FocusManager.focusOwner as ActorView).getActorInteractionHandler()?.keyPressed(keyEventContext(e))
+	            val context = keyEventContext(e)
+                (FocusManager.focusOwner as ActorView).getActorInteractionHandler(context)?.keyPressed(context)
             }
         }
 

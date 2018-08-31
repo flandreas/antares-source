@@ -308,7 +308,7 @@ class RAMView(
 
     /** ---- [ActorView] */
 
-    override fun getActorInteractionHandler(): ActorInteractionHandler? {
+    override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
         return actorInteractionHandler
     }
 
@@ -397,10 +397,11 @@ class RAMView(
     }
 
     private inner class DoubleClickActorHandler : ClickableActorInteractionHandlerAdapter() {
-        override fun mouseClicked(context: ActorInteractionContext) {
+        override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
             if (context.mouseEvent!!.clickCount == 2) {
                 requestOpenMemoryContents(context.mouseEvent!!, true)
             }
+	        return null
         }
     }
 }

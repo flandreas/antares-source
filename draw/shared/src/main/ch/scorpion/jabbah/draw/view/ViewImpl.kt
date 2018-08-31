@@ -105,6 +105,18 @@ open class ViewImpl<C: InputEventContext>(
         //repaint()
     }
 
+	override fun getInnerDrawableAt(x: Double, y: Double, condition: (Drawable) -> Boolean): Drawable? {
+		for (drawable in drawables) {
+			if (drawable is DrawableContainer<*>) {
+				val innerDrawable = drawable.getDrawableAt(x, y)
+				if (innerDrawable != null && condition.invoke(innerDrawable)) {
+					return innerDrawable
+				}
+			}
+		}
+		return null
+	}
+
     /** ---- Geometry */
 
     override val width: Int get() = canvas.dimension.width.toInt()

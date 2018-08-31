@@ -167,7 +167,7 @@ class SwitchView(
 
     /** ---- [ActorView] interface */
 
-    override fun getActorInteractionHandler(): ActorInteractionHandler? {
+    override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
         return actorInteractionHandler
     }
 
@@ -333,24 +333,27 @@ class SwitchView(
 
     private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
 
-        override fun mousePressed(context: ActorInteractionContext) {
+        override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
             model!!.toggle(context.signalHandler)
 	        context.mouseEvent?.consume()
+	        return null
         }
 
-        override fun mouseReleased(context: ActorInteractionContext) {
+        override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
             if (!toggle) {
                 model!!.toggle(context.signalHandler)
 	            context.mouseEvent?.consume()
             }
+	        return null
         }
 
-        override fun keyPressed(context: ActorInteractionContext) {
+        override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
             when(context.keyEvent?.key) {
                 '0'.toInt() -> model!!.setOn(context.signalHandler, false)
                 '1'.toInt() -> model!!.setOn(context.signalHandler, true)
                 '\n'.toInt() -> model!!.toggle(context.signalHandler)
             }
+	        return null
         }
     }
 }

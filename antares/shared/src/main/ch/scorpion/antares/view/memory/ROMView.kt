@@ -298,7 +298,7 @@ class ROMView(
 
     /** ---- [ActorView] */
 
-    override fun getActorInteractionHandler(): ActorInteractionHandler? {
+    override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
         return actorInteractionHandler
     }
 
@@ -382,10 +382,11 @@ class ROMView(
     }
 
     private inner class DoubleClickActorHandler : ClickableActorInteractionHandlerAdapter() {
-        override fun mouseClicked(context: ActorInteractionContext) {
+        override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
             if (context.mouseEvent!!.clickCount == 2) {
                 requestOpenMemoryContents(context.mouseEvent!!, true)
             }
+	        return null
         }
     }
 }

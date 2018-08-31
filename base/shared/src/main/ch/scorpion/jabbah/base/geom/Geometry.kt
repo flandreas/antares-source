@@ -4,16 +4,35 @@ import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.MathClass
 
 /**
- * A utility class providing geometry methods.
+ * A utility object providing geometry methods.
  */
 object Geometry {
 
-    /** Calculate the angle between two lines in radians.*/
+	/** Wraps an angle in radians to the range 0 .. 2*PI.*/
+	fun wrapAngle(angle: Double): Double {
+		if (angle < 0) {
+			return MathClass.TWO_PI - Math.abs(angle % MathClass.TWO_PI)
+		}
+		return angle % MathClass.TWO_PI
+	}
+
+	/** Determines whether the shortest rotation from one angle to another angle is a clockwise rotation.*/
+	fun isClockwiseAngleChange(angle1: Double, angle2: Double): Boolean {
+		return angle1 != angle2 && wrapAngle(angle1 - angle2) <= MathClass.PI
+	}
+
+	/**
+	 * Calculates the angle (in radians, counter-clockwise) between the horizontal x-axis
+	 * and the line defined by the two specified points.
+	 */
     fun angle(p1: Point2D, p2: Point2D): Double {
         return angle(p1.x, p1.y, p2.x, p2.y)
     }
 
-    /** Calculate the angle between two lines in radians.*/
+	/**
+	 * Calculates the angle (in radians, counter-clockwise) between the horizontal x-axis
+	 * and the line defined by the two specified points.
+	 */
     fun angle(x1: Double, y1: Double, x2: Double, y2: Double): Double {
         val fx = if (x2 > x1) 1 else -1
         val fy = if (y2 > y1) -1 else 1
@@ -23,21 +42,21 @@ object Geometry {
             return 0.0
         }
 
-        if (Math.abs(x2 - x1) < 0.0001) {
-            if (fy == 1)
-                angle = MathClass.PI / 2
-            else
-                angle = 3 * MathClass.PI / 2
+        if (Math.abs(x2 - x1) <= MathClass.SIGMA) {
+	        angle = if (fy == 1)
+		        MathClass.PI_2
+	        else
+		        3 * MathClass.PI_2
         } else {
             angle = Math.atan(Math.abs(y2 - y1) / Math.abs(x2 - x1))
             if (fx == 1) {
                 if (fy == -1)
                     angle = 2 * MathClass.PI - angle
             } else {
-                if (fy == 1)
-                    angle = MathClass.PI - angle
-                else
-                    angle = MathClass.PI + angle
+	            angle = if (fy == 1)
+		            MathClass.PI - angle
+	            else
+		            MathClass.PI + angle
             }
         }
         return angle

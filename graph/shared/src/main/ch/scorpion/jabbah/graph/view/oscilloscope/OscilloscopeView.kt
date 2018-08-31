@@ -152,7 +152,7 @@ class OscilloscopeView(
         container.draw(context)
     }
 
-    override fun getActorInteractionHandler(): ActorInteractionHandler? {
+    override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
         return actorHandler
     }
 
@@ -418,24 +418,28 @@ class OscilloscopeView(
         private var startLocation = Point2D()
         private var startScale: Double = 1.0
 
-        override fun mouseClicked(context: ActorInteractionContext) {
+        override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
             if (context.mouseEvent!!.clickCount == 2) {
                 timelineScale = 1.0
             }
+	        return null
         }
 
-        override fun mousePressed(context: ActorInteractionContext) {
+        override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
             startLocation = Point2D(x, y).subtract(container.location)
             startScale = timelineScale
+	        return null
         }
 
-        override fun mouseDragged(context: ActorInteractionContext) {
+        override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler? {
             val newLocation = Point2D(x, y).subtract(container.location)
             if (scaleRow.contains(newLocation)) {
                 val dist = startLocation.subtract(newLocation).x
                 LOG.debug("OscilloscopeView: actor mouseDragged, dx = $dist")
                 timelineScale = Math.max(0.1, startScale + Math.floor(10 * dist / 50) / 10)
+	            return this
             }
+	        return null
         }
     }
 }

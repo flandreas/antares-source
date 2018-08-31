@@ -220,4 +220,10 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
     /** Replaces `oldDrawable` by `newDrawable`.*/
     fun replaceDrawable(oldDrawable: Drawable, newDrawable: Drawable)
+
+	/**
+	 * Returns the first [Drawable] contained in the top-level [Drawable]s of this [View]
+	 * that fulfills the specified condition.
+	 */
+	fun getInnerDrawableAt(x: Double, y: Double, condition: (Drawable) -> Boolean): Drawable?
 }

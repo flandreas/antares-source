@@ -340,7 +340,7 @@ class SubGraphVerticeViewImpl(
 
     /** ---- [ActorView] */
 
-    override fun getActorInteractionHandler(): ActorInteractionHandler? {
+    override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
         return executionInteractionHandler
     }
 
@@ -452,31 +452,32 @@ class SubGraphVerticeViewImpl(
     }
 
     private inner class DoubleClickExecutionHandler: ClickableActorInteractionHandlerAdapter() {
-        override fun mousePressed(context: ActorInteractionContext) {
+        override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
 	        val actorView = getActorViewAt(context.x, context.y)
-            if (actorView?.getActorInteractionHandler() != null) {
-                actorView.getActorInteractionHandler()!!.mousePressed(context.withXY(context.x - location.x, context.y - location.y))
+            if (actorView?.getActorInteractionHandler(context) != null) {
+                return actorView.getActorInteractionHandler(context)!!.mousePressed(context.withXY(context.x - location.x, context.y - location.y))
             } else {
-                super.mousePressed(context)
+                return super.mousePressed(context)
             }
         }
-        override fun mouseReleased(context: ActorInteractionContext) {
+        override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 	        val actorView = getActorViewAt(context.x, context.y)
-	        if (actorView?.getActorInteractionHandler() != null) {
-                actorView.getActorInteractionHandler()!!.mouseReleased(context.withXY(context.x - location.x, context.y - location.y))
+	        if (actorView?.getActorInteractionHandler(context) != null) {
+                return actorView.getActorInteractionHandler(context)!!.mouseReleased(context.withXY(context.x - location.x, context.y - location.y))
             } else {
-                super.mouseReleased(context)
+                return super.mouseReleased(context)
             }
         }
 
-        override fun mouseClicked(context: ActorInteractionContext) {
+        override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
 	        val actorView = getActorViewAt(context.x, context.y)
-	        if (actorView?.getActorInteractionHandler() != null) {
-		        actorView.getActorInteractionHandler()!!.mouseClicked(context.withXY(context.x - location.x, context.y - location.y))
+	        if (actorView?.getActorInteractionHandler(context) != null) {
+		        return actorView.getActorInteractionHandler(context)!!.mouseClicked(context.withXY(context.x - location.x, context.y - location.y))
 	        } else {
 		        if (context.mouseEvent!!.clickCount == 2) {
 			        requestOpenSubGraph(context.mouseEvent!!)
 		        }
+		        return null
 	        }
         }
     }

@@ -9,7 +9,11 @@ open class MathClass {
 
 	companion object {
 		const val PI: Double = 3.14159265358979323846
+		const val TWO_PI: Double = 2.0 * PI
+		const val PI_2: Double = PI / 2.0
+		const val PI_4: Double = PI / 4.0
 		const val E: Double = 2.7182818284590452354
+		const val SIGMA: Double = 0.0000001
 	}
 
 	open fun min(a: Double, b: Double): Double = throw UnsupportedOperationException()
@@ -28,6 +32,11 @@ open class MathClass {
 
 	open fun abs(a: Int): Int = throw UnsupportedOperationException()
 
+	/**
+	 * Returns the signum function of the argument; zero if the argument
+	 * is zero, 1.0 if the argument is greater than zero, -1.0 if the
+	 * argument is less than zero.
+	 */
 	open fun signum(a: Double): Double = throw UnsupportedOperationException()
 
 	open fun floor(a: Double): Double = throw UnsupportedOperationException()
@@ -47,6 +56,14 @@ open class MathClass {
 	open fun random(): Double = throw UnsupportedOperationException()
 
 	open fun toDegrees(radians: Double): Double = throw UnsupportedOperationException()
+
+	open fun log10(a: Double): Double = throw UnsupportedOperationException()
+
+	/** Returns the natural logarithm (base e) of `a`.*/
+	open fun ln(a: Double): Double = throw UnsupportedOperationException()
+
+	/** Returns the value of `a` raised to the power of `b`.*/
+	open fun power(a: Double, b: Double): Double = throw UnsupportedOperationException()
 
 	fun random(min: Double, max: Double) = random() * (max - min) + min
 

@@ -43,4 +43,5 @@ class MathJs : MathClass() {
 	override fun random(): Double = kotlin.js.Math.random();
 
 	override fun toDegrees(radians: Double): Double = radians * 180.0 / kotlin.math.PI
+
 }

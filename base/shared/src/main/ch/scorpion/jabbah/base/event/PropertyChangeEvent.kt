@@ -36,4 +36,17 @@ class PropertyChangeSupport<T: Any>(val source: Any) {
     fun fire(name: String, oldValue: T?, newValue: T?) = fire(PropertyChangeEvent(source, name, oldValue, newValue))
 }
 
+abstract class PropertyOwner<T: Any> {
+
+	protected val pcSupport = PropertyChangeSupport<T>(this)
+
+	fun addPropertyChangeListener(l: PropertyChangeListener<T>) {
+		pcSupport.add(l)
+	}
+
+	fun removePropertyChangeListener(l: PropertyChangeListener<T>) {
+		pcSupport.remove(l)
+	}
+}
+
 

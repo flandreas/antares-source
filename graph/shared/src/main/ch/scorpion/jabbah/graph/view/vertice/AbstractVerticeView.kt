@@ -277,6 +277,17 @@ abstract class AbstractVerticeView<T : Vertice>(
 
     /** ---- [ActorView] interface */
 
+    protected open inner class DefaultActionInteractionHandler :  ActorInteractionHandlerAdapter() {
+	    override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+		    if (context.mouseEvent!!.clickCount == 2) {
+			    cannotOpenMsg(this@AbstractVerticeView)
+		    }
+		    return null
+	    }
+    }
+
+    private val _actorInteractionHandler: ActorInteractionHandler by lazy { DefaultActionInteractionHandler() }
+
     override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
         val portTooltip = getPortViewAtConnectionPoint(x, y)?.getExecutionTooltip(x, y)
         if (portTooltip != null) {
@@ -286,14 +297,8 @@ abstract class AbstractVerticeView<T : Vertice>(
         return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, plainBoundingBox.centerX, plainBoundingBox.maxY) else null
     }
 
-    override fun getActorInteractionHandler(): ActorInteractionHandler? {
-        return object : ActorInteractionHandlerAdapter() {
-            override fun mouseClicked(context: ActorInteractionContext) {
-                if (context.mouseEvent!!.clickCount == 2) {
-                    cannotOpenMsg(this@AbstractVerticeView)
-                }
-            }
-        }
+    override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
+        return _actorInteractionHandler
     }
 
     /** ---- [AbstractVerticeView] */
