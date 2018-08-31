@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 class IconButton(
         private val icon: Icon,
         private val action: () -> Unit,
-        location: Point2D = Point2D(),
+        location: Point2D = Point2D.ZERO,
         var tooltipKey: String? = null,
         private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangle(location.x, location.y, icon.dim.width, icon.dim.height) {

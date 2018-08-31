@@ -25,7 +25,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class SimpleTextComponent(
         text: String = "",
-        location: Point2D = Point2D(),
+        location: Point2D = Point2D.ZERO,
         styleType: StyleType = StyleType.FIGURE,
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
         private val textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory
@@ -129,6 +129,6 @@ class SimpleTextComponent(
     }
 
     private fun updateMultilineText() {
-        multilineText = MultilineText(text, font, (width.toInt() - 2 * INSET_X).toDouble(), Point2D(), textRenderInfoFactory)
+        multilineText = MultilineText(text, font, (width.toInt() - 2 * INSET_X).toDouble(), Point2D.ZERO, textRenderInfoFactory)
     }
 }

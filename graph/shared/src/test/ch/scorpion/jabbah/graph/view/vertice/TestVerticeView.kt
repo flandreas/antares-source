@@ -16,7 +16,7 @@ class TestVerticeView(
         private val name: String = "",
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
         vertice: TestVertice = TestVertice(),
-        loc: Point2D = Point2D(),
+        loc: Point2D = Point2D.ZERO,
         private val inputDirection: Direction = Direction.WEST,
         private val outputDirection: Direction = Direction.EAST,
         private val portViewLength: Int = 0

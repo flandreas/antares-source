@@ -113,7 +113,7 @@ open class BoxGateView<T : Vertice>(
                 font = font,
                 horizontalAlignment = HorizontalAlignment.CENTER,
                 verticalAlignment = VerticalAlignment.CENTER,
-                location = Point2D(),
+                location = Point2D.ZERO,
                 rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL)
     } else {
         null

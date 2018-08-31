@@ -63,7 +63,7 @@ class OscilloscopeProbeVerticeView<T: Any>(
 
     private val handler = Handler()
 
-    private var moveLastLocation = Point2D()
+    private var moveLastLocation = Point2D.ZERO
 
     /** ---- [Component] interface */
 
@@ -154,7 +154,7 @@ class OscilloscopeProbeVerticeView<T: Any>(
             // Snap
             val dx = context.x - moveLastLocation.x
             val dy = context.y - moveLastLocation.y
-            var offset = Point2D()
+            var offset = Point2D.ZERO
             if (context.editor.snapManager.snapEnabled) {
                 offset = context.editor.snapManager.snap(this@OscilloscopeProbeVerticeView, dx, dy)
             }

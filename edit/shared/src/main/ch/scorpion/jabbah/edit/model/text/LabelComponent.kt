@@ -31,7 +31,7 @@ class LabelComponent(
             font = LabelComponent.DEFAULT_FONT,
             horizontalAlignment = HorizontalAlignment.CENTER,
             verticalAlignment = VerticalAlignment.CENTER,
-            location = Point2D())
+            location = Point2D.ZERO)
 ) : AbstractRectangularComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider), TextComponent, Transparent {
 
     companion object {

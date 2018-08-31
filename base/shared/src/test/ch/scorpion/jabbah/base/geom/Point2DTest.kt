@@ -25,7 +25,7 @@ class Point2DTest {
 
     @Test
     fun shouldConstructDefault() {
-        assertEquals(Point2D(0.0, 0.0), Point2D())
+        assertEquals(Point2D(0.0, 0.0), Point2D.ZERO)
     }
 
     @Test

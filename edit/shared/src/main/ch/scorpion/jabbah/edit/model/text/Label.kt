@@ -27,7 +27,7 @@ class Label(
         var color: Color? = null,
         horizontalAlignment: HorizontalAlignment = DEFAULT_HORIZONTAL_ALIGNMENT,
         verticalAlignment: VerticalAlignment = DEFAULT_VERTICAL_ALIGNMENT,
-        location:Point2D = Point2D(),
+        location:Point2D = Point2D.ZERO,
         rotationDisplayStrategy: RotationDisplayStrategy = Label.RotationDisplayStrategy.IGNORE,
         val rotation: Rotation = Rotation.R0
 ) : AbstractDrawable() {
@@ -117,7 +117,7 @@ class Label(
     private val bounds = Rectangle2D()
 
     /** The point at which the text's baseline starts relative to the location.*/
-    private var baselinePoint = Point2D()
+    private var baselinePoint = Point2D.ZERO
 
     init {
         displayableText = calculateDisplayableText()

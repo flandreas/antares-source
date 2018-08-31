@@ -338,7 +338,7 @@ data class AffineTransformImpl (
             APPLY_SCALE -> Point2D(x * m00, y * m11)
             APPLY_TRANSLATE -> Point2D(x + m02, y + m12)
             APPLY_IDENTITY -> Point2D(x, y)
-            else -> Point2D()
+            else -> Point2D.ZERO
         }
     }
 
@@ -400,7 +400,7 @@ data class AffineTransformImpl (
             APPLY_IDENTITY -> {
                 Point2D(x, y)
             }
-            else -> return Point2D()
+            else -> return Point2D.ZERO
         }
     }
 

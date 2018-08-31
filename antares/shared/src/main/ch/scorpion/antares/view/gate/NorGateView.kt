@@ -23,7 +23,7 @@ class NorGateView(
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
-                TruthTableView(NorGate.TRUTH_TABLE, null), Point2D())
+                TruthTableView(NorGate.TRUTH_TABLE, null), Point2D.ZERO)
     }
 
     override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {

@@ -81,7 +81,7 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
     /** ---- [Locatable] interface  */
 
     /** Holds the absolute location of this [AbstractRectangularVerticeView], which must not necessarily be the upper-left corner. */
-    override var location: Point2D = Point2D()
+    override var location: Point2D = Point2D.ZERO
         set(value) {
             invalidate()
             field = value

@@ -50,7 +50,7 @@ open class NodeViewImpl<T: Any>(
 
     /** ---- [Locatable] interface */
 
-    override var location: Point2D = Point2D()
+    override var location: Point2D = Point2D.ZERO
         set(value) {
             field = value
             updateGeometry()

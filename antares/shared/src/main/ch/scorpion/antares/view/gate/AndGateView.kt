@@ -35,7 +35,7 @@ class AndGateView(
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
-                TruthTableView(AndGate.TRUTH_TABLE, null), Point2D())
+                TruthTableView(AndGate.TRUTH_TABLE, null), Point2D.ZERO)
     }
 
     var dataPort: InputPortNumber = InputPortNumber.NONE

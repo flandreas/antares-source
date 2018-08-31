@@ -33,7 +33,7 @@ class KnobView(
 	private val model: KnobModel = KnobModel(initialValue = 0),
 	private val unit: String = "",
 	private val valueChangeHandler: (Long) -> Unit = {},
-	location: Point2D = Point2D()
+	location: Point2D = Point2D.ZERO
 ) : AbstractRectangle(location.x - OUTER_SIZE / 2, location.y - OUTER_SIZE / 2, OUTER_SIZE, OUTER_SIZE), ActorView {
 
 	companion object {

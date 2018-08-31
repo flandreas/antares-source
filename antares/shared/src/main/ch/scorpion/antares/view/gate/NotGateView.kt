@@ -23,7 +23,7 @@ class NotGateView(
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
-                TruthTableView(NotGate.TRUTH_TABLE, null), Point2D())
+                TruthTableView(NotGate.TRUTH_TABLE, null), Point2D.ZERO)
     }
 
     init {

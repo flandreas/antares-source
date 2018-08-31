@@ -109,13 +109,13 @@ class OrthoPolyline(points: List<Point2D>) {
         }
 
         val angle1 = Geometry.angle(
-                Point2D(),
+                Point2D.ZERO,
                 Geometry.normal(
                         _points[i - 1].x, _points[i - 1].y,
                         _points[i].x, _points[i].y))
 
         val angle2 = Geometry.angle(
-                Point2D(),
+                Point2D.ZERO,
                 Geometry.normal(
                         _points[i].x, points[i].y,
                         _points[i + 1].x, _points[i + 1].y))

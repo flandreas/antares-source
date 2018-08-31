@@ -47,7 +47,7 @@ class QuadCurveHandleSelectionModel(c: QuadCurveComponent) : AbstractHandleSelec
 	}
 
 	private inner class QuadCurveEventHandler : EventHandler() {
-		private var oldLocation = Point2D()
+		private var oldLocation = Point2D.ZERO
 
 		override fun dragHandleBegin(view: View<*>) {
 			val index = getIndexOf(focusHandle!!)

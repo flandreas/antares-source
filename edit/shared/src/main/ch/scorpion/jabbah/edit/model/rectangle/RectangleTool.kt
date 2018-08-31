@@ -49,7 +49,7 @@ class RectangleTool<T : RectangularComponent>(
     private var addedComponent by Delegates.notNull<Component>()
 
     /** The location where the mouse is initially pressed.*/
-    private var anchorLocation = Point2D()
+    private var anchorLocation = Point2D.ZERO
 
     /** ---- [Tool] interface */
 

@@ -43,8 +43,8 @@ open class GraphViewBuilder<T: Any>() {
 
     fun connectOpen(from: VerticeView<out Vertice>, toLocation: Point2D): EdgeView<T> {
         val edgeView = GraphViewModule.getEdgeViewFactory<T>().createEdgeView()
-        edgeView.addSegmentPoint(Point2D())
-        edgeView.addSegmentPoint(Point2D())
+        edgeView.addSegmentPoint(Point2D.ZERO)
+        edgeView.addSegmentPoint(Point2D.ZERO)
         graphView.add(edgeView)
         GraphViewModule.graphViewConnectService.connectToOrigin(edgeView, from, from.vertice.getPort())
         edgeView.moveDestinationEndPoint(toLocation.x, toLocation.y)

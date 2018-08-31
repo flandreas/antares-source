@@ -20,7 +20,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
  * Standard implementation of the [DrawableContainer] interface.
  */
 open class DrawableContainerImpl<T: Drawable>(
-        override var location: Point2D = Point2D(),
+        override var location: Point2D = Point2D.ZERO,
         val useLocation: Boolean = false
 ) : AbstractDrawable(), DrawableContainer<T>, Locatable {
 

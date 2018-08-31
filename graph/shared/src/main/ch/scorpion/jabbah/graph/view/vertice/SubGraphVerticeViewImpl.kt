@@ -71,7 +71,7 @@ class SubGraphVerticeViewImpl(
 
     private val _boundingBox = Rectangle2D()
 
-    override var location: Point2D = Point2D()
+    override var location: Point2D = Point2D.ZERO
         set(value) {
             invalidate()
             field = value

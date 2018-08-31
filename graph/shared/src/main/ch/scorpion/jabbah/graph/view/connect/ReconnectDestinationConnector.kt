@@ -41,7 +41,7 @@ class ReconnectDestinationConnector(
 	 * The location where the mouse was pressed. Used to rollback the unconnect action if the user
 	 * didn't drag the mouse far enough, assuming that he clicked accidentally.
 	 */
-    private var pressLocation: Point2D = Point2D()
+    private var pressLocation: Point2D = Point2D.ZERO
 
     /** ---- [InputEventHandler] */
 

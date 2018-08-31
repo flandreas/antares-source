@@ -23,7 +23,7 @@ class NandGateView(
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
-                TruthTableView(NandGate.TRUTH_TABLE, null), Point2D())
+                TruthTableView(NandGate.TRUTH_TABLE, null), Point2D.ZERO)
     }
 
     init {

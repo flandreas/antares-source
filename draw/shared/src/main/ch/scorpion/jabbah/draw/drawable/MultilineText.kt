@@ -20,7 +20,7 @@ class MultilineText(
         private val text: String,
         private val font: Font,
         private val maxWidth: Double,
-        override var location: Point2D = Point2D(),
+        override var location: Point2D = Point2D.ZERO,
         textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory,
         private val asHtml: Boolean = false
 ) : AbstractRectangle(), Locatable {

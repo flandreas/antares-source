@@ -148,7 +148,7 @@ open class EditorImpl(
 
         private var isDragging = false
 
-        private var pressedLocation = Point2D()
+        private var pressedLocation = Point2D.ZERO
 
         override fun mouseMoved(e: MouseEvent) {
             currentTool.mouseMoved(e, view.viewToModelX(e.x.toDouble()), view.viewToModelY(e.y.toDouble()))

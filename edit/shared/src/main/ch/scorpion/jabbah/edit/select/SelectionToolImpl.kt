@@ -36,10 +36,10 @@ class SelectionToolImpl(
     private var movedReferenceComponent: Component? = null
 
     /** The location of [movedReferenceComponent] before moving it. */
-    private var moveStartLocation = Point2D()
+    private var moveStartLocation = Point2D.ZERO
 
     /** Stores the location of [movedReferenceComponent] before the last drag operation.*/
-    private var moveLastLocation = Point2D()
+    private var moveLastLocation = Point2D.ZERO
 
     /** Support for snapping multiple [Component]s while being moved. Initialized when starting to drag.*/
     private var multiComponentSnappable: MultiComponentSnappable? = null
@@ -158,7 +158,7 @@ class SelectionToolImpl(
         val dx = x - moveLastLocation.x
         val dy = y - moveLastLocation.y
         val selection = editor.view.selectionManager.selection
-        var offset = Point2D()
+        var offset = Point2D.ZERO
 
         if (editor.snapManager.snapEnabled) {
             if (selection.size > 1) {

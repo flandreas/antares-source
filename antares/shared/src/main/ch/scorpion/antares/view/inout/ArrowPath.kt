@@ -30,8 +30,8 @@ class ArrowPath(
 
         class Builder(val orientation: Direction, val contentDimension: Dimension2D) {
             private var path = System.get().createPath()
-            private var contentLocation: Point2D = Point2D()
-            private var tailLocation: Point2D = Point2D()
+            private var contentLocation: Point2D = Point2D.ZERO
+            private var tailLocation: Point2D = Point2D.ZERO
 
             fun build(inout: Boolean): ArrowPath {
                 when(orientation) {

@@ -18,7 +18,7 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
     constructor(editor: Editor): this(editor, BaseModule.eventBus)
 
     private val LOG by logger(SnapManagerImpl::class)
-    private val ZERO_OFFSET = Point2D()
+    private val ZERO_OFFSET = Point2D.ZERO
 
     /** The [Snapper]s that are orchestrated by this [SnapManager]. The [Snapper] at index 0 gets involved first.*/
     private val snappers: MutableList<Snapper> = mutableListOf<Snapper>()
@@ -196,7 +196,7 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 
     override fun snap(snappable: Snappable, dx: Double, dy: Double): Point2D {
         if (!snapEnabled) {
-            return Point2D()
+            return Point2D.ZERO
         }
 
         var snapDX = dx

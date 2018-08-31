@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
  */
 abstract class AbstractRectangularUnzoomable(
         halfSize: Double,
-        location: Point2D = Point2D()
+        location: Point2D = Point2D.ZERO
 ) : AbstractDrawable(), Unzoomable {
 
     override var zoomPan: ZoomPan? = ZoomPan()

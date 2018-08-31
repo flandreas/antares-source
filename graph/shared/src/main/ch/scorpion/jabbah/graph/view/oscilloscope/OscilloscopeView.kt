@@ -87,7 +87,7 @@ class OscilloscopeView(
 
     private val rows = mutableListOf<RowView>()
 
-    private val scaleRow = ScaleRow(Point2D())
+    private val scaleRow = ScaleRow(Point2D.ZERO)
 
     private val refColorSequence = referenceColorSequenceProvider.provide()
 
@@ -415,7 +415,7 @@ class OscilloscopeView(
 
     private inner class ActorHandler : ClickableActorInteractionHandlerAdapter() {
 
-        private var startLocation = Point2D()
+        private var startLocation = Point2D.ZERO
         private var startScale: Double = 1.0
 
         override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {

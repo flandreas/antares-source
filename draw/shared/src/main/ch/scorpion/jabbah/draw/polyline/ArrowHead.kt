@@ -38,10 +38,10 @@ class ArrowHead(
     val LOG by logger(ArrowHead::class)
 
     /** Holds the location of the arrow head peek.*/
-    private var location = Point2D()
+    private var location = Point2D.ZERO
 
     /** Holds the location at which the attached [Polyline] segment should end.*/
-    private var lineEnd = Point2D()
+    private var lineEnd = Point2D.ZERO
 
     /** Holds the rotation angle in radians.*/
     private var rotation: Double = 0.0

@@ -193,7 +193,7 @@ class NavigationStackView(
                 verticalAlignment = VerticalAlignment.CENTER,
                 location = Point2D(path.boundingBox.centerX, path.boundingBox.centerY))
 
-        var location: Point2D = Point2D()
+        var location: Point2D = Point2D.ZERO
 
         var isHover: Boolean = false
 

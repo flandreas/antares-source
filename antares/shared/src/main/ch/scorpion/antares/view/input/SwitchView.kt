@@ -239,7 +239,7 @@ class SwitchView(
     override fun createControlView(): ControlView<Switch> {
         val clone = SwitchView(styleProvider, model!!)
         clone.isShowPortViews = false
-        clone.location = Point2D()
+        clone.location = Point2D.ZERO
         clone.name = name
         clone.labelPosition = labelPosition
         return clone

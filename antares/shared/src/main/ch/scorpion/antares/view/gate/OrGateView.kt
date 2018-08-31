@@ -23,7 +23,7 @@ class OrGateView(
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
-                TruthTableView(OrGate.TRUTH_TABLE, null), Point2D())
+                TruthTableView(OrGate.TRUTH_TABLE, null), Point2D.ZERO)
     }
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {

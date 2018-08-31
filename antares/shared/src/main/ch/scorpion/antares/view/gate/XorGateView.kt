@@ -23,7 +23,7 @@ class XorGateView(
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
-                TruthTableView(XorGate.TRUTH_TABLE, null), Point2D())
+                TruthTableView(XorGate.TRUTH_TABLE, null), Point2D.ZERO)
     }
 
     override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {

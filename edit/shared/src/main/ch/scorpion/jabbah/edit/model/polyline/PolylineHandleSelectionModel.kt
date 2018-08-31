@@ -57,7 +57,7 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
      * selected [PolylineComponent] by creating an command after the mouse has been released.
      */
     private inner class PolylineEventHandler : EventHandler() {
-        private var oldLocation = Point2D()
+        private var oldLocation = Point2D.ZERO
 
         override fun dragHandleBegin(view: View<*>) {
             val index = getIndexOf(focusHandle!!)

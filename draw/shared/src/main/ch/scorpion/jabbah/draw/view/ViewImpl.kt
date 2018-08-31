@@ -312,7 +312,7 @@ open class ViewImpl<C: InputEventContext>(
     private var transform : AffineTransform = transformFactory.invoke()
 
     /** The location in view coordinates relative to which scale transformations are performed.*/
-    private var zoomCenter: Point2D = Point2D()
+    private var zoomCenter: Point2D = Point2D.ZERO
 
     /** Offers functions for navigating withing this [View].*/
     override val navigator: ViewNavigator = ViewNavigatorImpl(this)
@@ -360,7 +360,7 @@ open class ViewImpl<C: InputEventContext>(
 
     /** Creates a new [ViewGeometry] for the specified zoom factor, while keeping the pan origin and zoom center.*/
     private fun createViewGeometry(zoomFactor: Double): ViewGeometry {
-        return createViewGeometry(ZoomPan(this, zoomFactor, zoomPan.panOrigin), zoomCenter, Point2D())
+        return createViewGeometry(ZoomPan(this, zoomFactor, zoomPan.panOrigin), zoomCenter, Point2D.ZERO)
     }
 
     /** Creates a new [ViewGeometry] that represents the specified geometrical properties.*/
@@ -372,7 +372,7 @@ open class ViewImpl<C: InputEventContext>(
                 (newZoomCenter.x - zoomCenter.x) / zoomPan.zoomFactor,
                 (newZoomCenter.y - zoomCenter.y) / zoomPan.zoomFactor)
 
-        if (zoomCenterOffset != Point2D()) {
+        if (zoomCenterOffset != Point2D.ZERO) {
             _zoomPan = ZoomPan(
                     this,
                     zoomPan.zoomFactor,

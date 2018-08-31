@@ -29,7 +29,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
     protected var edgeView: EdgeView<*>? = null
 
     /** The location where dragging started. */
-    protected var oldLocation = Point2D()
+    protected var oldLocation = Point2D.ZERO
 
     /** ---- [InputEventHandler] */
 

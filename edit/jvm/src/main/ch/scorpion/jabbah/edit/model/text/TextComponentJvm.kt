@@ -56,7 +56,7 @@ open class TextComponentJvm(
 ) : AbstractRectangularComponent(styleType = styleType, styleProvider = styleProvider, shape = Rectangle2D(location.x, location.y, 0.0, 0.0)),
     Transparent, TextComponent {
 
-    constructor(text: String): this(text = text, location = Point2D(), styleType = StyleType.FIGURE, styleProvider = DrawStyleModule.styleProvider)
+    constructor(text: String): this(text = text, location = Point2D.ZERO, styleType = StyleType.FIGURE, styleProvider = DrawStyleModule.styleProvider)
     @Suppress("unused") constructor(): this("")
 
     private companion object {

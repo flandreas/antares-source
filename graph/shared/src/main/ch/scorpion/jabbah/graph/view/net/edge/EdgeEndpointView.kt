@@ -33,7 +33,7 @@ class EdgeEndpointView(
     /** ---- [Locatable] */
 
     /** The center of [boundsView] in absolute model coordinate space. */
-    override var location: Point2D = Point2D()
+    override var location: Point2D = Point2D.ZERO
         set(value) {
             invalidate()
             field = Point2D(value.x, value.y)

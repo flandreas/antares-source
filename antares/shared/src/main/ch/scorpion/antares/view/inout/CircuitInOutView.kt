@@ -196,13 +196,13 @@ class CircuitInOutView(
 
     override fun createControlView(): ControlView<CircuitInOut> {
         val controlView = DigitalSignalSourceControlView(styleProvider, controlId, signalRepresentation, model)
-        controlView.location = Point2D()
+        controlView.location = Point2D.ZERO
         return controlView
     }
 
     /** ---- [Locatable] */
 
-    override var location: Point2D = Point2D()
+    override var location: Point2D = Point2D.ZERO
         set(value) {
             invalidate()
             field = value

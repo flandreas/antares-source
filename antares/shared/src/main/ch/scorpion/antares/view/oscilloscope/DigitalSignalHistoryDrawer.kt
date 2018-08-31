@@ -126,7 +126,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
     private fun drawCurve(context: DrawContext) {
         val singleBit = signalHistory!!.last().signal.getBitWidth().width == 1
-        var lastPoint = Point2D()
+        var lastPoint = Point2D.ZERO
         var lastEntry: SignalHistoryEntry<DigitalSignal>? = null
         for (entry in signalHistory!!.getReverseEntriesUntil(0)) {
             val x = rightBorder - timeline!!.getX(entry.time)
