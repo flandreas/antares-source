@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.gate.DelayGate
 import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.base.Thousands
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -23,13 +24,17 @@ class DelayGateView(
     var delay: Long
         get() = model!!.delay
         set(value) {
-            model!!.delay = value
-            labelText = value.toString()
+	        if (delay != value) {
+		        invalidate()
+		        model!!.delay = value
+		        updateText()
+		        validate()
+	        }
         }
 
     override fun modelExchanged(oldModel: DelayGate?) {
         super.modelExchanged(oldModel)
-        labelText = delay.toString()
+        updateText()
     }
 
     override fun drawImpl(context: DrawContext) {
@@ -56,4 +61,8 @@ class DelayGateView(
 
         context.g.color = oldColor
     }
+
+	private fun updateText() {
+		labelText = "${Thousands.convert(delay)} ns"
+	}
 }
