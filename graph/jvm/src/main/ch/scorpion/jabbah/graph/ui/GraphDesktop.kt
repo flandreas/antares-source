@@ -65,7 +65,6 @@ class GraphDesktop(
     /** Closes all slave panels when the edited root [GraphView] has changed.*/
     private val editedGraphViewEventHandler: (EditedGraphViewEvent) -> Unit = {
         it.oldGraphView?.removeDrawableContainerListener(removeListener)
-        closeAllSlavesImpl()
         it.newGraphView?.addDrawableContainerListener(removeListener)
     }
 
@@ -90,14 +89,13 @@ class GraphDesktop(
 	    eventBus.register(EditedGraphViewEvent::class, editedGraphViewEventHandler)
 
 	    eventBus.register(ApplicationDataEvent::class) {
-		    if (it.newData == null) {
-			    closeAll()
-		    } else if (it.oldData == null) {
+		    closeAll()
+		    if (it.newData != null) {
 			    establishSingleView()
-			    invalidate()
-			    revalidate()
-			    repaint()
 		    }
+		    invalidate()
+		    revalidate()
+		    repaint()
 	    }
 
 	    // Replace reference color in all Associations
