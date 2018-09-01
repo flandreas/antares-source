@@ -1,5 +1,6 @@
 package ch.scorpion.antares
 
+import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
@@ -96,6 +97,10 @@ fun fillStandardLibrary(library: Library, service: LibraryService, storableCreat
 	val memory = service.ensureFolder(library, Translations.getString("library.folder.memory"), library)
 	addBaseElement(memory, "ROM", "library.element.ROM", "/img/rom.png", storableCreator, ROMView::class)
 	addBaseElement(memory, "RAM", "library.element.RAM", "/img/ram.png", storableCreator, RAMView::class)
+
+	val arithmetic = service.ensureFolder(library, Translations.getString("library.folder.arithmetic"), library)
+	addBaseElement(arithmetic, "Random", "library.element.Random", "/img/random.png", storableCreator, RandomView::class)
+
 }
 
 private fun addBaseElement(directory: LibraryDirectory, name: String, translationKey: String, iconPath: String?, storableCreator: StorableCreator?, clazz: KClass<out GraphElementView<*>>) {

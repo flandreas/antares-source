@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.model.InputPort
 
 /**
  * A digital gate is a [Vertice] that performs a basic logical operation on [DigitalSignal]s, whose number
@@ -35,7 +36,7 @@ abstract class AbstractDigitalGate(
             field = value
             clearPorts()
             for (i in 1..field.count) {
-                addPort(DigitalPortImpl.createInput())
+                addPort(createInputPort())
             }
             addPort(createOutputPort())
         }
@@ -75,6 +76,10 @@ abstract class AbstractDigitalGate(
     open val minInputCount: InputCount get() = DEF_MIN_INPUT_COUNT
 
     open val maxInputCount: InputCount get() = DEF_MAX_INPUT_COUNT
+
+	protected open fun createInputPort(): InputPort<DigitalSignal> {
+		return DigitalPortImpl.createInput()
+	}
 
     /**
      * Called by setter [chosenInputCount] which establishs the required [InputPort] and a single [OutputPort],

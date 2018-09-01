@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.module
 
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.arithmetic.Random
 import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.input.Clock
@@ -57,6 +58,7 @@ object AntaresModelModule : AbstractModule() {
         typeMap.register("delay", DelayGate::class)
         typeMap.register("tunnel", Tunnel::class)
         typeMap.register("ledMatrix", LEDMatrix::class)
+	    typeMap.register("random", Random::class)
 
     }
 }

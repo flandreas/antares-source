@@ -22,6 +22,7 @@ open class DigitalPortImpl(
         portType: PortType,
         name: String? = null,
         logic: Logic = Logic.POSITIVE,
+        trigger: Trigger = Trigger.LEVEL,
         bitWidth: BitWidth = BitWidth.BW_1,
         signalRepresentation: DigitalSignalRepresentation =
             if (bitWidth.width > 4) DigitalSignalRepresentation.HEXADECIMAL else DigitalSignalRepresentation.BINARY
@@ -42,8 +43,12 @@ open class DigitalPortImpl(
         }
 
         fun createInput(logic: Logic, name: String?, bitWidth: BitWidth): DigitalPort {
-            return DigitalPortImpl(PortType.INPUT, name, logic, bitWidth)
+            return DigitalPortImpl(PortType.INPUT, name, logic, bitWidth = bitWidth)
         }
+
+	    fun createInput(trigger: Trigger, name: String?, bitWidth: BitWidth): DigitalPort {
+		    return DigitalPortImpl(PortType.INPUT, name, trigger = trigger, bitWidth = bitWidth)
+	    }
 
         fun createOutput(): DigitalPort {
             return createPort(PortType.OUTPUT)
@@ -54,17 +59,17 @@ open class DigitalPortImpl(
         }
 
         fun createOutput(logic: Logic, name: String?, bitWidth: BitWidth): DigitalPort {
-            return DigitalPortImpl(PortType.OUTPUT, name, logic, bitWidth)
+            return DigitalPortImpl(PortType.OUTPUT, name, logic, bitWidth = bitWidth)
         }
 
         fun createTriStateOutput(logic: Logic, name: String?, bitWidth: BitWidth): DigitalPort {
-            val port = DigitalPortImpl(PortType.OUTPUT, name, logic, bitWidth)
+            val port = DigitalPortImpl(PortType.OUTPUT, name, logic, bitWidth = bitWidth)
             port.defaultBit = Bit.Undefined
             return port
         }
 
         fun createOutput(logic: Logic, name: String?, bitWidth: BitWidth, signalRepresentation: DigitalSignalRepresentation): DigitalPort {
-            return DigitalPortImpl(PortType.OUTPUT, name, logic, bitWidth, signalRepresentation)
+            return DigitalPortImpl(PortType.OUTPUT, name, logic, bitWidth = bitWidth, signalRepresentation = signalRepresentation)
         }
 
         fun createInOut(): DigitalPort {
@@ -74,7 +79,7 @@ open class DigitalPortImpl(
         }
 
         fun createInOut(logic: Logic, name: String?, bitWidth: BitWidth): DigitalPort {
-            val port = DigitalPortImpl(PortType.INOUT, name, logic, bitWidth)
+            val port = DigitalPortImpl(PortType.INOUT, name, logic, bitWidth = bitWidth)
             port.defaultBit = Bit.Undefined
             return port
         }
@@ -111,7 +116,7 @@ open class DigitalPortImpl(
             }
         }
 
-    override var trigger: Trigger = Trigger.LEVEL
+    override var trigger: Trigger = trigger
         set(value) {
             if (field != value) {
                 val oldValue = field

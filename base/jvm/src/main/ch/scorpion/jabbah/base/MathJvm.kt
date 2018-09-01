@@ -4,7 +4,9 @@ package ch.scorpion.jabbah.base
 /**
  * A wrapper class for the JVM Math class.
  */
-class MathJvm : MathClass() {
+class MathJvm(
+	private val randomProvider: () -> Double = { java.lang.Math.random() }
+) : MathClass() {
 
 	override fun min(a: Double, b: Double): Double = java.lang.Math.min(a, b)
 
@@ -38,7 +40,7 @@ class MathJvm : MathClass() {
 
 	override fun round(a: Double): Long = java.lang.Math.round(a)
 
-	override fun random(): Double = java.lang.Math.random()
+	override fun random(): Double = randomProvider.invoke()
 
 	override fun toDegrees(radians: Double): Double = java.lang.Math.toDegrees(radians)
 

@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.script.AntaresScriptGateway
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
@@ -160,6 +161,7 @@ object AntaresViewModule : AbstractModule() {
         typeMap.register("delayView", DelayGateView::class)
         typeMap.register("tunnelView", TunnelView::class)
         typeMap.register("ledMatrixView", LEDMatrixView::class)
+	    typeMap.register("randomView", RandomView::class)
     }
 
     private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -208,5 +210,7 @@ object AntaresViewModule : AbstractModule() {
 
 	    factory.register(SelectionDrawingStrategy.REPLACE, ROMView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 	    factory.register(SelectionDrawingStrategy.REPLACE, RAMView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+
+	    factory.register(SelectionDrawingStrategy.REPLACE, RandomView::class.simpleName!!) { SelectedColorSelectionModel(it) }
     }
 }

@@ -44,9 +44,8 @@ abstract class AbstractDigitalGateView<T : AbstractDigitalGate>(
     override fun modelExchanged(oldModel: T?) {
         super.modelExchanged(oldModel)
 
-        var index = 0
-        for (inputPort in model!!.getInputs()) {
-            addPortView(createInputPortView(inputPort as Port<DigitalSignal>, index++))
+	    for ((index, inputPort) in model!!.getInputs().withIndex()) {
+            addPortView(createInputPortView(inputPort as Port<DigitalSignal>, index))
         }
         addPortView(DigitalPortView(
             styleProvider = styleProvider,
