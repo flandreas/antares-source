@@ -124,23 +124,23 @@ open class CircuitElemModelBridge(
     /** Sets the output signal of the first (or one and only) [OutputPort] to the specified hex value.*/
     @Suppress("unused")
     fun setOutput(hexValue: String) {
-        setOutput(1, hexValue)
+	    setOutput(vertice.getOutput(), hexValue)
     }
 
     /** Sets the output signal of the [OutputPort] with ID [id] to the specified hex value.*/
     fun setOutput(id: Int, hexValue: String) {
-        setOutput(vertice.getOutput<DigitalSignal>(id), hexValue)
+        setOutput(vertice.getOutput(id), hexValue)
     }
 
     /** Sets the output signal of the [OutputPort] with the given name to the specified hex value.*/
     @Suppress("unused")
     fun setOutput(name: String, hexValue: String) {
-        setOutput(vertice.getOutput<DigitalSignal>(name), hexValue)
+        setOutput(vertice.getOutput(name), hexValue)
     }
 
     @Suppress("unused")
     fun setOutputWord(word: Word) {
-        setOutputWord(1, word)
+	    vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(word, signalHandler!!)
     }
 
     @Suppress("unused")
@@ -152,6 +152,11 @@ open class CircuitElemModelBridge(
         val outputPort = vertice.getOutput<DigitalSignal>(id) as DigitalPort
         outputPort.setOutgoingSignalBuffered(word, signalHandler!!)
     }
+
+	/** Sets the output signal of the first (or one and only) [OutputPort] to the specified boolean value.*/
+	fun setOutputBit(bit: Boolean) {
+		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(bit), signalHandler!!);
+	}
 
     @Suppress("unused")
     fun setOutputBit(name: String, bit: Boolean) {

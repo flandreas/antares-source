@@ -2,7 +2,18 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3' name='8-1 Multiplexer' shortDesc='Wählt aus 8 Eingängen einen aus'>
+        <graph _id='2' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3' name='8-1 Multiplexer' shortDesc='Wählt aus 8 Eingängen einen aus' script='var input = 0;
+if (elem.inputBit(&quot;S0&quot;)) {
+	input += 1;
+}
+if (elem.inputBit(&quot;S1&quot;)) {
+	input += 2;
+}
+if (elem.inputBit(&quot;S2&quot;)) {
+	input += 4;
+}
+
+elem.setOutputBit(elem.inputWord(&quot;I&quot;).bitAt(input).isSet());'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='0' name='4-1 Multiplexer' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'/>
             <subGraphVerticeRef _id='4' id='2' delay='0' name='4-1 Multiplexer' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'/>
@@ -275,7 +286,7 @@
             <point x='105.0' y='280.0'/>
           </location>
         </originIndicator>
-        <polyline _id='85' id='3' style='figure' filled='true' points='119.0,217.0 119.0,343.0 189.0,322.0 189.0,238.0 119.0,217.0'/>
+        <polyline _id='85' id='3' style='figure' points='119.0,217.0 119.0,343.0 189.0,322.0 189.0,238.0 119.0,217.0'/>
         <digitalPortViewComp _id='83' id='4' style='figure' showBitWidthAnnotation='true'>
           <portView>
             <digitalPortView _id='84' x='119.0' y='280.0' dir='west' textPos='internal' portId='88'/>

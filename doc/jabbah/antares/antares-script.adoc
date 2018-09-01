@@ -76,6 +76,11 @@ below are accessible as functions of the object `elem`.
 |Returns the lowest-priority input signal `Bit` of the `InputPort` with the specified name as a boolean.
 |TODO
 
+|`portRaised(<name:String>)`
+|Determines whether the input signal of the `InputPort` with the specified name has changed and its new value is 1,
+and returns the result as boolean.
+|if (elem.portRaised("C")) { ... }
+
 |`output()`
 |Returns the signal of the first (or one and only) `OutputPort` as a string.
 |TODO
@@ -114,6 +119,10 @@ below are accessible as functions of the object `elem`.
 
 |`setOutputWord(<ID:Int>, <value:Word>)`
 |Sets the output signal of the `OutputPort` with the specified ID to a `Word`.
+|TODO
+
+|`setOutputBit(<value:Boolean>)`
+|Sets the output signal of the first (or one and only) `OutputPort` to the specified boolean value.
 |TODO
 
 |`setOutputBit(<name:String>, <value:Boolean>)`
