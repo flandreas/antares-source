@@ -366,6 +366,14 @@ abstract class AbstractVerticeView<T : Vertice>(
         drawImpl(context, isShowPortViews)
     }
 
+	protected fun drawImplBeforeBorder(context: DrawContext) {
+		drawImpl(context, isShowPortViews, beforeBorder = true)
+	}
+
+	protected fun drawImplAfterBorder(context: DrawContext) {
+		drawImpl(context, isShowPortViews, beforeBorder = false)
+	}
+
     /**
      * Basic drawing method that only draws all [PortView]s of this [VerticeView].
      *
@@ -381,6 +389,12 @@ abstract class AbstractVerticeView<T : Vertice>(
             portViews.forEach { it.draw(context) }
         }
     }
+
+	private fun drawImpl(context: DrawContext, drawPortViews: Boolean, beforeBorder: Boolean) {
+		if (drawPortViews) {
+			portViews.forEach { if (beforeBorder) it.drawBelowOwner(context) else it.drawAboveOwner(context) }
+		}
+	}
 
     /**
      * Drawing wrapper method that prepares a setup for location and rotation independent drawing of custom drawing code.

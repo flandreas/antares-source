@@ -123,8 +123,10 @@ open class BoxGateView<T : Vertice>(
 
     override fun drawImpl(context: DrawContext) {
 	    val oldStylable = context.stylable
+
 	    context.stylable = this
-        super.drawImpl(context)
+        //super.drawImpl(context)
+		drawImplBeforeBorder(context)
 	    context.stylable = oldStylable
 
         val oldColor = context.g.color
@@ -133,6 +135,11 @@ open class BoxGateView<T : Vertice>(
         } else {
             drawShape(context, transparent.applyTo(foregroundColor), transparent.applyTo(backgroundColor), stroke)
         }
+
+	    context.stylable = this
+	    drawImplAfterBorder(context)
+	    context.stylable = oldStylable
+
         context.g.color = oldColor
     }
 

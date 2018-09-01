@@ -164,72 +164,90 @@ class DigitalPortView(
 
     /** ---- [Drawable] */
 
-    override fun draw(context: DrawContext) {
-        val origColor = context.g.color
-        val appContext = context.castedAppContext<GraphApplicationContext>()!!
+    private fun setupColor(context: DrawContext) {
+	    val appContext = context.castedAppContext<GraphApplicationContext>()!!
 
-        if (ApplicationMode.EXECUTE == appContext.mode && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
-            if (port.net == null || !port.net!!.isError) {
-                context.g.color = transparent.applyTo(when (port.portType) {
-                    PortType.INOUT -> getDigitalPort().dominantSignal.getColor().foregroundColor
-                    PortType.INPUT -> getDigitalPort().getIncomingSignal()!!.getColor().foregroundColor
-                    PortType.OUTPUT -> getDigitalPort().getOutgoingSignal()!!.getColor().foregroundColor
-                })
-            }
-        } else {
-            if (context.useContextColors) {
-                context.g.color = context.color!!.foregroundColor
-            } else {
-                context.g.color = styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
-            }
-        }
-
-        if (!port.isConnected) {
-            if (getDigitalPort().bitWidth.width > 1) {
-                context.g.stroke = Themes.get<GraphTheme>().edge.busStroke
-            } else {
-	            context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-		            Themes.get<GraphTheme>().edge.executionStroke
-	            } else {
-		            Themes.get<GraphTheme>().edge.stroke
-	            }
-            }
-
-            val connPoint = connectionPoint
-            context.g.drawLine(locationX.toInt(), locationY.toInt(), connPoint.x.toInt(), connPoint.y.toInt())
-        }
-
-        context.g.translate(locationX, locationY)
-
-        if (bitWidthAnnotation != null && showBitWidthAnnotation) {
-            bitWidthAnnotation!!.draw(context)
-        }
-
-        drawLogic(context)
-
-        context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(GraphStyleType.ANNOTATION).color).foregroundColor)
-        if (hasInternalInputAnnotation) {
-            drawInternalInputAnnotation(context)
-        }
-        if (hasInternalOutputAnnotation) {
-            drawInternalOutputAnnotation(context)
-        }
-
-        portLabel?.let {
-            context.g.color = transparent.applyTo(if (portLabelPosition == PortLabelPosition.EXTERNAL) {
-                context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).textColor
-            } else {
-                context.choose(styleProvider.getStyle(GraphStyleType.ANNOTATION).color).textColor
-            })
-            portLabel?.draw(context)
-        }
-
-        context.g.translate(-locationX, -locationY)
-
-	    DrawModule.drawDebugBoundingBox(this, context.g, DrawModule.DEBUG_BBOX_COLOR_SECONDARY)
-
-        context.g.color = origColor
+	    if (ApplicationMode.EXECUTE == appContext.mode && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
+		    if (port.net == null || !port.net!!.isError) {
+			    context.g.color = transparent.applyTo(when (port.portType) {
+				    PortType.INOUT -> getDigitalPort().dominantSignal.getColor().foregroundColor
+				    PortType.INPUT -> getDigitalPort().getIncomingSignal()!!.getColor().foregroundColor
+				    PortType.OUTPUT -> getDigitalPort().getOutgoingSignal()!!.getColor().foregroundColor
+			    })
+		    }
+	    } else {
+		    if (context.useContextColors) {
+			    context.g.color = context.color!!.foregroundColor
+		    } else {
+			    context.g.color = styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
+		    }
+	    }
     }
+
+    override fun draw(context: DrawContext) {
+        drawBelowOwner(context)
+	    drawAboveOwner(context)
+    }
+
+	override fun drawAboveOwner(context: DrawContext) {
+		val origColor = context.g.color
+
+		setupColor(context)
+
+		context.g.translate(locationX, locationY)
+
+		if (bitWidthAnnotation != null && showBitWidthAnnotation) {
+			bitWidthAnnotation!!.draw(context)
+		}
+
+		drawLogic(context)
+
+		context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(GraphStyleType.ANNOTATION).color).foregroundColor)
+		if (hasInternalInputAnnotation) {
+			drawInternalInputAnnotation(context)
+		}
+		if (hasInternalOutputAnnotation) {
+			drawInternalOutputAnnotation(context)
+		}
+
+		portLabel?.let {
+			context.g.color = transparent.applyTo(if (portLabelPosition == PortLabelPosition.EXTERNAL) {
+				context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).textColor
+			} else {
+				context.choose(styleProvider.getStyle(GraphStyleType.ANNOTATION).color).textColor
+			})
+			portLabel?.draw(context)
+		}
+
+		context.g.translate(-locationX, -locationY)
+
+		DrawModule.drawDebugBoundingBox(this, context.g, DrawModule.DEBUG_BBOX_COLOR_SECONDARY)
+
+		context.g.color = origColor
+	}
+
+	override fun drawBelowOwner(context: DrawContext) {
+		val origColor = context.g.color
+
+		setupColor(context)
+
+		if (!port.isConnected) {
+			if (getDigitalPort().bitWidth.width > 1) {
+				context.g.stroke = Themes.get<GraphTheme>().edge.busStroke
+			} else {
+				context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+					Themes.get<GraphTheme>().edge.executionStroke
+				} else {
+					Themes.get<GraphTheme>().edge.stroke
+				}
+			}
+
+			val connPoint = connectionPoint
+			context.g.drawLine(locationX.toInt(), locationY.toInt(), connPoint.x.toInt(), connPoint.y.toInt())
+		}
+
+		context.g.color = origColor
+	}
 
     override val boundingBox: Rectangle2D
         get() {

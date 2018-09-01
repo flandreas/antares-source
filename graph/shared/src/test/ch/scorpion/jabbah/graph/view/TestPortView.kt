@@ -40,4 +40,12 @@ class TestPortView<T: Any>(
         get() = unconnectedLength
 
     override fun getConnectedLength(): Int = 0
+
+	override fun drawAboveOwner(context: DrawContext) {
+		// empty
+	}
+
+	override fun drawBelowOwner(context: DrawContext) {
+		// empty
+	}
 }

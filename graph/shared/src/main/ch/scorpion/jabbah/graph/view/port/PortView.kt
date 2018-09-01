@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
@@ -164,5 +165,9 @@ interface PortView<T: Any> : Drawable, Storable, SnappableX, SnappableY, Transpa
      * @return the tool tip text of this [PortView].
      */
     fun getExecutionTooltip(x: Double, y: Double): Tooltip?
+
+	fun drawAboveOwner(context: DrawContext)
+
+	fun drawBelowOwner(context: DrawContext)
 
 }

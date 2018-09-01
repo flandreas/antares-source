@@ -2,7 +2,6 @@ package ch.scorpion.antares.model.arithmetic
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Math
@@ -29,6 +28,20 @@ class RandomTest {
 		withNextRandom(42)
 
 		random.getInput<DigitalSignal>().setIncomingSignal(Word.of(Bit.True), signalHandler)
+		random.act(signalHandler, random.createActorData(random.getInput<DigitalSignal>()))
+
+		assertThat(random.getOutput<DigitalSignal>().getOutgoingSignal() as Word, `is`(Word.of(random.bitWidth, 42)))
+	}
+
+	@Test
+	fun shouldProduceOnlyOnRaisingEdge() {
+		val random = Random()
+		withNextRandom(42)
+		random.getInput<DigitalSignal>().setIncomingSignal(Word.of(Bit.True), signalHandler)
+		random.act(signalHandler, random.createActorData(random.getInput<DigitalSignal>()))
+
+		withNextRandom(99)
+		random.getInput<DigitalSignal>().setIncomingSignal(Word.of(Bit.False), signalHandler)
 		random.act(signalHandler, random.createActorData(random.getInput<DigitalSignal>()))
 
 		assertThat(random.getOutput<DigitalSignal>().getOutgoingSignal() as Word, `is`(Word.of(random.bitWidth, 42)))

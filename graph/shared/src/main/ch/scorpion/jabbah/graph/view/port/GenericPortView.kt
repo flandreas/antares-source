@@ -27,4 +27,8 @@ class GenericPortView<T: Any>(
     override val boundingBox: RectangularShape get() = Rectangle2D(location.x, location.y, 0.0, 0.0)
 
     override fun draw(context: DrawContext) { }
+
+	override fun drawAboveOwner(context: DrawContext) { }
+
+	override fun drawBelowOwner(context: DrawContext) { }
 }

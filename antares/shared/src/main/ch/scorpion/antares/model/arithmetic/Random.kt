@@ -6,10 +6,7 @@ import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalSource
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -22,17 +19,18 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * Produces a random value of a specifiable [BitWidth] when the trigger input value changes to 1.
- * @param bitWidth the [BitWidth] of the output defining the maximum random number size
  */
 class Random() : AbstractDigitalGate(CALCULATOR, InputCount.ONE), DigitalSignalSource {
 
 	companion object {
 		private val CALCULATOR = object : VerticeCalculator<Random> {
 			override fun calculate(vertice: Random, data: GraphActorData, signalHandler: SignalHandler) {
-				vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(
-					Word.of(vertice.bitWidth, Math.randomInt(0, vertice.bitWidth.power() - 1).toLong()),
-					signalHandler
-				)
+				if (data.getSignal<DigitalSignal>(1)!!.bitAt(0) == Bit.True) {
+					vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(
+						Word.of(vertice.bitWidth, Math.randomInt(0, vertice.bitWidth.power() - 1).toLong()),
+						signalHandler
+					)
+				}
 			}
 		}
 	}
@@ -75,6 +73,4 @@ class Random() : AbstractDigitalGate(CALCULATOR, InputCount.ONE), DigitalSignalS
 		super.read(reader)
 		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
 	}
-
-	/** [Random] */
 }
