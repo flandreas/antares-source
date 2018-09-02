@@ -564,6 +564,7 @@ class CircuitInOutView(
 
 			    // Set the focus on the selected digit
 			    invalidate()
+			    requestFocus()
 			    numberView!!.setFocusTo(digitIndex)
 			    validate()
 		    }

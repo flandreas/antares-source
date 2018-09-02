@@ -126,7 +126,7 @@ abstract class AbstractComponent(
     /** ---- Focus management */
 
     /** [Component]s are by default not focusable. */
-    override var isFocusable: Boolean = true
+    override var isFocusable: Boolean = false
 
     override val isFocusOwner: Boolean get() = FocusManager.focusOwner == this
 

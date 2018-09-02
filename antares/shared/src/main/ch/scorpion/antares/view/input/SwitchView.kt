@@ -173,7 +173,7 @@ class SwitchView(
 
     /** ---- [Component] */
 
-    override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
+	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
         get() = SelectionDrawingStrategy.REPLACE
         set(@Suppress("UNUSED_PARAMETER") value) {
             throw UnsupportedOperationException()
@@ -336,6 +336,7 @@ class SwitchView(
         override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
             model!!.toggle(context.signalHandler)
 	        context.mouseEvent?.consume()
+	        requestFocus()
 	        return null
         }
 
