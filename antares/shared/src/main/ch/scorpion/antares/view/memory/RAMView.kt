@@ -29,6 +29,10 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -256,7 +260,9 @@ class RAMView(
     override fun handleStateChanged(event: GraphElementEvent) {
         label.text = if (text == null) buildLabelText() else text!!
 	    if (model!!.getChipSelectInput().getIncomingSignal() == Word.of(true)) {
-		    contentsView.handleCurrentAddressChanged()
+		    if (ExecutionModule.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe) {
+			    contentsView.handleCurrentAddressChanged()
+		    }
 	    }
         super.handleStateChanged(event)
     }
@@ -284,7 +290,7 @@ class RAMView(
 
         label.draw(context)
 
-        if (showContents) {
+        if (requireDrawContents(context)) {
             context.g.translate(contentsView.x, contentsView.y)
             context.g.rotate(rotation.inverse().angle)
             context.g.translate(-contentsView.x, -contentsView.y)
@@ -299,6 +305,13 @@ class RAMView(
 
         super.drawImpl(context)
     }
+
+	/** Determines whether drawing hte [AddressableContentsView] is required depending on the [CurrentSystemSpeedCategory].*/
+	private fun requireDrawContents(context: DrawContext): Boolean {
+		return showContents && (
+			!context.castedAppContext<GraphApplicationContext>()!!.isExecute
+			|| ExecutionModule.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe)
+	}
 
     /** ---- [AbstractVerticeView] */
 

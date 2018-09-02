@@ -41,10 +41,12 @@ class Label(
 
     var text: String = text ?: ""
         set(value) {
-            invalidate()
-            field = value
-            displayableText = calculateDisplayableText()
-            updateGeometry()
+	        if (field != value) {
+		        invalidate()
+		        field = value
+		        displayableText = calculateDisplayableText()
+		        updateGeometry()
+	        }
         }
 
     var font: Font = font
