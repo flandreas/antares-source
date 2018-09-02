@@ -30,7 +30,7 @@ interface Issue {
     /**
      * The optional context that the source of the [Issue] more precisely than [origin].
      * For example, if the [origin] of a JavaScript error is a particular scenario step, the [context]
-     * can indicate whether the error is the condition, the entry or the exit script.
+     * can indicate whether the error is in the condition, in the entry script or in the exit script.
      */
     val context: String?
 
@@ -73,13 +73,13 @@ class IssueCollector(
 
     init {
         if (clearOnExecutionStart) {
-            eventBus.register(SchedulerActivationStateEvent::class, {
-                if (it.scheduler.isActive) {
-                    clear()
-                }
-            })
+            eventBus.register(SchedulerActivationStateEvent::class) {
+	            if (it.scheduler.isActive) {
+		            clear()
+	            }
+            }
         }
-        eventBus.register(IssueImpl::class, { handleNewIssue(it) })
+        eventBus.register(IssueImpl::class) { handleNewIssue(it) }
     }
 
     /** Holds all collected [Issue]s. */

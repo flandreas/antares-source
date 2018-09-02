@@ -37,12 +37,17 @@ class IssuesPanel(
     private val table = JTable(IssueTableModel())
 
     init {
-        eventBus.register(IssueCollectorEvent::class, {
-            (table.model as IssueTableModel).fireTableDataChanged()
-        })
+        eventBus.register(IssueCollectorEvent::class) {
+	        (table.model as IssueTableModel).fireTableDataChanged()
+        }
 
-        buildUI()
+	    buildUI()
     }
+
+	/** Clears all [Issue]s.*/
+	fun clear() {
+		issueCollector.clear()
+	}
 
     private fun buildUI() {
         table.autoResizeMode = JTable.AUTO_RESIZE_OFF

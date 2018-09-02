@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.graph.model.*
@@ -49,7 +50,15 @@ interface GraphView<T : GraphElementView<*>> : Drawing<T> {
      */
     fun bind()
 
-    /**
+	/**
+	 * Checks for design errors in the [Graph] and posts an [Issue] on this [GraphView]'s [EventBus] for every
+	 * detected error. This is called before execution of this [GraphView] is started. Design errors are defined
+	 * in terms of [GraphElement.designError].
+	 * @return `true` if the design is okay, `false` if a design error has been found
+	 */
+	fun checkDesign(): Boolean
+
+	/**
      * Creates a clone of this [GraphView] that is connected with another model instance, and **not**
      * with the [Graph] of this [GraphView].
      *

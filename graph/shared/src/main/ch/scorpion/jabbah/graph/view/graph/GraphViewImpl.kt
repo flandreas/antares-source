@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.graph
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ConcatIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
@@ -28,11 +29,14 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.scenario.ScenariosImpl
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.execution.issue.IssueImpl
+import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.connect.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
+import impl.org.controlsfx.i18n.Translations
 
 
 /**
@@ -141,7 +145,21 @@ class GraphViewImpl<T : GraphElementView<*>>(
         }
     }
 
-    override fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator): GraphView<T> {
+	override fun checkDesign(): Boolean {
+		val issues = getDrawables { it.model!!.designError != null }.map {
+			IssueImpl(
+				severity = IssueSeverity.Error,
+				name = Translations.getString("graph.designError.name"),
+				description = it.model!!.designError?.description,
+				origin = "${it.type} (${it.id})",
+				context = null
+			)
+		}
+		issues.forEach { eventBus.post(it) }
+		return issues.isEmpty()
+	}
+
+	override fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator): GraphView<T> {
         LOG.trace("clone '${model.name}'for existing model")
         val clone = storableCloner.clone(
             this,

@@ -224,12 +224,18 @@ class GraphPanel(
 				eventBus.post(ApplicationModeEvent(currentMode))
 			}
 			ApplicationMode.EXECUTE -> {
-				editor.view.selectionManager.deselectAll()
-				editor.active = false
-				InvocationHandler.invoke(Runnable {
-					scheduler.isActive = true
-					eventBus.post(ApplicationModeEvent(currentMode))
-				})
+				issuesPanel.clear()
+				if ((editor.drawing as GraphView<*>).checkDesign()) {
+					editor.view.selectionManager.deselectAll()
+					editor.active = false
+					InvocationHandler.invoke(Runnable {
+						scheduler.isActive = true
+						eventBus.post(ApplicationModeEvent(currentMode))
+					})
+				} else {
+					eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = null, messageKey = "graph.designError.msg"))
+					LOG.debug("GraphPanel: execution not started due to design errors")
+				}
 			}
 		}
 	}
