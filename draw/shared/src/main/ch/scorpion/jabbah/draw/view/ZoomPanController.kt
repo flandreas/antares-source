@@ -47,6 +47,8 @@ class ZoomPanController(val view: View<*>) {
 
     private val autoPanning = AutoPanning()
 
+	private var isMousePressed: Boolean = false
+
     var startPos: Point2D = Point2D.ZERO
 
     inner class Controller : MouseAdapter() {
@@ -79,6 +81,7 @@ class ZoomPanController(val view: View<*>) {
 	    /** ---- [MouseAdapter] */
 
         override fun mousePressed(e: MouseEvent) {
+		    isMousePressed = true
             if (e.button != Button.BUTTON2) {
                 return
             }
@@ -86,6 +89,7 @@ class ZoomPanController(val view: View<*>) {
         }
 
         override fun mouseReleased(e: MouseEvent) {
+	        isMousePressed = false
             if (e.button != Button.BUTTON3) {
                 autoPanning.deactivate()
             }
@@ -103,6 +107,10 @@ class ZoomPanController(val view: View<*>) {
 
         override fun mouseWheelRotated(e: MouseEvent) {
 	        LOG.trace("ZoomPanController: mouseWheelRotated by ${e.wheelRotation}, modifiers=${e.modifiers}")
+	        if (isMousePressed) {
+		        // Don't zoom if a mouse button (especially the middle mouse button used for panning) is down
+		        return
+	        }
 	        if (e.modifiers == 0) {
 		        view.navigator.multiplyZoomFactor(zoomChangeFactorFromWheelRotation(e))
 	        } else if (e.isAltDown) {
