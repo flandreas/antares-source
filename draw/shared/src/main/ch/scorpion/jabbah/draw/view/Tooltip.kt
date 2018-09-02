@@ -1,23 +1,14 @@
 package ch.scorpion.jabbah.draw.view
 
-import ch.scorpion.jabbah.base.Math
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.Tooltip
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.event.PropertyChangeEvent
-import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.ArrowBubble
 import ch.scorpion.jabbah.draw.drawable.MultilineText
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
-import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -72,7 +63,7 @@ class TooltipHandler(
     private var lastExplanation: DrawableExplanation<RectangularDrawable>? = null
 
     /**
-     * Handles mouse moves events in the client of the tooltip system and requests tooltip displaying
+     * Handles mouse move events in the client of the tooltip system and requests tooltip displaying
      * or hiding as appropriate. Called by the client of the tooltip system in its event handling methods
      * if none of its [Drawable]s is interested in handling a mouse moved event.
      */
@@ -82,10 +73,7 @@ class TooltipHandler(
         if (drawable == null) {
             if (lastTooltipDrawable != null) {
                 eventBus.post(TooltipEvent(null, view, null, null))
-                lastExplanation?.explanation?.dispose()
-                lastTooltipDrawable = null
-                lastTooltipText = null
-                lastExplanation = null
+                clearLastTargets()
             }
             return
         }
@@ -94,20 +82,14 @@ class TooltipHandler(
         val explanation = explanationAccessor.invoke(drawable, x, y)
         if (StringUtils.isEmpty(tooltip?.text) && explanation == null) {
             if (lastTooltipDrawable != null || lastExplanation != null) {
-                lastExplanation?.explanation?.dispose()
-                lastTooltipDrawable = null
-                lastTooltipText = null
-                lastExplanation = null
+                clearLastTargets()
                 eventBus.post(TooltipEvent(null, view, null, null))
             }
             return
         }
 
         if (drawable !== lastTooltipDrawable || tooltip?.text != lastTooltipText || explanation?.explanation !== lastExplanation?.explanation) {
-            lastExplanation?.explanation?.dispose()
-            lastTooltipDrawable = drawable
-            lastTooltipText = tooltip?.text
-            lastExplanation = explanation
+	        setLastTargets(drawable, tooltip?.text, explanation)
             eventBus.post(TooltipEvent(drawable, view, tooltip, explanation))
         }
     }
@@ -115,6 +97,21 @@ class TooltipHandler(
     fun clear(view: View<*>) {
         eventBus.post(TooltipEvent(null, view, null, null))
     }
+
+	/** Clears [lastTooltipText] and [lastExplanation], if available.*/
+	private fun clearLastTargets() {
+		lastExplanation?.explanation?.dispose()
+		lastTooltipDrawable = null
+		lastTooltipText = null
+		lastExplanation = null
+	}
+
+	private fun setLastTargets(drawable: Drawable, tooltipText: String?, explanation: DrawableExplanation<RectangularDrawable>?) {
+		lastExplanation?.explanation?.dispose()
+		lastTooltipDrawable = drawable
+		lastTooltipText = tooltipText
+		lastExplanation = explanation
+	}
 }
 
 /**
@@ -142,15 +139,15 @@ object TooltipManager {
 
     private val LOG by logger(TooltipManager::class)
 
-    private val WIDTH = 300
+    private const val WIDTH = 300
 
-    private val MIN_WIDTH = 100
+    private const val MIN_WIDTH = 100
 
     /** The vertical distance between the bottom edge of the origin's bounding box and the tip of the [ArrowBubble]. */
-    private val Y_DIST = 10
+    private const val Y_DIST = 10
 
     /** The time (in ms) of delaying the displaying of the textTooltip. */
-    private val DELAY = 1500
+    private const val DELAY = 1500
 
     private val tooltipEventHandler: EventHandler<TooltipEvent> = { handle(it) }
 
@@ -188,7 +185,7 @@ object TooltipManager {
 
     init {
         eventBus.register(TooltipEvent::class, tooltipEventHandler)
-        timer.initialize(DELAY, { displayImpl() })
+        timer.initialize(DELAY) { displayImpl() }
     }
 
     private fun handle(event: TooltipEvent) {
