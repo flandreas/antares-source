@@ -25,8 +25,8 @@ class NumberView(
 ) : AbstractRectangle() {
 
     companion object {
-        val NIBBLE_GAP = 5
-        val BYTE_LABEL_HOR_GAP = 0
+        private const val NIBBLE_GAP = 5
+        private const val BYTE_LABEL_HOR_GAP = 0
     }
 
     /** Contains the individual digit views, starting with the lowest priority bit a index 0. */
@@ -35,7 +35,7 @@ class NumberView(
     /** Contains the [Label]s that designate the index of the displayed byte within the entire signal value. */
     private val byteIndexLabels = mutableListOf<Label>()
 
-    /** The index of the [digitView] that has the focus, or `null` if none has the focus. */
+    /** The index of the [digitViews] that has the focus, or `null` if none has the focus. */
     var focusIndex: Int? = null
         private set
 
@@ -70,6 +70,10 @@ class NumberView(
     /** Returns the number of {@link DigitView} that this {@link NumberView} displays.*/
     val digitCount: Int get() = digitViews.size
 
+	fun clear() {
+		digitViews.clear()
+	}
+
     fun setSignal(signal: DigitalSignal) {
         invalidate()
         digitViews.forEach { it.setSignal(signal) }
@@ -83,13 +87,11 @@ class NumberView(
      * @return the index of the digit at the specified relative coordinates, if any. The first index is 0.
      */
     fun getDigitIndexAt(x: Double, y: Double): Int? {
-        var i = 0
-        for (digitView in digitViews) {
+	    for ((i, digitView) in digitViews.withIndex()) {
             if (digitView.contains(x, y)) {
                 return i
             }
-            i++
-        }
+	    }
         return null
     }
 

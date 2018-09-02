@@ -30,7 +30,7 @@ class ProbeView(
 ) : AbstractNumberViewComponent<Probe>(styleProvider, "library.element.Probe", probe, Direction.EAST), ControlViewSource<Probe> {
 
     companion object {
-        val PROP_ICON_PATH = "ch.scorpion.antares.view.net.ProbeView.iconPath"
+        const val PROP_ICON_PATH = "ch.scorpion.antares.view.net.ProbeView.iconPath"
         private val TRIANGLE_PATH = System.get().createPath()
             .moveTo(0, 0)
             .lineTo(0, 5)
@@ -86,6 +86,7 @@ class ProbeView(
         get() = model!!.bitWidth
         set(value) {
             if (value != bitWidth) {
+	            clear()
                 model!!.bitWidth = value
                 updateView()
             }
@@ -108,7 +109,7 @@ class ProbeView(
 
     /** ---- [ControlViewSource] */
 
-    override val controlId: String get() = "probe:" + id
+    override val controlId: String get() = "probe:$id"
 
     override val controlName: String get() = "$type $id"
 

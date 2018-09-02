@@ -31,7 +31,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 ) : DigitalComponentView<T>(styleProvider, baseResourceKey, model) {
 
     companion object {
-        val DEFAULT_INSETS = Look.SCALE
+        const val DEFAULT_INSETS = Look.SCALE
     }
 
     override var orientation: Direction = orientation
@@ -72,7 +72,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 
     override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
         get() = SelectionDrawingStrategy.REPLACE
-        set(value) {throw UnsupportedOperationException()}
+        set(@Suppress("UNUSED_PARAMETER") value) { throw UnsupportedOperationException() }
 
     override val rotatable: Boolean get() = false
 
@@ -123,4 +123,8 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
     protected open fun updateViewImpl() {
         // empty
     }
+
+	protected fun clear() {
+		numberView?.clear()
+	}
 }
