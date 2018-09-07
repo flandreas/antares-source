@@ -19,7 +19,7 @@ import javax.swing.tree.*
 
 /**
  * Displays the objects that can be dragged into a [ContainerDrawing], such as [PortViewComponent]s and controls.
- * TODO I18N TODO Refactor: Duplicate code for handled event and view types
+ * TODO Refactor: Duplicate code for handled event and view types
  */
 open class ContainerTreeView(
     private val portFactory: PortFactory,
@@ -46,24 +46,23 @@ open class ContainerTreeView(
         dragEnabled = true
         dropMode = DropMode.ON
 
-        eventBus.register(GraphPortViewEvent::class, {
-            when(it.type) {
-                GraphPortViewEvent.Type.ADD -> addGraphPortView(it.graphPortView)
-                GraphPortViewEvent.Type.REMOVE -> removeGraphPortView(it.graphPortView.model!!.name!!)
-            }
-        })
+        eventBus.register(GraphPortViewEvent::class) {
+	        when(it.type) {
+		        GraphPortViewEvent.Type.ADD -> addGraphPortView(it.graphPortView)
+		        GraphPortViewEvent.Type.REMOVE -> removeGraphPortView(it.graphPortView.model!!.name!!)
+	        }
+        }
 
-        eventBus.register(ControlViewSourceEvent::class, {
-            when(it.type) {
-                ControlViewSourceEvent.Type.ADD -> addControlViewSource(it.source)
-                ControlViewSourceEvent.Type.REMOVE -> removeControlViewSource(it.source.controlId!!)
-            }
-        })
+	    eventBus.register(ControlViewSourceEvent::class) {
+		    when(it.type) {
+			    ControlViewSourceEvent.Type.ADD -> addControlViewSource(it.source)
+			    ControlViewSourceEvent.Type.REMOVE -> removeControlViewSource(it.source.controlId!!)
+		    }
+	    }
     }
 
     /** Updates the [TreeModel] by comparing data from [GraphView] and [ContainerDrawing].*/
     fun update(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
-        // TODO I18N
         portsNode = DefaultMutableTreeNode(Translations.getString("graph.component.ports"))
         controlsNode = DefaultMutableTreeNode(Translations.getString("graph.component.controls"))
         model = createTreeModel(graphView, containerDrawing)
@@ -197,7 +196,7 @@ open class ContainerTreeView(
 
         private fun getIcon(iconPath: String): Icon {
             try {
-                return iconCache.getOrPut(iconPath, { ImageIcon(ContainerTreeView::class.java.getResource(iconPath)) })
+                return iconCache.getOrPut(iconPath) { ImageIcon(ContainerTreeView::class.java.getResource(iconPath)) }
             } catch (e: Exception) {
                 LOG.value.error("Could not load icon $iconPath")
                 throw e
