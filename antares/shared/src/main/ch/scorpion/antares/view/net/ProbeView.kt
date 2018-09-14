@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.signal.AbstractNumberViewComponent
 import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -80,7 +81,13 @@ class ProbeView(
             updateView()
         }
 
-    /** ---- [AbstractNumberViewComponent] */
+	var name: String?
+		get() = model!!.name
+		set(value) {
+			model!!.name = value
+		}
+
+	/** ---- [AbstractNumberViewComponent] */
 
     override var bitWidth: BitWidth
         get() = model!!.bitWidth
@@ -111,7 +118,7 @@ class ProbeView(
 
     override val controlId: String get() = "probe:$id"
 
-    override val controlName: String get() = "$type $id"
+    override val controlName: String get() = if (StringUtils.isBlank(name)) "$type (ID:$id)" else "$type $name"
 
     override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 

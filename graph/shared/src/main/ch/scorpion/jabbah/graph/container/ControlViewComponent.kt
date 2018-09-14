@@ -76,9 +76,25 @@ class ControlViewComponent(
 
     override val boundingBox: RectangularShape get() = controlView!!.boundingBox
 
+	override val canMirror: Boolean get() = true
+
     override fun draw(context: DrawContext) {
         controlView!!.draw(context)
     }
+
+	override fun mirrorHorizontally(x: Double) {
+		invalidate()
+		location = location.mirrorHorizontally(x)
+		invalidate()
+		update()
+	}
+
+	override fun mirrorVertically(y: Double) {
+		invalidate()
+		location = location.mirrorVertically(y)
+		invalidate()
+		update()
+	}
 
     override fun contains(x: Double, y: Double): Boolean = controlView!!.contains(x, y)
 

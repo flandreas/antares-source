@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.edit.Editor
 class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
 
     companion object {
+	    private val name = PropertyImpl("element.property", String::class.java)
         private val bitWidth = PropertyImpl("element.property.bitWidth", BitWidth::class.java)
         private val signalRep = PropertyImpl("element.property.DigitalSignalRepresentation", DigitalSignalRepresentation::class.java)
         private val output = PropertyImpl("element.property.hasOutput", Boolean::class.java)
@@ -22,10 +23,12 @@ class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
     override fun addProperties(bean: ProbeView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
+	    name.bind(editor, { bean.name }, { bean.name = it })
         bitWidth.bind(editor, { bean.bitWidth }) { bean.bitWidth = it!! }
         signalRep.bind(editor, { bean.signalRepresentation }) { bean.signalRepresentation = it!! }
         output.bind(editor, { bean.hasOutput }) { bean.hasOutput = it!! }
 
+	    properties.add(name)
         properties.add(bitWidth)
         properties.add(signalRep)
         properties.add(output)
