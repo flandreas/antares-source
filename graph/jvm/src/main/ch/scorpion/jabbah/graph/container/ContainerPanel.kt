@@ -57,19 +57,19 @@ class ContainerPanel(
     init {
         editor.view.navigator.setZoomFactor(2.0)
 
-        eventBus.register(ApplicationDataEvent::class, {
-            if (it.newData == null) {
-				removeAll()
-            } else {
-	            if (it.oldData == null) {
-		            add(mainSplitPane)
-	            }
-	            val metaGraph = it.newData as MetaGraph
-	            setData(metaGraph.graph.graphView!!, metaGraph.containerDrawing)
-            }
-        })
+        eventBus.register(ApplicationDataEvent::class) {
+	        if (it.newData == null) {
+		        removeAll()
+	        } else {
+		        if (it.oldData == null) {
+			        add(mainSplitPane)
+		        }
+		        val metaGraph = it.newData as MetaGraph
+		        setData(metaGraph.graph.graphView!!, metaGraph.containerDrawing)
+	        }
+        }
 
-        propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
+	    propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
         // TODO Toolbar
 
@@ -128,10 +128,10 @@ class ContainerPanel(
         val toolbar = ToolBar(editor)
 
         toolbar.addTool(editor.currentTool, "/img/pointer.gif", Translations.getString("edit.tool.select"))
-        toolbar.addTool(LabelTool(editor, { LabelComponent() }), "/img/text.gif", Translations.getString("edit.component.label"))
-        toolbar.addTool(RectangleTool(editor, { RectangleComponent() }), "/img/rectangle.png", Translations.getString("edit.component.rectangle"))
-        toolbar.addTool(RectangleTool(editor, { EllipseComponent() }), "/img/ellipse.png", Translations.getString("edit.component.ellipse"))
-        toolbar.addTool(PolylineTool(editor, { PolylineComponent() }), "/img/polyline.gif", Translations.getString("edit.component.polyline"))
+        toolbar.addTool(LabelTool(editor) { LabelComponent() }, "/img/text.gif", Translations.getString("edit.component.label"))
+        toolbar.addTool(RectangleTool(editor) { RectangleComponent() }, "/img/rectangle.png", Translations.getString("edit.component.rectangle"))
+        toolbar.addTool(RectangleTool(editor) { EllipseComponent() }, "/img/ellipse.png", Translations.getString("edit.component.ellipse"))
+        toolbar.addTool(PolylineTool(editor) { PolylineComponent() }, "/img/polyline.gif", Translations.getString("edit.component.polyline"))
 
         return toolbar
     }
@@ -145,10 +145,10 @@ class ContainerPanel(
         /** Removes the object that has been added to the [ContainerDrawing] from the [ContainerTreeView].*/
         override fun drawableAdded(event: DrawableContainerEvent<Component>) {
             if (event.child is PortViewComponent<*>) {
-                treeView.removeGraphPortView((event.child as PortViewComponent<*>).port.name!!)
+                treeView.containerTree?.removeGraphPortView((event.child as PortViewComponent<*>).port.name!!)
             }
             if (event.child is ControlViewComponent) {
-                treeView.removeControlViewSource((event.child as ControlViewComponent).controlView!!.controlId!!)
+                treeView.containerTree?.removeControlViewSource((event.child as ControlViewComponent).controlView!!.controlId!!)
             }
         }
 
@@ -160,13 +160,13 @@ class ContainerPanel(
             if (event.child is PortViewComponent<*>) {
                 val graphPortView = graphView!!.getGraphPortView((event.child as PortViewComponent<*>).port.name!!)
                 if (graphPortView != null) {
-                    treeView.addGraphPortView(graphPortView)
+                    treeView.containerTree?.addGraphPortView(graphPortView)
                 }
             }
             if (event.child is ControlViewComponent) {
                 val cvs = graphView!!.getControlViewSource((event.child as ControlViewComponent).controlView!!.controlId!!)
                 if (cvs != null) {
-                    treeView.addControlViewSource(cvs)
+                    treeView.containerTree?.addControlViewSource(cvs)
                 }
             }
         }

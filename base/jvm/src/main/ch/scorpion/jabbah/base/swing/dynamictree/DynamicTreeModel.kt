@@ -9,14 +9,17 @@ import javax.swing.tree.TreeModel
  * Creates a new dynamic tree model for the specified root object and child initializer.
  * @param root the root object user value.
  * @param initializer the initializer strategy to use to lazily attach children to nodes.
+ * @param hasChildren determines whether the root [DynamicTreeNode] of this [DynamicTreeNode] has dynamic children,
+ * i.e. whether it has not already loaded its children dynamically.
  */
 open class DynamicTreeModel(
 	root: Any,
-	initializer: DynamicInitializer
+	initializer: DynamicInitializer,
+	hasChildren: Boolean = true
 ) : DefaultTreeModel(null), DynamicNotifier {
 
 	init {
-		setRoot(createNode(root, initializer, this, true))
+		setRoot(createNode(root, initializer, this, hasChildren))
 	}
 
 	/** ---- [DynamicNotifier] */
@@ -53,6 +56,8 @@ open class DynamicTreeModel(
 	 * @param value the user value encapsulated by this dynamic node.
 	 * @param initializer the initializer strategy to use to lazily attach children to this node.
 	 * @param notifier the notifier to use if the children of this node change.
+	 * @param hasChildren determines whether the created [DynamicTreeNode] has dynamic children, i.e. whether
+	 * it has not already loaded its children dynamically.
 	 */
 	protected fun createNode(value: Any, initializer: DynamicInitializer, notifier: DynamicNotifier, hasChildren: Boolean): DynamicTreeNode {
 		return DynamicTreeNode(value, initializer, notifier, hasChildren)

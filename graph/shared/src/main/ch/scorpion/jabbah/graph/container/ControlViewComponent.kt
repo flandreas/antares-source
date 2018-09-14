@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
@@ -15,6 +17,7 @@ import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
@@ -24,12 +27,10 @@ import ch.scorpion.jabbah.io.Storable
  */
 class ControlViewComponent(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    controlView: ControlView<Vertice>? = null
+    var controlView: ControlView<Vertice>? = null
 ) : AbstractComponent(styleProvider), ActorView {
 
-    var controlView: ControlView<Vertice>? = controlView
-
-    /**
+	/**
      * The ID of the model displayed by [controlView]. This ID is made persistent and is used to resolve the link
      * to the model when the underlying [Graph] gets bound.
      */
@@ -39,7 +40,7 @@ class ControlViewComponent(
 
     init {
         if (controlView != null) {
-            drawableOwner = DrawableOwner(this, controlView)
+            drawableOwner = DrawableOwner(this, controlView!!)
         }
     }
 
@@ -47,8 +48,8 @@ class ControlViewComponent(
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeStorable("controlView", controlView!!);
-        writer.writeInt("controlModelId", controlModelId);
+        writer.writeStorable("controlView", controlView!!)
+        writer.writeInt("controlModelId", controlModelId)
     }
 
     override fun read(reader: StoreReader) {

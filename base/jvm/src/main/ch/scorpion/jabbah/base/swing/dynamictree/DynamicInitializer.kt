@@ -11,8 +11,7 @@ import javax.swing.tree.TreeNode
 interface DynamicInitializer {
 
 	/**
-	 * Creates a [TreeNode] that is displayed as a single child while
-	 * initializing the specified parent.
+	 * Creates a [TreeNode] that is displayed as a single child while initializing the specified parent.
 	 * @param parent the parent node for which to create the initializer node.
 	 * @return the node used as single child while initializing.
 	 */

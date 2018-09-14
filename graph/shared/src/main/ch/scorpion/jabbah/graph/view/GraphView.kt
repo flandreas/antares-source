@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.io.Storable
@@ -90,6 +92,9 @@ interface GraphView<T : GraphElementView<*>> : Drawing<T> {
 
     /** Returns all [GraphElementView]s of a particular [GraphElement].*/
     fun getElementViews(element: GraphElement): ImmutableList<GraphElementView<*>>
+
+	/** Returns all [SubGraphVerticeView] that this [GraphView] contains.*/
+	fun getSubGraphVerticeViews(): ImmutableList<SubGraphVerticeView<SubGraphVertice>>
 
     // TODO Add Scenario methods
 }

@@ -1,0 +1,272 @@
+package ch.scorpion.jabbah.graph.container
+
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.swing.dynamictree.*
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.graph.container.ContainerTreeFolderItem.Companion.CONTROLS
+import ch.scorpion.jabbah.graph.container.ContainerTreeFolderItem.Companion.CONTROLS_NAME
+import ch.scorpion.jabbah.graph.container.ContainerTreeFolderItem.Companion.SUBGRAPHS_NAME
+import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
+import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.GraphPortView
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.port.PortFactory
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import javax.swing.tree.DefaultMutableTreeNode
+import javax.swing.tree.MutableTreeNode
+import javax.swing.tree.TreeNode
+
+enum class ContainerTreeItemType {
+	Leaf,
+	Ports,
+	Controls,
+	SubGraphs,
+	SubGraph
+}
+
+abstract class AbstractContainerTreeItem(
+	val type: ContainerTreeItemType
+) {
+	abstract val description: String
+}
+
+/**
+ * Represents an object that can be dragged into the container drawing.
+ * Used as user object in [TreeNode]s.
+ */
+class ContainerTreeLeafItem(
+	val id: String,
+	override val description: String,
+	val factory: () -> Component,
+	val iconPath: String
+) : AbstractContainerTreeItem(ContainerTreeItemType.Leaf)
+
+private class ContainerTreeFolderItem(
+	type: ContainerTreeItemType,
+	private val translatedDesc: String
+) : AbstractContainerTreeItem(type) {
+
+	companion object {
+		val CONTROLS_NAME = Translations.getString("graph.component.controls")
+		val SUBGRAPHS_NAME = Translations.getString("graph.component.subgraphs")
+		val PORTS_NAME = Translations.getString("graph.component.ports")
+		val PORTS = ContainerTreeFolderItem(ContainerTreeItemType.Ports, PORTS_NAME)
+		val CONTROLS = ContainerTreeFolderItem(ContainerTreeItemType.Controls, CONTROLS_NAME)
+	}
+
+	override val description: String
+		get() = translatedDesc
+
+	override fun toString(): String {
+		return translatedDesc
+	}
+}
+
+/**
+ * The user object of a tree node that contains all [SubGraphVerticeView]s of a particular [GraphView].
+ * @property graphView the [GraphView] whose [SubGraphVerticeView] are contained in the tree node
+ */
+private class SubgraphsFolderItem(
+	val graphView: GraphView<*>
+) : AbstractContainerTreeItem(ContainerTreeItemType.SubGraphs) {
+
+	override val description: String get() = SUBGRAPHS_NAME
+}
+
+/**
+ * The user object of a tree node that represents a single [SubGraphVerticeView].
+ * @property subGraphVerticeView the [SubGraphVerticeView], whose referenced [GraphView] can be opened by the tree node
+ */
+private class SubGraphVerticeViewFolderItem(
+	private val subGraphVerticeView: SubGraphVerticeView<SubGraphVertice>
+) : AbstractContainerTreeItem(ContainerTreeItemType.SubGraph) {
+
+	override val description: String get() = subGraphVerticeView.subGraphVertice?.name ?: "n.a."
+}
+
+private class ControlsTreeFolderItem(
+	 val graphView: GraphView<*>
+) : AbstractContainerTreeItem(ContainerTreeItemType.Controls) {
+
+	override val description: String get() = CONTROLS_NAME
+
+}
+
+/** Incrementally builds and fills the tree used in the container panel.*/
+class ContainerTree(
+	private val portFactory: PortFactory,
+	private val styleProvider: StyleProvider,
+	graphView: GraphView<*>,
+	containerDrawing: ContainerDrawing
+) : DynamicInitializer {
+
+	companion object {
+		private val LOG by logger(ContainerTree::class)
+	}
+
+	/** The root node that contains the [PortViewComponent]s.*/
+	private val portsNode = DefaultMutableTreeNode(ContainerTreeFolderItem.PORTS)
+
+	/** The root node that contains the [ControlViewSource]s. */
+	private val controlsNode = DefaultMutableTreeNode(ContainerTreeFolderItem.CONTROLS)
+
+	lateinit var treeModel: DynamicTreeModel
+		private set
+
+	init {
+		createTreeModel(graphView, containerDrawing)
+	}
+
+	/** ---- [DynamicInitializer] */
+
+	override fun createInitializerTreeNode(parent: TreeNode): TreeNode {
+		return InitializerTreeNode(parent, Translations.getString("graph.action.loading.desc"))
+	}
+
+	override fun initialize(value: Any, receiver: DynamicReceiver) {
+		LOG.trace("ContainerTree/DynamicInitializer: initialize $receiver")
+		if (value is AbstractContainerTreeItem) {
+			InvocationHandler.invoke {
+				when (value.type) {
+					ContainerTreeItemType.SubGraphs -> addSubGraphVerticeNodes(value as SubgraphsFolderItem, receiver)
+					ContainerTreeItemType.Controls -> addControlNodes(value as ControlsTreeFolderItem, receiver)
+					else ->	receiver.addChildren(listOf())
+				}
+			}
+		} else {
+			receiver.addChildren(listOf())
+		}
+	}
+
+	private fun createSubGraphVerticeViewTreeNode(vv: SubGraphVerticeView<SubGraphVertice>): MutableTreeNode {
+		val treeNode = DefaultMutableTreeNode(SubGraphVerticeViewFolderItem(vv))
+		val subGraphView = vv.createSubGraphView()
+		treeNode.add(DynamicTreeNode(ControlsTreeFolderItem(subGraphView), this, treeModel, true))
+		treeNode.add(DynamicTreeNode(SubgraphsFolderItem(subGraphView), this, treeModel, true))
+		return treeNode
+	}
+
+	private fun addSubGraphVerticeNodes(item: SubgraphsFolderItem, receiver: DynamicReceiver) {
+		receiver.addChildren(
+			item.graphView.getSubGraphVerticeViews()
+				.map { createSubGraphVerticeViewTreeNode(it) })
+	}
+
+	private fun addControlNodes(item: ControlsTreeFolderItem, receiver: DynamicReceiver) {
+		receiver.addChildren(
+			item.graphView.getControlViewSources()
+				.map { createControlViewNode(it) })
+	}
+
+	/** ---- [ContainerTree] */
+
+	/** Creates a tree node for the specified [GraphPortView] and adds it the corresponding parent node [portsNode] of the managed [TreeModel].*/
+	fun addGraphPortView(graphPortView: GraphPortView<*>) {
+		val item = ContainerTreeLeafItem(
+			graphPortView.model!!.name!!,
+			"${graphPortView.model!!.portType} ${graphPortView.model!!.name!!}",
+			{ portFactory.createPortViewComponent(portFactory.createPortView(portFactory.createSubGraphPort(graphPortView.model!!)))},
+			graphPortView.iconPath
+		)
+		portsNode.add(DefaultMutableTreeNode(item))
+		treeModel.nodesWereInserted(portsNode, intArrayOf(portsNode.childCount - 1))
+	}
+
+	/** Removes the [PortViewComponent] for the [Port] with the specified name from the [TreeModel]. */
+	fun removeGraphPortView(portName: String) {
+		val index = findGraphPortViewIndex(portName)
+		if (index != null) {
+			val child = portsNode.getChildAt(index)
+			portsNode.remove(index)
+			treeModel.nodesWereRemoved(portsNode, intArrayOf(index), arrayOf(child))
+		}
+	}
+
+	/** Returns the [TreeNode] with the [PortViewComponent] for the [Port] with the specified name. */
+	fun getPortsTreeNode(portName: String): DefaultMutableTreeNode? {
+		val index = findGraphPortViewIndex(portName)
+		if (index != null) {
+			return portsNode.getChildAt(index) as DefaultMutableTreeNode
+		}
+		return null
+	}
+
+	/** Creates a tree node for the specified [ControlViewSource] and adds it to the [TreeModel] .*/
+	fun addControlViewSource(source: ControlViewSource<Vertice>) {
+		controlsNode.add(DefaultMutableTreeNode(createControlViewNode(source)))
+		treeModel.nodesWereInserted(controlsNode, intArrayOf(controlsNode.childCount - 1))
+	}
+
+	/** Removes the [ControlViewSource] with the specified ID from the [TreeModel]. */
+	fun removeControlViewSource(controlId: String) {
+		val index = findControlViewSourceIndex(controlId)
+		if (index != null) {
+			val child = controlsNode.getChildAt(index)
+			controlsNode.remove(index)
+			treeModel.nodesWereRemoved(controlsNode, intArrayOf(index), arrayOf(child))
+		}
+	}
+
+	private fun createTreeModel(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
+		treeModel = DynamicTreeModel("Container", this, false)
+		fillGraphPortViews(graphView, containerDrawing)
+		fillControlViewSources(graphView, containerDrawing)
+		(treeModel.root as DefaultMutableTreeNode).add(portsNode)
+		(treeModel.root as DefaultMutableTreeNode).add(controlsNode)
+		(treeModel.root as DefaultMutableTreeNode).add(DynamicTreeNode(SubgraphsFolderItem(graphView), this, treeModel))
+	}
+
+	/**
+	 * Adds all [GraphPortView]s of the [GraphView] to this [ContainerTreeView] that are not contained
+	 * in the [ContainerDrawing].
+	 */
+	private fun fillGraphPortViews(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
+		graphView.getGraphPortViews()
+			.filter { containerDrawing.getPortViewComponent(it.model!!.name!!) == null }
+			.forEach { addGraphPortView(it) }
+	}
+
+	private fun findGraphPortViewIndex(portName: String): Int? {
+		for (index in 0 until portsNode.childCount) {
+			val item = (portsNode.getChildAt(index) as DefaultMutableTreeNode).userObject as ContainerTreeLeafItem
+			if (item.id == portName) {
+				return index
+			}
+		}
+		return null
+	}
+
+
+	/**
+	 * Adds all [ControlViewSource]s of the [GraphView] to the [TreeModel] that are not contained
+	 * in the [ContainerDrawing].
+	 */
+	private fun fillControlViewSources(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
+		graphView.getControlViewSources()
+			.filter { containerDrawing.getControlViewComponent(it.controlId!!) == null }
+			.forEach { addControlViewSource(it) }
+	}
+
+	private fun createControlViewNode(source: ControlViewSource<Vertice>): MutableTreeNode {
+		return DefaultMutableTreeNode(ContainerTreeLeafItem(
+			source.controlId!!,
+			source.controlName,
+			{ ControlViewComponent(styleProvider, source.createControlView()) },
+			source.iconPath))
+	}
+
+	private fun findControlViewSourceIndex(controlId: String): Int? {
+		for (index in 0 until controlsNode.childCount) {
+			val item = (controlsNode.getChildAt(index) as DefaultMutableTreeNode).userObject as ContainerTreeLeafItem
+			if (item.id == controlId) {
+				return index
+			}
+		}
+		return null
+	}
+}

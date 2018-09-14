@@ -12,12 +12,14 @@ import javax.swing.tree.MutableTreeNode
  *
  * @property initializer Strategy that will initialize this node
  * @property notifier Notifier to use if the children of this node change
+ * @param hasChildren determines whether this [DynamicTreeNode] has dynamic children, i.e. whether
+ * it has not already loaded its children dynamically.
  */
 class DynamicTreeNode(
 	value: Any,
 	private val initializer: DynamicInitializer,
 	private val notifier: DynamicNotifier,
-	hasChildren: Boolean
+	hasChildren: Boolean = true
 ) : DefaultMutableTreeNode(value, true), DynamicReceiver {
 
 	/** The current state of this dynamic node. */
@@ -82,7 +84,7 @@ class DynamicTreeNode(
 	 * @throws ArrayIndexOutOfBoundsException if there is no child at this index.
 	 */
 	@Synchronized
-	override fun getChildAt(index: Int): TreeNode {
+	override fun getChildAt(index: Int): TreeNode? {
 		return this.state.getChildAt(this, index)
 	}
 
@@ -256,7 +258,8 @@ class DynamicTreeNode(
 
 			override fun getChildCount(node: DynamicTreeNode): Int {
 				node.initialize();
-				return super.getChildCount(node);
+				// The node might have changed to the INITIALIZED state
+				return node.state.getChildCount(node)
 			}
 
 			override fun getChildAt(node: DynamicTreeNode, index: Int): TreeNode {

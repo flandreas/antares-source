@@ -31,13 +31,13 @@ import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.connect.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
-import impl.org.controlsfx.i18n.Translations
-
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 /**
  * A standard implementation of the [GraphView] interface.
@@ -201,6 +201,10 @@ class GraphViewImpl<T : GraphElementView<*>>(
     override fun getControlViewSource(controlId: String): ControlViewSource<Vertice>? {
         return getDrawable { it is ControlViewSource<*> && it.controlId == controlId } as ControlViewSource<Vertice>?
     }
+
+	override fun getSubGraphVerticeViews(): ImmutableList<SubGraphVerticeView<SubGraphVertice>> {
+		return getDrawables { it is SubGraphVerticeView<*> } as ImmutableList<SubGraphVerticeView<SubGraphVertice>>
+	}
 
     /** ---- [Storable] interface */
 

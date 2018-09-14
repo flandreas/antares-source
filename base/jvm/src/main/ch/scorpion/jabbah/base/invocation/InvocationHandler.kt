@@ -16,8 +16,14 @@ abstract class InvocationHandler {
         fun invoke(doRun: Runnable) {
             implementation.invokeImpl(doRun)
         }
+
+	    fun invoke(runnable: () -> Unit) {
+		    implementation.invokeImpl(runnable)
+	    }
     }
 
     protected abstract fun invokeImpl(doRun: Runnable)
+
+	protected abstract fun invokeImpl(runnable: () -> Unit)
 
 }

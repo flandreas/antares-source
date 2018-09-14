@@ -27,4 +27,22 @@ class SwingInvocationHandler : InvocationHandler() {
             }
         }
     }
+
+	override fun invokeImpl(runnable: () -> Unit) {
+		BusyHandler.increment()
+		SwingUtilities.invokeLater {
+			try {
+				runnable.invoke()
+			} catch (e: Throwable) {
+				val developerMode = false
+				if (developerMode) {
+					ErrorHandler.exception(e)
+				} else {
+					LOG.error("Error in invocation handler: ${e.message}")
+				}
+			} finally {
+				BusyHandler.decrement()
+			}
+		}
+	}
 }

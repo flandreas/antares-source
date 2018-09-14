@@ -21,14 +21,14 @@ class DigitalContainerTreeView(
 
     init {
         eventBus.register(CircuitInOutBitWidthChanged::class) {
-	        val treeNode = getPortsTreeNode(it.circuitInOut.name!!)
+	        val treeNode = containerTree?.getPortsTreeNode(it.circuitInOut.name!!)
 	        if (treeNode != null && treeNode.userObject is CircuitInOutView) {
 		        (treeNode.userObject as CircuitInOutView).bitWidth = it.newValue
 	        }
         }
 
 	    eventBus.register(CircuitInOutSignalRepresentationChanged::class) {
-		    val treeNode = getPortsTreeNode(it.circuitInOut.name!!)
+		    val treeNode = containerTree?.getPortsTreeNode(it.circuitInOut.name!!)
 		    if (treeNode != null && treeNode.userObject is CircuitInOutView) {
 			    (treeNode.userObject as CircuitInOutView).signalRepresentation = it.newValue
 		    }
