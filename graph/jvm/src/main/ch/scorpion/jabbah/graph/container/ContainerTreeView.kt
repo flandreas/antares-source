@@ -76,7 +76,8 @@ open class ContainerTreeView(
 			    val userObject = value.userObject as AbstractContainerTreeItem
 			    label.text = userObject.description
 			    label.icon = when (userObject.type) {
-				    ContainerTreeItemType.Leaf -> getIcon((value.userObject as ContainerTreeLeafItem).iconPath)
+				    ContainerTreeItemType.Port -> getIcon((value.userObject as DraggableTreeItem).iconPath)
+				    ContainerTreeItemType.Control -> getIcon((value.userObject as DraggableTreeItem).iconPath)
 				    ContainerTreeItemType.SubGraph -> subGraphIcon
 				    else -> folderIcon
 			    }

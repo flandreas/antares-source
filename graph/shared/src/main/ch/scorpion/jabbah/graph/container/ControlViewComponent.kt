@@ -16,25 +16,29 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StorableCreator
 
 /**
  * A [Component] that wraps a [ControlView] in order to allow deferred reference to a [SubGraphVerticeView]'s model.
  */
 class ControlViewComponent(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    var controlView: ControlView<Vertice>? = null
+    var controlView: ControlView<Vertice>? = null,
+    baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY
 ) : AbstractComponent(styleProvider), ActorView {
 
 	/**
      * The ID of the model displayed by [controlView]. This ID is made persistent and is used to resolve the link
      * to the model when the underlying [Graph] gets bound.
      */
-    private var controlModelId: Int = if (controlView != null) controlView!!.model!!.id else 0
+	private var controlModelLink: DeepVerticeLink = if (controlView != null) baseLink.append(controlView!!.model!!.id) else DeepVerticeLink.EMPTY
 
     private var drawableOwner: DrawableOwner? = null
 
@@ -49,7 +53,7 @@ class ControlViewComponent(
     override fun write(writer: StoreWriter) {
         super.write(writer)
         writer.writeStorable("controlView", controlView!!)
-        writer.writeInt("controlModelId", controlModelId)
+	    writer.writeString("controlModelId", controlModelLink.toStoreFormat())
     }
 
     override fun read(reader: StoreReader) {
@@ -59,7 +63,7 @@ class ControlViewComponent(
         }
         controlView = reader.readStorable("controlView") as ControlView<Vertice>
         drawableOwner = DrawableOwner(this, controlView!!)
-        controlModelId = reader.readInt("controlModelId")
+	    controlModelLink = DeepVerticeLink.fromStoreFormat(reader.readString("controlModelId"))
         super.read(reader)
         controlView!!.isShowPortViews = false
     }
@@ -106,7 +110,8 @@ class ControlViewComponent(
 
     /** ---- [ControlViewComponent] */
 
-    fun bindToGraph(graph: Graph) {
-        controlView!!.bindToModel(graph.withId(controlModelId) as Vertice)
+    fun bindToGraph(graph: Graph, repository: MetaGraphRepository, storableCreator: StorableCreator) {
+	    val vertice = controlModelLink.getLinkedVertice(graph, repository, storableCreator)
+	    controlView!!.bindToModel(vertice)
     }
 }

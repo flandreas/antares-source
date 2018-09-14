@@ -32,11 +32,11 @@ class ContainerTransferHandler : TransferHandler() {
 
     override fun createTransferable(c: JComponent?): Transferable? {
         val treeNode = (c as JTree).selectionPath.lastPathComponent as DefaultMutableTreeNode
-        if (!(treeNode.userObject is ContainerTreeLeafItem)) {
+        if (!(treeNode.userObject is DraggableTreeItem)) {
             return null
         }
 
-        val component = (treeNode.userObject as ContainerTreeLeafItem).factory.invoke()
+        val component = (treeNode.userObject as DraggableTreeItem).factory.invoke()
 
         dragImage = dummyImage
         dragImageOffset = Point(0, 0)

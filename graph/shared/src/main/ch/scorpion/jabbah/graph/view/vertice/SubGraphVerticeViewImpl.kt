@@ -279,7 +279,7 @@ class SubGraphVerticeViewImpl(
         super.bind(graph)
         if (model!!.designError == null) {
 	        val innerGraph = getGraph()
-	        getControlViewComponents().forEach { it.bindToGraph(innerGraph) }
+	        getControlViewComponents().forEach { it.bindToGraph(innerGraph, repository, storableCreator) }
         }
     }
 

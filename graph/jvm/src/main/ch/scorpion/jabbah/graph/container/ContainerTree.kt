@@ -6,11 +6,11 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.dynamictree.*
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.graph.container.ContainerTreeFolderItem.Companion.CONTROLS
 import ch.scorpion.jabbah.graph.container.ContainerTreeFolderItem.Companion.CONTROLS_NAME
 import ch.scorpion.jabbah.graph.container.ContainerTreeFolderItem.Companion.SUBGRAPHS_NAME
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.GraphPortView
@@ -20,9 +20,11 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.MutableTreeNode
 import javax.swing.tree.TreeNode
+import javax.swing.tree.TreeModel
 
 enum class ContainerTreeItemType {
-	Leaf,
+	Port,
+	Control,
 	Ports,
 	Controls,
 	SubGraphs,
@@ -35,16 +37,26 @@ abstract class AbstractContainerTreeItem(
 	abstract val description: String
 }
 
-/**
- * Represents an object that can be dragged into the container drawing.
- * Used as user object in [TreeNode]s.
- */
-class ContainerTreeLeafItem(
-	val id: String,
+abstract class DraggableTreeItem(
+	type: ContainerTreeItemType,
 	override val description: String,
 	val factory: () -> Component,
 	val iconPath: String
-) : AbstractContainerTreeItem(ContainerTreeItemType.Leaf)
+) : AbstractContainerTreeItem(type)
+
+private class ContainerTreePortItem(
+	val portName: String,
+	description: String,
+	factory: () -> Component,
+	iconPath: String
+) : DraggableTreeItem(ContainerTreeItemType.Port, description, factory, iconPath)
+
+private class ContainerTreeControlItem(
+	val controlViewId: String,
+	description: String,
+	factory: () -> Component,
+	iconPath: String
+)  : DraggableTreeItem(ContainerTreeItemType.Control, description, factory, iconPath)
 
 private class ContainerTreeFolderItem(
 	type: ContainerTreeItemType,
@@ -72,7 +84,8 @@ private class ContainerTreeFolderItem(
  * @property graphView the [GraphView] whose [SubGraphVerticeView] are contained in the tree node
  */
 private class SubgraphsFolderItem(
-	val graphView: GraphView<*>
+	val graphView: GraphView<*>,
+	val link: DeepVerticeLink
 ) : AbstractContainerTreeItem(ContainerTreeItemType.SubGraphs) {
 
 	override val description: String get() = SUBGRAPHS_NAME
@@ -89,12 +102,12 @@ private class SubGraphVerticeViewFolderItem(
 	override val description: String get() = subGraphVerticeView.subGraphVertice?.name ?: "n.a."
 }
 
-private class ControlsTreeFolderItem(
-	 val graphView: GraphView<*>
+private class ControlsFolderTreeItem(
+	 val graphView: GraphView<*>,
+	 val link: DeepVerticeLink
 ) : AbstractContainerTreeItem(ContainerTreeItemType.Controls) {
 
 	override val description: String get() = CONTROLS_NAME
-
 }
 
 /** Incrementally builds and fills the tree used in the container panel.*/
@@ -134,7 +147,7 @@ class ContainerTree(
 			InvocationHandler.invoke {
 				when (value.type) {
 					ContainerTreeItemType.SubGraphs -> addSubGraphVerticeNodes(value as SubgraphsFolderItem, receiver)
-					ContainerTreeItemType.Controls -> addControlNodes(value as ControlsTreeFolderItem, receiver)
+					ContainerTreeItemType.Controls -> addControlNodes(value as ControlsFolderTreeItem, receiver)
 					else ->	receiver.addChildren(listOf())
 				}
 			}
@@ -143,31 +156,31 @@ class ContainerTree(
 		}
 	}
 
-	private fun createSubGraphVerticeViewTreeNode(vv: SubGraphVerticeView<SubGraphVertice>): MutableTreeNode {
+	private fun createSubGraphVerticeViewTreeNode(vv: SubGraphVerticeView<SubGraphVertice>, link: DeepVerticeLink): MutableTreeNode {
 		val treeNode = DefaultMutableTreeNode(SubGraphVerticeViewFolderItem(vv))
 		val subGraphView = vv.createSubGraphView()
-		treeNode.add(DynamicTreeNode(ControlsTreeFolderItem(subGraphView), this, treeModel, true))
-		treeNode.add(DynamicTreeNode(SubgraphsFolderItem(subGraphView), this, treeModel, true))
+		treeNode.add(DynamicTreeNode(ControlsFolderTreeItem(subGraphView, link), this, treeModel, true))
+		treeNode.add(DynamicTreeNode(SubgraphsFolderItem(subGraphView, link), this, treeModel, true))
 		return treeNode
 	}
 
 	private fun addSubGraphVerticeNodes(item: SubgraphsFolderItem, receiver: DynamicReceiver) {
 		receiver.addChildren(
 			item.graphView.getSubGraphVerticeViews()
-				.map { createSubGraphVerticeViewTreeNode(it) })
+				.map { createSubGraphVerticeViewTreeNode(it, item.link.append(it.model!!.id)) })
 	}
 
-	private fun addControlNodes(item: ControlsTreeFolderItem, receiver: DynamicReceiver) {
+	private fun addControlNodes(item: ControlsFolderTreeItem, receiver: DynamicReceiver) {
 		receiver.addChildren(
 			item.graphView.getControlViewSources()
-				.map { createControlViewNode(it) })
+				.map { createControlViewNode(it, item.link) })
 	}
 
 	/** ---- [ContainerTree] */
 
 	/** Creates a tree node for the specified [GraphPortView] and adds it the corresponding parent node [portsNode] of the managed [TreeModel].*/
 	fun addGraphPortView(graphPortView: GraphPortView<*>) {
-		val item = ContainerTreeLeafItem(
+		val item = ContainerTreePortItem(
 			graphPortView.model!!.name!!,
 			"${graphPortView.model!!.portType} ${graphPortView.model!!.name!!}",
 			{ portFactory.createPortViewComponent(portFactory.createPortView(portFactory.createSubGraphPort(graphPortView.model!!)))},
@@ -196,9 +209,9 @@ class ContainerTree(
 		return null
 	}
 
-	/** Creates a tree node for the specified [ControlViewSource] and adds it to the [TreeModel] .*/
+	/** Creates a tree node for the specified top-level [ControlViewSource] and adds it to the [TreeModel] .*/
 	fun addControlViewSource(source: ControlViewSource<Vertice>) {
-		controlsNode.add(DefaultMutableTreeNode(createControlViewNode(source)))
+		controlsNode.add(createControlViewNode(source))
 		treeModel.nodesWereInserted(controlsNode, intArrayOf(controlsNode.childCount - 1))
 	}
 
@@ -218,7 +231,7 @@ class ContainerTree(
 		fillControlViewSources(graphView, containerDrawing)
 		(treeModel.root as DefaultMutableTreeNode).add(portsNode)
 		(treeModel.root as DefaultMutableTreeNode).add(controlsNode)
-		(treeModel.root as DefaultMutableTreeNode).add(DynamicTreeNode(SubgraphsFolderItem(graphView), this, treeModel))
+		(treeModel.root as DefaultMutableTreeNode).add(DynamicTreeNode(SubgraphsFolderItem(graphView, DeepVerticeLink()), this, treeModel))
 	}
 
 	/**
@@ -233,8 +246,8 @@ class ContainerTree(
 
 	private fun findGraphPortViewIndex(portName: String): Int? {
 		for (index in 0 until portsNode.childCount) {
-			val item = (portsNode.getChildAt(index) as DefaultMutableTreeNode).userObject as ContainerTreeLeafItem
-			if (item.id == portName) {
+			val item = (portsNode.getChildAt(index) as DefaultMutableTreeNode).userObject as ContainerTreePortItem
+			if (item.portName == portName) {
 				return index
 			}
 		}
@@ -252,18 +265,18 @@ class ContainerTree(
 			.forEach { addControlViewSource(it) }
 	}
 
-	private fun createControlViewNode(source: ControlViewSource<Vertice>): MutableTreeNode {
-		return DefaultMutableTreeNode(ContainerTreeLeafItem(
+	private fun createControlViewNode(source: ControlViewSource<Vertice>, baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY): MutableTreeNode {
+		return DefaultMutableTreeNode(ContainerTreeControlItem(
 			source.controlId!!,
 			source.controlName,
-			{ ControlViewComponent(styleProvider, source.createControlView()) },
+			{ ControlViewComponent(styleProvider, source.createControlView(), baseLink) },
 			source.iconPath))
 	}
 
-	private fun findControlViewSourceIndex(controlId: String): Int? {
+	private fun findControlViewSourceIndex(controlViewId: String): Int? {
 		for (index in 0 until controlsNode.childCount) {
-			val item = (controlsNode.getChildAt(index) as DefaultMutableTreeNode).userObject as ContainerTreeLeafItem
-			if (item.id == controlId) {
+			val item = (controlsNode.getChildAt(index) as DefaultMutableTreeNode).userObject as ContainerTreeControlItem
+			if (item.controlViewId == controlViewId) {
 				return index
 			}
 		}
