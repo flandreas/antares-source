@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.dynamictree.*
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.container.ContainerTreeFolderItem.Companion.CONTROLS_NAME
 import ch.scorpion.jabbah.graph.container.ContainerTreeFolderItem.Companion.SUBGRAPHS_NAME
@@ -15,6 +16,7 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.GraphPortView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortFactory
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.tree.DefaultMutableTreeNode
@@ -112,8 +114,8 @@ private class ControlsFolderTreeItem(
 
 /** Incrementally builds and fills the tree used in the container panel.*/
 class ContainerTree(
-	private val portFactory: PortFactory,
-	private val styleProvider: StyleProvider,
+	private val portFactory: PortFactory = GraphViewModule.portFactory,
+	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	graphView: GraphView<*>,
 	containerDrawing: ContainerDrawing
 ) : DynamicInitializer {
@@ -133,6 +135,15 @@ class ContainerTree(
 
 	init {
 		createTreeModel(graphView, containerDrawing)
+	}
+
+	private fun createTreeModel(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
+		treeModel = DynamicTreeModel("Container", this, false)
+		fillGraphPortViews(graphView, containerDrawing)
+		fillControlViewSources(graphView, containerDrawing)
+		(treeModel.root as DefaultMutableTreeNode).add(portsNode)
+		(treeModel.root as DefaultMutableTreeNode).add(controlsNode)
+		(treeModel.root as DefaultMutableTreeNode).add(DynamicTreeNode(SubgraphsFolderItem(graphView, DeepVerticeLink()), this, treeModel))
 	}
 
 	/** ---- [DynamicInitializer] */
@@ -223,15 +234,6 @@ class ContainerTree(
 			controlsNode.remove(index)
 			treeModel.nodesWereRemoved(controlsNode, intArrayOf(index), arrayOf(child))
 		}
-	}
-
-	private fun createTreeModel(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
-		treeModel = DynamicTreeModel("Container", this, false)
-		fillGraphPortViews(graphView, containerDrawing)
-		fillControlViewSources(graphView, containerDrawing)
-		(treeModel.root as DefaultMutableTreeNode).add(portsNode)
-		(treeModel.root as DefaultMutableTreeNode).add(controlsNode)
-		(treeModel.root as DefaultMutableTreeNode).add(DynamicTreeNode(SubgraphsFolderItem(graphView, DeepVerticeLink()), this, treeModel))
 	}
 
 	/**

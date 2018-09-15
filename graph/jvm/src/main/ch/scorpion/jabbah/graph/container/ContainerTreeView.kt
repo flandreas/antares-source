@@ -21,11 +21,10 @@ import javax.swing.tree.TreeModel
  * Displays the objects that can be dragged into a [ContainerDrawing], such as [PortViewComponent]s and controls.
  */
 open class ContainerTreeView(
-    private val portFactory: PortFactory,
-    private val styleProvider: StyleProvider,
-    eventBus: EventBus
+    private val portFactory: PortFactory = GraphViewModule.portFactory,
+    private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    eventBus: EventBus = BaseModule.eventBus
 ) : JTree() {
-    constructor(): this(GraphViewModule.portFactory, DrawStyleModule.styleProvider, BaseModule.eventBus)
 
 	companion object {
 		private val LOG = logger(ContainerTreeView::class)

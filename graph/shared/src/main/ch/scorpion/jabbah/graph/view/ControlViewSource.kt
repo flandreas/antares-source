@@ -1,6 +1,12 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import ch.scorpion.jabbah.graph.view.editor.GraphEditor
+import ch.scorpion.jabbah.graph.model.Graph
 
 /**
  * A [ControlViewSource] is a graphical part of a [VerticeView] that can be added to a
@@ -10,7 +16,7 @@ import ch.scorpion.jabbah.graph.model.Vertice
  * This feature allows the designer to place visual (and even interactive) elements of an inner [Graph] onto the
  * outside view of its container.
  *
- * A [GraphViewSource] has the following properties:
+ * A [ControlViewSource] has the following properties:
  * -It has a graphical representation and thus is a [Drawable]
  * -It might react to user interaction, such as a button the user can click
  * -It has a model whose state is graphically represented by the [ControlViewSource]. The model itself is part
@@ -21,7 +27,7 @@ interface ControlViewSource<T : Vertice> : VerticeView<T> {
 
     /**
      * Returns a unique ID that identifies this [ControlViewSource] to the system, and that is the same that is
-     * returned by [ControlView]s created by this [ControlViewSource] in [ConrolView.controlId].
+     * returned by [ControlView]s created by this [ControlViewSource] in [ControlView.controlId].
      * Used to associate [ControlViewSource] and corresponding [ControlView] in persistent [ContainerDrawing]s.
      */
     val controlId: String?

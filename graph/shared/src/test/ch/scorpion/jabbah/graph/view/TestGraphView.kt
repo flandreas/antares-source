@@ -11,8 +11,9 @@ import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 /**
  * A view extension of [TestGraph].
  */
-class TestGraphView(eventBus: EventBus) : TestGraph(eventBus) {
-    constructor(): this(BaseModule.eventBus)
+class TestGraphView(
+	eventBus: EventBus = BaseModule.eventBus
+) : TestGraph(eventBus) {
 
     val graphView = GraphViewModule.createGraphView<GraphElementView<*>>()
     val vv1: TestVerticeView = TestVerticeView(vertice = v1, name = "1")
