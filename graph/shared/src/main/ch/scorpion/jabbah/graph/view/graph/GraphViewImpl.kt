@@ -146,7 +146,7 @@ class GraphViewImpl<T : GraphElementView<*>>(
     }
 
 	override fun checkDesign(): Boolean {
-		val issues = getDrawables { it.model!!.designError != null }.map {
+		val issues = getDrawables { it.model?.designError != null }.map {
 			IssueImpl(
 				severity = IssueSeverity.Error,
 				name = Translations.getString("graph.designError.name"),
