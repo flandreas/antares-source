@@ -1,27 +1,33 @@
 package ch.scorpion.antares.view.signal
 
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.Storable
 
 class DigitalSignalSourceControlView<T : DigitalSignalSource>(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     override var controlId: String? = null,
     signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY,
-    model: T? = null
+    model: T? = null,
+    name: String? = null
 ) : AbstractNumberViewComponent<T>(styleProvider, "library.element.CircuitInOutControlView", model, Direction.EAST, signalRepresentation), ControlView<T> {
 
     init {
         modelExchanged(null)
     }
+
+	/** The name used in the container editor to identify the model (which is not yet bound in the container editor)*/
+	var name: String? = name
+		private set
 
     override fun modelExchanged(oldModel: T?) {
         super.modelExchanged(oldModel)
@@ -38,6 +44,9 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
             writer.writeString("controlId", controlId!!)
         }
         writer.writeInt("bitWidth", bitWidth.width)
+	    if (name != null) {
+		    writer.writeString("name", name!!)
+	    }
     }
 
     override fun read(reader: StoreReader) {
@@ -45,6 +54,9 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
             controlId = reader.readString("controlId")
         }
         bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+	    if (reader.hasAttribute("name")) {
+		    name = reader.readString("name")
+	    }
         super.read(reader)
     }
 
