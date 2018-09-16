@@ -4,32 +4,31 @@ import ch.scorpion.jabbah.base.collection.ConcatIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.model.DrawingImpl
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.script.ScriptGateway
-import ch.scorpion.jabbah.graph.library.LibraryHolder
-import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeImpl
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
-import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 
 
 /**
@@ -143,9 +142,14 @@ class ContainerDrawing(
         return getPortViewComponents().firstOrNull { it.portView!!.port.name == portName }
     }
 
+	@Deprecated("Use querying with DeepVerticeLink")
     fun getControlViewComponent(controlId: String): ControlViewComponent? {
         return getControlViewComponents().firstOrNull{it.controlView!!.controlId == controlId}
     }
+
+	fun getControlViewComponent(link: DeepVerticeLink): ControlViewComponent? {
+		return getControlViewComponents().firstOrNull { it.controlModelLink == link }
+	}
 
     fun createSubGraphVerticeView(): SubGraphVerticeView<SubGraphVerticeRef> {
         val model = SubGraphVerticeRef.fromSubGraphVertice(createSubGraphVertice(), storableCloner, repository, scriptGateway)

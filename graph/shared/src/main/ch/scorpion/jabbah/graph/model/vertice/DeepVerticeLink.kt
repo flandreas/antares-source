@@ -75,4 +75,18 @@ class DeepVerticeLink(verticeIds: List<Int>) {
 		return graph.withId(link.first) as Vertice
 	}
 
+	/** ---- [Any] */
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other !is DeepVerticeLink) return false
+
+		if (verticeIds != other.verticeIds) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		return verticeIds.hashCode()
+	}
 }

@@ -38,7 +38,8 @@ class ControlViewComponent(
      * The ID of the model displayed by [controlView]. This ID is made persistent and is used to resolve the link
      * to the model when the underlying [Graph] gets bound.
      */
-	private var controlModelLink: DeepVerticeLink = if (controlView != null) baseLink.append(controlView!!.model!!.id) else DeepVerticeLink.EMPTY
+	var controlModelLink: DeepVerticeLink = if (controlView != null) baseLink.append(controlView!!.model!!.id) else DeepVerticeLink.EMPTY
+		private set
 
     private var drawableOwner: DrawableOwner? = null
 

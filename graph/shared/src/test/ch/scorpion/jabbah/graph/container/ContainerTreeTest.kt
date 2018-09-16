@@ -8,11 +8,9 @@ import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.graph.view.ControlView
-import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.TestGraphView
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.TestPortFactory
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
@@ -94,17 +92,46 @@ class ContainerTreeTest {
 	}
 
 	@Test
-	fun shouldAddDeepLinkToTree() {
-		val library = LibraryModule.libraryHolder.library
-		TestLibraryBuilder().addInnerCustomComponent(library)
-		TestLibraryBuilder().addOuterCustomComponent(library)
-		val testGraphView = TestGraphView()
-		testGraphView.graphView.add((library.get(TestLibraryBuilder.OUTER_CUSTOM_COMP) as LibraryElement).getNewInstance<SubGraphVerticeRef>())
+	fun shouldAddDeepControlToTree() {
+		val graphView = createDeepLinkGraphView()
 
-		val containerTree = ContainerTree(graphView = testGraphView.graphView, containerDrawing = ContainerDrawing())
+		val containerTree = ContainerTree(graphView = graphView, containerDrawing = ContainerDrawing())
 		JTreeUtil.expandAll(containerTree.treeModel.root as TreeNode)
 
 		assertControlView(containerTree, notNullValue())
+	}
+
+	@Test
+	fun deepControlOfContainerShouldNotBeAddedToTree() {
+		val graphView = createDeepLinkGraphView()
+		val containerDrawing = createDeepControlContainerDrawing(graphView)
+
+		val containerTree = ContainerTree(graphView = graphView, containerDrawing = containerDrawing)
+		JTreeUtil.expandAll(containerTree.treeModel.root as TreeNode)
+
+		assertControlView(containerTree, nullValue())
+	}
+
+	/** Creates a [GraphView] that contains a [SubGraphVerticeView] referencing the outer custom component. */
+	private fun createDeepLinkGraphView(): GraphView<GraphElementView<*>> {
+		val library = LibraryModule.libraryHolder.library
+		TestLibraryBuilder().addInnerCustomComponent(library)
+		val testGraphView = TestGraphView()
+		testGraphView.graphView.add((library.get(TestLibraryBuilder.INNER_CUSTOM_COMP) as LibraryElement).getNewInstance<SubGraphVerticeRef>())
+		return testGraphView.graphView
+	}
+
+	/**
+	 * Creates a [ContainerDrawing] that contains a [ControlViewComponent] for the deeply
+	 * nested [ControlView] in the specified [GraphView].
+	 */
+	private fun createDeepControlContainerDrawing(graphView: GraphView<GraphElementView<*>>): ContainerDrawing {
+		val containerDrawing = ContainerDrawing()
+		val subGraphVerticeView = graphView.getSubGraphVerticeViews()[0]
+		val source = subGraphVerticeView.createSubGraphView().getControlViewSources()[0]
+		val link = DeepVerticeLink(subGraphVerticeView.id)
+		containerDrawing.add(ControlViewComponent(controlView = source.createControlView(), baseLink = link))
+		return containerDrawing
 	}
 
 	private fun assertControlView(containerTree: ContainerTree, matcher: Matcher<in TreeNode?>) {

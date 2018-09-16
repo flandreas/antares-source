@@ -117,7 +117,7 @@ class ContainerTree(
 	private val portFactory: PortFactory = GraphViewModule.portFactory,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	graphView: GraphView<*>,
-	containerDrawing: ContainerDrawing
+	private val containerDrawing: ContainerDrawing
 ) : DynamicInitializer {
 
 	companion object {
@@ -181,15 +181,24 @@ class ContainerTree(
 				.map { createSubGraphVerticeViewTreeNode(it, item.link.append(it.model!!.id)) })
 	}
 
+	/**
+	 * Creates a [TreeNode] containing a [ContainerTreeControlItem] for all controls in the given [ControlsFolderTreeItem]
+	 * and adds it to the specified [DynamicReceiver].
+	 * TODO Refactor: Merge with [fillControlViewSources]
+	 */
 	private fun addControlNodes(item: ControlsFolderTreeItem, receiver: DynamicReceiver) {
 		receiver.addChildren(
 			item.graphView.getControlViewSources()
+				.filter { containerDrawing.getControlViewComponent(item.link.append(it.model!!.id)) == null }
 				.map { createControlViewNode(it, item.link) })
 	}
 
 	/** ---- [ContainerTree] */
 
-	/** Creates a tree node for the specified [GraphPortView] and adds it the corresponding parent node [portsNode] of the managed [TreeModel].*/
+	/**
+	 * Creates a tree node for the specified [GraphPortView] and adds it the corresponding parent node [portsNode]
+	 * of the managed [TreeModel].
+	 */
 	fun addGraphPortView(graphPortView: GraphPortView<*>) {
 		val item = ContainerTreePortItem(
 			graphPortView.model!!.name!!,
@@ -237,8 +246,7 @@ class ContainerTree(
 	}
 
 	/**
-	 * Adds all [GraphPortView]s of the [GraphView] to this [ContainerTreeView] that are not contained
-	 * in the [ContainerDrawing].
+	 * Adds all toplevel [GraphPortView]s that are not contained in the [ContainerDrawing] to the [TreeModel].
 	 */
 	private fun fillGraphPortViews(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
 		graphView.getGraphPortViews()
@@ -246,6 +254,10 @@ class ContainerTree(
 			.forEach { addGraphPortView(it) }
 	}
 
+	/**
+	 * Finds the index of the [ContainerTreePortItem] with the given name in the toplevel [portsNode].
+	 * @return `null` if not found
+	 */
 	private fun findGraphPortViewIndex(portName: String): Int? {
 		for (index in 0 until portsNode.childCount) {
 			val item = (portsNode.getChildAt(index) as DefaultMutableTreeNode).userObject as ContainerTreePortItem
@@ -258,8 +270,7 @@ class ContainerTree(
 
 
 	/**
-	 * Adds all [ControlViewSource]s of the [GraphView] to the [TreeModel] that are not contained
-	 * in the [ContainerDrawing].
+	 * Adds all toplevel [ControlViewSource]s that are not contained in the [ContainerDrawing] to the [TreeModel].
 	 */
 	private fun fillControlViewSources(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
 		graphView.getControlViewSources()
@@ -267,6 +278,11 @@ class ContainerTree(
 			.forEach { addControlViewSource(it) }
 	}
 
+	/**
+	 * Creates a [MutableTreeNode] containing a [ContainerTreeControlItem] that can create a [ControlViewComponent]
+	 * from the given [ControlViewSource]. The specified [DeepVerticeLink] reaches to the model of the [SubGraphVerticeView]
+	 * that contains ´source´, but does NOT include the ID of the [ControlView]'s model.
+	 */
 	private fun createControlViewNode(source: ControlViewSource<Vertice>, baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY): MutableTreeNode {
 		return DefaultMutableTreeNode(ContainerTreeControlItem(
 			source.controlId!!,
@@ -275,6 +291,10 @@ class ContainerTree(
 			source.iconPath))
 	}
 
+	/**
+	 * Finds the index of the [ContainerTreeControlItem] with the given control ID in the toplevel [controlsNode]
+	 * @return `null`if not found
+	 */
 	private fun findControlViewSourceIndex(controlViewId: String): Int? {
 		for (index in 0 until controlsNode.childCount) {
 			val item = (controlsNode.getChildAt(index) as DefaultMutableTreeNode).userObject as ContainerTreeControlItem

@@ -16,7 +16,7 @@ class TestLibraryBuilder(
 ) {
 
 	companion object {
-		private const val INNER_CUSTOM_COMP = "InnerCustomComp"
+		const val INNER_CUSTOM_COMP = "InnerCustomComp"
 		const val OUTER_CUSTOM_COMP = "OuterCustomComp"
 	}
 

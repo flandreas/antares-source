@@ -66,4 +66,14 @@ class DeepVerticeLinkTest {
 		assertThat(newLink.last, `is`(4))
 		assertThat(newLink, not(sameInstance(link)))
 	}
+
+	@Test
+	fun shouldBeEqual() {
+		val link1 = DeepVerticeLink(listOf(1, 2, 3))
+		val link2 = DeepVerticeLink(listOf(1, 2, 3))
+		val link3 = DeepVerticeLink(listOf(1, 2, 4))
+
+		assertThat(link1 == link2, `is`(true))
+		assertThat(link1 == link3, `is`(false))
+	}
 }
