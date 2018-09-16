@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
  * Provides a convenient API for building [GraphView]s that contain connected [VerticeView]s.
  * @param T the type of signal
  */
-open class GraphViewBuilder<T: Any>() {
+open class GraphViewBuilder<T: Any> {
 
     val graph: Graph = GraphModelModule.graphFactory.invoke()
     val graphView: GraphView<GraphElementView<out GraphElement>> = GraphViewModule.createGraphView(graph)
@@ -27,13 +27,13 @@ open class GraphViewBuilder<T: Any>() {
         return graphView
     }
 
-    fun <T: VerticeView<out Vertice>> addVertice(verticeView: T): T {
+    fun <T: VerticeView<out Vertice>> addVerticeView(verticeView: T): T {
         graphView.add(verticeView)
         return verticeView
     }
 
     fun connect(from: VerticeView<out Vertice>, to: VerticeView<out Vertice>): EdgeView<T> {
-        return connect(from, to, to.vertice.getInput<T>())
+        return connect(from, to, to.vertice.getInput())
     }
 
     fun connect(from: VerticeView<out Vertice>, to: VerticeView<out Vertice>, toPort: InputPort<T>): EdgeView<T> {

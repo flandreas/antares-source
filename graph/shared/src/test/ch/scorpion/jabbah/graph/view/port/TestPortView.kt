@@ -1,17 +1,17 @@
-package ch.scorpion.jabbah.graph.view
+package ch.scorpion.jabbah.graph.view.port
 
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.view.port.AbstractPortView
-import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
+import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.port.PortImpl
 
 class TestPortView<T: Any>(
-        port: Port<T>,
-        direction: Direction,
-        portLabelPosition: PortLabelPosition,
-        length: Int
+	port: Port<T> = PortImpl(PortType.INPUT),
+	direction: Direction = Direction.WEST,
+	portLabelPosition: PortLabelPosition = PortLabelPosition.EXTERNAL,
+	length: Int = 0
 ) : AbstractPortView<T>(port, 0, 0, direction, portLabelPosition, length) {
 
     override var transparency: Int = 0

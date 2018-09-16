@@ -38,9 +38,9 @@ class NodeViewImplTest {
     fun setup(){
         TestTranslationsBuilder().withAnyKey()
         builder = GraphViewBuilder()
-        v1 = builder.addVertice(TestVerticeView(loc = Point2D(100, 100)))
-        v2 = builder.addVertice(TestVerticeView(loc = Point2D(200, 100)))
-        v3 = builder.addVertice(TestVerticeView(loc = Point2D(200, 200)))
+        v1 = builder.addVerticeView(TestVerticeView(loc = Point2D(100, 100)))
+        v2 = builder.addVerticeView(TestVerticeView(loc = Point2D(200, 100)))
+        v3 = builder.addVerticeView(TestVerticeView(loc = Point2D(200, 200)))
         origEdgeView = builder.connect(v1, v2)
         splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v3)
     }

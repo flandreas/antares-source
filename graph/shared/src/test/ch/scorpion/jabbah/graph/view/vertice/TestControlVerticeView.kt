@@ -4,10 +4,9 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.TestControlVertice
-import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.graph.view.TestPortView
+import ch.scorpion.jabbah.graph.view.port.TestPortView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 
 /** A [ControlView] implementation used for unit and integration testing.*/

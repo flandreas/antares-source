@@ -8,8 +8,10 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.net.NetImpl
@@ -30,14 +32,11 @@ import ch.scorpion.jabbah.io.StoreWriter
  * @param <T> the type of signal that this [NodeView] carries
  */
 open class NodeViewImpl<T: Any>(
-    styleProvider: StyleProvider,
-    currentSystemSpeedCategory: CurrentSystemSpeedCategory,
-    net: Net<T>,
-    netViewStyle: NetViewStyle?
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
+	net: Net<T> = NetImpl(),
+	netViewStyle: NetViewStyle? = null
 ) : AbstractNetViewElement<T>(styleProvider, currentSystemSpeedCategory, net), NodeView<T> {
-
-    constructor(styleProvider: StyleProvider, currentSystemSpeedCategory: CurrentSystemSpeedCategory, net: Net<T>): this(styleProvider, currentSystemSpeedCategory, net, null)
-    constructor(styleProvider: StyleProvider, currentSystemSpeedCategory: CurrentSystemSpeedCategory): this(styleProvider, currentSystemSpeedCategory, NetImpl<T>())
 
     /** Can be `null`during deserialization.*/
     private var styling: NodeViewStyling? = null
@@ -194,23 +193,23 @@ open class NodeViewImpl<T: Any>(
         val prefHorizontalDirections = mutableSetOf<Direction>()
         val prefVerticalDirections = mutableSetOf<Direction>()
 
-        if (refPoint.x == location.x) {
-            prefVerticalDirections.add(Direction.NORTH)
-            prefVerticalDirections.add(Direction.SOUTH)
-        } else if (refPoint.x > location.x) {
-            prefHorizontalDirections.add(Direction.EAST)
-        } else {
-            prefHorizontalDirections.add(Direction.WEST)
-        }
+	    when {
+		    refPoint.x == location.x -> {
+			    prefVerticalDirections.add(Direction.NORTH)
+			    prefVerticalDirections.add(Direction.SOUTH)
+		    }
+		    refPoint.x > location.x -> prefHorizontalDirections.add(Direction.EAST)
+		    else -> prefHorizontalDirections.add(Direction.WEST)
+	    }
 
-        if (refPoint.y == location.y) {
-            prefHorizontalDirections.add(Direction.WEST)
-            prefHorizontalDirections.add(Direction.EAST)
-        } else if (refPoint.y > location.y) {
-            prefVerticalDirections.add(Direction.SOUTH)
-        } else {
-            prefVerticalDirections.add(Direction.NORTH)
-        }
+	    when {
+		    refPoint.y == location.y -> {
+			    prefHorizontalDirections.add(Direction.WEST)
+			    prefHorizontalDirections.add(Direction.EAST)
+		    }
+		    refPoint.y > location.y -> prefVerticalDirections.add(Direction.SOUTH)
+		    else -> prefVerticalDirections.add(Direction.NORTH)
+	    }
 
         prefHorizontalDirections.removeAll(occupiedDirections)
         prefVerticalDirections.removeAll(occupiedDirections)

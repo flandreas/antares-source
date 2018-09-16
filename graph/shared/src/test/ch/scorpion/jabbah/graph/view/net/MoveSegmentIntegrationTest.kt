@@ -1,11 +1,9 @@
 package ch.scorpion.jabbah.graph.view.net
 
 import ch.scorpion.jabbah.base.TestTranslationsBuilder
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
-import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
@@ -37,8 +35,8 @@ class MoveSegmentIntegrationTest {
 
     @Test
     fun shouldMoveSegmentUp() {
-        val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
-        val v2 = builder.addVertice(createVerticeView(200, 100, Direction.WEST))
+        val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
+        val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
         val ev = builder.connect(v1, v2)
 
         val info = ev.moveSegment(0, -20.0)
@@ -49,8 +47,8 @@ class MoveSegmentIntegrationTest {
 
     @Test
     fun shouldMoveSegmentUpAndBack() {
-        val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
-        val v2 = builder.addVertice(createVerticeView(200, 100, Direction.WEST))
+        val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
+        val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
         val ev = builder.connect(v1, v2)
 
         ev.moveSegment(0, -20.0)
@@ -62,9 +60,9 @@ class MoveSegmentIntegrationTest {
 
     @Test
     fun shouldMoveSegmentUpWithAdjacentNode() {
-        val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
-        val v2 = builder.addVertice(createVerticeView(200, 100, Direction.WEST))
-        val v3 = builder.addVertice(createVerticeView(200, 0, Direction.WEST))
+        val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
+        val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
+        val v3 = builder.addVerticeView(createVerticeView(200, 0, Direction.WEST))
         val origEdgeView = builder.connect(v1, v2)
         val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v3)
 
@@ -78,8 +76,8 @@ class MoveSegmentIntegrationTest {
 
     @Test
     fun shouldMoveSegmentAtRotatedVertice() {
-        val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
-        val v2 = builder.addVertice(createVerticeView(200, 0, Direction.WEST))
+        val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
+        val v2 = builder.addVerticeView(createVerticeView(200, 0, Direction.WEST))
         v2.rotation = Rotation.R90
         val ev = builder.connect(v1, v2)
 
@@ -92,8 +90,8 @@ class MoveSegmentIntegrationTest {
 
 	@Test
 	fun shouldNotCurlOrigin() {
-		val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
-		val v2 = builder.addVertice(createVerticeView(200, 200, Direction.WEST))
+		val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
+		val v2 = builder.addVerticeView(createVerticeView(200, 200, Direction.WEST))
 		val ev = builder.connect(v1, v2)
 
 		ev.moveSegment(0, -20.0)
@@ -104,8 +102,8 @@ class MoveSegmentIntegrationTest {
 
 	@Test
 	fun shouldNotCurlDestination() {
-		val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
-		val v2 = builder.addVertice(createVerticeView(200, 200, Direction.WEST))
+		val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
+		val v2 = builder.addVerticeView(createVerticeView(200, 200, Direction.WEST))
 		val ev = builder.connect(v1, v2)
 
 		ev.moveSegment(2, 20.0)

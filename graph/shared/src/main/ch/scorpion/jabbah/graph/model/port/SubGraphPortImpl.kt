@@ -7,6 +7,9 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.SubGraphInputPort
 import ch.scorpion.jabbah.graph.model.SubGraphOutputPort
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
+import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.GraphPort
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.io.*
 import kotlin.reflect.KClass
 
@@ -16,15 +19,16 @@ import kotlin.reflect.KClass
  * @param <T> the type of the signal that is processed by this [SubGraphPortImpl].
  */
 class SubGraphPortImpl<T: Any>(
-    portType: PortType,
-    signalClass: KClass<T>
-) : PortImpl<T>(portType, signalClass), SubGraphInputPort<T>, SubGraphOutputPort<T> {
+	portType: PortType = PortType.INPUT,
+	signalClass: KClass<T>? = null,
+	name: String? = null
+) : PortImpl<T>(portType, signalClass, name), SubGraphInputPort<T>, SubGraphOutputPort<T> {
 
     /** ---- [SubGraphInputPort] */
 
     override var graphInput: GraphInput<T>? = null
 
-    /** ---- [SubGraphOutputPortPort] */
+    /** ---- [SubGraphOutputPort] */
 
     override fun propagateSignal(signal: T, signalHandler: SignalHandler) {
         setOutgoingSignalBuffered(signal, signalHandler)

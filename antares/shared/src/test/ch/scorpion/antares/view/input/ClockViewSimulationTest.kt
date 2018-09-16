@@ -26,9 +26,9 @@ class ClockViewSimulationTest : AbstractCircuitTest() {
     @Before
     fun setupCircuit() {
         val builder = TestCircuitBuilder("test", styleProvider, eventBus)
-        clockView = builder.addVertice(ClockView(styleProvider))
+        clockView = builder.addVerticeView(ClockView(styleProvider))
         clockView.period = 100 * 1_000
-        ledView = builder.addVertice(LEDView(styleProvider))
+        ledView = builder.addVerticeView(LEDView(styleProvider))
         builder.connect(clockView, ledView)
         circuitView = builder.build()
     }

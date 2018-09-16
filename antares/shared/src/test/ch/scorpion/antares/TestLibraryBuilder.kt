@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 
 /**
  * A test utility class that builds Antares circuits using [TestCircuitBuilder], and adds them to the [Library].
+ * TODO Resolve copy/paste from [ch.scorpion.jabbah.graph.TestLibraryBuilder].
  */
 class TestLibraryBuilder(
     private val portFactory: PortFactory = GraphViewModule.portFactory,
@@ -25,7 +26,7 @@ class TestLibraryBuilder(
 
     /**
      * Adds a custom NOT (as of [TestCircuitBuilder.buildCustomNot]) to the specified [LibraryDirectory].
-     * @return the created {@link MetaGraph} that contains the custom NOT
+     * @return the created [MetaGraph] that contains the custom NOT
      */
     fun addCustomNot(library: Library): MetaGraph {
         val customNOT = TestCircuitBuilder(CUSTOM_NOT).buildCustomNot()

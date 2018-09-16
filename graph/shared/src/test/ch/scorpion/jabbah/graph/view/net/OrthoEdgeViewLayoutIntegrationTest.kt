@@ -1,10 +1,8 @@
 package ch.scorpion.jabbah.graph.view.net
 
 import ch.scorpion.jabbah.base.TestTranslationsBuilder
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.net.edge.Layout
@@ -37,9 +35,9 @@ class OrthoEdgeViewLayoutIntegrationTest {
 
     @Test
     fun shouldSplitHorizontalEdgeView() {
-        val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
-        val v2 = builder.addVertice(createVerticeView(200, 100, Direction.WEST))
-        val v3 = builder.addVertice(createVerticeView(200, 200, Direction.WEST))
+        val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
+        val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
+        val v3 = builder.addVerticeView(createVerticeView(200, 200, Direction.WEST))
         val origEdgeView = builder.connect(v1, v2)
 
         val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v3)
@@ -56,9 +54,9 @@ class OrthoEdgeViewLayoutIntegrationTest {
 
     @Test
     fun shouldSplitEdgeViewAtCorner() {
-        val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
-        val v2 = builder.addVertice(createVerticeView(200, 100, Direction.WEST))
-        val v3 = builder.addVertice(createVerticeView(200, 200, Direction.WEST))
+        val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
+        val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
+        val v3 = builder.addVerticeView(createVerticeView(200, 200, Direction.WEST))
         val origEdgeView = builder.connect(v1, v3)
 
         val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v2)
@@ -75,9 +73,9 @@ class OrthoEdgeViewLayoutIntegrationTest {
 
     @Test
     fun shouldLayoutWestOfNodeView() {
-        val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
-        val v2 = builder.addVertice(createVerticeView(200, 100, Direction.WEST))
-        val v3 = builder.addVertice(createVerticeView(150, 0, Direction.SOUTH))
+        val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
+        val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
+        val v3 = builder.addVerticeView(createVerticeView(150, 0, Direction.SOUTH))
         val origEdgeView = builder.connect(v1, v2)
         builder.split(origEdgeView, 0, Point2D(150, 100), v3)
 
@@ -88,9 +86,9 @@ class OrthoEdgeViewLayoutIntegrationTest {
 
     @Test
     fun shouldLayoutEastOfNodeView() {
-        val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
-        val v2 = builder.addVertice(createVerticeView(200, 100, Direction.WEST))
-        val v4 = builder.addVertice(createVerticeView(150, 0, Direction.SOUTH))
+        val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
+        val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
+        val v4 = builder.addVerticeView(createVerticeView(150, 0, Direction.SOUTH))
         val origEdgeView = builder.connect(v1, v2)
         val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v4)
 
@@ -101,9 +99,9 @@ class OrthoEdgeViewLayoutIntegrationTest {
 
     @Test
     fun shouldLayoutNorthOfNodeView() {
-        val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
-        val v2 = builder.addVertice(createVerticeView(200, 100, Direction.WEST))
-        val v3 = builder.addVertice(createVerticeView(200, 0, Direction.WEST))
+        val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
+        val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
+        val v3 = builder.addVerticeView(createVerticeView(200, 0, Direction.WEST))
         val origEdgeView = builder.connect(v1, v2)
         val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v3)
 
@@ -112,15 +110,15 @@ class OrthoEdgeViewLayoutIntegrationTest {
 
     @Test
     fun shouldLayoutVerticalOpenVerticeView() {
-        val v = builder.addVertice(createVerticeView(100, 100, Direction.SOUTH))
+        val v = builder.addVerticeView(createVerticeView(100, 100, Direction.SOUTH))
         val edgeView = builder.connectOpen(v, Point2D(100, 200))
         assertThat(edgeView.segmentPointCount, `is`(2))
     }
 
     @Test
     fun shouldLayoutVerticalSplitOpenVerticeView() {
-        val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
-        val v2 = builder.addVertice(createVerticeView(200, 100, Direction.WEST))
+        val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
+        val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
         val ev = builder.connect(v1, v2)
 
         val splitResult = builder.split(ev, 0, Point2D(150, 100), null)
@@ -132,9 +130,9 @@ class OrthoEdgeViewLayoutIntegrationTest {
 
     @Test
     fun shouldCooperateWithNonLayoutEdgeView() {
-        val v1 = builder.addVertice(createVerticeView(100, 100, Direction.EAST))
-        val v2 = builder.addVertice(createVerticeView(200, 100, Direction.WEST))
-        val v3 = builder.addVertice(createVerticeView(200, 100, Direction.WEST))
+        val v1 = builder.addVerticeView(createVerticeView(100, 100, Direction.EAST))
+        val v2 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
+        val v3 = builder.addVerticeView(createVerticeView(200, 100, Direction.WEST))
         val origEdgeView = builder.connect(v1, v2)
         origEdgeView.layout = Layout.NONE
         val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v3)

@@ -1,13 +1,12 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.base.TestTranslationsBuilder
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.TestPortView
+import ch.scorpion.jabbah.graph.view.port.TestPortView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.*
@@ -52,10 +51,10 @@ class AbstractRectangularVerticeViewTest {
     @Test
     fun testNoOffsetWithPorts() {
         val rectangle = TestRectangleView()
-        rectangle.setBounds(0.0, 0.0, 100.0, 50.0);
-        val portView = TestPortView<Boolean>(rectangle.model!!.getInput(), Direction.WEST, PortLabelPosition.INTERNAL, 20);
-        portView.setLocation(0.0, 25.0);
-        rectangle.addPortView(portView);
+        rectangle.setBounds(0.0, 0.0, 100.0, 50.0)
+        val portView = TestPortView<Boolean>(rectangle.model!!.getInput(), Direction.WEST, PortLabelPosition.INTERNAL, 20)
+        portView.setLocation(0.0, 25.0)
+        rectangle.addPortView(portView)
 
         assertThat(rectangle.x, `is`(0.0))
         assertThat(rectangle.y, `is`(0.0))
@@ -88,11 +87,11 @@ class AbstractRectangularVerticeViewTest {
     @Test
     fun testOffsetWithPorts() {
         val rectangle = TestRectangleView()
-        rectangle.setBounds(0.0, 0.0, 100.0, 50.0);
+        rectangle.setBounds(0.0, 0.0, 100.0, 50.0)
         rectangle.location = Point2D(-20, 25)
-        val portView = TestPortView<Boolean>(rectangle.model!!.getInput(), Direction.WEST, PortLabelPosition.INTERNAL, 20);
-        portView.setLocation(0.0, 25.0);
-        rectangle.addPortView(portView);
+        val portView = TestPortView<Boolean>(rectangle.model!!.getInput(), Direction.WEST, PortLabelPosition.INTERNAL, 20)
+        portView.setLocation(0.0, 25.0)
+        rectangle.addPortView(portView)
 
         assertThat(rectangle.x, `is`(0.0))
         assertThat(rectangle.y, `is`(0.0))

@@ -6,14 +6,15 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.port.PortImpl
 
 /**
  * A standard implementation of the [GraphOutput] interface whose [PortType] cannot be changed.
  */
 class GraphOutputImpl<T: Any>(
-    inputPort: InputPort<T>,
-    name: String? = null,
-    eventBus: EventBus = BaseModule.eventBus
+	inputPort: InputPort<T> = PortImpl(PortType.OUTPUT),
+	name: String? = null,
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractGraphPort<T>(port = inputPort, name = name, calculator = GraphOutputImplCalculator, eventBus = eventBus), GraphOutput<T> {
 
     private var subGraphOutputPort: SubGraphOutputPort<T>? = null

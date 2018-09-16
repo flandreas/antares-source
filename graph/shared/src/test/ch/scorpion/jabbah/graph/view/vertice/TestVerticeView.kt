@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.TestVertice
-import ch.scorpion.jabbah.graph.view.TestPortView
+import ch.scorpion.jabbah.graph.view.port.TestPortView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 
 /**

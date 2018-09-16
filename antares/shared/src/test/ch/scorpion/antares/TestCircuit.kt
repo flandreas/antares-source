@@ -20,8 +20,8 @@ class TestCircuit {
         get() = builder.graphView
 
     init {
-        andGateView = builder.addVertice(AndGateView())
-        orGateView = builder.addVertice(OrGateView(orGate = OrGate(InputCount.THREE)))
+        andGateView = builder.addVerticeView(AndGateView())
+        orGateView = builder.addVerticeView(OrGateView(orGate = OrGate(InputCount.THREE)))
         wire = builder.connect(andGateView, orGateView)
     }
 }

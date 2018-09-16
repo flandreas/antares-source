@@ -9,14 +9,15 @@ import ch.scorpion.jabbah.graph.model.GraphInput
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.SubGraphInputPort
+import ch.scorpion.jabbah.graph.model.port.PortImpl
 
 /**
  * A standard implementation of the [GraphInput] interface whose [PortType] cannot be changed.
  */
 class GraphInputImpl<T: Any>(
-    outputPort: OutputPort<T>,
-    name: String? = null,
-    eventBus: EventBus = BaseModule.eventBus
+	outputPort: OutputPort<T> = PortImpl(PortType.INPUT),
+	name: String? = null,
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractGraphPort<T>(port = outputPort, name = name, eventBus = eventBus), GraphInput<T> {
 
     /** ---- [GraphPort] interface */
