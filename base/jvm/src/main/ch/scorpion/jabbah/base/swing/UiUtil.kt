@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base.swing
 
+import java.awt.EventQueue
 import java.lang.reflect.InvocationTargetException
 import javax.swing.SwingUtilities
 import javax.swing.UIManager
@@ -10,6 +11,22 @@ import javax.swing.plaf.FontUIResource
  * Contains various static utility methods.
  */
 object UiUtil {
+
+	/**
+	 * Invokes the specified invokable on the [EventQueue] an returns immediately.
+	 * The lambda returns `true` if it has dispatched the invokable on the event dispatch thread,
+	 * `false` if we are already on the event dispatch thread, and this lambda did nothing.
+	 *
+	 * Can be replaced for testing purposes with an implementations that does nothing and always
+	 * return `false`.
+	 */
+	var eventQueueInvoker: (invokable: () -> Unit) -> Boolean = {
+		if (!EventQueue.isDispatchThread()) {
+			EventQueue.invokeLater { it.invoke() }
+			true
+		}
+		false
+	}
 
     /**
      * A wrapper around [SwingUtilities.invokeAndWait] which wraps exceptions in

@@ -4,21 +4,18 @@ import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
+import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.model.TestControlVertice
-import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.port.SubGraphPortImpl
-import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
-import ch.scorpion.jabbah.graph.model.vertice.GraphOutputImpl
-import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.TestGraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.TestPortFactory
-import ch.scorpion.jabbah.graph.view.port.TestPortView
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
-import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import ch.scorpion.jabbah.io.IOModule
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.Matcher
@@ -41,17 +38,6 @@ class ContainerTreeTest {
 
 	@Before
 	fun setup() {
-		IOModule.typeMap.register("testVertice", TestVertice::class)
-		IOModule.typeMap.register("testVerticeView", TestVerticeView::class)
-		IOModule.typeMap.register("testControl", TestControlVertice::class)
-		IOModule.typeMap.register("testControlView", TestControlVerticeView::class)
-		IOModule.typeMap.register("testGraphPortView", TestGraphPortView::class)
-		IOModule.typeMap.register("testPortView", TestPortView::class)
-		IOModule.typeMap.register("graphInputImpl", GraphInputImpl::class)
-		IOModule.typeMap.register("graphOutputImpl", GraphOutputImpl::class)
-		IOModule.typeMap.register("portViewComponent", PortViewComponent::class)
-		IOModule.typeMap.register("subGraphPortImpl", SubGraphPortImpl::class)
-
 		val file = File.createTempFile("library", ".lib")
 		TestTranslationsBuilder().withAnyKey()
 		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
@@ -108,8 +94,17 @@ class ContainerTreeTest {
 	}
 
 	@Test
-	fun shouldBla() {
-		TestLibraryBuilder().addInnerCustomComponent(LibraryModule.libraryHolder.library)
+	fun shouldAddDeepLinkToTree() {
+		val library = LibraryModule.libraryHolder.library
+		TestLibraryBuilder().addInnerCustomComponent(library)
+		TestLibraryBuilder().addOuterCustomComponent(library)
+		val testGraphView = TestGraphView()
+		testGraphView.graphView.add((library.get(TestLibraryBuilder.OUTER_CUSTOM_COMP) as LibraryElement).getNewInstance<SubGraphVerticeRef>())
+
+		val containerTree = ContainerTree(graphView = testGraphView.graphView, containerDrawing = ContainerDrawing())
+		JTreeUtil.expandAll(containerTree.treeModel.root as TreeNode)
+
+		assertControlView(containerTree, notNullValue())
 	}
 
 	private fun assertControlView(containerTree: ContainerTree, matcher: Matcher<in TreeNode?>) {

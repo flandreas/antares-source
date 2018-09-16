@@ -17,6 +17,7 @@ class TestLibraryBuilder(
 
 	companion object {
 		private const val INNER_CUSTOM_COMP = "InnerCustomComp"
+		const val OUTER_CUSTOM_COMP = "OuterCustomComp"
 	}
 
 	/**
@@ -27,6 +28,14 @@ class TestLibraryBuilder(
 		val customComp = CompositeTestGraphViewBuilder(INNER_CUSTOM_COMP).buildInnerCustomComponent()
 		val containerDrawing = createContainerDrawing(customComp)
 		val metaGraph = MetaGraph(GraphStorable(customComp), containerDrawing)
+		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		return metaGraph
+	}
+
+	fun addOuterCustomComponent(library: Library): MetaGraph {
+		val outerComp = CompositeTestGraphViewBuilder(OUTER_CUSTOM_COMP).buildOuterCustomComponent(createSubGraphVerticeView(INNER_CUSTOM_COMP, library))
+		val containerDrawing = createContainerDrawing(outerComp)
+		val metaGraph = MetaGraph(GraphStorable(outerComp), containerDrawing)
 		libraryService.addContainerLibraryElement(library, metaGraph, library)
 		return metaGraph
 	}

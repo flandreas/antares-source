@@ -1,7 +1,20 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.invocation.SynchronousInvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.graph.container.PortViewComponent
+import ch.scorpion.jabbah.graph.model.TestControlVertice
+import ch.scorpion.jabbah.graph.model.TestVertice
+import ch.scorpion.jabbah.graph.model.port.SubGraphPortImpl
+import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
+import ch.scorpion.jabbah.graph.model.vertice.GraphOutputImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
+import ch.scorpion.jabbah.graph.view.port.TestPortView
+import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
+import ch.scorpion.jabbah.io.IOModule
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -27,5 +40,21 @@ class GraphViewTestRule : TestRule {
     fun configure() {
         BaseModuleJvm.require()
         GraphViewModuleJvm.require()
+
+	    IOModule.typeMap.register("testVertice", TestVertice::class)
+	    IOModule.typeMap.register("testVerticeView", TestVerticeView::class)
+	    IOModule.typeMap.register("testControl", TestControlVertice::class)
+	    IOModule.typeMap.register("testControlView", TestControlVerticeView::class)
+	    IOModule.typeMap.register("testGraphPortView", TestGraphPortView::class)
+	    IOModule.typeMap.register("testPortView", TestPortView::class)
+	    IOModule.typeMap.register("graphInputImpl", GraphInputImpl::class)
+	    IOModule.typeMap.register("graphOutputImpl", GraphOutputImpl::class)
+	    IOModule.typeMap.register("portViewComponent", PortViewComponent::class)
+	    IOModule.typeMap.register("subGraphPortImpl", SubGraphPortImpl::class)
+
+	    InvocationHandler.implementation = SynchronousInvocationHandler()
+	    UiUtil.eventQueueInvoker = {
+		    false
+	    }
     }
 }

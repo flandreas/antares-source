@@ -7,7 +7,7 @@ package ch.scorpion.jabbah.base.invocation
 abstract class InvocationHandler {
 
     companion object {
-        val implementation: InvocationHandler = SwingInvocationHandler()
+        var implementation: InvocationHandler = SwingInvocationHandler()
 
         /**
          * Invokes [Runnable.run] of the provided [Runnable] asynchronously. That is, this method returns
@@ -26,4 +26,16 @@ abstract class InvocationHandler {
 
 	protected abstract fun invokeImpl(runnable: () -> Unit)
 
+}
+
+/** Executes [InvocationHandler] invokables synchronously. Mainly used for testing purposes.*/
+class SynchronousInvocationHandler : InvocationHandler() {
+
+	override fun invokeImpl(doRun: Runnable) {
+		doRun.run()
+	}
+
+	override fun invokeImpl(runnable: () -> Unit) {
+		runnable.invoke()
+	}
 }

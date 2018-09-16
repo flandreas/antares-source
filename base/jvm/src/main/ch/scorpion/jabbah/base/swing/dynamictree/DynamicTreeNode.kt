@@ -1,11 +1,10 @@
 package ch.scorpion.jabbah.base.swing.dynamictree
 
-import java.awt.EventQueue
+import ch.scorpion.jabbah.base.swing.UiUtil
 import java.util.*
 import javax.swing.tree.DefaultMutableTreeNode
-import javax.swing.tree.TreeNode
-import java.util.Enumeration
 import javax.swing.tree.MutableTreeNode
+import javax.swing.tree.TreeNode
 
 /**
  * Dynamic [TreeNode] that supports lazy initialization.
@@ -107,8 +106,7 @@ class DynamicTreeNode(
 	 */
 	@Synchronized
 	override fun addChildren(values: Array<DynamicTreeNodeValue>) {
-		if (!EventQueue.isDispatchThread()) {
-			EventQueue.invokeLater { addChildren(values) }
+		if (UiUtil.eventQueueInvoker.invoke { addChildren(values) }) {
 			return
 		}
 		if (this.state === INITIALIZED) {
@@ -124,8 +122,7 @@ class DynamicTreeNode(
 	}
 
 	override fun addChildren(children: List<MutableTreeNode>) {
-		if (!EventQueue.isDispatchThread()) {
-			EventQueue.invokeLater { addChildren(children) }
+		if (UiUtil.eventQueueInvoker.invoke { addChildren(children) }) {
 			return
 		}
 		if (this.state === INITIALIZED) {
@@ -158,10 +155,10 @@ class DynamicTreeNode(
 	 * Actual initialization is performed on dispatch thread.
 	 */
 	protected fun primInitialize() {
-		if (!EventQueue.isDispatchThread()) {
-			EventQueue.invokeLater { primInitialize() }
+		if (UiUtil.eventQueueInvoker.invoke { primInitialize() }) {
 			return
 		}
+
 		this.initializer.initialize(getUserObject(), this)
 		this.notifier.notifyNodeStructureChanged(this)
 	}

@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 
@@ -22,6 +23,18 @@ class CompositeTestGraphViewBuilder(
 		val control = addVerticeView(TestControlVerticeView())
 		connect(addInput(), comp)
 		split(connect(comp, addOutput()),0, Point2D.ZERO, control)
+		graph.name = graphName
+		return graphView
+	}
+
+	/**
+	 * Builds a [GraphView] that contains an inner component as built by [buildInnerCustomComponent],
+	 * along with two [TestGraphPortView]s for input and output.
+	 */
+	fun buildOuterCustomComponent(innerComp: SubGraphVerticeView<*>): GraphView<GraphElementView<out GraphElement>> {
+		graphView.add(innerComp)
+		connect(addInput(), innerComp)
+		connect(innerComp, addOutput())
 		graph.name = graphName
 		return graphView
 	}
