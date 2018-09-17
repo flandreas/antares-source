@@ -209,6 +209,7 @@ class DynamicTreeNode(
 	companion object {
 
 		abstract class State {
+			abstract fun isInitialized(): Boolean
 			abstract fun isLeaf(node: DynamicTreeNode): Boolean
 			abstract fun getChildCount(node: DynamicTreeNode): Int
 			abstract fun getChildAt(node: DynamicTreeNode, index: Int): TreeNode
@@ -217,6 +218,8 @@ class DynamicTreeNode(
 
 		/** Base strategy used while the node is not yet initialized. */
 		private open class InitializingState : State() {
+
+			override fun isInitialized(): Boolean = false
 
 			override fun isLeaf(node: DynamicTreeNode): Boolean = false
 
@@ -277,6 +280,8 @@ class DynamicTreeNode(
 
 		private val INITIALIZED = object : State() {
 			override fun toString(): String = "Initialized"
+
+			override fun isInitialized(): Boolean = true
 
 			override fun isLeaf(node: DynamicTreeNode): Boolean {
 				return node.primIsLeaf;

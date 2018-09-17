@@ -7,11 +7,13 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceEvent
 import ch.scorpion.jabbah.graph.view.GraphPortView
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 /**
  * An [Editor] for editing a [GraphView].
@@ -35,6 +37,9 @@ class GraphEditor(
         if (component is ControlViewSource<*>) {
             eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.ADD, component as ControlViewSource<Vertice>))
         }
+	    if (component is SubGraphVerticeView<*>) {
+		    eventBus.post(SubGraphVerticeViewEvent(SubGraphVerticeViewEvent.Type.ADD, component as SubGraphVerticeView<SubGraphVertice>))
+	    }
     }
 
     override fun handleComponentRemoved(component: Component) {
@@ -44,6 +49,9 @@ class GraphEditor(
         if (component is ControlViewSource<*>) {
             eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.REMOVE, component as ControlViewSource<Vertice>))
         }
+	    if (component is SubGraphVerticeView<*>) {
+		    eventBus.post(SubGraphVerticeViewEvent(SubGraphVerticeViewEvent.Type.REMOVE, component as SubGraphVerticeView<SubGraphVertice>))
+	    }
     }
 }
 
@@ -52,4 +60,11 @@ class GraphPortViewEvent(val type: Type, val graphPortView: GraphPortView<*>) {
     enum class Type {
         ADD, REMOVE
     }
+}
+
+/** Posted by [GraphEditor] whenever a [SubGraphVerticeView] has been added or removed. */
+class SubGraphVerticeViewEvent(val type: Type, val subGraphVerticeView: SubGraphVerticeView<SubGraphVertice>) {
+	enum class Type {
+		ADD, REMOVE
+	}
 }

@@ -9,10 +9,12 @@ import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.TestPortFactory
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
@@ -92,7 +94,7 @@ class ContainerTreeTest {
 	}
 
 	@Test
-	fun shouldAddDeepControlToTree() {
+	fun shouldContainDeepControlInInitialTree() {
 		val graphView = createDeepLinkGraphView()
 
 		val containerTree = ContainerTree(graphView = graphView, containerDrawing = ContainerDrawing())
@@ -102,12 +104,41 @@ class ContainerTreeTest {
 	}
 
 	@Test
-	fun deepControlOfContainerShouldNotBeAddedToTree() {
+	fun deepControlOfContainerShouldNotBeContainedInInitalTree() {
 		val graphView = createDeepLinkGraphView()
 		val containerDrawing = createDeepControlContainerDrawing(graphView)
 
 		val containerTree = ContainerTree(graphView = graphView, containerDrawing = containerDrawing)
 		JTreeUtil.expandAll(containerTree.treeModel.root as TreeNode)
+
+		assertControlView(containerTree, nullValue())
+	}
+
+	@Test
+	fun shouldAddSubGraphVerticeViewToExpandedTree() {
+		val testGraphView = TestGraphView()
+		val containerTree = ContainerTree(graphView = testGraphView.graphView, containerDrawing = ContainerDrawing())
+		JTreeUtil.expandAll(containerTree.treeModel.root as TreeNode)
+		val library = LibraryModule.libraryHolder.library
+		TestLibraryBuilder().addInnerCustomComponent(library)
+		val vv = (library.get(TestLibraryBuilder.INNER_CUSTOM_COMP) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
+		testGraphView.graphView.add(vv)
+
+		containerTree.addSubGraphVerticeView(vv as SubGraphVerticeView<SubGraphVertice>)
+		JTreeUtil.expandAll(containerTree.treeModel.root as TreeNode)
+
+		assertControlView(containerTree, notNullValue())
+	}
+
+	@Test
+	fun shouldRemoveSubGraphVerticeViewFromExpandedTree() {
+		val graphView = createDeepLinkGraphView()
+		val containerDrawing = createDeepControlContainerDrawing(graphView)
+
+		val containerTree = ContainerTree(graphView = graphView, containerDrawing = containerDrawing)
+		JTreeUtil.expandAll(containerTree.treeModel.root as TreeNode)
+
+		containerTree.removeSubGraphVerticeView(graphView.getSubGraphVerticeViews().first())
 
 		assertControlView(containerTree, nullValue())
 	}

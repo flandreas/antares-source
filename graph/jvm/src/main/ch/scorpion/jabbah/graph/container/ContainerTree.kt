@@ -98,7 +98,7 @@ private class SubgraphsFolderItem(
  * @property subGraphVerticeView the [SubGraphVerticeView], whose referenced [GraphView] can be opened by the tree node
  */
 private class SubGraphVerticeViewFolderItem(
-	private val subGraphVerticeView: SubGraphVerticeView<SubGraphVertice>
+	val subGraphVerticeView: SubGraphVerticeView<SubGraphVertice>
 ) : AbstractContainerTreeItem(ContainerTreeItemType.SubGraph) {
 
 	override val description: String get() = subGraphVerticeView.subGraphVertice?.name ?: "n.a."
@@ -124,11 +124,14 @@ class ContainerTree(
 		private val LOG by logger(ContainerTree::class)
 	}
 
-	/** The root node that contains the [PortViewComponent]s.*/
+	/** The top-level node that contains the [PortViewComponent]s.*/
 	private val portsNode = DefaultMutableTreeNode(ContainerTreeFolderItem.PORTS)
 
-	/** The root node that contains the [ControlViewSource]s. */
+	/** The top-level node that contains the [ControlViewSource]s. */
 	private val controlsNode = DefaultMutableTreeNode(ContainerTreeFolderItem.CONTROLS)
+
+	/** The node that contains the top-level [SubGraphVerticeViewFolderItem].*/
+	private lateinit var subGraphsNode: DynamicTreeNode
 
 	lateinit var treeModel: DynamicTreeModel
 		private set
@@ -143,7 +146,8 @@ class ContainerTree(
 		fillControlViewSources(graphView, containerDrawing)
 		(treeModel.root as DefaultMutableTreeNode).add(portsNode)
 		(treeModel.root as DefaultMutableTreeNode).add(controlsNode)
-		(treeModel.root as DefaultMutableTreeNode).add(DynamicTreeNode(SubgraphsFolderItem(graphView, DeepVerticeLink()), this, treeModel))
+		subGraphsNode = DynamicTreeNode(SubgraphsFolderItem(graphView, DeepVerticeLink()), this, treeModel)
+		(treeModel.root as DefaultMutableTreeNode).add(subGraphsNode)
 	}
 
 	/** ---- [DynamicInitializer] */
@@ -243,6 +247,40 @@ class ContainerTree(
 			controlsNode.remove(index)
 			treeModel.nodesWereRemoved(controlsNode, intArrayOf(index), arrayOf(child))
 		}
+	}
+
+	/** Adds the specified [SubGraphVerticeView] to the [TreeNode] with the top-level [SubgraphsFolderItem]. */
+	fun addSubGraphVerticeView(vv: SubGraphVerticeView<SubGraphVertice>) {
+		if (subGraphsNode.isInitialized) {
+			subGraphsNode.add(createSubGraphVerticeViewTreeNode(vv, DeepVerticeLink(vv.model!!.id)))
+		}
+	}
+
+	fun removeSubGraphVerticeView(vv: SubGraphVerticeView<SubGraphVertice>) {
+		if (subGraphsNode.isInitialized) {
+			val index = findSubGraphVerticeViewIndex(vv.id)
+			if (index != null) {
+				val child = subGraphsNode.getChildAt(index)
+				subGraphsNode.remove(index)
+				treeModel.nodesWereRemoved(subGraphsNode, intArrayOf(index), arrayOf(child))
+			}
+		}
+	}
+
+	/**
+	 * Finds the index of the [ContainerTreePortItem] with the given name in the toplevel [portsNode].
+	 * @return `null` if not found
+	 */
+	private fun findSubGraphVerticeViewIndex(id: Int): Int? {
+		if (subGraphsNode.isInitialized) {
+			for (index in 0 until subGraphsNode.childCount) {
+				val item = (subGraphsNode.getChildAt(index) as DefaultMutableTreeNode).userObject as SubGraphVerticeViewFolderItem
+				if (item.subGraphVerticeView.id == id) {
+					return index
+				}
+			}
+		}
+		return null
 	}
 
 	/**

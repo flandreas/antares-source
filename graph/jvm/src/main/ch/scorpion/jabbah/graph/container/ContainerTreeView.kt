@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.view.ControlViewSourceEvent
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.editor.GraphPortViewEvent
+import ch.scorpion.jabbah.graph.view.editor.SubGraphVerticeViewEvent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortFactory
 import javax.swing.*
@@ -53,6 +54,13 @@ open class ContainerTreeView(
 		    when(it.type) {
 			    ControlViewSourceEvent.Type.ADD -> containerTree?.addControlViewSource(it.source)
 			    ControlViewSourceEvent.Type.REMOVE -> containerTree?.removeControlViewSource(it.source.controlId!!)
+		    }
+	    }
+
+	    eventBus.register(SubGraphVerticeViewEvent::class) {
+		    when(it.type) {
+			    SubGraphVerticeViewEvent.Type.ADD -> containerTree?.addSubGraphVerticeView(it.subGraphVerticeView)
+			    SubGraphVerticeViewEvent.Type.REMOVE -> containerTree?.removeSubGraphVerticeView(it.subGraphVerticeView)
 		    }
 	    }
     }
