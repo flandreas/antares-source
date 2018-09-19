@@ -51,7 +51,7 @@ class ContainerTreeTest {
 		val source = TestControlVerticeView()
 		testGraphView.graphView.add(source)
 
-		val containerTree = ContainerTree(graphView = testGraphView.graphView, containerDrawing = ContainerDrawing())
+		val containerTree = ContainerTree(mainGraphView = testGraphView.graphView, containerDrawing = ContainerDrawing())
 
 		assertControlView(containerTree, notNullValue())
 	}
@@ -64,7 +64,7 @@ class ContainerTreeTest {
 		val containerDrawing = ContainerDrawing()
 		containerDrawing.add(ControlViewComponent(controlView = source.createControlView() as ControlView<Vertice>))
 
-		val containerTree = ContainerTree(graphView = testGraphView.graphView, containerDrawing = containerDrawing)
+		val containerTree = ContainerTree(mainGraphView = testGraphView.graphView, containerDrawing = containerDrawing)
 
 		assertControlView(containerTree, nullValue())
 	}
@@ -72,11 +72,11 @@ class ContainerTreeTest {
 	@Test
 	fun shouldAddControlView() {
 		val testGraphView = TestGraphView()
-		val containerTree = ContainerTree(graphView = testGraphView.graphView, containerDrawing = ContainerDrawing())
+		val containerTree = ContainerTree(mainGraphView = testGraphView.graphView, containerDrawing = ContainerDrawing())
 		val source = TestControlVerticeView()
 		testGraphView.graphView.add(source)
 
-		containerTree.addControlViewSource(source as ControlViewSource<Vertice>)
+		containerTree.model.addControlViewSource(source as ControlViewSource<Vertice>)
 
 		assertControlView(containerTree, notNullValue())
 	}
@@ -86,9 +86,9 @@ class ContainerTreeTest {
 		val testGraphView = TestGraphView()
 		val source = TestControlVerticeView()
 		testGraphView.graphView.add(source)
-		val containerTree = ContainerTree(graphView = testGraphView.graphView, containerDrawing = ContainerDrawing())
+		val containerTree = ContainerTree(mainGraphView = testGraphView.graphView, containerDrawing = ContainerDrawing())
 
-		containerTree.removeControlViewSource(source.controlId!!)
+		containerTree.model.removeControlViewSource(source.controlId!!)
 
 		assertControlView(containerTree, nullValue())
 	}
@@ -97,8 +97,8 @@ class ContainerTreeTest {
 	fun shouldContainDeepControlInInitialTree() {
 		val graphView = createDeepLinkGraphView()
 
-		val containerTree = ContainerTree(graphView = graphView, containerDrawing = ContainerDrawing())
-		JTreeUtil.expandAll(containerTree.treeModel.root as TreeNode)
+		val containerTree = ContainerTree(mainGraphView = graphView, containerDrawing = ContainerDrawing())
+		JTreeUtil.expandAll(containerTree.model.treeModel.root as TreeNode)
 
 		assertControlView(containerTree, notNullValue())
 	}
@@ -108,8 +108,8 @@ class ContainerTreeTest {
 		val graphView = createDeepLinkGraphView()
 		val containerDrawing = createDeepControlContainerDrawing(graphView)
 
-		val containerTree = ContainerTree(graphView = graphView, containerDrawing = containerDrawing)
-		JTreeUtil.expandAll(containerTree.treeModel.root as TreeNode)
+		val containerTree = ContainerTree(mainGraphView = graphView, containerDrawing = containerDrawing)
+		JTreeUtil.expandAll(containerTree.model.treeModel.root as TreeNode)
 
 		assertControlView(containerTree, nullValue())
 	}
@@ -117,15 +117,15 @@ class ContainerTreeTest {
 	@Test
 	fun shouldAddSubGraphVerticeViewToExpandedTree() {
 		val testGraphView = TestGraphView()
-		val containerTree = ContainerTree(graphView = testGraphView.graphView, containerDrawing = ContainerDrawing())
-		JTreeUtil.expandAll(containerTree.treeModel.root as TreeNode)
+		val containerTree = ContainerTree(mainGraphView = testGraphView.graphView, containerDrawing = ContainerDrawing())
+		JTreeUtil.expandAll(containerTree.model.treeModel.root as TreeNode)
 		val library = LibraryModule.libraryHolder.library
 		TestLibraryBuilder().addInnerCustomComponent(library)
 		val vv = (library.get(TestLibraryBuilder.INNER_CUSTOM_COMP) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
 		testGraphView.graphView.add(vv)
 
-		containerTree.addSubGraphVerticeView(vv as SubGraphVerticeView<SubGraphVertice>)
-		JTreeUtil.expandAll(containerTree.treeModel.root as TreeNode)
+		containerTree.model.addSubGraphVerticeView(vv as SubGraphVerticeView<SubGraphVertice>)
+		JTreeUtil.expandAll(containerTree.model.treeModel.root as TreeNode)
 
 		assertControlView(containerTree, notNullValue())
 	}
@@ -135,12 +135,17 @@ class ContainerTreeTest {
 		val graphView = createDeepLinkGraphView()
 		val containerDrawing = createDeepControlContainerDrawing(graphView)
 
-		val containerTree = ContainerTree(graphView = graphView, containerDrawing = containerDrawing)
-		JTreeUtil.expandAll(containerTree.treeModel.root as TreeNode)
+		val containerTree = ContainerTree(mainGraphView = graphView, containerDrawing = containerDrawing)
+		JTreeUtil.expandAll(containerTree.model.treeModel.root as TreeNode)
 
-		containerTree.removeSubGraphVerticeView(graphView.getSubGraphVerticeViews().first())
+		containerTree.model.removeSubGraphVerticeView(graphView.getSubGraphVerticeViews().first())
 
 		assertControlView(containerTree, nullValue())
+	}
+
+	@Test
+	fun shouldRemoveAddedControlFromTree() {
+		// TODO
 	}
 
 	/** Creates a [GraphView] that contains a [SubGraphVerticeView] referencing the outer custom component. */
@@ -166,7 +171,7 @@ class ContainerTreeTest {
 	}
 
 	private fun assertControlView(containerTree: ContainerTree, matcher: Matcher<in TreeNode?>) {
-		assertThat(JTreeUtil.findTreeNode(containerTree.treeModel.root as TreeNode) {
+		assertThat(JTreeUtil.findTreeNode(containerTree.model.treeModel.root as TreeNode) {
 			it is DefaultMutableTreeNode
 				&& it.userObject is DraggableTreeItem
 				&& (it.userObject as DraggableTreeItem).type == ContainerTreeItemType.Control }, matcher)

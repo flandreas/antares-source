@@ -7,10 +7,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
-import ch.scorpion.jabbah.graph.view.ControlViewSourceEvent
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.editor.GraphPortViewEvent
-import ch.scorpion.jabbah.graph.view.editor.SubGraphVerticeViewEvent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortFactory
 import javax.swing.*
@@ -24,7 +21,7 @@ import javax.swing.tree.TreeModel
 open class ContainerTreeView(
     private val portFactory: PortFactory = GraphViewModule.portFactory,
     private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    eventBus: EventBus = BaseModule.eventBus
+    private val eventBus: EventBus = BaseModule.eventBus
 ) : JTree() {
 
 	companion object {
@@ -42,33 +39,16 @@ open class ContainerTreeView(
         showsRootHandles = true
         dragEnabled = true
         dropMode = DropMode.ON
-
-        eventBus.register(GraphPortViewEvent::class) {
-	        when(it.type) {
-		        GraphPortViewEvent.Type.ADD -> containerTree?.addGraphPortView(it.graphPortView)
-		        GraphPortViewEvent.Type.REMOVE -> containerTree?.removeGraphPortView(it.graphPortView.model!!.name!!)
-	        }
-        }
-
-	    eventBus.register(ControlViewSourceEvent::class) {
-		    when(it.type) {
-			    ControlViewSourceEvent.Type.ADD -> containerTree?.addControlViewSource(it.source)
-			    ControlViewSourceEvent.Type.REMOVE -> containerTree?.removeControlViewSource(it.source.controlId!!)
-		    }
-	    }
-
-	    eventBus.register(SubGraphVerticeViewEvent::class) {
-		    when(it.type) {
-			    SubGraphVerticeViewEvent.Type.ADD -> containerTree?.addSubGraphVerticeView(it.subGraphVerticeView)
-			    SubGraphVerticeViewEvent.Type.REMOVE -> containerTree?.removeSubGraphVerticeView(it.subGraphVerticeView)
-		    }
-	    }
     }
 
-    /** Updates the [TreeModel] by comparing data from [GraphView] and [ContainerDrawing].*/
-    fun update(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
-	    containerTree = ContainerTree(portFactory, styleProvider, graphView, containerDrawing)
-	    model = containerTree?.treeModel
+    /**
+     * Updates the [TreeModel] by comparing data from [GraphView] and [ContainerDrawing].
+     *
+     */
+    fun update(mainGraphView: GraphView<*>, containerDrawing: ContainerDrawing) {
+	    containerTree?.dispose()
+	    containerTree = ContainerTree(portFactory, styleProvider, mainGraphView, containerDrawing, eventBus)
+	    model = containerTree?.model?.treeModel
     }
 
     private inner class ContainerTreeCellRenderer : DefaultTreeCellRenderer() {

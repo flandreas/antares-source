@@ -46,8 +46,6 @@ class ContainerPanel(
     /** The [GraphView] whose outside view is edited by this [ContainerPanel]. Defined in [setData]. */
     private var graphView: GraphView<*>? = null
 
-    private val balancer = Balancer()
-
     private val propertyPanel: ComponentPropertyPanel
 
 	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
@@ -92,12 +90,15 @@ class ContainerPanel(
         treeView.updateUI()
     }
 
+	/**
+	 * Sets the data to be displayed by this [ContainerPanel].
+	 * @param graphView the main [GraphView] in the editable main panel
+	 * @param containerDrawing the [ContainerDrawing] that represents the outer view of `graphView`
+	 */
     fun setData(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
         this.graphView = graphView
-        editor.view.drawing.removeDrawableContainerListener(balancer)
         editor.view.drawing = containerDrawing
         treeView.update(graphView, containerDrawing)
-        editor.view.drawing.addDrawableContainerListener(balancer)
     }
 
     fun setGraphName(graphName: String) {
@@ -134,41 +135,5 @@ class ContainerPanel(
         toolbar.addTool(PolylineTool(editor) { PolylineComponent() }, "/img/polyline.gif", Translations.getString("edit.component.polyline"))
 
         return toolbar
-    }
-
-    /**
-     * Balances the contents of the [ContainerTreeView] and the [ContainerDrawing] such that each object
-     * is always contained only in one of them, but not in both.
-     */
-    private inner class Balancer : DrawableContainerAdapter<Component> () {
-
-        /** Removes the object that has been added to the [ContainerDrawing] from the [ContainerTreeView].*/
-        override fun drawableAdded(event: DrawableContainerEvent<Component>) {
-            if (event.child is PortViewComponent<*>) {
-                treeView.containerTree?.removeGraphPortView((event.child as PortViewComponent<*>).port.name!!)
-            }
-            if (event.child is ControlViewComponent) {
-                treeView.containerTree?.removeControlViewSource((event.child as ControlViewComponent).controlView!!.controlId!!)
-            }
-        }
-
-        /**
-         * Adds the object of the main [GraphView] to the [ContainerTreeView] when its corresponding object
-         * has been removed from the [ContainerDrawing].
-         */
-        override fun drawableRemoved(event: DrawableContainerEvent<Component>) {
-            if (event.child is PortViewComponent<*>) {
-                val graphPortView = graphView!!.getGraphPortView((event.child as PortViewComponent<*>).port.name!!)
-                if (graphPortView != null) {
-                    treeView.containerTree?.addGraphPortView(graphPortView)
-                }
-            }
-            if (event.child is ControlViewComponent) {
-                val cvs = graphView!!.getControlViewSource((event.child as ControlViewComponent).controlView!!.controlId!!)
-                if (cvs != null) {
-                    treeView.containerTree?.addControlViewSource(cvs)
-                }
-            }
-        }
     }
 }
