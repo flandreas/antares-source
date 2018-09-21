@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.base.checkArgument
@@ -36,6 +37,14 @@ abstract class AbstractVertice(name: String? = null) : AbstractGraphElement(), V
             }
         }
 
+	override var customDescription: String? = null
+		set(value) {
+			if (value != field) {
+				field = value
+				stateChanged()
+			}
+		}
+
     override val portsCount: Int
         get() = ports.size
 
@@ -51,9 +60,9 @@ abstract class AbstractVertice(name: String? = null) : AbstractGraphElement(), V
     override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
         if (LOG.isTraceEnabled()) {
             signalHandler.logTrace(
-                    System.get().getClass(this),
-                    id,
-                    { "input changed to ${dataToString()}, will calculate at ${signalHandler.executionTime + propagationDelay} ns" })
+                System.get().getClass(this), id) {
+	            "input changed to ${dataToString()}, will calculate at ${signalHandler.executionTime + propagationDelay} ns"
+            }
         }
 
         requestActingAfter(signalHandler, propagationDelay, createActorData(input))
@@ -128,6 +137,9 @@ abstract class AbstractVertice(name: String? = null) : AbstractGraphElement(), V
         if (name != null) {
             writer.writeString("name", name!!)
         }
+	    if (StringUtils.isNotEmpty(customDescription)) {
+		    writer.writeString("desc", customDescription!!)
+	    }
     }
 
     override fun read(reader: StoreReader) {
@@ -135,6 +147,7 @@ abstract class AbstractVertice(name: String? = null) : AbstractGraphElement(), V
         if (reader.hasAttribute("name")) {
             name = reader.readString("name")
         }
+	    customDescription = reader.readOptionalString("desc")
     }
 
     /** ---- [Actor] interface */

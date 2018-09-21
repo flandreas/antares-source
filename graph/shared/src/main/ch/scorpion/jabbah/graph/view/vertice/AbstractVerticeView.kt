@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -76,9 +77,17 @@ abstract class AbstractVerticeView<T : Vertice>(
             horizontalAlignment = HorizontalAlignment.CENTER,
             verticalAlignment = VerticalAlignment.BOTTOM)
 
+	/** ---- UI properties */
+
+	var customDescription: TextProperty
+		get() = TextProperty(model!!.customDescription)
+		set(value) { model!!.customDescription = value.text }
+
     /** ---- [VerticeView] interface */
 
-    override val shortDescription: String? = Translations.getOptionalString("$baseResourceKey.desc")
+    private val staticDescription: String? = Translations.getOptionalString("$baseResourceKey.desc")
+
+    override val shortDescription: String? get() = model?.customDescription ?: staticDescription
 
     override var isShowPortViews: Boolean = true
         set(value) {

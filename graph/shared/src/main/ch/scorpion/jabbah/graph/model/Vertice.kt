@@ -18,6 +18,14 @@ interface Vertice : GraphElement {
      */
     var name: String?
 
+	/**
+	 * The description of this [Vertice] instance that can be customized by the user.
+	 * Note that this description related to the instance, not the type. The description of the type is typically constant,
+	 * while two [Vertice]s of the same type can have distinctive instance descriptions, which can be used by the user
+	 * to be able to distinguish between them.
+	 */
+	var customDescription: String?
+
     /** The overall number of [Port]s this [Vertice] contains, independent of the [PortType].*/
     val portsCount: Int
 
