@@ -22,12 +22,9 @@ import ch.scorpion.jabbah.io.StoreWriter
  * A [Component] that wraps a [PortView] in order to allow the user to manipulate it.
  */
 open class PortViewComponent<T: Any>(
-    styleProvider: StyleProvider,
-    var portView: PortView<T>?
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    var portView: PortView<T>? = null
 ) : AbstractComponent(styleProvider) {
-
-    constructor(styleProvider: StyleProvider): this(styleProvider, null)
-    constructor(): this(DrawStyleModule.styleProvider)
 
     val port: Port<T> get() = portView!!.port
 

@@ -131,7 +131,7 @@ class ContainerTreeModel(
 		treeModel.nodesWereInserted(controlsNode, intArrayOf(controlsNode.childCount - 1))
 	}
 
-	/** Removes the [ControlViewSource] with the specified ID from the [TreeModel]. */
+	/** Removes the top-level [ControlViewSource] with the specified ID from the [TreeModel]. */
 	fun removeControlViewSource(controlId: String) {
 		val index = findControlViewSourceIndex(controlId)
 		if (index != null) {

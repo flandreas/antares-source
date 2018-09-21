@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 class TestGraphPortView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: GraphPort<Boolean> = GraphInputImpl()
-) : AbstractVerticeView<GraphPort<Boolean>>(styleProvider, "test", model) {
+) : AbstractVerticeView<GraphPort<Boolean>>(styleProvider, "test", model), GraphPortView<GraphPort<Boolean>> {
 
 	companion object {
 
@@ -28,6 +28,8 @@ class TestGraphPortView(
 	init {
 		addPortView(TestPortView<Boolean>(model.getPort(), Direction.WEST, PortLabelPosition.EXTERNAL, 0))
 	}
+
+	override val iconPath: String get() = "icon"
 
 	override fun getBoundingBoxImpl(): Rectangle2D = Rectangle2D()
 
