@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicInitializer
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicReceiver
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicTreeModel
@@ -131,6 +132,17 @@ class ContainerTreeModel(
 		treeModel.nodesWereInserted(controlsNode, intArrayOf(controlsNode.childCount - 1))
 	}
 
+	fun addControlViewSourceFor(comp: ControlViewComponent) {
+		val treeNode = findSubGraphVerticeViewFolder(comp.controlModelLink)
+		if (treeNode != null && (treeNode.getChildAt(0) as DynamicTreeNode).isInitialized) {
+			val subGraphVerticeView = (treeNode as DefaultMutableTreeNode).userObject as SubGraphVerticeViewFolderItem
+			val innerFolder = treeNode.getChildAt(0) as DynamicTreeNode
+			val source = subGraphVerticeView.graphView.getControlViewSource(comp.controlView!!.controlId!!)
+			innerFolder.add(createControlViewNode(source!!, comp.controlModelLink.withoutLast()))
+			treeModel.nodesWereInserted(innerFolder, intArrayOf(innerFolder.childCount - 1))
+		}
+	}
+
 	/** Removes the top-level [ControlViewSource] with the specified ID from the [TreeModel]. */
 	fun removeControlViewSource(controlId: String) {
 		val index = findControlViewSourceIndex(controlId)
@@ -138,6 +150,30 @@ class ContainerTreeModel(
 			val child = controlsNode.getChildAt(index)
 			controlsNode.remove(index)
 			treeModel.nodesWereRemoved(controlsNode, intArrayOf(index), arrayOf(child))
+		}
+	}
+
+	/** Removes the [ControlViewSource] that matches the specified [DeepVerticeLink] from the [TreeModel]. */
+	fun removeControlViewSource(link: DeepVerticeLink) {
+		val treeNode = findSubGraphVerticeViewFolder(link)
+		if (treeNode != null && (treeNode.getChildAt(0) as DynamicTreeNode).isInitialized) {
+			val innerFolder = treeNode.getChildAt(0) as DefaultMutableTreeNode
+			val index = findControlViewSourceIndexForModelId(innerFolder, link.last)
+			if (index != null) {
+				val child = innerFolder.getChildAt(index)
+				innerFolder.remove(index)
+				treeModel.nodesWereRemoved(innerFolder, intArrayOf(index), arrayOf(child))
+			}
+		}
+	}
+
+	private fun findSubGraphVerticeViewFolder(link: DeepVerticeLink): TreeNode? {
+		val subGraphVerticeViewLink = link.withoutLast()
+		return JTreeUtil.findTreeNode(treeModel.root as TreeNode) {
+			it is DefaultMutableTreeNode
+				&& it.childCount > 0
+				&& it.userObject is SubGraphVerticeViewFolderItem
+				&& (it.userObject as SubGraphVerticeViewFolderItem).link == subGraphVerticeViewLink
 		}
 	}
 
@@ -158,6 +194,7 @@ class ContainerTreeModel(
 	private fun createControlViewNode(source: ControlViewSource<Vertice>, baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY): MutableTreeNode {
 		return DefaultMutableTreeNode(ContainerTreeControlItem(
 			source.controlId!!,
+			source.model!!.id,
 			source.controlName,
 			{ ControlViewComponent(styleProvider, source.createControlView(), baseLink) },
 			source.iconPath))
@@ -171,6 +208,16 @@ class ContainerTreeModel(
 		for (index in 0 until controlsNode.childCount) {
 			val item = (controlsNode.getChildAt(index) as DefaultMutableTreeNode).userObject as ContainerTreeControlItem
 			if (item.controlViewId == controlViewId) {
+				return index
+			}
+		}
+		return null
+	}
+
+	private fun findControlViewSourceIndexForModelId(folder: TreeNode, modelId: Int): Int? {
+		for (index in 0 until folder.childCount) {
+			val item = (folder.getChildAt(index) as DefaultMutableTreeNode).userObject as ContainerTreeControlItem
+			if (item.controlModelId == modelId) {
 				return index
 			}
 		}
@@ -204,8 +251,8 @@ class ContainerTreeModel(
 	}
 
 	private fun createSubGraphVerticeViewTreeNode(vv: SubGraphVerticeView<SubGraphVertice>, link: DeepVerticeLink): MutableTreeNode {
-		val treeNode = DefaultMutableTreeNode(SubGraphVerticeViewFolderItem(vv))
 		val subGraphView = vv.createSubGraphView()
+		val treeNode = DefaultMutableTreeNode(SubGraphVerticeViewFolderItem(subGraphView, vv, link))
 		treeNode.add(DynamicTreeNode(ControlsFolderTreeItem(subGraphView, link), initializer, treeModel, true))
 		treeNode.add(DynamicTreeNode(SubgraphsFolderItem(subGraphView, link), initializer, treeModel, true))
 		return treeNode
@@ -250,6 +297,7 @@ private class ContainerTreePortItem(
 
 private class ContainerTreeControlItem(
 	val controlViewId: String,
+	val controlModelId: Int,
 	description: String,
 	factory: () -> Component,
 	iconPath: String
@@ -290,10 +338,12 @@ class SubgraphsFolderItem(
 
 /**
  * The user object of a tree node that represents a single [SubGraphVerticeView].
- * @property subGraphVerticeView the [SubGraphVerticeView], whose referenced [GraphView] can be opened by the tree node
+ * @property subGraphVerticeView the [SubGraphVerticeView] whose referenced [GraphView] can be opened by the tree node
  */
 class SubGraphVerticeViewFolderItem(
-	val subGraphVerticeView: SubGraphVerticeView<SubGraphVertice>
+	val graphView: GraphView<*>,
+	val subGraphVerticeView: SubGraphVerticeView<SubGraphVertice>,
+	val link: DeepVerticeLink
 ) : AbstractContainerTreeItem(ContainerTreeItemType.SubGraph) {
 
 	override val description: String get() = subGraphVerticeView.subGraphVertice?.name ?: "n.a."

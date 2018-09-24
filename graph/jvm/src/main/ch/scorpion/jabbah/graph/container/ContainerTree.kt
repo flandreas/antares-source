@@ -126,7 +126,12 @@ class ContainerTree(
 				model.removeGraphPortView((event.child as PortViewComponent<*>).port.name!!)
 			}
 			if (event.child is ControlViewComponent) {
-				model.removeControlViewSource((event.child as ControlViewComponent).controlView!!.controlId!!)
+				val link = (event.child as ControlViewComponent).controlModelLink
+				if (link.size == 1) {
+					model.removeControlViewSource((event.child as ControlViewComponent).controlView!!.controlId!!)
+				} else {
+					model.removeControlViewSource((event.child as ControlViewComponent).controlModelLink)
+				}
 			}
 		}
 
@@ -142,9 +147,14 @@ class ContainerTree(
 				}
 			}
 			if (event.child is ControlViewComponent) {
-				val cvs = mainGraphView.getControlViewSource((event.child as ControlViewComponent).controlView!!.controlId!!)
-				if (cvs != null) {
-					model.addControlViewSource(cvs)
+				val comp = event.child as ControlViewComponent
+				if (comp.controlModelLink.size == 1) {
+					val cvs = mainGraphView.getControlViewSource((event.child as ControlViewComponent).controlView!!.controlId!!)
+					if (cvs != null) {
+						model.addControlViewSource(cvs)
+					}
+				} else {
+					model.addControlViewSourceFor(event.child as ControlViewComponent)
 				}
 			}
 		}

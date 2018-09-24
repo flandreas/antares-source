@@ -52,6 +52,11 @@ class DeepVerticeLink(verticeIds: List<Int>) {
 		return DeepVerticeLink(verticeIds.subList(1, size))
 	}
 
+	/** Returns a copy of this [DeepVerticeLink] that contains the entire path without the last ID.*/
+	fun withoutLast(): DeepVerticeLink {
+		return DeepVerticeLink(verticeIds.subList(0, size - 1))
+	}
+
 	/** Appends the specified ID at the end of path and returns the result as a new [DeepVerticeLink].*/
 	fun append(id: Int): DeepVerticeLink {
 		return DeepVerticeLink(listOf(*verticeIds.toTypedArray(), id))

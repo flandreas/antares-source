@@ -4,12 +4,12 @@ package ch.scorpion.jabbah.base
  * Defines the interface of a visitor that can visit any hierarchical structures according to the visitor design
  * pattern.
  *
- * Objects that make up the hierarchical structure to be visited should offer a method that accepts a HierarchyVisitor,
+ * Objects that make up the hierarchical structure to be visited should offer a method that accepts a [HierarchyVisitor],
  * like `boolean accept(HierarchyVisitor visitor)`. In addition to the traditional visitor pattern, where the
- * visitor only has a `visit()` method, this hierarchical visitor pattern has to additional method that allow the
+ * visitor only has a `visit()` method, this hierarchical visitor pattern has two additional methods that allow the
  * visitor to distinguishing between siblings and children of composite nodes.
  *
- * The accept method of a composite node should be implemented as follows:
+ * The `accept` method of a composite node should be implemented as follows:
  *
  *      boolean accept(HierarchyVisitor v) {
  *          if (v.visitEnter(this)) {
@@ -23,7 +23,7 @@ package ch.scorpion.jabbah.base
  *          return v.visitLeave(this);
  *      }
  *
- * The accept method of a leaf node should be implemented as follows:
+ * The `accept` method of a leaf node should be implemented as follows:
  *
  *      boolean accept(HierarchyVisitor v) {
  *          return v.visit(this);
@@ -49,7 +49,7 @@ interface HierarchyVisitor {
 
     /**
      * Called by a visited composite node after the children have been visited.
-     * @param item the visited composite node.
+     * @param node the visited composite node.
      * @return `false` if traversal has to be stopped.
      */
     fun visitLeave(node: Any): Boolean
@@ -57,15 +57,9 @@ interface HierarchyVisitor {
 
 open class EmptyHierarchyVisitor : HierarchyVisitor {
 
-    override fun visitEnter(node: Any): Boolean {
-        return true
-    }
+    override fun visitEnter(node: Any): Boolean = true
 
-    override fun visit(node: Any): Boolean {
-        return true
-    }
+    override fun visit(node: Any): Boolean = true
 
-    override fun visitLeave(node: Any): Boolean {
-        return true
-    }
+    override fun visitLeave(node: Any): Boolean = true
 }

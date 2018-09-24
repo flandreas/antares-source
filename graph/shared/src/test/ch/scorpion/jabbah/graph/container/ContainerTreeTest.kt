@@ -8,16 +8,13 @@ import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
-import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.TestPortFactory
-import ch.scorpion.jabbah.graph.view.port.TestPortView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
 import org.hamcrest.CoreMatchers.notNullValue
@@ -38,6 +35,14 @@ class ContainerTreeTest {
 		@ClassRule
 		@JvmField
 		val rule = GraphViewTestRule()
+
+		private fun findDraggableTreeItemOfType(containerTree: ContainerTree, type: ContainerTreeItemType): DefaultMutableTreeNode? {
+			return JTreeUtil.findTreeNode(containerTree.model.treeModel.root as TreeNode) {
+				it is DefaultMutableTreeNode
+					&& it.userObject is DraggableTreeItem
+					&& (it.userObject as DraggableTreeItem).type == type
+			} as DefaultMutableTreeNode?
+		}
 	}
 
 	@Before
@@ -50,84 +55,71 @@ class ContainerTreeTest {
 	}
 
 	@Test
-	fun shouldBuildWithControlView() {
-		val builder = GraphViewBuilder<Boolean>()
-		val source = TestControlVerticeView()
-		builder.addVerticeView(source)
-
-		val containerTree = ContainerTree(mainGraphView = builder.build(), containerDrawing = ContainerDrawing())
-
-		assertControlView(containerTree, notNullValue())
-	}
-
-	@Test
-	fun controlOfContainerShouldNotBeAddedToTree() {
-		val builder = GraphViewBuilder<Boolean>()
-		val source = TestControlVerticeView()
-		builder.addVerticeView(source)
-		val containerDrawing = ContainerDrawing()
-		containerDrawing.add(ControlViewComponent(controlView = source.createControlView() as ControlView<Vertice>))
-
-		val containerTree = ContainerTree(mainGraphView = builder.build(), containerDrawing = containerDrawing)
-
-		assertControlView(containerTree, nullValue())
-	}
-
-	@Test
-	fun shouldAddControlView() {
-		val builder = GraphViewBuilder<Boolean>()
-		val containerTree = ContainerTree(mainGraphView = builder.build(), containerDrawing = ContainerDrawing())
-		val source = TestControlVerticeView()
-		builder.build().add(source)
-
-		containerTree.model.addControlViewSource(source as ControlViewSource<Vertice>)
-
-		assertControlView(containerTree, notNullValue())
-	}
-
-	@Test
-	fun shouldRemoveControlView() {
-		val builder = GraphViewBuilder<Boolean>()
-		val source = TestControlVerticeView()
-		builder.build().add(source)
-		val containerTree = ContainerTree(mainGraphView = builder.build(), containerDrawing = ContainerDrawing())
-
-		containerTree.model.removeControlViewSource(source.controlId!!)
-
-		assertControlView(containerTree, nullValue())
-	}
-
-	@Test
-	fun shouldContainDeepControlInInitialTree() {
-		val builder = createDeepLinkGraphView()
-
-		val containerTree = ContainerTree(mainGraphView = builder.build(), containerDrawing = ContainerDrawing())
-		JTreeUtil.expandAll(containerTree.model.treeModel.root as TreeNode)
-
-		assertControlView(containerTree, notNullValue())
-	}
-
-	@Test
-	fun deepControlOfContainerShouldNotBeContainedInInitialTree() {
-		val builder = createDeepLinkGraphView()
-		val containerDrawing = createDeepControlContainerDrawing(builder.build())
-
-		val containerTree = ContainerTree(mainGraphView = builder.build(), containerDrawing = containerDrawing)
-		JTreeUtil.expandAll(containerTree.model.treeModel.root as TreeNode)
-
-		assertControlView(containerTree, nullValue())
-	}
-
-	@Test
-	fun shouldAddSubGraphVerticeViewToExpandedTree() {
-		val setup = Setup().withInnerCustomSubGraphVerticeView()
+	fun shouldBuildWithToplevelControlView() {
+		val setup = Setup().addToplevelControlToGraphView().build()
 
 		assertControlView(setup.containerTree, notNullValue())
 	}
 
 	@Test
-	fun shouldRemoveSubGraphVerticeViewFromExpandedTree() {
-		val setup = Setup().withInnerCustomSubGraphVerticeView()
+	fun controlOfContainerShouldNotBeAddedToTree() {
+		val source = TestControlVerticeView()
+		val setup = Setup()
+		setup.graphView.add(source)
+		setup.containerDrawing.add(ControlViewComponent(controlView = source.createControlView() as ControlView<Vertice>))
+		setup.build()
+
+		assertControlView(setup.containerTree, nullValue())
+	}
+
+	@Test
+	fun shouldAddControlView() {
+		val setup = Setup().build().addToplevelControlToGraphView()
+		val source = TestControlVerticeView()
+
+		setup.graphView.add(source)
+		setup.containerTree.model.addControlViewSource(source as ControlViewSource<Vertice>)
+
+		assertControlView(setup.containerTree, notNullValue())
+	}
+
+	@Test
+	fun shouldRemoveControlView() {
+		val setup = Setup().build().addToplevelControlToGraphView()
+		val source = TestControlVerticeView()
+		setup.graphView.add(source)
+		setup.containerTree.model.addControlViewSource(source as ControlViewSource<Vertice>)
+		setup.expandAll()
+		setup.graphView.remove(source)
+		setup.containerTree.model.removeControlViewSource(source.controlId!!)
+
+		assertControlView(setup.containerTree, nullValue())
+	}
+
+	@Test
+	fun shouldContainDeepControlInInitialTree() {
+		val setup = Setup().build().addInnerCustomSubGraphVerticeView().expandAll()
+
+		assertControlView(setup.containerTree, notNullValue())
+	}
+
+	@Test
+	fun deepControlOfContainerShouldNoBeContainedInInitialTree() {
+		val setup = Setup().addInnerCustomSubGraphVerticeView().addDeepControlViewToContainer().build()
+
+		assertControlView(setup.containerTree, nullValue())
+	}
+
+	@Test
+	fun shouldAddControlOfAddedSubGraphVerticeViewToExpandedTree() {
+		val setup = Setup().build().addInnerCustomSubGraphVerticeView().expandAll()
+
+		assertControlView(setup.containerTree, notNullValue())
+	}
+
+	@Test
+	fun shouldRemoveControlOfRemovedSubGraphVerticeViewFromExpandedTree() {
+		val setup = Setup().build().addInnerCustomSubGraphVerticeView().expandAll()
 
 		setup.containerTree.model.removeSubGraphVerticeView(setup.graphView.getSubGraphVerticeViews().first())
 
@@ -136,19 +128,80 @@ class ContainerTreeTest {
 
 	@Test
 	fun shouldRemoveAddedPortViewFromTree() {
-		val setup = Setup().withPortViewComponent()
+		val setup = Setup()
+			.build()
+			.addGraphInputPortViewToGraphView()
+			.addPortViewComponent()
 
 		assertPortView(setup.containerTree, nullValue())
 	}
 
 	@Test
 	fun shouldAddRemovedPortViewToTree() {
-		val setup = Setup().withPortViewComponent()
+		val setup = Setup()
+			.build()
+			.addGraphInputPortViewToGraphView()
+			.addPortViewComponent()
 
-		setup.containerDrawing.remove(setup.portViewComponent)
+		setup.removePortViewFromContainer()
 
 		assertPortView(setup.containerTree, notNullValue())
 	}
+
+	@Test
+	fun shouldRemoveAddedToplevelControlViewFromTree() {
+		val setup = Setup().addToplevelControlToGraphView().build()
+
+		setup.addToplevelControlToContainer().expandAll()
+
+		assertControlView(setup.containerTree, nullValue())
+	}
+
+	@Test
+	fun shouldRemoveAddedDeepControlViewFromTree() {
+		val setup = Setup().addInnerCustomSubGraphVerticeView().build()
+
+		setup.addDeepControlViewToContainer().expandAll()
+
+		assertControlView(setup.containerTree, nullValue())
+	}
+
+	@Test
+	fun shouldRemoveRepeatedlyAddedDeepControlViewFromTree() {
+		val setup = Setup().addInnerCustomSubGraphVerticeView().build()
+		setup.addDeepControlViewToContainer().expandAll()
+		setup.removeControlFromContainer()
+
+		setup.addDeepControlViewToContainerUsingTree()
+
+		assertControlView(setup.containerTree, nullValue())
+	}
+
+	@Test
+	fun shouldAddRemovedDeepControlViewFromTree() {
+		val setup = Setup()
+			.addInnerCustomSubGraphVerticeView()
+			.addDeepControlViewToContainer()
+			.build()
+			.expandAll()
+
+		setup.removeControlFromContainer()
+
+		assertControlView(setup.containerTree, notNullValue())
+	}
+
+	@Test
+	fun shouldAddRemovedToplevelControlViewToTree() {
+		val setup = Setup()
+			.addToplevelControlToGraphView()
+			.addToplevelControlToContainer()
+			.build()
+
+		setup.removeControlFromContainer()
+
+		assertControlView(setup.containerTree, notNullValue())
+	}
+
 
 	/**
 	 * Utility class for building a configurable test data setup of main [GraphView] and [ContainerDrawing].
@@ -156,73 +209,93 @@ class ContainerTreeTest {
 	 */
 	private class Setup {
 
-		private val builder = createGraphPortViewGraphView()
-		val graphView: GraphView<GraphElementView<out GraphElement>> get() = builder.graphView
-		val containerDrawing = ContainerDrawing()
-		val containerTree = ContainerTree(mainGraphView = builder.build(), containerDrawing = containerDrawing)
-		val portViewComponent: PortViewComponent<Any> = GraphViewModule.portFactory.createPortViewComponent(
-			GraphViewModule.portFactory.createPortView(
-				GraphViewModule.portFactory.createSubGraphPort(
-					builder.graphView.getGraphPortView("I1")!!.model!!)))
+		private val graphViewBuilder = GraphViewBuilder<Boolean>()
+		private var _containerTree: ContainerTree? = null
+		private val toplevelControlViewSource = TestControlVerticeView()
 
-		init {
-			expandAll()
+		val graphView: GraphView<GraphElementView<out GraphElement>> get() = graphViewBuilder.graphView
+		val containerDrawing = ContainerDrawing()
+		val containerTree: ContainerTree get() = _containerTree!!
+
+		fun build(): Setup {
+			_containerTree = ContainerTree(mainGraphView = graphViewBuilder.build(), containerDrawing = containerDrawing)
+			return this
+		}
+
+		fun addToplevelControlToGraphView(): Setup {
+			graphViewBuilder.addVerticeView(toplevelControlViewSource)
+			return this
+		}
+
+		/** Adds a "custom comp" [SubGraphVerticeView] to the main [GraphView].*/
+		fun addInnerCustomSubGraphVerticeView(): Setup {
+			val library = LibraryModule.libraryHolder.library
+			TestLibraryBuilder().addInnerCustomComponent(library)
+			val vv = (library.get(TestLibraryBuilder.INNER_CUSTOM_COMP) as LibraryElement).getNewInstance<SubGraphVerticeRef>() as VerticeView<*>
+			graphViewBuilder.addVerticeView(vv)
+			// TODO This shouldn't be necessary any more
+			//containerTree.model.addSubGraphVerticeView(vv as SubGraphVerticeView<SubGraphVertice>)
+			return this
+		}
+
+		fun addToplevelControlToContainer(): Setup {
+			containerDrawing.add(ControlViewComponent(controlView = toplevelControlViewSource.createControlView() as ControlView<Vertice>))
+			return this
+		}
+
+		/** Adds a [ControlViewComponent] with a [ControlView] to the [ContainerDrawing].*/
+		fun addDeepControlViewToContainer(): Setup {
+			val subGraphVerticeView = graphView.getSubGraphVerticeViews()[0]
+			val source = subGraphVerticeView.createSubGraphView().getControlViewSources()[0]
+			val link = DeepVerticeLink(subGraphVerticeView.id)
+			containerDrawing.add(ControlViewComponent(controlView = source.createControlView(), baseLink = link))
+			return this
+		}
+
+		fun addDeepControlViewToContainerUsingTree(): Setup {
+			val node = findDraggableTreeItemOfType(containerTree, ContainerTreeItemType.Control)
+			val control = (node!!.userObject as DraggableTreeItem).factory.invoke() as ControlViewComponent
+			containerDrawing.add(control)
+			return this
+		}
+
+		fun removeControlFromContainer(): Setup {
+			containerDrawing.remove(containerDrawing.getDrawable { it is ControlViewComponent }!!)
+			return this
+		}
+
+		fun removePortViewFromContainer(): Setup {
+			containerDrawing.remove(containerDrawing.getDrawable { it is PortViewComponent<*> }!!)
+			return this
+		}
+
+		fun addGraphInputPortViewToGraphView(name: String = "I1"): Setup {
+			graphViewBuilder.addVerticeView(TestGraphPortView.input(name))
+			return this
 		}
 
 		/**
-		 * Adds a [PortViewComponent] with an input [GraphPortView] to the container drawing
-		 * and expands all nodes of its [ContainerTree].
+		 * Adds a new [PortViewComponent] to the [ContainerDrawing] for an input [GraphPortView] with
+		 * specified name in the main [GraphView].
 		 */
-		fun withPortViewComponent(): Setup {
-			containerDrawing.add(portViewComponent)
+		fun addPortViewComponent(graphPortName: String = "I1"): Setup {
+			val graphPortView = graphViewBuilder.graphView.getGraphPortView(graphPortName)
+			containerDrawing.add(createPortViewComponent(graphPortView!!.model!!))
 			JTreeUtil.expandAll(containerTree.model.treeModel.root as TreeNode)
 			return this
 		}
 
-		/** Adds a "custom comp" [SubGraphVerticeView] to the main [GraphView] and expands all nodes of its [ContainerTree].*/
-		fun withInnerCustomSubGraphVerticeView(): Setup {
-			val library = LibraryModule.libraryHolder.library
-			TestLibraryBuilder().addInnerCustomComponent(library)
-			val vv = (library.get(TestLibraryBuilder.INNER_CUSTOM_COMP) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
-			graphView.add(vv)
-			containerTree.model.addSubGraphVerticeView(vv as SubGraphVerticeView<SubGraphVertice>)
-			expandAll()
-			return this
-		}
 
 		fun expandAll(): Setup {
 			JTreeUtil.expandAll(containerTree.model.treeModel.root as TreeNode)
 			return this
 		}
 
-		private fun createGraphPortViewGraphView(): GraphViewBuilder<Boolean> {
-			val builder = GraphViewBuilder<Boolean>()
-			builder.addVerticeView(TestGraphPortView.input("I1"))
-			return builder
+		private fun createPortViewComponent(graphPort: GraphPort<*>): PortViewComponent<*> {
+			return GraphViewModule.portFactory.createPortViewComponent(
+				GraphViewModule.portFactory.createPortView(
+					GraphViewModule.portFactory.createSubGraphPort(graphPort)))
 		}
-	}
-
-	/** Creates a [GraphView] that contains a [SubGraphVerticeView] referencing the outer custom component. */
-	private fun createDeepLinkGraphView(): GraphViewBuilder<Boolean> {
-		val library = LibraryModule.libraryHolder.library
-		TestLibraryBuilder().addInnerCustomComponent(library)
-		val builder = GraphViewBuilder<Boolean>()
-		val subGraphVerticeView = (library.get(TestLibraryBuilder.INNER_CUSTOM_COMP) as LibraryElement).getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeView<SubGraphVertice>
-		builder.addVerticeView(subGraphVerticeView)
-		return builder
-	}
-
-	/**
-	 * Creates a [ContainerDrawing] that contains a [ControlViewComponent] for the deeply
-	 * nested [ControlView] in the specified [GraphView].
-	 */
-	private fun createDeepControlContainerDrawing(graphView: GraphView<GraphElementView<*>>): ContainerDrawing {
-		val containerDrawing = ContainerDrawing()
-		val subGraphVerticeView = graphView.getSubGraphVerticeViews()[0]
-		val source = subGraphVerticeView.createSubGraphView().getControlViewSources()[0]
-		val link = DeepVerticeLink(subGraphVerticeView.id)
-		containerDrawing.add(ControlViewComponent(controlView = source.createControlView(), baseLink = link))
-		return containerDrawing
 	}
 
 	private fun assertControlView(containerTree: ContainerTree, matcher: Matcher<in TreeNode?>) {
@@ -234,9 +307,6 @@ class ContainerTreeTest {
 	}
 
 	private fun assertContainerTreeItem(containerTree: ContainerTree, matcher: Matcher<in TreeNode?>, type: ContainerTreeItemType) {
-		assertThat(JTreeUtil.findTreeNode(containerTree.model.treeModel.root as TreeNode) {
-			it is DefaultMutableTreeNode
-				&& it.userObject is DraggableTreeItem
-				&& (it.userObject as DraggableTreeItem).type == type }, matcher)
+		assertThat(findDraggableTreeItemOfType(containerTree, type), matcher)
 	}
 }

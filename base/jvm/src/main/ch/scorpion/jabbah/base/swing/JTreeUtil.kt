@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base.swing
 
+import ch.scorpion.jabbah.base.swing.dynamictree.DynamicTreeNode
 import javax.swing.JTree
 import javax.swing.tree.TreeModel
 import javax.swing.tree.TreeNode
@@ -20,10 +21,16 @@ object JTreeUtil {
         return TreePath(nodes.toTypedArray())
     }
 
-	/** Finds the first [TreeNode] in the subtree rooted in `treeNode` that fulfills the specified condition.*/
+	/**
+	 * Finds the first [TreeNode] in the subtree rooted in `treeNode` that fulfills the specified condition.
+	 * Stops recursion on uninitialized [TreeNode]s.
+	 */
 	fun findTreeNode(treeNode: TreeNode, cond: (TreeNode) -> Boolean): TreeNode? {
 		if (cond.invoke(treeNode)) {
 			return treeNode
+		}
+		if (treeNode is DynamicTreeNode && !treeNode.isInitialized) {
+			return null
 		}
 		val children = treeNode.children()
 		while (children.hasMoreElements()) {
