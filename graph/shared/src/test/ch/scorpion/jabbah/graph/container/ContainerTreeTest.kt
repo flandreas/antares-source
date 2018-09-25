@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.TestTranslationsBuilder
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
@@ -13,6 +14,8 @@ import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.editor.GraphPortViewEvent
+import ch.scorpion.jabbah.graph.view.editor.SubGraphVerticeViewEvent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.TestPortFactory
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -78,7 +81,8 @@ class ContainerTreeTest {
 		val source = TestControlVerticeView()
 
 		setup.graphView.add(source)
-		setup.containerTree.model.addControlViewSource(source as ControlViewSource<Vertice>)
+		// The following event is normally posted by GraphEditor
+		BaseModule.eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.ADD, source as ControlViewSource<Vertice>))
 
 		assertControlView(setup.containerTree, notNullValue())
 	}
@@ -88,10 +92,14 @@ class ContainerTreeTest {
 		val setup = Setup().build().addToplevelControlToGraphView()
 		val source = TestControlVerticeView()
 		setup.graphView.add(source)
-		setup.containerTree.model.addControlViewSource(source as ControlViewSource<Vertice>)
+		// The following event is normally posted by GraphEditor
+		BaseModule.eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.ADD, source as ControlViewSource<Vertice>))
+
 		setup.expandAll()
 		setup.graphView.remove(source)
-		setup.containerTree.model.removeControlViewSource(source.controlId!!)
+		// The following event is normally posted by GraphEditor
+		BaseModule.eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.REMOVE, source as ControlViewSource<Vertice>))
+
 
 		assertControlView(setup.containerTree, nullValue())
 	}
@@ -121,7 +129,8 @@ class ContainerTreeTest {
 	fun shouldRemoveControlOfRemovedSubGraphVerticeViewFromExpandedTree() {
 		val setup = Setup().build().addInnerCustomSubGraphVerticeView().expandAll()
 
-		setup.containerTree.model.removeSubGraphVerticeView(setup.graphView.getSubGraphVerticeViews().first())
+		// The following event is normally posted by GraphEditor
+		BaseModule.eventBus.post(SubGraphVerticeViewEvent(SubGraphVerticeViewEvent.Type.REMOVE, setup.graphView.getSubGraphVerticeViews().first()))
 
 		assertControlView(setup.containerTree, nullValue())
 	}
@@ -201,7 +210,6 @@ class ContainerTreeTest {
 
 		assertControlView(setup.containerTree, notNullValue())
 	}
-
 
 	/**
 	 * Utility class for building a configurable test data setup of main [GraphView] and [ContainerDrawing].
