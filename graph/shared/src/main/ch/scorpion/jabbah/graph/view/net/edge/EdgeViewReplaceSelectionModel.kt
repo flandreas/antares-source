@@ -13,7 +13,6 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 class EdgeViewReplaceSelectionModel<T: EdgeView<*>>(component: T) : SelectedColorSelectionModel<T>(component) {
 
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-		component.layout.inputEventHandler.edgeView = component
-		return component.layout.inputEventHandler as InputEventHandler<T>
+		return component.layout.getInputEventHandler(component, context) as InputEventHandler<T>
 	}
 }

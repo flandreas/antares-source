@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
 import ch.scorpion.jabbah.graph.view.net.edge.Layout
@@ -84,6 +85,8 @@ interface EdgeView<T: Any> : NetViewElement<T> {
 
     /** Indicates the combination of [Port]s an [EdgeView] is connected with.*/
     val connectionState: EdgeViewConnectionState
+
+	val edgeToPortConnectorSupplier: () -> EdgeToPortConnector
 
     /**
      * Returns the [ConnectableView] that corresponds with the specified [Port], which can be either the

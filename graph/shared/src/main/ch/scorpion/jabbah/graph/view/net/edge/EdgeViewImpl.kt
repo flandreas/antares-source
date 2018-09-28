@@ -34,7 +34,7 @@ import ch.scorpion.jabbah.io.*
  */
 open class EdgeViewImpl<T: Any>(
         styleProvider: StyleProvider,
-        private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
+        override val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
         origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
         destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
         currentSystemSpeedCategory: CurrentSystemSpeedCategory,
@@ -644,20 +644,7 @@ open class EdgeViewImpl<T: Any>(
 
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
         LOG.trace("getInputEventHandler at " + Point2D(context.x, context.y))
-
-        if (context.mouseEvent != null) {
-            if (destination == null && destinationEndpointView.contains(context.x, context.y)) {
-                return destinationEndpointView.getInputEventHandler(context)
-            }
-            if (origin == null && originEndpointView.contains(context.x, context.y)) {
-                return originEndpointView.getInputEventHandler(context)
-            }
-            if (context.mouseEvent!!.isAltDown) {
-                edgeToPortConnectorSupplier.invoke().useFor(this)
-                return edgeToPortConnectorSupplier.invoke() as InputEventHandler<T>
-            }
-        }
-        return super.getInputEventHandler(context)
+	    return layout.getInputEventHandler(this, context) { super.getInputEventHandler(context) }
     }
 
     override fun draw(context: DrawContext) {
