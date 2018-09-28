@@ -3,30 +3,30 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.time.SystemSpeedEvent
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.FocusPanel
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
+import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.ScenarioEvent
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.io.StorableCreator
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.time.SystemSpeedEvent
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import ch.scorpion.jabbah.graph.ApplicationMode
-import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.MetaGraphRepository
 import java.awt.*
 import javax.swing.*
 import javax.swing.border.Border
@@ -53,7 +53,6 @@ open class GraphNavigationPanel(
 
     companion object {
         private val LOG by logger(GraphNavigationPanel::class)
-	    const val PROP_OVERLAY_COLOR = "graph.ui.GraphNavigationPanel.overlayColor"
     }
 
     private val mainPanel = JPanel(BorderLayout())
@@ -305,7 +304,7 @@ open class GraphNavigationPanel(
             && !scheduler.isDeepExecution
             && StringUtils.isNotEmpty(drawingView.drawing.graph!!.script)
         ) {
-            BaseModule.properties.get<Color>(PROP_OVERLAY_COLOR)
+		    Themes.get<GraphTheme>().overlay
         } else {
             null
         }
@@ -322,8 +321,8 @@ open class GraphNavigationPanel(
         headerPanel.add(navigationStackView)
         if (closeHandler != null) {
             val closeButton = JButton("Close")
-            closeButton.addActionListener({ closeHandler.invoke(this@GraphNavigationPanel) })
-            closeButton.icon = ImageIcon(GraphNavigationPanel::class.java.getResource("/img/close-16.png"))
+            closeButton.addActionListener { closeHandler.invoke(this@GraphNavigationPanel) }
+	        closeButton.icon = ImageIcon(GraphNavigationPanel::class.java.getResource("/img/close-16.png"))
             closeButton.text = null
             closeButton.border = BorderFactory.createEmptyBorder(0, 0, 0, 10)
             headerPanel.add(Box.createHorizontalGlue())

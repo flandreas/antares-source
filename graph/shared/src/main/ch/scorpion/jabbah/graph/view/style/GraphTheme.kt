@@ -28,7 +28,8 @@ open class GraphTheme(
         val annotation: Style = DEF_ANNOTATION,
         val explanation: Style = DEF_EXPLANATION,
         val subsystem: Style = DEF_SUBSYSTEM,
-        val error: CompositeColor = DEF_ERROR
+        val error: CompositeColor = DEF_ERROR,
+        val overlay: Color = DEF_OVERLAY
 ) : EditTheme(
         name,
         supportsWhiteBackground,
@@ -50,6 +51,7 @@ open class GraphTheme(
         val DEF_EXPLANATION = BasicStyle()
         val DEF_SUBSYSTEM = BasicStyle()
 	    val DEF_ERROR = CompositeColor(foregroundColor = Color.RED, backgroundColor = Color(255, 214, 214), textColor = Color.BLACK)
+	    val DEF_OVERLAY = Color(255, 255, 255, 192)
     }
 
     override fun activateIn(styleRepository: StyleRepository, styleOnly: Boolean) {

@@ -43,6 +43,6 @@ object GraphModuleJvm : AbstractModule() {
     }
 
     private fun fillProperties(properties: Properties) {
-		properties.set(GraphNavigationPanel.PROP_OVERLAY_COLOR, Color(255, 255, 255, 192))
+	    // empty so far
     }
 }

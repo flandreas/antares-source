@@ -26,6 +26,7 @@ class AntaresTheme(
     explanation: Style = DEF_EXPLANATION,
     subsystem: Style = DEF_SUBSYSTEM,
     error: CompositeColor = DEF_ERROR,
+    overlay: Color = DEF_OVERLAY,
     val zero: CompositeColor = DEF_ZERO,
     val one: CompositeColor = DEF_ONE,
     val undefined: CompositeColor = DEF_UNDEFINED,
@@ -49,7 +50,8 @@ class AntaresTheme(
     annotation,
     explanation,
     subsystem,
-	error
+	error,
+	overlay
 ){
     companion object {
         val DEF_ZERO = CompositeColor(foregroundColor = Color(0, 115, 15), backgroundColor = Color.BLACK, textColor = Color.WHITE)
