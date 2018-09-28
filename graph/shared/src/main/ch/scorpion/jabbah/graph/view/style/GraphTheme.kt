@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.style
 
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.style.*
@@ -26,7 +27,8 @@ open class GraphTheme(
         val edge: EdgeStyle = DEF_EDGE,
         val annotation: Style = DEF_ANNOTATION,
         val explanation: Style = DEF_EXPLANATION,
-        val subsystem: Style = DEF_SUBSYSTEM
+        val subsystem: Style = DEF_SUBSYSTEM,
+        val error: CompositeColor = DEF_ERROR
 ) : EditTheme(
         name,
         supportsWhiteBackground,
@@ -47,6 +49,7 @@ open class GraphTheme(
         val DEF_ANNOTATION = BasicStyle()
         val DEF_EXPLANATION = BasicStyle()
         val DEF_SUBSYSTEM = BasicStyle()
+	    val DEF_ERROR = CompositeColor(foregroundColor = Color.RED, backgroundColor = Color(255, 214, 214), textColor = Color.BLACK)
     }
 
     override fun activateIn(styleRepository: StyleRepository, styleOnly: Boolean) {

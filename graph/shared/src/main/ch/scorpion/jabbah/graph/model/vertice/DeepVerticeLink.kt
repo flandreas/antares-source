@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.io.StorableCreator
 
@@ -18,6 +19,8 @@ class DeepVerticeLink(verticeIds: List<Int>) {
 	constructor(): this(listOf())
 
 	companion object {
+
+		private val LOG by logger(DeepVerticeLink::class)
 
 		/** The delimiter that separates individual IDs in the store format.*/
 		private const val DELIMITER = '/'
@@ -73,11 +76,22 @@ class DeepVerticeLink(verticeIds: List<Int>) {
 		var link = this
 		var graph = startGraph
 		while (link.size > 1) {
-			val element = graph.withId(link.first) as SubGraphVertice
+			val id = link.first
+			val element = graph.withId(id) as SubGraphVertice?
+			if (element == null) {
+				LOG.debug("DeepVerticeLink broken: Cannot find element ${id} in graph '${graph.name}'")
+				throw IllegalArgumentException()
+			}
 			graph = element.getGraph(repository, storableCreator)
 			link = link.withoutFirst()
 		}
-		return graph.withId(link.first) as Vertice
+		val id = link.first
+		val vertice = graph.withId(id) as Vertice?
+		if (vertice == null) {
+			LOG.debug("DeepVerticeLink broken: Cannot find referenced Control with model ID ${id}")
+			throw IllegalArgumentException()
+		}
+		return vertice
 	}
 
 	/** ---- [Any] */

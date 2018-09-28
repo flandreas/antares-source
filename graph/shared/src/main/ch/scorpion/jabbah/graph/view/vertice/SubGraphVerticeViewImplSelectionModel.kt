@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
@@ -8,7 +9,7 @@ import ch.scorpion.jabbah.edit.SelectionModelProvider
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.graph.container.ControlViewComponent
-
+import ch.scorpion.jabbah.graph.view.ControlView
 
 /**
  * A [SelectionModel] for [SubGraphVerticeViewImpl] that draws its [ControlView]s using their [SelectionModel]s.
@@ -28,15 +29,15 @@ class SubGraphVerticeViewImplSelectionModel(
         context.useContextColors = true
         context.g.color = context.selectionColor!!.foregroundColor
         context.color = context.selectionColor
-        component.drawWithDrawableDrawer(context, {
-            if (it is ControlViewComponent) {
-                selectionModels[it]!!.draw(context)
-            } else {
-                it.draw(context)
-            }
-        })
+        component.drawWithDrawableDrawer(context) {
+	        if (it is ControlViewComponent) {
+		        selectionModels[it]!!.draw(context)
+	        } else {
+		        it.draw(context)
+	        }
+        }
 
-        context.useContextColors = oldUseContextColors
+	    context.useContextColors = oldUseContextColors
     }
 
     override val boundingBox: RectangularShape get() = component.boundingBox
@@ -48,7 +49,7 @@ class SubGraphVerticeViewImplSelectionModel(
     override fun componentUpdated() {
         selectionModels.clear()
         component.getControlViewComponents().forEach {
-            selectionModels.put(it, provider.provideFor(it.controlView!!, SelectionDrawingStrategy.REPLACE)!!)
+	        selectionModels[it] = provider.provideFor(it.controlView!!, SelectionDrawingStrategy.REPLACE)!!
         }
     }
 }

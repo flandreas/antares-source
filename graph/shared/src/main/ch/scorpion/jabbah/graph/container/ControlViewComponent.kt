@@ -1,16 +1,19 @@
 package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.style.*
+import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -19,6 +22,7 @@ import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -42,6 +46,9 @@ class ControlViewComponent(
 		private set
 
     private var drawableOwner: DrawableOwner? = null
+
+	/** Will be displayed instead of [controlView] if [controlModelLink] is broken, which isn't detected before [bindToGraph] is called.*/
+	private var brokenView: BrokenDeepLinkView? = null
 
     init {
         if (controlView != null) {
@@ -80,7 +87,11 @@ class ControlViewComponent(
 	override val canMirror: Boolean get() = true
 
     override fun draw(context: DrawContext) {
-        controlView!!.draw(context)
+	    if (brokenView != null) {
+		    brokenView!!.draw(context)
+	    } else {
+		    controlView!!.draw(context)
+	    }
     }
 
 	override fun mirrorHorizontally(x: Double) {
@@ -128,7 +139,49 @@ class ControlViewComponent(
     /** ---- [ControlViewComponent] */
 
     fun bindToGraph(graph: Graph, repository: MetaGraphRepository, storableCreator: StorableCreator) {
-	    val vertice = controlModelLink.getLinkedVertice(graph, repository, storableCreator)
-	    controlView!!.bindToModel(vertice)
+	    try {
+		    val vertice = controlModelLink.getLinkedVertice(graph, repository, storableCreator)
+		    controlView!!.bindToModel(vertice)
+	    } catch (e: IllegalArgumentException) {
+		    invalidate()
+		    brokenView = BrokenDeepLinkView(styleProvider, controlView!!.boundingBox)
+		    invalidate()
+		    update()
+	    }
     }
+
+	/** A [Drawable] to be displayed when the [DeepVerticeLink] of the [ControlView] is broken.*/
+	private class BrokenDeepLinkView(
+		private val styleProvider: StyleProvider,
+		bounds: RectangularShape
+	) : AbstractRectangle(bounds.centerX - HALF_SIZE, bounds.centerY - HALF_SIZE, 2 * HALF_SIZE, 2 * HALF_SIZE) {
+
+		companion object {
+			private const val HALF_SIZE = 10.0
+		}
+
+		private val style: Style get() = styleProvider.getStyle(StyleType.FIGURE)
+
+		private val color: CompositeColor = Themes.get<GraphTheme>().error
+
+		private val label: Label = Label(
+			text ="?",
+			font = style.font,
+			color = style.color.textColor,
+			location = Point2D(bounds.centerX, bounds.centerY)
+		)
+
+		override fun draw(context: DrawContext) {
+			drawRectangle(
+				context,
+				color.foregroundColor,
+				color.backgroundColor,
+				style.stroke)
+			label.color = color.textColor
+			label.draw(context)
+		}
+
+		override val lineWidth: Double get() = style.stroke.width.toDouble()
+
+	}
 }
