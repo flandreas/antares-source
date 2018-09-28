@@ -16,6 +16,8 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 
 class GateMnemonicsEvent
@@ -46,6 +48,10 @@ object GateMnemonic {
      * Returns `true` only if the scale factors are above a certain limit. Returns always `false` if not [enabled].
      */
     private fun isDisplayableFor(transform: AffineTransform): Boolean = enabled && transform.uniformScale >= ZOOM_LIMIT
+
+	private fun isDisplayableFor(mode: ApplicationMode): Boolean {
+		return mode == ApplicationMode.EDIT || ExecutionModule.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe
+	}
 
     fun drawAnd(gateView: AndGateView, context: DrawContext, foreground: Color, background: Color) {
         if (!begin(gateView, context)) {
@@ -446,11 +452,15 @@ object GateMnemonic {
     }
 
     /**
-     * Determines whether gate mnemonics have to be drawn (depending on the [InputCount] and the zoom level,
-     * and prepares drawing by setting up the coordinate system origin if drawing is required.
+     * Determines whether gate mnemonics have to be drawn (depending on the [InputCount], the zoom level,
+     * the [ApplicationMode]) and the general enabledness, and prepares drawing by setting up the
+     * coordinate system origin if drawing is required.
      */
     private fun begin(gateView: DigitalComponentView<*>, context: DrawContext): Boolean {
-        if (isDisplayableFor(context.g.transform) && gateView.model!!.inputCount <= 2) {
+        if (gateView.model!!.inputCount <= 2
+	        && isDisplayableFor(context.g.transform)
+	        && isDisplayableFor(context.castedAppContext<GraphApplicationContext>()!!.mode)
+        ) {
             if (gateView is BoxGateView<*>) {
                 gateView.labelStyle = BoxGateView.LabelStyle.SMALL_UPPER_LEFT
             }
