@@ -19,7 +19,7 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
     signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY,
     model: T? = null,
     name: String? = null
-) : AbstractNumberViewComponent<T>(styleProvider, "library.element.CircuitInOutControlView", model, Direction.EAST, signalRepresentation), ControlView<T> {
+) : AbstractNumberViewComponent<T>(styleProvider, "library.element.SignalSource", model, Direction.EAST, signalRepresentation), ControlView<T> {
 
     init {
         modelExchanged(null)
