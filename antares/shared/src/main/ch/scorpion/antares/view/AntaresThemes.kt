@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.draw.style.Theme
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.BasicStyle
+import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.view.style.EdgeStyle
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
@@ -154,23 +155,23 @@ object AntaresThemes {
 			supportsWhiteBackground = false,
 			referenceColors = listOf(
 				// Red
-				CompositeColor(Color(236, 35, 46), Color(120, 3, 7)),
+				CompositeColor(Color(236, 35, 46), Color(120, 3, 7, DrawTheme.REF_COLOR_ALPHA)),
 				// Blue
-				CompositeColor(Color(72, 186, 233), Color(3, 16, 139)),
+				CompositeColor(Color(72, 186, 233), Color(3, 16, 139, DrawTheme.REF_COLOR_ALPHA)),
 				// Green
-				CompositeColor(Color(115, 191, 91), Color(7, 87, 9)),
+				CompositeColor(Color(115, 191, 91), Color(7, 87, 9, DrawTheme.REF_COLOR_ALPHA)),
 				// Yellow
-				CompositeColor(Color(245, 235, 62), Color(67, 69, 10)),
+				CompositeColor(Color(245, 235, 62), Color(67, 69, 10, DrawTheme.REF_COLOR_ALPHA)),
 				// Violet
-				CompositeColor(Color(125, 108, 171), Color(55, 14, 91)),
+				CompositeColor(Color(125, 108, 171), Color(55, 14, 91, DrawTheme.REF_COLOR_ALPHA)),
 				// Pink
-				CompositeColor(Color(188, 126, 179), Color(104, 8, 89)),
+				CompositeColor(Color(188, 126, 179), Color(104, 8, 89, DrawTheme.REF_COLOR_ALPHA)),
 				// Blue-Green
-				CompositeColor(Color(90, 196, 194), Color(13, 110, 110)),
+				CompositeColor(Color(90, 196, 194), Color(13, 110, 110, DrawTheme.REF_COLOR_ALPHA)),
 				// Yellow-Orange
-				CompositeColor(Color(247, 164, 49), Color(152, 103, 22)),
+				CompositeColor(Color(247, 164, 49), Color(152, 103, 22, DrawTheme.REF_COLOR_ALPHA)),
 				// Black
-				CompositeColor(Color(234, 234, 234), Color(32, 32, 32))),
+				CompositeColor(Color(234, 234, 234), Color(32, 32, 32, DrawTheme.REF_COLOR_ALPHA))),
 			highlight = BasicStyle(
 				color = CompositeColor(
 					backgroundColor = highlightColor,
