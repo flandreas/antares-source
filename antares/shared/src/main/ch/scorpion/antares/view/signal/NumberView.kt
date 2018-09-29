@@ -133,7 +133,13 @@ class NumberView(
         val bounds = Rectangle2D(0, 0, 0, 0)
         var x = 0.0
         var y = 0.0
-        val max = Math.max(1, bitWidth.width / representation.bits()) - 1
+
+	    val digitViewCount = bitWidth.width / representation.bits()
+	    if (digitViewCount > 8 && bitWidth.width % 8 != 0) {
+		    x = (4.0 / representation.bits()) * DigitView.WIDTH + NIBBLE_GAP
+	    }
+
+        val max = Math.max(1, digitViewCount) - 1
         for (i in max downTo 0) {
             val digitView = DigitView(representation, i, x, y, drawDigitBorder)
             digitViews.add(0, digitView)

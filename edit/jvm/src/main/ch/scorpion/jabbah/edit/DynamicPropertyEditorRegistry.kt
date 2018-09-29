@@ -23,6 +23,6 @@ class DynamicPropertyEditorRegistry : PropertyEditorRegistry() {
     }
 
     fun register(clazz: Class<out Any>, supplier: (PropertyImpl<*>) -> PropertyEditor) {
-        factoryMap.put(clazz, supplier)
+	    factoryMap[clazz] = supplier
     }
 }

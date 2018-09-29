@@ -23,9 +23,9 @@ enum class InputPortNumber(val id: Int) {
         }
 
         fun withId(id: Int): InputPortNumber {
-            for (inportPortNumber in InputPortNumber.values()) {
-                if (inportPortNumber.id == id) {
-                    return inportPortNumber
+            for (inputPortNumber in InputPortNumber.values()) {
+                if (inputPortNumber.id == id) {
+                    return inputPortNumber
                 }
             }
             throw IllegalArgumentException("Unknown InputPortNumber $id")

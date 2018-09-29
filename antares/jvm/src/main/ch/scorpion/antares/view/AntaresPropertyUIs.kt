@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.*
+import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
@@ -59,6 +60,13 @@ class BitWidthEditor : ComboBoxPropertyEditor() {
         setAvailableValues(BitWidth.values())
         (editor as JComboBox<*>).renderer = EnumRenderer<BitWidth>()
     }
+}
+
+class BranchCountEditor(filter: (BranchCount) -> Boolean = { _ -> true }) : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(BranchCount.values().filter { filter.invoke(it) }.toTypedArray())
+		(editor as JComboBox<*>).renderer = EnumRenderer<BranchCount>()
+	}
 }
 
 class LogicEditor : ComboBoxPropertyEditor() {

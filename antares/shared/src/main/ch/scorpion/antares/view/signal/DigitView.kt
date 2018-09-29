@@ -32,8 +32,8 @@ class DigitView(
 ) : AbstractRectangle(x, y, WIDTH.toDouble(), HEIGHT.toDouble()) {
 
     companion object {
-        val WIDTH = 20
-        val HEIGHT = 20
+        const val WIDTH = 20
+        const val HEIGHT = 20
         val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
     }
 

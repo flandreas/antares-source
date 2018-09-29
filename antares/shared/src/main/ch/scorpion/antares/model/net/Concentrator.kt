@@ -5,7 +5,6 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
@@ -18,7 +17,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class Concentrator(
     bitWidth: BitWidth = BitWidth.BW_8,
-    branchCount: Int = 4
+    branchCount: BranchCount = BranchCount.BC_4
 ) : CalculatingVertice(CALCULATOR){
 
     companion object {
@@ -36,17 +35,19 @@ class Concentrator(
         get() = _bitWidth
         set(value) {
             if (_bitWidth != value) {
-                setSplitting(value, 2)
+                setSplitting(value, BranchCount.forBitWidth(value).first())
             }
         }
-    var _branchCount: Int = branchCount
-    var branchCount: Int
+    var _branchCount: BranchCount = branchCount
+    var branchCount: BranchCount
         get() = _branchCount
         set(value) {
             if (_branchCount != value) {
                 setSplitting(bitWidth, value)
             }
         }
+
+	val supportedBranchCounts: List<BranchCount> get() = BranchCount.forBitWidth(bitWidth)
 
     init {
         setSplitting(bitWidth, branchCount)
@@ -57,19 +58,23 @@ class Concentrator(
     override fun write(writer: StoreWriter) {
         super.write(writer);
         writer.writeInt("bitWidth", bitWidth.width);
-        writer.writeInt("branchCount", branchCount);
+        writer.writeInt("branchCount", branchCount.count);
     }
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        setSplitting(BitWidth.of(reader.readInt("bitWidth")), reader.readInt("branchCount"))
+        setSplitting(BitWidth.of(reader.readInt("bitWidth")), BranchCount.withCount(reader.readInt("branchCount")))
     }
 
     /** ---- [Concentrator] */
 
-    private fun setSplitting(bitWidth: BitWidth, branchCount: Int) {
-        checkArgument(branchCount >= 2 && branchCount <= bitWidth.width, "branchCount must be between 2 and bitWidth")
-        checkArgument(bitWidth.width % branchCount == 0, "bitWidth must be divisible by branchCount without remainder")
+    private fun setSplitting(bitWidth: BitWidth, branchCount: BranchCount) {
+	    if (branchCount < BranchCount.BC_2 || branchCount.count > bitWidth.width) {
+		    return
+	    }
+	    if (!BranchCount.forBitWidth(bitWidth).contains(branchCount)) {
+		    return
+	    }
         _bitWidth = bitWidth
         _branchCount = branchCount
         updateSplitting()
@@ -78,7 +83,7 @@ class Concentrator(
     private fun updateSplitting() {
         clearPorts()
         addPort(DigitalPortImpl.createOutput(Logic.POSITIVE, null, this.bitWidth))
-        val portBitWidth = bitWidth.width / branchCount
+        val portBitWidth = bitWidth.width / branchCount.count
         for (i in 0..bitWidth.width-1 step portBitWidth) {
             val label = i.toString()
             // Code disabled: Show only the start index of the bit range

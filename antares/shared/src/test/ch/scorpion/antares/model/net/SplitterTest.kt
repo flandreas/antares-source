@@ -26,7 +26,7 @@ class SplitterTest {
 
     @Test
     fun shouldSplitToBits() {
-        val splitter = Splitter(BitWidth.BW_4, 4)
+        val splitter = Splitter(BitWidth.BW_4, BranchCount.BC_4)
 
         splitter.getInput<Any>().setIncomingSignal(Word.of(BitWidth.BW_4, 6L), signalHandler)
         splitter.act(signalHandler, splitter.createActorData(splitter.getInput<DigitalSignal>()))
@@ -39,7 +39,7 @@ class SplitterTest {
 
     @Test
     fun shouldSplitToSubwords() {
-        val splitter = Splitter(BitWidth.BW_8, 4)
+        val splitter = Splitter(BitWidth.BW_8, BranchCount.BC_4)
 
         splitter.getInput<Any>().setIncomingSignal(Word.of(BitWidth.BW_8, 255L), signalHandler)
         splitter.act(signalHandler, splitter.createActorData(splitter.getInput<DigitalSignal>()))

@@ -25,7 +25,7 @@ class ConcentratorTest {
 
     @Test
     fun shouldConcentrateBits() {
-        val concentrator = Concentrator(BitWidth.BW_4, 4)
+        val concentrator = Concentrator(BitWidth.BW_4, BranchCount.BC_4)
 
         concentrator.getInput<Any>(2).setIncomingSignal(Word.of(false), signalHandler)
         concentrator.getInput<Any>(3).setIncomingSignal(Word.of(true), signalHandler)
@@ -39,7 +39,7 @@ class ConcentratorTest {
 
     @Test
     fun shouldConcentrateSubwords() {
-        val concentrator = Concentrator(BitWidth.BW_8, 4)
+        val concentrator = Concentrator(BitWidth.BW_8, BranchCount.BC_4)
 
         concentrator.getInput<Any>(2).setIncomingSignal(Word.of(BitWidth.BW_2, 2L), signalHandler)
         concentrator.getInput<Any>(3).setIncomingSignal(Word.of(BitWidth.BW_2, 3L), signalHandler)

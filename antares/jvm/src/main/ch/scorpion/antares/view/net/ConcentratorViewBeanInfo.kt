@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.net
 
+import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.antares.view.Handedness
@@ -17,7 +18,7 @@ class ConcentratorViewBeanInfo : DigitalComponentBeanInfo<ConcentratorView>() {
 
     companion object {
         private val bitWidth = PropertyImpl("element.property.bitWidth", BitWidth::class.java)
-        private val branchCount = PropertyImpl("element.property.branchCount", Int::class.java)
+        private val branchCount = PropertyImpl("element.property.branchCount", BranchCount::class.java)
         private val handedness = PropertyImpl("element.property.Splitter.handedness", Handedness::class.java)
         private val signalRep = PropertyImpl("element.property.DigitalSignalRepresentation", DigitalSignalRepresentation::class.java)
 
@@ -29,7 +30,7 @@ class ConcentratorViewBeanInfo : DigitalComponentBeanInfo<ConcentratorView>() {
         val connected = bean.model!!.isConnected
 
         bitWidth.bind(editor, { bean.bitWidth }, {bean.bitWidth = it!! }, !connected)
-        branchCount.bind(editor, { bean.branchCount }, { bean.branchCount = it!! }, !connected)
+        branchCount.bind(editor, { bean.branchCount }, { bean.branchCount = it!! }, !connected, { bean.model!!.supportedBranchCounts.contains(it)} )
         handedness.bind(editor, { bean.handedness }, { bean.handedness = it!! }, !connected)
         signalRep.bind(editor, { bean.signalRepresentation }, { bean.signalRepresentation = it!! })
 

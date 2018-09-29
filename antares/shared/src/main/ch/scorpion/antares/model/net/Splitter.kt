@@ -6,56 +6,57 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.Storable
 
 /**
  * Splits a multi-bit [Net] into multiple [Net]s with smaller [BitWidth].
  */
 class Splitter(
     bitWidth: BitWidth = BitWidth.BW_8,
-    branchCount: Int = 4
+    branchCount: BranchCount = BranchCount.BC_4
 ) : CalculatingVertice(CALCULATOR) {
 
     companion object {
         val CALCULATOR = object : VerticeCalculator<Splitter> {
             override fun calculate(vertice: Splitter, data: GraphActorData, signalHandler: SignalHandler) {
                 val signal = data.getSignal<DigitalSignal>(1)
-                var index = 0
-                for (output in vertice.getOutputs()) {
+	            for ((index, output) in vertice.getOutputs().withIndex()) {
                     val digitalPort = output as DigitalPort
                     if (signal == null) {
                         digitalPort.setOutgoingSignalBuffered(Word.undefined(vertice.getOutputBitWidth()), signalHandler)
                     } else {
                         digitalPort.setOutgoingSignalBuffered(signal.getSubword(vertice.getOutputBitWidth(), index), signalHandler)
                     }
-                    index++
-                }
+	            }
             }
         }
     }
 
-    var _bitWidth: BitWidth = bitWidth
+    private var _bitWidth: BitWidth = bitWidth
     var bitWidth: BitWidth
         get() = _bitWidth
         set(value) {
             if (_bitWidth != value) {
-                setSplitting(value, 2)
+                setSplitting(value, BranchCount.forBitWidth(value).first())
             }
         }
-    var _branchCount: Int = branchCount
-    var branchCount: Int
+    private var _branchCount: BranchCount = branchCount
+    var branchCount: BranchCount
         get() = _branchCount
         set(value) {
             if (_branchCount != value) {
                 setSplitting(bitWidth, value)
             }
         }
+
+	val supportedBranchCounts: List<BranchCount> get() = BranchCount.forBitWidth(bitWidth)
 
     init {
         setSplitting(bitWidth, branchCount)
@@ -64,25 +65,29 @@ class Splitter(
     /** ---- [Storable] */
 
     override fun write(writer: StoreWriter) {
-        super.write(writer);
-        writer.writeInt("bitWidth", bitWidth.width);
-        writer.writeInt("branchCount", branchCount);
+        super.write(writer)
+        writer.writeInt("bitWidth", bitWidth.width)
+        writer.writeInt("branchCount", branchCount.count)
     }
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        setSplitting(BitWidth.of(reader.readInt("bitWidth")), reader.readInt("branchCount"))
+        setSplitting(BitWidth.of(reader.readInt("bitWidth")), BranchCount.withCount(reader.readInt("branchCount")))
     }
 
     /** ---- [Splitter] */
 
     fun getOutputBitWidth(): BitWidth {
-        return BitWidth.of(bitWidth.width / branchCount)
+        return BitWidth.of(bitWidth.width / branchCount.count)
     }
 
-    private fun setSplitting(bitWidth: BitWidth, branchCount: Int) {
-        checkArgument(branchCount >= 2 && branchCount <= bitWidth.width, "branchCount must be between 2 and bitWidth")
-        checkArgument(bitWidth.width % branchCount == 0, "bitWidth must be divisible by branchCount without remainder")
+    private fun setSplitting(bitWidth: BitWidth, branchCount: BranchCount) {
+	    if (branchCount < BranchCount.BC_2 || branchCount.count > bitWidth.width) {
+		    return
+	    }
+	    if (!BranchCount.forBitWidth(bitWidth).contains(branchCount)) {
+		    return
+	    }
         _bitWidth = bitWidth
         _branchCount = branchCount
         updateSplitting()
@@ -90,10 +95,10 @@ class Splitter(
 
     private fun updateSplitting() {
         clearPorts()
-        addPort(DigitalPortImpl.createInput(Logic.POSITIVE, null, this.bitWidth));
+        addPort(DigitalPortImpl.createInput(Logic.POSITIVE, null, this.bitWidth))
 
         val outputBitWidth = getOutputBitWidth()
-        for (i in 0..bitWidth.width - 1 step outputBitWidth.width) {
+        for (i in 0 until bitWidth.width step outputBitWidth.width) {
             val label = i.toString()
             // Code disabled: Show only the start index of the bit range
             // if (outputBitWidth.getWidth() > 1) {

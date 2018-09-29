@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.net
 
+import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.Splitter
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -45,7 +46,7 @@ class SplitterView(
         }
 
     var bitWidth: BitWidth
-        get() = model!!._bitWidth
+        get() = model!!.bitWidth
         set(value) {
             if (value != bitWidth) {
                 invalidate()
@@ -56,7 +57,7 @@ class SplitterView(
             }
         }
 
-    var branchCount: Int
+    var branchCount: BranchCount
         get() = model!!.branchCount
         set(value) {
             if (value != branchCount) {

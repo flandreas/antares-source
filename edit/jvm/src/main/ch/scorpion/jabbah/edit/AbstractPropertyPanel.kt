@@ -52,6 +52,8 @@ abstract class AbstractPropertyPanel(
             if (propertyObject != null) {
                 sheet.writeToObject(propertyObject)
                 editor.view.drawing.validate()
+	            // Read back object to account for calculated properties
+	            sheet.readFromObject(propertyObject)
             }
         }
 

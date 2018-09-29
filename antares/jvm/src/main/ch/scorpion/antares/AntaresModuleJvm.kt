@@ -1,6 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.model.*
+import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
@@ -34,7 +35,7 @@ import ch.scorpion.jabbah.io.TypeMap
 /**
  * Module definitions for the [ch.scorpion.antares] module on the JVM target.
  */
-class AntaresModuleJvm(val app: Antares) : AbstractModule() {
+class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 
 	override fun initialize() {
 
@@ -70,11 +71,11 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
 	}
 
 	private fun createContainerEditor(eventBus: EventBus): ContainerEditor {
-		val containerCanvas = CanvasJvm({
+		val containerCanvas = CanvasJvm {
 			val drawingView = DrawingViewImpl<Drawing<Component>>(ContainerDrawing(), it)
 			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
 			drawingView
-		})
+		}
 		return DigitalContainerEditor(containerCanvas.view as DrawingView<Drawing<Component>>, eventBus)
 	}
 
@@ -97,12 +98,13 @@ class AntaresModuleJvm(val app: Antares) : AbstractModule() {
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
 		registry.registerEditor(LightColor::class.java, LightColorEditor::class.java)
-		registry.register(InputCount::class.java, { InputCountEditor((it as PropertyImpl<InputCount>).filter) })
-		registry.register(InputPortNumber::class.java, { InputPortNumberEditor((it as PropertyImpl<InputPortNumber>).filter) })
+		registry.register(InputCount::class.java) { InputCountEditor((it as PropertyImpl<InputCount>).filter) }
+		registry.register(InputPortNumber::class.java) { InputPortNumberEditor((it as PropertyImpl<InputPortNumber>).filter) }
 		registry.registerEditor(Handedness::class.java, HandednessEditor::class.java)
 		registry.registerEditor(Logic::class.java, LogicEditor::class.java)
 		registry.registerEditor(Trigger::class.java, TriggerEditor::class.java)
 		registry.registerEditor(BitWidth::class.java, BitWidthEditor::class.java)
+		registry.register(BranchCount::class.java) { BranchCountEditor((it as PropertyImpl<BranchCount>).filter) }
 		registry.registerEditor(DigitalSignalRepresentation::class.java, DigitalSignalRepresentationEditor::class.java)
 		registry.registerEditor(SevenSegmentDisplayScheme::class.java, SevenSegmentDisplaySchemeEditor::class.java)
 		registry.registerEditor(OutputAnnotation::class.java, OutputAnnotationEditor::class.java)

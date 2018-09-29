@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.net
 
+import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.Concentrator
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
@@ -58,7 +59,7 @@ class ConcentratorView(
             }
         }
 
-    var branchCount: Int
+    var branchCount: BranchCount
         get() = model!!.branchCount
         set(value) {
             if (value != branchCount) {
