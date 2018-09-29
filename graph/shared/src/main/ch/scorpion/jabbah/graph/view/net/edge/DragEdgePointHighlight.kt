@@ -61,7 +61,10 @@ class DragEdgePointHighlight(private val edgeView: EdgeView<*>) : AbstractDrawab
 
     fun updateMouseLocation(x: Double, y: Double) {
         val size = DrawModule.properties.getInt(PROP_HALF_SIZE)
-        val index = edgeView.findSegmentPoint(x, y, size)
+        var index = edgeView.findSegmentPoint(x, y, size)
+	    if (index == 0 || index == edgeView.segmentPointCount - 1) {
+		    index = null
+	    }
         if (pointIndex != index) {
             this.pointIndex = index
             invalidate()
