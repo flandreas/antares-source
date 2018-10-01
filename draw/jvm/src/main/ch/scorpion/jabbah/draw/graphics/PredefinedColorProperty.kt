@@ -100,7 +100,7 @@ class PredefinedColorEditorFx(
 		 * [ComboBox] doesn't work with `null` values, so use a "null pattern" object for displaying
 		 * and replace with `null` when transferring from and to property.
 		 */
-		private val nullPredefinedColor = PredefinedColor("null", "edit.style.property.fromStyle.name", CompositeColor())
+		private val nullPredefinedColor = PredefinedColor(PredefinedColorIdentity.Black, CompositeColor())
 	}
 
 	init {

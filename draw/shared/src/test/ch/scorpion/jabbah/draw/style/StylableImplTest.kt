@@ -4,11 +4,11 @@ import ch.scorpion.jabbah.draw.DrawTestRule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.PredefinedColor
+import ch.scorpion.jabbah.draw.graphics.PredefinedColorIdentity
 import ch.scorpion.jabbah.draw.module.DrawModule
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.sameInstance
 import org.junit.Assert.*
-import org.junit.BeforeClass
 import org.junit.ClassRule
 import org.junit.Test
 
@@ -25,7 +25,7 @@ class StylableImplTest {
 
 
     private val styleColor = CompositeColor()
-    private val customColor = PredefinedColor("test", "testKey", CompositeColor())
+    private val customColor = PredefinedColor(PredefinedColorIdentity.Black, CompositeColor())
     private val specifiedStyle = BasicStyle(color = styleColor)
 
     @Test

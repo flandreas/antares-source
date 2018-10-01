@@ -96,11 +96,12 @@ class StylableImpl(
             }
         }
 
-    override var customColor: PredefinedColor? = customColor
+	private var customColorIdentity: PredefinedColorIdentity? = customColor?.identity
+    override var customColor: PredefinedColor? get() = if (customColorIdentity != null) PredefinedColorRepository.withIdentity(customColorIdentity!!) else null
         set(value) {
-            if (field != value) {
+            if (customColorIdentity != value?.identity) {
                 invalidator?.invoke()
-                field = value
+	            customColorIdentity = value?.identity
                 invalidator?.invoke()
             }
         }

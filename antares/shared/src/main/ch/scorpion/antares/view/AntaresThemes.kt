@@ -150,18 +150,23 @@ object AntaresThemes {
 			backgroundColor = veryDarkGreen
 		)
 
+		val red = CompositeColor(Color(236, 35, 46), Color(120, 3, 7))
+		val blue = CompositeColor(Color(72, 186, 233), Color(3, 16, 139))
+		val green = CompositeColor(Color(115, 191, 91), Color(7, 87, 9))
+		val yellow = CompositeColor(Color(245, 235, 62), Color(67, 69, 10))
+
 		return AntaresTheme(
 			name = "CRT",
 			supportsWhiteBackground = false,
 			referenceColors = listOf(
 				// Red
-				CompositeColor(Color(236, 35, 46), Color(120, 3, 7, DrawTheme.REF_COLOR_ALPHA)),
+				red.withAlpha(DrawTheme.REF_COLOR_ALPHA),
 				// Blue
-				CompositeColor(Color(72, 186, 233), Color(3, 16, 139, DrawTheme.REF_COLOR_ALPHA)),
+				blue.withAlpha(DrawTheme.REF_COLOR_ALPHA),
 				// Green
-				CompositeColor(Color(115, 191, 91), Color(7, 87, 9, DrawTheme.REF_COLOR_ALPHA)),
+				green.withAlpha(DrawTheme.REF_COLOR_ALPHA),
 				// Yellow
-				CompositeColor(Color(245, 235, 62), Color(67, 69, 10, DrawTheme.REF_COLOR_ALPHA)),
+				yellow.withAlpha(DrawTheme.REF_COLOR_ALPHA),
 				// Violet
 				CompositeColor(Color(125, 108, 171), Color(55, 14, 91, DrawTheme.REF_COLOR_ALPHA)),
 				// Pink
@@ -172,6 +177,15 @@ object AntaresThemes {
 				CompositeColor(Color(247, 164, 49), Color(152, 103, 22, DrawTheme.REF_COLOR_ALPHA)),
 				// Black
 				CompositeColor(Color(234, 234, 234), Color(32, 32, 32, DrawTheme.REF_COLOR_ALPHA))),
+			predefinedColors = listOf(
+				PredefinedColor(PredefinedColorIdentity.White, DrawGraphicsModule.WHITE),
+				PredefinedColor(PredefinedColorIdentity.Black, DrawGraphicsModule.BLACK),
+				PredefinedColor(PredefinedColorIdentity.Gray, CompositeColor(foregroundColor = Color(64, 64, 64), backgroundColor = Color(32, 32, 32))),
+				PredefinedColor(PredefinedColorIdentity.Red, red),
+				PredefinedColor(PredefinedColorIdentity.Blue, blue),
+				PredefinedColor(PredefinedColorIdentity.Green, green),
+				PredefinedColor(PredefinedColorIdentity.Yellow, yellow)
+			),
 			highlight = BasicStyle(
 				color = CompositeColor(
 					backgroundColor = highlightColor,

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.draw.graphics.PredefinedColorRepository
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.draw.graphics.PredefinedColorIdentity
 import org.junit.Assert.*
 import org.junit.Test
 import org.hamcrest.CoreMatchers.*
@@ -25,16 +26,16 @@ class PredefinedColorRepositoryTest {
 
     @Test
     fun shouldRegister() {
-        repository.register(PredefinedColor("a", "predefinedColor.a", CompositeColor()))
-        assertThat(repository.withName("a")?.name, `is`("a"))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Black, CompositeColor()))
+        assertThat(repository.withIdName("black")?.name, `is`("black"))
     }
 
     @Test
     fun shouldProvideAll() {
-        repository.register(PredefinedColor("a", "predefinedColor.a", CompositeColor()))
-        repository.register(PredefinedColor("b", "predefinedColor.b", CompositeColor()))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Black, CompositeColor()))
+        repository.register(PredefinedColor(PredefinedColorIdentity.White, CompositeColor()))
         assertThat(repository.provideAll().size, `is`(2))
-        assertThat(repository.provideAll()[0].name, `is`("a"))
-        assertThat(repository.provideAll()[1].name, `is`("b"))
+        assertThat(repository.provideAll()[0].name, `is`("black"))
+        assertThat(repository.provideAll()[1].name, `is`("white"))
     }
 }

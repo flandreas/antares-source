@@ -104,7 +104,7 @@ abstract class AbstractComponent(
             styleType = styleProvider.getStyleType(reader.readString("style"))
         }
         if (reader.hasAttribute("color")) {
-            customColor = styleProvider.predefinedColorProvider.withName(reader.readString("color"))
+            customColor = styleProvider.predefinedColorProvider.withIdName(reader.readString("color"))
         }
         if (reader.hasAttribute("filled")) {
             filled = reader.readBoolean("filled")

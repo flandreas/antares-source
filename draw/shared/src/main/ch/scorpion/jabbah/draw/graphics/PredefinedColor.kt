@@ -4,15 +4,35 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.logger
 
+enum class PredefinedColorIdentity(val idName: String, val descriptionKey: String) {
+	White("white", "graphics.color.white.name"),
+	Black("black", "graphics.color.black.name"),
+	Gray("gray", "graphics.color.gray.name"),
+	Red("red", "graphics.color.red.name"),
+	Blue("blue", "graphics.color.blue.name"),
+	Green("green", "graphics.color.green.name"),
+	Yellow("yellow", "graphics.color.yellow.name");
+
+	companion object {
+
+		fun withIdName(idName: String): PredefinedColorIdentity = PredefinedColorIdentity.values().first { it.idName == idName }
+	}
+
+	/** Returns the description of the color in the user's language.*/
+	val description: String get() = Translations.getString(descriptionKey)
+
+}
 /**
  * A [PredefinedColor] is a [CompositeColor] with a particular name that has been predefined by
  * the developer of an application and that is part of a set of harmonic colors from which the user
  * can choose to color his graphical objects.
  */
-data class PredefinedColor(val name: String, val descriptionKey: String, val color: CompositeColor) {
+data class PredefinedColor(val identity: PredefinedColorIdentity, val color: CompositeColor) {
+
+	val name: String get() = identity.idName
 
     /** Returns the description of the color in the user's language.*/
-    val description: String get() = Translations.getString(descriptionKey)
+    val description: String get() = identity.description
 
     override fun toString(): String = description
 }
@@ -22,8 +42,11 @@ interface PredefinedColorProvider {
     /** Returns the [List] of all known [PredefinedColor]s.*/
     fun provideAll(): List<PredefinedColor>
 
-    /** Returns the [PredefinedColor] with the specified name, or `null` if not available.*/
-    fun withName(name: String): PredefinedColor?
+    /** Returns the [PredefinedColor] with the specified [PredefinedColorIdentity] name, or `null` if not available.*/
+    fun withIdName(idName: String): PredefinedColor?
+
+	/** Returns the [PredefinedColor] with the specified identity, or `null` if not available.*/
+	fun withIdentity(identity: PredefinedColorIdentity): PredefinedColor?
 }
 
 /**
@@ -35,33 +58,39 @@ object PredefinedColorRepository : PredefinedColorProvider {
     val LOG by logger(PredefinedColorRepository::class)
 
     /** Contains the registered [PredefinedColor]s.*/
-    val colors: MutableList<PredefinedColor> by lazy { mutableListOf<PredefinedColor>()}
+    private val colorsList: MutableList<PredefinedColor> by lazy { mutableListOf<PredefinedColor>()}
+
+	private val colors: MutableMap<PredefinedColorIdentity,PredefinedColor> by lazy { mutableMapOf<PredefinedColorIdentity, PredefinedColor>() }
 
     /** ---- [PredefinedColorProvider] interface */
 
     override fun provideAll(): List<PredefinedColor> {
-        return colors.toImmutableList()
+        return colorsList.toImmutableList()
     }
 
-    override fun withName(name: String): PredefinedColor?= colors.find { it.name == name }
+    override fun withIdName(idName: String): PredefinedColor?= colors[PredefinedColorIdentity.withIdName(idName)]
+
+	override fun withIdentity(identity: PredefinedColorIdentity): PredefinedColor? = colors.get(identity)
 
     /** ---- [PredefinedColorRepository] */
 
     /** Clears all registrations.*/
     fun clear() {
         colors.clear()
+	    colorsList.clear()
     }
 
     fun register(color: PredefinedColor) {
         if (containsName(color.name)) {
             LOG.warn("PredefinedColor with name ${color.name} already registered")
-            colors[colors.indexOf(withName(color.name))] = color
+            colorsList[colorsList.indexOf(withIdName(color.name))] = color
         } else {
-            colors.add(color)
+            colorsList.add(color)
         }
+        colors[color.identity] = color
     }
 
     private fun containsName(name: String): Boolean {
-        return withName(name) != null
+        return withIdName(name) != null
     }
 }

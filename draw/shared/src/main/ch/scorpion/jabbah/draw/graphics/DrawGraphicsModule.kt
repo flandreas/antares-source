@@ -28,12 +28,12 @@ object DrawGraphicsModule : AbstractModule() {
     /** ---- [DrawGraphicsModule] */
 
     private fun predefineColors(repository: PredefinedColorRepository) {
-        repository.register(PredefinedColor("white", "graphics.color.white.name", WHITE))
-        repository.register(PredefinedColor("black", "graphics.color.black.name", BLACK))
-        repository.register(PredefinedColor("gray", "graphics.color.gray.name", GRAY))
-        repository.register(PredefinedColor("red", "graphics.color.red.name", RED))
-        repository.register(PredefinedColor("blue", "graphics.color.blue.name", BLUE))
-        repository.register(PredefinedColor("green", "graphics.color.green.name", GREEN))
-        repository.register(PredefinedColor("yellow", "graphics.color.yellow.name", YELLOW))
+        repository.register(PredefinedColor(PredefinedColorIdentity.White, WHITE))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Black, BLACK))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Gray, GRAY))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Red, RED))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Blue, BLUE))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Green, GREEN))
+        repository.register(PredefinedColor(PredefinedColorIdentity.Yellow, YELLOW))
     }
 }
