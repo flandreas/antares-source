@@ -50,7 +50,7 @@ class ContainerPanel(
 
 	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
-    val toolbars: ImmutableList<JToolBar> = listOf(createToolbar(editor)).toImmutableList()
+    val toolbars: ImmutableList<ToolBar> = listOf(createToolbar(editor)).toImmutableList()
 
     init {
         editor.view.navigator.setZoomFactor(2.0)
@@ -125,9 +125,9 @@ class ContainerPanel(
         add(mainSplitPane)
     }
 
-    private fun createToolbar(editor: Editor): JToolBar {
+    private fun createToolbar(editor: Editor): ToolBar {
         val toolbar = ToolBar(editor)
-
+		toolbar.addSeparator()
         toolbar.addTool(editor.currentTool, "/img/pointer.gif", Translations.getString("edit.tool.select"))
         toolbar.addTool(LabelTool(editor) { LabelComponent() }, "/img/text.gif", Translations.getString("edit.component.label"))
         toolbar.addTool(RectangleTool(editor) { RectangleComponent() }, "/img/rectangle.png", Translations.getString("edit.component.rectangle"))

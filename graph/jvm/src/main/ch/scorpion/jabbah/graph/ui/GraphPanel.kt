@@ -78,8 +78,6 @@ class GraphPanel(
 		private const val DEF_SIDEBAR_SIZE = 200
 	}
 
-	private val modeToggleAction = ToggleModeAction(scheduler, eventBus)
-
 	private val graphEditPanel: GraphEditPanel = GraphEditPanel(editor, scheduler, viewManager, graphNavigationPanelFactory,
 		propertySheetFactory, { eventBus.post(CloseApplicationDataRequest(editor.drawing)) }, eventBus)
 
@@ -95,7 +93,7 @@ class GraphPanel(
 
 	private val bottomSidebarPane = SidebarPane(SidebarPane.Orientation.Horizontal) { bottomSidebarPaneChanged() }
 
-	val toolbars: List<JToolBar> = listOf(
+	val toolbars: List<ToolBar> = listOf(
 		createExecutionToolBar(),
 		drawingToolBar,
 		settingsToolBar)
@@ -240,29 +238,28 @@ class GraphPanel(
 		}
 	}
 
-	private fun createExecutionToolBar(): JToolBar {
+	private fun createExecutionToolBar(): ToolBar {
+		val modeToggleAction = ToggleModeAction(scheduler, eventBus)
 		val modeToggleButton = JToggleButton(modeToggleAction)
 		modeToggleButton.text = null
-		modeToggleButton.isFocusPainted = false
 		modeToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/powerOff-24.png"))
-		modeToggleButton.selectedIcon = ImageIcon(GraphPanel::class.java.getResource("/img/powerOff-24.png"))
-		modeToggleButton.toolTipText = modeToggleAction.getValue(Action.LONG_DESCRIPTION) as String?
-		modeToggleButton.isFocusPainted = false
+		modeToggleButton.toolTipText = Translations.getString("simulation.action.execute.name")
 
-		val pauseToggleButton = JToggleButton(ActionWrapperSwing(PauseExecutionAction(scheduler, eventBus)))
+		val executionAction = PauseExecutionAction(scheduler, eventBus)
+		val pauseToggleButton = JToggleButton(ActionWrapperSwing(executionAction))
 		pauseToggleButton.text = null
-		modeToggleButton.isFocusPainted = false
 		pauseToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/PauseOff-24.png"))
-		pauseToggleButton.selectedIcon = ImageIcon(GraphPanel::class.java.getResource("/img/PauseOff-24.png"))
+		pauseToggleButton.toolTipText = executionAction.name
 
 		val stepButton = JButton(ActionWrapperSwing(StepExecutionAction(scheduler, eventBus)))
 		stepButton.text = null
 		stepButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/Resume-24.png"))
+		stepButton.preferredSize = Dimension(40, 40)
 
 		val speedSlider = SystemSpeedSlider()
 		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
 
-		val mainToolBar = JToolBar()
+		val mainToolBar = ToolBar()
 		mainToolBar.isFloatable = false
 		mainToolBar.isRollover = true
 		mainToolBar.addSeparator()
@@ -286,7 +283,7 @@ class GraphPanel(
 		toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
 			"/img/polyline.gif", Translations.getString("edit.component.polyline"))
 		toolbar.addTool(QuadCurveTool(editor, { QuadCurveComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
-			"/img/curve24.png", Translations.getString("edit.component.quadraticCurve"))
+			"/img/curve-20.png", Translations.getString("edit.component.quadraticCurve"))
 		toolbar.addTool(TextTool(editor, { TextComponentJvm("Text") }, { GraphElementViewWrapper<Vertice>(it) }),
 			"/img/text.gif", Translations.getString("edit.component.text"))
 

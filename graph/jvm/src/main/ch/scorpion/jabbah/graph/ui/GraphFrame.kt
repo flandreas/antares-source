@@ -3,8 +3,10 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.app.AbstractApplicationFrame
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.DesktopApplication
+import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.app.action.AbstractApplicationAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Command
@@ -37,7 +39,7 @@ class GraphFrame(
 
 	private val containerAction = ViewContainerAction(this, application, eventBus)
 
-	private val mainToolBar: JToolBar
+	private val mainToolBar: ToolBar
 
 	private val toolbarPanel: JPanel
 
@@ -46,7 +48,7 @@ class GraphFrame(
 	private val containerPanel = ContainerPanel(GraphViewModule.containerEditorFactory.invoke(eventBus), viewManager)
 
 	init {
-		eventBus.register(GraphNameChangedEvent::class, { handle(it) })
+		eventBus.register(GraphNameChangedEvent::class) { handle(it) }
 
 		toolbarPanel = JPanel()
 		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
@@ -119,24 +121,26 @@ class GraphFrame(
 		}
 	}
 
-	private fun createMainToolBar(): JToolBar {
-		val toolbar = JToolBar()
+	private fun createMainToolBar(): ToolBar {
+		val toolbar = ToolBar()
 		toolbar.isFloatable = false
 
 		val viewDesktopButton = JToggleButton(ActionWrapperSwing(desktopAction))
 		viewDesktopButton.icon = ImageIcon(GraphFrame::class.java.getResource("/img/drawing-24.png"))
 		viewDesktopButton.text = null
+		viewDesktopButton.toolTipText = Translations.getString("graph.action.showDesktop.name")
 		toolbar.add(viewDesktopButton)
 
 		val viewContainerButton = JToggleButton(ActionWrapperSwing(containerAction))
 		viewContainerButton.icon = ImageIcon(GraphFrame::class.java.getResource("/img/container-24.png"))
 		viewContainerButton.text = null
+		viewContainerButton.toolTipText = Translations.getString("graph.action.showContainer.name")
 		toolbar.add(viewContainerButton)
 
 		return toolbar
 	}
 
-	private fun fillToolbarPanel(toolbars: List<JToolBar>) {
+	private fun fillToolbarPanel(toolbars: List<ToolBar>) {
 		toolbarPanel.removeAll()
 		toolbarPanel.add(mainToolBar)
 		toolbars.forEach { toolbarPanel.add(it) }
@@ -151,9 +155,9 @@ class ViewDesktopAction(
 ) : AbstractApplicationAction("view.action.desktop", app) {
 
 	init {
-		eventBus.register(GraphFrameEvent::class, {
+		eventBus.register(GraphFrameEvent::class) {
 			selected = it.displayedView == GraphFrame.DisplayedView.Desktop
-		})
+		}
 	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
@@ -168,9 +172,9 @@ class ViewContainerAction(
 ) : AbstractApplicationAction("view.action.container", app) {
 
 	init {
-		eventBus.register(GraphFrameEvent::class, {
+		eventBus.register(GraphFrameEvent::class) {
 			selected = it.displayedView == GraphFrame.DisplayedView.Container
-		})
+		}
 	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {

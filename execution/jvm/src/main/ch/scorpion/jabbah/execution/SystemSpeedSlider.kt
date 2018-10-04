@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion. jabbah.execution.speed.SystemSpeedCategoryEvent
 import java.awt.Component
+import java.awt.Dimension
+import java.awt.FlowLayout
 import javax.swing.*
 
 /**
@@ -30,9 +32,9 @@ class SystemSpeedSlider(
     private val slider = JSlider(JSlider.HORIZONTAL, SystemSpeed.MIN_SPEED, SystemSpeed.MAX_SPEED, systemSpeed.speed)
 
     init {
-        eventBus.register(SystemSpeedCategoryEvent::class, { label.text = it.newValue.toString() } )
+        eventBus.register(SystemSpeedCategoryEvent::class) { label.text = it.newValue.toString() }
 
-        slider.toolTipText = Translations.getString("simulator.action.speed.name")
+	    slider.toolTipText = Translations.getString("simulator.action.speed.name")
         slider.paintLabels = false
         slider.paintTicks = true
         slider.majorTickSpacing = 33
