@@ -45,6 +45,7 @@ class BusyHandler(val rootPaneContainer: RootPaneContainer, val stateBar: StateB
         /** Registers the specified [BusyHandler] and returns it */
         fun register(busyHandler: BusyHandler): BusyHandler {
             synchronized(HANDLERS) {
+	            LOG.trace("BusyHandler: registering for ${busyHandler.rootPaneContainer::class.simpleName}")
                 HANDLERS.put(busyHandler.rootPaneContainer, busyHandler)
             }
             return busyHandler
@@ -53,7 +54,8 @@ class BusyHandler(val rootPaneContainer: RootPaneContainer, val stateBar: StateB
         /** Unregisters the specified [RootPaneContainer] by removing its [BusyHandler].*/
         fun deregister(container: RootPaneContainer) {
             synchronized(HANDLERS) {
-                HANDLERS.get(container)?.dispose()
+	            LOG.trace("BusyHandler: registering for ${container::class.simpleName}")
+                HANDLERS[container]?.dispose()
                 HANDLERS.remove(container)
             }
         }

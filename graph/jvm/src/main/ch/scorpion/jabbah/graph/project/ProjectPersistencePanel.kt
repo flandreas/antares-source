@@ -4,11 +4,12 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.invocation.BusyHandler
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import java.awt.*
+import java.awt.event.*
 
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import javax.swing.*
 
 /**
@@ -27,10 +28,19 @@ class ProjectPersistencePanel(
 
 		fun showAsDialog(parent: JFrame) {
 			val dialog = JDialog(parent, true)
+			BusyHandler.register(dialog, null)
 			dialog.title = Translations.getString("project.dialog.title")
-			dialog.contentPane.add(ProjectPersistencePanel(closeHandler = { dialog.isVisible = false }))
+			dialog.contentPane.add(ProjectPersistencePanel(closeHandler = {
+				dialog.isVisible = false
+				dialog.dispose()
+			}))
 			dialog.pack()
 			dialog.setLocationRelativeTo(parent)
+			dialog.addWindowListener(object : WindowAdapter() {
+				override fun windowClosed(e: WindowEvent?) {
+					BusyHandler.deregister(dialog)
+				}
+			})
 			dialog.isVisible = true
 		}
 	}
@@ -105,8 +115,10 @@ class ProjectPersistencePanel(
 	private inner class OpenAction : AbstractAction("project.dialog.open.action") {
 		override fun execute(event: ActionEvent) {
 			LOG.debug("ProjectPersistencePanel: open project '$selectedProjectName'")
-			service.open(projectNameList.selectedValue)
-			closeHandler.invoke()
+			InvocationHandler.invoke {
+				service.open(projectNameList.selectedValue)
+				closeHandler.invoke()
+			}
 		}
 	}
 
