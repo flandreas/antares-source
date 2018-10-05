@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.io.StoreReader
 class OscilloscopeProbeVertice<T: Any>(
         name: String? = null,
         portFactory: PortFactory = GraphViewModule.portFactory
-) : AbstractVertice() {
+) : AbstractVertice("graph.component.oscilloscope.port") {
 
     init {
         val port = portFactory.createPort<T>(PortType.INPUT)

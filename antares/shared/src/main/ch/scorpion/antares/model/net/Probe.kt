@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.base.logger
 /**
  * Displays the value of a [DigitalSignal] within a circuit.
  */
-class Probe(hasOutput: Boolean = false) : CalculatingVertice(CALCULATOR), DigitalSignalSource {
+class Probe(hasOutput: Boolean = false) : CalculatingVertice("library.element.Probe", CALCULATOR), DigitalSignalSource {
 
     companion object {
         val LOG by logger(Probe::class)
@@ -27,7 +27,7 @@ class Probe(hasOutput: Boolean = false) : CalculatingVertice(CALCULATOR), Digita
                 if (vertice.isLogging) {
                     LOG.info("${signalHandler.executionTime} Probe: ${data.getSignal<DigitalSignal>(1)}")
                 }
-                vertice.setSignal(data.getSignal<DigitalSignal>(1)!!, signalHandler)
+                vertice.setSignal(data.getSignal(1)!!, signalHandler)
             }
         }
     }
@@ -69,6 +69,7 @@ class Probe(hasOutput: Boolean = false) : CalculatingVertice(CALCULATOR), Digita
 
     /** ---- [DigitalSignalSource] interface */
 
+    @Suppress("UNUSED_PARAMETER")
     override var signal: DigitalSignal?
         get() = getInput<DigitalSignal>().getIncomingSignal()
         set(value) {throw UnsupportedOperationException()}

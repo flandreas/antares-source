@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.logger
 import kotlin.NoSuchElementException
@@ -18,14 +19,18 @@ import kotlin.NoSuchElementException
  */
 open class NetImpl<T: Any> : AbstractGraphElement(), Net<T> {
 
-    companion object {
+	companion object {
         private val LOG by logger(NetImpl::class)
     }
 
     /** Internal representation of the [ports] property.*/
     private val _ports = mutableListOf<Port<T>>()
 
-    /** ---- [Net] interface */
+	/** ---- [GraphElement] interface */
+
+	override val type: String? get() = Translations.getString("graph.styleType.edge.name")
+
+	/** ---- [Net] interface */
 
     /** Non-property variable in order to access field while allowing to override getter of [signal] in subclasses.*/
     private var _signal: T? = null

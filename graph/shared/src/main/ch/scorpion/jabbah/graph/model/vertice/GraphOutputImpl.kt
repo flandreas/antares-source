@@ -15,7 +15,7 @@ class GraphOutputImpl<T: Any>(
 	inputPort: InputPort<T> = PortImpl(PortType.OUTPUT),
 	name: String? = null,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractGraphPort<T>(port = inputPort, name = name, calculator = GraphOutputImplCalculator, eventBus = eventBus), GraphOutput<T> {
+) : AbstractGraphPort<T>("graph.element.output", port = inputPort, name = name, calculator = GraphOutputImplCalculator, eventBus = eventBus), GraphOutput<T> {
 
     private var subGraphOutputPort: SubGraphOutputPort<T>? = null
 
@@ -23,6 +23,7 @@ class GraphOutputImpl<T: Any>(
 
     override var signal: T? = null
 
+    @Suppress("UNUSED_PARAMETER")
     override var portType: PortType
         get() = PortType.OUTPUT
         set(value) {

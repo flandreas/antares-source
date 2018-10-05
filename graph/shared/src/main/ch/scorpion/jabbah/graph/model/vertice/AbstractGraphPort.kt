@@ -12,11 +12,12 @@ import ch.scorpion.jabbah.graph.model.Vertice
  * when the name has been changed.
  */
 abstract class AbstractGraphPort<T: Any>(
+	baseResourceKey: String,
 	port: Port<T>,
 	name: String? = null,
 	calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : CalculatingVertice(calculator, name), GraphPort<T> {
+) : CalculatingVertice(baseResourceKey, calculator, name), GraphPort<T> {
 
 	init {
 		propagationDelay = 0

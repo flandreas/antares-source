@@ -24,7 +24,7 @@ class NorCalculatorTest {
     }
 
     private val signalHandler = ForwardSignalHandler()
-    private val vertice = CalculatingVertice(NorCalculator<CalculatingVertice>())
+    private val vertice = CalculatingVertice("Nor", NorCalculator<CalculatingVertice>())
 
     init {
         vertice.addPort(DigitalPortImpl.createInput("a"))

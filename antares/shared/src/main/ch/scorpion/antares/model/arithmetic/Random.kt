@@ -20,7 +20,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 /**
  * Produces a random value of a specifiable [BitWidth] when the trigger input value changes to 1.
  */
-class Random() : AbstractDigitalGate(CALCULATOR, InputCount.ONE), DigitalSignalSource {
+class Random() : AbstractDigitalGate("library.element.Random", CALCULATOR, InputCount.ONE), DigitalSignalSource {
 
 	companion object {
 		private val CALCULATOR = object : VerticeCalculator<Random> {
@@ -60,7 +60,7 @@ class Random() : AbstractDigitalGate(CALCULATOR, InputCount.ONE), DigitalSignalS
 
 	override var signal: DigitalSignal?
 		get() = getOutput<DigitalSignal>().getOutgoingSignal()
-		set(value) { throw UnsupportedOperationException() }
+		set(@Suppress("UNUSED_PARAMETER") value) { throw UnsupportedOperationException() }
 
 	/** ---- [Storable] interface */
 

@@ -2,16 +2,13 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.view.AntaresThemes
 import ch.scorpion.antares.view.module.AntaresViewModule
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
-import ch.scorpion.jabbah.io.IOModuleJvm
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
 /**
- * Basic setup of unit test in the [antares] package.
+ * Basic setup of unit test in the [ch.scorpion.antares] package.
  */
 class AntaresTestRule : TestRule {
 
@@ -32,5 +29,6 @@ class AntaresTestRule : TestRule {
         GraphModuleJvm.require()
         AntaresViewModule.require()
         AntaresThemes.install()
+	    TestTranslationsBuilder().withAnyKey()
     }
 }

@@ -19,7 +19,7 @@ class NotGateView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
     notGate: NotGate = NotGate()
-) : AbstractDigitalGateView<NotGate>(styleProvider, "1", "library.element.NotGate", notGate) {
+) : AbstractDigitalGateView<NotGate>(styleProvider, "1", notGate) {
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(

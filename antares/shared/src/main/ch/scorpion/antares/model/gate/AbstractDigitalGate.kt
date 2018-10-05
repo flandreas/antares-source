@@ -6,22 +6,26 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.Vertice
 
 /**
  * A digital gate is a [Vertice] that performs a basic logical operation on [DigitalSignal]s, whose number
  * of [InputPort]s can be chosen by the user up to a certain limit.
  */
 abstract class AbstractDigitalGate(
+	baseResourceKey: String,
     calculator: VerticeCalculator<*>,
     inputCount: InputCount
-) : CalculatingVertice(calculator) {
+) : CalculatingVertice(baseResourceKey, calculator) {
 
     companion object {
         val LOG by logger(AbstractDigitalGate::class)

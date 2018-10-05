@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.graph.model.*
 /**
  * A [SubGraphVertice] implementation that is used as the model class of a [ContainerDrawing].
  */
-class SubGraphVerticeImpl : CalculatingVertice(EmptyVerticeCalculator), SubGraphVertice {
+class SubGraphVerticeImpl : CalculatingVertice("graph.element.container", EmptyVerticeCalculator), SubGraphVertice {
 
     companion object {
         private val LOG by logger(SubGraphVerticeImpl::class)

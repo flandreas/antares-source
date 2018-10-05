@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.base.TestTranslationsBuilder
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -34,10 +33,7 @@ class EdgeViewImplTest {
 
     @Before
     fun setup() {
-        TestTranslationsBuilder()
-                .withResource("test.name")
-                .withResource("graph.name.unknown")
-                .withResource("test.desc")
+	    TestTranslationsBuilder().withAnyKey()
     }
 
     @Test
@@ -197,7 +193,7 @@ class EdgeViewImplTest {
         graphView.add(ev2)
 
         val vv = TestVerticeView()
-        ev2.connectToDestination(vv, vv.model!!.getInput<Boolean>())
+        ev2.connectToDestination(vv, vv.model!!.getInput())
 
         ev1.join(ev2)
 
@@ -222,7 +218,7 @@ class EdgeViewImplTest {
         graphView.add(ev2)
 
         val vv = TestVerticeView()
-        ev1.connectToOrigin(vv, vv.model!!.getOutput<Boolean>())
+        ev1.connectToOrigin(vv, vv.model!!.getOutput())
 
         ev2.join(ev1)
 
@@ -247,10 +243,10 @@ class EdgeViewImplTest {
         graphView.add(ev2)
 
         val vv1 = TestVerticeView()
-        ev1.connectToDestination(vv1, vv1.model!!.getOutput<Boolean>())
+        ev1.connectToDestination(vv1, vv1.model!!.getOutput())
 
         val vv2 = TestVerticeView()
-        ev2.connectToDestination(vv2, vv2.model!!.getOutput<Boolean>())
+        ev2.connectToDestination(vv2, vv2.model!!.getOutput())
 
         ev1.join(ev2)
 

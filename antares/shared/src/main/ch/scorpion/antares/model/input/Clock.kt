@@ -5,15 +5,17 @@ import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.Storable
 
 /**
  * A digital component that produces a periodically changing [DigitalSignal].
  */
-class Clock : AbstractDigitalGate(CALCULATOR, InputCount.ZERO) {
+class Clock : AbstractDigitalGate("library.element.Clock", CALCULATOR, InputCount.ZERO) {
 
     companion object {
         val CALCULATOR = object : VerticeCalculator<Clock> {

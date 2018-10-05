@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 class DelayGateView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     delayGate: DelayGate = DelayGate()
-) : AbstractDigitalGateView<DelayGate>(styleProvider, delayGate.delay.toString(), "library.element.Delay", delayGate) {
+) : AbstractDigitalGateView<DelayGate>(styleProvider, delayGate.delay.toString(), delayGate) {
 
     init {
         customFont = Look.ANNOTATION_FONT

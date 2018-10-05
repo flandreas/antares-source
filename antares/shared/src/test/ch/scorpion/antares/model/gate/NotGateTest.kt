@@ -24,7 +24,7 @@ class NotCalculatorText {
     }
 
     private val signalHandler = ForwardSignalHandler()
-    private val vertice = CalculatingVertice(NotCalculator<CalculatingVertice>())
+    private val vertice = CalculatingVertice("Not", NotCalculator<CalculatingVertice>())
 
     init {
         vertice.addPort(DigitalPortImpl.createInput())

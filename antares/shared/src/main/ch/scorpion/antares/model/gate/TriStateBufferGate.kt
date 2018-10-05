@@ -31,11 +31,11 @@ class TriStateBufferCalculator : VerticeCalculator<TriStateBufferGate> {
 class TriStateBufferGate(
     bitWidth: BitWidth = BitWidth.BW_1,
     enableLogic: Logic = Logic.POSITIVE
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice("library.element.TriStateBuffer", CALCULATOR) {
 
     companion object {
         val LOG by logger(TriStateBufferGate::class)
-        val ENABLE_PORT_NAME = "EN"
+        const val ENABLE_PORT_NAME = "EN"
         val CALCULATOR = TriStateBufferCalculator()
     }
 

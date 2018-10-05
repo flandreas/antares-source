@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
@@ -12,7 +13,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 /**
  * Represents an interactive switch that can toggle between two states.
  */
-class Switch : CalculatingVertice(CALCULATOR) {
+class Switch : CalculatingVertice("library.element.Switch", CALCULATOR) {
 
     var isOn: Boolean = false
         private set

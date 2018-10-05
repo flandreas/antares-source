@@ -19,7 +19,7 @@ class NandGateView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
     nandGate: NandGate = NandGate()
-) : AbstractAndLikeGateView<NandGate>(styleProvider, currentSymbolStyle, "&", "library.element.NandGate", nandGate) {
+) : AbstractAndLikeGateView<NandGate>(styleProvider, currentSymbolStyle, "&", nandGate) {
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(

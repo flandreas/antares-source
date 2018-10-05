@@ -47,7 +47,7 @@ class SwitchView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: Switch = Switch(),
     private val textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory
-) : DigitalComponentView<Switch>(styleProvider, "library.element.Switch", model), ControlView<Switch>, ControlViewSource<Switch> {
+) : DigitalComponentView<Switch>(styleProvider, model), ControlView<Switch>, ControlViewSource<Switch> {
 
     companion object {
         val LOG by logger(SwitchView::class)

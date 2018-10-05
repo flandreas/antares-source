@@ -24,7 +24,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 class ClockView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: Clock = Clock()
-) : AbstractDigitalGateView<Clock>(styleProvider, "", "library.element.Clock", model) {
+) : AbstractDigitalGateView<Clock>(styleProvider, "", model) {
 
     companion object {
         private const val SEG_X = Look.SCALE

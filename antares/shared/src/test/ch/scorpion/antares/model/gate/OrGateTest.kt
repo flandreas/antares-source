@@ -24,7 +24,7 @@ class OrCalculatorTest {
     }
 
     private val signalHandler = ForwardSignalHandler()
-    private val vertice = CalculatingVertice(OrCalculator<CalculatingVertice>())
+    private val vertice = CalculatingVertice("library.element.OrGate", OrCalculator<CalculatingVertice>())
 
     init {
         vertice.addPort(DigitalPortImpl.createInput("a"))

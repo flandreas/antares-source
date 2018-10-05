@@ -58,7 +58,7 @@ class CircuitInOutView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: CircuitInOut = CircuitInOutImpl(),
     private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractVerticeView<CircuitInOut>(styleProvider, "library.element.CircuitInOut", model), GraphPortView<CircuitInOut>, ControlViewSource<CircuitInOut> {
+) : AbstractVerticeView<CircuitInOut>(styleProvider, model), GraphPortView<CircuitInOut>, ControlViewSource<CircuitInOut> {
 
     companion object {
         const val PROP_INPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inputIcon"

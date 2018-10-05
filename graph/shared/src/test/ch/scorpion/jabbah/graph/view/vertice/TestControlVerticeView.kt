@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 class TestControlVerticeView(
 	vertice: TestControlVertice = TestControlVertice(),
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : AbstractRectangularVerticeView<TestControlVertice>(styleProvider, "testControl", vertice),
+) : AbstractRectangularVerticeView<TestControlVertice>(styleProvider, vertice),
 	ControlView<TestControlVertice>,
 	ControlViewSource<TestControlVertice>
 {

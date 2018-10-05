@@ -6,10 +6,11 @@ import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.Storable
 
 class SevenSegmentDisplay(
         portScheme: SevenSegmentDisplayScheme = SevenSegmentDisplayScheme.COMBINED
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice("library.element.SevenSegmentDisplay", CALCULATOR) {
 
     companion object {
         val CALCULATOR = object : VerticeCalculator<SevenSegmentDisplay> {

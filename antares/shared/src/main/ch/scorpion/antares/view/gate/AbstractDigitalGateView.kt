@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
 /**
  * Base view implementation for [AbstractDigitalGate] views.
@@ -19,9 +20,8 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 abstract class AbstractDigitalGateView<T : AbstractDigitalGate>(
     styleProvider: StyleProvider,
     text: String,
-    baseResourceKey: String,
     vertice: T
-) : BoxGateView<T>(styleProvider, text, baseResourceKey, vertice) {
+) : BoxGateView<T>(styleProvider, text, vertice) {
 
     var chosenInputCount: InputCount
         get() = model!!.chosenInputCount

@@ -7,19 +7,22 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.Storable
 
 /**
  * A [Vertice] that produces a configurable constant [DigitalSignal] at its single output.
  */
 class Constant(
         value: Word = Word.of(Bit.False)
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice("library.element.Constant", CALCULATOR) {
 
     init {
         addPort(DigitalPortImpl.createOutput())
@@ -63,8 +66,8 @@ class Constant(
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeInt("bitWidth", bitWidth.width);
-        writer.writeLong("value", value.getValue());
+        writer.writeInt("bitWidth", bitWidth.width)
+        writer.writeLong("value", value.getValue())
     }
 
     override fun read(reader: StoreReader) {

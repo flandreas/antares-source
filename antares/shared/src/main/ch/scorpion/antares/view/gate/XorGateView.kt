@@ -19,7 +19,7 @@ class XorGateView(
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
         currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
         xorGate: XorGate = XorGate()
-) : AbstractOrLikeGateView<XorGate>(styleProvider, currentSymbolStyle, "=1", "library.element.XorGate", xorGate) {
+) : AbstractOrLikeGateView<XorGate>(styleProvider, currentSymbolStyle, "=1", xorGate) {
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(

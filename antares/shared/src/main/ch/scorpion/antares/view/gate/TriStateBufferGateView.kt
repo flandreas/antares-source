@@ -26,7 +26,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 class TriStateBufferGateView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: TriStateBufferGate = TriStateBufferGate()
-) : DigitalComponentView<TriStateBufferGate>(styleProvider, "library.element.TriStateBuffer", model) {
+) : DigitalComponentView<TriStateBufferGate>(styleProvider, model) {
 
     var handedness: Handedness = Handedness.RIGHT
         set(value) {

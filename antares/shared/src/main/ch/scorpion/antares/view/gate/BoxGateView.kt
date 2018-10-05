@@ -33,9 +33,8 @@ import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 open class BoxGateView<T : Vertice>(
     styleProvider: StyleProvider,
     text: String,
-    baseResourceKey: String,
     vertice: T
-) : DigitalComponentView<T>(styleProvider, baseResourceKey, vertice) {
+) : DigitalComponentView<T>(styleProvider, vertice) {
 
     /** Represents the supported styles for the [Label] of a [BoxGateView].*/
     enum class LabelStyle {

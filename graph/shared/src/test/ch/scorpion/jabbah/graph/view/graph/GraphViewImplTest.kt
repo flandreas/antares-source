@@ -30,10 +30,7 @@ class GraphViewImplTest {
 
     @Before
     fun setup() {
-        TestTranslationsBuilder()
-                .withResource("test.name")
-                .withResource("test.desc")
-                .withResource("graph.name.unknown")
+	    TestTranslationsBuilder().withAnyKey()
     }
 
     private val graphView: GraphView<GraphElementView<*>> = GraphViewImpl(

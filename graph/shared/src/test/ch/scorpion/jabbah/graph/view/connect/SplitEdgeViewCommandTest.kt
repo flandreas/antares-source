@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.edit.editor.TestEditorBuilder
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -32,15 +31,7 @@ class SplitEdgeViewCommandTest {
 
     @Before
     fun setup() {
-        TestTranslationsBuilder()
-                .withResource("test.name")
-                .withResource("test.desc")
-                .withResource("graph.name.unknown")
-                .withResource("graph.command.splitEdge")
-                .withResource("edit.command.add")
-                .withResource("graph.command.connect")
-                .withResource("graph.name.unknown")
-
+        TestTranslationsBuilder().withAnyKey()
         testGraphView = TestGraphView()
     }
 

@@ -35,7 +35,7 @@ class OrCalculator<T: Vertice> : VerticeCalculator<T> {
     }
 }
 
-class OrGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CALCULATOR, inputCount) {
+class OrGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate("library.element.OrGate", CALCULATOR, inputCount) {
 
     companion object {
         val CALCULATOR = OrCalculator<OrGate>()

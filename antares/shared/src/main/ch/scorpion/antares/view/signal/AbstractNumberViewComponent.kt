@@ -23,12 +23,11 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 abstract class AbstractNumberViewComponent<T : Vertice>(
     styleProvider: StyleProvider,
-    baseResourceKey: String,
     model: T?,
     orientation: Direction,
     signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY,
     private val drawDigitBorder: Boolean = true
-) : DigitalComponentView<T>(styleProvider, baseResourceKey, model) {
+) : DigitalComponentView<T>(styleProvider, model) {
 
     companion object {
         const val DEFAULT_INSETS = Look.SCALE

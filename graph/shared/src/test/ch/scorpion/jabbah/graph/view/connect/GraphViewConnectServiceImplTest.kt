@@ -31,10 +31,7 @@ class GraphViewConnectServiceImplTest {
 
     @Before
     fun setup() {
-        TestTranslationsBuilder()
-            .withResource("test.name")
-            .withResource("graph.name.unknown")
-            .withResource("test.desc")
+        TestTranslationsBuilder().withAnyKey()
     }
 
     @Test

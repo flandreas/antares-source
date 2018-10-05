@@ -1,22 +1,22 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
-import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
-import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.logger
 
 /**
  * An abstract base implementation of the [Vertice] interface.
  */
-abstract class AbstractVertice(name: String? = null) : AbstractGraphElement(), Vertice {
+abstract class AbstractVertice(
+	override val baseResourceKey: String,
+	name: String? = null
+) : AbstractGraphElement(), Vertice {
 
     companion object {
         private val LOG by logger(AbstractVertice::class)
@@ -26,6 +26,10 @@ abstract class AbstractVertice(name: String? = null) : AbstractGraphElement(), V
     private val ports = mutableListOf<Port<*>>()
 
     open var shortDescription: String? = null
+
+	/** ---- [GraphElement] interface */
+
+	override val type: String? = Translations.getString("$baseResourceKey.name")
 
     /** ---- [Vertice] interface */
 

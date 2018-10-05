@@ -29,14 +29,17 @@ import ch.scorpion.jabbah.base.logger
 class LEDMatrix(
         columnWidth: BitWidth = LEDMatrix.DEF_COLUMN_WIDTH,
         rowWidth: BitWidth = LEDMatrix.DEF_ROW_WIDTH
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice("library.element.LEDMatrix", CALCULATOR) {
 
     companion object {
-        val COLUMN_PORT_NAME = "C"
-        val ROW_PORT_NAME = "R"
+
+	    private val LOG by logger(LEDMatrix::class)
+
+        const val COLUMN_PORT_NAME = "C"
+        const val ROW_PORT_NAME = "R"
         private val DEF_COLUMN_WIDTH = BitWidth.BW_8
         private val DEF_ROW_WIDTH = BitWidth.BW_8
-        private val DEF_AFTERGLOW = 10L
+        private const val DEF_AFTERGLOW = 10L
 
         private val CALCULATOR = object : VerticeCalculator<LEDMatrix> {
             override fun calculate(vertice: LEDMatrix, data: GraphActorData, signalHandler: SignalHandler) {
@@ -49,8 +52,6 @@ class LEDMatrix(
         addPort(DigitalPortImpl.createInput(Logic.POSITIVE, COLUMN_PORT_NAME, columnWidth))
         addPort(DigitalPortImpl.createInput(Logic.POSITIVE, ROW_PORT_NAME, rowWidth))
     }
-
-    private val LOG by logger(LEDMatrix::class)
 
     val columnPort: DigitalPort
         get() = getInput<DigitalSignal>(COLUMN_PORT_NAME) as DigitalPort

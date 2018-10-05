@@ -24,7 +24,7 @@ class XorCalculatorTest {
     }
 
     private val signalHandler = ForwardSignalHandler()
-    private val vertice = CalculatingVertice(XorCalculator<CalculatingVertice>())
+    private val vertice = CalculatingVertice("Xor", XorCalculator<CalculatingVertice>())
 
     init {
         vertice.addPort(DigitalPortImpl.createInput("a"))

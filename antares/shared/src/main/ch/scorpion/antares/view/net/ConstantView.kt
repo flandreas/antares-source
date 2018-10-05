@@ -25,7 +25,6 @@ class ConstantView(
     model: Constant = Constant()
 ) : AbstractNumberViewComponent<Constant>(
         styleProvider = styleProvider,
-        baseResourceKey = "library.element.Constant",
         model = model,
         orientation = Direction.WEST,
         drawDigitBorder = false

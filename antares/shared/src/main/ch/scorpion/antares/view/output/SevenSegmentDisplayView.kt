@@ -1,6 +1,5 @@
 package ch.scorpion.antares.view.output
 
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -40,7 +39,7 @@ class SevenSegmentDisplayView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: SevenSegmentDisplay = SevenSegmentDisplay(),
     lightColor: LightColor = DEFAULT_LIGHT_COLOR
-) : DigitalComponentView<SevenSegmentDisplay>(styleProvider, "library.element.SevenSegmentDisplay", model),
+) : DigitalComponentView<SevenSegmentDisplay>(styleProvider, model),
         ControlView<SevenSegmentDisplay>, ControlViewSource<SevenSegmentDisplay> {
 
     companion object {

@@ -17,7 +17,7 @@ class DelayGateCalculator : VerticeCalculator<DelayGate> {
     }
 }
 
-class DelayGate : AbstractDigitalGate(CALCULATOR, InputCount.ONE) {
+class DelayGate : AbstractDigitalGate("library.element.Delay", CALCULATOR, InputCount.ONE) {
 
     companion object {
         val CALCULATOR = DelayGateCalculator()

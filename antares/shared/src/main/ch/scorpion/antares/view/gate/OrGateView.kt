@@ -19,7 +19,7 @@ class OrGateView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
     orGate: OrGate = OrGate()
-) : AbstractOrLikeGateView<OrGate>(styleProvider, currentSymbolStyle, "≥1", "library.element.OrGate", orGate) {
+) : AbstractOrLikeGateView<OrGate>(styleProvider, currentSymbolStyle, "≥1", orGate) {
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(

@@ -24,7 +24,7 @@ class AndCalculatorTest {
     }
 
     private val signalHandler = ForwardSignalHandler()
-    private val vertice = CalculatingVertice(AndCalculator<CalculatingVertice>())
+    private val vertice = CalculatingVertice("And", AndCalculator<CalculatingVertice>())
 
     init {
         vertice.addPort(DigitalPortImpl.createInput("a"))

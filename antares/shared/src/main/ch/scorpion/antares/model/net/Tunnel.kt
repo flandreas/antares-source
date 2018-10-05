@@ -30,7 +30,7 @@ import ch.scorpion.jabbah.base.logger
  */
 class Tunnel(
     name: String? = null
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice("library.element.Tunnel", CALCULATOR) {
 
     companion object {
         private val LOG by logger(Tunnel::class)

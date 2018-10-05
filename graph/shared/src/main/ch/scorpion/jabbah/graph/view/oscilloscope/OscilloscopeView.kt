@@ -51,7 +51,6 @@ class OscilloscopeView(
         styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangularVerticeView<Oscilloscope>(
         styleProvider,
-        "graph.component.oscilloscope",
         model,
         x = 0.0,
         y = 0.0,

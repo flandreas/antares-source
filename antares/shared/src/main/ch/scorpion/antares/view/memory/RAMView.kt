@@ -46,7 +46,7 @@ class RAMView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     private val eventBus: EventBus = BaseModule.eventBus,
     model: RAM = RAM()
-) : DigitalComponentView<RAM>(styleProvider, "library.element.RAM", model) {
+) : DigitalComponentView<RAM>(styleProvider, model) {
 
     companion object {
         const val WIDTH = 24 * Look.GRID

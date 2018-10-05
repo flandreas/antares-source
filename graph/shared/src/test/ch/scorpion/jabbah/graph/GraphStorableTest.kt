@@ -26,10 +26,7 @@ class GraphStorableTest {
 
     @Before
     fun setup() {
-        TestTranslationsBuilder()
-                .withResource("test.name")
-                .withResource("test.desc")
-                .withResource("graph.name.unknown")
+	    TestTranslationsBuilder().withAnyKey()
         IOModule.typeMap.register("testVertice", TestVertice::class)
         IOModule.typeMap.register("testVerticeView", TestVerticeView::class)
     }
@@ -46,8 +43,8 @@ class GraphStorableTest {
         assertThat((graph.withId(1) as Vertice).getOutput<Boolean>().net?.id, `is`(3))
         assertThat((graph.withId(2) as Vertice).getInput<Boolean>().net?.id, `is`(3))
 
-        assertThat((graph.withId(3) as Net<Boolean>).isConnectedWith((graph.withId(1) as Vertice).getOutput<Boolean>()), `is`(true))
-        assertThat((graph.withId(3) as Net<Boolean>).isConnectedWith((graph.withId(2) as Vertice).getInput<Boolean>()), `is`(true))
+        assertThat((graph.withId(3) as Net<Boolean>).isConnectedWith((graph.withId(1) as Vertice).getOutput()), `is`(true))
+        assertThat((graph.withId(3) as Net<Boolean>).isConnectedWith((graph.withId(2) as Vertice).getInput()), `is`(true))
 
         // Assert view connectedness
         val graphView = clone.graphView!!
@@ -57,6 +54,5 @@ class GraphStorableTest {
 
         assertThat((graphView.getWidthId(3) as EdgeView<Boolean>).destination as TestVerticeView, `is`(sameInstance(graphView.getWidthId(2))))
         assertThat((graphView.getWidthId(3) as EdgeView<Boolean>).destinationPort as InputPort<Boolean>, `is`(sameInstance((graphView.getWidthId(2)!!.model as TestVertice).getInput<Boolean>())))
-
     }
 }

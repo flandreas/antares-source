@@ -31,7 +31,7 @@ class AndGateView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
     andGate: AndGate = AndGate()
-) : AbstractAndLikeGateView<AndGate>(styleProvider, currentSymbolStyle, "&", "library.element.AndGate", andGate) {
+) : AbstractAndLikeGateView<AndGate>(styleProvider, currentSymbolStyle, "&", andGate) {
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(

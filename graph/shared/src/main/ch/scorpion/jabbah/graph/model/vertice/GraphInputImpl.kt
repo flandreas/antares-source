@@ -18,12 +18,13 @@ class GraphInputImpl<T: Any>(
 	outputPort: OutputPort<T> = PortImpl(PortType.INPUT),
 	name: String? = null,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractGraphPort<T>(port = outputPort, name = name, eventBus = eventBus), GraphInput<T> {
+) : AbstractGraphPort<T>("graph.element.input", port = outputPort, name = name, eventBus = eventBus), GraphInput<T> {
 
     /** ---- [GraphPort] interface */
 
     override val signal: T? get() = getOutput<T>().getOutgoingSignal()
 
+    @Suppress("UNUSED_PARAMETER")
     override var portType: PortType
         get() = PortType.INPUT
         set(value) {

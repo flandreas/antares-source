@@ -24,7 +24,7 @@ class NandGateTest {
     }
 
     private val signalHandler = ForwardSignalHandler()
-    private val vertice = CalculatingVertice(NandCalculator<CalculatingVertice>())
+    private val vertice = CalculatingVertice("Nand", NandCalculator<CalculatingVertice>())
 
     init {
         vertice.addPort(DigitalPortImpl.createInput("a"))

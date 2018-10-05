@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.io.Storable
 /**
  * A light emitting [Vertice] that turns on with [Bit.True].
  */
-class LED(var text: String? = null) : CalculatingVertice(CALCULATOR) {
+class LED(var text: String? = null) : CalculatingVertice("library.element.LED", CALCULATOR) {
 
     companion object {
         val CALCULATOR = object : VerticeCalculator<LED> {

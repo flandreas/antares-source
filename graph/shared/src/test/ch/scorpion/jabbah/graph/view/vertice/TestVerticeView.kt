@@ -20,7 +20,7 @@ class TestVerticeView(
 	private val inputDirection: Direction = Direction.WEST,
 	private val outputDirection: Direction = Direction.EAST,
 	private val portViewLength: Int = 0
-) : AbstractRectangularVerticeView<TestVertice>(styleProvider, "test", vertice) {
+) : AbstractRectangularVerticeView<TestVertice>(styleProvider, vertice) {
 
 	init {
 		location = loc

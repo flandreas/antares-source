@@ -40,7 +40,7 @@ class AbstractVerticeTest {
         assertThat(vertice.getOutput<Boolean>(2).name, `is`("B"))
     }
 
-    private class MyVertice : AbstractVertice() {
+    private class MyVertice : AbstractVertice("graph.property.label") {
         override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
             return true
         }

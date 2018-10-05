@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
-import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
@@ -48,7 +47,6 @@ import ch.scorpion.jabbah.io.Storable
  */
 abstract class AbstractVerticeView<T : Vertice>(
     styleProvider: StyleProvider,
-    baseResourceKey: String,
     model: T?
 ): AbstractGraphElementView<T>(styleProvider, GraphStyleType.VERTICE, model), VerticeView<T>, Transparent {
 
@@ -85,7 +83,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
     /** ---- [VerticeView] interface */
 
-    private val staticDescription: String? = Translations.getOptionalString("$baseResourceKey.desc")
+    private val staticDescription: String? get() = Translations.getOptionalString("${model!!.baseResourceKey}.desc")
 
     override val shortDescription: String? get() = model?.customDescription ?: staticDescription
 
@@ -252,7 +250,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
     /** ---- [Component] interface */
 
-    override val type: String? = Translations.getString("$baseResourceKey.name")
+    override val type: String? get() = model?.type
 
     override val rotatable: Boolean get() = true
 

@@ -21,7 +21,7 @@ class BufferCalculator<T : Vertice> : VerticeCalculator<T> {
     }
 }
 
-class BufferGate(bitWidth: BitWidth = BitWidth.BW_1) : AbstractDigitalGate(CALCULATOR, InputCount.ONE) {
+class BufferGate(bitWidth: BitWidth = BitWidth.BW_1) : AbstractDigitalGate("library.element.Buffer", CALCULATOR, InputCount.ONE) {
 
     companion object {
         val CALCULATOR = BufferCalculator<BufferGate>()

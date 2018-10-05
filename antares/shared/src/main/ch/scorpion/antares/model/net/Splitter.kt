@@ -21,7 +21,7 @@ import ch.scorpion.jabbah.io.Storable
 class Splitter(
     bitWidth: BitWidth = BitWidth.BW_8,
     branchCount: BranchCount = BranchCount.BC_4
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice("library.element.Splitter", CALCULATOR) {
 
     companion object {
         val CALCULATOR = object : VerticeCalculator<Splitter> {

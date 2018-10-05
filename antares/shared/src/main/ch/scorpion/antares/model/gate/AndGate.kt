@@ -43,7 +43,7 @@ class AndCalculator<T : Vertice> : VerticeCalculator<T> {
 }
 
 /** A digital gate that performs a logical AND operation. */
-class AndGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CALCULATOR, inputCount) {
+class AndGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate("library.element.AndGate", CALCULATOR, inputCount) {
     
     companion object {
         val CALCULATOR = AndCalculator<AndGate>()

@@ -17,9 +17,8 @@ abstract class AbstractOrLikeGateView<T : AbstractDigitalGate>(
     styleProvider: StyleProvider,
     val currentSymbolStyle: CurrentSymbolStyle,
     text: String,
-    baseResourceKey: String,
     gate: T
-) : AbstractDigitalGateView<T>(styleProvider, text, baseResourceKey, gate) {
+) : AbstractDigitalGateView<T>(styleProvider, text, gate) {
 
     init {
         modelExchanged(null)

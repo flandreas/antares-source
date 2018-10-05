@@ -19,7 +19,7 @@ class NorGateView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
     norGate: NorGate = NorGate()
-) : AbstractOrLikeGateView<NorGate>(styleProvider, currentSymbolStyle, "≥1", "library.element.NorGate", norGate) {
+) : AbstractOrLikeGateView<NorGate>(styleProvider, currentSymbolStyle, "≥1", norGate) {
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(

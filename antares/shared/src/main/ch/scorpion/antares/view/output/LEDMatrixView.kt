@@ -25,7 +25,6 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.antares.model.output.LEDMatrix
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
@@ -39,17 +38,17 @@ class LEDMatrixView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: LEDMatrix = LEDMatrix(),
     lightColor: LightColor = DEFAULT_LIGHT_COLOR
-) : DigitalComponentView<LEDMatrix>(styleProvider, "library.element.LEDMatrix", model), ControlView<LEDMatrix>, ControlViewSource<LEDMatrix> {
+) : DigitalComponentView<LEDMatrix>(styleProvider, model), ControlView<LEDMatrix>, ControlViewSource<LEDMatrix> {
 
     companion object {
-        val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDMatrixView.iconPath"
+        const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDMatrixView.iconPath"
         private val DEBUG_COLUMN_COLOR = Color(255, 255, 0, 128)
         private val DEBUG_ROW_COLOR = Color(0, 255, 255, 128)
         private val STROKE = Stroke(1f)
         private val COLOR_CASE = Color.DARK_GRAY
         private val DEFAULT_LIGHT_COLOR = LightColor.RED
         private val DEFAULT_SIZE = Size.MEDIUM
-        private val DOT_SIZE = Look.SCALE
+        private const val DOT_SIZE = Look.SCALE
     }
 
     var lightColor: LightColor = lightColor
@@ -148,7 +147,7 @@ class LEDMatrixView(
 
         val columnPort = DigitalPortView(
             styleProvider = styleProvider,
-            port = model!!.getInput<DigitalSignal>(LEDMatrix.COLUMN_PORT_NAME),
+            port = model!!.getInput(LEDMatrix.COLUMN_PORT_NAME),
             direction = Direction.SOUTH,
             portLabelPosition = PortLabelPosition.EXTERNAL,
             x = calculateColumnPortPos().x.toInt(),
@@ -158,7 +157,7 @@ class LEDMatrixView(
 
         val rowPort = DigitalPortView(
                 styleProvider = styleProvider,
-                port = model!!.getInput<DigitalSignal>(LEDMatrix.ROW_PORT_NAME),
+                port = model!!.getInput(LEDMatrix.ROW_PORT_NAME),
                 direction = Direction.SOUTH,
                 portLabelPosition = PortLabelPosition.EXTERNAL,
                 x = calculateRowPortPos().x.toInt(),
@@ -210,9 +209,9 @@ class LEDMatrixView(
         context.g.fillRect(0, 0, width.toInt(), height.toInt())
 
         var x = width - inset - DOT_SIZE * factor
-        for (column in 0..model!!.columnWidth.width - 1) {
+        for (column in 0 until model!!.columnWidth.width) {
             var y = height - inset - DOT_SIZE * factor
-            for (row in 0..model!!.rowWidth.width - 1) {
+            for (row in 0 until model!!.rowWidth.width) {
                 if (model!!.isOn(column, row)) {
                     context.g.color = lightColor.onColor
                 } else {

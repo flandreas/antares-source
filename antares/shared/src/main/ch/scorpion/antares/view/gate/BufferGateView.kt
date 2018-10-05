@@ -18,7 +18,7 @@ class BufferGateView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
     bufferGate: BufferGate = BufferGate()
-) : AbstractDigitalGateView<BufferGate>(styleProvider, "1", "library.element.Buffer", bufferGate) {
+) : AbstractDigitalGateView<BufferGate>(styleProvider, "1", bufferGate) {
 
     init {
         modelExchanged(null)

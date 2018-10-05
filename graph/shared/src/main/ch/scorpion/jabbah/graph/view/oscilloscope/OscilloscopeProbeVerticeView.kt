@@ -4,10 +4,12 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
@@ -27,11 +29,11 @@ class OscilloscopeProbeVerticeView<T: Any>(
         color: CompositeColor = CompositeColor(),
         model: OscilloscopeProbeVertice<T>? = OscilloscopeProbeVertice(name = rowNumber.toString()),
         styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : AbstractRectangularVerticeView<OscilloscopeProbeVertice<T>>(styleProvider, "graph.component.oscilloscope.port", model) {
+) : AbstractRectangularVerticeView<OscilloscopeProbeVertice<T>>(styleProvider, model) {
 
     companion object {
         private val LOG by logger(OscilloscopeProbeVerticeView::class)
-        private val CONN_POINT_SIZE = 4.0
+        private const val CONN_POINT_SIZE = 4.0
     }
 
     init {
@@ -187,7 +189,7 @@ class OscilloscopeProbeVerticeView<T: Any>(
                 edgeView!!.model!!.unconnect(model!!.getPort<T>())
             }
             if (newEdgeView != null && newEdgeView !== edgeView) {
-                newEdgeView.model!!.connect(model!!.getPort<T>())
+                newEdgeView.model!!.connect(model!!.getPort())
             }
             edgeView = newEdgeView
 

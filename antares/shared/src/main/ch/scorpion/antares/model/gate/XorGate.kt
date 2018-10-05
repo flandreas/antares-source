@@ -32,7 +32,7 @@ class XorCalculator<T: Vertice> : VerticeCalculator<T> {
     }
 }
 
-class XorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CALCULATOR, inputCount) {
+class XorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate("library.element.XorGate", CALCULATOR, inputCount) {
 
     companion object {
         val CALCULATOR = XorCalculator<XorGate>()

@@ -6,10 +6,10 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.port.TestPortView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
+import ch.scorpion.jabbah.graph.view.port.TestPortView
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
+import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Test
@@ -26,9 +26,7 @@ class AbstractRectangularVerticeViewTest {
 
     @Before
     fun setup() {
-        TestTranslationsBuilder()
-            .withResource("test.name")
-                .withResource("test.desc")
+	    TestTranslationsBuilder().withAnyKey()
     }
 
     /** ---- Without rectangle offset */
@@ -103,7 +101,7 @@ class AbstractRectangularVerticeViewTest {
         assertThat(rectangle.boundingBox, `is`(Rectangle2D(-40, 25, 120, 50)))
     }
 
-    private class TestRectangleView : AbstractRectangularVerticeView<TestVertice>("test", TestVertice()) {
+    private class TestRectangleView : AbstractRectangularVerticeView<TestVertice>(model = TestVertice()) {
         override val lineWidth: Double
             get() = 0.0
     }

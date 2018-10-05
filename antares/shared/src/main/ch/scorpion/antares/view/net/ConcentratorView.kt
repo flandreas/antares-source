@@ -28,12 +28,12 @@ import ch.scorpion.jabbah.draw.graphics.Color
 class ConcentratorView(
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
         model: Concentrator = Concentrator()
-) : DigitalComponentView<Concentrator>(styleProvider, "library.element.Concentrator", model) {
+) : DigitalComponentView<Concentrator>(styleProvider, model) {
 
     companion object {
-        val WIDTH = 2 * Look.GRID
-        val PORT_INSET = Look.SCALE
-        val PORT_DISTANCE = 2 * Look.SCALE
+        const val WIDTH = 2 * Look.GRID
+        const val PORT_INSET = Look.SCALE
+        const val PORT_DISTANCE = 2 * Look.SCALE
     }
 
     var handedness: Handedness = Handedness.LEFT
@@ -48,7 +48,7 @@ class ConcentratorView(
         }
 
     var bitWidth: BitWidth
-        get() = model!!._bitWidth
+        get() = model!!.bitWidth
         set(value) {
             if (value != bitWidth) {
                 invalidate()

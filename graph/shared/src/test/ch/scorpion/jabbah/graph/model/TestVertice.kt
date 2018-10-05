@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
  * A [Vertice] implementation to be used in [ch.scorpion.jabbah.graph] integration tests.
  * [TestVertice] uses [Boolean] signals and has a single [InputPort] and a single [OutputPort].
  */
-class TestVertice : CalculatingVertice(CALCULATOR) {
+class TestVertice : CalculatingVertice("graph.property.label", CALCULATOR) {
 
     companion object {
         val CALCULATOR = object : VerticeCalculator<TestVertice> {

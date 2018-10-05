@@ -26,11 +26,11 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 class TunnelView(
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
         model: Tunnel = Tunnel()
-) : DigitalComponentView<Tunnel>(styleProvider, "library.element.Tunnel", model) {
+) : DigitalComponentView<Tunnel>(styleProvider, model) {
 
     companion object {
-        val SIZE = 4 * 7
-        val LABEL_DIST = Look.SCALE
+        const val SIZE = 4 * 7
+        const val LABEL_DIST = Look.SCALE
     }
 
     private val label = HorizontalLabel(

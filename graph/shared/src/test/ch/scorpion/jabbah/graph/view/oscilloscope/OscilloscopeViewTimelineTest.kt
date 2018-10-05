@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
+import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.execution.SignalHandlerMockBuilder
 import ch.scorpion.jabbah.graph.model.PortType
@@ -19,6 +20,7 @@ class OscilloscopeViewTimelineTest {
     @Before
     fun setup() {
         BaseModuleJvm.require()
+	    TestTranslationsBuilder().withAnyKey()
         signalHandler = SignalHandlerMockBuilder()
         oscilloscope = Oscilloscope()
         timeline = OscilloscopeViewTimeline(scale = 1.0, model = oscilloscope, minSignalWidth = 5.0)

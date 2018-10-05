@@ -19,7 +19,7 @@ class XnorGateView(
         styleProvider: StyleProvider = DrawStyleModule.styleProvider,
         currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
         xnorGate: XnorGate = XnorGate()
-) : AbstractOrLikeGateView<XnorGate>(styleProvider, currentSymbolStyle, "=1", "library.element.XnorGate", xnorGate) {
+) : AbstractOrLikeGateView<XnorGate>(styleProvider, currentSymbolStyle, "=1", xnorGate) {
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(

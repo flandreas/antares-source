@@ -32,7 +32,7 @@ class NotCalculator<T : Vertice> : VerticeCalculator<T> {
     }
 }
 
-class NotGate : AbstractDigitalGate(CALCULATOR, InputCount.ONE) {
+class NotGate : AbstractDigitalGate("library.element.NotGate", CALCULATOR, InputCount.ONE) {
 
     companion object {
         val CALCULATOR = NotCalculator<NotGate>()

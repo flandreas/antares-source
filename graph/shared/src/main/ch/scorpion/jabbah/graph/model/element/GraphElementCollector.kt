@@ -50,10 +50,6 @@ class GraphElementCollector(
 			count += 1
 		}
 
-		fun print() {
-			println("$count: $name")
-		}
-
 		fun print(builder: StringBuilder) {
 			builder.append("$count: $name\n")
 		}
@@ -65,16 +61,17 @@ class GraphElementCollector(
 
 	private inner class GraphVisitor : EmptyHierarchyVisitor() {
 
-		override fun visitEnter(item: Any): Boolean {
-			if (item is SubGraphVerticeRef) {
-				count("[" + item.name + "]")
+		override fun visitEnter(node: Any): Boolean {
+			if (node is SubGraphVerticeRef) {
+				count("""[${node.name}]""")
 			}
 			return true
 		}
 
-		override fun visit(item: Any): Boolean {
-			// TODO We would need translated type names on the GraphElement level
-			count(item::class.simpleName!!)
+		override fun visit(node: Any): Boolean {
+			if (node is GraphElement && node.type != null) {
+				count(node.type!!)
+			}
 			return true
 		}
 	}

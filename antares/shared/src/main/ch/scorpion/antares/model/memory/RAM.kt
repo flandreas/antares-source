@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 /**
  * Represents a random access (i.e. writable) memory whose address width and data width can be specified.
  */
-class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addressable {
+class RAM(hasClock: Boolean = true) : CalculatingVertice("library.element.RAM", RAMCalculator()), Addressable {
 
     companion object {
         const val ADDRESS_PORT_NAME = "A"

@@ -28,13 +28,13 @@ class CircuitInOutImpl(
     val eventBus: EventBus = BaseModule.eventBus,
     name: String? = null,
     portType: PortType = PortType.INPUT
-) : AbstractGraphPort<DigitalSignal>(DigitalPortImpl(portType.reverse()), name, CALCULATOR), CircuitInOut {
+) : AbstractGraphPort<DigitalSignal>("library.element.CircuitInOut", DigitalPortImpl(portType.reverse()), name, CALCULATOR), CircuitInOut {
 
     companion object {
 
         val CALCULATOR = object : VerticeCalculator<CircuitInOutImpl> {
             override fun calculate(vertice: CircuitInOutImpl, data: GraphActorData, signalHandler: SignalHandler) {
-                vertice.setOutgoingSignal(data.getSignal<DigitalSignal>(1)!!, signalHandler, data.changedPort == null)
+                vertice.setOutgoingSignal(data.getSignal(1)!!, signalHandler, data.changedPort == null)
             }
         }
     }

@@ -13,9 +13,8 @@ abstract class AbstractAndLikeGateView<T : AbstractDigitalGate>(
         styleProvider: StyleProvider,
         val currentSymbolStyle: CurrentSymbolStyle,
         text: String,
-        baseResourceKey: String,
         gate: T
-) : AbstractDigitalGateView<T>(styleProvider, text, baseResourceKey, gate) {
+) : AbstractDigitalGateView<T>(styleProvider, text, gate) {
 
     override val outsetTop: Int
         get() = when(currentSymbolStyle.symbolStyle) {

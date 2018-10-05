@@ -16,7 +16,19 @@ interface GraphElement : Storable, Actor {
     /** Holds the identification of this [GraphElement] being unique within a [Graph]. */
     override var id: Int
 
-    /**
+	/**
+	 * Holds a short translated description of the type of this [GraphElement].
+	 *
+	 * The type of a [GraphElement] describes the "kind" or the nature of a [GraphElement]. This is in contrast to
+	 * the name of a [GraphElement], which is often provided by the user and can serve to distinguish two
+	 * [GraphElement]s of the same type. Typically, the type is not persistent, but provided by concrete
+	 * implementation of the [GraphElement] interface. Note that this type description should be internationalized.
+	 *
+	 * Example: "AND Gate"
+	 */
+	val type: String?
+
+	/**
      * Determines whether this [GraphElement] is currently in an error state, which can be caused by either a
      * static [DesignError] or a dynamic [ExecutionError].
      * @return `true` if this [GraphElement] is currently in an error state

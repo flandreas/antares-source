@@ -1,29 +1,28 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
-import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableAdapter
 import ch.scorpion.jabbah.draw.DrawableEvent
+import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.AbstractComponent
-import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
-import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Storable
 
 /**
  * A rectangular shaped [VerticeView] implementation that adds the bounding boxes of all [PortView]s to its
@@ -42,25 +41,13 @@ import ch.scorpion.jabbah.io.Storable
  * @param h the height of the rectangle
  */
 abstract class AbstractRectangularVerticeView<T : Vertice>(
-    styleProvider: StyleProvider,
-    baseResourceKey: String,
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: T?,
-    x: Double,
-    y: Double,
-    w: Double,
-    h: Double
-): AbstractVerticeView<T>(styleProvider, baseResourceKey, model), RectangularDrawable {
-
-    constructor(
-        styleProvider: StyleProvider,
-        baseResourceKey: String,
-        model: T?
-    ): this(styleProvider, baseResourceKey, model, 0.0, 0.0, 0.0, 0.0)
-
-    constructor(
-        baseResourceKey: String,
-        model: T
-    ): this(DrawStyleModule.styleProvider, baseResourceKey, model)
+    x: Double = 0.0,
+    y: Double = 0.0,
+    w: Double = 0.0,
+    h: Double = 0.0
+): AbstractVerticeView<T>(styleProvider, model), RectangularDrawable {
 
     /** Contains the position relative to [location] and the size of the rectangle..*/
     private val rectangle = Rectangle2D(x, y, w, h)
@@ -228,20 +215,5 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
             height + 2 * lineWidth + outsetTop + outsetBottom
         )
         addPortViewsTo(_boundingBox, containsBox)
-    }
-}
-
-class RectangularVerticeViewSelectionModel(c: AbstractRectangularVerticeView<*>) : AbstractSelectionModel<AbstractRectangularVerticeView<*>>(c) {
-
-    override val boundingBox: RectangularShape get() = component.boundingBox
-
-    override fun draw(context: DrawContext) {
-        component.drawSelected(context)
-    }
-
-    override fun contains(x: Double, y: Double): Boolean = component.contains(x, y)
-
-    override fun componentUpdated() {
-        validate()
     }
 }

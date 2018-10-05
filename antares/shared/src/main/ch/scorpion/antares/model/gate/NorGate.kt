@@ -39,7 +39,7 @@ class NorCalculator<T : Vertice> : VerticeCalculator<T> {
     }
 }
 
-class NorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CALCULATOR, inputCount) {
+class NorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate("library.element.NorGate", CALCULATOR, inputCount) {
 
     companion object {
         val CALCULATOR = NorCalculator<NorGate>()

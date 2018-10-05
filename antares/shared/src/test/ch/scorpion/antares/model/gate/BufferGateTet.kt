@@ -24,7 +24,7 @@ class BufferCalculatorTest {
     }
 
     private val signalHandler = ForwardSignalHandler()
-    private val vertice = CalculatingVertice(BufferCalculator<CalculatingVertice>())
+    private val vertice = CalculatingVertice("Buffer", BufferCalculator<CalculatingVertice>())
 
     init {
         vertice.addPort(DigitalPortImpl.createInput())

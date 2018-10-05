@@ -18,6 +18,8 @@ interface Vertice : GraphElement {
      */
     var name: String?
 
+	val baseResourceKey: String
+
 	/**
 	 * The description of this [Vertice] instance that can be customized by the user.
 	 * Note that this description related to the instance, not the type. The description of the type is typically constant,

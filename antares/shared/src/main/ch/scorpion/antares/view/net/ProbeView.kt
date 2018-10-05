@@ -28,7 +28,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 class ProbeView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     probe: Probe = Probe()
-) : AbstractNumberViewComponent<Probe>(styleProvider, "library.element.Probe", probe, Direction.EAST), ControlViewSource<Probe> {
+) : AbstractNumberViewComponent<Probe>(styleProvider, probe, Direction.EAST), ControlViewSource<Probe> {
 
     companion object {
         const val PROP_ICON_PATH = "ch.scorpion.antares.view.net.ProbeView.iconPath"

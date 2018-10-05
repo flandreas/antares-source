@@ -46,7 +46,7 @@ class ROMView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     private val eventBus: EventBus = BaseModule.eventBus,
     model: ROM = ROM()
-) : DigitalComponentView<ROM>(styleProvider, "library.element.ROM", model) {
+) : DigitalComponentView<ROM>(styleProvider, model) {
 
     companion object {
 

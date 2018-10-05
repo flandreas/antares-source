@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.model.oscilloscope
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
@@ -23,7 +24,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class Oscilloscope(
         private val portFactory: PortFactory = GraphViewModule.portFactory
-) : AbstractVertice() {
+) : AbstractVertice("graph.component.oscilloscope") {
 
     companion object {
         private val LOG by logger(Oscilloscope::class)
@@ -80,7 +81,7 @@ class Oscilloscope(
         minDiffTime = Long.MAX_VALUE
         overallMinDelay  = Long.MAX_VALUE
 
-        getPorts().forEach { signalHistories.put(it.name!!, SignalHistoryImpl()) }
+        getPorts().forEach { signalHistories[it.name!!] = SignalHistoryImpl() }
         super.executionStarted(signalHandler)
     }
 
@@ -92,7 +93,7 @@ class Oscilloscope(
     /** ---- [Oscilloscope] */
 
     fun getSignalHistory(rowNumber: String): SignalHistory<Any>? {
-        return signalHistories.get(rowNumber)
+        return signalHistories[rowNumber]
     }
 
     /**
@@ -105,7 +106,7 @@ class Oscilloscope(
 
     private fun storeSignal(input: InputPort<*>, signalHandler: SignalHandler) {
         val signal = input.getIncomingSignal()!!
-        val history = signalHistories.get(input.name!!)!!
+        val history = signalHistories[input.name!!]!!
         LOG.debug("Oscilloscope ${input.name}: storing signal '$signal' at time ${signalHandler.executionTime}")
         history.add(SignalHistoryEntry(signal, signalHandler.executionTime))
         updateMaxTime(signalHandler.executionTime)

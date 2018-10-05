@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 /**
  * A read-only memory whose address width and data width can be specified.
  */
-class ROM : CalculatingVertice(CALCULATOR), Addressable {
+class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
 
     companion object {
 

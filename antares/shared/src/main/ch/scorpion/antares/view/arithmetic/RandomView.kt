@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 class RandomView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Random = Random()
-) : AbstractDigitalGateView<Random>(styleProvider, "", "library.element.Random", model) {
+) : AbstractDigitalGateView<Random>(styleProvider, "", model) {
 
 	companion object {
 		private const val DICE_SIZE = 18

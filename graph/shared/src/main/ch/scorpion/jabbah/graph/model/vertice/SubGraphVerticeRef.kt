@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.Script
@@ -25,7 +26,7 @@ class SubGraphVerticeRef(
     private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
     private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
     private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway
-) : CalculatingVertice(CALCULATOR), SubGraphVertice {
+) : CalculatingVertice("library.element.SubGraphVerticeRef", CALCULATOR), SubGraphVertice {
 
     companion object {
 
@@ -188,7 +189,7 @@ class SubGraphVerticeRef(
         graph = cloneGraph as Graph
 
         for (input in getSubGraphInputPorts()) {
-            input.graphInput = graph!!.getGraphInput<Any>(input.name!!)
+            input.graphInput = graph!!.getGraphInput(input.name!!)
             input.graphInput!!.subGraphInputPort = input
         }
         for (output in getSubGraphOutputPorts()) {

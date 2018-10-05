@@ -26,12 +26,12 @@ import ch.scorpion.jabbah.draw.graphics.Color
 class SplitterView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: Splitter = Splitter()
-) : DigitalComponentView<Splitter>(styleProvider, "library.element.Splitter", model) {
+) : DigitalComponentView<Splitter>(styleProvider, model) {
 
     companion object {
-        val WIDTH = 2 * Look.GRID
-        val PORT_INSET = Look.SCALE
-        val PORT_DISTANCE = 2 * Look.SCALE
+        const val WIDTH = 2 * Look.GRID
+        const val PORT_INSET = Look.SCALE
+        const val PORT_DISTANCE = 2 * Look.SCALE
     }
 
     var handedness: Handedness = Handedness.RIGHT

@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 class TestGraphPortView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: GraphPort<Boolean> = GraphInputImpl()
-) : AbstractVerticeView<GraphPort<Boolean>>(styleProvider, "test", model), GraphPortView<GraphPort<Boolean>> {
+) : AbstractVerticeView<GraphPort<Boolean>>(styleProvider, model), GraphPortView<GraphPort<Boolean>> {
 
 	companion object {
 

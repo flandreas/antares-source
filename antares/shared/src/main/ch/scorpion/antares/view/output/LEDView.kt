@@ -33,7 +33,7 @@ class LEDView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: LED = LED(),
     lightColor: LightColor = LEDView.DEFAULT_LIGHT_COLOR
-) : DigitalComponentView<LED>(styleProvider, "library.element.LED", model), ControlView<LED>, ControlViewSource<LED>{
+) : DigitalComponentView<LED>(styleProvider, model), ControlView<LED>, ControlViewSource<LED>{
 
     companion object {
         const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDView.iconPath"
