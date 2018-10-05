@@ -9,11 +9,10 @@ import ch.scorpion.jabbah.edit.select.EditSelectModule
  */
 object EditModelPolylineModule : AbstractModule() {
 
-    override fun initialize() {
-        EditSelectModule.selectionModelFactory.register(
-                SelectionDrawingStrategy.ABOVE,
-                PolylineComponent::class.simpleName!!,
-                { PolylineHandleSelectionModel(it as PolylineComponent) }
-        )
-    }
+	override fun initialize() {
+		EditSelectModule.selectionModelFactory.register(
+			SelectionDrawingStrategy.ABOVE,
+			PolylineComponent::class.simpleName!!
+		) { PolylineReplaceSelectionModel(it as PolylineComponent) }
+	}
 }
