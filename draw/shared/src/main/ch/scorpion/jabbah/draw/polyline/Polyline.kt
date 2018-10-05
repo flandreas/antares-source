@@ -59,16 +59,16 @@ interface Polyline {
     fun getPointAt(index: Int): Point2D
 
     /**
-     * Returns the first [Point].
-     * @throws IndexOutOfBoundsException if there is no [Point]
+     * Returns the first [Point2D].
+     * @throws IndexOutOfBoundsException if there is no [Point2D]
      */
     fun getFirstPoint(): Point2D {
         return getPointAt(0)
     }
 
     /**
-     * Returns the last [Point].
-     * @throws IndexOutOfBoundsException if there is no [Point]
+     * Returns the last [Point2D].
+     * @throws IndexOutOfBoundsException if there is no [Point2D]
      */
     fun getLastPoint(): Point2D {
         return getPointAt(pointsCount - 1)
@@ -114,12 +114,12 @@ interface Polyline {
     fun findSegment(x: Double, y: Double, area: Int): Int?
 
     /**
-     * Finds the index of the [Point] that contains the specified location while respecting the specified
+     * Finds the index of the [Point2D] that contains the specified location while respecting the specified
      * sensitive area.
      * @param x the x coordinate of the location.
      * @param y the y coordinate of the location.
      * @param area the sensitive area.
-     * @return the index of the found segment [Point], where 0 is the index of the first [Point].
+     * @return the index of the found segment [Point2D], where 0 is the index of the first [Point2D].
      */
     fun findPoint(x: Double, y: Double, area: Int): Int?
 
@@ -127,8 +127,8 @@ interface Polyline {
     fun getCenterOfSegment(index: Int): Point2D
 
     /**
-     * Compacts this [Polyline] by removing [Point]s that are at the same location as their predecessing
-     * [Point], unless the [Polyline] contains only two [Point]s.
+     * Compacts this [Polyline] by removing [Point2D]s that are at the same location as their preceding
+     * [Point2D], unless the [Polyline] contains only two [Point2D]s.
      * @return `true` if the [Polyline] has been changed while compacting
      */
     fun compact(): Boolean
@@ -146,10 +146,10 @@ interface Polyline {
     fun getSegmentLength(index: Int): Double
 
     /**
-     * Returns the [Point]s of this [Polyline] between a startIndex, inclusive, and an end index, exclusive.
+     * Returns the [Point2D]s of this [Polyline] between a startIndex, inclusive, and an end index, exclusive.
      * @param startIndex the index to start with
      * @param endIndex the end index, exclusive
-     * @return the [List] containing the requested [Point]s
+     * @return the [List] containing the requested [Point2D]s
      */
     fun getPoints(startIndex: Int, endIndex: Int): List<Point2D>
 

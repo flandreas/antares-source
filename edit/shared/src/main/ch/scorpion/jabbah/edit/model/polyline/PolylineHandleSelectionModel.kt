@@ -18,7 +18,9 @@ import ch.scorpion.jabbah.base.logger
  */
 class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelectionModel<PolylineComponent>(c) {
 
-    private val LOG by logger(PolylineHandleSelectionModel::class)
+	companion object {
+        private val LOG by logger(PolylineHandleSelectionModel::class)
+	}
 
     /** Handles input events on an individual [Handle].*/
     private val pointHandler = PolylinePointInputEventHandler()
@@ -37,7 +39,7 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
         if (requiredHandlesCount != calculateRequiredHandlesCount()) {
             createHandles()
         }
-        for (i in 0..component.pointsCount - 1) {
+        for (i in 0 until component.pointsCount) {
             getHandle(i).setLocation(component.getPointAt(i).x, component.getPointAt(i).y)
         }
     }
@@ -46,7 +48,7 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
 
     private fun createHandles() {
         clearHandles()
-        for (i in 0..component.pointsCount - 1) {
+        for (i in 0 until component.pointsCount) {
             addHandle(RectangularHandle(pointHandler))
         }
         requiredHandlesCount = component.pointsCount
@@ -58,17 +60,27 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
      */
     private inner class PolylineEventHandler : EventHandler() {
         private var oldLocation = Point2D.ZERO
+	    private var oldPointsCount: Int = 0
 
         override fun dragHandleBegin(view: View<*>) {
             val index = getIndexOf(focusHandle!!)
             oldLocation = Point2D(component.getPointAt(index))
+	        oldPointsCount = component.pointsCount
         }
 
         override fun dragHandleEnd(editor: Editor) {
             val index = getIndexOf(focusHandle!!)
             val newLocation = component.getPointAt(index)
-            editor.commandManager.register(
-                MovePolylinePointCommand(component, editor, index, oldLocation, newLocation))
+
+	        component.compact()
+
+	        val command = if (component.pointsCount != oldPointsCount) {
+		        JoinPolylinePointsCommand(component, index, oldLocation)
+	        } else {
+		        MovePolylinePointCommand(component, editor, index, oldLocation, newLocation)
+	        }
+
+	        editor.commandManager.register(command)
         }
 
         /** Adds an additional [Point2D] by double-clicking.*/
@@ -85,9 +97,7 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
         }
     }
 
-    /**
-     * Handles input event on an individual [Handle].
-     */
+    /** Handles input event on an individual [Handle].*/
     private inner class PolylinePointInputEventHandler : InputEventHandlerAdapter<EditInputEventContext>() {
 
         override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
@@ -98,11 +108,6 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
         override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
             component.setPointAt(getIndexOf((this@PolylineHandleSelectionModel.inputEventHandler as PolylineEventHandler).focusHandle!!), context.x, context.y)
             return this
-        }
-
-        override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-            component.compact()
-            return null
         }
     }
 }

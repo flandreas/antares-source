@@ -1,31 +1,28 @@
 package ch.scorpion.jabbah.draw.polyline
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.draw.style.*
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
 
 /**
  * A standard [Drawable] implementation of a [Polyline].
  */
 class PolylineDrawable constructor(
-        val shape: PolylineShape,
-        styleType: StyleType,
-        styleProvider: StyleProvider
+    val shape: PolylineShape = DrawModule.polylineShapeFactory.invoke(null),
+    styleType: StyleType = StyleType.FIGURE,
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ): AbstractStyledDrawable(styleType, styleProvider), Polyline, Locatable, Transparent {
-
-    constructor(): this(DrawModule.polylineShapeFactory.invoke(null), StyleType.FIGURE, DrawStyleModule.styleProvider)
-
-    val LOG by logger(PolylineDrawable::class)
 
 	/** ---- [Any] */
 
@@ -189,7 +186,13 @@ class PolylineDrawable constructor(
     }
 
     override fun compact(): Boolean {
-        return shape.compact()
+	    invalidate()
+        if (shape.compact()) {
+	        invalidate()
+	        update()
+	        return true
+        }
+	    return false
     }
 
     override fun getLength(): Double {
