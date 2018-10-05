@@ -636,10 +636,7 @@ open class EdgeViewImpl<T: Any>(
     }
 
     override fun accept(visitor: HierarchyVisitor): Boolean {
-        if (visitor.visitEnter(this)) {
-            destination?.accept(visitor)
-        }
-        return visitor.visitLeave(this)
+	    return visitor.visit(this)
     }
 
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {

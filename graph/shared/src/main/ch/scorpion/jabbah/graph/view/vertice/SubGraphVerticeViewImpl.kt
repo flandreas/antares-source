@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
+import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.collection.ConcatIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
@@ -153,7 +154,7 @@ class SubGraphVerticeViewImpl(
         return _boundingBox
     }
 
-    override fun contains(x: Double, y: Double): Boolean {
+	override fun contains(x: Double, y: Double): Boolean {
         return rotate(containsBox).contains(x, y)
     }
 

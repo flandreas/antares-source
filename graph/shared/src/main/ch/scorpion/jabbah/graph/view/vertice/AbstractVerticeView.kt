@@ -226,18 +226,6 @@ abstract class AbstractVerticeView<T : Vertice>(
             return bbox
         }
 
-    override fun accept(visitor: HierarchyVisitor): Boolean {
-        if (visitor.visitEnter(this)) {
-            val iterator = portViews.iterator()
-            while (iterator.hasNext()) {
-                if (!iterator.next().accept(visitor)) {
-                    break
-                }
-            }
-        }
-        return visitor.visitLeave(this)
-    }
-
     override fun getTooltip(x: Double, y: Double): Tooltip? {
         val portView = getPortViewAt(x, y)
         if (portView != null) {
