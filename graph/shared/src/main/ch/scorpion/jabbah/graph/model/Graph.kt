@@ -65,6 +65,12 @@ interface Graph : Storable {
 
     fun accept(visitor: HierarchyVisitor): Boolean
 
+	/**
+	 * Initializes the property [uuid] of this [Graph] by creating a new one.
+	 * This is only needed when creating a copy or clone of this [Graph] that needs to receive its own identity.
+	 */
+	fun initializeUUID()
+
     /**
      * Adds the specified [GraphElement] to this [Graph].
      * Posts a [GrapElementAddedEvent] on this [Graph]'s [EventBus].

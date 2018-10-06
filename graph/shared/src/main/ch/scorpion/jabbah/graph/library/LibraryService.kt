@@ -233,6 +233,7 @@ class LibraryServiceImpl(
 	override fun duplicateContainerLibraryElement(directory: LibraryDirectory, element: ContainerLibraryElement, newName: String): ContainerLibraryElement {
 		LOG.debug("LibraryServiceImpl: Duplicate ContainerLibraryElement")
 		val duplicate = storableCloner.clone(element.metaGraph!!) as MetaGraph
+		duplicate.graph.model!!.initializeUUID()
 		duplicate.graph.model!!.name = newName
 		return addContainerLibraryElement(directory.library!!, duplicate, directory)
 	}
