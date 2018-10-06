@@ -11,19 +11,16 @@ import javax.swing.UIManager
  * An [Icon] that renders a [Color] as a small rectangle.
  */
 class ColorIcon(
-    var backgroundColor: Color,
-    var foregroundColor: Color,
-    private val width: Int,
-    private val height: Int
+    var backgroundColor: Color = DEF_BACKGROUND_COLOR,
+    var foregroundColor: Color = DEF_FOREGROUND_COLOR,
+    private val width: Int = DEF_SIZE,
+    private val height: Int = DEF_SIZE
 ) : Icon {
-
-    constructor(backgroundColor: Color): this(backgroundColor, DEF_FOREGROUND_COLOR, DEF_SIZE, DEF_SIZE)
-    constructor(): this(DEF_BACKGROUND_COLOR)
 
     companion object {
         private val DEF_BACKGROUND_COLOR = Color.GRAY
         private val DEF_FOREGROUND_COLOR = UIManager.getColor("controlDkShadow")
-        private val DEF_SIZE = 10
+        private const val DEF_SIZE = 10
     }
 
     /** ---- [Icon] interface */

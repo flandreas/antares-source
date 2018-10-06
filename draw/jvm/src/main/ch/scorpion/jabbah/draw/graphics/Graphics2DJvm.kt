@@ -64,6 +64,16 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
             return java.awt.Font(font.family.javaName, fromFontStyle(font), font.size)
         }
 
+	    fun toAwtStroke(stroke: Stroke): java.awt.Stroke {
+		    return BasicStroke(
+			    stroke.width,
+			    fromLineCap(stroke.cap),
+			    fromLineJoin(stroke.join),
+			    stroke.miterLimit,
+			    stroke.dash,
+			    stroke.dashPhase ?: 0f)
+	    }
+
         fun measureHtmlText(text: String, font: java.awt.Font, width: Int): TextRenderInfo {
             setupTextPainter(text, font, java.awt.Color.BLACK, 0, 0, width, 1000)
             val prefSize1 = TEXT_PAINTER.preferredSize
@@ -91,6 +101,21 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
             TEXT_PAINTER.doLayout()
         }
 
+	    private fun fromLineCap(cap: LineCap): Int {
+		    return when (cap) {
+			    LineCap.BUTT -> BasicStroke.CAP_BUTT
+			    LineCap.ROUND -> BasicStroke.CAP_ROUND
+			    LineCap.SQUARE -> BasicStroke.CAP_SQUARE
+		    }
+	    }
+
+	    private fun fromLineJoin(join: LineJoin): Int {
+		    return when (join) {
+			    LineJoin.MITER -> BasicStroke.JOIN_MITER
+			    LineJoin.ROUND -> BasicStroke.JOIN_ROUND
+			    LineJoin.BEVEL -> BasicStroke.JOIN_BEVEL
+		    }
+	    }
     }
 
     init {
@@ -161,14 +186,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
             )
         }
         set(value) {
-            g.stroke = BasicStroke(
-                    value.width,
-                    fromLineCap(value.cap),
-                    fromLineJoin(value.join),
-                    value.miterLimit,
-                    value.dash,
-                    value.dashPhase ?: 0f
-            )
+	        g.stroke = toAwtStroke(value)
         }
 
     override fun scale(sx: Double, sy: Double) = g.scale(sx, sy)
@@ -304,28 +322,12 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         }
     }
 
-    private fun fromLineCap(cap: LineCap): Int {
-        return when (cap) {
-            LineCap.BUTT -> BasicStroke.CAP_BUTT
-            LineCap.ROUND -> BasicStroke.CAP_ROUND
-            LineCap.SQUARE -> BasicStroke.CAP_SQUARE
-        }
-    }
-
     private fun toLineJoin(join: Int): LineJoin {
         return when(join) {
             BasicStroke.JOIN_MITER -> LineJoin.MITER
             BasicStroke.JOIN_ROUND -> LineJoin.ROUND
             BasicStroke.JOIN_BEVEL -> LineJoin.BEVEL
             else -> throw IllegalArgumentException("unknown join $join")
-        }
-    }
-
-    private fun fromLineJoin(join: LineJoin): Int {
-        return when (join) {
-            LineJoin.MITER -> BasicStroke.JOIN_MITER
-            LineJoin.ROUND -> BasicStroke.JOIN_ROUND
-            LineJoin.BEVEL -> BasicStroke.JOIN_BEVEL
         }
     }
 

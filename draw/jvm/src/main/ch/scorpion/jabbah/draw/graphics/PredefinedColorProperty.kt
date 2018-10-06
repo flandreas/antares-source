@@ -15,7 +15,6 @@ import java.awt.Component
 import javax.swing.*
 import javax.swing.table.TableCellRenderer
 
-// TODO Remove when Swing is not used any more
 class PredefinedColorRenderer : DefaultListCellRenderer(), TableCellRenderer {
 
     private val colorIcon = ColorIcon()
@@ -62,7 +61,6 @@ class PredefinedColorRenderer : DefaultListCellRenderer(), TableCellRenderer {
     }
 }
 
-// TODO Remove when Swing is not used any more
 class PredefinedColorEditor(colorProvider: PredefinedColorProvider) : ComboBoxPropertyEditor() {
     init {
         val list = mutableListOf<PredefinedColor?>(null)

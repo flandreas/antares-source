@@ -41,7 +41,7 @@ interface Stylable {
     /** Contains the optional custom [PredefinedColor] that overwrites the color of the [Style].*/
     var customColor: PredefinedColor?
 
-    var customStroke: Stroke?
+    var customStroke: PredefinedStroke?
 
     var customFont: Font?
 }
@@ -57,14 +57,14 @@ interface Stylable {
  * TODO Refactoring: Can the invalidator pattern be implemented using delegated properties?
  */
 class StylableImpl(
-        override var invalidator: (() -> Unit)? = null,
-        styleType: StyleType,
-        override var styleProvider: StyleProvider,
-        filled: Boolean = true,
-        stroked: Boolean = true,
-        customColor: PredefinedColor? = null,
-        customStroke: Stroke? = null,
-        customFont: Font? = null
+    override var invalidator: (() -> Unit)? = null,
+    styleType: StyleType,
+    override var styleProvider: StyleProvider,
+    filled: Boolean = true,
+    stroked: Boolean = true,
+    customColor: PredefinedColor? = null,
+    customStroke: PredefinedStroke? = null,
+    customFont: Font? = null
 ) : Stylable {
 
     override var styleType: StyleType = styleType
@@ -106,13 +106,14 @@ class StylableImpl(
             }
         }
 
-    override var customStroke: Stroke? = customStroke
+	private var customStrokeIdentity: PredefinedStrokeIdentity? = customStroke?.identity
+    override var customStroke: PredefinedStroke? get() = if (customStrokeIdentity != null) PredefinedStrokeRepository.withIdentity(customStrokeIdentity!!) else null
         set(value) {
-            if (field != value) {
-                invalidator?.invoke()
-                field = value
-                invalidator?.invoke()
-            }
+	        if (customStrokeIdentity != value?.identity) {
+		        invalidator?.invoke()
+				customStrokeIdentity = value?.identity
+		        invalidator?.invoke()
+	        }
         }
 
     override var customFont: Font? = customFont
@@ -166,7 +167,7 @@ class StylableImpl(
     override val stroke: Stroke
         get() {
             if (customStroke != null) {
-                return customStroke!!
+                return customStroke!!.stroke
             }
             return style.stroke
         }

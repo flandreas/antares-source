@@ -82,6 +82,9 @@ abstract class AbstractComponent(
         if (customColor != null) {
             writer.writeString("color", customColor!!.name)
         }
+	    if (customStroke != null) {
+		    writer.writeString("stroke", customStroke!!.identity.id)
+	    }
         if (rotatable) {
             writer.writeString("rot", rotation.customName)
         }
@@ -106,6 +109,9 @@ abstract class AbstractComponent(
         if (reader.hasAttribute("color")) {
             customColor = styleProvider.predefinedColorProvider.withIdName(reader.readString("color"))
         }
+	    if (reader.hasAttribute("stroke")) {
+		    customStroke = styleProvider.predefinedStrokeProvider.withId(reader.readString("stroke"))
+	    }
         if (reader.hasAttribute("filled")) {
             filled = reader.readBoolean("filled")
         }

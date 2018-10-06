@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.draw.graphics.PredefinedColorProvider
 import ch.scorpion.jabbah.draw.graphics.PredefinedColorRepository
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.graphics.PredefinedStrokeProvider
+import ch.scorpion.jabbah.draw.graphics.PredefinedStrokeRepository
 
 /**
  * Provides the registered [Style] of a [StyleType].
@@ -13,6 +15,8 @@ import ch.scorpion.jabbah.base.logger
 interface StyleProvider {
 
     val predefinedColorProvider: PredefinedColorProvider
+
+	val predefinedStrokeProvider: PredefinedStrokeProvider
 
     /**
      * Provides the [Style] with the specified [StyleType].
@@ -39,7 +43,8 @@ interface StyleProvider {
  * An implementation of the [StyleProvider] interface that allows to register [Style]s.
  */
 class StyleRepository(
-        override val predefinedColorProvider: PredefinedColorProvider = PredefinedColorRepository
+	override val predefinedColorProvider: PredefinedColorProvider = PredefinedColorRepository,
+	override val predefinedStrokeProvider: PredefinedStrokeProvider = PredefinedStrokeRepository
 ) : StyleProvider {
 
     companion object {

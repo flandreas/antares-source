@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.model.rectangle
 import com.l2fprod.common.propertysheet.Property
 import java.beans.BeanInfo
 import ch.scorpion.jabbah.draw.graphics.PredefinedColor
+import ch.scorpion.jabbah.draw.graphics.PredefinedStroke
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.Editor
@@ -18,6 +19,7 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : AbstractB
         private val stroked = PropertyImpl("edit.property.stroked", Boolean::class.java)
         private val styleType = PropertyImpl("draw.styleType", StyleType::class.java)
         private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
+	    private val stroke = PropertyImpl("edit.property.stroke", PredefinedStroke::class.java)
         private val text = PropertyImpl("edit.property.text", String::class.java)
         private val alignment = PropertyImpl("edit.property.verticalAlignment", VerticalAlignment::class.java)
     }
@@ -29,6 +31,7 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : AbstractB
         stroked.bind(editor, { bean.stroked }, { bean.stroked = it!! })
         styleType.bind(editor, { bean.styleType }, { bean.styleType = it!! })
         color.bind(editor, { bean.customColor}, { bean.customColor = it })
+	    stroke.bind(editor, { bean.customStroke}, { bean.customStroke = it } )
         text.bind(editor, { bean.text }, { bean.text = it!!} )
         alignment.bind(editor, { bean.alignment }, { bean.alignment = it!! })
 
@@ -36,16 +39,17 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : AbstractB
         properties.add(stroked)
         properties.add(styleType)
         properties.add(color)
+	    properties.add(stroke)
         properties.add(text)
         properties.add(alignment)
     }
 }
 
 @Suppress("unused")
-class RectangleComponentBeanInfo() : RectangularComponentBeanInfo<RectangleComponent>()
+class RectangleComponentBeanInfo : RectangularComponentBeanInfo<RectangleComponent>()
 
 @Suppress("unused")
-class EllipseComponentBeanInfo() : RectangularComponentBeanInfo<EllipseComponent>()
+class EllipseComponentBeanInfo : RectangularComponentBeanInfo<EllipseComponent>()
 
 @Suppress("unused")
-class RoundRectangleComponentBeanInfo() : RectangularComponentBeanInfo<RoundRectangleComponent>()
+class RoundRectangleComponentBeanInfo : RectangularComponentBeanInfo<RoundRectangleComponent>()

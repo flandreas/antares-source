@@ -54,12 +54,13 @@ object EditModuleJvm : AbstractModule() {
         configurePropertyEditors(propertyEditorRegistry)
 
 	    registerPropertyEditorsFx(propertyEditorRegistryFx)
-	    registerSelectionModels();
+	    registerSelectionModels()
     }
 
     private fun configurePropertyRenderer(registry: PropertyRendererRegistry) {
         registry.registerRenderer(Direction::class.java, EnumRenderer::class.java)
         registry.registerRenderer(PredefinedColor::class.java, PredefinedColorRenderer::class.java)
+	    registry.registerRenderer(PredefinedStroke::class.java, PredefinedStrokeRenderer::class.java)
         registry.registerRenderer(Size::class.java, EnumRenderer::class.java)
         registry.registerRenderer(StyleType::class.java, StyleTypeRenderer::class.java)
         registry.registerRenderer(VerticalAlignment::class.java, EnumRenderer::class.java)
@@ -71,8 +72,9 @@ object EditModuleJvm : AbstractModule() {
         registry.registerEditor(Size::class.java, SizeEditor::class.java)
         registry.registerEditor(StyleType::class.java, StyleTypeEditor::class.java)
         registry.registerEditor(VerticalAlignment::class.java, VerticalAlignmentEditor::class.java)
-        registry.register(PredefinedColor::class.java, { PredefinedColorEditor(PredefinedColorRepository) })
-        registry.register(TextProperty::class.java, TextPropertyEditorFactory())
+        registry.register(PredefinedColor::class.java) { PredefinedColorEditor(PredefinedColorRepository) }
+	    registry.register(PredefinedStroke::class.java) { PredefinedStrokeEditor(PredefinedStrokeRepository) }
+	    registry.register(TextProperty::class.java, TextPropertyEditorFactory())
     }
 
 	private fun registerPropertyEditorsFx(registry: PropertyEditorRegistryFx) {
