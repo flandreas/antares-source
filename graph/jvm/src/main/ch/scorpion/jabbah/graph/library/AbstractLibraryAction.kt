@@ -19,16 +19,16 @@ abstract class AbstractLibraryAction(
 
 	protected val selectedItem: LibraryItem? get() = libraryTreeView?.getSelectedItem()
 
-	protected val folderOfSelectedItem: LibraryItem? get() =
-		(libraryTreeView!!.selectionPath.parentPath.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryItem?
+	protected val folderOfSelectedItem: LibraryDirectory? get() =
+		(libraryTreeView!!.selectionPath.parentPath.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryDirectory?
 
 	init {
 		enabled = false
-		eventBus.register(LibrarySelectionChangedEvent::class, {
+		eventBus.register(LibrarySelectionChangedEvent::class) {
 			libraryTreeView = it.libraryTreeView
 			updateEnabledness()
 			handleSelectionChanged()
-		})
+		}
 	}
 
 	protected fun updateEnabledness() {
@@ -61,5 +61,6 @@ abstract class AbstractContainerLibraryElementAction(
 	actionBaseName: String,
 	eventBus: EventBus
 ) : AbstractLibraryAction(actionBaseName, eventBus) {
+
 	override fun calculateEnabledness(): Boolean = selectedItem is ContainerLibraryElement
 }

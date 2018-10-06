@@ -102,6 +102,7 @@ class LibraryTreeView(
 
         containerPopupMenu.add(ActionWrapperSwing(DeleteContainerLibraryElementAction()))
 	    containerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(DefaultContainerLibraryElementAction())))
+	    containerPopupMenu.add(ActionWrapperSwing(DuplicateGraphAction()))
 
 	    expandRow(0)
     }

@@ -83,6 +83,8 @@ interface LibraryService {
 	 * @throws IllegalArgumentException if none is found
 	 */
 	fun getDirectoryOf(library: Library, item: LibraryItem): LibraryDirectory
+
+	fun duplicateContainerLibraryElement(directory: LibraryDirectory, element: ContainerLibraryElement, newName: String): ContainerLibraryElement
 }
 
 /** Posted on [EventBus] when a [LibraryItem] has been added to a [LibraryDirectory].*/
@@ -226,6 +228,13 @@ class LibraryServiceImpl(
 		}
 		LOG.debug("LibraryServiceImpl: could't find owning LibraryDirectory of LibraryItem")
 		throw IllegalStateException()
+	}
+
+	override fun duplicateContainerLibraryElement(directory: LibraryDirectory, element: ContainerLibraryElement, newName: String): ContainerLibraryElement {
+		LOG.debug("LibraryServiceImpl: Duplicate ContainerLibraryElement")
+		val duplicate = storableCloner.clone(element.metaGraph!!) as MetaGraph
+		duplicate.graph.model!!.name = newName
+		return addContainerLibraryElement(directory.library!!, duplicate, directory)
 	}
 
 	/** ---- [LibraryServiceImpl] */

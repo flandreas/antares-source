@@ -10,6 +10,8 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.Project
+import ch.scorpion.jabbah.io.IOModule
+import ch.scorpion.jabbah.io.StorableCloner
 
 /**
  * A service for managing the repository, which is the combination of the [Project] and the [Library].
@@ -44,8 +46,6 @@ class RepositoryServiceImpl(
 	override fun move(elem: ContainerLibraryElement, destination: LibraryDirectory) {
 		val origService = getOwningLibraryService(elem)
 		val destService = getOwningLibraryService(destination)
-
-		// TODO Use Command to make undoable
 
 		LOG.debug("RepositoryServiceImpl: moving '${elem.name}' in '${origService.currentLibrary?.name}' "
 			+ "to '${destination.name}' in '${destService.currentLibrary?.name}'")
