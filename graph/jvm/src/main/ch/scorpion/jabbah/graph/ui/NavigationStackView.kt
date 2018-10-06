@@ -41,6 +41,8 @@ class NavigationStackView(
 
         const val PROP_HEAD_FONT = "graph.ui.NavigationStackView.headFont"
 
+	    const val PROP_PANEL_BACKGROUND_COLOR = "graph.ui.NavigationStackView.panelBackgroundColor"
+
         const val PROP_BACKGROUND_COLOR = "graph.ui.NavigationStackView.backgroundColor"
 
         const val PROP_HOVER_BACKGROUND_COLOR = "graph.ui.NavigationStackView.hoverBackgroundColor"
@@ -60,7 +62,7 @@ class NavigationStackView(
         const val PROP_HEAD_TEXT_COLOR = "graph.ui.NavigationStackView.headTextColor"
 
         /** The fix height of this view.  */
-        private const val HEIGHT = 26
+        private const val HEIGHT = 22
 
         private const val INSETS = 5
 
@@ -88,6 +90,7 @@ class NavigationStackView(
 	        }
         }
 
+	    background = Graphics2DJvm.toAwtColor(DrawModule.properties.getColor(PROP_PANEL_BACKGROUND_COLOR))
 	    border = BorderFactory.createEmptyBorder(INSETS, INSETS, INSETS, INSETS)
         update()
     }
@@ -137,7 +140,7 @@ class NavigationStackView(
 		}
 
 		// Calculate locations of Elements
-		var x = 0.0
+		var x = INSETS.toDouble()
 		for (element in elements) {
 			element.location = Point2D(x, INSETS.toDouble())
 			x += element.path.boundingBox.width - HEIGHT / 2.0 + ELEMENT_DISTANCE

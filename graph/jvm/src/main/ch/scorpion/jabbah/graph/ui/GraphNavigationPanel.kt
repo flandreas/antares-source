@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ViewManager
@@ -328,6 +329,7 @@ open class GraphNavigationPanel(
             headerPanel.add(Box.createHorizontalGlue())
             headerPanel.add(closeButton)
         }
+	    headerPanel.background =  Graphics2DJvm.toAwtColor(DrawModule.properties.getColor(NavigationStackView.PROP_PANEL_BACKGROUND_COLOR))
 
         mainPanel.add(headerPanel, BorderLayout.NORTH)
 
