@@ -337,8 +337,12 @@ class SwitchView(
             model!!.toggle(context.signalHandler)
 	        context.mouseEvent?.consume()
 	        requestFocus()
-	        return null
+	        return this
         }
+
+	    override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler? {
+		    return this
+	    }
 
         override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
             if (!toggle) {
