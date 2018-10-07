@@ -9,8 +9,10 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.editor.EditorImpl
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
 import ch.scorpion.jabbah.graph.view.editor.GraphPortViewEvent
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 /**
  * An [Editor] for editing the outside view of a [SubGraphVerticeView] as a [ContainerDrawing].
@@ -24,20 +26,20 @@ open class ContainerEditor(
         view.defaultZoomStrategy = ZoomStrategy(ZoomStrategyType.VALUE, 2.0)
         view.drawing = ContainerDrawing()
 
-        eventBus.register(GraphPortViewEvent::class, {
-            if (it.type == GraphPortViewEvent.Type.REMOVE) {
-                removePortViewComponent(it.graphPortView.model!!.name!!)
-            }
-        })
+        eventBus.register(GraphPortViewEvent::class) {
+	        if (it.type == GraphPortViewEvent.Type.REMOVE) {
+		        removePortViewComponent(it.graphPortView.model!!.name!!)
+	        }
+        }
 
-        eventBus.register(GraphPortNameChanged::class, {
-            if (StringUtils.isNotEmpty(it.oldName)) {
-                val pvc = getContainerDrawing().getPortViewComponent(it.oldName!!)
-                if (pvc != null) {
-                    pvc.portView!!.setPortName(it.newName!!)
-                }
-            }
-        })
+	    eventBus.register(GraphPortNameChanged::class) {
+		    if (StringUtils.isNotEmpty(it.oldName)) {
+			    val pvc = getContainerDrawing().getPortViewComponent(it.oldName!!)
+			    if (pvc != null) {
+				    pvc.portView!!.setPortName(it.newName!!)
+			    }
+		    }
+	    }
     }
 
     protected fun getContainerDrawing(): ContainerDrawing {

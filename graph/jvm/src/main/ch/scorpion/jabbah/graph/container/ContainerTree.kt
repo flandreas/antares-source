@@ -100,7 +100,7 @@ class ContainerTree(
 		if (value is AbstractContainerTreeItem) {
 			InvocationHandler.invoke {
 				when (value.type) {
-					ContainerTreeItemType.SubGraphs -> model.addSubGraphVerticeNodes(value as SubgraphsFolderItem, receiver)
+					ContainerTreeItemType.SubGraphs -> model.addSubGraphVerticeNodes(value as SubGraphsFolderItem, receiver)
 					ContainerTreeItemType.Controls -> model.addControlNodes(value as ControlsFolderTreeItem, receiver)
 					else ->	receiver.addChildren(listOf())
 				}

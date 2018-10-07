@@ -20,8 +20,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.TestPortFactory
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
-import org.hamcrest.CoreMatchers.notNullValue
-import org.hamcrest.CoreMatchers.nullValue
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -136,6 +135,17 @@ class ContainerTreeTest {
 	}
 
 	@Test
+	fun shouldAddPortViewToTree() {
+		val setup = Setup().build().addGraphInputPortViewToGraphView().expandAll()
+		val portView = setup.graphView.getGraphPortView("I1")!!
+
+		// The following event is normally posted by GraphEditor
+		BaseModule.eventBus.post(GraphPortViewEvent(GraphPortViewEvent.Type.ADD, portView as GraphPortView<*>))
+
+		assertPortView(setup.containerTree, notNullValue())
+	}
+
+	@Test
 	fun shouldRemoveAddedPortViewFromTree() {
 		val setup = Setup()
 			.build()
@@ -209,6 +219,18 @@ class ContainerTreeTest {
 		setup.removeControlFromContainer()
 
 		assertControlView(setup.containerTree, notNullValue())
+	}
+
+	@Test
+	fun shouldChangePortName() {
+		val setup = Setup().build().addGraphInputPortViewToGraphView().expandAll()
+		val portView = setup.graphView.getGraphPortView("I1")!!
+		// The following event is normally posted by GraphEditor
+		BaseModule.eventBus.post(GraphPortViewEvent(GraphPortViewEvent.Type.ADD, portView as GraphPortView<*>))
+
+		portView.model!!.name = "newName"
+
+		assertPortViewName(setup.containerTree, "newName")
 	}
 
 	/**
@@ -312,6 +334,10 @@ class ContainerTreeTest {
 
 	private fun assertPortView(containerTree: ContainerTree, matcher: Matcher<in TreeNode?>) {
 		assertContainerTreeItem(containerTree, matcher, ContainerTreeItemType.Port)
+	}
+
+	private fun assertPortViewName(containerTree: ContainerTree, name: String) {
+		assertThat((findDraggableTreeItemOfType(containerTree, ContainerTreeItemType.Port)!!.userObject as ContainerTreePortItem).portName, `is`(name))
 	}
 
 	private fun assertContainerTreeItem(containerTree: ContainerTree, matcher: Matcher<in TreeNode?>, type: ContainerTreeItemType) {

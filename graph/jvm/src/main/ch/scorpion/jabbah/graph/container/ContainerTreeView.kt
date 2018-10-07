@@ -61,7 +61,7 @@ open class ContainerTreeView(
 
 		    if (value is DefaultMutableTreeNode && value.userObject is AbstractContainerTreeItem) {
 			    val userObject = value.userObject as AbstractContainerTreeItem
-			    label.text = userObject.description
+			    label.text = userObject.getDescription()
 			    label.icon = when (userObject.type) {
 				    ContainerTreeItemType.Port -> getIcon((value.userObject as DraggableTreeItem).iconPath)
 				    ContainerTreeItemType.Control -> getIcon((value.userObject as DraggableTreeItem).iconPath)
