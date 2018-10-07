@@ -24,8 +24,11 @@ open class RectangularReplaceSelectionModel(
 		/** Draws only the shape of the [Component] in selection color.*/
 		SHAPE {
 			override fun draw(component: AbstractRectangularComponent, context: DrawContext) {
+				val oldStroke = context.g.stroke
 				context.g.color = Themes.get<EditTheme>().selection.foregroundColor
+				context.g.stroke = component.stroke
 				context.g.draw(component.shape)
+				context.g.stroke = oldStroke
 			}
 		},
 
