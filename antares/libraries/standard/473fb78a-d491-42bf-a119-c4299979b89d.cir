@@ -378,16 +378,89 @@
   <container>
     <containerDrawing _id='109'>
       <components>
-        <containerBox _id='111' id='1' style='figure' x='140.0' y='140.0' w='70.0' h='140.0'/>
-        <originIndicator _id='110'>
+        <containerBox _id='135' id='1' style='figure' x='140.0' y='161.0' w='70.0' h='175.0'/>
+        <originIndicator _id='134'>
           <location>
-            <point x='140.0' y='140.0'/>
+            <point x='126.0' y='175.0'/>
           </location>
         </originIndicator>
+        <digitalPortViewComp _id='132' id='2' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='133' x='140.0' y='322.0' dir='west' textPos='internal' portId='137'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='130' id='3' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='131' x='140.0' y='301.0' dir='west' textPos='internal' portId='138'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='128' id='4' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='129' x='140.0' y='280.0' dir='west' textPos='internal' portId='139'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='126' id='5' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='127' x='140.0' y='259.0' dir='west' textPos='internal' portId='140'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='124' id='6' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='125' x='140.0' y='238.0' dir='west' textPos='internal' portId='141'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='122' id='7' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='123' x='140.0' y='217.0' dir='west' textPos='internal' portId='142'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='120' id='8' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='121' x='140.0' y='196.0' dir='west' textPos='internal' portId='143'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='118' id='9' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='119' x='140.0' y='175.0' dir='west' textPos='internal' portId='144'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='116' id='10' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='117' x='210.0' y='273.0' dir='east' textPos='internal' portId='145'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='114' id='11' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='115' x='210.0' y='252.0' dir='east' textPos='internal' portId='146'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='112' id='12' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='113' x='210.0' y='231.0' dir='east' textPos='internal' portId='147'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='110' id='13' style='figure' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='111' x='210.0' y='175.0' dir='east' textPos='internal' portId='148'/>
+          </portView>
+        </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='112' id='0' delay='0' name='8-3 Priority Encoder' uuid='473fb78a-d491-42bf-a119-c4299979b89d'>
-          <ports/>
+        <subGraphVertice _id='136' id='0' delay='0' name='8-3 Priority Encoder' uuid='473fb78a-d491-42bf-a119-c4299979b89d'>
+          <ports>
+            <subCircuitPort _id='137' portId='1' name='I0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='138' portId='2' name='I1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='139' portId='3' name='I2' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='140' portId='4' name='I3' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='141' portId='5' name='I4' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='142' portId='6' name='I5' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='143' portId='7' name='I6' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='144' portId='8' name='I7' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='145' portId='9' name='O0' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='146' portId='10' name='O1' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='147' portId='11' name='O2' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='148' portId='12' name='V' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+          </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>
