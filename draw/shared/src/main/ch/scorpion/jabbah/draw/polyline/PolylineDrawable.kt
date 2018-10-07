@@ -210,4 +210,12 @@ class PolylineDrawable constructor(
     override fun isSegmentOrthogonal(index: Int): Boolean {
         return shape.isSegmentOrthogonal(index)
     }
+
+	override fun mirrorHorizontally(x: Double) {
+		shape.mirrorHorizontally(x)
+	}
+
+	override fun mirrorVertically(y: Double) {
+		shape.mirrorVertically(y)
+	}
 }

@@ -51,6 +51,14 @@ class PolylineComponent(
     override val canMirror: Boolean
         get() = true
 
+	override fun mirrorHorizontally(x: Double) {
+		polyline.mirrorHorizontally(x)
+	}
+
+	override fun mirrorVertically(y: Double) {
+		polyline.mirrorVertically(y)
+	}
+
     override fun contains(x: Double, y: Double): Boolean {
         return polyline.contains(x, y)
     }
