@@ -89,7 +89,9 @@ class LibraryTreeViewTransferHandler(
 
 	private fun getDropLibraryDirectory(support: TransferHandler.TransferSupport): LibraryDirectory? {
 		val dropLocation = support.dropLocation as JTree.DropLocation
-		return (dropLocation.path.lastPathComponent as DefaultMutableTreeNode).userObject as? LibraryDirectory
+		return dropLocation.path?.let {
+			(it.lastPathComponent as DefaultMutableTreeNode).userObject as? LibraryDirectory
+		}
 	}
 
 	private fun extractTransferElement(support: TransferHandler.TransferSupport): LibraryElement {
