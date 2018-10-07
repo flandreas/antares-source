@@ -43,54 +43,57 @@
         <containerLibraryElement _id='24' name='4-16 Decoder' uuid='ff6a54e3-7b67-4800-936a-1b213e851790'/>
         <containerLibraryElement _id='25' name='BCD-7Seg Dec' uuid='d95b72af-a5b6-4c1c-9b43-a4a2f3330589'/>
         <containerLibraryElement _id='26' name='BCD-7Seg Hex' uuid='9eab72cb-2347-4bb1-9c22-40911beba7d4'/>
+        <containerLibraryElement _id='27' name='4-2 Priority Encoder' uuid='5f7f0e18-de3f-4776-ab82-a74f6fda8c75'/>
+        <containerLibraryElement _id='28' name='8-3 Priority Encoder' uuid='473fb78a-d491-42bf-a119-c4299979b89d'/>
       </items>
     </libraryFolder>
-    <libraryFolder _id='27' name='Flipflops'>
+    <libraryFolder _id='29' name='Flipflops'>
       <items>
-        <containerLibraryElement _id='28' name='D-Flipflop' uuid='d6ab312a-a94b-403a-9291-642295ff29c5'/>
-        <containerLibraryElement _id='29' name='SR Latch' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87'/>
-        <containerLibraryElement _id='30' name='SR-Flipflop' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'/>
-        <containerLibraryElement _id='31' name='JK-Flipflop (Neg)' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'/>
-        <containerLibraryElement _id='32' name='JK-Flipflop' uuid='204aeecf-cdca-4678-8c36-f8a834922966'/>
-        <containerLibraryElement _id='33' name='JK-Master-Slave-Flipflop' uuid='5485c628-408c-45ea-9d1e-8d930c8760e7'/>
-        <containerLibraryElement _id='34' name='SR-Flipflop PRE/CLR' uuid='d34d3483-be1d-432b-a949-7f68e0ee756b'/>
-        <containerLibraryElement _id='35' name='JK-MS-Flipflop PRE/CLR' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
-        <containerLibraryElement _id='36' name='D-Flipflop PRE/CLR' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733'/>
-        <containerLibraryElement _id='37' name='T-Flipflop' uuid='e0786c72-2fa2-4ec4-a1de-0a84b7281bec'/>
+        <containerLibraryElement _id='30' name='D-Flipflop' uuid='d6ab312a-a94b-403a-9291-642295ff29c5'/>
+        <containerLibraryElement _id='31' name='SR Latch' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87'/>
+        <containerLibraryElement _id='32' name='SR-Flipflop' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'/>
+        <containerLibraryElement _id='33' name='JK-Flipflop (Neg)' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'/>
+        <containerLibraryElement _id='34' name='JK-Flipflop' uuid='204aeecf-cdca-4678-8c36-f8a834922966'/>
+        <containerLibraryElement _id='35' name='JK-Master-Slave-Flipflop' uuid='5485c628-408c-45ea-9d1e-8d930c8760e7'/>
+        <containerLibraryElement _id='36' name='SR-Flipflop PRE/CLR' uuid='d34d3483-be1d-432b-a949-7f68e0ee756b'/>
+        <containerLibraryElement _id='37' name='JK-MS-Flipflop PRE/CLR' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
+        <containerLibraryElement _id='38' name='D-Flipflop PRE/CLR' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733'/>
+        <containerLibraryElement _id='39' name='T-Flipflop' uuid='e0786c72-2fa2-4ec4-a1de-0a84b7281bec'/>
       </items>
     </libraryFolder>
-    <libraryFolder _id='38' name='Plexer'>
+    <libraryFolder _id='40' name='Plexer'>
       <items>
-        <containerLibraryElement _id='39' name='2x 4-4 Multiplexer' uuid='83ba937d-5277-45f2-adff-1abab9207e33'/>
-        <containerLibraryElement _id='40' name='2x 8-8 Multiplexer' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9'/>
-        <containerLibraryElement _id='41' name='2x 16-16 Multiplexer' uuid='06e7b5c3-daad-4019-8a8f-945a9215cab6'/>
-        <containerLibraryElement _id='42' name='4-1 Multiplexer' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'/>
-        <containerLibraryElement _id='43' name='2-1 Multiplexer' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7'/>
-        <containerLibraryElement _id='44' name='8-1 Multiplexer' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3'/>
+        <containerLibraryElement _id='41' name='2x 4-4 Multiplexer' uuid='83ba937d-5277-45f2-adff-1abab9207e33'/>
+        <containerLibraryElement _id='42' name='2x 8-8 Multiplexer' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9'/>
+        <containerLibraryElement _id='43' name='2x 16-16 Multiplexer' uuid='06e7b5c3-daad-4019-8a8f-945a9215cab6'/>
+        <containerLibraryElement _id='44' name='4-1 Multiplexer' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'/>
+        <containerLibraryElement _id='45' name='2-1 Multiplexer' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7'/>
+        <containerLibraryElement _id='46' name='8-1 Multiplexer' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3'/>
+        <containerLibraryElement _id='47' name='2x 2-2 Multiplexer' uuid='2cb91fb8-b233-41b5-96b2-e898c9122e68'/>
       </items>
     </libraryFolder>
-    <libraryFolder _id='45' name='Test'>
+    <libraryFolder _id='48' name='Test'>
       <items>
-        <containerLibraryElement _id='46' name='Test Control Repaint' uuid='ae36df36-0b7b-45e3-ac5e-e17c6fa44415'/>
-        <containerLibraryElement _id='47' name='Custom NOT' uuid='6c9f2734-1386-4796-aa31-a6ea87d5ed7f'/>
-        <containerLibraryElement _id='48' name='NOP' uuid='cc6b2b47-de2e-4d82-9229-121cffddd85a'/>
-        <containerLibraryElement _id='49' name='Outer NOP' uuid='afc510f0-5ef7-4175-8ed3-bf4bc6058e13'/>
-        <containerLibraryElement _id='50' name='Ampel' uuid='0921d1db-d513-4dab-b39e-74f33b439312'/>
-        <containerLibraryElement _id='51' name='Test Text' uuid='6ef6759e-ce22-4d89-9935-7e6933a9eeb2'/>
-        <containerLibraryElement _id='52' name='Test Custom' uuid='6faeb5b6-ce07-47fc-b48a-068e245668eb'/>
-        <containerLibraryElement _id='53' name='Single Input' uuid='a0f6bafd-eacb-42a1-ac08-0d8d946daa5f'/>
-        <containerLibraryElement _id='54' name='Stoppuhr' uuid='eb2ff37b-57fb-4005-9601-7f7fbaa433c1'/>
-        <containerLibraryElement _id='55' name='Custom NOR' uuid='269574a4-cd85-444a-9414-16c06442d5b3'/>
+        <containerLibraryElement _id='49' name='Test Control Repaint' uuid='ae36df36-0b7b-45e3-ac5e-e17c6fa44415'/>
+        <containerLibraryElement _id='50' name='Custom NOT' uuid='6c9f2734-1386-4796-aa31-a6ea87d5ed7f'/>
+        <containerLibraryElement _id='51' name='NOP' uuid='cc6b2b47-de2e-4d82-9229-121cffddd85a'/>
+        <containerLibraryElement _id='52' name='Outer NOP' uuid='afc510f0-5ef7-4175-8ed3-bf4bc6058e13'/>
+        <containerLibraryElement _id='53' name='Ampel' uuid='0921d1db-d513-4dab-b39e-74f33b439312'/>
+        <containerLibraryElement _id='54' name='Test Text' uuid='6ef6759e-ce22-4d89-9935-7e6933a9eeb2'/>
+        <containerLibraryElement _id='55' name='Test Custom' uuid='6faeb5b6-ce07-47fc-b48a-068e245668eb'/>
+        <containerLibraryElement _id='56' name='Single Input' uuid='a0f6bafd-eacb-42a1-ac08-0d8d946daa5f'/>
+        <containerLibraryElement _id='57' name='Stoppuhr' uuid='eb2ff37b-57fb-4005-9601-7f7fbaa433c1'/>
+        <containerLibraryElement _id='58' name='Custom NOR' uuid='269574a4-cd85-444a-9414-16c06442d5b3'/>
       </items>
     </libraryFolder>
-    <libraryFolder _id='56' name='Test 2'>
+    <libraryFolder _id='59' name='Test 2'>
       <items/>
     </libraryFolder>
-    <libraryFolder _id='57' name='Zähler'>
+    <libraryFolder _id='60' name='Zähler'>
       <items>
-        <containerLibraryElement _id='58' name='Synch. Vorwärtszähler 3-Bit' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97'/>
-        <containerLibraryElement _id='59' name='Sync. BCD-Zähler 4-Bit' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'/>
-        <containerLibraryElement _id='60' name='Frequenzteiler' uuid='0a2995f4-af04-4830-b141-76de188e2e34'/>
+        <containerLibraryElement _id='61' name='Synch. Vorwärtszähler 3-Bit' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97'/>
+        <containerLibraryElement _id='62' name='Sync. BCD-Zähler 4-Bit' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'/>
+        <containerLibraryElement _id='63' name='Frequenzteiler' uuid='0a2995f4-af04-4830-b141-76de188e2e34'/>
       </items>
     </libraryFolder>
   </items>
