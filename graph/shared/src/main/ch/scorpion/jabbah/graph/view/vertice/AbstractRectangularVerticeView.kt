@@ -214,6 +214,6 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
             width + 2 * lineWidth + outsetLeft + outsetRight,
             height + 2 * lineWidth + outsetTop + outsetBottom
         )
-        addPortViewsTo(_boundingBox, containsBox)
+	    addPortViewsTo(_boundingBox, containsBox)
     }
 }

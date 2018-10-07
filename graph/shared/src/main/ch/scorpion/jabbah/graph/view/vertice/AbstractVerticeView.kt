@@ -329,9 +329,11 @@ abstract class AbstractVerticeView<T : Vertice>(
     /** Adds all [PortView]s to the overall bounding box and the box used for 'contains' calculation.*/
     protected fun addPortViewsTo(boundingBox: Rectangle2D, containsBox: Rectangle2D?) {
         containsBox?.setFrame(boundingBox)
-        for (pv in portViews) {
-            addPortViewTo(pv, boundingBox, containsBox)
-        }
+	    if (isShowPortViews) {
+		    for (pv in portViews) {
+			    addPortViewTo(pv, boundingBox, containsBox)
+		    }
+	    }
     }
 
     /**

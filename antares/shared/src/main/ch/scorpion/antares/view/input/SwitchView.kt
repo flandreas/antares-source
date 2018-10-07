@@ -190,8 +190,10 @@ class SwitchView(
     override val boundingBox: Rectangle2D
         get() {
             val bb = super.boundingBox
-            val lbb = externalLabel.boundingBox.moveBy(location)
-            bb.add(lbb)
+	        if (StringUtils.isNotEmpty(externalLabel.text)) {
+	            val lbb = externalLabel.boundingBox.moveBy(location)
+	            bb.add(lbb)
+	        }
             return bb
         }
 
@@ -351,6 +353,11 @@ class SwitchView(
             }
 	        return null
         }
+
+	    override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+		    context.mouseEvent?.consume()
+		    return this
+	    }
 
         override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
             when(context.keyEvent?.key) {
