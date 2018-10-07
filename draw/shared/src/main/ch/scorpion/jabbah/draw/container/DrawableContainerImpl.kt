@@ -272,6 +272,8 @@ open class DrawableContainerImpl<T: Drawable>(
     private fun updateBoundingBox() {
         if (!children.isEmpty()) {
             boundingBox.setFrame(children[0].boundingBox)
+        } else {
+	        boundingBox.setFrame(0.0, 0.0, 0.0, 0.0)
         }
         children.forEach { boundingBox.add(it.boundingBox) }
     }
