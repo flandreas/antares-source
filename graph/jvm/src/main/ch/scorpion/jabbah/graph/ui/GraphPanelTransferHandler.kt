@@ -10,7 +10,9 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.project.ProjectModule
@@ -23,7 +25,8 @@ import java.awt.datatransfer.Transferable
 class GraphPanelTransferHandler(
     editor: Editor,
     eventBus: EventBus,
-    flavour: DataFlavor
+    flavour: DataFlavor,
+    private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository
 ) : ComponentTransferHandler(editor, eventBus, flavour) {
 
 	companion object {
@@ -57,7 +60,7 @@ class GraphPanelTransferHandler(
         val dropVertice = dropComponent.model as SubGraphVertice?
 	    val targetUUID = (editor.drawing as GraphView<*>).graph!!.uuid
 
-        if (data.libraryElement.library!!.graphContainsRecursively(dropVertice!!.graphUUID!!, targetUUID)) {
+        if (repository.graphContainsRecursively(dropVertice!!.graphUUID!!, targetUUID)) {
             LOG.debug("Prevent dropping '${dropVertice.name}' in order to prevent Graph cycle")
             JOptionPane.showMessageDialog(
                 null,

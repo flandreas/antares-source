@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.library
+package ch.scorpion.jabbah.graph.repository
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.graph.model.Graph

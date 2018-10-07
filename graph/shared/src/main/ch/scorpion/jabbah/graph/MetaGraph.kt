@@ -5,8 +5,11 @@ import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.Project
+import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 
 interface MetaGraphRepository {
 
@@ -18,10 +21,19 @@ interface MetaGraphRepository {
 
 	/** Checks whether a [MetaGraph] with [uuid] exists in this [MetaGraphRepository]. */
 	fun containsMetaGraph(uuid: UUID): Boolean
+
+	/**
+	 * Determines whether a [Graph] contains directly or recursively a [GraphElement]
+	 * with the specified UUID.
+	 */
+	fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean
+
 }
 
 /** Combines the current [Library] and the current [Project] (if any) to a single [MetaGraphRepository].*/
-class CombinedMetaGraphRepository : MetaGraphRepository {
+class CombinedMetaGraphRepository(
+	private val storableCreator: StorableCreator = IOModule.storableCreator
+) : MetaGraphRepository {
 
 	/** Returns the entire [MetaGraph] with the specified [UUID], including the view representations. */
 	override fun getMetaGraph(uuid: UUID): MetaGraph {
@@ -36,6 +48,18 @@ class CombinedMetaGraphRepository : MetaGraphRepository {
 	/** Checks whether a [MetaGraph] with [uuid] exists in this [MetaGraphRepository]. */
 	override fun containsMetaGraph(uuid: UUID): Boolean {
 		return LibraryModule.libraryHolder.library.containsMetaGraph(uuid) || ProjectModule.projectHolder.project!!.containsMetaGraph(uuid)
+	}
+
+	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
+		val metaGraph = getMetaGraph(graphUUID)
+		if (metaGraph.graph.model!!.uuid == graphElementUUID) {
+			return true
+		}
+		return SubGraphVerticeLocator(
+			graph = metaGraph.graph.model!!,
+			repository = this,
+			storableCreator = storableCreator
+		).contains(graphElementUUID)
 	}
 }
 

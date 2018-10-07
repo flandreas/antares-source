@@ -3,9 +3,11 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -50,7 +52,19 @@ class LibraryImpl(
 		return "${Translations.getString(descriptionKey)} \"$name\""
 	}
 
-	/** ---- [Library] interface */
+	/** ---- [MetaGraphRepository] */
+
+	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
+		val metaGraph = getMetaGraph(graphUUID)
+		if (metaGraph.graph.model!!.uuid == graphElementUUID) {
+			return true
+		}
+		return SubGraphVerticeLocator(
+			graph = metaGraph.graph.model!!,
+			repository = this,
+			storableCreator = storableCreator
+		).contains(graphElementUUID)
+	}
 
 	override fun getMetaGraph(uuid: UUID): MetaGraph {
 		LOG.debug("LibraryImpl: Retrieve MetaGraph for UUID '${uuid.id}'")
@@ -66,17 +80,7 @@ class LibraryImpl(
 		return findContainerLibraryElementFor(uuid) != null
 	}
 
-	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean {
-		val metaGraph = getMetaGraph(graphUUID)
-		if (metaGraph.graph.model!!.uuid == graphElementUUID) {
-			return true
-		}
-		return SubGraphVerticeLocator(
-			graph = metaGraph.graph.model!!,
-			repository = this,
-			storableCreator = storableCreator
-		).contains(graphElementUUID)
-	}
+	/** ---- [Library] interface */
 
 	override fun replaceContentsWith(libraryFolder: LibraryFolder) {
 		this.libraryFolder.replaceWith(libraryFolder)
