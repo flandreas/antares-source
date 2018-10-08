@@ -4,17 +4,16 @@ import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.script.Script
-import ch.scorpion.jabbah.graph.script.ScriptEngine
-import ch.scorpion.jabbah.graph.script.ScriptGateway
-import ch.scorpion.jabbah.graph.script.ScriptModule
+import ch.scorpion.jabbah.graph.script.*
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.VerticeView
 
 /**
  * Gateway for executing Javascript code related with [antares].
@@ -24,8 +23,9 @@ class AntaresScriptGateway(private val engine: ScriptEngine, eventBus: EventBus)
     constructor():  this(ScriptModule.scriptEngineProvider.invoke(), BaseModule.eventBus)
 
     companion object {
-        private val GRAPH_WRAPPER = "function execGraph(circuit) {\$BODY}"
-        private val VERTICE_WRAPPER = "function execVertice(elem, data, signalHandler, store) {\$BODY}"
+        private const val GRAPH_WRAPPER = "function execGraph(circuit) {\$BODY}"
+	    private const val VERTICE_VIEW_WRAPPER = "function execVerticeView(elem) {\$BODY}"
+        private const val VERTICE_WRAPPER = "function execVertice(elem, data, signalHandler, store) {\$BODY}"
     }
 
     init {
@@ -42,7 +42,12 @@ class AntaresScriptGateway(private val engine: ScriptEngine, eventBus: EventBus)
         return engine.invoke("execGraph", CircuitViewBridge(view, null))
     }
 
-    override fun exec(script: Script, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler) {
+	override fun exec(script: Script, verticeView: VerticeView<*>, drawContext: DrawContext) {
+		engine.eval(script.copy(code = VERTICE_VIEW_WRAPPER.replaceFirst("\$BODY", script.code)))
+		engine.invoke("execVerticeView", CircuitElementViewBridge(verticeView, null, drawContext))
+	}
+
+	override fun exec(script: Script, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler) {
         engine.eval(script.copy(code = VERTICE_WRAPPER.replaceFirst("\$BODY", script.code)))
         engine.invoke("execVertice", CircuitElemModelBridge(vertice, signalHandler, data, store))
     }

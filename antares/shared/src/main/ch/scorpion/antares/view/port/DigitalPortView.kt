@@ -36,9 +36,8 @@ import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.view.style.EdgeStyle
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
-
+import ch.scorpion.jabbah.graph.view.port.PortView
 
 /**
  * A view representation of a [DigitalPort], either input or output.
@@ -229,18 +228,8 @@ class DigitalPortView(
 	override fun drawBelowOwner(context: DrawContext) {
 		val origColor = context.g.color
 
-		setupColor(context)
-
 		if (!port.isConnected) {
-			if (getDigitalPort().bitWidth.width > 1) {
-				context.g.stroke = Themes.get<GraphTheme>().edge.busStroke
-			} else {
-				context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-					Themes.get<GraphTheme>().edge.executionStroke
-				} else {
-					Themes.get<GraphTheme>().edge.stroke
-				}
-			}
+			prepareConnectionDrawContext(context)
 
 			val connPoint = connectionPoint
 			context.g.drawLine(locationX.toInt(), locationY.toInt(), connPoint.x.toInt(), connPoint.y.toInt())
@@ -279,6 +268,21 @@ class DigitalPortView(
     override fun buildToolTipContent(): String {
         return "${super.buildToolTipContent()}<p/>BitWidth: ${getDigitalPort().bitWidth.width}"
     }
+
+	/** ---- [PortView] interface */
+
+	override fun prepareConnectionDrawContext(context: DrawContext) {
+		setupColor(context)
+		if (getDigitalPort().bitWidth.width > 1) {
+			context.g.stroke = Themes.get<GraphTheme>().edge.busStroke
+		} else {
+			context.g.stroke = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				Themes.get<GraphTheme>().edge.executionStroke
+			} else {
+				Themes.get<GraphTheme>().edge.stroke
+			}
+		}
+	}
 
     /** ---- [AbstractPortView] */
 

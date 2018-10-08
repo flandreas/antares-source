@@ -16,7 +16,7 @@ class GenericPortView<T: Any>(
         connectable: Boolean = false
 ) : AbstractPortView<T>(port, x, y, direction, portLabelPosition, 0, connectable) {
 
-    override var transparency: Int = Transparent.FULLY_OPAQUE
+	override var transparency: Int = Transparent.FULLY_OPAQUE
 
     override fun contains(x: Double, y: Double): Boolean = false
 
@@ -31,4 +31,7 @@ class GenericPortView<T: Any>(
 	override fun drawAboveOwner(context: DrawContext) { }
 
 	override fun drawBelowOwner(context: DrawContext) { }
+
+	override fun prepareConnectionDrawContext(context: DrawContext) { }
+
 }

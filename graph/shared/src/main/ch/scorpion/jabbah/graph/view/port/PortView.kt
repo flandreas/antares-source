@@ -30,13 +30,13 @@ interface PortView<T: Any> : Drawable, Storable, SnappableX, SnappableY, Transpa
          * The name of the property in [Properties] that designates the size of the sensitive area around the
          * connection point of a [PortView]. Used for interactive connecting.
          */
-        val PROP_SENSITIVE_AREA = "graph.view.portView.sensitiveArea"
+        const val PROP_SENSITIVE_AREA = "graph.view.portView.sensitiveArea"
 
         /**
          * The name of the property in [Properties] that designates the object to be used for highlighting the
          * connection point of a [PortView] while interactively connecting.
          */
-        val PROP_HIGHLIGHT = "graph.view.portView.hightlight"
+        const val PROP_HIGHLIGHT = "graph.view.portView.hightlight"
     }
 
     /** The [Port] that this [PortView] displays. Must be one of the [Port]s of the [owner]'s [Vertice].*/
@@ -166,8 +166,24 @@ interface PortView<T: Any> : Drawable, Storable, SnappableX, SnappableY, Transpa
      */
     fun getExecutionTooltip(x: Double, y: Double): Tooltip?
 
+	/**
+	 * Draws all parts of this [PortView] that have to appear above the owning [VerticeView].
+	 * These are typically labels or annotations.
+	 */
 	fun drawAboveOwner(context: DrawContext)
 
+	/**
+	 * Draws all parts of this [PortView] that have to appear below the owning [VerticeView].
+	 * These are typically line segments that should not overlap the border of the [VerticeView], hence are
+	 * to be drawn before the [VerticeView] is drawn.
+	 */
 	fun drawBelowOwner(context: DrawContext)
+
+	/**
+	 * Prepares all settings of a [DrawContext] necessary to draw the connection of this [PortView],
+	 * including distinction based on edit or execution mode. This might be useful for [VerticeView] that want
+	 * to draw some of its look just the same way as [PortView]s are drawn.
+	 */
+	fun prepareConnectionDrawContext(context: DrawContext)
 
 }

@@ -18,7 +18,10 @@ interface SubGraphVerticeView<T : SubGraphVertice> : VerticeView<T> {
     /** Returns the model of this [SubGraphVerticeView].*/
     val subGraphVertice: SubGraphVertice?
 
-    /** Creates a new [GraphView] of the references sub [Graph].*/
+	/** Contains the script code that customized the visual look while execution mode.*/
+	var drawExecScript: String?
+
+	/** Creates a new [GraphView] of the references sub [Graph].*/
     fun createSubGraphView(): GraphView<GraphElementView<T>>
 
     /** Adds a [Drawable] to be part of the graphical representation of this [SubGraphVerticeView] */

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.script
 
+import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Graph
@@ -7,6 +8,7 @@ import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.VerticeView
 
 /**
  *  A gateway to [Graph] related functionality implemented as javascripts.
@@ -20,6 +22,11 @@ interface ScriptGateway {
      * @return the object that is returned by the script
      */
     fun exec(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Any?
+
+	/**
+	 * Executes a javascript [script] based on the current state of a [VerticeView].
+	 */
+	fun exec(script: Script, verticeView: VerticeView<*>, drawContext: DrawContext)
 
     /** Executes a javascript [script] based on the the current state of a [Vertice].*/
     fun exec(script: Script, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler)

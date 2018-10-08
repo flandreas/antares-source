@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.execution.actor.*
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ControlViewComponent
@@ -29,6 +30,9 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.script.Script
+import ch.scorpion.jabbah.graph.script.ScriptGateway
+import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -44,7 +48,8 @@ class SubGraphVerticeViewImpl(
     private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
     private val storableCreator: StorableCreator = IOModule.storableCreator,
     private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
-    private val eventBus: EventBus = BaseModule.eventBus
+    private val eventBus: EventBus = BaseModule.eventBus,
+    private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway
 ) : AbstractVerticeView<SubGraphVerticeRef>(
         styleProvider,
         graphElement
@@ -158,6 +163,9 @@ class SubGraphVerticeViewImpl(
 
     override fun drawImpl(context: DrawContext) {
         drawables.forEach { it.draw(context) }
+	    if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && StringUtils.isNotEmpty(drawExecScript)) {
+		    scriptGateway.exec(Script(code = drawExecScript!!, origin = "Container ${model?.getGraphIfPresent()?.name}", context = "drawExecScript"), this, context)
+	    }
         super.drawImpl(context)
     }
 
@@ -301,6 +309,8 @@ class SubGraphVerticeViewImpl(
     /** ---- [SubGraphVerticeView] */
 
     override val subGraphVertice: SubGraphVertice? get() = model
+
+	override var drawExecScript: String? = null
 
     override fun addDrawable(drawable: Drawable) {
         mirrorIfNecessary(drawable)

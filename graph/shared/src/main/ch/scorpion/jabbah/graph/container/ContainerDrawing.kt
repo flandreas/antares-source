@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.container
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ConcatIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
@@ -15,9 +16,13 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.GraphPort
+import ch.scorpion.jabbah.graph.model.SubGraphPort
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
@@ -43,10 +48,23 @@ class ContainerDrawing(
     private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : DrawingImpl<Component>() {
 
-    private val LOG by logger(ContainerDrawing::class)
+	companion object {
+        private val LOG by logger(ContainerDrawing::class)
+	}
 
     var model: SubGraphVertice = SubGraphVerticeImpl()
         private set
+
+	var execDrawScript: TextProperty = TextProperty()
+
+	/** ---- [Any] */
+
+	override fun toString(): String {
+		if (model.getGraphIfPresent()?.name != null) {
+			return Translations.getString("graph.property.ContainerDrawing", model.getGraphIfPresent()?.name!!)
+		}
+		return Translations.getString("graph.element.container.name")
+	}
 
     /** ---- [DrawableContainer] interface */
 
@@ -74,10 +92,16 @@ class ContainerDrawing(
     override fun write(writer: StoreWriter) {
         super.write(writer)
         writer.writeStorable("model", model)
+	    if (execDrawScript.isNotEmpty()) {
+		    writer.writeString("execDrawScript", execDrawScript.text!!)
+	    }
     }
 
     override fun read(reader: StoreReader) {
         model = reader.readStorable("model") as SubGraphVertice
+	    if (reader.hasAttribute("execDrawScript")) {
+		    execDrawScript = TextProperty(reader.readString("execDrawScript"))
+	    }
         super.read(reader)
     }
 
@@ -92,7 +116,7 @@ class ContainerDrawing(
      *
      * This method is called by [GraphStorable] after reading from persistent store. It completes
      * the model of this [DrawableContainer] with information from [Graph] objects, such as description
-     * of [GraphPort]s. These informations are needed by [DrawableContainer] when filling
+     * of [GraphPort]s. These information are needed by [DrawableContainer] when filling
      * [SubGraphVerticeView]s for that [Graph].
      *
      * Of course, this method is not cool. It conflicts with the design goal that ]SubGraphVerticeView]
@@ -178,6 +202,8 @@ class ContainerDrawing(
 
         val clonedDrawing = storableCloner.cloneUsingCreator(this, storableCreator) as ContainerDrawing
         val origin = clonedDrawing.getOriginIndicator().location
+
+	    view.drawExecScript = execDrawScript.text
 
         for (comp in clonedDrawing.getDrawables()) {
             comp.location = Point2D(comp.location.x - origin.x, comp.location.y - origin.y)

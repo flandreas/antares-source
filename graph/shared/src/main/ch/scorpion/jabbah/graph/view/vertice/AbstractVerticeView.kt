@@ -159,6 +159,15 @@ abstract class AbstractVerticeView<T : Vertice>(
         getNetPortViews(edgeView.model!!).forEach { it.edgeViewWidth = edgeView.width }
     }
 
+	override fun drawDataFlow(inputName: String, outputName: String, context: DrawContext) {
+		val inputPortView = getPortView(model!!.getInput<T>(inputName))!!
+		val outputPortView = getPortView(model!!.getOutput<T>(outputName))!!
+
+		inputPortView.prepareConnectionDrawContext(context)
+
+		context.g.drawLine(inputPortView.locationX, inputPortView.locationY, outputPortView.locationX, outputPortView.locationY)
+	}
+
     /** ---- [ConnectableView] */
 
 	override val isConnectable: Boolean get() = model!!.designError == null
