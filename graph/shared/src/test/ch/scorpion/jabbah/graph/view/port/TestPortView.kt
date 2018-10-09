@@ -14,7 +14,7 @@ class TestPortView<T: Any>(
 	length: Int = 0
 ) : AbstractPortView<T>(port, 0, 0, direction, portLabelPosition, length) {
 
-    override var transparency: Int = 0
+	override var transparency: Int = 0
 
     override val boundingBox: Rectangle2D
         get() {
@@ -28,9 +28,7 @@ class TestPortView<T: Any>(
         get() = throw UnsupportedOperationException()
         set(value) { }
 
-    override fun draw(context: DrawContext) {
-        // empty
-    }
+    override fun draw(context: DrawContext) { }
 
     override fun contains(x: Double, y: Double): Boolean {
         return boundingBox.contains(x, y)
@@ -41,11 +39,9 @@ class TestPortView<T: Any>(
 
     override fun getConnectedLength(): Int = 0
 
-	override fun drawAboveOwner(context: DrawContext) {
-		// empty
-	}
+	override fun drawAboveOwner(context: DrawContext) { }
 
-	override fun drawBelowOwner(context: DrawContext) {
-		// empty
-	}
+	override fun drawBelowOwner(context: DrawContext) { }
+
+	override fun prepareConnectionDrawContext(context: DrawContext) { }
 }

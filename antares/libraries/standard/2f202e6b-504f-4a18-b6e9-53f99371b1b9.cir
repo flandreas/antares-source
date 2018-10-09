@@ -2,7 +2,11 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9' name='2x 8-8 Multiplexer'>
+        <graph _id='2' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9' name='2x 8-8 Multiplexer' shortDesc='Wählt aus zwei 8-Bit-Datenleitungen eine aus' script='if (elem.inputBit(&quot;S&quot;)) {
+  elem.setOutput(&quot;O&quot;, elem.input(&quot;B&quot;));
+} else {
+  elem.setOutput(&quot;O&quot;, elem.input(&quot;A&quot;));
+}' propDelay='60'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='60' name='2x 4-4 Demultiplexer' uuid='83ba937d-5277-45f2-adff-1abab9207e33'/>
             <subGraphVerticeRef _id='4' id='2' delay='60' name='2x 4-4 Demultiplexer' uuid='83ba937d-5277-45f2-adff-1abab9207e33'/>
@@ -92,8 +96,8 @@
             <netView _id='55' modelId='13' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='44' id='1' rot='0' modelId='3' x='448.0' y='147.0'/>
-            <subGraphVerticeViewRef _id='43' id='2' rot='0' modelId='4' x='448.0' y='315.0'/>
+            <subGraphVerticeViewRef _id='44' id='1' rot='0' modelId='3' x='448.0' y='147.0' mirrorH='false' mirrorV='false'/>
+            <subGraphVerticeViewRef _id='43' id='2' rot='0' modelId='4' x='448.0' y='315.0' mirrorH='false' mirrorV='false'/>
             <circuitInOutView _id='42' id='3' modelId='5' representation='hex' orientation='east'>
               <location>
                 <point x='266.0' y='154.0'/>
@@ -199,25 +203,25 @@
             <point x='182.0' y='196.0'/>
           </location>
         </originIndicator>
-        <polyline _id='65' id='1' style='figure' points='196.0,168.0 196.0,266.0 252.0,252.0 252.0,182.0 196.0,168.0'/>
+        <polyline _id='65' id='1' style='figure' points='196.0,168.0 196.0,266.0 252.0,252.0 252.0,182.0 196.0,168.0' filled='true'/>
         <digitalPortViewComp _id='63' id='2' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='64' x='196.0' y='196.0' dir='west' textPos='internal' portId='68'/>
+            <digitalPortView _id='64' x='196.0' y='196.0' dir='west' textPos='INTERNAL' portId='68'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='61' id='3' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='62' x='196.0' y='238.0' dir='west' textPos='internal' portId='69'/>
+            <digitalPortView _id='62' x='196.0' y='238.0' dir='west' textPos='INTERNAL' portId='69'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='59' id='4' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='60' x='252.0' y='217.0' dir='east' textPos='internal' portId='71'/>
+            <digitalPortView _id='60' x='252.0' y='217.0' dir='east' textPos='INTERNAL' portId='71'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='57' id='5' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='58' x='224.0' y='259.0' dir='south' textPos='internal' portId='70'/>
+            <digitalPortView _id='58' x='224.0' y='259.0' dir='south' textPos='INTERNAL' portId='70'/>
           </portView>
         </digitalPortViewComp>
       </components>
