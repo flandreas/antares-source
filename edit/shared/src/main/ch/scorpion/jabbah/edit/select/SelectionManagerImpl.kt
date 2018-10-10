@@ -21,7 +21,7 @@ import ch.scorpion.jabbah.base.logger
 class SelectionManagerImpl(
 	val view: DrawingView<out Drawing<Component>>,
 	private val selectionModelProvider: SelectionModelProvider,
-	val eventBus: EventBus
+	private val eventBus: EventBus
 ) : SelectionManager {
 
     constructor(view: DrawingView<out Drawing<Component>>)
@@ -31,15 +31,21 @@ class SelectionManagerImpl(
         private val LOG by logger(SelectionManagerImpl::class)
 	}
 
+	private val drawingPropertyListener = object : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			if (e.name == DrawingView.PROP_DRAWING) {
+				handleDrawingChanged(e.oldValue as Drawing<Component>?)
+			}
+		}
+	}
+
     init {
-        view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
-            override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-                if (e.name == DrawingView.PROP_DRAWING) {
-                    handleDrawingChanged(e.oldValue as Drawing<Component>?)
-                }
-            }
-        })
+        view.addPropertyChangeListener(drawingPropertyListener)
     }
+
+	override fun dispose() {
+		view.removePropertyChangeListener(drawingPropertyListener)
+	}
 
     /**
      * Listens for [Component]s being removed from the current [Drawing] while being selected. Note that this

@@ -85,6 +85,8 @@ abstract class AbstractPropertyPanel(
             val beanInfoClass = Class.forName(classPath)
             val beanInfo = beanInfoClass.newInstance() as AbstractBeanInfo<Any>
 
+	        LOG.debug("PropertyPanel: updating properties for ${beanInfoClass}")
+
             sheet.properties = beanInfo.getProperties(bean, editor)
             sheet.readFromObject(bean)
 

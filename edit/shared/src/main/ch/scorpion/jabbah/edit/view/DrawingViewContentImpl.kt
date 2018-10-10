@@ -43,6 +43,7 @@ class DrawingViewContentImpl<T: Drawing<*>>(
 
     override fun dispose() {
         drawing.dispose()
+	    selectionManager.dispose()
     }
 
     override fun addSelectionModel(selectionModel: SelectionModel<Component>, strategy: SelectionDrawingStrategy) {

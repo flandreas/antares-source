@@ -50,6 +50,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
             if (field === value) {
                 return
             }
+	        content.dispose()
             val oldDrawing = field.drawing
             replaceContent(value)
             field = value

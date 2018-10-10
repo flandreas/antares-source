@@ -11,6 +11,8 @@ interface SelectionManager {
     /** Holds the currently selected [Component]s*/
     val selection: Collection<Component>
 
+	fun dispose()
+
     /**
      * Selects the specified [Component].
      *
