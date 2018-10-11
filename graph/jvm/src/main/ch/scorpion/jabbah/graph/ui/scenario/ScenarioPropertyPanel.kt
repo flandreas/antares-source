@@ -18,15 +18,19 @@ class ScenarioPropertyPanel(
 ) : AbstractPropertyPanel(editor, sheetPanelFactory) {
 
     init {
-        eventBus.register(ScenarioSelectionEvent::class, {
-            clearProperties()
-            if (it.scenarioStep != null) {
-                updateProperties(it.scenarioStep)
-            } else if (it.scenario != null) {
-                updateProperties(it.scenario)
-            }
-        })
+        eventBus.register(ScenarioSelectionEvent::class) {
+	        clearProperties()
+	        if (it.scenarioStep != null) {
+		        updateProperties(it.scenarioStep)
+	        } else if (it.scenario != null) {
+		        updateProperties(it.scenario)
+	        }
+        }
     }
+
+	override fun setupDefaultProperties() {
+		// empty
+	}
 
     override fun getDescription(bean: Any): String? {
         if (bean is Scenario) {

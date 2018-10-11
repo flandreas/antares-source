@@ -72,9 +72,9 @@ object EditModuleJvm : AbstractModule() {
         registry.registerEditor(Size::class.java, SizeEditor::class.java)
         registry.registerEditor(StyleType::class.java, StyleTypeEditor::class.java)
         registry.registerEditor(VerticalAlignment::class.java, VerticalAlignmentEditor::class.java)
+	    registry.registerEditor(TextProperty::class.java, TextPropertyEditor::class.java)
         registry.register(PredefinedColor::class.java) { PredefinedColorEditor(PredefinedColorRepository) }
 	    registry.register(PredefinedStroke::class.java) { PredefinedStrokeEditor(PredefinedStrokeRepository) }
-	    registry.register(TextProperty::class.java, TextPropertyEditorFactory())
     }
 
 	private fun registerPropertyEditorsFx(registry: PropertyEditorRegistryFx) {

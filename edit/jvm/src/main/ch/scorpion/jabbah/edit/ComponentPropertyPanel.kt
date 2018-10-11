@@ -26,7 +26,11 @@ class ComponentPropertyPanel(
 
     /** ---- [ComponentPropertyPanel] */
 
-    private fun handle(event: SelectionChangeEvent) {
+    override fun setupDefaultProperties() {
+	    updateProperties(editor.drawing)
+    }
+
+	private fun handle(event: SelectionChangeEvent) {
         if (event.view !== editor.view) {
             return
         }

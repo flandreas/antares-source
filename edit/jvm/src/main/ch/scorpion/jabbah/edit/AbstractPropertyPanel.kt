@@ -41,7 +41,7 @@ abstract class AbstractPropertyPanel(
 		    override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 			    if (e.name == Editor.PROP_ACTIVE) {
 				    if (editor.active) {
-					    updateProperties(editor.drawing)
+					    setupDefaultProperties()
 				    } else {
 					    clearProperties()
 				    }
@@ -67,6 +67,12 @@ abstract class AbstractPropertyPanel(
 
     /** ---- [AbstractPropertyPanel] */
 
+    /**
+     * Fill with properties of the object to be displayed per default, for example when the [Editor]
+     * just has become active.
+     */
+	protected abstract fun setupDefaultProperties()
+
     /** Returns a displayable description of the selected bean object.*/
     protected abstract fun getDescription(bean: Any): String?
 
@@ -88,6 +94,10 @@ abstract class AbstractPropertyPanel(
 	        LOG.debug("PropertyPanel: updating properties for ${beanInfoClass}")
 
             sheet.properties = beanInfo.getProperties(bean, editor)
+
+	        // Avoid triggering property change login while bean properties are loaded
+	        propertyObject = null
+
             sheet.readFromObject(bean)
 
             val table = getTable()

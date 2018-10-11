@@ -3,16 +3,20 @@ package ch.scorpion.jabbah.edit
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.TextProperty
 import java.awt.*
 import java.awt.Component
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
-import java.beans.PropertyEditor
 import javax.swing.*
 import javax.swing.table.TableCellRenderer
 
 class TextPropertyRenderer: TableCellRenderer {
+
+	companion object {
+		private val LOG by logger(TextPropertyRenderer::class)
+	}
 
     private val textArea: JTextArea = JTextArea()
 
@@ -32,42 +36,38 @@ class TextPropertyRenderer: TableCellRenderer {
     }
 }
 
-/** A factory for creating an editor for [TextProperty] to be used with [DynamicPropertyEditorRegistry].*/
-class TextPropertyEditorFactory : (PropertyImpl<*>) -> PropertyEditor {
-
-    override fun invoke(p1: PropertyImpl<*>): PropertyEditor {
-        return TextPropertyEditor(p1)
-    }
-}
-
 /**
  * An editor that provides more space for editing a [TextProperty] by using a multi-row [JTextArea].
  * Additionally contains a button to open a non-modal dialog that provides even more space.
  */
-class TextPropertyEditor(private val property: PropertyImpl<*>) : AbstractPropertyEditor() {
+class TextPropertyEditor() : AbstractPropertyEditor() {
 
     companion object {
+	    private val LOG by logger(TextPropertyEditor::class)
+
         // Holds the single [JDialog] instance across all [TextPropertyEditor] instances.
         private var dialog: JDialog? = null
     }
 
-    private val textArea: JTextArea = JTextArea()
+    private val editorTextArea: JTextArea = JTextArea()
     private val button = JButton()
 
     init {
-        textArea.rows = 4
-        textArea.lineWrap = true
-        textArea.isEditable = true
+        editorTextArea.rows = 4
+        editorTextArea.lineWrap = true
+        editorTextArea.isEditable = true
 
         buildUI()
     }
 
     override fun getValue(): Any {
-        return TextProperty(textArea.text)
+	    LOG.debug("TextProperty: get value ${editorTextArea.text}")
+        return TextProperty(editorTextArea.text)
     }
 
     override fun setValue(value: Any?) {
-        textArea.text = (value as TextProperty).text
+	    LOG.debug("TextProperty: set value $value")
+        editorTextArea.text = (value as TextProperty).text
     }
 
     private fun buildUI() {
@@ -75,7 +75,7 @@ class TextPropertyEditor(private val property: PropertyImpl<*>) : AbstractProper
         panel.background = Color.WHITE
         panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
 
-        val scrollPane = JScrollPane(textArea)
+        val scrollPane = JScrollPane(editorTextArea)
         scrollPane.alignmentY = Component.TOP_ALIGNMENT
         scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
         scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
@@ -107,10 +107,10 @@ class TextPropertyEditor(private val property: PropertyImpl<*>) : AbstractProper
                 button.isEnabled = true
             }
         })
-        dialog!!.title = "Property: ${property.displayName}"
-        dialog!!.contentPane.add(DialogContentPanel(property, {
-            dialog!!.dispose()
-        }))
+        dialog!!.title = "Property"
+        dialog!!.contentPane.add(DialogContentPanel() {
+	        dialog!!.dispose()
+        })
         dialog!!.pack()
         dialog!!.setLocationRelativeTo(frame)
         dialog!!.isVisible = true
@@ -118,21 +118,20 @@ class TextPropertyEditor(private val property: PropertyImpl<*>) : AbstractProper
         button.isEnabled = false
     }
 
-    private class DialogContentPanel(
-            private val property: PropertyImpl<*>,
+    private inner class DialogContentPanel(
             private val closeHandler: () -> Unit
     ) : JPanel() {
 
-        private val textArea = JTextArea((property.value as TextProperty).text)
+        private val dialogTextArea = JTextArea(editorTextArea.text)
 
         init {
             layout = BorderLayout()
 
-            textArea.wrapStyleWord = true
-            textArea.lineWrap = true
+            dialogTextArea.wrapStyleWord = true
+            dialogTextArea.lineWrap = true
 
             val scrollPane = JScrollPane()
-            scrollPane.setViewportView(textArea)
+            scrollPane.setViewportView(dialogTextArea)
             scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
             scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
             scrollPane.preferredSize = Dimension(400, 500)
@@ -141,9 +140,9 @@ class TextPropertyEditor(private val property: PropertyImpl<*>) : AbstractProper
             val buttonPanel = JPanel(FlowLayout(FlowLayout.CENTER))
             buttonPanel.add(JButton(ActionWrapperSwing(object : AbstractAction("edit.action.ok") {
                 override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-                    property.value = TextProperty(textArea.text)
-                    property.writeToBean()
+	                editorTextArea.text = dialogTextArea.text
                     closeHandler.invoke()
+	                editorTextArea.requestFocus()
                 }
             })))
             buttonPanel.add(JButton(ActionWrapperSwing(object : AbstractAction("edit.action.cancel") {
