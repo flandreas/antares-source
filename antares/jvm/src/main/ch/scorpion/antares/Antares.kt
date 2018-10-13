@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.input.ClockView
+import ch.scorpion.antares.view.input.DipSwitchView
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.memory.RAMView
 import ch.scorpion.antares.view.memory.ROMView
@@ -81,6 +82,7 @@ fun fillStandardLibrary(library: Library, service: LibraryService, storableCreat
 		view
 	}
 	addBaseElement(input, "Switch", "library.element.Switch", "/img/switch.png", storableCreator, SwitchView::class)
+	addBaseElement(input, "DipSwitch", "library.element.DipSwitch", "/img/dip-switch.png", storableCreator, DipSwitchView::class)
 	addBaseElement(input, "Clock", "library.element.Clock", "/img/clock.png", storableCreator, ClockView::class)
 
 	val output = service.ensureFolder(library, Translations.getString("library.folder.output"), library)

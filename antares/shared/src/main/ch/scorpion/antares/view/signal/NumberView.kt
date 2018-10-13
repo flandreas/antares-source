@@ -29,7 +29,7 @@ class NumberView(
         private const val BYTE_LABEL_HOR_GAP = 0
     }
 
-    /** Contains the individual digit views, starting with the lowest priority bit a index 0. */
+    /** Contains the individual digit views, starting with the lowest priority bit at index 0. */
     private val digitViews = mutableListOf<DigitView>()
 
     /** Contains the [Label]s that designate the index of the displayed byte within the entire signal value. */

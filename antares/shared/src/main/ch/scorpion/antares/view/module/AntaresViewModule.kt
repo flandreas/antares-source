@@ -9,6 +9,7 @@ import ch.scorpion.antares.view.container.DigitalPortViewComponent
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.input.ClockView
+import ch.scorpion.antares.view.input.DipSwitchView
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.input.SwitchViewSelectionModel
 import ch.scorpion.antares.view.memory.RAMView
@@ -124,6 +125,7 @@ object AntaresViewModule : AbstractModule() {
         properties.set(CircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")
         properties.set(CircuitInOutView.PROP_INOUT_ICON_PATH, "/img/inout.png")
         properties.set(SwitchView.PROP_ICON_PATH, "/img/switch.png")
+	    properties.set(DipSwitchView.PROP_ICON_PATH, "/img/dip-switch.png")
         properties.set(ProbeView.PROP_ICON_PATH, "/img/probe.png")
         properties.set(LEDView.PROP_ICON_PATH, "/img/led.png")
         properties.set(LEDMatrixView.PROP_ICON_PATH, "/img/led-matrix.png")
@@ -149,6 +151,7 @@ object AntaresViewModule : AbstractModule() {
         typeMap.register("triStateBufferGateView", TriStateBufferGateView::class)
 
         typeMap.register("switchView", SwitchView::class)
+	    typeMap.register("dipSwitchView", DipSwitchView::class)
         typeMap.register("clockView", ClockView::class)
         typeMap.register("ledView", LEDView::class)
         typeMap.register("sevenSegmentDisplayView", SevenSegmentDisplayView::class)
@@ -201,6 +204,7 @@ object AntaresViewModule : AbstractModule() {
 	    factory.register(SelectionDrawingStrategy.BELOW, DelayGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(it as BoxGateView<*>) }
 
 	    factory.register(SelectionDrawingStrategy.REPLACE, SwitchView::class.simpleName!!) { SwitchViewSelectionModel(it as SwitchView) }
+	    factory.register(SelectionDrawingStrategy.REPLACE, DipSwitchView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 	    factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 	    factory.register(SelectionDrawingStrategy.REPLACE, CircuitInOutView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 

@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.arithmetic.Random
 import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.input.Clock
+import ch.scorpion.antares.model.input.DipSwitch
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.memory.RAM
 import ch.scorpion.antares.model.memory.ROM
@@ -46,6 +47,7 @@ object AntaresModelModule : AbstractModule() {
         typeMap.register("triStateBufferGate", TriStateBufferGate::class)
 
         typeMap.register("switch", Switch::class)
+	    typeMap.register("dipSwitch", DipSwitch::class)
         typeMap.register("clock", Clock::class)
         typeMap.register("led", LED::class)
         typeMap.register("sevenSegmentDisplay", SevenSegmentDisplay::class)
