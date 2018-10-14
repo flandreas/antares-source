@@ -29,6 +29,7 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
@@ -73,7 +74,7 @@ class DipSwitchView(
 			}
 		}
 
-	private val bitsCount: Int get() = bitViews.size
+	private val bitsCount: Int get() = model!!.bitWidth.width
 
 	init {
 		isFocusable = true
@@ -96,6 +97,7 @@ class DipSwitchView(
 		set(value) {
 			if (value != bitWidth) {
 				invalidate()
+				clear()
 				model!!.bitWidth = value
 				updateView()
 				invalidate()
@@ -192,12 +194,17 @@ class DipSwitchView(
 
 	/** ---- [DipSwitchView] */
 
+	private fun clear() {
+		bitViews.clear()
+		focusIndex = null
+	}
+
 	private val upperLeftBoundsEdge: Point2D
 		get() = when(orientation) {
-			Direction.EAST -> Point2D(getOutput().length.toDouble(), -calculateHeight() / 2)
-			Direction.NORTH -> Point2D(-calculateWidth() / 2, -getOutput().length.toDouble() - calculateHeight())
-			Direction.WEST -> Point2D(-getOutput().length.toDouble() - calculateWidth(), -calculateHeight() / 2)
-			Direction.SOUTH -> Point2D(-calculateWidth() / 2, getOutput().length.toDouble())
+			Direction.WEST -> Point2D(getOutput().length.toDouble(), -calculateHeight() / 2)
+			Direction.SOUTH -> Point2D(-calculateWidth() / 2, -getOutput().length.toDouble() - calculateHeight())
+			Direction.EAST -> Point2D(-getOutput().length.toDouble() - calculateWidth(), -calculateHeight() / 2)
+			Direction.NORTH -> Point2D(-calculateWidth() / 2, getOutput().length.toDouble())
 		}
 
 	private fun updateView() {
@@ -212,8 +219,8 @@ class DipSwitchView(
 			bitViews.add(BitView(index, xx, yy, styleProvider))
 		}
 
-		getOutput().direction = orientation.opposite()
-		getOutput().setLocation(getOutput().length * orientation.dx, getOutput().length * orientation.dy)
+		getOutput().direction = orientation
+		getOutput().setLocation(getOutput().length * orientation.opposite().dx, getOutput().length * orientation.opposite().dy)
 	}
 
 	private fun calculateWidth(): Double {
@@ -272,6 +279,14 @@ class DipSwitchView(
 					context.keyEvent!!.key == KeyEvent.VK_LEFT -> transferFocusLeft()
 					context.keyEvent!!.key == KeyEvent.VK_RIGHT -> transferFocusRight()
 					context.keyEvent!!.key == KeyEvent.VK_ENTER -> toggleImpl(focusIndex!!, context.signalHandler)
+					context.keyEvent!!.key == KeyEvent.VK_0 -> {
+						model!!.setBit(focusIndex!!, Bit.False, context.signalHandler)
+						transferFocusRight()
+					}
+					context.keyEvent!!.key == KeyEvent.VK_1 -> {
+						model!!.setBit(focusIndex!!, Bit.True, context.signalHandler)
+						transferFocusRight()
+					}
 				}
 			}
 			return null
@@ -328,7 +343,7 @@ class DipSwitchView(
 				width - 2 * KNOB_INSET,
 				height / 2 - 1 * KNOB_INSET)
 
-			if (hasFocus) {
+			if (hasFocus && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 				drawFocus(context)
 			}
 		}

@@ -37,6 +37,8 @@ object BaseModuleJvm : AbstractModule() {
         KeyEvent.VK_RIGHT = java.awt.event.KeyEvent.VK_RIGHT
 		KeyEvent.VK_ESCAPE = java.awt.event.KeyEvent.VK_ESCAPE
 		KeyEvent.VK_ENTER = java.awt.event.KeyEvent.VK_ENTER
+		KeyEvent.VK_0 = java.awt.event.KeyEvent.VK_0
+		KeyEvent.VK_1 = java.awt.event.KeyEvent.VK_1
 	}
 
 	private fun defineKeyCodesFx() {
