@@ -7,16 +7,20 @@ import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
@@ -26,15 +30,21 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /** A view representation of a [DipSwitch].*/
 class DipSwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: DipSwitch = DipSwitch()
+	model: DipSwitch = DipSwitch(),
+	orientation: Direction = Direction.NORTH
 ) : DigitalComponentView<DipSwitch>(styleProvider, model) {
 
 	companion object {
+		private val LOG by logger(DipSwitchView::class)
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.DipSwitchView.iconPath"
 		private const val CASE_INSET = Look.SCALE
 		private const val LABEL_HEIGHT = 10
@@ -42,6 +52,9 @@ class DipSwitchView(
 
 	/** Contains the individual [BitView]s, starting with the lowest priority [Bit] at index 0.*/
 	private val bitViews = mutableListOf<BitView>()
+
+	/** The index of [bitViews] that has the focus, or `null` if none has the foucs.*/
+	private var focusIndex: Int? = null
 
 	private val actorInteractionHandler = InteractionHandler()
 
@@ -52,7 +65,18 @@ class DipSwitchView(
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.BOTTOM)
 
+	override var orientation: Direction = orientation
+		set(value) {
+			if (value != field) {
+				field = value
+				updateView()
+			}
+		}
+
+	private val bitsCount: Int get() = bitViews.size
+
 	init {
+		isFocusable = true
 		modelExchanged(null)
 	}
 
@@ -60,11 +84,9 @@ class DipSwitchView(
 		super.modelExchanged(oldModel)
 		val portView = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getOutput(),
-			direction = Direction.NORTH)
-		portView.setLocation(0, portView.length)
+			port = model!!.getOutput())
 		addPortView(portView)
-		buildUI()
+		updateView()
 	}
 
 	/** ---- UI properties */
@@ -75,11 +97,15 @@ class DipSwitchView(
 			if (value != bitWidth) {
 				invalidate()
 				model!!.bitWidth = value
-				buildUI()
+				updateView()
 				invalidate()
 				validate()
 			}
 		}
+
+	/** ---- [Component] */
+
+	override val rotatable: Boolean get() = false
 
 	/** ---- [ActorView] */
 
@@ -97,14 +123,22 @@ class DipSwitchView(
 		super.handleStateChanged(event)
 	}
 
+	/** ---- [Storable] interface */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeString("orientation", orientation.customName)
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		orientation = Direction.withName(reader.readString("orientation"))
+	}
+
 	/** ---- [Drawable] interface */
 
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
-		/*
-		drawFill(context, bounds, backgroundColor)
-		drawStroke(context, bounds, foregroundColor, stroke)
-		*/
 		drawFill(context, bounds, context.choose(color).backgroundColor)
 		drawStroke(context, bounds, context.choose(color).foregroundColor, stroke)
 		bitViews.forEach {
@@ -116,22 +150,70 @@ class DipSwitchView(
 		}
 	}
 
-	private fun buildUI() {
-		setBounds(calculateBounds())
-		bitViews.clear()
-		for (index in 0 until model!!.bitWidth.width) {
-			val x = width / 2 - (index + 1) * BitView.WIDTH - CASE_INSET
-			val y = bounds.y + LABEL_HEIGHT + CASE_INSET
-			bitViews.add(BitView(index, x, y, styleProvider))
+	/** ---- [AbstractComponent] */
+
+	override fun focusGained() {
+		updateFocusIndex(bitsCount - 1)
+		super.focusGained()
+	}
+
+	override fun focusLost() {
+		updateFocusIndex(null)
+		super.focusLost()
+	}
+
+	fun transferFocusRight() {
+		if (focusIndex != null) {
+			updateFocusIndex(if (focusIndex == 0) bitsCount - 1 else focusIndex!! - 1)
 		}
+	}
+
+	fun transferFocusLeft() {
+		if (focusIndex != null) {
+			updateFocusIndex(if (focusIndex == bitsCount - 1) 0 else focusIndex!! + 1)
+		}
+	}
+
+	fun setFocusTo(newFocusIndex: Int) {
+		updateFocusIndex(newFocusIndex)
+	}
+
+	private fun updateFocusIndex(newIndex: Int?) {
+		invalidate()
+		if (focusIndex != null) {
+			bitViews[focusIndex!!].hasFocus = false
+		}
+		focusIndex = newIndex
+		if (focusIndex != null) {
+			bitViews[focusIndex!!].hasFocus = true
+		}
+		validate()
 	}
 
 	/** ---- [DipSwitchView] */
 
-	private fun calculateBounds(): RectangularShape {
-		val width = calculateWidth()
-		val height = calculateHeight()
-		return Rectangle2D(-width / 2, DigitalPortView.LENGTH.toDouble(), width, height)
+	private val upperLeftBoundsEdge: Point2D
+		get() = when(orientation) {
+			Direction.EAST -> Point2D(getOutput().length.toDouble(), -calculateHeight() / 2)
+			Direction.NORTH -> Point2D(-calculateWidth() / 2, -getOutput().length.toDouble() - calculateHeight())
+			Direction.WEST -> Point2D(-getOutput().length.toDouble() - calculateWidth(), -calculateHeight() / 2)
+			Direction.SOUTH -> Point2D(-calculateWidth() / 2, getOutput().length.toDouble())
+		}
+
+	private fun updateView() {
+		val edge = upperLeftBoundsEdge
+		setBounds(edge.x, edge.y, calculateWidth(), calculateHeight())
+
+		bitViews.clear()
+		val maxIndex = model!!.bitWidth.width - 1
+		for (index in 0..maxIndex) {
+			val xx = x + (maxIndex - index) * BitView.WIDTH + CASE_INSET
+			val yy = y + LABEL_HEIGHT + CASE_INSET
+			bitViews.add(BitView(index, xx, yy, styleProvider))
+		}
+
+		getOutput().direction = orientation.opposite()
+		getOutput().setLocation(getOutput().length * orientation.dx, getOutput().length * orientation.dy)
 	}
 
 	private fun calculateWidth(): Double {
@@ -164,17 +246,35 @@ class DipSwitchView(
 
 		private fun toggle(signalHandler: SignalHandler, x: Double, y: Double) {
 			getBitViewIndexAt(x - location.x, y - location.y)?.let {
-				var signal = model!!.value as Word?
-				if (signal == null) {
-					signal = Word.allOf(model!!.bitWidth, Bit.Undefined)
-				}
-				var bit = signal.bitAt(it)
-				if (!bit.isDefined) {
-					bit = Bit.False
-				}
-				bit = bit.not()
-				model!!.setBit(it, bit, signalHandler)
+				toggleImpl(it, signalHandler)
+				requestFocus()
+				setFocusTo(it)
 			}
+		}
+
+		private fun toggleImpl(index: Int, signalHandler: SignalHandler) {
+			var signal = model!!.value as Word?
+			if (signal == null) {
+				signal = Word.allOf(model!!.bitWidth, Bit.Undefined)
+			}
+			var bit = signal.bitAt(index)
+			if (!bit.isDefined) {
+				bit = Bit.False
+			}
+			bit = bit.not()
+			model!!.setBit(index, bit, signalHandler)
+		}
+
+		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
+			LOG.debug("DipSwitchView: keyPressed '${context.keyEvent!!.key.toChar()}'")
+			if (focusIndex != null) {
+				when {
+					context.keyEvent!!.key == KeyEvent.VK_LEFT -> transferFocusLeft()
+					context.keyEvent!!.key == KeyEvent.VK_RIGHT -> transferFocusRight()
+					context.keyEvent!!.key == KeyEvent.VK_ENTER -> toggleImpl(focusIndex!!, context.signalHandler)
+				}
+			}
+			return null
 		}
 	}
 
@@ -194,10 +294,16 @@ class DipSwitchView(
 		companion object {
 			const val HEIGHT = 5.0 * Look.SCALE
 			const val WIDTH = 2.0 * Look.SCALE
-			private val KNOB_INSET = 2
+			private const val KNOB_INSET = 2
 		}
 
+		/** Contains the value this [BitView] displays.*/
 		var bit: Bit = Bit.False
+
+		/** Controls whether this [BitView] has the focus and should draw a focus border.*/
+		var hasFocus: Boolean = false
+
+		/** ---- [Drawable] interface */
 
 		override val lineWidth: Double get() = 0.0
 
@@ -221,6 +327,16 @@ class DipSwitchView(
 				bitY,
 				width - 2 * KNOB_INSET,
 				height / 2 - 1 * KNOB_INSET)
+
+			if (hasFocus) {
+				drawFocus(context)
+			}
+		}
+
+		private fun drawFocus(context: DrawContext) {
+			context.g.color = Themes.get<AntaresTheme>().focus.color.foregroundColor
+			context.g.stroke = Themes.get<AntaresTheme>().focus.stroke
+			context.g.drawRect(x + 1, y + 1, WIDTH - 2, HEIGHT - 2)
 		}
 	}
 }
