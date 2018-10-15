@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 
 enum class HorizontalAlignment(val customName: String) {
@@ -91,4 +92,25 @@ enum class VerticalAlignment(val customName: String) {
 }
 
 /** Used to update horizontal and vertical alignment at once. */
-data class Alignment(val horizontal: HorizontalAlignment, val vertical: VerticalAlignment)
+data class Alignment(val horizontal: HorizontalAlignment, val vertical: VerticalAlignment) {
+
+	companion object {
+
+		fun forOrientation(orientation: Direction): Alignment {
+			return when (orientation) {
+				Direction.EAST -> {
+					Alignment(HorizontalAlignment.RIGHT, VerticalAlignment.CENTER)
+				}
+				Direction.NORTH -> {
+					Alignment(HorizontalAlignment.CENTER, VerticalAlignment.TOP)
+				}
+				Direction.WEST -> {
+					Alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER)
+				}
+				Direction.SOUTH -> {
+					Alignment(HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM)
+				}
+			}
+		}
+	}
+}

@@ -29,10 +29,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.TextProperty
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.*
 import ch.scorpion.jabbah.graph.ApplicationMode
@@ -397,50 +394,15 @@ class CircuitInOutView(
 
     private fun updateInputLabel() {
         label.text = StringUtils.orEmpty(name)
-        label.location = Point2D(arrowPath!!.tailLocation)
-                .subtract(orientation.multiply(LABEL_DIST.toDouble()))
-        when (orientation) {
-            Direction.EAST -> {
-                label.horizontalAlignment = HorizontalAlignment.RIGHT
-                label.verticalAlignment = VerticalAlignment.CENTER
-            }
-            Direction.NORTH -> {
-                label.horizontalAlignment = HorizontalAlignment.CENTER
-                label.verticalAlignment = VerticalAlignment.TOP
-            }
-            Direction.WEST -> {
-                label.horizontalAlignment = HorizontalAlignment.LEFT
-                label.verticalAlignment = VerticalAlignment.CENTER
-            }
-            Direction.SOUTH -> {
-                label.horizontalAlignment = HorizontalAlignment.CENTER
-                label.verticalAlignment = VerticalAlignment.BOTTOM
-            }
-        }
+        label.location = Point2D(arrowPath!!.tailLocation).subtract(orientation.multiply(LABEL_DIST.toDouble()))
+	    label.alignment = Alignment.forOrientation(orientation)
         updateBoundingBox()
     }
 
     private fun updateOutputLabel() {
         label.text = StringUtils.orEmpty(name)
         label.location = orientation.multiply(LABEL_DIST.toDouble())
-        when (orientation) {
-            Direction.EAST -> {
-                label.horizontalAlignment = HorizontalAlignment.LEFT
-                label.verticalAlignment = VerticalAlignment.CENTER
-            }
-            Direction.NORTH -> {
-                label.horizontalAlignment = HorizontalAlignment.CENTER
-                label.verticalAlignment = VerticalAlignment.BOTTOM
-            }
-            Direction.WEST -> {
-                label.horizontalAlignment = HorizontalAlignment.RIGHT
-                label.verticalAlignment = VerticalAlignment.CENTER
-            }
-            Direction.SOUTH -> {
-                label.horizontalAlignment = HorizontalAlignment.CENTER
-                label.verticalAlignment = VerticalAlignment.TOP
-            }
-        }
+	    label.alignment = Alignment.forOrientation(orientation.opposite())
         updateBoundingBox()
     }
 

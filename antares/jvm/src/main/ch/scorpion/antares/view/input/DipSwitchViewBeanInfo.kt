@@ -12,14 +12,17 @@ import java.beans.BeanInfo
 class DipSwitchViewBeanInfo : DigitalComponentBeanInfo<DipSwitchView>() {
 
 	companion object {
+		private val name = PropertyImpl("element.property", String::class.java)
 		private val bitWidth = PropertyImpl("element.property.bitWidth", BitWidth::class.java)
 	}
 
 	override fun addProperties(bean: DipSwitchView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
+		name.bind(editor, { bean.name }, { bean.name = it })
 		bitWidth.bind(editor, { bean.bitWidth }, { bean.bitWidth = it!! })
 
+		properties.add(name)
 		properties.add(bitWidth)
 	}
 }

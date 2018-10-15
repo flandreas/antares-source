@@ -8,9 +8,11 @@ import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
@@ -21,6 +23,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.AbstractComponent
+import ch.scorpion.jabbah.edit.model.text.Alignment
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
@@ -48,7 +51,8 @@ class DipSwitchView(
 		private val LOG by logger(DipSwitchView::class)
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.DipSwitchView.iconPath"
 		private const val CASE_INSET = Look.SCALE
-		private const val LABEL_HEIGHT = 10
+		private const val BIT_LABEL_HEIGHT = 10
+		private const val LABEL_DIST = Look.SCALE
 	}
 
 	/** Contains the individual [BitView]s, starting with the lowest priority [Bit] at index 0.*/
@@ -60,17 +64,25 @@ class DipSwitchView(
 	private val actorInteractionHandler = InteractionHandler()
 
 	/** Single instance used as flyweight to draw the index number above [BitView]s.*/
-	private val labelFlyweight = Label(
+	private val bitLabelFlyweight = Label(
 		font = styleProvider.getStyle(GraphStyleType.ANNOTATION).font,
 		text = "",
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.BOTTOM)
 
+	/** The [Label] that displays the name of this [DipSwitchView].*/
+	private val label = Label(
+		font = font,
+		text = model.name)
+
 	override var orientation: Direction = orientation
 		set(value) {
 			if (value != field) {
+				invalidate()
 				field = value
 				updateView()
+				invalidate()
+				validate()
 			}
 		}
 
@@ -92,6 +104,12 @@ class DipSwitchView(
 
 	/** ---- UI properties */
 
+	var name: String?
+		get() = model!!.name
+		set(value) {
+			model!!.name = value
+		}
+
 	var bitWidth: BitWidth
 		get() = model!!.bitWidth
 		set(value) {
@@ -109,6 +127,16 @@ class DipSwitchView(
 
 	override val rotatable: Boolean get() = false
 
+	override val boundingBox: Rectangle2D
+		get() {
+			val bb = super.boundingBox
+			if (StringUtils.isNotEmpty(label.text)) {
+				val lbb = label.boundingBox.moveBy(location)
+				bb.add(lbb)
+			}
+			return bb
+		}
+
 	/** ---- [ActorView] */
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
@@ -122,6 +150,7 @@ class DipSwitchView(
 		for ((i,view) in bitViews.withIndex()) {
 			view.bit = model!!.value.bitAt(i)
 		}
+		label.text = StringUtils.orEmpty(model!!.name)
 		super.handleStateChanged(event)
 	}
 
@@ -145,11 +174,13 @@ class DipSwitchView(
 		drawStroke(context, bounds, context.choose(color).foregroundColor, stroke)
 		bitViews.forEach {
 			it.draw(context)
-			labelFlyweight.location = Point2D(it.bounds.centerX, it.bounds.minY - 2)
-			labelFlyweight.text = it.index.toString()
-			labelFlyweight.color = context.choose(color).textColor
-			labelFlyweight.draw(context)
+			bitLabelFlyweight.location = Point2D(it.bounds.centerX, it.bounds.minY - 2)
+			bitLabelFlyweight.text = it.index.toString()
+			bitLabelFlyweight.color = context.choose(color).textColor
+			bitLabelFlyweight.draw(context)
 		}
+		context.g.color = context.choose(color).textColor
+		label.draw(context)
 	}
 
 	/** ---- [AbstractComponent] */
@@ -215,12 +246,14 @@ class DipSwitchView(
 		val maxIndex = model!!.bitWidth.width - 1
 		for (index in 0..maxIndex) {
 			val xx = x + (maxIndex - index) * BitView.WIDTH + CASE_INSET
-			val yy = y + LABEL_HEIGHT + CASE_INSET
+			val yy = y + BIT_LABEL_HEIGHT + CASE_INSET
 			bitViews.add(BitView(index, xx, yy, styleProvider))
 		}
 
 		getOutput().direction = orientation
 		getOutput().setLocation(getOutput().length * orientation.opposite().dx, getOutput().length * orientation.opposite().dy)
+
+		updateLabel()
 	}
 
 	private fun calculateWidth(): Double {
@@ -228,7 +261,7 @@ class DipSwitchView(
 	}
 
 	private fun calculateHeight(): Double {
-		return BitView.HEIGHT + LABEL_HEIGHT + 2 * CASE_INSET
+		return BitView.HEIGHT + BIT_LABEL_HEIGHT + 2 * CASE_INSET
 	}
 
 	/**
@@ -241,6 +274,21 @@ class DipSwitchView(
 			}
 		}
 		return null
+	}
+
+	/**
+	 * Updates the text, the location nand the alignments of the external [Label] depending
+	 * on the orientation of this [DipSwitchView].
+	 */
+	private fun updateLabel() {
+		label.text = StringUtils.orEmpty(model!!.name)
+		label.alignment = Alignment.forOrientation(orientation)
+		label.location = when(orientation) {
+			Direction.EAST -> Point2D(-getOutput().length - bounds.width - LABEL_DIST, 0.0)
+			Direction.NORTH -> Point2D(0.0, getOutput().length + bounds.height + LABEL_DIST)
+			Direction.WEST -> Point2D(getOutput().length + bounds.width + LABEL_DIST, 0.0)
+			Direction.SOUTH -> Point2D(0.0, -getOutput().length - bounds.height - LABEL_DIST)
+		}
 	}
 
 	/** Allows to toggle individual [BitView]s during execution.*/

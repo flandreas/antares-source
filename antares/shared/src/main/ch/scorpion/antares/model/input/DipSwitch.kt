@@ -50,6 +50,7 @@ class DipSwitch(
 		set(value) {
 			if (value != bitWidth) {
 				getDigitalPort().bitWidth = value
+				this.value = Word.allOf(bitWidth, Bit.False)
 				stateChanged()
 			}
 		}
