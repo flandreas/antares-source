@@ -53,7 +53,7 @@ open class ContainerEditor(
 			    ControlViewSourceEvent.Type.CHANGE -> {
 				    LOG.debug("ContainerEditor: handling properties of ControlViewSource changed")
 				    val cvc = getControlViewComponent(it.source.id)
-				    if (cvc != null) {
+				    if (cvc != null && it.source !== cvc.controlView) {
 					    cvc.controlView?.sourcePropertiesChanged(it.source)
 				    }
 			    }

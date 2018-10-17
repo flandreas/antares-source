@@ -134,10 +134,12 @@ class SwitchView(
     var name: String?
         get() = model!!.name
         set(value) {
-            model!!.name = value
-            updateLabels()
-            validate()
-	        postControlViewSourceChangeEvent(eventBus)
+	        if (value != model!!.name) {
+		        model!!.name = value
+		        updateLabels()
+		        validate()
+		        postControlViewSourceChangeEvent(eventBus)
+	        }
         }
 
     /**
