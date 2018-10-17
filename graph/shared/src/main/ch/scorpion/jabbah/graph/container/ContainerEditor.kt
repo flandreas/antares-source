@@ -49,11 +49,19 @@ open class ContainerEditor(
 	    }
 
 	    eventBus.register(ControlViewSourceEvent::class) {
-		    if (it.type == ControlViewSourceEvent.Type.CHANGE) {
-			    LOG.debug("ContainerEditor: handling properties of ControlViewSource changed")
-			    val cvc = getControlViewComponent(it.source.id)
-			    if (cvc != null) {
-				    cvc.controlView?.sourcePropertiesChanged(it.source)
+		    when (it.type) {
+			    ControlViewSourceEvent.Type.CHANGE -> {
+				    LOG.debug("ContainerEditor: handling properties of ControlViewSource changed")
+				    val cvc = getControlViewComponent(it.source.id)
+				    if (cvc != null) {
+					    cvc.controlView?.sourcePropertiesChanged(it.source)
+				    }
+			    }
+			    ControlViewSourceEvent.Type.REMOVE -> {
+				    getControlViewComponent(it.source.id)?.let { getContainerDrawing().remove(it) }
+			    }
+			    ControlViewSourceEvent.Type.ADD -> {
+				    // nothing to do for ADD
 			    }
 		    }
 	    }
