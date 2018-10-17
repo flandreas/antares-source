@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StoreReader
@@ -34,7 +35,7 @@ import ch.scorpion.jabbah.io.StorableCreator
  */
 class ControlViewComponent(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    var controlView: ControlView<Vertice>? = null,
+    source: ControlViewSource<Vertice>? = null,
     baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY
 ) : AbstractComponent(styleProvider), ActorView {
 
@@ -42,8 +43,10 @@ class ControlViewComponent(
      * The ID of the model displayed by [controlView]. This ID is made persistent and is used to resolve the link
      * to the model when the underlying [Graph] gets bound.
      */
-	var controlModelLink: DeepVerticeLink = if (controlView != null) baseLink.append(controlView!!.model!!.id) else DeepVerticeLink.EMPTY
+	var controlModelLink: DeepVerticeLink
 		private set
+
+	var controlView: ControlView<Vertice>? = null
 
     private var drawableOwner: DrawableOwner? = null
 
@@ -51,9 +54,14 @@ class ControlViewComponent(
 	private var brokenView: BrokenDeepLinkView? = null
 
     init {
-        if (controlView != null) {
-            drawableOwner = DrawableOwner(this, controlView!!)
-        }
+	    if (source != null) {
+		    controlView = source.createControlView()
+		    controlView!!.id = source.id
+		    controlModelLink = baseLink.append(controlView!!.model!!.id)
+		    drawableOwner = DrawableOwner(this, controlView!!)
+	    } else {
+		    controlModelLink = DeepVerticeLink.EMPTY
+	    }
     }
 
     /** ---- [Storable] interface */
@@ -62,6 +70,7 @@ class ControlViewComponent(
         super.write(writer)
         writer.writeStorable("controlView", controlView!!)
 	    writer.writeString("controlModelId", controlModelLink.toStoreFormat())
+	    controlView?.writeModelProperties(writer)
     }
 
     override fun read(reader: StoreReader) {
@@ -72,6 +81,7 @@ class ControlViewComponent(
         controlView = reader.readStorable("controlView") as ControlView<Vertice>
         drawableOwner = DrawableOwner(this, controlView!!)
 	    controlModelLink = DeepVerticeLink.fromStoreFormat(reader.readString("controlModelId"))
+	    controlView?.readModelProperties(reader)
         super.read(reader)
         controlView!!.isShowPortViews = false
     }
@@ -121,8 +131,6 @@ class ControlViewComponent(
     override val type: String? get() = controlView!!.type
 
     override val selectableComponent: Component get() = controlView!!
-
-    override val propertyOwner: Any get() = controlView!!
 
     override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
         get() = controlView!!.preferredSelectionDrawingStrategy

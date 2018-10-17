@@ -30,6 +30,7 @@ import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.jabbah.base.event.EventBus
 
 /**
  * A view of a [LEDMatrix].
@@ -37,7 +38,8 @@ import ch.scorpion.antares.view.port.DigitalPortView
 class LEDMatrixView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: LEDMatrix = LEDMatrix(),
-    lightColor: LightColor = DEFAULT_LIGHT_COLOR
+    lightColor: LightColor = DEFAULT_LIGHT_COLOR,
+    private val eventBus: EventBus = BaseModule.eventBus
 ) : DigitalComponentView<LEDMatrix>(styleProvider, model), ControlView<LEDMatrix>, ControlViewSource<LEDMatrix> {
 
     companion object {
@@ -55,6 +57,7 @@ class LEDMatrixView(
         set(value) {
             invalidate()
             field = value
+	        postControlViewSourceChangeEvent(eventBus)
         }
 
     var size: Size = DEFAULT_SIZE
@@ -62,11 +65,18 @@ class LEDMatrixView(
             if (value != field) {
                 field = value
                 updateGeometry()
+	            postControlViewSourceChangeEvent(eventBus)
             }
         }
 
     /** `true` if the dots are drawn as circles, `false` if the are drawn as squares .*/
     var isCircleDots: Boolean = true
+		set(value) {
+			if (field != value) {
+				field = value
+				postControlViewSourceChangeEvent(eventBus)
+			}
+		}
 
     /** `true` if the dots additionally show whether the corresponding port bits are set to 1.*/
     var isDebug: Boolean = false
@@ -91,6 +101,7 @@ class LEDMatrixView(
             if (value != columnWidth) {
                 model!!.columnWidth = value
                 modelExchanged(model)
+	            postControlViewSourceChangeEvent(eventBus)
             }
         }
 
@@ -100,6 +111,7 @@ class LEDMatrixView(
             if (value != rowWidth) {
                 model!!.rowWidth = value
                 modelExchanged(model)
+	            postControlViewSourceChangeEvent(eventBus)
             }
         }
 
@@ -118,6 +130,40 @@ class LEDMatrixView(
         this.model = model
     }
 
+	override fun sourcePropertiesChanged(source: ControlViewSource<LEDMatrix>) {
+		if (source is LEDMatrixView) {
+			copyControlViewProperties(source, this)
+		}
+	}
+
+	override fun writeModelProperties(writer: StoreWriter) {
+		writer.writeString("columnWidth", columnWidth.customName)
+		writer.writeString("rowWidth", rowWidth.customName)
+		writer.writeLong("afterglow", afterglowDuration)
+	}
+
+	override fun readModelProperties(reader: StoreReader) {
+		// conditional access in order to support backward compatibility
+		if (reader.hasAttribute("columnWidth")) {
+			columnWidth = BitWidth.withName(reader.readString("columnWidth"))
+		}
+		if (reader.hasAttribute("rowWidth")) {
+			rowWidth = BitWidth.withName(reader.readString("rowWidth"))
+		}
+		if (reader.hasAttribute("afterglow")) {
+			afterglowDuration = reader.readLong("afterglow")
+		}
+	}
+
+	private fun copyControlViewProperties(source: LEDMatrixView, dest:LEDMatrixView) {
+		dest.model!!.name = source.model!!.name
+		dest.lightColor = source.lightColor
+		dest.isCircleDots = source.isCircleDots
+		dest.size = source.size
+		dest.columnWidth = source.columnWidth
+		dest.rowWidth = source.rowWidth
+	}
+
     /** ---- [ControlViewSource] */
 
     override val controlName: String
@@ -134,8 +180,7 @@ class LEDMatrixView(
         val clone = LEDMatrixView(styleProvider, model!!, lightColor)
         clone.isShowPortViews = false
         clone.isDebug = false
-        clone.isCircleDots = isCircleDots
-        clone.size = size
+	    copyControlViewProperties(this, clone)
         return clone
     }
 

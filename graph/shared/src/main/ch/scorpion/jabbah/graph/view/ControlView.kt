@@ -1,8 +1,13 @@
 package ch.scorpion.jabbah.graph.view
 
-import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.container.ControlViewComponent
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * A [VerticeView] that is created by a [ControlViewSource] and to be used to add to a [SubGraphVerticeView].
@@ -12,10 +17,31 @@ interface ControlView<T : Vertice> : VerticeView<T> {
 
     val controlId: String?
 
-    /**
+	/** Returns a translated text that identifies this [ControlView] to the user.*/
+	val controlName: String
+
+	/**
      * Binds this [ControlView] to the corresponding [Vertice] of the [Graph] that is contained in the
      * [SubGraphVerticeView] that owns this [ControlView]. Used for establishing a process to update this [ControlView]
      * whenever the corresponding [Vertice] changes.
      */
     fun bindToModel(model: T)
+
+	/**
+	 * Called by the editor environment to inform this [ControlView] that some properties of the [ControlViewSource]
+	 * that created this [ControlView] have changed. Depending on the type of [ControlView], it will copy some
+	 * or all of the [ControlViewSource]'s properties.
+	 */
+	fun sourcePropertiesChanged(source: ControlViewSource<T>)
+
+	/**
+	 * Called by [ControlViewComponent] to ask this [ControlView] to write current values of its model [GraphElement].
+	 * This is necessary when storing [ControlView]s in [ContainerDrawing]s, which don't have a model layer.
+	 * Typical [ControlView]s will store properties like the name of the model.
+	 */
+	fun writeModelProperties(writer: StoreWriter)
+
+	/** Reads model properties that have been stored by [storeModelProperties].*/
+	fun readModelProperties(reader: StoreReader)
+
 }

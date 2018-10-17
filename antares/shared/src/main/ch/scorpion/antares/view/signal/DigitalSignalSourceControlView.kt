@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.signal
 
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
@@ -8,6 +9,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -69,9 +71,41 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 
     /** ---- [ControlView] interface */
 
-    override fun bindToModel(model: T) {
+    override val controlName: String
+	    get() {
+		    if (StringUtils.isEmpty(model!!.name)) {
+			    return "${model!!.type} ($id)"
+		    }
+		    return "${model!!.type} \"${model!!.name}\""
+	    }
+
+	override fun bindToModel(model: T) {
         this.model = model
     }
+
+	override fun sourcePropertiesChanged(source: ControlViewSource<T>) {
+		if (source is AbstractNumberViewComponent<*>) {
+			copyControlViewProperties(source, this)
+		}
+	}
+
+	override fun writeModelProperties(writer: StoreWriter) {
+		if (StringUtils.isNotEmpty(name)) {
+			writer.writeString("name", name!!)
+		}
+	}
+
+	override fun readModelProperties(reader: StoreReader) {
+		if (reader.hasAttribute("name")) {
+			name = reader.readString("name")
+		}
+	}
+
+	private fun copyControlViewProperties(source: AbstractNumberViewComponent<*>, dest: DigitalSignalSourceControlView<*>) {
+		dest.name = source.model!!.name
+		dest.bitWidth = source.bitWidth
+		dest.signalRepresentation = source.signalRepresentation
+	}
 
     /** ---- [AbstractNumberViewComponent] */
 

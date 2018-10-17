@@ -30,6 +30,7 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.MathClass
+import ch.scorpion.jabbah.base.event.EventBus
 
 
 /**
@@ -38,7 +39,8 @@ import ch.scorpion.jabbah.base.MathClass
 class SevenSegmentDisplayView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: SevenSegmentDisplay = SevenSegmentDisplay(),
-    lightColor: LightColor = DEFAULT_LIGHT_COLOR
+    lightColor: LightColor = DEFAULT_LIGHT_COLOR,
+    private val eventBus: EventBus = BaseModule.eventBus
 ) : DigitalComponentView<SevenSegmentDisplay>(styleProvider, model),
         ControlView<SevenSegmentDisplay>, ControlViewSource<SevenSegmentDisplay> {
 
@@ -56,8 +58,11 @@ class SevenSegmentDisplayView(
 
     var lightColor: LightColor = lightColor
         set(value) {
-            invalidate()
-            field = value
+	        if (field != value) {
+	            invalidate()
+	            field = value
+		        postControlViewSourceChangeEvent(eventBus)
+	        }
         }
 
     var size: Size = DEFAULT_SIZE
@@ -71,6 +76,7 @@ class SevenSegmentDisplayView(
                 }
                 updateGeometry()
                 invalidate()
+	            postControlViewSourceChangeEvent(eventBus)
             }
         }
 
@@ -142,7 +148,10 @@ class SevenSegmentDisplayView(
     var name: String?
         get() = model!!.name
         set(value) {
-            model!!.name = value
+	        if (value != name) {
+		        model!!.name = value
+		        postControlViewSourceChangeEvent(eventBus)
+	        }
         }
 
     /** ---- [Storable] */
@@ -166,6 +175,37 @@ class SevenSegmentDisplayView(
     override fun bindToModel(model: SevenSegmentDisplay) {
         this.model = model
     }
+
+	override fun sourcePropertiesChanged(source: ControlViewSource<SevenSegmentDisplay>) {
+		if (source is SevenSegmentDisplayView) {
+			copyControlViewProperties(source, this)
+		}
+	}
+
+	override fun writeModelProperties(writer: StoreWriter) {
+		if (StringUtils.isNotEmpty(name)) {
+			writer.writeString("name", name!!)
+		}
+		writer.writeString("portScheme", portScheme.customName)
+	}
+
+	override fun readModelProperties(reader: StoreReader) {
+		// conditional access in order to support backward compatibility
+		if (reader.hasAttribute("name")) {
+			name = reader.readString("name")
+		}
+		if (reader.hasAttribute("portScheme")) {
+			portScheme = SevenSegmentDisplayScheme.withName(reader.readString("portScheme"))
+		}
+	}
+
+	private fun copyControlViewProperties(source: SevenSegmentDisplayView, dest: SevenSegmentDisplayView) {
+		dest.model!!.name = source.model!!.name
+		dest.lightColor = source.lightColor
+		dest.size = source.size
+	}
+
+	/** ---- [ControlViewSource] */
 
     override val controlName: String
         get() {

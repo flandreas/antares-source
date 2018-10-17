@@ -40,15 +40,28 @@ interface ControlViewSource<T : Vertice> : VerticeView<T> {
 
     /** Creates a new instance of a [ControlView] that represents this [ControlViewSource].*/
     fun createControlView(): ControlView<T>
+
+	/**
+	 * Posts a [ControlViewSourceEvent] on the specified [EventBus] to indicate that this
+	 * [ControlViewSource] has changed some of its property, which might be of interest
+	 * for [ControlView]s created by this [ControlViewSource].
+	 */
+	fun postControlViewSourceChangeEvent(eventBus: EventBus) {
+		eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.CHANGE, this as ControlViewSource<Vertice>))
+	}
 }
 
 /**
  * An event that is posted on the [GraphEditor]'s [EventBus] whenever a [ControlViewSource]
- * has been added or removed.
+ * has been added to or removed from the main [GraphView], or when a [ControlViewSource]'s property
+ * that is reflected by a created [ControlView] has changed, in which case the [ControlView] that receives
+ * the event will copy all relevant properties from its source [ControlViewSource].
  */
 class ControlViewSourceEvent(val type: Type, val source: ControlViewSource<Vertice>) {
 
     enum class Type {
-        ADD,REMOVE
+        ADD,
+	    REMOVE,
+	    CHANGE
     }
 }

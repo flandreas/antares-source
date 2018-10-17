@@ -8,6 +8,7 @@ import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.logger
@@ -46,7 +47,8 @@ import ch.scorpion.jabbah.io.StoreWriter
 class SwitchView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: Switch = Switch(),
-    private val textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory
+    private val textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory,
+    private val eventBus: EventBus = BaseModule.eventBus
 ) : DigitalComponentView<Switch>(styleProvider, model), ControlView<Switch>, ControlViewSource<Switch> {
 
     companion object {
@@ -68,6 +70,7 @@ class SwitchView(
             invalidate()
             update()
             validate()
+	        postControlViewSourceChangeEvent(eventBus)
         }
 
     /** Handles mouse interactions during execution*/
@@ -134,6 +137,7 @@ class SwitchView(
             model!!.name = value
             updateLabels()
             validate()
+	        postControlViewSourceChangeEvent(eventBus)
         }
 
     /**
@@ -142,6 +146,12 @@ class SwitchView(
      * the [Switch] returns to 0 state.
      */
     var toggle: Boolean = true
+		set(value) {
+			if (field != value) {
+				field = value
+				postControlViewSourceChangeEvent(eventBus)
+			}
+		}
 
     /** ---- [Storable] interface */
 
@@ -219,7 +229,19 @@ class SwitchView(
         context.g.color = oldColor
     }
 
-    /** ---- [ControlViewSource] */
+	override fun sourcePropertiesChanged(source: ControlViewSource<Switch>) {
+		if (source is SwitchView) {
+			copyControlViewProperties(source, this)
+		}
+	}
+
+	private fun copyControlViewProperties(source: SwitchView, dest: SwitchView) {
+		dest.name = source.name
+		dest.labelPosition = source.labelPosition
+		dest.toggle = source.toggle
+	}
+
+	/** ---- [ControlViewSource] */
 
     override val controlId: String
         get() {
@@ -242,10 +264,10 @@ class SwitchView(
         val clone = SwitchView(styleProvider, model!!)
         clone.isShowPortViews = false
         clone.location = Point2D.ZERO
-        clone.name = name
-        clone.labelPosition = labelPosition
+	    copyControlViewProperties(this, clone)
         return clone
     }
+
 
     /** ---- [ControlView] */
 
@@ -253,8 +275,19 @@ class SwitchView(
         this.model = model
     }
 
+	override fun writeModelProperties(writer: StoreWriter) {
+		if (StringUtils.isNotEmpty(name)) {
+			writer.writeString("name", name!!)
+		}
+	}
 
-    /** ---- [SwitchView] */
+	override fun readModelProperties(reader: StoreReader) {
+		if (reader.hasAttribute("name")) {
+			name = reader.readString("name")
+		}
+	}
+
+	/** ---- [SwitchView] */
 
     override fun drawSelected(context: DrawContext) {
         context.g.color = context.color!!.foregroundColor

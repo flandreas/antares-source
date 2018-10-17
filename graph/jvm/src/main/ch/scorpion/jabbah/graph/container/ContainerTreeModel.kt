@@ -193,7 +193,7 @@ class ContainerTreeModel(
 			source.controlId!!,
 			source.model!!.id,
 			source.controlName,
-			{ ControlViewComponent(styleProvider, source.createControlView(), baseLink) },
+			{ ControlViewComponent(styleProvider, source, baseLink) },
 			source.iconPath))
 	}
 

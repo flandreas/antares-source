@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.TestPortView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /** A [ControlView] implementation used for unit and integration testing.*/
 class TestControlVerticeView(
@@ -34,6 +36,14 @@ class TestControlVerticeView(
 	override fun bindToModel(model: TestControlVertice) {
 		this.model = model
 	}
+
+	override fun sourcePropertiesChanged(source: ControlViewSource<TestControlVertice>) {
+		// empty
+	}
+
+	override fun writeModelProperties(writer: StoreWriter) { }
+
+	override fun readModelProperties(reader: StoreReader) { }
 
 	/** ---- [ControlViewSource] */
 

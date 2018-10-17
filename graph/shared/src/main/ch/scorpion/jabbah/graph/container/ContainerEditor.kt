@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.draw.ZoomStrategyType
 import ch.scorpion.jabbah.edit.Editor
@@ -11,6 +12,8 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
+import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
+import ch.scorpion.jabbah.graph.view.ControlViewSourceEvent
 import ch.scorpion.jabbah.graph.view.editor.GraphPortViewEvent
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
@@ -21,6 +24,10 @@ open class ContainerEditor(
     view: DrawingView<Drawing<Component>>,
     eventBus: EventBus
 ) : EditorImpl(view) {
+
+	companion object {
+		private val LOG by logger(ContainerEditor::class)
+	}
 
     init {
         view.defaultZoomStrategy = ZoomStrategy(ZoomStrategyType.VALUE, 2.0)
@@ -40,11 +47,25 @@ open class ContainerEditor(
 			    }
 		    }
 	    }
+
+	    eventBus.register(ControlViewSourceEvent::class) {
+		    if (it.type == ControlViewSourceEvent.Type.CHANGE) {
+			    LOG.debug("ContainerEditor: handling properties of ControlViewSource changed")
+			    val cvc = getControlViewComponent(it.source.id)
+			    if (cvc != null) {
+				    cvc.controlView?.sourcePropertiesChanged(it.source)
+			    }
+		    }
+	    }
     }
 
     protected fun getContainerDrawing(): ContainerDrawing {
         return drawing as ContainerDrawing
     }
+
+	private fun getControlViewComponent(id: Int): ControlViewComponent? {
+		return getContainerDrawing().getControlViewComponent(DeepVerticeLink(id))
+	}
 
     /** Removes the [PortViewComponent] for the [Port] with the specified name from the [ContainerDrawing].*/
     private fun removePortViewComponent(name: String) {

@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.model.net.Probe
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.signal.AbstractNumberViewComponent
 import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
@@ -18,6 +19,7 @@ import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 
@@ -27,7 +29,8 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
  */
 class ProbeView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    probe: Probe = Probe()
+    probe: Probe = Probe(),
+    private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractNumberViewComponent<Probe>(styleProvider, probe, Direction.EAST), ControlViewSource<Probe> {
 
     companion object {
@@ -84,7 +87,10 @@ class ProbeView(
 	var name: String?
 		get() = model!!.name
 		set(value) {
-			model!!.name = value
+			if (model!!.name != value) {
+				model!!.name = value
+				postControlViewSourceChangeEvent(eventBus)
+			}
 		}
 
 	/** ---- [AbstractNumberViewComponent] */
@@ -96,8 +102,18 @@ class ProbeView(
 	            clear()
                 model!!.bitWidth = value
                 updateView()
+	            postControlViewSourceChangeEvent(eventBus)
             }
         }
+
+	override var signalRepresentation: DigitalSignalRepresentation
+		get() = super.signalRepresentation
+		set(value) {
+			if (super.signalRepresentation != value) {
+				super.signalRepresentation = value
+				postControlViewSourceChangeEvent(eventBus)
+			}
+		}
 
     override val signal: DigitalSignal get() = model!!.signal!!
 

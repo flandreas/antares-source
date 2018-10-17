@@ -68,7 +68,7 @@ class ContainerTreeTest {
 		val source = TestControlVerticeView()
 		val setup = Setup()
 		setup.graphView.add(source)
-		setup.containerDrawing.add(ControlViewComponent(controlView = source.createControlView() as ControlView<Vertice>))
+		setup.containerDrawing.add(ControlViewComponent(source = source as ControlViewSource<Vertice>))
 		setup.build()
 
 		assertControlView(setup.containerTree, nullValue())
@@ -269,7 +269,7 @@ class ContainerTreeTest {
 		}
 
 		fun addToplevelControlToContainer(): Setup {
-			containerDrawing.add(ControlViewComponent(controlView = toplevelControlViewSource.createControlView() as ControlView<Vertice>))
+			containerDrawing.add(ControlViewComponent(source = toplevelControlViewSource as ControlViewSource<Vertice>))
 			return this
 		}
 
@@ -278,7 +278,7 @@ class ContainerTreeTest {
 			val subGraphVerticeView = graphView.getSubGraphVerticeViews()[0]
 			val source = subGraphVerticeView.createSubGraphView().getControlViewSources()[0]
 			val link = DeepVerticeLink(subGraphVerticeView.id)
-			containerDrawing.add(ControlViewComponent(controlView = source.createControlView(), baseLink = link))
+			containerDrawing.add(ControlViewComponent(source = source, baseLink = link))
 			return this
 		}
 

@@ -41,7 +41,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
             }
         }
 
-    var signalRepresentation: DigitalSignalRepresentation = signalRepresentation
+    open var signalRepresentation: DigitalSignalRepresentation = signalRepresentation
         set(value) {
             if (value != field) {
                 field = value

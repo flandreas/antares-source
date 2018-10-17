@@ -6,6 +6,7 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -32,7 +33,8 @@ import ch.scorpion.jabbah.draw.style.Themes
 class LEDView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: LED = LED(),
-    lightColor: LightColor = LEDView.DEFAULT_LIGHT_COLOR
+    lightColor: LightColor = LEDView.DEFAULT_LIGHT_COLOR,
+    private val eventBus: EventBus = BaseModule.eventBus
 ) : DigitalComponentView<LED>(styleProvider, model), ControlView<LED>, ControlViewSource<LED>{
 
     companion object {
@@ -47,8 +49,12 @@ class LEDView(
 
     var lightColor: LightColor = lightColor
         set(value) {
-            invalidate()
-            field = value
+	        if (field != value) {
+		        invalidate()
+		        field = value
+		        postControlViewSourceChangeEvent(eventBus)
+		        validate()
+	        }
         }
 
     private val label = HorizontalLabel(
@@ -75,8 +81,11 @@ class LEDView(
     var name: String?
         get() = model!!.name
         set(value) {
-            model!!.name = value
-            updateLabel()
+	        if (value != name) {
+		        model!!.name = value
+		        updateLabel()
+		        postControlViewSourceChangeEvent(eventBus)
+	        }
         }
 
     /** ---- [ControlView] */
@@ -88,7 +97,26 @@ class LEDView(
             return "led:${model!!.id}"
         }
 
-    /** ---- [ControlViewSource] */
+	override fun sourcePropertiesChanged(source: ControlViewSource<LED>) {
+		if (source is LEDView) {
+			name = source.name
+			lightColor = source.lightColor
+		}
+	}
+
+	override fun writeModelProperties(writer: StoreWriter) {
+		if (StringUtils.isNotEmpty(name)) {
+			writer.writeString("name", name!!)
+		}
+	}
+
+	override fun readModelProperties(reader: StoreReader) {
+		if (reader.hasAttribute("name")) {
+			name = reader.readString("name")
+		}
+	}
+
+	/** ---- [ControlViewSource] */
 
     override val controlName: String
         get() {
