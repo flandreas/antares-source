@@ -140,6 +140,15 @@ class ContainerTreeModel(
 		}
 	}
 
+	fun updateControlViewSource(source: ControlViewSource<Vertice>) {
+		val index = findControlViewSourceIndex(source.controlId!!)
+		if (index != null) {
+			val child = controlsNode.getChildAt(index)
+			((child as DefaultMutableTreeNode).userObject as ContainerTreeControlItem).controlName = source.controlName
+			treeModel.nodesChanged(controlsNode, intArrayOf(index))
+		}
+	}
+
 	/** Removes the top-level [ControlViewSource] with the specified ID from the [TreeModel]. */
 	fun removeControlViewSource(controlId: String) {
 		val index = findControlViewSourceIndex(controlId)
@@ -299,7 +308,7 @@ class ContainerTreePortItem(
 private class ContainerTreeControlItem(
 	val controlViewId: String,
 	val controlModelId: Int,
-	val controlName: String,
+	var controlName: String,
 	factory: () -> Component,
 	iconPath: String
 )  : DraggableTreeItem(ContainerTreeItemType.Control, factory, iconPath) {

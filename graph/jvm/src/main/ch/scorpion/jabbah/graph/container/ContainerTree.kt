@@ -65,6 +65,7 @@ class ContainerTree(
 		when(it.type) {
 			ControlViewSourceEvent.Type.ADD -> model.addControlViewSource(it.source)
 			ControlViewSourceEvent.Type.REMOVE -> model.removeControlViewSource(it.source.controlId!!)
+			ControlViewSourceEvent.Type.CHANGE -> model.updateControlViewSource(it.source)
 		}
 	}
 
