@@ -128,10 +128,10 @@
                 <polylineShape points='-364.0,-56.0 -322.0,-56.0'/>
               </shape>
             </digitalEdgeView>
-            <constantView _id='96' id='4' modelId='5' x='-301.0' y='-112.0' representation='binary' orientation='north'/>
+            <constantView _id='96' id='4' modelId='5' x='-301.0' y='-112.0' representation='binary' orientation='south'/>
             <digitalEdgeView _id='95' id='5' modelId='6' layout='ortho' orig='96' origPort='1' origPortOutput='true' dest='93' adjusted='false'>
               <shape>
-                <polylineShape points='-301.0,-126.0 -301.0,-84.0'/>
+                <polylineShape points='-301.0,-112.0 -301.0,-84.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='94' id='6' modelId='6' layout='ortho' orig='93' dest='43' destPort='2' adjusted='true'>

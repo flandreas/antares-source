@@ -79,10 +79,10 @@
                 <point x='-364.0' y='-42.0'/>
               </location>
             </circuitInOutView>
-            <constantView _id='53' id='5' modelId='7' x='-266.0' y='-182.0' representation='binary' orientation='north'/>
+            <constantView _id='53' id='5' modelId='7' x='-266.0' y='-182.0' representation='binary' orientation='south'/>
             <digitalEdgeView _id='52' id='6' modelId='8' layout='ortho' orig='53' origPort='1' origPortOutput='true' dest='50' adjusted='false'>
               <shape>
-                <polylineShape points='-266.0,-196.0 -266.0,-154.0'/>
+                <polylineShape points='-266.0,-182.0 -266.0,-154.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='51' id='7' modelId='8' layout='ortho' orig='50' dest='57' destPort='2' adjusted='true'>

@@ -221,14 +221,14 @@ elem.setOutputBit(&quot;CO&quot;, co);'>
             <netView _id='113' modelId='39' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='85' id='1' rot='0' modelId='3' x='322.0' y='224.0' mirrorH='false' mirrorV='false'/>
+            <subGraphVerticeViewRef _id='85' id='1' rot='0' modelId='3' x='322.0' y='224.0' label='HA'/>
             <circuitInOutView _id='84' id='2' modelId='4' representation='hex' orientation='east'>
               <location>
                 <point x='210.0' y='140.0'/>
               </location>
             </circuitInOutView>
             <splitterView _id='83' id='3' rot='0' modelId='5' x='252.0' y='140.0' handedness='right'/>
-            <constantView _id='82' id='4' modelId='6' x='210.0' y='266.0' representation='binary' orientation='west'/>
+            <constantView _id='82' id='4' modelId='6' x='210.0' y='266.0' representation='binary' orientation='east'/>
             <digitalEdgeView _id='81' id='5' modelId='7' layout='ortho' orig='84' origPort='1' origPortOutput='true' dest='83' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='196.0,140.0 266.0,140.0'/>
@@ -236,16 +236,16 @@ elem.setOutputBit(&quot;CO&quot;, co);'>
             </digitalEdgeView>
             <digitalEdgeView _id='80' id='6' modelId='8' layout='ortho' orig='82' origPort='1' origPortOutput='true' dest='85' destPort='2' adjusted='false'>
               <shape>
-                <polylineShape points='196.0,266.0 336.0,266.0'/>
+                <polylineShape points='210.0,266.0 336.0,266.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='79' id='7' rot='0' modelId='9' x='434.0' y='224.0' mirrorH='false' mirrorV='false'/>
-            <subGraphVerticeViewRef _id='78' id='8' rot='0' modelId='10' x='546.0' y='224.0' mirrorH='false' mirrorV='false'/>
-            <subGraphVerticeViewRef _id='77' id='9' rot='0' modelId='11' x='658.0' y='224.0' mirrorH='false' mirrorV='false'/>
-            <subGraphVerticeViewRef _id='76' id='10' rot='0' modelId='12' x='770.0' y='224.0' mirrorH='false' mirrorV='false'/>
-            <subGraphVerticeViewRef _id='75' id='11' rot='0' modelId='13' x='882.0' y='224.0' mirrorH='false' mirrorV='false'/>
-            <subGraphVerticeViewRef _id='74' id='12' rot='0' modelId='14' x='994.0' y='224.0' mirrorH='false' mirrorV='false'/>
-            <subGraphVerticeViewRef _id='73' id='13' rot='0' modelId='15' x='1106.0' y='224.0' mirrorH='false' mirrorV='false'/>
+            <subGraphVerticeViewRef _id='79' id='7' rot='0' modelId='9' x='434.0' y='224.0' label='HA'/>
+            <subGraphVerticeViewRef _id='78' id='8' rot='0' modelId='10' x='546.0' y='224.0' label='HA'/>
+            <subGraphVerticeViewRef _id='77' id='9' rot='0' modelId='11' x='658.0' y='224.0' label='HA'/>
+            <subGraphVerticeViewRef _id='76' id='10' rot='0' modelId='12' x='770.0' y='224.0' label='HA'/>
+            <subGraphVerticeViewRef _id='75' id='11' rot='0' modelId='13' x='882.0' y='224.0' label='HA'/>
+            <subGraphVerticeViewRef _id='74' id='12' rot='0' modelId='14' x='994.0' y='224.0' label='HA'/>
+            <subGraphVerticeViewRef _id='73' id='13' rot='0' modelId='15' x='1106.0' y='224.0' label='HA'/>
             <digitalEdgeView _id='72' id='15' modelId='16' layout='ortho' orig='85' origPort='4' origPortOutput='true' dest='79' destPort='2' adjusted='false'>
               <shape>
                 <polylineShape points='392.0,266.0 448.0,266.0'/>
@@ -398,17 +398,17 @@ elem.setOutputBit(&quot;CO&quot;, co);'>
         </originIndicator>
         <digitalPortViewComp _id='120' id='3' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='121' x='140.0' y='154.0' dir='west' textPos='INTERNAL' portId='125'/>
+            <digitalPortView _id='121' x='140.0' y='154.0' dir='west' textPos='internal' portId='125'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='118' id='4' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='119' x='196.0' y='154.0' dir='east' textPos='INTERNAL' portId='126'/>
+            <digitalPortView _id='119' x='196.0' y='154.0' dir='east' textPos='internal' portId='126'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='116' id='5' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='117' x='196.0' y='210.0' dir='east' textPos='INTERNAL' portId='127'/>
+            <digitalPortView _id='117' x='196.0' y='210.0' dir='east' textPos='internal' portId='127'/>
           </portView>
         </digitalPortViewComp>
         <label _id='115' text='+1'>
