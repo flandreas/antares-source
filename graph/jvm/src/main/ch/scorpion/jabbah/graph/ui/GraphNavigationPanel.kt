@@ -185,9 +185,8 @@ open class GraphNavigationPanel(
             return
         }
 
-        val subGraphView = request.subGraphVerticeView.createSubGraphView()
-
         if (!request.quickMode) {
+            val subGraphView = request.subGraphVerticeView.createSubGraphView()
             drawingView.userZoomEnabled = false
             navigationStackView.isEnabled = false
             navigationStackView.navigationStack.peek().content.zoomPan = drawingView.zoomPan

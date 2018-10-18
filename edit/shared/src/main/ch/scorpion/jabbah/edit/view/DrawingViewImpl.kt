@@ -79,9 +79,11 @@ class DrawingViewImpl<T: Drawing<Component>>(
     override var drawing: T
         get() = content.drawing
         set(value) {
-            content = createContent(value)
-            value.setDrawableDrawer(drawableDrawer)
-            applyDefaultZoomStrategy()
+	        if (value !== content.drawing) {
+		        content = createContent(value)
+		        value.setDrawableDrawer(drawableDrawer)
+		        applyDefaultZoomStrategy()
+	        }
         }
 
     override var showGrid: Boolean = false
