@@ -24,9 +24,9 @@ class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
         super.addProperties(bean, editor, properties)
 
 	    name.bind(editor, { bean.name }, { bean.name = it })
-        bitWidth.bind(editor, { bean.bitWidth }) { bean.bitWidth = it!! }
-        signalRep.bind(editor, { bean.signalRepresentation }) { bean.signalRepresentation = it!! }
-        output.bind(editor, { bean.hasOutput }) { bean.hasOutput = it!! }
+        bitWidth.bind(editor, { bean.bitWidth }, { bean.bitWidth = it!! })
+        signalRep.bind(editor, { bean.signalRepresentation }, { bean.signalRepresentation = it!! })
+        output.bind(editor, { bean.hasOutput }, { bean.hasOutput = it!! }, !bean.model!!.isConnected)
 
 	    properties.add(name)
         properties.add(bitWidth)

@@ -8,20 +8,20 @@ import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.signal.AbstractNumberViewComponent
 import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.ApplicationMode
-import ch.scorpion.jabbah.graph.view.ControlView
-import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 
 
 /**
@@ -49,16 +49,27 @@ class ProbeView(
 
     override fun modelExchanged(oldModel: Probe?) {
         super.modelExchanged(oldModel)
+	    updatePortViews()
+		updateView()
+    }
 
-        val inputPortView = DigitalPortView(
+	private fun updatePortViews() {
+		clearPortViews()
+
+		val inputPortView = DigitalPortView(
 			styleProvider = styleProvider,
 			port = model!!.getInput(),
 			direction = Direction.WEST)
 		addPortView(inputPortView)
 
-		hasOutput = model!!.hasOutput
-		updateView()
-    }
+		if (hasOutput) {
+			val outputPort = DigitalPortView(
+				styleProvider = styleProvider,
+				port = model!!.getOutput(),
+				direction = Direction.EAST)
+			addPortView(outputPort)
+		}
+	}
 
     /** ---- UI properties */
 
@@ -70,17 +81,8 @@ class ProbeView(
             }
 
             invalidate()
-            if (value) {
-                model!!.hasOutput = true
-                val outputPort = DigitalPortView(
-                    styleProvider = styleProvider,
-                    port = model!!.getOutput(),
-                    direction = Direction.WEST)
-                addPortView(outputPort)
-            } else {
-                removePortView(getOutput())
-                model!!.hasOutput = false
-            }
+	        model!!.hasOutput = value
+            updatePortViews()
             updateView()
         }
 
@@ -119,15 +121,24 @@ class ProbeView(
 
     override val upperLeftBoundsEdge: Point2D
         get() = when(orientation) {
-            Direction.EAST -> Point2D(getInput().length.toDouble(), -numberView!!.height / 2 - insets)
-            Direction.NORTH -> Point2D(-numberView!!.width / 2 - insets, -getInput().length - numberView!!.height - 2 * insets)
-            Direction.SOUTH -> Point2D(-numberView!!.width / 2  - insets, getInput().length.toDouble())
-            Direction.WEST -> Point2D(-getInput().length - numberView!!.width - 2 * insets, -numberView!!.height / 2 - insets)
+            Direction.EAST -> Point2D(DigitalPortView.LENGTH.toDouble(), -numberView!!.height / 2 - insets)
+            Direction.NORTH -> Point2D(-numberView!!.width / 2 - insets, -DigitalPortView.LENGTH - numberView!!.height - 2 * insets)
+            Direction.SOUTH -> Point2D(-numberView!!.width / 2  - insets, DigitalPortView.LENGTH.toDouble())
+            Direction.WEST -> Point2D(-DigitalPortView.LENGTH - numberView!!.width - 2 * insets, -numberView!!.height / 2 - insets)
         }
 
     override fun updateViewImpl() {
         getInput().direction = orientation.opposite()
-        getInput().setLocation(getInput().length * orientation.dx, getInput().length * orientation.dy)
+        getInput().setLocation(DigitalPortView.LENGTH * orientation.dx, DigitalPortView.LENGTH * orientation.dy)
+	    if (hasOutput) {
+		    getOutput().direction = orientation
+		    when(orientation) {
+			    Direction.EAST -> getOutput().setLocation(2 * DigitalPortView.LENGTH + numberView!!.width , 0.0)
+			    Direction.NORTH -> getOutput().setLocation(0.0, -2 * DigitalPortView.LENGTH - numberView!!.height )
+			    Direction.WEST -> getOutput().setLocation(-2 * DigitalPortView.LENGTH - numberView!!.width, 0.0)
+			    Direction.SOUTH -> getOutput().setLocation(0.0, 2 * DigitalPortView.LENGTH + numberView!!.height)
+		    }
+	    }
     }
 
     /** ---- [ControlViewSource] */
@@ -182,20 +193,13 @@ class ProbeView(
         context.g.stroke = stroke
         context.g.color = lineColor
         context.g.drawRoundRect(xInt, yInt, width.toInt(), height.toInt(), 10, 10)
-        context.g.stroke = oldStroke
 
-        if (hasOutput) {
-            context.g.translate(
-                getInput().length.toDouble() * orientation.dx,
-                getInput().length.toDouble() * orientation.dy)
-            context.g.rotate(orientation.rotation.angle)
-
-            context.g.fill(TRIANGLE_PATH)
-
-            context.g.rotate(-orientation.rotation.angle)
-            context.g.translate(
-                -getInput().length.toDouble() * orientation.dx,
-                -getInput().length.toDouble() * orientation.dy)
+	    if (hasOutput) {
+	        context.g.translate(getOutput().locationX, getOutput().locationY)
+	        context.g.rotate(orientation.rotation.angle)
+	        context.g.fill(TRIANGLE_PATH)
+	        context.g.rotate(-orientation.rotation.angle)
+	        context.g.translate(-getOutput().locationX, -getOutput().locationY)
         }
 
         context.g.color = oldColor
