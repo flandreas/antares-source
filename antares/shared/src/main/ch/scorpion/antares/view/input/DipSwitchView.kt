@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
@@ -35,6 +36,8 @@ import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapte
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -45,7 +48,7 @@ class DipSwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: DipSwitch = DipSwitch(),
 	orientation: Direction = Direction.NORTH
-) : DigitalComponentView<DipSwitch>(styleProvider, model) {
+) : DigitalComponentView<DipSwitch>(styleProvider, model), ControlViewSource<DipSwitch>, ControlView<DipSwitch> {
 
 	companion object {
 		private val LOG by logger(DipSwitchView::class)
@@ -221,6 +224,60 @@ class DipSwitchView(
 			bitViews[focusIndex!!].hasFocus = true
 		}
 		validate()
+	}
+
+	/** ---- [ControlViewSource] */
+
+	override val controlId: String get() = "dipSwitch:" + model!!.id
+
+	override val controlName: String
+		get() {
+			if (StringUtils.isEmpty(model!!.name)) {
+				return "$type ($id)"
+			}
+			return "$type \"${model!!.name}\""
+		}
+
+	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
+
+	override fun createControlView(): ControlView<DipSwitch> {
+		val clone = DipSwitchView(styleProvider, model!!, orientation)
+		clone.isShowPortViews = false
+		clone.location = Point2D.ZERO
+		copyControlViewProperties(this, clone)
+		return clone
+	}
+
+	/** ---- [ControlView] */
+
+	override fun bindToModel(model: DipSwitch) {
+		this.model = model
+	}
+
+	override fun writeModelProperties(writer: StoreWriter) {
+		if (StringUtils.isNotEmpty(name)) {
+			writer.writeString("name", name!!)
+		}
+		writer.writeInt("bitWidth", bitWidth.width)
+	}
+
+	override fun readModelProperties(reader: StoreReader) {
+		if (reader.hasAttribute("name")) {
+			name = reader.readString("name")
+		}
+		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+	}
+
+	override fun sourcePropertiesChanged(source: ControlViewSource<DipSwitch>) {
+		if (source is DipSwitchView) {
+			copyControlViewProperties(source, this)
+		}
+	}
+
+	private fun copyControlViewProperties(source: DipSwitchView, dest: DipSwitchView) {
+		dest.name = source.name
+		dest.orientation = source.orientation
+		dest.bitWidth = source.bitWidth
 	}
 
 	/** ---- [DipSwitchView] */

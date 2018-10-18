@@ -29,6 +29,9 @@ interface ControlViewSource<T : Vertice> : VerticeView<T> {
      * Returns a unique ID that identifies this [ControlViewSource] to the system, and that is the same that is
      * returned by [ControlView]s created by this [ControlViewSource] in [ControlView.controlId].
      * Used to associate [ControlViewSource] and corresponding [ControlView] in persistent [ContainerDrawing]s.
+     *
+     * Don't use GraphElementView#getId() as part of the controlId, because that one might be changed
+     * when ControlViews (event as part of a wrapping Component) are added to a Drawing
      */
     val controlId: String?
 

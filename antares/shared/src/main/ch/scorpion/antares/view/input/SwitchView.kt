@@ -231,18 +231,6 @@ class SwitchView(
         context.g.color = oldColor
     }
 
-	override fun sourcePropertiesChanged(source: ControlViewSource<Switch>) {
-		if (source is SwitchView) {
-			copyControlViewProperties(source, this)
-		}
-	}
-
-	private fun copyControlViewProperties(source: SwitchView, dest: SwitchView) {
-		dest.name = source.name
-		dest.labelPosition = source.labelPosition
-		dest.toggle = source.toggle
-	}
-
 	/** ---- [ControlViewSource] */
 
     override val controlId: String
@@ -287,6 +275,18 @@ class SwitchView(
 		if (reader.hasAttribute("name")) {
 			name = reader.readString("name")
 		}
+	}
+
+	override fun sourcePropertiesChanged(source: ControlViewSource<Switch>) {
+		if (source is SwitchView) {
+			copyControlViewProperties(source, this)
+		}
+	}
+
+	private fun copyControlViewProperties(source: SwitchView, dest: SwitchView) {
+		dest.name = source.name
+		dest.labelPosition = source.labelPosition
+		dest.toggle = source.toggle
 	}
 
 	/** ---- [SwitchView] */
