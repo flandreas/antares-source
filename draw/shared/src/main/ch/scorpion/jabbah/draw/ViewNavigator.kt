@@ -18,10 +18,16 @@ interface ViewNavigator {
      */
     fun setZoomFactor(zoomFactor: Double)
 
-    /** Increments the zoom factor by the given delta.*/
+    /**
+     * Increments the zoom factor by the given delta.
+     * Does nothing if not in valid range as defined by [View.PROP_MIN_ZOOM_FACTOR] and [View.PROP_MAX_ZOOM_FACTOR]
+     */
     fun addZoomFactor(delta: Double)
 
-    /** Multiplies the zoom factor by the given factor.*/
+    /**
+     * Multiplies the zoom factor by the given factor.
+     * Does nothing if not in valid range as defined by [View.PROP_MIN_ZOOM_FACTOR] and [View.PROP_MAX_ZOOM_FACTOR]
+     */
     fun multiplyZoomFactor(factor: Double)
 
     /** Pans the [View] by the given delta offset.*/
