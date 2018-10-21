@@ -34,17 +34,16 @@ class LibraryPreviewPanel(
 ) : JPanel() {
 
     companion object {
+	    private val LOG by logger(LibraryPreviewPanel::class)
         private val BACKGROUND_COLOR = Color.WHITE
     }
 
     init {
-        eventBus.register(CurrentSavableEvent::class, { updateWithSelectedItem() })
+        eventBus.register(CurrentSavableEvent::class) { updateWithSelectedItem() }
     }
 
     @Suppress("unused")
     constructor(libraryTreeView: LibraryTreeView): this(BaseModule.eventBus, libraryTreeView)
-
-    private val LOG by logger(LibraryPreviewPanel::class)
 
     /** Maps a [LibraryElement] to the instantiated [Component] to be displayed as preview.*/
     private val map: MutableMap<LibraryElement, Component> = mutableMapOf()
@@ -63,10 +62,10 @@ class LibraryPreviewPanel(
         descriptionArea.preferredSize = Dimension(150, 50)
         descriptionArea.background = BACKGROUND_COLOR
 
-        eventBus.register(LibrarySelectionChangedEvent::class, { handleLibrarySelectionChanged(it) })
-        eventBus.register(LibraryItemUpdatedEvent::class, { map.remove(it.item) })
+        eventBus.register(LibrarySelectionChangedEvent::class) { handleLibrarySelectionChanged(it) }
+	    eventBus.register(LibraryItemUpdatedEvent::class) { map.remove(it.item) }
 
-        buildUI()
+	    buildUI()
 
         addComponentListener(object : ComponentAdapter() {
             override fun componentResized(e: ComponentEvent?) {
@@ -126,7 +125,7 @@ class LibraryPreviewPanel(
 
         InvocationHandler.invoke(Runnable {
             val c = libraryElement.getNewInstance<GraphElement>()
-            map.put(libraryElement, c)
+	        map[libraryElement] = c
             updateSelectionImpl(c)
         })
     }

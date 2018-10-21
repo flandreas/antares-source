@@ -75,6 +75,11 @@ interface LibraryService {
 	 */
 	fun getMetaGraph(library: Library, element: ContainerLibraryElement): MetaGraph
 
+	/**
+	 * Returns the [MetaGraph] of a [ContainerLibraryElement], loading it always, even if it is already loaded.
+	 */
+	fun loadMetaGraph(library: Library, element: ContainerLibraryElement): MetaGraph
+
 	/** Sets the [UUID] of the [ContainerLibraryElement] to be opened when the [Library] is opened, and makes the change persistent.*/
 	fun setDefaultElement(library: Library, uuid: UUID?)
 
@@ -212,6 +217,11 @@ class LibraryServiceImpl(
 		return element.metaGraph!!
 	}
 
+	override fun loadMetaGraph(library: Library, element: ContainerLibraryElement): MetaGraph {
+		ensureMetaGraph(library, element, loadAlways = true)
+		return element.metaGraph!!
+	}
+
 	override fun setDefaultElement(library: Library, uuid: UUID?) {
 		if (library.defaultElementUUID != uuid) {
 			LOG.debug("LibraryServiceImpl: Setting default element to '$uuid'")
@@ -255,8 +265,8 @@ class LibraryServiceImpl(
 			eventBus = eventBus)
 	}
 
-	private fun ensureMetaGraph(library: Library, element: ContainerLibraryElement) {
-		if (element.metaGraph == null) {
+	private fun ensureMetaGraph(library: Library, element: ContainerLibraryElement, loadAlways: Boolean = false) {
+		if (loadAlways || element.metaGraph == null) {
 			element.updateMetaGraph(persistenceService.loadMetaGraph(library, element.uuid))
 			LOG.debug("LibraryServiceImpl: Loaded MetaGraph '${element.metaGraph!!.name}' ${element.uuid}")
 		}

@@ -24,9 +24,9 @@ class EditContainerLibraryElementAction(
 	}
 
     init {
-        eventBus.register(OpenContainerLibraryElementRequest::class, {
-            openAsSavable(it.element)
-        })
+        eventBus.register(OpenContainerLibraryElementRequest::class) {
+	        openAsSavable(it.element)
+        }
     }
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
@@ -42,14 +42,14 @@ class EditContainerLibraryElementAction(
 
     private fun openAsSavable(element: ContainerLibraryElement) {
 	    val library = element.library!!
-	    val metaGraph = library.libraryService.getMetaGraph(library, element)
-	    if (library == LibraryModule.libraryHolder.library) {
-		    application.open(metaGraph, LibrarySavable(metaGraph, element))
-	    } else if (library == ProjectModule.projectHolder.project) {
-		    application.open(metaGraph, ProjectSavable(metaGraph, element))
-	    } else {
-		    LOG.error("EditContainerLibraryElementAction: Inconsistent state, unknown ContainerLibraryElement, cannot open")
-		    throw IllegalStateException()
+	    val metaGraph = library.libraryService.loadMetaGraph(library, element)
+	    when (library) {
+		    LibraryModule.libraryHolder.library -> application.open(metaGraph, LibrarySavable(metaGraph, element))
+		    ProjectModule.projectHolder.project -> application.open(metaGraph, ProjectSavable(metaGraph, element))
+		    else -> {
+			    LOG.error("EditContainerLibraryElementAction: Inconsistent state, unknown ContainerLibraryElement, cannot open")
+			    throw IllegalStateException()
+		    }
 	    }
     }
 }
