@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.event.EventBus
+import javax.swing.JPanel
 
 /**
  * A [JPanel] for editing the properties of the currently selected [Component].
@@ -12,7 +13,7 @@ class ComponentPropertyPanel(
 ) : AbstractPropertyPanel(editor, sheetFactory) {
 
     init {
-        eventBus.register(SelectionChangeEvent::class, {handle(it)})
+        eventBus.register(SelectionChangeEvent::class) { handle(it) }
     }
 
     /** ---- [AbstractPropertyPanel] */
@@ -27,7 +28,7 @@ class ComponentPropertyPanel(
     /** ---- [ComponentPropertyPanel] */
 
     override fun setupDefaultProperties() {
-	    updateProperties(editor.drawing)
+	    loadProperties(editor.drawing)
     }
 
 	private fun handle(event: SelectionChangeEvent) {
@@ -38,11 +39,11 @@ class ComponentPropertyPanel(
         clearProperties()
 
         if (event.type !== SelectionChangeEvent.Type.SELECTED) {
-            updateProperties(editor.view.drawing)
+	        loadProperties(editor.view.drawing)
         } else {
             val selection = getSelectedComponent(event)
             if (selection != null) {
-                updateComponentProperties(selection)
+	            loadComponentProperties(selection)
             }
         }
     }
@@ -54,11 +55,11 @@ class ComponentPropertyPanel(
         return null
     }
 
-    private fun updateComponentProperties(component: Component) {
+    private fun loadComponentProperties(component: Component) {
         if (component.beanInfoClassName != null) {
-            updateProperties(component.propertyOwner, component.beanInfoClassName!!)
+	        loadProperties(component.propertyOwner, component.beanInfoClassName!!)
         } else {
-            updateProperties(component.propertyOwner)
+	        loadProperties(component.propertyOwner)
         }
     }
 }

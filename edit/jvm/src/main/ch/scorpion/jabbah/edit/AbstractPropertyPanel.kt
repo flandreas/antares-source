@@ -49,12 +49,7 @@ abstract class AbstractPropertyPanel(
 		    }
 	    })
         sheet.addPropertySheetChangeListener {
-            if (propertyObject != null) {
-                sheet.writeToObject(propertyObject)
-                editor.view.drawing.validate()
-	            // Read back object to account for calculated properties
-	            sheet.readFromObject(propertyObject)
-            }
+            storeProperties()
         }
 
         label = JLabel()
@@ -77,16 +72,26 @@ abstract class AbstractPropertyPanel(
     protected abstract fun getDescription(bean: Any): String?
 
     protected fun clearProperties() {
+	    sheet.table?.cellEditor?.stopCellEditing()
         sheet.setProperties(arrayOf<PropertyDescriptor>())
         propertyObject = null
         updateLabel()
     }
 
-    protected fun updateProperties(bean: Any) {
-	    updateProperties(bean, bean.javaClass.name + "BeanInfo")
+	private fun storeProperties() {
+		if (propertyObject != null) {
+			sheet.writeToObject(propertyObject)
+			editor.view.drawing.validate()
+			// Read back object to account for calculated properties
+			sheet.readFromObject(propertyObject)
+		}
+	}
+
+    protected fun loadProperties(bean: Any) {
+	    loadProperties(bean, bean.javaClass.name + "BeanInfo")
     }
 
-    protected fun updateProperties(bean: Any, classPath: String) {
+    protected fun loadProperties(bean: Any, classPath: String) {
         try {
             val beanInfoClass = Class.forName(classPath)
             val beanInfo = beanInfoClass.newInstance() as AbstractBeanInfo<Any>

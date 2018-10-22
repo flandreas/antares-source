@@ -21,9 +21,9 @@ class ScenarioPropertyPanel(
         eventBus.register(ScenarioSelectionEvent::class) {
 	        clearProperties()
 	        if (it.scenarioStep != null) {
-		        updateProperties(it.scenarioStep)
+		        loadProperties(it.scenarioStep)
 	        } else if (it.scenario != null) {
-		        updateProperties(it.scenario)
+		        loadProperties(it.scenario)
 	        }
         }
     }
