@@ -75,28 +75,11 @@
         <containerLibraryElement _id='50' name='2x 2-2 Multiplexer' uuid='2cb91fb8-b233-41b5-96b2-e898c9122e68'/>
       </items>
     </libraryFolder>
-    <libraryFolder _id='51' name='Test'>
+    <libraryFolder _id='51' name='Zähler'>
       <items>
-        <containerLibraryElement _id='52' name='Test Control Repaint' uuid='ae36df36-0b7b-45e3-ac5e-e17c6fa44415'/>
-        <containerLibraryElement _id='53' name='Custom NOT' uuid='6c9f2734-1386-4796-aa31-a6ea87d5ed7f'/>
-        <containerLibraryElement _id='54' name='NOP' uuid='cc6b2b47-de2e-4d82-9229-121cffddd85a'/>
-        <containerLibraryElement _id='55' name='Outer NOP' uuid='afc510f0-5ef7-4175-8ed3-bf4bc6058e13'/>
-        <containerLibraryElement _id='56' name='Ampel' uuid='0921d1db-d513-4dab-b39e-74f33b439312'/>
-        <containerLibraryElement _id='57' name='Test Text' uuid='6ef6759e-ce22-4d89-9935-7e6933a9eeb2'/>
-        <containerLibraryElement _id='58' name='Test Custom' uuid='6faeb5b6-ce07-47fc-b48a-068e245668eb'/>
-        <containerLibraryElement _id='59' name='Single Input' uuid='a0f6bafd-eacb-42a1-ac08-0d8d946daa5f'/>
-        <containerLibraryElement _id='60' name='Stoppuhr' uuid='eb2ff37b-57fb-4005-9601-7f7fbaa433c1'/>
-        <containerLibraryElement _id='61' name='Custom NOR' uuid='269574a4-cd85-444a-9414-16c06442d5b3'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='62' name='Test 2'>
-      <items/>
-    </libraryFolder>
-    <libraryFolder _id='63' name='Zähler'>
-      <items>
-        <containerLibraryElement _id='64' name='Synch. Vorwärtszähler 3-Bit' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97'/>
-        <containerLibraryElement _id='65' name='Sync. BCD-Zähler 4-Bit' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'/>
-        <containerLibraryElement _id='66' name='Frequenzteiler' uuid='0a2995f4-af04-4830-b141-76de188e2e34'/>
+        <containerLibraryElement _id='52' name='Synch. Vorwärtszähler 3-Bit' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97'/>
+        <containerLibraryElement _id='53' name='Sync. BCD-Zähler 4-Bit' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'/>
+        <containerLibraryElement _id='54' name='Frequenzteiler' uuid='0a2995f4-af04-4830-b141-76de188e2e34'/>
       </items>
     </libraryFolder>
   </items>
