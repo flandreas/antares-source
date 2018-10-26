@@ -12,6 +12,7 @@ import ch.scorpion.antares.model.memory.ROM
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.LED
 import ch.scorpion.antares.model.output.LEDMatrix
+import ch.scorpion.antares.model.output.RgbLED
 import ch.scorpion.antares.model.output.SevenSegmentDisplay
 import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.jabbah.base.AbstractModule
@@ -50,6 +51,7 @@ object AntaresModelModule : AbstractModule() {
 	    typeMap.register("dipSwitch", DipSwitch::class)
         typeMap.register("clock", Clock::class)
         typeMap.register("led", LED::class)
+	    typeMap.register("rgbLed", RgbLED::class)
         typeMap.register("sevenSegmentDisplay", SevenSegmentDisplay::class)
         typeMap.register("splitter", Splitter::class)
         typeMap.register("concentrator", Concentrator::class)

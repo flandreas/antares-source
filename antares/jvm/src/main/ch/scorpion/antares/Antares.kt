@@ -12,6 +12,7 @@ import ch.scorpion.antares.view.memory.ROMView
 import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.output.LEDMatrixView
 import ch.scorpion.antares.view.output.LEDView
+import ch.scorpion.antares.view.output.RgbLEDView
 import ch.scorpion.antares.view.output.SevenSegmentDisplayView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.library.BaseLibraryElement
@@ -91,7 +92,8 @@ fun fillStandardLibrary(library: Library, service: LibraryService, storableCreat
 		view.portType = PortType.OUTPUT
 		view
 	}
-	addBaseElement(output, "LED", "library.element.LED", "/img/led.png", storableCreator, LEDView::class)
+	addBaseElement(output, "LED", "library.element.RgbLED", "/img/rgb-led.png", storableCreator, RgbLEDView::class)
+	addBaseElement(output, "RgbLED", "library.element.LED", "/img/led.png", storableCreator, LEDView::class)
 	addBaseElement(output, "SevenSegmentDisplay", "library.element.SevenSegmentDisplay", "/img/7segment.png",
 		storableCreator, SevenSegmentDisplayView::class)
 	addBaseElement(output, "LEDMatrix", "library.element.LEDMatrix", "/img/led-matrix.png", storableCreator, LEDMatrixView::class)

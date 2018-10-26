@@ -29,7 +29,7 @@ enum class BranchCount(val count: Int) {
 			BitWidth.BW_12 to listOf(BC_3, BC_6, BC_12),
 			BitWidth.BW_16 to listOf(BC_2, BC_4, BC_8, BC_16),
 			BitWidth.BW_20 to listOf(BC_10, BC_20),
-			BitWidth.BW_24 to listOf(BC_2, BC_6, BC_12, BC_24),
+			BitWidth.BW_24 to listOf(BC_2, BC_3, BC_6, BC_12, BC_24),
 			BitWidth.BW_28 to listOf(BC_4, BC_14, BC_28),
 			BitWidth.BW_32 to listOf(BC_2, BC_4, BC_8, BC_16, BC_32)
 		)

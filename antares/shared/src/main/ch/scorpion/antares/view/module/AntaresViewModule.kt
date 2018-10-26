@@ -128,6 +128,7 @@ object AntaresViewModule : AbstractModule() {
 	    properties.set(DipSwitchView.PROP_ICON_PATH, "/img/dip-switch.png")
         properties.set(ProbeView.PROP_ICON_PATH, "/img/probe.png")
         properties.set(LEDView.PROP_ICON_PATH, "/img/led.png")
+	    properties.set(RgbLEDView.PROP_ICON_PATH, "/img/rgb-led.png")
         properties.set(LEDMatrixView.PROP_ICON_PATH, "/img/led-matrix.png")
         properties.set(SevenSegmentDisplayView.PROP_ICON_PATH, "/img/7segment.png")
     }
@@ -154,6 +155,7 @@ object AntaresViewModule : AbstractModule() {
 	    typeMap.register("dipSwitchView", DipSwitchView::class)
         typeMap.register("clockView", ClockView::class)
         typeMap.register("ledView", LEDView::class)
+	    typeMap.register("RgbLedView", RgbLEDView::class)
         typeMap.register("sevenSegmentDisplayView", SevenSegmentDisplayView::class)
         typeMap.register("splitterView", SplitterView::class)
         typeMap.register("concentratorView", ConcentratorView::class)
@@ -209,6 +211,7 @@ object AntaresViewModule : AbstractModule() {
 	    factory.register(SelectionDrawingStrategy.REPLACE, CircuitInOutView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 
 	    factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class.simpleName!!) { LEDViewSelectionModel(it as LEDView) }
+	    factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class.simpleName!!) { LEDViewSelectionModel(it as RgbLEDView) }
 	    factory.register(SelectionDrawingStrategy.REPLACE, SevenSegmentDisplayView::class.simpleName!!) { SevenSegmentDisplayViewSelectionModel(it as SevenSegmentDisplayView) }
 	    factory.register(SelectionDrawingStrategy.REPLACE, LEDMatrixView::class.simpleName!!) { LEDMatrixViewSelectionModel(it as LEDMatrixView) }
 
