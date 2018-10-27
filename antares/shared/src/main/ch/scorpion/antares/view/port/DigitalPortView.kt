@@ -303,6 +303,12 @@ class DigitalPortView(
 
     override val minSegmentLength: Int get() = LENGTH
 
+	override fun ownerRotationChanged() {
+		super.ownerRotationChanged()
+		portLabel?.ownerRotation = ownerRotation
+		bitWidthAnnotation?.setOwnerRotation(ownerRotation)
+	}
+
     /** ---- [DigitalPortView] */
 
     // TODO Refactor (DRY): Same logic as in [AbstractNetViewElement]
@@ -316,7 +322,7 @@ class DigitalPortView(
 
     private fun buildBitWidthAnnotation() {
         bitWidthAnnotation = if (getDigitalPort().bitWidth != BitWidth.BW_1) {
-            BitWidthAnnotation(getDigitalPort().bitWidth, direction, centerExternalLabel)
+            BitWidthAnnotation(getDigitalPort().bitWidth, direction, centerExternalLabel, ownerRotation = ownerRotation)
         } else {
             null
         }
@@ -336,7 +342,9 @@ class DigitalPortView(
             verticalAlignment = getVerticalInternalLabelAlignment(direction),
             font = Look.INT_PIN_FONT,
             text = port.name,
-            location = getInternalLabelLocation(direction))
+            location = getInternalLabelLocation(direction),
+	        rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF,
+	        ownerRotation = ownerRotation)
     }
 
     private fun buildExternalLabel(port: Port<DigitalSignal>): Label {
@@ -351,7 +359,9 @@ class DigitalPortView(
             font = Look.EXT_PIN_FONT,
             text = port.name,
             location = getExternalLabelLocation(direction),
-            rotation = rotation)
+	        rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF,
+            rotation = rotation,
+	        ownerRotation = ownerRotation)
     }
 
     private fun getHorizontalInternalLabelAlignment(direction: Direction): HorizontalAlignment =
@@ -408,8 +418,8 @@ class DigitalPortView(
     private fun getExternalLabelLocation(direction: Direction): Point2D {
         val ea = if (hasExternalAnnotation) LOGIC_SIZE else 0
         return when (direction) {
-            Direction.WEST -> Point2D(-EXT_BORDER_DIST - ea, 0)
-            Direction.EAST -> Point2D(EXT_BORDER_DIST + ea, 0)
+            Direction.WEST -> Point2D(-EXT_BORDER_DIST - ea, -1)
+            Direction.EAST -> Point2D(EXT_BORDER_DIST + ea, -1)
             Direction.NORTH -> Point2D(0, -EXT_BORDER_DIST - ea)
             Direction.SOUTH -> Point2D(0, EXT_BORDER_DIST + ea)
             else -> throw IllegalStateException("unknown Direction $direction")

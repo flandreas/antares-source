@@ -25,88 +25,95 @@ import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
  * A [RectangularComponent] that contains a [Label] drawable.
  */
 class LabelComponent(
-    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    val label: Label = Label(
-            text = DEFAULT_TEXT,
-            font = LabelComponent.DEFAULT_FONT,
-            horizontalAlignment = HorizontalAlignment.CENTER,
-            verticalAlignment = VerticalAlignment.CENTER,
-            location = Point2D.ZERO)
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	val label: Label = Label(
+		text = DEFAULT_TEXT,
+		font = LabelComponent.DEFAULT_FONT,
+		horizontalAlignment = HorizontalAlignment.CENTER,
+		verticalAlignment = VerticalAlignment.CENTER,
+		location = Point2D.ZERO,
+		rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF)
 ) : AbstractRectangularComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider), TextComponent, Transparent {
 
-    companion object {
-        val DEFAULT_TEXT = "text"
-        val DEFAULT_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 14)
-    }
+	companion object {
+		const val DEFAULT_TEXT = "text"
+		val DEFAULT_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 14)
+	}
 
-    init {
-        DrawableOwner(this, label)
-    }
+	init {
+		DrawableOwner(this, label)
+	}
 
-    /** ---- UI properties */
+	/** ---- UI properties */
 
-    override var text: String
-        get() = label.text
-        set(value) {
-            label.text = value
-            setFrame(label.boundingBox)
-        }
+	override var text: String
+		get() = label.text
+		set(value) {
+			label.text = value
+			setFrame(label.boundingBox)
+		}
 
-    /** ---- [Transparent] interface */
+	/** ---- [Transparent] interface */
 
-    private val transparent = TransparentImpl(this)
+	private val transparent = TransparentImpl(this)
 
-    override var transparency: Int
-        get() = transparent.transparency
-        set(value) { transparent.transparency = value }
+	override var transparency: Int
+		get() = transparent.transparency
+		set(value) {
+			transparent.transparency = value
+		}
 
-    /** ---- [Drawable] */
+	/** ---- [Drawable] */
 
-    override val boundingBox: Rectangle2D get() = label.boundingBox
+	override val boundingBox: Rectangle2D get() = label.boundingBox
 
-    override fun contains(x: Double, y: Double): Boolean = label.contains(x, y)
+	override fun contains(x: Double, y: Double): Boolean = label.contains(x, y)
 
-    override fun contains(p: Point2D): Boolean = label.contains(p)
+	override fun contains(p: Point2D): Boolean = label.contains(p)
 
-    override fun draw(context: DrawContext) {
-        if (!context.useContextColors) {
-            context.g.color = transparent.applyTo(foregroundColor)
-        }
-        label.draw(context)
-    }
+	override fun draw(context: DrawContext) {
+		if (!context.useContextColors) {
+			context.g.color = transparent.applyTo(foregroundColor)
+		}
+		label.draw(context)
+	}
 
-    override fun mirrorHorizontally(x: Double) {
-        super.mirrorHorizontally(x)
-        label.mirrorHorizontally(x)
-    }
+	override fun mirrorHorizontally(x: Double) {
+		super.mirrorHorizontally(x)
+		label.mirrorHorizontally(x)
+	}
 
-    override fun mirrorVertically(y: Double) {
-        super.mirrorVertically(y)
-        label.mirrorVertically(y)
-    }
+	override fun mirrorVertically(y: Double) {
+		super.mirrorVertically(y)
+		label.mirrorVertically(y)
+	}
 
-    override var location: Point2D
-        get() = Point2D(label.location)
-        set(value) { label.location = value}
+	override var location: Point2D
+		get() = Point2D(label.location)
+		set(value) {
+			label.location = value
+		}
 
-    /** ---- [Storable] */
+	/** ---- [Storable] */
 
-    override fun write(writer: StoreWriter) {
-        writer.writeString("text", text)
-        writer.writePoint("location", label.location)
-    }
+	override fun write(writer: StoreWriter) {
+		writer.writeString("text", text)
+		writer.writePoint("location", label.location)
+	}
 
-    override fun read(reader: StoreReader) {
-        text = reader.readString("text")
-        location = reader.readPoint("location")
-    }
+	override fun read(reader: StoreReader) {
+		text = reader.readString("text")
+		location = reader.readPoint("location")
+	}
 
-    /** ---- [Component] */
+	/** ---- [Component] */
 
-    override val type: String? get() = Translations.getString("edit.component.label")
+	override val type: String? get() = Translations.getString("edit.component.label")
 
-    override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
-        get() = SelectionDrawingStrategy.REPLACE
-        set(value) {super.preferredSelectionDrawingStrategy = value}
+	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
+		get() = SelectionDrawingStrategy.REPLACE
+		set(value) {
+			super.preferredSelectionDrawingStrategy = value
+		}
 
 }

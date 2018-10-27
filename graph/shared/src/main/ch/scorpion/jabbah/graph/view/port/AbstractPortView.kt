@@ -63,6 +63,12 @@ abstract class AbstractPortView<T: Any>(
         }
 
     override var owner: VerticeView<*>? = null
+		set(value) {
+			if (field != value) {
+				field = value
+				ownerRotationChanged()
+			}
+		}
 
     private var _port: Port<T> = port
     override var port: Port<T>
@@ -91,7 +97,7 @@ abstract class AbstractPortView<T: Any>(
         get() = owner?.rotation ?: Rotation.R0
         set(value) {
             invalidate()
-            modelChanged()
+	        ownerRotationChanged()
             invalidate()
             update()
         }
@@ -290,6 +296,10 @@ abstract class AbstractPortView<T: Any>(
     protected open fun modelChanged() {
         // empty
     }
+
+	protected open fun ownerRotationChanged() {
+		// empty
+	}
 
     protected fun buildToolTipTitle(): String {
         return "${port.portType.toString()} '${port.name}'"

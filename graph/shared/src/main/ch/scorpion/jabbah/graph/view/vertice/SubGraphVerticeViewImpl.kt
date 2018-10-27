@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
@@ -280,6 +281,15 @@ class SubGraphVerticeViewImpl(
         get() = SelectionDrawingStrategy.REPLACE
         set(value) { super.preferredSelectionDrawingStrategy = value }
 
+	override fun rotationChanged(newRotation: Rotation) {
+		super.rotationChanged(newRotation)
+		drawables.forEach {
+			if (it is LabelComponent) {
+				it.label.ownerRotation = newRotation
+			}
+		}
+	}
+
     /** ---- [GraphElementView] */
 
     override fun bind(graph: Graph) {
@@ -318,6 +328,8 @@ class SubGraphVerticeViewImpl(
             // Handle validation events from ControlView in order to update the UI
             // whenever state of ControlView changes
             DrawableOwner(this, drawable)
+        } else if (drawable is LabelComponent) {
+	        drawable.label.ownerRotation = rotation
         }
         drawables.add(0, drawable)
         _boundingBox.add(drawable.boundingBox)

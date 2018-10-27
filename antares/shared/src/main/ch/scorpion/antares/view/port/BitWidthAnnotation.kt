@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
@@ -22,14 +23,15 @@ import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 class BitWidthAnnotation(
     bitWidth: BitWidth,
     private val direction: Direction,
-    private val centerLabel: Boolean
+    private val centerLabel: Boolean,
+    ownerRotation: Rotation = Rotation.R0
 ) : AbstractDrawable() {
 
     companion object {
-        val LABEL_EDGE_DIST = 10.0
-        val LINE_WIDTH_HALF = 3.0
-        val LINE_HEIGHT_HALF = 5.0
-        val LINE_POS_X_FACT = 0.75
+        const val LABEL_EDGE_DIST = 10.0
+        const val LINE_WIDTH_HALF = 3.0
+        const val LINE_HEIGHT_HALF = 5.0
+        const val LINE_POS_X_FACT = 0.75
     }
 
     private val label: Label = Label(
@@ -37,8 +39,9 @@ class BitWidthAnnotation(
         font = Themes.get<AntaresTheme>().annotation.font,
         horizontalAlignment = getHorizontalLabelAlignment(),
         verticalAlignment = getVerticalLabelAlignment(),
-        location = getLabelLocation()
-    )
+        location = getLabelLocation(),
+	    rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF,
+	    ownerRotation = ownerRotation)
 
     /** ---- [Drawable] interface */
 
@@ -65,6 +68,13 @@ class BitWidthAnnotation(
     override fun contains(x: Double, y: Double): Boolean = label.contains(x, y)
 
     /** ---- [BitWidthAnnotation] */
+
+    fun setOwnerRotation(rotation: Rotation) {
+	    invalidate()
+	    label.ownerRotation = rotation
+	    invalidate()
+	    update()
+    }
 
     private fun getLineBoxWidth(): Double {
         if (direction.isHorizontal()) {
