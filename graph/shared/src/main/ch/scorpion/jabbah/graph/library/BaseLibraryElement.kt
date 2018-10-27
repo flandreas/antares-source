@@ -1,14 +1,12 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import kotlin.reflect.KClass
 
 /**
  * A [LibraryElement] that represents a basic, non-composed [GraphElementView].
@@ -19,42 +17,33 @@ import kotlin.reflect.KClass
  * The supplier takes precedence over the [StorableCreator].
  */
 class BaseLibraryElement(
-    override val name: String,
-    private val translationKey: String,
-    iconPath: String?,
-    private val storableCreator: StorableCreator? = null,
-    private val clazz: KClass<out GraphElementView<*>>?,
-    private val supplier: (() -> GraphElementView<out GraphElement>)? = null
-) : LibraryElement(iconPath) {
-
-    init {
-        checkState((storableCreator != null && clazz != null) || supplier != null, "either StorableCreator/clazz or supplier must be provided")
-    }
+	override var name: String = "",
+	private val repository: BaseLibraryElementRepository = LibraryModule.baseLibraryElementRepository
+) : LibraryElement() {
 
     override val isFixed: Boolean get() = true
+
+	override val iconPath: String? get() = repository.getIconPath(name)
 
     /** ---- [Any] */
 
     override fun toString(): String {
-        return Translations.getString("$translationKey.name")
+	    return Translations.getString("${repository.getTranslationKey(name)!!}.name")
     }
 
     /** ---- [Storable] interface */
 
     override fun write(writer: StoreWriter) {
-        // empty
+        writer.writeString("name", name)
     }
 
     override fun read(reader: StoreReader) {
-        // empty
+        name = reader.readString("name")
     }
 
     /** ---- [LibraryElement] */
 
     override fun <T : GraphElement> getNewInstance(): GraphElementView<T> {
-        if (supplier != null) {
-            return supplier.invoke() as GraphElementView<T>
-        }
-        return storableCreator!!.create(clazz!!) as GraphElementView<T>
+	    return repository.getNewInstance(name)
     }
 }

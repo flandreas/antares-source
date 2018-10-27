@@ -13,8 +13,7 @@ interface LibraryItem : Storable {
 
     /**
      * Determines whether this [LibraryItem] is fixed.
-     * Fixed [LibraryItem]s are provided by the application and cannot be changed or deleted by the user, which is
-     * why there is no need to make them persistent.
+     * Fixed [LibraryItem]s are provided by the application and cannot be changed or deleted by the user.
      */
     val isFixed: Boolean
 

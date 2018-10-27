@@ -12,8 +12,9 @@ import ch.scorpion.jabbah.io.Storable
  * A [LibraryElement] is a leaf [LibraryItem] containing a template of a [GraphElementView] that
  * can be instantiated.
  */
-abstract class LibraryElement(iconPath: String?) : AbstractLibraryItem(iconPath) {
-    constructor(): this(null)
+abstract class LibraryElement(
+	iconPath: String? = null
+) : AbstractLibraryItem(iconPath) {
 
     /** ---- [Any] */
 

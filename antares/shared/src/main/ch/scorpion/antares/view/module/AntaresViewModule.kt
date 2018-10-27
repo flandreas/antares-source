@@ -42,6 +42,9 @@ import ch.scorpion.jabbah.edit.snap.ComponentSnapper
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.container.OriginIndicator
+import ch.scorpion.jabbah.graph.library.BaseLibraryElementRepository
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.CurrentGraphViewAnimationType
 import ch.scorpion.jabbah.graph.view.EdgeView
@@ -97,6 +100,8 @@ object AntaresViewModule : AbstractModule() {
         configureSelectionModels(EditSelectModule.selectionModelFactory)
 
         ScriptModule.scriptGatewayProvider = { AntaresScriptGateway() }
+
+	    registerBaseLibraryElements(LibraryModule.baseLibraryElementRepository)
     }
 
     private fun customizeProperties(properties: Properties) {
@@ -220,4 +225,47 @@ object AntaresViewModule : AbstractModule() {
 
 	    factory.register(SelectionDrawingStrategy.REPLACE, RandomView::class.simpleName!!) { SelectedColorSelectionModel(it) }
     }
+
+	private fun registerBaseLibraryElements(repository: BaseLibraryElementRepository) {
+		repository.register("Constant", "library.element.Constant", "/img/constant.png", ConstantView::class)
+		repository.register("Splitter", "library.element.Splitter", "/img/splitter.png", SplitterView::class)
+		repository.register("Concentrator", "library.element.Concentrator", "/img/concentrator.png", ConcentratorView::class)
+		repository.register("Probe", "library.element.Probe", "/img/probe.png", ProbeView::class)
+		repository.register("Tunnel", "library.element.Tunnel", "/img/tunnel.png", TunnelView::class)
+
+		repository.register("AND", "library.element.AndGate", "/img/and.png",  AndGateView::class)
+		repository.register("OR", "library.element.OrGate", "/img/or.png",  OrGateView::class)
+		repository.register("NOT", "library.element.NotGate", "/img/not.png",  NotGateView::class)
+		repository.register("NAND", "library.element.NandGate", "/img/nand.png",  NandGateView::class)
+		repository.register("NOR", "library.element.NorGate", "/img/nor.png",  NorGateView::class)
+		repository.register("XOR", "library.element.XorGate", "/img/xor.png", XorGateView::class)
+		repository.register("XNOR", "library.element.XnorGate", "/img/xnor.png", XnorGateView::class)
+		repository.register("Buffer", "library.element.Buffer", "/img/buffer.png", BufferGateView::class)
+		repository.register("TriStateBuffer", "library.element.TriStateBuffer", "/img/tristate-buffer.png", TriStateBufferGateView::class)
+		repository.register("Delay", "library.element.Delay", "/img/delay.png", DelayGateView::class)
+
+		repository.register("Input", "library.element.CircuitInput", "/img/input.png") {
+			val view = it.create(CircuitInOutView::class) as CircuitInOutView
+			view.portType = PortType.INPUT
+			view
+		}
+		repository.register("Switch", "library.element.Switch", "/img/switch.png", SwitchView::class)
+		repository.register("DipSwitch", "library.element.DipSwitch", "/img/dip-switch.png", DipSwitchView::class)
+		repository.register("Clock", "library.element.Clock", "/img/clock.png", ClockView::class)
+
+		repository.register("Output", "library.element.CircuitOutput", "/img/output.png") {
+			val view = it.create(CircuitInOutView::class) as CircuitInOutView
+			view.portType = PortType.OUTPUT
+			view
+		}
+		repository.register("LED", "library.element.RgbLED", "/img/rgb-led.png", RgbLEDView::class)
+		repository.register("RgbLED", "library.element.LED", "/img/led.png", LEDView::class)
+		repository.register("SevenSegmentDisplay", "library.element.SevenSegmentDisplay", "/img/7segment.png", SevenSegmentDisplayView::class)
+		repository.register("LEDMatrix", "library.element.LEDMatrix", "/img/led-matrix.png", LEDMatrixView::class)
+
+		repository.register("ROM", "library.element.ROM", "/img/rom.png", ROMView::class)
+		repository.register("RAM", "library.element.RAM", "/img/ram.png", RAMView::class)
+
+		repository.register("Random", "library.element.Random", "/img/random.png", RandomView::class)
+	}
 }

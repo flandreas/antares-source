@@ -77,7 +77,7 @@ class LibraryFolder(
     }
 
     override fun getStorableChildren(): Iterator<Storable> {
-        return items.filter { !it.isFixed }.iterator()
+	    return items.iterator()
     }
 
     override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {

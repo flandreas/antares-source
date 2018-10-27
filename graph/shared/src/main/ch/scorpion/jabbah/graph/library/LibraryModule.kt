@@ -18,6 +18,8 @@ object LibraryModule : AbstractModule() {
 
 	var libraryService: () -> LibraryService = { LibraryServiceImpl() }
 
+	var baseLibraryElementRepository: BaseLibraryElementRepository = BaseLibraryElementRepository()
+
     override fun initialize() {
         configureTypeMap(IOModule.typeMap)
     }
