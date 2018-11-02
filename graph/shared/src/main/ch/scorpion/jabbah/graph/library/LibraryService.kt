@@ -113,7 +113,7 @@ data class LibraryItemUpdatedEvent(
 class LibraryServiceImpl(
 	private val libraryAccessor: () -> Library? = { LibraryModule.libraryHolder.library },
 	private val persistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService,
-	private val libraryFactory: (String) -> Library = LibraryModule.libraryFactory,
+	private val libraryFactory: LibraryFactory = LibraryModule.libraryFactory,
 	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus
@@ -128,7 +128,7 @@ class LibraryServiceImpl(
 	override val currentLibrary: Library? get() = libraryAccessor.invoke()
 
 	override fun loadLibrary(name: String): Library {
-		return loadLibrary(libraryFactory.invoke(name))
+		return loadLibrary(libraryFactory.createEmptyLibrary(name))
 	}
 
 	override fun loadLibrary(library: Library): Library {

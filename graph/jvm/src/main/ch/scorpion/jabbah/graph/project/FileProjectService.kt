@@ -44,7 +44,7 @@ class FileProjectService(
 
 	override fun getProjectNames(): ImmutableList<String> {
 		return ImmutableList(Files.list(Paths.get(directoryPath))
-			.filter({ Files.isDirectory(it) })
+			.filter { Files.isDirectory(it) }
 			.map { it.fileName.toString() }
 			.sorted()
 			.collect(Collectors.toList()))

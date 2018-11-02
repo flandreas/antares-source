@@ -58,7 +58,7 @@ interface ProjectService {
 	/** Opens the specified [Project] and [ContainerLibraryElement].*/
 	fun open(projectName: String, containerLibraryElement: UUID)
 
-	/** Deletes the Project] with the specified name.*/
+	/** Deletes the [Project] with the specified name.*/
 	fun delete(projectName: String)
 
 	/** Closes the currently open [Project].*/

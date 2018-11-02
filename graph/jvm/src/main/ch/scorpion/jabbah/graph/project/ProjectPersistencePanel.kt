@@ -12,6 +12,16 @@ import java.awt.event.*
 
 import javax.swing.*
 
+/** Opens and shows the [ProjectPersistencePanel] in a modal dialog.*/
+class ShowProjectsDialogAction(
+	private val parent: JFrame
+) : AbstractAction("project.dialog.action") {
+
+	override fun execute(event: ActionEvent) {
+		ProjectPersistencePanel.showAsDialog(parent)
+	}
+}
+
 /**
  * Displays a list of all existing project names and allows the user to open a project.
  */

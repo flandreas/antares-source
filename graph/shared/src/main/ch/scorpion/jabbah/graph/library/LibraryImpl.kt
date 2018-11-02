@@ -30,6 +30,13 @@ class LibraryImpl(
 		private val LOG by logger(LibraryImpl::class)
 	}
 
+	// override var uuid: UUID = System.get().createUUID()
+
+	/*
+	override var importedLibrary: UUID? = null
+		private set
+	*/
+
 	/**
 	 * Can't be stored locally, because delegation would not work any more (cannot change delegated object).
 	 * As a workaround, store it in [LibraryFolder].
@@ -79,6 +86,26 @@ class LibraryImpl(
 	override fun containsMetaGraph(uuid: UUID): Boolean {
 		return findContainerLibraryElementFor(uuid) != null
 	}
+
+	/** ---- [Storable] interface */
+
+	/*
+	override fun write(writer: StoreWriter) {
+		writer.writeString("uuid", uuid.toString())
+		if (importedLibrary != null) {
+			writer.writeString("import", importedLibrary.toString())
+		}
+		libraryFolder.write(writer)
+	}
+
+	override fun read(reader: StoreReader) {
+		uuid = System.get().createUUID(reader.readString("uuid"))
+		if (reader.hasAttribute("import")) {
+			importedLibrary = System.get().createUUID(reader.readString("import"))
+		}
+		libraryFolder.read(reader)
+	}
+	*/
 
 	/** ---- [Library] interface */
 

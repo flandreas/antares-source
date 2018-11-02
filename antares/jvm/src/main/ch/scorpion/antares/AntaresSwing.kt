@@ -23,18 +23,14 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
-import ch.scorpion.jabbah.graph.library.LibraryItemRemovedEvent
-import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphPanel
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.editor.GraphEditor
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
-import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StorableCreator
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
@@ -49,8 +45,7 @@ import javax.swing.plaf.FontUIResource
 class AntaresSwing(
 	args: Array<String>,
 	eventBus: EventBus = BaseModule.eventBus,
-	private val viewManager: ViewManager = DrawViewModule.viewManager,
-	private val storableCreator: StorableCreator = IOModule.storableCreator
+	private val viewManager: ViewManager = DrawViewModule.viewManager
 ) : AbstractDesktopApplicationSwing(args, eventBus), Antares {
 
 	companion object {
@@ -71,15 +66,18 @@ class AntaresSwing(
 				throw VetoException()
 			}
 		}
+		eventBus.register(OpenLibraryRequest::class) {
+			if (!canReplaceSavable("library.action.open.name")) {
+				throw VetoException()
+			}
+		}
 		eventBus.register(CloseProjectRequest::class) {
 			if (savable is ProjectSavable && (savable as ProjectSavable).project == it.project && !canReplaceSavable("project.action.close.name")) {
 				throw VetoException()
 			}
 		}
-		eventBus.register(ProjectEvent::class) {
-			if (it.project == null && savable is ProjectSavable) {
-				close()
-			}
+		eventBus.register(LibraryEvent::class) {
+			close()
 		}
 		eventBus.register(LibraryItemRemovedEvent::class) {
 			if (it.item is ContainerLibraryElement && (it.item as ContainerLibraryElement).metaGraph == applicationData) {

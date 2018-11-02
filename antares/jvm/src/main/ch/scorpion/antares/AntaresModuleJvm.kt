@@ -19,13 +19,10 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
-import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
-import ch.scorpion.jabbah.graph.library.LibraryHolder
-import ch.scorpion.jabbah.graph.library.LibraryImpl
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerEditor
+import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.FileProjectService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -52,8 +49,8 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 			metaGraphFileExtension = app.fileExtension,
 			libraryFileName = app.libraryFileName
 		)
-		LibraryModule.libraryFactory = { LibraryImpl(it, libraryService = LibraryModule.libraryService.invoke()) }
-		LibraryModule.libraryHolder = LibraryHolder(LibraryModule.libraryFactory.invoke("standard"))
+		LibraryModule.libraryFactory = AntaresLibraryFactory()
+		LibraryModule.libraryHolder = LibraryHolder(LibraryModule.libraryFactory.createEmptyLibrary("Standard"))
 
 		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(
 			directoryPath = app.projectsDirectoryPath.toString(),
@@ -64,6 +61,18 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 			directoryPath = app.projectsDirectoryPath.toString(),
 			newMetaGraphNameTranslationKey = "graph.name.unknown"
 		)
+
+		LibraryModule.libraryDictionary = FileLibraryDictionary(
+			directoryPath = app.libraryDirectoryPath.toString()
+		)
+		LibraryModule.libraryDictionary.load()
+
+		LibraryModule.libraryManagementService = FileLibraryManagementService(
+			defaultLibraryName = "Standard",
+			directoryPath = app.libraryDirectoryPath.toString(),
+			projectService = ProjectModule.projectService
+		)
+
 
 		configureTypeMap(IOModule.typeMap)
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)

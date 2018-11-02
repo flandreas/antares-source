@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.AbstractModule
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 
@@ -10,7 +9,7 @@ import ch.scorpion.jabbah.io.TypeMap
  */
 object LibraryModule : AbstractModule() {
 
-    var libraryFactory: (String) -> Library = { throw UnsupportedOperationException() }
+	var libraryFactory: LibraryFactory = UnimplementedLibraryFactory()
 
     var libraryHolder: LibraryHolder = LibraryHolder()
 
@@ -20,13 +19,20 @@ object LibraryModule : AbstractModule() {
 
 	var baseLibraryElementRepository: BaseLibraryElementRepository = BaseLibraryElementRepository()
 
+	var libraryDictionary: LibraryDictionary = UnimplementedLibraryDictionary()
+
+	var libraryManagementService: LibraryManagementService = UnimplementedLibraryManagementService()
+
     override fun initialize() {
         configureTypeMap(IOModule.typeMap)
     }
 
     private fun configureTypeMap(typeMap: TypeMap) {
+	    typeMap.register("library", LibraryImpl::class)
         typeMap.register("baseLibraryElement", BaseLibraryElement::class)
         typeMap.register("libraryFolder", LibraryFolder::class)
         typeMap.register("containerLibraryElement", ContainerLibraryElement::class)
+	    typeMap.register("libraryDictionary", FileLibraryDictionary::class)
+	    typeMap.register("libraryDictionaryEntry", FileLibraryDictionaryEntry::class)
     }
 }

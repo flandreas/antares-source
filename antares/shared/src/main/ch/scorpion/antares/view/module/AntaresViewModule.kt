@@ -42,8 +42,7 @@ import ch.scorpion.jabbah.edit.snap.ComponentSnapper
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.container.OriginIndicator
-import ch.scorpion.jabbah.graph.library.BaseLibraryElementRepository
-import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.CurrentGraphViewAnimationType
@@ -62,7 +61,40 @@ import ch.scorpion.jabbah.io.TypeMap
  */
 object AntaresViewModule : AbstractModule() {
 
-    val currentSymbolStyle: CurrentSymbolStyle = CurrentSymbolStyle()
+	private const val CONSTANT = "Constant"
+	private const val SPLITTER = "Splitter"
+	private const val CONCENTRATOR = "Concentrator"
+	private const val PROBE = "Probe"
+	private const val TUNNEL = "Tunnel"
+
+	private const val AND = "AND"
+	private const val OR = "OR"
+	private const val NOT = "NOT"
+	private const val NAND = "NAND"
+	private const val NOR = "NOR"
+	private const val XOR = "XOR"
+	private const val XNOR = "XNOR"
+	private const val BUFFER = "Buffer"
+	private const val TRISTATE_BUFFER = "TriStateBuffer"
+	private const val DELAY = "Delay"
+
+	private const val INPUT = "Input"
+	private const val SWITCH = "Switch"
+	private const val DIP_SWITCH = "DipSwitch"
+	private const val CLOCK = "Clock"
+
+	private const val OUTPUT = "Output"
+	private const val LED = "LED"
+	private const val RGB_LED = "RgbLED"
+	private const val SEVEN_SEGMENT_DISPLAX = "SevenSegmentDisplay"
+	private const val LED_MATRIX = "LEDMAtrix"
+
+	private const val ROM = "ROM"
+	private const val RAM = "RAM"
+
+	private const val RANDOM = "Random"
+
+	val currentSymbolStyle: CurrentSymbolStyle = CurrentSymbolStyle()
     val currentGraphViewAnimationType: CurrentGraphViewAnimationType by lazy { CurrentGraphViewAnimationType() }
 
     override fun initialize() {
@@ -227,45 +259,97 @@ object AntaresViewModule : AbstractModule() {
     }
 
 	private fun registerBaseLibraryElements(repository: BaseLibraryElementRepository) {
-		repository.register("Constant", "library.element.Constant", "/img/constant.png", ConstantView::class)
-		repository.register("Splitter", "library.element.Splitter", "/img/splitter.png", SplitterView::class)
-		repository.register("Concentrator", "library.element.Concentrator", "/img/concentrator.png", ConcentratorView::class)
-		repository.register("Probe", "library.element.Probe", "/img/probe.png", ProbeView::class)
-		repository.register("Tunnel", "library.element.Tunnel", "/img/tunnel.png", TunnelView::class)
+		repository.register(CONSTANT, "library.element.Constant", "/img/constant.png", ConstantView::class)
+		repository.register(SPLITTER, "library.element.Splitter", "/img/splitter.png", SplitterView::class)
+		repository.register(CONCENTRATOR, "library.element.Concentrator", "/img/concentrator.png", ConcentratorView::class)
+		repository.register(PROBE, "library.element.Probe", "/img/probe.png", ProbeView::class)
+		repository.register(TUNNEL, "library.element.Tunnel", "/img/tunnel.png", TunnelView::class)
 
-		repository.register("AND", "library.element.AndGate", "/img/and.png",  AndGateView::class)
-		repository.register("OR", "library.element.OrGate", "/img/or.png",  OrGateView::class)
-		repository.register("NOT", "library.element.NotGate", "/img/not.png",  NotGateView::class)
-		repository.register("NAND", "library.element.NandGate", "/img/nand.png",  NandGateView::class)
-		repository.register("NOR", "library.element.NorGate", "/img/nor.png",  NorGateView::class)
-		repository.register("XOR", "library.element.XorGate", "/img/xor.png", XorGateView::class)
-		repository.register("XNOR", "library.element.XnorGate", "/img/xnor.png", XnorGateView::class)
-		repository.register("Buffer", "library.element.Buffer", "/img/buffer.png", BufferGateView::class)
-		repository.register("TriStateBuffer", "library.element.TriStateBuffer", "/img/tristate-buffer.png", TriStateBufferGateView::class)
-		repository.register("Delay", "library.element.Delay", "/img/delay.png", DelayGateView::class)
+		repository.register(AND, "library.element.AndGate", "/img/and.png",  AndGateView::class)
+		repository.register(OR, "library.element.OrGate", "/img/or.png",  OrGateView::class)
+		repository.register(NOT, "library.element.NotGate", "/img/not.png",  NotGateView::class)
+		repository.register(NAND, "library.element.NandGate", "/img/nand.png",  NandGateView::class)
+		repository.register(NOR, "library.element.NorGate", "/img/nor.png",  NorGateView::class)
+		repository.register(XOR, "library.element.XorGate", "/img/xor.png", XorGateView::class)
+		repository.register(XNOR, "library.element.XnorGate", "/img/xnor.png", XnorGateView::class)
+		repository.register(BUFFER, "library.element.Buffer", "/img/buffer.png", BufferGateView::class)
+		repository.register(TRISTATE_BUFFER, "library.element.TriStateBuffer", "/img/tristate-buffer.png", TriStateBufferGateView::class)
+		repository.register(DELAY, "library.element.Delay", "/img/delay.png", DelayGateView::class)
 
-		repository.register("Input", "library.element.CircuitInput", "/img/input.png") {
+		repository.register(INPUT, "library.element.CircuitInput", "/img/input.png") {
 			val view = it.create(CircuitInOutView::class) as CircuitInOutView
 			view.portType = PortType.INPUT
 			view
 		}
-		repository.register("Switch", "library.element.Switch", "/img/switch.png", SwitchView::class)
-		repository.register("DipSwitch", "library.element.DipSwitch", "/img/dip-switch.png", DipSwitchView::class)
-		repository.register("Clock", "library.element.Clock", "/img/clock.png", ClockView::class)
+		repository.register(SWITCH, "library.element.Switch", "/img/switch.png", SwitchView::class)
+		repository.register(DIP_SWITCH, "library.element.DipSwitch", "/img/dip-switch.png", DipSwitchView::class)
+		repository.register(CLOCK, "library.element.Clock", "/img/clock.png", ClockView::class)
 
-		repository.register("Output", "library.element.CircuitOutput", "/img/output.png") {
+		repository.register(OUTPUT, "library.element.CircuitOutput", "/img/output.png") {
 			val view = it.create(CircuitInOutView::class) as CircuitInOutView
 			view.portType = PortType.OUTPUT
 			view
 		}
-		repository.register("LED", "library.element.RgbLED", "/img/rgb-led.png", RgbLEDView::class)
-		repository.register("RgbLED", "library.element.LED", "/img/led.png", LEDView::class)
-		repository.register("SevenSegmentDisplay", "library.element.SevenSegmentDisplay", "/img/7segment.png", SevenSegmentDisplayView::class)
-		repository.register("LEDMatrix", "library.element.LEDMatrix", "/img/led-matrix.png", LEDMatrixView::class)
+		repository.register(LED, "library.element.RgbLED", "/img/rgb-led.png", RgbLEDView::class)
+		repository.register(RGB_LED, "library.element.LED", "/img/led.png", LEDView::class)
+		repository.register(SEVEN_SEGMENT_DISPLAX, "library.element.SevenSegmentDisplay", "/img/7segment.png", SevenSegmentDisplayView::class)
+		repository.register(LED_MATRIX, "library.element.LEDMatrix", "/img/led-matrix.png", LEDMatrixView::class)
 
-		repository.register("ROM", "library.element.ROM", "/img/rom.png", ROMView::class)
-		repository.register("RAM", "library.element.RAM", "/img/ram.png", RAMView::class)
+		repository.register(ROM, "library.element.ROM", "/img/rom.png", ROMView::class)
+		repository.register(RAM, "library.element.RAM", "/img/ram.png", RAMView::class)
 
-		repository.register("Random", "library.element.Random", "/img/random.png", RandomView::class)
+		repository.register(RANDOM, "library.element.Random", "/img/random.png", RandomView::class)
+	}
+
+	fun fillBaseElementLibrary(library: Library) {
+		val net = LibraryFolder(Translations.getString("library.folder.net"))
+		addLibraryItem(library, BaseLibraryElement(CONSTANT), net)
+		addLibraryItem(library, BaseLibraryElement(SPLITTER), net)
+		addLibraryItem(library, BaseLibraryElement(CONCENTRATOR), net)
+		addLibraryItem(library, BaseLibraryElement(PROBE), net)
+		addLibraryItem(library, BaseLibraryElement(TUNNEL), net)
+		addLibraryItem(library, net, library)
+
+		val base = LibraryFolder(Translations.getString("library.folder.baseElements"))
+		addLibraryItem(library, BaseLibraryElement(AND), base)
+		addLibraryItem(library, BaseLibraryElement(OR), base)
+		addLibraryItem(library, BaseLibraryElement(NOT), base)
+		addLibraryItem(library, BaseLibraryElement(NAND), base)
+		addLibraryItem(library, BaseLibraryElement(NOR), base)
+		addLibraryItem(library, BaseLibraryElement(XOR), base)
+		addLibraryItem(library, BaseLibraryElement(XNOR), base)
+		addLibraryItem(library, BaseLibraryElement(BUFFER), base)
+		addLibraryItem(library, BaseLibraryElement(TRISTATE_BUFFER), base)
+		addLibraryItem(library, BaseLibraryElement(DELAY), base)
+		addLibraryItem(library, base, library)
+
+		val input = LibraryFolder(Translations.getString("library.folder.input"))
+		addLibraryItem(library, BaseLibraryElement(INPUT), input)
+		addLibraryItem(library, BaseLibraryElement(SWITCH), input)
+		addLibraryItem(library, BaseLibraryElement(DIP_SWITCH), input)
+		addLibraryItem(library, BaseLibraryElement(CLOCK), input)
+		addLibraryItem(library, input, library)
+
+		val output = LibraryFolder(Translations.getString("library.folder.output"))
+		addLibraryItem(library, BaseLibraryElement(OUTPUT), output)
+		addLibraryItem(library, BaseLibraryElement(LED), output)
+		addLibraryItem(library, BaseLibraryElement(RGB_LED), output)
+		addLibraryItem(library, BaseLibraryElement(SEVEN_SEGMENT_DISPLAX), output)
+		addLibraryItem(library, BaseLibraryElement(LED_MATRIX), output)
+		addLibraryItem(library, output, library)
+
+		val memory = LibraryFolder(Translations.getString("library.folder.memory"))
+		addLibraryItem(library, BaseLibraryElement(ROM), memory)
+		addLibraryItem(library, BaseLibraryElement(RAM), memory)
+		addLibraryItem(library, memory, library)
+
+		val arithmetic = LibraryFolder(Translations.getString("library.folder.arithmetic"))
+		addLibraryItem(library, BaseLibraryElement(RANDOM), arithmetic)
+		addLibraryItem(library, arithmetic, library)
+	}
+
+	private fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory) {
+		item.bindTo(library)
+		directory.add(item)
 	}
 }

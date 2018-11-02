@@ -42,6 +42,7 @@ open class GraphMenuBarBuilder(
 
 	override fun fillFileMenu(menu: JMenu) {
 		menu.add(JMenuItem(ActionWrapperSwing(ShowProjectsDialogAction(frame))))
+		menu.add(JMenuItem(ActionWrapperSwing(ShowLibrariesDialogAction(frame))))
 		menu.add(openRecentMenu)
 		menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(frame.application))))
 		menu.addSeparator()

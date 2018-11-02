@@ -111,8 +111,5 @@
         <containerLibraryElement _id='81' name='Frequenzteiler' uuid='0a2995f4-af04-4830-b141-76de188e2e34'/>
       </items>
     </libraryFolder>
-    <libraryFolder _id='82' name='Test'>
-      <items/>
-    </libraryFolder>
   </items>
 </libraryFolder>
