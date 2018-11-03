@@ -15,9 +15,12 @@ class LibraryHolder(
     var l: Library? = l
         set(value) {
 	        if (field != value) {
+		        val oldValue = field
 		        field?.dispose()
 		        field = value
-		        eventBus.post(LibraryEvent(field!!))
+		        if (oldValue != null) {
+			        eventBus.post(LibraryEvent(field!!))
+		        }
 	        }
         }
 

@@ -54,7 +54,7 @@ class FileProjectService(
 		if (!exists(projectName)) {
 			throw IllegalArgumentException("project name '$projectName' doesn't exists")
 		}
-		return libraryService.loadLibrary(projectFactory.invoke(projectName))
+		return libraryService.loadLibrary(projectName)
 	}
 
 	override fun create(projectName: String): Project {

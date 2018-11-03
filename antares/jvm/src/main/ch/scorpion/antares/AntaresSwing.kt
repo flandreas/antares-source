@@ -94,7 +94,7 @@ class AntaresSwing(
 
 	override fun init() {
 		AntaresModuleJvm(this).require()
-		LibraryModule.libraryService.invoke().loadLibrary(LibraryModule.libraryHolder.library)
+		LibraryModule.libraryHolder.l = LibraryModule.libraryService.invoke().loadLibrary("Standard")
 		UiUtil.setUIFont(FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size))
 		AntaresThemes.install()
 		super.init()

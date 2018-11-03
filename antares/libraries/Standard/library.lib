@@ -1,115 +1,119 @@
-<libraryFolder _id='0' name='Standard'>
-  <items>
-    <libraryFolder _id='1' name='Netz'>
-      <items>
-        <baseLibraryElement _id='2' name='Constant'/>
-        <baseLibraryElement _id='3' name='Splitter'/>
-        <baseLibraryElement _id='4' name='Concentrator'/>
-        <baseLibraryElement _id='5' name='Probe'/>
-        <baseLibraryElement _id='6' name='Tunnel'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='7' name='Grundelemente'>
-      <items>
-        <baseLibraryElement _id='8' name='AND'/>
-        <baseLibraryElement _id='9' name='OR'/>
-        <baseLibraryElement _id='10' name='NOT'/>
-        <baseLibraryElement _id='11' name='NAND'/>
-        <baseLibraryElement _id='12' name='NOR'/>
-        <baseLibraryElement _id='13' name='XOR'/>
-        <baseLibraryElement _id='14' name='XNOR'/>
-        <baseLibraryElement _id='15' name='Buffer'/>
-        <baseLibraryElement _id='16' name='TriStateBuffer'/>
-        <baseLibraryElement _id='17' name='Delay'/>
-        <containerLibraryElement _id='18' name='Impulsglied' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5'/>
-        <containerLibraryElement _id='19' name='Impulsglied (Neg)' uuid='6b75bce8-f115-4154-a7d8-782b8f4b629a'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='20' name='Eingabe'>
-      <items>
-        <baseLibraryElement _id='21' name='Input'/>
-        <baseLibraryElement _id='22' name='Switch'/>
-        <baseLibraryElement _id='23' name='DipSwitch'/>
-        <baseLibraryElement _id='24' name='Clock'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='25' name='Ausgabe'>
-      <items>
-        <baseLibraryElement _id='26' name='Output'/>
-        <baseLibraryElement _id='27' name='LED'/>
-        <baseLibraryElement _id='28' name='RgbLED'/>
-        <baseLibraryElement _id='29' name='SevenSegmentDisplay'/>
-        <baseLibraryElement _id='30' name='LEDMatrix'/>
-        <containerLibraryElement _id='31' name='8x8 LED-Matrix mit Ctrl' uuid='8cb1ea46-2a0d-4a1d-87af-02487049a050'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='32' name='Speicher'>
-      <items>
-        <baseLibraryElement _id='33' name='ROM'/>
-        <baseLibraryElement _id='34' name='RAM'/>
-        <containerLibraryElement _id='35' name='Register 4-Bit' uuid='e802fb9c-82dc-4196-b266-79fa023fb12e'/>
-        <containerLibraryElement _id='36' name='Register 16-Bit' uuid='2578848c-f03a-40d6-a7c4-6febf588e408'/>
-        <containerLibraryElement _id='37' name='Register 32-Bit' uuid='ce8674e0-8778-419b-b459-d10d2a0678ab'/>
-        <containerLibraryElement _id='38' name='Register 8-Bit' uuid='f8869bb7-cce3-4811-8f58-07eef9b04823'/>
-        <containerLibraryElement _id='39' name='Schieberegister Parallel-Out 4-Bit' uuid='2fa2c8a7-fc2d-4139-8f6b-bd4b07933916'/>
-        <containerLibraryElement _id='40' name='Schieberegister Parallel-Out 8-Bit' uuid='38cc0a3a-c46c-4c1b-85ca-0fc6dab00289'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='41' name='Arithmetik'>
-      <items>
-        <baseLibraryElement _id='42' name='Random'/>
-        <containerLibraryElement _id='43' name='Halbaddierer' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
-        <containerLibraryElement _id='44' name='Volladdierer' uuid='08aba425-96c2-4c43-b10b-2e0c72ce8300'/>
-        <containerLibraryElement _id='45' name='Inkrementierer 8-Bit' uuid='81e0ad9b-4678-4e79-aeef-8f59b153f2e3'/>
-        <containerLibraryElement _id='46' name='Shifter 8-Bit' uuid='9eb38fe7-5844-4be6-9192-25104a077b0c'/>
-        <containerLibraryElement _id='47' name='Shifter 16-Bit' uuid='c79ec2d7-ed8a-4be3-b334-49f8a9ee3779'/>
-        <containerLibraryElement _id='48' name='Komparator 4-Bit' uuid='a523d891-bd1a-4b0c-9072-ae6351db6ca7'/>
-        <containerLibraryElement _id='49' name='Komparator 8-Bit' uuid='e5954353-6045-4cad-9e43-cb843fd679fc'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='50' name='Codec'>
-      <items>
-        <containerLibraryElement _id='51' name='2-4 Decoder' uuid='326eba0f-e139-4786-b1e8-99610ec33bc9'/>
-        <containerLibraryElement _id='52' name='3-8 Decoder' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92'/>
-        <containerLibraryElement _id='53' name='4-16 Decoder' uuid='ff6a54e3-7b67-4800-936a-1b213e851790'/>
-        <containerLibraryElement _id='54' name='BCD-7Seg Dec' uuid='d95b72af-a5b6-4c1c-9b43-a4a2f3330589'/>
-        <containerLibraryElement _id='55' name='BCD-7Seg Hex' uuid='9eab72cb-2347-4bb1-9c22-40911beba7d4'/>
-        <containerLibraryElement _id='56' name='4-2 Priority Encoder' uuid='5f7f0e18-de3f-4776-ab82-a74f6fda8c75'/>
-        <containerLibraryElement _id='57' name='8-3 Priority Encoder' uuid='473fb78a-d491-42bf-a119-c4299979b89d'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='58' name='Flipflops'>
-      <items>
-        <containerLibraryElement _id='59' name='D-Flipflop' uuid='d6ab312a-a94b-403a-9291-642295ff29c5'/>
-        <containerLibraryElement _id='60' name='SR Latch' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87'/>
-        <containerLibraryElement _id='61' name='SR-Flipflop' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'/>
-        <containerLibraryElement _id='62' name='JK-Flipflop (Neg)' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'/>
-        <containerLibraryElement _id='63' name='JK-Flipflop' uuid='204aeecf-cdca-4678-8c36-f8a834922966'/>
-        <containerLibraryElement _id='64' name='JK-Master-Slave-Flipflop' uuid='5485c628-408c-45ea-9d1e-8d930c8760e7'/>
-        <containerLibraryElement _id='65' name='SR-Flipflop PRE/CLR' uuid='d34d3483-be1d-432b-a949-7f68e0ee756b'/>
-        <containerLibraryElement _id='66' name='JK-MS-Flipflop PRE/CLR' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
-        <containerLibraryElement _id='67' name='D-Flipflop PRE/CLR' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733'/>
-        <containerLibraryElement _id='68' name='T-Flipflop' uuid='e0786c72-2fa2-4ec4-a1de-0a84b7281bec'/>
-        <containerLibraryElement _id='69' name='SR-Flipflop (Neg)' uuid='54f46f36-85cf-41c9-a63a-b43fe4446742'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='70' name='Plexer'>
-      <items>
-        <containerLibraryElement _id='71' name='2x 4-4 Multiplexer' uuid='83ba937d-5277-45f2-adff-1abab9207e33'/>
-        <containerLibraryElement _id='72' name='2x 8-8 Multiplexer' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9'/>
-        <containerLibraryElement _id='73' name='2x 16-16 Multiplexer' uuid='06e7b5c3-daad-4019-8a8f-945a9215cab6'/>
-        <containerLibraryElement _id='74' name='4-1 Multiplexer' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'/>
-        <containerLibraryElement _id='75' name='2-1 Multiplexer' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7'/>
-        <containerLibraryElement _id='76' name='8-1 Multiplexer' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3'/>
-        <containerLibraryElement _id='77' name='2x 2-2 Multiplexer' uuid='2cb91fb8-b233-41b5-96b2-e898c9122e68'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='78' name='Zähler'>
-      <items>
-        <containerLibraryElement _id='79' name='Synch. Vorwärtszähler 3-Bit' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97'/>
-        <containerLibraryElement _id='80' name='Sync. BCD-Zähler 4-Bit' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'/>
-        <containerLibraryElement _id='81' name='Frequenzteiler' uuid='0a2995f4-af04-4830-b141-76de188e2e34'/>
-      </items>
-    </libraryFolder>
-  </items>
-</libraryFolder>
+<library>
+  <folder>
+        <libraryFolder _id='0' name='Standard'>
+          <items>
+            <libraryFolder _id='1' name='Netz'>
+              <items>
+                <baseLibraryElement _id='2' name='Constant'/>
+                <baseLibraryElement _id='3' name='Splitter'/>
+                <baseLibraryElement _id='4' name='Concentrator'/>
+                <baseLibraryElement _id='5' name='Probe'/>
+                <baseLibraryElement _id='6' name='Tunnel'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='7' name='Grundelemente'>
+              <items>
+                <baseLibraryElement _id='8' name='AND'/>
+                <baseLibraryElement _id='9' name='OR'/>
+                <baseLibraryElement _id='10' name='NOT'/>
+                <baseLibraryElement _id='11' name='NAND'/>
+                <baseLibraryElement _id='12' name='NOR'/>
+                <baseLibraryElement _id='13' name='XOR'/>
+                <baseLibraryElement _id='14' name='XNOR'/>
+                <baseLibraryElement _id='15' name='Buffer'/>
+                <baseLibraryElement _id='16' name='TriStateBuffer'/>
+                <baseLibraryElement _id='17' name='Delay'/>
+                <containerLibraryElement _id='18' name='Impulsglied' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5'/>
+                <containerLibraryElement _id='19' name='Impulsglied (Neg)' uuid='6b75bce8-f115-4154-a7d8-782b8f4b629a'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='20' name='Eingabe'>
+              <items>
+                <baseLibraryElement _id='21' name='Input'/>
+                <baseLibraryElement _id='22' name='Switch'/>
+                <baseLibraryElement _id='23' name='DipSwitch'/>
+                <baseLibraryElement _id='24' name='Clock'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='25' name='Ausgabe'>
+              <items>
+                <baseLibraryElement _id='26' name='Output'/>
+                <baseLibraryElement _id='27' name='LED'/>
+                <baseLibraryElement _id='28' name='RgbLED'/>
+                <baseLibraryElement _id='29' name='SevenSegmentDisplay'/>
+                <baseLibraryElement _id='30' name='LEDMatrix'/>
+                <containerLibraryElement _id='31' name='8x8 LED-Matrix mit Ctrl' uuid='8cb1ea46-2a0d-4a1d-87af-02487049a050'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='32' name='Speicher'>
+              <items>
+                <baseLibraryElement _id='33' name='ROM'/>
+                <baseLibraryElement _id='34' name='RAM'/>
+                <containerLibraryElement _id='35' name='Register 4-Bit' uuid='e802fb9c-82dc-4196-b266-79fa023fb12e'/>
+                <containerLibraryElement _id='36' name='Register 16-Bit' uuid='2578848c-f03a-40d6-a7c4-6febf588e408'/>
+                <containerLibraryElement _id='37' name='Register 32-Bit' uuid='ce8674e0-8778-419b-b459-d10d2a0678ab'/>
+                <containerLibraryElement _id='38' name='Register 8-Bit' uuid='f8869bb7-cce3-4811-8f58-07eef9b04823'/>
+                <containerLibraryElement _id='39' name='Schieberegister Parallel-Out 4-Bit' uuid='2fa2c8a7-fc2d-4139-8f6b-bd4b07933916'/>
+                <containerLibraryElement _id='40' name='Schieberegister Parallel-Out 8-Bit' uuid='38cc0a3a-c46c-4c1b-85ca-0fc6dab00289'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='41' name='Arithmetik'>
+              <items>
+                <baseLibraryElement _id='42' name='Random'/>
+                <containerLibraryElement _id='43' name='Halbaddierer' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
+                <containerLibraryElement _id='44' name='Volladdierer' uuid='08aba425-96c2-4c43-b10b-2e0c72ce8300'/>
+                <containerLibraryElement _id='45' name='Inkrementierer 8-Bit' uuid='81e0ad9b-4678-4e79-aeef-8f59b153f2e3'/>
+                <containerLibraryElement _id='46' name='Shifter 8-Bit' uuid='9eb38fe7-5844-4be6-9192-25104a077b0c'/>
+                <containerLibraryElement _id='47' name='Shifter 16-Bit' uuid='c79ec2d7-ed8a-4be3-b334-49f8a9ee3779'/>
+                <containerLibraryElement _id='48' name='Komparator 4-Bit' uuid='a523d891-bd1a-4b0c-9072-ae6351db6ca7'/>
+                <containerLibraryElement _id='49' name='Komparator 8-Bit' uuid='e5954353-6045-4cad-9e43-cb843fd679fc'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='50' name='Codec'>
+              <items>
+                <containerLibraryElement _id='51' name='2-4 Decoder' uuid='326eba0f-e139-4786-b1e8-99610ec33bc9'/>
+                <containerLibraryElement _id='52' name='3-8 Decoder' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92'/>
+                <containerLibraryElement _id='53' name='4-16 Decoder' uuid='ff6a54e3-7b67-4800-936a-1b213e851790'/>
+                <containerLibraryElement _id='54' name='BCD-7Seg Dec' uuid='d95b72af-a5b6-4c1c-9b43-a4a2f3330589'/>
+                <containerLibraryElement _id='55' name='BCD-7Seg Hex' uuid='9eab72cb-2347-4bb1-9c22-40911beba7d4'/>
+                <containerLibraryElement _id='56' name='4-2 Priority Encoder' uuid='5f7f0e18-de3f-4776-ab82-a74f6fda8c75'/>
+                <containerLibraryElement _id='57' name='8-3 Priority Encoder' uuid='473fb78a-d491-42bf-a119-c4299979b89d'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='58' name='Flipflops'>
+              <items>
+                <containerLibraryElement _id='59' name='D-Flipflop' uuid='d6ab312a-a94b-403a-9291-642295ff29c5'/>
+                <containerLibraryElement _id='60' name='SR Latch' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87'/>
+                <containerLibraryElement _id='61' name='SR-Flipflop' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'/>
+                <containerLibraryElement _id='62' name='JK-Flipflop (Neg)' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'/>
+                <containerLibraryElement _id='63' name='JK-Flipflop' uuid='204aeecf-cdca-4678-8c36-f8a834922966'/>
+                <containerLibraryElement _id='64' name='JK-Master-Slave-Flipflop' uuid='5485c628-408c-45ea-9d1e-8d930c8760e7'/>
+                <containerLibraryElement _id='65' name='SR-Flipflop PRE/CLR' uuid='d34d3483-be1d-432b-a949-7f68e0ee756b'/>
+                <containerLibraryElement _id='66' name='JK-MS-Flipflop PRE/CLR' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
+                <containerLibraryElement _id='67' name='D-Flipflop PRE/CLR' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733'/>
+                <containerLibraryElement _id='68' name='T-Flipflop' uuid='e0786c72-2fa2-4ec4-a1de-0a84b7281bec'/>
+                <containerLibraryElement _id='69' name='SR-Flipflop (Neg)' uuid='54f46f36-85cf-41c9-a63a-b43fe4446742'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='70' name='Plexer'>
+              <items>
+                <containerLibraryElement _id='71' name='2x 4-4 Multiplexer' uuid='83ba937d-5277-45f2-adff-1abab9207e33'/>
+                <containerLibraryElement _id='72' name='2x 8-8 Multiplexer' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9'/>
+                <containerLibraryElement _id='73' name='2x 16-16 Multiplexer' uuid='06e7b5c3-daad-4019-8a8f-945a9215cab6'/>
+                <containerLibraryElement _id='74' name='4-1 Multiplexer' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'/>
+                <containerLibraryElement _id='75' name='2-1 Multiplexer' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7'/>
+                <containerLibraryElement _id='76' name='8-1 Multiplexer' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3'/>
+                <containerLibraryElement _id='77' name='2x 2-2 Multiplexer' uuid='2cb91fb8-b233-41b5-96b2-e898c9122e68'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='78' name='Zähler'>
+              <items>
+                <containerLibraryElement _id='79' name='Synch. Vorwärtszähler 3-Bit' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97'/>
+                <containerLibraryElement _id='80' name='Sync. BCD-Zähler 4-Bit' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'/>
+                <containerLibraryElement _id='81' name='Frequenzteiler' uuid='0a2995f4-af04-4830-b141-76de188e2e34'/>
+              </items>
+            </libraryFolder>
+          </items>
+        </libraryFolder>
+    </folder>
+</library>

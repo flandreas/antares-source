@@ -86,8 +86,8 @@ object AntaresViewModule : AbstractModule() {
 	private const val OUTPUT = "Output"
 	private const val LED = "LED"
 	private const val RGB_LED = "RgbLED"
-	private const val SEVEN_SEGMENT_DISPLAX = "SevenSegmentDisplay"
-	private const val LED_MATRIX = "LEDMAtrix"
+	private const val SEVEN_SEGMENT_DISPLAY = "SevenSegmentDisplay"
+	private const val LED_MATRIX = "LEDMatrix"
 
 	private const val ROM = "ROM"
 	private const val RAM = "RAM"
@@ -292,7 +292,7 @@ object AntaresViewModule : AbstractModule() {
 		}
 		repository.register(LED, "library.element.RgbLED", "/img/rgb-led.png", RgbLEDView::class)
 		repository.register(RGB_LED, "library.element.LED", "/img/led.png", LEDView::class)
-		repository.register(SEVEN_SEGMENT_DISPLAX, "library.element.SevenSegmentDisplay", "/img/7segment.png", SevenSegmentDisplayView::class)
+		repository.register(SEVEN_SEGMENT_DISPLAY, "library.element.SevenSegmentDisplay", "/img/7segment.png", SevenSegmentDisplayView::class)
 		repository.register(LED_MATRIX, "library.element.LEDMatrix", "/img/led-matrix.png", LEDMatrixView::class)
 
 		repository.register(ROM, "library.element.ROM", "/img/rom.png", ROMView::class)
@@ -334,7 +334,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(OUTPUT), output)
 		addLibraryItem(library, BaseLibraryElement(LED), output)
 		addLibraryItem(library, BaseLibraryElement(RGB_LED), output)
-		addLibraryItem(library, BaseLibraryElement(SEVEN_SEGMENT_DISPLAX), output)
+		addLibraryItem(library, BaseLibraryElement(SEVEN_SEGMENT_DISPLAY), output)
 		addLibraryItem(library, BaseLibraryElement(LED_MATRIX), output)
 		addLibraryItem(library, output, library)
 

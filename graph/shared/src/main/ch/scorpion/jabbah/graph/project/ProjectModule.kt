@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.io.IOModule
+import ch.scorpion.jabbah.io.TypeMap
 
 /**
  * Module definitions the the [ch.scorpion.jabbah.graph.project] module.
@@ -19,9 +21,13 @@ object ProjectModule : AbstractModule() {
 
 	var projectService: ProjectService = UnimplementedProjectService()
 
-	val projectFactory: (String) -> Project = { LibraryImpl(name = it, libraryService = projectLibraryService.invoke(), descriptionKey = "project.project.name") }
+	val projectFactory: (String) -> Project = { ProjectImpl(name = it, libraryService = projectLibraryService.invoke(), descriptionKey = "project.project.name") }
 
 	override fun initialize() {
-		// empty
+		configureTypeMap(IOModule.typeMap)
+	}
+
+	private fun configureTypeMap(typeMap: TypeMap) {
+		typeMap.register("project", ProjectImpl::class)
 	}
 }

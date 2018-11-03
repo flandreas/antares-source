@@ -3,10 +3,7 @@ package ch.scorpion.jabbah.graph.project
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
-
-typealias Project = Library
 
 /**
  * Posted on [EventBus] when a [Project] is to be opened and is to replace the currently open [Project], if any.

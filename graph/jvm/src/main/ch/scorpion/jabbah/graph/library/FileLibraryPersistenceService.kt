@@ -70,14 +70,13 @@ class FileLibraryPersistenceService(
         File(buildMetaGraphFilePath(library.name, uuid)).delete()
     }
 
-    override fun loadLibrary(library: Library) {
-	    val path = buildLibraryFilePath(library.name)
+    override fun loadLibrary(name: String): Library {
+	    val path = buildLibraryFilePath(name)
         LOG.debug("Loading library from $path")
         FileInputStream(path).use {
             try {
                 val storeReader = StoreXmlReader(ElectricXmlReader(it))
-                val loadedFolder = storeReader.readStorable() as LibraryFolder
-                library.replaceContentsWith(loadedFolder)
+	            return storeReader.readStorable() as Library
             } catch (e: Throwable) {
                 LOG.error("Error while loading library file '$path': ${e.message}")
                 throw e
@@ -92,7 +91,7 @@ class FileLibraryPersistenceService(
             FileOutputStream(path).use {
                 try {
                     val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
-                    storeWriter.writeStorable(library.libraryFolder)
+                    storeWriter.writeStorable(library)
                 } catch (e: Throwable) {
                     LOG.error("Error while storing library file '$path': ${e.message}")
                     throw e

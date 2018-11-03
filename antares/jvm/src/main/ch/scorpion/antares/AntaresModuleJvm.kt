@@ -50,7 +50,6 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 			libraryFileName = app.libraryFileName
 		)
 		LibraryModule.libraryFactory = AntaresLibraryFactory()
-		LibraryModule.libraryHolder = LibraryHolder(LibraryModule.libraryFactory.createEmptyLibrary("Standard"))
 
 		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(
 			directoryPath = app.projectsDirectoryPath.toString(),

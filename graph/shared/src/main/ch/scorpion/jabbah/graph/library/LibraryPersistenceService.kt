@@ -14,7 +14,7 @@ interface LibraryPersistenceService {
 
     fun deleteContainerLibraryElement(library: Library, uuid: UUID)
 
-    fun loadLibrary(library: Library)
+	fun loadLibrary(name: String): Library
 
     fun storeLibrary(library: Library)
 
@@ -24,7 +24,8 @@ interface LibraryPersistenceService {
 
 /** Null pattern.*/
 class UnimplementedLibraryPersistenceService : LibraryPersistenceService{
-    override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
+
+	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
         throw UnsupportedOperationException("not implemented")
     }
 
@@ -36,11 +37,11 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService{
         throw UnsupportedOperationException("not implemented")
     }
 
-    override fun loadLibrary(library: Library) {
-        throw UnsupportedOperationException("not implemented")
-    }
+	override fun loadLibrary(name: String): Library {
+		throw UnsupportedOperationException("not implemented")
+	}
 
-    override fun storeLibrary(library: Library) {
+	override fun storeLibrary(library: Library) {
         throw UnsupportedOperationException("not implemented")
     }
 

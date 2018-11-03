@@ -1,12 +1,10 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
-import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 import ch.scorpion.jabbah.io.*
 
@@ -18,13 +16,12 @@ import ch.scorpion.jabbah.io.*
  * the delegate is bound at instantiation time. Instead, [LibraryPersistenceService] loads the contents of the [Library]'s
  * [LibraryFolder] directly into the existing [LibraryFolder] instance, without instantiating it.
  */
-class LibraryImpl(
-	name: String,
-	override val libraryFolder: LibraryFolder = LibraryFolder(name),
-	override val libraryService: LibraryService,
+open class LibraryImpl(
+	name: String = "",
+	override val libraryService: LibraryService = LibraryModule.libraryService.invoke(),
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val descriptionKey: String = "library.library.name"
-) : Library, LibraryDirectory by libraryFolder {
+) : Library, LibraryDirectory {
 
 	companion object {
 		private val LOG by logger(LibraryImpl::class)
@@ -37,13 +34,13 @@ class LibraryImpl(
 		private set
 	*/
 
+	override var libraryFolder: LibraryFolder = LibraryFolder(name)
+
 	/**
 	 * Can't be stored locally, because delegation would not work any more (cannot change delegated object).
 	 * As a workaround, store it in [LibraryFolder].
 	 */
-	override var defaultElementUUID: UUID?
-		get() = libraryFolder.defaultElementUUID
-		set(value) { libraryFolder.defaultElementUUID = value }
+	override var defaultElementUUID: UUID? = null
 
 	init {
 		libraryFolder.bindTo(this)
@@ -57,6 +54,46 @@ class LibraryImpl(
 
 	override fun toString(): String {
 		return "${Translations.getString(descriptionKey)} \"$name\""
+	}
+
+	/** ---- [LibraryDirectory] */
+
+	override fun isEmpty(): Boolean = libraryFolder.isEmpty()
+
+	override fun add(item: LibraryItem) {
+		libraryFolder.add(item)
+	}
+
+	override fun add(index: Int, item: LibraryItem) {
+		libraryFolder.add(index, item)
+	}
+
+	override fun remove(item: LibraryItem): Boolean = libraryFolder.remove(item)
+
+	override fun contains(item: LibraryItem): Boolean = libraryFolder.contains(item)
+
+	override fun containsRecursively(item: LibraryItem): Boolean = libraryFolder.containsRecursively(item)
+
+	override fun get(name: String): LibraryItem? = libraryFolder.get(name)
+
+	override fun getRecursively(name: String): LibraryItem? = libraryFolder.getRecursively(name)
+
+	override fun getItems(): ImmutableList<LibraryItem> = libraryFolder.getItems()
+
+	override fun indexOf(item: LibraryItem): Int = libraryFolder.indexOf(item)
+
+	override val library: Library? get() = libraryFolder.library
+
+	override val isFixed: Boolean get() = libraryFolder.isFixed
+
+	override val name: String get() = libraryFolder.name
+
+	override val iconPath: String? get() = libraryFolder.iconPath
+
+	override fun accept(visitor: HierarchyVisitor): Boolean = libraryFolder.accept(visitor)
+
+	override fun bindTo(library: Library) {
+		libraryFolder.bindTo(library)
 	}
 
 	/** ---- [MetaGraphRepository] */
@@ -89,23 +126,43 @@ class LibraryImpl(
 
 	/** ---- [Storable] interface */
 
-	/*
+	override var storableId: Int = 0
+
 	override fun write(writer: StoreWriter) {
+		if (defaultElementUUID != null) {
+			writer.writeString("defaultElement", defaultElementUUID.toString())
+		}
+		writer.writeStorable("folder", libraryFolder)
+		/*
 		writer.writeString("uuid", uuid.toString())
 		if (importedLibrary != null) {
 			writer.writeString("import", importedLibrary.toString())
 		}
 		libraryFolder.write(writer)
+		*/
 	}
 
 	override fun read(reader: StoreReader) {
+		if (reader.hasAttribute("defaultElement")) {
+			defaultElementUUID = UUID(reader.readString("defaultElement"))
+		}
+		libraryFolder = reader.readStorable("folder") as LibraryFolder
+		/*
 		uuid = System.get().createUUID(reader.readString("uuid"))
 		if (reader.hasAttribute("import")) {
 			importedLibrary = System.get().createUUID(reader.readString("import"))
 		}
 		libraryFolder.read(reader)
+		*/
 	}
-	*/
+
+	override fun getStorableChildren(): Iterator<Storable> {
+		return mutableListOf<Storable>(libraryFolder).iterator()
+	}
+
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+		// empty
+	}
 
 	/** ---- [Library] interface */
 

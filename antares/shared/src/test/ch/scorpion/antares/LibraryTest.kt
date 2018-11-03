@@ -112,8 +112,6 @@ class LibraryTest {
 
     private fun storeAndLoad(library: LibraryImpl, service: LibraryService): Library {
         service.storeLibrary(library)
-        val loadedLibrary = LibraryImpl("test", libraryService = LibraryModule.libraryService.invoke())
-        LibraryModule.libraryService.invoke().loadLibrary(loadedLibrary)
-        return loadedLibrary
+	    return LibraryModule.libraryService.invoke().loadLibrary("test")
     }
 }

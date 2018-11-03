@@ -23,8 +23,6 @@ interface LibraryService {
 
 	fun loadLibrary(name: String): Library
 
-	fun loadLibrary(library: Library): Library
-
 	fun storeLibrary(library: Library)
 
 	/**
@@ -128,13 +126,9 @@ class LibraryServiceImpl(
 	override val currentLibrary: Library? get() = libraryAccessor.invoke()
 
 	override fun loadLibrary(name: String): Library {
-		return loadLibrary(libraryFactory.createEmptyLibrary(name))
-	}
-
-	override fun loadLibrary(library: Library): Library {
 		try {
-			LOG.debug("LibraryServiceImpl: Loading Library '${library.name}'")
-			persistenceService.loadLibrary(library)
+			LOG.debug("LibraryServiceImpl: Loading Library '$name'")
+			val library = persistenceService.loadLibrary(name)
 			library.bindLibraryItems()
 			return library
 		} catch(e: LibraryPersistenceServiceException) {

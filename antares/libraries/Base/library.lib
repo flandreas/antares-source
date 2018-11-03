@@ -1,55 +1,59 @@
-<libraryFolder _id='0' name='Base'>
-  <items>
-    <libraryFolder _id='1' name='Netz'>
-      <items>
-        <baseLibraryElement _id='2' name='Splitter'/>
-        <baseLibraryElement _id='3' name='Concentrator'/>
-        <baseLibraryElement _id='4' name='Probe'/>
-        <baseLibraryElement _id='5' name='Tunnel'/>
-        <baseLibraryElement _id='6' name='Constant'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='7' name='Grundelemente'>
-      <items>
-        <baseLibraryElement _id='8' name='OR'/>
-        <baseLibraryElement _id='9' name='NOT'/>
-        <baseLibraryElement _id='10' name='NAND'/>
-        <baseLibraryElement _id='11' name='NOR'/>
-        <baseLibraryElement _id='12' name='XOR'/>
-        <baseLibraryElement _id='13' name='XNOR'/>
-        <baseLibraryElement _id='14' name='Buffer'/>
-        <baseLibraryElement _id='15' name='TriStateBuffer'/>
-        <baseLibraryElement _id='16' name='Delay'/>
-        <baseLibraryElement _id='17' name='AND'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='18' name='Eingabe'>
-      <items>
-        <baseLibraryElement _id='19' name='Switch'/>
-        <baseLibraryElement _id='20' name='DipSwitch'/>
-        <baseLibraryElement _id='21' name='Clock'/>
-        <baseLibraryElement _id='22' name='Input'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='23' name='Ausgabe'>
-      <items>
-        <baseLibraryElement _id='24' name='LED'/>
-        <baseLibraryElement _id='25' name='RgbLED'/>
-        <baseLibraryElement _id='26' name='SevenSegmentDisplay'/>
-        <baseLibraryElement _id='27' name='LEDMAtrix'/>
-        <baseLibraryElement _id='28' name='Output'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='29' name='Speicher'>
-      <items>
-        <baseLibraryElement _id='30' name='RAM'/>
-        <baseLibraryElement _id='31' name='ROM'/>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='32' name='Arithmetik'>
-      <items>
-        <baseLibraryElement _id='33' name='Random'/>
-      </items>
-    </libraryFolder>
-  </items>
-</libraryFolder>
+<library _id='34'>
+    <folder>
+        <libraryFolder _id='0' name='Base'>
+          <items>
+            <libraryFolder _id='1' name='Netz'>
+              <items>
+                <baseLibraryElement _id='2' name='Splitter'/>
+                <baseLibraryElement _id='3' name='Concentrator'/>
+                <baseLibraryElement _id='4' name='Probe'/>
+                <baseLibraryElement _id='5' name='Tunnel'/>
+                <baseLibraryElement _id='6' name='Constant'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='7' name='Grundelemente'>
+              <items>
+                <baseLibraryElement _id='8' name='OR'/>
+                <baseLibraryElement _id='9' name='NOT'/>
+                <baseLibraryElement _id='10' name='NAND'/>
+                <baseLibraryElement _id='11' name='NOR'/>
+                <baseLibraryElement _id='12' name='XOR'/>
+                <baseLibraryElement _id='13' name='XNOR'/>
+                <baseLibraryElement _id='14' name='Buffer'/>
+                <baseLibraryElement _id='15' name='TriStateBuffer'/>
+                <baseLibraryElement _id='16' name='Delay'/>
+                <baseLibraryElement _id='17' name='AND'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='18' name='Eingabe'>
+              <items>
+                <baseLibraryElement _id='19' name='Switch'/>
+                <baseLibraryElement _id='20' name='DipSwitch'/>
+                <baseLibraryElement _id='21' name='Clock'/>
+                <baseLibraryElement _id='22' name='Input'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='23' name='Ausgabe'>
+              <items>
+                <baseLibraryElement _id='24' name='LED'/>
+                <baseLibraryElement _id='25' name='RgbLED'/>
+                <baseLibraryElement _id='26' name='SevenSegmentDisplay'/>
+                <baseLibraryElement _id='27' name='LEDMAtrix'/>
+                <baseLibraryElement _id='28' name='Output'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='29' name='Speicher'>
+              <items>
+                <baseLibraryElement _id='30' name='RAM'/>
+                <baseLibraryElement _id='31' name='ROM'/>
+              </items>
+            </libraryFolder>
+            <libraryFolder _id='32' name='Arithmetik'>
+              <items>
+                <baseLibraryElement _id='33' name='Random'/>
+              </items>
+            </libraryFolder>
+          </items>
+        </libraryFolder>
+    </folder>
+</library>
