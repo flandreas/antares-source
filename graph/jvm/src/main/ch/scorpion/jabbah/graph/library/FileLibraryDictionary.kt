@@ -31,7 +31,6 @@ class FileLibraryDictionary(
 	/** Maps a [UUID] of a [FileLibraryDictionaryEntry] to its [FileLibraryDictionaryEntry].*/
 	private val entries = mutableMapOf<UUID,FileLibraryDictionaryEntry>()
 
-	/*
 	private val libraryCreatedHandler: EventHandler<LibraryCreatedEvent> = {
 		add(it.library.name, it.library.uuid)
 	}
@@ -43,7 +42,6 @@ class FileLibraryDictionary(
 	private fun dispose() {
 		eventBus.unregister(LibraryCreatedEvent::class, libraryCreatedHandler)
 	}
-	*/
 
 	/** ---- [LibraryDictionary] interface */
 
@@ -86,7 +84,7 @@ class FileLibraryDictionary(
 					val dictionary = storeReader.readStorable() as FileLibraryDictionary
 					this.entries.clear()
 					this.entries.putAll(dictionary.entries)
-					//dictionary.dispose()
+					dictionary.dispose()
 				} catch (e: Throwable) {
 					LOG.error("FileLibraryDictionary: error while loading dictionary file $path: ${e.message}")
 					throw e
@@ -123,7 +121,7 @@ class FileLibraryDictionary(
 	/** --- [FileLibraryDictionary] */
 
 	private fun getEntryByName(name: String): FileLibraryDictionaryEntry {
-		val entry = entries.values.firstOrNull() { it.name == name }
+		val entry = entries.values.firstOrNull { it.name == name }
 		if (entry == null) {
 			LOG.error("FileLibraryDictionary: requesting entry of non-existing library with name $name")
 			throw IllegalArgumentException()
@@ -163,7 +161,7 @@ data class FileLibraryDictionaryEntry(
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
-	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator<Storable>()
+	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
 	
 	override fun write(writer: StoreWriter) {
 		writer.writeString("uuid", uuid.toString())

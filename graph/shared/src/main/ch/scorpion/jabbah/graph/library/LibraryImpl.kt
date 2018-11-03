@@ -27,19 +27,10 @@ open class LibraryImpl(
 		private val LOG by logger(LibraryImpl::class)
 	}
 
-	// override var uuid: UUID = System.get().createUUID()
-
-	/*
-	override var importedLibrary: UUID? = null
-		private set
-	*/
+	override var uuid: UUID = System.get().createUUID()
 
 	override var libraryFolder: LibraryFolder = LibraryFolder(name)
 
-	/**
-	 * Can't be stored locally, because delegation would not work any more (cannot change delegated object).
-	 * As a workaround, store it in [LibraryFolder].
-	 */
 	override var defaultElementUUID: UUID? = null
 
 	init {
@@ -133,13 +124,7 @@ open class LibraryImpl(
 			writer.writeString("defaultElement", defaultElementUUID.toString())
 		}
 		writer.writeStorable("folder", libraryFolder)
-		/*
 		writer.writeString("uuid", uuid.toString())
-		if (importedLibrary != null) {
-			writer.writeString("import", importedLibrary.toString())
-		}
-		libraryFolder.write(writer)
-		*/
 	}
 
 	override fun read(reader: StoreReader) {
@@ -147,13 +132,7 @@ open class LibraryImpl(
 			defaultElementUUID = UUID(reader.readString("defaultElement"))
 		}
 		libraryFolder = reader.readStorable("folder") as LibraryFolder
-		/*
 		uuid = System.get().createUUID(reader.readString("uuid"))
-		if (reader.hasAttribute("import")) {
-			importedLibrary = System.get().createUUID(reader.readString("import"))
-		}
-		libraryFolder.read(reader)
-		*/
 	}
 
 	override fun getStorableChildren(): Iterator<Storable> {
@@ -189,7 +168,7 @@ open class LibraryImpl(
 		})
 	}
 
-	/** Returns the [ContainerLibraryElement] to be opened when this [Library] is openend.*/
+	/** Returns the [ContainerLibraryElement] to be opened when this [Library] is opened.*/
 	override fun getDefaultElement(): ContainerLibraryElement? {
 		if (defaultElementUUID == null) {
 			val finder = DefaultElementFinder()

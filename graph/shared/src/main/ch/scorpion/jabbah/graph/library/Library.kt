@@ -2,24 +2,18 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 
 
 interface Library : LibraryDirectory, MetaGraphRepository {
 
 	/** The universal unique ID of this [Library]. Used for referencing this [Library] from projects.*/
-	// val uuid: UUID
-
-	/**
-	 * The [UUID] of the [Library] imported by this [Library], i.e. the [Library] from which this [Library]
-	 * imports [MetaGraph]s. This is currently only used by projects.
-	 */
-	// val importedLibrary: UUID?
+	val uuid: UUID
 
 	/** The UUID of the [ContainerLibraryElement] to be opened per default.*/
 	var defaultElementUUID: UUID?
 
+	/** The [LibraryFolder] containing the top-level elements of this [Library].*/
     val libraryFolder: LibraryFolder
 
 	/**

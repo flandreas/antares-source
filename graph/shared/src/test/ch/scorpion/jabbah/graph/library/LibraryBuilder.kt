@@ -6,10 +6,11 @@ import ch.scorpion.jabbah.graph.MetaGraph
 /** A builder that helps to setup a [LibraryImpl] to be used for testing.*/
 class LibraryBuilder(
 	name: String,
-	libraryService: LibraryService
+	libraryService: LibraryService,
+	library: Library = LibraryImpl(name = name, libraryService = libraryService)
 ) {
 
-	val library: Library = LibraryImpl(name = name, libraryService = libraryService)
+	val library: Library = library
 	private val stack = Stack<LibraryDirectory>()
 
 	init {
