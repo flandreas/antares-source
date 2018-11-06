@@ -1,16 +1,14 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.project.ProjectModule
-import ch.scorpion.jabbah.graph.project.ProjectService
 import org.apache.commons.io.FileUtils
 import java.nio.file.FileSystems
 import java.nio.file.Files
-import java.nio.file.Paths
 
 /**
  * A [LibraryManagementService] that uses the local file system to store [Libraries][Library].
@@ -22,7 +20,6 @@ class FileLibraryManagementService(
 	private val libraryService: LibraryService = LibraryModule.libraryService.invoke(),
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val libraryDirectory: LibraryDictionary = LibraryModule.libraryDictionary,
-	private val projectService: ProjectService = ProjectModule.projectService,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : LibraryManagementService {
 
@@ -59,13 +56,19 @@ class FileLibraryManagementService(
 		return library
 	}
 
+	override fun open(uuid: UUID): Library {
+		val library = load(libraryDirectory.getNameOfUUID(uuid))
+		open(library)
+		return library
+	}
+
 	override fun open(library: Library) {
+		LOG.debug("FileLibraryManagementService: open library '${library.name}'")
 		eventBus.postVetoable(
 			event = OpenLibraryRequest(library),
 			undoEvent = OpenLibraryRequest(libraryHolder.library),
 			thenHandler = {
 				libraryHolder.l = library
-				projectService.close()
 			}
 		)
 	}

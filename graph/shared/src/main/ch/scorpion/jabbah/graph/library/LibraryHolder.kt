@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
@@ -12,9 +13,14 @@ class LibraryHolder(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
+	companion object {
+		private val LOG by logger(LibraryHolder::class)
+	}
+
     var l: Library? = l
         set(value) {
 	        if (field != value) {
+		        LOG.debug("LibraryHolder: setting current Library to '${value?.name}'")
 		        val oldValue = field
 		        field?.dispose()
 		        field = value

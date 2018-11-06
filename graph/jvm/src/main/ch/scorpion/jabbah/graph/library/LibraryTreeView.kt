@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.JTreeUtil.findTreeNode
@@ -109,6 +110,8 @@ class LibraryTreeView(
     }
 
     companion object {
+
+	    private val LOG by logger(LibraryTreeView::class)
 
         fun createLibraryTreeModel(library: Library, project: Project?): TreeModel {
 	        val root = DefaultMutableTreeNode(Translations.getString("graph.desktop.name"))
@@ -233,6 +236,7 @@ class LibraryTreeView(
 	}
 
 	private fun openLibrary(library: Library) {
+		LOG.debug("LibraryTreeView: open Library '${library.name}'")
 		val root = model.root as DefaultMutableTreeNode
 		val oldLibraryNode = getLibraryNode()
 		val newLibraryNode = DefaultMutableTreeNode(library)
@@ -243,9 +247,12 @@ class LibraryTreeView(
 		(model as DefaultTreeModel).nodesWereRemoved(root, intArrayOf(libraryNodeIndex), arrayOf(oldLibraryNode))
 		root.insert(newLibraryNode, libraryNodeIndex)
 		(model as DefaultTreeModel).nodesWereInserted(root, intArrayOf(libraryNodeIndex))
+
+		expandRow(0)
 	}
 
 	private fun openProject(project: Project) {
+		LOG.debug("LibraryTreeView: open Project '${project.name}'")
 		val root = model.root as DefaultMutableTreeNode
 		val oldProjectNode = getProjectNode()
 		val newProjectNode = DefaultMutableTreeNode(project)
@@ -260,9 +267,12 @@ class LibraryTreeView(
 			root.insert(newProjectNode, 0)
 			(model as DefaultTreeModel).nodesWereInserted(root, intArrayOf(0))
 		}
+
+		expandRow(0)
 	}
 
 	private fun closeProject() {
+		LOG.debug("LibraryTreeView: close Project")
 		val projectNode = getProjectNode()
 		if (projectNode != null) {
 			val root = model.root as DefaultMutableTreeNode

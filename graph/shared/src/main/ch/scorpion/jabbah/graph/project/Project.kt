@@ -18,14 +18,14 @@ interface Project : Library {
 	 * The [UUID] of the [Library] imported by this [Library], i.e. the [Library] from which this [Library]
 	 * imports [MetaGraph]s. This is currently only used by projects.
 	 */
-	val importedLibrary: UUID?
+	var importedLibrary: UUID?
 }
 
 class ProjectImpl(
 	name: String = "",
 	libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
 	storableCreator: StorableCreator = IOModule.storableCreator,
-	descriptionKey: String = "library.library.name"
+	descriptionKey: String = "project.project.name"
 ) : LibraryImpl(
 	name = name,
 	libraryService = libraryService,

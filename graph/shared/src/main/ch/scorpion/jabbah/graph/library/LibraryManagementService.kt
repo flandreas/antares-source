@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.event.EventBus
@@ -46,6 +47,12 @@ interface LibraryManagementService {
 	 */
 	fun open(name: String): Library
 
+	/**
+	 * Loads and opens the [Library] with the specified [UUID], while closing a currently open project.
+	 * @throws IllegalArgumentException if a [Library] with [UUID] [uuid] doesn't exist
+	 */
+	fun open(uuid: UUID): Library
+
 	/** Opens the specified [Library], while closing a currently open project*/
 	fun open(library: Library)
 
@@ -76,6 +83,10 @@ class UnimplementedLibraryManagementService : LibraryManagementService {
 	}
 
 	override fun open(name: String): Library {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun open(uuid: UUID): Library {
 		throw UnsupportedOperationException("not implemented")
 	}
 

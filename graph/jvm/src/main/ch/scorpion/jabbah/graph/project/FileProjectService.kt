@@ -24,13 +24,19 @@ class FileProjectService(
 	private val directoryPath: String,
 	private val projectFactory: (String) -> Project = ProjectModule.projectFactory,
 	private val libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
+	private val libraryManagementService: LibraryManagementService = LibraryModule.libraryManagementService,
 	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name",
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
+	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ProjectService {
 
 	companion object {
 		private val LOG by logger(FileProjectService::class)
+	}
+
+	init {
+		eventBus.register(LibraryEvent::class) { close() }
 	}
 
 	/** ---- [ProjectService] interface */
@@ -63,6 +69,7 @@ class FileProjectService(
 		}
 		LOG.debug("FileProjectService: creating new project '$projectName'")
 		val project = projectFactory.invoke(projectName)
+		project.importedLibrary = libraryHolder.library.uuid
 		libraryService.storeLibrary(project)
 
 		val metaGraph = MetaGraph()
@@ -83,11 +90,7 @@ class FileProjectService(
 			event = OpenProjectRequest(project),
 			undoEvent = OpenProjectRequest(projectHolder.project),
 			thenHandler = {
-				projectHolder.p = project
-				val element = project.getDefaultElement()
-				if (element != null) {
-					eventBus.post(OpenContainerLibraryElementRequest(element))
-				}
+				openImpl(project, project.defaultElementUUID)
 			}
 		)
 	}
@@ -98,13 +101,27 @@ class FileProjectService(
 			event = OpenProjectRequest(project),
 			undoEvent = OpenProjectRequest(projectHolder.project),
 			thenHandler = {
-				projectHolder.p = project
-				val element = project.getContainerLibraryElement(containerLibraryElement)
-				if (element != null) {
-					eventBus.post(OpenContainerLibraryElementRequest(element))
-				}
+				openImpl(project, containerLibraryElement)
 			}
 		)
+	}
+
+	private fun openImpl(project: Project, elementUUID: UUID?) {
+		LOG.debug("FileProjectService: open project '${project.name}'")
+		openLibraryForProjectIfNecessary(project)
+		projectHolder.p = project
+		if (elementUUID != null) {
+			val element = project.getContainerLibraryElement(elementUUID)
+			if (element != null) {
+				eventBus.post(OpenContainerLibraryElementRequest(element))
+			}
+		}
+	}
+
+	private fun openLibraryForProjectIfNecessary(project: Project) {
+		if (project.importedLibrary != libraryHolder.library.uuid) {
+			libraryManagementService.open(project.importedLibrary!!)
+		}
 	}
 
 	override fun delete(projectName: String) {

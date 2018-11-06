@@ -51,6 +51,16 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		)
 		LibraryModule.libraryFactory = AntaresLibraryFactory()
 
+		LibraryModule.libraryDictionary = FileLibraryDictionary(
+			directoryPath = app.libraryDirectoryPath.toString()
+		)
+		LibraryModule.libraryDictionary.load()
+
+		LibraryModule.libraryManagementService = FileLibraryManagementService(
+			defaultLibraryName = "Standard",
+			directoryPath = app.libraryDirectoryPath.toString()
+		)
+
 		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(
 			directoryPath = app.projectsDirectoryPath.toString(),
 			metaGraphFileExtension = app.fileExtension,
@@ -60,18 +70,6 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 			directoryPath = app.projectsDirectoryPath.toString(),
 			newMetaGraphNameTranslationKey = "graph.name.unknown"
 		)
-
-		LibraryModule.libraryDictionary = FileLibraryDictionary(
-			directoryPath = app.libraryDirectoryPath.toString()
-		)
-		LibraryModule.libraryDictionary.load()
-
-		LibraryModule.libraryManagementService = FileLibraryManagementService(
-			defaultLibraryName = "Standard",
-			directoryPath = app.libraryDirectoryPath.toString(),
-			projectService = ProjectModule.projectService
-		)
-
 
 		configureTypeMap(IOModule.typeMap)
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
