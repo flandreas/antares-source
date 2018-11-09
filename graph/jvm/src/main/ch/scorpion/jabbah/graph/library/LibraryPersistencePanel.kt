@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.graph.project.ProjectPersistencePanel
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent

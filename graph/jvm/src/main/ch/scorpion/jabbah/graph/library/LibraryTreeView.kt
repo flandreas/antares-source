@@ -42,6 +42,8 @@ class LibraryTreeView(
 
 	private val projectRootMenu = JPopupMenu()
 
+	private val libraryRootMenu = JPopupMenu()
+
 	private var currentSavable: Savable? = null
 		set(value) {
 			if (field != value) {
@@ -82,6 +84,8 @@ class LibraryTreeView(
 	    val addLibraryFolderAction = AddLibraryFolderAction()
 	    val newGraphAction = NewGraphAction()
 	    val addGraphToLibraryAction = AddGraphToLibraryAction()
+	    val deleteLibraryFolderAction = DeleteLibraryFolderAction()
+	    val editLibraryAction = EditLibraryAction()
 
 	    desktopPopupMenu.add(ActionWrapperSwing(expandAllAction))
 	    desktopPopupMenu.add(ActionWrapperSwing(collapseAllAction))
@@ -100,7 +104,17 @@ class LibraryTreeView(
 	    directoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 	    directoryPopupMenu.add(ActionWrapperSwing(newGraphAction))
 	    directoryPopupMenu.add(ActionWrapperSwing(addGraphToLibraryAction))
-	    directoryPopupMenu.add(ActionWrapperSwing(DeleteLibraryFolderAction()))
+	    directoryPopupMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
+
+	    libraryRootMenu.add(ActionWrapperSwing(expandAllAction))
+	    libraryRootMenu.add(ActionWrapperSwing(collapseAllAction))
+	    libraryRootMenu.addSeparator()
+	    libraryRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
+	    libraryRootMenu.add(ActionWrapperSwing(newGraphAction))
+	    libraryRootMenu.add(ActionWrapperSwing(addGraphToLibraryAction))
+	    libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
+	    libraryRootMenu.addSeparator()
+	    libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
 
         containerPopupMenu.add(ActionWrapperSwing(DeleteContainerLibraryElementAction()))
 	    containerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(DefaultContainerLibraryElementAction())))
@@ -168,7 +182,7 @@ class LibraryTreeView(
         }
         componentPopupMenu = when ((newSelectionPath.lastPathComponent as DefaultMutableTreeNode).userObject) {
 	        is Project -> projectRootMenu
-	        is Library -> directoryPopupMenu
+	        is Library -> libraryRootMenu
             is LibraryFolder -> directoryPopupMenu
             is LibraryDirectory -> directoryPopupMenu
 	        is ContainerLibraryElement -> containerPopupMenu

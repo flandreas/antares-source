@@ -16,10 +16,10 @@ class AddGraphToLibraryAction(
     private var metaGraph: MetaGraph? = null
 
     init {
-        eventBus.register(ApplicationDataEvent::class, {
-            metaGraph = it.newData as MetaGraph?
+        eventBus.register(ApplicationDataEvent::class) {
+	        metaGraph = it.newData as MetaGraph?
 	        updateEnabledness()
-        })
+        }
     }
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
