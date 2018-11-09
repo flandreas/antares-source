@@ -15,8 +15,6 @@ import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import java.awt.Component
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import java.awt.font.TextAttribute
 import javax.swing.*
 import javax.swing.tree.*
@@ -66,6 +64,8 @@ class LibraryTreeView(
 
 	private val libraryRootMenu = JPopupMenu()
 
+	private val basePopupMenu = JPopupMenu()
+
 	private var currentSavable: Savable? = null
 		set(value) {
 			if (field != value) {
@@ -104,6 +104,7 @@ class LibraryTreeView(
 	    val newGraphAction = NewGraphAction()
 	    val addGraphToLibraryAction = AddGraphToLibraryAction()
 	    val deleteLibraryFolderAction = DeleteLibraryFolderAction()
+	    val deleteLibraryElementAction = DeleteLibraryElementAction()
 	    val editLibraryAction = EditLibraryAction()
 
 	    desktopPopupMenu.add(ActionWrapperSwing(expandAllAction))
@@ -135,9 +136,11 @@ class LibraryTreeView(
 	    libraryRootMenu.addSeparator()
 	    libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
 
-        containerPopupMenu.add(ActionWrapperSwing(DeleteContainerLibraryElementAction()))
+        containerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 	    containerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(DefaultContainerLibraryElementAction())))
 	    containerPopupMenu.add(ActionWrapperSwing(DuplicateGraphAction()))
+
+	    basePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 
 	    expandRow(0)
     }
@@ -197,6 +200,7 @@ class LibraryTreeView(
             is LibraryFolder -> directoryPopupMenu
             is LibraryDirectory -> directoryPopupMenu
 	        is ContainerLibraryElement -> containerPopupMenu
+	        is BaseLibraryElement -> basePopupMenu
 	        is String -> desktopPopupMenu
             else -> null
         }
@@ -247,7 +251,7 @@ class LibraryTreeView(
 	}
 
 	private fun handle(event: LibraryItemRemovedEvent) {
-		if (event.item.library === library) {
+		if (event.parent.library === library) {
 			val node = findTreeNode(event.item)
 			val parent = node.parent
 			val nodeIndex = parent.getIndex(node)

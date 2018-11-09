@@ -64,3 +64,12 @@ abstract class AbstractContainerLibraryElementAction(
 
 	override fun calculateEnabledness(): Boolean = selectedItem is ContainerLibraryElement
 }
+
+/** An [Action] that is only enabled if the selected item is a [BaseLibraryElement].*/
+abstract class AbstractBaseLibraryElementAction(
+	actionBaseName: String,
+	eventBus: EventBus
+) : AbstractLibraryAction(actionBaseName, eventBus) {
+
+	override fun calculateEnabledness(): Boolean = selectedItem is BaseLibraryElement
+}

@@ -84,7 +84,7 @@ open class GraphMenuBarBuilder(
         menu.add(JMenuItem(ActionWrapperSwing(NewGraphAction())))
         menu.add(JMenuItem(ActionWrapperSwing(AddGraphToLibraryAction())))
         menu.add(JMenuItem(ActionWrapperSwing(EditContainerLibraryElementAction(frame.application, eventBus))))
-        menu.add(JMenuItem(ActionWrapperSwing(DeleteContainerLibraryElementAction(eventBus))))
+        menu.add(JMenuItem(ActionWrapperSwing(DeleteLibraryElementAction(eventBus))))
 	    menu.add(JMenuItem(ActionWrapperSwing(DuplicateGraphAction())))
         return menu
     }
