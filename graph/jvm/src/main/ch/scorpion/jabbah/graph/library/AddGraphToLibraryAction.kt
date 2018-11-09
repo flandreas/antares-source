@@ -24,7 +24,7 @@ class AddGraphToLibraryAction(
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
         val directory = libraryTreeView!!.getSelectedItem() as LibraryDirectory
-	    service.addContainerLibraryElement(libraryTreeView!!.libraryHolder.library, metaGraph!!, directory)
+	    service.addContainerLibraryElement(libraryTreeView!!.library, metaGraph!!, directory)
     }
 
 	override fun calculateEnabledness(): Boolean = super.calculateEnabledness() && metaGraph != null

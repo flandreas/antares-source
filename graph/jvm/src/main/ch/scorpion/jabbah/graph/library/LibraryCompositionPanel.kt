@@ -24,7 +24,7 @@ class EditLibraryAction(
 ) : AbstractLibraryAction("library.composition.action", eventBus) {
 
 	override fun execute(event: ActionEvent) {
-		LibraryCompositionPanel.showAsDialog(libraryTreeView!!.libraryHolder.library, Frame.getFrames()[0])
+		LibraryCompositionPanel.showAsDialog(libraryTreeView!!.library, Frame.getFrames()[0], eventBus)
 	}
 
 	override fun calculateEnabledness(): Boolean {
@@ -39,20 +39,24 @@ class EditLibraryAction(
 class LibraryCompositionPanel(
 	private val library: Library,
 	private val libraryManagementService: LibraryManagementService = LibraryModule.libraryManagementService,
+	eventBus: EventBus = BaseModule.eventBus,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
 
 	companion object {
 		private val LOG by logger(LibraryCompositionPanel::class)
 
-		fun showAsDialog(library: Library, parent: Frame) {
+		fun showAsDialog(library: Library, parent: Frame, eventBus: EventBus) {
 			val dialog = JDialog(parent, true)
 			BusyHandler.register(dialog, null)
 			dialog.title = Translations.getString("library.composition.title")
-			dialog.contentPane.add(LibraryCompositionPanel(library = library, closeHandler = {
-				dialog.isVisible = false
-				dialog.dispose()
-			}))
+			dialog.contentPane.add(LibraryCompositionPanel(
+				library = library,
+				closeHandler = {
+					dialog.isVisible = false
+					dialog.dispose()
+				},
+				eventBus = eventBus))
 			dialog.pack()
 			dialog.setLocationRelativeTo(parent)
 			dialog.addWindowListener(object : WindowAdapter() {
@@ -64,9 +68,9 @@ class LibraryCompositionPanel(
 		}
 	}
 
-	private val sourceLibraryTree = JTree()
+	private val sourceLibraryTree: LibraryTreeView
 
-	private val destinationLibraryTree = JTree()
+	private val destinationLibraryTree = LibraryTreeView(library = library, project = null, eventBus = eventBus, showWorkspaceNode = false)
 
 	private val copyAction = CopyAction()
 
@@ -78,7 +82,22 @@ class LibraryCompositionPanel(
 
 	init {
 		fillSourceLibraries()
+
+		// TODO With showWorkshopNode = false, Tree is empty after current Library has been changed?
+		sourceLibraryTree =  LibraryTreeView(library = getSelectedSourceLibrary(), project = null, eventBus = eventBus, showWorkspaceNode = true)
+		sourceLibraries.addActionListener {
+			sourceLibraryTree.library = getSelectedSourceLibrary()
+		}
+
 		buildUI()
+	}
+
+	private fun getSelectedSourceLibraryName(): String {
+		return sourceLibraries.selectedItem as String
+	}
+
+	private fun getSelectedSourceLibrary(): Library {
+		return libraryManagementService.loadLibrary(getSelectedSourceLibraryName())
 	}
 
 	private fun fillSourceLibraries() {

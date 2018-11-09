@@ -50,6 +50,10 @@ class FileLibraryManagementService(
 		return library
 	}
 
+	override fun loadLibrary(name: String): Library {
+		return libraryService.loadLibrary(name)
+	}
+
 	override fun open(name: String): Library {
 		val library = load(name)
 		open(library)

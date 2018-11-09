@@ -21,8 +21,10 @@ interface LibraryService {
 	/** Returns the current [Library].*/
 	val currentLibrary: Library?
 
+	/** Loads the [Library] with the specified name from persistent store.*/
 	fun loadLibrary(name: String): Library
 
+	/** Stores the specified [Library] in persistent store.*/
 	fun storeLibrary(library: Library)
 
 	/**

@@ -33,6 +33,9 @@ interface LibraryManagementService {
 	/** Determines whether [name] already exists as the name of a stored [Library].*/
 	fun exists(name: String): Boolean
 
+	/** Loads the [Library] with the specified name from persistent store.*/
+	fun loadLibrary(name: String): Library
+
 	/**
 	 * Creates a new default [Library] with the given name and stores it in persistent store.
 	 * Posts a [LibraryCreatedEvent] on [EventBus].
@@ -75,6 +78,10 @@ class UnimplementedLibraryManagementService : LibraryManagementService {
 	}
 
 	override fun exists(name: String): Boolean {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun loadLibrary(name: String): Library {
 		throw UnsupportedOperationException("not implemented")
 	}
 

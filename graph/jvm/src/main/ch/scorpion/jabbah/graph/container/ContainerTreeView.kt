@@ -53,7 +53,7 @@ open class ContainerTreeView(
 
     private inner class ContainerTreeCellRenderer : DefaultTreeCellRenderer() {
         private val iconCache: MutableMap<String, Icon> = mutableMapOf()
-	    private val folderIcon = ImageIcon(LibraryTreeView::class.java.getResource("/img/folder-20.png"))
+	    private val folderIcon = ImageIcon(ContainerTreeView::class.java.getResource("/img/folder-20.png"))
 	    private val subGraphIcon = ContainerLibraryElementIcon()
 
 	    override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): java.awt.Component {
