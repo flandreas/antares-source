@@ -16,7 +16,7 @@ import java.awt.Frame
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import javax.swing.*
-
+import javax.swing.event.TreeSelectionListener
 
 /** An [Action] for editing a [Library] by using [LibraryCompositionPanel].*/
 class EditLibraryAction(
@@ -37,7 +37,7 @@ class EditLibraryAction(
  * drag in [MetaGraph]s.
  */
 class LibraryCompositionPanel(
-	private val library: Library,
+	private val destinationLibrary: Library,
 	private val libraryManagementService: LibraryManagementService = LibraryModule.libraryManagementService,
 	eventBus: EventBus = BaseModule.eventBus,
 	private val closeHandler: () -> Unit
@@ -51,7 +51,7 @@ class LibraryCompositionPanel(
 			BusyHandler.register(dialog, null)
 			dialog.title = Translations.getString("library.composition.title")
 			dialog.contentPane.add(LibraryCompositionPanel(
-				library = library,
+				destinationLibrary = library,
 				closeHandler = {
 					dialog.isVisible = false
 					dialog.dispose()
@@ -70,7 +70,7 @@ class LibraryCompositionPanel(
 
 	private val sourceLibraryTree: LibraryTreeView
 
-	private val destinationLibraryTree = LibraryTreeView(library = library, project = null, eventBus = eventBus, showWorkspaceNode = false)
+	private val destinationLibraryTree = LibraryTreeView(library = destinationLibrary, project = null, eventBus = eventBus, showWorkspaceNode = false)
 
 	private val copyAction = CopyAction()
 
@@ -80,6 +80,15 @@ class LibraryCompositionPanel(
 
 	private val sourceLibraries = JComboBox<String>()
 
+	private val isSourceElementSelected: Boolean get() = sourceLibraryTree.getSelectedItem() is LibraryElement
+
+	private val isDestinationFolderSelected: Boolean get() = destinationLibraryTree.getSelectedItem() is LibraryDirectory
+
+	private val librarySelectionListener = TreeSelectionListener {
+		copyAction.enabled = isSourceElementSelected && isDestinationFolderSelected
+		addAction.enabled = isDestinationFolderSelected
+	}
+
 	init {
 		fillSourceLibraries()
 
@@ -88,6 +97,13 @@ class LibraryCompositionPanel(
 		sourceLibraries.addActionListener {
 			sourceLibraryTree.library = getSelectedSourceLibrary()
 		}
+
+		sourceLibraryTree.addTreeSelectionListener(librarySelectionListener)
+		destinationLibraryTree.addTreeSelectionListener(librarySelectionListener)
+
+		copyAction.enabled = false
+		addAction.enabled = false
+		removeAction.enabled = false
 
 		buildUI()
 	}
@@ -103,7 +119,7 @@ class LibraryCompositionPanel(
 	private fun fillSourceLibraries() {
 		libraryManagementService
 			.getLibraryNames()
-			.filter { it != library.name }
+			.filter { it != destinationLibrary.name }
 			.forEach { sourceLibraries.addItem(it) }
 	}
 
@@ -189,10 +205,25 @@ class LibraryCompositionPanel(
 		}
 	}
 
-
+	/** Copies the currently selected source [LibraryElement] to the currently selected destination [LibraryDirectory].*/
 	private inner class CopyAction : AbstractAction("library.composition.copy.action") {
 		override fun execute(event: ActionEvent) {
-			// TODO
+			val sourceElement = sourceLibraryTree.getSelectedItem() as LibraryElement
+			if (sourceElement is ContainerLibraryElement && !libraryManagementService.canCopyContainerLibraryElement(sourceElement, destinationLibrary)) {
+				if(JOptionPane.showConfirmDialog(
+					this@LibraryCompositionPanel,
+					Translations.getString("library.composition.copy.incomplete.msg"),
+					description,
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION
+				) {
+					return
+				}
+			}
+
+			libraryManagementService.copyLibraryElement(
+				sourceElement,
+				destinationLibraryTree.getSelectedItem() as LibraryDirectory)
 		}
 	}
 

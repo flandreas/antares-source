@@ -65,6 +65,13 @@ interface LibraryManagementService {
 	 * @throws IllegalArgumentException if a [Library] with name [name] doesn't exist
 	 */
 	fun delete(name: String)
+
+	fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean
+
+	/**
+	 * Copies the specified [LibraryElement] from its [Library] to the destination [LibraryDirectory].
+	 */
+	fun copyLibraryElement(element: LibraryElement, destination: LibraryDirectory)
 }
 
 /** Null pattern.*/
@@ -102,6 +109,14 @@ class UnimplementedLibraryManagementService : LibraryManagementService {
 	}
 
 	override fun delete(name: String) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun copyLibraryElement(element: LibraryElement, destination: LibraryDirectory) {
 		throw UnsupportedOperationException("not implemented")
 	}
 }

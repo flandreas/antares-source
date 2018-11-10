@@ -6,6 +6,9 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.io.IOModule
+import ch.scorpion.jabbah.io.StorableCloner
 import org.apache.commons.io.FileUtils
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -20,6 +23,7 @@ class FileLibraryManagementService(
 	private val libraryService: LibraryService = LibraryModule.libraryService.invoke(),
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val libraryDirectory: LibraryDictionary = LibraryModule.libraryDictionary,
+	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : LibraryManagementService {
 
@@ -81,6 +85,20 @@ class FileLibraryManagementService(
 		throw UnsupportedOperationException("not implemented")
 	}
 
+	override fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {
+		libraryService.loadMetaGraph(element.library!!, element)
+		return destination.containsAllRecursivelyReferencedBy(element.metaGraph!!.graph.model!!)
+	}
+
+	override fun copyLibraryElement(element: LibraryElement, destination: LibraryDirectory) {
+		LOG.debug("FileLibraryManagementService: copy LibraryElement ${element.name}")
+		when (element) {
+			is BaseLibraryElement -> copyBaseElement(element, destination)
+			is ContainerLibraryElement -> copyContainerLibraryElement(element, destination)
+			else -> throw IllegalArgumentException("unsupported LibraryElement type ${element::class}")
+		}
+	}
+
 	/** ---- [FileLibraryManagementService] */
 
 	private fun load(name: String): Library {
@@ -92,5 +110,16 @@ class FileLibraryManagementService(
 
 	private fun deleteImpl(libraryName: String) {
 		FileUtils.forceDelete(FileSystems.getDefault().getPath(directoryPath, libraryName).toFile())
+	}
+
+	private fun copyBaseElement(element: BaseLibraryElement, destination: LibraryDirectory) {
+		val clone = storableCloner.clone(element) as BaseLibraryElement
+		libraryService.addLibraryItem(destination.library!!, clone, destination, null)
+	}
+
+	private fun copyContainerLibraryElement(element: ContainerLibraryElement, destination: LibraryDirectory) {
+		libraryService.loadMetaGraph(element.library!!, element)
+		val clone = storableCloner.clone(element.metaGraph!!) as MetaGraph
+		libraryService.addContainerLibraryElement(destination.library!!, clone, destination, null)
 	}
 }

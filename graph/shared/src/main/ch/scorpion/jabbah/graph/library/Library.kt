@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.model.Graph
 
 
 interface Library : LibraryDirectory, MetaGraphRepository {
@@ -36,6 +37,12 @@ interface Library : LibraryDirectory, MetaGraphRepository {
 	 * The current implementation simply returns the first element (if existing).
 	 */
 	fun getDefaultElement(): ContainerLibraryElement?
+
+	/**
+	 * Determines whether this [Library] contains [ContainerLibraryElement] for all [Graph]s
+	 * recursively referenced in the specified [Graph].
+	 */
+	fun containsAllRecursivelyReferencedBy(graph: Graph): Boolean
 
 }
 

@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
 import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 import ch.scorpion.jabbah.io.*
 
@@ -182,6 +183,12 @@ open class LibraryImpl(
 
 	override fun getContainerLibraryElement(uuid: UUID): ContainerLibraryElement? {
 		return findContainerLibraryElementFor(uuid)
+	}
+
+	override fun containsAllRecursivelyReferencedBy(graph: Graph): Boolean {
+		return ContainerLibraryElementCollector(repository = this)
+			.collect(graph)
+			.all { containsMetaGraph(it) }
 	}
 
 	/** ---- [LibraryImpl] */
