@@ -78,7 +78,11 @@ open class LibraryImpl(
 
 	override val isFixed: Boolean get() = libraryFolder.isFixed
 
-	override val name: String get() = libraryFolder.name
+	override var name: String
+		get() = libraryFolder.name
+		set(value) {
+			libraryFolder.name = value
+		}
 
 	override val iconPath: String? get() = libraryFolder.iconPath
 

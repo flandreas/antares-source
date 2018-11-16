@@ -107,7 +107,7 @@ class LibraryTest {
     fun shouldExportLibrary() {
         TestLibraryBuilder().addCustomNot(LibraryModule.libraryHolder.library)
         val file = File.createTempFile("library", ".zip")
-        LibraryModule.libraryPersistenceService.exportLibrary(file.name, file.parent)
+        LibraryModule.libraryPersistenceService.exportLibrary(LibraryModule.libraryHolder.library, file.absolutePath)
     }
 
     private fun storeAndLoad(library: LibraryImpl, service: LibraryService): Library {

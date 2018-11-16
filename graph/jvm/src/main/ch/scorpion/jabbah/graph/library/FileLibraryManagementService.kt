@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
@@ -43,13 +44,21 @@ class FileLibraryManagementService(
 		return libraryDirectory.getLibraryNames()
 	}
 
-	override fun create(name: String): Library {
+	override fun create(name: String, templateLibraryName: String?): Library {
 		if (exists(name)) {
 			throw IllegalArgumentException("library name '$name' already exists")
 		}
-		LOG.debug("FileLibraryManagementService: creating new library '$name'")
-		val library = libraryFactory.createBaseLibrary(name)
-		libraryService.storeLibrary(library)
+		LOG.debug("FileLibraryManagementService: creating new library '$name' with template $templateLibraryName")
+
+		val library = if(StringUtils.isBlank(templateLibraryName)) {
+			val library = libraryFactory.createEmptyLibrary(name)
+			libraryService.storeLibrary(library)
+			library
+		} else {
+			libraryService.duplicateLibrary(loadLibrary(templateLibraryName!!), name)
+		}
+
+		library.bindLibraryItems()
 		eventBus.post(LibraryCreatedEvent(library))
 		return library
 	}

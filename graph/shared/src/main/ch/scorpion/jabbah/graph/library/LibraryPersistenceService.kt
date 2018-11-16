@@ -18,8 +18,13 @@ interface LibraryPersistenceService {
 
     fun storeLibrary(library: Library)
 
-    fun exportLibrary(fileName: String, locationPath: String? = null)
+	/** Duplicates the specified [Library] and stores the duplicate with the given new name.*/
+	fun duplicateLibrary(library: Library, newName: String)
 
+	/** Imports a [Library] contained in a ZIP file at `inputPath` and stores it as new [Library] with the given name.*/
+	fun importLibrary(name: String, inputPath: String)
+
+    fun exportLibrary(library: Library, outputPath: String)
 }
 
 /** Null pattern.*/
@@ -45,7 +50,15 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService{
         throw UnsupportedOperationException("not implemented")
     }
 
-    override fun exportLibrary(fileName: String, locationPath: String?) {
+	override fun duplicateLibrary(library: Library, newName: String) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun importLibrary(name: String, inputPath: String) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+    override fun exportLibrary(library: Library, outputPath: String) {
         throw UnsupportedOperationException("not implemented")
     }
 

@@ -28,8 +28,7 @@ class ShowProjectsDialogAction(
 class ProjectPersistencePanel(
 	private val service: ProjectService = ProjectModule.projectService,
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
-	private val closeHandler: () -> Unit,
-	private val eventBus: EventBus = BaseModule.eventBus
+	private val closeHandler: () -> Unit
 ) : JPanel() {
 
 	companion object {
@@ -141,7 +140,7 @@ class ProjectPersistencePanel(
 	private inner class NewAction : AbstractAction("project.dialog.new.action") {
 		override fun execute(event: ActionEvent) {
 			LOG.debug("ProjectPersistencePanel: new project")
-			var projectName: String
+			var projectName: String?
 			while (true) {
 				projectName = JOptionPane.showInputDialog(
 					this@ProjectPersistencePanel,
@@ -168,7 +167,7 @@ class ProjectPersistencePanel(
 			}
 
 			LOG.debug("ProjectPersistencePanel: creating new project '$projectName'")
-			service.open(service.create(projectName))
+			service.open(service.create(projectName!!))
 			closeHandler.invoke()
 		}
 	}

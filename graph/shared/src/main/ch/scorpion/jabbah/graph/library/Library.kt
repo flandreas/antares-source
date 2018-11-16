@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.graph.model.Graph
 interface Library : LibraryDirectory, MetaGraphRepository {
 
 	/** The universal unique ID of this [Library]. Used for referencing this [Library] from projects.*/
-	val uuid: UUID
+	var uuid: UUID
 
 	/** The UUID of the [ContainerLibraryElement] to be opened per default.*/
 	var defaultElementUUID: UUID?

@@ -117,21 +117,26 @@ class LibraryPersistencePanel(
 	private inner class NewAction : AbstractAction("library.dialog.new.action") {
 		override fun execute(event: ActionEvent) {
 			LOG.debug("LibraryPersistencePanel: new library")
-			var libraryName: String
-			while (true) {
-				libraryName = JOptionPane.showInputDialog(
-					this@LibraryPersistencePanel,
-					Translations.getString("library.dialog.new.name.dialog.desc"),
-					Translations.getString("library.dialog.new.name.dialog.title"),
-					JOptionPane.QUESTION_MESSAGE
-				)
-				if (StringUtils.isEmpty(libraryName)) {
-					return
-				}
-				if (service.exists(libraryName)) {
+
+			var info: CreateLibraryPanel.CreateLibraryInfo
+			while(true) {
+				info = CreateLibraryPanel.showAsDialog(service = service)
+					?: return
+
+				if (StringUtils.isBlank(info.libraryName)) {
 					if (JOptionPane.showConfirmDialog(
 						this@LibraryPersistencePanel,
-						Translations.getString("library.dialog.new.duplicate.msg", libraryName),
+						Translations.getString("library.dialog.new.emptyName.msg"),
+						Translations.getString("library.dialog.new.name.dialog.title"),
+						JOptionPane.OK_CANCEL_OPTION,
+						JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
+					) {
+						return
+					}
+				} else if (service.exists(info.libraryName)) {
+					if (JOptionPane.showConfirmDialog(
+						this@LibraryPersistencePanel,
+						Translations.getString("library.dialog.new.duplicate.msg", info.libraryName),
 						Translations.getString("library.dialog.new.name.dialog.title"),
 						JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
@@ -143,9 +148,11 @@ class LibraryPersistencePanel(
 				}
 			}
 
-			LOG.debug("LibraryPersistencePanel: creating new library '$libraryName'")
-			service.open(service.create(libraryName))
-			closeHandler.invoke()
+			LOG.debug("LibraryPersistencePanel: creating new library '${info.libraryName}'")
+			InvocationHandler.invoke {
+				service.open(service.create(info.libraryName, info.templateName))
+				closeHandler.invoke()
+			}
 		}
 	}
 

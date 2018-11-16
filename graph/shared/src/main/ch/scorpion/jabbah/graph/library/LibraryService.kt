@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
@@ -90,6 +91,12 @@ interface LibraryService {
 	fun getDirectoryOf(library: Library, item: LibraryItem): LibraryDirectory
 
 	fun duplicateContainerLibraryElement(directory: LibraryDirectory, element: ContainerLibraryElement, newName: String): ContainerLibraryElement
+
+	/**
+	 * Duplicates the specified [Library] and stores the duplicate with the given new name.
+	 * @return the created duplicate [Library]
+	 */
+	fun duplicateLibrary(library: Library, newName: String): Library
 }
 
 /** Posted on [EventBus] when a [LibraryItem] has been added to a [LibraryDirectory].*/
@@ -113,7 +120,6 @@ data class LibraryItemUpdatedEvent(
 class LibraryServiceImpl(
 	private val libraryAccessor: () -> Library? = { LibraryModule.libraryHolder.library },
 	private val persistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService,
-	private val libraryFactory: LibraryFactory = LibraryModule.libraryFactory,
 	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus
@@ -242,6 +248,16 @@ class LibraryServiceImpl(
 		duplicate.graph.model!!.initializeUUID()
 		duplicate.graph.model!!.name = newName
 		return addContainerLibraryElement(directory.library!!, duplicate, directory)
+	}
+
+	override fun duplicateLibrary(library: Library, newName: String): Library {
+		LOG.debug("LibraryServiceImpl: Duplicate Library ${library.name} to new name $newName")
+		persistenceService.duplicateLibrary(library, newName)
+		val duplicateLibrary = persistenceService.loadLibrary(newName)
+		duplicateLibrary.uuid = System.get().createUUID()
+		duplicateLibrary.name = newName
+		storeLibrary(duplicateLibrary)
+		return duplicateLibrary
 	}
 
 	/** ---- [LibraryServiceImpl] */

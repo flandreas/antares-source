@@ -7,13 +7,14 @@ import ch.scorpion.jabbah.io.StoreXmlReader
 import ch.scorpion.jabbah.io.StoreXmlWriter
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
+import org.apache.commons.io.FileUtils
+import java.io.*
 import java.nio.file.FileSystems
 import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
 /**
@@ -103,18 +104,38 @@ class FileLibraryPersistenceService(
         }
     }
 
-    override fun exportLibrary(fileName: String, locationPath: String?) {
-        val path = FileSystems.getDefault().getPath(locationPath, fileName).toString()
-        LOG.debug("Exporting library to $path")
-        FileOutputStream(path).use { output ->
+	override fun duplicateLibrary(library: Library, newName: String) {
+		LOG.debug("FileLibraryPersistenceService: duplicateLibrary ${library.name}")
+		FileUtils.copyDirectory(
+			File(buildLibraryDirectoryPath(library.name)),
+			File(buildLibraryDirectoryPath(newName))
+		)
+	}
+
+    override fun exportLibrary(library: Library, outputPath: String) {
+        LOG.debug("Exporting library to $outputPath")
+        FileOutputStream(outputPath).use { output ->
             ZipOutputStream(output).use {
-                val fileToZip = File(directoryPath)
+                val fileToZip = File(buildLibraryDirectoryPath(library.name))
                 zipFile(fileToZip, fileToZip.name, it)
             }
         }
     }
 
+	override fun importLibrary(name: String, inputPath: String) {
+		LOG.debug("Importing library '$name' from $inputPath")
+		FileInputStream(inputPath).use {input ->
+			ZipInputStream(input).use {
+				unzipFile(Files.createDirectory(Paths.get(name)), it)
+			}
+		}
+	}
+
     /** ---- [FileLibraryPersistenceService] */
+
+    private fun buildLibraryDirectoryPath(libraryName: String): String {
+	    return FileSystems.getDefault().getPath(directoryPath, libraryName).toString()
+    }
 
     private fun buildMetaGraphFilePath(libraryName: String, uuid: UUID): String {
 	    return FileSystems.getDefault().getPath(directoryPath, libraryName, "$uuid.$metaGraphFileExtension").toString()
@@ -145,7 +166,7 @@ class FileLibraryPersistenceService(
         FileInputStream(file).use {
             val zipEntry = ZipEntry(fileName)
             zipOut.putNextEntry(zipEntry)
-            val buffer = ByteArray(1024, { 0 })
+            val buffer = ByteArray(1024) { 0 }
 	        var length: Int
 	        do {
                 length = it.read(buffer)
@@ -155,4 +176,40 @@ class FileLibraryPersistenceService(
             } while (length > 0)
         }
     }
+
+	private fun unzipFile(destDir: Path, zipIn: ZipInputStream) {
+		val buffer = ByteArray(1024) { 0 }
+		var zipEntry = zipIn.nextEntry
+		while (zipEntry != null) {
+			val newFile = newFile(destDir.toFile(), zipEntry)
+			FileOutputStream(newFile).use {
+				var length: Int
+				do {
+					length = zipIn.read(buffer)
+					if (length > 0) {
+						it.write(buffer, 0, length)
+					}
+
+				} while (length > 0)
+			}
+			zipEntry = zipIn.nextEntry
+		}
+	}
+
+	/**
+	 * Returns the destination [File] of the specified [ZipEntry] by checking that it is a
+	 * subdirectory of the overall directory, hereby guarding against the "Zip Slip" vulnerability.
+	 * See https://www.baeldung.com/java-compress-and-uncompress.
+	 */
+	private fun newFile(destDir: File, zipEntry: ZipEntry): File {
+		val destFile = File(destDir, zipEntry.name)
+		val destDirPath = destDir.canonicalPath
+		val destFilePath = destFile.canonicalPath
+
+		if (!destFilePath.startsWith(destDirPath + File.separator)) {
+			throw IOException("Entry is outside of the target dir: ${zipEntry.name}")
+		}
+
+		return destFile
+	}
 }
