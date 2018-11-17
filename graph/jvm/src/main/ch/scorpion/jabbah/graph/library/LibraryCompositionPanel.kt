@@ -6,12 +6,10 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.BusyHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import java.awt.BorderLayout
 import java.awt.Dimension
-import java.awt.FlowLayout
 import java.awt.Frame
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
@@ -44,8 +42,6 @@ class LibraryCompositionPanel(
 ) : JPanel() {
 
 	companion object {
-		private val LOG by logger(LibraryCompositionPanel::class)
-
 		fun showAsDialog(library: Library, parent: Frame, eventBus: EventBus) {
 			val dialog = JDialog(parent, true)
 			BusyHandler.register(dialog, null)
@@ -130,13 +126,15 @@ class LibraryCompositionPanel(
 
 		add(buildContentPanel(), BorderLayout.CENTER)
 
-		val buttonPanel = JPanel(FlowLayout(FlowLayout.LEFT))
+		val buttonPanel = JPanel()
+		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
+		buttonPanel.add(Box.createHorizontalGlue())
 		buttonPanel.add(JButton(ActionWrapperSwing(CancelAction())))
 		add(buttonPanel, BorderLayout.SOUTH)
 	}
 
 	private fun buildContentPanel(): JComponent {
-		val panel = JPanel();
+		val panel = JPanel()
 		val layout = GroupLayout(panel)
 		panel.layout = layout
 
