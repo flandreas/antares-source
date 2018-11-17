@@ -91,7 +91,10 @@ class FileLibraryManagementService(
 	}
 
 	override fun delete(name: String) {
-		throw UnsupportedOperationException("not implemented")
+		if (libraryHolder.library.name == name) {
+			throw IllegalArgumentException("illegal attempt to delete the currently open library '$name'")
+		}
+		libraryService.deleteLibrary(name)
 	}
 
 	override fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {

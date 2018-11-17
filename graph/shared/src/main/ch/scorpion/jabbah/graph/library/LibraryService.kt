@@ -29,6 +29,13 @@ interface LibraryService {
 	fun storeLibrary(library: Library)
 
 	/**
+	 * Deletes a [Library] persistently.
+	 * Posts a [LibraryDeletedEvent] on this [LibraryService]'s [EventBus].
+	 * @throws IllegalArgumentException if a [Library] with the specified name doesn't exist
+	 */
+	fun deleteLibrary(name: String)
+
+	/**
 	 * Adds a [LibraryItem] at the end position of a [LibraryDirectory] and makes the change persistent.
 	 * Posts a [LibraryItemAddedEvent] on this [LibraryService]'s [EventBus].
 	 */
@@ -117,6 +124,12 @@ data class LibraryItemUpdatedEvent(
 	val item: LibraryItem
 )
 
+/** Posted on [EventBus] when a [Library] has been deleted.*/
+data class LibraryDeletedEvent(
+	val uuid: UUID,
+	val name: String
+)
+
 class LibraryServiceImpl(
 	private val libraryAccessor: () -> Library? = { LibraryModule.libraryHolder.library },
 	private val persistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService,
@@ -147,6 +160,13 @@ class LibraryServiceImpl(
 	override fun storeLibrary(library: Library) {
 		LOG.debug("LibraryServiceImpl: Storing Library")
 		persistenceService.storeLibrary(library)
+	}
+
+	override fun deleteLibrary(name: String) {
+		LOG.debug("LibraryServiceImpl: Deleting Library '$name'")
+		val library = loadLibrary(name)
+		persistenceService.deleteLibrary(name)
+		eventBus.post(LibraryDeletedEvent(library.uuid, name))
 	}
 
 	override fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory, index: Int?) {

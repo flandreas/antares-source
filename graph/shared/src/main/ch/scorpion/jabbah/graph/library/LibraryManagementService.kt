@@ -64,8 +64,7 @@ interface LibraryManagementService {
 
 	/**
 	 * Deletes the [Library] with the specified name.
-	 * If the deleted [Library] is currently open, the default [Library] is opened instead.
-	 * @throws IllegalArgumentException if a [Library] with name [name] doesn't exist
+	 * @throws IllegalArgumentException if the [Library] is currently open
 	 */
 	fun delete(name: String)
 

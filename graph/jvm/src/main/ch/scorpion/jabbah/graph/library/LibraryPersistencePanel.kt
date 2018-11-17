@@ -56,6 +56,8 @@ class LibraryPersistencePanel(
 	private val libraryNameList = JList<String>(loadLibraryNames())
 	private val currentLibraryFont = libraryNameList.font.deriveFont(Font.BOLD)
 	private val openAction = OpenAction()
+	private val deleteAction = DeleteAction()
+
 	private val selectedLibraryName: String? get() = libraryNameList.selectedValue
 
 	init {
@@ -72,16 +74,20 @@ class LibraryPersistencePanel(
 	}
 
 	private fun buildUI() {
-		layout = BorderLayout()
-		preferredSize = Dimension(400, 500)
+		layout = BorderLayout(0, 10)
+		preferredSize = Dimension(400, 400)
 		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
 		val scrollPane = JScrollPane(libraryNameList)
 		add(scrollPane, BorderLayout.CENTER)
 
-		val buttonPanel = JPanel(FlowLayout(FlowLayout.LEFT))
+		val buttonPanel = JPanel()
+		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 		buttonPanel.add(JButton(ActionWrapperSwing(openAction)))
 		buttonPanel.add(JButton(ActionWrapperSwing(NewAction())))
+		buttonPanel.add(JButton(ActionWrapperSwing(deleteAction)))
+
+		buttonPanel.add(Box.createHorizontalGlue())
 		buttonPanel.add(JButton(ActionWrapperSwing(CancelAction())))
 		add(buttonPanel, BorderLayout.SOUTH)
 
@@ -96,6 +102,7 @@ class LibraryPersistencePanel(
 
 	private fun updateActions() {
 		openAction.enabled = !libraryNameList.isSelectionEmpty && libraryNameList.selectedValue != libraryHolder.l?.name
+		deleteAction.enabled = !libraryNameList.isSelectionEmpty && libraryNameList.selectedValue != libraryHolder.l?.name
 	}
 
 	private inner class OpenAction : AbstractAction("library.dialog.open.action") {
@@ -151,6 +158,28 @@ class LibraryPersistencePanel(
 			LOG.debug("LibraryPersistencePanel: creating new library '${info.libraryName}'")
 			InvocationHandler.invoke {
 				service.open(service.create(info.libraryName, info.templateName))
+				closeHandler.invoke()
+			}
+		}
+	}
+
+	private inner class DeleteAction : AbstractAction("library.dialog.delete.action") {
+		override fun execute(event: ActionEvent) {
+			val libraryName = selectedLibraryName!!
+
+			if (JOptionPane.showConfirmDialog(
+					this@LibraryPersistencePanel,
+					Translations.getString("library.dialog.delete.confirmation.msg", libraryName),
+					Translations.getString("library.dialog.delete.title"),
+					JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.WARNING_MESSAGE) == JOptionPane.CANCEL_OPTION
+			) {
+				return
+			}
+
+			LOG.debug("LibraryPersistencePanel: delete library $libraryName")
+			InvocationHandler.invoke {
+				service.delete(libraryName)
 				closeHandler.invoke()
 			}
 		}

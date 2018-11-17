@@ -18,6 +18,8 @@ interface LibraryPersistenceService {
 
     fun storeLibrary(library: Library)
 
+	fun deleteLibrary(name: String)
+
 	/** Duplicates the specified [Library] and stores the duplicate with the given new name.*/
 	fun duplicateLibrary(library: Library, newName: String)
 
@@ -49,6 +51,10 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService{
 	override fun storeLibrary(library: Library) {
         throw UnsupportedOperationException("not implemented")
     }
+
+	override fun deleteLibrary(name: String) {
+		throw UnsupportedOperationException("not implemented")
+	}
 
 	override fun duplicateLibrary(library: Library, newName: String) {
 		throw UnsupportedOperationException("not implemented")

@@ -35,12 +35,18 @@ class FileLibraryDictionary(
 		add(it.library.name, it.library.uuid)
 	}
 
+	private val libraryDeletedHandler: EventHandler<LibraryDeletedEvent> = {
+		remove(it.uuid)
+	}
+
 	init {
 		eventBus.register(LibraryCreatedEvent::class, libraryCreatedHandler)
+		eventBus.register(LibraryDeletedEvent::class, libraryDeletedHandler)
 	}
 
 	private fun dispose() {
 		eventBus.unregister(LibraryCreatedEvent::class, libraryCreatedHandler)
+		eventBus.unregister(LibraryDeletedEvent::class, libraryDeletedHandler)
 	}
 
 	/** ---- [LibraryDictionary] interface */

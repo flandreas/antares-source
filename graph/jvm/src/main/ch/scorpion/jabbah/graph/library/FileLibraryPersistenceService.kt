@@ -104,6 +104,11 @@ class FileLibraryPersistenceService(
         }
     }
 
+	override fun deleteLibrary(name: String) {
+		LOG.debug("FileLibraryPersistenceService: deleteLibrary $name")
+		FileUtils.deleteDirectory(File(buildLibraryDirectoryPath(name)))
+	}
+
 	override fun duplicateLibrary(library: Library, newName: String) {
 		LOG.debug("FileLibraryPersistenceService: duplicateLibrary ${library.name}")
 		FileUtils.copyDirectory(
