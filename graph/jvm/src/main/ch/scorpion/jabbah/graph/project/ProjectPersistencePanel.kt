@@ -3,13 +3,13 @@ package ch.scorpion.jabbah.graph.project
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.base.module.BaseModule
 import java.awt.*
-import java.awt.event.*
-
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import javax.swing.*
 
 /** Opens and shows the [ProjectPersistencePanel] in a modal dialog.*/
@@ -85,10 +85,13 @@ class ProjectPersistencePanel(
 		val scrollPane = JScrollPane(projectNameList)
 		add(scrollPane, BorderLayout.CENTER)
 
-		val buttonPanel = JPanel(FlowLayout(FlowLayout.LEFT))
+		val buttonPanel = JPanel()
+		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 		buttonPanel.add(JButton(ActionWrapperSwing(openAction)))
 		buttonPanel.add(JButton(ActionWrapperSwing(NewAction())))
 		buttonPanel.add(JButton(ActionWrapperSwing(deleteAction)))
+
+		buttonPanel.add(Box.createHorizontalGlue())
 		buttonPanel.add(JButton(ActionWrapperSwing(CancelAction())))
 		add(buttonPanel, BorderLayout.SOUTH)
 
