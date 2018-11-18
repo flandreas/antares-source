@@ -38,7 +38,7 @@
                 <baseLibraryElement _id='24' name='LED'/>
                 <baseLibraryElement _id='25' name='RgbLED'/>
                 <baseLibraryElement _id='26' name='SevenSegmentDisplay'/>
-                <baseLibraryElement _id='27' name='LEDMAtrix'/>
+                <baseLibraryElement _id='27' name='LEDMatrix'/>
                 <baseLibraryElement _id='28' name='Output'/>
               </items>
             </libraryFolder>
