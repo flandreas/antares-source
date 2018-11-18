@@ -102,7 +102,6 @@ class LibraryTreeView(
 	    val collapseAllAction = CollapseAllAction()
 	    val addLibraryFolderAction = AddLibraryFolderAction()
 	    val newGraphAction = NewGraphAction()
-	    val addGraphToLibraryAction = AddGraphToLibraryAction()
 	    val deleteLibraryFolderAction = DeleteLibraryFolderAction()
 	    val deleteLibraryElementAction = DeleteLibraryElementAction()
 	    val editLibraryAction = EditLibraryAction()
@@ -115,7 +114,6 @@ class LibraryTreeView(
 	    projectRootMenu.addSeparator()
 	    projectRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 	    projectRootMenu.add(ActionWrapperSwing(newGraphAction))
-	    projectRootMenu.add(ActionWrapperSwing(addGraphToLibraryAction))
 	    projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
 
 	    directoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
@@ -123,7 +121,6 @@ class LibraryTreeView(
 	    directoryPopupMenu.addSeparator()
 	    directoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 	    directoryPopupMenu.add(ActionWrapperSwing(newGraphAction))
-	    directoryPopupMenu.add(ActionWrapperSwing(addGraphToLibraryAction))
 	    directoryPopupMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
 
 	    libraryRootMenu.add(ActionWrapperSwing(expandAllAction))
@@ -131,7 +128,6 @@ class LibraryTreeView(
 	    libraryRootMenu.addSeparator()
 	    libraryRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 	    libraryRootMenu.add(ActionWrapperSwing(newGraphAction))
-	    libraryRootMenu.add(ActionWrapperSwing(addGraphToLibraryAction))
 	    libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
 	    libraryRootMenu.addSeparator()
 	    libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
