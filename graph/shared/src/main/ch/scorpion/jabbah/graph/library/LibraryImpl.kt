@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.module.AppModule
+import ch.scorpion.jabbah.app.user.UserHolder
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
@@ -21,7 +23,8 @@ open class LibraryImpl(
 	name: String = "",
 	override val libraryService: LibraryService = LibraryModule.libraryService.invoke(),
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
-	private val descriptionKey: String = "library.library.name"
+	private val descriptionKey: String = "library.library.name",
+	userHolder: UserHolder = AppModule.userHolder
 ) : Library, LibraryDirectory {
 
 	companion object {
@@ -29,6 +32,8 @@ open class LibraryImpl(
 	}
 
 	override var uuid: UUID = System.get().createUUID()
+
+	override var author: UUID = userHolder.user.uuid
 
 	override var libraryFolder: LibraryFolder = LibraryFolder(name)
 
@@ -130,6 +135,7 @@ open class LibraryImpl(
 		}
 		writer.writeStorable("folder", libraryFolder)
 		writer.writeString("uuid", uuid.toString())
+		writer.writeString("author", author.toString())
 	}
 
 	override fun read(reader: StoreReader) {
@@ -138,6 +144,7 @@ open class LibraryImpl(
 		}
 		libraryFolder = reader.readStorable("folder") as LibraryFolder
 		uuid = System.get().createUUID(reader.readString("uuid"))
+		author = System.get().createUUID(reader.readString("author"))
 	}
 
 	override fun getStorableChildren(): Iterator<Storable> {

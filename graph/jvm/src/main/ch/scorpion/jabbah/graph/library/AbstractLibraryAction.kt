@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.module.AppModule
+import ch.scorpion.jabbah.app.user.UserHolder
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.EventBus
 import javax.swing.Action
@@ -22,6 +24,8 @@ abstract class AbstractLibraryAction(
 	protected val folderOfSelectedItem: LibraryDirectory? get() =
 		(libraryTreeView!!.selectionPath.parentPath.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryDirectory?
 
+	protected val isLibraryOwnedByUser: Boolean get() = AppModule.userHolder.user.uuid == selectedItem?.library?.author
+
 	init {
 		enabled = false
 		eventBus.register(LibrarySelectionChangedEvent::class) {
@@ -31,7 +35,7 @@ abstract class AbstractLibraryAction(
 		}
 	}
 
-	protected fun updateEnabledness() {
+	private fun updateEnabledness() {
 		enabled = calculateEnabledness()
 	}
 
@@ -44,6 +48,7 @@ abstract class AbstractLibraryAction(
 		// empty
 	}
 
+	/** Implemented by subclasses to further decide whether this [Action] should be enabled*/
 	protected abstract fun calculateEnabledness(): Boolean
 }
 

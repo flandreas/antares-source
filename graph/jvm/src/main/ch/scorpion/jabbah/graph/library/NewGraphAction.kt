@@ -32,4 +32,8 @@ class NewGraphAction(
 	    val element = library.libraryService.addContainerLibraryElement(library, metaGraph, directory)
 		eventBus.post(OpenContainerLibraryElementRequest(element))
     }
+
+	override fun calculateEnabledness(): Boolean {
+		return isLibraryOwnedByUser && super.calculateEnabledness()
+	}
 }

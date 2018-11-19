@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.app.module.AppModule
+import ch.scorpion.jabbah.app.user.User
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.invocation.SynchronousInvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
@@ -56,5 +58,7 @@ class GraphViewTestRule : TestRule {
 	    UiUtil.eventQueueInvoker = {
 		    false
 	    }
+
+	    AppModule.userHolder.u = User.developer()
     }
 }

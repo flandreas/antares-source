@@ -31,4 +31,8 @@ class DefaultContainerLibraryElementAction(
 			false
 		}
 	}
+
+	override fun calculateEnabledness(): Boolean {
+		return isLibraryOwnedByUser && super.calculateEnabledness()
+	}
 }

@@ -30,4 +30,8 @@ class AddLibraryFolderAction(
         val directory = libraryTreeView!!.getSelectedItem() as LibraryDirectory
 	    directory.library!!.libraryService.addFolder(directory.library!!, name, directory)
     }
+
+	override fun calculateEnabledness(): Boolean {
+		return isLibraryOwnedByUser && super.calculateEnabledness()
+	}
 }

@@ -27,6 +27,6 @@ class DeleteLibraryElementAction(
     }
 
 	override fun calculateEnabledness(): Boolean {
-		return selectedItem is BaseLibraryElement || selectedItem is ContainerLibraryElement
+		return isLibraryOwnedByUser && (selectedItem is BaseLibraryElement || selectedItem is ContainerLibraryElement)
 	}
 }

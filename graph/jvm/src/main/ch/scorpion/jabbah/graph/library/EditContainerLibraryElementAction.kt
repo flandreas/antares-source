@@ -33,7 +33,11 @@ class EditContainerLibraryElementAction(
         openAsSavable()
     }
 
-    /**
+	override fun calculateEnabledness(): Boolean {
+		return isLibraryOwnedByUser && super.calculateEnabledness()
+	}
+
+	/**
      * Opens the currently selected [ContainerLibraryElement] as the current [Savable] in the application.
      */
     private fun openAsSavable() {

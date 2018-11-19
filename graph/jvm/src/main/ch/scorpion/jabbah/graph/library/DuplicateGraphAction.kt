@@ -40,4 +40,8 @@ class DuplicateGraphAction(
 		val duplicate = library!!.libraryService.duplicateContainerLibraryElement(folderOfSelectedItem!!, element, newGraphName)
 		eventBus.post(OpenContainerLibraryElementRequest(duplicate))
 	}
+
+	override fun calculateEnabledness(): Boolean {
+		return isLibraryOwnedByUser && super.calculateEnabledness()
+	}
 }

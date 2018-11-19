@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.app.module.AppModule
+import ch.scorpion.jabbah.app.user.User
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.io.Storable
@@ -25,6 +27,7 @@ abstract class AbstractDesktopApplication(
 	eventBus: EventBus
 ) : AbstractApplication(eventBus), DesktopApplication {
 
+	// Must not be in companion object due to Module and LogSystem bootstrapping order
 	private val LOG by logger(AbstractDesktopApplication::class)
 
 	protected val commandLine: CommandLine by lazy {
@@ -140,7 +143,6 @@ abstract class AbstractDesktopApplication(
 
 	protected open fun shutdown() {
 		LOG.info("Shutting $displayName down")
-		// TODO Provide service for loading/storing Properties
 		handleShutdown()
 		shutdownUI()
 		storeSettings()
@@ -159,6 +161,13 @@ abstract class AbstractDesktopApplication(
 			.desc("Home directory")
 			.hasArg()
 			.build())
+
+		options.addOption(Option.builder("dev")
+			.required(false)
+			.longOpt("developer")
+			.desc("Run in developer mode")
+			.hasArg(false)
+			.build())
 	}
 
 	/**
@@ -166,8 +175,13 @@ abstract class AbstractDesktopApplication(
 	 * This implementation does nothing. Subclasses can overwrite this method in order to consume and use
 	 * the provided [Options].
 	 */
-	protected open fun consumeCommandLine(@Suppress("UNUSED_PARAMETER") commandLine: CommandLine) {
-		// empty
+	protected open fun consumeCommandLine(commandLine: CommandLine) {
+		AppModule.userHolder.u = if (commandLine.hasOption("dev")) {
+			LOG.info("Starting application in developer mode")
+			User.developer()
+		} else {
+			User.anybody()
+		}
 	}
 
 	private fun getSettingsPath(): Path {

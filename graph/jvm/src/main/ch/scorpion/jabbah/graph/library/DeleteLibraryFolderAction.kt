@@ -13,7 +13,7 @@ class DeleteLibraryFolderAction(
 ) : AbstractLibraryFolderAction("graph.action.deleteLibraryDirectory", eventBus) {
 
 	override fun calculateEnabledness(): Boolean {
-		return super.calculateEnabledness() && (selectedItem as LibraryDirectory).isEmpty()
+		return super.calculateEnabledness() && (selectedItem as LibraryDirectory).isEmpty() && isLibraryOwnedByUser
 	}
 
 	override fun execute(event: ActionEvent) {

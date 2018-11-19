@@ -26,7 +26,7 @@ class EditLibraryAction(
 	}
 
 	override fun calculateEnabledness(): Boolean {
-		return true
+		return isLibraryOwnedByUser
 	}
 }
 

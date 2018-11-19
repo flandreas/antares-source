@@ -2,6 +2,8 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.view.AntaresThemes
 import ch.scorpion.antares.view.module.AntaresViewModule
+import ch.scorpion.jabbah.app.module.AppModule
+import ch.scorpion.jabbah.app.user.User
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import org.junit.rules.TestRule
 import org.junit.runner.Description
@@ -30,5 +32,6 @@ class AntaresTestRule : TestRule {
         AntaresViewModule.require()
         AntaresThemes.install()
 	    TestTranslationsBuilder().withAnyKey()
+	    AppModule.userHolder.u = User.developer()
     }
 }

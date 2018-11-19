@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.user.User
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.graph.MetaGraphRepository
@@ -10,6 +11,9 @@ interface Library : LibraryDirectory, MetaGraphRepository {
 
 	/** The universal unique ID of this [Library]. Used for referencing this [Library] from projects.*/
 	var uuid: UUID
+
+	/** The [UUID] of the [User] that is the author (and therefore owner) of this [Library].*/
+	var author: UUID
 
 	/** The UUID of the [ContainerLibraryElement] to be opened per default.*/
 	var defaultElementUUID: UUID?
