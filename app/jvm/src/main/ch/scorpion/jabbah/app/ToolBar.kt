@@ -11,63 +11,6 @@ import javax.swing.*
 /**
  * Contains a list of [JButton]s that allows the user to select an [Editor]'s current [Tool].
  */
-/*
-class ToolBar(val editor: Editor) : JToolBar() {
-
-    private val buttonGroup = ButtonGroup()
-
-    init {
-        isFloatable = false
-        isRollover = false
-    }
-
-    /** ---- [JComponent] */
-
-    override fun setEnabled(enabled: Boolean) {
-        super.setEnabled(enabled)
-        for (c in components) {
-            c.isEnabled = enabled
-        }
-    }
-
-    /** ---- [ToolBar] */
-
-    fun addTool(tool: Tool, imgPath: String, tooltipText: String) {
-        val button = createButton(imgPath, tooltipText)
-        button.isEnabled = isEnabled
-        button.addActionListener(ToolListener(tool, button))
-        buttonGroup.add(button)
-        add(button)
-    }
-
-    private fun createButton(imgPath: String, tooltipText: String): JToggleButton {
-        val button = JToggleButton(ImageIcon(ToolBar::class.java.getResource(imgPath)))
-        button.toolTipText = tooltipText
-        return button
-    }
-
-    private inner class ToolListener(val tool: Tool, val button: JToggleButton) : ActionListener, PropertyChangeListener<Any> {
-
-        init {
-            editor.addPropertyChangeListener(this)
-        }
-
-        override fun actionPerformed(e: ActionEvent?) {
-            editor.currentTool = tool
-        }
-
-        override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-            if (e.name == Editor.PROP_CURRENT_TOOL && e.newValue == tool) {
-                if (!button.isSelected) {
-                    button.doClick()
-                    button.requestFocus()
-                }
-            }
-        }
-    }
-}
-*/
-
 class ToolBar(val editor: Editor? = null) : JPanel() {
 
 	companion object {
@@ -93,8 +36,10 @@ class ToolBar(val editor: Editor? = null) : JPanel() {
 			throw IllegalStateException("Cannot add Tool to ToolBar without Editor")
 		}
 		val button = createButton(imgPath, tooltipText)
-		button.isEnabled = isEnabled
-		button.addActionListener(ToolListener(tool, button))
+		val toolListener = ToolListener(tool, button)
+		button.isEnabled = editor.active
+		button.addActionListener(toolListener)
+		editor.addPropertyChangeListener(toolListener)
 		toolGroup.add(button)
 		add(button)
 	}
@@ -107,10 +52,6 @@ class ToolBar(val editor: Editor? = null) : JPanel() {
 
 	private inner class ToolListener(val tool: Tool, val button: JToggleButton) : ActionListener, PropertyChangeListener<Any> {
 
-		init {
-			editor?.addPropertyChangeListener(this)
-		}
-
 		override fun actionPerformed(e: ActionEvent?) {
 			editor?.currentTool = tool
 		}
@@ -121,6 +62,8 @@ class ToolBar(val editor: Editor? = null) : JPanel() {
 					button.doClick()
 					button.requestFocus()
 				}
+			} else if (e.name == Editor.PROP_ACTIVE) {
+				button.isEnabled = editor?.active ?: false
 			}
 		}
 	}

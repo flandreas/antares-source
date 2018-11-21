@@ -64,13 +64,9 @@ class GraphEditPanel(
 		BaseModule.settings.set("graphPanel.sidebarSplitPos", sidebarSplitPane.dividerLocation)
 	}
 
-	fun setGraphView(newGraphView: GraphView<GraphElementView<*>>?) {
-		val oldGraphView = graphNavigationPanel.drawingView.drawing
-		if (newGraphView != null) {
-			graphNavigationPanel.setRootGraphView(newGraphView)
-			scenarioPanel.graphView = newGraphView
-		}
-		eventBus.post(EditedGraphViewEvent(oldGraphView, newGraphView))
+	fun setGraphView(newGraphView: GraphView<GraphElementView<*>>) {
+		graphNavigationPanel.setRootGraphView(newGraphView)
+		scenarioPanel.graphView = newGraphView
 	}
 
 	private fun buildUI() {
@@ -90,7 +86,7 @@ class GraphEditPanel(
 		add(sidebarPane, BorderLayout.EAST)
 	}
 
-	/** Handles changes of the ´isOpen´ property of the [sidebarPane]. */
+	/** Handles changes of the ï¿½isOpenï¿½ property of the [sidebarPane]. */
 	private fun sidebarPaneChanged() {
 		if (sidebarPane.isOpen) {
 			removeAll()

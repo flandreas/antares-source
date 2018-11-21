@@ -112,24 +112,32 @@ class GraphPanel(
 	/** Displays the current [Issue]s. */
 	private val issuesPanel = IssuesPanel()
 
+	private var editedGraphView: GraphView<GraphElementView<*>>? = editor.drawing as GraphView<GraphElementView<*>>?
+		set(value) {
+			if (field !== value) {
+				val oldValue = field
+				field = value
+				if (value != null) {
+					graphEditPanel.setGraphView(value)
+					value.snapper = editor.view.grid
+				}
+				eventBus.post(EditedGraphViewEvent(oldValue, value))
+				updateEditability()
+			}
+		}
+
 	init {
 
 		(editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
 		libraryPropertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
 		eventBus.register(ApplicationDataEvent::class) {
-			if (it.newData != null) {
-				LOG.debug("GraphPanel: ApplicationDataChanged, setting GraphView in GraphEditPanel")
-				val metaGraph = it.newData as MetaGraph
-				graphEditPanel.setGraphView(metaGraph.graph.graphView as GraphView<GraphElementView<*>>)
-				metaGraph.graph.graphView!!.snapper = editor.view.grid
-			} else {
-				LOG.debug("GraphPanel: ApplicationDataChanged, using dummy GraphView in GraphEditPanel")
-				graphEditPanel.setGraphView(null)
-			}
+			editedGraphView = (it.newData as MetaGraph?)?.graph?.graphView as GraphView<GraphElementView<*>>?
 		}
 
-		eventBus.register(ActiveViewChangedEvent::class) { updateEditability() }
+		eventBus.register(ActiveViewChangedEvent::class) {
+			updateEditability()
+		}
 
 		eventBus.register(ExecutionStoppedOnIssueEvent::class) {
 			eventBus.post(ComponentMessage(
@@ -162,7 +170,7 @@ class GraphPanel(
 		val editable = viewManager.activeView === editor.view && editor.view.editable
 		drawingToolBar.isEnabled = editable
 		settingsToolBar.isEnabled = editable
-		editor.active = editable && scheduler.isActive == false
+		editor.active = editable && scheduler.isActive == false && editedGraphView != null
 	}
 
 	private fun buildUI() {
@@ -218,16 +226,16 @@ class GraphPanel(
 				if (!init) {
 					scheduler.isActive = false
 				}
-				editor.active = true
+				updateEditability()
 				eventBus.post(ApplicationModeEvent(currentMode))
 			}
 			ApplicationMode.EXECUTE -> {
 				issuesPanel.clear()
 				if ((editor.drawing as GraphView<*>).checkDesign()) {
 					editor.view.selectionManager.deselectAll()
-					editor.active = false
 					InvocationHandler.invoke(Runnable {
 						scheduler.isActive = true
+						updateEditability()
 						eventBus.post(ApplicationModeEvent(currentMode))
 					})
 				} else {
@@ -333,6 +341,8 @@ class GraphPanel(
 				override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 					if (e.name == Editor.PROP_COMPONENT_SNAP) {
 						updateState()
+					} else if (e.name == Editor.PROP_ACTIVE) {
+						isEnabled = editor.active
 					}
 				}
 			})

@@ -89,10 +89,10 @@ open class GraphMenuBarBuilder(
     }
 
     protected open fun fillScenariosMenu(menu: JMenu): JMenu {
-        menu.add(JMenuItem(ActionWrapperSwing(AddScenarioAction(eventBus, EditModule.commandManager))))
-        menu.add(JMenuItem(ActionWrapperSwing(AddScenarioStepAction(eventBus, EditModule.commandManager))))
-        menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioAction(eventBus, EditModule.commandManager))))
-        menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioStepAction(eventBus, EditModule.commandManager))))
+        menu.add(JMenuItem(ActionWrapperSwing(AddScenarioAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(AddScenarioStepAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioAction())))
+        menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioStepAction())))
         return menu
     }
 }

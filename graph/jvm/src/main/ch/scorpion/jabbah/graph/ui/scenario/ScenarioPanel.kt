@@ -31,7 +31,7 @@ class ScenarioPanel(
     private val treeView = ScenarioTreeView(eventBus)
     private val propertyPanel = ScenarioPropertyPanel(editor, sheetFactory, eventBus)
 
-    var graphView: GraphView<*>? = null
+    var graphView: GraphView<*> = editor.drawing as GraphView<*>
         set(value) {
             field = value
             treeView.graphView = value
@@ -42,9 +42,9 @@ class ScenarioPanel(
         treeView.addTreeSelectionListener {
             val scenario = treeView.selectedScenario
             val scenarioStep = treeView.selectedScenarioStep
-            graphView?.currentScenario = scenario
-            graphView?.currentScenarioStep = scenarioStep
-            eventBus.post(ScenarioSelectionEvent(graphView!!, scenario, scenarioStep))
+            graphView.currentScenario = scenario
+            graphView.currentScenarioStep = scenarioStep
+            eventBus.post(ScenarioSelectionEvent(graphView, scenario, scenarioStep))
 
         }
         treeView.preferredSize = Dimension(300, treeView.preferredSize.height)
