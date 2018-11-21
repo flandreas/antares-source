@@ -86,7 +86,7 @@ class GraphEditPanel(
 		add(sidebarPane, BorderLayout.EAST)
 	}
 
-	/** Handles changes of the �isOpen� property of the [sidebarPane]. */
+	/** Handles changes of the `isOpen` property of the [sidebarPane]. */
 	private fun sidebarPaneChanged() {
 		if (sidebarPane.isOpen) {
 			removeAll()
@@ -105,6 +105,8 @@ class GraphEditPanel(
 			add(graphNavigationPanel, BorderLayout.CENTER)
 			add(sidebarPane, BorderLayout.EAST)
 		}
+		scenarioPanel.clearSelection()
+
 		revalidate()
 		repaint()
 	}

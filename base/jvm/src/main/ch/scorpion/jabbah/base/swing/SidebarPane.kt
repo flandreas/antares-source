@@ -47,7 +47,7 @@ class SidebarPane(private val orientation: Orientation, private val isOpenChange
 
     private val labelListener = VerticalLabelListener()
 
-    init {
+	init {
         initUI()
     }
 

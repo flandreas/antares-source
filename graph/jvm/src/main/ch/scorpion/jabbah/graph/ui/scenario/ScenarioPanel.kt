@@ -53,6 +53,10 @@ class ScenarioPanel(
         buildUI()
     }
 
+	fun clearSelection() {
+		treeView.selectionModel.clearSelection()
+	}
+
     private fun buildUI() {
         layout = BorderLayout()
         val treeViewScrollPane = JScrollPane(
