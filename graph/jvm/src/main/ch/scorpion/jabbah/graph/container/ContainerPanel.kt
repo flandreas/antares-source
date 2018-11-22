@@ -7,9 +7,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.view.FocusPanel
-import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
@@ -32,23 +30,22 @@ import javax.swing.*
  * A [JPanel] for editing the outside [ContainerDrawing] of a [GraphView].
  */
 class ContainerPanel(
-        val editor: ContainerEditor,
-        propertySheetFactory: PropertySheetPanelFactory,
-        eventBus: EventBus,
-        viewManager: ViewManager
+    val editor: ContainerEditor,
+    propertySheetFactory: PropertySheetPanelFactory,
+    eventBus: EventBus,
+    private val viewManager: ViewManager
 ) : JPanel() {
 
     constructor(editor: ContainerEditor, viewManager: ViewManager): this(editor, EditModuleJvm.propertySheetPanelFactory, BaseModule.eventBus, viewManager)
 
-    /** The [ContainerTreeView] containing all objects of [graphView] that have not yet been added to the [ContainerDrawing].*/
+    /** The [ContainerTreeView] containing all objects of the underlying [GraphView] that have not yet been added to the [ContainerDrawing].*/
     private val treeView = GraphModuleJvm.containerTreeViewFactory.invoke()
-
-    /** The [GraphView] whose outside view is edited by this [ContainerPanel]. Defined in [setData]. */
-    private var graphView: GraphView<*>? = null
 
     private val propertyPanel: ComponentPropertyPanel
 
 	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+
+	private var editedContainerDrawing: ContainerDrawing? = null
 
     val toolbars: ImmutableList<ToolBar> = listOf(createToolbar(editor)).toImmutableList()
 
@@ -57,19 +54,20 @@ class ContainerPanel(
 
         eventBus.register(ApplicationDataEvent::class) {
 	        if (it.newData == null) {
+		        editedContainerDrawing = null
 		        removeAll()
 	        } else {
 		        if (it.oldData == null) {
 			        add(mainSplitPane)
 		        }
 		        val metaGraph = it.newData as MetaGraph
-		        setData(metaGraph.graph.graphView!!, metaGraph.containerDrawing)
+		        editedContainerDrawing = metaGraph.containerDrawing
+		        setData(metaGraph.graph.graphView!!, editedContainerDrawing!!)
 	        }
+	        updateEditability()
         }
 
 	    propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
-
-        // TODO Toolbar
 
         treeView.transferHandler = ContainerTransferHandler()
         (editor.view.canvas as JPanel).transferHandler = ComponentTransferHandler(editor, eventBus, ComponentTransferable.FLAVOR)
@@ -96,13 +94,11 @@ class ContainerPanel(
 	 * @param containerDrawing the [ContainerDrawing] that represents the outer view of `graphView`
 	 */
     fun setData(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
-        this.graphView = graphView
         editor.view.drawing = containerDrawing
         treeView.update(graphView, containerDrawing)
     }
 
     fun setGraphName(graphName: String) {
-        //graphView!!.graph!!.name = graphName
         (editor.drawing as ContainerDrawing).model.name = graphName
     }
 
@@ -136,4 +132,8 @@ class ContainerPanel(
 
         return toolbar
     }
+
+	private fun updateEditability() {
+		editor.active = editedContainerDrawing != null
+	}
 }
