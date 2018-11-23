@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.Savable
+import ch.scorpion.jabbah.app.module.AppModule
+import ch.scorpion.jabbah.app.user.UserHolder
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -13,14 +15,17 @@ import ch.scorpion.jabbah.graph.MetaGraph
 class LibrarySavable(
     metaGraph: MetaGraph,
     element: ContainerLibraryElement,
-    private val library: Library = LibraryModule.libraryHolder.library,
+    val library: Library = LibraryModule.libraryHolder.library,
     val service: LibraryService = LibraryModule.libraryService.invoke(),
+    private val userHolder: UserHolder = AppModule.userHolder,
     private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibrarySavable(metaGraph, element, service) {
 
 	/** ---- [Savable] */
 
     override val description: String get() = "${Translations.getString("library.savable.prefix")} \"${element.name}\""
+
+	override val readOnly: Boolean get() = library.author != userHolder.user.uuid
 
     override fun open(application: Application): Boolean {
         eventBus.post(OpenContainerLibraryElementRequest(element))

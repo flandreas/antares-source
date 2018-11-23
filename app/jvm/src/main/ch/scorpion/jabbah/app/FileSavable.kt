@@ -2,9 +2,11 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalStateException
+import java.io.File
 
 /**
  * A [Savable] that saves application data into a [File] of a file system.
+ * Can only be used with [DesktopApplication].
  */
 data class FileSavable(val filePath: String?) : Savable {
 
@@ -38,6 +40,8 @@ data class FileSavable(val filePath: String?) : Savable {
     override val defined: Boolean get() = filePath != null && !filePath.isEmpty()
 
     override val supportsMostRecent: Boolean get() = true
+
+	override val readOnly: Boolean get() = false
 
     override fun open(application: Application): Boolean {
         val desktopApplication = application as DesktopApplication

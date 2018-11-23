@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.app.ApplicationDataEvent
-import ch.scorpion.jabbah.app.CloseApplicationDataRequest
-import ch.scorpion.jabbah.app.ToolBar
+import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -126,6 +123,8 @@ class GraphPanel(
 			}
 		}
 
+	private var currentSavable: Savable? = null
+
 	init {
 
 		(editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
@@ -144,6 +143,11 @@ class GraphPanel(
 				type = ComponentMessageType.Error,
 				source = null,
 				messageKey = "execution.scheduler.stoppedDueToIssue.msg"))
+		}
+
+		eventBus.register(CurrentSavableEvent::class) {
+			currentSavable = it.savable
+			updateEditability()
 		}
 
 		editor.view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
@@ -170,7 +174,7 @@ class GraphPanel(
 		val editable = viewManager.activeView === editor.view && editor.view.editable
 		drawingToolBar.isEnabled = editable
 		settingsToolBar.isEnabled = editable
-		editor.active = editable && scheduler.isActive == false && editedGraphView != null
+		editor.active = editable && scheduler.isActive == false && editedGraphView != null && !(currentSavable?.readOnly ?: false)
 	}
 
 	private fun buildUI() {

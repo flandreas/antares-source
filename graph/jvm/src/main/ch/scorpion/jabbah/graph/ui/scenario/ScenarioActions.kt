@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
+import ch.scorpion.jabbah.app.CurrentSavableEvent
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
@@ -25,6 +27,7 @@ abstract class AbstractScenarioAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction(baseName) {
 
+	private var currentSavable: Savable? = null
 	protected var editedGraphView: GraphView<*>? = null
 	protected var graphView: GraphView<*>? = null
 	protected var scenario: Scenario? = null
@@ -41,10 +44,20 @@ abstract class AbstractScenarioAction(
 			scenarioStep = it.scenarioStep
 			updateEnabledness()
 		}
+		eventBus.register(CurrentSavableEvent::class) {
+			currentSavable = it.savable
+			updateEnabledness()
+		}
 		enabled = false
 	}
 
-	protected abstract fun updateEnabledness()
+	protected fun updateEnabledness() {
+		enabled = calculateEnabled()
+	}
+
+	protected open fun calculateEnabled(): Boolean {
+		return editedGraphView != null && !(currentSavable?.readOnly ?: false)
+	}
 }
 
 /**
@@ -65,8 +78,8 @@ class AddScenarioAction : AbstractScenarioAction("scenarios.action.addScenario")
 		cmdManager.execute(AddScenarioCommand(graphView!!, ScenarioImpl(name)))
 	}
 
-	override fun updateEnabledness() {
-		enabled = editedGraphView != null && scenario == null && scenarioStep == null
+	override fun calculateEnabled(): Boolean {
+		return super.calculateEnabled() && scenario == null && scenarioStep == null
 	}
 }
 
@@ -90,8 +103,8 @@ class AddScenarioStepAction(
 		cmdManager.execute(AddScenarioStepCommand(graphView!!, scenario!!, ScenarioStepImpl(scriptGateway, name)))
 	}
 
-	override fun updateEnabledness() {
-		enabled = editedGraphView != null && scenario != null && scenarioStep == null
+	override fun calculateEnabled(): Boolean {
+		return super.calculateEnabled() && scenario != null && scenarioStep == null
 	}
 }
 
@@ -109,8 +122,8 @@ class DeleteScenarioAction : AbstractScenarioAction("scenarios.action.deleteScen
 		}
 	}
 
-	override fun updateEnabledness() {
-		enabled = editedGraphView != null && scenario != null && scenarioStep == null
+	override fun calculateEnabled(): Boolean {
+		return super.calculateEnabled() && scenario != null && scenarioStep == null
 	}
 }
 
@@ -128,7 +141,7 @@ class DeleteScenarioStepAction : AbstractScenarioAction("scenarios.action.delete
 		}
 	}
 
-	override fun updateEnabledness() {
-		enabled = editedGraphView != null && scenario != null && scenarioStep != null
+	override fun calculateEnabled(): Boolean {
+		return super.calculateEnabled() && scenario != null && scenarioStep != null
 	}
 }

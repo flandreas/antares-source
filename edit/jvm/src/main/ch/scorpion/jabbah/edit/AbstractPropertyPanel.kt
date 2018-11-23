@@ -132,7 +132,7 @@ abstract class AbstractPropertyPanel(
         }
     }
 
-    private fun getTable(): JTable {
+    protected fun getTable(): JTable {
         return ((sheet.getComponent(1) as Container).getComponent(0) as Container).getComponent(0) as JTable
     }
 

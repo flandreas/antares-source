@@ -21,6 +21,9 @@ interface Savable {
     /** Determines whether this [Savable] can be added to the "Most Recent" file menu.*/
     val supportsMostRecent: Boolean
 
+	/** Determines whether this [Savable] is read-only*/
+	val readOnly: Boolean
+
     /**
      * Opens this [Savable] in the specified [Application].
      * @param application the [Application] in which this [Savable] is opened.

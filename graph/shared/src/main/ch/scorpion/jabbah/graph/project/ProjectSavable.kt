@@ -30,6 +30,8 @@ class ProjectSavable(
 
 	override val description: String get() = "${Translations.getString("project.savable.prefix")} \"${element.name}\""
 
+	override val readOnly: Boolean get() = false
+
 	override fun open(application: Application): Boolean {
 		projectService.open(project.name, element.uuid)
 		return true
