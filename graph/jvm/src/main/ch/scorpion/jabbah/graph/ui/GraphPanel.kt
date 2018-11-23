@@ -164,10 +164,12 @@ class GraphPanel(
 		GraphPanelTransferHandler(editor, eventBus, GraphElementViewTransferable.FLAVOR)
 
 	private fun updateEditability() {
-		val editable = viewManager.activeView === editor.view && editor.view.editable
-		drawingToolBar.isEnabled = editable
-		settingsToolBar.isEnabled = editable
-		editor.active = editable && scheduler.isActive == false && editedGraphView != null
+		val editable = (viewManager.activeView === editor.view && editor.view.editable)
+			&& !scheduler.isActive
+			&& editedGraphView != null
+
+		editor.active = editable
+		libraryPropertyPanel.editable = editable
 	}
 
 	private fun buildUI() {

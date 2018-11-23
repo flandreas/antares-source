@@ -12,6 +12,14 @@ class ComponentPropertyPanel(
     eventBus: EventBus
 ) : AbstractPropertyPanel(editor, sheetFactory) {
 
+	var editable: Boolean = true
+		set(value) {
+			if (field != value) {
+				field = value
+				getTable().isEnabled = field
+			}
+		}
+
     init {
         eventBus.register(SelectionChangeEvent::class) { handle(it) }
     }
