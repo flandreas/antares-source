@@ -16,13 +16,13 @@ interface DrawingView<T: Drawing<*>> : View<EditInputEventContext> {
 
     companion object {
         /** The name of the [Drawing] property in [PropertyChangeEvent]s.*/
-        val PROP_DRAWING = "PROP_DRAWING"
+        const val PROP_DRAWING = "PROP_DRAWING"
 
         /** The name of the [Boolean] property in [PropertyChangeEvent]s.*/
-        val PROP_SHOW_GRID = "PROP_SHOW_GRID"
+        const val PROP_SHOW_GRID = "PROP_SHOW_GRID"
 
         /** The name of the [Boolean] property in [PropertyChangeEvent]s.*/
-        val PROP_EDITABLE = "PROP_EDITABLE"
+        const val PROP_EDITABLE = "PROP_EDITABLE"
     }
 
     /**
@@ -52,8 +52,9 @@ interface DrawingView<T: Drawing<*>> : View<EditInputEventContext> {
     /** Allows temporary highlighting of [Component]s in this [DrawingView].*/
     val highlighter: Highlighter
 
-    /** Controls whether this [DrawingView] displays its [Grid]. Even if this property is set,
-     * the  [Grid] is not shown if this [DrawingView] is not [editable].*/
+    /** Controls whether the user wants this [DrawingView] to display its [Grid]. Even if this property is set,
+     * the [Grid] is not shown if this [DrawingView] is not [editable].
+     */
     var showGrid: Boolean
 
     /** The [Grid] displayed in the background of this [DrawingView].*/

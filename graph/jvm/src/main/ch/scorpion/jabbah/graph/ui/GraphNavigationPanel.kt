@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.animation.Animator
+import ch.scorpion.jabbah.app.CurrentSavableEvent
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
@@ -71,15 +73,18 @@ open class GraphNavigationPanel(
     private val openSubGraphRequestHandler: (OpenSubGraphRequest) -> Unit = { handle(it) }
     private val navigationStackEventHandler: (NavigationStackEvent) -> Unit = { handle(it) }
     private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = { handle(it) }
-    private val scenarioEventHandler: (ScenarioEvent) -> Unit = {handle(it)}
+    private val scenarioEventHandler: (ScenarioEvent) -> Unit = { handle(it) }
     private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
     private val systemSpeedHandler: (SystemSpeedEvent) -> Unit = { handle(it) }
+	private val currentSavableHandler: (CurrentSavableEvent) -> Unit = { handle(it) }
 
     /** Forwards input events to the [GraphView] while executing.*/
     private val graphViewExecutionHandler = GraphViewExecutionHandler(drawingView, scheduler, eventBus)
 
     /** Forwards input events to the [GraphView] while displaying (i.e. NOT executing) and NOT being editable.*/
     private val graphViewDisplayHandler = GraphViewDisplayHandler(drawingView, scheduler, eventBus)
+
+	private var currentSavable: Savable? = null
 
     var contextColor: CompositeColor? = null
         set(value) {
@@ -117,6 +122,7 @@ open class GraphNavigationPanel(
         eventBus.register(ScenarioEvent::class, scenarioEventHandler)
         eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
         eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
+	    eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
 
         drawingView.editable = drawingView.editable && isRoot
 
@@ -140,6 +146,7 @@ open class GraphNavigationPanel(
         eventBus.unregister(ScenarioEvent::class, scenarioEventHandler)
         eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
         eventBus.unregister(SystemSpeedEvent::class, systemSpeedHandler)
+	    eventBus.unregister(CurrentSavableEvent::class, currentSavableHandler)
     }
 
     /** Initializes the [NavigationStackView] with a root [DrawingViewContent].*/
@@ -151,7 +158,7 @@ open class GraphNavigationPanel(
     }
 
     private fun getRootEntry(): NavigationStackEntry<GraphView<GraphElementView<*>>> =
-            navigationStackView.navigationStack.rootEntry!!
+	    navigationStackView.navigationStack.rootEntry!!
 
     @Suppress("unused")
     fun setGlassPaneComponent(component: JComponent) {
@@ -286,8 +293,13 @@ open class GraphNavigationPanel(
         propagateApplicationContext()
     }
 
+	private fun handle(event: CurrentSavableEvent) {
+		currentSavable = event.savable
+		updateDrawingViewEditability()
+	}
+
     private fun updateDrawingViewEditability() {
-	    drawingView.editable = isRoot && navigationStackView.navigationStack.size == 1 && !scheduler.isActive
+	    drawingView.editable = isRoot && navigationStackView.navigationStack.size == 1 && !scheduler.isActive && !(currentSavable?.readOnly ?: false)
     }
 
     private fun propagateApplicationContext() {

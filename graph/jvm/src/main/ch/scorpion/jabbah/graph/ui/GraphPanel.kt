@@ -123,8 +123,6 @@ class GraphPanel(
 			}
 		}
 
-	private var currentSavable: Savable? = null
-
 	init {
 
 		(editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
@@ -143,11 +141,6 @@ class GraphPanel(
 				type = ComponentMessageType.Error,
 				source = null,
 				messageKey = "execution.scheduler.stoppedDueToIssue.msg"))
-		}
-
-		eventBus.register(CurrentSavableEvent::class) {
-			currentSavable = it.savable
-			updateEditability()
 		}
 
 		editor.view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
@@ -174,7 +167,7 @@ class GraphPanel(
 		val editable = viewManager.activeView === editor.view && editor.view.editable
 		drawingToolBar.isEnabled = editable
 		settingsToolBar.isEnabled = editable
-		editor.active = editable && scheduler.isActive == false && editedGraphView != null && !(currentSavable?.readOnly ?: false)
+		editor.active = editable && scheduler.isActive == false && editedGraphView != null
 	}
 
 	private fun buildUI() {
