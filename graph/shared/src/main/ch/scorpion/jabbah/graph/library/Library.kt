@@ -6,20 +6,25 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 
-
+/**
+ * A [Library] is a hierarchically structured [MetaGraphRepository] that has been composed by a particular user
+ * (which might be the developer of the application that uses this software).
+ *
+ * Note that the name of the [Library] is maintained as the name of its root [LibraryDirectory].
+ */
 interface Library : LibraryDirectory, MetaGraphRepository {
 
 	/** The universal unique ID of this [Library]. Used for referencing this [Library] from projects.*/
 	var uuid: UUID
 
-	/** The [UUID] of the [User] that is the author (and therefore owner) of this [Library].*/
+	/**
+	 * The [UUID] of the [User] that is the author (and therefore owner) of this [Library].
+	 * A [Library] and its elements can only be edited by the author of the [Library].
+	 */
 	var author: UUID
 
 	/** The UUID of the [ContainerLibraryElement] to be opened per default.*/
 	var defaultElementUUID: UUID?
-
-	/** The [LibraryFolder] containing the top-level elements of this [Library].*/
-    val libraryFolder: LibraryFolder
 
 	/**
 	 * The [LibraryService] to use when operation on this [Library]. Needed in order to be able to distinguish

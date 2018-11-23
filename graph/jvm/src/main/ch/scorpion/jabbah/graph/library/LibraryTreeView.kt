@@ -210,12 +210,14 @@ class LibraryTreeView(
 		}
 	}
 
+	private fun displaysLibrary(library: Library?): Boolean = library === this.library || library === project
+
 	/**
 	 * Expand the [JTree] to the node that contains the opened [ContainerLibraryElement].
 	 * This is primarily needed when the request originates from opening a [Project].
 	 */
 	private fun handle(event: OpenContainerLibraryElementRequest) {
-		if (event.element.library === library) {
+		if (displaysLibrary(event.element.library)) {
 			SwingUtilities.invokeLater {
 				val node = findTreeNode(treeModel.root as TreeNode) { (it as DefaultMutableTreeNode).userObject == event.element }
 				if (node != null) {
@@ -226,7 +228,7 @@ class LibraryTreeView(
 	}
 
 	private fun handle(event: LibraryItemAddedEvent) {
-		if (event.item.library === library) {
+		if (displaysLibrary(event.item.library)) {
 			findOptionalTreeNode(event.parent)?.let {
 				it.add(DefaultMutableTreeNode(event.item))
 				(model as DefaultTreeModel).nodesWereInserted(it, intArrayOf(it.childCount - 1))
@@ -239,7 +241,7 @@ class LibraryTreeView(
 	 * This is necessary to reflect the possibly changed [LibraryItem] name in the [TreeNode].
 	 */
 	private fun handle(event: LibraryItemUpdatedEvent) {
-		if (event.item.library === library) {
+		if (displaysLibrary(event.item.library)) {
 			val node = findTreeNode(event.item)
 			node.userObject = event.item
 			(model as DefaultTreeModel).nodeChanged(node)
@@ -247,7 +249,7 @@ class LibraryTreeView(
 	}
 
 	private fun handle(event: LibraryItemRemovedEvent) {
-		if (event.parent.library === library) {
+		if (displaysLibrary(event.parent.library)) {
 			val node = findTreeNode(event.item)
 			val parent = node.parent
 			val nodeIndex = parent.getIndex(node)
@@ -325,12 +327,7 @@ class LibraryTreeView(
 
 	private fun findOptionalTreeNode(item: LibraryItem): DefaultMutableTreeNode? {
 		return JTreeUtil.findTreeNode(model.root as TreeNode) {
-			val userObject = (it as DefaultMutableTreeNode).userObject
-			if (userObject is Library) {
-				userObject.libraryFolder == item || userObject == item
-			} else {
-				userObject == item
-			}
+			(it as DefaultMutableTreeNode).userObject  == item
 		} as DefaultMutableTreeNode?
 	}
 

@@ -2,6 +2,10 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
 
+/**
+ * A [LibraryDirectory] is a [LibraryItem] that contains other [LibraryItem]s, hence representing an
+ * application of the composite design pattern.
+ */
 interface LibraryDirectory : LibraryItem {
 
 	override var name: String

@@ -7,10 +7,18 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
+import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 
+/**
+ * A [MetaGraphRepository] is a repository of reusable [MetaGraph].
+ *
+ * A [MetaGraph] containing [SubGraphVertice]s will use a [MetaGraphRepository] to get access to the
+ * [MetaGraph] that is referenced by the [SubGraphVertice].
+ */
 interface MetaGraphRepository {
 
 	/** Returns the entire [MetaGraph] with the specified [UUID], including the view representations. */

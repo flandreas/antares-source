@@ -13,11 +13,6 @@ import ch.scorpion.jabbah.io.*
 
 /**
  * Standard implementation of the [Library] interface.
- *
- * Since we want to implement the [LibraryDirectory] interface by delegation to the [libraryFolder] property,
- * we cannot exchange the property value when reading the library from persistent store, because in Kotlin
- * the delegate is bound at instantiation time. Instead, [LibraryPersistenceService] loads the contents of the [Library]'s
- * [LibraryFolder] directly into the existing [LibraryFolder] instance, without instantiating it.
  */
 open class LibraryImpl(
 	name: String = "",
@@ -35,9 +30,9 @@ open class LibraryImpl(
 
 	override var author: UUID = userHolder.user.uuid
 
-	override var libraryFolder: LibraryFolder = LibraryFolder(name)
-
 	override var defaultElementUUID: UUID? = null
+
+	private var libraryFolder: LibraryFolder = LibraryFolder(name)
 
 	init {
 		libraryFolder.bindTo(this)
