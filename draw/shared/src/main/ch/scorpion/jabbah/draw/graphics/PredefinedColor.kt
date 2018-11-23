@@ -70,7 +70,7 @@ object PredefinedColorRepository : PredefinedColorProvider {
 
     override fun withIdName(idName: String): PredefinedColor?= colors[PredefinedColorIdentity.withIdName(idName)]
 
-	override fun withIdentity(identity: PredefinedColorIdentity): PredefinedColor? = colors.get(identity)
+	override fun withIdentity(identity: PredefinedColorIdentity): PredefinedColor? = colors[identity]
 
     /** ---- [PredefinedColorRepository] */
 
@@ -82,7 +82,6 @@ object PredefinedColorRepository : PredefinedColorProvider {
 
     fun register(color: PredefinedColor) {
         if (containsName(color.name)) {
-            LOG.warn("PredefinedColor with name ${color.name} already registered")
             colorsList[colorsList.indexOf(withIdName(color.name))] = color
         } else {
             colorsList.add(color)

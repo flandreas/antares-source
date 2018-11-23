@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw.style
 
-import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableSet
 import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.draw.graphics.PredefinedColorProvider
@@ -49,9 +48,9 @@ class StyleRepository(
 
     companion object {
         var INSTANCE: StyleRepository = StyleRepository()
+        private val LOG by logger(StyleRepository::class)
     }
 
-    private val LOG by logger(StyleRepository::class)
 
     /** Maps the name of [StyleType] to the [StyleType] object.*/
     private val typeMap: MutableMap<String, StyleType> by lazy { mutableMapOf<String, StyleType>() }
@@ -99,10 +98,7 @@ class StyleRepository(
      * Registers
      */
     fun registerStyleType(styleType: StyleType): StyleRepository {
-        if (typeMap.containsKey(styleType.name)) {
-            LOG.warn("StyleType '${styleType.name}' already registered, will be replaced")
-        }
-        typeMap.put(styleType.name, styleType)
+	    typeMap[styleType.name] = styleType
         return this
     }
 
@@ -111,11 +107,10 @@ class StyleRepository(
      * @return this to support method chaining
      */
     fun registerStyle(styleType: StyleType, style: Style): StyleRepository {
-        if (styleMap.containsKey(styleType)) {
-            LOG.warn("Style for StyleType '${styleType.name}' already registered, will be replaced")
-        }
-        registerStyleType(styleType)
-        styleMap.put(styleType, style)
+	    if (!typeMap.containsKey(styleType.name)) {
+		    registerStyleType(styleType)
+	    }
+	    styleMap[styleType] = style
         return this
     }
 }
