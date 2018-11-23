@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.graph.project
 
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 
 /**
@@ -19,7 +21,8 @@ data class OpenProjectRequest (val project: Project?)
  */
 data class CloseProjectRequest (val project: Project)
 
-interface ProjectService {
+/** Provides methods for managing the set of a user's [Project]s, including open and closing [Project]s. */
+interface ProjectManagementService {
 
 	/** Returns the currently open [Project], if any.*/
 	val currentProject: Project?
@@ -63,7 +66,7 @@ interface ProjectService {
 }
 
 /** Null pattern */
-class UnimplementedProjectService : ProjectService {
+class UnimplementedProjectManagementService : ProjectManagementService {
 
 	override val currentProject: Project? get() = throw UnsupportedOperationException("not implemented")
 

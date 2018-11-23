@@ -14,7 +14,7 @@ class ProjectSavable(
 	element: ContainerLibraryElement,
 	val project: Project = ProjectModule.projectHolder.project!!,
 	libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
-	private val projectService: ProjectService = ProjectModule.projectService
+	private val projectManagementService: ProjectManagementService = ProjectModule.projectManagementService
 ) : AbstractLibrarySavable(metaGraph, element, libraryService) {
 
 	/** ---- [Any] */
@@ -33,7 +33,7 @@ class ProjectSavable(
 	override val readOnly: Boolean get() = false
 
 	override fun open(application: Application): Boolean {
-		projectService.open(project.name, element.uuid)
+		projectManagementService.open(project.name, element.uuid)
 		return true
 	}
 

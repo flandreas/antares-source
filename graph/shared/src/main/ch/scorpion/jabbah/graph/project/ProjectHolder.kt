@@ -20,7 +20,7 @@ class ProjectHolder(
 				LOG.debug("ProjectHolder: setting current Project to '${value?.name}'")
 				field?.dispose()
 				field = value
-				eventBus.post(ProjectEvent(field))
+				eventBus.post(CurrentProjectEvent(field))
 			}
 		}
 
@@ -28,6 +28,6 @@ class ProjectHolder(
 }
 
 /**
- * Posted on an [EventBus] when the current project has changed.
+ * Posted on an [EventBus] when the current [Project] has changed.
  */
-data class ProjectEvent(val project: Project?)
+data class CurrentProjectEvent(val project: Project?)

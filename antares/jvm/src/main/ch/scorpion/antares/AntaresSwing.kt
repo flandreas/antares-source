@@ -76,7 +76,7 @@ class AntaresSwing(
 				throw VetoException()
 			}
 		}
-		eventBus.register(LibraryEvent::class) {
+		eventBus.register(CurrentLibraryEvent::class) {
 			close()
 		}
 		eventBus.register(LibraryItemRemovedEvent::class) {
@@ -138,7 +138,7 @@ class AntaresSwing(
 	/** Implements [DesktopApplication.openFrom] by interpreting `identification` as a project name.*/
 	override fun openFrom(identification: String): Boolean {
 		InvocationHandler.invoke(Runnable {
-			ProjectModule.projectService.open(identification)
+			ProjectModule.projectManagementService.open(identification)
 		})
 		return true
 	}

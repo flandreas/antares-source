@@ -26,7 +26,7 @@ class ShowProjectsDialogAction(
  * Displays a list of all existing project names and allows the user to open a project.
  */
 class ProjectPersistencePanel(
-	private val service: ProjectService = ProjectModule.projectService,
+	private val managementService: ProjectManagementService = ProjectModule.projectManagementService,
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
@@ -100,7 +100,7 @@ class ProjectPersistencePanel(
 
 	private fun loadProjectNames(): ListModel<String> {
 		val list = DefaultListModel<String>()
-		service.getProjectNames().forEach { list.addElement(it) }
+		managementService.getProjectNames().forEach { list.addElement(it) }
 		return list
 	}
 
@@ -128,7 +128,7 @@ class ProjectPersistencePanel(
 		override fun execute(event: ActionEvent) {
 			LOG.debug("ProjectPersistencePanel: open project '$selectedProjectName'")
 			InvocationHandler.invoke {
-				service.open(projectNameList.selectedValue)
+				managementService.open(projectNameList.selectedValue)
 				closeHandler.invoke()
 			}
 		}
@@ -154,7 +154,7 @@ class ProjectPersistencePanel(
 				if (StringUtils.isEmpty(projectName)) {
 					return
 				}
-				if (service.exists(projectName)) {
+				if (managementService.exists(projectName)) {
 					if (JOptionPane.showConfirmDialog(
 						this@ProjectPersistencePanel,
 						Translations.getString("project.dialog.new.duplicate.msg", projectName),
@@ -170,7 +170,7 @@ class ProjectPersistencePanel(
 			}
 
 			LOG.debug("ProjectPersistencePanel: creating new project '$projectName'")
-			service.open(service.create(projectName!!))
+			managementService.open(managementService.create(projectName!!))
 			closeHandler.invoke()
 		}
 	}
@@ -184,7 +184,7 @@ class ProjectPersistencePanel(
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
 			) {
-				service.delete(selectedProjectName!!)
+				managementService.delete(selectedProjectName!!)
 				refreshProjectNames()
 			}
 		}

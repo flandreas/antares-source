@@ -23,7 +23,7 @@ import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.library.*
-import ch.scorpion.jabbah.graph.project.FileProjectService
+import ch.scorpion.jabbah.graph.project.FileProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.IOModule
@@ -66,7 +66,7 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 			metaGraphFileExtension = app.fileExtension,
 			libraryFileName = app.libraryFileName
 		)
-		ProjectModule.projectService = FileProjectService(
+		ProjectModule.projectManagementService = FileProjectManagementService(
 			directoryPath = app.projectsDirectoryPath.toString(),
 			newMetaGraphNameTranslationKey = "graph.name.unknown"
 		)

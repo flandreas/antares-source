@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.style.ThemeEvent
 import ch.scorpion.jabbah.graph.project.Project
-import ch.scorpion.jabbah.graph.project.ProjectEvent
+import ch.scorpion.jabbah.graph.project.CurrentProjectEvent
 import ch.scorpion.jabbah.graph.project.ProjectHolder
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import java.awt.BorderLayout
@@ -29,8 +29,8 @@ class LibraryPanel(
 
     init {
         eventBus.register(ThemeEvent::class) { repaint() }
-	    eventBus.register(LibraryEvent::class) { libraryTreeView.library = it.library }
-	    eventBus.register(ProjectEvent::class) { libraryTreeView.project = it.project }
+	    eventBus.register(CurrentLibraryEvent::class) { libraryTreeView.library = it.library }
+	    eventBus.register(CurrentProjectEvent::class) { libraryTreeView.project = it.project }
 
 	    libraryTreeView.addMouseListener(DoubleClickListener())
 

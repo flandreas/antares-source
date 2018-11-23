@@ -16,11 +16,11 @@ import java.nio.file.Paths
 import java.util.stream.Collectors
 
 /**
- * A [ProjectService] that uses the local file system to store projects.
+ * A [ProjectManagementService] that uses the local file system to store [Project]s.
  *
- * @property directoryPath the absolute path of the file system directory where the projects are located
+ * @property directoryPath the absolute path of the file system directory where the [Project]s are located
  */
-class FileProjectService(
+class FileProjectManagementService(
 	private val directoryPath: String,
 	private val projectFactory: (String) -> Project = ProjectModule.projectFactory,
 	private val libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
@@ -29,17 +29,17 @@ class FileProjectService(
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : ProjectService {
+) : ProjectManagementService {
 
 	companion object {
-		private val LOG by logger(FileProjectService::class)
+		private val LOG by logger(FileProjectManagementService::class)
 	}
 
 	init {
-		eventBus.register(LibraryEvent::class) { close() }
+		eventBus.register(CurrentLibraryEvent::class) { close() }
 	}
 
-	/** ---- [ProjectService] interface */
+	/** ---- [ProjectManagementService] interface */
 
 	override val currentProject: Project? get() = projectHolder.project
 
@@ -67,7 +67,7 @@ class FileProjectService(
 		if (exists(projectName)) {
 			throw IllegalArgumentException("project name '$projectName' already exists")
 		}
-		LOG.debug("FileProjectService: creating new project '$projectName'")
+		LOG.debug("FileProjectManagementService: creating new project '$projectName'")
 		val project = projectFactory.invoke(projectName)
 		project.importedLibrary = libraryHolder.library.uuid
 		libraryService.storeLibrary(project)
@@ -107,7 +107,7 @@ class FileProjectService(
 	}
 
 	private fun openImpl(project: Project, elementUUID: UUID?) {
-		LOG.debug("FileProjectService: open project '${project.name}'")
+		LOG.debug("FileProjectManagementService: open project '${project.name}'")
 		openLibraryForProjectIfNecessary(project)
 		projectHolder.p = project
 		if (elementUUID != null) {
