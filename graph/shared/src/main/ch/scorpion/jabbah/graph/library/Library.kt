@@ -93,12 +93,6 @@ interface LibraryDictionary {
 	/** Determines whether this [LibraryDictionary] contains a mapping with the given [UUID].*/
 	fun contains(uuid: UUID): Boolean
 
-	/** Adds the given mapping to this [LibraryDictionary] and makes the change persistent.*/
-	fun add(name: String, uuid: UUID)
-
-	/** Removes the mapping with the given [UUID] from this [LibraryDictionary] and makes the change persistent.*/
-	fun remove(uuid: UUID)
-
 	/** Returns the names of the stored [Libraries][Library].*/
 	fun getLibraryNames(): ImmutableList<String>
 
@@ -119,14 +113,6 @@ class UnimplementedLibraryDictionary : LibraryDictionary {
 	}
 
 	override fun contains(uuid: UUID): Boolean {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun add(name: String, uuid: UUID) {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun remove(uuid: UUID) {
 		throw UnsupportedOperationException("not implemented")
 	}
 

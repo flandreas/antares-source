@@ -48,6 +48,15 @@ interface LibraryManagementService {
 	fun create(properties: LibraryProperties, templateLibraryName: String?): Library
 
 	/**
+	 * Updates the currently open [Library] with the specified properties and stores it in persistent store.
+	 * @throws IllegalArgumentException if [properties] are not consistent, e.g. if a [Library]
+	 * with the specified name already exists.
+	 * @throws IllegalStateException if no [Library] is currently open
+	 * Posts [LibraryPropertiesEvent] on this [LibraryManagementService]'s [EventBus].
+	 */
+	fun update(properties: LibraryProperties)
+
+	/**
 	 * Loads and opens the [Library] with the specified name, while closing a currently open project.
 	 * @throws IllegalArgumentException if a [Library] with name [name] doesn't exist
 	 */
@@ -96,6 +105,10 @@ class UnimplementedLibraryManagementService : LibraryManagementService {
 	}
 
 	override fun create(properties: LibraryProperties, templateLibraryName: String?): Library {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun update(properties: LibraryProperties) {
 		throw UnsupportedOperationException("not implemented")
 	}
 

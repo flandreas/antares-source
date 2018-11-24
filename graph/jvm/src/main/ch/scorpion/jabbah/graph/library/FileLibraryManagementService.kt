@@ -23,7 +23,7 @@ class FileLibraryManagementService(
 	private val libraryFactory: LibraryFactory = LibraryModule.libraryFactory,
 	private val libraryService: LibraryService = LibraryModule.libraryService.invoke(),
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	private val libraryDirectory: LibraryDictionary = LibraryModule.libraryDictionary,
+	private val libraryDictionary: LibraryDictionary = LibraryModule.libraryDictionary,
 	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : LibraryManagementService {
@@ -41,7 +41,7 @@ class FileLibraryManagementService(
 	}
 
 	override fun getLibraryNames(): ImmutableList<String> {
-		return libraryDirectory.getLibraryNames()
+		return libraryDictionary.getLibraryNames()
 	}
 
 	override fun create(properties: LibraryProperties, templateLibraryName: String?): Library {
@@ -63,6 +63,22 @@ class FileLibraryManagementService(
 		return library
 	}
 
+	override fun update(properties: LibraryProperties) {
+		if (exists(properties.name)) {
+			throw IllegalArgumentException("Library name '${properties.name}' already exists")
+		}
+		val library = libraryHolder.library
+		LOG.debug("FileLibraryManagementService: updating library '${library.name}'")
+
+		if (library.name != properties.name) {
+			libraryService.renameLibrary(library, properties.name)
+		}
+
+		library.properties = properties
+		libraryService.storeLibrary(library)
+		eventBus.post(LibraryPropertiesEvent(library, properties))
+	}
+
 	override fun loadLibrary(name: String): Library {
 		return libraryService.loadLibrary(name)
 	}
@@ -74,7 +90,7 @@ class FileLibraryManagementService(
 	}
 
 	override fun open(uuid: UUID): Library {
-		val library = load(libraryDirectory.getNameOfUUID(uuid))
+		val library = load(libraryDictionary.getNameOfUUID(uuid))
 		open(library)
 		return library
 	}

@@ -133,7 +133,7 @@ class LibraryPersistencePanel(
 				if (StringUtils.isBlank(info.libraryName)) {
 					if (JOptionPane.showConfirmDialog(
 						this@LibraryPersistencePanel,
-						Translations.getString("library.dialog.new.emptyName.msg"),
+						Translations.getString("library.emptyName.msg"),
 						Translations.getString("library.dialog.new.name.dialog.title"),
 						JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
@@ -143,7 +143,7 @@ class LibraryPersistencePanel(
 				} else if (service.exists(info.libraryName)) {
 					if (JOptionPane.showConfirmDialog(
 						this@LibraryPersistencePanel,
-						Translations.getString("library.dialog.new.duplicate.msg", info.libraryName),
+						Translations.getString("library.duplicate.msg", info.libraryName),
 						Translations.getString("library.dialog.new.name.dialog.title"),
 						JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION

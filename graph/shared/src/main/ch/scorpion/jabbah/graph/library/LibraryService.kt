@@ -136,8 +136,7 @@ data class LibraryDeletedEvent(
 /** Posted on [EventBus] when a [Library] has been renamed.*/
 data class LibraryRenamedEvent(
 	val library: Library,
-	val oldName: String,
-	val newName: String
+	val oldName: String
 )
 
 class LibraryServiceImpl(
@@ -185,7 +184,7 @@ class LibraryServiceImpl(
 		persistenceService.renameLibrary(library, newName)
 		library.name = newName
 		storeLibrary(library)
-		eventBus.post(LibraryRenamedEvent(library, oldName, newName))
+		eventBus.post(LibraryRenamedEvent(library, oldName))
 	}
 
 	override fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory, index: Int?) {

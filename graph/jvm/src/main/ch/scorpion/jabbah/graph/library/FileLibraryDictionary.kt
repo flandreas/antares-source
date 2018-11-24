@@ -39,30 +39,26 @@ class FileLibraryDictionary(
 		remove(it.uuid)
 	}
 
+	private val libraryRenamedHandler: EventHandler<LibraryRenamedEvent> = {
+		rename(it.library)
+	}
+
 	init {
 		eventBus.register(LibraryCreatedEvent::class, libraryCreatedHandler)
 		eventBus.register(LibraryDeletedEvent::class, libraryDeletedHandler)
+		eventBus.register(LibraryRenamedEvent::class, libraryRenamedHandler)
 	}
 
 	private fun dispose() {
 		eventBus.unregister(LibraryCreatedEvent::class, libraryCreatedHandler)
 		eventBus.unregister(LibraryDeletedEvent::class, libraryDeletedHandler)
+		eventBus.unregister(LibraryRenamedEvent::class, libraryRenamedHandler)
 	}
 
 	/** ---- [LibraryDictionary] interface */
 
 	override val size: Int get() = entries.size
 	
-	override fun add(name: String, uuid: UUID) {
-		entries[uuid] = FileLibraryDictionaryEntry(uuid, name)
-		store()
-	}
-
-	override fun remove(uuid: UUID) {
-		entries.remove(uuid)
-		store()
-	}
-
 	override fun contains(uuid: UUID): Boolean =
 		entries.contains(uuid)
 	
@@ -125,6 +121,21 @@ class FileLibraryDictionary(
 	}
 
 	/** --- [FileLibraryDictionary] */
+
+	private fun add(name: String, uuid: UUID) {
+		entries[uuid] = FileLibraryDictionaryEntry(uuid, name)
+		store()
+	}
+
+	private fun remove(uuid: UUID) {
+		entries.remove(uuid)
+		store()
+	}
+
+	private fun rename(library: Library) {
+		entries[library.uuid]!!.name = library.name
+		store()
+	}
 
 	private fun getEntryByName(name: String): FileLibraryDictionaryEntry {
 		val entry = entries.values.firstOrNull { it.name == name }

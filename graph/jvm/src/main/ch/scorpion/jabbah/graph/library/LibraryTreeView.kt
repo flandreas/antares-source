@@ -133,6 +133,7 @@ class LibraryTreeView(
 	    libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
 	    libraryRootMenu.addSeparator()
 	    libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
+	    libraryRootMenu.add(ActionWrapperSwing(LibraryPropertiesAction()))
 
         containerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 	    containerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(DefaultContainerLibraryElementAction())))
