@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.io.ElectricXmlWriter
 import ch.scorpion.jabbah.io.StoreXmlReader
 import ch.scorpion.jabbah.io.StoreXmlWriter
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 import org.apache.commons.io.FileUtils
 import java.io.*
@@ -118,7 +119,7 @@ class FileLibraryPersistenceService(
 	}
 
     override fun exportLibrary(library: Library, outputPath: String) {
-        LOG.debug("Exporting library to $outputPath")
+        LOG.debug("FileLibraryPersistenceService: Exporting library to $outputPath")
         FileOutputStream(outputPath).use { output ->
             ZipOutputStream(output).use {
                 val fileToZip = File(buildLibraryDirectoryPath(library.name))
@@ -128,12 +129,22 @@ class FileLibraryPersistenceService(
     }
 
 	override fun importLibrary(name: String, inputPath: String) {
-		LOG.debug("Importing library '$name' from $inputPath")
+		LOG.debug("FileLibraryPersistenceService: Importing library '$name' from $inputPath")
 		FileInputStream(inputPath).use {input ->
 			ZipInputStream(input).use {
 				unzipFile(Files.createDirectory(Paths.get(name)), it)
 			}
 		}
+	}
+
+	override fun renameLibrary(library: Library, newName: String) {
+		LOG.debug("FileLibraryPersistenceService: renameLibrary '${library.name}' to '$newName'")
+		val oldPath = FileSystems.getDefault().getPath(directoryPath, library.name)
+		if (!Files.exists(oldPath)) {
+			throw IllegalArgumentException("No directory found for library ${library.name}")
+		}
+		val newPath = FileSystems.getDefault().getPath(directoryPath, newName)
+		Files.move(oldPath, newPath)
 	}
 
     /** ---- [FileLibraryPersistenceService] */

@@ -157,7 +157,7 @@ class LibraryPersistencePanel(
 
 			LOG.debug("LibraryPersistencePanel: creating new library '${info.libraryName}'")
 			InvocationHandler.invoke {
-				service.open(service.create(info.libraryName, info.templateName))
+				service.open(service.create(LibraryProperties(info.libraryName), info.templateName))
 				closeHandler.invoke()
 			}
 		}

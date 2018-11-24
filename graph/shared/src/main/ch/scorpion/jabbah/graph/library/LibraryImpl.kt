@@ -15,12 +15,20 @@ import ch.scorpion.jabbah.io.*
  * Standard implementation of the [Library] interface.
  */
 open class LibraryImpl(
-	name: String = "",
+	properties: LibraryProperties = LibraryProperties(""),
 	override val libraryService: LibraryService = LibraryModule.libraryService.invoke(),
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val descriptionKey: String = "library.library.name",
 	userHolder: UserHolder = AppModule.userHolder
 ) : Library, LibraryDirectory {
+
+	constructor(
+		name: String = "",
+		libraryService: LibraryService = LibraryModule.libraryService.invoke(),
+		storableCreator: StorableCreator = IOModule.storableCreator,
+		descriptionKey: String = "library.library.name",
+		userHolder: UserHolder = AppModule.userHolder
+	): this(LibraryProperties(name), libraryService, storableCreator, descriptionKey, userHolder)
 
 	companion object {
 		private val LOG by logger(LibraryImpl::class)
@@ -28,11 +36,13 @@ open class LibraryImpl(
 
 	override var uuid: UUID = System.get().createUUID()
 
+	override var description: String? = properties.description
+
 	override var author: UUID = userHolder.user.uuid
 
 	override var defaultElementUUID: UUID? = null
 
-	private var libraryFolder: LibraryFolder = LibraryFolder(name)
+	private var libraryFolder: LibraryFolder = LibraryFolder(properties.name)
 
 	init {
 		libraryFolder.bindTo(this)
@@ -131,6 +141,9 @@ open class LibraryImpl(
 		writer.writeStorable("folder", libraryFolder)
 		writer.writeString("uuid", uuid.toString())
 		writer.writeString("author", author.toString())
+		if (StringUtils.isNotEmpty(description)) {
+			writer.writeString("desc", description!!)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -140,6 +153,7 @@ open class LibraryImpl(
 		libraryFolder = reader.readStorable("folder") as LibraryFolder
 		uuid = System.get().createUUID(reader.readString("uuid"))
 		author = System.get().createUUID(reader.readString("author"))
+		description = reader.readOptionalString("desc")
 	}
 
 	override fun getStorableChildren(): Iterator<Storable> {
@@ -151,6 +165,13 @@ open class LibraryImpl(
 	}
 
 	/** ---- [Library] interface */
+
+	override var properties: LibraryProperties
+		get() = LibraryProperties(name, description)
+		set(value) {
+			name = value.name
+			description = value.description
+		}
 
 	override fun replaceContentsWith(libraryFolder: LibraryFolder) {
 		this.libraryFolder.replaceWith(libraryFolder)

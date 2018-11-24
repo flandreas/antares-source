@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.base.swing
 
 import java.awt.EventQueue
 import java.lang.reflect.InvocationTargetException
+import javax.swing.JScrollPane
+import javax.swing.JTextArea
 import javax.swing.SwingUtilities
 import javax.swing.UIManager
 import javax.swing.plaf.FontUIResource
@@ -71,4 +73,13 @@ object UiUtil {
                 UIManager.put(key, f)
         }
     }
+
+	fun decorateTextArea(textArea: JTextArea): JScrollPane {
+		val scroll = JScrollPane(textArea)
+		val border = UIManager.getBorder("TextField.border")
+		if (border != null) {
+			scroll.border = border
+		}
+		return scroll
+	}
 }

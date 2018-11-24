@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.graph.library.LibraryProperties
+import ch.scorpion.jabbah.graph.library.LibraryPropertiesPanel
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -143,21 +145,26 @@ class ProjectPersistencePanel(
 	private inner class NewAction : AbstractAction("project.dialog.new.action") {
 		override fun execute(event: ActionEvent) {
 			LOG.debug("ProjectPersistencePanel: new project")
-			var projectName: String?
+			var properties: LibraryProperties?
 			while (true) {
-				projectName = JOptionPane.showInputDialog(
-					this@ProjectPersistencePanel,
-					Translations.getString("project.dialog.new.name.dialog.desc"),
-					Translations.getString("project.dialog.new.name.dialog.title"),
-					JOptionPane.QUESTION_MESSAGE
-				)
-				if (StringUtils.isEmpty(projectName)) {
+				properties = LibraryPropertiesPanel.showAsDialog(title = Translations.getString("project.dialog.new.dialog.title"))
+				if (properties == null) {
 					return
 				}
-				if (managementService.exists(projectName)) {
+				if (StringUtils.isBlank(properties.name)) {
+					if (JOptionPane.showConfirmDialog(
+							this@ProjectPersistencePanel,
+							Translations.getString("project.emptyName.msg"),
+							Translations.getString("project.dialog.new.dialog.title"),
+							JOptionPane.OK_CANCEL_OPTION,
+							JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
+					) {
+						return
+					}
+				} else if (managementService.exists(properties.name)) {
 					if (JOptionPane.showConfirmDialog(
 						this@ProjectPersistencePanel,
-						Translations.getString("project.dialog.new.duplicate.msg", projectName),
+						Translations.getString("project.duplicate.msg", properties.name),
 						Translations.getString("project.dialog.new.name.dialog.title"),
 						JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
@@ -169,8 +176,8 @@ class ProjectPersistencePanel(
 				}
 			}
 
-			LOG.debug("ProjectPersistencePanel: creating new project '$projectName'")
-			managementService.open(managementService.create(projectName!!))
+			LOG.debug("ProjectPersistencePanel: creating new project '${properties!!.name}'")
+			managementService.open(managementService.create(properties))
 			closeHandler.invoke()
 		}
 	}

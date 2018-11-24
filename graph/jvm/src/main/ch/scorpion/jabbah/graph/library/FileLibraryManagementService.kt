@@ -44,18 +44,18 @@ class FileLibraryManagementService(
 		return libraryDirectory.getLibraryNames()
 	}
 
-	override fun create(name: String, templateLibraryName: String?): Library {
-		if (exists(name)) {
-			throw IllegalArgumentException("library name '$name' already exists")
+	override fun create(properties: LibraryProperties, templateLibraryName: String?): Library {
+		if (exists(properties.name)) {
+			throw IllegalArgumentException("library name '${properties.name}' already exists")
 		}
-		LOG.debug("FileLibraryManagementService: creating new library '$name' with template $templateLibraryName")
+		LOG.debug("FileLibraryManagementService: creating new library '${properties.name}' with template $templateLibraryName")
 
 		val library = if(StringUtils.isBlank(templateLibraryName)) {
-			val library = libraryFactory.createEmptyLibrary(name)
+			val library = libraryFactory.createEmptyLibrary(properties)
 			libraryService.storeLibrary(library)
 			library
 		} else {
-			libraryService.duplicateLibrary(loadLibrary(templateLibraryName!!), name)
+			libraryService.duplicateLibrary(loadLibrary(templateLibraryName!!), properties.name)
 		}
 
 		library.bindLibraryItems()

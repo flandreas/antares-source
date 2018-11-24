@@ -23,6 +23,9 @@ interface LibraryPersistenceService {
 	/** Duplicates the specified [Library] and stores the duplicate with the given new name.*/
 	fun duplicateLibrary(library: Library, newName: String)
 
+	/** Stores the renaming of a [Library].*/
+	fun renameLibrary(library: Library, newName: String)
+
 	/** Imports a [Library] contained in a ZIP file at `inputPath` and stores it as new [Library] with the given name.*/
 	fun importLibrary(name: String, inputPath: String)
 
@@ -57,6 +60,10 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService{
 	}
 
 	override fun duplicateLibrary(library: Library, newName: String) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun renameLibrary(library: Library, newName: String) {
 		throw UnsupportedOperationException("not implemented")
 	}
 

@@ -73,7 +73,7 @@ class CreateLibraryPanel(
 
 		EGBL.add(
 			this,
-			JLabel(Translations.getString("library.dialog.new.libraryName.label") + ":"),
+			JLabel(Translations.getString("library.property.name.name") + ":"),
 			0, 0,	// x, y
 			1, 1,	// width, height
 			0.0, 0.0,	// weightX, weightY

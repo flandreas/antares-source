@@ -35,6 +35,9 @@ interface LibraryService {
 	 */
 	fun deleteLibrary(name: String)
 
+	/** Renames a [Library] and makes the change persistent.*/
+	fun renameLibrary(library: Library, newName: String)
+
 	/**
 	 * Adds a [LibraryItem] at the end position of a [LibraryDirectory] and makes the change persistent.
 	 * Posts a [LibraryItemAddedEvent] on this [LibraryService]'s [EventBus].
@@ -130,6 +133,13 @@ data class LibraryDeletedEvent(
 	val name: String
 )
 
+/** Posted on [EventBus] when a [Library] has been renamed.*/
+data class LibraryRenamedEvent(
+	val library: Library,
+	val oldName: String,
+	val newName: String
+)
+
 class LibraryServiceImpl(
 	private val libraryAccessor: () -> Library? = { LibraryModule.libraryHolder.library },
 	private val persistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService,
@@ -167,6 +177,15 @@ class LibraryServiceImpl(
 		val library = loadLibrary(name)
 		persistenceService.deleteLibrary(name)
 		eventBus.post(LibraryDeletedEvent(library.uuid, name))
+	}
+
+	override fun renameLibrary(library: Library, newName: String) {
+		LOG.debug("LibraryServiceImpl: Renaming Library '${library.name}' to '$newName'")
+		val oldName = library.name
+		persistenceService.renameLibrary(library, newName)
+		library.name = newName
+		storeLibrary(library)
+		eventBus.post(LibraryRenamedEvent(library, oldName, newName))
 	}
 
 	override fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory, index: Int?) {

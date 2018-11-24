@@ -39,13 +39,13 @@ interface LibraryManagementService {
 	/**
 	 * Creates a new default [Library] with the given name and stores it in persistent store.
 	 * Posts a [LibraryCreatedEvent] on [EventBus].
-	 * @param name the name of the new [Library]
+	 * @param properties the initial properties of the new [Library]
 	 * @param templateLibraryName the name of the [Libary] to be copied as a template.
 	 *      If `null`, an empty [Library] is created.
 	 * @return the created [Library]
 	 * @throws IllegalArgumentException if a [Library] with name [name] already exists
 	 */
-	fun create(name: String, templateLibraryName: String?): Library
+	fun create(properties: LibraryProperties, templateLibraryName: String?): Library
 
 	/**
 	 * Loads and opens the [Library] with the specified name, while closing a currently open project.
@@ -95,7 +95,7 @@ class UnimplementedLibraryManagementService : LibraryManagementService {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun create(name: String, templateLibraryName: String?): Library {
+	override fun create(properties: LibraryProperties, templateLibraryName: String?): Library {
 		throw UnsupportedOperationException("not implemented")
 	}
 

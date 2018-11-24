@@ -115,6 +115,8 @@ class LibraryTreeView(
 	    projectRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 	    projectRootMenu.add(ActionWrapperSwing(newGraphAction))
 	    projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
+	    projectRootMenu.addSeparator()
+	    projectRootMenu.add(ActionWrapperSwing(ProjectPropertiesAction()))
 
 	    directoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
 	    directoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))

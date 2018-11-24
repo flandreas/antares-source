@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -63,12 +64,13 @@ class FileProjectManagementService(
 		return libraryService.loadLibrary(projectName) as Project
 	}
 
-	override fun create(projectName: String): Project {
-		if (exists(projectName)) {
-			throw IllegalArgumentException("project name '$projectName' already exists")
+	override fun create(properties: LibraryProperties): Project {
+		if (exists(properties.name)) {
+			throw IllegalArgumentException("project name '${properties.name}' already exists")
 		}
-		LOG.debug("FileProjectManagementService: creating new project '$projectName'")
-		val project = projectFactory.invoke(projectName)
+		LOG.debug("FileProjectManagementService: creating new project '${properties.name}'")
+		val project = projectFactory.invoke(properties.name)
+		project.description = properties.description
 		project.importedLibrary = libraryHolder.library.uuid
 		libraryService.storeLibrary(project)
 
@@ -77,6 +79,25 @@ class FileProjectManagementService(
 		libraryService.addContainerLibraryElement(project, metaGraph, project)
 
 		return project
+	}
+
+	override fun update(properties: LibraryProperties) {
+		if (exists(properties.name)) {
+			throw IllegalArgumentException("project name '${properties.name}' already exists")
+		}
+		if (projectHolder.project == null) {
+			throw IllegalStateException("cannot update properties, no project open")
+		}
+		val project = projectHolder.project!!
+		LOG.debug("FileProjectManagementService: updating project '${project.name}'")
+
+		if (project.name != properties.name) {
+			libraryService.renameLibrary(project, properties.name)
+		}
+
+		project.properties = properties
+		libraryService.storeLibrary(project)
+		eventBus.post(LibraryPropertiesEvent(project, properties))
 	}
 
 	override fun open(projectName: String): Project {

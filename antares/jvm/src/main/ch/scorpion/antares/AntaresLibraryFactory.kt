@@ -5,12 +5,12 @@ import ch.scorpion.jabbah.graph.library.*
 
 class AntaresLibraryFactory : LibraryFactory {
 
-	override fun createEmptyLibrary(name: String): Library {
-		return LibraryImpl(name, libraryService = LibraryModule.libraryService.invoke())
+	override fun createEmptyLibrary(properties: LibraryProperties): Library {
+		return LibraryImpl(properties, libraryService = LibraryModule.libraryService.invoke())
 	}
 
-	override fun createBaseLibrary(name: String): Library {
-		val library = createEmptyLibrary(name)
+	override fun createBaseLibrary(properties: LibraryProperties): Library {
+		val library = createEmptyLibrary(properties)
 		AntaresViewModule.fillBaseElementLibrary(library)
 		return library
 	}
