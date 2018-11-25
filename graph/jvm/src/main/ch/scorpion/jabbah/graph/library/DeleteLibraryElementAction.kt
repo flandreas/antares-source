@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import java.awt.Frame
 import javax.swing.JOptionPane
 
 /**
@@ -16,7 +17,7 @@ class DeleteLibraryElementAction(
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 	    val libraryItem = libraryTreeView!!.getSelectedItem()
 	    if (JOptionPane.showConfirmDialog(
-		    null,
+		    Frame.getFrames()[0],
 		    Translations.getString("graph.action.deleteLibraryElement.question", libraryTreeView!!.getSelectedItem()!!),
 		    name,
 		    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)

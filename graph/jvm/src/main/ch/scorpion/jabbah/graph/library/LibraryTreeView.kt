@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.JTreeUtil.findTreeNode
+import ch.scorpion.jabbah.base.swing.JTreeUtil.getPath
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.project.*
@@ -235,6 +236,7 @@ class LibraryTreeView(
 			findOptionalTreeNode(event.parent)?.let {
 				it.add(DefaultMutableTreeNode(event.item))
 				(model as DefaultTreeModel).nodesWereInserted(it, intArrayOf(it.childCount - 1))
+				expandPath(getPath(it))
 			}
 		}
 	}
