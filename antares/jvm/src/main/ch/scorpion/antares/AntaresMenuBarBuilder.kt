@@ -6,6 +6,7 @@ import ch.scorpion.antares.view.gate.EuropeanSymbolStyleAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.app.AbstractApplicationFrame
+import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -19,11 +20,16 @@ import javax.swing.*
 /**
  * Adds [ch.scorpion.antares] related menus to the [GraphMenuBarBuilder].
  */
-class AntaresMenuBarBuilder(frame: AbstractApplicationFrame, eventBus: EventBus) : GraphMenuBarBuilder(frame, eventBus) {
+class AntaresMenuBarBuilder(
+	frame: AbstractApplicationFrame,
+	eventBus: EventBus
+) : GraphMenuBarBuilder(frame, eventBus) {
 
     override fun fillMenuBar(menuBar: JMenuBar) {
         super.fillMenuBar(menuBar)
-        menuBar.add(fillDevelopmentMenu(JMenu(Translations.getString("application.menu.development"))))
+	    if (AppModule.userHolder.user.isDeveloper) {
+		    menuBar.add(fillDevelopmentMenu(JMenu(Translations.getString("application.menu.development"))))
+	    }
     }
 
     override fun fillViewMenu(menu: JMenu) {

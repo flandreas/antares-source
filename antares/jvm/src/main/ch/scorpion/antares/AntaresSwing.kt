@@ -6,6 +6,8 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.memory.MemoryContentsPanel
 import ch.scorpion.antares.view.memory.OpenMemoryContentsRequest
 import ch.scorpion.jabbah.app.*
+import ch.scorpion.jabbah.app.module.AppModule
+import ch.scorpion.jabbah.app.user.UserHolder
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
