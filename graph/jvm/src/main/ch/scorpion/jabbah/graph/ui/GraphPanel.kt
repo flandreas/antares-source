@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPane
+import ch.scorpion.jabbah.base.swing.SidebarSplitPane
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.ComponentPropertyPanel
@@ -56,9 +57,11 @@ import javax.swing.*
 
 
 /**
- * A [JPanel] for editing and executing a root [GraphView]. It consists of a [LibraryPanel] at the left,
- * a [ComponentPropertyPanel] for editing the properties of the selected [Component] at the center-left,
- * and a [GraphNavigationPanel] for editing the [GraphView] at the center-right.
+ * A [JPanel] for editing and executing a root [GraphView].
+ *
+ * It consists of a [LibraryPanel] at the left, a [ComponentPropertyPanel] for editing the properties
+ * of the selected [Component] at the center-left, and a [GraphNavigationPanel] for editing the [GraphView]
+ * at the center-right.
  */
 class GraphPanel(
 	val editor: Editor,
@@ -75,33 +78,52 @@ class GraphPanel(
 		private const val DEF_SIDEBAR_SIZE = 200
 	}
 
+	/** Allows to edit and execute the currently open GraphView.*/
 	private val graphEditPanel: GraphEditPanel = GraphEditPanel(editor, scheduler, viewManager, graphNavigationPanelFactory,
 		propertySheetFactory, { eventBus.post(CloseApplicationDataRequest(editor.drawing)) }, eventBus)
 
+	/** Allows to open multiple Graphs.*/
 	private val desktop : GraphDesktop = GraphDesktop(graphEditPanel, eventBus, viewManager, graphNavigationPanelFactory, scheduler)
 
-	private val libraryPropertyPanel: ComponentPropertyPanel
+	/** Displays the properties of the currently selected component in [graphEditPanel].*/
+	private val propertyPanel: ComponentPropertyPanel
 
+	/** Contains UI for selecting components from the current library or the current project.*/
 	val libraryPanel = LibraryPanel(eventBus, libraryHolder)
 
 	private val drawingToolBar = createDrawingToolBar()
 
 	private val settingsToolBar = createSettingsToolBar()
 
-	private val bottomSidebarPane = SidebarPane(SidebarPane.Orientation.Horizontal) { bottomSidebarPaneChanged() }
+	/** Contains the errors view.*/
+	private val bottomSidebarPane = SidebarPane(SidebarPane.Location.Bottom) { bottomSidebarPaneChanged() }
 
 	val toolbars: List<ToolBar> = listOf(
 		createExecutionToolBar(),
 		drawingToolBar,
 		settingsToolBar)
 
-	private val librarySplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+	/** The "Explorer" contains [libraryPanel] and [propertyPanel].*/
+	private val explorerSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+	/**
+	 * Allows to show and hide the Explorer. If not initialy opened, the event system turns crazy and lags while processing
+	 * drag events in the DrawingView (BUG still not explained).
+	 */
+	private val leftSidebarPane = SidebarSplitPane(
+		location = SidebarPane.Location.Left,
+		mainContent = desktop,
+		settingBaseName = "graphPanel.leftSidebar",
+		providedInitialOpenIndex = 0,
+		contents = listOf(SidebarPane.Content(
+			Translations.getString("graph.explorer.name"),
+			"/img/compass-16.png",
+			explorerSplitPane)
+		))
 
-	private val bottonSidebarSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+	private val bottomSidebarSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-	/** Holds the location of [bottonSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
+	/** Holds the location of [bottomSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
 	private var bottomSidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.bottomSidebarSplitPos", -1)
 
 	private var currentMode: ApplicationMode = ApplicationMode.EDIT
@@ -126,7 +148,7 @@ class GraphPanel(
 	init {
 
 		(editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
-		libraryPropertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
+		propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
 		eventBus.register(ApplicationDataEvent::class) {
 			editedGraphView = (it.newData as MetaGraph?)?.graph?.graphView as GraphView<GraphElementView<*>>?
@@ -156,8 +178,9 @@ class GraphPanel(
 	}
 
 	fun dispose() {
-		BaseModule.settings.set("graphPanel.mainSplitPos", mainSplitPane.dividerLocation)
-		BaseModule.settings.set("graphPanel.librarySplitPos", librarySplitPane.dividerLocation)
+		leftSidebarPane.dispose()
+		graphEditPanel.dispose()
+		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
 	}
 
 	private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
@@ -169,48 +192,43 @@ class GraphPanel(
 			&& editedGraphView != null
 
 		editor.active = editable
-		libraryPropertyPanel.editable = editable
+		propertyPanel.editable = editable
 	}
 
 	private fun buildUI() {
 		layout = BorderLayout()
 
-		librarySplitPane.border = null
-		librarySplitPane.add(libraryPanel)
-		librarySplitPane.add(libraryPropertyPanel)
-		librarySplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 700)
+		explorerSplitPane.border = null
+		explorerSplitPane.add(libraryPanel)
+		explorerSplitPane.add(propertyPanel)
+		explorerSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 700)
 
-		bottonSidebarSplitPane.border = null
-		bottonSidebarSplitPane.resizeWeight = 1.0
+		bottomSidebarSplitPane.border = null
+		bottomSidebarSplitPane.resizeWeight = 1.0
 
-		bottomSidebarPane.add(Translations.getString("graph.issues.title"), "/img/issue-16.png", issuesPanel)
+		bottomSidebarPane.add(SidebarPane.Content(Translations.getString("graph.issues.title"), "/img/issue-16.png", issuesPanel))
 
-		mainSplitPane.add(librarySplitPane)
-		mainSplitPane.add(desktop)
-		mainSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.mainSplitPos", 250)
-		mainSplitPane.border = null
-
-		add(mainSplitPane, BorderLayout.CENTER)
+		add(leftSidebarPane, BorderLayout.CENTER)
 		add(bottomSidebarPane, BorderLayout.SOUTH)
 	}
 
-	/** Handles changes of the �isOpen� property of the [bottomSidebarPane]. */
+	/** Handles changes of the `isOpen` property of the [bottomSidebarPane]. */
 	private fun bottomSidebarPaneChanged() {
 		if (bottomSidebarPane.isOpen) {
 			removeAll()
-			bottonSidebarSplitPane.remove(mainSplitPane)
-			bottonSidebarSplitPane.remove(bottomSidebarPane)
-			bottonSidebarSplitPane.add(mainSplitPane)
-			bottonSidebarSplitPane.add(bottomSidebarPane)
-			bottonSidebarSplitPane.dividerLocation = if (bottomSidebarDividerLocation > 0) bottomSidebarDividerLocation else mainSplitPane.height - DEF_SIDEBAR_SIZE
-			bottomSidebarDividerLocation = bottonSidebarSplitPane.dividerLocation
-			add(bottonSidebarSplitPane, BorderLayout.CENTER)
+			bottomSidebarSplitPane.remove(leftSidebarPane)
+			bottomSidebarSplitPane.remove(bottomSidebarPane)
+			bottomSidebarSplitPane.add(leftSidebarPane)
+			bottomSidebarSplitPane.add(bottomSidebarPane)
+			bottomSidebarSplitPane.dividerLocation = if (bottomSidebarDividerLocation > 0) bottomSidebarDividerLocation else leftSidebarPane.height - DEF_SIDEBAR_SIZE
+			bottomSidebarDividerLocation = bottomSidebarSplitPane.dividerLocation
+			add(bottomSidebarSplitPane, BorderLayout.CENTER)
 		} else {
-			bottomSidebarDividerLocation = bottonSidebarSplitPane.dividerLocation
+			bottomSidebarDividerLocation = bottomSidebarSplitPane.dividerLocation
 			removeAll()
-			bottonSidebarSplitPane.remove(mainSplitPane)
-			bottonSidebarSplitPane.remove(bottomSidebarPane)
-			add(mainSplitPane, BorderLayout.CENTER)
+			bottomSidebarSplitPane.remove(leftSidebarPane)
+			bottomSidebarSplitPane.remove(bottomSidebarPane)
+			add(leftSidebarPane, BorderLayout.CENTER)
 			add(bottomSidebarPane, BorderLayout.SOUTH)
 		}
 		revalidate()
@@ -316,7 +334,7 @@ class GraphPanel(
 	private inner class ToggleModeAction(private val scheduler: Scheduler, eventBus: EventBus) : AbstractAction() {
 		init {
 			updateState()
-			eventBus.register(SchedulerActivationStateEvent::class, { updateState() })
+			eventBus.register(SchedulerActivationStateEvent::class) { updateState() }
 
 		}
 

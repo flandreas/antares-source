@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.base.swing
 import ch.scorpion.jabbah.base.logger
 import java.awt.BorderLayout
 import java.awt.Color
-import java.awt.Component
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
@@ -12,25 +11,96 @@ import javax.swing.*
  * A [JPanel] that stacks multiple collapsed views at the right side, allowing the user to display one of
  * them on demand.
  *
+ * @property location the relative location of this [SidebarPane] within its containing [JPanel]. This defines
+ * the orientation of the title and the arrow button for closing the [SidebarPane].
  * @property isOpenChangeHandler a callback called by [SidebarPane] whenever the [isOpen] property has changed,
  * which allows the owner of this [SidebarPane] to adjust its view, if necessary (such as using this [SidebarPane]
  * within a [JSplitPane], if it is open).
  */
-class SidebarPane(private val orientation: Orientation, private val isOpenChangeHandler: () -> Unit) : JPanel() {
+class SidebarPane(
+	private val location: Location,
+	private val isOpenChangeHandler: () -> Unit
+) : JPanel() {
+
+	data class Content(val name: String, val iconPath: String, val content: JComponent)
 
     companion object {
         private val LOG by logger(SidebarPane::class)
     }
 
-    enum class Orientation {
-        Horizontal,
-        Vertical
+    enum class Location {
+
+	    /** The [SidebarPane] is displayed at the bottom of the main content.*/
+        Bottom {
+
+	        override fun createIcon(): ImageIcon {
+		        return ImageIcon(SidebarPane::class.java.getResource("/img/double-arrow-down-16.png"))
+	        }
+
+	        override fun createLabel(name: String, icon: Icon): JLabel {
+		        return JLabel(name, icon, SwingConstants.LEADING)
+	        }
+
+	        override fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel) {
+		        labelPanel.layout = BoxLayout(labelPanel, BoxLayout.X_AXIS)
+		        panel.add(labelPanel, BorderLayout.SOUTH)
+		        panel.add(contentPanel, BorderLayout.CENTER)
+	        }
+        },
+
+	    /** The [SidebarPane] is displayed at the right side of the main content.*/
+        Right {
+
+	        override fun createIcon(): ImageIcon {
+		        return ImageIcon(SidebarPane::class.java.getResource("/img/double-arrow-right-16.png"))
+	        }
+
+	        override fun createLabel(name: String, icon: Icon): JLabel {
+		        return VerticalLabel.create(name, icon)
+	        }
+
+	        override fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel) {
+		        labelPanel.layout = BoxLayout(labelPanel, BoxLayout.Y_AXIS)
+		        panel.add(labelPanel, BorderLayout.EAST)
+		        panel.add(contentPanel, BorderLayout.CENTER)
+	        }
+        },
+
+	    /** The [SidebarPane] is displayed at the left side of the main content.*/
+	    Left {
+
+	        override fun createIcon(): ImageIcon {
+		        return ImageIcon(SidebarPane::class.java.getResource("/img/double-arrow-left-16.png"))
+	        }
+
+	        override fun createLabel(name: String, icon: Icon): JLabel {
+		        return VerticalLabel.create(name, icon, clockwise = false)
+	        }
+
+	        override fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel) {
+		        labelPanel.layout = BoxLayout(labelPanel, BoxLayout.Y_AXIS)
+		        panel.add(labelPanel, BorderLayout.WEST)
+		        panel.add(contentPanel, BorderLayout.CENTER)
+	        }
+        };
+
+	    abstract fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel)
+	    abstract fun createLabel(name: String, icon: Icon): JLabel
+	    abstract fun createIcon(): ImageIcon
     }
 
     /** Determines whether this [SidebarPane] is currently open, i.e. whether it displays one if its content views.*/
     val isOpen: Boolean get() = current != null
 
-    /** The [JPanel] at the right side containing the vertical [JLabel]s. */
+	/** Returns the index of the currently open content, of -1 if none is open.*/
+	val openIndex: Int get() {
+		if (current == null) {
+			return -1
+		}
+		return entries.indexOf(current!!)
+	}
+
+    /** The [JPanel] at the right side (or top side) containing the vertical (or horizontal) [JLabel]s. */
     private val labelPanel = JPanel()
 
     /** Contains the content of the current [Entry] in the center and the title bar in the north. */
@@ -41,6 +111,7 @@ class SidebarPane(private val orientation: Orientation, private val isOpenChange
 
     private val headerPanel = JPanel()
 
+	/** Contains all [Entries][Entry] registered with [add].*/
     private val entries = mutableListOf<Entry>()
 
     private var current: Entry? = null
@@ -56,12 +127,24 @@ class SidebarPane(private val orientation: Orientation, private val isOpenChange
      * @param name the translated name of the content to be displayed in the vertical button (if the content is closed)
      * or in the title bar (if the content is closed).
      */
-    fun add(name: String, iconPath: String, content: JComponent) {
-        val entry = createEntry(name, ImageIcon(SidebarPane::class.java.getResource(iconPath)), content)
+    fun add(content: Content) {
+        val entry = createEntry(content.name, ImageIcon(SidebarPane::class.java.getResource(content.iconPath)), content.content)
         entries.add(entry)
         entry.label.addMouseListener(labelListener)
         labelPanel.add(entry.label)
     }
+
+	/**
+	 * Opens the content with the specified index.
+	 * @param index the index of the content, or `-1` to close all content.
+	 */
+	fun open(index: Int) {
+		if (index < 0) {
+			activate(null)
+		} else {
+			activate(entries[index])
+		}
+	}
 
     private fun initUI() {
         headerPanel.layout = BoxLayout(headerPanel, BoxLayout.X_AXIS)
@@ -70,54 +153,28 @@ class SidebarPane(private val orientation: Orientation, private val isOpenChange
         headerPanel.add(Box.createGlue())
 
         val collapseButton = JButton()
-        collapseButton.addActionListener({ collapse() })
-        collapseButton.icon = when (orientation) {
-            Orientation.Vertical -> ImageIcon(SidebarPane::class.java.getResource("/img/double-arrow-right-16.png"))
-            Orientation.Horizontal -> ImageIcon(SidebarPane::class.java.getResource("/img/double-arrow-down-16.png"))
-        }
+        collapseButton.addActionListener { collapse() }
+	    collapseButton.icon = location.createIcon()
         collapseButton.border = BorderFactory.createEmptyBorder()
         collapseButton.toolTipText = "Hide"
         headerPanel.add(collapseButton)
-        headerPanel.background = getBackgroundDivertColor()
+	    headerPanel.background = getBackgroundDivertColor()
 
         contentPanel.layout = BorderLayout()
 
         layout = BorderLayout()
-        when (orientation) {
-            Orientation.Vertical -> {
-                labelPanel.layout = BoxLayout(labelPanel, BoxLayout.Y_AXIS)
-                add(labelPanel, BorderLayout.EAST)
-                add(contentPanel, BorderLayout.CENTER)
-            }
-            Orientation.Horizontal -> {
-                labelPanel.layout = BoxLayout(labelPanel, BoxLayout.X_AXIS)
-                add(labelPanel, BorderLayout.SOUTH)
-                add(contentPanel, BorderLayout.CENTER)
-            }
-        }
+	    location.initUI(this, labelPanel, contentPanel)
     }
 
     private fun createEntry(name: String, icon: Icon, content: JComponent): Entry {
-        when (orientation) {
-            Orientation.Vertical -> {
-                val label = VerticalLabel.create(name, icon)
-                label.border = BorderFactory.createEmptyBorder(5, 10, 5, 10)
-                label.isOpaque = true
-                label.verticalAlignment = SwingConstants.TOP
-                return Entry(label, content)
-            }
-            Orientation.Horizontal -> {
-                val label = JLabel(name)
-                label.border = BorderFactory.createEmptyBorder(5, 10, 5, 10)
-                label.icon = icon
-                label.isOpaque = true
-                label.verticalAlignment = SwingConstants.TOP
-                return Entry(label, content)
-            }
-        }
+	    val label = location.createLabel(name, icon)
+	    label.border = BorderFactory.createEmptyBorder(5, 10, 5, 10)
+	    label.isOpaque = true
+	    label.verticalAlignment = SwingConstants.TOP
+	    return Entry(label, content)
     }
 
-    private data class Entry(val label: JLabel, val content: JComponent) {
+    data class Entry(val label: JLabel, val content: JComponent) {
         val name: String = label.text
     }
 
@@ -137,7 +194,8 @@ class SidebarPane(private val orientation: Orientation, private val isOpenChange
             titleLabel.text = current!!.name
             contentPanel.add(headerPanel, BorderLayout.NORTH)
             contentPanel.add(current!!.content, BorderLayout.CENTER)
-            current!!.label.background = background.darker()
+
+	        current!!.label.background = Color(175, 175, 175)
         }
         if (changed) {
             isOpenChangeHandler.invoke()

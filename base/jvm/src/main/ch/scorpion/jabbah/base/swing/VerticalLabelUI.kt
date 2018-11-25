@@ -9,12 +9,13 @@ class VerticalLabel {
     companion object {
 
         fun create(
-                text: String = "",
-                icon: Icon? = null,
-                horizontalAlignment: Int = SwingConstants.LEFT
+            text: String = "",
+            icon: Icon? = null,
+            horizontalAlignment: Int = SwingConstants.LEFT,
+            clockwise: Boolean = true
         ): JLabel {
             val label = JLabel(text, icon, horizontalAlignment)
-	        label.setUI(VerticalLabelUI.labelUI)
+	        label.setUI(VerticalLabelUI.getUI(clockwise))
             return label
         }
     }
@@ -23,11 +24,20 @@ class VerticalLabel {
 class VerticalLabelUI(private val clockwise: Boolean = true) : BasicLabelUI() {
 
     companion object {
-        val labelUI = VerticalLabelUI()
+        private val labelUI = VerticalLabelUI()
+	    private val antiClockwiseLabelUI = VerticalLabelUI(false)
         private val paintIconRect = Rectangle()
         private val paintTextRect = Rectangle()
         private val paintViewRect = Rectangle()
         private val paintViewInsets = Insets(0, 0, 0, 0)
+
+	    fun getUI(clockwise: Boolean): VerticalLabelUI {
+		    return if (clockwise) {
+			    labelUI
+		    } else {
+			    antiClockwiseLabelUI
+		    }
+	    }
     }
 
     override fun getPreferredSize(c: JComponent?): Dimension {
