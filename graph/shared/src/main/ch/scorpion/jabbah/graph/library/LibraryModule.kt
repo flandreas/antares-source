@@ -33,6 +33,6 @@ object LibraryModule : AbstractModule() {
         typeMap.register("libraryFolder", LibraryFolder::class)
         typeMap.register("containerLibraryElement", ContainerLibraryElement::class)
 	    typeMap.register("libraryDictionary", FileLibraryDictionary::class)
-	    typeMap.register("libraryDictionaryEntry", FileLibraryDictionaryEntry::class)
+	    typeMap.register("libraryDictionaryEntry", LibraryDictionaryEntry::class)
     }
 }

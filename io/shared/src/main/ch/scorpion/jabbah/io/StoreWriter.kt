@@ -51,6 +51,13 @@ interface StoreWriter : GlobalIdentityProvider {
      */
     fun writeString(name: String, value: String)
 
+	/**
+	 * Writes the specified [String] if it is not `null` or empty.
+	 * @param name the name of the attribute.
+	 * @param value the value of the attribute.
+	 */
+	fun writeOptionalString(name: String, value: String?)
+
     /**
      * Writes the specified [Boolean] attribute under the given name.
      * @param name the name of the attribute.

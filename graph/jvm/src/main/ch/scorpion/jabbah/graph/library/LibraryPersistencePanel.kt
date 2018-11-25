@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.module.AppModule
+import ch.scorpion.jabbah.app.user.UserHolder
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
@@ -27,6 +29,7 @@ class ShowLibrariesDialogAction(private val parent: JFrame) : AbstractAction("li
 class LibraryPersistencePanel(
 	private val service: LibraryManagementService = LibraryModule.libraryManagementService,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+	private val userHolder: UserHolder = AppModule.userHolder,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
 
@@ -53,16 +56,16 @@ class LibraryPersistencePanel(
 		}
 	}
 
-	private val libraryNameList = JList<String>(loadLibraryNames())
-	private val currentLibraryFont = libraryNameList.font.deriveFont(Font.BOLD)
+	private val libraryDictionaryEntries = JList<LibraryDictionaryEntry>(loadLibraryDirectoryEntries())
+	private val currentLibraryFont = libraryDictionaryEntries.font.deriveFont(Font.BOLD)
 	private val openAction = OpenAction()
 	private val deleteAction = DeleteAction()
 
-	private val selectedLibraryName: String? get() = libraryNameList.selectedValue
+	private val selectedLibraryName: String? get() = libraryDictionaryEntries.selectedValue.name
 
 	init {
-		libraryNameList.addListSelectionListener { updateActions() }
-		libraryNameList.addMouseListener(object: MouseAdapter() {
+		libraryDictionaryEntries.addListSelectionListener { updateActions() }
+		libraryDictionaryEntries.addMouseListener(object: MouseAdapter() {
 			override fun mouseClicked(e: MouseEvent?) {
 				if (e!!.clickCount == 2) {
 					openAction.execute(ActionWrapperSwing.toJabbaActionEvent(e))
@@ -78,7 +81,7 @@ class LibraryPersistencePanel(
 		preferredSize = Dimension(400, 400)
 		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
-		val scrollPane = JScrollPane(libraryNameList)
+		val scrollPane = JScrollPane(libraryDictionaryEntries)
 		add(scrollPane, BorderLayout.CENTER)
 
 		val buttonPanel = JPanel()
@@ -91,18 +94,28 @@ class LibraryPersistencePanel(
 		buttonPanel.add(JButton(ActionWrapperSwing(CancelAction())))
 		add(buttonPanel, BorderLayout.SOUTH)
 
-		libraryNameList.cellRenderer = LibraryListRenderer()
+		libraryDictionaryEntries.cellRenderer = LibraryListRenderer()
 	}
 
-	private fun loadLibraryNames(): ListModel<String> {
-		val list = DefaultListModel<String>()
-		service.getLibraryNames().forEach { list.addElement(it) }
+	private fun isReadonly(entry: LibraryDictionaryEntry): Boolean {
+		return entry.author != userHolder.user.uuid
+	}
+
+	private fun loadLibraryDirectoryEntries(): ListModel<LibraryDictionaryEntry> {
+		val list = DefaultListModel<LibraryDictionaryEntry>()
+		service.getLibraryDirectoryEntries().forEach { list.addElement(it) }
 		return list
 	}
 
 	private fun updateActions() {
-		openAction.enabled = !libraryNameList.isSelectionEmpty && libraryNameList.selectedValue != libraryHolder.l?.name
-		deleteAction.enabled = !libraryNameList.isSelectionEmpty && libraryNameList.selectedValue != libraryHolder.l?.name
+		openAction.enabled =
+			!libraryDictionaryEntries.isSelectionEmpty
+			&& libraryDictionaryEntries.selectedValue.name != libraryHolder.l?.name
+
+		deleteAction.enabled =
+			!libraryDictionaryEntries.isSelectionEmpty
+			&& libraryDictionaryEntries.selectedValue.name != libraryHolder.l?.name
+			&& !isReadonly(libraryDictionaryEntries.selectedValue)
 	}
 
 	private inner class OpenAction : AbstractAction("library.dialog.open.action") {
@@ -168,11 +181,11 @@ class LibraryPersistencePanel(
 			val libraryName = selectedLibraryName!!
 
 			if (JOptionPane.showConfirmDialog(
-					this@LibraryPersistencePanel,
-					Translations.getString("library.dialog.delete.confirmation.msg", libraryName),
-					Translations.getString("library.dialog.delete.title"),
-					JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.WARNING_MESSAGE) == JOptionPane.CANCEL_OPTION
+				this@LibraryPersistencePanel,
+				Translations.getString("library.dialog.delete.confirmation.msg", libraryName),
+				Translations.getString("library.dialog.delete.title"),
+				JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.WARNING_MESSAGE) == JOptionPane.CANCEL_OPTION
 			) {
 				return
 			}
@@ -186,14 +199,15 @@ class LibraryPersistencePanel(
 	}
 
 	private inner class LibraryListRenderer : DefaultListCellRenderer() {
+
+		private val lockedIcon = ImageIcon(LibraryPersistencePanel::class.java.getResource("/img/locked-16.png"))
+		private val unlockedIcon = ImageIcon(LibraryPersistencePanel::class.java.getResource("/img/unlocked-16.png"))
+
 		override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
-			val renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
-			val name = value as String
-			if (name == libraryHolder.library.name) {
-				renderer.font = currentLibraryFont
-			} else {
-				renderer.font = libraryNameList.font
-			}
+			val renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel
+			val entry = value as LibraryDictionaryEntry
+			renderer.font = if (entry.name == libraryHolder.library.name) currentLibraryFont else libraryDictionaryEntries.font
+			renderer.icon = if (isReadonly(entry)) lockedIcon else unlockedIcon
 			return renderer
 		}
 	}

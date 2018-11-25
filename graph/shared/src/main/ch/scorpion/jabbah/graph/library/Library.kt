@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.user.User
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 
@@ -77,54 +77,3 @@ data class LibraryProperties(val name: String, val description: String? = null)
  * Note that this event is NOT posted by [Library] itself.
  */
 data class LibraryPropertiesEvent(val library: Library, val properties: LibraryProperties)
-
-/**
- * Maintains all [Libraries][Library] of an installation/user by mapping [Library] names to their [UUID],
- * avoiding the need to read all [Libraries][Library] from persistent store to do this mapping.
- */
-interface LibraryDictionary {
-
-	/** Returns the number of mappings in this [LibraryDictionary].*/
-	val size: Int
-
-	/** Loads the contents of this [LibraryDictionary] from persistent storage.*/
-	fun load()
-
-	/** Determines whether this [LibraryDictionary] contains a mapping with the given [UUID].*/
-	fun contains(uuid: UUID): Boolean
-
-	/** Returns the names of the stored [Libraries][Library].*/
-	fun getLibraryNames(): ImmutableList<String>
-
-	/** Returns the [UUID] of the [Library] with the specified name.*/
-	fun getUUIDofName(name: String): UUID
-
-	/** Returns the name of the [Library] with the specified [UUID].*/
-	fun getNameOfUUID(uuid: UUID): String
-}
-
-/** Null pattern.*/
-class UnimplementedLibraryDictionary : LibraryDictionary {
-
-	override val size: Int get() = TODO("not implemented")
-
-	override fun load() {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun contains(uuid: UUID): Boolean {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun getLibraryNames(): ImmutableList<String> {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun getUUIDofName(name: String): UUID {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun getNameOfUUID(uuid: UUID): String {
-		throw UnsupportedOperationException("not implemented")
-	}
-}

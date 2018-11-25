@@ -1,8 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
@@ -28,11 +26,11 @@ class FileLibraryDictionary(
 		private val LOG by logger(FileLibraryDictionary::class)
 	}
 	
-	/** Maps a [UUID] of a [FileLibraryDictionaryEntry] to its [FileLibraryDictionaryEntry].*/
-	private val entries = mutableMapOf<UUID,FileLibraryDictionaryEntry>()
+	/** Maps a [UUID] of a [LibraryDictionaryEntry] to its [LibraryDictionaryEntry].*/
+	private val entries = mutableMapOf<UUID,LibraryDictionaryEntry>()
 
 	private val libraryCreatedHandler: EventHandler<LibraryCreatedEvent> = {
-		add(it.library.name, it.library.uuid)
+		addFor(it.library)
 	}
 
 	private val libraryDeletedHandler: EventHandler<LibraryDeletedEvent> = {
@@ -43,16 +41,22 @@ class FileLibraryDictionary(
 		rename(it.library)
 	}
 
+	private val libraryPropertiesHandler: EventHandler<LibraryPropertiesEvent> = {
+		update(it.library, it.properties)
+	}
+
 	init {
 		eventBus.register(LibraryCreatedEvent::class, libraryCreatedHandler)
 		eventBus.register(LibraryDeletedEvent::class, libraryDeletedHandler)
 		eventBus.register(LibraryRenamedEvent::class, libraryRenamedHandler)
+		eventBus.register(LibraryPropertiesEvent::class, libraryPropertiesHandler)
 	}
 
 	private fun dispose() {
 		eventBus.unregister(LibraryCreatedEvent::class, libraryCreatedHandler)
 		eventBus.unregister(LibraryDeletedEvent::class, libraryDeletedHandler)
 		eventBus.unregister(LibraryRenamedEvent::class, libraryRenamedHandler)
+		eventBus.unregister(LibraryPropertiesEvent::class, libraryPropertiesHandler)
 	}
 
 	/** ---- [LibraryDictionary] interface */
@@ -64,6 +68,10 @@ class FileLibraryDictionary(
 	
 	override fun getLibraryNames(): ImmutableList<String> =
 		entries.values.map { it.name }.sorted().toImmutableList()
+
+	override fun getEntries(): ImmutableList<LibraryDictionaryEntry> {
+		return entries.values.toList().toImmutableList()
+	}
 
 	override fun getUUIDofName(name: String): UUID = getEntryByName(name).uuid
 
@@ -112,7 +120,7 @@ class FileLibraryDictionary(
 	override fun read(reader: StoreReader) {
 		reader
 			.readStorables("entries")
-			.map { it as FileLibraryDictionaryEntry }
+			.map { it as LibraryDictionaryEntry }
 			.forEach { entries[it.uuid] = it }
 	}
 
@@ -122,8 +130,8 @@ class FileLibraryDictionary(
 
 	/** --- [FileLibraryDictionary] */
 
-	private fun add(name: String, uuid: UUID) {
-		entries[uuid] = FileLibraryDictionaryEntry(uuid, name)
+	private fun addFor(library: Library) {
+		entries[library.uuid] = LibraryDictionaryEntry.forLibrary(library)
 		store()
 	}
 
@@ -137,7 +145,12 @@ class FileLibraryDictionary(
 		store()
 	}
 
-	private fun getEntryByName(name: String): FileLibraryDictionaryEntry {
+	private fun update(library: Library, properties: LibraryProperties) {
+		entries[library.uuid]!!.updateFrom(properties)
+		store()
+	}
+
+	private fun getEntryByName(name: String): LibraryDictionaryEntry {
 		val entry = entries.values.firstOrNull { it.name == name }
 		if (entry == null) {
 			LOG.error("FileLibraryDictionary: requesting entry of non-existing library with name $name")
@@ -166,27 +179,5 @@ class FileLibraryDictionary(
 
 	private fun buildLibraryDirectoryFilePath(): String {
 		return FileSystems.getDefault().getPath(directoryPath, dictionaryFileName).toString()
-	}
-}
-
-data class FileLibraryDictionaryEntry(
-	var uuid: UUID = System.get().createUUID(),
-	var name: String = ""
-) : Storable {
-
-	override var storableId: Int = 0
-
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
-
-	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
-	
-	override fun write(writer: StoreWriter) {
-		writer.writeString("uuid", uuid.toString())
-		writer.writeString("name", name)
-	}
-
-	override fun read(reader: StoreReader) {
-		uuid = System.get().createUUID(reader.readString("uuid"))
-		name = reader.readString("name")
 	}
 }

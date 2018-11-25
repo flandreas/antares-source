@@ -30,6 +30,9 @@ interface LibraryManagementService {
 	/** Returns the names of the stored [Libraries][Library].*/
 	fun getLibraryNames(): ImmutableList<String>
 
+	/** Returns all [LibraryDictionaryEntries][LibraryDictionaryEntry].*/
+	fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry>
+
 	/** Determines whether [name] already exists as the name of a stored [Library].*/
 	fun exists(name: String): Boolean
 
@@ -93,6 +96,10 @@ class UnimplementedLibraryManagementService : LibraryManagementService {
 	override val currentLibrary: Library get() = TODO("not implemented")
 
 	override fun getLibraryNames(): ImmutableList<String> {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> {
 		throw UnsupportedOperationException("not implemented")
 	}
 

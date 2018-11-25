@@ -44,6 +44,10 @@ class FileLibraryManagementService(
 		return libraryDictionary.getLibraryNames()
 	}
 
+	override fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> {
+		return libraryDictionary.getEntries()
+	}
+
 	override fun create(properties: LibraryProperties, templateLibraryName: String?): Library {
 		if (exists(properties.name)) {
 			throw IllegalArgumentException("library name '${properties.name}' already exists")

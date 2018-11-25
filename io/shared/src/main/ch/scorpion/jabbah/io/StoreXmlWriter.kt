@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.io
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.System
 
@@ -81,6 +82,12 @@ class StoreXmlWriter(
     override fun writeString(name: String, value: String) {
         xmlWriter.setAttributeValue(name, value)
     }
+
+	override fun writeOptionalString(name: String, value: String?) {
+		if (StringUtils.isNotEmpty(value)) {
+			writeString(name, value!!)
+		}
+	}
 
     override fun writeBoolean(name: String, value: Boolean) {
         xmlWriter.setAttributeValue(name, if (value) "true" else "false")
