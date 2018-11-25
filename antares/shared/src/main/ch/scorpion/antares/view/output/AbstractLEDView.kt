@@ -164,6 +164,20 @@ abstract class AbstractLEDView<T: Vertice>(
 	/** Returns the [Color] to be used for drawing the bulb of this [LED].*/
 	protected abstract fun getBulbColor(): Color
 
+	/** Draws the bulb in the color returned by [getBulbColor].*/
+	protected open fun drawBulb(context: DrawContext) {
+		drawBulb(context, getBulbColor())
+	}
+
+	/** Draws the bulb using the specified [Color].*/
+	protected fun drawBulb(context: DrawContext, color: Color) {
+		context.g.color = color
+		context.g.fillOval(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
+			SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+		context.g.drawOval(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
+			SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+	}
+
 	private fun updateLabel() {
 		invalidate()
 		label.text = StringUtils.orEmpty(name)
@@ -178,11 +192,7 @@ abstract class AbstractLEDView<T: Vertice>(
 		context.g.fillOval(xInt, yInt, SIZE, SIZE)
 		context.g.color = COLOR_BORDER
 		context.g.drawOval(xInt, yInt, SIZE, SIZE)
-		context.g.color = getBulbColor()
-		context.g.fillOval(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-			SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
-		context.g.drawOval(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-			SIZE - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH)
+		drawBulb(context)
 	}
 }
 
