@@ -15,6 +15,9 @@ import ch.scorpion.jabbah.io.StoreWriter
  * - Provide a supplier that knows how to instantiate the [GraphElementView]. Use this method if you need to
  * change the created [GraphElementView] after instantiation.
  * The supplier takes precedence over the [StorableCreator].
+ *
+ * @property name the name of an entry in [BaseLibraryElementRepository] containing the referenced [GraphElementView].
+ * @property repository the [BaseLibraryElementRepository] that contains the [GraphElementView] referenced by [name].
  */
 class BaseLibraryElement(
 	override var name: String = "",

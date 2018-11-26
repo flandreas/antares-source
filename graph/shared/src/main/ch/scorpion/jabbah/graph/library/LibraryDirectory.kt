@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.Language
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.collection.ImmutableList
 
 /**
@@ -8,6 +10,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
  */
 interface LibraryDirectory : LibraryItem {
 
+	/** Contains the displayable name of this [LibraryDictionary] in the [System]'s current [Language].*/
 	override var name: String
 
 	fun isEmpty(): Boolean

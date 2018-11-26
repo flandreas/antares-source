@@ -48,4 +48,11 @@ interface System {
      */
     fun getActionAcceleratorKey(baseName: String): String
 
+	/**
+	 * Returns the current [Language] to be used for translating dynamic text.
+	 * If the current system language isn't one of those supported by Jabbah (as defined by [Language]),
+	 * this method returns the default language as of [Language.DEFAULT].
+	 */
+	fun currentLanguage(): Language
+
 }

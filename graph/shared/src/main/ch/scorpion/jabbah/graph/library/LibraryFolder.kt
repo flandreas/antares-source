@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.io.*
 
 class LibraryFolder(
@@ -17,6 +19,8 @@ class LibraryFolder(
 ) : AbstractLibraryItem(iconPath), LibraryDirectory {
 
     private val items: MutableList<LibraryItem> = mutableListOf()
+
+	private var translatedName = TranslatableText()
 
 	var defaultElementUUID: UUID? = null
 
@@ -30,9 +34,19 @@ class LibraryFolder(
 
     override val isFixed: Boolean get() = false
 
-    override var name: String = StringUtils.orEmpty(name)
+	override var name: String
+		get() = translatedName.getTranslation()
+		set(value) {
+			if (StringUtils.isNotEmpty(value)) {
+				translatedName.setTranslation(value)
+			}
+		}
 
-    override fun accept(visitor: HierarchyVisitor): Boolean {
+	init {
+		this.name = StringUtils.orEmpty(name)
+	}
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
         if (visitor.visitEnter(this)) {
             val iter = items.iterator()
             while (iter.hasNext()) {
@@ -54,7 +68,8 @@ class LibraryFolder(
     override var storableId: Int = 0
 
     override fun write(writer: StoreWriter) {
-        writer.writeString("name", name)
+	    writer.writeStorables("name", translatedName.allTranslations())
+
 	    if (defaultElementUUID != null) {
 		    writer.writeString("defaultElement", defaultElementUUID.toString())
 	    }
@@ -62,7 +77,14 @@ class LibraryFolder(
     }
 
     override fun read(reader: StoreReader) {
-        name = reader.readString("name")
+	    if (reader.hasAttribute("name")) {
+		    // backward compatibility
+		    name = reader.readString("name")
+	    }
+	    if (reader.hasElement("name")) {
+		    translatedName = TranslatableText(reader.readStorables("name").map { it as Translation })
+	    }
+
 	    if (reader.hasAttribute("defaultElement")) {
 		    defaultElementUUID = UUID(reader.readString("defaultElement"))
 	    }

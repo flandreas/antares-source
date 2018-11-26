@@ -19,6 +19,7 @@ interface LibraryItem : Storable {
 
     /**
      * Returns the name of this [LibraryItem] to be displayed in the graphical representation of the [LibraryItem].
+     * The interpretation of this name depends on the concrete type of classes that implement [LibraryItem].
      */
     val name: String
 

@@ -24,10 +24,7 @@ import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.model.polyline.EditModelPolylineModule
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 import ch.scorpion.jabbah.edit.model.rectangle.*
-import ch.scorpion.jabbah.edit.model.text.EditModelTextModule
-import ch.scorpion.jabbah.edit.model.text.LabelComponent
-import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
-import ch.scorpion.jabbah.edit.model.text.TextComponentFactory
+import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.snap.EditSnapModule
 import ch.scorpion.jabbah.edit.style.EditTheme
@@ -83,5 +80,6 @@ object EditModule : AbstractModule() {
         typeMap.register("text", SimpleTextComponent::class)
         typeMap.register("group", GroupComponent::class)
         typeMap.register("quadCurve", QuadCurveComponent::class)
+	    typeMap.register("translation", Translation::class)
     }
 }

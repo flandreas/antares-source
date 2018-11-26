@@ -94,4 +94,12 @@ class SystemJvm(private val useJavaFX: Boolean = false) : System {
         }
         return "$baseName.accelerator"
     }
+
+	override fun currentLanguage(): Language {
+		val code = java.lang.System.getProperty("user.language")
+		if (Language.supports(code)) {
+			return Language.withCode(code)
+		}
+		return Language.DEFAULT
+	}
 }

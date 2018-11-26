@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base
 
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.exception.MissingResourceException
 
 /**
@@ -26,3 +27,39 @@ open class TranslationsClass {
 }
 
 var Translations: TranslationsClass = TranslationsClass()
+
+/**
+ * Defines all languages supported by the Jabbah framework for translation of dynamic (i.e. user provided) text.
+ * @property code the ISO 639-1 two-letter language code. Example: "en" for English.
+ */
+enum class Language(val code: String) {
+	English("en"),
+	German("de");
+
+	companion object {
+
+		val DEFAULT: Language = English
+
+		fun withCode(code: String): Language {
+			return getLanguage(code) ?: throw IllegalArgumentException("unknown Language $code")
+		}
+
+		fun supports(code: String): Boolean {
+			return getLanguage(code) != null
+		}
+
+		private fun getLanguage(code: String): Language? {
+			for (lang in Language.values()) {
+				if (lang.code == code) {
+					return lang
+				}
+			}
+			return null
+		}
+	}
+
+	override fun toString(): String = when(this) {
+		Language.English -> Translations.getString("base.language.en.name")
+		Language.German -> Translations.getString("base.language.de.name")
+	}
+}

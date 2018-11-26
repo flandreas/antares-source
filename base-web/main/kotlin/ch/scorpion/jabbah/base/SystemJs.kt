@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base
 
+import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.base.geom.AffineTransformImpl
 import ch.scorpion.jabbah.base.geom.Path
@@ -77,4 +78,6 @@ class SystemJs() : System {
     }
 
     override fun getActionAcceleratorKey(baseName: String): String = "$baseName.accelerator"
+
+	override fun fun currentLanguage(): Language = Language.English
 }
