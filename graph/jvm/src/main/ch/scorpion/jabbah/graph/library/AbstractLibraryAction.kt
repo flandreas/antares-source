@@ -58,6 +58,8 @@ abstract class AbstractLibraryFolderAction(
 	eventBus: EventBus
 ) : AbstractLibraryAction(actionBaseName, eventBus) {
 
+	val selectedFolder: LibraryDirectory get() = selectedItem as LibraryDirectory
+
 	override fun calculateEnabledness(): Boolean = selectedItem is LibraryDirectory
 }
 

@@ -20,7 +20,7 @@ class LibraryFolder(
 
     private val items: MutableList<LibraryItem> = mutableListOf()
 
-	private var translatedName = TranslatableText()
+	override var translatableName = TranslatableText()
 
 	var defaultElementUUID: UUID? = null
 
@@ -35,10 +35,10 @@ class LibraryFolder(
     override val isFixed: Boolean get() = false
 
 	override var name: String
-		get() = translatedName.getTranslation()
+		get() = translatableName.getTranslation()
 		set(value) {
 			if (StringUtils.isNotEmpty(value)) {
-				translatedName.setTranslation(value)
+				translatableName.setTranslation(value)
 			}
 		}
 
@@ -68,7 +68,7 @@ class LibraryFolder(
     override var storableId: Int = 0
 
     override fun write(writer: StoreWriter) {
-	    writer.writeStorables("name", translatedName.allTranslations())
+	    writer.writeStorables("name", translatableName.allTranslations())
 
 	    if (defaultElementUUID != null) {
 		    writer.writeString("defaultElement", defaultElementUUID.toString())
@@ -82,7 +82,7 @@ class LibraryFolder(
 		    name = reader.readString("name")
 	    }
 	    if (reader.hasElement("name")) {
-		    translatedName = TranslatableText(reader.readStorables("name").map { it as Translation })
+		    translatableName = TranslatableText(reader.readStorables("name").map { it as Translation })
 	    }
 
 	    if (reader.hasAttribute("defaultElement")) {

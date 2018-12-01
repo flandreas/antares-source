@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 
 /**
  * A [LibraryDirectory] is a [LibraryItem] that contains other [LibraryItem]s, hence representing an
@@ -12,6 +13,9 @@ interface LibraryDirectory : LibraryItem {
 
 	/** Contains the displayable name of this [LibraryDictionary] in the [System]'s current [Language].*/
 	override var name: String
+
+	/** Contains the displayable name of this [LibraryDictionary] as various translations.*/
+	var translatableName: TranslatableText
 
 	fun isEmpty(): Boolean
 

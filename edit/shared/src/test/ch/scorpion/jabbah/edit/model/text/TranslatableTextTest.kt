@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Language.*
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.io.*
 import org.hamcrest.CoreMatchers.`is`
@@ -34,6 +35,12 @@ class TranslatableTextTest {
 
 		assertThat(text.hasTranslation(German), `is`(true))
 		assertThat(text.hasTranslation(English), `is`(false))
+	}
+
+	@Test(expected = IllegalArgumentException::class)
+	fun shouldNotAcceptEmptyTranslation() {
+		val text = TranslatableText()
+		text.setTranslation(German, "")
 	}
 
 	@Test

@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
 import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 import ch.scorpion.jabbah.io.*
@@ -59,6 +60,12 @@ open class LibraryImpl(
 	}
 
 	/** ---- [LibraryDirectory] */
+
+	override var translatableName: TranslatableText
+		get() = libraryFolder.translatableName
+		set(value) {
+			libraryFolder.translatableName = value
+		}
 
 	override fun isEmpty(): Boolean = libraryFolder.isEmpty()
 

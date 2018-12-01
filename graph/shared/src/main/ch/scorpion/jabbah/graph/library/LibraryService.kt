@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
@@ -58,6 +59,12 @@ interface LibraryService {
 	 * @return the created [LibraryDirectory]
 	 */
 	fun addFolder(library: Library, name: String, directory: LibraryDirectory): LibraryDirectory
+
+	/**
+	 * Renames the specified [LibraryDirectory].
+	 * Posts [LibraryDirectoryRenamedEvent] on this [LibraryService]'s [EventBus].
+	 */
+	fun renameDirectory(directory: LibraryDirectory, newName: TranslatableText)
 
 	/**
 	 * Ensures that a [LibraryDirectory] contains a [LibraryFolder] with the specified name. Creates and adds a
@@ -136,6 +143,12 @@ data class LibraryDeletedEvent(
 /** Posted on [EventBus] when a [Library] has been renamed.*/
 data class LibraryRenamedEvent(
 	val library: Library,
+	val oldName: String
+)
+
+/** Posted on [EventBus] when a [LibraryDirectory] has been renamed*/
+data class LibraryDirectoryRenamedEvent(
+	val directory: LibraryDirectory,
 	val oldName: String
 )
 
@@ -224,6 +237,14 @@ class LibraryServiceImpl(
 		val folder = LibraryFolder(name)
 		addLibraryItem(library, folder, directory)
 		return folder
+	}
+
+	override fun renameDirectory(directory: LibraryDirectory, newName: TranslatableText) {
+		LOG.debug("LibraryServiceImpl: Renaming LibraryDirectory")
+		val oldName = directory.name
+		directory.translatableName = newName
+		storeLibrary(directory.library!!)
+		eventBus.post(LibraryDirectoryRenamedEvent(directory, oldName))
 	}
 
 	override fun ensureFolder(library: Library, name: String, directory: LibraryDirectory): LibraryDirectory {

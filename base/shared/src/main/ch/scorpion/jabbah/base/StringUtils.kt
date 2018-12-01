@@ -18,6 +18,8 @@ object StringUtils {
 
     fun isNotEmpty(s: String?): Boolean = !isEmpty(s)
 
+	fun isNotBlank(s: String?): Boolean = !isBlank(s)
+
     fun orEmpty(s: String?): String {
         if (s == null) {
             return ""

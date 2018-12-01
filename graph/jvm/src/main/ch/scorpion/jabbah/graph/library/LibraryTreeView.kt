@@ -94,6 +94,7 @@ class LibraryTreeView(
         eventBus.register(LibraryItemAddedEvent::class) { handle(it) }
 	    eventBus.register(LibraryItemRemovedEvent::class) { handle(it) }
 	    eventBus.register(LibraryItemUpdatedEvent::class) { handle(it) }
+	    eventBus.register(LibraryDirectoryRenamedEvent::class) { handle(it) }
 
 	    eventBus.register(ApplicationModeEvent::class) { dragEnabled = it.applicationMode === ApplicationMode.EDIT }
 	    eventBus.register(CurrentSavableEvent::class) { handle(it) }
@@ -106,6 +107,7 @@ class LibraryTreeView(
 	    val deleteLibraryFolderAction = DeleteLibraryFolderAction()
 	    val deleteLibraryElementAction = DeleteLibraryElementAction()
 	    val editLibraryAction = EditLibraryAction()
+	    val libraryFolderPropertiesAction = LibraryFolderPropertiesAction()
 
 	    desktopPopupMenu.add(ActionWrapperSwing(expandAllAction))
 	    desktopPopupMenu.add(ActionWrapperSwing(collapseAllAction))
@@ -125,6 +127,7 @@ class LibraryTreeView(
 	    directoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 	    directoryPopupMenu.add(ActionWrapperSwing(newGraphAction))
 	    directoryPopupMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
+	    directoryPopupMenu.add(ActionWrapperSwing(libraryFolderPropertiesAction))
 
 	    libraryRootMenu.add(ActionWrapperSwing(expandAllAction))
 	    libraryRootMenu.add(ActionWrapperSwing(collapseAllAction))
@@ -260,6 +263,13 @@ class LibraryTreeView(
 			val nodeIndex = parent.getIndex(node)
 			node.removeFromParent()
 			(model as DefaultTreeModel).nodesWereRemoved(parent, intArrayOf(nodeIndex), arrayOf(node))
+		}
+	}
+
+	private fun handle(event: LibraryDirectoryRenamedEvent) {
+		if (displaysLibrary(event.directory.library)) {
+			val node = findTreeNode(event.directory)
+			(model as DefaultTreeModel).nodeChanged(node)
 		}
 	}
 

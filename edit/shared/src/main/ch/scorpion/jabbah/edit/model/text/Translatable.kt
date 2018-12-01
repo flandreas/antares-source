@@ -9,11 +9,20 @@ import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.io.*
 import java.util.*
 
-/** Represents an individual text in a particular [Language].*/
+/**
+ * Represents an individual text in a particular [Language].
+ * Mutable only for deserialization.
+ */
 class Translation(
-	var language: Language = Language.DEFAULT,
-	var text: String = ""
+	language: Language = Language.DEFAULT,
+	text: String = ""
 ) : Storable {
+
+	var language: Language = language
+		private set
+
+	var text: String = text
+		private set
 
 	/** ---- [Storable] interface */
 
@@ -29,13 +38,9 @@ class Translation(
 		text = reader.readString("text")
 	}
 
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-		// empty
-	}
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
-	override fun getStorableChildren(): Iterator<Storable> {
-		return Collections.emptyIterator()
-	}
+	override fun getStorableChildren(): Iterator<Storable> = Collections.emptyIterator()
 }
 
 /**
@@ -62,7 +67,7 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 
 	/** Sets the translation for a particular [Language].*/
 	fun setTranslation(language: Language, text: String) {
-		checkArgument(StringUtils.isNotEmpty(text), "text must not be empty")
+		checkArgument(StringUtils.isNotBlank(text), "text must not be empty")
 		translations[language] = Translation(language, text)
 	}
 
@@ -83,4 +88,10 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 
 	/** Returns all registered translations.*/
 	fun allTranslations(): Iterator<Translation> = translations.values.iterator()
+
+	/**
+	 * Determines whether this [TranslatableText] contains at least a translation for the default [Language].
+	 * or the [System] language.
+	 */
+	fun hasDefaultOrSystemLanguage(): Boolean = hasTranslation(Language.DEFAULT) || hasTranslation(System.get().currentLanguage())
 }
