@@ -48,8 +48,8 @@ class EditContainerLibraryElementAction(
 	    val library = element.library!!
 	    val metaGraph = library.libraryService.loadMetaGraph(library, element)
 	    when (library) {
-		    LibraryModule.libraryHolder.library -> application.open(metaGraph, LibrarySavable(metaGraph, element))
-		    ProjectModule.projectHolder.project -> application.open(metaGraph, ProjectSavable(metaGraph, element))
+		    LibraryModule.libraryHolder.library -> application.open(metaGraph, LibrarySavable(element))
+		    ProjectModule.projectHolder.project -> application.open(metaGraph, ProjectSavable(element))
 		    else -> {
 			    LOG.error("EditContainerLibraryElementAction: Inconsistent state, unknown ContainerLibraryElement, cannot open")
 			    throw IllegalStateException()

@@ -13,13 +13,12 @@ import ch.scorpion.jabbah.graph.MetaGraph
  * Saves the edited [MetaGraph] of a [ContainerLibraryElement] in the containing [LibraryDirectory].
  */
 class LibrarySavable(
-    metaGraph: MetaGraph,
     element: ContainerLibraryElement,
     val library: Library = LibraryModule.libraryHolder.library,
     val service: LibraryService = LibraryModule.libraryService.invoke(),
     private val userHolder: UserHolder = AppModule.userHolder,
     private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibrarySavable(metaGraph, element, service) {
+) : AbstractLibrarySavable(element, service) {
 
 	/** ---- [Savable] */
 
@@ -33,7 +32,7 @@ class LibrarySavable(
     }
 
     override fun save(application: Application): Boolean {
-	    service.updateContainerLibraryElement(library, metaGraph, element)
+	    service.updateContainerLibraryElement(library, element)
         return true
     }
 

@@ -86,7 +86,7 @@ interface LibraryService {
 	 * and makes the change persistent.
 	 * Posts a [LibraryItemUpdatedEvent] on this [LibraryService]'s [EventBus].
 	 */
-	fun updateContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement)
+	fun updateContainerLibraryElement(library: Library, element: ContainerLibraryElement)
 
 	/**
 	 * Returns the [MetaGraph] of a [ContainerLibraryElement], loading it if not already loaded.
@@ -263,14 +263,16 @@ class LibraryServiceImpl(
 		return element
 	}
 
-	override fun updateContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement) {
+	override fun updateContainerLibraryElement(library: Library, element: ContainerLibraryElement) {
 		LOG.debug("LibraryServiceImpl: Updating ContainerLibraryElement")
-		val nameChanged = metaGraph.name != element.name
-		storeContainerLibraryElement(library, metaGraph, element)
-		if (nameChanged) {
-			storeLibrary(library)
+		element.metaGraph?.let {
+			val nameChanged = it.name != element.name
+			storeContainerLibraryElement(library, it, element)
+			if (nameChanged) {
+				storeLibrary(library)
+			}
+			eventBus.post(LibraryItemUpdatedEvent(library, element))
 		}
-		eventBus.post(LibraryItemUpdatedEvent(library, element))
 	}
 
 	override fun getMetaGraph(library: Library, element: ContainerLibraryElement): MetaGraph {
