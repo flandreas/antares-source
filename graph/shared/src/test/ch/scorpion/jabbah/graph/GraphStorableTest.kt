@@ -38,7 +38,7 @@ class GraphStorableTest {
         val clone: GraphStorable = IOModule.storableClonerProvider.invoke().cloneUsingCreator(orig, IOModule.storableCreator) as GraphStorable
 
         // Assert model connectedness
-        val graph: Graph = clone.graphView!!.graph!!
+        val graph: Graph = clone.graphView.graph!!
 
         assertThat((graph.withId(1) as Vertice).getOutput<Boolean>().net?.id, `is`(3))
         assertThat((graph.withId(2) as Vertice).getInput<Boolean>().net?.id, `is`(3))
@@ -47,7 +47,7 @@ class GraphStorableTest {
         assertThat((graph.withId(3) as Net<Boolean>).isConnectedWith((graph.withId(2) as Vertice).getInput()), `is`(true))
 
         // Assert view connectedness
-        val graphView = clone.graphView!!
+        val graphView = clone.graphView
 
         assertThat((graphView.getWidthId(3) as EdgeView<Boolean>).origin as TestVerticeView, `is`(sameInstance(graphView.getWidthId(1))))
         assertThat((graphView.getWidthId(3) as EdgeView<Boolean>).originPort as OutputPort<Boolean>, `is`(sameInstance((graphView.getWidthId(1)!!.model as TestVertice).getOutput<Boolean>())))

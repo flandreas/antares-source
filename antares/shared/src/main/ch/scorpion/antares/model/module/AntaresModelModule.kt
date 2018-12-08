@@ -27,7 +27,7 @@ object AntaresModelModule : AbstractModule() {
 
     override fun initialize() {
         configureTypeMap(IOModule.typeMap)
-        GraphModelModule.graphFactory = { DigitalGraph() }
+        GraphModelModule.graphFactory = { DigitalGraph(name = it) }
     }
 
     private fun configureTypeMap(typeMap: TypeMap) {

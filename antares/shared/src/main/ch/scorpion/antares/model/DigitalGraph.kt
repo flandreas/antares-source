@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -14,7 +15,10 @@ import ch.scorpion.jabbah.base.logger
 /**
  * A [GraphImpl] that forwards [DigitalSignal]s.
  */
-class DigitalGraph(eventBus: EventBus = BaseModule.eventBus) : GraphImpl(eventBus = eventBus) {
+class DigitalGraph(
+	name: String = Translations.getString("graph.name.unknown"),
+	eventBus: EventBus = BaseModule.eventBus
+) : GraphImpl(name = name, eventBus = eventBus) {
 
     companion object {
         private val LOG by logger(DigitalGraph::class)

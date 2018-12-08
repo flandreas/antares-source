@@ -43,7 +43,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  * A standard implementation of the [GraphView] interface.
  */
 class GraphViewImpl<T : GraphElementView<*>>(
-        override var graph: Graph? = GraphModelModule.graphFactory.invoke(),
+        override var graph: Graph?,
         private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
         private val outputToInputConnector: OutputToInputConnector = GraphViewModule.outputToInputConnector,
         private val inputToOutputOrEdgeConnector: InputToOutputOrEdgeConnector = GraphViewModule.inputToOutputOrEdgeConnector,
@@ -52,6 +52,9 @@ class GraphViewImpl<T : GraphElementView<*>>(
         private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
         private val eventBus: EventBus = BaseModule.eventBus
 ) : DrawingImpl<T>(), GraphView<T> {
+
+	constructor(): this(Translations.getString("graph.name.unknown"))
+	constructor(name: String): this( GraphModelModule.graphFactory.invoke(name))
 
     private val LOG by logger(GraphViewImpl::class)
 

@@ -58,6 +58,6 @@ class GraphPaneDropHandlerFx(
 
 	override fun extractComponent(transferData: String): Component {
 		val graphStorable = IOModule.storableClonerProvider.invoke().deserialize(transferData) as GraphStorable
-		return graphStorable.graphView!!.get(0)
+		return graphStorable.graphView.get(0)
 	}
 }

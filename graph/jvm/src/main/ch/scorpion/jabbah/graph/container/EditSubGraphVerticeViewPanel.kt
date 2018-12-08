@@ -52,8 +52,8 @@ class EditSubGraphVerticeViewPanel(
     private fun fill() {
         val libraryGraph = metaGraphRepository.getMetaGraph(subGraphVerticeView.subGraphVertice!!.graphUUID!!)
         containerPanel.setData(
-                libraryGraph.graph.graphView!!,
-                storableCloner.clone(subGraphVerticeView.getEditableContainerDrawing()) as ContainerDrawing)
+	        libraryGraph.graph.graphView,
+            storableCloner.clone(subGraphVerticeView.getEditableContainerDrawing()) as ContainerDrawing)
     }
 
     private inner class OkAction : AbstractAction(Translations.getString("edit.action.ok.name")) {

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.UUID
@@ -74,7 +75,12 @@ class CombinedMetaGraphRepository(
 /**
  * Combines a [GraphStorable] and a [ContainerDrawing] as a [Storable].
  */
-class MetaGraph(graph: GraphStorable = GraphStorable(), containerDrawing: ContainerDrawing = ContainerDrawing()) : Storable {
+class MetaGraph(
+	graph: GraphStorable,
+	containerDrawing: ContainerDrawing
+) : Storable {
+
+	constructor(): this(GraphStorable(Translations.getString("graph.name.unknown")), ContainerDrawing(Translations.getString("graph.name.unknown")))
 
 	companion object {
 		fun withName(name: String): MetaGraph {
@@ -96,7 +102,6 @@ class MetaGraph(graph: GraphStorable = GraphStorable(), containerDrawing: Contai
     val uuid: UUID get() = graph.model!!.uuid
 
     init {
-        containerDrawing.model.name = name
         containerDrawing.model.graphUUID = uuid
         containerDrawing.initialize()
     }

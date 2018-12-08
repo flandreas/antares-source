@@ -33,10 +33,13 @@ class ContainerPanel(
     val editor: ContainerEditor,
     propertySheetFactory: PropertySheetPanelFactory,
     eventBus: EventBus,
-    private val viewManager: ViewManager
+    viewManager: ViewManager
 ) : JPanel() {
 
-    constructor(editor: ContainerEditor, viewManager: ViewManager): this(editor, EditModuleJvm.propertySheetPanelFactory, BaseModule.eventBus, viewManager)
+    constructor(
+	    editor: ContainerEditor,
+	    viewManager: ViewManager
+    ): this(editor, EditModuleJvm.propertySheetPanelFactory, BaseModule.eventBus, viewManager)
 
     /** The [ContainerTreeView] containing all objects of the underlying [GraphView] that have not yet been added to the [ContainerDrawing].*/
     private val treeView = GraphModuleJvm.containerTreeViewFactory.invoke()
@@ -62,7 +65,7 @@ class ContainerPanel(
 		        }
 		        val metaGraph = it.newData as MetaGraph
 		        editedContainerDrawing = metaGraph.containerDrawing
-		        setData(metaGraph.graph.graphView!!, editedContainerDrawing!!)
+		        setData(metaGraph.graph.graphView, editedContainerDrawing!!)
 	        }
 	        updateEditability()
         }

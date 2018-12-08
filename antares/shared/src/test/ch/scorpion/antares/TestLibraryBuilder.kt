@@ -49,10 +49,9 @@ class TestLibraryBuilder(
     }
 
     private fun createContainerDrawing(circuitView: GraphView<*>): ContainerDrawing {
-        val containerDrawing = GraphViewModule.createContainerDrawing()
+        val containerDrawing = GraphViewModule.createContainerDrawing(circuitView.graph!!.name)
 
         containerDrawing.model.graphUUID = circuitView.graph!!.uuid
-        containerDrawing.model.name = circuitView.graph!!.name
 
         for (circuitInput in circuitView.graph!!.graphInputs) {
             containerDrawing.add(

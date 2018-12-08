@@ -20,10 +20,10 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  * Supports building [GraphView]s that contain Antares components.
  */
 class TestCircuitBuilder(
-	private val graphName: String,
+	graphName: String,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : GraphViewBuilder<DigitalSignal>() {
+) : GraphViewBuilder<DigitalSignal>(graphName) {
 
     /**
      * Builds a [GraphView] that contains a [NotGateView] along with [CircuitInOutView] for input and output.
@@ -32,7 +32,6 @@ class TestCircuitBuilder(
         val not = addVerticeView(NotGateView())
         connect(addInput(), not)
         connect(not, addOutput())
-        graph.name = graphName
         return graphView
     }
 
@@ -48,7 +47,6 @@ class TestCircuitBuilder(
         connect(andView, notView)
         connect(notView, addOutput())
 
-        graph.name = graphName
         return graphView
     }
 

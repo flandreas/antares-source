@@ -70,10 +70,9 @@ object CopyPasteUtilitySwing {
                 val writer = StoreXmlWriter(
                     xmlWriter,
                     typeMap,
-                    GlobalIdentityCreator(),
-                    { c -> c !is GraphElementView<*> || components.contains(c) }
-                )
-                val graphStorable = GraphStorable(graphView)
+                    GlobalIdentityCreator()
+                ) { c -> c !is GraphElementView<*> || components.contains(c) }
+	            val graphStorable = GraphStorable(graphView)
                 writer.writeStorable(graphStorable)
 
                 Toolkit.getDefaultToolkit().systemClipboard.setContents(
@@ -118,9 +117,9 @@ object CopyPasteUtilitySwing {
 
                 if (copy is GraphStorable) {
                     val components = mutableListOf<Component>()
-                    for (cv in copy.graphView!!.backToFrontIterator()) {
+                    for (cv in copy.graphView.backToFrontIterator()) {
                         if (cv is VerticeView) {
-                            strip(cv, copy.graphView!!)
+                            strip(cv, copy.graphView)
                         }
                         if (pastedAnchorComponent == null && origAnchorComponent!!.location == cv.location) {
                             pastedAnchorComponent = cv

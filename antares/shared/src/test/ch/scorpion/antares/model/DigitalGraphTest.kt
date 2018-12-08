@@ -32,7 +32,7 @@ class DigitalGraphTest {
     @Test
     fun shouldForwardTunnelSignal() {
         val signalHandler = ForwardSignalHandler()
-        val testGraph = DigitalGraph(mock<EventBus>())
+        val testGraph = DigitalGraph(eventBus = mock<EventBus>())
 
         val tunnel1 = Tunnel("Test")
         testGraph.add(tunnel1)

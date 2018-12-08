@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -8,6 +9,7 @@ import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
@@ -15,27 +17,29 @@ import ch.scorpion.jabbah.graph.model.*
 
 /**
  * A [SubGraphVertice] implementation that is used as the model class of a [ContainerDrawing].
+ * They are used as a blueprint when creating [SubGraphVerticeRef]s that reference a particular [Graph].
+ *
+ * Extends [AbstractVertice] for its [Port] management functionality.
  */
-class SubGraphVerticeImpl : CalculatingVertice("graph.element.container", EmptyVerticeCalculator), SubGraphVertice {
+class SubGraphVerticeImpl(
+	name: String = Translations.getString("graph.name.unknown")
+) : AbstractVertice("graph.element.container", name), SubGraphVertice {
 
     companion object {
         private val LOG by logger(SubGraphVerticeImpl::class)
     }
 
-    // TODO Not used any more?
-    private val graph: Graph? = null
-
     /* ---- [SubGraphVertice] */
 
-    // TODO Not used any more?
+	/** Used when [SubGraphVerticeRef]s are created from this [SubGraphVerticeImpl].*/
     override var graphUUID: UUID? = null
 
     override fun getGraphIfPresent(): Graph? {
-        return graph
+        return null
     }
 
     override fun getGraph(repository: MetaGraphRepository, storableCreator: StorableCreator): Graph {
-        return graph!!
+        throw UnsupportedOperationException()
     }
 
     override fun <T : Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler) {

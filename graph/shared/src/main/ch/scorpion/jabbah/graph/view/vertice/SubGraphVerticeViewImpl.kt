@@ -338,7 +338,7 @@ class SubGraphVerticeViewImpl(
 
     override fun createSubGraphView(): GraphView<GraphElementView<SubGraphVerticeRef>> {
         val libraryGraph = repository.getMetaGraph(subGraphVertice!!.graphUUID!!)
-        val graphView = libraryGraph.graph.graphView!!.cloneForExistingModel(getGraph(), storableCreator)
+        val graphView = libraryGraph.graph.graphView.cloneForExistingModel(getGraph(), storableCreator)
         graphView.bind()
         return graphView as GraphView<GraphElementView<SubGraphVerticeRef>>
     }

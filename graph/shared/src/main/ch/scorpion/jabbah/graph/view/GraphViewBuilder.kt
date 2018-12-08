@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.Graph
@@ -18,9 +19,11 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
  * Provides a convenient API for building [GraphView]s that contain connected [VerticeView]s.
  * @param T the type of signal
  */
-open class GraphViewBuilder<T: Any> {
+open class GraphViewBuilder<T: Any>(
+	name: String = Translations.getString("graph.name.unknown")
+) {
 
-    val graph: Graph = GraphModelModule.graphFactory.invoke()
+    val graph: Graph = GraphModelModule.graphFactory.invoke(name)
     val graphView: GraphView<GraphElementView<out GraphElement>> = GraphViewModule.createGraphView(graph)
 
     fun build(): GraphView<GraphElementView<out GraphElement>> {

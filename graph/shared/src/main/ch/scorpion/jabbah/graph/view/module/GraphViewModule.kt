@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.module
 import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.BasicStyle
@@ -12,7 +13,6 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -63,15 +63,15 @@ import ch.scorpion.jabbah.graph.view.style.GraphTheme
  */
 object GraphViewModule : AbstractModule() {
 
-    var graphViewFactory: () -> GraphView<*> = {GraphViewImpl<GraphElementView<GraphElement>>()}
+    var graphViewFactory: (name: String) -> GraphView<*> = { GraphViewImpl<GraphElementView<GraphElement>>(it) }
 
     /** Must be specified by higher application layers.*/
     var portFactory: PortFactory = UndefinedPortFactory()
 
     var containerEditorFactory: (EventBus) -> ContainerEditor = { throw UnsupportedOperationException("ContainerEditorFactor not configured") }
 
-    val dragEdgeViewOriginConnector: DragEdgeViewOriginConnector by lazy {DragEdgeViewOriginConnector({ graphViewConnectService})}
-    val dragEdgeViewDestinationConnector: DragEdgeViewDestinationConnector by lazy { DragEdgeViewDestinationConnector({graphViewConnectService})}
+    val dragEdgeViewOriginConnector: DragEdgeViewOriginConnector by lazy {DragEdgeViewOriginConnector { graphViewConnectService} }
+    val dragEdgeViewDestinationConnector: DragEdgeViewDestinationConnector by lazy { DragEdgeViewDestinationConnector {graphViewConnectService} }
 
     val edgeToPortConnector: EdgeToPortConnector by lazy { EdgeToPortConnector(
             {graphViewConnectService },
@@ -161,16 +161,15 @@ object GraphViewModule : AbstractModule() {
 
     private fun configureSelectionModels(factory: SelectionModelFactory) {
         factory.register(SelectionDrawingStrategy.REPLACE, EdgeViewImpl::class.simpleName!!, { EdgeViewReplaceSelectionModel(it as EdgeView<*>)})
-        factory.register(SelectionDrawingStrategy.REPLACE, SubGraphVerticeViewImpl::class.simpleName!!,
-            { SubGraphVerticeViewImplSelectionModel(it as SubGraphVerticeViewImpl, EditSelectModule.selectionModelProvider) })
-        factory.register(SelectionDrawingStrategy.REPLACE, OriginIndicator::class.simpleName!!, { OriginIndicatorSelectionModel(it as OriginIndicator)})
-        factory.register(SelectionDrawingStrategy.REPLACE, PortViewComponent::class.simpleName!!, { SelectedColorSelectionModel(it) })
-        factory.register(SelectionDrawingStrategy.REPLACE, ControlViewComponent::class.simpleName!!, { SelectedColorSelectionModel(it) })
-        factory.register(SelectionDrawingStrategy.REPLACE, OscilloscopeProbeVerticeView::class.simpleName!!, { SelectedColorSelectionModel(it) })
+        factory.register(SelectionDrawingStrategy.REPLACE, SubGraphVerticeViewImpl::class.simpleName!!) { SubGraphVerticeViewImplSelectionModel(it as SubGraphVerticeViewImpl, EditSelectModule.selectionModelProvider) }
+	    factory.register(SelectionDrawingStrategy.REPLACE, OriginIndicator::class.simpleName!!) { OriginIndicatorSelectionModel(it as OriginIndicator)}
+	    factory.register(SelectionDrawingStrategy.REPLACE, PortViewComponent::class.simpleName!!) { SelectedColorSelectionModel(it) }
+	    factory.register(SelectionDrawingStrategy.REPLACE, ControlViewComponent::class.simpleName!!) { SelectedColorSelectionModel(it) }
+	    factory.register(SelectionDrawingStrategy.REPLACE, OscilloscopeProbeVerticeView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 
-        factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class.simpleName!!, { EdgeViewBelowSelectionModel(it as EdgeView<*>) })
-        factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class.simpleName!!, { BoundingBoxBelowSelectionModel(it) })
-        factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class.simpleName!!, { BoundingBoxBelowSelectionModel(it) })
+	    factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class.simpleName!!) { EdgeViewBelowSelectionModel(it as EdgeView<*>) }
+	    factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class.simpleName!!) { BoundingBoxBelowSelectionModel(it) }
+	    factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class.simpleName!!) { BoundingBoxBelowSelectionModel(it) }
     }
 
     private var edgeViewFactoryImpl: EdgeViewFactory<Any> = EdgeViewFactoryImpl(
@@ -202,13 +201,18 @@ object GraphViewModule : AbstractModule() {
         nodeViewFactory = factory as NodeViewFactory<Any>
     }
 
-    fun <T: GraphElementView<*>> createGraphView(graph: Graph = GraphModelModule.graphFactory.invoke()): GraphView<T> {
+	fun <T: GraphElementView<*>> createGraphView(name: String = Translations.getString("graph.name.unknown")): GraphView<T> {
+		return createGraphView(GraphModelModule.graphFactory.invoke(name))
+	}
+
+    fun <T: GraphElementView<*>> createGraphView(graph: Graph): GraphView<T> {
         return GraphViewImpl(graph, IOModule.storableClonerProvider.invoke(), outputToInputConnector, inputToOutputOrEdgeConnector,
-                reconnectOriginConnector, reconnectDestinationConnector, graphViewConnectService, BaseModule.eventBus)
+	        reconnectOriginConnector, reconnectDestinationConnector, graphViewConnectService, BaseModule.eventBus)
     }
 
-    fun createContainerDrawing(): ContainerDrawing {
+    fun createContainerDrawing(name: String = Translations.getString("graph.name.unknown")): ContainerDrawing {
         return ContainerDrawing(
+	        name,
             IOModule.storableCreator,
             IOModule.storableClonerProvider.invoke(),
             BaseModule.eventBus,

@@ -151,7 +151,7 @@ class GraphPanel(
 		propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
 		eventBus.register(ApplicationDataEvent::class) {
-			editedGraphView = (it.newData as MetaGraph?)?.graph?.graphView as GraphView<GraphElementView<*>>?
+			editedGraphView = (it.newData as MetaGraph?)?.graph?.graphView as GraphView<GraphElementView<*>>
 		}
 
 		eventBus.register(ActiveViewChangedEvent::class) {

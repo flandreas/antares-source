@@ -42,7 +42,7 @@ class StoreTest {
 
         val storable = GraphStorable(testCircuit.circuitView)
         val clone = IOModule.storableClonerProvider.invoke().cloneUsingCreator(storable, IOModule.storableCreator) as GraphStorable
-        val orGateView = clone.graphView!!.getWidthId(2) as OrGateView
+        val orGateView = clone.graphView.getWidthId(2) as OrGateView
 
         assertThat(orGateView.model!!.inputCount, `is`(3))
 

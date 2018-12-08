@@ -42,7 +42,7 @@ object GraphModelModule : AbstractModule() {
         Translations.addBundle("jabbah-graph")
     }
 
-    var graphFactory: () -> Graph = { GraphImpl() }
+    var graphFactory: (name: String) -> Graph = { GraphImpl(it) }
 
     private fun configureTypeMap(typeMap: TypeMap) {
 	    typeMap.register("graph", GraphImpl::class)

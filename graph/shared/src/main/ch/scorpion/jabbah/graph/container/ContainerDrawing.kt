@@ -40,6 +40,7 @@ import ch.scorpion.jabbah.io.*
  * A [Drawing] that contains the graphical representation of a [SubGraphVertice]' outside view.
  */
 class ContainerDrawing(
+	name: String = Translations.getString("graph.name.unknown"),
     private val storableCreator: StorableCreator = IOModule.storableCreator,
     private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
     private val eventBus: EventBus = BaseModule.eventBus,
@@ -52,7 +53,7 @@ class ContainerDrawing(
         private val LOG by logger(ContainerDrawing::class)
 	}
 
-    var model: SubGraphVertice = SubGraphVerticeImpl()
+    var model: SubGraphVertice = SubGraphVerticeImpl(name)
         private set
 
 	var execDrawScript: TextProperty = TextProperty()
@@ -182,7 +183,7 @@ class ContainerDrawing(
         return view
     }
 
-    /** Creates a copy of the [SubGraphVertice] model of this {@link ContainerDrawing}*/
+    /** Creates a copy of the [SubGraphVertice] model of this [ContainerDrawing].*/
     fun createSubGraphVertice(): SubGraphVertice {
         val subGraphVertice = storableCloner.cloneUsingCreator(this.model, storableCreator) as SubGraphVertice
         // The port descriptions are NOT copied when cloning, because they are not part of the persistent state
