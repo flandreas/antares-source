@@ -41,11 +41,11 @@ open class GraphImpl(
 		eventBus.register(GraphPortNameChanged::class, graphPortNameChangedHandler)
 	}
 
-	fun dispose() {
+	override fun dispose() {
 		eventBus.unregister(GraphPortNameChanged::class, graphPortNameChangedHandler)
 	}
 
-    /** ---- [Graph] interface */
+	/** ---- [Graph] interface */
 
     override var uuid: UUID = System.get().createUUID()
 

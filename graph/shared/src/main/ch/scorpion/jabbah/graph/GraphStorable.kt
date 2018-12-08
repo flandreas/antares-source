@@ -22,6 +22,11 @@ class GraphStorable(
 
     val model: Graph? get() = graphView.graph
 
+	fun dispose() {
+		graphView.dispose()
+		model?.dispose()
+	}
+
     /** ---- [Storable] interface */
 
     override var storableId: Int = 0

@@ -43,7 +43,12 @@ class ContainerLibraryElement(
 
     override val isFixed: Boolean get() = false
 
-    /** ---- [Storable] */
+	override fun dispose() {
+		super.dispose()
+		metaGraph?.dispose()
+	}
+
+	/** ---- [Storable] */
 
     override fun write(writer: StoreWriter) {
         writer.writeString("name", name)

@@ -106,6 +106,11 @@ class MetaGraph(
         containerDrawing.initialize()
     }
 
+	fun dispose() {
+		graph.dispose()
+		containerDrawing.dispose()
+	}
+
     /** ---- [Storable] interface */
 
     override var storableId: Int = 0
