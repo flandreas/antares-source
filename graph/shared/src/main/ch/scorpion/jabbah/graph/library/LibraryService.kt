@@ -266,7 +266,7 @@ class LibraryServiceImpl(
 	override fun updateContainerLibraryElement(library: Library, element: ContainerLibraryElement) {
 		LOG.debug("LibraryServiceImpl: Updating ContainerLibraryElement")
 		element.metaGraph?.let {
-			val nameChanged = it.name != element.name
+			val nameChanged = it.translatableName != element.translatableName
 			storeContainerLibraryElement(library, it, element)
 			if (nameChanged) {
 				storeLibrary(library)

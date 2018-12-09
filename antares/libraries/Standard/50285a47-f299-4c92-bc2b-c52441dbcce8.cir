@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8' name='SR-Flipflop'>
+        <graph _id='2'>
           <elements>
             <circuitInOut _id='3' id='1' delay='0' name='S' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' delay='0' name='R' type='input' bitWidth='1'/>
@@ -237,7 +237,11 @@
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='71' id='0' delay='0' name='SR-Flipflop' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'>
+        <subGraphVertice _id='71' id='0' delay='0' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'>
+          <name>
+            <translation lang='en' text='SR Flip-Flop'/>
+            <translation lang='de' text='SR-Flipflop'/>
+          </name>
           <ports>
             <subCircuitPort _id='72' portId='1' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='73' portId='2' name='R' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

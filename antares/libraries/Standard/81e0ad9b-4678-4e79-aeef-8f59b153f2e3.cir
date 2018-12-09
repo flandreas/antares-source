@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='81e0ad9b-4678-4e79-aeef-8f59b153f2e3' name='Inkrementierer 8-Bit' shortDesc='Erhöht eine 8-Bit-Zahl um 1' script='var d = elem.input(&quot;D&quot;);
+        <graph _id='2' shortDesc='Erhöht eine 8-Bit-Zahl um 1' script='var d = elem.input(&quot;D&quot;);
 var valueIn = parseInt(d, &quot;16&quot;);
 var valueOut = (valueIn + 1) % 256;
 var co = (valueIn == 255);
@@ -418,7 +418,11 @@ elem.setOutputBit(&quot;CO&quot;, co);'>
         </label>
       </components>
       <model>
-        <subGraphVertice _id='124' id='0' delay='0' name='Inkrementierer 8-Bit' uuid='81e0ad9b-4678-4e79-aeef-8f59b153f2e3'>
+        <subGraphVertice _id='124' id='0' delay='0' uuid='81e0ad9b-4678-4e79-aeef-8f59b153f2e3'>
+          <name>
+            <translation lang='en' text='Incrementer 8 Bit'/>
+            <translation lang='de' text='Inkrementierer 8-Bit'/>
+          </name>
           <ports>
             <subCircuitPort _id='125' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='126' portId='2' name='O' logic='positive' bitWidth='8' trigger='level' type='output' representation='hex'/>

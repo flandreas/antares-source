@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='2fa2c8a7-fc2d-4139-8f6b-bd4b07933916' name='Schieberegister Parallel-Out 4-Bit' shortDesc='Schieberegister mit 4 Bit für Parallelausgabe' script=''>
+        <graph _id='2' shortDesc='Schieberegister mit 4 Bit für Parallelausgabe' script=''>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='0' name='SR-Flipflop' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'/>
             <subGraphVerticeRef _id='4' id='2' delay='0' name='SR-Flipflop' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'/>
@@ -368,7 +368,11 @@
         </label>
       </components>
       <model>
-        <subGraphVertice _id='101' id='0' delay='0' name='Schieberegister Parallel-Out 4-Bit' uuid='2fa2c8a7-fc2d-4139-8f6b-bd4b07933916'>
+        <subGraphVertice _id='101' id='0' delay='0' uuid='2fa2c8a7-fc2d-4139-8f6b-bd4b07933916'>
+          <name>
+            <translation lang='en' text='Shift Register Parallel-Out 4 Bit'/>
+            <translation lang='de' text='Schieberegister Parallel-Out 4-Bit'/>
+          </name>
           <ports>
             <subCircuitPort _id='102' portId='1' name='T' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
             <subCircuitPort _id='103' portId='2' name='I' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

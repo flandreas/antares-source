@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3' name='8-1 Multiplexer' shortDesc='Wählt aus 8 Eingängen einen aus' script='var input = 0;
+        <graph _id='2' shortDesc='Wählt aus 8 Eingängen einen aus' script='var input = 0;
 if (elem.inputBit(&quot;S0&quot;)) {
 	input += 1;
 }
@@ -314,7 +314,11 @@ elem.setOutputBit(elem.inputWord(&quot;I&quot;).bitAt(input).isSet());'>
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='87' id='0' delay='0' name='8-1 Multiplexer' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3'>
+        <subGraphVertice _id='87' id='0' delay='0' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3'>
+          <name>
+            <translation lang='en' text='8-1 Multiplexer'/>
+            <translation lang='de' text='8-1 Multiplexer'/>
+          </name>
           <ports>
             <subCircuitPort _id='88' portId='1' name='I' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='89' portId='3' name='S0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

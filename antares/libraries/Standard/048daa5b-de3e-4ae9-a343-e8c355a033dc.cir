@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc' name='JK-MS-Flipflop PRE/CLR' shortDesc='JK-Master-Slave-Flipflop mit asynchronem Set- und Rücksetzeingang'>
+        <graph _id='2' shortDesc='JK-Master-Slave-Flipflop mit asynchronem Set- und Rücksetzeingang'>
           <elements>
             <nandGate _id='3' id='1' delay='20' inputCount='3'/>
             <circuitInOut _id='4' id='2' delay='0' name='J' type='input' bitWidth='1'/>
@@ -487,7 +487,11 @@
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='140' id='0' delay='0' name='JK-MS-Flipflop PRE/CLR' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'>
+        <subGraphVertice _id='140' id='0' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'>
+          <name>
+            <translation lang='en' text='JK MS-Flip-Flop PRE/CLR'/>
+            <translation lang='de' text='JK-MS-Flipflop PRE/CLR'/>
+          </name>
           <ports>
             <subCircuitPort _id='141' portId='1' name='J' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='142' portId='2' name='K' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

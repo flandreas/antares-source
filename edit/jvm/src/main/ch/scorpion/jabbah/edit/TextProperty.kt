@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.TextProperty
 import java.awt.*
@@ -85,8 +86,7 @@ class TextPropertyEditor() : AbstractPropertyEditor() {
         button.alignmentY = Component.TOP_ALIGNMENT
         button.icon = ImageIcon(TextPropertyEditor::class.java.getResource("/img/openInPopup-20.png"))
         button.border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
-        // TODO I18N
-        button.toolTipText = "Edit text in larger popup dialog"
+        button.toolTipText = Translations.getString("edit.action.editText.tooltip")
         button.addActionListener { showDialog() }
         panel.add(button)
 

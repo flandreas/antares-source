@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.SubGraphOutputPort
@@ -21,6 +22,9 @@ interface SubGraphVertice : Vertice {
 
     /** Holds the [UUID] of the [Graph] that this [SubGraphVertice] contains.*/
     var graphUUID: UUID?
+
+	/** Contains the displayable name of the [Graph] represented by this [SubGraphVertice] as various translations.*/
+	var translatableName: TranslatableText
 
     /**
      * Returns the [Graph] that this [SubGraphVertice] contains, if already present.

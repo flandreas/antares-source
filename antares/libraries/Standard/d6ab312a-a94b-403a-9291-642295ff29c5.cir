@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='d6ab312a-a94b-403a-9291-642295ff29c5' name='D-Flipflop' shortDesc='Taktflanken-gesteuertes Flipflop mit einem Dateneingang (D)' script='var d = elem.inputBit(&quot;D&quot;);
+        <graph _id='2' shortDesc='Taktflanken-gesteuertes Flipflop mit einem Dateneingang (D)' script='var d = elem.inputBit(&quot;D&quot;);
 if (elem.portRaised(&quot;C&quot;)) {
    elem.setOutputBit(&quot;Q&quot;, d);
    elem.setOutputBit(&quot;!Q&quot;, !d);
@@ -248,7 +248,11 @@ if (elem.portRaised(&quot;C&quot;)) {
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='72' id='0' delay='0' name='D-Flipflop' uuid='d6ab312a-a94b-403a-9291-642295ff29c5'>
+        <subGraphVertice _id='72' id='0' delay='0' uuid='d6ab312a-a94b-403a-9291-642295ff29c5'>
+          <name>
+            <translation lang='en' text='D Flip-Flop'/>
+            <translation lang='de' text='D-Flipflop'/>
+          </name>
           <ports>
             <subCircuitPort _id='73' portId='1' name='D' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='74' portId='2' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>

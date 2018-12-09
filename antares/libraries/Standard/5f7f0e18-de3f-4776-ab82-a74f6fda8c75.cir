@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='5f7f0e18-de3f-4776-ab82-a74f6fda8c75' name='4-2 Priority Encoder' shortDesc='Erzeugt eine 2-Bit-Zahl, die die Position des gesetzten Eingang-Bit darstellt'>
+        <graph _id='2' shortDesc='Erzeugt eine 2-Bit-Zahl, die die Position des gesetzten Eingang-Bit darstellt'>
           <elements>
             <circuitInOut _id='3' id='1' delay='0' name='I0' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' delay='0' name='I1' type='input' bitWidth='1'/>
@@ -287,7 +287,11 @@
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='85' id='0' delay='0' name='4-2 Priority Encoder' uuid='5f7f0e18-de3f-4776-ab82-a74f6fda8c75'>
+        <subGraphVertice _id='85' id='0' delay='0' uuid='5f7f0e18-de3f-4776-ab82-a74f6fda8c75'>
+          <name>
+            <translation lang='en' text='4-2 Priority Encoder'/>
+            <translation lang='de' text='4-2 Priorität-Kodierer'/>
+          </name>
           <ports>
             <subCircuitPort _id='86' portId='1' name='I0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='87' portId='2' name='I1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

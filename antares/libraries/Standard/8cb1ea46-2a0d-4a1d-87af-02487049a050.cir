@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='8cb1ea46-2a0d-4a1d-87af-02487049a050' name='8x8 LED-Matrix mit Ctrl'>
+        <graph _id='2'>
           <elements>
             <constant _id='3' id='1' delay='1' bitWidth='1' value='1'/>
             <subGraphVerticeRef _id='4' id='2' delay='43' name='3-8 Decoder' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92'/>
@@ -1213,7 +1213,11 @@
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='320' id='0' delay='0' name='8x8 LED-Matrix mit Ctrl' uuid='8cb1ea46-2a0d-4a1d-87af-02487049a050'>
+        <subGraphVertice _id='320' id='0' delay='0' uuid='8cb1ea46-2a0d-4a1d-87af-02487049a050'>
+          <name>
+            <translation lang='en' text='8x8 LED Matrix with Ctrl'/>
+            <translation lang='de' text='8x8 LED-Matrix mit Ctrl'/>
+          </name>
           <ports>
             <subCircuitPort _id='321' portId='1' name='C' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='322' portId='2' name='I0' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>

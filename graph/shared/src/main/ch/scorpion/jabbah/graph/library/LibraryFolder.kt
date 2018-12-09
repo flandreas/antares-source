@@ -38,7 +38,7 @@ class LibraryFolder(
 		get() = translatableName.getTranslation()
 		set(value) {
 			if (StringUtils.isNotEmpty(value)) {
-				translatableName.setTranslation(value)
+				translatableName = translatableName.withTranslation(value)
 			}
 		}
 
@@ -131,12 +131,10 @@ class LibraryFolder(
 
 	override fun containsRecursively(item: LibraryItem): Boolean {
 		return items.any {
-			if (it.name == item.name) {
-				true
-			} else if (it is LibraryDirectory) {
-				it.containsRecursively(item)
-			} else {
-				false
+			when {
+				it.name == item.name -> true
+				it is LibraryDirectory -> it.containsRecursively(item)
+				else -> false
 			}
 		}
 	}

@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4' name='Sync. BCD-Zähler 4-Bit' shortDesc='Zählt von 0 bis 9 und fängt dann wieder bei 0 an'>
+        <graph _id='2' shortDesc='Zählt von 0 bis 9 und fängt dann wieder bei 0 an'>
           <elements>
             <circuitInOut _id='3' id='2' delay='0' name='C' type='input' bitWidth='1'/>
             <digitalNet _id='4' id='3' delay='0'>
@@ -492,7 +492,11 @@
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='128' id='0' delay='0' name='Sync. BCD-Zähler 4-Bit' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'>
+        <subGraphVertice _id='128' id='0' delay='0' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'>
+          <name>
+            <translation lang='en' text='Sync. BCD Counter 4 Bit'/>
+            <translation lang='de' text='Synch. BCD-Zähler 4-Bit'/>
+          </name>
           <ports>
             <subCircuitPort _id='129' portId='1' name='C' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='130' portId='2' name='O0' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>

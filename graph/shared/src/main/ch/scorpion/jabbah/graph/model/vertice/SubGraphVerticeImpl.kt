@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -11,6 +13,8 @@ import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.*
@@ -31,6 +35,8 @@ class SubGraphVerticeImpl(
 
     /* ---- [SubGraphVertice] */
 
+	override var translatableName = TranslatableText(name)
+
 	/** Used when [SubGraphVerticeRef]s are created from this [SubGraphVerticeImpl].*/
     override var graphUUID: UUID? = null
 
@@ -46,17 +52,39 @@ class SubGraphVerticeImpl(
         // Not needed here
     }
 
+	/** ---- [AbstractVertice] */
+
+	/** Represents the [translatableName] in the current system [Language].*/
+	override var name: String?
+		get() = translatableName.getTranslation()
+		set(value) {
+			if (StringUtils.isNotEmpty(value)) {
+				translatableName = translatableName.withTranslation(value!!)
+			}
+		}
+
     /** ---- [Storable] */
+
+	override val storesName: Boolean get() = false
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
         writer.writeString("uuid", graphUUID.toString())
+	    writer.writeStorables("name", translatableName.allTranslations())
         writer.writeStorables("ports", getSubGraphPorts().iterator())
     }
 
     override fun read(reader: StoreReader) {
         super.read(reader)
         graphUUID = UUID(reader.readString("uuid"))
+
+	    if (reader.hasAttribute("name")) {
+		    // backward compatibility
+		    name = reader.readString("name")
+	    }
+	    if (reader.hasElement("name")) {
+		    translatableName = TranslatableText(reader.readStorables("name").map { it as Translation })
+	    }
 
         for (port in reader.readStorables("ports").map { it as SubGraphPort<Any> }) {
             LOG.debug("SubGraphVerticeImpl: reading and adding SubCircuitPort $port")

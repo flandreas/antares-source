@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='6b75bce8-f115-4154-a7d8-782b8f4b629a' name='Impulsglied (Neg)'>
+        <graph _id='2'>
           <elements>
             <norGate _id='3' id='1' delay='10' inputCount='2'/>
             <notGate _id='4' id='2' delay='20' inputCount='1'/>
@@ -107,7 +107,11 @@
         <polyline _id='26' id='4' style='annotation' points='161.0,147.0 168.0,147.0 168.0,161.0 175.0,161.0' filled='false'/>
       </components>
       <model>
-        <subGraphVertice _id='33' id='0' delay='0' name='Impulsglied (Neg)' uuid='6b75bce8-f115-4154-a7d8-782b8f4b629a'>
+        <subGraphVertice _id='33' id='0' delay='0' uuid='6b75bce8-f115-4154-a7d8-782b8f4b629a'>
+          <name>
+            <translation lang='en' text='Pulse Generator (Neg)'/>
+            <translation lang='de' text='Impulsglied (Neg)'/>
+          </name>
           <ports>
             <subCircuitPort _id='34' portId='1' name='I' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='35' portId='2' name='O' logic='negative' bitWidth='1' trigger='level' type='output' representation='binary'/>

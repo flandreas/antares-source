@@ -65,6 +65,7 @@ object EditModuleJvm : AbstractModule() {
         registry.registerRenderer(StyleType::class.java, StyleTypeRenderer::class.java)
         registry.registerRenderer(VerticalAlignment::class.java, EnumRenderer::class.java)
         registry.registerRenderer(TextProperty::class.java, TextPropertyRenderer::class.java)
+	    registry.registerRenderer(TranslatableText::class.java, TranslatableTextPropertyRenderer::class.java)
     }
 
     private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -75,6 +76,7 @@ object EditModuleJvm : AbstractModule() {
 	    registry.registerEditor(TextProperty::class.java, TextPropertyEditor::class.java)
         registry.register(PredefinedColor::class.java) { PredefinedColorEditor(PredefinedColorRepository) }
 	    registry.register(PredefinedStroke::class.java) { PredefinedStrokeEditor(PredefinedStrokeRepository) }
+	    registry.registerEditor(TranslatableText::class.java, TranslatableTextPropertyEditor::class.java)
     }
 
 	private fun registerPropertyEditorsFx(registry: PropertyEditorRegistryFx) {

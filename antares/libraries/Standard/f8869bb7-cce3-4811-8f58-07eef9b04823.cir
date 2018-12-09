@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='f8869bb7-cce3-4811-8f58-07eef9b04823' name='Register 8-Bit' shortDesc='Speichert einen 8-Bit-Wert'>
+        <graph _id='2' shortDesc='Speichert einen 8-Bit-Wert'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='110' name='D-Flipflop' uuid='d6ab312a-a94b-403a-9291-642295ff29c5'/>
             <subGraphVerticeRef _id='4' id='2' delay='110' name='D-Flipflop' uuid='d6ab312a-a94b-403a-9291-642295ff29c5'/>
@@ -427,7 +427,11 @@
         </label>
       </components>
       <model>
-        <subGraphVertice _id='120' id='0' delay='0' name='Register 8-Bit' uuid='f8869bb7-cce3-4811-8f58-07eef9b04823'>
+        <subGraphVertice _id='120' id='0' delay='0' uuid='f8869bb7-cce3-4811-8f58-07eef9b04823'>
+          <name>
+            <translation lang='en' text='Register 8 Bit'/>
+            <translation lang='de' text='Register 8-Bit'/>
+          </name>
           <ports>
             <subCircuitPort _id='121' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='122' portId='2' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>

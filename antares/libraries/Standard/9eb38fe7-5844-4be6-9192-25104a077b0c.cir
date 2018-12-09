@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='9eb38fe7-5844-4be6-9192-25104a077b0c' name='Shifter 8-Bit' shortDesc='Addiert zwei Bits zu Summe und Übertrag' script='var a = elem.inputBit(&quot;A&quot;);
+        <graph _id='2' shortDesc='Schiebt eine 8-Bit-Wert bitweise nach links oder rechts' script='var a = elem.inputBit(&quot;A&quot;);
 var b = elem.inputBit(&quot;B&quot;);
 elem.setOutputBit(&quot;S&quot;, (a || b) &amp;&amp; !(a &amp;&amp; b));
 elem.setOutputBit(&quot;C&quot;, a &amp;&amp; b);
@@ -1052,7 +1052,11 @@ elem.setOutputBit(&quot;C&quot;, a &amp;&amp; b);
         </label>
       </components>
       <model>
-        <subGraphVertice _id='290' id='0' delay='0' name='Shifter 8-Bit' uuid='9eb38fe7-5844-4be6-9192-25104a077b0c'>
+        <subGraphVertice _id='290' id='0' delay='0' uuid='9eb38fe7-5844-4be6-9192-25104a077b0c'>
+          <name>
+            <translation lang='en' text='Shifter 8 Bit'/>
+            <translation lang='de' text='Shifter 8-Bit'/>
+          </name>
           <ports>
             <subCircuitPort _id='291' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='292' portId='2' name='CIR' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

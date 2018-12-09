@@ -24,9 +24,11 @@ class Translation(
 	var text: String = text
 		private set
 
+
+
 	/** ---- [Storable] interface */
 
-	override var storableId: Int = 0
+	override var storableId: Int = -1
 
 	override fun write(writer: StoreWriter) {
 		writer.writeString("lang", language.code)
@@ -41,6 +43,27 @@ class Translation(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun getStorableChildren(): Iterator<Storable> = Collections.emptyIterator()
+
+	/** ---- [Any] */
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other == null) return false
+		if (this::class != other::class) return false
+
+		other as Translation
+
+		if (language != other.language) return false
+		if (text != other.text) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = language.hashCode()
+		result = 31 * result + text.hashCode()
+		return result
+	}
 }
 
 /**
@@ -50,9 +73,14 @@ class Translation(
  * [TranslatableText] is used for dynamic, user provided text and stored the translated text
  * within the serialized representation of a [Storable] that contains a [TranslatableText] property.
  *
- * @param translations the [Translation]s to be added to this [TranslatableText].
+ * Designed to be immutable.
+ *
+ * @param translations the [Translation]s to be included in this [TranslatableText].
  */
 class TranslatableText(translations: Collection<Translation>? = null) {
+
+	constructor(text: String): this(System.get().currentLanguage(), text)
+	constructor(language: Language, text: String): this(listOf(Translation(language, text)))
 
 	private val translations: MutableMap<Language, Translation> = mutableMapOf()
 
@@ -60,15 +88,37 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 		translations?.forEach { this.translations[it.language] = it }
 	}
 
-	/** Sets the translation for the current system language.*/
-	fun setTranslation(text: String) {
-		setTranslation(System.get().currentLanguage(), text)
+	/** ---- [Any] */
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other == null) return false
+		if (this::class != other::class) return false
+
+		other as TranslatableText
+
+		if (translations != other.translations) return false
+
+		return true
 	}
 
-	/** Sets the translation for a particular [Language].*/
-	fun setTranslation(language: Language, text: String) {
+	override fun hashCode(): Int {
+		return translations.hashCode()
+	}
+
+	/** ---- [TranslatableText] */
+
+	/** Creates a new [Translation] by adding the specified translation for the current system language.*/
+	fun withTranslation(text: String): TranslatableText {
+		return withTranslation(System.get().currentLanguage(), text)
+	}
+
+	/** Creates a new [Translation] by adding the specified translation for a particular [Language].*/
+	fun withTranslation(language: Language, text: String): TranslatableText {
 		checkArgument(StringUtils.isNotBlank(text), "text must not be empty")
-		translations[language] = Translation(language, text)
+		val values = translations.toMutableMap()
+		values[language] = Translation(language, text)
+		return TranslatableText(values.values)
 	}
 
 	/** Returns the translation in the current system language.*/
@@ -80,7 +130,8 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 	fun getTranslation(language: Language): String {
 		return translations[language]?.text
 			?: translations[Language.DEFAULT]?.text
-			?: throw IllegalArgumentException("no translation for language '$language' available")
+			?: translations.values.firstOrNull()?.text
+			?: throw IllegalArgumentException("no translation available")
 	}
 
 	/** Determines whether this [TranslatableText] contains a translation in the specified [Language].*/
@@ -94,4 +145,5 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 	 * or the [System] language.
 	 */
 	fun hasDefaultOrSystemLanguage(): Boolean = hasTranslation(Language.DEFAULT) || hasTranslation(System.get().currentLanguage())
+
 }

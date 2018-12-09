@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
@@ -119,6 +120,8 @@ class MetaGraph(
 
     val uuid: UUID get() = graph.model!!.uuid
 
+	val translatableName: TranslatableText get() = graph.model!!.translatedName
+
 	private val graphNameHandler: EventHandler<GraphNameChangedEvent> = {
 		handle(it)
 	}
@@ -174,6 +177,12 @@ class MetaGraph(
         }
     }
 
+	override fun resolutionDone() {
+		super.resolutionDone()
+		graph.model!!.uuid = containerDrawing.model.graphUUID!!
+		graph.model!!.translatedName = containerDrawing.model.translatableName
+	}
+
     /** ---- [MetaGraph] */
 
     fun accept(visitor: HierarchyVisitor): Boolean {
@@ -190,7 +199,7 @@ class MetaGraph(
 
 	private fun handle(event: GraphNameChangedEvent) {
 		if (event.graph == graph.model) {
-			containerDrawing.model.name = event.newName
+			containerDrawing.model.translatableName = event.newValue
 		}
 	}
 }

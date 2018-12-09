@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97' name='Synch. Vorwärtszähler 3-Bit'>
+        <graph _id='2'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='0' name='JK-Flipflop (Neg)' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'/>
             <subGraphVerticeRef _id='4' id='2' delay='0' name='JK-Flipflop (Neg)' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'/>
@@ -287,7 +287,11 @@
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='77' id='0' delay='0' name='Synch. Vorwärtszähler 3-Bit' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97'>
+        <subGraphVertice _id='77' id='0' delay='0' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97'>
+          <name>
+            <translation lang='en' text='Sync. Forward Counter 3 Bit'/>
+            <translation lang='de' text='Synch. Vorwärtszähler 3-Bit'/>
+          </name>
           <ports>
             <subCircuitPort _id='78' portId='1' name='C' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='79' portId='2' name='O1' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>

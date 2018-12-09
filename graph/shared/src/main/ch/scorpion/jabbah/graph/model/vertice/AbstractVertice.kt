@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 
 /**
  * An abstract base implementation of the [Vertice] interface.
@@ -136,9 +137,16 @@ abstract class AbstractVertice(
 
     /** ---- [Storable] interface */
 
+    /**
+     * Determines whether this [AbstractVertice] and its subclasses store the [name] property as [Storable].
+     * The default is `true`. Subclasses that translate the [name] property using [TranslatableText] will
+     * return `false` and store the [TranslatableText] instead.
+     */
+    protected open val storesName: Boolean get() = true
+
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        if (name != null) {
+        if (storesName && name != null) {
             writer.writeString("name", name!!)
         }
 	    if (StringUtils.isNotEmpty(customDescription)) {
@@ -148,7 +156,7 @@ abstract class AbstractVertice(
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        if (reader.hasAttribute("name")) {
+        if (storesName && reader.hasAttribute("name")) {
             name = reader.readString("name")
         }
 	    customDescription = reader.readOptionalString("desc")

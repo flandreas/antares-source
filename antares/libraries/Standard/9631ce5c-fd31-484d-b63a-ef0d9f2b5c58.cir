@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58' name='JK-Flipflop (Neg)'>
+        <graph _id='2'>
           <elements>
             <circuitInOut _id='3' id='1' delay='0' name='J' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' delay='0' name='C' type='input' bitWidth='1'/>
@@ -270,7 +270,11 @@
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='78' id='0' delay='0' name='JK-Flipflop (Neg)' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'>
+        <subGraphVertice _id='78' id='0' delay='0' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'>
+          <name>
+            <translation lang='en' text='JK Flip-Flop (Neg)'/>
+            <translation lang='de' text='JK-Flipflop (Neg)'/>
+          </name>
           <ports>
             <subCircuitPort _id='79' portId='1' name='J' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='80' portId='2' name='K' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='c79ec2d7-ed8a-4be3-b334-49f8a9ee3779' name='Shifter 16-Bit' shortDesc='Shiebt einen 16-Bit-Wert bitweise nach links oder rechts' script='var d = parseInt(elem.input(&quot;D&quot;), &quot;16&quot;);
+        <graph _id='2' shortDesc='Schiebt einen 16-Bit-Wert bitweise nach links oder rechts' script='var d = parseInt(elem.input(&quot;D&quot;), &quot;16&quot;);
 var left = elem.inputBit(&quot;F&quot;);
 var cir = elem.inputBit(&quot;CIR&quot;);
 var cil = elem.inputBit(&quot;CIL&quot;);
@@ -303,7 +303,11 @@ if (left) {
         </label>
       </components>
       <model>
-        <subGraphVertice _id='87' id='0' delay='0' name='Shifter 16-Bit' uuid='c79ec2d7-ed8a-4be3-b334-49f8a9ee3779'>
+        <subGraphVertice _id='87' id='0' delay='0' uuid='c79ec2d7-ed8a-4be3-b334-49f8a9ee3779'>
+          <name>
+            <translation lang='en' text='Shifter 16 Bit'/>
+            <translation lang='de' text='Shifter 16-Bit'/>
+          </name>
           <ports>
             <subCircuitPort _id='88' portId='1' name='D' logic='positive' bitWidth='16' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='89' portId='2' name='CIR' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

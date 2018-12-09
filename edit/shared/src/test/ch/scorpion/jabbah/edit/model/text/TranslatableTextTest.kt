@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.Language.*
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.io.*
-import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -19,10 +19,10 @@ class TranslatableTextTest {
 	}
 
 	@Test
-	fun shouldGetTranslation() {
+	fun shouldSetAndGetTranslation() {
 		val text = TranslatableText()
-		text.setTranslation(German, "Baum")
-		text.setTranslation(English, "Tree")
+			.withTranslation(German, "Baum")
+			.withTranslation(English, "Tree")
 
 		assertThat(text.getTranslation(German), `is`("Baum"))
 		assertThat(text.getTranslation(English), `is`("Tree"))
@@ -30,8 +30,7 @@ class TranslatableTextTest {
 
 	@Test
 	fun shouldHaveTranslation() {
-		val text = TranslatableText()
-		text.setTranslation(German, "Baum")
+		val text = TranslatableText(German, "Baum")
 
 		assertThat(text.hasTranslation(German), `is`(true))
 		assertThat(text.hasTranslation(English), `is`(false))
@@ -40,14 +39,14 @@ class TranslatableTextTest {
 	@Test(expected = IllegalArgumentException::class)
 	fun shouldNotAcceptEmptyTranslation() {
 		val text = TranslatableText()
-		text.setTranslation(German, "")
+		text.withTranslation(German, "")
 	}
 
 	@Test
 	fun shouldYieldTranslationInSystemLanguage() {
 		val text = TranslatableText()
-		text.setTranslation(German, "Baum")
-		text.setTranslation(English, "Tree")
+			.withTranslation(German, "Baum")
+			.withTranslation(English, "Tree")
 
 		assertThat(text.getTranslation(), `is`(text.getTranslation(System.get().currentLanguage())))
 	}
@@ -55,10 +54,17 @@ class TranslatableTextTest {
 	@Test
 	fun shouldFallbackToDefaultLanguage() {
 		java.lang.System.setProperty("user.language", "de")
-		val text = TranslatableText()
-		text.setTranslation(English, "Tree")
+		val text = TranslatableText(English, "Tree")
 
 		assertThat(text.getTranslation(), `is`("Tree"))
+	}
+
+	@Test
+	fun shouldFallbackToAnyLanguageWithMissingDefault() {
+		java.lang.System.setProperty("user.language", English.code)
+		val text = TranslatableText(German, "Baum")
+
+		assertThat(text.getTranslation(), `is`("Baum"))
 	}
 
 	@Test
@@ -77,11 +83,33 @@ class TranslatableTextTest {
 		assertThat(clone.attribute.getTranslation(German), `is`("Meer"))
 		assertThat(clone.attribute.getTranslation(English), `is`("Sea"))
 	}
+
+	@Test
+	fun shouldBeEqualWithSameTranslations() {
+		val text1 = TranslatableText("Text")
+		val text2 = TranslatableText("Text")
+		assertThat(text1, `is`(text2))
+	}
+
+	@Test
+	fun shouldBeDifferentWithDifferentTranslations() {
+		val text1 = TranslatableText("Text")
+		val text2 = TranslatableText("Text2")
+		assertThat(text1, `is`(not(text2)))
+	}
+
+	@Test
+	fun shouldBeImmutable() {
+		val text1 = TranslatableText("Text")
+		val text2 = text1.withTranslation("Text2")
+		assertThat(text1, not(sameInstance(text2)))
+	}
 }
 
 class ClassUsingTranslatable(text: TranslatableText? = null) : Storable {
 
 	var attribute: TranslatableText = text ?: TranslatableText()
+		private set
 
 	override var storableId: Int = 0
 

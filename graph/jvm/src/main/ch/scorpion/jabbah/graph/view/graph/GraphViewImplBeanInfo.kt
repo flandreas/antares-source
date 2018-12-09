@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.edit.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
 import ch.scorpion.jabbah.edit.model.text.TextProperty
-
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 
 
 /**
@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.edit.model.text.TextProperty
 class GraphViewImplBeanInfo : AbstractBeanInfo<GraphViewImpl<*>>() {
 
     companion object {
-        private val name = PropertyImpl("graph.property.GraphViewImpl", String::class.java)
+        private val name = PropertyImpl("graph.property.GraphViewImpl", TranslatableText::class.java)
         private val propDelay = PropertyImpl("element.property.propagationDelay", Long::class.java)
         private val shortDesc = PropertyImpl("graph.property.GraphViewImpl.shortDescription", TextProperty::class.java)
         private val script = PropertyImpl("graph.property.GraphViewImpl.script", TextProperty::class.java)
@@ -23,7 +23,7 @@ class GraphViewImplBeanInfo : AbstractBeanInfo<GraphViewImpl<*>>() {
     override fun addProperties(bean: GraphViewImpl<*>, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-        name.bind(editor, { bean.name }, { bean.name = it!! })
+        name.bind(editor, { bean.translatableName }, { bean.translatableName = it!! })
 		propDelay.bind(editor, { bean.propagationDelay }, { bean.propagationDelay = it })
 		shortDesc.bind(editor, { bean.shortDescription }, { bean.shortDescription = it!! })
 		script.bind(editor, { bean.script }, { bean.script = it!! })

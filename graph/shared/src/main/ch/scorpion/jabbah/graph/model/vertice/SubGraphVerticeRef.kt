@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
-import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -10,9 +10,8 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -49,7 +48,7 @@ class SubGraphVerticeRef(
         ): SubGraphVerticeRef {
             val verticeRef = SubGraphVerticeRef(null, storableCloner, repository, scriptGateway)
             verticeRef.graphUUID = subGraphVertice.graphUUID
-            verticeRef.name = subGraphVertice.name
+	        verticeRef.translatableName = subGraphVertice.translatableName
             verticeRef.fillFrom(subGraphVertice)
             return verticeRef
         }
@@ -80,9 +79,22 @@ class SubGraphVerticeRef(
         return visitor.visitLeave(this)
     }
 
+	/** ---- [AbstractVertice] */
+
+	/** Represents the [translatableName] in the current system [Language].*/
+	override var name: String?
+		get() = translatableName.getTranslation()
+		set(value) {
+			if (StringUtils.isNotEmpty(value)) {
+				translatableName = translatableName.withTranslation(value!!)
+			}
+		}
+
     /** ---- [SubGraphVertice] */
 
     override var graphUUID: UUID? = graphUUID
+
+	override var translatableName: TranslatableText = TranslatableText()
 
     override fun <T: Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler) {
         LOG.trace("SubGraphVerticeRef: propagateOutput for Output '${outputPort.name}'")
@@ -93,6 +105,8 @@ class SubGraphVerticeRef(
     }
 
     /** ---- [Storable] interface */
+
+	override val storesName: Boolean get() = false
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
@@ -106,10 +120,10 @@ class SubGraphVerticeRef(
 
         val metaGraph = repository.getOptionalMetaGraph(graphUUID!!)
         if (metaGraph != null) {
-            val containerDrawing = metaGraph.containerDrawing
             name = metaGraph.name
+	        translatableName = metaGraph.containerDrawing.model.translatableName
             shortDescription = metaGraph.graph.model!!.shortDescription
-            fillFrom(containerDrawing.createSubGraphVertice())
+            fillFrom(metaGraph.containerDrawing.createSubGraphVertice())
 
             super.read(reader)
 

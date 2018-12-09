@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
@@ -51,14 +52,21 @@ open class GraphImpl(
 
     override var propagationDelay: Long? = null
 
-    override var name: String = name
+    override var name: String
+	    get() = translatedName.getTranslation()
         set(value) {
-	        if (field != value) {
-	            val oldValue = field
-	            field = value
-	            eventBus.post(GraphNameChangedEvent(this, oldValue, field))
+	        if (name != value) {
+	            translatedName = translatedName.withTranslation(value)
 	        }
         }
+
+	override var translatedName: TranslatableText = TranslatableText(name)
+		set(value) {
+			if (field != value) {
+				field = value
+				eventBus.post(GraphNameChangedEvent(this, value))
+			}
+		}
 
     override var shortDescription: String? = null
 
@@ -193,8 +201,6 @@ open class GraphImpl(
     }
 
     override fun write(writer: StoreWriter) {
-        writer.writeString("uuid", uuid.toString())
-        writer.writeString("name", name)
         shortDescription?.let { writer.writeString("shortDesc", it) }
         script?.let { writer.writeString("script", it) }
         propagationDelay?.let { writer.writeLong("propDelay", it) }
@@ -202,8 +208,6 @@ open class GraphImpl(
     }
 
     override fun read(reader: StoreReader) {
-        uuid = System.get().createUUID(reader.readString("uuid"))
-        name = reader.readString("name")
         if (reader.hasAttribute(("shortDesc"))) {
             shortDescription = reader.readString("shortDesc")
         }

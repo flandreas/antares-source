@@ -65,12 +65,12 @@ class TranslatableTextPanel(
 	}
 
 	private val text: TranslatableText get() {
-		val text = TranslatableText()
+		var text = TranslatableText()
 		if (!StringUtils.isBlank(currentLangTextField.text)) {
-			text.setTranslation(currentLanguage, currentLangTextField.text)
+			text = text.withTranslation(currentLanguage, currentLangTextField.text)
 		}
 		if (!StringUtils.isBlank(defaultLangTextField.text)) {
-			text.setTranslation(Language.DEFAULT, defaultLangTextField.text)
+			text = text.withTranslation(Language.DEFAULT, defaultLangTextField.text)
 		}
 		return  text
 	}

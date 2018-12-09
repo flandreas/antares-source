@@ -29,6 +29,7 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.scenario.ScenariosImpl
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
@@ -58,10 +59,6 @@ class GraphViewImpl<T : GraphElementView<*>>(
 
     private val LOG by logger(GraphViewImpl::class)
 
-    var name: String
-        get() = graph!!.name
-        set(value) {graph!!.name = value}
-
     /** Resets the current [Scenario] and [ScenarioStep] when the [Scheduler] is activated or deactivated. */
     private val schedulerActivationObserver: (SchedulerActivationStateEvent) -> Unit = {
         currentScenario = null
@@ -85,7 +82,19 @@ class GraphViewImpl<T : GraphElementView<*>>(
 
     /** ---- UI properties */
 
-    var shortDescription: TextProperty
+    var name: String
+	    get() = graph!!.name
+	    set(value) {
+		    graph!!.name = value
+	    }
+
+	var translatableName: TranslatableText
+		get() = graph!!.translatedName
+		set(value) {
+			graph!!.translatedName = value
+		}
+
+	var shortDescription: TextProperty
         get() = TextProperty(graph!!.shortDescription)
         set(value) {
             graph!!.shortDescription = value.text

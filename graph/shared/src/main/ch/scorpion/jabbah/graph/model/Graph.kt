@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 
 /**
@@ -25,7 +26,7 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 interface Graph : Storable {
 
     /** The universal unique ID of this [Graph]. Used for referencing this [Graph] from other [Graph]s.*/
-    val uuid: UUID
+    var uuid: UUID
 
     /**
      * The overall estimated propagation delay of this [Graph] in nanoseconds, i.e. the estimated time it
@@ -38,6 +39,9 @@ interface Graph : Storable {
      * Posts a [GraphNameChangedEvent] on this [Graph]'s [EventBus] when changed.
      */
     var name: String
+
+	/** Contains translations of the [name] property.*/
+	var translatedName: TranslatableText
 
     /** A short description of the purpose of this [Graph].*/
     var shortDescription: String?
@@ -76,14 +80,14 @@ interface Graph : Storable {
 
     /**
      * Adds the specified [GraphElement] to this [Graph].
-     * Posts a [GrapElementAddedEvent] on this [Graph]'s [EventBus].
+     * Posts a [GraphElementAddedEvent] on this [Graph]'s [EventBus].
      * @return this [Graph] to support method chaining
      */
     fun add(graphElement: GraphElement): Graph
 
     /**
      * Removes the specified [GraphElement] from this [Graph].
-     * Posts a [GrapElementRemovedEvent] on this [Graph]'s [EventBus].
+     * Posts a [GraphElementRemovedEvent] on this [Graph]'s [EventBus].
      * @return this [Graph] to support method chaining
      */
     fun remove(graphElement: GraphElement): Graph
@@ -120,6 +124,9 @@ interface Graph : Storable {
 
 }
 
-class GraphNameChangedEvent(val graph: Graph, val oldName: String, val newName: String)
+/** Posted on a [Graph]s [EventBus] when its name (or one of its translations) has changed.*/
+class GraphNameChangedEvent(val graph: Graph, val newValue: TranslatableText)
+
 class GraphElementAddedEvent(val graph: Graph, val element: GraphElement)
+
 class GraphElementRemovedEvent(val graph: Graph, val element: GraphElement)

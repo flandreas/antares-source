@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733' name='D-Flipflop PRE/CLR' shortDesc='' propDelay='0'>
+        <graph _id='2' shortDesc='' propDelay='0'>
           <elements>
             <circuitInOut _id='3' id='1' delay='0' name='D' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' delay='0' name='C' type='input' bitWidth='1'/>
@@ -304,7 +304,11 @@
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='91' id='0' delay='0' name='D-Flipflop PRE/CLR' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733'>
+        <subGraphVertice _id='91' id='0' delay='0' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733'>
+          <name>
+            <translation lang='en' text='D Flip-Flop PRE/CRL'/>
+            <translation lang='de' text='D-Flipflop PRE/CRL'/>
+          </name>
           <ports>
             <subCircuitPort _id='92' portId='1' name='D' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='93' portId='2' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
