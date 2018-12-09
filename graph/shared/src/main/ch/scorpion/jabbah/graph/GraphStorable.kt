@@ -11,19 +11,25 @@ import ch.scorpion.jabbah.io.*
  * Stores a [GraphView] and its [Graph].
  */
 class GraphStorable(
-	graphView: GraphView<*>
+	graphView: GraphView<*>?
 ) : Storable {
 
-	constructor(): this(Translations.getString("graph.name.unknown"))
+	constructor(): this(null)
 	constructor(name: String): this(GraphViewModule.graphViewFactory.invoke(name))
 
 	private var _graphView: GraphView<*>? = graphView
+		set(value) {
+			if (field !== value) {
+				field?.dispose()
+				field = value
+			}
+		}
 	val graphView: GraphView<*> get() = _graphView!!
 
-    val model: Graph? get() = graphView.graph
+    val model: Graph? get() = _graphView?.graph
 
 	fun dispose() {
-		graphView.dispose()
+		_graphView?.dispose()
 		model?.dispose()
 	}
 

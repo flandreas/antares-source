@@ -94,9 +94,9 @@ interface LibraryService {
 	fun getMetaGraph(library: Library, element: ContainerLibraryElement): MetaGraph
 
 	/**
-	 * Returns the [MetaGraph] of a [ContainerLibraryElement], loading it always, even if it is already loaded.
+	 * Reloads the [MetaGraph] of a [ContainerLibraryElement], loading it always, even if it is already loaded.
 	 */
-	fun loadMetaGraph(library: Library, element: ContainerLibraryElement): MetaGraph
+	fun loadMetaGraph(library: Library, element: ContainerLibraryElement)
 
 	/** Sets the [UUID] of the [ContainerLibraryElement] to be opened when the [Library] is opened, and makes the change persistent.*/
 	fun setDefaultElement(library: Library, uuid: UUID?)
@@ -280,9 +280,8 @@ class LibraryServiceImpl(
 		return element.metaGraph!!
 	}
 
-	override fun loadMetaGraph(library: Library, element: ContainerLibraryElement): MetaGraph {
+	override fun loadMetaGraph(library: Library, element: ContainerLibraryElement) {
 		ensureMetaGraph(library, element, loadAlways = true)
-		return element.metaGraph!!
 	}
 
 	override fun setDefaultElement(library: Library, uuid: UUID?) {

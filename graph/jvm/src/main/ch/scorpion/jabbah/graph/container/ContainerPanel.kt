@@ -101,10 +101,6 @@ class ContainerPanel(
         treeView.update(graphView, containerDrawing)
     }
 
-    fun setGraphName(graphName: String) {
-        (editor.drawing as ContainerDrawing).model.name = graphName
-    }
-
     private fun buildUI(viewManager: ViewManager) {
         layout = BorderLayout()
 	    background = Color.GRAY

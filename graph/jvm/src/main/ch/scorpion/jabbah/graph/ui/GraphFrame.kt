@@ -13,7 +13,6 @@ import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.container.ContainerPanel
-import ch.scorpion.jabbah.graph.model.GraphNameChangedEvent
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import java.awt.BorderLayout
@@ -48,8 +47,6 @@ class GraphFrame(
 	private val containerPanel = ContainerPanel(GraphViewModule.containerEditorFactory.invoke(eventBus), viewManager)
 
 	init {
-		eventBus.register(GraphNameChangedEvent::class) { handle(it) }
-
 		toolbarPanel = JPanel()
 		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
 		mainToolBar = createMainToolBar()
@@ -72,12 +69,6 @@ class GraphFrame(
 		get() = graphPanel.editor.commandManager.applicationDataChanged
 
 	/** ---- [GraphFrame] */
-
-	private fun handle(event: GraphNameChangedEvent) {
-		if (event.graph === (graphPanel.editor.view.drawing as GraphView<*>).graph!!) {
-			containerPanel.setGraphName(event.newName)
-		}
-	}
 
 	fun showDesktop() {
 		if (displayedView == DisplayedView.Desktop) {

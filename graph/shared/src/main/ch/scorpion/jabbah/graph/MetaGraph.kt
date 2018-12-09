@@ -5,11 +5,15 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.model.GraphNameChangedEvent
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
@@ -77,10 +81,14 @@ class CombinedMetaGraphRepository(
  */
 class MetaGraph(
 	graph: GraphStorable,
-	containerDrawing: ContainerDrawing
+	containerDrawing: ContainerDrawing,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : Storable {
 
-	constructor(): this(GraphStorable(Translations.getString("graph.name.unknown")), ContainerDrawing(Translations.getString("graph.name.unknown")))
+	constructor(): this(
+		GraphStorable(Translations.getString("graph.name.unknown")),
+		ContainerDrawing(Translations.getString("graph.name.unknown"))
+	)
 
 	companion object {
 		fun withName(name: String): MetaGraph {
@@ -92,21 +100,37 @@ class MetaGraph(
 	}
 
     var graph: GraphStorable = graph
-        private set
+        private set(value) {
+	        if (field !== value) {
+		        field.dispose()
+		        field = value
+	        }
+        }
 
     var containerDrawing: ContainerDrawing = containerDrawing
-        private set
+        private set(value) {
+	        if (field !== value) {
+		        field.dispose()
+		        field = value
+	        }
+        }
 
     val name: String get() = graph.model!!.name
 
     val uuid: UUID get() = graph.model!!.uuid
 
+	private val graphNameHandler: EventHandler<GraphNameChangedEvent> = {
+		handle(it)
+	}
+
     init {
+	    eventBus.register(GraphNameChangedEvent::class, graphNameHandler)
         containerDrawing.model.graphUUID = uuid
         containerDrawing.initialize()
     }
 
 	fun dispose() {
+		eventBus.unregister(GraphNameChangedEvent::class, graphNameHandler)
 		graph.dispose()
 		containerDrawing.dispose()
 	}
@@ -163,4 +187,10 @@ class MetaGraph(
         }
         return visitor.visitLeave(this)
     }
+
+	private fun handle(event: GraphNameChangedEvent) {
+		if (event.graph == graph.model) {
+			containerDrawing.model.name = event.newName
+		}
+	}
 }

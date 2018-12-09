@@ -37,7 +37,12 @@ class ContainerLibraryElement(
 
     /** Lazily initialized instance of the referenced [MetaGraph]. */
     var metaGraph: MetaGraph? = null
-		private set
+		private set(value) {
+			if (field != value) {
+				field?.dispose()
+				field = value
+			}
+		}
 
     /** ---- [LibraryItem] */
 

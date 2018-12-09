@@ -53,9 +53,11 @@ open class GraphImpl(
 
     override var name: String = name
         set(value) {
-            val oldValue = field
-            field = value
-            eventBus.post(GraphNameChangedEvent(this, oldValue, field))
+	        if (field != value) {
+	            val oldValue = field
+	            field = value
+	            eventBus.post(GraphNameChangedEvent(this, oldValue, field))
+	        }
         }
 
     override var shortDescription: String? = null
