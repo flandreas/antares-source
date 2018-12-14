@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.DrawableAdapter
 import ch.scorpion.jabbah.draw.DrawableEvent
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
@@ -214,6 +215,9 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
             width + 2 * lineWidth + outsetLeft + outsetRight,
             height + 2 * lineWidth + outsetTop + outsetBottom
         )
+	    if (shadow) {
+		    DropShadow.expand(_boundingBox)
+	    }
 	    addPortViewsTo(_boundingBox, containsBox)
     }
 }

@@ -129,6 +129,9 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
     override val supportClipping: Boolean get() = true
 
+	override var rotationAngle: Double = 0.0
+		private set
+
     override fun save() {
         val copy = g.create() as java.awt.Graphics2D
         stack.push(g)
@@ -193,7 +196,10 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
     override fun translate(tx: Double, ty: Double) = g.translate(tx, ty)
 
-    override fun rotate(theta: Double) = g.rotate(theta)
+    override fun rotate(theta: Double) {
+	    rotationAngle += theta
+	    g.rotate(theta)
+    }
 
     override fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {
         g.drawLine(x1, y1, x2, y2)

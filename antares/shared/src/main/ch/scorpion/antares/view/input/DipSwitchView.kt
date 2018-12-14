@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -172,6 +173,11 @@ class DipSwitchView(
 	/** ---- [Drawable] interface */
 
 	override fun drawImpl(context: DrawContext) {
+		if (shadow) {
+			DropShadow.draw(context) {
+				context.g.fill(bounds)
+			}
+		}
 		super.drawImpl(context)
 		drawFill(context, bounds, context.choose(color).backgroundColor)
 		drawStroke(context, bounds, context.choose(color).foregroundColor, stroke)

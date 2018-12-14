@@ -92,6 +92,9 @@ class Graphics2DFx(var g: GraphicsContext) : AbstractGraphics2D() {
 
     private val clipBounds = Rectangle2D()
 
+	override var rotationAngle: Double = 0.0
+		private set
+
     /** ---- Path rendering methods */
 
     override fun beginPath() {
@@ -199,6 +202,7 @@ class Graphics2DFx(var g: GraphicsContext) : AbstractGraphics2D() {
     }
 
     override fun rotate(theta: Double) {
+	    rotationAngle += theta
         g.rotate(Math.toDegrees(theta))
     }
 

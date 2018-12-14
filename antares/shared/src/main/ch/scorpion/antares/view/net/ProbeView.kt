@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.ApplicationMode
@@ -159,6 +160,11 @@ class ProbeView(
     /** ---- [AbstractDrawable] */
 
     override fun drawImpl(context: DrawContext) {
+	    if (shadow) {
+		    DropShadow.draw(context) {
+			    context.g.fillRoundRect(xInt, yInt, width.toInt(), height.toInt(), 10, 10)
+		    }
+	    }
         super.drawImpl(context)
         if (ApplicationMode.EXECUTE === context.castedAppContext<GraphApplicationContext>()!!.mode) {
             drawSimulated(context)

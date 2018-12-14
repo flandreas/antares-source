@@ -22,10 +22,9 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.Stroke
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
@@ -243,6 +242,15 @@ class CircuitInOutView(
         val translation = getArrowPathTranslation()
         context.g.translate(translation.x, translation.y)
 
+	    if (shadow) {
+		    DropShadow.draw(context) {
+			    if (backgroundColor != null) {
+				    context.g.fill(arrowPath!!.path)
+			    }
+			    context.g.draw(arrowPath!!.path)
+		    }
+	    }
+
         if (backgroundColor != null) {
             context.g.color = backgroundColor
             context.g.fill(arrowPath!!.path)
@@ -414,11 +422,15 @@ class CircuitInOutView(
 
 		val pathBB = arrowPath!!.path.boundingBox
 		val pathTranslation = getArrowPathTranslation()
-		boundingBox.add(Rectangle2D(
-			location.x + pathBB.x + pathTranslation.x - 1,
-			location.y + pathBB.y + pathTranslation.y - 1,
-			pathBB.width + 2,
-			pathBB.height + 2))
+	    val pathBBoxRect = Rectangle2D(
+		    location.x + pathBB.x + pathTranslation.x - 1,
+		    location.y + pathBB.y + pathTranslation.y - 1,
+		    pathBB.width + 2,
+		    pathBB.height + 2)
+	    if (shadow) {
+		    DropShadow.expand(pathBBoxRect)
+	    }
+	    boundingBox.add(pathBBoxRect)
 
 		val labelBB = label.boundingBox
 		boundingBox.add(Rectangle2D(

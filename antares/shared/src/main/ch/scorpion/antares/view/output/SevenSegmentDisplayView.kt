@@ -31,6 +31,7 @@ import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.MathClass
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 
 
 /**
@@ -233,6 +234,11 @@ class SevenSegmentDisplayView(
     /** ---- [AbstractVerticeView] */
 
     override fun drawImpl(context: DrawContext) {
+	    if (shadow) {
+		    DropShadow.draw(context) {
+			    context.g.fillRect(0, 0, geom.width, geom.height)
+		    }
+	    }
         super.drawImpl(context)
 
         context.g.color = COLOR_CASE

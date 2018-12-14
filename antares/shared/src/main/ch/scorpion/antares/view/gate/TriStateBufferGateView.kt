@@ -106,11 +106,11 @@ class TriStateBufferGateView(
 
         context.g.translate(getInput().unconnectedLength.toDouble(), -bounds.height / 2)
         if (context.useContextColors) {
-            SymbolStyle.drawAmerican(x, y, bounds.height, SymbolStyle.NOT_PATH, context,
+            SymbolStyle.drawAmerican(this, x, y, bounds.height, SymbolStyle.NOT_PATH, context,
                 context.color!!.foregroundColor, context.color!!.backgroundColor, stroke, false)
             GateMnemonic.drawTriStateBuffer(this, context, context.color!!.foregroundColor)
         } else {
-            SymbolStyle.drawAmerican(x, y, bounds.height, SymbolStyle.NOT_PATH, context, foregroundColor,
+            SymbolStyle.drawAmerican(this, x, y, bounds.height, SymbolStyle.NOT_PATH, context, foregroundColor,
                 backgroundColor, stroke, false)
             GateMnemonic.drawTriStateBuffer(this, context, foregroundColor)
         }

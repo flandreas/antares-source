@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 
 
 /**
@@ -129,6 +130,11 @@ class ConcentratorView(
     }
 
     override fun drawImpl(context: DrawContext) {
+	    if (shadow) {
+		    DropShadow.draw(context) {
+			    context.g.fillRect(xInt, yInt, width.toInt(), height.toInt())
+		    }
+	    }
         super.drawImpl(context)
         if (context.useContextColors) {
             drawImpl(context, context.color!!.foregroundColor, context.color!!.backgroundColor)

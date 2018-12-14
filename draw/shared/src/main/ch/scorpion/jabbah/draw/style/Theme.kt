@@ -108,7 +108,8 @@ open class DrawTheme(
 	private val predefinedColors: List<PredefinedColor> = DEF_PREDEFINED_COLORS,
 	val background: Style = DEF_BACKGROUND,
 	val figure: Style = DEF_FIGURE,
-	val tooltip: Style = DEF_TOOLTIP
+	val tooltip: Style = DEF_TOOLTIP,
+	val shadow: CompositeColor = DEF_SHADOW
 ) : Theme {
 
     companion object {
@@ -118,6 +119,7 @@ open class DrawTheme(
         val DEF_FIGURE = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
         val DEF_TOOLTIP = BasicStyle(CompositeColor(foregroundColor = Color(249, 214, 54),
                 backgroundColor = Color(255, 253, 219), textColor = Color.BLACK))
+	    val DEF_SHADOW = CompositeColor(Color.GRAY, Color.GRAY, Color.GRAY)
 	    const val REF_COLOR_ALPHA = 144
         val DEF_REF_COLORS = listOf(
             DrawGraphicsModule.RED.withAlpha(REF_COLOR_ALPHA),

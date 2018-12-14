@@ -10,6 +10,8 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.draw.graphics.DropShadow
+import ch.scorpion.jabbah.edit.Component
 
 /**
  * [SymbolStyle] represents international standards for drawing digital gates.
@@ -57,11 +59,11 @@ enum class SymbolStyle(val customName: String) {
         }
 
         override fun drawXorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-            drawAmerican(gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true)
+            drawAmerican(gate, gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true)
         }
 
         override fun drawXnorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-            drawAmerican(gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true)
+            drawAmerican(gate, gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true)
         }
 
         override fun drawNotGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
@@ -139,10 +141,10 @@ enum class SymbolStyle(val customName: String) {
         }
 
         fun drawAmerican(gate: BoxGateView<*>, path: Path, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-            drawAmerican(gate.x, gate.y, gate.bounds.height, path, context, foregroundColor, backgroundColor, stroke, false)
+            drawAmerican(gate, gate.x, gate.y, gate.bounds.height, path, context, foregroundColor, backgroundColor, stroke, false)
         }
 
-        fun drawAmerican(x: Double, y: Double, height: Double, path: Path, context: DrawContext, foregroundColor: Color,
+        fun drawAmerican(comp: Component, x: Double, y: Double, height: Double, path: Path, context: DrawContext, foregroundColor: Color,
                          backgroundColor: Color, stroke: Stroke, exclusive: Boolean) {
 
             val vOffset = (height - 2 * Look.SCALE - path.boundingBox.height) / 2
@@ -155,6 +157,13 @@ enum class SymbolStyle(val customName: String) {
             }
 
             context.g.translate(x, y + vOffset)
+
+	        if (comp.shadow) {
+		        DropShadow.draw(context) {
+			        context.g.fill(path)
+		        }
+	        }
+
             context.g.color = backgroundColor
             context.g.fill(path)
             context.g.color = foregroundColor

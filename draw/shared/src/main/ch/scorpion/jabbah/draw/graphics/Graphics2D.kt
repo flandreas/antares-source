@@ -22,6 +22,9 @@ interface Graphics2D {
 
     val supportClipping: Boolean
 
+	/** Returns the accumulated rotation angle.*/
+	val rotationAngle: Double
+
     /* Saves the current state of this [Graphics2D] onto a stack.*/
     fun save()
 

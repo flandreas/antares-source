@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.draw.graphics
 
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.module.DrawModule
 
 /**
  * Module definitions for the [ch.scorpion.jabbah.draw.graphics] package.
@@ -36,9 +38,14 @@ object DrawGraphicsModule : AbstractModule() {
         BaseModule.require()
         predefineColors(PredefinedColorRepository)
 	    predefineStrokes(PredefinedStrokeRepository)
+	    fillProperties(DrawModule.properties)
     }
 
     /** ---- [DrawGraphicsModule] */
+
+    private fun fillProperties(properties: Properties) {
+	    properties.set(DropShadow.PROP_OFFSET, 2)
+    }
 
     private fun predefineColors(repository: PredefinedColorRepository) {
         repository.register(PredefinedColor(PredefinedColorIdentity.White, WHITE))

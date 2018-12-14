@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
@@ -84,6 +85,11 @@ class TunnelView(
     }
 
     override fun drawImpl(context: DrawContext) {
+		if (shadow) {
+			DropShadow.draw(context) {
+				context.g.fillRect(xInt, yInt, SIZE, SIZE)
+			}
+		}
 
         context.g.color = context.choose(color).backgroundColor
         context.g.fillRect(xInt, yInt, SIZE, SIZE)

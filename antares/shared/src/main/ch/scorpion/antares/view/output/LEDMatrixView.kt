@@ -31,6 +31,7 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 
 /**
  * A view of a [LEDMatrix].
@@ -244,6 +245,12 @@ class LEDMatrixView(
     /** ---- [AbstractVerticeView] */
 
     override fun drawImpl(context: DrawContext) {
+	    if (shadow) {
+		    DropShadow.draw(context) {
+			    context.g.fillRect(0, 0, width.toInt(), height.toInt())
+		    }
+	    }
+
         super.drawImpl(context)
 
         val oldColor = context.g.color

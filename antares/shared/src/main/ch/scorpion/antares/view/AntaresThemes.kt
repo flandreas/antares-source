@@ -65,7 +65,8 @@ object AntaresThemes {
 			figure = BasicStyle(
 				color = skyBlue,
 				stroke = BOX_STROKE,
-				font = FONT),
+				font = FONT,
+				shadow = true),
 			tooltip = BasicStyle(
 				color = EXPLANATION,
 				stroke = TOOLTIP_STROKE),
@@ -84,7 +85,8 @@ object AntaresThemes {
 			vertice = BasicStyle(
 				color = skyBlue,
 				stroke = BOX_STROKE,
-				font = FONT),
+				font = FONT,
+				shadow = true),
 			edge = EdgeStyle(
 				color = CompositeColor(
 					foregroundColor = Color.BLACK,
@@ -149,6 +151,7 @@ object AntaresThemes {
 			foregroundColor = Color(50, 232, 42),
 			backgroundColor = veryDarkGreen
 		)
+		val shadow = Color(22, 54, 49)
 
 		val red = CompositeColor(Color(236, 35, 46), Color(120, 3, 7))
 		val blue = CompositeColor(Color(72, 186, 233), Color(3, 16, 139))
@@ -201,15 +204,18 @@ object AntaresThemes {
 			figure = BasicStyle(
 				color = color,
 				stroke = BOX_STROKE,
-				font = FONT),
+				font = FONT,
+				shadow = true),
 			tooltip = BasicStyle(
 				color = explanationColor,
 				stroke = TOOLTIP_STROKE
 			),
+			shadow = CompositeColor(shadow, shadow),
 			vertice = BasicStyle(
 				color = color,
 				stroke = BOX_STROKE,
-				font = FONT),
+				font = FONT,
+				shadow = true),
 			edge = EdgeStyle(
 				color = CompositeColor(
 					foregroundColor = ZERO.foregroundColor,
@@ -284,7 +290,8 @@ object AntaresThemes {
 			figure = BasicStyle(
 				color = figureColor,
 				stroke = BOX_STROKE,
-				font = FONT),
+				font = FONT,
+				shadow = true),
 			highlight = BasicStyle(
 				color = highlightColor,
 				font = FONT,
@@ -300,7 +307,8 @@ object AntaresThemes {
 			vertice = BasicStyle(
 				color = figureColor,
 				stroke = BOX_STROKE,
-				font = FONT),
+				font = FONT,
+				shadow = true),
 			edge = EdgeStyle(
 				color = CompositeColor(
 					foregroundColor = Color.BLACK,

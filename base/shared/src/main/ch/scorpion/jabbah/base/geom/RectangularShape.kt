@@ -136,6 +136,11 @@ interface RectangularShape : Shape {
     /** Expands this [RectangularShape] by adding the delta to each side of this [RectangularShape].*/
     fun expandBy(delta: Double): RectangularShape = expandBy(delta, delta)
 
+	fun expandBy(topY: Double, leftX: Double, bottomY: Double, rightX: Double): RectangularShape {
+		setFrame(x - leftX, y - topY, width + leftX + rightX, height + topY + bottomY)
+		return this
+	}
+
     fun contains(rect: RectangularShape): Boolean {
         return contains(rect.x, rect.y, rect.width, rect.height)
     }

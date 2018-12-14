@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
@@ -150,6 +151,12 @@ open class BoxGateView<T : Vertice>(
     }
 
     fun drawEuropeanShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+	    if (shadow) {
+		    DropShadow.draw(context) {
+			    context.g.fillRect(xInt, yInt, widthInt, heightInt)
+	        }
+	    }
+
 		context.g.color = backgroundColor
 		context.g.fillRect(xInt, yInt, widthInt, heightInt)
 

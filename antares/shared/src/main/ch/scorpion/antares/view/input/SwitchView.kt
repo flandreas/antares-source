@@ -15,12 +15,10 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
@@ -310,6 +308,12 @@ class SwitchView(
     }
 
     private fun drawBodyDigital(context: DrawContext) {
+	    if (shadow) {
+			DropShadow.draw(context) {
+				context.g.fillRect(xInt, yInt, widthInt, heightInt)
+			}
+	    }
+
         context.g.color = transparent.applyTo(color.backgroundColor)
         context.g.fillRect(xInt, yInt, widthInt, heightInt)
 

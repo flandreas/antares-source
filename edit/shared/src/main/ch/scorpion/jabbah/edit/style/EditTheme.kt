@@ -20,6 +20,7 @@ open class EditTheme(
 	background: Style = DEF_BACKGROUND,
 	figure: Style = DEF_FIGURE,
 	tooltip: Style = DEF_TOOLTIP,
+	shadow: CompositeColor = DEF_SHADOW,
 	val selection: CompositeColor = DEF_SELECTION,
 	val highlight: Style = DEF_HIGHLIGHT,
 	val messageInfo: Style = DEF_MESSAGE_INFO,
@@ -32,7 +33,8 @@ open class EditTheme(
 	predefinedColors,
 	background,
 	figure,
-	tooltip
+	tooltip,
+	shadow
 ) {
 
 	companion object {

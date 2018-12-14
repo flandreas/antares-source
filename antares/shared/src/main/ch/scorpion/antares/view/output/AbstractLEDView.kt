@@ -12,10 +12,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.draw.graphics.DropShadow
+import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
@@ -187,6 +185,11 @@ abstract class AbstractLEDView<T: Vertice>(
 	}
 
 	private fun drawBody(context: DrawContext) {
+		if (shadow) {
+			DropShadow.draw(context) {
+				context.g.fillOval(xInt, yInt, SIZE, SIZE)
+			}
+		}
 		context.g.color = COLOR_CASE
 		context.g.stroke = stroke
 		context.g.fillOval(xInt, yInt, SIZE, SIZE)

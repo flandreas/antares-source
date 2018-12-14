@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
@@ -268,6 +269,12 @@ class ROMView(
     private fun drawImpl(context: DrawContext, lineColor: Color, fillColor: Color?) {
         val oldColor = context.g.color
 		val oldStroke = context.g.stroke
+
+	    if (shadow) {
+		    DropShadow.draw(context) {
+			    context.g.fill(bounds)
+		    }
+	    }
 
 		if (fillColor != null) {
 			context.g.color = fillColor

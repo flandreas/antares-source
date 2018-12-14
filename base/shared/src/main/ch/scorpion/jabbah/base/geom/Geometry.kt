@@ -69,4 +69,10 @@ object Geometry {
     fun middle(p1: Point2D, p2: Point2D): Point2D {
 	    return Point2D(p1.x + (p2.x - p1.y) / 2, p1.y + (p2.y - p1.y / 2))
     }
+
+	fun rotate(x: Double, y: Double, angle: Double): Point2D {
+		return Point2D(
+			x * Math.cos(angle) - y * Math.sin(angle),
+			y * Math.cos(angle) + x * Math.sin(angle))
+	}
 }

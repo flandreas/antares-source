@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -80,6 +81,12 @@ class PolylineDrawable constructor(
 
     private fun drawImpl(context: DrawContext, lineColor: Color, fillColor: Color?) {
         val oldColor = context.g.color
+
+	    if (shadow && fillColor != null) {
+		    DropShadow.draw(context) {
+			    context.g.fill(shape)
+		    }
+	    }
         if (fillColor != null) {
             context.g.color = fillColor
             context.g.fill(shape)

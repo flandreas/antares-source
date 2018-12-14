@@ -38,12 +38,16 @@ interface Stylable {
 
     var stroked: Boolean
 
+	val shadow: Boolean
+
     /** Contains the optional custom [PredefinedColor] that overwrites the color of the [Style].*/
     var customColor: PredefinedColor?
 
     var customStroke: PredefinedStroke?
 
     var customFont: Font?
+
+	var customShadow: Boolean?
 }
 
 /**
@@ -64,7 +68,8 @@ class StylableImpl(
     stroked: Boolean = true,
     customColor: PredefinedColor? = null,
     customStroke: PredefinedStroke? = null,
-    customFont: Font? = null
+    customFont: Font? = null,
+    customShadow: Boolean? = null
 ) : Stylable {
 
     override var styleType: StyleType = styleType
@@ -125,6 +130,15 @@ class StylableImpl(
             }
         }
 
+	override var customShadow: Boolean? = customShadow
+		set(value) {
+			if (field != value) {
+				invalidator?.invoke()
+				field = value
+				invalidator?.invoke()
+			}
+		}
+
     /** TODO This method can be used very often while drawing. Find an implementation that performs better.*/
     override val color: CompositeColor
         get() = CompositeColor(
@@ -132,43 +146,15 @@ class StylableImpl(
             backgroundColor = backgroundColor,
             textColor =  textColor)
 
-    override val foregroundColor: Color
-        get() {
-            if (customColor != null) {
-                return customColor!!.color.foregroundColor
-            }
-            return style.color.foregroundColor
-        }
+    override val foregroundColor: Color get() = customColor?.color?.foregroundColor ?: style.color.foregroundColor
 
-    override val backgroundColor: Color
-        get() {
-            if (customColor != null) {
-                return customColor!!.color.backgroundColor
-            }
-            return style.color.backgroundColor
-        }
+    override val backgroundColor: Color get() = customColor?.color?.backgroundColor ?: style.color.backgroundColor
 
-    override val textColor: Color
-        get() {
-            if (customColor != null) {
-                return customColor!!.color.textColor
-            }
-            return style.color.textColor
-        }
+    override val textColor: Color get() = customColor?.color?.textColor ?: style.color.textColor
 
-    override val font: Font
-        get() {
-            if (customFont != null) {
-                return customFont!!
-            }
-            return style.font
-        }
+    override val font: Font get() = customFont ?: style.font
 
-    override val stroke: Stroke
-        get() {
-            if (customStroke != null) {
-                return customStroke!!.stroke
-            }
-            return style.stroke
-        }
+    override val stroke: Stroke get() = customStroke?.stroke ?: style.stroke
+
+	override val shadow: Boolean get() = customShadow ?: style.shadow
 }
