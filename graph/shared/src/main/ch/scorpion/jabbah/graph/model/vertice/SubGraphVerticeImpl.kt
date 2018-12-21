@@ -35,10 +35,20 @@ class SubGraphVerticeImpl(
 
     /* ---- [SubGraphVertice] */
 
-	override var translatableName = TranslatableText(name)
-
 	/** Used when [SubGraphVerticeRef]s are created from this [SubGraphVerticeImpl].*/
     override var graphUUID: UUID? = null
+
+	override var translatableName = TranslatableText(name)
+
+	override var shortDescription: String?
+		get() = translatableDescription.getTranslation()
+		set(value) {
+			if (StringUtils.isNotBlank(value)) {
+				translatableDescription = translatableDescription.withTranslation(value!!)
+			}
+		}
+
+	override var translatableDescription: TranslatableText = TranslatableText()
 
     override fun getGraphIfPresent(): Graph? {
         return null
@@ -71,6 +81,9 @@ class SubGraphVerticeImpl(
         super.write(writer)
         writer.writeString("uuid", graphUUID.toString())
 	    writer.writeStorables("name", translatableName.allTranslations())
+	    if (!translatableDescription.isEmpty) {
+		    writer.writeStorables("desc", translatableDescription.allTranslations())
+	    }
         writer.writeStorables("ports", getSubGraphPorts().iterator())
     }
 
@@ -84,6 +97,9 @@ class SubGraphVerticeImpl(
 	    }
 	    if (reader.hasElement("name")) {
 		    translatableName = TranslatableText(reader.readStorables("name").map { it as Translation })
+	    }
+	    if (reader.hasElement("desc")) {
+		    translatableDescription = TranslatableText(reader.readStorables("desc").map { it as Translation })
 	    }
 
         for (port in reader.readStorables("ports").map { it as SubGraphPort<Any> }) {

@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' shortDesc='Wandelt eine BCD-Zahl in den 7-Segment-Code für eine Dezimalziffer um' script=''>
+        <graph _id='2' script=''>
           <elements>
             <circuitInOut _id='3' id='1' delay='0' name='A' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' delay='0' name='B' type='input' bitWidth='1'/>
@@ -1218,6 +1218,10 @@
             <translation lang='en' text='BCD 7-Seg Decoder'/>
             <translation lang='de' text='BCD 7-Seg Dekodierer'/>
           </name>
+          <desc>
+            <translation lang='en' text='Coverts a BCD number to the corresponding 7-segment code'/>
+            <translation lang='de' text='Wandelt eine BCD-Zahl in den 7-Segment-Code für eine Dezimalziffer um'/>
+          </desc>
           <ports>
             <subCircuitPort _id='278' portId='2' name='A' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='279' portId='3' name='B' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

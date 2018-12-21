@@ -36,7 +36,7 @@ interface System {
     /** Creates a new [Path].*/
     fun createPath(): Path
 
-    fun buildToolTipText(title: String?, text: String?): String?
+    fun buildToolTipText(title: String?, text: String?, endWithPeriod: Boolean = false): String?
 
     fun createUUID(uuid: String? = null): UUID
 

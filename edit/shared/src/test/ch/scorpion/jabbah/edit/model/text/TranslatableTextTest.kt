@@ -104,6 +104,19 @@ class TranslatableTextTest {
 		val text2 = text1.withTranslation("Text2")
 		assertThat(text1, not(sameInstance(text2)))
 	}
+
+	@Test
+	fun shouldBeEmpty() {
+		val text = TranslatableText()
+		assertThat(text.isEmpty, `is`(true))
+	}
+
+	@Test
+	fun shouldTranslateOptionally() {
+		java.lang.System.setProperty("user.language", "en")
+		assertThat(TranslatableText().getOptionalTranslation(), `is`(nullValue()))
+		assertThat(TranslatableText(English, "Tree").getOptionalTranslation(), `is`("Tree"))
+	}
 }
 
 class ClassUsingTranslatable(text: TranslatableText? = null) : Storable {

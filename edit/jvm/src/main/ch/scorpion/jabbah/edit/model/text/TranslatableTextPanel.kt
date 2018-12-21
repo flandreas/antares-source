@@ -5,16 +5,18 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.EGBL
+import ch.scorpion.jabbah.base.swing.UiUtil
+import java.awt.Dimension
 import java.awt.Frame
-import javax.swing.JLabel
-import javax.swing.JOptionPane
-import javax.swing.JPanel
-import javax.swing.JTextField
+import javax.swing.*
+import javax.swing.text.JTextComponent
 
 /** A [JPanel] for editing a [TranslatableText] in the systems current [Language] and the default [Language].*/
 class TranslatableTextPanel(
+	private val textName: String,
 	text: TranslatableText,
-	textFieldColumns: Int = 20
+	textFieldRows: Int = 1,
+	textFieldColumns: Int = 25
 ) : JPanel() {
 
 	companion object {
@@ -27,9 +29,10 @@ class TranslatableTextPanel(
 			parent: Frame = Frame.getFrames()[0],
 			title: String,
 			text: TranslatableText,
-			textFieldColumns: Int = 20
+			textFieldRows: Int = 1,
+			textFieldColumns: Int = 25
 		) : TranslatableText? {
-			val panel = TranslatableTextPanel(text, textFieldColumns)
+			val panel = TranslatableTextPanel(title, text, textFieldRows, textFieldColumns)
 			return when (
 			JOptionPane.showConfirmDialog(
 				parent,
@@ -44,15 +47,35 @@ class TranslatableTextPanel(
 		}
 	}
 
-	private val currentLangTextField = JTextField()
+	private val currentLangTextField: JTextComponent
 
-	private val defaultLangTextField = JTextField()
+	private val defaultLangTextField: JTextComponent
 
 	private val currentLanguage: Language get() = System.get().currentLanguage()
 
 	private val isNonDefaultLanguage: Boolean get() = currentLanguage != Language.DEFAULT
 
 	init {
+		if (textFieldRows == 1) {
+			currentLangTextField = JTextField()
+			currentLangTextField.columns = textFieldColumns
+			defaultLangTextField = JTextField()
+			defaultLangTextField.columns = textFieldColumns
+		} else {
+			currentLangTextField = JTextArea()
+			currentLangTextField.rows = textFieldRows
+			currentLangTextField.columns = textFieldColumns
+			currentLangTextField.lineWrap = true
+			currentLangTextField.wrapStyleWord = true
+			currentLangTextField.isEditable = true
+			defaultLangTextField = JTextArea()
+			defaultLangTextField.rows = textFieldRows
+			defaultLangTextField.columns = textFieldColumns
+			defaultLangTextField.lineWrap = true
+			defaultLangTextField.wrapStyleWord = true
+			defaultLangTextField.isEditable = true
+		}
+
 		if (text.hasTranslation(currentLanguage)) {
 			currentLangTextField.text = text.getTranslation(currentLanguage)
 		}
@@ -81,7 +104,7 @@ class TranslatableTextPanel(
 
 		EGBL.add(
 			this,
-			JLabel(Translations.getString("directory.property.name.name", currentLanguage.toString()) + ":"),
+			JLabel("$textName (${currentLanguage}):"),
 			0, 0,	// x, y
 			1, 1,	// width, height
 			0.0, 0.0,	// weightX, weightY
@@ -90,10 +113,9 @@ class TranslatableTextPanel(
 			0, inset, 0, 0
 		)
 
-		currentLangTextField.columns = textFieldColumns
 		EGBL.add(
 			this,
-			currentLangTextField,
+			if (currentLangTextField is JTextArea) UiUtil.decorateTextArea(currentLangTextField) else currentLangTextField,
 			1, 0,	// x, y
 			EGBL.REMAINDER, 1,	// width, height
 			0.0, 0.0,	// weightX, weightY
@@ -105,25 +127,24 @@ class TranslatableTextPanel(
 		if (isNonDefaultLanguage) {
 			EGBL.add(
 				this,
-				JLabel(Translations.getString("directory.property.name.name", Language.DEFAULT.toString()) + ":"),
+				JLabel("$textName (${Language.DEFAULT}):"),
 				0, 1,	// x, y
 				1, 1,	// width, height
 				0.0, 0.0,	// weightX, weightY
 				EGBL.WEST,	// anchor
 				EGBL.NONE,	// fill
-				0, inset, 0, 0
+				inset, inset, 0, 0
 			)
 
-			defaultLangTextField.columns = textFieldColumns
 			EGBL.add(
 				this,
-				defaultLangTextField,
+				if (defaultLangTextField is JTextArea) UiUtil.decorateTextArea(defaultLangTextField) else defaultLangTextField,
 				1, 1,    // x, y
 				EGBL.REMAINDER, 1,    // width, height
 				0.0, 0.0,    // weightX, weightY
 				EGBL.WEST,    // anchor
 				EGBL.HORIZONTAL,    // fill
-				0, inset, 0, 0
+				inset, inset, 0, 0
 			)
 		}
 

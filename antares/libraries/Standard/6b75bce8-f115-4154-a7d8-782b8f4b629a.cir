@@ -112,6 +112,10 @@
             <translation lang='en' text='Pulse Generator (Neg)'/>
             <translation lang='de' text='Impulsglied (Neg)'/>
           </name>
+          <desc>
+            <translation lang='en' text='Produces a short descending edge'/>
+            <translation lang='de' text='Erzeugt eine kurze fallende Flanke'/>
+          </desc>
           <ports>
             <subCircuitPort _id='34' portId='1' name='I' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='35' portId='2' name='O' logic='negative' bitWidth='1' trigger='level' type='output' representation='binary'/>

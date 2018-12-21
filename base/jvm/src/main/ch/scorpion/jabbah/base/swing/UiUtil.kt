@@ -76,6 +76,9 @@ object UiUtil {
 
 	fun decorateTextArea(textArea: JTextArea): JScrollPane {
 		val scroll = JScrollPane(textArea)
+		scroll.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+		scroll.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+
 		val border = UIManager.getBorder("TextField.border")
 		if (border != null) {
 			scroll.border = border

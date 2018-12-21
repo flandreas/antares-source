@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
+import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.io.StorableCreator
@@ -8,6 +9,13 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.SubGraphOutputPort
+import ch.scorpion.jabbah.graph.model.SubGraphInputPort
+import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.GraphOutput
+import ch.scorpion.jabbah.graph.model.GraphInput
+import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.GraphElement
 
 /**
  * A [Vertice] that contains an inner [Graph], thus enabling recursively nested [Graph] structures.
@@ -25,6 +33,15 @@ interface SubGraphVertice : Vertice {
 
 	/** Contains the displayable name of the [Graph] represented by this [SubGraphVertice] as various translations.*/
 	var translatableName: TranslatableText
+
+	/**
+	 * Contains a short description of the [Graph] represented by this [SubGraphVertice].
+	 * Reflects the value in [translatableDescription] corresponding with the current system [Language].
+	 */
+	val shortDescription: String?
+
+	/** Contains the short description of the [Graph] represented by this [SubGraphVertice] as various translations.*/
+	var translatableDescription: TranslatableText
 
     /**
      * Returns the [Graph] that this [SubGraphVertice] contains, if already present.

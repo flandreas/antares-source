@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' shortDesc='Nicht-taktgesteuertes NOR-Latch mit Setzeingang S und Rücksetzeingang R' script='var s = elem.inputBit(&quot;S&quot;);
+        <graph _id='2' script='var s = elem.inputBit(&quot;S&quot;);
 var r = elem.inputBit(&quot;R&quot;);
 
 if (!s &amp;&amp; !r) {
@@ -206,6 +206,10 @@ elem.setOutputBit(&quot;!Q&quot;, true);
             <translation lang='en' text='SR Latch'/>
             <translation lang='de' text='SR Latch'/>
           </name>
+          <desc>
+            <translation lang='en' text='Level-triggered NOR latch mit set input S and reset input R'/>
+            <translation lang='de' text='Nicht-taktgesteuertes NOR-Latch mit Setzeingang S und Rücksetzeingang R'/>
+          </desc>
           <ports>
             <subCircuitPort _id='56' portId='1' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='57' portId='2' name='R' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.select.EditSelectModule
+import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.edit.view.EditContextMenuProvider
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.IOModuleJvm
@@ -29,7 +30,7 @@ import com.l2fprod.common.propertysheet.PropertyRendererRegistry
  */
 object EditModuleJvm : AbstractModule() {
 
-    val propertyRendererRegistry = PropertyRendererRegistry()
+    val propertyRendererRegistry = DynamicPropertyRendererRegistry()
 
     val propertyEditorRegistry = DynamicPropertyEditorRegistry()
 
@@ -57,7 +58,7 @@ object EditModuleJvm : AbstractModule() {
 	    registerSelectionModels()
     }
 
-    private fun configurePropertyRenderer(registry: PropertyRendererRegistry) {
+    private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
         registry.registerRenderer(Direction::class.java, EnumRenderer::class.java)
         registry.registerRenderer(PredefinedColor::class.java, PredefinedColorRenderer::class.java)
 	    registry.registerRenderer(PredefinedStroke::class.java, PredefinedStrokeRenderer::class.java)
@@ -65,7 +66,7 @@ object EditModuleJvm : AbstractModule() {
         registry.registerRenderer(StyleType::class.java, StyleTypeRenderer::class.java)
         registry.registerRenderer(VerticalAlignment::class.java, EnumRenderer::class.java)
         registry.registerRenderer(TextProperty::class.java, TextPropertyRenderer::class.java)
-	    registry.registerRenderer(TranslatableText::class.java, TranslatableTextPropertyRenderer::class.java)
+	    registry.register(TranslatableText::class.java) { TranslatableTextPropertyRenderer((it as PropertyImpl<TranslatableText>).filter)}
     }
 
     private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -76,7 +77,10 @@ object EditModuleJvm : AbstractModule() {
 	    registry.registerEditor(TextProperty::class.java, TextPropertyEditor::class.java)
         registry.register(PredefinedColor::class.java) { PredefinedColorEditor(PredefinedColorRepository) }
 	    registry.register(PredefinedStroke::class.java) { PredefinedStrokeEditor(PredefinedStrokeRepository) }
-	    registry.registerEditor(TranslatableText::class.java, TranslatableTextPropertyEditor::class.java)
+	    registry.register(TranslatableText::class.java) { TranslatableTextPropertyEditor(
+		    propertyName = (it as PropertyImpl<TranslatableText>).displayName,
+		    multiline = (it as PropertyImpl<TranslatableText>).filter)
+	    }
     }
 
 	private fun registerPropertyEditorsFx(registry: PropertyEditorRegistryFx) {

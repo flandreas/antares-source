@@ -134,7 +134,7 @@ class LibraryPreviewPanel(
         selection = component
         selection!!.styleProvider = Themes.uiStyleProvider
         componentDisplay.updateLayout()
-        descriptionArea.text = System.get().buildToolTipText(selection!!.type, (selection as VerticeView<*>).shortDescription)
+	    descriptionArea.text = System.get().buildToolTipText(selection!!.type, (selection as VerticeView<*>).shortDescription, true)
     }
 
     /** Displays the graphical preview of the selected {@link Component}. */

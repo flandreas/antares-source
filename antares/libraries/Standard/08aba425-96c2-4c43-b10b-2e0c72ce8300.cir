@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' shortDesc='Addiert zwei Bits und ein Übertragsbit zu Summe und Übertrag' script='var a = elem.inputBit(&quot;A&quot;);
+        <graph _id='2' script='var a = elem.inputBit(&quot;A&quot;);
 var b = elem.inputBit(&quot;B&quot;);
 var ci = elem.inputBit(&quot;CI&quot;);
 
@@ -206,6 +206,10 @@ elem.setOutputBit(&quot;CO&quot;, ha1c || ha2c);' propDelay='60'>
             <translation lang='en' text='Full Adder'/>
             <translation lang='de' text='Volladdierer'/>
           </name>
+          <desc>
+            <translation lang='en' text='Adds two input bits and one carry input resulting in a sum bit and a carry output'/>
+            <translation lang='de' text='Addiert zwei Bits und ein Übertragsbit zu Summe und Übertrag'/>
+          </desc>
           <ports>
             <subCircuitPort _id='60' portId='1' name='A' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='61' portId='2' name='B' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

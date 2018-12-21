@@ -49,6 +49,7 @@ class SubGraphVerticeRef(
             val verticeRef = SubGraphVerticeRef(null, storableCloner, repository, scriptGateway)
             verticeRef.graphUUID = subGraphVertice.graphUUID
 	        verticeRef.translatableName = subGraphVertice.translatableName
+	        verticeRef.translatableDescription = subGraphVertice.translatableDescription
             verticeRef.fillFrom(subGraphVertice)
             return verticeRef
         }
@@ -96,6 +97,8 @@ class SubGraphVerticeRef(
 
 	override var translatableName: TranslatableText = TranslatableText()
 
+	override var translatableDescription: TranslatableText = TranslatableText()
+
     override fun <T: Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler) {
         LOG.trace("SubGraphVerticeRef: propagateOutput for Output '${outputPort.name}'")
         // Invoke SignalHandler in order to enable breakpoint on the SubGraphOutputPort
@@ -122,7 +125,7 @@ class SubGraphVerticeRef(
         if (metaGraph != null) {
             name = metaGraph.name
 	        translatableName = metaGraph.containerDrawing.model.translatableName
-            shortDescription = metaGraph.graph.model!!.shortDescription
+	        translatableDescription = metaGraph.containerDrawing.model.translatableDescription
             fillFrom(metaGraph.containerDrawing.createSubGraphVertice())
 
             super.read(reader)
@@ -164,7 +167,7 @@ class SubGraphVerticeRef(
 		    if (descriptionProperty.isNotEmpty()) {
 			    return descriptionProperty.text
 		    } else {
-			    return graph?.shortDescription ?: super.shortDescription
+			    return translatableDescription.getOptionalTranslation() ?: super.shortDescription
 		    }
 	    }
         set(value) {super.shortDescription = value}

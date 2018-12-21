@@ -108,6 +108,8 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 
 	/** ---- [TranslatableText] */
 
+	val isEmpty: Boolean get() = translations.isEmpty()
+
 	/** Creates a new [Translation] by adding the specified translation for the current system language.*/
 	fun withTranslation(text: String): TranslatableText {
 		return withTranslation(System.get().currentLanguage(), text)
@@ -126,13 +128,23 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 		return getTranslation(System.get().currentLanguage())
 	}
 
+	fun getOptionalTranslation(): String? {
+		return getOptionalTranslation(System.get().currentLanguage())
+	}
+
 	/** Returns the translation in the specified [Language].*/
 	fun getTranslation(language: Language): String {
+		return getOptionalTranslation(language)
+			?: throw IllegalArgumentException("no translation available")
+	}
+
+	/** Returns the translation in the specified [Language].*/
+	fun getOptionalTranslation(language: Language): String? {
 		return translations[language]?.text
 			?: translations[Language.DEFAULT]?.text
 			?: translations.values.firstOrNull()?.text
-			?: throw IllegalArgumentException("no translation available")
 	}
+
 
 	/** Determines whether this [TranslatableText] contains a translation in the specified [Language].*/
 	fun hasTranslation(language: Language): Boolean = translations[language] != null

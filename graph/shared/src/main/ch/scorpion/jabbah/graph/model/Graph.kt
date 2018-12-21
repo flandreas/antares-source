@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.graph.library.Library
@@ -36,15 +37,29 @@ interface Graph : Storable {
 
     /**
      * The name of this [Graph] to be used when offering this [Graph] in a [Library].
+     * Reflects the value in [translatedName] corresponding with the current system [Language].
      * Posts a [GraphNameChangedEvent] on this [Graph]'s [EventBus] when changed.
      */
     var name: String
 
-	/** Contains translations of the [name] property.*/
+	/**
+	 * Contains translations of the [name] property.
+	 * Posts a [GraphNameChangedEvent] on this [Graph]'s [EventBus] when changed.
+	 */
 	var translatedName: TranslatableText
 
-    /** A short description of the purpose of this [Graph].*/
+    /**
+     * A short description of the purpose of this [Graph].
+     * Reflects the value in [translatedShortDescription] corresponding with the current system [Language].
+     * Posts a [GraphDescriptionChangedEvent] on this [Graph]'s [EventBus] when changed.
+     */
     var shortDescription: String?
+
+	/**
+	 * Contains translations of the [shortDescription] property.
+	 * Posts a [GraphDescriptionChangedEvent] on this [Graph]'s [EventBus] when changed.
+	 */
+	var translatedShortDescription: TranslatableText
 
     /** The script code to be executed when a [GraphInput] has changed and deep execution is not required.*/
     var script: String?
@@ -126,6 +141,9 @@ interface Graph : Storable {
 
 /** Posted on a [Graph]s [EventBus] when its name (or one of its translations) has changed.*/
 class GraphNameChangedEvent(val graph: Graph, val newValue: TranslatableText)
+
+/** Posted on a [Graph]s [EventBus] when its description (or one of its translations) has changed.*/
+class GraphDescriptionChangedEvent(val graph: Graph, val newValue: TranslatableText)
 
 class GraphElementAddedEvent(val graph: Graph, val element: GraphElement)
 

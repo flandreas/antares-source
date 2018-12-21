@@ -100,6 +100,12 @@ class GraphViewImpl<T : GraphElementView<*>>(
             graph!!.shortDescription = value.text
         }
 
+	var translatableShortDescription: TranslatableText
+		get() = graph!!.translatedShortDescription
+		set(value) {
+			graph!!.translatedShortDescription = value
+		}
+
     var propagationDelay: Long?
         get() = graph!!.propagationDelay
         set(value) {

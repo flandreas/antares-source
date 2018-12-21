@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
+import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.script.ScriptEngineJvm
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -63,7 +64,7 @@ object GraphViewModuleJvm : AbstractModule() {
         properties.set(NavigationStackView.PROP_HEAD_TEXT_COLOR, Color.BLACK)
     }
 
-    private fun configurePropertyRenderer(registry: PropertyRendererRegistry) {
+    private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
         registry.registerRenderer(Layout::class.java, EnumRenderer::class.java)
         registry.registerRenderer(PortType::class.java, EnumRenderer::class.java)
         registry.registerRenderer(PortLabelPosition::class.java, EnumRenderer::class.java)

@@ -68,7 +68,21 @@ open class GraphImpl(
 			}
 		}
 
-    override var shortDescription: String? = null
+    override var shortDescription: String?
+		get() = translatedShortDescription.getOptionalTranslation()
+		set(value) {
+			if (shortDescription != value && value != null) {
+				translatedShortDescription = translatedShortDescription.withTranslation(value)
+			}
+		}
+
+	override var translatedShortDescription: TranslatableText = TranslatableText()
+		set(value) {
+			if (field != value) {
+				field = value
+				eventBus.post(GraphDescriptionChangedEvent(this, value))
+			}
+		}
 
     override var script: String? = null
 
@@ -201,16 +215,12 @@ open class GraphImpl(
     }
 
     override fun write(writer: StoreWriter) {
-        shortDescription?.let { writer.writeString("shortDesc", it) }
         script?.let { writer.writeString("script", it) }
         propagationDelay?.let { writer.writeLong("propDelay", it) }
         writer.writeStorables("elements", getStorableChildren())
     }
 
     override fun read(reader: StoreReader) {
-        if (reader.hasAttribute(("shortDesc"))) {
-            shortDescription = reader.readString("shortDesc")
-        }
         if (reader.hasAttribute("script")) {
             script = reader.readString("script")
         }

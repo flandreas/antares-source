@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' shortDesc='Wählt einen von 4 Ausgängen anhand des 2-Bit-Wertes am Eingang aus' script='var en = elem.inputBit(&quot;EN&quot;);
+        <graph _id='2' script='var en = elem.inputBit(&quot;EN&quot;);
 var i0 = elem.inputBit(&quot;I0&quot;) ? 1 : 0;
 var i1 = elem.inputBit(&quot;I1&quot;) ? 1 : 0;
 
@@ -463,6 +463,10 @@ elem.setOutputBit(&quot;O3&quot;, en &amp;&amp; val == 3);' propDelay='40'>
             <translation lang='en' text='2-4 Decoder'/>
             <translation lang='de' text='2-4 Dekodierer'/>
           </name>
+          <desc>
+            <translation lang='en' text='Asserts one of 4 outputs according to the 2-bit input value'/>
+            <translation lang='de' text='Wählt einen von 4 Ausgängen anhand des 2-Bit-Wertes am Eingang aus'/>
+          </desc>
           <ports>
             <subCircuitPort _id='119' portId='1' name='I0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='120' portId='2' name='I1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerEditor
@@ -89,7 +90,7 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		typeMap.register("text", TextComponentJvm::class)
 	}
 
-	private fun configurePropertyRenderer(registry: PropertyRendererRegistry) {
+	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
 		registry.registerRenderer(ch.scorpion.antares.view.output.LightColor::class.java, LightColorRenderer::class.java)
 		registry.registerRenderer(InputCount::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(InputPortNumber::class.java, EnumRenderer::class.java)

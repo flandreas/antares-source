@@ -53,7 +53,7 @@ class SystemJvm(private val useJavaFX: Boolean = false) : System {
         return UUID(uuid)
     }
 
-    override fun buildToolTipText(title: String?, text: String?): String? {
+    override fun buildToolTipText(title: String?, text: String?, endWithPeriod: Boolean): String? {
         val sb = StringBuilder()
 
         if (title == null || "" == title) {
@@ -74,6 +74,9 @@ class SystemJvm(private val useJavaFX: Boolean = false) : System {
 
         if (hasText) {
             sb.append(text)
+	        if (endWithPeriod && !text!!.endsWith(".")) {
+		        sb.append('.')
+	        }
         }
 
         sb.append("</html>")

@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' shortDesc='Schieberegsiter mit 8 Bits für Parallelausgabe'>
+        <graph _id='2'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='0' name='Schieberegister Parallel-Out 4-Bit' desc='Schieberegister Bits 0..3' uuid='2fa2c8a7-fc2d-4139-8f6b-bd4b07933916'/>
             <subGraphVerticeRef _id='4' id='2' delay='0' name='Schieberegister Parallel-Out 4-Bit' desc='Schieberegister Bits 4..7' uuid='2fa2c8a7-fc2d-4139-8f6b-bd4b07933916'/>
@@ -260,6 +260,10 @@
             <translation lang='en' text='Shift Register Parallel-Out 8 Bit'/>
             <translation lang='de' text='Schieberegister Parallel-Out 8-Bit'/>
           </name>
+          <desc>
+            <translation lang='en' text='8-bit shift register with parallel output'/>
+            <translation lang='de' text='Schieberegister mit 8 Bits für Parallelausgabe'/>
+          </desc>
           <ports>
             <subCircuitPort _id='74' portId='1' name='I' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='75' portId='2' name='T' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>

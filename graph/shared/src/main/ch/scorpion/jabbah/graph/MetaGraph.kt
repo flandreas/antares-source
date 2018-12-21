@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.model.GraphDescriptionChangedEvent
 import ch.scorpion.jabbah.graph.model.GraphNameChangedEvent
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.Project
@@ -126,14 +127,20 @@ class MetaGraph(
 		handle(it)
 	}
 
+	private val graphDescHandler: EventHandler<GraphDescriptionChangedEvent> = {
+		handle(it)
+	}
+
     init {
 	    eventBus.register(GraphNameChangedEvent::class, graphNameHandler)
+	    eventBus.register(GraphDescriptionChangedEvent::class, graphDescHandler)
         containerDrawing.model.graphUUID = uuid
         containerDrawing.initialize()
     }
 
 	fun dispose() {
 		eventBus.unregister(GraphNameChangedEvent::class, graphNameHandler)
+		eventBus.unregister(GraphDescriptionChangedEvent::class, graphDescHandler)
 		graph.dispose()
 		containerDrawing.dispose()
 	}
@@ -181,6 +188,7 @@ class MetaGraph(
 		super.resolutionDone()
 		graph.model!!.uuid = containerDrawing.model.graphUUID!!
 		graph.model!!.translatedName = containerDrawing.model.translatableName
+		graph.model!!.translatedShortDescription =containerDrawing.model.translatableDescription
 	}
 
     /** ---- [MetaGraph] */
@@ -200,6 +208,12 @@ class MetaGraph(
 	private fun handle(event: GraphNameChangedEvent) {
 		if (event.graph == graph.model) {
 			containerDrawing.model.translatableName = event.newValue
+		}
+	}
+
+	private fun handle(event: GraphDescriptionChangedEvent) {
+		if (event.graph == graph.model) {
+			containerDrawing.model.translatableDescription = event.newValue
 		}
 	}
 }

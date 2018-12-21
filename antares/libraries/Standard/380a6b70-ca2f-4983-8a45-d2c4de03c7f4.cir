@@ -2,7 +2,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' shortDesc='Zählt von 0 bis 9 und fängt dann wieder bei 0 an'>
+        <graph _id='2'>
           <elements>
             <circuitInOut _id='3' id='2' delay='0' name='C' type='input' bitWidth='1'/>
             <digitalNet _id='4' id='3' delay='0'>
@@ -497,6 +497,10 @@
             <translation lang='en' text='Sync. BCD Counter 4 Bit'/>
             <translation lang='de' text='Synch. BCD-Zähler 4-Bit'/>
           </name>
+          <desc>
+            <translation lang='en' text='Counts from 0 to 9 and starts over with 0'/>
+            <translation lang='de' text=' Zählt von 0 bis 9 und fängt dann wieder bei 0 an'/>
+          </desc>
           <ports>
             <subCircuitPort _id='129' portId='1' name='C' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='130' portId='2' name='O0' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
