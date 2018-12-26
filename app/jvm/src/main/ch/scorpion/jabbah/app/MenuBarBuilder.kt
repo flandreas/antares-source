@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.action.*
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.preferences.PreferencesAction
 import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.edit.app.*
 import javax.swing.JCheckBoxMenuItem
@@ -33,12 +34,12 @@ open class MenuBarBuilder(
         fillMenuBar(menuBar)
 
         eventBus.register(SavableHistoryEvent::class, { updateOpenRecentMenu() })
-	    eventBus.register(CurrentSavableEvent::class, {
+	    eventBus.register(CurrentSavableEvent::class) {
 		    // Make a [Savable] that has just been closed visible in the menu
 		    if (it.savable == null) {
 			    updateOpenRecentMenu()
 		    }
-	    })
+	    }
     }
 
     protected open fun fillMenuBar(menuBar: JMenuBar) {
@@ -53,6 +54,8 @@ open class MenuBarBuilder(
         menu.add(openRecentMenu)
         menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(frame.application))))
 	    menu.add(JMenuItem(ActionWrapperSwing(SaveFileAsAction(frame.application))))
+	    menu.addSeparator()
+	    menu.add(JMenuItem(ActionWrapperSwing(PreferencesAction())))
         menu.addSeparator()
         menu.add(JMenuItem(ActionWrapperSwing(CloseFileAction(frame.application))))
         menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))

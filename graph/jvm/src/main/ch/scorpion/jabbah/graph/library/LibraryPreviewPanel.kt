@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -64,6 +65,7 @@ class LibraryPreviewPanel(
 
         eventBus.register(LibrarySelectionChangedEvent::class) { handleLibrarySelectionChanged(it) }
 	    eventBus.register(LibraryItemUpdatedEvent::class) { map.remove(it.item) }
+	    eventBus.register(PreferencesChangedEvent::class) { componentDisplay.repaint() }
 
 	    buildUI()
 

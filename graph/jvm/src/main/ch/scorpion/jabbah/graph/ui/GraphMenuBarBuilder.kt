@@ -8,9 +8,9 @@ import ch.scorpion.jabbah.app.action.SaveFileAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.preferences.PreferencesAction
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.ExecutionDepthAction
 import ch.scorpion.jabbah.execution.StopOnIssueAction
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
@@ -47,6 +47,7 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(frame.application))))
 		menu.addSeparator()
 		menu.add(JMenuItem(ActionWrapperSwing(GraphInfoAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(PreferencesAction())))
 		menu.addSeparator()
 		menu.add(JMenuItem(ActionWrapperSwing(CloseFileAction(frame.application))))
 		menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))

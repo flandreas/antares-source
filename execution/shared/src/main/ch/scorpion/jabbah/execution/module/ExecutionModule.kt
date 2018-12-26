@@ -35,6 +35,6 @@ object ExecutionModule : AbstractModule() {
     }
 
 	private fun fillProperties(properties: Properties) {
-		properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe)
+		properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)
 	}
 }

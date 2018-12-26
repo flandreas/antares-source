@@ -56,7 +56,7 @@ class EditSubGraphVerticeViewPanel(
             storableCloner.clone(subGraphVerticeView.getEditableContainerDrawing()) as ContainerDrawing)
     }
 
-    private inner class OkAction : AbstractAction(Translations.getString("edit.action.ok.name")) {
+    private inner class OkAction : AbstractAction(Translations.getString("base.action.ok.name")) {
         override fun actionPerformed(e: ActionEvent?) {
             subGraphVerticeView.setEditedContainerDrawing(containerPanel.editor.drawing as ContainerDrawing)
             closeCallback.invoke(this@EditSubGraphVerticeViewPanel)

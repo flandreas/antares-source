@@ -11,14 +11,14 @@ import ch.scorpion.jabbah.base.logger
  * Defines categories of [SystemSpeed] that distinguish the depth of interest of a user when
  * interacting with the system.
  */
-enum class SystemSpeedCategory(val speedRange: IntRange) {
+enum class SystemSpeedCategory(val customName: String, val speedRange: IntRange) {
 
     /**
      * When using the system, the user is only interested in the outcome of using the system,
      * e.g. in the results that are produced by the system. Although he'd expect to see the results being produced
      * slower if he reduces the [SystemSpeed], the internals of the system could still run as fast as possible
      */
-    Use(66..100),
+    Use("use", 66..100),
 
     /**
      * When observing the system, the user is not only interested in the outcome of using the system,
@@ -26,13 +26,19 @@ enum class SystemSpeedCategory(val speedRange: IntRange) {
      * the system displays intermediate results and provides some visual insights of how information flows across
      * the system.
      */
-    Observe(33..66),
+    Observe("observer", 33..66),
 
     /**
      * When exploring the system, the user expects from the system to explain how it works in every possible
      * detail, including using intermediate animations that can further slow down the system speed.
      */
-    Explore(0..33);
+    Explore("explore", 0..33);
+
+	companion object {
+		fun withName(customName: String): SystemSpeedCategory {
+			return SystemSpeedCategory.values().firstOrNull { it.customName == customName } ?: throw IllegalArgumentException("Unknown SystemSpeedCategory")
+		}
+	}
 
     override fun toString(): String {
         return when(this) {

@@ -62,6 +62,11 @@ abstract class AbstractDesktopApplication(
 
 	/** ---- [AbstractApplication] */
 
+	override fun init() {
+		super.init()
+		loadPreferences()
+	}
+
 	override fun createNewSavable(): Savable {
 		return FileSavable.undefined()
 	}
@@ -145,6 +150,7 @@ abstract class AbstractDesktopApplication(
 		LOG.info("Shutting $displayName down")
 		handleShutdown()
 		shutdownUI()
+		storePreferences()
 		storeSettings()
 		System.exit(0)
 	}
@@ -188,6 +194,10 @@ abstract class AbstractDesktopApplication(
 		return FileSystems.getDefault().getPath(homeDirectoryPath.toString(), "$systemName.ini")
 	}
 
+	private fun getPreferencesPath(): Path {
+		return FileSystems.getDefault().getPath(homeDirectoryPath.toString(), "$systemName.pref")
+	}
+
 	/** Ensures that the application home directory exists by creating it if it doesn't. */
 	private fun ensureHomeDirectory() {
 		val path = homeDirectoryPath
@@ -209,7 +219,7 @@ abstract class AbstractDesktopApplication(
 						BaseModule.settings.set(key as String, settings[key]!!)
 					}
 				} catch (x: Throwable) {
-					LOG.error("Could not load properties: ${x.message}")
+					LOG.error("Error while loading settings: ${x.message}")
 				}
 			}
 		} catch (x: FileNotFoundException) {
@@ -229,7 +239,44 @@ abstract class AbstractDesktopApplication(
 				}
 				properties.store(it, null)
 			} catch (x: Throwable) {
-				LOG.error("Error while storing properties: ${x.message}")
+				LOG.error("Error while storing settings: ${x.message}")
+			}
+		}
+	}
+
+	private fun loadPreferences() {
+		val path = getPreferencesPath()
+		LOG.debug("Loading preferences from '$path'")
+		try {
+			FileInputStream(path.toString()).use {
+				try {
+					val preferences = java.util.Properties()
+					preferences.load(it)
+					for (key in preferences.keys) {
+						BaseModule.properties.load(key as String, preferences.getProperty(key))
+					}
+				} catch (x: Throwable) {
+					LOG.error("Error while loading preferences: ${x.message}")
+				}
+			}
+		} catch (x: FileNotFoundException) {
+			// empty
+		}
+	}
+
+	protected fun storePreferences() {
+		val path = getPreferencesPath()
+		LOG.debug("Storing preferences in $path")
+		ensureHomeDirectory()
+		FileOutputStream(path.toString()).use {
+			try {
+				val preferences = java.util.Properties()
+				for (key in BaseModule.properties.getCustomizedKeys()) {
+					preferences.set(key, BaseModule.properties.getEntry(key).stringValue)
+				}
+				preferences.store(it, null)
+			} catch (x: Throwable) {
+				LOG.error("Error while storing preferences: ${x.message}")
 			}
 		}
 	}

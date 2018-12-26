@@ -1,10 +1,12 @@
 package ch.scorpion.jabbah.draw.view
 
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Vector2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.base.time.Timer
 
@@ -15,11 +17,17 @@ import ch.scorpion.jabbah.base.time.Timer
 class ZoomPanController(val view: View<*>) {
 
     companion object {
+
+	    /** The name of the wheel zoom step [Float] property in [Properties].*/
+	    const val PROP_WHEEL_ZOOM_STEP = "view.ZoomPanController.wheelZoomStep"
+
+	    /** The name of the wheel pan step [Float] property in [Properties].*/
+	    const val PROP_WHEEL_PAN_STEP = "view.ZoomPanController.wheelPanStep"
+
 	    private val LOG by logger(ZoomPanController::class)
         private const val AUTOPAN_TIMER_DELAY = 50
         private const val AUTOPAN_SIZE = 10
         private const val AUTOPAN_REGION = 50
-        private const val ZOOM_OUT_CHANGE_FACTOR = 0.9
 	    private const val MOUSE_WHEEL_PAN_FACTOR = 5
     }
 
@@ -47,6 +55,10 @@ class ZoomPanController(val view: View<*>) {
 
 	private var isMousePressed: Boolean = false
 
+	private val wheelZoomStep: Double get() = BaseModule.properties.getFloat(PROP_WHEEL_ZOOM_STEP).toDouble()
+
+	private val wheelPanStep: Int get() = BaseModule.properties.getInt(PROP_WHEEL_PAN_STEP)
+
     var startPos: Point2D = Point2D.ZERO
 
     inner class Controller : MouseAdapter() {
@@ -55,7 +67,7 @@ class ZoomPanController(val view: View<*>) {
 
         private fun zoomChangeFactorFromWheelRotation(e: MouseEvent): Double {
 	        if (e.wheelRotation != 0 && e.modifiers == 0) {
-		        return if (isZoomOutWheelRotation(e)) ZOOM_OUT_CHANGE_FACTOR else 1 / ZOOM_OUT_CHANGE_FACTOR
+		        return if (isZoomOutWheelRotation(e)) 1 / wheelZoomStep else wheelZoomStep
 	        }
             return 1.0
         }
@@ -63,9 +75,9 @@ class ZoomPanController(val view: View<*>) {
 	    private fun panVectorFromWheelRotation(e: MouseEvent): Point2D {
 		    if (e.wheelRotation != 0) {
 			    return if (e.isShiftDown) {
-				    Point2D(e.wheelRotation * MOUSE_WHEEL_PAN_FACTOR, 0)
+				    Point2D(e.wheelRotation * wheelPanStep, 0)
 			    } else {
-				    Point2D(0, e.wheelRotation * MOUSE_WHEEL_PAN_FACTOR)
+				    Point2D(0, e.wheelRotation * wheelPanStep)
 			    }
 		    }
 		    return Point2D.ZERO

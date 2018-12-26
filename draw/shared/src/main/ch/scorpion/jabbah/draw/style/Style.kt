@@ -33,8 +33,6 @@ interface Style {
 		/** The name of the default [Font] property in [Properties].*/
 		const val PROP_FONT = "draw.style.font"
 
-		/** The name of the default shadow [Boolean] property in [Properties].*/
-		const val PROP_SHADOW = "draw.style.shadow"
 	}
 }
 
@@ -45,8 +43,5 @@ open class BasicStyle(
 		DrawModule.properties.getColor(Style.PROP_TEXT_COLOR)),
 	override val stroke: Stroke = DrawModule.properties.getStroke(Style.PROP_STROKE),
 	override val font: Font = DrawModule.properties.getFont(Style.PROP_FONT),
-	shadow: Boolean = false
-) : Style {
-
-	override val shadow: Boolean = shadow && DrawModule.properties.getBoolean(Style.PROP_SHADOW)
-}
+	override val shadow: Boolean = false
+) : Style

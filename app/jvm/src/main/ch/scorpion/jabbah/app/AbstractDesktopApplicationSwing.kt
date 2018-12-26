@@ -78,6 +78,7 @@ abstract class AbstractDesktopApplicationSwing(
 	/** ---- [AbstractApplication] */
 
 	override fun init() {
+		super.init()
 		mainFrame = createMainFrame()
 		mainFrame.jMenuBar = createMenuBarBuilder().menuBar
 		DrawViewModule.viewManager.activeView = mainFrame.editor.view

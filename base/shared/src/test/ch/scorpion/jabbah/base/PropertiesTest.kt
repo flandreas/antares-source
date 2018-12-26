@@ -30,5 +30,28 @@ class PropertiesTest {
 		assertThat(properties.get<SomeObject>("myObject"), `is`(SomeObject(1, 2)))
     }
 
+	@Test
+	fun shouldCustomizeInt() {
+		val properties = Properties()
+		properties.set("myInt", 5)
+		properties.customize("myInt", 6)
+		assertThat(properties.getInt("myInt"), `is`(6))
+	}
+
+	@Test
+	fun shouldGetCustomizesKeys() {
+		val properties = Properties()
+		properties.set("myInt", 5)
+		properties.customize("myInt", 6)
+		assertThat(properties.getCustomizedKeys().next(), `is`("myInt"))
+	}
+
+	@Test
+	fun shouldLoadBoolean() {
+		val properties = Properties()
+		properties.load("bool", false.toString())
+		assertThat(properties.getBoolean("bool"), `is`(false))
+	}
+
 	data class SomeObject(val a: Int, val b: Int)
 }

@@ -29,7 +29,6 @@ object DrawStyleModule : AbstractModule() {
         properties.set(Style.PROP_TEXT_COLOR, Color.BLACK)
         properties.set(Style.PROP_STROKE, Stroke())
         properties.set(Style.PROP_FONT, FontImpl())
-	    properties.set(Style.PROP_SHADOW, true)
     }
 
     private fun configureStyleRepository(repository: StyleRepository) {

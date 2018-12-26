@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw
 
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.geom.RectangularShape
@@ -15,8 +16,10 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
     companion object {
 
+	    /** The name of the [Float] property in [Properties] representing the minimum zoom factor.*/
 	    const val PROP_MIN_ZOOM_FACTOR = "draw.view.minZoomFactor"
 
+	    /** The name of the [Float] property in [Properties] representing the maximum zoom factor.*/
 	    const val PROP_MAX_ZOOM_FACTOR = "draw.view.maxZoomFactor"
 
         /** The name of the [ZoomPan] property in [PropertyChangeEvent]s.*/

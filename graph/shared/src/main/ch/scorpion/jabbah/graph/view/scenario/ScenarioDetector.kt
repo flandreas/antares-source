@@ -43,7 +43,7 @@ class ScenarioDetector(
 
     companion object {
 
-	    /** The name of the limit [SystemSpeedCategory] in [Properties]. */
+	    /** The custom name [String] of the limit [SystemSpeedCategory] in [Properties]. */
 	    public val PROP_LIMIT_SYSTEM_SPEED_CATEGORY = "graph.view.scenario.detector.systemSpeedCategoryLimit"
 
         private val LOG by logger(ScenarioDetector::class)
@@ -140,7 +140,7 @@ class ScenarioDetector(
 
     private fun updateActive() {
         val oldValue = isActive
-        isActive = scheduler.isActive && currentSystemSpeedCategory.systemSpeedCategory >= BaseModule.properties.get(PROP_LIMIT_SYSTEM_SPEED_CATEGORY)
+        isActive = scheduler.isActive && currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.withName(BaseModule.properties.getString(PROP_LIMIT_SYSTEM_SPEED_CATEGORY))
         if (isActive != oldValue) {
             LOG.debug("ScenarioDetector: active = '$isActive'")
             view.drawing.currentScenario = null

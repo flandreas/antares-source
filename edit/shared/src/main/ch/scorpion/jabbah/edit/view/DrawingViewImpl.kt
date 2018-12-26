@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 
 /**
  * An implementation of a [View] for displaying and editing [Drawing]s.
@@ -28,13 +29,13 @@ import ch.scorpion.jabbah.base.System
  * a stack of view slides. Therefore, client classes cannot add or remove [Drawable]s by themselves.
  */
 class DrawingViewImpl<T: Drawing<Component>>(
-        drawing: T,
-        canvas: Canvas,
-        transformFactory: () -> AffineTransform = { System.get().createAffineTransform() },
-        private val selectionManagerFactory: SelectionManagerFactory = EditSelectModule.selectionManagerFactory,
-        private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,
-        eventBus: EventBus = BaseModule.eventBus,
-        animator: Animator = AnimationModule.animator
+    drawing: T,
+    canvas: Canvas,
+    transformFactory: () -> AffineTransform = { System.get().createAffineTransform() },
+    private val selectionManagerFactory: SelectionManagerFactory = EditSelectModule.selectionManagerFactory,
+    private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,
+    eventBus: EventBus = BaseModule.eventBus,
+    animator: Animator = AnimationModule.animator
 ) : ViewImpl<EditInputEventContext>(canvas, transformFactory, eventBus), DrawingView<T> {
 
     /** The [DrawableDrawer] used for drawing the [Drawing].*/
@@ -42,6 +43,10 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
     /** Displays [ComponentMessage]s from [Component]s of the current [Drawing]. */
     private val componentMessageDisplayer = ComponentMessageDisplayer(this, eventBus, animator)
+
+	private val preferenceChangeHandler: (PreferencesChangedEvent) -> Unit = {
+		repaint()
+	}
 
     /** ---- [DrawingView] interface */
 
@@ -101,12 +106,19 @@ class DrawingViewImpl<T: Drawing<Component>>(
     override var defaultSelectionDrawingStrategy = SelectionDrawingStrategy.REPLACE
 
     init {
+	    eventBus.register(PreferencesChangedEvent::class, preferenceChangeHandler)
         setupContent()
         grid.view = this
         showGrid = true
     }
 
-    override var dropComponent: Component? = null
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(PreferencesChangedEvent::class, preferenceChangeHandler)
+		componentMessageDisplayer.dispose()
+	}
+
+	override var dropComponent: Component? = null
         private set
 
     override fun createContent(drawing: T): DrawingViewContent<T> {
@@ -144,11 +156,6 @@ class DrawingViewImpl<T: Drawing<Component>>(
     /** ---- [View] interface */
 
     override val contentBounds: RectangularShape get() = drawing.boundingBox
-
-	override fun dispose() {
-		super.dispose()
-		componentMessageDisplayer.dispose()
-	}
 
 	override fun removeDrawable(drawable: Drawable) {
         // DrawingViewImpl has a fixed set of DrawableContainers

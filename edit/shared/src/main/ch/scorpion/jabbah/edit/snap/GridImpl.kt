@@ -22,7 +22,7 @@ import ch.scorpion.jabbah.edit.*
  */
 class GridImpl(
     styleProvider: StyleProvider = StyleRepository.INSTANCE,
-    override var distance: Double = BaseModule.properties.getFloat(Grid.PROP_GRID_DEFAULT_DISTANCE).toDouble(),
+    override var distance: Double = BaseModule.properties.getInt(Grid.PROP_GRID_DEFAULT_DISTANCE).toDouble(),
     override var paintFactor: Int = BaseModule.properties.getInt(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR)
 ) : AbstractSnapper(snapEnabled = true), Grid {
 

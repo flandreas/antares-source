@@ -19,7 +19,9 @@ object DrawViewModule : AbstractModule() {
     }
 
 	private fun fillProperties(properties: Properties) {
-		properties.set(View.PROP_MIN_ZOOM_FACTOR, 0.05)
-		properties.set(View.PROP_MAX_ZOOM_FACTOR, 20)
+		properties.set(View.PROP_MIN_ZOOM_FACTOR, 0.05f)
+		properties.set(View.PROP_MAX_ZOOM_FACTOR, 20f)
+		properties.set(ZoomPanController.PROP_WHEEL_ZOOM_STEP, 1.1f)
+		properties.set(ZoomPanController.PROP_WHEEL_PAN_STEP, 5)
 	}
 }

@@ -35,7 +35,7 @@ class SchedulerImpl(
 ) : Scheduler {
 
     companion object {
-	    /** The name of the limit [SystemSpeedCategory] in [Properties] for sending [SchedulerEvent]s.*/
+	    /** The custom name [String] of the limit [SystemSpeedCategory] in [Properties] for sending [SchedulerEvent]s.*/
 	    const val PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT = "execution.scheduler.eventSystemSpeedLimit"
 
         private val LOG by logger(SchedulerImpl::class)
@@ -215,7 +215,7 @@ class SchedulerImpl(
     private fun postSchedulerEvent(actor: Actor, type: SchedulerEvent.Type) {
         // Is only active when exploring the system. For performance reasons, we therefore avoid sending
         // unnecessary (and costly) events.
-        if (isActive && currentSystemSpeedCategory.systemSpeedCategory >= BaseModule.properties.get(PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT)) {
+        if (isActive && currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.withName(BaseModule.properties.getString(PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT))) {
             eventBus.post(SchedulerEvent(type, this, actor))
         }
     }

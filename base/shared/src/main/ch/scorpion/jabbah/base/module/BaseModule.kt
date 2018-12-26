@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventBusImpl
+import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.TimeService
@@ -15,7 +16,11 @@ import ch.scorpion.jabbah.base.time.TimeService
  */
 object BaseModule : AbstractModule() {
 
+	const val PREF_TREE_ROOT = "base.preferences.group.root"
+
 	val properties: Properties = Properties()
+
+	val preferencesTree: PreferenceGroup = PreferenceGroup(PREF_TREE_ROOT)
 
     var settings: Settings = Settings()
 

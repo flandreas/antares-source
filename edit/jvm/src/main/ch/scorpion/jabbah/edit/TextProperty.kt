@@ -138,14 +138,14 @@ class TextPropertyEditor() : AbstractPropertyEditor() {
             add(scrollPane, BorderLayout.CENTER)
 
             val buttonPanel = JPanel(FlowLayout(FlowLayout.CENTER))
-            buttonPanel.add(JButton(ActionWrapperSwing(object : AbstractAction("edit.action.ok") {
+            buttonPanel.add(JButton(ActionWrapperSwing(object : AbstractAction("base.action.ok") {
                 override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 	                editorTextArea.text = dialogTextArea.text
                     closeHandler.invoke()
 	                editorTextArea.requestFocus()
                 }
             })))
-            buttonPanel.add(JButton(ActionWrapperSwing(object : AbstractAction("edit.action.cancel") {
+            buttonPanel.add(JButton(ActionWrapperSwing(object : AbstractAction("base.action.cancel") {
                 override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
                     closeHandler.invoke()
                 }

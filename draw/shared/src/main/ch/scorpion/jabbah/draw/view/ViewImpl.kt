@@ -25,9 +25,9 @@ import ch.scorpion.jabbah.draw.style.ThemeEvent
  * @param transformFactory a factory for creating new [AffineTransform]s
  */
 open class ViewImpl<C: InputEventContext>(
-        override val canvas: Canvas,
-        private val transformFactory: () -> AffineTransform,
-        private val eventBus: EventBus = BaseModule.eventBus
+    override val canvas: Canvas,
+    private val transformFactory: () -> AffineTransform,
+    protected val eventBus: EventBus = BaseModule.eventBus
 ) : View<C> {
 
     companion object {

@@ -4,9 +4,11 @@ apply plugin: 'kotlin'
 
 sourceSets {
 	main.kotlin.srcDirs += 'shared/src/main'
+    main.resources.srcDirs += 'shared/rsc'
 	main.kotlin.srcDirs += 'jvm/src/main'
 	
 	test.kotlin.srcDirs += 'shared/src/test'
+    test.resources.srcDirs += 'shared/rsc'
 	test.kotlin.srcDirs += 'jvm/src/test'
 
 	demo {

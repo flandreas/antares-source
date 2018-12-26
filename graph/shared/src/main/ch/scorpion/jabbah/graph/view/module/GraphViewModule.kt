@@ -155,8 +155,8 @@ object GraphViewModule : AbstractModule() {
         properties.set(OriginIndicator.PROP_COLOR, Color.BLUE)
         properties.set(OriginIndicator.PROP_SELECTION_COLOR, Color.RED)
 
-	    properties.set(ScenarioDetector.PROP_LIMIT_SYSTEM_SPEED_CATEGORY, SystemSpeedCategory.Observe)
-	    properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe)
+	    properties.set(ScenarioDetector.PROP_LIMIT_SYSTEM_SPEED_CATEGORY, SystemSpeedCategory.Observe.customName)
+	    properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)
     }
 
     private fun configureSelectionModels(factory: SelectionModelFactory) {
