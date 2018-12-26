@@ -1,10 +1,12 @@
 package ch.scorpion.jabbah.edit.snap
 
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.View
@@ -22,8 +24,9 @@ import ch.scorpion.jabbah.edit.*
  */
 class GridImpl(
     styleProvider: StyleProvider = StyleRepository.INSTANCE,
-    override var distance: Double = BaseModule.properties.getInt(Grid.PROP_GRID_DEFAULT_DISTANCE).toDouble(),
-    override var paintFactor: Int = BaseModule.properties.getInt(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR)
+    chosenDistance: Double? = null,
+    chosenPaintFactor: Int? = null,
+    eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSnapper(snapEnabled = true), Grid {
 
 	companion object {
@@ -45,6 +48,32 @@ class GridImpl(
      * [Rectangle2D] whenever a part of the [GridImpl] is redrawn.
      */
     private val clipBuffer: Rectangle2D = Rectangle2D()
+
+	override var paintFactor: Int
+		get() = chosenPaintFactor ?: BaseModule.properties.getInt(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR)
+		set(value) {
+			chosenPaintFactor = value
+			updateGridPainterProperties()
+		}
+
+	override var distance: Double
+		get() = chosenDistance ?: BaseModule.properties.getInt(Grid.PROP_GRID_DEFAULT_DISTANCE).toDouble()
+		set(value) {
+			chosenDistance = value
+			updateGridPainterProperties()
+		}
+
+	private var chosenPaintFactor: Int? = chosenPaintFactor
+
+	private var chosenDistance: Double? = chosenDistance
+
+	init {
+		eventBus.register(PreferencesChangedEvent::class) {
+			updateGridPainterProperties()
+			invalidate()
+			requestRedraw()
+		}
+	}
 
     /** ---- [Grid] interface */
 

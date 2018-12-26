@@ -45,6 +45,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
     private val componentMessageDisplayer = ComponentMessageDisplayer(this, eventBus, animator)
 
 	private val preferenceChangeHandler: (PreferencesChangedEvent) -> Unit = {
+		invalidate()
 		repaint()
 	}
 

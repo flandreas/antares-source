@@ -302,7 +302,7 @@ open class ViewImpl<C: InputEventContext>(
         canvas.repaint(x, y, w, h)
     }
 
-    private fun invalidate(region: RectangularShape? = null) {
+    protected fun invalidate(region: RectangularShape? = null) {
         painter.invalidateRegion(region, false)
     }
 
