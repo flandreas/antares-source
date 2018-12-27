@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -12,11 +11,11 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.element.GraphElementCollector
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
-import java.awt.FlowLayout
 import java.awt.Frame
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
-import javax.swing.*
+import javax.swing.JOptionPane
+import javax.swing.JPanel
+import javax.swing.JScrollPane
+import javax.swing.JTextArea
 
 /** Provides in-depth information about the currently open [Graph].*/
 class GraphInfoAction(
@@ -25,30 +24,26 @@ class GraphInfoAction(
 
 	override fun execute(event: ActionEvent) {
 		val graphView = (viewManager.activeView as DrawingView<*>).drawing as GraphView<*>
-		//GraphElementCollector().collect(graphView.graph!!)
-		GraphInfoPanel.showAsDialog(graphView.graph!!)
+		GraphInfoPanel.showAsDialog(title = Translations.getString("graph.action.info.name"), graph = graphView.graph!!)
 	}
 }
 
 /** Displays the result of a [GraphElementCollector] run for the specified [Graph].*/
-class GraphInfoPanel(graph: Graph, private val closeHandler: () -> Unit) : JPanel() {
+class GraphInfoPanel(graph: Graph) : JPanel() {
 
 	companion object {
-		fun showAsDialog(graph: Graph, parent: Frame = Frame.getFrames()[0]) {
-			val dialog = JDialog(parent, true)
-
-			BusyHandler.register(dialog, null)
-			dialog.addWindowListener(object : WindowAdapter() {
-				override fun windowClosed(e: WindowEvent?) {
-					BusyHandler.deregister(dialog)
-				}
-			})
-
-			dialog.title = Translations.getString("graph.action.info.name")
-			dialog.contentPane.add(GraphInfoPanel(graph) { dialog.dispose()})
-			dialog.pack()
-			dialog.setLocationRelativeTo(parent)
-			dialog.isVisible = true
+		fun showAsDialog(
+			parent: Frame = Frame.getFrames()[0],
+			title: String,
+			graph: Graph
+		) {
+			JOptionPane.showConfirmDialog(
+				parent,
+				GraphInfoPanel(graph),
+				title,
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.PLAIN_MESSAGE
+			)
 		}
 	}
 
@@ -72,15 +67,5 @@ class GraphInfoPanel(graph: Graph, private val closeHandler: () -> Unit) : JPane
 		scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
 		scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
 		add(scrollPane, BorderLayout.CENTER)
-
-		val buttonPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-		buttonPanel.add(JButton(CloseAction()))
-		add(buttonPanel, BorderLayout.SOUTH)
-	}
-
-	private inner class CloseAction : AbstractAction(Translations.getString("file.action.close.name")) {
-		override fun actionPerformed(e: java.awt.event.ActionEvent?) {
-			closeHandler.invoke()
-		}
 	}
 }
