@@ -66,7 +66,7 @@ abstract class AbstractRectangularComponent(
 				bb.height + 2 * lw
 			)
 			if (shadow) {
-				DropShadow.expand(bb)
+				DropShadow.expand(bb, rotation)
 			}
 			return bb
 		}
@@ -229,7 +229,7 @@ abstract class RectangularComponent(
 					drawFill(context, shape, context.choose(Themes.get<DrawTheme>().shadow).foregroundColor)
 				}
 				if (strokeColor != null) {
-					drawStroke(context, shape, context.choose(Themes.get<DrawTheme>().shadow).foregroundColor, stroke);
+					drawStroke(context, shape, context.choose(Themes.get<DrawTheme>().shadow).foregroundColor, stroke)
 				}
 			}
 		}

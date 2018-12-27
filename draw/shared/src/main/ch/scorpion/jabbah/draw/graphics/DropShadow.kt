@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw.graphics
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
@@ -45,10 +46,14 @@ object DropShadow {
 		}
 	}
 
-	fun expand(rect: RectangularShape): RectangularShape {
+	fun expand(rect: RectangularShape, rotation: Rotation) {
 		if (useShadow) {
-			rect.expandBy(0.0, 0.0, offset, offset)
+			when (rotation) {
+				Rotation.R0 -> rect.expandBy(0.0, 0.0, offset, offset)
+				Rotation.R90 -> rect.expandBy(0.0, offset, offset, 0.0)
+				Rotation.R180 -> rect.expandBy(offset, offset, 0.0, 0.0)
+				Rotation.R270 -> rect.expandBy(offset, 0.0, 0.0, offset)
+			}
 		}
-		return rect
 	}
 }

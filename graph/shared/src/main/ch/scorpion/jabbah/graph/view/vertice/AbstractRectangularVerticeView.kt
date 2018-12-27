@@ -216,7 +216,7 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
             height + 2 * lineWidth + outsetTop + outsetBottom
         )
 	    if (shadow) {
-		    DropShadow.expand(_boundingBox)
+		    DropShadow.expand(_boundingBox, rotation)
 	    }
 	    addPortViewsTo(_boundingBox, containsBox)
     }

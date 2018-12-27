@@ -428,7 +428,7 @@ class CircuitInOutView(
 		    pathBB.width + 2,
 		    pathBB.height + 2)
 	    if (shadow) {
-		    DropShadow.expand(pathBBoxRect)
+		    DropShadow.expand(pathBBoxRect, rotation)
 	    }
 	    boundingBox.add(pathBBoxRect)
 

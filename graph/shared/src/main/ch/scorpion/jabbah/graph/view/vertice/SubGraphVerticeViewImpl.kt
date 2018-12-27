@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
@@ -442,6 +443,8 @@ class SubGraphVerticeViewImpl(
             _boundingBox.add(r)
             containsBox.add(r)
         }
+
+	    DropShadow.expand(_boundingBox, rotation)
     }
 
     private fun mirrorIfNecessary(drawable: Drawable) {
