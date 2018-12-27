@@ -63,7 +63,7 @@ class EditSubGraphVerticeViewPanel(
         }
     }
 
-    private inner class CancelAction : AbstractAction(Translations.getString("edit.action.cancel.name")) {
+    private inner class CancelAction : AbstractAction(Translations.getString("base.action.cancel.name")) {
         override fun actionPerformed(e: ActionEvent?) {
             closeCallback.invoke(this@EditSubGraphVerticeViewPanel)
         }
