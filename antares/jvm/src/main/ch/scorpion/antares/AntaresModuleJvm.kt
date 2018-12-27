@@ -97,6 +97,7 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		registry.registerRenderer(Handedness::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(Logic::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(Trigger::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(BranchCount::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(BitWidth::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(DigitalSignalRepresentation::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(SevenSegmentDisplayScheme::class.java, EnumRenderer::class.java)

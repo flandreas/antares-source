@@ -59,7 +59,7 @@ object EditModuleJvm : AbstractModule() {
     }
 
     private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
-        registry.registerRenderer(Direction::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(Direction::class.java, EnumRenderer::class.java)
         registry.registerRenderer(PredefinedColor::class.java, PredefinedColorRenderer::class.java)
 	    registry.registerRenderer(PredefinedStroke::class.java, PredefinedStrokeRenderer::class.java)
         registry.registerRenderer(Size::class.java, EnumRenderer::class.java)
@@ -67,7 +67,7 @@ object EditModuleJvm : AbstractModule() {
         registry.registerRenderer(VerticalAlignment::class.java, EnumRenderer::class.java)
         registry.registerRenderer(TextProperty::class.java, TextPropertyRenderer::class.java)
 	    registry.register(TranslatableText::class.java) { TranslatableTextPropertyRenderer((it as PropertyImpl<TranslatableText>).filter)}
-    }
+}
 
     private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
         registry.registerEditor(Direction::class.java, DirectionEditor::class.java)
