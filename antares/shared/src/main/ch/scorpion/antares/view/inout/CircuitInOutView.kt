@@ -535,6 +535,9 @@ class CircuitInOutView(
 
 				    model!!.setIncomingSignal(signal.withBit(digitIndex, bit.not()), signalHandler)
 			    }
+			    else if (numberView!!.focusIndex == digitIndex) {
+				    eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = this@CircuitInOutView, messageKey = "antares.msg.HexInputManipulation"))
+			    }
 
 			    // Set the focus on the selected digit
 			    invalidate()
