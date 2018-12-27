@@ -122,11 +122,7 @@ class SidebarPane(
         initUI()
     }
 
-    /**
-     * Adds a new content view to this [SidebarPane].
-     * @param name the translated name of the content to be displayed in the vertical button (if the content is closed)
-     * or in the title bar (if the content is closed).
-     */
+    /** Adds a new content view to this [SidebarPane].*/
     fun add(content: Content) {
         val entry = createEntry(content.name, ImageIcon(SidebarPane::class.java.getResource(content.iconPath)), content.content)
         entries.add(entry)
@@ -170,7 +166,7 @@ class SidebarPane(
 	    val label = location.createLabel(name, icon)
 	    label.border = BorderFactory.createEmptyBorder(5, 10, 5, 10)
 	    label.isOpaque = true
-	    label.verticalAlignment = SwingConstants.TOP
+	    label.verticalAlignment = SwingConstants.CENTER
 	    return Entry(label, content)
     }
 
