@@ -243,7 +243,7 @@ class CircuitInOutView(
         context.g.translate(translation.x, translation.y)
 
 	    if (shadow) {
-		    DropShadow.draw(context) {
+		    DropShadow.draw(context, transparency) {
 			    if (backgroundColor != null) {
 				    context.g.fill(arrowPath!!.path)
 			    }

@@ -83,7 +83,7 @@ class PolylineDrawable constructor(
         val oldColor = context.g.color
 
 	    if (shadow && fillColor != null) {
-		    DropShadow.draw(context) {
+		    DropShadow.draw(context, transparency) {
 			    context.g.fill(shape)
 		    }
 	    }

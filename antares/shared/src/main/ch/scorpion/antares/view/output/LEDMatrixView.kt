@@ -246,7 +246,7 @@ class LEDMatrixView(
 
     override fun drawImpl(context: DrawContext) {
 	    if (shadow) {
-		    DropShadow.draw(context) {
+		    DropShadow.draw(context, transparency) {
 			    context.g.fillRect(0, 0, width.toInt(), height.toInt())
 		    }
 	    }

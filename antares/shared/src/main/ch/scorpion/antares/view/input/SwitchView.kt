@@ -309,7 +309,7 @@ class SwitchView(
 
     private fun drawBodyDigital(context: DrawContext) {
 	    if (shadow) {
-			DropShadow.draw(context) {
+			DropShadow.draw(context, transparency) {
 				context.g.fillRect(xInt, yInt, widthInt, heightInt)
 			}
 	    }

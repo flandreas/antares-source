@@ -152,7 +152,7 @@ open class BoxGateView<T : Vertice>(
 
     fun drawEuropeanShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 	    if (shadow) {
-		    DropShadow.draw(context) {
+		    DropShadow.draw(context, transparency) {
 			    context.g.fillRect(xInt, yInt, widthInt, heightInt)
 	        }
 	    }

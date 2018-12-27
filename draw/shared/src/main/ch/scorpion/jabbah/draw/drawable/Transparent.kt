@@ -30,6 +30,7 @@ interface Transparent : Drawable {
      * where 0 means complete transparency, and 255 means complete opacity.
      */
     var transparency: Int
+
 }
 
 /**

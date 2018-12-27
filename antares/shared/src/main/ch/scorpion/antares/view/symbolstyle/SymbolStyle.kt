@@ -59,11 +59,11 @@ enum class SymbolStyle(val customName: String) {
         }
 
         override fun drawXorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-            drawAmerican(gate, gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true)
+            drawAmerican(gate, gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true, gate.transparency)
         }
 
         override fun drawXnorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-            drawAmerican(gate, gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true)
+            drawAmerican(gate, gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true, gate.transparency)
         }
 
         override fun drawNotGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
@@ -141,11 +141,11 @@ enum class SymbolStyle(val customName: String) {
         }
 
         fun drawAmerican(gate: BoxGateView<*>, path: Path, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-            drawAmerican(gate, gate.x, gate.y, gate.bounds.height, path, context, foregroundColor, backgroundColor, stroke, false)
+            drawAmerican(gate, gate.x, gate.y, gate.bounds.height, path, context, foregroundColor, backgroundColor, stroke, false, gate.transparency)
         }
 
         fun drawAmerican(comp: Component, x: Double, y: Double, height: Double, path: Path, context: DrawContext, foregroundColor: Color,
-                         backgroundColor: Color, stroke: Stroke, exclusive: Boolean) {
+                         backgroundColor: Color, stroke: Stroke, exclusive: Boolean, transparency: Int) {
 
             val vOffset = (height - 2 * Look.SCALE - path.boundingBox.height) / 2
 
@@ -159,7 +159,7 @@ enum class SymbolStyle(val customName: String) {
             context.g.translate(x, y + vOffset)
 
 	        if (comp.shadow) {
-		        DropShadow.draw(context) {
+		        DropShadow.draw(context, transparency) {
 			        context.g.fill(path)
 		        }
 	        }

@@ -224,7 +224,7 @@ abstract class RectangularComponent(
 		val oldColor = context.g.color
 
 		if (shadow) {
-			DropShadow.draw(context) {
+			DropShadow.draw(context, transparency) {
 				if (fillColor != null) {
 					drawFill(context, shape, context.choose(Themes.get<DrawTheme>().shadow).foregroundColor)
 				}

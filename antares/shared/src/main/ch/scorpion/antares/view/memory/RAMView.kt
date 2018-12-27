@@ -281,7 +281,7 @@ class RAMView(
         val oldStroke = context.g.stroke
 
 	    if (shadow) {
-		    DropShadow.draw(context) {
+		    DropShadow.draw(context, transparency) {
 			    context.g.fill(bounds)
 		    }
 	    }

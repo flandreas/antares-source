@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.Themes
 
@@ -37,8 +38,8 @@ object DropShadow {
 		}
 	}
 
-	fun draw(context: DrawContext, drawer: (DrawContext) -> Unit) {
-		if (useShadow) {
+	fun draw(context: DrawContext, transparency: Int, drawer: (DrawContext) -> Unit) {
+		if (useShadow && transparency == Transparent.FULLY_OPAQUE) {
 			begin(context)
 			context.g.color = context.choose(Themes.get<DrawTheme>().shadow).foregroundColor
 			drawer.invoke(context)

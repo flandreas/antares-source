@@ -123,7 +123,7 @@ class SplitterView(
 
     override fun drawImpl(context: DrawContext) {
 	    if (shadow) {
-		    DropShadow.draw(context) {
+		    DropShadow.draw(context, transparency) {
 			    context.g.fillRect(xInt, yInt, width.toInt(), height.toInt())
 		    }
 	    }

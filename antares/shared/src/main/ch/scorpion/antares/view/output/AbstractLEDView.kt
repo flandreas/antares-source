@@ -186,7 +186,7 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	private fun drawBody(context: DrawContext) {
 		if (shadow) {
-			DropShadow.draw(context) {
+			DropShadow.draw(context, transparency) {
 				context.g.fillOval(xInt, yInt, SIZE, SIZE)
 			}
 		}

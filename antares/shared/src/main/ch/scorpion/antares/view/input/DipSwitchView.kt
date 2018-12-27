@@ -174,7 +174,7 @@ class DipSwitchView(
 
 	override fun drawImpl(context: DrawContext) {
 		if (shadow) {
-			DropShadow.draw(context) {
+			DropShadow.draw(context, transparency) {
 				context.g.fill(bounds)
 			}
 		}
