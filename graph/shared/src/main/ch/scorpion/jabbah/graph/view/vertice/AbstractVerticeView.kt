@@ -227,7 +227,7 @@ abstract class AbstractVerticeView<T : Vertice>(
     override val boundingBox: Rectangle2D
         get() {
             val bbox = plainBoundingBox
-            if (isExecutionInfoDrawn(true)) {
+            if (isExecutionInfoDrawn(requiredBySystemSpeed = true, isPausing = true)) {
                 bbox.add(executionInfoLabel.boundingBox)
             }
             return bbox
@@ -422,7 +422,8 @@ abstract class AbstractVerticeView<T : Vertice>(
         context.g.translate(-location.x, -location.y)
 
         // Draw propagation delay above bounding box if in waiting state
-        if (isExecutionInfoDrawn(context.castedAppContext<GraphApplicationContext>()!!.systemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore)) {
+	    val appContext = context.castedAppContext<GraphApplicationContext>()!!
+	    if (isExecutionInfoDrawn(appContext.systemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore, appContext.isPausing)) {
             configureExecutionInfoLabel()
             executionInfoLabel.draw(context)
         }
@@ -432,8 +433,8 @@ abstract class AbstractVerticeView<T : Vertice>(
         context.g.color = oldColor
     }
 
-    private fun isExecutionInfoDrawn(requiredBySystemSpeed: Boolean): Boolean {
-        return requiredBySystemSpeed && model != null && model!!.waiting
+    private fun isExecutionInfoDrawn(requiredBySystemSpeed: Boolean, isPausing: Boolean): Boolean {
+        return requiredBySystemSpeed && model != null && model!!.waiting && isPausing
     }
 
     /**

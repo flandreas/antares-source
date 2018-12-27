@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningStateEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
@@ -75,6 +76,7 @@ open class GraphNavigationPanel(
     private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = { handle(it) }
     private val scenarioEventHandler: (ScenarioEvent) -> Unit = { handle(it) }
     private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
+	private val schedulerRunningStateHandler: (SchedulerRunningStateEvent) -> Unit = { handle(it) }
     private val systemSpeedHandler: (SystemSpeedEvent) -> Unit = { handle(it) }
 	private val currentSavableHandler: (CurrentSavableEvent) -> Unit = { handle(it) }
 
@@ -121,6 +123,7 @@ open class GraphNavigationPanel(
         eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
         eventBus.register(ScenarioEvent::class, scenarioEventHandler)
         eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+	    eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
         eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
 	    eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
 
@@ -145,6 +148,7 @@ open class GraphNavigationPanel(
         eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)
         eventBus.unregister(ScenarioEvent::class, scenarioEventHandler)
         eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+	    eventBus.unregister(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
         eventBus.unregister(SystemSpeedEvent::class, systemSpeedHandler)
 	    eventBus.unregister(CurrentSavableEvent::class, currentSavableHandler)
     }
@@ -289,6 +293,10 @@ open class GraphNavigationPanel(
         }
     }
 
+	private fun handle(event: SchedulerRunningStateEvent) {
+		propagateApplicationContext()
+	}
+
     private fun handle(@Suppress("UNUSED_PARAMETER") event: SystemSpeedEvent) {
         propagateApplicationContext()
     }
@@ -303,7 +311,7 @@ open class GraphNavigationPanel(
     }
 
     private fun propagateApplicationContext() {
-        drawingView.applicationContext = GraphApplicationContext(currentMode, currentSystemSpeedCategory)
+        drawingView.applicationContext = GraphApplicationContext(currentMode, currentSystemSpeedCategory, scheduler.isPaused)
     }
 
     /**
