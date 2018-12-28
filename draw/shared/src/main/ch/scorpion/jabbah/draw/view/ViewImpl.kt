@@ -27,7 +27,8 @@ import ch.scorpion.jabbah.draw.style.ThemeEvent
 open class ViewImpl<C: InputEventContext>(
     override val canvas: Canvas,
     private val transformFactory: () -> AffineTransform,
-    protected val eventBus: EventBus = BaseModule.eventBus
+    protected val eventBus: EventBus = BaseModule.eventBus,
+    viewPainterFactory: ViewPainterFactory<C> = { InvalidatableViewPainter(it) }
 ) : View<C> {
 
     companion object {
@@ -205,7 +206,7 @@ open class ViewImpl<C: InputEventContext>(
 
     final override val overlayContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
 
-    val painter: ViewPainter = InvalidatableViewPainter(this)
+    val painter: ViewPainter = viewPainterFactory.invoke(this)
 
     /* Listens for [DrawableEvent]s from child [Drawable]s.*/
     private val childListener = ChildListener()

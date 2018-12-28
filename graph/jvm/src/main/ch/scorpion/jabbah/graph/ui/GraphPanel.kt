@@ -249,7 +249,7 @@ class GraphPanel(
 			ApplicationMode.EXECUTE -> {
 				issuesPanel.clear()
 				if ((editor.drawing as GraphView<*>).checkDesign()) {
-					editor.view.selectionManager.deselectAll()
+					graphEditPanel.graphNavigationPanel.deselectAll()
 					InvocationHandler.invoke(Runnable {
 						scheduler.isActive = true
 						updateEditability()

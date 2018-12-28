@@ -184,6 +184,12 @@ open class GraphNavigationPanel(
         }
     }
 
+	/** Deselects all [Component]s in all [View]s.*/
+	fun deselectAll() {
+		drawingView.selectionManager.deselectAll()
+		navigationStackView.navigationStack.forAllContents { it.removeAllSelectionModels() }
+	}
+
     /** Finds the first [NavigationStackEntry] in the navigation stack that fulfills the specified condition, if any.*/
     fun findEntry(condition: (NavigationStackEntry<GraphView<GraphElementView<*>>>) -> Boolean): NavigationStackEntry<GraphView<GraphElementView<*>>>? =
             navigationStackView.navigationStack.find(condition)

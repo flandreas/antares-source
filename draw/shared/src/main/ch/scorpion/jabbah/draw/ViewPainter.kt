@@ -48,3 +48,5 @@ interface ViewPainter {
      */
     fun invalidateRegion(region: RectangularShape?, ghost: Boolean)
 }
+
+typealias ViewPainterFactory<T> = (View<T>) -> ViewPainter

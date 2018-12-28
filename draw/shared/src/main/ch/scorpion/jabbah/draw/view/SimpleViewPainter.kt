@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
  * This class only exists for testing and demonstration purposes. For real applications, use more efficient painting
  * strategies like [BufferedViewPainter].
  */
-class SimpleViewPainter(val view: View<InputEventContext>) : ViewPainter {
+class SimpleViewPainter(val view: View<out InputEventContext>) : ViewPainter {
 
     override fun repaintView() {
         view.repaint()

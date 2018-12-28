@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
+import ch.scorpion.jabbah.draw.view.InvalidatableViewPainter
 
 /**
  * An implementation of a [View] for displaying and editing [Drawing]s.
@@ -35,8 +36,9 @@ class DrawingViewImpl<T: Drawing<Component>>(
     private val selectionManagerFactory: SelectionManagerFactory = EditSelectModule.selectionManagerFactory,
     private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,
     eventBus: EventBus = BaseModule.eventBus,
-    animator: Animator = AnimationModule.animator
-) : ViewImpl<EditInputEventContext>(canvas, transformFactory, eventBus), DrawingView<T> {
+    animator: Animator = AnimationModule.animator,
+    viewPainterFactory: ViewPainterFactory<out EditInputEventContext> = { InvalidatableViewPainter(it) }
+) : ViewImpl<EditInputEventContext>(canvas, transformFactory, eventBus, viewPainterFactory), DrawingView<T> {
 
     /** The [DrawableDrawer] used for drawing the [Drawing].*/
     private var drawableDrawer: DrawableDrawer<Component> = DrawingDrawer()
@@ -56,7 +58,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
             if (field === value) {
                 return
             }
-	        content.dispose()
+	        // don't dispose old content, as it could be reused later
             val oldDrawing = field.drawing
             replaceContent(value)
             field = value

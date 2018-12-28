@@ -89,6 +89,11 @@ class NavigationStack<T: Drawing<*>>(val eventBus: EventBus = BaseModule.eventBu
         return entries.firstOrNull(condition)
     }
 
+	/** Executes the specified action for all [DrawingViewContent]s.*/
+	fun forAllContents(action: (DrawingViewContent<Drawing<*>>) -> Unit) {
+		entries.forEach { action.invoke(it.content as DrawingViewContent<Drawing<*>>) }
+	}
+
     private fun removeHead(): NavigationStackEntry<T> {
         val entry = peek()
         entries.removeAt(entries.size - 1)
