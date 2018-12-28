@@ -155,7 +155,7 @@ class ContainerDrawing(
      * from storage.
      */
     fun initialize() {
-        add(RectangleComponent(140.0, 140.0, 70.0, 140.0))
+        add(RectangleComponent(140.0, 140.0, 56.0, 70.0))
         add(OriginIndicator(x = 140.0, y = 140.0))
     }
 
