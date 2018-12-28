@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.Script
+import ch.scorpion.jabbah.graph.view.vertice.BrokenReferenceView
 
 /**
  * A [SubGraphVertice] implementation that is part of one [Graph] and references another [Graph] in the [Library].
@@ -136,6 +137,7 @@ class SubGraphVerticeRef(
         } else {
 	        // Broken reference to library component
 	        LOG.warn("SubGraphVerticeRef: broken reference $graphUUID")
+	        translatableName = BrokenReferenceView.NAME
 	        super.read(reader)
 	        _designError = DesignError("Broken reference")
 

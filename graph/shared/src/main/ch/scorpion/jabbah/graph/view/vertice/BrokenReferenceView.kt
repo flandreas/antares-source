@@ -1,6 +1,9 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
@@ -10,6 +13,8 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 
@@ -17,6 +22,7 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
  * A [Drawable] that represent a [SubGraphVerticeRef] with a broken [MetaGraph] reference.
  */
 class BrokenReferenceView(
+	ownerRotation: Rotation = Rotation.R0,
 	private val styleProvider: StyleProvider
 ) : AbstractRectangle(1.5 * EXPECTED_PORT_VIEW_SIZE, -EXPECTED_VERTICAL_INSET, SIZE, SIZE) {
 
@@ -24,6 +30,10 @@ class BrokenReferenceView(
 		private const val SIZE = 40.0
 		private const val EXPECTED_PORT_VIEW_SIZE = 14.0
 		private const val EXPECTED_VERTICAL_INSET = 7.0
+
+		val NAME = TranslatableText(listOf(
+			Translation(System.get().currentLanguage(), Translations.getString("graph.element.brokenRef.name"))
+		))
 	}
 
 	private val stroke: Stroke get() = styleProvider.getStyle(StyleType.FIGURE).stroke
@@ -36,11 +46,13 @@ class BrokenReferenceView(
 
 	private val textColor: Color get() = styleProvider.getStyle(StyleType.FIGURE).color.textColor
 
-	private val label: Label = Label(
+	val label: Label = Label(
 		text ="?",
 		font = font,
 		color = textColor,
-		location = Point2D(bounds.centerX, bounds.centerY)
+		location = Point2D(bounds.centerX, bounds.centerY),
+		ownerRotation = ownerRotation,
+		rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL
 	)
 
 	override fun draw(context: DrawContext) {

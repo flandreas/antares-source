@@ -285,8 +285,9 @@ class SubGraphVerticeViewImpl(
 	override fun rotationChanged(newRotation: Rotation) {
 		super.rotationChanged(newRotation)
 		drawables.forEach {
-			if (it is LabelComponent) {
-				it.label.ownerRotation = newRotation
+			when (it) {
+				is LabelComponent -> it.label.ownerRotation = newRotation
+				is BrokenReferenceView -> it.label.ownerRotation = newRotation
 			}
 		}
 	}
@@ -423,7 +424,7 @@ class SubGraphVerticeViewImpl(
 
 	private fun fillDesignErrorRepresentation() {
 		drawables.clear()
-		drawables.add(BrokenReferenceView(styleProvider))
+		drawables.add(BrokenReferenceView(rotation, styleProvider))
 		updateBoxes()
 	}
 
