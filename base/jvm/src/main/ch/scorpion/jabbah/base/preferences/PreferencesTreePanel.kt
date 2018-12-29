@@ -181,9 +181,9 @@ class PreferencesDialogPanel(
 		}
 	}
 
-	private val okAction = object : AbstractAction("base.action.ok") {
+	private val closeAction = object : AbstractAction("base.action.close") {
 		override fun execute(event: ActionEvent) {
-			LOG.debug("PreferencesDialogPanel: okAction")
+			LOG.debug("PreferencesDialogPanel: closeAction")
 			closeHandler.invoke()
 		}
 	}
@@ -191,13 +191,6 @@ class PreferencesDialogPanel(
 	private val applyAction = object : AbstractAction("base.action.apply") {
 		override fun execute(event: ActionEvent) {
 			treePanel.applyChanges()
-		}
-	}
-
-	private val cancelAction = object : AbstractAction("base.action.cancel") {
-		override fun execute(event: ActionEvent) {
-			LOG.debug("PreferencesDialogPanel: cancelAction")
-			closeHandler.invoke()
 		}
 	}
 
@@ -219,9 +212,8 @@ class PreferencesDialogPanel(
 
 	private fun buildButtonPanel(): JPanel {
 		val panel = JPanel(FlowLayout(FlowLayout.RIGHT))
-		panel.add(JButton(ActionWrapperSwing(cancelAction)))
 		panel.add(JButton(ActionWrapperSwing(applyAction)))
-		panel.add(JButton(ActionWrapperSwing(okAction)))
+		panel.add(JButton(ActionWrapperSwing(closeAction)))
 		return panel
 	}
 }

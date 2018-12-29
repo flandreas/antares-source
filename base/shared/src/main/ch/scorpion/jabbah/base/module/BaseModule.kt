@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.base.time.TimeService
 object BaseModule : AbstractModule() {
 
 	const val PREF_TREE_ROOT = "base.preferences.group.root"
+	const val PREF_TREE_GENERAL = "base.preferences.group.general"
 
 	val properties: Properties = Properties()
 
@@ -32,5 +33,10 @@ object BaseModule : AbstractModule() {
 
     override fun initialize() {
 	    Translations.addBundle("jabbah-base")
+	    buildPropertyTree(preferencesTree)
     }
+
+	private fun buildPropertyTree(root: PreferenceGroup) {
+		root.add(PreferenceGroup(PREF_TREE_GENERAL))
+	}
 }

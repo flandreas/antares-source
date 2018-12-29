@@ -22,11 +22,11 @@ class PreferenceGroup(
 	/** Maps the nameKey of a [PreferenceGroup] to the corresponding [PreferenceGroup].*/
 	private val _groupsMap = mutableMapOf<String,PreferenceGroup>()
 
-	private val _preferences = mutableListOf<Preference<Any>>()
+	private val _preferences = mutableListOf<Preference>()
 
 	val children: Iterator<PreferenceGroup> get() = _groupsList.iterator()
 
-	val preferences: Iterator<Preference<Any>> get() = _preferences.iterator()
+	val preferences: Iterator<Preference> get() = _preferences.iterator()
 
 	/** Returns the displayable, translated name of this [PropertyGroup].*/
 	val name: String get() = Translations.getString(nameKey)
@@ -39,7 +39,7 @@ class PreferenceGroup(
 		return this
 	}
 
-	fun add(property: Preference<Any>): PreferenceGroup {
+	fun add(property: Preference): PreferenceGroup {
 		_preferences.add(property)
 		return this
 	}
@@ -57,7 +57,7 @@ class PreferenceGroup(
  * Represents an individual user preference stored in [Properties] that can be edited by the user in the UI.
  * A [Preference] is therefore a user-customizable property.
  */
-interface Preference<out T:Any> {
+interface Preference {
 
 	/** The unique ID of this [Preference] used when accessing [Properties].*/
 	val id: String
@@ -75,11 +75,11 @@ interface Preference<out T:Any> {
 	fun load()
 }
 
-abstract class AbstractPreference<out T:Any>(
+abstract class AbstractPreference(
 	override val id: String,
 	private val nameKey: String,
 	override val needsRestart: Boolean
-) : Preference<T> {
+) : Preference {
 
 	override val name: String get() = Translations.getString(nameKey)
 
@@ -91,7 +91,7 @@ class BooleanPreference(
 	id: String,
 	nameKey: String,
 	needsRestart: Boolean = false
-) : AbstractPreference<Boolean>(id, nameKey, needsRestart) {
+) : AbstractPreference(id, nameKey, needsRestart) {
 
 	private val editor = JCheckBox(name)
 
@@ -122,7 +122,7 @@ class IntPreference(
 	needsRestart: Boolean = false,
 	minValue: Int = Int.MIN_VALUE,
 	maxValue: Int = Int.MAX_VALUE
-) : AbstractPreference<Int>(id, nameKey, needsRestart) {
+) : AbstractPreference(id, nameKey, needsRestart) {
 
 	private val editor: JFormattedTextField
 
@@ -158,7 +158,7 @@ class FloatPreference(
 	needsRestart: Boolean = false,
 	minValue: Float = Float.MIN_VALUE,
 	maxValue: Float = Float.MAX_VALUE
-) : AbstractPreference<Float>(id, nameKey, needsRestart) {
+) : AbstractPreference(id, nameKey, needsRestart) {
 
 	private val editor: JFormattedTextField
 
@@ -190,7 +190,7 @@ class StringPreference(
 	id: String,
 	nameKey: String,
 	needsRestart: Boolean = false
-) : AbstractPreference<String>(id, nameKey, needsRestart) {
+) : AbstractPreference(id, nameKey, needsRestart) {
 
 	private val editor = JTextField(10)
 
