@@ -177,7 +177,7 @@ class ContainerDrawing(
 	}
 
     fun createSubGraphVerticeView(): SubGraphVerticeView<SubGraphVerticeRef> {
-        val model = SubGraphVerticeRef.fromSubGraphVertice(createSubGraphVertice(), storableCloner, repository, scriptGateway)
+        val model = SubGraphVerticeRef.fromSubGraphVertice(createSubGraphVertice(), repository, scriptGateway)
         val view = SubGraphVerticeViewImpl(model, styleProvider, storableCloner, storableCreator, repository, eventBus)
         fillSubGraphVerticeView(view)
         return view

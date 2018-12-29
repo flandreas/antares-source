@@ -23,7 +23,6 @@ import ch.scorpion.jabbah.graph.view.vertice.BrokenReferenceView
  */
 class SubGraphVerticeRef(
     graphUUID: UUID? = null,
-    private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
     private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
     private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway
 ) : CalculatingVertice("library.element.SubGraphVerticeRef", CALCULATOR), SubGraphVertice {
@@ -43,11 +42,10 @@ class SubGraphVerticeRef(
         /** Creates a new [SubGraphVerticeRef] using the data in the specified [SubGraphVertice].*/
         fun fromSubGraphVertice(
             subGraphVertice: SubGraphVertice,
-            storableCloner: StorableCloner,
             repository: MetaGraphRepository,
             scriptGateway: ScriptGateway
         ): SubGraphVerticeRef {
-            val verticeRef = SubGraphVerticeRef(null, storableCloner, repository, scriptGateway)
+            val verticeRef = SubGraphVerticeRef(null, repository, scriptGateway)
             verticeRef.graphUUID = subGraphVertice.graphUUID
 	        verticeRef.translatableName = subGraphVertice.translatableName
 	        verticeRef.translatableDescription = subGraphVertice.translatableDescription
@@ -204,8 +202,7 @@ class SubGraphVerticeRef(
             return graph!!
         }
         val subGraph = repository.getMetaGraph(graphUUID!!)
-        val cloneGraph = storableCloner.clonePreservingIdentities(subGraph.graph.model!!, storableCreator)
-        graph = cloneGraph as Graph
+	    graph = subGraph.cloneGraphModel(storableCreator)
 
         for (input in getSubGraphInputPorts()) {
             input.graphInput = graph!!.getGraphInput(input.name!!)

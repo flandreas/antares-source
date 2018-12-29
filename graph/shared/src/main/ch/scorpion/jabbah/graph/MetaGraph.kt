@@ -84,7 +84,8 @@ class CombinedMetaGraphRepository(
 class MetaGraph(
 	graph: GraphStorable,
 	containerDrawing: ContainerDrawing,
-	private val eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke()
 ) : Storable {
 
 	constructor(): this(
@@ -186,12 +187,16 @@ class MetaGraph(
 
 	override fun resolutionDone() {
 		super.resolutionDone()
-		graph.model!!.uuid = containerDrawing.model.graphUUID!!
-		graph.model!!.translatedName = containerDrawing.model.translatableName
-		graph.model!!.translatedShortDescription =containerDrawing.model.translatableDescription
+		copyGraphDataFromContainerModel(graph.model!!)
 	}
 
     /** ---- [MetaGraph] */
+
+    fun cloneGraphModel(storableCreator: StorableCreator): Graph {
+	    val clone = storableCloner.clonePreservingIdentities(graph.model!!, storableCreator) as Graph
+	    copyGraphDataFromContainerModel(clone)
+	    return clone
+    }
 
     fun accept(visitor: HierarchyVisitor): Boolean {
         if (visitor.visitEnter(this)) {
@@ -215,5 +220,12 @@ class MetaGraph(
 		if (event.graph == graph.model) {
 			containerDrawing.model.translatableDescription = event.newValue
 		}
+	}
+
+	private fun copyGraphDataFromContainerModel(graph: Graph) {
+		graph.uuid = containerDrawing.model.graphUUID!!
+		graph.translatedName = containerDrawing.model.translatableName
+		graph.translatedShortDescription =containerDrawing.model.translatableDescription
+
 	}
 }
