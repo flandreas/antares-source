@@ -78,7 +78,7 @@ interface Preference {
 abstract class AbstractPreference(
 	override val id: String,
 	private val nameKey: String,
-	override val needsRestart: Boolean
+	override val needsRestart: Boolean = false
 ) : Preference {
 
 	override val name: String get() = Translations.getString(nameKey)

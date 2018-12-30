@@ -39,8 +39,6 @@ import ch.scorpion.jabbah.io.TypeMap
  */
 object EditModule : AbstractModule() {
 
-	const val PREF_TREE_EDITOR = "edit.preferences.group.editor"
-
     var commandManager: CommandManager = CommandManagerImpl()
 
     var textComponentFactory: () -> TextComponentFactory = { throw UnsupportedOperationException() }
@@ -67,7 +65,6 @@ object EditModule : AbstractModule() {
 
         Translations.addBundle("jabbah-edit")
         Themes.register(EditTheme())
-	    buildPropertyTree(BaseModule.preferencesTree)
 
         configureTypeMap(IOModule.typeMap)
     }
@@ -85,26 +82,4 @@ object EditModule : AbstractModule() {
         typeMap.register("quadCurve", QuadCurveComponent::class)
 	    typeMap.register("translation", Translation::class)
     }
-
-	private fun buildPropertyTree(root: PreferenceGroup) {
-		root.add(PreferenceGroup(PREF_TREE_EDITOR))
-
-		root.getGroup(PREF_TREE_EDITOR).add(IntPreference(
-			id = Grid.PROP_GRID_DEFAULT_DISTANCE,
-			nameKey = "edit.preferences.Grid.dist",
-			minValue = 1
-		))
-
-		root.getGroup(PREF_TREE_EDITOR).add(IntPreference(
-			id = Grid.PROP_GRID_DEFAULT_PAINT_FACTOR,
-			nameKey = "edit.preferences.Grid.paintFactor",
-			minValue = 1
-		))
-
-		root.getGroup(PREF_TREE_EDITOR).add(IntPreference(
-			id = Grid.PROP_GRID_MIN_DISTANCE,
-			nameKey = "edit.preferences.Grid.minDist",
-			minValue = 2
-		))
-	}
 }

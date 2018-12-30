@@ -2,6 +2,9 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.app.user.User
+import ch.scorpion.jabbah.base.LOG_SYSTEM
+import ch.scorpion.jabbah.base.LogLevel
+import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.io.Storable
@@ -65,6 +68,7 @@ abstract class AbstractDesktopApplication(
 	override fun init() {
 		super.init()
 		loadPreferences()
+		LOG_SYSTEM?.level = LogLevel.valueOf(BaseModule.properties.getString(LogSystem.PROP_LOG_LEVEL))
 	}
 
 	override fun createNewSavable(): Savable {

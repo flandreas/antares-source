@@ -67,7 +67,9 @@ open class Properties {
 
 	/** Customizes a predefined system property. Typically called by a UI.*/
 	open fun customize(name: String, value: Any) {
-		entries[name] = Entry(value.toString(), value, customized = true)
+		if (value != entries[name]?.objValue) {
+			entries[name] = Entry(value.toString(), value, customized = true)
+		}
 	}
 
 	/** Initially loads a property using its persistent [String] representation.*/

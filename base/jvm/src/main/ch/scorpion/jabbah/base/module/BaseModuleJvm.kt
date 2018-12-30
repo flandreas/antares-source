@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.base.module
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.KeyEvent
+import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
 import javafx.scene.input.KeyCode
 
@@ -10,7 +11,12 @@ import javafx.scene.input.KeyCode
  */
 object BaseModuleJvm : AbstractModule() {
 
+	const val PREF_TREE_ROOT = "base.preferences.group.root"
+	const val PREF_TREE_GENERAL = "base.preferences.group.general"
+
 	var useJavaFx: Boolean = false
+
+	val preferencesTree: PreferenceGroup = PreferenceGroup(PREF_TREE_ROOT)
 
 	override fun initialize() {
 		defineKeyCodes()
@@ -22,6 +28,8 @@ object BaseModuleJvm : AbstractModule() {
 
 		BaseModule.timeService = RealTimeServiceJvm()
 		BaseModule.require()
+
+		buildPropertyTree(preferencesTree)
 	}
 
 	private fun defineKeyCodes() {
@@ -46,5 +54,11 @@ object BaseModuleJvm : AbstractModule() {
 		KeyEvent.VK_RIGHT = KeyCode.RIGHT.ordinal
 		KeyEvent.VK_ESCAPE = KeyCode.ESCAPE.ordinal
 		KeyEvent.VK_ENTER = KeyCode.ENTER.ordinal
+	}
+
+	private fun buildPropertyTree(root: PreferenceGroup) {
+		root.add(PreferenceGroup(PREF_TREE_GENERAL))
+
+		root.getGroup(PREF_TREE_GENERAL).add(LogLevelPreference())
 	}
 }

@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.base.preferences
 
-import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.MutableTreeNode
@@ -8,7 +8,7 @@ import javax.swing.tree.TreeModel
 
 /** Builds a [TreeModel] of a [PreferenceGroup] tree.*/
 class PreferencesTreeModelBuilder(
-	private val preferencesTree: PreferenceGroup = BaseModule.preferencesTree
+	private val preferencesTree: PreferenceGroup = BaseModuleJvm.preferencesTree
 ) {
 
 	fun build(): TreeModel {

@@ -3,6 +3,9 @@ package ch.scorpion.jabbah.edit.module
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.DirectionEditor
+import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.preferences.IntPreference
+import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
@@ -23,14 +26,15 @@ import ch.scorpion.jabbah.edit.view.EditContextMenuProvider
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.IOModuleJvm
 import ch.scorpion.jabbah.io.TypeMap
-import com.l2fprod.common.propertysheet.PropertyRendererRegistry
 
 /**
  * Setup of the [ch.scorpion.jabbah.edit] module for the JVM target.
  */
 object EditModuleJvm : AbstractModule() {
 
-    val propertyRendererRegistry = DynamicPropertyRendererRegistry()
+	const val PREF_TREE_EDITOR = "edit.preferences.group.editor"
+
+	val propertyRendererRegistry = DynamicPropertyRendererRegistry()
 
     val propertyEditorRegistry = DynamicPropertyEditorRegistry()
 
@@ -56,6 +60,8 @@ object EditModuleJvm : AbstractModule() {
 
 	    registerPropertyEditorsFx(propertyEditorRegistryFx)
 	    registerSelectionModels()
+
+	    buildPropertyTree(BaseModuleJvm.preferencesTree)
     }
 
     private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
@@ -100,4 +106,26 @@ object EditModuleJvm : AbstractModule() {
 		    TextComponentJvm::class.simpleName!!
 	    ) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent, drawStrategy = RectangularReplaceSelectionModel.DrawStrategy.COMPONENT) }
     }
+
+	private fun buildPropertyTree(root: PreferenceGroup) {
+		root.add(PreferenceGroup(PREF_TREE_EDITOR))
+
+		root.getGroup(PREF_TREE_EDITOR).add(IntPreference(
+			id = Grid.PROP_GRID_DEFAULT_DISTANCE,
+			nameKey = "edit.preferences.Grid.dist",
+			minValue = 1
+		))
+
+		root.getGroup(PREF_TREE_EDITOR).add(IntPreference(
+			id = Grid.PROP_GRID_DEFAULT_PAINT_FACTOR,
+			nameKey = "edit.preferences.Grid.paintFactor",
+			minValue = 1
+		))
+
+		root.getGroup(PREF_TREE_EDITOR).add(IntPreference(
+			id = Grid.PROP_GRID_MIN_DISTANCE,
+			nameKey = "edit.preferences.Grid.minDist",
+			minValue = 2
+		))
+	}
 }

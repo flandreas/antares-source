@@ -18,7 +18,16 @@ import kotlin.reflect.KClass
 
 interface LogSystem {
 
-    /** Returns the [Logger] to be used for a particular object. */
+	companion object {
+
+		/** The name of the [String] property in [Properties] representing the current log level.*/
+		const val PROP_LOG_LEVEL = "base.logLevel"
+	}
+
+	/** The root log level of this [LogSystem].*/
+	var level: LogLevel
+
+	/** Returns the [Logger] to be used for a particular object. */
     fun getLogger(clazz: KClass<out Any>): Lazy<Logger>
 }
 
@@ -32,17 +41,14 @@ interface Logger {
     fun trace(msg: String)
     fun isDebugEnabled(): Boolean
     fun isTraceEnabled(): Boolean
-
-    fun setLogLevel(level: LogLevel?)
 }
 
 enum class LogLevel {
-    NONE,
-    ERROR,
-    WARN,
-    INFO,
-    DEBUG,
-    TRACE
+    Error,
+    Info,
+    Warning,
+    Debug,
+    Trace
 }
 
 fun <T: Any> logger(origin: KClass<T>): Lazy<Logger> {

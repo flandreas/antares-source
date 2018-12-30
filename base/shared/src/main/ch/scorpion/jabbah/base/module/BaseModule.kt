@@ -1,27 +1,18 @@
 package ch.scorpion.jabbah.base.module
 
-import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.AbstractModule
-import ch.scorpion.jabbah.base.Settings
-import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventBusImpl
-import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.TimeService
 
 /**
- * Module definitions for the [jabbah.base] package.
+ * Module definitions for the [ch.scorpion.jabbah.base] package.
  */
 object BaseModule : AbstractModule() {
 
-	const val PREF_TREE_ROOT = "base.preferences.group.root"
-	const val PREF_TREE_GENERAL = "base.preferences.group.general"
-
 	val properties: Properties = Properties()
-
-	val preferencesTree: PreferenceGroup = PreferenceGroup(PREF_TREE_ROOT)
 
     var settings: Settings = Settings()
 
@@ -33,10 +24,10 @@ object BaseModule : AbstractModule() {
 
     override fun initialize() {
 	    Translations.addBundle("jabbah-base")
-	    buildPropertyTree(preferencesTree)
+	    fillProperties(properties)
     }
 
-	private fun buildPropertyTree(root: PreferenceGroup) {
-		root.add(PreferenceGroup(PREF_TREE_GENERAL))
+	private fun fillProperties(properties: Properties) {
+		properties.set(LogSystem.PROP_LOG_LEVEL, LogLevel.Info.name)
 	}
 }
