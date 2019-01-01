@@ -41,12 +41,13 @@ object EditModule : AbstractModule() {
 
     var commandManager: CommandManager = CommandManagerImpl()
 
-    var textComponentFactory: () -> TextComponentFactory = { throw UnsupportedOperationException() }
+	var drawingViewFactory: DrawingViewFactory<Drawing<Component>> = { drawing, canvas -> DrawingViewImpl(drawing, canvas) }
 
-    var drawingViewFactory: (Drawing<Component>, Canvas) -> DrawingView<Drawing<Component>> = { drawing, canvas -> DrawingViewImpl<Drawing<Component>>(drawing, canvas) }
-
-    /** Creates an [AttentionDrawer] that produces an animation for drawing the attention of the user to a particular location. */
-    val attentionDrawerFactory: () -> AttentionDrawer = { AttentionDrawerImpl() }
+    /**
+     * Creates an [AttentionDrawer] that produces an animation for drawing the attention
+     * of the user to a particular location.
+     */
+    val attentionDrawerFactory: () -> AttentionDrawer = ::AttentionDrawerImpl
 
     var drawingService: DrawingService = DrawingServiceImpl()
 

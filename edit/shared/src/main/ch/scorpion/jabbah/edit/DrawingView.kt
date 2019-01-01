@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.draw.container.UnzoomableContainer
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.select.UnzoomableSelectionModel
 
+typealias DrawingViewFactory<T> = (T,Canvas) -> DrawingView<T>
 
 /**
  * Enhances {@link View} with functionality needed for editing {@link Drawing}s.

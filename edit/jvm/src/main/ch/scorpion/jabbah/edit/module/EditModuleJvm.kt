@@ -50,7 +50,6 @@ object EditModuleJvm : AbstractModule() {
         registerTypes(IOModule.typeMap)
 
         EditModule.require()
-        EditModule.textComponentFactory = { TextComponentFactoryJvm() }
 	    EditModule.copyPasteUtility = CopyPasteUtilityFx()
 
 	    DrawModuleJvm.contextMenuProvider = EditContextMenuProvider()
@@ -87,7 +86,7 @@ object EditModuleJvm : AbstractModule() {
 	    }
 	    registry.register(TranslatableText::class.java) { TranslatableTextPropertyEditor(
 		    propertyName = (it as PropertyImpl<TranslatableText>).displayName,
-		    multiline = (it as PropertyImpl<TranslatableText>).filter)
+		    multiline = it.filter)
 	    }
     }
 
