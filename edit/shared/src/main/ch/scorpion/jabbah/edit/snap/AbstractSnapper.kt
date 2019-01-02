@@ -9,7 +9,9 @@ import ch.scorpion.jabbah.edit.*
  * An abstract implementation of the [Snapper] interface that can be used as a base class for developing custom
  * [Snapper]s.
  */
-abstract class AbstractSnapper(override var snapEnabled: Boolean = true) : AbstractDrawable(), Snapper {
+abstract class AbstractSnapper(
+	override var snapEnabled: Boolean = true
+) : AbstractDrawable(), Snapper {
 
     /** ---- [Snapper] interface */
 
@@ -101,8 +103,6 @@ abstract class AbstractSnapper(override var snapEnabled: Boolean = true) : Abstr
 
     /**
      * Snaps the specified x coordinate.
-
-     * @param x the x coordinate to be snapped by this [Snapper].
      * @return the snapped x coordinate, or [Double.MAX_VALUE] if the x coordinate
      *      could not be snapped by this [Snapper], because it is out of range.
      */
@@ -110,8 +110,6 @@ abstract class AbstractSnapper(override var snapEnabled: Boolean = true) : Abstr
 
     /**
      * Snaps the specified y coordinate.
-     *
-     * @param y the y coordinate to be snapped by this [Snapper].
      * @return the snapped y coordinate, or [Double.MAX_VALUE] if the y coordinate
      *      could not be snapped by this [Snapper], because it is out of range.
      */

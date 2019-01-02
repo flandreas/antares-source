@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ToolBar
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
@@ -10,6 +11,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.app.ComponentSnapAction
+import ch.scorpion.jabbah.edit.app.GridSnapAction
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 import ch.scorpion.jabbah.edit.model.polyline.PolylineTool
 import ch.scorpion.jabbah.edit.model.rectangle.EllipseComponent
@@ -21,6 +24,7 @@ import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
+import ch.scorpion.jabbah.graph.ui.GraphPanel
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Color
@@ -50,7 +54,9 @@ class ContainerPanel(
 
 	private var editedContainerDrawing: ContainerDrawing? = null
 
-    val toolbars: ImmutableList<ToolBar> = listOf(createToolbar(editor)).toImmutableList()
+    val toolbars: ImmutableList<ToolBar> = listOf(
+	    createToolbar(editor),
+	    createSettingsToolBar()).toImmutableList()
 
     init {
         editor.view.navigator.setZoomFactor(2.0)
@@ -131,6 +137,27 @@ class ContainerPanel(
 
         return toolbar
     }
+
+	private fun createSettingsToolBar(): ToolBar {
+		val toolBar = ToolBar(editor)
+		toolBar.addSeparator()
+
+		val gridButton = JToggleButton(ActionWrapperSwing(GridSnapAction(editor)))
+		gridButton.text = null
+		gridButton.isFocusPainted = false
+		gridButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/snapGrid.gif"))
+		gridButton.toolTipText = Translations.getString("edit.action.grid.snap.name")
+		toolBar.add(gridButton)
+
+		val button = JToggleButton(ActionWrapperSwing(ComponentSnapAction(editor)))
+		button.text = null
+		button.isFocusPainted = false
+		button.icon = ImageIcon(GraphPanel::class.java.getResource("/img/snap.gif"))
+		button.toolTipText = Translations.getString("edit.tool.align.name")
+		toolBar.add(button)
+
+		return toolBar
+	}
 
 	private fun updateEditability() {
 		editor.active = editedContainerDrawing != null

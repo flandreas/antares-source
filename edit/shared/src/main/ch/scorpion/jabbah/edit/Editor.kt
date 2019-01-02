@@ -22,8 +22,11 @@ interface Editor {
         /** The name of the 'active' property in [PropertyChangeEvent]s.*/
         const val PROP_ACTIVE = "active"
 
-        /** The name of the [PropertyChangeEvent] event that determines whether component snap is active.*/
+        /** The name of the [PropertyChangeEvent] property that determines whether component snap is active.*/
         const val PROP_COMPONENT_SNAP = "componentSnap"
+
+	    /** The name of the [PropertyChangeEvent] property that determines whether grid snap is active.*/
+	    const val PROP_GRID_SNAP = "gridSnap"
     }
 
     /** Holds the current [Drawing] being edited by this [Editor].*/
@@ -40,6 +43,9 @@ interface Editor {
 
     /** Determines whether [Component] snapping is enabled.*/
     var componentSnap: Boolean
+
+	/** Determines whether [Grid] snapping is enabled.*/
+	var gridSnap: Boolean
 
     /** Holds the current [Tool].*/
     var currentTool: Tool

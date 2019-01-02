@@ -18,6 +18,8 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.PropertySheetPanelFactory
+import ch.scorpion.jabbah.edit.app.ComponentSnapAction
+import ch.scorpion.jabbah.edit.app.GridSnapAction
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.QuadCurveTool
@@ -318,13 +320,19 @@ class GraphPanel(
 	private fun createSettingsToolBar(): ToolBar {
 		val toolBar = ToolBar(editor)
 		toolBar.addSeparator()
-		val action = ToggleComponentSnapAction()
-		val button = JToggleButton(action)
+
+		val gridButton = JToggleButton(ActionWrapperSwing(GridSnapAction(editor)))
+		gridButton.text = null
+		gridButton.isFocusPainted = false
+		gridButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/snapGrid.gif"))
+		gridButton.toolTipText = Translations.getString("edit.action.grid.snap.name")
+		toolBar.add(gridButton)
+
+		val button = JToggleButton(ActionWrapperSwing(ComponentSnapAction(editor)))
 		button.text = null
 		button.isFocusPainted = false
 		button.icon = ImageIcon(GraphPanel::class.java.getResource("/img/snap.gif"))
 		button.toolTipText = Translations.getString("edit.tool.align.name")
-
 		toolBar.add(button)
 
 		return toolBar
@@ -348,29 +356,6 @@ class GraphPanel(
 
 		private fun updateState() {
 			putValue(Action.SELECTED_KEY, scheduler.isActive)
-		}
-	}
-
-	private inner class ToggleComponentSnapAction : AbstractAction() {
-		init {
-			updateState()
-			editor.addPropertyChangeListener(object : PropertyChangeListener<Any> {
-				override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-					if (e.name == Editor.PROP_COMPONENT_SNAP) {
-						updateState()
-					} else if (e.name == Editor.PROP_ACTIVE) {
-						isEnabled = editor.active
-					}
-				}
-			})
-		}
-
-		override fun actionPerformed(e: ActionEvent?) {
-			editor.componentSnap = !editor.componentSnap
-		}
-
-		private fun updateState() {
-			putValue(Action.SELECTED_KEY, editor.componentSnap)
 		}
 	}
 }

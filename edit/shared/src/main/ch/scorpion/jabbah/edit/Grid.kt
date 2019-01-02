@@ -19,6 +19,9 @@ interface Grid : Snapper, Unzoomable {
 
         /** The name of the default paint factor [Int] property in [Properties]. */
         const val PROP_GRID_DEFAULT_PAINT_FACTOR = "edit.grid.paintFactor.default"
+
+	    /** The name of the snap enabed [Boolean] property in [Properties].*/
+	    const val PROP_SNAP_ENABLED = "edit.grid.snapEnabled"
     }
 
     /** The [View] to which this [Grid] belongs. Only `null` until initialized. */
@@ -32,5 +35,6 @@ interface Grid : Snapper, Unzoomable {
      * every second dot is painted.
      */
     var paintFactor: Int
+
 
 }

@@ -98,6 +98,17 @@ open class EditorImpl(
             changeSupport.fire(Editor.PROP_COMPONENT_SNAP, oldValue, value)
         }
 
+	override var gridSnap: Boolean
+		get() = view.grid.snapEnabled
+		set(value) {
+			if (value == gridSnap) {
+				return
+			}
+			val oldValue = gridSnap
+			view.grid.snapEnabled = value
+			changeSupport.fire(Editor.PROP_GRID_SNAP, oldValue, value)
+		}
+
     override fun addPropertyChangeListener(l: PropertyChangeListener<Any>) {
         changeSupport.add(l)
     }

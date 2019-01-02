@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.Grid.Companion.PROP_SNAP_ENABLED
 
 /**
  * A standard, simple implementation of a grid that defines a two dimensional array of points that are used for snapping
@@ -27,7 +28,7 @@ class GridImpl(
     chosenDistance: Double? = null,
     chosenPaintFactor: Int? = null,
     eventBus: EventBus = BaseModule.eventBus
-) : AbstractSnapper(snapEnabled = true), Grid {
+) : AbstractSnapper(BaseModule.settings.getBoolean(PROP_SNAP_ENABLED, true)), Grid {
 
 	companion object {
         private val LOG by logger(GridImpl::class)
@@ -125,7 +126,16 @@ class GridImpl(
 
     /** ---- [AbstractSnapper] */
 
-    override fun doSnapX(initSnappableX: SnappableX, initDx: Double): Double = snapValue(initSnappableX.x + initDx)
+    override var snapEnabled: Boolean
+	    get() = super.snapEnabled
+	    set(value) {
+		    if (value != snapEnabled) {
+			    super.snapEnabled = value
+			    BaseModule.settings.set(PROP_SNAP_ENABLED, value)
+		    }
+	    }
+
+	override fun doSnapX(initSnappableX: SnappableX, initDx: Double): Double = snapValue(initSnappableX.x + initDx)
 
     override fun doSnapY(initSnappableY: SnappableY, initDy: Double): Double = snapValue(initSnappableY.y + initDy)
 

@@ -6,31 +6,29 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.snap.ComponentSnapper
+import ch.scorpion.jabbah.edit.Grid
 
 /**
- * An [Action] for toggling the [ComponentSnapper] functionality for the given [Editor].
+ * An [Action] for toggling the [Grid] snap functionality for the given [Editor].
  */
-class ComponentSnapAction(private val editor: Editor) : AbstractAction("edit.tool.align") {
+class GridSnapAction(private val editor: Editor) : AbstractAction("edit.action.grid.snap") {
 
 	init {
 		updateState()
 		editor.addPropertyChangeListener(object : PropertyChangeListener<Any> {
 			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-				if (e.name == Editor.PROP_COMPONENT_SNAP) {
+				if (e.name == Editor.PROP_GRID_SNAP) {
 					updateState()
-				} else if (e.name == Editor.PROP_ACTIVE) {
-					enabled = editor.active
 				}
 			}
 		})
 	}
 
 	override fun execute(event: ActionEvent) {
-		editor.componentSnap = !editor.componentSnap
+		editor.gridSnap = !editor.gridSnap
 	}
 
 	private fun updateState() {
-		selected = editor.componentSnap
+		selected = editor.gridSnap
 	}
 }
