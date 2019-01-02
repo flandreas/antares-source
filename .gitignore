@@ -1,6 +1,7 @@
 .gradle
 antares.ini
 antares.pref
+antares.log
 build/
 out/
 doc/model.mdj
