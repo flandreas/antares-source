@@ -3,9 +3,11 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
@@ -57,6 +59,9 @@ open class GraphNavigationPanel(
 
     companion object {
         private val LOG by logger(GraphNavigationPanel::class)
+
+	    /** The name of the [Boolean] property in [Properties] that controls whether animations are used when opening subgraphs.*/
+	    val PROP_DIVE_ANIMATION = "graph.GraphNavigationPanel.diveAnimation"
     }
 
     private val mainPanel = JPanel(BorderLayout())
@@ -202,24 +207,32 @@ open class GraphNavigationPanel(
             return
         }
 
-        if (!request.quickMode) {
-            val subGraphView = request.subGraphVerticeView.createSubGraphView()
-            drawingView.userZoomEnabled = false
-            navigationStackView.isEnabled = false
-            navigationStackView.navigationStack.peek().content.zoomPan = drawingView.zoomPan
-            DescendAnimationManager(animator).descendInto(
-                    drawingView,
-                    request.subGraphVerticeView,
-                    descender = {
-                        navigationStackView.navigationStack.push(NavigationStackEntry(
-	                        subGraphVerticeView = request.subGraphVerticeView,
-	                        content = drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>)))
-                    },
-                    terminator = {
-                        navigationStackView.isEnabled = true
-                        drawingView.userZoomEnabled = true
-                    }
-            )
+        if (!request.newView) {
+	        val subGraphView = request.subGraphVerticeView.createSubGraphView()
+	        navigationStackView.navigationStack.peek().content.zoomPan = drawingView.zoomPan
+	        if (BaseModule.properties.getBoolean(PROP_DIVE_ANIMATION) && !request.quickMode) {
+		        drawingView.userZoomEnabled = false
+		        navigationStackView.isEnabled = false
+		        DescendAnimationManager(animator).descendInto(
+			        drawingView,
+			        request.subGraphVerticeView,
+			        descender = {
+				        navigationStackView.navigationStack.push(NavigationStackEntry(
+					        subGraphVerticeView = request.subGraphVerticeView,
+					        content = drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>)))
+			        },
+			        terminator = {
+				        navigationStackView.isEnabled = true
+				        drawingView.userZoomEnabled = true
+			        }
+		        )
+	        } else {
+		        SwingUtilities.invokeLater {
+			        navigationStackView.navigationStack.push(NavigationStackEntry(
+				        subGraphVerticeView = request.subGraphVerticeView,
+				        content = drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>)))
+		        }
+	        }
         }
     }
 
@@ -231,7 +244,7 @@ open class GraphNavigationPanel(
             return
         }
 
-	    if (!event.isExpansion && !event.quickMode) {
+	    if (!event.isExpansion && !event.quickMode && BaseModule.properties.getBoolean(PROP_DIVE_ANIMATION) && !event.quickMode) {
 		    ascendFrom(event.entries)
 	    } else {
 		    drawingView.content = navigationStackView.navigationStack.peek().content
@@ -267,7 +280,7 @@ open class GraphNavigationPanel(
 				}
 			} else {
 				{
-					ascendFrom(entries.subList(0, entries.size - 1 ))
+					ascendFrom(entries.subList(0, entries.size - 1))
 				}
 			}
 		)

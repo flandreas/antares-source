@@ -112,7 +112,7 @@ class GraphDesktop(
         }
 
 	    eventBus.register(OpenSubGraphRequest::class) { request ->
-		    if (request.quickMode) {
+		    if (request.newView) {
 			    val assoc = associations.firstOrNull{ it.ref == request.subGraphVerticeView}
 			    if (assoc != null) {
 				    eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = assoc.ref, messageKey = "graph.vertice.alreadyOpen.msg"))

@@ -3,6 +3,9 @@ package ch.scorpion.jabbah.graph.view.module
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.preferences.BooleanPreference
+import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.FontFamily
@@ -21,6 +24,7 @@ import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.script.ScriptEngineJvm
 import ch.scorpion.jabbah.graph.script.ScriptModule
+import ch.scorpion.jabbah.graph.ui.GraphNavigationPanel
 import ch.scorpion.jabbah.graph.ui.NavigationStackView
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioPropertyEditorFactory
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioStepPropertyEditorFactory
@@ -30,7 +34,6 @@ import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
 import ch.scorpion.jabbah.io.IOModuleJvm
-import com.l2fprod.common.propertysheet.PropertyRendererRegistry
 
 /**
  * Module definitions for the [ch.scorpion.jabbah.graph] module on the JVM platform.
@@ -47,6 +50,8 @@ object GraphViewModuleJvm : AbstractModule() {
         configureSelectionModels(EditSelectModule.selectionModelFactory)
         configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
         configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
+
+	    buildPropertyTree(BaseModuleJvm.preferencesTree)
     }
 
     private fun fillProperties(properties: Properties) {
@@ -62,6 +67,7 @@ object GraphViewModuleJvm : AbstractModule() {
         properties.set(NavigationStackView.PROP_HEAD_BACKGROUND_COLOR, Color.WHITE)
         properties.set(NavigationStackView.PROP_HEAD_BORDER_COLOR, Color(214, 214, 214))
         properties.set(NavigationStackView.PROP_HEAD_TEXT_COLOR, Color.BLACK)
+	    properties.set(GraphNavigationPanel.PROP_DIVE_ANIMATION, true)
     }
 
     private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
@@ -84,6 +90,13 @@ object GraphViewModuleJvm : AbstractModule() {
     }
 
     private fun configureSelectionModels(factory: SelectionModelFactory) {
-        factory.register(SelectionDrawingStrategy.ABOVE, TextComponentJvm::class.simpleName!!, { RectangularHandleSelectionModel(it as AbstractRectangularComponent) })
+        factory.register(SelectionDrawingStrategy.ABOVE, TextComponentJvm::class.simpleName!!) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
     }
+
+	private fun buildPropertyTree(root: PreferenceGroup) {
+		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(
+			id = GraphNavigationPanel.PROP_DIVE_ANIMATION,
+			nameKey = "graph.preferences.GraphNavigationPanel.diveAnimation"
+		))
+	}
 }

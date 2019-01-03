@@ -76,6 +76,7 @@ class PreferencesTreePanel(
 		tree.cellRenderer = TreeCellRenderer()
 		tree.model = PreferencesTreeModelBuilder().build()
 		tree.isRootVisible = false
+		tree.showsRootHandles = true
 		tree.addTreeSelectionListener { updateGroup() }
 		tree.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
 

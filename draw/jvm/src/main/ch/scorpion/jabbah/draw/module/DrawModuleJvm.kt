@@ -24,6 +24,7 @@ object DrawModuleJvm : AbstractModule() {
 
 	const val PREF_TREE_RENDERING = "draw.preferences.group.rendering"
 	const val PREF_TREE_VIEW = "draw.preferences.group.view"
+	const val PREF_TREE_VIEW_NAVIGATION = "draw.preferences.group.view.navigation"
 
 	var contextMenuProvider: ContextMenuProvider = object : ContextMenuProvider {
 		override fun fillContextMenu(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {
@@ -53,6 +54,7 @@ object DrawModuleJvm : AbstractModule() {
 	private fun buildPropertyTree(root: PreferenceGroup) {
 		root.add(PreferenceGroup(PREF_TREE_RENDERING))
 		root.add(PreferenceGroup(PREF_TREE_VIEW))
+		root.getGroup(PREF_TREE_VIEW).add(PreferenceGroup(PREF_TREE_VIEW_NAVIGATION))
 
 		root.getGroup(PREF_TREE_RENDERING).add(BooleanPreference(
 			id = DropShadow.PROP_SHADOW,

@@ -458,7 +458,7 @@ class SubGraphVerticeViewImpl(
     }
 
     private fun requestOpenSubGraph(event: InputEvent) {
-        eventBus.post(OpenSubGraphRequest(this, quickMode = event.isAltDown))
+        eventBus.post(OpenSubGraphRequest(this, newView = event.isAltDown, quickMode = event.isMetaDown))
     }
 
     private fun getActorViewAt(x: Double, y: Double): ActorView? {

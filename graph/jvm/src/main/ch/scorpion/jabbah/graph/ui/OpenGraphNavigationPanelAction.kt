@@ -19,7 +19,7 @@ class OpenGraphNavigationPanelAction(
 ) : AbstractSelectionAwareAction("graph.action.openSubGraph", eventBus, viewManager) {
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-        eventBus.post(OpenSubGraphRequest(subGraphVerticeView ?: getSingleSelection() as SubGraphVerticeView<*>, quickMode = true))
+        eventBus.post(OpenSubGraphRequest(subGraphVerticeView ?: getSingleSelection() as SubGraphVerticeView<*>, newView = true, quickMode = false))
     }
 
     override fun calculateEnabled(): Boolean {
