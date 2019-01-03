@@ -128,7 +128,8 @@ class GraphPanel(
 	/** Holds the location of [bottomSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
 	private var bottomSidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.bottomSidebarSplitPos", -1)
 
-	private var currentMode: ApplicationMode = ApplicationMode.EDIT
+	var currentMode: ApplicationMode = ApplicationMode.EDIT
+		private set
 
 	/** Displays the current [Issue]s. */
 	private val issuesPanel = IssuesPanel()

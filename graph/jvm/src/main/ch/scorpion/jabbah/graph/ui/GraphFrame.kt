@@ -12,6 +12,8 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.container.ContainerPanel
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -34,9 +36,9 @@ class GraphFrame(
 		Desktop, Container
 	}
 
-	private val desktopAction = ViewDesktopAction(this, application, eventBus)
+	private val desktopAction = ViewDesktopAction(application, eventBus)
 
-	private val containerAction = ViewContainerAction(this, application, eventBus)
+	private val containerAction = ViewContainerAction(application, eventBus)
 
 	private val mainToolBar: ToolBar
 
@@ -120,15 +122,31 @@ class GraphFrame(
 		viewDesktopButton.icon = ImageIcon(GraphFrame::class.java.getResource("/img/drawing-24.png"))
 		viewDesktopButton.text = null
 		viewDesktopButton.toolTipText = Translations.getString("graph.action.showDesktop.name")
+		viewDesktopButton.addActionListener(MainToolBarActionListener(viewDesktopButton, DisplayedView.Desktop))
 		toolbar.add(viewDesktopButton)
 
 		val viewContainerButton = JToggleButton(ActionWrapperSwing(containerAction))
 		viewContainerButton.icon = ImageIcon(GraphFrame::class.java.getResource("/img/container-24.png"))
 		viewContainerButton.text = null
 		viewContainerButton.toolTipText = Translations.getString("graph.action.showContainer.name")
+		viewContainerButton.addActionListener(MainToolBarActionListener(viewContainerButton, DisplayedView.Container))
 		toolbar.add(viewContainerButton)
 
 		return toolbar
+	}
+
+	/**
+	 * Establishes a [JToggleButton] with [JRadioButton] behaviour (i.e. cannot be deselected)
+	 * by listening for [java.awt.event.ActionEvent]s and selecting it again, if necessary.
+	 */
+	private inner class MainToolBarActionListener(private val button: JToggleButton, private val targetDisplayedView: DisplayedView) : java.awt.event.ActionListener {
+
+		override fun actionPerformed(e: java.awt.event.ActionEvent?) {
+			if (!button.isSelected && displayedView == targetDisplayedView) {
+				button.doClick()
+				button.requestFocus()
+			}
+		}
 	}
 
 	private fun fillToolbarPanel(toolbars: List<ToolBar>) {
@@ -137,41 +155,49 @@ class GraphFrame(
 		toolbars.forEach { toolbarPanel.add(it) }
 		toolbarPanel.add(Box.createHorizontalGlue())
 	}
-}
 
-class ViewDesktopAction(
-	private val graphFrame: GraphFrame,
-	app: DesktopApplication,
-	eventBus: EventBus
-) : AbstractApplicationAction("view.action.desktop", app) {
+	private inner class ViewDesktopAction(
+		app: DesktopApplication,
+		eventBus: EventBus
+	) : AbstractApplicationAction("view.action.desktop", app) {
 
-	init {
-		eventBus.register(GraphFrameEvent::class) {
-			selected = it.displayedView == GraphFrame.DisplayedView.Desktop
+		init {
+			eventBus.register(GraphFrameEvent::class) { update() }
+			eventBus.register(ApplicationModeEvent::class) { update() }
+			update()
+		}
+
+		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+			showDesktop()
+		}
+
+		private fun update() {
+			selected = displayedView == DisplayedView.Desktop
+			enabled = graphPanel.currentMode == ApplicationMode.EDIT
 		}
 	}
 
-	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-		graphFrame.showDesktop()
-	}
-}
+	private inner class ViewContainerAction(
+		app: DesktopApplication,
+		eventBus: EventBus
+	) : AbstractApplicationAction("view.action.container", app) {
 
-class ViewContainerAction(
-	private val graphFrame: GraphFrame,
-	app: DesktopApplication,
-	eventBus: EventBus
-) : AbstractApplicationAction("view.action.container", app) {
+		init {
+			eventBus.register(GraphFrameEvent::class) { update() }
+			eventBus.register(ApplicationModeEvent::class) { update() }
+			update()
+		}
 
-	init {
-		eventBus.register(GraphFrameEvent::class) {
-			selected = it.displayedView == GraphFrame.DisplayedView.Container
+		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+			showContainer()
+		}
+
+		private fun update() {
+			selected = displayedView == DisplayedView.Container
+			enabled = graphPanel.currentMode == ApplicationMode.EDIT
 		}
 	}
-
-	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-		graphFrame.showContainer()
-	}
 }
 
-/** Posted by [GraphFrame] when [GraphFrame.DisplayedView] has changed.*/
+/** Posted by [GraphFrame] on [EventBus] when [GraphFrame.DisplayedView] has changed.*/
 data class GraphFrameEvent(val graphFrame: GraphFrame, val displayedView: GraphFrame.DisplayedView)
