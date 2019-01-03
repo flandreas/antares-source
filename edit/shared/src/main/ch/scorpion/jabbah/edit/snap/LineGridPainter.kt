@@ -7,13 +7,20 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.GridPainter
 
 /**
  * Paints a horizontal and a vertical line through each grid point.
  */
 class LineGridPainter(private val styleProvider: StyleProvider) : GridPainter {
 
+	companion object {
+		const val NAME = "line"
+	}
+
 	/** ---- [GridPainter] interface */
+
+	override val name: String get() = NAME
 
 	override var distanceX: Double = 10.0
 

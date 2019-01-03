@@ -2,22 +2,27 @@ package ch.scorpion.jabbah.edit.snap
 
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.ZoomPan
-import ch.scorpion.jabbah.draw.style.Style
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.GridPainter
 
 /**
  * Paints a simple dot for each grid dot.
  */
 class DottedGridPainter(private val styleProvider: StyleProvider) : GridPainter {
 
-    val LOG by logger(DottedGridPainter::class)
+	companion object {
+		const val NAME = "dot"
+        private val LOG by logger(DottedGridPainter::class)
+	}
 
     /** ---- [GridPainter] interface */
+
+	override val name: String get() = NAME
 
     override var distanceX: Double = 10.0
 
@@ -27,7 +32,7 @@ class DottedGridPainter(private val styleProvider: StyleProvider) : GridPainter 
 
     override fun paint(context: DrawContext, rect: Rectangle2D) {
         val oldColor = context.g.color
-        context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.foregroundColor
+        context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.foregroundColor.darker().darker()
 
         val dx = distanceX * zoomPan!!.zoomFactor
         val dy = distanceY * zoomPan!!.zoomFactor
@@ -44,7 +49,8 @@ class DottedGridPainter(private val styleProvider: StyleProvider) : GridPainter 
         while (x <= high.x) {
             var y = low.y
             while (y <= high.y) {
-                context.g.drawDot(x.toInt(), y.toInt())
+                //context.g.drawDot(x.toInt(), y.toInt())
+	            context.g.fillRect(x, y, 1.0, 1.0)
                 y += dy
             }
             x += dx

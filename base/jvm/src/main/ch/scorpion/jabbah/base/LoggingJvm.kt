@@ -90,7 +90,7 @@ class LogLevelPreference(
 		LogLevel.values().forEach { editor.addItem(it) }
 		editor.addActionListener {
 			if (panel != null) {
-				panel?.preferences?.customize(id, editor.selectedItem.toString())
+				panel?.preferences?.customize(id, (editor.selectedItem as LogLevel).name)
 			}
 		}
 		eventBus.register(PreferencesChangedEvent::class) { LOG_SYSTEM?.level = valueOf(BaseModule.properties.getString(PROP_LOG_LEVEL))}

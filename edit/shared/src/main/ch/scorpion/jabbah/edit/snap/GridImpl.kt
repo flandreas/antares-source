@@ -24,31 +24,36 @@ import ch.scorpion.jabbah.edit.Grid.Companion.PROP_SNAP_ENABLED
  * points falls below a certain minimum distance because of zooming, [GridImpl] doesn't draw these points any more.
  */
 class GridImpl(
-    styleProvider: StyleProvider = StyleRepository.INSTANCE,
+    private val styleProvider: StyleProvider = StyleRepository.INSTANCE,
     chosenDistance: Double? = null,
     chosenPaintFactor: Int? = null,
-    eventBus: EventBus = BaseModule.eventBus
+    private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSnapper(BaseModule.settings.getBoolean(PROP_SNAP_ENABLED, true)), Grid {
 
 	companion object {
         private val LOG by logger(GridImpl::class)
 	}
 
-    /** The object that actually paints the grid dots.*/
-    private var gridPainter: GridPainter = LineGridPainter(styleProvider)
-        set(value) {
-            invalidate()
-            field = value
-            updateGridPainterProperties()
-            invalidate()
-            validate()
-        }
+	/**
+	 * A buffer object for requesting the current clip rectangle when drawing the grid. Used to avoid creating the
+	 * [Rectangle2D] whenever a part of the [GridImpl] is redrawn.
+	 */
+	private val clipBuffer: Rectangle2D = Rectangle2D()
 
-    /**
-     * A buffer object for requesting the current clip rectangle when drawing the grid. Used to avoid creating the
-     * [Rectangle2D] whenever a part of the [GridImpl] is redrawn.
-     */
-    private val clipBuffer: Rectangle2D = Rectangle2D()
+	private val configuredGridPainter get() = GridPainterRegistry.get(BaseModule.properties.getString(Grid.PROP_GRID_PAINTER)).invoke(styleProvider)
+
+	/** The object that actually paints the grid dots.*/
+    override var gridPainter: GridPainter = configuredGridPainter
+        set(value) {
+	        if (field != value) {
+		        invalidate()
+		        field = value
+		        BaseModule.properties.set(Grid.PROP_GRID_PAINTER, field.name)
+		        updateGridPainterProperties()
+		        invalidate()
+		        validate()
+	        }
+        }
 
 	override var paintFactor: Int
 		get() = chosenPaintFactor ?: BaseModule.properties.getInt(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR)
@@ -68,12 +73,21 @@ class GridImpl(
 
 	private var chosenDistance: Double? = chosenDistance
 
+	private val preferencesHandler: (PreferencesChangedEvent) -> Unit = {
+		gridPainter = configuredGridPainter
+		updateGridPainterProperties()
+		invalidate()
+		requestRedraw()
+	}
+
 	init {
-		eventBus.register(PreferencesChangedEvent::class) {
-			updateGridPainterProperties()
-			invalidate()
-			requestRedraw()
-		}
+		eventBus.register(PreferencesChangedEvent::class, preferencesHandler)
+		updateGridPainterProperties()
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(PreferencesChangedEvent::class, preferencesHandler)
 	}
 
     /** ---- [Grid] interface */

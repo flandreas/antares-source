@@ -126,5 +126,7 @@ object EditModuleJvm : AbstractModule() {
 			nameKey = "edit.preferences.Grid.minDist",
 			minValue = 2
 		))
+
+		root.getGroup(PREF_TREE_EDITOR).add(GridPainterPreference())
 	}
 }

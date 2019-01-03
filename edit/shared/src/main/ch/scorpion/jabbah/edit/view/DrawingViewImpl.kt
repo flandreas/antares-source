@@ -119,6 +119,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
 		super.dispose()
 		eventBus.unregister(PreferencesChangedEvent::class, preferenceChangeHandler)
 		componentMessageDisplayer.dispose()
+		grid.dispose()
 	}
 
 	override var dropComponent: Component? = null

@@ -20,8 +20,11 @@ interface Grid : Snapper, Unzoomable {
         /** The name of the default paint factor [Int] property in [Properties]. */
         const val PROP_GRID_DEFAULT_PAINT_FACTOR = "edit.grid.paintFactor.default"
 
-	    /** The name of the snap enabed [Boolean] property in [Properties].*/
+	    /** The name of the snap enabled [Boolean] property in [Properties].*/
 	    const val PROP_SNAP_ENABLED = "edit.grid.snapEnabled"
+
+	    /** The name of the [String] property in [Properties] that contains the name of the [GridPainter] to use.*/
+	    const val PROP_GRID_PAINTER = "edit.grid.painter"
     }
 
     /** The [View] to which this [Grid] belongs. Only `null` until initialized. */
@@ -36,5 +39,7 @@ interface Grid : Snapper, Unzoomable {
      */
     var paintFactor: Int
 
+	/** Paints the visual representation of this [Grid].*/
+	var gridPainter: GridPainter
 
 }
