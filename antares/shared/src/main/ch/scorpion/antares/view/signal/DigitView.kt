@@ -10,6 +10,8 @@ import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
@@ -29,7 +31,7 @@ class DigitView(
     x: Double,
     y: Double,
     private val drawBorder: Boolean = true
-) : AbstractRectangle(x, y, WIDTH.toDouble(), HEIGHT.toDouble()) {
+) : AbstractRectangle(x, y, WIDTH.toDouble(), HEIGHT.toDouble()), Transparent {
 
     companion object {
         const val WIDTH = 20
@@ -60,7 +62,15 @@ class DigitView(
         setBounds(x, y, WIDTH.toDouble(), HEIGHT.toDouble())
     }
 
-    /** ---- [AbstractRectangle] */
+	/** ---- [Transparent] */
+
+	private val transparent = TransparentImpl(this)
+
+	override var transparency: Int
+		get() = transparent.transparency
+		set(value) { transparent.transparency = value }
+
+	/** ---- [AbstractRectangle] */
 
     override val lineWidth: Double get() = 0.0
 
@@ -80,20 +90,20 @@ class DigitView(
 		val oldStroke = context.g.stroke
 
         if (isOn) {
-            context.g.color = signalDigit.getColor().foregroundColor
+            context.g.color = transparent.applyTo(signalDigit.getColor().foregroundColor)
             context.g.fillRect(xInt + 1, yInt, WIDTH - 2, HEIGHT - 1)
         } else {
             if (drawBorder) {
-                context.g.color = context.choose(Themes.get<AntaresTheme>().annotation.color).foregroundColor
+                context.g.color = transparent.applyTo(context.choose(Themes.get<AntaresTheme>().annotation.color).foregroundColor)
                 context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
                 context.g.drawRect(xInt + 1, yInt, WIDTH - 2, HEIGHT - 1)
             }
         }
-        label.color = when {
+        label.color = transparent.applyTo(when {
             isOn -> signalDigit.getColor().textColor
             context.useContextColors -> context.color!!.textColor
             else -> oldColor
-        }
+        })
 
 		label.draw(context)
         if (hasFocus) {

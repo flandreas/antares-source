@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
@@ -19,10 +21,10 @@ import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
  * Displays a digital number with individual [DigitView]s.
  */
 class NumberView(
-        representation: DigitalSignalRepresentation,
-        bitWidth: BitWidth,
-        drawDigitBorder: Boolean = true
-) : AbstractRectangle() {
+    representation: DigitalSignalRepresentation,
+    bitWidth: BitWidth,
+    drawDigitBorder: Boolean = true
+) : AbstractRectangle(), Transparent {
 
     companion object {
         private const val NIBBLE_GAP = 5
@@ -42,6 +44,17 @@ class NumberView(
     init {
         buildUI(representation, bitWidth, drawDigitBorder)
     }
+
+	/** ---- [Transparent] */
+
+	private val transparent = TransparentImpl(this)
+
+	override var transparency: Int
+		get() = transparent.transparency
+		set(value) {
+			transparent.transparency = value
+			digitViews.forEach { it.transparency = value }
+		}
 
     /** ---- [AbstractRectangle] */
 

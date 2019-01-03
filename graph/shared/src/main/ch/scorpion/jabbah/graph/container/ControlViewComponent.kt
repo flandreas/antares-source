@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
+import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.model.text.Label
@@ -37,7 +38,7 @@ class ControlViewComponent(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     source: ControlViewSource<Vertice>? = null,
     baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY
-) : AbstractComponent(styleProvider), ActorView {
+) : AbstractComponent(styleProvider), ActorView, Transparent {
 
 	/**
      * The ID of the model displayed by [controlView]. This ID is made persistent and is used to resolve the link
@@ -63,6 +64,10 @@ class ControlViewComponent(
 		    controlModelLink = DeepVerticeLink.EMPTY
 	    }
     }
+
+	override var transparency: Int
+		get() = controlView!!.transparency
+		set(value) { controlView!!.transparency = value }
 
     /** ---- [Storable] interface */
 

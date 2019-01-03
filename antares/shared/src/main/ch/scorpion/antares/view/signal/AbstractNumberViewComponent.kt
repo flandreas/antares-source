@@ -7,6 +7,7 @@ import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
@@ -79,6 +80,15 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
         numberView!!.setSignal(signal)
         super.handleStateChanged(event)
     }
+
+	/** ---- [Transparent] */
+
+	override var transparency: Int
+		get() = super.transparency
+		set(value) {
+			super.transparency = value
+			numberView!!.transparency = value
+		}
 
     /** ---- [AbstractNumberViewComponent] */
 
