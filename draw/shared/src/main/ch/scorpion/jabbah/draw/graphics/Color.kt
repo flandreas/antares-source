@@ -34,6 +34,14 @@ data class Color(val red: Int, val green: Int, val blue: Int, val alpha: Int) {
         )
     }
 
+	fun brighter(): Color {
+		return return Color(
+			Math.min((red / FACTOR).toInt(), 255),
+			Math.min((green / FACTOR).toInt(), 255),
+			Math.min((blue / FACTOR).toInt(), 255)
+		)
+	}
+
     /** Returns a new [Color] with the same RGB values as this [Color], but with the specified alpha value.*/
     fun withAlpha(alpha: Int): Color {
         return Color(red, green, blue, alpha)

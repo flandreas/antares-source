@@ -33,10 +33,10 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
  * between multiple [Vertice]s, as [TruthTableView] is mainly presumed to be used as a flyweight.
  */
 class TruthTableView(
-        private val model: TruthTableModel,
-        vertice: Vertice?,
-        private val styleType: StyleType = GraphStyleType.EXPLANATION,
-        private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
+	private val model: TruthTableModel,
+	vertice: Vertice?,
+	private val styleType: StyleType = StyleType.TOOLTIP,
+	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangle() {
 
     companion object {

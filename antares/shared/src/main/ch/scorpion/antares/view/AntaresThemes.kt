@@ -25,9 +25,13 @@ object AntaresThemes {
 	private val EDGE_STROKE = Stroke(1.0f)
 	private val EDGE_EXECUTION_STROKE = Stroke(1.3f)
 	private val BUS_STROKE = Stroke(3.0f, LineCap.BUTT, LineJoin.ROUND)
-	private val EXPLANATION = CompositeColor(
+	private val TOOLTIP = CompositeColor(
 		foregroundColor = Color(252, 205, 90),
 		backgroundColor = Color(255, 255, 223),
+		textColor = Color.BLACK)
+	private val EXPLANATION = CompositeColor(
+		foregroundColor = Color.GRAY,
+		backgroundColor = Color(240, 240, 240),
 		textColor = Color.BLACK)
 	private val SUBSYSTEM_COLOR = Color(244, 244, 244)
 	private val SUBSYSTEM_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.8 * Look.SCALE).toInt())
@@ -68,7 +72,7 @@ object AntaresThemes {
 				font = FONT,
 				shadow = true),
 			tooltip = BasicStyle(
-				color = EXPLANATION,
+				color = TOOLTIP,
 				stroke = TOOLTIP_STROKE),
 			highlight = BasicStyle(
 				color = highlightColor,
