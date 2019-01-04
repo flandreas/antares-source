@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.preferences.PreferencesPanel
 import org.apache.log4j.Logger.*
 import org.slf4j.LoggerFactory
+import org.slf4j.spi.LocationAwareLogger
 import javax.swing.JComboBox
 import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObject
@@ -69,12 +70,52 @@ class LogSystemJVM : LogSystem {
 
 class LoggerJvm(private val slf4jLogger: org.slf4j.Logger) : Logger {
 
-    override fun info(msg: String) = slf4jLogger.info(msg)
-    override fun warn(msg: String) = slf4jLogger.warn(msg)
-    override fun error(msg: String) = slf4jLogger.error(msg)
-    override fun debug(msg: String) = slf4jLogger.debug(msg)
-    override fun trace(msg: String) = slf4jLogger.trace(msg)
+	companion object {
+		private val FQCN = LoggerJvm::class.java.name
+	}
+
+    override fun info(msg: String) {
+	    if (slf4jLogger is LocationAwareLogger) {
+		    slf4jLogger.log(null, FQCN, LocationAwareLogger.INFO_INT, msg, null, null)
+	    } else {
+	        slf4jLogger.info(msg)
+	    }
+    }
+
+    override fun warn(msg: String) {
+	    if (slf4jLogger is LocationAwareLogger) {
+		    slf4jLogger.log(null, FQCN, LocationAwareLogger.WARN_INT, msg, null, null)
+	    } else {
+		    slf4jLogger.warn(msg)
+	    }
+    }
+
+    override fun error(msg: String) {
+	    if (slf4jLogger is LocationAwareLogger) {
+		    slf4jLogger.log(null, FQCN, LocationAwareLogger.ERROR_INT, msg, null, null)
+	    } else {
+		    slf4jLogger.error(msg)
+	    }
+    }
+
+    override fun debug(msg: String) {
+	    if (slf4jLogger is LocationAwareLogger) {
+		    slf4jLogger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, msg, null, null)
+	    } else {
+		    slf4jLogger.debug(msg)
+	    }
+    }
+
+    override fun trace(msg: String) {
+	    if (slf4jLogger is LocationAwareLogger) {
+		    slf4jLogger.log(null, FQCN, LocationAwareLogger.TRACE_INT, msg, null, null)
+	    } else {
+		    slf4jLogger.trace(msg)
+	    }
+    }
+
     override fun isTraceEnabled(): Boolean = slf4jLogger.isTraceEnabled
+
     override fun isDebugEnabled(): Boolean = slf4jLogger.isDebugEnabled
 }
 
