@@ -88,12 +88,13 @@ class LibraryTreeView(
         addTreeSelectionListener { eventBus.post(LibrarySelectionChangedEvent(this)) }
 
         dragEnabled = true
-        dropMode = DropMode.ON
+        dropMode = DropMode.ON_OR_INSERT
 	    showsRootHandles = true
 
         eventBus.register(LibraryItemAddedEvent::class) { handle(it) }
 	    eventBus.register(LibraryItemRemovedEvent::class) { handle(it) }
 	    eventBus.register(LibraryItemUpdatedEvent::class) { handle(it) }
+	    eventBus.register(LibraryItemMovedEvent::class) { handle(it) }
 	    eventBus.register(LibraryDirectoryRenamedEvent::class) { handle(it) }
 
 	    eventBus.register(ApplicationModeEvent::class) { dragEnabled = it.applicationMode === ApplicationMode.EDIT }
@@ -263,6 +264,16 @@ class LibraryTreeView(
 			val nodeIndex = parent.getIndex(node)
 			node.removeFromParent()
 			(model as DefaultTreeModel).nodesWereRemoved(parent, intArrayOf(nodeIndex), arrayOf(node))
+		}
+	}
+
+	private fun handle(event: LibraryItemMovedEvent) {
+		if (displaysLibrary(event.item.library)) {
+			findOptionalTreeNode(event.parent)?.let {
+				findTreeNode(event.item).removeFromParent()
+				it.insert(DefaultMutableTreeNode(event.item), event.index)
+				(model as DefaultTreeModel).nodeStructureChanged(it)
+			}
 		}
 	}
 

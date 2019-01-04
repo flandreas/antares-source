@@ -17,6 +17,9 @@ interface LibraryDirectory : LibraryItem {
 	/** Contains the displayable name of this [LibraryDictionary] as various translations.*/
 	var translatableName: TranslatableText
 
+	/** Returns the number of [LibraryItem]s in this [LibraryDirectory].*/
+	val size: Int
+
 	fun isEmpty(): Boolean
 
 	fun add(item: LibraryItem)
@@ -47,5 +50,13 @@ interface LibraryDirectory : LibraryItem {
 	 * or `-1` if not contained.
 	 */
 	fun indexOf(item: LibraryItem): Int
+
+	/**
+	 * Moves a [LibraryItem] to a new index within this [LibraryDirectory].
+	 * @param item the [LibraryItem] to be moved within this [LibraryDirectory]
+	 * @param newIndex the index to insert `item` after it has been added
+	 * @throws IllegalArgumentException if `item` is not contained
+	 */
+	fun move(item: LibraryItem, newIndex: Int)
 }
 

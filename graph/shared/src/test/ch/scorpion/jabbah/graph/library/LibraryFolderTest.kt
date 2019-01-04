@@ -58,4 +58,90 @@ class LibraryFolderTest {
 		assertThat(folder.getRecursively("item") as LibraryFolder?, sameInstance(item))
 		assertThat(folder.getRecursively("bla") as LibraryFolder?, `is`(nullValue()));
 	}
+
+	@Test
+	fun shouldMoveItemUp() {
+		val folder = LibraryFolder("test")
+		val item1 = LibraryFolder("item1")
+		val item2 = LibraryFolder("item2")
+		val item3 = LibraryFolder("item3")
+		folder.add(item1)
+		folder.add(item2)
+		folder.add(item3)
+
+		folder.move(item1, 2)
+
+		assertThat(folder.indexOf(folder.get("item2")!!), `is`(0))
+		assertThat(folder.indexOf(folder.get("item3")!!), `is`(1))
+		assertThat(folder.indexOf(folder.get("item1")!!), `is`(2))
+	}
+
+	@Test
+	fun shouldMoveItemOneUp() {
+		val folder = LibraryFolder("test")
+		val item1 = LibraryFolder("item1")
+		val item2 = LibraryFolder("item2")
+		val item3 = LibraryFolder("item3")
+		folder.add(item1)
+		folder.add(item2)
+		folder.add(item3)
+
+		folder.move(item1, 1)
+
+		assertThat(folder.indexOf(folder.get("item2")!!), `is`(0))
+		assertThat(folder.indexOf(folder.get("item1")!!), `is`(1))
+		assertThat(folder.indexOf(folder.get("item3")!!), `is`(2))
+	}
+
+	@Test
+	fun shouldMoveItemDown() {
+		val folder = LibraryFolder("test")
+		val item1 = LibraryFolder("item1")
+		val item2 = LibraryFolder("item2")
+		val item3 = LibraryFolder("item3")
+		folder.add(item1)
+		folder.add(item2)
+		folder.add(item3)
+
+		folder.move(item3, 0)
+
+		assertThat(folder.indexOf(folder.get("item3")!!), `is`(0))
+		assertThat(folder.indexOf(folder.get("item1")!!), `is`(1))
+		assertThat(folder.indexOf(folder.get("item2")!!), `is`(2))
+	}
+
+	@Test
+	fun shouldMoveItemOneDown() {
+		val folder = LibraryFolder("test")
+		val item1 = LibraryFolder("item1")
+		val item2 = LibraryFolder("item2")
+		val item3 = LibraryFolder("item3")
+		folder.add(item1)
+		folder.add(item2)
+		folder.add(item3)
+
+		folder.move(item3, 1)
+
+		assertThat(folder.indexOf(folder.get("item1")!!), `is`(0))
+		assertThat(folder.indexOf(folder.get("item3")!!), `is`(1))
+		assertThat(folder.indexOf(folder.get("item2")!!), `is`(2))
+	}
+
+	@Test
+	fun shouldMoveItemToSamePosition() {
+		val folder = LibraryFolder("test")
+		val item1 = LibraryFolder("item1")
+		val item2 = LibraryFolder("item2")
+		val item3 = LibraryFolder("item3")
+		folder.add(item1)
+		folder.add(item2)
+		folder.add(item3)
+
+		folder.move(item2, 1)
+
+		assertThat(folder.indexOf(folder.get("item1")!!), `is`(0))
+		assertThat(folder.indexOf(folder.get("item2")!!), `is`(1))
+		assertThat(folder.indexOf(folder.get("item3")!!), `is`(2))
+	}
+
 }

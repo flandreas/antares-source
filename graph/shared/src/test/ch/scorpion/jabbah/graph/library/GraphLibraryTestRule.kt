@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.module.AppModule
+import ch.scorpion.jabbah.app.user.User
+import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.io.IOModule
+import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.io.IOModuleJvm
 import org.junit.rules.TestRule
 import org.junit.runner.Description
@@ -30,5 +32,8 @@ class GraphLibraryTestRule : TestRule {
 		BaseModuleJvm.require()
 		IOModuleJvm.require()
 		LibraryModule.require()
+		GraphModuleJvm.require()
+		TestTranslationsBuilder().withAnyKey()
+		AppModule.userHolder.u = User.developer()
 	}
 }

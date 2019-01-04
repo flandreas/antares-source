@@ -46,7 +46,7 @@ class LibraryTreeViewTransferHandler(
 		    return false
 	    }
 
-	    return getDropLibraryDirectory(support) != null
+	    return getLibraryDropLocation(support) != null
     }
 
     override fun createTransferable(c: JComponent): Transferable? {
@@ -67,11 +67,10 @@ class LibraryTreeViewTransferHandler(
     }
 
     override fun importData(support: TransferHandler.TransferSupport): Boolean {
-	    getDropLibraryDirectory(support)?.let {
+	    getLibraryDropLocation(support)?.let {
 		    val elem = extractTransferElement(support) as ContainerLibraryElement
-		    val dest = getDropLibraryDirectory(support)
 		    return try {
-			    repositoryService.move(elem, dest!!)
+			    repositoryService.move(elem, it.directory, it.index)
 			    true
 		    } catch (e: LibraryDependencyException) {
 			    JOptionPane.showConfirmDialog(
@@ -87,10 +86,16 @@ class LibraryTreeViewTransferHandler(
 	    return false
     }
 
-	private fun getDropLibraryDirectory(support: TransferHandler.TransferSupport): LibraryDirectory? {
+	private fun getLibraryDropLocation(support: TransferHandler.TransferSupport): LibraryDropLocation? {
 		val dropLocation = support.dropLocation as JTree.DropLocation
 		return dropLocation.path?.let {
-			(it.lastPathComponent as DefaultMutableTreeNode).userObject as? LibraryDirectory
+			val item = (it.lastPathComponent as DefaultMutableTreeNode).userObject
+			val index = if (dropLocation.childIndex >= 0) dropLocation.childIndex else null
+			if (item is LibraryDirectory) {
+				LibraryDropLocation(item, index)
+			} else {
+				null
+			}
 		}
 	}
 
@@ -98,4 +103,6 @@ class LibraryTreeViewTransferHandler(
 		val data = support.transferable.getTransferData(GraphElementViewTransferable.FLAVOR) as GraphElementViewTransferableData
 		return data.libraryElement
 	}
+
+	private data class LibraryDropLocation(val directory: LibraryDirectory, val index: Int? = null)
 }

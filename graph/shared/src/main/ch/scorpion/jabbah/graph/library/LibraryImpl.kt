@@ -67,6 +67,8 @@ open class LibraryImpl(
 			libraryFolder.translatableName = value
 		}
 
+	override val size: Int get() = libraryFolder.size
+
 	override fun isEmpty(): Boolean = libraryFolder.isEmpty()
 
 	override fun add(item: LibraryItem) {
@@ -103,10 +105,26 @@ open class LibraryImpl(
 
 	override val iconPath: String? get() = libraryFolder.iconPath
 
-	override fun accept(visitor: HierarchyVisitor): Boolean = libraryFolder.accept(visitor)
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		// Don't use libraryFolder.accept(visitor) in order to achieve that this Library is the resulting instance,
+		// and not its folder (which should be transparent to the outside world)
+		if (visitor.visitEnter(this)) {
+			val iter = libraryFolder.getItems().iterator()
+			while (iter.hasNext()) {
+				if (!iter.next().accept(visitor)) {
+					break
+				}
+			}
+		}
+		return visitor.visitLeave(this)
+	}
 
 	override fun bindTo(library: Library) {
 		libraryFolder.bindTo(library)
+	}
+
+	override fun move(item: LibraryItem, newIndex: Int) {
+		libraryFolder.move(item, newIndex)
 	}
 
 	/** ---- [MetaGraphRepository] */

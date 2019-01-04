@@ -61,6 +61,14 @@ interface LibraryService {
 	fun addFolder(library: Library, name: String, directory: LibraryDirectory): LibraryDirectory
 
 	/**
+	 * Moves a [LibraryItem] to a new position within its [LibraryDirectory].
+	 * @param item the [LibraryItem] to be moved within its [LibraryDirectory]
+	 * @param newIndex the new index of `item` within its [LibraryDirectory] after it has been moved
+	 *
+	 */
+	fun move(library: Library, item: LibraryItem, newIndex: Int)
+
+	/**
 	 * Renames the specified [LibraryDirectory].
 	 * Posts [LibraryDirectoryRenamedEvent] on this [LibraryService]'s [EventBus].
 	 */
@@ -132,6 +140,13 @@ data class LibraryItemRemovedEvent(
 data class LibraryItemUpdatedEvent(
 	val library: Library,
 	val item: LibraryItem
+)
+
+/** Posted on [EventBus] when a [LibraryImpl] hast been moved within its [LibraryDirectory].*/
+data class LibraryItemMovedEvent(
+	val parent: LibraryDirectory,
+	val item: LibraryItem,
+	val index: Int
 )
 
 /** Posted on [EventBus] when a [Library] has been deleted.*/
@@ -237,6 +252,13 @@ class LibraryServiceImpl(
 		val folder = LibraryFolder(name)
 		addLibraryItem(library, folder, directory)
 		return folder
+	}
+
+	override fun move(library: Library, item: LibraryItem, newIndex: Int) {
+		val directory = getDirectoryOf(library, item)
+		directory.move(item, newIndex)
+		storeLibrary(library)
+		eventBus.post(LibraryItemMovedEvent(directory, item, newIndex))
 	}
 
 	override fun renameDirectory(directory: LibraryDirectory, newName: TranslatableText) {

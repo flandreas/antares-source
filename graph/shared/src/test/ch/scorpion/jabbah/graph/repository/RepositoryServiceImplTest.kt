@@ -60,6 +60,26 @@ class RepositoryServiceImplTest {
 		assertThat((library.getRecursively("Directory") as LibraryDirectory).contains(library.getRecursively("Element") as LibraryItem), `is`(true))
 	}
 
+	@Test
+	fun shouldMoveWithinDirectory() {
+		val project = projectBuilder
+			.addDirectory("ProjectDirectory")
+			.addContainerLibraryElement("Element")
+			.addContainerLibraryElement("Element2")
+			.addContainerLibraryElement("Element3")
+			.library
+
+		service.move(
+			project.getRecursively("Element") as ContainerLibraryElement,
+			project.getRecursively("ProjectDirectory") as LibraryDirectory,
+			3)
+
+		val directory = project.getRecursively("ProjectDirectory") as LibraryDirectory
+		assertThat(directory.indexOf(project.getRecursively("Element2") as ContainerLibraryElement), `is`(0))
+		assertThat(directory.indexOf(project.getRecursively("Element3") as ContainerLibraryElement), `is`(1))
+		assertThat(directory.indexOf(project.getRecursively("Element") as ContainerLibraryElement), `is`(2))
+	}
+
 	@Test(expected = LibraryDependencyException::class)
 	fun shouldNotMoveProjectDependenciesToLibrary() {
 		projectBuilder.addContainerLibraryElement("ReferencedVertice")

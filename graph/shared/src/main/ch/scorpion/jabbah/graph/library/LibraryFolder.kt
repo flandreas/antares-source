@@ -110,6 +110,8 @@ class LibraryFolder(
 
     /** ---- [LibraryDirectory]  */
 
+	override val size: Int get() = items.size
+
 	override fun isEmpty(): Boolean = items.isEmpty()
 
     override fun add(item: LibraryItem) {
@@ -155,6 +157,14 @@ class LibraryFolder(
 
 	override fun indexOf(item: LibraryItem): Int {
 		return items.indexOf(item)
+	}
+
+	override fun move(item: LibraryItem, newIndex: Int) {
+		if (!contains(item)) {
+			throw IllegalArgumentException("doesn't contain item to move")
+		}
+		items.remove(item)
+		items.add(newIndex, item)
 	}
 
     /** ---- [LibraryFolder] */
