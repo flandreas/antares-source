@@ -47,4 +47,15 @@ class StylableImplTest {
         val stylable = StylableImpl(styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
         assertThat(stylable.foregroundColor, `is`(sameInstance(propertyColor)))
     }
+
+	@Test
+	fun shouldDeactivateShadow() {
+		val style = BasicStyle(shadow = true)
+		StyleRepository.INSTANCE.registerStyle(StyleType.FIGURE, style)
+		val stylable = StylableImpl(styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
+
+		stylable.customShadow = false
+
+		assertThat(stylable.shadow, `is`(false))
+	}
 }

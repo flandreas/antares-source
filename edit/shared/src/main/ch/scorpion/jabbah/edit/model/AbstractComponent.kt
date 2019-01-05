@@ -94,6 +94,9 @@ abstract class AbstractComponent(
         if (!stroked) {
             writer.writeBoolean("stroked", stroked)
         }
+	    if (customShadow != null) {
+		    writer.writeBoolean("shadow", customShadow!!)
+	    }
     }
 
     override fun read(reader: StoreReader) {
@@ -118,6 +121,9 @@ abstract class AbstractComponent(
         if (reader.hasAttribute("stroked")) {
             stroked = reader.readBoolean("stroked")
         }
+	    if (reader.hasAttribute("shadow")) {
+		    customShadow = reader.readBoolean("shadow")
+	    }
     }
 
     override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {

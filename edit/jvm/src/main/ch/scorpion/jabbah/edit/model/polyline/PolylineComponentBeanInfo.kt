@@ -20,6 +20,7 @@ class PolylineComponentBeanInfo : AbstractBeanInfo<PolylineComponent>() {
         private val styleType = PropertyImpl("draw.styleType", StyleType::class.java)
         private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
 	    private val stroke = PropertyImpl("edit.property.stroke", PredefinedStroke::class.java)
+	    private val shadow = PropertyImpl("edit.property.shadow", Boolean::class.java)
     }
 
     override fun addProperties(bean: PolylineComponent, editor: Editor, properties: MutableList<Property>) {
@@ -29,8 +30,10 @@ class PolylineComponentBeanInfo : AbstractBeanInfo<PolylineComponent>() {
         styleType.bind(editor, { bean.styleType }, { bean.styleType = it!! })
         color.bind(editor, { bean.customColor }, { bean.customColor = it })
 		stroke.bind(editor, { bean.customStroke}, { bean.customStroke = it } )
+	    shadow.bind(editor, { bean.shadow }, { bean.customShadow = it!! })
 
         properties.add(filled)
+	    properties.add(shadow)
         properties.add(styleType)
         properties.add(color)
 	    properties.add(stroke)
@@ -45,6 +48,7 @@ class PolylineDrawableBeanInfo : AbstractBeanInfo<PolylineDrawable>() {
         private val styleType = PropertyImpl("draw.styleType", StyleType::class.java)
         private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
 	    private val stroke = PropertyImpl("edit.property.stroke", PredefinedStroke::class.java)
+	    private val shadow = PropertyImpl("edit.property.shadow", Boolean::class.java)
     }
 
     override fun addProperties(bean: PolylineDrawable, editor: Editor, properties: MutableList<Property>) {
@@ -54,8 +58,10 @@ class PolylineDrawableBeanInfo : AbstractBeanInfo<PolylineDrawable>() {
         styleType.bind(editor, { bean.styleType }, { bean.styleType = it!! })
         color.bind(editor, { bean.customColor }, { bean.customColor = it })
 	    stroke.bind(editor, { bean.customStroke}, { bean.customStroke = it } )
+	    shadow.bind(editor, { bean.shadow }, { bean.customShadow = it!! })
 
         properties.add(filled)
+	    properties.add(shadow)
         properties.add(styleType)
         properties.add(color)
 	    properties.add(stroke)

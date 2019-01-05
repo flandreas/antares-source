@@ -133,8 +133,9 @@ class StylableImpl(
 	override var customShadow: Boolean? = customShadow
 		set(value) {
 			if (field != value) {
+				val effectiveValue = if (value == shadow) null else value
 				invalidator?.invoke()
-				field = value
+				field = effectiveValue
 				invalidator?.invoke()
 			}
 		}

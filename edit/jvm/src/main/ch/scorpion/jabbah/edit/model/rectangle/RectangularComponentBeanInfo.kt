@@ -22,6 +22,7 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : AbstractB
 	    private val stroke = PropertyImpl("edit.property.stroke", PredefinedStroke::class.java)
         private val text = PropertyImpl("edit.property.text", String::class.java)
         private val alignment = PropertyImpl("edit.property.verticalAlignment", VerticalAlignment::class.java)
+	    private val shadow = PropertyImpl("edit.property.shadow", Boolean::class.java)
     }
 
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
@@ -34,9 +35,11 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : AbstractB
 	    stroke.bind(editor, { bean.customStroke}, { bean.customStroke = it } )
         text.bind(editor, { bean.text }, { bean.text = it!!} )
         alignment.bind(editor, { bean.alignment }, { bean.alignment = it!! })
+	    shadow.bind(editor, { bean.shadow }, { bean.customShadow = it!! })
 
         properties.add(filled)
         properties.add(stroked)
+	    properties.add(shadow)
         properties.add(styleType)
         properties.add(color)
 	    properties.add(stroke)

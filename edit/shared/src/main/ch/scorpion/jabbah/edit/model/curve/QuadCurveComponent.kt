@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.io.StoreReader
@@ -149,6 +149,13 @@ class QuadCurveComponent(points: List<Point2D>) : AbstractComponent(), Transpare
 
 	private fun drawImpl(context: DrawContext, lineColor: Color, fillColor: Color?) {
 		val oldColor = context.g.color
+
+		if (shadow && fillColor != null) {
+			DropShadow.draw(context, transparency) {
+				context.g.fill(path)
+			}
+		}
+
 		if (fillColor != null) {
 			context.g.color = fillColor
 			context.g.fill(path)
