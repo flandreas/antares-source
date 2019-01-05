@@ -87,7 +87,7 @@ class CommandManagerImpl(
         }
         level--
         if (level == 0) {
-            LOG.debug("CommandManagerImpl: commit transaction '${transaction!!.headCommand.getDescription()}'")
+            LOG.debug("commit transaction '${transaction!!.headCommand.getDescription()}'")
             undoStack.push(transaction!!)
             eventBus.post(CommandEvent(this))
             transaction = null

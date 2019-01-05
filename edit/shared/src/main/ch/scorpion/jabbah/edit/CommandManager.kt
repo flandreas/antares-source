@@ -40,11 +40,11 @@ interface CommandManager {
     /**
      * Begins a new transaction with the specified [Command] as its head, and executes or registers the [Command]
      * depending on the [register] property.
+     * If there is already a current transaction, the specified [Command] is added to that transaction, and the nesting
+     * level is increased. That nesting level must be met by a corresponding number of commits.
      *
      * @param register `true` if [command] should only be registered and not executed. If omitted,
      * the [Command] is executed
-     * @throws IllegalStateException if there is already a current transaction, since nested transactions
-     * are not supported
      */
     fun beginTransaction(command: Command, register: Boolean = false)
 
@@ -57,13 +57,15 @@ interface CommandManager {
 
     /**
      * Executes the specified [Command] and registers it with the current transaction.
-     * @throws IllegalStateException if there is no current transaction
+     * If there is no current transaction, this [CommandManager] begins a transaction for the specified [Command]
+     * and commits it automatically after executing the [Command].
      */
     fun execute(command: Command)
 
     /**
      * Registers the specified [Command] with the current transaction without executing it.
-     * @throws IllegalStateException if there is no current transaction
+     * If there is no current transaction, this [CommandManager] begins a transaction for the specified [Command]
+     * and commits it automatically after registering the [Command].
      */
     fun register(command: Command)
 
