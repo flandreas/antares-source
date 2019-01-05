@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
@@ -61,7 +62,7 @@ open class GraphNavigationPanel(
         private val LOG by logger(GraphNavigationPanel::class)
 
 	    /** The name of the [Boolean] property in [Properties] that controls whether animations are used when opening subgraphs.*/
-	    val PROP_DIVE_ANIMATION = "graph.GraphNavigationPanel.diveAnimation"
+	    const val PROP_DIVE_ANIMATION = "graph.GraphNavigationPanel.diveAnimation"
     }
 
     private val mainPanel = JPanel(BorderLayout())
@@ -164,6 +165,8 @@ open class GraphNavigationPanel(
         navigationStackView.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)
         scenarioDetector?.dispose()
         scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus, currentSystemSpeedCategory)
+	    UiUtil.invokeLater(Runnable { drawingView.navigator.fitMaxNormal() })
+
     }
 
     private fun getRootEntry(): NavigationStackEntry<GraphView<GraphElementView<*>>> =
@@ -200,7 +203,7 @@ open class GraphNavigationPanel(
             navigationStackView.navigationStack.find(condition)
 
     private fun handle(request: OpenSubGraphRequest) {
-        LOG.debug("GraphNavigationPanel: handling OpenSubGraphRequest by descending into SubGraphVerticeView")
+        LOG.debug("handling OpenSubGraphRequest by descending into SubGraphVerticeView")
 
         val graphView = drawingView.drawing
         if (!graphView.contains(request.subGraphVerticeView)) {

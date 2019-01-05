@@ -72,7 +72,8 @@ class GraphPanel(
 	private val viewManager: ViewManager,
 	graphNavigationPanelFactory: GraphNavigationPanelFactory = GraphModuleJvm.graphNavigationPanelFactory,
 	var scheduler: Scheduler = ExecutionModule.scheduler,
-	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
+	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory,
+	showContentInitially: Boolean = true
 ) : JPanel() {
 
 	companion object {
@@ -85,7 +86,7 @@ class GraphPanel(
 		propertySheetFactory, { eventBus.post(CloseApplicationDataRequest(editor.drawing)) }, eventBus)
 
 	/** Allows to open multiple Graphs.*/
-	private val desktop : GraphDesktop = GraphDesktop(graphEditPanel, eventBus, scheduler)
+	private val desktop : GraphDesktop = GraphDesktop(graphEditPanel, eventBus, scheduler, showContentInitially)
 
 	/** Displays the properties of the currently selected component in [graphEditPanel].*/
 	private val propertyPanel: ComponentPropertyPanel
@@ -260,7 +261,7 @@ class GraphPanel(
 					})
 				} else {
 					eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = null, messageKey = "graph.designError.msg"))
-					LOG.debug("GraphPanel: execution not started due to design errors")
+					LOG.debug("execution not started due to design errors")
 				}
 			}
 		}

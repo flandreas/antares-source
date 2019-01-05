@@ -11,9 +11,7 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorEvent
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.view.CanvasJvm
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule.viewManager
-import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
@@ -23,7 +21,6 @@ import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm.graphNavigationPanelFactory
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -42,7 +39,8 @@ import javax.swing.SwingUtilities
 class GraphDesktop(
 	private val graphEditPanel: GraphEditPanel,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val scheduler: Scheduler = ExecutionModule.scheduler
+	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	showContentInitially: Boolean = true
 ) : JPanel() {
 
     companion object {
@@ -118,7 +116,9 @@ class GraphDesktop(
 		    }
 	    }
 
-	    add(graphEditPanel)
+	    if (showContentInitially) {
+		    add(graphEditPanel)
+	    }
     }
 
     fun dispose() {
@@ -155,7 +155,7 @@ class GraphDesktop(
 
 			it.drawingView.highlighter.highlight(view, refColor)
 			it.drawingView.repaint()
-		} ?: LOG.error("GraphDesktop: SubGraphVerticeView for OpenSubGraphRequest not found in open panels")
+		} ?: LOG.error("SubGraphVerticeView for OpenSubGraphRequest not found in open panels")
 	}
 
 	private fun addGraphNavigationPanel(panel: GraphNavigationPanel) {
