@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
@@ -11,6 +12,7 @@ import ch.scorpion.jabbah.draw.graphics.ReferenceColorEvent
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.draw.view.DrawViewModule.viewManager
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
@@ -22,6 +24,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
+import ch.scorpion.jabbah.graph.module.GraphModuleJvm.graphNavigationPanelFactory
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
@@ -39,8 +42,6 @@ import javax.swing.SwingUtilities
 class GraphDesktop(
 	private val graphEditPanel: GraphEditPanel,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	viewManager: ViewManager = DrawViewModule.viewManager,
-	graphNavigationPanelFactory: GraphNavigationPanelFactory = GraphModuleJvm.graphNavigationPanelFactory,
 	private val scheduler: Scheduler = ExecutionModule.scheduler
 ) : JPanel() {
 
@@ -113,36 +114,7 @@ class GraphDesktop(
 
 	    eventBus.register(OpenSubGraphRequest::class) { request ->
 		    if (request.newView) {
-			    val assoc = associations.firstOrNull{ it.ref == request.subGraphVerticeView}
-			    if (assoc != null) {
-				    eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = assoc.ref, messageKey = "graph.vertice.alreadyOpen.msg"))
-				    return@register
-			    }
-
-			    val subGraphView = request.subGraphVerticeView.createSubGraphView()
-			    val graphCanvas = CanvasJvm {
-				    val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>, it)
-				    drawingView
-			    }
-			    val drawingView = graphCanvas.view as DrawingView<GraphView<GraphElementView<*>>>
-
-			    val refColor = referenceColorSequence.next()
-			    panelContaining(request.subGraphVerticeView)?.let {
-				    val newPanel = graphNavigationPanelFactory.create(
-					    isRoot = false,
-					    drawingView = drawingView,
-					    viewManager = viewManager,
-					    closeHandler = { closeGraphNavigationPanel(it) },
-					    contextColor = refColor,
-					    scheduler = scheduler
-				    )
-				    associations.add(Association(it, request.subGraphVerticeView, newPanel, refColor))
-
-				    addGraphNavigationPanel(newPanel)
-
-				    it.drawingView.highlighter.highlight(request.subGraphVerticeView, refColor)
-				    it.drawingView.repaint()
-			    } ?: LOG.error("GraphDesktop: SubGraphVerticeView for OpenSubGraphRequest not found in open panels")
+			    InvocationHandler.invoke { openSubGraphVerticeView(request.subGraphVerticeView) }
 		    }
 	    }
 
@@ -153,7 +125,40 @@ class GraphDesktop(
 	    graphEditPanel.dispose()
     }
 
-    private fun addGraphNavigationPanel(panel: GraphNavigationPanel) {
+	private fun openSubGraphVerticeView(view: SubGraphVerticeView<*>) {
+		val assoc = associations.firstOrNull{ it.ref == view}
+		if (assoc != null) {
+			eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = assoc.ref, messageKey = "graph.vertice.alreadyOpen.msg"))
+			return
+		}
+
+		val subGraphView = view.createSubGraphView()
+		val graphCanvas = CanvasJvm {
+			val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>, it)
+			drawingView
+		}
+		val drawingView = graphCanvas.view as DrawingView<GraphView<GraphElementView<*>>>
+
+		val refColor = referenceColorSequence.next()
+		panelContaining(view)?.let {
+			val newPanel = graphNavigationPanelFactory.create(
+				isRoot = false,
+				drawingView = drawingView,
+				viewManager = viewManager,
+				closeHandler = { closeGraphNavigationPanel(it) },
+				contextColor = refColor,
+				scheduler = scheduler
+			)
+			associations.add(Association(it, view, newPanel, refColor))
+
+			addGraphNavigationPanel(newPanel)
+
+			it.drawingView.highlighter.highlight(view, refColor)
+			it.drawingView.repaint()
+		} ?: LOG.error("GraphDesktop: SubGraphVerticeView for OpenSubGraphRequest not found in open panels")
+	}
+
+	private fun addGraphNavigationPanel(panel: GraphNavigationPanel) {
         if (slaveGraphNavigationPanels.isEmpty()) {
             remove(graphEditPanel)
             sidePanel.add(panel)
@@ -190,14 +195,6 @@ class GraphDesktop(
         }
 
         sidePanel.remove(panel)
-        revalidate()
-        repaint()
-    }
-
-    /** Closes all open slave [GraphNavigationPanel]s.*/
-    private fun closeAllSlaves() {
-		closeAllSlavesImpl()
-        establishSingleView()
         revalidate()
         repaint()
     }
