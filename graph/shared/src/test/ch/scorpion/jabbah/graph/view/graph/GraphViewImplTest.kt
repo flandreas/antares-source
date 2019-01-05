@@ -2,17 +2,14 @@ package ch.scorpion.jabbah.graph.view.graph
 
 import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.TestGraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.io.IOModule
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.ClassRule
@@ -40,7 +37,6 @@ class GraphViewImplTest {
             GraphViewModule.inputToOutputOrEdgeConnector,
             GraphViewModule.reconnectOriginConnector,
             GraphViewModule.reconnectDestinationConnector,
-            GraphViewModule.graphViewConnectService,
             BaseModule.eventBus)
 
     @Test
