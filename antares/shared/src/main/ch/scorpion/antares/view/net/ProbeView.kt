@@ -96,6 +96,15 @@ class ProbeView(
 			}
 		}
 
+	var isLogging: Boolean
+		get() = model!!.isLogging
+		set(value) {
+			if (value == isLogging) {
+				return
+			}
+			model!!.isLogging = value
+		}
+
 	/** ---- [AbstractNumberViewComponent] */
 
     override var bitWidth: BitWidth

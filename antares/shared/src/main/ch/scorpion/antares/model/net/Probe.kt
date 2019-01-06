@@ -25,7 +25,7 @@ class Probe(hasOutput: Boolean = false) : CalculatingVertice("library.element.Pr
         val CALCULATOR = object : VerticeCalculator<Probe> {
             override fun calculate(vertice: Probe, data: GraphActorData, signalHandler: SignalHandler) {
                 if (vertice.isLogging) {
-                    LOG.info("${signalHandler.executionTime} Probe: ${data.getSignal<DigitalSignal>(1)}")
+                    LOG.info("${signalHandler.executionTime} Probe '${vertice.name}': ${data.getSignal<DigitalSignal>(1)}")
                 }
                 vertice.setSignal(data.getSignal(1)!!, signalHandler)
             }
@@ -80,12 +80,18 @@ class Probe(hasOutput: Boolean = false) : CalculatingVertice("library.element.Pr
         super.write(writer)
         writer.writeInt("bitWidth", bitWidth.width)
         writer.writeBoolean("hasOutput", hasOutput)
+	    if (isLogging) {
+		    writer.writeBoolean("logging", isLogging)
+	    }
     }
 
     override fun read(reader: StoreReader) {
         super.read(reader)
         bitWidth = BitWidth.of(reader.readInt("bitWidth"))
         hasOutput = reader.readBoolean("hasOutput")
+	    if (reader.hasAttribute("logging")) {
+		    isLogging = reader.readBoolean("logging")
+	    }
     }
 
     /** ---- [Probe] */

@@ -18,6 +18,7 @@ class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
         private val bitWidth = PropertyImpl("element.property.bitWidth", BitWidth::class.java)
         private val signalRep = PropertyImpl("element.property.DigitalSignalRepresentation", DigitalSignalRepresentation::class.java)
         private val output = PropertyImpl("element.property.hasOutput", Boolean::class.java)
+	    private val logging = PropertyImpl("element.property.logging", Boolean::class.java)
     }
 
     override fun addProperties(bean: ProbeView, editor: Editor, properties: MutableList<Property>) {
@@ -27,10 +28,12 @@ class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
         bitWidth.bind(editor, { bean.bitWidth }, { bean.bitWidth = it!! })
         signalRep.bind(editor, { bean.signalRepresentation }, { bean.signalRepresentation = it!! })
         output.bind(editor, { bean.hasOutput }, { bean.hasOutput = it!! }, !bean.model!!.isConnected)
+	    logging.bind(editor, { bean.isLogging }, { bean.isLogging = it!! })
 
 	    properties.add(name)
         properties.add(bitWidth)
         properties.add(signalRep)
         properties.add(output)
+	    properties.add(logging)
     }
 }
