@@ -45,7 +45,7 @@ object AntaresThemes {
 
 	/** This should be taken from the current focus color of the System/Target.*/
 	private val FOCUS_COLOR = Color(48, 131, 251)
-	private val FOCUS_STROKE = Stroke(1.0f, LineCap.BUTT, LineJoin.MITER, 1.0f, floatArrayOf(2.0f, 1.0f), 0.0f)
+	private val FOCUS_STROKE = Stroke(0.8f, LineCap.BUTT, LineJoin.MITER, 1.0f, floatArrayOf(2.0f, 1.0f), 0.0f)
 
 	private val TOOLTIP_STROKE = Stroke(1.0f)
 
@@ -270,7 +270,7 @@ object AntaresThemes {
 			error = ERROR,
 			focus = BasicStyle(
 				color = CompositeColor(
-					foregroundColor = FOCUS_COLOR
+					foregroundColor = ONE.foregroundColor
 				),
 				stroke = FOCUS_STROKE
 			),
