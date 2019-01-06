@@ -36,7 +36,7 @@ import javax.swing.*
 class ContainerPanel(
     val editor: ContainerEditor,
     propertySheetFactory: PropertySheetPanelFactory,
-    eventBus: EventBus,
+    private val eventBus: EventBus,
     viewManager: ViewManager
 ) : JPanel() {
 
@@ -54,23 +54,12 @@ class ContainerPanel(
 
 	private var editedContainerDrawing: ContainerDrawing? = null
 
+	private val applicationDataEventHandler: (ApplicationDataEvent) -> Unit = { handle(it) }
+
     init {
         editor.view.navigator.setZoomFactor(2.0)
 
-        eventBus.register(ApplicationDataEvent::class) {
-	        if (it.newData == null) {
-		        editedContainerDrawing = null
-		        removeAll()
-	        } else {
-		        if (it.oldData == null) {
-			        add(mainSplitPane)
-		        }
-		        val metaGraph = it.newData as MetaGraph
-		        editedContainerDrawing = metaGraph.containerDrawing
-		        setData(metaGraph.graph.graphView, editedContainerDrawing!!)
-	        }
-	        updateEditability()
-        }
+        eventBus.register(ApplicationDataEvent::class, applicationDataEventHandler)
 
 	    propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
@@ -79,6 +68,10 @@ class ContainerPanel(
 
         buildUI(viewManager)
     }
+
+	fun dispose() {
+		eventBus.unregister(ApplicationDataEvent::class, applicationDataEventHandler)
+	}
 
     fun initialize() {
         editor.view.initialize()
@@ -163,5 +156,20 @@ class ContainerPanel(
 
 	private fun updateEditability() {
 		editor.active = editedContainerDrawing != null
+	}
+
+	private fun handle(event: ApplicationDataEvent) {
+		if (event.newData == null) {
+			editedContainerDrawing = null
+			removeAll()
+		} else {
+			if (event.oldData == null) {
+				add(mainSplitPane)
+			}
+			val metaGraph = event.newData as MetaGraph
+			editedContainerDrawing = metaGraph.containerDrawing
+			setData(metaGraph.graph.graphView, editedContainerDrawing!!)
+		}
+		updateEditability()
 	}
 }

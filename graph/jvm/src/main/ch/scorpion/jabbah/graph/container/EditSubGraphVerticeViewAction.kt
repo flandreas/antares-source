@@ -33,12 +33,6 @@ class EditSubGraphVerticeViewAction(
 		private val LOG by logger(EditSubGraphVerticeViewAction::class)
 	}
 
-	private var editedVerticeView: SubGraphVerticeView<*>? = null
-
-	private var containerPanel: ContainerPanel? = null
-
-	private var oldActiveView: View<out InputEventContext>? = null
-
 	override fun calculateEnabled(): Boolean {
 		return getSelectionCount() == 1 && getSingleSelection() is SubGraphVerticeView<*>
 	}
@@ -46,34 +40,42 @@ class EditSubGraphVerticeViewAction(
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		LOG.debug("opening EditSubGraphVerticeViewPanel")
 
-		editedVerticeView = getSingleSelection() as SubGraphVerticeView<*>
-		getDrawingView()!!.selectionManager.deselect(editedVerticeView!!)
-		editedVerticeView!!.invalidate()
+		val editedVerticeView = getSingleSelection() as SubGraphVerticeView<*>
+		getDrawingView()!!.selectionManager.deselect(editedVerticeView)
+		editedVerticeView.invalidate()
 
-		containerPanel = ContainerPanel(
+		val containerPanel = ContainerPanel(
 			GraphViewModule.containerEditorFactory.invoke(eventBus),
 			EditModuleJvm.propertySheetPanelFactory,
 			eventBus,
 			viewManager)
 
-		oldActiveView = viewManager.activeView
-		viewManager.registerView(containerPanel!!.editor.view)
+		val oldActiveView = viewManager.activeView
+		viewManager.registerView(containerPanel.editor.view)
 
-		containerPanel!!.initialize()
+		containerPanel.initialize()
 
 		UiUtil.invokeLater(Runnable {
-			containerPanel!!.editor.view.navigator.fitMaxNormal()
-			containerPanel!!.activated()
+			containerPanel.editor.view.navigator.fitMaxNormal()
+			containerPanel.activated()
 		})
 
 		if (EditSubGraphVerticeViewPanel.showAsDialog(
 			metaGraphRepository = metaGraphRepository,
-			containerPanel = containerPanel!!,
-			subGraphVerticeView = editedVerticeView!!,
+			containerPanel = containerPanel,
+			subGraphVerticeView = editedVerticeView,
 			storableCloner = storableCloner
 		)) {
 			// User has pressed "OK"
-			editedVerticeView!!.setEditedContainerDrawing(containerPanel!!.editor.drawing as ContainerDrawing)
+			editedVerticeView.setEditedContainerDrawing(containerPanel.editor.drawing as ContainerDrawing)
 		}
+
+		viewManager.unregisterView(containerPanel.editor.view)
+		viewManager.activeView = oldActiveView
+
+		editedVerticeView.invalidate()
+		getDrawingView()!!.selectionManager.select(editedVerticeView)
+
+		containerPanel.dispose()
 	}
 }

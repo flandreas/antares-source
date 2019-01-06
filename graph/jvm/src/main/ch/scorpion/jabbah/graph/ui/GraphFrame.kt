@@ -42,14 +42,13 @@ class GraphFrame(
 
 	private val mainToolBar: ToolBar
 
-	private val toolbarPanel: JPanel
+	private val toolbarPanel: JPanel = JPanel()
 
 	private var displayedView: DisplayedView = DisplayedView.Container
 
 	private val containerPanel = ContainerPanel(GraphViewModule.containerEditorFactory.invoke(eventBus), viewManager)
 
 	init {
-		toolbarPanel = JPanel()
 		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
 		mainToolBar = createMainToolBar()
 
@@ -62,6 +61,7 @@ class GraphFrame(
 	override fun dispose() {
 		super.dispose()
 		graphPanel.dispose()
+		containerPanel.dispose()
 	}
 
 	/** ---- [AbstractApplicationFrame] */
