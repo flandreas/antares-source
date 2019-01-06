@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.style
 
+import ch.scorpion.jabbah.base.Translations
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import java.awt.Component
 import javax.swing.DefaultListCellRenderer
@@ -12,10 +13,7 @@ import javafx.scene.control.ComboBox
 import org.controlsfx.control.PropertySheet
 import org.controlsfx.property.editor.AbstractPropertyEditor
 
-// TODO Remove when Swing is not used any more
-class StyleTypeEditor(styleProvider: StyleProvider) : ComboBoxPropertyEditor() {
-
-    constructor(): this(DrawStyleModule.styleProvider)
+class StyleTypeEditor(styleProvider: StyleProvider = DrawStyleModule.styleProvider) : ComboBoxPropertyEditor() {
 
     init {
         setAvailableValues(styleProvider.getChoosableStyleTypes().toTypedArray())
@@ -42,7 +40,6 @@ class StyleTypeEditorFx(
 	}
 }
 
-// TODO Remove when Swing is not used any more
 class StyleTypeRenderer : DefaultListCellRenderer(), TableCellRenderer {
 
     override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
@@ -74,10 +71,9 @@ class StyleTypeRenderer : DefaultListCellRenderer(), TableCellRenderer {
     }
 
     private fun setValue(styleType: StyleType?) {
-        // TODO I18N
         if (styleType == null) {
             icon = null
-            text = "Keine"
+            text = Translations.getString("draw.style.none")
         } else {
             text = styleType.description
         }

@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw.style
 
-import ch.scorpion.jabbah.base.collection.toImmutableSet
 import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.draw.graphics.PredefinedColorProvider
 import ch.scorpion.jabbah.draw.graphics.PredefinedColorRepository
@@ -30,12 +29,12 @@ interface StyleProvider {
     fun getStyleType(name: String): StyleType
 
     /**
-     * Returns all registered [StyleType]s as a [Set].
+     * Returns all registered [StyleType]s in the order of registration.
      */
-    fun getStyleTypes(): Set<StyleType>
+    fun getStyleTypes(): List<StyleType>
 
 	/** Returns the [StyleType] that can be chosen by the user, i.e. those whose property [StyleType.isSystem] is not set.*/
-	fun getChoosableStyleTypes(): Set<StyleType>
+	fun getChoosableStyleTypes(): List<StyleType>
 }
 
 /**
@@ -51,9 +50,11 @@ class StyleRepository(
         private val LOG by logger(StyleRepository::class)
     }
 
-
     /** Maps the name of [StyleType] to the [StyleType] object.*/
     private val typeMap: MutableMap<String, StyleType> by lazy { mutableMapOf<String, StyleType>() }
+
+	/** Maintains the order of [StyleType]s registrations.*/
+	private val typeList: MutableList<StyleType> by lazy { mutableListOf<StyleType>() }
 
     /** Maps a [StyleType] to the [Style] to be used for that [StyleType].*/
     private val styleMap: MutableMap<StyleType, Style> by lazy { mutableMapOf<StyleType, Style>()}
@@ -78,12 +79,12 @@ class StyleRepository(
         return styleType
     }
 
-    override fun getStyleTypes(): Set<StyleType> {
-        return styleMap.keys.toImmutableSet()
+    override fun getStyleTypes(): List<StyleType> {
+	    return typeList
     }
 
-	override fun getChoosableStyleTypes(): Set<StyleType> {
-		return styleMap.keys.filter { !it.isSystem }.toSet()
+	override fun getChoosableStyleTypes(): List<StyleType> {
+		return getStyleTypes().filter { !it.isSystem }.toList()
 	}
 
     /** ---- [StyleRepository] */
@@ -91,6 +92,7 @@ class StyleRepository(
     /** Clears this [StyleRepository] by removing all registrations. Used mainly for testing purposes.*/
     fun clear() {
         typeMap.clear()
+	    typeList.clear()
         styleMap.clear()
     }
 
@@ -99,6 +101,7 @@ class StyleRepository(
      */
     fun registerStyleType(styleType: StyleType): StyleRepository {
 	    typeMap[styleType.name] = styleType
+	    typeList.add(styleType)
         return this
     }
 
