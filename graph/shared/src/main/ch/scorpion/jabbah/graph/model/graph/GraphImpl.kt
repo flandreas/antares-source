@@ -32,7 +32,7 @@ open class GraphImpl(
     private val oscilloscopeProbeHandler = OscilloscopeProbeHandler()
 
 	private val graphPortNameChangedHandler: EventHandler<GraphPortNameChanged<Any>> = {
-		LOG.debug("GraphImpl: handling GraphPortNameChanged")
+		LOG.debug("handling GraphPortNameChanged")
 		if (it.newName != null && contains(it.graphPort) && existsGraphPortNameExcluding(it.newName, it.graphPort)) {
 			throw VetoException()
 		}
@@ -63,6 +63,10 @@ open class GraphImpl(
 	override var translatedName: TranslatableText = TranslatableText(name)
 		set(value) {
 			if (field != value) {
+				if (!value.hasDefaultOrSystemLanguage()) {
+					LOG.error("translatedName of GraphImpl doesn't contain text for default or system language")
+					throw IllegalArgumentException("TranslatableText doesn't contain text for default or system language")
+				}
 				field = value
 				eventBus.post(GraphNameChangedEvent(this, value))
 			}
@@ -243,14 +247,14 @@ open class GraphImpl(
     /** Called by this [GraphImpl] when a [GraphElement] has been added or read as [Storable].*/
     protected open fun handleGraphElementAdded(graphElem: GraphElement) {
         if (graphElem is OscilloscopeProbeVertice<*>) {
-            LOG.debug("GraphImpl: added OscilloscopeProbeVertice ${graphElem.getInput<Any>().name} to GraphImpl")
+            LOG.debug("added OscilloscopeProbeVertice ${graphElem.getInput<Any>().name} to GraphImpl")
             graphElem.addGraphElementListener(oscilloscopeProbeHandler)
         }
     }
 
     protected open fun handleGraphElementRemoved(graphElem: GraphElement) {
         if (graphElem is OscilloscopeProbeVertice<*>) {
-            LOG.debug("GraphImpl: removed OscilloscopeProbeVertice ${graphElem.getInput<Any>().name} from GraphImpl")
+            LOG.debug("removed OscilloscopeProbeVertice ${graphElem.getInput<Any>().name} from GraphImpl")
             graphElem.removeGraphElementListener(oscilloscopeProbeHandler)
         }
     }
