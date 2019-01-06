@@ -1,9 +1,10 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.module.AppModule
-import ch.scorpion.jabbah.app.user.UserHolder
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import javax.swing.Action
 import javax.swing.tree.DefaultMutableTreeNode
 
@@ -24,19 +25,31 @@ abstract class AbstractLibraryAction(
 	protected val folderOfSelectedItem: LibraryDirectory? get() =
 		(libraryTreeView!!.selectionPath.parentPath.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryDirectory?
 
-	protected val isLibraryOwnedByUser: Boolean get() = AppModule.userHolder.user.uuid == selectedItem?.library?.author
+	/** The selectedItem might be `null` during boot-strap.*/
+	protected val isLibraryOwnedByUser: Boolean get() = selectedItem == null || AppModule.userHolder.user.uuid == selectedItem?.library?.author
+
+	protected var applicationMode: ApplicationMode = ApplicationMode.EDIT
+		set(value) {
+			if (value != field) {
+				field = value
+				updateEnabledness()
+			}
+		}
 
 	init {
-		enabled = false
+		enabled = true
 		eventBus.register(LibrarySelectionChangedEvent::class) {
 			libraryTreeView = it.libraryTreeView
 			updateEnabledness()
 			handleSelectionChanged()
 		}
+		eventBus.register(ApplicationModeEvent::class) {
+			applicationMode = it.applicationMode
+		}
 	}
 
 	private fun updateEnabledness() {
-		enabled = calculateEnabledness()
+		enabled = applicationMode == ApplicationMode.EDIT && calculateEnabledness()
 	}
 
 	/**

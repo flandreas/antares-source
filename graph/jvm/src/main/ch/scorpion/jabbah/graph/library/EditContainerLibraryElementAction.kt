@@ -6,13 +6,15 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.ProjectSavable
 
 /**
  * An [Action] for opening the [ContainerLibraryElement] that is currently selected in the
  * [LibraryTreeView] for editing.
- * TODO The logic implemented by this Action should rather be in a business domain libraryService.
  */
 class EditContainerLibraryElementAction(
     private val application: DesktopApplication,
@@ -25,7 +27,11 @@ class EditContainerLibraryElementAction(
 
     init {
         eventBus.register(OpenContainerLibraryElementRequest::class) {
-	        openAsSavable(it.element)
+	        if (applicationMode != ApplicationMode.EDIT) {
+		        eventBus.post(ComponentMessage(type =  ComponentMessageType.Info, source = null, messageKey = "graph.action.cannotOpenWhileExecuting.msg"))
+	        } else {
+		        openAsSavable(it.element)
+	        }
         }
     }
 
@@ -45,6 +51,7 @@ class EditContainerLibraryElementAction(
     }
 
     private fun openAsSavable(element: ContainerLibraryElement) {
+
 	    val library = element.library!!
 	    library.libraryService.loadMetaGraph(library, element)
 	    when (library) {
