@@ -54,10 +54,6 @@ class ContainerPanel(
 
 	private var editedContainerDrawing: ContainerDrawing? = null
 
-    val toolbars: ImmutableList<ToolBar> = listOf(
-	    createToolbar(editor),
-	    createSettingsToolBar()).toImmutableList()
-
     init {
         editor.view.navigator.setZoomFactor(2.0)
 
@@ -88,6 +84,10 @@ class ContainerPanel(
         editor.view.initialize()
         editor.view.applicationContext = GraphApplicationContext()
     }
+
+	fun createToolbars(separator: Boolean = true): ImmutableList<ToolBar> = listOf(
+		createToolbar(editor, separator),
+		createSettingsToolBar()).toImmutableList()
 
     /** Notifies this [ContainerPanel] that is has been activated and that it is now visible.*/
     fun activated() {
@@ -126,9 +126,11 @@ class ContainerPanel(
         add(mainSplitPane)
     }
 
-    private fun createToolbar(editor: Editor): ToolBar {
+    private fun createToolbar(editor: Editor, separator: Boolean): ToolBar {
         val toolbar = ToolBar(editor)
-		toolbar.addSeparator()
+	    if (separator) {
+		    toolbar.addSeparator()
+	    }
         toolbar.addTool(editor.currentTool, "/img/pointer.gif", Translations.getString("edit.tool.select"))
         toolbar.addTool(LabelTool(editor) { LabelComponent() }, "/img/text.gif", Translations.getString("edit.component.label"))
         toolbar.addTool(RectangleTool(editor) { RectangleComponent() }, "/img/rectangle.png", Translations.getString("edit.component.rectangle"))

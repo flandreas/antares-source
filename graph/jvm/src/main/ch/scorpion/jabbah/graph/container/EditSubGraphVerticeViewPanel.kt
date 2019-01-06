@@ -8,10 +8,9 @@ import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import java.awt.BorderLayout
 import java.awt.Dimension
-import java.awt.FlowLayout
-import java.awt.event.ActionEvent
-import javax.swing.AbstractAction
-import javax.swing.JButton
+import java.awt.Frame
+import javax.swing.BoxLayout
+import javax.swing.JOptionPane
 import javax.swing.JPanel
 
 
@@ -23,9 +22,32 @@ class EditSubGraphVerticeViewPanel(
 	private val metaGraphRepository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
     private val containerPanel: ContainerPanel,
     private val subGraphVerticeView: SubGraphVerticeView<*>,
-    private val closeCallback: (EditSubGraphVerticeViewPanel) -> Unit,
     private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke()
 ) : JPanel() {
+
+	companion object {
+
+		/**
+		 * Shows an [EditSubGraphVerticeViewPanel] within a modal dialog.
+		 * @return `true` if the user confirmed his changed by clicking "OK", `false` if he clicked "Cancel".
+		 */
+		fun showAsDialog(
+			parent: Frame = Frame.getFrames()[0],
+			metaGraphRepository: MetaGraphRepository,
+			containerPanel: ContainerPanel,
+			subGraphVerticeView: SubGraphVerticeView<*>,
+			storableCloner: StorableCloner
+		): Boolean {
+			val panel = EditSubGraphVerticeViewPanel(metaGraphRepository, containerPanel, subGraphVerticeView, storableCloner)
+			return JOptionPane.showConfirmDialog(
+				parent,
+				panel,
+				Translations.getString("graph.action.editSubGraphVerticeView.name"),
+				JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE
+			) == JOptionPane.OK_OPTION
+		}
+	}
 
     init {
         buildUI()
@@ -41,12 +63,9 @@ class EditSubGraphVerticeViewPanel(
         fill()
 
         containerPanel.preferredSize = Dimension(1000, 800)
-        add(containerPanel, BorderLayout.CENTER)
 
-        val buttonPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-        buttonPanel.add(JButton(OkAction()))
-        buttonPanel.add(JButton(CancelAction()))
-        add(buttonPanel, BorderLayout.SOUTH)
+	    add(createToolBarPanel(), BorderLayout.NORTH)
+        add(containerPanel, BorderLayout.CENTER)
     }
 
     private fun fill() {
@@ -56,16 +75,10 @@ class EditSubGraphVerticeViewPanel(
             storableCloner.clone(subGraphVerticeView.getEditableContainerDrawing()) as ContainerDrawing)
     }
 
-    private inner class OkAction : AbstractAction(Translations.getString("base.action.ok.name")) {
-        override fun actionPerformed(e: ActionEvent?) {
-            subGraphVerticeView.setEditedContainerDrawing(containerPanel.editor.drawing as ContainerDrawing)
-            closeCallback.invoke(this@EditSubGraphVerticeViewPanel)
-        }
-    }
-
-    private inner class CancelAction : AbstractAction(Translations.getString("base.action.cancel.name")) {
-        override fun actionPerformed(e: ActionEvent?) {
-            closeCallback.invoke(this@EditSubGraphVerticeViewPanel)
-        }
-    }
+	private fun createToolBarPanel(): JPanel {
+		val toolbarPanel = JPanel()
+		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
+		containerPanel.createToolbars(separator = false).forEach { toolbarPanel.add(it) }
+		return toolbarPanel
+	}
 }

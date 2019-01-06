@@ -1,8 +1,9 @@
 package ch.scorpion.jabbah.graph.container
 
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -13,81 +14,66 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import java.awt.Component
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
+import ch.scorpion.jabbah.io.IOModule
+import ch.scorpion.jabbah.io.StorableCloner
 import javax.swing.Action
-import javax.swing.JDialog
-import javax.swing.JFrame
-import javax.swing.SwingUtilities
 
 /**
  * An [Action] for editing the look of a individual [SubGraphVerticeView] by overwriting the standard
  * [ContainerDrawing] using a [ContainerEditor] in a dialog.
  */
 class EditSubGraphVerticeViewAction(
-    private val eventBus: EventBus = BaseModule.eventBus,
-    viewManager: ViewManager = DrawViewModule.viewManager,
-    private val metaGraphRepository: MetaGraphRepository = GraphModelModule.metaGraphRepository
+	private val eventBus: EventBus = BaseModule.eventBus,
+	viewManager: ViewManager = DrawViewModule.viewManager,
+	private val metaGraphRepository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
+	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke()
 ) : AbstractSelectionAwareAction("graph.action.editSubGraphVerticeView", eventBus, viewManager) {
 
-    private var editedVerticeView: SubGraphVerticeView<*>? = null
+	companion object {
+		private val LOG by logger(EditSubGraphVerticeViewAction::class)
+	}
 
-    private var containerPanel: ContainerPanel? = null
+	private var editedVerticeView: SubGraphVerticeView<*>? = null
 
-    private var oldActiveView: View<out InputEventContext>? = null
+	private var containerPanel: ContainerPanel? = null
 
-    override fun calculateEnabled(): Boolean {
-        return getSelectionCount() == 1 && getSingleSelection() is SubGraphVerticeView<*>
-    }
+	private var oldActiveView: View<out InputEventContext>? = null
 
-    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-        editedVerticeView = getSingleSelection() as SubGraphVerticeView<*>
+	override fun calculateEnabled(): Boolean {
+		return getSelectionCount() == 1 && getSingleSelection() is SubGraphVerticeView<*>
+	}
 
-        val frame = SwingUtilities.getRoot(getDrawingView()!!.canvas as Component) as JFrame
-        val dialog = JDialog(frame, true)
-        dialog.title = Translations.getString("graph.action.editSubGraphVerticeView.name")
-        dialog.addWindowListener(object : WindowAdapter() {
-            override fun windowClosing(we: WindowEvent?) {
-                handleClosed()
-            }
-            override fun windowClosed(we: WindowEvent?) {
-                handleClosed()
-            }
-        })
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		LOG.debug("opening EditSubGraphVerticeViewPanel")
 
-        getDrawingView()!!.selectionManager.deselect(editedVerticeView!!)
-        editedVerticeView!!.invalidate()
+		editedVerticeView = getSingleSelection() as SubGraphVerticeView<*>
+		getDrawingView()!!.selectionManager.deselect(editedVerticeView!!)
+		editedVerticeView!!.invalidate()
 
-        containerPanel = ContainerPanel(
-                GraphViewModule.containerEditorFactory.invoke(eventBus),
-                EditModuleJvm.propertySheetPanelFactory,
-                eventBus,
-                viewManager)
+		containerPanel = ContainerPanel(
+			GraphViewModule.containerEditorFactory.invoke(eventBus),
+			EditModuleJvm.propertySheetPanelFactory,
+			eventBus,
+			viewManager)
 
-        val panel = EditSubGraphVerticeViewPanel(
-            metaGraphRepository,
-            containerPanel!!,
-            editedVerticeView!!,
-            { dialog.dispose() }
-        )
+		oldActiveView = viewManager.activeView
+		viewManager.registerView(containerPanel!!.editor.view)
 
-        dialog.contentPane.add(panel)
-        dialog.pack()
-        dialog.setLocationRelativeTo(frame)
-        panel.initialize()
+		containerPanel!!.initialize()
 
-        oldActiveView = viewManager.activeView
-        viewManager.registerView(containerPanel!!.editor.view)
+		UiUtil.invokeLater(Runnable {
+			containerPanel!!.editor.view.navigator.fitMaxNormal()
+			containerPanel!!.activated()
+		})
 
-        dialog.isVisible = true
-    }
-
-    private fun handleClosed() {
-        viewManager.unregisterView(containerPanel!!.editor.view)
-        viewManager.activeView = oldActiveView
-
-        editedVerticeView!!.invalidate()
-        getDrawingView()!!.selectionManager.select(editedVerticeView!!)
-    }
+		if (EditSubGraphVerticeViewPanel.showAsDialog(
+			metaGraphRepository = metaGraphRepository,
+			containerPanel = containerPanel!!,
+			subGraphVerticeView = editedVerticeView!!,
+			storableCloner = storableCloner
+		)) {
+			// User has pressed "OK"
+			editedVerticeView!!.setEditedContainerDrawing(containerPanel!!.editor.drawing as ContainerDrawing)
+		}
+	}
 }

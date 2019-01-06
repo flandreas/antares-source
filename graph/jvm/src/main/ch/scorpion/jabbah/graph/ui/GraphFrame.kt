@@ -98,7 +98,7 @@ class GraphFrame(
 
 		SwingUtilities.invokeLater {
 			contentPane.removeAll()
-			fillToolbarPanel(containerPanel.toolbars)
+			fillToolbarPanel(containerPanel.createToolbars())
 			contentPane.add(toolbarPanel, BorderLayout.NORTH)
 			contentPane.add(containerPanel, BorderLayout.CENTER)
 			invalidate()
