@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.graph.library.LibraryPropertiesPanel
+import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -17,11 +18,13 @@ import javax.swing.*
 /** Opens and shows the [ProjectPersistencePanel] in a modal dialog.*/
 class ShowProjectsDialogAction(
 	private val parent: JFrame
-) : AbstractAction("project.dialog.action") {
+) : AbstractApplicationModeEditAction("project.dialog.action") {
 
 	override fun execute(event: ActionEvent) {
 		ProjectPersistencePanel.showAsDialog(parent)
 	}
+
+	override fun calculateEnabledness(): Boolean = true
 }
 
 /**
