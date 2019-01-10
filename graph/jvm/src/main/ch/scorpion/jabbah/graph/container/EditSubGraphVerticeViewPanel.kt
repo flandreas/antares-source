@@ -1,6 +1,11 @@
 package ch.scorpion.jabbah.graph.container
 
+import ch.scorpion.jabbah.app.ToolBar
+import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -10,6 +15,7 @@ import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
 import javax.swing.BoxLayout
+import javax.swing.JButton
 import javax.swing.JOptionPane
 import javax.swing.JPanel
 
@@ -26,6 +32,8 @@ class EditSubGraphVerticeViewPanel(
 ) : JPanel() {
 
 	companion object {
+
+		private val LOG by logger(EditSubGraphVerticeViewPanel::class)
 
 		/**
 		 * Shows an [EditSubGraphVerticeViewPanel] within a modal dialog.
@@ -48,6 +56,8 @@ class EditSubGraphVerticeViewPanel(
 			) == JOptionPane.OK_OPTION
 		}
 	}
+
+	private val resetAction = ResetAction()
 
     init {
         buildUI()
@@ -79,6 +89,35 @@ class EditSubGraphVerticeViewPanel(
 		val toolbarPanel = JPanel()
 		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
 		containerPanel.createToolbars(separator = false).forEach { toolbarPanel.add(it) }
+		toolbarPanel.add(createLocalToolbar())
 		return toolbarPanel
+	}
+
+	private fun createLocalToolbar(): JPanel {
+		val toolbar = ToolBar()
+		toolbar.addSeparator()
+		toolbar.add(JButton(ActionWrapperSwing(resetAction)))
+		return toolbar
+	}
+
+	private fun reset() {
+		LOG.debug("Resetting custom view of SubGraphVerticeView")
+		subGraphVerticeView.setEditedContainerDrawing(null)
+		fill()
+	}
+
+	private inner class ResetAction : AbstractAction("graph.action.resetCustomView") {
+		override fun execute(event: ActionEvent) {
+			if (JOptionPane.showConfirmDialog(
+				this@EditSubGraphVerticeViewPanel,
+				Translations.getString("graph.action.resetCustomView.msg"),
+				name,
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.WARNING_MESSAGE
+
+			) == JOptionPane.YES_OPTION) {
+				reset()
+			}
+		}
 	}
 }
