@@ -422,6 +422,8 @@ class SubGraphVerticeViewImpl(
         }
 
         updateBoxes()
+
+	    update()
     }
 
 	private fun fillDesignErrorRepresentation() {
