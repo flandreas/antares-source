@@ -35,7 +35,7 @@ open class GraphMenuBarBuilder(
 
     override fun fillMenuBar(menuBar: JMenuBar) {
         super.fillMenuBar(menuBar)
-        menuBar.add(fillLibraryMenu(JMenu(Translations.getString("application.menu.library"))))
+        menuBar.add(fillLibraryMenu(JMenu(Translations.getString("application.menu.desktop"))))
         menuBar.add(fillScenariosMenu(JMenu(Translations.getString("application.menu.scenarios"))))
         menuBar.add(fillExecutionMenu(JMenu(Translations.getString("application.menu.simulation"))))
     }
