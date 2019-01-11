@@ -208,7 +208,7 @@ class SelectionToolImpl(
         target = null
         multiComponentSnappable = null
         movedReferenceComponent = null
-        updateCursor(null)
+        updateCursor(editor.drawing.getDrawableAt(x, y))
     }
 
     /** ---- [SelectionToolImpl] */

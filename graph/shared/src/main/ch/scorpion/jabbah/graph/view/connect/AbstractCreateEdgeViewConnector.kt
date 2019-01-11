@@ -50,12 +50,6 @@ abstract class AbstractCreateEdgeViewConnector(
         view.selectionManager.select(edgeView!!)
     }
 
-    /*
-    protected open fun cancel(view: DrawingView<Drawing<Component>>) {
-        view.drawing.remove(edgeView!!)
-        removePortViewHighlight(view)
-    }
-    */
     protected open fun cancel(editor: Editor) {
         edgeView?.connectToOrigin(null, null)
         edgeView?.connectToDestination(null, null)
