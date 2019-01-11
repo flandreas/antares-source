@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
+import ch.scorpion.jabbah.graph.container.ResetSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.JPopupMenu
 
@@ -19,7 +20,8 @@ open class GraphContextMenuProvider(
 		private val cutAction = ActionWrapperSwing(CutAction())
 		private val copyAction = ActionWrapperSwing(CopyAction())
 		private val openGraphAction = OpenGraphNavigationPanelAction()
-		private val editSubgraphAction = ActionWrapperSwing(EditSubGraphVerticeViewAction())
+		private val editSubGraphAction = ActionWrapperSwing(EditSubGraphVerticeViewAction())
+		private val resetSubGraphAction = ActionWrapperSwing(ResetSubGraphVerticeViewAction())
 	}
 
 	override fun fillContextMenu(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {
@@ -39,7 +41,8 @@ open class GraphContextMenuProvider(
 		super.addActions(popupMenu)
 		popupMenu.addSeparator()
 		popupMenu.add(ActionWrapperSwing(openGraphAction))
-		popupMenu.add(editSubgraphAction)
+		popupMenu.add(editSubGraphAction)
+		popupMenu.add(resetSubGraphAction)
 	}
 
 	private fun addExecutionActions(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {

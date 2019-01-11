@@ -21,6 +21,8 @@ interface SubGraphVerticeView<T : SubGraphVertice> : VerticeView<T> {
 	/** Contains the script code that customized the visual look while execution mode.*/
 	var drawExecScript: String?
 
+	val hasCustomizedContainerDrawing: Boolean
+
 	/** Creates a new [GraphView] of the references sub [Graph].*/
     fun createSubGraphView(): GraphView<GraphElementView<T>>
 

@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
-import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.graph.MetaGraphRepository
@@ -79,21 +78,5 @@ class EditSubGraphVerticeViewAction(
 		getDrawingView()!!.selectionManager.select(editedVerticeView)
 
 		containerPanel.dispose()
-	}
-}
-
-private class EditSubGraphVerticeViewCommand(
-	private val verticeView: SubGraphVerticeView<*>,
-	private val newDrawing: ContainerDrawing
-) : AbstractCommand("graph.command.editSubGraphVerticeView") {
-
-	private val oldDrawing: ContainerDrawing = verticeView.getEditableContainerDrawing()
-
-	override fun execute() {
-		verticeView.setEditedContainerDrawing(newDrawing)
-	}
-
-	override fun undo() {
-		verticeView.setEditedContainerDrawing(oldDrawing)
 	}
 }

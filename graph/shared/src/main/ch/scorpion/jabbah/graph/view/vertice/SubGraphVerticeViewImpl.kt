@@ -324,6 +324,8 @@ class SubGraphVerticeViewImpl(
 
 	override var drawExecScript: String? = null
 
+	override val hasCustomizedContainerDrawing: Boolean get() = customizedContainerDrawing != null
+
     override fun addDrawable(drawable: Drawable) {
         mirrorIfNecessary(drawable)
         if (drawable is ControlViewComponent) {
