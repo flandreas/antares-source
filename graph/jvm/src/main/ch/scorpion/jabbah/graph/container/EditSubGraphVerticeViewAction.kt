@@ -4,11 +4,12 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
-import ch.scorpion.jabbah.draw.InputEventContext
-import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
+import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -25,6 +26,7 @@ import javax.swing.Action
 class EditSubGraphVerticeViewAction(
 	private val eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager = DrawViewModule.viewManager,
+	private val commandManager: CommandManager = EditModule.commandManager,
 	private val metaGraphRepository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
 	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke()
 ) : AbstractSelectionAwareAction("graph.action.editSubGraphVerticeView", eventBus, viewManager) {
@@ -67,7 +69,7 @@ class EditSubGraphVerticeViewAction(
 			storableCloner = storableCloner
 		)) {
 			// User has pressed "OK"
-			editedVerticeView.setEditedContainerDrawing(containerPanel.editor.drawing as ContainerDrawing)
+			commandManager.execute(EditSubGraphVerticeViewCommand(editedVerticeView, containerPanel.editor.drawing as ContainerDrawing))
 		}
 
 		viewManager.unregisterView(containerPanel.editor.view)
@@ -77,5 +79,21 @@ class EditSubGraphVerticeViewAction(
 		getDrawingView()!!.selectionManager.select(editedVerticeView)
 
 		containerPanel.dispose()
+	}
+}
+
+private class EditSubGraphVerticeViewCommand(
+	private val verticeView: SubGraphVerticeView<*>,
+	private val newDrawing: ContainerDrawing
+) : AbstractCommand("graph.command.editSubGraphVerticeView") {
+
+	private val oldDrawing: ContainerDrawing = verticeView.getEditableContainerDrawing()
+
+	override fun execute() {
+		verticeView.setEditedContainerDrawing(newDrawing)
+	}
+
+	override fun undo() {
+		verticeView.setEditedContainerDrawing(oldDrawing)
 	}
 }
