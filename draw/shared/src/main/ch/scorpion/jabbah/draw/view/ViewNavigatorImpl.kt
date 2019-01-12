@@ -5,18 +5,30 @@ import ch.scorpion.jabbah.draw.ViewNavigator
 import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.Math
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
  * A default implementation of the [ViewNavigator] interface.
  */
-class ViewNavigatorImpl(private val view: View<*>) : ViewNavigator {
+class ViewNavigatorImpl(
+	private val view: View<*>,
+	private val properties: Properties = BaseModule.properties
+) : ViewNavigator {
 
 	private companion object {
+
 		val LOG by logger(ViewNavigatorImpl::class)
-		val FIT_ZOOM_INSET: Int = 20
+
+		/**
+		 * The number of pixels (in view space) to be left free on each side of the View when calculating
+		 * the fitting zoom factor.
+		 */
+		const val FIT_ZOOM_INSET: Int = 20
 	}
+
+	private val defaultZoomFactor: Double get() = properties.getFloat(View.PROP_DEFAULT_ZOOM_FACTOR).toDouble()
 
 	/** ---- [ViewNavigator] interface */
 
@@ -56,6 +68,10 @@ class ViewNavigatorImpl(private val view: View<*>) : ViewNavigator {
 		panCenter(view.zoomFactor)
 	}
 
+	override fun panCenterDefault() {
+		panCenter(defaultZoomFactor)
+	}
+
 	override fun panCenter(zoomFactor: Double) {
 		setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
 	}
@@ -66,7 +82,7 @@ class ViewNavigatorImpl(private val view: View<*>) : ViewNavigator {
 	}
 
 	override fun fitMaxNormal() {
-		val zoomFactor = Math.min(1.0, calculateFitZoomFactor())
+		val zoomFactor = Math.min(defaultZoomFactor, calculateFitZoomFactor())
 		setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
 	}
 
@@ -87,10 +103,10 @@ class ViewNavigatorImpl(private val view: View<*>) : ViewNavigator {
 	private fun calculateFitZoomFactor(): Double {
 		val bounds = view.contentBounds
 		if (bounds.width == 0.0 || bounds.height == 0.0) {
-			return 1.0
+			return defaultZoomFactor
 		}
 		if (view.width == 0 || view.height == 0) {
-			return 1.0
+			return defaultZoomFactor
 		}
 
 		return Math.min(

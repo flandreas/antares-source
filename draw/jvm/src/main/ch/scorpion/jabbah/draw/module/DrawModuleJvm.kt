@@ -82,6 +82,10 @@ object DrawModuleJvm : AbstractModule() {
 			minValue = 1))
 
 		root.getGroup(PREF_TREE_VIEW).add(FloatPreference(
+			id = View.PROP_DEFAULT_ZOOM_FACTOR,
+			nameKey = "draw.preferences.View.defaultZoomFactor"))
+
+		root.getGroup(PREF_TREE_VIEW).add(FloatPreference(
 			id = View.PROP_MIN_ZOOM_FACTOR,
 			nameKey = "draw.preferences.View.minZoomFactor"))
 

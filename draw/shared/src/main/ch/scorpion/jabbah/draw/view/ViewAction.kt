@@ -59,7 +59,7 @@ class ZoomNormalAction(
 ) : AbstractViewAction("view.action.zoomNormal", eventBus, viewManager) {
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-		viewManager.activeView!!.navigator.panCenter(1.0)
+		viewManager.activeView!!.navigator.panCenterDefault()
 	}
 }
 

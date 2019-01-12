@@ -45,6 +45,9 @@ interface ViewNavigator {
     /** Pans to the center of the [View]'s content by maintaining the current zoom factor. */
     fun panCenter()
 
+	/** Pans to the center of the [View]'s content while applying the system's default zoom factor */
+	fun panCenterDefault()
+
     /**
      * Pans to the center of the [View]'s content while applying the specified zoom factor.
      * @param zoomFactor the new zoom factor.
