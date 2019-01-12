@@ -34,14 +34,6 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 
     /** ---- [Storable] interface */
 
-    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-        if (reference.name == "component") {
-            readingFromStore = true
-            add(reference.additionalInfo as T)
-            readingFromStore = false
-        }
-    }
-
     override fun write(writer: StoreWriter) {
         writer.writeStorables("components", backToFrontIterator())
     }
@@ -57,7 +49,20 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
         }
     }
 
-    override fun getStorableChildren(): Iterator<Storable> {
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+		if (reference.name == "component") {
+			readingFromStore = true
+			add(reference.additionalInfo as T)
+			readingFromStore = false
+		}
+	}
+
+	override fun allResolutionDone() {
+		super.allResolutionDone()
+		updateBoundingBox()
+	}
+
+	override fun getStorableChildren(): Iterator<Storable> {
         return frontToBackIterator()
     }
 

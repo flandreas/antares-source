@@ -14,17 +14,26 @@ interface Storable {
 
     /**
      * Asks this [Storable] to resolve a [Reference] to another [Storable] that it has requested to be
-     * reolved during [read] using [requestResolution].
+     * resolved during [read] using [ReferenceResolver.requestResolution].
      */
     fun resolve(reference: Reference, referenceResolver: ReferenceResolver)
 
     /**
-     * This method is called by a [StoreReader] after all resolutions have been done. A [Storable] implementation
+     * This method is called by a [ReferenceResolver] after all resolutions have been done. A [Storable] implementation
      * can overwrite this method in order to implement logic that depends on the existence of the entire object tree.
      */
     fun resolutionDone() {
         // empty
     }
+
+	/**
+	 * This method is called by a [ReferenceResolver] after all [Storable.resolutionDone]s have been called.
+	 * A [Storable] implementation can overwrite this method in order to implement logic that depends on completed
+	 * resolution of the entire object tree.
+	 */
+	fun allResolutionDone() {
+		// empty
+	}
 
     /** Writes the properties of this [Storable] to persistent store using the specified [StoreWriter].*/
     fun write(writer: StoreWriter)

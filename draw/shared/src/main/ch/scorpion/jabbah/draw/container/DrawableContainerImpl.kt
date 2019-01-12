@@ -269,7 +269,7 @@ open class DrawableContainerImpl<T: Drawable>(
      * Updates this [DrawableContainer]'s bounding box by calculating the union of the bounding boxes of
      * all contained [Drawable]'s.
      */
-    private fun updateBoundingBox() {
+    protected fun updateBoundingBox() {
         if (!children.isEmpty()) {
             boundingBox.setFrame(children[0].boundingBox)
         } else {

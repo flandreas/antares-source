@@ -74,6 +74,10 @@ class ReferenceResolverImpl : ReferenceResolver {
         list.forEach {
             it.resolutionDone()
         }
+
+	    list.forEach {
+		    it.allResolutionDone()
+	    }
     }
 
     /** ---- [ReferenceResolverImpl] */
