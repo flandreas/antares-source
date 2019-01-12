@@ -131,7 +131,6 @@ object GraphViewModule : AbstractModule() {
         typeMap.register("containerDrawing", ContainerDrawing::class)
         typeMap.register("originIndicator", OriginIndicator::class)
         typeMap.register("subGraphVerticeViewRef", SubGraphVerticeViewImpl::class)
-        typeMap.register("containerBox", RectangleComponent::class)
         typeMap.register("controlViewComponent", ControlViewComponent::class)
         typeMap.register("graphTextComponent", SimpleTextComponent::class)
         typeMap.register("oscilloscopeView", OscilloscopeView::class)

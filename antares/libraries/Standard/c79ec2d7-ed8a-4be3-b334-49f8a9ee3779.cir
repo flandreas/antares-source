@@ -255,7 +255,7 @@ if (left) {
   <container>
     <containerDrawing _id='69'>
       <components>
-        <containerBox _id='86' id='1' style='figure' x='140.0' y='140.0' w='84.0' h='98.0'/>
+        <rectangle _id='86' id='1' style='figure' x='140.0' y='140.0' w='84.0' h='98.0'/>
         <originIndicator _id='85'>
           <location>
             <point x='126.0' y='161.0'/>

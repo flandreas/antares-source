@@ -547,7 +547,7 @@ elem.setOutputBit(&quot;O15&quot;, en &amp;&amp; val == 15);' propDelay='90'>
   <container>
     <containerDrawing _id='144'>
       <components>
-        <containerBox _id='188' id='1' style='figure' x='140.0' y='140.0' w='84.0' h='245.0'/>
+        <rectangle _id='188' id='1' style='figure' x='140.0' y='140.0' w='84.0' h='245.0'/>
         <originIndicator _id='187'>
           <location>
             <point x='126.0' y='210.0'/>

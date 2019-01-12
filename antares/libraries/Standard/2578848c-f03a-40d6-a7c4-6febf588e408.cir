@@ -235,7 +235,7 @@
   <container>
     <containerDrawing _id='65'>
       <components>
-        <containerBox _id='74' id='1' style='figure' x='140.0' y='140.0' w='98.0' h='56.0'/>
+        <rectangle _id='74' id='1' style='figure' x='140.0' y='140.0' w='98.0' h='56.0'/>
         <originIndicator _id='73'>
           <location>
             <point x='126.0' y='154.0'/>

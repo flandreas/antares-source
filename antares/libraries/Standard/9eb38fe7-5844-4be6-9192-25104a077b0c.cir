@@ -1004,7 +1004,7 @@ elem.setOutputBit(&quot;C&quot;, a &amp;&amp; b);
   <container>
     <containerDrawing _id='272'>
       <components>
-        <containerBox _id='289' id='1' style='figure' x='140.0' y='133.0' w='84.0' h='98.0'/>
+        <rectangle _id='289' id='1' style='figure' x='140.0' y='133.0' w='84.0' h='98.0'/>
         <originIndicator _id='288'>
           <location>
             <point x='126.0' y='154.0'/>

@@ -1175,7 +1175,7 @@
   <container>
     <containerDrawing _id='263'>
       <components>
-        <containerBox _id='276' id='1' x='378.0' y='280.0' w='112.0' h='70.0'/>
+        <rectangle _id='276' id='1' x='378.0' y='280.0' w='112.0' h='70.0'/>
         <originIndicator _id='275'>
           <location>
             <point x='434.0' y='266.0'/>

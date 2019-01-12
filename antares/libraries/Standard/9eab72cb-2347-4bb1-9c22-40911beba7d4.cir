@@ -2193,7 +2193,7 @@ switch (input) {
   <container>
     <containerDrawing _id='507'>
       <components>
-        <containerBox _id='520' id='1' style='figure' x='140.0' y='140.0' w='112.0' h='70.0'/>
+        <rectangle _id='520' id='1' style='figure' x='140.0' y='140.0' w='112.0' h='70.0'/>
         <originIndicator _id='519'>
           <location>
             <point x='196.0' y='126.0'/>

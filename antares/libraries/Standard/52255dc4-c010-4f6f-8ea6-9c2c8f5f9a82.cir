@@ -149,7 +149,7 @@ elem.setOutputBit(&quot;C&quot;, a &amp;&amp; b);
   <container>
     <containerDrawing _id='39'>
       <components>
-        <containerBox _id='50' id='1' style='figure' x='140.0' y='140.0' w='56.0' h='70.0'/>
+        <rectangle _id='50' id='1' style='figure' x='140.0' y='140.0' w='56.0' h='70.0'/>
         <originIndicator _id='49'>
           <location>
             <point x='126.0' y='154.0'/>
