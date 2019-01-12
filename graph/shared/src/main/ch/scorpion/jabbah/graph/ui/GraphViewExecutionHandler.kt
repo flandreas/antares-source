@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Cursor
@@ -36,26 +35,22 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  * itself when not in execution mode.
  */
 class GraphViewExecutionHandler(
-        private val view: DrawingView<GraphView<GraphElementView<*>>>,
-        private val scheduler: Scheduler,
-        eventBus: EventBus
+	private val view: DrawingView<GraphView<GraphElementView<*>>>,
+	private val scheduler: Scheduler,
+	eventBus: EventBus
 ) {
 
-	companion object {
-		private val LOG by logger(GraphViewExecutionHandler::class)
-	}
+	/** Handles [MouseEvent]s on [view] during execution.*/
+	private val mouseHandler = MouseHandler()
 
-    /** Handles [MouseEvent]s on [view] during execution.*/
-    private val mouseHandler = MouseHandler()
+	/** Handles [KeyEvent]s on [view] during execution.*/
+	private val keyHandler = KeyHandler()
 
-    /** Handles [KeyEvent]s on [view] during execution.*/
-    private val keyHandler = KeyHandler()
-
-    /** Gateway to the custom tooltip system.*/
-    private val tooltipHandler = TooltipHandler(
-            eventBus,
-            { _, x, y -> getActorViewAt(x, y) as Drawable? },
-            { d, x, y -> (d as ActorView).getExecutionTooltip(x, y ) })
+	/** Gateway to the custom tooltip system.*/
+	private val tooltipHandler = TooltipHandler(
+		eventBus,
+		{ _, x, y -> getActorViewAt(x, y) as Drawable? },
+		{ d, x, y -> (d as ActorView).getExecutionTooltip(x, y) })
 
 	private val context = ReusableActorInteractionContext(
 		signalHandler = scheduler.signalHandler,
@@ -65,176 +60,178 @@ class GraphViewExecutionHandler(
 	/** The target [ActorInteractionHandler] to which the next event is forwarded during complex interactions.*/
 	private var target: ActorInteractionHandler? = null
 
-    /** Returns the [ActorView] in [view] at the specified location, if any.*/
-    private fun getActorViewAt(x: Double, y: Double): ActorView? {
-	    return view.getInnerDrawableAt(x, y) { it is ActorView } as ActorView?
-    }
+	/** Returns the [ActorView] in [view] at the specified location, if any.*/
+	private fun getActorViewAt(x: Double, y: Double): ActorView? {
+		return view.getInnerDrawableAt(x, y) { it is ActorView } as ActorView?
+	}
 
-    init {
-        eventBus.register(SchedulerActivationStateEvent::class) { updateActivationState() }
-	    updateActivationState()
-    }
+	init {
+		eventBus.register(SchedulerActivationStateEvent::class) { updateActivationState() }
+		updateActivationState()
+	}
 
-    fun dispose() {
-        passivate()
-    }
+	fun dispose() {
+		passivate()
+	}
 
-    private fun updateActivationState() {
-        if (scheduler.isActive) {
-            activate()
-        } else {
-            passivate()
-        }
-    }
+	private fun updateActivationState() {
+		if (scheduler.isActive) {
+			activate()
+		} else {
+			passivate()
+		}
+	}
 
-    private fun activate() {
-        view.addMouseListener(mouseHandler)
-        view.addMouseMotionListener(mouseHandler)
-        view.addKeyListener(keyHandler)
-    }
+	private fun activate() {
+		view.addMouseListener(mouseHandler)
+		view.addMouseMotionListener(mouseHandler)
+		view.addKeyListener(keyHandler)
+	}
 
-    private fun passivate() {
-        view.removeMouseListener(mouseHandler)
-        view.removeMouseMotionListener(mouseHandler)
-        view.removeKeyListener(keyHandler)
-    }
+	private fun passivate() {
+		view.removeMouseListener(mouseHandler)
+		view.removeMouseMotionListener(mouseHandler)
+		view.removeKeyListener(keyHandler)
+	}
 
-    private inner class MouseHandler: MouseAdapter() {
+	private inner class MouseHandler : MouseAdapter() {
 
-        override fun mouseMoved(e: MouseEvent) {
-            val x = view.viewToModelX(e.x.toDouble())
-            val y = view.viewToModelY(e.y.toDouble())
-	        val context = mouseEventContext(e, x, y)
+		override fun mouseMoved(e: MouseEvent) {
+			val x = view.viewToModelX(e.x.toDouble())
+			val y = view.viewToModelY(e.y.toDouble())
+			val context = mouseEventContext(e, x, y)
 
-	        if (target != null) {
-		        target = target!!.mouseMoved(context)
-		        if (target != null) {
-			        return
-		        }
-	        }
+			if (target != null) {
+				target = target!!.mouseMoved(context)
+				if (target != null) {
+					return
+				}
+			}
 
-	        val actorViewAt = getActorViewAt(x, y)
-	        target = actorViewAt?.getActorInteractionHandler(context)?.mouseMoved(context)
-	        if (actorViewAt == null) {
-		        view.setCursor(Cursor.DEFAULT)
-	        }
-	        tooltipHandler.handle(view, view.drawing, x, y)
-        }
+			val actorViewAt = getActorViewAt(x, y)
+			target = actorViewAt?.getActorInteractionHandler(context)?.mouseMoved(context)
+			if (actorViewAt == null) {
+				view.setCursor(Cursor.DEFAULT)
+			}
+			tooltipHandler.handle(view, view.drawing, x, y)
+		}
 
-        override fun mousePressed(e: MouseEvent) {
-            tooltipHandler.clear(view)
+		override fun mousePressed(e: MouseEvent) {
+			tooltipHandler.clear(view)
 
-            if (e.button == Button.BUTTON2) {
-                return
-            }
+			if (e.button == Button.BUTTON2) {
+				return
+			}
 
-            val x = view.viewToModelX(e.x.toDouble())
-            val y = view.viewToModelY(e.y.toDouble())
-	        val context = mouseEventContext(e, x, y)
+			val x = view.viewToModelX(e.x.toDouble())
+			val y = view.viewToModelY(e.y.toDouble())
+			val context = mouseEventContext(e, x, y)
 
-	        if (target != null) {
-		        target = target?.mousePressed(context)
-		        if (target != null) {
-			        return
-		        }
-	        }
+			if (target != null) {
+				target = target?.mousePressed(context)
+				if (target != null) {
+					return
+				}
+			}
 
-	        val actorViewAt = getActorViewAt(x, y)
-	        target = actorViewAt?.getActorInteractionHandler(context)?.mousePressed(context)
-	        if (actorViewAt == null) {
-		        view.setCursor(Cursor.DEFAULT)
-	        }
-        }
+			val actorViewAt = getActorViewAt(x, y)
+			target = actorViewAt?.getActorInteractionHandler(context)?.mousePressed(context)
+			if (actorViewAt == null) {
+				view.setCursor(Cursor.DEFAULT)
+			}
+		}
 
-        override fun mouseDragged(e: MouseEvent) {
-            if (e.button !== Button.BUTTON1) {
-                return
-            }
+		override fun mouseDragged(e: MouseEvent) {
+			if (e.button !== Button.BUTTON1) {
+				return
+			}
 
-	        val x = view.viewToModelX(e.x.toDouble())
-	        val y = view.viewToModelY(e.y.toDouble())
-	        val context = mouseEventContext(e, x, y)
+			val x = view.viewToModelX(e.x.toDouble())
+			val y = view.viewToModelY(e.y.toDouble())
+			val context = mouseEventContext(e, x, y)
 
-	        if (target != null) {
-		        target = target?.mouseDragged(context)
-		        if (target != null) {
-			        return
-		        }
-	        }
+			if (target != null) {
+				target = target?.mouseDragged(context)
+				if (target != null) {
+					return
+				}
+			}
 
-	        val actorViewAt = getActorViewAt(x, y)
-	        target = actorViewAt?.getActorInteractionHandler(context)?.mouseDragged(context)
-	        if (actorViewAt == null) {
-		        view.setCursor(Cursor.DEFAULT)
-	        }
-        }
+			val actorViewAt = getActorViewAt(x, y)
+			target = actorViewAt?.getActorInteractionHandler(context)?.mouseDragged(context)
+			if (actorViewAt == null) {
+				view.setCursor(Cursor.DEFAULT)
+			}
+		}
 
-        override fun mouseReleased(e: MouseEvent) {
-            if (e.button !== Button.BUTTON1) {
-                return
-            }
+		override fun mouseReleased(e: MouseEvent) {
+			if (e.button !== Button.BUTTON1) {
+				return
+			}
 
-            val x = view.viewToModelX(e.x.toDouble())
-            val y = view.viewToModelY(e.y.toDouble())
-	        val context = mouseEventContext(e, x, y)
+			val x = view.viewToModelX(e.x.toDouble())
+			val y = view.viewToModelY(e.y.toDouble())
+			val context = mouseEventContext(e, x, y)
 
-	        if (target != null) {
-		        target = target?.mouseReleased(context)
-	        }
-	        target = null
-	        view.setCursor(Cursor.DEFAULT)
-        }
+			if (target != null) {
+				target = target?.mouseReleased(context)
+			}
+			target = null
+			if (getActorViewAt(x, y) == null) {
+				view.setCursor(Cursor.DEFAULT)
+			}
+		}
 
-        override fun mouseClicked(e: MouseEvent) {
-            if (e.button !== Button.BUTTON1) {
-                return
-            }
+		override fun mouseClicked(e: MouseEvent) {
+			if (e.button !== Button.BUTTON1) {
+				return
+			}
 
-            val x = view.viewToModelX(e.x.toDouble())
-            val y = view.viewToModelY(e.y.toDouble())
-	        val context = mouseEventContext(e, x, y)
+			val x = view.viewToModelX(e.x.toDouble())
+			val y = view.viewToModelY(e.y.toDouble())
+			val context = mouseEventContext(e, x, y)
 
-	        if (target != null) {
-		        target = target?.mouseClicked(context)
-		        return
-	        }
+			if (target != null) {
+				target = target?.mouseClicked(context)
+				return
+			}
 
-	        val actorViewAt = getActorViewAt(x, y)
-	        target = actorViewAt?.getActorInteractionHandler(context)?.mouseClicked(context)
-        }
+			val actorViewAt = getActorViewAt(x, y)
+			target = actorViewAt?.getActorInteractionHandler(context)?.mouseClicked(context)
+		}
 
-	    private fun mouseEventContext(e: MouseEvent, x: Double, y: Double): ActorInteractionContext {
-		    context.mouseEvent = e
-		    context.keyEvent = null
-		    context.x = x
-		    context.y = y
-		    return context
-	    }
-    }
+		private fun mouseEventContext(e: MouseEvent, x: Double, y: Double): ActorInteractionContext {
+			context.mouseEvent = e
+			context.keyEvent = null
+			context.x = x
+			context.y = y
+			return context
+		}
+	}
 
-    /** Performs a single execution step if [Scheduler] is currently paused (i.e. if in single step mode). */
-    private inner class KeyHandler : KeyAdapter() {
+	/** Performs a single execution step if [Scheduler] is currently paused (i.e. if in single step mode). */
+	private inner class KeyHandler : KeyAdapter() {
 
-        override fun keyPressed(e: KeyEvent) {
-            if (e.key == ' '.toInt()) {
-                if (scheduler.isPaused) {
-                    scheduler.step()
-                }
-            }
-            if (FocusManager.focusOwner is ActorView) {
-	            val context = keyEventContext(e)
-                (FocusManager.focusOwner as ActorView).getActorInteractionHandler(context)?.keyPressed(context)
-            }
-        }
+		override fun keyPressed(e: KeyEvent) {
+			if (e.key == ' '.toInt()) {
+				if (scheduler.isPaused) {
+					scheduler.step()
+				}
+			}
+			if (FocusManager.focusOwner is ActorView) {
+				val context = keyEventContext(e)
+				(FocusManager.focusOwner as ActorView).getActorInteractionHandler(context)?.keyPressed(context)
+			}
+		}
 
-	    private fun keyEventContext(e: KeyEvent): ActorInteractionContext {
-		    context.mouseEvent = null
-		    context.keyEvent = e
-		    context.x = 0.0
-		    context.y = 0.0
-		    return context
-	    }
-    }
+		private fun keyEventContext(e: KeyEvent): ActorInteractionContext {
+			context.mouseEvent = null
+			context.keyEvent = e
+			context.x = 0.0
+			context.y = 0.0
+			return context
+		}
+	}
 
 	/** Used to avoid object creation for every event.*/
 	private inner class ReusableActorInteractionContext(
