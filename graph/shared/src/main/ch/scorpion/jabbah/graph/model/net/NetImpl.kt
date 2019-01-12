@@ -66,7 +66,7 @@ open class NetImpl<T: Any> : AbstractGraphElement(), Net<T> {
 
     override fun connect(port: Port<T>) {
         checkState(!_ports.contains(port), "Net already connected to specified Port")
-        LOG.trace("NetImpl: connect ${port.portId}")
+        LOG.trace("connect ${port.portId}")
         _ports.add(port)
         port.connectTo(this)
         stateChanged()
@@ -74,7 +74,7 @@ open class NetImpl<T: Any> : AbstractGraphElement(), Net<T> {
 
     override fun unconnect(port: Port<*>) {
         checkState(_ports.contains(port), "Net not connected with specified Port")
-        LOG.trace("NetImpl: unconnect ${port.portId}")
+        LOG.trace("unconnect ${port.portId}")
         _ports.remove(port)
         port.disconnect()
         stateChanged()
@@ -137,7 +137,7 @@ open class NetImpl<T: Any> : AbstractGraphElement(), Net<T> {
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        val portRefs = _ports.map { PortRef(it) }
+        val portRefs = _ports.map { PortRef(it) }.sortedBy { it.verticeId }
         if (!portRefs.isEmpty()) {
             writer.writeStorables("ports", portRefs.iterator())
         }
@@ -167,7 +167,7 @@ open class NetImpl<T: Any> : AbstractGraphElement(), Net<T> {
 	            // If vertice has a DesignError, we assume that it is a SubGraphVerticeRef with a broken reference,
 	            // and we can't connect this Net that Vertice
                 if (vertice.designError == null) {
-	                LOG.error("NetImpl: Couldn't resolve Port $portId of Vertice ${System.get().getClassName(vertice)} with storableID ${vertice.storableId}")
+	                LOG.error("Couldn't resolve Port $portId of Vertice ${System.get().getClassName(vertice)} with storableID ${vertice.storableId}")
                 }
             }
         }
