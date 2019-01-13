@@ -11,24 +11,37 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.module.EditModule
 
 /**
  * An [Action] for deleting the selected [Component]s in a [Drawing].
  */
 class DeleteAction(
-	eventBus: EventBus = BaseModule.eventBus,
+	private val eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	private val drawingService: DrawingService = EditModule.drawingService
 ) : AbstractSelectionAwareAction("edit.action.delete", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
 		val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
-		drawingService.delete(
-			drawingView.selectionManager.selection
-				.filter { it.deletable }
-				.toCollection(mutableListOf<Component>()),
-			drawingView)
+		val selection = drawingView.selectionManager.selection
+		val components = selection
+			.filter { it.deletable }
+			.toCollection(mutableListOf())
+		if (components.isNotEmpty()) {
+			drawingService.delete(
+				components,
+				drawingView)
+		}
+		if (components.size != selection.size) {
+			eventBus.post(ComponentMessage(
+				ComponentMessageType.Info,
+				null,
+				"edit.action.undeletable.msg"
+			))
+		}
 	}
 }
 

@@ -27,11 +27,11 @@ class OriginIndicator(
 ) : AbstractComponent(styleProvider) {
 
     companion object {
-        val PROP_COLOR = "graph.containereditor.OriginIndicator.color"
-        val PROP_SELECTION_COLOR = "graph.containereditor.OriginIndicator.selectionColor"
+        const val PROP_COLOR = "graph.containereditor.OriginIndicator.color"
+        const val PROP_SELECTION_COLOR = "graph.containereditor.OriginIndicator.selectionColor"
         val STROKE = Stroke(1.0f)
-        val SIZE = 20.0
-        val CIRCLE_SIZE = 14.0
+        const val SIZE = 20.0
+        const val CIRCLE_SIZE = 14.0
     }
 
     override var location = Point2D(x, y)
@@ -73,7 +73,9 @@ class OriginIndicator(
 
     /** ---- [Component] */
 
-    override val type: String?
+    override val deletable: Boolean get() = false
+
+	override val type: String?
         get() = Translations.getString("graph.component.origin")
 
     override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
