@@ -8,14 +8,11 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.CommandManager
 import java.awt.BorderLayout
 import java.awt.Dimension
-import java.awt.FlowLayout
+import java.awt.Frame
 import java.awt.event.ActionEvent
 import java.nio.file.Files
 import java.nio.file.Paths
-import javax.swing.AbstractAction
-import javax.swing.JButton
-import javax.swing.JFileChooser
-import javax.swing.JPanel
+import javax.swing.*
 
 
 /**
@@ -33,6 +30,25 @@ class MemoryContentsPanel(
         private val LOG by logger(MemoryContentsPanel::class)
 		private const val PREF_WIDTH = 800
 		private const val PREF_HEIGHT = 500
+
+		fun showAsDialog(
+			parent: Frame = Frame.getFrames()[0],
+			name: String,
+			memory: Memory,
+			addressable: Addressable,
+			cmdManager: CommandManager,
+			readonly: Boolean
+		) {
+			val dialog = JDialog(parent, true)
+			val contentsPanel = MemoryContentsPanel(memory, addressable, cmdManager, readonly) {
+				dialog.isVisible = false
+			}
+			dialog.title = Translations.getString("antares.action.memory.contents.title", name)
+			dialog.contentPane.add(contentsPanel)
+			dialog.pack()
+			dialog.setLocationRelativeTo(parent)
+			dialog.isVisible = true
+		}
 	}
 
 	private val memoryDisplayPanel = MemoryDisplayPanel(addressable)
@@ -49,8 +65,11 @@ class MemoryContentsPanel(
         contentsView.add(memoryDisplayPanel)
         add(contentsView, BorderLayout.CENTER)
 
-        val buttonPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-	    buttonPanel.add(JButton(CloseAction()))
+	    val buttonPanel = JPanel()
+	    buttonPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+	    buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
+	    buttonPanel.add(Box.createHorizontalGlue())
+
 	    if (!readonly) {
 		    buttonPanel.add(JButton(ImportAction()))
 	    }
@@ -58,7 +77,9 @@ class MemoryContentsPanel(
 	    if (!readonly) {
 		    buttonPanel.add(JButton(ClearAction()))
 	    }
-        add(buttonPanel, BorderLayout.SOUTH)
+	    buttonPanel.add(JButton(CloseAction()))
+
+	    add(buttonPanel, BorderLayout.SOUTH)
     }
 
 	private inner class CloseAction : AbstractAction(Translations.getString("file.action.close.name")) {

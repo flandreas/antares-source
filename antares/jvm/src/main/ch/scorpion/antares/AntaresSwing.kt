@@ -6,10 +6,7 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.memory.MemoryContentsPanel
 import ch.scorpion.antares.view.memory.OpenMemoryContentsRequest
 import ch.scorpion.jabbah.app.*
-import ch.scorpion.jabbah.app.module.AppModule
-import ch.scorpion.jabbah.app.user.UserHolder
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
@@ -36,13 +33,12 @@ import ch.scorpion.jabbah.io.Storable
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
-import javax.swing.JDialog
 import javax.swing.plaf.FontUIResource
 
 
 /**
  * The main application class of the Antares digital circuit editor and simulator desktop application,
- * implemented using Swing classes. Will be replaced by [AntaresFx].
+ * implemented using Swing classes.
  */
 class AntaresSwing(
 	args: Array<String>,
@@ -62,7 +58,15 @@ class AntaresSwing(
 	}
 
 	init {
-		eventBus.register(OpenMemoryContentsRequest::class) { handle(it) }
+		eventBus.register(OpenMemoryContentsRequest::class) {
+			MemoryContentsPanel.showAsDialog(
+				parent = mainFrame,
+				name = it.name,
+				memory = it.memory,
+				addressable = it.addressable,
+				cmdManager = mainFrame.editor.commandManager,
+				readonly = it.readonly)
+		}
 		eventBus.register(OpenProjectRequest::class) {
 			if (!canReplaceSavable("project.action.open.name")) {
 				throw VetoException()
@@ -167,21 +171,5 @@ class AntaresSwing(
 		}
 
 		close()
-	}
-
-	/** ---- [AntaresSwing] */
-
-	private fun handle(event: OpenMemoryContentsRequest) {
-		val dialog = JDialog(mainFrame, true)
-		val contentsPanel = MemoryContentsPanel(
-			memory = event.memory,
-			addressable = event.addressable,
-			cmdManager = mainFrame.editor.commandManager,
-			readonly = event.readonly) { dialog.isVisible = false }
-		dialog.title = Translations.getString("antares.action.memory.contents.title", event.name)
-		dialog.contentPane.add(contentsPanel)
-		dialog.pack()
-		dialog.setLocationRelativeTo(mainFrame)
-		dialog.isVisible = true
 	}
 }
