@@ -35,7 +35,11 @@ class DeleteAction(
 				components,
 				drawingView)
 		}
-		if (components.size != selection.size) {
+
+		// Don't do 'components.size != selection.size for checking whether everything has been deleted,
+		// because non-deletable (by user selection!) Components might have been deleted as a side effect
+		// of deleting other Components.
+		if (selection.any { drawingView.drawing.contains(it) }) {
 			eventBus.post(ComponentMessage(
 				ComponentMessageType.Info,
 				null,
