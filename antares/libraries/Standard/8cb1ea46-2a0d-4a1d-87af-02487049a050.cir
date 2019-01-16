@@ -380,7 +380,7 @@
                 <polylineShape points='-182.0,-84.0 -182.0,-140.0'/>
               </shape>
             </digitalEdgeView>
-            <ledMatrixView _id='251' id='4' color='green' rot='0' modelId='6' x='98.0' y='-756.0' size='large' circle='true'/>
+            <ledMatrixView _id='251' id='4' lightColor='green' rot='0' modelId='6' x='98.0' y='-756.0' size='large' circle='true'/>
             <clockView _id='250' id='5' rot='0' modelId='7' x='-483.0' y='-203.0'/>
             <subGraphVerticeViewRef _id='249' id='6' rot='0' modelId='8' x='-413.0' y='-203.0' label='CTR 8'/>
             <digitalEdgeView _id='248' id='7' modelId='9' layout='ortho' orig='250' origPort='1' origPortOutput='true' dest='216' adjusted='false'>
@@ -1163,7 +1163,7 @@
         </originIndicator>
         <controlViewComponent _id='317' id='2' style='figure' controlModelId='4'>
           <controlView>
-            <ledMatrixView _id='318' id='0' color='green' rot='0' modelId='6' x='147.0' y='0.0' size='large' circle='true'/>
+            <ledMatrixView _id='318' id='0' lightColor='green' rot='0' modelId='6' x='147.0' y='0.0' size='large' circle='true'/>
           </controlView>
         </controlViewComponent>
         <digitalPortViewComp _id='315' id='3' style='figure' showBitWidthAnnotation='true'>

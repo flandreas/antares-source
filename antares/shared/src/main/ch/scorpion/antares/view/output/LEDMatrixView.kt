@@ -218,7 +218,7 @@ class LEDMatrixView(
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeString("color", lightColor.customName)
+        writer.writeString("lightColor", lightColor.customName)
         writer.writeString("size", size.customName)
         if (isCircleDots) {
             writer.writeBoolean("circle", true)
@@ -230,7 +230,7 @@ class LEDMatrixView(
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        lightColor = LightColor.withName(reader.readString("color"))
+        lightColor = LightColor.withName(reader.readString("lightColor"))
         size = Size.withName(reader.readString("size"))
         isCircleDots = reader.hasAttribute("circle")
         isDebug = reader.hasAttribute("debug")

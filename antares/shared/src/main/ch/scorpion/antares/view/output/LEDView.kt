@@ -70,12 +70,12 @@ class LEDView(
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeString("color", lightColor.customName)
+        writer.writeString("lightColor", lightColor.customName)
     }
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        lightColor = LightColor.withName(reader.readString("color"))
+        lightColor = LightColor.withName(reader.readString("lightColor"))
     }
 
     /** ---- [LEDView] */

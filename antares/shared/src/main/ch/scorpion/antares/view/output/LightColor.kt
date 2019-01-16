@@ -13,7 +13,8 @@ enum class LightColor(val customName: String, val onColor: Color, val offColor: 
     RED("red", Color(255, 0, 0), Color(60, 0, 0)),
     YELLOW("yellow", Color(255, 255, 0), Color(60, 47, 0)),
     GREEN("green", Color(0, 255, 0), Color(0, 60, 0)),
-    BLUE("blue", Color(0, 255, 255), Color(0, 0, 60));
+    BLUE("blue", Color(0, 255, 255), Color(0, 0, 60)),
+    ORANGE("orange", Color(253, 146, 71), Color(105, 2,5));
 
     companion object {
 
@@ -33,6 +34,7 @@ enum class LightColor(val customName: String, val onColor: Color, val offColor: 
             YELLOW -> Translations.getString("element.color.yellow")
             GREEN -> Translations.getString("element.color.green")
             BLUE -> Translations.getString("element.color.blue")
+	        ORANGE -> Translations.getString("element.color.orange")
         }
     }
 }
