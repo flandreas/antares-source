@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.edit.AbstractBeanInfo
+import ch.scorpion.jabbah.edit.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
 import ch.scorpion.jabbah.edit.model.text.TextProperty
@@ -16,10 +17,9 @@ import com.l2fprod.common.propertysheet.Property
  * A [AbstractBeanInfo] for [CircuitInOutView].
  */
 @Suppress("unused")
-class CircuitInOutViewBeanInfo : AbstractBeanInfo<CircuitInOutView>() {
+class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 
     companion object {
-        private val id = PropertyImpl("edit.property.id", Int::class.java)
         private val name = PropertyImpl("element.property", String::class.java)
         private val portType = PropertyImpl("graph.property.portType", PortType::class.java)
         private val bitWidth = PropertyImpl("element.property.bitWidth", BitWidth::class.java)
@@ -33,7 +33,6 @@ class CircuitInOutViewBeanInfo : AbstractBeanInfo<CircuitInOutView>() {
     override fun addProperties(bean: CircuitInOutView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-        id.bind(editor, { bean.id}, null, false)
 		name.bind(editor, { bean.name }, { bean.name = it })
 		portType.bind(editor, { bean.portType }, { bean.portType = it!! })
 		orientation.bind(editor, { bean.orientation }, { bean.orientation = it!! })
@@ -43,7 +42,6 @@ class CircuitInOutViewBeanInfo : AbstractBeanInfo<CircuitInOutView>() {
 	    toggle.bind(editor, { bean.toggle }, { bean.toggle = it!! })
 		description.bind(editor, { bean.description}, { bean.description = it!! })
 
-		properties.add(id)
 		properties.add(name)
 		properties.add(portType)
 		properties.add(orientation)

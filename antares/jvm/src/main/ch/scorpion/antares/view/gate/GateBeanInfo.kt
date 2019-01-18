@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.edit.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.edit.ComponentBeanInfo
 
 @Suppress("unused") class AndGateViewBeanInfo : DigitalGateViewBeanInfo<AndGateView>() {
     companion object {
@@ -37,9 +38,8 @@ import ch.scorpion.jabbah.base.geom.Direction
     }
 }
 
-@Suppress("unused") class DelayGateViewBeanInfo : AbstractBeanInfo<DelayGateView>() {
+@Suppress("unused") class DelayGateViewBeanInfo : ComponentBeanInfo<DelayGateView>() {
     companion object {
-        val id = PropertyImpl("edit.property.id", Integer::class.java)
         val delay = PropertyImpl("element.property.DelayGate.delay", Long::class.java)
         val orientation = PropertyImpl("edit.property.Component.orientation", Direction::class.java)
     }
@@ -47,11 +47,9 @@ import ch.scorpion.jabbah.base.geom.Direction
     override fun addProperties(bean: DelayGateView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-        id.bind(editor, {Integer(bean.id)}, null, false)
         delay.bind(editor, {bean.delay}, {bean.delay = it!!})
         orientation.bind(editor, {bean.orientation}, {bean.orientation = it!!})
 
-        properties.add(id)
         properties.add(delay)
         properties.add(orientation)
     }

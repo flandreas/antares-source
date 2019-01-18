@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.output
 import ch.scorpion.antares.model.signal.BitWidth
 import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.AbstractBeanInfo
+import ch.scorpion.jabbah.edit.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
 import ch.scorpion.jabbah.edit.model.Size
@@ -11,10 +12,9 @@ import ch.scorpion.jabbah.edit.model.Size
 /**
  * A [BeanInfo] for [LEDMatrixView].
  */
-class LEDMatrixViewBeanInfo : AbstractBeanInfo<LEDMatrixView>() {
+class LEDMatrixViewBeanInfo : ComponentBeanInfo<LEDMatrixView>() {
 
     companion object {
-        //private val name = PropertyImpl("element.property", String::class.java)
         private val columnWidth = PropertyImpl("element.property.columns", BitWidth::class.java)
         private val rowWidth = PropertyImpl("element.property.rows", BitWidth::class.java)
         private val lightColor = PropertyImpl("element.property.LEDColor", LightColor::class.java)

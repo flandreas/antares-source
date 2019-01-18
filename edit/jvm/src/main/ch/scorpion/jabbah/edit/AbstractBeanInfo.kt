@@ -24,3 +24,20 @@ abstract class AbstractBeanInfo<T> : SimpleBeanInfo() {
         // empty
     }
 }
+
+/**
+ * Base class for implementing [SimpleBeanInfo]s for [Component]s.
+ * Adds the ID property.
+ */
+abstract class ComponentBeanInfo<T: Component> : AbstractBeanInfo<T>() {
+
+	companion object {
+		private val id = PropertyImpl("edit.property.id", Int::class.java)
+	}
+
+	override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
+		super.addProperties(bean, editor, properties)
+		id.bind(editor, {bean.id}, null, false)
+		properties.add(id)
+	}
+}

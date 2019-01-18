@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.net.edge
 
 import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.AbstractBeanInfo
+import ch.scorpion.jabbah.edit.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
@@ -9,10 +10,9 @@ import java.beans. BeanInfo
 /**
  * A [BeanInfo] for [EdgeViewImpl].
  */
-open class EdgeViewImplBeanInfo : AbstractBeanInfo<EdgeViewImpl<*>>() {
+open class EdgeViewImplBeanInfo : ComponentBeanInfo<EdgeViewImpl<*>>() {
 
     companion object {
-        private val id = PropertyImpl("edit.property.id", Int::class.java)
         private val arrow = PropertyImpl("graph.property.edgeView.arrow", Boolean::class.java)
         private val layout = PropertyImpl("graph.property.edgeView.layout", Layout::class.java)
         private val style = PropertyImpl("graph.property.edgeViewLineStyle", NetViewStyle::class.java)
@@ -21,12 +21,10 @@ open class EdgeViewImplBeanInfo : AbstractBeanInfo<EdgeViewImpl<*>>() {
     override fun addProperties(bean: EdgeViewImpl<*>, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-        id.bind(editor, { bean.id }, null, false)
         arrow.bind(editor, { bean.isArrow }, { bean.isArrow = it!! })
         layout.bind(editor, { bean.layout }, { bean.layout = it!! })
         style.bind(editor, { bean.netView!!.style }, { bean.netView!!.style = it!! })
 
-        properties.add(id)
         properties.add(arrow)
         properties.add(layout)
         properties.add(style)

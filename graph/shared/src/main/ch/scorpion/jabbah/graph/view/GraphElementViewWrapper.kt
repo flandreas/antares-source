@@ -49,12 +49,16 @@ class GraphElementViewWrapper<T : GraphElement>(
     /** ---- [Storable] interface */
 
     override fun write(writer: StoreWriter) {
+	    writer.writeInt("id", id)
         writer.writeStorable("component", _component!!)
     }
 
     override fun read(reader: StoreReader) {
         // don't call super.read() in order not to interfere with the wrapped Component's style
         _component = reader.readStorable("component") as Component
+	    if (reader.hasAttribute("id")) {
+		    id = reader.readInt("id")
+	    }
     }
 
     /** ---- [Locatable] interface */
@@ -96,7 +100,15 @@ class GraphElementViewWrapper<T : GraphElement>(
 
     /** ---- [Component] interface */
 
-    override val selectableComponent: Component get() = _component!!
+    /** Forwards id to Component in order to appear as bean property.*/
+    override var id: Int
+	    get() = super.id
+	    set(value) {
+		    super.id = value
+		    component!!.id = value
+	    }
+
+	override val selectableComponent: Component get() = _component!!
 
     override val propertyOwner: Any get() = _component!!.propertyOwner
 

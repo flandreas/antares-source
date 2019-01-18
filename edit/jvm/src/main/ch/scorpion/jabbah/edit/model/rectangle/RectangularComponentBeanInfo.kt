@@ -6,16 +6,17 @@ import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.draw.graphics.PredefinedStroke
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.AbstractBeanInfo
+import ch.scorpion.jabbah.edit.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 
 /** A [BeanInfo] for [RectangularComponent]. */
-abstract class RectangularComponentBeanInfo<T: RectangularComponent> : AbstractBeanInfo<T>() {
+abstract class RectangularComponentBeanInfo<T: RectangularComponent> : ComponentBeanInfo<T>() {
 
     companion object {
-        private val filled = PropertyImpl("edit.property.filled", Boolean::class.java)
+	    private val filled = PropertyImpl("edit.property.filled", Boolean::class.java)
         private val stroked = PropertyImpl("edit.property.stroked", Boolean::class.java)
         private val styleType = PropertyImpl("draw.styleType", StyleType::class.java)
         private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
