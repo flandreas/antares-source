@@ -42,7 +42,7 @@ class GraphViewServiceImplTest {
     fun shouldUndoDeleteAfterNode() {
         val newEdgeView = setupSplittedEdgeViews()
 
-        service.delete(listOf(newEdgeView), DrawingViewMockBuilder().withDrawing(testGraphView.graphView).build<Component>())
+        service.delete(listOf(newEdgeView), DrawingViewMockBuilder().withDrawing(testGraphView.graphView).build())
         assertThat(testGraphView.graphView.drawablesCount, `is`(4))
 
         EditModule.commandManager.undo()
@@ -58,7 +58,7 @@ class GraphViewServiceImplTest {
     fun shouldUndoDeleteBeforeNode() {
         setupSplittedEdgeViews()
 
-        service.delete(listOf(testGraphView.ev), DrawingViewMockBuilder().withDrawing(testGraphView.graphView).build<Component>())
+        service.delete(listOf(testGraphView.ev), DrawingViewMockBuilder().withDrawing(testGraphView.graphView).build())
         assertThat(testGraphView.graphView.drawablesCount, `is`(4))
 
         EditModule.commandManager.undo()
@@ -69,6 +69,16 @@ class GraphViewServiceImplTest {
         assertThat(getNodeView().getEdgeViews().firstOrNull { it.destination == testGraphView.vv2 }, `is`(notNullValue()))
         assertThat(getNodeView().getEdgeViews().firstOrNull { it.destination == vv3 }, `is`(notNullValue()))
     }
+
+	@Test
+	fun shouldUndoDeleteAll() {
+		setupSplittedEdgeViews()
+		service.delete(testGraphView.graphView.getDrawables().toList(), DrawingViewMockBuilder().withDrawing(testGraphView.graphView).build())
+
+		EditModule.commandManager.undo()
+
+		assertThat(getNodeView().getEdgeViews().size, `is`(3))
+	}
 
     private fun setupSplittedEdgeViews(): EdgeView<Boolean> {
         testGraphView.graphView.add(vv3)

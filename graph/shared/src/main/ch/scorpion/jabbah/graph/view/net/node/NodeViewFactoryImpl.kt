@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.net.node
 
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.model.Net
@@ -12,7 +13,12 @@ class NodeViewFactoryImpl<T: Any>(
     private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
 ) : NodeViewFactory<T> {
 
+	companion object {
+		private val LOG by logger(NodeViewFactoryImpl::class)
+	}
+
     override fun create(): NodeView<T> {
+	    LOG.debug("create NodeView")
         return NodeViewImpl(styleProvider, currentSystemSpeedCategory)
     }
 
