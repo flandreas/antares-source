@@ -3,9 +3,14 @@ package ch.scorpion.jabbah.edit
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.app.CopyPasteUtility
-import ch.scorpion.jabbah.edit.editor.CutCommand
+import ch.scorpion.jabbah.edit.app.DeleteAction
 import ch.scorpion.jabbah.edit.editor.PasteCommand
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.io.*
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
@@ -31,8 +36,22 @@ class CopyPasteUtilityFx : CopyPasteUtility {
 	/** ---- [CopyPasteUtility] */
 
 	override fun cut(view: DrawingView<Drawing<Component>>, components: Collection<Component>, typeMap: TypeMap, commandManager: CommandManager) {
-		copy(view.drawing, components, typeMap)
-		commandManager.execute(CutCommand(view, components.toList()))
+		val componentsToDelete = DeleteAction.getComponentsToDelete(components)
+		if (componentsToDelete.isNotEmpty()) {
+			copy(view.drawing, componentsToDelete, typeMap)
+			EditModule.drawingService.delete(componentsToDelete, view, "edit.command.cut")
+		}
+
+		// Don't do 'components.size != componentsToDelete.size for checking whether everything has been deleted,
+		// because non-deletable (by user selection!) Components might have been deleted as a side effect
+		// of deleting other Components.
+		if (components.any { view.drawing.contains(it) }) {
+			BaseModule.eventBus.post(ComponentMessage(
+				ComponentMessageType.Info,
+				null,
+				"edit.action.undeletable.msg"
+			))
+		}
 	}
 
 	override fun copy(drawing: Drawing<*>, components: Collection<Component>, typeMap: TypeMap) {
@@ -42,9 +61,8 @@ class CopyPasteUtilityFx : CopyPasteUtility {
 				val writer = StoreXmlWriter(
 					xmlWriter,
 					typeMap,
-					GlobalIdentityCreator(),
-					{ c -> components.contains(c) }
-				)
+					GlobalIdentityCreator()
+				) { c -> components.contains(c) }
 				writer.writeStorable(drawing)
 
 				val content = ClipboardContent()

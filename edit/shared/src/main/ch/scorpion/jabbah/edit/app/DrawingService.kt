@@ -18,8 +18,11 @@ interface DrawingService {
 	/** Adds the specified [Component] to a [DrawingView]'s [Drawing].*/
 	fun add(component: Component, drawingView: DrawingView<Drawing<Component>>)
 
-    /** Deletes the specified [Component] from its [Drawing].*/
-    fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>)
+    /**
+     * Deletes the specified [Component] from its [Drawing].
+     * @param the translation key of the [Command] that makes this operation undoable, or `null` to use the default name
+     */
+    fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String? = null)
 
 	/** Replaces the specified [Component]s with a newly created [GroupComponent].*/
     fun group(components: List<Component>, drawingView: DrawingView<Drawing<Component>>)
@@ -38,7 +41,7 @@ open class DrawingServiceImpl(
 		commandManager.execute(AddCommand(drawingView, component))
 	}
 
-    override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>) {
+    override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String?) {
         commandManager.execute(DeleteCommand(drawingView, components))
     }
 

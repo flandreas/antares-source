@@ -20,25 +20,25 @@ import ch.scorpion.jabbah.io.TypeMap
  * [View] to the clipboard.
  */
 class CutAction(
-    eventBus: EventBus = BaseModule.eventBus,
-    viewManager: ViewManager = DrawViewModule.viewManager,
-    private val typeMap: TypeMap = IOModule.typeMap,
-    private val cmdManager: CommandManager = EditModule.commandManager,
-    private val scheduler: Scheduler = ExecutionModule.scheduler
+	eventBus: EventBus = BaseModule.eventBus,
+	viewManager: ViewManager = DrawViewModule.viewManager,
+	private val typeMap: TypeMap = IOModule.typeMap,
+	private val cmdManager: CommandManager = EditModule.commandManager,
+	private val scheduler: Scheduler = ExecutionModule.scheduler
 ) : AbstractSelectionAwareAction("edit.action.cut", eventBus, viewManager) {
 
 	init {
 		eventBus.register(SchedulerActivationStateEvent::class) { updateEnabled() }
 	}
 
-    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-        val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
-        CopyPasteUtilitySwing.cut(
-                drawingView,
-                drawingView.selectionManager.selection,
-                typeMap,
-                cmdManager)
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
+		CopyPasteUtilitySwing.cut(
+			drawingView,
+			drawingView.selectionManager.selection,
+			typeMap,
+			cmdManager)
+	}
 
 	override fun calculateEnabled(): Boolean = super.calculateEnabled() && !scheduler.isActive
 }

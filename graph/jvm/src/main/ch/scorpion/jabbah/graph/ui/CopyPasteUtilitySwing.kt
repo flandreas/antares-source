@@ -1,19 +1,25 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.editor.CutCommand
 import ch.scorpion.jabbah.edit.editor.PasteCommand
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.edit.app.CopyPasteUtility
+import ch.scorpion.jabbah.edit.app.DeleteAction
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortView
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
@@ -25,11 +31,11 @@ import java.io.ByteArrayOutputStream
  * An utility class that provides methods for copying a collection of [Component]s to the system clipboard,
  * and pasting them back into the current [Drawing].
  */
-object CopyPasteUtilitySwing {
+object CopyPasteUtilitySwing : CopyPasteUtility {
 
     private val LOG by logger(CopyPasteUtilitySwing::class)
 
-    private val DEFAULT_DISTANCE_FACTOR = 3
+    private const val DEFAULT_DISTANCE_FACTOR = 3
 
     /** Remembers the first copies [Component] in order to repeat dislocations for consecutive pasts. */
     private var origAnchorComponent: Component? = null
@@ -41,14 +47,29 @@ object CopyPasteUtilitySwing {
     private var pasteCount: Int = 0
 
     /** Cuts the specified [Component]s from the [Drawing] of the specified [DrawingView].*/
-    fun cut(
+    override fun cut(
         view: DrawingView<Drawing<Component>>,
         components: Collection<Component>,
         typeMap: TypeMap,
-        cmdManager: CommandManager
+        commandManager: CommandManager
     ) {
-        copy(view.drawing as GraphView, components, typeMap)
-        cmdManager.execute(CutCommand(view, components.toList()))
+	    val componentsToDelete = DeleteAction.getComponentsToDelete(components)
+	    if (componentsToDelete.isNotEmpty()) {
+		    copy(view.drawing as GraphView, componentsToDelete, typeMap)
+		    //commandManager.execute(CutCommand(view, componentsToDelete.toList()))
+		    GraphViewModule.graphViewService.delete(componentsToDelete, view, "edit.command.cut")
+	    }
+
+	    // Don't do 'components.size != selection.size for checking whether everything has been deleted,
+	    // because non-deletable (by user selection!) Components might have been deleted as a side effect
+	    // of deleting other Components.
+	    if (components.any { view.drawing.contains(it) }) {
+		    BaseModule.eventBus.post(ComponentMessage(
+			    ComponentMessageType.Info,
+			    null,
+			    "edit.action.undeletable.msg"
+		    ))
+	    }
     }
 
     /**
@@ -59,10 +80,10 @@ object CopyPasteUtilitySwing {
      * copies much more that needed from the model layer; in fact, it copies the entire model contents.
      * Stripping is done when pasting the clipboard contents again.
      */
-    fun copy(
-        graphView: GraphView<*>,
+    override fun copy(
+	    drawing: Drawing<*>,
         components: Collection<Component>,
-        typeMap: TypeMap = IOModule.typeMap
+        typeMap: TypeMap
     ) {
         ByteArrayOutputStream().use {
             try {
@@ -72,7 +93,7 @@ object CopyPasteUtilitySwing {
                     typeMap,
                     GlobalIdentityCreator()
                 ) { c -> c !is GraphElementView<*> || components.contains(c) }
-	            val graphStorable = GraphStorable(graphView)
+	            val graphStorable = GraphStorable(drawing as GraphView<*>)
                 writer.writeStorable(graphStorable)
 
                 Toolkit.getDefaultToolkit().systemClipboard.setContents(
@@ -88,11 +109,11 @@ object CopyPasteUtilitySwing {
         }
     }
 
-    fun paste(
+    override fun paste(
         view: DrawingView<Drawing<Component>>,
-        storableCreator: StorableCreator = IOModule.storableCreator,
-        typeMap: TypeMap = IOModule.typeMap,
-        cmdManager: CommandManager = EditModule.commandManager
+        storableCreator: StorableCreator,
+        typeMap: TypeMap,
+        commandManager: CommandManager
     ) {
         // Read the contents from the clipboard
         val transferable = Toolkit.getDefaultToolkit().systemClipboard.getContents(null)
@@ -110,9 +131,9 @@ object CopyPasteUtilitySwing {
                     pasteCount++
                     pastedAnchorComponent!!.location.subtract(origAnchorComponent!!.location).multiply(pasteCount.toDouble())
                 } else {
-                    Point2D(
-                            DEFAULT_DISTANCE_FACTOR * view.grid.distance,
-                            DEFAULT_DISTANCE_FACTOR * view.grid.distance)
+	                Point2D(
+		                DEFAULT_DISTANCE_FACTOR * view.grid.distance,
+		                DEFAULT_DISTANCE_FACTOR * view.grid.distance)
                 }
 
                 if (copy is GraphStorable) {
@@ -127,7 +148,7 @@ object CopyPasteUtilitySwing {
                         components.add(cv)
                     }
 	                Locatable.moveLocatables(components, dislocation)
-	                cmdManager.execute(PasteCommand(view, components))
+	                commandManager.execute(PasteCommand(view, components))
                 }
             } catch(e: Exception) {
                 LOG.error("Error while reading Components from clipboard: ${e.message}")

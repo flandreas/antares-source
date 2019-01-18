@@ -40,9 +40,9 @@ class GraphViewServiceImpl(
 		super.add(GraphElementViewWrapper<GraphElement>(component), drawingView)
 	}
 
-	override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>) {
+	override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String?) {
 		LOG.debug("delete ${components.size} components")
-		commandManager.beginTransaction("edit.command.delete", drawingView)
+		commandManager.beginTransaction(cmdDescriptionKey ?: "edit.command.delete", drawingView)
 
 		for (component in components) {
 			if (component is VerticeView<*>) {

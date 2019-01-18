@@ -24,12 +24,18 @@ class DeleteAction(
 	private val drawingService: DrawingService = EditModule.drawingService
 ) : AbstractSelectionAwareAction("edit.action.delete", eventBus, viewManager) {
 
+	companion object {
+
+		/** Creates a new [List] containing only those [Component] that can really be deleted.*/
+		fun getComponentsToDelete(components: Collection<Component>): List<Component> {
+			return components.filter { it.deletable }.toCollection(mutableListOf())
+		}
+	}
+
 	override fun execute(event: ActionEvent) {
 		val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
 		val selection = drawingView.selectionManager.selection
-		val components = selection
-			.filter { it.deletable }
-			.toCollection(mutableListOf())
+		val components = getComponentsToDelete(selection)
 		if (components.isNotEmpty()) {
 			drawingService.delete(
 				components,
