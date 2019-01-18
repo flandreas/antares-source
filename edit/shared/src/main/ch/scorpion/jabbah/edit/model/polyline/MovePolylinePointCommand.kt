@@ -10,12 +10,13 @@ import ch.scorpion.jabbah.base.geom.Point2D
  * A [Command] for moving an individual point of a [Polyline].
  */
 class MovePolylinePointCommand(
-    val polyline: Polyline,
-    editor: Editor,
-    val index: Int,
-    val oldLocation: Point2D,
-    val newLocation: Point2D
+	editor: Editor,
+    private val polyline: Polyline,
+    private val index: Int,
+    private val newLocation: Point2D
 ) : AbstractCommand("edit.model.polyline.movePoint", editor) {
+
+	private val oldLocation: Point2D = polyline.getPointAt(index)
 
     override fun execute() {
         polyline.setPointAt(index, newLocation.x, newLocation.y)

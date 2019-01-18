@@ -75,9 +75,9 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
 	        component.compact()
 
 	        val command = if (component.pointsCount != oldPointsCount) {
-		        JoinPolylinePointsCommand(component, index, oldLocation)
+		        JoinPolylinePointsCommand(editor, component, index, oldLocation)
 	        } else {
-		        MovePolylinePointCommand(component, editor, index, oldLocation, newLocation)
+		        MovePolylinePointCommand(editor, component, index, newLocation)
 	        }
 
 	        editor.commandManager.register(command)
