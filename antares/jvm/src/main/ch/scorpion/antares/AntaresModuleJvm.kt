@@ -8,11 +8,15 @@ import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
+import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.output.LightColor
 import com.l2fprod.common.propertysheet.PropertyRendererRegistry
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.preferences.BooleanPreference
+import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.*
@@ -29,11 +33,16 @@ import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
+import javafx.beans.property.BooleanProperty
 
 /**
  * Module definitions for the [ch.scorpion.antares] module on the JVM target.
  */
-class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
+ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
+
+	companion object {
+		const val PREF_TREE_CIRCUIT = "antares.preferences.group.circuit"
+	}
 
 	override fun initialize() {
 
@@ -75,6 +84,8 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		configureTypeMap(IOModule.typeMap)
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
+
+		buildPropertyTree(BaseModuleJvm.preferencesTree)
 	}
 
 	private fun createContainerEditor(eventBus: EventBus): ContainerEditor {
@@ -116,5 +127,14 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		registry.registerEditor(DigitalSignalRepresentation::class.java, DigitalSignalRepresentationEditor::class.java)
 		registry.registerEditor(SevenSegmentDisplayScheme::class.java, SevenSegmentDisplaySchemeEditor::class.java)
 		registry.registerEditor(OutputAnnotation::class.java, OutputAnnotationEditor::class.java)
+	}
+
+	private fun buildPropertyTree(root: PreferenceGroup) {
+		root.add(PreferenceGroup(PREF_TREE_CIRCUIT))
+
+		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
+			id = AndGateView.PROP_DATA_FLOW_ENABLED,
+			nameKey = "antares.preferences.AndGateDataFlow"
+		))
 	}
 }

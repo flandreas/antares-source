@@ -168,6 +168,8 @@ object AntaresViewModule : AbstractModule() {
 	    properties.set(RgbLEDView.PROP_ICON_PATH, "/img/rgb-led.png")
         properties.set(LEDMatrixView.PROP_ICON_PATH, "/img/led-matrix.png")
         properties.set(SevenSegmentDisplayView.PROP_ICON_PATH, "/img/7segment.png")
+
+	    properties.set(AndGateView.PROP_DATA_FLOW_ENABLED, true)
     }
 
     private fun configureTypeMap(typeMap: TypeMap) {

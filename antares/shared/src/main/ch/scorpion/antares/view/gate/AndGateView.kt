@@ -9,6 +9,8 @@ import ch.scorpion.antares.view.truthtable.TruthTableView
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.DrawableExplanation
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -28,102 +30,108 @@ import ch.scorpion.jabbah.io.Storable
  * A view of an [AndGate].
  */
 class AndGateView(
-    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
-    andGate: AndGate = AndGate()
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+	andGate: AndGate = AndGate()
 ) : AbstractAndLikeGateView<AndGate>(styleProvider, currentSymbolStyle, "&", andGate) {
 
-    companion object {
-        private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
-                TruthTableView(AndGate.TRUTH_TABLE, null), Point2D.ZERO)
-    }
+	companion object {
 
-    var dataPort: InputPortNumber = InputPortNumber.NONE
-        set(value) {
-            if (field == value) {
-                return
-            }
-            checkArgument(value.id <= model!!.chosenInputCount.count, "InputPortNumber must not be larger than InputCount")
-            invalidate()
-            field = value
-	        labelStyle = if (dataPort == InputPortNumber.NONE) LabelStyle.LARGE_CENTERED else LabelStyle.SMALL_UPPER_LEFT
-            invalidate()
-            update()
-        }
+		/** The name of the [Boolean] property in [Properties] defining whether the data flow feature is enabled.*/
+		const val PROP_DATA_FLOW_ENABLED = "antares.andGate.dataFlow"
 
-    init {
-        modelExchanged(null)
-    }
+		private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
+			TruthTableView(AndGate.TRUTH_TABLE, null), Point2D.ZERO)
+	}
 
-    override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
-        return if (model!!.inputCount == 2) {
-            EXPLANATION.explanation.vertice = model
-            EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
-            EXPLANATION
-        } else null
-    }
+	var dataPort: InputPortNumber = InputPortNumber.NONE
+		set(value) {
+			if (field == value) {
+				return
+			}
+			checkArgument(value.id <= model!!.chosenInputCount.count, "InputPortNumber must not be larger than InputCount")
+			invalidate()
+			field = value
+			labelStyle = if (dataPort == InputPortNumber.NONE) LabelStyle.LARGE_CENTERED else LabelStyle.SMALL_UPPER_LEFT
+			invalidate()
+			update()
+		}
 
-    override fun modelExchanged(oldModel: AndGate?) {
-        super.modelExchanged(oldModel)
-        if (model != null) {
-            dataPort = InputPortNumber.withId(Math.min(dataPort.id, model!!.chosenInputCount.count))
-        }
-    }
+	private val isDataFlowEnabled: Boolean get() = BaseModule.properties.getBoolean(PROP_DATA_FLOW_ENABLED)
 
-    override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-        currentSymbolStyle.symbolStyle.drawAndGate(this, context, foregroundColor, backgroundColor, stroke)
-        if (dataPort != InputPortNumber.NONE) {
-            drawDataFlow(context)
-        } else {
-            GateMnemonic.drawAnd(this, context, foregroundColor, backgroundColor)
-        }
-    }
+	init {
+		modelExchanged(null)
+	}
 
-    /** ---- [Storable] interface */
+	override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
+		return if (model!!.inputCount == 2) {
+			EXPLANATION.explanation.vertice = model
+			EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
+			EXPLANATION
+		} else null
+	}
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        if (dataPort != InputPortNumber.NONE) {
-            writer.writeInt("dataPort", dataPort.id)
-        }
-    }
+	override fun modelExchanged(oldModel: AndGate?) {
+		super.modelExchanged(oldModel)
+		if (model != null) {
+			dataPort = InputPortNumber.withId(Math.min(dataPort.id, model!!.chosenInputCount.count))
+		}
+	}
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        if (reader.hasAttribute("dataPort")) {
-            dataPort = InputPortNumber.withId(reader.readInt("dataPort"))
-        }
-    }
+	override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		currentSymbolStyle.symbolStyle.drawAndGate(this, context, foregroundColor, backgroundColor, stroke)
+		if (dataPort != InputPortNumber.NONE && isDataFlowEnabled) {
+			drawDataFlow(context)
+		} else {
+			GateMnemonic.drawAnd(this, context, foregroundColor, backgroundColor)
+		}
+	}
 
-    /** ---- [AndGateView] */
+	/** ---- [Storable] interface */
 
-    private fun drawDataFlow(context: DrawContext) {
-        val dataPortView = getPortView(model!!.getInput<DigitalSignal>(dataPort.id))!!
-        val outputPortView = getPortView(model!!.getOutput<DigitalSignal>())!!
-        val appContext = context.castedAppContext<GraphApplicationContext>()!!
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		if (dataPort != InputPortNumber.NONE) {
+			writer.writeInt("dataPort", dataPort.id)
+		}
+	}
 
-        if (ApplicationMode.EXECUTE == appContext.mode) {
-            val controlState = model!!.calculate { it.portId != dataPort.id }
-            if (controlState.isSet) {
-                context.g.stroke = createClosedDataPathStroke()
-            } else {
-                context.g.stroke = createOpenDataPathStroke()
-            }
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute("dataPort")) {
+			dataPort = InputPortNumber.withId(reader.readInt("dataPort"))
+		}
+	}
 
-        } else {
-            context.g.stroke = createOpenDataPathStroke()
-        }
+	/** ---- [AndGateView] */
 
-        if (ApplicationMode.EXECUTE == appContext.mode && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
-            context.g.color = model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!.getColor().foregroundColor
-        } else {
-	        context.g.color = context.choose(Themes.get<GraphTheme>().edge.color).foregroundColor
-        }
+	private fun drawDataFlow(context: DrawContext) {
+		val dataPortView = getPortView(model!!.getInput<DigitalSignal>(dataPort.id))!!
+		val outputPortView = getPortView(model!!.getOutput<DigitalSignal>())!!
+		val appContext = context.castedAppContext<GraphApplicationContext>()!!
 
-        context.g.drawLine(
-            dataPortView.locationX, dataPortView.locationY,
-            outputPortView.locationX, outputPortView.locationY)
-    }
+		if (ApplicationMode.EXECUTE == appContext.mode) {
+			val controlState = model!!.calculate { it.portId != dataPort.id }
+			if (controlState.isSet) {
+				context.g.stroke = createClosedDataPathStroke()
+			} else {
+				context.g.stroke = createOpenDataPathStroke()
+			}
+
+		} else {
+			context.g.stroke = createOpenDataPathStroke()
+		}
+
+		if (ApplicationMode.EXECUTE == appContext.mode && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
+			context.g.color = model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!.getColor().foregroundColor
+		} else {
+			context.g.color = context.choose(Themes.get<GraphTheme>().edge.color).foregroundColor
+		}
+
+		context.g.drawLine(
+			dataPortView.locationX, dataPortView.locationY,
+			outputPortView.locationX, outputPortView.locationY)
+	}
 
 	// TODO Refactor: Use [StyleProvider] instead of [Themes] to access style information
 
@@ -131,8 +139,8 @@ class AndGateView(
 
 	private fun createClosedDataPathStroke() = Stroke(width = Themes.get<GraphTheme>().edge.stroke.width)
 
-    // TODO Refactor (DRY): Same logic as in [AbstractNetViewElement]
-    private fun showNetState(systemSpeedCategory: SystemSpeedCategory): Boolean {
-        return systemSpeedCategory > SystemSpeedCategory.Use
-    }
+	// TODO Refactor (DRY): Same logic as in [AbstractNetViewElement]
+	private fun showNetState(systemSpeedCategory: SystemSpeedCategory): Boolean {
+		return systemSpeedCategory > SystemSpeedCategory.Use
+	}
 }
