@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.graph.project
 
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryService
@@ -50,4 +52,8 @@ class ProjectImpl(
 			writer.writeString("import", importedLibrary.toString())
 		}
 	}
+
+	/** ---- [LibraryImpl] */
+
+	override fun createSavable(element: ContainerLibraryElement): Savable = ProjectSavable(element)
 }

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.app.user.UserHolder
 import ch.scorpion.jabbah.base.*
@@ -242,6 +243,8 @@ open class LibraryImpl(
 			.collect(graph)
 			.all { containsMetaGraph(it) }
 	}
+
+	override fun createSavable(element: ContainerLibraryElement): Savable = LibrarySavable(element)
 
 	/** ---- [LibraryImpl] */
 

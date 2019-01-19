@@ -1,16 +1,12 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.app.DesktopApplication
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.IllegalStateException
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.ApplicationMode
-import ch.scorpion.jabbah.graph.project.ProjectModule
-import ch.scorpion.jabbah.graph.project.ProjectSavable
 
 /**
  * An [Action] for opening the [ContainerLibraryElement] that is currently selected in the
@@ -20,10 +16,6 @@ class EditContainerLibraryElementAction(
     private val application: DesktopApplication,
     eventBus: EventBus
 ) : AbstractContainerLibraryElementAction("graph.action.editContainerLibraryElement", eventBus) {
-
-	companion object {
-		private val LOG by logger(EditContainerLibraryElementAction::class)
-	}
 
     init {
         eventBus.register(OpenContainerLibraryElementRequest::class) {
@@ -51,16 +43,8 @@ class EditContainerLibraryElementAction(
     }
 
     private fun openAsSavable(element: ContainerLibraryElement) {
-
 	    val library = element.library!!
 	    library.libraryService.loadMetaGraph(library, element)
-	    when (library) {
-		    LibraryModule.libraryHolder.library -> application.open(element.metaGraph!!, LibrarySavable(element))
-		    ProjectModule.projectHolder.project -> application.open(element.metaGraph!!, ProjectSavable(element))
-		    else -> {
-			    LOG.error("EditContainerLibraryElementAction: Inconsistent state, unknown ContainerLibraryElement, cannot open")
-			    throw IllegalStateException()
-		    }
-	    }
+	    application.open(element.metaGraph!!, library.createSavable(element))
     }
 }

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.app.user.User
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.UUID
@@ -63,6 +64,9 @@ interface Library : LibraryDirectory, MetaGraphRepository {
 	 * recursively referenced in the specified [Graph].
 	 */
 	fun containsAllRecursivelyReferencedBy(graph: Graph): Boolean
+
+	/** Creates an appropriate [Savable] for the specfieid [ContainerLibraryElement].*/
+	fun createSavable(element: ContainerLibraryElement): Savable
 
 }
 
