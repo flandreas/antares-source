@@ -280,7 +280,7 @@ class LibraryServiceImpl(
 	override fun addContainerLibraryElement(library: Library, metaGraph: MetaGraph, directory: LibraryDirectory, index: Int?): ContainerLibraryElement {
 		LOG.debug("LibraryServiceImpl: Adding ContainerLibraryElement")
 		val element = createContainerLibraryElement(metaGraph)
-		storeContainerLibraryElement(library, metaGraph, element)
+		storeContainerLibraryElement(library, metaGraph, element, doClone = true)
 		addLibraryItem(library, element, directory, index)
 		return element
 	}
@@ -289,7 +289,7 @@ class LibraryServiceImpl(
 		LOG.debug("LibraryServiceImpl: Updating ContainerLibraryElement")
 		element.metaGraph?.let {
 			val nameChanged = it.translatableName != element.translatableName
-			storeContainerLibraryElement(library, it, element)
+			storeContainerLibraryElement(library, it, element, doClone = false)
 			if (nameChanged) {
 				storeLibrary(library)
 			}
@@ -344,11 +344,15 @@ class LibraryServiceImpl(
 
 	/** ---- [LibraryServiceImpl] */
 
-	private fun storeContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement) {
+	private fun storeContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement, doClone: Boolean) {
 		LOG.debug("LibraryServiceImpl: Storing MetaGraph")
-		val clone = storableCloner.cloneUsingCreator(metaGraph, storableCreator) as MetaGraph
-		element.updateMetaGraph(clone)
-		persistenceService.storeMetaGraph(library, metaGraph)
+		if (doClone) {
+			val clone = storableCloner.cloneUsingCreator(metaGraph, storableCreator) as MetaGraph
+			element.updateMetaGraph(clone)
+			persistenceService.storeMetaGraph(library, clone)
+		} else {
+			persistenceService.storeMetaGraph(library, metaGraph)
+		}
 	}
 
 	private fun createContainerLibraryElement(metaGraph: MetaGraph): ContainerLibraryElement {
