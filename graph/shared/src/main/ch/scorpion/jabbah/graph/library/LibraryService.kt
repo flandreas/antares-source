@@ -291,6 +291,7 @@ class LibraryServiceImpl(
 			val nameChanged = it.translatableName != element.translatableName
 			storeContainerLibraryElement(library, it, element, doClone = false)
 			if (nameChanged) {
+				element.translatableName = it.translatableName
 				storeLibrary(library)
 			}
 			eventBus.post(LibraryItemUpdatedEvent(library, element))
