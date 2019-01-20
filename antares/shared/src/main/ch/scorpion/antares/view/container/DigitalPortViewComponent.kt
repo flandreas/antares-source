@@ -26,6 +26,9 @@ class DigitalPortViewComponent(
     private val digitalPort: DigitalPort get() = port as DigitalPort
     private val digitalPortView: DigitalPortView get() = portView as DigitalPortView
 
+	val portId: Int
+		get() = digitalPort.portId
+
     var logic: Logic
         get() = digitalPort.logic
         set(value) {

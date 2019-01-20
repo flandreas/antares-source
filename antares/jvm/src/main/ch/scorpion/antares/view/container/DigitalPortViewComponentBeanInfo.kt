@@ -18,6 +18,8 @@ import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 class DigitalPortViewComponentBeanInfo : AbstractBeanInfo<DigitalPortViewComponent>() {
 
     companion object {
+	    private val id = PropertyImpl("graph.property.PortId", Int::class.java)
+	    private val name = PropertyImpl("element.property", String::class.java)
         private val direction = PropertyImpl("graph.property.direction", Direction::class.java)
         private val portLabelPos = PropertyImpl("graph.property.PortLabelPosition", PortLabelPosition::class.java)
         private val showBitWidth = PropertyImpl("element.property.DigitalPortViewComponent.showBitWidthAnnotation", Boolean::class.java)
@@ -29,6 +31,8 @@ class DigitalPortViewComponentBeanInfo : AbstractBeanInfo<DigitalPortViewCompone
     override fun addProperties(bean: DigitalPortViewComponent, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
+	    properties.add(id.bind(editor, { bean.portId}, null, false))
+	    properties.add(name.bind(editor, { bean.port.name }, null, false))
         properties.add(direction.bind(editor, { bean.direction}, { bean.direction = it!! }))
         properties.add(portLabelPos.bind(editor, { bean.portLabelPosition }, { bean.portLabelPosition = it!! }))
         properties.add(showBitWidth.bind(editor, { bean.showBitWidthAnnotation }, { bean.showBitWidthAnnotation = it!! }))
