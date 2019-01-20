@@ -3,15 +3,17 @@ package ch.scorpion.jabbah.edit.model.text
 import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.EGBL
 import ch.scorpion.jabbah.base.swing.UiUtil
-import java.awt.Dimension
 import java.awt.Frame
 import javax.swing.*
 import javax.swing.text.JTextComponent
 
-/** A [JPanel] for editing a [TranslatableText] in the systems current [Language] and the default [Language].*/
+/**
+ * A [JPanel] for editing a [TranslatableText] in the systems current [Language] and the default [Language].
+ * If the [TranslatableText] doesn't contain a text for both of these [Language]s, any available [Language]
+ * is used.
+ */
 class TranslatableTextPanel(
 	private val textName: String,
 	text: TranslatableText,
@@ -49,18 +51,22 @@ class TranslatableTextPanel(
 
 	private val currentLangTextField: JTextComponent
 
-	private val defaultLangTextField: JTextComponent
+	private val alternativeLangTextField: JTextComponent
 
-	private val currentLanguage: Language get() = System.get().currentLanguage()
+	private val currentLanguage: Language = System.get().currentLanguage()
 
-	private val isNonDefaultLanguage: Boolean get() = currentLanguage != Language.DEFAULT
+	private val isNonDefaultLanguage: Boolean = currentLanguage != Language.DEFAULT
+
+	private val needsAlternativeLangText: Boolean = isNonDefaultLanguage || !text.hasDefaultOrSystemLanguage()
+
+	private val alternativeLanguage: Language?
 
 	init {
 		if (textFieldRows == 1) {
 			currentLangTextField = JTextField()
 			currentLangTextField.columns = textFieldColumns
-			defaultLangTextField = JTextField()
-			defaultLangTextField.columns = textFieldColumns
+			alternativeLangTextField = JTextField()
+			alternativeLangTextField.columns = textFieldColumns
 		} else {
 			currentLangTextField = JTextArea()
 			currentLangTextField.rows = textFieldRows
@@ -68,23 +74,32 @@ class TranslatableTextPanel(
 			currentLangTextField.lineWrap = true
 			currentLangTextField.wrapStyleWord = true
 			currentLangTextField.isEditable = true
-			defaultLangTextField = JTextArea()
-			defaultLangTextField.rows = textFieldRows
-			defaultLangTextField.columns = textFieldColumns
-			defaultLangTextField.lineWrap = true
-			defaultLangTextField.wrapStyleWord = true
-			defaultLangTextField.isEditable = true
+			alternativeLangTextField = JTextArea()
+			alternativeLangTextField.rows = textFieldRows
+			alternativeLangTextField.columns = textFieldColumns
+			alternativeLangTextField.lineWrap = true
+			alternativeLangTextField.wrapStyleWord = true
+			alternativeLangTextField.isEditable = true
+		}
+
+		alternativeLanguage = if (needsAlternativeLangText) {
+			if (!text.hasDefaultOrSystemLanguage()) {
+				text.getFirstLanguage()
+			} else {
+				Language.DEFAULT
+			}
+		} else {
+			null
 		}
 
 		if (text.hasTranslation(currentLanguage)) {
 			currentLangTextField.text = text.getTranslation(currentLanguage)
 		}
-		if (isNonDefaultLanguage) {
-			if (text.hasTranslation(Language.DEFAULT)) {
-				defaultLangTextField.text = text.getTranslation(Language.DEFAULT)
-			}
+		if (needsAlternativeLangText) {
+			alternativeLangTextField.text = text.getTranslation(alternativeLanguage!!)
 		}
-		buildUI(textFieldColumns)
+
+		buildUI()
 	}
 
 	private val text: TranslatableText get() {
@@ -92,19 +107,19 @@ class TranslatableTextPanel(
 		if (!StringUtils.isBlank(currentLangTextField.text)) {
 			text = text.withTranslation(currentLanguage, currentLangTextField.text)
 		}
-		if (!StringUtils.isBlank(defaultLangTextField.text)) {
-			text = text.withTranslation(Language.DEFAULT, defaultLangTextField.text)
+		if (needsAlternativeLangText && !StringUtils.isBlank(alternativeLangTextField.text)) {
+			text = text.withTranslation(alternativeLanguage!!, alternativeLangTextField.text)
 		}
 		return  text
 	}
 
-	private fun buildUI(textFieldColumns: Int) {
+	private fun buildUI() {
 		val inset = 5
 		layout = EGBL.getLayout()
 
 		EGBL.add(
 			this,
-			JLabel("$textName (${currentLanguage}):"),
+			JLabel("$textName ($currentLanguage):"),
 			0, 0,	// x, y
 			1, 1,	// width, height
 			0.0, 0.0,	// weightX, weightY
@@ -124,10 +139,10 @@ class TranslatableTextPanel(
 			0, inset, 0, 0
 		)
 
-		if (isNonDefaultLanguage) {
+		if (needsAlternativeLangText) {
 			EGBL.add(
 				this,
-				JLabel("$textName (${Language.DEFAULT}):"),
+				JLabel("$textName ($alternativeLanguage):"),
 				0, 1,	// x, y
 				1, 1,	// width, height
 				0.0, 0.0,	// weightX, weightY
@@ -138,7 +153,7 @@ class TranslatableTextPanel(
 
 			EGBL.add(
 				this,
-				if (defaultLangTextField is JTextArea) UiUtil.decorateTextArea(defaultLangTextField) else defaultLangTextField,
+				if (alternativeLangTextField is JTextArea) UiUtil.decorateTextArea(alternativeLangTextField) else alternativeLangTextField,
 				1, 1,    // x, y
 				EGBL.REMAINDER, 1,    // width, height
 				0.0, 0.0,    // weightX, weightY

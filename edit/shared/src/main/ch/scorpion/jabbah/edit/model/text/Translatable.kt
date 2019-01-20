@@ -158,4 +158,7 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 	 */
 	fun hasDefaultOrSystemLanguage(): Boolean = hasTranslation(Language.DEFAULT) || hasTranslation(System.get().currentLanguage())
 
+	/** Returns the [Language] also used in [getOptionalTranslation] if neither translation for the System nor the default [Language] is available.*/
+	fun getFirstLanguage(): Language? = translations.values.firstOrNull()?.language
+
 }

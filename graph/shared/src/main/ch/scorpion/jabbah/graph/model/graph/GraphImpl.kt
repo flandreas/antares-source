@@ -63,10 +63,6 @@ open class GraphImpl(
 	override var translatedName: TranslatableText = TranslatableText(name)
 		set(value) {
 			if (field != value) {
-				if (!value.hasDefaultOrSystemLanguage()) {
-					LOG.error("translatedName of GraphImpl doesn't contain text for default or system language")
-					throw IllegalArgumentException("TranslatableText doesn't contain text for default or system language")
-				}
 				field = value
 				eventBus.post(GraphNameChangedEvent(this, value))
 			}

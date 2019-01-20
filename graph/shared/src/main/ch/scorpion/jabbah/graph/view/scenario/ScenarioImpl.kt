@@ -57,10 +57,6 @@ class ScenarioImpl(
 	override var translatableName: TranslatableText = TranslatableText(name)
 		set(value) {
 			if (field != value) {
-				if (!value.hasDefaultOrSystemLanguage()) {
-					LOG.error("translatedName of ScenarioImpl doesn't contain text for default or system language")
-					throw IllegalArgumentException("TranslatableText doesn't contain text for default or system language")
-				}
 				field = value
 			}
 		}
