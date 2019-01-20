@@ -128,7 +128,6 @@ class ScenarioImpl(
 
 	override fun write(writer: StoreWriter) {
 		writer.writeInt("id", id)
-		writer.writeString("name", name)
 		writer.writeStorables("name", translatableName.allTranslations())
 		if (!translatableDescription.isEmpty) {
 			writer.writeStorables("desc", translatableDescription.allTranslations())

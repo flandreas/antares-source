@@ -84,7 +84,7 @@ class TranslatableTextPanel(
 
 		alternativeLanguage = if (needsAlternativeLangText) {
 			if (!text.hasDefaultOrSystemLanguage()) {
-				text.getFirstLanguage()
+				text.getFirstLanguage() ?: Language.DEFAULT
 			} else {
 				Language.DEFAULT
 			}
@@ -96,7 +96,9 @@ class TranslatableTextPanel(
 			currentLangTextField.text = text.getTranslation(currentLanguage)
 		}
 		if (needsAlternativeLangText) {
-			alternativeLangTextField.text = text.getTranslation(alternativeLanguage!!)
+			if (text.hasTranslation(alternativeLanguage!!)) {
+				alternativeLangTextField.text = text.getTranslation(alternativeLanguage!!)
+			}
 		}
 
 		buildUI()

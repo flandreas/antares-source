@@ -8,9 +8,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import com.l2fprod.common.propertysheet.Property
 import java.beans.BeanInfo
 
-/**
- * A [BeanInfo] for [ScenarioImpl].
- */
+/** A [BeanInfo] for [ScenarioImpl].*/
 @Suppress("unused")
 class ScenarioImplBeanInfo : AbstractBeanInfo<ScenarioImpl>() {
 
