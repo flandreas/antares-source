@@ -141,6 +141,44 @@ class CommandManagerImplTest {
         assertThat(cmdManager.canRedo(), `is`(false))
     }
 
+	/** ---- Checkpoints */
+
+	@Test
+	fun shouldNotBeUndoableWithNewCheckpoint() {
+		cmdManager.execute(command("A"))
+
+		cmdManager.openCheckpoint("CP")
+
+		assertThat(cmdManager.canUndo(), `is`(false))
+	}
+
+	@Test
+	fun shouldBeUndoableAfterUsingCheckpoint() {
+		cmdManager.execute(command("A"))
+		cmdManager.openCheckpoint("CP")
+
+		cmdManager.execute(command("B"))
+
+		assertThat(cmdManager.canUndo(), `is`(true))
+	}
+
+	@Test
+	fun shouldPurgeCommandsWhenClosingCheckpoint() {
+		val cmdA = command("A")
+		val cmdB = command("B")
+		cmdManager.execute(cmdA)
+		cmdManager.openCheckpoint("CP")
+		cmdManager.execute(cmdB)
+		cmdManager.closeCheckpoint()
+
+		cmdManager.undo()
+
+		verify(cmdB, never()).undo()
+		verify(cmdA, times(1)).undo()
+	}
+
+	/** ---- Helper methods */
+
     private fun command(desc: String = "Cmd"): Command {
         val command = mock<Command>()
         whenever(command.getDescription()).thenReturn(desc)

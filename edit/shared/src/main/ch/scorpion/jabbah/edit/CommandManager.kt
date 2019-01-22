@@ -18,6 +18,13 @@ data class CommandManagerActiveEvent(val commandManager: CommandManager)
  * registered, executed or undone.
  *
  * A [CommandManager] resets its state after the current application data have been saved.
+ *
+ * [CommandManager] uses the concept of "checkpoints" for stacking [CommandManager] states. Consider an
+ * application that uses a single [CommandManager] or an [Editor]. This application consists of a modal dialog,
+ * in which the user performs some undoable actions. If the user closes this dialog using "Cancel" (and confirming
+ * a warning that he will loose his changes), the application want the [CommandManager] to delete all registered
+ * [Command]s back to the point where the modal dialog was opened. This can be done by opening a checkpoint when
+ * the dialog is opened, and closing the checkpoint when the dialog is closed.
  */
 interface CommandManager {
 
@@ -115,4 +122,16 @@ interface CommandManager {
      * Posts a [CommandEvent] after execution.
      */
     fun reset()
+
+	/**
+	 * Creates a new, stacked [CommandManager] state. See the class comment for more information.
+	 * @name the name of the checkpoint. Only used for logging.
+	 */
+	fun openCheckpoint(name: String)
+
+	/**
+	 * Closes the previously opened checkpoint.
+	 * @throws IllegalStateException if no checkpoint has been opened
+	 */
+	fun closeCheckpoint()
 }

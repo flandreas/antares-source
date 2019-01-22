@@ -65,7 +65,8 @@ class EditSubGraphVerticeViewAction(
 			metaGraphRepository = metaGraphRepository,
 			containerPanel = containerPanel,
 			subGraphVerticeView = editedVerticeView,
-			storableCloner = storableCloner
+			storableCloner = storableCloner,
+			commandManager = commandManager
 		)) {
 			// User has pressed "OK"
 			commandManager.execute(EditSubGraphVerticeViewCommand(editedVerticeView, containerPanel.editor.drawing as ContainerDrawing))

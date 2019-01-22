@@ -6,7 +6,9 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.DeleteAction
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -29,6 +31,7 @@ class EditSubGraphVerticeViewPanel(
     private val containerPanel: ContainerPanel,
     private val subGraphVerticeView: SubGraphVerticeView<*>,
     private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
+	private val commandManager: CommandManager = EditModule.commandManager,
 	private val closeHandler: (Boolean) -> Unit
 ) : JPanel() {
 
@@ -45,7 +48,8 @@ class EditSubGraphVerticeViewPanel(
 			metaGraphRepository: MetaGraphRepository,
 			containerPanel: ContainerPanel,
 			subGraphVerticeView: SubGraphVerticeView<*>,
-			storableCloner: StorableCloner
+			storableCloner: StorableCloner,
+			commandManager: CommandManager
 		): Boolean {
 			val dialog = JDialog(parent, true)
 			var okPressed = false
@@ -69,7 +73,13 @@ class EditSubGraphVerticeViewPanel(
 					BusyHandler.deregister(dialog)
 				}
 			})
-			dialog.isVisible = true
+
+			try {
+				commandManager.openCheckpoint("subgraphContainerView")
+				dialog.isVisible = true
+			} finally {
+				commandManager.closeCheckpoint()
+			}
 
 			return okPressed
 		}

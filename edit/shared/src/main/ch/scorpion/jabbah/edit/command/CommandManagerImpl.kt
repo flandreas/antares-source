@@ -15,19 +15,32 @@ class CommandManagerImpl(
 ) : CommandManager {
 
 	companion object {
-        private val LOG by logger(CommandManagerImpl::class)
+		private val LOG by logger(CommandManagerImpl::class)
+		private const val DEFAULT_STATE_NAME = "default"
 	}
 
-    private val undoStack = Stack<CommandTransaction>()
+	private class State(val name: String) {
 
-    private val redoStack = Stack<CommandTransaction>()
+		val undoStack = Stack<CommandTransaction>()
 
-    /** Holds the current [CommandTransaction].*/
-    private var transaction: CommandTransaction? = null
+		val redoStack = Stack<CommandTransaction>()
 
-    private var level: Int = 0
+		/** Holds the current [CommandTransaction].*/
+		var transaction: CommandTransaction? = null
 
-    /** ---- [CommandManager] interface */
+		/** The level of transaction stacking.*/
+		var level: Int = 0
+	}
+
+	private val states = Stack<State>();
+
+	private val state: State get() = states.peek()
+
+	init {
+		states.push(State(DEFAULT_STATE_NAME))
+	}
+
+	/** ---- [CommandManager] interface */
 
 	override var active: Boolean = true
 		set(value) {
@@ -37,177 +50,192 @@ class CommandManagerImpl(
 			}
 		}
 
-    override val applicationDataChanged: Boolean
-        get() = undoStack.items.reversed().firstOrNull { it.changesApplicationData } != null
+	override val applicationDataChanged: Boolean
+		get() = state.undoStack.items.reversed().firstOrNull { it.changesApplicationData } != null
 
-    override fun beginTransaction(command: Command, register: Boolean) {
-        if (transaction == null) {
-            transaction = CommandTransaction()
-        }
-        level++
-        transaction?.let {
-            it.add(command)
-            if (register) {
-                command.registered()
-            } else {
-                command.execute()
-                command.validate()
-            }
-        }
-    }
+	override fun beginTransaction(command: Command, register: Boolean) {
+		if (state.transaction == null) {
+			state.transaction = CommandTransaction()
+		}
+		state.level++
+		state.transaction?.let {
+			it.add(command)
+			if (register) {
+				command.registered()
+			} else {
+				command.execute()
+				command.validate()
+			}
+		}
+	}
 
-    override fun beginTransaction(descriptionKey: String, drawingView: DrawingView<*>?) {
-        beginTransaction(TransactionCommand(descriptionKey, drawingView), true)
-    }
+	override fun beginTransaction(descriptionKey: String, drawingView: DrawingView<*>?) {
+		beginTransaction(TransactionCommand(descriptionKey, drawingView), true)
+	}
 
-    override fun execute(command: Command) {
-        if (transaction == null) {
-            beginTransaction(command, register = false)
-            commitTransaction()
-        } else {
-            transaction!!.add(command)
-            command.execute()
-            command.validate()
-        }
-    }
+	override fun execute(command: Command) {
+		if (state.transaction == null) {
+			beginTransaction(command, register = false)
+			commitTransaction()
+		} else {
+			state.transaction!!.add(command)
+			command.execute()
+			command.validate()
+		}
+	}
 
-    override fun register(command: Command) {
-        if (transaction == null) {
-            beginTransaction(command, register = true)
-            commitTransaction()
-        } else {
-            transaction!!.add(command)
-            command.validate()
-        }
-    }
+	override fun register(command: Command) {
+		if (state.transaction == null) {
+			beginTransaction(command, register = true)
+			commitTransaction()
+		} else {
+			state.transaction!!.add(command)
+			command.validate()
+		}
+	}
 
-    override fun commitTransaction() {
-        if (transaction == null) {
-            throw IllegalStateException("no transaction")
-        }
-        level--
-        if (level == 0) {
-            LOG.debug("commit transaction '${transaction!!.headCommand.getDescription()}'")
-            undoStack.push(transaction!!)
-            eventBus.post(CommandEvent(this))
-            transaction = null
-        }
-    }
+	override fun commitTransaction() {
+		if (state.transaction == null) {
+			throw IllegalStateException("no transaction")
+		}
+		state.level--
+		if (state.level == 0) {
+			LOG.debug("commit transaction '${state.transaction!!.headCommand.getDescription()}'")
+			state.undoStack.push(state.transaction!!)
+			eventBus.post(CommandEvent(this))
+			state.transaction = null
+		}
+	}
 
-    override fun rollbackTransaction() {
-        if (transaction == null) {
-            throw IllegalStateException("no transaction")
-        }
-        transaction!!.undo()
-        level = 0
-        transaction = null
-    }
+	override fun rollbackTransaction() {
+		if (state.transaction == null) {
+			throw IllegalStateException("no transaction")
+		}
+		state.transaction!!.undo()
+		state.level = 0
+		state.transaction = null
+	}
 
-    override fun canUndo(): Boolean {
-        return !undoStack.empty
-    }
+	override fun canUndo(): Boolean {
+		return !state.undoStack.empty
+	}
 
-    override fun canRedo(): Boolean {
-        return !redoStack.empty
-    }
+	override fun canRedo(): Boolean {
+		return !state.redoStack.empty
+	}
 
-    override fun getUndoDescription(): String? {
-        if (!canUndo()) {
-            return null
-        }
-        return undoStack.peek().headCommand.getDescription()
-    }
+	override fun getUndoDescription(): String? {
+		if (!canUndo()) {
+			return null
+		}
+		return state.undoStack.peek().headCommand.getDescription()
+	}
 
-    override fun getRedoDescription(): String? {
-        if (!canRedo()) {
-            return null
-        }
-        return redoStack.peek().headCommand.getDescription()
-    }
+	override fun getRedoDescription(): String? {
+		if (!canRedo()) {
+			return null
+		}
+		return state.redoStack.peek().headCommand.getDescription()
+	}
 
-    override fun undo() {
-        if (!canUndo()) {
-            throw IllegalStateException("no undoable transaction")
-        }
-        val undoTransaction = undoStack.pop()
-        redoStack.push(undoTransaction)
+	override fun undo() {
+		if (!canUndo()) {
+			throw IllegalStateException("no undoable transaction")
+		}
+		val undoTransaction = state.undoStack.pop()
+		state.redoStack.push(undoTransaction)
 
-        undoTransaction.undo()
-        eventBus.post(CommandEvent(this))
-    }
+		undoTransaction.undo()
+		eventBus.post(CommandEvent(this))
+	}
 
-    override fun redo() {
-        if (!canRedo()) {
-            throw IllegalStateException("no redoable transaction")
-        }
-        val redoTransaction = redoStack.pop()
-        undoStack.push(redoTransaction)
+	override fun redo() {
+		if (!canRedo()) {
+			throw IllegalStateException("no redoable transaction")
+		}
+		val redoTransaction = state.redoStack.pop()
+		state.undoStack.push(redoTransaction)
 
-        redoTransaction.execute()
-        eventBus.post(CommandEvent(this))
-    }
+		redoTransaction.execute()
+		eventBus.post(CommandEvent(this))
+	}
 
-    override fun reset() {
-        if (transaction != null) {
-            throw IllegalStateException("cannot reset while in transaction")
-        }
-        undoStack.clear()
-        redoStack.clear()
-        eventBus.post(CommandEvent(this))
-    }
+	override fun reset() {
+		if (state.transaction != null) {
+			throw IllegalStateException("cannot reset while in transaction")
+		}
+		state.undoStack.clear()
+		state.redoStack.clear()
+		eventBus.post(CommandEvent(this))
+	}
 
-    /** ---- [CommandManagerImpl] */
+	override fun openCheckpoint(name: String) {
+		LOG.debug("opening checkpoint '$name'")
+		states.push(State(name))
+		eventBus.post(CommandEvent(this))
+	}
 
-    private class CommandTransaction {
+	override fun closeCheckpoint() {
+		if (states.size < 2) {
+			throw IllegalStateException("no checkpoint to close")
+		}
+		LOG.debug("closing checkpoint ${states.peek().name}")
+		states.pop()
+		eventBus.post(CommandEvent(this))
+	}
 
-	    private val commands = mutableListOf<Command>()
+	/** ---- [CommandManagerImpl] */
 
-        val headCommand: Command get() = commands.first()
+	private class CommandTransaction {
 
-	    val changesApplicationData: Boolean get() = commands.find { it.changesApplicationData } != null
+		private val commands = mutableListOf<Command>()
 
-        fun add(command: Command) {
-            commands.add(command)
-            command.addedToTransaction()
-        }
+		val headCommand: Command get() = commands.first()
 
-        fun execute() {
-            for (c in commands) {
-                c.execute()
-                c.validate()
-            }
-        }
+		val changesApplicationData: Boolean get() = commands.find { it.changesApplicationData } != null
 
-        fun undo() {
-            for (c in commands.reversed()) {
-                c.undo()
-                c.validate()
-            }
-        }
-    }
+		fun add(command: Command) {
+			commands.add(command)
+			command.addedToTransaction()
+		}
 
-    /**
-     * A [Command] implementation that does nothing, but serves only as a dummy [Command]
-     * for holding inner transaction [Command]s.
-     *
-     * @param descriptionKey the translation key of the transaction's description
-     * @property drawingView the [DrawingView] to validate, if any
-     */
-    private class TransactionCommand(
-            descriptionKey: String,
-            private val drawingView: DrawingView<*>? = null
-    ) : AbstractCommand(descriptionKey, null) {
+		fun execute() {
+			for (c in commands) {
+				c.execute()
+				c.validate()
+			}
+		}
 
-        override fun execute() {
-            // empty
-        }
+		fun undo() {
+			for (c in commands.reversed()) {
+				c.undo()
+				c.validate()
+			}
+		}
+	}
 
-        override fun undo() {
-            // empty
-        }
+	/**
+	 * A [Command] implementation that does nothing, but serves only as a dummy [Command]
+	 * for holding inner transaction [Command]s.
+	 *
+	 * @param descriptionKey the translation key of the transaction's description
+	 * @property drawingView the [DrawingView] to validate, if any
+	 */
+	private class TransactionCommand(
+		descriptionKey: String,
+		private val drawingView: DrawingView<*>? = null
+	) : AbstractCommand(descriptionKey, null) {
 
-        override fun validate() {
-            drawingView?.drawing?.validate()
-        }
-    }
+		override fun execute() {
+			// empty
+		}
+
+		override fun undo() {
+			// empty
+		}
+
+		override fun validate() {
+			drawingView?.drawing?.validate()
+		}
+	}
 }
