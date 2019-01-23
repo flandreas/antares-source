@@ -51,6 +51,11 @@ class DrawingViewImpl<T: Drawing<Component>>(
 		repaint()
 	}
 
+	private val commandEventHandler: (CommandEvent) -> Unit = {
+		invalidate()
+		repaint()
+	}
+
     /** ---- [DrawingView] interface */
 
     override var content: DrawingViewContent<T> = createContent(drawing)
@@ -110,6 +115,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
     init {
 	    eventBus.register(PreferencesChangedEvent::class, preferenceChangeHandler)
+	    eventBus.register(CommandEvent::class, commandEventHandler)
         setupContent()
         grid.view = this
         showGrid = true
@@ -118,6 +124,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
 	override fun dispose() {
 		super.dispose()
 		eventBus.unregister(PreferencesChangedEvent::class, preferenceChangeHandler)
+		eventBus.unregister(CommandEvent::class, commandEventHandler)
 		componentMessageDisplayer.dispose()
 		grid.dispose()
 	}
