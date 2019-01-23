@@ -10,7 +10,7 @@ var co = (valueIn == 255);
 elem.setOutput(&quot;O&quot;, valueOut.toString(&quot;16&quot;));
 elem.setOutputBit(&quot;CO&quot;, co);'>
           <elements>
-            <subGraphVerticeRef _id='3' id='1' delay='20' name='Halbaddierer' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
+            <subGraphVerticeRef _id='3' id='1' delay='20' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
             <circuitInOut _id='4' id='2' delay='0' name='D' type='input' bitWidth='8'/>
             <splitter _id='5' id='3' delay='0' bitWidth='8' branchCount='8'/>
             <constant _id='6' id='4' delay='1' bitWidth='1' value='1'/>
@@ -26,13 +26,13 @@ elem.setOutputBit(&quot;CO&quot;, co);'>
                 <netPortRef verticeId='6' portId='1'/>
               </ports>
             </digitalNet>
-            <subGraphVerticeRef _id='9' id='7' delay='20' name='Halbaddierer' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
-            <subGraphVerticeRef _id='10' id='8' delay='20' name='Halbaddierer' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
-            <subGraphVerticeRef _id='11' id='9' delay='20' name='Halbaddierer' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
-            <subGraphVerticeRef _id='12' id='10' delay='20' name='Halbaddierer' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
-            <subGraphVerticeRef _id='13' id='11' delay='20' name='Halbaddierer' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
-            <subGraphVerticeRef _id='14' id='12' delay='20' name='Halbaddierer' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
-            <subGraphVerticeRef _id='15' id='13' delay='20' name='Halbaddierer' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
+            <subGraphVerticeRef _id='9' id='7' delay='20' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
+            <subGraphVerticeRef _id='10' id='8' delay='20' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
+            <subGraphVerticeRef _id='11' id='9' delay='20' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
+            <subGraphVerticeRef _id='12' id='10' delay='20' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
+            <subGraphVerticeRef _id='13' id='11' delay='20' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
+            <subGraphVerticeRef _id='14' id='12' delay='20' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
+            <subGraphVerticeRef _id='15' id='13' delay='20' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
             <digitalNet _id='16' id='15' delay='0'>
               <ports>
                 <netPortRef verticeId='9' portId='2'/>
@@ -228,7 +228,7 @@ elem.setOutputBit(&quot;CO&quot;, co);'>
               </location>
             </circuitInOutView>
             <splitterView _id='83' id='3' rot='0' modelId='5' x='252.0' y='140.0' handedness='right'/>
-            <constantView _id='82' id='4' modelId='6' x='210.0' y='266.0' representation='binary' orientation='east'/>
+            <constantView _id='82' id='4' modelId='6' x='196.0' y='266.0' representation='binary' orientation='east'/>
             <digitalEdgeView _id='81' id='5' modelId='7' layout='ortho' orig='84' origPort='1' origPortOutput='true' dest='83' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='196.0,140.0 266.0,140.0'/>
@@ -236,7 +236,7 @@ elem.setOutputBit(&quot;CO&quot;, co);'>
             </digitalEdgeView>
             <digitalEdgeView _id='80' id='6' modelId='8' layout='ortho' orig='82' origPort='1' origPortOutput='true' dest='85' destPort='2' adjusted='false'>
               <shape>
-                <polylineShape points='210.0,266.0 336.0,266.0'/>
+                <polylineShape points='182.0,266.0 336.0,266.0'/>
               </shape>
             </digitalEdgeView>
             <subGraphVerticeViewRef _id='79' id='7' rot='0' modelId='9' x='434.0' y='224.0' label='HA'/>

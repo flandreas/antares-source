@@ -4,9 +4,9 @@
       <model>
         <graph _id='2'>
           <elements>
-            <subGraphVerticeRef _id='3' id='1' delay='0' name='JK-Flipflop (Neg)' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'/>
-            <subGraphVerticeRef _id='4' id='2' delay='0' name='JK-Flipflop (Neg)' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'/>
-            <subGraphVerticeRef _id='5' id='3' delay='0' name='JK-Flipflop (Neg)' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'/>
+            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'/>
+            <subGraphVerticeRef _id='4' id='2' delay='0' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'/>
+            <subGraphVerticeRef _id='5' id='3' delay='0' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58'/>
             <circuitInOut _id='6' id='4' delay='0' name='C' type='input' bitWidth='1'/>
             <constant _id='7' id='5' delay='1' bitWidth='1' value='1'/>
             <digitalNet _id='8' id='6' delay='0'>
@@ -82,7 +82,7 @@
             <constantView _id='53' id='5' modelId='7' x='-266.0' y='-182.0' representation='binary' orientation='south'/>
             <digitalEdgeView _id='52' id='6' modelId='8' layout='ortho' orig='53' origPort='1' origPortOutput='true' dest='50' adjusted='false'>
               <shape>
-                <polylineShape points='-266.0,-182.0 -266.0,-154.0'/>
+                <polylineShape points='-266.0,-196.0 -266.0,-154.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='51' id='7' modelId='8' layout='ortho' orig='50' dest='57' destPort='2' adjusted='true'>
