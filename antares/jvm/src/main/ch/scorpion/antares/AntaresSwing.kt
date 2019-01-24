@@ -33,6 +33,7 @@ import ch.scorpion.jabbah.io.Storable
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
+import javax.swing.SwingUtilities
 import javax.swing.plaf.FontUIResource
 
 
@@ -87,7 +88,7 @@ class AntaresSwing(
 		}
 		eventBus.register(LibraryItemRemovedEvent::class) {
 			if (it.item is ContainerLibraryElement && (it.item as ContainerLibraryElement).metaGraph == applicationData) {
-				close()
+				SwingUtilities.invokeLater { close() }
 			}
 		}
 	}

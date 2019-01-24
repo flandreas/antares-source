@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.repository.LibraryDependencyException
 import ch.scorpion.jabbah.graph.repository.RepositoryModule
@@ -26,65 +26,64 @@ class LibraryTreeViewTransferHandler(
 	private val repositoryService: RepositoryService = RepositoryModule.repositoryService.invoke()
 ) : TransferHandler() {
 
-    companion object {
-	    private val LOG by logger(LibraryTreeViewTransferHandler::class)
-        private val DUMMY_IMAGE = BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
-    }
+	companion object {
+		private val DUMMY_IMAGE = BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB)
+	}
 
-    /** ---- [TransferHandler] */
+	/** ---- [TransferHandler] */
 
-    override fun getSourceActions(c: JComponent): Int = TransferHandler.COPY
+	override fun getSourceActions(c: JComponent): Int = TransferHandler.COPY
 
-    override fun canImport(support: TransferHandler.TransferSupport): Boolean {
-	    if (!support.isDataFlavorSupported(GraphElementViewTransferable.FLAVOR)) {
-		    return false
-	    }
-	    if (support.dropLocation !is JTree.DropLocation || support.component != treeView) {
-		    return false
-	    }
-	    if (extractTransferElement(support) !is ContainerLibraryElement) {
-		    return false
-	    }
+	override fun canImport(support: TransferHandler.TransferSupport): Boolean {
+		if (!support.isDataFlavorSupported(GraphElementViewTransferable.FLAVOR)) {
+			return false
+		}
+		if (support.dropLocation !is JTree.DropLocation || support.component != treeView) {
+			return false
+		}
+		if (extractTransferElement(support) !is ContainerLibraryElement) {
+			return false
+		}
 
-	    return getLibraryDropLocation(support) != null
-    }
+		return getLibraryDropLocation(support) != null
+	}
 
-    override fun createTransferable(c: JComponent): Transferable? {
-        val tree = c as JTree
-        val treeNode = tree.selectionPath.lastPathComponent as DefaultMutableTreeNode
-        if (treeNode.userObject !is LibraryElement) {
-            return null
-        }
+	override fun createTransferable(c: JComponent): Transferable? {
+		val tree = c as JTree
+		val treeNode = tree.selectionPath.lastPathComponent as DefaultMutableTreeNode
+		if (treeNode.userObject !is LibraryElement) {
+			return null
+		}
 
-        val libraryElement = treeNode.userObject as LibraryElement
-        val newInstance = libraryElement.getNewInstance<GraphElement>()
+		val libraryElement = treeNode.userObject as LibraryElement
+		val newInstance = libraryElement.getNewInstance<GraphElement>()
 
-        // Didn't find a better way to hide the default cursor rectangle in the size of the TreeNode's bounding box
-        dragImage = DUMMY_IMAGE
-        dragImageOffset = java.awt.Point(0, 0)
+		// Didn't find a better way to hide the default cursor rectangle in the size of the TreeNode's bounding box
+		dragImage = DUMMY_IMAGE
+		dragImageOffset = java.awt.Point(0, 0)
 
-        return GraphElementViewTransferable.of(newInstance, libraryElement)
-    }
+		return GraphElementViewTransferable.of(newInstance, libraryElement)
+	}
 
-    override fun importData(support: TransferHandler.TransferSupport): Boolean {
-	    getLibraryDropLocation(support)?.let {
-		    val elem = extractTransferElement(support) as ContainerLibraryElement
-		    return try {
-			    repositoryService.move(elem, it.directory, it.index)
-			    true
-		    } catch (e: LibraryDependencyException) {
-			    JOptionPane.showConfirmDialog(
-				    Frame.getFrames()[0],
-				    Translations.getString("repository.move.dependencyError.msg", e.subGraphVertice.name!!),
-				    Translations.getString("repository.move.name"),
-				    JOptionPane.DEFAULT_OPTION,
-				    JOptionPane.ERROR_MESSAGE)
-			    false
-		    }
-	    }
+	override fun importData(support: TransferHandler.TransferSupport): Boolean {
+		getLibraryDropLocation(support)?.let {
+			val elem = extractTransferElement(support) as ContainerLibraryElement
+			return try {
+				InvocationHandler.invoke { repositoryService.move(elem, it.directory, it.index) }
+				true
+			} catch (e: LibraryDependencyException) {
+				JOptionPane.showConfirmDialog(
+					Frame.getFrames()[0],
+					Translations.getString("repository.move.dependencyError.msg", e.subGraphVertice.name!!),
+					Translations.getString("repository.move.name"),
+					JOptionPane.DEFAULT_OPTION,
+					JOptionPane.ERROR_MESSAGE)
+				false
+			}
+		}
 
-	    return false
-    }
+		return false
+	}
 
 	private fun getLibraryDropLocation(support: TransferHandler.TransferSupport): LibraryDropLocation? {
 		val dropLocation = support.dropLocation as JTree.DropLocation
