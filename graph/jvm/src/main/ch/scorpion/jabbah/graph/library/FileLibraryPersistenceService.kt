@@ -36,7 +36,7 @@ class FileLibraryPersistenceService(
     /** ---- [LibraryPersistenceService] */
 
     override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
-        LOG.debug("FileLibraryPersistenceService: load MetaGraph '$uuid'")
+        LOG.debug("load MetaGraph '$uuid'")
         val filePath = buildMetaGraphFilePath(library.name, uuid)
         FileInputStream(filePath).use {
             try {
@@ -53,7 +53,7 @@ class FileLibraryPersistenceService(
     }
 
     override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
-        LOG.debug("FileLibraryPersistenceService: store MetaGraph '${metaGraph.uuid}'")
+        LOG.debug("store MetaGraph '${metaGraph.uuid}'")
 	    ensureLibraryDirectory(library.name)
 	    val filePath = buildMetaGraphFilePath(library.name, metaGraph.uuid)
         FileOutputStream(filePath).use {
@@ -68,7 +68,7 @@ class FileLibraryPersistenceService(
     }
 
     override fun deleteContainerLibraryElement(library: Library, uuid: UUID) {
-        LOG.debug("FileLibraryPersistenceService: delete MetaGraph '$uuid'")
+        LOG.debug("delete MetaGraph '$uuid'")
         File(buildMetaGraphFilePath(library.name, uuid)).delete()
     }
 
@@ -106,12 +106,12 @@ class FileLibraryPersistenceService(
     }
 
 	override fun deleteLibrary(name: String) {
-		LOG.debug("FileLibraryPersistenceService: deleteLibrary $name")
+		LOG.debug("deleteLibrary $name")
 		FileUtils.deleteDirectory(File(buildLibraryDirectoryPath(name)))
 	}
 
 	override fun duplicateLibrary(library: Library, newName: String) {
-		LOG.debug("FileLibraryPersistenceService: duplicateLibrary ${library.name}")
+		LOG.debug("duplicateLibrary ${library.name}")
 		FileUtils.copyDirectory(
 			File(buildLibraryDirectoryPath(library.name)),
 			File(buildLibraryDirectoryPath(newName))
@@ -119,7 +119,7 @@ class FileLibraryPersistenceService(
 	}
 
     override fun exportLibrary(library: Library, outputPath: String) {
-        LOG.debug("FileLibraryPersistenceService: Exporting library to $outputPath")
+        LOG.debug("Exporting library to $outputPath")
         FileOutputStream(outputPath).use { output ->
             ZipOutputStream(output).use {
                 val fileToZip = File(buildLibraryDirectoryPath(library.name))
@@ -129,7 +129,7 @@ class FileLibraryPersistenceService(
     }
 
 	override fun importLibrary(name: String, inputPath: String) {
-		LOG.debug("FileLibraryPersistenceService: Importing library '$name' from $inputPath")
+		LOG.debug("Importing library '$name' from $inputPath")
 		FileInputStream(inputPath).use {input ->
 			ZipInputStream(input).use {
 				unzipFile(Files.createDirectory(Paths.get(name)), it)
@@ -138,7 +138,7 @@ class FileLibraryPersistenceService(
 	}
 
 	override fun renameLibrary(library: Library, newName: String) {
-		LOG.debug("FileLibraryPersistenceService: renameLibrary '${library.name}' to '$newName'")
+		LOG.debug("renameLibrary '${library.name}' to '$newName'")
 		val oldPath = FileSystems.getDefault().getPath(directoryPath, library.name)
 		if (!Files.exists(oldPath)) {
 			throw IllegalArgumentException("No directory found for library ${library.name}")

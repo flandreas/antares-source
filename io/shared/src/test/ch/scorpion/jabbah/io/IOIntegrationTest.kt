@@ -16,20 +16,20 @@ import kotlin.test.assertTrue
 class IOIntegrationTest {
 
     private val xml =
-            "<document _id='1'>" +
-                "<children>" +
-                    "<a _id='1' aString='test' aInt='42' aDouble='3.5' aBoolean='true' aLong='123' referencedB='2'>" +
-                    "<childB>" +
-                        "<b name='b1'/>" +
-                        "<b name='b2'/>" +
-                        "<b name='b3'/>" +
-                    "</childB>" +
-                    "</a>" +
-                    "<b _id='2' name='anyB'/>" +
-                "</children>" +
-            "</document>"
+        "<document _id='1'>" +
+            "<children>" +
+                "<a _id='1' aString='test' aInt='42' aDouble='3.5' aBoolean='true' aLong='123' referencedB='2'>" +
+                "<childB>" +
+                    "<b name='b1'/>" +
+                    "<b name='b2'/>" +
+                    "<b name='b3'/>" +
+                "</childB>" +
+                "</a>" +
+                "<b _id='2' name='anyB'/>" +
+            "</children>" +
+        "</document>"
 
-    lateinit private var typeMap: TypeMap
+    private lateinit var typeMap: TypeMap
 
     @Before
     fun setup() {
@@ -38,6 +38,7 @@ class IOIntegrationTest {
         typeMap.register("document", Document::class)
         typeMap.register("a", A::class)
         typeMap.register("b", B::class)
+	    A.instancesCount = 0
     }
 
     @Test
@@ -70,8 +71,8 @@ class IOIntegrationTest {
         val buffer = ByteArrayOutputStream()
         val xmlWriter = ElectricXmlWriter(buffer)
 
-        val storeXmlWriter = StoreXmlWriter(xmlWriter, typeMap, GlobalIdentityCreator(), {true})
-        storeXmlWriter.writeStorable(document)
+        val storeXmlWriter = StoreXmlWriter(xmlWriter, typeMap, GlobalIdentityCreator()) {true}
+	    storeXmlWriter.writeStorable(document)
 
         // Read in order to check
         val storeXmlReader = StoreXmlReader(
@@ -81,6 +82,30 @@ class IOIntegrationTest {
             ReferenceResolverImpl())
         checkDocument(storeXmlReader.readStorable() as Document)
     }
+
+	@Test
+	fun shouldReadElementAtPath() {
+		val xml =
+			"<document _id='1'>" +
+				"<myA>" +
+					"<a _id='1' aString='test' aInt='42' aDouble='3.5' aBoolean='true' aLong='123' referencedB='2'/>" +
+				"</myA>" +
+				"<myB>" +
+					"<b _id='2' name='anyB'/>" +
+				"</myB>" +
+			"</document>"
+
+		val storeXmlReader = StoreXmlReader(
+			ElectricXmlReader(ByteArrayInputStream(xml.toByteArray())),
+			typeMap,
+			SystemStorableCreator(),
+			ReferenceResolverImpl())
+
+		val b = storeXmlReader.readStorable(listOf("myB")) as B
+
+		assertThat(A.instancesCount, `is`(0))
+		assertThat(b.name, `is`("anyB"))
+	}
 
     private fun checkDocument(doc: Document) {
         assertThat(doc.children.size, `is`(2))
@@ -125,8 +150,17 @@ class IOIntegrationTest {
     }
 
     class A : Storable {
+
+	    companion object {
+	        var instancesCount: Int = 0
+	    }
+
+	    init {
+		    instancesCount++
+	    }
+
         override var storableId: Int = 0
-            var aString: String = ""
+	    var aString: String = ""
         var aInt: Int= 0
         var aDouble: Double = 0.0
         var aBoolean: Boolean = false

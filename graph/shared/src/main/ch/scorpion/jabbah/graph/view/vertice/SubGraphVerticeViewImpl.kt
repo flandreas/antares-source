@@ -239,7 +239,6 @@ class SubGraphVerticeViewImpl(
 
         if (STORABLE_MODEL_ID == reference.name) {
             if (customizedContainerDrawing == null) {
-                // TODO Support for requesting only the ContainerDrawing from the LibraryImpl
                 val graph = repository.getOptionalMetaGraph(model!!.graphUUID!!)
                 if (graph != null) {
                     fillFromContainerDrawing(graph.containerDrawing)

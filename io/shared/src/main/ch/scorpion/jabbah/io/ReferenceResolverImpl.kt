@@ -26,13 +26,13 @@ class ReferenceResolverImpl : ReferenceResolver {
     /** ---- [ReferenceResolver] */
 
     override fun addStorable(globalId: Int, storable: Storable) {
-        LOG.trace("ReferenceResolver: add storable $globalId")
+        LOG.trace("add storable $globalId")
         storable.storableId = globalId
         map.put(globalId, storable)
     }
 
     override fun getStorable(globalId: Int): Storable? {
-        LOG.trace("ReferenceResolver: getStorable for id $globalId")
+        LOG.trace("getStorable for id $globalId")
         return map.get(globalId)
     }
 
@@ -64,7 +64,7 @@ class ReferenceResolverImpl : ReferenceResolver {
                         try {
                             storable.resolve(reference, referenceResolver)
                         } catch (e: Throwable) {
-                            LOG.error("ReferenceResolver: error while resolving class '${System.get().getClassName(storable)}' with storableID '${storable.storableId}': ${e.message}")
+                            LOG.error("error while resolving class '${System.get().getClassName(storable)}' with storableID '${storable.storableId}': ${e.message}")
                             throw e
                         }
                     }

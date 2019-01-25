@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.UUID
  */
 interface LibraryPersistenceService {
 
+	/** Loads the entire [MetaGraph] with the specified [UUID].*/
     fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph
 
     fun storeMetaGraph(library: Library, metaGraph: MetaGraph)

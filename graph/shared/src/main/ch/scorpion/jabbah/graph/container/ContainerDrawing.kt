@@ -31,6 +31,7 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.io.*
@@ -120,11 +121,9 @@ class ContainerDrawing(
      * of [GraphPort]s. These information are needed by [DrawableContainer] when filling
      * [SubGraphVerticeView]s for that [Graph].
      *
-     * Of course, this method is not cool. It conflicts with the design goal that ]SubGraphVerticeView]
-     * can be constructed soley with information from [DrawableContainer], without using the [Graph].
-     * However, this goal may be out of reach anyway, and making information such as port description
-     * reduntand in the [Graph] and the [DrawableContainer] (especially if they support I18N in the futuer!)
-     * isn't cool either.
+     * Of course, this method is not cool. It conflicts with the design goal that [SubGraphVerticeView]
+     * can be constructed solely with information from [DrawableContainer], without using the [Graph].
+     * However, this goal may be out of reach anyway when [ContainerDrawing]s contain deeply linked [ControlView]s.
      */
     fun completeFromGraph(graph: Graph) {
         model.getPorts().forEach {
@@ -141,7 +140,7 @@ class ContainerDrawing(
             val outer = c.portView!!.port
             val inner = model.getPort<Any>(outer.name!!)
             if (outer !== inner) {
-                LOG.warn("ContainerDrawing: inconsistent SubGraphPort instances for port $outer")
+                LOG.warn("inconsistent SubGraphPort instances for port $outer")
                 return false
             }
         }
@@ -199,7 +198,7 @@ class ContainerDrawing(
      * [ContainerDrawing], thus providing the look that has been designed by the library designer.
      */
     fun fillSubGraphVerticeView(view: SubGraphVerticeView<SubGraphVerticeRef>) {
-        LOG.debug("ContainerDrawing: filling SubGraphVerticeViewRef name:${model.name} storableId:${model.storableId}, uuid:${model.graphUUID}")
+        LOG.debug("filling SubGraphVerticeViewRef name:${model.name} storableId:${model.storableId}, uuid:${model.graphUUID}")
 
         val clonedDrawing = storableCloner.cloneUsingCreator(this, storableCreator) as ContainerDrawing
         val origin = clonedDrawing.getOriginIndicator().location

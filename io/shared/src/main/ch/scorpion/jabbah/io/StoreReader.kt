@@ -15,26 +15,32 @@ interface StoreReader {
 
     fun getStorable(id: Int): Storable
 
-    /**
-     * Reads the next [Storable] from this [StoreReader].
-
-     * @param inputStream the [InputStream] from which the data is read.
-     * @param referenceResolver used for resolving references to other [Storable]s, or `null` if a standard
-     *      reference resolver is to be used.
-     * @return the read [Storable].
-     */
-    //fun readStorable(inputStream: InputStream, referenceResolver: ReferenceResolver?): Storable
-
     /** Reads the toplevel [Storable].*/
     fun readStorable(): Storable
 
     /**
      * Reads the next [Storable] with the specified name.
-
      * @param name the name of the [Storable].
      * @return the read [Storable]
      */
     fun readStorable(name: String): Storable
+
+	/**
+	 * Reads the next [Storable] at the specified path of names.
+	 *
+	 * Example:
+	 * <pre>
+	 * <document _id='1'>
+	 *     <children>
+	 *         <a/>
+	 *         <b/>
+	 *     </children>
+	 * </docment>
+     * </pre>
+	 *
+	 * Calling readStorable(listOf("children", "b")) reads only an instance of "b", but not "a".
+	 */
+	fun readStorable(names: List<String>): Storable
 
     /**
      * Reads a group of [Storable]s with the specified name.
@@ -43,34 +49,24 @@ interface StoreReader {
      */
     fun readStorables(name: String): List<Storable>
 
-    /**
-     * Reads the next `int` attribute with the given name.
-     */
+    /** Reads the next `int` attribute with the given name.*/
     fun readInt(name: String): Int
 
-    /**
-     * Reads the next `double` attribute with the given name.
-     */
+    /** Reads the next `double` attribute with the given name.*/
     fun readDouble(name: String): Double
 
-    /**
-     * Reads the next [String] attribute with the given name.
-     */
+    /** Reads the next [String] attribute with the given name.*/
     fun readString(name: String): String
 
     fun readOptionalString(name: String): String?
 
-    /**
-     * Reads the next [Boolean] attribute with the given name.
-     */
+    /** Reads the next [Boolean] attribute with the given name.*/
     fun readBoolean(name: String): Boolean
 
-    /**
-     * Reads the next [Long] attribute with the given name.
-     */
+    /** Reads the next [Long] attribute with the given name.*/
     fun readLong(name: String): Long
 
-    /** Reads a list of [Points] from the attribute with the given name.*/
+    /** Reads a list of [Point2D] from the attribute with the given name.*/
     fun readPoints(name: String): List<Point2D>
 
     /**

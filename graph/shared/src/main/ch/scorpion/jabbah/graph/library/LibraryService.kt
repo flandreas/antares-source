@@ -185,7 +185,7 @@ class LibraryServiceImpl(
 
 	override fun loadLibrary(name: String): Library {
 		try {
-			LOG.debug("LibraryServiceImpl: Loading Library '$name'")
+			LOG.debug("Loading Library '$name'")
 			val library = persistenceService.loadLibrary(name)
 			library.bindLibraryItems()
 			return library
@@ -195,19 +195,19 @@ class LibraryServiceImpl(
 	}
 
 	override fun storeLibrary(library: Library) {
-		LOG.debug("LibraryServiceImpl: Storing Library")
+		LOG.debug("Storing Library")
 		persistenceService.storeLibrary(library)
 	}
 
 	override fun deleteLibrary(name: String) {
-		LOG.debug("LibraryServiceImpl: Deleting Library '$name'")
+		LOG.debug("Deleting Library '$name'")
 		val library = loadLibrary(name)
 		persistenceService.deleteLibrary(name)
 		eventBus.post(LibraryDeletedEvent(library.uuid, name))
 	}
 
 	override fun renameLibrary(library: Library, newName: String) {
-		LOG.debug("LibraryServiceImpl: Renaming Library '${library.name}' to '$newName'")
+		LOG.debug("Renaming Library '${library.name}' to '$newName'")
 		val oldName = library.name
 		persistenceService.renameLibrary(library, newName)
 		library.name = newName
@@ -228,7 +228,7 @@ class LibraryServiceImpl(
 	}
 
 	override fun removeLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory) {
-		LOG.debug("LibraryServiceImpl: Removing LibraryItem '${item.name}'")
+		LOG.debug("Removing LibraryItem '${item.name}'")
 		if (directory.remove(item)) {
 			if (item is ContainerLibraryElement) {
 				persistenceService.deleteContainerLibraryElement(library, item.uuid)
@@ -248,7 +248,7 @@ class LibraryServiceImpl(
 	}
 
 	override fun addFolder(library: Library, name: String, directory: LibraryDirectory): LibraryDirectory {
-		LOG.debug("LibraryServiceImpl: Adding new Folder '$name'")
+		LOG.debug("Adding new Folder '$name'")
 		val folder = LibraryFolder(name)
 		addLibraryItem(library, folder, directory)
 		return folder
@@ -262,7 +262,7 @@ class LibraryServiceImpl(
 	}
 
 	override fun renameDirectory(directory: LibraryDirectory, newName: TranslatableText) {
-		LOG.debug("LibraryServiceImpl: Renaming LibraryDirectory")
+		LOG.debug("Renaming LibraryDirectory")
 		val oldName = directory.name
 		directory.translatableName = newName
 		storeLibrary(directory.library!!)
@@ -278,7 +278,7 @@ class LibraryServiceImpl(
 	}
 
 	override fun addContainerLibraryElement(library: Library, metaGraph: MetaGraph, directory: LibraryDirectory, index: Int?): ContainerLibraryElement {
-		LOG.debug("LibraryServiceImpl: Adding ContainerLibraryElement")
+		LOG.debug("Adding ContainerLibraryElement")
 		val element = createContainerLibraryElement(metaGraph)
 		storeContainerLibraryElement(library, metaGraph, element, doClone = true)
 		addLibraryItem(library, element, directory, index)
@@ -286,7 +286,7 @@ class LibraryServiceImpl(
 	}
 
 	override fun updateContainerLibraryElement(library: Library, element: ContainerLibraryElement) {
-		LOG.debug("LibraryServiceImpl: Updating ContainerLibraryElement")
+		LOG.debug("Updating ContainerLibraryElement")
 		element.metaGraph?.let {
 			val nameChanged = it.translatableName != element.translatableName
 			storeContainerLibraryElement(library, it, element, doClone = false)
@@ -309,7 +309,7 @@ class LibraryServiceImpl(
 
 	override fun setDefaultElement(library: Library, uuid: UUID?) {
 		if (library.defaultElementUUID != uuid) {
-			LOG.debug("LibraryServiceImpl: Setting default element to '$uuid'")
+			LOG.debug("Setting default element to '$uuid'")
 			library.defaultElementUUID = uuid
 			storeLibrary(library)
 		}
@@ -321,12 +321,12 @@ class LibraryServiceImpl(
 		if (finder.result != null) {
 			return finder.result!!
 		}
-		LOG.debug("LibraryServiceImpl: could't find owning LibraryDirectory of LibraryItem")
+		LOG.debug("could't find owning LibraryDirectory of LibraryItem")
 		throw IllegalStateException()
 	}
 
 	override fun duplicateContainerLibraryElement(directory: LibraryDirectory, element: ContainerLibraryElement, newName: String): ContainerLibraryElement {
-		LOG.debug("LibraryServiceImpl: Duplicate ContainerLibraryElement")
+		LOG.debug("Duplicate ContainerLibraryElement")
 		val duplicate = storableCloner.clone(element.metaGraph!!) as MetaGraph
 		duplicate.graph.model!!.initializeUUID()
 		duplicate.graph.model!!.name = newName
@@ -334,7 +334,7 @@ class LibraryServiceImpl(
 	}
 
 	override fun duplicateLibrary(library: Library, newName: String): Library {
-		LOG.debug("LibraryServiceImpl: Duplicate Library ${library.name} to new name $newName")
+		LOG.debug("Duplicate Library ${library.name} to new name $newName")
 		persistenceService.duplicateLibrary(library, newName)
 		val duplicateLibrary = persistenceService.loadLibrary(newName)
 		duplicateLibrary.uuid = System.get().createUUID()
