@@ -1,15 +1,13 @@
 package ch.scorpion.antares.model.signal
 
-import ch.scorpion.antares.AntaresModuleJvm
 import ch.scorpion.antares.view.AntaresThemes
-import ch.scorpion.antares.view.Theme
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
+import ch.scorpion.jabbah.draw.style.Themes
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertThat
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 
@@ -109,18 +107,18 @@ class WordTest {
 
     @Test
     fun shouldCheckZeroWithChangedBit() {
-        assertThat(Word.of(BitWidth.BW_4, 0L).withBit(0, Bit.True).getColor(), `is`(Theme.current.word))
-        assertThat(Word.of(BitWidth.BW_4, 1L).withBit(0, Bit.False).getColor(), `is`(Theme.current.wordZero))
+        assertThat(Word.of(BitWidth.BW_4, 0L).withBit(0, Bit.True).getColor(), `is`(Themes.get<AntaresTheme>().word))
+        assertThat(Word.of(BitWidth.BW_4, 1L).withBit(0, Bit.False).getColor(), `is`(Themes.get<AntaresTheme>().wordZero))
     }
 
     @Test
     fun shouldReturnBusColor() {
-        assertThat(Word.of(BitWidth.BW_4, 1L).getColor(), `is`(Theme.current.word))
+        assertThat(Word.of(BitWidth.BW_4, 1L).getColor(), `is`(Themes.get<AntaresTheme>().word))
     }
 
     @Test
     fun shouldReturnBusZeroColor() {
-        assertThat(Word.of(BitWidth.BW_4, 0L).getColor(), `is`(Theme.current.wordZero))
+        assertThat(Word.of(BitWidth.BW_4, 0L).getColor(), `is`(Themes.get<AntaresTheme>().wordZero))
     }
 
     @Test
