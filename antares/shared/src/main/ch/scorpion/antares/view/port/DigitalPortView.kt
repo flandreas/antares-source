@@ -322,7 +322,12 @@ class DigitalPortView(
 
     private fun buildBitWidthAnnotation() {
         bitWidthAnnotation = if (getDigitalPort().bitWidth != BitWidth.BW_1) {
-            BitWidthAnnotation(getDigitalPort().bitWidth, direction, centerExternalLabel, ownerRotation = ownerRotation)
+	        if (centerExternalLabel && portLabelPosition == PortLabelPosition.EXTERNAL) {
+		        // The external label has priority over BitWithAnnotation
+		        null
+	        } else {
+		        BitWidthAnnotation(getDigitalPort().bitWidth, direction, centerExternalLabel, ownerRotation = ownerRotation)
+	        }
         } else {
             null
         }
