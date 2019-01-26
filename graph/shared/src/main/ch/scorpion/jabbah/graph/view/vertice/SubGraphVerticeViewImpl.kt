@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
@@ -152,6 +153,17 @@ class SubGraphVerticeViewImpl(
             super.transparency = value
             drawables.filter { it is Transparent }.map { it as Transparent }.forEach { it.transparency = value }
         }
+
+	/** ---- [Stylable] */
+
+	override var styleProvider: StyleProvider
+		get() = super.styleProvider
+		set(value) {
+			if (super.styleProvider != value) {
+				super.styleProvider = value
+				drawables.filter { it is Stylable }.map { it as Stylable }.forEach { it.styleProvider = value }
+			}
+		}
 
     /** ---- [Drawable] */
 
