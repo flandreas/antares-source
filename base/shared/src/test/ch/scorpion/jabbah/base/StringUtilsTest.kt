@@ -20,7 +20,18 @@ class StringUtilsTest {
         assertThat(StringUtils.replaceNegation("!Q"), `is`("Q" + StringUtils.OVERLINE))
     }
 
-    // Not yet supported.
+	@Test
+	fun shouldAddPeriod() {
+		assertThat(StringUtils.endWithPeriod("Test"), `is`("Test."))
+	}
+
+	@Test
+	fun shouldNotAddPeriodIfAlreadyExisting() {
+		assertThat(StringUtils.endWithPeriod("Test."), `is`("Test."))
+	}
+
+
+	// Not yet supported.
     /*
     fun shouldReplaceBlockNegation() {
         assertThat(StringUtils.replaceNegation("!(AB)"), `is`("A\u0305B\u0305"))

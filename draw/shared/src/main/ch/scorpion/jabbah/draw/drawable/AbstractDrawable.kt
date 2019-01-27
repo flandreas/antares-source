@@ -142,7 +142,7 @@ abstract class AbstractDrawable : Drawable {
     }
 
     protected fun buildToolTipText(title: String?, text: String?): String? {
-        return System.get().buildToolTipText(title, text)
+        return System.get().buildToolTipText(title, text, true)
     }
 
     /**

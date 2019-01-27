@@ -18,111 +18,112 @@ import ch.scorpion.jabbah.draw.style.StyleType
  * @property location the [Point2D] at the tip of the arrow path
  */
 class ArrowBubble(
-        private val content: RectangularDrawable,
-        private val location: Point2D,
-        private val isBelow: Boolean = true,
-        styleType: StyleType,
-        styleProvider: StyleProvider = DrawStyleModule.styleProvider
+	private val content: RectangularDrawable,
+	private val location: Point2D,
+	private val isBelow: Boolean = true,
+	styleType: StyleType,
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractStyledDrawable(styleType, styleProvider) {
 
-    companion object {
+	companion object {
 
-        /** The inset between the content and the border path.*/
-        private val INSET = 8.0
+		/** The inset between the content and the border path.*/
+		private const val INSET = 8.0
 
-        /** The size of the rounded corner arcs.*/
-        private val ARC_SIZE = 5.0
+		/** The size of the rounded corner arcs.*/
+		private const val ARC_SIZE = 5.0
 
-        /** The base width of the arrow tip.*/
-        private val TIP_WIDTH = 15.0
+		/** The base width of the arrow tip.*/
+		private const val TIP_WIDTH = 15.0
 
-        /** The height of the arrow tip.*/
-        private val TIP_HEIGHT = 15.0
+		/** The height of the arrow tip.*/
+		private const val TIP_HEIGHT = 15.0
 
-        /** The width of the area from the path's left edge to the arrow's tip.*/
-        private val LEFT_WIDTH = TIP_WIDTH / 2 + 20
+		/** The width of the area from the path's left edge to the arrow's tip.*/
+		private const val LEFT_WIDTH = TIP_WIDTH / 2 + 20
 
-    }
+	}
 
-    /** The border path with the arrow tip pointing upwards. Expressed in relative coordinates with origin (0,0) at the arrow tip. */
-    private val path: Path = createPath()
+	/** The border path with the arrow tip pointing upwards. Expressed in relative coordinates with origin (0,0) at the arrow tip. */
+	private val path: Path = createPath()
 
-    /** The overall width of the path.*/
-    private val width: Double get() = content.width + 2 * INSET
+	/** The overall width of the path.*/
+	private val width: Double get() = content.width + 2 * INSET
 
-    private val height: Double get() = content.height + 2 * INSET + TIP_HEIGHT
+	private val height: Double get() = content.height + 2 * INSET + TIP_HEIGHT
 
-    /** The width of the area from the path's right edge to the arrow's tip.*/
-    private val rightWidth: Double get() = width - LEFT_WIDTH
+	/** The width of the area from the path's right edge to the arrow's tip.*/
+	private val rightWidth: Double get() = width - LEFT_WIDTH
 
-    /** The upper-left corner of [content] in the local, relative coordinate system. */
-    private val contentLocation: Point2D get() =
-        if (isBelow) {
-            Point2D(-LEFT_WIDTH + INSET, TIP_HEIGHT + INSET)
-        } else {
-            Point2D(-LEFT_WIDTH + INSET, -height + INSET)
-        }
+	/** The upper-left corner of [content] in the local, relative coordinate system. */
+	private val contentLocation: Point2D
+		get() =
+			if (isBelow) {
+				Point2D(-LEFT_WIDTH + INSET, TIP_HEIGHT + INSET)
+			} else {
+				Point2D(-LEFT_WIDTH + INSET, -height + INSET)
+			}
 
-    init {
-        content.setBounds(contentLocation.x, contentLocation.y, content.width, content.height)
-        DrawableOwner(this, content)
-    }
+	init {
+		content.setBounds(contentLocation.x, contentLocation.y, content.width, content.height)
+		DrawableOwner(this, content)
+	}
 
-    /** ----  [AbstractDrawable] */
-    
-    override val boundingBox: RectangularShape get() = path.boundingBox.expandBy(style.stroke.width.toDouble())
+	/** ----  [AbstractDrawable] */
 
-    override fun draw(context: DrawContext) {
-        context.g.translate(location.x, location.y)
+	override val boundingBox: RectangularShape get() = path.boundingBox.expandBy(style.stroke.width.toDouble())
 
-        context.g.color = style.color.backgroundColor
-        context.g.fill(path)
-        context.g.color = style.color.foregroundColor
-        context.g.stroke = style.stroke
-        context.g.draw(path)
+	override fun draw(context: DrawContext) {
+		context.g.translate(location.x, location.y)
 
-        context.g.color = style.color.textColor
-        context.g.font = style.font
-        content.draw(context)
+		context.g.color = style.color.backgroundColor
+		context.g.fill(path)
+		context.g.color = style.color.foregroundColor
+		context.g.stroke = style.stroke
+		context.g.draw(path)
 
-        context.g.translate(-location.x, -location.y)
-    }
+		context.g.color = style.color.textColor
+		context.g.font = style.font
+		content.draw(context)
 
-    override fun contains(x: Double, y: Double): Boolean = path.contains(x - location.x, y - location.y)
+		context.g.translate(-location.x, -location.y)
+	}
 
-    /** ---- [ArrowBubble] */
+	override fun contains(x: Double, y: Double): Boolean = path.contains(x - location.x, y - location.y)
 
-    private fun createPath(): Path = if (isBelow) createBelowPath() else createAbovePath()
+	/** ---- [ArrowBubble] */
 
-    private fun createBelowPath(): Path {
-        return System.get().createPath()
-                .moveTo(0, 0)
-                .lineTo(TIP_WIDTH / 2, TIP_HEIGHT)
-                .lineTo(rightWidth - ARC_SIZE, TIP_HEIGHT)
-                .quadTo(rightWidth, TIP_HEIGHT, rightWidth, TIP_HEIGHT + ARC_SIZE)
-                .lineTo(rightWidth, height - ARC_SIZE)
-                .quadTo(rightWidth, height, rightWidth - ARC_SIZE, height)
-                .lineTo(-LEFT_WIDTH + ARC_SIZE, height)
-                .quadTo(-LEFT_WIDTH, height, -LEFT_WIDTH, height - ARC_SIZE)
-                .lineTo(-LEFT_WIDTH, TIP_HEIGHT + ARC_SIZE)
-                .quadTo(-LEFT_WIDTH, TIP_HEIGHT, -LEFT_WIDTH + ARC_SIZE, TIP_HEIGHT)
-                .lineTo(-TIP_WIDTH / 2, TIP_HEIGHT)
-                .close()
-    }
+	private fun createPath(): Path = if (isBelow) createBelowPath() else createAbovePath()
 
-    private fun createAbovePath(): Path {
-        return System.get().createPath()
-                .moveTo(0, 0)
-                .lineTo(-TIP_WIDTH / 2, -TIP_HEIGHT)
-                .lineTo(-LEFT_WIDTH + ARC_SIZE, -TIP_HEIGHT)
-                .quadTo(-LEFT_WIDTH, -TIP_HEIGHT, -LEFT_WIDTH, -TIP_HEIGHT - ARC_SIZE)
-                .lineTo(-LEFT_WIDTH, -height + ARC_SIZE)
-                .quadTo(-LEFT_WIDTH, -height, -LEFT_WIDTH + ARC_SIZE, -height)
-                .lineTo(rightWidth - ARC_SIZE, -height)
-                .quadTo(rightWidth, -height, rightWidth, -height + ARC_SIZE)
-                .lineTo(rightWidth, -TIP_HEIGHT - ARC_SIZE)
-                .quadTo(rightWidth, -TIP_HEIGHT, rightWidth - ARC_SIZE, -TIP_HEIGHT)
-                .lineTo(TIP_WIDTH / 2, -TIP_HEIGHT)
-                .close()
-    }
+	private fun createBelowPath(): Path {
+		return System.get().createPath()
+			.moveTo(0, 0)
+			.lineTo(TIP_WIDTH / 2, TIP_HEIGHT)
+			.lineTo(rightWidth - ARC_SIZE, TIP_HEIGHT)
+			.quadTo(rightWidth, TIP_HEIGHT, rightWidth, TIP_HEIGHT + ARC_SIZE)
+			.lineTo(rightWidth, height - ARC_SIZE)
+			.quadTo(rightWidth, height, rightWidth - ARC_SIZE, height)
+			.lineTo(-LEFT_WIDTH + ARC_SIZE, height)
+			.quadTo(-LEFT_WIDTH, height, -LEFT_WIDTH, height - ARC_SIZE)
+			.lineTo(-LEFT_WIDTH, TIP_HEIGHT + ARC_SIZE)
+			.quadTo(-LEFT_WIDTH, TIP_HEIGHT, -LEFT_WIDTH + ARC_SIZE, TIP_HEIGHT)
+			.lineTo(-TIP_WIDTH / 2, TIP_HEIGHT)
+			.close()
+	}
+
+	private fun createAbovePath(): Path {
+		return System.get().createPath()
+			.moveTo(0, 0)
+			.lineTo(-TIP_WIDTH / 2, -TIP_HEIGHT)
+			.lineTo(-LEFT_WIDTH + ARC_SIZE, -TIP_HEIGHT)
+			.quadTo(-LEFT_WIDTH, -TIP_HEIGHT, -LEFT_WIDTH, -TIP_HEIGHT - ARC_SIZE)
+			.lineTo(-LEFT_WIDTH, -height + ARC_SIZE)
+			.quadTo(-LEFT_WIDTH, -height, -LEFT_WIDTH + ARC_SIZE, -height)
+			.lineTo(rightWidth - ARC_SIZE, -height)
+			.quadTo(rightWidth, -height, rightWidth, -height + ARC_SIZE)
+			.lineTo(rightWidth, -TIP_HEIGHT - ARC_SIZE)
+			.quadTo(rightWidth, -TIP_HEIGHT, rightWidth - ARC_SIZE, -TIP_HEIGHT)
+			.lineTo(TIP_WIDTH / 2, -TIP_HEIGHT)
+			.close()
+	}
 }

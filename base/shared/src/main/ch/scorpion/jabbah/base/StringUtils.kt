@@ -5,8 +5,8 @@ package ch.scorpion.jabbah.base
  */
 object StringUtils {
 
-    private val NEGATION_SIGN = '!'
-    val OVERLINE = '\u0305'
+    private const val NEGATION_SIGN = '!'
+    const val OVERLINE = '\u0305'
 
     fun isBlank(s: String?): Boolean {
         return s == null || s.isBlank()
@@ -35,4 +35,9 @@ object StringUtils {
     fun replaceNegation(s: String): String {
         return s.replace("$NEGATION_SIGN(.)".toRegex(), "${'$'}1" + OVERLINE)
     }
+
+	/** Returns a [String] that adds a period to the specified [String] if if doesn't already end with a period.*/
+	fun endWithPeriod(s: String): String {
+		return if (s.endsWith(".")) s else "$s."
+	}
 }
