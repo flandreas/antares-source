@@ -63,6 +63,10 @@ class DelayGateView(
     }
 
 	private fun updateText() {
-		labelText = "${Thousands.convert(delay)} ns"
+		var value = Thousands.convert(delay)
+		if (value.length < 5) {
+			value += " ns"
+		}
+		labelText = value
 	}
 }
