@@ -270,7 +270,7 @@ object AntaresThemes {
 			error = ERROR,
 			focus = BasicStyle(
 				color = CompositeColor(
-					foregroundColor = ONE.foregroundColor
+					foregroundColor = ONE.foregroundColor.between(ZERO.foregroundColor)
 				),
 				stroke = FOCUS_STROKE
 			),

@@ -30,16 +30,21 @@ data class Color(val red: Int, val green: Int, val blue: Int, val alpha: Int) {
         return Color(
             Math.max((red * FACTOR).toInt(), 0),
             Math.max((green * FACTOR).toInt(), 0),
-            Math.max((blue * FACTOR).toInt(), 0)
-        )
+            Math.max((blue * FACTOR).toInt(), 0))
     }
 
 	fun brighter(): Color {
-		return return Color(
+		return Color(
 			Math.min((red / FACTOR).toInt(), 255),
 			Math.min((green / FACTOR).toInt(), 255),
-			Math.min((blue / FACTOR).toInt(), 255)
-		)
+			Math.min((blue / FACTOR).toInt(), 255))
+	}
+
+	fun between(other: Color): Color {
+		return Color(
+			(red + other.red) / 2,
+			(green + other.green) / 2,
+			(blue + other.blue) / 2)
 	}
 
     /** Returns a new [Color] with the same RGB values as this [Color], but with the specified alpha value.*/
