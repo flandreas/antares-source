@@ -27,7 +27,7 @@ import javax.swing.*
  */
 class GraphFrame(
 	application: DesktopApplication,
-	private val graphPanel: GraphPanel,
+	val graphPanel: GraphPanel,
 	private val eventBus: EventBus,
 	val viewManager: ViewManager
 ) : AbstractApplicationFrame(application) {

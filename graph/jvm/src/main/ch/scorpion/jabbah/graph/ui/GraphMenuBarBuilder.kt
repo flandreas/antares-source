@@ -29,7 +29,7 @@ import javax.swing.JMenuItem
  * Adds [ch.scorpion.jabbah.graph] related menus to [MenuBarBuilder].
  */
 open class GraphMenuBarBuilder(
-	frame: AbstractApplicationFrame,
+	frame: GraphFrame,
 	eventBus: EventBus
 ) : MenuBarBuilder(frame = frame, eventBus = eventBus) {
 
@@ -75,6 +75,7 @@ open class GraphMenuBarBuilder(
     }
 
     protected open fun fillExecutionMenu(menu: JMenu): JMenu {
+	    menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ToggleApplicationModeAction((frame as GraphFrame).graphPanel))))
         menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ExecutionDepthAction())))
         menu.add(JCheckBoxMenuItem(ActionWrapperSwing(StopOnIssueAction())))
         return menu

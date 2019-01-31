@@ -267,7 +267,7 @@ class GraphPanel(
 		}
 	}
 
-	private fun toggleMode() {
+	fun toggleMode() {
 		when (currentMode) {
 			ApplicationMode.EDIT -> setMode(ApplicationMode.EXECUTE, false)
 			ApplicationMode.EXECUTE -> setMode(ApplicationMode.EDIT, false)
@@ -275,9 +275,10 @@ class GraphPanel(
 	}
 
 	private fun createExecutionToolBar(): ToolBar {
-		val modeToggleAction = ToggleModeAction(eventBus)
+		val modeToggleAction = ActionWrapperSwing(ToggleApplicationModeAction(this))
 		val modeToggleButton = JToggleButton(modeToggleAction)
 		modeToggleButton.text = null
+		modeToggleButton.hideActionText = true
 		modeToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/powerOff-24.png"))
 		modeToggleButton.toolTipText = Translations.getString("simulation.action.execute.name")
 
@@ -345,23 +346,6 @@ class GraphPanel(
 		toolBar.add(button)
 
 		return toolBar
-	}
-
-	/** Toggles a [Scheduler] on and off.*/
-	private inner class ToggleModeAction(eventBus: EventBus) : AbstractAction() {
-		init {
-			updateState()
-			eventBus.register(SchedulerActivationStateEvent::class) { updateState() }
-		}
-
-		override fun actionPerformed(e: ActionEvent?) {
-			toggleMode()
-			SwingUtilities.invokeLater { updateState() }
-		}
-
-		private fun updateState() {
-			putValue(Action.SELECTED_KEY, currentMode == ApplicationMode.EXECUTE)
-		}
 	}
 }
 

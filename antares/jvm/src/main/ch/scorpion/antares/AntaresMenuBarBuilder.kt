@@ -5,7 +5,6 @@ import ch.scorpion.antares.view.gate.AmericanSymbolStyleAction
 import ch.scorpion.antares.view.gate.EuropeanSymbolStyleAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
 import ch.scorpion.antares.view.module.AntaresViewModule
-import ch.scorpion.jabbah.app.AbstractApplicationFrame
 import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
@@ -14,6 +13,7 @@ import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.execution.NoiseMenu
 import ch.scorpion.jabbah.execution.PrintScheduleAction
 import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphMenuBarBuilder
 import javax.swing.*
 
@@ -21,7 +21,7 @@ import javax.swing.*
  * Adds [ch.scorpion.antares] related menus to the [GraphMenuBarBuilder].
  */
 class AntaresMenuBarBuilder(
-	frame: AbstractApplicationFrame,
+	frame: GraphFrame,
 	eventBus: EventBus
 ) : GraphMenuBarBuilder(frame, eventBus) {
 
