@@ -29,6 +29,11 @@ class TunnelView(
 	model: Tunnel = Tunnel()
 ) : DigitalComponentView<Tunnel>(styleProvider, model) {
 
+	constructor(
+		name: String,
+		styleProvider: StyleProvider = DrawStyleModule.styleProvider
+	) : this(styleProvider, Tunnel(name))
+
 	companion object {
 		const val SIZE = 4 * 7
 		const val LABEL_DIST = Look.SCALE

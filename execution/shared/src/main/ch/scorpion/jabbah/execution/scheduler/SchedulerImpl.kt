@@ -89,7 +89,6 @@ class SchedulerImpl(
             } else {
                 stop()
             }
-            eventBus.post(SchedulerActivationStateEvent(this))
         }
 
     override var isPaused: Boolean

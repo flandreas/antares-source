@@ -37,7 +37,7 @@ class Tunnel(
         val CALCULATOR = object : VerticeCalculator<Tunnel> {
             override fun calculate(vertice: Tunnel, data: GraphActorData, signalHandler: SignalHandler) {
                 (vertice.getPort<DigitalSignal>() as DigitalPort).isOutputDominant = true
-                LOG.debug("Calculate Tunnel ${vertice.id} with signal '${data.getSignal<DigitalSignal>(1)}', outputDominant = ${(vertice.getPort<DigitalSignal>() as DigitalPort).isOutputDominant}")
+                LOG.debug("Calculate Tunnel ${vertice.id} with signal '${data.getSignal<DigitalSignal>(1)}'")
                 vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
             }
         }

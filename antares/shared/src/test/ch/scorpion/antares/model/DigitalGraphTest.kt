@@ -6,7 +6,6 @@ import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import com.nhaarman.mockitokotlin2.mock
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import org.hamcrest.CoreMatchers
 import org.junit.Assert.*
@@ -32,7 +31,7 @@ class DigitalGraphTest {
     @Test
     fun shouldForwardTunnelSignal() {
         val signalHandler = ForwardSignalHandler()
-        val testGraph = DigitalGraph(eventBus = mock<EventBus>())
+        val testGraph = DigitalGraph(eventBus = mock())
 
         val tunnel1 = Tunnel("Test")
         testGraph.add(tunnel1)

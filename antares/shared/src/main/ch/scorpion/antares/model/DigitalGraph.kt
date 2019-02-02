@@ -58,13 +58,15 @@ class DigitalGraph(
                 val tunnel = e.element as Tunnel
                 if (StringUtils.isNotEmpty(tunnel.name)) {
                     val isOutputDominant = (tunnel.getPort<DigitalSignal>() as DigitalPort).isOutputDominant
-                    val signal = tunnel.getInput<DigitalSignal>().getIncomingSignal()!!
-                    LOG.debug("Propagating signal '$signal' through tunnel '${tunnel.name}', isOutputDominant is $isOutputDominant")
-                    getTunnels(tunnel.name!!)
-                            .filter { e.element != it}
-                            .forEach {
-                                it.setSignal(signal, e.signalHandler!!)
-                            }
+	                if (!isOutputDominant) {
+		                val signal = tunnel.getInput<DigitalSignal>().getIncomingSignal()!!
+		                LOG.debug("Propagating signal '$signal' from Tunnel ${tunnel.id} through '${tunnel.name}', isOutputDominant is $isOutputDominant")
+		                getTunnels(tunnel.name!!)
+			                .filter { e.element != it }
+			                .forEach {
+				                it.setSignal(signal, e.signalHandler!!)
+			                }
+	                }
                 }
             }
         }
