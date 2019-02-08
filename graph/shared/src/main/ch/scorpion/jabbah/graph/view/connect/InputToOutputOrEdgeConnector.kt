@@ -84,7 +84,9 @@ class InputToOutputOrEdgeConnector(
 	override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 		LOG.trace("mouseDragged to (${context.x},${context.y})")
 		// Forward to DragEdgeViewEndpointHandler, but keep control in order to handle mouseReleased
-		super.mouseDragged(context)
+		if (edgeView != null) {
+			super.mouseDragged(context)
+		}
 		return this
 	}
 
@@ -121,5 +123,7 @@ class InputToOutputOrEdgeConnector(
 				destConnectableView = destPortView?.owner,
 				destPort = destPortView?.port))
 		context.drawingView().selectionManager.select(edgeView!!)
+
+		edgeView = null
 	}
 }

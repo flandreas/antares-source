@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.ConnectableView
@@ -19,12 +21,21 @@ abstract class AbstractCreateEdgeViewConnector(
     endpointType: EdgeViewEndpointType
 ) : AbstractConnectionPointHighlighter(DragEdgeViewEndpointHandler(endpointType)) {
 
+	companion object {
+		private val LOG by logger(AbstractCreateEdgeViewConnector::class)
+	}
+
     /** The new [EdgeView] that is being dragged, `null` before mouse has been pressed */
     protected var edgeView: EdgeView<Any>? = null
 
     /** ---- [InputEventHandler] */
 
-    override fun keyPressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? = this
+    override fun keyPressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+	    if (context.keyEvent?.key == KeyEvent.VK_ESCAPE) {
+		    cancel(context.editor)
+	    }
+	    return this
+    }
 
     override fun keyReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? = this
 
@@ -51,10 +62,14 @@ abstract class AbstractCreateEdgeViewConnector(
     }
 
     protected open fun cancel(editor: Editor) {
-        edgeView?.connectToOrigin(null, null)
-        edgeView?.connectToDestination(null, null)
-        editor.view.drawing.remove(edgeView!!)
-        removePortViewHighlight(editor.view)
+	    if (edgeView != null) {
+		    LOG.debug("creating EdgeView canceled by user")
+		    edgeView?.connectToOrigin(null, null)
+		    edgeView?.connectToDestination(null, null)
+		    editor.view.drawing.remove(edgeView!!)
+		    removePortViewHighlight(editor.view)
+		    edgeView = null
+	    }
     }
 
     /**
