@@ -2,8 +2,10 @@ package ch.scorpion.jabbah.base.geom
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.logger
+import kotlin.math.abs
+import kotlin.math.round
+import kotlin.math.sign
 
 enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotation: Rotation) {
     EAST("east", 1, 0, Rotation.R0),
@@ -45,8 +47,8 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
         fun of(p1: Point2D, p2: Point2D): Direction {
             try {
                 return of(
-                        Math.signum(Math.round(p2.x - p1.x).toDouble()).toInt(),
-                        Math.signum(Math.round(p2.y - p1.y).toDouble()).toInt())
+                        sign(round(p2.x - p1.x).toDouble()).toInt(),
+                        sign(round(p2.y - p1.y).toDouble()).toInt())
             } catch (e: IllegalArgumentException) {
                 LOG.error("Cannot determine Direction from $p1 to $p2")
                 throw e
@@ -98,7 +100,7 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
         EAST, WEST -> this
     }
 
-    fun abs(): Direction = of(Math.abs(dx), Math.abs(dy))
+    fun abs(): Direction = of(abs(dx), abs(dy))
 
     /** Multiplies this [Direction] by the specified value and returns the result as a [Point2D].*/
     fun multiply(value: Double): Point2D = Point2D(dx * value, dy * value)

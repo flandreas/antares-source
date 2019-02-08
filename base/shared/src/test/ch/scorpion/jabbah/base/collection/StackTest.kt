@@ -1,8 +1,6 @@
 package ch.scorpion.jabbah.base.collection
 
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.*
 
 /**
  * Unit tests for [Stack].

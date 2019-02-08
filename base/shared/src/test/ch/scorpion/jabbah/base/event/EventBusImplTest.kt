@@ -1,15 +1,9 @@
 package ch.scorpion.jabbah.base.event
 
-import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.*
 
-/**
- * Unit tests for [EventBusImpl].
- */
+/** Unit tests for [EventBusImpl]. */
 class EventBusImplTest {
 
     val eventBus = EventBusImpl()
@@ -17,44 +11,44 @@ class EventBusImplTest {
     private class TestEventA
     private class TestEventB
 
-    @Before
+    @BeforeTest
     fun setup() {
         BaseModuleJvm.require()
     }
 
     @Test
     fun shouldRegisterAndHandle() {
-        var handledA: Boolean = false
-        var handledB: Boolean = false
-        eventBus.register(TestEventA::class, {handledA = true})
-        eventBus.post(TestEventA())
+        var handledA = false
+        val handledB = false
+        eventBus.register(TestEventA::class) { handledA = true }
+	    eventBus.post(TestEventA())
         eventBus.post(TestEventB())
-        assertThat(handledA, `is`(true));
-        assertThat(handledB, `is`(false));
+        assertTrue(handledA)
+        assertFalse(handledB)
     }
 
     @Test
     fun shouldUnregisterForEvent() {
-        var handledA: Boolean = false
-        val handlerA: (T: Any) -> Unit = {handledA = true}
+        var handledA = false
+        val handlerA: (T: Any) -> Unit = { handledA = true }
         eventBus.register(TestEventA::class, handlerA)
         eventBus.unregister(TestEventA::class, handlerA)
         eventBus.post(TestEventA())
-        assertThat(handledA, `is`(false));
+        assertFalse(handledA)
     }
 
     @Test
     fun shouldUnregisterAll() {
-        var handled: Boolean = false
-        val handler: (T: Any) -> Unit = {handled = true}
+        var handled = false
+        val handler: (T: Any) -> Unit = { handled = true }
         eventBus.register(TestEventA::class, handler)
         eventBus.register(TestEventB::class, handler)
         eventBus.unregister(handler)
 
         eventBus.post(TestEventA())
-        assertThat(handled, `is`(false));
+        assertFalse(handled)
 
         eventBus.post(TestEventB())
-        assertThat(handled, `is`(false));
+	    assertFalse(handled)
     }
 }

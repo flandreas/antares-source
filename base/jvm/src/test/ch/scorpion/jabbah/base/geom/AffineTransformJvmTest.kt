@@ -1,16 +1,16 @@
 package ch.scorpion.jabbah.base.geom
 
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.BeforeTest
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [AffineTransformJvm].
  */
 class AffineTransformJvmTest {
 
-    @Before
+    @BeforeTest
     fun init() {
         BaseModuleJvm.require()
     }

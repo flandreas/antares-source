@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.base.geom
 
-import ch.scorpion.jabbah.base.Math
+import kotlin.math.sqrt
 
 /**
  * Represents a 2D affine transformation that performs a linear mapping from 2D coordinates to other 2D coordinates
@@ -35,7 +35,7 @@ interface AffineTransform {
     val determinant: Double
 
     /** Returns the resulting scale factor if scaling is uniform, i.e. scaling in both directions are the same.*/
-    val uniformScale: Double get() = Math.sqrt(determinant)
+    val uniformScale: Double get() = sqrt(determinant)
 
     /** Returns the transformation matrix as an array of the form m00, m10, m01, m11, m02, m12.*/
     fun getMatrix(): DoubleArray

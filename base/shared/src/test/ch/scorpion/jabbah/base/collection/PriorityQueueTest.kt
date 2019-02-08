@@ -1,8 +1,7 @@
 package ch.scorpion.jabbah.base.collection
 
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [PriorityQueue].
@@ -14,11 +13,11 @@ class PriorityQueueTest {
         val queue = PriorityQueue<Int>()
 
         queue.add(10)
-        assertThat(queue.peek(), `is`(10))
+        assertEquals(10, queue.peek())
         queue.add(9)
-        assertThat(queue.peek(), `is`(9))
+        assertEquals(9, queue.peek())
         queue.add(11)
-        assertThat(queue.peek(), `is`(9))
+        assertEquals(9, queue.peek())
     }
 
     @Test
@@ -29,7 +28,7 @@ class PriorityQueueTest {
         queue.add(3)
 
         queue.remove()
-        assertThat(queue.peek(), `is`(2))
-        assertThat(queue.size, `is`(2))
+        assertEquals(2, queue.peek())
+        assertEquals(2, queue.size)
     }
 }

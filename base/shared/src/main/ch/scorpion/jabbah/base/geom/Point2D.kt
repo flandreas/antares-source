@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.base.geom
 
 import ch.scorpion.jabbah.base.Math
+import kotlin.math.sqrt
 
 /**
  * The [Point2D] class defines a point representing a location in (x,y) coordinate space.
@@ -28,7 +29,7 @@ data class Point2D(val x: Double = 0.0, val y: Double = 0.0) {
     fun distanceSq(p: Point2D): Double = distanceSq(p.x, p.y)
 
     /** Returns the distance from this [Point2D] to a specified location.*/
-    fun distance(x: Double, y: Double): Double = Math.sqrt(distanceSq(x, y))
+    fun distance(x: Double, y: Double): Double = sqrt(distanceSq(x, y))
 
     /** Returns the distance from this [Point2D] to a specified other [Point2D].*/
     fun distance(p: Point2D): Double = distance(p.x, p.y)

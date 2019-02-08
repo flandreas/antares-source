@@ -4,12 +4,10 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import org.junit.Assert.*
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
-/**
- * Unit tests for [ControlledTimeService].
- */
+/** Unit tests for [ControlledTimeService].*/
 class ControlledTimeServiceTest {
 
     val service: ControlledTimeService

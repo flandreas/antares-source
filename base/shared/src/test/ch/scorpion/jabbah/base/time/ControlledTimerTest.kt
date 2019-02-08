@@ -3,11 +3,7 @@ package ch.scorpion.jabbah.base.time
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Test
-
+import kotlin.test.*
 
 /**
  * Unit tests for [ControlledTimer].
@@ -15,9 +11,9 @@ import org.junit.Test
 class ControlledTimerTest {
 
     private var event: ActionEvent? = null
-    lateinit private var timeService: ControlledTimeService
+    private lateinit var timeService: ControlledTimeService
 
-    @Before
+    @BeforeTest
     fun setup() {
         BaseModuleJvm.require()
         event = null
@@ -28,28 +24,28 @@ class ControlledTimerTest {
     fun shouldNotFireBeforeTime() {
         build(100).start()
         timeService.setTimeMillis(50)
-        assertThat(event, `is`(nullValue()))
+        assertNull(event)
     }
 
     @Test
     fun shouldFireAtTime() {
         build(100).start()
         timeService.setTimeMillis(100)
-        assertThat(event, `is`(notNullValue()))
+        assertNotNull(event)
     }
 
     @Test
     fun shouldFireAfterTime() {
         build(100).start()
         timeService.setTimeMillis(150)
-        assertThat(event, `is`(notNullValue()))
+	    assertNotNull(event)
     }
 
     @Test
     fun shouldNotFireWhenNotStarted() {
         build(100)
         timeService.setTimeMillis(150)
-        assertThat(event, `is`(nullValue()))
+	    assertNull(event)
     }
 
     @Test
@@ -58,22 +54,22 @@ class ControlledTimerTest {
 
         timer.start()
         timeService.setTimeMillis(150)
-        assertThat(event, `is`(notNullValue()))
+	    assertNotNull(event)
 
         event = null
         timer.stop()
         timeService.setTimeMillis(250)
-        assertThat(event, `is`(nullValue()))
+	    assertNull(event)
     }
 
     @Test
     fun shouldFireRepeatedly() {
         build(100).start()
         timeService.setTimeMillis(150)
-        assertThat(event, `is`(notNullValue()))
+	    assertNotNull(event)
         event = null
         timeService.setTimeMillis(250)
-        assertThat(event, `is`(notNullValue()))
+	    assertNotNull(event)
     }
 
     @Test(expected = IllegalStateException::class)
@@ -84,7 +80,7 @@ class ControlledTimerTest {
 
     private fun build(interval: Int): Timer {
         val timer = ControlledTimer(timeService)
-        timer.initialize(interval, {this@ControlledTimerTest.event = it})
-        return timer
+        timer.initialize(interval) {this@ControlledTimerTest.event = it}
+	    return timer
     }
 }

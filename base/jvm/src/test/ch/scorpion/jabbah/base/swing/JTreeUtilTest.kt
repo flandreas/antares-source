@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.base.swing
 
-import org.hamcrest.CoreMatchers.nullValue
-import org.hamcrest.CoreMatchers.sameInstance
-import org.junit.Assert.assertThat
-import org.junit.Test
 import javax.swing.tree.DefaultMutableTreeNode
+import kotlin.test.*
 
 /** Unit tests for [JTreeUtil].*/
 class JTreeUtilTest {
@@ -21,9 +18,9 @@ class JTreeUtilTest {
 		node1.add(node12)
 		node12.add(node121)
 
-		assertThat(JTreeUtil.findTreeNode(node1, { (it as DefaultMutableTreeNode).userObject == "1.1" }) as DefaultMutableTreeNode?, sameInstance(node11))
-		assertThat(JTreeUtil.findTreeNode(node1, { (it as DefaultMutableTreeNode).userObject == "1.2" }) as DefaultMutableTreeNode?, sameInstance(node12))
-		assertThat(JTreeUtil.findTreeNode(node1, { (it as DefaultMutableTreeNode).userObject == "1.2.1" }) as DefaultMutableTreeNode?, sameInstance(node121))
-		assertThat(JTreeUtil.findTreeNode(node1, { (it as DefaultMutableTreeNode).userObject == "something" }), nullValue())
+		assertSame(node11, JTreeUtil.findTreeNode(node1) { (it as DefaultMutableTreeNode).userObject == "1.1" } as DefaultMutableTreeNode?)
+		assertSame(node12, JTreeUtil.findTreeNode(node1) { (it as DefaultMutableTreeNode).userObject == "1.2" } as DefaultMutableTreeNode?)
+		assertSame(node121, JTreeUtil.findTreeNode(node1) { (it as DefaultMutableTreeNode).userObject == "1.2.1" } as DefaultMutableTreeNode?)
+		assertNull(JTreeUtil.findTreeNode(node1) { (it as DefaultMutableTreeNode).userObject == "something" })
 	}
 }

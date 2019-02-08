@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.base.geom
 
-import ch.scorpion.jabbah.base.Math
+import kotlin.math.sqrt
 
 /** A simple implementation of a geometrical vector.*/
 class Vector2D(val x: Double, val y: Double) {
@@ -9,7 +9,7 @@ class Vector2D(val x: Double, val y: Double) {
 
     constructor(p: Point2D): this(p.x, p.y)
 
-    val magnitude: Double get() = Math.sqrt(x * x + y * y)
+    val magnitude: Double get() = sqrt(x * x + y * y)
 
     val normalize: Vector2D
         get() {

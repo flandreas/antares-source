@@ -1,8 +1,9 @@
 package ch.scorpion.jabbah.base.geom
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.MathClass
+import kotlin.math.abs
+import kotlin.math.min
 
 /**
  * Represents the main four orthogonal rotations in a plane.
@@ -82,10 +83,10 @@ enum class Rotation(val customName: String, val angle: Double) {
         val p2 = rotatePoint(rect.x + rect.width - pivot.x, rect.y + rect.height - pivot.y)
 
         val newRect = Rectangle2D(
-                Math.min(p1.x, p2.x),
-                Math.min(p1.y, p2.y),
-                Math.abs(p1.x - p2.x),
-                Math.abs(p1.y - p2.y))
+                min(p1.x, p2.x),
+                min(p1.y, p2.y),
+                abs(p1.x - p2.x),
+                abs(p1.y - p2.y))
 
         newRect.setFrame(
                 newRect.x + pivot.x, newRect.y + pivot.y,

@@ -1,7 +1,10 @@
 package ch.scorpion.jabbah.base.geom
 
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.MathClass
+import kotlin.math.abs
+import kotlin.math.atan
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * A utility object providing geometry methods.
@@ -11,7 +14,7 @@ object Geometry {
 	/** Wraps an angle in radians to the range 0 .. 2*PI.*/
 	fun wrapAngle(angle: Double): Double {
 		if (angle < 0) {
-			return MathClass.TWO_PI - Math.abs(angle % MathClass.TWO_PI)
+			return MathClass.TWO_PI - abs(angle % MathClass.TWO_PI)
 		}
 		return angle % MathClass.TWO_PI
 	}
@@ -42,13 +45,13 @@ object Geometry {
             return 0.0
         }
 
-        if (Math.abs(x2 - x1) <= MathClass.SIGMA) {
+        if (abs(x2 - x1) <= MathClass.SIGMA) {
 	        angle = if (fy == 1)
 		        MathClass.PI_2
 	        else
 		        3 * MathClass.PI_2
         } else {
-            angle = Math.atan(Math.abs(y2 - y1) / Math.abs(x2 - x1))
+            angle = atan(abs(y2 - y1) / abs(x2 - x1))
             if (fx == 1) {
                 if (fy == -1)
                     angle = 2 * MathClass.PI - angle
@@ -72,7 +75,7 @@ object Geometry {
 
 	fun rotate(x: Double, y: Double, angle: Double): Point2D {
 		return Point2D(
-			x * Math.cos(angle) - y * Math.sin(angle),
-			y * Math.cos(angle) + x * Math.sin(angle))
+			x * cos(angle) - y * sin(angle),
+			y * cos(angle) + x * sin(angle))
 	}
 }

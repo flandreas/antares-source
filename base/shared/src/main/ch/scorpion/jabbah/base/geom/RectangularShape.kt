@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.base.geom
 
-import ch.scorpion.jabbah.base.Math
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * A [RectangularShape] is a [Shape] whose geometry is defined by a rectangular frame.
@@ -89,10 +90,10 @@ interface RectangularShape : Shape {
         if (isInitial) {
             setFrame(x, y, 0.0, 0.0)
         } else {
-            val x1 = Math.min(minX, x)
-            val x2 = Math.max(maxX, x)
-            val y1 = Math.min(minY, y)
-            val y2 = Math.max(maxY, y)
+            val x1 = min(minX, x)
+            val x2 = max(maxX, x)
+            val y1 = min(minY, y)
+            val y2 = max(maxY, y)
             setFrame(x1, y1, x2 - x1, y2 - y1)
         }
         return this
@@ -115,10 +116,10 @@ interface RectangularShape : Shape {
         if (isInitial) {
             setFrame(rect)
         } else {
-            val x1 = Math.min(minX, rect.minX)
-            val x2 = Math.max(maxX, rect.maxX)
-            val y1 = Math.min(minY, rect.minY)
-            val y2 = Math.max(maxY, rect.maxY)
+            val x1 = min(minX, rect.minX)
+            val x2 = max(maxX, rect.maxX)
+            val y1 = min(minY, rect.minY)
+            val y2 = max(maxY, rect.maxY)
             setFrame(x1, y1, x2 - x1, y2 - y1)
         }
         return this

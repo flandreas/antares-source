@@ -1,17 +1,14 @@
 package ch.scorpion.jabbah.base
 
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.*
 
 /**
  * Unit tests for [Properties].
  */
 class PropertiesTest {
 
-    @Before
+    @BeforeTest
     fun setup() {
         BaseModuleJvm.require()
     }
@@ -20,14 +17,14 @@ class PropertiesTest {
     fun shouldGetPredefined() {
         val properties = Properties()
         properties.set("name", "ABC")
-        assertThat(properties.getString("name"), `is`("ABC"))
+        assertEquals("ABC", properties.getString("name"))
     }
 
 	@Test
     fun shouldGetObject() {
 		val properties = Properties()
 		properties.set("myObject", SomeObject(1, 2))
-		assertThat(properties.get<SomeObject>("myObject"), `is`(SomeObject(1, 2)))
+		assertEquals(SomeObject(1, 2), properties.get<SomeObject>("myObject"))
     }
 
 	@Test
@@ -35,7 +32,7 @@ class PropertiesTest {
 		val properties = Properties()
 		properties.set("myInt", 5)
 		properties.customize("myInt", 6)
-		assertThat(properties.getInt("myInt"), `is`(6))
+		assertEquals(6, properties.getInt("myInt"))
 	}
 
 	@Test
@@ -43,14 +40,14 @@ class PropertiesTest {
 		val properties = Properties()
 		properties.set("myInt", 5)
 		properties.customize("myInt", 6)
-		assertThat(properties.getCustomizedKeys().next(), `is`("myInt"))
+		assertEquals("myInt", properties.getCustomizedKeys().next())
 	}
 
 	@Test
 	fun shouldLoadBoolean() {
 		val properties = Properties()
 		properties.load("bool", false.toString())
-		assertThat(properties.getBoolean("bool"), `is`(false))
+		assertFalse(properties.getBoolean("bool"))
 	}
 
 	data class SomeObject(val a: Int, val b: Int)

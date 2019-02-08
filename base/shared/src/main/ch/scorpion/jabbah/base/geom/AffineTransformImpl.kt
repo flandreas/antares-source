@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.base.geom
 
-import ch.scorpion.jabbah.base.Math
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * A Kotlin implementation of the [AffineTransform] interface.
@@ -116,14 +118,14 @@ data class AffineTransformImpl (
     }
 
     fun setToRotation(theta: Double) {
-        var sin = Math.sin(theta)
+        var sin = sin(theta)
         val cos: Double
         if (sin == 1.0 || sin == -1.0) {
             cos = 0.0
             state = APPLY_SHEAR
             type = TYPE_QUADRANT_ROTATION
         } else {
-            cos = Math.cos(theta)
+            cos = kotlin.math.cos(theta)
             when (cos) {
                 -1.0 -> {
                     sin = 0.0
@@ -302,13 +304,13 @@ data class AffineTransformImpl (
     }
 
     override fun rotate(theta: Double) {
-        val sin = Math.sin(theta)
+        val sin = sin(theta)
         if (sin == 1.0) {
             rotate90()
         } else if (sin == -1.0) {
             rotate270()
         } else {
-            val cos = Math.cos(theta)
+            val cos = cos(theta)
             if (cos == -1.0) {
                 rotate180()
             } else if (cos != 1.0) {
@@ -351,7 +353,7 @@ data class AffineTransformImpl (
                 x -= m02
                 y -= m12
                 val det = m00 * m11 - m01 * m10
-                if (Math.abs(det) <= Double.MIN_VALUE) {
+                if (abs(det) <= Double.MIN_VALUE) {
                     throw NonInvertibleTransformException("Determinant is " + det)
                 }
                 Point2D((x * m11 - y * m01) / det, (y * m00 - x * m10) / det)
@@ -359,7 +361,7 @@ data class AffineTransformImpl (
         /* NOBREAK */
             APPLY_SHEAR or APPLY_SCALE -> {
                 val det = m00 * m11 - m01 * m10
-                if (Math.abs(det) <= Double.MIN_VALUE) {
+                if (abs(det) <= Double.MIN_VALUE) {
                     throw NonInvertibleTransformException("Determinant is " + det)
                 }
                 Point2D((x * m11 - y * m01) / det, (y * m00 - x * m10) / det)

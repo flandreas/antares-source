@@ -27,13 +27,10 @@ dependencies {
 	compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
     compile "commons-io:commons-io:2.6"
 
-	testCompile 'junit:junit:4.12'
-    testCompile 'org.hamcrest:hamcrest-core:1.3'
-    testCompile 'org.hamcrest:hamcrest-library:1.3'
-    testCompile "org.mockito:mockito-core:$mockito_version"
 	testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
 	testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 	testCompile "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockito_kotlin_version"
+    testImplementation "io.mockk:mockk:$mockk_version"
 }
 
 task testJar(type: Jar) {

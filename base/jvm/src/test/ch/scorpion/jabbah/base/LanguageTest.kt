@@ -1,15 +1,14 @@
 package ch.scorpion.jabbah.base
 
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.BeforeTest
+import kotlin.test.assertEquals
 import java.util.Locale
 
 /** Unit tests for [Language].*/
 class LanguageTest {
 
-	@Before
+	@BeforeTest
 	fun setup() {
 		LOG_SYSTEM = LogSystemJVM()
 		Translations = TranslationsJvm()
@@ -19,12 +18,12 @@ class LanguageTest {
 
 	@Test
 	fun shouldYieldForCode() {
-		assertThat(Language.withCode("en"), `is`(Language.English))
+		assertEquals(Language.withCode("en"), Language.English)
 	}
 
 	@Test
 	fun shouldTranslateToString() {
-		assertThat(Language.English.toString(), `is`("English"))
-		assertThat(Language.German.toString(), `is`("German"))
+		assertEquals(Language.English.toString(), "English")
+		assertEquals(Language.German.toString(), "German")
 	}
 }

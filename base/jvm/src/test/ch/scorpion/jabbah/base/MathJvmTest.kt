@@ -1,23 +1,21 @@
 package ch.scorpion.jabbah.base
 
-import org.junit.Assert.*
-import org.junit.BeforeClass
-import org.junit.Test
-import org.hamcrest.CoreMatchers.`is`
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.BeforeTest
+import kotlin.test.assertTrue
 
 class MathJvmTest {
 
-	companion object {
-		@BeforeClass @JvmStatic
-		fun setup() {
-			Math = MathJvm()
-		}
+	@BeforeTest
+	fun setup() {
+		Math = MathJvm()
 	}
 
 	@Test
 	fun shouldCalculateRandomInt() {
-		val value = Math.randomInt(10, 100)
-		assertThat(value >= 10, `is`(true))
-		assertThat(value <= 100, `is`(true))
+		val value = Random.nextInt(10, 100)
+		assertTrue(value >= 10)
+		assertTrue(value <= 100)
 	}
 }

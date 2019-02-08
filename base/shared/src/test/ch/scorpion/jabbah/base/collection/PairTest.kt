@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.base.collection
 
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Unit tests for [Pair].
@@ -13,23 +13,23 @@ class PairTest {
     fun cartesianProduct() {
         val product = Pair.cartesianProduct(setOf(1, 2), setOf(1, 2))
 
-        assertThat(product.size, `is`(4))
-        assertThat(product.contains(Pair(1, 1)), `is`(true))
-        assertThat(product.contains(Pair(1, 2)), `is`(true))
-        assertThat(product.contains(Pair(2, 1)), `is`(true))
-        assertThat(product.contains(Pair(2, 2)), `is`(true))
+        assertEquals(4, product.size)
+        assertTrue(product.contains(Pair(1, 1)))
+        assertTrue(product.contains(Pair(1, 2)))
+        assertTrue(product.contains(Pair(2, 1)))
+        assertTrue(product.contains(Pair(2, 2)))
     }
 
     @Test
     fun cartesianProductOfEmptyFirstSet() {
         val product = Pair.cartesianProduct(setOf(), setOf(1, 2))
-        assertThat(product.size, `is`(0))
+	    assertEquals(0, product.size)
     }
 
     @Test
     fun cartesianProductOfEmptySecondSet() {
         val product = Pair.cartesianProduct(setOf(1, 2), setOf())
-        assertThat(product.size, `is`(0))
+        assertEquals(0, product.size)
     }
 
 }

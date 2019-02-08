@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base
 
+import kotlin.math.log10
+
 object Thousands {
 
 	/** The total number of digits in the result.*/
@@ -29,7 +31,7 @@ object Thousands {
 	 * than 1_000_000_000_000_000.
 	 */
 	fun convert(value: Long): String {
-		val log = Math.log10(value.toDouble()).toInt()
+		val log = log10(value.toDouble()).toInt()
 
 		return when {
 			value < KILO_MIN -> value.toString()
