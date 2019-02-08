@@ -41,7 +41,6 @@ class StorableClonerJvm(val typeMap: TypeMap = IOModule.typeMap) : StorableClone
 		storableCreator: StorableCreator,
 		referenceResolver: ReferenceResolver
 	): Storable {
-
 		try {
 			val data = serializeImpl(storable, identityProvider)
 			LOG.debug(data)

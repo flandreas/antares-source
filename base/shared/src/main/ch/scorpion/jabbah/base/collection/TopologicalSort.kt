@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.io
+package ch.scorpion.jabbah.base.collection
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 
@@ -31,7 +31,7 @@ object TopologicalSort {
 
         // Fire off a DFS from each node in the graph
         for (node in gRev) {
-            explore(node, gRev, result, visited, expanded)
+	        explore(node, gRev, result, visited, expanded)
         }
 
         // Hand back the resulting ordering
@@ -58,9 +58,9 @@ object TopologicalSort {
              * therefore is part of a cycle. In that case, we should report an error.
              */
             if (expanded.contains(node)) {
-                return;
+                return
             }
-            throw IllegalArgumentException("Graph contains a cycle: " + node);
+            throw IllegalArgumentException("Graph contains a cycle: $node")
         }
 
         // Mark that we've been here
@@ -68,7 +68,7 @@ object TopologicalSort {
 
         // Recursively explore all of the node's predecessors.
         for (predecessor in g.edgesFrom(node)) {
-            explore(predecessor, g, ordering, visited, expanded)
+	        explore(predecessor, g, ordering, visited, expanded)
         }
 
         // Having explored all of the node's predecessors, we can now add this node to the sorted ordering

@@ -16,6 +16,10 @@ class StoreXmlReader(
 	private val referenceResolver: ReferenceResolver
 ) : StoreReader {
 
+	companion object {
+		private val LOG by logger(StoreXmlReader::class)
+	}
+
 	@Suppress("unused")
 	constructor(xmlReader: XmlReader, typeMap: TypeMap, storableCreator: StorableCreator) : this(
 		xmlReader,
@@ -30,7 +34,6 @@ class StoreXmlReader(
 		IOModule.storableCreator,
 		ReferenceResolverImpl())
 
-	private val LOG by logger(StoreXmlReader::class)
 
 	/** ---- [StoreReader] interface */
 
@@ -88,7 +91,7 @@ class StoreXmlReader(
 
 		val storable = readStorableImpl()
 
-		names.forEach {
+		names.forEach { _ ->
 			xmlReader.ascend()
 			xmlReader.ascend()
 		}
@@ -136,7 +139,6 @@ class StoreXmlReader(
 	}
 
 	override fun readLong(name: String): Long {
-		//return System.get().stringToLong(xmlReader.getAttributeValue(name))
 		return xmlReader.getAttributeValue(name).toLong()
 	}
 

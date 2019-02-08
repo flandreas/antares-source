@@ -1,7 +1,6 @@
-package ch.scorpion.jabbah.io
+package ch.scorpion.jabbah.base.collection
 
 import ch.scorpion.jabbah.base.exception.NoSuchElementException
-import ch.scorpion.jabbah.base.collection.ImmutableSet
 
 /**
  * http://keithschwarz.com/interesting/code/?dir=topological-sort.
@@ -35,7 +34,7 @@ class DirectedGraph<T> : Iterable<T> {
             return false
 
         // Otherwise, add the node with an empty set of outgoing edges.
-        mGraph.put(node, mutableSetOf<T>())
+	    mGraph[node] = mutableSetOf()
         return true
     }
 

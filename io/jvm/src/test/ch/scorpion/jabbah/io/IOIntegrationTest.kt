@@ -2,12 +2,11 @@ package ch.scorpion.jabbah.io
 
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Before
-import org.junit.Test
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import kotlin.test.Test
+import kotlin.test.BeforeTest
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -31,7 +30,7 @@ class IOIntegrationTest {
 
     private lateinit var typeMap: TypeMap
 
-    @Before
+    @BeforeTest
     fun setup() {
         BaseModuleJvm.require()
         typeMap = TypeMapImpl()
@@ -103,26 +102,26 @@ class IOIntegrationTest {
 
 		val b = storeXmlReader.readStorable(listOf("myB")) as B
 
-		assertThat(A.instancesCount, `is`(0))
-		assertThat(b.name, `is`("anyB"))
+		assertEquals(A.instancesCount, 0)
+		assertEquals(b.name, "anyB")
 	}
 
     private fun checkDocument(doc: Document) {
-        assertThat(doc.children.size, `is`(2))
-        assertTrue { doc.children[0] is A }
-        assertTrue { doc.children[1] is B }
+        assertEquals(2, doc.children.size)
+        assertTrue(doc.children[0] is A)
+        assertTrue(doc.children[1] is B)
 
         val a = doc.children[0] as A
 
-        assertThat(a.aString, `is`("test"))
-        assertThat(a.aDouble, `is`(3.5))
-        assertThat(a.aBoolean, `is`(true))
-        assertThat(a.aLong, `is`(123L))
-        assertThat(a.childB.size, `is`(3))
-        assertThat(a.childB[0].name, `is`("b1"))
-        assertThat(a.childB[1].name, `is`("b2"))
-        assertThat(a.childB[2].name, `is`("b3"))
-        assertThat(a.referencedB!!.name, `is`("anyB"))
+        assertEquals("test", a.aString)
+        assertEquals( 3.5, a.aDouble)
+        assertTrue(a.aBoolean)
+        assertEquals(123L, a.aLong)
+        assertEquals(3, a.childB.size)
+        assertEquals("b1", a.childB[0].name)
+        assertEquals("b2", a.childB[1].name)
+        assertEquals("b3", a.childB[2].name)
+        assertEquals("anyB", a.referencedB!!.name)
     }
 
     class Document : Storable {

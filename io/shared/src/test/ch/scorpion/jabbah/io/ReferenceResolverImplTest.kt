@@ -1,9 +1,10 @@
 package ch.scorpion.jabbah.io
 
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.Test
-import java.util.Collections.emptyIterator
+import ch.scorpion.jabbah.base.collection.EmptyIterator
+import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.BeforeTest
 
 /**
  * Unit tests for [ReferenceResolverImpl].
@@ -11,6 +12,11 @@ import java.util.Collections.emptyIterator
 class ReferenceResolverImplTest {
 
     private var result = mutableListOf<Int>()
+
+	@BeforeTest
+	fun setup() {
+		BaseModuleJvm.require()
+	}
 
     @Test
     fun shouldSortResolutionRequestsTopologicly() {
@@ -34,12 +40,12 @@ class ReferenceResolverImplTest {
         result = mutableListOf()
         rr.resolveReferences()
 
-        assertThat(result.size, `is` (4))
+        assertEquals(result.size, 4)
 
-        assertThat(result[0], `is`(3))
-        assertThat(result[1], `is`(4))
-        assertThat(result[2], `is`(2))
-        assertThat(result[3], `is`(1))
+        assertEquals(3, result[0])
+        assertEquals(4, result[1])
+        assertEquals(2, result[2])
+        assertEquals(1, result[3])
     }
 
     @Test
@@ -63,11 +69,11 @@ class ReferenceResolverImplTest {
         result = mutableListOf()
         rr.resolveReferences()
 
-        assertThat(result.size, `is`(3))
+        assertEquals(3, result.size)
 
-        assertThat(result[0], `is`(4))
-        assertThat(result[1], `is`(2))
-        assertThat(result[2], `is`(1))
+        assertEquals(4, result[0])
+        assertEquals(2, result[1])
+        assertEquals(1, result[2])
     }
 
     private inner class TestStorable : Storable {
@@ -87,7 +93,7 @@ class ReferenceResolverImplTest {
         }
 
         override fun getStorableChildren(): Iterator<Storable> {
-            return emptyIterator()
+            return EmptyIterator()
         }
     }
 }
