@@ -2,7 +2,8 @@ package ch.scorpion.jabbah.animation
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.exception.NoSuchElementException
-import ch.scorpion.jabbah.base.Math
+import kotlin.math.abs
+import kotlin.math.sign
 
 /**
  * A [DoubleRange] is a [Sequence] of [Double] values between a begin and end value.
@@ -27,7 +28,7 @@ class DoubleRange(var begin: Double, var end: Double, sequenceType: SequenceType
     /** ---- [Sequence] interface*/
 
     override val size: Double
-        get() = Math.abs(begin - end)
+        get() = abs(begin - end)
 
     override fun hasNext(): Boolean = sequencer.hasNext(begin, end, value)
 
@@ -57,7 +58,7 @@ class DoubleRange(var begin: Double, var end: Double, sequenceType: SequenceType
 
         ONCE() {
             override fun hasNext(begin: Double, end: Double, value: Double): Boolean {
-                if (Math.signum(end - begin) > 0) {
+                if (sign(end - begin) > 0) {
                     return value <= end
                 }
                 return value >= end
@@ -67,7 +68,7 @@ class DoubleRange(var begin: Double, var end: Double, sequenceType: SequenceType
                 return NextValue(
                     begin = begin,
                     end = end,
-                    nextValue = value + Math.signum(end - begin) * distance
+                    nextValue = value + sign(end - begin) * distance
                 )
             }
         },
@@ -76,7 +77,7 @@ class DoubleRange(var begin: Double, var end: Double, sequenceType: SequenceType
             override fun hasNext(begin: Double, end: Double, value: Double): Boolean = true
 
             override fun calculateNext(begin: Double, end: Double, value: Double, distance: Double): NextValue {
-                val signum = Math.signum(end - begin)
+                val signum = sign(end - begin)
                 val nextValue = value + signum * distance
                 if (signum > 0) {
                     if (nextValue <= end) {

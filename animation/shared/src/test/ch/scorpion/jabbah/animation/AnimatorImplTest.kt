@@ -1,15 +1,14 @@
 package ch.scorpion.jabbah.animation
 
-import com.nhaarman.mockitokotlin2.whenever
-import com.nhaarman.mockitokotlin2.mock
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
-import org.mockito.Mockito.*
+import io.mockk.every
+import io.mockk.spyk
+import io.mockk.verify
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [AnimatorImpl].
@@ -19,7 +18,7 @@ class AnimatorImplTest {
     lateinit var timeService: ControlledTimeService
     lateinit var animator: AnimatorImpl
 
-    @Before
+    @BeforeTest
     fun init() {
         BaseModuleJvm.require()
         timeService = ControlledTimeService()
@@ -33,7 +32,7 @@ class AnimatorImplTest {
         task.start()
         timeService.setTimeMillis(50)
 
-        `verify`(task, `never`()).animate(`anyDouble`())
+	    verify(exactly = 0) { task.animate(any()) }
     }
 
     @Test
@@ -43,7 +42,7 @@ class AnimatorImplTest {
         task.start()
         timeService.setTimeMillis(150)
 
-        `verify`(task, `times`(1)).animate(`anyDouble`())
+	    verify(exactly = 1) { task.animate(any()) }
     }
 
     @Test
@@ -53,13 +52,13 @@ class AnimatorImplTest {
         task.start()
 
         timeService.setTimeMillis(150)
-        `verify`(task, `times`(1)).animate(10.0)
+	    verify(exactly = 1) { task.animate(10.0) }
 
         timeService.setTimeMillis(250)
-        `verify`(task, `times`(2)).animate(10.0)
+	    verify(exactly = 2) { task.animate(10.0) }
 
         timeService.setTimeMillis(350)
-        `verify`(task, `times`(3)).animate(10.0)
+	    verify(exactly = 3) { task.animate(10.0) }
     }
 
     @Test
@@ -68,12 +67,12 @@ class AnimatorImplTest {
         animator.schedule(task)
         task.start()
 
-        assertThat(animator.taskCount, `is`(1))
+        assertEquals(1, animator.taskCount)
         timeService.setTimeMillis(150)
-        `verify`(task, `times`(1)).animate(10.0)
+	    verify(exactly = 1) { task.animate(10.0) }
 
         task.stop()
-        assertThat(animator.taskCount, `is`(0))
+	    assertEquals(0, animator.taskCount)
     }
 
     @Test
@@ -87,34 +86,38 @@ class AnimatorImplTest {
 
         animator.stopAllTasks()
 
-        assertThat(animator.taskCount, `is`(0))
+	    assertEquals(0, animator.taskCount)
     }
 
     private fun createTask(duration: Double, size: Double): AnimationTask {
-        val task = mock<TestTask>()
+        val task = spyk<TestTask>()
 
-        whenever(task.duration).thenReturn(duration)
-        whenever(task.size).thenReturn(size)
+	    every { task.duration } returns duration
+	    every { task.size } returns size
+	    every { task.dependsOnSystemSpeed } returns false
+
+	    /*
         `doCallRealMethod`().`when`(task).start()
         `doCallRealMethod`().`when`(task).stop()
         `doCallRealMethod`().`when`(task).addListener(animator.taskListener)
+		*/
 
         return task
     }
 
-    abstract class TestTask : AnimationTask {
-        var listener: AnimationTaskListener? = null
+	abstract class TestTask : AnimationTask {
+		var listener: AnimationTaskListener? = null
 
-        override fun start() {
-            listener!!.started(this)
-        }
+		override fun start() {
+			listener!!.started(this)
+		}
 
-        override fun stop() {
-            listener!!.ended(this)
-        }
+		override fun stop() {
+			listener!!.ended(this)
+		}
 
-        override fun addListener(listener: AnimationTaskListener) {
-            this.listener = listener
-        }
-    }
+		override fun addListener(listener: AnimationTaskListener) {
+			this.listener = listener
+		}
+	}
 }
