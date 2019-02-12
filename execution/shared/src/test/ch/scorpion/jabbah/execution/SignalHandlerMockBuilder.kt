@@ -1,15 +1,15 @@
 package ch.scorpion.jabbah.execution
 
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
+import io.mockk.every
+import io.mockk.mockk
 
 /** A builder for mocks of [SignalHandler].*/
 class SignalHandlerMockBuilder {
 
-    private val signalHandler = mock<SignalHandler>()
+    private val signalHandler = mockk<SignalHandler>()
 
     fun withExecutionTime(time: Long): SignalHandlerMockBuilder {
-        whenever(signalHandler.executionTime).thenReturn(time)
+        every { signalHandler.executionTime } returns time
         return this
     }
 

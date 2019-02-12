@@ -21,6 +21,8 @@ import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.reflect.KClass
 
 /**
@@ -317,7 +319,7 @@ class SchedulerImpl(
             }
             recalculated = true
         } else {
-            updateRelativeTime(Math.min(getRelativeRealTime(), slot.relativeTime))
+            updateRelativeTime(min(getRelativeRealTime(), slot.relativeTime))
         }
         postSchedulerStateEvent()
         return ExecutionStepResult(recalculated, breakpoint)
@@ -358,7 +360,7 @@ class SchedulerImpl(
         }
 
         private fun calculateTimerInterval(): Int {
-            val interval = Math.max(1.0, SLOWDOWN_FACTOR * (SystemSpeed.MAX_SPEED - currentSystemSpeedCategory.systemSpeed.speed)).toInt()
+            val interval = max(1.0, SLOWDOWN_FACTOR * (SystemSpeed.MAX_SPEED - currentSystemSpeedCategory.systemSpeed.speed)).toInt()
             LOG.debug("SchedulerImpl: interval = $interval")
             return interval
         }

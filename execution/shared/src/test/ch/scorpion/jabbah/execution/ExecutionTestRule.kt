@@ -9,8 +9,9 @@ import org.junit.runners.model.Statement
 /**
  * Basic setup of unit tests in the [ch.scorpion.jabbah.execution] package.
  */
-class ExecutionTestRule : TestRule {
+object ExecutionTestRule {
 
+	/*
     override fun apply(statement: Statement?, p1: Description?): Statement {
         return object : Statement() {
             override fun evaluate() {
@@ -23,6 +24,7 @@ class ExecutionTestRule : TestRule {
             }
         }
     }
+    */
 
     fun configure() {
         BaseModuleJvm.require()

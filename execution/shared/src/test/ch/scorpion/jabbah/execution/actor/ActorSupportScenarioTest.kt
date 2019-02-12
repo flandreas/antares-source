@@ -1,77 +1,74 @@
 package ch.scorpion.jabbah.execution.actor
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.times
-import com.nhaarman.mockitokotlin2.verify
 import ch.scorpion.jabbah.execution.ExecutionTestRule
 import ch.scorpion.jabbah.execution.SignalHandler
-import org.junit.ClassRule
-import org.junit.Test
+import io.mockk.mockk
+import io.mockk.verify
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 /**
- * Scenario tests for [ActorSupport] using [TestVertice], which inherits [ActorSupport] functionality
- * from [AbstractGraphElement].
+ * Scenario tests for [ActorSupport].
  */
 class ActorSupportScenarioTest {
 
-    companion object {
-        @ClassRule @JvmField
-        val testRule = ExecutionTestRule()
-    }
+	@BeforeTest
+	fun setup() {
+		ExecutionTestRule.configure()
+	}
 
-    val signalHandler: SignalHandler = mock()
+	val signalHandler: SignalHandler = mockk(relaxed = true)
 
-    @Test
-    fun shouldRequestActing() {
-        val actorSupport = ActorSupport(mock())
-        val view1: ActorListener = mock()
-        actorSupport.addListener(view1)
-        val view2: ActorListener = mock()
-        actorSupport.addListener(view2)
+	@Test
+	fun shouldRequestActing() {
+		val actorSupport = ActorSupport(mockk())
+		val view1: ActorListener = mockk(relaxed = true)
+		actorSupport.addListener(view1)
+		val view2: ActorListener = mockk(relaxed = true)
+		actorSupport.addListener(view2)
 
-        actorSupport.requestActingAfter(signalHandler, 0, mock())
+		actorSupport.requestActingAfter(signalHandler, 0, mockk())
 
-        verify(signalHandler).requestActingAfter(any(), any(), any())
-        verify(view1).actingRequested(any(), any(), any())
-        verify(view2).actingRequested(any(), any(), any())
-    }
+		verify { signalHandler.requestActingAfter(any(), any(), any()) }
+		verify { view1.actingRequested(any(), any(), any()) }
+		verify { view2.actingRequested(any(), any(), any()) }
+	}
 
-    @Test
-    fun shouldAct() {
-        val actor: Actor = mock()
-        val actorSupport = ActorSupport(actor)
-        val view1: ActorListener = mock()
-        actorSupport.addListener(view1)
-        val view2: ActorListener = mock()
-        actorSupport.addListener(view2)
+	@Test
+	fun shouldAct() {
+		val actor: Actor = mockk()
+		val actorSupport = ActorSupport(actor)
+		val view1: ActorListener = mockk(relaxed = true)
+		actorSupport.addListener(view1)
+		val view2: ActorListener = mockk(relaxed = true)
+		actorSupport.addListener(view2)
 
-        val actorData: ActorData = mock()
-        actorSupport.requestActingAfter(signalHandler, 0,actorData)
-        actorSupport.notifyActed(signalHandler, actorData)
+		val actorData: ActorData = mockk()
+		actorSupport.requestActingAfter(signalHandler, 0, actorData)
+		actorSupport.notifyActed(signalHandler, actorData)
 
-        verify(view1).acted(actor, signalHandler,actorData)
-        verify(view2).acted(actor, signalHandler,actorData)
-    }
+		verify { view1.acted(actor, signalHandler, actorData) }
+		verify { view2.acted(actor, signalHandler, actorData) }
+	}
 
-    @Test
-    fun shouldWaitForAllVisualizations() {
-        val actor: Actor = mock()
-        val actorSupport = ActorSupport(actor)
-        val view1: ActorListener = mock()
-        actorSupport.addListener(view1)
-        val view2: ActorListener = mock()
-        actorSupport.addListener(view2)
+	@Test
+	fun shouldWaitForAllVisualizations() {
+		val actor: Actor = mockk()
+		val actorSupport = ActorSupport(actor)
+		val view1: ActorListener = mockk(relaxed = true)
+		actorSupport.addListener(view1)
+		val view2: ActorListener = mockk(relaxed = true)
+		actorSupport.addListener(view2)
 
-        val actorData: ActorData = mock()
-        actorSupport.requestActingAfter(signalHandler, 0, actorData)
-        actorSupport.notifyActed(signalHandler, mock())
-        verify(signalHandler, times(0)).actingDone(actor)
+		val actorData: ActorData = mockk()
+		actorSupport.requestActingAfter(signalHandler, 0, actorData)
+		actorSupport.notifyActed(signalHandler, mockk())
+		verify(exactly = 0) {signalHandler.actingDone(actor) }
 
-        actorSupport.actingVisualized(signalHandler, view1)
-        verify(signalHandler, times(0)).actingDone(actor)
+		actorSupport.actingVisualized(signalHandler, view1)
+		verify(exactly = 0) { signalHandler.actingDone(actor) }
 
-        actorSupport.actingVisualized(signalHandler, view2)
-        verify(signalHandler, times(1)).actingDone(actor)
-    }
+		actorSupport.actingVisualized(signalHandler, view2)
+		verify(exactly = 1) {signalHandler.actingDone(actor) }
+	}
 }

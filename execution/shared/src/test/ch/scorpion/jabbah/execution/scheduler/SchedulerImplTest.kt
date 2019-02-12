@@ -1,21 +1,22 @@
 package ch.scorpion.jabbah.execution.scheduler
 
-import com.nhaarman.mockitokotlin2.*
 import ch.scorpion.jabbah.execution.ExecutionTestRule
-import org.junit.Assert.*
-import org.junit.ClassRule
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.*
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Test
-import javax.naming.ldap.Control
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Unit tests for [SchedulerImpl].
@@ -23,17 +24,21 @@ import javax.naming.ldap.Control
 class SchedulerImplTest {
 
     companion object {
-        @ClassRule @JvmField
-        val testRule = ExecutionTestRule()
-
-        val MILLION = 1000000L
+        const val MILLION = 1000000L
     }
 
-    private val timeService = ControlledTimeService()
+	@BeforeTest
+	fun setup() {
+		ExecutionTestRule.configure()
+	}
+
+    private val timeService: ControlledTimeService
     private val eventBus = EventBusImpl()
     private val scheduler: SchedulerImpl;
 
     init {
+	    ExecutionTestRule.configure()
+	    timeService = ControlledTimeService()
         scheduler = SchedulerImpl(
             timeService,
             ControlledTimer(timeService),
@@ -52,7 +57,7 @@ class SchedulerImplTest {
 
         timeService.setTimeMillis(150)
 
-        verify(actor).act(any(), any())
+        verify { actor.act(any(), any()) }
     }
 
     @Test
@@ -63,7 +68,7 @@ class SchedulerImplTest {
 
         timeService.setTimeMillis(150)
 
-        verify(actor, never()).act(any(), any())
+        verify(exactly = 0) { actor.act(any(), any()) }
     }
 
     @Test
@@ -76,8 +81,8 @@ class SchedulerImplTest {
 
         timeService.setTimeMillis(150)
 
-        verify(actor1, times(1)).act(any(), any())
-        verify(actor2, times(1)).act(any(), any())
+        verify(exactly = 1) { actor1.act(any(), any()) }
+        verify(exactly = 1) { actor2.act(any(), any()) }
     }
 
     @Test
@@ -89,8 +94,8 @@ class SchedulerImplTest {
         timeService.setTimeMillis(150)
         timeService.setTimeMillis(300)
 
-        verify(actor, times(1)).act(any(), any())
-        assertThat(scheduler.numberOfRemainingSlots, `is`(0))
+        verify(exactly = 1) { actor.act(any(), any()) }
+        assertEquals(0, scheduler.numberOfRemainingSlots)
     }
 
     @Test
@@ -102,7 +107,7 @@ class SchedulerImplTest {
 
         timeService.setTimeMillis(150)
 
-        verify(actor, times(1)).act(any(), any())
+        verify(exactly = 1) { actor.act(any(), any()) }
     }
 
     /** ---- Stepping tests */
@@ -130,7 +135,7 @@ class SchedulerImplTest {
 
         timeService.setTimeMillis(150)
 
-        verify(actor, never()).act(any(), any())
+        verify(exactly = 0) { actor.act(any(), any()) }
     }
 
     @Test
@@ -144,13 +149,13 @@ class SchedulerImplTest {
 
         timeService.setTimeMillis(150)
         scheduler.step()
-        verify(actor1, times(1)).act(any(), any())
-        verify(actor2, never()).act(any(), any())
+        verify(exactly = 1) { actor1.act(any(), any()) }
+        verify(exactly = 0) { actor2.act(any(), any()) }
 
         timeService.setTimeMillis(250)
         scheduler.step()
-        verify(actor1, times(1)).act(any(), any())
-        verify(actor2, times(1)).act(any(), any())
+        verify(exactly = 1) { actor1.act(any(), any()) }
+        verify(exactly = 1) { actor2.act(any(), any()) }
     }
 
     @Test
@@ -164,33 +169,33 @@ class SchedulerImplTest {
 
         timeService.setTimeMillis(50)
         scheduler.step()
-        verify(actor1, times(1)).act(any(), any())
-        verify(actor2, never()).act(any(), any())
+        verify(exactly = 1) { actor1.act(any(), any()) }
+        verify(exactly = 0) { actor2.act(any(), any()) }
 
         timeService.setTimeMillis(80)
         scheduler.step()
-        verify(actor1, times(1)).act(any(), any())
-        verify(actor2, times(1)).act(any(), any())
+        verify(exactly = 1) { actor1.act(any(), any()) }
+        verify(exactly = 1) { actor2.act(any(), any()) }
     }
 
     /** ---- Animation tests */
 
     @Test
     fun shouldWaitForActingDone() {
-        val actor1: Actor = mock()
-        whenever(actor1.act(any(), any())).thenReturn(false)
+        val actor1: Actor = mockk(relaxed = true)
+        every { actor1.act(any(), any()) } returns(false)
         val actor2 = createActor()
 
         scheduler.isActive = true
         scheduler.signalHandler.requestActingAfter(actor1, 100 * MILLION, createActorData())
 
         timeService.setTimeMillis(150)
-        verify(actor1, times(1)).act(any(), any())
-        verify(actor2, never()).act(any(), any())
+        verify(exactly = 1) { actor1.act(any(), any()) }
+        verify(exactly = 0) { actor2.act(any(), any()) }
 
         timeService.setTimeMillis(300)
-        verify(actor1, times(1)).act(any(), any())
-        verify(actor2, never()).act(any(), any())
+        verify(exactly = 1) { actor1.act(any(), any()) }
+        verify(exactly = 0) { actor2.act(any(), any()) }
     }
 
     @Test
@@ -202,16 +207,16 @@ class SchedulerImplTest {
         scheduler.signalHandler.requestActingAfter(actor2, 100 * MILLION, createActorData())
 
         timeService.setTimeMillis(150)
-        assertThat(actor2.actingCalled, `is`(true))
-        verify(actor1, never()).act(any(), any())
-        assertThat(scheduler.numberOfRemainingSlots, `is`(1))
+        assertTrue(actor2.actingCalled)
+        verify(exactly = 0) { actor1.act(any(), any()) }
+        assertEquals(1, scheduler.numberOfRemainingSlots)
 
         scheduler.signalHandler.actingDone(actor2)
-        assertThat(scheduler.numberOfRemainingSlots, `is`(1))
+        assertEquals(1, scheduler.numberOfRemainingSlots)
 
         timeService.setTimeMillis(250)
-        verify(actor1, times(1)).act(any(), any())
-        assertThat(scheduler.numberOfRemainingSlots, `is`(0))
+        verify(exactly = 1) { actor1.act(any(), any()) }
+        assertEquals(0, scheduler.numberOfRemainingSlots)
     }
 
     @Test
@@ -223,27 +228,27 @@ class SchedulerImplTest {
         scheduler.isActive = true
         scheduler.signalHandler.requestActingAfter(actor2, 100 * MILLION, createActorData())
         scheduler.signalHandler.requestActingAfter(actor3, 100 * MILLION, createActorData())
-        assertThat(scheduler.numberOfRemainingSlots, `is`(1))
+        assertEquals(1, scheduler.numberOfRemainingSlots)
 
         timeService.setTimeMillis(150)
-        verify(actor1, never()).act(any(), any())
-        assertThat(actor2.actingCalled, `is`(true))
-        assertThat(actor3.actingCalled, `is`(true))
+        verify(exactly = 0) { actor1.act(any(), any()) }
+        assertTrue(actor2.actingCalled)
+	    assertTrue(actor3.actingCalled)
 
         scheduler.signalHandler.actingDone(actor2)
         scheduler.signalHandler.actingDone(actor3)
-        assertThat(scheduler.numberOfRemainingSlots, `is`(1))
+        assertEquals(1, scheduler.numberOfRemainingSlots)
 
         timeService.setTimeMillis(300)
-        verify(actor1, times(1)).act(any(), any())
+        verify(exactly = 1) { actor1.act(any(), any()) }
     }
 
     /** ---- [SchedulerImplTest] */
 
     private fun createActor(isBreakpoint: Boolean = true): Actor {
-        val actor: Actor = mock()
-        whenever(actor.act(any(), any())).thenReturn(true)
-        whenever(actor.isBreakpoint).thenReturn(isBreakpoint)
+        val actor: Actor = mockk(relaxed = true)
+        every { actor.act(any(), any()) } returns true
+        every { actor.isBreakpoint } returns isBreakpoint
         return actor
     }
 
