@@ -2,28 +2,25 @@ package ch.scorpion.jabbah.draw.style
 
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.DrawTestRule
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.`sameInstance`
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 /**
  * Unit tests for [StyleRepository].
  */
 class StyleRepositoryTest {
 
-	companion object {
-		@ClassRule
-		@JvmField
-		val drawTestRule = DrawTestRule()
+	@BeforeTest
+	fun beforeTest() {
+		DrawTestRule.configure()
 	}
 
     val styleType = StyleType("test", "testKey")
     val style: Style = BasicStyle()
 
-    @Before
+    @BeforeTest
     fun setup() {
         BaseModuleJvm.require()
         StyleRepository.INSTANCE.clear()
@@ -32,13 +29,13 @@ class StyleRepositoryTest {
     @Test
     fun shouldRegisterStyleType() {
         StyleRepository.INSTANCE.registerStyleType(styleType)
-        assertThat(StyleRepository.INSTANCE.getStyleType("test"), `is`(`sameInstance`(styleType)))
+        assertSame(styleType, StyleRepository.INSTANCE.getStyleType("test"))
     }
 
     @Test
     fun shouldRegisterStyle() {
         StyleRepository.INSTANCE.registerStyle(styleType, style)
-        assertThat(StyleRepository.INSTANCE.getStyle(styleType), `is`(`sameInstance`(style)))
+	    assertSame(style, StyleRepository.INSTANCE.getStyle(styleType))
     }
 
 	@Test
@@ -47,8 +44,8 @@ class StyleRepositoryTest {
 		StyleRepository.INSTANCE.registerStyleType(StyleType("Style B", "testKey"))
 		StyleRepository.INSTANCE.registerStyleType(StyleType("Style C", "testKey"))
 
-		assertThat(StyleRepository.INSTANCE.getStyleTypes()[0].name, `is`("Style A"))
-		assertThat(StyleRepository.INSTANCE.getStyleTypes()[1].name, `is`("Style B"))
-		assertThat(StyleRepository.INSTANCE.getStyleTypes()[2].name, `is`("Style C"))
+		assertEquals("Style A", StyleRepository.INSTANCE.getStyleTypes()[0].name)
+		assertEquals("Style B", StyleRepository.INSTANCE.getStyleTypes()[1].name)
+		assertEquals("Style C", StyleRepository.INSTANCE.getStyleTypes()[2].name)
 	}
 }

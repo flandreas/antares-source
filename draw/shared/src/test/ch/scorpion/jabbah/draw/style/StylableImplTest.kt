@@ -3,23 +3,17 @@ package ch.scorpion.jabbah.draw.style
 import ch.scorpion.jabbah.draw.DrawTestRule
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModule
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.sameInstance
-import org.junit.Assert.*
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.*
 
 /**
  * Unit tests for [StylableImpl].
  */
 class StylableImplTest {
 
-    companion object {
-
-        @ClassRule @JvmField
-        val drawTestRule = DrawTestRule()
-    }
-
+	@BeforeTest
+	fun beforeTest() {
+		DrawTestRule.configure()
+	}
 
     private val styleColor = CompositeColor()
     private val customColor = PredefinedColorRepository.withIdentity(PredefinedColorIdentity.Black)!!
@@ -29,14 +23,14 @@ class StylableImplTest {
     fun shouldUseStyleForegroundColor() {
         StyleRepository.INSTANCE.registerStyle(StyleType.FIGURE, specifiedStyle)
         val stylable = StylableImpl(styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
-        assertThat(stylable.foregroundColor, `is`(sameInstance(specifiedStyle.color.foregroundColor)))
+        assertSame(stylable.foregroundColor, specifiedStyle.color.foregroundColor)
     }
 
     @Test
     fun shouldUseCustomForegroundColor() {
         StyleRepository.INSTANCE.registerStyle(StyleType.FIGURE, specifiedStyle)
         val stylable = StylableImpl(customColor = customColor, styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
-        assertThat(stylable.foregroundColor, `is`(sameInstance(customColor.color.foregroundColor)))
+	    assertSame(stylable.foregroundColor, customColor.color.foregroundColor)
     }
 
     @Test
@@ -45,7 +39,7 @@ class StylableImplTest {
         DrawModule.properties.set(Style.PROP_FOREGROUND_COLOR, propertyColor)
         StyleRepository.INSTANCE.registerStyle(StyleType.FIGURE, BasicStyle())
         val stylable = StylableImpl(styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
-        assertThat(stylable.foregroundColor, `is`(sameInstance(propertyColor)))
+	    assertSame(stylable.foregroundColor, propertyColor)
     }
 
 	@Test
@@ -56,6 +50,6 @@ class StylableImplTest {
 
 		stylable.customShadow = false
 
-		assertThat(stylable.shadow, `is`(false))
+		assertFalse(stylable.shadow)
 	}
 }

@@ -6,38 +6,37 @@ import ch.scorpion.jabbah.draw.DrawTestRule
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import org.junit.ClassRule
-import org.junit.Test
-import org.mockito.Mockito
+import io.mockk.mockk
+import io.mockk.verify
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 /** Unit tests for [ViewImpl].*/
 class ViewImplTest {
 
-	companion object {
-		@ClassRule
-		@JvmField
-		val drawTestRule = DrawTestRule()
+	private val canvas: Canvas = mockk(relaxed = true)
+
+	@BeforeTest
+	fun before() {
+		DrawTestRule.configure()
 	}
-
-	private val canvas: Canvas = mock()
-
-	private val view: ViewImpl<InputEventContext> = ViewImpl(
-		canvas = canvas,
-		transformFactory = { AffineTransformImpl() },
-		viewPainterFactory = { SimpleViewPainter(it) })
 
 	@Test
 	fun shouldRepaintCanvasWhenValidatingDrawable() {
+		//DrawTestRule.configure()
+
+		val view: ViewImpl<InputEventContext> = ViewImpl(
+			canvas = canvas,
+			transformFactory = { AffineTransformImpl() },
+			viewPainterFactory = { SimpleViewPainter(it) })
+
 		val container = DrawableContainerImpl<Drawable>()
 		view.addDrawable(container)
-		Mockito.clearInvocations(canvas)
 		container.invalidate()
 
 		container.validate()
 
-		verify(canvas).repaint()
+		verify { canvas.repaint() }
 	}
 
 }

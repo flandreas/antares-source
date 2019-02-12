@@ -23,6 +23,7 @@ import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
 import javafx.scene.layout.Region
+import kotlin.math.ceil
 
 class CanvasFx(
         val canvas: javafx.scene.canvas.Canvas,
@@ -78,7 +79,7 @@ class CanvasFx(
     }
 
     override fun repaint() {
-        repaint(0, 0, Math.ceil(canvas.width).toInt(), Math.ceil(canvas.height).toInt())
+        repaint(0, 0, ceil(canvas.width).toInt(), ceil(canvas.height).toInt())
     }
 
     override fun repaint(x: Int, y: Int, width: Int, height: Int) {

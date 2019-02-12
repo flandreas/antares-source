@@ -1,27 +1,26 @@
 package ch.scorpion.jabbah.draw.view
 
-import com.nhaarman.mockitokotlin2.mock
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.DrawTestRule
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
+import io.mockk.mockk
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [InvalidatableViewPainter].
  */
 class InvalidatableViewPainterTest {
 
-    private var view: View<InputEventContext> = mock()
+    private var view: View<InputEventContext> = mockk()
     private var viewPainter = InvalidatableViewPainter(view)
 
-    @Before
-    fun setup() {
-        BaseModuleJvm.require()
-    }
+	@BeforeTest
+	fun beforeTest() {
+		DrawTestRule.configure()
+	}
 
     @Test
     fun shouldSumInvalidAreas() {

@@ -1,13 +1,13 @@
 package ch.scorpion.jabbah.draw.view
 
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ViewNavigator
 import ch.scorpion.jabbah.draw.ZoomPan
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.Math
-import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
+import kotlin.math.min
 
 /**
  * A default implementation of the [ViewNavigator] interface.
@@ -82,7 +82,7 @@ class ViewNavigatorImpl(
 	}
 
 	override fun fitMaxNormal() {
-		val zoomFactor = Math.min(defaultZoomFactor, calculateFitZoomFactor())
+		val zoomFactor = min(defaultZoomFactor, calculateFitZoomFactor())
 		setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
 	}
 
@@ -109,7 +109,7 @@ class ViewNavigatorImpl(
 			return defaultZoomFactor
 		}
 
-		return Math.min(
+		return min(
 			(view.width - 2 * FIT_ZOOM_INSET) / bounds.width,
 			(view.height - 2 * FIT_ZOOM_INSET) / bounds.height)
 	}

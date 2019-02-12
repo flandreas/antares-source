@@ -1,35 +1,35 @@
 package ch.scorpion.jabbah.draw.drawable
 
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.Tooltip
-import com.nhaarman.mockitokotlin2.*
-import org.mockito.Mockito
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.Drawable
+import io.mockk.every
+import io.mockk.mockk
 
 /**
  * A builder for mocks of [Drawable].
  */
 class DrawableMockBuilder {
 
-    private val drawable: Drawable =mock<Drawable>()
+    private val drawable: Drawable = mockk(relaxed = true)
 
     init {
-        Mockito.`when`(drawable.boundingBox).thenReturn(Rectangle2D())
-        Mockito.`when`(drawable.visible).thenReturn(true)
+	    every { drawable.boundingBox } returns Rectangle2D()
+	    every { drawable.visible } returns true
     }
 
     fun invisible(): DrawableMockBuilder {
-        Mockito.`when`(drawable.visible).thenReturn(false)
+	    every { drawable.visible } returns false
         return this
     }
 
     fun contains(x: Double, y: Double): DrawableMockBuilder {
-        whenever(drawable.contains(eq(x), eq(y))).thenReturn(true)
+	    every { drawable.contains(eq(x), eq(y)) } returns true
         return this
     }
 
     fun tooltip(s: String): DrawableMockBuilder {
-        Mockito.`when`(drawable.getTooltip(any(), any())).thenReturn(Tooltip(s, 0.0, 0.0))
+	    every { drawable.getTooltip(any(), any()) } returns Tooltip(s, 0.0, 0.0)
         return this
     }
 

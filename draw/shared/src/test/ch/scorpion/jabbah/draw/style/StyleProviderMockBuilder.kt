@@ -1,23 +1,22 @@
 package ch.scorpion.jabbah.draw.style
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
+import io.mockk.every
+import io.mockk.mockk
 
 /**
  * A builder for mocks of [StyleProvider].
  */
 class StyleProviderMockBuilder {
 
-    private val styleProvider = mock<StyleProvider>()
+    private val styleProvider = mockk<StyleProvider>()
 
     init {
-        whenever(styleProvider.getStyleType(any())).thenReturn(StyleType.FIGURE)
-        whenever(styleProvider.getStyle(any())).thenReturn(BasicStyle())
+	    every { styleProvider.getStyleType(any()) } returns StyleType.FIGURE
+	    every { styleProvider.getStyle(any()) } returns BasicStyle()
     }
 
     fun withStyleType(name: String, styleType: StyleType): StyleProviderMockBuilder {
-        whenever(styleProvider.getStyleType(name)).thenReturn(styleType)
+	    every { styleProvider.getStyleType(name) } returns styleType
         return this
     }
 

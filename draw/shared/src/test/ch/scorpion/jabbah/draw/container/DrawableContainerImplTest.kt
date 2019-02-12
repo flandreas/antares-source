@@ -8,16 +8,9 @@ import ch.scorpion.jabbah.draw.drawable.DrawableMockBuilder
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
-import ch.scorpion.jabbah.draw.graphics.Graphics2D
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.sameInstance
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Test
-import org.mockito.Mockito
+import io.mockk.mockk
+import io.mockk.verify
+import kotlin.test.*
 
 /**
  * Unit tests for [DrawableContainerImpl].
@@ -27,24 +20,24 @@ class DrawableContainerImplTest {
     private lateinit var container: DrawableContainerImpl<Drawable>
     private lateinit var context: DrawContext
 
-    @Before
+    @BeforeTest
     fun setup() {
         BaseModuleJvm.require()
         container = DrawableContainerImpl()
-        context = Mockito.mock(DrawContext::class.java)
+        context = mockk()
     }
 
     @Test
     fun shouldAddDrawable() {
         val drawable = DrawableMockBuilder().build()
         container.add(drawable)
-        Assert.assertTrue(container.contains(drawable))
+        assertTrue(container.contains(drawable))
     }
 
     @Test
     fun shouldNotContainUnaddedDrawable() {
         val drawable = DrawableMockBuilder().build()
-        Assert.assertFalse(container.contains(drawable))
+        assertFalse(container.contains(drawable))
     }
 
     @Test
@@ -52,7 +45,7 @@ class DrawableContainerImplTest {
         val drawable = DrawableMockBuilder().build()
         container.add(drawable)
         container.draw(context)
-        Mockito.verify(drawable, Mockito.atLeastOnce()).draw(context)
+	    verify(atLeast = 1) { drawable.draw(context) }
     }
 
     @Test
@@ -60,7 +53,7 @@ class DrawableContainerImplTest {
         val drawable = DrawableMockBuilder().invisible().build()
         container.add(drawable)
         container.draw(context)
-        Mockito.verify(drawable, Mockito.never()).draw(context)
+	    verify(exactly = 0) { drawable.draw(context) }
     }
 
     @Test
@@ -72,10 +65,10 @@ class DrawableContainerImplTest {
 
         val iter = container.backToFrontIterator()
 
-        assertThat(iter.hasNext(), `is`(true))
-        assertThat(iter.next(), `is`(`sameInstance`(drawable1)))
-        assertThat(iter.next(), `is`(`sameInstance`(drawable2)))
-        assertThat(iter.next(), `is`(`sameInstance`(drawable3)))
+        assertTrue(iter.hasNext())
+        assertSame(iter.next(), drawable1)
+	    assertSame(iter.next(), drawable2)
+	    assertSame(iter.next(), drawable3)
     }
 
     // Stacking order
@@ -89,9 +82,9 @@ class DrawableContainerImplTest {
 
         container.setStackingOrderPosition(1, d3)
 
-        assertThat(container.getStackingOrderPosition(d1), `is`(0))
-        assertThat(container.getStackingOrderPosition(d3), `is`(1))
-        assertThat(container.getStackingOrderPosition(d2), `is`(2))
+        assertEquals(0, container.getStackingOrderPosition(d1))
+        assertEquals(1, container.getStackingOrderPosition(d3))
+        assertEquals(2, container.getStackingOrderPosition(d2))
     }
 
     @Test
@@ -103,9 +96,9 @@ class DrawableContainerImplTest {
 
         container.setStackingOrderPosition(2, d2)
 
-        assertThat(container.getStackingOrderPosition(d1), `is`(0))
-        assertThat(container.getStackingOrderPosition(d3), `is`(1))
-        assertThat(container.getStackingOrderPosition(d2), `is`(2))
+        assertEquals(0, container.getStackingOrderPosition(d1))
+        assertEquals(1, container.getStackingOrderPosition(d3))
+        assertEquals(2, container.getStackingOrderPosition(d2))
     }
 
     @Test
@@ -117,9 +110,9 @@ class DrawableContainerImplTest {
 
         container.setStackingOrderPosition(1, d2)
 
-        assertThat(container.getStackingOrderPosition(d1), `is`(0))
-        assertThat(container.getStackingOrderPosition(d2), `is`(1))
-        assertThat(container.getStackingOrderPosition(d3), `is`(2))
+        assertEquals(0, container.getStackingOrderPosition(d1))
+        assertEquals(1, container.getStackingOrderPosition(d2))
+        assertEquals(2, container.getStackingOrderPosition(d3))
     }
 
     @Test
@@ -131,9 +124,9 @@ class DrawableContainerImplTest {
 
         container.toFront(listOf(d3))
 
-        assertThat(container.getStackingOrderPosition(d3), `is`(0))
-        assertThat(container.getStackingOrderPosition(d1), `is`(1))
-        assertThat(container.getStackingOrderPosition(d2), `is`(2))
+        assertEquals(0, container.getStackingOrderPosition(d3))
+        assertEquals(1, container.getStackingOrderPosition(d1))
+        assertEquals(2, container.getStackingOrderPosition(d2))
     }
 
     @Test
@@ -145,9 +138,9 @@ class DrawableContainerImplTest {
 
         container.toBack(listOf(d1, d2))
 
-        assertThat(container.getStackingOrderPosition(d3), `is`(0))
-        assertThat(container.getStackingOrderPosition(d1), `is`(1))
-        assertThat(container.getStackingOrderPosition(d2), `is`(2))
+        assertEquals(0, container.getStackingOrderPosition(d3))
+        assertEquals(1, container.getStackingOrderPosition(d1))
+        assertEquals(2, container.getStackingOrderPosition(d2))
     }
 
     // Direct containment tests
@@ -155,15 +148,15 @@ class DrawableContainerImplTest {
     @Test
     fun shouldDirectlyContainAt() {
         container.add(TestRectangle(Rectangle2D(100, 100, 10, 10)))
-        assertThat(container.contains(105.0, 105.0), `is`(true))
-        assertThat(container.contains(5.0, 5.0), `is`(false))
+        assertTrue(container.contains(105.0, 105.0))
+        assertFalse(container.contains(5.0, 5.0))
     }
 
     @Test
     fun shouldGetDrawableAt() {
         val rect = TestRectangle(Rectangle2D(100, 100, 10, 10))
         container.add(rect)
-        assertThat(container.getDrawableAt(105.0, 105.0) as TestRectangle, `is`(rect))
+        assertEquals(rect, container.getDrawableAt(105.0, 105.0) as TestRectangle)
     }
 
     // Composite DrawableContainerImpl
@@ -174,7 +167,7 @@ class DrawableContainerImplTest {
         innerContainer.add(TestRectangle(Rectangle2D(20, 20, 10, 10)))
         container.add(innerContainer)
 
-        assertThat(container.contains(125.0, 125.0), `is`(true))
+        assertTrue(container.contains(125.0, 125.0))
     }
 
     @Test
@@ -183,7 +176,7 @@ class DrawableContainerImplTest {
         innerContainer.add(TestRectangle(Rectangle2D(20, 20, 10, 10)))
         container.add(innerContainer)
 
-        assertThat(container.contains(110.0, 110.0), `is`(false))
+        assertFalse(container.contains(110.0, 110.0))
     }
 
     @Test
@@ -193,7 +186,7 @@ class DrawableContainerImplTest {
         innerContainer.add(rect)
         container.add(innerContainer)
 
-        assertThat(container.getDrawableAt(125.0, 125.0) as DrawableContainerImpl<Drawable>, `is`(innerContainer))
+        assertEquals(innerContainer, container.getDrawableAt(125.0, 125.0) as DrawableContainerImpl<Drawable>)
     }
 
     @Test
@@ -203,7 +196,7 @@ class DrawableContainerImplTest {
         innerContainer.add(rect)
         container.add(innerContainer)
 
-        assertThat(innerContainer.getDrawableAt(125.0, 125.0) as TestRectangle, `is`(rect))
+        assertEquals(rect, innerContainer.getDrawableAt(125.0, 125.0) as TestRectangle)
     }
 
     @Test
@@ -213,12 +206,12 @@ class DrawableContainerImplTest {
 
         container.add(innerContainer)
 
-        assertThat(container.getTooltip(125.0, 125.0)?.text, `is`("Test"))
+        assertEquals("Test", container.getTooltip(125.0, 125.0)?.text)
     }
 
     @Test
     fun shouldDispatchMouseMovedToNestedDrawable() {
-        val view = mock<View<InputEventContext>>()
+        val view = mockk<View<InputEventContext>>()
         val context = InputEventContext(view = view, x = 125.0, y = 125.0)
 
         val rect = TestRectangle(Rectangle2D(20, 20, 10, 10))
@@ -228,12 +221,12 @@ class DrawableContainerImplTest {
 
         container.getInputEventHandler(context).mouseMoved(context)
 
-        assertThat(rect.mouseMoved, `is`(true))
+        assertTrue(rect.mouseMoved)
     }
 
     @Test
     fun shouldDispatchMousePressedToNestedDrawable() {
-        val view = mock<View<InputEventContext>>()
+        val view = mockk<View<InputEventContext>>()
         val context = InputEventContext(view = view, x = 125.0, y = 125.0)
 
         val rect = TestRectangle(Rectangle2D(20, 20, 10, 10))
@@ -243,7 +236,7 @@ class DrawableContainerImplTest {
 
         container.getInputEventHandler(context).mousePressed(context)
 
-        assertThat(rect.mousePressed, `is`(true))
+        assertTrue(rect.mousePressed)
     }
 
 

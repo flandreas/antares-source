@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import kotlin.math.max
 
 /**
  * Represents a request to display or hide the tooltip of a [Drawable] in a particular [View].
@@ -256,7 +257,7 @@ object TooltipManager {
 	private fun createTextArrowBubble(tooltip: Tooltip, view: View<*>): ArrowBubble {
 		val font = styleProvider.getStyle(StyleType.TOOLTIP).font
 		val textRenderInfo = DrawModule.textRenderInfoFactory.measureHtmlText(tooltip.text, font, WIDTH)
-		val width = Math.max(MIN_WIDTH, textRenderInfo.textBounds.width.toInt()).toDouble()
+		val width = max(MIN_WIDTH, textRenderInfo.textBounds.width.toInt()).toDouble()
 
 		val multilineText = MultilineText(text = tooltip.text, font = font, maxWidth = width, asHtml = true)
 		multilineText.setBounds(0, 0, width.toInt(), textRenderInfo.textBounds.height.toInt())

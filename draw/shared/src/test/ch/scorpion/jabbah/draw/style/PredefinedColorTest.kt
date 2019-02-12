@@ -1,14 +1,13 @@
 package ch.scorpion.jabbah.draw.style
 
+import ch.scorpion.jabbah.draw.DrawTestRule
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.PredefinedColor
-import ch.scorpion.jabbah.draw.graphics.PredefinedColorRepository
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.graphics.PredefinedColorIdentity
-import org.junit.Assert.*
-import org.junit.Test
-import org.hamcrest.CoreMatchers.*
-import org.junit.Before
+import ch.scorpion.jabbah.draw.graphics.PredefinedColorRepository
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [PredefinedColorRepository].
@@ -17,9 +16,9 @@ class PredefinedColorRepositoryTest {
 
     lateinit var repository: PredefinedColorRepository
 
-    @Before
+    @BeforeTest
     fun setup() {
-        BaseModuleJvm.require()
+	    DrawTestRule.configure()
         repository = PredefinedColorRepository
         repository.clear()
     }
@@ -27,15 +26,15 @@ class PredefinedColorRepositoryTest {
     @Test
     fun shouldRegister() {
         repository.register(PredefinedColor(PredefinedColorIdentity.Black, CompositeColor()))
-        assertThat(repository.withIdName("black")?.name, `is`("black"))
+        assertEquals("black", repository.withIdName("black")?.name)
     }
 
     @Test
     fun shouldProvideAll() {
         repository.register(PredefinedColor(PredefinedColorIdentity.Black, CompositeColor()))
         repository.register(PredefinedColor(PredefinedColorIdentity.White, CompositeColor()))
-        assertThat(repository.provideAll().size, `is`(2))
-        assertThat(repository.provideAll()[0].name, `is`("black"))
-        assertThat(repository.provideAll()[1].name, `is`("white"))
+        assertEquals(2, repository.provideAll().size)
+        assertEquals("black", repository.provideAll()[0].name)
+        assertEquals("white", repository.provideAll()[1].name)
     }
 }
