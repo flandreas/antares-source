@@ -3,11 +3,8 @@ package ch.scorpion.jabbah.graph.view.net.edge
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.ClassRule
-import org.junit.Test
-
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [EdgeViewPointSequence].
@@ -15,8 +12,9 @@ import org.junit.Test
 class EdgeViewPointSequenceTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = GraphViewTestRule()
+	    init {
+		    GraphViewTestRule.configure()
+	    }
     }
 
     @Test
@@ -29,12 +27,12 @@ class EdgeViewPointSequenceTest {
 
         val sequence = EdgeViewPointSequence.of(edgeView)
 
-        assertThat(sequence.size, `is`(20.0))
+        assertEquals(sequence.size, (20.0))
 
-        assertThat(sequence.getNext(10.0), `is`(Point2D(0, 0)))
-        assertThat(sequence.getNext(10.0), `is`(Point2D(10, 0)))
-        assertThat(sequence.getNext(10.0), `is`(Point2D(10, 0)))
-        assertThat(sequence.getNext(10.0), `is`(Point2D(10, 10)))
+        assertEquals(Point2D(0, 0), sequence.getNext(10.0))
+        assertEquals(Point2D(10, 0), sequence.getNext(10.0))
+        assertEquals(Point2D(10, 0), sequence.getNext(10.0))
+        assertEquals(Point2D(10, 10), sequence.getNext(10.0))
     }
 
     @Test
@@ -47,10 +45,10 @@ class EdgeViewPointSequenceTest {
 
         val sequence = EdgeViewPointSequence.reverseOf(edgeView)
 
-        assertThat(sequence.size, `is`(20.0))
-        assertThat(sequence.getNext(10.0), `is`(Point2D(10, 10)))
-		assertThat(sequence.getNext(10.0), `is`(Point2D(10, 0)))
-		assertThat(sequence.getNext(10.0), `is`(Point2D(10, 0)))
-		assertThat(sequence.getNext(10.0), `is`(Point2D(0, 0)))
+        assertEquals(20.0, sequence.size)
+        assertEquals(Point2D(10, 10), sequence.getNext(10.0))
+		assertEquals(Point2D(10, 0), sequence.getNext(10.0))
+		assertEquals(Point2D(10, 0), sequence.getNext(10.0))
+		assertEquals(Point2D(0, 0), sequence.getNext(10.0))
     }
 }

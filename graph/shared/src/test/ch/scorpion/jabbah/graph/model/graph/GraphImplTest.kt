@@ -1,154 +1,151 @@
 package ch.scorpion.jabbah.graph.model.graph
 
-import com.nhaarman.mockitokotlin2.mock
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.graph.model.*
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.nullValue
-import org.junit.Assert.assertThat
-import org.junit.ClassRule
-import org.junit.Test
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphOutputImpl
 import ch.scorpion.jabbah.io.IOModule
+import io.mockk.mockk
+import kotlin.test.*
 
 /**
  * Unit tests for [GraphImpl].
  */
 class GraphImplTest {
 
-    companion object {
-        @ClassRule @JvmField
-        val rule = GraphModelTestRule()
-    }
+	companion object {
+		init {
+			GraphModelTestRule.configure()
+		}
+	}
 
-    @Test
-    fun shouldClear() {
-        val graph = GraphImpl(eventBus = mock())
-                .add(TestVertice())
-                .add(TestVertice())
-                .clear()
-        assertThat(graph.elementsCount, `is`(0))
-    }
+	@Test
+	fun shouldClear() {
+		val graph = GraphImpl(eventBus = mockk(relaxed = true))
+			.add(TestVertice())
+			.add(TestVertice())
+			.clear()
+		assertEquals(0, graph.elementsCount)
+	}
 
-    @Test
-    fun shouldSetGraphElementId() {
-        val v1 = TestVertice()
-        val v2 = TestVertice()
-        val graph = GraphImpl(eventBus = mock())
-        graph.add(v1)
-        graph.add(v2)
+	@Test
+	fun shouldSetGraphElementId() {
+		val v1 = TestVertice()
+		val v2 = TestVertice()
+		val graph = GraphImpl(eventBus = mockk(relaxed = true))
+		graph.add(v1)
+		graph.add(v2)
 
-        assertThat(v1.id, `is`(1))
-        assertThat(v2.id, `is`(2))
-    }
+		assertEquals(1, v1.id)
+		assertEquals(2, v2.id)
+	}
 
-    @Test
-    fun shouldBeStorable() {
-        val testGraph = TestGraph(eventBus = mock())
-        val clone = IOModule.storableClonerProvider.invoke().clone(testGraph.graph) as Graph
+	@Test
+	fun shouldBeStorable() {
+		val testGraph = TestGraph(eventBus = mockk(relaxed = true))
+			val clone = IOModule . storableClonerProvider . invoke ().clone(testGraph.graph) as Graph
 
-        val v1: Vertice = clone.withId(1)!! as Vertice
-        val v2: Vertice = clone.withId(2)!! as Vertice
-        val net: Net<Boolean> = clone.withId(3)!! as Net<Boolean>
-        assertThat(v1.getOutput<Boolean>().net!!.id, `is`(3))
-        assertThat(net.isConnectedWith(v2.getInput()), `is`(true))
-    }
+		val v1: Vertice = clone.withId(1)!! as Vertice
+		val v2: Vertice = clone.withId(2)!! as Vertice
+		val net: Net<Boolean> = clone.withId(3)!! as Net<Boolean>
+		assertEquals(3, v1.getOutput<Boolean>().net!!.id)
+		assertTrue(net.isConnectedWith(v2.getInput()))
+	}
 
-    @Test
-    fun shouldUnconnectEdgeWhenRemovingOriginVertice() {
-        val testGraph = TestGraph(eventBus = mock())
+	@Test
+	fun shouldUnconnectEdgeWhenRemovingOriginVertice() {
+		val testGraph = TestGraph(eventBus = mockk(relaxed = true))
 
-        testGraph.graph.remove(testGraph.v1)
+		testGraph.graph.remove(testGraph.v1)
 
-        assertThat(testGraph.v1.getOutput<Boolean>().net, `is`(nullValue()))
-        assertThat(testGraph.net.isConnectedWith(testGraph.v1.getOutput()), `is`(false))
-    }
+		assertNull(testGraph.v1.getOutput<Boolean>().net)
+		assertFalse(testGraph.net.isConnectedWith(testGraph.v1.getOutput()))
+	}
 
-    @Test
-    fun shouldUnconnectEdgeWhenRemovingDestinationVertice() {
-        val testGraph = TestGraph(eventBus = mock())
+	@Test
+	fun shouldUnconnectEdgeWhenRemovingDestinationVertice() {
+		val testGraph = TestGraph(eventBus = mockk(relaxed = true))
 
-        testGraph.graph.remove(testGraph.v2)
+		testGraph.graph.remove(testGraph.v2)
 
-        assertThat(testGraph.v2.getInput<Boolean>().net, `is`(nullValue()))
-        assertThat(testGraph.net.isConnectedWith(testGraph.v2.getInput()), `is`(false))
-    }
+		assertNull(testGraph.v2.getInput<Boolean>().net)
+		assertFalse(testGraph.net.isConnectedWith(testGraph.v2.getInput()))
+	}
 
-    @Test
-    fun shouldUnconnectOutputPortWhenRemovingNet() {
-        val testGraph = TestGraph(eventBus = mock())
+	@Test
+	fun shouldUnconnectOutputPortWhenRemovingNet() {
+		val testGraph = TestGraph(eventBus = mockk(relaxed = true))
 
-        testGraph.graph.remove(testGraph.net)
+		testGraph.graph.remove(testGraph.net)
 
-        assertThat(testGraph.v1.getOutput<Boolean>().net, `is`(nullValue()))
-        assertThat(testGraph.v2.getInput<Boolean>().net, `is`(nullValue()))
-        assertThat(testGraph.net.isConnectedWith(testGraph.v1.getOutput()), `is`(false))
-        assertThat(testGraph.net.isConnectedWith(testGraph.v2.getInput()), `is`(false))
-    }
+		assertNull(testGraph.v1.getOutput<Boolean>().net)
+		assertNull(testGraph.v2.getInput<Boolean>().net)
+		assertFalse(testGraph.net.isConnectedWith(testGraph.v1.getOutput()))
+		assertFalse(testGraph.net.isConnectedWith(testGraph.v2.getInput()))
+	}
 
-    @Test
-    fun shouldCreateUniqueGraphInputName() {
-        val testGraph = GraphImpl(eventBus = mock())
+	@Test
+	fun shouldCreateUniqueGraphInputName() {
+		val testGraph = GraphImpl(eventBus = mockk(relaxed = true))
 
-        val in1 = GraphInputImpl(PortImpl.createOutput(Boolean::class))
-        testGraph.add(in1)
-        val in2 = GraphInputImpl(PortImpl.createOutput(Boolean::class))
-        testGraph.add(in2)
+		val in1 = GraphInputImpl(PortImpl.createOutput(Boolean::class))
+		testGraph.add(in1)
+		val in2 = GraphInputImpl(PortImpl.createOutput(Boolean::class))
+		testGraph.add(in2)
 
-        assertThat(in1.name, `is`("I1"))
-        assertThat(in2.name, `is`("I2"))
-    }
+		assertEquals("I1", in1.name)
+		assertEquals("I2", in2.name)
+	}
 
 	@Test
 	fun shouldCreateUniqueGraphInputNameForExisting() {
-		val testGraph = GraphImpl(eventBus = mock())
+		val testGraph = GraphImpl(eventBus = mockk(relaxed = true))
 
 		val in1 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1")
 		testGraph.add(in1)
 		val in2 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1")
 		testGraph.add(in2)
 
-		assertThat(in1.name, `is`("I1"))
-		assertThat(in2.name, `is`("I2"))
+		assertEquals("I1", in1.name)
+		assertEquals("I2", in2.name)
 	}
 
-    @Test
-    fun shouldCreateUniqueGraphOutputName() {
-        val testGraph = GraphImpl(eventBus = mock())
+	@Test
+	fun shouldCreateUniqueGraphOutputName() {
+		val testGraph = GraphImpl(eventBus = mockk(relaxed = true))
 
-        val out1 = GraphOutputImpl(PortImpl.createInput(Boolean::class))
-        testGraph.add(out1)
-        val out2 = GraphOutputImpl(PortImpl.createInput(Boolean::class))
-        testGraph.add(out2)
+		val out1 = GraphOutputImpl(PortImpl.createInput(Boolean::class))
+		testGraph.add(out1)
+		val out2 = GraphOutputImpl(PortImpl.createInput(Boolean::class))
+		testGraph.add(out2)
 
-        assertThat(out1.name, `is`("O1"))
-        assertThat(out2.name, `is`("O2"))
-    }
-
-    @Test
-    fun shouldCreateUniqueGraphInputOutputName() {
-        val testGraph = GraphImpl(eventBus = mock())
-
-        val `in` = GraphInputImpl(PortImpl.createOutput(Boolean::class))
-        testGraph.add(`in`)
-        val out = GraphOutputImpl(PortImpl.createInput(Boolean::class))
-        testGraph.add(out)
-
-        assertThat(`in`.name, `is`("I1"))
-        assertThat(out.name, `is`("O1"))
-    }
+		assertEquals("O1", out1.name)
+		assertEquals("O2", out2.name)
+	}
 
 	@Test
-    fun shouldNotChangeUniqueInputName() {
+	fun shouldCreateUniqueGraphInputOutputName() {
+		val testGraph = GraphImpl(eventBus = mockk(relaxed = true))
+
+		val `in` = GraphInputImpl(PortImpl.createOutput(Boolean::class))
+		testGraph.add(`in`)
+		val out = GraphOutputImpl(PortImpl.createInput(Boolean::class))
+		testGraph.add(out)
+
+		assertEquals("I1", `in`.name)
+		assertEquals("O1", out.name)
+	}
+
+	@Test
+	fun shouldNotChangeUniqueInputName() {
 		val testGraph = GraphImpl(eventBus = EventBusImpl())
 		val `in` = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I99")
 
 		testGraph.add(`in`)
 
-		assertThat(`in`.name, `is`("I99"))
-    }
+		assertEquals("I99", `in`.name)
+	}
 
 	@Test
 	fun shouldNotChangeUniqueOutputName() {
@@ -157,7 +154,7 @@ class GraphImplTest {
 
 		testGraph.add(out)
 
-		assertThat(out.name, `is`("O99"))
+		assertEquals("O99", out.name)
 	}
 
 	@Test
@@ -167,11 +164,11 @@ class GraphImplTest {
 
 		testGraph.add(inout)
 
-		assertThat(inout.name, `is`("IO99"))
+		assertEquals("IO99", inout.name)
 	}
 
 	@Test
-	fun shouldAllowUniquePortNameChange () {
+	fun shouldAllowUniquePortNameChange() {
 		val eventBus = EventBusImpl()
 		val testGraph = GraphImpl(eventBus = eventBus)
 		testGraph.add(GraphInputImpl(PortImpl.createOutput(Boolean::class), "I1", eventBus))
@@ -180,7 +177,7 @@ class GraphImplTest {
 
 		in2.name = "I3"
 
-		assertThat(in2.name, `is`("I3"))
+		assertEquals("I3", in2.name)
 	}
 
 	@Test
@@ -193,6 +190,6 @@ class GraphImplTest {
 
 		in2.name = "I1"
 
-		assertThat(in2.name, `is`("I2"))
+		assertEquals("I2", in2.name)
 	}
 }

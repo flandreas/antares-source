@@ -8,12 +8,7 @@ import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.graph.view.net.edge.OrthoEdgeViewLayout
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.sameInstance
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.*
 
 /**
  * Unit tests for [NodeViewImpl].
@@ -23,8 +18,9 @@ import org.junit.Test
 class NodeViewImplTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = GraphViewTestRule()
+	    init {
+	    	GraphViewTestRule.configure()
+	    }
     }
 
     private lateinit var builder: GraphViewBuilder<Boolean>
@@ -34,7 +30,7 @@ class NodeViewImplTest {
     private lateinit var origEdgeView: EdgeView<Boolean>
     private lateinit var splitResult: SplitEdgeViewResult<Boolean>
 
-    @Before
+    @BeforeTest
     fun setup(){
         TestTranslationsBuilder().withAnyKey()
         builder = GraphViewBuilder()
@@ -47,49 +43,49 @@ class NodeViewImplTest {
 
     @Test
     fun testSetup() {
-        assertThat(splitResult.tailEdgeView.segmentPointCount, `is`(2))
-        assertThat(splitResult.tailEdgeView.isAdjusted, `is`(false))
-        assertThat(splitResult.newEdgeView.segmentPointCount, `is`(3))
-        assertThat(splitResult.newEdgeView.isAdjusted, `is`(false))
-        assertThat(origEdgeView.segmentPointCount, `is`(2))
-        assertThat(origEdgeView.isAdjusted, `is`(false))
+        assertEquals(2, splitResult.tailEdgeView.segmentPointCount)
+        assertFalse(splitResult.tailEdgeView.isAdjusted)
+        assertEquals(3, splitResult.newEdgeView.segmentPointCount)
+        assertFalse(splitResult.newEdgeView.isAdjusted)
+        assertEquals(2, origEdgeView.segmentPointCount)
+        assertFalse(origEdgeView.isAdjusted)
     }
 
     @Test
     fun shouldYieldEdgeViews() {
         val list = splitResult.nodeView.getEdgeViews()
-        assertThat(list.size, `is`(3))
-        assertThat(list.contains(origEdgeView), `is`(true))
-        assertThat(list.contains(splitResult.newEdgeView), `is`(true))
-        assertThat(list.contains(splitResult.tailEdgeView), `is`(true))
+        assertEquals(3, list.size)
+        assertTrue(list.contains(origEdgeView))
+        assertTrue(list.contains(splitResult.newEdgeView))
+        assertTrue(list.contains(splitResult.tailEdgeView))
     }
 
     @Test
     fun shouldYieldIncomingEdgeViews() {
-        assertThat(splitResult.nodeView.getIncomingEdgeView(), `is`(sameInstance(origEdgeView)))
+        assertSame(origEdgeView, splitResult.nodeView.getIncomingEdgeView())
     }
 
     @Test
     fun shouldYieldOutgoingEdgeViews() {
         val list = splitResult.nodeView.getOutgoingEdgeViews()
-        assertThat(list.size, `is`(2))
-        assertThat(list.contains(splitResult.newEdgeView), `is`(true))
-        assertThat(list.contains(splitResult.tailEdgeView), `is`(true))
+        assertEquals(2, list.size)
+        assertTrue(list.contains(splitResult.newEdgeView))
+        assertTrue(list.contains(splitResult.tailEdgeView))
     }
 
     @Test
     fun shouldYieldEdgeViewForDirection() {
-        assertThat(splitResult.nodeView.getEdgeView(Direction.WEST), `is`(sameInstance(origEdgeView)))
-        assertThat(splitResult.nodeView.getEdgeView(Direction.EAST), `is`(sameInstance(splitResult.tailEdgeView)))
-        assertThat(splitResult.nodeView.getEdgeView(Direction.SOUTH), `is`(sameInstance(splitResult.newEdgeView)))
+        assertSame(origEdgeView, splitResult.nodeView.getEdgeView(Direction.WEST))
+        assertSame(splitResult.tailEdgeView, splitResult.nodeView.getEdgeView(Direction.EAST))
+        assertSame(splitResult.newEdgeView, splitResult.nodeView.getEdgeView(Direction.SOUTH))
     }
 
     @Test
     fun shouldCalculatePortConnectionLayoutDirections() {
         val set = splitResult.nodeView.getPortConnectionLayoutDirections(splitResult.newEdgeView, null, Point2D(200, 200))
-        assertThat(set.contains(Direction.SOUTH), `is`(true))
-        assertThat(set.contains(Direction.NORTH), `is`(false))
-        assertThat(set.contains(Direction.EAST), `is`(false))
-        assertThat(set.contains(Direction.WEST), `is`(false))
+        assertTrue(set.contains(Direction.SOUTH))
+        assertFalse(set.contains(Direction.NORTH))
+	    assertFalse(set.contains(Direction.EAST))
+	    assertFalse(set.contains(Direction.WEST))
     }
 }

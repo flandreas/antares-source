@@ -1,17 +1,15 @@
 package ch.scorpion.jabbah.graph.library
 
-import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.*
-import org.junit.ClassRule
 import org.junit.Test
+import kotlin.test.*
 
 /** Unit tests for [LibraryFolder]. */
 class LibraryFolderTest {
 
 	companion object {
-		@ClassRule
-		@JvmField
-		val rule = GraphLibraryTestRule()
+		init {
+			GraphLibraryTestRule.configure()
+		}
 	}
 
 	@Test
@@ -21,8 +19,8 @@ class LibraryFolderTest {
 		val item2 = LibraryFolder("item2")
 		folder.add(item)
 
-		assertThat(folder.contains(item), `is`(true))
-		assertThat(folder.contains(item2), `is`(false))
+		assertTrue(folder.contains(item))
+		assertFalse(folder.contains(item2))
 	}
 
 	@Test
@@ -33,8 +31,8 @@ class LibraryFolderTest {
 		folder.add(folder2)
 		folder2.add(item)
 
-		assertThat(folder.contains(item), `is`(false))
-		assertThat(folder.containsRecursively(item), `is`(true))
+		assertFalse(folder.contains(item))
+		assertTrue(folder.containsRecursively(item))
 	}
 
 	@Test
@@ -44,7 +42,7 @@ class LibraryFolderTest {
 		val item2 = LibraryFolder("item2")
 
 		folder.add(item)
-		assertThat(folder.get("item") as LibraryFolder, sameInstance(item))
+		assertSame(item, folder.get("item") as LibraryFolder)
 	}
 
 	@Test
@@ -55,8 +53,8 @@ class LibraryFolderTest {
 		folder.add(folder2)
 		folder2.add(item)
 
-		assertThat(folder.getRecursively("item") as LibraryFolder?, sameInstance(item))
-		assertThat(folder.getRecursively("bla") as LibraryFolder?, `is`(nullValue()));
+		assertSame(item, folder.getRecursively("item") as LibraryFolder?)
+		assertNull(folder.getRecursively("bla") as LibraryFolder?)
 	}
 
 	@Test
@@ -71,9 +69,9 @@ class LibraryFolderTest {
 
 		folder.move(item1, 2)
 
-		assertThat(folder.indexOf(folder.get("item2")!!), `is`(0))
-		assertThat(folder.indexOf(folder.get("item3")!!), `is`(1))
-		assertThat(folder.indexOf(folder.get("item1")!!), `is`(2))
+		assertEquals(0, folder.indexOf(folder.get("item2")!!))
+		assertEquals(1, folder.indexOf(folder.get("item3")!!))
+		assertEquals(2, folder.indexOf(folder.get("item1")!!))
 	}
 
 	@Test
@@ -88,9 +86,9 @@ class LibraryFolderTest {
 
 		folder.move(item1, 1)
 
-		assertThat(folder.indexOf(folder.get("item2")!!), `is`(0))
-		assertThat(folder.indexOf(folder.get("item1")!!), `is`(1))
-		assertThat(folder.indexOf(folder.get("item3")!!), `is`(2))
+		assertEquals(0, folder.indexOf(folder.get("item2")!!))
+		assertEquals(1, folder.indexOf(folder.get("item1")!!))
+		assertEquals(2, folder.indexOf(folder.get("item3")!!))
 	}
 
 	@Test
@@ -105,9 +103,9 @@ class LibraryFolderTest {
 
 		folder.move(item3, 0)
 
-		assertThat(folder.indexOf(folder.get("item3")!!), `is`(0))
-		assertThat(folder.indexOf(folder.get("item1")!!), `is`(1))
-		assertThat(folder.indexOf(folder.get("item2")!!), `is`(2))
+		assertEquals(0, folder.indexOf(folder.get("item3")!!))
+		assertEquals(1, folder.indexOf(folder.get("item1")!!))
+		assertEquals(2, folder.indexOf(folder.get("item2")!!))
 	}
 
 	@Test
@@ -122,9 +120,9 @@ class LibraryFolderTest {
 
 		folder.move(item3, 1)
 
-		assertThat(folder.indexOf(folder.get("item1")!!), `is`(0))
-		assertThat(folder.indexOf(folder.get("item3")!!), `is`(1))
-		assertThat(folder.indexOf(folder.get("item2")!!), `is`(2))
+		assertEquals(0, folder.indexOf(folder.get("item1")!!))
+		assertEquals(1, folder.indexOf(folder.get("item3")!!))
+		assertEquals(2, folder.indexOf(folder.get("item2")!!))
 	}
 
 	@Test
@@ -139,9 +137,8 @@ class LibraryFolderTest {
 
 		folder.move(item2, 1)
 
-		assertThat(folder.indexOf(folder.get("item1")!!), `is`(0))
-		assertThat(folder.indexOf(folder.get("item2")!!), `is`(1))
-		assertThat(folder.indexOf(folder.get("item3")!!), `is`(2))
+		assertEquals(0, folder.indexOf(folder.get("item1")!!))
+		assertEquals(1, folder.indexOf(folder.get("item2")!!))
+		assertEquals(2, folder.indexOf(folder.get("item3")!!))
 	}
-
 }

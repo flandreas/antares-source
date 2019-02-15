@@ -1,8 +1,6 @@
 package ch.scorpion.jabbah.graph.view.app
 
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.view.EdgeView
@@ -11,19 +9,18 @@ import ch.scorpion.jabbah.graph.view.TestGraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.notNullValue
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 /** Unit tests for [GraphViewServiceImpl].*/
 class GraphViewServiceImplTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = GraphViewTestRule()
+	    init {
+	    	GraphViewTestRule.configure()
+	    }
     }
 
     private val connectService = GraphViewModule.graphViewConnectService
@@ -31,9 +28,8 @@ class GraphViewServiceImplTest {
     private lateinit var testGraphView: TestGraphView
     private lateinit var vv3: TestVerticeView
 
-    @Before
+    @BeforeTest
     fun setup() {
-        TestTranslationsBuilder().withAnyKey()
         testGraphView = TestGraphView()
         vv3 = TestVerticeView(name = "3", loc = Point2D(200, 200))
     }
@@ -43,15 +39,15 @@ class GraphViewServiceImplTest {
         val newEdgeView = setupSplittedEdgeViews()
 
         service.delete(listOf(newEdgeView), DrawingViewMockBuilder().withDrawing(testGraphView.graphView).build())
-        assertThat(testGraphView.graphView.drawablesCount, `is`(4))
+        assertEquals(4, testGraphView.graphView.drawablesCount)
 
         EditModule.commandManager.undo()
 
-        assertThat((newEdgeView.origin as NodeView<Boolean>).getEdgeViews().size, `is`(3))
-        assertThat(getNodeView().getEdgeViews().size, `is`(3))
-        assertThat(getNodeView().getEdgeViews().firstOrNull { it.origin == testGraphView.vv1 }, `is`(notNullValue()))
-        assertThat(getNodeView().getEdgeViews().firstOrNull { it.destination == testGraphView.vv2 }, `is`(notNullValue()))
-        assertThat(getNodeView().getEdgeViews().firstOrNull { it.destination == vv3 }, `is`(notNullValue()))
+	    assertEquals(3, (newEdgeView.origin as NodeView<Boolean>).getEdgeViews().size)
+	    assertEquals(3, getNodeView().getEdgeViews().size)
+        assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.origin == testGraphView.vv1 })
+        assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.destination == testGraphView.vv2 })
+        assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.destination == vv3 })
     }
 
     @Test
@@ -59,15 +55,15 @@ class GraphViewServiceImplTest {
         setupSplittedEdgeViews()
 
         service.delete(listOf(testGraphView.ev), DrawingViewMockBuilder().withDrawing(testGraphView.graphView).build())
-        assertThat(testGraphView.graphView.drawablesCount, `is`(4))
+        assertEquals(4, testGraphView.graphView.drawablesCount)
 
         EditModule.commandManager.undo()
 
-        assertThat(getNodeView().getEdgeViews().size, `is`(3))
-        assertThat(getNodeView().location, `is`(Point2D(150, 100)))
-        assertThat(getNodeView().getEdgeViews().firstOrNull { it.origin == testGraphView.vv1 }, `is`(notNullValue()))
-        assertThat(getNodeView().getEdgeViews().firstOrNull { it.destination == testGraphView.vv2 }, `is`(notNullValue()))
-        assertThat(getNodeView().getEdgeViews().firstOrNull { it.destination == vv3 }, `is`(notNullValue()))
+	    assertEquals(3, getNodeView().getEdgeViews().size)
+	    assertEquals(Point2D(150, 100), getNodeView().location)
+        assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.origin == testGraphView.vv1 })
+        assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.destination == testGraphView.vv2 })
+        assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.destination == vv3 })
     }
 
 	@Test
@@ -77,7 +73,7 @@ class GraphViewServiceImplTest {
 
 		EditModule.commandManager.undo()
 
-		assertThat(getNodeView().getEdgeViews().size, `is`(3))
+		assertEquals(3, getNodeView().getEdgeViews().size)
 	}
 
     private fun setupSplittedEdgeViews(): EdgeView<Boolean> {

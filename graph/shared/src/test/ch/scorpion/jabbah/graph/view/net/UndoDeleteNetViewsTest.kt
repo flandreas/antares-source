@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.net
 
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.Component
@@ -8,42 +7,37 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.SelectionManager
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.sameInstance
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import io.mockk.every
+import io.mockk.mockk
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /** An integration test for undoing deletion of [NetView]s.*/
 class UndoDeleteNetViewsTest {
 
 	companion object {
-		@ClassRule
-		@JvmField
-		val rule = GraphViewTestRule()
+		init {
+			GraphViewTestRule.configure()
+		}
 	}
 
 	private lateinit var builder: GraphViewBuilder<Boolean>
 
-	private val drawingView = mock<DrawingView<Drawing<Component>>>()
+	private val drawingView = mockk<DrawingView<Drawing<Component>>>()
 
-	private val selectionManager = mock<SelectionManager>()
+	private val selectionManager = mockk<SelectionManager>(relaxed = true)
 
-	@Before
+	@BeforeTest
 	fun setup(){
-		TestTranslationsBuilder().withAnyKey()
 		builder = GraphViewBuilder()
-		whenever(drawingView.drawing).thenReturn(builder.graphView as Drawing<Component>)
-		whenever(drawingView.selectionManager).thenReturn(selectionManager)
+		every { drawingView.drawing } returns builder.graphView as Drawing<Component>
+		every { drawingView.selectionManager } returns selectionManager
 	}
 
 	@Test
@@ -57,12 +51,7 @@ class UndoDeleteNetViewsTest {
 		GraphViewModule.graphViewService.delete(builder.graphView.getDrawables().toList(), drawingView)
 		EditModule.commandManager.undo()
 
-		/*
-		assertThat(v1v2.origin, `is`(sameInstance(v1 as ConnectableView)))
-		assertThat(v1v2.destination, `is`(sameInstance(split.nodeView as ConnectableView)))
-		assertThat(split.newEdgeView.destination, `is`(sameInstance(v2 as ConnectableView)))
-		*/
-		assertThat(builder.graphView.getEdgeViews().size, `is`(3))
+		assertEquals(3, builder.graphView.getEdgeViews().size)
 	}
 
 	private fun createVerticeView(x: Int, y: Int, dir: Direction): TestVerticeView {

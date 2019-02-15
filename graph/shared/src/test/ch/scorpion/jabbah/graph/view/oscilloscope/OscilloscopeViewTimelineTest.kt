@@ -6,21 +6,25 @@ import ch.scorpion.jabbah.execution.SignalHandlerMockBuilder
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.port.PortImpl
-import org.junit.Before
-import org.junit.Test
-import org.junit.Assert.*
-import org.hamcrest.CoreMatchers.`is`
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class OscilloscopeViewTimelineTest {
+	
+	companion object {
+		init {
+			BaseModuleJvm.require()
+			TestTranslationsBuilder().withAnyKey()
+		}
+	}
 
     private lateinit var signalHandler: SignalHandlerMockBuilder
     private lateinit var oscilloscope: Oscilloscope
     private lateinit var timeline: OscilloscopeViewTimeline
 
-    @Before
+    @BeforeTest
     fun setup() {
-        BaseModuleJvm.require()
-	    TestTranslationsBuilder().withAnyKey()
         signalHandler = SignalHandlerMockBuilder()
         oscilloscope = Oscilloscope()
         timeline = OscilloscopeViewTimeline(scale = 1.0, model = oscilloscope, minSignalWidth = 5.0)
@@ -32,7 +36,7 @@ class OscilloscopeViewTimelineTest {
         oscilloscope.executionStarted(signalHandler.build())
         input("1", 100, true)
         input("1", 150, false)
-        assertThat(timeline.getX(0), `is`(15.0))
+        assertEquals(15.0, timeline.getX(0))
     }
 
     @Test
@@ -41,7 +45,7 @@ class OscilloscopeViewTimelineTest {
         oscilloscope.executionStarted(signalHandler.build())
         input("1", 100, true)
         input("2", 110, true)
-        assertThat(timeline.getX(0), `is`(55.0))
+        assertEquals(55.0, timeline.getX(0))
     }
 
     @Test
@@ -50,7 +54,7 @@ class OscilloscopeViewTimelineTest {
         oscilloscope.executionStarted(signalHandler.build())
         input("1", 100, true)
         input("1", 150, false)
-        assertThat(timeline.getX(0), `is`(15.0))
+        assertEquals(15.0, timeline.getX(0))
     }
 
     @Test
@@ -61,7 +65,7 @@ class OscilloscopeViewTimelineTest {
         input("1", 1001, false)
         input("1", 2002, true)
         input("2", 2033, false)
-        assertThat(timeline.getX(0), `is`(325.0))
+        assertEquals(325.0, timeline.getX(0))
     }
 
     private fun createPorts(portsCount: Int) {

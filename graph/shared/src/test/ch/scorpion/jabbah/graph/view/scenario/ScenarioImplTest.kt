@@ -2,22 +2,20 @@ package ch.scorpion.jabbah.graph.view.scenario
 
 import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /** Unit tests for [ScenarioImpl]. */
 class ScenarioImplTest {
 
     companion object {
-        @ClassRule
-        @JvmField
-        val rule = GraphViewTestRule()
+	    init {
+		    GraphViewTestRule.configure()
+	    }
     }
 
-    @Before
+    @BeforeTest
     fun setup() {
         TestTranslationsBuilder().withAnyKey()
     }
@@ -34,9 +32,9 @@ class ScenarioImplTest {
 
         scenario.moveStep(step3, 0)
 
-        assertThat(scenario.indexOf(step3), `is`(0))
-        assertThat(scenario.indexOf(step1), `is`(1))
-        assertThat(scenario.indexOf(step2), `is`(2))
+        assertEquals(0, scenario.indexOf(step3))
+        assertEquals(1, scenario.indexOf(step1))
+        assertEquals(2, scenario.indexOf(step2))
     }
 
     @Test
@@ -51,9 +49,9 @@ class ScenarioImplTest {
 
         scenario.moveStep(step1, 2)
 
-        assertThat(scenario.indexOf(step2), `is`(0))
-        assertThat(scenario.indexOf(step3), `is`(1))
-        assertThat(scenario.indexOf(step1), `is`(2))
+        assertEquals(0, scenario.indexOf(step2))
+        assertEquals(1, scenario.indexOf(step3))
+        assertEquals(2, scenario.indexOf(step1))
     }
 
     @Test
@@ -68,9 +66,9 @@ class ScenarioImplTest {
 
         scenario.moveStep(step1, 1)
 
-        assertThat(scenario.indexOf(step2), `is`(0))
-        assertThat(scenario.indexOf(step1), `is`(1))
-        assertThat(scenario.indexOf(step3), `is`(2))
+        assertEquals(0, scenario.indexOf(step2))
+        assertEquals(1, scenario.indexOf(step1))
+        assertEquals(2, scenario.indexOf(step3))
     }
 
     @Test
@@ -85,8 +83,8 @@ class ScenarioImplTest {
 
         scenario.moveStep(step3, 1)
 
-        assertThat(scenario.indexOf(step1), `is`(0))
-        assertThat(scenario.indexOf(step3), `is`(1))
-        assertThat(scenario.indexOf(step2), `is`(2))
+        assertEquals(0, scenario.indexOf(step1))
+        assertEquals(1, scenario.indexOf(step3))
+        assertEquals(2, scenario.indexOf(step2))
     }
 }

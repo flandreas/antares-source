@@ -4,10 +4,8 @@ import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import ch.scorpion.jabbah.graph.model.GraphModelTestRule
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.port.PortImpl
-import org.hamcrest.CoreMatchers.*
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.ClassRule
-import org.junit.Test
+import ch.scorpion.jabbah.graph.model.Net
+import kotlin.test.*
 
 /**
  * Unit tests for bus behaviour, multiple [OutputPort]s that are connected to the same [Net].
@@ -15,8 +13,9 @@ import org.junit.Test
 class BusTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = GraphModelTestRule()
+	    init {
+		    GraphModelTestRule.configure()
+	    }
     }
 
     private val signalHandler = ForwardSignalHandler()
@@ -32,23 +31,23 @@ class BusTest {
     @Test
     fun shouldForwardSingleConsistentSignal() {
         output1.setOutgoingSignal(true, signalHandler)
-        assertThat(net.signalBuffer, `is`(true))
-        assertThat(net.executionError, `is`(nullValue()))
+        assertTrue(net.signalBuffer!!)
+        assertNull(net.executionError)
     }
 
     @Test
     fun shouldAcceptMultipleConsistentSignals() {
         output1.setOutgoingSignal(true, signalHandler)
         output2.setOutgoingSignal(true, signalHandler)
-        assertThat(net.signalBuffer, `is`(true))
-        assertThat(net.executionError, `is`(nullValue()))
+	    assertTrue(net.signalBuffer!!)
+	    assertNull(net.executionError)
     }
 
     @Test
     fun shouldDetectInconsistentSignal() {
         output1.setOutgoingSignal(true, signalHandler)
         output2.setOutgoingSignal(false, signalHandler)
-        assertThat(net.executionError, `is`(not(nullValue())))
+        assertNotNull(net.executionError)
     }
 
     @Test
@@ -57,8 +56,8 @@ class BusTest {
         output2.setOutgoingSignal(false, signalHandler)
         output1.setOutgoingSignal(null, signalHandler)
 
-        assertThat(net.signalBuffer, `is`(false))
-        assertThat(net.executionError, `is`(nullValue()))
+        assertFalse(net.signalBuffer!!)
+        assertNull(net.executionError)
     }
 
     @Test
@@ -67,8 +66,8 @@ class BusTest {
         output2.setOutgoingSignal(null, signalHandler)
         output1.setOutgoingSignal(null, signalHandler)
 
-        assertThat(net.signalBuffer, `is`(nullValue()))
-        assertThat(net.executionError, `is`(nullValue()))
+        assertNull(net.signalBuffer)
+        assertNull(net.executionError)
     }
 
     @Test
@@ -78,8 +77,8 @@ class BusTest {
         output1.setOutgoingSignal(null, signalHandler)
         output2.setOutgoingSignal(null, signalHandler)
 
-        assertThat(net.signalBuffer, `is`(nullValue()))
-        assertThat(net.executionError, `is`(nullValue()))
+	    assertNull(net.signalBuffer)
+	    assertNull(net.executionError)
     }
 
     @Test
@@ -88,7 +87,7 @@ class BusTest {
         output2.setOutgoingSignal(true, signalHandler)
         output2.setOutgoingSignal(null, signalHandler)
 
-        assertThat(net.signalBuffer, `is`(true))
-        assertThat(net.executionError, `is`(nullValue()))
+        assertTrue(net.signalBuffer!!)
+        assertNull(net.executionError)
     }
 }

@@ -20,23 +20,15 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.TestPortFactory
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
-import org.hamcrest.CoreMatchers.*
-import org.hamcrest.Matcher
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
 import java.io.File
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.TreeNode
+import kotlin.test.*
 
 /** Unit tests for [ContainerTree].*/
 class ContainerTreeTest {
 
 	companion object {
-		@ClassRule
-		@JvmField
-		val rule = GraphViewTestRule()
 
 		private fun findDraggableTreeItemOfType(containerTree: ContainerTree, type: ContainerTreeItemType): DefaultMutableTreeNode? {
 			return JTreeUtil.findTreeNode(containerTree.model.treeModel.root as TreeNode) {
@@ -45,9 +37,13 @@ class ContainerTreeTest {
 					&& (it.userObject as DraggableTreeItem).type == type
 			} as DefaultMutableTreeNode?
 		}
+
+		init {
+			GraphViewTestRule.configure()
+		}
 	}
 
-	@Before
+	@BeforeTest
 	fun setup() {
 		val file = File.createTempFile("library", ".lib")
 		TestTranslationsBuilder().withAnyKey()
@@ -60,7 +56,7 @@ class ContainerTreeTest {
 	fun shouldBuildWithToplevelControlView() {
 		val setup = Setup().addToplevelControlToGraphView().build()
 
-		assertControlView(setup.containerTree, notNullValue())
+		assertControlViewNotNull(setup.containerTree)
 	}
 
 	@Test
@@ -71,7 +67,7 @@ class ContainerTreeTest {
 		setup.containerDrawing.add(ControlViewComponent(source = source as ControlViewSource<Vertice>))
 		setup.build()
 
-		assertControlView(setup.containerTree, nullValue())
+		assertControlViewNull(setup.containerTree)
 	}
 
 	@Test
@@ -83,7 +79,7 @@ class ContainerTreeTest {
 		// The following event is normally posted by GraphEditor
 		BaseModule.eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.ADD, source as ControlViewSource<Vertice>))
 
-		assertControlView(setup.containerTree, notNullValue())
+		assertControlViewNotNull(setup.containerTree)
 	}
 
 	@Test
@@ -100,28 +96,28 @@ class ContainerTreeTest {
 		BaseModule.eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.REMOVE, source as ControlViewSource<Vertice>))
 
 
-		assertControlView(setup.containerTree, nullValue())
+		assertControlViewNull(setup.containerTree)
 	}
 
 	@Test
 	fun shouldContainDeepControlInInitialTree() {
 		val setup = Setup().build().addInnerCustomSubGraphVerticeView().expandAll()
 
-		assertControlView(setup.containerTree, notNullValue())
+		assertControlViewNotNull(setup.containerTree)
 	}
 
 	@Test
 	fun deepControlOfContainerShouldNoBeContainedInInitialTree() {
 		val setup = Setup().addInnerCustomSubGraphVerticeView().addDeepControlViewToContainer().build()
 
-		assertControlView(setup.containerTree, nullValue())
+		assertControlViewNull(setup.containerTree)
 	}
 
 	@Test
 	fun shouldAddControlOfAddedSubGraphVerticeViewToExpandedTree() {
 		val setup = Setup().build().addInnerCustomSubGraphVerticeView().expandAll()
 
-		assertControlView(setup.containerTree, notNullValue())
+		assertControlViewNotNull(setup.containerTree)
 	}
 
 	@Test
@@ -131,7 +127,7 @@ class ContainerTreeTest {
 		// The following event is normally posted by GraphEditor
 		BaseModule.eventBus.post(SubGraphVerticeViewEvent(SubGraphVerticeViewEvent.Type.REMOVE, setup.graphView.getSubGraphVerticeViews().first()))
 
-		assertControlView(setup.containerTree, nullValue())
+		assertControlViewNull(setup.containerTree)
 	}
 
 	@Test
@@ -142,7 +138,7 @@ class ContainerTreeTest {
 		// The following event is normally posted by GraphEditor
 		BaseModule.eventBus.post(GraphPortViewEvent(GraphPortViewEvent.Type.ADD, portView as GraphPortView<*>))
 
-		assertPortView(setup.containerTree, notNullValue())
+		assertPortViewNotNull(setup.containerTree)
 	}
 
 	@Test
@@ -152,7 +148,7 @@ class ContainerTreeTest {
 			.addGraphInputPortViewToGraphView()
 			.addPortViewComponent()
 
-		assertPortView(setup.containerTree, nullValue())
+		assertPortViewNull(setup.containerTree)
 	}
 
 	@Test
@@ -164,7 +160,7 @@ class ContainerTreeTest {
 
 		setup.removePortViewFromContainer()
 
-		assertPortView(setup.containerTree, notNullValue())
+		assertPortViewNotNull(setup.containerTree)
 	}
 
 	@Test
@@ -173,7 +169,7 @@ class ContainerTreeTest {
 
 		setup.addToplevelControlToContainer().expandAll()
 
-		assertControlView(setup.containerTree, nullValue())
+		assertControlViewNull(setup.containerTree)
 	}
 
 	@Test
@@ -182,7 +178,7 @@ class ContainerTreeTest {
 
 		setup.addDeepControlViewToContainer().expandAll()
 
-		assertControlView(setup.containerTree, nullValue())
+		assertControlViewNull(setup.containerTree)
 	}
 
 	@Test
@@ -193,7 +189,7 @@ class ContainerTreeTest {
 
 		setup.addDeepControlViewToContainerUsingTree()
 
-		assertControlView(setup.containerTree, nullValue())
+		assertControlViewNull(setup.containerTree)
 	}
 
 	@Test
@@ -206,7 +202,7 @@ class ContainerTreeTest {
 
 		setup.removeControlFromContainer()
 
-		assertControlView(setup.containerTree, notNullValue())
+		assertControlViewNotNull(setup.containerTree)
 	}
 
 	@Test
@@ -218,7 +214,7 @@ class ContainerTreeTest {
 
 		setup.removeControlFromContainer()
 
-		assertControlView(setup.containerTree, notNullValue())
+		assertControlViewNotNull(setup.containerTree)
 	}
 
 	@Test
@@ -328,19 +324,24 @@ class ContainerTreeTest {
 		}
 	}
 
-	private fun assertControlView(containerTree: ContainerTree, matcher: Matcher<in TreeNode?>) {
-		assertContainerTreeItem(containerTree, matcher, ContainerTreeItemType.Control)
+	private fun assertControlViewNull(containerTree: ContainerTree) {
+		assertNull(findDraggableTreeItemOfType(containerTree, ContainerTreeItemType.Control))
 	}
 
-	private fun assertPortView(containerTree: ContainerTree, matcher: Matcher<in TreeNode?>) {
-		assertContainerTreeItem(containerTree, matcher, ContainerTreeItemType.Port)
+	private fun assertControlViewNotNull(containerTree: ContainerTree) {
+		assertNotNull(findDraggableTreeItemOfType(containerTree, ContainerTreeItemType.Control))
+	}
+
+
+	private fun assertPortViewNull(containerTree: ContainerTree) {
+		assertNull(findDraggableTreeItemOfType(containerTree, ContainerTreeItemType.Port))
+	}
+
+	private fun assertPortViewNotNull(containerTree: ContainerTree) {
+		assertNotNull(findDraggableTreeItemOfType(containerTree, ContainerTreeItemType.Port))
 	}
 
 	private fun assertPortViewName(containerTree: ContainerTree, name: String) {
-		assertThat((findDraggableTreeItemOfType(containerTree, ContainerTreeItemType.Port)!!.userObject as ContainerTreePortItem).portName, `is`(name))
-	}
-
-	private fun assertContainerTreeItem(containerTree: ContainerTree, matcher: Matcher<in TreeNode?>, type: ContainerTreeItemType) {
-		assertThat(findDraggableTreeItemOfType(containerTree, type), matcher)
+		assertEquals((findDraggableTreeItemOfType(containerTree, ContainerTreeItemType.Port)!!.userObject as ContainerTreePortItem).portName, name)
 	}
 }

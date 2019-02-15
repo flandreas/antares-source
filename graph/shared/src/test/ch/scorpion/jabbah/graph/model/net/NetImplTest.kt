@@ -1,12 +1,11 @@
 package ch.scorpion.jabbah.graph.model.net
 
 import ch.scorpion.jabbah.graph.model.GraphModelTestRule
-import ch.scorpion.jabbah.graph.model.Net
-import org.junit.Assert.*
-import org.junit.ClassRule
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Test
 import ch.scorpion.jabbah.graph.model.TestVertice
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Unit tests for [NetImpl].
@@ -14,28 +13,29 @@ import ch.scorpion.jabbah.graph.model.TestVertice
 class NetImplTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = GraphModelTestRule()
+	    init {
+		    GraphModelTestRule.configure()
+	    }
     }
 
     @Test
     fun shouldConnectPort() {
         val v = TestVertice()
         val net = NetImpl<Boolean>()
-        net.connect(v.getOutput<Boolean>())
+        net.connect(v.getOutput())
 
-        assertThat(net.isConnectedWith(v.getOutput<Boolean>()), `is`(true))
-        assertThat(net.portsCount, `is`(1))
+        assertTrue(net.isConnectedWith(v.getOutput()))
+        assertEquals(1, net.portsCount)
     }
 
     @Test
     fun shouldUnconnectPort() {
         val v = TestVertice()
         val net = NetImpl<Boolean>()
-        net.connect(v.getOutput<Boolean>())
+        net.connect(v.getOutput())
         net.unconnect(v.getOutput<Boolean>())
 
-        assertThat(net.isConnectedWith(v.getOutput<Boolean>()), `is`(false))
-        assertThat(net.portsCount, `is`(0))
+        assertFalse(net.isConnectedWith(v.getOutput()))
+        assertEquals(0, net.portsCount)
     }
 }

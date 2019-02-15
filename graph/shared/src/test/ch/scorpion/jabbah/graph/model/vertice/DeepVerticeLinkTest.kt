@@ -1,8 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
-import org.hamcrest.Matchers.*
-import org.junit.Assert.*
-import org.junit.Test
+import kotlin.test.*
 
 /** Unit tests for [DeepVerticeLink].*/
 class DeepVerticeLinkTest {
@@ -10,44 +8,44 @@ class DeepVerticeLinkTest {
 	@Test
 	fun shouldParseSomeStoreFormat() {
 		val link = DeepVerticeLink.fromStoreFormat("1/2/3")
-		assertThat(link.size, `is`(3))
-		assertThat(link.first, `is`(1))
-		assertThat(link.last, `is`(3))
+		assertEquals(3, link.size)
+		assertEquals(1, link.first)
+		assertEquals(3, link.last)
 	}
 
 	@Test
 	fun shouldParseEmptyStoreFormat() {
 		val link = DeepVerticeLink.fromStoreFormat("")
-		assertThat(link.empty, `is`(true) )
+		assertTrue(link.empty)
 	}
 
 	@Test
 	fun shouldGenerateStoreFormat() {
 		val link = DeepVerticeLink(listOf(1, 2, 3))
-		assertThat(DeepVerticeLink.toStoreFormat(link), `is`("1/2/3"))
+		assertEquals("1/2/3", DeepVerticeLink.toStoreFormat(link))
 	}
 
 	@Test
 	fun shouldGenerateEmptyStoreFormat() {
 		val link = DeepVerticeLink(listOf())
-		assertThat(link.toStoreFormat(), `is`(""))
+		assertEquals("", link.toStoreFormat())
 	}
 
 	@Test
 	fun shouldDuplicateWithoutFirst() {
 		val link = DeepVerticeLink(listOf(1, 2, 3))
 		val withoutFirst = link.withoutFirst()
-		assertThat(withoutFirst.size, `is`(2))
-		assertThat(withoutFirst.first, `is`(2))
-		assertThat(withoutFirst.last, `is`(3))
+		assertEquals(2, withoutFirst.size)
+		assertEquals(2, withoutFirst.first)
+		assertEquals(3, withoutFirst.last)
 	}
 
 	@Test
 	fun shouldConstructWithSingleId() {
 		val link = DeepVerticeLink(42)
-		assertThat(link.size, `is`(1))
-		assertThat(link.first, `is`(42))
-		assertThat(link.last, `is`(42))
+		assertEquals(1, link.size)
+		assertEquals(42, link.first)
+		assertEquals(42, link.last)
 	}
 
 	@Test
@@ -55,16 +53,16 @@ class DeepVerticeLinkTest {
 		val ids = mutableListOf(1, 2, 3)
 		val link = DeepVerticeLink(ids)
 		ids.clear()
-		assertThat(link.size, `is`(3))
+		assertEquals(3, link.size)
 	}
 
 	@Test
 	fun shouldAppend() {
 		val link = DeepVerticeLink(listOf(1, 2, 3))
 		val newLink = link.append(4)
-		assertThat(newLink.size, `is`(4))
-		assertThat(newLink.last, `is`(4))
-		assertThat(newLink, not(sameInstance(link)))
+		assertEquals(4, newLink.size)
+		assertEquals(4, newLink.last)
+		assertNotSame(link, newLink)
 	}
 
 	@Test
@@ -73,7 +71,7 @@ class DeepVerticeLinkTest {
 		val link2 = DeepVerticeLink(listOf(1, 2, 3))
 		val link3 = DeepVerticeLink(listOf(1, 2, 4))
 
-		assertThat(link1 == link2, `is`(true))
-		assertThat(link1 == link3, `is`(false))
+		assertEquals(link1, link2)
+		assertNotEquals(link1, link3)
 	}
 }

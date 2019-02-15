@@ -1,21 +1,22 @@
 package ch.scorpion.jabbah.graph.library
 
-import com.nhaarman.mockitokotlin2.mock
-import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.*
-import org.junit.ClassRule
+import io.mockk.mockk
 import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
+
 
 /** Unit tests for [LibraryServiceImpl].*/
 class LibraryServiceImplTest {
 
 	companion object {
-		@ClassRule
-		@JvmField
-		val rule = GraphLibraryTestRule()
+		init {
+			GraphLibraryTestRule.configure()
+		}
 	}
 
-	private val libraryPersistenceService = mock<LibraryPersistenceService>()
+	private val libraryPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
 	private val service: LibraryService = LibraryServiceImpl(persistenceService = libraryPersistenceService, libraryAccessor = { libraryBuilder.library })
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
 	private val library: Library get() = libraryBuilder.library
@@ -24,8 +25,8 @@ class LibraryServiceImplTest {
 	fun shouldAddFolderToRoot() {
 		libraryBuilder.addDirectory("Folder")
 
-		assertThat(library.get("Folder"), `is`(notNullValue()))
-		assertThat(library.get("Folder"), `is`(instanceOf(LibraryFolder::class.java)))
+		assertNotNull(library.get("Folder"))
+		assertTrue(library.get("Folder") is LibraryFolder)
 	}
 
 	@Test
@@ -34,8 +35,8 @@ class LibraryServiceImplTest {
 			.addDirectory("Folder")
 			.addDirectory("InnerFolder")
 
-		assertThat(library.getRecursively("InnerFolder"), `is`(notNullValue()))
-		assertThat((library.get("Folder") as LibraryFolder).contains(library.getRecursively("InnerFolder") as LibraryItem), `is`(true))
+		assertNotNull(library.getRecursively("InnerFolder"))
+		assertTrue((library.get("Folder") as LibraryFolder).contains(library.getRecursively("InnerFolder") as LibraryItem))
 	}
 
 	@Test
@@ -51,8 +52,8 @@ class LibraryServiceImplTest {
 		service.move(library, library.getRecursively("Elem1")!!, 2)
 
 		val folder = library.getRecursively("Folder") as LibraryDirectory
-		assertThat(folder.indexOf(library.getRecursively("Elem2")!!), `is`(0))
-		assertThat(folder.indexOf(library.getRecursively("Elem3")!!), `is`(1))
-		assertThat(folder.indexOf(library.getRecursively("Elem1")!!), `is`(2))
+		assertEquals(0, folder.indexOf(library.getRecursively("Elem2")!!))
+		assertEquals(1, folder.indexOf(library.getRecursively("Elem3")!!))
+		assertEquals(2, folder.indexOf(library.getRecursively("Elem1")!!))
 	}
 }

@@ -1,19 +1,16 @@
 package ch.scorpion.jabbah.graph.view.net
 
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Integration tests for moving [EdgeViewImpl] segments with and without [NodeView]s.
@@ -21,17 +18,12 @@ import org.junit.Test
 class MoveSegmentIntegrationTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = GraphViewTestRule()
+	    init {
+		    GraphViewTestRule.configure()
+	    }
     }
 
-    private lateinit var builder: GraphViewBuilder<Boolean>
-
-    @Before
-    fun setup(){
-        TestTranslationsBuilder().withAnyKey()
-        builder = GraphViewBuilder()
-    }
+    private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
 
     @Test
     fun shouldMoveSegmentUp() {
@@ -41,8 +33,8 @@ class MoveSegmentIntegrationTest {
 
         val info = ev.moveSegment(0, -20.0)
 
-        assertThat(ev.segmentPointCount, `is`(6))
-        assertThat(info.segmentIndex, `is`(2))
+        assertEquals(6, ev.segmentPointCount)
+        assertEquals(2, info.segmentIndex)
     }
 
     @Test
@@ -54,8 +46,8 @@ class MoveSegmentIntegrationTest {
         ev.moveSegment(0, -20.0)
         val info = ev.moveSegment(2, 20.0)
 
-        assertThat(ev.segmentPointCount, `is`(2))
-        assertThat(info.segmentIndex, `is`(0))
+        assertEquals(2, ev.segmentPointCount)
+        assertEquals(0, info.segmentIndex)
     }
 
     @Test
@@ -68,10 +60,10 @@ class MoveSegmentIntegrationTest {
 
         origEdgeView.moveSegment(0, -50.0)
 
-        assertThat(origEdgeView.segmentPointCount, `is`(4))
-        assertThat(splitResult.nodeView.location, `is`(Point2D(150, 50)))
-        assertThat(splitResult.tailEdgeView.segmentPointCount, `is`(3))
-        assertThat(splitResult.newEdgeView.segmentPointCount, `is`(3))
+        assertEquals(4, origEdgeView.segmentPointCount)
+        assertEquals(Point2D(150, 50), splitResult.nodeView.location)
+        assertEquals(3, splitResult.tailEdgeView.segmentPointCount)
+        assertEquals(3, splitResult.newEdgeView.segmentPointCount)
     }
 
     @Test
@@ -82,9 +74,9 @@ class MoveSegmentIntegrationTest {
         val ev = builder.connect(v1, v2)
 
         ev.moveSegment(1, 20.0)
-        assertThat(ev.segmentPointCount, `is`(5))
+        assertEquals(5, ev.segmentPointCount)
         for (i in 0..ev.segmentPointCount - 2) {
-            assertThat("Segment $i is not orthogonal", ev.isSegmentOrthogonal(i), `is`(true))
+            assertTrue(ev.isSegmentOrthogonal(i), "Segment $i is not orthogonal")
         }
     }
 
@@ -97,7 +89,7 @@ class MoveSegmentIntegrationTest {
 		ev.moveSegment(0, -20.0)
 		v1.moveBy(0.0, -20.0)
 
-		assertThat(ev.segmentPointCount, `is`(4))
+		assertEquals(4, ev.segmentPointCount)
 	}
 
 	@Test
@@ -109,7 +101,7 @@ class MoveSegmentIntegrationTest {
 		ev.moveSegment(2, 20.0)
 		v2.moveBy(0.0, 20.0)
 
-		assertThat(ev.segmentPointCount, `is`(4))
+		assertEquals(4, ev.segmentPointCount)
 	}
 
     private fun createVerticeView(x: Int, y: Int, dir: Direction): TestVerticeView {

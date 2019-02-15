@@ -1,21 +1,20 @@
 package ch.scorpion.jabbah.graph.library
 
-import com.nhaarman.mockitokotlin2.mock
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.ClassRule
+import io.mockk.mockk
 import org.junit.Test
+import kotlin.test.assertEquals
+
 
 /** Unit tests for [LibraryImpl].*/
 class LibraryImplTest {
 
 	companion object {
-		@ClassRule
-		@JvmField
-		val rule = GraphLibraryTestRule()
+		init {
+			GraphLibraryTestRule.configure()
+		}
 	}
 
-	private val libraryPersistenceService = mock<LibraryPersistenceService>()
+	private val libraryPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
 	private val service: LibraryService = LibraryServiceImpl(persistenceService = libraryPersistenceService, libraryAccessor = { libraryBuilder.library })
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
 	private val library: Library get() = libraryBuilder.library
@@ -29,7 +28,7 @@ class LibraryImplTest {
 			.back()
 			.addDirectory("Folder3")
 
-		assertThat(library.indexOf(library.getRecursively("Folder3")!!), `is`(2))
+		assertEquals(2, library.indexOf(library.getRecursively("Folder3")!!))
 	}
 
 	@Test
@@ -41,6 +40,6 @@ class LibraryImplTest {
 			.back()
 			.addDirectory("Folder3")
 
-		assertThat(library.indexOf(library.getRecursively("Folder3")!!), `is`(2))
+		assertEquals(2, library.indexOf(library.getRecursively("Folder3")!!))
 	}
 }

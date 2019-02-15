@@ -6,15 +6,13 @@ import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.io.IOModuleJvm
-import org.junit.rules.TestRule
-import org.junit.runner.Description
-import org.junit.runners.model.Statement
 
 /**
  * Basic setup of unit tests in the [ch.scorpion.jabbah.graph.library] package.
  */
-class GraphLibraryTestRule : TestRule {
+object GraphLibraryTestRule {
 
+	/*
 	override fun apply(statement: Statement?, p1: Description?): Statement {
 		return object : Statement() {
 			override fun evaluate() {
@@ -27,6 +25,7 @@ class GraphLibraryTestRule : TestRule {
 			}
 		}
 	}
+	*/
 
 	fun configure() {
 		BaseModuleJvm.require()

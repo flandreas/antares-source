@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.app.user.User
+import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.invocation.SynchronousInvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
@@ -24,8 +25,9 @@ import org.junit.runners.model.Statement
 /**
  * Basic setup of unit tests in the [ch.scorpion.jabbah.graph.view] package.
  */
-class GraphViewTestRule : TestRule {
+object GraphViewTestRule {
 
+	/*
     override fun apply(statement: Statement?, p1: Description?): Statement {
         return object : Statement() {
             override fun evaluate() {
@@ -38,10 +40,13 @@ class GraphViewTestRule : TestRule {
             }
         }
     }
+    */
 
     fun configure() {
         BaseModuleJvm.require()
         GraphViewModuleJvm.require()
+
+	    TestTranslationsBuilder().withAnyKey()
 
 	    IOModule.typeMap.register("testVertice", TestVertice::class)
 	    IOModule.typeMap.register("testVerticeView", TestVerticeView::class)

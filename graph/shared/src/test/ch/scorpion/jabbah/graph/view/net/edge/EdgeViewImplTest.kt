@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -10,13 +9,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.nullValue
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
-
+import kotlin.test.*
 
 /**
  * Unit tests for [EdgeViewImpl].
@@ -24,18 +17,14 @@ import org.junit.Test
 class EdgeViewImplTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = GraphViewTestRule()
+	    init {
+	    	GraphViewTestRule.configure()
+	    }
     }
 
     private val edgeViewFactory = GraphViewModule.getEdgeViewFactory<Boolean>()
     private val graphView = GraphViewModule.createGraphView<GraphElementView<*>>()
-
-    @Before
-    fun setup() {
-	    TestTranslationsBuilder().withAnyKey()
-    }
-
+	
     @Test
     fun shouldUpdateBoundingBox() {
         val ev = edgeViewFactory.createEdgeView()
@@ -43,7 +32,7 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(200, 100))
         ev.addSegmentPoint(Point2D(200, 200))
         // Result includes line width and EdgeEndpointViews
-        assertThat(ev.boundingBox as Rectangle2D, `is`(Rectangle2D(92, 92, 116, 116)))
+        assertEquals(Rectangle2D(92, 92, 116, 116), ev.boundingBox as Rectangle2D)
     }
 
     @Test
@@ -51,7 +40,7 @@ class EdgeViewImplTest {
         val ev = edgeViewFactory.createEdgeView()
         ev.addSegmentPoint(Point2D(10, 10))
         ev.addSegmentPoint(Point2D(20, 10))
-        assertThat(ev.isDegenerated, `is`(false))
+        assertFalse(ev.isDegenerated)
     }
 
     @Test
@@ -59,7 +48,7 @@ class EdgeViewImplTest {
         val ev = edgeViewFactory.createEdgeView()
         ev.addSegmentPoint(Point2D(10, 10))
         ev.addSegmentPoint(Point2D(10, 10))
-        assertThat(ev.isDegenerated, `is`(true))
+        assertTrue(ev.isDegenerated)
     }
 
     @Test
@@ -68,7 +57,7 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(10, 10))
         ev.addSegmentPoint(Point2D(10, 10))
         ev.addSegmentPoint(Point2D(20, 10))
-        assertThat(ev.isDegenerated, `is`(true))
+	    assertTrue(ev.isDegenerated)
     }
 
     @Test
@@ -77,7 +66,7 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(10, 10))
         ev.addSegmentPoint(Point2D(20, 10))
         ev.addSegmentPoint(Point2D(20, 10))
-        assertThat(ev.isDegenerated, `is`(true))
+	    assertTrue(ev.isDegenerated)
     }
 
     @Test
@@ -89,7 +78,7 @@ class EdgeViewImplTest {
 
         ev.compact()
 
-        assertThat(ev.segmentPointCount, `is`(2))
+        assertEquals(2, ev.segmentPointCount)
     }
 
     @Test
@@ -101,7 +90,7 @@ class EdgeViewImplTest {
 
         ev.compact()
 
-        assertThat(ev.segmentPointCount, `is`(2))
+        assertEquals(2, ev.segmentPointCount)
     }
 
     @Test
@@ -113,20 +102,20 @@ class EdgeViewImplTest {
 
         ev.compact()
 
-        assertThat(ev.segmentPointCount, `is`(2))
+        assertEquals(2, ev.segmentPointCount)
     }
 
     @Test
     fun shouldCalculateLengthWithoutPoints() {
         val ev = edgeViewFactory.createEdgeView()
-        assertThat(ev.length, `is`(0.0))
+        assertEquals(0.0, ev.length)
     }
 
     @Test
     fun shouldCalculateLengthWithOnePoint() {
         val ev = edgeViewFactory.createEdgeView()
         ev.addSegmentPoint(Point2D(0, 0))
-        assertThat(ev.length, `is`(0.0))
+        assertEquals(0.0, ev.length)
     }
 
     @Test
@@ -136,7 +125,7 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(0, 10))
         ev.addSegmentPoint(Point2D(20, 10))
 
-        assertThat(ev.length, `is`(30.0))
+        assertEquals(30.0, ev.length)
     }
 
     @Test
@@ -149,15 +138,15 @@ class EdgeViewImplTest {
 
         val newEV = ev.split(1, Point2D(100, 25)) { edgeViewFactory.createEdgeView(it as Net<Boolean>) }
 
-        assertThat(ev.segmentPointCount, `is`(3))
-        assertThat(ev.getSegmentPoint(0), `is`(Point2D(0, 0)))
-        assertThat(ev.getSegmentPoint(1), `is`(Point2D(100, 0)))
-        assertThat(ev.getSegmentPoint(2), `is`(Point2D(100, 25)))
+        assertEquals(3, ev.segmentPointCount)
+        assertEquals(Point2D(0, 0), ev.getSegmentPoint(0))
+        assertEquals(Point2D(100, 0), ev.getSegmentPoint(1))
+        assertEquals(Point2D(100, 25), ev.getSegmentPoint(2))
 
-        assertThat(newEV.segmentPointCount, `is`(3))
-        assertThat(newEV.getSegmentPoint(0), `is`(Point2D(100, 25)))
-        assertThat(newEV.getSegmentPoint(1), `is`(Point2D(100, 50)))
-        assertThat(newEV.getSegmentPoint(2), `is`(Point2D(200, 50)))
+        assertEquals(3, newEV.segmentPointCount)
+        assertEquals(Point2D(100, 25), newEV.getSegmentPoint(0))
+        assertEquals(Point2D(100, 50), newEV.getSegmentPoint(1))
+        assertEquals(Point2D(200, 50),newEV.getSegmentPoint(2))
     }
 
     @Test
@@ -170,14 +159,14 @@ class EdgeViewImplTest {
 
         val newEV = ev.split(1, Point2D(100, 0)) { edgeViewFactory.createEdgeView(it as Net<Boolean>) }
 
-        assertThat(ev.segmentPointCount, `is`(2))
-        assertThat(ev.getSegmentPoint(0), `is`(Point2D(0, 0)))
-        assertThat(ev.getSegmentPoint(1), `is`(Point2D(100, 0)))
+        assertEquals(2, ev.segmentPointCount)
+        assertEquals(Point2D(0, 0), ev.getSegmentPoint(0))
+        assertEquals(Point2D(100, 0), ev.getSegmentPoint(1))
 
-        assertThat(newEV.segmentPointCount, `is`(3))
-        assertThat(newEV.getSegmentPoint(0), `is`(Point2D(100, 0)))
-        assertThat(newEV.getSegmentPoint(1), `is`(Point2D(100, 50)))
-        assertThat(newEV.getSegmentPoint(2), `is`(Point2D(200, 50)))
+        assertEquals(3, newEV.segmentPointCount)
+        assertEquals(Point2D(100, 0), newEV.getSegmentPoint(0))
+        assertEquals(Point2D(100, 50), newEV.getSegmentPoint(1))
+        assertEquals(Point2D(200, 50), newEV.getSegmentPoint(2))
     }
 
     @Test
@@ -197,12 +186,12 @@ class EdgeViewImplTest {
 
         ev1.join(ev2)
 
-        assertThat(ev1.segmentPointCount, `is`(2))
-        assertThat(ev1.getSegmentPoint(0), `is`(Point2D(0, 0)))
-        assertThat(ev1.getSegmentPoint(1), `is`(Point2D(200, 0)))
+        assertEquals(2, ev1.segmentPointCount)
+        assertEquals(Point2D(0, 0), ev1.getSegmentPoint(0))
+        assertEquals(Point2D(200, 0), ev1.getSegmentPoint(1))
 
-        assertThat(ev1.destination as TestVerticeView, `is`(vv))
-        assertThat(ev2.destination, `is`(nullValue()))
+        assertEquals(ev1.destination as TestVerticeView, vv)
+        assertNull(ev2.destination)
     }
 
     @Test
@@ -222,12 +211,12 @@ class EdgeViewImplTest {
 
         ev2.join(ev1)
 
-        assertThat(ev2.segmentPointCount, `is`(2))
-        assertThat(ev2.getSegmentPoint(0), `is`(Point2D(0, 0)))
-        assertThat(ev2.getSegmentPoint(1), `is`(Point2D(200, 0)))
+        assertEquals(2, ev2.segmentPointCount)
+        assertEquals(Point2D(0, 0), ev2.getSegmentPoint(0))
+        assertEquals(Point2D(200, 0), ev2.getSegmentPoint(1))
 
-        assertThat(ev2.origin as TestVerticeView, `is`(vv))
-        assertThat(ev1.origin, `is`(nullValue()))
+        assertEquals(vv, ev2.origin as TestVerticeView)
+        assertNull(ev1.origin)
     }
 
     @Test
@@ -250,12 +239,12 @@ class EdgeViewImplTest {
 
         ev1.join(ev2)
 
-        assertThat(ev1.segmentPointCount, `is`(2))
-        assertThat(ev1.getSegmentPoint(0), `is`(Point2D(-100, 0)))
-        assertThat(ev1.getSegmentPoint(1), `is`(Point2D(100, 0)))
+        assertEquals(2, ev1.segmentPointCount)
+        assertEquals(Point2D(-100, 0), ev1.getSegmentPoint(0))
+        assertEquals(Point2D(100, 0), ev1.getSegmentPoint(1))
 
-        assertThat(ev1.origin as TestVerticeView, `is`(vv2))
-        assertThat(ev1.destination as TestVerticeView, `is`(vv1))
+        assertEquals(vv2, ev1.origin as TestVerticeView)
+        assertEquals(vv1, ev1.destination as TestVerticeView)
     }
 
     @Test
@@ -267,10 +256,10 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(0, 100))
         ev.addSegmentPoint(Point2D(0, 0))
 
-        assertThat(ev.getSegmentDirection(0)!!, `is`(Direction.EAST))
-        assertThat(ev.getSegmentDirection(1)!!, `is`(Direction.SOUTH))
-        assertThat(ev.getSegmentDirection(2)!!, `is`(Direction.WEST))
-        assertThat(ev.getSegmentDirection(3)!!, `is`(Direction.NORTH))
+        assertEquals(Direction.EAST, ev.getSegmentDirection(0)!!)
+        assertEquals(Direction.SOUTH, ev.getSegmentDirection(1)!!)
+        assertEquals(Direction.WEST, ev.getSegmentDirection(2)!!)
+        assertEquals(Direction.NORTH, ev.getSegmentDirection(3)!!)
     }
 
     @Test
@@ -280,13 +269,13 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(150, 0))
         ev.addSegmentPoint(Point2D(200, 0))
 
-        assertThat(ev.findSegment(150.0, 50.0, 1), `is`(0))
+        assertEquals(0, ev.findSegment(150.0, 50.0, 1))
     }
 
     @Test
     fun shouldDetectUnconnectedConnectionState() {
         val ev = edgeViewFactory.createEdgeView()
-        assertThat(ev.connectionState, `is`(EdgeViewConnectionState.Unconnected))
+        assertEquals(ev.connectionState, EdgeViewConnectionState.Unconnected)
     }
 
     @Test
@@ -294,7 +283,7 @@ class EdgeViewImplTest {
         val ev = edgeViewFactory.createEdgeView()
         val vv = TestVerticeView()
         ev.connectToDestination(vv, vv.model!!.getInput())
-        assertThat(ev.connectionState, `is`(EdgeViewConnectionState.Input))
+        assertEquals(ev.connectionState, EdgeViewConnectionState.Input)
     }
 
     @Test
@@ -302,7 +291,7 @@ class EdgeViewImplTest {
         val ev = edgeViewFactory.createEdgeView()
         val vv = TestVerticeView()
         ev.connectToDestination(vv, vv.model!!.getOutput())
-        assertThat(ev.connectionState, `is`(EdgeViewConnectionState.Output))
+        assertEquals(ev.connectionState, EdgeViewConnectionState.Output)
     }
 
     @Test
@@ -312,7 +301,7 @@ class EdgeViewImplTest {
         val vv2 = TestVerticeView()
         ev.connectToOrigin(vv1, vv1.model!!.getOutput())
         ev.connectToDestination(vv2, vv2.model!!.getInput())
-        assertThat(ev.connectionState, `is`(EdgeViewConnectionState.InputOutput))
+        assertEquals(ev.connectionState, EdgeViewConnectionState.InputOutput)
     }
 
     @Test
@@ -322,7 +311,7 @@ class EdgeViewImplTest {
         val vv2 = TestVerticeView()
         ev.connectToOrigin(vv1, vv1.model!!.getInput())
         ev.connectToDestination(vv2, vv2.model!!.getInput())
-        assertThat(ev.connectionState, `is`(EdgeViewConnectionState.InputInput))
+        assertEquals(ev.connectionState, EdgeViewConnectionState.InputInput)
     }
 
     @Test
@@ -332,7 +321,7 @@ class EdgeViewImplTest {
         val vv2 = TestVerticeView()
         ev.connectToOrigin(vv1, vv1.model!!.getOutput())
         ev.connectToDestination(vv2, vv2.model!!.getOutput())
-        assertThat(ev.connectionState, `is`(EdgeViewConnectionState.OutputOutput))
+        assertEquals(ev.connectionState, EdgeViewConnectionState.OutputOutput)
     }
 
     @Test
@@ -351,8 +340,8 @@ class EdgeViewImplTest {
         ev.prepareMoveBy(listOf(ev))
         ev.moveBy(0.0, 50.0)
 
-        assertThat(ev.getSegmentPoint(0), `is`(Point2D(0, 0)))
-        assertThat(ev.getSegmentPoint(1), `is`(Point2D(100, 0)))
+        assertEquals(Point2D(0, 0), ev.getSegmentPoint(0))
+        assertEquals(Point2D(100, 0), ev.getSegmentPoint(1))
     }
 
     @Test
@@ -371,8 +360,8 @@ class EdgeViewImplTest {
         ev.prepareMoveBy(listOf(vv1, vv2, ev))
         ev.moveBy(0.0, 50.0)
 
-        assertThat(ev.getSegmentPoint(0), `is`(Point2D(0, 50)))
-        assertThat(ev.getSegmentPoint(1), `is`(Point2D(100, 50)))
+        assertEquals(Point2D(0, 50), ev.getSegmentPoint(0))
+        assertEquals(Point2D(100, 50), ev.getSegmentPoint(1))
     }
 
     @Test
@@ -388,7 +377,7 @@ class EdgeViewImplTest {
         ev.prepareMoveBy(listOf(vv1, ev))
         ev.moveBy(0.0, 50.0)
 
-        assertThat(ev.getSegmentPoint(0), `is`(Point2D(0, 50)))
-        assertThat(ev.getSegmentPoint(1), `is`(Point2D(100, 50)))
+        assertEquals(Point2D(0, 50), ev.getSegmentPoint(0))
+        assertEquals(Point2D(100, 50), ev.getSegmentPoint(1))
     }
 }

@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.net
 
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
@@ -9,11 +8,9 @@ import ch.scorpion.jabbah.graph.view.net.edge.Layout
 import ch.scorpion.jabbah.graph.view.net.edge.OrthoEdgeViewLayout
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewImpl
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 /**
  * Integration tests for integrating [OrthoEdgeViewLayout] and [NodeViewImpl].
@@ -21,17 +18,13 @@ import org.junit.Test
 class OrthoEdgeViewLayoutIntegrationTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = GraphViewTestRule()
+	    init {
+		    GraphViewTestRule.configure()
+	    }
     }
 
-    private lateinit var builder: GraphViewBuilder<Boolean>
+    private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
 
-    @Before
-    fun setup(){
-        TestTranslationsBuilder().withAnyKey()
-        builder = GraphViewBuilder()
-    }
 
     @Test
     fun shouldSplitHorizontalEdgeView() {
@@ -42,14 +35,14 @@ class OrthoEdgeViewLayoutIntegrationTest {
 
         val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v3)
 
-        assertThat(splitResult.tailEdgeView.segmentPointCount, `is`(2))
-        assertThat(splitResult.tailEdgeView.isAdjusted, `is`(false))
+        assertEquals(2, splitResult.tailEdgeView.segmentPointCount)
+        assertFalse(splitResult.tailEdgeView.isAdjusted)
 
-        assertThat(splitResult.newEdgeView.segmentPointCount, `is`(3))
-        assertThat(splitResult.newEdgeView.isAdjusted, `is`(false))
+        assertEquals(3, splitResult.newEdgeView.segmentPointCount)
+        assertFalse(splitResult.newEdgeView.isAdjusted)
 
-        assertThat(origEdgeView.segmentPointCount, `is`(2))
-        assertThat(origEdgeView.isAdjusted, `is`(false))
+        assertEquals(2, origEdgeView.segmentPointCount)
+        assertFalse(origEdgeView.isAdjusted)
     }
 
     @Test
@@ -61,14 +54,14 @@ class OrthoEdgeViewLayoutIntegrationTest {
 
         val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v2)
 
-        assertThat(splitResult.tailEdgeView.segmentPointCount, `is`(3))
-        assertThat(splitResult.tailEdgeView.isAdjusted, `is`(false))
+        assertEquals(3, splitResult.tailEdgeView.segmentPointCount)
+        assertFalse(splitResult.tailEdgeView.isAdjusted)
 
-        assertThat(splitResult.newEdgeView.segmentPointCount, `is`(2))
-        assertThat(splitResult.newEdgeView.isAdjusted, `is`(false))
+        assertEquals(2, splitResult.newEdgeView.segmentPointCount)
+        assertFalse(splitResult.newEdgeView.isAdjusted)
 
-        assertThat(origEdgeView.segmentPointCount, `is`(2))
-        assertThat(origEdgeView.isAdjusted, `is`(false))
+        assertEquals(2, origEdgeView.segmentPointCount)
+        assertFalse(origEdgeView.isAdjusted)
     }
 
     @Test
@@ -81,7 +74,7 @@ class OrthoEdgeViewLayoutIntegrationTest {
 
         v1.moveBy(-10.0, 0.0)
 
-        assertThat(origEdgeView.segmentPointCount, `is`(2))
+        assertEquals(2, origEdgeView.segmentPointCount)
     }
 
     @Test
@@ -94,7 +87,7 @@ class OrthoEdgeViewLayoutIntegrationTest {
 
         v2.moveBy(0.0, -10.0)
 
-        assertThat(splitResult.tailEdgeView.segmentPointCount, `is`(4))
+        assertEquals(4, splitResult.tailEdgeView.segmentPointCount)
     }
 
     @Test
@@ -105,14 +98,14 @@ class OrthoEdgeViewLayoutIntegrationTest {
         val origEdgeView = builder.connect(v1, v2)
         val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v3)
 
-        assertThat(splitResult.newEdgeView.segmentPointCount, `is`(3))
+        assertEquals(3, splitResult.newEdgeView.segmentPointCount)
     }
 
     @Test
     fun shouldLayoutVerticalOpenVerticeView() {
         val v = builder.addVerticeView(createVerticeView(100, 100, Direction.SOUTH))
         val edgeView = builder.connectOpen(v, Point2D(100, 200))
-        assertThat(edgeView.segmentPointCount, `is`(2))
+        assertEquals(2, edgeView.segmentPointCount)
     }
 
     @Test
@@ -124,8 +117,8 @@ class OrthoEdgeViewLayoutIntegrationTest {
         val splitResult = builder.split(ev, 0, Point2D(150, 100), null)
         splitResult.newEdgeView.moveDestinationEndPoint(200.0, 200.0)
 
-        assertThat(splitResult.newEdgeView.segmentPointCount, `is`(3))
-        assertThat(splitResult.newEdgeView.getSegmentDirection(0), `is`(Direction.SOUTH))
+        assertEquals(3, splitResult.newEdgeView.segmentPointCount)
+        assertEquals(Direction.SOUTH, splitResult.newEdgeView.getSegmentDirection(0))
     }
 
     @Test
@@ -137,7 +130,7 @@ class OrthoEdgeViewLayoutIntegrationTest {
         origEdgeView.layout = Layout.NONE
         val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v3)
 
-        assertThat(splitResult.newEdgeView.getSegmentDirection(0), `is`(Direction.SOUTH))
+        assertEquals(Direction.SOUTH, splitResult.newEdgeView.getSegmentDirection(0))
     }
 
 

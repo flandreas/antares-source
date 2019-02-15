@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.repository
 
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -11,34 +10,29 @@ import ch.scorpion.jabbah.graph.project.ProjectImpl
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import com.nhaarman.mockitokotlin2.mock
-import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import io.mockk.mockk
+import kotlin.test.*
 
 class RepositoryServiceImplTest {
 
 	companion object {
-		@ClassRule
-		@JvmField
-		val rule = GraphViewTestRule()
+		init {
+			GraphViewTestRule.configure()
+		}
 	}
 
-	private val libraryPersistenceService = mock<LibraryPersistenceService>()
+	private val libraryPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
 	private val libraryService: LibraryService = LibraryServiceImpl(libraryAccessor = { libraryBuilder.library }, persistenceService = libraryPersistenceService)
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = libraryService)
 
-	private val projectPersistenceService = mock<LibraryPersistenceService>()
+	private val projectPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
 	private val projectLibraryService: LibraryService = LibraryServiceImpl(libraryAccessor = { projectBuilder.library }, persistenceService = projectPersistenceService)
 	private val projectBuilder = LibraryBuilder(name = "Project", libraryService = projectLibraryService, library = ProjectImpl("Project", projectLibraryService))
 
 	private val service = RepositoryServiceImpl(libraryService = libraryService, projectLibraryService = projectLibraryService)
 
-	@Before
+	@BeforeTest
 	fun setup() {
-		TestTranslationsBuilder().withAnyKey()
 		LibraryModule.libraryHolder.l = libraryBuilder.library
 		ProjectModule.projectHolder.p = projectBuilder.library as Project
 	}
@@ -55,9 +49,9 @@ class RepositoryServiceImplTest {
 
 		service.move(project.getRecursively("Element") as ContainerLibraryElement, library.getRecursively("Directory") as LibraryDirectory)
 
-		assertThat(project.getRecursively("Element"), `is`(nullValue()))
-		assertThat(library.getRecursively("Element"), `is`(notNullValue()))
-		assertThat((library.getRecursively("Directory") as LibraryDirectory).contains(library.getRecursively("Element") as LibraryItem), `is`(true))
+		assertNull(project.getRecursively("Element"))
+		assertNotNull(library.getRecursively("Element"))
+		assertTrue((library.getRecursively("Directory") as LibraryDirectory).contains(library.getRecursively("Element") as LibraryItem))
 	}
 
 	@Test
@@ -75,9 +69,9 @@ class RepositoryServiceImplTest {
 			3)
 
 		val directory = project.getRecursively("ProjectDirectory") as LibraryDirectory
-		assertThat(directory.indexOf(project.getRecursively("Element2") as ContainerLibraryElement), `is`(0))
-		assertThat(directory.indexOf(project.getRecursively("Element3") as ContainerLibraryElement), `is`(1))
-		assertThat(directory.indexOf(project.getRecursively("Element") as ContainerLibraryElement), `is`(2))
+		assertEquals(0, directory.indexOf(project.getRecursively("Element2") as ContainerLibraryElement))
+		assertEquals(1, directory.indexOf(project.getRecursively("Element3") as ContainerLibraryElement))
+		assertEquals(2, directory.indexOf(project.getRecursively("Element") as ContainerLibraryElement))
 	}
 
 	@Test(expected = LibraryDependencyException::class)
@@ -93,8 +87,8 @@ class RepositoryServiceImplTest {
 		try {
 			service.move(projectBuilder.library.get("ReferencingVertice") as ContainerLibraryElement, libraryBuilder.library as LibraryDirectory)
 		} catch (e: LibraryDependencyException) {
-			assertThat(projectBuilder.library.get("ReferencingVertice") as ContainerLibraryElement?, `is`(notNullValue()))
-			assertThat(libraryBuilder.library.get("ReferencingVertice") as ContainerLibraryElement?, `is`(nullValue()))
+			assertNotNull(projectBuilder.library.get("ReferencingVertice") as ContainerLibraryElement?)
+			assertNull(libraryBuilder.library.get("ReferencingVertice") as ContainerLibraryElement?)
 			throw e
 		}
 	}
@@ -112,9 +106,9 @@ class RepositoryServiceImplTest {
 
 		EditModule.commandManager.undo()
 
-		assertThat(project.getRecursively("Element"), `is`(notNullValue()))
-		assertThat((project.getRecursively("ProjectDirectory") as LibraryDirectory).contains(project.getRecursively("Element") as LibraryItem), `is`(true))
-		assertThat(library.getRecursively("Element"), `is`(nullValue()))
+		assertNotNull(project.getRecursively("Element"))
+		assertTrue((project.getRecursively("ProjectDirectory") as LibraryDirectory).contains(project.getRecursively("Element") as LibraryItem))
+		assertNull(library.getRecursively("Element"))
 	}
 
 	@Test
@@ -131,8 +125,8 @@ class RepositoryServiceImplTest {
 		EditModule.commandManager.undo()
 		EditModule.commandManager.redo()
 
-		assertThat(project.getRecursively("Element"), `is`(nullValue()))
-		assertThat(library.getRecursively("Element"), `is`(notNullValue()))
-		assertThat((library.getRecursively("Directory") as LibraryDirectory).contains(library.getRecursively("Element") as LibraryItem), `is`(true))
+		assertNull(project.getRecursively("Element"))
+		assertNotNull(library.getRecursively("Element"))
+		assertTrue((library.getRecursively("Directory") as LibraryDirectory).contains(library.getRecursively("Element") as LibraryItem))
 	}
 }

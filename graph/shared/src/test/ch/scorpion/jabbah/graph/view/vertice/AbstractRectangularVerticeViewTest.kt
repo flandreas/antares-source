@@ -8,11 +8,9 @@ import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.port.TestPortView
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [AbstractRectangularVerticeView].
@@ -20,11 +18,12 @@ import org.junit.Test
 class AbstractRectangularVerticeViewTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = GraphViewTestRule()
+	    init {
+	    	GraphViewTestRule.configure()
+	    }
     }
 
-    @Before
+    @BeforeTest
     fun setup() {
 	    TestTranslationsBuilder().withAnyKey()
     }
@@ -36,14 +35,14 @@ class AbstractRectangularVerticeViewTest {
         val rectangle = TestRectangleView()
         rectangle.setBounds(0.0, 0.0, 100.0, 50.0)
 
-        assertThat(rectangle.x, `is`(0.0))
-        assertThat(rectangle.y, `is`(0.0))
-        assertThat(rectangle.width, `is`(100.0))
-        assertThat(rectangle.height, `is`(50.0))
-        assertThat(rectangle.location.x, `is`(0.0))
-        assertThat(rectangle.location.y, `is`(0.0))
-        assertThat(rectangle.bounds.boundingBox as Rectangle2D, `is`(Rectangle2D(0, 0, 100, 50)))
-        assertThat(rectangle.boundingBox, `is`(Rectangle2D(0, 0, 100, 50)))
+        assertEquals(0.0, rectangle.x)
+        assertEquals(0.0, rectangle.y)
+        assertEquals(100.0, rectangle.width)
+        assertEquals(50.0, rectangle.height)
+        assertEquals(0.0, rectangle.location.x)
+        assertEquals(0.0, rectangle.location.y)
+        assertEquals(Rectangle2D(0, 0, 100, 50), rectangle.bounds.boundingBox as Rectangle2D)
+        assertEquals(Rectangle2D(0, 0, 100, 50), rectangle.boundingBox)
     }
 
     @Test
@@ -54,14 +53,14 @@ class AbstractRectangularVerticeViewTest {
         portView.setLocation(0.0, 25.0)
         rectangle.addPortView(portView)
 
-        assertThat(rectangle.x, `is`(0.0))
-        assertThat(rectangle.y, `is`(0.0))
-        assertThat(rectangle.width, `is`(100.0))
-        assertThat(rectangle.height, `is`(50.0))
-        assertThat(rectangle.location.x, `is`(0.0))
-        assertThat(rectangle.location.y, `is`(0.0))
-        assertThat(rectangle.bounds.boundingBox as Rectangle2D, `is`(Rectangle2D(0, 0, 100, 50)))
-        assertThat(rectangle.boundingBox, `is`(Rectangle2D(-20, 0, 120, 50)))
+        assertEquals(0.0, rectangle.x)
+        assertEquals(0.0, rectangle.y)
+        assertEquals(100.0, rectangle.width)
+        assertEquals(50.0, rectangle.height)
+        assertEquals(0.0, rectangle.location.x)
+        assertEquals(0.0, rectangle.location.y)
+        assertEquals(Rectangle2D(0, 0, 100, 50), rectangle.bounds.boundingBox as Rectangle2D)
+        assertEquals(Rectangle2D(-20, 0, 120, 50), rectangle.boundingBox)
     }
 
     /** ---- With rectangle offset */
@@ -72,14 +71,14 @@ class AbstractRectangularVerticeViewTest {
         rectangle.setBounds(0.0, 0.0, 100.0, 50.0)
         rectangle.location = Point2D(-20, 25)
 
-        assertThat(rectangle.x, `is`(0.0))
-        assertThat(rectangle.y, `is`(0.0))
-        assertThat(rectangle.width, `is`(100.0))
-        assertThat(rectangle.height, `is`(50.0))
-        assertThat(rectangle.location.x, `is`(-20.0))
-        assertThat(rectangle.location.y, `is`(25.0))
-        assertThat(rectangle.bounds.boundingBox as Rectangle2D, `is`(Rectangle2D(0, 0, 100, 50)))
-        assertThat(rectangle.boundingBox, `is`(Rectangle2D(-20, 25, 100, 50)))
+        assertEquals(0.0, rectangle.x)
+        assertEquals(0.0, rectangle.y)
+        assertEquals(100.0, rectangle.width)
+        assertEquals(50.0, rectangle.height)
+        assertEquals(-20.0, rectangle.location.x)
+        assertEquals(25.0, rectangle.location.y)
+        assertEquals(Rectangle2D(0, 0, 100, 50), rectangle.bounds.boundingBox as Rectangle2D)
+        assertEquals(Rectangle2D(-20, 25, 100, 50), rectangle.boundingBox)
     }
 
     @Test
@@ -91,14 +90,14 @@ class AbstractRectangularVerticeViewTest {
         portView.setLocation(0.0, 25.0)
         rectangle.addPortView(portView)
 
-        assertThat(rectangle.x, `is`(0.0))
-        assertThat(rectangle.y, `is`(0.0))
-        assertThat(rectangle.width, `is`(100.0))
-        assertThat(rectangle.height, `is`(50.0))
-        assertThat(rectangle.location.x, `is`(-20.0))
-        assertThat(rectangle.location.y, `is`(25.0))
-        assertThat(rectangle.bounds.boundingBox as Rectangle2D, `is`(Rectangle2D(0, 0, 100, 50)))
-        assertThat(rectangle.boundingBox, `is`(Rectangle2D(-40, 25, 120, 50)))
+        assertEquals(0.0, rectangle.x)
+        assertEquals(0.0, rectangle.y)
+        assertEquals(100.0, rectangle.width)
+        assertEquals(50.0, rectangle.height)
+        assertEquals(-20.0, rectangle.location.x)
+        assertEquals(25.0, rectangle.location.y)
+        assertEquals(Rectangle2D(0, 0, 100, 50), rectangle.bounds.boundingBox as Rectangle2D)
+        assertEquals(Rectangle2D(-40, 25, 120, 50), rectangle.boundingBox)
     }
 
     private class TestRectangleView : AbstractRectangularVerticeView<TestVertice>(model = TestVertice()) {

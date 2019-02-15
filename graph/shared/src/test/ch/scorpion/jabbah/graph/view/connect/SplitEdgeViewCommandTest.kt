@@ -8,12 +8,10 @@ import ch.scorpion.jabbah.graph.view.TestGraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.sameInstance
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 /**
  * Unit tests for [SplitEdgeViewCommand].
@@ -21,15 +19,16 @@ import org.junit.Test
 class SplitEdgeViewCommandTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = GraphViewTestRule()
+	    init {
+	    	GraphViewTestRule.configure()
+	    }
     }
 
     private val service = GraphViewModule.graphViewConnectService
     private val edgeViewFactory = GraphViewModule.getEdgeViewFactory<Boolean>()
     private lateinit var testGraphView: TestGraphView
 
-    @Before
+    @BeforeTest
     fun setup() {
         TestTranslationsBuilder().withAnyKey()
         testGraphView = TestGraphView()
@@ -54,18 +53,18 @@ class SplitEdgeViewCommandTest {
         command.execute()
 
         // Model assertions: 2 Vertices, 1 Net
-        assertThat(testGraphView.graph.elementsCount, `is`(3))
-        assertThat(testGraphView.v1.getOutput<Boolean>().net, `is`(sameInstance(testGraphView.net)))
+        assertEquals(3, testGraphView.graph.elementsCount)
+        assertSame(testGraphView.net, testGraphView.v1.getOutput<Boolean>().net)
 
         // View assertions
         val nodeView = newEdgeView.origin as NodeView<Boolean>
-        assertThat(testGraphView.ev.origin as TestVerticeView, `is`(sameInstance(testGraphView.vv1)))
-        assertThat(testGraphView.ev.destination as NodeView<Boolean>, `is`(sameInstance(nodeView)))
-        assertThat(testGraphView.ev.getSegmentPoint(testGraphView.ev.segmentPointCount - 1), `is`(nodeView.location))
+	    assertSame(testGraphView.vv1, testGraphView.ev.origin as TestVerticeView)
+	    assertSame(nodeView, testGraphView.ev.destination as NodeView<Boolean>)
+	    assertEquals(nodeView.location, testGraphView.ev.getSegmentPoint(testGraphView.ev.segmentPointCount - 1))
 
         val ev = nodeView.getOutgoingEdgeViews()[1]
-        assertThat(ev.origin as NodeView<Boolean>, `is`(sameInstance(nodeView)))
-        assertThat(ev.destination as TestVerticeView, `is`(sameInstance(testGraphView.vv2)))
-        assertThat(ev.getSegmentPoint(0), `is`(nodeView.location))
+	    assertSame(nodeView, ev.origin as NodeView<Boolean>)
+	    assertSame(testGraphView.vv2, ev.destination as TestVerticeView)
+	    assertEquals(nodeView.location, ev.getSegmentPoint(0))
     }
 }

@@ -1,108 +1,107 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import io.mockk.every
+import io.mockk.mockk
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [OrthoEdgeViewLayout].
  */
 class OrthoEdgeViewLayoutTest {
 
-    companion object {
-        @ClassRule @JvmField
-        val rule = GraphViewTestRule()
-    }
+	companion object {
+		init {
+			GraphViewTestRule.configure()
+		}
+	}
 
-    private lateinit var graphView: GraphView<*>
-    private lateinit var layout: OrthoEdgeViewLayout
+	private lateinit var graphView: GraphView<*>
+	private lateinit var layout: OrthoEdgeViewLayout
 
-    @Before
-    fun setup() {
-        layout = OrthoEdgeViewLayout()
-        graphView = mock()
-        whenever(graphView.snapper).thenReturn(null)
-    }
+	@BeforeTest
+	fun setup() {
+		layout = OrthoEdgeViewLayout()
+		graphView = mockk()
+		every { graphView.snapper } returns null
+	}
 
-    @Test
-    fun layoutEastEast() {
-        val points = layout.layout(
-                null,
-                graphView,
-                LayoutBoundary(
-                        point = Point2D(0, 0),
-                        directions = setOf(Direction.EAST),
-                        isPort = true),
-                LayoutBoundary(
-                        point = Point2D(100, 100),
-                        directions = setOf(Direction.EAST),
-                        isPort = true))
+	@Test
+	fun layoutEastEast() {
+		val points = layout.layout(
+			null,
+			graphView,
+			LayoutBoundary(
+				point = Point2D(0, 0),
+				directions = setOf(Direction.EAST),
+				isPort = true),
+			LayoutBoundary(
+				point = Point2D(100, 100),
+				directions = setOf(Direction.EAST),
+				isPort = true))
 
-        assertThat(points.size, `is`(4))
-        assertThat(points[0], `is`(Point2D(0, 0)))
-        assertThat(points[1], `is`(Point2D(50, 0)))
-        assertThat(points[2], `is`(Point2D(50, 100)))
-        assertThat(points[3], `is`(Point2D(100, 100)))
-    }
+		assertEquals(4, points.size)
+		assertEquals(Point2D(0, 0), points[0])
+		assertEquals(Point2D(50, 0), points[1])
+		assertEquals(Point2D(50, 100), points[2])
+		assertEquals(Point2D(100, 100), points[3])
+	}
 
-    @Test
-    fun layoutEastEastDegenerated() {
-        val points = layout.layout(
-                null,
-                graphView,
-                LayoutBoundary(
-                        point = Point2D(100, 0),
-                        directions = setOf(Direction.EAST),
-                        isPort = true),
-                LayoutBoundary(
-                        point = Point2D(0, 0),
-                        directions = setOf(Direction.EAST),
-                        isPort = true))
+	@Test
+	fun layoutEastEastDegenerated() {
+		val points = layout.layout(
+			null,
+			graphView,
+			LayoutBoundary(
+				point = Point2D(100, 0),
+				directions = setOf(Direction.EAST),
+				isPort = true),
+			LayoutBoundary(
+				point = Point2D(0, 0),
+				directions = setOf(Direction.EAST),
+				isPort = true))
 
-		assertThat(points.size, `is`(2))
-		assertThat(points[0], `is`(Point2D(100, 0)))
-		assertThat(points[1], `is`(Point2D(0, 0)))
-    }
+		assertEquals(2, points.size)
+		assertEquals(Point2D(100, 0), points[0])
+		assertEquals(Point2D(0, 0), points[1])
+	}
 
-    @Test
-    fun shouldNotFailWithEmptyPolyline() {
-        val points = layout.layout(
-                null,
-                graphView,
-                LayoutBoundary(
-                        point = Point2D(0, 0),
-                        directions = setOf(Direction.EAST),
-                        isPort = true),
-                LayoutBoundary(
-                        point = Point2D(0, 0),
-                        directions = setOf(Direction.EAST),
-                        isPort = true))
+	@Test
+	fun shouldNotFailWithEmptyPolyline() {
+		val points = layout.layout(
+			null,
+			graphView,
+			LayoutBoundary(
+				point = Point2D(0, 0),
+				directions = setOf(Direction.EAST),
+				isPort = true),
+			LayoutBoundary(
+				point = Point2D(0, 0),
+				directions = setOf(Direction.EAST),
+				isPort = true))
 
-        assertThat(points.size, `is`(2))
-    }
+		assertEquals(2, points.size)
+	}
 
-    @Test
-    fun layoutSouthOpen() {
-        val points = layout.layout(
-                null,
-                graphView,
-                LayoutBoundary(
-                        point = Point2D(0, 0),
-                        directions = setOf(Direction.EAST),
-                        isPort = true),
-                LayoutBoundary(
-                        point = Point2D(100, 100),
-                        directions = setOf(Direction.WEST),
-                        isPort = false))
+	@Test
+	fun layoutSouthOpen() {
+		val points = layout.layout(
+			null,
+			graphView,
+			LayoutBoundary(
+				point = Point2D(0, 0),
+				directions = setOf(Direction.EAST),
+				isPort = true),
+			LayoutBoundary(
+				point = Point2D(100, 100),
+				directions = setOf(Direction.WEST),
+				isPort = false))
 
-        assertThat(points.size, `is`(3))
-    }
+		assertEquals(3, points.size)
+	}
 }

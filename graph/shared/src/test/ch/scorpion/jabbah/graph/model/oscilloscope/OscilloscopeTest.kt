@@ -1,23 +1,27 @@
 package ch.scorpion.jabbah.graph.model.oscilloscope
 
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.execution.SignalHandlerMockBuilder
+import ch.scorpion.jabbah.graph.model.GraphModelTestRule
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.port.PortImpl
-import org.junit.Assert.*
-import org.junit.Before
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /** Unit tests for [Oscilloscope]. */
 class OscilloscopeTest {
+	
+	companion object {
+		init {
+			GraphModelTestRule.configure()
+		}
+	}
 
     private lateinit var signalHandler: SignalHandlerMockBuilder
     private lateinit var oscilloscope: Oscilloscope
 
-    @Before
+    @BeforeTest
     fun setup() {
-        BaseModuleJvm.require()
         signalHandler = SignalHandlerMockBuilder()
         oscilloscope = Oscilloscope()
     }
@@ -28,7 +32,7 @@ class OscilloscopeTest {
         oscilloscope.executionStarted(signalHandler.build())
         input("1", 100, true)
         input("1", 200, false)
-        assertThat(oscilloscope.maxTime, `is`(200L))
+        assertEquals(200L, oscilloscope.maxTime)
     }
 
     @Test
@@ -37,7 +41,7 @@ class OscilloscopeTest {
         oscilloscope.executionStarted(signalHandler.build())
         input("1", 100, true)
         input("2", 150, false)
-        assertThat(oscilloscope.minDiffTime, `is`(50L))
+        assertEquals(50L, oscilloscope.minDiffTime)
     }
 
     @Test
@@ -46,7 +50,7 @@ class OscilloscopeTest {
         oscilloscope.executionStarted(signalHandler.build())
         input("1", 100, true)
         //input("1", 150, true)
-        assertThat(oscilloscope.minDiffTime, `is`(Long.MAX_VALUE))
+        assertEquals(Long.MAX_VALUE, oscilloscope.minDiffTime)
     }
 
     @Test
@@ -55,7 +59,7 @@ class OscilloscopeTest {
         oscilloscope.executionStarted(signalHandler.build())
         input("1", 100, true)
         input("1", 150, false)
-        assertThat(oscilloscope.minDiffTime, `is`(Long.MAX_VALUE))
+        assertEquals(Long.MAX_VALUE, oscilloscope.minDiffTime)
     }
 
     private fun createPorts(portsCount: Int) {

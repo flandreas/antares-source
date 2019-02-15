@@ -7,8 +7,8 @@ import io.mockk.mockk
 class DrawingViewMockBuilder {
 
     private val drawingView = mockk<DrawingView<Drawing<*>>>()
-    private val selectionManager = mockk<SelectionManager>()
-    private val grid = mockk<Grid>()
+    private val selectionManager = mockk<SelectionManager>(relaxed = true)
+    private val grid = mockk<Grid>(relaxed = true)
 
     init {
         every { grid.distance } returns 10.0

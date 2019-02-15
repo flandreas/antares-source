@@ -1,29 +1,24 @@
 package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.io.StorableClonerJvm
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.ClassRule
-import org.junit.Test
-import java.util.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class MetaGraphTest {
 
 	companion object {
-		@ClassRule
-		@JvmField
-		val rule = GraphViewTestRule()
+		init {
+			GraphViewTestRule.configure()
+		}
 	}
 
 	@Test
 	fun shouldUpdateContainerGraphName() {
 		val metaGraph = MetaGraph()
 		metaGraph.graph.model!!.name = "Changed Name"
-		assertThat(metaGraph.containerDrawing.model.name, `is`("Changed Name"))
+		assertEquals("Changed Name", metaGraph.containerDrawing.model.name)
 	}
 
 	@Test
@@ -36,7 +31,7 @@ class MetaGraphTest {
 
 		val clone = StorableClonerJvm().clone(metaGraph) as MetaGraph
 
-		assertThat(clone.uuid, `is`(uuid))
-		assertThat(clone.name, `is`(name))
+		assertEquals(uuid, clone.uuid)
+		assertEquals(name, clone.name)
 	}
 }

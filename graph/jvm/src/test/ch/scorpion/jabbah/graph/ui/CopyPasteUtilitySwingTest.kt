@@ -8,21 +8,21 @@ import ch.scorpion.jabbah.graph.view.TestGraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.io.IOModule
-import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotSame
 
 /** Unit tests for [CopyPasteUtilitySwing]. */
 class CopyPasteUtilitySwingTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = GraphViewTestRule()
+	    init {
+		    GraphViewTestRule.configure()
+	    }
     }
 
-    @Before
+    @BeforeTest
     fun setup() {
         TestTranslationsBuilder().withAnyKey()
         IOModule.typeMap.register("testVertice", TestVertice::class)
@@ -32,13 +32,13 @@ class CopyPasteUtilitySwingTest {
     @Test
     fun shouldCopyPaste() {
         val testGraphView = copyPaste()
-        assertThat(testGraphView.graphView.drawablesCount, `is`(4))
+        assertEquals(4, testGraphView.graphView.drawablesCount)
     }
 
     @Test
     fun copyShouldHaveDifferentModel() {
         val testGraphView = copyPaste()
-        assertThat(testGraphView.vv2.model, `is`(not(sameInstance(getCopiedVerticeView(testGraphView).model))))
+        assertNotSame(testGraphView.vv2.model, getCopiedVerticeView(testGraphView).model)
     }
 
     /** Creates a [TestGraphView] and performs a copy/paste for its [TestVerticeView] vv2.*/
