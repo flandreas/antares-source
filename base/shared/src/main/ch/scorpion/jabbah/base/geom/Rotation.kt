@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.base.geom
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.MathClass
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -10,9 +10,9 @@ import kotlin.math.min
  */
 enum class Rotation(val customName: String, val angle: Double) {
     R0("0", 0.0),
-    R90("90", 3 * MathClass.PI / 2),
-    R180("180", MathClass.PI),
-    R270("270", MathClass.PI / 2);
+    R90("90", 3 * PI / 2),
+    R180("180", PI),
+    R270("270", PI / 2);
 
     /** Holds the equivalent [AffineTransform] of this [Rotation].*/
     private val transform: AffineTransform

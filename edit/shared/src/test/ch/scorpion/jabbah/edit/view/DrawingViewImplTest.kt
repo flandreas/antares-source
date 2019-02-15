@@ -10,26 +10,23 @@ import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.select.EditSelectModule
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
-import org.junit.ClassRule
-import org.junit.Test
-import org.junit.rules.TestRule
-import org.mockito.Mockito
+import io.mockk.clearMocks
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 /** Unit tests for [DrawingViewImpl].*/
 class DrawingViewImplTest {
 
-	companion object {
-		@ClassRule
-		@Suppress("JoinDeclarationAndAssignment")
-		lateinit var editTestRule: TestRule
+	@BeforeTest
+	fun setup() {
+		EditTestRule.configure()
+	}
 
-		init {
-			editTestRule = EditTestRule()
-		}
+	init {
+		EditTestRule.configure()
 	}
 
 	private val drawing = DrawingImpl<Component>()
@@ -42,15 +39,11 @@ class DrawingViewImplTest {
 		transformFactory = { AffineTransformImpl() },
 		viewPainterFactory = { SimpleViewPainter(it) })
 
-	init {
-		Mockito.clearInvocations(canvas)
-	}
-
 	@Test
 	fun shouldRepaintCanvasWhenValidatingDrawing() {
 		drawing.validate()
 
-		verify(canvas).repaint()
+		verify { canvas.repaint() }
 	}
 
 	@Test
@@ -60,10 +53,10 @@ class DrawingViewImplTest {
 		val newContent = DrawingViewContentImpl(view, newDrawing, EditSelectModule.selectionManagerFactory.create(view), EditHighlightModule.highlighterFactory)
 		view.content = newContent
 
-		Mockito.clearInvocations(canvas)
+		clearMocks(canvas)
 		oldContent.drawing.validate()
 
-		verify(canvas, never()).repaint()
+		verify(exactly = 0) { canvas.repaint() }
 	}
 
 	@Test
@@ -72,10 +65,10 @@ class DrawingViewImplTest {
 		val newContent = DrawingViewContentImpl(view, newDrawing, EditSelectModule.selectionManagerFactory.create(view), EditHighlightModule.highlighterFactory)
 		view.content = newContent
 
-		Mockito.clearInvocations(canvas)
+		clearMocks(canvas)
 		newContent.drawing.validate()
 
-		verify(canvas).repaint()
+		verify { canvas.repaint() }
 	}
 
 	@Test
@@ -86,17 +79,16 @@ class DrawingViewImplTest {
 		view.content = newContent
 		view.content = oldContent
 
-		Mockito.clearInvocations(canvas)
+		clearMocks(canvas)
 		oldContent.drawing.validate()
 
-		verify(canvas).repaint()
+		verify { canvas.repaint() }
 	}
 
 	private fun createCanvas(): Canvas {
-		val canvas: Canvas = mock()
-		whenever(canvas.view).thenReturn(view)
-		whenever(canvas.dimension).thenReturn(Dimension2D(100, 100))
+		val canvas: Canvas = mockk(relaxed = true)
+		every { canvas.view } returns view
+		every { canvas.dimension } returns Dimension2D(100, 100)
 		return canvas
 	}
-
 }

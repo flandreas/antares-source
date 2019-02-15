@@ -1,24 +1,22 @@
 package ch.scorpion.jabbah.edit.snap
 
-import ch.scorpion.jabbah.draw.DrawTestRule
-import ch.scorpion.jabbah.draw.style.StyleProviderMockBuilder
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.style.StyleProviderMockBuilder
+import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [MultiComponentSnappable].
  */
 class MultiComponentSnappableTest {
 
-    companion object {
-        @ClassRule @JvmField
-        val drawTestRule = DrawTestRule()
-    }
+	@BeforeTest
+	fun setup() {
+		EditTestRule.configure()
+	}
 
     @Test
     fun shouldSnapX() {
@@ -29,13 +27,13 @@ class MultiComponentSnappableTest {
 
         // Didn't succeed in using hamcrest's containsInAnyOrder() method due to type inference problems
 
-        assertThat(snapX.size, `is`(6))
-        assertThat(snapX[0].x, `is`(0.0))
-        assertThat(snapX[1].x, `is`(10.0))
-        assertThat(snapX[2].x, `is`(20.0))
-        assertThat(snapX[3].x, `is`(100.0))
-        assertThat(snapX[4].x, `is`(110.0))
-        assertThat(snapX[5].x, `is`(120.0))
+        assertEquals(6, snapX.size)
+        assertEquals(0.0, snapX[0].x)
+        assertEquals(10.0, snapX[1].x)
+        assertEquals(20.0, snapX[2].x)
+        assertEquals(100.0, snapX[3].x)
+        assertEquals(110.0, snapX[4].x)
+        assertEquals(120.0, snapX[5].x)
     }
 
     @Test
@@ -47,12 +45,12 @@ class MultiComponentSnappableTest {
 
         // Didn't succeed in using hamcrest's containsInAnyOrder() method due to type inference problems
 
-        assertThat(snapY.size, `is`(6))
-        assertThat(snapY[0].y, `is`(0.0))
-        assertThat(snapY[1].y, `is`(5.0))
-        assertThat(snapY[2].y, `is`(10.0))
-        assertThat(snapY[3].y, `is`(200.0))
-        assertThat(snapY[4].y, `is`(205.0))
-        assertThat(snapY[5].y, `is`(210.0))
+        assertEquals(6, snapY.size)
+        assertEquals(0.0, snapY[0].y)
+        assertEquals(5.0, snapY[1].y)
+        assertEquals(10.0, snapY[2].y)
+        assertEquals(200.0, snapY[3].y)
+        assertEquals(205.0, snapY[4].y)
+        assertEquals(210.0, snapY[5].y)
     }
 }

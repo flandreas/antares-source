@@ -2,18 +2,16 @@ package ch.scorpion.jabbah.edit.model.polyline
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.EditTestRule
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /** Unit tests for [PolylineComponent]. */
 class PolylineComponentTest {
 
-	companion object {
-		@ClassRule
-		@JvmField
-		val editTestRule = EditTestRule()
+	@BeforeTest
+	fun setup() {
+		EditTestRule.configure()
 	}
 
 	@Test
@@ -24,8 +22,8 @@ class PolylineComponentTest {
 
 		component.mirrorHorizontally(50.0)
 
-		assertThat(component.polyline.getFirstPoint(), `is`(Point2D(100.0, 0.0)))
-		assertThat(component.polyline.getLastPoint(), `is`(Point2D(0.0, 200.0)))
+		assertEquals(Point2D(100.0, 0.0), component.polyline.getFirstPoint())
+		assertEquals(Point2D(0.0, 200.0), component.polyline.getLastPoint())
 	}
 
 	@Test
@@ -36,7 +34,7 @@ class PolylineComponentTest {
 
 		component.mirrorVertically(50.0)
 
-		assertThat(component.polyline.getFirstPoint(), `is`(Point2D(0.0, 100.0)))
-		assertThat(component.polyline.getLastPoint(), `is`(Point2D(100.0, -100.0)))
+		assertEquals(Point2D(0.0, 100.0), component.polyline.getFirstPoint())
+		assertEquals(Point2D(100.0, -100.0), component.polyline.getLastPoint())
 	}
 }

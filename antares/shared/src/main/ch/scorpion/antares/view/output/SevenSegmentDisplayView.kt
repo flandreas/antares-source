@@ -29,9 +29,9 @@ import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
-import ch.scorpion.jabbah.base.MathClass
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.graphics.DropShadow
+import kotlin.math.PI
 
 
 /**
@@ -322,12 +322,12 @@ class SevenSegmentDisplayView(
 
     private fun drawVerticalSegment(g: Graphics2D, value: Boolean, relX: Float, relY: Float) {
         g.translate(relX.toDouble(), relY.toDouble())
-        g.rotate(MathClass.PI / 2)
+        g.rotate(PI / 2)
 
         g.color = getColor(value)
         g.fill(geom.path)
 
-        g.rotate(-MathClass.PI / 2)
+        g.rotate(-PI / 2)
         g.translate(-relX.toDouble(), -relY.toDouble())
     }
 

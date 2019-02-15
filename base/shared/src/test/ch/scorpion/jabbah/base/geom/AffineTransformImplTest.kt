@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.base.geom
 
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.base.MathClass
+import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -33,7 +33,7 @@ class AffineTransformImplTest {
     @Test
     fun shouldRotate() {
         val transform = AffineTransformImpl()
-        transform.rotate(MathClass.PI)
+        transform.rotate(PI)
         assertEquals(Point2D(-100.0, -0.0), transform.transform(Point2D(100.0, 0.0)))
     }
 
@@ -48,8 +48,8 @@ class AffineTransformImplTest {
     fun shouldBeReversible() {
         val transform = AffineTransformImpl()
         transform.translate(100.0, 50.0)
-        transform.rotate(MathClass.PI)
-        transform.rotate(-MathClass.PI)
+        transform.rotate(PI)
+        transform.rotate(-PI)
         transform.translate(-100.0, -50.0)
         assertEquals(Point2D(200.0, 150.0), transform.transform(Point2D(200.0, 150.0)))
     }

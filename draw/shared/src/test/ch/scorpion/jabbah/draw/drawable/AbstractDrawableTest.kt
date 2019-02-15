@@ -51,7 +51,6 @@ class AbstractDrawableTest {
     fun shouldNotifyParentWhenInvalidated() {
         drawable.handleAdded(container)
         drawable.invalidate()
-	    //verify { container.handleDrawableInvalidated(drawable, drawable.boundingBox) }
 	    verify { container.handleDrawableInvalidated(any(), any()) }
     }
 
@@ -63,13 +62,6 @@ class AbstractDrawableTest {
 	    val slot = slot<DrawableEvent>()
 	    verify { listener.drawableInvalidated(capture(slot)) }
 	    assertEquals(drawable.boundingBox, slot.captured.area)
-
-	    /*
-        argumentCaptor<DrawableEvent>().apply {
-            verify(listener).drawableInvalidated(capture())
-            assertEquals(drawable.boundingBox, firstValue.area)
-        }
-        */
     }
 
     @Test
@@ -80,13 +72,6 @@ class AbstractDrawableTest {
 	    val slot = slot<DrawableEvent>()
 	    verify { listener.drawableRequestRedraw(capture(slot)) }
 	    assertEquals(drawable.boundingBox, slot.captured.area)
-
-	    /*
-        argumentCaptor<DrawableEvent>().apply {
-            verify(listener).drawableRequestRedraw(capture())
-            assertEquals(drawable.boundingBox, firstValue.area)
-        }
-        */
     }
 
     @Test
@@ -97,13 +82,6 @@ class AbstractDrawableTest {
 	    val slot = slot<DrawableEvent>()
 	    verify { listener.drawableUpdated(capture(slot)) }
 	    assertEquals(drawable.boundingBox, slot.captured.area)
-
-	    /*
-        argumentCaptor<DrawableEvent>().apply {
-            verify(listener).drawableUpdated(capture())
-            assertEquals(drawable.boundingBox, firstValue.area)
-        }
-        */
     }
 
     @Test

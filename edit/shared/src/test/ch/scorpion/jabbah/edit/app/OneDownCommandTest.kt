@@ -1,15 +1,12 @@
 package ch.scorpion.jabbah.edit.app
 
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
+import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentMockBuilder
 import ch.scorpion.jabbah.edit.model.DrawingImpl
-import ch.scorpion.jabbah.edit.module.EditModuleJvm
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Test
-
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [OneDownCommand].
@@ -22,10 +19,9 @@ class OneDownCommandTest {
     private val c3 = ComponentMockBuilder().build()
     private val c4 = ComponentMockBuilder().build()
 
-    @Before
+    @BeforeTest
     fun setup() {
-        EditModuleJvm.require()
-        TestTranslationsBuilder().withAnyKey()
+	    EditTestRule.configure()
         drawing.add(c4).add(c3).add(c2).add(c1)
     }
 
@@ -33,20 +29,20 @@ class OneDownCommandTest {
     fun shouldExecuteOneUp() {
         val command = OneDownCommand(drawing, setOf(c1, c3))
         command.execute()
-        assertThat(drawing.getStackingOrderPosition(c2), `is`(0))
-        assertThat(drawing.getStackingOrderPosition(c1), `is`(1))
-        assertThat(drawing.getStackingOrderPosition(c4), `is`(2))
-        assertThat(drawing.getStackingOrderPosition(c3), `is`(3))
+        assertEquals(0, drawing.getStackingOrderPosition(c2))
+        assertEquals(1, drawing.getStackingOrderPosition(c1))
+        assertEquals(2, drawing.getStackingOrderPosition(c4))
+        assertEquals(3, drawing.getStackingOrderPosition(c3))
     }
 
     @Test
     fun shouldMaintainRelativeOrderWhenExecuting() {
         val command = OneDownCommand(drawing, setOf(c1, c3, c4))
         command.execute()
-        assertThat(drawing.getStackingOrderPosition(c2), `is`(0))
-        assertThat(drawing.getStackingOrderPosition(c1), `is`(1))
-        assertThat(drawing.getStackingOrderPosition(c3), `is`(2))
-        assertThat(drawing.getStackingOrderPosition(c4), `is`(3))
+        assertEquals(0, drawing.getStackingOrderPosition(c2))
+        assertEquals(1, drawing.getStackingOrderPosition(c1))
+        assertEquals(2, drawing.getStackingOrderPosition(c3))
+        assertEquals(3, drawing.getStackingOrderPosition(c4))
     }
 
     @Test
@@ -54,10 +50,10 @@ class OneDownCommandTest {
         val command = OneDownCommand(drawing, setOf(c1, c3))
         command.execute()
         command.undo()
-        assertThat(drawing.getStackingOrderPosition(c1), `is`(0))
-        assertThat(drawing.getStackingOrderPosition(c2), `is`(1))
-        assertThat(drawing.getStackingOrderPosition(c3), `is`(2))
-        assertThat(drawing.getStackingOrderPosition(c4), `is`(3))
+        assertEquals(0, drawing.getStackingOrderPosition(c1))
+        assertEquals(1, drawing.getStackingOrderPosition(c2))
+        assertEquals(2, drawing.getStackingOrderPosition(c3))
+        assertEquals(3, drawing.getStackingOrderPosition(c4))
     }
 
     @Test
@@ -65,9 +61,9 @@ class OneDownCommandTest {
         val command = OneDownCommand(drawing, setOf(c1, c3, c4))
         command.execute()
         command.undo()
-        assertThat(drawing.getStackingOrderPosition(c1), `is`(0))
-        assertThat(drawing.getStackingOrderPosition(c2), `is`(1))
-        assertThat(drawing.getStackingOrderPosition(c3), `is`(2))
-        assertThat(drawing.getStackingOrderPosition(c4), `is`(3))
+        assertEquals(0, drawing.getStackingOrderPosition(c1))
+        assertEquals(1, drawing.getStackingOrderPosition(c2))
+        assertEquals(2, drawing.getStackingOrderPosition(c3))
+        assertEquals(3, drawing.getStackingOrderPosition(c4))
     }
 }

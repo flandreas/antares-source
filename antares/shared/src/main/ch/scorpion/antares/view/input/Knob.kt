@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.execution.actor.ActorView
+import kotlin.math.PI
 
 /**
  * A circular knob used for interactively changing a value while execution.
@@ -54,10 +55,10 @@ class KnobView(
 			.close()
 
 		/** The angle (in radians and in terms of Math, i.e. anti-clockwise) at which the 1 digit is drawn in the scale.*/
-		private const val ONE_ANGLE = MathClass.PI / 2
+		private const val ONE_ANGLE = PI / 2
 
 		/** The angle (in radians) between two subsequent scale digits.*/
-		private const val ANGLE_PER_DIGIT = 2 * MathClass.PI / 9
+		private const val ANGLE_PER_DIGIT = 2 * PI / 9
 	}
 
 	var value: Long

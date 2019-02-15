@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.base.geom
 
 import ch.scorpion.jabbah.base.MathClass
-import kotlin.math.abs
-import kotlin.math.atan
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 /**
  * A utility object providing geometry methods.
@@ -21,7 +18,7 @@ object Geometry {
 
 	/** Determines whether the shortest rotation from one angle to another angle is a clockwise rotation.*/
 	fun isClockwiseAngleChange(angle1: Double, angle2: Double): Boolean {
-		return angle1 != angle2 && wrapAngle(angle1 - angle2) <= MathClass.PI
+		return angle1 != angle2 && wrapAngle(angle1 - angle2) <= PI
 	}
 
 	/**
@@ -54,12 +51,12 @@ object Geometry {
             angle = atan(abs(y2 - y1) / abs(x2 - x1))
             if (fx == 1) {
                 if (fy == -1)
-                    angle = 2 * MathClass.PI - angle
+                    angle = 2 * PI - angle
             } else {
 	            angle = if (fy == 1)
-		            MathClass.PI - angle
+		            PI - angle
 	            else
-		            MathClass.PI + angle
+		            PI + angle
             }
         }
         return angle

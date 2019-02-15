@@ -1,23 +1,23 @@
 package ch.scorpion.jabbah.edit
 
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import io.mockk.every
+import io.mockk.mockk
 
 /**
  * A builder for mocks of [Component].
  */
 class ComponentMockBuilder {
 
-    private val component = mock<Component>()
+    private val component = mockk<Component>(relaxed = true)
 
     init {
-        whenever(component.boundingBox).thenReturn(Rectangle2D())
-        whenever(component.visible).thenReturn(true)
+        every { component.boundingBox } returns Rectangle2D()
+        every { component.visible } returns true
     }
 
     fun withId(id: Int): ComponentMockBuilder {
-        whenever(component.id).thenReturn(id)
+        every { component.id } returns id
         return this
     }
 

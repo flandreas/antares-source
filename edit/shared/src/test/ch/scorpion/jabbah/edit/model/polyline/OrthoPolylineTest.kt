@@ -1,22 +1,21 @@
 package ch.scorpion.jabbah.edit.model.polyline
 
-import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.base.geom.Point2D
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.ClassRule
-import org.junit.Test
+import ch.scorpion.jabbah.edit.EditTestRule
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [OrthoPolyline].
  */
 class OrthoPolylineTest {
 
-    companion object {
-        @ClassRule @JvmField
-        val editTestRule = EditTestRule()
-    }
-
+	@BeforeTest
+	fun setup() {
+		EditTestRule.configure()
+	}
+	
     @Test
     fun shouldBuild() {
         val polyLine = OrthoPolyline()
@@ -26,19 +25,19 @@ class OrthoPolylineTest {
         polyLine.add(Point2D(20, 0))
         polyLine.add(Point2D(20, 10))
 
-        assertThat(polyLine.size, `is`(3))
+        assertEquals(polyLine.size, 3)
 
         val bbox = polyLine.boundingBox
-        assertThat(bbox.x, `is`(0.0))
-        assertThat(bbox.y, `is`(0.0))
-        assertThat(bbox.width, `is`(20.0))
-        assertThat(bbox.height, `is`(10.0))
+        assertEquals(0.0, bbox.x)
+        assertEquals(0.0, bbox.y)
+        assertEquals(20.0, bbox.width)
+        assertEquals(10.0, bbox.height)
     }
 
     @Test
     fun shouldBuildWithPoints() {
         val polyline = OrthoPolyline(listOf(Point2D(0, 0), Point2D(10, 0)))
-        assertThat(polyline.size, `is`(2))
+        assertEquals(2, polyline.size)
     }
 
     @Test
@@ -51,7 +50,7 @@ class OrthoPolylineTest {
 
         polyline.compact()
 
-        assertThat(polyline.size, `is`(2))
+        assertEquals(2, polyline.size)
     }
 
     @Test
@@ -64,7 +63,7 @@ class OrthoPolylineTest {
 
         polyline.compact()
 
-        assertThat(polyline.size, `is`(2))
+        assertEquals(2, polyline.size)
     }
 
     @Test
@@ -77,7 +76,7 @@ class OrthoPolylineTest {
 
         polyline.compact()
 
-        assertThat(polyline.size, `is`(2))
+        assertEquals(2, polyline.size)
     }
 
     @Test
@@ -92,7 +91,7 @@ class OrthoPolylineTest {
 
         polyline.compact()
 
-        assertThat(polyline.size, `is`(4))
+        assertEquals(4, polyline.size)
     }
 
     @Test
@@ -105,7 +104,7 @@ class OrthoPolylineTest {
 
         polyline.compact()
 
-        assertThat(polyline.size, `is`(3))
+        assertEquals(3, polyline.size)
     }
 
     @Test
@@ -115,7 +114,7 @@ class OrthoPolylineTest {
 
         polyline.compact()
 
-        assertThat(polyline.size, `is`(2))
+        assertEquals(2, polyline.size)
     }
 
     @Test
@@ -125,6 +124,6 @@ class OrthoPolylineTest {
 
         polyline.compact()
 
-        assertThat(polyline.size, `is`(2))
+        assertEquals(2, polyline.size)
     }
 }

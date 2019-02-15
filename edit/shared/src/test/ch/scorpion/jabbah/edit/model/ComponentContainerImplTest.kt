@@ -1,22 +1,19 @@
 package ch.scorpion.jabbah.edit.model
 
-import com.nhaarman.mockitokotlin2.times
-import com.nhaarman.mockitokotlin2.verify
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentMockBuilder
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.sameInstance
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import io.mockk.verify
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertSame
 
 /**
  * Unit tests for [ComponentContainerImpl].
  */
 class ComponentContainerImplTest {
 
-    @Before
+    @BeforeTest
     fun setup() {
         EditModuleJvm.require()
     }
@@ -28,8 +25,8 @@ class ComponentContainerImplTest {
         val container = ComponentContainerImpl<Component>()
         container.add(c1)
         container.add(c2)
-        verify(c1, times(1)).id = 1
-        verify(c2, times(1)).id = 2
+        verify(exactly = 1) { c1.id = 1 }
+        verify(exactly = 1) { c2.id = 2 }
     }
 
     @Test
@@ -40,6 +37,6 @@ class ComponentContainerImplTest {
         container.add(c1)
         container.add(c2)
 
-        assertThat(container.getWidthId(2), `is`(`sameInstance`(c2)))
+        assertSame(c2, container.getWidthId(2))
     }
 }

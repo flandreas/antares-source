@@ -1,41 +1,41 @@
 package ch.scorpion.jabbah.edit.editor
 
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import ch.scorpion.jabbah.edit.*
+import io.mockk.every
+import io.mockk.mockk
 
 /**
  * Builds test mocks for [Editor].
  */
 class TestEditorBuilder {
 
-    val editor: Editor = mock()
-    private val view: DrawingView<Drawing<Component>> = mock()
+    val editor: Editor = mockk(relaxed = true)
+    private val view: DrawingView<Drawing<Component>> = mockk(relaxed = true)
 
     init {
-        whenever(editor.view).thenReturn(view)
+        every { editor.view } returns view
     }
 
     fun withDrawing(drawing: Drawing<Component>): TestEditorBuilder {
-        whenever(editor.drawing).thenReturn(drawing)
-        whenever(view.drawing).thenReturn(drawing)
+	    every { editor.drawing } returns drawing
+	    every { view.drawing } returns drawing
         return this
     }
 
     fun withGrid(grid: Grid): TestEditorBuilder {
-        whenever(view.grid).thenReturn(grid)
+	    every { view.grid } returns grid
         return this
     }
 
     fun withGridDistance(distance: Double): TestEditorBuilder {
-        val grid: Grid = mock()
-        whenever(grid.distance).thenReturn(distance)
-        whenever(view.grid).thenReturn(grid)
+        val grid: Grid = mockk()
+	    every { grid.distance } returns distance
+	    every { view.grid } returns grid
         return this
     }
 
     fun withSelectionManager(): TestEditorBuilder {
-        whenever(view.selectionManager).thenReturn(mock<SelectionManager>())
+	    every { view.selectionManager } returns mockk()
         return this
     }
 }

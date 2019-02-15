@@ -10,6 +10,7 @@ import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.*
 import org.junit.ClassRule
 import org.junit.Test
+import kotlin.math.PI
 
 /** Unit tests for [KnobModel]. */
 class KnobModelTest {
@@ -27,7 +28,7 @@ class KnobModelTest {
 		assertThat(KnobModel(10).asAngle, `is`(0.0))
 
 		assertThat(KnobModel(100).asAngle, `is`(0.0))
-		assertThat(KnobModel(550).asAngle, `is`(MathClass.PI))
+		assertThat(KnobModel(550).asAngle, `is`(PI))
 	}
 
 	@Test

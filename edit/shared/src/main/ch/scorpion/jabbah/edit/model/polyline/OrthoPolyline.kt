@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.MathClass
+import kotlin.math.PI
 
 /**
  * An [OrthoPolyline] is a sequence of [Point2D]s that keeps only those points that form a sequence of
@@ -120,6 +121,6 @@ class OrthoPolyline(points: List<Point2D>) {
                         _points[i].x, points[i].y,
                         _points[i + 1].x, _points[i + 1].y))
 
-        return Math.abs(angle1 - angle2) <= COMPACT_ANGLE || Math.abs(Math.abs(angle1 - angle2) - MathClass.PI) < COMPACT_ANGLE
+        return Math.abs(angle1 - angle2) <= COMPACT_ANGLE || Math.abs(Math.abs(angle1 - angle2) - PI) < COMPACT_ANGLE
     }
 }

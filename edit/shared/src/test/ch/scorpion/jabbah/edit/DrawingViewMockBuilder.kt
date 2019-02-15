@@ -1,23 +1,23 @@
 package ch.scorpion.jabbah.edit
 
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
+import io.mockk.every
+import io.mockk.mockk
 
 /** A builder for [DrawingView] mocks*/
 class DrawingViewMockBuilder {
 
-    private val drawingView = mock<DrawingView<Drawing<*>>>()
-    private val selectionManager = mock<SelectionManager>()
-    private val grid = mock<Grid>()
+    private val drawingView = mockk<DrawingView<Drawing<*>>>()
+    private val selectionManager = mockk<SelectionManager>()
+    private val grid = mockk<Grid>()
 
     init {
-        whenever(grid.distance).thenReturn(10.0)
-        whenever(drawingView.grid).thenReturn(grid)
-        whenever(drawingView.selectionManager).thenReturn(selectionManager)
+        every { grid.distance } returns 10.0
+        every { drawingView.grid } returns grid
+        every { drawingView.selectionManager } returns selectionManager
     }
 
     fun withDrawing(drawing: Drawing<*>): DrawingViewMockBuilder {
-        whenever(drawingView.drawing).thenReturn(drawing)
+        every { drawingView.drawing } returns drawing
         return this
     }
 

@@ -1,29 +1,21 @@
 package ch.scorpion.jabbah.edit.command
 
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.EditTestRule
-import com.nhaarman.mockitokotlin2.*
-import org.junit.Assert.*
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /** Unit tests for [CommandManagerImpl].*/
 class CommandManagerImplTest {
 
-    companion object {
-        @ClassRule
-        @JvmField
-        val editTestRule = EditTestRule()
-    }
-
-    @Before
-    fun setup() {
-        TestTranslationsBuilder().withAnyKey()
-    }
+	init {
+		EditTestRule.configure()
+	}
 
     private val cmdManager = CommandManagerImpl()
 
@@ -36,16 +28,16 @@ class CommandManagerImplTest {
     fun shouldAutoCommitExecute() {
         val cmd = command()
         cmdManager.execute(cmd)
-        verify(cmd).execute()
-        assertThat(cmdManager.canUndo(), `is`(true))
+        verify { cmd.execute() }
+        assertTrue(cmdManager.canUndo())
     }
 
     @Test
     fun shouldAutoCommitRegister() {
         val cmd = command()
         cmdManager.register(cmd)
-        verify(cmd, never()).execute()
-        assertThat(cmdManager.canUndo(), `is`(true))
+        verify(exactly = 0) { cmd.execute() }
+	    assertTrue(cmdManager.canUndo())
     }
 
     @Test
@@ -53,8 +45,8 @@ class CommandManagerImplTest {
         val cmd = command()
         cmdManager.beginTransaction(cmd)
         cmdManager.commitTransaction()
-        verify(cmd).execute()
-        assertThat(cmdManager.canUndo(), `is`(true))
+        verify { cmd.execute() }
+	    assertTrue(cmdManager.canUndo())
     }
 
     @Test
@@ -64,21 +56,21 @@ class CommandManagerImplTest {
         cmdManager.beginTransaction(cmd1)
         cmdManager.execute(cmd2)
         cmdManager.commitTransaction()
-        verify(cmd1).execute()
-        verify(cmd2).execute()
-        assertThat(cmdManager.canUndo(), `is`(true))
+        verify { cmd1.execute() }
+        verify { cmd2.execute() }
+	    assertTrue(cmdManager.canUndo())
     }
 
     @Test
-    fun shouldNotCommitInnerTransation() {
+    fun shouldNotCommitInnerTransaction() {
         val cmd1 = command()
         val cmd2 = command()
         cmdManager.beginTransaction(cmd1)
         cmdManager.beginTransaction(cmd2)
         cmdManager.commitTransaction()
-        verify(cmd1).execute()
-        verify(cmd2).execute()
-        assertThat(cmdManager.canUndo(), `is`(false))
+        verify { cmd1.execute() }
+        verify { cmd2.execute() }
+	    assertFalse(cmdManager.canUndo())
     }
 
     @Test
@@ -89,9 +81,9 @@ class CommandManagerImplTest {
         cmdManager.beginTransaction(cmd2)
         cmdManager.commitTransaction()
         cmdManager.commitTransaction()
-        verify(cmd1).execute()
-        verify(cmd2).execute()
-        assertThat(cmdManager.canUndo(), `is`(true))
+        verify { cmd1.execute() }
+        verify { cmd2.execute() }
+	    assertTrue(cmdManager.canUndo())
     }
 
     @Test
@@ -104,10 +96,10 @@ class CommandManagerImplTest {
 
         cmdManager.undo()
 
-        verify(cmdB).undo()
-        verify(cmdA).undo()
-        assertThat(cmdManager.canUndo(), `is`(false))
-        assertThat(cmdManager.canRedo(), `is`(true))
+        verify { cmdB.undo() }
+        verify { cmdA.undo() }
+        assertFalse(cmdManager.canUndo())
+	    assertTrue(cmdManager.canRedo())
     }
 
     @Test
@@ -118,15 +110,13 @@ class CommandManagerImplTest {
         cmdManager.execute(cmdB)
         cmdManager.commitTransaction()
         cmdManager.undo()
-        reset(cmdA)
-        reset(cmdB)
 
         cmdManager.redo()
 
-        verify(cmdA).execute()
-        verify(cmdB).execute()
-        assertThat(cmdManager.canUndo(), `is`(true))
-        assertThat(cmdManager.canRedo(), `is`(false))
+        verify(exactly = 2) { cmdA.execute() }
+        verify(exactly = 2) { cmdB.execute() }
+        assertTrue(cmdManager.canUndo())
+        assertFalse(cmdManager.canRedo())
     }
 
     @Test
@@ -137,8 +127,8 @@ class CommandManagerImplTest {
 
         cmdManager.reset()
 
-        assertThat(cmdManager.canUndo(), `is`(false))
-        assertThat(cmdManager.canRedo(), `is`(false))
+	    assertFalse(cmdManager.canUndo())
+	    assertFalse(cmdManager.canRedo())
     }
 
 	/** ---- Checkpoints */
@@ -149,7 +139,7 @@ class CommandManagerImplTest {
 
 		cmdManager.openCheckpoint("CP")
 
-		assertThat(cmdManager.canUndo(), `is`(false))
+		assertFalse(cmdManager.canUndo())
 	}
 
 	@Test
@@ -159,7 +149,7 @@ class CommandManagerImplTest {
 
 		cmdManager.execute(command("B"))
 
-		assertThat(cmdManager.canUndo(), `is`(true))
+		assertTrue(cmdManager.canUndo())
 	}
 
 	@Test
@@ -173,15 +163,15 @@ class CommandManagerImplTest {
 
 		cmdManager.undo()
 
-		verify(cmdB, never()).undo()
-		verify(cmdA, times(1)).undo()
+		verify(exactly = 0) { cmdB.undo() }
+		verify(exactly = 1) { cmdA.undo() }
 	}
 
 	/** ---- Helper methods */
 
     private fun command(desc: String = "Cmd"): Command {
-        val command = mock<Command>()
-        whenever(command.getDescription()).thenReturn(desc)
+        val command = mockk<Command>(relaxed = true)
+        every { command.getDescription() } returns desc
         return command
     }
 }

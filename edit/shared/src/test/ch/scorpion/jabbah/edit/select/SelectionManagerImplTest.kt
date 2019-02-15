@@ -3,35 +3,26 @@ package ch.scorpion.jabbah.edit.select
 import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.geom.AffineTransformJvm
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.StyleRepository
+import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
-import ch.scorpion.jabbah.edit.view.DrawingViewImpl
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.ClassRule
-import org.junit.Test
-import org.junit.rules.TestRule
+import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import kotlin.test.*
 
 /**
  * Unit tests for [SelectionManagerImpl].
  */
 class SelectionManagerImplTest {
 
-    companion object {
-        @ClassRule
-        @Suppress("JoinDeclarationAndAssignment")
-        lateinit var editTestRule: TestRule
-
-        init {
-            editTestRule = EditTestRule()
-        }
-    }
+	@BeforeTest
+	fun setup() {
+		EditTestRule.configure()
+	}
 
     val drawing = DrawingImpl<Component>()
     val canvas = CanvasJvm({ DrawingViewImpl<Drawing<Component>>(
@@ -57,9 +48,9 @@ class SelectionManagerImplTest {
     @Test
     fun shouldSelect() {
         selectionManager.select(rect)
-        assertThat(selectionManager.selectionCount, `is`(1))
-        assertThat(selectionManager.isSelected(rect), `is`(true))
-        assertThat(selectionManager.view.content.hasSelectionModelFor(rect), `is`(true))
+        assertEquals(1, selectionManager.selectionCount)
+        assertTrue(selectionManager.isSelected(rect))
+	    assertTrue(selectionManager.view.content.hasSelectionModelFor(rect))
     }
 
     @Test
@@ -68,11 +59,11 @@ class SelectionManagerImplTest {
         rect2.preferredSelectionDrawingStrategy  = SelectionDrawingStrategy.BELOW
         drawing.add(rect2)
         selectionManager.select(listOf(rect, rect2))
-        assertThat(selectionManager.selectionCount, `is`(2))
-        assertThat(selectionManager.isSelected(rect), `is`(true))
-        assertThat(selectionManager.isSelected(rect2), `is`(true))
-        assertThat(selectionManager.view.content.hasSelectionModelFor(rect), `is`(true))
-        assertThat(selectionManager.view.content.hasSelectionModelFor(rect2), `is`(true))
+        assertEquals(2, selectionManager.selectionCount)
+	    assertTrue(selectionManager.isSelected(rect))
+	    assertTrue(selectionManager.isSelected(rect2))
+	    assertTrue(selectionManager.view.content.hasSelectionModelFor(rect))
+	    assertTrue(selectionManager.view.content.hasSelectionModelFor(rect2))
     }
 
     @Test
@@ -81,20 +72,20 @@ class SelectionManagerImplTest {
         rect2.preferredSelectionDrawingStrategy  = SelectionDrawingStrategy.BELOW
         drawing.add(rect2)
         selectionManager.selectAll()
-        assertThat(selectionManager.selectionCount, `is`(2))
-        assertThat(selectionManager.isSelected(rect), `is`(true))
-        assertThat(selectionManager.isSelected(rect2), `is`(true))
-        assertThat(selectionManager.view.content.hasSelectionModelFor(rect), `is`(true))
-        assertThat(selectionManager.view.content.hasSelectionModelFor(rect2), `is`(true))
+        assertEquals(2, selectionManager.selectionCount)
+	    assertTrue(selectionManager.isSelected(rect))
+	    assertTrue(selectionManager.isSelected(rect2))
+	    assertTrue(selectionManager.view.content.hasSelectionModelFor(rect))
+	    assertTrue(selectionManager.view.content.hasSelectionModelFor(rect2))
     }
 
     @Test
     fun shouldDeselect() {
         selectionManager.select(rect)
         selectionManager.deselect(rect)
-        assertThat(selectionManager.selectionCount, `is`(0))
-        assertThat(selectionManager.isSelected(rect), `is`(false))
-        assertThat(selectionManager.view.content.hasSelectionModelFor(rect), `is`(false))
+        assertEquals(0, selectionManager.selectionCount)
+        assertFalse(selectionManager.isSelected(rect))
+	    assertFalse(selectionManager.view.content.hasSelectionModelFor(rect))
     }
 
     @Test
@@ -104,11 +95,11 @@ class SelectionManagerImplTest {
         drawing.add(rect2)
         selectionManager.selectAll()
         selectionManager.deselect(listOf(rect, rect2))
-        assertThat(selectionManager.selectionCount, `is`(0))
-        assertThat(selectionManager.isSelected(rect), `is`(false))
-        assertThat(selectionManager.isSelected(rect2), `is`(false))
-        assertThat(selectionManager.view.content.hasSelectionModelFor(rect), `is`(false))
-        assertThat(selectionManager.view.content.hasSelectionModelFor(rect2), `is`(false))
+        assertEquals(0, selectionManager.selectionCount)
+	    assertFalse(selectionManager.isSelected(rect))
+	    assertFalse(selectionManager.isSelected(rect2))
+	    assertFalse(selectionManager.view.content.hasSelectionModelFor(rect))
+	    assertFalse(selectionManager.view.content.hasSelectionModelFor(rect2))
     }
 
     @Test
@@ -118,10 +109,10 @@ class SelectionManagerImplTest {
         drawing.add(rect2)
         selectionManager.selectAll()
         selectionManager.deselectAll()
-        assertThat(selectionManager.selectionCount, `is`(0))
-        assertThat(selectionManager.isSelected(rect), `is`(false))
-        assertThat(selectionManager.isSelected(rect2), `is`(false))
-        assertThat(selectionManager.view.content.hasSelectionModelFor(rect), `is`(false))
-        assertThat(selectionManager.view.content.hasSelectionModelFor(rect2), `is`(false))
+        assertEquals(0, selectionManager.selectionCount)
+	    assertFalse(selectionManager.isSelected(rect))
+	    assertFalse(selectionManager.isSelected(rect2))
+	    assertFalse(selectionManager.view.content.hasSelectionModelFor(rect))
+	    assertFalse(selectionManager.view.content.hasSelectionModelFor(rect2))
     }
 }

@@ -3,25 +3,24 @@ package ch.scorpion.jabbah.edit.model.text
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
-import ch.scorpion.jabbah.edit.module.EditModuleJvm
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import ch.scorpion.jabbah.edit.EditTestRule
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [Label].
  */
 class LabelTest {
 
-    @Before
-    fun setup() {
-        EditModuleJvm.require()
-    }
+	@BeforeTest
+	fun setup() {
+		EditTestRule.configure()
+	}
 
     @Test
     fun shouldConstructWithText() {
         val label = Label(text = "Test", font = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 10))
-        assertThat(label.text, `is`("Test"))
+        assertEquals("Test", label.text)
     }
 }
