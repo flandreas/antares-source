@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.model
 
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.tool.ToolAdapter
@@ -14,13 +15,8 @@ import ch.scorpion.jabbah.edit.tool.ToolAdapter
 abstract class AbstractComponentTool<T: Component> (
     editor: Editor,
     private val factory: () -> T,
-    private val adder: (T) -> Component
+    private val adder: (T) -> Component = { it }
 ) : ToolAdapter(editor) {
-
-    constructor(
-        editor: Editor,
-        factory: () -> T
-    ): this(editor, factory, { it })
 
     protected fun createComponent(): T {
         return factory.invoke()

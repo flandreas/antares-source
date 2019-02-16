@@ -25,7 +25,7 @@ class StatusBar(
 
 		buildUI()
 
-		smallLabel.preferredSize = Dimension(80, smallLabel.preferredSize.height)
+		smallLabel.preferredSize = Dimension(100, smallLabel.preferredSize.height)
 
 		SwingUtilities.invokeLater {
 			largeLabel.text = Status.get(StatusType.Large)

@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.Component
@@ -20,7 +19,7 @@ class QuadCurveTool(
 	editor: Editor,
 	factory: () -> QuadCurveComponent,
 	adder: (QuadCurveComponent) -> Component = { it }
-	) : AbstractComponentTool<QuadCurveComponent>(editor, factory, adder) {
+) : AbstractComponentTool<QuadCurveComponent>(editor, factory, adder) {
 
 	/** Holds the instantiated rectangle. Initialized in [mousePressed].*/
 	private var instance by Delegates.notNull<QuadCurveComponent>()
@@ -67,9 +66,11 @@ class QuadCurveTool(
 	}
 
 	override fun mouseMoved(e: MouseEvent, x: Double, y: Double) {
+		super.mouseMoved(e, x, y)
+
 		if (clickedCount > 0) {
 			val offset = editor.snapManager.snap(x, y)
-			var movedPointIndex = when(clickedCount) {
+			var movedPointIndex = when (clickedCount) {
 				1 -> 2
 				2 -> 1
 				else -> throw IllegalArgumentException("")
@@ -92,7 +93,7 @@ class QuadCurveTool(
 	/** ---- [QuadCurveTool] */
 
 	private fun createPoints(clickedLocation: Point2D): List<Point2D> {
-		return when(clickedCount) {
+		return when (clickedCount) {
 			1 -> listOf(clickedLocation, clickedLocation, clickedLocation)
 			2 -> listOf(instance.points[0], clickedLocation, clickedLocation)
 			3 -> listOf(instance.points[0], clickedLocation, instance.points[2])

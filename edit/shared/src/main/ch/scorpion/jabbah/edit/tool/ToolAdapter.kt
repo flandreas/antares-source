@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.edit.tool
 
+import ch.scorpion.jabbah.base.Status
+import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.edit.Tool
@@ -19,7 +21,7 @@ open class ToolAdapter(val editor: Editor) : Tool {
     }
 
     override fun deactivate() {
-        // empty
+        clearPointStatus()
     }
 
     override fun mouseClicked(e: MouseEvent, x: Double, y: Double) {
@@ -35,7 +37,7 @@ open class ToolAdapter(val editor: Editor) : Tool {
     }
 
     override fun mouseMoved(e: MouseEvent, x: Double, y: Double) {
-        // empty
+	    reportPointStatus(x, y)
     }
 
     override fun mouseDragged(e: MouseEvent, x: Double, y: Double) {
@@ -55,4 +57,14 @@ open class ToolAdapter(val editor: Editor) : Tool {
     override fun keyReleased(e: KeyEvent) {
         // empty
     }
+
+	/** ---- [ToolAdapter] */
+
+	protected fun reportPointStatus(x: Double, y: Double) {
+		Status.set(StatusType.Small, "${x.toInt()},${y.toInt()}")
+	}
+
+	private fun clearPointStatus() {
+		Status.set(StatusType.Small, null)
+	}
 }

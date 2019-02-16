@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.edit.model.rectangle
 
+import ch.scorpion.jabbah.base.Status
+import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
@@ -32,13 +34,13 @@ class RectangleTool<T : RectangularComponent>(
     companion object {
 
         /** The default rectangle width used if dragging is omitted.*/
-        val DEF_WIDTH = 200.0
+        const val DEF_WIDTH = 200.0
 
         /** The default rectangle height used if dragging is omitted.*/
-        val DEF_HEIGHT = 100.0
+        const val DEF_HEIGHT = 100.0
 
         /** The minimal width or height used to determine whether dragging is omitted.*/
-        val MINIMAL_SIZE = 3
+        const val MINIMAL_SIZE = 3
     }
 
     /** Holds the instantiated rectangle. Initialized in [mousePressed].*/
@@ -86,6 +88,8 @@ class RectangleTool<T : RectangularComponent>(
         )
 
         instance.validate()
+
+	    reportSize()
     }
 
     override fun mouseReleased(e: MouseEvent, x: Double, y: Double) {
@@ -99,4 +103,8 @@ class RectangleTool<T : RectangularComponent>(
         editor.commandManager.execute(AddCommand(editor, addedComponent))
         editor.toolDone()
     }
+
+	private fun reportSize() {
+		Status.set(StatusType.Small, "w=${instance.width.toInt()}, h=${instance.height.toInt()}")
+	}
 }

@@ -57,10 +57,6 @@ class SelectionToolImpl(
 		editor.view.setCursor(Cursor.DEFAULT)
 	}
 
-	override fun deactivate() {
-		clearStatus()
-	}
-
 	override fun keyPressed(e: KeyEvent) {
 		target = target?.keyPressed(keyEventContext(e))
 	}
@@ -81,11 +77,11 @@ class SelectionToolImpl(
 	}
 
 	override fun mouseMoved(e: MouseEvent, x: Double, y: Double) {
+		super.mouseMoved(e, x, y)
+
 		if (LOG.isTraceEnabled()) {
 			LOG.trace("mouseMoved to $x,$y")
 		}
-
-		reportStatus(x, y)
 
 		if (target != null) {
 			target = target?.mouseMoved(mouseEventContext(e, x, y))
@@ -246,13 +242,5 @@ class SelectionToolImpl(
 		} else {
 			editor.view.setCursor(Cursor.HAND)
 		}
-	}
-
-	private fun reportStatus(x: Double, y: Double) {
-		Status.set(StatusType.Small, "${x.toInt()},${y.toInt()}")
-	}
-
-	private fun clearStatus() {
-		Status.set(StatusType.Small, null)
 	}
 }
