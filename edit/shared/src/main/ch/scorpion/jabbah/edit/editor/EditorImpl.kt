@@ -47,10 +47,12 @@ open class EditorImpl(
                 view.addMouseListener(mouseEventDelegator)
                 view.addMouseMotionListener(mouseEventDelegator)
                 view.addKeyListener(keyEventDelegator)
+	            currentTool.activate()
             } else {
                 view.removeMouseListener(mouseEventDelegator)
                 view.removeMouseMotionListener(mouseEventDelegator)
                 view.removeKeyListener(keyEventDelegator)
+	            currentTool.deactivate()
             }
             view.autoPanningEnabled = active
             changeSupport.fire(Editor.PROP_ACTIVE, oldValue, field)

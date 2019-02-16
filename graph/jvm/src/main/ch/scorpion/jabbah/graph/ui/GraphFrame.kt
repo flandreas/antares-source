@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.AbstractApplicationFrame
-import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.app.DesktopApplication
-import ch.scorpion.jabbah.app.ToolBar
+import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.app.action.AbstractApplicationAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
@@ -41,6 +38,8 @@ class GraphFrame(
 	private val containerAction = ViewContainerAction(application, eventBus)
 
 	private val mainToolBar: ToolBar
+
+	private val statusBar = StatusBar()
 
 	private val toolbarPanel: JPanel = JPanel()
 
@@ -81,6 +80,7 @@ class GraphFrame(
 			fillToolbarPanel(graphPanel.toolbars)
 			contentPane.add(toolbarPanel, BorderLayout.NORTH)
 			contentPane.add(graphPanel, BorderLayout.CENTER)
+			contentPane.add(statusBar, BorderLayout.SOUTH)
 			invalidate()
 			revalidate()
 			repaint()
@@ -101,6 +101,7 @@ class GraphFrame(
 			fillToolbarPanel(containerPanel.createToolbars())
 			contentPane.add(toolbarPanel, BorderLayout.NORTH)
 			contentPane.add(containerPanel, BorderLayout.CENTER)
+			contentPane.add(statusBar, BorderLayout.SOUTH)
 			invalidate()
 			revalidate()
 			repaint()

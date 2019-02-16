@@ -1,5 +1,8 @@
 package ch.scorpion.jabbah.edit.select
 
+import ch.scorpion.jabbah.base.Status
+import ch.scorpion.jabbah.base.StatusEvent
+import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.KeyEvent
@@ -14,223 +17,242 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.*
+import kotlin.math.round
 
 /**
  * Standard implementation of a [SelectionTool].
  * Uses a [RubberBandHandler] for selecting multiple [Component]s at a time.
  */
 class SelectionToolImpl(
-        editor: Editor,
-        private val rubberBandHandler: RubberBandHandler,
-        val eventBus: EventBus
+	editor: Editor,
+	private val rubberBandHandler: RubberBandHandler,
+	private val eventBus: EventBus
 ) : ToolAdapter(editor), SelectionTool {
 
-    companion object {
-        private val LOG by logger(SelectionToolImpl::class)
-    }
+	companion object {
+		private val LOG by logger(SelectionToolImpl::class)
+	}
 
-    /** The target [InputEventHandler] to which events are forwarded during complex interactions.*/
-    private var target: InputEventHandler<EditInputEventContext>? = null
+	/** The target [InputEventHandler] to which events are forwarded during complex interactions.*/
+	private var target: InputEventHandler<EditInputEventContext>? = null
 
-    /** The [Component] acting as reference for moving potentially many [Component]s. */
-    private var movedReferenceComponent: Component? = null
+	/** The [Component] acting as reference for moving potentially many [Component]s. */
+	private var movedReferenceComponent: Component? = null
 
-    /** The location of [movedReferenceComponent] before moving it. */
-    private var moveStartLocation = Point2D.ZERO
+	/** The location of [movedReferenceComponent] before moving it. */
+	private var moveStartLocation = Point2D.ZERO
 
-    /** Stores the location of [movedReferenceComponent] before the last drag operation.*/
-    private var moveLastLocation = Point2D.ZERO
+	/** Stores the location of [movedReferenceComponent] before the last drag operation.*/
+	private var moveLastLocation = Point2D.ZERO
 
-    /** Support for snapping multiple [Component]s while being moved. Initialized when starting to drag.*/
-    private var multiComponentSnappable: MultiComponentSnappable? = null
+	/** Support for snapping multiple [Component]s while being moved. Initialized when starting to drag.*/
+	private var multiComponentSnappable: MultiComponentSnappable? = null
 
-    /** Gateway to the tooltip system.*/
-    private val tooltipHandler: TooltipHandler = TooltipHandler(eventBus)
+	/** Gateway to the tooltip system.*/
+	private val tooltipHandler: TooltipHandler = TooltipHandler(eventBus)
 
-    /** ---- [Tool] interface */
+	/** ---- [Tool] interface */
 
-    override fun activate() {
-        editor.view.setCursor(Cursor.DEFAULT)
-    }
+	override fun activate() {
+		editor.view.setCursor(Cursor.DEFAULT)
+	}
 
-    override fun keyPressed(e: KeyEvent) {
-        target = target?.keyPressed(keyEventContext(e))
-    }
+	override fun deactivate() {
+		clearStatus()
+	}
 
-    override fun keyReleased(e: KeyEvent) {
-        target = target?.keyReleased(keyEventContext(e))
-    }
+	override fun keyPressed(e: KeyEvent) {
+		target = target?.keyPressed(keyEventContext(e))
+	}
 
-    override fun mouseClicked(e: MouseEvent, x: Double, y: Double) {
-        LOG.debug("SelectionToolImpl: mouseClicked at $x,$y")
-        if (target != null) {
-            target = target?.mouseClicked(mouseEventContext(e, x, y))
-            if (target != null) {
-                return
-            }
-        }
-        target = editor.view.getInputEventHandler(e).mouseClicked(mouseEventContext(e, x, y))
-    }
+	override fun keyReleased(e: KeyEvent) {
+		target = target?.keyReleased(keyEventContext(e))
+	}
 
-    override fun mouseMoved(e: MouseEvent, x: Double, y: Double) {
-        LOG.trace("SelectionToolImpl: mouseMoved to $x,$y")
+	override fun mouseClicked(e: MouseEvent, x: Double, y: Double) {
+		LOG.debug("mouseClicked at $x,$y")
+		if (target != null) {
+			target = target?.mouseClicked(mouseEventContext(e, x, y))
+			if (target != null) {
+				return
+			}
+		}
+		target = editor.view.getInputEventHandler(e).mouseClicked(mouseEventContext(e, x, y))
+	}
 
-        if (target != null) {
-            target = target?.mouseMoved(mouseEventContext(e, x, y))
-            if (target != null) {
-                return
-            }
-        }
-        target = editor.view.getInputEventHandler(e).mouseMoved(mouseEventContext(e, x, y))
-        if (target == null) {
-            updateCursor(editor.drawing.getDrawableAt(x, y))
-        }
-        tooltipHandler.handle(editor.view, editor.drawing, x, y)
-    }
+	override fun mouseMoved(e: MouseEvent, x: Double, y: Double) {
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("mouseMoved to $x,$y")
+		}
 
-    override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
-        tooltipHandler.clear(editor.view)
+		reportStatus(x, y)
 
-        if (e.button != Button.BUTTON1) {
-            return
-        }
+		if (target != null) {
+			target = target?.mouseMoved(mouseEventContext(e, x, y))
+			if (target != null) {
+				return
+			}
+		}
+		target = editor.view.getInputEventHandler(e).mouseMoved(mouseEventContext(e, x, y))
+		if (target == null) {
+			updateCursor(editor.drawing.getDrawableAt(x, y))
+		}
+		tooltipHandler.handle(editor.view, editor.drawing, x, y)
+	}
 
-        LOG.debug("SelectionToolImpl: mousePressed at $x,$y")
+	override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
+		tooltipHandler.clear(editor.view)
 
-        if (target != null) {
-            target = target?.mousePressed(mouseEventContext(e, x, y))
-            if (target != null) {
-                return
-            }
-        }
+		if (e.button != Button.BUTTON1) {
+			return
+		}
 
-        // Try to forward event to an interested [Drawable] in the [View]
-        target = editor.view.getInputEventHandler(e).mousePressed(mouseEventContext(e, x, y))
+		LOG.debug("mousePressed at $x,$y")
 
-        // Selection logic
-        val component: Component? = editor.drawing.getDrawableAt(x, y)
-        if (component != null) {
-            if (e.isShiftDown) {
-                if (editor.view.selectionManager.isSelected(component)) {
-                    LOG.debug("SelectionToolImpl: Removing component from selection")
-                    editor.view.selectionManager.deselect(component)
-                } else {
-                    LOG.debug("SelectionToolImpl: Adding component to selection")
-                    editor.view.selectionManager.select(component)
-                }
-            } else {
-                if (!editor.view.selectionManager.isSelected(component)) {
-                    LOG.debug("Selecting only single component")
-                    editor.view.selectionManager.deselectAll()
-                    editor.view.selectionManager.select(component)
-                }
-            }
+		if (target != null) {
+			target = target?.mousePressed(mouseEventContext(e, x, y))
+			if (target != null) {
+				return
+			}
+		}
 
-            movedReferenceComponent = component
-            moveStartLocation = Point2D(movedReferenceComponent!!.location)
-            moveLastLocation = Point2D(x, y)
+		// Try to forward event to an interested [Drawable] in the [View]
+		target = editor.view.getInputEventHandler(e).mousePressed(mouseEventContext(e, x, y))
 
-	        target = editor.view.getInputEventHandler(e).mousePressed(mouseEventContext(e, x, y))
-        } else {
-            if (!e.isShiftDown) {
-                editor.view.selectionManager.deselectAll()
-            }
-            LOG.debug("SelectionToolImpl: delegating to rubberband")
-            target = rubberBandHandler
-            target?.mousePressed(mouseEventContext(e, x, y))
-        }
-    }
+		// Selection logic
+		val component: Component? = editor.drawing.getDrawableAt(x, y)
+		if (component != null) {
+			if (e.isShiftDown) {
+				if (editor.view.selectionManager.isSelected(component)) {
+					LOG.debug("Removing component from selection")
+					editor.view.selectionManager.deselect(component)
+				} else {
+					LOG.debug("Adding component to selection")
+					editor.view.selectionManager.select(component)
+				}
+			} else {
+				if (!editor.view.selectionManager.isSelected(component)) {
+					LOG.debug("Selecting only single component")
+					editor.view.selectionManager.deselectAll()
+					editor.view.selectionManager.select(component)
+				}
+			}
 
-    override fun mouseDragged(e: MouseEvent, x: Double, y: Double) {
-        if (e.button != Button.BUTTON1) {
-            return
-        }
+			movedReferenceComponent = component
+			moveStartLocation = Point2D(movedReferenceComponent!!.location)
+			moveLastLocation = Point2D(x, y)
 
-        LOG.trace("SelectionTool: drag to $x,$y, target is $target")
+			target = editor.view.getInputEventHandler(e).mousePressed(mouseEventContext(e, x, y))
+		} else {
+			if (!e.isShiftDown) {
+				editor.view.selectionManager.deselectAll()
+			}
+			LOG.debug("delegating to rubberband")
+			target = rubberBandHandler
+			target?.mousePressed(mouseEventContext(e, x, y))
+		}
+	}
 
-        if (target != null) {
-            target = target?.mouseDragged(mouseEventContext(e, x, y))
-            if (target != null) {
-                return
-            }
-        }
+	override fun mouseDragged(e: MouseEvent, x: Double, y: Double) {
+		if (e.button != Button.BUTTON1) {
+			return
+		}
 
-        val dx = x - moveLastLocation.x
-        val dy = y - moveLastLocation.y
-        val selection = editor.view.selectionManager.selection
-        var offset = Point2D.ZERO
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("drag to $x,$y, target is $target")
+		}
 
-        if (editor.snapManager.snapEnabled) {
-            if (selection.size > 1) {
-                if (multiComponentSnappable == null) {
-                    multiComponentSnappable = MultiComponentSnappable(selection)
-                }
-                offset = editor.snapManager.snap(multiComponentSnappable!!, dx, dy)
-            } else if (selection.size == 1) {
-                offset = editor.snapManager.snap(selection.first(), dx, dy)
-            }
-        }
+		if (target != null) {
+			target = target?.mouseDragged(mouseEventContext(e, x, y))
+			if (target != null) {
+				return
+			}
+		}
 
-        // Move all selected [Components] by the same snapped offset
-	    Locatable.moveLocatables(selection, Point2D(dx + offset.x, dy + offset.y))
+		val dx = x - moveLastLocation.x
+		val dy = y - moveLastLocation.y
+		val selection = editor.view.selectionManager.selection
+		var offset = Point2D.ZERO
 
-        eventBus.post(DragEvent(editor, selection))
-        moveLastLocation = Point2D(x + offset.x, y + offset.y)
-        editor.drawing.validate()
-    }
+		if (editor.snapManager.snapEnabled) {
+			if (selection.size > 1) {
+				if (multiComponentSnappable == null) {
+					multiComponentSnappable = MultiComponentSnappable(selection)
+				}
+				offset = editor.snapManager.snap(multiComponentSnappable!!, dx, dy)
+			} else if (selection.size == 1) {
+				offset = editor.snapManager.snap(selection.first(), dx, dy)
+			}
+		}
 
-    override fun mouseReleased(e: MouseEvent, x: Double, y: Double) {
-        if (e.button != Button.BUTTON1) {
-            return
-        }
+		// Move all selected [Components] by the same snapped offset
+		Locatable.moveLocatables(selection, Point2D(dx + offset.x, dy + offset.y))
 
-        LOG.debug("SelectionTool: mouseReleased at $x,$y")
+		eventBus.post(DragEvent(editor, selection))
+		moveLastLocation = Point2D(x + offset.x, y + offset.y)
+		editor.drawing.validate()
+	}
 
-        if (target != null) {
-            target = target?.mouseReleased(mouseEventContext(e, x, y))
-        }
+	override fun mouseReleased(e: MouseEvent, x: Double, y: Double) {
+		if (e.button != Button.BUTTON1) {
+			return
+		}
 
-        if (movedReferenceComponent != null) {
-            if (moveStartLocation != movedReferenceComponent?.location) {
-                try {
-                    editor.commandManager.register(MoveCommand(
-                        editor,
-                        editor.view.selectionManager.selection,
-                        movedReferenceComponent!!.location.subtract(moveStartLocation)))
-                } catch(e: Throwable) {
-                    LOG.error("SelectionToolImpl.mouseReleased(): error '${e.message}'")
-                    editor.commandManager.rollbackTransaction()
-                }
-            }
-        }
+		LOG.debug("mouseReleased at $x,$y")
 
-        // Cleanup
-        target = null
-        multiComponentSnappable = null
-        movedReferenceComponent = null
-        updateCursor(editor.drawing.getDrawableAt(x, y))
-    }
+		if (target != null) {
+			target = target?.mouseReleased(mouseEventContext(e, x, y))
+		}
 
-    /** ---- [SelectionToolImpl] */
+		if (movedReferenceComponent != null) {
+			if (moveStartLocation != movedReferenceComponent?.location) {
+				try {
+					editor.commandManager.register(MoveCommand(
+						editor,
+						editor.view.selectionManager.selection,
+						movedReferenceComponent!!.location.subtract(moveStartLocation)))
+				} catch (e: Throwable) {
+					LOG.error("SelectionToolImpl.mouseReleased(): error '${e.message}'")
+					editor.commandManager.rollbackTransaction()
+				}
+			}
+		}
 
-    private fun keyEventContext(e: KeyEvent): EditInputEventContext {
-        return EditInputEventContext(editor = editor, keyEvent = e)
-    }
+		// Cleanup
+		target = null
+		multiComponentSnappable = null
+		movedReferenceComponent = null
+		updateCursor(editor.drawing.getDrawableAt(x, y))
+	}
 
-    private fun mouseEventContext(e: MouseEvent, x: Double, y: Double): EditInputEventContext {
-        return EditInputEventContext(
-            editor = editor,
-            mouseEvent = e,
-            x = x,
-            y = y
-        )
-    }
+	/** ---- [SelectionToolImpl] */
 
-    private fun updateCursor(component: Drawable?) {
-        if (component == null) {
-            editor.view.setCursor(Cursor.DEFAULT)
-        } else {
-            editor.view.setCursor(Cursor.HAND)
-        }
-    }
+	private fun keyEventContext(e: KeyEvent): EditInputEventContext {
+		return EditInputEventContext(editor = editor, keyEvent = e)
+	}
+
+	private fun mouseEventContext(e: MouseEvent, x: Double, y: Double): EditInputEventContext {
+		return EditInputEventContext(
+			editor = editor,
+			mouseEvent = e,
+			x = x,
+			y = y
+		)
+	}
+
+	private fun updateCursor(component: Drawable?) {
+		if (component == null) {
+			editor.view.setCursor(Cursor.DEFAULT)
+		} else {
+			editor.view.setCursor(Cursor.HAND)
+		}
+	}
+
+	private fun reportStatus(x: Double, y: Double) {
+		Status.set(StatusType.Small, "${x.toInt()},${y.toInt()}")
+	}
+
+	private fun clearStatus() {
+		Status.set(StatusType.Small, null)
+	}
 }

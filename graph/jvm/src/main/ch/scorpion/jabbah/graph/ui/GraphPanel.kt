@@ -1,13 +1,11 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.*
-import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
@@ -248,6 +246,7 @@ class GraphPanel(
 				}
 				updateEditability()
 				eventBus.post(ApplicationModeEvent(currentMode))
+				Status.set(StatusType.Large, Translations.getString("graph.status.edit"))
 			}
 			ApplicationMode.EXECUTE -> {
 				issuesPanel.clear()
@@ -258,6 +257,7 @@ class GraphPanel(
 						scheduler.isActive = true
 						updateEditability()
 						eventBus.post(ApplicationModeEvent(currentMode))
+						Status.set(StatusType.Large, Translations.getString("graph.status.execute"))
 					})
 				} else {
 					eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = null, messageKey = "graph.designError.msg"))
