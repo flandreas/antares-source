@@ -16,7 +16,6 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewPointSequence
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.logger
 
 /**
@@ -33,154 +32,154 @@ import ch.scorpion.jabbah.base.logger
  * Therefore, animations on longer paths travel faster, while animations on shorter path travel slower.
  */
 class DigitalEdgeViewNetAnimation(
-        val startEdgeView: DigitalEdgeView,
-        val originPort: DigitalPort,
-        val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-        val animator: Animator = AnimationModule.animator,
-        val scheduler: Scheduler = ExecutionModule.scheduler,
-        val styleProvider: StyleProvider = DrawStyleModule.styleProvider
+	val startEdgeView: DigitalEdgeView,
+	val originPort: DigitalPort,
+	val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+	val animator: Animator = AnimationModule.animator,
+	val scheduler: Scheduler = ExecutionModule.scheduler,
+	val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) {
 
-    companion object {
-        // Note that the effective duration of an Animation already depends on [SystemSpeed] as implemented by [Animator].
-        // Additionally, as a [DigitalEdgeViewNetAnimation] is only used for [SystemSpeedCategory.Use],
-        // (which is defined below 33% of maximum [SystemSpeed]), the duration here represents 3 times the effective time.
-        private val DURATION_MS = 300.0
+	companion object {
+		// Note that the effective duration of an Animation already depends on [SystemSpeed] as implemented by [Animator].
+		// Additionally, as a [DigitalEdgeViewNetAnimation] is only used for [SystemSpeedCategory.Use],
+		// (which is defined below 33% of maximum [SystemSpeed]), the duration here represents 3 times the effective time.
+		private val DURATION_MS = 300.0
 
-        /** Returns 1 for maximum speed, 0 for halted.*/
-        fun normalizedSpeed(speed: Int): Double {
-            return Math.min(speed, SystemSpeedCategory.Explore.speedRange.last) / SystemSpeedCategory.Explore.speedRange.last.toDouble()
-        }
-    }
+		/** Returns 1 for maximum speed, 0 for halted.*/
+		fun normalizedSpeed(speed: Int): Double {
+			return Math.min(speed, SystemSpeedCategory.Explore.speedRange.last) / SystemSpeedCategory.Explore.speedRange.last.toDouble()
+		}
+	}
 
-    private val LOG by logger(DigitalEdgeViewNetAnimation::class)
+	private val LOG by logger(DigitalEdgeViewNetAnimation::class)
 
-    /**
-     * Contains management information associated with every [AnimationTask].
-     * @property animationTask the [AnimationTask] the information belongs to
-     * @property overallLength the overall length of the entire net to travers
-     * @property remainingLength the length of the remaining net to travers
-     * @property visitedLength the added length of all visited [DigitalEdgeView]s
-     */
-    private data class AnimationInfo(
-            val animationTask: AnimationTask?,
-            val overallLength: Double,
-            val remainingLength: Double,
-            val visitedLength: Double)
+	/**
+	 * Contains management information associated with every [AnimationTask].
+	 * @property animationTask the [AnimationTask] the information belongs to
+	 * @property overallLength the overall length of the entire net to travers
+	 * @property remainingLength the length of the remaining net to travers
+	 * @property visitedLength the added length of all visited [DigitalEdgeView]s
+	 */
+	private data class AnimationInfo(
+		val animationTask: AnimationTask?,
+		val overallLength: Double,
+		val remainingLength: Double,
+		val visitedLength: Double)
 
-    /** Maps a [DigitalEdgeView] to the [AnimationInfo] of its predecessor [DigitalEdgeView]. */
-    private val predecessorMap = mutableMapOf<DigitalEdgeView, AnimationInfo>()
+	/** Maps a [DigitalEdgeView] to the [AnimationInfo] of its predecessor [DigitalEdgeView]. */
+	private val predecessorMap = mutableMapOf<DigitalEdgeView, AnimationInfo>()
 
-    private val terminatedAnimationViews = mutableListOf<DigitalEdgeAnimationView>()
+	private val terminatedAnimationViews = mutableListOf<DigitalEdgeAnimationView>()
 
-    private val animationSplitter = AnimationSplitter()
+	private val animationSplitter = AnimationSplitter()
 
-    init {
-        setupEdgeAnimation(null, startEdgeView, startEdgeView.getConnectableView(originPort)!!)
-    }
+	init {
+		setupEdgeAnimation(null, startEdgeView, startEdgeView.getConnectableView(originPort)!!)
+	}
 
-    /**
-     * TODO What is the purpose of returning an [AnimationTask]? This task cannot be used for stopping the
-     * animation, because if the animation has been spit at a [DigitalNodeView], there are multiple additional tasks.
-     * It would be better to return nothing and to provide a stop() method that stops all running tasks.
-     */
-    fun start(): AnimationTask {
-        val animationInfo = predecessorMap[startEdgeView]!!
-        animationInfo.animationTask!!.start()
-        return animationInfo.animationTask
-    }
+	/**
+	 * TODO What is the purpose of returning an [AnimationTask]? This task cannot be used for stopping the
+	 * animation, because if the animation has been spit at a [DigitalNodeView], there are multiple additional tasks.
+	 * It would be better to return nothing and to provide a stop() method that stops all running tasks.
+	 */
+	fun start(): AnimationTask {
+		val animationInfo = predecessorMap[startEdgeView]!!
+		animationInfo.animationTask!!.start()
+		return animationInfo.animationTask
+	}
 
-    /**
-     * Creates a new animation for every outgoing [DigitalEdgeView] of the specified [NodeView], and registers
-     * them in [predecessorMap].
-     */
-    private fun processNode(predecessor: DigitalEdgeView, nodeView: NodeView<*>) {
-        nodeView.getEdgeViews()
-            .filter { it != predecessor }
-            .map { it as DigitalEdgeView }
-            .forEach { setupEdgeAnimation(predecessor, it, nodeView) }
-    }
+	/**
+	 * Creates a new animation for every outgoing [DigitalEdgeView] of the specified [NodeView], and registers
+	 * them in [predecessorMap].
+	 */
+	private fun processNode(predecessor: DigitalEdgeView, nodeView: NodeView<*>) {
+		nodeView.getEdgeViews()
+			.filter { it != predecessor }
+			.map { it as DigitalEdgeView }
+			.forEach { setupEdgeAnimation(predecessor, it, nodeView) }
+	}
 
-    private fun setupEdgeAnimation(predecessor: DigitalEdgeView?, edgeView: DigitalEdgeView, originConnectable: ConnectableView) {
-        LOG.trace("Setup EdgeView animation for output of ${originConnectable::class.simpleName}")
+	private fun setupEdgeAnimation(predecessor: DigitalEdgeView?, edgeView: DigitalEdgeView, originConnectable: ConnectableView) {
+		LOG.trace("Setup EdgeView animation for output of ${originConnectable::class.simpleName}")
 
-        val isReverse = originConnectable === edgeView.destination
-        val signalView = DigitalEdgeAnimationView(
-            edgeView,
-            startEdgeView.model!!.signalBuffer as DigitalSignal,
-            originPort.signalRepresentation,
-            isReverse,
-            styleProvider
-        )
-        val predecessorInfo: AnimationInfo? = if (predecessor != null) predecessorMap[predecessor] else null
+		val isReverse = originConnectable === edgeView.destination
+		val signalView = DigitalEdgeAnimationView(
+			edgeView,
+			startEdgeView.model!!.signalBuffer as DigitalSignal,
+			originPort.signalRepresentation,
+			isReverse,
+			styleProvider
+		)
+		val predecessorInfo: AnimationInfo? = if (predecessor != null) predecessorMap[predecessor] else null
 
-        val sequence: Sequence<Point2D> = if (isReverse) {
-            EdgeViewPointSequence.reverseOf(edgeView)
-        } else {
-            EdgeViewPointSequence.of(edgeView)
-        }
+		val sequence: Sequence<Point2D> = if (isReverse) {
+			EdgeViewPointSequence.reverseOf(edgeView)
+		} else {
+			EdgeViewPointSequence.of(edgeView)
+		}
 
-        val overallLength: Double = predecessorInfo?.overallLength ?: sequence.size
-        val oldVisitedLength = predecessorInfo?.visitedLength ?: 0.0
-        val remainingTime = (overallLength - oldVisitedLength) / overallLength * DURATION_MS
+		val overallLength: Double = predecessorInfo?.overallLength ?: sequence.size
+		val oldVisitedLength = predecessorInfo?.visitedLength ?: 0.0
+		val remainingTime = (overallLength - oldVisitedLength) / overallLength * DURATION_MS
 
-        val bitAnimationTask: AnimationTask = MoveLocatableAnimation(signalView, sequence, remainingTime)
-        bitAnimationTask.addListener(animationSplitter)
+		val bitAnimationTask: AnimationTask = MoveLocatableAnimation(signalView, sequence, remainingTime)
+		bitAnimationTask.addListener(animationSplitter)
 
-        val animationInfo = AnimationInfo(
-            animationTask = bitAnimationTask,
-            overallLength = overallLength,
-            remainingLength = sequence.size,
-            visitedLength = oldVisitedLength + edgeView.length
-        )
+		val animationInfo = AnimationInfo(
+			animationTask = bitAnimationTask,
+			overallLength = overallLength,
+			remainingLength = sequence.size,
+			visitedLength = oldVisitedLength + edgeView.length
+		)
 
-        if (isReverse) {
-            signalView.location = edgeView.getSegmentPoint(edgeView.segmentPointCount - 1)
-        } else {
-            signalView.location = edgeView.getSegmentPoint(0)
-        }
+		if (isReverse) {
+			signalView.location = edgeView.getSegmentPoint(edgeView.segmentPointCount - 1)
+		} else {
+			signalView.location = edgeView.getSegmentPoint(0)
+		}
 
-        drawingView.animationContainer.add(signalView)
-        signalView.validate()
+		drawingView.animationContainer.add(signalView)
+		signalView.validate()
 
-        predecessorMap.put(edgeView, animationInfo)
-        animator.schedule(bitAnimationTask)
-    }
+		predecessorMap.put(edgeView, animationInfo)
+		animator.schedule(bitAnimationTask)
+	}
 
-    /**
-     * Splits an animation at a [NodeView] by removing the animation of the incoming [DigitalEdgeView]
-     * and starting a new animation for every outgoing [DigitalEdgeView].
-     */
-    private inner class AnimationSplitter : AnimationTaskAdapter() {
+	/**
+	 * Splits an animation at a [NodeView] by removing the animation of the incoming [DigitalEdgeView]
+	 * and starting a new animation for every outgoing [DigitalEdgeView].
+	 */
+	private inner class AnimationSplitter : AnimationTaskAdapter() {
 
-        override fun ended(task: AnimationTask) {
-            task.removeListener(this)
-            val animationView = task.target as DigitalEdgeAnimationView
+		override fun ended(task: AnimationTask) {
+			task.removeListener(this)
+			val animationView = task.target as DigitalEdgeAnimationView
 
-            if (animationView.reverseDirection) {
-                if (animationView.edgeView.origin is NodeView<*>) {
-                    processNode(animationView.edgeView, animationView.edgeView.origin as NodeView<*>)
-                }
-            } else {
-                if (animationView.edgeView.destination is NodeView<*>) {
-                    processNode(animationView.edgeView, animationView.edgeView.destination as NodeView<*>)
-                }
-            }
+			if (animationView.reverseDirection) {
+				if (animationView.edgeView.origin is NodeView<*>) {
+					processNode(animationView.edgeView, animationView.edgeView.origin as NodeView<*>)
+				}
+			} else {
+				if (animationView.edgeView.destination is NodeView<*>) {
+					processNode(animationView.edgeView, animationView.edgeView.destination as NodeView<*>)
+				}
+			}
 
-            terminatedAnimationViews.add(animationView)
-            animationView.drawSignalView = false
-            predecessorMap.remove(animationView.edgeView)
+			terminatedAnimationViews.add(animationView)
+			animationView.drawSignalView = false
+			predecessorMap.remove(animationView.edgeView)
 
-            if (predecessorMap.isEmpty()) {
-                scheduler.signalHandler.actingDone(startEdgeView.model!!)
-                for (terminatedAnimationView in terminatedAnimationViews) {
-                    drawingView.animationContainer.remove(terminatedAnimationView)
-                }
-            } else {
-                predecessorMap.values.forEach {
-                    it.animationTask!!.start()
-                }
-            }
-        }
-    }
+			if (predecessorMap.isEmpty()) {
+				scheduler.signalHandler.actingDone(startEdgeView.model!!)
+				for (terminatedAnimationView in terminatedAnimationViews) {
+					drawingView.animationContainer.remove(terminatedAnimationView)
+				}
+			} else {
+				predecessorMap.values.forEach {
+					it.animationTask!!.start()
+				}
+			}
+		}
+	}
 }

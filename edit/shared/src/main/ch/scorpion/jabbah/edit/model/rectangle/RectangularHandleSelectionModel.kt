@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.edit.select.Handle
 import ch.scorpion.jabbah.edit.select.RectangularHandle
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.base.Math
 
 /**
  * A [SelectionModel] consisting of [Handle]s to be used for selecting and manipulating a [RectangularComponent].

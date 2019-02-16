@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.geom.Turn
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.System.Companion.SYSTEM
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.graph.model.PortType

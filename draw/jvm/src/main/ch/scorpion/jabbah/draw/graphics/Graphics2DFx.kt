@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw.graphics
 
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.*
 import javafx.scene.canvas.GraphicsContext

@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.edit.view
 import ch.scorpion.jabbah.animation.AnimationTask
 import ch.scorpion.jabbah.animation.AnimationTaskAdapter
 import ch.scorpion.jabbah.animation.Animator
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.drawable.Transparent

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.base
 
 import kotlin.math.log10
+import kotlin.math.pow
 
 object Thousands {
 
@@ -45,7 +46,7 @@ object Thousands {
 
 	/** Rounds `value` to at most `digits` digits after the comma, removing unnecessary trailing zeros and commas.*/
 	fun round(value: Double, digits: Int): String {
-		val tenPower = Math.power(10.0, digits.toDouble())
+		val tenPower = 10.0.pow(digits.toDouble())
 		val s = ((value * tenPower).toInt() / tenPower).toString()
 		return s.trimEnd('0').trimEnd('.')
 	}

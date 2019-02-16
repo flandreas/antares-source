@@ -4,50 +4,51 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.jabbah.base.Math
-import ch.scorpion.jabbah.base.MathJvm
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class RandomTest {
 
 	companion object {
-		@ClassRule
-		@JvmField
-		val rule = AntaresTestRule()
+		init {
+			AntaresTestRule.configure()
+		}
 	}
 
+	private val valueProvider = RandomProvider()
 	private val signalHandler = ForwardSignalHandler()
 
 	@Test
 	fun shouldProduceRandom() {
-		val random = Random()
-		withNextRandom(42)
+		val random = Random(valueProvider::provide)
+		valueProvider.nextValue = 42
 
 		random.getInput<DigitalSignal>().setIncomingSignal(Word.of(Bit.True), signalHandler)
 		random.act(signalHandler, random.createActorData(random.getInput<DigitalSignal>()))
 
-		assertThat(random.getOutput<DigitalSignal>().getOutgoingSignal() as Word, `is`(Word.of(random.bitWidth, 42)))
+		assertEquals(Word.of(random.bitWidth, 42), random.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
 	}
 
 	@Test
 	fun shouldProduceOnlyOnRaisingEdge() {
-		val random = Random()
-		withNextRandom(42)
+		val random = Random(valueProvider::provide)
+		valueProvider.nextValue = 42
 		random.getInput<DigitalSignal>().setIncomingSignal(Word.of(Bit.True), signalHandler)
 		random.act(signalHandler, random.createActorData(random.getInput<DigitalSignal>()))
 
-		withNextRandom(99)
+		valueProvider.nextValue = 99
 		random.getInput<DigitalSignal>().setIncomingSignal(Word.of(Bit.False), signalHandler)
 		random.act(signalHandler, random.createActorData(random.getInput<DigitalSignal>()))
 
-		assertThat(random.getOutput<DigitalSignal>().getOutgoingSignal() as Word, `is`(Word.of(random.bitWidth, 42)))
+		assertEquals(Word.of(random.bitWidth, 42), random.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
 	}
 
-	private fun withNextRandom(value: Int) {
-		Math = MathJvm { value / 255.0}
+	private class RandomProvider {
+		var nextValue: Int = 0
+
+		fun provide (max: Int): Int {
+			return nextValue
+		}
 	}
 }

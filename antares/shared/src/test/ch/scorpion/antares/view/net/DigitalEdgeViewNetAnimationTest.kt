@@ -1,27 +1,25 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.AntaresTestRule
-import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
-import org.junit.ClassRule
-import org.junit.Test
-import org.junit.Assert.*
-import org.hamcrest.CoreMatchers.`is`
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [DigitalEdgeViewNetAnimation].
  */
 class DigitalEdgeViewNetAnimationTest {
 
-    companion object {
-        @ClassRule @JvmField
-        val rule = AntaresTestRule()
-    }
+	companion object {
+		init {
+			AntaresTestRule.configure()
+		}
+	}
 
-    @Test
-    fun shouldNormalizeSpeed() {
-        assertThat(DigitalEdgeViewNetAnimation.normalizedSpeed(SystemSpeedCategory.Explore.speedRange.endInclusive), `is`(1.0))
-        assertThat(DigitalEdgeViewNetAnimation.normalizedSpeed(SystemSpeedCategory.Explore.speedRange.first), `is`(0.0))
-        assertThat(DigitalEdgeViewNetAnimation.normalizedSpeed(SystemSpeedCategory.Observe.speedRange.endInclusive), `is`(1.0))
-    }
+	@Test
+	fun shouldNormalizeSpeed() {
+		assertEquals(1.0, DigitalEdgeViewNetAnimation.normalizedSpeed(SystemSpeedCategory.Explore.speedRange.endInclusive))
+		assertEquals(0.0, DigitalEdgeViewNetAnimation.normalizedSpeed(SystemSpeedCategory.Explore.speedRange.first))
+		assertEquals(1.0, DigitalEdgeViewNetAnimation.normalizedSpeed(SystemSpeedCategory.Observe.speedRange.endInclusive))
+	}
 }

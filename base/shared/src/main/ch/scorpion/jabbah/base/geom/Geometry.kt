@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.base.geom
 
-import ch.scorpion.jabbah.base.MathClass
+import ch.scorpion.jabbah.base.PI_2
+import ch.scorpion.jabbah.base.SIGMA
+import ch.scorpion.jabbah.base.TWO_PI
 import kotlin.math.*
 
 /**
@@ -11,9 +13,9 @@ object Geometry {
 	/** Wraps an angle in radians to the range 0 .. 2*PI.*/
 	fun wrapAngle(angle: Double): Double {
 		if (angle < 0) {
-			return MathClass.TWO_PI - abs(angle % MathClass.TWO_PI)
+			return TWO_PI - abs(angle % TWO_PI)
 		}
-		return angle % MathClass.TWO_PI
+		return angle % TWO_PI
 	}
 
 	/** Determines whether the shortest rotation from one angle to another angle is a clockwise rotation.*/
@@ -42,11 +44,11 @@ object Geometry {
             return 0.0
         }
 
-        if (abs(x2 - x1) <= MathClass.SIGMA) {
+        if (abs(x2 - x1) <= SIGMA) {
 	        angle = if (fy == 1)
-		        MathClass.PI_2
+		        PI_2
 	        else
-		        3 * MathClass.PI_2
+		        3 * PI_2
         } else {
             angle = atan(abs(y2 - y1) / abs(x2 - x1))
             if (fx == 1) {

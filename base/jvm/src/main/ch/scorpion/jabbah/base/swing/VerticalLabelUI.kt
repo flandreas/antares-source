@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base.swing
 import javax.swing.plaf.basic.BasicLabelUI
 import java.awt.*
 import javax.swing.*
+import kotlin.math.PI
 
 class VerticalLabel {
 
@@ -77,10 +78,10 @@ class VerticalLabelUI(private val clockwise: Boolean = true) : BasicLabelUI() {
         val g2 = g as Graphics2D
         val oldTransform = g2.transform
         if (clockwise) {
-            g2.rotate(Math.PI / 2)
+            g2.rotate(PI / 2)
             g2.translate(-0, -c.getWidth())
         } else {
-            g2.rotate(-Math.PI / 2)
+            g2.rotate(-PI / 2)
             g2.translate(-c.getHeight(), 0)
         }
 

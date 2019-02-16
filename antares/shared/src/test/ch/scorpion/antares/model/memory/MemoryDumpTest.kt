@@ -2,11 +2,8 @@ package ch.scorpion.antares.model.memory
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.ClassRule
-import org.junit.Test
-
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [MemoryDump].
@@ -14,8 +11,9 @@ import org.junit.Test
 class MemoryDumpTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = AntaresTestRule()
+	    init {
+		    AntaresTestRule.configure()
+	    }
     }
 
     /** ---- Write 8 bit tests */
@@ -23,7 +21,7 @@ class MemoryDumpTest {
     @Test
     fun shouldWriteEmptyData() {
         val memory = Memory()
-        assertThat(MemoryDump.write(memory, BitWidth.BW_8), `is`(""))
+        assertEquals("", MemoryDump.write(memory, BitWidth.BW_8))
     }
 
     @Test
@@ -35,7 +33,7 @@ class MemoryDumpTest {
         memory.write(8, 1)
         memory.write(10, 2)
 
-        assertThat(MemoryDump.write(memory, BitWidth.BW_8), `is`("04 FF FF 00 00 00 00 00 01 00 02"))
+        assertEquals("04 FF FF 00 00 00 00 00 01 00 02", MemoryDump.write(memory, BitWidth.BW_8))
     }
 
     /** ---- Write 16 bit tests */
@@ -49,7 +47,7 @@ class MemoryDumpTest {
         memory.write(8, 1)
         memory.write(10, 138)
 
-        assertThat(MemoryDump.write(memory, BitWidth.BW_16), `is`("0004 FFFF 00FF 0000 0000 0000 0000 0000 0001 0000 008A"))
+        assertEquals("0004 FFFF 00FF 0000 0000 0000 0000 0000 0001 0000 008A", MemoryDump.write(memory, BitWidth.BW_16))
     }
 
     /** ---- Read 8 bit data */
@@ -61,14 +59,14 @@ class MemoryDumpTest {
 
         MemoryDump.read(memory, "01 02 03")
 
-        assertThat(memory.read(10), `is`(0L))
+        assertEquals(0L, memory.read(10))
     }
 
     @Test
     fun shouldReadEmptyData() {
         val memory = Memory(8)
         MemoryDump.read(memory, "")
-        assertThat(memory.read(0), `is`(0L))
+        assertEquals(0L, memory.read(0))
     }
 
     @Test
@@ -77,14 +75,14 @@ class MemoryDumpTest {
 
         MemoryDump.read(memory, "04 00 FF 1A 00 00 08")
 
-        assertThat(memory.read(0), `is`(4L))
-        assertThat(memory.read(1), `is`(0L))
-        assertThat(memory.read(2), `is`(255L))
-        assertThat(memory.read(3), `is`(26L))
-        assertThat(memory.read(4), `is`(0L))
-        assertThat(memory.read(5), `is`(0L))
-        assertThat(memory.read(6), `is`(8L))
-        assertThat(memory.read(7), `is`(0L))
+        assertEquals(4L, memory.read(0))
+        assertEquals(0L, memory.read(1))
+        assertEquals(255L, memory.read(2))
+        assertEquals(26L, memory.read(3))
+        assertEquals(0L, memory.read(4))
+        assertEquals(0L, memory.read(5))
+        assertEquals(8L, memory.read(6))
+        assertEquals(0L, memory.read(7))
     }
 
     /** ---- Read 16 bit test */
@@ -95,14 +93,14 @@ class MemoryDumpTest {
 
         MemoryDump.read(memory, "0004 FFFF 00FF 001A 0000 0000 0008")
 
-        assertThat(memory.read(0), `is`(4L))
-        assertThat(memory.read(1), `is`(65535L))
-        assertThat(memory.read(2), `is`(255L))
-        assertThat(memory.read(3), `is`(26L))
-        assertThat(memory.read(4), `is`(0L))
-        assertThat(memory.read(5), `is`(0L))
-        assertThat(memory.read(6), `is`(8L))
-        assertThat(memory.read(7), `is`(0L))
+        assertEquals(4L, memory.read(0))
+        assertEquals(65535L, memory.read(1))
+        assertEquals(255L, memory.read(2))
+        assertEquals(26L, memory.read(3))
+        assertEquals(0L, memory.read(4))
+        assertEquals(0L, memory.read(5))
+        assertEquals(8L, memory.read(6))
+        assertEquals(0L, memory.read(7))
     }
 
     /** ---- Read 32 bit tests */
@@ -123,7 +121,7 @@ class MemoryDumpTest {
 		memory.writeCommentedValue(1, 255, "Comment1")
 		memory.write(2, 8)
 
-		assertThat(MemoryDump.write(memory, BitWidth.BW_8), `is`("04 FF:Comment1 08"))
+		assertEquals("04 FF:Comment1 08", MemoryDump.write(memory, BitWidth.BW_8))
 	}
 
 	@Test
@@ -132,10 +130,10 @@ class MemoryDumpTest {
 
 		MemoryDump.read(memory, "04 FF:Comment1 08")
 
-		assertThat(memory.read(0), `is`(4L))
-		assertThat(memory.read(1), `is`(255L))
-		assertThat(memory.readComment(1), `is`("Comment1"))
-		assertThat(memory.read(2), `is`(8L))
+		assertEquals(4L, memory.read(0))
+		assertEquals(255L, memory.read(1))
+		assertEquals("Comment1", memory.readComment(1))
+		assertEquals(8L, memory.read(2))
 	}
 
 	@Test
@@ -145,7 +143,7 @@ class MemoryDumpTest {
 		memory.writeCommentedValue(1, 255, "Bla:Blu Bli")
 		memory.write(2, 8)
 
-		assertThat(MemoryDump.write(memory, BitWidth.BW_8), `is`("04 FF:Bla\\:Blu\\ Bli 08"))
+		assertEquals("04 FF:Bla\\:Blu\\ Bli 08", MemoryDump.write(memory, BitWidth.BW_8))
 	}
 
 	@Test
@@ -154,10 +152,10 @@ class MemoryDumpTest {
 
 		MemoryDump.read(memory, "04 FF:Bla\\:Blu\\ Bli 08")
 
-		assertThat(memory.read(0), `is`(4L))
-		assertThat(memory.read(1), `is`(255L))
-		assertThat(memory.readComment(1), `is`("Bla:Blu Bli"))
-		assertThat(memory.read(2), `is`(8L))
+		assertEquals(4L, memory.read(0))
+		assertEquals(255L, memory.read(1))
+		assertEquals("Bla:Blu Bli", memory.readComment(1))
+		assertEquals(8L, memory.read(2))
 	}
 
 	@Test
@@ -189,7 +187,7 @@ class MemoryDumpTest {
 
 		MemoryDump.readNewlineSeparated(memory, data)
 
-		assertThat(memory.read(0), `is`("7000".toLong(16)))
-		assertThat(memory.readComment(0), `is`("Initialize I at 0800"))
+		assertEquals("7000".toLong(16), memory.read(0))
+		assertEquals("Initialize I at 0800", memory.readComment(0))
 	}
 }

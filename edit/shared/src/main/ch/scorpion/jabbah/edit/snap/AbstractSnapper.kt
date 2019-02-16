@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.edit.snap
 
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.edit.*
 
 /**

@@ -6,7 +6,6 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
 import ch.scorpion.antares.view.truthtable.TruthTableView
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.Properties

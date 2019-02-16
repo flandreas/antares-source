@@ -7,11 +7,8 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.ClassRule
-import org.junit.Test
-
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [TriStateBufferGate].
@@ -19,8 +16,9 @@ import org.junit.Test
 class TriStateBufferGateTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = AntaresTestRule()
+	    init {
+		    AntaresTestRule.configure()
+	    }
     }
 
     private val signalHandler = ForwardSignalHandler()
@@ -33,13 +31,13 @@ class TriStateBufferGateTest {
         gate.getInput<DigitalSignal>("EN").setIncomingSignal(Word.of(true), signalHandler)
 
         gate.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(true), signalHandler)
-        assertThat(gate.getOutput<Word>().getOutgoingSignal(), `is`(Word.of(true)))
+        assertEquals(Word.of(true), gate.getOutput<Word>().getOutgoingSignal())
 
         gate.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(false), signalHandler)
-        assertThat(gate.getOutput<Word>().getOutgoingSignal(), `is`(Word.of(false)))
+        assertEquals(Word.of(false), gate.getOutput<Word>().getOutgoingSignal())
 
         gate.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(Bit.Undefined), signalHandler)
-        assertThat(gate.getOutput<Word>().getOutgoingSignal(), `is`(Word.of(Bit.Undefined)))
+        assertEquals(Word.of(Bit.Undefined), gate.getOutput<Word>().getOutgoingSignal())
     }
 
     @Test
@@ -48,7 +46,7 @@ class TriStateBufferGateTest {
         gate.getInput<DigitalSignal>("EN").setIncomingSignal(Word.of(false), signalHandler)
         gate.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(true), signalHandler)
 
-        assertThat(gate.getOutput<Word>().getOutgoingSignal(), `is`(Word.of(Bit.Undefined)))
+        assertEquals(Word.of(Bit.Undefined), gate.getOutput<Word>().getOutgoingSignal())
     }
 
     // Negative
@@ -59,13 +57,13 @@ class TriStateBufferGateTest {
         gate.getInput<DigitalSignal>("EN").setIncomingSignal(Word.of(false), signalHandler)
 
         gate.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(true), signalHandler)
-        assertThat(gate.getOutput<Word>().getOutgoingSignal(), `is`(Word.of(true)))
+        assertEquals(Word.of(true), gate.getOutput<Word>().getOutgoingSignal())
 
         gate.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(false), signalHandler)
-        assertThat(gate.getOutput<Word>().getOutgoingSignal(), `is`(Word.of(false)))
+        assertEquals(Word.of(false), gate.getOutput<Word>().getOutgoingSignal())
 
         gate.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(Bit.Undefined), signalHandler)
-        assertThat(gate.getOutput<Word>().getOutgoingSignal(), `is`(Word.of(Bit.Undefined)))
+        assertEquals(Word.of(Bit.Undefined), gate.getOutput<Word>().getOutgoingSignal())
 
     }
 
@@ -75,6 +73,6 @@ class TriStateBufferGateTest {
         gate.getInput<DigitalSignal>("EN").setIncomingSignal(Word.of(true), signalHandler)
         gate.getInput<DigitalSignal>(1).setIncomingSignal(Word.of(true), signalHandler)
 
-        assertThat(gate.getOutput<Word>().getOutgoingSignal(), `is`(Word.of(Bit.Undefined)))
+        assertEquals(Word.of(Bit.Undefined), gate.getOutput<Word>().getOutgoingSignal())
     }
 }

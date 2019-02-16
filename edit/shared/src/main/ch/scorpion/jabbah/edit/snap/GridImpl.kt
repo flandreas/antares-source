@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.edit.snap
 
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.Rectangle2D

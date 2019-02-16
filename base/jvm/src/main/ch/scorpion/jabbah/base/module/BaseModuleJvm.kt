@@ -22,7 +22,6 @@ object BaseModuleJvm : AbstractModule() {
 		defineKeyCodes()
 
 		System.SYSTEM = SystemJvm(useJavaFx)
-		Math = MathJvm()
 		LOG_SYSTEM = LogSystemJVM()
 		Translations = TranslationsJvm()
 

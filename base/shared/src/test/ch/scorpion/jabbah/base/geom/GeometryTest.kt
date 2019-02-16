@@ -1,12 +1,11 @@
 package ch.scorpion.jabbah.base.geom
 
-import ch.scorpion.jabbah.base.MathClass
+import ch.scorpion.jabbah.base.PI_2
+import ch.scorpion.jabbah.base.PI_4
+import ch.scorpion.jabbah.base.TWO_PI
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.math.PI
+import kotlin.test.*
 
 /** Unit tests for [Geometry].*/
 class GeometryTest {
@@ -18,40 +17,40 @@ class GeometryTest {
 
 	@Test
 	fun shouldCalculateAngleLocatedInOrigin() {
-		assertEquals(MathClass.PI_4, Geometry.angle(0.0, 0.0, 10.0, -10.0))
-		assertEquals(7 * MathClass.PI_4, Geometry.angle(0.0, 0.0, 10.0, 10.0))
+		assertEquals(PI_4, Geometry.angle(0.0, 0.0, 10.0, -10.0))
+		assertEquals(7 * PI_4, Geometry.angle(0.0, 0.0, 10.0, 10.0))
 	}
 
 	@Test
 	fun shouldCalculateAngleNotLocatedInOrigin() {
-		assertEquals(MathClass.PI_4, Geometry.angle(100.0, 0.0, 110.0, -10.0))
-		assertEquals(7 * MathClass.PI_4, Geometry.angle(0.0, 100.0, 10.0, 110.0))
+		assertEquals(PI_4, Geometry.angle(100.0, 0.0, 110.0, -10.0))
+		assertEquals(7 * PI_4, Geometry.angle(0.0, 100.0, 10.0, 110.0))
 	}
 
 	@Test
 	fun shouldWrapAngle() {
 		assertEquals(0.0, Geometry.wrapAngle(0.0))
-		assertEquals(0.0, Geometry.wrapAngle(MathClass.TWO_PI))
-		assertEquals(0.0, Geometry.wrapAngle(2 * MathClass.TWO_PI))
-		assertEquals(MathClass.PI, Geometry.wrapAngle(1.5 * MathClass.TWO_PI))
+		assertEquals(0.0, Geometry.wrapAngle(TWO_PI))
+		assertEquals(0.0, Geometry.wrapAngle(2 * TWO_PI))
+		assertEquals(PI, Geometry.wrapAngle(1.5 * TWO_PI))
 	}
 
 	@Test
 	fun shouldWrapNegativeAngle() {
-		assertEquals(3 * MathClass.PI_2, Geometry.wrapAngle(-MathClass.PI_2))
-		assertEquals(3 * MathClass.PI_2, Geometry.wrapAngle(-MathClass.TWO_PI - MathClass.PI_2))
+		assertEquals(3 * PI_2, Geometry.wrapAngle(-PI_2))
+		assertEquals(3 * PI_2, Geometry.wrapAngle(-TWO_PI - PI_2))
 	}
 
 	@Test
 	fun shouldBeAntiClockwiseAngleChange() {
 		assertFalse(Geometry.isClockwiseAngleChange(0.0, 0.0))
-		assertFalse(Geometry.isClockwiseAngleChange(0.0, MathClass.PI_2))
-		assertFalse(Geometry.isClockwiseAngleChange(3 * MathClass.TWO_PI, MathClass.PI_2))
+		assertFalse(Geometry.isClockwiseAngleChange(0.0, PI_2))
+		assertFalse(Geometry.isClockwiseAngleChange(3 * TWO_PI, PI_2))
 	}
 
 	@Test
 	fun shouldBeClockwiseAngleChange() {
-		assertTrue(Geometry.isClockwiseAngleChange(MathClass.PI_2, 0.0))
-		assertTrue(Geometry.isClockwiseAngleChange(MathClass.PI_2, 3 * MathClass.TWO_PI))
+		assertTrue(Geometry.isClockwiseAngleChange(PI_2, 0.0))
+		assertTrue(Geometry.isClockwiseAngleChange(PI_2, 3 * TWO_PI))
 	}
 }

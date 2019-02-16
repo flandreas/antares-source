@@ -1,67 +1,67 @@
 package ch.scorpion.antares.model.truthtable
 
 import ch.scorpion.antares.model.signal.Bit
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Unit tests for [TruthTableModel].
  */
 class TruthTableModelTest {
 
-    @Test
-    fun shouldAssignDefaultColumnNames() {
-        val model = TruthTableModel(3, 2)
-        assertThat(model.inputColumnNames[0], `is`("A"))
-        assertThat(model.inputColumnNames[1], `is`("B"))
-        assertThat(model.inputColumnNames[2], `is`("C"))
-        assertThat(model.outputColumnNames[0], `is`("O1"))
-        assertThat(model.outputColumnNames[1], `is`("O2"))
-    }
+	@Test
+	fun shouldAssignDefaultColumnNames() {
+		val model = TruthTableModel(3, 2)
+		assertEquals("A", model.inputColumnNames[0])
+		assertEquals("B", model.inputColumnNames[1])
+		assertEquals("C", model.inputColumnNames[2])
+		assertEquals("O1", model.outputColumnNames[0])
+		assertEquals("O2", model.outputColumnNames[1])
+	}
 
-    @Test
-    fun singleOutputShouldHaveUnnumberedColumnName() {
-        val model = TruthTableModel(2, 1)
-        assertThat(model.inputColumnNames[0], `is`("A"))
-        assertThat(model.inputColumnNames[1], `is`("B"))
-        assertThat(model.outputColumnNames[0], `is`("O"))
-    }
+	@Test
+	fun singleOutputShouldHaveUnnumberedColumnName() {
+		val model = TruthTableModel(2, 1)
+		assertEquals("A", model.inputColumnNames[0])
+		assertEquals("B", model.inputColumnNames[1])
+		assertEquals("O", model.outputColumnNames[0])
+	}
 
-    @Test
-    fun shouldPredefineModel() {
-        val model = TruthTableModel(2, 1)
-        assertThat(model.rows.size, `is`(4))
-        assertThat(model.rows[0].input, `is`(arrayOf(Bit.False, Bit.False)))
-        assertThat(model.rows[1].input, `is`(arrayOf(Bit.True, Bit.False)))
-        assertThat(model.outputOf(arrayOf(Bit.True, Bit.True))[0], `is`(Bit.False))
-    }
+	@Test
+	fun shouldPredefineModel() {
+		val model = TruthTableModel(2, 1)
+		assertEquals(4, model.rows.size)
+		assertTrue(arrayOf(Bit.False, Bit.False).contentEquals(model.rows[0].input))
+		assertTrue(arrayOf(Bit.True, Bit.False).contentEquals(model.rows[1].input))
+		assertEquals(Bit.False, model.outputOf(arrayOf(Bit.True, Bit.True))[0])
+	}
 
-    @Test
-    fun shouldPredefineWithInts() {
-        val model = TruthTableModel(2, 1)
-        model.define(intArrayOf(0, 0), 0)
-        model.define(intArrayOf(0, 1), 1)
-        model.define(intArrayOf(1, 0), 1)
-        model.define(intArrayOf(1, 1), 1)
-        assertThat(model.outputOf(intArrayOf(0, 0)), `is`(intArrayOf(0)))
-        assertThat(model.outputOf(intArrayOf(1, 1)), `is`(intArrayOf(1)))
-    }
+	@Test
+	fun shouldPredefineWithInts() {
+		val model = TruthTableModel(2, 1)
+		model.define(intArrayOf(0, 0), 0)
+		model.define(intArrayOf(0, 1), 1)
+		model.define(intArrayOf(1, 0), 1)
+		model.define(intArrayOf(1, 1), 1)
+		assertTrue(intArrayOf(0).contentEquals(model.outputOf(intArrayOf(0, 0))))
+		assertTrue(intArrayOf(1).contentEquals(model.outputOf(intArrayOf(1, 1))))
+	}
 
-    @Test
-    fun shouldGetDefinedOutputs() {
-        val model = createOrGateModel()
-        assertThat(model.outputOf(arrayOf(Bit.False, Bit.False))[0], `is`(Bit.False))
-        assertThat(model.outputOf(arrayOf(Bit.True, Bit.False))[0], `is`(Bit.True))
-    }
+	@Test
+	fun shouldGetDefinedOutputs() {
+		val model = createOrGateModel()
+		assertEquals(Bit.False, model.outputOf(arrayOf(Bit.False, Bit.False))[0])
+		assertEquals(Bit.True, model.outputOf(arrayOf(Bit.True, Bit.False))[0])
+	}
 
-    private fun createOrGateModel(): TruthTableModel {
-        val model = TruthTableModel(2, 1)
-        model.define(arrayOf(Bit.False, Bit.False), Bit.False)
-        model.define(arrayOf(Bit.False, Bit.True), Bit.True)
-        model.define(arrayOf(Bit.True, Bit.False), Bit.True)
-        model.define(arrayOf(Bit.True, Bit.True), Bit.False)
-        return model
-    }
+	private fun createOrGateModel(): TruthTableModel {
+		val model = TruthTableModel(2, 1)
+		model.define(arrayOf(Bit.False, Bit.False), Bit.False)
+		model.define(arrayOf(Bit.False, Bit.True), Bit.True)
+		model.define(arrayOf(Bit.True, Bit.False), Bit.True)
+		model.define(arrayOf(Bit.True, Bit.True), Bit.False)
+		return model
+	}
 
 }

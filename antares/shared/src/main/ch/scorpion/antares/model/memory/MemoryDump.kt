@@ -2,7 +2,6 @@ package ch.scorpion.antares.model.memory
 
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
@@ -32,46 +31,46 @@ object MemoryDump {
 	/** The regular expression for separating cell value and optional cell comment.*/
 	private val cellTokenSeparationRegex = Pattern.compile("(?<!\\\\)$COMMENT_DELIMITER")
 
-    /**
-     * Writes the contents of the specified [Memory] into a new [String].
-     */
-    fun write(memory: Memory, bitWidth: BitWidth): String {
-        val builder = StringBuilder()
-        val mask = BitOperation.power(bitWidth.width.toLong()) - 1L
-        val length = Math.max(2, bitWidth.width / 4)
+	/**
+	 * Writes the contents of the specified [Memory] into a new [String].
+	 */
+	fun write(memory: Memory, bitWidth: BitWidth): String {
+		val builder = StringBuilder()
+		val mask = BitOperation.power(bitWidth.width.toLong()) - 1L
+		val length = Math.max(2, bitWidth.width / 4)
 
-        val cellIter = ZeroFiller(memory.getNonZeroCells())
-        while (cellIter.hasNext()) {
-            val cell = cellIter.next()
-            writePaddedHex(cell.value, mask, length, builder)
-	        if (StringUtils.isNotEmpty(cell.comment)) {
-		        builder.append(COMMENT_DELIMITER)
-		        writeEscapedComment(cell.comment!!, builder)
-	        }
-            if (cellIter.hasNext()) {
-                builder.append(CELL_DELIMITER)
-            }
-        }
-        return builder.toString()
-    }
+		val cellIter = ZeroFiller(memory.getNonZeroCells())
+		while (cellIter.hasNext()) {
+			val cell = cellIter.next()
+			writePaddedHex(cell.value, mask, length, builder)
+			if (StringUtils.isNotEmpty(cell.comment)) {
+				builder.append(COMMENT_DELIMITER)
+				writeEscapedComment(cell.comment!!, builder)
+			}
+			if (cellIter.hasNext()) {
+				builder.append(CELL_DELIMITER)
+			}
+		}
+		return builder.toString()
+	}
 
-    /**
-     * Reads the dump from the specified [String] into a [Memory].
-     */
-    fun read(memory: Memory, dump: String) {
-        memory.clear()
-	    for ((address, cell) in dump.split(cellSeparationRegex).withIndex()) {
-	        val cellTokens = cell.split(cellTokenSeparationRegex)
-	        when (cellTokens.size) {
-		        1 -> memory.write(address, BitOperation.hexToLong(cellTokens[0]))
-		        2 -> memory.writeCommentedValue(address, BitOperation.hexToLong(cellTokens[0]), readEscapedComment(cellTokens[1]))
-		        else -> {
-			        LOG.error("MemoryDump: illegal syntax at address $address in cell $cell")
-			        throw IllegalArgumentException("Illegal syntax in MemoryDump")
-		        }
-	        }
-	    }
-    }
+	/**
+	 * Reads the dump from the specified [String] into a [Memory].
+	 */
+	fun read(memory: Memory, dump: String) {
+		memory.clear()
+		for ((address, cell) in dump.split(cellSeparationRegex).withIndex()) {
+			val cellTokens = cell.split(cellTokenSeparationRegex)
+			when (cellTokens.size) {
+				1 -> memory.write(address, BitOperation.hexToLong(cellTokens[0]))
+				2 -> memory.writeCommentedValue(address, BitOperation.hexToLong(cellTokens[0]), readEscapedComment(cellTokens[1]))
+				else -> {
+					LOG.error("MemoryDump: illegal syntax at address $address in cell $cell")
+					throw IllegalArgumentException("Illegal syntax in MemoryDump")
+				}
+			}
+		}
+	}
 
 	fun readNewlineSeparated(memory: Memory, dump: String) {
 		memory.clear()
@@ -89,9 +88,9 @@ object MemoryDump {
 		}
 	}
 
-    private fun writePaddedHex(value: Long, mask:Long, length: Int, builder: StringBuilder) {
-        builder.append(BitOperation.longToHex(value and mask).toUpperCase().padStart(length, '0'))
-    }
+	private fun writePaddedHex(value: Long, mask: Long, length: Int, builder: StringBuilder) {
+		builder.append(BitOperation.longToHex(value and mask).toUpperCase().padStart(length, '0'))
+	}
 
 	private fun writeEscapedComment(comment: String, builder: StringBuilder) {
 		builder.append(

@@ -5,11 +5,8 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.ClassRule
-import org.junit.Test
-
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [Concentrator].
@@ -17,8 +14,9 @@ import org.junit.Test
 class ConcentratorTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = AntaresTestRule()
+	    init {
+		    AntaresTestRule.configure()
+	    }
     }
 
     private val signalHandler = ForwardSignalHandler()
@@ -33,8 +31,8 @@ class ConcentratorTest {
         concentrator.getInput<Any>(5).setIncomingSignal(Word.of(false), signalHandler)
         concentrator.act(signalHandler, concentrator.createActorData(concentrator.getInput<DigitalSignal>(5)))
 
-        assertThat((concentrator.getOutput<Any>().getOutgoingSignal() as Word).getBitWidth(), `is`(BitWidth.BW_4))
-        assertThat((concentrator.getOutput<Any>().getOutgoingSignal() as Word).getValue(), `is`(6L))
+        assertEquals(BitWidth.BW_4, (concentrator.getOutput<Any>().getOutgoingSignal() as Word).getBitWidth())
+        assertEquals(6L, (concentrator.getOutput<Any>().getOutgoingSignal() as Word).getValue())
     }
 
     @Test
@@ -47,7 +45,7 @@ class ConcentratorTest {
         concentrator.getInput<Any>(5).setIncomingSignal(Word.of(BitWidth.BW_2, 3L), signalHandler)
         concentrator.act(signalHandler, concentrator.createActorData(concentrator.getInput<DigitalSignal>(5)))
 
-        assertThat((concentrator.getOutput<Any>().getOutgoingSignal() as Word).getBitWidth(), `is`(BitWidth.BW_8))
-        assertThat((concentrator.getOutput<Any>().getOutgoingSignal() as Word).getValue(), `is`(254L))
+        assertEquals(BitWidth.BW_8, (concentrator.getOutput<Any>().getOutgoingSignal() as Word).getBitWidth())
+        assertEquals(254L, (concentrator.getOutput<Any>().getOutgoingSignal() as Word).getValue())
     }
 }

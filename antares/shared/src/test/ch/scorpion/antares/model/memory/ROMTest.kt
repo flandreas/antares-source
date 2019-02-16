@@ -4,14 +4,11 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
-import com.nhaarman.mockitokotlin2.mock
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.ClassRule
-import org.junit.Test
-
+import io.mockk.mockk
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit test for [ROM].
@@ -19,23 +16,24 @@ import org.junit.Test
 class ROMTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = AntaresTestRule()
+	    init {
+		    AntaresTestRule.configure()
+	    }
     }
 
     private val rom = ROM()
     private val calculator = ROM.CALCULATOR
-    private val signalHandler: SignalHandler = mock()
+    private val signalHandler: SignalHandler = mockk(relaxed = true)
 
     @Test
     fun shouldReadAndWrite() {
         rom.write(0, 99)
-        assertThat(rom.read(0), `is`(99L))
+        assertEquals(99L, rom.read(0))
     }
 
     @Test
     fun shouldReadZeroFromUnwrittenAddress() {
-        assertThat(rom.read(1234), `is`(0L))
+        assertEquals(0L, rom.read(1234))
     }
 
     @Test
@@ -47,7 +45,7 @@ class ROMTest {
         calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
 
         val dataOutput = rom.getOutput<DigitalSignal>(ROM.DATA_PORT_NAME)
-        assertThat(dataOutput.getOutgoingSignal() as Word, `is`(Word.of(BitWidth.BW_8, 99L)))
+        assertEquals(Word.of(BitWidth.BW_8, 99L), dataOutput.getOutgoingSignal() as Word)
     }
 
     @Test
@@ -59,7 +57,7 @@ class ROMTest {
         calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
 
         val dataOutput = rom.getOutput<DigitalSignal>(ROM.DATA_PORT_NAME)
-        assertThat(dataOutput.getOutgoingSignal() as Word, `is`(Word.undefined(BitWidth.BW_8)))
+        assertEquals(Word.undefined(BitWidth.BW_8), dataOutput.getOutgoingSignal() as Word)
     }
 
     @Test
@@ -71,7 +69,7 @@ class ROMTest {
         calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
 
         val dataOutput = rom.getOutput<DigitalSignal>(ROM.DATA_PORT_NAME)
-        assertThat(dataOutput.getOutgoingSignal() as Word, `is`(Word.error(BitWidth.BW_8)))
+        assertEquals(Word.error(BitWidth.BW_8), dataOutput.getOutgoingSignal() as Word)
     }
 
     @Test
@@ -79,7 +77,7 @@ class ROMTest {
         rom.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 16L), signalHandler)
 	    rom.getChipSelectInput().setIncomingSignal(Word.of(BitWidth.BW_1, 1L), signalHandler)
 	    calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
-        assertThat(rom.currentAddress, `is`(16))
+        assertEquals(16, rom.currentAddress)
     }
 
     @Test
@@ -88,6 +86,6 @@ class ROMTest {
         rom.getAddressInput().setIncomingSignal(Word.of(BitWidth.BW_8, 1L), signalHandler)
 	    rom.getChipSelectInput().setIncomingSignal(Word.of(BitWidth.BW_1, 1L), signalHandler)
 	    calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()) as GraphActorData, signalHandler)
-        assertThat(rom.data, `is`(255L))
+        assertEquals(255L, rom.data)
     }
 }

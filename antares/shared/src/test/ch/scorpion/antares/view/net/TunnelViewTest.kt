@@ -7,10 +7,9 @@ import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /** Unit tests for [TunnelView].*/
 class TunnelViewTest : AbstractCircuitTest() {
@@ -23,7 +22,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 
 	override fun getCircuitView(): GraphView<GraphElementView<*>> = circuitView
 
-	@Before
+	@BeforeTest
 	fun setupCircuit() {
 		builder = TestCircuitBuilder("test", styleProvider, eventBus)
 		sender = builder.addVerticeView(TunnelView("A"))
@@ -38,7 +37,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedToMillis(1100L)
 
-		assertThat(sender.model!!.getInOrOutSignal() as Word, `is`(Word.of(false)))
+		assertEquals(Word.of(false), sender.model!!.getInOrOutSignal() as Word)
 	}
 
 	@Test
@@ -48,8 +47,8 @@ class TunnelViewTest : AbstractCircuitTest() {
 		switchView.model!!.toggle(scheduler)
 		proceedToMillis(1100L)
 
-		assertThat(sender.model!!.getInOrOutSignal() as Word, `is`(Word.of(true)))
-		assertThat(receiver.model!!.getInOrOutSignal() as Word, `is`(Word.of(true)))
+		assertEquals(Word.of(true), sender.model!!.getInOrOutSignal() as Word)
+		assertEquals(Word.of(true), receiver.model!!.getInOrOutSignal() as Word)
 	}
 
 	@Test
@@ -60,8 +59,8 @@ class TunnelViewTest : AbstractCircuitTest() {
 		switchView.model!!.toggle(scheduler)
 		proceedToMillis(1100L)
 
-		assertThat(receiver.model!!.getInOrOutSignal() as Word, `is`(Word.of(true)))
-		assertThat(receiver2.model!!.getInOrOutSignal() as Word, `is`(Word.of(true)))
+		assertEquals(Word.of(true), receiver.model!!.getInOrOutSignal() as Word)
+		assertEquals(Word.of(true), receiver2.model!!.getInOrOutSignal() as Word)
 	}
 
 	@Test
@@ -72,8 +71,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 		switchView.model!!.toggle(scheduler)
 		proceedToMillis(1100L)
 
-		assertThat(receiver.model!!.getInOrOutSignal() as Word, `is`(Word.of(true)))
-		assertThat(tunnelB.model!!.getInOrOutSignal() as Word, `is`(Word.undefined(BitWidth.BW_1)))
-
+		assertEquals(Word.of(true), receiver.model!!.getInOrOutSignal() as Word)
+		assertEquals(Word.undefined(BitWidth.BW_1), tunnelB.model!!.getInOrOutSignal() as Word)
 	}
 }

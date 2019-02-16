@@ -1,10 +1,9 @@
 package ch.scorpion.antares.model.memory
 
 import ch.scorpion.antares.AntaresTestRule
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 /**
  * Unit tests for [ZeroFiller].
@@ -12,8 +11,9 @@ import org.junit.Test
 class ZeroFillerTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = AntaresTestRule()
+	    init {
+		    AntaresTestRule.configure()
+	    }
     }
 
     @Test
@@ -23,9 +23,9 @@ class ZeroFillerTest {
 
         val iter = ZeroFiller(memory.getNonZeroCells())
 
-        assertThat(iter.next(), `is`(MemoryCell(0, 0L)))
-        assertThat(iter.next(), `is`(MemoryCell(1, 11L)))
-        assertThat(iter.hasNext(), `is`(false))
+        assertEquals(MemoryCell(0, 0L), iter.next())
+        assertEquals(MemoryCell(1, 11L), iter.next())
+        assertFalse(iter.hasNext())
     }
 
     @Test
@@ -36,9 +36,9 @@ class ZeroFillerTest {
 
         val iter = ZeroFiller(memory.getNonZeroCells())
 
-        assertThat(iter.next(), `is`(MemoryCell(0, 5L)))
-        assertThat(iter.next(), `is`(MemoryCell(1, 11L)))
-        assertThat(iter.hasNext(), `is`(false))
+        assertEquals(MemoryCell(0, 5L), iter.next())
+        assertEquals(MemoryCell(1, 11L), iter.next())
+        assertFalse(iter.hasNext())
     }
 
     @Test
@@ -49,10 +49,10 @@ class ZeroFillerTest {
 
         val iter = ZeroFiller(memory.getNonZeroCells())
 
-        assertThat(iter.next(), `is`(MemoryCell(0, 5L)))
-        assertThat(iter.next(), `is`(MemoryCell(1, 0L)))
-        assertThat(iter.next(), `is`(MemoryCell(2, 0L)))
-        assertThat(iter.next(), `is`(MemoryCell(3, 11L)))
-        assertThat(iter.hasNext(), `is`(false))
+        assertEquals(MemoryCell(0, 5L), iter.next())
+        assertEquals(MemoryCell(1, 0L), iter.next())
+        assertEquals(MemoryCell(2, 0L), iter.next())
+        assertEquals(MemoryCell(3, 11L), iter.next())
+        assertFalse(iter.hasNext())
     }
 }

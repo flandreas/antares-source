@@ -3,11 +3,9 @@ package ch.scorpion.jabbah.edit.model.polyline
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Geometry
-import ch.scorpion.jabbah.base.Math
-import ch.scorpion.jabbah.base.MathClass
 import kotlin.math.PI
 
 /**

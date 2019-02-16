@@ -6,7 +6,6 @@ import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.MouseEvent
@@ -44,384 +43,384 @@ import ch.scorpion.jabbah.io.*
  * A view of a [RAM].
  */
 class RAMView(
-    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    private val eventBus: EventBus = BaseModule.eventBus,
-    model: RAM = RAM()
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	private val eventBus: EventBus = BaseModule.eventBus,
+	model: RAM = RAM()
 ) : DigitalComponentView<RAM>(styleProvider, model) {
 
-    companion object {
-        const val WIDTH = 24 * Look.GRID
-        const val HEIGHT = 12 * Look.GRID
-        const val LABEL_VERTICAL_FACTOR = 0.3f
-        const val CLOCK_PORT_X_FACTOR = 6
-        const val CS_PORT_X_FACTOR = 10
-        const val WRITE_PORT_X_FACTOR = 14
-        const val CLEAR_PORT_X_FACTOR = 18
-    }
+	companion object {
+		const val WIDTH = 24 * Look.GRID
+		const val HEIGHT = 12 * Look.GRID
+		const val LABEL_VERTICAL_FACTOR = 0.3f
+		const val CLOCK_PORT_X_FACTOR = 6
+		const val CS_PORT_X_FACTOR = 10
+		const val WRITE_PORT_X_FACTOR = 14
+		const val CLEAR_PORT_X_FACTOR = 18
+	}
 
-    private val inputEventHandler = DoubleClickHandler()
-    private val actorInteractionHandler = DoubleClickActorHandler()
+	private val inputEventHandler = DoubleClickHandler()
+	private val actorInteractionHandler = DoubleClickActorHandler()
 
-    /**
-     * The text to be used for overwriting the default [RAMView] text, if any. If `null` no overwriting
-     * takes place. Can also be set to an empty [String] in order to hide the predefined label.
-     */
-    var text: String? = null
-        set(value) {
-            if (value != text) {
-                field = value
-                label.text = if (StringUtils.isEmpty(value)) buildLabelText() else value!!
-            }
-        }
+	/**
+	 * The text to be used for overwriting the default [RAMView] text, if any. If `null` no overwriting
+	 * takes place. Can also be set to an empty [String] in order to hide the predefined label.
+	 */
+	var text: String? = null
+		set(value) {
+			if (value != text) {
+				field = value
+				label.text = if (StringUtils.isEmpty(value)) buildLabelText() else value!!
+			}
+		}
 
-    private val label = Label(
-            font = font,
-            text = buildLabelText(),
-            horizontalAlignment = HorizontalAlignment.CENTER,
-            verticalAlignment = VerticalAlignment.CENTER,
-            location = Point2D(x + width / 2, y + LABEL_VERTICAL_FACTOR * height))
+	private val label = Label(
+		font = font,
+		text = buildLabelText(),
+		horizontalAlignment = HorizontalAlignment.CENTER,
+		verticalAlignment = VerticalAlignment.CENTER,
+		location = Point2D(x + width / 2, y + LABEL_VERTICAL_FACTOR * height))
 
-    private var contentsView = AddressableContentsView(model)
+	private var contentsView = AddressableContentsView(model)
 
-    override fun modelExchanged(oldModel: RAM?) {
-        super.modelExchanged(oldModel)
+	override fun modelExchanged(oldModel: RAM?) {
+		super.modelExchanged(oldModel)
 
-        val addressPV = DigitalPortView(
-            styleProvider = styleProvider,
-            port = model!!.getAddressInput(),
-            direction = Direction.WEST)
-        addressPV.setLocation(addressPV.length, 0)
-        addPortView(addressPV)
+		val addressPV = DigitalPortView(
+			styleProvider = styleProvider,
+			port = model!!.getAddressInput(),
+			direction = Direction.WEST)
+		addressPV.setLocation(addressPV.length, 0)
+		addPortView(addressPV)
 
-        val dataPV = DigitalPortView(
-            styleProvider = styleProvider,
-            port = model!!.getDataPort(),
-            direction = Direction.EAST)
-        dataPV.setLocation(dataPV.length + WIDTH, 0)
-        addPortView(dataPV)
+		val dataPV = DigitalPortView(
+			styleProvider = styleProvider,
+			port = model!!.getDataPort(),
+			direction = Direction.EAST)
+		dataPV.setLocation(dataPV.length + WIDTH, 0)
+		addPortView(dataPV)
 
-        if (model!!.hasClock) {
-            val clockPV = DigitalPortView(
-                styleProvider = styleProvider,
-                port = model!!.getClockInput()!!,
-                direction = Direction.SOUTH)
-            clockPV.setLocation(clockPV.length + CLOCK_PORT_X_FACTOR * Look.GRID, HEIGHT / 2)
-            addPortView(clockPV)
-        }
+		if (model!!.hasClock) {
+			val clockPV = DigitalPortView(
+				styleProvider = styleProvider,
+				port = model!!.getClockInput()!!,
+				direction = Direction.SOUTH)
+			clockPV.setLocation(clockPV.length + CLOCK_PORT_X_FACTOR * Look.GRID, HEIGHT / 2)
+			addPortView(clockPV)
+		}
 
-        val csPV = DigitalPortView(
-            styleProvider = styleProvider,
-            port = model!!.getChipSelectInput(),
-            direction = Direction.SOUTH)
-        csPV.setLocation(csPV.length + CS_PORT_X_FACTOR * Look.GRID, HEIGHT / 2)
-        addPortView(csPV)
+		val csPV = DigitalPortView(
+			styleProvider = styleProvider,
+			port = model!!.getChipSelectInput(),
+			direction = Direction.SOUTH)
+		csPV.setLocation(csPV.length + CS_PORT_X_FACTOR * Look.GRID, HEIGHT / 2)
+		addPortView(csPV)
 
-        val writePV = DigitalPortView(
-            styleProvider = styleProvider,
-            port = model!!.getWriteInput(),
-            direction = Direction.SOUTH)
-        writePV.setLocation(writePV.length + WRITE_PORT_X_FACTOR * Look.GRID, HEIGHT / 2)
-        addPortView(writePV)
+		val writePV = DigitalPortView(
+			styleProvider = styleProvider,
+			port = model!!.getWriteInput(),
+			direction = Direction.SOUTH)
+		writePV.setLocation(writePV.length + WRITE_PORT_X_FACTOR * Look.GRID, HEIGHT / 2)
+		addPortView(writePV)
 
-        val clearPV = DigitalPortView(
-            styleProvider = styleProvider,
-            port = model!!.getClearInput(),
-            direction = Direction.SOUTH)
-        clearPV.setLocation(clearPV.length + CLEAR_PORT_X_FACTOR * Look.GRID, HEIGHT / 2)
-        addPortView(clearPV)
+		val clearPV = DigitalPortView(
+			styleProvider = styleProvider,
+			port = model!!.getClearInput(),
+			direction = Direction.SOUTH)
+		clearPV.setLocation(clearPV.length + CLEAR_PORT_X_FACTOR * Look.GRID, HEIGHT / 2)
+		addPortView(clearPV)
 
-        if (model != null) {
-	        label.text = buildLabelText()
-            contentsView = AddressableContentsView(
-                    addressable = model!!,
-                    rowsCount = contentRowsCount,
-                    columnsCount = contentColumnsCount,
-                    showDisassembler = false)
-        }
-    }
+		if (model != null) {
+			label.text = buildLabelText()
+			contentsView = AddressableContentsView(
+				addressable = model!!,
+				rowsCount = contentRowsCount,
+				columnsCount = contentColumnsCount,
+				showDisassembler = false)
+		}
+	}
 
-    init {
-        modelExchanged(null)
-        updateGeometry()
-    }
+	init {
+		modelExchanged(null)
+		updateGeometry()
+	}
 
-    /** ---- UI properties */
+	/** ---- UI properties */
 
-    var addressWidth: BitWidth
-        get() = model!!.addressWidth
-        set(value) {
-            invalidate()
-            model!!.setAddressWidth(value)
-            invalidate()
-            validate()
-        }
+	var addressWidth: BitWidth
+		get() = model!!.addressWidth
+		set(value) {
+			invalidate()
+			model!!.setAddressWidth(value)
+			invalidate()
+			validate()
+		}
 
-    var dataWidth: BitWidth
-        get() = model!!.dataWidth
-        set(value) {
-            invalidate()
-            model!!.setDataWidth(value)
-            invalidate()
-            validate()
-        }
-    var hasClock: Boolean
-        get() = model!!.hasClock
-        set(value) {
-            invalidate()
-            model!!.hasClock = value
-            modelExchanged(model)
-            invalidate()
-            validate()
-        }
+	var dataWidth: BitWidth
+		get() = model!!.dataWidth
+		set(value) {
+			invalidate()
+			model!!.setDataWidth(value)
+			invalidate()
+			validate()
+		}
+	var hasClock: Boolean
+		get() = model!!.hasClock
+		set(value) {
+			invalidate()
+			model!!.hasClock = value
+			modelExchanged(model)
+			invalidate()
+			validate()
+		}
 
-    var showContents: Boolean = false
-        set(value) {
-            if (field != value) {
-                field = value
-                updateGeometry()
-                validate()
-            }
-        }
+	var showContents: Boolean = false
+		set(value) {
+			if (field != value) {
+				field = value
+				updateGeometry()
+				validate()
+			}
+		}
 
-    var contentRowsCount: Int
-        get() = contentsView.rowsCount
-        set(value) {
-            if (value != contentRowsCount) {
-                contentsView.rowsCount = value
-                updateGeometry()
-                validate()
-            }
-        }
+	var contentRowsCount: Int
+		get() = contentsView.rowsCount
+		set(value) {
+			if (value != contentRowsCount) {
+				contentsView.rowsCount = value
+				updateGeometry()
+				validate()
+			}
+		}
 
-    var contentColumnsCount: Int
-        get() = contentsView.columnsCount
-        set(value) {
-            if (value != contentColumnsCount) {
-                contentsView.columnsCount = value
-                updateGeometry()
-                validate()
-            }
-        }
+	var contentColumnsCount: Int
+		get() = contentsView.columnsCount
+		set(value) {
+			if (value != contentColumnsCount) {
+				contentsView.columnsCount = value
+				updateGeometry()
+				validate()
+			}
+		}
 
-    /** ---- [Storable] interface */
+	/** ---- [Storable] interface */
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        if (showContents) {
-            writer.writeBoolean("showContents", showContents)
-        }
-        if (text != null) {
-            writer.writeString("text", text!!)
-        }
-        writer.writeInt("contentRowsCount", contentRowsCount)
-        writer.writeInt("contentColumnsCount", contentColumnsCount)
-    }
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		if (showContents) {
+			writer.writeBoolean("showContents", showContents)
+		}
+		if (text != null) {
+			writer.writeString("text", text!!)
+		}
+		writer.writeInt("contentRowsCount", contentRowsCount)
+		writer.writeInt("contentColumnsCount", contentColumnsCount)
+	}
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        if (reader.hasAttribute("showContents")) {
-            reader.requestResolution(this, Reference(
-                    name = "showContents",
-                    additionalInfo = reader.readBoolean("showContents"),
-                    resolveAfter = listOf(reader.readInt("modelId"))))
-        }
-        val tempText = if (reader.hasAttribute("text")) reader.readString("text") else null
-        // The default text depends on model data, so resolve the text after the model has been read
-        reader.requestResolution(this, Reference(
-                name = "text",
-                additionalInfo = tempText,
-                resolveAfter = listOf(reader.readInt("modelId"))))
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute("showContents")) {
+			reader.requestResolution(this, Reference(
+				name = "showContents",
+				additionalInfo = reader.readBoolean("showContents"),
+				resolveAfter = listOf(reader.readInt("modelId"))))
+		}
+		val tempText = if (reader.hasAttribute("text")) reader.readString("text") else null
+		// The default text depends on model data, so resolve the text after the model has been read
+		reader.requestResolution(this, Reference(
+			name = "text",
+			additionalInfo = tempText,
+			resolveAfter = listOf(reader.readInt("modelId"))))
 
-        if (reader.hasAttribute("contentRowsCount")) {
-            contentRowsCount = reader.readInt("contentRowsCount")
-        }
-        if (reader.hasAttribute("contentColumnsCount")) {
-            contentColumnsCount = reader.readInt("contentColumnsCount")
-        }
-    }
+		if (reader.hasAttribute("contentRowsCount")) {
+			contentRowsCount = reader.readInt("contentRowsCount")
+		}
+		if (reader.hasAttribute("contentColumnsCount")) {
+			contentColumnsCount = reader.readInt("contentColumnsCount")
+		}
+	}
 
-    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-        super.resolve(reference, referenceResolver)
-        if (reference.name == "text") {
-            text = reference.additionalInfo as String?
-        } else if (reference.name == "showContents") {
-            showContents = reference.additionalInfo as Boolean
-        }
-    }
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+		super.resolve(reference, referenceResolver)
+		if (reference.name == "text") {
+			text = reference.additionalInfo as String?
+		} else if (reference.name == "showContents") {
+			showContents = reference.additionalInfo as Boolean
+		}
+	}
 
-    /** ---- [Component] */
+	/** ---- [Component] */
 
-    override fun rotationChanged(newRotation: Rotation) {
-        super.rotationChanged(newRotation)
-        updateGeometry()
-    }
+	override fun rotationChanged(newRotation: Rotation) {
+		super.rotationChanged(newRotation)
+		updateGeometry()
+	}
 
-    /** ---- [AbstractGraphElementView] */
+	/** ---- [AbstractGraphElementView] */
 
-    override fun handleStateChanged(event: GraphElementEvent) {
-        label.text = if (text == null) buildLabelText() else text!!
-	    if (model!!.getChipSelectInput().getIncomingSignal() == Word.of(true)) {
-		    if (ExecutionModule.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe) {
-			    contentsView.handleCurrentAddressChanged()
-		    }
-	    }
-        super.handleStateChanged(event)
-    }
+	override fun handleStateChanged(event: GraphElementEvent) {
+		label.text = if (text == null) buildLabelText() else text!!
+		if (model!!.getChipSelectInput().getIncomingSignal() == Word.of(true)) {
+			if (ExecutionModule.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe) {
+				contentsView.handleCurrentAddressChanged()
+			}
+		}
+		super.handleStateChanged(event)
+	}
 
-    override fun drawImpl(context: DrawContext) {
-        if (context.useContextColors) {
-            drawImpl(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
-        } else {
-            drawImpl(context, foregroundColor, if (filled) backgroundColor else null)
-        }
-    }
+	override fun drawImpl(context: DrawContext) {
+		if (context.useContextColors) {
+			drawImpl(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
+		} else {
+			drawImpl(context, foregroundColor, if (filled) backgroundColor else null)
+		}
+	}
 
-    private fun drawImpl(context: DrawContext, lineColor: Color, fillColor: Color?) {
-        val oldColor = context.g.color
-        val oldStroke = context.g.stroke
+	private fun drawImpl(context: DrawContext, lineColor: Color, fillColor: Color?) {
+		val oldColor = context.g.color
+		val oldStroke = context.g.stroke
 
-	    if (shadow) {
-		    DropShadow.draw(context, transparency) {
-			    context.g.fill(bounds)
-		    }
-	    }
+		if (shadow) {
+			DropShadow.draw(context, transparency) {
+				context.g.fill(bounds)
+			}
+		}
 
-	    if (fillColor != null) {
-            context.g.color = fillColor
-            context.g.fill(bounds)
-        }
+		if (fillColor != null) {
+			context.g.color = fillColor
+			context.g.fill(bounds)
+		}
 
-        context.g.color = lineColor
-        context.g.stroke = stroke
-        context.g.draw(bounds)
+		context.g.color = lineColor
+		context.g.stroke = stroke
+		context.g.draw(bounds)
 
-        label.draw(context)
+		label.draw(context)
 
-        if (requireDrawContents(context)) {
-            context.g.translate(contentsView.x, contentsView.y)
-            context.g.rotate(rotation.inverse().angle)
-            context.g.translate(-contentsView.x, -contentsView.y)
-            contentsView.draw(context)
-            context.g.translate(contentsView.x, contentsView.y)
-            context.g.rotate(-rotation.inverse().angle)
-            context.g.translate(-contentsView.x, -contentsView.y)
-        }
+		if (requireDrawContents(context)) {
+			context.g.translate(contentsView.x, contentsView.y)
+			context.g.rotate(rotation.inverse().angle)
+			context.g.translate(-contentsView.x, -contentsView.y)
+			contentsView.draw(context)
+			context.g.translate(contentsView.x, contentsView.y)
+			context.g.rotate(-rotation.inverse().angle)
+			context.g.translate(-contentsView.x, -contentsView.y)
+		}
 
-        context.g.color = oldColor
-        context.g.stroke = oldStroke
+		context.g.color = oldColor
+		context.g.stroke = oldStroke
 
-        super.drawImpl(context)
-    }
+		super.drawImpl(context)
+	}
 
 	/** Determines whether drawing hte [AddressableContentsView] is required depending on the [CurrentSystemSpeedCategory].*/
 	private fun requireDrawContents(context: DrawContext): Boolean {
 		return showContents && (
 			!context.castedAppContext<GraphApplicationContext>()!!.isExecute
-			|| ExecutionModule.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe)
+				|| ExecutionModule.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe)
 	}
 
-    /** ---- [AbstractVerticeView] */
+	/** ---- [AbstractVerticeView] */
 
-    override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-        return inputEventHandler
-    }
+	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
+		return inputEventHandler
+	}
 
-    /** ---- [ActorView] */
+	/** ---- [ActorView] */
 
-    override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
-        return actorInteractionHandler
-    }
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
+		return actorInteractionHandler
+	}
 
-    /** ---- [ROMView] */
+	/** ---- [ROMView] */
 
-    private fun updateGeometry() {
-        invalidate()
-        contentsView.updateGeometry()
+	private fun updateGeometry() {
+		invalidate()
+		contentsView.updateGeometry()
 
-        val addressPV = getPortView(model!!.getAddressInput())!!
-        val x = addressPV.unconnectedLength
+		val addressPV = getPortView(model!!.getAddressInput())!!
+		val x = addressPV.unconnectedLength
 
-        val totalHeight = Look.scaleToDoubleGrid(calculateHeight())
-        val totalWidth = Look.scaleToDoubleGrid(calculateWidth())
-        setBounds(x, -totalHeight / 2, totalWidth, totalHeight)
+		val totalHeight = Look.scaleToDoubleGrid(calculateHeight())
+		val totalWidth = Look.scaleToDoubleGrid(calculateWidth())
+		setBounds(x, -totalHeight / 2, totalWidth, totalHeight)
 
-        if (showContents) {
-            contentsView.location = calculateContentsLocation()
-        }
-        label.location = Point2D(x + width / 2.0, y + ROMView.LABEL_INSET)
+		if (showContents) {
+			contentsView.location = calculateContentsLocation()
+		}
+		label.location = Point2D(x + width / 2.0, y + ROMView.LABEL_INSET)
 
-        addressPV.setLocation(addressPV.unconnectedLength, 0)
+		addressPV.setLocation(addressPV.unconnectedLength, 0)
 
-        val dataPV = getPortView(model!!.getDataPort())!!
-        dataPV.setLocation(dataPV.unconnectedLength + width, 0.0)
+		val dataPV = getPortView(model!!.getDataPort())!!
+		dataPV.setLocation(dataPV.unconnectedLength + width, 0.0)
 
-	    if (model!!.hasClock) {
-		    getPortView(model!!.getClockInput()!!)!!.setLocation(x + CLOCK_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
-	    }
-        getPortView(model!!.getChipSelectInput())!!.setLocation(x + CS_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
-        getPortView(model!!.getWriteInput())!!.setLocation(x + WRITE_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
-        getPortView(model!!.getClearInput())!!.setLocation(x + CLEAR_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
+		if (model!!.hasClock) {
+			getPortView(model!!.getClockInput()!!)!!.setLocation(x + CLOCK_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
+		}
+		getPortView(model!!.getChipSelectInput())!!.setLocation(x + CS_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
+		getPortView(model!!.getWriteInput())!!.setLocation(x + WRITE_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
+		getPortView(model!!.getClearInput())!!.setLocation(x + CLEAR_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
 
-        invalidate()
+		invalidate()
 
-        update()
-    }
+		update()
+	}
 
-    private fun calculateContentsLocation(): Point2D {
-        return when(rotation) {
-            Rotation.R0 -> Point2D(x + width / 2 - contentsView.width / 2, -contentsView.height / 2)
-            Rotation.R90 -> Point2D(x + width / 2 + contentsView.height / 2, y + height / 2 - contentsView.width / 2)
-            Rotation.R180 -> Point2D(x + width / 2 + contentsView.width / 2, contentsView.height / 2)
-            Rotation.R270 -> Point2D(x + width / 2 - contentsView.height / 2, contentsView.width / 2)
-        }
-    }
+	private fun calculateContentsLocation(): Point2D {
+		return when (rotation) {
+			Rotation.R0 -> Point2D(x + width / 2 - contentsView.width / 2, -contentsView.height / 2)
+			Rotation.R90 -> Point2D(x + width / 2 + contentsView.height / 2, y + height / 2 - contentsView.width / 2)
+			Rotation.R180 -> Point2D(x + width / 2 + contentsView.width / 2, contentsView.height / 2)
+			Rotation.R270 -> Point2D(x + width / 2 - contentsView.height / 2, contentsView.width / 2)
+		}
+	}
 
-    private fun calculateWidth(): Int {
-        return if (showContents) {
-            Math.max(ROMView.MIN_WIDTH, when (rotation) {
-                Rotation.R0, Rotation.R180 -> (contentsView.width + 2 * ROMView.HORIZONTAL_CONTENTS_INSET).toInt()
-                Rotation.R90, Rotation.R270 -> (contentsView.height + 2 * ROMView.HORIZONTAL_CONTENTS_INSET).toInt()
-            })
-        } else {
-            ROMView.MIN_WIDTH
-        }
-    }
+	private fun calculateWidth(): Int {
+		return if (showContents) {
+			Math.max(ROMView.MIN_WIDTH, when (rotation) {
+				Rotation.R0, Rotation.R180 -> (contentsView.width + 2 * ROMView.HORIZONTAL_CONTENTS_INSET).toInt()
+				Rotation.R90, Rotation.R270 -> (contentsView.height + 2 * ROMView.HORIZONTAL_CONTENTS_INSET).toInt()
+			})
+		} else {
+			ROMView.MIN_WIDTH
+		}
+	}
 
-    private fun calculateHeight(): Int {
-        return if (showContents) {
-            Math.max(ROMView.MIN_HEIGHT, when (rotation) {
-                Rotation.R0, Rotation.R180 -> (contentsView.height + 2 * ROMView.VERTICAL_CONTENTS_INSET).toInt()
-                Rotation.R90, Rotation.R270 -> (contentsView.width + 2 * ROMView.VERTICAL_CONTENTS_INSET).toInt()
-            })
-        } else {
-            ROMView.MIN_HEIGHT
-        }
-    }
+	private fun calculateHeight(): Int {
+		return if (showContents) {
+			Math.max(ROMView.MIN_HEIGHT, when (rotation) {
+				Rotation.R0, Rotation.R180 -> (contentsView.height + 2 * ROMView.VERTICAL_CONTENTS_INSET).toInt()
+				Rotation.R90, Rotation.R270 -> (contentsView.width + 2 * ROMView.VERTICAL_CONTENTS_INSET).toInt()
+			})
+		} else {
+			ROMView.MIN_HEIGHT
+		}
+	}
 
-    private fun buildLabelText(): String {
-        return "RAM ${addressWidth.size}x${dataWidth.width}"
-    }
+	private fun buildLabelText(): String {
+		return "RAM ${addressWidth.size}x${dataWidth.width}"
+	}
 
-    private fun requestOpenMemoryContents(event: MouseEvent, readonly: Boolean) {
-        eventBus.post(OpenMemoryContentsRequest(label.text, model!!.memory, model!!, event, readonly))
-    }
+	private fun requestOpenMemoryContents(event: MouseEvent, readonly: Boolean) {
+		eventBus.post(OpenMemoryContentsRequest(label.text, model!!.memory, model!!, event, readonly))
+	}
 
-    private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {
-        override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
-            if (context.mouseEvent!!.clickCount == 2) {
-                requestOpenMemoryContents(context.mouseEvent!!, context.readonly)
-                return null
-            }
-            return super.mouseClicked(context)
-        }
-    }
+	private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {
+		override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
+			if (context.mouseEvent!!.clickCount == 2) {
+				requestOpenMemoryContents(context.mouseEvent!!, context.readonly)
+				return null
+			}
+			return super.mouseClicked(context)
+		}
+	}
 
-    private inner class DoubleClickActorHandler : ClickableActorInteractionHandlerAdapter() {
-        override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-            if (context.mouseEvent!!.clickCount == 2) {
-                requestOpenMemoryContents(context.mouseEvent!!, true)
-            }
-	        return null
-        }
-    }
+	private inner class DoubleClickActorHandler : ClickableActorInteractionHandlerAdapter() {
+		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+			if (context.mouseEvent!!.clickCount == 2) {
+				requestOpenMemoryContents(context.mouseEvent!!, true)
+			}
+			return null
+		}
+	}
 }

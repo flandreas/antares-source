@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.library.uifx
 
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D

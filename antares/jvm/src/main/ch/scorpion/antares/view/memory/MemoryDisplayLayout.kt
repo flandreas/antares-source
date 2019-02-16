@@ -3,7 +3,6 @@ package ch.scorpion.antares.view.memory
 import ch.scorpion.antares.model.memory.Addressable
 import ch.scorpion.antares.model.memory.Memory
 import ch.scorpion.antares.model.signal.BitOperation
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import javax.swing.JLabel
@@ -37,7 +36,7 @@ class FixedWidthLayout(
 	}
 
 	override fun createTableModel(): TableModel {
-		return when(cellsPerRow) {
+		return when (cellsPerRow) {
 			1 -> SingleColumnTableModel(addressable, rowCount)
 			else -> MemoryTableModel(cellsPerRow, addressable, rowCount)
 		}
@@ -46,19 +45,19 @@ class FixedWidthLayout(
 	override fun columnAlignment(columnIndex: Int): Int {
 		return when (cellsPerRow) {
 			1 -> if (addressable.disassemblyWidth > 0) {
-					when (columnIndex) {
-						0 -> JLabel.RIGHT
-						1 -> JLabel.LEFT
-						2 -> JLabel.LEFT
-						else -> throw IllegalArgumentException()
-					}
-				} else {
-					when (columnIndex) {
-						0 -> JLabel.RIGHT
-						1 -> JLabel.LEFT
-						else -> throw IllegalArgumentException()
-					}
+				when (columnIndex) {
+					0 -> JLabel.RIGHT
+					1 -> JLabel.LEFT
+					2 -> JLabel.LEFT
+					else -> throw IllegalArgumentException()
 				}
+			} else {
+				when (columnIndex) {
+					0 -> JLabel.RIGHT
+					1 -> JLabel.LEFT
+					else -> throw IllegalArgumentException()
+				}
+			}
 			else -> JLabel.RIGHT
 		}
 	}
@@ -133,7 +132,7 @@ class SingleColumnTableModel(
 	}
 
 	override fun getColumnName(column: Int): String {
-		return when(column) {
+		return when (column) {
 			0 -> valueColumnName
 			1 -> if (showDisassembly) disassemblyColumnName else commentsColumnName
 			2 -> commentsColumnName

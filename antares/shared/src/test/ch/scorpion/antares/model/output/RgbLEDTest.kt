@@ -6,17 +6,15 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class RgbLEDTest {
 
 	companion object {
-		@ClassRule
-		@JvmField
-		val rule = AntaresTestRule()
+		init {
+			AntaresTestRule.configure()
+		}
 	}
 
 	private val signalHandler = ForwardSignalHandler()
@@ -26,6 +24,6 @@ class RgbLEDTest {
 		val led = RgbLED()
 		led.getInput<DigitalSignal>().setIncomingSignal(Word.of(BitWidth.BW_24, (16 + 4 * 256).toLong()), signalHandler)
 
-		assertThat(led.color, `is`(Color(16, 4, 0)))
+		assertEquals(Color(16, 4, 0), led.color)
 	}
 }

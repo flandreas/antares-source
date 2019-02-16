@@ -1,15 +1,14 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.AntaresTestRule
-import org.junit.ClassRule
-import org.junit.Test
+import kotlin.test.Test
 
 class DipSwitchViewTest {
 
 	companion object {
-		@ClassRule
-		@JvmField
-		val rule = AntaresTestRule()
+		init {
+			AntaresTestRule.configure()
+		}
 	}
 
 	@Test

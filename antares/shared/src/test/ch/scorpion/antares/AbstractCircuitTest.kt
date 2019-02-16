@@ -13,55 +13,53 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
-import org.junit.Before
-import org.junit.ClassRule
+import kotlin.test.BeforeTest
 
 /**
  * A test base class for testing Antares circuit simulations.
  */
 abstract class AbstractCircuitTest {
 
-    companion object {
-        @ClassRule @JvmField
-        val rule = AntaresTestRule()
-    }
+	companion object {
+		init {
+			AntaresTestRule.configure()
+		}
+	}
 
-    protected lateinit var styleProvider: StyleProvider
-    protected lateinit var eventBus: EventBus
-    protected lateinit var timeService: ControlledTimeService
-    protected lateinit var timer: Timer
-    protected lateinit var scheduler: Scheduler
+	protected lateinit var styleProvider: StyleProvider
+	protected lateinit var eventBus: EventBus
+	protected lateinit var timeService: ControlledTimeService
+	protected lateinit var timer: Timer
+	protected lateinit var scheduler: Scheduler
 
-    @Before
-    fun setup() {
-        TestTranslationsBuilder().withAnyKey()
+	@BeforeTest
+	fun setup() {
+		styleProvider = DrawStyleModule.styleProvider
+		eventBus = EventBusImpl()
+		timeService = ControlledTimeService()
+		timer = ControlledTimer(timeService)
+		scheduler = SchedulerImpl(timeService, timer, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()))
+	}
 
-        styleProvider = DrawStyleModule.styleProvider
-        eventBus = EventBusImpl()
-        timeService = ControlledTimeService()
-        timer = ControlledTimer(timeService)
-        scheduler = SchedulerImpl(timeService, timer, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()))
-    }
+	abstract fun getCircuitView(): GraphView<GraphElementView<*>>
 
-    abstract fun getCircuitView(): GraphView<GraphElementView<*>>
+	protected fun startSimulation() {
+		scheduler.isActive = true
+		getCircuitView().graph!!.executionStarted(scheduler)
+	}
 
-    protected fun startSimulation() {
-        scheduler.isActive = true
-        getCircuitView().graph!!.executionStarted(scheduler)
-    }
+	protected fun stopSimulation() {
+		scheduler.isActive = false
+		getCircuitView().graph!!.executionStopped(scheduler)
+	}
 
-    protected fun stopSimulation() {
-        scheduler.isActive = false
-        getCircuitView().graph!!.executionStopped(scheduler)
-    }
+	protected fun proceedToMillis(timeMillis: Long) {
+		timeService.setTimeMillis(timeMillis)
+		scheduler.proceedTo(timeMillis * 1_000_000)
+	}
 
-    protected fun proceedToMillis(timeMillis: Long) {
-        timeService.setTimeMillis(timeMillis)
-        scheduler.proceedTo(timeMillis * 1_000_000)
-    }
-
-    protected fun proceedToNanos(timeNanos: Long) {
-        timeService.setTimeNanos(timeNanos)
-        scheduler.proceedTo(timeNanos)
-    }
+	protected fun proceedToNanos(timeNanos: Long) {
+		timeService.setTimeNanos(timeNanos)
+		scheduler.proceedTo(timeNanos)
+	}
 }

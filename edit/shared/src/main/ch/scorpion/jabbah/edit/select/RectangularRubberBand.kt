@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.edit.select.RubberBand.Companion.PROP_STROKE
 import ch.scorpion.jabbah.edit.select.RubberBand.Companion.PROP_STROKE_PAINT
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.Math
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.module.DrawModule
 

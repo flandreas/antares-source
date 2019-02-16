@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.edit.editor.AddCommand
 import ch.scorpion.jabbah.edit.model.AbstractComponentTool
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.base.Math
 import kotlin.properties.Delegates
 
 @Suppress("unused")

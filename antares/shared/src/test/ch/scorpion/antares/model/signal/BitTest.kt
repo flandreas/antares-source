@@ -1,79 +1,77 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert.*
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [Bit].
  */
 class BitTest {
 
-    @Test
-    fun shouldGetNumericalValue() {
-        assertThat(Bit.of(true).numericalValue, `is`(1))
-        assertThat(Bit.of(false).numericalValue, `is`(0))
-    }
+	@Test
+	fun shouldGetNumericalValue() {
+		assertEquals(1, Bit.of(true).numericalValue)
+		assertEquals(0, Bit.of(false).numericalValue)
+	}
 
-    @Test(expected = KotlinNullPointerException::class)
-    fun shouldNotGetUndefinedValue() {
-        Bit.Undefined.numericalValue
-    }
+	@Test(expected = KotlinNullPointerException::class)
+	fun shouldNotGetUndefinedValue() {
+		Bit.Undefined.numericalValue
+	}
 
-    @Test
-    fun shouldProvideForBoolean() {
-        assertThat(Bit.of(true), `is`(Bit.True))
-        assertThat(Bit.of(false), `is`(Bit.False))
-    }
+	@Test
+	fun shouldProvideForBoolean() {
+		assertEquals(Bit.True, Bit.of(true))
+		assertEquals(Bit.False, Bit.of(false))
+	}
 
-    @Test
-    fun shouldProvideForInteger() {
-        assertThat(Bit.of(0), `is`(Bit.False))
-        assertThat(Bit.of(1), `is`(Bit.True))
-    }
+	@Test
+	fun shouldProvideForInteger() {
+		assertEquals(Bit.False, Bit.of(0))
+		assertEquals(Bit.True, Bit.of(1))
+	}
 
-    @Test(expected = IllegalArgumentException::class)
-    fun shouldRejectInvalidInteger() {
-        Bit.of(2)
-    }
+	@Test(expected = IllegalArgumentException::class)
+	fun shouldRejectInvalidInteger() {
+		Bit.of(2)
+	}
 
-    @Test
-    fun shouldBeEqual() {
-        assertThat(Bit.of(0), `is`(equalTo(Bit.of(0))))
-        assertThat(Bit.of(1), `is`(equalTo(Bit.of(1))))
-    }
+	@Test
+	fun shouldBeEqual() {
+		assertEquals(Bit.of(0), Bit.of(0))
+		assertEquals(Bit.of(1), Bit.of(1))
+	}
 
-    @Test
-    fun shouldConvertToBinaryString() {
-        assertThat(Bit.Undefined.toBinaryString(), `is`("?"))
-        assertThat(Bit.Error.toBinaryString(), `is`("E"))
-        assertThat(Bit.of(0).toBinaryString(), `is`("0"))
-        assertThat(Bit.of(1).toBinaryString(), `is`("1"))
-    }
+	@Test
+	fun shouldConvertToBinaryString() {
+		assertEquals("?", Bit.Undefined.toBinaryString())
+		assertEquals("E", Bit.Error.toBinaryString())
+		assertEquals("0", Bit.of(0).toBinaryString())
+		assertEquals("1", Bit.of(1).toBinaryString())
+	}
 
-    @Test
-    fun shouldConvertToHexString() {
-        assertThat(Bit.Undefined.toHexString(), `is`("?"))
-        assertThat(Bit.Error.toHexString(), `is`("E"))
-        assertThat(Bit.False.toHexString(), `is`("0"))
-        assertThat(Bit.True.toHexString(), `is`("1"))
-    }
+	@Test
+	fun shouldConvertToHexString() {
+		assertEquals("?", Bit.Undefined.toHexString())
+		assertEquals("E", Bit.Error.toHexString())
+		assertEquals("0", Bit.False.toHexString())
+		assertEquals("1", Bit.True.toHexString())
+	}
 
-    @Test
-    fun shouldCalculateNot() {
-        assertThat(Bit.of(true).not(), `is`(Bit.of(false)))
-        assertThat(Bit.of(false).not(), `is`(Bit.of(true)))
-        assertThat(Bit.Error.not(), `is`(Bit.Error))
-        assertThat(Bit.Undefined.not(), `is`(Bit.Undefined))
-    }
+	@Test
+	fun shouldCalculateNot() {
+		assertEquals(Bit.of(false), Bit.of(true).not())
+		assertEquals(Bit.of(true), Bit.of(false).not())
+		assertEquals(Bit.Error, Bit.Error.not())
+		assertEquals(Bit.Undefined, Bit.Undefined.not())
+	}
 
-    @Test
-    fun shouldConvertIntToBitList() {
-        val list: List<Bit> = Bit.listFromInt(5, 3)
-        assertThat(list[0], `is`(Bit.True))
-        assertThat(list[1], `is`(Bit.False))
-        assertThat(list[2], `is`(Bit.True))
-    }
+	@Test
+	fun shouldConvertIntToBitList() {
+		val list: List<Bit> = Bit.listFromInt(5, 3)
+		assertEquals(Bit.True, list[0])
+		assertEquals(Bit.False, list[1])
+		assertEquals(Bit.True, list[2])
+	}
 }

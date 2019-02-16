@@ -7,11 +7,8 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.ClassRule
-import org.junit.Test
-
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /**
  * Unit tests for [OrCalculator].
@@ -19,8 +16,9 @@ import org.junit.Test
 class OrCalculatorTest {
 
     companion object {
-        @ClassRule @JvmField
-        val rule = AntaresTestRule()
+	    init {
+		    AntaresTestRule.configure()
+	    }
     }
 
     private val signalHandler = ForwardSignalHandler()
@@ -40,7 +38,7 @@ class OrCalculatorTest {
         inputB.setIncomingSignal(Word.of(true), signalHandler)
 
         val output = vertice.getOutput<DigitalSignal>()
-        assertThat(output.getOutgoingSignal()!!.bitAt(0), `is`(Bit.True))
+        assertEquals(Bit.True, output.getOutgoingSignal()!!.bitAt(0))
     }
 
     @Test
@@ -51,7 +49,7 @@ class OrCalculatorTest {
         inputB.setIncomingSignal(Word.of(false), signalHandler)
 
         val output = vertice.getOutput<DigitalSignal>()
-        assertThat(output.getOutgoingSignal()!!.bitAt(0), `is`(Bit.False))
+        assertEquals(Bit.False, output.getOutgoingSignal()!!.bitAt(0))
     }
 
     @Test
@@ -62,7 +60,7 @@ class OrCalculatorTest {
         inputB.setIncomingSignal(Word.of(false), signalHandler)
 
         val output = vertice.getOutput<DigitalSignal>()
-        assertThat(output.getOutgoingSignal()!!.bitAt(0), `is`(Bit.True))
+        assertEquals(Bit.True, output.getOutgoingSignal()!!.bitAt(0))
     }
 
     @Test
@@ -73,7 +71,7 @@ class OrCalculatorTest {
         inputB.setIncomingSignal(Word.of(Bit.Undefined), signalHandler)
 
         val output = vertice.getOutput<DigitalSignal>()
-        assertThat(output.getOutgoingSignal()!!.bitAt(0), `is`(Bit.Undefined))
+        assertEquals(Bit.Undefined, output.getOutgoingSignal()!!.bitAt(0))
     }
 
     @Test
@@ -84,6 +82,6 @@ class OrCalculatorTest {
         inputB.setIncomingSignal(Word.of(true), signalHandler)
 
         val output = vertice.getOutput<DigitalSignal>()
-        assertThat(output.getOutgoingSignal()!!.bitAt(0), `is`(Bit.True))
+        assertEquals(Bit.True, output.getOutgoingSignal()!!.bitAt(0))
     }
 }

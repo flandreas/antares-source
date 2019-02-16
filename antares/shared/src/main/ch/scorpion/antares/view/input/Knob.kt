@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.execution.actor.ActorView
 import kotlin.math.PI
+import kotlin.math.pow
 
 /**
  * A circular knob used for interactively changing a value while execution.
@@ -63,7 +64,9 @@ class KnobView(
 
 	var value: Long
 		get() = model.value
-		set(value) { model.value = value }
+		set(value) {
+			model.value = value
+		}
 
 	private val handler = Handler()
 
@@ -71,10 +74,10 @@ class KnobView(
 	private val angle: Double get() = -(ONE_ANGLE - model.asAngle)
 
 	/** Used as a stamp to draw the scale numbers.*/
-	private val scaleLabel = Label(font = Themes.get<AntaresTheme>().explanation.font, text= "")
+	private val scaleLabel = Label(font = Themes.get<AntaresTheme>().explanation.font, text = "")
 
 	/** Used to draw the current value in the center of the knob.*/
-	private val valueLabel = Label(font = Themes.get<AntaresTheme>().explanation.font, text= "", color = Color.WHITE)
+	private val valueLabel = Label(font = Themes.get<AntaresTheme>().explanation.font, text = "", color = Color.WHITE)
 
 	init {
 		model.addPropertyChangeListener(object : PropertyChangeListener<Long> {
@@ -229,11 +232,11 @@ class KnobModel(initialValue: Long = 0) : PropertyOwner<Long>() {
 	 * The current value with all digits except the most significant digits set to zero.
 	 * Example: The base value of 12_345 is 10_000.
 	 */
-	private val baseValue: Double get() = Math.power(10.0, Math.log10(value.toDouble()).toLong().toDouble())
+	private val baseValue: Double get() = 10.0.pow(Math.log10(value.toDouble()).toLong().toDouble())
 
 	fun incrementAngleTo(newAngle: Double): Long {
 		var currentBaseValue = baseValue
-		val factor = newAngle / MathClass.TWO_PI
+		val factor = newAngle / TWO_PI
 		var newValue = (currentBaseValue + 9 * currentBaseValue * factor).toLong()
 		if (newValue != value) {
 			if (newValue < value) {
@@ -247,7 +250,7 @@ class KnobModel(initialValue: Long = 0) : PropertyOwner<Long>() {
 
 	private fun decrementAngleTo(newAngle: Double): Long {
 		var currentBaseValue = baseValue
-		val factor = newAngle / MathClass.TWO_PI
+		val factor = newAngle / TWO_PI
 		var newValue = (currentBaseValue + 9 * currentBaseValue * factor).toLong()
 		if (newValue != value) {
 			if (newValue > value) {
@@ -271,6 +274,6 @@ class KnobModel(initialValue: Long = 0) : PropertyOwner<Long>() {
 	/** Returns the specified value of this [KnobModel] as an angle (in radians, zero east, anti-clockwise).*/
 	private fun asAngle(a: Long): Double {
 		val diffValue = a - baseValue
-		return if (diffValue == 0.0) 0.0 else MathClass.TWO_PI * diffValue / (9 * baseValue)
+		return if (diffValue == 0.0) 0.0 else TWO_PI * diffValue / (9 * baseValue)
 	}
 }
