@@ -7,12 +7,12 @@ import ch.scorpion.jabbah.graph.view.GraphView
 /**
  * The layout algorithm for [Layout.NONE].
  */
-class NoneEdgeViewLayout : EdgeViewLayout {
+object NoneEdgeViewLayout : EdgeViewLayout {
 
     override fun layout(edgeView: EdgeView<*>?, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
         val list = mutableListOf<Point2D>()
         edgeView?.let {
-            for (i in 0..edgeView.segmentPointCount - 1) {
+            for (i in 0 until edgeView.segmentPointCount) {
                 list.add(edgeView.getSegmentPoint(i))
             }
             list[0] = begin.point

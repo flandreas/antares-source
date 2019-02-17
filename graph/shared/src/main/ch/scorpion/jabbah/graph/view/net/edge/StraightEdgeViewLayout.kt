@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 /**
  * The layout algorithm for [Layout.STRAIGHT].
  */
-class StraightEdgeViewLayout : EdgeViewLayout {
+object StraightEdgeViewLayout : EdgeViewLayout {
 
     override fun layout(edgeView: EdgeView<*>?, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
         val list = mutableListOf<Point2D>()

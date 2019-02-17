@@ -22,18 +22,16 @@ class OrthoEdgeViewLayoutTest {
 	}
 
 	private lateinit var graphView: GraphView<*>
-	private lateinit var layout: OrthoEdgeViewLayout
 
 	@BeforeTest
 	fun setup() {
-		layout = OrthoEdgeViewLayout()
 		graphView = mockk()
 		every { graphView.snapper } returns null
 	}
 
 	@Test
 	fun layoutEastEast() {
-		val points = layout.layout(
+		val points = OrthoEdgeViewLayout.layout(
 			null,
 			graphView,
 			LayoutBoundary(
@@ -54,7 +52,7 @@ class OrthoEdgeViewLayoutTest {
 
 	@Test
 	fun layoutEastEastDegenerated() {
-		val points = layout.layout(
+		val points = OrthoEdgeViewLayout.layout(
 			null,
 			graphView,
 			LayoutBoundary(
@@ -73,7 +71,7 @@ class OrthoEdgeViewLayoutTest {
 
 	@Test
 	fun shouldNotFailWithEmptyPolyline() {
-		val points = layout.layout(
+		val points = OrthoEdgeViewLayout.layout(
 			null,
 			graphView,
 			LayoutBoundary(
@@ -90,7 +88,7 @@ class OrthoEdgeViewLayoutTest {
 
 	@Test
 	fun layoutSouthOpen() {
-		val points = layout.layout(
+		val points = OrthoEdgeViewLayout.layout(
 			null,
 			graphView,
 			LayoutBoundary(

@@ -13,13 +13,11 @@ import ch.scorpion.jabbah.base.logger
 /**
  * Layout algorithm for [Layout.ORTHOGONAL].
  */
-class OrthoEdgeViewLayout : EdgeViewLayout {
+object OrthoEdgeViewLayout : EdgeViewLayout {
 
-    companion object {
-        val LOG by logger(OrthoEdgeViewLayout::class)
-        // TODO Make configurable in order to align with GridImpl width
-        val END_LENGTH = 14
-    }
+    val LOG by logger(OrthoEdgeViewLayout::class)
+    // TODO Make configurable in order to align with GridImpl width
+    const val END_LENGTH = 14
 
     /** ---- [EdgeViewLayout] */
 
@@ -33,19 +31,19 @@ class OrthoEdgeViewLayout : EdgeViewLayout {
 
         // Create possible solutions by first creating a Point list that only contains the first and last segments,
         // and by then completing these list in all possible ways, which yields the different solutions.
-        createSolutions(solutions, begin, end, { a, b -> createD(a, b, graphView.snapper)})
-        createSolutions(solutions, begin, end, { a, b -> createC(a, b, graphView.snapper)})
-        createSolutions(solutions, begin, end, { a, b -> createB(a, b)})
-        createSolutions(solutions, begin, end, { a, b -> createA(a, b)})
+        createSolutions(solutions, begin, end) { a, b -> createD(a, b, graphView.snapper)}
+	    createSolutions(solutions, begin, end) { a, b -> createC(a, b, graphView.snapper)}
+	    createSolutions(solutions, begin, end) { a, b -> createB(a, b)}
+	    createSolutions(solutions, begin, end) { a, b -> createA(a, b)}
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("OrthoEdgeViewLayout solutions:")
+	    if (LOG.isDebugEnabled()) {
+            LOG.debug("solutions:")
             solutions.forEach { LOG.debug("- ${it.polyline}") }
         }
 
         if (solutions.size == 0) {
             // begin and end must both be collinear and counter-directive
-            LOG.debug("OrthoEdgeViewLayout: using fallback solution")
+            LOG.debug("using fallback solution")
             return createFallbackSolution(begin.point, end.point)
         }
         if (solutions.size == 1) {

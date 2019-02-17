@@ -16,8 +16,7 @@ enum class Layout(val customName: String, inputEventHandler: EdgeViewInputEventH
 
     STRAIGHT("straight", EdgeViewInputEventHandler()) {
         override fun layout(edgeView: EdgeView<*>, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
-            val layout = StraightEdgeViewLayout()
-            return layout.layout(edgeView, graphView, begin, end)
+            return StraightEdgeViewLayout.layout(edgeView, graphView, begin, end)
         }
 
         override fun getSegmentDirection(edgeView: EdgeView<*>, segmentIndex: Int): Direction? {
@@ -27,15 +26,13 @@ enum class Layout(val customName: String, inputEventHandler: EdgeViewInputEventH
 
     ORTHOGONAL("ortho", DragEdgeSegmentHandler()) {
         override fun layout(edgeView: EdgeView<*>, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
-            val layout = OrthoEdgeViewLayout()
-            return layout.layout(edgeView, graphView, begin, end)
+            return OrthoEdgeViewLayout.layout(edgeView, graphView, begin, end)
         }
     },
 
     NONE("none", DragEdgePointHandler()) {
         override fun layout(edgeView: EdgeView<*>, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
-            val layout = NoneEdgeViewLayout()
-            return layout.layout(edgeView, graphView, begin, end)
+            return NoneEdgeViewLayout.layout(edgeView, graphView, begin, end)
         }
     };
 
