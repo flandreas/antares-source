@@ -5,9 +5,13 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.graph.view.net.node.NodeView
 
 /**
  * An [EdgeViewStyling] that draws an [EdgeView] as thin lines.
+ *
+ * [EdgeViewLineStyling] also draws [NodeView] to which it is connected, because otherwise they would not be
+ * visible when using highlighting.
  */
 class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 
@@ -25,9 +29,13 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 
         if (edgeView.origin == null) {
             edgeView.originEndpointView.draw(context)
+        } else if (edgeView.origin is NodeView<*>) {
+	        edgeView.origin!!.draw(context)
         }
         if (edgeView.destination == null) {
             edgeView.destinationEndpointView.draw(context)
+        } else if (edgeView.destination is NodeView<*>) {
+	        edgeView.destination!!.draw(context)
         }
 
         if (edgeView.polyline.endLineTerminator != null) {
@@ -42,9 +50,13 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
         boundingBox.add(edgeView.polyline.boundingBox)
         if (edgeView.origin == null) {
             boundingBox.add(edgeView.originEndpointView.boundingBox)
+        } else if (edgeView.origin is NodeView<*>) {
+	        boundingBox.add(edgeView.origin!!.boundingBox)
         }
         if (edgeView.destination == null) {
             boundingBox.add(edgeView.destinationEndpointView.boundingBox)
+        } else if (edgeView.destination is NodeView<*>) {
+	        boundingBox.add(edgeView.destination!!.boundingBox)
         }
         boundingBox.setFrame(
                 boundingBox.x - edgeView.stroke.width, boundingBox.y - edgeView.stroke.width,
