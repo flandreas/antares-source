@@ -43,7 +43,6 @@ open class EdgeViewImpl<T : Any>(
 
 	private companion object {
 		val LOG by logger(EdgeViewImpl::class)
-		const val CONTAINS_SIZE = 4
 	}
 
 	constructor(
@@ -115,8 +114,6 @@ open class EdgeViewImpl<T : Any>(
 	override val destinationEndpointView: EdgeEndpointView = EdgeEndpointView(this, destEndpointConnectorSupplier, styleProvider)
 
 	override val segmentPointCount: Int get() = polyline.pointsCount
-
-	override val length: Double get() = polyline.getLength()
 
 	override val width: Int get() = styling.width
 
@@ -248,9 +245,9 @@ open class EdgeViewImpl<T : Any>(
 					}
 				}
 			}
-			return length + maxSubnetLength
+			return polyline.length + maxSubnetLength
 		}
-		return length
+		return polyline.length
 	}
 
 	override fun moveOriginEndPoint(x: Double, y: Double) {
@@ -289,18 +286,6 @@ open class EdgeViewImpl<T : Any>(
 		styling.updateBoundingBox()
 		invalidate()
 		update()
-	}
-
-	override fun findSegment(x: Double, y: Double): Int? {
-		return findSegment(x, y, CONTAINS_SIZE)
-	}
-
-	override fun findSegment(x: Double, y: Double, area: Int): Int? {
-		return polyline.findSegment(x, y, area)
-	}
-
-	override fun findSegmentPoint(x: Double, y: Double, area: Int): Int? {
-		return polyline.findPoint(x, y, area)
 	}
 
 	override fun moveSegment(segmentIndex: Int, from: Point2D, to: Point2D): MoveEdgeSegmentInfo {
@@ -410,7 +395,7 @@ open class EdgeViewImpl<T : Any>(
 		suspendOriginLayout = false
 		suspendDestinationLayout = false
 
-		return MoveEdgeSegmentInfo(findSegment(center.x, center.y)!!, offset)
+		return MoveEdgeSegmentInfo(polyline.findSegment(center.x, center.y)!!, offset)
 	}
 
 	override fun getSegmentDirection(segmentIndex: Int): Direction? {
@@ -518,10 +503,6 @@ open class EdgeViewImpl<T : Any>(
 		return polyline.getPointAt(polyline.pointsCount - 1) == polyline.getPointAt(polyline.pointsCount - 2)
 	}
 
-	override fun isSegmentOrthogonal(index: Int): Boolean {
-		return polyline.isSegmentOrthogonal(index)
-	}
-
 	override fun split(index: Int, splitLocation: Point2D, edgeViewCreator: (Net<*>) -> EdgeView<*>): EdgeView<*> {
 		val tail = edgeViewCreator.invoke(model!!) as EdgeView<T>
 
@@ -627,7 +608,7 @@ open class EdgeViewImpl<T : Any>(
 	override val boundingBox: Rectangle2D get() = styling.boundingBox
 
 	override fun contains(x: Double, y: Double): Boolean {
-		return findSegment(x, y) != null
+		return polyline.findSegment(x, y) != null
 	}
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? {

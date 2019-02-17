@@ -76,7 +76,7 @@ class MoveSegmentIntegrationTest {
         ev.moveSegment(1, 20.0)
         assertEquals(5, ev.segmentPointCount)
         for (i in 0..ev.segmentPointCount - 2) {
-            assertTrue(ev.isSegmentOrthogonal(i), "Segment $i is not orthogonal")
+            assertTrue(ev.polyline.isSegmentOrthogonal(i), "Segment $i is not orthogonal")
         }
     }
 

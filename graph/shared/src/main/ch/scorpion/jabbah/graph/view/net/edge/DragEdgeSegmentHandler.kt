@@ -25,7 +25,7 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 
 	override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 	    LOG.debug("DragEdgeSegmentHandler: mouseMoved")
-	    val segment = edgeView!!.findSegment(context.x, context.y)
+	    val segment = edgeView!!.polyline.findSegment(context.x, context.y)
 	    if (segment != null) {
 		    updateCursor(segment, context)
 		    return this
@@ -50,7 +50,7 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
         LOG.trace("mousePressed at (${context.x},${context.y})")
         lastX = context.x + context.editor.snapManager.snapX(context.x, context.y)
         lastY = context.y + context.editor.snapManager.snapY(context.x, context.y)
-        segmentIndex = edgeView!!.findSegment(context.x, context.y)
+        segmentIndex = edgeView!!.polyline.findSegment(context.x, context.y)
 	    updateCursor(segmentIndex, context)
         totalOffset = 0.0
         return this

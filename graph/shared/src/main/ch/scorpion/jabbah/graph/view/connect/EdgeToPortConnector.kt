@@ -44,7 +44,7 @@ class EdgeToPortConnector(
 	private data class SnapResult(val segmentIndex: Int, val x: Double, val y: Double)
 
 	private fun snap(context: EditInputEventContext): SnapResult? {
-		val segmentIndex = branchedEdgeView!!.findSegment(context.x, context.y) ?: return null
+		val segmentIndex = branchedEdgeView!!.polyline.findSegment(context.x, context.y) ?: return null
 		var x = context.x
 		var y = context.y
 

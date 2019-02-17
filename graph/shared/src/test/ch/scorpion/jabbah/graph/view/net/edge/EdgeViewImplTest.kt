@@ -108,14 +108,14 @@ class EdgeViewImplTest {
     @Test
     fun shouldCalculateLengthWithoutPoints() {
         val ev = edgeViewFactory.createEdgeView()
-        assertEquals(0.0, ev.length)
+        assertEquals(0.0, ev.polyline.length)
     }
 
     @Test
     fun shouldCalculateLengthWithOnePoint() {
         val ev = edgeViewFactory.createEdgeView()
         ev.addSegmentPoint(Point2D(0, 0))
-        assertEquals(0.0, ev.length)
+        assertEquals(0.0, ev.polyline.length)
     }
 
     @Test
@@ -125,7 +125,7 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(0, 10))
         ev.addSegmentPoint(Point2D(20, 10))
 
-        assertEquals(30.0, ev.length)
+        assertEquals(30.0, ev.polyline.length)
     }
 
     @Test
@@ -269,7 +269,7 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(150, 0))
         ev.addSegmentPoint(Point2D(200, 0))
 
-        assertEquals(0, ev.findSegment(150.0, 50.0, 1))
+        assertEquals(0, ev.polyline.findSegment(150.0, 50.0, 1))
     }
 
     @Test

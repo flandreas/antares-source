@@ -76,5 +76,5 @@ abstract class AbstractCreateEdgeViewConnector(
      * Determines whether the [EdgeView] that is being added by this [AbstractCreateEdgeViewConnector]
      * is valid, i.e. that it exists and has a non-zero length.
      */
-    protected fun isValidEdgeView(): Boolean = edgeView != null && edgeView!!.length > 0.0
+    protected fun isValidEdgeView(): Boolean = edgeView != null && edgeView!!.polyline.length > 0.0
 }

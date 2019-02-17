@@ -46,9 +46,6 @@ interface EdgeView<T: Any> : NetViewElement<T> {
     /** Returns the number of segment points of this [EdgeView].*/
     val segmentPointCount: Int
 
-    /** Returns the geometrical length of this [EdgeView], which is the sum of all segment lengths. */
-    val length: Double
-
     /**
      * Returns the width of segments of this [EdgeView]. Depends on the [EdgeViewStyling] of this [EdgeView]
      * and is typically the width of the [Stroke] used for drawing this [EdgeView].
@@ -165,32 +162,6 @@ interface EdgeView<T: Any> : NetViewElement<T> {
     fun moveDestinationEndPoint(x: Double, y: Double)
 
     /**
-     * Finds the index of the segment that contains the specified location.
-     * @param x the x coordinate of the location.
-     * @param y the y coordinate of the location.
-     * @return the index of the found segment, where 0 is the index of the first segment.
-     */
-    fun findSegment(x: Double, y: Double): Int?
-
-    /**
-     * Finds the index of the segment that contains the specified location while respecting the specified sensitive
-     * area.
-     * @param x the x coordinate of the location.
-     * @param y the y coordinate of the location.
-     * @param area the sensitive area.
-     * @return the index of the found segment, where 0 is the index of the first segment.
-     */
-    fun findSegment(x: Double, y: Double, area: Int): Int?
-
-    /**
-     * Finds the index of the segment [Point2D] that contains the specified location.
-     * @param x the x coordinate of the location.
-     * @param y the y coordinate of the location.
-     * @return the index of the found segment [Point2D], where 0 is the index of the first [Point2D].
-     */
-    fun findSegmentPoint(x: Double, y: Double, area: Int): Int?
-
-    /**
      * Moves a segment of this [EdgeView] and returns information about the segment moving.
      * @param segmentIndex the index of the segment that is to be moved.
      * @param from the start location of the displacement vector
@@ -223,12 +194,6 @@ interface EdgeView<T: Any> : NetViewElement<T> {
      * @return the length of the longest subnet starting with this [EdgeView].
      */
     fun calculateMaximumNetLength(reverse: Boolean): Double
-
-    /**
-     * Determines whether the specified segment is orthogonal, i.e. is horizontal or vertical.
-     * @param index the index of the segment in question, where 0 is the index of the first segment.
-     */
-    fun isSegmentOrthogonal(index: Int): Boolean
 
     /**
      * Splits this [EdgeView] at a particular segment and a particular (x,y) location.

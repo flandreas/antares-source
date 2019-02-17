@@ -130,7 +130,7 @@ class DigitalEdgeViewNetAnimation(
 			animationTask = bitAnimationTask,
 			overallLength = overallLength,
 			remainingLength = sequence.size,
-			visitedLength = oldVisitedLength + edgeView.length
+			visitedLength = oldVisitedLength + edgeView.polyline.length
 		)
 
 		if (isReverse) {

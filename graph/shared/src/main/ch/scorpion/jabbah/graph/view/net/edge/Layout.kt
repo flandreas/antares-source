@@ -103,7 +103,7 @@ enum class Layout(val customName: String, inputEventHandler: EdgeViewInputEventH
             // LOG.warn("EdgeView is degenerated at index {}", segmentIndex);
             return null
         }
-        if (!edgeView.isSegmentOrthogonal(segmentIndex)) {
+        if (!edgeView.polyline.isSegmentOrthogonal(segmentIndex)) {
             // LOG.warn("EdgeView is not orthogonal at segment {}. Cannot determine Direction.", segmentIndex);
             return null
         }

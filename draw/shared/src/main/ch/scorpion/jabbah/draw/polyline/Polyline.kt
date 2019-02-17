@@ -7,6 +7,10 @@ import ch.scorpion.jabbah.base.geom.Point2D
  */
 interface Polyline {
 
+	companion object {
+		const val CONTAINS_SIZE = 4
+	}
+
     /** Holds the number of points of this [Polyline].*/
     val pointsCount: Int
 
@@ -16,7 +20,10 @@ interface Polyline {
     /** Holds the [LineTerminator] that is connected to the last point of this [Polyline].*/
     var endLineTerminator: LineTerminator?
 
-    /** Removes all points from this [Polyline].*/
+	/** Returns the geometrical length of this [Polyline], which is the sum of all segment lengths.*/
+	val length: Double
+
+	/** Removes all points from this [Polyline].*/
     fun clear()
 
     /**
@@ -111,7 +118,7 @@ interface Polyline {
      * @param area the sensitive area.
      * @return the index of the found segment, where 0 is the index of the first segment.
      */
-    fun findSegment(x: Double, y: Double, area: Int): Int?
+    fun findSegment(x: Double, y: Double, area: Int = CONTAINS_SIZE): Int?
 
     /**
      * Finds the index of the [Point2D] that contains the specified location while respecting the specified
@@ -121,7 +128,7 @@ interface Polyline {
      * @param area the sensitive area.
      * @return the index of the found segment [Point2D], where 0 is the index of the first [Point2D].
      */
-    fun findPoint(x: Double, y: Double, area: Int): Int?
+    fun findPoint(x: Double, y: Double, area: Int = CONTAINS_SIZE): Int?
 
     /** Returns the center of the segment with the specified index. */
     fun getCenterOfSegment(index: Int): Point2D
@@ -132,12 +139,6 @@ interface Polyline {
      * @return `true` if the [Polyline] has been changed while compacting
      */
     fun compact(): Boolean
-
-    /**
-     * Returns the geometrical length of this [Polyline], which is the sum of all segment lengths.
-     * @return the length of this [Polyline].
-     */
-    fun getLength(): Double
 
     /**
      * Returns the geometrical length of the specified segment.

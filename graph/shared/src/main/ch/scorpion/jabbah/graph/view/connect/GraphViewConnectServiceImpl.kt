@@ -49,7 +49,7 @@ class GraphViewConnectServiceImpl(
 			val destPortView = if (edgeView.destinationPort != null) edgeView.destination?.getPortView(edgeView.destinationPort!!) else null
 			return JoinEdgeViewsResult<T>(
 				joinedEdgeView,
-				joinedEdgeView.findSegment(origNodeView.location.x, origNodeView.location.y)!!,
+				joinedEdgeView.polyline.findSegment(origNodeView.location.x, origNodeView.location.y)!!,
 				edgeView,
 				destPortView,
 				tailEdgeView
@@ -82,7 +82,7 @@ class GraphViewConnectServiceImpl(
 			val origPortView = if (edgeView.originPort != null) edgeView.origin?.getPortView(edgeView.originPort!!) else null
 			return JoinEdgeViewsResult<T>(
 				joinedEdgeView,
-				joinedEdgeView.findSegment(destNodeView.location.x, destNodeView.location.y)!!,
+				joinedEdgeView.polyline.findSegment(destNodeView.location.x, destNodeView.location.y)!!,
 				edgeView,
 				origPortView,
 				tailEdgeView

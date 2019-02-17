@@ -103,7 +103,9 @@ class PolylineDrawable constructor(
 
     /** ---- [Polyline] interface */
 
-    override val pointsCount: Int
+    override val length: Double get() = shape.length
+
+	override val pointsCount: Int
         get() = shape.pointsCount
 
     override var beginLineTerminator: LineTerminator?
@@ -200,10 +202,6 @@ class PolylineDrawable constructor(
 	        return true
         }
 	    return false
-    }
-
-    override fun getLength(): Double {
-        return shape.getLength()
     }
 
     override fun getSegmentLength(index: Int): Double {

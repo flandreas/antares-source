@@ -71,11 +71,11 @@ open class NodeViewImpl<T : Any>(
 
 	override fun anyEdgeViewContainsPoint(x: Double, y: Double, excludedEdgeView: EdgeView<*>?): Boolean {
 		val incomingCV = getIncomingEdgeView()
-		if (incomingCV != null && incomingCV !== excludedEdgeView && incomingCV.findSegment(x, y, 1) != null) {
+		if (incomingCV != null && incomingCV !== excludedEdgeView && incomingCV.polyline.findSegment(x, y, 1) != null) {
 			return true
 		}
 		for (outgoingCV in getOutgoingEdgeViews()) {
-			if (outgoingCV !== excludedEdgeView && outgoingCV.findSegment(x, y, 1) != null) {
+			if (outgoingCV !== excludedEdgeView && outgoingCV.polyline.findSegment(x, y, 1) != null) {
 				return true
 			}
 		}

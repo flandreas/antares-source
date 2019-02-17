@@ -19,9 +19,9 @@ class PolylineShapeImplTest {
 
     @Test
     fun shouldCalculateLength() {
-        assertEquals(0.0, PolylineShapeImpl().addPoint(0, 0).getLength())
-        assertEquals(100.0, PolylineShapeImpl().addPoint(0, 0).addPoint(100, 0).getLength())
-        assertEquals(300.0, PolylineShapeImpl().addPoint(0, 0).addPoint(100, 0).addPoint(100, 200).getLength())
+        assertEquals(0.0, PolylineShapeImpl().addPoint(0, 0).length)
+        assertEquals(100.0, PolylineShapeImpl().addPoint(0, 0).addPoint(100, 0).length)
+        assertEquals(300.0, PolylineShapeImpl().addPoint(0, 0).addPoint(100, 0).addPoint(100, 200).length)
     }
 
     @Test
