@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.draw.View
+
 /**
  * Sent by a [SelectionManager] whenever the current selection in a [DrawingView] has changed.
  *
@@ -10,17 +11,17 @@ import ch.scorpion.jabbah.draw.View
  *      doesn't contain all currently selected [Component]s, but only the delta.
  */
 data class SelectionChangeEvent(
-        val view: DrawingView<out Drawing<Component>>,
-        val type: Type,
-        val components: Collection<Component>
+	val view: DrawingView<out Drawing<*>>,
+	val type: Type,
+	val components: Collection<Component>
 ) {
-    constructor(view: DrawingView<out Drawing<Component>>, components: Collection<Component>, selected: Boolean) :
-        this(view, if (selected) Type.SELECTED else Type.DESELECTED, components)
+	constructor(view: DrawingView<out Drawing<*>>, components: Collection<Component>, selected: Boolean) :
+		this(view, if (selected) Type.SELECTED else Type.DESELECTED, components)
 
-    enum class Type {
-        SELECTED,
-        DESELECTED
-    }
+	enum class Type {
+		SELECTED,
+		DESELECTED
+	}
 
-    val selected: Boolean = type == Type.SELECTED
+	val selected: Boolean = type == Type.SELECTED
 }

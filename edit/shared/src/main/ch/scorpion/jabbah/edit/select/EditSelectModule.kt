@@ -18,9 +18,9 @@ object EditSelectModule : AbstractModule() {
     var selectionModelProvider: SelectionModelProvider = SimpleSelectionModelProvider(selectionModelFactory)
 
     var selectionManagerFactory = object : SelectionManagerFactory {
-        override fun create(view: DrawingView<out Drawing<Component>>): SelectionManager {
-            return SelectionManagerImpl(view)
-        }
+	    override fun create(content: DrawingViewContent<*>): SelectionManager {
+		    return SelectionManagerImpl(content)
+	    }
     }
 
     var selectionToolFactory = object : SelectionToolFactory {

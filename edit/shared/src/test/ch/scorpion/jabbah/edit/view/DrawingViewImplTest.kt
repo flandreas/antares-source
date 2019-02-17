@@ -50,7 +50,7 @@ class DrawingViewImplTest {
 	fun shouldNotRepaintValidatedReplacedContent() {
 		val oldContent = view.content
 		val newDrawing = DrawingImpl<Component>()
-		val newContent = DrawingViewContentImpl(view, newDrawing, EditSelectModule.selectionManagerFactory.create(view), EditHighlightModule.highlighterFactory)
+		val newContent = DrawingViewContentImpl(view, newDrawing, EditSelectModule.selectionManagerFactory, EditHighlightModule.highlighterFactory)
 		view.content = newContent
 
 		clearMocks(canvas)
@@ -62,7 +62,7 @@ class DrawingViewImplTest {
 	@Test
 	fun shouldRepaintValidatedReplacingContent() {
 		val newDrawing = DrawingImpl<Component>()
-		val newContent = DrawingViewContentImpl(view, newDrawing, EditSelectModule.selectionManagerFactory.create(view), EditHighlightModule.highlighterFactory)
+		val newContent = DrawingViewContentImpl(view, newDrawing, EditSelectModule.selectionManagerFactory, EditHighlightModule.highlighterFactory)
 		view.content = newContent
 
 		clearMocks(canvas)
@@ -75,7 +75,7 @@ class DrawingViewImplTest {
 	fun shouldRepaintValidatedReusedContent() {
 		val oldContent = view.content
 		val newDrawing = DrawingImpl<Component>()
-		val newContent = DrawingViewContentImpl(view, newDrawing, EditSelectModule.selectionManagerFactory.create(view), EditHighlightModule.highlighterFactory)
+		val newContent = DrawingViewContentImpl(view, newDrawing, EditSelectModule.selectionManagerFactory, EditHighlightModule.highlighterFactory)
 		view.content = newContent
 		view.content = oldContent
 

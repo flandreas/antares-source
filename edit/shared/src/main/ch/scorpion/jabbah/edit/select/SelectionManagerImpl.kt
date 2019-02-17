@@ -1,58 +1,27 @@
 package ch.scorpion.jabbah.edit.select
 
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.PropertyChangeEvent
-import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.DrawableContainerEvent
-import ch.scorpion.jabbah.draw.DrawableContainerListener
-import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
-import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.*
 
 /**
  * Standard implementation of the [SelectionManager] interface.
  *
- * @param view the [DrawingView] whose [Component]s are selected by this [SelectionManager]
+ * @param content the [DrawingViewContent] whose [Component]s are selected by this [SelectionManager]
  * @param selectionModelProvider provides the [SelectionModel]s for [Component]s that are to be selected
  * @param eventBus the [EventBus] on which [SelectionChangeEvent]s are posted by this [SelectionManager]
  */
 class SelectionManagerImpl(
-	val view: DrawingView<out Drawing<Component>>,
-	private val selectionModelProvider: SelectionModelProvider,
-	private val eventBus: EventBus
+	val content: DrawingViewContent<*>,
+	private val selectionModelProvider: SelectionModelProvider = EditSelectModule.selectionModelProvider,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : SelectionManager {
-
-    constructor(view: DrawingView<out Drawing<Component>>)
-        : this(view, EditSelectModule.selectionModelProvider, BaseModule.eventBus)
 
 	companion object {
         private val LOG by logger(SelectionManagerImpl::class)
 	}
-
-	private val drawingPropertyListener = object : PropertyChangeListener<Any> {
-		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-			if (e.name == DrawingView.PROP_DRAWING) {
-				handleDrawingChanged(e.oldValue as Drawing<Component>?)
-			}
-		}
-	}
-
-    init {
-        view.addPropertyChangeListener(drawingPropertyListener)
-    }
-
-	override fun dispose() {
-		view.removePropertyChangeListener(drawingPropertyListener)
-	}
-
-    /**
-     * Listens for [Component]s being removed from the current [Drawing] while being selected. Note that this
-     * listener must be relinked from the current [Drawing] to the new [Drawing] if it is changed in [view].
-     * This is done in [handleDrawingChanged].
-     */
-    private val componentRemoveListener: DrawableContainerListener<Component> = ComponentRemoveListener()
 
     private val selectionMap: MutableMap<Component,SelectionModel<Component>> = mutableMapOf()
 
@@ -60,10 +29,14 @@ class SelectionManagerImpl(
 
     override val selection: Collection<Component> get() = selectionMap.keys.toList()
 
-    override fun select(component: Component) {
+	override fun dispose() {
+		// empty
+	}
+
+	override fun select(component: Component) {
         if (!isSelected(component)) {
             selectImpl(component)
-            view.drawing.validate()
+            content.drawing.validate()
             postSelectionChanged(listOf(component), selected = true)
         }
     }
@@ -78,13 +51,13 @@ class SelectionManagerImpl(
         }
         if (!newSelections.isEmpty()) {
             postSelectionChanged(newSelections, selected = true)
-            view.drawing.validate()
+	        content.drawing.validate()
         }
     }
 
     override fun selectAll() {
         val list = mutableListOf<Component>()
-        for (c in view.drawing.getDrawables()) {
+        for (c in content.drawing.getDrawables()) {
             if (!isSelected(c)) {
                 selectImpl(c)
                 list.add(c)
@@ -92,21 +65,21 @@ class SelectionManagerImpl(
         }
         if (!list.isEmpty()) {
             postSelectionChanged(list, selected = true)
-            view.drawing.validate()
+	        content.drawing.validate()
         }
     }
 
     override fun deselect(component: Component) {
         if (isSelected(component)) {
             deselectImpl(component)
-            view.drawing.validate()
+	        content.drawing.validate()
             postSelectionChanged(listOf(component), selected = false)
         }
     }
 
     override fun deselect(components: Collection<Component>) {
         val list = mutableListOf<Component>()
-        for (c in view.drawing.getDrawables()) {
+        for (c in content.drawing.getDrawables()) {
             if (isSelected(c)) {
                 deselectImpl(c)
                 list.add(c)
@@ -114,7 +87,7 @@ class SelectionManagerImpl(
         }
         if (!list.isEmpty()) {
             postSelectionChanged(list, selected = false)
-            view.drawing.validate()
+	        content.drawing.validate()
         }
     }
 
@@ -126,7 +99,7 @@ class SelectionManagerImpl(
         }
         if (!list.isEmpty()) {
             postSelectionChanged(list, selected = false)
-            view.drawing.validate()
+	        content.drawing.validate()
         }
     }
 
@@ -136,42 +109,13 @@ class SelectionManagerImpl(
 
     /** ---- [SelectionManagerImpl] */
 
-    /** Listens for removals of [Component]s and deselects them (if selected) in order to remove the [SelectionModel].*/
-    private inner class ComponentRemoveListener : DrawableContainerAdapter<Component>() {
-        override fun drawableRemoved(event: DrawableContainerEvent<Component>) {
-            if (event.child is Component && isSelected(event.child as Component)) {
-                deselect(event.child as Component)
-            }
-        }
-    }
-
-    private fun handleDrawingChanged(oldDrawing: Drawing<Component>?) {
-        if (oldDrawing == null) {
-            return
-        }
-
-        // Because [view.drawing] has already a new value, we cannot use [deselectAll] for cleanup,
-        // because it iterates over all [Component]s of [view.drawing], which already contains other
-        // (and unselected) [Component]s.
-
-        // relink componentRemoveListener
-        oldDrawing.removeDrawableContainerListener(componentRemoveListener)
-        view.drawing.addDrawableContainerListener(componentRemoveListener)
-
-        view.content.removeAllSelectionModels()
-
-
-        selectionMap.clear()
-        postSelectionChanged(emptyList(), selected = false)
-    }
-
     private fun postSelectionChanged(components: Collection<Component>, selected: Boolean) {
-        eventBus.post(SelectionChangeEvent(view, components, selected))
+        eventBus.post(SelectionChangeEvent(content.drawingView, components, selected))
     }
 
     /** Selects the specified [Component] without posting an event.*/
     private fun selectImpl(component: Component) {
-        var strategy = view.getComponentSelectionDrawingStrategy(component)
+        var strategy = content.drawingView.getComponentSelectionDrawingStrategy(component)
         var selectionModel = selectionModelProvider.provideFor(component, strategy)
         if (selectionModel == null && component.preferredSelectionDrawingStrategy != null) {
             strategy = component.preferredSelectionDrawingStrategy!!
@@ -182,9 +126,9 @@ class SelectionManagerImpl(
                 "${System.SYSTEM!!.getClassName(component.selectableComponent)} and strategy $strategy")
             return
         }
-        view.content.addSelectionModel(selectionModel, strategy)
+        content.addSelectionModel(selectionModel, strategy)
 	    selectionMap[component] = selectionModel
-        selectionModel.notifyAdded(view)
+        selectionModel.notifyAdded(content.drawingView)
     }
 
     /** Deselects the specified [Component] without posting an event.*/
@@ -192,9 +136,9 @@ class SelectionManagerImpl(
         val selectionModel = selectionMap[component]
         if (selectionModel != null) {
             selectionMap.remove(component)
-            view.content.removeSelectionModel(selectionModel)
+            content.removeSelectionModel(selectionModel)
             selectionModelProvider.release(selectionModel)
-            selectionModel.notifyRemoved(view)
+            selectionModel.notifyRemoved(content.drawingView)
         }
     }
 }
