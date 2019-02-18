@@ -7,12 +7,12 @@ import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import ch.scorpion.jabbah.graph.view.net.edge.OrthoEdgeViewLayout
+import ch.scorpion.jabbah.graph.view.net.edge.OrthoEdgeViewLayouter
 import kotlin.test.*
 
 /**
  * Unit tests for [NodeViewImpl].
- * Note that some of these unit tests heavily rely on [OrthoEdgeViewLayout] behaviour, which is supposed to be the
+ * Note that some of these unit tests heavily rely on [OrthoEdgeViewLayouter] behaviour, which is supposed to be the
  * default layout strategy of newly created [EdgeView]s.
  */
 class NodeViewImplTest {
@@ -44,11 +44,11 @@ class NodeViewImplTest {
     @Test
     fun testSetup() {
         assertEquals(2, splitResult.tailEdgeView.segmentPointCount)
-        assertFalse(splitResult.tailEdgeView.isAdjusted)
+        assertFalse(splitResult.tailEdgeView.layout.isAdjusted)
         assertEquals(3, splitResult.newEdgeView.segmentPointCount)
-        assertFalse(splitResult.newEdgeView.isAdjusted)
+        assertFalse(splitResult.newEdgeView.layout.isAdjusted)
         assertEquals(2, origEdgeView.segmentPointCount)
-        assertFalse(origEdgeView.isAdjusted)
+        assertFalse(origEdgeView.layout.isAdjusted)
     }
 
     @Test

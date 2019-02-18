@@ -27,6 +27,6 @@ class TestGraphView(
         ev.connectToDestination(vv2, vv2.model!!.getInput())
 
         graphView.add(vv1).add(vv2).add(ev)
-        ev.layoutOrigin()
+        ev.layout.layoutOrigin()
     }
 }

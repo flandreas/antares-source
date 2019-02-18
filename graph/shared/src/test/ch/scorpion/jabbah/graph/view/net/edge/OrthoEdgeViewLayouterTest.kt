@@ -11,9 +11,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Unit tests for [OrthoEdgeViewLayout].
+ * Unit tests for [OrthoEdgeViewLayouter].
  */
-class OrthoEdgeViewLayoutTest {
+class OrthoEdgeViewLayouterTest {
 
 	companion object {
 		init {
@@ -31,7 +31,7 @@ class OrthoEdgeViewLayoutTest {
 
 	@Test
 	fun layoutEastEast() {
-		val points = OrthoEdgeViewLayout.layout(
+		val points = OrthoEdgeViewLayouter.layout(
 			null,
 			graphView,
 			LayoutBoundary(
@@ -52,7 +52,7 @@ class OrthoEdgeViewLayoutTest {
 
 	@Test
 	fun layoutEastEastDegenerated() {
-		val points = OrthoEdgeViewLayout.layout(
+		val points = OrthoEdgeViewLayouter.layout(
 			null,
 			graphView,
 			LayoutBoundary(
@@ -71,7 +71,7 @@ class OrthoEdgeViewLayoutTest {
 
 	@Test
 	fun shouldNotFailWithEmptyPolyline() {
-		val points = OrthoEdgeViewLayout.layout(
+		val points = OrthoEdgeViewLayouter.layout(
 			null,
 			graphView,
 			LayoutBoundary(
@@ -88,7 +88,7 @@ class OrthoEdgeViewLayoutTest {
 
 	@Test
 	fun layoutSouthOpen() {
-		val points = OrthoEdgeViewLayout.layout(
+		val points = OrthoEdgeViewLayouter.layout(
 			null,
 			graphView,
 			LayoutBoundary(

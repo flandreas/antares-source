@@ -11,15 +11,15 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.base.logger
 
 /**
- * Layout algorithm for [Layout.ORTHOGONAL].
+ * Layout algorithm for [LayoutType.ORTHOGONAL].
  */
-object OrthoEdgeViewLayout : EdgeViewLayout {
+object OrthoEdgeViewLayouter : EdgeViewLayouter {
 
-    val LOG by logger(OrthoEdgeViewLayout::class)
+    val LOG by logger(OrthoEdgeViewLayouter::class)
     // TODO Make configurable in order to align with GridImpl width
     const val END_LENGTH = 14
 
-    /** ---- [EdgeViewLayout] */
+    /** ---- [EdgeViewLayouter] */
 
     override fun layout(edgeView: EdgeView<*>?, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
         if (begin.point == end.point) {
@@ -58,7 +58,7 @@ object OrthoEdgeViewLayout : EdgeViewLayout {
         return solutions[minIndex].polyline.points
     }
 
-    /** ---- [OrthoEdgeViewLayout] */
+    /** ---- [OrthoEdgeViewLayouter] */
 
     private fun createFallbackSolution(begin: Point2D, end: Point2D): List<Point2D> = listOf(begin, end)
 

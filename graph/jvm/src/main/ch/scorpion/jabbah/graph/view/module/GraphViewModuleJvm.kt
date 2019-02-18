@@ -29,7 +29,7 @@ import ch.scorpion.jabbah.graph.ui.NavigationStackView
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioPropertyEditorFactory
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioStepPropertyEditorFactory
 import ch.scorpion.jabbah.graph.view.*
-import ch.scorpion.jabbah.graph.view.net.edge.Layout
+import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
@@ -40,58 +40,58 @@ import ch.scorpion.jabbah.io.IOModuleJvm
  */
 object GraphViewModuleJvm : AbstractModule() {
 
-    override fun initialize() {
-        IOModuleJvm.require()
-        DrawModuleJvm.require()
-        GraphViewModule.require()
-        ScriptModule.scriptEngineProvider = { ScriptEngineJvm() }
+	override fun initialize() {
+		IOModuleJvm.require()
+		DrawModuleJvm.require()
+		GraphViewModule.require()
+		ScriptModule.scriptEngineProvider = { ScriptEngineJvm() }
 
-        fillProperties(BaseModule.properties)
-        configureSelectionModels(EditSelectModule.selectionModelFactory)
-        configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
-        configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
+		fillProperties(BaseModule.properties)
+		configureSelectionModels(EditSelectModule.selectionModelFactory)
+		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
+		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
 
-	    buildPropertyTree(BaseModuleJvm.preferencesTree)
-    }
+		buildPropertyTree(BaseModuleJvm.preferencesTree)
+	}
 
-    private fun fillProperties(properties: Properties) {
-        properties.set(NavigationStackView.PROP_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 11))
-        properties.set(NavigationStackView.PROP_HEAD_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.BOLD.value, 11))
-	    properties.set(NavigationStackView.PROP_PANEL_BACKGROUND_COLOR, Color(214, 214, 214))
-        properties.set(NavigationStackView.PROP_BACKGROUND_COLOR, Color.WHITE)
-        properties.set(NavigationStackView.PROP_BORDER_COLOR, Color(214, 214, 214))
-        properties.set(NavigationStackView.PROP_TEXT_COLOR, Color.BLACK)
-        properties.set(NavigationStackView.PROP_HOVER_BACKGROUND_COLOR, Color.GRAY)
-        properties.set(NavigationStackView.PROP_HOVER_BORDER_COLOR, Color.GRAY)
-        properties.set(NavigationStackView.PROP_HOVER_TEXT_COLOR, Color.WHITE)
-        properties.set(NavigationStackView.PROP_HEAD_BACKGROUND_COLOR, Color.WHITE)
-        properties.set(NavigationStackView.PROP_HEAD_BORDER_COLOR, Color(214, 214, 214))
-        properties.set(NavigationStackView.PROP_HEAD_TEXT_COLOR, Color.BLACK)
-	    properties.set(GraphNavigationPanel.PROP_DIVE_ANIMATION, true)
-    }
+	private fun fillProperties(properties: Properties) {
+		properties.set(NavigationStackView.PROP_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 11))
+		properties.set(NavigationStackView.PROP_HEAD_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.BOLD.value, 11))
+		properties.set(NavigationStackView.PROP_PANEL_BACKGROUND_COLOR, Color(214, 214, 214))
+		properties.set(NavigationStackView.PROP_BACKGROUND_COLOR, Color.WHITE)
+		properties.set(NavigationStackView.PROP_BORDER_COLOR, Color(214, 214, 214))
+		properties.set(NavigationStackView.PROP_TEXT_COLOR, Color.BLACK)
+		properties.set(NavigationStackView.PROP_HOVER_BACKGROUND_COLOR, Color.GRAY)
+		properties.set(NavigationStackView.PROP_HOVER_BORDER_COLOR, Color.GRAY)
+		properties.set(NavigationStackView.PROP_HOVER_TEXT_COLOR, Color.WHITE)
+		properties.set(NavigationStackView.PROP_HEAD_BACKGROUND_COLOR, Color.WHITE)
+		properties.set(NavigationStackView.PROP_HEAD_BORDER_COLOR, Color(214, 214, 214))
+		properties.set(NavigationStackView.PROP_HEAD_TEXT_COLOR, Color.BLACK)
+		properties.set(GraphNavigationPanel.PROP_DIVE_ANIMATION, true)
+	}
 
-    private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
-        registry.registerRenderer(Layout::class.java, EnumRenderer::class.java)
-        registry.registerRenderer(PortType::class.java, EnumRenderer::class.java)
-        registry.registerRenderer(PortLabelPosition::class.java, EnumRenderer::class.java)
-        registry.registerRenderer(VerticeLabelPosition::class.java, EnumRenderer::class.java)
-        registry.registerRenderer(NetViewStyle::class.java, EnumRenderer::class.java)
+	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
+		registry.registerRenderer(LayoutType::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(PortType::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(PortLabelPosition::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(VerticeLabelPosition::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(NetViewStyle::class.java, EnumRenderer::class.java)
 
-    }
+	}
 
-    private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
-        registry.registerEditor(Layout::class.java, LayoutEditor::class.java)
-        registry.registerEditor(PortType::class.java, PortTypeEditor::class.java)
-        registry.registerEditor(PortLabelPosition::class.java, PortLabelPositionEditor::class.java)
-        registry.registerEditor(VerticeLabelPosition::class.java, VerticeLabelPositionEditor::class.java)
-        registry.registerEditor(NetViewStyle::class.java, NetViewStyleEditor::class.java)
-        registry.register(Scenario::class.java, ScenarioPropertyEditorFactory())
-        registry.register(ScenarioStep::class.java, ScenarioStepPropertyEditorFactory())
-    }
+	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
+		registry.registerEditor(LayoutType::class.java, LayoutEditor::class.java)
+		registry.registerEditor(PortType::class.java, PortTypeEditor::class.java)
+		registry.registerEditor(PortLabelPosition::class.java, PortLabelPositionEditor::class.java)
+		registry.registerEditor(VerticeLabelPosition::class.java, VerticeLabelPositionEditor::class.java)
+		registry.registerEditor(NetViewStyle::class.java, NetViewStyleEditor::class.java)
+		registry.register(Scenario::class.java, ScenarioPropertyEditorFactory())
+		registry.register(ScenarioStep::class.java, ScenarioStepPropertyEditorFactory())
+	}
 
-    private fun configureSelectionModels(factory: SelectionModelFactory) {
-        factory.register(SelectionDrawingStrategy.ABOVE, TextComponentJvm::class.simpleName!!) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
-    }
+	private fun configureSelectionModels(factory: SelectionModelFactory) {
+		factory.register(SelectionDrawingStrategy.ABOVE, TextComponentJvm::class.simpleName!!) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
+	}
 
 	private fun buildPropertyTree(root: PreferenceGroup) {
 		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(

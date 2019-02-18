@@ -67,18 +67,9 @@ open class EdgeViewImpl<T : Any>(
 		modelExchanged(null)
 	}
 
-	/** Listens for geometry updates of the [ConnectableView]s to which this [EdgeView] is connected.*/
-	private val connectableViewListener = ConnectableViewListener()
-
 	// TODO How to initialize EdgeViewStyling when new EdgeViews are created while interacting with Tools?
 	// The proper styling should be derived from adjacent EdgeViews.
 	private var styling: EdgeViewStyling = NetViewStyle.LINE.createEdgeViewStyling(styleProvider, this)
-
-	/** Indicates that this [EdgeViewImpl] should not perform an origin layout.  */
-	private var suspendOriginLayout: Boolean = false
-
-	/** Indicates that this [EdgeViewImpl] should not perform a destination layout.  */
-	private var suspendDestinationLayout: Boolean = false
 
 	/** ---- [Any] */
 
@@ -88,16 +79,7 @@ open class EdgeViewImpl<T : Any>(
 
 	/** ---- [EdgeView] interface */
 
-	override var layout = Layout.ORTHOGONAL
-		set(value) {
-			if (value == field) {
-				return
-			}
-			field = value
-			if (parent != null) {
-				layoutAll(null, null)
-			}
-		}
+	override val layout: EdgeViewLayout = EdgeViewLayoutImpl(this)
 
 	override var polyline: PolylineShape = DrawModule.polylineShapeFactory.invoke(null)
 
@@ -116,8 +98,6 @@ open class EdgeViewImpl<T : Any>(
 	override val segmentPointCount: Int get() = polyline.pointsCount
 
 	override val width: Int get() = styling.width
-
-	override var isAdjusted: Boolean = false
 
 	override var isArrow: Boolean = false
 		set(value) {
@@ -189,10 +169,22 @@ open class EdgeViewImpl<T : Any>(
 		invalidate()
 	}
 
+	override fun setLaidOutPoints(points: List<Point2D>) {
+		invalidate()
+		polyline.setPoints(points)
+
+		updateEndpointViews()
+		styling.updateBoundingBox()
+		invalidate()
+
+		compact()
+		update()
+	}
+
 	override fun compact() {
 		invalidate()
 		if (polyline.compact()) {
-			updateAdjusted()
+			layout.updateAdjusted()
 			updateEndpointViews()
 			styling.updateBoundingBox()
 			invalidate()
@@ -202,13 +194,13 @@ open class EdgeViewImpl<T : Any>(
 	override fun connectToOrigin(origin: ConnectableView?, port: Port<T>?) {
 		checkArgument(port == null || origin != null)
 		if (this.origin != null) {
-			this.origin?.removeDrawableListener(connectableViewListener)
+			this.origin?.removeDrawableListener(layout)
 			this.origin?.handleUnconnect(this, originPort)
 		}
 		this.origin = origin
 		this.originPort = port
 		if (this.origin != null) {
-			this.origin?.addDrawableListener(connectableViewListener)
+			this.origin?.addDrawableListener(layout)
 			origin?.handleConnect(this, port)
 		}
 
@@ -220,13 +212,13 @@ open class EdgeViewImpl<T : Any>(
 		checkArgument(port == null || destination != null)
 
 		if (this.destination != null) {
-			this.destination?.removeDrawableListener(connectableViewListener)
+			this.destination?.removeDrawableListener(layout)
 			this.destination?.handleUnconnect(this, destinationPort)
 		}
 		this.destination = destination
 		this.destinationPort = port
 		if (this.destination != null) {
-			this.destination?.addDrawableListener(connectableViewListener)
+			this.destination?.addDrawableListener(layout)
 			destination?.handleConnect(this, port)
 		}
 		updateEndpointViews()
@@ -254,7 +246,7 @@ open class EdgeViewImpl<T : Any>(
 		LOG.trace("moveOriginEndPoint to ($x,$y)")
 		invalidate()
 		moveOriginEndPointImpl(x, y)
-		layoutOrigin()
+		layout.layoutOrigin()
 		invalidate()
 		update()
 	}
@@ -268,7 +260,7 @@ open class EdgeViewImpl<T : Any>(
 		LOG.trace("moveDestinationEndPoint to ($x,$y)")
 		invalidate()
 		moveDestinationEndPointImpl(x, y)
-		layoutDestination()
+		layout.layoutDestination()
 		invalidate()
 		update()
 	}
@@ -372,10 +364,10 @@ open class EdgeViewImpl<T : Any>(
 			}
 		}
 
-		isAdjusted = true
+		layout.isAdjusted = true
 
-		suspendOriginLayout = true
-		suspendDestinationLayout = true
+		layout.suspendOriginLayout = true
+		layout.suspendDestinationLayout = true
 
 		if (newOrigNodePoint != null) {
 			(origin as NodeView<*>).location = Point2D(newOrigNodePoint.x, newOrigNodePoint.y)
@@ -392,104 +384,14 @@ open class EdgeViewImpl<T : Any>(
 		invalidate()
 		update()
 
-		suspendOriginLayout = false
-		suspendDestinationLayout = false
+		layout.suspendOriginLayout = false
+		layout.suspendDestinationLayout = false
 
 		return MoveEdgeSegmentInfo(polyline.findSegment(center.x, center.y)!!, offset)
 	}
 
 	override fun getSegmentDirection(segmentIndex: Int): Direction? {
-		return layout.getSegmentDirection(this, segmentIndex)
-	}
-
-	override fun layoutOrigin() {
-		layoutOrigin(null)
-	}
-
-	override fun layoutOrigin(direction: Direction?) {
-		LOG.debug("EdgeViewImpl: layoutOrigin")
-		if (!isAdjusted) {
-			layoutAll(direction, null)
-			return
-		}
-		val originPoint = getLayoutOriginPoint()
-		if (originPoint != null) {
-			val destPointIndex = Math.min(2, polyline.pointsCount - 1)
-			val destPoint = Point2D(polyline.getPointAt(destPointIndex))
-			val originDirs = if (direction == null) getOriginDirections(destPoint) else setOf(direction)
-			val destDir = getSegmentDirection(destPointIndex - 1)
-			val list = mutableListOf<Point2D>()
-			list.addAll(layout.layout(
-				this,
-				parent as GraphView<*>,
-				LayoutBoundary(
-					point = originPoint,
-					directions = originDirs,
-					isPort = origin != null || direction != null),
-				LayoutBoundary(
-					point = destPoint,
-					directions = destDir?.let { setOf(destDir) } ?: setOf(),
-					isPort = destination != null && destPointIndex == polyline.pointsCount - 1)))
-
-			list.addAll(polyline.getPoints(destPointIndex, polyline.pointsCount))
-
-			invalidate()
-			polyline.setPoints(list)
-
-			updateEndpointViews()
-			styling.updateBoundingBox()
-			invalidate()
-
-			compact()
-
-			update()
-		}
-
-		updateAdjusted()
-	}
-
-	override fun layoutDestination() {
-		layoutDestination(null)
-	}
-
-	override fun layoutDestination(direction: Direction?) {
-		LOG.trace("EdgeViewImpl: layoutDestination")
-		if (!isAdjusted) {
-			layoutAll(null, direction)
-			return
-		}
-		val destPoint = getLayoutDestinationPoint()
-		if (destPoint != null) {
-			val origPointIndex = Math.max(0, polyline.pointsCount - 3)
-			val origPoint = Point2D(polyline.getPointAt(origPointIndex))
-			val destDirs = if (direction == null) getDestinationDirections(origPoint) else setOf(direction)
-			val origDir = getSegmentDirection(origPointIndex)
-			val list = mutableListOf<Point2D>()
-			list.addAll(layout.layout(
-				this,
-				parent as GraphView<*>,
-				LayoutBoundary(
-					point = origPoint,
-					directions = origDir?.let { setOf(origDir) } ?: setOf(),
-					isPort = origin != null && origPointIndex == 0),
-				LayoutBoundary(
-					point = destPoint,
-					directions = destDirs,
-					isPort = destination != null || direction != null)))
-			list.addAll(0, polyline.getPoints(0, origPointIndex))
-
-			invalidate()
-			polyline.setPoints(list)
-
-			updateEndpointViews()
-			styling.updateBoundingBox()
-			invalidate()
-
-			compact()
-			update()
-		}
-
-		updateAdjusted()
+		return layout.type.getSegmentDirection(this, segmentIndex)
 	}
 
 	override val isDegenerated: Boolean
@@ -522,8 +424,8 @@ open class EdgeViewImpl<T : Any>(
 			tail.addSegmentPoint(0, Point2D(splitLocation))
 		}
 
-		tail.layout = this.layout
-		tail.isAdjusted = this.isAdjusted
+		tail.layout.type = this.layout.type
+		tail.layout.isAdjusted = this.layout.isAdjusted
 		tail.isArrow = this.isArrow
 
 		val oldConnectionState = connectionState
@@ -578,15 +480,15 @@ open class EdgeViewImpl<T : Any>(
 		val destIfExistsMoves = destination == null || components.contains(destination as Locatable)
 		val thisMoves = originIfExistsMoves && destIfExistsMoves
 
-		suspendOriginLayout = originIfExistsMoves && thisMoves
-		suspendDestinationLayout = destIfExistsMoves && thisMoves
+		layout.suspendOriginLayout = originIfExistsMoves && thisMoves
+		layout.suspendDestinationLayout = destIfExistsMoves && thisMoves
 	}
 
 	override fun moveBy(dx: Double, dy: Double) {
 		LOG.debug("moveBy")
 
 		// An EdgeView does only move if all ConnectableView it is connected to are moved as well
-		if (origin != null && !suspendOriginLayout || destination != null && !suspendDestinationLayout) {
+		if (origin != null && !layout.suspendOriginLayout || destination != null && !layout.suspendDestinationLayout) {
 			return
 		}
 
@@ -599,8 +501,8 @@ open class EdgeViewImpl<T : Any>(
 	}
 
 	override fun completeMoveBy() {
-		suspendOriginLayout = false
-		suspendDestinationLayout = false
+		layout.suspendOriginLayout = false
+		layout.suspendDestinationLayout = false
 	}
 
 	/** ---- [Drawable] interface */
@@ -622,7 +524,7 @@ open class EdgeViewImpl<T : Any>(
 
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
 		LOG.trace("getInputEventHandler at " + Point2D(context.x, context.y))
-		return layout.getInputEventHandler(this, context) { super.getInputEventHandler(context) }
+		return layout.type.getInputEventHandler(this, context) { super.getInputEventHandler(context) }
 	}
 
 	override fun draw(context: DrawContext) {
@@ -647,7 +549,7 @@ open class EdgeViewImpl<T : Any>(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeString("layout", layout.customName)
+		writer.writeString("layout", layout.type.customName)
 		if (isArrow) {
 			writer.writeBoolean("arrow", true)
 		}
@@ -669,17 +571,17 @@ open class EdgeViewImpl<T : Any>(
 				}
 			}
 		}
-		writer.writeBoolean("adjusted", isAdjusted)
+		writer.writeBoolean("adjusted", layout.isAdjusted)
 		writer.writePoints("shape", "polylineShape", "points", polyline.getPoints(0, polyline.pointsCount))
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("layout")) {
-			layout = Layout.withName(reader.readString("layout"))
+			layout.type = LayoutType.withName(reader.readString("layout"))
 		}
 		if (reader.hasAttribute("adjusted")) {
-			isAdjusted = reader.readBoolean("adjusted")
+			layout.isAdjusted = reader.readBoolean("adjusted")
 		}
 
 		if (reader.hasAttribute("orig")) {
@@ -802,40 +704,6 @@ open class EdgeViewImpl<T : Any>(
 		return this
 	}
 
-	private fun layoutAll(originDir: Direction?, destDir: Direction?) {
-		LOG.trace("EdgeViewImpl: layoutAll, originDir=$originDir, destDir=$destDir")
-		val originPoint = getLayoutOriginPoint()
-		val originDirs: Set<Direction>
-		val destPoint = getLayoutDestinationPoint()
-		val destDirs: Set<Direction>
-
-		if (originPoint != null && destPoint != null) {
-			invalidate()
-
-			originDirs = if (originDir != null) setOf(originDir) else getOriginDirections(destPoint)
-			destDirs = if (destDir != null) setOf(destDir) else getDestinationDirections(originPoint)
-
-			val layoutedPoints = layout.layout(
-				this,
-				parent as GraphView<*>,
-				LayoutBoundary(
-					point = originPoint,
-					directions = originDirs,
-					isPort = origin != null || originDir != null),
-				LayoutBoundary(
-					point = destPoint,
-					directions = destDirs,
-					isPort = destination != null || destDir != null))
-
-			polyline.clear()
-			polyline.setPoints(layoutedPoints)
-			updateEndpointViews()
-			styling.updateBoundingBox()
-			invalidate()
-			update()
-		}
-	}
-
 	/**
 	 * Updates the locations of both [EdgeEndpointView]s.
 	 * Doesn't call update bounding box of styling, since that is the responsibility of the caller.
@@ -845,48 +713,6 @@ open class EdgeViewImpl<T : Any>(
 		if (segmentPointCount > 0) {
 			originEndpointView.location = Point2D(polyline.getPointAt(0))
 			destinationEndpointView.location = Point2D(polyline.getPointAt(polyline.pointsCount - 1))
-		}
-	}
-
-	private fun getLayoutOriginPoint(): Point2D? {
-		if (origin != null) {
-			return origin!!.getPortConnectionPoint(originPort)
-		}
-		if (polyline.pointsCount > 0) {
-			return Point2D(polyline.getPointAt(0))
-		}
-		return null
-	}
-
-	private fun getOriginDirections(refPoint: Point2D): Set<Direction> {
-		if (origin != null) {
-			return origin!!.getPortConnectionLayoutDirections(this, originPort, refPoint)
-		}
-		return setOf(Direction.EAST)
-	}
-
-	private fun getLayoutDestinationPoint(): Point2D? {
-		if (destination != null) {
-			return destination!!.getPortConnectionPoint(destinationPort)
-		}
-		if (polyline.pointsCount >= 2) {
-			return Point2D(polyline.getPointAt(polyline.pointsCount - 1))
-		}
-		return null
-	}
-
-	private fun getDestinationDirections(refPoint: Point2D): Set<Direction> {
-		if (destination != null) {
-			return Direction.oppositeSet(destination!!.getPortConnectionLayoutDirections(this, destinationPort, refPoint))
-		}
-		return Direction.ALL
-	}
-
-	private fun updateAdjusted() {
-		isAdjusted = if (origin is NodeView<*> || destination is NodeView<*>) {
-			isAdjusted && polyline.pointsCount > 2
-		} else {
-			isAdjusted && polyline.pointsCount > 3
 		}
 	}
 
@@ -957,25 +783,5 @@ open class EdgeViewImpl<T : Any>(
 		}
 		val portView = destination!!.getPortView(destinationPort!!)
 		return polyline.getSegmentLength(polyline.pointsCount - 2) >= portView!!.minSegmentLength
-	}
-
-	/**
-	 * Listens for geometry updates of the [ConnectableView]s to which this [EdgeView] is connected and
-	 * initiates a re-layout when they are changed.
-	 */
-	private inner class ConnectableViewListener : DrawableAdapter() {
-		override fun drawableUpdated(event: DrawableEvent) {
-			if (parent == null) {
-				// No need to do any layouts while EdgeView is being loaded from persistant storage
-				return
-			}
-			LOG.debug("VerticeView updated")
-			if (event.source == origin && !suspendOriginLayout) {
-				layoutOrigin()
-			}
-			if (event.source == destination && !suspendDestinationLayout) {
-				layoutDestination()
-			}
-		}
 	}
 }

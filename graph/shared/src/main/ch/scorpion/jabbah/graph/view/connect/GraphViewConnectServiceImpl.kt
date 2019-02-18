@@ -255,7 +255,7 @@ class GraphViewConnectServiceImpl(
 		}
 		edgeView.connectToOrigin(orig, port)
 		if (layout) {
-			edgeView.layoutOrigin()
+			edgeView.layout.layoutOrigin()
 		}
 	}
 
@@ -267,7 +267,7 @@ class GraphViewConnectServiceImpl(
 		}
 		edgeView.connectToDestination(dest, port)
 		if (layout) {
-			edgeView.layoutDestination()
+			edgeView.layout.layoutDestination()
 		}
 	}
 }

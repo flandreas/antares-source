@@ -10,13 +10,13 @@ import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 
 /**
- * Represents the supported strategies for laying out the segments of an [EdgeView].
+ * Represents the supported types for laying out the segments of an [EdgeView].
  */
-enum class Layout(val customName: String, inputEventHandler: EdgeViewInputEventHandler) {
+enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEventHandler) {
 
     STRAIGHT("straight", EdgeViewInputEventHandler()) {
         override fun layout(edgeView: EdgeView<*>, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
-            return StraightEdgeViewLayout.layout(edgeView, graphView, begin, end)
+            return StraightEdgeViewLayouter.layout(edgeView, graphView, begin, end)
         }
 
         override fun getSegmentDirection(edgeView: EdgeView<*>, segmentIndex: Int): Direction? {
@@ -26,22 +26,22 @@ enum class Layout(val customName: String, inputEventHandler: EdgeViewInputEventH
 
     ORTHOGONAL("ortho", DragEdgeSegmentHandler()) {
         override fun layout(edgeView: EdgeView<*>, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
-            return OrthoEdgeViewLayout.layout(edgeView, graphView, begin, end)
+            return OrthoEdgeViewLayouter.layout(edgeView, graphView, begin, end)
         }
     },
 
     NONE("none", DragEdgePointHandler()) {
         override fun layout(edgeView: EdgeView<*>, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
-            return NoneEdgeViewLayout.layout(edgeView, graphView, begin, end)
+            return NoneEdgeViewLayouter.layout(edgeView, graphView, begin, end)
         }
     };
 
     companion object {
 
-        val LOG by logger(Layout::class)
+        val LOG by logger(LayoutType::class)
 
-        fun withName(customName: String): Layout {
-            for (i in 0 until Layout.values().size) {
+        fun withName(customName: String): LayoutType {
+            for (i in 0 until LayoutType.values().size) {
                 if (values()[i].customName == customName) {
                     return values()[i]
                 }

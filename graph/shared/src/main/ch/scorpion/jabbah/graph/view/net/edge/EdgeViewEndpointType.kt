@@ -24,7 +24,7 @@ enum class EdgeViewEndpointType {
         }
 
         override fun layout(edgeView: EdgeView<*>, direction: Direction?) {
-            edgeView.layoutOrigin(direction)
+            edgeView.layout.layoutOrigin(direction)
         }
 
         override fun getEndpoint(edgeView: EdgeView<*>): EdgeEndpointView {
@@ -55,7 +55,7 @@ enum class EdgeViewEndpointType {
         }
 
         override fun layout(edgeView: EdgeView<*>, direction: Direction?) {
-            edgeView.layoutDestination(direction)
+            edgeView.layout.layoutDestination(direction)
         }
 
         override fun getEndpoint(edgeView: EdgeView<*>): EdgeEndpointView {
