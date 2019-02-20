@@ -191,7 +191,7 @@ interface EdgeView<T: Any> : NetViewElement<T> {
      * @param edgeViewCreator used to create the new [EdgeView] tail instance.
      * @return the newly created [EdgeView] that represents the tail part that has been spit apart from this [EdgeView].
      */
-    fun split(index: Int, splitLocation: Point2D, edgeViewCreator: (Net<*>) -> EdgeView<*>): EdgeView<*>
+    fun split(index: Int, splitLocation: Point2D, edgeViewCreator: (Net<T>) -> EdgeView<T>): EdgeView<T>
 
     /**
      * Joins this [EdgeView] with another adjacent [EdgeView].

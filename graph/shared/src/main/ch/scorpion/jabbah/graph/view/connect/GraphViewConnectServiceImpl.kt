@@ -189,7 +189,7 @@ class GraphViewConnectServiceImpl(
 		val tail = splittedEdgeView.split(
 			splitSegmentIndex,
 			newEdgeView.getSegmentPoint(0)
-		) { tailEdgeView ?: edgeViewFactorySupplier.invoke().createEdgeView(it as Net<Any>) } as EdgeView<T>
+		) { tailEdgeView ?: edgeViewFactorySupplier.invoke().createEdgeView(it as Net<Any>) as EdgeView<T> }
 
 		// Update view of head part of EdgeView that is being split
 		val origSplittedEVConnState = splittedEdgeView.connectionState

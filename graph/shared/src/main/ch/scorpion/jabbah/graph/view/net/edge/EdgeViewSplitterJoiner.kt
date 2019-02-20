@@ -1,0 +1,166 @@
+package ch.scorpion.jabbah.graph.view.net.edge
+
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.view.ConnectableView
+import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.EdgeViewConnectionState
+
+/**
+ * A utility object for splitting and joining [EdgeView]s.
+ */
+object EdgeViewSplitterJoiner {
+
+	fun <T: Any> split(edgeView: EdgeView<T>, index: Int, splitLocation: Point2D, edgeViewCreator: (Net<T>) -> EdgeView<T>): EdgeView<T> {
+		val tail = edgeViewCreator.invoke(edgeView.model!!) as EdgeView<T>
+
+		if (edgeView.isArrow) {
+			tail.isArrow = true
+			edgeView.isArrow = false
+		}
+		while (edgeView.segmentPointCount - 1 > index) {
+			tail.addSegmentPoint(0, edgeView.getSegmentPoint(edgeView.segmentPointCount - 1))
+			edgeView.polyline.removePoint(edgeView.segmentPointCount - 1)
+		}
+
+		if (splitLocation != edgeView.polyline.getLastPoint()) {
+			edgeView.addSegmentPoint(Point2D(Point2D(splitLocation)))
+		}
+		if (splitLocation != tail.getSegmentPoint(0)) {
+			tail.addSegmentPoint(0, Point2D(splitLocation))
+		}
+
+		tail.layout.type = edgeView.layout.type
+		tail.layout.isAdjusted = edgeView.layout.isAdjusted
+		tail.isArrow = edgeView.isArrow
+
+		val oldConnectionState = edgeView.connectionState
+		val oldDest = edgeView.destination
+		val oldDestPort = edgeView.destinationPort
+
+		if (oldConnectionState == EdgeViewConnectionState.InputInput) {
+			val orig = edgeView.origin
+			val origPort = edgeView.originPort
+			if (orig != null) {
+				edgeView.connectToOrigin(null, null)
+				edgeView.connectToDestination(orig, origPort)
+			}
+		}
+
+		if (oldDest != null) {
+			if (oldConnectionState != EdgeViewConnectionState.InputInput) {
+				edgeView.connectToDestination(null, null)
+			}
+			tail.connectToDestination(oldDest, oldDestPort)
+		}
+
+		return tail
+	}
+
+	fun <T: Any> join(edgeView: EdgeView<T>, other: EdgeView<T>): EdgeView<*> {
+		return if (edgeView.polyline.getLastPoint() == other.polyline.getFirstPoint()) {
+			joinOtherHeadWithTail(edgeView, other)
+		} else if (edgeView.polyline.getFirstPoint() == other.polyline.getLastPoint()) {
+			joinOtherTailWithHead(edgeView, other)
+		} else if (edgeView.polyline.getFirstPoint() == other.polyline.getFirstPoint()) {
+			joinOtherHeadWithHead(edgeView, other)
+		} else {
+			throw IllegalArgumentException("joined EdgeView is not adjacent")
+		}
+	}
+
+	/**
+	 * Checks whether the origin segment should be split because it is to be moved and the originating
+	 * [ConnectableView] requires a minimum segment length, and adds a new [Point2D] if necessary.
+	 * @return `true` if the origin segment has been split and a new [Point2D] has been added
+	 */
+	fun splitOriginSegmentForMove(edgeView: EdgeView<*>): Boolean {
+		if (edgeView.origin == null || edgeView.originPort == null) {
+			return false
+		}
+
+		val portView = edgeView.origin!!.getPortView(edgeView.originPort!!)
+		if (portView!!.minSegmentLength == 0) {
+			return false
+		}
+
+		val newPoint = Point2D(
+			edgeView.polyline.getFirstPoint().x + portView.relativeDirection.dx * portView.minSegmentLength,
+			edgeView.polyline.getFirstPoint().y + portView.relativeDirection.dy * portView.minSegmentLength)
+
+		edgeView.polyline.addPointAt(1, newPoint.x, newPoint.y)
+		return true
+	}
+
+	/**
+	 * Checks whether the destination segment should be split because it is to be moved and the destination
+	 * [ConnectableView] requires a minimum segment length, and adds a new [Point2D] if necessary.
+	 * @return `true` if the destination segment has been split and a new [Point2D] has been added
+	 */
+	fun splitDestinationSegmentForMove(edgeView: EdgeView<*>): Boolean {
+		if (edgeView.destination == null || edgeView.destinationPort == null) {
+			return false
+		}
+
+		val portView = edgeView.destination!!.getPortView(edgeView.destinationPort!!)
+		if (portView!!.minSegmentLength == 0) {
+			return false
+		}
+
+		val newPoint = Point2D(
+			edgeView.polyline.getLastPoint().x + portView.relativeDirection.dx * portView.minSegmentLength,
+			edgeView.polyline.getLastPoint().y + portView.relativeDirection.dy * portView.minSegmentLength)
+
+		edgeView.polyline.addPointAt(edgeView.polyline.pointsCount - 1, newPoint.x, newPoint.y)
+		return true
+	}
+
+	private fun <T: Any> joinOtherHeadWithHead(edgeView: EdgeView<T>, other: EdgeView<T>): EdgeView<*> {
+		for (i in 0 until other.segmentPointCount) {
+			if (edgeView.polyline.getFirstPoint() != other.getSegmentPoint(i)) {
+				edgeView.addSegmentPoint(0, other.getSegmentPoint(i))
+			}
+		}
+		edgeView.compact()
+		val origin = other.destination
+		val originPort = other.destinationPort
+		if (other.destination != null) {
+			other.connectToDestination(null, null)
+		}
+		edgeView.connectToOrigin(origin, originPort)
+		return edgeView
+	}
+
+	private fun <T: Any> joinOtherHeadWithTail(edgeView: EdgeView<T>, other: EdgeView<T>): EdgeView<*> {
+		for (i in 0 until other.segmentPointCount) {
+			if (edgeView.polyline.getLastPoint() != other.getSegmentPoint(i)) {
+				edgeView.addSegmentPoint(other.getSegmentPoint(i))
+			}
+		}
+		edgeView.compact()
+		val destination = other.destination
+		val destinationPort = other.destinationPort
+		if (other.destination != null) {
+			other.connectToDestination(null, null)
+		}
+		edgeView.connectToDestination(destination, destinationPort)
+		return edgeView
+	}
+
+	private fun <T: Any> joinOtherTailWithHead(edgeView: EdgeView<T>, other: EdgeView<T>): EdgeView<*> {
+		for (i in other.segmentPointCount - 1 downTo 0) {
+			if (edgeView.polyline.getFirstPoint() != other.getSegmentPoint(i)) {
+				edgeView.addSegmentPoint(0, other.getSegmentPoint(i))
+			}
+		}
+		edgeView.compact()
+		val origin = other.origin
+		val originPort = other.originPort
+		if (other.origin != null) {
+			other.connectToOrigin(null, null)
+		}
+		edgeView.connectToOrigin(origin, originPort)
+		return edgeView
+	}
+}
