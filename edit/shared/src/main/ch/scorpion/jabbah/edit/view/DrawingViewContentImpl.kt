@@ -1,15 +1,14 @@
 package ch.scorpion.jabbah.edit.view
 
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawableContainer
-import ch.scorpion.jabbah.draw.ZoomPan
+import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.draw.container.UnzoomableContainer
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.select.UnzoomableSelectionModel
 
-class DrawingViewContentImpl<T : Drawing<*>>(
+class DrawingViewContentImpl<T : Drawing<Component>>(
 	override val drawingView: DrawingView<T>,
 	override val drawing: T,
 	selectionManagerFactory: SelectionManagerFactory,
@@ -17,16 +16,22 @@ class DrawingViewContentImpl<T : Drawing<*>>(
 ) : DrawingViewContent<T> {
 
 	/** Holds a [DrawableContainer] for every supported [SelectionDrawingStrategy].*/
-	private val selectionContainers = mutableMapOf<SelectionDrawingStrategy, DrawableContainer<SelectionModel<Component>>>()
+	private val selectionContainers =
+		mutableMapOf<SelectionDrawingStrategy, DrawableContainer<SelectionModel<Component>>>()
 
 	/** Used for managing [SelectionModel]s that are [Unzoomable]. */
-	private val unzoomableSelectionContainers = mutableMapOf<SelectionDrawingStrategy, UnzoomableContainer<UnzoomableSelectionModel<Component>>>()
+	private val unzoomableSelectionContainers =
+		mutableMapOf<SelectionDrawingStrategy, UnzoomableContainer<UnzoomableSelectionModel<Component>>>()
+
+	/** Listens for [Component]s being removed from the current [Drawing] while being selected.*/
+	private val componentRemoveListener = ComponentRemoveListener()
 
 	init {
 		selectionContainers[SelectionDrawingStrategy.ABOVE] = DrawableContainerImpl()
 		selectionContainers[SelectionDrawingStrategy.REPLACE] = DrawableContainerImpl()
 		selectionContainers[SelectionDrawingStrategy.BELOW] = DrawableContainerImpl()
 		unzoomableSelectionContainers[SelectionDrawingStrategy.ABOVE] = UnzoomableContainer()
+		drawing.addDrawableContainerListener(componentRemoveListener)
 	}
 
 	/** ---- [DrawingViewContent] interface */
@@ -44,6 +49,7 @@ class DrawingViewContentImpl<T : Drawing<*>>(
 	override val highlightContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
 
 	override fun dispose() {
+		drawing.removeDrawableContainerListener(componentRemoveListener)
 		drawing.dispose()
 		selectionManager.dispose()
 	}
@@ -89,5 +95,14 @@ class DrawingViewContentImpl<T : Drawing<*>>(
 
 	override fun unzoomableSelectionContainerFor(strategy: SelectionDrawingStrategy): UnzoomableContainer<UnzoomableSelectionModel<Component>>? {
 		return unzoomableSelectionContainers[strategy]
+	}
+
+	/** Listens for removals of [Component]s and deselects them (if selected) in order to remove the [SelectionModel].*/
+	private inner class ComponentRemoveListener : DrawableContainerAdapter<Component>() {
+		override fun drawableRemoved(event: DrawableContainerEvent<Component>) {
+			if (event.child is Component && selectionManager.isSelected(event.child as Component)) {
+				selectionManager.deselect(event.child as Component)
+			}
+		}
 	}
 }
