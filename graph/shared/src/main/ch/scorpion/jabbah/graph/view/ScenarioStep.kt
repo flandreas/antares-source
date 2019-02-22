@@ -15,60 +15,60 @@ import ch.scorpion.jabbah.io.Storable
  */
 interface ScenarioStep : Storable {
 
-    /** The identification of this [ScenarioStep] that is unique within a [Scenario].*/
-    var id: Int
+	/** The identification of this [ScenarioStep] that is unique within a [Scenario].*/
+	var id: Int
 
-    /**
-     * The displayable name of this [ScenarioStep]. Note that this name can be internationalized and should
-     * not be used for technical identifications.
-     * Reflects the value in [translatableName] corresponding with the current system [Language].
-     */
-    var name: String
+	/**
+	 * The displayable name of this [ScenarioStep]. Note that this name can be internationalized and should
+	 * not be used for technical identifications.
+	 * Reflects the value in [translatableName] corresponding with the current system [Language].
+	 */
+	var name: String
 
 	/** Contains translations of the [name] property.*/
 	var translatableName: TranslatableText
 
-    /**
-     * The text to be displayed above the explained [GraphView] when this [ScenarioStep] is active.
-     * Reflects the value in [translatableDescription] corresponding with the current system [Language].
-     */
-    var description: String?
+	/**
+	 * The text to be displayed above the explained [GraphView] when this [ScenarioStep] is active.
+	 * Reflects the value in [translatableDescription] corresponding with the current system [Language].
+	 */
+	var description: String?
 
 	/** Contains translations for the [description] property.*/
 	var translatableDescription: TranslatableText
 
-    /** The comma-separated, persistent list of [Component] IDs to be highlighted when this [ScenarioStep] is active*/
-    var highlightIds: String?
+	/** The comma-separated, persistent list of [Component] IDs to be highlighted when this [ScenarioStep] is active*/
+	var highlightIds: String?
 
-    /**
-     * Returns the [List] of [Component] IDs to be highlighted when this [ScenarioStep] is active.
-     * @throws IllegalStateException if `highlightIds` contains data in an illegal format
-     */
-    val highlightIdsAsInt: List<Int>
+	/**
+	 * Returns the [List] of [Component] IDs to be highlighted when this [ScenarioStep] is active.
+	 * @throws IllegalStateException if [highlightIds] contains data in an illegal format
+	 */
+	val highlightIdsAsInt: List<Int>
 
-    /**
-     * Returns the condition that determines whether this {@link ScenarioStep} is triggered depending on the current state
-     * of a [DrawingView] and its GraphView.
-     *
-     * A [ScenarioStep] will only trigger if its owning [Scenario] also triggers, which is controlled by
-     * client classes that evaluate the return condition. Hence, it's not necessary that the returned condition contains
-     * terms that check the [Scenario] condition as well.
-     */
-    val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
+	/**
+	 * Returns the condition that determines whether this {@link ScenarioStep} is triggered depending on the current state
+	 * of a [DrawingView] and its GraphView.
+	 *
+	 * A [ScenarioStep] will only trigger if its owning [Scenario] also triggers, which is controlled by
+	 * client classes that evaluate the return condition. Hence, it's not necessary that the returned condition contains
+	 * terms that check the [Scenario] condition as well.
+	 */
+	val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
 
-    fun dispose()
+	fun dispose()
 
-    /**
-     * Notifies this [ScenarioStep] that it has become the active [ScenarioStep] in a [GraphView]'s
-     * current [Scenario].
-     */
-    fun activate(view: DrawingView<GraphView<GraphElementView<*>>>)
+	/**
+	 * Notifies this [ScenarioStep] that it has become the active [ScenarioStep] in a [GraphView]'s
+	 * current [Scenario].
+	 */
+	fun activate(view: DrawingView<GraphView<GraphElementView<*>>>)
 
-    /**
-     * Notifies this [ScenarioStep] that it is no longer the active [ScenarioStep] in a [GraphView]'s
-     * current [Scenario].
-     */
-    fun passivate(view: DrawingView<GraphView<GraphElementView<*>>>)
+	/**
+	 * Notifies this [ScenarioStep] that it is no longer the active [ScenarioStep] in a [GraphView]'s
+	 * current [Scenario].
+	 */
+	fun passivate(view: DrawingView<GraphView<GraphElementView<*>>>)
 
 }
 

@@ -3,41 +3,41 @@ package ch.scorpion.jabbah.graph.view
 import ch.scorpion.jabbah.io.Storable
 
 /**
- * Encapsulates the {@link Scenario}s of a {@link GraphView} and the corresponding management methods into
- * a single object.
+ * Encapsulates the [Scenario]s of a [GraphView] and the corresponding management methods
+ * into a single object.
  */
 interface Scenarios : Storable {
 
-    /** Can be `null` in order to be instantiated by deserialization .*/
-    var graphView: GraphView<*>?
+	/** Can be `null` in order to be instantiated by deserialization. */
+	var graphView: GraphView<*>?
 
-    val isEmpty: Boolean
+	val isEmpty: Boolean
 
-    fun dispose()
+	fun dispose()
 
-    fun getScenarios(): Iterable<Scenario>
+	fun getScenarios(): Iterable<Scenario>
 
-    fun get(id: Int): Scenario
+	fun get(id: Int): Scenario
 
-    fun add(name: String)
+	fun add(name: String)
 
-    fun add(scenario: Scenario)
+	fun add(scenario: Scenario)
 
-    fun add(scenario: Scenario, index: Int)
+	fun add(scenario: Scenario, index: Int)
 
-    fun remove(scenario: Scenario)
+	fun remove(scenario: Scenario)
 
-    fun addStep(scenario: Scenario, step: ScenarioStep)
+	fun addStep(scenario: Scenario, step: ScenarioStep)
 
-    fun addStep(scenario: Scenario, step: ScenarioStep, index: Int)
+	fun addStep(scenario: Scenario, step: ScenarioStep, index: Int)
 
-    fun removeStep(scenario: Scenario, step: ScenarioStep)
+	fun removeStep(scenario: Scenario, step: ScenarioStep)
 
-    fun moveStep(scenario: Scenario, step: ScenarioStep, index: Int)
+	fun moveStep(scenario: Scenario, step: ScenarioStep, index: Int)
 
-    fun indexOfScenario(scenario: Scenario): Int
+	fun indexOfScenario(scenario: Scenario): Int
 
-    fun indexOfStep(scenario: Scenario, step: ScenarioStep): Int
+	fun indexOfStep(scenario: Scenario, step: ScenarioStep): Int
 }
 
 data class ScenarioAddedEvent(val graphView: GraphView<*>, val scenario: Scenario)
