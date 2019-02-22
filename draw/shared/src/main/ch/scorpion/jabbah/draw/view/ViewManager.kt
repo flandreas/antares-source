@@ -10,20 +10,20 @@ import ch.scorpion.jabbah.draw.View
  */
 interface ViewManager {
 
-    /** Holds the currently active [View]. */
-    var activeView: View<out InputEventContext>?
+	/** Holds the currently active [View]. */
+	var activeView: View<out InputEventContext>?
 
-    /** Registers [View].*/
-    fun registerView(view: View<out InputEventContext>)
+	/** Registers [View].*/
+	fun registerView(view: View<out InputEventContext>)
 
-    /** Unregisters a [View]. */
-    fun unregisterView(view: View<out InputEventContext>)
+	/** Unregisters a [View]. */
+	fun unregisterView(view: View<out InputEventContext>)
 }
 
 /**
  * Posted by a [ViewManager] when the active {@link View} has changed.
  */
 data class ActiveViewChangedEvent(
-        val viewManager: ViewManager,
-        val oldView: View<out InputEventContext>?,
-        val newView: View<out InputEventContext>?)
+	val viewManager: ViewManager,
+	val oldView: View<out InputEventContext>?,
+	val newView: View<out InputEventContext>?)

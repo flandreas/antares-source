@@ -19,53 +19,53 @@ import javax.swing.UIManager
  * @property view the [View] whose [Canvas] requests the focus
  */
 class FocusPanel(
-        child: JComponent,
-        val view: View<out InputEventContext>,
-        viewManager: ViewManager
+	child: JComponent,
+	val view: View<out InputEventContext>,
+	viewManager: ViewManager
 ) : JPanel() {
 
-    companion object {
-        val focusBorder = BorderFactory.createLineBorder(UIManager.getColor("Focus.color"), 1)!!
-        val nonFocusBorder = BorderFactory.createEmptyBorder(1, 1, 1, 1)!!
-    }
+	companion object {
+		val focusBorder = BorderFactory.createLineBorder(UIManager.getColor("Focus.color"), 1)!!
+		val nonFocusBorder = BorderFactory.createEmptyBorder(1, 1, 1, 1)!!
+	}
 
-    init {
-        (view.canvas as JComponent).addFocusListener(object : FocusAdapter() {
-            override fun focusGained(e: FocusEvent) {
-	            if (!e.isTemporary) {
-		            updateFocusBorder()
-		            viewManager.activeView = view
-	            }
-            }
+	init {
+		(view.canvas as JComponent).addFocusListener(object : FocusAdapter() {
+			override fun focusGained(e: FocusEvent) {
+				if (!e.isTemporary) {
+					updateFocusBorder()
+					viewManager.activeView = view
+				}
+			}
 
-            override fun focusLost(e: FocusEvent) {
-	            if (!e.isTemporary) {
-		            updateFocusBorder()
-	            }
-            }
-        })
-        (view.canvas as JComponent).addMouseListener(object : MouseAdapter() {
-            override fun mousePressed(e: MouseEvent) {
-	            if (e.button == BUTTON1) {
-		            view.requestFocus()
-	            }
-            }
-        })
+			override fun focusLost(e: FocusEvent) {
+				if (!e.isTemporary) {
+					updateFocusBorder()
+				}
+			}
+		})
+		(view.canvas as JComponent).addMouseListener(object : MouseAdapter() {
+			override fun mousePressed(e: MouseEvent) {
+				if (e.button == BUTTON1) {
+					view.requestFocus()
+				}
+			}
+		})
 
-        buildUI(child)
-    }
+		buildUI(child)
+	}
 
-    private fun buildUI(child: JComponent) {
-        layout = BorderLayout()
-        add(child, BorderLayout.CENTER)
-        border = nonFocusBorder
-    }
+	private fun buildUI(child: JComponent) {
+		layout = BorderLayout()
+		add(child, BorderLayout.CENTER)
+		border = nonFocusBorder
+	}
 
-    private fun updateFocusBorder() {
-        border = if ((view.canvas as JComponent).isFocusOwner) {
-            focusBorder
-        } else {
-            nonFocusBorder
-        }
-    }
+	private fun updateFocusBorder() {
+		border = if ((view.canvas as JComponent).isFocusOwner) {
+			focusBorder
+		} else {
+			nonFocusBorder
+		}
+	}
 }

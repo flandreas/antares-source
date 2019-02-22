@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
+import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.module.DrawModule
@@ -47,7 +48,7 @@ open class GraphNavigationPanel(
     private val isRoot: Boolean,
     val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
     private val viewManager: ViewManager,
-    closeHandler: ((GraphNavigationPanel) -> Unit)?,
+    private val closeHandler: ((GraphNavigationPanel) -> Unit)?,
     contextBorderColor: CompositeColor? = null,
     private val scheduler: Scheduler,
     private val animator: Animator,
@@ -85,6 +86,7 @@ open class GraphNavigationPanel(
 	private val schedulerRunningStateHandler: (SchedulerRunningStateEvent) -> Unit = { handle(it) }
     private val systemSpeedHandler: (SystemSpeedEvent) -> Unit = { handle(it) }
 	private val currentSavableHandler: (CurrentSavableEvent) -> Unit = { handle(it) }
+	private val closeViewRequestHandler: (CloseViewRequest) -> Unit = { handle(it) }
 
     /** Forwards input events to the [GraphView] while executing.*/
     private val graphViewExecutionHandler = GraphViewExecutionHandler(drawingView, scheduler, eventBus)
@@ -132,6 +134,7 @@ open class GraphNavigationPanel(
 	    eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
         eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
 	    eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
+	    eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 
         drawingView.editable = drawingView.editable && isRoot
 
@@ -157,6 +160,7 @@ open class GraphNavigationPanel(
 	    eventBus.unregister(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
         eventBus.unregister(SystemSpeedEvent::class, systemSpeedHandler)
 	    eventBus.unregister(CurrentSavableEvent::class, currentSavableHandler)
+	    eventBus.unregister(CloseViewRequest::class, closeViewRequestHandler)
     }
 
     /** Initializes the [NavigationStackView] with a root [DrawingViewContent].*/
@@ -202,7 +206,13 @@ open class GraphNavigationPanel(
     fun findEntry(condition: (NavigationStackEntry<GraphView<GraphElementView<*>>>) -> Boolean): NavigationStackEntry<GraphView<GraphElementView<*>>>? =
             navigationStackView.navigationStack.find(condition)
 
-    private fun handle(request: OpenSubGraphRequest) {
+    private fun handle(request: CloseViewRequest) {
+	    if (request.view === drawingView) {
+		    closeHandler?.invoke(this)
+	    }
+    }
+
+	private fun handle(request: OpenSubGraphRequest) {
         LOG.debug("handling OpenSubGraphRequest by descending into SubGraphVerticeView")
 
         val graphView = drawingView.drawing

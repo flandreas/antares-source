@@ -36,107 +36,107 @@ import ch.scorpion.jabbah.io.StorableCreator
  * - Uses [GraphViewAnimator] to animate signal flow
  */
 class AntaresGraphNavigationPanel(
-    isRoot: Boolean,
-    drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-    viewManager: ViewManager,
-    closeHandler: ((GraphNavigationPanel) -> Unit)?,
-    contextColor: CompositeColor?,
-    scheduler: Scheduler,
-    eventBus: EventBus,
-    repository: MetaGraphRepository,
-    storableCreator: StorableCreator,
-    animator: Animator,
-    systemSpeedCategory: CurrentSystemSpeedCategory,
-    currentGraphViewAnimationType: CurrentGraphViewAnimationType,
-    styleProvider: StyleProvider,
-    scriptGateway: ScriptGateway,
-    currentSystemSpeedCategory: CurrentSystemSpeedCategory
+	isRoot: Boolean,
+	drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+	viewManager: ViewManager,
+	closeHandler: ((GraphNavigationPanel) -> Unit)?,
+	contextColor: CompositeColor?,
+	scheduler: Scheduler,
+	eventBus: EventBus,
+	repository: MetaGraphRepository,
+	storableCreator: StorableCreator,
+	animator: Animator,
+	systemSpeedCategory: CurrentSystemSpeedCategory,
+	currentGraphViewAnimationType: CurrentGraphViewAnimationType,
+	styleProvider: StyleProvider,
+	scriptGateway: ScriptGateway,
+	currentSystemSpeedCategory: CurrentSystemSpeedCategory
 ) : GraphNavigationPanel(
-        isRoot,
-        drawingView,
-        viewManager,
-        closeHandler,
-        contextColor,
-        scheduler,
-        animator,
-        eventBus,
-        repository,
-        storableCreator,
-        scriptGateway,
-        currentSystemSpeedCategory
+	isRoot,
+	drawingView,
+	viewManager,
+	closeHandler,
+	contextColor,
+	scheduler,
+	animator,
+	eventBus,
+	repository,
+	storableCreator,
+	scriptGateway,
+	currentSystemSpeedCategory
 ) {
 
-    private val graphAnimator = GraphViewAnimator(drawingView, scheduler, animator, systemSpeedCategory, eventBus,
-            currentGraphViewAnimationType, styleProvider)
+	private val graphAnimator = GraphViewAnimator(drawingView, scheduler, animator, systemSpeedCategory, eventBus,
+		currentGraphViewAnimationType, styleProvider)
 
-    init {
-        eventBus.register(CurrentGraphAnimationTypeEvent::class, { drawingView.repaint() })
-        eventBus.register(CurrentSymbolStyleChangedEvent::class, { drawingView.repaint() })
-        eventBus.register(GateMnemonicsEvent::class, { drawingView.repaint() })
-    }
+	init {
+		eventBus.register(CurrentGraphAnimationTypeEvent::class) { drawingView.repaint() }
+		eventBus.register(CurrentSymbolStyleChangedEvent::class) { drawingView.repaint() }
+		eventBus.register(GateMnemonicsEvent::class) { drawingView.repaint() }
+	}
 
-    override fun dispose() {
-        super.dispose()
-        graphAnimator.dispose()
-    }
+	override fun dispose() {
+		super.dispose()
+		graphAnimator.dispose()
+	}
 }
 
 class AntaresGraphNavigationPanelFactory : GraphNavigationPanelFactory {
 
-    override fun create(
-            isRoot: Boolean,
-            drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-            viewManager: ViewManager,
-            closeHandler: ((GraphNavigationPanel) -> Unit)?,
-            contextColor: CompositeColor?,
-            scheduler: Scheduler,
-            eventBus: EventBus,
-            repository: MetaGraphRepository,
-            storableCreator: StorableCreator,
-            animator: Animator,
-            systemSpeedCategory: CurrentSystemSpeedCategory,
-            currentGraphViewAnimationType: CurrentGraphViewAnimationType,
-            styleProvider: StyleProvider,
-            scriptGateway: ScriptGateway,
-            currentSystemSpeedCategory: CurrentSystemSpeedCategory
-    ): GraphNavigationPanel {
-        return AntaresGraphNavigationPanel(
-                isRoot,
-                drawingView,
-                viewManager,
-                closeHandler,
-                contextColor,
-                scheduler,
-                eventBus,
-                repository,
-                storableCreator,
-                animator,
-                systemSpeedCategory,
-                currentGraphViewAnimationType,
-                styleProvider,
-                scriptGateway,
-                currentSystemSpeedCategory
-        )
-    }
+	override fun create(
+		isRoot: Boolean,
+		drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+		viewManager: ViewManager,
+		closeHandler: ((GraphNavigationPanel) -> Unit)?,
+		contextColor: CompositeColor?,
+		scheduler: Scheduler,
+		eventBus: EventBus,
+		repository: MetaGraphRepository,
+		storableCreator: StorableCreator,
+		animator: Animator,
+		systemSpeedCategory: CurrentSystemSpeedCategory,
+		currentGraphViewAnimationType: CurrentGraphViewAnimationType,
+		styleProvider: StyleProvider,
+		scriptGateway: ScriptGateway,
+		currentSystemSpeedCategory: CurrentSystemSpeedCategory
+	): GraphNavigationPanel {
+		return AntaresGraphNavigationPanel(
+			isRoot,
+			drawingView,
+			viewManager,
+			closeHandler,
+			contextColor,
+			scheduler,
+			eventBus,
+			repository,
+			storableCreator,
+			animator,
+			systemSpeedCategory,
+			currentGraphViewAnimationType,
+			styleProvider,
+			scriptGateway,
+			currentSystemSpeedCategory
+		)
+	}
 
-    override fun create(
-            isRoot: Boolean,
-            drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-            viewManager: ViewManager,
-            closeHandler: ((GraphNavigationPanel) -> Unit)?,
-            contextColor: CompositeColor?,
-            scheduler: Scheduler
-    ): GraphNavigationPanel {
-        return create(
-            isRoot, drawingView, viewManager, closeHandler, contextColor, scheduler,
-            BaseModule.eventBus,
-            GraphModelModule.metaGraphRepository,
-            IOModule.storableCreator,
-            AnimationModule.animator,
-            ExecutionModule.currentSystemSpeedCategory,
-            AntaresViewModule.currentGraphViewAnimationType,
-            DrawStyleModule.styleProvider,
-            ScriptModule.scriptGateway,
-            ExecutionModule.currentSystemSpeedCategory)
-    }
+	override fun create(
+		isRoot: Boolean,
+		drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+		viewManager: ViewManager,
+		closeHandler: ((GraphNavigationPanel) -> Unit)?,
+		contextColor: CompositeColor?,
+		scheduler: Scheduler
+	): GraphNavigationPanel {
+		return create(
+			isRoot, drawingView, viewManager, closeHandler, contextColor, scheduler,
+			BaseModule.eventBus,
+			GraphModelModule.metaGraphRepository,
+			IOModule.storableCreator,
+			AnimationModule.animator,
+			ExecutionModule.currentSystemSpeedCategory,
+			AntaresViewModule.currentGraphViewAnimationType,
+			DrawStyleModule.styleProvider,
+			ScriptModule.scriptGateway,
+			ExecutionModule.currentSystemSpeedCategory)
+	}
 }

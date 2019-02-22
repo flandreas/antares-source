@@ -9,6 +9,13 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 
 /**
+ * Represents a user's request to close the specified view.
+ * Typically processed by UI classes that contain the [View]. The system can refuse to accept the request,
+ * for example if changes by the user have not yet been saved.
+ */
+data class CloseViewRequest(val view: View<*>)
+
+/**
  * A [View] is a zoomable view that can display a stack of [Drawable]s, which are typically
  * [DrawableContainer]s that represent entire diagrams, of that contain selection or highlight graphics.
  */

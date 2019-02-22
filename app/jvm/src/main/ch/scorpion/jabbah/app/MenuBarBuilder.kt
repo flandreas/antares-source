@@ -81,6 +81,8 @@ open class MenuBarBuilder(
     }
 
     protected open fun fillViewMenu(menu: JMenu) {
+	    menu.add(JMenuItem(ActionWrapperSwing(CloseViewAction())))
+	    menu.addSeparator()
         menu.add(JMenuItem(ActionWrapperSwing(ZoomInAction())))
         menu.add(JMenuItem(ActionWrapperSwing(ZoomNormalAction())))
         menu.add(JMenuItem(ActionWrapperSwing(ZoomOutAction())))
