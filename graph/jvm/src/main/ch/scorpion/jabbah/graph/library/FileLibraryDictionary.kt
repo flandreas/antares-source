@@ -119,8 +119,7 @@ class FileLibraryDictionary(
 
 	override fun read(reader: StoreReader) {
 		reader
-			.readStorables("entries")
-			.map { it as LibraryDictionaryEntry }
+			.readStorables<LibraryDictionaryEntry>("entries")
 			.forEach { entries[it.uuid] = it }
 	}
 

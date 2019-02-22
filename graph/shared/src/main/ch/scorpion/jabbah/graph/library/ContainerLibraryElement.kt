@@ -2,16 +2,17 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.model.text.Translation
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * Represents a request to open the [MetaGraph] of a [ContainerLibraryElement].
@@ -34,15 +35,15 @@ class ContainerLibraryElement(
 	val eventBus: EventBus = BaseModule.eventBus
 ) : LibraryElement(iconPath) {
 
-    companion object {
-        val LOG by logger(ContainerLibraryElement::class)
-    }
+	companion object {
+		val LOG by logger(ContainerLibraryElement::class)
+	}
 
 	/** Contains the translations of the property [name].*/
 	var translatableName: TranslatableText = TranslatableText(name)
 
-    /** Lazily initialized instance of the referenced [MetaGraph]. */
-    var metaGraph: MetaGraph? = null
+	/** Lazily initialized instance of the referenced [MetaGraph]. */
+	var metaGraph: MetaGraph? = null
 		private set(value) {
 			if (field != value) {
 				field?.dispose()
@@ -50,15 +51,15 @@ class ContainerLibraryElement(
 			}
 		}
 
-    /** ---- [LibraryItem] */
+	/** ---- [LibraryItem] */
 
-    override var name: String
-	    get() = translatableName.getTranslation()
-	    set(value) {
-		    if (StringUtils.isNotEmpty(value)) {
-			    translatableName = translatableName.withTranslation(value)
-		    }
-	    }
+	override var name: String
+		get() = translatableName.getTranslation()
+		set(value) {
+			if (StringUtils.isNotEmpty(value)) {
+				translatableName = translatableName.withTranslation(value)
+			}
+		}
 
 	override val isFixed: Boolean get() = false
 
@@ -69,51 +70,51 @@ class ContainerLibraryElement(
 
 	/** ---- [Storable] */
 
-    override fun write(writer: StoreWriter) {
-        writer.writeString("uuid", uuid.toString())
+	override fun write(writer: StoreWriter) {
+		writer.writeString("uuid", uuid.toString())
 		writer.writeStorables("name", translatableName.allTranslations())
-    }
+	}
 
-    override fun read(reader: StoreReader) {
-        uuid = UUID(reader.readString("uuid"))
-	    if (reader.hasAttribute("name")) {
-		    // backward compatibility
-		    name = reader.readString("name")
-	    }
-	    if (reader.hasElement("name")) {
-		    translatableName = TranslatableText(reader.readStorables("name").map { it as Translation })
-	    }
-    }
+	override fun read(reader: StoreReader) {
+		uuid = UUID(reader.readString("uuid"))
+		if (reader.hasAttribute("name")) {
+			// backward compatibility
+			name = reader.readString("name")
+		}
+		if (reader.hasElement("name")) {
+			translatableName = TranslatableText(reader.readStorables("name"))
+		}
+	}
 
-    /** ---- [LibraryElement] */
+	/** ---- [LibraryElement] */
 
-    override fun accept(visitor: HierarchyVisitor): Boolean {
-        if (visitor.visitEnter(this)) {
-            if (metaGraph != null) {
-                metaGraph!!.accept(visitor)
-            }
-        }
-        return visitor.visitLeave(this)
-    }
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			if (metaGraph != null) {
+				metaGraph!!.accept(visitor)
+			}
+		}
+		return visitor.visitLeave(this)
+	}
 
-    override fun <T : GraphElement> getNewInstance(): GraphElementView<T> {
-        LOG.debug("Create new instance of '$name'")
-	    library!!.libraryService.getMetaGraph(library!!, this)
+	override fun <T : GraphElement> getNewInstance(): GraphElementView<T> {
+		LOG.debug("Create new instance of '$name'")
+		library!!.libraryService.getMetaGraph(library!!, this)
 
-        val instance = metaGraph!!.containerDrawing.createSubGraphVerticeView()
-	    instance.model!!.translatableDescription = metaGraph!!.graph.model!!.translatedShortDescription
-        if (metaGraph!!.graph.model!!.propagationDelay != null) {
-            instance.model!!.propagationDelay = metaGraph!!.graph.model!!.propagationDelay!!
-        }
-        @Suppress("UNCHECKED_CAST")
-        return instance as GraphElementView<T>
-    }
+		val instance = metaGraph!!.containerDrawing.createSubGraphVerticeView()
+		instance.model!!.translatableDescription = metaGraph!!.graph.model!!.translatedShortDescription
+		if (metaGraph!!.graph.model!!.propagationDelay != null) {
+			instance.model!!.propagationDelay = metaGraph!!.graph.model!!.propagationDelay!!
+		}
+		@Suppress("UNCHECKED_CAST")
+		return instance as GraphElementView<T>
+	}
 
-    /** ---- [ContainerLibraryElement] */
+	/** ---- [ContainerLibraryElement] */
 
-    fun updateMetaGraph(metaGraph: MetaGraph) {
-	    uuid = metaGraph.uuid
-	    translatableName = metaGraph.translatableName
-	    this.metaGraph = metaGraph
-    }
+	fun updateMetaGraph(metaGraph: MetaGraph) {
+		uuid = metaGraph.uuid
+		translatableName = metaGraph.translatableName
+		this.metaGraph = metaGraph
+	}
 }

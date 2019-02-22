@@ -2,18 +2,17 @@ package ch.scorpion.jabbah.graph.view.scenario
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.collection.EmptyIterator
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.model.text.Translation
-import ch.scorpion.jabbah.graph.script.Script
 
 /**
  * Standard implementation of the [ScenarioStep] interface.
@@ -177,14 +176,14 @@ class ScenarioStepImpl(
 			name = reader.readString("name")
 		}
 		if (reader.hasElement("name")) {
-			translatableName = TranslatableText(reader.readStorables("name").map { it as Translation })
+			translatableName = TranslatableText(reader.readStorables("name"))
 		}
 		if (reader.hasAttribute("desc")) {
 			// backward compatibility
 			description = reader.readString("desc")
 		}
 		if (reader.hasElement("desc")) {
-			translatableDescription = TranslatableText(reader.readStorables("desc").map { it as Translation })
+			translatableDescription = TranslatableText(reader.readStorables("desc"))
 		}
 
 		highlightIds = reader.readOptionalString("highlightIds")

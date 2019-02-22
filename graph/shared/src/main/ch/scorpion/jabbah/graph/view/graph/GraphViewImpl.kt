@@ -241,7 +241,7 @@ class GraphViewImpl<T : GraphElementView<*>>(
 
 	override fun read(reader: StoreReader) {
 		netViewMap.clear()
-		for (netView in reader.readStorables("netViews")) {
+		for (netView in reader.readStorables<Storable>("netViews")) {
 			reader.requestResolution(this, Reference(
 				name = "netView",
 				additionalInfo = netView,

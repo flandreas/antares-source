@@ -79,7 +79,7 @@ class StoreXmlReader(
 		return storable
 	}
 
-	override fun readStorable(names: List<String>): Storable {
+	override fun <T : Storable> readStorable(names: List<String>): T {
 		names.forEach {
 			if (!xmlReader.hasElement(it)) {
 				LOG.error("readStorable at path: no element in '${xmlReader.getName()}' with name '$it'")
@@ -96,10 +96,10 @@ class StoreXmlReader(
 			xmlReader.ascend()
 		}
 
-		return storable
+		return storable as T
 	}
 
-	override fun readStorables(name: String): List<Storable> {
+	override fun <T : Storable> readStorables(name: String): List<T> {
 		if (!xmlReader.hasElement(name)) {
 			return listOf()
 		}
@@ -111,7 +111,7 @@ class StoreXmlReader(
 			xmlReader.ascend()
 		}
 		xmlReader.ascend()
-		return storables
+		return storables as List<T>
 	}
 
 	override fun readInt(name: String): Int {

@@ -40,7 +40,7 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 
     override fun read(reader: StoreReader) {
         clear()
-        for (storable in reader.readStorables("components")) {
+        for (storable in reader.readStorables<Component>("components")) {
             reader.requestResolution(this, Reference(
                 name = "component",
                 additionalInfo = storable,

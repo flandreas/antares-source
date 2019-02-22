@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -144,19 +143,19 @@ class ScenarioImpl(
 			name = reader.readString("name")
 		}
 		if (reader.hasElement("name")) {
-			translatableName = TranslatableText(reader.readStorables("name").map { it as Translation })
+			translatableName = TranslatableText(reader.readStorables("name"))
 		}
 		if (reader.hasAttribute("desc")) {
 			// backward compatibility
 			description = reader.readString("desc")
 		}
 		if (reader.hasElement("desc")) {
-			translatableDescription = TranslatableText(reader.readStorables("desc").map { it as Translation })
+			translatableDescription = TranslatableText(reader.readStorables("desc"))
 		}
 
 		conditionScript = reader.readString("condition")
-		for (step in reader.readStorables("steps")) {
-			addStep(step as ScenarioStep)
+		for (step in reader.readStorables<ScenarioStep>("steps")) {
+			addStep(step)
 		}
 		isLoading = false
 	}

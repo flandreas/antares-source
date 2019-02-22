@@ -137,6 +137,6 @@ class ClassUsingTranslatable(text: TranslatableText? = null) : Storable {
 	}
 
 	override fun read(reader: StoreReader) {
-		attribute = TranslatableText(reader.readStorables("name").map { it as Translation })
+		attribute = TranslatableText(reader.readStorables("name"))
 	}
 }

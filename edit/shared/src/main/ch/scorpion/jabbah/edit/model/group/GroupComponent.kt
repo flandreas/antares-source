@@ -1,15 +1,14 @@
 package ch.scorpion.jabbah.edit.model.group
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -86,7 +85,7 @@ class GroupComponent(components: List<Component>) : AbstractComponent() {
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		_components.clear()
-		_components.addAll(reader.readStorables("component").map { it as Component })
+		_components.addAll(reader.readStorables("component"))
 		updateBoundingBox()
 	}
 

@@ -40,14 +40,14 @@ interface StoreReader {
 	 *
 	 * Calling readStorable(listOf("children", "b")) reads only an instance of "b", but not "a".
 	 */
-	fun readStorable(names: List<String>): Storable
+	fun <T : Storable> readStorable(names: List<String>): T
 
     /**
      * Reads a group of [Storable]s with the specified name.
      * @param name the name of the [Storable] group.
      * @return an [Iterator] over the read [Storable]s.
      */
-    fun readStorables(name: String): List<Storable>
+    fun <T : Storable> readStorables(name: String): List<T>
 
     /** Reads the next `int` attribute with the given name.*/
     fun readInt(name: String): Int

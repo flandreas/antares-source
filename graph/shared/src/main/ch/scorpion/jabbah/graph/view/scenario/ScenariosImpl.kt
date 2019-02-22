@@ -89,7 +89,8 @@ class ScenariosImpl(
     }
 
     override fun read(reader: StoreReader) {
-        scenarios.addAll(reader.readStorables("scenarios") as Collection<Scenario>)
+	    val c: Collection<Scenario> = reader.readStorables("scenarios")
+	    scenarios.addAll(c)
     }
 
     override fun getStorableChildren(): Iterator<Storable> {
