@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.base.event.EventBus
 
 /**
  * Encapsulates the [Scenario]s of a [GraphView] and the corresponding management methods
@@ -19,10 +20,22 @@ interface Scenarios : Storable {
 
 	fun get(id: Int): Scenario
 
+	/**
+	 * Adds a new [Scenario] with the specified name as the last one in this [Scenarios].
+	 * Posts a [ScenarioAddedEvent] on this [Scenarios]' [EventBus].
+	 */
 	fun add(name: String)
 
+	/**
+	 * Adds the specified [Scenario] as the last one in this [Scenarios].
+	 * Posts a [ScenarioAddedEvent] on this [Scenarios]' [EventBus].
+	 */
 	fun add(scenario: Scenario)
 
+	/**
+	 * Adds the specified [Scenario] at the specified index to this [Scenarios].
+	 * Posts a [ScenarioAddedEvent] on this [Scenarios]' [EventBus].
+	 */
 	fun add(scenario: Scenario, index: Int)
 
 	fun remove(scenario: Scenario)
