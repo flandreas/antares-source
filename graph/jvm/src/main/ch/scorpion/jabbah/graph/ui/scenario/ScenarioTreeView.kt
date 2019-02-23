@@ -6,12 +6,11 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphNameChangedEvent
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
-import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.scenario.MoveScenarioStepCommand
 import java.awt.Component
@@ -32,7 +31,8 @@ class ScenarioTreeView(
 	eventBus: EventBus = BaseModule.eventBus,
 	private val commandManager: CommandManager = EditModule.commandManager
 ) : JTree() {
-	@Suppress("unused") constructor() : this(BaseModule.eventBus)
+	@Suppress("unused")
+	constructor() : this(BaseModule.eventBus)
 
 	companion object {
 		private val LOG by logger(ScenarioTreeView::class)
@@ -102,8 +102,8 @@ class ScenarioTreeView(
 			isEnabled = !it.scheduler.isActive
 		}
 
-		eventBus.register(GraphNameChangedEvent::class) {
-			if (this.graphView != null && it.graph === this.graphView!!.graph) {
+		eventBus.register(NameChangedEvent::class) {
+			if (this.graphView != null && it.name === this.graphView!!.graph?.name) {
 				scenarioTreeModel.updateGraphName()
 			}
 		}

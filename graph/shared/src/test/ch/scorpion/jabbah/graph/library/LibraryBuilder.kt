@@ -33,7 +33,7 @@ class LibraryBuilder(
 	/** Creates a new [MetaGraph] for a model with the given name and adds it to the current [LibraryDirectory].*/
 	fun addContainerLibraryElement(name: String): LibraryBuilder {
 		val metaGraph = MetaGraph()
-		metaGraph.graph.model!!.name = name
+		metaGraph.graph.model!!.name.value = name
 		return addContainerLibraryElement(metaGraph)
 	}
 

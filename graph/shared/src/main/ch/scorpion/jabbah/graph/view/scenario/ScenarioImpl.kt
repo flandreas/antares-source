@@ -3,10 +3,12 @@ package ch.scorpion.jabbah.graph.view.scenario
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.TextProperty
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
+import ch.scorpion.jabbah.edit.model.text.description.Namable
+import ch.scorpion.jabbah.edit.model.text.description.NamableImpl
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -19,13 +21,11 @@ import ch.scorpion.jabbah.io.*
  * Standard implementation of the [Scenario] interface.
  */
 class ScenarioImpl(
-	name: String = "",
-	private var conditionScript: String = ""
-) : Scenario {
-
-	companion object {
-		private val LOG by logger(ScenarioImpl::class)
-	}
+	initialName: String = "",
+	private var conditionScript: String = "",
+	private val namable: NamableImpl = NamableImpl(initialName),
+	private val describable: Describable = DescribableImpl()
+) : Scenario, Namable by namable, Describable by describable {
 
 	private val steps: MutableList<ScenarioStep> by lazy { mutableListOf<ScenarioStep>() }
 
@@ -39,41 +39,11 @@ class ScenarioImpl(
 
 	/** ---- [Any] */
 
-	override fun toString(): String = StringUtils.replaceNegation(name)
+	override fun toString(): String = StringUtils.replaceNegation(name.value)
 
 	/** ---- [Scenario] interface */
 
 	override var id: Int = 0
-
-	override var name: String
-		get() = translatableName.getTranslation()
-		set(value) {
-			if (name != value) {
-				translatableName = translatableName.withTranslation(value)
-			}
-		}
-
-	override var translatableName: TranslatableText = TranslatableText(name)
-		set(value) {
-			if (field != value) {
-				field = value
-			}
-		}
-
-	override var description: String?
-		get() = translatableDescription.getOptionalTranslation()
-		set(value) {
-			if (description != null && value != null) {
-				translatableDescription = translatableDescription.withTranslation(value)
-			}
-		}
-
-	override var translatableDescription: TranslatableText = TranslatableText()
-		set(value) {
-			if (field != value) {
-				field = value
-			}
-		}
 
 	override val stepCount: Int get() = steps.size
 
@@ -127,10 +97,8 @@ class ScenarioImpl(
 
 	override fun write(writer: StoreWriter) {
 		writer.writeInt("id", id)
-		writer.writeStorables("name", translatableName.allTranslations())
-		if (!translatableDescription.isEmpty) {
-			writer.writeStorables("desc", translatableDescription.allTranslations())
-		}
+		name.write("name", writer)
+		description.write("desc", writer)
 		writer.writeString("condition", conditionScript)
 		writer.writeStorables("steps", getStorableChildren())
 	}
@@ -138,21 +106,8 @@ class ScenarioImpl(
 	override fun read(reader: StoreReader) {
 		isLoading = true
 		id = reader.readInt("id")
-		if (reader.hasAttribute("name")) {
-			// backward compatibility
-			name = reader.readString("name")
-		}
-		if (reader.hasElement("name")) {
-			translatableName = TranslatableText(reader.readStorables("name"))
-		}
-		if (reader.hasAttribute("desc")) {
-			// backward compatibility
-			description = reader.readString("desc")
-		}
-		if (reader.hasElement("desc")) {
-			translatableDescription = TranslatableText(reader.readStorables("desc"))
-		}
-
+		name.read("name", reader)
+		description.read("desc", reader)
 		conditionScript = reader.readString("condition")
 		for (step in reader.readStorables<ScenarioStep>("steps")) {
 			addStep(step)

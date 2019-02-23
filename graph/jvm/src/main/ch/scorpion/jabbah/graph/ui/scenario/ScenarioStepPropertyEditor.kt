@@ -18,43 +18,44 @@ import javax.swing.*
  */
 class ScenarioStepPropertyEditor(val graphView: GraphView<*>) : AbstractPropertyEditor() {
 
-    private val label = JLabel()
-    private val button = JButton("Select")
-    private var scenarioStep: ScenarioStep? = null
+	private val label = JLabel()
+	private val button = JButton("Select")
+	private var scenarioStep: ScenarioStep? = null
 
-    init {
-        PopupMenuButton.install(
-            button,
-            ScenarioMenuBuilder.buildScenarioStepMenu(
-                graphView, { object : AbstractAction(it.name) {
-                        override fun actionPerformed(e: ActionEvent?) {
-                            this@ScenarioStepPropertyEditor.value = it
-                        }
-                    }
-                }
-            )
-        )
+	init {
+		PopupMenuButton.install(
+			button,
+			ScenarioMenuBuilder.buildScenarioStepMenu(
+				graphView
+			) {
+				object : AbstractAction(it.name.value) {
+					override fun actionPerformed(e: ActionEvent?) {
+						this@ScenarioStepPropertyEditor.value = it
+					}
+				}
+			}
+		)
 
-        val panel = JPanel()
+		val panel = JPanel()
 		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
 		panel.add(label)
 		panel.add(button)
 
 		editor = panel
-    }
+	}
 
-    override fun setValue(value: Any?) {
-        scenarioStep = value as ScenarioStep?
-        if (scenarioStep != null) {
-            label.text = scenarioStep!!.name
-        } else {
-            label.text = "None"
-        }
-    }
+	override fun setValue(value: Any?) {
+		scenarioStep = value as ScenarioStep?
+		if (scenarioStep != null) {
+			label.text = scenarioStep!!.name.value
+		} else {
+			label.text = "None"
+		}
+	}
 
-    override fun getValue(): Any? {
-        return scenarioStep
-    }
+	override fun getValue(): Any? {
+		return scenarioStep
+	}
 }
 
 /**
@@ -62,17 +63,17 @@ class ScenarioStepPropertyEditor(val graphView: GraphView<*>) : AbstractProperty
  * that offer the [ScenarioStep]s of the current [GraphView].
  */
 class ScenarioStepPropertyEditorFactory(eventBus: EventBus) : (Property) -> PropertyEditor {
-    constructor(): this(BaseModule.eventBus)
+	constructor() : this(BaseModule.eventBus)
 
-    private var graphView: GraphView<*>? = null
+	private var graphView: GraphView<*>? = null
 
-    init {
-        eventBus.register(EditedGraphViewEvent::class, {
-            graphView = it.newGraphView
-        })
-    }
+	init {
+		eventBus.register(EditedGraphViewEvent::class) {
+			graphView = it.newGraphView
+		}
+	}
 
-    override fun invoke(property: Property): PropertyEditor {
-        return ScenarioStepPropertyEditor(graphView!!)
-    }
+	override fun invoke(property: Property): PropertyEditor {
+		return ScenarioStepPropertyEditor(graphView!!)
+	}
 }

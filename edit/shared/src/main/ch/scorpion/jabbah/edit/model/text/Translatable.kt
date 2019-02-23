@@ -5,9 +5,9 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.checkArgument
+import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.io.*
-import java.util.*
 
 /**
  * Represents an individual text in a particular [Language].
@@ -23,8 +23,6 @@ class Translation(
 
 	var text: String = text
 		private set
-
-
 
 	/** ---- [Storable] interface */
 
@@ -42,7 +40,7 @@ class Translation(
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
-	override fun getStorableChildren(): Iterator<Storable> = Collections.emptyIterator()
+	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
 
 	/** ---- [Any] */
 
@@ -110,16 +108,28 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 
 	val isEmpty: Boolean get() = translations.isEmpty()
 
-	/** Creates a new [Translation] by adding the specified translation for the current system language.*/
+	/** Creates a new [TranslatableText] by adding the specified translation for the current system language.*/
 	fun withTranslation(text: String): TranslatableText {
 		return withTranslation(System.get().currentLanguage(), text)
 	}
 
-	/** Creates a new [Translation] by adding the specified translation for a particular [Language].*/
+	/** Creates a new [TranslatableText] by adding the specified translation for a particular [Language].*/
 	fun withTranslation(language: Language, text: String): TranslatableText {
 		checkArgument(StringUtils.isNotBlank(text), "text must not be empty")
 		val values = translations.toMutableMap()
 		values[language] = Translation(language, text)
+		return TranslatableText(values.values)
+	}
+
+	/** Creates a new [TranslatableText] by removing the translation for the current system language.*/
+	fun withoutTranslation(): TranslatableText {
+		return withoutTranslation(System.get().currentLanguage())
+	}
+
+	/** Creates a new [TranslatableText] by removing the text in the specified [Language].*/
+	fun withoutTranslation(language: Language): TranslatableText {
+		val values = translations.toMutableMap()
+		values.remove(language)
 		return TranslatableText(values.values)
 	}
 

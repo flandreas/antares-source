@@ -54,24 +54,36 @@ elem.setOutputBit(&quot;C&quot;, a &amp;&amp; b);
           <scenarios>
             <scenarios _id='30'>
               <scenarios>
-                <scenario _id='31' id='1' name='Null' condition='return circuit.input(&quot;A&quot;) == &quot;0&quot; &amp;&amp; circuit.input(&quot;B&quot;) == &quot;0&quot;;'>
+                <scenario _id='31' id='1' condition='return circuit.input(&quot;A&quot;) == &quot;0&quot; &amp;&amp; circuit.input(&quot;B&quot;) == &quot;0&quot;;'>
+                    <name>
+                        <translation lang='de' text='Keiner'/>
+                    </name>
                     <desc>
                         <translation lang='de' text='Wenn beide Eingänge 0 sind, ist sowohl die Summe als auch der Übertrag 0.'/>
                     </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='32' id='2' name='Nur einer 1' condition='return circuit.input(&quot;A&quot;) == &quot;0&quot; &amp;&amp; circuit.input(&quot;B&quot;) == &quot;1&quot; || circuit.input(&quot;A&quot;) == &quot;1&quot; &amp;&amp; circuit.input(&quot;B&quot;) == &quot;0&quot; ;'>
+                <scenario _id='32' id='2' condition='return circuit.input(&quot;A&quot;) == &quot;0&quot; &amp;&amp; circuit.input(&quot;B&quot;) == &quot;1&quot; || circuit.input(&quot;A&quot;) == &quot;1&quot; &amp;&amp; circuit.input(&quot;B&quot;) == &quot;0&quot; ;'>
+                    <name>
+                        <translation lang='de' text='Nur einer 1'/>
+                    </name>
                     <desc>
                         <translation lang='de' text='Wenn nur einer der beiden Eingänge 1 ist, ist die Summe 1 und der Übertrag 0.'/>
                     </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='33' id='3' name='Übertrag' condition='return circuit.input(&quot;A&quot;) == &quot;1&quot; &amp;&amp; circuit.input(&quot;B&quot;) == &quot;1&quot;;'>
+                <scenario _id='33' id='3' condition='return circuit.input(&quot;A&quot;) == &quot;1&quot; &amp;&amp; circuit.input(&quot;B&quot;) == &quot;1&quot;;'>
+                    <name>
+                        <translation lang='de' text='Übertrag'/>
+                    </name>
                     <desc>
                         <translation lang='de' text='Weil der Ausgang eines XOR-Gates nur dann 1 ist, wenn beide Eingänge verschieden ist, ist die Summe 0, wenn beide Eingänge 1 sind. Dafür ist der Übertrag gesetzt.'/>
                     </desc>
                   <steps>
-                    <scenarioStep _id='34' id='1' name='Highlight AND' highlightIds='4' condition='return true;'>
+                    <scenarioStep _id='34' id='1' highlightIds='4' condition='return true;'>
+                        <name>
+                            <translation lang='de' text='Highlight AND'/>
+                        </name>
                       <desc>
                           <translation lang='de' text='Das AND-Gate sorgt dafür, dass der Übertrag C nur dann 1 ist, wenn beide Dateneingänge 1 sind.'/>
                       </desc>

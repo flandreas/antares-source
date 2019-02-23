@@ -34,7 +34,7 @@ class CircuitViewBridge(
     }
 
     /** Returns the name of the circuit model.*/
-    fun name(): String = view.drawing.graph!!.name
+    fun name(): String = view.drawing.graph!!.name.value
 
     /** Returns the signal of the [GraphInput] with the specified name as a [String].*/
     fun input(name: String): String = view.drawing.graph!!.getGraphInput<DigitalSignal>(name)!!.getOutput<DigitalSignal>().getOutgoingSignal().toString()

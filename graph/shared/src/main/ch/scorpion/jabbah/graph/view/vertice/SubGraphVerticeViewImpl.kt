@@ -254,7 +254,7 @@ class SubGraphVerticeViewImpl(
                 val graph = repository.getOptionalMetaGraph(model!!.graphUUID!!)
                 if (graph != null) {
                     fillFromContainerDrawing(graph.containerDrawing)
-                    model!!.shortDescription = graph.graph.model!!.shortDescription
+                    model!!.shortDescription = graph.graph.model!!.description.value
                 }
             }
 	        if (model!!.designError != null) {
@@ -276,7 +276,7 @@ class SubGraphVerticeViewImpl(
         if (customizedContainerDrawing != null && model!!.designError == null) {
             val graph = repository.getMetaGraph(model!!.graphUUID!!)
             fillFromContainerDrawing(customizedContainerDrawing!!)
-            model!!.shortDescription = graph.graph.model!!.shortDescription
+            model!!.shortDescription = graph.graph.model!!.description.value
         }
     }
 

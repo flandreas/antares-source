@@ -1,16 +1,16 @@
 package ch.scorpion.jabbah.graph.model
 
-import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.Language
-import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.Namable
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
-import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.graph.MetaGraphRepository
 
 /**
  * A [Graph] is mainly a collection of [GraphElement]s.
@@ -24,7 +24,7 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
  * surrounding [Graph] that uses this [Graph], such as to derive a proper clock design for synchronous
  * applications.
  */
-interface Graph : Storable {
+interface Graph : Namable, Describable, Storable {
 
     /** The universal unique ID of this [Graph]. Used for referencing this [Graph] from other [Graph]s.*/
     var uuid: UUID
@@ -34,32 +34,6 @@ interface Graph : Storable {
      * takes to calculate new output values when an input has changed.
      */
     var propagationDelay: Long?
-
-    /**
-     * The name of this [Graph] to be used when offering this [Graph] in a [Library].
-     * Reflects the value in [translatedName] corresponding with the current system [Language].
-     * Posts a [GraphNameChangedEvent] on this [Graph]'s [EventBus] when changed.
-     */
-    var name: String
-
-	/**
-	 * Contains translations of the [name] property.
-	 * Posts a [GraphNameChangedEvent] on this [Graph]'s [EventBus] when changed.
-	 */
-	var translatedName: TranslatableText
-
-    /**
-     * A short description of the purpose of this [Graph].
-     * Reflects the value in [translatedShortDescription] corresponding with the current system [Language].
-     * Posts a [GraphDescriptionChangedEvent] on this [Graph]'s [EventBus] when changed.
-     */
-    var shortDescription: String?
-
-	/**
-	 * Contains translations of the [shortDescription] property.
-	 * Posts a [GraphDescriptionChangedEvent] on this [Graph]'s [EventBus] when changed.
-	 */
-	var translatedShortDescription: TranslatableText
 
     /** The script code to be executed when a [GraphInput] has changed and deep execution is not required.*/
     var script: String?
@@ -138,12 +112,6 @@ interface Graph : Storable {
     fun <T: Any> getGraphOutput(name: String): GraphOutput<T>?
 
 }
-
-/** Posted on a [Graph]s [EventBus] when its name (or one of its translations) has changed.*/
-class GraphNameChangedEvent(val graph: Graph, val newValue: TranslatableText)
-
-/** Posted on a [Graph]s [EventBus] when its description (or one of its translations) has changed.*/
-class GraphDescriptionChangedEvent(val graph: Graph, val newValue: TranslatableText)
 
 class GraphElementAddedEvent(val graph: Graph, val element: GraphElement)
 

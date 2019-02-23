@@ -29,6 +29,29 @@ class TranslatableTextTest {
 	}
 
 	@Test
+	fun shouldRemoveTranslation() {
+		var text = TranslatableText()
+			.withTranslation(German, "Baum")
+			.withTranslation(English, "Tree")
+
+		text = text.withoutTranslation(English)
+
+		assertThat(text.hasTranslation(English), `is`(false))
+	}
+
+	@Test
+	fun shouldRemoveTranslationForSystemLanguage() {
+		java.lang.System.setProperty("user.language", "de")
+		var text = TranslatableText()
+			.withTranslation(German, "Baum")
+			.withTranslation(English, "Tree")
+
+		text = text.withoutTranslation()
+
+		assertThat(text.hasTranslation(German), `is`(false))
+	}
+
+	@Test
 	fun shouldHaveTranslation() {
 		val text = TranslatableText(German, "Baum")
 

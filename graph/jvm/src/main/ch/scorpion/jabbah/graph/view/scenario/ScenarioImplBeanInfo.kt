@@ -12,19 +12,19 @@ import java.beans.BeanInfo
 @Suppress("unused")
 class ScenarioImplBeanInfo : AbstractBeanInfo<ScenarioImpl>() {
 
-    private val name = PropertyImpl("graph.property.scenario.name", TranslatableText::class.java)
-    private val description = PropertyImpl("edit.property.description", TranslatableText::class.java)
-    private val condition = PropertyImpl("graph.property.scenario.condition", TextProperty::class.java)
+	private val name = PropertyImpl("graph.property.scenario.name", TranslatableText::class.java)
+	private val description = PropertyImpl("edit.property.description", TranslatableText::class.java)
+	private val condition = PropertyImpl("graph.property.scenario.condition", TextProperty::class.java)
 
-    override fun addProperties(bean: ScenarioImpl, editor: Editor, properties: MutableList<Property>) {
-        super.addProperties(bean, editor, properties)
+	override fun addProperties(bean: ScenarioImpl, editor: Editor, properties: MutableList<Property>) {
+		super.addProperties(bean, editor, properties)
 
-        name.bind(editor, { bean.translatableName}, { bean.translatableName = it!! }, true, { false })
-        description.bind(editor, { bean.translatableDescription}, { bean.translatableDescription = it!! }, true, { true })
+		name.bind(editor, { bean.name.translation }, { bean.name.translation = it!! }, true, { false })
+		description.bind(editor, { bean.description.translation }, { bean.description.translation = it!! }, true, { true })
 		condition.bind(editor, { bean.conditionProperty }, { bean.conditionProperty = it!! })
 
 		properties.add(name)
-        properties.add(description)
+		properties.add(description)
 		properties.add(condition)
-    }
+	}
 }

@@ -17,7 +17,7 @@ class MetaGraphTest {
 	@Test
 	fun shouldUpdateContainerGraphName() {
 		val metaGraph = MetaGraph()
-		metaGraph.graph.model!!.name = "Changed Name"
+		metaGraph.graph.model!!.name.value = "Changed Name"
 		assertEquals("Changed Name", metaGraph.containerDrawing.model.name)
 	}
 

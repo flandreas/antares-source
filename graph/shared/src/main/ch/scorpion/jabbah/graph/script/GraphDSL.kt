@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 class GraphViewBridge(private val view: DrawingView<GraphView<GraphElementView<*>>>) {
 
     /** Returns the name of the [Graph] of this [GraphView].*/
-    fun name(): String = view.drawing.graph!!.name
+    fun name(): String = view.drawing.graph!!.name.value
 
     /** Returns a scripting bridge for the [GraphElementView] with the specified ID. */
     @Suppress("unused")

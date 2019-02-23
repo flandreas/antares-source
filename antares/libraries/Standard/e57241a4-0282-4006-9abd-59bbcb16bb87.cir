@@ -71,51 +71,78 @@ elem.setOutputBit(&quot;!Q&quot;, true);
           <scenarios>
             <scenarios _id='30'>
               <scenarios>
-                <scenario _id='31' id='1' name='Set' condition='return circuit.input(&quot;S&quot;) == &quot;1&quot; &amp;&amp; circuit.input(&quot;R&quot;) == &quot;0&quot;;'>
+                <scenario _id='31' id='1' condition='return circuit.input(&quot;S&quot;) == &quot;1&quot; &amp;&amp; circuit.input(&quot;R&quot;) == &quot;0&quot;;'>
+                    <name>
+                        <translation lang='de' text='Set'/>
+                    </name>
                     <desc>
                         <translation lang='de' text='Setzen: Mit einer 1 am Eingang S wird das SR Latch gesetzt, wenn der Eingang R gleichzeitig auf 0 ist. Der Zustand 1 erscheint am Ausgang Q'/>
                     </desc>
                   <steps>
-                    <scenarioStep _id='32' id='1' name='Calculate S-gate' highlightIds='1' condition='return circuit.elem(1).input(1) == &quot;1&quot; &amp;&amp; circuit.elem(1).input(2) == &quot;0&quot; &amp;&amp; circuit.elem(1).output() == &quot;1&quot;;' onEntry='' onExit=''>
+                    <scenarioStep _id='32' id='1' highlightIds='1' condition='return circuit.elem(1).input(1) == &quot;1&quot; &amp;&amp; circuit.elem(1).input(2) == &quot;0&quot; &amp;&amp; circuit.elem(1).output() == &quot;1&quot;;' onEntry='' onExit=''>
+                      <name>
+                          <translation lang='de' text='Calculate S-gate'/>
+                      </name>
                       <desc>
                           <translation lang='de' text='Durch das Setzen des Eingangs &quot;S&quot; ist ein Eingang des oberen NOR-Gates 1. Ein NOR-Gate ist nur 1, wenn beide Eingäge 0 sind. Deshalb schaltet das obere NOR-Gate auf 0.'/>
                       </desc>
                     </scenarioStep>
-                    <scenarioStep _id='33' id='2' name='Reset !Q' highlightIds='9,11,13' condition='return circuit.elem(1).input(1) == &quot;1&quot; &amp;&amp; circuit.elem(1).input(2) == &quot;0&quot; &amp;&amp; circuit.elem(1).output() == &quot;0&quot; &amp;&amp; circuit.elem(2).input(1) == &quot;1&quot;;' onEntry='' onExit=''>
+                    <scenarioStep _id='33' id='2' highlightIds='9,11,13' condition='return circuit.elem(1).input(1) == &quot;1&quot; &amp;&amp; circuit.elem(1).input(2) == &quot;0&quot; &amp;&amp; circuit.elem(1).output() == &quot;0&quot; &amp;&amp; circuit.elem(2).input(1) == &quot;1&quot;;' onEntry='' onExit=''>
+                        <name>
+                            <translation lang='de' text='Reset !Q'/>
+                        </name>
                       <desc>
                           <translation lang='de' text='Das 0 am Ausgang des oberen NOR-Gates wird einerseits an den Ausgang !Q gegeben (der damit nun richtig gesetzt ist), und andererseits an das untere NOR-Gate.'/>
                       </desc>
                     </scenarioStep>
-                    <scenarioStep _id='34' id='3' name='Calculate R-Gate' highlightIds='2' condition='return circuit.elem(2).input(1) == &quot;0&quot; &amp;&amp; circuit.elem(2).input(2) == &quot;0&quot; &amp;&amp; circuit.elem(2).output() == &quot;0&quot;;' onEntry='' onExit=''>
+                    <scenarioStep _id='34' id='3' highlightIds='2' condition='return circuit.elem(2).input(1) == &quot;0&quot; &amp;&amp; circuit.elem(2).input(2) == &quot;0&quot; &amp;&amp; circuit.elem(2).output() == &quot;0&quot;;' onEntry='' onExit=''>
+                        <name>
+                            <translation lang='de' text='Calculate R-Gate'/>
+                        </name>
                       <desc>
                           <translation lang='de' text='Die 0 vom Ausgang des oberen NOR-Gate ist am unteren NOR-Gate angekommen. Der Ausgang einer NOR-Gate ist 1, wenn beide Eingänge 0 sind. Da der zweite Eingang bereits eine 0 vom R-Eingang hat, schaltet das untere NOR-Gate auf 1.'/>
                       </desc>
                     </scenarioStep>
-                    <scenarioStep _id='35' id='4' name='Set Q' highlightIds='10,14,16' condition='return circuit.elem(2).input(1) == &quot;0&quot; &amp;&amp; circuit.elem(2).input(2) == &quot;0&quot; &amp;&amp; circuit.elem(2).output() == &quot;1&quot; &amp;&amp; circuit.elem(1).input(2) == &quot;0&quot;;' onEntry='' onExit=''>
+                    <scenarioStep _id='35' id='4' highlightIds='10,14,16' condition='return circuit.elem(2).input(1) == &quot;0&quot; &amp;&amp; circuit.elem(2).input(2) == &quot;0&quot; &amp;&amp; circuit.elem(2).output() == &quot;1&quot; &amp;&amp; circuit.elem(1).input(2) == &quot;0&quot;;' onEntry='' onExit=''>
+                        <name>
+                            <translation lang='de' text='Set Q'/>
+                        </name>
                       <desc>
                           <translation lang='de' text='Die 1 von unteren NOR-Gate wird einerseits an den Ausgang Q geleitet (der damit nun richtig gesetzt ist), und andererseits an das obere NOR-Gate geschickt.'/>
                       </desc>
                     </scenarioStep>
-                    <scenarioStep _id='36' id='5' name='Confirm S-gate'  highlightIds='1' condition='return circuit.elem(1).input(1) == &quot;1&quot; &amp;&amp; circuit.elem(1).input(2) == &quot;1&quot; &amp;&amp; circuit.elem(1).output() == &quot;0&quot;;'>
+                    <scenarioStep _id='36' id='5'  highlightIds='1' condition='return circuit.elem(1).input(1) == &quot;1&quot; &amp;&amp; circuit.elem(1).input(2) == &quot;1&quot; &amp;&amp; circuit.elem(1).output() == &quot;0&quot;;'>
+                        <name>
+                            <translation lang='de' text='Confirm S-gate'/>
+                        </name>
                         <desc>
                             <translation lang='de' text='Die 1 vom unteren NOR-Gate ist am oberen NOR-Gate angekommen. Nun sind beide Eingäge auf 1, und der Ausgang des NOR-Gates bleibt auf 1. Das Latch ist nun stabil. Selbst wenn später die 1 vom Eingang &quot;S&quot; verschwinden sollte, bleibt der Ausgang dieses NOR-Gates dank der 1 vom unteren NOR-Gate trotzdem auf 0.'/>
                         </desc>
                     </scenarioStep>
                   </steps>
                 </scenario>
-                <scenario _id='37' id='2' name='Reset' condition='return circuit.input(&quot;S&quot;) == &quot;0&quot; &amp;&amp; circuit.input(&quot;R&quot;) == &quot;1&quot;;'>
+                <scenario _id='37' id='2' condition='return circuit.input(&quot;S&quot;) == &quot;0&quot; &amp;&amp; circuit.input(&quot;R&quot;) == &quot;1&quot;;'>
+                    <name>
+                        <translation lang='de' text='Reset'/>
+                    </name>
                     <desc>
                         <translation lang='de' text='Zurücksetzen: Mit einer 1 am Eingang R wird das SR Latch zurückgesetzt, wenn der Eingang S gleichzeitig auf 0 ist. Der Zustand 0 erscheint am Ausgang Q.'/>
                     </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='38' id='3' name='Store' condition='return circuit.input(&quot;S&quot;) == &quot;0&quot; &amp;&amp; circuit.input(&quot;R&quot;) == &quot;0&quot;;'>
+                <scenario _id='38' id='3' condition='return circuit.input(&quot;S&quot;) == &quot;0&quot; &amp;&amp; circuit.input(&quot;R&quot;) == &quot;0&quot;;'>
+                    <name>
+                        <translation lang='de' text='Store'/>
+                    </name>
                     <desc>
                         <translation lang='de' text='Speichern: Wenn beide Eingänge S und R auf 0 sind, bleibt der aktuelle Zustand des Flipflops gespeichert.'/>
                     </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='39' id='4' name='Race Condition' condition='return circuit.input(&quot;S&quot;) == &quot;1&quot; &amp;&amp; circuit.input(&quot;R&quot;) == &quot;1&quot;;'>
+                <scenario _id='39' id='4' condition='return circuit.input(&quot;S&quot;) == &quot;1&quot; &amp;&amp; circuit.input(&quot;R&quot;) == &quot;1&quot;;'>
+                    <name>
+                        <translation lang='de' text='Race Condition'/>
+                    </name>
                     <desc>
                         <translation lang='de' text='Race Condition: Wenn beide Eingänge auf 1 sind, sind beide Ausgänge auf 0. Dieser Zustand ist nicht speicherbar. Wenn anschliessend beide Eingänge auf 0 gehen, ist nicht vorhersehbar, in welchen Zustand das Latch kippt.'/>
                     </desc>

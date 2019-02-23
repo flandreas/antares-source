@@ -102,7 +102,7 @@ class ContainerLibraryElement(
 		library!!.libraryService.getMetaGraph(library!!, this)
 
 		val instance = metaGraph!!.containerDrawing.createSubGraphVerticeView()
-		instance.model!!.translatableDescription = metaGraph!!.graph.model!!.translatedShortDescription
+		instance.model!!.description.translation = metaGraph!!.graph.model!!.description.translation
 		if (metaGraph!!.graph.model!!.propagationDelay != null) {
 			instance.model!!.propagationDelay = metaGraph!!.graph.model!!.propagationDelay!!
 		}

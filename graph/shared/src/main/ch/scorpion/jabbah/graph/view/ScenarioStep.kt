@@ -1,10 +1,10 @@
 package ch.scorpion.jabbah.graph.view
 
-import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.base.exception.IllegalStateException
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.io.Storable
 
@@ -13,29 +13,10 @@ import ch.scorpion.jabbah.io.Storable
  *
  * TODO This interface has a signature similar to [Scenario]. Consider redesigning the structure.
  */
-interface ScenarioStep : Storable {
+interface ScenarioStep : Namable, Describable, Storable {
 
 	/** The identification of this [ScenarioStep] that is unique within a [Scenario].*/
 	var id: Int
-
-	/**
-	 * The displayable name of this [ScenarioStep]. Note that this name can be internationalized and should
-	 * not be used for technical identifications.
-	 * Reflects the value in [translatableName] corresponding with the current system [Language].
-	 */
-	var name: String
-
-	/** Contains translations of the [name] property.*/
-	var translatableName: TranslatableText
-
-	/**
-	 * The text to be displayed above the explained [GraphView] when this [ScenarioStep] is active.
-	 * Reflects the value in [translatableDescription] corresponding with the current system [Language].
-	 */
-	var description: String?
-
-	/** Contains translations for the [description] property.*/
-	var translatableDescription: TranslatableText
 
 	/** The comma-separated, persistent list of [Component] IDs to be highlighted when this [ScenarioStep] is active*/
 	var highlightIds: String?

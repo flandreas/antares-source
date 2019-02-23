@@ -37,7 +37,7 @@ object ScenarioMenuBuilder {
         val list = mutableListOf<JMenuItem>()
         for (scenario in graphView.scenarios.getScenarios()) {
             if (scenario.stepCount > 0) {
-                val menu = JMenu(scenario.name)
+                val menu = JMenu(scenario.name.value)
                 for (scenarioStep in scenario.getScenarioSteps()) {
                     menu.add(JMenuItem(actionBuilder.invoke(scenarioStep)))
                 }

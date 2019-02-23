@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -24,8 +26,9 @@ import ch.scorpion.jabbah.io.StoreWriter
  * Extends [AbstractVertice] for its [Port] management functionality.
  */
 class SubGraphVerticeImpl(
-	name: String = Translations.getString("graph.name.unknown")
-) : AbstractVertice("graph.element.container", name), SubGraphVertice {
+	name: String = Translations.getString("graph.name.unknown"),
+	private val describable: Describable = DescribableImpl()
+) : AbstractVertice("graph.element.container", name), SubGraphVertice, Describable by describable {
 
 	companion object {
 		private val LOG by logger(SubGraphVerticeImpl::class)
@@ -39,14 +42,12 @@ class SubGraphVerticeImpl(
 	override var translatableName = TranslatableText(name)
 
 	override var shortDescription: String?
-		get() = translatableDescription.getTranslation()
+		get() = describable.description.value
 		set(value) {
 			if (StringUtils.isNotBlank(value)) {
-				translatableDescription = translatableDescription.withTranslation(value!!)
+				describable.description.translation = describable.description.translation.withTranslation(value!!)
 			}
 		}
-
-	override var translatableDescription: TranslatableText = TranslatableText()
 
 	override fun getGraphIfPresent(): Graph? {
 		return null
@@ -79,9 +80,7 @@ class SubGraphVerticeImpl(
 		super.write(writer)
 		writer.writeString("uuid", graphUUID.toString())
 		writer.writeStorables("name", translatableName.allTranslations())
-		if (!translatableDescription.isEmpty) {
-			writer.writeStorables("desc", translatableDescription.allTranslations())
-		}
+		description.write("desc", writer)
 		writer.writeStorables("ports", getSubGraphPorts().iterator())
 	}
 
@@ -96,9 +95,7 @@ class SubGraphVerticeImpl(
 		if (reader.hasElement("name")) {
 			translatableName = TranslatableText(reader.readStorables("name"))
 		}
-		if (reader.hasElement("desc")) {
-			translatableDescription = TranslatableText(reader.readStorables("desc"))
-		}
+		description.read("desc", reader)
 
 		for (port in reader.readStorables<SubGraphPort<Any>>("ports")) {
 			LOG.debug("SubGraphVerticeImpl: reading and adding SubCircuitPort $port")

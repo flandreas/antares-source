@@ -1,11 +1,11 @@
 package ch.scorpion.jabbah.graph.view
 
-import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.graph.script.ScriptGateway
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.io.Storable
 
 /**
@@ -15,30 +15,13 @@ import ch.scorpion.jabbah.io.Storable
  * For example, an digital electronic SR Latch (implemented with NOR gates) supports the three scenarios "Set", "Reset"
  * and "Store". The "Set" scenario is triggered when the S input is 1 while R is 0. The "Reset" scenario is triggered
  * when the R input is 0 while S is 1. The "Store" scenario is triggered when both S and R are 0.
+ *
+ * The value of [Describable] is the text to be displayed above the explained [GraphView] when this [Scenario] is active.
  */
-interface Scenario : Storable {
+interface Scenario : Namable, Describable, Storable {
 
 	/** Returns the identification of this [Scenario] that is unique within a [GraphView].*/
 	var id: Int
-
-	/**
-	 * Returns the displayable name of this [Scenario]. Note that this name can be internationalized and should
-	 * not be used for technical identifications.
-	 * Reflects the value in [translatableName] corresponding with the current system [Language].
-	 */
-	var name: String
-
-	/** Contains translations of the [name] property.*/
-	var translatableName: TranslatableText
-
-	/**
-	 * The text to be displayed above the explained [GraphView] when this [Scenario] is active.
-	 * Reflects the value in [translatableDescription] corresponding with the current system [Language].
-	 */
-	var description: String?
-
-	/** Contains translations for the [description] property.*/
-	var translatableDescription: TranslatableText
 
 	/** Returns the number of [ScenarioStep]s of this [Scenario].*/
 	val stepCount: Int

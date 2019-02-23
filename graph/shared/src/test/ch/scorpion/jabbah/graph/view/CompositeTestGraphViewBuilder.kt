@@ -23,7 +23,7 @@ class CompositeTestGraphViewBuilder(
 		val control = addVerticeView(TestControlVerticeView())
 		connect(addInput(), comp)
 		split(connect(comp, addOutput()),0, Point2D.ZERO, control)
-		graph.name = graphName
+		graph.name.value = graphName
 		return graphView
 	}
 
@@ -35,7 +35,7 @@ class CompositeTestGraphViewBuilder(
 		graphView.add(innerComp)
 		connect(addInput(), innerComp)
 		connect(innerComp, addOutput())
-		graph.name = graphName
+		graph.name.value = graphName
 		return graphView
 	}
 

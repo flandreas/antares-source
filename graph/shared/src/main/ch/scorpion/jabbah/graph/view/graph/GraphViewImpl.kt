@@ -75,33 +75,33 @@ class GraphViewImpl<T : GraphElementView<*>>(
 	/** ---- [Any] */
 
 	override fun toString(): String {
-		return graph?.name ?: ""
+		return graph?.name?.value ?: ""
 	}
 
 	/** ---- UI properties */
 
 	var name: String
-		get() = graph!!.name
+		get() = graph!!.name.value
 		set(value) {
-			graph!!.name = value
+			graph!!.name.value = value
 		}
 
 	var translatableName: TranslatableText
-		get() = graph!!.translatedName
+		get() = graph!!.name.translation
 		set(value) {
-			graph!!.translatedName = value
+			graph!!.name.translation = value
 		}
 
 	var shortDescription: TextProperty
-		get() = TextProperty(graph!!.shortDescription)
+		get() = TextProperty(graph!!.description.value)
 		set(value) {
-			graph!!.shortDescription = value.text
+			graph!!.description.value = value.text
 		}
 
 	var translatableShortDescription: TranslatableText
-		get() = graph!!.translatedShortDescription
+		get() = graph!!.description.translation
 		set(value) {
-			graph!!.translatedShortDescription = value
+			graph!!.description.translation = value
 		}
 
 	var propagationDelay: Long?

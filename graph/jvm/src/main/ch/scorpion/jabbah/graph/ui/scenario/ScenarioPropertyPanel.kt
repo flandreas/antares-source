@@ -45,10 +45,10 @@ class ScenarioPropertyPanel(
 
     override fun getDescription(bean: Any): String? {
         if (bean is Scenario) {
-            return bean.name
+            return bean.name.value
         }
         if (bean is ScenarioStep) {
-            return bean.name
+            return bean.name.value
         }
         return null
     }

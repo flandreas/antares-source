@@ -6,7 +6,10 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
+import ch.scorpion.jabbah.edit.model.text.description.Namable
+import ch.scorpion.jabbah.edit.model.text.description.NamableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.*
@@ -19,8 +22,10 @@ import ch.scorpion.jabbah.io.*
  */
 open class GraphImpl(
 	name: String = Translations.getString("graph.name.unknown"),
-	private val eventBus: EventBus = BaseModule.eventBus
-) : Graph {
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val namable: Namable = NamableImpl(name, eventBus),
+	private val describable: Describable = DescribableImpl(eventBus)
+) : Graph, Namable by namable, Describable by describable {
 
 	companion object {
 		private val LOG by logger(GraphImpl::class)
@@ -51,38 +56,6 @@ open class GraphImpl(
 	override var uuid: UUID = System.get().createUUID()
 
 	override var propagationDelay: Long? = null
-
-	override var name: String
-		get() = translatedName.getTranslation()
-		set(value) {
-			if (name != value) {
-				translatedName = translatedName.withTranslation(value)
-			}
-		}
-
-	override var translatedName: TranslatableText = TranslatableText(name)
-		set(value) {
-			if (field != value) {
-				field = value
-				eventBus.post(GraphNameChangedEvent(this, value))
-			}
-		}
-
-	override var shortDescription: String?
-		get() = translatedShortDescription.getOptionalTranslation()
-		set(value) {
-			if (shortDescription != value && value != null) {
-				translatedShortDescription = translatedShortDescription.withTranslation(value)
-			}
-		}
-
-	override var translatedShortDescription: TranslatableText = TranslatableText()
-		set(value) {
-			if (field != value) {
-				field = value
-				eventBus.post(GraphDescriptionChangedEvent(this, value))
-			}
-		}
 
 	override var script: String? = null
 

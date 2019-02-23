@@ -9,13 +9,13 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.DescriptionChangedEvent
+import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.library.Library
-import ch.scorpion.jabbah.graph.model.GraphDescriptionChangedEvent
-import ch.scorpion.jabbah.graph.model.GraphNameChangedEvent
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
@@ -96,7 +96,7 @@ class MetaGraph(
 	companion object {
 		fun withName(name: String): MetaGraph {
 			val metaGraph = MetaGraph()
-			metaGraph.graph.model!!.name = name
+			metaGraph.graph.model!!.name.value = name
 			metaGraph.containerDrawing.model.name = name
 			return metaGraph
 		}
@@ -118,30 +118,30 @@ class MetaGraph(
 	        }
         }
 
-    val name: String get() = graph.model!!.name
+    val name: String get() = graph.model!!.name.value
 
     val uuid: UUID get() = graph.model!!.uuid
 
-	val translatableName: TranslatableText get() = graph.model!!.translatedName
+	val translatableName: TranslatableText get() = graph.model!!.name.translation
 
-	private val graphNameHandler: EventHandler<GraphNameChangedEvent> = {
+	private val graphNameHandler: EventHandler<NameChangedEvent> = {
 		handle(it)
 	}
 
-	private val graphDescHandler: EventHandler<GraphDescriptionChangedEvent> = {
+	private val graphDescHandler: EventHandler<DescriptionChangedEvent> = {
 		handle(it)
 	}
 
     init {
-	    eventBus.register(GraphNameChangedEvent::class, graphNameHandler)
-	    eventBus.register(GraphDescriptionChangedEvent::class, graphDescHandler)
+	    eventBus.register(NameChangedEvent::class, graphNameHandler)
+	    eventBus.register(DescriptionChangedEvent::class, graphDescHandler)
         containerDrawing.model.graphUUID = uuid
         containerDrawing.initialize()
     }
 
 	fun dispose() {
-		eventBus.unregister(GraphNameChangedEvent::class, graphNameHandler)
-		eventBus.unregister(GraphDescriptionChangedEvent::class, graphDescHandler)
+		eventBus.unregister(NameChangedEvent::class, graphNameHandler)
+		eventBus.unregister(DescriptionChangedEvent::class, graphDescHandler)
 		graph.dispose()
 		containerDrawing.dispose()
 	}
@@ -210,22 +210,22 @@ class MetaGraph(
         return visitor.visitLeave(this)
     }
 
-	private fun handle(event: GraphNameChangedEvent) {
-		if (event.graph == graph.model) {
-			containerDrawing.model.translatableName = event.newValue
+	private fun handle(event: NameChangedEvent) {
+		if (event.name === graph.model?.name) {
+			containerDrawing.model.translatableName = event.name.translation
 		}
 	}
 
-	private fun handle(event: GraphDescriptionChangedEvent) {
-		if (event.graph == graph.model) {
-			containerDrawing.model.translatableDescription = event.newValue
+	private fun handle(event: DescriptionChangedEvent) {
+		if (event.description == graph.model?.description) {
+			containerDrawing.model.description.translation = event.description.translation
 		}
 	}
 
 	private fun copyGraphDataFromContainerModel(graph: Graph) {
 		graph.uuid = containerDrawing.model.graphUUID!!
-		graph.translatedName = containerDrawing.model.translatableName
-		graph.translatedShortDescription =containerDrawing.model.translatableDescription
+		graph.name.translation = containerDrawing.model.translatableName
+		graph.description.translation =containerDrawing.model.description.translation
 
 	}
 }

@@ -5,7 +5,10 @@ import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.TextProperty
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
+import ch.scorpion.jabbah.edit.model.text.description.Namable
+import ch.scorpion.jabbah.edit.model.text.description.NamableImpl
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -19,8 +22,11 @@ import ch.scorpion.jabbah.io.*
  */
 class ScenarioStepImpl(
 	private val scriptGateway: ScriptGateway,
-	name: String
-) : ScenarioStep {
+	initialName: String,
+	private val namable: NamableImpl = NamableImpl(initialName),
+	private val describable: DescribableImpl = DescribableImpl()
+
+) : ScenarioStep, Namable by namable, Describable by describable {
 
 	@Suppress("unused")
 	constructor() : this(ScriptModule.scriptGateway, "")
@@ -43,7 +49,7 @@ class ScenarioStepImpl(
 
 	/** ---- [Any] */
 
-	override fun toString(): String = StringUtils.replaceNegation(name)
+	override fun toString(): String = StringUtils.replaceNegation(name.value)
 
 	/** ---- UI editable properties */
 
@@ -68,36 +74,6 @@ class ScenarioStepImpl(
 	/** ---- [ScenarioStep] interface */
 
 	override var id: Int = 0
-
-	override var name: String
-		get() = translatableName.getTranslation()
-		set(value) {
-			if (name != value) {
-				translatableName = translatableName.withTranslation(value)
-			}
-		}
-
-	override var translatableName: TranslatableText = TranslatableText(name)
-		set(value) {
-			if (field != value) {
-				field = value
-			}
-		}
-
-	override var description: String?
-		get() = translatableDescription.getOptionalTranslation()
-		set(value) {
-			if (description != null && value != null) {
-				translatableDescription = translatableDescription.withTranslation(value)
-			}
-		}
-
-	override var translatableDescription: TranslatableText = TranslatableText()
-		set(value) {
-			if (field != value) {
-				field = value
-			}
-		}
 
 	override var highlightIds: String? = null
 		set(value) {
@@ -159,10 +135,8 @@ class ScenarioStepImpl(
 
 	override fun write(writer: StoreWriter) {
 		writer.writeInt("id", id)
-		writer.writeStorables("name", translatableName.allTranslations())
-		if (!translatableDescription.isEmpty) {
-			writer.writeStorables("desc", translatableDescription.allTranslations())
-		}
+		name.write("name", writer)
+		description.write("desc", writer)
 		highlightIds?.let { writer.writeString("highlightIds", it) }
 		conditionScript?.let { writer.writeString("condition", conditionScript!!) }
 		onEntryScript?.let { writer.writeString("onEntry", onEntryScript!!) }
@@ -171,21 +145,8 @@ class ScenarioStepImpl(
 
 	override fun read(reader: StoreReader) {
 		id = reader.readInt("id")
-		if (reader.hasAttribute("name")) {
-			// backward compatibility
-			name = reader.readString("name")
-		}
-		if (reader.hasElement("name")) {
-			translatableName = TranslatableText(reader.readStorables("name"))
-		}
-		if (reader.hasAttribute("desc")) {
-			// backward compatibility
-			description = reader.readString("desc")
-		}
-		if (reader.hasElement("desc")) {
-			translatableDescription = TranslatableText(reader.readStorables("desc"))
-		}
-
+		name.read("name", reader)
+		description.read("desc", reader)
 		highlightIds = reader.readOptionalString("highlightIds")
 		conditionScript = reader.readOptionalString("condition")
 		onEntryScript = reader.readOptionalString("onEntry")
