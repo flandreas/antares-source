@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.Namable
 
 /**
  * A [Usecase] is a representation of a single way the user can use a [GraphView].
@@ -14,31 +16,13 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
  * In addition, a [Usecase] can contain assertion code that checks certain conditions after execution of
  * a [Usecase], which can be used to automatically testing a [GraphView].
  */
-interface Usecase : Storable {
+interface Usecase : Namable, Describable, Storable {
 
 	/** Returns the identification of this [Usecase] that is unique within a [GraphView].*/
 	var id: Int
 
-	/**
-	 * Contains the displayable name of this [Usecase] in the current system [Language].
-	 * Note taht this name is internationalized and should not be used for technical identification.
-	 */
-	var name: String
-
-	/** Contains translations of the [name] property.*/
-	var translatableName: TranslatableText
-
-	/**
-	 * The text to be displayed above the explained [GraphView] when this [Scenario] is active.
-	 * Reflects the value in [translatableDescription] corresponding with the current system [Language].
-	 */
-	var description: String?
-
-	/** Contains translations for the [description] property.*/
-	var translatableDescription: TranslatableText
-
 	/** The JavaScript script to be executed when this [Usecase] is executed.*/
-	var executionScriptProperty: TextProperty
+	var executionScript: String
 
 	fun dispose()
 }

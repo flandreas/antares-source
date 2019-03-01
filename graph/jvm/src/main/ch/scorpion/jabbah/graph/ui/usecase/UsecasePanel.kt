@@ -1,0 +1,59 @@
+package ch.scorpion.jabbah.graph.ui.usecase
+
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.PropertySheetPanelFactory
+import ch.scorpion.jabbah.edit.module.EditModuleJvm
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.Usecase
+import java.awt.BorderLayout
+import java.awt.Dimension
+import javax.swing.JPanel
+import javax.swing.JScrollPane
+
+class UsecasePanel(
+	editor: Editor,
+	private val eventBus: EventBus = BaseModule.eventBus,
+	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
+) : JPanel() {
+
+	private val treeView = UsecaseTreeView(eventBus)
+	private val propertyPanel = UsecasePropertyPanel(editor, sheetFactory, eventBus)
+
+	var graphView: GraphView<*> = editor.drawing as GraphView<*>
+		set(value) {
+			field = value
+			treeView.graphView = value
+		}
+
+	init {
+		treeView.addTreeSelectionListener {
+			val usecase = treeView.selectedUsecase
+			eventBus.post(UsecaseSelectionEvent(graphView, usecase))
+		}
+		treeView.preferredSize = Dimension(300, treeView.preferredSize.height)
+		propertyPanel.preferredSize = Dimension(300, propertyPanel.preferredSize.height)
+
+		buildUI()
+	}
+
+	fun clearSelection() {
+		treeView.selectionModel.clearSelection()
+	}
+
+	private fun buildUI() {
+		layout = BorderLayout()
+		val treeViewScrollPane = JScrollPane(
+			treeView,
+			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+		add(treeViewScrollPane, BorderLayout.CENTER)
+		add(propertyPanel, BorderLayout.SOUTH)
+	}
+}
+
+data class UsecaseSelectionEvent(
+	val graphView: GraphView<*>,
+	val usecase: Usecase?
+)

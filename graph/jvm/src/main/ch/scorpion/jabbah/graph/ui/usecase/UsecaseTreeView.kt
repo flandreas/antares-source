@@ -1,0 +1,181 @@
+package ch.scorpion.jabbah.graph.ui.usecase
+
+import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.JTreeUtil
+import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
+import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.Usecase
+import ch.scorpion.jabbah.graph.view.UsecaseAddedEvent
+import ch.scorpion.jabbah.graph.view.UsecaseRemovedEvent
+import java.awt.Component
+import javax.swing.ImageIcon
+import javax.swing.JLabel
+import javax.swing.JPopupMenu
+import javax.swing.JTree
+import javax.swing.tree.*
+
+/** Displays the tree of [Usecase]s of a [GraphView].*/
+class UsecaseTreeView(
+	eventBus: EventBus = BaseModule.eventBus,
+	private val commandManager: CommandManager = EditModule.commandManager
+) : JTree() {
+
+	/** The [JPopupMenu] to be displayed for the [GraphView] node.*/
+	private val graphViewPopupMenu = JPopupMenu()
+
+	/** The [JPopupMenu] to be displayed for a [Usecase] node.*/
+	private val usecasePopupMenu = JPopupMenu()
+
+	init {
+		selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
+		selectionModel.addTreeSelectionListener { setupPopupMenu(it.newLeadSelectionPath) }
+
+		setCellRenderer(UsecaseTreeRenderer())
+		setRowHeight(24)
+
+		eventBus.register(UsecaseAddedEvent::class) {
+			if (it.graphView === this.graphView) {
+				val usecaseNode = usecaseTreeModel.addUsecase(it.usecase)
+				selectionPath = JTreeUtil.getPath(usecaseNode)
+			}
+		}
+
+		eventBus.register(UsecaseRemovedEvent::class) {
+			if (it.graphView === this.graphView) {
+				usecaseTreeModel.removeUsecase(it.usecase)
+			}
+		}
+
+		eventBus.register(SchedulerActivationStateEvent::class) {
+			if (it.scheduler.isActive) {
+				selectionModel.clearSelection()
+			}
+			isEnabled = !it.scheduler.isActive
+		}
+
+		eventBus.register(NameChangedEvent::class) {
+			if (this.graphView != null && it.name === this.graphView!!.graph?.name) {
+				usecaseTreeModel.updateGraphName()
+			}
+		}
+
+		graphViewPopupMenu.add(ActionWrapperSwing(AddUsecaseAction()))
+		usecasePopupMenu.add(ActionWrapperSwing(DeleteUsecaseAction()))
+	}
+
+	/** Holds the [GraphView] whose [Usecase]s are displayed by this [UsecaseTreeView].*/
+	var graphView: GraphView<*>? = null
+		set(value) {
+			if (field != value) {
+				field = value
+				// TODO How about null?
+				model = UsecaseTreeModel(field!!)
+			}
+		}
+
+	val selectedUsecase: Usecase?
+		get() {
+			val path = selectionPath ?: return null
+			val selectedObj = (path.lastPathComponent as DefaultMutableTreeNode).userObject
+			if (selectedObj is Usecase) {
+				return selectedObj
+			}
+			return null
+		}
+
+	private val usecaseTreeModel: UsecaseTreeModel get() = model!! as UsecaseTreeModel
+
+	private fun setupPopupMenu(newSelectionPath: TreePath?) {
+		if (newSelectionPath == null) {
+			componentPopupMenu = null
+			return
+		}
+
+		componentPopupMenu = when ((newSelectionPath.lastPathComponent as DefaultMutableTreeNode).userObject) {
+			is GraphView<*> -> graphViewPopupMenu
+			is Usecase -> usecasePopupMenu
+			else -> null
+		}
+	}
+
+	private class UsecaseTreeModel(graphView: GraphView<*>) : DefaultTreeModel(DefaultMutableTreeNode(graphView)) {
+
+		private val graphViewNode: DefaultMutableTreeNode get() = root as DefaultMutableTreeNode
+
+		init {
+			graphView.usecases.getUsecases().forEach { addUsecase(it) }
+			nodeStructureChanged(root)
+		}
+
+		fun updateGraphName() {
+			nodeChanged(graphViewNode)
+		}
+
+		fun addUsecase(usecase: Usecase): TreeNode {
+			val usecaseNode = DefaultMutableTreeNode(usecase)
+			graphViewNode.add(usecaseNode)
+			nodesWereInserted(graphViewNode, intArrayOf(graphViewNode.childCount - 1))
+			return usecaseNode
+		}
+
+		fun removeUsecase(usecase: Usecase) {
+			val usecaseNode = findUsecaseNode(usecase)
+			val index = getUsecaseIndex(usecase)
+			if (index >= 0) {
+				graphViewNode.remove(index)
+				nodesWereRemoved(graphViewNode, intArrayOf(index), arrayOf(usecaseNode))
+			}
+		}
+
+		private fun findUsecaseNode(usecase: Usecase): TreeNode? {
+			for (e in graphViewNode.depthFirstEnumeration()) {
+				if ((e as DefaultMutableTreeNode).userObject == usecase) {
+					return e
+				}
+			}
+			return null
+		}
+
+		private fun getUsecaseIndex(usecase: Usecase): Int {
+			for (index in 0 until graphViewNode.childCount) {
+				val item = (graphViewNode.getChildAt(index) as DefaultMutableTreeNode).userObject as Usecase
+				if (item == usecase) {
+					return index
+				}
+			}
+			return -1
+		}
+	}
+
+	private class UsecaseTreeRenderer : DefaultTreeCellRenderer() {
+
+		companion object {
+			private val elementIcon = ContainerLibraryElementIcon()
+			private val usecaseIcon = ImageIcon(UsecaseTreeView::class.java.getResource("/img/usecase-16.png"))
+		}
+
+		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
+			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
+
+			val userObject = (value as DefaultMutableTreeNode).userObject
+			when (userObject) {
+				is Usecase -> {
+					component.icon = usecaseIcon
+					component.disabledIcon = usecaseIcon
+				}
+				is GraphView<*> -> {
+					component.icon = elementIcon
+					component.disabledIcon = elementIcon
+				}
+			}
+
+			return component
+		}
+	}
+}

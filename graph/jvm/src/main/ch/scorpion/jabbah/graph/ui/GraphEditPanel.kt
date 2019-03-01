@@ -11,11 +11,10 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertySheetPanelFactory
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioPanel
+import ch.scorpion.jabbah.graph.ui.usecase.UsecasePanel
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
-import javax.swing.BorderFactory
-import javax.swing.JLabel
 import javax.swing.JPanel
 
 /**
@@ -45,7 +44,7 @@ class GraphEditPanel(
 
 	private val scenarioPanel = ScenarioPanel(editor, eventBus, propertySheetFactory)
 
-	private val usecasesDummy = JLabel(Translations.getString("application.notYetImplemented.text"))
+	private val usecasePanel = UsecasePanel(editor, eventBus, propertySheetFactory)
 
 	private val sidebarSplitPane = SidebarSplitPane(
 		location = SidebarPane.Location.Right,
@@ -53,12 +52,13 @@ class GraphEditPanel(
 		settingBaseName = "graphPanel.rightSidebar",
 		contents = listOf(
 			SidebarPane.Content(Translations.getString("graph.scenarios.title"), "/img/scenarios-16.png", scenarioPanel),
-			SidebarPane.Content(Translations.getString("graph.usecases.title"), "/img/usecase-16.png", usecasesDummy)
+			SidebarPane.Content(Translations.getString("graph.usecases.title"), "/img/usecase-16.png", usecasePanel)
 		)) {
-			scenarioPanel.clearSelection()
-			revalidate()
-			repaint()
-		}
+		scenarioPanel.clearSelection()
+		usecasePanel.clearSelection()
+		revalidate()
+		repaint()
+	}
 
 	init {
 		buildUI()
@@ -71,14 +71,11 @@ class GraphEditPanel(
 	fun setGraphView(newGraphView: GraphView<GraphElementView<*>>) {
 		graphNavigationPanel.setRootGraphView(newGraphView)
 		scenarioPanel.graphView = newGraphView
+		usecasePanel.graphView = newGraphView
 	}
 
 	private fun buildUI() {
 		layout = BorderLayout()
-
-		usecasesDummy.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
-		usecasesDummy.verticalAlignment = JLabel.TOP
-
 		add(sidebarSplitPane, BorderLayout.CENTER)
 	}
 }

@@ -31,17 +31,18 @@ class ScenarioTreeView(
 	eventBus: EventBus = BaseModule.eventBus,
 	private val commandManager: CommandManager = EditModule.commandManager
 ) : JTree() {
-	@Suppress("unused")
-	constructor() : this(BaseModule.eventBus)
 
 	companion object {
 		private val LOG by logger(ScenarioTreeView::class)
 	}
 
+	/** The [JPopupMenu] to be displayed for the [GraphView] node.*/
 	private val graphViewPopupMenu = JPopupMenu()
 
+	/** The [JPopupMenu] to be displayed for a [Scenario] node.*/
 	private val scenarioPopupMenu = JPopupMenu()
 
+	/** The [JPopupMenu] to be displayed for a [ScenarioStep] node.*/
 	private val scenarioStepPopupMenu = JPopupMenu()
 
 	init {
@@ -121,6 +122,7 @@ class ScenarioTreeView(
 		set(value) {
 			if (field != value) {
 				field = value
+				// TODO How about null?
 				model = ScenarioTreeModel(field!!)
 			}
 		}

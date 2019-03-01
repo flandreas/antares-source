@@ -61,7 +61,7 @@ abstract class AbstractScenarioAction(
 }
 
 /**
- * Asks the user for the name of a new [Scenario] and adds it to the current [Graph].
+ * Asks the user for the name of a new [Scenario] and adds it to the current [GraphView].
  */
 class AddScenarioAction : AbstractScenarioAction("scenarios.action.addScenario") {
 
@@ -114,7 +114,7 @@ class DeleteScenarioAction : AbstractScenarioAction("scenarios.action.deleteScen
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		if (JOptionPane.showConfirmDialog(
 				Frame.getFrames()[0],
-				Translations.getString("scenarios.action.deleteScenario.question", scenario!!.name),
+				Translations.getString("scenarios.action.deleteScenario.question", scenario!!.name.value),
 				Translations.getString("scenarios.action.deleteScenario.name"),
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {

@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.ui.scenario
+package ch.scorpion.jabbah.graph.ui.usecase
 
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
@@ -6,14 +6,10 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.AbstractPropertyPanel
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertySheetPanelFactory
-import ch.scorpion.jabbah.graph.view.Scenario
-import ch.scorpion.jabbah.graph.view.ScenarioStep
+import ch.scorpion.jabbah.graph.view.Usecase
 
-/**
- * An [AbstractPropertyPanel] for editing the properties of the currently selected
- * [Scenario] or [ScenarioStep].
- */
-class ScenarioPropertyPanel(
+/** An [AbstractPropertyPanel] for editing the properties of the currently selected [Usecase].*/
+class UsecasePropertyPanel(
 	editor: Editor,
 	sheetPanelFactory: PropertySheetPanelFactory,
 	eventBus: EventBus
@@ -22,12 +18,10 @@ class ScenarioPropertyPanel(
 	private var currentSavable: Savable? = null
 
 	init {
-		eventBus.register(ScenarioSelectionEvent::class) {
+		eventBus.register(UsecaseSelectionEvent::class) {
 			clearProperties()
-			if (it.scenarioStep != null) {
-				loadProperties(it.scenarioStep)
-			} else if (it.scenario != null) {
-				loadProperties(it.scenario)
+			if (it.usecase != null) {
+				loadProperties(it.usecase)
 			}
 		}
 
@@ -44,10 +38,7 @@ class ScenarioPropertyPanel(
 	}
 
 	override fun getDescription(bean: Any): String? {
-		if (bean is Scenario) {
-			return bean.name.value
-		}
-		if (bean is ScenarioStep) {
+		if (bean is Usecase) {
 			return bean.name.value
 		}
 		return null

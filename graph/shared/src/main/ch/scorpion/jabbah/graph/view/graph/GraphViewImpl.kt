@@ -37,6 +37,7 @@ import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.connect.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
+import ch.scorpion.jabbah.graph.view.usecase.UsecasesImpl
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 /**
@@ -121,6 +122,8 @@ class GraphViewImpl<T : GraphElementView<*>>(
 	override var snapper: Snapper? = null
 
 	override var scenarios: Scenarios = ScenariosImpl(this, eventBus)
+
+	override var usecases: Usecases = UsecasesImpl(this, eventBus)
 
 	override var currentScenario: Scenario? = null
 		set(value) {
@@ -227,6 +230,7 @@ class GraphViewImpl<T : GraphElementView<*>>(
 	override fun getStorableChildren(): Iterator<Storable> {
 		val list = mutableListOf<Storable>()
 		list.add(scenarios)
+		list.add(usecases)
 		list.addAll(netViewMap.values)
 		return ConcatIterator(super.getStorableChildren(), list.iterator())
 	}
@@ -235,6 +239,9 @@ class GraphViewImpl<T : GraphElementView<*>>(
 		writer.writeStorables("netViews", netViewMap.values.iterator())
 		if (!scenarios.isEmpty) {
 			writer.writeStorable("scenarios", scenarios)
+		}
+		if (!usecases.isEmpty) {
+			writer.writeStorable("usecases", usecases)
 		}
 		super.write(writer)
 	}
@@ -251,6 +258,10 @@ class GraphViewImpl<T : GraphElementView<*>>(
 		if (reader.hasElement("scenarios")) {
 			scenarios = reader.readStorable("scenarios") as Scenarios
 			scenarios.graphView = this
+		}
+		if (reader.hasElement("usecases")) {
+			usecases = reader.readStorable("usecases") as Usecases
+			usecases.graphView = this
 		}
 		super.read(reader)
 	}
@@ -289,6 +300,7 @@ class GraphViewImpl<T : GraphElementView<*>>(
 			graphElementView.dispose()
 		}
 		scenarios.dispose()
+		usecases.dispose()
 		eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationObserver)
 	}
 

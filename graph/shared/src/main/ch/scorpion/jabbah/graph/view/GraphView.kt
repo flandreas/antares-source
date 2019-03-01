@@ -36,6 +36,9 @@ interface GraphView<T : GraphElementView<*>> : Drawing<T> {
     /** Returns the [Scenarios] that are defined for this [GraphView].*/
     val scenarios: Scenarios
 
+	/** Returns the [Usecases] that are defined for this [GraphView].*/
+	val usecases: Usecases
+
     /** The current [Scenario] of this [GraphView], if any. Posts a [ScenarioEvent] if changed.*/
     var currentScenario: Scenario?
 
