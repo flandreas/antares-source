@@ -67,6 +67,7 @@ class UsecaseTreeView(
 
 		graphViewPopupMenu.add(ActionWrapperSwing(AddUsecaseAction()))
 		usecasePopupMenu.add(ActionWrapperSwing(DeleteUsecaseAction()))
+		usecasePopupMenu.add(ActionWrapperSwing(RunUsecaseAction()))
 	}
 
 	/** Holds the [GraphView] whose [Usecase]s are displayed by this [UsecaseTreeView].*/

@@ -8,10 +8,11 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
+import ch.scorpion.jabbah.graph.ApplicationModeHolder
 
 /** An [Action] for toggling the [ApplicationMode] of a [GraphPanel]. */
 class ToggleApplicationModeAction(
-	private val graphPanel: GraphPanel,
+	private val appModeHolder: ApplicationModeHolder,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("simulation.action.execute") {
 
@@ -21,11 +22,11 @@ class ToggleApplicationModeAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		graphPanel.toggleMode()
+		appModeHolder.toggleMode()
 	}
 
 	private fun updateState() {
-		when (graphPanel.currentMode) {
+		when (appModeHolder.currentMode) {
 			ApplicationMode.EDIT -> {
 				description = Translations.getString("simulation.action.start.desc")
 				selected = false

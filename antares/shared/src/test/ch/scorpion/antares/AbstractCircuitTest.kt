@@ -1,7 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventBusImpl
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
 import ch.scorpion.jabbah.base.time.Timer
@@ -33,9 +33,9 @@ abstract class AbstractCircuitTest {
 	protected lateinit var scheduler: Scheduler
 
 	@BeforeTest
-	fun setup() {
+	open fun setup() {
 		styleProvider = DrawStyleModule.styleProvider
-		eventBus = EventBusImpl()
+		eventBus = BaseModule.eventBus
 		timeService = ControlledTimeService()
 		timer = ControlledTimer(timeService)
 		scheduler = SchedulerImpl(timeService, timer, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()))

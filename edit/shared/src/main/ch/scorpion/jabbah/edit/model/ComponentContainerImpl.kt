@@ -28,7 +28,7 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 
     /** ---- [ComponentContainer] interface */
 
-    override fun getWidthId(id: Int): T? {
+    override fun getWithId(id: Int): T? {
         return getDrawables().filter { it.id == id }.firstOrNull()
     }
 

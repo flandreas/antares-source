@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.execution.issue.Issue
  * @property context additional information to further identify the origin of the script
  */
 data class Script(
-        val code: String,
-        val origin: String,
-        val context: String? = null
+	val code: String,
+	val origin: String,
+	val context: String? = null
 )

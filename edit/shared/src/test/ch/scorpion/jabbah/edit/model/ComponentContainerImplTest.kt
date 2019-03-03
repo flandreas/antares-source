@@ -37,6 +37,6 @@ class ComponentContainerImplTest {
         container.add(c1)
         container.add(c2)
 
-        assertSame(c2, container.getWidthId(2))
+        assertSame(c2, container.getWithId(2))
     }
 }

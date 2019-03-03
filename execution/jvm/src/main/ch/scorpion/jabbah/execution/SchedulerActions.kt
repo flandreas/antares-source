@@ -14,62 +14,63 @@ abstract class AbstractSchedulerAction(name: String) : AbstractAction(name)
 
 /** Toggles the [SchedulerActivationState] of a [Scheduler]. */
 class PauseExecutionAction(
-    val scheduler: Scheduler,
-    eventBus: EventBus
+	val scheduler: Scheduler,
+	eventBus: EventBus
 ) : AbstractSchedulerAction("simulator.action.pause") {
 
-    init {
-        eventBus.register(SchedulerRunningStateEvent::class, { updateState() })
-        updateState()
-    }
+	init {
+		eventBus.register(SchedulerRunningStateEvent::class, { updateState() })
+		updateState()
+	}
 
-    private fun updateState() {
-        selected = scheduler.isPaused
-    }
+	private fun updateState() {
+		selected = scheduler.isPaused
+	}
 
-    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-        scheduler.isPaused = !scheduler.isPaused
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		scheduler.isPaused = !scheduler.isPaused
+	}
 }
 
 /** Performs a single execution step.*/
 class StepExecutionAction(
-    val scheduler: Scheduler,
-    eventBus: EventBus
+	val scheduler: Scheduler,
+	eventBus: EventBus
 ) : AbstractSchedulerAction("simulator.action.step") {
 
-    init {
-        eventBus.register(SchedulerRunningStateEvent::class, { updateEnabledness(scheduler.numberOfRemainingSlots) })
-        eventBus.register(SchedulerActivationStateEvent::class, { updateEnabledness(scheduler.numberOfRemainingSlots) })
-        eventBus.register(SchedulerStateEvent::class, { updateEnabledness(it.numberOfRemainingSlots) })
-        enabled = false
-    }
+	init {
+		eventBus.register(SchedulerRunningStateEvent::class) { updateEnabledness(scheduler.numberOfRemainingSlots) }
+		eventBus.register(SchedulerActivationStateEvent::class) { updateEnabledness(scheduler.numberOfRemainingSlots) }
+		// TODO For performance reasons, register only temporarily for receiving SchedulerStateEvents (i.e. when stepping is active)
+		eventBus.register(SchedulerStateEvent::class) { updateEnabledness(it.numberOfRemainingSlots) }
+		enabled = false
+	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		scheduler.step()
 	}
 
-    private fun updateEnabledness(numberOfRemainingSlots: Int) {
-        enabled = scheduler.isPaused && scheduler.isActive && numberOfRemainingSlots > 0
-    }
+	private fun updateEnabledness(numberOfRemainingSlots: Int) {
+		enabled = scheduler.isPaused && scheduler.isActive && numberOfRemainingSlots > 0
+	}
 }
 
 /** Toggles the [SignalHandler.isDeepExecution] property of a [Scheduler].*/
 class ExecutionDepthAction(
-    val scheduler: Scheduler = ExecutionModule.scheduler,
-    eventBus: EventBus = BaseModule.eventBus
+	val scheduler: Scheduler = ExecutionModule.scheduler,
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("simulator.action.deepSimulation") {
 
-    init {
-        eventBus.register(SchedulerActivationStateEvent::class, { updateState() })
-        eventBus.register(ExecutionDepthEvent::class, { updateState() })
-        updateState()
-    }
+	init {
+		eventBus.register(SchedulerActivationStateEvent::class, { updateState() })
+		eventBus.register(ExecutionDepthEvent::class, { updateState() })
+		updateState()
+	}
 
-    private fun updateState() {
-        selected = scheduler.isDeepExecution
-        enabled = !scheduler.isActive
-    }
+	private fun updateState() {
+		selected = scheduler.isDeepExecution
+		enabled = !scheduler.isActive
+	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		scheduler.isDeepExecution = selected
@@ -78,27 +79,27 @@ class ExecutionDepthAction(
 
 /** Toggles the [Scheduler.isStopOnIssue] property. */
 class StopOnIssueAction(
-    private val scheduler: Scheduler = ExecutionModule.scheduler,
-    eventBus: EventBus = BaseModule.eventBus
+	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("simulator.action.stopOnIssue") {
 
-    init {
-        eventBus.register(StopOnIssueEvent::class, { updateState() })
-        updateState()
-    }
+	init {
+		eventBus.register(StopOnIssueEvent::class, { updateState() })
+		updateState()
+	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		scheduler.isStopOnIssue = selected
 	}
 
-    private fun updateState() {
-        selected = scheduler.isStopOnIssue
-        enabled = !scheduler.isActive
-    }
+	private fun updateState() {
+		selected = scheduler.isStopOnIssue
+		enabled = !scheduler.isActive
+	}
 }
 
 class PrintScheduleAction(
-        private val scheduler: Scheduler = ExecutionModule.scheduler
+	private val scheduler: Scheduler = ExecutionModule.scheduler
 ) : AbstractSchedulerAction("simulator.action.print") {
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {

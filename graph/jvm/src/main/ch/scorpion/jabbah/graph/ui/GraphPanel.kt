@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.*
+import ch.scorpion.jabbah.app.ApplicationDataEvent
+import ch.scorpion.jabbah.app.CloseApplicationDataRequest
+import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
@@ -11,11 +13,7 @@ import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.edit.ComponentPropertyPanel
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.PropertySheetPanelFactory
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.app.ComponentSnapAction
 import ch.scorpion.jabbah.edit.app.GridSnapAction
 import ch.scorpion.jabbah.edit.model.ComponentMessage
@@ -30,29 +28,29 @@ import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
-import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.execution.IssuesPanel
 import ch.scorpion.jabbah.execution.PauseExecutionAction
 import ch.scorpion.jabbah.execution.StepExecutionAction
 import ch.scorpion.jabbah.execution.SystemSpeedSlider
+import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.ExecutionStoppedOnIssueEvent
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
+import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryPanel
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
+import ch.scorpion.jabbah.graph.ui.usecase.UsecaseSelector
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Dimension
-import java.awt.event.ActionEvent
 import javax.swing.*
 
 
@@ -72,7 +70,7 @@ class GraphPanel(
 	var scheduler: Scheduler = ExecutionModule.scheduler,
 	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory,
 	showContentInitially: Boolean = true
-) : JPanel() {
+) : JPanel(), ApplicationModeHolder {
 
 	companion object {
 		private val LOG by logger(GraphPanel::class)
@@ -84,7 +82,7 @@ class GraphPanel(
 		propertySheetFactory, { eventBus.post(CloseApplicationDataRequest(editor.drawing)) }, eventBus)
 
 	/** Allows to open multiple Graphs.*/
-	private val desktop : GraphDesktop = GraphDesktop(graphEditPanel, eventBus, scheduler, showContentInitially)
+	private val desktop: GraphDesktop = GraphDesktop(graphEditPanel, eventBus, scheduler, showContentInitially)
 
 	/** Displays the properties of the currently selected component in [graphEditPanel].*/
 	private val propertyPanel: ComponentPropertyPanel
@@ -127,14 +125,14 @@ class GraphPanel(
 	/** Holds the location of [bottomSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
 	private var bottomSidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.bottomSidebarSplitPos", -1)
 
-	var currentMode: ApplicationMode = ApplicationMode.EDIT
+	override var currentMode: ApplicationMode = ApplicationMode.EDIT
 		private set
 
 	/** Displays the current [Issue]s. */
 	private val issuesPanel = IssuesPanel()
 
-	private var editedGraphView: GraphView<GraphElementView<*>>? = editor.drawing as GraphView<GraphElementView<*>>?
-		set(value) {
+	var rootGraphView: GraphView<GraphElementView<*>>? = editor.drawing as GraphView<GraphElementView<*>>?
+		private set(value) {
 			if (field !== value) {
 				val oldValue = field
 				field = value
@@ -142,7 +140,7 @@ class GraphPanel(
 					graphEditPanel.setGraphView(value)
 					value.snapper = editor.view.grid
 				}
-				eventBus.post(EditedGraphViewEvent(oldValue, value))
+				eventBus.post(EditedGraphViewEvent(this, oldValue, value))
 				updateEditability()
 			}
 		}
@@ -153,7 +151,7 @@ class GraphPanel(
 		propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
 		eventBus.register(ApplicationDataEvent::class) {
-			editedGraphView = (it.newData as MetaGraph?)?.graph?.graphView as GraphView<GraphElementView<*>>?
+			rootGraphView = (it.newData as MetaGraph?)?.graph?.graphView as GraphView<GraphElementView<*>>?
 		}
 
 		eventBus.register(ActiveViewChangedEvent::class) {
@@ -191,7 +189,7 @@ class GraphPanel(
 	private fun updateEditability() {
 		val editable = (viewManager.activeView === editor.view && editor.view.editable)
 			&& !scheduler.isActive
-			&& editedGraphView != null
+			&& rootGraphView != null
 
 		editor.active = editable
 		propertyPanel.editable = editable
@@ -237,7 +235,7 @@ class GraphPanel(
 		repaint()
 	}
 
-	private fun setMode(mode: ApplicationMode, init: Boolean) {
+	private fun setMode(mode: ApplicationMode, init: Boolean, after: () -> Unit = {}) {
 		when (mode) {
 			ApplicationMode.EDIT -> {
 				currentMode = mode
@@ -258,6 +256,7 @@ class GraphPanel(
 						updateEditability()
 						eventBus.post(ApplicationModeEvent(currentMode))
 						Status.set(StatusType.Large, Translations.getString("graph.status.execute"))
+						after.invoke()
 					})
 				} else {
 					eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = null, messageKey = "graph.designError.msg"))
@@ -267,10 +266,10 @@ class GraphPanel(
 		}
 	}
 
-	fun toggleMode() {
+	override fun toggleMode(after: () -> Unit) {
 		when (currentMode) {
-			ApplicationMode.EDIT -> setMode(ApplicationMode.EXECUTE, false)
-			ApplicationMode.EXECUTE -> setMode(ApplicationMode.EDIT, false)
+			ApplicationMode.EDIT -> setMode(ApplicationMode.EXECUTE, false, after)
+			ApplicationMode.EXECUTE -> setMode(ApplicationMode.EDIT, false, after)
 		}
 	}
 
@@ -296,6 +295,8 @@ class GraphPanel(
 		val speedSlider = SystemSpeedSlider()
 		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
 
+		val usecaseSelector = UsecaseSelector(this)
+
 		val mainToolBar = ToolBar()
 		mainToolBar.isFloatable = false
 		mainToolBar.isRollover = true
@@ -304,6 +305,7 @@ class GraphPanel(
 		mainToolBar.add(pauseToggleButton)
 		mainToolBar.add(stepButton)
 		mainToolBar.add(speedSlider)
+		mainToolBar.add(usecaseSelector)
 
 		return mainToolBar
 	}
@@ -350,4 +352,8 @@ class GraphPanel(
 }
 
 /** Posted on [EventBus] when the currently (one and only) edited root [GraphView] changes. */
-class EditedGraphViewEvent(val oldGraphView: GraphView<GraphElementView<*>>?, val newGraphView: GraphView<GraphElementView<*>>?)
+class EditedGraphViewEvent(
+	val applicationModeHolder: ApplicationModeHolder,
+	val oldGraphView: GraphView<GraphElementView<*>>?,
+	val newGraphView: GraphView<GraphElementView<*>>?
+)

@@ -13,46 +13,49 @@ import javax.script.ScriptException
  * Implements [ScriptEngine] using the JVM "nashorn" engine.
  */
 class ScriptEngineJvm(
-        private val eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : ScriptEngine {
 
-    private val LOG by logger(ScriptEngineJvm::class)
-    private val engine = ScriptEngineManager().getEngineByName("nashorn")
-    private var lastScript: Script? = null
+	companion object {
+		private val LOG by logger(ScriptEngineJvm::class)
+	}
 
-    override fun eval(script: Script) {
-        lastScript = script
-        try {
-            engine.eval(script.code)
-        } catch (e: ScriptException) {
-            LOG.debug("ScriptException while defining JS function: '${e.message}'")
-            postIssue(script, e)
-        } catch (e: Throwable) {
-            LOG.error("General error while defining JS function: '${e.message}'")
-            throw e
-        }
-    }
+	private val engine = ScriptEngineManager().getEngineByName("nashorn")
+	private var lastScript: Script? = null
 
-    override fun invoke(name: String, vararg args: Any): Any? {
-        try {
-            return (engine as Invocable).invokeFunction(name, *args)
-        } catch (e: ScriptException) {
-            LOG.debug("ScriptException while defining JS function: '${e.message}'")
-            postIssue(lastScript!!, e)
-            return null
-        } catch (e: Throwable) {
-            LOG.error("Error while invoking JS function '$name': ${e.message}")
-            LOG.error("Invoked '$name' for the following script\n: $lastScript")
-            throw e
-        }
-    }
+	override fun eval(script: Script) {
+		lastScript = script
+		try {
+			engine.eval(script.code)
+		} catch (e: ScriptException) {
+			LOG.debug("ScriptException while defining JS function: '${e.message}'")
+			postIssue(script, e)
+		} catch (e: Throwable) {
+			LOG.error("General error while defining JS function: '${e.message}'")
+			throw e
+		}
+	}
 
-    private fun postIssue(script: Script, e: ScriptException) {
-        eventBus.post(IssueImpl(
-                severity = IssueSeverity.Error,
-                name = "JS Script",
-                description = "${e.message}",
-                origin = script.origin,
-                context = script.context))
-    }
+	override fun invoke(name: String, vararg args: Any): Any? {
+		return try {
+			(engine as Invocable).invokeFunction(name, *args)
+		} catch (e: ScriptException) {
+			LOG.debug("ScriptException while defining JS function: '${e.message}'")
+			postIssue(lastScript!!, e)
+			null
+		} catch (e: Throwable) {
+			LOG.error("Error while invoking JS function '$name': ${e.message}")
+			LOG.error("Invoked '$name' for the following script\n: $lastScript")
+			throw e
+		}
+	}
+
+	private fun postIssue(script: Script, e: ScriptException) {
+		eventBus.post(IssueImpl(
+			severity = IssueSeverity.Error,
+			name = "JS Script",
+			description = "${e.message}",
+			origin = script.origin,
+			context = script.context))
+	}
 }

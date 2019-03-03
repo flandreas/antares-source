@@ -14,16 +14,10 @@ import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 /** Unit tests for [DrawingViewImpl].*/
 class DrawingViewImplTest {
-
-	@BeforeTest
-	fun setup() {
-		EditTestRule.configure()
-	}
 
 	init {
 		EditTestRule.configure()

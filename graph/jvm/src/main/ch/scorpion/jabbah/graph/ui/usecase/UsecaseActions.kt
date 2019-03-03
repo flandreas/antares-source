@@ -5,16 +5,21 @@ import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.ui.EditedGraphViewEvent
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.usecase.AddUsecaseCommand
 import ch.scorpion.jabbah.graph.view.usecase.DeleteUsecaseCommand
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseImpl
+import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
 import java.awt.Frame
 import javax.swing.JOptionPane
 
@@ -25,13 +30,14 @@ abstract class AbstractUsecaseAction(
 ) : AbstractAction(baseName) {
 
 	private var currentSavable: Savable? = null
-	protected var editedGraphView: GraphView<*>? = null
+	protected var applicationModeHolder: ApplicationModeHolder? = null
 	protected var graphView: GraphView<*>? = null
 	protected var usecase: Usecase? = null
 
 	init {
 		eventBus.register(EditedGraphViewEvent::class) {
-			editedGraphView = it.newGraphView
+			applicationModeHolder = it.applicationModeHolder
+			graphView = it.newGraphView
 			updateEnabledness()
 		}
 		eventBus.register(UsecaseSelectionEvent::class) {
@@ -51,7 +57,7 @@ abstract class AbstractUsecaseAction(
 	}
 
 	protected open fun calculateEnabled(): Boolean {
-		return editedGraphView != null && !(currentSavable?.readOnly ?: false)
+		return graphView != null && !(currentSavable?.readOnly ?: false)
 	}
 }
 
@@ -87,6 +93,21 @@ class DeleteUsecaseAction : AbstractUsecaseAction("usecases.action.deleteUsecase
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
 			cmdManager.execute(DeleteUsecaseCommand(graphView!!, usecase!!))
+		}
+	}
+
+	override fun calculateEnabled(): Boolean {
+		return super.calculateEnabled() && usecase != null
+	}
+}
+
+class RunUsecaseAction(
+	private val scheduler: Scheduler = ExecutionModule.scheduler
+) : AbstractUsecaseAction("usecases.action.runUsecase") {
+
+	override fun execute(event: ActionEvent) {
+		usecase?.let {
+			UsecaseRunner(it, graphView!!, scheduler, applicationModeHolder!!).run()
 		}
 	}
 

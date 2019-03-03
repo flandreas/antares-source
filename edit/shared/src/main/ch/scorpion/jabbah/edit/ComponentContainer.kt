@@ -9,5 +9,5 @@ import ch.scorpion.jabbah.io.Storable
 interface ComponentContainer<T : Component> : DrawableContainer<T>, Storable {
 
     /** Returns the [Component] with the specified identification, if present.*/
-    fun getWidthId(id: Int): T?
+    fun getWithId(id: Int): T?
 }

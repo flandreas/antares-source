@@ -22,7 +22,7 @@ class GraphViewBridge(private val view: DrawingView<GraphView<GraphElementView<*
     /** Returns a scripting bridge for the [GraphElementView] with the specified ID. */
     @Suppress("unused")
     fun elem(id: Int): GraphElementViewBridge {
-        return GraphElementViewBridge(view.drawing.getWidthId(id)!!)
+        return GraphElementViewBridge(view.drawing.getWithId(id)!!)
     }
 }
 
