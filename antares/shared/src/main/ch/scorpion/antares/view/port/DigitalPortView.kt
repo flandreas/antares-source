@@ -9,34 +9,33 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
-import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.drawable.TransparentImpl
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.base.geom.*
-import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.port.AbstractPortView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
+import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
-import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.ReferenceResolver
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.draw.drawable.Transparent
-import ch.scorpion.jabbah.draw.drawable.TransparentImpl
-import ch.scorpion.jabbah.draw.module.DrawModule
-import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
-import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
-import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.view.style.GraphTheme
-import ch.scorpion.jabbah.graph.view.port.PortView
 
 /**
  * A view representation of a [DigitalPort], either input or output.
@@ -167,7 +166,7 @@ class DigitalPortView(
 	private fun setupColor(context: DrawContext) {
 		val appContext = context.castedAppContext<GraphApplicationContext>()!!
 
-		if (ApplicationMode.EXECUTE == appContext.mode && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
+		if (appContext.isExecute && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
 			if (port.net == null || !port.net!!.isError) {
 				context.g.color = transparent.applyTo(when (port.portType) {
 					PortType.INOUT -> getDigitalPort().dominantSignal.getColor().foregroundColor

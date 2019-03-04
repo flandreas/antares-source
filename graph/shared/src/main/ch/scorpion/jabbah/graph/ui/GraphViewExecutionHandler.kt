@@ -14,6 +14,8 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -37,7 +39,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 class GraphViewExecutionHandler(
 	private val view: DrawingView<GraphView<GraphElementView<*>>>,
 	private val scheduler: Scheduler,
-	eventBus: EventBus
+	private val eventBus: EventBus
 ) {
 
 	/** Handles [MouseEvent]s on [view] during execution.*/
@@ -60,26 +62,34 @@ class GraphViewExecutionHandler(
 	/** The target [ActorInteractionHandler] to which the next event is forwarded during complex interactions.*/
 	private var target: ActorInteractionHandler? = null
 
-	/** Returns the [ActorView] in [view] at the specified location, if any.*/
-	private fun getActorViewAt(x: Double, y: Double): ActorView? {
-		return view.getInnerDrawableAt(x, y) { it is ActorView } as ActorView?
+	private var currentMode: ApplicationMode = ApplicationMode.EDIT
+
+	private val modeEventHandler: EventHandler<ApplicationModeEvent> = {
+		currentMode = it.applicationMode
+		updateActivationState()
 	}
 
 	init {
-		eventBus.register(SchedulerActivationStateEvent::class) { updateActivationState() }
+		eventBus.register(ApplicationModeEvent::class, modeEventHandler)
 		updateActivationState()
 	}
 
 	fun dispose() {
+		eventBus.unregister(ApplicationModeEvent::class, modeEventHandler)
 		passivate()
 	}
 
 	private fun updateActivationState() {
-		if (scheduler.isActive) {
+		if (currentMode === ApplicationMode.EXECUTE) {
 			activate()
 		} else {
 			passivate()
 		}
+	}
+
+	/** Returns the [ActorView] in [view] at the specified location, if any.*/
+	private fun getActorViewAt(x: Double, y: Double): ActorView? {
+		return view.getInnerDrawableAt(x, y) { it is ActorView } as ActorView?
 	}
 
 	private fun activate() {

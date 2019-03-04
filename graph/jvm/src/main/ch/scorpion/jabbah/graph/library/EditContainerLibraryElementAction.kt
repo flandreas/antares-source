@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
-import ch.scorpion.jabbah.graph.ApplicationMode
 
 /**
  * An [Action] for opening the [ContainerLibraryElement] that is currently selected in the
@@ -19,7 +18,7 @@ class EditContainerLibraryElementAction(
 
     init {
         eventBus.register(OpenContainerLibraryElementRequest::class) {
-	        if (applicationMode != ApplicationMode.EDIT) {
+	        if (!applicationMode.isEdit()) {
 		        eventBus.post(ComponentMessage(type =  ComponentMessageType.Info, source = null, messageKey = "graph.action.cannotOpenWhileExecuting.msg"))
 	        } else {
 		        openAsSavable(it.element)

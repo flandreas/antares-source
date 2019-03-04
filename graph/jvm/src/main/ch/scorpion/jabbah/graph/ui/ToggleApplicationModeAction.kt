@@ -22,7 +22,7 @@ class ToggleApplicationModeAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		appModeHolder.toggleMode()
+		appModeHolder.setMode(if (appModeHolder.currentMode.isExecute()) ApplicationMode.EDIT else ApplicationMode.EXECUTE)
 	}
 
 	private fun updateState() {
@@ -31,7 +31,7 @@ class ToggleApplicationModeAction(
 				description = Translations.getString("simulation.action.start.desc")
 				selected = false
 			}
-			ApplicationMode.EXECUTE -> {
+			ApplicationMode.EXECUTE, ApplicationMode.EXEC_USECASE -> {
 				description = Translations.getString("simulation.action.stop.desc")
 				selected = true
 			}

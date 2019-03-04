@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.container.ContainerPanel
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -174,7 +173,7 @@ class GraphFrame(
 
 		private fun update() {
 			selected = displayedView == DisplayedView.Desktop
-			enabled = graphPanel.currentMode == ApplicationMode.EDIT
+			enabled = graphPanel.currentMode.isEdit()
 		}
 	}
 
@@ -195,7 +194,7 @@ class GraphFrame(
 
 		private fun update() {
 			selected = displayedView == DisplayedView.Container
-			enabled = graphPanel.currentMode == ApplicationMode.EDIT
+			enabled = graphPanel.currentMode.isEdit()
 		}
 	}
 }

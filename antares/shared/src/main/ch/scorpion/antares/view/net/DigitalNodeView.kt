@@ -7,9 +7,9 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewFactory
@@ -23,43 +23,41 @@ import ch.scorpion.jabbah.graph.view.net.node.NodeViewImpl
  * Try to inject the aspect of varying color and stroke into [EdgeView] and [NodeView].
  */
 class DigitalNodeView(
-    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
-    net: Net<DigitalSignal> = DigitalNet(),
-    netViewStyle: NetViewStyle? = null
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
+	net: Net<DigitalSignal> = DigitalNet(),
+	netViewStyle: NetViewStyle? = null
 ) : NodeViewImpl<DigitalSignal>(styleProvider, currentSystemSpeedCategory, net, netViewStyle) {
 
-    override fun draw(context: DrawContext) {
-        val oldColor = context.g.color
-        val oldCompositeColor = context.color
+	override fun draw(context: DrawContext) {
+		val oldColor = context.g.color
+		val oldCompositeColor = context.color
 
-        if (ApplicationMode.EXECUTE == context.castedAppContext<GraphApplicationContext>()!!.mode && showNetState()) {
-            if (!model!!.isError) {
-                context.color = model!!.signal!!.getColor()
-            }
-        } else {
-            context.color = context.choose(color)
-        }
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && showNetState()) {
+			if (!model!!.isError) {
+				context.color = model!!.signal!!.getColor()
+			}
+		} else {
+			context.color = context.choose(color)
+		}
 
-        super.draw(context)
+		super.draw(context)
 
-        context.color = oldCompositeColor
-        context.g.color = oldColor
-    }
+		context.color = oldCompositeColor
+		context.g.color = oldColor
+	}
 }
 
 class DigitalNodeViewFactory(
-        private val styleProvider: StyleProvider,
-        private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
+	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory
 ) : NodeViewFactory<DigitalSignal> {
 
-    constructor(): this(DrawStyleModule.styleProvider, ExecutionModule.currentSystemSpeedCategory)
+	override fun create(): NodeView<DigitalSignal> {
+		return DigitalNodeView(styleProvider, currentSystemSpeedCategory)
+	}
 
-    override fun create(): NodeView<DigitalSignal> {
-        return DigitalNodeView(styleProvider, currentSystemSpeedCategory)
-    }
-
-    override fun create(net: Net<DigitalSignal>): NodeView<DigitalSignal> {
-        return DigitalNodeView(styleProvider, currentSystemSpeedCategory, net)
-    }
+	override fun create(net: Net<DigitalSignal>): NodeView<DigitalSignal> {
+		return DigitalNodeView(styleProvider, currentSystemSpeedCategory, net)
+	}
 }

@@ -175,8 +175,12 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		private var _currentMode: ApplicationMode = ApplicationMode.EDIT
 		override val currentMode: ApplicationMode get() = _currentMode
 
-		override fun toggleMode(after: () -> Unit) {
-			startSimulation()
+		override fun setMode(mode: ApplicationMode, after: () -> Unit) {
+			if (mode.isExecute()) {
+				startSimulation()
+			} else {
+				stopSimulation()
+			}
 			after.invoke()
 		}
 	}

@@ -24,14 +24,14 @@ abstract class AbstractApplicationModeEditAction(
 		}
 
 	init {
-		enabled = initialMode == ApplicationMode.EDIT
+		enabled = initialMode.isEdit()
 		eventBus.register(ApplicationModeEvent::class) {
 			applicationMode = it.applicationMode
 		}
 	}
 
 	protected fun updateEnabledness() {
-		enabled = applicationMode == ApplicationMode.EDIT && calculateEnabledness()
+		enabled = applicationMode.isEdit() && calculateEnabledness()
 	}
 
 	/** Implemented by subclasses to further decide whether this [Action] should be enabled. */

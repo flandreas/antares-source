@@ -26,7 +26,6 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
-import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
@@ -282,7 +281,7 @@ class OscilloscopeView(
         override val lineWidth: Double get() = 0.0
 
         override fun draw(context: DrawContext) {
-            if (context.castedAppContext<GraphApplicationContext>()!!.mode != ApplicationMode.EXECUTE) {
+            if (!context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
                 return
             }
             val deltaTime = when (model!!.portsCount) {

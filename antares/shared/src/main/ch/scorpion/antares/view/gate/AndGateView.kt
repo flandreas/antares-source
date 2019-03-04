@@ -6,24 +6,23 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
 import ch.scorpion.antares.view.truthtable.TruthTableView
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.DrawableExplanation
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
-import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Storable
 
 /**
  * A view of an [AndGate].
@@ -109,7 +108,7 @@ class AndGateView(
 		val outputPortView = getPortView(model!!.getOutput<DigitalSignal>())!!
 		val appContext = context.castedAppContext<GraphApplicationContext>()!!
 
-		if (ApplicationMode.EXECUTE == appContext.mode) {
+		if (appContext.mode.isExecute()) {
 			val controlState = model!!.calculate { it.portId != dataPort.id }
 			if (controlState.isSet) {
 				context.g.stroke = createClosedDataPathStroke()
@@ -121,7 +120,7 @@ class AndGateView(
 			context.g.stroke = createOpenDataPathStroke()
 		}
 
-		if (ApplicationMode.EXECUTE == appContext.mode && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
+		if (appContext.isExecute && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
 			context.g.color = model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!.getColor().foregroundColor
 		} else {
 			context.g.color = context.choose(Themes.get<GraphTheme>().edge.color).foregroundColor

@@ -5,7 +5,16 @@ package ch.scorpion.jabbah.graph
  */
 enum class ApplicationMode(val nameKey: String) {
     EDIT("application.mode.edit"),
-    EXECUTE("application.mode.simulation");
+    EXECUTE("application.mode.execution"),
+    EXEC_USECASE("application.mode.exec_usecase");
+
+	fun isEdit(): Boolean {
+		return this === EDIT
+	}
+
+	fun isExecute(): Boolean {
+		return this === EXECUTE || this === EXEC_USECASE
+	}
 }
 
 /** Gets posted on [EventBus] when the current [ApplicationMode] has changed.*/
@@ -19,5 +28,5 @@ interface ApplicationModeHolder {
 	 * Toggles [ApplicationMode].
 	 * @param after the code to be executed after the [ApplicationMode] has been toggled
 	 */
-	fun toggleMode(after: () -> Unit = {})
+	fun setMode(mode: ApplicationMode, after: () -> Unit = {})
 }

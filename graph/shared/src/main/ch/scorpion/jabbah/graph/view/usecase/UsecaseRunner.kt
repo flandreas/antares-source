@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.EmptyActor
 import ch.scorpion.jabbah.execution.actor.SimpleActorData
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.model.GraphInput
 import ch.scorpion.jabbah.graph.script.Script
@@ -46,7 +47,7 @@ class UsecaseRunner(
 		checkState(!didRun, "Attempt to repeatedly run UsecaseRunner")
 
 		LOG.debug("Running usecase '${usecase.name.value}'")
-		appModeHolder.toggleMode() {
+		appModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
 			val script = Script(usecase.executionScript, usecase.name.value, "Usecase")
 			gateway.usecase(script, this, scheduler)
 		}

@@ -246,7 +246,7 @@ class GraphPanel(
 				eventBus.post(ApplicationModeEvent(currentMode))
 				Status.set(StatusType.Large, Translations.getString("graph.status.edit"))
 			}
-			ApplicationMode.EXECUTE -> {
+			ApplicationMode.EXECUTE, ApplicationMode.EXEC_USECASE -> {
 				issuesPanel.clear()
 				if ((editor.drawing as GraphView<*>).checkDesign()) {
 					currentMode = mode
@@ -266,11 +266,14 @@ class GraphPanel(
 		}
 	}
 
-	override fun toggleMode(after: () -> Unit) {
+	override fun setMode(mode: ApplicationMode, after: () -> Unit) {
+		/*
 		when (currentMode) {
 			ApplicationMode.EDIT -> setMode(ApplicationMode.EXECUTE, false, after)
-			ApplicationMode.EXECUTE -> setMode(ApplicationMode.EDIT, false, after)
+			ApplicationMode.EXECUTE, ApplicationMode.EXEC_USECASE -> setMode(ApplicationMode.EDIT, false, after)
 		}
+		*/
+		setMode(mode, init = false, after = after)
 	}
 
 	private fun createExecutionToolBar(): ToolBar {

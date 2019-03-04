@@ -19,7 +19,6 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
@@ -175,7 +174,7 @@ class ProbeView(
 		    }
 	    }
         super.drawImpl(context)
-        if (ApplicationMode.EXECUTE === context.castedAppContext<GraphApplicationContext>()!!.mode) {
+        if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
             drawSimulated(context)
         } else {
             drawEdited(context)

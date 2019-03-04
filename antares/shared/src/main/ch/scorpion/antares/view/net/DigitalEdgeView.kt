@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.EdgeView
@@ -49,7 +48,7 @@ class DigitalEdgeView(
 		val oldColor = context.g.color
 		val oldCompositeColor = context.color
 
-		if (ApplicationMode.EXECUTE == context.castedAppContext<GraphApplicationContext>()!!.mode && showNetState()) {
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && showNetState()) {
 			if (!model!!.isError) {
 				context.color = model!!.signal!!.getColor()
 			}

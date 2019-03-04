@@ -11,9 +11,10 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.JTreeUtil.findTreeNode
 import ch.scorpion.jabbah.base.swing.JTreeUtil.getPath
-import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
-import ch.scorpion.jabbah.graph.project.*
+import ch.scorpion.jabbah.graph.project.CloseProjectAction
+import ch.scorpion.jabbah.graph.project.Project
+import ch.scorpion.jabbah.graph.project.ProjectPropertiesAction
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import java.awt.Component
 import java.awt.font.TextAttribute
@@ -97,7 +98,7 @@ class LibraryTreeView(
 	    eventBus.register(LibraryItemMovedEvent::class) { handle(it) }
 	    eventBus.register(LibraryDirectoryRenamedEvent::class) { handle(it) }
 
-	    eventBus.register(ApplicationModeEvent::class) { dragEnabled = it.applicationMode === ApplicationMode.EDIT }
+	    eventBus.register(ApplicationModeEvent::class) { dragEnabled = it.applicationMode.isEdit() }
 	    eventBus.register(CurrentSavableEvent::class) { handle(it) }
 	    eventBus.register(OpenContainerLibraryElementRequest::class) { handle(it) }
 

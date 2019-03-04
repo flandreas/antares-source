@@ -6,19 +6,18 @@ import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
-import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.DropShadow
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.edit.model.AbstractComponent
+import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 
 /**
@@ -104,7 +103,7 @@ class TunnelView(
 		// Draw the PortView above the border
 		super.drawImpl(context)
 
-		if (ApplicationMode.EXECUTE == context.castedAppContext<GraphApplicationContext>()!!.mode) {
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			context.g.color = model!!.getInOrOutSignal().getColor().foregroundColor
 		}
 

@@ -13,5 +13,5 @@ data class GraphApplicationContext(
 	val systemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
 	val isPausing: Boolean = false
 ) {
-	val isExecute: Boolean get() = mode == ApplicationMode.EXECUTE
+	val isExecute: Boolean get() = mode.isExecute()
 }
