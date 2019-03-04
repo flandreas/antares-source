@@ -209,20 +209,34 @@ class UsecaseBridge(
 	@Suppress("unused")
 	fun pressButtonAt(time: Long, buttonId: Int) {
 		LOG.debug("pressButton $buttonId at $time")
-
-		val component = runner.graphView.getWithId(buttonId)
-		if (component !is SwitchView) {
-			// TODO How to signal semantic errors?
-			throw RuntimeException("expecting SwitchView, but component with ID $buttonId is of type ${component!!::class.simpleName}")
-		}
-
+		val component = getButton(buttonId)
 		runner.executeAt(time) { component.model!!.toggle(signalHandler) }
 	}
 
 	@Suppress("unused")
 	fun setInputAt(time: Long, inputId: Int, hexValue: String) {
 		LOG.debug("setInput of $inputId to '$hexValue' at $time")
+		val component = getInput(inputId)
+		runner.executeAt(time) { component.model!!.setIncomingSignal(Word.of(component.model!!.bitWidth, hexValue), signalHandler) }
+	}
 
+	@Suppress("unused")
+	fun applyClockAt(time: Long, inputId: Int, period: Long) {
+		LOG.debug("applyClock with period $period to input $inputId at $time")
+		val component = getInput(inputId)
+		runner.applyOscillationAt(time, component.model!!, Word.falseValue(component.model!!.bitWidth), Word.trueValue(component.model!!.bitWidth), period)
+	}
+
+	private fun getButton(buttonId: Int): SwitchView {
+		val component = runner.graphView.getWithId(buttonId)
+		if (component !is SwitchView) {
+			// TODO How to signal semantic errors?
+			throw RuntimeException("expecting SwitchView, but component with ID $buttonId is of type ${component!!::class.simpleName}")
+		}
+		return component
+	}
+
+	private fun getInput(inputId: Int): CircuitInOutView {
 		val component = runner.graphView.getWithId(inputId)
 		if (component !is CircuitInOutView) {
 			// TODO How to signal semantic errors?
@@ -231,9 +245,7 @@ class UsecaseBridge(
 		if (!component.model!!.portType.isInput) {
 			throw java.lang.RuntimeException("expecting input CircuitInOutView, but PortType is ${component.model!!.portType}")
 		}
-
-		runner.executeAt(time) { component.model!!.setIncomingSignal(Word.of(component.model!!.bitWidth, hexValue), signalHandler) }
-
+		return component
 	}
 
 }

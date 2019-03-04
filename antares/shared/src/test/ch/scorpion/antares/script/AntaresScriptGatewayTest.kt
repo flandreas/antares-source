@@ -29,9 +29,7 @@ import ch.scorpion.jabbah.graph.view.usecase.UsecaseImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.Assert.*
-import org.junit.Test
-import kotlin.test.BeforeTest
+import kotlin.test.*
 
 class AntaresScriptGatewayTest : AbstractCircuitTest() {
 
@@ -136,7 +134,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		val usecase = UsecaseImpl("PressButton", "circuit.pressButtonAt(10000, 1);")
 		val runner = UsecaseRunner(usecase, view.drawing, scheduler, DummyApplicationModeHolder())
 		runner.run()
-		proceedToNanos(11_000)
+		proceedToNanos(10_000)
 		assertTrue(switch.model!!.isOn)
 	}
 
@@ -145,9 +143,25 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		val usecase = UsecaseImpl("SetInput", "circuit.setInputAt(10000, 2, \"1\");")
 		val runner = UsecaseRunner(usecase, view.drawing, scheduler, DummyApplicationModeHolder())
 		runner.run()
-		proceedToNanos(11_000)
+		proceedToNanos(10_000)
 		assertFalse(switch.model!!.isOn)
 		assertEquals(Word.of(true), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
+	}
+
+	@Test
+	fun shouldApplyClock() {
+		val usecase = UsecaseImpl("ApplyClock", "circuit.applyClockAt(10000, 2, 1000);")
+		val runner = UsecaseRunner(usecase, view.drawing, scheduler, DummyApplicationModeHolder())
+		runner.run()
+
+		proceedToNanos(10_000)
+		assertEquals(Word.of(false), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToNanos(11_000)
+		assertEquals(Word.of(true), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToNanos(12_000)
+		assertEquals(Word.of(false), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
 	}
 
 	/** ---- [AntaresScriptGateway] */

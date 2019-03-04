@@ -1,18 +1,14 @@
 package ch.scorpion.jabbah.graph.view.usecase
 
 import ch.scorpion.jabbah.base.checkState
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.EmptyActor
 import ch.scorpion.jabbah.execution.actor.SimpleActorData
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
-import ch.scorpion.jabbah.execution.scheduler.SchedulerStateEvent
 import ch.scorpion.jabbah.graph.ApplicationModeHolder
+import ch.scorpion.jabbah.graph.model.GraphInput
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -64,14 +60,42 @@ class UsecaseRunner(
 	 * This method is typically called by [ScriptGateway.usecase].
 	 */
 	fun executeAt(time: Long, action: () -> Unit) {
-		val delay = time - scheduler.executionTime
-		scheduler.requestActingAfter(UsecaseActor(action), delay, SimpleActorData())
+		scheduler.requestActingAfter(UsecaseActor(action), delay(time), SimpleActorData())
+	}
+
+	fun <T:Any> applyOscillationAt(time: Long, input: GraphInput<T>, firstValue: T, secondValue: T, period: Long) {
+		scheduler.requestActingAfter(UsecaseClock<T>(input, firstValue, secondValue, period), delay(time), SimpleActorData())
+	}
+
+	private fun delay(time: Long) : Long {
+		return time - scheduler.executionTime
 	}
 
 	private class UsecaseActor(private val action: () -> Unit) : EmptyActor() {
 		override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
 			action.invoke()
 			return super.act(signalHandler, data)
+		}
+	}
+
+	private class UsecaseClock<T:Any>(
+		private val input: GraphInput<T>,
+		private val firstValue: T,
+		private val secondValue: T,
+		private val period: Long
+	) : EmptyActor() {
+
+		private var currentValue = secondValue
+
+		override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
+			toggleCurrentValue()
+			input.setIncomingSignal(currentValue, signalHandler)
+			signalHandler.requestActingAfter(this, period, SimpleActorData())
+			return super.act(signalHandler, data)
+		}
+
+		private fun toggleCurrentValue() {
+			currentValue = if (currentValue === firstValue) secondValue else firstValue
 		}
 	}
 }
