@@ -130,12 +130,25 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 	/** ---- [UsecaseBridge] */
 
 	@Test
-	fun shouldPressButton() {
+	fun shouldPressToggleButton() {
 		val usecase = UsecaseImpl("PressButton", "circuit.pressButtonAt(10000, 1);")
 		val runner = UsecaseRunner(usecase, view.drawing, scheduler, DummyApplicationModeHolder())
 		runner.run()
 		proceedToNanos(10_000)
 		assertTrue(switch.model!!.isOn)
+	}
+
+	@Test
+	fun shouldPressPushButton() {
+		switch.toggle = false
+		val usecase = UsecaseImpl("PressButton", "circuit.pressButtonAt(10000, 1);")
+		val runner = UsecaseRunner(usecase, view.drawing, scheduler, DummyApplicationModeHolder())
+		runner.run()
+		proceedToNanos(10_000)
+		assertTrue(switch.model!!.isOn)
+
+		proceedToNanos(20_000)
+		assertFalse(switch.model!!.isOn)
 	}
 
 	@Test

@@ -210,7 +210,13 @@ class UsecaseBridge(
 	fun pressButtonAt(time: Long, buttonId: Int) {
 		LOG.debug("pressButton $buttonId at $time")
 		val component = getButton(buttonId)
-		runner.executeAt(time) { component.model!!.toggle(signalHandler) }
+		runner.executeAt(time) {
+			component.model!!.toggle(signalHandler)
+			if (!component.toggle) {
+				// TODO BUG: This should not happen before visualization of first toggle has completed!
+				runner.executeAt(time + component.model!!.propagationDelay) { component.model!!.toggle(signalHandler)}
+			}
+		}
 	}
 
 	@Suppress("unused")
