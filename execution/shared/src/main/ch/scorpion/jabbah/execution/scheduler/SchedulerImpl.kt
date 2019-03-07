@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.execution.scheduler
 
+import ch.scorpion.jabbah.base.Status
+import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.collection.PriorityQueue
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.ActionListener
@@ -90,6 +92,7 @@ class SchedulerImpl(
 			} else {
 				stop()
 			}
+			Status.set(StatusType.Small, null)
 		}
 
 	override var isPaused: Boolean
@@ -222,6 +225,9 @@ class SchedulerImpl(
 
 	private fun postSchedulerStateEvent() {
 		eventBus.post(SchedulerStateEvent(numberOfRemainingSlots = queue.size, relativeTime = relativeTime))
+		if (runningState == SchedulerRunningState.PAUSED) {
+			Status.set(StatusType.Small, "$relativeTime ns")
+		}
 	}
 
 	private fun addSlot(slot: Slot) {
