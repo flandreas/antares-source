@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.usecase
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -37,6 +38,8 @@ class UsecaseRunner(
 		private val LOG by logger(UsecaseRunner::class)
 	}
 
+	val script = Script(usecase.executionScript, usecase.name.value, Translations.getString("usecases.issueContext.name"))
+
 	private var didRun = false
 
 	/**
@@ -48,7 +51,6 @@ class UsecaseRunner(
 
 		LOG.debug("Running usecase '${usecase.name.value}'")
 		appModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
-			val script = Script(usecase.executionScript, usecase.name.value, "Usecase")
 			gateway.usecase(script, this, scheduler)
 		}
 		didRun = true

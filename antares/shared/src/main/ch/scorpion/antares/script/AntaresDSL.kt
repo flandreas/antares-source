@@ -6,10 +6,15 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.input.SwitchView
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.issue.IssueImpl
+import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -199,7 +204,8 @@ class CircuitElementViewBridge(
 
 class UsecaseBridge(
 	private val runner: UsecaseRunner,
-	private val signalHandler: SignalHandler
+	private val signalHandler: SignalHandler,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
 	companion object {
@@ -209,12 +215,13 @@ class UsecaseBridge(
 	@Suppress("unused")
 	fun pressButtonAt(time: Long, buttonId: Int) {
 		LOG.debug("pressButton $buttonId at $time")
-		val component = getButton(buttonId)
-		runner.executeAt(time) {
-			component.model!!.toggle(signalHandler)
-			if (!component.toggle) {
-				// TODO BUG: This should not happen before visualization of first toggle has completed!
-				runner.executeAt(time + component.model!!.propagationDelay) { component.model!!.toggle(signalHandler)}
+		getButton(buttonId)?.let { button ->
+			runner.executeAt(time) {
+				button.model!!.toggle(signalHandler)
+				if (!button.toggle) {
+					// TODO BUG: This should not happen before visualization of first toggle has completed!
+					runner.executeAt(time + button.model!!.propagationDelay) { button.model!!.toggle(signalHandler)}
+				}
 			}
 		}
 	}
@@ -222,36 +229,63 @@ class UsecaseBridge(
 	@Suppress("unused")
 	fun setInputAt(time: Long, inputId: Int, hexValue: String) {
 		LOG.debug("setInput of $inputId to '$hexValue' at $time")
-		val component = getInput(inputId)
-		runner.executeAt(time) { component.model!!.setIncomingSignal(Word.of(component.model!!.bitWidth, hexValue), signalHandler) }
+		getInput(inputId)?.let {component ->
+			runner.executeAt(time) { component.model!!.setIncomingSignal(Word.of(component.model!!.bitWidth, hexValue), signalHandler) }
+		}
 	}
 
 	@Suppress("unused")
 	fun applyClockAt(time: Long, inputId: Int, period: Long) {
 		LOG.debug("applyClock with period $period to input $inputId at $time")
-		val component = getInput(inputId)
-		runner.applyOscillationAt(time, component.model!!, Word.falseValue(component.model!!.bitWidth), Word.trueValue(component.model!!.bitWidth), period)
+		getInput(inputId)?.let { component ->
+			runner.applyOscillationAt(
+				time,
+				component.model!!,
+				Word.falseValue(component.model!!.bitWidth),
+				Word.trueValue(component.model!!.bitWidth),
+				period)
+		}
 	}
 
-	private fun getButton(buttonId: Int): SwitchView {
+	private fun getButton(buttonId: Int): SwitchView? {
 		val component = runner.graphView.getWithId(buttonId)
 		if (component !is SwitchView) {
-			// TODO How to signal semantic errors?
-			throw RuntimeException("expecting SwitchView, but component with ID $buttonId is of type ${component!!::class.simpleName}")
+			val desc = "expecting SwitchView, but component with ID $buttonId is of type ${component!!::class.simpleName}"
+			LOG.debug("getButton: $desc")
+			postTypeIssue(buttonId, Translations.getString("library.element.Switch.name"), component.type!!)
+			return null
 		}
 		return component
 	}
 
-	private fun getInput(inputId: Int): CircuitInOutView {
+	private fun getInput(inputId: Int): CircuitInOutView? {
 		val component = runner.graphView.getWithId(inputId)
 		if (component !is CircuitInOutView) {
-			// TODO How to signal semantic errors?
-			throw RuntimeException("expecting CircuitInOutView, but component with ID $inputId is of type ${component!!::class.simpleName}")
+			LOG.debug("expecting CircuitInOutView, but component with ID $inputId is of type ${component!!::class.simpleName}")
+			postTypeIssue(inputId, Translations.getString("library.element.CircuitInOut.name"), component.type!!)
+			return null
 		}
 		if (!component.model!!.portType.isInput) {
-			throw java.lang.RuntimeException("expecting input CircuitInOutView, but PortType is ${component.model!!.portType}")
+			LOG.debug("\"expecting input CircuitInOutView, but PortType is ${component.model!!.portType}")
+			postTypeIssue(inputId, Translations.getString("library.element.CircuitInOut.name"), Translations.getString("graph.property.portType.output"))
+			return null
 		}
 		return component
 	}
 
+	private fun postTypeIssue(id: Int, expected: String, actual: String) {
+		return postIssue(
+			Translations.getString("antares.usecaseDSL.typeError.name"),
+			Translations.getString("antares.usecaseDSL.typeError.text", id, expected, actual))
+	}
+
+	private fun postIssue(name: String, description: String) {
+		eventBus.post(IssueImpl(
+			severity = IssueSeverity.Error,
+			name = name,
+			description = description,
+			origin = runner.script.origin,
+			context = runner.script.context
+		))
+	}
 }

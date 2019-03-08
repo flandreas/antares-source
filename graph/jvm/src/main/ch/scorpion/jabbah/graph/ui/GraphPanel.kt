@@ -36,6 +36,7 @@ import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.ExecutionStoppedOnIssueEvent
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.ApplicationModeHolder
@@ -158,6 +159,12 @@ class GraphPanel(
 			updateEditability()
 		}
 
+		eventBus.register(SchedulerActivationStateEvent::class) {
+			if (!it.scheduler.isActive) {
+				setMode(ApplicationMode.EDIT)
+			}
+		}
+
 		eventBus.register(ExecutionStoppedOnIssueEvent::class) {
 			eventBus.post(ComponentMessage(
 				type = ComponentMessageType.Error,
@@ -236,6 +243,9 @@ class GraphPanel(
 	}
 
 	private fun setMode(mode: ApplicationMode, init: Boolean, after: () -> Unit = {}) {
+		if (mode == currentMode) {
+			return
+		}
 		when (mode) {
 			ApplicationMode.EDIT -> {
 				currentMode = mode
@@ -267,12 +277,6 @@ class GraphPanel(
 	}
 
 	override fun setMode(mode: ApplicationMode, after: () -> Unit) {
-		/*
-		when (currentMode) {
-			ApplicationMode.EDIT -> setMode(ApplicationMode.EXECUTE, false, after)
-			ApplicationMode.EXECUTE, ApplicationMode.EXEC_USECASE -> setMode(ApplicationMode.EDIT, false, after)
-		}
-		*/
 		setMode(mode, init = false, after = after)
 	}
 
