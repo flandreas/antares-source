@@ -246,15 +246,14 @@ class UsecaseBridge(
 	}
 
 	@Suppress("unused")
-	fun applyClockAt(time: Long, inputId: Int, period: Long) {
-		LOG.debug("applyClock with period $period to input $inputId at $time")
+	fun applyClock(inputId: Int, period: Long) {
+		LOG.debug("applyClock with period $period to input $inputId")
 		if (clockApplications.contains(inputId)) {
 			postMultipleClockIssue(inputId)
 		}
 		getInput(inputId)?.let { component ->
 			clockApplications.add(inputId)
-			runner.applyOscillationAt(
-				time,
+			runner.applyOscillation(
 				component.model!!,
 				Word.falseValue(component.model!!.bitWidth),
 				Word.trueValue(component.model!!.bitWidth),

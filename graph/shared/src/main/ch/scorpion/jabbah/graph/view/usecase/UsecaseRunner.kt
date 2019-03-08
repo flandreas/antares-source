@@ -66,8 +66,8 @@ class UsecaseRunner(
 		scheduler.requestActingAfter(UsecaseActor(action), delay(time), SimpleActorData())
 	}
 
-	fun <T:Any> applyOscillationAt(time: Long, input: GraphInput<T>, firstValue: T, secondValue: T, period: Long) {
-		scheduler.requestActingAfter(UsecaseClock<T>(input, firstValue, secondValue, period), delay(time), SimpleActorData())
+	fun <T:Any> applyOscillation(input: GraphInput<T>, firstValue: T, secondValue: T, period: Long) {
+		scheduler.requestActingAfter(UsecaseClock<T>(input, firstValue, secondValue, period), period / 2, SimpleActorData())
 	}
 
 	private fun delay(time: Long) : Long {
@@ -93,7 +93,7 @@ class UsecaseRunner(
 		override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
 			toggleCurrentValue()
 			input.setIncomingSignal(currentValue, signalHandler)
-			signalHandler.requestActingAfter(this, period, SimpleActorData())
+			signalHandler.requestActingAfter(this, period / 2, SimpleActorData())
 			return super.act(signalHandler, data)
 		}
 
