@@ -217,6 +217,12 @@ class UsecaseBridge(
 	private var _errorHandled = false
 	override val errorHandled: Boolean get() = _errorHandled
 
+	/**
+	 * Maintains the IDs of [CircuitInOutView]s to which a clock has been applied.
+	 * Used for forbidding application of more than one clock to the same [CircuitInOutView].
+	 */
+	private val clockApplications = mutableListOf<Int>()
+
 	@Suppress("unused")
 	fun pressButtonAt(time: Long, buttonId: Int) {
 		LOG.debug("pressButton $buttonId at $time")
@@ -242,7 +248,11 @@ class UsecaseBridge(
 	@Suppress("unused")
 	fun applyClockAt(time: Long, inputId: Int, period: Long) {
 		LOG.debug("applyClock with period $period to input $inputId at $time")
+		if (clockApplications.contains(inputId)) {
+			postMultipleClockIssue(inputId)
+		}
 		getInput(inputId)?.let { component ->
+			clockApplications.add(inputId)
 			runner.applyOscillationAt(
 				time,
 				component.model!!,
@@ -299,6 +309,14 @@ class UsecaseBridge(
 		return postIssue(
 			Translations.getString("antares.usecaseDSL.compNotFound.name"),
 			Translations.getString("antares.usecaseDSL.compNotFound.text", id)
+		)
+	}
+
+	private fun postMultipleClockIssue(id: Int) {
+		_errorHandled = true
+		return postIssue(
+			Translations.getString("antares.usecaseDSL.multipleClocks.name"),
+			Translations.getString("antares.usecaseDSL.multipleClocks.text", id)
 		)
 	}
 
