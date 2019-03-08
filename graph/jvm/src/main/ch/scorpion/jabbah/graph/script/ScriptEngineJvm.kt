@@ -36,7 +36,7 @@ class ScriptEngineJvm(
 		}
 	}
 
-	override fun invoke(name: String, vararg args: Any): Any? {
+	override fun invoke(name: String, errorHandler: ScriptErrorHandler?, vararg args: Any): Any? {
 		return try {
 			(engine as Invocable).invokeFunction(name, *args)
 		} catch (e: ScriptException) {
@@ -44,9 +44,12 @@ class ScriptEngineJvm(
 			postIssue(lastScript!!, e)
 			null
 		} catch (e: Throwable) {
-			LOG.error("Error while invoking JS function '$name': ${e.message}")
-			LOG.error("Invoked '$name' for the following script\n: $lastScript")
-			throw e
+			if (errorHandler != null && !errorHandler.errorHandled) {
+				LOG.error("Error while invoking JS function '$name': ${e.message}")
+				LOG.debug("Invoked '$name' for the following script\n: $lastScript")
+				throw e
+			}
+			return null
 		}
 	}
 

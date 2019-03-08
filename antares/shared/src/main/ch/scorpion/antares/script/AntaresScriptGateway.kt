@@ -10,10 +10,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.script.Script
-import ch.scorpion.jabbah.graph.script.ScriptEngine
-import ch.scorpion.jabbah.graph.script.ScriptGateway
-import ch.scorpion.jabbah.graph.script.ScriptModule
+import ch.scorpion.jabbah.graph.script.*
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -45,17 +42,17 @@ class AntaresScriptGateway(
 
 	override fun exec(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Any? {
 		engine.eval(script.copy(code = GRAPH_WRAPPER.replaceFirst("\$BODY", script.code)))
-		return engine.invoke("execGraph", CircuitViewBridge(view, null))
+		return engine.invoke("execGraph", null, CircuitViewBridge(view, null))
 	}
 
 	override fun exec(script: Script, verticeView: VerticeView<*>, drawContext: DrawContext) {
 		engine.eval(script.copy(code = VERTICE_VIEW_WRAPPER.replaceFirst("\$BODY", script.code)))
-		engine.invoke("execVerticeView", CircuitElementViewBridge(verticeView, null, drawContext))
+		engine.invoke("execVerticeView", null, CircuitElementViewBridge(verticeView, null, drawContext))
 	}
 
 	override fun exec(script: Script, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler) {
 		engine.eval(script.copy(code = VERTICE_WRAPPER.replaceFirst("\$BODY", script.code)))
-		engine.invoke("execVertice", CircuitElemModelBridge(vertice, signalHandler, data, store))
+		engine.invoke("execVertice", null, CircuitElemModelBridge(vertice, signalHandler, data, store))
 	}
 
 	override fun condition(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Boolean {
@@ -67,7 +64,8 @@ class AntaresScriptGateway(
 
 	override fun usecase(script: Script, runner: UsecaseRunner, signalHandler: SignalHandler) {
 		engine.eval(script.copy(code = USECASE_WRAPPER.replaceFirst("\$BODY", script.code)))
-		engine.invoke("runUsecase", UsecaseBridge(runner, signalHandler))
+		val usecaseBridge = UsecaseBridge(runner, signalHandler)
+		engine.invoke("runUsecase", usecaseBridge, usecaseBridge)
 	}
 
 	/** ---- [AntaresScriptGateway] */

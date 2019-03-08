@@ -11,11 +11,13 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.script.ScriptErrorHandler
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Scenario
@@ -206,11 +208,14 @@ class UsecaseBridge(
 	private val runner: UsecaseRunner,
 	private val signalHandler: SignalHandler,
 	private val eventBus: EventBus = BaseModule.eventBus
-) {
+) : ScriptErrorHandler {
 
 	companion object {
 		private val LOG by logger(UsecaseBridge::class)
 	}
+
+	private var _errorHandled = false
+	override val errorHandled: Boolean get() = _errorHandled
 
 	@Suppress("unused")
 	fun pressButtonAt(time: Long, buttonId: Int) {
@@ -248,7 +253,7 @@ class UsecaseBridge(
 	}
 
 	private fun getButton(buttonId: Int): SwitchView? {
-		val component = runner.graphView.getWithId(buttonId)
+		val component = getComponent(buttonId)
 		if (component !is SwitchView) {
 			val desc = "expecting SwitchView, but component with ID $buttonId is of type ${component!!::class.simpleName}"
 			LOG.debug("getButton: $desc")
@@ -259,7 +264,7 @@ class UsecaseBridge(
 	}
 
 	private fun getInput(inputId: Int): CircuitInOutView? {
-		val component = runner.graphView.getWithId(inputId)
+		val component = getComponent(inputId)
 		if (component !is CircuitInOutView) {
 			LOG.debug("expecting CircuitInOutView, but component with ID $inputId is of type ${component!!::class.simpleName}")
 			postTypeIssue(inputId, Translations.getString("library.element.CircuitInOut.name"), component.type!!)
@@ -273,10 +278,28 @@ class UsecaseBridge(
 		return component
 	}
 
+	private fun getComponent(id: Int): Component? {
+		val component = runner.graphView.getWithId(id)
+		if (component == null) {
+			LOG.debug("Component with ID $id not found")
+			postNotFoundIssue(id)
+		}
+		return component
+	}
+
 	private fun postTypeIssue(id: Int, expected: String, actual: String) {
+		_errorHandled = true
 		return postIssue(
 			Translations.getString("antares.usecaseDSL.typeError.name"),
 			Translations.getString("antares.usecaseDSL.typeError.text", id, expected, actual))
+	}
+
+	private fun postNotFoundIssue(id: Int) {
+		_errorHandled = true
+		return postIssue(
+			Translations.getString("antares.usecaseDSL.compNotFound.name"),
+			Translations.getString("antares.usecaseDSL.compNotFound.text", id)
+		)
 	}
 
 	private fun postIssue(name: String, description: String) {
