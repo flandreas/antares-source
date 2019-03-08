@@ -22,6 +22,15 @@ interface Scheduler : SignalHandler {
     /** Determines whether this [Scheduler] stops execution when an [Issue] occurs while executing. */
     var isStopOnIssue: Boolean
 
+	/**
+	 * Determines whether this [Scheduler] updates [Status] with the relative simulation time event when not
+	 * in stepping mode.
+	 * </p>
+	 * Normally, this feature is only enabled in stepping mode due to performance considerations.
+	 * When setting this flag, the [Status] gets also updated when not in stepping mode.
+	 */
+	var isSimulationTimeStatusEnabled: Boolean
+
     fun step()
 
     /**
@@ -48,13 +57,16 @@ class SchedulerEvent(val type: Type, val scheduler: Scheduler, val actor: Actor)
 }
 
 /** Posted by a [Scheduler] after an execution cycle.*/
-class SchedulerStateEvent(val numberOfRemainingSlots: Int, val relativeTime: Long)
+data class SchedulerStateEvent(val numberOfRemainingSlots: Int, val relativeTime: Long)
 
 /** Posted by a [Scheduler] when the execution depth changes.*/
-class ExecutionDepthEvent(val scheduler: Scheduler, val deepSimulation: Boolean)
+data class ExecutionDepthEvent(val scheduler: Scheduler, val deepSimulation: Boolean)
 
 /** Posted by a [Scheduler] when the [Scheduler.isStopOnIssue] property changes.*/
-class StopOnIssueEvent(val scheduler: Scheduler, val isStopOnIssue: Boolean)
+data class StopOnIssueEvent(val scheduler: Scheduler, val isStopOnIssue: Boolean)
+
+/** Posted by a [Scheduler] when the [Scheduler.isSimulationTimeStatusEnabled] property changes.*/
+data class SimulationTimeStatusEnabledEvent(val scheduler: Scheduler)
 
 /** Posted by a [Scheduler] if execution had been stopped due to an [Issue]. */
-class ExecutionStoppedOnIssueEvent(val scheduler: Scheduler)
+data class ExecutionStoppedOnIssueEvent(val scheduler: Scheduler)

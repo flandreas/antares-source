@@ -123,6 +123,20 @@ class SchedulerImpl(
 			eventBus.post(StopOnIssueEvent(this, field))
 		}
 
+	override var isSimulationTimeStatusEnabled: Boolean = false
+		set(value) {
+			if (field == value) {
+				return
+			}
+			field = value
+			if (field) {
+				publishSimulationTimeStatus()
+			} else {
+				clearSimulationTimeStatus()
+			}
+			eventBus.post(SimulationTimeStatusEnabledEvent(this))
+		}
+
 	override fun step() {
 		if (!isActive) {
 			throw IllegalStateException("cannot step when not active")
@@ -227,9 +241,17 @@ class SchedulerImpl(
 
 	private fun postSchedulerStateEvent() {
 		eventBus.post(SchedulerStateEvent(numberOfRemainingSlots = queue.size, relativeTime = relativeTime))
-		if (runningState == SchedulerRunningState.PAUSED) {
-			Status.set(StatusType.Small, "$relativeTime ns")
+		if (isSimulationTimeStatusEnabled || runningState == SchedulerRunningState.PAUSED) {
+			publishSimulationTimeStatus()
 		}
+	}
+
+	private fun publishSimulationTimeStatus() {
+		Status.set(StatusType.Small, "$relativeTime ns")
+	}
+
+	private fun clearSimulationTimeStatus() {
+		Status.set(StatusType.Small, null)
 	}
 
 	private fun addSlot(slot: Slot) {

@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.base.preferences.PreferencesAction
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.execution.ExecutionDepthAction
+import ch.scorpion.jabbah.execution.SimulationTimeStatusEnabledAction
 import ch.scorpion.jabbah.execution.StopOnIssueAction
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.library.*
@@ -78,6 +79,7 @@ open class GraphMenuBarBuilder(
 	    menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ToggleApplicationModeAction((frame as GraphFrame).graphPanel))))
         menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ExecutionDepthAction())))
         menu.add(JCheckBoxMenuItem(ActionWrapperSwing(StopOnIssueAction())))
+	    menu.add(JCheckBoxMenuItem(ActionWrapperSwing(SimulationTimeStatusEnabledAction())))
         return menu
     }
 

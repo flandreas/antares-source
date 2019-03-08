@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.execution
 
 import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
@@ -84,7 +85,7 @@ class StopOnIssueAction(
 ) : AbstractSchedulerAction("simulator.action.stopOnIssue") {
 
 	init {
-		eventBus.register(StopOnIssueEvent::class, { updateState() })
+		eventBus.register(StopOnIssueEvent::class) { updateState() }
 		updateState()
 	}
 
@@ -95,6 +96,26 @@ class StopOnIssueAction(
 	private fun updateState() {
 		selected = scheduler.isStopOnIssue
 		enabled = !scheduler.isActive
+	}
+}
+
+/** Toggles the [Scheduler.isSimulationTimeStatusEnabled] property.*/
+class SimulationTimeStatusEnabledAction(
+	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractSchedulerAction("simulator.action.enableSimulationTimeStatus") {
+
+	init {
+		eventBus.register(SimulationTimeStatusEnabledEvent::class) { updateState() }
+		updateState()
+	}
+
+	override fun execute(event: ActionEvent) {
+		scheduler.isSimulationTimeStatusEnabled = !scheduler.isSimulationTimeStatusEnabled
+	}
+
+	private fun updateState() {
+		selected = scheduler.isSimulationTimeStatusEnabled
 	}
 }
 
