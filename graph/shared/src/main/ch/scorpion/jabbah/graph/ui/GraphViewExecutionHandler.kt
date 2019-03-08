@@ -1,10 +1,8 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
-import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.FocusManager
@@ -14,8 +12,6 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
-import ch.scorpion.jabbah.graph.ApplicationMode
-import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -37,22 +33,13 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  * itself when not in execution mode.
  */
 class GraphViewExecutionHandler(
-	private val view: DrawingView<GraphView<GraphElementView<*>>>,
+	view: DrawingView<GraphView<GraphElementView<*>>>,
 	private val scheduler: Scheduler,
-	private val eventBus: EventBus
-) {
-
-	/** Handles [MouseEvent]s on [view] during execution.*/
-	private val mouseHandler = MouseHandler()
+	eventBus: EventBus
+) : AbstractGraphViewExecutionHandler(view, eventBus) {
 
 	/** Handles [KeyEvent]s on [view] during execution.*/
 	private val keyHandler = KeyHandler()
-
-	/** Gateway to the custom tooltip system.*/
-	private val tooltipHandler = TooltipHandler(
-		eventBus,
-		{ _, x, y -> getActorViewAt(x, y) as Drawable? },
-		{ d, x, y -> (d as ActorView).getExecutionTooltip(x, y) })
 
 	private val context = ReusableActorInteractionContext(
 		signalHandler = scheduler.signalHandler,
@@ -62,45 +49,19 @@ class GraphViewExecutionHandler(
 	/** The target [ActorInteractionHandler] to which the next event is forwarded during complex interactions.*/
 	private var target: ActorInteractionHandler? = null
 
-	private var currentMode: ApplicationMode = ApplicationMode.EDIT
+	override fun createMouseHandler(): MouseAdapter = MouseHandler()
 
-	private val modeEventHandler: EventHandler<ApplicationModeEvent> = {
-		currentMode = it.applicationMode
-		updateActivationState()
-	}
+	override val activationCondition: Boolean get() = currentMode === ch.scorpion.jabbah.graph.ApplicationMode.EXECUTE
 
-	init {
-		eventBus.register(ApplicationModeEvent::class, modeEventHandler)
-		updateActivationState()
-	}
-
-	fun dispose() {
-		eventBus.unregister(ApplicationModeEvent::class, modeEventHandler)
-		passivate()
-	}
-
-	private fun updateActivationState() {
-		if (currentMode === ApplicationMode.EXECUTE) {
-			activate()
-		} else {
-			passivate()
-		}
-	}
-
-	/** Returns the [ActorView] in [view] at the specified location, if any.*/
-	private fun getActorViewAt(x: Double, y: Double): ActorView? {
-		return view.getInnerDrawableAt(x, y) { it is ActorView } as ActorView?
-	}
-
-	private fun activate() {
+	override fun activate() {
+		super.activate()
 		view.addMouseListener(mouseHandler)
-		view.addMouseMotionListener(mouseHandler)
 		view.addKeyListener(keyHandler)
 	}
 
-	private fun passivate() {
+	override fun passivate() {
+		super.passivate()
 		view.removeMouseListener(mouseHandler)
-		view.removeMouseMotionListener(mouseHandler)
 		view.removeKeyListener(keyHandler)
 	}
 

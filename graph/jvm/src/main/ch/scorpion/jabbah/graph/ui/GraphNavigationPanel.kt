@@ -34,6 +34,7 @@ import ch.scorpion.jabbah.graph.view.ScenarioEvent
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
+import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.io.StorableCreator
 import java.awt.*
 import javax.swing.*
@@ -94,6 +95,9 @@ open class GraphNavigationPanel(
     /** Forwards input events to the [GraphView] while displaying (i.e. NOT executing) and NOT being editable.*/
     private val graphViewDisplayHandler = GraphViewDisplayHandler(drawingView, scheduler, eventBus)
 
+	/** Forwards input events to the [GraphView] while a [Usecase] is executed.*/
+	private val graphViewUsecaseExecutionHandler = GraphViewUsecaseExecutionHandler(drawingView, eventBus)
+
 	private var currentSavable: Savable? = null
 
     var contextColor: CompositeColor? = null
@@ -150,6 +154,8 @@ open class GraphNavigationPanel(
         drawingView.content.drawing.dispose()
         graphViewExecutionHandler.dispose()
         graphViewDisplayHandler.dispose()
+	    graphViewUsecaseExecutionHandler.dispose()
+
 	    scenarioDetector?.dispose()
 
         eventBus.unregister(OpenSubGraphRequest::class, openSubGraphRequestHandler)
