@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.script.ScriptErrorHandler
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -206,7 +207,7 @@ class CircuitElementViewBridge(
 
 class UsecaseBridge(
 	private val runner: UsecaseRunner,
-	private val signalHandler: SignalHandler,
+	private val scheduler: Scheduler,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ScriptErrorHandler {
 
@@ -228,10 +229,10 @@ class UsecaseBridge(
 		LOG.debug("pressButton $buttonId at $time")
 		getButton(buttonId)?.let { button ->
 			runner.executeAt(time) {
-				button.model!!.toggle(signalHandler)
+				button.model!!.toggle(scheduler)
 				if (!button.toggle) {
 					// TODO BUG: This should not happen before visualization of first toggle has completed!
-					runner.executeAt(time + button.model!!.propagationDelay) { button.model!!.toggle(signalHandler)}
+					runner.executeAt(time + button.model!!.propagationDelay) { button.model!!.toggle(scheduler)}
 				}
 			}
 		}
@@ -241,7 +242,7 @@ class UsecaseBridge(
 	fun setInputAt(time: Long, inputId: Int, hexValue: String) {
 		LOG.debug("setInput of $inputId to '$hexValue' at $time")
 		getInput(inputId)?.let {component ->
-			runner.executeAt(time) { component.model!!.setIncomingSignal(Word.of(component.model!!.bitWidth, hexValue), signalHandler) }
+			runner.executeAt(time) { component.model!!.setIncomingSignal(Word.of(component.model!!.bitWidth, hexValue), scheduler) }
 		}
 	}
 
@@ -259,6 +260,12 @@ class UsecaseBridge(
 				Word.trueValue(component.model!!.bitWidth),
 				period)
 		}
+	}
+
+	@Suppress("unused")
+	fun pauseAt(time: Long) {
+		LOG.debug("pause at $time")
+		runner.executeAt(time) { scheduler.isPaused = true }
 	}
 
 	private fun getButton(buttonId: Int): SwitchView? {

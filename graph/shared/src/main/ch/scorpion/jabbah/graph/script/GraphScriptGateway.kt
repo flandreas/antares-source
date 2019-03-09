@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.script
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -41,7 +42,7 @@ class GraphScriptGateway(private val engine: ScriptEngine) : ScriptGateway {
 		return exec(script, view) as Boolean
 	}
 
-	override fun usecase(script: Script, usecaseRunner: UsecaseRunner, signalHandler: SignalHandler) {
+	override fun usecase(script: Script, usecaseRunner: UsecaseRunner, scheduler: Scheduler) {
 		throw UnsupportedOperationException("not implemented")
 	}
 }

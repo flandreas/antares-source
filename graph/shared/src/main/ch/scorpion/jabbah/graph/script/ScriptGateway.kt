@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.script
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -40,5 +41,5 @@ interface ScriptGateway {
      */
     fun condition(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Boolean
 
-	fun usecase(script: Script, runner: UsecaseRunner, signalHandler: SignalHandler)
+	fun usecase(script: Script, runner: UsecaseRunner, scheduler: Scheduler)
 }

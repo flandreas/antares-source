@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -62,9 +63,9 @@ class AntaresScriptGateway(
 		return exec(script, view) as Boolean
 	}
 
-	override fun usecase(script: Script, runner: UsecaseRunner, signalHandler: SignalHandler) {
+	override fun usecase(script: Script, runner: UsecaseRunner, scheduler: Scheduler) {
 		engine.eval(script.copy(code = USECASE_WRAPPER.replaceFirst("\$BODY", script.code)))
-		val usecaseBridge = UsecaseBridge(runner, signalHandler)
+		val usecaseBridge = UsecaseBridge(runner, scheduler)
 		engine.invoke("runUsecase", usecaseBridge, usecaseBridge)
 	}
 
