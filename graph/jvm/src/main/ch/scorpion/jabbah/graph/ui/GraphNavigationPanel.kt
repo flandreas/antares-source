@@ -96,7 +96,7 @@ open class GraphNavigationPanel(
     private val graphViewDisplayHandler = GraphViewDisplayHandler(drawingView, scheduler, eventBus)
 
 	/** Forwards input events to the [GraphView] while a [Usecase] is executed.*/
-	private val graphViewUsecaseExecutionHandler = GraphViewUsecaseExecutionHandler(drawingView, eventBus)
+	private val graphViewUsecaseExecutionHandler = GraphViewUsecaseExecutionHandler(drawingView, scheduler, eventBus)
 
 	private var currentSavable: Savable? = null
 

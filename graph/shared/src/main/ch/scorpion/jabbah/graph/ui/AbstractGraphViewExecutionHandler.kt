@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.event.KeyAdapter
 import ch.scorpion.jabbah.base.event.MouseAdapter
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
@@ -23,6 +24,8 @@ abstract class AbstractGraphViewExecutionHandler(
 
 	protected val mouseHandler = createMouseHandler()
 
+	protected val keyHandler = createKeyHandler()
+
 	private val modeEventHandler: EventHandler<ApplicationModeEvent> = {
 		currentMode = it.applicationMode
 		updateActivationState()
@@ -34,6 +37,8 @@ abstract class AbstractGraphViewExecutionHandler(
 
 	protected abstract fun createMouseHandler(): MouseAdapter
 
+	protected abstract fun createKeyHandler(): KeyAdapter
+
 	protected abstract  val activationCondition: Boolean
 
 	open fun dispose() {
@@ -43,10 +48,12 @@ abstract class AbstractGraphViewExecutionHandler(
 
 	protected open fun activate() {
 		view.addMouseMotionListener(mouseHandler)
+		view.addKeyListener(keyHandler)
 	}
 
 	protected open fun passivate() {
 		view.removeMouseMotionListener(mouseHandler)
+		view.removeKeyListener(keyHandler)
 	}
 
 	private fun updateActivationState() {

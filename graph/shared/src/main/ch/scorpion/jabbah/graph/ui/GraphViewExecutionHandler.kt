@@ -38,9 +38,6 @@ class GraphViewExecutionHandler(
 	eventBus: EventBus
 ) : AbstractGraphViewExecutionHandler(view, eventBus) {
 
-	/** Handles [KeyEvent]s on [view] during execution.*/
-	private val keyHandler = KeyHandler()
-
 	private val context = ReusableActorInteractionContext(
 		signalHandler = scheduler.signalHandler,
 		view = view
@@ -51,18 +48,18 @@ class GraphViewExecutionHandler(
 
 	override fun createMouseHandler(): MouseAdapter = MouseHandler()
 
+	override fun createKeyHandler(): KeyAdapter = KeyHandler()
+
 	override val activationCondition: Boolean get() = currentMode === ch.scorpion.jabbah.graph.ApplicationMode.EXECUTE
 
 	override fun activate() {
 		super.activate()
 		view.addMouseListener(mouseHandler)
-		view.addKeyListener(keyHandler)
 	}
 
 	override fun passivate() {
 		super.passivate()
 		view.removeMouseListener(mouseHandler)
-		view.removeKeyListener(keyHandler)
 	}
 
 	private inner class MouseHandler : MouseAdapter() {

@@ -1,9 +1,10 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.MouseAdapter
-import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.FocusManager
+import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
@@ -13,10 +14,13 @@ import ch.scorpion.jabbah.graph.view.Usecase
  */
 class GraphViewUsecaseExecutionHandler(
 	view: DrawingView<GraphView<GraphElementView<*>>>,
+	private val scheduler: Scheduler,
 	eventBus: EventBus
 ) : AbstractGraphViewExecutionHandler(view, eventBus) {
 
 	override fun createMouseHandler(): MouseAdapter = MouseHandler()
+
+	override fun createKeyHandler(): KeyAdapter = KeyHandler()
 
 	override val activationCondition: Boolean get() = currentMode === ch.scorpion.jabbah.graph.ApplicationMode.EXEC_USECASE
 
@@ -26,6 +30,17 @@ class GraphViewUsecaseExecutionHandler(
 			val x = view.viewToModelX(e.x.toDouble())
 			val y = view.viewToModelY(e.y.toDouble())
 			tooltipHandler.handle(view, view.drawing, x, y)
+		}
+	}
+
+	private inner class KeyHandler : KeyAdapter() {
+
+		override fun keyPressed(e: KeyEvent) {
+			if (e.key == ' '.toInt()) {
+				if (scheduler.isPaused) {
+					scheduler.step()
+				}
+			}
 		}
 	}
 }
