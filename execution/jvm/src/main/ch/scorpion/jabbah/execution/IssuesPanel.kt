@@ -19,89 +19,89 @@ import javax.swing.table.DefaultTableCellRenderer
 
 /** Displays the current [Issue]s of an [IssueCollector] as a table.*/
 class IssuesPanel(
-        private val issueCollector: IssueCollector = ExecutionModule.issueCollector,
-        private val eventBus: EventBus = BaseModule.eventBus
+	private val issueCollector: IssueCollector = ExecutionModule.issueCollector,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : JPanel() {
 
-    companion object {
-        private val WARNING_ICON = ImageIcon(IssuesPanel::class.java.getResource("/img/warning-16.png"))
-        private val ERROR_ICON = ImageIcon(IssuesPanel::class.java.getResource("/img/error-16.png"))
-        private val COLUMN_NAMES = arrayOf(
-                Translations.getString("issue.property.name.name"),
-                Translations.getString("issue.property.origin.name"),
-                Translations.getString("issue.property.context.name"),
-                Translations.getString("issue.property.description.name")
-        )
-    }
+	companion object {
+		private val WARNING_ICON = ImageIcon(IssuesPanel::class.java.getResource("/img/warning-16.png"))
+		private val ERROR_ICON = ImageIcon(IssuesPanel::class.java.getResource("/img/error-16.png"))
+		private val COLUMN_NAMES = arrayOf(
+			Translations.getString("issue.property.name.name"),
+			Translations.getString("issue.property.origin.name"),
+			Translations.getString("issue.property.context.name"),
+			Translations.getString("issue.property.description.name")
+		)
+	}
 
-    private val table = JTable(IssueTableModel())
+	private val table = JTable(IssueTableModel())
 
-    init {
-        eventBus.register(IssueCollectorEvent::class) {
-	        (table.model as IssueTableModel).fireTableDataChanged()
-        }
+	init {
+		eventBus.register(IssueCollectorEvent::class) {
+			(table.model as IssueTableModel).fireTableDataChanged()
+		}
 
-	    buildUI()
-    }
+		buildUI()
+	}
 
 	/** Clears all [Issue]s.*/
 	fun clear() {
 		issueCollector.clear()
 	}
 
-    private fun buildUI() {
-        table.autoResizeMode = JTable.AUTO_RESIZE_OFF
+	private fun buildUI() {
+		table.autoResizeMode = JTable.AUTO_RESIZE_OFF
 
-        table.columnModel.getColumn(0).preferredWidth = 100
-        table.columnModel.getColumn(1).preferredWidth = 200
-        table.columnModel.getColumn(2).preferredWidth = 150
-        table.columnModel.getColumn(3).preferredWidth = 600
+		table.columnModel.getColumn(0).preferredWidth = 100
+		table.columnModel.getColumn(1).preferredWidth = 200
+		table.columnModel.getColumn(2).preferredWidth = 150
+		table.columnModel.getColumn(3).preferredWidth = 600
 
-        table.columnModel.getColumn(0).cellRenderer = NameCellRenderer()
+		table.columnModel.getColumn(0).cellRenderer = NameCellRenderer()
 
-        layout = BorderLayout()
-        val scrollPane = JScrollPane(table)
-        add(scrollPane, BorderLayout.CENTER)
-    }
+		layout = BorderLayout()
+		val scrollPane = JScrollPane(table)
+		add(scrollPane, BorderLayout.CENTER)
+	}
 
-    private inner class IssueTableModel : AbstractTableModel() {
+	private inner class IssueTableModel : AbstractTableModel() {
 
-        override fun getColumnName(column: Int): String = COLUMN_NAMES[column]
+		override fun getColumnName(column: Int): String = COLUMN_NAMES[column]
 
-        override fun getRowCount(): Int = issueCollector.size
+		override fun getRowCount(): Int = issueCollector.size
 
-        override fun getColumnCount(): Int = COLUMN_NAMES.size
+		override fun getColumnCount(): Int = COLUMN_NAMES.size
 
-        override fun getValueAt(rowIndex: Int, columnIndex: Int): Any {
-            val issue = issueCollector.getIssue(rowIndex)
-            return when(columnIndex) {
-                0 -> issue.name
-                1 -> issue.origin
-                2 -> issue.context ?: ""
-                3 -> issue.description ?: ""
-                else -> ""
-            }
-        }
-    }
+		override fun getValueAt(rowIndex: Int, columnIndex: Int): Any {
+			val issue = issueCollector.getIssue(rowIndex)
+			return when (columnIndex) {
+				0 -> issue.name
+				1 -> issue.origin
+				2 -> issue.context ?: ""
+				3 -> issue.description ?: ""
+				else -> ""
+			}
+		}
+	}
 
-    /** Renders the severity of an [Issue] as an icon and its name as text in a single column.*/
-    private inner class NameCellRenderer : DefaultTableCellRenderer() {
+	/** Renders the severity of an [Issue] as an icon and its name as text in a single column.*/
+	private inner class NameCellRenderer : DefaultTableCellRenderer() {
 
-        private var currentRow: Int = 0
+		private var currentRow: Int = 0
 
-        /** Overridden in order to capture the current row index. */
-        override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
-            currentRow = row
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
-        }
+		/** Overridden in order to capture the current row index. */
+		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
+			currentRow = row
+			return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
+		}
 
-        override fun setValue(value: Any?) {
-            val issue = issueCollector.getIssue(currentRow)
-            text = issue.name
-            icon = when (issue.severity) {
-                IssueSeverity.Warning -> WARNING_ICON
-                IssueSeverity.Error -> ERROR_ICON
-            }
-        }
-    }
+		override fun setValue(value: Any?) {
+			val issue = issueCollector.getIssue(currentRow)
+			text = issue.name
+			icon = when (issue.severity) {
+				IssueSeverity.Warning -> WARNING_ICON
+				IssueSeverity.Error -> ERROR_ICON
+			}
+		}
+	}
 }

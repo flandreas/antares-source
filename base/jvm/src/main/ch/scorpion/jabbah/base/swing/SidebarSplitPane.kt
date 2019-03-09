@@ -16,7 +16,7 @@ class SidebarSplitPane(
 	private val mainContent: JComponent,
 	settingBaseName: String,
 	providedInitialOpenIndex: Int = -1,
-	contents: List<SidebarPane.Content>,
+	contents: List<SidebarPaneContent>,
 	private val isOpenChangeHandler: (() -> Unit)? = null
 ) : JPanel() {
 

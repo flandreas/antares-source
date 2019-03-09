@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base.swing
 
+import ch.scorpion.jabbah.base.event.PropertyChangeEvent
+import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import java.awt.BorderLayout
 import java.awt.Color
@@ -21,8 +23,6 @@ class SidebarPane(
 	private val location: Location,
 	private val isOpenChangeHandler: () -> Unit
 ) : JPanel() {
-
-	data class Content(val name: String, val iconPath: String, val content: JComponent)
 
     companion object {
         private val LOG by logger(SidebarPane::class)
@@ -123,8 +123,8 @@ class SidebarPane(
     }
 
     /** Adds a new content view to this [SidebarPane].*/
-    fun add(content: Content) {
-        val entry = createEntry(content.name, ImageIcon(SidebarPane::class.java.getResource(content.iconPath)), content.content)
+    fun add(content: SidebarPaneContent) {
+	    val entry = Entry(content)
         entries.add(entry)
         entry.label.addMouseListener(labelListener)
         labelPanel.add(entry.label)
@@ -162,17 +162,28 @@ class SidebarPane(
 	    location.initUI(this, labelPanel, contentPanel)
     }
 
-    private fun createEntry(name: String, icon: Icon, content: JComponent): Entry {
-	    val label = location.createLabel(name, icon)
-	    label.border = BorderFactory.createEmptyBorder(5, 10, 5, 10)
-	    label.isOpaque = true
-	    label.verticalAlignment = SwingConstants.CENTER
-	    return Entry(label, content)
-    }
+	private inner class Entry(private val content: SidebarPaneContent) : PropertyChangeListener<Any> {
 
-    data class Entry(val label: JLabel, val content: JComponent) {
-        val name: String = label.text
-    }
+		val label: JLabel
+
+		val name: String get() = content.name
+
+		val component: JComponent get() = content.component
+
+		init {
+			label = location.createLabel(name, content.icon)
+			label.border = BorderFactory.createEmptyBorder(5, 10, 5, 10)
+			label.isOpaque = true
+			label.verticalAlignment = SwingConstants.CENTER
+
+			content.addListener(this)
+		}
+
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			label.icon = content.icon
+			label.text = content.name
+		}
+	}
 
     private fun getEntry(label: JLabel): Entry = entries.first { it.label === label }
 
@@ -182,14 +193,14 @@ class SidebarPane(
 
         if (current != null) {
             contentPanel.remove(headerPanel)
-            contentPanel.remove(current!!.content)
+            contentPanel.remove(current!!.component)
             current!!.label.background = background
         }
         current = entry
         if (current != null) {
             titleLabel.text = current!!.name
             contentPanel.add(headerPanel, BorderLayout.NORTH)
-            contentPanel.add(current!!.content, BorderLayout.CENTER)
+            contentPanel.add(current!!.component, BorderLayout.CENTER)
 
 	        current!!.label.background = Color(175, 175, 175)
         }

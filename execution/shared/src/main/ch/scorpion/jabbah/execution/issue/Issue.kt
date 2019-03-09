@@ -91,18 +91,35 @@ class IssueCollector(
 	/** Returns the collected [Issue]s in the order they occurred. */
 	val issues: List<Issue> get() = _issues
 
+	var maximumSeverity: IssueSeverity? = null
+		private set
+
 	/** Removes all collected [Issue]s. */
 	fun clear() {
 		_issues.clear()
+		updateMaximumSeverity()
 		eventBus.post(IssueCollectorEvent(this, null))
 	}
 
 	/** Returns the [Issue] at the specified index.*/
 	fun getIssue(index: Int): Issue = _issues.get(index)
 
+	fun hasIssueWithSeverity(severity: IssueSeverity): Boolean {
+		return issues.any { it.severity == severity }
+	}
+
 	private fun handleNewIssue(issue: Issue) {
 		_issues.add(issue)
+		updateMaximumSeverity()
 		eventBus.post(IssueCollectorEvent(this, issue))
+	}
+
+	private fun updateMaximumSeverity() {
+		maximumSeverity = when {
+			issues.isEmpty() -> null
+			hasIssueWithSeverity(IssueSeverity.Error) -> IssueSeverity.Error
+			else -> IssueSeverity.Warning
+		}
 	}
 }
 

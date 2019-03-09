@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPane
+import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
 import ch.scorpion.jabbah.draw.view.ViewManager
@@ -33,6 +34,8 @@ import ch.scorpion.jabbah.execution.PauseExecutionAction
 import ch.scorpion.jabbah.execution.StepExecutionAction
 import ch.scorpion.jabbah.execution.SystemSpeedSlider
 import ch.scorpion.jabbah.execution.issue.Issue
+import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
+import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.ExecutionStoppedOnIssueEvent
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -115,9 +118,9 @@ class GraphPanel(
 		mainContent = desktop,
 		settingBaseName = "graphPanel.leftSidebar",
 		providedInitialOpenIndex = 0,
-		contents = listOf(SidebarPane.Content(
+		contents = listOf(SidebarPaneContentImpl(
 			Translations.getString("graph.explorer.name"),
-			"/img/compass-16.png",
+			ImageIcon(SidebarPane::class.java.getResource("/img/compass-16.png")),
 			explorerSplitPane)
 		))
 
@@ -131,6 +134,11 @@ class GraphPanel(
 
 	/** Displays the current [Issue]s. */
 	private val issuesPanel = IssuesPanel()
+
+	private val issuesContent = SidebarPaneContentImpl(
+		Translations.getString("graph.issues.title"),
+		ImageIcon(GraphPanel::class.java.getResource("/img/issue-16.png")),
+		issuesPanel)
 
 	var rootGraphView: GraphView<GraphElementView<*>>? = editor.drawing as GraphView<GraphElementView<*>>?
 		private set(value) {
@@ -180,6 +188,15 @@ class GraphPanel(
 			}
 		})
 
+		eventBus.register (IssueCollectorEvent::class) {
+			val iconPath = when(it.issueCollector.maximumSeverity) {
+				null -> "/img/issue-16.png"
+				IssueSeverity.Warning -> "/img/warning-16.png"
+				IssueSeverity.Error -> "/img/error-16.png"
+			}
+			issuesContent.icon = ImageIcon(GraphPanel::class.java.getResource(iconPath))
+		}
+
 		buildUI()
 		setMode(ApplicationMode.EDIT, true)
 	}
@@ -213,7 +230,7 @@ class GraphPanel(
 		bottomSidebarSplitPane.border = null
 		bottomSidebarSplitPane.resizeWeight = 1.0
 
-		bottomSidebarPane.add(SidebarPane.Content(Translations.getString("graph.issues.title"), "/img/issue-16.png", issuesPanel))
+		bottomSidebarPane.add(issuesContent)
 
 		add(leftSidebarPane, BorderLayout.CENTER)
 		add(bottomSidebarPane, BorderLayout.SOUTH)
