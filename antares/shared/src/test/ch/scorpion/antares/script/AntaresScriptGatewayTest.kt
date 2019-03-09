@@ -163,18 +163,18 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 
 	@Test
 	fun shouldApplyClock() {
-		val usecase = UsecaseImpl("ApplyClock", "circuit.applyClockAt(10000, 2, 1000);")
+		val usecase = UsecaseImpl("ApplyClock", "circuit.applyClock(2, 1000);")
 		val runner = UsecaseRunner(usecase, view.drawing, scheduler, DummyApplicationModeHolder())
 		runner.run()
 
 		proceedToNanos(10_000)
+		assertEquals(Word.of(true), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToNanos(10_500)
 		assertEquals(Word.of(false), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
 
 		proceedToNanos(11_000)
 		assertEquals(Word.of(true), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
-
-		proceedToNanos(12_000)
-		assertEquals(Word.of(false), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
 	}
 
 	/** ---- [AntaresScriptGateway] */
