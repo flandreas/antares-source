@@ -32,7 +32,7 @@ class ElectricXmlReader(inputStream: InputStream) : XmlReader {
     }
 
     override fun getAttributeValue(name: String): String {
-        return stack.peek().getAttributeValue(name)
+        return stack.peek().getAttributeValue(name) ?: throw IllegalArgumentException("mandatory attribute '$name' not found")
     }
 
     override fun hasAttribute(name: String): Boolean {

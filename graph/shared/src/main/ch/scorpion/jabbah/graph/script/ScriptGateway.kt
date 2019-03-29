@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
+import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestRunner
 
 /**
  *  A gateway to [Graph] related functionality implemented as javascripts.
@@ -41,5 +42,7 @@ interface ScriptGateway {
      */
     fun condition(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Boolean
 
-	fun usecase(script: Script, runner: UsecaseRunner, scheduler: Scheduler)
+	fun usecaseAction(script: Script, runner: UsecaseRunner, scheduler: Scheduler)
+
+	fun usecaseTest(script: Script, runner: UsecaseTestRunner)
 }

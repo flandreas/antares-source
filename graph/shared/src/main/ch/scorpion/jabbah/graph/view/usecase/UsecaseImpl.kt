@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.io.*
 class UsecaseImpl(
 	name: String = "",
 	override var executionScript: String = "",
+	override var testScript: String? = null,
 	private val namable: Namable = NamableImpl(name),
 	private val describable: Describable = DescribableImpl()
 ) : Usecase, Namable by namable, Describable by describable {
@@ -21,6 +22,12 @@ class UsecaseImpl(
 		get() = TextProperty(executionScript)
 		set(value) {
 			executionScript = value.text!!
+		}
+
+	var testScriptProperty: TextProperty
+		get() = TextProperty(testScript)
+		set(value) {
+			testScript = value.text!!
 		}
 
 	/** ---- [Any] */
@@ -46,6 +53,7 @@ class UsecaseImpl(
 		name.write("name", writer)
 		description.write("desc", writer)
 		writer.writeString("exec", executionScript)
+		writer.writeOptionalString("test", testScript)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -53,6 +61,6 @@ class UsecaseImpl(
 		name.read("name", reader)
 		description.read("desc", reader)
 		executionScript = reader.readString("exec")
+		testScript = reader.readOptionalString("test")
 	}
-
 }

@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
+import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestRunner
 
 /**
  * Gateway for executing Javascript code related with [Graph]s.
@@ -42,7 +43,11 @@ class GraphScriptGateway(private val engine: ScriptEngine) : ScriptGateway {
 		return exec(script, view) as Boolean
 	}
 
-	override fun usecase(script: Script, usecaseRunner: UsecaseRunner, scheduler: Scheduler) {
+	override fun usecaseAction(script: Script, usecaseRunner: UsecaseRunner, scheduler: Scheduler) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun usecaseTest(script: Script, runner: UsecaseTestRunner) {
 		throw UnsupportedOperationException("not implemented")
 	}
 }

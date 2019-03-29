@@ -16,10 +16,7 @@ import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.ui.EditedGraphViewEvent
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
-import ch.scorpion.jabbah.graph.view.usecase.AddUsecaseCommand
-import ch.scorpion.jabbah.graph.view.usecase.DeleteUsecaseCommand
-import ch.scorpion.jabbah.graph.view.usecase.UsecaseImpl
-import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
+import ch.scorpion.jabbah.graph.view.usecase.*
 import java.awt.Frame
 import javax.swing.JOptionPane
 
@@ -113,5 +110,21 @@ class RunUsecaseAction(
 
 	override fun calculateEnabled(): Boolean {
 		return super.calculateEnabled() && usecase != null
+	}
+}
+
+/** Executes the test script of the currently selected [Usecase].*/
+class RunSingleUsecaseTestAction(
+	private val scheduler: Scheduler = ExecutionModule.scheduler
+) : AbstractUsecaseAction("usecaseTest.action.runSingleTest") {
+
+	override fun execute(event: ActionEvent) {
+		usecase?.let {
+			UsecaseTestRunner(it, graphView!!, scheduler, applicationModeHolder!!).run()
+		}
+	}
+
+	override fun calculateEnabled(): Boolean {
+		return super.calculateEnabled() && usecase != null && usecase!!.testScript != null
 	}
 }

@@ -70,7 +70,7 @@ class SchedulerImpl(
 			if (isActive && isStopOnIssue && it.issue != null) {
 				System.get().invokeLater {
 					isActive = false
-					LOG.debug("SchedulerImpl: execution stopped due to Issue")
+					LOG.debug("SchedulerImpl: execution stopped due to Issue '${it.issue.name}'")
 					eventBus.post(ExecutionStoppedOnIssueEvent(this))
 				}
 			}

@@ -51,7 +51,7 @@ class UsecaseRunner(
 
 		LOG.debug("Running usecase '${usecase.name.value}'")
 		appModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
-			gateway.usecase(script, this, scheduler)
+			gateway.usecaseAction(script, this, scheduler)
 		}
 		didRun = true
 	}
@@ -60,7 +60,7 @@ class UsecaseRunner(
 
 	/**
 	 * Request to execute the specified [action] after [time] nanoseconds.
-	 * This method is typically called by [ScriptGateway.usecase].
+	 * This method is typically called by [ScriptGateway.usecaseAction].
 	 */
 	fun executeAt(time: Long, action: () -> Unit) {
 		scheduler.requestActingAfter(UsecaseActor(action), delay(time), SimpleActorData())

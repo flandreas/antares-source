@@ -24,5 +24,8 @@ interface Usecase : Namable, Describable, Storable {
 	/** The JavaScript script to be executed when this [Usecase] is executed.*/
 	var executionScript: String
 
+	/** The JavaScript script to be executed when testing this [Usecase].*/
+	var testScript: String?
+
 	fun dispose()
 }

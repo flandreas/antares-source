@@ -1,6 +1,7 @@
 package ch.scorpion.antares.script
 
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.script.dsl.*
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -16,9 +17,10 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
+import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestRunner
 
 /**
- * Gateway for executing Javascript code related with [antares].
+ * Gateway for executing Javascript code related with [ch.scorpion.antares].
  */
 class AntaresScriptGateway(
 	private val engine: ScriptEngine = ScriptModule.scriptEngineProvider.invoke(),
@@ -29,7 +31,8 @@ class AntaresScriptGateway(
 		private const val GRAPH_WRAPPER = "function execGraph(circuit) {\$BODY}"
 		private const val VERTICE_VIEW_WRAPPER = "function execVerticeView(elem) {\$BODY}"
 		private const val VERTICE_WRAPPER = "function execVertice(elem, data, signalHandler, store) {\$BODY}"
-		private const val USECASE_WRAPPER = "function runUsecase(circuit) {\$BODY}"
+		private const val USECASE_ACTION_WRAPPER = "function usecaseAction(circuit) {\$BODY}"
+		private const val USECASE_TEST_WRAPPER = "function usecaseTest(circuit) {\$BODY}"
 	}
 
 	init {
@@ -63,10 +66,16 @@ class AntaresScriptGateway(
 		return exec(script, view) as Boolean
 	}
 
-	override fun usecase(script: Script, runner: UsecaseRunner, scheduler: Scheduler) {
-		engine.eval(script.copy(code = USECASE_WRAPPER.replaceFirst("\$BODY", script.code)))
-		val usecaseBridge = UsecaseBridge(runner, scheduler)
-		engine.invoke("runUsecase", usecaseBridge, usecaseBridge)
+	override fun usecaseAction(script: Script, runner: UsecaseRunner, scheduler: Scheduler) {
+		engine.eval(script.copy(code = USECASE_ACTION_WRAPPER.replaceFirst("\$BODY", script.code)))
+		val usecaseBridge = UsecaseActionBridge(runner, scheduler)
+		engine.invoke("usecaseAction", usecaseBridge, usecaseBridge)
+	}
+
+	override fun usecaseTest(script: Script, runner: UsecaseTestRunner) {
+		engine.eval(script.copy(code = USECASE_TEST_WRAPPER.replaceFirst("\$BODY", script.code)))
+		val usecaseTestBridge = UsecaseTestBridge(runner)
+		engine.invoke("usecaseTest", usecaseTestBridge, usecaseTestBridge)
 	}
 
 	/** ---- [AntaresScriptGateway] */

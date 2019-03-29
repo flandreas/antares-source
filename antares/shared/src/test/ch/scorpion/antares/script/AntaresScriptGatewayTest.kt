@@ -27,6 +27,8 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
+import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestFailureException
+import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestRunner
 import io.mockk.every
 import io.mockk.mockk
 import kotlin.test.*
@@ -175,6 +177,32 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 
 		proceedToNanos(11_000)
 		assertEquals(Word.of(true), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
+	}
+
+	/** ---- [UsecaseTestBridge] */
+
+	@Test
+	fun shouldAssertLedOn() {
+		val usecase = UsecaseImpl(
+			"PressButton",
+			"circuit.pressButtonAt(10000, 1);",
+			"circuit.assertLedOnAt(20000, 4);")
+		val runner = UsecaseTestRunner(usecase, circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		runner.run()
+
+		proceedToNanos(20_000)
+	}
+
+	@Test(expected = UsecaseTestFailureException::class)
+	fun shouldFailToAssertLedOn() {
+		val usecase = UsecaseImpl(
+			"PressButton",
+			";",
+			"circuit.assertLedOnAt(20000, 4);")
+		val runner = UsecaseTestRunner(usecase, circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		runner.run()
+
+		proceedToNanos(20_000)
 	}
 
 	/** ---- [AntaresScriptGateway] */
