@@ -52,6 +52,17 @@ abstract class AbstractDrawingViewBridge(
 		} ?: return null
 	}
 
+	protected fun getOutput(outputId: Int): CircuitInOutView? {
+		getComponent(outputId, CircuitInOutView::class,Translations.getString("library.element.CircuitInOut.name"))?.let { output ->
+			if (!output.model!!.portType.isOutput) {
+				LOG.debug("\"expecting output CircuitInOutView, but PortType is ${output.model!!.portType}")
+				postTypeIssue(outputId, Translations.getString("library.element.CircuitInOut.name"), Translations.getString("graph.property.portType.input"))
+				return null
+			}
+			return output
+		} ?: return null
+	}
+
 	protected fun <T : Component> getComponent(id: Int, clazz: KClass<T>, translatedClassName: String): T? {
 		getComponent(id)?.let {component ->
 			if (component::class != clazz) {

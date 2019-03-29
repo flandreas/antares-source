@@ -12,12 +12,16 @@ import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.base.geom.AffineTransformImpl
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.view.SimpleViewPainter
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.execution.issue.IssueImpl
+import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.model.PortType
@@ -38,6 +42,11 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 	companion object {
 		init {
 			AntaresTestRule.configure()
+			BaseModule.eventBus.register(IssueImpl::class) {
+				if (it.severity == IssueSeverity.Error) {
+					throw RuntimeException("Issue")
+				}
+			}
 		}
 	}
 
@@ -69,7 +78,8 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 
 		builder.connect(input, orGate, orGate.vertice.getInput(1))
 		builder.connect(switch, orGate, orGate.vertice.getInput(2))
-		builder.connect(orGate, led)
+		val edgeView = builder.connect(orGate, led)
+		builder.split(edgeView, 0, Point2D.ZERO, output)
 
 		circuitView = builder.build()
 
@@ -184,7 +194,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 	@Test
 	fun shouldAssertLedOn() {
 		val usecase = UsecaseImpl(
-			"PressButton",
+			"AssertLedOn",
 			"circuit.pressButtonAt(10000, 1);",
 			"circuit.assertLedOnAt(20000, 4);")
 		val runner = UsecaseTestRunner(usecase, circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
@@ -196,9 +206,33 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 	@Test(expected = UsecaseTestFailureException::class)
 	fun shouldFailToAssertLedOn() {
 		val usecase = UsecaseImpl(
-			"PressButton",
+			"AssertLedOn",
 			";",
 			"circuit.assertLedOnAt(20000, 4);")
+		val runner = UsecaseTestRunner(usecase, circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		runner.run()
+
+		proceedToNanos(20_000)
+	}
+
+	@Test
+	fun shouldAssertOutput() {
+		val usecase = UsecaseImpl(
+			"AssertOutputSet",
+			"circuit.pressButtonAt(10000, 1);",
+			"circuit.assertOutputAt(20000, 5, \"1\");")
+		val runner = UsecaseTestRunner(usecase, circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		runner.run()
+
+		proceedToNanos(20_000)
+	}
+
+	@Test(expected = UsecaseTestFailureException::class)
+	fun shouldFailToAssertOutput () {
+		val usecase = UsecaseImpl(
+			"AssertOutputSet",
+			";",
+			"circuit.assertOutputAt(20000, 5, \"1\");")
 		val runner = UsecaseTestRunner(usecase, circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
 		runner.run()
 

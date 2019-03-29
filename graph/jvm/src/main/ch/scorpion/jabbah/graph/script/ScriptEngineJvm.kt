@@ -40,7 +40,7 @@ class ScriptEngineJvm(
 		return try {
 			(engine as Invocable).invokeFunction(name, *args)
 		} catch (e: ScriptException) {
-			LOG.debug("ScriptException while defining JS function: '${e.message}'")
+			LOG.debug("ScriptException while invoking JS function: '${e.message}'")
 			postIssue(lastScript!!, e)
 			null
 		} catch (e: Throwable) {
