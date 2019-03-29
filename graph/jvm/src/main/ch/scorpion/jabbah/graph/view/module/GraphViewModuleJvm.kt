@@ -26,8 +26,6 @@ import ch.scorpion.jabbah.graph.script.ScriptEngineJvm
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.ui.GraphNavigationPanel
 import ch.scorpion.jabbah.graph.ui.NavigationStackView
-import ch.scorpion.jabbah.graph.ui.scenario.ScenarioPropertyEditorFactory
-import ch.scorpion.jabbah.graph.ui.scenario.ScenarioStepPropertyEditorFactory
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
@@ -85,8 +83,6 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.registerEditor(PortLabelPosition::class.java, PortLabelPositionEditor::class.java)
 		registry.registerEditor(VerticeLabelPosition::class.java, VerticeLabelPositionEditor::class.java)
 		registry.registerEditor(NetViewStyle::class.java, NetViewStyleEditor::class.java)
-		registry.register(Scenario::class.java, ScenarioPropertyEditorFactory())
-		registry.register(ScenarioStep::class.java, ScenarioStepPropertyEditorFactory())
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
