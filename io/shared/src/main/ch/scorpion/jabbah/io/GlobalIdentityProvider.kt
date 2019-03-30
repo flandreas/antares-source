@@ -10,9 +10,11 @@ interface GlobalIdentityProvider {
      * by calls of method [provideIdentity].*/
     fun register(storable: Storable)
 
-    /**
-     * Provides an identity of a [Storable] that has previously been registered using [register].
-     */
+	/**
+	 * Provides an identity of a [Storable] that has previously been registered using [register].
+	 * @return the globally unique identity of [storable] (starting with 0), or -1 if [storable]
+	 * has not been registered previously.
+	 */
     fun provideIdentity(storable: Storable): Int
 }
 

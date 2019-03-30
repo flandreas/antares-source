@@ -23,12 +23,6 @@ interface Usecases : Storable {
 	fun getUsecases(): Iterable<Usecase>
 
 	/**
-	 * Returns the [Usecase] with the specified identification.
-	 * @throws [NoSuchElementException] if not found
-	 */
-	fun get(id: Int): Usecase
-
-	/**
 	 * Adds a new [Usecase] with the specified name as the last one in this [Usecases].
 	 * Posts a [UsecaseAddedEvent] on this [Usecases]' [EventBus].
 	 */

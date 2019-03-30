@@ -9,6 +9,10 @@ interface Storable {
      * Holds the global identification of this [Storable] after it has been read from persistent store.
      * This is used to read composite [Storable]s that reference persistent object which have been read earlier,
      * like when cloning view objects from the same model object.
+     *
+     * The value of this attribute is typically set by a [ReferenceResolver] in its collection phase, before
+     * the first [Storable] is written. [Storable]s that are not returned by any [getStorableChildren] method
+     * are are therefore not affected by a [ReferenceResolver] collection phase should set this attribute to -1.
      */
     var storableId: Int
 

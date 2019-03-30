@@ -28,10 +28,6 @@ class UsecasesImpl(
 		return usecases.toImmutableList()
 	}
 
-	override fun get(id: Int): Usecase {
-		return usecases.first { it.id == id }
-	}
-
 	override fun add(name: String) {
 		add(UsecaseImpl(name))
 	}
@@ -42,7 +38,6 @@ class UsecasesImpl(
 
 	override fun add(usecase: Usecase, index: Int) {
 		// TODO Ensure name uniqueness
-		usecase.id = usecases.size - 1
 		usecases.add(index, usecase)
 		eventBus.post(UsecaseAddedEvent(graphView!!, usecase))
 	}
