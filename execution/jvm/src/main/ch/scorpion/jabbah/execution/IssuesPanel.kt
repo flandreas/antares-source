@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.execution
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.execution.issue.IssueCollector
@@ -24,6 +25,7 @@ class IssuesPanel(
 ) : JPanel() {
 
 	companion object {
+		private val SETTING_COLUMN_WIDTHS = "jabbah.execution.issuesPanel.columnWidth"
 		private val WARNING_ICON = ImageIcon(IssuesPanel::class.java.getResource("/img/warning-16.png"))
 		private val ERROR_ICON = ImageIcon(IssuesPanel::class.java.getResource("/img/error-16.png"))
 		private val COLUMN_NAMES = arrayOf(
@@ -36,12 +38,18 @@ class IssuesPanel(
 
 	private val table = JTable(IssueTableModel())
 
-	init {
-		eventBus.register(IssueCollectorEvent::class) {
-			(table.model as IssueTableModel).fireTableDataChanged()
-		}
+	private val issueCollectionEventHandler: EventHandler<IssueCollectorEvent> = {
+		(table.model as IssueTableModel).fireTableDataChanged()
+	}
 
+	init {
+		eventBus.register(IssueCollectorEvent::class, issueCollectionEventHandler)
 		buildUI()
+	}
+
+	fun dispose() {
+		eventBus.unregister(IssueCollectorEvent::class, issueCollectionEventHandler)
+		storeColumnsWidths()
 	}
 
 	/** Clears all [Issue]s.*/
@@ -52,16 +60,24 @@ class IssuesPanel(
 	private fun buildUI() {
 		table.autoResizeMode = JTable.AUTO_RESIZE_OFF
 
-		table.columnModel.getColumn(0).preferredWidth = 100
-		table.columnModel.getColumn(1).preferredWidth = 200
-		table.columnModel.getColumn(2).preferredWidth = 150
-		table.columnModel.getColumn(3).preferredWidth = 600
+		table.columnModel.getColumn(0).preferredWidth = BaseModule.settings.getInt("$SETTING_COLUMN_WIDTHS.name", 200)
+		table.columnModel.getColumn(1).preferredWidth = BaseModule.settings.getInt("$SETTING_COLUMN_WIDTHS.origin", 200)
+		table.columnModel.getColumn(2).preferredWidth = BaseModule.settings.getInt("$SETTING_COLUMN_WIDTHS.context", 200)
+		table.columnModel.getColumn(3).preferredWidth = BaseModule.settings.getInt("$SETTING_COLUMN_WIDTHS.description", 200)
+
 
 		table.columnModel.getColumn(0).cellRenderer = NameCellRenderer()
 
 		layout = BorderLayout()
 		val scrollPane = JScrollPane(table)
 		add(scrollPane, BorderLayout.CENTER)
+	}
+
+	private fun storeColumnsWidths() {
+		BaseModule.settings.set("$SETTING_COLUMN_WIDTHS.name", table.columnModel.getColumn(0).width)
+		BaseModule.settings.set("$SETTING_COLUMN_WIDTHS.origin", table.columnModel.getColumn(1).width)
+		BaseModule.settings.set("$SETTING_COLUMN_WIDTHS.context", table.columnModel.getColumn(2).width)
+		BaseModule.settings.set("$SETTING_COLUMN_WIDTHS.description", table.columnModel.getColumn(3).width)
 	}
 
 	private inner class IssueTableModel : AbstractTableModel() {

@@ -203,6 +203,7 @@ class GraphPanel(
 
 	fun dispose() {
 		leftSidebarPane.dispose()
+		issuesPanel.dispose()
 		graphEditPanel.dispose()
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
 	}

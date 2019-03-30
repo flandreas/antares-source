@@ -175,6 +175,14 @@ class Settings {
         return getOptional(name)?.toFloat() ?: defaultValue
     }
 
+	fun getIntegers(name: String): List<Int> {
+		return getOptional(name)
+			?.split(",")
+			?.filter { it.isNotBlank() }
+			?.map { it.toInt() }
+			?: listOf()
+	}
+
     fun getKeys(): Iterator<String> {
         return values.keys.iterator()
     }
@@ -187,6 +195,10 @@ class Settings {
     fun set(name: String, value: Any) {
 	    values[name] = value.toString()
     }
+
+	fun set(name: String, integers: Iterable<Int>) {
+		values[name] = integers.joinToString(",")
+	}
 
     fun remove(name: String) {
         values.remove(name)
