@@ -82,7 +82,16 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice("library.element.RAM", 
 
     override val disassemblyWidth: Int get() = 0
 
-    override fun dataAt(address: Int): Long = memory.read(address)
+	override fun clear() {
+		memory.clear()
+		update()
+	}
+
+	override fun update() {
+		stateChanged()
+	}
+
+	override fun dataAt(address: Int): Long = memory.read(address)
 
     override fun disassemblyAt(address: Int): String = ""
 
@@ -113,11 +122,6 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice("library.element.RAM", 
     }
 
     /** ---- [RAM] */
-
-    fun clear() {
-        memory.clear()
-        stateChanged()
-    }
 
     fun setAddressWidth(bitWidth: BitWidth) {
         checkNotNull(bitWidth)

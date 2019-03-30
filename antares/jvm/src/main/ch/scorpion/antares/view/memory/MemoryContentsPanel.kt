@@ -100,7 +100,7 @@ class MemoryContentsPanel(
 
 	private inner class ClearAction : AbstractAction(Translations.getString("antares.action.memory.clear.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
-			cmdManager.execute(MemoryClearCommand(memory, addressable.dataWidth))
+			cmdManager.execute(MemoryClearCommand(addressable, memory, addressable.dataWidth))
 			memoryDisplayPanel.refresh()
 		}
 	}

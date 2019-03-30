@@ -28,6 +28,12 @@ interface Addressable {
     /** Returns the maximum number of characters of all disassembly values.*/
     val disassemblyWidth: Int
 
+	/** Clears all content in this [Addressable].*/
+	fun clear()
+
+	/** Called if the underlying data of this [Addressable] has changed*/
+	fun update()
+
     /** Returns the data at the specified address.*/
     fun dataAt(address: Int): Long
 

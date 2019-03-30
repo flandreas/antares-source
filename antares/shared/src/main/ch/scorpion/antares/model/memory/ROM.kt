@@ -97,6 +97,17 @@ class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
 
 	override val disassemblyWidth: Int get() = _disassemblyWidth
 
+	override fun clear() {
+		memory.clear()
+		resetDisassembly()
+		update()
+	}
+
+	override fun update() {
+		disassembleAll()
+		stateChanged()
+	}
+
 	override fun dataAt(address: Int): Long = memory.read(address)
 
 	override fun disassemblyAt(address: Int): String = disassembly.getOrElse(address) { "" }
@@ -124,11 +135,6 @@ class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
 	}
 
 	/** ---- [ROM]  */
-
-	fun clear() {
-		memory.clear()
-		stateChanged()
-	}
 
 	fun setAddressWidth(bitWidth: BitWidth) {
 		checkNotNull(bitWidth)
