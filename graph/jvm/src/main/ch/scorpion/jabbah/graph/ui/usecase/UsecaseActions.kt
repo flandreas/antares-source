@@ -120,11 +120,24 @@ class RunSingleUsecaseTestAction(
 
 	override fun execute(event: ActionEvent) {
 		usecase?.let {
-			UsecaseTestRunner(it, graphView!!, scheduler, applicationModeHolder!!).run()
+			UsecaseTestRunner(listOf(it), graphView!!, scheduler, applicationModeHolder!!).run()
 		}
 	}
 
 	override fun calculateEnabled(): Boolean {
 		return super.calculateEnabled() && usecase != null && usecase!!.testScript != null
+	}
+}
+
+class RunAllTestsAction(
+	private val scheduler: Scheduler = ExecutionModule.scheduler
+) : AbstractUsecaseAction("usecaseTest.action.runAllTests") {
+
+	override fun execute(event: ActionEvent) {
+		UsecaseTestRunner(graphView!!.usecases.withTests(), graphView!!, scheduler, applicationModeHolder!!).run()
+	}
+
+	override fun calculateEnabled(): Boolean {
+		return super.calculateEnabled() && graphView!!.usecases.hasTest
 	}
 }

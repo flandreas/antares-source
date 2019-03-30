@@ -24,5 +24,7 @@ interface Usecase : Namable, Describable, Storable {
 	/** The JavaScript script to be executed when testing this [Usecase].*/
 	var testScript: String?
 
+	val hasTest: Boolean get() = testScript?.isNotBlank() ?: false
+
 	fun dispose()
 }

@@ -197,7 +197,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 			"AssertLedOn",
 			"circuit.pressButtonAt(10000, 1);",
 			"circuit.assertLedOnAt(20000, 4);")
-		val runner = UsecaseTestRunner(usecase, circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
 		runner.run()
 
 		proceedToNanos(20_000)
@@ -209,7 +209,31 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 			"AssertLedOn",
 			";",
 			"circuit.assertLedOnAt(20000, 4);")
-		val runner = UsecaseTestRunner(usecase, circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		runner.run()
+
+		proceedToNanos(20_000)
+	}
+
+	@Test
+	fun shouldAssertLedOff() {
+		val usecase = UsecaseImpl(
+			"AssertLedOn",
+			";",
+			"circuit.assertLedOffAt(20000, 4);")
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		runner.run()
+
+		proceedToNanos(20_000)
+	}
+
+	@Test(expected = UsecaseTestFailureException::class)
+	fun shouldFailToAssertLedOff() {
+		val usecase = UsecaseImpl(
+			"AssertLedOn",
+			"circuit.pressButtonAt(10000, 1);",
+			"circuit.assertLedOffAt(20000, 4);")
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
 		runner.run()
 
 		proceedToNanos(20_000)
@@ -221,7 +245,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 			"AssertOutputSet",
 			"circuit.pressButtonAt(10000, 1);",
 			"circuit.assertOutputAt(20000, 5, \"1\");")
-		val runner = UsecaseTestRunner(usecase, circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
 		runner.run()
 
 		proceedToNanos(20_000)
@@ -233,7 +257,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 			"AssertOutputSet",
 			";",
 			"circuit.assertOutputAt(20000, 5, \"1\");")
-		val runner = UsecaseTestRunner(usecase, circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
 		runner.run()
 
 		proceedToNanos(20_000)

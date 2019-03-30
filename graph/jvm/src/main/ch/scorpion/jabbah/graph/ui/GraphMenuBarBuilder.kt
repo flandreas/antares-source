@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.AbstractApplicationFrame
 import ch.scorpion.jabbah.app.MenuBarBuilder
 import ch.scorpion.jabbah.app.action.CloseFileAction
 import ch.scorpion.jabbah.app.action.QuitApplicationAction
@@ -21,10 +20,7 @@ import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioStepAction
-import ch.scorpion.jabbah.graph.ui.usecase.AddUsecaseAction
-import ch.scorpion.jabbah.graph.ui.usecase.DeleteUsecaseAction
-import ch.scorpion.jabbah.graph.ui.usecase.RunSingleUsecaseTestAction
-import ch.scorpion.jabbah.graph.ui.usecase.RunUsecaseAction
+import ch.scorpion.jabbah.graph.ui.usecase.*
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JMenu
 import javax.swing.JMenuBar
@@ -111,6 +107,7 @@ open class GraphMenuBarBuilder(
 		menu.addSeparator()
 		menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(RunAllTestsAction())))
 		return menu
 	}
 }

@@ -47,9 +47,9 @@ class UsecasesImpl(
 		eventBus.post(UsecaseRemovedEvent(graphView!!, usecase))
 	}
 
-	override fun indexOfUsecase(usecase: Usecase): Int {
-		return usecases.indexOf(usecase)
-	}
+	override fun indexOfUsecase(usecase: Usecase): Int = usecases.indexOf(usecase)
+
+	override fun withTests(): List<Usecase> = usecases.filter { it.hasTest }
 
 	/** ---- [Storable] interface */
 

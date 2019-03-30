@@ -18,6 +18,8 @@ interface Usecases : Storable {
 
 	val isEmpty: Boolean
 
+	val hasTest: Boolean get() = getUsecases().any { it.hasTest }
+
 	fun dispose()
 
 	fun getUsecases(): Iterable<Usecase>
@@ -48,6 +50,9 @@ interface Usecases : Storable {
 
 	/** Returns the index of the specified [Usecase] (starting with 0) in this [Usecases].*/
 	fun indexOfUsecase(usecase: Usecase): Int
+
+	/** Returns all [Usecase] that contain a test.*/
+	fun withTests(): List<Usecase>
 
 }
 

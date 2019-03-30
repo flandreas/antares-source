@@ -66,6 +66,9 @@ class UsecaseTreeView(
 		}
 
 		graphViewPopupMenu.add(ActionWrapperSwing(AddUsecaseAction()))
+		graphViewPopupMenu.addSeparator()
+		graphViewPopupMenu.add(ActionWrapperSwing(RunAllTestsAction()))
+
 		usecasePopupMenu.add(ActionWrapperSwing(DeleteUsecaseAction()))
 		usecasePopupMenu.addSeparator()
 		usecasePopupMenu.add(ActionWrapperSwing(RunUsecaseAction()))
