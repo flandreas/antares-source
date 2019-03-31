@@ -1,19 +1,17 @@
 package ch.scorpion.jabbah.edit.model.text
 
+import ch.scorpion.jabbah.base.Language.English
+import ch.scorpion.jabbah.base.Language.German
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.Language.*
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.io.*
-import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
 import java.util.*
+import kotlin.test.*
 
 class TranslatableTextTest {
 
-	@Before
+	@BeforeTest
 	fun setup() {
 		EditModuleJvm.require()
 	}
@@ -24,8 +22,8 @@ class TranslatableTextTest {
 			.withTranslation(German, "Baum")
 			.withTranslation(English, "Tree")
 
-		assertThat(text.getTranslation(German), `is`("Baum"))
-		assertThat(text.getTranslation(English), `is`("Tree"))
+		assertEquals("Baum", text.getTranslation(German))
+		assertEquals("Tree", text.getTranslation(English))
 	}
 
 	@Test
@@ -36,7 +34,7 @@ class TranslatableTextTest {
 
 		text = text.withoutTranslation(English)
 
-		assertThat(text.hasTranslation(English), `is`(false))
+		assertFalse(text.hasTranslation(English))
 	}
 
 	@Test
@@ -48,15 +46,15 @@ class TranslatableTextTest {
 
 		text = text.withoutTranslation()
 
-		assertThat(text.hasTranslation(German), `is`(false))
+		assertFalse(text.hasTranslation(German))
 	}
 
 	@Test
 	fun shouldHaveTranslation() {
 		val text = TranslatableText(German, "Baum")
 
-		assertThat(text.hasTranslation(German), `is`(true))
-		assertThat(text.hasTranslation(English), `is`(false))
+		assertTrue(text.hasTranslation(German))
+		assertFalse(text.hasTranslation(English))
 	}
 
 	@Test(expected = IllegalArgumentException::class)
@@ -71,7 +69,7 @@ class TranslatableTextTest {
 			.withTranslation(German, "Baum")
 			.withTranslation(English, "Tree")
 
-		assertThat(text.getTranslation(), `is`(text.getTranslation(System.get().currentLanguage())))
+		assertEquals(text.getTranslation(System.get().currentLanguage()), text.getTranslation())
 	}
 
 	@Test
@@ -79,7 +77,7 @@ class TranslatableTextTest {
 		java.lang.System.setProperty("user.language", "de")
 		val text = TranslatableText(English, "Tree")
 
-		assertThat(text.getTranslation(), `is`("Tree"))
+		assertEquals("Tree", text.getTranslation())
 	}
 
 	@Test
@@ -87,7 +85,7 @@ class TranslatableTextTest {
 		java.lang.System.setProperty("user.language", English.code)
 		val text = TranslatableText(German, "Baum")
 
-		assertThat(text.getTranslation(), `is`("Baum"))
+		assertEquals("Baum", text.getTranslation())
 	}
 
 	@Test
@@ -103,42 +101,42 @@ class TranslatableTextTest {
 
 		val clone = storableCloner.clone(obj) as ClassUsingTranslatable
 
-		assertThat(clone.attribute.getTranslation(German), `is`("Meer"))
-		assertThat(clone.attribute.getTranslation(English), `is`("Sea"))
+		assertEquals("Meer", clone.attribute.getTranslation(German))
+		assertEquals("Sea", clone.attribute.getTranslation(English))
 	}
 
 	@Test
 	fun shouldBeEqualWithSameTranslations() {
 		val text1 = TranslatableText("Text")
 		val text2 = TranslatableText("Text")
-		assertThat(text1, `is`(text2))
+		assertEquals(text1, text2)
 	}
 
 	@Test
 	fun shouldBeDifferentWithDifferentTranslations() {
 		val text1 = TranslatableText("Text")
 		val text2 = TranslatableText("Text2")
-		assertThat(text1, `is`(not(text2)))
+		assertNotEquals(text1, text2)
 	}
 
 	@Test
 	fun shouldBeImmutable() {
 		val text1 = TranslatableText("Text")
 		val text2 = text1.withTranslation("Text2")
-		assertThat(text1, not(sameInstance(text2)))
+		assertNotSame(text1, text2)
 	}
 
 	@Test
 	fun shouldBeEmpty() {
 		val text = TranslatableText()
-		assertThat(text.isEmpty, `is`(true))
+		assertTrue(text.isEmpty)
 	}
 
 	@Test
 	fun shouldTranslateOptionally() {
 		java.lang.System.setProperty("user.language", "en")
-		assertThat(TranslatableText().getOptionalTranslation(), `is`(nullValue()))
-		assertThat(TranslatableText(English, "Tree").getOptionalTranslation(), `is`("Tree"))
+		assertNull(TranslatableText().getOptionalTranslation())
+		assertEquals("Tree", TranslatableText(English, "Tree").getOptionalTranslation())
 	}
 }
 

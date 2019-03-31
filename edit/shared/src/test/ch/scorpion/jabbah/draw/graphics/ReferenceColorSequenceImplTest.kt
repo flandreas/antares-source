@@ -1,10 +1,8 @@
 package ch.scorpion.jabbah.draw.graphics
 
 import ch.scorpion.jabbah.base.exception.IllegalStateException
-import org.junit.Assert.*
-import org.junit.Test
-import org.hamcrest.CoreMatchers.`is`
-
+import kotlin.test.Test
+import kotlin.test.assertEquals
 /**
  * Unit tests for [ReferenceColorSequenceImpl].
  */
@@ -17,22 +15,22 @@ class ReferenceColorSequenceImplTest {
 
     @Test
     fun shouldFetchNext() {
-        assertThat(sequence.next().foregroundColor, `is`(Color.BLACK))
-        assertThat(sequence.next().foregroundColor, `is`(Color.WHITE))
+        assertEquals(Color.BLACK, sequence.next().foregroundColor)
+	    assertEquals(Color.WHITE, sequence.next().foregroundColor)
     }
 
     @Test
     fun shouldFree() {
         val color = sequence.next()
         sequence.free(color)
-        assertThat(sequence.next(), `is`(color))
+	    assertEquals(color, sequence.next())
     }
 
     @Test
     fun shouldWrapAround() {
         val firstColor = sequence.next()
         sequence.next()
-        assertThat(sequence.next(), `is`(firstColor))
+	    assertEquals(firstColor, sequence.next())
     }
 
     @Test(expected = IllegalStateException::class)

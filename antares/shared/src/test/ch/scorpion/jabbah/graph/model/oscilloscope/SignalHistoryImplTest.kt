@@ -1,10 +1,9 @@
 package ch.scorpion.jabbah.graph.model.oscilloscope
 
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import org.junit.Assert.*
-import org.junit.Test
-import org.hamcrest.CoreMatchers.`is`
+import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Test
 
 /** Unit tests for [SignalHistory]. */
 class SignalHistoryImplTest {
@@ -20,7 +19,7 @@ class SignalHistoryImplTest {
     fun shouldNotAddSameSignal() {
         history.add(false, 100)
         history.add(false, 200)
-        assertThat(history.size, `is`(1))
+        assertEquals(1, history.size)
     }
 
     @Test
@@ -28,12 +27,12 @@ class SignalHistoryImplTest {
         history.add(false, 100)
         history.add(true, 200)
         history.add(false, 300)
-        assertThat(history.size, `is`(3))
+        assertEquals(3, history.size)
     }
 
     @Test
     fun minDelayShouldBeInfiniteWhenEmpty() {
-        assertThat(history.minDelay, `is`(Long.MAX_VALUE))
+        assertEquals(Long.MAX_VALUE, history.minDelay)
     }
 
     @Test
@@ -41,7 +40,7 @@ class SignalHistoryImplTest {
         history.add(true, 0)
         history.add(false, 100)
         history.add(true, 150)
-        assertThat(history.minDelay, `is`(50L))
+        assertEquals(50L, history.minDelay)
     }
 
     @Test
@@ -51,8 +50,8 @@ class SignalHistoryImplTest {
         history.add(true, 200)
         history.truncate(200)
 
-        assertThat(history.size, `is`(1))
-        assertThat(history.lastOrNull()!!.time, `is`(200L))
+        assertEquals(1, history.size)
+        assertEquals(200L, history.lastOrNull()!!.time)
     }
 
     @Test
@@ -61,6 +60,6 @@ class SignalHistoryImplTest {
         history.add(false, 100)
         history.add(true, 150)
         history.truncate(150)
-        assertThat(history.minDelay, `is`(50L))
+        assertEquals(50L, history.minDelay)
     }
 }

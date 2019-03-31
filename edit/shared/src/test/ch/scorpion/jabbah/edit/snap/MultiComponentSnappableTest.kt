@@ -25,8 +25,6 @@ class MultiComponentSnappableTest {
                 RectangleComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(100.0, 200.0, 20.0, 10.0))
         )).snappableX
 
-        // Didn't succeed in using hamcrest's containsInAnyOrder() method due to type inference problems
-
         assertEquals(6, snapX.size)
         assertEquals(0.0, snapX[0].x)
         assertEquals(10.0, snapX[1].x)
@@ -42,8 +40,6 @@ class MultiComponentSnappableTest {
                 RectangleComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(0.0, 0.0, 20.0, 10.0)),
                 RectangleComponent(styleProvider = StyleProviderMockBuilder().build(), shape = Rectangle2D(100.0, 200.0, 20.0, 10.0))
         )).snappableY
-
-        // Didn't succeed in using hamcrest's containsInAnyOrder() method due to type inference problems
 
         assertEquals(6, snapY.size)
         assertEquals(0.0, snapY[0].y)

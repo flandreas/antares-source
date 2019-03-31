@@ -180,13 +180,13 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		runner.run()
 
 		proceedToNanos(10_000)
-		assertEquals(Word.of(true), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
-
-		proceedToNanos(10_500)
 		assertEquals(Word.of(false), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
 
-		proceedToNanos(11_000)
+		proceedToNanos(10_500)
 		assertEquals(Word.of(true), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToNanos(11_000)
+		assertEquals(Word.of(false), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
 	}
 
 	/** ---- [UsecaseTestBridge] */

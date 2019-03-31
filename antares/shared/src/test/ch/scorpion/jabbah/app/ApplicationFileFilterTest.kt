@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.app
 
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.*
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 
@@ -11,14 +11,13 @@ class ApplicationFileFilterTest {
     @Test
     fun shouldAcceptExtension() {
         val filter = ApplicationFileFilter("cir", "test")
-        assertThat(filter.accept(File("test.cir")), `is`(true))
-        assertThat(filter.accept(File("test.bla")), `is`(false))
+        assertTrue(filter.accept(File("test.cir")))
+        assertFalse(filter.accept(File("test.bla")))
     }
 
     @Test
     fun shouldNotAcceptWrongExtension() {
         val filter = ApplicationFileFilter("cir", "test")
-        assertThat(filter.accept(File("test.bla")), `is`(false))
+	    assertFalse(filter.accept(File("test.bla")))
     }
-
 }
