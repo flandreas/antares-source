@@ -137,7 +137,7 @@ class GraphViewAnimator(
 
 	override fun actingRequested(actor: Actor, signalHandler: SignalHandler, data: ActorData) {
 		if (actor is Net<*>) {
-			handleNetActingRequested(actor, (data as GraphActorData).changedPort as DigitalPort)
+			handleNetActingRequested(actor, data as GraphActorData)
 		} else if ((data as GraphActorData).isInput) {
 			handleGraphElementActingRequested(actor as GraphElement)
 		}
@@ -148,17 +148,19 @@ class GraphViewAnimator(
 			handleNetActed(actor)
 		} else {
 			handleGraphElementActed(actor as GraphElement)
-			actor.actingVisualized(signalHandler, this)
+			actor.actingVisualized(signalHandler, this, data)
 		}
 	}
 
-	private fun handleNetActingRequested(net: Net<*>, changedPort: DigitalPort) {
+	private fun handleNetActingRequested(net: Net<*>/*, changedPort: DigitalPort*/, actorData: GraphActorData) {
 		// The acting of a Net has been requested, because an Output of a Vertice has asserted
 		// a signal onto the net (which is still buffered in the Net and not yet forwarded).
 		// Setup a animation of the signal that will flow along the corresponding EdgeView,
 		// if requested by current settings.
 
 		LOG.trace("GraphViewAnimator: handleNetActingRequested for Net '${net.id}'")
+
+		val  changedPort: DigitalPort = actorData.changedPort as DigitalPort
 
 		if (!requireEdgeViewAnimation()) {
 			return
@@ -176,6 +178,8 @@ class GraphViewAnimator(
 		// has finished.
 
 		registerAnimation(net, DigitalEdgeViewNetAnimation(
+			actorListener = this,
+			actorData = actorData,
 			startEdgeView = edgeView,
 			originPort = changedPort,
 			drawingView = drawingView,

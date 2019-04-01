@@ -1,5 +1,6 @@
 package ch.scorpion.antares
 
+import ch.scorpion.jabbah.base.MILLION
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
@@ -11,8 +12,10 @@ import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.io.IOModule
 import kotlin.test.BeforeTest
 
 /**
@@ -45,6 +48,7 @@ abstract class AbstractCircuitTest {
 
 	protected fun startSimulation() {
 		scheduler.isActive = true
+		LibraryModule.libraryHolder.l?.let { getCircuitView().graph!!.bind(it, IOModule.storableCreator) }
 		getCircuitView().graph!!.executionStarted(scheduler)
 	}
 
@@ -55,11 +59,22 @@ abstract class AbstractCircuitTest {
 
 	protected fun proceedToMillis(timeMillis: Long) {
 		timeService.setTimeMillis(timeMillis)
-		scheduler.proceedTo(timeMillis * 1_000_000)
+		scheduler.proceedTo(timeMillis * MILLION)
 	}
 
 	protected fun proceedToNanos(timeNanos: Long) {
 		timeService.setTimeNanos(timeNanos)
 		scheduler.proceedTo(timeNanos)
+	}
+
+	/**
+	 * If the head of the scheduling queue uses time freezing, the relative time is updated AFTER the [Actor] has acted.
+	 * Therefore, we need an additional time tick to continue with the simulation when testing. Note that the second time
+	 * tick must be later than the [Scheduler]'s [Timer] interval, because otherwise the [Timer] wouldn't wake up and
+	 * the [Scheduler] wouldn't be triggered.
+	 */
+	protected fun proceedFrozenTimeTo(time: Long) {
+		timeService.setTimeMillis(time)
+		timeService.setTimeMillis(time + scheduler.timerInterval + 1)
 	}
 }

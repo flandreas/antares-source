@@ -29,6 +29,11 @@ class StringUtilsTest {
 		assertEquals("Test.", StringUtils.endWithPeriod("Test."))
 	}
 
+	@Test
+	fun shouldFormatLong() {
+		assertEquals("123", StringUtils.formatLong(123L))
+		assertEquals("123_456_789", StringUtils.formatLong(123456789L))
+	}
 
 	// Not yet supported.
     /*

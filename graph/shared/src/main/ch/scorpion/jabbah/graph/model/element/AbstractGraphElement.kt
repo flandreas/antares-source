@@ -107,11 +107,11 @@ abstract class AbstractGraphElement : GraphElement {
         return actorSupport.notifyActed(signalHandler, data)
     }
 
-    override fun actingVisualized(signalHandler: SignalHandler, l: ActorListener) {
-        actorSupport.actingVisualized(signalHandler, l)
+    override fun actingVisualized(signalHandler: SignalHandler, l: ActorListener, data: ActorData?) {
+        actorSupport.actingVisualized(signalHandler, l, data)
     }
 
-    override fun actingDone(signalHandler: SignalHandler, data: ActorData) {
+    override fun actingDone(signalHandler: SignalHandler, data: ActorData?) {
         _state = ActorState.Idle
     }
 

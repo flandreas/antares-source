@@ -9,7 +9,7 @@ class ActorSupport(private val actor: Actor) {
 
     /**
      * Maps a registered [ActorListener] to its [Entry] object.
-     * Manual lazy initialization because [hasListener] property would unnecessarily instantiate a Kotlin lazy delegate.
+     * Manual lazy initialization because [hasListeners] property would unnecessarily instantiate a Kotlin lazy delegate.
      */
     private var entries: MutableMap<ActorListener, Entry>? = null
 
@@ -35,7 +35,7 @@ class ActorSupport(private val actor: Actor) {
     }
 
     fun notifyActed(signalHandler: SignalHandler, data: ActorData): Boolean {
-        if (entries != null && entries!!.size > 0) {
+        if (entries != null && entries!!.isNotEmpty()) {
             entries?.forEach {
                 it.value.isPending = true
                 it.key.acted(actor, signalHandler, data)
@@ -46,12 +46,12 @@ class ActorSupport(private val actor: Actor) {
         return true
     }
 
-    fun actingVisualized(signalHandler: SignalHandler, l: ActorListener) {
+    fun actingVisualized(signalHandler: SignalHandler, l: ActorListener, data: ActorData?) {
         if (entries != null) {
             ensureEntry(l).isPending = false
         }
         if (allDone()) {
-            signalHandler.actingDone(actor)
+            signalHandler.actingDone(actor, data)
         }
     }
 
@@ -59,7 +59,7 @@ class ActorSupport(private val actor: Actor) {
         if (entries == null) {
             entries = mutableMapOf()
         }
-        return entries!!.getOrPut(l, {Entry(l)})
+        return entries!!.getOrPut(l) {Entry(l)}
     }
 
     private fun allDone(): Boolean {

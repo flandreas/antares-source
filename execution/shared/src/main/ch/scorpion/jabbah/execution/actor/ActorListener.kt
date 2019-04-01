@@ -43,6 +43,6 @@ class EmptyActorListener : ActorListener {
     }
 
     override fun acted(actor: Actor, signalHandler: SignalHandler, data: ActorData) {
-       signalHandler.actingDone(actor)
+       signalHandler.actingDone(actor, data)
     }
 }

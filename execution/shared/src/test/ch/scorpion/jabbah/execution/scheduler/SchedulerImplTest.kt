@@ -211,7 +211,7 @@ class SchedulerImplTest {
         verify(exactly = 0) { actor1.act(any(), any()) }
         assertEquals(1, scheduler.numberOfRemainingSlots)
 
-        scheduler.signalHandler.actingDone(actor2)
+        scheduler.signalHandler.actingDone(actor2, createActorData())
         assertEquals(1, scheduler.numberOfRemainingSlots)
 
         timeService.setTimeMillis(250)
@@ -235,8 +235,8 @@ class SchedulerImplTest {
         assertTrue(actor2.actingCalled)
 	    assertTrue(actor3.actingCalled)
 
-        scheduler.signalHandler.actingDone(actor2)
-        scheduler.signalHandler.actingDone(actor3)
+        scheduler.signalHandler.actingDone(actor2, createActorData())
+        scheduler.signalHandler.actingDone(actor3, createActorData())
         assertEquals(1, scheduler.numberOfRemainingSlots)
 
         timeService.setTimeMillis(300)
@@ -295,11 +295,11 @@ class SchedulerImplTest {
             return false
         }
 
-        override fun actingVisualized(signalHandler: SignalHandler, l: ActorListener) {
+        override fun actingVisualized(signalHandler: SignalHandler, l: ActorListener, data: ActorData?) {
             // empty
         }
 
-        override fun actingDone(signalHandler: SignalHandler, data: ActorData) {
+        override fun actingDone(signalHandler: SignalHandler, data: ActorData?) {
             state = ActorState.Idle
             signalHandler.requestActingAfter(target, targetPropDelay, createActorData())
         }

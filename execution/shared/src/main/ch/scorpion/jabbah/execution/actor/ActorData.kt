@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.execution.actor
 
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
+
 /**
  * Represents the state of an [Actor] at the beginning of an execution step in order to support stateless [Actor]s.
  *
- * An [Actor] should capture its current state before requesting scheduling. THe [Scheduler] keeps the passed
+ * An [Actor] should capture its current state before requesting scheduling. The [Scheduler] keeps the passed
  * [ActorData] while the requests waits to be scheduled. At the end of an execution step, the [Actor]
- * receives the [ActorData] back in the method [Actor.execute].
+ * receives the [ActorData] back in the method [Actor.actingDone].
  */
 interface ActorData {
 

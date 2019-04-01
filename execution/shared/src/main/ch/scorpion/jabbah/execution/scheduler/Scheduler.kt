@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.execution.scheduler
 
+import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.issue.Issue
@@ -30,6 +31,9 @@ interface Scheduler : SignalHandler {
 	 * When setting this flag, the [Status] gets also updated when not in stepping mode.
 	 */
 	var isSimulationTimeStatusEnabled: Boolean
+
+	/** The time (in milliseconds) between two ticks of the [Timer] that drives this [Scheduler].*/
+	val timerInterval: Int
 
     fun step()
 

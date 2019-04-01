@@ -40,4 +40,22 @@ object StringUtils {
 	fun endWithPeriod(s: String): String {
 		return if (s.endsWith(".")) s else "$s."
 	}
+
+	/**
+	 * Formats a [Long] using underscores to separate groups of 3 digits.
+	 * Example: 12345678L is formatted as "12_345_678"
+	 * */
+	fun formatLong(l: Long): String {
+		val s = l.toString()
+		val result = StringBuilder()
+		var i = 0
+		for (c in s.reversed()) {
+			result.append(c)
+			i++
+			if (i.rem(3) == 0 && i < s.length) {
+				result.append('_')
+			}
+		}
+		return result.toString().reversed()
+	}
 }

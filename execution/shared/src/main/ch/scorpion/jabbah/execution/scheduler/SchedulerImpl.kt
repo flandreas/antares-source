@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.execution.scheduler
 
-import ch.scorpion.jabbah.base.Status
-import ch.scorpion.jabbah.base.StatusType
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.PriorityQueue
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.ActionListener
@@ -15,8 +14,6 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
@@ -82,6 +79,8 @@ class SchedulerImpl(
 	override val signalHandler: SignalHandler get() = this
 
 	override val numberOfRemainingSlots: Int get() = queue.size
+
+	override val timerInterval: Int get() = task.timerInterval
 
 	override var isActive: Boolean
 		get() = activationState == SchedulerActivationState.ACTIVE
@@ -177,7 +176,7 @@ class SchedulerImpl(
 	override fun logTrace(clazz: KClass<*>, id: Int, msg: () -> String) {
 		// TEST BEGIN
 		if (LOG.isTraceEnabled()) {
-			LOG.trace("$executionTime ns [${clazz.simpleName} ($id)]: ${msg.invoke()}")
+			LOG.trace("${StringUtils.formatLong(executionTime)} ns [${clazz.simpleName} ($id)]: ${msg.invoke()}")
 		}
 		// TEST
 	}
@@ -190,7 +189,7 @@ class SchedulerImpl(
 		requestActingImpl(actor, 1, true, data)
 	}
 
-	override fun actingDone(actor: Actor) {
+	override fun actingDone(actor: Actor, data: ActorData?) {
 		logTrace(System.get().getClass(actor), actor.id) { "Acting done" }
 		val slot = queue.peek()
 		if (slot != null) {
@@ -203,6 +202,8 @@ class SchedulerImpl(
 				removeSlot(slot)
 				postSchedulerStateEvent()
 			}
+		} else {
+			actor.actingDone(this, data)
 		}
 	}
 
@@ -210,7 +211,9 @@ class SchedulerImpl(
 		if (!isActive) {
 			return
 		}
-		logTrace(System.get().getClass(actor), actor.id) { "Request to act after $delay ns" }
+		if (LOG.isTraceEnabled()) {
+			logTrace(System.get().getClass(actor), actor.id) { "Request to act after ${StringUtils.formatLong(delay)} ns" }
+		}
 		if (delay == 0L) {
 			actor.act(this, data)
 		} else {
@@ -255,7 +258,7 @@ class SchedulerImpl(
 	}
 
 	private fun addSlot(slot: Slot) {
-		LOG.trace("Add slot at ${slot.relativeTime}")
+		LOG.trace("Add slot at ${StringUtils.formatLong(slot.relativeTime)}")
 		queue.add(slot)
 	}
 
@@ -358,6 +361,8 @@ class SchedulerImpl(
 	private inner class Task(private val timer: Timer) : ActionListener {
 
 		private val SLOWDOWN_FACTOR = 0.5
+
+		val timerInterval: Int get() = timer.interval
 
 		init {
 			timer.initialize(calculateTimerInterval()) { actionPerformed(it) }

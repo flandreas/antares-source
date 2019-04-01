@@ -39,7 +39,13 @@ interface SignalHandler {
      */
     fun requestActingTimeFreeze(actor: Actor, data: ActorData)
 
-    /** Informs this [SignalHandler] that the acting of the specified [Actor] is done.*/
-    fun actingDone(actor: Actor)
+    /**
+     * Informs this [SignalHandler] that the acting of the specified [Actor] is done.
+     *
+     * @param actor the [Actor] that has done acting
+     * @param data the [ActorData] to forward to the [Actor]. This is only required when calling this [SignalHandler]
+     * in testing scenarios. In all other scenarios, the [ActorData] is known by the system itself.
+     */
+    fun actingDone(actor: Actor, data: ActorData?)
 
 }

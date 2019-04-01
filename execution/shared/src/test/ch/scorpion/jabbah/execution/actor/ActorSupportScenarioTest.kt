@@ -63,12 +63,12 @@ class ActorSupportScenarioTest {
 		val actorData: ActorData = mockk()
 		actorSupport.requestActingAfter(signalHandler, 0, actorData)
 		actorSupport.notifyActed(signalHandler, mockk())
-		verify(exactly = 0) {signalHandler.actingDone(actor) }
+		verify(exactly = 0) {signalHandler.actingDone(actor, actorData) }
 
-		actorSupport.actingVisualized(signalHandler, view1)
-		verify(exactly = 0) { signalHandler.actingDone(actor) }
+		actorSupport.actingVisualized(signalHandler, view1, actorData)
+		verify(exactly = 0) { signalHandler.actingDone(actor, actorData) }
 
-		actorSupport.actingVisualized(signalHandler, view2)
-		verify(exactly = 1) {signalHandler.actingDone(actor) }
+		actorSupport.actingVisualized(signalHandler, view2, actorData)
+		verify(exactly = 1) { signalHandler.actingDone(actor, actorData) }
 	}
 }

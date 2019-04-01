@@ -17,6 +17,8 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewPointSequence
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.execution.actor.ActorData
+import ch.scorpion.jabbah.execution.actor.ActorListener
 
 /**
  * Organizes individual animations of bits flowing through a net of [DigitalEdgeView]s.
@@ -32,6 +34,8 @@ import ch.scorpion.jabbah.base.logger
  * Therefore, animations on longer paths travel faster, while animations on shorter path travel slower.
  */
 class DigitalEdgeViewNetAnimation(
+	private val actorListener: ActorListener,
+	private val actorData: ActorData,
 	val startEdgeView: DigitalEdgeView,
 	val originPort: DigitalPort,
 	val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
@@ -41,18 +45,19 @@ class DigitalEdgeViewNetAnimation(
 ) {
 
 	companion object {
+
+		private val LOG by logger(DigitalEdgeViewNetAnimation::class)
+
 		// Note that the effective duration of an Animation already depends on [SystemSpeed] as implemented by [Animator].
 		// Additionally, as a [DigitalEdgeViewNetAnimation] is only used for [SystemSpeedCategory.Use],
 		// (which is defined below 33% of maximum [SystemSpeed]), the duration here represents 3 times the effective time.
-		private val DURATION_MS = 300.0
+		private const val DURATION_MS = 300.0
 
 		/** Returns 1 for maximum speed, 0 for halted.*/
 		fun normalizedSpeed(speed: Int): Double {
 			return Math.min(speed, SystemSpeedCategory.Explore.speedRange.last) / SystemSpeedCategory.Explore.speedRange.last.toDouble()
 		}
 	}
-
-	private val LOG by logger(DigitalEdgeViewNetAnimation::class)
 
 	/**
 	 * Contains management information associated with every [AnimationTask].
@@ -142,7 +147,7 @@ class DigitalEdgeViewNetAnimation(
 		drawingView.animationContainer.add(signalView)
 		signalView.validate()
 
-		predecessorMap.put(edgeView, animationInfo)
+		predecessorMap[edgeView] = animationInfo
 		animator.schedule(bitAnimationTask)
 	}
 
@@ -171,7 +176,7 @@ class DigitalEdgeViewNetAnimation(
 			predecessorMap.remove(animationView.edgeView)
 
 			if (predecessorMap.isEmpty()) {
-				scheduler.signalHandler.actingDone(startEdgeView.model!!)
+				startEdgeView.model!!.actingVisualized(scheduler, actorListener, actorData)
 				for (terminatedAnimationView in terminatedAnimationViews) {
 					drawingView.animationContainer.remove(terminatedAnimationView)
 				}

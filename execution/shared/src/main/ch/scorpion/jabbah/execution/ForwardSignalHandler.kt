@@ -30,7 +30,7 @@ class ForwardSignalHandler : SignalHandler {
         actor.act(this, data)
     }
 
-    override fun actingDone(actor: Actor) {
+    override fun actingDone(actor: Actor, data: ActorData?) {
         // empty
     }
 }

@@ -115,6 +115,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	/** ---- [Actor] interface */
 
 	override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
+		super.act(signalHandler, data)
 		return notifyActed(signalHandler, data)
 	}
 
@@ -124,7 +125,8 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		signalBuffer = null
 	}
 
-	override fun actingDone(signalHandler: SignalHandler, data: ActorData) {
+	override fun actingDone(signalHandler: SignalHandler, data: ActorData?) {
+		super.actingDone(signalHandler, data)
 		_signal = (data as GraphActorData).getSignal(1)
 		stateChanged()
 		ports

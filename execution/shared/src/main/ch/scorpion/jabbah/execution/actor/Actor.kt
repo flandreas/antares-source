@@ -50,15 +50,24 @@ interface Actor {
 	 */
 	fun act(signalHandler: SignalHandler, data: ActorData): Boolean
 
-	/** Called by a registered [ActorListener] after it has done its execution visualization.*/
-	fun actingVisualized(signalHandler: SignalHandler, l: ActorListener)
+	/**
+	 * Called by a registered [ActorListener] after it has done its execution visualization.
+	 *
+	 * @param data must only be provided if [Actor] has a zero propagation, because in all other cases,
+	 * [actingVisualized] will result in a call to [SignalHandler.actingDone], which has access to the
+	 * [ActorData] of the queued scheduling request. Thus, an [ActorData] must only be provided in test scenarios,
+	 * where [ActorListener]s are simulated and [actingVisualized] is called artificially. If there are
+	 * no [ActorListener]s in real scenarios, an [Actor] will directly call [SignalHandler.actingDone]
+	 * with the available [ActorData].
+	 */
+	fun actingVisualized(signalHandler: SignalHandler, l: ActorListener, data: ActorData? = null)
 
 	/**
 	 * Called by the [Scheduler] after an execution cycle has been completed. An [Actor] implementation can
 	 * implement this method in order to update another [Actor] that depends on this [Actor], thereby starting
 	 * another execution cycle.
 	 */
-	fun actingDone(signalHandler: SignalHandler, data: ActorData)
+	fun actingDone(signalHandler: SignalHandler, data: ActorData?)
 
 	/**
 	 * Called by the execution environment to give this [Actor] the opportunity to cleanup its state
@@ -106,11 +115,11 @@ open class EmptyActor : Actor {
 		return actorSupport.notifyActed(signalHandler, data)
 	}
 
-	override fun actingVisualized(signalHandler: SignalHandler, l: ActorListener) {
-		actorSupport.actingVisualized(signalHandler, l)
+	override fun actingVisualized(signalHandler: SignalHandler, l: ActorListener, data: ActorData?) {
+		actorSupport.actingVisualized(signalHandler, l, data)
 	}
 
-	override fun actingDone(signalHandler: SignalHandler, data: ActorData) {
+	override fun actingDone(signalHandler: SignalHandler, data: ActorData?) {
 		_state = ActorState.Idle
 	}
 
