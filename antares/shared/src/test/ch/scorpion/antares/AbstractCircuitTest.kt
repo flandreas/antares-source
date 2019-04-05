@@ -12,10 +12,13 @@ import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
+import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
+import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.IOModule
+import java.io.File
 import kotlin.test.BeforeTest
 
 /**
@@ -33,7 +36,7 @@ abstract class AbstractCircuitTest {
 	protected lateinit var eventBus: EventBus
 	protected lateinit var timeService: ControlledTimeService
 	protected lateinit var timer: Timer
-	protected lateinit var scheduler: Scheduler
+	protected lateinit var scheduler: SchedulerImpl
 
 	@BeforeTest
 	open fun setup() {
@@ -45,6 +48,12 @@ abstract class AbstractCircuitTest {
 	}
 
 	abstract fun getCircuitView(): GraphView<GraphElementView<*>>
+
+	protected fun setupLibrary() {
+		val file = File.createTempFile("library", ".lib")
+		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
+		LibraryModule.libraryHolder.l = LibraryImpl("testLib")
+	}
 
 	protected fun startSimulation() {
 		scheduler.isActive = true
@@ -73,8 +82,14 @@ abstract class AbstractCircuitTest {
 	 * tick must be later than the [Scheduler]'s [Timer] interval, because otherwise the [Timer] wouldn't wake up and
 	 * the [Scheduler] wouldn't be triggered.
 	 */
-	protected fun proceedFrozenTimeTo(time: Long) {
+	protected fun proceedFrozenTimeToMillis(time: Long) {
 		timeService.setTimeMillis(time)
 		timeService.setTimeMillis(time + scheduler.timerInterval + 1)
 	}
+
+	protected fun proceedFrozenTimeToNanos(time: Long) {
+		timeService.setTimeMillis(time / MILLION)
+		timeService.setTimeMillis((time + scheduler.timerInterval + 1) / MILLION)
+	}
+
 }

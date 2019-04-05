@@ -7,15 +7,13 @@ import ch.scorpion.jabbah.base.event.ActionListener
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.time.TimeService
-import ch.scorpion.jabbah.base.time.Timer
+import ch.scorpion.jabbah.base.time.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
-import ch.scorpion.jabbah.base.time.SystemSpeed
-import ch.scorpion.jabbah.base.time.SystemSpeedEvent
+import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
@@ -67,7 +65,7 @@ class SchedulerImpl(
 			if (isActive && isStopOnIssue && it.issue != null) {
 				System.get().invokeLater {
 					isActive = false
-					LOG.debug("SchedulerImpl: execution stopped due to Issue '${it.issue.name}'")
+					LOG.debug("execution stopped due to Issue '${it.issue.name}'")
 					eventBus.post(ExecutionStoppedOnIssueEvent(this))
 				}
 			}
@@ -149,13 +147,16 @@ class SchedulerImpl(
 	}
 
 	override fun proceedTo(time: Long) {
+		LOG.trace("Proceed to ${StringUtils.formatLong(time)}")
 		while (!queue.isEmpty && executionTime < time) {
 			executionStep()
 		}
+		// Repeat because time freezing slots update relative time at the end of executionStep
+		executionStep()
 	}
 
 	override fun printSchedule() {
-		LOG.debug("SchedulerImpl: Scheduling queue at $relativeTime ns")
+		LOG.debug("Scheduling queue at ${StringUtils.formatLong(relativeTime)} ns")
 		queue.elements().forEach { it.print() }
 	}
 
@@ -233,6 +234,24 @@ class SchedulerImpl(
 	}
 
 	/** ---- [SchedulerImpl] */
+
+	/**
+	 * Proceeds the pushing time further and completing waiting [Actor]s until the queue is empty.
+	 * Used only in testing for passing boot strapping activities before the real test can begin.
+	 * Should only be used for test scenarios without cyclic [Actor] dependencies.
+	 */
+	fun proceedUntilQueueIsEmpty(timeService: ControlledTimeService, actorListener: ActorListener) {
+		while (!queue.isEmpty) {
+			val slot = queue.peek()
+			slot!!.getRequests().forEach {
+				if (it.isActing) {
+					it.actor.actingVisualized(this, actorListener)
+				}
+			}
+			timeService.setTimeNanos(slot.relativeTime)
+			executionStep()
+		}
+	}
 
 	private fun postSchedulerEvent(actor: Actor, type: SchedulerEvent.Type) {
 		// Is only active when exploring the system. For performance reasons, we therefore avoid sending
@@ -316,7 +335,13 @@ class SchedulerImpl(
 
 	/** Executes all [Request]s of the next executable [Slot].*/
 	private fun executionStep(): ExecutionStepResult {
-		val slot: Slot = getNextExecutableSlot() ?: return ExecutionStepResult(recalculated = false, breakpoint = false)
+		val optionalSlot = getNextExecutableSlot()
+		if (optionalSlot == null) {
+			updateRelativeTime(getRelativeRealTime())
+			return ExecutionStepResult(recalculated = false, breakpoint = false)
+		}
+
+		val slot: Slot = optionalSlot
 
 		LOG.trace("Execution step at $relativeTime ns, queue size is ${queue.size}")
 

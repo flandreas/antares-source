@@ -20,9 +20,26 @@ class TestLibraryBuilder(
 ) {
 
     companion object {
+	    val NOP = "NOP"
+	    val OUTER_NOP = "OuterNOP"
         const val CUSTOM_NOT = "CustomNOT"
         const val CUSTOM_NAND = "CustomNAND"
     }
+
+	/** Builds (as of [TestCircuitBuilder.buildCustomNot] a custom NOP and adds it to [libraryDirectory].*/
+	fun addNOP(library: Library, propagationDelay: Long = 0): MetaGraph {
+		val nop = TestCircuitBuilder(NOP).buildNOP(propagationDelay)
+		val metaGraph = MetaGraph(GraphStorable(nop), createContainerDrawing(nop))
+		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		return metaGraph
+	}
+
+	fun addOuterNOP(library: Library): MetaGraph {
+		val outerNOP = TestCircuitBuilder(OUTER_NOP).buildOuterNOP(createSubGraphVerticeView(NOP, library))
+		val metaGraph = MetaGraph(GraphStorable(outerNOP), createContainerDrawing(outerNOP))
+		libraryService.addContainerLibraryElement(library, metaGraph, library)
+		return metaGraph
+	}
 
     /**
      * Adds a custom NOT (as of [TestCircuitBuilder.buildCustomNot]) to the specified [LibraryDirectory].

@@ -6,14 +6,10 @@ import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.base.MILLION
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.actor.ActorState
-import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
-import ch.scorpion.jabbah.graph.library.LibraryImpl
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import io.mockk.mockk
-import java.io.File
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -36,10 +32,7 @@ class SimpleExecutionIntegrationTest : AbstractCircuitTest() {
 
 	@BeforeTest
 	fun setupCircuit() {
-		val file = File.createTempFile("library", ".lib")
-		TestTranslationsBuilder().withAnyKey()
-		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
-		LibraryModule.libraryHolder.l = LibraryImpl("testLib")
+		setupLibrary()
 
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 		builder.addVerticeView(switchView).model!!.addActorListener(actorListener)
@@ -70,7 +63,7 @@ class SimpleExecutionIntegrationTest : AbstractCircuitTest() {
 		assertEquals(ActorState.Waiting, edgeView.model!!.state)
 
 		// EdgeView uses frozen time
-		proceedFrozenTimeTo(1100 * MILLION)
+		proceedFrozenTimeToNanos(1100 * MILLION)
 		scheduler.printSchedule()
 		assertEquals(ActorState.Acting, edgeView.model!!.state)
 		assertEquals(1, scheduler.numberOfRemainingSlots)

@@ -25,6 +25,22 @@ class TestCircuitBuilder(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : GraphViewBuilder<DigitalSignal>(graphName) {
 
+	/** Builds a [GraphView] that contains only an input and an output, i.e. that perform a "no operation".*/
+	fun buildNOP(propagationDelay: Long = 0): GraphView<GraphElementView<out GraphElement>> {
+		connect(addInput("I"), addOutput("O"))
+		graph.propagationDelay = propagationDelay
+		return graphView
+	}
+
+	/** Build a "no operation" [GraphView] that contains the specified inner "no operation" [SubGraphVerticeView].*/
+	fun buildOuterNOP(nop: SubGraphVerticeView<*>, propagationDelay: Long = 0): GraphView<GraphElementView<*>> {
+		graphView.add(nop)
+		connect(addInput("A"), nop)
+		connect(nop, addOutput("B"))
+		graph.propagationDelay = propagationDelay
+		return graphView
+	}
+
     /**
      * Builds a [GraphView] that contains a [NotGateView] along with [CircuitInOutView] for input and output.
      */
@@ -50,15 +66,15 @@ class TestCircuitBuilder(
         return graphView
     }
 
-    private fun addInput(): CircuitInOutView {
-        val inout = CircuitInOutView(styleProvider, CircuitInOutImpl(eventBus, null, PortType.INPUT), eventBus)
-        graphView.add(inout)
-        return inout
-    }
+	private fun addInput(name: String? = null): CircuitInOutView {
+		val inout = CircuitInOutView(styleProvider, CircuitInOutImpl(eventBus, name, PortType.INPUT), eventBus)
+		graphView.add(inout)
+		return inout
+	}
 
-    private fun addOutput(): CircuitInOutView {
-        val inout = CircuitInOutView(styleProvider, CircuitInOutImpl(eventBus, null, PortType.OUTPUT), eventBus)
-        graphView.add(inout)
-        return inout
-    }
+	private fun addOutput(name: String? = null): CircuitInOutView {
+		val inout = CircuitInOutView(styleProvider, CircuitInOutImpl(eventBus, name, PortType.OUTPUT), eventBus)
+		graphView.add(inout)
+		return inout
+	}
 }
