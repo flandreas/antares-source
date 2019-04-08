@@ -44,7 +44,7 @@ class SubGraphPortImpl<T: Any>(
         graphInput?.setIncomingSignal(signal, signalHandler)
     }
 
-    // TODO Is this overrride necessary? Wasn't part of the guugen version
+    // TODO Is this override necessary? Wasn't part of the guugen version
     override fun setOutgoingSignal(signal: T?, signalHandler: SignalHandler) {
         super.setOutgoingSignal(signal, signalHandler)
         owner?.outputChanged(this, signalHandler)
@@ -66,17 +66,13 @@ class SubGraphPortImpl<T: Any>(
     override fun write(writer: StoreWriter) {
         writer.writeString("name", name!!)
         writer.writeString("type", portType.customName)
-        if (description != null) {
-            writer.writeString("desc", description!!)
-        }
+	    description.write("desc", writer)
     }
 
     override fun read(reader: StoreReader) {
         name = reader.readString("name")
         portType = PortType.withName(reader.readString("type"))
-        if (reader.hasAttribute("desc")) {
-            description = reader.readString("desc")
-        }
+	    description.read("desc", reader)
     }
 
     override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()

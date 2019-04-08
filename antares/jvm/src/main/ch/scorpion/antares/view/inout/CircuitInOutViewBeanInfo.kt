@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.edit.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
-import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.model.PortType
 import com.l2fprod.common.propertysheet.Property
 
@@ -27,7 +27,7 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 	    private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
         private val signalRep = PropertyImpl("element.property.DigitalSignalRepresentation", DigitalSignalRepresentation::class.java)
 	    private val toggle = PropertyImpl("element.property.Switch.toggle", Boolean::class.java)
-        private val description = PropertyImpl("edit.property.description", TextProperty::class.java)
+        private val description = PropertyImpl("edit.property.description", TranslatableText::class.java)
     }
 
     override fun addProperties(bean: CircuitInOutView, editor: Editor, properties: MutableList<Property>) {
@@ -40,7 +40,7 @@ class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 	    bitWidth.bind(editor, { bean.bitWidth }, { bean.bitWidth = it!! })
 		signalRep.bind(editor, { bean.signalRepresentation }, { bean.signalRepresentation = it!! })
 	    toggle.bind(editor, { bean.toggle }, { bean.toggle = it!! })
-		description.bind(editor, { bean.description}, { bean.description = it!! })
+		description.bind(editor, { bean.description.translation }, { bean.description.translation = it!! })
 
 		properties.add(name)
 		properties.add(portType)

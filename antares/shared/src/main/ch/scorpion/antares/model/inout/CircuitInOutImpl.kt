@@ -6,11 +6,10 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.model.signal.DigitalSignalUtil
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.AbstractGraphPort
@@ -18,7 +17,6 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-
 
 
 /**
@@ -107,9 +105,7 @@ class CircuitInOutImpl(
         super.write(writer)
         writer.writeString("type", portType.customName)
         writer.writeInt("bitWidth", bitWidth.width)
-        if (!StringUtils.isBlank(portDescription)) {
-            writer.writeString("desc", portDescription!!)
-        }
+	    portDescription.write("desc", writer)
     }
 
     override fun read(reader: StoreReader) {
@@ -118,9 +114,7 @@ class CircuitInOutImpl(
             super.read(reader)
             portType = PortType.withName(reader.readString("type"))
             bitWidth = BitWidth.of(reader.readInt("bitWidth"))
-            if (reader.hasAttribute(("desc"))) {
-                portDescription = reader.readString("desc")
-            }
+	        portDescription.read("desc", reader)
         } finally {
             readingFromStore = false
         }

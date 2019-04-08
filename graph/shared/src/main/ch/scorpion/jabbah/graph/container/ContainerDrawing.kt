@@ -127,7 +127,7 @@ class ContainerDrawing(
      */
     fun completeFromGraph(graph: Graph) {
         model.getPorts().forEach {
-            it.description = graph.getGraphPort<Any>(it.name!!)!!.portDescription
+            it.description.translation = graph.getGraphPort<Any>(it.name!!)!!.portDescription.translation
         }
     }
 
@@ -188,7 +188,7 @@ class ContainerDrawing(
         // The port descriptions are NOT copied when cloning, because they are not part of the persistent state
         // the Container's SubGraphVertice (see documentation of completeFromGraph()). Therefore, copy them now.
         subGraphVertice.getPorts().forEach {
-            it.description = this.model.getPort<Any>(it.name!!).description
+            it.description.translation = this.model.getPort<Any>(it.name!!).description.translation
         }
         return subGraphVertice
     }

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
@@ -24,14 +25,14 @@ interface GraphPort<out T: Any> : Vertice {
     var portType: PortType
 
     /** Corresponds with [Port.description] of the single [Port] of this [GraphPort].*/
-    var portDescription: String?
+    var portDescription: Description
         get() {
             val port: Port<T> = getPort()
             return port.description
         }
         set(value) {
             val port: Port<T> = getPort()
-            port.description = value
+            port.description.translation = value.translation
         }
 }
 

@@ -32,7 +32,7 @@ import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.text.Alignment
 import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -138,16 +138,10 @@ class CircuitInOutView(
 			updateView()
 		}
 
-	var description: TextProperty
-		get() = TextProperty(portDescription)
-		set(value) {
-			portDescription = value.text
-		}
-
-	private var portDescription: String?
+	var description: Description
 		get() = model!!.getPort<DigitalSignal>().description
 		set(value) {
-			model!!.getPort<DigitalSignal>().description = value
+			model!!.getPort<DigitalSignal>().description.translation = value.translation
 		}
 
 	/** ---- [GraphPortView] */
@@ -320,8 +314,8 @@ class CircuitInOutView(
 
 	override val shortDescription: String?
 		get() {
-			if (StringUtils.isNotEmpty(portDescription)) {
-				return portDescription
+			if (StringUtils.isNotEmpty(description.value)) {
+				return description.value
 			}
 			return when (portType) {
 				PortType.INOUT -> Translations.getOptionalString("library.element.CircuitInOut.desc")

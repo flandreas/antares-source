@@ -93,6 +93,7 @@ abstract class AbstractPortView<T: Any>(
             update()
         }
 
+    @Suppress("UNUSED_PARAMETER")
     override var ownerRotation: Rotation
         get() = owner?.rotation ?: Rotation.R0
         set(value) {
@@ -302,11 +303,16 @@ abstract class AbstractPortView<T: Any>(
 	}
 
     protected fun buildToolTipTitle(): String {
-        return "${port.portType.toString()} '${port.name}'"
+	    return if (StringUtils.isBlank(port.name)) {
+		    "${port.portType}"
+	    } else {
+		    "${port.portType} '${port.name}'"
+	    }
+
     }
 
     protected open fun buildToolTipContent(): String {
-        return StringUtils.orEmpty(port.description)
+        return StringUtils.orEmpty(port.description.value)
     }
 
     private inner class PortListener : PropertyChangeListener<Any> {
