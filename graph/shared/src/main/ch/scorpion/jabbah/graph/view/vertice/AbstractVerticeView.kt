@@ -23,8 +23,8 @@ import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
@@ -46,118 +46,120 @@ import ch.scorpion.jabbah.io.Storable
  * Abstract base implementation of the [VerticeView] interface.
  */
 abstract class AbstractVerticeView<T : Vertice>(
-    styleProvider: StyleProvider,
-    model: T?
-): AbstractGraphElementView<T>(styleProvider, GraphStyleType.VERTICE, model), VerticeView<T>, Transparent {
+	styleProvider: StyleProvider,
+	model: T?
+) : AbstractGraphElementView<T>(styleProvider, GraphStyleType.VERTICE, model), VerticeView<T>, Transparent {
 
-    companion object {
-        private fun cannotOpenMsg(c: Component) {
-            BaseModule.eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = c, messageKey="graph.vertice.cannotOpen.msg"))
-        }
-    }
+	companion object {
+		private fun cannotOpenMsg(c: Component) {
+			BaseModule.eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = c, messageKey = "graph.vertice.cannotOpen.msg"))
+		}
+	}
 
-    /** Holds the graphical representations of all the model's [Port]s.*/
-    private val portViews: MutableList<PortView<*>> = mutableListOf()
+	/** Holds the graphical representations of all the model's [Port]s.*/
+	private val portViews: MutableList<PortView<*>> = mutableListOf()
 
-    /**
-     * Determines whether this [VerticeView] stores its [PortView]s in terms of [Storable], or
-     * whether they are statically created while constructing this [AbstractVerticeView] (or its subclass).
-     *
-     * This implementation returns `false` by default. Might be overwritten by subclasses.
-     * @return `true` if this [AbstractVerticeView] stores its [PortView]s.
-     */
-    private val arePortViewsStored: Boolean get() = false
+	/**
+	 * Determines whether this [VerticeView] stores its [PortView]s in terms of [Storable], or
+	 * whether they are statically created while constructing this [AbstractVerticeView] (or its subclass).
+	 *
+	 * This implementation returns `false` by default. Might be overwritten by subclasses.
+	 * @return `true` if this [AbstractVerticeView] stores its [PortView]s.
+	 */
+	private val arePortViewsStored: Boolean get() = false
 
-    /** Displays information while the model of this [VerticeView] is executed.*/
-    private val executionInfoLabel = Label(
-            text = "",
-            font = font,
-            horizontalAlignment = HorizontalAlignment.CENTER,
-            verticalAlignment = VerticalAlignment.BOTTOM)
+	/** Displays information while the model of this [VerticeView] is executed.*/
+	private val executionInfoLabel = Label(
+		text = "",
+		font = font,
+		horizontalAlignment = HorizontalAlignment.CENTER,
+		verticalAlignment = VerticalAlignment.BOTTOM)
 
 	/** ---- UI properties */
 
-	var customDescription: TextProperty
-		get() = TextProperty(model!!.customDescription)
-		set(value) { model!!.customDescription = value.text }
+	var customDescription: Description
+		get() = model!!.description
+		set(value) {
+			model!!.description.translation = value.translation
+		}
 
-    /** ---- [VerticeView] interface */
+	/** ---- [VerticeView] interface */
 
-    private val staticDescription: String? get() = Translations.getOptionalString("${model!!.baseResourceKey}.desc")
+	private val staticDescription: String? get() = Translations.getOptionalString("${model!!.baseResourceKey}.desc")
 
-    override val shortDescription: String? get() = model?.customDescription ?: staticDescription
+	override val shortDescription: String? get() = model?.description?.value ?: staticDescription
 
-    override var isShowPortViews: Boolean = true
-        set(value) {
-            if (value == field) {
-                return
-            }
-            invalidate()
-            field = value
-            invalidate()
-            update()
-        }
+	override var isShowPortViews: Boolean = true
+		set(value) {
+			if (value == field) {
+				return
+			}
+			invalidate()
+			field = value
+			invalidate()
+			update()
+		}
 
-    override val portViewCount: Int get() = portViews.size
+	override val portViewCount: Int get() = portViews.size
 
-    override fun addPortView(portView: PortView<*>) {
-        portViews.add(portView)
-        portView.owner = this
-    }
+	override fun addPortView(portView: PortView<*>) {
+		portViews.add(portView)
+		portView.owner = this
+	}
 
-    override fun removePortView(portView: PortView<*>) {
-        portViews.remove(portView)
-        portView.owner = null
-    }
+	override fun removePortView(portView: PortView<*>) {
+		portViews.remove(portView)
+		portView.owner = null
+	}
 
-    override fun getPortViews(): ImmutableList<PortView<*>> {
-        return portViews.toImmutableList()
-    }
+	override fun getPortViews(): ImmutableList<PortView<*>> {
+		return portViews.toImmutableList()
+	}
 
-    override fun getPortViewAtConnectionPoint(x: Double, y: Double): PortView<*>? {
-        val p = rotateBack(x, y)
-        return portViews.firstOrNull { it.containsConnectionPoint(p.x - location.x, p.y - location.y) }
-    }
+	override fun getPortViewAtConnectionPoint(x: Double, y: Double): PortView<*>? {
+		val p = rotateBack(x, y)
+		return portViews.firstOrNull { it.containsConnectionPoint(p.x - location.x, p.y - location.y) }
+	}
 
-    override fun getPortViewAt(x: Double, y: Double): PortView<*>? {
-        val p = rotateBack(x, y)
-        return portViews.firstOrNull { it.contains(p.x - location.x, p.y - location.y) || it.containsConnectionPoint(x, y)}
-    }
+	override fun getPortViewAt(x: Double, y: Double): PortView<*>? {
+		val p = rotateBack(x, y)
+		return portViews.firstOrNull { it.contains(p.x - location.x, p.y - location.y) || it.containsConnectionPoint(x, y) }
+	}
 
-    override fun <G : Any> getPortView(port: Port<G>): PortView<G>? {
-        return portViews.filter { it.port == port }.map { it as PortView<G> }.firstOrNull()
-    }
+	override fun <G : Any> getPortView(port: Port<G>): PortView<G>? {
+		return portViews.filter { it.port == port }.map { it as PortView<G> }.firstOrNull()
+	}
 
-    override fun getPort(portId: Int): Port<*>? {
-        if (model!!.designError != null) {
-            return null
-        }
-        return model!!.getPort<Any>(portId)
-    }
+	override fun getPort(portId: Int): Port<*>? {
+		if (model!!.designError != null) {
+			return null
+		}
+		return model!!.getPort<Any>(portId)
+	}
 
-    override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?) {
-	    if (port != null) {
-	        getPortView(port)?.let {
-	            invalidate()
-	            it.handleConnect(edgeView)
-	            invalidate()
-	        }
-	    }
-    }
+	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?) {
+		if (port != null) {
+			getPortView(port)?.let {
+				invalidate()
+				it.handleConnect(edgeView)
+				invalidate()
+			}
+		}
+	}
 
-    override fun <G : Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?) {
-	    if (port != null) {
-	        getPortView(port)?.let {
-	            invalidate()
-	            it.handleUnconnect(edgeView)
-	            invalidate()
-	        }
-	    }
-    }
+	override fun <G : Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?) {
+		if (port != null) {
+			getPortView(port)?.let {
+				invalidate()
+				it.handleUnconnect(edgeView)
+				invalidate()
+			}
+		}
+	}
 
-    override fun handleEdgeViewWidthChanged(edgeView: EdgeView<*>) {
-        getNetPortViews(edgeView.model!!).forEach { it.edgeViewWidth = edgeView.width }
-    }
+	override fun handleEdgeViewWidthChanged(edgeView: EdgeView<*>) {
+		getNetPortViews(edgeView.model!!).forEach { it.edgeViewWidth = edgeView.width }
+	}
 
 	override fun drawDataFlow(inputName: String, outputName: String, context: DrawContext) {
 		val inputPortView = getPortView(model!!.getInput<T>(inputName))!!
@@ -168,209 +170,209 @@ abstract class AbstractVerticeView<T : Vertice>(
 		context.g.drawLine(inputPortView.locationX, inputPortView.locationY, outputPortView.locationX, outputPortView.locationY)
 	}
 
-    /** ---- [ConnectableView] */
+	/** ---- [ConnectableView] */
 
 	override val isConnectable: Boolean get() = model!!.designError == null
 
-    override fun getPortConnectionPoint(port: Port<*>?): Point2D {
-        return rotate(getPortView(port!!)!!.connectionPoint.add(location))
-    }
+	override fun getPortConnectionPoint(port: Port<*>?): Point2D {
+		return rotate(getPortView(port!!)!!.connectionPoint.add(location))
+	}
 
-    override fun getPortConnectionLayoutDirections(edgeView: EdgeView<*>, port: Port<*>?, refPoint: Point2D?): Set<Direction> {
-        if (port != null) {
-            return setOf(rotate(getPortView(port)!!.direction))
-        }
-        return emptySet()
-    }
+	override fun getPortConnectionLayoutDirections(edgeView: EdgeView<*>, port: Port<*>?, refPoint: Point2D?): Set<Direction> {
+		if (port != null) {
+			return setOf(rotate(getPortView(port)!!.direction))
+		}
+		return emptySet()
+	}
 
-    /** ---- [Transparent] interface */
+	/** ---- [Transparent] interface */
 
-    protected val transparent = TransparentImpl(this)
+	protected val transparent = TransparentImpl(this)
 
-    override var transparency: Int
-        get() = transparent.transparency
-        set(value) {
-            transparent.transparency = value
-            portViews.forEach { it.transparency = value }
-        }
+	override var transparency: Int
+		get() = transparent.transparency
+		set(value) {
+			transparent.transparency = value
+			portViews.forEach { it.transparency = value }
+		}
 
-    /** ---- [Snappable] interface */
+	/** ---- [Snappable] interface */
 
-    override val snappableX: Array<SnappableX>
-        get() {
-            val list = mutableListOf<SnappableX>()
-            list.add(SnappableXCoordinate(location.x))
-            model!!.getPorts()
-                    .filter { !it.isConnected }
-                    .forEach { list.add(getPortView(it)!!) }
-            return list.toTypedArray()
-        }
+	override val snappableX: Array<SnappableX>
+		get() {
+			val list = mutableListOf<SnappableX>()
+			list.add(SnappableXCoordinate(location.x))
+			model!!.getPorts()
+				.filter { !it.isConnected }
+				.forEach { list.add(getPortView(it)!!) }
+			return list.toTypedArray()
+		}
 
-    override val snappableY: Array<SnappableY>
-        get() {
-            val list = mutableListOf<SnappableY>()
-            list.add(SnappableYCoordinate(location.y))
-            model!!.getPorts()
-                    .filter { !it.isConnected }
-                    .forEach { list.add(getPortView(it)!!) }
-            return list.toTypedArray()
-        }
+	override val snappableY: Array<SnappableY>
+		get() {
+			val list = mutableListOf<SnappableY>()
+			list.add(SnappableYCoordinate(location.y))
+			model!!.getPorts()
+				.filter { !it.isConnected }
+				.forEach { list.add(getPortView(it)!!) }
+			return list.toTypedArray()
+		}
 
-    private fun getUnconnectedPortConnectionPoint(port: Port<*>): Point2D {
-        return rotate(getPortView(port)!!.unconnectedConnectionPoint.add(location))
-    }
+	private fun getUnconnectedPortConnectionPoint(port: Port<*>): Point2D {
+		return rotate(getPortView(port)!!.unconnectedConnectionPoint.add(location))
+	}
 
-    /** ---- [Drawable] */
+	/** ---- [Drawable] */
 
-    private val plainBoundingBox get() = rotate(getBoundingBoxImpl())
+	private val plainBoundingBox get() = rotate(getBoundingBoxImpl())
 
-    override val boundingBox: Rectangle2D
-        get() {
-            val bbox = plainBoundingBox
-            if (isExecutionInfoDrawn(requiredBySystemSpeed = true, isPausing = true)) {
-                bbox.add(executionInfoLabel.boundingBox)
-            }
-            return bbox
-        }
+	override val boundingBox: Rectangle2D
+		get() {
+			val bbox = plainBoundingBox
+			if (isExecutionInfoDrawn(requiredBySystemSpeed = true, isPausing = true)) {
+				bbox.add(executionInfoLabel.boundingBox)
+			}
+			return bbox
+		}
 
-    override fun getTooltip(x: Double, y: Double): Tooltip? {
-        val portView = getPortViewAt(x, y)
-        if (portView != null) {
-            return portView.getTooltip(x, y)
-        }
-        val text = buildToolTipText(type, shortDescription)
-        return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, plainBoundingBox.centerX, plainBoundingBox.maxY) else null
-    }
+	override fun getTooltip(x: Double, y: Double): Tooltip? {
+		val portView = getPortViewAt(x, y)
+		if (portView != null) {
+			return portView.getTooltip(x, y)
+		}
+		val text = buildToolTipText(type, shortDescription)
+		return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, plainBoundingBox.centerX, plainBoundingBox.maxY) else null
+	}
 
-    override fun draw(context: DrawContext) {
-        draw(context) {drawImpl(it)}
-    }
+	override fun draw(context: DrawContext) {
+		draw(context) { drawImpl(it) }
+	}
 
-    override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-        return object : InputEventHandlerAdapter<InputEventContext>() {
-            override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
-                if (context.mouseEvent?.button == Button.BUTTON1 && context.mouseEvent?.clickCount == 2) {
-                    cannotOpenMsg(this@AbstractVerticeView)
-                }
-                return null
-            }
-        }
-    }
+	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
+		return object : InputEventHandlerAdapter<InputEventContext>() {
+			override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
+				if (context.mouseEvent?.button == Button.BUTTON1 && context.mouseEvent?.clickCount == 2) {
+					cannotOpenMsg(this@AbstractVerticeView)
+				}
+				return null
+			}
+		}
+	}
 
-    /** ---- [Component] interface */
+	/** ---- [Component] interface */
 
-    override val type: String? get() = model?.type
+	override val type: String? get() = model?.type
 
-    override val rotatable: Boolean get() = true
+	override val rotatable: Boolean get() = true
 
-    override var rotation: Rotation
-        get() = super.rotation
-        set(value) {
-            super.rotation = value
-            portViews.forEach { it.ownerRotation = value }
-        }
+	override var rotation: Rotation
+		get() = super.rotation
+		set(value) {
+			super.rotation = value
+			portViews.forEach { it.ownerRotation = value }
+		}
 
-    /** ---- [AbstractGraphElementView] */
+	/** ---- [AbstractGraphElementView] */
 
-    override fun modelExchanged(oldModel: T?) {
-        super.modelExchanged(oldModel)
-        if (!arePortViewsStored) {
-            clearPortViews()
-        }
-    }
+	override fun modelExchanged(oldModel: T?) {
+		super.modelExchanged(oldModel)
+		if (!arePortViewsStored) {
+			clearPortViews()
+		}
+	}
 
-    /** ---- [ActorView] interface */
+	/** ---- [ActorView] interface */
 
-    protected open inner class DefaultActionInteractionHandler :  ActorInteractionHandlerAdapter() {
-	    override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-		    if (context.mouseEvent!!.clickCount == 2) {
-			    cannotOpenMsg(this@AbstractVerticeView)
-		    }
-		    return null
-	    }
-    }
+	protected open inner class DefaultActionInteractionHandler : ActorInteractionHandlerAdapter() {
+		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+			if (context.mouseEvent!!.clickCount == 2) {
+				cannotOpenMsg(this@AbstractVerticeView)
+			}
+			return null
+		}
+	}
 
-    private val _actorInteractionHandler: ActorInteractionHandler by lazy { DefaultActionInteractionHandler() }
+	private val _actorInteractionHandler: ActorInteractionHandler by lazy { DefaultActionInteractionHandler() }
 
-    override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
-        val portTooltip = getPortViewAtConnectionPoint(x, y)?.getExecutionTooltip(x, y)
-        if (portTooltip != null) {
-            return portTooltip
-        }
-        val text = buildToolTipText(type, shortDescription)
-        return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, plainBoundingBox.centerX, plainBoundingBox.maxY) else null
-    }
+	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
+		val portTooltip = getPortViewAtConnectionPoint(x, y)?.getExecutionTooltip(x, y)
+		if (portTooltip != null) {
+			return portTooltip
+		}
+		val text = buildToolTipText(type, shortDescription)
+		return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, plainBoundingBox.centerX, plainBoundingBox.maxY) else null
+	}
 
-    override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
-        return _actorInteractionHandler
-    }
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
+		return _actorInteractionHandler
+	}
 
-    /** ---- [AbstractVerticeView] */
+	/** ---- [AbstractVerticeView] */
 
-    /** Returns the unrotated bounding box in absolute view coordinates.*/
-    protected abstract fun getBoundingBoxImpl(): Rectangle2D
+	/** Returns the unrotated bounding box in absolute view coordinates.*/
+	protected abstract fun getBoundingBoxImpl(): Rectangle2D
 
-    protected fun clearPortViews() {
-        portViews.clear()
-    }
+	protected fun clearPortViews() {
+		portViews.clear()
+	}
 
-    /**
-     * Convenience method for getting the [PortView] of the first [InputPort].
-     * @throws NoSuchElementException if not exists
-     */
-    protected fun getInput(): PortView<*> {
-        return getPortView(model!!.getInput<Any>())!!
-    }
+	/**
+	 * Convenience method for getting the [PortView] of the first [InputPort].
+	 * @throws NoSuchElementException if not exists
+	 */
+	protected fun getInput(): PortView<*> {
+		return getPortView(model!!.getInput<Any>())!!
+	}
 
-    /**
-     * Convenience method for getting the [PortView] of the first [OutputPort].
-     * @throws NoSuchElementException if not exists
-     */
-    protected fun getOutput(): PortView<*> {
-        return getPortView(model!!.getOutput<Any>())!!
-    }
+	/**
+	 * Convenience method for getting the [PortView] of the first [OutputPort].
+	 * @throws NoSuchElementException if not exists
+	 */
+	protected fun getOutput(): PortView<*> {
+		return getPortView(model!!.getOutput<Any>())!!
+	}
 
-    /** Returns the [PortView]s that point to the specified [Direction].*/
-    protected fun getPortViewsOfDirection(direction: Direction): ImmutableList<PortView<*>> {
-        return portViews.filter { it.direction == direction }.toCollection(mutableListOf()).toImmutableList()
-    }
+	/** Returns the [PortView]s that point to the specified [Direction].*/
+	protected fun getPortViewsOfDirection(direction: Direction): ImmutableList<PortView<*>> {
+		return portViews.filter { it.direction == direction }.toCollection(mutableListOf()).toImmutableList()
+	}
 
-    /** Adds all [PortView]s to the overall bounding box and the box used for 'contains' calculation.*/
-    protected fun addPortViewsTo(boundingBox: Rectangle2D, containsBox: Rectangle2D?) {
-        containsBox?.setFrame(boundingBox)
-	    if (isShowPortViews) {
-		    for (pv in portViews) {
-			    addPortViewTo(pv, boundingBox, containsBox)
-		    }
-	    }
-    }
+	/** Adds all [PortView]s to the overall bounding box and the box used for 'contains' calculation.*/
+	protected fun addPortViewsTo(boundingBox: Rectangle2D, containsBox: Rectangle2D?) {
+		containsBox?.setFrame(boundingBox)
+		if (isShowPortViews) {
+			for (pv in portViews) {
+				addPortViewTo(pv, boundingBox, containsBox)
+			}
+		}
+	}
 
-    /**
-     * Adds the bounding box of the specified [PortView] to the overall bounding box and the box
-     * used for 'contains' calculation.
-     */
-    protected fun addPortViewTo(portView: PortView<*>, boundingBox: Rectangle2D, containsBox: Rectangle2D?) {
-        val outset = BaseModule.properties.getInt(PROP_SENSITIVE_AREA)
-        val bb = portView.boundingBox
+	/**
+	 * Adds the bounding box of the specified [PortView] to the overall bounding box and the box
+	 * used for 'contains' calculation.
+	 */
+	protected fun addPortViewTo(portView: PortView<*>, boundingBox: Rectangle2D, containsBox: Rectangle2D?) {
+		val outset = BaseModule.properties.getInt(PROP_SENSITIVE_AREA)
+		val bb = portView.boundingBox
 
-        bb.setFrame(location.x + bb.x, location.y + bb.y, bb.width, bb.height)
-        boundingBox.add(bb)
+		bb.setFrame(location.x + bb.x, location.y + bb.y, bb.width, bb.height)
+		boundingBox.add(bb)
 
-        containsBox?.let {
-            it.add(bb)
-            it.add(
-                location.x + portView.connectionPoint.x + outset * portView.direction.dx,
-                location.y + portView.connectionPoint.y + outset * portView.direction.dy)
-        }
-    }
+		containsBox?.let {
+			it.add(bb)
+			it.add(
+				location.x + portView.connectionPoint.x + outset * portView.direction.dx,
+				location.y + portView.connectionPoint.y + outset * portView.direction.dy)
+		}
+	}
 
-    /**
-     * Calls [drawImpl(DrawContext,Boolean)] and uses the property [isShowPortViews] to determine
-     * whether the [PortView]s are to be drawn.
-     */
-    protected open fun drawImpl(context: DrawContext) {
-        drawImpl(context, isShowPortViews)
-    }
+	/**
+	 * Calls [drawImpl(DrawContext,Boolean)] and uses the property [isShowPortViews] to determine
+	 * whether the [PortView]s are to be drawn.
+	 */
+	protected open fun drawImpl(context: DrawContext) {
+		drawImpl(context, isShowPortViews)
+	}
 
 	protected fun drawImplBeforeBorder(context: DrawContext) {
 		drawImpl(context, isShowPortViews, beforeBorder = true)
@@ -380,21 +382,21 @@ abstract class AbstractVerticeView<T : Vertice>(
 		drawImpl(context, isShowPortViews, beforeBorder = false)
 	}
 
-    /**
-     * Basic drawing method that only draws all [PortView]s of this [VerticeView].
-     *
-     * When this method gets called, the [DrawContext] is translated to the location and rotated to the rotation
-     * angle of this [AbstractVerticeView].
-     *
-     * Subclasses will extends this method in order to draw their individual look. Note that this method is typically
-     * called by [AbstractVerticeView.draw], which prepares a setup for location and rotation independent drawing of
-     * this method.
-     */
-    protected open fun drawImpl(context: DrawContext, drawPortViews: Boolean) {
-        if (drawPortViews) {
-            portViews.forEach { it.draw(context) }
-        }
-    }
+	/**
+	 * Basic drawing method that only draws all [PortView]s of this [VerticeView].
+	 *
+	 * When this method gets called, the [DrawContext] is translated to the location and rotated to the rotation
+	 * angle of this [AbstractVerticeView].
+	 *
+	 * Subclasses will extends this method in order to draw their individual look. Note that this method is typically
+	 * called by [AbstractVerticeView.draw], which prepares a setup for location and rotation independent drawing of
+	 * this method.
+	 */
+	protected open fun drawImpl(context: DrawContext, drawPortViews: Boolean) {
+		if (drawPortViews) {
+			portViews.forEach { it.draw(context) }
+		}
+	}
 
 	private fun drawImpl(context: DrawContext, drawPortViews: Boolean, beforeBorder: Boolean) {
 		if (drawPortViews) {
@@ -402,80 +404,80 @@ abstract class AbstractVerticeView<T : Vertice>(
 		}
 	}
 
-    /**
-     * Drawing wrapper method that prepares a setup for location and rotation independent drawing of custom drawing code.
-     *
-     * This method translates the [Graphics2D] context to the location of this [VerticeView] and also
-     * rotates it to the current [Rotation].
-     * @param context the {@link DrawContext} to be used for drawing
-     * @param drawer the code that effectively draws content within the prepared translation and rotation context.
-     */
-    fun draw(context: DrawContext, drawer: (DrawContext) -> Unit) {
-        val oldColor = context.g.color
+	/**
+	 * Drawing wrapper method that prepares a setup for location and rotation independent drawing of custom drawing code.
+	 *
+	 * This method translates the [Graphics2D] context to the location of this [VerticeView] and also
+	 * rotates it to the current [Rotation].
+	 * @param context the {@link DrawContext} to be used for drawing
+	 * @param drawer the code that effectively draws content within the prepared translation and rotation context.
+	 */
+	fun draw(context: DrawContext, drawer: (DrawContext) -> Unit) {
+		val oldColor = context.g.color
 
-        context.g.translate(location.x, location.y)
-        context.g.rotate(rotation.angle)
+		context.g.translate(location.x, location.y)
+		context.g.rotate(rotation.angle)
 
-        drawer.invoke(context)
+		drawer.invoke(context)
 
-        context.g.rotate(-rotation.angle)
-        context.g.translate(-location.x, -location.y)
+		context.g.rotate(-rotation.angle)
+		context.g.translate(-location.x, -location.y)
 
-        // Draw propagation delay above bounding box if in waiting state
-	    val appContext = context.castedAppContext<GraphApplicationContext>()!!
-	    if (isExecutionInfoDrawn(appContext.systemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore, appContext.isPausing)) {
-            configureExecutionInfoLabel()
-            executionInfoLabel.draw(context)
-        }
+		// Draw propagation delay above bounding box if in waiting state
+		val appContext = context.castedAppContext<GraphApplicationContext>()!!
+		if (isExecutionInfoDrawn(appContext.systemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore, appContext.isPausing)) {
+			configureExecutionInfoLabel()
+			executionInfoLabel.draw(context)
+		}
 
-	    DrawModule.drawLocatableDebugBoundingBox(this, context)
+		DrawModule.drawLocatableDebugBoundingBox(this, context)
 
-        context.g.color = oldColor
-    }
+		context.g.color = oldColor
+	}
 
-    private fun isExecutionInfoDrawn(requiredBySystemSpeed: Boolean, isPausing: Boolean): Boolean {
-        return requiredBySystemSpeed && model != null && model!!.waiting && isPausing
-    }
+	private fun isExecutionInfoDrawn(requiredBySystemSpeed: Boolean, isPausing: Boolean): Boolean {
+		return requiredBySystemSpeed && model != null && model!!.waiting && isPausing
+	}
 
-    /**
-     * Configures and updates the [Label] that displays the execution info text above the bounding box.
-     * Since [AbstractVerticeView] doesn't update itself when the [Vertice]'s execution state has changed,
-     * this method must always be called before using [executionInfoLabel].
-     */
-    private fun configureExecutionInfoLabel() {
-        val bbox = plainBoundingBox
-        val text = "$propagationDelay ns"
-        val style = Themes.get<GraphTheme>().annotation
-        executionInfoLabel.font = style.font
-        executionInfoLabel.text = text
-        executionInfoLabel.color = transparent.applyTo(style.color.textColor)
-        executionInfoLabel.location = Point2D(bbox.centerX.toInt(), bbox.minY.toInt() - 3)
-    }
+	/**
+	 * Configures and updates the [Label] that displays the execution info text above the bounding box.
+	 * Since [AbstractVerticeView] doesn't update itself when the [Vertice]'s execution state has changed,
+	 * this method must always be called before using [executionInfoLabel].
+	 */
+	private fun configureExecutionInfoLabel() {
+		val bbox = plainBoundingBox
+		val text = "$propagationDelay ns"
+		val style = Themes.get<GraphTheme>().annotation
+		executionInfoLabel.font = style.font
+		executionInfoLabel.text = text
+		executionInfoLabel.color = transparent.applyTo(style.color.textColor)
+		executionInfoLabel.location = Point2D(bbox.centerX.toInt(), bbox.minY.toInt() - 3)
+	}
 
-    protected fun rotate(rect: Rectangle2D): Rectangle2D {
-        return rotation.rotateRectangleAround(location, rect)
-    }
+	protected fun rotate(rect: Rectangle2D): Rectangle2D {
+		return rotation.rotateRectangleAround(location, rect)
+	}
 
-    /** Rotates the specified point around the location of this [VerticeView] by its [Rotation]..*/
-    private fun rotate(p: Point2D): Point2D {
-        return rotate(p.x, p.y)
-    }
+	/** Rotates the specified point around the location of this [VerticeView] by its [Rotation]..*/
+	private fun rotate(p: Point2D): Point2D {
+		return rotate(p.x, p.y)
+	}
 
-    /** Rotates the specified (x,y) point around the location of this [VerticeView] by its [Rotation].*/
-    private fun rotate(x: Double, y: Double): Point2D {
-        return rotation.rotatePointAround(location, x, y)
-    }
+	/** Rotates the specified (x,y) point around the location of this [VerticeView] by its [Rotation].*/
+	private fun rotate(x: Double, y: Double): Point2D {
+		return rotation.rotatePointAround(location, x, y)
+	}
 
-    /** Rotates the specified (x,y) point around the location of this [VerticeView] by the inverse of its [Rotation].*/
-    protected fun rotateBack(x: Double, y: Double): Point2D {
-        return rotation.inverse().rotatePointAround(location, x, y)
-    }
+	/** Rotates the specified (x,y) point around the location of this [VerticeView] by the inverse of its [Rotation].*/
+	protected fun rotateBack(x: Double, y: Double): Point2D {
+		return rotation.inverse().rotatePointAround(location, x, y)
+	}
 
-    /** Rotates the specified [Direction] by the [Rotation] of this [VerticeView].*/
-    private fun rotate(direction: Direction): Direction {
-        return rotation.rotateDirection(direction)
-    }
+	/** Rotates the specified [Direction] by the [Rotation] of this [VerticeView].*/
+	private fun rotate(direction: Direction): Direction {
+		return rotation.rotateDirection(direction)
+	}
 
-    /** Returns all [PortView]s of this [VerticeView] whose [Port]s are connected to the specified [Net].*/
-    private fun getNetPortViews(net: Net<*>): Collection<PortView<*>> = portViews.filter { it.port.net === net }
+	/** Returns all [PortView]s of this [VerticeView] whose [Port]s are connected to the specified [Net].*/
+	private fun getNetPortViews(net: Net<*>): Collection<PortView<*>> = portViews.filter { it.port.net === net }
 }

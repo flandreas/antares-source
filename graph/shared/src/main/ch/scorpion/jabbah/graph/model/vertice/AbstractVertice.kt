@@ -10,18 +10,25 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 
 /**
  * An abstract base implementation of the [Vertice] interface.
  */
 abstract class AbstractVertice(
 	override val baseResourceKey: String,
-	name: String? = null
-) : AbstractGraphElement(), Vertice {
+	name: String? = null,
+	private val describable: Describable = DescribableImpl()
+) : AbstractGraphElement(), Vertice, Describable by describable {
 
     companion object {
         private val LOG by logger(AbstractVertice::class)
     }
+
+	init {
+		describable.description.changeHandler = { _, _ -> stateChanged() }
+	}
 
     /** Contains all [Port]s of this [Vertice].*/
     private val ports = mutableListOf<Port<*>>()
@@ -41,14 +48,6 @@ abstract class AbstractVertice(
                 stateChanged()
             }
         }
-
-	override var customDescription: String? = null
-		set(value) {
-			if (value != field) {
-				field = value
-				stateChanged()
-			}
-		}
 
     override val portsCount: Int
         get() = ports.size
@@ -149,9 +148,7 @@ abstract class AbstractVertice(
         if (storesName && name != null) {
             writer.writeString("name", name!!)
         }
-	    if (StringUtils.isNotEmpty(customDescription)) {
-		    writer.writeString("desc", customDescription!!)
-	    }
+	    description.write("desc", writer)
     }
 
     override fun read(reader: StoreReader) {
@@ -159,7 +156,7 @@ abstract class AbstractVertice(
         if (storesName && reader.hasAttribute("name")) {
             name = reader.readString("name")
         }
-	    customDescription = reader.readOptionalString("desc")
+	    description.read("desc", reader)
     }
 
     /** ---- [Actor] interface */

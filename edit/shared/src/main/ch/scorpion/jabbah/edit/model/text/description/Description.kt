@@ -18,10 +18,19 @@ interface Describable {
 
 /** A standard implementation of the [Describable] interface. */
 data class DescribableImpl(override val description: Description = Description()) : Describable {
-	constructor(eventBus: EventBus): this(Description(eventBus))
+	constructor(eventBus: EventBus): this(Description(eventBus = eventBus))
+	constructor(changeHandler: ((Description, TranslatableText) -> Unit)): this(Description(changeHandler = changeHandler))
 }
 
-class Description(private val eventBus: EventBus? = null) {
+class Description(
+	translatableText: TranslatableText = TranslatableText(),
+	var changeHandler: ((Description, TranslatableText) -> Unit)? = null
+) {
+
+	constructor(
+		translatableText: TranslatableText = TranslatableText(),
+		eventBus: EventBus?
+	): this(translatableText, { desc, oldValue -> eventBus?.post(DescriptionChangedEvent(desc, oldValue))})
 
 	/** The displayable name in the current system [Language]. */
 	var value: String?
@@ -37,12 +46,12 @@ class Description(private val eventBus: EventBus? = null) {
 		}
 
 	/** Contains translations of [value] .*/
-	var translation: TranslatableText = TranslatableText()
+	var translation: TranslatableText = translatableText
 		set(newValue) {
 			if (field != newValue) {
 				val oldValue = field
 				field = newValue
-				eventBus?.post(DescriptionChangedEvent(this, oldValue))
+				changeHandler?.invoke(this, oldValue)
 			}
 		}
 

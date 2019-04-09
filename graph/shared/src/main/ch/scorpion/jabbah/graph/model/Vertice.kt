@@ -3,14 +3,20 @@ package ch.scorpion.jabbah.graph.model
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.exception.NoSuchElementException
+import ch.scorpion.jabbah.edit.model.text.description.Describable
 
 /**
  * A [Vertice] is a node in a [Graph] that can be connected with other [Vertice]s using [Net]s that are attached
  * to the [Vertice]' [Port]s.
  *
  * The IDs of [Port]s in a [Vertice] start with 1, i.e. the first [Port] of a [Vertice] has ID 1.
+ *
+ * The description of this [Vertice] instance that can be customized by the user.
+ * Note that this description is related to the instance, not the type. The description of the type is typically constant,
+ * while two [Vertice]s of the same type can have distinctive instance descriptions, which can be used by the user
+ * to be able to distinguish between them.
  */
-interface Vertice : GraphElement {
+interface Vertice : GraphElement, Describable {
 
     /**
      * The name of this [Vertice]. Is often provided by the user and can serve to distinguish two [Vertice]s of the same type
@@ -19,14 +25,6 @@ interface Vertice : GraphElement {
     var name: String?
 
 	val baseResourceKey: String
-
-	/**
-	 * The description of this [Vertice] instance that can be customized by the user.
-	 * Note that this description related to the instance, not the type. The description of the type is typically constant,
-	 * while two [Vertice]s of the same type can have distinctive instance descriptions, which can be used by the user
-	 * to be able to distinguish between them.
-	 */
-	var customDescription: String?
 
     /** The overall number of [Port]s this [Vertice] contains, independent of the [PortType].*/
     val portsCount: Int
