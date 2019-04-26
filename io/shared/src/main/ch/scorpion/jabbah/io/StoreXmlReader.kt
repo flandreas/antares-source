@@ -96,6 +96,8 @@ class StoreXmlReader(
 			xmlReader.ascend()
 		}
 
+		// Accept a ClassCastException if cast fails
+		@Suppress("UNCHECKED_CAST")
 		return storable as T
 	}
 
@@ -103,15 +105,19 @@ class StoreXmlReader(
 		if (!xmlReader.hasElement(name)) {
 			return listOf()
 		}
-		val storables = mutableListOf<Storable>()
+		val storables = mutableListOf<T>()
 		xmlReader.descend(name)
 		for (i in 1..xmlReader.getElementsCount()) {
 			xmlReader.descend(i)
-			storables.add(readStorableImpl())
+
+			// Accept a ClassCastException if cast fails
+			@Suppress("UNCHECKED_CAST")
+			storables.add(readStorableImpl() as T)
+
 			xmlReader.ascend()
 		}
 		xmlReader.ascend()
-		return storables as List<T>
+		return storables
 	}
 
 	override fun readInt(name: String): Int {

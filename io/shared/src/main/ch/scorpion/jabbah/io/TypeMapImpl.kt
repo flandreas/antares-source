@@ -23,7 +23,8 @@ class TypeMapImpl : TypeMap {
 
     override fun <T : Any> getClass(type: String): KClass<T> {
         val clazz = type2Class[type] ?: throw NoSuchElementException("TypeMapImpl: type '$type' not found")
-        return clazz as KClass<T>
+	    @Suppress("UNCHECKED_CAST")
+	    return clazz as KClass<T>
     }
 
     override fun getTypeName(clazz: KClass<Any>): String {
