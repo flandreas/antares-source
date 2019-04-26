@@ -26,6 +26,6 @@ abstract class AbstractModule : Module {
      * and then configure defaults implementations of interfaces and default property values, which might
      * overwrite configurations of lower level modules.
      */
-    abstract protected fun initialize()
+    protected abstract fun initialize()
 
 }

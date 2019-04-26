@@ -8,9 +8,11 @@ import ch.scorpion.jabbah.base.module.BaseModuleJvm
  */
 object IOModuleJvm : AbstractModule() {
 
+	private val storableCloner: StorableCloner by lazy { StorableClonerJvm() }
+
     override fun initialize() {
-        IOModule.storableClonerProvider = { StorableClonerJvm() }
         BaseModuleJvm.require()
         IOModule.require()
+        IOModule.storableClonerProvider = { storableCloner }
     }
 }

@@ -10,9 +10,11 @@ import ch.scorpion.jabbah.io.StorableClonerJs
  */
 object IOModuleJs : AbstractModule() {
 
+	private val storableCloner: StorableCloner by lazy { StorableClonerJs() }
+
     override fun initialize() {
         BaseModuleJs.require()
-        IOModule.storableClonerProvider = { StorableClonerJs() }
         IOModule.require()
+        IOModule.storableClonerProvider = { storableCloner }
     }
 }

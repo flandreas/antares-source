@@ -193,7 +193,7 @@ class IOIntegrationTest {
             aLong = reader.readLong("aLong")
             childB.clear()
             for (b in reader.readStorables<B>("childB")) {
-                childB.add(b as B)
+                childB.add(b)
             }
             reader.requestResolution(this, Reference(
                 name = "referencedB",
