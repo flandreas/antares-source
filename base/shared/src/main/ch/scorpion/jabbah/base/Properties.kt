@@ -123,10 +123,12 @@ open class Properties {
 	}
 
 	fun <T> get(name: String): T {
+		@Suppress("UNCHECKED_CAST")
 		return getEntry(name).objValue as T
 	}
 
 	fun <T> getOptional(name: String): T? {
+		@Suppress("UNCHECKED_CAST")
 		return getOptionalEntry(name)?.objValue as T?
 	}
 }

@@ -12,7 +12,9 @@ import java.io.ByteArrayOutputStream
 
 class InteractiveErrorHandler : ErrorHandler() {
 
-    private val LOG by logger(InteractiveErrorHandler::class)
+	companion object {
+        private val LOG by logger(InteractiveErrorHandler::class)
+	}
 
     private var frame: JFrame? = null
 
@@ -21,7 +23,7 @@ class InteractiveErrorHandler : ErrorHandler() {
     }
 
     override fun exceptionImpl(x: Throwable) {
-        LOG.error("Unexpected error: ${x}")
+        LOG.error("Unexpected error: $x")
 
         if (frame != null) {
             if (LOG.isDebugEnabled()) {

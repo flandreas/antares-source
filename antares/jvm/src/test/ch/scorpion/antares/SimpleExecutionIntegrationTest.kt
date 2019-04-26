@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import io.mockk.mockk
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -49,6 +50,7 @@ class SimpleExecutionIntegrationTest : AbstractCircuitTest() {
 	}
 
 	@Test
+	@Ignore
 	fun shouldRunThrough() {
 		startSimulation()
 		assertEquals(ActorState.Waiting, switchView.model!!.state)

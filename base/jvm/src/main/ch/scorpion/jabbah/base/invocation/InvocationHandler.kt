@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.base.invocation
 
 /**
- * The [InvocationHandler] processes {@link Runnable}s asynchronously.
+ * The [InvocationHandler] processes [Runnable]s asynchronously.
  * @see #invoke(Runnable)
  */
 abstract class InvocationHandler {

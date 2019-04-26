@@ -25,7 +25,6 @@ object UiUtil {
 	var eventQueueInvoker: (invokable: () -> Unit) -> Boolean = {
 		if (!EventQueue.isDispatchThread()) {
 			EventQueue.invokeLater { it.invoke() }
-			true
 		}
 		false
 	}

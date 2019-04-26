@@ -140,13 +140,11 @@ class BusyHandler(val rootPaneContainer: RootPaneContainer, val stateBar: StateB
      */
     fun incrementBusyCounter() {
         LOG.trace("incrementBusyCounter")
-        var counter = 0
         synchronized(this) {
             busyCounter++
-            counter = busyCounter
-        }
-        if (counter == 1) {
-            busyStateChanged()
+	        if (busyCounter == 1) {
+	            busyStateChanged()
+	        }
         }
     }
 
@@ -156,20 +154,17 @@ class BusyHandler(val rootPaneContainer: RootPaneContainer, val stateBar: StateB
      */
     fun decrementBusyCounter() {
         LOG.trace("decrementBusyCounter")
-        var counter = 0
         synchronized(this) {
-            if (busyCounter == 0) {
+	        if (busyCounter == 0) {
                 return
             }
             busyCounter--
-            counter = busyCounter
-        }
 
-        if (counter == 0) {
-            busyStateChanged()
+	        if (busyCounter == 0) {
+		        busyStateChanged()
+	        }
         }
     }
-
 
     /**
      * Called whenever the busy state changed. It has to be called after every state change, but the state can have

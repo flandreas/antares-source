@@ -25,7 +25,7 @@ abstract class ErrorHandler {
                 try {
                     UiUtil.invokeAndWaitThrowing(Runnable { implementation.exceptionImpl(x) })
                 } catch (e: Exception) {
-                    LOG.error("Error: ${e}")
+                    LOG.error("Error: $e")
                 }
 
             }
