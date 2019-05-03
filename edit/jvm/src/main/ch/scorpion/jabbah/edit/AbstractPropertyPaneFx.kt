@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox
 import org.controlsfx.control.PropertySheet
 import java.util.*
 
-/** A [Pane] for editing the properties of a bean.*/
+/** A panel for editing the properties of a bean.*/
 abstract class AbstractPropertyPaneFx(
 	protected val editor: Editor
 ) : VBox() {
@@ -55,7 +55,8 @@ abstract class AbstractPropertyPaneFx(
 	protected fun updateProperties(bean: Any, classPath: String) {
 		try {
 			val beanInfoClass = Class.forName(classPath)
-			val beanInfo = beanInfoClass.newInstance() as AbstractBeanInfo<Any>
+			@Suppress("UNCHECKED_CAST")
+			val beanInfo = beanInfoClass.getDeclaredConstructor().newInstance() as AbstractBeanInfo<Any>
 
 			sheet.items.setAll(beanInfo.getProperties(bean, editor).map { PropertyWrapper(it, bean) })
 			propertyObject = bean

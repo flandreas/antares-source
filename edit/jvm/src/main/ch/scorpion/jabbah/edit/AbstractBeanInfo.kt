@@ -11,7 +11,7 @@ import java.beans.SimpleBeanInfo
  * extend the bean's class name by "BeanInfo". Example: The [SimpleBeanInfo] class for "LEDView" must be named
  * "LEDViewBeanInfo".
  */
-abstract class AbstractBeanInfo<T> : SimpleBeanInfo() {
+abstract class AbstractBeanInfo<in T> : SimpleBeanInfo() {
 
     fun getProperties(bean: T, editor: Editor): Array<Property> {
         val properties = mutableListOf<Property>()
@@ -29,7 +29,7 @@ abstract class AbstractBeanInfo<T> : SimpleBeanInfo() {
  * Base class for implementing [SimpleBeanInfo]s for [Component]s.
  * Adds the ID property.
  */
-abstract class ComponentBeanInfo<T: Component> : AbstractBeanInfo<T>() {
+abstract class ComponentBeanInfo<in T: Component> : AbstractBeanInfo<T>() {
 
 	companion object {
 		private val id = PropertyImpl("edit.property.id", Int::class.java)
