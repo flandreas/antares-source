@@ -172,6 +172,6 @@ abstract class AbstractGraphics2D : Graphics2D {
 			LOG.warn("Graphics2DJs: requested ellipsoid ring, but only circular ring supported.")
 		}
 		arc(x + w / 2, y + w / 2, w / 2, 0.0, PI * 2, false)
-		arc(x + w / 2, y + w / 2, w / 2, 0.0, PI * 2, true)
+		arc(x + w / 2, y + w / 2, w / 2 - thickness, 0.0, PI * 2, true)
 	}
 }

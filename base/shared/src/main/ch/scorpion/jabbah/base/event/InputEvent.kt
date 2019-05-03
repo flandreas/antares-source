@@ -1,11 +1,11 @@
 package ch.scorpion.jabbah.base.event
 
 /** These masks are the same as in the corresponding JDK class.*/
-const val SHIFT_MASK = 1
-const val CTRL_MASK = 2
-const val META_MASK = 4
-const val ALT_MASK = 8
-const val ALT_GRAPH_MASK = 32
+const val SHIFT_MASK = 1.shl(6)
+const val CTRL_MASK = 1.shl(7)
+const val META_MASK = 1.shl(8)
+const val ALT_MASK = 1.shl(9)
+const val ALT_GRAPH_MASK = 1.shl(13)
 
 /**
  * Abstract cross-platform base class of events that indicate a user input.

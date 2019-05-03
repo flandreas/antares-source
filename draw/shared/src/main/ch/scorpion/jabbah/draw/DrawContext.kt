@@ -10,11 +10,11 @@ import ch.scorpion.jabbah.draw.style.Stylable
  */
 open class DrawContext(val g: Graphics2D, val appContext: Any? = null) {
 
-    /** Instructs a [Drawable] to use the colors of this [DrawContext] instead of its own colors.*/
-    var useContextColors: Boolean = false
+	/** Instructs a [Drawable] to use the colors of this [DrawContext] instead of its own colors.*/
+	var useContextColors: Boolean = false
 
-    /** The [Color] used for drawing if [useContextColors] is `true`.*/
-    var color: CompositeColor? = null
+	/** The [Color] used for drawing if [useContextColors] is `true`.*/
+	var color: CompositeColor? = null
 
 	/**
 	 * The optional [Stylable] to be used as a source for styling information like [Color].
@@ -22,19 +22,20 @@ open class DrawContext(val g: Graphics2D, val appContext: Any? = null) {
 	 */
 	var stylable: Stylable? = null
 
-    var selectionColor: CompositeColor? = null
+	var selectionColor: CompositeColor? = null
 
-    /**
-     * Convenience method for choosing to use the specified [CompositeColor] or this [DrawContext]'s color
-     * depending on the current value of [useContextColors].
-     */
-    fun choose(color: CompositeColor): CompositeColor {
-        return if (useContextColors) this.color!! else color
-    }
+	/**
+	 * Convenience method for choosing to use the specified [CompositeColor] or this [DrawContext]'s color
+	 * depending on the current value of [useContextColors].
+	 */
+	fun choose(color: CompositeColor): CompositeColor {
+		return if (useContextColors) this.color!! else color
+	}
 
-    fun <T> castedAppContext(): T? {
-        return appContext as T?
-    }
+	fun <T> castedAppContext(): T? {
+		@Suppress("UNCHECKED_CAST")
+		return appContext as T?
+	}
 
 	/**
 	 * Returns the [CompositeColor] of the [Stylable] of this [DrawContext], or the specified [CompositeColor]

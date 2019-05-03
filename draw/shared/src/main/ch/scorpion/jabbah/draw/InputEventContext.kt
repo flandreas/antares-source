@@ -12,25 +12,25 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
  * accessing [View] properties, such as changing the [Cursor] during input handling.
  */
 open class InputEventContext(
-    val view: View<*>,
-    val mouseEvent: MouseEvent? = null,
-    val keyEvent: KeyEvent? = null,
-    val x: Double = 0.0,
-    val y: Double = 0.0,
-    val readonly: Boolean = false
+	val view: View<*>,
+	val mouseEvent: MouseEvent? = null,
+	val keyEvent: KeyEvent? = null,
+	val x: Double = 0.0,
+	val y: Double = 0.0,
+	val readonly: Boolean = false
 ) {
-    val location: Point2D get() = Point2D(x, y)
+	val location: Point2D get() = Point2D(x, y)
 
-    fun withXY(p: Point2D): InputEventContext = withXY(p.x, p.y)
+	fun withXY(p: Point2D): InputEventContext = withXY(p.x, p.y)
 
-    /** Returns a copy of this [InputEventContext] with other x and y coordinates*/
-    open fun withXY(x: Double, y: Double): InputEventContext {
-        return InputEventContext(
-                view = this.view,
-                mouseEvent = this.mouseEvent,
-                keyEvent = this.keyEvent,
-                x = x,
-                y = y
-        )
-    }
+	/** Returns a copy of this [InputEventContext] with other x and y coordinates*/
+	open fun withXY(x: Double, y: Double): InputEventContext {
+		return InputEventContext(
+			view = this.view,
+			mouseEvent = this.mouseEvent,
+			keyEvent = this.keyEvent,
+			x = x,
+			y = y
+		)
+	}
 }

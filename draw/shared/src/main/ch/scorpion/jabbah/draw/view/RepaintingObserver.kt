@@ -92,7 +92,7 @@ object RepaintingObserver {
      * Notifies this [RepaintingObserver] that the current [View] has been repainted.
      * @param rect the repainted region in view coordinates
      */
-    fun repainted(rect: RectangularShape) {
+    fun repainted(@Suppress("UNUSED_PARAMETER") rect: RectangularShape) {
         // TODO
     }
 
@@ -135,10 +135,10 @@ private class RepaintingObserverDisplay(view: View<*>) : AbstractRectangle(0, 0,
     }
 
     init {
-        BaseModule.eventBus.register(RepaintingObserverLogEvent::class, {
-            invalidate()
-            validate()
-        })
+        BaseModule.eventBus.register(RepaintingObserverLogEvent::class) {
+	        invalidate()
+	        validate()
+        }
     }
 
     override fun draw(context: DrawContext) {

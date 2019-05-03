@@ -5,12 +5,12 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 
 class EnableRepaintingObserverAction(
-		eventBus: EventBus = BaseModule.eventBus
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("view.action.repaintingObserver.enable") {
 
 	init {
-		eventBus.register(RepaintingObserverEnabledEvent::class, { updateState() })
-		eventBus.register(RepaintingObserverRunningEvent::class, { updateState() })
+		eventBus.register(RepaintingObserverEnabledEvent::class) { updateState() }
+		eventBus.register(RepaintingObserverRunningEvent::class) { updateState() }
 		updateState()
 	}
 
@@ -25,12 +25,12 @@ class EnableRepaintingObserverAction(
 }
 
 class RunRepaintingObserverAction(
-		eventBus: EventBus = BaseModule.eventBus
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("view.action.repaintingObserver.run") {
 
 	init {
-		eventBus.register(RepaintingObserverEnabledEvent::class, { updateState() })
-		eventBus.register(RepaintingObserverRunningEvent::class, { updateState()})
+		eventBus.register(RepaintingObserverEnabledEvent::class) { updateState() }
+		eventBus.register(RepaintingObserverRunningEvent::class) { updateState() }
 		updateState()
 	}
 
@@ -45,12 +45,12 @@ class RunRepaintingObserverAction(
 }
 
 class PreviousRepaintingObserverLogAction(
-		eventBus: EventBus = BaseModule.eventBus
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("view.action.repaintingObserver.log.previous") {
 
 	init {
-		eventBus.register(RepaintingObserverRunningEvent::class, { updateState() })
-		eventBus.register(RepaintingObserverLogEvent::class, { updateState() })
+		eventBus.register(RepaintingObserverRunningEvent::class) { updateState() }
+		eventBus.register(RepaintingObserverLogEvent::class) { updateState() }
 		updateState()
 	}
 
@@ -60,18 +60,18 @@ class PreviousRepaintingObserverLogAction(
 
 	private fun updateState() {
 		enabled = RepaintingObserver.isEnabled
-				&& !RepaintingObserver.isRunning
-				&& RepaintingObserver.logIndex > 0
+			&& !RepaintingObserver.isRunning
+			&& RepaintingObserver.logIndex > 0
 	}
 }
 
 class NextRepaintingObserverLogAction(
-		eventBus: EventBus = BaseModule.eventBus
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("view.action.repaintingObserver.log.next") {
 
 	init {
-		eventBus.register(RepaintingObserverRunningEvent::class, { updateState() })
-		eventBus.register(RepaintingObserverLogEvent::class, { updateState() })
+		eventBus.register(RepaintingObserverRunningEvent::class) { updateState() }
+		eventBus.register(RepaintingObserverLogEvent::class) { updateState() }
 		updateState()
 	}
 
@@ -81,7 +81,7 @@ class NextRepaintingObserverLogAction(
 
 	private fun updateState() {
 		enabled = RepaintingObserver.isEnabled
-				&& !RepaintingObserver.isRunning
-				&& RepaintingObserver.logIndex < RepaintingObserver.logSize - 1
+			&& !RepaintingObserver.isRunning
+			&& RepaintingObserver.logIndex < RepaintingObserver.logSize - 1
 	}
 }

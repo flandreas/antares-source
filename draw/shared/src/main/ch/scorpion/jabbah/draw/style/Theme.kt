@@ -6,95 +6,95 @@ import ch.scorpion.jabbah.draw.graphics.*
 
 interface Theme {
 
-    /** The displayable name of this [Theme]. This name is not translated to the user's language.*/
-    val name: String
+	/** The displayable name of this [Theme]. This name is not translated to the user's language.*/
+	val name: String
 
-    /**
-     * Determines whether this [Theme] defines colors for objects that can be painted over white background.
-     * This is relevant when displaying individual figures directly on UI panels, such as trees or component
-     * preview panels.
-     */
-    val supportsWhiteBackground: Boolean
+	/**
+	 * Determines whether this [Theme] defines colors for objects that can be painted over white background.
+	 * This is relevant when displaying individual figures directly on UI panels, such as trees or component
+	 * preview panels.
+	 */
+	val supportsWhiteBackground: Boolean
 
-    /**
-     * Notifies this [Theme] that is has become the current one in [Themes].
-     * Implementations should activateIn themselves by registering all their [Style]s
-     * with the [StyleRepository].
-     */
-    fun activateIn(styleRepository: StyleRepository, styleOnly: Boolean)
+	/**
+	 * Notifies this [Theme] that is has become the current one in [Themes].
+	 * Implementations should activateIn themselves by registering all their [Style]s
+	 * with the [StyleRepository].
+	 */
+	fun activateIn(styleRepository: StyleRepository, styleOnly: Boolean)
 }
 
 object Themes {
 
-    private const val PROP_THEME = "ch.scorpion.antares.view.theme"
-    private val themes = mutableListOf<Theme>(DrawTheme())
+	private const val PROP_THEME = "ch.scorpion.antares.view.theme"
+	private val themes = mutableListOf<Theme>(DrawTheme())
 
-    private var _current: Theme = themes[0]
-        set(value) {
-            field = value
-            field.activateIn(DrawStyleModule.styleProvider, styleOnly = false)
-            _uiTheme = determineUITheme()
-        }
+	private var uiTheme: Theme = themes[0]
+		set(value) {
+			if (field != value) {
+				field = value
+				field.activateIn(uiStyleProvider as StyleRepository, styleOnly = true)
+			}
+		}
 
-    private var _uiTheme: Theme = themes[0]
-        set(value) {
-            if (field != value) {
-                field = value
-                field.activateIn(uiStyleProvider as StyleRepository, styleOnly = true)
-            }
-        }
+	var current: Theme = themes[0]
+		private set(value) {
+			field = value
+			field.activateIn(DrawStyleModule.styleProvider, styleOnly = false)
+			uiTheme = determineUITheme()
+		}
 
-    val current: Theme get() = _current
+	/** The [StyleProvider] that provides the [Style]s to be used for displaying over white UI background.*/
+	val uiStyleProvider: StyleProvider = StyleRepository()
 
-    /** The [StyleProvider] that provides the [Style]s to be used for displaying over white UI background.*/
-    val uiStyleProvider: StyleProvider = StyleRepository()
+	fun setCurrent(name: String) {
+		current = get(name) ?: throw NoSuchElementException("No theme with name '$name' defined")
+		BaseModule.settings.set(PROP_THEME, name)
+		BaseModule.eventBus.post(ThemeEvent(current))
+	}
 
-    fun setCurrent(name: String) {
-        _current = get(name) ?: throw NoSuchElementException("No theme with name '$name' defined")
-        BaseModule.settings.set(PROP_THEME, name)
-        BaseModule.eventBus.post(ThemeEvent(_current))
-    }
+	fun <T : Theme> get(): T {
+		@Suppress("UNCHECKED_CAST")
+		return current as T
+	}
 
-    fun <T: Theme> get(): T {
-        return current as T
-    }
+	/** Returns the [Theme] suitable to be displayed over white UI background.*/
+	fun <T : Theme> getUITheme(): T {
+		@Suppress("UNCHECKED_CAST")
+		return uiTheme as T
+	}
 
-    /** Returns the [Theme] suitable to be displayed over white UI background.*/
-    fun <T: Theme> getUITheme(): T {
-        return _uiTheme as T
-    }
+	private fun determineUITheme(): Theme {
+		if (current.supportsWhiteBackground) {
+			return current
+		}
+		return themes.firstOrNull { it.supportsWhiteBackground } ?: current
+	}
 
-    private fun determineUITheme(): Theme {
-        if (current.supportsWhiteBackground) {
-            return current
-        }
-        return themes.firstOrNull { it.supportsWhiteBackground } ?: current
-    }
+	fun get(name: String): Theme? {
+		return themes.firstOrNull { it.name == name }
+	}
 
-    fun get(name: String): Theme? {
-        return themes.firstOrNull { it.name == name }
-    }
+	fun exists(name: String): Boolean {
+		return get(name) != null
+	}
 
-    fun exists(name: String): Boolean {
-        return get(name) != null
-    }
+	/** Registers the specified [Theme]s by replacing all existing [Theme]s.*/
+	fun register(vararg themes: Theme) {
+		if (themes.isNotEmpty()) {
+			this.themes.clear()
+			this.themes.addAll(themes)
 
-    /** Registers the specified [Theme]s by replacing all existing [Theme]s.*/
-    fun register(vararg themes: Theme) {
-        if (themes != null && themes.isNotEmpty()) {
-            this.themes.clear()
-            this.themes.addAll(themes)
+			val storedThemeName = BaseModule.settings.getString(PROP_THEME, "")
+			if (StringUtils.isNotEmpty(storedThemeName) && this.themes.firstOrNull { it.name == storedThemeName } != null) {
+				setCurrent(storedThemeName)
+			} else {
+				current = this.themes[0]
+			}
+		}
+	}
 
-            val storedThemeName = BaseModule.settings.getString(PROP_THEME, "")
-            if (StringUtils.isNotEmpty(storedThemeName) && this.themes.firstOrNull { it.name == storedThemeName } != null) {
-                setCurrent(storedThemeName)
-            } else {
-                _current = this.themes[0]
-            }
-        }
-    }
-
-    fun allThemes(): Iterator<Theme> = themes.iterator()
+	fun allThemes(): Iterator<Theme> = themes.iterator()
 
 }
 
@@ -112,44 +112,44 @@ open class DrawTheme(
 	val shadow: CompositeColor = DEF_SHADOW
 ) : Theme {
 
-    companion object {
-        const val DEF_NAME = "default"
-        const val DEF_SUPPORTS_WHITE_BACKGROUND = true
-        val DEF_BACKGROUND = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
-        val DEF_FIGURE = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
-        val DEF_TOOLTIP = BasicStyle(CompositeColor(foregroundColor = Color(249, 214, 54),
-                backgroundColor = Color(255, 253, 219), textColor = Color.BLACK))
-	    val DEF_SHADOW = CompositeColor(Color.GRAY, Color.GRAY, Color.GRAY)
-	    const val REF_COLOR_ALPHA = 144
-        val DEF_REF_COLORS = listOf(
-            DrawGraphicsModule.RED.withAlpha(REF_COLOR_ALPHA),
-            DrawGraphicsModule.BLUE.withAlpha(REF_COLOR_ALPHA),
-            DrawGraphicsModule.GREEN.withAlpha(REF_COLOR_ALPHA),
-            DrawGraphicsModule.YELLOW.withAlpha(REF_COLOR_ALPHA),
-            DrawGraphicsModule.VIOLET.withAlpha(REF_COLOR_ALPHA),
-            DrawGraphicsModule.PINK.withAlpha(REF_COLOR_ALPHA),
-            DrawGraphicsModule.GRAY.withAlpha(REF_COLOR_ALPHA),
-            DrawGraphicsModule.WHITE.withAlpha(REF_COLOR_ALPHA),
-            DrawGraphicsModule.BLACK.withAlpha(REF_COLOR_ALPHA)
-        )
-	    val DEF_PREDEFINED_COLORS = listOf(
-		    PredefinedColor(PredefinedColorIdentity.White, DrawGraphicsModule.WHITE),
-		    PredefinedColor(PredefinedColorIdentity.Black, DrawGraphicsModule.BLACK),
-		    PredefinedColor(PredefinedColorIdentity.Gray, DrawGraphicsModule.GRAY),
-		    PredefinedColor(PredefinedColorIdentity.Red, DrawGraphicsModule.RED),
-		    PredefinedColor(PredefinedColorIdentity.Blue, DrawGraphicsModule.BLUE),
-		    PredefinedColor(PredefinedColorIdentity.Green, DrawGraphicsModule.GREEN),
-		    PredefinedColor(PredefinedColorIdentity.Yellow, DrawGraphicsModule.YELLOW)
-	    )
-    }
+	companion object {
+		const val DEF_NAME = "default"
+		const val DEF_SUPPORTS_WHITE_BACKGROUND = true
+		val DEF_BACKGROUND = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
+		val DEF_FIGURE = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
+		val DEF_TOOLTIP = BasicStyle(CompositeColor(foregroundColor = Color(249, 214, 54),
+			backgroundColor = Color(255, 253, 219), textColor = Color.BLACK))
+		val DEF_SHADOW = CompositeColor(Color.GRAY, Color.GRAY, Color.GRAY)
+		const val REF_COLOR_ALPHA = 144
+		val DEF_REF_COLORS = listOf(
+			DrawGraphicsModule.RED.withAlpha(REF_COLOR_ALPHA),
+			DrawGraphicsModule.BLUE.withAlpha(REF_COLOR_ALPHA),
+			DrawGraphicsModule.GREEN.withAlpha(REF_COLOR_ALPHA),
+			DrawGraphicsModule.YELLOW.withAlpha(REF_COLOR_ALPHA),
+			DrawGraphicsModule.VIOLET.withAlpha(REF_COLOR_ALPHA),
+			DrawGraphicsModule.PINK.withAlpha(REF_COLOR_ALPHA),
+			DrawGraphicsModule.GRAY.withAlpha(REF_COLOR_ALPHA),
+			DrawGraphicsModule.WHITE.withAlpha(REF_COLOR_ALPHA),
+			DrawGraphicsModule.BLACK.withAlpha(REF_COLOR_ALPHA)
+		)
+		val DEF_PREDEFINED_COLORS = listOf(
+			PredefinedColor(PredefinedColorIdentity.White, DrawGraphicsModule.WHITE),
+			PredefinedColor(PredefinedColorIdentity.Black, DrawGraphicsModule.BLACK),
+			PredefinedColor(PredefinedColorIdentity.Gray, DrawGraphicsModule.GRAY),
+			PredefinedColor(PredefinedColorIdentity.Red, DrawGraphicsModule.RED),
+			PredefinedColor(PredefinedColorIdentity.Blue, DrawGraphicsModule.BLUE),
+			PredefinedColor(PredefinedColorIdentity.Green, DrawGraphicsModule.GREEN),
+			PredefinedColor(PredefinedColorIdentity.Yellow, DrawGraphicsModule.YELLOW)
+		)
+	}
 
-    override fun activateIn(styleRepository: StyleRepository, styleOnly: Boolean) {
-        if (!styleOnly) {
-            referenceColorSequenceProvider.replaceColors(referenceColors)
-	        predefinedColors.forEach { PredefinedColorRepository.register(it) }
-        }
-        styleRepository.registerStyle(StyleType.BACKGROUND, background)
-        styleRepository.registerStyle(StyleType.FIGURE, figure)
-        styleRepository.registerStyle(StyleType.TOOLTIP, tooltip)
-    }
+	override fun activateIn(styleRepository: StyleRepository, styleOnly: Boolean) {
+		if (!styleOnly) {
+			referenceColorSequenceProvider.replaceColors(referenceColors)
+			predefinedColors.forEach { PredefinedColorRepository.register(it) }
+		}
+		styleRepository.registerStyle(StyleType.BACKGROUND, background)
+		styleRepository.registerStyle(StyleType.FIGURE, figure)
+		styleRepository.registerStyle(StyleType.TOOLTIP, tooltip)
+	}
 }
