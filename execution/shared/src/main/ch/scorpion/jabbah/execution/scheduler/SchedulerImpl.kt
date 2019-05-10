@@ -505,7 +505,7 @@ class SchedulerImpl(
 
 		/** Prints this [Slot] to the DEBUG log.*/
 		fun print() {
-			LOG.debug("\tSlot at $relativeTime ns with ${requests.size} requests, timeFreeze=$timeFreeze")
+			LOG.debug("\tSlot at ${StringUtils.formatLong(relativeTime)} ns with ${requests.size} requests, timeFreeze=$timeFreeze")
 			requests.forEach { it.print() }
 		}
 	}

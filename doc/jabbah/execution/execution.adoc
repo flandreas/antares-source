@@ -1,28 +1,27 @@
-== Execution
+== Modul "Execution"
 
-=== Introduction
+=== Einführung
 
-The `Execution` module provides mechanisms for discrete simulation (and its animation) of composite systems.
-In order to understand what that means, let's look at an example.
+Das Modul `Execution` stellt Mechanismen für die diskrete Simulation (und deren Animation) von zusammengestetzten Systemen
+zur Verfügung. Um zu verstehen, was das bedeutet, betrachten wir ein Beispiel.
 
-Consider the model of a system that consists of four components A, B, C and D. These components are active
-in a way that they have a particular behaviour whose execution is triggered by an input. The execution of
-this behaviour takes a particular time. When they have completed their execution, they may have produced
-an output, which is forwarded to another component, which in turn triggered the execution behaviour of that other
-component, and so on and forth. Such systems occur often in technical applications, for example as digital
-electronic circuits or production chains within factories.
+Ein System besteht aus den vier Komponenten A, B, C und D. Die Komponenten haben jeweils einen Eingang und einen
+Ausgang. Sie empfangen am Eingang ein Signal, führen eine bestimmte Verarbeitung durch, und produzieren am Ausgang ein
+anderes Signal, das zur nächsten Komponente weitergeleitet wird, was wiederum deren Verarbeitung des Signals anstösst.
+Die Verarbarbeitung eines Signals innerhalb einer Komponente nimmt eine gewisse Zeit in Anspruch.
 
-TODO More description.
+Solche Systeme kommen oft in technischen Anwendungen vor, z.B. in Form von digitale elekronische Schaltungen oder Produktionsketten
+in Fabriken.
 
 image::../../graffle-img/execution-model.svg[width=500]
 
-=== High-level Requirements
+=== Anforderungen
 
 TODO
 
-=== Core Abstractions
+=== Kern-Abstraktionen
 
 image::../../model-img/svg/jabbah__execution__Execution Core Abstractions_20.svg[]
 
-=== Interaction
+=== Interaktionen
 image::../../model-img/svg/jabbah__execution__Collaboration1__Interaction1__Execution_19.svg[width=800]
