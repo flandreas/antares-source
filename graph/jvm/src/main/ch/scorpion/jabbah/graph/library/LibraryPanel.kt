@@ -24,7 +24,7 @@ class LibraryPanel(
     projectHolder: ProjectHolder = ProjectModule.projectHolder
 ): JPanel() {
 
-    val libraryTreeView = LibraryTreeView(libraryHolder.library, projectHolder.project, eventBus)
+    private val libraryTreeView = LibraryTreeView(libraryHolder.library, projectHolder.project, eventBus)
     val libraryPreviewPanel = LibraryPreviewPanel(eventBus, libraryTreeView)
 
     init {

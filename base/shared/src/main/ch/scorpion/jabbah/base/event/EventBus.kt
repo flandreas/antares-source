@@ -19,7 +19,7 @@ interface EventBus {
     fun <T: Any> unregister(eventClass: KClass<out T>, handler: EventHandler<T>)
 
     /** Unregisters a handler function from listening to any events.*/
-    fun unregister(handler: EventHandler<Any>)
+    fun unregister(handler: EventHandler<*>)
 
     /** Posts an event by calling all handlers that have been registered for the class of the event. */
     fun post(event: Any)
@@ -54,7 +54,7 @@ class EventBusImpl : EventBus {
         unregister(eventClass.simpleName!!, handler as EventHandler<Any>)
     }
 
-    override fun unregister(handler: EventHandler<Any>) {
+    override fun unregister(handler: EventHandler<*>) {
         registrations.keys.forEach { unregister(it, handler) }
     }
 
@@ -78,7 +78,7 @@ class EventBusImpl : EventBus {
 
     /** ---- [EventBusImpl] */
 
-    private fun unregister(eventClassName: String, handler: EventHandler<Any>) {
-        registrations.get(eventClassName)?.remove(handler)
+    private fun unregister(eventClassName: String, handler: EventHandler<*>) {
+        registrations[eventClassName]?.remove(handler)
     }
 }

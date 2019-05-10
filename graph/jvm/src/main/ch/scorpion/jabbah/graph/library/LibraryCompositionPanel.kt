@@ -45,18 +45,20 @@ class LibraryCompositionPanel(
 		fun showAsDialog(library: Library, parent: Frame, eventBus: EventBus) {
 			val dialog = JDialog(parent, true)
 			BusyHandler.register(dialog, null)
-			dialog.title = Translations.getString("library.composition.title")
-			dialog.contentPane.add(LibraryCompositionPanel(
+			val panel = LibraryCompositionPanel(
 				destinationLibrary = library,
 				closeHandler = {
 					dialog.isVisible = false
 					dialog.dispose()
 				},
-				eventBus = eventBus))
+				eventBus = eventBus)
+			dialog.title = Translations.getString("library.composition.title")
+			dialog.contentPane.add(panel)
 			dialog.pack()
 			dialog.setLocationRelativeTo(parent)
 			dialog.addWindowListener(object : WindowAdapter() {
 				override fun windowClosed(e: WindowEvent?) {
+					panel.dispose()
 					BusyHandler.deregister(dialog)
 				}
 			})
@@ -102,6 +104,11 @@ class LibraryCompositionPanel(
 		removeAction.enabled = false
 
 		buildUI()
+	}
+
+	fun dispose() {
+		sourceLibraryTree.dispose()
+		destinationLibraryTree.dispose()
 	}
 
 	private fun getSelectedSourceLibraryName(): String {
