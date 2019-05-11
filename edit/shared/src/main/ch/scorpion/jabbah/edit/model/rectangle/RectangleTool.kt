@@ -21,88 +21,94 @@ import kotlin.properties.Delegates
  * @property factory creates the [RectangularComponent] to be added to the [Drawing]
  */
 class RectangleTool<T : RectangularComponent>(
-    editor: Editor,
-    factory: () -> T,
-    adder: (T) -> Component,
-    val defaultWidth: Double,
-    val defaultHeight: Double
+	editor: Editor,
+	factory: () -> T,
+	adder: (T) -> Component,
+	val defaultWidth: Double,
+	val defaultHeight: Double
 ) : AbstractComponentTool<T>(editor, factory, adder) {
 
-    constructor(editor: Editor, factory: () -> T): this(editor, factory, { it })
-    constructor(editor: Editor, factory: () -> T, adder: (T) -> Component): this(editor, factory, adder, DEF_WIDTH, DEF_HEIGHT)
+	constructor(editor: Editor, factory: () -> T) : this(editor, factory, { it })
+	constructor(editor: Editor, factory: () -> T, adder: (T) -> Component) : this(editor, factory, adder, DEF_WIDTH, DEF_HEIGHT)
 
-    companion object {
+	companion object {
 
-        /** The default rectangle width used if dragging is omitted.*/
-        const val DEF_WIDTH = 200.0
+		/** The default rectangle width used if dragging is omitted.*/
+		const val DEF_WIDTH = 200.0
 
-        /** The default rectangle height used if dragging is omitted.*/
-        const val DEF_HEIGHT = 100.0
+		/** The default rectangle height used if dragging is omitted.*/
+		const val DEF_HEIGHT = 100.0
 
-        /** The minimal width or height used to determine whether dragging is omitted.*/
-        const val MINIMAL_SIZE = 3
-    }
+		/** The minimal width or height used to determine whether dragging is omitted.*/
+		const val MINIMAL_SIZE = 3
+	}
 
-    /** Holds the instantiated rectangle. Initialized in [mousePressed].*/
-    private var instance by Delegates.notNull<T>()
+	/** Holds the instantiated rectangle. Initialized in [mousePressed].*/
+	private var instance by Delegates.notNull<T>()
 
-    /** The [Component] that is added to the [Drawing]. */
-    private var addedComponent by Delegates.notNull<Component>()
+	/** The [Component] that is added to the [Drawing]. */
+	private var addedComponent by Delegates.notNull<Component>()
 
-    /** The location where the mouse is initially pressed.*/
-    private var anchorLocation = Point2D.ZERO
+	/** The location where the mouse is initially pressed.*/
+	private var anchorLocation = Point2D.ZERO
 
-    /** ---- [Tool] interface */
+	/** ---- [Tool] interface */
 
-    override fun activate() {
-        editor.view.setCursor(Cursor.CROSSHAIR)
-    }
+	override fun activate() {
+		editor.view.setCursor(Cursor.CROSSHAIR)
+	}
 
-    override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
-        super.mousePressed(e, x, y)
+	override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
+		super.mousePressed(e, x, y)
 
-        instance = createComponent()
+		instance = createComponent()
 
-        val offset = editor.snapManager.snap(x, y)
-        anchorLocation = Point2D(x + offset.x, y + offset.y)
-        instance.setFrame(anchorLocation.x, anchorLocation.y, 0.0, 0.0)
+		val offset = editor.snapManager.snap(x, y)
+		anchorLocation = Point2D(x + offset.x, y + offset.y)
+		instance.setFrame(anchorLocation.x, anchorLocation.y, 0.0, 0.0)
 
-        editor.view.selectionManager.deselectAll()
-        addedComponent = getAddedComponent(instance)
-        editor.drawing.add(addedComponent)
-        editor.view.selectionManager.select(addedComponent)
-    }
+		editor.view.selectionManager.deselectAll()
+		addedComponent = getAddedComponent(instance)
+		editor.drawing.add(addedComponent)
+		editor.view.selectionManager.select(addedComponent)
+	}
 
-    override fun mouseDragged(e: MouseEvent, x: Double, y: Double) {
-        super.mouseDragged(e, x, y)
+	override fun mouseDragged(e: MouseEvent, x: Double, y: Double) {
+		super.mouseDragged(e, x, y)
 
-        val offset = editor.snapManager.snap(x, y)
-        val width = x + offset.x - anchorLocation.x
-        val height = y + offset.y - anchorLocation.y
+		val offset = editor.snapManager.snap(x, y)
+		var width = x + offset.x - anchorLocation.x
+		var height = y + offset.y - anchorLocation.y
 
-        instance.setFrame(
-            Math.min(anchorLocation.x, anchorLocation.x + width),
-            Math.min(anchorLocation.y, anchorLocation.y + height),
-            Math.abs(width),
-            Math.abs(height)
-        )
+		if (e.isShiftDown) {
+			val size = Math.max(width, height)
+			width = size
+			height = size
+		}
 
-        instance.validate()
+		instance.setFrame(
+			Math.min(anchorLocation.x, anchorLocation.x + width),
+			Math.min(anchorLocation.y, anchorLocation.y + height),
+			Math.abs(width),
+			Math.abs(height)
+		)
 
-	    reportSize()
-    }
+		instance.validate()
 
-    override fun mouseReleased(e: MouseEvent, x: Double, y: Double) {
-        super.mouseReleased(e, x, y)
+		reportSize()
+	}
 
-        if (instance.width < MINIMAL_SIZE || instance.height < MINIMAL_SIZE) {
-            instance.setFrame(anchorLocation.x, anchorLocation.y, defaultWidth, defaultHeight)
-        }
+	override fun mouseReleased(e: MouseEvent, x: Double, y: Double) {
+		super.mouseReleased(e, x, y)
 
-        editor.view.selectionManager.select(addedComponent)
-        editor.commandManager.execute(AddCommand(editor, addedComponent))
-        editor.toolDone()
-    }
+		if (instance.width < MINIMAL_SIZE || instance.height < MINIMAL_SIZE) {
+			instance.setFrame(anchorLocation.x, anchorLocation.y, defaultWidth, defaultHeight)
+		}
+
+		editor.view.selectionManager.select(addedComponent)
+		editor.commandManager.execute(AddCommand(editor, addedComponent))
+		editor.toolDone()
+	}
 
 	private fun reportSize() {
 		Status.set(StatusType.Small, "w=${instance.width.toInt()}, h=${instance.height.toInt()}")
