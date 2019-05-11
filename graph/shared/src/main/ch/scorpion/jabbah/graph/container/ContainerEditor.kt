@@ -3,15 +3,17 @@ package ch.scorpion.jabbah.graph.container
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.draw.ZoomStrategyType
-import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditorImpl
-import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.view.ControlViewSourceEvent
 import ch.scorpion.jabbah.graph.view.editor.GraphPortViewEvent
@@ -27,10 +29,13 @@ open class ContainerEditor(
 
 	companion object {
 		private val LOG by logger(ContainerEditor::class)
+
+		/** The name of the [Float] property in [Properties] defining the default zoom factor in the [ContainerEditor].*/
+		const val PROP_DEFAULT_ZOOM_FACTOR = "graph.container.defaultZoomFactor"
 	}
 
     init {
-        view.defaultZoomStrategy = ZoomStrategy(ZoomStrategyType.VALUE, 2.0)
+	    configureDefaultZoomFactor()
         view.drawing = ContainerDrawing()
 
         eventBus.register(GraphPortViewEvent::class) {
@@ -65,7 +70,13 @@ open class ContainerEditor(
 			    }
 		    }
 	    }
+
+	    eventBus.register(PreferencesChangedEvent::class) { configureDefaultZoomFactor() }
     }
+
+	private fun configureDefaultZoomFactor() {
+		view.defaultZoomStrategy = ZoomStrategy(ZoomStrategyType.VALUE, BaseModule.properties.getFloat(PROP_DEFAULT_ZOOM_FACTOR).toDouble())
+	}
 
     protected fun getContainerDrawing(): ContainerDrawing {
         return drawing as ContainerDrawing

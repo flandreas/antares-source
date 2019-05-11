@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
+import ch.scorpion.jabbah.base.preferences.FloatPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -21,6 +22,7 @@ import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
+import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.script.ScriptEngineJvm
 import ch.scorpion.jabbah.graph.script.ScriptModule
@@ -93,6 +95,10 @@ object GraphViewModuleJvm : AbstractModule() {
 		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(
 			id = GraphNavigationPanel.PROP_DIVE_ANIMATION,
 			nameKey = "graph.preferences.GraphNavigationPanel.diveAnimation"
+		))
+		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).add(FloatPreference(
+			id = ContainerEditor.PROP_DEFAULT_ZOOM_FACTOR,
+			nameKey = "graph.preferences.ContainerEditor.defaultZoomFactor"
 		))
 	}
 }

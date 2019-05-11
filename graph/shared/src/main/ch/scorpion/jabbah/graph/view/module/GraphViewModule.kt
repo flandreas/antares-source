@@ -162,6 +162,7 @@ object GraphViewModule : AbstractModule() {
 
 		properties.set(ScenarioDetector.PROP_LIMIT_SYSTEM_SPEED_CATEGORY, SystemSpeedCategory.Observe.customName)
 		properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)
+		properties.set(ContainerEditor.PROP_DEFAULT_ZOOM_FACTOR, 2.0f)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
