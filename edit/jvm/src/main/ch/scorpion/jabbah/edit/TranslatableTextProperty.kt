@@ -12,7 +12,7 @@ import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.text.JTextComponent
 
 class TranslatableTextPropertyRenderer(
-	multiline: (TranslatableText) -> Boolean = {_ -> false}
+	multiline: (TranslatableText) -> Boolean = { _ -> false }
 ) : DefaultTableCellRenderer() {
 
 	private val textComponent: JTextComponent?
@@ -60,7 +60,7 @@ class TranslatableTextPropertyRenderer(
 
 class TranslatableTextPropertyEditor(
 	private val propertyName: String,
-	private val multiline: (TranslatableText) -> Boolean = {_ -> false}
+	private val multiline: (TranslatableText) -> Boolean = { _ -> false }
 ) : AbstractPropertyEditor() {
 
 	private val textComponent: JTextComponent
@@ -84,7 +84,7 @@ class TranslatableTextPropertyEditor(
 
 	override fun getValue(): Any {
 		return if (StringUtils.isBlank(textComponent.text)) {
-			text
+			text.withoutTranslation()
 		} else {
 			text.withTranslation(textComponent.text)
 		}
