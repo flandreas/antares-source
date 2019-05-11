@@ -50,6 +50,10 @@ object JTreeUtil {
 		}
 	}
 
+	fun expandAll(tree: JTree) {
+		expandAll(tree, TreePath(tree.model.root))
+	}
+
 	fun expandAll(tree: JTree, parent: TreePath) {
 		val node = parent.lastPathComponent as TreeNode
 		if (node.childCount >= 0) {

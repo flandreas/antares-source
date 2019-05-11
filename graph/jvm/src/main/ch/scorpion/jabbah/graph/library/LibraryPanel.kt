@@ -10,7 +10,6 @@ import java.awt.BorderLayout
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JPanel
-import javax.swing.JScrollPane
 
 /**
  * A combination of a [LibraryTreeView] and a [LibraryPreviewPanel] for the currently open
@@ -25,7 +24,8 @@ class LibraryPanel(
 ): JPanel() {
 
     private val libraryTreeView = LibraryTreeView(libraryHolder.library, projectHolder.project, eventBus)
-    val libraryPreviewPanel = LibraryPreviewPanel(eventBus, libraryTreeView)
+	private val libraryTreePanel = LibraryTreePanel(libraryTreeView)
+    val libraryPreviewPanel = LibraryPreviewPanel(eventBus, libraryTreePanel.libraryTreeView)
 
     init {
         eventBus.register(ThemeEvent::class) { repaint() }
@@ -39,13 +39,8 @@ class LibraryPanel(
 
 	private fun buildUI() {
 		layout = BorderLayout()
-		val treeViewScrollPane = JScrollPane(
-			libraryTreeView,
-			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
-
 		add(libraryPreviewPanel, BorderLayout.NORTH)
-		add(treeViewScrollPane, BorderLayout.CENTER)
+		add(libraryTreePanel, BorderLayout.CENTER)
 	}
 
 	private inner class DoubleClickListener : MouseAdapter() {
