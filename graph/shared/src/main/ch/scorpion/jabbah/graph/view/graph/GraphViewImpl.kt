@@ -193,6 +193,10 @@ class GraphViewImpl<T : GraphElementView<*>>(
 		return clone
 	}
 
+	override fun getVerticeViews(): ImmutableList<VerticeView<Vertice>> {
+		return getDrawables { it is VerticeView<*> } as ImmutableList<VerticeView<Vertice>>
+	}
+
 	override fun getEdgeViews(): ImmutableList<EdgeView<Any>> {
 		return getDrawables { it is EdgeView<*> } as ImmutableList<EdgeView<Any>>
 	}

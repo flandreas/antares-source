@@ -401,15 +401,16 @@ class SwitchView(
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!keyDown) {
-				when (context.keyEvent?.key) {
-					'0'.toInt() -> switchOn(context,false)
-					'1'.toInt() -> switchOn(context, true)
-					'\n'.toInt() -> switchOn(context, !model!!.isOn)
-					else -> {
-						name?.let {
-							if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
-								switchOn(context, !model!!.isOn)
-							}
+				if (isFocusOwner) {
+					when (context.keyEvent?.key) {
+						'0'.toInt() -> switchOn(context,false)
+						'1'.toInt() -> switchOn(context, true)
+						'\n'.toInt() -> switchOn(context, !model!!.isOn)
+					}
+				} else {
+					name?.let {
+						if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
+							switchOn(context, !model!!.isOn)
 						}
 					}
 				}
@@ -421,9 +422,18 @@ class SwitchView(
 		override fun keyReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!toggle) {
 				if (keyDown) {
-					when (context.keyEvent?.key) {
-						'1'.toInt() -> switchOn(context, false)
-						'\n'.toInt() -> switchOn(context, !model!!.isOn)
+					if (isFocusOwner) {
+						when (context.keyEvent?.key) {
+							'1'.toInt() -> switchOn(context, false)
+							'\n'.toInt() -> switchOn(context, false)
+						}
+					}
+					else {
+						name?.let {
+							if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
+								switchOn(context, false)
+							}
+						}
 					}
 				}
 			}

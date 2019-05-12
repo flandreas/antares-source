@@ -76,6 +76,8 @@ interface GraphView<T : GraphElementView<*>> : Drawing<T> {
      */
     fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator = IOModule.storableCreator): GraphView<T>
 
+	fun getVerticeViews(): ImmutableList<VerticeView<Vertice>>
+
     /** Returns all [EdgeViews] that this [GraphView] contains.*/
     fun getEdgeViews(): ImmutableList<EdgeView<Any>>
 
