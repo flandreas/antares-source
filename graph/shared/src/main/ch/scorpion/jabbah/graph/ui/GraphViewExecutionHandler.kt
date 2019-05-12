@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.DrawingView
@@ -37,6 +38,10 @@ class GraphViewExecutionHandler(
 	private val scheduler: Scheduler,
 	eventBus: EventBus
 ) : AbstractGraphViewExecutionHandler(view, eventBus) {
+
+	companion object {
+		private val LOG by logger(GraphViewExecutionHandler::class)
+	}
 
 	private val context = ReusableActorInteractionContext(
 		signalHandler = scheduler.signalHandler,
@@ -182,6 +187,7 @@ class GraphViewExecutionHandler(
 	private inner class KeyHandler : KeyAdapter() {
 
 		override fun keyPressed(e: KeyEvent) {
+			LOG.debug("keyPressed: ${e.key}")
 			if (e.key == ' '.toInt()) {
 				if (scheduler.isPaused) {
 					scheduler.step()

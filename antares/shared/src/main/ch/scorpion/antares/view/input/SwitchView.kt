@@ -400,34 +400,40 @@ class SwitchView(
 		}
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			when (context.keyEvent?.key) {
-				'0'.toInt() -> model!!.setOn(context.signalHandler, false)
-				'1'.toInt() -> model!!.setOn(context.signalHandler, true)
-				'\n'.toInt() -> {
-					if (!keyDown) {
-						// avoid repeated toggling due to OS key repetition
-						model!!.toggle(context.signalHandler)
+			if (!keyDown) {
+				when (context.keyEvent?.key) {
+					'0'.toInt() -> switchOn(context,false)
+					'1'.toInt() -> switchOn(context, true)
+					'\n'.toInt() -> switchOn(context, !model!!.isOn)
+					else -> {
+						name?.let {
+							if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
+								switchOn(context, !model!!.isOn)
+							}
+						}
 					}
 				}
+				keyDown = true
 			}
-			keyDown = true
 			return null
 		}
 
 		override fun keyReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!toggle) {
-				when (context.keyEvent?.key) {
-					'1'.toInt() -> model!!.setOn(context.signalHandler, false)
-					'\n'.toInt() -> {
-						if (keyDown) {
-							// avoid repeated toggling due to OS key repetition
-							model!!.toggle(context.signalHandler)
-						}
+				if (keyDown) {
+					when (context.keyEvent?.key) {
+						'1'.toInt() -> switchOn(context, false)
+						'\n'.toInt() -> switchOn(context, !model!!.isOn)
 					}
 				}
 			}
 			keyDown = false
 			return null
+		}
+
+		private fun switchOn(context: ActorInteractionContext, isOn: Boolean) {
+			model!!.setOn(context.signalHandler, isOn)
+			context.keyEvent?.consume()
 		}
 	}
 }
