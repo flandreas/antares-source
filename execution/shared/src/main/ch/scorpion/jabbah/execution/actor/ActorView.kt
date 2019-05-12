@@ -81,6 +81,8 @@ interface ActorInteractionHandler {
     fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler?
 
     fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler?
+
+	fun keyReleased(context: ActorInteractionContext): ActorInteractionHandler?
 }
 
 open class ActorInteractionHandlerAdapter : ActorInteractionHandler {
@@ -108,6 +110,10 @@ open class ActorInteractionHandlerAdapter : ActorInteractionHandler {
     override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 	    return null
     }
+
+	override fun keyReleased(context: ActorInteractionContext): ActorInteractionHandler? {
+		return null
+	}
 }
 
 /** An [ActorInteractionHandlerAdapter] that displays [Cursor.HAND] in [mouseMoved].*/

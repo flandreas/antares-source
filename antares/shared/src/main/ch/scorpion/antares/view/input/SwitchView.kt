@@ -373,6 +373,8 @@ class SwitchView(
 
 	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
 
+		private var keyDown = false
+
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			model!!.toggle(context.signalHandler)
 			context.mouseEvent?.consume()
@@ -401,8 +403,30 @@ class SwitchView(
 			when (context.keyEvent?.key) {
 				'0'.toInt() -> model!!.setOn(context.signalHandler, false)
 				'1'.toInt() -> model!!.setOn(context.signalHandler, true)
-				'\n'.toInt() -> model!!.toggle(context.signalHandler)
+				'\n'.toInt() -> {
+					if (!keyDown) {
+						// avoid repeated toggling due to OS key repetition
+						model!!.toggle(context.signalHandler)
+					}
+				}
 			}
+			keyDown = true
+			return null
+		}
+
+		override fun keyReleased(context: ActorInteractionContext): ActorInteractionHandler? {
+			if (!toggle) {
+				when (context.keyEvent?.key) {
+					'1'.toInt() -> model!!.setOn(context.signalHandler, false)
+					'\n'.toInt() -> {
+						if (keyDown) {
+							// avoid repeated toggling due to OS key repetition
+							model!!.toggle(context.signalHandler)
+						}
+					}
+				}
+			}
+			keyDown = false
 			return null
 		}
 	}

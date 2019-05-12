@@ -33,4 +33,8 @@ object FocusManager {
     fun requestFocus(c: Component) {
         focusOwner = c
     }
+
+	fun resetFocus() {
+		focusOwner = null
+	}
 }

@@ -106,6 +106,7 @@ class GraphViewExecutionHandler(
 			target = actorViewAt?.getActorInteractionHandler(context)?.mousePressed(context)
 			if (actorViewAt == null) {
 				view.setCursor(Cursor.DEFAULT)
+				FocusManager.resetFocus()
 			}
 		}
 
@@ -189,6 +190,13 @@ class GraphViewExecutionHandler(
 			if (FocusManager.focusOwner is ActorView) {
 				val context = keyEventContext(e)
 				(FocusManager.focusOwner as ActorView).getActorInteractionHandler(context)?.keyPressed(context)
+			}
+		}
+
+		override fun keyReleased(e: KeyEvent) {
+			if (FocusManager.focusOwner is ActorView) {
+				val context = keyEventContext(e)
+				(FocusManager.focusOwner as ActorView).getActorInteractionHandler(context)?.keyReleased(context)
 			}
 		}
 
