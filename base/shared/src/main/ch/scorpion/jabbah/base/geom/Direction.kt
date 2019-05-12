@@ -29,15 +29,24 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
             throw IllegalArgumentException("unknown Direction $name")
         }
 
-        /** Returns the [Direction] with the specified x and y offsets.*/
+        /**
+         * Returns the [Direction] with the specified x and y offsets.
+         * @throws IllegalArgumentException if the two points are not orthogonal, i.e. if they don't have
+         * exactly one coordinate in common
+         */
         fun of(dx: Int, dy: Int): Direction {
-            for (dir in Direction.values()) {
-                if (dir.dx == dx && dir.dy == dy) {
-                    return dir
-                }
-            }
-            throw IllegalArgumentException("Cannot determine Direction for ($dx,$dy)")
+	        return optionalOf(dx, dy) ?: throw IllegalArgumentException("Cannot determine Direction for ($dx,$dy)")
         }
+
+	    /** Returns the [Direction] with the specified x and y offsets, or `null` if not orthogonal.*/
+	    fun optionalOf(dx: Int, dy: Int): Direction? {
+		    for (dir in Direction.values()) {
+			    if (dir.dx == dx && dir.dy == dy) {
+				    return dir
+			    }
+		    }
+		    return null
+	    }
 
         /**
          * Returns the [Direction] from a first point to a second point
@@ -45,15 +54,17 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
          * exactly one coordinate in common
          */
         fun of(p1: Point2D, p2: Point2D): Direction {
-            try {
-                return of(
-                        sign(round(p2.x - p1.x).toDouble()).toInt(),
-                        sign(round(p2.y - p1.y).toDouble()).toInt())
-            } catch (e: IllegalArgumentException) {
-                LOG.error("Cannot determine Direction from $p1 to $p2")
-                throw e
-            }
+	        return optionalOf(p1, p2) ?: throw IllegalArgumentException("Cannot determine Direction from $p1 to $p2")
         }
+
+	    /**
+	     * Returns the [Direction] from a first point to a second point, or `null` if not orthogonal
+	     */
+	    fun optionalOf(p1: Point2D, p2: Point2D): Direction? {
+		    return optionalOf(
+			    sign(round(p2.x - p1.x).toDouble()).toInt(),
+			    sign(round(p2.y - p1.y).toDouble()).toInt())
+	    }
 
         /** Returns the [Direction] that represents the specified [Rotation].*/
         fun of(rotation: Rotation): Direction {

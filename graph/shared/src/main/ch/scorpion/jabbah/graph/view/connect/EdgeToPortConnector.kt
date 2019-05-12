@@ -58,10 +58,12 @@ class EdgeToPortConnector(
 			y = branchedEdgeView!!.getSegmentPoint(segmentIndex + 1).y
 		}
 
-		// Additionally, snap to the grid
+		// Additionally, snap to the grid, but only if the resulting location still lies on the EdgeView
 		val snap = context.editor.snapManager.snap(x, y)
-
-		return SnapResult(segmentIndex, x + snap.x, y + snap.y)
+		if (branchedEdgeView!!.polyline.findSegment(x + snap.x, y + snap.y, 0) != null) {
+			return SnapResult(segmentIndex, x + snap.x, y + snap.y)
+		}
+		return SnapResult(segmentIndex, x, y)
 	}
 
 	override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {

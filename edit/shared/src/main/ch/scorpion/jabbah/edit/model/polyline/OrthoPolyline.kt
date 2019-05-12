@@ -66,7 +66,7 @@ class OrthoPolyline(points: List<Point2D>) {
         if (isDegenerated) {
             return null
         }
-        return Direction.of(_points[segmentIndex], _points[segmentIndex + 1])
+        return Direction.optionalOf(_points[segmentIndex], _points[segmentIndex + 1])
     }
 
     /** Removes all intermediate points that lie between two collinear segments */
