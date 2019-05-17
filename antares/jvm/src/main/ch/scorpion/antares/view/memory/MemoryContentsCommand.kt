@@ -13,28 +13,28 @@ import java.nio.file.Paths
  * A [Command] for loading the contents of a [Memory] from a file.
  */
 class MemoryContentsCommand(
-        private val memory: Memory,
-        private val bitWidth: BitWidth,
-        private val filePath: String
+	private val memory: Memory,
+	private val bitWidth: BitWidth,
+	private val filePath: String
 ) : AbstractCommand("antares.command.memoryContents", null) {
 
-    companion object {
-        private val LOG by logger(MemoryContentsCommand::class)
-    }
+	companion object {
+		private val LOG by logger(MemoryContentsCommand::class)
+	}
 
-    private var oldContents: String? = null
+	private var oldContents: String? = null
 
-    override fun execute() {
-        oldContents = MemoryDump.write(memory, bitWidth)
-        try {
-            MemoryDump.readNewlineSeparated(memory, String(Files.readAllBytes(Paths.get(filePath))))
-        } catch(e: Throwable) {
-            LOG.error("Error while reading memory from file '$filePath'")
-            throw e
-        }
-    }
+	override fun execute() {
+		oldContents = MemoryDump.write(memory, bitWidth)
+		try {
+			MemoryDump.readNewlineSeparated(memory, String(Files.readAllBytes(Paths.get(filePath))))
+		} catch (e: Throwable) {
+			LOG.error("Error while reading memory from file '$filePath'")
+			throw e
+		}
+	}
 
-    override fun undo() {
-        MemoryDump.read(memory, oldContents!!)
-    }
+	override fun undo() {
+		MemoryDump.read(memory, oldContents!!)
+	}
 }

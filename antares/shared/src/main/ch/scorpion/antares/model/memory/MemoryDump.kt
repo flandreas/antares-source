@@ -65,7 +65,7 @@ object MemoryDump {
 				1 -> memory.write(address, BitOperation.hexToLong(cellTokens[0]))
 				2 -> memory.writeCommentedValue(address, BitOperation.hexToLong(cellTokens[0]), readEscapedComment(cellTokens[1]))
 				else -> {
-					LOG.error("MemoryDump: illegal syntax at address $address in cell $cell")
+					LOG.error("illegal syntax at address $address in cell $cell")
 					throw IllegalArgumentException("Illegal syntax in MemoryDump")
 				}
 			}
