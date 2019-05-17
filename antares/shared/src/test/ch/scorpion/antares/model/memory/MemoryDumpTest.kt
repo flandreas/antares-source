@@ -85,6 +85,17 @@ class MemoryDumpTest {
         assertEquals(0L, memory.read(7))
     }
 
+	@Test
+	fun shouldReadMultipleAddressesPerLine() {
+		val memory = Memory()
+
+		MemoryDump.readNewlineSeparated(memory, "00 01 02 03\n04 05 06 07")
+
+		for (index in 0..7) {
+			assertEquals(index, memory.read(index).toInt())
+		}
+	}
+
     /** ---- Read 16 bit test */
 
     @Test

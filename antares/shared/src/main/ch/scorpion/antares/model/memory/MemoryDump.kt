@@ -74,16 +74,19 @@ object MemoryDump {
 
 	fun readNewlineSeparated(memory: Memory, dump: String) {
 		memory.clear()
-		for ((address, cell) in dump.split('\n').withIndex()) {
-			val commentDelimiterIndex = cell.indexOf(COMMENT_DELIMITER)
+		var address = 0
+		for (line in dump.split('\n')) {
+			val commentDelimiterIndex = line.indexOf(COMMENT_DELIMITER)
 			val comment: String?
 			val value: Long
 			if (commentDelimiterIndex == -1) {
-				memory.write(address, BitOperation.hexToLong(cell))
+				for (cell in line.split(CELL_DELIMITER)) {
+					memory.write(address++, BitOperation.hexToLong(cell))
+				}
 			} else {
-				value = BitOperation.hexToLong(cell.substring(0, commentDelimiterIndex))
-				comment = cell.substring(commentDelimiterIndex + 1)
-				memory.writeCommentedValue(address, value, comment)
+				value = BitOperation.hexToLong(line.substring(0, commentDelimiterIndex))
+				comment = line.substring(commentDelimiterIndex + 1)
+				memory.writeCommentedValue(address++, value, comment)
 			}
 		}
 	}
