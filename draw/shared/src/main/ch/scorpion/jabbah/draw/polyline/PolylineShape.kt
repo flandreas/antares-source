@@ -196,8 +196,12 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 		return points.subList(startIndex, endIndex)
 	}
 
-	override fun isSegmentOrthogonal(index: Int): Boolean {
-		return points[index].x == points[index + 1].x || points[index].y == points[index + 1].y
+	override fun isSegmentHorizontal(index: Int): Boolean {
+		return points[index].y == points[index + 1].y
+	}
+
+	override fun isSegmentVertical(index: Int): Boolean {
+		return points[index].x == points[index + 1].x
 	}
 
 	override fun mirrorHorizontally(x: Double) {

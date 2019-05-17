@@ -154,12 +154,16 @@ interface Polyline {
      */
     fun getPoints(startIndex: Int, endIndex: Int): List<Point2D>
 
+	fun isSegmentHorizontal(index: Int): Boolean
+
+	fun isSegmentVertical(index: Int): Boolean
+
     /**
      * Determines whether the specified segment is orthogonal, i.e. is horizontal or vertical.
      * @param index the index of the segment in question, where 0 is the index of the first segment.
      * @return `true` if segment `index` is orthogonal.
      */
-    fun isSegmentOrthogonal(index: Int): Boolean
+    fun isSegmentOrthogonal(index: Int): Boolean = isSegmentHorizontal(index) || isSegmentVertical(index)
 
     fun mirrorHorizontally(x: Double)
 

@@ -3,11 +3,11 @@ package ch.scorpion.jabbah.graph.view.net.edge
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
+import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * Represents the supported types for laying out the segments of an [EdgeView].

@@ -3,13 +3,13 @@ package ch.scorpion.jabbah.edit
 /**
  * A utility class used to transport snapping results between the hierarchically structured [Snapper]s.
  */
-class SnapResult {
+class SnapResult(x: Double = 0.0, y: Double = 0.0) {
 
     /** Stores the snapped x coordinate.*/
-    var x: Double = 0.0
+    var x: Double = x
 
     /** Stores the snapped y coordinate.*/
-    var y: Double = 0.0
+    var y: Double = y
 
     /**
      * Stores the distance between the original and the snapped x coordinate, i.e. the x distance by which the

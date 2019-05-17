@@ -1,19 +1,16 @@
 package ch.scorpion.jabbah.graph.view.connect
 
-import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.InputEventHandler
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.port.PortView
 
 /**
  * An [InputEventHandler] that splits an existing [EdgeView] by adding a [NodeView] and connecting it
@@ -26,10 +23,7 @@ class EdgeToPortConnector(
 
 	companion object {
 		private val LOG by logger(EdgeToPortConnector::class)
-		private const val EDGE_CORNER_DIST = 15
-		private const val MIN_DIST = 10
 	}
-
 
 	/** The [EdgeView] from which new [EdgeView]s are branched by this connector. */
 	private var branchedEdgeView: EdgeView<*>? = null
@@ -41,29 +35,8 @@ class EdgeToPortConnector(
 
 	/** ---- [InputEventHandler] */
 
-	private data class SnapResult(val segmentIndex: Int, val x: Double, val y: Double)
-
-	private fun snap(context: EditInputEventContext): SnapResult? {
-		val segmentIndex = branchedEdgeView!!.polyline.findSegment(context.x, context.y) ?: return null
-		var x = context.x
-		var y = context.y
-
-		// Try to snap to a nearby [EdgeView] corner, if any
-		if (branchedEdgeView!!.getSegmentPoint(segmentIndex).distance(context.x, context.y) <= EDGE_CORNER_DIST) {
-			x = branchedEdgeView!!.getSegmentPoint(segmentIndex).x
-			y = branchedEdgeView!!.getSegmentPoint(segmentIndex).y
-		} else if (segmentIndex < branchedEdgeView!!.segmentPointCount - 2
-			&& branchedEdgeView!!.getSegmentPoint(segmentIndex + 1).distance(context.x, context.y) <= EDGE_CORNER_DIST) {
-			x = branchedEdgeView!!.getSegmentPoint(segmentIndex + 1).x
-			y = branchedEdgeView!!.getSegmentPoint(segmentIndex + 1).y
-		}
-
-		// Additionally, snap to the grid, but only if the resulting location still lies on the EdgeView
-		val snap = context.editor.snapManager.snap(x, y)
-		if (branchedEdgeView!!.polyline.findSegment(x + snap.x, y + snap.y, 0) != null) {
-			return SnapResult(segmentIndex, x + snap.x, y + snap.y)
-		}
-		return SnapResult(segmentIndex, x, y)
+	private fun snap(context: EditInputEventContext): EdgeViewSnapLocatorResult? {
+		return branchedEdgeView!!.snap(context.x, context.y, context.editor.view.grid)
 	}
 
 	override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {

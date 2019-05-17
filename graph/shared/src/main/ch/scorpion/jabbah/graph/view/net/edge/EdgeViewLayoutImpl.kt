@@ -11,7 +11,10 @@ import ch.scorpion.jabbah.graph.view.EdgeViewLayout
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 
-class EdgeViewLayoutImpl(private val edgeView: EdgeView<*>) : EdgeViewLayout {
+class EdgeViewLayoutImpl(
+	private val edgeView: EdgeView<*>,
+	type: LayoutType = LayoutType.ORTHOGONAL
+) : EdgeViewLayout {
 
 	companion object {
 		private val LOG by logger(EdgeViewLayoutImpl::class)
@@ -19,9 +22,9 @@ class EdgeViewLayoutImpl(private val edgeView: EdgeView<*>) : EdgeViewLayout {
 
 	/** ---- [DrawableListener] */
 
-	override fun drawableInvalidated(event: DrawableEvent) { }
+	override fun drawableInvalidated(event: DrawableEvent) {}
 
-	override fun drawableRequestRedraw(event: DrawableEvent) { }
+	override fun drawableRequestRedraw(event: DrawableEvent) {}
 
 	/**
 	 * Listens for geometry updates of the [ConnectableView]s to which this [EdgeView] is connected and
@@ -49,7 +52,7 @@ class EdgeViewLayoutImpl(private val edgeView: EdgeView<*>) : EdgeViewLayout {
 
 	override var suspendDestinationLayout: Boolean = false
 
-	override var type = LayoutType.ORTHOGONAL
+	override var type = type
 		set(value) {
 			if (value == field) {
 				return

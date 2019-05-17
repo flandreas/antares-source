@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
@@ -13,6 +15,7 @@ import ch.scorpion.jabbah.draw.polyline.PolylineShape
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.model.Net
@@ -157,16 +160,17 @@ open class EdgeViewImpl<T : Any>(
 		return Point2D(polyline.getPointAt(index))
 	}
 
-	override fun addSegmentPoint(point: Point2D) {
-		addSegmentPoint(segmentPointCount, point)
+	override fun addSegmentPoint(point: Point2D): EdgeView<T> {
+		return addSegmentPoint(segmentPointCount, point)
 	}
 
-	override fun addSegmentPoint(index: Int, point: Point2D) {
+	override fun addSegmentPoint(index: Int, point: Point2D): EdgeView<T> {
 		invalidate()
 		polyline.addPointAt(index, point.x, point.y)
 		updateEndpointViews()
 		styling.updateBoundingBox()
 		invalidate()
+		return this
 	}
 
 	override fun setLaidOutPoints(points: List<Point2D>) {
@@ -411,6 +415,10 @@ open class EdgeViewImpl<T : Any>(
 
 	override fun join(edgeView: EdgeView<T>): EdgeView<*> {
 		return EdgeViewSplitterJoiner.join(this, edgeView)
+	}
+
+	override fun snap(x: Double, y: Double, backgroundSnapper: Snapper?): EdgeViewSnapLocatorResult? {
+		return EdgeViewSnapLocator.snap(this, x, y, backgroundSnapper)
 	}
 
 	/** ---- [Locatable] interface */

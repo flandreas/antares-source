@@ -6,16 +6,14 @@ import ch.scorpion.jabbah.draw.polyline.PolylineShape
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
-import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
-import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
-import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
-import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
+import ch.scorpion.jabbah.graph.view.net.edge.*
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 
 /**
@@ -32,7 +30,16 @@ import ch.scorpion.jabbah.graph.view.net.node.NodeView
  */
 interface EdgeView<T: Any> : NetViewElement<T> {
 
-    /** The [ConnectableView] from which this [EdgeView] originates.*/
+	companion object {
+
+		/** The size of the rectangular area defining whether a point is "inside" this [EdgeView]. Used for snapping.*/
+		const val containsSize: Int = 4
+
+		/** The maximum distance for regarding a snap point as being on a corner of this [EdgeView]. Used for snapping.*/
+		const val edgeCornerDistance: Int = 15
+	}
+
+	/** The [ConnectableView] from which this [EdgeView] originates.*/
     var origin: ConnectableView?
 
     /** The [Port] of the model of [origin] where this [EdgeView] originates.*/
@@ -58,15 +65,6 @@ interface EdgeView<T: Any> : NetViewElement<T> {
      * at the same location.
      */
     val isDegenerated: Boolean
-
-    /**
-     * An [EdgeView] is adjusted if the user has moved one of its segments after layout.
-     * Moving a [VerticeView] connected to one end of an adjusted [VerticeView] only updates the layout
-     * of the connected segment, not the entire [EdgeView].
-     */
-    /*
-    var isAdjusted: Boolean
-    */
 
     /** Determines how the segments of this [EdgeView] are automatically laid out, e.g. orthogonally.*/
     //var layoutType: LayoutType
@@ -98,11 +96,17 @@ interface EdgeView<T: Any> : NetViewElement<T> {
     /** Returns the start [Point2D] of the segment with the specified index.*/
     fun getSegmentPoint(index: Int): Point2D
 
-    /** Adds the specified [Point2D] at the end of this [EdgeView].*/
-    fun addSegmentPoint(point: Point2D)
+    /**
+     * Adds the specified [Point2D] at the end of this [EdgeView].
+     * @return this [EdgeView] to support method chaining
+     */
+    fun addSegmentPoint(point: Point2D): EdgeView<T>
 
-    /** Adds the specified [Point2D] at the the given index.*/
-    fun addSegmentPoint(index: Int, point: Point2D)
+    /**
+     * Adds the specified [Point2D] at the the given index.
+     * @returns this [EdgeView] to support method chaining
+     */
+    fun addSegmentPoint(index: Int, point: Point2D): EdgeView<T>
 
     /**
      * Compacts this [EdgeView] by removing [Point2D]s that are at the same location as their predecessor
@@ -202,7 +206,11 @@ interface EdgeView<T: Any> : NetViewElement<T> {
      * @throws IllegalArgumentException if `edgeView` is not adjacent
      */
     fun join(edgeView: EdgeView<T>): EdgeView<*>
+
+	fun snap(x: Double, y: Double, backgroundSnapper: Snapper? = null): EdgeViewSnapLocatorResult?
 }
+
+data class EdgeViewSnapLocatorResult(val segmentIndex: Int, val x: Double, val y: Double)
 
 /**
  * Encapsulates all aspects of an [EdgeView] that is related with its layout.
