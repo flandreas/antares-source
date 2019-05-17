@@ -28,5 +28,12 @@ class NodeViewDotStyling(private val nodeView: NodeView<*>) : NodeViewStyling {
 		context.g.fillOval(
 			(nodeView.location.x - HALF_SIZE).toInt(), (nodeView.location.y - HALF_SIZE).toInt(),
 			2 * HALF_SIZE, 2 * HALF_SIZE)
+
+		// Completely cover [NodeView]s that lie beneath this one
+		if (context.useContextColors) {
+			context.g.drawOval(
+				(nodeView.location.x - HALF_SIZE).toInt(), (nodeView.location.y - HALF_SIZE).toInt(),
+				2 * HALF_SIZE, 2 * HALF_SIZE)
+		}
 	}
 }
