@@ -118,8 +118,14 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice("library.element.RAM", 
     override fun executionStarted(signalHandler: SignalHandler) {
         super.executionStarted(signalHandler)
 	    currentSelectedAddress = 0
+	    clear()
         getDataPort().setOutgoingSignal(Word.undefined(dataWidth), signalHandler)
     }
+
+	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
+		clear()
+	}
 
     /** ---- [RAM] */
 
