@@ -302,6 +302,12 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         }
     }
 
+	override fun setClipBounds(x: Int, y: Int, w: Int, h: Int) {
+		if (supportClipping) {
+			g.setClip(x, y, w, h)
+		}
+	}
+
     override fun getClipBounds(): Rectangle2D {
         val b = g.clipBounds
         return Rectangle2D(b.x, b.y, b.width, b.height)

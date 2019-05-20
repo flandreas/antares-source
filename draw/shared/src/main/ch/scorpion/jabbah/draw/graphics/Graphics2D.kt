@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.graphics
 
+import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Shape
@@ -83,6 +84,12 @@ interface Graphics2D {
 
     /** Fills the specified [Shape] with the current [Color].*/
     fun fill(shape: Shape)
+
+	/**
+	 * Sets the bounding rectangle of the current clipping area.
+	 * Does nothing if [supportClipping] returns `false`.
+	 */
+	fun setClipBounds(x: Int, y: Int, w: Int, h: Int)
 
     /** Returns the bounding rectangle of the current clipping area. */
     fun getClipBounds(): Rectangle2D

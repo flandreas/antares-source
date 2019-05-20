@@ -284,6 +284,10 @@ class Graphics2DFx(var g: GraphicsContext) : AbstractGraphics2D() {
         g.drawImage((image as ImageFx).image, x.toDouble(), y.toDouble())
     }
 
+	override fun setClipBounds(x: Int, y: Int, w: Int, h: Int) {
+		// Not yet implemented
+	}
+
     override fun getClipBounds(): Rectangle2D {
         return clipBounds.copy()
     }

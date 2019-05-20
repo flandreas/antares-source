@@ -249,6 +249,7 @@ private class KeyEventJvm(override val event: AwtKeyEvent) : KeyEvent {
 	override val source: Any get() = event.source
 	override val modifiers: Int get() = event.modifiersEx
 	override val key: Int get() = event.keyCode
+	override val keyChar: Char get() = event.keyChar
 
 	override fun consume() {
 		event.consume()

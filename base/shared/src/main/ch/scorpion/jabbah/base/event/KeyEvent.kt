@@ -7,6 +7,8 @@ interface KeyEvent : InputEvent {
 
     val key: Int
 
+	val keyChar: Char
+
     companion object {
 
         /** The following key codes are target specific and must be set in the setup of the corresponding Target system.*/

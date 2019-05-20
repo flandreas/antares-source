@@ -59,6 +59,7 @@
             <baseLibraryElement _id='23' name='Switch'/>
             <baseLibraryElement _id='24' name='DipSwitch'/>
             <baseLibraryElement _id='25' name='Clock'/>
+            <baseLibraryElement _id='83' name='Keyboard'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='26'>

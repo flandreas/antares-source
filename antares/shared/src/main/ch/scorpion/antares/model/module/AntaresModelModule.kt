@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.input.Clock
 import ch.scorpion.antares.model.input.DipSwitch
+import ch.scorpion.antares.model.input.Keyboard
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.memory.RAM
 import ch.scorpion.antares.model.memory.ROM
@@ -63,6 +64,7 @@ object AntaresModelModule : AbstractModule() {
         typeMap.register("tunnel", Tunnel::class)
         typeMap.register("ledMatrix", LEDMatrix::class)
 	    typeMap.register("random", Random::class)
+	    typeMap.register("keyboard", Keyboard::class)
 
     }
 }

@@ -8,10 +8,7 @@ import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
-import ch.scorpion.antares.view.input.ClockView
-import ch.scorpion.antares.view.input.DipSwitchView
-import ch.scorpion.antares.view.input.SwitchView
-import ch.scorpion.antares.view.input.SwitchViewSelectionModel
+import ch.scorpion.antares.view.input.*
 import ch.scorpion.antares.view.memory.RAMView
 import ch.scorpion.antares.view.memory.ROMView
 import ch.scorpion.antares.view.net.*
@@ -82,6 +79,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val SWITCH = "Switch"
 	private const val DIP_SWITCH = "DipSwitch"
 	private const val CLOCK = "Clock"
+	private const val KEYBOARD = "Keyboard"
 
 	private const val OUTPUT = "Output"
 	private const val LED = "LED"
@@ -206,6 +204,7 @@ object AntaresViewModule : AbstractModule() {
         typeMap.register("tunnelView", TunnelView::class)
         typeMap.register("ledMatrixView", LEDMatrixView::class)
 	    typeMap.register("randomView", RandomView::class)
+	    typeMap.register("keyboardView", KeyboardView::class)
     }
 
     private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -248,6 +247,7 @@ object AntaresViewModule : AbstractModule() {
 	    factory.register(SelectionDrawingStrategy.REPLACE, DipSwitchView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 	    factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 	    factory.register(SelectionDrawingStrategy.REPLACE, CircuitInOutView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+	    factory.register(SelectionDrawingStrategy.REPLACE, KeyboardView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 
 	    factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class.simpleName!!) { LEDViewSelectionModel(it as LEDView) }
 	    factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class.simpleName!!) { LEDViewSelectionModel(it as RgbLEDView) }
@@ -286,6 +286,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(SWITCH, "library.element.Switch", "/img/switch.png", SwitchView::class)
 		repository.register(DIP_SWITCH, "library.element.DipSwitch", "/img/dip-switch.png", DipSwitchView::class)
 		repository.register(CLOCK, "library.element.Clock", "/img/clock.png", ClockView::class)
+		repository.register(KEYBOARD, "library.element.Keyboard", "/img/keyboard.png", KeyboardView::class)
 
 		repository.register(OUTPUT, "library.element.CircuitOutput", "/img/output.png") {
 			val view = it.create(CircuitInOutView::class) as CircuitInOutView
@@ -330,6 +331,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(SWITCH), input)
 		addLibraryItem(library, BaseLibraryElement(DIP_SWITCH), input)
 		addLibraryItem(library, BaseLibraryElement(CLOCK), input)
+		addLibraryItem(library, BaseLibraryElement(KEYBOARD), input)
 		addLibraryItem(library, input, library)
 
 		val output = LibraryFolder(Translations.getString("library.folder.output"))

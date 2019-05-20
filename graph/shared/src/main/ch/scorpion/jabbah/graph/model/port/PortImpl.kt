@@ -116,8 +116,10 @@ open class PortImpl<T : Any>(
 	}
 
 	override fun setIncomingSignal(signal: T?, signalHandler: SignalHandler) {
-		storeIncomingSignal(signal)
-		owner?.inputChanged(this, signalHandler)
+		if (signal != _incomingSignal) {
+			storeIncomingSignal(signal)
+			owner?.inputChanged(this, signalHandler)
+		}
 	}
 
 	/** ---- [OutputPort] interface */

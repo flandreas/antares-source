@@ -460,6 +460,7 @@ class DigitalPortView(
 	private fun drawInternalInputAnnotation(context: DrawContext) {
 		if (hasInternalInputAnnotation) {
 			val angle = direction.rotation.angle
+			context.g.stroke = styleProvider.getStyle(GraphStyleType.ANNOTATION).stroke
 			context.g.rotate(angle)
 			context.g.draw(EDGE_TRIGGER_PATH)
 			context.g.rotate(-angle)
@@ -477,6 +478,7 @@ class DigitalPortView(
 	private fun drawInternalOutputAnnotation(context: DrawContext) {
 		if (hasInternalOutputAnnotation) {
 			val angle = direction.rotation.angle
+			context.g.stroke = styleProvider.getStyle(GraphStyleType.ANNOTATION).stroke
 			context.g.rotate(angle)
 			context.g.draw(getOutputAnnotationPath()!!)
 			context.g.rotate(-angle)

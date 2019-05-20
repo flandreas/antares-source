@@ -302,6 +302,8 @@ class CanvasFx(
 
 		override val key: Int get() = event.code.ordinal
 
+		override val keyChar: Char get() = event.character[0]
+
 		override val source: Any get() = event.source
 
 		override val modifiers: Int get() = convertModifiers()
