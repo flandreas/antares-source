@@ -35,6 +35,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
                 undefinedOutput(ram, signalHandler)
                 return
             }
+	        ram.currentSelectedAddress = ram.getAddressInput().getIncomingSignal()!!.toInt()!!
             if (ram.getWriteInput().getIncomingSignal() == Word.of(false)) {
                 read(ram, signalHandler)
             }
@@ -43,6 +44,8 @@ class RAMCalculator : VerticeCalculator<RAM> {
         if (ram.getChipSelectInput().getIncomingSignal() == Word.of(false)) {
             return
         }
+
+	    ram.currentSelectedAddress = ram.getAddressInput().getIncomingSignal()!!.toInt()!!
 
         if (data.changedPort === ram.getAddressInput()) {
             if (ram.getWriteInput().getIncomingSignal() == Word.of(false)) {
@@ -77,8 +80,9 @@ class RAMCalculator : VerticeCalculator<RAM> {
             return
         }
 
+	    ram.currentSelectedAddress = ram.getAddressInput().getIncomingSignal()!!.toInt()!!
+
         if (data.changedPort === ram.getAddressInput()) {
-	        ram.currentSelectedAddress = ram.getAddressInput().getIncomingSignal()!!.toInt()!!
             readOrWrite(ram, signalHandler)
         }
 
