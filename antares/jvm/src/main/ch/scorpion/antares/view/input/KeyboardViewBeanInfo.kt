@@ -6,8 +6,8 @@ import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
 import java.beans.BeanInfo
 
-/** A [BeanInfo] for [KeyboardView].*/
-@Suppress("unused")class KeyboardViewBeanInfo : VerticeViewBeanInfo<KeyboardView>() {
+@Suppress("unused")
+class KeyboardViewBeanInfo : VerticeViewBeanInfo<KeyboardView>() {
 
 	companion object {
 		private val bufferSize = PropertyImpl("element.property.bufferSize", Int::class.java)

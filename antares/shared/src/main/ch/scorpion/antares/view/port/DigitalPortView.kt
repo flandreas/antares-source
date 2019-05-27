@@ -48,7 +48,8 @@ class DigitalPortView(
 	direction: Direction = Direction.EAST,
 	portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
 	length: Int? = null,
-	var predefinedConnectedLength: Int? = null
+	var predefinedConnectedLength: Int? = null,
+	showBitWidthAnnotation: Boolean = true
 ) : AbstractPortView<DigitalSignal>(port, x, y, direction, portLabelPosition, length ?: LENGTH) {
 
 	companion object {
@@ -76,7 +77,7 @@ class DigitalPortView(
 	}
 
 	/** Determines whether this [DigitalPortView] shows an annotation that indicates the [DigitalPort]'s [BitWidth].*/
-	var showBitWidthAnnotation: Boolean = true
+	var showBitWidthAnnotation: Boolean = showBitWidthAnnotation
 		set(value) {
 			if (value != field) {
 				invalidate()

@@ -4,10 +4,7 @@ import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.arithmetic.Random
 import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
-import ch.scorpion.antares.model.input.Clock
-import ch.scorpion.antares.model.input.DipSwitch
-import ch.scorpion.antares.model.input.Keyboard
-import ch.scorpion.antares.model.input.Switch
+import ch.scorpion.antares.model.input.*
 import ch.scorpion.antares.model.memory.RAM
 import ch.scorpion.antares.model.memory.ROM
 import ch.scorpion.antares.model.net.*
@@ -65,6 +62,6 @@ object AntaresModelModule : AbstractModule() {
         typeMap.register("ledMatrix", LEDMatrix::class)
 	    typeMap.register("random", Random::class)
 	    typeMap.register("keyboard", Keyboard::class)
-
+	    typeMap.register("terminal", Terminal::class)
     }
 }

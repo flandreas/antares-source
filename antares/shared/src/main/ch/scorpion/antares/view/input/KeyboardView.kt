@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.FontFamily
-import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -113,6 +112,7 @@ class KeyboardView(
 			port = (model as Keyboard).dataOutput,
 			direction = Direction.WEST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
+			showBitWidthAnnotation = false,
 			x = DigitalPortView.LENGTH,
 			y = 0))
 
@@ -221,13 +221,11 @@ class KeyboardView(
 
 	object KeyHandler {
 
-		//companion object {
-			private const val BACKSPACE = 8
-			private const val TAB = 9
-			private const val LINEFEED = 10
-			private const val MIN_CHAR = '!'.toInt()
-			private const val MAX_CHAR = '~'.toInt()
-		//}
+		private const val BACKSPACE = 8
+		private const val TAB = 9
+		private const val LINEFEED = 10
+		private const val MIN_CHAR = '!'.toInt()
+		private const val MAX_CHAR = '~'.toInt()
 
 		fun acceptKey(keyChar: Char): Boolean {
 			return keyChar.toInt() in MIN_CHAR..MAX_CHAR

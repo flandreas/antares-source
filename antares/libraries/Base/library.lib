@@ -61,6 +61,7 @@
             <baseLibraryElement _id='27' name='SevenSegmentDisplay'/>
             <baseLibraryElement _id='28' name='LEDMatrix'/>
             <baseLibraryElement _id='29' name='Output'/>
+            <baseLibraryElement _id='36' name='Terminal'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='30'>

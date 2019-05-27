@@ -44,14 +44,20 @@ import ch.scorpion.jabbah.io.StoreWriter
 abstract class AbstractRectangularVerticeView<T : Vertice>(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: T?,
-    x: Double = 0.0,
-    y: Double = 0.0,
-    w: Double = 0.0,
-    h: Double = 0.0
+    rectangle: RectangularShape
 ): AbstractVerticeView<T>(styleProvider, model), RectangularDrawable {
 
+	constructor(
+		styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+		model: T?,
+		x: Double = 0.0,
+		y: Double = 0.0,
+		w: Double = 0.0,
+		h: Double = 0.0
+	): this(styleProvider, model, Rectangle2D(x, y, w, h))
+
     /** Contains the position relative to [location] and the size of the rectangle..*/
-    private val rectangle = Rectangle2D(x, y, w, h)
+    protected val rectangle: RectangularShape = rectangle
 
     /** Contains the actual and absolute bounding box including all [PortView] bounding boxes. */
     private val _boundingBox = Rectangle2D()

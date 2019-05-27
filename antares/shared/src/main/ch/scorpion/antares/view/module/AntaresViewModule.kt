@@ -80,6 +80,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val DIP_SWITCH = "DipSwitch"
 	private const val CLOCK = "Clock"
 	private const val KEYBOARD = "Keyboard"
+	private const val TERMINAL = "Terminal"
 
 	private const val OUTPUT = "Output"
 	private const val LED = "LED"
@@ -205,6 +206,7 @@ object AntaresViewModule : AbstractModule() {
         typeMap.register("ledMatrixView", LEDMatrixView::class)
 	    typeMap.register("randomView", RandomView::class)
 	    typeMap.register("keyboardView", KeyboardView::class)
+	    typeMap.register("terminalView", TerminalView::class)
     }
 
     private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -248,6 +250,7 @@ object AntaresViewModule : AbstractModule() {
 	    factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 	    factory.register(SelectionDrawingStrategy.REPLACE, CircuitInOutView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 	    factory.register(SelectionDrawingStrategy.REPLACE, KeyboardView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+	    factory.register(SelectionDrawingStrategy.REPLACE, TerminalView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 
 	    factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class.simpleName!!) { LEDViewSelectionModel(it as LEDView) }
 	    factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class.simpleName!!) { LEDViewSelectionModel(it as RgbLEDView) }
@@ -287,6 +290,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(DIP_SWITCH, "library.element.DipSwitch", "/img/dip-switch.png", DipSwitchView::class)
 		repository.register(CLOCK, "library.element.Clock", "/img/clock.png", ClockView::class)
 		repository.register(KEYBOARD, "library.element.Keyboard", "/img/keyboard.png", KeyboardView::class)
+		repository.register(TERMINAL, "library.element.Terminal", "/img/terminal.png", TerminalView::class)
 
 		repository.register(OUTPUT, "library.element.CircuitOutput", "/img/output.png") {
 			val view = it.create(CircuitInOutView::class) as CircuitInOutView
