@@ -49,13 +49,12 @@ class SwitchView(
 ) : DigitalComponentView<Switch>(styleProvider, model), ControlView<Switch>, ControlViewSource<Switch> {
 
 	companion object {
-		val LOG by logger(SwitchView::class)
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.SwitchView.iconPath"
-		const val SIZE = 4 * Look.SCALE
-		const val BORDER_WIDTH = 3
-		const val DIAMETER = 12
-		const val LABEL_DIST = Look.SCALE
-		const val LABEL_INSET = 4.0
+		private const val SIZE = 4 * Look.SCALE
+		private const val BORDER_WIDTH = 3
+		private const val DIAMETER = 12
+		private const val LABEL_DIST = Look.SCALE
+		private const val LABEL_INSET = 4.0
 	}
 
 	var labelPosition: VerticeLabelPosition = VerticeLabelPosition.EXTERNAL

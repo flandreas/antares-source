@@ -4,8 +4,11 @@ import ch.scorpion.antares.model.input.Terminal
 import ch.scorpion.antares.model.input.TerminalRow
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
@@ -16,6 +19,8 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -31,9 +36,11 @@ class TerminalView(
 	styleProvider,
 	model,
 	RoundRectangle2D(0.0, 0.0, 100.0, 100.0, ROUND_ARC.toDouble(), ROUND_ARC.toDouble())
-) {
+), ControlView<Terminal>, ControlViewSource<Terminal> {
 
 	companion object {
+		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.TerminalView.iconPath"
+
 		private val DEFAULT_SIZE = Size.MEDIUM
 
 		private const val INSET = 2 * Look.SCALE
@@ -154,8 +161,8 @@ class TerminalView(
 		setBounds(
 			x = DigitalPortView.LENGTH.toDouble(),
 			y = -calculatedHeight + 3 * Look.SCALE.toDouble(),
-			w = calculatedWidth.toDouble(),
-			h = calculatedHeight.toDouble()
+			w = calculatedWidth,
+			h = calculatedHeight
 		)
 	}
 
@@ -212,4 +219,53 @@ class TerminalView(
 		row.iterator().forEach { builder.append(it) }
 		return builder.toString()
 	}
+
+	/** ---- [ControlViewSource] */
+
+	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
+
+	override val controlId: String get() = "terminal:" + model!!.id
+
+	override val controlName: String
+		get() {
+			if (StringUtils.isEmpty(model!!.name)) {
+				return "$type ($id)"
+			}
+			return "$type \"${model!!.name}\""
+		}
+
+	override fun createControlView(): ControlView<Terminal> {
+		val clone = TerminalView(styleProvider, model!!)
+		clone.isShowPortViews = false
+		clone.location = Point2D.ZERO
+		copyControlViewProperties(this, clone)
+		return clone
+	}
+
+	/** ---- [ControlView] */
+
+	override fun bindToModel(model: Terminal) {
+		this.model = model
+	}
+
+	override fun sourcePropertiesChanged(source: ControlViewSource<Terminal>) {
+		if (source is TerminalView) {
+			copyControlViewProperties(source, this)
+		}
+	}
+
+	override fun writeModelProperties(writer: StoreWriter) {
+		writer.writeInt("rowsCount", rowsCount)
+		writer.writeInt("columnsCount", columnsCount)
+	}
+
+	override fun readModelProperties(reader: StoreReader) {
+		rowsCount = reader.readInt("rowsCount")
+		columnsCount = reader.readInt("columnsCount")
+	}
+
+	private fun copyControlViewProperties(source: TerminalView, dest: TerminalView) {
+		dest.size = source.size
+	}
+
 }

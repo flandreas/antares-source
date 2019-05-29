@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -30,8 +32,8 @@ interface ControlViewSource<T : Vertice> : VerticeView<T> {
      * returned by [ControlView]s created by this [ControlViewSource] in [ControlView.controlId].
      * Used to associate [ControlViewSource] and corresponding [ControlView] in persistent [ContainerDrawing]s.
      *
-     * Don't use GraphElementView#getId() as part of the controlId, because that one might be changed
-     * when ControlViews (event as part of a wrapping Component) are added to a Drawing
+     * Don't use [GraphElementView.id] as part of the [controlId], because that one might change
+     * when [ControlView]s (even as part of a wrapping [Component]) are added to a [Drawing]
      */
     val controlId: String?
 

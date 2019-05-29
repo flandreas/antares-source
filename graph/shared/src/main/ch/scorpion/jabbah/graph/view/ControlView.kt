@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 /**
- * A [VerticeView] that is created by a [ControlViewSource] and to be used to add to a [SubGraphVerticeView].
+ * A [VerticeView] that is created by a [ControlViewSource] and used to be added to a [SubGraphVerticeView].
  * @param <T> the type of the model
  */
 interface ControlView<T : Vertice> : VerticeView<T>, Transparent {

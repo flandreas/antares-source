@@ -4,9 +4,11 @@ import ch.scorpion.antares.model.input.Keyboard
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.FontFamily
@@ -24,10 +26,14 @@ import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapte
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /** A view representation of a [Keyboard].*/
 class KeyboardView(
@@ -38,9 +44,11 @@ class KeyboardView(
 	model,
 	x = DigitalPortView.LENGTH.toDouble(),
 	y = - HEIGHT / 2.0
-) {
+), ControlView<Keyboard>, ControlViewSource<Keyboard> {
 
 	companion object {
+		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.KeyboardView.iconPath"
+
 		private val LOG by logger(KeyboardView::class)
 		private const val WIDTH = 20 * Look.SCALE
 		private const val HEIGHT = 6 * Look.SCALE
@@ -141,6 +149,52 @@ class KeyboardView(
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
 		return actorInteractionHandler
+	}
+
+	/** ---- [ControlViewSource] */
+
+	override val controlId: String get() = "keyboard:" + model!!.id
+
+	override val controlName: String
+		get() {
+			if (StringUtils.isEmpty(model!!.name)) {
+				return "$type ($id)"
+			}
+			return "$type \"${model!!.name}\""
+		}
+
+	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
+
+	override fun createControlView(): ControlView<Keyboard> {
+		val clone = KeyboardView(styleProvider, model!!)
+		clone.isShowPortViews = false
+		clone.location = Point2D.ZERO
+		copyControlViewProperties(this, clone)
+		return clone
+	}
+
+	/** ---- [ControlView] */
+
+	override fun bindToModel(model: Keyboard) {
+		this.model = model
+	}
+
+	override fun sourcePropertiesChanged(source: ControlViewSource<Keyboard>) {
+		if (source is KeyboardView) {
+			copyControlViewProperties(source, this)
+		}
+	}
+
+	override fun writeModelProperties(writer: StoreWriter) {
+		writer.writeInt("bufferSize", bufferSize)
+	}
+
+	override fun readModelProperties(reader: StoreReader) {
+		bufferSize = reader.readInt("bufferSize")
+	}
+
+	private fun copyControlViewProperties(source: KeyboardView, dest: KeyboardView) {
+		// empty
 	}
 
 	/** ---- [AbstractVerticeView] */
