@@ -7,8 +7,11 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.edit.model.text.Translation
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -20,31 +23,38 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class RAM(hasClock: Boolean = true) : CalculatingVertice("library.element.RAM", RAMCalculator()), Addressable {
 
-    companion object {
-        const val ADDRESS_PORT_NAME = "A"
-        const val CHIP_SELECT_PORT_NAME = "CS"
-        const val DATA_PORT_NAME = "D"
-        const val WRITE_PORT_NAME = "WR"
-        const val CLEAR_PORT_NAME = "CLR"
-        const val CLOCK_PORT_NAME = "CLK"
-    }
+	companion object {
+		private const val ADDRESS_PORT_NAME = "A"
+		private const val CHIP_SELECT_PORT_NAME = "CS"
+		private const val DATA_PORT_NAME = "D"
+		private const val WRITE_PORT_NAME = "WR"
+		private const val CLEAR_PORT_NAME = "CLR"
+		private const val CLOCK_PORT_NAME = "CLK"
 
-    val memory = Memory()
+		private val ADDRESS_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.addressPort.desc"))
+		private val CHIP_SELECT_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.chipSelectPort.desc"))
+		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.dataPort.desc"))
+		private val WRITE_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.writePort.desc"))
+		private val CLEAR_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.clearPort.desc"))
+		private val CLOCK_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.clockPort.desc"))
+	}
 
-    /** Determines whether this [RAM] has a clock input. */
-    var hasClock: Boolean = false
-        set(value) {
-            if (value != field) {
-                field = value
-                if (value) {
-                    val clockPort = DigitalPortImpl.createInput(CLOCK_PORT_NAME)
-                    clockPort.trigger = Trigger.EDGE
-                    addPort(clockPort)
-                } else {
-                    removePort(getPort<DigitalSignal>(CLOCK_PORT_NAME))
-                }
-            }
-        }
+	val memory = Memory()
+
+	/** Determines whether this [RAM] has a clock input. */
+	var hasClock: Boolean = false
+		set(value) {
+			if (value != field) {
+				field = value
+				if (value) {
+					val clockPort = DigitalPortImpl(portType = PortType.INPUT, name = CLOCK_PORT_NAME, describable = CLOCK_PORT_DESC)
+					clockPort.trigger = Trigger.EDGE
+					addPort(clockPort)
+				} else {
+					removePort(getPort<DigitalSignal>(CLOCK_PORT_NAME))
+				}
+			}
+		}
 
 	/**
 	 * Represents the last value of the address input, but gets only updated when the chip is selected (CS).
@@ -52,35 +62,36 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice("library.element.RAM", 
 	 */
 	var currentSelectedAddress: Int = 0
 
-    init {
-        addPort(DigitalPortImpl.createInput(Logic.POSITIVE, ADDRESS_PORT_NAME, BitWidth.BW_8))
-        addPort(DigitalPortImpl.createInput(CHIP_SELECT_PORT_NAME))
-        addPort(DigitalPortImpl.createInput(WRITE_PORT_NAME))
-        addPort(DigitalPortImpl.createInput(CLEAR_PORT_NAME))
-        addPort(DigitalPortImpl.createInOut(Logic.POSITIVE, DATA_PORT_NAME, BitWidth.BW_8))
-        this.hasClock = hasClock
-    }
+	init {
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ADDRESS_PORT_NAME, bitWidth = BitWidth.BW_8, describable = ADDRESS_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CHIP_SELECT_PORT_NAME, describable = CHIP_SELECT_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = WRITE_PORT_NAME, describable = WRITE_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLEAR_PORT_NAME, describable = CLEAR_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INOUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, describable = DATA_PORT_DESC))
 
-    /** ---- [Addressable] interface */
+		this.hasClock = hasClock
+	}
 
-    override val currentAddress: Int get() = currentSelectedAddress
+	/** ---- [Addressable] interface */
 
-    override val maxAddress: Int get() = getAddressInput().bitWidth.power() - 1
+	override val currentAddress: Int get() = currentSelectedAddress
 
-    override val data: Long
-        get() {
-            val address = currentAddress
-            if (address >= 0) {
-                return memory.read(address)
-            }
-            return 0
-        }
+	override val maxAddress: Int get() = getAddressInput().bitWidth.power() - 1
 
-    override val addressWidth: BitWidth get() = getAddressInput().bitWidth
+	override val data: Long
+		get() {
+			val address = currentAddress
+			if (address >= 0) {
+				return memory.read(address)
+			}
+			return 0
+		}
 
-    override val dataWidth: BitWidth get() = getDataPort().bitWidth
+	override val addressWidth: BitWidth get() = getAddressInput().bitWidth
 
-    override val disassemblyWidth: Int get() = 0
+	override val dataWidth: BitWidth get() = getDataPort().bitWidth
+
+	override val disassemblyWidth: Int get() = 0
 
 	override fun clear() {
 		memory.clear()
@@ -93,83 +104,83 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice("library.element.RAM", 
 
 	override fun dataAt(address: Int): Long = memory.read(address)
 
-    override fun disassemblyAt(address: Int): String = ""
+	override fun disassemblyAt(address: Int): String = ""
 
 	override fun commentAt(address: Int): String? = memory.readComment(address)
 
 	/** ---- [Storable] */
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        writer.writeString("addressBitWidth", addressWidth.customName)
-        writer.writeString("dataBitWidth", dataWidth.customName)
-        writer.writeBoolean("clock", hasClock)
-    }
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeString("addressBitWidth", addressWidth.customName)
+		writer.writeString("dataBitWidth", dataWidth.customName)
+		writer.writeBoolean("clock", hasClock)
+	}
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        setAddressWidth(BitWidth.withName(reader.readString("addressBitWidth")))
-        setDataWidth(BitWidth.withName(reader.readString("dataBitWidth")))
-        hasClock = reader.readBoolean("clock")
-    }
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		setAddressWidth(BitWidth.withName(reader.readString("addressBitWidth")))
+		setDataWidth(BitWidth.withName(reader.readString("dataBitWidth")))
+		hasClock = reader.readBoolean("clock")
+	}
 
-    /** ---- [Actor] interface */
+	/** ---- [Actor] interface */
 
-    override fun executionStarted(signalHandler: SignalHandler) {
-        super.executionStarted(signalHandler)
-	    currentSelectedAddress = 0
-	    clear()
-        getDataPort().setOutgoingSignal(Word.undefined(dataWidth), signalHandler)
-    }
+	override fun executionStarted(signalHandler: SignalHandler) {
+		super.executionStarted(signalHandler)
+		currentSelectedAddress = 0
+		clear()
+		getDataPort().setOutgoingSignal(Word.undefined(dataWidth), signalHandler)
+	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		clear()
 	}
 
-    /** ---- [RAM] */
+	/** ---- [RAM] */
 
-    fun setAddressWidth(bitWidth: BitWidth) {
-        checkNotNull(bitWidth)
-        getAddressInput().bitWidth = bitWidth
-        stateChanged()
-    }
+	fun setAddressWidth(bitWidth: BitWidth) {
+		checkNotNull(bitWidth)
+		getAddressInput().bitWidth = bitWidth
+		stateChanged()
+	}
 
-    fun setDataWidth(bitWidth: BitWidth) {
-        checkNotNull(bitWidth)
-        getDataPort().bitWidth = bitWidth
-        stateChanged()
-    }
+	fun setDataWidth(bitWidth: BitWidth) {
+		checkNotNull(bitWidth)
+		getDataPort().bitWidth = bitWidth
+		stateChanged()
+	}
 
-    fun getAddressInput(): DigitalPort {
-        val addressInput = getPort<DigitalSignal>(ADDRESS_PORT_NAME)
-        return addressInput as DigitalPort
-    }
+	fun getAddressInput(): DigitalPort {
+		val addressInput = getPort<DigitalSignal>(ADDRESS_PORT_NAME)
+		return addressInput as DigitalPort
+	}
 
-    fun getChipSelectInput(): DigitalPort {
-        val addressInput = getPort<DigitalSignal>(CHIP_SELECT_PORT_NAME)
-        return addressInput as DigitalPort
-    }
+	fun getChipSelectInput(): DigitalPort {
+		val addressInput = getPort<DigitalSignal>(CHIP_SELECT_PORT_NAME)
+		return addressInput as DigitalPort
+	}
 
-    fun getDataPort(): DigitalPort = getPort<DigitalSignal>(DATA_PORT_NAME) as DigitalPort
+	fun getDataPort(): DigitalPort = getPort<DigitalSignal>(DATA_PORT_NAME) as DigitalPort
 
-    fun getWriteInput(): DigitalPort = getPort<DigitalSignal>(WRITE_PORT_NAME) as DigitalPort
+	fun getWriteInput(): DigitalPort = getPort<DigitalSignal>(WRITE_PORT_NAME) as DigitalPort
 
-    fun getClearInput(): DigitalPort {
-        val clearPort = getPort<DigitalSignal>(CLEAR_PORT_NAME)
-        return clearPort as DigitalPort
-    }
+	fun getClearInput(): DigitalPort {
+		val clearPort = getPort<DigitalSignal>(CLEAR_PORT_NAME)
+		return clearPort as DigitalPort
+	}
 
-    fun getClockInput(): DigitalPort? {
-        if (!hasClock) {
-            return null
-        }
-        return getPort<DigitalSignal>(CLOCK_PORT_NAME) as DigitalPort
-    }
+	fun getClockInput(): DigitalPort? {
+		if (!hasClock) {
+			return null
+		}
+		return getPort<DigitalSignal>(CLOCK_PORT_NAME) as DigitalPort
+	}
 
-    fun read(address: Int): Long? = memory.read(address)
+	fun read(address: Int): Long? = memory.read(address)
 
-    fun write(address: Int, value: Long) {
-        memory.write(address, value)
-    }
+	fun write(address: Int, value: Long) {
+		memory.write(address, value)
+	}
 }

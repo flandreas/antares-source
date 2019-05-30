@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.output
 
-import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
@@ -17,6 +16,9 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.model.text.Translation
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
+import ch.scorpion.jabbah.graph.model.PortType
 
 /**
  * A matrix of light emitting dots with a row and column addressing input, designed
@@ -41,6 +43,9 @@ class LEDMatrix(
         private val DEF_ROW_WIDTH = BitWidth.BW_8
         private const val DEF_AFTERGLOW = 10L
 
+	    private val COLUMNS_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ledMatrix.columnsPort.desc"))
+	    private val ROWS_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ledMatrix.rowsPort.desc"))
+
         private val CALCULATOR = object : VerticeCalculator<LEDMatrix> {
             override fun calculate(vertice: LEDMatrix, data: GraphActorData, signalHandler: SignalHandler) {
                 vertice.updateBuffer(data.changedPort != null, signalHandler)
@@ -49,8 +54,8 @@ class LEDMatrix(
     }
 
     init {
-        addPort(DigitalPortImpl.createInput(Logic.POSITIVE, COLUMN_PORT_NAME, columnWidth))
-        addPort(DigitalPortImpl.createInput(Logic.POSITIVE, ROW_PORT_NAME, rowWidth))
+	    addPort(DigitalPortImpl(portType = PortType.INPUT, name = COLUMN_PORT_NAME, bitWidth = columnWidth, describable = COLUMNS_PORT_DESC))
+	    addPort(DigitalPortImpl(portType = PortType.INPUT, name = ROW_PORT_NAME, bitWidth = rowWidth, describable = ROWS_PORT_DESC))
     }
 
     val columnPort: DigitalPort

@@ -1,16 +1,18 @@
 package ch.scorpion.antares.model.arithmetic
 
 import ch.scorpion.antares.model.InputCount
-import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.jabbah.edit.model.text.Translation
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -24,6 +26,10 @@ class Random(
 ) : AbstractDigitalGate("library.element.Random", CALCULATOR, InputCount.ONE), DigitalSignalSource {
 
 	companion object {
+
+		private val CLOCK_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.random.clockPort.desc"))
+		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.random.dataPort.desc"))
+
 		private val CALCULATOR = object : VerticeCalculator<Random> {
 			override fun calculate(vertice: Random, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.getSignal<DigitalSignal>(1)!!.bitAt(0) == Bit.True) {
@@ -41,11 +47,11 @@ class Random(
 	override val minInputCount: InputCount get() = InputCount.ONE
 
 	override fun createInputPort(): InputPort<DigitalSignal> {
-		return DigitalPortImpl.createInput(trigger = Trigger.EDGE, name = null, bitWidth = BitWidth.BW_1)
+		return DigitalPortImpl(portType = PortType.INPUT, trigger = Trigger.EDGE, name = null, describable = CLOCK_PORT_DESC)
 	}
 
 	override fun createOutputPort(): OutputPort<DigitalSignal> {
-		return DigitalPortImpl.createOutput(Logic.POSITIVE, null, BitWidth.BW_8)
+		return DigitalPortImpl(portType = PortType.OUTPUT, name = null, bitWidth = BitWidth.BW_8, describable = DATA_PORT_DESC)
 	}
 
 	/** [DigitalSignalSource] interface */

@@ -42,11 +42,11 @@ class Keyboard(
 		private const val DATA_PORT_NAME = "D"
 		private const val AVAILABLE_PORT_NAME = "AV"
 
-		private val availablePortDesc = DescribableImpl(Translation.ofStaticKey("antares.keyboard.availablePort.desc"))
-		private val clearPortDesc = DescribableImpl(Translation.ofStaticKey("antares.keyboard.clearPort.desc"))
-		private val enablePortDesc = DescribableImpl(Translation.ofStaticKey("antares.keyboard.enablePort.desc"))
-		private val clockPortDesc = DescribableImpl(Translation.ofStaticKey("antares.keyboard.clockPort.desc"))
-		private val dataPortDesc = DescribableImpl(Translation.ofStaticKey("antares.keyboard.dataPort.desc"))
+		private val AVAILABLE_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.keyboard.availablePort.desc"))
+		private val CLEAR_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.keyboard.clearPort.desc"))
+		private val ENABLE_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.keyboard.enablePort.desc"))
+		private val CLOCK_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.keyboard.clockPort.desc"))
+		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.keyboard.dataPort.desc"))
 	}
 
 	private val buffer: MutableList<Byte> by lazy { mutableListOf<Byte>() }
@@ -76,11 +76,11 @@ class Keyboard(
 	private val isReadEnabled: Boolean get() = readEnableInput.getIncomingSignal() == Word.of(true)
 
 	init {
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLOCK_PORT_NAME, trigger = Trigger.EDGE, describable = clockPortDesc))
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLEAR_PORT_NAME, describable = clearPortDesc))
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = READ_ENABLE_PORT_NAME, describable = enablePortDesc))
-		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, describable = dataPortDesc))
-		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = AVAILABLE_PORT_NAME, describable = availablePortDesc))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLOCK_PORT_NAME, trigger = Trigger.EDGE, describable = CLOCK_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLEAR_PORT_NAME, describable = CLEAR_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = READ_ENABLE_PORT_NAME, describable = ENABLE_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, describable = DATA_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = AVAILABLE_PORT_NAME, describable = AVAILABLE_PORT_DESC))
 
 		propagationDelay = 1000
 	}

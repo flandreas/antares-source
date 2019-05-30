@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.input
 
-import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
@@ -9,8 +8,11 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.model.text.Translation
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -38,6 +40,11 @@ class Terminal(
 
 		private const val BACKSPACE = 8.toChar()
 		private const val LINEFEED = 10.toChar()
+
+		private val CLOCK_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.terminal.clockPort.desc"))
+		private val CLEAR_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.terminal.clearPort.desc"))
+		private val ENABLE_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.terminal.enablePort.desc"))
+		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.terminal.dataPort.desc"))
 	}
 
 	var rowsCount: Int = rowsCount
@@ -73,10 +80,11 @@ class Terminal(
 	private val isWriteEnabled: Boolean get() = writeEnableInput.getIncomingSignal() == Word.of(true)
 
 	init {
-		addPort(DigitalPortImpl.createInput(Trigger.EDGE, CLOCK_PORT_NAME, BitWidth.BW_1))
-		addPort(DigitalPortImpl.createInput(CLEAR_PORT_NAME))
-		addPort(DigitalPortImpl.createInput(WRITE_ENABLE_PORT_NAME))
-		addPort(DigitalPortImpl.createInput(Logic.POSITIVE, DATA_PORT_NAME, BitWidth.BW_8))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLOCK_PORT_NAME, trigger = Trigger.EDGE, describable = CLOCK_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLEAR_PORT_NAME, describable = CLEAR_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = WRITE_ENABLE_PORT_NAME, describable = ENABLE_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, describable = DATA_PORT_DESC))
+
 		propagationDelay = 1000
 	}
 

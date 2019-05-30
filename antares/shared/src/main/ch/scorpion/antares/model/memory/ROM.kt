@@ -1,12 +1,14 @@
 package ch.scorpion.antares.model.memory
 
-import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.edit.model.text.Translation
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -24,6 +26,10 @@ class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
 		const val ADDRESS_PORT_NAME = "A"
 		const val CHIP_SELECT_PORT_NAME = "CS"
 		const val DATA_PORT_NAME = "D"
+
+		private val ADDRESS_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.rom.addressPort.desc"))
+		private val CHIP_SELECT_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.rom.chipSelectPort.desc"))
+		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.rom.dataPort.desc"))
 
 		val CALCULATOR = object : VerticeCalculator<ROM> {
 			override fun calculate(vertice: ROM, data: GraphActorData, signalHandler: SignalHandler) {
@@ -70,10 +76,10 @@ class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
 	private var _disassemblyWidth: Int = 0
 
 	init {
-		addPort(DigitalPortImpl.createInput(Logic.POSITIVE, ADDRESS_PORT_NAME, BitWidth.BW_8))
-		addPort(DigitalPortImpl.createInput(CHIP_SELECT_PORT_NAME))
-		addPort(DigitalPortImpl.createOutput(Logic.POSITIVE, DATA_PORT_NAME, BitWidth.BW_8,
-			DigitalSignalRepresentation.HEXADECIMAL))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ADDRESS_PORT_NAME, bitWidth = BitWidth.BW_8, describable = ADDRESS_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CHIP_SELECT_PORT_NAME, describable = CHIP_SELECT_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8,
+			signalRepresentation = DigitalSignalRepresentation.HEXADECIMAL, describable = DATA_PORT_DESC))
 	}
 
 	/** ---- [Addressable] interface */

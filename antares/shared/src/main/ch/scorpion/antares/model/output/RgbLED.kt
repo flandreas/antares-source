@@ -6,9 +6,12 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.edit.model.text.Translation
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -21,6 +24,8 @@ class RgbLED() : CalculatingVertice("library.element.RgbLED", CALCULATOR) {
 
 	companion object {
 		private val DEFAULT_COLOR = Color(60, 0, 0)
+		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.rgbLed.dataPort.desc"))
+
 		private val CALCULATOR = object : VerticeCalculator<RgbLED> {
 			override fun calculate(vertice: RgbLED, data: GraphActorData, signalHandler: SignalHandler) {
 				vertice.updateColor(data.getSignal<DigitalSignal>(1) as Word)
@@ -37,7 +42,7 @@ class RgbLED() : CalculatingVertice("library.element.RgbLED", CALCULATOR) {
 		}
 
 	init {
-		addPort(DigitalPortImpl.createInput(Logic.POSITIVE, null, BitWidth.BW_24))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = null, bitWidth = BitWidth.BW_24, describable = DATA_PORT_DESC))
 		propagationDelay = 0
 	}
 
