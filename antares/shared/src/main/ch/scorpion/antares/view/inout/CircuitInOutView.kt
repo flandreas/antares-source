@@ -513,12 +513,18 @@ class CircuitInOutView(
 				return null
 			}
 			toggle(context.signalHandler, context.x, context.y)
-			return null
+			context.mouseEvent?.consume()
+			return this
+		}
+
+		override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler? {
+			return this
 		}
 
 		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!toggle) {
 				toggle(context.signalHandler, context.x, context.y)
+				context.mouseEvent?.consume()
 			}
 			return null
 		}
