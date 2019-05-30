@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.view.port
 
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
@@ -15,11 +14,10 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
 import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
+import java.lang.StringBuilder
 
 
 /**
@@ -39,6 +37,9 @@ abstract class AbstractPortView<T : Any>(
 	companion object {
 		private val LOG by logger(AbstractPortView::class)
 		private val SENS_AREA = BaseModule.properties.getInt(PROP_SENSITIVE_AREA)
+		private val INPUT_TEXT = Translations.getString("graph.property.portType.input")
+		private val OUTPUT_TEXT = Translations.getString("graph.property.portType.output")
+		private val CURRENT_VALUE_TEXT = Translations.getString("graph.portView.currentValue.name")
 	}
 
 	override var location: Point2D = Point2D(x, y)
@@ -139,15 +140,21 @@ abstract class AbstractPortView<T : Any>(
 	}
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
-		val text = when (port.portType) {
+		val valueText = when (port.portType) {
 			PortType.INPUT -> (port as InputPort<*>).getIncomingSignal().toString()
 			PortType.OUTPUT -> (port as OutputPort<*>).getOutgoingSignal().toString()
 			PortType.INOUT -> {
 				val p = port as BidirectionalPort<*>
-				buildToolTipText("Port", "I:${p.getIncomingSignal()}, O:${p.getOutgoingSignal()}")
+				"$INPUT_TEXT:${p.getIncomingSignal()}, $OUTPUT_TEXT:${p.getOutgoingSignal()}"
 			}
 		}
-		return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, owner!!.getPortConnectionPoint(port)) else null
+		var content = StringBuilder(buildToolTipContent())
+		if (StringUtils.isNotEmpty(valueText)) {
+			content.append("<p/>")
+			content.append("<b>$CURRENT_VALUE_TEXT</b>: $valueText")
+		}
+		val text = System.get().buildToolTipText(buildToolTipTitle(), content.toString())
+		return if (StringUtils.isNotBlank(text)) Tooltip(text!!, owner!!.getPortConnectionPoint(port)) else null
 	}
 
 	override fun setPortName(name: String) {
