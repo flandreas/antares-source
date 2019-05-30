@@ -9,7 +9,6 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice

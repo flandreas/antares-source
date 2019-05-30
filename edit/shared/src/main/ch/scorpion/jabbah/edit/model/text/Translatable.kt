@@ -18,6 +18,13 @@ class Translation(
 	text: String = ""
 ) : Storable {
 
+	companion object {
+
+		fun ofStaticKey(key: String): Translation {
+			return Translation(System.get().currentLanguage(), Translations.getString(key))
+		}
+	}
+
 	var language: Language = language
 		private set
 
@@ -78,6 +85,7 @@ class Translation(
 class TranslatableText(translations: Collection<Translation>? = null) {
 
 	constructor(text: String): this(System.get().currentLanguage(), text)
+	constructor(translation: Translation): this(listOf(translation))
 	constructor(language: Language, text: String): this(listOf(Translation(language, text)))
 
 	private val translations: MutableMap<Language, Translation> = mutableMapOf()

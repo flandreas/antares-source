@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.model.text.description
 import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -20,6 +21,7 @@ interface Describable {
 data class DescribableImpl(override val description: Description = Description()) : Describable {
 	constructor(eventBus: EventBus): this(Description(eventBus = eventBus))
 	constructor(changeHandler: ((Description, TranslatableText) -> Unit)): this(Description(changeHandler = changeHandler))
+	constructor(translation: Translation): this(Description(translation))
 }
 
 class Description(
@@ -30,7 +32,9 @@ class Description(
 	constructor(
 		translatableText: TranslatableText = TranslatableText(),
 		eventBus: EventBus?
-	): this(translatableText, { desc, oldValue -> eventBus?.post(DescriptionChangedEvent(desc, oldValue))})
+	): this(translatableText, { desc, oldValue -> eventBus?.post(DescriptionChangedEvent(desc, oldValue)) })
+
+	constructor(translation: Translation): this(TranslatableText(translation))
 
 	/** The displayable name in the current system [Language]. */
 	var value: String?

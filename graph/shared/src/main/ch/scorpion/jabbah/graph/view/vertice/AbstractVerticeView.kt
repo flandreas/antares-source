@@ -123,7 +123,10 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	override fun getPortViewAt(x: Double, y: Double): PortView<*>? {
 		val p = rotateBack(x, y)
-		return portViews.firstOrNull { it.contains(p.x - location.x, p.y - location.y) || it.containsConnectionPoint(x, y) }
+		return portViews.firstOrNull {
+			it.contains(p.x - location.x, p.y - location.y)
+			|| it.containsConnectionPoint(p.x - location.x, p.y - location.y)
+		}
 	}
 
 	override fun <G : Any> getPortView(port: Port<G>): PortView<G>? {
