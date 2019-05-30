@@ -278,7 +278,7 @@ class KeyboardView(
 		private const val BACKSPACE = 8
 		private const val TAB = 9
 		private const val LINEFEED = 10
-		private const val MIN_CHAR = '!'.toInt()
+		private const val MIN_CHAR = ' '.toInt()
 		private const val MAX_CHAR = '~'.toInt()
 
 		fun acceptKey(keyChar: Char): Boolean {

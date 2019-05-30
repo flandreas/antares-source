@@ -35,8 +35,8 @@ class PauseExecutionAction(
 
 /** Performs a single execution step.*/
 class StepExecutionAction(
-	val scheduler: Scheduler,
-	eventBus: EventBus
+	val scheduler: Scheduler = ExecutionModule.scheduler,
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("simulator.action.step") {
 
 	init {

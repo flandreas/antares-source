@@ -188,12 +188,6 @@ class GraphViewExecutionHandler(
 
 		override fun keyPressed(e: KeyEvent) {
 			LOG.debug("keyPressed: ${e.key}")
-			if (e.key == ' '.toInt()) {
-				if (scheduler.isPaused) {
-					scheduler.step()
-				}
-				return
-			}
 
 			val context = keyEventContext(e)
 
