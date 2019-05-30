@@ -274,7 +274,12 @@ object AntaresThemes {
 				),
 				stroke = FOCUS_STROKE
 			),
-			overlay = Color(32, 32, 32, 192)
+			overlay = Color(32, 32, 32, 192),
+			screen = CompositeColor(
+				foregroundColor = Color.BLACK,
+				backgroundColor = Color.BLACK,
+				textColor = ONE.foregroundColor
+			)
 		)
 	}
 

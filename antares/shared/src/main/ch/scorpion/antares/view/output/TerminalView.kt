@@ -4,19 +4,19 @@ import ch.scorpion.antares.model.input.Terminal
 import ch.scorpion.antares.model.input.TerminalRow
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
@@ -45,7 +45,6 @@ class TerminalView(
 
 		private const val INSET = 2 * Look.SCALE
 		private const val ROUND_ARC = 10
-		private val CONTENT_COLOR = CompositeColor(Color.BLACK, Color.BLACK, Color.WHITE)
 	}
 
 	var size: Size = DEFAULT_SIZE
@@ -196,16 +195,17 @@ class TerminalView(
 	}
 
 	private fun drawScreen(context: DrawContext) {
-		context.g.color = context.choose(CONTENT_COLOR).backgroundColor
+		val contentColor = Themes.get<AntaresTheme>().screen
+		context.g.color = context.choose(contentColor).backgroundColor
 		context.g.fillRect(rectangle.x + INSET, rectangle.y + INSET, rectangle.width - 2 * INSET, rectangle.height - 2 * INSET)
 
-		context.g.color = context.choose(CONTENT_COLOR).foregroundColor
+		context.g.color = context.choose(contentColor).foregroundColor
 		context.g.drawRect(rectangle.x + INSET, rectangle.y + INSET, rectangle.width - 2 * INSET, rectangle.height - 2 * INSET)
 	}
 
 	private fun drawText(context: DrawContext) {
 		context.g.font = textFont
-		context.g.color = context.choose(CONTENT_COLOR).textColor
+		context.g.color = context.choose(Themes.get<AntaresTheme>().screen).textColor
 
 		var y = rectangle.minY.toInt() + INSET + textRenderInfo.ascent
 		for (row in 0 until model!!.displayedRowsCount) {
