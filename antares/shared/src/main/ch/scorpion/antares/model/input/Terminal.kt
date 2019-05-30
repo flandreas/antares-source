@@ -85,7 +85,7 @@ class Terminal(
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = WRITE_ENABLE_PORT_NAME, describable = ENABLE_PORT_DESC))
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, describable = DATA_PORT_DESC))
 
-		propagationDelay = 1000
+		propagationDelay = 1
 	}
 
 	/** ---- [Storable] */
