@@ -250,6 +250,7 @@ class KeyboardView(
 	private fun drawBuffer(context: DrawContext) {
 		val oldClip = context.g.getClipBounds()
 		context.g.setClipBounds((x + INSET).toInt(), (y + INSET).toInt(), (width - INSET - RIGHT_INSET).toInt(), (height - 2 * INSET).toInt())
+		label.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
 		label.draw(context)
 		context.g.setClipBounds(oldClip.x.toInt(), oldClip.y.toInt(), oldClip.width.toInt(), oldClip.height.toInt())
 	}
