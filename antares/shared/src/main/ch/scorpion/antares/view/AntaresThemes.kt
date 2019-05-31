@@ -137,12 +137,17 @@ object AntaresThemes {
 				color = CompositeColor(
 					foregroundColor = FOCUS_COLOR
 				),
-				stroke = FOCUS_STROKE
-			))
+				stroke = FOCUS_STROKE),
+			screen = CompositeColor(
+				foregroundColor = Color.BLACK,
+				backgroundColor = Color.DARK_GRAY,
+				textColor = Color.WHITE
+			)
+		)
 	}
 
 	private fun crt(): Theme {
-		val color = CompositeColor(
+		val mainColor = CompositeColor(
 			foregroundColor = ZERO.foregroundColor,
 			backgroundColor = Color.BLACK
 		)
@@ -202,11 +207,11 @@ object AntaresThemes {
 				color = CompositeColor(
 					foregroundColor = Color(32, 32, 32),
 					backgroundColor = Color.BLACK,
-					textColor = color.foregroundColor),
+					textColor = mainColor.foregroundColor),
 				stroke = ANNOTATION_STROKE,
 				font = Look.ANNOTATION_FONT),
 			figure = BasicStyle(
-				color = color,
+				color = mainColor,
 				stroke = BOX_STROKE,
 				font = FONT,
 				shadow = true),
@@ -216,7 +221,7 @@ object AntaresThemes {
 			),
 			shadow = CompositeColor(shadow, shadow),
 			vertice = BasicStyle(
-				color = color,
+				color = mainColor,
 				stroke = BOX_STROKE,
 				font = FONT,
 				shadow = true),
@@ -230,7 +235,7 @@ object AntaresThemes {
 				busStroke = BUS_STROKE,
 				font = Look.ANNOTATION_FONT),
 			annotation = BasicStyle(
-				color = color,
+				color = mainColor,
 				stroke = ANNOTATION_STROKE,
 				font = Look.ANNOTATION_FONT),
 			explanation = BasicStyle(
@@ -276,8 +281,8 @@ object AntaresThemes {
 			),
 			overlay = Color(32, 32, 32, 192),
 			screen = CompositeColor(
-				foregroundColor = Color.BLACK,
-				backgroundColor = Color.BLACK,
+				foregroundColor = mainColor.foregroundColor,
+				backgroundColor = Color(0, 24, 0),
 				textColor = ONE.foregroundColor
 			)
 		)

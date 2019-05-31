@@ -35,8 +35,6 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	companion object {
 		protected const val SIZE = 4 * Look.SCALE
-		val COLOR_BORDER = Color.DARK_GRAY
-		val COLOR_CASE = Color.DARK_GRAY
 		const val BORDER_WIDTH = 3
 		const val LABEL_DIST = Look.SCALE
 	}
@@ -190,10 +188,10 @@ abstract class AbstractLEDView<T: Vertice>(
 				context.g.fillOval(xInt, yInt, SIZE, SIZE)
 			}
 		}
-		context.g.color = COLOR_CASE
+		context.g.color = Themes.get<AntaresTheme>().screen.backgroundColor
 		context.g.stroke = stroke
 		context.g.fillOval(xInt, yInt, SIZE, SIZE)
-		context.g.color = COLOR_BORDER
+		context.g.color = Themes.get<AntaresTheme>().screen.foregroundColor
 		context.g.drawOval(xInt, yInt, SIZE, SIZE)
 		drawBulb(context)
 	}

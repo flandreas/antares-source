@@ -46,8 +46,6 @@ class LEDMatrixView(
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDMatrixView.iconPath"
 		private val DEBUG_COLUMN_COLOR = Color(255, 255, 0, 128)
 		private val DEBUG_ROW_COLOR = Color(0, 255, 255, 128)
-		private val STROKE = Stroke(1f)
-		private val COLOR_CASE = Color.DARK_GRAY
 		private val DEFAULT_LIGHT_COLOR = LightColor.RED
 		private val DEFAULT_SIZE = Size.MEDIUM
 		private const val DOT_SIZE = Look.SCALE
@@ -258,8 +256,7 @@ class LEDMatrixView(
 		val oldColor = context.g.color
 		val oldStroke = context.g.stroke
 
-		context.g.stroke = STROKE
-		context.g.color = COLOR_CASE
+		context.g.color = Themes.get<AntaresTheme>().screen.backgroundColor
 		context.g.fillRect(0, 0, width.toInt(), height.toInt())
 
 		var x = width - inset - DOT_SIZE * factor

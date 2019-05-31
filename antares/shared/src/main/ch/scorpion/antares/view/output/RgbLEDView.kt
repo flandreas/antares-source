@@ -1,12 +1,14 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.RgbLED
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
@@ -19,7 +21,6 @@ class RgbLEDView(
 
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.RgbLEDView.iconPath"
-		private val EDIT_BULB_COLOR = Color(232, 232, 232)
 	}
 
 	/** ---- [ControlView] */
@@ -50,7 +51,7 @@ class RgbLEDView(
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			super.drawBulb(context)
 		} else {
-			drawBulb(context, EDIT_BULB_COLOR)
+			drawBulb(context, Themes.get<AntaresTheme>().screen.backgroundColor)
 		}
 	}
 
