@@ -45,9 +45,9 @@ class RandomTest {
 	}
 
 	private class RandomProvider {
-		var nextValue: Int = 0
+		var nextValue: Long = 0
 
-		fun provide (max: Int): Int {
+		fun provide (max: Long): Long {
 			return nextValue
 		}
 	}

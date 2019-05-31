@@ -43,6 +43,7 @@ class BitOperationTest {
         assertEquals(8, BitOperation.power(3))
         assertEquals(256, BitOperation.power(8))
         assertEquals(65536, BitOperation.power(16))
+	    assertEquals(4_294_967_296, BitOperation.power(32))
     }
 
     @Test

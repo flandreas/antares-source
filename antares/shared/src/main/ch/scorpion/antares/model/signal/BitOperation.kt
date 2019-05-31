@@ -1,6 +1,8 @@
 package ch.scorpion.antares.model.signal
 
+import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import kotlin.math.pow
 
 /**
  * Utility functions for working with bits.
@@ -9,8 +11,9 @@ object BitOperation {
 
     val BINARY = listOf('0', '1')
     val HEX = listOf('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F')
+	private val POWER = Array(32 + 1) { it -> 2.0.pow(it).toLong() }
 
-    fun getBitAt(value: Long, index: Int): Boolean {
+	fun getBitAt(value: Long, index: Int): Boolean {
         return value shr index and 1 == 1L
     }
 
@@ -22,13 +25,9 @@ object BitOperation {
         return value and (1L shl index).inv()
     }
 
-    fun power(value: Long): Int {
-        // TODO Use Hashmap for values between 0 and 31.
-        var sum = 1
-        for (i in 0..value - 1) {
-            sum *= 2
-        }
-        return sum
+    fun power(value: Byte): Long {
+	    checkArgument(value <= 32, "value must not be larger than 32")
+	    return POWER[value.toInt()]
     }
 
     /** Converts a hexadecimal value to a decimal long value*/

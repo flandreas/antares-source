@@ -70,7 +70,7 @@ abstract class AbstractMemoryTableModel(
 ) : AbstractTableModel() {
 
 	private val format: String = "%${Math.max(2, addressable.dataWidth.width / 4)}s"
-	private val mask: Int = BitOperation.power(addressable.dataWidth.width.toLong()) - 1
+	private val mask: Long = BitOperation.power(addressable.dataWidth.width.toByte()) - 1
 
 	override fun getRowCount(): Int {
 		return rowCount
@@ -87,7 +87,7 @@ abstract class AbstractMemoryTableModel(
 	protected fun getMemoryValue(rowIndex: Int, columnIndex: Int): String {
 		val address = rowIndex * cellsPerRow + columnIndex
 		val value = addressable.dataAt(address)
-		return String.format(format, java.lang.Long.toHexString(value and mask.toLong()).toUpperCase())
+		return String.format(format, java.lang.Long.toHexString(value and mask).toUpperCase())
 	}
 }
 

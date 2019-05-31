@@ -86,7 +86,7 @@ class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
 
 	override val currentAddress: Int get() = currentSelectedAddress
 
-	override val maxAddress: Int get() = getAddressInput().bitWidth.power() - 1
+	override val maxAddress: Int get() = getAddressInput().bitWidth.power().toInt() - 1
 
 	override val data: Long
 		get() {

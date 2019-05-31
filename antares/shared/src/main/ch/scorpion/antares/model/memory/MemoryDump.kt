@@ -36,7 +36,7 @@ object MemoryDump {
 	 */
 	fun write(memory: Memory, bitWidth: BitWidth): String {
 		val builder = StringBuilder()
-		val mask = BitOperation.power(bitWidth.width.toLong()) - 1L
+		val mask = BitOperation.power(bitWidth.width.toByte()) - 1L
 		val length = Math.max(2, bitWidth.width / 4)
 
 		val cellIter = ZeroFiller(memory.getNonZeroCells())

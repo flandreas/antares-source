@@ -22,7 +22,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  * Produces a random value of a specifiable [BitWidth] when the trigger input value changes to 1.
  */
 class Random(
-	private val valueProvider: (Int) -> Int = { kotlin.random.Random.nextInt(0, it) }
+	private val valueProvider: (Long) -> Long = { kotlin.random.Random.nextLong(0, it) }
 ) : AbstractDigitalGate("library.element.Random", CALCULATOR, InputCount.ONE), DigitalSignalSource {
 
 	companion object {
@@ -34,7 +34,7 @@ class Random(
 			override fun calculate(vertice: Random, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.getSignal<DigitalSignal>(1)!!.bitAt(0) == Bit.True) {
 					vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(
-						Word.of(vertice.bitWidth, vertice.valueProvider.invoke(vertice.bitWidth.power() - 1).toLong()),
+						Word.of(vertice.bitWidth, vertice.valueProvider.invoke(vertice.bitWidth.power() - 1)),
 						signalHandler
 					)
 				}

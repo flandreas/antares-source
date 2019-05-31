@@ -230,7 +230,7 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 				return null
 			}
 			if (bits[i].numericalValue == 1) {
-				sum += BitOperation.power(digit.toLong()).toLong()
+				sum += BitOperation.power(digit.toByte())
 			}
 			digit--
 		}

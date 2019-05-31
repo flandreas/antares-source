@@ -40,8 +40,8 @@ enum class BitWidth(val width: Int, val size: String) {
 
     val customName: String get() = width.toString()
 
-    fun power(): Int {
-        return BitOperation.power(width.toLong())
+    fun power(): Long {
+        return BitOperation.power(width.toByte())
     }
 
     override fun toString(): String {

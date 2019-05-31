@@ -36,6 +36,8 @@ enum class Bit(private val value: Int?) {
          * the least-priority bit.
          */
         fun listFromInt(value: Int, length: Int): List<Bit> = (0 until length).map { Bit.of(BitOperation.getBitAt(value.toLong(), it))}
+
+	    fun listFromLong(value: Long, length: Int): List<Bit> = (0 until length).map { Bit.of(BitOperation.getBitAt(value, it))}
     }
 
     /** Checks whether this [Bit] has a defined value, i.e. whether it is not `null`.*/

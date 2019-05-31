@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.memory
 
-import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
@@ -9,8 +8,8 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
-import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.io.Storable
@@ -76,7 +75,7 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice("library.element.RAM", 
 
 	override val currentAddress: Int get() = currentSelectedAddress
 
-	override val maxAddress: Int get() = getAddressInput().bitWidth.power() - 1
+	override val maxAddress: Int get() = getAddressInput().bitWidth.power().toInt() - 1
 
 	override val data: Long
 		get() {
