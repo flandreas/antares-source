@@ -43,7 +43,8 @@ class TerminalView(
 
 		private val DEFAULT_SIZE = Size.MEDIUM
 
-		private const val INSET = 2 * Look.SCALE
+		private const val BORDER_WIDTH = 2 * Look.SCALE
+		private const val SCREEN_H_INSET = 3
 		private const val ROUND_ARC = 10
 	}
 
@@ -74,9 +75,9 @@ class TerminalView(
 
 	private val cellWidth get() = textRenderInfo.textBounds.width
 
-	private val calculatedWidth get() = INSET + columnsCount * cellWidth + INSET
+	private val calculatedWidth get() = BORDER_WIDTH + SCREEN_H_INSET + columnsCount * cellWidth + SCREEN_H_INSET + BORDER_WIDTH
 
-	private val calculatedHeight get() =  INSET + rowsCount * cellHeight + INSET
+	private val calculatedHeight get() =  BORDER_WIDTH + rowsCount * cellHeight + BORDER_WIDTH
 
 	/** ---- UI properties */
 
@@ -197,19 +198,23 @@ class TerminalView(
 	private fun drawScreen(context: DrawContext) {
 		val contentColor = Themes.get<AntaresTheme>().screen
 		context.g.color = context.choose(contentColor).backgroundColor
-		context.g.fillRect(rectangle.x + INSET, rectangle.y + INSET, rectangle.width - 2 * INSET, rectangle.height - 2 * INSET)
+		context.g.fillRect(
+			rectangle.x + BORDER_WIDTH, rectangle.y + BORDER_WIDTH,
+			rectangle.width - 2 * BORDER_WIDTH, rectangle.height - 2 * BORDER_WIDTH)
 
 		context.g.color = context.choose(contentColor).foregroundColor
-		context.g.drawRect(rectangle.x + INSET, rectangle.y + INSET, rectangle.width - 2 * INSET, rectangle.height - 2 * INSET)
+		context.g.drawRect(
+			rectangle.x + BORDER_WIDTH, rectangle.y + BORDER_WIDTH,
+			rectangle.width - 2 * BORDER_WIDTH, rectangle.height - 2 * BORDER_WIDTH)
 	}
 
 	private fun drawText(context: DrawContext) {
 		context.g.font = textFont
 		context.g.color = context.choose(Themes.get<AntaresTheme>().screen).textColor
 
-		var y = rectangle.minY.toInt() + INSET + textRenderInfo.ascent
+		var y = rectangle.minY.toInt() + BORDER_WIDTH + textRenderInfo.ascent
 		for (row in 0 until model!!.displayedRowsCount) {
-			context.g.drawString(rowToString(model!!.getRow(row)), INSET + rectangle.minX.toInt(), y.toInt())
+			context.g.drawString(rowToString(model!!.getRow(row)), BORDER_WIDTH + rectangle.minX.toInt() + SCREEN_H_INSET, y.toInt())
 			y += cellHeight
 		}
 	}
@@ -267,5 +272,4 @@ class TerminalView(
 	private fun copyControlViewProperties(source: TerminalView, dest: TerminalView) {
 		dest.size = source.size
 	}
-
 }
