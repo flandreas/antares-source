@@ -11,7 +11,6 @@ import ch.scorpion.antares.view.container.DigitalContainerTreeView
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.output.LightColor
-import com.l2fprod.common.propertysheet.PropertyRendererRegistry
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
@@ -33,12 +32,11 @@ import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
-import javafx.beans.property.BooleanProperty
 
 /**
  * Module definitions for the [ch.scorpion.antares] module on the JVM target.
  */
- class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
+class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 
 	companion object {
 		const val PREF_TREE_CIRCUIT = "antares.preferences.group.circuit"
@@ -102,7 +100,7 @@ import javafx.beans.property.BooleanProperty
 	}
 
 	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
-		registry.registerRenderer(ch.scorpion.antares.view.output.LightColor::class.java, LightColorRenderer::class.java)
+		registry.registerRenderer(LightColor::class.java, LightColorRenderer::class.java)
 		registry.registerRenderer(InputCount::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(InputPortNumber::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(Handedness::class.java, EnumRenderer::class.java)
@@ -116,7 +114,7 @@ import javafx.beans.property.BooleanProperty
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
-		registry.registerEditor(LightColor::class.java, LightColorEditor::class.java)
+		registry.register(LightColor::class.java) { LightColorEditor((it as PropertyImpl<LightColor>).optional) }
 		registry.register(InputCount::class.java) { InputCountEditor((it as PropertyImpl<InputCount>).filter) }
 		registry.register(InputPortNumber::class.java) { InputPortNumberEditor((it as PropertyImpl<InputPortNumber>).filter) }
 		registry.registerEditor(Handedness::class.java, HandednessEditor::class.java)

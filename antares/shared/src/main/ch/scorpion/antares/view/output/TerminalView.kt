@@ -6,6 +6,7 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
@@ -18,6 +19,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.Size
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
@@ -31,7 +33,9 @@ import ch.scorpion.jabbah.io.StoreWriter
 /** A view representation of a [Terminal].*/
 class TerminalView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: Terminal = Terminal()
+	model: Terminal = Terminal(),
+	lightColor: LightColor? = null,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractRectangularVerticeView<Terminal>(
 	styleProvider,
 	model,
@@ -54,6 +58,17 @@ class TerminalView(
 				invalidate()
 				field = value
 				updateGeometry()
+			}
+		}
+
+	/** The color used for drawing the text. If `null`, the text color from [AntaresTheme]'s screen property is used.*/
+	var lightColor: LightColor? = lightColor
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				postControlViewSourceChangeEvent(eventBus)
+				validate()
 			}
 		}
 
@@ -108,11 +123,15 @@ class TerminalView(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeString("size", size.customName)
+		lightColor?.let { writer.writeString("lightColor", it.customName) }
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		size = Size.withName(reader.readString("size"))
+		if (reader.hasAttribute("lightColor")) {
+			lightColor = LightColor.withName(reader.readString("lightColor"));
+		}
 	}
 
 	/** ---- [AbstractGraphElementView] */
@@ -209,13 +228,15 @@ class TerminalView(
 	}
 
 	private fun drawText(context: DrawContext) {
-		context.g.font = textFont
-		context.g.color = context.choose(Themes.get<AntaresTheme>().screen).textColor
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			context.g.font = textFont
+			context.g.color = lightColor?.onColor ?: Themes.get<AntaresTheme>().screen.textColor
 
-		var y = rectangle.minY.toInt() + BORDER_WIDTH + textRenderInfo.ascent
-		for (row in 0 until model!!.displayedRowsCount) {
-			context.g.drawString(rowToString(model!!.getRow(row)), BORDER_WIDTH + rectangle.minX.toInt() + SCREEN_H_INSET, y.toInt())
-			y += cellHeight
+			var y = rectangle.minY.toInt() + BORDER_WIDTH + textRenderInfo.ascent
+			for (row in 0 until model!!.displayedRowsCount) {
+				context.g.drawString(rowToString(model!!.getRow(row)), BORDER_WIDTH + rectangle.minX.toInt() + SCREEN_H_INSET, y.toInt())
+				y += cellHeight
+			}
 		}
 	}
 

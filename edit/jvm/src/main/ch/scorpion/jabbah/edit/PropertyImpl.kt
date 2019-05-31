@@ -23,6 +23,7 @@ class PropertyImpl<V>(
     private var setter: ((V?) -> Unit)? = null
     private var editable: Boolean = false
     var filter: (V) -> Boolean = { true }
+	var optional: Boolean = false
 
     /** ---- [PropertyImpl] */
 
@@ -31,7 +32,7 @@ class PropertyImpl<V>(
         return this
     }
 
-    fun bind(editor: Editor, getter: () -> V?, setter: ((V?) -> Unit)?, editable: Boolean, filter: ((V) -> Boolean)? = null): PropertyImpl<V> {
+    fun bind(editor: Editor, getter: () -> V?, setter: ((V?) -> Unit)?, editable: Boolean, filter: ((V) -> Boolean)? = null, optional: Boolean = false): PropertyImpl<V> {
         this.editor = checkNotNull(editor)
         this.getter = checkNotNull(getter)
         this.setter = setter
@@ -39,6 +40,7 @@ class PropertyImpl<V>(
         if (filter != null) {
             this.filter = filter
         }
+	    this.optional = optional
         return this
     }
 

@@ -6,9 +6,11 @@ import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.output.LightColor
+import ch.scorpion.jabbah.base.Translations
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import ch.scorpion.jabbah.base.swing.ColorIcon
 import ch.scorpion.jabbah.base.swing.EnumRenderer
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import javax.swing.JComboBox
 import javax.swing.JList
@@ -16,20 +18,30 @@ import javax.swing.JList
 /**
  * Renders a [LightColor] in a [JList].
  */
-class LightColorRenderer : EnumRenderer<LightColor>() {
+open class LightColorRenderer : EnumRenderer<LightColor>() {
 
     private val icon = ColorIcon()
 
-    override fun setValue(value: LightColor) {
-        icon.backgroundColor = Graphics2DJvm.toAwtColor(value.onColor)
-        text = value.toString()
-        setIcon(icon)
+    override fun setValue(value: LightColor?) {
+	    if (value == null) {
+		    icon.backgroundColor = Graphics2DJvm.toAwtColor(Color.WHITE)
+		    text = Translations.getString("element.color.fromTheme")
+	    } else {
+		    icon.backgroundColor = Graphics2DJvm.toAwtColor(value.onColor)
+		    text = value.toString()
+	    }
+	    setIcon(icon)
     }
 }
 
-class LightColorEditor : ComboBoxPropertyEditor() {
+class LightColorEditor(optional: Boolean = false) : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(LightColor.values())
+	    val list = mutableListOf<LightColor?>()
+	    if (optional) {
+		    list.add(null)
+	    }
+	    list.addAll(LightColor.values())
+        setAvailableValues(list.toTypedArray())
         (editor as JComboBox<*>).renderer = LightColorRenderer()
     }
 }

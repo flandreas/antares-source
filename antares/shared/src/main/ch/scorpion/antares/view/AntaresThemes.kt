@@ -366,7 +366,12 @@ object AntaresThemes {
 				color = CompositeColor(
 					foregroundColor = FOCUS_COLOR
 				),
-				stroke = FOCUS_STROKE
-			))
+				stroke = FOCUS_STROKE),
+			screen = CompositeColor(
+				foregroundColor = Color.BLACK,
+				backgroundColor = Color.DARK_GRAY,
+				textColor = Color.WHITE
+			)
+		)
 	}
 }

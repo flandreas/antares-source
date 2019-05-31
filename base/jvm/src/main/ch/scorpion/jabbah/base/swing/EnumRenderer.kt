@@ -13,7 +13,7 @@ open class EnumRenderer<T : Enum<T>> : DefaultListCellRenderer(), TableCellRende
 
     override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
 		@Suppress("UNCHECKED_CAST")
-        setValue(value as T)
+        setValue(value as T?)
 
 		if (isSelected) {
 			foreground = list.selectionForeground
@@ -28,7 +28,7 @@ open class EnumRenderer<T : Enum<T>> : DefaultListCellRenderer(), TableCellRende
 
     override fun getTableCellRendererComponent(table: JTable, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
 		@Suppress("UNCHECKED_CAST")
-        setValue(value as T)
+        setValue(value as T?)
 
 		if (isSelected) {
 			foreground = table.selectionForeground
@@ -41,7 +41,7 @@ open class EnumRenderer<T : Enum<T>> : DefaultListCellRenderer(), TableCellRende
 		return this
     }
 
-    protected open fun setValue(value: T) {
-		text = value.toString()
+    protected open fun setValue(value: T?) {
+		text = value?.toString() ?: ""
     }
 }
