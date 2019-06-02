@@ -5,11 +5,12 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.graph.library.LibraryTreeView
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.port.PortFactory
+import ch.scorpion.jabbah.graph.model.port.PortFactory
+import ch.scorpion.jabbah.graph.view.port.PortViewFactory
 import javax.swing.*
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeCellRenderer
@@ -19,9 +20,10 @@ import javax.swing.tree.TreeModel
  * Displays the objects that can be dragged into a [ContainerDrawing], such as [PortViewComponent]s and controls.
  */
 open class ContainerTreeView(
-    private val portFactory: PortFactory = GraphViewModule.portFactory,
-    private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    private val eventBus: EventBus = BaseModule.eventBus
+	private val portFactory: PortFactory = GraphModelModule.portFactory,
+	private val portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
+	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : JTree() {
 
 	companion object {
@@ -47,7 +49,7 @@ open class ContainerTreeView(
      */
     fun update(mainGraphView: GraphView<*>, containerDrawing: ContainerDrawing) {
 	    containerTree?.dispose()
-	    containerTree = ContainerTree(portFactory, styleProvider, mainGraphView, containerDrawing, eventBus)
+	    containerTree = ContainerTree(portFactory, portViewFactory, styleProvider, mainGraphView, containerDrawing, eventBus)
 	    model = containerTree?.model?.treeModel
     }
 

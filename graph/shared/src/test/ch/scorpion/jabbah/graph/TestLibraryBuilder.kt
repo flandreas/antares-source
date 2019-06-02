@@ -2,16 +2,19 @@ package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.CompositeTestGraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.port.PortFactory
+import ch.scorpion.jabbah.graph.view.port.PortViewFactory
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 
 /** Builds and fills a [Library] using components from [CompositeTestGraphViewBuilder] used for integration testing.*/
 class TestLibraryBuilder(
-	private val portFactory: PortFactory = GraphViewModule.portFactory,
+	private val portFactory: PortFactory = GraphModelModule.portFactory,
+	private val portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
 	private val libraryService: LibraryService = LibraryModule.libraryService.invoke()
 ) {
 
@@ -52,11 +55,11 @@ class TestLibraryBuilder(
 
 		for (circuitInput in graphView.graph!!.graphInputs) {
 			containerDrawing.add(
-				portFactory.createPortViewComponent(portFactory.createPortView(portFactory.createSubGraphPort(circuitInput))))
+				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitInput))))
 		}
 		for (circuitOutput in graphView.graph!!.graphOutputs) {
 			containerDrawing.add(
-				portFactory.createPortViewComponent(portFactory.createPortView(portFactory.createSubGraphPort(circuitOutput))))
+				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitOutput))))
 		}
 
 		return containerDrawing

@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.view.ControlView
@@ -18,7 +19,8 @@ import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.GraphPortView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.port.PortFactory
+import ch.scorpion.jabbah.graph.model.port.PortFactory
+import ch.scorpion.jabbah.graph.view.port.PortViewFactory
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.MutableTreeNode
@@ -26,7 +28,8 @@ import javax.swing.tree.TreeModel
 import javax.swing.tree.TreeNode
 
 class ContainerTreeModel(
-	private val portFactory: PortFactory = GraphViewModule.portFactory,
+	private val portFactory: PortFactory = GraphModelModule.portFactory,
+	private val portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val initializer: DynamicInitializer,
 	graphView: GraphView<*>,
@@ -61,7 +64,7 @@ class ContainerTreeModel(
 	 */
 	fun addGraphPortView(graphPortView: GraphPortView<*>) {
 		val item = ContainerTreePortItem(graphPortView) {
-			portFactory.createPortViewComponent(portFactory.createPortView(portFactory.createSubGraphPort(graphPortView.model!!)))
+			portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(graphPortView.model!!)))
 		}
 		portsNode.add(DefaultMutableTreeNode(item))
 		treeModel.nodesWereInserted(portsNode, intArrayOf(portsNode.childCount - 1))

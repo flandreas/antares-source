@@ -8,8 +8,9 @@ import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.graph.model.GraphElementListener
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.port.PortFactory
+import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreWriter
@@ -18,11 +19,9 @@ import ch.scorpion.jabbah.io.StoreWriter
  * A [Vertice] that collects signals from multiple [OscilloscopeProbeVertice]s.
  * [Oscilloscope] has a variable amount of [InputPort]s. Changes of values at the [InputPort]
  * are not processed through the [SignalHandler], but directly communicated to registered [GraphElementListener]s.
- *
- * TODO Refactoring: Split PortFactory into model and view part (module dependency)
  */
 class Oscilloscope(
-	private val portFactory: PortFactory = GraphViewModule.portFactory
+	private val portFactory: PortFactory = GraphModelModule.portFactory
 ) : AbstractVertice("graph.component.oscilloscope") {
 
 	companion object {

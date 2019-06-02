@@ -50,9 +50,9 @@ import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeProbeVerticeView
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeViewFactory
 import ch.scorpion.jabbah.graph.view.oscilloscope.UndefinedOscilloscopeViewFactory
-import ch.scorpion.jabbah.graph.view.port.PortFactory
 import ch.scorpion.jabbah.graph.view.port.PortView
-import ch.scorpion.jabbah.graph.view.port.UndefinedPortFactory
+import ch.scorpion.jabbah.graph.view.port.PortViewFactory
+import ch.scorpion.jabbah.graph.view.port.UndefinedPortViewFactory
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
@@ -70,7 +70,7 @@ object GraphViewModule : AbstractModule() {
 	var graphViewFactory: (name: String) -> GraphView<*> = { GraphViewImpl<GraphElementView<GraphElement>>(it) }
 
 	/** Must be specified by higher application layers.*/
-	var portFactory: PortFactory = UndefinedPortFactory()
+	var portViewFactory: PortViewFactory = UndefinedPortViewFactory()
 
 	var containerEditorFactory: (EventBus) -> ContainerEditor = { throw UnsupportedOperationException("ContainerEditorFactor not configured") }
 

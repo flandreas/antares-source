@@ -15,12 +15,14 @@ import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.ControlViewSourceEvent
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.editor.GraphPortViewEvent
 import ch.scorpion.jabbah.graph.view.editor.SubGraphVerticeViewEvent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.port.PortFactory
+import ch.scorpion.jabbah.graph.model.port.PortFactory
+import ch.scorpion.jabbah.graph.view.port.PortViewFactory
 import javax.swing.tree.TreeModel
 import javax.swing.tree.TreeNode
 
@@ -39,7 +41,8 @@ enum class ContainerTreeItemType {
  * element is only contained in either one of them.
  */
 class ContainerTree(
-	portFactory: PortFactory = GraphViewModule.portFactory,
+	portFactory: PortFactory = GraphModelModule.portFactory,
+	portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val mainGraphView: GraphView<*>,
 	private val containerDrawing: ContainerDrawing,
@@ -50,7 +53,7 @@ class ContainerTree(
 		private val LOG by logger(ContainerTree::class)
 	}
 
-	val model = ContainerTreeModel(portFactory, styleProvider, this, mainGraphView, containerDrawing)
+	val model = ContainerTreeModel(portFactory, portViewFactory, styleProvider, this, mainGraphView, containerDrawing)
 
 	private val balancer = Balancer()
 

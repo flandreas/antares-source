@@ -11,13 +11,15 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.editor.GraphPortViewEvent
 import ch.scorpion.jabbah.graph.view.editor.SubGraphVerticeViewEvent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.port.TestPortFactory
+import ch.scorpion.jabbah.graph.model.port.TestPortFactory
+import ch.scorpion.jabbah.graph.view.port.TestPortViewFactory
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
 import java.io.File
@@ -49,7 +51,8 @@ class ContainerTreeTest {
 		TestTranslationsBuilder().withAnyKey()
 		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
 		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService.invoke())
-		GraphViewModule.portFactory = TestPortFactory()
+		GraphModelModule.portFactory = TestPortFactory()
+		GraphViewModule.portViewFactory = TestPortViewFactory()
 	}
 
 	@Test
@@ -318,9 +321,9 @@ class ContainerTreeTest {
 		}
 
 		private fun createPortViewComponent(graphPort: GraphPort<*>): PortViewComponent<*> {
-			return GraphViewModule.portFactory.createPortViewComponent(
-				GraphViewModule.portFactory.createPortView(
-					GraphViewModule.portFactory.createSubGraphPort(graphPort)))
+			return GraphViewModule.portViewFactory.createPortViewComponent(
+				GraphViewModule.portViewFactory.createPortView(
+					GraphModelModule.portFactory.createSubGraphPort(graphPort)))
 		}
 	}
 

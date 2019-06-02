@@ -13,6 +13,8 @@ import ch.scorpion.jabbah.graph.model.graph.GraphImpl
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
+import ch.scorpion.jabbah.graph.model.port.PortFactory
+import ch.scorpion.jabbah.graph.model.port.UndefinedPortFactory
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeImpl
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.repository.RepositoryModule
@@ -43,6 +45,9 @@ object GraphModelModule : AbstractModule() {
 
 		Translations.addBundle("jabbah-graph")
 	}
+
+	/** Must be specified by higher application layers.*/
+	var portFactory: PortFactory = UndefinedPortFactory()
 
 	var graphFactory: (name: String) -> Graph = { GraphImpl(it) }
 

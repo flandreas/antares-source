@@ -16,6 +16,7 @@ import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeViewFactory
 import ch.scorpion.antares.view.output.*
 import ch.scorpion.antares.view.port.DigitalPortFactory
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.antares.view.port.DigitalPortViewFactory
 import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
 import ch.scorpion.jabbah.animation.AnimationModule
@@ -106,7 +107,7 @@ object AntaresViewModule : AbstractModule() {
             drawingView
         }
 
-        GraphViewModule.portFactory = DigitalPortFactory(DrawStyleModule.styleProvider)
+        GraphViewModule.portViewFactory = DigitalPortViewFactory(DrawStyleModule.styleProvider)
         GraphViewModule.oscilloscopeViewFactory = DigitalOscilloscopeViewFactory()
         val edgeViewFactory = DigitalEdgeViewFactory(
                 DrawStyleModule.styleProvider,

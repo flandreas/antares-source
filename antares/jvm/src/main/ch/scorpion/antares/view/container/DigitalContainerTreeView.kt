@@ -8,16 +8,17 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.port.PortFactory
+import ch.scorpion.jabbah.graph.model.port.PortFactory
+import ch.scorpion.jabbah.graph.view.port.PortViewFactory
 
 class DigitalContainerTreeView(
-    portFactory: PortFactory,
-    styleProvider: StyleProvider,
-    eventBus: EventBus
-) : ContainerTreeView(portFactory, styleProvider, eventBus) {
-
-    constructor(): this(GraphViewModule.portFactory, DrawStyleModule.styleProvider, BaseModule.eventBus)
+	portFactory: PortFactory = GraphModelModule.portFactory,
+	portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	eventBus: EventBus = BaseModule.eventBus
+) : ContainerTreeView(portFactory, portViewFactory, styleProvider, eventBus) {
 
     init {
         eventBus.register(CircuitInOutBitWidthChanged::class) {
