@@ -5,20 +5,18 @@ import ch.scorpion.antares.model.gate.TriStateBufferGate
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Handedness
-import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
+import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
-import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 
 
 /**
@@ -95,16 +93,6 @@ class TriStateBufferGateView(
 	}
 
 	/** ---- [AbstractRectangularVerticeView] */
-
-	/*
-	override fun getBoundingBoxImpl(): Rectangle2D {
-		val bbox = super.getBoundingBoxImpl()
-		return Rectangle2D(
-			bbox.x, bbox.y - (SymbolStyle.NOT_PATH.boundingBox.height - Look.SCALE) / 2,
-			bbox.width, bbox.height
-		)
-	}
-	*/
 
 	override fun drawImpl(context: DrawContext) {
 		val oldColor = context.g.color
