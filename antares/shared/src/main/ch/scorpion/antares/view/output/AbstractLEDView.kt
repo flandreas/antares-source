@@ -188,11 +188,9 @@ abstract class AbstractLEDView<T: Vertice>(
 				context.g.fillOval(xInt, yInt, SIZE, SIZE)
 			}
 		}
-		context.g.color = Themes.get<AntaresTheme>().screen.backgroundColor
+		context.g.color = Themes.get<AntaresTheme>().screen.foregroundColor
 		context.g.stroke = stroke
 		context.g.fillOval(xInt, yInt, SIZE, SIZE)
-		context.g.color = Themes.get<AntaresTheme>().screen.foregroundColor
-		context.g.drawOval(xInt, yInt, SIZE, SIZE)
 		drawBulb(context)
 	}
 }
