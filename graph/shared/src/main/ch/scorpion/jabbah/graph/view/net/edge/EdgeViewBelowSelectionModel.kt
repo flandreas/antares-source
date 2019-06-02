@@ -17,9 +17,9 @@ import ch.scorpion.jabbah.graph.view.EdgeView
  */
 class EdgeViewBelowSelectionModel(
 	component: EdgeView<*>,
-	private val styleProvider: StyleProvider) : AbstractSelectionModel<EdgeView<*>>(component) {
-
-	constructor(component: EdgeView<*>) : this(component, DrawStyleModule.styleProvider)
+	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	private val styleType: EditStyleType = EditStyleType.SELECTION
+) : AbstractSelectionModel<EdgeView<*>>(component) {
 
 	/** ---- [AbstractSelectionModel] */
 
@@ -29,8 +29,8 @@ class EdgeViewBelowSelectionModel(
 		val oldStroke = context.g.stroke
 		val oldColor = context.g.color
 
-		context.g.stroke = styleProvider.getStyle(EditStyleType.HIGHLIGHT).stroke
-		context.g.color = styleProvider.getStyle(EditStyleType.HIGHLIGHT).color.backgroundColor
+		context.g.stroke = styleProvider.getStyle(styleType).stroke
+		context.g.color = styleProvider.getStyle(styleType).color.backgroundColor
 
 		for (i in 0 until component.segmentPointCount - 1) {
 			val begin = component.getSegmentPoint(i)

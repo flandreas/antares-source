@@ -18,11 +18,9 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
  */
 class BoxGateViewBelowSelectionModel(
     component: BoxGateView<*>,
-    private val styleProvider: StyleProvider
+    private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    private val styleType: EditStyleType = EditStyleType.SELECTION
 ) : AbstractSelectionModel<BoxGateView<*>>(component) {
-
-    @Suppress("unused")
-    constructor(component: BoxGateView<*>): this(component, DrawStyleModule.styleProvider)
 
     private var bounds = Rectangle2D()
 
@@ -32,7 +30,7 @@ class BoxGateViewBelowSelectionModel(
 
     override fun draw(context: DrawContext) {
         component.draw(context) {
-	        val style = styleProvider.getStyle(EditStyleType.HIGHLIGHT)
+	        val style = styleProvider.getStyle(styleType)
 	        component.drawShape(
 		        it,
 		        style.color.foregroundColor,

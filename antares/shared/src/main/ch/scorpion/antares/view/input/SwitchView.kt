@@ -402,7 +402,7 @@ class SwitchView(
 			if (!keyDown) {
 				if (isFocusOwner) {
 					when (context.keyEvent?.key) {
-						'0'.toInt() -> switchOn(context,false)
+						'0'.toInt() -> switchOn(context, false)
 						'1'.toInt() -> switchOn(context, true)
 						'\n'.toInt() -> switchOn(context, !model!!.isOn)
 					}
@@ -426,8 +426,7 @@ class SwitchView(
 							'1'.toInt() -> switchOn(context, false)
 							'\n'.toInt() -> switchOn(context, false)
 						}
-					}
-					else {
+					} else {
 						name?.let {
 							if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
 								switchOn(context, false)
@@ -452,7 +451,7 @@ class SwitchViewSelectionModel(component: SwitchView) : AbstractSelectionModel<S
 	override fun draw(context: DrawContext) {
 		val oldUseContextColors = context.useContextColors
 		context.useContextColors = true
-		context.color = Themes.get<AntaresTheme>().selection
+		context.color = Themes.get<AntaresTheme>().selection.color
 		component.drawSelected(context)
 		context.useContextColors = oldUseContextColors
 	}

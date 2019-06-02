@@ -18,7 +18,7 @@ class AntaresTheme(
 	figure: Style = DEF_FIGURE,
 	tooltip: Style = DEF_TOOLTIP,
 	shadow: CompositeColor = DEF_SHADOW,
-	selection: CompositeColor = DEF_SELECTION,
+	selection: Style = DEF_SELECTION,
 	highlight: Style = DEF_HIGHLIGHT,
 	messageInfo: Style = DEF_MESSAGE_INFO,
 	messageError: Style = DEF_MESSAGE_ERROR,

@@ -22,7 +22,7 @@ open class GraphTheme(
 	figure: Style = DEF_FIGURE,
 	tooltip: Style = DEF_TOOLTIP,
 	shadow: CompositeColor = DEF_SHADOW,
-	selection: CompositeColor = DEF_SELECTION,
+	selection: Style = DEF_SELECTION,
 	highlight: Style = DEF_HIGHLIGHT,
 	messageInfo: Style = DEF_MESSAGE_INFO,
 	messageError: Style = DEF_MESSAGE_ERROR,
@@ -68,8 +68,8 @@ open class GraphTheme(
 		styleRepository.registerStyle(GraphStyleType.SUBSYSTEM, subsystem)
 
 		if (!styleOnly) {
-			BaseModule.properties.set(Handle.PROP_BORDER_COLOR, selection.foregroundColor)
-			BaseModule.properties.set(Handle.PROP_FILL_COLOR, selection.backgroundColor)
+			BaseModule.properties.set(Handle.PROP_BORDER_COLOR, selection.color.foregroundColor)
+			BaseModule.properties.set(Handle.PROP_FILL_COLOR, selection.color.backgroundColor)
 		}
 	}
 }

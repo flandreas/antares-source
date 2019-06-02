@@ -42,10 +42,10 @@ import ch.scorpion.jabbah.io.StoreWriter
  * @param h the height of the rectangle
  */
 abstract class AbstractRectangularVerticeView<T : Vertice>(
-    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    model: T?,
-    rectangle: RectangularShape
-): AbstractVerticeView<T>(styleProvider, model), RectangularDrawable {
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	model: T?,
+	rectangle: RectangularShape
+) : AbstractVerticeView<T>(styleProvider, model), RectangularDrawable {
 
 	constructor(
 		styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -54,176 +54,180 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 		y: Double = 0.0,
 		w: Double = 0.0,
 		h: Double = 0.0
-	): this(styleProvider, model, Rectangle2D(x, y, w, h))
+	) : this(styleProvider, model, Rectangle2D(x, y, w, h))
 
-    /** Contains the position relative to [location] and the size of the rectangle..*/
-    protected val rectangle: RectangularShape = rectangle
+	/** Contains the position relative to [location] and the size of the rectangle..*/
+	protected val rectangle: RectangularShape = rectangle
 
-    /** Contains the actual and absolute bounding box including all [PortView] bounding boxes. */
-    private val _boundingBox = Rectangle2D()
+	/** Contains the actual and absolute bounding box including all [PortView] bounding boxes. */
+	private val _boundingBox = Rectangle2D()
 
-    /** Contains the rectangular area that responds to [contains] method calls. Always kept in sync with the geometry.*/
-    private val containsBox = Rectangle2D()
+	/** Contains the rectangular area that responds to [contains] method calls. Always kept in sync with the geometry.*/
+	private val containsBox = Rectangle2D()
 
-    /** Listens for geometry updates on [PortView]s and initiates bounding box recalculation.*/
-    private val portViewUpdateListener = object : DrawableAdapter() {
-        override fun drawableUpdated(event: DrawableEvent) {
-            updateBoxes()
-        }
-    }
+	/** Listens for geometry updates on [PortView]s and initiates bounding box recalculation.*/
+	private val portViewUpdateListener = object : DrawableAdapter() {
+		override fun drawableUpdated(event: DrawableEvent) {
+			updateBoxes()
+		}
+	}
 
-    /** ---- [Locatable] interface  */
+	/** ---- [Locatable] interface  */
 
-    /** Holds the absolute location of this [AbstractRectangularVerticeView], which must not necessarily be the upper-left corner. */
-    override var location: Point2D = Point2D.ZERO
-        set(value) {
-            invalidate()
-            field = value
-            updateBoxes()
-            invalidate()
-            if (!isResolving) {
-                update()
-            }
-        }
+	/** Holds the absolute location of this [AbstractRectangularVerticeView], which must not necessarily be the upper-left corner. */
+	override var location: Point2D = Point2D.ZERO
+		set(value) {
+			invalidate()
+			field = value
+			updateBoxes()
+			invalidate()
+			if (!isResolving) {
+				update()
+			}
+		}
 
-    /** ---- [Storable] interface */
+	/** ---- [Storable] interface */
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        writer.writeDouble("x", location.x)
-        writer.writeDouble("y", location.y)
-        if (storeSize) {
-            writer.writeDouble("w", width)
-            writer.writeDouble("h", height)
-        }
-    }
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeDouble("x", location.x)
+		writer.writeDouble("y", location.y)
+		if (storeSize) {
+			writer.writeDouble("w", width)
+			writer.writeDouble("h", height)
+		}
+	}
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        location = Point2D(reader.readDouble("x"), reader.readDouble("y"))
-        if (storeSize) {
-            setDimension(reader.readDouble("w"), reader.readDouble("h"))
-        }
-    }
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		location = Point2D(reader.readDouble("x"), reader.readDouble("y"))
+		if (storeSize) {
+			setDimension(reader.readDouble("w"), reader.readDouble("h"))
+		}
+	}
 
-    /** ---- [Drawable] interface */
+	/** ---- [Drawable] interface */
 
-    override fun contains(x: Double, y: Double): Boolean {
-        return rotate(containsBox).contains(x, y)
-    }
+	override fun contains(x: Double, y: Double): Boolean {
+		return rotate(containsBox).contains(x, y)
+	}
 
-    /** ---- [AbstractComponent] */
+	/** ---- [AbstractComponent] */
 
-    override fun rotationChanged(newRotation: Rotation) {
-        super.rotationChanged(newRotation)
-        updateBoxes()
-    }
+	override fun rotationChanged(newRotation: Rotation) {
+		super.rotationChanged(newRotation)
+		updateBoxes()
+	}
 
-    /** ---- [AbstractVerticeView] */
+	/** ---- [AbstractVerticeView] */
 
-    override fun getBoundingBoxImpl(): Rectangle2D {
-        updateBoxes()
-        return _boundingBox
-    }
+	override fun getBoundingBoxImpl(): Rectangle2D {
+		updateBoxes()
+		return _boundingBox
+	}
 
-    override fun addPortView(portView: PortView<*>) {
-        super.addPortView(portView)
-        portView.addDrawableListener(portViewUpdateListener)
-        updateBoxes()
-    }
+	override fun addPortView(portView: PortView<*>) {
+		super.addPortView(portView)
+		portView.addDrawableListener(portViewUpdateListener)
+		updateBoxes()
+	}
 
-    override fun removePortView(portView: PortView<*>) {
-        super.removePortView(portView)
-        portView.removeDrawableListener(portViewUpdateListener)
-        updateBoxes()
-    }
+	override fun removePortView(portView: PortView<*>) {
+		super.removePortView(portView)
+		portView.removeDrawableListener(portViewUpdateListener)
+		updateBoxes()
+	}
 
-    override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?) {
-        super.handleConnect(edgeView, port)
-        updateBoxes()
-    }
+	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?) {
+		super.handleConnect(edgeView, port)
+		updateBoxes()
+	}
 
-    override fun <G : Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?) {
-        super.handleUnconnect(edgeView, port)
-        updateBoxes()
-    }
+	override fun <G : Any> handleUnconnect(edgeView: EdgeView<G>, port: Port<G>?) {
+		super.handleUnconnect(edgeView, port)
+		updateBoxes()
+	}
 
-    /** ---- [RectangularDrawable] */
+	/** ---- [RectangularDrawable] */
 
-    override val bounds: RectangularShape get() = rectangle
+	override val bounds: RectangularShape get() = rectangle
 
-    override fun setBounds(x: Double, y: Double, w: Double, h: Double) {
-        if (this.x == x && this.y == y && this.width == w && this.height == h) {
-            return
-        }
-        invalidate()
-        rectangle.setFrame(x, y, w, h)
-        updateBoxes()
-        invalidate()
-        if (!isResolving) {
-            update()
-        }
-    }
+	override fun setBounds(x: Double, y: Double, w: Double, h: Double) {
+		if (this.x == x && this.y == y && this.width == w && this.height == h) {
+			return
+		}
+		invalidate()
+		rectangle.setFrame(x, y, w, h)
+		updateBoxes()
+		invalidate()
+		if (!isResolving) {
+			update()
+		}
+	}
 
-    override var width: Double
-        get() = rectangle.width
-        set(value) {setDimension(value, height)}
+	override var width: Double
+		get() = rectangle.width
+		set(value) {
+			setDimension(value, height)
+		}
 
-    override var height: Double
-        get() = rectangle.height
-        set(value) {setDimension(width, value)}
+	override var height: Double
+		get() = rectangle.height
+		set(value) {
+			setDimension(width, value)
+		}
 
-    override val lineWidth: Double
-        get() = stroke.width.toDouble()
+	override val lineWidth: Double
+		get() = stroke.width.toDouble()
 
-    override fun contains(x: Double, y: Double, w: Double, h: Double): Boolean {
-        return rectangle.contains(x, y, w, h)
-    }
+	override fun contains(x: Double, y: Double, w: Double, h: Double): Boolean {
+		return rectangle.contains(x, y, w, h)
+	}
 
-    /** ---- [AbstractRectangularVerticeView] */
+	/** ---- [AbstractRectangularVerticeView] */
 
-    open fun drawSelected(context: DrawContext) {
-        draw(context) { c->
-            super.drawImpl(c)
-            context.g.color = Themes.get<GraphTheme>().selection.foregroundColor
-            context.g.stroke = stroke
-            context.g.draw(bounds)
-        }
-    }
+	open fun drawSelected(context: DrawContext) {
+		draw(context) { c ->
+			super.drawImpl(c)
+			context.g.color = Themes.get<GraphTheme>().selection.color.foregroundColor
+			context.g.stroke = stroke
+			context.g.draw(bounds)
+		}
+	}
 
-    /**
-     * Determines whether the width and height attributes should be stored by this [Storable], or whether
-     * subclasses calculate the size by themselves. The default ist `false`
-     * @return `true` if the width and height should be stored by this [Storable].
-     */
-    protected open val storeSize: Boolean = false
+	/**
+	 * Determines whether the width and height attributes should be stored by this [Storable], or whether
+	 * subclasses calculate the size by themselves. The default ist `false`
+	 * @return `true` if the width and height should be stored by this [Storable].
+	 */
+	protected open val storeSize: Boolean = false
 
-    /** Returns the number of model units to be added at the corresponding side of the rectangle when calculating the bounding box.*/
-    protected open val outsetLeft: Int get() = 0
-    protected open val outsetRight: Int get() = 0
-    protected open val outsetTop: Int get() = 0
-    protected open val outsetBottom: Int get() = 0
+	/** Returns the number of model units to be added at the corresponding side of the rectangle when calculating the bounding box.*/
+	protected open val outsetLeft: Int get() = 0
+	protected open val outsetRight: Int get() = 0
+	protected open val outsetTop: Int get() = 0
+	protected open val outsetBottom: Int get() = 0
 
-    protected fun setDimension(w: Double, h: Double) {
-        invalidate()
-        rectangle.setFrame(rectangle.x, rectangle.y, w, h)
-        updateBoxes()
-        invalidate()
-        if (!isResolving) {
-            update()
-        }
-    }
+	protected fun setDimension(w: Double, h: Double) {
+		invalidate()
+		rectangle.setFrame(rectangle.x, rectangle.y, w, h)
+		updateBoxes()
+		invalidate()
+		if (!isResolving) {
+			update()
+		}
+	}
 
-    protected fun updateBoxes() {
-        _boundingBox.setFrame(
-            location.x + x - lineWidth - outsetLeft,
-            location.y + y - lineWidth - outsetTop,
-            width + 2 * lineWidth + outsetLeft + outsetRight,
-            height + 2 * lineWidth + outsetTop + outsetBottom
-        )
-	    if (shadow) {
-		    DropShadow.expand(_boundingBox, rotation)
-	    }
-	    addPortViewsTo(_boundingBox, containsBox)
-    }
+	protected fun updateBoxes() {
+		_boundingBox.setFrame(
+			location.x + x - lineWidth - outsetLeft,
+			location.y + y - lineWidth - outsetTop,
+			width + 2 * lineWidth + outsetLeft + outsetRight,
+			height + 2 * lineWidth + outsetTop + outsetBottom
+		)
+		if (shadow) {
+			DropShadow.expand(_boundingBox, rotation)
+		}
+		addPortViewsTo(_boundingBox, containsBox)
+	}
 }

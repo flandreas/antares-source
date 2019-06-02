@@ -19,27 +19,27 @@ import ch.scorpion.jabbah.graph.view.style.GraphTheme
  * selection [Color] prior to asking the [DigitalComponentView] to draw itself. As a consequence, drawing
  * unselected [DigitalComponentView]s must also be preceded by establishing the default drawing color.
  */
-class DigitalComponentViewDrawer(successor: DrawableDrawer<Component>?) : AbstractDrawableDrawer<Component> () {
-    constructor(): this(null)
+class DigitalComponentViewDrawer(successor: DrawableDrawer<Component>?) : AbstractDrawableDrawer<Component>() {
+	constructor() : this(null)
 
-    init {
-        successor?.let { super.successor = successor }
-    }
+	init {
+		successor?.let { super.successor = successor }
+	}
 
-    override fun process(context: DrawContext, drawable: Component) {
-	    val oldUseContextColor = context.useContextColors
-        if (drawable is GraphElementView<*> && drawable.model != null && drawable.model!!.isError) {
-            context.useContextColors = true
-            context.g.color = Themes.get<AntaresTheme>().error.foregroundColor
-            context.color = Themes.get<AntaresTheme>().error
-        } else {
-            context.g.color = Themes.get<GraphTheme>().vertice.color.foregroundColor
-            context.color = Themes.get<GraphTheme>().vertice.color
-            context.selectionColor = Themes.get<GraphTheme>().selection
-        }
-        context.g.stroke = Themes.get<GraphTheme>().edge.stroke
-        nextProcessor(context, drawable)
+	override fun process(context: DrawContext, drawable: Component) {
+		val oldUseContextColor = context.useContextColors
+		if (drawable is GraphElementView<*> && drawable.model != null && drawable.model!!.isError) {
+			context.useContextColors = true
+			context.g.color = Themes.get<AntaresTheme>().error.foregroundColor
+			context.color = Themes.get<AntaresTheme>().error
+		} else {
+			context.g.color = Themes.get<GraphTheme>().vertice.color.foregroundColor
+			context.color = Themes.get<GraphTheme>().vertice.color
+			context.selectionColor = Themes.get<GraphTheme>().selection.color
+		}
+		context.g.stroke = Themes.get<GraphTheme>().edge.stroke
+		nextProcessor(context, drawable)
 
-	    context.useContextColors = oldUseContextColor
-    }
+		context.useContextColors = oldUseContextColor
+	}
 }

@@ -28,7 +28,7 @@ class RectangularBelowSelectionModel(
         get() = Rectangle2D(bounds.x - 1, bounds.y - 1, bounds.width + 2, bounds.height + 2)
 
     override fun draw(context: DrawContext) {
-        context.g.color = Themes.get<EditTheme>().selection.foregroundColor
+        context.g.color = Themes.get<EditTheme>().selection.color.foregroundColor
         context.g.fillRect(bounds.x.toInt(), bounds.y.toInt(), bounds.width.toInt(), bounds.height.toInt())
     }
 

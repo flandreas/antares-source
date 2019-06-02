@@ -12,12 +12,14 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.BoundingBoxBelowSelectionModel
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
+import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
@@ -125,6 +127,7 @@ object GraphViewModule : AbstractModule() {
 		fillProperties(BaseModule.properties)
 		configureStyleRepository(StyleRepository.INSTANCE)
 		configureSelectionModels(EditSelectModule.selectionModelFactory)
+		configureHighlightModels(EditHighlightModule.highlightModelFactory)
 
 		ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptModule.scriptEngineProvider.invoke()) }
 		EditModule.drawingService = graphViewService
@@ -160,7 +163,7 @@ object GraphViewModule : AbstractModule() {
 		properties.set(PortView.PROP_HIGHLIGHT, ConnectionPointHighlightCircle())
 		properties.set(DragEdgePointHighlight.PROP_COLOR, Color.BLACK)
 		properties.set(DragEdgePointHighlight.PROP_HALF_SIZE, 6)
-		properties.set(ConnectionPointHighlightCircle.PROP_COLOR, Themes.get<EditTheme>().selection.foregroundColor)
+		properties.set(ConnectionPointHighlightCircle.PROP_COLOR, Themes.get<EditTheme>().selection.color.foregroundColor)
 		properties.set(OriginIndicator.PROP_COLOR, Color.BLUE)
 		properties.set(OriginIndicator.PROP_SELECTION_COLOR, Color.RED)
 
@@ -180,6 +183,12 @@ object GraphViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class.simpleName!!) { EdgeViewBelowSelectionModel(it as EdgeView<*>) }
 		factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class.simpleName!!) { BoundingBoxBelowSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class.simpleName!!) { BoundingBoxBelowSelectionModel(it) }
+	}
+
+	private fun configureHighlightModels(factory: SelectionModelFactory) {
+		factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class.simpleName!!) { EdgeViewBelowSelectionModel(it as EdgeView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class.simpleName!!) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class.simpleName!!) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
 	}
 
 	private var edgeViewFactoryImpl: EdgeViewFactory<Any> = EdgeViewFactoryImpl(

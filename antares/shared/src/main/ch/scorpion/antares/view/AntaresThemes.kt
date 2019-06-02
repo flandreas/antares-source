@@ -117,10 +117,11 @@ object AntaresThemes {
 					backgroundColor = SUBSYSTEM_COLOR),
 				font = SUBSYSTEM_FONT,
 				stroke = SUBSYSTEM_STROKE),
-			selection = CompositeColor(
-				foregroundColor = SELECTION_COLOR,
-				textColor = SELECTION_COLOR,
-				backgroundColor = Color.WHITE),
+			selection = BasicStyle(
+				color = CompositeColor(
+					foregroundColor = SELECTION_COLOR,
+					textColor = SELECTION_COLOR,
+					backgroundColor = Color.WHITE)),
 			zero = ZERO,
 			one = ONE,
 			undefined = UNDEFINED,
@@ -256,9 +257,10 @@ object AntaresThemes {
 					foregroundColor = Color(13, 116, 15),
 					backgroundColor = Color(5, 40, 7)),
 				stroke = SUBSYSTEM_STROKE),
-			selection = CompositeColor(
-				foregroundColor = SELECTION_COLOR,
-				backgroundColor = Color.BLACK),
+			selection = BasicStyle(
+				CompositeColor(
+					foregroundColor = SELECTION_COLOR,
+					backgroundColor = Color.BLACK)),
 			zero = ZERO.withBackground(ZERO.foregroundColor),
 			one = ONE,
 			undefined = UNDEFINED,
@@ -346,10 +348,11 @@ object AntaresThemes {
 					backgroundColor = SUBSYSTEM_COLOR),
 				font = SUBSYSTEM_FONT,
 				stroke = SUBSYSTEM_STROKE),
-			selection = CompositeColor(
-				foregroundColor = SELECTION_COLOR,
-				textColor = SELECTION_COLOR,
-				backgroundColor = Color.WHITE),
+			selection = BasicStyle(
+				CompositeColor(
+					foregroundColor = SELECTION_COLOR,
+					textColor = SELECTION_COLOR,
+					backgroundColor = Color.WHITE)),
 			zero = ZERO,
 			one = ONE,
 			undefined = UNDEFINED,

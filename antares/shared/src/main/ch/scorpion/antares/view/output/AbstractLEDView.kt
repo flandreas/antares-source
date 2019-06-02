@@ -200,7 +200,7 @@ class LEDViewSelectionModel(c: AbstractLEDView<*>) : AbstractSelectionModel<Abst
 	override fun draw(context: DrawContext) {
 		val oldUseContextColors = context.useContextColors
 		context.useContextColors = true
-		context.color = Themes.get<AntaresTheme>().selection
+		context.color = Themes.get<AntaresTheme>().selection.color
 		component.drawSelected(context)
 		context.useContextColors = oldUseContextColors
 	}

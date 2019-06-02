@@ -25,7 +25,7 @@ open class RectangularReplaceSelectionModel(
 		SHAPE {
 			override fun draw(component: AbstractRectangularComponent, context: DrawContext) {
 				val oldStroke = context.g.stroke
-				context.g.color = Themes.get<EditTheme>().selection.foregroundColor
+				context.g.color = Themes.get<EditTheme>().selection.color.foregroundColor
 				context.g.stroke = component.stroke
 				context.g.draw(component.shape)
 				context.g.stroke = oldStroke
@@ -38,7 +38,7 @@ open class RectangularReplaceSelectionModel(
 				val oldUseContextColor = context.useContextColors
 				val oldContextColor = context.color
 				context.useContextColors = true
-				context.color = Themes.get<EditTheme>().selection
+				context.color = Themes.get<EditTheme>().selection.color
 				component.draw(context)
 				context.useContextColors = oldUseContextColor
 				context.color = oldContextColor

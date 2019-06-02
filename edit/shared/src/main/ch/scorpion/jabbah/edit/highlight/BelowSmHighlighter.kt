@@ -1,21 +1,20 @@
 package ch.scorpion.jabbah.edit.highlight
 
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Colorable
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.edit.*
 
 /**
  * An implementation of a [Highlighter] that uses the configured [SelectionModel]s of
  * [SelectionDrawingStrategy.BELOW] for highlighting.
  */
 class BelowSmHighlighter(
-	private val selectionModelProvider: SelectionModelProvider = EditSelectModule.selectionModelProvider,
+	private val selectionModelProvider: SelectionModelProvider = EditHighlightModule.highlightModelProvider,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val content: DrawingViewContent<*>
 ) : Highlighter {

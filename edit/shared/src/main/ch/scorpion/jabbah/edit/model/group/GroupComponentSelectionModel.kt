@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.model.group
 
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
@@ -22,7 +23,8 @@ class GroupComponentSelectionModel(
 
 	init {
 		component.components.forEach {
-			selectionModels.put(it, provider.provideFor(it, SelectionDrawingStrategy.REPLACE) ?: SelectedColorSelectionModel(it))
+			selectionModels[it] = provider.provideFor(it, SelectionDrawingStrategy.REPLACE)
+				?: SelectedColorSelectionModel(it)
 		}
 	}
 
@@ -34,7 +36,7 @@ class GroupComponentSelectionModel(
 		val oldUseContextColors = context.useContextColors
 
 		context.useContextColors = true
-		context.selectionColor = Themes.get<EditTheme>().selection
+		context.selectionColor = Themes.get<EditTheme>().selection.color
 		context.g.color = context.selectionColor!!.foregroundColor
 		context.color = context.selectionColor
 		component.components.asReversed().forEach { selectionModels[it]!!.draw(context) }
