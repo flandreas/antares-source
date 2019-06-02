@@ -28,6 +28,10 @@ interface Addressable {
     /** Returns the maximum number of characters of all disassembly values.*/
     val disassemblyWidth: Int
 
+	val editableWhileEditingAction: Boolean
+
+	val editableWhileExecution: Boolean
+
 	/** Clears all content in this [Addressable].*/
 	fun clear()
 
@@ -36,6 +40,8 @@ interface Addressable {
 
     /** Returns the data at the specified address.*/
     fun dataAt(address: Int): Long
+
+	fun setDataAt(address: Int, value: Long)
 
 	/** Returns the comment at the specified address.*/
 	fun commentAt(address: Int): String?

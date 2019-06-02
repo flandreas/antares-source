@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import javax.swing.JLabel
+import javax.swing.event.TableModelEvent
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.TableModel
 
@@ -18,7 +19,16 @@ interface MemoryDisplayLayout {
 
 	/** Returns the text alignment of the specified column in terms of [JLabel.RIGHT] or [JLabel.LEFT].*/
 	fun columnAlignment(columnIndex: Int): Int
+
+	fun getCellAddress(rowIndex: Int, columnIndex: Int): Int
 }
+
+class MemoryTableModelEvent(
+	source: TableModel,
+	row: Int,
+	column: Int,
+	val oldValue: Long
+) : TableModelEvent(source, row, column, TableModelEvent.UPDATE)
 
 abstract class AbstractMemoryDisplayLayout(
 	protected val addressable: Addressable
@@ -26,7 +36,8 @@ abstract class AbstractMemoryDisplayLayout(
 
 class FixedWidthLayout(
 	override val cellsPerRow: Int,
-	addressable: Addressable
+	addressable: Addressable,
+	private val editable: Boolean
 ) : AbstractMemoryDisplayLayout(addressable) {
 
 	private val rowCount: Int = Math.ceil((addressable.addressWidth.power() / cellsPerRow).toDouble()).toInt()
@@ -35,10 +46,14 @@ class FixedWidthLayout(
 		return Translations.getString("antares.memory.layout.columns", cellsPerRow)
 	}
 
+	override fun getCellAddress(rowIndex: Int, columnIndex: Int): Int {
+		return rowIndex * cellsPerRow + columnIndex
+	}
+
 	override fun createTableModel(): TableModel {
 		return when (cellsPerRow) {
-			1 -> SingleColumnTableModel(addressable, rowCount)
-			else -> MemoryTableModel(cellsPerRow, addressable, rowCount)
+			1 -> SingleColumnTableModel(addressable, rowCount, editable)
+			else -> MemoryTableModel(cellsPerRow, addressable, rowCount, editable)
 		}
 	}
 
@@ -63,14 +78,13 @@ class FixedWidthLayout(
 	}
 }
 
-abstract class AbstractMemoryTableModel(
-	private val cellsPerRow: Int,
+private abstract class AbstractMemoryTableModel(
+	protected val cellsPerRow: Int,
 	protected val addressable: Addressable,
 	private val rowCount: Int
 ) : AbstractTableModel() {
 
 	private val format: String = "%${Math.max(2, addressable.dataWidth.width / 4)}s"
-	private val mask: Long = BitOperation.power(addressable.dataWidth.width.toByte()) - 1
 
 	override fun getRowCount(): Int {
 		return rowCount
@@ -85,30 +99,55 @@ abstract class AbstractMemoryTableModel(
 	}
 
 	protected fun getMemoryValue(rowIndex: Int, columnIndex: Int): String {
-		val address = rowIndex * cellsPerRow + columnIndex
-		val value = addressable.dataAt(address)
-		return String.format(format, java.lang.Long.toHexString(value and mask).toUpperCase())
+		return BitOperation.longToHexPadded(getCellValue(rowIndex, columnIndex), addressable.dataWidth)
+	}
+
+	protected fun getCellAddress(rowIndex: Int, columnIndex: Int): Int {
+		return rowIndex * cellsPerRow + columnIndex
+	}
+
+	protected fun getCellValue(rowIndex: Int, columnIndex: Int): Long {
+		return addressable.dataAt(getCellAddress(rowIndex, columnIndex))
 	}
 }
 
-open class MemoryTableModel(
+private open class MemoryTableModel(
 	cellsPerRow: Int,
 	addressable: Addressable,
-	rowCount: Int
+	rowCount: Int,
+	private val editable: Boolean
 ) : AbstractMemoryTableModel(cellsPerRow, addressable, rowCount) {
 
 	/** ---- [AbstractTableModel] */
 
-
 	override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? {
 		return getMemoryValue(rowIndex, columnIndex)
 	}
+
+	override fun setValueAt(aValue: Any?, rowIndex: Int, columnIndex: Int) {
+		val oldValue = getCellValue(rowIndex, columnIndex)
+		setMemoryValue(aValue as String, rowIndex, columnIndex)
+		fireTableChanged(MemoryTableModelEvent(this, rowIndex, columnIndex, oldValue))
+	}
+
+	override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
+		return editable
+	}
+
+	private fun setMemoryValue(value: String, rowIndex: Int, columnIndex: Int) {
+		try {
+			addressable.setDataAt(getCellAddress(rowIndex, columnIndex), BitOperation.hexToLong(value.trim()))
+		} catch (e: IllegalArgumentException) {
+			// empty
+		}
+	}
 }
 
-class SingleColumnTableModel(
+private class SingleColumnTableModel(
 	addressable: Addressable,
-	rowCount: Int
-) : MemoryTableModel(1, addressable, rowCount) {
+	rowCount: Int,
+	editable: Boolean
+) : MemoryTableModel(1, addressable, rowCount, editable) {
 
 	private val showDisassembly: Boolean = addressable.disassemblyWidth > 0
 	private val valueColumnName = Translations.getString("antares.memory.layout.value")

@@ -73,6 +73,13 @@ class BitOperationTest {
         assertEquals("FF", BitOperation.longToHex(255))
     }
 
+	@Test
+	fun shouldConvertLongToHexPadded() {
+		assertEquals("3", BitOperation.longToHexPadded(3, BitWidth.BW_2))
+		assertEquals("5", BitOperation.longToHexPadded(5, BitWidth.BW_4))
+		assertEquals("05", BitOperation.longToHexPadded(5, BitWidth.BW_8))
+	}
+
     @Test
     fun shouldConvertHexDigitToWord() {
         assertEquals(Word.of(BitWidth.BW_4, 5L), BitOperation.hexDigitToWord(BitWidth.BW_4, '5'))
@@ -84,4 +91,37 @@ class BitOperationTest {
     fun shouldDetectConvertHexDigitToWordOverflow() {
         assertNull(BitOperation.hexDigitToWord(BitWidth.BW_2, '4'))
     }
+
+	@Test
+	fun shouldNormalizeHex() {
+		assertEquals("05", BitOperation.normalizeHex("05", BitWidth.BW_8))
+		assertEquals("AF", BitOperation.normalizeHex("AF", BitWidth.BW_8))
+		assertEquals("AF13", BitOperation.normalizeHex("AF13", BitWidth.BW_16))
+	}
+
+	@Test
+	fun shouldRejectTooLongHexWhenNormalizing() {
+		assertNull(BitOperation.normalizeHex("13", BitWidth.BW_2))
+		assertNull(BitOperation.normalizeHex("AB", BitWidth.BW_4))
+		assertNull(BitOperation.normalizeHex("ABC", BitWidth.BW_8))
+	}
+
+	@Test
+	fun shouldPadHexWhenNormalizing() {
+		assertEquals("00", BitOperation.normalizeHex("", BitWidth.BW_8))
+		assertEquals("0F", BitOperation.normalizeHex("F", BitWidth.BW_8))
+		assertEquals("0003", BitOperation.normalizeHex("3", BitWidth.BW_16))
+	}
+
+	@Test
+	fun shouldRejectTooBigDigits() {
+		assertNull(BitOperation.normalizeHex("8", BitWidth.BW_2))
+		assertNull(BitOperation.normalizeHex("A", BitWidth.BW_2))
+	}
+
+	@Test
+	fun shouldRejectInvalidDigit() {
+		assertNull(BitOperation.normalizeHex("-", BitWidth.BW_2))
+		assertNull(BitOperation.normalizeHex("AX", BitWidth.BW_8))
+	}
 }

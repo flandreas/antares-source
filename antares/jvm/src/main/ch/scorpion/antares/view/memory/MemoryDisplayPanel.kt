@@ -2,32 +2,48 @@ package ch.scorpion.antares.view.memory
 
 import ch.scorpion.antares.model.memory.Addressable
 import ch.scorpion.antares.model.memory.Memory
+import ch.scorpion.antares.model.signal.BitOperation
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
 import com.l2fprod.common.swing.renderer.DefaultCellRenderer
 import java.awt.*
 import javax.swing.*
+import javax.swing.event.TableModelEvent
+import javax.swing.event.TableModelListener
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableCellRenderer
+import javax.swing.text.JTextComponent
 
 /**
  * Displays the value of the individual cells of a [Memory].
  */
 class MemoryDisplayPanel(
-	addressable: Addressable
+	private val addressable: Addressable,
+	editable: Boolean
 ) : JPanel() {
 
+	companion object {
+		private val LOG by logger(MemoryDisplayPanel::class)
+	}
+
 	private val layouts = arrayOf<MemoryDisplayLayout>(
-		FixedWidthLayout(1, addressable),
-		FixedWidthLayout(4, addressable),
-		FixedWidthLayout(8, addressable),
-		FixedWidthLayout(16, addressable)
+		FixedWidthLayout(1, addressable, editable),
+		FixedWidthLayout(4, addressable, editable),
+		FixedWidthLayout(8, addressable, editable),
+		FixedWidthLayout(16, addressable, editable)
 	)
 
     private val table = JTable(layouts[1].createTableModel())
 	private val scrollPane = JScrollPane(table)
 	private val layoutComboBox = JComboBox<MemoryDisplayLayout>(layouts)
 	private val memoryDisplayLayout: MemoryDisplayLayout get() = layoutComboBox.selectedItem as MemoryDisplayLayout
+	private val changeCollector = ChangeCollector()
+
+	val changes: Collection<MemoryCellChange> get() {
+		return changeCollector.changes.values
+	}
 
     init {
         buildUI()
@@ -57,9 +73,11 @@ class MemoryDisplayPanel(
     }
 
 	private fun updateMemoryDisplayLayout(memoryDisplayLayout: MemoryDisplayLayout) {
+		table.model.removeTableModelListener(changeCollector)
 		table.model = memoryDisplayLayout.createTableModel()
+		table.model.addTableModelListener(changeCollector)
 
-		val rowHeaderTable = RowHeaderTable(table) { Integer.toHexString(it * memoryDisplayLayout.cellsPerRow).toUpperCase() }
+		val rowHeaderTable = RowHeaderTable(table) { BitOperation.longToHexPadded(it.toLong() * memoryDisplayLayout.cellsPerRow, addressable.addressWidth) }
 		scrollPane.setRowHeaderView(rowHeaderTable)
 		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowHeaderTable.tableHeader)
 
@@ -67,6 +85,10 @@ class MemoryDisplayPanel(
 			val tableCellRenderer = DefaultTableCellRenderer()
 			tableCellRenderer.horizontalAlignment = memoryDisplayLayout.columnAlignment(it.modelIndex)
 			it.cellRenderer = tableCellRenderer
+
+			val textField = JTextField()
+			textField.inputVerifier = HexNumberInputVerifier(addressable.dataWidth)
+			it.cellEditor = DefaultCellEditor(textField)
 		}
 
 		table.tableHeader.defaultRenderer = HeaderRenderer(table)
@@ -87,6 +109,39 @@ class MemoryDisplayPanel(
 
 		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
 			return renderers[column].getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
+		}
+	}
+
+	private class HexNumberInputVerifier(private val bitWidth: BitWidth) : InputVerifier() {
+
+		override fun verify(input: JComponent?): Boolean {
+			val text = (input as JTextComponent).text
+			val result = BitOperation.normalizeHex(text.trim(), bitWidth) != null
+			LOG.debug("verifying '$text': $result")
+			return result
+		}
+	}
+
+	private inner class ChangeCollector : TableModelListener {
+
+		/** Maps a memory address to the corresponding value change.*/
+		val changes = mutableMapOf<Int,MemoryCellChange>()
+
+		override fun tableChanged(e: TableModelEvent?) {
+			if (e is MemoryTableModelEvent) {
+				LOG.debug("cell at ${e.firstRow},${e.column} changed")
+				val address = memoryDisplayLayout.getCellAddress(e.firstRow, e.column)
+				val newValue = getCurrentValue(e.firstRow, e.column)
+				changes[address] = MemoryCellChange(address, newValue, getOrigValue(address, e.oldValue))
+			}
+		}
+
+		private fun getOrigValue(address: Int, previousValue: Long): Long {
+			return changes[address]?.origValue ?: previousValue
+		}
+
+		private fun getCurrentValue(rowIndex: Int, columnIndex: Int): Long {
+			return addressable.dataAt(memoryDisplayLayout.getCellAddress(rowIndex, columnIndex))
 		}
 	}
 }

@@ -15,7 +15,6 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import javax.swing.*
 
-
 /**
  * Displays the contents of a [Memory].
  */
@@ -40,6 +39,7 @@ class MemoryContentsPanel(
 			cmdManager: CommandManager,
 			readonly: Boolean
 		) {
+
 			val dialog = JDialog(parent, true)
 			val contentsPanel = MemoryContentsPanel(memory, addressable, cmdManager, readonly) {
 				dialog.isVisible = false
@@ -52,7 +52,7 @@ class MemoryContentsPanel(
 		}
 	}
 
-	private val memoryDisplayPanel = MemoryDisplayPanel(addressable)
+	private val memoryDisplayPanel = MemoryDisplayPanel(addressable, !readonly)
 
 	init {
 		buildUI(readonly)
@@ -85,6 +85,9 @@ class MemoryContentsPanel(
 
 	private inner class CloseAction : AbstractAction(Translations.getString("file.action.close.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
+			val changes = memoryDisplayPanel.changes
+			LOG.debug("User has changed ${changes.size} memory cells")
+			cmdManager.register(MemoryCellChangeCommand(memory, changes))
 			closeHandler.invoke()
 		}
 	}

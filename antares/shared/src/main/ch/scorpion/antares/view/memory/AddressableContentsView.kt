@@ -203,7 +203,7 @@ class AddressableContentsView(
 
 		// Draw address
 		context.g.color = context.choose(styleProvider.getStyle(styleType).color).disabledTextColor
-		addressLabel.text = BitOperation.longToHex(address.toLong()).padStart(addressDigitCount, '0')
+		addressLabel.text = BitOperation.longToHexPadded(address.toLong(), addressable.addressWidth)
 		addressLabel.location = Point2D(x, y)
 		addressLabel.draw(context)
 
@@ -223,7 +223,7 @@ class AddressableContentsView(
 				context.g.color = context.choose(styleProvider.getStyle(styleType).color).textColor
 			}
 
-			dataLabel.text = BitOperation.longToHex(addressable.dataAt(cellAddress)).padStart(dataDigitCount, '0')
+			dataLabel.text = BitOperation.longToHexPadded(addressable.dataAt(cellAddress), addressable.dataWidth)
 			dataLabel.location = Point2D(x, y)
 			dataLabel.draw(context)
 

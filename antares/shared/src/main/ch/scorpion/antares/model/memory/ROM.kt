@@ -84,6 +84,10 @@ class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
 
 	/** ---- [Addressable] interface */
 
+	override val editableWhileExecution: Boolean get() = true
+
+	override val editableWhileEditingAction: Boolean get() = true
+
 	override val currentAddress: Int get() = currentSelectedAddress
 
 	override val maxAddress: Int get() = getAddressInput().bitWidth.power().toInt() - 1
@@ -115,6 +119,10 @@ class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
 	}
 
 	override fun dataAt(address: Int): Long = memory.read(address)
+
+	override fun setDataAt(address: Int, value: Long) {
+		memory.write(address, value)
+	}
 
 	override fun disassemblyAt(address: Int): String = disassembly.getOrElse(address) { "" }
 

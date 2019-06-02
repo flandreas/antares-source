@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import kotlin.math.max
 import kotlin.math.pow
 
 /**
@@ -11,7 +12,7 @@ object BitOperation {
 
     val BINARY = listOf('0', '1')
     val HEX = listOf('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F')
-	private val POWER = Array(32 + 1) { it -> 2.0.pow(it).toLong() }
+	private val POWER = Array(32 + 1) { 2.0.pow(it).toLong() }
 
 	fun getBitAt(value: Long, index: Int): Boolean {
         return value shr index and 1 == 1L
@@ -30,19 +31,45 @@ object BitOperation {
 	    return POWER[value.toInt()]
     }
 
+	/**
+	 * Returns the normalized representation of a hexadecimal [String] in a particular [BitWidth],
+	 * or `null` if the combination is invalid (e.g. hex string is too long, to big, or contains invalid characters).
+	 */
+	fun normalizeHex(hex: String, bitWidth: BitWidth): String? {
+		val value = hex.toUpperCase()
+		if (bitWidth < BitWidth.BW_4) {
+			if (value.length > 1) {
+				return null
+			}
+			val maxDigit = bitWidth.power() - 1
+			if (value[0] !in '0'..maxDigit.toChar()) {
+				return null
+			}
+			return value
+		} else {
+			val length = bitWidth.width / 4
+			if (value.length > length) {
+				return null
+			}
+			if (value.firstOrNull { it !in '0'..'9' && it !in 'A'..'F' } != null) {
+				return null
+			}
+
+			return value.padStart(length, '0')
+		}
+	}
+
     /** Converts a hexadecimal value to a decimal long value*/
     fun hexToLong(hex: String): Long {
         var value = 0L
         var factor = 1L
 
         for (c in hex.toUpperCase().reversed()) {
-            if (c in '0'..'9') {
-                value += factor * (c.toInt() - '0'.toInt())
-            } else if (c in 'A'..'F') {
-                value += factor * (c.toInt() - 'A'.toInt() + 10)
-            } else {
-                throw IllegalArgumentException("'$hex' is not a valid hexadecimal number")
-            }
+	        value += when (c) {
+		        in '0'..'9' -> factor * (c.toInt() - '0'.toInt())
+		        in 'A'..'F' -> factor * (c.toInt() - 'A'.toInt() + 10)
+		        else -> throw IllegalArgumentException("'$hex' is not a valid hexadecimal number")
+	        }
             factor *= 16
         }
 
@@ -92,6 +119,10 @@ object BitOperation {
         }
         return hex.toString().reversed()
     }
+
+	fun longToHexPadded(value: Long, bitWidth: BitWidth): String {
+		return longToHex(value).padStart(max(1, bitWidth.width / 4), '0')
+	}
 
     /**
      * Converts a decimal value in the range 0..15 to the corresponding hexadecimal digit.
