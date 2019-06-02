@@ -28,6 +28,7 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
@@ -69,6 +70,9 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 	@BeforeTest
 	override fun setup() {
 		super.setup()
+
+		GraphViewModule.applicationModeHolder = DummyApplicationModeHolder()
+
 		val builder = TestCircuitBuilder("bla", styleProvider, eventBus)
 		switch = builder.addVerticeView(SwitchView())
 		input = builder.addVerticeView(CircuitInOutView(model = CircuitInOutImpl(portType = PortType.INPUT)))
@@ -144,7 +148,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 	@Test
 	fun shouldPressToggleButton() {
 		val usecase = UsecaseImpl("PressButton", "circuit.pressButtonAt(10000, 1);")
-		val runner = UsecaseRunner(usecase, view.drawing, scheduler, DummyApplicationModeHolder())
+		val runner = UsecaseRunner(usecase, view.drawing, scheduler)
 		runner.run()
 		proceedToNanos(10_000)
 		assertTrue(switch.model!!.isOn)
@@ -154,7 +158,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 	fun shouldPressPushButton() {
 		switch.toggle = false
 		val usecase = UsecaseImpl("PressButton", "circuit.pressButtonAt(10000, 1);")
-		val runner = UsecaseRunner(usecase, view.drawing, scheduler, DummyApplicationModeHolder())
+		val runner = UsecaseRunner(usecase, view.drawing, scheduler)
 		runner.run()
 		proceedToNanos(10_000)
 		assertTrue(switch.model!!.isOn)
@@ -166,7 +170,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 	@Test
 	fun shouldSetInput() {
 		val usecase = UsecaseImpl("SetInput", "circuit.setInputAt(10000, 2, \"1\");")
-		val runner = UsecaseRunner(usecase, view.drawing, scheduler, DummyApplicationModeHolder())
+		val runner = UsecaseRunner(usecase, view.drawing, scheduler)
 		runner.run()
 		proceedToNanos(10_000)
 		assertFalse(switch.model!!.isOn)
@@ -176,7 +180,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 	@Test
 	fun shouldApplyClock() {
 		val usecase = UsecaseImpl("ApplyClock", "circuit.applyClock(2, 1000);")
-		val runner = UsecaseRunner(usecase, view.drawing, scheduler, DummyApplicationModeHolder())
+		val runner = UsecaseRunner(usecase, view.drawing, scheduler)
 		runner.run()
 
 		proceedToNanos(10_000)
@@ -197,7 +201,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 			"AssertLedOn",
 			"circuit.pressButtonAt(10000, 1);",
 			"circuit.assertLedOnAt(20000, 4);")
-		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, throwFailureException = true)
 		runner.run()
 
 		proceedToNanos(20_000)
@@ -209,7 +213,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 			"AssertLedOn",
 			";",
 			"circuit.assertLedOnAt(20000, 4);")
-		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, throwFailureException = true)
 		runner.run()
 
 		proceedToNanos(20_000)
@@ -221,7 +225,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 			"AssertLedOn",
 			";",
 			"circuit.assertLedOffAt(20000, 4);")
-		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, throwFailureException = true)
 		runner.run()
 
 		proceedToNanos(20_000)
@@ -233,7 +237,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 			"AssertLedOn",
 			"circuit.pressButtonAt(10000, 1);",
 			"circuit.assertLedOffAt(20000, 4);")
-		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, throwFailureException = true)
 		runner.run()
 
 		proceedToNanos(20_000)
@@ -245,19 +249,19 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 			"AssertOutputSet",
 			"circuit.pressButtonAt(10000, 1);",
 			"circuit.assertOutputAt(20000, 5, \"1\");")
-		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, throwFailureException = true)
 		runner.run()
 
 		proceedToNanos(20_000)
 	}
 
 	@Test(expected = UsecaseTestFailureException::class)
-	fun shouldFailToAssertOutput () {
+	fun shouldFailToAssertOutput() {
 		val usecase = UsecaseImpl(
 			"AssertOutputSet",
 			";",
 			"circuit.assertOutputAt(20000, 5, \"1\");")
-		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, DummyApplicationModeHolder(), throwFailureException = true)
+		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, throwFailureException = true)
 		runner.run()
 
 		proceedToNanos(20_000)

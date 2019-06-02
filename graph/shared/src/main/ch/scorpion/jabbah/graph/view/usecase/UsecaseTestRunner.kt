@@ -15,19 +15,18 @@ import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.ApplicationMode
-import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import kotlin.math.max
 
 class UsecaseTestRunner(
 	usecases: List<Usecase>,
 	val graphView: GraphView<*>,
 	private val scheduler: Scheduler,
-	private val appModeHolder: ApplicationModeHolder,
 	private val gateway: ScriptGateway = ScriptModule.scriptGateway,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val throwFailureException: Boolean = false
@@ -62,8 +61,8 @@ class UsecaseTestRunner(
 			_usecase = usecase
 			_script = Script(usecase.testScript!!, usecase.name.value, Translations.getString("usecaseTest.issueContext.name"))
 
-			val usecaseActionRunner = UsecaseRunner(usecase, graphView, scheduler, appModeHolder, gateway)
-			appModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
+			val usecaseActionRunner = UsecaseRunner(usecase, graphView, scheduler, gateway)
+			GraphViewModule.applicationModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
 				gateway.usecaseAction(usecaseActionRunner.script, usecaseActionRunner, scheduler)
 				gateway.usecaseTest(script, this)
 				scheduler.requestActingAfter(FinishTestActor(), maxAssertionTime + 1, SimpleActorData())

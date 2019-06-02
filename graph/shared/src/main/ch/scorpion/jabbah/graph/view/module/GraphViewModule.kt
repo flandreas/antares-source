@@ -23,6 +23,8 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
+import ch.scorpion.jabbah.graph.ApplicationModeHolder
+import ch.scorpion.jabbah.graph.UndefinedApplicationModeHolder
 import ch.scorpion.jabbah.graph.container.*
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
@@ -109,6 +111,8 @@ object GraphViewModule : AbstractModule() {
 	var oscilloscopeViewFactory: OscilloscopeViewFactory = UndefinedOscilloscopeViewFactory()
 
 	val oscilloscopeViewService: OscilloscopeViewService = OscilloscopeViewServiceImpl(EditModule.commandManager, BaseModule.eventBus)
+
+	var applicationModeHolder: ApplicationModeHolder = UndefinedApplicationModeHolder()
 
 	override fun initialize() {
 		EditModule.require()

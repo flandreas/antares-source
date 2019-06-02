@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.ui.EditedGraphViewEvent
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
@@ -27,13 +26,11 @@ abstract class AbstractUsecaseAction(
 ) : AbstractAction(baseName) {
 
 	private var currentSavable: Savable? = null
-	protected var applicationModeHolder: ApplicationModeHolder? = null
 	protected var graphView: GraphView<*>? = null
 	protected var usecase: Usecase? = null
 
 	init {
 		eventBus.register(EditedGraphViewEvent::class) {
-			applicationModeHolder = it.applicationModeHolder
 			graphView = it.newGraphView
 			updateEnabledness()
 		}
@@ -104,7 +101,7 @@ class RunUsecaseAction(
 
 	override fun execute(event: ActionEvent) {
 		usecase?.let {
-			UsecaseRunner(it, graphView!!, scheduler, applicationModeHolder!!).run()
+			UsecaseRunner(it, graphView!!, scheduler).run()
 		}
 	}
 
@@ -120,7 +117,7 @@ class RunSingleUsecaseTestAction(
 
 	override fun execute(event: ActionEvent) {
 		usecase?.let {
-			UsecaseTestRunner(listOf(it), graphView!!, scheduler, applicationModeHolder!!).run()
+			UsecaseTestRunner(listOf(it), graphView!!, scheduler).run()
 		}
 	}
 
@@ -134,7 +131,7 @@ class RunAllTestsAction(
 ) : AbstractUsecaseAction("usecaseTest.action.runAllTests") {
 
 	override fun execute(event: ActionEvent) {
-		UsecaseTestRunner(graphView!!.usecases.withTests(), graphView!!, scheduler, applicationModeHolder!!).run()
+		UsecaseTestRunner(graphView!!.usecases.withTests(), graphView!!, scheduler).run()
 	}
 
 	override fun calculateEnabled(): Boolean {

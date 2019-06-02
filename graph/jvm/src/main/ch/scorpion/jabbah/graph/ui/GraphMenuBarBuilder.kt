@@ -78,7 +78,7 @@ open class GraphMenuBarBuilder(
 	}
 
 	protected open fun fillExecutionMenu(menu: JMenu): JMenu {
-		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ToggleApplicationModeAction((frame as GraphFrame).graphPanel))))
+		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ToggleApplicationModeAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(StepExecutionAction())))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ExecutionDepthAction())))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(StopOnIssueAction())))

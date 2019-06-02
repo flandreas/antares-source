@@ -29,6 +29,7 @@ import ch.scorpion.jabbah.graph.ui.GraphPanel
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.editor.GraphEditor
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.Storable
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
@@ -137,8 +138,9 @@ class AntaresSwing(
 		}
 		val graphEditor = GraphEditor(graphCanvas.view as DrawingView<Drawing<Component>>)
 		val graphPanel = GraphPanel(editor = graphEditor, viewManager = viewManager, showContentInitially = false)
-		graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
+		GraphViewModule.applicationModeHolder = graphPanel
 
+		graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
 		return GraphFrame(this, graphPanel, eventBus, viewManager)
 	}
 

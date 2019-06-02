@@ -9,13 +9,13 @@ import ch.scorpion.jabbah.execution.actor.EmptyActor
 import ch.scorpion.jabbah.execution.actor.SimpleActorData
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.ApplicationMode
-import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.model.GraphInput
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /**
  * Runs a [Usecase] by starting the [Scheduler] and executing the JavaScrip code associated with the [Usecase].
@@ -30,7 +30,6 @@ class UsecaseRunner(
 	private val usecase: Usecase,
 	val graphView: GraphView<*>,
 	private val scheduler: Scheduler,
-	private val appModeHolder: ApplicationModeHolder,
 	private val gateway: ScriptGateway = ScriptModule.scriptGateway
 ) {
 
@@ -50,7 +49,7 @@ class UsecaseRunner(
 		checkState(!didRun, "Attempt to repeatedly run UsecaseRunner")
 
 		LOG.debug("Running usecase '${usecase.name.value}'")
-		appModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
+		GraphViewModule.applicationModeHolder.setMode(ApplicationMode.EXEC_USECASE) {
 			gateway.usecaseAction(script, this, scheduler)
 		}
 		didRun = true
@@ -66,11 +65,11 @@ class UsecaseRunner(
 		scheduler.requestActingAfter(UsecaseActor(action), delay(time), SimpleActorData())
 	}
 
-	fun <T:Any> applyOscillation(input: GraphInput<T>, firstValue: T, secondValue: T, period: Long) {
+	fun <T : Any> applyOscillation(input: GraphInput<T>, firstValue: T, secondValue: T, period: Long) {
 		scheduler.requestActingAfter(UsecaseClock<T>(input, firstValue, secondValue, period), 1, SimpleActorData())
 	}
 
-	private fun delay(time: Long) : Long {
+	private fun delay(time: Long): Long {
 		return time - scheduler.executionTime
 	}
 
@@ -81,7 +80,7 @@ class UsecaseRunner(
 		}
 	}
 
-	private class UsecaseClock<T:Any>(
+	private class UsecaseClock<T : Any>(
 		private val input: GraphInput<T>,
 		private val firstValue: T,
 		private val secondValue: T,

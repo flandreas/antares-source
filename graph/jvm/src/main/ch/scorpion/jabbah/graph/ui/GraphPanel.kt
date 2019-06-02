@@ -188,8 +188,8 @@ class GraphPanel(
 			}
 		})
 
-		eventBus.register (IssueCollectorEvent::class) {
-			val iconPath = when(it.issueCollector.maximumSeverity) {
+		eventBus.register(IssueCollectorEvent::class) {
+			val iconPath = when (it.issueCollector.maximumSeverity) {
 				null -> "/img/issue-16.png"
 				IssueSeverity.Warning -> "/img/warning-16.png"
 				IssueSeverity.Error -> "/img/error-16.png"
@@ -299,7 +299,7 @@ class GraphPanel(
 	}
 
 	private fun createExecutionToolBar(): ToolBar {
-		val modeToggleAction = ActionWrapperSwing(ToggleApplicationModeAction(this))
+		val modeToggleAction = ActionWrapperSwing(ToggleApplicationModeAction())
 		val modeToggleButton = JToggleButton(modeToggleAction)
 		modeToggleButton.text = null
 		modeToggleButton.hideActionText = true
@@ -320,7 +320,7 @@ class GraphPanel(
 		val speedSlider = SystemSpeedSlider()
 		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
 
-		val usecaseSelector = UsecaseSelector(this)
+		val usecaseSelector = UsecaseSelector()
 
 		val mainToolBar = ToolBar()
 		mainToolBar.isFloatable = false
