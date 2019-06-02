@@ -30,8 +30,6 @@ interface Addressable {
 
 	val editableWhileEditingAction: Boolean
 
-	val editableWhileExecution: Boolean
-
 	/** Clears all content in this [Addressable].*/
 	fun clear()
 

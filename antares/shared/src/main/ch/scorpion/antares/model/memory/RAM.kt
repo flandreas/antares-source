@@ -76,8 +76,6 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice("library.element.RAM", 
 
 	/** ---- [Addressable] interface */
 
-	override val editableWhileExecution: Boolean get() = true
-
 	override val editableWhileEditingAction: Boolean get() = false
 
 	override val currentAddress: Int get() = currentSelectedAddress

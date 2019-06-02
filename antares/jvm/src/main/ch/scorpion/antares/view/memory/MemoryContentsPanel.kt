@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
@@ -39,9 +40,10 @@ class MemoryContentsPanel(
 			cmdManager: CommandManager,
 			readonly: Boolean
 		) {
+			val editable = GraphViewModule.applicationModeHolder.currentMode.isEdit() && addressable.editableWhileEditingAction
 
 			val dialog = JDialog(parent, true)
-			val contentsPanel = MemoryContentsPanel(memory, addressable, cmdManager, readonly) {
+			val contentsPanel = MemoryContentsPanel(memory, addressable, cmdManager, readonly || !editable) {
 				dialog.isVisible = false
 			}
 			dialog.title = Translations.getString("antares.action.memory.contents.title", name)

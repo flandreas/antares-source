@@ -84,8 +84,6 @@ class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
 
 	/** ---- [Addressable] interface */
 
-	override val editableWhileExecution: Boolean get() = true
-
 	override val editableWhileEditingAction: Boolean get() = true
 
 	override val currentAddress: Int get() = currentSelectedAddress
