@@ -64,18 +64,20 @@ open class DrawableContainerImpl<T: Drawable>(
     }
 
     override fun draw(context: DrawContext) {
-        if (useLocation) {
-            context.g.translate(location.x, location.y)
-        }
-        drawablesInDrawingOrder().forEach {
-            if (it.visible) {
-                drawableDrawer.process(context, it)
-            }
-        }
-	    DrawModule.drawLocatableDebugBoundingBox(this, context)
-        if (useLocation) {
-            context.g.translate(-location.x, -location.y)
-        }
+	    if (children.isNotEmpty()) {
+		    if (useLocation) {
+			    context.g.translate(location.x, location.y)
+		    }
+		    drawablesInDrawingOrder().forEach {
+			    if (it.visible) {
+				    drawableDrawer.process(context, it)
+			    }
+		    }
+		    DrawModule.drawLocatableDebugBoundingBox(this, context)
+		    if (useLocation) {
+			    context.g.translate(-location.x, -location.y)
+		    }
+	    }
     }
 
     /** Returns the [Drawable]s in the order they should be drawn.*/

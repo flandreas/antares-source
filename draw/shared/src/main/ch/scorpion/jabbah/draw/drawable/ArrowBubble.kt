@@ -71,7 +71,7 @@ class ArrowBubble(
 
 	/** ----  [AbstractDrawable] */
 
-	override val boundingBox: RectangularShape get() = path.boundingBox.expandBy(style.stroke.width.toDouble())
+	override val boundingBox: RectangularShape get() = path.boundingBox.expandBy(style.stroke.width.toDouble()).moveBy(location)
 
 	override fun draw(context: DrawContext) {
 		context.g.translate(location.x, location.y)
