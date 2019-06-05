@@ -6,6 +6,7 @@ import ch.scorpion.antares.view.gate.AbstractDigitalGateView
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rotation.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -27,18 +28,18 @@ class ClockView(
 ) : AbstractDigitalGateView<Clock>(styleProvider, "", model) {
 
     companion object {
-        private const val SEG_X = Look.SCALE
-        private const val SEG_Y = SEG_X * 3 / 2
+        private const val SEG_X = Look.SCALE.toDouble()
+        private const val SEG_Y_HALF = SEG_X * 3 / 4
         private val ICON_PATH = createIconPath()
 
         private fun createIconPath(): Path {
-            return System.get().createPath()
-                .moveTo(0, 0)
-                .lineTo(SEG_X, 0)
-                .lineTo(SEG_X, -SEG_Y)
-                .lineTo(2 * SEG_X, -SEG_Y)
-                .lineTo(2 * SEG_X, 0)
-                .lineTo(3 * SEG_X, 0)
+	        return System.get().createPath()
+		        .moveTo(-SEG_X * 1.5, SEG_Y_HALF)
+		        .lineTo(-SEG_X * 0.6, SEG_Y_HALF)
+		        .lineTo(-SEG_X * 0.6, -SEG_Y_HALF)
+		        .lineTo(SEG_X * 0.6, -SEG_Y_HALF)
+		        .lineTo(SEG_X * 0.6, SEG_Y_HALF)
+		        .lineTo(SEG_X * 1.5, SEG_Y_HALF)
         }
     }
 
@@ -96,15 +97,30 @@ class ClockView(
         }
         context.g.stroke = styleProvider.getStyle(GraphStyleType.ANNOTATION).stroke
 
-        val dx = bounds.centerX - 3 * SEG_X / 2
-        val dy = bounds.centerY - SEG_Y / 2
-
-        context.g.translate(dx, dy)
-        context.g.draw(ICON_PATH)
-        context.g.translate(-dx, -dy)
+        drawIconPath(context)
 
         context.g.color = oldColor
     }
+
+	private fun drawIconPath(context: DrawContext) {
+		val dx = when(rotation) {
+			R0,R180 -> bounds.centerX
+			R90 -> bounds.centerX + bounds.width / 5
+			R270 -> bounds.centerX - bounds.width / 5
+		}
+
+		val dy = when(rotation) {
+			R0 -> bounds.centerY - bounds.height / 5
+			R90, R270 -> bounds.centerY
+			R180 -> bounds.centerY + bounds.height / 5
+		}
+
+		context.g.translate(dx, dy)
+		context.g.rotate(rotation.inverse().angle)
+		context.g.draw(ICON_PATH)
+		context.g.rotate(-rotation.inverse().angle)
+		context.g.translate(-dx, -dy)
+	}
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
 		return actorInteractionHandler
