@@ -73,4 +73,25 @@ class EdgeViewSnapLocatorTest {
 		assertEquals(55.0, locatorResult.x)
 		assertEquals(0.0, locatorResult.y)
 	}
+
+	@Test
+	fun shouldNotSnapNearStartOfOriginSegment() {
+		ev.addSegmentPoint(Point2D(0, 0))
+		ev.addSegmentPoint(Point2D(100, 0))
+
+		val result = EdgeViewSnapLocator.snap(ev, EdgeViewSnapLocator.FORBIDDEN_END_AREA, 0.0)
+
+		assertNull(result)
+	}
+
+	@Test
+	fun shouldNotSnapNearEndOfDestinationSegment() {
+		ev.addSegmentPoint(Point2D(0, 0))
+		ev.addSegmentPoint(Point2D(100, 0))
+
+		val result = EdgeViewSnapLocator.snap(ev, 100.0 - EdgeViewSnapLocator.FORBIDDEN_END_AREA, 0.0)
+
+		assertNull(result)
+	}
+
 }

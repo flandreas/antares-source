@@ -207,6 +207,12 @@ interface EdgeView<T: Any> : NetViewElement<T> {
      */
     fun join(edgeView: EdgeView<T>): EdgeView<*>
 
+	/**
+	 * Snaps the point given by [x] and [y] to the location on this [EdgeView] that is nearest to any of
+	 * the snapping coordinates defined by the specified [Snapper].
+	 * @return a [EdgeViewSnapLocatorResult] or `null` if no suitable location was found, for example if too far
+	 * away from the [EdgeView], or not on a perpendicular segment.
+	 */
 	fun snap(x: Double, y: Double, backgroundSnapper: Snapper? = null): EdgeViewSnapLocatorResult?
 }
 
