@@ -40,4 +40,6 @@ data class CompositeColor(
 
 	fun withAlpha(alpha: Int): CompositeColor = CompositeColor(foregroundColor.withAlpha(alpha), backgroundColor.withAlpha(alpha), textColor.withAlpha(alpha))
 
+	fun withForegroundLikeBackground(): CompositeColor = CompositeColor(backgroundColor, backgroundColor, textColor)
+
 }

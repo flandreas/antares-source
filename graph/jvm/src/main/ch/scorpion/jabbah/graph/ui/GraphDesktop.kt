@@ -155,7 +155,7 @@ class GraphDesktop(
 
 			addGraphNavigationPanel(newPanel)
 
-			it.drawingView.highlighter.highlight(view, refColor)
+			it.drawingView.highlighter.highlight(view, refColor.withForegroundLikeBackground())
 			it.drawingView.repaint()
 		} ?: LOG.error("SubGraphVerticeView for OpenSubGraphRequest not found in open panels")
 	}
