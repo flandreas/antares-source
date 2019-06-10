@@ -64,7 +64,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
 
         if (data.changedPort === ram.getClockInput()!!) {
             if (ram.getClockInput()!!.getIncomingSignal() == Word.of(true) && ram.getWriteInput().getIncomingSignal() == Word.of(true)) {
-                write(ram)
+                write(ram, signalHandler)
             }
         }
     }
@@ -105,7 +105,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
 
     private fun readOrWrite(ram: RAM, signalHandler: SignalHandler) {
         if (ram.getWriteInput().getIncomingSignal() == Word.of(true)) {
-            write(ram)
+            write(ram, signalHandler)
         } else {
             read(ram, signalHandler)
         }
@@ -122,12 +122,12 @@ class RAMCalculator : VerticeCalculator<RAM> {
     }
 
 
-    private fun write(ram: RAM) {
+    private fun write(ram: RAM, signalHandler: SignalHandler) {
         val address = ram.getAddressInput().getIncomingSignal()
         val signal = ram.getDataPort().getIncomingSignal()!!.toInt()
 
         LOG.debug("Writing into RAM: address=$address, value=$signal")
 
-        ram.write(address!!.toInt()!!, signal!!.toLong())
+        ram.write(address!!.toInt()!!, signal!!.toLong(), signalHandler)
     }
 }

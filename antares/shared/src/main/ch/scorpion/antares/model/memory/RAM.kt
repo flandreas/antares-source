@@ -188,7 +188,8 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice("library.element.RAM", 
 
 	fun read(address: Int): Long? = memory.read(address)
 
-	fun write(address: Int, value: Long) {
+	fun write(address: Int, value: Long, signalHandler: SignalHandler? = null) {
 		memory.write(address, value)
+		stateChanged(signalHandler)
 	}
 }

@@ -1,12 +1,13 @@
 package ch.scorpion.antares.model.memory
 
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.jabbah.graph.model.Vertice
 
 /**
  * An [Addressable] is an object that consists of addressable cells, each containing data content
  * of a particular [BitWidth].
  */
-interface Addressable {
+interface Addressable : Vertice {
 
     /** Returns the current address.*/
     val currentAddress: Int

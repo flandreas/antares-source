@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.model.GraphElementAdapter
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.ui.AbstractGraphDesktopItemPanel
 import ch.scorpion.jabbah.graph.ui.GraphDesktopItem
 import ch.scorpion.jabbah.graph.ui.GraphDesktopItemHeaderPanel
@@ -56,7 +58,7 @@ class MemoryContentGraphDesktopItem(
 		get() = null
 
 	override fun dispose() {
-		// empty
+		memoryContentPanel.dispose()
 	}
 
 	override fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<*>? = null
@@ -82,7 +84,7 @@ class MemoryContentsPanel(
 	private val addressable: Addressable,
 	private val cmdManager: CommandManager,
 	readonly: Boolean = false,
-	private val closeHandler: (() -> Unit)? = null
+	private val closeHandler: ((MemoryContentsPanel) -> Unit)? = null
 ) : JPanel() {
 
 	companion object {
@@ -103,6 +105,7 @@ class MemoryContentsPanel(
 			val dialog = JDialog(parent, true)
 			val contentsPanel = MemoryContentsPanel(memory, addressable, cmdManager, readonly || !editable) {
 				dialog.isVisible = false
+				it.dispose()
 			}
 			dialog.title = Translations.getString("antares.action.memory.contents.title", name)
 			dialog.contentPane.add(contentsPanel)
@@ -114,8 +117,20 @@ class MemoryContentsPanel(
 
 	private val memoryDisplayPanel = MemoryDisplayPanel(addressable, !readonly)
 
+	private val addressableListener = object : GraphElementAdapter() {
+		override fun stateChanged(e: GraphElementEvent) {
+			invalidate()
+			repaint()
+		}
+	}
+
 	init {
+		addressable.addGraphElementListener(addressableListener)
 		buildUI(readonly)
+	}
+
+	fun dispose() {
+		addressable.removeGraphElementListener(addressableListener)
 	}
 
 	/** ---- [MemoryContentsPanel] */
@@ -152,7 +167,7 @@ class MemoryContentsPanel(
 			val changes = memoryDisplayPanel.changes
 			LOG.debug("User has changed ${changes.size} memory cells")
 			cmdManager.register(MemoryCellChangeCommand(memory, changes))
-			closeHandler?.invoke()
+			closeHandler?.invoke(this@MemoryContentsPanel)
 		}
 	}
 
