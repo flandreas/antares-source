@@ -58,6 +58,7 @@ class ConstantView(
 		get() = model!!.bitWidth
 		set(value) {
 			invalidate()
+			clear()
 			model!!.bitWidth = value
 			updateView()
 		}

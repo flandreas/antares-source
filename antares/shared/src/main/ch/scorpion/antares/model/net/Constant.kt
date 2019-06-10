@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -21,58 +22,58 @@ import ch.scorpion.jabbah.io.Storable
  * A [Vertice] that produces a configurable constant [DigitalSignal] at its single output.
  */
 class Constant(
-        value: Word = Word.of(Bit.False)
+	value: Word = Word.of(Bit.False)
 ) : CalculatingVertice("library.element.Constant", CALCULATOR) {
 
-    init {
-        addPort(DigitalPortImpl.createOutput())
-        propagationDelay = 1
-    }
+	init {
+		addPort(DigitalPortImpl(portType = PortType.OUTPUT, bitWidth = value.getBitWidth()))
+		propagationDelay = 1
+	}
 
-    companion object {
-        val CALCULATOR = object : VerticeCalculator<Constant> {
-            override fun calculate(vertice: Constant, data: GraphActorData, signalHandler: SignalHandler) {
-                vertice.getOutput<DigitalSignal>().setOutgoingSignal(data.getSignal(1), signalHandler)
-            }
-        }
-    }
+	companion object {
+		val CALCULATOR = object : VerticeCalculator<Constant> {
+			override fun calculate(vertice: Constant, data: GraphActorData, signalHandler: SignalHandler) {
+				vertice.getOutput<DigitalSignal>().setOutgoingSignal(data.getSignal(1), signalHandler)
+			}
+		}
+	}
 
-    var value: Word = value
-        set(value) {
-            if (field != value) {
-                field = value
-                stateChanged()
-            }
-        }
+	var value: Word = value
+		set(value) {
+			if (field != value) {
+				field = value
+				stateChanged()
+			}
+		}
 
-    var bitWidth: BitWidth
-        get() = (getOutput<DigitalSignal>() as DigitalPort).bitWidth
-        set(newValue) {
-            if (newValue != bitWidth) {
-                (getOutput<DigitalSignal>() as DigitalPort).bitWidth = newValue
-                value = Word.of(bitWidth, value.getValue())
-                stateChanged()
-            }
-        }
+	var bitWidth: BitWidth
+		get() = (getOutput<DigitalSignal>() as DigitalPort).bitWidth
+		set(newValue) {
+			if (newValue != bitWidth) {
+				(getOutput<DigitalSignal>() as DigitalPort).bitWidth = newValue
+				value = Word.of(bitWidth, value.getValue())
+				stateChanged()
+			}
+		}
 
-    /** ---- [Actor] */
+	/** ---- [Actor] */
 
-    override fun executionStarted(signalHandler: SignalHandler) {
-        super.executionStarted(signalHandler)
-        requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(getOutput<DigitalSignal>(), value))
-    }
+	override fun executionStarted(signalHandler: SignalHandler) {
+		super.executionStarted(signalHandler)
+		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(getOutput<DigitalSignal>(), value))
+	}
 
-    /** ---- [Storable] interface */
+	/** ---- [Storable] interface */
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        writer.writeInt("bitWidth", bitWidth.width)
-        writer.writeLong("value", value.getValue())
-    }
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeInt("bitWidth", bitWidth.width)
+		writer.writeLong("value", value.getValue())
+	}
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        bitWidth = BitWidth.of(reader.readInt("bitWidth"))
-        value = Word.of(bitWidth, reader.readLong("value"))
-    }
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+		value = Word.of(bitWidth, reader.readLong("value"))
+	}
 }
