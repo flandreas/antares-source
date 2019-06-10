@@ -23,7 +23,7 @@ import javax.swing.JPanel
  * A [JPanel] for editing a root [GraphView].
  *
  * Consists of a [GraphNavigationPanel] at the left side and a [SidebarPane] at the right side that allows
- * to display a [ScenarioPanel] and (in the future) a use cases panel.
+ * to display a [ScenarioPanel] and a [UsecasePanel].
  */
 class GraphEditPanel(
 	editor: Editor,
@@ -31,7 +31,6 @@ class GraphEditPanel(
 	viewManager: ViewManager,
 	graphNavigationPanelFactory: GraphNavigationPanelFactory,
 	propertySheetFactory: PropertySheetPanelFactory,
-	closeHandler: (GraphNavigationPanel) -> Unit,
 	eventBus: EventBus = BaseModule.eventBus
 ) : JPanel() {
 
@@ -40,7 +39,6 @@ class GraphEditPanel(
 		isRoot = true,
 		drawingView = editor.view as DrawingView<GraphView<GraphElementView<*>>>,
 		viewManager = viewManager,
-		closeHandler = closeHandler,
 		contextColor = null,
 		scheduler = scheduler)
 

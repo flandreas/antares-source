@@ -22,73 +22,69 @@ import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCreator
 
 interface GraphNavigationPanelFactory {
-    fun create(
-            isRoot: Boolean,
-            drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-            viewManager: ViewManager,
-            closeHandler: ((GraphNavigationPanel) -> Unit)?,
-            contextColor: CompositeColor?,
-            scheduler: Scheduler,
-            eventBus: EventBus,
-            repository: MetaGraphRepository,
-            storableCreator: StorableCreator,
-            animator: Animator,
-            systemSpeedCategory: CurrentSystemSpeedCategory,
-            currentGraphViewAnimationType: CurrentGraphViewAnimationType,
-            styleProvider: StyleProvider,
-            scriptGateway: ScriptGateway,
-            currentSystemSpeedCategory: CurrentSystemSpeedCategory
-    ): GraphNavigationPanel
+	fun create(
+		isRoot: Boolean,
+		drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+		viewManager: ViewManager,
+		contextColor: CompositeColor?,
+		scheduler: Scheduler,
+		eventBus: EventBus,
+		repository: MetaGraphRepository,
+		storableCreator: StorableCreator,
+		animator: Animator,
+		systemSpeedCategory: CurrentSystemSpeedCategory,
+		currentGraphViewAnimationType: CurrentGraphViewAnimationType,
+		styleProvider: StyleProvider,
+		scriptGateway: ScriptGateway,
+		currentSystemSpeedCategory: CurrentSystemSpeedCategory
+	): GraphNavigationPanel
 
-    fun create(
-        isRoot: Boolean,
-        drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-        viewManager: ViewManager,
-        closeHandler: ((GraphNavigationPanel) -> Unit)?,
-        contextColor: CompositeColor?,
-        scheduler: Scheduler
-    ): GraphNavigationPanel
+	fun create(
+		isRoot: Boolean,
+		drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+		viewManager: ViewManager,
+		contextColor: CompositeColor?,
+		scheduler: Scheduler
+	): GraphNavigationPanel
 }
 
-class StandardGraphNavigationPanelFactory: GraphNavigationPanelFactory {
-    override fun create(
-            isRoot: Boolean,
-            drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-            viewManager: ViewManager,
-            closeHandler: ((GraphNavigationPanel) -> Unit)?,
-            contextColor: CompositeColor?,
-            scheduler: Scheduler,
-            eventBus: EventBus,
-            repository: MetaGraphRepository,
-            storableCreator: StorableCreator,
-            animator: Animator,
-            systemSpeedCategory: CurrentSystemSpeedCategory,
-            currentGraphViewAnimationType: CurrentGraphViewAnimationType,
-            styleProvider: StyleProvider,
-            scriptGateway: ScriptGateway,
-            currentSystemSpeedCategory: CurrentSystemSpeedCategory
-    ): GraphNavigationPanel {
-        return GraphNavigationPanel(
-            isRoot, drawingView, viewManager, closeHandler, contextColor, scheduler, animator, eventBus, repository,
-                storableCreator, scriptGateway, currentSystemSpeedCategory)
-    }
+class StandardGraphNavigationPanelFactory : GraphNavigationPanelFactory {
+	override fun create(
+		isRoot: Boolean,
+		drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+		viewManager: ViewManager,
+		contextColor: CompositeColor?,
+		scheduler: Scheduler,
+		eventBus: EventBus,
+		repository: MetaGraphRepository,
+		storableCreator: StorableCreator,
+		animator: Animator,
+		systemSpeedCategory: CurrentSystemSpeedCategory,
+		currentGraphViewAnimationType: CurrentGraphViewAnimationType,
+		styleProvider: StyleProvider,
+		scriptGateway: ScriptGateway,
+		currentSystemSpeedCategory: CurrentSystemSpeedCategory
+	): GraphNavigationPanel {
+		return GraphNavigationPanel(
+			isRoot, drawingView, viewManager, contextColor, scheduler, animator, eventBus, repository,
+			storableCreator, scriptGateway, currentSystemSpeedCategory)
+	}
 
-    override fun create(
-            isRoot: Boolean,
-            drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-            viewManager: ViewManager,
-            closeHandler: ((GraphNavigationPanel) -> Unit)?,
-            contextColor: CompositeColor?,
-            scheduler: Scheduler
-    ): GraphNavigationPanel {
-        return GraphNavigationPanel(
-            isRoot, drawingView, viewManager, closeHandler, contextColor,
-            scheduler,
-            AnimationModule.animator,
-            BaseModule.eventBus,
-            GraphModelModule.metaGraphRepository,
-            IOModule.storableCreator,
-            ScriptModule.scriptGateway,
-            ExecutionModule.currentSystemSpeedCategory)
-    }
+	override fun create(
+		isRoot: Boolean,
+		drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+		viewManager: ViewManager,
+		contextColor: CompositeColor?,
+		scheduler: Scheduler
+	): GraphNavigationPanel {
+		return GraphNavigationPanel(
+			isRoot, drawingView, viewManager, contextColor,
+			scheduler,
+			AnimationModule.animator,
+			BaseModule.eventBus,
+			GraphModelModule.metaGraphRepository,
+			IOModule.storableCreator,
+			ScriptModule.scriptGateway,
+			ExecutionModule.currentSystemSpeedCategory)
+	}
 }

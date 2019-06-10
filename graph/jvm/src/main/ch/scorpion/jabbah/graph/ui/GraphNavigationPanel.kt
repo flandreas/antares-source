@@ -11,9 +11,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.draw.CloseViewRequest
+import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ViewManager
@@ -31,14 +30,16 @@ import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.ScenarioEvent
+import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
-import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.io.StorableCreator
 import java.awt.*
-import javax.swing.*
-import javax.swing.border.Border
+import javax.swing.JComponent
+import javax.swing.JLayeredPane
+import javax.swing.JPanel
+import javax.swing.SwingUtilities
 
 
 /**
@@ -46,161 +47,154 @@ import javax.swing.border.Border
  * to navigate within the [GraphView] hierarchy.
  */
 open class GraphNavigationPanel(
-    private val isRoot: Boolean,
-    val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-    private val viewManager: ViewManager,
-    private val closeHandler: ((GraphNavigationPanel) -> Unit)?,
-    contextBorderColor: CompositeColor? = null,
-    private val scheduler: Scheduler,
-    private val animator: Animator,
-    private val eventBus: EventBus,
-    private val repository: MetaGraphRepository,
-    private val storableCreator: StorableCreator,
-    private val scriptGateway: ScriptGateway,
-    private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
-) : JPanel() {
+	private val isRoot: Boolean,
+	override val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+	private val viewManager: ViewManager,
+	contextBorderColor: CompositeColor? = null,
+	private val scheduler: Scheduler,
+	private val animator: Animator,
+	private val eventBus: EventBus,
+	private val repository: MetaGraphRepository,
+	private val storableCreator: StorableCreator,
+	private val scriptGateway: ScriptGateway,
+	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
+) : AbstractGraphDesktopItemPanel() {
 
-    companion object {
-        private val LOG by logger(GraphNavigationPanel::class)
+	companion object {
+		private val LOG by logger(GraphNavigationPanel::class)
 
-	    /** The name of the [Boolean] property in [Properties] that controls whether animations are used when opening subgraphs.*/
-	    const val PROP_DIVE_ANIMATION = "graph.GraphNavigationPanel.diveAnimation"
-    }
+		/** The name of the [Boolean] property in [Properties] that controls whether animations are used when opening subgraphs.*/
+		const val PROP_DIVE_ANIMATION = "graph.GraphNavigationPanel.diveAnimation"
+	}
 
-    private val mainPanel = JPanel(BorderLayout())
+	private val mainPanel = JPanel(BorderLayout())
 
-    private val headerPanel = JPanel()
+	private val navigationStackView = NavigationStackView()
 
-    private val navigationStackView = NavigationStackView()
+	private val headerPanel = GraphDesktopItemHeaderPanel(this, navigationStackView, eventBus, allowClose = !isRoot)
 
-    private val layeredPane = JLayeredPane()
+	private val layeredPane = JLayeredPane()
 
-    private var scenarioDetector: ScenarioDetector? = null
+	private var scenarioDetector: ScenarioDetector? = null
 
-    private var currentMode: ApplicationMode = if (scheduler.isActive) ApplicationMode.EXECUTE else ApplicationMode.EDIT
+	private var currentMode: ApplicationMode = if (scheduler.isActive) ApplicationMode.EXECUTE else ApplicationMode.EDIT
 
-    private val openSubGraphRequestHandler: (OpenSubGraphRequest) -> Unit = { handle(it) }
-    private val navigationStackEventHandler: (NavigationStackEvent) -> Unit = { handle(it) }
-    private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = { handle(it) }
-    private val scenarioEventHandler: (ScenarioEvent) -> Unit = { handle(it) }
-    private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
+	private val openSubGraphRequestHandler: (OpenSubGraphRequest) -> Unit = { handle(it) }
+	private val navigationStackEventHandler: (NavigationStackEvent) -> Unit = { handle(it) }
+	private val applicationModeEventHandler: (ApplicationModeEvent) -> Unit = { handle(it) }
+	private val scenarioEventHandler: (ScenarioEvent) -> Unit = { handle(it) }
+	private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
 	private val schedulerRunningStateHandler: (SchedulerRunningStateEvent) -> Unit = { handle(it) }
-    private val systemSpeedHandler: (SystemSpeedEvent) -> Unit = { handle(it) }
+	private val systemSpeedHandler: (SystemSpeedEvent) -> Unit = { handle(it) }
 	private val currentSavableHandler: (CurrentSavableEvent) -> Unit = { handle(it) }
 	private val closeViewRequestHandler: (CloseViewRequest) -> Unit = { handle(it) }
 
-    /** Forwards input events to the [GraphView] while executing.*/
-    private val graphViewExecutionHandler = GraphViewExecutionHandler(drawingView, scheduler, eventBus)
+	/** Forwards input events to the [GraphView] while executing.*/
+	private val graphViewExecutionHandler = GraphViewExecutionHandler(drawingView, scheduler, eventBus)
 
-    /** Forwards input events to the [GraphView] while displaying (i.e. NOT executing) and NOT being editable.*/
-    private val graphViewDisplayHandler = GraphViewDisplayHandler(drawingView, scheduler, eventBus)
+	/** Forwards input events to the [GraphView] while displaying (i.e. NOT executing) and NOT being editable.*/
+	private val graphViewDisplayHandler = GraphViewDisplayHandler(drawingView, scheduler, eventBus)
 
 	/** Forwards input events to the [GraphView] while a [Usecase] is executed.*/
 	private val graphViewUsecaseExecutionHandler = GraphViewUsecaseExecutionHandler(drawingView, scheduler, eventBus)
 
 	private var currentSavable: Savable? = null
 
-    var contextColor: CompositeColor? = null
-        set(value) {
-            if (field == value) {
-                return
-            }
-            when {
-                field == null -> {
-                    // Add context color border
-                    mainPanel.removeAll()
-                    mainPanel.add(headerPanel, BorderLayout.NORTH)
-                    val borderPanel = JPanel(BorderLayout())
-                    borderPanel.border = createContextColorBorder(value!!)
-                    borderPanel.add(layeredPane)
-                    mainPanel.add(FocusPanel(borderPanel, drawingView, viewManager), BorderLayout.CENTER)
-                }
-                value == null -> {
-                    // Remove context color border
-                    mainPanel.removeAll()
-                    mainPanel.add(headerPanel, BorderLayout.NORTH)
-                    mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
-                }
-                else -> // Exchange context color border
-                    (mainPanel.getComponent(0) as JComponent).border = createContextColorBorder(value)
-            }
-            revalidate()
-            repaint()
-        }
+	init {
+		eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
+		eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
+		eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
+		eventBus.register(ScenarioEvent::class, scenarioEventHandler)
+		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+		eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
+		eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
+		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
+		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 
+		drawingView.editable = drawingView.editable && isRoot
 
-    init {
-        eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
-        eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
-        eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
-        eventBus.register(ScenarioEvent::class, scenarioEventHandler)
-        eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
-	    eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
-        eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
-	    eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
-	    eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
+		setRootGraphView(drawingView.drawing)
 
-        drawingView.editable = drawingView.editable && isRoot
+		buildUI(contextBorderColor)
+		propagateApplicationContext()
 
-        setRootGraphView(drawingView.drawing)
+		updateDetached()
+	}
 
-        buildUI(contextBorderColor, closeHandler)
-        propagateApplicationContext()
+	/** ---- [GraphDesktopItem] */
 
-        updateDetached()
-    }
+	override fun dispose() {
+		drawingView.content.drawing.dispose()
+		graphViewExecutionHandler.dispose()
+		graphViewDisplayHandler.dispose()
+		graphViewUsecaseExecutionHandler.dispose()
 
-    open fun dispose() {
-        drawingView.content.drawing.dispose()
-        graphViewExecutionHandler.dispose()
-        graphViewDisplayHandler.dispose()
-	    graphViewUsecaseExecutionHandler.dispose()
+		scenarioDetector?.dispose()
 
-	    scenarioDetector?.dispose()
+		eventBus.unregister(OpenSubGraphRequest::class, openSubGraphRequestHandler)
+		eventBus.unregister(NavigationStackEvent::class, navigationStackEventHandler)
+		eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)
+		eventBus.unregister(ScenarioEvent::class, scenarioEventHandler)
+		eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+		eventBus.unregister(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
+		eventBus.unregister(SystemSpeedEvent::class, systemSpeedHandler)
+		eventBus.unregister(CurrentSavableEvent::class, currentSavableHandler)
+		eventBus.unregister(CloseViewRequest::class, closeViewRequestHandler)
+	}
 
-        eventBus.unregister(OpenSubGraphRequest::class, openSubGraphRequestHandler)
-        eventBus.unregister(NavigationStackEvent::class, navigationStackEventHandler)
-        eventBus.unregister(ApplicationModeEvent::class, applicationModeEventHandler)
-        eventBus.unregister(ScenarioEvent::class, scenarioEventHandler)
-        eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
-	    eventBus.unregister(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
-        eventBus.unregister(SystemSpeedEvent::class, systemSpeedHandler)
-	    eventBus.unregister(CurrentSavableEvent::class, currentSavableHandler)
-	    eventBus.unregister(CloseViewRequest::class, closeViewRequestHandler)
-    }
+	override fun addContextColorBorder(color: CompositeColor) {
+		mainPanel.removeAll()
+		mainPanel.add(headerPanel, BorderLayout.NORTH)
+		val borderPanel = JPanel(BorderLayout())
+		borderPanel.border = createContextColorBorder(color)
+		borderPanel.add(layeredPane)
+		mainPanel.add(FocusPanel(borderPanel, drawingView, viewManager), BorderLayout.CENTER)
+	}
 
-    /** Initializes the [NavigationStackView] with a root [DrawingViewContent].*/
-    fun setRootGraphView(graphView: GraphView<GraphElementView<*>>) {
-        drawingView.drawing = graphView
-        navigationStackView.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)
-        scenarioDetector?.dispose()
-        scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus, currentSystemSpeedCategory)
-	    UiUtil.invokeLater(Runnable { drawingView.navigator.fitMaxNormal() })
+	override fun removeContextColorBorder() {
+		mainPanel.removeAll()
+		mainPanel.add(headerPanel, BorderLayout.NORTH)
+		mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
+	}
 
-    }
+	override fun updateContextColorBorder(color: CompositeColor) {
+		(mainPanel.getComponent(0) as JComponent).border = createContextColorBorder(color)
+	}
 
-    private fun getRootEntry(): NavigationStackEntry<GraphView<GraphElementView<*>>> =
-	    navigationStackView.navigationStack.rootEntry!!
+	/** ---- [GraphNavigationPanel] */
 
-    @Suppress("unused")
-    fun setGlassPaneComponent(component: JComponent) {
-        removeGlassPaneComponent()
-        layeredPane.add(component, JLayeredPane.DRAG_LAYER)
-        revalidate()
-        repaint()
-    }
+	/** Initializes the [NavigationStackView] with a root [DrawingViewContent].*/
+	fun setRootGraphView(graphView: GraphView<GraphElementView<*>>) {
+		drawingView.drawing = graphView
+		navigationStackView.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)
+		scenarioDetector?.dispose()
+		scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus, currentSystemSpeedCategory)
+		UiUtil.invokeLater(Runnable { drawingView.navigator.fitMaxNormal() })
 
-    @Suppress("MemberVisibilityCanBePrivate")
-    fun removeGlassPaneComponent() {
-        val components = layeredPane.getComponentsInLayer(JLayeredPane.DRAG_LAYER)
-        if (components != null) {
-            for (i in components.indices) {
-                layeredPane.remove(components[i])
-            }
-            revalidate()
-            repaint()
-        }
-    }
+	}
+
+	private fun getRootEntry(): NavigationStackEntry<GraphView<GraphElementView<*>>> =
+		navigationStackView.navigationStack.rootEntry!!
+
+	@Suppress("unused")
+	fun setGlassPaneComponent(component: JComponent) {
+		removeGlassPaneComponent()
+		layeredPane.add(component, JLayeredPane.DRAG_LAYER)
+		revalidate()
+		repaint()
+	}
+
+	@Suppress("MemberVisibilityCanBePrivate")
+	fun removeGlassPaneComponent() {
+		val components = layeredPane.getComponentsInLayer(JLayeredPane.DRAG_LAYER)
+		if (components != null) {
+			for (i in components.indices) {
+				layeredPane.remove(components[i])
+			}
+			revalidate()
+			repaint()
+		}
+	}
 
 	/** Deselects all [Component]s in all [View]s.*/
 	fun deselectAll() {
@@ -208,72 +202,73 @@ open class GraphNavigationPanel(
 		navigationStackView.navigationStack.forAllContents { it.removeAllSelectionModels() }
 	}
 
-    /** Finds the first [NavigationStackEntry] in the navigation stack that fulfills the specified condition, if any.*/
-    fun findEntry(condition: (NavigationStackEntry<GraphView<GraphElementView<*>>>) -> Boolean): NavigationStackEntry<GraphView<GraphElementView<*>>>? =
-            navigationStackView.navigationStack.find(condition)
+	/** Finds the first [DrawingViewContent] in the navigation stack that fulfills the specified condition, if any.*/
+	override fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<*>? =
+		navigationStackView.navigationStack.find(condition)
 
-    private fun handle(request: CloseViewRequest) {
-	    if (request.view === drawingView) {
-		    closeHandler?.invoke(this)
-	    }
-    }
+
+	private fun handle(request: CloseViewRequest) {
+		if (request.view === drawingView) {
+			eventBus.post(GraphDesktopItemCloseRequest(this))
+		}
+	}
 
 	private fun handle(request: OpenSubGraphRequest) {
-        LOG.debug("handling OpenSubGraphRequest by descending into SubGraphVerticeView")
+		LOG.debug("handling OpenSubGraphRequest by descending into SubGraphVerticeView")
 
-        val graphView = drawingView.drawing
-        if (!graphView.contains(request.subGraphVerticeView)) {
-            return
-        }
+		val graphView = drawingView.drawing
+		if (!graphView.contains(request.subGraphVerticeView)) {
+			return
+		}
 
-        if (!request.newView) {
-	        val subGraphView = request.subGraphVerticeView.createSubGraphView()
-	        navigationStackView.navigationStack.peek().content.zoomPan = drawingView.zoomPan
-	        if (BaseModule.properties.getBoolean(PROP_DIVE_ANIMATION) && !request.quickMode) {
-		        drawingView.userZoomEnabled = false
-		        navigationStackView.isEnabled = false
-		        DescendAnimationManager(animator).descendInto(
-			        drawingView,
-			        request.subGraphVerticeView,
-			        descender = {
-				        navigationStackView.navigationStack.push(NavigationStackEntry(
-					        subGraphVerticeView = request.subGraphVerticeView,
-					        content = drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>)))
-			        },
-			        terminator = {
-				        navigationStackView.isEnabled = true
-				        drawingView.userZoomEnabled = true
-			        }
-		        )
-	        } else {
-		        SwingUtilities.invokeLater {
-			        navigationStackView.navigationStack.push(NavigationStackEntry(
-				        subGraphVerticeView = request.subGraphVerticeView,
-				        content = drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>)))
-		        }
-	        }
-        }
-    }
+		if (!request.newView) {
+			val subGraphView = request.subGraphVerticeView.createSubGraphView()
+			navigationStackView.navigationStack.peek().content.zoomPan = drawingView.zoomPan
+			if (BaseModule.properties.getBoolean(PROP_DIVE_ANIMATION) && !request.quickMode) {
+				drawingView.userZoomEnabled = false
+				navigationStackView.isEnabled = false
+				DescendAnimationManager(animator).descendInto(
+					drawingView,
+					request.subGraphVerticeView,
+					descender = {
+						navigationStackView.navigationStack.push(NavigationStackEntry(
+							subGraphVerticeView = request.subGraphVerticeView,
+							content = drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>)))
+					},
+					terminator = {
+						navigationStackView.isEnabled = true
+						drawingView.userZoomEnabled = true
+					}
+				)
+			} else {
+				SwingUtilities.invokeLater {
+					navigationStackView.navigationStack.push(NavigationStackEntry(
+						subGraphVerticeView = request.subGraphVerticeView,
+						content = drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>)))
+				}
+			}
+		}
+	}
 
-    private fun handle(event: NavigationStackEvent) {
-        if (event.navigationStack !== navigationStackView.navigationStack) {
-            return
-        }
-        if (navigationStackView.navigationStack.peek().content === drawingView.content) {
-            return
-        }
+	private fun handle(event: NavigationStackEvent) {
+		if (event.navigationStack !== navigationStackView.navigationStack) {
+			return
+		}
+		if (navigationStackView.navigationStack.peek().content === drawingView.content) {
+			return
+		}
 
-	    if (!event.isExpansion && !event.quickMode && BaseModule.properties.getBoolean(PROP_DIVE_ANIMATION) && !event.quickMode) {
-		    ascendFrom(event.entries)
-	    } else {
-		    drawingView.content = navigationStackView.navigationStack.peek().content
-		    updateDrawingViewEditability()
-		    updateDetached()
+		if (!event.isExpansion && !event.quickMode && BaseModule.properties.getBoolean(PROP_DIVE_ANIMATION) && !event.quickMode) {
+			ascendFrom(event.entries)
+		} else {
+			drawingView.content = navigationStackView.navigationStack.peek().content
+			updateDrawingViewEditability()
+			updateDetached()
 
-		    invalidate()
-		    revalidate()
-	    }
-    }
+			invalidate()
+			revalidate()
+		}
+	}
 
 	private fun ascendFrom(entries: List<NavigationStackEntry<*>>) {
 		drawingView.userZoomEnabled = false
@@ -305,122 +300,107 @@ open class GraphNavigationPanel(
 		)
 	}
 
-    private fun handle(event: ApplicationModeEvent) {
-        currentMode = event.applicationMode
-        propagateApplicationContext()
-	    updateDrawingViewEditability()
-        updateDetached()
-    }
+	private fun handle(event: ApplicationModeEvent) {
+		currentMode = event.applicationMode
+		propagateApplicationContext()
+		updateDrawingViewEditability()
+		updateDetached()
+	}
 
-    private fun handle(event: ScenarioEvent) {
-        if (event.graphView === drawingView.drawing) {
-            drawingView.drawing.invalidate()
-            drawingView.drawing.validate()
-        }
-    }
+	private fun handle(event: ScenarioEvent) {
+		if (event.graphView === drawingView.drawing) {
+			drawingView.drawing.invalidate()
+			drawingView.drawing.validate()
+		}
+	}
 
-    private fun handle(event: SchedulerActivationStateEvent) {
-        if (event.scheduler.isActive) {
-            if (isRoot) {
-                getRootEntry().content.drawing.graph!!.bind(repository, storableCreator)
-            }
-            navigationStackView.forEach { it.content.drawing.bind() }
-            getRootEntry().content.drawing.graph!!.executionStarted(event.scheduler)
-        } else {
-            getRootEntry().content.drawing.graph!!.executionStopped(event.scheduler)
-        }
-    }
+	private fun handle(event: SchedulerActivationStateEvent) {
+		if (event.scheduler.isActive) {
+			if (isRoot) {
+				getRootEntry().content.drawing.graph!!.bind(repository, storableCreator)
+			}
+			navigationStackView.forEach { it.content.drawing.bind() }
+			getRootEntry().content.drawing.graph!!.executionStarted(event.scheduler)
+		} else {
+			getRootEntry().content.drawing.graph!!.executionStopped(event.scheduler)
+		}
+	}
 
 	private fun handle(event: SchedulerRunningStateEvent) {
 		propagateApplicationContext()
 	}
 
-    private fun handle(@Suppress("UNUSED_PARAMETER") event: SystemSpeedEvent) {
-        propagateApplicationContext()
-    }
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: SystemSpeedEvent) {
+		propagateApplicationContext()
+	}
 
 	private fun handle(event: CurrentSavableEvent) {
 		currentSavable = event.savable
 		updateDrawingViewEditability()
 	}
 
-    private fun updateDrawingViewEditability() {
-	    drawingView.editable = isRoot && navigationStackView.navigationStack.size == 1 && !scheduler.isActive && !(currentSavable?.readOnly ?: false)
-    }
+	private fun updateDrawingViewEditability() {
+		drawingView.editable = isRoot && navigationStackView.navigationStack.size == 1 && !scheduler.isActive && !(currentSavable?.readOnly
+			?: false)
+	}
 
-    private fun propagateApplicationContext() {
-        drawingView.applicationContext = GraphApplicationContext(currentMode, currentSystemSpeedCategory, scheduler.isPaused)
-    }
+	private fun propagateApplicationContext() {
+		drawingView.applicationContext = GraphApplicationContext(currentMode, currentSystemSpeedCategory, scheduler.isPaused)
+	}
 
-    /**
-     * Updates the [DrawingView] in order to display whether the displayed [GraphView] is detached,
-     * i.e. whether it doesn't show accurate signal states due to shallow execution.
-     */
-    private fun updateDetached() {
-	    drawingView.overlayColor = if ((!isRoot || navigationStackView.navigationStack.size > 1)
-            && scheduler.isActive
-            && !scheduler.isDeepExecution
-            && StringUtils.isNotEmpty(drawingView.drawing.graph!!.script)
-        ) {
-		    Themes.get<GraphTheme>().overlay
-        } else {
-            null
-        }
-    }
+	/**
+	 * Updates the [DrawingView] in order to display whether the displayed [GraphView] is detached,
+	 * i.e. whether it doesn't show accurate signal states due to shallow execution.
+	 */
+	private fun updateDetached() {
+		drawingView.overlayColor = if ((!isRoot || navigationStackView.navigationStack.size > 1)
+			&& scheduler.isActive
+			&& !scheduler.isDeepExecution
+			&& StringUtils.isNotEmpty(drawingView.drawing.graph!!.script)
+		) {
+			Themes.get<GraphTheme>().overlay
+		} else {
+			null
+		}
+	}
 
-    private fun createContextColorBorder(contextColor: CompositeColor): Border =
-            BorderFactory.createLineBorder(Graphics2DJvm.toAwtColor(contextColor.backgroundColor), 5, true)
+	private fun buildUI(contextColor: CompositeColor?) {
+		layeredPane.layout = LayerLayoutManager()
+		layeredPane.add(drawingView.canvas as JComponent, JLayeredPane.DEFAULT_LAYER)
 
-    private fun buildUI(contextColor: CompositeColor?, closeHandler: ((GraphNavigationPanel) -> Unit)?) {
-        layeredPane.layout = LayerLayoutManager()
-        layeredPane.add(drawingView.canvas as JComponent, JLayeredPane.DEFAULT_LAYER)
+		mainPanel.add(headerPanel, BorderLayout.NORTH)
 
-        headerPanel.layout = BoxLayout(headerPanel, BoxLayout.LINE_AXIS)
-        headerPanel.add(navigationStackView)
-        if (closeHandler != null) {
-            val closeButton = JButton("Close")
-            closeButton.addActionListener { closeHandler.invoke(this@GraphNavigationPanel) }
-	        closeButton.icon = ImageIcon(GraphNavigationPanel::class.java.getResource("/img/close-16.png"))
-            closeButton.text = null
-            closeButton.border = BorderFactory.createEmptyBorder(0, 0, 0, 10)
-            headerPanel.add(Box.createHorizontalGlue())
-            headerPanel.add(closeButton)
-        }
-	    headerPanel.background =  Graphics2DJvm.toAwtColor(DrawModule.properties.getColor(NavigationStackView.PROP_PANEL_BACKGROUND_COLOR))
+		mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
+		this.contextColor = contextColor
 
-        mainPanel.add(headerPanel, BorderLayout.NORTH)
+		layout = BorderLayout()
+		add(mainPanel, BorderLayout.CENTER)
+	}
 
-        mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
-        this.contextColor = contextColor
+	/** Layouts all contained [Component]s to fully take up the entire size of the parent [Container].*/
+	private inner class LayerLayoutManager : LayoutManager {
 
-        layout = BorderLayout()
-        add(mainPanel, BorderLayout.CENTER)
-    }
+		override fun layoutContainer(parent: Container?) {
+			synchronized(parent!!.treeLock) {
+				if (parent.componentCount > 0) {
+					for (i in 0 until parent.componentCount) {
+						parent.getComponent(i).setBounds(0, 0, parent.width, parent.height)
+					}
+				}
+			}
+		}
 
-    /** Layouts all contained [Component]s to fully take up the entire size of the parent [Container].*/
-    private inner class LayerLayoutManager : LayoutManager {
+		override fun preferredLayoutSize(parent: Container?): Dimension =
+			(drawingView.canvas as JComponent).preferredSize
 
-        override fun layoutContainer(parent: Container?) {
-            synchronized(parent!!.treeLock) {
-                if (parent.componentCount > 0) {
-                    for (i in 0 until parent.componentCount) {
-                        parent.getComponent(i).setBounds(0, 0, parent.width, parent.height)
-                    }
-                }
-            }
-        }
+		override fun minimumLayoutSize(parent: Container?): Dimension = Dimension()
 
-        override fun preferredLayoutSize(parent: Container?): Dimension =
-                (drawingView.canvas as JComponent).preferredSize
+		override fun addLayoutComponent(name: String?, comp: Component?) {
+			// empty
+		}
 
-        override fun minimumLayoutSize(parent: Container?): Dimension = Dimension()
-
-        override fun addLayoutComponent(name: String?, comp: Component?) {
-            // empty
-        }
-
-        override fun removeLayoutComponent(comp: Component?) {
-            // empty
-        }
-    }
+		override fun removeLayoutComponent(comp: Component?) {
+			// empty
+		}
+	}
 }

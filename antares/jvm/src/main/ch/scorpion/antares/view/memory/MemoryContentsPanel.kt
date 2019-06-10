@@ -6,7 +6,16 @@ import ch.scorpion.antares.model.memory.MemoryDump
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.DrawingViewContent
+import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.ui.AbstractGraphDesktopItemPanel
+import ch.scorpion.jabbah.graph.ui.GraphDesktopItem
+import ch.scorpion.jabbah.graph.ui.GraphDesktopItemHeaderPanel
+import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -16,6 +25,55 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import javax.swing.*
 
+
+class MemoryContentGraphDesktopItem(
+	memory: Memory,
+	addressable: Addressable,
+	title: String,
+	cmdManager: CommandManager = EditModule.commandManager,
+	readonly: Boolean = false,
+	contextColor: CompositeColor
+) : AbstractGraphDesktopItemPanel() {
+
+	private val memoryContentPanel = MemoryContentsPanel(memory, addressable, cmdManager, readonly)
+
+	private val headerPanel = GraphDesktopItemHeaderPanel(this, JLabel(title), allowClose = true)
+
+	init {
+		buildUI(contextColor)
+	}
+
+	private fun buildUI(contextColor: CompositeColor) {
+		layout = BorderLayout()
+		add(headerPanel, BorderLayout.NORTH)
+		add(memoryContentPanel, BorderLayout.CENTER)
+		super.contextColor = contextColor
+	}
+
+	/** ---- [GraphDesktopItem] */
+
+	override val drawingView: DrawingView<GraphView<GraphElementView<*>>>?
+		get() = null
+
+	override fun dispose() {
+		// empty
+	}
+
+	override fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<*>? = null
+
+	override fun addContextColorBorder(color: CompositeColor) {
+		memoryContentPanel.border = createContextColorBorder(color)
+	}
+
+	override fun removeContextColorBorder() {
+		memoryContentPanel.border = null
+	}
+
+	override fun updateContextColorBorder(color: CompositeColor) {
+		memoryContentPanel.border = createContextColorBorder(color)
+	}
+}
+
 /**
  * Displays the contents of a [Memory].
  */
@@ -24,7 +82,7 @@ class MemoryContentsPanel(
 	private val addressable: Addressable,
 	private val cmdManager: CommandManager,
 	readonly: Boolean = false,
-	private val closeHandler: () -> Unit
+	private val closeHandler: (() -> Unit)? = null
 ) : JPanel() {
 
 	companion object {
@@ -60,6 +118,8 @@ class MemoryContentsPanel(
 		buildUI(readonly)
 	}
 
+	/** ---- [MemoryContentsPanel] */
+
 	private fun buildUI(readonly: Boolean) {
 		layout = BorderLayout()
 
@@ -80,7 +140,9 @@ class MemoryContentsPanel(
 		if (!readonly) {
 			buttonPanel.add(JButton(ClearAction()))
 		}
-		buttonPanel.add(JButton(CloseAction()))
+		if (closeHandler != null) {
+			buttonPanel.add(JButton(CloseAction()))
+		}
 
 		add(buttonPanel, BorderLayout.SOUTH)
 	}
@@ -90,7 +152,7 @@ class MemoryContentsPanel(
 			val changes = memoryDisplayPanel.changes
 			LOG.debug("User has changed ${changes.size} memory cells")
 			cmdManager.register(MemoryCellChangeCommand(memory, changes))
-			closeHandler.invoke()
+			closeHandler?.invoke()
 		}
 	}
 

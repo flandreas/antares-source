@@ -83,10 +83,10 @@ class GraphPanel(
 
 	/** Allows to edit and execute the currently open GraphView.*/
 	private val graphEditPanel: GraphEditPanel = GraphEditPanel(editor, scheduler, viewManager, graphNavigationPanelFactory,
-		propertySheetFactory, { eventBus.post(CloseApplicationDataRequest(editor.drawing)) }, eventBus)
+		propertySheetFactory, eventBus)
 
 	/** Allows to open multiple Graphs.*/
-	private val desktop: GraphDesktop = GraphDesktop(graphEditPanel, eventBus, scheduler, showContentInitially)
+	val desktop: GraphDesktop = GraphDesktop(graphEditPanel, eventBus, scheduler, showContentInitially)
 
 	/** Displays the properties of the currently selected component in [graphEditPanel].*/
 	private val propertyPanel: ComponentPropertyPanel

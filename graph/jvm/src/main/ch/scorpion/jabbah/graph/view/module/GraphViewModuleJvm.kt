@@ -26,6 +26,7 @@ import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.script.ScriptEngineJvm
 import ch.scorpion.jabbah.graph.script.ScriptModule
+import ch.scorpion.jabbah.graph.ui.GraphDesktopItemHeaderPanel
 import ch.scorpion.jabbah.graph.ui.GraphNavigationPanel
 import ch.scorpion.jabbah.graph.ui.NavigationStackView
 import ch.scorpion.jabbah.graph.view.*
@@ -55,9 +56,9 @@ object GraphViewModuleJvm : AbstractModule() {
 	}
 
 	private fun fillProperties(properties: Properties) {
+		properties.set(GraphDesktopItemHeaderPanel.PROP_BACKGROUND_COLOR, Color(214, 214, 214))
 		properties.set(NavigationStackView.PROP_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 11))
 		properties.set(NavigationStackView.PROP_HEAD_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.BOLD.value, 11))
-		properties.set(NavigationStackView.PROP_PANEL_BACKGROUND_COLOR, Color(214, 214, 214))
 		properties.set(NavigationStackView.PROP_BACKGROUND_COLOR, Color.WHITE)
 		properties.set(NavigationStackView.PROP_BORDER_COLOR, Color(214, 214, 214))
 		properties.set(NavigationStackView.PROP_TEXT_COLOR, Color.BLACK)

@@ -41,8 +41,6 @@ class NavigationStackView(
 
 		const val PROP_HEAD_FONT = "graph.ui.NavigationStackView.headFont"
 
-		const val PROP_PANEL_BACKGROUND_COLOR = "graph.ui.NavigationStackView.panelBackgroundColor"
-
 		const val PROP_BACKGROUND_COLOR = "graph.ui.NavigationStackView.backgroundColor"
 
 		const val PROP_HOVER_BACKGROUND_COLOR = "graph.ui.NavigationStackView.hoverBackgroundColor"
@@ -61,18 +59,18 @@ class NavigationStackView(
 
 		const val PROP_HEAD_TEXT_COLOR = "graph.ui.NavigationStackView.headTextColor"
 
-		/** The fix height of this view.  */
-		private const val HEIGHT = 19
-
 		/** Vertical insets between view border and arrow border.*/
 		private const val V_INSETS = 4
+
+		/** The fix height of this view.  */
+		private const val HEIGHT = GraphDesktopItemHeaderPanel.PREF_HEIGHT - 2 * V_INSETS
 
 		/** Horizontal insets between view border and arrow border.*/
 		private const val H_INSETS = 5
 
 		private const val ELEMENT_DISTANCE = 8
 
-		private const val TEXT_INSET = 15
+		private const val TEXT_INSET = 10
 	}
 
 	private val elements: MutableList<Element> = mutableListOf()
@@ -94,8 +92,8 @@ class NavigationStackView(
 			}
 		}
 
-		background = Graphics2DJvm.toAwtColor(DrawModule.properties.getColor(PROP_PANEL_BACKGROUND_COLOR))
-		border = BorderFactory.createEmptyBorder(V_INSETS, H_INSETS, V_INSETS, H_INSETS)
+		background = Graphics2DJvm.toAwtColor(DrawModule.properties.getColor(GraphDesktopItemHeaderPanel.PROP_BACKGROUND_COLOR))
+		border = BorderFactory.createEmptyBorder(V_INSETS, 0, V_INSETS, H_INSETS)
 		update()
 	}
 
@@ -144,7 +142,7 @@ class NavigationStackView(
 		}
 
 		// Calculate locations of Elements
-		var x = H_INSETS.toDouble()
+		var x = 0.0
 		for (element in elements) {
 			element.location = Point2D(x, V_INSETS.toDouble())
 			x += element.path.boundingBox.width - HEIGHT / 2.0 + ELEMENT_DISTANCE

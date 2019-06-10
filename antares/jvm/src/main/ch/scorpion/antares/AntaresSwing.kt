@@ -3,6 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.view.AntaresThemes
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.memory.MemoryContentGraphDesktopItem
 import ch.scorpion.antares.view.memory.MemoryContentsPanel
 import ch.scorpion.antares.view.memory.OpenMemoryContentsRequest
 import ch.scorpion.jabbah.app.*
@@ -60,14 +61,26 @@ class AntaresSwing(
 	}
 
 	init {
-		eventBus.register(OpenMemoryContentsRequest::class) {
-			MemoryContentsPanel.showAsDialog(
-				parent = mainFrame,
-				name = it.name,
-				memory = it.memory,
-				addressable = it.addressable,
-				cmdManager = mainFrame.editor.commandManager,
-				readonly = it.readonly)
+		eventBus.register(OpenMemoryContentsRequest::class) { request ->
+			if (request.newDesktopView) {
+				(mainFrame as GraphFrame).graphPanel.desktop.openVerticeView(request.verticeView) {
+					MemoryContentGraphDesktopItem(
+						memory = request.memory,
+						addressable = request.addressable,
+						title = request.name,
+						cmdManager = mainFrame.editor.commandManager,
+						readonly = request.readonly,
+						contextColor = it)
+				}
+			} else {
+				MemoryContentsPanel.showAsDialog(
+					parent = mainFrame,
+					name = request.name,
+					memory = request.memory,
+					addressable = request.addressable,
+					cmdManager = mainFrame.editor.commandManager,
+					readonly = request.readonly)
+			}
 		}
 		eventBus.register(OpenProjectRequest::class) {
 			if (!canReplaceSavable("project.action.open.name")) {

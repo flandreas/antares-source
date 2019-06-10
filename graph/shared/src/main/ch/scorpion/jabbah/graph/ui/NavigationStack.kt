@@ -84,10 +84,10 @@ class NavigationStack<T: Drawing<*>>(val eventBus: EventBus = BaseModule.eventBu
         postNavigationStackEvent(isExpansion = false, entries = removedEntries, quickMode = quickMode)
     }
 
-    /** Finds the first [NavigationStackEntry] that fulfills the specified condition, if any.*/
-    fun find(condition: (NavigationStackEntry<T>) -> Boolean): NavigationStackEntry<T>? {
-        return entries.firstOrNull(condition)
-    }
+    /** Finds the first [DrawingViewContent] that fulfills the specified condition, if any.*/
+	fun find(condition: (DrawingViewContent<T>) -> Boolean): DrawingViewContent<T>? {
+		return entries.firstOrNull { condition.invoke(it.content) }?.content
+	}
 
 	/** Executes the specified action for all [DrawingViewContent]s.*/
 	fun forAllContents(action: (DrawingViewContent<Drawing<*>>) -> Unit) {

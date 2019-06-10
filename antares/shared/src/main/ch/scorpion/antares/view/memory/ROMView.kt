@@ -388,14 +388,14 @@ class ROMView(
 		return "ROM ${addressWidth.size}x${dataWidth.width}"
 	}
 
-	private fun requestOpenMemoryContents(event: MouseEvent, readonly: Boolean) {
-		eventBus.post(OpenMemoryContentsRequest(label.text, model!!.memory, model!!, event, readonly))
+	private fun requestOpenMemoryContents(readonly: Boolean, newDesktopView: Boolean) {
+		eventBus.post(OpenMemoryContentsRequest(this, label.text, model!!.memory, model!!, readonly, newDesktopView))
 	}
 
 	private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {
 		override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
 			if (context.mouseEvent!!.clickCount == 2) {
-				requestOpenMemoryContents(context.mouseEvent!!, context.readonly)
+				requestOpenMemoryContents(context.readonly, context.mouseEvent!!.isAltDown)
 				return null
 			}
 			return super.mouseClicked(context)
@@ -405,7 +405,7 @@ class ROMView(
 	private inner class DoubleClickActorHandler : ClickableActorInteractionHandlerAdapter() {
 		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (context.mouseEvent!!.clickCount == 2) {
-				requestOpenMemoryContents(context.mouseEvent!!, true)
+				requestOpenMemoryContents(true, context.mouseEvent!!.isAltDown)
 			}
 			return null
 		}

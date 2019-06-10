@@ -32,10 +32,7 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.edit.select.EditSelectModule
-import ch.scorpion.jabbah.edit.select.Handle
-import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
-import ch.scorpion.jabbah.edit.select.SelectionModelFactory
+import ch.scorpion.jabbah.edit.select.*
 import ch.scorpion.jabbah.edit.snap.ComponentSnapper
 import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
@@ -96,166 +93,166 @@ object AntaresViewModule : AbstractModule() {
 	private const val RANDOM = "Random"
 
 	val currentSymbolStyle: CurrentSymbolStyle = CurrentSymbolStyle()
-    val currentGraphViewAnimationType: CurrentGraphViewAnimationType by lazy { CurrentGraphViewAnimationType() }
+	val currentGraphViewAnimationType: CurrentGraphViewAnimationType by lazy { CurrentGraphViewAnimationType() }
 
-    override fun initialize() {
-        Translations.addBundle("antares")
+	override fun initialize() {
+		Translations.addBundle("antares")
 
-        // Overwritten in order to change the [DrawableDrawer]
-        EditModule.drawingViewFactory = {d,c ->
-            val drawingView = DrawingViewImpl(d, c)
-            drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
-            drawingView
-        }
+		// Overwritten in order to change the [DrawableDrawer]
+		EditModule.drawingViewFactory = { d, c ->
+			val drawingView = DrawingViewImpl(d, c)
+			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
+			drawingView
+		}
 
-        GraphViewModule.portViewFactory = DigitalPortViewFactory(DrawStyleModule.styleProvider)
-        GraphViewModule.oscilloscopeViewFactory = DigitalOscilloscopeViewFactory()
-        val edgeViewFactory = DigitalEdgeViewFactory(
-                DrawStyleModule.styleProvider,
-                { GraphViewModule.edgeToPortConnector },
-                { GraphViewModule.dragEdgeViewOriginConnector },
-                { GraphViewModule.dragEdgeViewDestinationConnector },
-                ExecutionModule.currentSystemSpeedCategory
-        )
-        GraphViewModule.setEdgeViewFactory(edgeViewFactory)
-        GraphViewModule.setNodeViewFactory(DigitalNodeViewFactory(
-                DrawStyleModule.styleProvider,
-                ExecutionModule.currentSystemSpeedCategory)
-        )
+		GraphViewModule.portViewFactory = DigitalPortViewFactory(DrawStyleModule.styleProvider)
+		GraphViewModule.oscilloscopeViewFactory = DigitalOscilloscopeViewFactory()
+		val edgeViewFactory = DigitalEdgeViewFactory(
+			DrawStyleModule.styleProvider,
+			{ GraphViewModule.edgeToPortConnector },
+			{ GraphViewModule.dragEdgeViewOriginConnector },
+			{ GraphViewModule.dragEdgeViewDestinationConnector },
+			ExecutionModule.currentSystemSpeedCategory
+		)
+		GraphViewModule.setEdgeViewFactory(edgeViewFactory)
+		GraphViewModule.setNodeViewFactory(DigitalNodeViewFactory(
+			DrawStyleModule.styleProvider,
+			ExecutionModule.currentSystemSpeedCategory)
+		)
 
-        GraphViewModule.require()
-        AnimationModule.require()
-        AntaresModelModule.require()
+		GraphViewModule.require()
+		AnimationModule.require()
+		AntaresModelModule.require()
 
-        customizeProperties(BaseModule.properties)
+		customizeProperties(BaseModule.properties)
 
-        configureTypeMap(IOModule.typeMap)
-        configureSelectionModels(EditSelectModule.selectionModelFactory)
-	    configureHighlightModels(EditHighlightModule.highlightModelFactory)
+		configureTypeMap(IOModule.typeMap)
+		configureSelectionModels(EditSelectModule.selectionModelFactory)
+		configureHighlightModels(EditHighlightModule.highlightModelFactory)
 
-        ScriptModule.scriptGatewayProvider = { AntaresScriptGateway() }
+		ScriptModule.scriptGatewayProvider = { AntaresScriptGateway() }
 
-	    registerBaseLibraryElements(LibraryModule.baseLibraryElementRepository)
-    }
+		registerBaseLibraryElements(LibraryModule.baseLibraryElementRepository)
+	}
 
-    private fun customizeProperties(properties: Properties) {
-        properties.set(Style.PROP_FOREGROUND_COLOR, Themes.get<GraphTheme>().vertice.color.foregroundColor)
-        properties.set(Style.PROP_BACKGROUND_COLOR, Themes.get<GraphTheme>().vertice.color.backgroundColor)
-        properties.set(Style.PROP_TEXT_COLOR, Themes.get<GraphTheme>().vertice.color.textColor)
-        properties.set(Style.PROP_STROKE, Themes.get<GraphTheme>().vertice.stroke)
-        properties.set(Style.PROP_FONT, Themes.get<GraphTheme>().vertice.font)
+	private fun customizeProperties(properties: Properties) {
+		properties.set(Style.PROP_FOREGROUND_COLOR, Themes.get<GraphTheme>().vertice.color.foregroundColor)
+		properties.set(Style.PROP_BACKGROUND_COLOR, Themes.get<GraphTheme>().vertice.color.backgroundColor)
+		properties.set(Style.PROP_TEXT_COLOR, Themes.get<GraphTheme>().vertice.color.textColor)
+		properties.set(Style.PROP_STROKE, Themes.get<GraphTheme>().vertice.stroke)
+		properties.set(Style.PROP_FONT, Themes.get<GraphTheme>().vertice.font)
 
-        properties.set(Grid.PROP_GRID_DEFAULT_DISTANCE, Look.GRID)
-        properties.set(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR, 2)
-	    properties.set(Grid.PROP_GRID_MIN_DISTANCE, 12)
+		properties.set(Grid.PROP_GRID_DEFAULT_DISTANCE, Look.GRID)
+		properties.set(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR, 2)
+		properties.set(Grid.PROP_GRID_MIN_DISTANCE, 12)
 
-        properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
-        properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_STROKE, Stroke(0.5f))
+		properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
+		properties.set(ComponentSnapper.PROP_SNAP_HIGHLIGHT_STROKE, Stroke(0.5f))
 
-        properties.set(OriginIndicator.PROP_SELECTION_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
+		properties.set(OriginIndicator.PROP_SELECTION_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
 
-        properties.set(Handle.PROP_BORDER_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
-        properties.set(Handle.PROP_FILL_COLOR, Themes.get<GraphTheme>().selection.color.backgroundColor)
+		properties.set(Handle.PROP_BORDER_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
+		properties.set(Handle.PROP_FILL_COLOR, Themes.get<GraphTheme>().selection.color.backgroundColor)
 
-        properties.set(AutoConnectorHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
-        properties.set(DragEdgePointHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
+		properties.set(AutoConnectorHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
+		properties.set(DragEdgePointHighlight.PROP_COLOR, Themes.get<GraphTheme>().selection.color.foregroundColor)
 
-        properties.set(CircuitInOutView.PROP_INPUT_ICON_PATH, "/img/input.png")
-        properties.set(CircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")
-        properties.set(CircuitInOutView.PROP_INOUT_ICON_PATH, "/img/inout.png")
-        properties.set(SwitchView.PROP_ICON_PATH, "/img/switch.png")
-	    properties.set(DipSwitchView.PROP_ICON_PATH, "/img/dip-switch.png")
-        properties.set(ProbeView.PROP_ICON_PATH, "/img/probe.png")
-        properties.set(LEDView.PROP_ICON_PATH, "/img/led.png")
-	    properties.set(RgbLEDView.PROP_ICON_PATH, "/img/rgb-led.png")
-        properties.set(LEDMatrixView.PROP_ICON_PATH, "/img/led-matrix.png")
-        properties.set(SevenSegmentDisplayView.PROP_ICON_PATH, "/img/7segment.png")
-	    properties.set(TerminalView.PROP_ICON_PATH, "/img/terminal.png")
-	    properties.set(KeyboardView.PROP_ICON_PATH, "/img/keyboard.png")
+		properties.set(CircuitInOutView.PROP_INPUT_ICON_PATH, "/img/input.png")
+		properties.set(CircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")
+		properties.set(CircuitInOutView.PROP_INOUT_ICON_PATH, "/img/inout.png")
+		properties.set(SwitchView.PROP_ICON_PATH, "/img/switch.png")
+		properties.set(DipSwitchView.PROP_ICON_PATH, "/img/dip-switch.png")
+		properties.set(ProbeView.PROP_ICON_PATH, "/img/probe.png")
+		properties.set(LEDView.PROP_ICON_PATH, "/img/led.png")
+		properties.set(RgbLEDView.PROP_ICON_PATH, "/img/rgb-led.png")
+		properties.set(LEDMatrixView.PROP_ICON_PATH, "/img/led-matrix.png")
+		properties.set(SevenSegmentDisplayView.PROP_ICON_PATH, "/img/7segment.png")
+		properties.set(TerminalView.PROP_ICON_PATH, "/img/terminal.png")
+		properties.set(KeyboardView.PROP_ICON_PATH, "/img/keyboard.png")
 
-	    properties.set(AndGateView.PROP_DATA_FLOW_ENABLED, true)
-    }
+		properties.set(AndGateView.PROP_DATA_FLOW_ENABLED, true)
+	}
 
-    private fun configureTypeMap(typeMap: TypeMap) {
-        typeMap.register("circuitInOutView", CircuitInOutView::class)
-        typeMap.register("digitalEdgeView", DigitalEdgeView::class)
-        typeMap.register("digitalNodeView", DigitalNodeView::class)
-        typeMap.register("digitalPortView", DigitalPortView::class)
-        typeMap.register("digitalPortViewComp", DigitalPortViewComponent::class)
-        typeMap.register("digitalSignalSourceCV", DigitalSignalSourceControlView::class)
+	private fun configureTypeMap(typeMap: TypeMap) {
+		typeMap.register("circuitInOutView", CircuitInOutView::class)
+		typeMap.register("digitalEdgeView", DigitalEdgeView::class)
+		typeMap.register("digitalNodeView", DigitalNodeView::class)
+		typeMap.register("digitalPortView", DigitalPortView::class)
+		typeMap.register("digitalPortViewComp", DigitalPortViewComponent::class)
+		typeMap.register("digitalSignalSourceCV", DigitalSignalSourceControlView::class)
 
-        typeMap.register("notGateView", NotGateView::class)
-        typeMap.register("andGateView", AndGateView::class)
-        typeMap.register("nandGateView", NandGateView::class)
-        typeMap.register("orGateView", OrGateView::class)
-        typeMap.register("norGateView", NorGateView::class)
-        typeMap.register("xorGateView", XorGateView::class)
-        typeMap.register("xnorGateView", XnorGateView::class)
-        typeMap.register("bufferGateView", BufferGateView::class)
-        typeMap.register("triStateBufferGateView", TriStateBufferGateView::class)
+		typeMap.register("notGateView", NotGateView::class)
+		typeMap.register("andGateView", AndGateView::class)
+		typeMap.register("nandGateView", NandGateView::class)
+		typeMap.register("orGateView", OrGateView::class)
+		typeMap.register("norGateView", NorGateView::class)
+		typeMap.register("xorGateView", XorGateView::class)
+		typeMap.register("xnorGateView", XnorGateView::class)
+		typeMap.register("bufferGateView", BufferGateView::class)
+		typeMap.register("triStateBufferGateView", TriStateBufferGateView::class)
 
-        typeMap.register("switchView", SwitchView::class)
-	    typeMap.register("dipSwitchView", DipSwitchView::class)
-        typeMap.register("clockView", ClockView::class)
-        typeMap.register("ledView", LEDView::class)
-	    typeMap.register("RgbLedView", RgbLEDView::class)
-        typeMap.register("sevenSegmentDisplayView", SevenSegmentDisplayView::class)
-        typeMap.register("splitterView", SplitterView::class)
-        typeMap.register("concentratorView", ConcentratorView::class)
-        typeMap.register("constantView", ConstantView::class)
-        typeMap.register("probeView", ProbeView::class)
-        typeMap.register("ramView", RAMView::class)
-        typeMap.register("romView", ROMView::class)
-        typeMap.register("delayView", DelayGateView::class)
-        typeMap.register("tunnelView", TunnelView::class)
-        typeMap.register("ledMatrixView", LEDMatrixView::class)
-	    typeMap.register("randomView", RandomView::class)
-	    typeMap.register("keyboardView", KeyboardView::class)
-	    typeMap.register("terminalView", TerminalView::class)
-    }
+		typeMap.register("switchView", SwitchView::class)
+		typeMap.register("dipSwitchView", DipSwitchView::class)
+		typeMap.register("clockView", ClockView::class)
+		typeMap.register("ledView", LEDView::class)
+		typeMap.register("RgbLedView", RgbLEDView::class)
+		typeMap.register("sevenSegmentDisplayView", SevenSegmentDisplayView::class)
+		typeMap.register("splitterView", SplitterView::class)
+		typeMap.register("concentratorView", ConcentratorView::class)
+		typeMap.register("constantView", ConstantView::class)
+		typeMap.register("probeView", ProbeView::class)
+		typeMap.register("ramView", RAMView::class)
+		typeMap.register("romView", ROMView::class)
+		typeMap.register("delayView", DelayGateView::class)
+		typeMap.register("tunnelView", TunnelView::class)
+		typeMap.register("ledMatrixView", LEDMatrixView::class)
+		typeMap.register("randomView", RandomView::class)
+		typeMap.register("keyboardView", KeyboardView::class)
+		typeMap.register("terminalView", TerminalView::class)
+	}
 
-    private fun configureSelectionModels(factory: SelectionModelFactory) {
-        factory.register(SelectionDrawingStrategy.REPLACE, DigitalNodeView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, DigitalPortViewComponent::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, DigitalSignalSourceControlView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+	private fun configureSelectionModels(factory: SelectionModelFactory) {
+		factory.register(SelectionDrawingStrategy.REPLACE, DigitalNodeView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DigitalPortViewComponent::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DigitalSignalSourceControlView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 
-	    factory.register(SelectionDrawingStrategy.REPLACE, LabelComponent::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, DigitalEdgeView::class.simpleName!!) { EdgeViewReplaceSelectionModel(it as EdgeView<*>) }
+		factory.register(SelectionDrawingStrategy.REPLACE, LabelComponent::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DigitalEdgeView::class.simpleName!!) { EdgeViewReplaceSelectionModel(it as EdgeView<*>) }
 
-	    factory.register(SelectionDrawingStrategy.REPLACE, SplitterView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, ConcentratorView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, ProbeView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, ConstantView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, TunnelView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SplitterView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ConcentratorView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ProbeView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ConstantView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, TunnelView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 
-	    factory.register(SelectionDrawingStrategy.REPLACE, AndGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, OrGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, NotGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, NandGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, NorGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, XorGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, XnorGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, BufferGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, TriStateBufferGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, DelayGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AndGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, OrGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, NotGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, NandGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, NorGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, XorGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, XnorGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, BufferGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, TriStateBufferGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DelayGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 
-	    factory.register(SelectionDrawingStrategy.REPLACE, SwitchView::class.simpleName!!) { SwitchViewSelectionModel(it as SwitchView) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, DipSwitchView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, CircuitInOutView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, KeyboardView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, TerminalView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SwitchView::class.simpleName!!) { SwitchViewSelectionModel(it as SwitchView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DipSwitchView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, CircuitInOutView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, KeyboardView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, TerminalView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 
-	    factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class.simpleName!!) { LEDViewSelectionModel(it as LEDView) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class.simpleName!!) { LEDViewSelectionModel(it as RgbLEDView) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, SevenSegmentDisplayView::class.simpleName!!) { SevenSegmentDisplayViewSelectionModel(it as SevenSegmentDisplayView) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, LEDMatrixView::class.simpleName!!) { LEDMatrixViewSelectionModel(it as LEDMatrixView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class.simpleName!!) { LEDViewSelectionModel(it as LEDView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class.simpleName!!) { LEDViewSelectionModel(it as RgbLEDView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SevenSegmentDisplayView::class.simpleName!!) { SevenSegmentDisplayViewSelectionModel(it as SevenSegmentDisplayView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, LEDMatrixView::class.simpleName!!) { LEDMatrixViewSelectionModel(it as LEDMatrixView) }
 
-	    factory.register(SelectionDrawingStrategy.REPLACE, ROMView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-	    factory.register(SelectionDrawingStrategy.REPLACE, RAMView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ROMView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, RAMView::class.simpleName!!) { SelectedColorSelectionModel(it) }
 
-	    factory.register(SelectionDrawingStrategy.REPLACE, RandomView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-    }
+		factory.register(SelectionDrawingStrategy.REPLACE, RandomView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
 		factory.register(SelectionDrawingStrategy.BELOW, DigitalEdgeView::class.simpleName!!) { EdgeViewBelowSelectionModel(component = it as EdgeView<*>, styleType = EditStyleType.HIGHLIGHT) }
@@ -270,6 +267,9 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.BELOW, BufferGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, TriStateBufferGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, DelayGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
+
+		factory.register(SelectionDrawingStrategy.BELOW, RAMView::class.simpleName!!) { BoundingBoxBelowSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.BELOW, ROMView::class.simpleName!!) { BoundingBoxBelowSelectionModel(it) }
 	}
 
 	private fun registerBaseLibraryElements(repository: BaseLibraryElementRepository) {
@@ -279,11 +279,11 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(PROBE, "library.element.Probe", "/img/probe.png", ProbeView::class)
 		repository.register(TUNNEL, "library.element.Tunnel", "/img/tunnel.png", TunnelView::class)
 
-		repository.register(AND, "library.element.AndGate", "/img/and.png",  AndGateView::class)
-		repository.register(OR, "library.element.OrGate", "/img/or.png",  OrGateView::class)
-		repository.register(NOT, "library.element.NotGate", "/img/not.png",  NotGateView::class)
-		repository.register(NAND, "library.element.NandGate", "/img/nand.png",  NandGateView::class)
-		repository.register(NOR, "library.element.NorGate", "/img/nor.png",  NorGateView::class)
+		repository.register(AND, "library.element.AndGate", "/img/and.png", AndGateView::class)
+		repository.register(OR, "library.element.OrGate", "/img/or.png", OrGateView::class)
+		repository.register(NOT, "library.element.NotGate", "/img/not.png", NotGateView::class)
+		repository.register(NAND, "library.element.NandGate", "/img/nand.png", NandGateView::class)
+		repository.register(NOR, "library.element.NorGate", "/img/nor.png", NorGateView::class)
 		repository.register(XOR, "library.element.XorGate", "/img/xor.png", XorGateView::class)
 		repository.register(XNOR, "library.element.XnorGate", "/img/xnor.png", XnorGateView::class)
 		repository.register(BUFFER, "library.element.Buffer", "/img/buffer.png", BufferGateView::class)
