@@ -18,77 +18,93 @@ import ch.scorpion.jabbah.base.logger
  * this [DragEdgeViewEndpointHandler] operates by calling [useFor] before every usage.
  */
 class DragEdgeViewEndpointHandler(
-    val edgeViewEndpointType: EdgeViewEndpointType
+	val edgeViewEndpointType: EdgeViewEndpointType
 ) : AbstractConnectionPointHighlighter() {
 
-    companion object {
-        private val LOG by logger(DragEdgeViewEndpointHandler::class)
-    }
+	companion object {
+		private val LOG by logger(DragEdgeViewEndpointHandler::class)
+	}
 
-    /** The [EdgeView] whose endpoint is being dragged. Set in [useFor]. */
-    private var edgeView: EdgeView<*>? = null
+	/** The [EdgeView] whose endpoint is being dragged. Set in [useFor]. */
+	private var edgeView: EdgeView<*>? = null
 
-    /** The found target [PortView], if any. */
-    var targetPortView: PortView<*>? = null
+	/** The found target [PortView], if any. */
+	var targetPortView: PortView<*>? = null
 
-    /** ---- [InputEventHandler] */
+	/** ---- [InputEventHandler] */
 
-    override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        LOG.trace("DragEdgeViewEndpointHandler.mouseDragged to (${context.x},${context.y})")
+	override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		LOG.trace("DragEdgeViewEndpointHandler.mouseDragged to (${context.x},${context.y})")
 
-        if (targetPortView == null) {
-            val snap = context.editor.snapManager.snap(context.x, context.y)
-            edgeViewEndpointType.moveTo(edgeView!!, Point2D(context.x + snap.x, context.y + snap.y))
-            edgeView?.validate()
-        }
+		moveEdgeViewEndpoint(context)
 
-        val destVerticeView = context.drawingView().drawing.getDrawable({ it.contains(context.x, context.y) && it !== edgeView })
-        if (destVerticeView == null || destVerticeView !is VerticeView<*>) {
-            exitTargetPortView(context.drawingView())
-            return this
-        }
+		if (!isOnTargetPortView(context)) {
+			return this
+		}
 
-        val pv = (destVerticeView).getPortViewAtConnectionPoint(context.x, context.y)
-        if (pv == null || pv.port.isConnected || !pv.connectable || !edgeViewEndpointType.canConnectTo(pv.port.portType)) {
-            exitTargetPortView(context.drawingView())
-            return this
-        }
+		snapToTargetPortView(context)
 
-        targetPortView = pv
+		return this
+	}
 
-        if (portViewHighlight == null) {
-            // Start highlighting current destination PortView
-            val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
-            displayPortViewHighlight(context.drawingView(), connPointAbs)
+	private fun moveEdgeViewEndpoint(context: EditInputEventContext) {
+		if (targetPortView == null) {
+			val snap = context.editor.snapManager.snap(context.x, context.y)
+			edgeViewEndpointType.moveTo(edgeView!!, Point2D(context.x + snap.x, context.y + snap.y))
+			edgeView?.validate()
+		}
+	}
 
-            // Snap EdgeView end to connection point
-            edgeViewEndpointType.moveTo(edgeView!!, Point2D(connPointAbs.x, connPointAbs.y))
+	private fun isOnTargetPortView(context: EditInputEventContext): Boolean {
+		val destVerticeView = context.drawingView().drawing.getDrawable { it.contains(context.x, context.y) && it !== edgeView }
+		if (destVerticeView == null || destVerticeView !is VerticeView<*>) {
+			exitTargetPortView(context.drawingView())
+			return false
+		}
 
-            // Layout EdgeView
-            val direction = edgeViewEndpointType.getDirectionForPortView(targetPortView!!)
+		val pv = (destVerticeView).getPortViewAtConnectionPoint(context.x, context.y)
+		if (pv == null || pv.port.isConnected || !pv.connectable || !edgeViewEndpointType.canConnectTo(pv.port.portType)) {
+			exitTargetPortView(context.drawingView())
+			return false
+		}
 
-            edgeViewEndpointType.layout(edgeView!!, direction)
-            edgeView?.validate()
-        }
+		targetPortView = pv
 
-        return this
-    }
+		return true
+	}
 
-    override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        LOG.debug("DragEdgeViewEndpointHandler.mouseReleased")
-        removePortViewHighlight(context.drawingView())
-        return null
-    }
+	private fun snapToTargetPortView(context: EditInputEventContext) {
+		if (portViewHighlight == null) {
+			// Start highlighting current destination PortView
+			val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
+			displayPortViewHighlight(context.drawingView(), connPointAbs)
 
-    /** ---- [DragEdgeViewEndpointHandler] */
+			// Snap EdgeView end to connection point
+			edgeViewEndpointType.moveTo(edgeView!!, Point2D(connPointAbs.x, connPointAbs.y))
 
-    /** Binds the specified [EdgeView] in order to be used by this [DragEdgeViewEndpointHandler].*/
-    fun useFor(edgeView: EdgeView<*>) {
-        this.edgeView = edgeView
-    }
+			// Layout EdgeView
+			val direction = edgeViewEndpointType.getDirectionForPortView(targetPortView!!)
 
-    private fun exitTargetPortView(view: DrawingView<*>) {
-        removePortViewHighlight(view)
-        targetPortView = null
-    }
+			edgeViewEndpointType.layout(edgeView!!, direction)
+			edgeView?.validate()
+		}
+	}
+
+	override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		LOG.debug("DragEdgeViewEndpointHandler.mouseReleased")
+		removePortViewHighlight(context.drawingView())
+		return null
+	}
+
+	/** ---- [DragEdgeViewEndpointHandler] */
+
+	/** Binds the specified [EdgeView] in order to be used by this [DragEdgeViewEndpointHandler].*/
+	fun useFor(edgeView: EdgeView<*>) {
+		this.edgeView = edgeView
+	}
+
+	private fun exitTargetPortView(view: DrawingView<*>) {
+		removePortViewHighlight(view)
+		targetPortView = null
+	}
 }

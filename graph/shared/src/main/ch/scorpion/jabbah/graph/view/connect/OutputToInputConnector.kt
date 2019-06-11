@@ -23,7 +23,9 @@ class OutputToInputConnector(
 	edgeViewFactorySupplier: () -> EdgeViewFactory<Any>
 ) : AbstractCreateEdgeViewConnector(edgeViewFactorySupplier, EdgeViewEndpointType.DESTINATION) {
 
-	private val LOG by logger(OutputToInputConnector::class)
+	companion object {
+		private val LOG by logger(OutputToInputConnector::class)
+	}
 
 	/** The [VerticeView] from which the new connection originates. */
 	private var verticeView: VerticeView<*>? = null

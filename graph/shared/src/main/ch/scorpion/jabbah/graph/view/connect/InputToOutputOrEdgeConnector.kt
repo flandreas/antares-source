@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.base.logger
  * or with an [EdgeView], or that leaves the [EdgeView] open.
  *
  * Designed as a single instance being used by multiple [VerticeView]s. Therefore, determine the [VerticeView] on which
- * this [DragEdgeViewEndpointHandler] operates by calling [useFor] before every usage.
+ * this [InputToOutputOrEdgeConnector] operates by calling [useFor] before every usage.
  *
  * TODO Implement connecting to [EdgeView].
  * TODO Refactor: A lot of code common with [OutputToInputConnector].
@@ -46,6 +46,14 @@ class InputToOutputOrEdgeConnector(
 	/** ---- [InputEventHandler] */
 
 	override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		if (isOnInputPort(context)) {
+			return this
+		}
+		exitOriginPortViewIfNecessary(context)
+		return null
+	}
+
+	private fun isOnInputPort(context: EditInputEventContext): Boolean {
 		if (verticeView!!.contains(context.x, context.y)) {
 			val pv = verticeView!!.getPortViewAtConnectionPoint(context.x, context.y)
 			if (pv != null && !pv.port.isConnected && pv.port.portType.isInput) {
@@ -54,16 +62,17 @@ class InputToOutputOrEdgeConnector(
 					val connPoint = verticeView!!.getPortConnectionPoint(destPortView!!.port)
 					displayPortViewHighlight(context.drawingView(), Point2D(connPoint))
 				}
-				return this
+				return true
 			}
 		}
+		return false
+	}
 
+	private fun exitOriginPortViewIfNecessary(context: EditInputEventContext) {
 		if (portViewHighlight != null) {
 			removePortViewHighlight(context.drawingView())
 			destPortView = null
 		}
-
-		return null
 	}
 
 	override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {

@@ -14,34 +14,36 @@ import ch.scorpion.jabbah.draw.module.DrawModule
  * Abstract base implementation of an [InputEventHandler] that supports highlighting connection points.
  */
 abstract class AbstractConnectionPointHighlighter(
-    successor: InputEventHandler<EditInputEventContext>? = null
+	successor: InputEventHandler<EditInputEventContext>? = null
 ) : InputEventHandlerAdapter<EditInputEventContext>(successor) {
 
-    private val LOG by logger(AbstractConnectionPointHighlighter::class)
+	companion object {
+		private val LOG by logger(AbstractConnectionPointHighlighter::class)
+	}
 
-    /** The highlight of the currently snapped origin or destination [PortView], else `null`. */
-    protected var portViewHighlight: ConnectionPointHighlight? = null
+	/** The highlight of the currently snapped origin or destination [PortView], else `null`. */
+	protected var portViewHighlight: ConnectionPointHighlight? = null
 
-    protected fun displayPortViewHighlight(view: DrawingView<*>, location: Point2D) {
-        LOG.trace("displayPortViewHighlight at $location")
-        if (portViewHighlight == null) {
-            view.setCursor(Cursor.DEFAULT)
-            portViewHighlight = DrawModule.properties.get<ConnectionPointHighlight>(PortView.PROP_HIGHLIGHT)
-            portViewHighlight!!.location = location
-            view.ghostContainer.add(portViewHighlight!!)
-        } else {
-            portViewHighlight!!.location = location
-        }
-        portViewHighlight!!.validate()
-    }
+	protected fun displayPortViewHighlight(view: DrawingView<*>, location: Point2D) {
+		LOG.trace("displayPortViewHighlight at $location")
+		if (portViewHighlight == null) {
+			view.setCursor(Cursor.DEFAULT)
+			portViewHighlight = DrawModule.properties.get<ConnectionPointHighlight>(PortView.PROP_HIGHLIGHT)
+			portViewHighlight!!.location = location
+			view.ghostContainer.add(portViewHighlight!!)
+		} else {
+			portViewHighlight!!.location = location
+		}
+		portViewHighlight!!.validate()
+	}
 
-    /** Removes the previously displayed [ConnectionPointHighlight] from the [DrawingView]. */
-    protected fun removePortViewHighlight(view: DrawingView<*>) {
-        if (portViewHighlight != null) {
-            LOG.trace("removePortViewHighlight")
-            view.ghostContainer.remove(portViewHighlight!!)
-            view.ghostContainer.validate()
-            portViewHighlight = null
-        }
-    }
+	/** Removes the previously displayed [ConnectionPointHighlight] from the [DrawingView]. */
+	protected fun removePortViewHighlight(view: DrawingView<*>) {
+		if (portViewHighlight != null) {
+			LOG.trace("removePortViewHighlight")
+			view.ghostContainer.remove(portViewHighlight!!)
+			view.ghostContainer.validate()
+			portViewHighlight = null
+		}
+	}
 }
