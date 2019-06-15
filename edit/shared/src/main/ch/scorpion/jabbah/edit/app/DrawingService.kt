@@ -18,21 +18,21 @@ interface DrawingService {
 	/** Adds the specified [Component] to a [DrawingView]'s [Drawing].*/
 	fun add(component: Component, drawingView: DrawingView<Drawing<Component>>)
 
-    /**
-     * Deletes the specified [Component] from its [Drawing].
-     * @param the translation key of the [Command] that makes this operation undoable, or `null` to use the default name
-     */
-    fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String? = null)
+	/**
+	 * Deletes the specified [Component] from its [Drawing].
+	 * @param the translation key of the [Command] that makes this operation undoable, or `null` to use the default name
+	 */
+	fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String? = null)
 
 	/** Replaces the specified [Component]s with a newly created [GroupComponent].*/
-    fun group(components: List<Component>, drawingView: DrawingView<Drawing<Component>>)
+	fun group(components: List<Component>, drawingView: DrawingView<Drawing<Component>>)
 
 	/** Replaces the specified [GroupComponent] in the [DrawingView] with its inner [Component]s.*/
 	fun ungroup(component: GroupComponent, drawingView: DrawingView<Drawing<Component>>)
 }
 
 open class DrawingServiceImpl(
-        private val commandManager: CommandManager = EditModule.commandManager
+	private val commandManager: CommandManager = EditModule.commandManager
 ) : DrawingService {
 
 	/** ---- [DrawingService] interface */
@@ -41,9 +41,9 @@ open class DrawingServiceImpl(
 		commandManager.execute(AddCommand(drawingView, component))
 	}
 
-    override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String?) {
-        commandManager.execute(DeleteCommand(drawingView, components))
-    }
+	override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String?) {
+		commandManager.execute(DeleteCommand(drawingView, components))
+	}
 
 	override fun group(components: List<Component>, drawingView: DrawingView<Drawing<Component>>) {
 		checkArgument(components.size >= 2, "grouping requires at least two Components")

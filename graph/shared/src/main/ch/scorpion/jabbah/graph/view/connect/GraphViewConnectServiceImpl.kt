@@ -210,6 +210,7 @@ class GraphViewConnectServiceImpl(
 		graphView.add(newEdgeView)
 
 		// Connect newEdgeView
+		newEdgeView.net = splittedEdgeView.net
 		when (origSplittedEVConnState) {
 			EdgeViewConnectionState.Input -> {
 				connectToDestination<T>(newEdgeView, nodeView, null)

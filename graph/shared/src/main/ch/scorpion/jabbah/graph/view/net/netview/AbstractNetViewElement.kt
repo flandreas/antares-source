@@ -21,7 +21,13 @@ abstract class AbstractNetViewElement<T: Any>(
     model: Net<T>
 ) : AbstractGraphElementView<Net<T>>(styleProvider, GraphStyleType.EDGE, model), NetViewElement<T> {
 
-    override val net: Net<T>? get() = model
+    override var net: Net<T>?
+	    get() = model
+	    set(value) {
+		    if (model !== value) {
+			    model = value
+		    }
+	    }
 
     override var netView: NetView<T>? = null
         set(value) {

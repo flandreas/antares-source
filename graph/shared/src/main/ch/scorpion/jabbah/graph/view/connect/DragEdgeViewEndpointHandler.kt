@@ -18,7 +18,8 @@ import ch.scorpion.jabbah.base.logger
  * this [DragEdgeViewEndpointHandler] operates by calling [useFor] before every usage.
  */
 class DragEdgeViewEndpointHandler(
-	val edgeViewEndpointType: EdgeViewEndpointType
+	val edgeViewEndpointType: EdgeViewEndpointType,
+	private val allowEdgeViewAsTarget: Boolean = false
 ) : AbstractConnectionPointHighlighter() {
 
 	companion object {
@@ -31,18 +32,25 @@ class DragEdgeViewEndpointHandler(
 	/** The found target [PortView], if any. */
 	var targetPortView: PortView<*>? = null
 
+	/** The found target [EdgeView], if any. */
+	var targetEdgeView: EdgeView<*>? = null
+
+	var targetEdgeViewSegmentIndex: Int? = null
+
 	/** ---- [InputEventHandler] */
 
 	override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		LOG.trace("DragEdgeViewEndpointHandler.mouseDragged to (${context.x},${context.y})")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("mouseDragged to (${context.x},${context.y})")
+		}
 
 		moveEdgeViewEndpoint(context)
 
-		if (!isOnTargetPortView(context)) {
-			return this
+		if (isOnTargetPortView(context)) {
+			snapToTargetPortView(context)
+		} else if (allowEdgeViewAsTarget && isOnTargetEdgeView(context)) {
+			snapToTargetEdgeView(context)
 		}
-
-		snapToTargetPortView(context)
 
 		return this
 	}
@@ -56,7 +64,7 @@ class DragEdgeViewEndpointHandler(
 	}
 
 	private fun isOnTargetPortView(context: EditInputEventContext): Boolean {
-		val destVerticeView = context.drawingView().drawing.getDrawable { it.contains(context.x, context.y) && it !== edgeView }
+		val destVerticeView = context.drawingView().drawing.getDrawable { it.contains(context.location) && it !== edgeView }
 		if (destVerticeView == null || destVerticeView !is VerticeView<*>) {
 			exitTargetPortView(context.drawingView())
 			return false
@@ -69,6 +77,20 @@ class DragEdgeViewEndpointHandler(
 		}
 
 		targetPortView = pv
+		targetEdgeView = null
+
+		return true
+	}
+
+	private fun isOnTargetEdgeView(context: EditInputEventContext): Boolean {
+		val destDrawable = context.drawingView().drawing.getDrawable { it !== edgeView && it.contains(context.location)}
+		if (destDrawable == null || destDrawable !is EdgeView<*>) {
+			exitTargetEdgeView(context.drawingView())
+			return false
+		}
+
+		targetPortView = null
+		targetEdgeView = destDrawable
 
 		return true
 	}
@@ -90,8 +112,20 @@ class DragEdgeViewEndpointHandler(
 		}
 	}
 
+	private fun snapToTargetEdgeView(context: EditInputEventContext) {
+		if (portViewHighlight == null) {
+			targetEdgeView!!.snap(context.x, context.y, context.editor.view.grid)?.let { snapResult ->
+				targetEdgeViewSegmentIndex = snapResult.segmentIndex
+				displayPortViewHighlight(context.drawingView(), snapResult.location)
+				edgeViewEndpointType.moveTo(edgeView!!, snapResult.location)
+				edgeViewEndpointType.layout(edgeView!!, null)
+				edgeView!!.layout
+			}
+		}
+	}
+
 	override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		LOG.debug("DragEdgeViewEndpointHandler.mouseReleased")
+		LOG.debug("mouseReleased")
 		removePortViewHighlight(context.drawingView())
 		return null
 	}
@@ -106,5 +140,10 @@ class DragEdgeViewEndpointHandler(
 	private fun exitTargetPortView(view: DrawingView<*>) {
 		removePortViewHighlight(view)
 		targetPortView = null
+	}
+
+	private fun exitTargetEdgeView(view: DrawingView<*>) {
+		removePortViewHighlight(view)
+		targetEdgeView = null
 	}
 }

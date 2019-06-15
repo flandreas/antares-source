@@ -12,6 +12,8 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * An [InputEventHandler] that connects an [InputPort] of a [VerticeView] with an [OutputPort] of a [VerticeView],
@@ -20,13 +22,12 @@ import ch.scorpion.jabbah.base.logger
  * Designed as a single instance being used by multiple [VerticeView]s. Therefore, determine the [VerticeView] on which
  * this [InputToOutputOrEdgeConnector] operates by calling [useFor] before every usage.
  *
- * TODO Implement connecting to [EdgeView].
  * TODO Refactor: A lot of code common with [OutputToInputConnector].
  */
 class InputToOutputOrEdgeConnector(
 	private val connectServiceSupplier: () -> GraphViewConnectService,
 	edgeViewFactorySupplier: () -> EdgeViewFactory<Any>
-) : AbstractCreateEdgeViewConnector(edgeViewFactorySupplier, EdgeViewEndpointType.ORIGIN) {
+) : AbstractCreateEdgeViewConnector(edgeViewFactorySupplier, EdgeViewEndpointType.ORIGIN, allowEdgeViewAsTarget = true) {
 
 	companion object {
 		private val LOG by logger(InputToOutputOrEdgeConnector::class)
@@ -38,7 +39,7 @@ class InputToOutputOrEdgeConnector(
 	/** The [PortView] in [verticeView] where the new connection ends.  */
 	private var destPortView: PortView<*>? = null
 
-	/** Prepares this [InputToOutputOrEdgeConnector] to be used to created [EdgeView]s that end in the specified [VerticeView].*/
+	/** Prepares this [InputToOutputOrEdgeConnector] to be used to created [EdgeView]s that ends in the specified [VerticeView].*/
 	fun useFor(verticeView: VerticeView<*>) {
 		this.verticeView = verticeView
 	}
@@ -49,7 +50,7 @@ class InputToOutputOrEdgeConnector(
 		if (isOnInputPort(context)) {
 			return this
 		}
-		exitOriginPortViewIfNecessary(context)
+		exitDestinationPortViewIfNecessary(context)
 		return null
 	}
 
@@ -68,7 +69,7 @@ class InputToOutputOrEdgeConnector(
 		return false
 	}
 
-	private fun exitOriginPortViewIfNecessary(context: EditInputEventContext) {
+	private fun exitDestinationPortViewIfNecessary(context: EditInputEventContext) {
 		if (portViewHighlight != null) {
 			removePortViewHighlight(context.drawingView())
 			destPortView = null
@@ -91,7 +92,9 @@ class InputToOutputOrEdgeConnector(
 	}
 
 	override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		LOG.trace("mouseDragged to (${context.x},${context.y})")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("mouseDragged to (${context.x},${context.y})")
+		}
 		// Forward to DragEdgeViewEndpointHandler, but keep control in order to handle mouseReleased
 		if (edgeView != null) {
 			super.mouseDragged(context)
@@ -104,7 +107,11 @@ class InputToOutputOrEdgeConnector(
 		super.mouseReleased(context)
 
 		if (isValidEdgeView()) {
-			completeConnecting(context)
+			if (getEndpointHandler().targetPortView != null) {
+				completeConnectingToOutput(context)
+			} else if (getEndpointHandler().targetEdgeView != null) {
+				completeConnectingToEdge(context)
+			}
 		} else {
 			cancel(context.editor)
 		}
@@ -118,21 +125,38 @@ class InputToOutputOrEdgeConnector(
 		return successor as DragEdgeViewEndpointHandler
 	}
 
-	private fun completeConnecting(context: EditInputEventContext) {
+	private fun completeConnectingToOutput(context: EditInputEventContext) {
 		context.drawingView().drawing.remove(edgeView!!)
 
-		val targetPortView = getEndpointHandler().targetPortView
+		val origPortView = getEndpointHandler().targetPortView
 		context.editor.commandManager.execute(
 			ConnectCommand(
 				editor = context.editor,
 				connectService = connectServiceSupplier.invoke(),
 				edgeView = edgeView!!,
-				origConnectableView = targetPortView?.owner,
-				origPort = targetPortView?.port,
+				origConnectableView = origPortView?.owner,
+				origPort = origPortView?.port,
 				destConnectableView = destPortView?.owner,
 				destPort = destPortView?.port))
 		context.drawingView().selectionManager.select(edgeView!!)
 
 		edgeView = null
+	}
+
+	private fun completeConnectingToEdge(context: EditInputEventContext) {
+		context.drawingView().drawing.remove(edgeView!!)
+
+		context.editor.commandManager.execute(
+			SplitEdgeViewCommand(
+				editor = context.editor,
+				connectService = connectServiceSupplier.invoke(),
+				graphView = context.editor.drawing as GraphView<GraphElementView<*>>,
+				origEdgeView = getEndpointHandler().targetEdgeView!!,
+				segmentIndex = getEndpointHandler().targetEdgeViewSegmentIndex!!,
+				newEdgeView = edgeView!!,
+				targetPortView = destPortView!!,
+				nodeView = null
+			)
+		)
 	}
 }

@@ -103,10 +103,8 @@ interface GraphViewConnectService {
 	): EdgeView<T>
 
 	/**
-	 * Splits an existing [EdgeView], inserts a [NodeView] at the begin location of `graphView`,
+	 * Splits an existing [EdgeView], inserts a [NodeView] at the begin location of [newEdgeView],
 	 * and connects the [NodeView] with a destination [Port], if available.
-	 *
-	 * The created [NodeView] is placed at the first segment point of the [newEdgeView].
 	 * Adds the [newEdgeView] to the [graphView].
 	 *
 	 * @param tailEdgeView the tail part after splitting, or `null` if a new [EdgeView] has to be created as tail part

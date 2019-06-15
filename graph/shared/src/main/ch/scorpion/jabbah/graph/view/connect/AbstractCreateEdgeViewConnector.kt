@@ -18,8 +18,9 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
  */
 abstract class AbstractCreateEdgeViewConnector(
 	private val edgeViewFactorySupplier: () -> EdgeViewFactory<Any>,
-	endpointType: EdgeViewEndpointType
-) : AbstractConnectionPointHighlighter(DragEdgeViewEndpointHandler(endpointType)) {
+	endpointType: EdgeViewEndpointType,
+	allowEdgeViewAsTarget: Boolean = false
+) : AbstractConnectionPointHighlighter(DragEdgeViewEndpointHandler(endpointType, allowEdgeViewAsTarget)) {
 
 	companion object {
 		private val LOG by logger(AbstractCreateEdgeViewConnector::class)

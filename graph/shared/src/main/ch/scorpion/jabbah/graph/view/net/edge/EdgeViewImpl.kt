@@ -491,8 +491,6 @@ open class EdgeViewImpl<T : Any>(
 
 	/** ---- [NetViewElement] interface */
 
-	override val net: Net<T>? get() = model
-
 	override fun handleNetViewStyleChanged() {
 		invalidate()
 		styling = netView!!.style.createEdgeViewStyling(styleProvider, this)

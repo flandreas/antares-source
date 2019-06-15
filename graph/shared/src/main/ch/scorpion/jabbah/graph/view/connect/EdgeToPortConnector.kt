@@ -40,11 +40,13 @@ class EdgeToPortConnector(
 	}
 
 	override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		LOG.trace("mouseMoved to (${context.x},${context.y})")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("mouseMoved to (${context.x},${context.y})")
+		}
 
 		val snapResult = snap(context)
 		if (snapResult != null) {
-			displayPortViewHighlight(context.drawingView(), Point2D(snapResult.x, snapResult.y))
+			displayPortViewHighlight(context.drawingView(), snapResult.location)
 			return this
 		}
 
@@ -65,7 +67,9 @@ class EdgeToPortConnector(
 	}
 
 	override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		LOG.trace("mouseDragged to (${context.x},${context.y})")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("mouseDragged to (${context.x},${context.y})")
+		}
 		// Forward to DragEdgeViewEndpointHandler, but keep control in order to handle mouseReleased by returning this
 		super.mouseDragged(context)
 		return this

@@ -57,8 +57,6 @@ open class NodeViewImpl<T : Any>(
 
 	/** ---- [NetViewElement] interface */
 
-	override val net: Net<T>? get() = model
-
 	override fun handleNetViewStyleChanged() {
 		invalidate()
 		styling = netView!!.style.createNodeViewStyling(styleProvider, this)

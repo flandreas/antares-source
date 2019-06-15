@@ -34,7 +34,9 @@ abstract class AbstractDragEdgeViewEndpointConnector(
     /** ---- [InputEventHandler] */
 
     override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        LOG.trace("AbstractDragEdgeViewEndpointConnector.mouseMoved")
+	    if (LOG.isTraceEnabled()) {
+		    LOG.trace("mouseMoved")
+	    }
         if (endpointType.getEndpoint(edgeView!!).contains(context.x, context.y)) {
             displayPortViewHighlight(context.drawingView(), getEndpointView().location)
             return this
@@ -50,7 +52,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
     }
 
     override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        LOG.debug("AbstractDragEdgeViewEndpointConnector.mousePressed")
+        LOG.debug("mousePressed")
         removePortViewHighlight(context.drawingView())
         oldLocation = getEndpointView().location
         context.drawingView().selectionManager.deselectAll()

@@ -216,7 +216,9 @@ interface EdgeView<T: Any> : NetViewElement<T> {
 	fun snap(x: Double, y: Double, backgroundSnapper: Snapper? = null): EdgeViewSnapLocatorResult?
 }
 
-data class EdgeViewSnapLocatorResult(val segmentIndex: Int, val x: Double, val y: Double)
+data class EdgeViewSnapLocatorResult(val segmentIndex: Int, val x: Double, val y: Double) {
+	val location: Point2D get() = Point2D(x, y)
+}
 
 /**
  * Encapsulates all aspects of an [EdgeView] that is related with its layout.
