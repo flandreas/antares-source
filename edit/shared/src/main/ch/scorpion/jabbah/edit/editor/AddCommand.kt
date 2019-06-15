@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
  * A [Command] for adding a [Component] to a [Drawing].
  */
 class AddCommand(
-    private val drawingView: DrawingView<Drawing<Component>>,
+    private val drawingView: DrawingView<Drawing<in Component>>,
     val component: Component
 ) : AbstractCommand("edit.command.add", null) {
 

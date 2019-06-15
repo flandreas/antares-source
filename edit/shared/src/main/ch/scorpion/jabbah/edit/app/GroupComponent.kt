@@ -20,9 +20,9 @@ class GroupComponentsAction(
 ) : AbstractSelectionAwareAction("edit.action.group", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
+		val drawingView = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!
 		drawingService.group(
-			drawingView.selectionManager.selection.toCollection(mutableListOf<Component>()),
+			drawingView.selectionManager.selection.toCollection(mutableListOf()),
 			drawingView)
 	}
 
@@ -39,7 +39,7 @@ class UngroupComponentsAction(
 ) : AbstractSelectionAwareAction("edit.action.ungroup", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
+		val drawingView = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!
 		drawingService.ungroup(
 			getSingleSelection()!!.propertyOwner as GroupComponent,
 			drawingView)

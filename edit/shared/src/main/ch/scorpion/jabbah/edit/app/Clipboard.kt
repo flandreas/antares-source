@@ -50,7 +50,7 @@ class CutAction(
 ) : AbstractSelectionAwareAction("edit.action.cut", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
+		val drawingView = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!
 		copyPasteUtility.cut(drawingView, drawingView.selectionManager.selection, typeMap, commandManager)
 	}
 }
@@ -78,7 +78,7 @@ class PasteAction(
 ) : AbstractViewAction("edit.action.paste", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
+		val drawingView = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!
 		copyPasteUtility.paste(drawingView, storableCreator, typeMap, commandManager)
 	}
 }

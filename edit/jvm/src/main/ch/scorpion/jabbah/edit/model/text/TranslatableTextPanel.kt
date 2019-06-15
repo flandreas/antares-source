@@ -33,16 +33,16 @@ class TranslatableTextPanel(
 			text: TranslatableText,
 			textFieldRows: Int = 1,
 			textFieldColumns: Int = 25
-		) : TranslatableText? {
+		): TranslatableText? {
 			val panel = TranslatableTextPanel(title, text, textFieldRows, textFieldColumns)
 			return when (
-			JOptionPane.showConfirmDialog(
-				parent,
-				panel,
-				title,
-				JOptionPane.OK_CANCEL_OPTION,
-				JOptionPane.PLAIN_MESSAGE)
-			) {
+				JOptionPane.showConfirmDialog(
+					parent,
+					panel,
+					title,
+					JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.PLAIN_MESSAGE)
+				) {
 				JOptionPane.OK_OPTION -> panel.text
 				else -> null
 			}
@@ -97,23 +97,24 @@ class TranslatableTextPanel(
 		}
 		if (needsAlternativeLangText) {
 			if (text.hasTranslation(alternativeLanguage!!)) {
-				alternativeLangTextField.text = text.getTranslation(alternativeLanguage!!)
+				alternativeLangTextField.text = text.getTranslation(alternativeLanguage)
 			}
 		}
 
 		buildUI()
 	}
 
-	private val text: TranslatableText get() {
-		var text = TranslatableText()
-		if (!StringUtils.isBlank(currentLangTextField.text)) {
-			text = text.withTranslation(currentLanguage, currentLangTextField.text)
+	private val text: TranslatableText
+		get() {
+			var text = TranslatableText()
+			if (!StringUtils.isBlank(currentLangTextField.text)) {
+				text = text.withTranslation(currentLanguage, currentLangTextField.text)
+			}
+			if (needsAlternativeLangText && !StringUtils.isBlank(alternativeLangTextField.text)) {
+				text = text.withTranslation(alternativeLanguage!!, alternativeLangTextField.text)
+			}
+			return text
 		}
-		if (needsAlternativeLangText && !StringUtils.isBlank(alternativeLangTextField.text)) {
-			text = text.withTranslation(alternativeLanguage!!, alternativeLangTextField.text)
-		}
-		return  text
-	}
 
 	private fun buildUI() {
 		val inset = 5
@@ -122,22 +123,22 @@ class TranslatableTextPanel(
 		EGBL.add(
 			this,
 			JLabel("$textName ($currentLanguage):"),
-			0, 0,	// x, y
-			1, 1,	// width, height
-			0.0, 0.0,	// weightX, weightY
-			EGBL.WEST,	// anchor
-			EGBL.NONE,	// fill
+			0, 0,    // x, y
+			1, 1,    // width, height
+			0.0, 0.0,    // weightX, weightY
+			EGBL.WEST,    // anchor
+			EGBL.NONE,    // fill
 			0, inset, 0, 0
 		)
 
 		EGBL.add(
 			this,
 			if (currentLangTextField is JTextArea) UiUtil.decorateTextArea(currentLangTextField) else currentLangTextField,
-			1, 0,	// x, y
-			EGBL.REMAINDER, 1,	// width, height
-			0.0, 0.0,	// weightX, weightY
-			EGBL.WEST,	// anchor
-			EGBL.HORIZONTAL,	// fill
+			1, 0,    // x, y
+			EGBL.REMAINDER, 1,    // width, height
+			0.0, 0.0,    // weightX, weightY
+			EGBL.WEST,    // anchor
+			EGBL.HORIZONTAL,    // fill
 			0, inset, 0, 0
 		)
 
@@ -145,11 +146,11 @@ class TranslatableTextPanel(
 			EGBL.add(
 				this,
 				JLabel("$textName ($alternativeLanguage):"),
-				0, 1,	// x, y
-				1, 1,	// width, height
-				0.0, 0.0,	// weightX, weightY
-				EGBL.WEST,	// anchor
-				EGBL.NONE,	// fill
+				0, 1,    // x, y
+				1, 1,    // width, height
+				0.0, 0.0,    // weightX, weightY
+				EGBL.WEST,    // anchor
+				EGBL.NONE,    // fill
 				inset, inset, 0, 0
 			)
 

@@ -186,7 +186,7 @@ class DrawableContainerImplTest {
         innerContainer.add(rect)
         container.add(innerContainer)
 
-        assertEquals(innerContainer, container.getDrawableAt(125.0, 125.0) as DrawableContainerImpl<Drawable>)
+        assertEquals(innerContainer, container.getDrawableAt(125.0, 125.0) as DrawableContainerImpl<*>)
     }
 
     @Test

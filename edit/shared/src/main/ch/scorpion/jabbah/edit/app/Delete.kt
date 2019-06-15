@@ -33,7 +33,7 @@ class DeleteAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
+		val drawingView = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!
 		val selection = drawingView.selectionManager.selection
 		val components = getComponentsToDelete(selection)
 		if (components.isNotEmpty()) {

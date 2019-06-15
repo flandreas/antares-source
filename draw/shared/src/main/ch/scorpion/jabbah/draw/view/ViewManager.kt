@@ -13,6 +13,9 @@ interface ViewManager {
 	/** Holds the currently active [View]. */
 	var activeView: View<out InputEventContext>?
 
+	@Suppress("UNCHECKED_CAST")
+	fun <T> castedActiveView(): T? = activeView as T?
+
 	/** Registers [View].*/
 	fun registerView(view: View<out InputEventContext>)
 
