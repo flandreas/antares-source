@@ -63,6 +63,7 @@ object EditModuleJvm : AbstractModule() {
 	    buildPropertyTree(BaseModuleJvm.preferencesTree)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
 		registry.registerRenderer(Direction::class.java, EnumRenderer::class.java)
         registry.registerRenderer(PredefinedColor::class.java, PredefinedColorRenderer::class.java)
@@ -74,6 +75,7 @@ object EditModuleJvm : AbstractModule() {
 	    registry.register(TranslatableText::class.java) { TranslatableTextPropertyRenderer((it as PropertyImpl<TranslatableText>).filter)}
 }
 
+    @Suppress("UNCHECKED_CAST")
     private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
         registry.registerEditor(Direction::class.java, DirectionEditor::class.java)
         registry.registerEditor(Size::class.java, SizeEditor::class.java)

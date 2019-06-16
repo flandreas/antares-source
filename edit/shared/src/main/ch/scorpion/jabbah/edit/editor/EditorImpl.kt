@@ -213,6 +213,7 @@ open class EditorImpl(
     //private val drawingViewListener = object : PropertyChangeListener<Any> {
     private val drawingViewListener = DrawingViewListener()
     private inner class DrawingViewListener : PropertyChangeListener<Any> {
+        @Suppress("UNCHECKED_CAST")
         override fun propertyChanged(e: PropertyChangeEvent<Any>) {
             if (e.name == DrawingView.PROP_DRAWING) {
                 (e.oldValue as Drawing<Component>).addDrawableContainerListener(drawingListener)

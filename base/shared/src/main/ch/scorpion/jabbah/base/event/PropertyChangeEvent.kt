@@ -3,7 +3,11 @@ package ch.scorpion.jabbah.base.event
 /**
  * A [PropertyChangeEvent] gets delivered to [PropertyChangeListener]s when a bound property of a bean changes.
  */
-data class PropertyChangeEvent<out T> (val source: Any, val name: String, val oldValue: T?, val newValue: T?)
+data class PropertyChangeEvent<out T> (
+	val source: Any,
+	val name: String,
+	val oldValue: T?,
+	val newValue: T?)
 
 /**
  * Listens to [PropertyChangeEvent]s from beans.

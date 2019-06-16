@@ -2,9 +2,6 @@ package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.command.AbstractCommand
-import kotlin.reflect.jvm.internal.impl.descriptors.ModuleDescriptor.DefaultImpls.accept
-
-
 
 /**
  * A {@link Command} that reflects the undoable change of an {@link Object}'s property.
@@ -13,7 +10,7 @@ import kotlin.reflect.jvm.internal.impl.descriptors.ModuleDescriptor.DefaultImpl
 class PropertyCommand<V>(
     editor: Editor,
     private val propertyBaseKey: String,
-    private val getter: () -> V?,
+    getter: () -> V?,
     private val setter: (V?) -> Unit,
     private val newValue: V?
 ) : AbstractCommand("edit.command.property", editor) {
@@ -21,7 +18,7 @@ class PropertyCommand<V>(
     private val oldValue = getter.invoke()
 
     override fun getDescription(): String {
-        return Translations.getString(propertyBaseKey + ".name")
+        return Translations.getString("$propertyBaseKey.name")
     }
 
     override fun execute() {

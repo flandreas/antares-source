@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.edit.SelectionModel
  *
  * @param T the type of [Component] being selected by this [SelectionModel]
  */
-abstract class AbstractSelectedColorWrappingSelectionModel<T: Component>(component: T) : SelectedColorSelectionModel<T>(component) {
+abstract class AbstractSelectedColorWrappingSelectionModel<T : Component>(component: T) : SelectedColorSelectionModel<T>(component) {
 
 	protected val handleSelectionModel: AbstractHandleSelectionModel<T> = createInnerSelectionModel(component)
 
@@ -29,6 +29,7 @@ abstract class AbstractSelectedColorWrappingSelectionModel<T: Component>(compone
 	/** ---- [Drawable] */
 
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
+		@Suppress("UNCHECKED_CAST")
 		return eventHandler as InputEventHandler<T>
 	}
 
@@ -89,7 +90,7 @@ abstract class AbstractSelectedColorWrappingSelectionModel<T: Component>(compone
 
 		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			val mousePressed = handleSelectionModel.getInputEventHandler(context).mousePressed(context)
-			return if (mousePressed != null) this else null;
+			return if (mousePressed != null) this else null
 		}
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {

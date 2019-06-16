@@ -1,19 +1,19 @@
 package ch.scorpion.jabbah.edit
 
 import org.controlsfx.control.PropertySheet
-import org.controlsfx.property.editor.AbstractPropertyEditor
 import ch.scorpion.jabbah.base.fx.NumericField
 import javafx.application.Platform
 import javafx.beans.value.ObservableValue
+import org.controlsfx.property.editor.PropertyEditor
 
 /**
  * A [PropertyEditor] for editing optional [Number]s.
  */
 open class OptionalNumericEditor(
 	property: PropertySheet.Item
-) : AbstractFocusPropertyEditor<Number, NumericField>(property, NumericField(property.type as Class<out Number>) ) {
+) : AbstractFocusPropertyEditor<Number, NumericField>(property, NumericField(property.type) ) {
 
-	private var sourceClass: Class<out Number> = property.type as Class<out Number>
+	private var sourceClass: Class<*> = property.type
 
 	init {
 		editor.focusedProperty().addListener {

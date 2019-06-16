@@ -27,62 +27,63 @@ import ch.scorpion.jabbah.edit.style.EditStyleType
 /**
  * Displays [ComponentMessage]s in a [DrawingView].
  */
-class ComponentMessageDisplayer<T: Drawing<Component>>(
-    private val drawingView: DrawingView<T>,
-    private val eventBus: EventBus,
-    private val animator: Animator
+class ComponentMessageDisplayer<T : Drawing<Component>>(
+	private val drawingView: DrawingView<T>,
+	private val eventBus: EventBus,
+	private val animator: Animator
 ) {
 
-    companion object {
+	companion object {
 
-        private val LOG by logger(ComponentMessageDisplayer::class)
+		private val LOG by logger(ComponentMessageDisplayer::class)
 
-        private const val INSET = 10.0
+		private const val INSET = 10.0
 
-	    /** The inset in view coordinates to apply when making [Drawable]s visible.*/
-	    private const val MAKE_VISIBLE_INSET = 10.0
-    }
+		/** The inset in view coordinates to apply when making [Drawable]s visible.*/
+		private const val MAKE_VISIBLE_INSET = 10.0
+	}
 
-    init {
-        eventBus.register(ComponentMessage::class, this::handle)
-    }
+	init {
+		eventBus.register(ComponentMessage::class, this::handle)
+	}
 
-    fun dispose() {
-        eventBus.unregister(ComponentMessage::class, this::handle)
-    }
+	fun dispose() {
+		eventBus.unregister(ComponentMessage::class, this::handle)
+	}
 
-    private fun handle(msg: ComponentMessage) {
-        if (msg.source != null && !drawingView.drawing.contains(msg.source)) {
-            return
-        }
-        val text = Translations.getString(msg.messageKey)
-        val messageView = FlexibleTextView(
-                text = text,
-                anchor = calculateAnchorPoint(msg),
-                direction = Direction.SOUTH,
-                styleType = determineStyleType(msg.type))
+	private fun handle(msg: ComponentMessage) {
+		if (msg.source != null && !drawingView.drawing.contains(msg.source)) {
+			return
+		}
+		val text = Translations.getString(msg.messageKey)
+		val messageView = FlexibleTextView(
+			text = text,
+			anchor = calculateAnchorPoint(msg),
+			direction = Direction.SOUTH,
+			styleType = determineStyleType(msg.type))
 
-	    if (msg.source != null) {
-		    val makeVisibleOffset = getMakeVisibleOffset(messageView)
-		    messageView.moveBy(makeVisibleOffset.x, makeVisibleOffset.y)
-	    }
+		if (msg.source != null) {
+			val makeVisibleOffset = getMakeVisibleOffset(messageView)
+			messageView.moveBy(makeVisibleOffset.x, makeVisibleOffset.y)
+		}
 
-        val container = if (msg.source == null) drawingView.overlayContainer else drawingView.ghostContainer as DrawableContainer<Drawable>
+		@Suppress("UNCHECKED_CAST")
+		val container = if (msg.source == null) drawingView.overlayContainer else drawingView.ghostContainer as DrawableContainer<Drawable>
 
-        container.add(messageView)
-        container.validate()
+		container.add(messageView)
+		container.validate()
 
-        FadeInOut(messageView, container, animator)
-    }
+		FadeInOut(messageView, container, animator)
+	}
 
-    private fun calculateAnchorPoint(msg: ComponentMessage): Point2D {
-        return if (msg.source == null) {
-            Point2D(drawingView.width / 2, drawingView.height / 2)
-        } else {
-            val bbox = msg.source.boundingBox
-            Point2D(bbox.centerX, bbox.maxY + INSET)
-        }
-    }
+	private fun calculateAnchorPoint(msg: ComponentMessage): Point2D {
+		return if (msg.source == null) {
+			Point2D(drawingView.width / 2, drawingView.height / 2)
+		} else {
+			val bbox = msg.source.boundingBox
+			Point2D(bbox.centerX, bbox.maxY + INSET)
+		}
+	}
 
 	/**
 	 * Calculates the minimal displacement to apply to the specified [FlexibleTextView] to make it entirely visible
@@ -112,47 +113,47 @@ class ComponentMessageDisplayer<T: Drawing<Component>>(
 	}
 
 	private fun determineStyleType(msgType: ComponentMessageType): StyleType {
-		return when(msgType) {
+		return when (msgType) {
 			ComponentMessageType.Info -> EditStyleType.MESSAGE_INFO
 			ComponentMessageType.Error -> EditStyleType.MESSAGE_ERROR
 		}
 	}
 
-    private inner class FadeInOut(
-            messageView: Transparent,
-            container: DrawableContainer<Drawable>,
-            animator: Animator
-    ) {
+	private inner class FadeInOut(
+		messageView: Transparent,
+		container: DrawableContainer<in Drawable>,
+		animator: Animator
+	) {
 
-        init {
-            messageView.transparency = Transparent.FULLY_TRANSPARENT
+		init {
+			messageView.transparency = Transparent.FULLY_TRANSPARENT
 
-            val fadeOutAnimation = TransparentAnimation.fadeOut(messageView, 600.0)
-            fadeOutAnimation.addListener(object : AnimationTaskAdapter() {
-                override fun ended(task: AnimationTask) {
-                    LOG.debug("remove MessageView")
-                    container.remove(messageView)
-                }
-            })
-            animator.schedule(fadeOutAnimation)
+			val fadeOutAnimation = TransparentAnimation.fadeOut(messageView, 600.0)
+			fadeOutAnimation.addListener(object : AnimationTaskAdapter() {
+				override fun ended(task: AnimationTask) {
+					LOG.debug("remove MessageView")
+					container.remove(messageView)
+				}
+			})
+			animator.schedule(fadeOutAnimation)
 
-            val timer = System.get().createTimer()
-            timer.initialize(2000) {
-	            LOG.debug("start fade out animation")
-	            fadeOutAnimation.start()
-	            timer.stop()
-            }
+			val timer = System.get().createTimer()
+			timer.initialize(2000) {
+				LOG.debug("start fade out animation")
+				fadeOutAnimation.start()
+				timer.stop()
+			}
 
-	        val fadeInAnimation = TransparentAnimation.fadeIn(messageView, 300.0)
-            fadeInAnimation.addListener(object : AnimationTaskAdapter() {
-                override fun ended(task: AnimationTask) {
-                    LOG.debug("start timer")
-                    timer.start()
-                }
-            })
-            animator.schedule(fadeInAnimation)
-            LOG.debug("start fade in animation")
-            fadeInAnimation.start()
-        }
-    }
+			val fadeInAnimation = TransparentAnimation.fadeIn(messageView, 300.0)
+			fadeInAnimation.addListener(object : AnimationTaskAdapter() {
+				override fun ended(task: AnimationTask) {
+					LOG.debug("start timer")
+					timer.start()
+				}
+			})
+			animator.schedule(fadeInAnimation)
+			LOG.debug("start fade in animation")
+			fadeInAnimation.start()
+		}
+	}
 }

@@ -27,6 +27,7 @@ class RectangularHandle(val handler: InputEventHandler<EditInputEventContext>
     }
 
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
+	    @Suppress("UNCHECKED_CAST")
         return handler as InputEventHandler<T>
     }
 }

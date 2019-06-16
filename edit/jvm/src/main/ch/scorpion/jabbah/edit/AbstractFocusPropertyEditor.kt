@@ -44,6 +44,7 @@ abstract class AbstractFocusPropertyEditor<T, out C : Node>(
 			property.observableValue.get().addListener { _: ObservableValue<out Any>, _: Any, _: Any ->
 				if (!suspendUpdate) {
 					suspendUpdate = true
+					@Suppress("UNCHECKED_CAST")
 					this@AbstractFocusPropertyEditor.value = property.value as T
 					suspendUpdate = false
 				}

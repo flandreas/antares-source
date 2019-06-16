@@ -11,7 +11,7 @@ import java.math.BigInteger
  * Copy/paste from org.controlsfx.property.editor in order to implement property editors for ControlFX's
  * PropertyPanel that support optional values.
  */
-class NumericField(cls: Class<out Number>) : TextField() {
+class NumericField(cls: Class<*>) : TextField() {
 
 	private val value: NumericValidator<Number>
 

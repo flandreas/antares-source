@@ -51,7 +51,7 @@ class PropertyImpl<V>(
     }
 
     override fun getDisplayName(): String {
-        return Translations.getString(baseKey + ".name")
+        return Translations.getString("$baseKey.name")
     }
 
     override fun getName(): String? {
@@ -59,7 +59,7 @@ class PropertyImpl<V>(
     }
 
     override fun getShortDescription(): String? {
-        return Translations.getOptionalString(baseKey + ".desc")
+        return Translations.getOptionalString("$baseKey.desc")
     }
 
     override fun getType(): Class<*> {
@@ -80,6 +80,7 @@ class PropertyImpl<V>(
 
     /** ---- [PropertyImpl] */
 
+    @Suppress("UNCHECKED_CAST")
     fun writeToBean() {
         val oldValue = getter!!.invoke()
         val newValue = value as V

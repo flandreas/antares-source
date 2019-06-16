@@ -52,6 +52,7 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		if (reference.name == "component") {
 			readingFromStore = true
+			@Suppress("UNCHECKED_CAST")
 			add(reference.additionalInfo as T)
 			readingFromStore = false
 		}
