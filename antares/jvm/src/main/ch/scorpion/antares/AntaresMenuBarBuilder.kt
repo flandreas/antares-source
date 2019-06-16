@@ -4,7 +4,6 @@ import ch.scorpion.antares.view.GraphViewAnimationAction
 import ch.scorpion.antares.view.gate.AmericanSymbolStyleAction
 import ch.scorpion.antares.view.gate.EuropeanSymbolStyleAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
-import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
@@ -15,6 +14,7 @@ import ch.scorpion.jabbah.execution.PrintScheduleAction
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphMenuBarBuilder
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import javax.swing.*
 
 /**
@@ -54,7 +54,7 @@ class AntaresMenuBarBuilder(
 
     override fun fillExecutionMenu(menu: JMenu): JMenu {
         super.fillExecutionMenu(menu)
-        menu.add(JCheckBoxMenuItem(ActionWrapperSwing(GraphViewAnimationAction(AntaresViewModule.currentGraphViewAnimationType, eventBus))))
+        menu.add(JCheckBoxMenuItem(ActionWrapperSwing(GraphViewAnimationAction(GraphViewModule.currentGraphViewAnimationType, eventBus))))
         menu.add(NoiseMenu(listOf(ExecutionModule.noNoiseGenerator, ExecutionModule.randomNoiseGenerator)))
         return menu
     }

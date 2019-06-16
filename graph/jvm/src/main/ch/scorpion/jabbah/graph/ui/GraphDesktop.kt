@@ -24,7 +24,6 @@ import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.graph.module.GraphModuleJvm.graphNavigationPanelFactory
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -223,11 +222,11 @@ class GraphDesktop(
 				drawingView
 			}
 			val drawingView = graphCanvas.view as DrawingView<GraphView<GraphElementView<*>>>
-			graphNavigationPanelFactory.create(
+			GraphNavigationPanel(
 				isRoot = false,
 				drawingView = drawingView,
 				viewManager = viewManager,
-				contextColor = it,
+				contextBorderColor = it,
 				scheduler = scheduler
 			)
 		}

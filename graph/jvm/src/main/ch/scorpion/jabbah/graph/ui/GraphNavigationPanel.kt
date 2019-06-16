@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
@@ -18,6 +19,7 @@ import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
+import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningStateEvent
@@ -26,7 +28,10 @@ import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.script.ScriptGateway
+import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.ScenarioEvent
@@ -35,6 +40,7 @@ import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCreator
 import java.awt.*
 import javax.swing.JComponent
@@ -47,18 +53,19 @@ import javax.swing.SwingUtilities
  * Displays a [GraphView] in a [DrawingView] along with a [NavigationStackView] that allows the user
  * to navigate within the [GraphView] hierarchy.
  */
-open class GraphNavigationPanel(
+class GraphNavigationPanel(
 	private val isRoot: Boolean,
 	override val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
 	private val viewManager: ViewManager,
 	contextBorderColor: CompositeColor? = null,
-	private val scheduler: Scheduler,
-	private val animator: Animator,
-	private val eventBus: EventBus,
-	private val repository: MetaGraphRepository,
-	private val storableCreator: StorableCreator,
-	private val scriptGateway: ScriptGateway,
-	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
+	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val animator: Animator = AnimationModule.animator,
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
+	private val storableCreator: StorableCreator = IOModule.storableCreator,
+	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
+	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
+	extensionFactory: (GraphNavigationPanel) -> GraphNavigationPanelExtension = GraphModuleJvm.graphNavigationPanelExtensionFactory
 ) : AbstractGraphDesktopItemPanel() {
 
 	companion object {
@@ -101,6 +108,8 @@ open class GraphNavigationPanel(
 
 	private var currentSavable: Savable? = null
 
+	private val extension = extensionFactory.invoke(this)
+
 	init {
 		eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
 		eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
@@ -141,6 +150,8 @@ open class GraphNavigationPanel(
 		eventBus.unregister(SystemSpeedEvent::class, systemSpeedHandler)
 		eventBus.unregister(CurrentSavableEvent::class, currentSavableHandler)
 		eventBus.unregister(CloseViewRequest::class, closeViewRequestHandler)
+
+		extension.dispose(this)
 	}
 
 	override fun addContextColorBorder(color: CompositeColor) {

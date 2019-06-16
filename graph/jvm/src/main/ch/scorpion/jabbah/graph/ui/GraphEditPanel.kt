@@ -29,18 +29,17 @@ class GraphEditPanel(
 	editor: Editor,
 	scheduler: Scheduler,
 	viewManager: ViewManager,
-	graphNavigationPanelFactory: GraphNavigationPanelFactory,
 	propertySheetFactory: PropertySheetPanelFactory,
 	eventBus: EventBus = BaseModule.eventBus
 ) : JPanel() {
 
-
-	val graphNavigationPanel = graphNavigationPanelFactory.create(
+	val graphNavigationPanel = GraphNavigationPanel(
 		isRoot = true,
 		drawingView = editor.view as DrawingView<GraphView<GraphElementView<*>>>,
 		viewManager = viewManager,
-		contextColor = null,
-		scheduler = scheduler)
+		contextBorderColor = null,
+		scheduler = scheduler
+	)
 
 	private val scenarioPanel = ScenarioPanel(editor, eventBus, propertySheetFactory)
 

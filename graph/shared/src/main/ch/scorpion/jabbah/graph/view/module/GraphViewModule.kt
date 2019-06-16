@@ -33,10 +33,7 @@ import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.GraphScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
-import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
-import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.app.GraphViewService
 import ch.scorpion.jabbah.graph.view.app.GraphViewServiceImpl
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
@@ -115,6 +112,8 @@ object GraphViewModule : AbstractModule() {
 	val oscilloscopeViewService: OscilloscopeViewService = OscilloscopeViewServiceImpl(EditModule.commandManager, BaseModule.eventBus)
 
 	var applicationModeHolder: ApplicationModeHolder = UndefinedApplicationModeHolder()
+
+	val currentGraphViewAnimationType: CurrentGraphViewAnimationType by lazy { CurrentGraphViewAnimationType() }
 
 	override fun initialize() {
 		EditModule.require()

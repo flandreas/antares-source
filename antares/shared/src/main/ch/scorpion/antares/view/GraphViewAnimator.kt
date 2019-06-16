@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.port.DigitalPort
-import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.net.DigitalEdgeView
 import ch.scorpion.antares.view.net.DigitalEdgeViewNetAnimation
 import ch.scorpion.jabbah.animation.AnimationModule
@@ -12,27 +11,31 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
-import ch.scorpion.jabbah.draw.drawable.TransparentAnimation
 import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.drawable.TransparentAnimation
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.*
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationState
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningState
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategoryEvent
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /**
  * Performs animations of [GraphElementView] execution and signal flow across [EdgeView]s.
@@ -43,23 +46,13 @@ import ch.scorpion.jabbah.graph.view.*
  */
 class GraphViewAnimator(
 	private val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
-	private val scheduler: Scheduler,
-	private val animator: Animator,
-	private val systemSpeedCategory: CurrentSystemSpeedCategory,
-	val eventBus: EventBus,
-	private val currentGraphAnimationType: CurrentGraphViewAnimationType,
-	val styleProvider: StyleProvider
+	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	private val animator: Animator = AnimationModule.animator,
+	private val systemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
+	val eventBus: EventBus = BaseModule.eventBus,
+	private val currentGraphAnimationType: CurrentGraphViewAnimationType = GraphViewModule.currentGraphViewAnimationType,
+	val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : ActorListener {
-
-	@Suppress("unused")
-	constructor(drawingView: DrawingView<GraphView<GraphElementView<*>>>) : this(
-		drawingView,
-		ExecutionModule.scheduler,
-		AnimationModule.animator,
-		ExecutionModule.currentSystemSpeedCategory,
-		BaseModule.eventBus,
-		AntaresViewModule.currentGraphViewAnimationType,
-		DrawStyleModule.styleProvider)
 
 	companion object {
 		private val LOG by logger(GraphViewAnimator::class)

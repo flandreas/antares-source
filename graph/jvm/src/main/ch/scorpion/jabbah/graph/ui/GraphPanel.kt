@@ -51,7 +51,6 @@ import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryPanel
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseSelector
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
@@ -73,7 +72,6 @@ class GraphPanel(
 	val eventBus: EventBus = BaseModule.eventBus,
 	val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val viewManager: ViewManager,
-	graphNavigationPanelFactory: GraphNavigationPanelFactory = GraphModuleJvm.graphNavigationPanelFactory,
 	var scheduler: Scheduler = ExecutionModule.scheduler,
 	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory,
 	showContentInitially: Boolean = true
@@ -85,8 +83,7 @@ class GraphPanel(
 	}
 
 	/** Allows to edit and execute the currently open GraphView.*/
-	private val graphEditPanel: GraphEditPanel = GraphEditPanel(editor, scheduler, viewManager, graphNavigationPanelFactory,
-		propertySheetFactory, eventBus)
+	private val graphEditPanel: GraphEditPanel = GraphEditPanel(editor, scheduler, viewManager, propertySheetFactory, eventBus)
 
 	/** Allows to open multiple Graphs.*/
 	val desktop: GraphDesktop = GraphDesktop(graphEditPanel, eventBus, scheduler, showContentInitially)

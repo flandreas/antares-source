@@ -93,7 +93,6 @@ object AntaresViewModule : AbstractModule() {
 	private const val RANDOM = "Random"
 
 	val currentSymbolStyle: CurrentSymbolStyle = CurrentSymbolStyle()
-	val currentGraphViewAnimationType: CurrentGraphViewAnimationType by lazy { CurrentGraphViewAnimationType() }
 
 	override fun initialize() {
 		Translations.addBundle("antares")

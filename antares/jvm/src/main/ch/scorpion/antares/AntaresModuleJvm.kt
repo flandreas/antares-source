@@ -47,7 +47,7 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		GraphViewModule.containerEditorFactory = { createContainerEditor(it) }
 
 		GraphModuleJvm.containerTreeViewFactory = { DigitalContainerTreeView() }
-		GraphModuleJvm.graphNavigationPanelFactory = AntaresGraphNavigationPanelFactory()
+		GraphModuleJvm.graphNavigationPanelExtensionFactory = { AntaresGraphNavigationPanelExtension(it) }
 
 		GraphModuleJvm.require()
 		AntaresViewModule.require()
