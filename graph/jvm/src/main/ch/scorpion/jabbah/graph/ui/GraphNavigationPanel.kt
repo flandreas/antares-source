@@ -34,6 +34,7 @@ import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StorableCreator
 import java.awt.*
 import javax.swing.JComponent
@@ -214,39 +215,55 @@ open class GraphNavigationPanel(
 	}
 
 	private fun handle(request: OpenSubGraphRequest) {
-		LOG.debug("handling OpenSubGraphRequest by descending into SubGraphVerticeView")
-
-		val graphView = drawingView.drawing
-		if (!graphView.contains(request.subGraphVerticeView)) {
+		if (!shouldDescendFor(request)) {
 			return
 		}
+		LOG.debug("handling OpenSubGraphRequest by descending into SubGraphVerticeView")
 
-		if (!request.newView) {
-			val subGraphView = request.subGraphVerticeView.createSubGraphView()
-			navigationStackView.navigationStack.peek().content.zoomPan = drawingView.zoomPan
-			if (BaseModule.properties.getBoolean(PROP_DIVE_ANIMATION) && !request.quickMode) {
-				drawingView.userZoomEnabled = false
-				navigationStackView.isEnabled = false
-				DescendAnimationManager(animator).descendInto(
-					drawingView,
-					request.subGraphVerticeView,
-					descender = {
-						navigationStackView.navigationStack.push(NavigationStackEntry(
-							subGraphVerticeView = request.subGraphVerticeView,
-							content = drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>)))
-					},
-					terminator = {
-						navigationStackView.isEnabled = true
-						drawingView.userZoomEnabled = true
-					}
-				)
-			} else {
-				SwingUtilities.invokeLater {
-					navigationStackView.navigationStack.push(NavigationStackEntry(
-						subGraphVerticeView = request.subGraphVerticeView,
-						content = drawingView.createContent(subGraphView as GraphView<GraphElementView<*>>)))
-				}
+		rememberZoomPanOfCurrentNavigationStack()
+		if (isDescendAnimationRequired(request)) {
+			descendIntoSubGraphWithAnimation(request.subGraphVerticeView)
+		} else {
+			descendIntoSubGraphWithoutAnimation(request.subGraphVerticeView)
+		}
+	}
+
+	private fun shouldDescendFor(request: OpenSubGraphRequest): Boolean {
+		return !request.newView && drawingView.drawing.contains(request.subGraphVerticeView)
+	}
+
+	private fun isDescendAnimationRequired(request: OpenSubGraphRequest): Boolean {
+		return BaseModule.properties.getBoolean(PROP_DIVE_ANIMATION) && !request.quickMode
+	}
+
+	private fun rememberZoomPanOfCurrentNavigationStack() {
+		navigationStackView.navigationStack.peek().content.zoomPan = drawingView.zoomPan
+	}
+
+	private fun descendIntoSubGraphWithAnimation(vv: SubGraphVerticeView<*>) {
+		drawingView.userZoomEnabled = false
+		navigationStackView.isEnabled = false
+		DescendAnimationManager(animator).descendInto(
+			drawingView,
+			vv,
+			descender = {
+				navigationStackView.navigationStack.push(NavigationStackEntry(
+					subGraphVerticeView = vv,
+					content = drawingView.createContent(vv.createSubGraphView() as GraphView<GraphElementView<*>>)))
+			},
+			terminator = {
+				navigationStackView.isEnabled = true
+				drawingView.userZoomEnabled = true
 			}
+		)
+	}
+
+	private fun descendIntoSubGraphWithoutAnimation(vv: SubGraphVerticeView<*>) {
+		SwingUtilities.invokeLater {
+			navigationStackView.navigationStack.push(NavigationStackEntry(
+				subGraphVerticeView = vv,
+				content = drawingView.createContent(vv.createSubGraphView() as GraphView<GraphElementView<*>>)))
+			UiUtil.invokeLater(Runnable { drawingView.navigator.fitMaxNormal() })
 		}
 	}
 
