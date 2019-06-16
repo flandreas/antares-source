@@ -262,7 +262,9 @@ class SchedulerImpl(
 	}
 
 	private fun postSchedulerStateEvent() {
-		eventBus.post(SchedulerStateEvent(numberOfRemainingSlots = queue.size, relativeTime = relativeTime))
+		if (runningState == SchedulerRunningState.PAUSED) {
+			eventBus.post(SchedulerStateEvent(numberOfRemainingSlots = queue.size, relativeTime = relativeTime))
+		}
 		if (isSimulationTimeStatusEnabled || runningState == SchedulerRunningState.PAUSED) {
 			publishSimulationTimeStatus()
 		}

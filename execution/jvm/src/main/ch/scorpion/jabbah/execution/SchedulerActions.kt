@@ -20,7 +20,7 @@ class PauseExecutionAction(
 ) : AbstractSchedulerAction("simulator.action.pause") {
 
 	init {
-		eventBus.register(SchedulerRunningStateEvent::class, { updateState() })
+		eventBus.register(SchedulerRunningStateEvent::class) { updateState() }
 		updateState()
 	}
 
@@ -42,7 +42,6 @@ class StepExecutionAction(
 	init {
 		eventBus.register(SchedulerRunningStateEvent::class) { updateEnabledness(scheduler.numberOfRemainingSlots) }
 		eventBus.register(SchedulerActivationStateEvent::class) { updateEnabledness(scheduler.numberOfRemainingSlots) }
-		// TODO For performance reasons, register only temporarily for receiving SchedulerStateEvents (i.e. when stepping is active)
 		eventBus.register(SchedulerStateEvent::class) { updateEnabledness(it.numberOfRemainingSlots) }
 		enabled = false
 	}
@@ -63,8 +62,8 @@ class ExecutionDepthAction(
 ) : AbstractSchedulerAction("simulator.action.deepSimulation") {
 
 	init {
-		eventBus.register(SchedulerActivationStateEvent::class, { updateState() })
-		eventBus.register(ExecutionDepthEvent::class, { updateState() })
+		eventBus.register(SchedulerActivationStateEvent::class) { updateState() }
+		eventBus.register(ExecutionDepthEvent::class) { updateState() }
 		updateState()
 	}
 

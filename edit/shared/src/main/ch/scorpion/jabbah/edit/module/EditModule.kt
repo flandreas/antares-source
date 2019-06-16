@@ -1,16 +1,17 @@
 package ch.scorpion.jabbah.edit.module
 
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.preferences.IntPreference
-import ch.scorpion.jabbah.base.preferences.PreferenceGroup
-import ch.scorpion.jabbah.draw.Canvas
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.polyline.PolylineShapeImpl
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingViewFactory
 import ch.scorpion.jabbah.edit.app.CopyPasteUtility
 import ch.scorpion.jabbah.edit.app.DrawingService
 import ch.scorpion.jabbah.edit.app.DrawingServiceImpl
@@ -23,8 +24,14 @@ import ch.scorpion.jabbah.edit.model.group.EditModelGroupModule
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.model.polyline.EditModelPolylineModule
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
-import ch.scorpion.jabbah.edit.model.rectangle.*
-import ch.scorpion.jabbah.edit.model.text.*
+import ch.scorpion.jabbah.edit.model.rectangle.EditModelRectangleModule
+import ch.scorpion.jabbah.edit.model.rectangle.EllipseComponent
+import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import ch.scorpion.jabbah.edit.model.rectangle.RoundRectangleComponent
+import ch.scorpion.jabbah.edit.model.text.EditModelTextModule
+import ch.scorpion.jabbah.edit.model.text.LabelComponent
+import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
+import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.snap.EditSnapModule
 import ch.scorpion.jabbah.edit.style.EditTheme
@@ -47,7 +54,7 @@ object EditModule : AbstractModule() {
      * Creates an [AttentionDrawer] that produces an animation for drawing the attention
      * of the user to a particular location.
      */
-    val attentionDrawerFactory: () -> AttentionDrawer = ::AttentionDrawerImpl
+    val attentionDrawerFactory: () -> AttentionDrawer = { AttentionDrawerImpl() }
 
     var drawingService: DrawingService = DrawingServiceImpl()
 
@@ -68,6 +75,7 @@ object EditModule : AbstractModule() {
         Themes.register(EditTheme())
 
         configureTypeMap(IOModule.typeMap)
+	    fillProperties(BaseModule.properties)
     }
 
     private fun configureTypeMap(typeMap: TypeMap) {
@@ -83,4 +91,10 @@ object EditModule : AbstractModule() {
         typeMap.register("quadCurve", QuadCurveComponent::class)
 	    typeMap.register("translation", Translation::class)
     }
+
+	private fun fillProperties(properties: Properties) {
+		properties.set(AttentionDrawer.PROP_COLOR, Color.RED)
+		properties.set(AttentionDrawerImpl.PROP_DURATION, 500.0f)
+		properties.set(AttentionDrawerImpl.PROP_MAX_RADIUS, 30.0f)
+	}
 }

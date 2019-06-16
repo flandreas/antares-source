@@ -1,9 +1,9 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.ApplicationDataEvent
-import ch.scorpion.jabbah.app.CloseApplicationDataRequest
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
@@ -12,6 +12,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.*
@@ -29,6 +31,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
+import ch.scorpion.jabbah.edit.view.AttentionDrawer
 import ch.scorpion.jabbah.execution.IssuesPanel
 import ch.scorpion.jabbah.execution.PauseExecutionAction
 import ch.scorpion.jabbah.execution.StepExecutionAction
@@ -312,10 +315,7 @@ class GraphPanel(
 		pauseToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/PauseOff-24.png"))
 		pauseToggleButton.toolTipText = executionAction.name
 
-		val stepButton = JButton(ActionWrapperSwing(StepExecutionAction(scheduler, eventBus)))
-		stepButton.text = null
-		stepButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/Resume-24.png"))
-		stepButton.preferredSize = Dimension(40, 40)
+		val stepButton = StepButton("/img/Resume-24.png", StepExecutionAction(scheduler, eventBus))
 
 		val speedSlider = SystemSpeedSlider()
 		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
@@ -373,6 +373,28 @@ class GraphPanel(
 		toolBar.add(button)
 
 		return toolBar
+	}
+
+	private class StepButton(iconPath: String, private val action: Action) : JPanel() {
+
+		private val button = JButton(ActionWrapperSwing(action))
+		private val color = Graphics2DJvm.toAwtColor(BaseModule.properties.get<Color>(AttentionDrawer.PROP_COLOR))
+
+		init {
+			button.text = null
+			button.icon = ImageIcon(GraphPanel::class.java.getResource(iconPath))
+			button.preferredSize = Dimension(40, 40)
+
+			layout = BoxLayout(this, BoxLayout.LINE_AXIS)
+
+			add(button)
+
+			action.addPropertyChangeListener(object : PropertyChangeListener<Any> {
+				override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+					background = if (action.enabled) color else null
+				}
+			})
+		}
 	}
 }
 

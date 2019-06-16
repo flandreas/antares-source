@@ -60,7 +60,7 @@ class SchedulerEvent(val type: Type, val scheduler: Scheduler, val actor: Actor)
     }
 }
 
-/** Posted by a [Scheduler] after an execution cycle.*/
+/** Posted by a [Scheduler] in [SchedulerRunningState.PAUSED] after an execution cycle.*/
 data class SchedulerStateEvent(val numberOfRemainingSlots: Int, val relativeTime: Long)
 
 /** Posted by a [Scheduler] when the execution depth changes.*/
