@@ -145,7 +145,7 @@ class GraphViewAnimator(
 
 	override fun acted(actor: Actor, signalHandler: SignalHandler, data: ActorData) {
 		if (actor is Net<*>) {
-			handleNetActed(actor)
+			handleNetActed(actor, data)
 		} else {
 			handleGraphElementActed(actor as GraphElement)
 			actor.actingVisualized(signalHandler, this, data)
@@ -158,7 +158,7 @@ class GraphViewAnimator(
 		// Setup a animation of the signal that will flow along the corresponding EdgeView,
 		// if requested by current settings.
 
-		LOG.trace("GraphViewAnimator: handleNetActingRequested for Net '${net.id}'")
+		LOG.trace("handleNetActingRequested for Net '${net.id}'")
 
 		val  changedPort: DigitalPort = actorData.changedPort as DigitalPort
 
@@ -194,18 +194,18 @@ class GraphViewAnimator(
 			animator
 		)
 
-		LOG.trace("GraphViewAnimator: Registered EdgeView animation for EdgeView '${edgeView.id}'")
+		LOG.trace("Registered EdgeView animation for EdgeView '${edgeView.id}'")
 	}
 
-	private fun handleNetActed(net: Net<*>) {
+	private fun handleNetActed(net: Net<*>, data: ActorData) {
 		// The simulation of a Net has been scheduled by the Scheduler. Lookup all pending net animations
 		// and start them. If there are no pending net animations, the acted Net belongs to a SubVertice
 		// whose views are not displayed by the GraphView managed by this SimulationDriver.
 
-		LOG.trace("GraphViewAnimator: Handling SimulationEvent for Net '${net.id}'")
+		LOG.trace("Handling SimulationEvent for Net '${net.id}'")
 
 		if (!requireEdgeViewAnimation()) {
-			net.actingVisualized(scheduler, this)
+			net.actingVisualized(scheduler, this, data)
 			return
 		}
 
@@ -220,14 +220,14 @@ class GraphViewAnimator(
 	}
 
 	private fun handleGraphElementActingRequested(graphElement: GraphElement) {
-		LOG.trace("GraphViewAnimator: handleGraphElementActingRequested for GraphElement '${graphElement.id}'")
+		LOG.trace("handleGraphElementActingRequested for GraphElement '${graphElement.id}'")
 
 		if (!requireVerticeGlowAnimation()) {
-			LOG.trace("GraphViewAnimator: VerticeView doesn't require glow animation")
+			LOG.trace("VerticeView doesn't require glow animation")
 			return
 		}
 		if (graphElement.propagationDelay == 0L) {
-			LOG.trace("GraphViewAnimator: VerticeView would require glow animation, but propDelay is 0")
+			LOG.trace("VerticeView would require glow animation, but propDelay is 0")
 			return
 		}
 
@@ -238,7 +238,7 @@ class GraphViewAnimator(
 		// has been requested and this Actor waits to be scheduled by the Scheduler.
 
 		if (elementViews.size == 1 && elementViews[0] is Transparent) {
-			LOG.debug("GraphViewAnimator: start glow animation")
+			LOG.debug("start glow animation")
 			val transparent = elementViews[0] as Transparent
 			val glowAnimation = TransparentAnimation.glow(transparent, 300.0)
 			glowAnimation.addListener(object : AnimationTaskAdapter() {
@@ -254,7 +254,7 @@ class GraphViewAnimator(
 	}
 
 	private fun handleGraphElementActed(graphElement: GraphElement) {
-		LOG.trace("GraphViewAnimator: handleGraphElementActed for GraphElement '${graphElement.id}'")
+		LOG.trace("handleGraphElementActed for GraphElement '${graphElement.id}'")
 		if (!requireVerticeGlowAnimation()) {
 			return
 		}
