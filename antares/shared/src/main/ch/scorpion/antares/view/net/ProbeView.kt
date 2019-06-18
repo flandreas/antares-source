@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.net.Probe
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.signal.AbstractNumberViewComponent
 import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
@@ -12,6 +13,7 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
@@ -19,7 +21,13 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.model.text.Alignment
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 
@@ -35,6 +43,7 @@ class ProbeView(
 
     companion object {
         const val PROP_ICON_PATH = "ch.scorpion.antares.view.net.ProbeView.iconPath"
+	    private const val LABEL_DIST = Look.SCALE
         private val TRIANGLE_PATH = System.get().createPath()
             .moveTo(0, 0)
             .lineTo(0, 5)
@@ -43,14 +52,20 @@ class ProbeView(
             .close()
     }
 
-    init {
+	private val label = Label(
+		font = font,
+		text = probe.name)
+
+	init {
         modelExchanged(null)
     }
+
 
     override fun modelExchanged(oldModel: Probe?) {
         super.modelExchanged(oldModel)
 	    updatePortViews()
 		updateView()
+	    updateLabel()
     }
 
 	private fun updatePortViews() {
@@ -71,7 +86,14 @@ class ProbeView(
 		}
 	}
 
-    /** ---- UI properties */
+	override fun handleStateChanged(event: GraphElementEvent) {
+		invalidate()
+		updateBoxes()
+		updateLabel()
+		super.handleStateChanged(event)
+	}
+
+	/** ---- UI properties */
 
     var hasOutput: Boolean
         get() = model!!.hasOutput
@@ -102,6 +124,16 @@ class ProbeView(
 				return
 			}
 			model!!.isLogging = value
+		}
+
+	/** ---- [AbstractDrawable] */
+
+	override val boundingBox: Rectangle2D
+		get() {
+			val bb = Rectangle2D(super.boundingBox)
+			val lbb = label.boundingBox.moveBy(location)
+			bb.add(lbb)
+			return bb
 		}
 
 	/** ---- [AbstractNumberViewComponent] */
@@ -148,6 +180,7 @@ class ProbeView(
 			    Direction.SOUTH -> getOutput().setLocation(0.0, 2 * DigitalPortView.LENGTH + numberView!!.height)
 		    }
 	    }
+	    updateLabelPosition()
     }
 
     /** ---- [ControlViewSource] */
@@ -190,13 +223,13 @@ class ProbeView(
 
     private fun drawEdited(context: DrawContext) {
         if (context.useContextColors) {
-            drawEdited(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
+            drawEdited(context, context.color!!.foregroundColor, context.color!!.backgroundColor, context.color!!.textColor)
         } else {
-            drawEdited(context, foregroundColor, if (filled) backgroundColor else null)
+            drawEdited(context, foregroundColor, if (filled) backgroundColor else null, styleProvider.getStyle(StyleType.BACKGROUND).color.textColor)
         }
     }
 
-    private fun drawEdited(context: DrawContext, lineColor: Color, fillColor: Color?) {
+    private fun drawEdited(context: DrawContext, lineColor: Color, fillColor: Color?, textColor: Color) {
         val oldStroke = context.g.stroke
         val oldColor = context.g.color
 
@@ -216,7 +249,43 @@ class ProbeView(
 	        context.g.translate(-getOutput().locationX, -getOutput().locationY)
         }
 
+	    context.g.color = textColor
+	    label.draw(context)
+
         context.g.color = oldColor
         context.g.stroke = oldStroke
     }
+
+	private fun updateLabel() {
+		label.text = StringUtils.orEmpty(name)
+		updateLabelPosition()
+	}
+
+	private fun updateLabelPosition() {
+		if (model!!.hasOutput) {
+			updateLabelPositionWithOutput()
+		} else {
+			updateLabelPositionWithoutOutput()
+		}
+	}
+
+	private fun updateLabelPositionWithoutOutput() {
+		label.location = when(orientation) {
+			Direction.EAST -> Point2D(DigitalPortView.LENGTH + width + LABEL_DIST, 0.0)
+			Direction.NORTH -> Point2D(0.0, -(DigitalPortView.LENGTH + height + LABEL_DIST))
+			Direction.WEST -> Point2D(-(DigitalPortView.LENGTH + width + LABEL_DIST), 0.0)
+			Direction.SOUTH -> Point2D(0.0, DigitalPortView.LENGTH + height + LABEL_DIST)
+		}
+		label.alignment = Alignment.forOrientation(orientation.opposite())
+	}
+
+	private fun updateLabelPositionWithOutput() {
+		if (orientation.isHorizontal()) {
+			label.location = Point2D(rectangle.centerX, rectangle.minY - LABEL_DIST)
+			label.alignment = Alignment(HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM)
+		} else {
+			label.location = Point2D(rectangle.maxX + LABEL_DIST, rectangle.centerY)
+			label.alignment = Alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER)
+		}
+	}
 }

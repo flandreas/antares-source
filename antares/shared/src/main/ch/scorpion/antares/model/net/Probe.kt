@@ -18,88 +18,93 @@ import ch.scorpion.jabbah.base.logger
 /**
  * Displays the value of a [DigitalSignal] within a circuit.
  */
-class Probe(hasOutput: Boolean = false) : CalculatingVertice("library.element.Probe", CALCULATOR), DigitalSignalSource {
+class Probe(
+	hasOutput: Boolean = false
+) : CalculatingVertice("library.element.Probe", CALCULATOR), DigitalSignalSource {
 
-    companion object {
-        val LOG by logger(Probe::class)
-        val CALCULATOR = object : VerticeCalculator<Probe> {
-            override fun calculate(vertice: Probe, data: GraphActorData, signalHandler: SignalHandler) {
-                if (vertice.isLogging) {
-                    LOG.info("${signalHandler.executionTime} Probe '${vertice.name}': ${data.getSignal<DigitalSignal>(1)}")
-                }
-                vertice.setSignal(data.getSignal(1)!!, signalHandler)
-            }
-        }
-    }
+	companion object {
+		val LOG by logger(Probe::class)
+		val CALCULATOR = object : VerticeCalculator<Probe> {
+			override fun calculate(vertice: Probe, data: GraphActorData, signalHandler: SignalHandler) {
+				if (vertice.isLogging) {
+					LOG.info("${signalHandler.executionTime} Probe '${vertice.name}': ${data.getSignal<DigitalSignal>(1)}")
+				}
+				vertice.setSignal(data.getSignal(1)!!, signalHandler)
+			}
+		}
+	}
 
-    /** Write a log message whenever the input changes */
-    var isLogging: Boolean = false
+	/** Write a log message whenever the input changes */
+	var isLogging: Boolean = false
 
-    override var bitWidth: BitWidth
-        get() = (getInput<DigitalSignal>() as DigitalPort).bitWidth
-        set(value) {
-            if (value != bitWidth) {
-                (getInput<DigitalSignal>() as DigitalPort).bitWidth = value
-                if (hasOutput) {
-                    (getOutput<DigitalSignal>() as DigitalPort).bitWidth = value
-                }
-                stateChanged()
-            }
-        }
+	override var bitWidth: BitWidth
+		get() = (getInput<DigitalSignal>() as DigitalPort).bitWidth
+		set(value) {
+			if (value != bitWidth) {
+				(getInput<DigitalSignal>() as DigitalPort).bitWidth = value
+				if (hasOutput) {
+					(getOutput<DigitalSignal>() as DigitalPort).bitWidth = value
+				}
+				stateChanged()
+			}
+		}
 
-    var hasOutput: Boolean
-        get() = outputCount > 0
-        set(value) {
-            if (value == hasOutput) {
-                return
-            }
-            if (value) {
-                val output = DigitalPortImpl.createOutput()
-                output.bitWidth = bitWidth
-                addPort(output)
-            } else {
-                removePort(getOutput<DigitalSignal>())
-            }
-        }
+	var hasOutput: Boolean
+		get() = outputCount > 0
+		set(value) {
+			if (value == hasOutput) {
+				return
+			}
+			if (value) {
+				val output = DigitalPortImpl.createOutput()
+				output.bitWidth = bitWidth
+				addPort(output)
+			} else {
+				removePort(getOutput<DigitalSignal>())
+			}
+			stateChanged()
+		}
 
-    init {
-        addPort(DigitalPortImpl.createInput())
-        this.hasOutput = hasOutput
-    }
+	init {
+		addPort(DigitalPortImpl.createInput())
+		this.hasOutput = hasOutput
+	}
 
-    /** ---- [DigitalSignalSource] interface */
+	/** ---- [DigitalSignalSource] interface */
 
-    @Suppress("UNUSED_PARAMETER")
-    override var signal: DigitalSignal?
-        get() = getInput<DigitalSignal>().getIncomingSignal()
-        set(value) {throw UnsupportedOperationException()}
+	@Suppress("UNUSED_PARAMETER")
+	override var signal: DigitalSignal?
+		get() = getInput<DigitalSignal>().getIncomingSignal()
+		set(value) {
+			throw UnsupportedOperationException()
+		}
 
-    /** ---- [Storable] interface */
+	/** ---- [Storable] interface */
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        writer.writeInt("bitWidth", bitWidth.width)
-        writer.writeBoolean("hasOutput", hasOutput)
-	    if (isLogging) {
-		    writer.writeBoolean("logging", isLogging)
-	    }
-    }
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeInt("bitWidth", bitWidth.width)
+		writer.writeBoolean("hasOutput", hasOutput)
+		if (isLogging) {
+			writer.writeBoolean("logging", isLogging)
+		}
+	}
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        bitWidth = BitWidth.of(reader.readInt("bitWidth"))
-        hasOutput = reader.readBoolean("hasOutput")
-	    if (reader.hasAttribute("logging")) {
-		    isLogging = reader.readBoolean("logging")
-	    }
-    }
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+		hasOutput = reader.readBoolean("hasOutput")
+		if (reader.hasAttribute("logging")) {
+			isLogging = reader.readBoolean("logging")
+		}
+	}
 
-    /** ---- [Probe] */
+	/** ---- [Probe] */
 
-    private fun setSignal(signal: DigitalSignal, signalHandler: SignalHandler) {
-        stateChanged()
-        if (outputCount > 0) {
-            getOutput<DigitalSignal>().setOutgoingSignalBuffered(signal, signalHandler)
-        }
-    }
+	private fun setSignal(signal: DigitalSignal, signalHandler: SignalHandler) {
+		stateChanged()
+		if (outputCount > 0) {
+			getOutput<DigitalSignal>().setOutgoingSignalBuffered(signal, signalHandler)
+		}
+	}
 }

@@ -23,63 +23,65 @@ import ch.scorpion.jabbah.io.StoreWriter
  * Abstract base class for [DigitalComponentView]s that display a [NumberView].
  */
 abstract class AbstractNumberViewComponent<T : Vertice>(
-    styleProvider: StyleProvider,
-    model: T?,
-    orientation: Direction,
-    signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY,
-    private val drawDigitBorder: Boolean = true
+	styleProvider: StyleProvider,
+	model: T?,
+	orientation: Direction,
+	signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY,
+	private val drawDigitBorder: Boolean = true
 ) : DigitalComponentView<T>(styleProvider, model) {
 
-    companion object {
-        const val DEFAULT_INSETS = Look.SCALE
-    }
+	companion object {
+		const val DEFAULT_INSETS = Look.SCALE
+	}
 
-    override var orientation: Direction = orientation
-        set(value) {
-            if (value != field) {
-                field = value
-                updateView()
-            }
-        }
+	override var orientation: Direction = orientation
+		set(value) {
+			if (value != field) {
+				field = value
+				updateView()
+			}
+		}
 
-    open var signalRepresentation: DigitalSignalRepresentation = signalRepresentation
-        set(value) {
-            if (value != field) {
-                field = value
-                updateView()
-            }
-        }
+	open var signalRepresentation: DigitalSignalRepresentation = signalRepresentation
+		set(value) {
+			if (value != field) {
+				field = value
+				updateView()
+			}
+		}
 
-    /** Displays the current signal. Dynamically created and initialized.*/
-    protected var numberView: NumberView? = null
-        private set
+	/** Displays the current signal. Dynamically created and initialized.*/
+	protected var numberView: NumberView? = null
+		private set
 
-    /** ---- [Storable] interface */
+	/** ---- [Storable] interface */
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        writer.writeString("representation", signalRepresentation.customName)
-        writer.writeString("orientation", orientation.customName)
-    }
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeString("representation", signalRepresentation.customName)
+		writer.writeString("orientation", orientation.customName)
+	}
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        signalRepresentation = DigitalSignalRepresentation.withName(reader.readString("representation"))
-        orientation = Direction.withName(reader.readString("orientation"))
-    }
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		signalRepresentation = DigitalSignalRepresentation.withName(reader.readString("representation"))
+		orientation = Direction.withName(reader.readString("orientation"))
+	}
 
-    /** ---- [Component] */
+	/** ---- [Component] */
 
-    override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
-        get() = SelectionDrawingStrategy.REPLACE
-        set(@Suppress("UNUSED_PARAMETER") value) { throw UnsupportedOperationException() }
+	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
+		get() = SelectionDrawingStrategy.REPLACE
+		set(@Suppress("UNUSED_PARAMETER") value) {
+			throw UnsupportedOperationException()
+		}
 
-    override val rotatable: Boolean get() = false
+	override val rotatable: Boolean get() = false
 
-    override fun handleStateChanged(event: GraphElementEvent) {
-        numberView!!.setSignal(signal)
-        super.handleStateChanged(event)
-    }
+	override fun handleStateChanged(event: GraphElementEvent) {
+		numberView!!.setSignal(signal)
+		super.handleStateChanged(event)
+	}
 
 	/** ---- [Transparent] */
 
@@ -90,48 +92,48 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 			numberView!!.transparency = value
 		}
 
-    /** ---- [AbstractNumberViewComponent] */
+	/** ---- [AbstractNumberViewComponent] */
 
-    abstract var bitWidth: BitWidth
+	abstract var bitWidth: BitWidth
 
-    abstract val signal: DigitalSignal
+	abstract val signal: DigitalSignal
 
-    abstract val upperLeftBoundsEdge: Point2D
+	abstract val upperLeftBoundsEdge: Point2D
 
-    /** Returns the insets between the bounds and the contained [NumberView].*/
-    protected open val insets: Int get() = DEFAULT_INSETS
+	/** Returns the insets between the bounds and the contained [NumberView].*/
+	protected open val insets: Int get() = DEFAULT_INSETS
 
-    protected fun drawNumberView(context: DrawContext, isOn: Boolean) {
-        numberView?.draw(context, isOn)
-    }
+	protected fun drawNumberView(context: DrawContext, isOn: Boolean) {
+		numberView?.draw(context, isOn)
+	}
 
-    protected fun updateView() {
-        invalidate()
+	protected fun updateView() {
+		invalidate()
 
-        numberView = NumberView(signalRepresentation, bitWidth, drawDigitBorder)
-        numberView!!.setSignal(signal)
+		numberView = NumberView(signalRepresentation, bitWidth, drawDigitBorder)
+		numberView!!.setSignal(signal)
 
-        val upperLeftBoundsEdge = upperLeftBoundsEdge
-        setBounds(
-                upperLeftBoundsEdge.x, upperLeftBoundsEdge.y,
-                numberView!!.width + 2 * insets, numberView!!.height + 2 * insets)
+		val upperLeftBoundsEdge = upperLeftBoundsEdge
+		setBounds(
+			upperLeftBoundsEdge.x, upperLeftBoundsEdge.y,
+			numberView!!.width + 2 * insets, numberView!!.height + 2 * insets)
 
-        numberView!!.setBounds(
-                xInt + insets, yInt + insets,
-                numberView!!.widthInt, numberView!!.heightInt)
+		numberView!!.setBounds(
+			xInt + insets, yInt + insets,
+			numberView!!.widthInt, numberView!!.heightInt)
 
-        updateViewImpl()
+		updateViewImpl()
 
-        updateBoxes()
+		updateBoxes()
 
-        invalidate()
-        update()
-        validate()
-    }
+		invalidate()
+		update()
+		validate()
+	}
 
-    protected open fun updateViewImpl() {
-        // empty
-    }
+	protected open fun updateViewImpl() {
+		// empty
+	}
 
 	protected fun clear() {
 		numberView?.clear()
