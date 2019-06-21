@@ -66,13 +66,13 @@ object RepaintingObserver {
 
     val logSize: Int get() = logEntries.size
 
-    val currentLog: LogEntry get() = logEntries[logIndex]
+    val currentLog: RepaintingLogEntry get() = logEntries[logIndex]
 
     private val view: View<*>? get() = DrawViewModule.viewManager.activeView
 
     private var repaintIndex = 0
 
-    private val logEntries = mutableListOf<LogEntry>()
+    private val logEntries = mutableListOf<RepaintingLogEntry>()
 
     private var display: RepaintingObserverDisplay? = null
 
@@ -85,7 +85,7 @@ object RepaintingObserver {
             return
         }
         LOG.debug("RepaintingObserver.invalidated rect=$rect")
-        logEntries.add(LogEntry(modelToViewRect(rect), repaintIndex++))
+        logEntries.add(RepaintingLogEntry(modelToViewRect(rect), repaintIndex++))
     }
 
     /**
@@ -110,7 +110,7 @@ object RepaintingObserver {
         BaseModule.eventBus.post(RepaintingObserverLogEvent())
     }
 
-    fun getLog(index: Int): LogEntry {
+    fun getLog(index: Int): RepaintingLogEntry {
         return logEntries[index]
     }
 
@@ -125,7 +125,7 @@ class RepaintingObserverEnabledEvent
 class RepaintingObserverRunningEvent
 class RepaintingObserverLogEvent
 
-data class LogEntry(val invalidRect: RectangularShape, val repaintNumber: Int)
+data class RepaintingLogEntry(val invalidRect: RectangularShape, val repaintNumber: Int)
 
 private class RepaintingObserverDisplay(view: View<*>) : AbstractRectangle(0, 0, view.width, view.height) {
 

@@ -140,6 +140,13 @@ class GraphPanel(
 		ImageIcon(GraphPanel::class.java.getResource("/img/issue-16.png")),
 		issuesPanel)
 
+	private val logPanel = LogPanel()
+
+	private val logContent = SidebarPaneContentImpl(
+		Translations.getString("graph.log.title"),
+		ImageIcon(GraphPanel::class.java.getResource("/img/log-16.png")),
+		logPanel)
+
 	var rootGraphView: GraphView<GraphElementView<*>>? = editor.drawing as GraphView<GraphElementView<*>>?
 		private set(value) {
 			if (field !== value) {
@@ -204,6 +211,7 @@ class GraphPanel(
 	fun dispose() {
 		leftSidebarPane.dispose()
 		issuesPanel.dispose()
+		logPanel.dispose()
 		graphEditPanel.dispose()
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
 	}
@@ -232,6 +240,7 @@ class GraphPanel(
 		bottomSidebarSplitPane.resizeWeight = 1.0
 
 		bottomSidebarPane.add(issuesContent)
+		bottomSidebarPane.add(logContent)
 
 		add(leftSidebarPane, BorderLayout.CENTER)
 		add(bottomSidebarPane, BorderLayout.SOUTH)

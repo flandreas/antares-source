@@ -25,7 +25,7 @@ class IssuesPanel(
 ) : JPanel() {
 
 	companion object {
-		private val SETTING_COLUMN_WIDTHS = "jabbah.execution.issuesPanel.columnWidth"
+		private const val SETTING_COLUMN_WIDTHS = "jabbah.execution.issuesPanel.columnWidth"
 		private val WARNING_ICON = ImageIcon(IssuesPanel::class.java.getResource("/img/warning-16.png"))
 		private val ERROR_ICON = ImageIcon(IssuesPanel::class.java.getResource("/img/error-16.png"))
 		private val COLUMN_NAMES = arrayOf(

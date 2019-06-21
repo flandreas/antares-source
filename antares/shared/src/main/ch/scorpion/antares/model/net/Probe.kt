@@ -5,6 +5,8 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalSource
+import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -14,12 +16,15 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.model.LogEvent
 
 /**
  * Displays the value of a [DigitalSignal] within a circuit.
  */
 class Probe(
-	hasOutput: Boolean = false
+	hasOutput: Boolean = false,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : CalculatingVertice("library.element.Probe", CALCULATOR), DigitalSignalSource {
 
 	companion object {
@@ -28,10 +33,19 @@ class Probe(
 			override fun calculate(vertice: Probe, data: GraphActorData, signalHandler: SignalHandler) {
 				if (vertice.isLogging) {
 					LOG.info("${signalHandler.executionTime} Probe '${vertice.name}': ${data.getSignal<DigitalSignal>(1)}")
+					vertice.sendLogEvent(data, signalHandler.executionTime)
 				}
 				vertice.setSignal(data.getSignal(1)!!, signalHandler)
 			}
 		}
+	}
+
+	private fun sendLogEvent(data: GraphActorData, time: Long) {
+		eventBus.post(LogEvent(
+			source = this,
+			name = StringUtils.orElse(name, "<Unknown>"),
+			value = data.getSignal<DigitalSignal>(1)?.toHexString() ?: "<empty>",
+			time = time))
 	}
 
 	/** Write a log message whenever the input changes */
