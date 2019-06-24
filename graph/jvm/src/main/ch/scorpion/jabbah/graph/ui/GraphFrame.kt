@@ -3,8 +3,14 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.app.action.AbstractApplicationAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.PropertyChangeEvent
+import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
@@ -25,8 +31,21 @@ class GraphFrame(
 	application: DesktopApplication,
 	val graphPanel: GraphPanel,
 	private val eventBus: EventBus,
-	val viewManager: ViewManager
+	val viewManager: ViewManager,
+	private val properties: Properties = BaseModule.properties
 ) : AbstractApplicationFrame(application) {
+
+	companion object {
+
+		/** The name of the [Boolean] propert in [Properties] that controls whether extreme zoom factors should initiate mode switching.*/
+		const val PROP_AUTO_SWITCH = "graph.GraphFrame.autoSwitch"
+
+		/** The percentage of the minimal zoom factor that switches this [GraphFrame] to display the container.*/
+		private const val SWITCH_TO_CONTAINER_ZOOM_FACTOR_PERCENTAGE = 1.1
+
+		/** The percentage of the maximal zoom factor that switches this [GraphFrame] to display the desktop.*/
+		private const val SWITCH_TO_DESKTOP_ZOOM_FACTOR_PERCENTAGE = 0.9
+	}
 
 	enum class DisplayedView {
 		Desktop, Container
@@ -46,9 +65,28 @@ class GraphFrame(
 
 	private val containerPanel = ContainerPanel(GraphViewModule.containerEditorFactory.invoke(eventBus), viewManager)
 
+	private val zoomEventHandler = object : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			if (e.name == View.PROP_ZOOM_PAN && properties.getBoolean(PROP_AUTO_SWITCH)) {
+				if (e.source === graphPanel.editor.view) {
+					if (graphPanel.editor.view.zoomFactor <= SWITCH_TO_CONTAINER_ZOOM_FACTOR_PERCENTAGE * properties.getFloat(View.PROP_MIN_ZOOM_FACTOR)) {
+						showContainer()
+					}
+				} else if (e.source === containerPanel.editor.view) {
+					if (containerPanel.editor.view.zoomFactor >= SWITCH_TO_DESKTOP_ZOOM_FACTOR_PERCENTAGE * properties.getFloat(View.PROP_MAX_ZOOM_FACTOR)) {
+						showDesktop()
+					}
+				}
+			}
+		}
+	}
+
 	init {
 		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
 		mainToolBar = createMainToolBar()
+
+		graphPanel.editor.view.addPropertyChangeListener(zoomEventHandler)
+		containerPanel.editor.view.addPropertyChangeListener(zoomEventHandler)
 
 		showDesktop()
 	}
@@ -58,6 +96,8 @@ class GraphFrame(
 
 	override fun dispose() {
 		super.dispose()
+		graphPanel.editor.view.removePropertyChangeListener(zoomEventHandler)
+		containerPanel.editor.view.removePropertyChangeListener(zoomEventHandler)
 		graphPanel.dispose()
 		containerPanel.dispose()
 	}
@@ -83,6 +123,8 @@ class GraphFrame(
 			invalidate()
 			revalidate()
 			repaint()
+
+			graphPanel.editor.view.initialize()
 
 			displayedView = DisplayedView.Desktop
 			viewManager.activeView = graphPanel.editor.view

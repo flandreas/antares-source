@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.script.ScriptEngineJvm
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.ui.GraphDesktopItemHeaderPanel
+import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphNavigationPanel
 import ch.scorpion.jabbah.graph.ui.NavigationStackView
 import ch.scorpion.jabbah.graph.view.*
@@ -69,6 +70,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		properties.set(NavigationStackView.PROP_HEAD_BORDER_COLOR, Color(214, 214, 214))
 		properties.set(NavigationStackView.PROP_HEAD_TEXT_COLOR, Color.BLACK)
 		properties.set(GraphNavigationPanel.PROP_DIVE_ANIMATION, true)
+		properties.set(GraphFrame.PROP_AUTO_SWITCH, true)
 	}
 
 	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
@@ -96,6 +98,10 @@ object GraphViewModuleJvm : AbstractModule() {
 		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(
 			id = GraphNavigationPanel.PROP_DIVE_ANIMATION,
 			nameKey = "graph.preferences.GraphNavigationPanel.diveAnimation"
+		))
+		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(
+			id = GraphFrame.PROP_AUTO_SWITCH,
+			nameKey = "graph.preferences.GraphFrame.autoSwitch"
 		))
 		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).add(FloatPreference(
 			id = ContainerEditor.PROP_DEFAULT_ZOOM_FACTOR,
