@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -24,7 +26,7 @@ class LogPanel(
 ) : JPanel() {
 
 	companion object {
-		private const val SETTING_COLUMN_WIDTHS = "jabbah.graph.logPanel.columnWidth"
+		private const val SETTING_COLUMN_WIDTHS = "graph.logPanel.columnWidth"
 		private val TIME_COLUMN_NAME = Translations.getString("log.property.time.name")
 	}
 
@@ -76,6 +78,7 @@ class LogPanel(
 		val oldColumnCount = eventHistory.eventColumnsCount
 		eventHistory.add(event)
 		if (oldColumnCount != eventHistory.eventColumnsCount) {
+			storeColumnWidths()
 			(table.model as LogEventTableModel).fireTableStructureChanged()
 			for (index in 0 until table.columnModel.columnCount) {
 				table.columnModel.getColumn(index).cellRenderer = rightAlignedRenderer
@@ -113,6 +116,17 @@ class LogPanel(
 				else -> eventHistory.getValue(rowIndex, columnIndex - 1)
 			}
 		}
+	}
+}
+
+class ClearLogPanelAction(private val logPanel: LogPanel) : AbstractAction("graph.action.clearLogPanel") {
+
+	init {
+		imagePath = "/img/trash-16.png"
+	}
+
+	override fun execute(event: ActionEvent) {
+		logPanel.clear()
 	}
 }
 

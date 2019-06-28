@@ -1,5 +1,9 @@
 package ch.scorpion.jabbah.base.swing
 
+import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
@@ -10,7 +14,7 @@ import java.awt.event.MouseEvent
 import javax.swing.*
 
 /**
- * A [JPanel] that stacks multiple collapsed views at the right side, allowing the user to display one of
+ * A [JPanel] that stacks multiple collapsed views at the particular [Location], allowing the user to display one of
  * them on demand.
  *
  * @property location the relative location of this [SidebarPane] within its containing [JPanel]. This defines
@@ -33,9 +37,7 @@ class SidebarPane(
 	    /** The [SidebarPane] is displayed at the bottom of the main content.*/
         Bottom {
 
-	        override fun createIcon(): ImageIcon {
-		        return ImageIcon(SidebarPane::class.java.getResource("/img/double-arrow-down-16.png"))
-	        }
+		    override val iconPath: String = "/img/double-arrow-down-16.png"
 
 	        override fun createLabel(name: String, icon: Icon): JLabel {
 		        return JLabel(name, icon, SwingConstants.LEADING)
@@ -51,9 +53,7 @@ class SidebarPane(
 	    /** The [SidebarPane] is displayed at the right side of the main content.*/
         Right {
 
-	        override fun createIcon(): ImageIcon {
-		        return ImageIcon(SidebarPane::class.java.getResource("/img/double-arrow-right-16.png"))
-	        }
+		    override val iconPath: String = "/img/double-arrow-right-16.png"
 
 	        override fun createLabel(name: String, icon: Icon): JLabel {
 		        return VerticalLabel.create(name, icon)
@@ -69,9 +69,7 @@ class SidebarPane(
 	    /** The [SidebarPane] is displayed at the left side of the main content.*/
 	    Left {
 
-	        override fun createIcon(): ImageIcon {
-		        return ImageIcon(SidebarPane::class.java.getResource("/img/double-arrow-left-16.png"))
-	        }
+		    override val iconPath: String = "/img/double-arrow-left-16.png"
 
 	        override fun createLabel(name: String, icon: Icon): JLabel {
 		        return VerticalLabel.create(name, icon, clockwise = false)
@@ -86,7 +84,7 @@ class SidebarPane(
 
 	    abstract fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel)
 	    abstract fun createLabel(name: String, icon: Icon): JLabel
-	    abstract fun createIcon(): ImageIcon
+	    abstract val iconPath: String
     }
 
     /** Determines whether this [SidebarPane] is currently open, i.e. whether it displays one if its content views.*/
@@ -106,17 +104,14 @@ class SidebarPane(
     /** Contains the content of the current [Entry] in the center and the title bar in the north. */
     private val contentPanel = JPanel()
 
-    /** Displays the name of the current content in the title bar.*/
-    private val titleLabel = JLabel()
-
-    private val headerPanel = JPanel()
-
 	/** Contains all [Entries][Entry] registered with [add].*/
     private val entries = mutableListOf<Entry>()
 
     private var current: Entry? = null
 
     private val labelListener = VerticalLabelListener()
+
+	private val collapseAction = CollapseAction()
 
 	init {
         initUI()
@@ -143,19 +138,6 @@ class SidebarPane(
 	}
 
     private fun initUI() {
-        headerPanel.layout = BoxLayout(headerPanel, BoxLayout.X_AXIS)
-        headerPanel.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        headerPanel.add(titleLabel)
-        headerPanel.add(Box.createGlue())
-
-        val collapseButton = JButton()
-        collapseButton.addActionListener { collapse() }
-	    collapseButton.icon = location.createIcon()
-        collapseButton.border = BorderFactory.createEmptyBorder()
-        collapseButton.toolTipText = "Hide"
-        headerPanel.add(collapseButton)
-	    headerPanel.background = getBackgroundDivertColor()
-
         contentPanel.layout = BorderLayout()
 
         layout = BorderLayout()
@@ -170,13 +152,47 @@ class SidebarPane(
 
 		val component: JComponent get() = content.component
 
+		/** Displays the name of the current content in the title bar.*/
+		private val titleLabel = JLabel()
+
+		val headerPanel = JPanel()
+
 		init {
 			label = location.createLabel(name, content.icon)
 			label.border = BorderFactory.createEmptyBorder(5, 10, 5, 10)
 			label.isOpaque = true
 			label.verticalAlignment = SwingConstants.CENTER
 
+			fillHeaderPanel()
+
 			content.addListener(this)
+		}
+
+		fun update() {
+			titleLabel.text = name
+		}
+
+		private fun fillHeaderPanel() {
+			headerPanel.layout = BoxLayout(headerPanel, BoxLayout.X_AXIS)
+			headerPanel.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
+			headerPanel.add(titleLabel)
+			headerPanel.add(Box.createGlue())
+			headerPanel.background = getBackgroundDivertColor()
+
+			content.actions.forEach {
+				headerPanel.add(createButton(it))
+				headerPanel.add(Box.createHorizontalStrut(5))
+			}
+			headerPanel.add(createButton(collapseAction))
+		}
+
+		private fun createButton(action: Action): JButton {
+			val button = JButton(ActionWrapperSwing(action))
+			button.border = BorderFactory.createEmptyBorder()
+			button.icon = ImageIcon(SidebarPane::class.java.getResource(action.imagePath))
+			button.text = null
+			button.toolTipText = action.name
+			return button
 		}
 
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
@@ -192,14 +208,14 @@ class SidebarPane(
         val changed = current != entry
 
         if (current != null) {
-            contentPanel.remove(headerPanel)
+            contentPanel.remove(current!!.headerPanel)
             contentPanel.remove(current!!.component)
             current!!.label.background = background
         }
         current = entry
         if (current != null) {
-            titleLabel.text = current!!.name
-            contentPanel.add(headerPanel, BorderLayout.NORTH)
+	        current!!.update()
+            contentPanel.add(current!!.headerPanel, BorderLayout.NORTH)
             contentPanel.add(current!!.component, BorderLayout.CENTER)
 
 	        current!!.label.background = Color(175, 175, 175)
@@ -220,6 +236,17 @@ class SidebarPane(
         val bg = this@SidebarPane.background
         return Color(bg.red - 24, bg.green - 24, bg.blue - 24)
     }
+
+	private inner class CollapseAction : AbstractAction("graph.action.collapse") {
+
+		init {
+			imagePath = location.iconPath
+		}
+
+		override fun execute(event: ActionEvent) {
+			collapse()
+		}
+	}
 
     private inner class VerticalLabelListener : MouseAdapter() {
 

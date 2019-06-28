@@ -145,7 +145,8 @@ class GraphPanel(
 	private val logContent = SidebarPaneContentImpl(
 		Translations.getString("graph.log.title"),
 		ImageIcon(GraphPanel::class.java.getResource("/img/log-16.png")),
-		logPanel)
+		logPanel,
+		listOf(ClearLogPanelAction(logPanel)))
 
 	var rootGraphView: GraphView<GraphElementView<*>>? = editor.drawing as GraphView<GraphElementView<*>>?
 		private set(value) {

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base.swing
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyChangeSupport
 import ch.scorpion.jabbah.base.swing.SidebarPaneContent.Companion.ICON_PROPERTY
@@ -20,6 +21,9 @@ interface SidebarPaneContent {
 
 	val component: JComponent
 
+	/** The additional [Action]s to be displayed in the title bar of this [SidebarPaneContent].*/
+	val actions: List<Action>
+
 	fun addListener (listener: PropertyChangeListener<Any>)
 
 	fun removeListener (listener: PropertyChangeListener<Any>)
@@ -29,7 +33,8 @@ interface SidebarPaneContent {
 class SidebarPaneContentImpl(
 	name: String,
 	icon: Icon,
-	override val component: JComponent
+	override val component: JComponent,
+	override val actions: List<Action> = listOf()
 ) : SidebarPaneContent {
 
 	private val support = PropertyChangeSupport<Any>(this)
