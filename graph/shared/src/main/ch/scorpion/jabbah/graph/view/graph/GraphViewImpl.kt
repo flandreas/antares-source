@@ -165,15 +165,17 @@ class GraphViewImpl<T : GraphElementView<*>>(
 	}
 
 	override fun checkDesign(): Boolean {
-		val issues = getDrawables { it.model?.designError != null }.map {
-			IssueImpl(
-				severity = IssueSeverity.Error,
-				name = Translations.getString("graph.designError.name"),
-				description = it.model!!.designError?.description,
-				origin = "${it.type} (${it.id})",
-				context = null
-			)
-		}
+		val issues = getDrawables { it.model?.designError != null }
+			.groupBy { it.model }
+			.map { it.value.first() }
+			.map {
+				IssueImpl(
+					severity = IssueSeverity.Error,
+					name = Translations.getString("graph.designError.name"),
+					description = it.model!!.designError?.description,
+					origin = "${it.type} (${it.id})",
+					context = null)
+			}
 		issues.forEach { eventBus.post(it) }
 		return issues.isEmpty()
 	}
