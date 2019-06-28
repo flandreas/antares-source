@@ -41,7 +41,28 @@ object StringUtils {
     }
 
     fun replaceNegation(s: String): String {
-        return s.replace("$NEGATION_SIGN(.)".toRegex(), "${'$'}1" + OVERLINE)
+	    var negating = false
+	    var inBlock = false
+	    val result = StringBuilder()
+
+	    for (c in s) {
+		    when (c) {
+			    NEGATION_SIGN -> negating = true
+			    '(' -> inBlock = true
+			    ')' -> inBlock = false
+			    else -> {
+				    result.append(c)
+				    if (negating) {
+					    result.append(OVERLINE)
+				    }
+				    if (!inBlock) {
+					    negating = false
+				    }
+			    }
+		    }
+	    }
+
+	    return result.toString()
     }
 
 	/** Returns a [String] that adds a period to the specified [String] if if doesn't already end with a period.*/

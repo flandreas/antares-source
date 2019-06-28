@@ -16,7 +16,8 @@ class StringUtilsTest {
 
     @Test
     fun shouldReplaceSingleNegation() {
-        assertEquals("Q" + StringUtils.OVERLINE, StringUtils.replaceNegation("!Q"))
+        assertEquals("Q${StringUtils.OVERLINE}", StringUtils.replaceNegation("!Q"))
+	    assertEquals("AQ${StringUtils.OVERLINE}B", StringUtils.replaceNegation("A!QB"))
     }
 
 	@Test
@@ -35,10 +36,8 @@ class StringUtilsTest {
 		assertEquals("123_456_789", StringUtils.formatLong(123456789L))
 	}
 
-	// Not yet supported.
-    /*
+	@Test
     fun shouldReplaceBlockNegation() {
-        assertEquals(StringUtils.replaceNegation("!(AB)"), "A\u0305B\u0305"))
+        assertEquals("A\u0305B\u0305", StringUtils.replaceNegation("!(AB)"))
     }
-    */
 }
