@@ -1,10 +1,13 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.ApplicationDataEvent
+import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
@@ -104,18 +107,24 @@ class GraphDesktopItemHeaderPanel(
 		background = Graphics2DJvm.toAwtColor(DrawModule.properties.getColor(PROP_BACKGROUND_COLOR))
 
 		if (allowClose) {
-			val closeButton = JButton("Close")
-			closeButton.addActionListener { eventBus.post(GraphDesktopItemCloseRequest(graphDesktopItem)) }
-			closeButton.icon = ImageIcon(GraphNavigationPanel::class.java.getResource("/img/close-16.png"))
-			closeButton.text = null
-			closeButton.border = BorderFactory.createEmptyBorder(0, 0, 0, 10)
 			add(Box.createHorizontalGlue())
-			add(closeButton)
+			add(UiUtil.createToolBarButton(CloseAction()))
 		}
 	}
 
 	override fun getPreferredSize(): Dimension {
 		return Dimension(super.getPreferredSize().width, max(PREF_HEIGHT, super.getPreferredSize().height))
+	}
+
+	private inner class CloseAction : AbstractAction("base.action.close") {
+
+		init {
+			imagePath = "/img/close-16.png"
+		}
+
+		override fun execute(event: ActionEvent) {
+			eventBus.post(GraphDesktopItemCloseRequest(graphDesktopItem))
+		}
 	}
 }
 

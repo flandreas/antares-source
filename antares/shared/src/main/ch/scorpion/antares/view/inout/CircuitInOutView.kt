@@ -351,14 +351,14 @@ class CircuitInOutView(
 	 * @return the vector relative to this {@link VerticeView}'s origin
 	 */
 	private fun getArrowPathTranslation(): Point2D {
-		return when (model!!.portType) {
+		val translation = when (model!!.portType) {
 			PortType.INPUT -> orientation.multiply(-getOutput().unconnectedLength.toDouble())
 			PortType.INOUT,
 			PortType.OUTPUT -> Point2D(arrowPath!!.tailLocation)
 				.multiply(-1.0)
 				.add(orientation.multiply(getInput().unconnectedLength.toDouble()))
-			else -> orientation.multiply(-getOutput().unconnectedLength.toDouble())
 		}
+		return translation
 	}
 
 	/**

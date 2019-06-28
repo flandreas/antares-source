@@ -1,12 +1,11 @@
 package ch.scorpion.jabbah.base.swing
 
 import ch.scorpion.jabbah.base.AbstractAction
-import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.swing.SidebarPane.Location
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.event.MouseAdapter
@@ -177,22 +176,13 @@ class SidebarPane(
 			headerPanel.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
 			headerPanel.add(titleLabel)
 			headerPanel.add(Box.createGlue())
-			headerPanel.background = getBackgroundDivertColor()
+			headerPanel.background = UiUtil.getBackgroundDivertColor(this@SidebarPane)
 
 			content.actions.forEach {
-				headerPanel.add(createButton(it))
+				headerPanel.add(UiUtil.createToolBarButton(it))
 				headerPanel.add(Box.createHorizontalStrut(5))
 			}
-			headerPanel.add(createButton(collapseAction))
-		}
-
-		private fun createButton(action: Action): JButton {
-			val button = JButton(ActionWrapperSwing(action))
-			button.border = BorderFactory.createEmptyBorder()
-			button.icon = ImageIcon(SidebarPane::class.java.getResource(action.imagePath))
-			button.text = null
-			button.toolTipText = action.name
-			return button
+			headerPanel.add(UiUtil.createToolBarButton(collapseAction))
 		}
 
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
@@ -232,11 +222,6 @@ class SidebarPane(
         activate(null)
     }
 
-    private fun getBackgroundDivertColor(): Color {
-        val bg = this@SidebarPane.background
-        return Color(bg.red - 24, bg.green - 24, bg.blue - 24)
-    }
-
 	private inner class CollapseAction : AbstractAction("graph.action.collapse") {
 
 		init {
@@ -252,7 +237,7 @@ class SidebarPane(
 
         override fun mouseEntered(e: MouseEvent?) {
             if (!isCurrent(e!!)) {
-                (e.source as JComponent).background = getBackgroundDivertColor()
+	            (e.source as JComponent).background = UiUtil.getBackgroundDivertColor(this@SidebarPane)
             }
         }
 

@@ -1,11 +1,11 @@
 package ch.scorpion.jabbah.base.swing
 
+import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.ActionWrapperSwing
+import java.awt.Color
 import java.awt.EventQueue
 import java.lang.reflect.InvocationTargetException
-import javax.swing.JScrollPane
-import javax.swing.JTextArea
-import javax.swing.SwingUtilities
-import javax.swing.UIManager
+import javax.swing.*
 import javax.swing.plaf.FontUIResource
 
 
@@ -83,5 +83,25 @@ object UiUtil {
 			scroll.border = border
 		}
 		return scroll
+	}
+
+	fun getBackgroundDivertColor(parent: JComponent): Color {
+		val bg = parent.background
+		return Color(bg.red - 24, bg.green - 24, bg.blue - 24)
+	}
+
+	fun getButtonPressColor(parent: JComponent): Color {
+		val bg = parent.background
+		return Color(bg.red - 40, bg.green - 40, bg.blue - 40)
+	}
+
+	fun createToolBarButton(action: Action): JButton {
+		val button = JButton(ActionWrapperSwing(action))
+		button.border = BorderFactory.createEmptyBorder(3, 3, 3, 3)
+		button.icon = ImageIcon(UiUtil::class.java.getResource(action.imagePath))
+		button.text = null
+		button.toolTipText = action.name
+		RolloverButtonEnabler(button)
+		return button
 	}
 }
