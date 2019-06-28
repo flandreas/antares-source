@@ -32,10 +32,7 @@ import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.view.AttentionDrawer
-import ch.scorpion.jabbah.execution.IssuesPanel
-import ch.scorpion.jabbah.execution.PauseExecutionAction
-import ch.scorpion.jabbah.execution.StepExecutionAction
-import ch.scorpion.jabbah.execution.SystemSpeedSlider
+import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
@@ -138,7 +135,8 @@ class GraphPanel(
 	private val issuesContent = SidebarPaneContentImpl(
 		Translations.getString("graph.issues.title"),
 		ImageIcon(GraphPanel::class.java.getResource("/img/issue-16.png")),
-		issuesPanel)
+		issuesPanel,
+		listOf(ClearIssuesPanelAction(issuesPanel)))
 
 	private val logPanel = LogPanel()
 

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.execution
 
+import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -119,5 +120,16 @@ class IssuesPanel(
 				IssueSeverity.Error -> ERROR_ICON
 			}
 		}
+	}
+}
+
+class ClearIssuesPanelAction(private val issuesPanel: IssuesPanel) : AbstractAction("graph.action.clearIssuesPanel") {
+
+	init {
+		imagePath = "/img/trash-16.png"
+	}
+
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		issuesPanel.clear()
 	}
 }
