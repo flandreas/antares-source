@@ -48,6 +48,7 @@ class LogPanel(
 	fun dispose() {
 		eventBus.unregister(logEventHandler)
 		eventBus.unregister(activationHandler)
+		storeColumnWidths()
 	}
 
 	private fun buildUI() {
@@ -55,6 +56,15 @@ class LogPanel(
 		layout = BorderLayout()
 		val scrollPane = JScrollPane(table)
 		add(scrollPane, BorderLayout.CENTER)
+		setColumnWidths()
+	}
+
+	private fun storeColumnWidths() {
+		settings.set("$SETTING_COLUMN_WIDTHS.time", table.columnModel.getColumn(0).width)
+	}
+
+	private fun setColumnWidths() {
+		table.columnModel.getColumn(0).preferredWidth = settings.getInt("$SETTING_COLUMN_WIDTHS.time", 120)
 	}
 
 	fun clear() {
@@ -70,7 +80,7 @@ class LogPanel(
 			for (index in 0 until table.columnModel.columnCount) {
 				table.columnModel.getColumn(index).cellRenderer = rightAlignedRenderer
 			}
-			table.columnModel.getColumn(0).preferredWidth = 120
+			setColumnWidths()
 		}
 
 		(table.model as LogEventTableModel).fireTableDataChanged()
@@ -159,7 +169,7 @@ class LogEventHistory {
 	private class EventRow(val time: Long, entries: MutableMap<EventColumn,String> = mutableMapOf()) {
 
 		/** Maps an [EventColumn] to the value of the [LogEvent] that has occurred at the given time. */
-		private val entries = entries
+		private val entries = entries.toMutableMap()
 
 		fun getValue(column: EventColumn): String = entries[column] ?: ""
 
@@ -168,7 +178,7 @@ class LogEventHistory {
 		}
 
 		fun copyForTime(time: Long): EventRow {
-			return EventRow(time, entries.toMutableMap())
+			return EventRow(time, entries)
 		}
 	}
 }
