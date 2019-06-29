@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
@@ -32,7 +33,7 @@ import javax.swing.JComponent
  */
 class NavigationStackView(
 	val navigationStack: NavigationStack<GraphView<GraphElementView<*>>> = NavigationStack(BaseModule.eventBus),
-	eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : JPanel() {
 
 	companion object {
@@ -77,24 +78,33 @@ class NavigationStackView(
 
 	private val hoverListener = HoverListener()
 
+	private val navigationStackHandler: EventHandler<NavigationStackEvent> = {
+		if (it.navigationStack == navigationStack) {
+			update()
+		}
+	}
+
+	private val nameChangeHandler: EventHandler<NameChangedEvent> = {
+		if (navigationStack.rootEntry != null && navigationStack.rootEntry!!.content.drawing.graph?.name === it.name) {
+			update()
+		}
+	}
+
 	init {
 		isEnabled = true
 
-		eventBus.register(NavigationStackEvent::class) {
-			if (it.navigationStack == navigationStack) {
-				update()
-			}
-		}
-
-		eventBus.register(NameChangedEvent::class) {
-			if (navigationStack.rootEntry != null && navigationStack.rootEntry!!.content.drawing.graph?.name === it.name) {
-				update()
-			}
-		}
+		eventBus.register(NavigationStackEvent::class, navigationStackHandler)
+		eventBus.register(NameChangedEvent::class, nameChangeHandler)
 
 		background = Graphics2DJvm.toAwtColor(DrawModule.properties.getColor(GraphDesktopItemHeaderPanel.PROP_BACKGROUND_COLOR))
 		border = BorderFactory.createEmptyBorder(V_INSETS, 0, V_INSETS, H_INSETS)
 		update()
+	}
+
+	fun dispose() {
+		eventBus.unregister(navigationStackHandler)
+		eventBus.unregister(nameChangeHandler)
+		navigationStack.dispose()
 	}
 
 	/** ---- [JComponent] */

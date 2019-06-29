@@ -134,7 +134,8 @@ class GraphNavigationPanel(
 	/** ---- [GraphDesktopItem] */
 
 	override fun dispose() {
-		drawingView.content.drawing.dispose()
+		drawingView.dispose()
+		navigationStackView.dispose()
 		graphViewExecutionHandler.dispose()
 		graphViewDisplayHandler.dispose()
 		graphViewUsecaseExecutionHandler.dispose()

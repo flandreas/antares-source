@@ -29,6 +29,7 @@ class AntaresGraphNavigationPanelExtension(
 	}
 
 	override fun dispose(panel: GraphNavigationPanel) {
+		graphAnimator.dispose()
 		eventBus.unregister(currentGraphAnimationTypeHandler)
 		eventBus.unregister(currentSymbolStyleHandler)
 		eventBus.unregister(gateMnemonicHandler)
