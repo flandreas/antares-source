@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
+import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.*
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
@@ -269,13 +270,14 @@ class SchedulerImplTest {
 
         override val id: Int get() = 0
 
-        override var state: ActorState = ActorState.NonExecuting
+	    override var executionError: ExecutionError? = null
+
+	    override var state: ActorState = ActorState.NonExecuting
             private set
 
         override var propagationDelay: Long = 100L
 
-        override val isBreakpoint: Boolean
-            get() = true
+        override val isBreakpoint: Boolean get() = true
 
         override fun addActorListener(l: ActorListener) {
             // empty

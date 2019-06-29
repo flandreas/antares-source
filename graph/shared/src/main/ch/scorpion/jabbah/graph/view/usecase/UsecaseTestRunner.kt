@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorData
-import ch.scorpion.jabbah.execution.actor.EmptyActor
+import ch.scorpion.jabbah.execution.actor.ActorImpl
 import ch.scorpion.jabbah.execution.actor.SimpleActorData
 import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.execution.issue.IssueImpl
@@ -84,7 +84,7 @@ class UsecaseTestRunner(
 	private inner class UsecaseTestActor(
 		private val usecase: Usecase,
 		private val condition: () -> Boolean
-	) : EmptyActor() {
+	) : ActorImpl() {
 		override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
 			if (!condition.invoke()) {
 				LOG.debug("Test '${usecase.name.value}' failed")
@@ -97,7 +97,7 @@ class UsecaseTestRunner(
 		}
 	}
 
-	private inner class FinishTestActor : EmptyActor() {
+	private inner class FinishTestActor : ActorImpl() {
 		override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
 			scheduler.isActive = false
 			if (nextUsecases.isEmpty()) {

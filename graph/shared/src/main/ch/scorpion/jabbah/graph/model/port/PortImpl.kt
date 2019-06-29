@@ -221,4 +221,4 @@ open class PortImpl<T : Any>(
 }
 
 /** Signals that a [PortImpl] tried to assign a signal to its [Net] that turns the [Net] inconsistent.*/
-class InconsistentNetError : ExecutionError()
+class InconsistentNetError : ExecutionError

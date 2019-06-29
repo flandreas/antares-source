@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorData
-import ch.scorpion.jabbah.execution.actor.EmptyActor
+import ch.scorpion.jabbah.execution.actor.ActorImpl
 import ch.scorpion.jabbah.execution.actor.SimpleActorData
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.ApplicationMode
@@ -73,7 +73,7 @@ class UsecaseRunner(
 		return time - scheduler.executionTime
 	}
 
-	private class UsecaseActor(private val action: () -> Unit) : EmptyActor() {
+	private class UsecaseActor(private val action: () -> Unit) : ActorImpl() {
 		override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
 			action.invoke()
 			return super.act(signalHandler, data)
@@ -85,7 +85,7 @@ class UsecaseRunner(
 		private val firstValue: T,
 		private val secondValue: T,
 		private val period: Long
-	) : EmptyActor() {
+	) : ActorImpl() {
 
 		private var currentValue = firstValue
 

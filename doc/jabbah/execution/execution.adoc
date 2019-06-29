@@ -2,26 +2,37 @@
 
 === Einführung
 
-Das Modul `Execution` stellt Mechanismen für die diskrete Simulation (und deren Animation) von zusammengestetzten Systemen
-zur Verfügung. Um zu verstehen, was das bedeutet, betrachten wir ein Beispiel.
+Das Modul `Execution` stellt Mechanismen für die diskrete Simulation und Animation von zusammengesetzten Systemen zur Verfügung. Um zu verstehen, was das bedeutet, betrachten wir ein Beispiel.
 
-Ein System besteht aus den vier Komponenten A, B, C und D. Die Komponenten haben jeweils einen Eingang und einen
-Ausgang. Sie empfangen am Eingang ein Signal, führen eine bestimmte Verarbeitung durch, und produzieren am Ausgang ein
-anderes Signal, das zur nächsten Komponente weitergeleitet wird, was wiederum deren Verarbeitung des Signals anstösst.
-Die Verarbarbeitung eines Signals innerhalb einer Komponente nimmt eine gewisse Zeit in Anspruch.
+Die untenstehende Grafik zeigt das Beispiel eines Modells, das aus aus den vier Komponenten A, B, C und D besteht. Die Komponenten haben jeweils einen Eingang und einen Ausgang. Sie empfangen am Eingang ein Signal, führen eine bestimmte Verarbeitung durch, und produzieren am Ausgang ein weiteres Signal, das zur nächsten Komponente weitergeleitet wird, was wiederum deren Verarbeitung des Signals anstösst. Die Verarbeitung eines Signals innerhalb einer Komponente nimmt eine gewisse Zeit in Anspruch.
 
-Solche Systeme kommen oft in technischen Anwendungen vor, z.B. in Form von digitale elekronische Schaltungen oder Produktionsketten
-in Fabriken.
+Systeme dieser Art kommen oft in technischen Anwendungen vor, z.B. bei digitalen elekronischen Schaltungen oder als Produktionsketten in Fabriken.
 
 image::../../graffle-img/execution-model.svg[width=500]
 
+Das simulierte Modell kann in Form einer "View" graphisch dargestellt werden, damit der Benutzer den Ablauf der Simulation verfolgen kann, z.B. um zu lernen, wie das System funktioniert. Eine View eines Modellkomponete könnte z.B. eine andere Farbe annehmen, während ihre Modellkomponente am Arbeiten ist. Eine Animation könnte zeigen, wie ein Signal von einer Komponente zur nächsten Komponente fliesst.
+
+Ein entscheidener Aspekt der Simulation eines solchen Systems ist die zeitliche Steuerung. Bei der Modellierung des Systems will man die effektiv benötigen Ausführungszeiten angeben, z.B. 24 Stunden für die Produktion eines Autos in einer Fabrik und 3 Tage für den Transport des produzierten Autos in das Empfängerland. Bei der Simulation dieses Systems soll der Benutzer aber nicht 24 Stunden warten müssen, bis das Signal, welches das produzierte Auto repräsentiert, die Fabrik-Modellkomponente verlässt. Wenn aber verschiedene Modellkomponenten unterschiedliche Produktionszeiten haben, soll für den Benutzer ersichtlich sein, dass deren Produkte nicht zur selben Zeit bei den nachfolgenden Komponenten eintreffen.
+
 === Anforderungen
 
-TODO
+Zeitliche Kohärenz:: Die zeitliche Abfolge von Simulationsereignissen ergibt sich strikt aus den Produktionszeiten (Propagation Delays) der Modellkomponenten.
 
-=== Kern-Abstraktionen
+Trennung Model-View:: Die View-Komponenten sind von den Modell-Komponenten getrennt. Damit können Modelle ohne Berücksichtigung von Darstellungsaspekten definiert werden, und es können mehrere Views für dasselbe Modell existieren.
+
+Visualisierung des Simulationszustandes:: Eine View-Komponente stellt anschaulich dar, ob ihre Modell-Komponenten zur Zeit simuliert wird, oder ob sie im Ruhezustand ist.
+
+Hierarchische Komponenten:: Modell-Komponenten können hierarchisch sein, d.h. eine Modell-Komponente kann im Innern aus einem Mdell mit weiteren Komponenten bestehen. In diesem Fall wird das Simulationsverhalten durch die Gesamtheit des Simulationsverhaltens der inneren Komponenten bestimmt, z.B. im Bezug auf die Berechnung der Propagation Delay.
+
+Steuerung der Simulationsgeschwindigkeit:: Der Benutzer kann die Geschwindigkeit der Simulation verändern, um z.B. einen Prozess zur langsamere Ausführung besser verfolgen zu können.
+
+Einzelschritt-Modus:: Der Benutzer kann die Simulation im Einzelschritt-Modus ausführen. Sie Simulation hält nach Ausführung eines "relevanten Simulationsschrittes" an und wartet, bis der Benutzer verlangt, dass die Simulation fortgeführt wird.
+
+=== Design-Übersicht
+
+==== Kern-Abstraktionen
 
 image::../../model-img/svg/jabbah__execution__Execution Core Abstractions_20.svg[]
 
-=== Interaktionen
+==== Interaktionen
 image::../../model-img/svg/jabbah__execution__Collaboration1__Interaction1__Execution_19.svg[width=800]

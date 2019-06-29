@@ -35,9 +35,6 @@ interface GraphElement : Storable, Actor {
      */
     val isError: Boolean
 
-    /** Holds the current [ExecutionError] of this [GraphElement], if any. */
-    var executionError: ExecutionError?
-
     /** Holds the current [DesignError] of this [GraphElement], if any. */
     val designError: DesignError?
 

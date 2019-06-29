@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.execution.actor
 
+import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 
@@ -8,6 +9,7 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
  */
 interface Actor {
 
+	/** An identification of this [Actor] primarely used for debugging and tracing.*/
 	val id: Int
 
 	/** The execution state of this [Actor].*/
@@ -18,6 +20,9 @@ interface Actor {
 	val waiting: Boolean get() = state == ActorState.Waiting
 
 	val acting: Boolean get() = state == ActorState.Acting
+
+	/** Holds the current [ExecutionError] of this [Actor], if any. */
+	var executionError: ExecutionError?
 
 	/**
 	 * Returns the propagation delay (in nanoseconds), i.e. the time this [Actor] requires to recalculate
@@ -83,17 +88,21 @@ enum class ActorState {
 	Acting
 }
 
-open class EmptyActor : Actor {
+open class ActorImpl(
+	override val id: Int = 0,
+	override var propagationDelay: Long = 0
+) : Actor {
 
-	private val actorSupport = ActorSupport(this)
+	/** Manages [Actor] behaviour on behalf of this [Actor].*/
+	private val actorSupport: ActorSupport by lazy { ActorSupport(this) }
 
 	private var _state: ActorState = ActorState.NonExecuting
 
-	override val id: Int = 0;
+	/** ---- [Actor] interface */
+
+	override var executionError: ExecutionError? = null
 
 	override val state: ActorState get() = _state
-
-	override var propagationDelay: Long = 0
 
 	override val isBreakpoint: Boolean get() = actorSupport.hasListeners
 
@@ -107,6 +116,7 @@ open class EmptyActor : Actor {
 
 	override fun executionStarted(signalHandler: SignalHandler) {
 		_state = ActorState.Idle
+		executionError = null
 
 	}
 
@@ -124,6 +134,23 @@ open class EmptyActor : Actor {
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
+		executionError = null
 		_state = ActorState.NonExecuting
+	}
+
+	/** ---- [AbstractActor] */
+
+	protected fun requestActingAfter(signalHandler: SignalHandler, delay: Long, data: ActorData) {
+		_state = ActorState.Waiting
+		actorSupport.requestActingAfter(signalHandler, delay, data)
+	}
+
+	protected fun requestActingTimeFreeze(signalHandler: SignalHandler, data: ActorData) {
+		_state = ActorState.Waiting
+		actorSupport.requestActingTimeFreeze(signalHandler, data)
+	}
+
+	fun notifyActed(signalHandler: SignalHandler, data: ActorData): Boolean {
+		return actorSupport.notifyActed(signalHandler, data)
 	}
 }
