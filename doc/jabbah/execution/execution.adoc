@@ -32,7 +32,25 @@ Einzelschritt-Modus:: Der Benutzer kann die Simulation im Einzelschritt-Modus au
 
 ==== Kern-Abstraktionen
 
+Die beiden zentralen Abstraktionen im Design des `Execution`-Moduls sind der `Actor` und der `Scheduler`. Der `Actor` repräsentiert die Komponenten, die ausgeführt werden (d.h. die während der Simulation "handeln"), während der `Scheduler` die zeitliche Abfolge der Simulationsereignisse kontrolliert.
+
 image::../../model-img/svg/jabbah__execution__Execution Core Abstractions_20.svg[]
 
+Nachdem die Simulation gestartet worden ist, wird der Ablauf der Simulation vom Verhalten der gesteuert. Die Simulation eines Actors kann angestossen werden, weil beim Actor ein Eingangssignal eingetroffen ist, oder weil eine interaktive `ActorView` dieses `Actors` eine Simulation erfordert.
+
+Der `Actor` beginnt nun nicht sofort mit Arbeiten, sondern er verwendet einen `SignalHandler`, der die Laufzeit-Schnittstelle des zuständigen `Schedulers` repräsentiert, und bittet ihn um Ausführung nach Ablauf der sog. "Propagation Delay" (requestActingAfter). Der `Scheduler` erzeugt einen `SchedulingRequest` für die berechnete Ausführungzeit und trägt ihn in eine interne Queue ein. Ein `Timer` sorgt dafür, dass der `Scheduler` in regelmässigen Abständen fällige `SchedulingRequests` bearbeitet, indem er den entsprechenden `Actor` auffordert, nun zu agieren (act).
+
+Alle simulationsrelevanten Aktionen eines `Actors`  werden auf der Ebene der Benutzerschnittstelle von `ActorListeners` beobachtet, die dafür zuständig sind, den Ablauf der Simulation z.B. mit Animationen zu veranschaulichen. Die Verwaltung aller registrierten `ActorListeners` eines `Actors` ist an `ActorSupport` ausgelagert.
+
+Damit ergibt sich für `ActorState` das folgende Zustand-Übergangs-Diagramm.
+
+
+
+image::../../model-img/svg/jabbah__execution__actor__StateMachine1__StatechartDiagram1_21.svg[]
+
+===== Scheduler
+
+TODO
+
 ==== Interaktionen
-image::../../model-img/svg/jabbah__execution__Collaboration1__Interaction1__Execution_19.svg[width=800]
+image::../../model-img/svg/jabbah__execution__Collaboration1__Interaction1__Execution_19.svg[width=1000]

@@ -187,7 +187,7 @@ open class PortImpl<T : Any>(
 			if (isOutputUndefined) {
 				withdrawSignal(signal, signalHandler, withDelay)
 			} else {
-				signalHandler.logTrace(System.get().getClass(this), portId) { "forwarding signal $signal into net" }
+				signalHandler.logTrace(System.get().getClass(this), portId) { "forwarding signal $signal into net '${net!!.id}'" }
 				net!!.setSignal(signal, this, signalHandler, withDelay)
 			}
 			return
@@ -195,7 +195,7 @@ open class PortImpl<T : Any>(
 
 		// Net has become consistent and has to recover from execution error
 		if (!isOutputUndefined) {
-			signalHandler.logTrace(System.get().getClass(this), portId) { "recover net by forwarding defined signal $signal into net" }
+			signalHandler.logTrace(System.get().getClass(this), portId) { "recover net by forwarding defined signal $signal into net '${net!!.id}'" }
 			net!!.executionError = null
 			net!!.setSignal(signal, this, signalHandler, withDelay)
 			return
@@ -213,7 +213,7 @@ open class PortImpl<T : Any>(
 			net!!.executionError = null
 			consistentPort.flush(signalHandler)
 		} else {
-			signalHandler.logTrace(System.get().getClass(this), portId) { "forwarding undefined signal into net" }
+			signalHandler.logTrace(System.get().getClass(this), portId) { "forwarding undefined signal into net '${net!!.id}'" }
 			net!!.executionError = null
 			net!!.setSignal(signal, this, signalHandler, withDelay)
 		}

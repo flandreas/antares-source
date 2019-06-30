@@ -44,7 +44,7 @@ interface Scheduler : SignalHandler {
      */
     fun proceedTo(time: Long)
 
-    /** Prints the pending scheduling request to the DEBUG log. */
+    /** Prints the pending scheduling request to the INFO log. Should only be used on explicit demand when debugging. */
     fun printSchedule()
 }
 

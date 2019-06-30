@@ -39,6 +39,8 @@ class SchedulerImpl(
 		private val LOG by logger(SchedulerImpl::class)
 		private const val SETTING_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
 		private const val SETTING_STOP_ON_ISSUE = "execution.scheduler.stopOnIssue"
+
+		private const val SLOWDOWN_FACTOR = 0.5
 	}
 
 	/** The queue of pending [Slot]s ordered by ascending execution time.*/
@@ -156,7 +158,7 @@ class SchedulerImpl(
 	}
 
 	override fun printSchedule() {
-		LOG.debug("Scheduling queue at ${StringUtils.formatLong(relativeTime)} ns")
+		LOG.info("Scheduling queue at ${StringUtils.formatLong(relativeTime)} ns")
 		queue.elements().forEach { it.print() }
 	}
 
@@ -386,8 +388,6 @@ class SchedulerImpl(
 
 	/** Repeatedly called by the [Timer] in order to perform an execution step.*/
 	private inner class Task(private val timer: Timer) : ActionListener {
-
-		private val SLOWDOWN_FACTOR = 0.5
 
 		val timerInterval: Int get() = timer.interval
 

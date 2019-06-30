@@ -9,10 +9,13 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
  */
 interface Actor {
 
-	/** An identification of this [Actor] primarely used for debugging and tracing.*/
+	/** An identification of this [Actor] primarily used for debugging and tracing.*/
 	val id: Int
 
-	/** The execution state of this [Actor].*/
+	/**
+	 * The execution state of this [Actor].
+	 * Maintained by this [Actor] itself. Primarily used by [ActorView].
+	 */
 	val state: ActorState
 
 	val idle: Boolean get() = state == ActorState.Idle
@@ -82,9 +85,20 @@ interface Actor {
 }
 
 enum class ActorState {
+
+	/** An [Actor] is in this state when the simulation is not running.*/
 	NonExecuting,
+
+	/** The simulation is running, but the [Actor] has not yet requested execution.*/
 	Idle,
+
+	/** The [Actor] has requested execution and is waiting to be scheduled for acting.*/
 	Waiting,
+
+	/**
+	 * The [Actor] has been scheduled for acting and is waiting until all its [ActorListener] have completed
+	 * visualizing the acting, and the [Scheduler] has confirmed that acting is done.
+	 */
 	Acting
 }
 
@@ -138,14 +152,14 @@ open class ActorImpl(
 		_state = ActorState.NonExecuting
 	}
 
-	/** ---- [AbstractActor] */
+	/** ---- [ActorImpl] */
 
-	protected fun requestActingAfter(signalHandler: SignalHandler, delay: Long, data: ActorData) {
+	fun requestActingAfter(signalHandler: SignalHandler, delay: Long, data: ActorData) {
 		_state = ActorState.Waiting
 		actorSupport.requestActingAfter(signalHandler, delay, data)
 	}
 
-	protected fun requestActingTimeFreeze(signalHandler: SignalHandler, data: ActorData) {
+	fun requestActingTimeFreeze(signalHandler: SignalHandler, data: ActorData) {
 		_state = ActorState.Waiting
 		actorSupport.requestActingTimeFreeze(signalHandler, data)
 	}
