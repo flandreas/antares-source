@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.polyline.PolylineShapeJvm
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.draw.view.ContextMenuProvider
+import ch.scorpion.jabbah.draw.view.TooltipManager
 import ch.scorpion.jabbah.draw.view.ZoomPanController
 import java.awt.font.FontRenderContext
 import javax.swing.JPopupMenu
@@ -92,6 +93,11 @@ object DrawModuleJvm : AbstractModule() {
 		root.getGroup(PREF_TREE_VIEW).add(FloatPreference(
 			id = View.PROP_MAX_ZOOM_FACTOR,
 			nameKey = "draw.preferences.View.maxZoomFactor"))
+
+		root.getGroup(PREF_TREE_VIEW).add(IntPreference(
+			id = TooltipManager.PROP_DELAY,
+			nameKey = "draw.preference.TooltipManager.delay"
+		))
 	}
 }
 

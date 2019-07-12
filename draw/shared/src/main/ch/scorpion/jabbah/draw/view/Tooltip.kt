@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.ArrowBubble
@@ -140,6 +141,9 @@ object TooltipManager {
 
 	private val LOG by logger(TooltipManager::class)
 
+	/** The name of the [Int] property in [Properties] designating the time (in ms) of delaying the displaying of the tooltip.*/
+	const val PROP_DELAY = "draw.view.TooltipManager.delay"
+
 	private const val WIDTH = 300
 
 	private const val MIN_WIDTH = 100
@@ -147,10 +151,9 @@ object TooltipManager {
 	/** The vertical distance between the bottom edge of the origin's bounding box and the tip of the [ArrowBubble]. */
 	private const val Y_DIST = 10
 
-	/** The time (in ms) of delaying the displaying of the textTooltip. */
-	private const val DELAY = 1500
-
 	private val tooltipEventHandler: EventHandler<TooltipEvent> = { handle(it) }
+
+	private val preferencesChangeHandler: EventHandler<PreferencesChangedEvent> = { initTimer() }
 
 	/** The currently displayed text [TooltipView]. */
 	private var textTooltip: TooltipView? = null
@@ -162,7 +165,7 @@ object TooltipManager {
 	private var request: TooltipRequest? = null
 
 	/** Used to delay the displaying of a requested textTooltip. */
-	private val timer: Timer = System.get().createTimer()
+	private lateinit var timer: Timer
 
 	/** Listens for [ZoomPan] changes in [View] for which a [TooltipView] is displayed in order to dispose it.*/
 	private val zoomPanListener = object : PropertyChangeListener<Any> {
@@ -177,8 +180,10 @@ object TooltipManager {
 		set(value) {
 			if (field != value) {
 				eventBus.unregister(TooltipEvent::class, tooltipEventHandler)
+				eventBus.unregister(PreferencesChangedEvent::class, preferencesChangeHandler)
 				field = value
 				field.register(TooltipEvent::class, tooltipEventHandler)
+				field.register(PreferencesChangedEvent::class, preferencesChangeHandler)
 			}
 		}
 
@@ -186,7 +191,13 @@ object TooltipManager {
 
 	init {
 		eventBus.register(TooltipEvent::class, tooltipEventHandler)
-		timer.initialize(DELAY) { displayImpl() }
+		eventBus.register(PreferencesChangedEvent::class, preferencesChangeHandler)
+		initTimer()
+	}
+
+	private fun initTimer() {
+		timer = System.get().createTimer()
+		timer.initialize(BaseModule.properties.getInt(PROP_DELAY)) { displayImpl() }
 	}
 
 	private fun handle(event: TooltipEvent) {

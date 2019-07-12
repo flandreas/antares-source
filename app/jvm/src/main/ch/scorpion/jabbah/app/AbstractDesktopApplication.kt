@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.io.StoreXmlReader
 import ch.scorpion.jabbah.io.StoreXmlWriter
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import org.apache.commons.cli.*
@@ -259,6 +260,7 @@ abstract class AbstractDesktopApplication(
 					for (key in preferences.keys) {
 						BaseModule.properties.load(key as String, preferences.getProperty(key))
 					}
+					eventBus.post(PreferencesChangedEvent(BaseModule.properties))
 				} catch (x: Throwable) {
 					LOG.error("Error while loading preferences: ${x.message}")
 				}
