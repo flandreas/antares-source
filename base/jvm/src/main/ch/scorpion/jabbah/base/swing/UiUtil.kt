@@ -68,8 +68,9 @@ object UiUtil {
         while (keys.hasMoreElements()) {
             val key = keys.nextElement()
             val value = UIManager.get(key)
-            if (value != null && value is FontUIResource)
-                UIManager.put(key, f)
+            if (value != null && value is FontUIResource) {
+	            UIManager.put(key, f)
+            }
         }
     }
 
