@@ -94,15 +94,7 @@ abstract class AbstractLEDView<T: Vertice>(
 		}
 	}
 
-	/** ---- [ControlViewSource] */
-
-	override val controlName: String
-		get() {
-			if (StringUtils.isEmpty(model!!.name)) {
-				return "$type ($id)"
-			}
-			return "$type \"${model!!.name}\""
-		}
+	override val controlName: String get() = super.controlName
 
 	/** ---- [AbstractComponent] */
 

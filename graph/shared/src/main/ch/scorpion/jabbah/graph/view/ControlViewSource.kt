@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.edit.Component
@@ -38,7 +39,12 @@ interface ControlViewSource<T : Vertice> : VerticeView<T> {
     val controlId: String?
 
     /** Returns a translated text that identifies this [ControlViewSource] to the user.*/
-    val controlName: String
+    val controlName: String get() {
+	    if (StringUtils.isEmpty(model!!.name)) {
+		    return "$type ($id)"
+	    }
+	    return "$type \"${model!!.name}\""
+    }
 
     /** Returns the path of the icon that identifies this [ControlViewSource] graphically. */
     val iconPath: String

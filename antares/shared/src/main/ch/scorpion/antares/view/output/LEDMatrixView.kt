@@ -7,7 +7,6 @@ import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -164,13 +163,7 @@ class LEDMatrixView(
 
 	/** ---- [ControlViewSource] */
 
-	override val controlName: String
-		get() {
-			if (StringUtils.isEmpty(model!!.name)) {
-				return "$type ($id)"
-			}
-			return "$type \"${model!!.name}\""
-		}
+	override val controlName: String get() = super.controlName
 
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 

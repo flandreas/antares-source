@@ -10,14 +10,16 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.*
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
-import ch.scorpion.jabbah.draw.style.*
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
@@ -236,13 +238,7 @@ class SwitchView(
 			return "switch:" + model!!.id
 		}
 
-	override val controlName: String
-		get() {
-			if (StringUtils.isEmpty(model!!.name)) {
-				return "$type ($id)"
-			}
-			return "$type \"${model!!.name}\""
-		}
+	override val controlName: String get() = super.controlName
 
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 

@@ -47,7 +47,7 @@ class TestControlVerticeView(
 
 	/** ---- [ControlViewSource] */
 
-	override val controlName: String get() = "control:${model!!.id}"
+	override val controlName: String get() = super.controlName
 
 	override val iconPath: String get() = "not used"
 

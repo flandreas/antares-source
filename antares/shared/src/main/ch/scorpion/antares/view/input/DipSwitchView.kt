@@ -236,13 +236,7 @@ class DipSwitchView(
 
 	override val controlId: String get() = "dipSwitch:" + model!!.id
 
-	override val controlName: String
-		get() {
-			if (StringUtils.isEmpty(model!!.name)) {
-				return "$type ($id)"
-			}
-			return "$type \"${model!!.name}\""
-		}
+	override val controlName: String get() = super.controlName
 
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
