@@ -15,22 +15,16 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
-import ch.scorpion.jabbah.graph.project.*
-import ch.scorpion.jabbah.graph.ui.GraphFrame
-import ch.scorpion.jabbah.graph.ui.GraphPanel
-import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.editor.GraphEditor
-import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.project.CloseProjectRequest
+import ch.scorpion.jabbah.graph.project.OpenProjectRequest
+import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.project.ProjectSavable
+import ch.scorpion.jabbah.graph.ui.GraphFrameController
+import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import ch.scorpion.jabbah.io.Storable
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
@@ -64,7 +58,7 @@ class AntaresSwing(
 	init {
 		eventBus.register(OpenMemoryContentsRequest::class) { request ->
 			if (request.newDesktopView) {
-				(mainFrame as GraphFrame).graphPanel.desktop.openVerticeView(request.verticeView) {
+				(mainFrame as GraphFrameSwing).graphPanel.desktop.openVerticeView(request.verticeView) {
 					MemoryContentGraphDesktopItem(
 						memory = request.memory,
 						addressable = request.addressable,
@@ -139,22 +133,17 @@ class AntaresSwing(
 	}
 
 	override fun createMenuBarBuilder(): MenuBarBuilder {
-		return AntaresMenuBarBuilder(mainFrame as GraphFrame, eventBus)
+		return AntaresMenuBarBuilder(mainFrame as GraphFrameSwing, eventBus)
 	}
 
 	override fun createMainFrame(): AbstractApplicationFrame {
-		// TODO Extract GraphEditor creation to factory in module
-		val graphCanvas = CanvasJvm {
-			val drawingView = DrawingViewImpl(GraphViewImpl<GraphElementView<*>>() as Drawing<Component>, it)
-			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
-			drawingView
-		}
-		val graphEditor = GraphEditor(graphCanvas.view as DrawingView<Drawing<Component>>)
-		val graphPanel = GraphPanel(editor = graphEditor, viewManager = viewManager, showContentInitially = false)
-		GraphViewModule.applicationModeHolder = graphPanel
+		val controller = GraphFrameController(eventBus)
+		val frame = GraphFrameSwing(this, eventBus, viewManager, controller)
+		controller.view = frame
 
-		graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
-		return GraphFrame(this, graphPanel, eventBus, viewManager)
+		frame.graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
+
+		return frame
 	}
 
 	/** Implements [DesktopApplication.openFrom] by interpreting `identification` as a project name.*/

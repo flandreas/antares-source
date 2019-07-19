@@ -39,6 +39,7 @@ import ch.scorpion.jabbah.graph.view.app.GraphViewServiceImpl
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewServiceImpl
 import ch.scorpion.jabbah.graph.view.connect.*
+import ch.scorpion.jabbah.graph.view.editor.GraphEditor
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.net.edge.*
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
@@ -71,7 +72,9 @@ object GraphViewModule : AbstractModule() {
 	/** Must be specified by higher application layers.*/
 	var portViewFactory: PortViewFactory = UndefinedPortViewFactory()
 
-	var containerEditorFactory: (EventBus) -> ContainerEditor = { throw UnsupportedOperationException("ContainerEditorFactor not configured") }
+	var graphEditorFactory: (EventBus) -> GraphEditor = { throw UnsupportedOperationException("GraphEditor factory not configured")}
+
+	var containerEditorFactory: (EventBus) -> ContainerEditor = { throw UnsupportedOperationException("ContainerEditor factory not configured") }
 
 	val dragEdgeViewOriginConnector: DragEdgeViewOriginConnector by lazy { DragEdgeViewOriginConnector { graphViewConnectService } }
 	val dragEdgeViewDestinationConnector: DragEdgeViewDestinationConnector by lazy { DragEdgeViewDestinationConnector { graphViewConnectService } }

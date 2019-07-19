@@ -31,7 +31,7 @@ import javax.swing.JMenuItem
  * Adds [ch.scorpion.jabbah.graph] related menus to [MenuBarBuilder].
  */
 open class GraphMenuBarBuilder(
-	frame: GraphFrame,
+	frame: GraphFrameSwing,
 	eventBus: EventBus
 ) : MenuBarBuilder(frame = frame, eventBus = eventBus) {
 

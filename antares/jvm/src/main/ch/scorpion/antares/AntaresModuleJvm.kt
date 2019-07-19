@@ -29,6 +29,9 @@ import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.FileProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.editor.GraphEditor
+import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
@@ -44,6 +47,7 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 
 	override fun initialize() {
 
+		GraphViewModule.graphEditorFactory = { createGraphEditor(it) }
 		GraphViewModule.containerEditorFactory = { createContainerEditor(it) }
 
 		GraphModuleJvm.containerTreeViewFactory = { DigitalContainerTreeView() }
@@ -84,6 +88,15 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
 
 		buildPropertyTree(BaseModuleJvm.preferencesTree)
+	}
+
+	private fun createGraphEditor(eventBus: EventBus): GraphEditor {
+		val graphCanvas = CanvasJvm {
+			val drawingView = DrawingViewImpl(GraphViewImpl<GraphElementView<*>>() as Drawing<Component>, it)
+			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
+			drawingView
+		}
+		return GraphEditor(graphCanvas.view as DrawingView<Drawing<Component>>)
 	}
 
 	private fun createContainerEditor(eventBus: EventBus): ContainerEditor {

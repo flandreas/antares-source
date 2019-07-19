@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.execution.NoiseMenu
 import ch.scorpion.jabbah.execution.PrintScheduleAction
 import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.graph.ui.GraphFrame
+import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import ch.scorpion.jabbah.graph.ui.GraphMenuBarBuilder
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import javax.swing.*
@@ -21,7 +21,7 @@ import javax.swing.*
  * Adds [ch.scorpion.antares] related menus to the [GraphMenuBarBuilder].
  */
 class AntaresMenuBarBuilder(
-	frame: GraphFrame,
+	frame: GraphFrameSwing,
 	eventBus: EventBus
 ) : GraphMenuBarBuilder(frame, eventBus) {
 
