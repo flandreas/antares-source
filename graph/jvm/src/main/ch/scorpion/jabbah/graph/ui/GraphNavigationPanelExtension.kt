@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
-/** An extension point for extension point the functionality of [GraphNavigationPanel] without the need for subclassing.*/
+/** An extension point for extending the functionality of [GraphNavigationPanel] without the need for subclassing.*/
 interface GraphNavigationPanelExtension {
 
 	/** Called by the owning [GraphNavigationPanel] when it is being disposed.*/
@@ -8,7 +8,9 @@ interface GraphNavigationPanelExtension {
 
 }
 
-open class EmptyGraphNavigationPanelExtension(panel: GraphNavigationPanel) : GraphNavigationPanelExtension {
+open class EmptyGraphNavigationPanelExtension(
+	@Suppress("UNUSED_PARAMETER") panel: GraphNavigationPanel
+) : GraphNavigationPanelExtension {
 
 	override fun dispose(panel: GraphNavigationPanel) {
 		// empty

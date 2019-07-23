@@ -50,7 +50,7 @@ import javax.swing.SwingUtilities
 
 
 /**
- * Displays a [GraphView] in a [DrawingView] along with a [NavigationStackView] that allows the user
+ * Displays a [GraphView] in a [DrawingView] along with a [NavigationStackViewSwing] that allows the user
  * to navigate within the [GraphView] hierarchy.
  */
 class GraphNavigationPanel(
@@ -77,7 +77,9 @@ class GraphNavigationPanel(
 
 	private val mainPanel = JPanel(BorderLayout())
 
-	private val navigationStackView = NavigationStackView()
+	private val navigationStackViewController = NavigationStackViewController()
+
+	private val navigationStackView = NavigationStackViewSwing(navigationStackViewController)
 
 	private val headerPanel = GraphDesktopItemHeaderPanel(this, navigationStackView, eventBus, allowClose = !isRoot)
 
@@ -111,6 +113,8 @@ class GraphNavigationPanel(
 	private val extension = extensionFactory.invoke(this)
 
 	init {
+		navigationStackViewController.view = navigationStackView
+
 		eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
 		eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
 		eventBus.register(ApplicationModeEvent::class, applicationModeEventHandler)
@@ -135,7 +139,7 @@ class GraphNavigationPanel(
 
 	override fun dispose() {
 		drawingView.dispose()
-		navigationStackView.dispose()
+		navigationStackViewController.dispose()
 		graphViewExecutionHandler.dispose()
 		graphViewDisplayHandler.dispose()
 		graphViewUsecaseExecutionHandler.dispose()
@@ -176,10 +180,10 @@ class GraphNavigationPanel(
 
 	/** ---- [GraphNavigationPanel] */
 
-	/** Initializes the [NavigationStackView] with a root [DrawingViewContent].*/
+	/** Initializes the [NavigationStackViewSwing] with a root [DrawingViewContent].*/
 	fun setRootGraphView(graphView: GraphView<GraphElementView<*>>) {
 		drawingView.drawing = graphView
-		navigationStackView.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)
+		navigationStackViewController.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)
 		scenarioDetector?.dispose()
 		scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus, currentSystemSpeedCategory)
 		UiUtil.invokeLater(Runnable { drawingView.navigator.fitMaxNormal() })
@@ -187,7 +191,7 @@ class GraphNavigationPanel(
 	}
 
 	private fun getRootEntry(): NavigationStackEntry<GraphView<GraphElementView<*>>> =
-		navigationStackView.navigationStack.rootEntry!!
+		navigationStackViewController.navigationStack.rootEntry!!
 
 	@Suppress("unused")
 	fun setGlassPaneComponent(component: JComponent) {
@@ -212,12 +216,12 @@ class GraphNavigationPanel(
 	/** Deselects all [Component]s in all [View]s.*/
 	fun deselectAll() {
 		drawingView.selectionManager.deselectAll()
-		navigationStackView.navigationStack.forAllContents { it.removeAllSelectionModels() }
+		navigationStackViewController.navigationStack.forAllContents { it.removeAllSelectionModels() }
 	}
 
 	/** Finds the first [DrawingViewContent] in the navigation stack that fulfills the specified condition, if any.*/
 	override fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<*>? =
-		navigationStackView.navigationStack.find(condition)
+		navigationStackViewController.navigationStack.find(condition)
 
 
 	private fun handle(request: CloseViewRequest) {
@@ -249,7 +253,7 @@ class GraphNavigationPanel(
 	}
 
 	private fun rememberZoomPanOfCurrentNavigationStack() {
-		navigationStackView.navigationStack.peek().content.zoomPan = drawingView.zoomPan
+		navigationStackViewController.navigationStack.peek().content.zoomPan = drawingView.zoomPan
 	}
 
 	private fun descendIntoSubGraphWithAnimation(vv: SubGraphVerticeView<*>) {
@@ -259,7 +263,7 @@ class GraphNavigationPanel(
 			drawingView,
 			vv,
 			descender = {
-				navigationStackView.navigationStack.push(NavigationStackEntry(
+				navigationStackViewController.navigationStack.push(NavigationStackEntry(
 					subGraphVerticeView = vv,
 					content = drawingView.createContent(vv.createSubGraphView() as GraphView<GraphElementView<*>>)))
 			},
@@ -272,7 +276,7 @@ class GraphNavigationPanel(
 
 	private fun descendIntoSubGraphWithoutAnimation(vv: SubGraphVerticeView<*>) {
 		SwingUtilities.invokeLater {
-			navigationStackView.navigationStack.push(NavigationStackEntry(
+			navigationStackViewController.navigationStack.push(NavigationStackEntry(
 				subGraphVerticeView = vv,
 				content = drawingView.createContent(vv.createSubGraphView() as GraphView<GraphElementView<*>>)))
 			UiUtil.invokeLater(Runnable { drawingView.navigator.fitMaxNormal() })
@@ -280,17 +284,17 @@ class GraphNavigationPanel(
 	}
 
 	private fun handle(event: NavigationStackEvent) {
-		if (event.navigationStack !== navigationStackView.navigationStack) {
+		if (event.navigationStack !== navigationStackViewController.navigationStack) {
 			return
 		}
-		if (navigationStackView.navigationStack.peek().content === drawingView.content) {
+		if (navigationStackViewController.navigationStack.peek().content === drawingView.content) {
 			return
 		}
 
 		if (!event.isExpansion && !event.quickMode && BaseModule.properties.getBoolean(PROP_DIVE_ANIMATION) && !event.quickMode) {
 			ascendFrom(event.entries)
 		} else {
-			drawingView.content = navigationStackView.navigationStack.peek().content
+			drawingView.content = navigationStackViewController.navigationStack.peek().content
 			updateDrawingViewEditability()
 			updateDetached()
 
@@ -310,7 +314,7 @@ class GraphNavigationPanel(
 				drawingView.content = if (entries.size > 1) {
 					entries[entries.size - 2].content as DrawingViewContent<GraphView<GraphElementView<*>>>
 				} else {
-					navigationStackView.navigationStack.peek().content
+					navigationStackViewController.navigationStack.peek().content
 				}
 			},
 			terminator = if (entries.size == 1) {
@@ -369,7 +373,7 @@ class GraphNavigationPanel(
 	}
 
 	private fun updateDrawingViewEditability() {
-		drawingView.editable = isRoot && navigationStackView.navigationStack.size == 1 && !scheduler.isActive && !(currentSavable?.readOnly
+		drawingView.editable = isRoot && navigationStackViewController.navigationStack.size == 1 && !scheduler.isActive && !(currentSavable?.readOnly
 			?: false)
 	}
 
@@ -382,7 +386,7 @@ class GraphNavigationPanel(
 	 * i.e. whether it doesn't show accurate signal states due to shallow execution.
 	 */
 	private fun updateDetached() {
-		drawingView.overlayColor = if ((!isRoot || navigationStackView.navigationStack.size > 1)
+		drawingView.overlayColor = if ((!isRoot || navigationStackViewController.navigationStack.size > 1)
 			&& scheduler.isActive
 			&& !scheduler.isDeepExecution
 			&& StringUtils.isNotEmpty(drawingView.drawing.graph!!.script)

@@ -1,22 +1,18 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
-import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
+import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -24,17 +20,16 @@ import java.awt.RenderingHints
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.BorderFactory
-import javax.swing.JPanel
 import javax.swing.JComponent
+import javax.swing.JPanel
 
 
 /**
- * A breadcrumb-like view of a [NavigationStack<GraphView>].
+ * A [javax.swing] implementation of a [NavigationStackView].
  */
-class NavigationStackView(
-	val navigationStack: NavigationStack<GraphView<GraphElementView<*>>> = NavigationStack(BaseModule.eventBus),
-	private val eventBus: EventBus = BaseModule.eventBus
-) : JPanel() {
+class NavigationStackViewSwing(
+	val actions: NavigationStackViewActions
+) : JPanel(), NavigationStackView {
 
 	companion object {
 
@@ -78,33 +73,35 @@ class NavigationStackView(
 
 	private val hoverListener = HoverListener()
 
-	private val navigationStackHandler: EventHandler<NavigationStackEvent> = {
-		if (it.navigationStack == navigationStack) {
-			update()
-		}
-	}
-
-	private val nameChangeHandler: EventHandler<NameChangedEvent> = {
-		if (navigationStack.rootEntry != null && navigationStack.rootEntry!!.content.drawing.graph?.name === it.name) {
-			update()
-		}
-	}
-
 	init {
 		isEnabled = true
-
-		eventBus.register(NavigationStackEvent::class, navigationStackHandler)
-		eventBus.register(NameChangedEvent::class, nameChangeHandler)
-
 		background = Graphics2DJvm.toAwtColor(DrawModule.properties.getColor(GraphDesktopItemHeaderPanel.PROP_BACKGROUND_COLOR))
 		border = BorderFactory.createEmptyBorder(V_INSETS, 0, V_INSETS, H_INSETS)
 		update()
 	}
 
-	fun dispose() {
-		eventBus.unregister(navigationStackHandler)
-		eventBus.unregister(nameChangeHandler)
-		navigationStack.dispose()
+	/** ---- [NavigationStackView] */
+
+	override fun update() {
+		elements.clear()
+
+		// Create new Element object
+		var i = 0
+		val iter = actions.navigationStack.iterator()
+		while (iter.hasNext()) {
+			val content = iter.next()
+			elements.add(createElement(content, i == 0, !iter.hasNext()))
+			i++
+		}
+
+		// Calculate locations of Elements
+		var x = 0.0
+		for (element in elements) {
+			element.location = Point2D(x, V_INSETS.toDouble())
+			x += element.path.boundingBox.width - HEIGHT / 2.0 + ELEMENT_DISTANCE
+		}
+
+		repaint()
 	}
 
 	/** ---- [JComponent] */
@@ -132,37 +129,15 @@ class NavigationStackView(
 		return Dimension(300, HEIGHT + 2 * V_INSETS)
 	}
 
-	/** ---- [NavigationStackView] */
+	/** ---- [NavigationStackViewSwing] */
 
 	/** Executes the specified handler for each [DrawingViewContent] of this [NavigationStack].*/
 	fun forEach(action: (NavigationStackEntry<GraphView<GraphElementView<*>>>) -> Unit) {
 		elements.forEach { action.invoke(it.entry) }
 	}
 
-	private fun update() {
-		elements.clear()
-
-		// Create new Element object
-		var i = 0
-		val iter = navigationStack.iterator()
-		while (iter.hasNext()) {
-			val content = iter.next()
-			elements.add(createElement(content, i == 0, !iter.hasNext()))
-			i++
-		}
-
-		// Calculate locations of Elements
-		var x = 0.0
-		for (element in elements) {
-			element.location = Point2D(x, V_INSETS.toDouble())
-			x += element.path.boundingBox.width - HEIGHT / 2.0 + ELEMENT_DISTANCE
-		}
-
-		repaint()
-	}
-
 	private fun createElement(entry: NavigationStackEntry<GraphView<GraphElementView<*>>>, first: Boolean, last: Boolean): Element {
-		val textRenderInfo = DrawModule.textRenderInfoFactory.measureSingleLineText(entry.content.drawing.graph!!.name.value, DrawModule.properties.getFont(PROP_FONT))
+		val textRenderInfo = DrawModule.textRenderInfoFactory.measureSingleLineText(entry.graphName!!.value, DrawModule.properties.getFont(PROP_FONT))
 		val textLength = textRenderInfo.textBounds.width
 		return Element(entry, if (first) createFirstPath(textLength) else createNonFirstPath(textLength), last)
 	}
@@ -193,7 +168,7 @@ class NavigationStackView(
 		return path
 	}
 
-	/** An element of a [NavigationStackView] representing a single [DrawingViewContent].*/
+	/** An element of a [NavigationStackViewSwing] representing a single [DrawingViewContent].*/
 	private inner class Element(
 		val entry: NavigationStackEntry<GraphView<GraphElementView<*>>>,
 		val path: Path,
@@ -283,7 +258,7 @@ class NavigationStackView(
 			}
 
 			if (changed) {
-				this@NavigationStackView.repaint()
+				this@NavigationStackViewSwing.repaint()
 			}
 		}
 
@@ -293,7 +268,7 @@ class NavigationStackView(
 
 		override fun mousePressed(e: MouseEvent) {
 			if (hoveredElement != null) {
-				navigationStack.navigateBackTo(hoveredElement!!.entry, e.isMetaDown)
+				actions.navigationStack.navigateBackTo(hoveredElement!!.entry, e.isMetaDown)
 			}
 		}
 
@@ -301,7 +276,7 @@ class NavigationStackView(
 			if (hoveredElement != null) {
 				hoveredElement!!.isHover = false
 				hoveredElement = null
-				this@NavigationStackView.repaint()
+				this@NavigationStackViewSwing.repaint()
 			}
 		}
 	}

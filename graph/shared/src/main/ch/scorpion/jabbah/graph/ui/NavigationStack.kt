@@ -6,12 +6,17 @@ import ch.scorpion.jabbah.base.exception.NoSuchElementException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingViewContent
+import ch.scorpion.jabbah.edit.model.text.description.Name
+import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
-data class NavigationStackEntry<T : Drawing<*>>(
+data class NavigationStackEntry<T : GraphView<GraphElementView<*>>>(
 	val subGraphVerticeView: SubGraphVerticeView<*>? = null,
 	val content: DrawingViewContent<T>
 ) {
+	val graphName: Name? get() = content.drawing.graph?.name
+
 	fun dispose() {
 		content.dispose()
 	}
@@ -22,7 +27,7 @@ data class NavigationStackEntry<T : Drawing<*>>(
  * [Drawing]s.
  * Posts a [NavigationStackEvent] whenever the head [DrawingViewContent] has changed.
  */
-class NavigationStack<T : Drawing<*>>(val eventBus: EventBus = BaseModule.eventBus) {
+class NavigationStack<T : GraphView<GraphElementView<*>>>(val eventBus: EventBus = BaseModule.eventBus) {
 
 	/**
 	 * Holds the [NavigationStackEntries][NavigationStackEntry] that make up the stack. The last element is the stack head.
