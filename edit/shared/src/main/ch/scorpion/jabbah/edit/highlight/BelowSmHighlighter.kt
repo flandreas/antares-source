@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.edit.*
  * [SelectionDrawingStrategy.BELOW] for highlighting.
  */
 class BelowSmHighlighter(
-	private val selectionModelProvider: SelectionModelProvider = EditHighlightModule.highlightModelProvider,
+	private val highlightModelProvider: SelectionModelProvider = EditHighlightModule.highlightModelProvider,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val content: DrawingViewContent<*>
 ) : Highlighter {
@@ -110,7 +110,7 @@ class BelowSmHighlighter(
 
 	private fun highlightImpl(c: Component, color: CompositeColor? = null) {
 		LOG.debug("Highlight component '${c.id}'")
-		val highlight = selectionModelProvider.provideFor(c, SelectionDrawingStrategy.BELOW)
+		val highlight = highlightModelProvider.provideFor(c, SelectionDrawingStrategy.BELOW)
 		if (highlight == null) {
 			LOG.error("No suitable highlight SelectionModel found for ${System.get().getClassName(c)}")
 			return
