@@ -129,7 +129,7 @@ class GraphDesktopController(
 
 			view.addGraphDesktopItem(newItem)
 
-			it.drawingView?.highlighter?.highlight(vv, refColor.withForegroundLikeBackground())
+			it.drawingView?.highlighter?.highlight(vv, refColor)
 			it.drawingView?.repaint()
 		} ?: LOG.error("VerticeView to be opened not found in open panels")
 	}
@@ -158,7 +158,9 @@ class GraphDesktopController(
 			assoc.item.contextColor = assoc.refColor
 			event.replacements.forEach { assoc.item.drawingView?.highlighter?.replaceColor(it.oldColor, it.newColor) }
 		}
-		event.replacements.forEach { view.mainDesktopItem.drawingView?.highlighter?.replaceColor(it.oldColor, it.newColor) }
+		event.replacements.forEach {
+			view.mainDesktopItem.drawingView?.highlighter?.replaceColor(it.oldColor, it.newColor)
+		}
 	}
 
 	private fun openSubGraphVerticeView(verticeView: SubGraphVerticeView<*>) {

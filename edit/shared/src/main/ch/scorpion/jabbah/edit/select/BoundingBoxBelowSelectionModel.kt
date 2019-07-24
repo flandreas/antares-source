@@ -50,7 +50,7 @@ class BoundingBoxBelowSelectionModel(
 
 	override fun draw(context: DrawContext) {
 		val oldColor = context.g.color
-		context.g.color = color.foregroundColor
+		context.g.color = color.backgroundColor
 
 		context.g.fillRoundRect(
 			bounds.x.toInt(),
