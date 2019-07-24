@@ -174,10 +174,6 @@ class GraphNavigationPanel(
 		mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
 	}
 
-	override fun updateContextColorBorder(color: CompositeColor) {
-		(mainPanel.getComponent(0) as JComponent).border = createContextColorBorder(color)
-	}
-
 	/** ---- [GraphNavigationPanel] */
 
 	/** Initializes the [NavigationStackViewSwing] with a root [DrawingViewContent].*/

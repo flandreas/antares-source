@@ -57,7 +57,7 @@ abstract class AbstractGraphDesktopItemPanel() : JPanel(), GraphDesktopItem {
 			when {
 				field == null -> addContextColorBorder(value!!)
 				value == null -> removeContextColorBorder()
-				else -> updateContextColorBorder(value)
+				else -> addContextColorBorder(value)
 			}
 
 			field = value
@@ -68,8 +68,6 @@ abstract class AbstractGraphDesktopItemPanel() : JPanel(), GraphDesktopItem {
 	protected abstract fun addContextColorBorder(color: CompositeColor)
 
 	protected abstract fun removeContextColorBorder()
-
-	protected abstract fun updateContextColorBorder(color: CompositeColor)
 
 	protected fun createContextColorBorder(contextColor: CompositeColor): Border =
 		BorderFactory.createLineBorder(Graphics2DJvm.toAwtColor(contextColor.backgroundColor), BORDER_THICKNESS, true)

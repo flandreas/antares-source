@@ -70,10 +70,6 @@ class MemoryContentGraphDesktopItem(
 	override fun removeContextColorBorder() {
 		memoryContentPanel.border = null
 	}
-
-	override fun updateContextColorBorder(color: CompositeColor) {
-		memoryContentPanel.border = createContextColorBorder(color)
-	}
 }
 
 /**
