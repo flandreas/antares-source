@@ -70,8 +70,7 @@ class GraphPanel(
 	val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val viewManager: ViewManager,
 	var scheduler: Scheduler = ExecutionModule.scheduler,
-	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory,
-	showContentInitially: Boolean = true
+	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel(), ApplicationModeHolder {
 
 	companion object {
@@ -82,8 +81,10 @@ class GraphPanel(
 	/** Allows to edit and execute the currently open GraphView.*/
 	private val graphEditPanel: GraphEditPanel = GraphEditPanel(editor, scheduler, viewManager, propertySheetFactory, eventBus)
 
+	val desktopController = GraphDesktopController()
+
 	/** Allows to open multiple Graphs.*/
-	val desktop: GraphDesktop = GraphDesktop(graphEditPanel, eventBus, scheduler, showContentInitially)
+	val desktop: GraphDesktopSwing = GraphDesktopSwing(graphEditPanel)
 
 	/** Displays the properties of the currently selected component in [graphEditPanel].*/
 	private val propertyPanel: ComponentPropertyPanel
@@ -161,6 +162,8 @@ class GraphPanel(
 		}
 
 	init {
+
+		desktopController.view = desktop
 
 		(editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
 		propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)

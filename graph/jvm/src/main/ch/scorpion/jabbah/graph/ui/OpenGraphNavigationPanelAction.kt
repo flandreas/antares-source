@@ -13,16 +13,17 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  * in the [GraphDesktop].
  */
 class OpenGraphNavigationPanelAction(
-        viewManager: ViewManager = DrawViewModule.viewManager,
-        private val eventBus: EventBus = BaseModule.eventBus,
-        var subGraphVerticeView: SubGraphVerticeView<*>? = null
+	viewManager: ViewManager = DrawViewModule.viewManager,
+	private val eventBus: EventBus = BaseModule.eventBus,
+	var subGraphVerticeView: SubGraphVerticeView<*>? = null
 ) : AbstractSelectionAwareAction("graph.action.openSubGraph", eventBus, viewManager) {
 
-    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-        eventBus.post(OpenSubGraphRequest(subGraphVerticeView ?: getSingleSelection() as SubGraphVerticeView<*>, newView = true, quickMode = false))
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		eventBus.post(OpenSubGraphRequest(subGraphVerticeView
+			?: getSingleSelection() as SubGraphVerticeView<*>, newView = true, quickMode = false))
+	}
 
-    override fun calculateEnabled(): Boolean {
-        return if (subGraphVerticeView != null) true else getSelectionCount() == 1 && getSingleSelection() is SubGraphVerticeView<*>
-    }
+	override fun calculateEnabled(): Boolean {
+		return if (subGraphVerticeView != null) true else getSelectionCount() == 1 && getSingleSelection() is SubGraphVerticeView<*>
+	}
 }

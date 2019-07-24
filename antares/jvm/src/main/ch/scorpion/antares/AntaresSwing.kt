@@ -58,7 +58,7 @@ class AntaresSwing(
 	init {
 		eventBus.register(OpenMemoryContentsRequest::class) { request ->
 			if (request.newDesktopView) {
-				(mainFrame as GraphFrameSwing).graphPanel.desktop.openVerticeView(request.verticeView) {
+				(mainFrame as GraphFrameSwing).graphPanel.desktopController.openVerticeView(request.verticeView) {
 					MemoryContentGraphDesktopItem(
 						memory = request.memory,
 						addressable = request.addressable,
