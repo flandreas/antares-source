@@ -1,11 +1,10 @@
 package ch.scorpion.jabbah.edit
 
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.base.exception.IllegalStateException
-import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.Stylable
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.io.Storable
 
 /**
@@ -20,47 +19,50 @@ import ch.scorpion.jabbah.io.Storable
  */
 interface Component : Locatable, Snappable, Storable, Stylable {
 
-    /** Holds an identification being unique within the [ComponentContainer] that contains this [Component].*/
-    var id: Int
+	/** Holds an identification being unique within the [ComponentContainer] that contains this [Component].*/
+	var id: Int
 
-    /**
-     * Holds a short translated description of the type of this [Component].
-     *
-     * The type of a [Component] describes the "kind" or the nature of a [Component]. This is in contrast to
-     * the name of a [Component], which is often provided by the user and can serve to distinguish two
-     * [Component]s of the same type. Typically, the type is not persistent, but provided by concrete
-     * implementation of the [Component] interface. Note that this type description should be internationalized.
-     *
-     * Example: "Rectangle"
-     */
-    val type: String?
+	/**
+	 * Holds a short translated description of the type of this [Component].
+	 *
+	 * The type of a [Component] describes the "kind" or the nature of a [Component]. This is in contrast to
+	 * the name of a [Component], which is often provided by the user and can serve to distinguish two
+	 * [Component]s of the same type. Typically, the type is not persistent, but provided by concrete
+	 * implementation of the [Component] interface. Note that this type description should be internationalized.
+	 *
+	 * Example: "Rectangle"
+	 */
+	val type: String?
 
-    /**
-     * Determines whether this [Component]'s [StyleType] is determined by the implementing class and cannot be
-     * changed in the [styleType] property.
-     */
-    val fixStyleType: Boolean
+	/**
+	 * Determines whether this [Component]'s [StyleType] is determined by the implementing class and cannot be
+	 * changed in the [styleType] property.
+	 */
+	val fixStyleType: Boolean
 
-    /**
-     * Returns the [Component] to be selected when the user selects this [Component].
-     * Standard implementations just return `this`. Wrappers will return the wrapped [Component].
-     */
-    val selectableComponent: Component
+	/**
+	 * Returns the [Component] to be graphically selected when the user selects this [Component].
+	 *
+	 * Standard implementations just return `this`. Wrappers will return the wrapped [Component].
+	 * This is primarily relevant for determination of the displayed [SelectionModel] by the
+	 * [SelectionManagerFactory]; the logically selected [Component] is always `this`.
+	 */
+	val selectableComponent: Component
 
-    /** Determines whether this [Component] can be manually deleted from its [ComponentContainer] interactively by the user.*/
-    val deletable: Boolean
+	/** Determines whether this [Component] can be manually deleted from its [ComponentContainer] interactively by the user.*/
+	val deletable: Boolean
 
-    /** Determines whether this [Component] can be rotated.*/
-    val rotatable: Boolean
+	/** Determines whether this [Component] can be rotated.*/
+	val rotatable: Boolean
 
-    /** Holds the rotation property of this [Component].*/
-    var rotation: Rotation
+	/** Holds the rotation property of this [Component].*/
+	var rotation: Rotation
 
-    /**
-     * Returns the object whose properties are editable when the user edits this [Component].
-     * Most implementations will just return `this`. Wrapper classes might return the wrapped object.
-     */
-    val propertyOwner: Any
+	/**
+	 * Returns the object whose properties are editable when the user edits this [Component].
+	 * Most implementations will just return `this`. Wrapper classes might return the wrapped object.
+	 */
+	val propertyOwner: Any
 
 	/**
 	 * Returns the fully qualified class name to be used for instantiating the bean info object used
@@ -69,30 +71,30 @@ interface Component : Locatable, Snappable, Storable, Stylable {
 	 */
 	val beanInfoClassName: String? get() = null
 
-    /**
-     * Returns the preferred strategy of how this [Component] likes to render its selection state.
-     * Returns `null`if this [Component] supports multiple [SelectionDrawingStrategies][SelectionDrawingStrategy]
-     */
-    var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
+	/**
+	 * Returns the preferred strategy of how this [Component] likes to render its selection state.
+	 * Returns `null`if this [Component] supports multiple [SelectionDrawingStrategies][SelectionDrawingStrategy]
+	 */
+	var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
 
-    /** Controls whether this [Component] can receive the focus.*/
-    var isFocusable: Boolean
+	/** Controls whether this [Component] can receive the focus.*/
+	var isFocusable: Boolean
 
-    /** Determines whether this [Component] currently has the focus.*/
-    val isFocusOwner: Boolean
+	/** Determines whether this [Component] currently has the focus.*/
+	val isFocusOwner: Boolean
 
-    /** Requests the focus for this [Component].*/
-    fun requestFocus()
+	/** Requests the focus for this [Component].*/
+	fun requestFocus()
 
-    /**
-     * Informs this [Component] that is has gained the focus. Implementing classes should update their
-     * graphical representation. This method is typically only called by the [FocusManager].
-     */
-    fun focusGained()
+	/**
+	 * Informs this [Component] that is has gained the focus. Implementing classes should update their
+	 * graphical representation. This method is typically only called by the [FocusManager].
+	 */
+	fun focusGained()
 
-    /**
-     * Informs this [Component] that is has lost the focus. Implementing classes should update their
-     * graphical representation.  This method is typically only called by the [FocusManager].
-     */
-    fun focusLost()
+	/**
+	 * Informs this [Component] that is has lost the focus. Implementing classes should update their
+	 * graphical representation.  This method is typically only called by the [FocusManager].
+	 */
+	fun focusLost()
 }

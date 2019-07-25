@@ -71,6 +71,8 @@ open class MenuBarBuilder(
         menu.add(JMenuItem(ActionWrapperSwing(UngroupComponentsAction())))
         menu.addSeparator()
         menu.add(JMenuItem(ActionWrapperSwing(SelectAllAction())))
+	    menu.add(JMenuItem(ActionWrapperSwing(SelectNextAction())))
+	    menu.add(JMenuItem(ActionWrapperSwing(SelectPreviousAction())))
         menu.addSeparator()
         val arrangeMenu = JMenu(Translations.getString("edit.action.stackingOrder.name"))
         arrangeMenu.add(JMenuItem(ActionWrapperSwing(ToFrontAction())))

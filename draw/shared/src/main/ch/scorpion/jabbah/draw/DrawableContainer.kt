@@ -120,7 +120,7 @@ interface DrawableContainer<T : Drawable> : Drawable, Locatable {
      * Returns the position of a [Drawable] in the stacking order of this [DrawableContainer].
      * @throws NoSuchElementException if this [DrawableContainer] doesn't contain `drawable`
      */
-    fun getStackingOrderPosition(drawable: T): Int
+    fun getStackingOrderPosition(drawable: Drawable): Int
 
     /**
      * Sets the stacking order position of the specified [Drawable]

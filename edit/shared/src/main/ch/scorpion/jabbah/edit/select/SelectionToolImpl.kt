@@ -254,7 +254,7 @@ class SelectionToolImpl(
 
 	private fun isMoveKey(event: KeyEvent): Boolean {
 		return when(event.key) {
-			VK_RIGHT, VK_LEFT, VK_UP, VK_DOWN -> true
+			VK_RIGHT, VK_LEFT, VK_UP, VK_DOWN -> event.modifiers == 0
 			else -> false
 		}
 	}

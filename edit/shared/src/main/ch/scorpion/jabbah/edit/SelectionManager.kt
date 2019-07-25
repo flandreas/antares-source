@@ -36,7 +36,6 @@ interface SelectionManager {
     /**
      * Deselects the specified [Component].
      *
-     *
      * If the specified [Component] is already deselected, this method does nothing.
      * @param component the [Component] to deselect.
      */
@@ -44,7 +43,6 @@ interface SelectionManager {
 
     /**
      * Deselects the specified [Component]s.
-     *
      *
      * If the specified [Component]s is already deselected, this method does nothing.
      * @param components the [Component]s to deselect.
@@ -64,6 +62,18 @@ interface SelectionManager {
      * @return `true` if `component` is currently selected.
      */
     fun isSelected(component: Component): Boolean
+
+	/**
+	 * Selects the next [Component] of a [Drawing], or the first one if none is yet selected.
+	 * Does nothing if the [Drawing] is empty.
+	 */
+	fun selectNext()
+
+	/**
+	 * Selects the previous [Component] of a [Drawing], or the last one if none is yet selected.
+	 * Does nothing if the [Drawing] is empty.
+	 */
+	fun selectPrevious()
 }
 
 /**

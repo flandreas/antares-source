@@ -107,6 +107,52 @@ class SelectionManagerImpl(
         return selectionMap.containsKey(component)
     }
 
+	override fun selectNext() {
+		nextSelection()?.let {
+			deselectAll()
+			select(it)
+		}
+	}
+
+	private fun nextSelection(): Component? {
+		val currentSelection: Component? = selection.firstOrNull()
+		return if (currentSelection == null) {
+			if (content.drawing.drawablesCount > 0) {
+				content.drawing.get(0)
+			} else {
+				null
+			}
+		} else {
+			val index = content.drawing.getStackingOrderPosition(currentSelection)
+			content.drawing.get((index + 1).rem(content.drawing.drawablesCount))
+		}
+	}
+
+	override fun selectPrevious() {
+		previousSelection()?.let {
+			deselectAll()
+			select(it)
+		}
+	}
+
+	private fun previousSelection(): Component? {
+		val currentSelection: Component? = selection.firstOrNull()
+		return if (currentSelection == null) {
+			if (content.drawing.drawablesCount > 0) {
+				content.drawing.get(content.drawing.drawablesCount - 1)
+			} else {
+				null
+			}
+		} else {
+			val index = content.drawing.getStackingOrderPosition(currentSelection)
+			if (index > 0) {
+				content.drawing.get(index - 1)
+			} else {
+				content.drawing.get(content.drawing.drawablesCount - 1)
+			}
+		}
+	}
+
     /** ---- [SelectionManagerImpl] */
 
     private fun postSelectionChanged(components: Collection<Component>, selected: Boolean) {

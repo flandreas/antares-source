@@ -198,7 +198,7 @@ open class DrawableContainerImpl<T: Drawable>(
         }
     }
 
-    override fun getStackingOrderPosition(drawable: T): Int {
+    override fun getStackingOrderPosition(drawable: Drawable): Int {
         val position = children.indexOf(drawable)
         if (position < 0) {
             throw NoSuchElementException("drawable not contained")
