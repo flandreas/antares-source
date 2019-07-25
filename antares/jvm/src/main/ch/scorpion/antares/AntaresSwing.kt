@@ -19,10 +19,7 @@ import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
-import ch.scorpion.jabbah.graph.project.CloseProjectRequest
-import ch.scorpion.jabbah.graph.project.OpenProjectRequest
-import ch.scorpion.jabbah.graph.project.ProjectModule
-import ch.scorpion.jabbah.graph.project.ProjectSavable
+import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import ch.scorpion.jabbah.io.Storable
@@ -96,6 +93,11 @@ class AntaresSwing(
 		eventBus.register(CurrentLibraryEvent::class) {
 			close()
 		}
+
+		eventBus.register(CurrentProjectEvent::class) {
+			close()
+		}
+
 		eventBus.register(LibraryItemRemovedEvent::class) {
 			if (it.item is ContainerLibraryElement && (it.item as ContainerLibraryElement).metaGraph == applicationData) {
 				SwingUtilities.invokeLater { close() }

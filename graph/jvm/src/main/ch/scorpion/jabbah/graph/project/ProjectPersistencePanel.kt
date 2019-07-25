@@ -66,7 +66,7 @@ class ProjectPersistencePanel(
 
 	init {
 		projectNameList.addListSelectionListener { updateActions() }
-		projectNameList.addMouseListener(object: MouseAdapter() {
+		projectNameList.addMouseListener(object : MouseAdapter() {
 			override fun mouseClicked(e: MouseEvent?) {
 				if (e!!.clickCount == 2) {
 					openAction.execute(ActionWrapperSwing.toJabbaActionEvent(e))
@@ -166,11 +166,11 @@ class ProjectPersistencePanel(
 					}
 				} else if (managementService.exists(properties.name)) {
 					if (JOptionPane.showConfirmDialog(
-						this@ProjectPersistencePanel,
-						Translations.getString("project.duplicate.msg", properties.name),
-						Translations.getString("project.dialog.new.name.dialog.title"),
-						JOptionPane.OK_CANCEL_OPTION,
-						JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
+							this@ProjectPersistencePanel,
+							Translations.getString("project.duplicate.msg", properties.name),
+							Translations.getString("project.dialog.new.name.dialog.title"),
+							JOptionPane.OK_CANCEL_OPTION,
+							JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
 					) {
 						return
 					}
@@ -188,11 +188,11 @@ class ProjectPersistencePanel(
 	private inner class DeleteAction : AbstractAction("project.dialog.delete.action") {
 		override fun execute(event: ActionEvent) {
 			if (JOptionPane.showConfirmDialog(
-				this@ProjectPersistencePanel,
-				Translations.getString("project.dialog.delete.confirm.msg", selectedProjectName!!),
-				Translations.getString("project.dialog.delete.action.name"),
-				JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
+					this@ProjectPersistencePanel,
+					Translations.getString("project.dialog.delete.confirm.msg", selectedProjectName!!),
+					Translations.getString("project.dialog.delete.action.name"),
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
 			) {
 				managementService.delete(selectedProjectName!!)
 				refreshProjectNames()

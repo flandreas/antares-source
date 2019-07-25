@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.project.CurrentProjectEvent
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -91,6 +92,8 @@ class GraphDesktopController(
 	/** Replace reference color in all Associations */
 	private val referenceColorHandler: EventHandler<ReferenceColorEvent> = { handle(it) }
 
+	private val currentProjectHandler: EventHandler<CurrentProjectEvent> = { handle(it) }
+
 	/** Closes an open [GraphDesktopItem] when the corresponding [VerticeView] has been removed.*/
 	private val removeListener = RemoveListener()
 
@@ -102,6 +105,7 @@ class GraphDesktopController(
 		eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
 		eventBus.register(OpenSubGraphRequest::class, openRequestHandler)
 		eventBus.register(ReferenceColorEvent::class, referenceColorHandler)
+		eventBus.register(CurrentProjectEvent::class, currentProjectHandler)
 	}
 
 	fun dispose() {
@@ -110,6 +114,7 @@ class GraphDesktopController(
 		eventBus.unregister(ApplicationDataEvent::class, applicationDataHandler)
 		eventBus.unregister(OpenSubGraphRequest::class, openRequestHandler)
 		eventBus.unregister(ReferenceColorEvent::class, referenceColorHandler)
+		eventBus.unregister(CurrentProjectEvent::class, currentProjectHandler)
 	}
 
 	/** ---- [GraphDesktopController] */
@@ -141,6 +146,10 @@ class GraphDesktopController(
 
 	private fun handle(event: ApplicationDataEvent) {
 		closeAll(event.newData != null)
+	}
+
+	private fun handle(event: CurrentProjectEvent) {
+		closeAll(false)
 	}
 
 	private fun handle(request: OpenSubGraphRequest) {
