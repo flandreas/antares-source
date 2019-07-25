@@ -49,6 +49,7 @@ class AntaresSwing(
 
 		@JvmStatic
 		fun main(args: Array<String>) {
+			System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS")
 			UiUtil.setUIFont(FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size))
 			BaseModuleJvm.require()
 			AntaresSwing(args).start()
