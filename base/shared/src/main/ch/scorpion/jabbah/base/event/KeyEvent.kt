@@ -19,6 +19,12 @@ interface KeyEvent : InputEvent {
         /** Key code of the non-numpad right arrow key. */
         var VK_RIGHT = 0x00
 
+	    /** Key code of the non-numpad up arrow key. */
+	    var VK_UP = 0x00
+
+	    /** Key code of the non-numpad down arrow key. */
+	    var VK_DOWN = 0x00
+
         /** Key code of the escape key.*/
         var VK_ESCAPE = 0x00
 

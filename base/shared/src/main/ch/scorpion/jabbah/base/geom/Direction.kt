@@ -141,4 +141,7 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
         Turn.RIGHT -> previous()
         Turn.NONE -> this
     }
+
+	/** Returns the [Point2D] that represents the normalized vector pointing to this [Direction].*/
+	fun toPoint2D(): Point2D = Point2D(dx, dy)
 }

@@ -42,6 +42,8 @@ object BaseModuleJvm : AbstractModule() {
 	private fun defineKeyCodesSwing() {
 		KeyEvent.VK_LEFT = java.awt.event.KeyEvent.VK_LEFT
         KeyEvent.VK_RIGHT = java.awt.event.KeyEvent.VK_RIGHT
+		KeyEvent.VK_UP = java.awt.event.KeyEvent.VK_UP
+		KeyEvent.VK_DOWN = java.awt.event.KeyEvent.VK_DOWN
 		KeyEvent.VK_ESCAPE = java.awt.event.KeyEvent.VK_ESCAPE
 		KeyEvent.VK_ENTER = java.awt.event.KeyEvent.VK_ENTER
 		KeyEvent.VK_0 = java.awt.event.KeyEvent.VK_0

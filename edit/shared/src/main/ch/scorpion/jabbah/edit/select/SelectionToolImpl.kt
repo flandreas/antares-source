@@ -1,23 +1,25 @@
 package ch.scorpion.jabbah.edit.select
 
-import ch.scorpion.jabbah.base.Status
-import ch.scorpion.jabbah.base.StatusEvent
-import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.KeyEvent
+import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_DOWN
+import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_LEFT
+import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_RIGHT
+import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_UP
 import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.edit.snap.MultiComponentSnappable
-import ch.scorpion.jabbah.edit.tool.ToolAdapter
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.*
-import kotlin.math.round
+import ch.scorpion.jabbah.edit.snap.MultiComponentSnappable
+import ch.scorpion.jabbah.edit.tool.ToolAdapter
 
 /**
  * Standard implementation of a [SelectionTool].
@@ -58,7 +60,13 @@ class SelectionToolImpl(
 	}
 
 	override fun keyPressed(e: KeyEvent) {
-		target = target?.keyPressed(keyEventContext(e))
+		if (target != null) {
+			target = target?.keyPressed(keyEventContext(e))
+			return
+		}
+		if (isMoveKey(e) && editor.view.selectionManager.selectionCount > 0) {
+			moveBy(e)
+		}
 	}
 
 	override fun keyReleased(e: KeyEvent) {
@@ -242,5 +250,30 @@ class SelectionToolImpl(
 		} else {
 			editor.view.setCursor(Cursor.HAND)
 		}
+	}
+
+	private fun isMoveKey(event: KeyEvent): Boolean {
+		return when(event.key) {
+			VK_RIGHT, VK_LEFT, VK_UP, VK_DOWN -> true
+			else -> false
+		}
+	}
+
+	private fun getKeyMoveDirection(event: KeyEvent): Direction {
+		return when(event.key) {
+			VK_RIGHT -> Direction.EAST
+			VK_LEFT -> Direction.WEST
+			VK_UP -> Direction.NORTH
+			VK_DOWN -> Direction.SOUTH
+			else -> throw IllegalArgumentException("KeyEvent doesn't represent a move direction")
+		}
+	}
+
+	private fun moveBy(event: KeyEvent) {
+		editor.commandManager.execute(MoveCommand(
+			editor,
+			editor.view.selectionManager.selection,
+			getKeyMoveDirection(event).toPoint2D().multiply(editor.view.grid.distance)
+		))
 	}
 }
