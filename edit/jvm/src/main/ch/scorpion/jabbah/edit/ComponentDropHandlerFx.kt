@@ -28,7 +28,7 @@ open class ComponentDropHandlerFx(
 
 	init {
 		(editor.view.canvas as CanvasFx).canvas.setOnDragEntered {
-			LOG.debug("ComponentDropHandlerFx: onDragEntered")
+			LOG.debug("onDragEntered")
 			val transferData = it.dragboard.getContent(ComponentDataFormat)
 			if (transferData != null && transferData is String) {
 				component = extractComponent(transferData)
@@ -53,7 +53,7 @@ open class ComponentDropHandlerFx(
 		}
 
 		(editor.view.canvas as CanvasFx).canvas.setOnDragDropped {
-			LOG.debug("ComponentDropHandlerFx: onDragDropped")
+			LOG.debug("onDragDropped")
 			val dropComponent = editor.view.dropComponent
 			if (dropComponent != null && canImport(dropComponent)) {
 				it.isDropCompleted = true

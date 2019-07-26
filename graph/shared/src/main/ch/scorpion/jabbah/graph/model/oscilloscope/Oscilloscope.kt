@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.graph.model.GraphElementListener
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.Storable
@@ -114,7 +113,7 @@ class Oscilloscope(
 
 	private fun updateMaxTime(now: Long) {
 		maxTime = Math.max(maxTime, now)
-		LOG.debug("Oscilloscope: maxTime = $maxTime")
+		LOG.debug("maxTime = $maxTime")
 	}
 
 	private fun updateMinDiffTime(now: Long) {
@@ -124,11 +123,11 @@ class Oscilloscope(
 		if (minSignalHistory != null) {
 			minDiffTime = Math.min(minDiffTime, now - minSignalHistory.last().time)
 		}
-		LOG.debug("Oscilloscope: minDiffTime = $minDiffTime")
+		LOG.debug("minDiffTime = $minDiffTime")
 	}
 
 	private fun updateOverallMinDelay(minDelay: Long) {
 		overallMinDelay = Math.min(overallMinDelay, minDelay)
-		LOG.debug("Oscilloscope: overallMinDelay = $overallMinDelay")
+		LOG.debug("overallMinDelay = $overallMinDelay")
 	}
 }

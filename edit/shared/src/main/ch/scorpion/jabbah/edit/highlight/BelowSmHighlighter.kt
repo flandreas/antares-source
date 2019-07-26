@@ -119,7 +119,7 @@ class BelowSmHighlighter(
 			if (highlight is Colorable) {
 				highlight.color = color
 			} else {
-				LOG.warn("BelowSmHighlighter: requested highlight color for non-colorable SelectionModel ${highlight::class.simpleName}")
+				LOG.warn("requested highlight color for non-colorable SelectionModel ${highlight::class.simpleName}")
 			}
 		}
 		highlights[c] = highlight

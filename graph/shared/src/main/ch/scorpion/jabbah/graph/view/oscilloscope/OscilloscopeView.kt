@@ -433,7 +433,7 @@ class OscilloscopeView(
 			val newLocation = Point2D(x, y).subtract(container.location)
 			if (scaleRow.contains(newLocation)) {
 				val dist = startLocation.subtract(newLocation).x
-				LOG.debug("OscilloscopeView: actor mouseDragged, dx = $dist")
+				LOG.debug("actor mouseDragged, dx = $dist")
 				timelineScale = Math.max(0.1, startScale + Math.floor(10 * dist / 50) / 10)
 				return this
 			}

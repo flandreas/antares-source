@@ -17,7 +17,7 @@ class UserHolder(
 	var u: User? = u
 		set(value) {
 			if (field != value) {
-				LOG.debug("UserHolder: setting current User")
+				LOG.debug("setting current User")
 				val oldValue = field
 				field = value
 				if (oldValue != null) {

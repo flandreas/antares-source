@@ -27,102 +27,103 @@ class SidebarPane(
 	private val isOpenChangeHandler: () -> Unit
 ) : JPanel() {
 
-    companion object {
-        private val LOG by logger(SidebarPane::class)
-    }
-
-    enum class Location {
-
-	    /** The [SidebarPane] is displayed at the bottom of the main content.*/
-        Bottom {
-
-		    override val iconPath: String = "/img/double-arrow-down-16.png"
-
-	        override fun createLabel(name: String, icon: Icon): JLabel {
-		        return JLabel(name, icon, SwingConstants.LEADING)
-	        }
-
-	        override fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel) {
-		        labelPanel.layout = BoxLayout(labelPanel, BoxLayout.X_AXIS)
-		        panel.add(labelPanel, BorderLayout.SOUTH)
-		        panel.add(contentPanel, BorderLayout.CENTER)
-	        }
-        },
-
-	    /** The [SidebarPane] is displayed at the right side of the main content.*/
-        Right {
-
-		    override val iconPath: String = "/img/double-arrow-right-16.png"
-
-	        override fun createLabel(name: String, icon: Icon): JLabel {
-		        return VerticalLabel.create(name, icon)
-	        }
-
-	        override fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel) {
-		        labelPanel.layout = BoxLayout(labelPanel, BoxLayout.Y_AXIS)
-		        panel.add(labelPanel, BorderLayout.EAST)
-		        panel.add(contentPanel, BorderLayout.CENTER)
-	        }
-        },
-
-	    /** The [SidebarPane] is displayed at the left side of the main content.*/
-	    Left {
-
-		    override val iconPath: String = "/img/double-arrow-left-16.png"
-
-	        override fun createLabel(name: String, icon: Icon): JLabel {
-		        return VerticalLabel.create(name, icon, clockwise = false)
-	        }
-
-	        override fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel) {
-		        labelPanel.layout = BoxLayout(labelPanel, BoxLayout.Y_AXIS)
-		        panel.add(labelPanel, BorderLayout.WEST)
-		        panel.add(contentPanel, BorderLayout.CENTER)
-	        }
-        };
-
-	    abstract fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel)
-	    abstract fun createLabel(name: String, icon: Icon): JLabel
-	    abstract val iconPath: String
-    }
-
-    /** Determines whether this [SidebarPane] is currently open, i.e. whether it displays one if its content views.*/
-    val isOpen: Boolean get() = current != null
-
-	/** Returns the index of the currently open content, of -1 if none is open.*/
-	val openIndex: Int get() {
-		if (current == null) {
-			return -1
-		}
-		return entries.indexOf(current!!)
+	companion object {
+		private val LOG by logger(SidebarPane::class)
 	}
 
-    /** The [JPanel] at the right side (or top side) containing the vertical (or horizontal) [JLabel]s. */
-    private val labelPanel = JPanel()
+	enum class Location {
 
-    /** Contains the content of the current [Entry] in the center and the title bar in the north. */
-    private val contentPanel = JPanel()
+		/** The [SidebarPane] is displayed at the bottom of the main content.*/
+		Bottom {
+
+			override val iconPath: String = "/img/double-arrow-down-16.png"
+
+			override fun createLabel(name: String, icon: Icon): JLabel {
+				return JLabel(name, icon, SwingConstants.LEADING)
+			}
+
+			override fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel) {
+				labelPanel.layout = BoxLayout(labelPanel, BoxLayout.X_AXIS)
+				panel.add(labelPanel, BorderLayout.SOUTH)
+				panel.add(contentPanel, BorderLayout.CENTER)
+			}
+		},
+
+		/** The [SidebarPane] is displayed at the right side of the main content.*/
+		Right {
+
+			override val iconPath: String = "/img/double-arrow-right-16.png"
+
+			override fun createLabel(name: String, icon: Icon): JLabel {
+				return VerticalLabel.create(name, icon)
+			}
+
+			override fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel) {
+				labelPanel.layout = BoxLayout(labelPanel, BoxLayout.Y_AXIS)
+				panel.add(labelPanel, BorderLayout.EAST)
+				panel.add(contentPanel, BorderLayout.CENTER)
+			}
+		},
+
+		/** The [SidebarPane] is displayed at the left side of the main content.*/
+		Left {
+
+			override val iconPath: String = "/img/double-arrow-left-16.png"
+
+			override fun createLabel(name: String, icon: Icon): JLabel {
+				return VerticalLabel.create(name, icon, clockwise = false)
+			}
+
+			override fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel) {
+				labelPanel.layout = BoxLayout(labelPanel, BoxLayout.Y_AXIS)
+				panel.add(labelPanel, BorderLayout.WEST)
+				panel.add(contentPanel, BorderLayout.CENTER)
+			}
+		};
+
+		abstract fun initUI(panel: JPanel, labelPanel: JPanel, contentPanel: JPanel)
+		abstract fun createLabel(name: String, icon: Icon): JLabel
+		abstract val iconPath: String
+	}
+
+	/** Determines whether this [SidebarPane] is currently open, i.e. whether it displays one if its content views.*/
+	val isOpen: Boolean get() = current != null
+
+	/** Returns the index of the currently open content, of -1 if none is open.*/
+	val openIndex: Int
+		get() {
+			if (current == null) {
+				return -1
+			}
+			return entries.indexOf(current!!)
+		}
+
+	/** The [JPanel] at the right side (or top side) containing the vertical (or horizontal) [JLabel]s. */
+	private val labelPanel = JPanel()
+
+	/** Contains the content of the current [Entry] in the center and the title bar in the north. */
+	private val contentPanel = JPanel()
 
 	/** Contains all [Entries][Entry] registered with [add].*/
-    private val entries = mutableListOf<Entry>()
+	private val entries = mutableListOf<Entry>()
 
-    private var current: Entry? = null
+	private var current: Entry? = null
 
-    private val labelListener = VerticalLabelListener()
+	private val labelListener = VerticalLabelListener()
 
 	private val collapseAction = CollapseAction()
 
 	init {
-        initUI()
-    }
+		initUI()
+	}
 
-    /** Adds a new content view to this [SidebarPane].*/
-    fun add(content: SidebarPaneContent) {
-	    val entry = Entry(content)
-        entries.add(entry)
-        entry.label.addMouseListener(labelListener)
-        labelPanel.add(entry.label)
-    }
+	/** Adds a new content view to this [SidebarPane].*/
+	fun add(content: SidebarPaneContent) {
+		val entry = Entry(content)
+		entries.add(entry)
+		entry.label.addMouseListener(labelListener)
+		labelPanel.add(entry.label)
+	}
 
 	/**
 	 * Opens the content with the specified index.
@@ -136,12 +137,12 @@ class SidebarPane(
 		}
 	}
 
-    private fun initUI() {
-        contentPanel.layout = BorderLayout()
+	private fun initUI() {
+		contentPanel.layout = BorderLayout()
 
-        layout = BorderLayout()
-	    location.initUI(this, labelPanel, contentPanel)
-    }
+		layout = BorderLayout()
+		location.initUI(this, labelPanel, contentPanel)
+	}
 
 	private inner class Entry(private val content: SidebarPaneContent) : PropertyChangeListener<Any> {
 
@@ -191,36 +192,36 @@ class SidebarPane(
 		}
 	}
 
-    private fun getEntry(label: JLabel): Entry = entries.first { it.label === label }
+	private fun getEntry(label: JLabel): Entry = entries.first { it.label === label }
 
-    private fun activate(entry: Entry?) {
-        LOG.debug("SidebarPanel: activate entry ${entry?.name}")
-        val changed = current != entry
+	private fun activate(entry: Entry?) {
+		LOG.debug("activate entry ${entry?.name}")
+		val changed = current != entry
 
-        if (current != null) {
-            contentPanel.remove(current!!.headerPanel)
-            contentPanel.remove(current!!.component)
-            current!!.label.background = background
-        }
-        current = entry
-        if (current != null) {
-	        current!!.update()
-            contentPanel.add(current!!.headerPanel, BorderLayout.NORTH)
-            contentPanel.add(current!!.component, BorderLayout.CENTER)
+		if (current != null) {
+			contentPanel.remove(current!!.headerPanel)
+			contentPanel.remove(current!!.component)
+			current!!.label.background = background
+		}
+		current = entry
+		if (current != null) {
+			current!!.update()
+			contentPanel.add(current!!.headerPanel, BorderLayout.NORTH)
+			contentPanel.add(current!!.component, BorderLayout.CENTER)
 
-	        current!!.label.background = Color(175, 175, 175)
-        }
-        if (changed) {
-            isOpenChangeHandler.invoke()
-        }
-        revalidate()
-        repaint()
-    }
+			current!!.label.background = Color(175, 175, 175)
+		}
+		if (changed) {
+			isOpenChangeHandler.invoke()
+		}
+		revalidate()
+		repaint()
+	}
 
-    private fun collapse() {
-        LOG.debug("SidebarPanel: collapse")
-        activate(null)
-    }
+	private fun collapse() {
+		LOG.debug("collapse")
+		activate(null)
+	}
 
 	private inner class CollapseAction : AbstractAction("graph.action.collapse") {
 
@@ -233,31 +234,31 @@ class SidebarPane(
 		}
 	}
 
-    private inner class VerticalLabelListener : MouseAdapter() {
+	private inner class VerticalLabelListener : MouseAdapter() {
 
-        override fun mouseEntered(e: MouseEvent?) {
-            if (!isCurrent(e!!)) {
-	            (e.source as JComponent).background = UiUtil.getBackgroundDivertColor(this@SidebarPane)
-            }
-        }
+		override fun mouseEntered(e: MouseEvent?) {
+			if (!isCurrent(e!!)) {
+				(e.source as JComponent).background = UiUtil.getBackgroundDivertColor(this@SidebarPane)
+			}
+		}
 
-        override fun mouseExited(e: MouseEvent?) {
-            if (!isCurrent(e!!)) {
-                (e.source as JComponent).background = this@SidebarPane.background
-            }
-        }
+		override fun mouseExited(e: MouseEvent?) {
+			if (!isCurrent(e!!)) {
+				(e.source as JComponent).background = this@SidebarPane.background
+			}
+		}
 
-        override fun mouseClicked(e: MouseEvent?) {
-            val clickedEntry = getEntry(e!!.source as JLabel)
-            if (isOpen && clickedEntry == current) {
-                activate(null)
-            } else {
-                activate(clickedEntry)
-            }
-        }
+		override fun mouseClicked(e: MouseEvent?) {
+			val clickedEntry = getEntry(e!!.source as JLabel)
+			if (isOpen && clickedEntry == current) {
+				activate(null)
+			} else {
+				activate(clickedEntry)
+			}
+		}
 
-        private fun isCurrent(e: MouseEvent): Boolean {
-            return current != null && current!!.label === e.source
-        }
-    }
+		private fun isCurrent(e: MouseEvent): Boolean {
+			return current != null && current!!.label === e.source
+		}
+	}
 }

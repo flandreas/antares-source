@@ -32,10 +32,11 @@ class PreferencesTreePanel(
 	/** Maps a [PreferenceGroup] to its lazily created [PreferencesPanel].*/
 	private val panels = mutableMapOf<PreferenceGroup, PreferencesPanel>()
 
-	private val selectedGroup: PreferenceGroup? get() {
-		val path = tree.selectionPath ?: return null
-		return (path.lastPathComponent as DefaultMutableTreeNode).userObject as PreferenceGroup?
-	}
+	private val selectedGroup: PreferenceGroup?
+		get() {
+			val path = tree.selectionPath ?: return null
+			return (path.lastPathComponent as DefaultMutableTreeNode).userObject as PreferenceGroup?
+		}
 
 	private val localPreferences = ChangeInterceptingPreferences()
 
@@ -64,7 +65,7 @@ class PreferencesTreePanel(
 	}
 
 	fun applyChanges() {
-		LOG.debug("PreferencesTreePanel: applying ${localPreferences.size} changes")
+		LOG.debug("applying ${localPreferences.size} changes")
 		localPreferences.flush()
 		changed = false
 		eventBus.post(PreferencesChangedEvent(origPreferences))
@@ -139,7 +140,7 @@ class PreferencesTreePanel(
 		}
 
 		override fun customize(name: String, value: Any) {
-			LOG.debug("PreferencesTreePanel: customizing property '$name' with '$value'")
+			LOG.debug("customizing property '$name' with '$value'")
 			accumulator.customize(name, value)
 			changed = true
 		}
@@ -184,7 +185,7 @@ class PreferencesDialogPanel(
 
 	private val closeAction = object : AbstractAction("base.action.close") {
 		override fun execute(event: ActionEvent) {
-			LOG.debug("PreferencesDialogPanel: closeAction")
+			LOG.debug("closeAction")
 			closeHandler.invoke()
 		}
 	}

@@ -97,7 +97,7 @@ abstract class AbstractPropertyPanel(
 			@Suppress("UNCHECKED_CAST")
 			val beanInfo = beanInfoClass.getDeclaredConstructor().newInstance() as AbstractBeanInfo<Any>
 
-			LOG.debug("PropertyPanel: updating properties for $beanInfoClass")
+			LOG.debug("updating properties for $beanInfoClass")
 
 			sheet.properties = beanInfo.getProperties(bean, editor)
 

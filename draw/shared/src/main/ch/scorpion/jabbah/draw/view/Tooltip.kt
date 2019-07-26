@@ -212,14 +212,14 @@ object TooltipManager {
 		if (textTooltip != null || explanationTooltip != null) {
 			disposeTooltip()
 		}
-		LOG.debug("TooltipManager.tooltipRequested  for text '${event.tooltip!!.text}' and explanation ${event.explanation}")
+		LOG.debug("tooltipRequested  for text '${event.tooltip!!.text}' and explanation ${event.explanation}")
 		request = TooltipRequest(event.origin!!, event.view, event.tooltip, event.explanation)
 		timer.start()
 	}
 
 	private fun tooltipDismissed() {
 		if (textTooltip != null || explanationTooltip != null) {
-			LOG.debug("TooltipManager.tooltipDismissed()")
+			LOG.debug("tooltipDismissed()")
 			disposeTooltip()
 		}
 		if (timer.isRunning()) {
@@ -229,7 +229,7 @@ object TooltipManager {
 
 	/** Called by the [timer] in order to effectively display the textTooltip, if still needed. */
 	private fun displayImpl() {
-		LOG.debug("TooltipManager.displayImpl")
+		LOG.debug("displayImpl")
 		request?.let {
 			disposeTooltip()
 			if (it.tooltip != null) {
@@ -248,7 +248,7 @@ object TooltipManager {
 	}
 
 	private fun disposeTooltip() {
-		LOG.debug("TooltipManager.disposeTooltip")
+		LOG.debug("disposeTooltip")
 		textTooltip?.let {
 			it.view.overlayContainer.remove(it.arrowBubble)
 			it.view.overlayContainer.validate()

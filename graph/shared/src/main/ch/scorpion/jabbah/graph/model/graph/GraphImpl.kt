@@ -284,7 +284,7 @@ open class GraphImpl(
 	/** Forwards signal changes of a [OscilloscopeProbeVertice] to the [Oscilloscope].*/
 	private inner class OscilloscopeProbeHandler : GraphElementAdapter() {
 		override fun stateChanged(e: GraphElementEvent) {
-			LOG.debug("OscilloscopeProbeHandler: stateChanged")
+			LOG.debug("stateChanged")
 			val probePort = (e.element as OscilloscopeProbeVertice<*>).getInput<Any>()
 			if (probePort.getIncomingSignal() != null && e.signalHandler != null) {
 				val oscilloscopePort = getOscilloscope()?.getPort<Any>(probePort.name!!) as InputPort<Any>

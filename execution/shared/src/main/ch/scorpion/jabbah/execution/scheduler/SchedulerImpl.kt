@@ -422,7 +422,7 @@ class SchedulerImpl(
 
 		private fun calculateTimerInterval(): Int {
 			val interval = max(1.0, SLOWDOWN_FACTOR * (SystemSpeed.MAX_SPEED - currentSystemSpeedCategory.systemSpeed.speed)).toInt()
-			LOG.debug("SchedulerImpl: interval = $interval")
+			LOG.debug("interval = $interval")
 			return interval
 		}
 

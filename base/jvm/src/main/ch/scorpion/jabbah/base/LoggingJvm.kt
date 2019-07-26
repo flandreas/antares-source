@@ -19,7 +19,9 @@ import kotlin.reflect.full.companionObject
  */
 class LogSystemJVM : LogSystem {
 
-	private val LOG: Logger = LoggerJvm(LoggerFactory.getLogger(LogSystemJVM::class.simpleName))
+	companion object {
+		private val LOG: Logger = LoggerJvm(LoggerFactory.getLogger(LogSystemJVM::class.simpleName))
+	}
 
 	private val propertyValue: LogLevel get() = valueOf(BaseModule.properties.getString(PROP_LOG_LEVEL))
 
@@ -27,7 +29,7 @@ class LogSystemJVM : LogSystem {
 		get() = propertyValue
 		set(value) {
 			if (value != fromLog4jLevel(getRootLogger().level)) {
-				LOG.info("LogSystemJVM: Setting log level to $value")
+				LOG.info("Setting log level to $value")
 				getRootLogger().level = toLog4jLevel(value)
 				BaseModule.properties.customize(PROP_LOG_LEVEL, value.name)
 			}
@@ -38,13 +40,13 @@ class LogSystemJVM : LogSystem {
 	}
 
 	/** Unwrap companion class to enclosing class given a Java class.*/
-    private fun <T: Any> unwrapCompanionClass(ofClass: Class<T>): Class<*> {
-        return if (ofClass.enclosingClass != null && ofClass.enclosingClass.kotlin.companionObject?.java == ofClass) {
-            ofClass.enclosingClass
-        } else {
-            ofClass
-        }
-    }
+	private fun <T : Any> unwrapCompanionClass(ofClass: Class<T>): Class<*> {
+		return if (ofClass.enclosingClass != null && ofClass.enclosingClass.kotlin.companionObject?.java == ofClass) {
+			ofClass.enclosingClass
+		} else {
+			ofClass
+		}
+	}
 
 	private fun toLog4jLevel(level: LogLevel): org.apache.log4j.Level {
 		return when (level) {
@@ -74,49 +76,49 @@ class LoggerJvm(private val slf4jLogger: org.slf4j.Logger) : Logger {
 		private val FQCN = LoggerJvm::class.java.name
 	}
 
-    override fun info(msg: String) {
-	    if (slf4jLogger is LocationAwareLogger) {
-		    slf4jLogger.log(null, FQCN, LocationAwareLogger.INFO_INT, msg, null, null)
-	    } else {
-	        slf4jLogger.info(msg)
-	    }
-    }
+	override fun info(msg: String) {
+		if (slf4jLogger is LocationAwareLogger) {
+			slf4jLogger.log(null, FQCN, LocationAwareLogger.INFO_INT, msg, null, null)
+		} else {
+			slf4jLogger.info(msg)
+		}
+	}
 
-    override fun warn(msg: String) {
-	    if (slf4jLogger is LocationAwareLogger) {
-		    slf4jLogger.log(null, FQCN, LocationAwareLogger.WARN_INT, msg, null, null)
-	    } else {
-		    slf4jLogger.warn(msg)
-	    }
-    }
+	override fun warn(msg: String) {
+		if (slf4jLogger is LocationAwareLogger) {
+			slf4jLogger.log(null, FQCN, LocationAwareLogger.WARN_INT, msg, null, null)
+		} else {
+			slf4jLogger.warn(msg)
+		}
+	}
 
-    override fun error(msg: String) {
-	    if (slf4jLogger is LocationAwareLogger) {
-		    slf4jLogger.log(null, FQCN, LocationAwareLogger.ERROR_INT, msg, null, null)
-	    } else {
-		    slf4jLogger.error(msg)
-	    }
-    }
+	override fun error(msg: String) {
+		if (slf4jLogger is LocationAwareLogger) {
+			slf4jLogger.log(null, FQCN, LocationAwareLogger.ERROR_INT, msg, null, null)
+		} else {
+			slf4jLogger.error(msg)
+		}
+	}
 
-    override fun debug(msg: String) {
-	    if (slf4jLogger is LocationAwareLogger) {
-		    slf4jLogger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, msg, null, null)
-	    } else {
-		    slf4jLogger.debug(msg)
-	    }
-    }
+	override fun debug(msg: String) {
+		if (slf4jLogger is LocationAwareLogger) {
+			slf4jLogger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, msg, null, null)
+		} else {
+			slf4jLogger.debug(msg)
+		}
+	}
 
-    override fun trace(msg: String) {
-	    if (slf4jLogger is LocationAwareLogger) {
-		    slf4jLogger.log(null, FQCN, LocationAwareLogger.TRACE_INT, msg, null, null)
-	    } else {
-		    slf4jLogger.trace(msg)
-	    }
-    }
+	override fun trace(msg: String) {
+		if (slf4jLogger is LocationAwareLogger) {
+			slf4jLogger.log(null, FQCN, LocationAwareLogger.TRACE_INT, msg, null, null)
+		} else {
+			slf4jLogger.trace(msg)
+		}
+	}
 
-    override fun isTraceEnabled(): Boolean = slf4jLogger.isTraceEnabled
+	override fun isTraceEnabled(): Boolean = slf4jLogger.isTraceEnabled
 
-    override fun isDebugEnabled(): Boolean = slf4jLogger.isDebugEnabled
+	override fun isDebugEnabled(): Boolean = slf4jLogger.isDebugEnabled
 }
 
 class LogLevelPreference(
@@ -134,7 +136,7 @@ class LogLevelPreference(
 				panel?.preferences?.customize(id, (editor.selectedItem as LogLevel).name)
 			}
 		}
-		eventBus.register(PreferencesChangedEvent::class) { LOG_SYSTEM?.level = valueOf(BaseModule.properties.getString(PROP_LOG_LEVEL))}
+		eventBus.register(PreferencesChangedEvent::class) { LOG_SYSTEM?.level = valueOf(BaseModule.properties.getString(PROP_LOG_LEVEL)) }
 	}
 
 	override fun addToPanel(panel: PreferencesPanel) {

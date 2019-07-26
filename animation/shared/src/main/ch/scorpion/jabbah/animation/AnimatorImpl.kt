@@ -95,7 +95,7 @@ class AnimatorImpl(
 	 * isRunning [AnimationTask] on step further.
 	 */
 	private fun animationStep() {
-		LOG.trace("AnimatorImpl: animationStep")
+		LOG.trace("animationStep")
 		jobs.toList()
 			.filter { jobs.contains(it) && it.isRunning }
 			.forEach { it.animate() }
@@ -121,7 +121,7 @@ class AnimatorImpl(
 	}
 
 	private fun resumeSuspendedJobs() {
-		LOG.debug("AnimatorImpl: resume suspended Jobs")
+		LOG.debug("resume suspended Jobs")
 		jobs.filter { it.isSuspended }.forEach { it.resume() }
 		startTimerIfNeeded()
 	}
@@ -164,7 +164,7 @@ class AnimatorImpl(
 		}
 
 		fun suspend() {
-			LOG.debug("AnimatorImpl: suspending job")
+			LOG.debug("suspending job")
 			state = State.Suspended
 		}
 
@@ -173,7 +173,7 @@ class AnimatorImpl(
 		}
 
 		fun resume() {
-			LOG.debug("AnimatorImpl: resuming job")
+			LOG.debug("resuming job")
 			state = State.Running
 		}
 

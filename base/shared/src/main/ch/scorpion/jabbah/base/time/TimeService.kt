@@ -8,11 +8,11 @@ import ch.scorpion.jabbah.base.logger
 /** A service that provides the current time.*/
 interface TimeService {
 
-    /** Returns the current time in milliseconds.*/
-    fun nowMillis(): Long
+	/** Returns the current time in milliseconds.*/
+	fun nowMillis(): Long
 
-    /** Returns the current time in nanoseconds.*/
-    fun nowNanos(): Long
+	/** Returns the current time in nanoseconds.*/
+	fun nowNanos(): Long
 }
 
 /**
@@ -21,48 +21,46 @@ interface TimeService {
  */
 class ControlledTimeService : TimeService {
 
-    private val LOG by logger(ControlledTimeService::class)
+	companion object {
+		private val LOG by logger(ControlledTimeService::class)
+		const val PROP_TIME = "time"
+	}
 
-    companion object {
-        /** The name of the time property.*/
-        val PROP_TIME = "time"
-    }
+	private var pcSupport: PropertyChangeSupport<Long> = PropertyChangeSupport(this)
 
-    private var pcSupport: PropertyChangeSupport<Long> = PropertyChangeSupport(this)
+	/** Holds the current time in nanoseconds.*/
+	private var _timeNanos: Long = 0
 
-    /** Holds the current time in nanoseconds.*/
-    private var _timeNanos: Long = 0
+	/** ---- [TimeService] interface */
 
-    /** ---- [TimeService] interface */
+	override fun nowMillis(): Long = _timeNanos / 1_000_000
 
-    override fun nowMillis(): Long = _timeNanos / 1_000_000
+	override fun nowNanos(): Long = _timeNanos
 
-    override fun nowNanos(): Long = _timeNanos
+	/** ---- [ControlledTimeService] */
 
-    /** ---- [ControlledTimeService] */
+	fun reset() {
+		val oldValue = _timeNanos
+		_timeNanos = 0
+		pcSupport.fire(PROP_TIME, oldValue, _timeNanos)
+	}
 
-    fun reset() {
-        val oldValue = _timeNanos
-        _timeNanos = 0
-        pcSupport.fire(PROP_TIME, oldValue, _timeNanos)
-    }
+	fun setTimeMillis(timeMillis: Long) {
+		setTimeNanos(1_000_000 * timeMillis)
+	}
 
-    fun setTimeMillis(timeMillis: Long) {
-        setTimeNanos(1_000_000 * timeMillis)
-    }
+	fun setTimeNanos(timeNanos: Long) {
+		if (timeNanos < _timeNanos) {
+			throw IllegalArgumentException("Time can only flow forward")
+		}
+		val oldValue = _timeNanos
+		_timeNanos = timeNanos
+		pcSupport.fire(PROP_TIME, oldValue, _timeNanos)
 
-    fun setTimeNanos(timeNanos: Long) {
-        if (timeNanos < _timeNanos) {
-            throw IllegalArgumentException("Time can only flow forward")
-        }
-        val oldValue = _timeNanos
-        _timeNanos = timeNanos
-        pcSupport.fire(PROP_TIME, oldValue, _timeNanos)
+		LOG.debug("Fired TimeEvent at $_timeNanos ns")
+	}
 
-        LOG.debug("ControlledTimeService: Fired TimeEvent at $_timeNanos ns")
-    }
+	fun addPropertyChangeListener(l: PropertyChangeListener<Long>) = pcSupport.add(l)
 
-    fun addPropertyChangeListener(l: PropertyChangeListener<Long>) = pcSupport.add(l)
-
-    fun removePropertyChangeListener(l: PropertyChangeListener<Long>) = pcSupport.remove(l)
+	fun removePropertyChangeListener(l: PropertyChangeListener<Long>) = pcSupport.remove(l)
 }
