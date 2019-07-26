@@ -161,6 +161,8 @@ class GraphPanel(
 			}
 		}
 
+	val showsNavigationRoot: Boolean get() = graphEditPanel.graphNavigationPanel.showsNavigationRoot
+
 	init {
 
 		desktopController.view = desktop

@@ -59,6 +59,8 @@ class GraphFrameSwing(
 
 	override val containerView: View<*> get() = containerPanel.editor.view
 
+	override val desktopViewShowsNavigationRoot: Boolean get() = graphPanel.showsNavigationRoot
+
 	override fun showDesktop() {
 		if (displayedView == GraphFrame.DisplayedView.Desktop) {
 			return

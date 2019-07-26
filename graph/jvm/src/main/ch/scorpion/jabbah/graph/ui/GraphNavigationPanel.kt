@@ -112,6 +112,8 @@ class GraphNavigationPanel(
 
 	private val extension = extensionFactory.invoke(this)
 
+	val showsNavigationRoot: Boolean get() = navigationStackViewController.navigationStack.size == 1
+
 	init {
 		navigationStackViewController.view = navigationStackView
 

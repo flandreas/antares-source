@@ -35,6 +35,8 @@ interface GraphFrame {
 
 	val containerView: View<*>
 
+	val desktopViewShowsNavigationRoot: Boolean
+
 	fun dispose()
 
 	fun showDesktop()
@@ -104,7 +106,7 @@ class GraphFrameController(
 	private val zoomEventHandler = object : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 			if (e.name == View.PROP_ZOOM_PAN && properties.getBoolean(PROP_AUTO_SWITCH)) {
-				if (e.source === view.desktopView) {
+				if (e.source === view.desktopView && view.desktopViewShowsNavigationRoot) {
 					if (view.desktopView.zoomFactor <= SWITCH_TO_CONTAINER_ZOOM_FACTOR_PERCENTAGE * properties.getFloat(View.PROP_MIN_ZOOM_FACTOR)) {
 						view.showContainer()
 					}
