@@ -28,7 +28,7 @@ object BaseModuleJvm : AbstractModule() {
 		BaseModule.timeService = RealTimeServiceJvm()
 		BaseModule.require()
 
-		buildPropertyTree(preferencesTree)
+		buildPreferencesTree(preferencesTree)
 	}
 
 	private fun defineKeyCodes() {
@@ -57,7 +57,7 @@ object BaseModuleJvm : AbstractModule() {
 		KeyEvent.VK_ENTER = KeyCode.ENTER.ordinal
 	}
 
-	private fun buildPropertyTree(root: PreferenceGroup) {
+	private fun buildPreferencesTree(root: PreferenceGroup) {
 		root.add(PreferenceGroup(PREF_TREE_GENERAL))
 
 		root.getGroup(PREF_TREE_GENERAL).add(LogLevelPreference())

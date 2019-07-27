@@ -50,7 +50,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
 
-		buildPropertyTree(BaseModuleJvm.preferencesTree)
+		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 	}
 
 	private fun fillProperties(properties: Properties) {
@@ -91,7 +91,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.ABOVE, TextComponentJvm::class.simpleName!!) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
 	}
 
-	private fun buildPropertyTree(root: PreferenceGroup) {
+	private fun buildPreferencesTree(root: PreferenceGroup) {
 		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(
 			id = GraphNavigationPanel.PROP_DIVE_ANIMATION,
 			nameKey = "graph.preferences.GraphNavigationPanel.diveAnimation"

@@ -179,7 +179,7 @@ class DipSwitchView(
 			}
 		}
 		super.drawImpl(context)
-		drawFill(context, bounds, context.choose(color).backgroundColor)
+		drawFill(context, bounds, if (context.useContextColors) context.choose(color).backgroundColor else propertiesBackgroundColor)
 		drawStroke(context, bounds, context.choose(color).foregroundColor, stroke)
 		bitViews.forEach {
 			it.draw(context)

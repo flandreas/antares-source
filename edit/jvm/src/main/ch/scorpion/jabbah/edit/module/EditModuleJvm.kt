@@ -60,7 +60,7 @@ object EditModuleJvm : AbstractModule() {
 	    registerPropertyEditorsFx(propertyEditorRegistryFx)
 	    registerSelectionModels()
 
-	    buildPropertyTree(BaseModuleJvm.preferencesTree)
+	    buildPreferencesTree(BaseModuleJvm.preferencesTree)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -108,7 +108,7 @@ object EditModuleJvm : AbstractModule() {
 	    ) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent, drawStrategy = RectangularReplaceSelectionModel.DrawStrategy.COMPONENT) }
     }
 
-	private fun buildPropertyTree(root: PreferenceGroup) {
+	private fun buildPreferencesTree(root: PreferenceGroup) {
 		root.add(PreferenceGroup(PREF_TREE_EDITOR))
 
 		root.getGroup(PREF_TREE_EDITOR).add(IntPreference(

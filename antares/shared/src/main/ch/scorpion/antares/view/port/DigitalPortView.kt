@@ -450,7 +450,12 @@ class DigitalPortView(
 			logicX += LOGIC_SIZE * direction.previous().dx / 2
 			logicY += LOGIC_SIZE * direction.previous().dy / 2
 
-			context.g.color = transparent.applyTo(context.choose(context.styleColor(styleProvider.getStyle(StyleType.BACKGROUND).color)).backgroundColor)
+			val fillColor = if (Look.FILL_BASIC_COMPONENTS) {
+				context.styleColor(styleProvider.getStyle(StyleType.BACKGROUND).color)
+			} else {
+				styleProvider.getStyle(StyleType.BACKGROUND).color
+			}
+			context.g.color = transparent.applyTo(context.choose(fillColor).backgroundColor)
 			context.g.fillOval(logicX, logicY, LOGIC_SIZE, LOGIC_SIZE)
 
 			context.g.stroke = Themes.get<AntaresTheme>().figure.stroke

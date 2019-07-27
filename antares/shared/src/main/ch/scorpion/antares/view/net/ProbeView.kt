@@ -225,7 +225,7 @@ class ProbeView(
         if (context.useContextColors) {
             drawEdited(context, context.color!!.foregroundColor, context.color!!.backgroundColor, context.color!!.textColor)
         } else {
-            drawEdited(context, foregroundColor, if (filled) backgroundColor else null, styleProvider.getStyle(StyleType.BACKGROUND).color.textColor)
+            drawEdited(context, foregroundColor, propertiesBackgroundColor, styleProvider.getStyle(StyleType.BACKGROUND).color.textColor)
         }
     }
 

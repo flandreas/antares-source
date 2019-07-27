@@ -271,7 +271,7 @@ class RAMView(
 		if (context.useContextColors) {
 			drawImpl(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
 		} else {
-			drawImpl(context, foregroundColor, if (filled) backgroundColor else null)
+			drawImpl(context, foregroundColor, propertiesBackgroundColor)
 		}
 	}
 

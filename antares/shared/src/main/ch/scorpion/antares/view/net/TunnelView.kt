@@ -93,7 +93,11 @@ class TunnelView(
 			}
 		}
 
-		context.g.color = context.choose(color).backgroundColor
+		context.g.color = if (context.useContextColors) {
+			context.color!!.backgroundColor
+		} else {
+			propertiesBackgroundColor
+		}
 		context.g.fillRect(xInt, yInt, SIZE, SIZE)
 
 		context.g.color = context.choose(color).foregroundColor

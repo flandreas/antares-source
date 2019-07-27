@@ -99,6 +99,8 @@ class CircuitInOutView(
 
 	private val actorInteractionHandler = InteractionHandler()
 
+	private val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
+
 	private val label = Label(
 		font = font,
 		text = model.name)
@@ -235,7 +237,7 @@ class CircuitInOutView(
 			if (context.useContextColors) {
 				drawEdited(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
 			} else {
-				drawEdited(context, foregroundColor, if (filled) backgroundColor else null)
+				drawEdited(context, foregroundColor, propertiesBackgroundColor)
 			}
 		}
 
@@ -287,7 +289,7 @@ class CircuitInOutView(
 
 	private fun drawSimulated(context: DrawContext) {
 		if (model!!.signal!!.getBitWidth().width > 1) {
-			drawEdited(context, model!!.signal!!.getColor().foregroundColor, backgroundColor)
+			drawEdited(context, model!!.signal!!.getColor().foregroundColor, propertiesBackgroundColor)
 		} else {
 			drawEdited(context,
 				model!!.signal!!.getColor().backgroundColor,

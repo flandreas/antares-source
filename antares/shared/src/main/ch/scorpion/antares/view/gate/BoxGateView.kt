@@ -132,7 +132,7 @@ open class BoxGateView<T : Vertice>(
 		if (context.useContextColors) {
 			drawShape(context, transparent.applyTo(context.color!!.foregroundColor), transparent.applyTo(context.color!!.backgroundColor), stroke)
 		} else {
-			drawShape(context, transparent.applyTo(foregroundColor), transparent.applyTo(backgroundColor), stroke)
+			drawShape(context, transparent.applyTo(foregroundColor), transparent.applyTo(propertiesBackgroundColor), stroke)
 		}
 
 		context.stylable = this

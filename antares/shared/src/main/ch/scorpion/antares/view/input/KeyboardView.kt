@@ -66,6 +66,8 @@ class KeyboardView(
 		verticalAlignment = VerticalAlignment.CENTER,
 		location = Point2D(DigitalPortView.LENGTH + INSET + TEXT_INSET, 0))
 
+	private val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
+
 	init {
 		isFocusable = true
 		modelExchanged(null)
@@ -213,7 +215,7 @@ class KeyboardView(
 			}
 		}
 
-		drawFill(context, bounds, context.choose(color).backgroundColor)
+		drawFill(context, bounds, if (context.useContextColors) context.choose(color).backgroundColor else propertiesBackgroundColor)
 		drawStroke(context, bounds, context.choose(color).foregroundColor, stroke)
 
 		context.g.color = context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor

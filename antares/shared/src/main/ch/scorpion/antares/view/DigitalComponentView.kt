@@ -2,6 +2,7 @@ package ch.scorpion.antares.view
 
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 
@@ -38,7 +39,9 @@ open class DigitalComponentView<T : Vertice>(
         }
     }
 
-    /** ---- Properties to be edited by the User */
+	protected val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
+
+	/** ---- Properties to be edited by the User */
 
     open var orientation: Direction
         get() = Direction.of(rotation)

@@ -1,10 +1,18 @@
 package ch.scorpion.antares.view
 
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 
 object Look {
+
+	const val PROP_FILL_BASIC_COMPONENTS = "antares.view.fillBasicComponents"
+
+	var FILL_BASIC_COMPONENTS = true
+		private set
 
 	const val SCALE: Int = 7
 	const val GRID: Int = 1 * SCALE
@@ -14,6 +22,15 @@ object Look {
 	val EXT_PIN_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.5 * SCALE).toInt())
 	val ANNOTATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.4 * SCALE).toInt())
 	val ADDRESSABLE_CONTENTS_FONT = FontImpl(FontFamily.MONOSPACED, FontStyle.PLAIN.value, (1.8 * SCALE).toInt())
+
+	fun initialize(eventBus: EventBus) {
+		eventBus.register(PreferencesChangedEvent::class) { updateFillBasicComponents() }
+		updateFillBasicComponents()
+	}
+
+	private fun updateFillBasicComponents() {
+		FILL_BASIC_COMPONENTS = BaseModule.properties.getBoolean(PROP_FILL_BASIC_COMPONENTS)
+	}
 
 	fun scaleToGrid(value: Int): Int {
 		return GRID * Math.ceil(value.toDouble() / GRID).toInt()

@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
+import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
@@ -87,7 +88,7 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
 
-		buildPropertyTree(BaseModuleJvm.preferencesTree)
+		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 	}
 
 	private fun createGraphEditor(eventBus: EventBus): GraphEditor {
@@ -140,7 +141,12 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		registry.registerEditor(OutputAnnotation::class.java, OutputAnnotationEditor::class.java)
 	}
 
-	private fun buildPropertyTree(root: PreferenceGroup) {
+	private fun buildPreferencesTree(root: PreferenceGroup) {
+		root.getGroup(DrawModuleJvm.PREF_TREE_RENDERING).add(BooleanPreference(
+			id = Look.PROP_FILL_BASIC_COMPONENTS,
+			nameKey = "antares.preference.fillBasicComponents"
+		))
+
 		root.add(PreferenceGroup(PREF_TREE_CIRCUIT))
 
 		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(

@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.graph.GraphApplicationContext
@@ -70,6 +71,8 @@ class TerminalView(
 				validate()
 			}
 		}
+
+	private val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 
 	init {
 		modelExchanged(null)
@@ -209,7 +212,7 @@ class TerminalView(
 			}
 		}
 
-		drawFill(context, rectangle, context.choose(color).backgroundColor)
+		drawFill(context, rectangle, if (context.useContextColors) context.choose(color).backgroundColor else propertiesBackgroundColor)
 		drawStroke(context, rectangle, context.choose(color).foregroundColor, stroke)
 	}
 

@@ -10,6 +10,8 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.draw.graphics.DropShadow
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
 
 /**
@@ -163,7 +165,7 @@ enum class SymbolStyle(val customName: String) {
 				}
 			}
 
-			context.g.color = backgroundColor
+			context.g.color = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 			context.g.fill(path)
 			context.g.color = foregroundColor
 			context.g.stroke = stroke

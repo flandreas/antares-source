@@ -45,14 +45,14 @@ object DrawModuleJvm : AbstractModule() {
         DrawModule.require()
 
         fillProperties(DrawModule.properties)
-	    buildPropertyTree(BaseModuleJvm.preferencesTree)
+	    buildPreferencesTree(BaseModuleJvm.preferencesTree)
     }
 
     private fun fillProperties(properties: Properties) {
         properties.set(AbstractViewAction.PROP_ZOOM_STEP, 1.5f)
     }
 
-	private fun buildPropertyTree(root: PreferenceGroup) {
+	private fun buildPreferencesTree(root: PreferenceGroup) {
 		root.add(PreferenceGroup(PREF_TREE_RENDERING))
 		root.add(PreferenceGroup(PREF_TREE_VIEW))
 		root.getGroup(PREF_TREE_VIEW).add(PreferenceGroup(PREF_TREE_VIEW_NAVIGATION))
