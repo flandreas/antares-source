@@ -21,14 +21,16 @@ class LEDView(
     model: LED = LED(),
     lightColor: LightColor = DEFAULT_LIGHT_COLOR,
     private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractLEDView<LED>(styleProvider, model), ControlView<LED>, ControlViewSource<LED>{
+) : AbstractLEDView<LED>(styleProvider, model), LightEmitter, ControlView<LED>, ControlViewSource<LED> {
 
     companion object {
         const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDView.iconPath"
         private val DEFAULT_LIGHT_COLOR = LightColor.RED
     }
 
-    var lightColor: LightColor = lightColor
+	/** ---- [LightEmitter]  */
+
+    override var lightColor: LightColor = lightColor
         set(value) {
 	        if (field != value) {
 		        invalidate()

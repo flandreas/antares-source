@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.script.AntaresScriptGateway
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
 import ch.scorpion.antares.view.gate.*
@@ -42,6 +43,7 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.app.GraphViewService
 import ch.scorpion.jabbah.graph.view.editor.AutoConnectorHighlight
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.DragEdgePointHighlight
@@ -102,7 +104,9 @@ object AntaresViewModule : AbstractModule() {
 			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
 			drawingView
 		}
+		EditModule.drawingService = AntaresGraphViewService()
 
+		GraphViewModule.graphViewService = EditModule.drawingService as GraphViewService
 		GraphViewModule.portViewFactory = DigitalPortViewFactory(DrawStyleModule.styleProvider)
 		GraphViewModule.oscilloscopeViewFactory = DigitalOscilloscopeViewFactory()
 		val edgeViewFactory = DigitalEdgeViewFactory(
@@ -172,6 +176,8 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(KeyboardView.PROP_ICON_PATH, "/img/keyboard.png")
 
 		properties.set(AndGateView.PROP_DATA_FLOW_ENABLED, true)
+
+		properties.set(LightColor.PROP_DEFAULT_LIGHT_COLOR, LightColor.RED)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

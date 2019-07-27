@@ -22,7 +22,7 @@ interface GraphViewService : DrawingService {
 	// TODO More service methods
 }
 
-class GraphViewServiceImpl(
+open class GraphViewServiceImpl(
 	private val commandManager: CommandManager = EditModule.commandManager,
 	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
 ) : DrawingServiceImpl(commandManager), GraphViewService {

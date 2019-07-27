@@ -43,7 +43,7 @@ class SevenSegmentDisplayView(
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : DigitalComponentView<SevenSegmentDisplay>(styleProvider, model),
-	ControlView<SevenSegmentDisplay>, ControlViewSource<SevenSegmentDisplay> {
+	LightEmitter, ControlView<SevenSegmentDisplay>, ControlViewSource<SevenSegmentDisplay> {
 
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.SevenSegmentDisplayView.iconPath"
@@ -56,7 +56,7 @@ class SevenSegmentDisplayView(
 			Size.LARGE to Geometry(factor = 2.0f))
 	}
 
-	var lightColor: LightColor = lightColor
+	override var lightColor: LightColor = lightColor
 		set(value) {
 			if (field != value) {
 				invalidate()

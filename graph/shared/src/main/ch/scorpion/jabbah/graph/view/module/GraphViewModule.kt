@@ -107,7 +107,7 @@ object GraphViewModule : AbstractModule() {
 			{ nodeViewFactory })
 	}
 
-	val graphViewService: GraphViewService = GraphViewServiceImpl(EditModule.commandManager)
+	var graphViewService: GraphViewService = GraphViewServiceImpl(EditModule.commandManager)
 
 	/** Must be specified by higher application layers.*/
 	var oscilloscopeViewFactory: OscilloscopeViewFactory = UndefinedOscilloscopeViewFactory()

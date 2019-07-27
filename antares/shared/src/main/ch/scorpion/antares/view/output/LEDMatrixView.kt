@@ -38,7 +38,7 @@ class LEDMatrixView(
 	model: LEDMatrix = LEDMatrix(),
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : DigitalComponentView<LEDMatrix>(styleProvider, model), ControlView<LEDMatrix>, ControlViewSource<LEDMatrix> {
+) : DigitalComponentView<LEDMatrix>(styleProvider, model), LightEmitter, ControlView<LEDMatrix>, ControlViewSource<LEDMatrix> {
 
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDMatrixView.iconPath"
@@ -49,7 +49,7 @@ class LEDMatrixView(
 		private const val DOT_SIZE = Look.SCALE
 	}
 
-	var lightColor: LightColor = lightColor
+	override var lightColor: LightColor = lightColor
 		set(value) {
 			invalidate()
 			field = value

@@ -11,6 +11,7 @@ import ch.scorpion.antares.view.container.DigitalContainerTreeView
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.output.LightColor
+import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
@@ -153,5 +154,7 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 			id = AndGateView.PROP_DATA_FLOW_ENABLED,
 			nameKey = "antares.preferences.AndGateDataFlow"
 		))
+
+		root.getGroup(PREF_TREE_CIRCUIT).add(LightColorPreference())
 	}
 }
