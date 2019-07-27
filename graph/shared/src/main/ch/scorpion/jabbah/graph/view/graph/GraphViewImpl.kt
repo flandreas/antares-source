@@ -46,10 +46,6 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 class GraphViewImpl<T : GraphElementView<*>>(
 	override var graph: Graph?,
 	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
-	private val outputToInputConnector: OutputToInputConnector = GraphViewModule.outputToInputConnector,
-	private val inputToOutputOrEdgeConnector: InputToOutputOrEdgeConnector = GraphViewModule.inputToOutputOrEdgeConnector,
-	private val reconnectOriginConnector: ReconnectOriginConnector = GraphViewModule.reconnectOriginConnector,
-	private val reconnectDestinationConnector: ReconnectDestinationConnector = GraphViewModule.reconnectDestinationConnector,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : DrawingImpl<T>(), GraphView<T> {
 
@@ -58,6 +54,9 @@ class GraphViewImpl<T : GraphElementView<*>>(
 
 	companion object {
 		private val LOG by logger(GraphViewImpl::class)
+
+		/** Use the same single [GraphViewInputEventHandler] instance for all [GraphViewImpl]. */
+		private var inputEventHandler: GraphViewInputEventHandler<*>? = null
 	}
 
 	/** Resets the current [Scenario] and [ScenarioStep] when the [Scheduler] is activated or deactivated. */
@@ -326,8 +325,11 @@ class GraphViewImpl<T : GraphElementView<*>>(
 		return drawables.toImmutableList()
 	}
 
-	override fun createInputEventHandler(): InputEventHandler<InputEventContext> {
-		return GraphViewInputEventHandler() as InputEventHandler<InputEventContext>
+	override fun provideInputEventHandler(): DrawableContainerInputEventHandler<T, InputEventContext> {
+		if (inputEventHandler == null) {
+			inputEventHandler = GraphViewInputEventHandler<T>()
+		}
+		return inputEventHandler as DrawableContainerInputEventHandler<T, InputEventContext>
 	}
 
 	/** Overridden in order to add the [GraphElement] to the [Graph] that this [GraphView] displays.*/
@@ -401,7 +403,12 @@ class GraphViewImpl<T : GraphElementView<*>>(
 	 * This relieves the [VerticeView] implementations from the burden to provide constructor injection parameters
 	 * for all kinds of connectors, for the [EdgeViewFactory] and lots of other injected objects.
 	 */
-	private inner class GraphViewInputEventHandler : DrawableContainerInputEventHandler<T, EditInputEventContext>(this@GraphViewImpl) {
+	private class GraphViewInputEventHandler<T : GraphElementView<*>>(
+		private val outputToInputConnector: OutputToInputConnector = GraphViewModule.outputToInputConnector,
+		private val inputToOutputOrEdgeConnector: InputToOutputOrEdgeConnector = GraphViewModule.inputToOutputOrEdgeConnector,
+		private val reconnectOriginConnector: ReconnectOriginConnector = GraphViewModule.reconnectOriginConnector,
+		private val reconnectDestinationConnector: ReconnectDestinationConnector = GraphViewModule.reconnectDestinationConnector
+	) : DrawableContainerInputEventHandler<T, EditInputEventContext>() {
 
 		private var target: InputEventHandler<EditInputEventContext>? = null
 
@@ -413,14 +420,14 @@ class GraphViewImpl<T : GraphElementView<*>>(
 				}
 			}
 
-			val drawable = getDrawableAt(context.x, context.y)
+			val drawable = container.getDrawableAt(context.x, context.y)
 			if (drawable is VerticeView<*>) {
 				val portView = drawable.getPortViewAtConnectionPoint(context.x, context.y)
 				if (portView != null && portView.connectable) {
 					if (portView.port.portType.isOutput) {
 						if (portView.port.isConnected) {
 							LOG.debug("delegating mouseMoved to ReconnectOriginConnector")
-							reconnectOriginConnector.useFor(getEdgeView(portView.port)!!)
+							reconnectOriginConnector.useFor((container as GraphView<T>).getEdgeView(portView.port)!!)
 							target = reconnectOriginConnector
 						} else {
 							LOG.debug("delegating mouseMoved to OutputToInputConnector")
@@ -430,7 +437,7 @@ class GraphViewImpl<T : GraphElementView<*>>(
 					} else if (portView.port.portType.isInput) {
 						if (portView.port.isConnected) {
 							LOG.debug("delegating mouseMoved to ReconnectDestinationConnector")
-							reconnectDestinationConnector.useFor(getEdgeView(portView.port)!!)
+							reconnectDestinationConnector.useFor((container as GraphView<T>).getEdgeView(portView.port)!!)
 							target = reconnectDestinationConnector
 						} else {
 							LOG.debug("delegating mouseMoved to InputToOutputOrEdgeConnector")

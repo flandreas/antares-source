@@ -43,12 +43,15 @@ open class DrawableContainerImpl<T: Drawable>(
      * Holds an [InputEventHandler] that dispatches input events to the [Drawable] whose
      * [contains] methods returns `true` for the events location.
      */
-    private val inputEventHandler: InputEventHandler<InputEventContext> = createInputEventHandler()
+    private val inputEventHandler: DrawableContainerInputEventHandler<T, InputEventContext> by lazy { provideInputEventHandler() }
 
-    protected open fun createInputEventHandler(): InputEventHandler<InputEventContext> =
-            DrawableContainerInputEventHandler(this)
+    protected open fun provideInputEventHandler(): DrawableContainerInputEventHandler<T, InputEventContext> =
+	    DrawableContainerInputEventHandler()
 
-    override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> = inputEventHandler
+    override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
+	    inputEventHandler.useFor(this)
+	    return inputEventHandler
+    }
 
     /** ---- [Drawable] interface */
 

@@ -227,8 +227,7 @@ object GraphViewModule : AbstractModule() {
 	}
 
 	fun <T : GraphElementView<*>> createGraphView(graph: Graph): GraphView<T> {
-		return GraphViewImpl(graph, IOModule.storableClonerProvider.invoke(), outputToInputConnector, inputToOutputOrEdgeConnector,
-			reconnectOriginConnector, reconnectDestinationConnector, BaseModule.eventBus)
+		return GraphViewImpl(graph, IOModule.storableClonerProvider.invoke(), BaseModule.eventBus)
 	}
 
 	fun createContainerDrawing(name: String = Translations.getString("graph.name.unknown")): ContainerDrawing {

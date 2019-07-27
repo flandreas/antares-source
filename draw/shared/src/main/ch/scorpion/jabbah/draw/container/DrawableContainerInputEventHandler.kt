@@ -6,9 +6,15 @@ import ch.scorpion.jabbah.draw.*
  * Forwards interaction initiating input events to the [Drawable] at the current mouse location of a
  * [DrawableContainer].
  */
-open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContext>(
-	val container: DrawableContainer<T>
-) : InputEventHandlerAdapter<C>() {
+open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContext>() : InputEventHandlerAdapter<C>() {
+
+	private var _container: DrawableContainer<T>? = null
+
+	protected val container: DrawableContainer<T> get() = _container!!
+
+	fun useFor(container: DrawableContainer<T>) {
+		_container = container
+	}
 
 	override fun mouseMoved(context: C): InputEventHandler<C>? {
 		val drawable = container.getDrawableAt(context.x, context.y)

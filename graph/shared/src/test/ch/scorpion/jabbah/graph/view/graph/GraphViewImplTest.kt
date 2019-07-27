@@ -26,10 +26,6 @@ class GraphViewImplTest {
 	private val graphView: GraphView<GraphElementView<*>> = GraphViewImpl(
 		GraphImpl(),
 		IOModule.storableClonerProvider.invoke(),
-		GraphViewModule.outputToInputConnector,
-		GraphViewModule.inputToOutputOrEdgeConnector,
-		GraphViewModule.reconnectOriginConnector,
-		GraphViewModule.reconnectDestinationConnector,
 		BaseModule.eventBus)
 
 	@Test
