@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.app
 
 import ch.scorpion.jabbah.base.checkArgument
+import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
@@ -20,7 +21,8 @@ interface DrawingService {
 
 	/**
 	 * Deletes the specified [Component] from its [Drawing].
-	 * @param the translation key of the [Command] that makes this operation undoable, or `null` to use the default name
+	 * @param cmdDescriptionKey the translation key of the [Command] that makes this operation undoable,
+	 * or `null` to use the default name
 	 */
 	fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String? = null)
 
@@ -39,6 +41,8 @@ open class DrawingServiceImpl(
 
 	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>) {
 		commandManager.execute(AddCommand(drawingView, component))
+		drawingView.selectionManager.deselectAll()
+		drawingView.selectionManager.select(component)
 	}
 
 	override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String?) {
@@ -52,7 +56,6 @@ open class DrawingServiceImpl(
 		components.forEach { commandManager.execute(DeleteCommand(drawingView, it)) }
 		add(group, drawingView)
 		commandManager.commitTransaction()
-		drawingView.selectionManager.select(group)
 	}
 
 	override fun ungroup(component: GroupComponent, drawingView: DrawingView<Drawing<Component>>) {

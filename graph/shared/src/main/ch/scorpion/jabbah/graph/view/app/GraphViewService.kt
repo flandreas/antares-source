@@ -36,8 +36,9 @@ class GraphViewServiceImpl(
 	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>) {
 		if (component is GraphElementView<*>) {
 			super.add(component, drawingView)
+		} else {
+			super.add(GraphElementViewWrapper<GraphElement>(component), drawingView)
 		}
-		super.add(GraphElementViewWrapper<GraphElement>(component), drawingView)
 	}
 
 	override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String?) {

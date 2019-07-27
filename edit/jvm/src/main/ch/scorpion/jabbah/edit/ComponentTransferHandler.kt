@@ -1,12 +1,13 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.edit.editor.AddCommand
-import ch.scorpion.jabbah.edit.editor.DropEvent
-import ch.scorpion.jabbah.edit.select.DragEvent
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.app.DrawingService
+import ch.scorpion.jabbah.edit.editor.DropEvent
+import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.edit.select.DragEvent
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 import java.awt.dnd.DropTarget
@@ -25,7 +26,8 @@ import javax.swing.TransferHandler
 open class ComponentTransferHandler(
     protected val editor: Editor,
     private val eventBus: EventBus,
-    private val flavour: DataFlavor
+    private val flavour: DataFlavor,
+    private val service: DrawingService = EditModule.drawingService
 ) : TransferHandler() {
 
 	companion object {
@@ -119,11 +121,8 @@ open class ComponentTransferHandler(
     private fun importElement(elementView: Component, eventBus: EventBus) {
         LOG.debug("importData")
         try {
-            val command = AddCommand(editor.view, elementView)
-            editor.commandManager.execute(command)
+	        service.add(elementView, editor.view)
             eventBus.post(DropEvent(editor, elementView))
-            editor.view.selectionManager.deselectAll()
-            editor.view.selectionManager.select(elementView)
             editor.drawing.validate()
             (editor.view.canvas as JPanel).requestFocusInWindow()
         } catch (e: Exception) {
