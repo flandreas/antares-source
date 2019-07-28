@@ -94,7 +94,7 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 
 	private fun createGraphEditor(eventBus: EventBus): GraphEditor {
 		val graphCanvas = CanvasJvm {
-			val drawingView = DrawingViewImpl(GraphViewImpl<GraphElementView<*>>() as Drawing<Component>, it)
+			val drawingView = DrawingViewImpl(GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>, it)
 			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
 			drawingView
 		}

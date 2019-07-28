@@ -67,7 +67,7 @@ import ch.scorpion.jabbah.io.TypeMap
  */
 object GraphViewModule : AbstractModule() {
 
-	var graphViewFactory: (name: String) -> GraphView<*> = { GraphViewImpl<GraphElementView<GraphElement>>(it) }
+	var graphViewFactory: (name: String?) -> GraphView<*> = { GraphViewImpl<GraphElementView<GraphElement>>(it ?: Translations.getString("graph.name.unknown")) }
 
 	/** Must be specified by higher application layers.*/
 	var portViewFactory: PortViewFactory = UndefinedPortViewFactory()
