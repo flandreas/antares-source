@@ -38,6 +38,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 		    LOG.trace("mouseMoved")
 	    }
         if (endpointType.getEndpoint(edgeView!!).contains(context.x, context.y)) {
+	        context.view.setCursor(Cursor.CROSSHAIR)
             displayPortViewHighlight(context.drawingView(), getEndpointView().location)
             return this
         }

@@ -27,7 +27,7 @@ abstract class AbstractConnectionPointHighlighter(
 	protected fun displayPortViewHighlight(view: DrawingView<*>, location: Point2D) {
 		LOG.trace("displayPortViewHighlight at $location")
 		if (portViewHighlight == null) {
-			view.setCursor(Cursor.DEFAULT)
+			view.setCursor(Cursor.CROSSHAIR)
 			portViewHighlight = DrawModule.properties.get<ConnectionPointHighlight>(PortView.PROP_HIGHLIGHT)
 			portViewHighlight!!.location = location
 			view.ghostContainer.add(portViewHighlight!!)
