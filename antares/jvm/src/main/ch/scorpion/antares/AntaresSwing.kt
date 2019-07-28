@@ -1,13 +1,16 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.view.AntaresThemes
+import ch.scorpion.antares.view.DefaultLightColorEvent
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.antares.view.memory.MemoryContentGraphDesktopItem
 import ch.scorpion.antares.view.memory.MemoryContentsPanel
 import ch.scorpion.antares.view.memory.OpenMemoryContentsRequest
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
@@ -22,10 +25,15 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
+import ch.scorpion.jabbah.graph.view.app.GraphViewService
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.usecase.DeleteUsecaseCommand
 import ch.scorpion.jabbah.io.Storable
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
+import java.awt.Frame
+import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import javax.swing.plaf.FontUIResource
 
@@ -101,6 +109,12 @@ class AntaresSwing(
 		eventBus.register(LibraryItemRemovedEvent::class) {
 			if (it.item is ContainerLibraryElement && (it.item as ContainerLibraryElement).metaGraph == applicationData) {
 				SwingUtilities.invokeLater { close() }
+			}
+		}
+
+		eventBus.register(DefaultLightColorEvent::class) {
+			if (it.graphView.defaultLightColor != null && shouldReplaceLightColor()) {
+				(GraphViewModule.graphViewService as DigitalGraphViewService).replaceLightColor(it.graphView)
 			}
 		}
 	}
@@ -179,5 +193,16 @@ class AntaresSwing(
 		}
 
 		close()
+	}
+
+	/** ---- [AntaresSwing] */
+
+	private fun shouldReplaceLightColor(): Boolean {
+		return JOptionPane.showConfirmDialog(
+			Frame.getFrames()[0],
+			Translations.getString("antares.action.replaceLightColor.question"),
+			Translations.getString("antares.action.replaceLightColor.name"),
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
 	}
 }

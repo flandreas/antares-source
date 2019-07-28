@@ -46,7 +46,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 open class GraphViewImpl<T : GraphElementView<*>>(
 	override var graph: Graph?,
 	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
-	private val eventBus: EventBus = BaseModule.eventBus
+	protected val eventBus: EventBus = BaseModule.eventBus
 ) : DrawingImpl<T>(), GraphView<T> {
 
 	constructor() : this(Translations.getString("graph.name.unknown"))

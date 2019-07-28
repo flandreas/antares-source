@@ -2,9 +2,9 @@ package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.view.output.LightColor
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -22,9 +22,20 @@ class DigitalGraphView<T : GraphElementView<*>>(
 
 	/**
 	 * The [LightColor] to be used when adding [LightEmitter]s to this [DigitalGraphView],
-	 * or `null` if the system default is to be used.
+	 * or `null` if the system default is to be used. Posts a [DefaultLightColorEvent] on this
+	 * [DigitalGraphView]'s [EventBus] when changed by the user.
 	 */
 	var defaultLightColor: LightColor? = null
+		set(value) {
+			if (field != value) {
+				field = value
+				if (!isReading) {
+					System.get().invokeLater { eventBus.post(DefaultLightColorEvent(this)) }
+				}
+			}
+		}
+
+	private var isReading = false
 
 	/** ---- [Storable] interface */
 
@@ -35,8 +46,13 @@ class DigitalGraphView<T : GraphElementView<*>>(
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
+		isReading = true
 		if (reader.hasAttribute("lightColor")) {
 			defaultLightColor = LightColor.withName(reader.readString("lightColor"))
 		}
+		isReading = false
 	}
 }
+
+/** Posted on [EventBus] when the default [LightColor] of a [DigitalGraphView] as changed by the user.*/
+data class DefaultLightColorEvent(val graphView: DigitalGraphView<*>)
