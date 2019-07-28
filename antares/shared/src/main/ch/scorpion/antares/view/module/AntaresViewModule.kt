@@ -3,8 +3,9 @@ package ch.scorpion.antares.view.module
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.script.AntaresScriptGateway
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
+import ch.scorpion.antares.view.DigitalGraphView
 import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.app.AntaresGraphViewService
+import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
 import ch.scorpion.antares.view.gate.*
@@ -40,9 +41,11 @@ import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.container.OriginIndicator
 import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.app.GraphViewService
 import ch.scorpion.jabbah.graph.view.editor.AutoConnectorHighlight
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -104,8 +107,9 @@ object AntaresViewModule : AbstractModule() {
 			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
 			drawingView
 		}
-		EditModule.drawingService = AntaresGraphViewService()
+		EditModule.drawingService = DigitalGraphViewService()
 
+		GraphViewModule.graphViewFactory = { DigitalGraphView<GraphElementView<GraphElement>>(it ?: Translations.getString("graph.name.unknown")) }
 		GraphViewModule.graphViewService = EditModule.drawingService as GraphViewService
 		GraphViewModule.portViewFactory = DigitalPortViewFactory(DrawStyleModule.styleProvider)
 		GraphViewModule.oscilloscopeViewFactory = DigitalOscilloscopeViewFactory()
@@ -216,6 +220,8 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("randomView", RandomView::class)
 		typeMap.register("keyboardView", KeyboardView::class)
 		typeMap.register("terminalView", TerminalView::class)
+
+		typeMap.register("graphView", DigitalGraphView::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {

@@ -11,7 +11,8 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 /**
  * A [BeanInfo] for [GraphViewImpl].
  */
-class GraphViewImplBeanInfo : AbstractBeanInfo<GraphViewImpl<*>>() {
+@Suppress("unused")
+open class GraphViewImplBeanInfo<in T: GraphViewImpl<*>> : AbstractBeanInfo<T>() {
 
     companion object {
         private val name = PropertyImpl("graph.property.GraphViewImpl", TranslatableText::class.java)
@@ -20,7 +21,7 @@ class GraphViewImplBeanInfo : AbstractBeanInfo<GraphViewImpl<*>>() {
         private val script = PropertyImpl("graph.property.GraphViewImpl.script", TextProperty::class.java)
     }
 
-    override fun addProperties(bean: GraphViewImpl<*>, editor: Editor, properties: MutableList<Property>) {
+    override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
         name.bind(editor, { bean.translatableName }, { bean.translatableName = it!! }, true, { false })

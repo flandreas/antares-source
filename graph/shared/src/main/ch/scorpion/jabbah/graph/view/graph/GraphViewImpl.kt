@@ -43,7 +43,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 /**
  * A standard implementation of the [GraphView] interface.
  */
-class GraphViewImpl<T : GraphElementView<*>>(
+open class GraphViewImpl<T : GraphElementView<*>>(
 	override var graph: Graph?,
 	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	private val eventBus: EventBus = BaseModule.eventBus

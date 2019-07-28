@@ -25,7 +25,7 @@ open class LightColorRenderer : EnumRenderer<LightColor>() {
     override fun setValue(value: LightColor?) {
 	    if (value == null) {
 		    icon.backgroundColor = Graphics2DJvm.toAwtColor(Color.WHITE)
-		    text = Translations.getString("element.color.fromTheme")
+		    text = Translations.getString("element.color.none")
 	    } else {
 		    icon.backgroundColor = Graphics2DJvm.toAwtColor(value.onColor)
 		    text = value.toString()
