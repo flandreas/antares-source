@@ -16,6 +16,8 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import java.awt.Image
+import java.awt.Taskbar
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.io.File
@@ -83,6 +85,7 @@ abstract class AbstractDesktopApplicationSwing(
 		mainFrame.jMenuBar = createMenuBarBuilder().menuBar
 		DrawViewModule.viewManager.activeView = mainFrame.editor.view
 		BusyHandler.register(mainFrame, null)
+		installTaskbarIcon()
 		SwingUtilities.invokeLater {
 			openInitialSavable()
 		}
@@ -141,13 +144,19 @@ abstract class AbstractDesktopApplicationSwing(
 
 	/** ---- [AbstractDesktopApplicationSwing] */
 
+	protected abstract val taskbarIcon: Image
+
 	protected open fun createMenuBarBuilder(): MenuBarBuilder {
 		return MenuBarBuilder(frame = mainFrame, eventBus = eventBus)
 	}
 
 	protected open fun createMainFrame(): AbstractApplicationFrame {
-		val canvas: Canvas = CanvasJvm({ DrawingViewImpl(DrawingImpl(), it) })
+		val canvas: Canvas = CanvasJvm { DrawingViewImpl(DrawingImpl(), it) }
 		val editor: Editor = EditEditorModule.createEditor(canvas.view as DrawingView<Drawing<Component>>)
 		return SimpleApplicationFrame(this, editor, emptyList())
+	}
+
+	private fun installTaskbarIcon() {
+		Taskbar.getTaskbar().iconImage = taskbarIcon
 	}
 }
