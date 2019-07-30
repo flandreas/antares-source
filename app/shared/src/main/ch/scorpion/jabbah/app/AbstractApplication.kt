@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.io.Storable
@@ -12,6 +13,10 @@ import ch.scorpion.jabbah.io.Storable
 abstract class AbstractApplication(
     protected val eventBus: EventBus
 ) : Application {
+
+	companion object {
+		private val LOG by lazy { logger(AbstractApplication::class) }
+	}
 
     init {
         configureCustomModules()
@@ -32,6 +37,14 @@ abstract class AbstractApplication(
             field = value
             eventBus.post(CurrentSavableEvent(this, field))
         }
+
+	override val aboutInfo: AboutInfo get() = AboutInfo(
+		iconPath = null,
+		name = displayName,
+		claim = "A cool application",
+		version = "1.0",
+		disclaimer = "All rights reserved."
+	)
 
     override fun newFile() {
         if (canReplaceSavable("file.action.new.name")) {
@@ -63,6 +76,10 @@ abstract class AbstractApplication(
 		    savable = null
 	    }
     }
+
+	override fun showAboutInfo() {
+		LOG.value.info("${aboutInfo.name} Version ${aboutInfo.version}")
+	}
 
     /** ---- [AbstractApplication] */
 

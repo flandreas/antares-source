@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.io.Storable
 
 /**
@@ -28,6 +29,8 @@ interface Application {
 
     val mostRecentSavables: SavableHistory
 
+	val aboutInfo: AboutInfo
+
     /**
      * Starts this [Application] by initializing it, by loading predefined content, and by displaying its primary view.
      * This method is typically implemented in a platform-specific layer.
@@ -51,4 +54,15 @@ interface Application {
 
 	/** Closes the current [applicationData]. */
 	fun close()
+
+	fun showAboutInfo()
+
 }
+
+data class AboutInfo(
+	val iconPath: String?,
+	val name: String,
+	val claim: String,
+	val version: String,
+	val disclaimer: String = Translations.getString("application.disclaimer.allRightsReserved")
+)

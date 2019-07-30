@@ -55,13 +55,15 @@ class AntaresSwing(
 		@JvmStatic
 		fun main(args: Array<String>) {
 			System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS")
-			System.setProperty("apple.laf.useScreenMenuBar", "true")
+			//System.setProperty("apple.laf.useScreenMenuBar", "true")
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name","Antares")
 			UiUtil.setUIFont(FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size))
 			BaseModuleJvm.require()
 			AntaresSwing(args).start()
 		}
 	}
+
+	private val iconPath = "img/Logo64.png"
 
 	init {
 		eventBus.register(OpenMemoryContentsRequest::class) { request ->
@@ -121,9 +123,17 @@ class AntaresSwing(
 		}
 	}
 
+	/** ---- [AbstractApplication] */
+
+	override val aboutInfo: AboutInfo get() = AboutInfo(
+		iconPath = "/$iconPath",
+		name = displayName,
+		claim = "Digital Circuit Learning Platform",
+		version = "0.1")
+
 	/** ---- [AbstractDesktopApplication] */
 
-	override val taskbarIcon: Image get() = Toolkit.getDefaultToolkit().getImage(AntaresSwing::class.java.classLoader.getResource("img/Logo64.png"))
+	override val taskbarIcon: Image get() = Toolkit.getDefaultToolkit().getImage(AntaresSwing::class.java.classLoader.getResource(iconPath))
 
 	override fun createNewApplicationData(): Storable {
 		return MetaGraph()

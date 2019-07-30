@@ -91,6 +91,10 @@ abstract class AbstractDesktopApplicationSwing(
 		}
 	}
 
+	override fun showAboutInfo() {
+		AboutPanel.showAsDialog(this)
+	}
+
 	override fun canReplaceSavable(actionKey: String): Boolean {
 		if (!applicationDataChanged) {
 			return true

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.MenuBarBuilder
+import ch.scorpion.jabbah.app.action.AboutAction
 import ch.scorpion.jabbah.app.action.CloseFileAction
 import ch.scorpion.jabbah.app.action.QuitApplicationAction
 import ch.scorpion.jabbah.app.action.SaveFileAction
@@ -44,6 +45,8 @@ open class GraphMenuBarBuilder(
 	}
 
 	override fun fillFileMenu(menu: JMenu) {
+		menu.add(JMenuItem(ActionWrapperSwing(AboutAction(frame.application))))
+		menu.addSeparator()
 		menu.add(JMenuItem(ActionWrapperSwing(ShowProjectsDialogAction(frame))))
 		menu.add(JMenuItem(ActionWrapperSwing(ShowLibrariesDialogAction(frame))))
 		menu.add(openRecentMenu)

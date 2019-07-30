@@ -49,6 +49,8 @@ open class MenuBarBuilder(
     }
 
     protected open fun fillFileMenu(menu: JMenu) {
+	    menu.add(JMenuItem(ActionWrapperSwing(AboutAction(frame.application))))
+	    menu.addSeparator()
 	    menu.add(JMenuItem(ActionWrapperSwing(NewFileAction(frame.application))))
 	    menu.add(JMenuItem(ActionWrapperSwing(OpenFileAction(frame.application))))
         menu.add(openRecentMenu)
