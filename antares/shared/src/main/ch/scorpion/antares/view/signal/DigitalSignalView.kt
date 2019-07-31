@@ -32,9 +32,9 @@ class DigitalSignalView(
 
 	companion object {
 		val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
-		val V_INSET = 3
-		val H_INSET = 4
-		val ARCH_SIZE = 12.0
+		const val V_INSET = 3
+		const val H_INSET = 4
+		const val ARCH_SIZE = 12.0
 
 		fun calcHeight(): Double {
 			return FONT.size + 2.0 * V_INSET
@@ -44,7 +44,6 @@ class DigitalSignalView(
 			val digitCount = Math.max(1, bitWidth.width / representation.bits())
 			val textRenderInfo = DrawModule.textRenderInfoFactory.measureSingleLineText("0".repeat(digitCount), FONT)
 			return Math.ceil(textRenderInfo.textBounds.width).toInt() + 2.0 * H_INSET
-
 		}
 	}
 

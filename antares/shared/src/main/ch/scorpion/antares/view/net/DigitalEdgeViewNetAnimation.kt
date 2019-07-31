@@ -21,7 +21,7 @@ import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.ActorListener
 
 /**
- * Organizes individual animations of bits flowing through a net of [DigitalEdgeView]s.
+ * Organizes consecutive animations of bits flowing through a net of [DigitalEdgeView]s.
  *
  * Creates an [AnimationTask] that drives a [DigitalEdgeAnimationView] along the specified [DigitalEdgeView].
  * The animation is not started right away. Start the animation by calling [start], which returns the created
@@ -109,7 +109,7 @@ class DigitalEdgeViewNetAnimation(
 		LOG.trace("Setup EdgeView animation for output of ${originConnectable::class.simpleName}")
 
 		val isReverse = originConnectable === edgeView.destination
-		val signalView = DigitalEdgeAnimationView(
+		val animationView = DigitalEdgeAnimationView(
 			edgeView,
 			startEdgeView.model!!.signalBuffer as DigitalSignal,
 			originPort.signalRepresentation,
@@ -128,7 +128,7 @@ class DigitalEdgeViewNetAnimation(
 		val oldVisitedLength = predecessorInfo?.visitedLength ?: 0.0
 		val remainingTime = (overallLength - oldVisitedLength) / overallLength * DURATION_MS
 
-		val bitAnimationTask: AnimationTask = MoveLocatableAnimation(signalView, sequence, remainingTime)
+		val bitAnimationTask: AnimationTask = MoveLocatableAnimation(animationView, sequence, remainingTime)
 		bitAnimationTask.addListener(animationSplitter)
 
 		val animationInfo = AnimationInfo(
@@ -139,13 +139,13 @@ class DigitalEdgeViewNetAnimation(
 		)
 
 		if (isReverse) {
-			signalView.location = edgeView.getSegmentPoint(edgeView.segmentPointCount - 1)
+			animationView.location = edgeView.getSegmentPoint(edgeView.segmentPointCount - 1)
 		} else {
-			signalView.location = edgeView.getSegmentPoint(0)
+			animationView.location = edgeView.getSegmentPoint(0)
 		}
 
-		drawingView.animationContainer.add(signalView)
-		signalView.validate()
+		drawingView.animationContainer.add(animationView)
+		animationView.validate()
 
 		predecessorMap[edgeView] = animationInfo
 		animator.schedule(bitAnimationTask)

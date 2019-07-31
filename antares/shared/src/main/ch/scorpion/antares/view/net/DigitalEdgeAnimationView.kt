@@ -52,6 +52,9 @@ class DigitalEdgeAnimationView(
 			if (value != field) {
 				invalidate()
 				field = value
+				if (!value && artificialNodeView != null) {
+					signalView.orthoPolyline.add(artificialNodeView!!.location)
+				}
 				invalidate()
 				validate()
 			}
@@ -59,6 +62,32 @@ class DigitalEdgeAnimationView(
 
 	/** An artificial [NodeView] to be drawn above the end [NodeView], if any. */
 	private var artificialNodeView: DigitalNodeView? = null
+
+	init {
+		DrawableOwner(this, signalView)
+
+		if (edgeView.netView!!.style == NetViewStyle.LINE) {
+			if (reverseDirection) {
+				if (edgeView.origin is NodeView<*>) {
+					artificialNodeView = DigitalNodeView(styleProvider, ExecutionModule.currentSystemSpeedCategory,
+						DummyNet(signal), NetViewStyle.LINE)
+					artificialNodeView!!.location = edgeView.getSegmentPoint(0)
+				}
+			} else {
+				if (edgeView.destination is NodeView<*>) {
+					artificialNodeView = DigitalNodeView(styleProvider, ExecutionModule.currentSystemSpeedCategory,
+						DummyNet(signal), NetViewStyle.LINE)
+					artificialNodeView!!.location = edgeView.getSegmentPoint(edgeView.segmentPointCount - 1)
+				}
+			}
+		}
+	}
+
+	/**
+	 * A dummy [DigitalNet] implementation that returns the animated signal, which is used for animation
+	 * painting.
+	 */
+	private class DummyNet(override val signal: DigitalSignal?) : DigitalNet()
 
 	/** ---- [Drawable] */
 
@@ -103,33 +132,4 @@ class DigitalEdgeAnimationView(
 			signalView.location = value
 			invalidate()
 		}
-
-
-	/** ---- [DigitalEdgeAnimationView] */
-
-	init {
-		DrawableOwner(this, signalView)
-
-		if (edgeView.netView!!.style == NetViewStyle.LINE) {
-			if (reverseDirection) {
-				if (edgeView.origin is NodeView<*>) {
-					artificialNodeView = DigitalNodeView(styleProvider, ExecutionModule.currentSystemSpeedCategory,
-						DummyNet(signal), NetViewStyle.LINE)
-					artificialNodeView!!.location = edgeView.getSegmentPoint(0)
-				}
-			} else {
-				if (edgeView.destination is NodeView<*>) {
-					artificialNodeView = DigitalNodeView(styleProvider, ExecutionModule.currentSystemSpeedCategory,
-						DummyNet(signal), NetViewStyle.LINE)
-					artificialNodeView!!.location = edgeView.getSegmentPoint(edgeView.segmentPointCount - 1)
-				}
-			}
-		}
-	}
-
-	/**
-	 * A dummy [DigitalNet] implementation that returns the animated signal, which is used for animation
-	 * painting.
-	 */
-	private class DummyNet(override val signal: DigitalSignal?) : DigitalNet()
 }

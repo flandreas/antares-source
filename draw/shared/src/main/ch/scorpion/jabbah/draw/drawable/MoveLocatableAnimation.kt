@@ -8,12 +8,12 @@ import ch.scorpion.jabbah.base.geom.Point2D
  * Animates the moving of a [Locatable] along a [Sequence] of [Point2D]s.
  */
 class MoveLocatableAnimation(
-        locatable: Locatable,
-        sequence: Sequence<Point2D>,
-        duration: Double
+	locatable: Locatable,
+	sequence: Sequence<Point2D>,
+	duration: Double
 ) : AbstractAnimationTask<Point2D>(
-        target = locatable,
-        consumer = {locatable.location = it; locatable.validate()},
-        sequence = sequence,
-        duration = duration,
-        dependsOnSystemSpeed = true)
+	target = locatable,
+	consumer = { locatable.location = it; locatable.validate() },
+	sequence = sequence,
+	duration = duration,
+	dependsOnSystemSpeed = true)
