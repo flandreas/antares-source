@@ -30,7 +30,8 @@ interface LibraryPersistenceService {
 	/** Imports a [Library] contained in a ZIP file at `inputPath` and stores it as new [Library] with the given name.*/
 	fun importLibrary(name: String, inputPath: String)
 
-    fun exportLibrary(library: Library, outputPath: String)
+	/** Exports the [Library] with the specified name into a ZIP file and stores it at `outputPath'. */
+    fun exportLibrary(name: String, outputPath: String)
 }
 
 /** Null pattern.*/
@@ -72,7 +73,7 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService{
 		throw UnsupportedOperationException("not implemented")
 	}
 
-    override fun exportLibrary(library: Library, outputPath: String) {
+    override fun exportLibrary(name: String, outputPath: String) {
         throw UnsupportedOperationException("not implemented")
     }
 

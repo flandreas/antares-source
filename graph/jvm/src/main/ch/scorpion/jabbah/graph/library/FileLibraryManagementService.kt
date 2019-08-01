@@ -34,8 +34,6 @@ class FileLibraryManagementService(
 
 	/** ---- [LibraryManagementService] interface */
 
-	override val currentLibrary: Library get() = libraryHolder.library
-
 	override fun exists(name: String): Boolean {
 		return Files.exists(FileSystems.getDefault().getPath(directoryPath, name))
 	}

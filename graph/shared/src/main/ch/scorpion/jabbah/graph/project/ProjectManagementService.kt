@@ -44,7 +44,7 @@ interface ProjectManagementService {
 	/**
 	 * Creates a new [Project] with the given name and stores it in persistent store.
 	 * @return the created [Project]
-	 * @throws IllegalArgumentException if [proprties] are not consistent, e.g. if a [Project]
+	 * @throws IllegalArgumentException if [properties] are not consistent, e.g. if a [Project]
 	 * with the specified name already exists
 	 */
 	fun create(properties: LibraryProperties): Project
@@ -75,6 +75,8 @@ interface ProjectManagementService {
 
 	/** Closes the currently open [Project].*/
 	fun close()
+
+	fun export(name: String, outputPath: String)
 }
 
 /** Null pattern */
@@ -119,6 +121,10 @@ class UnimplementedProjectManagementService : ProjectManagementService {
 	}
 
 	override fun close() {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun export(name: String, outputPath: String) {
 		throw UnsupportedOperationException("not implemented")
 	}
 }

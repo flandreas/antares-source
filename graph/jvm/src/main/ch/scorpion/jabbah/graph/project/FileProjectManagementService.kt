@@ -174,4 +174,8 @@ class FileProjectManagementService(
 			)
 		}
 	}
+
+	override fun export(name: String, outputPath: String) {
+		libraryService.exportLibrary(name, outputPath)
+	}
 }

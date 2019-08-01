@@ -48,6 +48,7 @@ class LibraryPersistencePanel(
 				dialog.isVisible = false
 				dialog.dispose()
 			}))
+			dialog.isResizable = false
 			dialog.pack()
 			dialog.setLocationRelativeTo(parent)
 			dialog.addWindowListener(object : WindowAdapter() {

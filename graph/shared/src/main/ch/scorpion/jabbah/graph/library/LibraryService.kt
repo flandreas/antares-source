@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.io.StorableCreator
 
 /**
- * Provides methods for accessing and manipulating a [Library].
+ * Provides methods for accessing and manipulating a single [Library].
  * Implementations will use a [LibraryPersistenceService] to make these manipulations persistent.
  */
 interface LibraryService {
@@ -122,6 +122,20 @@ interface LibraryService {
 	 * @return the created duplicate [Library]
 	 */
 	fun duplicateLibrary(library: Library, newName: String): Library
+
+	/**
+	 * Exports the [Library] with the specified name by storing its entire contents at an output path.
+	 * Note that this wouldn't work in a client/server setup, which would require the exported data to be
+	 * transferred to the client to be stored there. This is up to a future extension.
+	 */
+	fun exportLibrary(name: String, outputPath: String)
+
+	/**
+	 * Imports a [Library] by reading its entire contents from the specified input path.
+	 * Note that this wouldn't work in a client/server setup, which would require the imported data to be
+	 * transferred to the server to be stored there. This is up to a future extension.
+	 */
+	fun importLibrary(name: String, inputPath: String)
 }
 
 /** Posted on [EventBus] when a [LibraryItem] has been added to a [LibraryDirectory].*/
@@ -341,6 +355,15 @@ class LibraryServiceImpl(
 		duplicateLibrary.name = newName
 		storeLibrary(duplicateLibrary)
 		return duplicateLibrary
+	}
+
+	override fun exportLibrary(name: String, outputPath: String) {
+		LOG.debug("Export Library '$name' to path $outputPath")
+		persistenceService.exportLibrary(name, outputPath)
+	}
+
+	override fun importLibrary(name: String, inputPath: String) {
+		// TODO
 	}
 
 	/** ---- [LibraryServiceImpl] */

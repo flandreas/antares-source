@@ -19,13 +19,13 @@ data class OpenLibraryRequest(val library: Library)
  */
 data class LibraryCreatedEvent(val library: Library)
 
+/**
+ * Provides methods for managing multiple [Libraries][Library].
+ */
 interface LibraryManagementService {
 
 	/** Returns the name of the default [Library] which is one of those provided by the system, not by the user.*/
 	val defaultLibraryName: String
-
-	/** Returns the currently open [Library].*/
-	val currentLibrary: Library
 
 	/** Returns the names of the stored [Libraries][Library].*/
 	fun getLibraryNames(): ImmutableList<String>
@@ -93,7 +93,6 @@ interface LibraryManagementService {
 class UnimplementedLibraryManagementService : LibraryManagementService {
 
 	override val defaultLibraryName: String get() = TODO("not implemented")
-	override val currentLibrary: Library get() = TODO("not implemented")
 
 	override fun getLibraryNames(): ImmutableList<String> {
 		throw UnsupportedOperationException("not implemented")

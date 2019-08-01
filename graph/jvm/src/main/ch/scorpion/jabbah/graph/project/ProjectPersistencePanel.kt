@@ -13,6 +13,7 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
+import java.io.File
 import javax.swing.*
 
 /** Opens and shows the [ProjectPersistencePanel] in a modal dialog.*/
@@ -48,6 +49,7 @@ class ProjectPersistencePanel(
 				dialog.isVisible = false
 				dialog.dispose()
 			}))
+			dialog.isResizable = false
 			dialog.pack()
 			dialog.setLocationRelativeTo(parent)
 			dialog.addWindowListener(object : WindowAdapter() {
@@ -63,6 +65,7 @@ class ProjectPersistencePanel(
 	private val currentProjectFont = projectNameList.font.deriveFont(Font.BOLD)
 	private val openAction = OpenAction()
 	private val deleteAction = DeleteAction()
+	private val exportAction = ExportAction()
 
 	init {
 		projectNameList.addListSelectionListener { updateActions() }
@@ -80,14 +83,15 @@ class ProjectPersistencePanel(
 	private fun updateActions() {
 		openAction.enabled = !projectNameList.isSelectionEmpty && projectNameList.selectedValue != projectHolder.p?.name
 		deleteAction.enabled = !projectNameList.isSelectionEmpty
+		exportAction.enabled = !projectNameList.isSelectionEmpty
 	}
 
 	private fun buildUI() {
 		layout = BorderLayout()
-		preferredSize = Dimension(400, 500)
 		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
 		val scrollPane = JScrollPane(projectNameList)
+		scrollPane.preferredSize = Dimension(300, 400)
 		add(scrollPane, BorderLayout.CENTER)
 
 		val buttonPanel = JPanel()
@@ -95,6 +99,7 @@ class ProjectPersistencePanel(
 		buttonPanel.add(JButton(ActionWrapperSwing(openAction)))
 		buttonPanel.add(JButton(ActionWrapperSwing(NewAction())))
 		buttonPanel.add(JButton(ActionWrapperSwing(deleteAction)))
+		buttonPanel.add(JButton(ActionWrapperSwing(exportAction)))
 
 		buttonPanel.add(Box.createHorizontalGlue())
 		buttonPanel.add(JButton(ActionWrapperSwing(CancelAction())))
@@ -196,6 +201,17 @@ class ProjectPersistencePanel(
 			) {
 				managementService.delete(selectedProjectName!!)
 				refreshProjectNames()
+			}
+		}
+	}
+
+	private inner class ExportAction : AbstractAction("project.dialog.export.action") {
+		override fun execute(event: ActionEvent) {
+			val fileChooser = JFileChooser()
+			fileChooser.dialogTitle = name
+			fileChooser.selectedFile = File("$selectedProjectName.zip")
+			if (fileChooser.showSaveDialog(this@ProjectPersistencePanel) == JFileChooser.APPROVE_OPTION) {
+				managementService.export(selectedProjectName!!, fileChooser.selectedFile.absolutePath)
 			}
 		}
 	}

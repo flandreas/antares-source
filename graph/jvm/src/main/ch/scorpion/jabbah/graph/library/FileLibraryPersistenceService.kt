@@ -118,11 +118,11 @@ class FileLibraryPersistenceService(
 		)
 	}
 
-    override fun exportLibrary(library: Library, outputPath: String) {
+    override fun exportLibrary(name: String, outputPath: String) {
         LOG.debug("Exporting library to $outputPath")
         FileOutputStream(outputPath).use { output ->
             ZipOutputStream(output).use {
-                val fileToZip = File(buildLibraryDirectoryPath(library.name))
+                val fileToZip = File(buildLibraryDirectoryPath(name))
                 zipFile(fileToZip, fileToZip.name, it)
             }
         }
