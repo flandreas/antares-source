@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.FileExtensionFilter
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -24,6 +25,7 @@ import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
+import javax.swing.filechooser.FileFilter
 
 abstract class AbstractDesktopApplicationSwing(
 	args: Array<String>,
@@ -52,7 +54,7 @@ abstract class AbstractDesktopApplicationSwing(
 		val fileChooser = JFileChooser()
 		fileChooser.isAcceptAllFileFilterUsed = true
 		fileChooser.isFileHidingEnabled = true
-		fileChooser.fileFilter = ApplicationFileFilter(this)
+		fileChooser.fileFilter = createFileFilter()
 		if (savable is FileSavable) {
 			if (!(savable as FileSavable).filePath.isNullOrEmpty()) {
 				fileChooser.selectedFile = File((savable as FileSavable).filePath)
@@ -70,11 +72,14 @@ abstract class AbstractDesktopApplicationSwing(
 	override fun open() {
 		val fileChooser = JFileChooser()
 		fileChooser.isAcceptAllFileFilterUsed = false
-		fileChooser.fileFilter = ApplicationFileFilter(this)
-
+		fileChooser.fileFilter = createFileFilter()
 		if (fileChooser.showOpenDialog(mainFrame) == JFileChooser.APPROVE_OPTION) {
 			openFrom(fileChooser.selectedFile.absolutePath)
 		}
+	}
+
+	private fun createFileFilter(): FileFilter {
+		return FileExtensionFilter(fileExtension, displayName)
 	}
 
 	/** ---- [AbstractApplication] */

@@ -130,9 +130,10 @@ class FileLibraryPersistenceService(
 
 	override fun importLibrary(name: String, inputPath: String) {
 		LOG.debug("Importing library '$name' from $inputPath")
+		Files.createDirectory(Paths.get(buildLibraryDirectoryPath(name)))
 		FileInputStream(inputPath).use {input ->
 			ZipInputStream(input).use {
-				unzipFile(Files.createDirectory(Paths.get(name)), it)
+				unzipFile(Paths.get(directoryPath), it)
 			}
 		}
 	}

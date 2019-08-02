@@ -2,12 +2,16 @@ package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.swing.FileExtensionFilter
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.graph.library.LibraryPropertiesPanel
+import ch.scorpion.jabbah.graph.project.ProjectImportResult.*
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
+import org.apache.commons.io.FilenameUtils
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -15,6 +19,7 @@ import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.io.File
 import javax.swing.*
+import javax.swing.filechooser.FileFilter
 
 /** Opens and shows the [ProjectPersistencePanel] in a modal dialog.*/
 class ShowProjectsDialogAction(
@@ -41,6 +46,8 @@ class ProjectPersistencePanel(
 
 		private val LOG by logger(ProjectPersistencePanel::class)
 
+		private val EXPORT_FILE_EXTENSION = "zip"
+
 		fun showAsDialog(parent: JFrame) {
 			val dialog = JDialog(parent, true)
 			BusyHandler.register(dialog, null)
@@ -66,6 +73,7 @@ class ProjectPersistencePanel(
 	private val openAction = OpenAction()
 	private val deleteAction = DeleteAction()
 	private val exportAction = ExportAction()
+	private val importAction = ImportAction()
 
 	init {
 		projectNameList.addListSelectionListener { updateActions() }
@@ -84,6 +92,7 @@ class ProjectPersistencePanel(
 		openAction.enabled = !projectNameList.isSelectionEmpty && projectNameList.selectedValue != projectHolder.p?.name
 		deleteAction.enabled = !projectNameList.isSelectionEmpty
 		exportAction.enabled = !projectNameList.isSelectionEmpty
+		importAction.enabled = true
 	}
 
 	private fun buildUI() {
@@ -96,16 +105,22 @@ class ProjectPersistencePanel(
 
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
-		buttonPanel.add(JButton(ActionWrapperSwing(openAction)))
-		buttonPanel.add(JButton(ActionWrapperSwing(NewAction())))
-		buttonPanel.add(JButton(ActionWrapperSwing(deleteAction)))
-		buttonPanel.add(JButton(ActionWrapperSwing(exportAction)))
 
+		buttonPanel.add(createButton(openAction))
+		buttonPanel.add(createButton(NewAction()))
+		buttonPanel.add(createButton(deleteAction))
+		buttonPanel.add(createButton(exportAction))
+		buttonPanel.add(createButton(importAction))
 		buttonPanel.add(Box.createHorizontalGlue())
-		buttonPanel.add(JButton(ActionWrapperSwing(CancelAction())))
+		buttonPanel.add(createButton(CancelAction()))
+
 		add(buttonPanel, BorderLayout.SOUTH)
 
 		projectNameList.cellRenderer = ProjectListRenderer()
+	}
+
+	private fun createButton(action: Action): JButton {
+		return JButton(ActionWrapperSwing(action))
 	}
 
 	private fun loadProjectNames(): ListModel<String> {
@@ -209,10 +224,79 @@ class ProjectPersistencePanel(
 		override fun execute(event: ActionEvent) {
 			val fileChooser = JFileChooser()
 			fileChooser.dialogTitle = name
-			fileChooser.selectedFile = File("$selectedProjectName.zip")
+			fileChooser.selectedFile = File("$selectedProjectName.$EXPORT_FILE_EXTENSION")
 			if (fileChooser.showSaveDialog(this@ProjectPersistencePanel) == JFileChooser.APPROVE_OPTION) {
 				managementService.export(selectedProjectName!!, fileChooser.selectedFile.absolutePath)
+				JOptionPane.showConfirmDialog(
+					Frame.getFrames()[0],
+					Translations.getString("project.dialog.export.success.msg", selectedProjectName!!),
+					name,
+					JOptionPane.DEFAULT_OPTION,
+					JOptionPane.INFORMATION_MESSAGE)
 			}
 		}
 	}
+
+	private inner class ImportAction : AbstractAction("project.dialog.import.action") {
+		override fun execute(event: ActionEvent) {
+			val fileChooser = JFileChooser()
+			fileChooser.dialogTitle = name
+			fileChooser.fileFilter = createFilter()
+			if (fileChooser.showOpenDialog(this@ProjectPersistencePanel) == JFileChooser.APPROVE_OPTION) {
+				import(fileChooser.selectedFile.absolutePath)
+			}
+		}
+
+		private fun import(path: String) {
+			val name = FilenameUtils.getBaseName(path)
+			when(managementService.import(path)) {
+				Success -> handleSuccessfulImport(name)
+				NameAlreadyExists -> handleImportNameAlreadyExists(name)
+				Invalid -> handleInvalidImportFile(name)
+				StaleLibraryReference -> handleStaleLibraryReference(name)
+			}
+		}
+
+		private fun createFilter(): FileFilter {
+			return FileExtensionFilter(EXPORT_FILE_EXTENSION, Translations.getString("project.dialog.import.filter.name"))
+		}
+
+		fun handleSuccessfulImport(projectName: String) {
+			JOptionPane.showConfirmDialog(
+				Frame.getFrames()[0],
+				Translations.getString("project.dialog.import.success.msg", projectName),
+				name,
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.INFORMATION_MESSAGE)
+			refreshProjectNames()
+		}
+
+		fun handleImportNameAlreadyExists(projectName: String) {
+			JOptionPane.showConfirmDialog(
+				Frame.getFrames()[0],
+				Translations.getString("project.dialog.import.alreadyExists.msg", projectName),
+				name,
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.ERROR_MESSAGE)
+		}
+
+		fun handleInvalidImportFile(projectName: String) {
+			JOptionPane.showConfirmDialog(
+				Frame.getFrames()[0],
+				Translations.getString("project.dialog.import.invalid.msg", projectName),
+				name,
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.ERROR_MESSAGE)
+		}
+
+		fun handleStaleLibraryReference(projectName: String) {
+			JOptionPane.showConfirmDialog(
+				Frame.getFrames()[0],
+				Translations.getString("project.dialog.import.staleLibraryReference.msg", projectName),
+				name,
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.ERROR_MESSAGE)
+		}
+	}
+
 }

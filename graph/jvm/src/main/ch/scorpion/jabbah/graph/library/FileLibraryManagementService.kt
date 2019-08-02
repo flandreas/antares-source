@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
-import org.apache.commons.io.FileUtils
 import java.nio.file.FileSystems
 import java.nio.file.Files
 
@@ -133,13 +132,10 @@ class FileLibraryManagementService(
 
 	private fun load(name: String): Library {
 		if (!exists(name)) {
+			LOG.error("Attempt to load non-existing library '$name'")
 			throw IllegalArgumentException("library '$name' doesn't exist")
 		}
 		return libraryService.loadLibrary(name)
-	}
-
-	private fun deleteImpl(libraryName: String) {
-		FileUtils.forceDelete(FileSystems.getDefault().getPath(directoryPath, libraryName).toFile())
 	}
 
 	private fun copyBaseElement(element: BaseLibraryElement, destination: LibraryDirectory) {

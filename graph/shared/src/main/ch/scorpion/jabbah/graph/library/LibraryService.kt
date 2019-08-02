@@ -36,6 +36,12 @@ interface LibraryService {
 	 */
 	fun deleteLibrary(name: String)
 
+	/**
+	 * Silently deletes any resources related with a [Library].
+	 * This is primarily used by higher-level services after importing an invalid [Library].
+	 */
+	fun purgeLibrary(name: String)
+
 	/** Renames a [Library] and makes the change persistent.*/
 	fun renameLibrary(library: Library, newName: String)
 
@@ -134,8 +140,9 @@ interface LibraryService {
 	 * Imports a [Library] by reading its entire contents from the specified input path.
 	 * Note that this wouldn't work in a client/server setup, which would require the imported data to be
 	 * transferred to the server to be stored there. This is up to a future extension.
+	 * @return the imported [Library], or `null` if the [Library] is invalid
 	 */
-	fun importLibrary(name: String, inputPath: String)
+	fun importLibrary(name: String, inputPath: String): Library?
 }
 
 /** Posted on [EventBus] when a [LibraryItem] has been added to a [LibraryDirectory].*/
@@ -218,6 +225,11 @@ class LibraryServiceImpl(
 		val library = loadLibrary(name)
 		persistenceService.deleteLibrary(name)
 		eventBus.post(LibraryDeletedEvent(library.uuid, name))
+	}
+
+	override fun purgeLibrary(name: String) {
+		LOG.debug("Purging Library '$name'")
+		persistenceService.deleteLibrary(name)
 	}
 
 	override fun renameLibrary(library: Library, newName: String) {
@@ -358,12 +370,17 @@ class LibraryServiceImpl(
 	}
 
 	override fun exportLibrary(name: String, outputPath: String) {
-		LOG.debug("Export Library '$name' to path $outputPath")
 		persistenceService.exportLibrary(name, outputPath)
 	}
 
-	override fun importLibrary(name: String, inputPath: String) {
-		// TODO
+	override fun importLibrary(name: String, inputPath: String): Library? {
+		persistenceService.importLibrary(name, inputPath)
+		try {
+			return loadLibrary(name)
+		} catch(e: Throwable) {
+			persistenceService.deleteLibrary(name)
+			return null
+		}
 	}
 
 	/** ---- [LibraryServiceImpl] */

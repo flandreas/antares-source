@@ -77,6 +77,15 @@ interface ProjectManagementService {
 	fun close()
 
 	fun export(name: String, outputPath: String)
+
+	fun import(inputPath: String): ProjectImportResult
+}
+
+enum class ProjectImportResult {
+	Success,
+	NameAlreadyExists,
+	Invalid,
+	StaleLibraryReference
 }
 
 /** Null pattern */
@@ -125,6 +134,10 @@ class UnimplementedProjectManagementService : ProjectManagementService {
 	}
 
 	override fun export(name: String, outputPath: String) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun import(inputPath: String): ProjectImportResult {
 		throw UnsupportedOperationException("not implemented")
 	}
 }

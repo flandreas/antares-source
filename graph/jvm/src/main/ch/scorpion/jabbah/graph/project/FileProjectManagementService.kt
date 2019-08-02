@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
 import org.apache.commons.io.FileUtils
+import org.apache.commons.io.FilenameUtils
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -29,6 +30,7 @@ class FileProjectManagementService(
 	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name",
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+	private val libraryDictionary: LibraryDictionary = LibraryModule.libraryDictionary,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ProjectManagementService {
 
@@ -177,5 +179,20 @@ class FileProjectManagementService(
 
 	override fun export(name: String, outputPath: String) {
 		libraryService.exportLibrary(name, outputPath)
+	}
+
+	override fun import(inputPath: String): ProjectImportResult {
+		val name = FilenameUtils.getBaseName(inputPath)
+		if (exists(name)) {
+			return ProjectImportResult.NameAlreadyExists
+		}
+
+		val library = libraryService.importLibrary(name, inputPath) ?: return ProjectImportResult.Invalid
+		if (!libraryDictionary.contains((library as Project).uuid)) {
+			libraryService.purgeLibrary(name)
+			return ProjectImportResult.StaleLibraryReference
+		}
+
+		return ProjectImportResult.Success
 	}
 }
