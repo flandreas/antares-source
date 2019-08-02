@@ -213,7 +213,7 @@ class GraphNavigationPanel(
 
 	/** Deselects all [Component]s in all [View]s.*/
 	fun deselectAll() {
-		drawingView.selectionManager.deselectAll()
+		navigationStackViewController.navigationStack.rootEntry?.content?.selectionManager?.deselectAll()
 		navigationStackViewController.navigationStack.forAllContents { it.removeAllSelectionModels() }
 	}
 

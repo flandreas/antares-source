@@ -23,7 +23,12 @@ class SubGraphVerticeViewImplSelectionModel(
 
     /** ---- [Drawable] */
 
-    override fun draw(context: DrawContext) {
+    override fun dispose() {
+	    super.dispose()
+	    clearSelectionModels()
+    }
+
+	override fun draw(context: DrawContext) {
         val oldUseContextColors = context.useContextColors
 
         context.useContextColors = true
@@ -47,9 +52,16 @@ class SubGraphVerticeViewImplSelectionModel(
     /** ---- [AbstractSelectionModel] */
 
     override fun componentUpdated() {
-        selectionModels.clear()
+	    clearSelectionModels()
         component.getControlViewComponents().forEach {
 	        selectionModels[it] = provider.provideFor(it.controlView!!, SelectionDrawingStrategy.REPLACE)!!
         }
     }
+
+	/** ---- [SubGraphVerticeViewImplSelectionModel] */
+
+	private fun clearSelectionModels() {
+		selectionModels.values.forEach { it.dispose() }
+		selectionModels.clear()
+	}
 }
