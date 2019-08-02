@@ -19,7 +19,11 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 class EdgeToPortConnector(
 	private val connectServiceSupplier: () -> GraphViewConnectService,
 	edgeViewFactorySupplier: () -> EdgeViewFactory<Any>
-) : AbstractCreateEdgeViewConnector(edgeViewFactorySupplier, EdgeViewEndpointType.DESTINATION) {
+) : AbstractCreateEdgeViewConnector(
+	portTypeCond = { true },
+	edgeViewFactorySupplier = edgeViewFactorySupplier,
+	endpointType = EdgeViewEndpointType.DESTINATION
+) {
 
 	companion object {
 		private val LOG by logger(EdgeToPortConnector::class)
@@ -96,14 +100,14 @@ class EdgeToPortConnector(
 		}
 	}
 
+	override fun connectEdgeViewToStartPort() {
+		// not used
+	}
+
 	/** ---- [EdgeToPortConnector] */
 
 	fun useFor(edgeView: EdgeView<*>) {
 		branchedEdgeView = edgeView
-	}
-
-	private fun getEndpointHandler(): DragEdgeViewEndpointHandler {
-		return successor as DragEdgeViewEndpointHandler
 	}
 
 	private fun beginConnecting(view: DrawingView<Drawing<Component>>) {
