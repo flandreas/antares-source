@@ -16,7 +16,7 @@ object AntaresThemes {
 
 	private val SELECTION_COLOR = Color.ORANGE
 
-	private val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.5 * Look.SCALE).toInt())
+	private val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 15)
 	private val EXPLANATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 12)
 
 	private val ANNOTATION_STROKE = Stroke(1.0f)
