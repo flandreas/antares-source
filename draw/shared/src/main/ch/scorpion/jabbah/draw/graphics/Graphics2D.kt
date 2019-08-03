@@ -65,9 +65,17 @@ interface Graphics2D {
     /** Draws an oval within the rectangle defined by the upper-left corner (x,y) and the given width and height.*/
     fun drawOval(x: Double, y: Double, w: Double, h: Double)
 
+	fun drawCircle(x: Double, y: Double, r: Double) {
+		drawOval(x - r, y - r, 2 * r, 2 * r)
+	}
+
     fun fillOval(x: Int, y: Int, w: Int, h: Int)
 
     fun fillOval(x: Double, y: Double, w: Double, h: Double)
+
+	fun fillCircle(x: Double, y: Double, r: Double) {
+		fillOval(x - r, y - r, 2 * r, 2 * r)
+	}
 
     fun drawDot(x: Int, y: Int)
 

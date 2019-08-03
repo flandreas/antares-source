@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
@@ -34,11 +35,19 @@ import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapte
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
+private interface SwitchViewFace {
+
+	fun drawEdited(context: DrawContext)
+
+	fun drawExecuted(context: DrawContext)
+
+}
 
 /**
  * A view representation of a [Switch] that supports persistent toggling between two states.
@@ -54,7 +63,6 @@ class SwitchView(
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.SwitchView.iconPath"
 		private const val SIZE = 4 * Look.SCALE
 		private const val BORDER_WIDTH = 3
-		private const val DIAMETER = 12
 		private const val LABEL_DIST = Look.SCALE
 		private const val LABEL_INSET = 4.0
 	}
@@ -70,6 +78,8 @@ class SwitchView(
 			validate()
 			postControlViewSourceChangeEvent(eventBus)
 		}
+
+	private val face = DigitalFace()
 
 	/** Handles mouse interactions during execution*/
 	private val actorInteractionHandler = InteractionHandler()
@@ -222,11 +232,43 @@ class SwitchView(
 	override fun drawImpl(context: DrawContext) {
 		val oldColor = context.g.color
 		super.drawImpl(context)
-		drawBodyDigital(context)
+
+		if (shadow) {
+			DropShadow.draw(context, transparency) {
+				context.g.fillRect(xInt, yInt, widthInt, heightInt)
+			}
+		}
+
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			face.drawExecuted(context)
+		} else {
+			face.drawEdited(context)
+		}
+
+		drawBorder(context)
+
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			drawFocus(context)
 		}
 		context.g.color = oldColor
+	}
+
+	override fun drawSelected(context: DrawContext) {
+		context.g.color = context.color!!.foregroundColor
+		draw(context) {
+			super.drawImpl(it)
+			context.g.stroke = stroke
+			context.g.drawRect(xInt, yInt, width.toInt(), SIZE)
+			context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
+			context.g.drawRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
+				width.toInt() - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH/*, DIAMETER, DIAMETER*/)
+			if (labelPosition == VerticeLabelPosition.INTERNAL) {
+				internalLabel.draw(context)
+			}
+		}
+		if (labelPosition == VerticeLabelPosition.EXTERNAL) {
+			externalLabel.draw(context)
+		}
 	}
 
 	/** ---- [ControlViewSource] */
@@ -283,49 +325,21 @@ class SwitchView(
 
 	/** ---- [SwitchView] */
 
-	override fun drawSelected(context: DrawContext) {
-		context.g.color = context.color!!.foregroundColor
-		draw(context) {
-			super.drawImpl(it)
-			context.g.stroke = stroke
-			context.g.drawRect(xInt, yInt, width.toInt(), SIZE)
-			context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
-			context.g.drawRoundRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-				width.toInt() - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH, DIAMETER, DIAMETER)
-			if (labelPosition == VerticeLabelPosition.INTERNAL) {
-				internalLabel.draw(context)
-			}
-		}
-		if (labelPosition == VerticeLabelPosition.EXTERNAL) {
-			externalLabel.draw(context)
-		}
-	}
-
-	private fun drawBodyDigital(context: DrawContext) {
-		if (shadow) {
-			DropShadow.draw(context, transparency) {
-				context.g.fillRect(xInt, yInt, widthInt, heightInt)
-			}
-		}
-
-		context.g.color = transparent.applyTo(color.backgroundColor)
-		context.g.fillRect(xInt, yInt, widthInt, heightInt)
-
-		context.g.color = transparent.applyTo(Bit.of(model!!.isOn).color.foregroundColor)
-		context.g.fillRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-			widthInt - 2 * BORDER_WIDTH, heightInt - 2 * BORDER_WIDTH)
-
+	private fun drawBorder(context: DrawContext) {
 		context.g.color = transparent.applyTo(color.foregroundColor)
 		context.g.stroke = stroke
 		context.g.drawRect(xInt, yInt, widthInt, heightInt)
+	}
 
-		internalLabel.color = transparent.applyTo(if (model!!.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
-		if (labelPosition == VerticeLabelPosition.INTERNAL) {
-			internalLabel.text = StringUtils.orEmpty(model!!.name)
-		} else {
-			internalLabel.text = Bit.of(model!!.isOn).toHexString()
-		}
-		internalLabel.draw(context)
+	private fun drawBackground(context: DrawContext) {
+		context.g.color = transparent.applyTo(propertiesBackgroundColor)
+		context.g.fillRect(xInt, yInt, widthInt, heightInt)
+	}
+
+	private fun drawSignalBackground(context: DrawContext) {
+		context.g.color = transparent.applyTo(Bit.of(model!!.isOn).color.foregroundColor)
+		context.g.fillRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
+			widthInt - 2 * BORDER_WIDTH, heightInt - 2 * BORDER_WIDTH)
 	}
 
 	private fun drawFocus(context: DrawContext) {
@@ -364,6 +378,100 @@ class SwitchView(
 		val tri = textRenderInfoFactory.measureSingleLineText(model!!.name!!, font)
 		val requiredSpace = tri.textBounds.width + 2 * LABEL_INSET
 		return (SIZE * Math.max(1.0, Math.ceil(requiredSpace / SIZE))).toInt()
+	}
+
+	private inner class DigitalFace : SwitchViewFace {
+
+		override fun drawEdited(context: DrawContext) {
+			drawSignalBackground(context)
+			drawContent(context)
+		}
+
+		override fun drawExecuted(context: DrawContext) {
+			drawSignalBackground(context)
+			drawContent(context)
+		}
+
+		private fun drawContent(context: DrawContext) {
+			drawSignalBackground(context)
+
+			internalLabel.color = transparent.applyTo(if (model!!.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
+			if (labelPosition == VerticeLabelPosition.INTERNAL) {
+				internalLabel.text = StringUtils.orEmpty(model!!.name)
+			} else {
+				internalLabel.text = Bit.of(model!!.isOn).toHexString()
+			}
+			internalLabel.draw(context)
+		}
+	}
+
+	private inner class AnalogFace : SwitchViewFace {
+
+		override fun drawEdited(context: DrawContext) {
+			drawBackground(context)
+			context.g.color = transparent.applyTo(color.foregroundColor)
+			drawContent(context)
+		}
+
+		override fun drawExecuted(context: DrawContext) {
+			drawSignalBackground(context)
+			context.g.color = transparent.applyTo(if (model!!.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
+			drawContent(context)
+		}
+
+		private fun drawContent(context: DrawContext) {
+			if (labelPosition == VerticeLabelPosition.INTERNAL) {
+				internalLabel.text = StringUtils.orEmpty(model!!.name)
+				internalLabel.draw(context)
+			} else {
+				drawSymbol(context)
+			}
+		}
+
+		private fun drawSymbol(context: DrawContext) {
+			drawCircles(context)
+			context.g.stroke = styleProvider.getStyle(GraphStyleType.ANNOTATION).stroke
+			if (toggle) {
+				drawToggleSymbol(context)
+			} else {
+				drawPushButtonSymbol(context)
+			}
+		}
+
+		private fun drawCircles(context: DrawContext) {
+			context.g.fillCircle(-DigitalPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE, 2.0)
+			context.g.fillCircle(-DigitalPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE, 2.0)
+		}
+
+		private fun drawPushButtonSymbol(context: DrawContext) {
+			if (model!!.isOn) {
+				context.g.drawLine(
+					-DigitalPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE,
+					-DigitalPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE)
+				context.g.drawLine(
+					-DigitalPortView.LENGTH - 2.0 * SCALE, 0.5 * SCALE,
+					-DigitalPortView.LENGTH - 2.0 * SCALE, -0.0 * SCALE)
+			} else {
+				context.g.drawLine(
+					-DigitalPortView.LENGTH - 3.0 * SCALE, -0.25 * SCALE,
+					-DigitalPortView.LENGTH - 1.0 * SCALE, -0.25 * SCALE)
+				context.g.drawLine(
+					-DigitalPortView.LENGTH - 2.0 * SCALE, -0.25 * SCALE,
+					-DigitalPortView.LENGTH - 2.0 * SCALE, -0.75 * SCALE)
+			}
+		}
+
+		private fun drawToggleSymbol(context: DrawContext) {
+			if (model!!.isOn) {
+				context.g.drawLine(
+					-DigitalPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE,
+					-DigitalPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE)
+			} else {
+				context.g.drawLine(
+					-DigitalPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE,
+					-DigitalPortView.LENGTH - 2.0 * SCALE, -1.0 * SCALE)
+			}
+		}
 	}
 
 	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
