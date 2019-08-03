@@ -89,7 +89,7 @@ class ConstantView(
 			}
 		}
 		super.drawImpl(context)
-		drawBody(context)
+		//drawBody(context)
 		drawNumberView(context, false)
 	}
 

@@ -79,7 +79,7 @@ class SwitchView(
 			postControlViewSourceChangeEvent(eventBus)
 		}
 
-	private val face = DigitalFace()
+	private val face = AnalogFace()
 
 	/** Handles mouse interactions during execution*/
 	private val actorInteractionHandler = InteractionHandler()
