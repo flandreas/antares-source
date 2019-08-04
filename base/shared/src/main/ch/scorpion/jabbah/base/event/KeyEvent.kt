@@ -1,9 +1,14 @@
 package ch.scorpion.jabbah.base.event
 
+enum class KeyEventType {
+	TYPED, PRESSED, RELEASED
+}
 /**
  * An event which indicates that the user has pressed a key.
  */
 interface KeyEvent : InputEvent {
+
+	val type: KeyEventType
 
     val key: Int
 
@@ -39,6 +44,27 @@ interface KeyEvent : InputEvent {
     }
 }
 
+/**
+ * A platform-independent empty implementation of [KeyEvent] to be used when applying the "null pattern",
+ * or for testing.
+ */
+data class KeyEventImpl(
+	override val type: KeyEventType,
+	override val event: Any = "",
+	override val key: Int,
+	override val keyChar: Char,
+	override val source: Any = "",
+	override val modifiers: Int = 0
+) : KeyEvent {
+
+	private var consumed: Boolean = false
+
+	override fun consume() {
+		consumed = true
+	}
+
+	override fun isConsumed(): Boolean = consumed
+}
 
 interface KeyListener {
     fun keyTyped(e: KeyEvent)

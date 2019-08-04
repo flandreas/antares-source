@@ -9,10 +9,15 @@ enum class Button {
     NONE, BUTTON1, BUTTON2, BUTTON3
 }
 
+enum class MouseEventType {
+	CLICKED, PRESSED, RELEASED, ENTERED, EXITED, MOVED, DRAGGED, WHEEL_ROTATED
+}
+
 /**
  * An event which indicates that a mouse action has occurred in a component.
  */
 interface MouseEvent : InputEvent {
+	val type: MouseEventType
     val x: Int
     val y: Int
     val button: Button
@@ -21,25 +26,29 @@ interface MouseEvent : InputEvent {
     val location: Point2D get() = Point2D(x.toDouble(), y.toDouble())
 }
 
-/** A platform-independent empty implementation of [MouseEvent] to be used when applying the "null pattern".*/
-class EmptyMouseEvent : MouseEvent {
+/**
+ * A platform-independent empty implementation of [MouseEvent] to be used when applying the "null pattern",
+ * or for testing.
+ */
+data class MouseEventImpl(
+	override val type: MouseEventType = MouseEventType.PRESSED,
+	override val event: Any = "",
+	override val x: Int = 0,
+	override val y: Int = 0,
+	override val button: Button = Button.NONE,
+	override val clickCount: Int = 0,
+	override val wheelRotation: Int = 0,
+	override val source: Any = "",
+	override val modifiers: Int = 0
+) : MouseEvent {
 
-    override val event: Any get() = this
-    override val x: Int get() = 0
-    override val y: Int get() = 0
-    override val button: Button get() = Button.NONE
-    override val clickCount: Int get() = 0
-    override val wheelRotation: Int get() = 0
-    override val source: Any get() = this
-    override val modifiers: Int get() = 0
+	private var consumed: Boolean = false
 
-    override fun consume() {
-        // empty
-    }
-
-	override fun isConsumed(): Boolean {
-		return false
+	override fun consume() {
+		consumed = true
 	}
+
+	override fun isConsumed(): Boolean = consumed
 }
 
 

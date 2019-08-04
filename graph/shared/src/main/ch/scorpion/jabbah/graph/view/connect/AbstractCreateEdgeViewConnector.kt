@@ -81,7 +81,7 @@ abstract class AbstractCreateEdgeViewConnector(
 
 	/** ---- [AbstractCreateEdgeViewConnector] */
 
-	abstract protected fun connectEdgeViewToStartPort()
+	protected abstract fun connectEdgeViewToStartPort()
 
 	/**
 	 * Prepares this [AbstractConnectionPointHighlighter] to be used to created [EdgeView]s that the user

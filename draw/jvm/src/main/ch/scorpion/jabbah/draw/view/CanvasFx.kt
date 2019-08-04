@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DFx
 import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
@@ -175,6 +176,7 @@ class CanvasFx(
 
 	private class MouseEventJx(override val event: MouseEvent) : ch.scorpion.jabbah.base.event.MouseEvent {
 
+		override val type: MouseEventType get() = convertEventType(event.eventType)
 		override val x: Int get() = event.x.toInt()
 		override val y: Int get() = event.y.toInt()
 		override val button: Button get() = convertButton()
@@ -215,10 +217,16 @@ class CanvasFx(
 
 			return modifiers
 		}
+
+		private fun convertEventType(type: EventType<out MouseEvent>): MouseEventType {
+			// Not used, will be removed
+			return MouseEventType.MOVED
+		}
 	}
 
 	private class ScrollEventJx(private val scrollEvent: ScrollEvent) : ch.scorpion.jabbah.base.event.MouseEvent {
 
+		override val type: MouseEventType get() = convertEventType(scrollEvent.eventType)
 		override val x: Int get() = scrollEvent.x.toInt()
 		override val y: Int get() = scrollEvent.y.toInt()
 		override val button: Button get() = Button.NONE
@@ -250,6 +258,11 @@ class CanvasFx(
 			}
 
 			return modifiers
+		}
+
+		private fun convertEventType(type: EventType<out ScrollEvent>): MouseEventType {
+			// Not used, will be removed
+			return MouseEventType.MOVED
 		}
 	}
 
@@ -300,6 +313,8 @@ class CanvasFx(
 		override val event: KeyEvent
 	) : ch.scorpion.jabbah.base.event.KeyEvent {
 
+		override val type: KeyEventType get() = convertEventType(event.eventType)
+
 		override val key: Int get() = event.code.ordinal
 
 		override val keyChar: Char get() = event.character[0]
@@ -330,6 +345,11 @@ class CanvasFx(
 			}
 
 			return modifiers
+		}
+
+		private fun convertEventType(type: EventType<out KeyEvent>): KeyEventType {
+			// Not used, will be removed
+			return KeyEventType.TYPED
 		}
 	}
 

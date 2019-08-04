@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.draw
 
-import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.base.state.StateMachine
 
 /**
  * Handles mouse and key inputs that are targeted at a [Drawable] in a [View].
@@ -66,5 +66,49 @@ open class InputEventHandlerAdapter<in T : InputEventContext>(
     override fun keyReleased(context: T): InputEventHandler<T>? {
         return successor?.keyReleased(context)
     }
+}
+
+/**
+ * Implements [InputEventHandler] logic using the specified non-strict [StateMachine],
+ * forwarding unhandled events to an optional successor [InputEventHandler].
+ */
+class StateMachineInputEventHandler<T : InputEventContext>(
+	val sm: StateMachine<T>,
+	val successor: InputEventHandler<T>? = null
+) : InputEventHandler<T>{
+
+	init {
+		if (sm.strict)  {
+			throw IllegalArgumentException("StateMachine must not be strict")
+		}
+	}
+
+	override fun mouseClicked(context: T): InputEventHandler<T>? {
+		return if (sm.handle(context)) this else successor?.mouseClicked(context)
+	}
+
+	override fun mouseMoved(context: T): InputEventHandler<T>? {
+		return if (sm.handle(context)) this else successor?.mouseMoved(context)
+	}
+
+	override fun mousePressed(context: T): InputEventHandler<T>? {
+		return if (sm.handle(context)) this else successor?.mousePressed(context)
+	}
+
+	override fun mouseDragged(context: T): InputEventHandler<T>? {
+		return if (sm.handle(context)) this else successor?.mouseDragged(context)
+	}
+
+	override fun mouseReleased(context: T): InputEventHandler<T>? {
+		return if (sm.handle(context)) this else successor?.mouseReleased(context)
+	}
+
+	override fun keyPressed(context: T): InputEventHandler<T>? {
+		return if (sm.handle(context)) this else successor?.keyPressed(context)
+	}
+
+	override fun keyReleased(context: T): InputEventHandler<T>? {
+		return if (sm.handle(context)) this else successor?.keyReleased(context)
+	}
 }
 

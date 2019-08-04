@@ -10,6 +10,8 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
  *
  * @property view the [View] in which the object that owns this [InputEventHandler] is displayed. Used for
  * accessing [View] properties, such as changing the [Cursor] during input handling.
+ * @property x the origin event's x-coordinate (in view coordinated) transferred to model coordinate space
+ * @property y the origin event's y-coordinate (in view coordinated) transferred to model coordinate space
  */
 open class InputEventContext(
 	val view: View<*>,

@@ -214,6 +214,8 @@ private class MouseEventJvm(
 	override val event: AwtMouseEvent
 ) : MouseEvent {
 
+	override val type: MouseEventType get() = convertEventType(event.id)
+
 	override val source: Any get() = event.source
 
 	override val modifiers: Int get() = event.modifiersEx
@@ -243,9 +245,24 @@ private class MouseEventJvm(
 			else -> throw IllegalArgumentException("unknown button $jvmButton")
 		}
 	}
+
+	private fun convertEventType(id: Int): MouseEventType {
+		return when(id) {
+			AwtMouseEvent.MOUSE_CLICKED -> MouseEventType.CLICKED
+			AwtMouseEvent.MOUSE_PRESSED -> MouseEventType.PRESSED
+			AwtMouseEvent.MOUSE_RELEASED -> MouseEventType.RELEASED
+			AwtMouseEvent.MOUSE_ENTERED -> MouseEventType.ENTERED
+			AwtMouseEvent.MOUSE_EXITED -> MouseEventType.EXITED
+			AwtMouseEvent.MOUSE_MOVED -> MouseEventType.MOVED
+			AwtMouseEvent.MOUSE_DRAGGED -> MouseEventType.DRAGGED
+			AwtMouseEvent.MOUSE_WHEEL -> MouseEventType.WHEEL_ROTATED
+			else -> throw IllegalArgumentException("unknown AWT mouse event id $id")
+		}
+	}
 }
 
 private class KeyEventJvm(override val event: AwtKeyEvent) : KeyEvent {
+	override val type: KeyEventType get() = convertEventType(event.id)
 	override val source: Any get() = event.source
 	override val modifiers: Int get() = event.modifiersEx
 	override val key: Int get() = event.keyCode
@@ -256,6 +273,15 @@ private class KeyEventJvm(override val event: AwtKeyEvent) : KeyEvent {
 	}
 
 	override fun isConsumed(): Boolean = event.isConsumed
+
+	private fun convertEventType(id: Int): KeyEventType {
+		return when (id) {
+			AwtKeyEvent.KEY_TYPED -> KeyEventType.TYPED
+			AwtKeyEvent.KEY_PRESSED -> KeyEventType.PRESSED
+			AwtKeyEvent.KEY_RELEASED -> KeyEventType.RELEASED
+			else -> throw IllegalArgumentException("unknown AWT key event id $id")
+		}
+	}
 }
 
 private class KeyEventBridge(val listener: KeyListener) : java.awt.event.KeyListener {

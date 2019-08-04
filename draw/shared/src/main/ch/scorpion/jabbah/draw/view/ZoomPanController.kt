@@ -141,7 +141,7 @@ class ZoomPanController(val view: View<*>) {
     inner class AutoPanning : MouseAdapter() {
 
         private val timer: Timer = System.get().createTimer()
-        private var event: MouseEvent = EmptyMouseEvent()
+        private var event: MouseEvent = MouseEventImpl()
 
         var enabled: Boolean = true
 

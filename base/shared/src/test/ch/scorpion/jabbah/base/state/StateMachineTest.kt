@@ -20,30 +20,78 @@ class StateMachineTest {
 
 	private val stateC = State<String>("C")
 
-	private val stateMachine = StateMachine(stateA, stateB, stateC)
+	private lateinit var stateMachine : StateMachine<String>
 
 	init {
 		stateA.add(Transition(destination = stateB, condition = { it == "eventB"}, action = transitionActionAB ))
 		stateA.add(Transition(destination = stateC, condition = { it == "eventC"}, action = transitionActionAC ))
+		stateA.add(Transition(destination = stateA, condition = { it == "eventA"}))
+	}
+
+	private fun buildStrictStateMachine() {
+		buildStateMachine(strict = true)
+	}
+
+	private fun buildNonStrictStateMachine() {
+		buildStateMachine(strict = false)
+	}
+
+	private fun buildStateMachine(strict: Boolean) {
+		stateMachine = StateMachine(stateA, stateB, stateC, strict = strict)
 	}
 
 	@Test
 	fun shouldRejectNoStates() {
+		buildStrictStateMachine()
+
 		assertFailsWith(IllegalArgumentException::class) { StateMachine<String>() }
 	}
 
 	@Test
 	fun shouldEnterStartState() {
+		buildStrictStateMachine()
+
 		assertEquals(stateA, stateMachine.currentState)
 		verify(exactly = 1) { entryActionA.invoke(any()) }
 	}
 
 	@Test
 	fun shouldTransit() {
-		stateMachine.handle("eventB")
+		buildStrictStateMachine()
 
+		val handled = stateMachine.handle("eventB")
+
+		assertTrue(handled)
 		verify(exactly = 1) { transitionActionAB.invoke(any()) }
 		verify(exactly = 1) { entryActionB.invoke(any()) }
 		assertEquals(stateB, stateMachine.currentState)
+	}
+
+	@Test
+	fun strictStateMachineShouldRejectUnsupportedEvent() {
+		buildStrictStateMachine()
+
+		assertFailsWith(IllegalArgumentException::class) { stateMachine.handle("unsupported") }
+	}
+
+	@Test
+	fun nonStrictStateMachineShouldIgnoreUnsupportedEvent() {
+		buildNonStrictStateMachine()
+
+		val handled = stateMachine.handle("unsupported")
+
+		assertFalse(handled)
+		assertEquals(stateA, stateMachine.currentState)
+	}
+
+	@Test
+	fun selfTransitionShouldNotTriggerActions() {
+		buildStrictStateMachine()
+
+		val handled = stateMachine.handle("eventA")
+
+		assertTrue(handled)
+		verify(exactly = 1) { entryActionA.invoke(any()) }
+		assertEquals(stateA, stateMachine.currentState)
 	}
 }
