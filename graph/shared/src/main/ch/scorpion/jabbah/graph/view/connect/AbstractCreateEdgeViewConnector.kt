@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
@@ -27,7 +28,7 @@ abstract class AbstractCreateEdgeViewConnector(
 	private val edgeViewFactorySupplier: () -> EdgeViewFactory<Any>,
 	endpointType: EdgeViewEndpointType,
 	allowEdgeViewAsTarget: Boolean = false
-) : AbstractConnectionPointHighlighter(DragEdgeViewEndpointHandler(endpointType, allowEdgeViewAsTarget)) {
+) : InputEventHandlerAdapter<EditInputEventContext>(DragEdgeViewEndpointHandler(endpointType, allowEdgeViewAsTarget)) {
 
 	companion object {
 		private val LOG by logger(AbstractCreateEdgeViewConnector::class)
@@ -116,9 +117,9 @@ abstract class AbstractCreateEdgeViewConnector(
 			val pv = startVerticeView!!.getPortViewAtConnectionPoint(context.x, context.y)
 			if (pv != null && !pv.port.isConnected && portTypeCond.invoke(pv.port.portType)) {
 				startPortView = pv
-				if (portViewHighlight == null) {
+				if (!ConnectionPointHighlighter.hasPortViewHighlight) {
 					val connPoint = startVerticeView!!.getPortConnectionPoint(startPortView!!.port)
-					displayPortViewHighlight(context.drawingView(), Point2D(connPoint))
+					ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), Point2D(connPoint))
 				}
 				return true
 			}
@@ -127,13 +128,13 @@ abstract class AbstractCreateEdgeViewConnector(
 	}
 
 	protected fun beginConnecting(context: EditInputEventContext): Boolean {
-		if (portViewHighlight == null) {
+		if (!ConnectionPointHighlighter.hasPortViewHighlight) {
 			return false
 		}
 
 		createEdgeView(context.drawingView(), startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
 		getEndpointHandler().useFor(edgeView!!)
-		removePortViewHighlight(context.drawingView())
+		ConnectionPointHighlighter.removePortViewHighlight(context.drawingView())
 
 		edgeView!!.model!!.connect(startPortView!!.port as Port<Any>)
 		connectEdgeViewToStartPort()
@@ -142,8 +143,8 @@ abstract class AbstractCreateEdgeViewConnector(
 	}
 
 	protected fun exitStartPortViewIfNecessary(context: EditInputEventContext) {
-		if (portViewHighlight != null) {
-			removePortViewHighlight(context.drawingView())
+		if (ConnectionPointHighlighter.hasPortViewHighlight) {
+			ConnectionPointHighlighter.removePortViewHighlight(context.drawingView())
 			startPortView = null
 		}
 	}
@@ -154,7 +155,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			edgeView?.connectToOrigin(null, null)
 			edgeView?.connectToDestination(null, null)
 			editor.view.drawing.remove(edgeView!!)
-			removePortViewHighlight(editor.view)
+			ConnectionPointHighlighter.removePortViewHighlight(editor.view)
 			edgeView = null
 		}
 	}

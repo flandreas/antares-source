@@ -50,12 +50,12 @@ class EdgeToPortConnector(
 
 		val snapResult = snap(context)
 		if (snapResult != null) {
-			displayPortViewHighlight(context.drawingView(), snapResult.location)
+			ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), snapResult.location)
 			return this
 		}
 
-		if (portViewHighlight != null) {
-			removePortViewHighlight(context.drawingView())
+		if (ConnectionPointHighlighter.hasPortViewHighlight) {
+			ConnectionPointHighlighter.removePortViewHighlight(context.drawingView())
 		}
 		return null
 	}
@@ -111,9 +111,9 @@ class EdgeToPortConnector(
 	}
 
 	private fun beginConnecting(view: DrawingView<Drawing<Component>>) {
-		createEdgeView(view, Point2D(portViewHighlight!!.location), branchedEdgeView!!.model as Net<Any>)
+		createEdgeView(view, Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.model as Net<Any>)
 		getEndpointHandler().useFor(edgeView!!)
-		removePortViewHighlight(view)
+		ConnectionPointHighlighter.removePortViewHighlight(view)
 
 		splitResult = connectServiceSupplier.invoke().split(
 			view.drawing as GraphView<GraphElementView<*>>,

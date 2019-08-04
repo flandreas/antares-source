@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 
 /**
  * Controls dragging an endpoint of an [EdgeView] towards an target [PortView] of a [VerticeView],
@@ -20,7 +21,7 @@ import ch.scorpion.jabbah.base.logger
 class DragEdgeViewEndpointHandler(
 	val edgeViewEndpointType: EdgeViewEndpointType,
 	private val allowEdgeViewAsTarget: Boolean = false
-) : AbstractConnectionPointHighlighter() {
+) : InputEventHandlerAdapter<EditInputEventContext>() {
 
 	companion object {
 		private val LOG by logger(DragEdgeViewEndpointHandler::class)
@@ -96,10 +97,10 @@ class DragEdgeViewEndpointHandler(
 	}
 
 	private fun snapToTargetPortView(context: EditInputEventContext) {
-		if (portViewHighlight == null) {
+		if (!ConnectionPointHighlighter.hasPortViewHighlight) {
 			// Start highlighting current destination PortView
 			val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
-			displayPortViewHighlight(context.drawingView(), connPointAbs)
+			ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), connPointAbs)
 
 			// Snap EdgeView end to connection point
 			edgeViewEndpointType.moveTo(edgeView!!, Point2D(connPointAbs.x, connPointAbs.y))
@@ -113,10 +114,10 @@ class DragEdgeViewEndpointHandler(
 	}
 
 	private fun snapToTargetEdgeView(context: EditInputEventContext) {
-		if (portViewHighlight == null) {
+		if (!ConnectionPointHighlighter.hasPortViewHighlight) {
 			targetEdgeView!!.snap(context.x, context.y, context.editor.view.grid)?.let { snapResult ->
 				targetEdgeViewSegmentIndex = snapResult.segmentIndex
-				displayPortViewHighlight(context.drawingView(), snapResult.location)
+				ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), snapResult.location)
 				edgeViewEndpointType.moveTo(edgeView!!, snapResult.location)
 				edgeViewEndpointType.layout(edgeView!!, null)
 				edgeView!!.layout
@@ -126,7 +127,7 @@ class DragEdgeViewEndpointHandler(
 
 	override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 		LOG.debug("mouseReleased")
-		removePortViewHighlight(context.drawingView())
+		ConnectionPointHighlighter.removePortViewHighlight(context.drawingView())
 		return null
 	}
 
@@ -138,12 +139,12 @@ class DragEdgeViewEndpointHandler(
 	}
 
 	private fun exitTargetPortView(view: DrawingView<*>) {
-		removePortViewHighlight(view)
+		ConnectionPointHighlighter.removePortViewHighlight(view)
 		targetPortView = null
 	}
 
 	private fun exitTargetEdgeView(view: DrawingView<*>) {
-		removePortViewHighlight(view)
+		ConnectionPointHighlighter.removePortViewHighlight(view)
 		targetEdgeView = null
 	}
 }

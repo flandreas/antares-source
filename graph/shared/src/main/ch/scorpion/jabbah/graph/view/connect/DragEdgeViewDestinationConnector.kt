@@ -10,41 +10,41 @@ import ch.scorpion.jabbah.base.logger
  * with an input [PortView] of a [VerticeView].
  */
 class DragEdgeViewDestinationConnector(
-        private val connectServiceSupplier: () -> GraphViewConnectService
+	private val connectServiceSupplier: () -> GraphViewConnectService
 ) : AbstractDragEdgeViewEndpointConnector(EdgeViewEndpointType.DESTINATION) {
 
-    private val LOG by logger(DragEdgeViewDestinationConnector::class)
+	private val LOG by logger(DragEdgeViewDestinationConnector::class)
 
-    /** ---- [InputEventHandler] */
+	/** ---- [InputEventHandler] */
 
-    override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        super.mouseDragged(context)
-        return this
-    }
+	override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		super.mouseDragged(context)
+		return this
+	}
 
-    override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        LOG.debug("DragEdgeViewDestinationConnector.mouseReleased at (${context.x},${context.y})")
-        super.mouseReleased(context)
+	override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		LOG.debug("mouseReleased at (${context.x},${context.y})")
+		super.mouseReleased(context)
 
-        val moveCmd = MoveDestinationEndpointCommand(
-                editor = context.editor,
-                edgeView = edgeView!!,
-                oldLocation = oldLocation,
-                newLocation = edgeView!!.destinationEndpointView.location)
+		val moveCmd = MoveDestinationEndpointCommand(
+			editor = context.editor,
+			edgeView = edgeView!!,
+			oldLocation = oldLocation,
+			newLocation = edgeView!!.destinationEndpointView.location)
 
-        if (getEndpointHandler()!!.targetPortView == null) {
-            context.editor.commandManager.beginTransaction(moveCmd)
-        } else {
-            val connectCmd = ConnectDestinationCommand(
-                    editor = context.editor,
-                    service = connectServiceSupplier.invoke(),
-                    edgeView = edgeView!!,
-                    destConnectableView = getEndpointHandler()!!.targetPortView!!.owner!!,
-                    destPort = getEndpointHandler()!!.targetPortView!!.port)
-            context.editor.commandManager.beginTransaction(connectCmd)
-            context.editor.commandManager.execute(moveCmd)
-        }
-        context.editor.commandManager.commitTransaction()
-        return null
-    }
+		if (getEndpointHandler()!!.targetPortView == null) {
+			context.editor.commandManager.beginTransaction(moveCmd)
+		} else {
+			val connectCmd = ConnectDestinationCommand(
+				editor = context.editor,
+				service = connectServiceSupplier.invoke(),
+				edgeView = edgeView!!,
+				destConnectableView = getEndpointHandler()!!.targetPortView!!.owner!!,
+				destPort = getEndpointHandler()!!.targetPortView!!.port)
+			context.editor.commandManager.beginTransaction(connectCmd)
+			context.editor.commandManager.execute(moveCmd)
+		}
+		context.editor.commandManager.commitTransaction()
+		return null
+	}
 }

@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.connect.AbstractConnectionPointHighlighter
+import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.io.*
@@ -142,7 +142,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 		return getPortConnectionPoint(model!!.getPort<Any>())
 	}
 
-	private inner class Handler : AbstractConnectionPointHighlighter() {
+	private inner class Handler : InputEventHandlerAdapter<EditInputEventContext>() {
 
 		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			LOG.debug("OscilloscopeProbeVerticeView pressed ${context.x},${context.y}")
@@ -169,9 +169,9 @@ class OscilloscopeProbeVerticeView<T : Any>(
 			// Sensing EdgeView
 			if (findEdgeView(context) != null) {
 				LOG.debug("OscilloscopeProbeVerticeView found EdgeView at ${context.x},${context.y}")
-				displayPortViewHighlight(context.drawingView(), connectionPoint())
+				ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), connectionPoint())
 			} else {
-				removePortViewHighlight(context.drawingView())
+				ConnectionPointHighlighter.removePortViewHighlight(context.drawingView())
 			}
 
 			return this
@@ -179,7 +179,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 		override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			LOG.debug("OscilloscopeProbeVerticeView released ${context.x},${context.y}")
-			removePortViewHighlight(context.drawingView())
+			ConnectionPointHighlighter.removePortViewHighlight(context.drawingView())
 
 			// TODO Create Commands
 

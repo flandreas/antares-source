@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -14,12 +15,12 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
 
 /**
  * Abstract base implementation of an [InputEventHandler] that supports dragging
- * an [EdgeView] endpoint to a new location, or to connect the [EdgeView] with
+ * an [EdgeView] endpoint to a new location, or to connect the existing [EdgeView] with
  * an input or output [PortView] of a [VerticeView].
  */
 abstract class AbstractDragEdgeViewEndpointConnector(
     private val endpointType: EdgeViewEndpointType
-) : AbstractConnectionPointHighlighter(DragEdgeViewEndpointHandler(endpointType)) {
+) : InputEventHandlerAdapter<EditInputEventContext>(DragEdgeViewEndpointHandler(endpointType)) {
 
     companion object {
         private val LOG by logger(AbstractDragEdgeViewEndpointConnector::class)
@@ -39,13 +40,13 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 	    }
         if (endpointType.getEndpoint(edgeView!!).contains(context.x, context.y)) {
 	        context.view.setCursor(Cursor.CROSSHAIR)
-            displayPortViewHighlight(context.drawingView(), getEndpointView().location)
+            ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), getEndpointView().location)
             return this
         }
 
-        if (portViewHighlight != null) {
+        if (ConnectionPointHighlighter.hasPortViewHighlight) {
             context.view.setCursor(Cursor.DEFAULT)
-            removePortViewHighlight(context.drawingView())
+            ConnectionPointHighlighter.removePortViewHighlight(context.drawingView())
             return null
         }
 
@@ -54,7 +55,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
     override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         LOG.debug("mousePressed")
-        removePortViewHighlight(context.drawingView())
+        ConnectionPointHighlighter.removePortViewHighlight(context.drawingView())
         oldLocation = getEndpointView().location
         context.drawingView().selectionManager.deselectAll()
         context.drawingView().selectionManager.select(edgeView!!)
