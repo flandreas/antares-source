@@ -3,95 +3,121 @@ package ch.scorpion.jabbah.base.state
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.Assert.*
-import kotlin.test.Test
-import kotlin.test.assertFailsWith
+import kotlin.test.*
 
-class StateMachineTest {
+class DslStateTest {
 
-	private val entryActionA = mockk<Action<String>>(relaxed = true)
-	private val exitActionA = mockk<Action<String>>(relaxed = true)
-	private val stateA = State(name = "A", entryAction = entryActionA, exitAction = exitActionA)
+	private val entryA = mockk<Action<String>>(relaxed = true)
+	private val exitA = mockk<Action<String>>(relaxed = true)
 	private val transitionActionAB = mockk<Action<String>>(relaxed = true)
 	private val transitionActionAC = mockk<Action<String>>(relaxed = true)
+	private val entryB = mockk<Action<String>>(relaxed = true)
 
-	private val entryActionB = mockk<Action<String>>(relaxed = true)
-	private val stateB = State<String>("B", entryAction = entryActionB)
+	private fun buildStateMachine(strict: Boolean = true): StateMachine<String> {
 
-	private val stateC = State<String>("C")
+		return stateMachine(strict) {
 
-	private lateinit var stateMachine : StateMachine<String>
+			state("A") {
+				onEntry(entryA)
+				onExit(exitA)
+				transitTo("B") {
+					given { it == "eventB" }
+					onTransit(transitionActionAB)
+				}
+				transitTo("C") {
+					given { it == "eventC" }
+					onTransit(transitionActionAC)
+				}
+				transitTo("A") {
+					given { it == "eventA" }
+				}
+			}
 
-	init {
-		stateA.add(Transition(destination = stateB, condition = { it == "eventB"}, action = transitionActionAB ))
-		stateA.add(Transition(destination = stateC, condition = { it == "eventC"}, action = transitionActionAC ))
-		stateA.add(Transition(destination = stateA, condition = { it == "eventA"}))
-	}
+			state("B") {
+				onEntry(entryB)
+			}
 
-	private fun buildStrictStateMachine() {
-		buildStateMachine(strict = true)
-	}
-
-	private fun buildNonStrictStateMachine() {
-		buildStateMachine(strict = false)
-	}
-
-	private fun buildStateMachine(strict: Boolean) {
-		stateMachine = StateMachine(stateA, stateB, stateC, strict = strict)
-	}
-
-	@Test
-	fun shouldRejectNoStates() {
-		buildStrictStateMachine()
-
-		assertFailsWith(IllegalArgumentException::class) { StateMachine<String>() }
+			state("C")
+		}
 	}
 
 	@Test
 	fun shouldEnterStartState() {
-		buildStrictStateMachine()
+		val sm = buildStateMachine().start()
 
-		assertEquals(stateA, stateMachine.currentState)
-		verify(exactly = 1) { entryActionA.invoke(any()) }
+		assertEquals("A", sm.currentState.name)
+		verify(exactly = 1) { entryA.invoke(any()) }
+	}
+
+	@Test
+	fun stateNamesShouldBeUnique() {
+		val sm = buildStateMachine()
+		assertFailsWith(IllegalArgumentException::class) { sm.state("A")}
 	}
 
 	@Test
 	fun shouldTransit() {
-		buildStrictStateMachine()
+		val sm = buildStateMachine().start()
 
-		val handled = stateMachine.handle("eventB")
+		val handled = sm.handle("eventB")
 
 		assertTrue(handled)
 		verify(exactly = 1) { transitionActionAB.invoke(any()) }
-		verify(exactly = 1) { entryActionB.invoke(any()) }
-		assertEquals(stateB, stateMachine.currentState)
+		verify(exactly = 1) { exitA.invoke(any())}
+		verify(exactly = 1) { entryB.invoke(any()) }
+		assertEquals("B", sm.currentState.name)
 	}
 
 	@Test
-	fun strictStateMachineShouldRejectUnsupportedEvent() {
-		buildStrictStateMachine()
+	fun selfTransitionShouldNotTriggerAction() {
+		val sm = buildStateMachine().start()
 
-		assertFailsWith(IllegalArgumentException::class) { stateMachine.handle("unsupported") }
+		val handled = sm.handle("eventA")
+
+		assertTrue(handled)
+		verify(exactly = 1) { entryA.invoke(any())} // from init
+		verify(exactly = 0) { exitA.invoke(any()) }
+		assertEquals("A", sm.currentState.name)
+	}
+
+	fun strictStateMachineShouldRejectUnsupportedEvent() {
+		val sm = buildStateMachine().start()
+
+		assertFailsWith(IllegalArgumentException::class) { sm.handle("unsupported")}
 	}
 
 	@Test
 	fun nonStrictStateMachineShouldIgnoreUnsupportedEvent() {
-		buildNonStrictStateMachine()
+		val sm = buildStateMachine(strict = false).start()
 
-		val handled = stateMachine.handle("unsupported")
+		val handled = sm.handle("unsupported")
 
 		assertFalse(handled)
-		assertEquals(stateA, stateMachine.currentState)
+		assertEquals("A", sm.currentState.name)
 	}
 
 	@Test
-	fun selfTransitionShouldNotTriggerActions() {
-		buildStrictStateMachine()
+	fun shouldDefineSampleStateMachine() {
 
-		val handled = stateMachine.handle("eventA")
+		stateMachine<String> {
 
-		assertTrue(handled)
-		verify(exactly = 1) { entryActionA.invoke(any()) }
-		assertEquals(stateA, stateMachine.currentState)
+			state("A") {
+				onEntry {  }
+				onExit {  }
+				transitTo("B") {
+					given { false }
+					onTransit {  }
+				}
+			}
+
+			state("B") {
+				onEntry {  }
+				onExit {  }
+				transitTo("A") {
+					given { false }
+					onTransit {  }
+				}
+			}
+		}
 	}
 }
