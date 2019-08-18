@@ -19,8 +19,9 @@ class TestVerticeView(
 	loc: Point2D = Point2D.ZERO,
 	private val inputDirection: Direction = Direction.WEST,
 	private val outputDirection: Direction = Direction.EAST,
-	private val portViewLength: Int = 0
-) : AbstractRectangularVerticeView<TestVertice>(styleProvider, vertice) {
+	private val portViewLength: Int? = null,
+	width: Int = 0
+) : AbstractRectangularVerticeView<TestVertice>(styleProvider, vertice, loc.x, loc.y, width.toDouble(), 0.0) {
 
 	init {
 		location = loc
@@ -33,7 +34,7 @@ class TestVerticeView(
 
 	override fun modelExchanged(oldModel: TestVertice?) {
 		super.modelExchanged(oldModel)
-		addPortView(TestPortView(model!!.getInput<Boolean>(), inputDirection, PortLabelPosition.INTERNAL, portViewLength))
-		addPortView(TestPortView(model!!.getOutput<Boolean>(), outputDirection, PortLabelPosition.INTERNAL, portViewLength))
+		addPortView(TestPortView(model!!.getInput<Boolean>(), inputDirection, PortLabelPosition.INTERNAL, portViewLength, Point2D.ZERO))
+		addPortView(TestPortView(model!!.getOutput<Boolean>(), outputDirection, PortLabelPosition.INTERNAL, portViewLength, Point2D(width, 0.0)))
 	}
 }

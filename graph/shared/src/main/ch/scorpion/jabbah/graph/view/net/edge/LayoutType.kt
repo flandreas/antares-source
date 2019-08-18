@@ -81,7 +81,7 @@ enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEv
 			}
 			if (context.mouseEvent!!.isAltDown) {
 				edgeView.edgeToPortConnectorSupplier.invoke().useFor(edgeView)
-				return edgeView.edgeToPortConnectorSupplier.invoke() as InputEventHandler<T>
+				return edgeView.edgeToPortConnectorSupplier.invoke().handler as InputEventHandler<T>
 			}
 		}
 

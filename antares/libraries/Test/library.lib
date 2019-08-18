@@ -1,0 +1,12 @@
+<library _id='0' uuid='dacd3e4e-1d2a-45e5-9b2d-3abfa9edfc18' author='5ecf330b-e395-4e17-88b0-0883834b384a'>
+  <folder>
+    <libraryFolder _id='1'>
+      <name>
+        <translation lang='de' text='Test'/>
+      </name>
+      <items>
+        <baseLibraryElement _id='2' name='Switch'/>
+      </items>
+    </libraryFolder>
+  </folder>
+</library>

@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.VerticeView
 
 /**
  * Connects the origin point of an [EdgeView] with the [Port] of a [VerticeView].

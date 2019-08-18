@@ -1,11 +1,18 @@
 package ch.scorpion.jabbah.base.state
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.exception.IllegalStateException
+import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import io.mockk.mockk
 import io.mockk.verify
 import kotlin.test.*
 
-class DslStateTest {
+class StateMachineTest {
+
+	@BeforeTest
+	fun setup() {
+		BaseModuleJvm.require()
+	}
 
 	private val entryA = mockk<Action<String>>(relaxed = true)
 	private val exitA = mockk<Action<String>>(relaxed = true)
@@ -39,6 +46,11 @@ class DslStateTest {
 
 			state("C")
 		}
+	}
+
+	@Test
+	fun shouldRejectToStartEmptyStateMachine() {
+		assertFailsWith(IllegalStateException::class) { StateMachine<Any>().start() }
 	}
 
 	@Test

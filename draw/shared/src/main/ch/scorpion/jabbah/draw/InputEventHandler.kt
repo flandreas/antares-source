@@ -1,5 +1,8 @@
 package ch.scorpion.jabbah.draw
 
+import ch.scorpion.jabbah.base.event.KeyEvent
+import ch.scorpion.jabbah.base.event.KeyEventType
+import ch.scorpion.jabbah.base.event.MouseEventType
 import ch.scorpion.jabbah.base.state.StateMachine
 
 /**
@@ -75,7 +78,16 @@ open class InputEventHandlerAdapter<in T : InputEventContext>(
 class StateMachineInputEventHandler<T : InputEventContext>(
 	val sm: StateMachine<T>,
 	val successor: InputEventHandler<T>? = null
-) : InputEventHandler<T>{
+) : InputEventHandler<T> {
+
+	companion object {
+		val mouseMoved: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.MOVED }
+		val mousePressed: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.PRESSED }
+		val mouseDragged: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.DRAGGED }
+		val mouseReleased: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.RELEASED }
+
+		val escapePressed: (InputEventContext) -> Boolean = { it.keyEvent?.type == KeyEventType.PRESSED && it.keyEvent.key == KeyEvent.VK_ESCAPE}
+	}
 
 	init {
 		if (sm.strict)  {
@@ -111,4 +123,3 @@ class StateMachineInputEventHandler<T : InputEventContext>(
 		return if (sm.handle(context)) this else successor?.keyReleased(context)
 	}
 }
-

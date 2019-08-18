@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.base.state
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.exception.IllegalStateException
+import ch.scorpion.jabbah.base.logger
 
 typealias Action<T> = (T?) -> Unit
 
@@ -23,6 +25,10 @@ fun <T> stateMachine(strict: Boolean = true, init: StateMachine<T>.() -> Unit): 
  */
 class StateMachine<T>(val strict: Boolean = true) {
 
+	companion object {
+		private val LOG by logger(StateMachine::class)
+	}
+
 	private val states = mutableListOf<State<T>>()
 
 	/**
@@ -33,6 +39,10 @@ class StateMachine<T>(val strict: Boolean = true) {
 		private set
 
 	fun start(): StateMachine<T> {
+		if (states.isEmpty()) {
+			throw IllegalStateException("StateMachine must have at least 1 state")
+		}
+		LOG.debug("Start in state '${states.first().name}'")
 		enter(states.first(), event = null)
 		return this
 	}
@@ -67,6 +77,7 @@ class StateMachine<T>(val strict: Boolean = true) {
 		transition.transit(event)
 
 		if (destinationState !== currentState) {
+			LOG.debug("Enter state '${destinationState.name}'")
 			currentState = destinationState
 			currentState.enter(event)
 		}

@@ -104,7 +104,7 @@ class OrthoEdgeViewLayouterIntegrationTest {
 	@Test
 	fun shouldLayoutVerticalOpenVerticeView() {
 		val v = builder.addVerticeView(createVerticeView(100, 100, Direction.SOUTH))
-		val edgeView = builder.connectOpen(v, Point2D(100, 200))
+		val edgeView = builder.connectInputOpen(v, Point2D(100, 200))
 		assertEquals(2, edgeView.segmentPointCount)
 	}
 

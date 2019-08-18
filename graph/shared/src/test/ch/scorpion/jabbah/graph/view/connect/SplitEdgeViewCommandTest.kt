@@ -41,14 +41,14 @@ class SplitEdgeViewCommandTest {
         newEdgeView.addSegmentPoint(Point2D(150, 100))
 
         val command = SplitEdgeViewCommand(
-                editor = editorBuilder.editor,
-                connectService = service,
-                graphView = testGraphView.graphView,
-                origEdgeView = testGraphView.ev,
-                segmentIndex = 0,
-                newEdgeView = newEdgeView,
-                targetPortView = null,
-                nodeView = null
+	        editor = editorBuilder.editor,
+	        connectService = service,
+	        graphView = testGraphView.graphView,
+	        origEdgeView = testGraphView.ev,
+	        segmentIndex = 0,
+	        newEdgeView = newEdgeView,
+	        targetPortView = null,
+	        nodeView = null
         )
         command.execute()
 

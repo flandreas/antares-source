@@ -1,53 +1,44 @@
 package ch.scorpion.jabbah.graph.view.connect
 
-import ch.scorpion.jabbah.draw.InputEventHandler
+import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
-import ch.scorpion.jabbah.base.logger
 
-/**
- * Used to drag the origin end point of an [EdgeView] to a new location, or to connect it
- * with an output [PortView] of a [VerticeView].
- */
 class DragEdgeViewOriginConnector(
-    private val connectServiceSupplier: () -> GraphViewConnectService
+	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
 ) : AbstractDragEdgeViewEndpointConnector(EdgeViewEndpointType.ORIGIN) {
 
-    private val LOG by logger(DragEdgeViewOriginConnector::class)
+	override fun completeDragOpen(context: EditInputEventContext) {
+		context.editor.commandManager.beginTransaction(createMoveCommand(context))
+		context.editor.commandManager.commitTransaction()
+	}
 
-    /** ---- [InputEventHandler] */
+	override fun completeDragConnecting(context: EditInputEventContext) {
+		context.editor.commandManager.beginTransaction(createMoveCommand(context))
+		context.editor.commandManager.execute(createConnectCommand(context))
+		context.editor.commandManager.commitTransaction()
+	}
 
-    override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        super.mouseDragged(context)
-        return this
-    }
+	private fun createMoveCommand(context: EditInputEventContext): Command {
+		return MoveOriginEndpointCommand(
+			editor = context.editor,
+			edgeView = edgeView!!,
+			oldLocation = oldLocation,
+			newLocation = edgeView!!.originEndpointView.location)
+	}
 
-    override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-        LOG.debug("DragEdgeViewOriginConnector.mouseReleased at (${context.x},${context.y})")
-        super.mouseReleased(context)
+	private fun createConnectCommand(context: EditInputEventContext): Command {
+		return ConnectOriginCommand(
+			editor = context.editor,
+			service = connectService,
+			edgeView = edgeView!!,
+			origConnectableView = targetPortView!!.owner!!,
+			origPort = targetPortView!!.port)
+	}
 
-        val moveCmd = MoveOriginEndpointCommand(
-            editor = context.editor,
-            edgeView = edgeView!!,
-            oldLocation = oldLocation,
-            newLocation = edgeView!!.originEndpointView.location)
-
-        if (getEndpointHandler()!!.targetPortView == null) {
-            context.editor.commandManager.beginTransaction(moveCmd)
-        } else {
-            val connectCmd = ConnectOriginCommand(
-                editor = context.editor,
-                    service = connectServiceSupplier.invoke(),
-                    edgeView = edgeView!!,
-                    origConnectableView = getEndpointHandler()!!.targetPortView!!.owner!!,
-                    origPort = getEndpointHandler()!!.targetPortView!!.port)
-            context.editor.commandManager.beginTransaction(connectCmd)
-            context.editor.commandManager.execute(moveCmd)
-        }
-        context.editor.commandManager.commitTransaction()
-        return null
-    }
+	override fun cancel(editor: Editor) {
+		edgeView!!.moveOriginEndPoint(oldLocation.x, oldLocation.y)
+	}
 }

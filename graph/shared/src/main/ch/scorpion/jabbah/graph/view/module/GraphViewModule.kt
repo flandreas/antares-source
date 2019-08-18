@@ -76,30 +76,18 @@ object GraphViewModule : AbstractModule() {
 
 	var containerEditorFactory: (EventBus) -> ContainerEditor = { throw UnsupportedOperationException("ContainerEditor factory not configured") }
 
-	val dragEdgeViewOriginConnector: DragEdgeViewOriginConnector by lazy { DragEdgeViewOriginConnector { graphViewConnectService } }
-	val dragEdgeViewDestinationConnector: DragEdgeViewDestinationConnector by lazy { DragEdgeViewDestinationConnector { graphViewConnectService } }
+	val dragEdgeViewOriginConnector: DragEdgeViewOriginConnector by lazy { DragEdgeViewOriginConnector(graphViewConnectService) }
+	val dragEdgeViewDestinationConnector: DragEdgeViewDestinationConnector by lazy { DragEdgeViewDestinationConnector(graphViewConnectService) }
 
-	val edgeToPortConnector: EdgeToPortConnector by lazy {
-		EdgeToPortConnector(
-			{ graphViewConnectService },
-			{ edgeViewFactoryImpl })
-	}
+	val edgeToPortConnector: EdgeToPortConnector by lazy { EdgeToPortConnector(graphViewConnectService, edgeViewFactoryImpl) }
 
-	val outputToInputConnector: OutputToInputConnector by lazy {
-		OutputToInputConnector(
-			{ graphViewConnectService },
-			{ edgeViewFactoryImpl })
-	}
+	val outputToInputConnector: OutputToInputConnector by lazy { OutputToInputConnector(graphViewConnectService, edgeViewFactoryImpl) }
 
-	val inputToOutputOrEdgeConnector: InputToOutputOrEdgeConnector by lazy {
-		InputToOutputOrEdgeConnector(
-			{ graphViewConnectService },
-			{ edgeViewFactoryImpl })
-	}
+	val inputToOutputOrEdgeConnector: InputToOutputOrEdgeConnector by lazy { InputToOutputOrEdgeConnector(graphViewConnectService, edgeViewFactoryImpl) }
 
-	val reconnectOriginConnector: ReconnectOriginConnector by lazy { ReconnectOriginConnector({ graphViewConnectService }) }
+	val reconnectOriginConnector: ReconnectOriginConnector by lazy { ReconnectOriginConnector(graphViewConnectService) }
 
-	val reconnectDestinationConnector: ReconnectDestinationConnector by lazy { ReconnectDestinationConnector({ graphViewConnectService }) }
+	val reconnectDestinationConnector: ReconnectDestinationConnector by lazy { ReconnectDestinationConnector(graphViewConnectService) }
 
 	val graphViewConnectService: GraphViewConnectService by lazy {
 		GraphViewConnectServiceImpl(

@@ -12,27 +12,27 @@ import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
 /**
  * Standard implementation of the [EdgeViewFactory] interface.
  */
-open class EdgeViewFactoryImpl<T: Any>(
-        private val styleProvider: StyleProvider,
-        private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
-        private val originEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-        private val destinationEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
-        private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
-) :EdgeViewFactory<T> {
+open class EdgeViewFactoryImpl<T : Any>(
+	private val styleProvider: StyleProvider,
+	private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
+	private val originEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
+	private val destinationEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
+	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory
+) : EdgeViewFactory<T> {
 
 	companion object {
 		private val LOG by logger(EdgeViewFactoryImpl::class)
 	}
 
-    override fun createEdgeView(): EdgeView<T> {
-	    LOG.debug("create EdgeView")
-        return EdgeViewImpl(styleProvider, edgeToPortConnectorSupplier, originEndpointConnectorSupplier,
-                destinationEndpointConnectorSupplier, currentSystemSpeedCategory)
-    }
+	override fun createEdgeView(): EdgeView<T> {
+		LOG.debug("create EdgeView")
+		return EdgeViewImpl(styleProvider, edgeToPortConnectorSupplier, originEndpointConnectorSupplier,
+			destinationEndpointConnectorSupplier, currentSystemSpeedCategory)
+	}
 
-    override fun createEdgeView(net: Net<T>): EdgeView<T> {
-	    LOG.debug("create EdgeView")
-        return EdgeViewImpl(styleProvider, edgeToPortConnectorSupplier, originEndpointConnectorSupplier,
-                destinationEndpointConnectorSupplier, currentSystemSpeedCategory, net)
-    }
+	override fun createEdgeView(net: Net<T>): EdgeView<T> {
+		LOG.debug("create EdgeView")
+		return EdgeViewImpl(styleProvider, edgeToPortConnectorSupplier, originEndpointConnectorSupplier,
+			destinationEndpointConnectorSupplier, currentSystemSpeedCategory, net)
+	}
 }

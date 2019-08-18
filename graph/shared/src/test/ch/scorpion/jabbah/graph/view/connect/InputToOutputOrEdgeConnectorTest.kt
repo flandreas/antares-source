@@ -1,0 +1,115 @@
+package ch.scorpion.jabbah.graph.view.connect
+
+import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import io.mockk.verify
+import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+
+class InputToOutputOrEdgeConnectorTest : AbstractConnectorTest(GraphViewModule.inputToOutputOrEdgeConnector) {
+
+	companion object {
+		init {
+			GraphViewTestRule.configure()
+		}
+	}
+
+	@Test
+	fun shouldConnectToOutput() {
+		mouseMoveTo(190, 100)
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+		verify { view.setCursor(Cursor.CROSSHAIR) }
+
+		pressMouseAt(190, 100)
+		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
+
+		dragMouseTo(150, 100)
+
+		dragMouseTo(130, 100)
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+
+		releaseMouseAt(110, 100)
+		assertTrue(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
+		assertTrue(draggedEdgeView.model!!.isConnectedWith(v2.model!!.getInput()))
+	}
+
+	@Test
+	fun shouldUndoConnectToOutput() {
+		mouseMoveTo(190, 100)
+		pressMouseAt(190, 100)
+		dragMouseTo(130, 100)
+		releaseMouseAt(130, 100)
+
+		editor.commandManager.undo()
+
+		assertTrue(builder.graphView.getEdgeViews().isEmpty())
+		assertFalse(v1.model!!.getOutput<Boolean>().isConnected)
+		assertFalse(v2.model!!.getInput<Boolean>().isConnected)
+	}
+
+	@Test
+	fun shouldConnectOpenEnded() {
+		mouseMoveTo(190, 100)
+		pressMouseAt(190, 100)
+		dragMouseTo(150, 100)
+		releaseMouseAt(150, 100)
+
+		assertTrue(draggedEdgeView.model!!.isConnectedWith(v2.model!!.getInput()))
+		assertFalse(v1.model!!.getOutput<Boolean>().isConnected)
+	}
+
+	@Test
+	fun shouldUndoConnectOpenEnded() {
+		mouseMoveTo(190, 100)
+		pressMouseAt(190, 100)
+		dragMouseTo(150, 100)
+		releaseMouseAt(150, 100)
+
+		editor.commandManager.undo()
+
+		assertTrue(builder.graphView.getEdgeViews().isEmpty())
+		assertFalse(v1.model!!.getOutput<Boolean>().isConnected)
+		assertFalse(v2.model!!.getInput<Boolean>().isConnected)
+	}
+
+	@Test
+	fun shouldConnectToEdgeView() {
+		val ev = GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
+		val v3 = builder.addVerticeView(createEastOutputVerticeView(200, 200))
+
+		mouseMoveTo(190, 200)
+		pressMouseAt(190, 200)
+		dragMouseTo(150, 100)
+		releaseMouseAt(150, 100)
+
+		assertTrue(ev.model!!.isConnectedWith(v1.model!!.getOutput()))
+		assertTrue(ev.model!!.isConnectedWith(v2.model!!.getInput()))
+		assertTrue(ev.model!!.isConnectedWith(v3.model!!.getInput()))
+
+		// 3 VerticeViews, 1 NodeView, 3 EdgeViews
+		assertEquals(7, builder.graphView.drawablesCount)
+	}
+
+	@Test
+	fun shouldUndoConnectToEdgeView() {
+		val ev = GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
+		val v3 = builder.addVerticeView(createEastOutputVerticeView(200, 200))
+
+		mouseMoveTo(190, 200)
+		pressMouseAt(190, 200)
+		dragMouseTo(150, 100)
+		releaseMouseAt(150, 100)
+
+		editor.commandManager.undo()
+
+		assertTrue(ev.model!!.isConnectedWith(v1.model!!.getOutput()))
+		assertTrue(ev.model!!.isConnectedWith(v2.model!!.getInput()))
+		assertFalse(ev.model!!.isConnectedWith(v3.model!!.getInput()))
+
+		// 3 VerticeViews, 1 EdgeView
+		assertEquals(4, builder.graphView.drawablesCount)
+	}
+}

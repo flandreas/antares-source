@@ -2,5 +2,6 @@
   <entries>
     <libraryDictionaryEntry _id='1' uuid='cb21300b-8f5d-4c64-8f37-5d9a49807e8c' name='Base' author='5ecf330b-e395-4e17-88b0-0883834b384a'/>
     <libraryDictionaryEntry _id='2' uuid='6707f981-110d-4629-a0bf-c35a4688025c' name='Standard' author='5ecf330b-e395-4e17-88b0-0883834b384a'/>
+    <libraryDictionaryEntry _id='3' uuid='dacd3e4e-1d2a-45e5-9b2d-3abfa9edfc18' name='Test' author='5ecf330b-e395-4e17-88b0-0883834b384a'/>
   </entries>
 </libraryDictionary>

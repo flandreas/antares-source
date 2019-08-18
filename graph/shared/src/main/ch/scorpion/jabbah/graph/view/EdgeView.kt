@@ -1,19 +1,18 @@
 package ch.scorpion.jabbah.graph.view
 
-import ch.scorpion.jabbah.draw.DrawableListener
-import ch.scorpion.jabbah.draw.polyline.Polyline
-import ch.scorpion.jabbah.draw.polyline.PolylineShape
-import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.DrawableListener
+import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.draw.polyline.Polyline
+import ch.scorpion.jabbah.draw.polyline.PolylineShape
 import ch.scorpion.jabbah.edit.Snapper
-import ch.scorpion.jabbah.graph.model.Net
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
-import ch.scorpion.jabbah.graph.view.net.edge.*
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
+import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 
 /**

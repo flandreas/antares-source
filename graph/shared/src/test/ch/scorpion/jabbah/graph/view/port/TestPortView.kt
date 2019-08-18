@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.port
 
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
@@ -11,9 +12,13 @@ class TestPortView<T: Any>(
 	port: Port<T> = PortImpl(PortType.INPUT),
 	direction: Direction = Direction.WEST,
 	portLabelPosition: PortLabelPosition = PortLabelPosition.EXTERNAL,
-	length: Int = 0
-) : AbstractPortView<T>(port, 0, 0, direction, portLabelPosition, length) {
+	length: Int? = null,
+	position: Point2D = Point2D.ZERO
+) : AbstractPortView<T>(port, position.x.toInt(), position.y.toInt(), direction, portLabelPosition, length ?: LENGTH) {
 
+	companion object {
+		private const val LENGTH = 10
+	}
 	override var transparency: Int = 0
 
     override val boundingBox: Rectangle2D

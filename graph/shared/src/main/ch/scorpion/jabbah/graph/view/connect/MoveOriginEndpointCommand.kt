@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.base.geom.Point2D

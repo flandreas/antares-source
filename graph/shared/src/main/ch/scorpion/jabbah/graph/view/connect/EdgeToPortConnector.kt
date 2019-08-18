@@ -1,121 +1,138 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.InputEventHandler
+import ch.scorpion.jabbah.base.state.stateMachine
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDragged
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mousePressed
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseReleased
+import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.EdgeViewSnapLocatorResult
+import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
-import ch.scorpion.jabbah.graph.view.net.node.NodeView
-import ch.scorpion.jabbah.graph.view.port.PortView
 
-/**
- * An [InputEventHandler] that splits an existing [EdgeView] by adding a [NodeView] and connecting it
- * by a new [EdgeView] with the [PortView] of another [VerticeView].
- */
 class EdgeToPortConnector(
-	private val connectServiceSupplier: () -> GraphViewConnectService,
-	edgeViewFactorySupplier: () -> EdgeViewFactory<Any>
+	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
+	edgeViewFactory: EdgeViewFactory<Any> = GraphViewModule.getEdgeViewFactory()
 ) : AbstractCreateEdgeViewConnector(
-	portTypeCond = { true },
-	edgeViewFactorySupplier = edgeViewFactorySupplier,
-	endpointType = EdgeViewEndpointType.DESTINATION
+	edgeViewFactory = edgeViewFactory,
+	draggedEndpointType = EdgeViewEndpointType.DESTINATION
 ) {
 
-	companion object {
-		private val LOG by logger(EdgeToPortConnector::class)
-	}
-
-	/** The [EdgeView] from which new [EdgeView]s are branched by this connector. */
+	/** The [EdgeView] from which a new [EdgeView] is branched by this connector. */
 	private var branchedEdgeView: EdgeView<*>? = null
 
-	/** The index of the [EdgeView] segment at which splitting takes place.*/
+	/** The index of the segment in [branchedEdgeView] at which splitting takes place.*/
 	private var branchedSegmentIndex: Int? = null
 
 	private var splitResult: SplitEdgeViewResult<*>? = null
 
-	/** ---- [InputEventHandler] */
+	override val handler = StateMachineInputEventHandler(
 
-	private fun snap(context: EditInputEventContext): EdgeViewSnapLocatorResult? {
-		return branchedEdgeView!!.snap(context.x, context.y, context.editor.view.grid)
-	}
+		stateMachine<EditInputEventContext>(strict = false) {
 
-	override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		if (LOG.isTraceEnabled()) {
-			LOG.trace("mouseMoved to (${context.x},${context.y})")
+			state("sense") {
+				onEntry { it?.view?.setCursor(Cursor.DEFAULT) }
+				transitTo("insideEdge") {
+					given { mouseMoved(it) && snap(it) != null }
+				}
+			}
+
+			state("insideEdge") {
+				onEntry { displayPortViewHighlight(it!!, snap(it)!!.location) }
+				transitTo("insideEdge") {
+					given { mouseMoved(it) && snap(it) != null }
+					onTransit { displayPortViewHighlight(it!!, snap(it)!!.location) }
+				}
+				transitTo("sense") {
+					given { snap(it) == null }
+					onTransit { removePortViewHighlight(it!!) }
+				}
+				transitTo("drag") {
+					given { mousePressed(it) }
+					onTransit {
+						beginConnecting(it!!.drawingView())
+						removePortViewHighlight(it)
+					}
+				}
+			}
+
+			state("drag") {
+				transitTo("insideTargetPortView") {
+					given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
+				}
+				transitTo("drag") {
+					given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
+					onTransit { moveEdgeViewEndpoint(it!!) }
+				}
+				transitTo("connected") {
+					given { mouseReleased(it) && isValidEdgeView }
+				}
+				transitTo("cancelled") {
+					given { mouseReleased(it) && !isValidEdgeView }
+				}
+				transitTo("cancelled") {
+					given { cancelled(it) }
+				}
+			}
+
+			// This is exactly the same code as in AbstractPortViewStartConnector. However, if we would use
+			// a common State builder for this State, we would loose the insight in the entire StateMachine here.
+			state("insideTargetPortView") {
+				onEntry { snapToTargetPortView(it!!) }
+				onExit { removePortViewHighlight(it!!) }
+				transitTo("insideTargetPortView") {
+					given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
+				}
+				transitTo("drag") {
+					given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
+				}
+				transitTo("connected") {
+					given { mouseReleased(it) }
+				}
+				transitTo("cancelled") {
+					given { cancelled(it) }
+				}
+			}
+
+			state("connected") {
+				onEntry {
+					completeConnecting(it!!)
+					reset()
+				}
+			}
+
+			state("cancelled") {
+				onEntry { cancel(it!!.editor) }
+			}
 		}
-
-		val snapResult = snap(context)
-		if (snapResult != null) {
-			ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView(), snapResult.location)
-			return this
-		}
-
-		if (ConnectionPointHighlighter.hasPortViewHighlight) {
-			ConnectionPointHighlighter.removePortViewHighlight(context.drawingView())
-		}
-		return null
-	}
-
-	override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		LOG.trace("mousePressed at (${context.x},${context.y})")
-
-		val snapResult = snap(context) ?: return null
-		branchedSegmentIndex = snapResult.segmentIndex
-
-		beginConnecting(context.drawingView())
-		return this
-	}
-
-	override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		if (LOG.isTraceEnabled()) {
-			LOG.trace("mouseDragged to (${context.x},${context.y})")
-		}
-		// Forward to DragEdgeViewEndpointHandler, but keep control in order to handle mouseReleased by returning this
-		super.mouseDragged(context)
-		return this
-	}
-
-	override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		super.mouseReleased(context)
-		if (isValidEdgeView()) {
-			completeConnecting(context)
-		} else {
-			cancel(context.editor)
-		}
-		return null
-	}
-
-	/** ---- [AbstractCreateEdgeViewConnector] */
-
-	override fun cancel(editor: Editor) {
-		if (edgeView != null) {
-			val cmd = createSplitEdgeViewCommand(editor)
-			cmd.registered()
-			cmd.undo()
-			super.cancel(editor)
-		}
-	}
-
-	override fun connectEdgeViewToStartPort() {
-		// not used
-	}
-
-	/** ---- [EdgeToPortConnector] */
+	)
 
 	fun useFor(edgeView: EdgeView<*>) {
+		reset()
 		branchedEdgeView = edgeView
+		handler.sm.start()
+	}
+
+	private fun snap(context: EditInputEventContext): EdgeViewSnapLocatorResult? {
+		val result = branchedEdgeView!!.snap(context.x, context.y, context.editor.view.grid)
+		branchedSegmentIndex = result?.segmentIndex
+		return result
 	}
 
 	private fun beginConnecting(view: DrawingView<Drawing<Component>>) {
 		createEdgeView(view, Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.model as Net<Any>)
-		getEndpointHandler().useFor(edgeView!!)
 		ConnectionPointHighlighter.removePortViewHighlight(view)
 
-		splitResult = connectServiceSupplier.invoke().split(
+		splitResult = connectService.split(
 			view.drawing as GraphView<GraphElementView<*>>,
 			branchedEdgeView!! as EdgeView<Any>,
 			branchedSegmentIndex!!,
@@ -124,11 +141,11 @@ class EdgeToPortConnector(
 	}
 
 	private fun completeConnecting(context: EditInputEventContext) {
-		if (getEndpointHandler().targetPortView != null) {
-			connectServiceSupplier.invoke().connectToDestination(
+		if (targetPortView != null) {
+			connectService.connectToDestination(
 				edgeView!!,
-				getEndpointHandler().targetPortView!!.owner!!,
-				getEndpointHandler().targetPortView!!.port as Port<Any>)
+				targetPortView!!.owner!!,
+				targetPortView!!.port as Port<Any>)
 		}
 
 		context.editor.commandManager.register(createSplitEdgeViewCommand(context.editor))
@@ -137,12 +154,12 @@ class EdgeToPortConnector(
 	private fun createSplitEdgeViewCommand(editor: Editor): Command {
 		return SplitEdgeViewCommand(
 			editor = editor,
-			connectService = connectServiceSupplier.invoke(),
+			connectService = connectService,
 			graphView = editor.view.drawing as GraphView<GraphElementView<*>>,
 			origEdgeView = branchedEdgeView!!,
 			segmentIndex = branchedSegmentIndex!!,
 			newEdgeView = edgeView!!,
-			targetPortView = getEndpointHandler().targetPortView,
+			targetPortView = targetPortView,
 			nodeView = splitResult!!.nodeView)
 	}
 }

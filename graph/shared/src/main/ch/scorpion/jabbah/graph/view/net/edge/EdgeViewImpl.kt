@@ -54,8 +54,13 @@ open class EdgeViewImpl<T : Any>(
 		origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
 		destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
 		currentSystemSpeedCategory: CurrentSystemSpeedCategory
-	) : this(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier, destEndpointConnectorSupplier,
-		currentSystemSpeedCategory, NetImpl<T>())
+	) : this(
+		styleProvider,
+		edgeToPortConnectorSupplier,
+		origEndpointConnectorSupplier,
+		destEndpointConnectorSupplier,
+		currentSystemSpeedCategory, NetImpl<T>()
+	)
 
 	@Suppress("unused")
 	constructor() : this(

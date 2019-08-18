@@ -1,13 +1,13 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.edit.Command
-import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
+import ch.scorpion.jabbah.graph.view.port.PortView
 
 /**
  * A [Command] that splits an [EdgeView] by inserting a [NodeView], to which an additional
@@ -27,7 +27,7 @@ class SplitEdgeViewCommand(
 	private var result: SplitEdgeViewResult<Any>? = null
 
 	override fun execute() {
-		result = connectService.split(graphView, origEdgeView as EdgeView<Any>, segmentIndex, newEdgeView as EdgeView<Any>, targetPortView as PortView<Any>?);
+		result = connectService.split(graphView, origEdgeView as EdgeView<Any>, segmentIndex, newEdgeView as EdgeView<Any>, targetPortView as PortView<Any>?)
 	}
 
 	override fun undo() {

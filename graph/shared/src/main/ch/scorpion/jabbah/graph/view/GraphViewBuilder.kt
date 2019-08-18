@@ -19,58 +19,68 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
  * Provides a convenient API for building [GraphView]s that contain connected [VerticeView]s.
  * @param T the type of signal
  */
-open class GraphViewBuilder<T: Any>(
+open class GraphViewBuilder<T : Any>(
 	name: String = Translations.getString("graph.name.unknown")
 ) {
 
-    val graph: Graph = GraphModelModule.graphFactory.invoke(name)
-    val graphView: GraphView<GraphElementView<out GraphElement>> = GraphViewModule.createGraphView(graph)
+	val graph: Graph = GraphModelModule.graphFactory.invoke(name)
+	val graphView: GraphView<GraphElementView<out GraphElement>> = GraphViewModule.createGraphView(graph)
 
-    fun build(): GraphView<GraphElementView<out GraphElement>> {
-        return graphView
-    }
+	fun build(): GraphView<GraphElementView<out GraphElement>> {
+		return graphView
+	}
 
-    fun <T: VerticeView<out Vertice>> addVerticeView(verticeView: T): T {
-        graphView.add(verticeView)
-        return verticeView
-    }
+	fun <T : VerticeView<out Vertice>> addVerticeView(verticeView: T): T {
+		graphView.add(verticeView)
+		return verticeView
+	}
 
-    fun connect(from: VerticeView<out Vertice>, to: VerticeView<out Vertice>): EdgeView<T> {
-        return connect(from, to, to.vertice.getInput())
-    }
+	fun connect(from: VerticeView<out Vertice>, to: VerticeView<out Vertice>): EdgeView<T> {
+		return connect(from, to, to.vertice.getInput())
+	}
 
-    fun connect(from: VerticeView<out Vertice>, to: VerticeView<out Vertice>, toPort: InputPort<T>): EdgeView<T> {
-        return GraphViewModule.graphViewConnectService.addConnection(
-                graphView, from.getPortView(from.vertice.getOutput())!!, to.getPortView(toPort)!!)
-    }
+	fun connect(from: VerticeView<out Vertice>, to: VerticeView<out Vertice>, toPort: InputPort<T>): EdgeView<T> {
+		return GraphViewModule.graphViewConnectService.addConnection(
+			graphView, from.getPortView(from.vertice.getOutput())!!, to.getPortView(toPort)!!)
+	}
 
-    fun connectOpen(from: VerticeView<out Vertice>, toLocation: Point2D): EdgeView<T> {
-        val edgeView = GraphViewModule.getEdgeViewFactory<T>().createEdgeView()
-        edgeView.addSegmentPoint(Point2D.ZERO)
-        edgeView.addSegmentPoint(Point2D.ZERO)
-        graphView.add(edgeView)
-        GraphViewModule.graphViewConnectService.connectToOrigin(edgeView, from, from.vertice.getPort())
-        edgeView.moveDestinationEndPoint(toLocation.x, toLocation.y)
-        return edgeView
-    }
+	fun connectOutputOpen(from: VerticeView<out Vertice>, toLocation: Point2D): EdgeView<T> {
+		val edgeView = GraphViewModule.getEdgeViewFactory<T>().createEdgeView()
+		edgeView.addSegmentPoint(Point2D.ZERO)
+		edgeView.addSegmentPoint(Point2D.ZERO)
+		graphView.add(edgeView)
+		GraphViewModule.graphViewConnectService.connectToOrigin(edgeView, from, from.vertice.getOutput())
+		edgeView.moveDestinationEndPoint(toLocation.x, toLocation.y)
+		return edgeView
+	}
 
-    fun reference(uuid: UUID): SubGraphVerticeView<SubGraphVerticeRef> {
+	fun connectInputOpen(to: VerticeView<out Vertice>, fromLocation: Point2D): EdgeView<T> {
+		val edgeView = GraphViewModule.getEdgeViewFactory<T>().createEdgeView()
+		edgeView.addSegmentPoint(Point2D.ZERO)
+		edgeView.addSegmentPoint(Point2D.ZERO)
+		graphView.add(edgeView)
+		GraphViewModule.graphViewConnectService.connectToDestination(edgeView, to, to.vertice.getInput())
+		edgeView.moveOriginEndPoint(fromLocation.x, fromLocation.y)
+		return edgeView
+	}
+
+	fun reference(uuid: UUID): SubGraphVerticeView<SubGraphVerticeRef> {
 		val vv = SubGraphVerticeViewImpl(SubGraphVerticeRef(graphUUID = uuid))
-	    graphView.add(vv)
-	    return vv
-    }
+		graphView.add(vv)
+		return vv
+	}
 
-    fun split(edgeView: EdgeView<T>, segmentIndex: Int, location: Point2D, dest: VerticeView<out Vertice>?): SplitEdgeViewResult<T> {
-        val newEdgeView = GraphViewModule.getEdgeViewFactory<T>().createEdgeView(edgeView.net!!)
-        newEdgeView.addSegmentPoint(location)
-        var portView: PortView<T>? = null
-        if (dest != null) {
-            portView = dest.getPortView(dest.model!!.getPort())
-        }
-        val result = GraphViewModule.graphViewConnectService.split(graphView, edgeView, segmentIndex, newEdgeView, portView)
-        if (dest == null) {
-            newEdgeView.addSegmentPoint(location)
-        }
-        return result
-    }
+	fun split(edgeView: EdgeView<T>, segmentIndex: Int, location: Point2D, dest: VerticeView<out Vertice>?): SplitEdgeViewResult<T> {
+		val newEdgeView = GraphViewModule.getEdgeViewFactory<T>().createEdgeView(edgeView.net!!)
+		newEdgeView.addSegmentPoint(location)
+		var portView: PortView<T>? = null
+		if (dest != null) {
+			portView = dest.getPortView(dest.model!!.getPort())
+		}
+		val result = GraphViewModule.graphViewConnectService.split(graphView, edgeView, segmentIndex, newEdgeView, portView)
+		if (dest == null) {
+			newEdgeView.addSegmentPoint(location)
+		}
+		return result
+	}
 }

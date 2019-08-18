@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -46,6 +47,8 @@ interface VerticeView<T : Vertice> : GraphElementView<T>, ConnectableView, Actor
      * @return the [PortView] at `(x, y)`, if any.
      */
     fun getPortViewAtConnectionPoint(x: Double, y: Double): PortView<*>?
+
+	fun getPortViewAtConnectionPoint(p: Point2D): PortView<*>? = getPortViewAtConnectionPoint(p.x, p.y)
 
 	/**
 	 * Draws visual primitives to become obvious that this [VerticeView]'s current state let
