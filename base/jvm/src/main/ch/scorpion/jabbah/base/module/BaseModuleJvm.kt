@@ -45,6 +45,7 @@ object BaseModuleJvm : AbstractModule() {
 		KeyEvent.VK_UP = java.awt.event.KeyEvent.VK_UP
 		KeyEvent.VK_DOWN = java.awt.event.KeyEvent.VK_DOWN
 		KeyEvent.VK_ESCAPE = java.awt.event.KeyEvent.VK_ESCAPE
+		KeyEvent.VK_ALT = java.awt.event.KeyEvent.VK_ALT
 		KeyEvent.VK_ENTER = java.awt.event.KeyEvent.VK_ENTER
 		KeyEvent.VK_0 = java.awt.event.KeyEvent.VK_0
 		KeyEvent.VK_1 = java.awt.event.KeyEvent.VK_1
@@ -54,6 +55,7 @@ object BaseModuleJvm : AbstractModule() {
 		KeyEvent.VK_LEFT = KeyCode.LEFT.ordinal
 		KeyEvent.VK_RIGHT = KeyCode.RIGHT.ordinal
 		KeyEvent.VK_ESCAPE = KeyCode.ESCAPE.ordinal
+		KeyEvent.VK_ALT = KeyCode.ALT.ordinal
 		KeyEvent.VK_ENTER = KeyCode.ENTER.ordinal
 	}
 

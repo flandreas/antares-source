@@ -65,8 +65,7 @@ interface EdgeView<T: Any> : NetViewElement<T> {
      */
     val isDegenerated: Boolean
 
-    /** Determines how the segments of this [EdgeView] are automatically laid out, e.g. orthogonally.*/
-    //var layoutType: LayoutType
+    /** Encapsulates all aspects of an [EdgeView] that is related with its layout.*/
 	val layout: EdgeViewLayout
 
     /** Determines whether this [EdgeView] displays an arrow head at its destination. */
@@ -102,18 +101,22 @@ interface EdgeView<T: Any> : NetViewElement<T> {
     fun addSegmentPoint(point: Point2D): EdgeView<T>
 
     /**
-     * Adds the specified [Point2D] at the the given index.
+     * Adds the specified [Point2D] at the given index.
      * @returns this [EdgeView] to support method chaining
      */
     fun addSegmentPoint(index: Int, point: Point2D): EdgeView<T>
 
-    /**
+	/** Removes the [Point2D] at the given index.*/
+	fun removeSegmentPoint(index: Int): EdgeView<T>
+
+	/**
      * Compacts this [EdgeView] by removing [Point2D]s that are at the same location as their predecessor
      * [Point2D], or that are intermediate points of two parallel segments.
      */
     fun compact()
 
-	fun setLaidOutPoints(points: List<Point2D>)
+	/** Consumes the [Point2D]s produced by an [EdgeViewLayout] without initiating another layout cycle. */
+	fun setLaidOutPoints(points: List<Point2D>, compact: Boolean)
 
     /**
      * Connects this [EdgeView] to the [Port] of the origin [ConnectableView].
@@ -242,11 +245,8 @@ interface EdgeViewLayout : DrawableListener {
 	/** Indicates that this [EdgeViewImpl] should not perform a destination layout.  */
 	var suspendDestinationLayout: Boolean
 
+	/** Resets the [isAdjusted] property if there are not enough points in the [EdgeView] justify adjustment.*/
 	fun updateAdjusted()
-
-	fun handleOriginChanged()
-
-	fun handleDestinationChanged()
 
 	fun layoutOrigin()
 
@@ -267,6 +267,17 @@ interface EdgeViewLayout : DrawableListener {
 	 * and snapping to a destination [Port].
 	 */
 	fun layoutDestination(direction: Direction?)
+
+	/**
+	 * Adjusts the destination of the [EdgeView] to [origLocation] and updates the layout to the point at [layoutDestIndex].
+	 */
+	fun adjustOrigin(layoutDestIndex: Int, origDirection: Direction? = null, origLocation: Point2D)
+
+	/**
+	 * Adjusts the destination of the [EdgeView] to [destLocation] and updates the layout from the point at [layoutOrigIndex].
+	 */
+	fun adjustDestination(layoutOrigIndex: Int, destDir: Direction? = null, destLocation: Point2D)
+
 }
 
 /**

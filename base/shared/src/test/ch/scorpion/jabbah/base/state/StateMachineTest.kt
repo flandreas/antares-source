@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base.state
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.*
 import io.mockk.mockk
 import io.mockk.verify
 import kotlin.test.*
@@ -20,9 +21,9 @@ class StateMachineTest {
 	private val transitionActionAC = mockk<Action<String>>(relaxed = true)
 	private val entryB = mockk<Action<String>>(relaxed = true)
 
-	private fun buildStateMachine(strict: Boolean = true): StateMachine<String> {
+	private fun buildStateMachine(behaviour: UnhandledEventBehaviour = Strict): StateMachine<String> {
 
-		return stateMachine(strict) {
+		return stateMachine(behaviour) {
 
 			state("A") {
 				onEntry(entryA)
@@ -38,6 +39,7 @@ class StateMachineTest {
 				transitTo("A") {
 					given { it == "eventA" }
 				}
+				stayIf { it == "stay"}
 			}
 
 			state("B") {
@@ -81,6 +83,16 @@ class StateMachineTest {
 	}
 
 	@Test
+	fun shouldStay() {
+		val sm = buildStateMachine().start()
+
+		val handled = sm.handle("stay")
+
+		assertTrue(handled)
+		assertEquals("A", sm.currentState.name)
+	}
+
+	@Test
 	fun selfTransitionShouldNotTriggerAction() {
 		val sm = buildStateMachine().start()
 
@@ -92,6 +104,7 @@ class StateMachineTest {
 		assertEquals("A", sm.currentState.name)
 	}
 
+	@Test
 	fun strictStateMachineShouldRejectUnsupportedEvent() {
 		val sm = buildStateMachine().start()
 
@@ -100,36 +113,11 @@ class StateMachineTest {
 
 	@Test
 	fun nonStrictStateMachineShouldIgnoreUnsupportedEvent() {
-		val sm = buildStateMachine(strict = false).start()
+		val sm = buildStateMachine(Unhandled).start()
 
 		val handled = sm.handle("unsupported")
 
 		assertFalse(handled)
 		assertEquals("A", sm.currentState.name)
-	}
-
-	@Test
-	fun shouldDefineSampleStateMachine() {
-
-		stateMachine<String> {
-
-			state("A") {
-				onEntry {  }
-				onExit {  }
-				transitTo("B") {
-					given { false }
-					onTransit {  }
-				}
-			}
-
-			state("B") {
-				onEntry {  }
-				onExit {  }
-				transitTo("A") {
-					given { false }
-					onTransit {  }
-				}
-			}
-		}
 	}
 }

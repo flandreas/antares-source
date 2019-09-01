@@ -49,6 +49,8 @@ data class MouseEventImpl(
 	}
 
 	override fun isConsumed(): Boolean = consumed
+
+	override fun toString(): String = "Mouse.$type at $x,$y"
 }
 
 

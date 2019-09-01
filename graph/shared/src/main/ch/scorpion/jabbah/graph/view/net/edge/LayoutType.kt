@@ -62,6 +62,8 @@ enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEv
 	 * forwards events to the [EdgeView] itself. Unselected [EdgeView]s will rather return an empty [InputEventHandler],
 	 * which results in involving the selection tool to select the [EdgeView] upon a click, which will finally result
 	 * in events being handled by the [EdgeView]'s [InputEventHandler].
+	 *
+	 * TODO This is independent of layout and should therefore moved away from here
 	 */
 	fun <T : InputEventContext> getInputEventHandler(
 		edgeView: EdgeView<*>,
@@ -109,7 +111,6 @@ enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEv
 		return Direction.optionalOf(
 			Point2D(edgeView.getSegmentPoint(segmentIndex)),
 			Point2D(edgeView.getSegmentPoint(segmentIndex + 1)))
-
 	}
 }
 

@@ -223,10 +223,18 @@ class SelectionToolImpl(
 		}
 
 		// Cleanup
+		// TEST BEGIN
+		// Resetting target results in mouseClicked not property working. But can we trust in mouseClicked anyway,
+		// because it is only called by the UI if the mouse hasn't been moved between mousePressed and mouseReleased?
+		/*
 		target = null
+		*/
+		// TEST END
 		multiComponentSnappable = null
 		movedReferenceComponent = null
-		updateCursor(editor.drawing.getDrawableAt(x, y))
+		if (target == null) {
+			updateCursor(editor.drawing.getDrawableAt(x, y))
+		}
 	}
 
 	/** ---- [SelectionToolImpl] */

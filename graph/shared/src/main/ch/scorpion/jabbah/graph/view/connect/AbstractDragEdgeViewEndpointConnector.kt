@@ -2,15 +2,16 @@ package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Unhandled
 import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
+import ch.scorpion.jabbah.graph.view.port.PortView
 
 /**
  * A base class for building connectors that drag a [EdgeEndpointView] towards a
@@ -29,7 +30,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 	override val handler = StateMachineInputEventHandler(
 
-		stateMachine<EditInputEventContext>(strict = false) {
+		stateMachine<EditInputEventContext>(Unhandled) {
 
 			state("sense") {
 				onEntry { it?.view?.setCursor(Cursor.DEFAULT) }
@@ -65,7 +66,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 					given { StateMachineInputEventHandler.mouseReleased(it) }
 				}
 				transitTo("cancelled") {
-					given { cancelled(it) }
+					given { escapePressed(it) }
 				}
 			}
 
@@ -82,7 +83,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 					given { StateMachineInputEventHandler.mouseReleased(it) }
 				}
 				transitTo("cancelled") {
-					given { cancelled(it) }
+					given { escapePressed(it) }
 				}
 			}
 

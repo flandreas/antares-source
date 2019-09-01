@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.graph.view.port.PortView
  */
 interface ConnectionPointHighlight : Unzoomable {
 	var location: Point2D
+	var alternativeView: Boolean
 }
 
 object ConnectionPointHighlighter {
@@ -32,12 +33,13 @@ object ConnectionPointHighlighter {
 
 	val hasPortViewHighlight: Boolean get() = portViewHighlight != null
 
-	fun displayPortViewHighlight(view: DrawingView<*>, location: Point2D) {
+	fun displayPortViewHighlight(view: DrawingView<*>, location: Point2D, alternativeView: Boolean = false) {
 		LOG.trace("displayPortViewHighlight at $location")
 		if (portViewHighlight == null) {
 			view.setCursor(Cursor.CROSSHAIR)
 			portViewHighlight = DrawModule.properties.get<ConnectionPointHighlight>(PortView.PROP_HIGHLIGHT)
 			portViewHighlight!!.location = location
+			portViewHighlight!!.alternativeView = alternativeView
 			view.ghostContainer.add(portViewHighlight!!)
 		} else {
 			portViewHighlight!!.location = location
@@ -68,12 +70,36 @@ class ConnectionPointHighlightCircle : AbstractRectangularUnzoomable(SIZE_HALF),
 		val STROKE = Stroke()
 	}
 
+	override val lineWidth: Double get() = STROKE.width.toDouble()
+
+	override var alternativeView: Boolean = false
+		set(value) {
+			if (value != alternativeView) {
+				invalidate()
+				field = value
+				invalidate()
+				validate()
+			}
+		}
+
 	override fun draw(context: DrawContext) {
 		context.g.color = DrawModule.properties.getColor(PROP_COLOR)
+		if (alternativeView) {
+			drawAlternativeView(context)
+		} else {
+			drawNormalView(context)
+		}
+	}
+
+	private fun drawNormalView(context: DrawContext) {
 		val rect = getViewRectangle()
 		context.g.drawOval(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
 		context.g.fillOval(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
 	}
 
-	override val lineWidth: Double get() = STROKE.width.toDouble()
+	private fun drawAlternativeView(context: DrawContext) {
+		val rect = getViewRectangle()
+		context.g.drawRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
+		context.g.fillRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
+	}
 }

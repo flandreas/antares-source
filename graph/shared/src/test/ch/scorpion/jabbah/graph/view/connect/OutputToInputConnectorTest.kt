@@ -1,12 +1,11 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.event.ALT_MASK
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import io.mockk.verify
-import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputToInputConnector) {
 
@@ -80,7 +79,7 @@ class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputT
 		pressMouseAt(130, 100)
 		dragMouseTo(150, 100)
 
-		cancelDrag()
+		pressEscape()
 
 		assertTrue(builder.graphView.getEdgeViews().isEmpty())
 		assertFalse(v1.model!!.getOutput<Boolean>().isConnected)
@@ -93,10 +92,50 @@ class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputT
 		pressMouseAt(130, 100)
 		dragMouseTo(190, 100)
 
-		cancelDrag()
+		pressEscape()
 
 		assertTrue(builder.graphView.getEdgeViews().isEmpty())
 		assertFalse(v1.model!!.getOutput<Boolean>().isConnected)
 		assertFalse(v2.model!!.getInput<Boolean>().isConnected)
+	}
+
+	@Test
+	fun shouldAdjustDestination() {
+		mouseMoveTo(130, 100)
+		clickMouseAt(130, 100, modifiers = ALT_MASK)
+
+		mouseMoveTo(150, 200)
+		clickMouseAt(150, 200)
+
+		mouseMoveTo(170, 200)
+		assertEquals(4, draggedEdgeView.segmentPointCount)
+
+		clickMouseAt(170, 200)
+		assertEquals(5, draggedEdgeView.segmentPointCount)
+
+		mouseMoveTo(190, 100)
+		assertEquals(6, draggedEdgeView.segmentPointCount)
+
+		clickMouseAt(190, 100)
+		assertTrue(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
+		assertTrue(draggedEdgeView.model!!.isConnectedWith(v2.model!!.getInput()))
+	}
+
+	@Test
+	fun shouldUndoAdjustWithEscapePressed() {
+		mouseMoveTo(130, 100)
+		clickMouseAt(130, 100, modifiers = ALT_MASK)
+
+		mouseMoveTo(150, 200)
+		clickMouseAt(150, 200)
+
+		mouseMoveTo(170, 200)
+		assertEquals(4, draggedEdgeView.segmentPointCount)
+
+		pressEscape()
+		assertEquals(3, draggedEdgeView.segmentPointCount)
+
+		pressEscape()
+		assertTrue(builder.graphView.getEdgeViews().isEmpty())
 	}
 }

@@ -2,18 +2,19 @@ package ch.scorpion.jabbah.draw
 
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Unhandled
 import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import io.mockk.mockk
 import org.junit.Assert
 import kotlin.test.Test
-import kotlin.test.BeforeTest
 
 class StateMachineInputEventHandlerTest {
 
-	@BeforeTest
-	fun before() {
-		DrawTestRule.configure()
+	companion object {
+		init {
+			DrawTestRule.configure()
+		}
 	}
 
 	private val rectangle = TestRectangle(0, 0, 100, 100)
@@ -26,7 +27,7 @@ class StateMachineInputEventHandlerTest {
 		private var startDragLocation = Point2D()
 
 		val handler = StateMachineInputEventHandler(
-			stateMachine(strict = false) {
+			stateMachine(behaviour = Unhandled) {
 
 				state("sense") {
 					onEntry { view.setCursor(Cursor.DEFAULT) }
@@ -115,7 +116,7 @@ class StateMachineInputEventHandlerTest {
 	}
 
 	private fun context(type: MouseEventType, x: Int, y: Int): InputEventContext {
-		return InputEventContext(view, mouseEvent = MouseEventImpl(type, x, y), x = x.toDouble(), y = y.toDouble())
+		return InputEventContext(view, mouseEvent = MouseEventImpl(type, x = x, y = y), x = x.toDouble(), y = y.toDouble())
 	}
 
 	private fun context(type: KeyEventType, keyCode: Int): InputEventContext {

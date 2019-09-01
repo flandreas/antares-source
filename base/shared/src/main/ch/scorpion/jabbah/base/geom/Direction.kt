@@ -62,8 +62,8 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
 	     */
 	    fun optionalOf(p1: Point2D, p2: Point2D): Direction? {
 		    return optionalOf(
-			    sign(round(p2.x - p1.x).toDouble()).toInt(),
-			    sign(round(p2.y - p1.y).toDouble()).toInt())
+			    sign(round(p2.x - p1.x)).toInt(),
+			    sign(round(p2.y - p1.y)).toInt())
 	    }
 
         /** Returns the [Direction] that represents the specified [Rotation].*/

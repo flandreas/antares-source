@@ -25,6 +25,10 @@ class InputToOutputOrEdgeConnector(
 	allowEdgeViewAsTarget = true
 ) {
 
+	override fun createAdjustment(): EdgeViewAdjustmentView {
+		return SimpleEdgeViewAdjustmentView.forOriginAdjustmentOf(edgeView!!)
+	}
+
 	override fun connectEdgeViewToStartPort() {
 		edgeView!!.connectToDestination(startPortView!!.owner, startPortView!!.port as Port<Any>)
 		edgeView!!.layout.layoutDestination()

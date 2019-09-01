@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.base.collection
 
 /**
  * A simple stack implementation.
- * TODO Remove and replace by corresponding class in Kotlin standard library once it its available.
  */
 class Stack<T> {
 
@@ -11,6 +10,8 @@ class Stack<T> {
     val size: Int get() = items.size
 
     val empty: Boolean get() = items.isEmpty()
+
+	fun getItem(index: Int): T = items[index]
 
     /** Pushes an item onto the top of this stack.*/
     fun push(item: T) {

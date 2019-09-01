@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Unhandled
 import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDragged
@@ -37,7 +38,7 @@ class EdgeToPortConnector(
 
 	override val handler = StateMachineInputEventHandler(
 
-		stateMachine<EditInputEventContext>(strict = false) {
+		stateMachine<EditInputEventContext>(Unhandled) {
 
 			state("sense") {
 				onEntry { it?.view?.setCursor(Cursor.DEFAULT) }
@@ -80,7 +81,7 @@ class EdgeToPortConnector(
 					given { mouseReleased(it) && !isValidEdgeView }
 				}
 				transitTo("cancelled") {
-					given { cancelled(it) }
+					given { escapePressed(it) }
 				}
 			}
 
@@ -99,7 +100,7 @@ class EdgeToPortConnector(
 					given { mouseReleased(it) }
 				}
 				transitTo("cancelled") {
-					given { cancelled(it) }
+					given { escapePressed(it) }
 				}
 			}
 

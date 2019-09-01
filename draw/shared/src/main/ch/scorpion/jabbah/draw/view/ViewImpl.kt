@@ -460,7 +460,7 @@ open class ViewImpl<C : InputEventContext>(
 		}
 
 		override fun mouseReleased(context: T): InputEventHandler<T>? {
-			return target?.mouseDragged(context)
+			return target?.mouseReleased(context)
 		}
 
 		override fun keyPressed(context: T): InputEventHandler<T>? {

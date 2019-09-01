@@ -36,6 +36,9 @@ interface KeyEvent : InputEvent {
 	    /** Key code of the ENTER key.*/
         var VK_ENTER = 0x00
 
+	    /** Key code of the ALT key.*/
+	    var VK_ALT = 0x00
+
 	    /** Key code for the 0 key.*/
 	    var VK_0 = 0x00
 

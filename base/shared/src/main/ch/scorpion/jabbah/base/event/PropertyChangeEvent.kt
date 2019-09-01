@@ -30,6 +30,16 @@ class PropertyChangeSupport<T: Any>(val source: Any) {
         }
     }
 
+	fun add(handler: (PropertyChangeEvent<T>) -> Unit): PropertyChangeListener<T> {
+		val listener = object : PropertyChangeListener<T> {
+			override fun propertyChanged(e: PropertyChangeEvent<T>) {
+				handler.invoke(e)
+			}
+		}
+		add(listener)
+		return listener
+	}
+
     /** Removes the specified [PropertyChangeListener] to stop listening for [PropertyChangeEvent]s from [source].*/
     fun remove(l: PropertyChangeListener<T>) = listeners.remove(l)
 

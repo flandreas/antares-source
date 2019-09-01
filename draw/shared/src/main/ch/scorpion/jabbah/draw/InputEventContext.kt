@@ -35,4 +35,8 @@ open class InputEventContext(
 			y = y
 		)
 	}
+
+	override fun toString(): String {
+		return mouseEvent?.toString() ?: keyEvent!!.toString()
+	}
 }

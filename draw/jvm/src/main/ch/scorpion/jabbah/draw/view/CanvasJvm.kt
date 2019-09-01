@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
@@ -236,6 +237,8 @@ private class MouseEventJvm(
 
 	override fun isConsumed(): Boolean = event.isConsumed
 
+	override fun toString(): String = "MouseEvent $type"
+
 	private fun convertButton(jvmButton: Int): Button {
 		return when (jvmButton) {
 			AwtMouseEvent.NOBUTTON -> Button.NONE
@@ -274,6 +277,10 @@ private class KeyEventJvm(override val event: AwtKeyEvent) : KeyEvent {
 
 	override fun isConsumed(): Boolean = event.isConsumed
 
+	override fun toString(): String {
+		return "KeyEvent $type $key"
+	}
+
 	private fun convertEventType(id: Int): KeyEventType {
 		return when (id) {
 			AwtKeyEvent.KEY_TYPED -> KeyEventType.TYPED
@@ -286,76 +293,41 @@ private class KeyEventJvm(override val event: AwtKeyEvent) : KeyEvent {
 
 private class KeyEventBridge(val listener: KeyListener) : java.awt.event.KeyListener {
 
-	override fun keyTyped(e: AwtKeyEvent?) {
+	override fun keyTyped(e: AwtKeyEvent) {
 		// empty
 	}
 
-	override fun keyPressed(e: AwtKeyEvent?) {
-		if (e != null) {
-			listener.keyPressed(KeyEventJvm(e))
-		}
-	}
+	override fun keyPressed(e: AwtKeyEvent) = listener.keyPressed(KeyEventJvm(e))
 
-	override fun keyReleased(e: AwtKeyEvent?) {
-		if (e != null) {
-			listener.keyReleased(KeyEventJvm(e))
-		}
-	}
+	override fun keyReleased(e: AwtKeyEvent) = listener.keyReleased(KeyEventJvm(e))
 }
 
 private class MouseMotionEventBridge(val listener: MouseMotionListener) : java.awt.event.MouseMotionListener {
 
-	override fun mouseMoved(e: AwtMouseEvent?) {
-		if (e != null) {
-			listener.mouseMoved(MouseEventJvm(e))
-		}
-	}
-
-	override fun mouseDragged(e: AwtMouseEvent?) {
-		if (e != null) {
-			listener.mouseDragged(MouseEventJvm(e))
-		}
-	}
+	override fun mouseMoved(e: AwtMouseEvent) = listener.mouseMoved(MouseEventJvm(e))
+	override fun mouseDragged(e: AwtMouseEvent) = listener.mouseDragged(MouseEventJvm(e))
 }
 
 private class MouseWheelEventBridge(val listener: MouseWheelListener) : java.awt.event.MouseWheelListener {
 
-	override fun mouseWheelMoved(e: MouseWheelEvent?) {
-		if (e != null) {
-			listener.mouseWheelRotated(MouseEventJvm(e))
-		}
-	}
+	override fun mouseWheelMoved(e: MouseWheelEvent) = listener.mouseWheelRotated(MouseEventJvm(e))
 }
 
 private class MouseEventBridge(val listener: MouseListener) : java.awt.event.MouseListener {
 
-	override fun mouseEntered(e: AwtMouseEvent?) {
-		if (e != null) {
-			listener.mouseEntered(MouseEventJvm(e))
-		}
+	companion object {
+		private val LOG by logger(MouseEventBridge::class)
 	}
 
-	override fun mouseClicked(e: AwtMouseEvent?) {
-		if (e != null) {
-			listener.mouseClicked(MouseEventJvm(e))
-		}
+	override fun mouseEntered(e: AwtMouseEvent) = listener.mouseEntered(MouseEventJvm(e))
+	override fun mouseClicked(e: AwtMouseEvent) {
+		LOG.debug("clicked")
+		listener.mouseClicked(MouseEventJvm(e))
 	}
-
-	override fun mouseReleased(e: AwtMouseEvent?) {
-		if (e != null) {
-			listener.mouseReleased(MouseEventJvm(e))
-		}
+	override fun mouseReleased(e: AwtMouseEvent) {
+		LOG.debug("released")
+		listener.mouseReleased(MouseEventJvm(e))
 	}
-
-	override fun mouseExited(e: AwtMouseEvent?) {
-		if (e != null) {
-			listener.mouseExited(MouseEventJvm(e))
-		}
-	}
-
-	override fun mousePressed(e: AwtMouseEvent?) {
-		if (e != null) {
-			listener.mousePressed(MouseEventJvm(e))
-		}
-	}
+	override fun mouseExited(e: AwtMouseEvent) = listener.mouseExited(MouseEventJvm(e))
+	override fun mousePressed(e: AwtMouseEvent) = listener.mousePressed(MouseEventJvm(e))
 }

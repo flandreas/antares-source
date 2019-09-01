@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlighter.displayPortViewHighlight
 import ch.scorpion.jabbah.graph.view.port.PortView
 
@@ -31,8 +30,8 @@ abstract class AbstractConnector(
 		targetPortView = null
 	}
 
-	protected fun displayPortViewHighlight(context: EditInputEventContext, location: Point2D) {
-		displayPortViewHighlight(context.drawingView(), location)
+	protected fun displayPortViewHighlight(context: EditInputEventContext, location: Point2D, alternativeView: Boolean = false) {
+		displayPortViewHighlight(context.drawingView(), location, alternativeView)
 		context.view.setCursor(Cursor.CROSSHAIR)
 	}
 
@@ -43,7 +42,7 @@ abstract class AbstractConnector(
 	protected fun moveEdgeViewEndpoint(context: EditInputEventContext) {
 		if (targetPortView == null) {
 			val snap = context.editor.snapManager.snap(context.x, context.y)
-			draggedEndpointType.moveTo(edgeView!!, Point2D(context.x + snap.x, context.y + snap.y))
+			draggedEndpointType.moveTo(edgeView!!, context.location.add(snap))
 			edgeView?.validate()
 		}
 	}
@@ -76,8 +75,8 @@ abstract class AbstractConnector(
 
 		// Layout EdgeView
 		val direction = draggedEndpointType.getDirectionForPortView(targetPortView!!)
-
 		draggedEndpointType.layout(edgeView!!, direction)
+
 		edgeView?.validate()
 	}
 
@@ -85,7 +84,7 @@ abstract class AbstractConnector(
 		targetPortView = null
 	}
 
-	protected fun cancelled(context: EditInputEventContext): Boolean {
+	protected fun escapePressed(context: EditInputEventContext): Boolean {
 		return StateMachineInputEventHandler.escapePressed(context)
 	}
 }

@@ -3,7 +3,9 @@ package ch.scorpion.jabbah.draw
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.KeyEventType
 import ch.scorpion.jabbah.base.event.MouseEventType
+import ch.scorpion.jabbah.base.state.State
 import ch.scorpion.jabbah.base.state.StateMachine
+import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Strict
 
 /**
  * Handles mouse and key inputs that are targeted at a [Drawable] in a [View].
@@ -85,12 +87,17 @@ class StateMachineInputEventHandler<T : InputEventContext>(
 		val mousePressed: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.PRESSED }
 		val mouseDragged: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.DRAGGED }
 		val mouseReleased: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.RELEASED }
+		val mouseClicked: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.CLICKED }
 
+		val keyReleased: (InputEventContext) -> Boolean = { it.keyEvent?.type == KeyEventType.RELEASED }
 		val escapePressed: (InputEventContext) -> Boolean = { it.keyEvent?.type == KeyEventType.PRESSED && it.keyEvent.key == KeyEvent.VK_ESCAPE}
+		val altPressed: (InputEventContext) -> Boolean = { it.keyEvent?.type == KeyEventType.PRESSED && it.keyEvent.key == KeyEvent.VK_ALT}
+
+		val altReleased: (InputEventContext) -> Boolean = { it.keyEvent?.type == KeyEventType.RELEASED && it.keyEvent.key == KeyEvent.VK_ALT}
 	}
 
 	init {
-		if (sm.strict)  {
+		if (sm.behaviour == Strict)  {
 			throw IllegalArgumentException("StateMachine must not be strict")
 		}
 	}

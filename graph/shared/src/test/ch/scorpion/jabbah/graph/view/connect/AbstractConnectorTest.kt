@@ -38,8 +38,12 @@ abstract class AbstractConnectorTest(
 		builder.graphView.getInputEventHandler(context).mouseMoved(context)
 	}
 
-	protected fun pressMouseAt(x: Int, y: Int) {
-		connector.handler.mousePressed(context(MouseEventType.PRESSED, x, y))
+	protected fun pressMouseAt(x: Int, y: Int, modifiers: Int = 0) {
+		connector.handler.mousePressed(context(MouseEventType.PRESSED, x, y, modifiers))
+	}
+
+	protected fun clickMouseAt(x: Int, y: Int, modifiers: Int = 0) {
+		connector.handler.mouseClicked(context(MouseEventType.CLICKED, x, y, modifiers))
 	}
 
 	protected fun dragMouseTo(x: Int, y: Int) {
@@ -50,12 +54,12 @@ abstract class AbstractConnectorTest(
 		connector.handler.mouseReleased(context(MouseEventType.RELEASED, x, y))
 	}
 
-	protected fun cancelDrag() {
+	protected fun pressEscape() {
 		connector.handler.keyPressed(context(KeyEventType.PRESSED, KeyEvent.VK_ESCAPE))
 	}
 
 	protected fun context(type: MouseEventType, x: Int, y: Int, modifiers: Int = 0): EditInputEventContext {
-		return EditInputEventContext(editor, mouseEvent = MouseEventImpl(type, x, y, modifiers = modifiers), x = x.toDouble(), y = y.toDouble())
+		return EditInputEventContext(editor, mouseEvent = MouseEventImpl(type, x = x, y = y, modifiers = modifiers), x = x.toDouble(), y = y.toDouble())
 	}
 
 	protected fun context(type: KeyEventType, keyCode: Int): EditInputEventContext {

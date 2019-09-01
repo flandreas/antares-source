@@ -42,6 +42,14 @@ enum class EdgeViewEndpointType {
         override fun getDirectionForPortView(portView: PortView<*>): Direction {
             return portView.relativeDirection
         }
+
+	    override fun adjustTo(edgeView: EdgeView<*>, layoutIndex: Int, direction: Direction?, location: Point2D) {
+		    edgeView.layout.adjustOrigin(layoutIndex, direction, location)
+	    }
+
+	    override fun remove(edgeView: EdgeView<*>) {
+		    edgeView.removeSegmentPoint(0)
+	    }
     },
 
     DESTINATION {
@@ -73,6 +81,14 @@ enum class EdgeViewEndpointType {
         override fun getDirectionForPortView(portView: PortView<*>): Direction {
             return portView.relativeDirection.opposite()
         }
+
+	    override fun adjustTo(edgeView: EdgeView<*>, layoutIndex: Int, direction: Direction?, location: Point2D) {
+		    edgeView.layout.adjustDestination(layoutIndex, direction, location)
+	    }
+
+	    override fun remove(edgeView: EdgeView<*>) {
+		    edgeView.removeSegmentPoint(edgeView.segmentPointCount - 1)
+	    }
     };
 
     /** Determines whether and endpoint of this type can connect to a [Port] of the specified [PortType].*/
@@ -80,6 +96,9 @@ enum class EdgeViewEndpointType {
 
     /** Moves this endpoint of an [EdgeView] to the specified location. */
     abstract fun moveTo(edgeView: EdgeView<*>, point: Point2D)
+
+	/** Adjusts this endpoint of an [EdgeView] to the specified location, restricting layout the [EdgeView] point with index [layoutIndex].*/
+	abstract fun adjustTo(edgeView: EdgeView<*>, layoutIndex: Int, direction: Direction? = null, location: Point2D)
 
     /** Layouts the [EdgeView] at this endpoint with the preferred [Direction] at the endpoint. */
     abstract fun layout(edgeView: EdgeView<*>, direction: Direction?)
@@ -101,5 +120,9 @@ enum class EdgeViewEndpointType {
      */
     abstract fun getDirectionForPortView(portView: PortView<*>): Direction
 
+	/** Returns the location of the corresponding [EdgeView] endpoint. */
     abstract fun getLocation(edgeView: EdgeView<*>): Point2D
+
+	/** Removes the corresponding endpoint from [EdgeView] and makes the second last point the new endpoint. */
+	abstract fun remove(edgeView: EdgeView<*>)
 }

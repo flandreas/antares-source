@@ -36,11 +36,13 @@ class EdgeEndpointView(
 	/** The center of [bounds] in absolute model coordinate space. */
 	override var location: Point2D = Point2D.ZERO
 		set(value) {
-			invalidate()
-			field = Point2D(value.x, value.y)
-			updateGeometry()
-			invalidate()
-			update()
+			if (field != value) {
+				invalidate()
+				field = Point2D(value.x, value.y)
+				updateGeometry()
+				invalidate()
+				update()
+			}
 		}
 
 	override fun moveBy(dx: Double, dy: Double) {

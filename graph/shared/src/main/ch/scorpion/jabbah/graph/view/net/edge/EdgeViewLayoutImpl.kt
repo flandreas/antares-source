@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.EdgeViewLayout
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
+import kotlin.math.min
 
 class EdgeViewLayoutImpl(
 	private val edgeView: EdgeView<*>,
@@ -71,14 +72,6 @@ class EdgeViewLayoutImpl(
 		}
 	}
 
-	override fun handleOriginChanged() {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun handleDestinationChanged() {
-		throw UnsupportedOperationException("not implemented")
-	}
-
 	override fun layoutOrigin() {
 		layoutOrigin(null)
 	}
@@ -89,31 +82,40 @@ class EdgeViewLayoutImpl(
 			layoutAll(direction, null)
 			return
 		}
-		val originPoint = getLayoutOriginPoint()
-		if (originPoint != null) {
-			val destPointIndex = Math.min(2, edgeView.polyline.pointsCount - 1)
-			val destPoint = Point2D(edgeView.polyline.getPointAt(destPointIndex))
-			val originDirs = if (direction == null) getOriginDirections(destPoint) else setOf(direction)
+		val destPointIndex = min(2, edgeView.polyline.pointsCount - 1)
+		layoutOriginImpl(destPointIndex, direction, getLayoutOriginPoint(), compact = true)
+
+		updateAdjusted()
+	}
+
+	override fun adjustOrigin(layoutDestIndex: Int, origDirection: Direction?, origLocation: Point2D) {
+		val destPointIndex = min(layoutDestIndex, edgeView.polyline.pointsCount - 1)
+		layoutOriginImpl(destPointIndex, origDirection, origLocation = origLocation, compact = false)
+		isAdjusted = true
+	}
+
+	private fun layoutOriginImpl(destPointIndex: Int, origDir: Direction?, origLocation: Point2D?, compact: Boolean) {
+		if (origLocation != null) {
+			val destLocation = Point2D(edgeView.polyline.getPointAt(destPointIndex))
+			val originDirs = if (origDir == null) getOriginDirections(destLocation) else setOf(origDir)
 			val destDir = type.getSegmentDirection(edgeView, destPointIndex - 1)
 			val list = mutableListOf<Point2D>()
 			list.addAll(type.layout(
 				edgeView,
 				edgeView.parent as GraphView<*>,
 				LayoutBoundary(
-					point = originPoint,
+					point = origLocation,
 					directions = originDirs,
-					isPort = edgeView.origin != null || direction != null),
+					isPort = edgeView.origin != null || origDir != null),
 				LayoutBoundary(
-					point = destPoint,
-					directions = destDir?.let { setOf(destDir) } ?: setOf(),
+					point = destLocation,
+					directions = destDir?.let { setOf(destDir) } ?: Direction.ALL,
 					isPort = edgeView.destination != null && destPointIndex == edgeView.polyline.pointsCount - 1)))
 
-			list.addAll(edgeView.polyline.getPoints(destPointIndex, edgeView.polyline.pointsCount))
+			list.addAll(edgeView.polyline.getPoints(destPointIndex + 1, edgeView.polyline.pointsCount))
 
-			edgeView.setLaidOutPoints(list)
+			edgeView.setLaidOutPoints(list, compact)
 		}
-
-		updateAdjusted()
 	}
 
 	override fun layoutDestination() {
@@ -126,30 +128,37 @@ class EdgeViewLayoutImpl(
 			layoutAll(null, direction)
 			return
 		}
-		val destPoint = getLayoutDestinationPoint()
-		if (destPoint != null) {
-			val origPointIndex = Math.max(0, edgeView.polyline.pointsCount - 3)
-			val origPoint = Point2D(edgeView.polyline.getPointAt(origPointIndex))
-			val destDirs = if (direction == null) getDestinationDirections(origPoint) else setOf(direction)
+		val origPointIndex = Math.max(0, edgeView.polyline.pointsCount - 3)
+		layoutDestinationImpl(origPointIndex, direction, getLayoutDestinationPoint(), compact = true)
+		updateAdjusted()
+	}
+
+	override fun adjustDestination(layoutOrigIndex: Int, destDir: Direction?, destLocation: Point2D) {
+		layoutDestinationImpl(layoutOrigIndex, destDir, destLocation = destLocation, compact = false)
+		isAdjusted = true
+	}
+
+	private fun layoutDestinationImpl(origPointIndex: Int, destDir: Direction?, destLocation: Point2D?, compact: Boolean) {
+		if (destLocation != null) {
+			val origLocation = Point2D(edgeView.polyline.getPointAt(origPointIndex))
+			val destDirs = if (destDir == null) getDestinationDirections(origLocation) else setOf(destDir)
 			val origDir = type.getSegmentDirection(edgeView, origPointIndex)
 			val list = mutableListOf<Point2D>()
 			list.addAll(type.layout(
 				edgeView,
 				edgeView.parent as GraphView<*>,
 				LayoutBoundary(
-					point = origPoint,
-					directions = origDir?.let { setOf(origDir) } ?: setOf(),
+					point = origLocation,
+					directions = origDir?.let { setOf(origDir) } ?: Direction.ALL,
 					isPort = edgeView.origin != null && origPointIndex == 0),
 				LayoutBoundary(
-					point = destPoint,
+					point = destLocation,
 					directions = destDirs,
-					isPort = edgeView.destination != null || direction != null)))
+					isPort = edgeView.destination != null || destDir != null)))
 			list.addAll(0, edgeView.polyline.getPoints(0, origPointIndex))
 
-			edgeView.setLaidOutPoints(list)
+			edgeView.setLaidOutPoints(list, compact)
 		}
-
-		updateAdjusted()
 	}
 
 	private fun layoutAll(originDir: Direction?, destDir: Direction?) {
@@ -178,7 +187,7 @@ class EdgeViewLayoutImpl(
 					isPort = edgeView.destination != null || destDir != null))
 
 
-			edgeView.setLaidOutPoints(laidOutPoints)
+			edgeView.setLaidOutPoints(laidOutPoints, compact = true)
 		}
 	}
 

@@ -175,10 +175,21 @@ open class EdgeViewImpl<T : Any>(
 		updateEndpointViews()
 		styling.updateBoundingBox()
 		invalidate()
+		update()
 		return this
 	}
 
-	override fun setLaidOutPoints(points: List<Point2D>) {
+	override fun removeSegmentPoint(index: Int): EdgeView<T> {
+		invalidate()
+		polyline.removePoint(index)
+		updateEndpointViews()
+		styling.updateBoundingBox()
+		invalidate()
+		update()
+		return this
+	}
+
+	override fun setLaidOutPoints(points: List<Point2D>, compact: Boolean) {
 		invalidate()
 		polyline.setPoints(points)
 
@@ -186,7 +197,10 @@ open class EdgeViewImpl<T : Any>(
 		styling.updateBoundingBox()
 		invalidate()
 
-		compact()
+		if (compact) {
+			compact()
+		}
+
 		update()
 	}
 
@@ -276,7 +290,7 @@ open class EdgeViewImpl<T : Any>(
 
 	private fun moveDestinationEndPointImpl(x: Double, y: Double) {
 		polyline.removePoint(polyline.pointsCount - 1)
-		// TODO Snap?
+		// Snapping is done by higher application layers
 		addSegmentPoint(Point2D(x, y))
 	}
 

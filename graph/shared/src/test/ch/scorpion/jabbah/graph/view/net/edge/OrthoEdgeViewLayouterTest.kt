@@ -102,4 +102,24 @@ class OrthoEdgeViewLayouterTest {
 
 		assertEquals(3, points.size)
 	}
+
+	@Test
+	fun shouldNotRequireBeginDirection() {
+		// This is used for interactive adjusting, where two points at the begin Port
+		// lay at the same position, and the second one is adjusted to snap the end Port,
+		// resulting in a degenerated begin segment, and hence a missing begin Direction.
+		val points = OrthoEdgeViewLayouter.layout(
+			null,
+			graphView,
+			LayoutBoundary(
+				point = Point2D(0, 0),
+				directions = setOf(),
+				isPort = true),
+			LayoutBoundary(
+				point = Point2D(100, 100),
+				directions = setOf(Direction.WEST),
+				isPort = true))
+
+		assertEquals(4, points.size)
+	}
 }

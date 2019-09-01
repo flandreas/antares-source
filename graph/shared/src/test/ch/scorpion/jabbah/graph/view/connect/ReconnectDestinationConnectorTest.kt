@@ -88,7 +88,7 @@ class ReconnectDestinationConnectorTest : AbstractConnectorTest(GraphViewModule.
 		pressMouseAt(205, 100)
 		dragMouseTo(150, 100)
 
-		cancelDrag()
+		pressEscape()
 
 		assertTrue(draggedEdgeView.model!!.isConnectedWith(v2.model!!.getInput()))
 		assertEquals(v2.getPortConnectionPoint(v2.model!!.getInput<Boolean>()), draggedEdgeView.destinationEndpointView.location)

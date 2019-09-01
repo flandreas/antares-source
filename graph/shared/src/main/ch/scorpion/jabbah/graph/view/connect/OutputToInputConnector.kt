@@ -24,6 +24,10 @@ class OutputToInputConnector(
 	draggedEndpointType = EdgeViewEndpointType.DESTINATION
 ) {
 
+	override fun createAdjustment(): EdgeViewAdjustmentView {
+		return SimpleEdgeViewAdjustmentView.forDestinationAdjustmentOf(edgeView!!)
+	}
+
 	override fun connectEdgeViewToStartPort() {
 		edgeView!!.connectToOrigin(startPortView!!.owner, startPortView!!.port as Port<Any>)
 		// Adapt to PortView that might has reduced its length
