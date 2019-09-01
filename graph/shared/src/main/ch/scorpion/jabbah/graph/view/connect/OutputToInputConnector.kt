@@ -26,6 +26,8 @@ class OutputToInputConnector(
 
 	override fun connectEdgeViewToStartPort() {
 		edgeView!!.connectToOrigin(startPortView!!.owner, startPortView!!.port as Port<Any>)
+		// Adapt to PortView that might has reduced its length
+		edgeView!!.layout.layoutOrigin()
 	}
 
 	override fun completeConnectingToEndPort(context: EditInputEventContext) {

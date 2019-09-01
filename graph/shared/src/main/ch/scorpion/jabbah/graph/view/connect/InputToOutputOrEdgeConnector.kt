@@ -27,6 +27,7 @@ class InputToOutputOrEdgeConnector(
 
 	override fun connectEdgeViewToStartPort() {
 		edgeView!!.connectToDestination(startPortView!!.owner, startPortView!!.port as Port<Any>)
+		edgeView!!.layout.layoutDestination()
 	}
 
 	override fun completeConnectingToEndPort(context: EditInputEventContext) {
