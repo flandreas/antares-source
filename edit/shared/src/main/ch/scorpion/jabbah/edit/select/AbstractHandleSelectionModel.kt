@@ -168,7 +168,15 @@ abstract class AbstractHandleSelectionModel<T : Component>(
 			// empty
 		}
 
-		/** ---- [InputEventHandlerAdapter]  */
+		/** ---- [InputEventHandlerAdapter] */
+
+		override fun keyPressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+			return if (focusHandle != null) this else null
+		}
+
+		override fun keyReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+			return if (focusHandle != null) this else null
+		}
 
 		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			val handle = getHandleAt(context.x, context.y) ?: return null

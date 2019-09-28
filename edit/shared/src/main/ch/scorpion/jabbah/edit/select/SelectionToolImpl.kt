@@ -60,6 +60,7 @@ class SelectionToolImpl(
 	}
 
 	override fun keyPressed(e: KeyEvent) {
+		LOG.debug("keyPressed")
 		if (target != null) {
 			target = target?.keyPressed(keyEventContext(e))
 			return
@@ -70,6 +71,7 @@ class SelectionToolImpl(
 	}
 
 	override fun keyReleased(e: KeyEvent) {
+		LOG.debug("keyReleased")
 		target = target?.keyReleased(keyEventContext(e))
 	}
 

@@ -71,6 +71,15 @@ abstract class AbstractSelectedColorWrappingSelectionModel<T : Component>(compon
 	}
 
 	private inner class EventHandler : InputEventHandlerAdapter<EditInputEventContext>() {
+
+		override fun keyPressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+			return handleSelectionModel.getInputEventHandler(context).keyPressed(context)
+		}
+
+		override fun keyReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+			return handleSelectionModel.getInputEventHandler(context).keyReleased(context)
+		}
+
 		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			if (handlesDisplayed && handleSelectionModel.contains(context.x, context.y)) {
 				val handler = handleSelectionModel.getInputEventHandler(context).mouseMoved(context)
