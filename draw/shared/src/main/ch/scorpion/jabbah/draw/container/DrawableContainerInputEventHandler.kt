@@ -1,12 +1,13 @@
 package ch.scorpion.jabbah.draw.container
 
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.*
 
 /**
  * Forwards interaction initiating input events to the [Drawable] at the current mouse location of a
  * [DrawableContainer].
  */
-open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContext>() : InputEventHandlerAdapter<C>() {
+open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContext> : InputEventHandlerAdapter<C>() {
 
 	private var _container: DrawableContainer<T>? = null
 
@@ -17,7 +18,7 @@ open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContex
 	}
 
 	override fun mouseMoved(context: C): InputEventHandler<C>? {
-		val drawable = container.getDrawableAt(context.x, context.y)
+		val drawable = container.getDrawableAt(context.location)
 		if (drawable != null) {
 			val localContext = localContext(context)
 			return drawable.getInputEventHandler(localContext).mouseMoved(localContext)
@@ -26,7 +27,7 @@ open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContex
 	}
 
 	override fun mousePressed(context: C): InputEventHandler<C>? {
-		val drawable = container.getDrawableAt(context.x, context.y)
+		val drawable = container.getDrawableAt(context.location)
 		if (drawable != null) {
 			val localContext = localContext(context)
 			return drawable.getInputEventHandler(localContext).mousePressed(localContext)
@@ -35,7 +36,7 @@ open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContex
 	}
 
 	override fun mouseDragged(context: C): InputEventHandler<C>? {
-		val drawable = container.getDrawableAt(context.x, context.y)
+		val drawable = container.getDrawableAt(context.location)
 		if (drawable != null) {
 			val localContext = localContext(context)
 			return drawable.getInputEventHandler(localContext).mouseDragged(localContext)
@@ -44,7 +45,7 @@ open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContex
 	}
 
 	override fun mouseReleased(context: C): InputEventHandler<C>? {
-		val drawable = container.getDrawableAt(context.x, context.y)
+		val drawable = container.getDrawableAt(context.location)
 		if (drawable != null) {
 			val localContext = localContext(context)
 			return drawable.getInputEventHandler(localContext).mouseReleased(localContext)
@@ -54,7 +55,7 @@ open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContex
 
 
 	override fun mouseClicked(context: C): InputEventHandler<C>? {
-		val drawable = container.getDrawableAt(context.x, context.y)
+		val drawable = container.getDrawableAt(context.location)
 		if (drawable != null) {
 			val localContext = localContext(context)
 			return drawable.getInputEventHandler(localContext).mouseClicked(localContext)
@@ -63,5 +64,6 @@ open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContex
 	}
 
 	@Suppress("UNCHECKED_CAST")
-	private fun localContext(c: C): C = c.withXY(c.location.subtract(container.location)) as C
+	private fun localContext(c: C): C =
+		if (container.location == Point2D.ZERO) c else c.withXY(c.location.subtract(container.location)) as C
 }

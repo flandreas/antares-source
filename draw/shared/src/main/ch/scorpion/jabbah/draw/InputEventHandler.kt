@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.draw
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.KeyEventType
 import ch.scorpion.jabbah.base.event.MouseEventType
-import ch.scorpion.jabbah.base.state.State
 import ch.scorpion.jabbah.base.state.StateMachine
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Strict
 

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw
 
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.drawable.Locatable
@@ -98,6 +99,9 @@ interface DrawableContainer<T : Drawable> : Drawable, Locatable {
      * inner [Drawable] at that location. This method rather returns only direct children.
      */
     fun getDrawableAt(x: Double, y: Double): T?
+
+	/** Delegates to [getDrawableAt] using the individual coordinates of the specified [Point2D]. */
+	fun getDrawableAt(location: Point2D): T? = getDrawableAt(location.x, location.y)
 
     fun getDrawables(): ImmutableList<T>
 

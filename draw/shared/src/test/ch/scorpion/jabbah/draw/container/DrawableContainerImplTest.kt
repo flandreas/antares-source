@@ -239,7 +239,6 @@ class DrawableContainerImplTest {
         assertTrue(rect.mousePressed)
     }
 
-
     private class TestRectangle(shape: RectangularShape) : AbstractRectangle(shape) {
         var mouseMoved = false
         var mousePressed = false
