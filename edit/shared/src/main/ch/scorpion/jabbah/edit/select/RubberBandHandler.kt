@@ -24,18 +24,13 @@ class RubberBandHandler(private val rubberBand: RubberBand) : InputEventHandlerA
         SELECT_ON_DRAG {
 
 	        override fun mousePressed(rubberBand: RubberBand, context: EditInputEventContext) {
-		        if (!context.mouseEvent!!.isShiftDown) {
-			        selection.clear()
-			        selection.addAll(context.drawingView().selectionManager.selection)
-		        }
+		        selection.clear()
 	        }
 
             override fun mouseDragged(rubberBand: RubberBand, context: EditInputEventContext) {
                 // TODO This is a pretty inefficient solution that turns the CPU crazy due to heavy
                 // repainting and calculation load. Check if there is a more efficient solution.
-	            if (!context.mouseEvent!!.isShiftDown) {
-		            context.drawingView().selectionManager.deselect(selection)
-	            }
+	            context.drawingView().selectionManager.deselect(selection)
 	            selection.clear()
                 context.drawingView().drawing.getDrawables()
                     .filter { it.visible && rubberBand.contains(it.boundingBox) }
@@ -78,7 +73,12 @@ class RubberBandHandler(private val rubberBand: RubberBand) : InputEventHandlerA
 
     /** ---- [InputEventHandler] */
 
-    override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+    override fun keyReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+	    // Avoid stop dragging Rubberband when SHIFT is released
+	    return this
+    }
+
+	override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         super.mousePressed(context)
 	    selectionStrategy.mousePressed(rubberBand, context)
         return rubberBand.inputEventHandler.mousePressed(context)

@@ -97,12 +97,12 @@ class SelectionManagerImplTest {
 		rect2.preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
 		drawing.add(rect2)
 		selectionManager.selectAll()
-		selectionManager.deselect(listOf(rect, rect2))
-		assertEquals(0, selectionManager.selectionCount)
+		selectionManager.deselect(listOf(rect))
+		assertEquals(1, selectionManager.selectionCount)
 		assertFalse(selectionManager.isSelected(rect))
-		assertFalse(selectionManager.isSelected(rect2))
+		assertTrue(selectionManager.isSelected(rect2))
 		assertFalse(selectionManager.content.hasSelectionModelFor(rect))
-		assertFalse(selectionManager.content.hasSelectionModelFor(rect2))
+		assertTrue(selectionManager.content.hasSelectionModelFor(rect2))
 	}
 
 	@Test

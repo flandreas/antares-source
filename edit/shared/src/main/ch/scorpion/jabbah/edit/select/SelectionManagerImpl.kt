@@ -79,7 +79,7 @@ class SelectionManagerImpl(
 
     override fun deselect(components: Collection<Component>) {
         val list = mutableListOf<Component>()
-        for (c in content.drawing.getDrawables()) {
+        for (c in components) {
             if (isSelected(c)) {
                 deselectImpl(c)
                 list.add(c)
