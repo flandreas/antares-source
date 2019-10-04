@@ -14,8 +14,7 @@ import ch.scorpion.jabbah.draw.polyline.ArrowHead
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Snapper
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.model.Net
@@ -481,6 +480,12 @@ open class EdgeViewImpl<T : Any>(
 		layout.suspendOriginLayout = false
 		layout.suspendDestinationLayout = false
 	}
+
+	/** ---- [Snappable] interface: [EdgeView]s aren't snap point sources */
+
+	override val snappableX: Array<SnappableX> get() = Snappable.EMPTY_X
+
+	override val snappableY: Array<SnappableY> get() = Snappable.EMPTY_Y
 
 	/** ---- [Drawable] interface */
 

@@ -10,6 +10,11 @@ package ch.scorpion.jabbah.edit
  */
 interface Snappable {
 
+	companion object {
+		val EMPTY_X = arrayOf<SnappableX>()
+		val EMPTY_Y = arrayOf<SnappableY>()
+	}
+
     /**
      * Holds the x-coordinates at which this [Snappable] wants to be snapped, or an empty array if this [Snappable]
      * doesn't want to be snapped at x-coordinates.
