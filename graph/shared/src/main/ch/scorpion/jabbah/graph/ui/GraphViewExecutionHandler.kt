@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.DrawingView
@@ -11,8 +12,11 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.ApplicationMode.EXECUTE
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -35,9 +39,10 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  */
 class GraphViewExecutionHandler(
 	view: DrawingView<GraphView<GraphElementView<*>>>,
-	private val scheduler: Scheduler,
-	eventBus: EventBus
-) : AbstractGraphViewExecutionHandler(view, eventBus) {
+	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	eventBus: EventBus = BaseModule.eventBus,
+	applicationMode: ApplicationMode
+) : AbstractGraphViewExecutionHandler(view, eventBus, applicationMode) {
 
 	companion object {
 		private val LOG by logger(GraphViewExecutionHandler::class)
@@ -55,7 +60,7 @@ class GraphViewExecutionHandler(
 
 	override fun createKeyHandler(): KeyAdapter = KeyHandler()
 
-	override val activationCondition: Boolean get() = currentMode === ch.scorpion.jabbah.graph.ApplicationMode.EXECUTE
+	override val activationCondition: Boolean get() = currentMode === EXECUTE
 
 	override fun activate() {
 		super.activate()

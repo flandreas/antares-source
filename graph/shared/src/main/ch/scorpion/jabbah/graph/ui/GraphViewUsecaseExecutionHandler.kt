@@ -1,10 +1,14 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.FocusManager
 import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.ApplicationMode.EXEC_USECASE
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
@@ -14,15 +18,16 @@ import ch.scorpion.jabbah.graph.view.Usecase
  */
 class GraphViewUsecaseExecutionHandler(
 	view: DrawingView<GraphView<GraphElementView<*>>>,
-	private val scheduler: Scheduler,
-	eventBus: EventBus
-) : AbstractGraphViewExecutionHandler(view, eventBus) {
+	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	eventBus: EventBus = BaseModule.eventBus,
+	applicationMode: ApplicationMode
+) : AbstractGraphViewExecutionHandler(view, eventBus, applicationMode) {
 
 	override fun createMouseHandler(): MouseAdapter = MouseHandler()
 
 	override fun createKeyHandler(): KeyAdapter = KeyHandler()
 
-	override val activationCondition: Boolean get() = currentMode === ch.scorpion.jabbah.graph.ApplicationMode.EXEC_USECASE
+	override val activationCondition: Boolean get() = currentMode === EXEC_USECASE
 
 	private inner class MouseHandler : MouseAdapter() {
 

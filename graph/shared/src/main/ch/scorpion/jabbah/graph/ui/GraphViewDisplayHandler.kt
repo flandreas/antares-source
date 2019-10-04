@@ -24,94 +24,94 @@ import ch.scorpion.jabbah.draw.view.TooltipHandler
  * - Dive into a {@link SubGraphVerticeView} when the user double clicks on it
  */
 class GraphViewDisplayHandler(
-        private val view: DrawingView<GraphView<GraphElementView<*>>>,
-        private val scheduler: Scheduler,
-        eventBus: EventBus
+	private val view: DrawingView<GraphView<GraphElementView<*>>>,
+	private val scheduler: Scheduler,
+	eventBus: EventBus
 ) {
 
-    companion object {
-        private val LOG by logger(GraphViewDisplayHandler::class)
-    }
+	companion object {
+		private val LOG by logger(GraphViewDisplayHandler::class)
+	}
 
-    private val mouseHandler = MouseHandler()
+	private val mouseHandler = MouseHandler()
 
-    /** Gateway to the tooltip system.*/
-    private val tooltipHandler: TooltipHandler = TooltipHandler(eventBus)
+	/** Gateway to the tooltip system.*/
+	private val tooltipHandler: TooltipHandler = TooltipHandler(eventBus)
 
-    init {
-        eventBus.register(SchedulerActivationStateEvent::class) { updateActivationState() }
-	    view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
-            override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-                if (e.name == DrawingView.PROP_DRAWING || e.name == DrawingView.PROP_EDITABLE) {
-                    updateActivationState()
-                }
-            }
-        })
-        updateActivationState()
-    }
+	init {
+		eventBus.register(SchedulerActivationStateEvent::class) { updateActivationState() }
+		view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
+			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+				if (e.name == DrawingView.PROP_DRAWING || e.name == DrawingView.PROP_EDITABLE) {
+					updateActivationState()
+				}
+			}
+		})
+		updateActivationState()
+	}
 
-    fun dispose() {
-        passivate()
-    }
+	fun dispose() {
+		passivate()
+	}
 
-    private fun updateActivationState() {
-        if (!scheduler.isActive && !view.editable) {
-            activate()
-        } else {
-            passivate()
-        }
-    }
+	private fun updateActivationState() {
+		if (!scheduler.isActive && !view.editable) {
+			activate()
+		} else {
+			passivate()
+		}
+	}
 
-    private fun activate() {
-        view.addMouseListener(mouseHandler)
-        view.addMouseMotionListener(mouseHandler)
-    }
+	private fun activate() {
+		view.addMouseListener(mouseHandler)
+		view.addMouseMotionListener(mouseHandler)
+	}
 
-    private fun passivate() {
-        view.removeMouseListener(mouseHandler)
-        view.removeMouseMotionListener(mouseHandler)
-    }
+	private fun passivate() {
+		view.removeMouseListener(mouseHandler)
+		view.removeMouseMotionListener(mouseHandler)
+	}
 
-    private inner class MouseHandler : MouseAdapter() {
+	private inner class MouseHandler : MouseAdapter() {
 
-        /** Displays the hand cursor if the mouse is over a [SubGraphVerticeView] */
-        override fun mouseMoved(e: MouseEvent) {
-            LOG.trace("GraphViewDisplayHandler.mouseMoved")
-            val x = view.viewToModelX(e.x.toDouble())
-            val y = view.viewToModelY(e.y.toDouble())
+		/** Displays the hand cursor if the mouse is over a [SubGraphVerticeView] */
+		override fun mouseMoved(e: MouseEvent) {
+			LOG.trace("GraphViewDisplayHandler.mouseMoved")
+			val x = view.viewToModelX(e.x.toDouble())
+			val y = view.viewToModelY(e.y.toDouble())
 
-            val drawable = view.drawing.getDrawableAt(x, y)
-            tooltipHandler.handle(view, view.drawing, x, y)
+			val drawable = view.drawing.getDrawableAt(x, y)
+			tooltipHandler.handle(view, view.drawing, x, y)
 
-            if (drawable != null /*&& drawable is SubGraphVerticeView<*>*/) {
-                view.setCursor(Cursor.HAND)
-            } else {
-                view.setCursor(Cursor.DEFAULT)
-            }
-        }
+			if (drawable != null /*&& drawable is SubGraphVerticeView<*>*/) {
+				view.setCursor(Cursor.HAND)
+			} else {
+				view.setCursor(Cursor.DEFAULT)
+			}
+		}
 
-        /** Forwards a click with button 1 to a [SubGraphVerticeView] at the mouse location, if any. */
-        override fun mouseClicked(e: MouseEvent) {
-            tooltipHandler.clear(view)
+		/** Forwards a click with button 1 to a [SubGraphVerticeView] at the mouse location, if any. */
+		override fun mouseClicked(e: MouseEvent) {
+			tooltipHandler.clear(view)
 
-            if (e.button != Button.BUTTON1) {
-                return
-            }
+			if (e.button != Button.BUTTON1) {
+				return
+			}
 
-            val x = view.viewToModelX(e.x.toDouble())
-            val y = view.viewToModelY(e.y.toDouble())
+			val x = view.viewToModelX(e.x.toDouble())
+			val y = view.viewToModelY(e.y.toDouble())
 
-            val drawable = view.drawing.getDrawableAt(x, y)
-            if (drawable != null /*&& drawable is SubGraphVerticeView*/) {
-                val context = InputEventContext(
-                    view = view,
-                    mouseEvent = e,
-                    x = x,
-                    y = y,
-	                readonly = true)
-                drawable.getInputEventHandler(context).mouseClicked(context)
-                view.drawing.validate()
-            }
-        }
-    }
+			val drawable = view.drawing.getDrawableAt(x, y)
+			if (drawable != null /*&& drawable is SubGraphVerticeView*/) {
+				val context = InputEventContext(
+					view = view,
+					mouseEvent = e,
+					x = x,
+					y = y,
+					readonly = true)
+				drawable.getInputEventHandler(context).mouseClicked(context)
+				view.drawing.validate()
+			}
+		}
+	}
 }

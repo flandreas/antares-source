@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.graph
 
+import ch.scorpion.jabbah.base.event.EventBus
+
 /**
- * Represents the supported application mode of a [graph] application.
+ * Represents the supported application mode of a [ch.scorpion.jabbah.graph] application.
  */
 enum class ApplicationMode(val nameKey: String) {
 	EDIT("application.mode.edit"),

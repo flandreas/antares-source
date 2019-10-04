@@ -100,13 +100,13 @@ class GraphNavigationPanel(
 	private val closeViewRequestHandler: (CloseViewRequest) -> Unit = { handle(it) }
 
 	/** Forwards input events to the [GraphView] while executing.*/
-	private val graphViewExecutionHandler = GraphViewExecutionHandler(drawingView, scheduler, eventBus)
+	private val graphViewExecutionHandler = GraphViewExecutionHandler(drawingView, scheduler, eventBus, currentMode)
 
 	/** Forwards input events to the [GraphView] while displaying (i.e. NOT executing) and NOT being editable.*/
 	private val graphViewDisplayHandler = GraphViewDisplayHandler(drawingView, scheduler, eventBus)
 
 	/** Forwards input events to the [GraphView] while a [Usecase] is executed.*/
-	private val graphViewUsecaseExecutionHandler = GraphViewUsecaseExecutionHandler(drawingView, scheduler, eventBus)
+	private val graphViewUsecaseExecutionHandler = GraphViewUsecaseExecutionHandler(drawingView, scheduler, eventBus, currentMode)
 
 	private var currentSavable: Savable? = null
 
