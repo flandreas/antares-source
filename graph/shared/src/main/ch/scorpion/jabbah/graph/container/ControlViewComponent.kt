@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StoreReader
@@ -38,7 +39,7 @@ class ControlViewComponent(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     source: ControlViewSource<Vertice>? = null,
     baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY
-) : AbstractComponent(styleProvider), ActorView, Transparent {
+) : AbstractComponent(styleProvider), GraphElementView<Vertice>, ActorView, Transparent {
 
 	/**
      * The ID of the model displayed by [controlView]. This ID is made persistent and is used to resolve the link
@@ -65,9 +66,19 @@ class ControlViewComponent(
 	    }
     }
 
+	/** ---- [Transparent] interface */
+
 	override var transparency: Int
 		get() = controlView!!.transparency
 		set(value) { controlView!!.transparency = value }
+
+	/** ---- [GraphElementView] interface */
+
+	override val model: Vertice? get() = controlView?.model
+
+	override fun bind(graph: Graph) {
+		// empty
+	}
 
     /** ---- [Storable] interface */
 
