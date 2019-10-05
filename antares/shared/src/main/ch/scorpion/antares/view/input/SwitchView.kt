@@ -249,6 +249,7 @@ class SwitchView(
 
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			drawFocus(context)
+			drawEnabled(context)
 		}
 		context.g.color = oldColor
 	}
@@ -348,6 +349,13 @@ class SwitchView(
 			context.g.stroke = Themes.get<AntaresTheme>().focus.stroke
 			context.g.drawRect(xInt + BORDER_WIDTH - 1, yInt + BORDER_WIDTH - 1,
 				widthInt - 2 * BORDER_WIDTH + 2, heightInt - 2 * BORDER_WIDTH + 2)
+		}
+	}
+
+	private fun drawEnabled(context: DrawContext) {
+		if (!model!!.enabled) {
+			context.g.color = Themes.get<AntaresTheme>().background.color.backgroundColor.withAlpha(192)
+			context.g.fillRect(xInt, yInt, widthInt, heightInt)
 		}
 	}
 
@@ -506,14 +514,14 @@ class SwitchView(
 			if (!keyDown) {
 				if (isFocusOwner) {
 					when (context.keyEvent?.key) {
-						'0'.toInt() -> switchOn(context, false)
-						'1'.toInt() -> switchOn(context, true)
-						'\n'.toInt() -> switchOn(context, !model!!.isOn)
+						'0'.toInt() -> switchOff(context)
+						'1'.toInt() -> switchOn(context)
+						'\n'.toInt() -> toggle(context)
 					}
 				} else {
 					name?.let {
 						if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
-							switchOn(context, !model!!.isOn)
+							toggle(context)
 						}
 					}
 				}
@@ -527,13 +535,13 @@ class SwitchView(
 				if (keyDown) {
 					if (isFocusOwner) {
 						when (context.keyEvent?.key) {
-							'1'.toInt() -> switchOn(context, false)
-							'\n'.toInt() -> switchOn(context, false)
+							'1'.toInt() -> switchOff(context)
+							'\n'.toInt() -> switchOff(context)
 						}
 					} else {
 						name?.let {
 							if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
-								switchOn(context, false)
+								switchOff(context)
 							}
 						}
 					}
@@ -543,8 +551,18 @@ class SwitchView(
 			return null
 		}
 
-		private fun switchOn(context: ActorInteractionContext, isOn: Boolean) {
-			model!!.setOn(context.signalHandler, isOn)
+		private fun switchOn(context: ActorInteractionContext) {
+			model!!.on(context.signalHandler)
+			context.keyEvent?.consume()
+		}
+
+		private fun switchOff(context: ActorInteractionContext) {
+			model!!.off(context.signalHandler)
+			context.keyEvent?.consume()
+		}
+
+		private fun toggle(context: ActorInteractionContext) {
+			model!!.toggle(context.signalHandler)
 			context.keyEvent?.consume()
 		}
 	}
