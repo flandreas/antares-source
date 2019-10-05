@@ -73,7 +73,12 @@ if (left) {
               </ports>
             </digitalNet>
             <andGate _id='32' id='33' delay='20' inputCount='2'/>
-            <circuitInOut _id='33' id='34' delay='0' name='F' type='input' bitWidth='1'/>
+            <circuitInOut _id='33' id='34' delay='0' name='F' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='0: Schieben nach links, 1: Schieben nach rechts'/>
+                <translation lang='en' text='0: Shift to left, 1: Shift to right'/>
+              </desc>
+            </circuitInOut>
             <notGate _id='34' id='35' delay='20' inputCount='1'/>
             <circuitInOut _id='35' id='36' delay='0' name='D' type='input' bitWidth='8'/>
             <digitalNet _id='36' id='37' delay='0'>
@@ -1026,12 +1031,12 @@ if (left) {
         </digitalPortViewComp>
         <digitalPortViewComp _id='285' id='4' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='286' x='140.0' y='182.0' dir='west' textPos='internal' portId='293'/>
+            <digitalPortView _id='286' x='224.0' y='182.0' dir='east' textPos='internal' portId='293'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='283' id='5' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='284' x='140.0' y='210.0' dir='west' textPos='internal' portId='296'/>
+            <digitalPortView _id='284' x='224.0' y='210.0' dir='east' textPos='internal' portId='296'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='281' id='6' style='figure' showBitWidthAnnotation='true'>
@@ -1041,12 +1046,12 @@ if (left) {
         </digitalPortViewComp>
         <digitalPortViewComp _id='279' id='7' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='280' x='224.0' y='210.0' dir='east' textPos='internal' portId='294'/>
+            <digitalPortView _id='280' x='140.0' y='210.0' dir='west' textPos='internal' portId='294'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='277' id='8' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='278' x='224.0' y='182.0' dir='east' textPos='internal' portId='298'/>
+            <digitalPortView _id='278' x='140.0' y='182.0' dir='west' textPos='internal' portId='298'/>
           </portView>
         </digitalPortViewComp>
         <digitalPortViewComp _id='275' id='9' style='figure' showBitWidthAnnotation='true'>
