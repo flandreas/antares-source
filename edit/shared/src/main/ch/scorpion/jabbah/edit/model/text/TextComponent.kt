@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.edit.Component
 
 
 /**
- * A [Component] with multipline text that can be interactively edited by the user.
+ * A [Component] with multiline text that can be interactively edited by the user.
  */
 interface TextComponent : Component, RectangularShape {
 

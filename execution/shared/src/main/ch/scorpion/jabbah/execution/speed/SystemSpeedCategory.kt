@@ -59,10 +59,12 @@ class CurrentSystemSpeedCategory(
     private val eventBus: EventBus = BaseModule.eventBus
 ) {
     init {
-        eventBus.register(SystemSpeedEvent::class, { update() })
+        eventBus.register(SystemSpeedEvent::class) { update() }
     }
 
-    private val LOG by logger(CurrentSystemSpeedCategory::class)
+	companion object {
+        private val LOG by logger(CurrentSystemSpeedCategory::class)
+	}
 
     var systemSpeedCategory: SystemSpeedCategory = calculate()
 

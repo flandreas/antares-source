@@ -2,29 +2,25 @@ package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.MouseEvent
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.InputEventContext
-import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
-import ch.scorpion.jabbah.draw.drawable.Transparent
-import ch.scorpion.jabbah.draw.drawable.TransparentImpl
-import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.drawable.TransparentImpl
+import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import java.awt.BasicStroke
 import java.awt.Component
 import java.awt.Container
@@ -197,7 +193,6 @@ open class TextComponentJvm(
 	}
 
 	override fun draw(context: DrawContext) {
-		val oldClip = context.g.getClipBounds()
 		val b = shape
 
 		if (filled) {
@@ -205,11 +200,9 @@ open class TextComponentJvm(
 		}
 
 		setupTextPainter(context)
-		(context.g as Graphics2DJvm).g.setClip(b.x.toInt(), b.y.toInt(), b.width.toInt(), b.height.toInt())
 		context.g.translate(TEXT_PAINTER.x.toDouble(), TEXT_PAINTER.y.toDouble())
 		TEXT_PAINTER.paint((context.g as Graphics2DJvm).g)
 		context.g.translate(-TEXT_PAINTER.x.toDouble(), -TEXT_PAINTER.y.toDouble())
-		(context.g as Graphics2DJvm).g.setClip(oldClip.x.toInt(), oldClip.y.toInt(), oldClip.width.toInt(), oldClip.height.toInt())
 
 		if (stroked) {
 			decorator.drawForeground(this, context)
