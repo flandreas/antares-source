@@ -34,18 +34,18 @@ class TunnelViewTest : AbstractCircuitTest() {
 
 	@Test
 	fun shouldInitialize() {
-		startSimulation()
-		proceedToMillis(1100L)
+		startSimulation(1100L)
+		proceedToMillis(2200L)
 
 		assertEquals(Word.of(false), sender.model!!.getInOrOutSignal() as Word)
 	}
 
 	@Test
 	fun shouldForwardSignal() {
-		startSimulation()
+		startSimulation(1100L)
 
 		switchView.model!!.toggle(scheduler)
-		proceedToMillis(1100L)
+		proceedToMillis(2200L)
 
 		assertEquals(Word.of(true), sender.model!!.getInOrOutSignal() as Word)
 		assertEquals(Word.of(true), receiver.model!!.getInOrOutSignal() as Word)
@@ -55,9 +55,9 @@ class TunnelViewTest : AbstractCircuitTest() {
 	fun shouldForwardSignalToMultipleReceivers() {
 		val receiver2 = builder.addVerticeView(TunnelView("A"))
 
-		startSimulation()
+		startSimulation(1100L)
 		switchView.model!!.toggle(scheduler)
-		proceedToMillis(1100L)
+		proceedToMillis(2200L)
 
 		assertEquals(Word.of(true), receiver.model!!.getInOrOutSignal() as Word)
 		assertEquals(Word.of(true), receiver2.model!!.getInOrOutSignal() as Word)
@@ -67,9 +67,9 @@ class TunnelViewTest : AbstractCircuitTest() {
 	fun shouldNotForwardSignalToOtherName() {
 		val tunnelB = builder.addVerticeView(TunnelView("B"))
 
-		startSimulation()
+		startSimulation(1100L)
 		switchView.model!!.toggle(scheduler)
-		proceedToMillis(1100L)
+		proceedToMillis(2200L)
 
 		assertEquals(Word.of(true), receiver.model!!.getInOrOutSignal() as Word)
 		assertEquals(Word.undefined(BitWidth.BW_1), tunnelB.model!!.getInOrOutSignal() as Word)
