@@ -3,18 +3,18 @@
     <graphStorable _id='1'>
       <model>
         <graph _id='2' script='var d = parseInt(elem.input(&quot;D&quot;), &quot;16&quot;);
-var left = elem.inputBit(&quot;F&quot;);
+var right = elem.inputBit(&quot;F&quot;);
 var cir = elem.inputBit(&quot;CIR&quot;);
 var cil = elem.inputBit(&quot;CIL&quot;);
 
-if (left) {
-  elem.setOutput(&quot;O&quot;, (d &lt;&lt; 1).toString(&quot;16&quot;));
-  elem.setOutputBit(&quot;COL&quot;, d &gt;= 128);
-  elem.setOutputBit(&quot;COR&quot;, false);
-} else {
+if (right) {
   elem.setOutput(&quot;O&quot;, (d &gt;&gt; 1).toString(&quot;16&quot;));
   elem.setOutputBit(&quot;COL&quot;, false);
   elem.setOutputBit(&quot;COR&quot;, d % 2 == 1);
+} else {
+  elem.setOutput(&quot;O&quot;, (d &lt;&lt; 1).toString(&quot;16&quot;));
+  elem.setOutputBit(&quot;COL&quot;, d &gt;= 128);
+  elem.setOutputBit(&quot;COR&quot;, false);  
 }' propDelay='20'>
           <elements>
             <andGate _id='3' id='1' delay='20' inputCount='2'/>
@@ -74,6 +74,10 @@ if (left) {
             </digitalNet>
             <andGate _id='32' id='33' delay='20' inputCount='2'/>
             <circuitInOut _id='33' id='34' delay='0' name='F' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='0: Schieben nach links, 1: Schieben nach rechts'/>
+                <translation lang='en' text='0: Shift to left, 1: Shift to right'/>
+              </desc>
               <desc>
                 <translation lang='de' text='0: Schieben nach links, 1: Schieben nach rechts'/>
                 <translation lang='en' text='0: Shift to left, 1: Shift to right'/>
