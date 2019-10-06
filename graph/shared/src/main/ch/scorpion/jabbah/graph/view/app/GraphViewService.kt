@@ -34,8 +34,8 @@ open class GraphViewServiceImpl(
 	/** ---- [DrawingService] interface */
 
 	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>) {
-		if (component is GraphElementView<*>) {
-			super.add(component, drawingView)
+		if (drawingView.drawing !is GraphView<*> || component is GraphElementView<*>) {
+			super.add(component,drawingView)
 		} else {
 			super.add(GraphElementViewWrapper<GraphElement>(component), drawingView)
 		}
