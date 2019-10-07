@@ -11,10 +11,10 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
-import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 /**
@@ -25,14 +25,14 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class DipSwitch(
 	bitWidth: BitWidth = BitWidth.BW_4
-) : CalculatingVertice("library.element.DipSwitch", CALCULATOR) {
+) : InteractableVertice("library.element.DipSwitch", CALCULATOR) {
 
 	companion object {
 		val CALCULATOR = object : VerticeCalculator<DipSwitch> {
 			override fun calculate(vertice: DipSwitch, data: GraphActorData, signalHandler: SignalHandler) {
 				val output = vertice.getOutput<DigitalSignal>()
 				output.setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
-				vertice.stateChanged()
+				vertice.enabled = true
 			}
 		}
 	}
@@ -65,7 +65,7 @@ class DipSwitch(
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		value = Word.allOf(bitWidth, Bit.False)
-		stateChanged(signalHandler)
+		enabled = true
 	}
 
 	/** ---- [Storable] */
@@ -83,9 +83,11 @@ class DipSwitch(
 	/** ---- [DipSwitch] */
 
 	fun setBit(index: Int, bit: Bit, signalHandler: SignalHandler) {
-		value = value.withBit(index, bit)
-		stateChanged(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, value))
+		if (enabled) {
+			value = value.withBit(index, bit)
+			enabled = false
+			requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, value))
+		}
 	}
 
 	private fun getDigitalPort(): DigitalPort {

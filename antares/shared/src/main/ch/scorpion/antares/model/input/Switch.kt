@@ -4,24 +4,19 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
-import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
 /**
  * Represents an interactive switch that can toggle between two states.
  */
-class Switch : CalculatingVertice("library.element.Switch", CALCULATOR) {
+class Switch : InteractableVertice("library.element.Switch", CALCULATOR) {
 
     var isOn: Boolean = false
         private set
-
-	/** A [Switch] is disabled between changing is [isOn] state and re-calculation initiated by the [Scheduler]. */
-	var enabled: Boolean = true
-		private set
 
 	private var delayedOff: Boolean = false
 
@@ -41,7 +36,6 @@ class Switch : CalculatingVertice("library.element.Switch", CALCULATOR) {
 		            vertice.setState(signalHandler, false)
 	            } else {
 		            vertice.enabled = true
-	                vertice.stateChanged()
 	            }
             }
         }
@@ -58,7 +52,6 @@ class Switch : CalculatingVertice("library.element.Switch", CALCULATOR) {
         super.executionStopped(signalHandler)
         isOn = false
 	    enabled = true
-        stateChanged()
     }
 
     /** ---- [Switch] */
@@ -90,7 +83,6 @@ class Switch : CalculatingVertice("library.element.Switch", CALCULATOR) {
 	private fun setState(signalHandler: SignalHandler, on: Boolean) {
 		isOn = on
 		enabled = false
-		stateChanged()
 		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, Word.of(isOn)))
 	}
 }

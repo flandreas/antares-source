@@ -188,8 +188,20 @@ class DipSwitchView(
 			bitLabelFlyweight.color = context.choose(color).textColor
 			bitLabelFlyweight.draw(context)
 		}
+
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			drawEnabled(context)
+		}
+
 		context.g.color = context.choose(color).textColor
 		label.draw(context)
+	}
+
+	private fun drawEnabled(context: DrawContext) {
+		if (!model!!.enabled) {
+			context.g.color = Themes.get<AntaresTheme>().background.color.backgroundColor.withAlpha(192)
+			context.g.fillRect(xInt, yInt, widthInt, heightInt)
+		}
 	}
 
 	/** ---- [AbstractComponent] */
