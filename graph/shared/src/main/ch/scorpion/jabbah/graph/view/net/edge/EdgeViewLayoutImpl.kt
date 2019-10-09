@@ -33,7 +33,7 @@ class EdgeViewLayoutImpl(
 	 */
 	override fun drawableUpdated(event: DrawableEvent) {
 		if (edgeView.parent == null) {
-			// No need to do any layouts while EdgeView is being loaded from persistant storage
+			// No need to do any layouts while EdgeView is being loaded from persistent storage
 			return
 		}
 		LOG.debug("VerticeView updated")

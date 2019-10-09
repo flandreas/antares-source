@@ -3,11 +3,11 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.*
 
@@ -136,13 +136,13 @@ class GraphViewConnectServiceImplTest {
 		// View assertions
 		assertEquals(7, gv.drawablesCount)
 		assertSame(vv1, ev1.origin as TestVerticeView)
-		assertSame(result.nodeView, ev1.destination as NodeView<Boolean>)
+		assertSame(result.nodeView, ev1.destination)
 		assertEquals(result.nodeView.location, ev1.getSegmentPoint(ev1.segmentPointCount - 1))
 
-		assertSame(result.nodeView, ev2.origin as NodeView<Boolean>)
+		assertSame(result.nodeView, ev2.origin)
 		assertNotNull(result.nodeView.parent)
 
-		assertEquals(result.nodeView, result.tailEdgeView.origin as NodeView<Boolean>)
+		assertEquals(result.nodeView, result.tailEdgeView.origin)
 		assertSame(vv2, result.tailEdgeView.destination as TestVerticeView)
 		assertEquals(result.nodeView.location, result.tailEdgeView.getSegmentPoint(0))
 	}
@@ -177,16 +177,46 @@ class GraphViewConnectServiceImplTest {
 		// View assertions
 		assertEquals(7, gv.drawablesCount)
 
-		assertSame(result.nodeView, ev1.origin as NodeView<Boolean>)
+		assertSame(result.nodeView, ev1.origin)
 		assertSame(vv1, ev1.destination as TestVerticeView)
 		assertEquals(result.nodeView.location, ev1.getSegmentPoint(0))
 
 		assertSame(vv3, ev2.origin as TestVerticeView)
-		assertSame(result.nodeView, ev2.destination as NodeView<Boolean>)
+		assertSame(result.nodeView, ev2.destination)
 
-		assertEquals(result.nodeView, result.tailEdgeView.origin as NodeView<Boolean>)
+		assertEquals(result.nodeView, result.tailEdgeView.origin)
 		assertEquals(vv2, result.tailEdgeView.destination as TestVerticeView)
 		assertEquals(result.nodeView.location, result.tailEdgeView.getSegmentPoint(0))
+	}
+
+	@Test
+	@Ignore
+	// Not yet supported by current model
+	fun shouldSplitInOutToUnconnected() {
+		val vv = TestVerticeView(loc = Point2D(100, 100), vertice = TestVertice(inOut = true))
+		gv.add(vv)
+
+		val ev = edgeViewFactory.createEdgeView()
+		ev.addSegmentPoint(Point2D(100, 100))
+		ev.addSegmentPoint(Point2D(200, 100))
+		gv.add(ev)
+		service.connectToOrigin(ev, vv, vv.model!!.getOutput())
+
+		val newEv = edgeViewFactory.createEdgeView(ev.model!!)
+		newEv.addSegmentPoint(Point2D(150, 100))
+
+		val result = service.split(gv, ev, 0, newEv, null, null)
+
+		// Model assertions
+		assertEquals(2, gv.graph!!.elementsCount)
+		assertTrue(ev.model!!.isConnectedWith(vv.model!!.getOutput()))
+
+		// View assertion
+		assertEquals(5, gv.drawablesCount)
+
+		assertSame(vv, ev.origin)
+		assertSame(result.nodeView, ev.destination)
+		assertSame(result.nodeView, result.tailEdgeView.origin)
 	}
 
 	/** Regression test for a bug that occurred on 02.10.17.*/

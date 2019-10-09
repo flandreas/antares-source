@@ -8,8 +8,12 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 /**
  * A [Vertice] implementation to be used in [ch.scorpion.jabbah.graph] integration tests.
  * [TestVertice] uses [Boolean] signals and has a single [InputPort] and a single [OutputPort].
+ *
+ * @param inOut `true` if the created output [Port] has [PortType.INOUT], `false` if it has [PortType.OUTPUT]
  */
-class TestVertice : CalculatingVertice("graph.property.label", CALCULATOR) {
+class TestVertice(
+	inOut: Boolean = false
+) : CalculatingVertice("graph.property.label", CALCULATOR) {
 
     companion object {
         val CALCULATOR = object : VerticeCalculator<TestVertice> {
@@ -21,6 +25,6 @@ class TestVertice : CalculatingVertice("graph.property.label", CALCULATOR) {
 
     init {
         addPort(PortImpl.createInput(Boolean::class))
-        addPort(PortImpl.createOutput(Boolean::class))
+        addPort(if (inOut) PortImpl.createInOut(Boolean::class) else PortImpl.createOutput(Boolean::class))
     }
 }
