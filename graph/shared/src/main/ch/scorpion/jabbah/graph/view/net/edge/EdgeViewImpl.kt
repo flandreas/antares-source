@@ -119,37 +119,6 @@ open class EdgeViewImpl<T : Any>(
 			update()
 		}
 
-	override val connectionState: EdgeViewConnectionState
-		get() {
-			return if (originPort != null) {
-				if (destinationPort != null) {
-					if (originPort!!.portType.isInput) {
-						if (destinationPort!!.portType.isInput) {
-							EdgeViewConnectionState.InputInput
-						} else {
-							EdgeViewConnectionState.InputOutput
-						}
-					} else {
-						if (destinationPort!!.portType.isInput) {
-							EdgeViewConnectionState.InputOutput
-						} else {
-							EdgeViewConnectionState.OutputOutput
-						}
-					}
-				} else {
-					portToEdgeViewConnectionState(originPort!!)
-				}
-			} else if (destinationPort != null) {
-				portToEdgeViewConnectionState(destinationPort!!)
-			} else {
-				EdgeViewConnectionState.Unconnected
-			}
-		}
-
-	private fun portToEdgeViewConnectionState(port: Port<*>): EdgeViewConnectionState {
-		return if (port.portType.isInput) EdgeViewConnectionState.Input else EdgeViewConnectionState.Output
-	}
-
 	override fun getConnectableView(port: Port<T>): ConnectableView? {
 		if (port == originPort) {
 			return origin
@@ -182,6 +151,15 @@ open class EdgeViewImpl<T : Any>(
 		invalidate()
 		polyline.removePoint(index)
 		updateEndpointViews()
+		styling.updateBoundingBox()
+		invalidate()
+		update()
+		return this
+	}
+
+	override fun clear(): EdgeView<T> {
+		invalidate()
+		polyline.clear()
 		styling.updateBoundingBox()
 		invalidate()
 		update()

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.BeforeTest
@@ -18,53 +19,54 @@ import kotlin.test.assertSame
  */
 class SplitEdgeViewCommandTest {
 
-    companion object {
-	    init {
-	    	GraphViewTestRule.configure()
-	    }
-    }
+	companion object {
+		init {
+			GraphViewTestRule.configure()
+		}
+	}
 
-    private val service = GraphViewModule.graphViewConnectService
-    private val edgeViewFactory = GraphViewModule.getEdgeViewFactory<Boolean>()
-    private lateinit var testGraphView: TestGraphView
+	private val service = GraphViewModule.graphViewConnectService
+	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory<Boolean>()
+	private lateinit var testGraphView: TestGraphView
 
-    @BeforeTest
-    fun setup() {
-        TestTranslationsBuilder().withAnyKey()
-        testGraphView = TestGraphView()
-    }
+	@BeforeTest
+	fun setup() {
+		TestTranslationsBuilder().withAnyKey()
+		testGraphView = TestGraphView()
+	}
 
-    @Test
-    fun shouldSplitEdgeView() {
-        val editorBuilder = TestEditorBuilder()
-        val newEdgeView = edgeViewFactory.createEdgeView(testGraphView.net)
-        newEdgeView.addSegmentPoint(Point2D(150, 100))
+	@Test
+	fun shouldSplitEdgeView() {
+		val editorBuilder = TestEditorBuilder()
+		val newEdgeView = edgeViewFactory.createEdgeView(testGraphView.net)
+		newEdgeView.addSegmentPoint(Point2D(150, 100))
 
-        val command = SplitEdgeViewCommand(
-	        editor = editorBuilder.editor,
-	        connectService = service,
-	        graphView = testGraphView.graphView,
-	        origEdgeView = testGraphView.ev,
-	        segmentIndex = 0,
-	        newEdgeView = newEdgeView,
-	        targetPortView = null,
-	        nodeView = null
-        )
-        command.execute()
+		val command = SplitEdgeViewCommand(
+			editor = editorBuilder.editor,
+			connectService = service,
+			graphView = testGraphView.graphView,
+			origEdgeView = testGraphView.ev,
+			segmentIndex = 0,
+			newEdgeView = newEdgeView,
+			newEdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,
+			targetPortView = null,
+			nodeView = null
+		)
+		command.execute()
 
-        // Model assertions: 2 Vertices, 1 Net
-        assertEquals(3, testGraphView.graph.elementsCount)
-        assertSame(testGraphView.net, testGraphView.v1.getOutput<Boolean>().net)
+		// Model assertions: 2 Vertices, 1 Net
+		assertEquals(3, testGraphView.graph.elementsCount)
+		assertSame(testGraphView.net, testGraphView.v1.getOutput<Boolean>().net)
 
-        // View assertions
-        val nodeView = newEdgeView.origin as NodeView<Boolean>
-	    assertSame(testGraphView.vv1, testGraphView.ev.origin as TestVerticeView)
-	    assertSame(nodeView, testGraphView.ev.destination as NodeView<Boolean>)
-	    assertEquals(nodeView.location, testGraphView.ev.getSegmentPoint(testGraphView.ev.segmentPointCount - 1))
+		// View assertions
+		val nodeView = newEdgeView.origin as NodeView<Boolean>
+		assertSame(testGraphView.vv1, testGraphView.ev.origin as TestVerticeView)
+		assertSame(nodeView, testGraphView.ev.destination as NodeView<Boolean>)
+		assertEquals(nodeView.location, testGraphView.ev.getSegmentPoint(testGraphView.ev.segmentPointCount - 1))
 
-        val ev = nodeView.getOutgoingEdgeViews()[1]
-	    assertSame(nodeView, ev.origin as NodeView<Boolean>)
-	    assertSame(testGraphView.vv2, ev.destination as TestVerticeView)
-	    assertEquals(nodeView.location, ev.getSegmentPoint(0))
-    }
+		val ev = nodeView.getOutgoingEdgeViews()[1]
+		assertSame(nodeView, ev.origin as NodeView<Boolean>)
+		assertSame(testGraphView.vv2, ev.destination as TestVerticeView)
+		assertEquals(nodeView.location, ev.getSegmentPoint(0))
+	}
 }

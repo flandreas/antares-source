@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.app
 
+import ch.scorpion.jabbah.base.collection.Pair
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.app.DeleteCommand
@@ -35,7 +36,7 @@ open class GraphViewServiceImpl(
 
 	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>) {
 		if (drawingView.drawing !is GraphView<*> || component is GraphElementView<*>) {
-			super.add(component,drawingView)
+			super.add(component, drawingView)
 		} else {
 			super.add(GraphElementViewWrapper<GraphElement>(component), drawingView)
 		}
@@ -97,25 +98,41 @@ private class UnconnectEdgeViewCommand(
 	private val destPortView: PortView<Any>? =
 		if (edgeView.destinationPort != null) edgeView.destination!!.getPortView(edgeView.destinationPort!!) else null
 
-	private var joinResults: JoinEdgeViewsResult<Any>? = null
+	private lateinit var joinResults: Pair<JoinEdgeViewsResult<Any>?>
 
 	override fun execute() {
 		joinResults = connectService.unconnect(edgeView)
 	}
 
 	override fun undo() {
-		if (joinResults == null) {
-			connectService.connect(edgeView, origPortView, destPortView)
-		} else {
-			if (joinResults != null) {
-				connectService.split(
-					graphView,
-					joinResults!!.joinedEdgeView,
-					joinResults!!.segmentIndex,
-					joinResults!!.removedEdgeView,
-					joinResults!!.targetPortView,
-					joinResults!!.tailEdgeView)
+		if (joinResults.first == null) {
+			if (origPortView != null) {
+				connectService.connectToOrigin(edgeView, origPortView.owner!!, origPortView.port)
 			}
+		} else {
+			connectService.split(
+				graphView,
+				joinResults.first!!.joinedEdgeView,
+				joinResults.first!!.segmentIndex,
+				joinResults.first!!.removedEdgeView,
+				joinResults.first!!.removedEdgeViewEndpointType,
+				joinResults.first!!.targetPortView,
+				joinResults.first!!.tailEdgeView)
+		}
+
+		if (joinResults.second == null) {
+			if (destPortView != null) {
+				connectService.connectToDestination(edgeView, destPortView.owner!!, destPortView.port)
+			}
+		} else {
+			connectService.split(
+				graphView,
+				joinResults.second!!.joinedEdgeView,
+				joinResults.second!!.segmentIndex,
+				joinResults.second!!.removedEdgeView,
+				joinResults.second!!.removedEdgeViewEndpointType,
+				joinResults.second!!.targetPortView,
+				joinResults.second!!.tailEdgeView)
 		}
 	}
 }

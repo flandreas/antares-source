@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
@@ -77,7 +78,8 @@ open class GraphViewBuilder<T : Any>(
 		if (dest != null) {
 			portView = dest.getPortView(dest.model!!.getPort())
 		}
-		val result = GraphViewModule.graphViewConnectService.split(graphView, edgeView, segmentIndex, newEdgeView, portView)
+		val result = GraphViewModule.graphViewConnectService.split(graphView, edgeView,
+			segmentIndex, newEdgeView, EdgeViewEndpointType.ORIGIN, portView)
 		if (dest == null) {
 			newEdgeView.addSegmentPoint(location)
 		}

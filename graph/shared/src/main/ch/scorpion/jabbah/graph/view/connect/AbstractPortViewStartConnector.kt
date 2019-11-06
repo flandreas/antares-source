@@ -427,6 +427,7 @@ abstract class AbstractPortViewStartConnector(
 				origEdgeView = targetEdgeView!!,
 				segmentIndex = targetEdgeViewSegmentIndex!!,
 				newEdgeView = edgeView!!,
+				newEdgeViewEndpointType = draggedEndpointType,
 				targetPortView = startPortView!!,
 				nodeView = null
 			)

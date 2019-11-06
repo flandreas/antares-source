@@ -212,6 +212,13 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 		setPoints(points.map { it.mirrorVertically(y) })
 	}
 
+	override fun reverse() {
+		val buffer = points.toMutableList().asReversed()
+		points.clear()
+		points.addAll(buffer)
+		updateLineTerminatorLocations()
+	}
+
 	/** ---- [PolylineShape]  */
 
 	private fun updateLineTerminatorLocations() {

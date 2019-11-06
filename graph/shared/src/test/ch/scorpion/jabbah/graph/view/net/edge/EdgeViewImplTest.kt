@@ -3,13 +3,14 @@ package ch.scorpion.jabbah.graph.view.net.edge
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.graph.model.Net
-import ch.scorpion.jabbah.graph.view.EdgeViewConnectionState
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Unit tests for [EdgeViewImpl].
@@ -129,125 +130,6 @@ class EdgeViewImplTest {
     }
 
     @Test
-    fun shouldSplitInMiddleOfSegment() {
-        val ev = edgeViewFactory.createEdgeView()
-        ev.addSegmentPoint(Point2D(0, 0))
-        ev.addSegmentPoint(Point2D(100, 0))
-        ev.addSegmentPoint(Point2D(100, 50))
-        ev.addSegmentPoint(Point2D(200, 50))
-
-        val newEV = ev.split(1, Point2D(100, 25)) { edgeViewFactory.createEdgeView(it as Net<Boolean>) }
-
-        assertEquals(3, ev.segmentPointCount)
-        assertEquals(Point2D(0, 0), ev.getSegmentPoint(0))
-        assertEquals(Point2D(100, 0), ev.getSegmentPoint(1))
-        assertEquals(Point2D(100, 25), ev.getSegmentPoint(2))
-
-        assertEquals(3, newEV.segmentPointCount)
-        assertEquals(Point2D(100, 25), newEV.getSegmentPoint(0))
-        assertEquals(Point2D(100, 50), newEV.getSegmentPoint(1))
-        assertEquals(Point2D(200, 50),newEV.getSegmentPoint(2))
-    }
-
-    @Test
-    fun shouldSplitAtStartOfSegment() {
-        val ev = edgeViewFactory.createEdgeView()
-        ev.addSegmentPoint(Point2D(0, 0))
-        ev.addSegmentPoint(Point2D(100, 0))
-        ev.addSegmentPoint(Point2D(100, 50))
-        ev.addSegmentPoint(Point2D(200, 50))
-
-        val newEV = ev.split(1, Point2D(100, 0)) { edgeViewFactory.createEdgeView(it as Net<Boolean>) }
-
-        assertEquals(2, ev.segmentPointCount)
-        assertEquals(Point2D(0, 0), ev.getSegmentPoint(0))
-        assertEquals(Point2D(100, 0), ev.getSegmentPoint(1))
-
-        assertEquals(3, newEV.segmentPointCount)
-        assertEquals(Point2D(100, 0), newEV.getSegmentPoint(0))
-        assertEquals(Point2D(100, 50), newEV.getSegmentPoint(1))
-        assertEquals(Point2D(200, 50), newEV.getSegmentPoint(2))
-    }
-
-    @Test
-    fun shouldJoinOtherHeadWithTail() {
-        val ev1 = edgeViewFactory.createEdgeView()
-        ev1.addSegmentPoint(Point2D(0, 0))
-        ev1.addSegmentPoint(Point2D(100, 0))
-        graphView.add(ev1)
-
-        val ev2 = edgeViewFactory.createEdgeView(ev1.model!!)
-        ev2.addSegmentPoint(Point2D(100, 0))
-        ev2.addSegmentPoint(Point2D(200, 0))
-        graphView.add(ev2)
-
-        val vv = TestVerticeView()
-        ev2.connectToDestination(vv, vv.model!!.getInput())
-
-        ev1.join(ev2)
-
-        assertEquals(2, ev1.segmentPointCount)
-        assertEquals(Point2D(0, 0), ev1.getSegmentPoint(0))
-        assertEquals(Point2D(200, 0), ev1.getSegmentPoint(1))
-
-        assertEquals(ev1.destination as TestVerticeView, vv)
-        assertNull(ev2.destination)
-    }
-
-    @Test
-    fun shouldJoinOtherTailWithHead() {
-        val ev1 = edgeViewFactory.createEdgeView()
-        ev1.addSegmentPoint(Point2D(0, 0))
-        ev1.addSegmentPoint(Point2D(100, 0))
-        graphView.add(ev1)
-
-        val ev2 = edgeViewFactory.createEdgeView(ev1.model!!)
-        ev2.addSegmentPoint(Point2D(100, 0))
-        ev2.addSegmentPoint(Point2D(200, 0))
-        graphView.add(ev2)
-
-        val vv = TestVerticeView()
-        ev1.connectToOrigin(vv, vv.model!!.getOutput())
-
-        ev2.join(ev1)
-
-        assertEquals(2, ev2.segmentPointCount)
-        assertEquals(Point2D(0, 0), ev2.getSegmentPoint(0))
-        assertEquals(Point2D(200, 0), ev2.getSegmentPoint(1))
-
-        assertEquals(vv, ev2.origin as TestVerticeView)
-        assertNull(ev1.origin)
-    }
-
-    @Test
-    fun shouldJoinOtherHeadWithHead() {
-        val ev1 = edgeViewFactory.createEdgeView()
-        ev1.addSegmentPoint(Point2D(0, 0))
-        ev1.addSegmentPoint(Point2D(100, 0))
-        graphView.add(ev1)
-
-        val ev2 = edgeViewFactory.createEdgeView(ev1.model!!)
-        ev2.addSegmentPoint(Point2D(0, 0))
-        ev2.addSegmentPoint(Point2D(-100, 0))
-        graphView.add(ev2)
-
-        val vv1 = TestVerticeView()
-        ev1.connectToDestination(vv1, vv1.model!!.getOutput())
-
-        val vv2 = TestVerticeView()
-        ev2.connectToDestination(vv2, vv2.model!!.getOutput())
-
-        ev1.join(ev2)
-
-        assertEquals(2, ev1.segmentPointCount)
-        assertEquals(Point2D(-100, 0), ev1.getSegmentPoint(0))
-        assertEquals(Point2D(100, 0), ev1.getSegmentPoint(1))
-
-        assertEquals(vv2, ev1.origin as TestVerticeView)
-        assertEquals(vv1, ev1.destination as TestVerticeView)
-    }
-
-    @Test
     fun shouldCalculateSegmentDirection() {
         val ev = edgeViewFactory.createEdgeView()
         ev.addSegmentPoint(Point2D(0, 0))
@@ -270,58 +152,6 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(200, 0))
 
         assertEquals(0, ev.polyline.findSegment(150.0, 50.0, 1))
-    }
-
-    @Test
-    fun shouldDetectUnconnectedConnectionState() {
-        val ev = edgeViewFactory.createEdgeView()
-        assertEquals(ev.connectionState, EdgeViewConnectionState.Unconnected)
-    }
-
-    @Test
-    fun shouldDetectInputConnectionState() {
-        val ev = edgeViewFactory.createEdgeView()
-        val vv = TestVerticeView()
-        ev.connectToDestination(vv, vv.model!!.getInput())
-        assertEquals(ev.connectionState, EdgeViewConnectionState.Input)
-    }
-
-    @Test
-    fun shouldDetectOutputConnectionState() {
-        val ev = edgeViewFactory.createEdgeView()
-        val vv = TestVerticeView()
-        ev.connectToDestination(vv, vv.model!!.getOutput())
-        assertEquals(ev.connectionState, EdgeViewConnectionState.Output)
-    }
-
-    @Test
-    fun shouldDetectInputOutputConnectionState() {
-        val ev = edgeViewFactory.createEdgeView()
-        val vv1 = TestVerticeView()
-        val vv2 = TestVerticeView()
-        ev.connectToOrigin(vv1, vv1.model!!.getOutput())
-        ev.connectToDestination(vv2, vv2.model!!.getInput())
-        assertEquals(ev.connectionState, EdgeViewConnectionState.InputOutput)
-    }
-
-    @Test
-    fun shouldDetectInputInputConnectionState() {
-        val ev = edgeViewFactory.createEdgeView()
-        val vv1 = TestVerticeView()
-        val vv2 = TestVerticeView()
-        ev.connectToOrigin(vv1, vv1.model!!.getInput())
-        ev.connectToDestination(vv2, vv2.model!!.getInput())
-        assertEquals(ev.connectionState, EdgeViewConnectionState.InputInput)
-    }
-
-    @Test
-    fun shouldDetectOutputOutputConnectionState() {
-        val ev = edgeViewFactory.createEdgeView()
-        val vv1 = TestVerticeView()
-        val vv2 = TestVerticeView()
-        ev.connectToOrigin(vv1, vv1.model!!.getOutput())
-        ev.connectToDestination(vv2, vv2.model!!.getOutput())
-        assertEquals(ev.connectionState, EdgeViewConnectionState.OutputOutput)
     }
 
     @Test

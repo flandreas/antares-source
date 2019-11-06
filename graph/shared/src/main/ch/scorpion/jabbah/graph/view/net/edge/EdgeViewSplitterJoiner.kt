@@ -5,15 +5,20 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.EdgeViewConnectionState
 
 /**
  * A utility object for splitting and joining [EdgeView]s.
  */
 object EdgeViewSplitterJoiner {
 
-	fun <T: Any> split(edgeView: EdgeView<T>, index: Int, splitLocation: Point2D, edgeViewCreator: (Net<T>) -> EdgeView<T>): EdgeView<T> {
-		val tail = edgeViewCreator.invoke(edgeView.model!!) as EdgeView<T>
+	fun <T: Any> split(
+		edgeView: EdgeView<T>,
+		index: Int, splitLocation: Point2D,
+		edgeViewCreator: (Net<T>) -> EdgeView<T>
+	): EdgeView<T> {
+
+		val tail = edgeViewCreator.invoke(edgeView.model!!)
+		tail.clear()
 
 		if (edgeView.isArrow) {
 			tail.isArrow = true
@@ -35,23 +40,12 @@ object EdgeViewSplitterJoiner {
 		tail.layout.isAdjusted = edgeView.layout.isAdjusted
 		tail.isArrow = edgeView.isArrow
 
-		val oldConnectionState = edgeView.connectionState
 		val oldDest = edgeView.destination
 		val oldDestPort = edgeView.destinationPort
 
-		if (oldConnectionState == EdgeViewConnectionState.InputInput) {
-			val orig = edgeView.origin
-			val origPort = edgeView.originPort
-			if (orig != null) {
-				edgeView.connectToOrigin(null, null)
-				edgeView.connectToDestination(orig, origPort)
-			}
-		}
+		edgeView.connectToDestination(null, null)
 
 		if (oldDest != null) {
-			if (oldConnectionState != EdgeViewConnectionState.InputInput) {
-				edgeView.connectToDestination(null, null)
-			}
 			tail.connectToDestination(oldDest, oldDestPort)
 		}
 
@@ -125,10 +119,10 @@ object EdgeViewSplitterJoiner {
 		edgeView.compact()
 		val origin = other.destination
 		val originPort = other.destinationPort
-		if (other.destination != null) {
-			other.connectToDestination(null, null)
-		}
+
+		unconnect(other)
 		edgeView.connectToOrigin(origin, originPort)
+
 		return edgeView
 	}
 
@@ -141,10 +135,10 @@ object EdgeViewSplitterJoiner {
 		edgeView.compact()
 		val destination = other.destination
 		val destinationPort = other.destinationPort
-		if (other.destination != null) {
-			other.connectToDestination(null, null)
-		}
+
+		unconnect(other)
 		edgeView.connectToDestination(destination, destinationPort)
+
 		return edgeView
 	}
 
@@ -157,10 +151,19 @@ object EdgeViewSplitterJoiner {
 		edgeView.compact()
 		val origin = other.origin
 		val originPort = other.originPort
-		if (other.origin != null) {
-			other.connectToOrigin(null, null)
-		}
+
+		unconnect(other)
 		edgeView.connectToOrigin(origin, originPort)
+
 		return edgeView
+	}
+
+	private fun <T: Any> unconnect(edgeView: EdgeView<T>) {
+		if (edgeView.origin != null) {
+			edgeView.connectToOrigin(null, null)
+		}
+		if (edgeView.destination != null) {
+			edgeView.connectToDestination(null, null)
+		}
 	}
 }

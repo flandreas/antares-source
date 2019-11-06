@@ -1,9 +1,11 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.collection.Pair
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 
@@ -70,7 +72,7 @@ interface GraphViewConnectService {
 	 * @param edgeView the [EdgeView] to unconnect
 	 * @return the information that results when unconnecting an [EdgeView] from a [NodeView]
 	 */
-	fun <T : Any> unconnect(edgeView: EdgeView<T>): JoinEdgeViewsResult<T>?
+	fun <T : Any> unconnect(edgeView: EdgeView<T>): Pair<JoinEdgeViewsResult<T>?>
 
 	/**
 	 * Unconnects all [PortView]s of a [VerticeView] from the [EdgeView]s to which it is
@@ -107,14 +109,16 @@ interface GraphViewConnectService {
 	 * and connects the [NodeView] with a destination [Port], if available.
 	 * Adds the [newEdgeView] to the [graphView].
 	 *
-	 * @param tailEdgeView the tail part after splitting, or `null` if a new [EdgeView] has to be created as tail part
+	 * @param newEdgeViewEndpointType the [EdgeViewEndpointType] to connect [newEdgeView] with the created [NodeView]
+	 * @param otherNewEdgeViewPortView the [PortView] to connect the end of [newEdgeView] that is not connected to the [NodeView]
 	 */
 	fun <T : Any> split(
 		graphView: GraphView<GraphElementView<*>>,
 		splittedEdgeView: EdgeView<T>,
 		splitSegmentIndex: Int,
 		newEdgeView: EdgeView<T>,
-		destPort: PortView<T>?,
+		newEdgeViewEndpointType: EdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,
+		otherNewEdgeViewPortView: PortView<T>?,
 		tailEdgeView: EdgeView<T>? = null
 	): SplitEdgeViewResult<T>
 
@@ -136,5 +140,6 @@ data class JoinEdgeViewsResult<T : Any>(
 	val joinedEdgeView: EdgeView<T>,
 	val segmentIndex: Int,
 	val removedEdgeView: EdgeView<T>,
+	val removedEdgeViewEndpointType: EdgeViewEndpointType,
 	val targetPortView: PortView<T>?,
 	val tailEdgeView: EdgeView<T>)

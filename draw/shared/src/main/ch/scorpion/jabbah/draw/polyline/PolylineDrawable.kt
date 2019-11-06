@@ -210,4 +210,8 @@ class PolylineDrawable constructor(
 	override fun mirrorVertically(y: Double) {
 		shape.mirrorVertically(y)
 	}
+
+	override fun reverse() {
+		shape.reverse()
+	}
 }

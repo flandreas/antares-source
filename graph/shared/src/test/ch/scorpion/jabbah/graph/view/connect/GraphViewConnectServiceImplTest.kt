@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.ORIGIN
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.*
 
@@ -177,21 +178,19 @@ class GraphViewConnectServiceImplTest {
 		// View assertions
 		assertEquals(7, gv.drawablesCount)
 
-		assertSame(result.nodeView, ev1.origin)
-		assertSame(vv1, ev1.destination as TestVerticeView)
-		assertEquals(result.nodeView.location, ev1.getSegmentPoint(0))
+		assertSame(result.nodeView, ev1.destination)
+		assertSame(vv1, ev1.origin as TestVerticeView)
+		assertEquals(result.nodeView.location, ev1.polyline.getLastPoint())
 
-		assertSame(vv3, ev2.origin as TestVerticeView)
-		assertSame(result.nodeView, ev2.destination)
+		assertSame(vv3, ev2.destination as TestVerticeView)
+		assertSame(result.nodeView, ev2.origin)
 
-		assertEquals(result.nodeView, result.tailEdgeView.origin)
-		assertEquals(vv2, result.tailEdgeView.destination as TestVerticeView)
-		assertEquals(result.nodeView.location, result.tailEdgeView.getSegmentPoint(0))
+		assertSame(result.nodeView, result.tailEdgeView.origin)
+		assertSame(vv2, result.tailEdgeView.destination as TestVerticeView)
+		assertEquals(result.nodeView.location, result.tailEdgeView.polyline.getFirstPoint())
 	}
 
 	@Test
-	@Ignore
-	// Not yet supported by current model
 	fun shouldSplitInOutToUnconnected() {
 		val vv = TestVerticeView(loc = Point2D(100, 100), vertice = TestVertice(inOut = true))
 		gv.add(vv)
@@ -205,7 +204,7 @@ class GraphViewConnectServiceImplTest {
 		val newEv = edgeViewFactory.createEdgeView(ev.model!!)
 		newEv.addSegmentPoint(Point2D(150, 100))
 
-		val result = service.split(gv, ev, 0, newEv, null, null)
+		val result = service.split(gv, ev, 0, newEv, ORIGIN, null)
 
 		// Model assertions
 		assertEquals(2, gv.graph!!.elementsCount)
@@ -277,23 +276,25 @@ class GraphViewConnectServiceImplTest {
 		// View assertions
 		assertEquals(0, result.nodeView.getOutgoingEdgeViews().size)
 		assertFalse(gv.contains(result.nodeView))
+		assertSame(vv1, remainingEV.origin)
+		assertSame(vv2, remainingEV.destination)
 	}
 
 	private fun splitToInput(
-		splittedEdgeView: EdgeView<Boolean>,
+		splitEdgeView: EdgeView<Boolean>,
 		newEdgeView: EdgeView<Boolean>,
 		vv: TestVerticeView
 	): SplitEdgeViewResult<Boolean> {
 		val inputPort = vv.model!!.getInput<Boolean>()
-		return service.split(gv, splittedEdgeView, 1, newEdgeView, vv.getPortView(inputPort))
+		return service.split(gv, splitEdgeView, 1, newEdgeView, ORIGIN, vv.getPortView(inputPort))
 	}
 
 	private fun splitToOutput(
-		splittedEdgeView: EdgeView<Boolean>,
+		splitEdgeView: EdgeView<Boolean>,
 		newEdgeView: EdgeView<Boolean>,
 		vv: TestVerticeView
 	): SplitEdgeViewResult<Boolean> {
 		val outputPort = vv.model!!.getOutput<Boolean>()
-		return service.split(gv, splittedEdgeView, 1, newEdgeView, vv.getPortView(outputPort))
+		return service.split(gv, splitEdgeView, 1, newEdgeView, ORIGIN, vv.getPortView(outputPort))
 	}
 }

@@ -138,6 +138,7 @@ class EdgeToPortConnector(
 			branchedEdgeView!! as EdgeView<Any>,
 			branchedSegmentIndex!!,
 			edgeView!!,
+			EdgeViewEndpointType.ORIGIN,
 			null)
 	}
 
@@ -160,6 +161,7 @@ class EdgeToPortConnector(
 			origEdgeView = branchedEdgeView!!,
 			segmentIndex = branchedSegmentIndex!!,
 			newEdgeView = edgeView!!,
+			newEdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,
 			targetPortView = targetPortView,
 			nodeView = splitResult!!.nodeView)
 	}

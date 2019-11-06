@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 
@@ -20,6 +21,7 @@ class SplitEdgeViewCommand(
 	private var origEdgeView: EdgeView<*>,
 	private val segmentIndex: Int,
 	private val newEdgeView: EdgeView<*>,
+	private val newEdgeViewEndpointType: EdgeViewEndpointType,
 	private val targetPortView: PortView<*>?,
 	private val nodeView: NodeView<*>?
 ) : AbstractCommand("graph.command.splitEdge", editor) {
@@ -27,11 +29,14 @@ class SplitEdgeViewCommand(
 	private var result: SplitEdgeViewResult<Any>? = null
 
 	override fun execute() {
-		result = connectService.split(graphView, origEdgeView as EdgeView<Any>, segmentIndex, newEdgeView as EdgeView<Any>, targetPortView as PortView<Any>?)
+		result = connectService.split(graphView, origEdgeView as EdgeView<Any>, segmentIndex, newEdgeView as EdgeView<Any>, newEdgeViewEndpointType, targetPortView as PortView<Any>?)
 	}
 
 	override fun undo() {
-		origEdgeView = connectService.unconnect(result!!.newEdgeView)!!.joinedEdgeView
+		origEdgeView = when (newEdgeViewEndpointType) {
+			EdgeViewEndpointType.ORIGIN -> connectService.unconnect(result!!.newEdgeView).first!!.joinedEdgeView
+			EdgeViewEndpointType.DESTINATION -> connectService.unconnect(result!!.newEdgeView).second!!.joinedEdgeView
+		}
 		graphView.remove(result!!.newEdgeView)
 	}
 

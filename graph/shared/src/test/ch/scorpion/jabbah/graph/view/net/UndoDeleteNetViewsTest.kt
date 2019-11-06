@@ -51,7 +51,8 @@ class UndoDeleteNetViewsTest {
 		GraphViewModule.graphViewService.delete(builder.graphView.getDrawables().toList(), drawingView)
 		EditModule.commandManager.undo()
 
-		assertEquals(3, builder.graphView.getEdgeViews().size)
+		val edgeViews = builder.graphView.getEdgeViews()
+		assertEquals(3, edgeViews.size)
 	}
 
 	private fun createVerticeView(x: Int, y: Int, dir: Direction): TestVerticeView {

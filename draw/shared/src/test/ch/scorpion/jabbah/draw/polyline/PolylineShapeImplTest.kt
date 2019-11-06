@@ -40,4 +40,15 @@ class PolylineShapeImplTest {
         assertEquals(Point2D(150, 50), polyline.getPointAt(1))
         assertEquals(Point2D(150, 150), polyline.getPointAt(2))
     }
+
+	@Test
+	fun shouldReverse() {
+		val polyline = PolylineShapeImpl(listOf(Point2D(0, 0), Point2D(100, 0), Point2D(100, 100)))
+
+		polyline.reverse()
+
+		assertEquals(Point2D(100, 100), polyline.getPointAt(0))
+		assertEquals(Point2D(100, 0), polyline.getPointAt(1))
+		assertEquals(Point2D(0, 0), polyline.getPointAt(2))
+	}
 }

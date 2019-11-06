@@ -168,4 +168,10 @@ interface Polyline {
     fun mirrorHorizontally(x: Double)
 
     fun mirrorVertically(y: Double)
+
+	/**
+	 * Reverses the order of the points of this [Polyline], making the formerly first point now the last point,
+	 * and vice versa.
+	 */
+	fun reverse()
 }

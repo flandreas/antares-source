@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.collection.Pair
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.*
@@ -9,6 +10,7 @@ import ch.scorpion.jabbah.graph.view.net.node.NodeViewFactory
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 
 /**
  * Standard implementation of the [GraphViewConnectService] interface.
@@ -25,7 +27,11 @@ class GraphViewConnectServiceImpl(
 	/** ---- [GraphViewConnectService] interface */
 
 	override fun <T : Any> connectToOrigin(edgeView: EdgeView<T>, orig: ConnectableView, port: Port<T>?) {
-		connectToOrigin(edgeView, orig, port, layout = true);
+		LOG.debug("connect EdgeView ${edgeView.id} to Port ${port?.portId} of origin ConnectableView ${orig.id}")
+		checkNotNull(orig)
+		connectPortToNet(port, edgeView.model!!)
+		edgeView.connectToOrigin(orig, port)
+		edgeView.layout.layoutOrigin()
 	}
 
 	override fun <T : Any> unconnectFromOrigin(edgeView: EdgeView<T>): JoinEdgeViewsResult<T>? {
@@ -34,32 +40,30 @@ class GraphViewConnectServiceImpl(
 		if (edgeView.origin is NodeView<*>) {
 			origNodeView = edgeView.origin as NodeView<T>
 		}
-
-		edgeView.originPort?.let {
-			if (edgeView.model!!.isConnectedWith(edgeView.originPort!!)) {
-				edgeView.model!!.unconnect(edgeView.originPort!!)
-			}
-		}
-
+		unconnectPortFromNet(edgeView.originPort, edgeView.model!!)
 		edgeView.connectToOrigin(null, null)
 
 		if (origNodeView != null && origNodeView.getEdgeViews().size == 2) {
 			val tailEdgeView = origNodeView.getEdgeViews()[1]
 			val joinedEdgeView = removeNodeView<T>((origNodeView.parent as GraphView<GraphElementView<*>>), origNodeView)
 			val destPortView = if (edgeView.destinationPort != null) edgeView.destination?.getPortView(edgeView.destinationPort!!) else null
-			return JoinEdgeViewsResult<T>(
+			return JoinEdgeViewsResult(
 				joinedEdgeView,
 				joinedEdgeView.polyline.findSegment(origNodeView.location.x, origNodeView.location.y)!!,
 				edgeView,
+				EdgeViewEndpointType.ORIGIN,
 				destPortView,
-				tailEdgeView
-			)
+				tailEdgeView)
 		}
 		return null
 	}
 
 	override fun <T : Any> connectToDestination(edgeView: EdgeView<T>, dest: ConnectableView, port: Port<T>?) {
-		connectToDestination(edgeView, dest, port, layout = true);
+		LOG.debug("connect EdgeView ${edgeView.id} to Port ${port?.portId} of destination ConnectableView ${dest.id}")
+		checkNotNull(dest)
+		connectPortToNet(port, edgeView.model!!)
+		edgeView.connectToDestination(dest, port)
+		edgeView.layout.layoutDestination()
 	}
 
 	override fun <T : Any> unconnectFromDestination(edgeView: EdgeView<T>): JoinEdgeViewsResult<T>? {
@@ -68,25 +72,20 @@ class GraphViewConnectServiceImpl(
 		if (edgeView.destination is NodeView<*>) {
 			destNodeView = edgeView.destination as NodeView<T>
 		}
-
-		edgeView.destinationPort?.let {
-			if (edgeView.model!!.isConnectedWith(edgeView.destinationPort!!)) {
-				edgeView.model!!.unconnect(edgeView.destinationPort!!)
-			}
-		}
+		unconnectPortFromNet(edgeView.destinationPort, edgeView.model!!)
 		edgeView.connectToDestination(null, null)
 
 		if (destNodeView != null && destNodeView.getEdgeViews().size == 2) {
 			val tailEdgeView = destNodeView.getEdgeViews()[1]
 			val joinedEdgeView = removeNodeView<T>((destNodeView.parent as GraphView<GraphElementView<*>>), destNodeView)
 			val origPortView = if (edgeView.originPort != null) edgeView.origin?.getPortView(edgeView.originPort!!) else null
-			return JoinEdgeViewsResult<T>(
+			return JoinEdgeViewsResult(
 				joinedEdgeView,
 				joinedEdgeView.polyline.findSegment(destNodeView.location.x, destNodeView.location.y)!!,
 				edgeView,
+				EdgeViewEndpointType.DESTINATION,
 				origPortView,
-				tailEdgeView
-			)
+				tailEdgeView)
 		}
 		return null
 	}
@@ -106,27 +105,9 @@ class GraphViewConnectServiceImpl(
 		}
 	}
 
-	override fun <T : Any> unconnect(edgeView: EdgeView<T>): JoinEdgeViewsResult<T>? {
+	override fun <T : Any> unconnect(edgeView: EdgeView<T>): Pair<JoinEdgeViewsResult<T>?> {
 		LOG.debug("unconnect")
-		val origPortView = if (edgeView.originPort != null) edgeView.origin?.getPortView(edgeView.originPort!!) else null
-
-		val originJoinResults = unconnectFromOrigin(edgeView)
-		val destJoinResults = unconnectFromDestination(edgeView)
-		if (originJoinResults != null) {
-			return originJoinResults
-		}
-
-		if (destJoinResults != null) {
-			// Rebuild JoinEdgeViewsResult in order to include origPortView (which has been reset by unconnectFromOrigin)
-			return JoinEdgeViewsResult(
-				destJoinResults.joinedEdgeView,
-				destJoinResults.segmentIndex,
-				destJoinResults.removedEdgeView,
-				origPortView,
-				destJoinResults.tailEdgeView)
-		}
-
-		return null
+		return Pair(unconnectFromOrigin(edgeView), unconnectFromDestination(edgeView))
 	}
 
 	override fun unconnectEdgeViewOrigin(edgeView: EdgeView<Any>) {
@@ -177,51 +158,44 @@ class GraphViewConnectServiceImpl(
 		splittedEdgeView: EdgeView<T>,
 		splitSegmentIndex: Int,
 		newEdgeView: EdgeView<T>,
-		destPort: PortView<T>?,
+		newEdgeViewEndpointType: EdgeViewEndpointType,
+		otherNewEdgeViewPortView: PortView<T>?,
 		tailEdgeView: EdgeView<T>?
 	): SplitEdgeViewResult<T> {
-		LOG.debug("split EdgeView ${splittedEdgeView.id} and connect to Port ${destPort?.port?.portId} of destination ConnectableView ${destPort?.owner?.id}")
+		LOG.debug("split EdgeView ${splittedEdgeView.id} and connect to Port ${otherNewEdgeViewPortView?.port?.portId} of destination ConnectableView ${otherNewEdgeViewPortView?.owner?.id}")
 
+		val splitLocation = newEdgeViewEndpointType.getLocation(newEdgeView)
 		val nodeView = nodeViewFactorySupplier.invoke().create(splittedEdgeView.model as Net<Any>) as NodeView<T>
 		graphView.add(nodeView)
 
 		// Create tail part of EdgeView that is being split
 		val tail = splittedEdgeView.split(
 			splitSegmentIndex,
-			newEdgeView.getSegmentPoint(0)
+			splitLocation
 		) { tailEdgeView ?: edgeViewFactorySupplier.invoke().createEdgeView(it as Net<Any>) as EdgeView<T> }
 
-		// Update view of head part of EdgeView that is being split
-		val origSplittedEVConnState = splittedEdgeView.connectionState
-		when (origSplittedEVConnState) {
-			EdgeViewConnectionState.Input -> {
-				nodeView.location = newEdgeView.polyline.getLastPoint()
-				connectToOrigin(splittedEdgeView, nodeView, null, true)
-			}
-			EdgeViewConnectionState.Output, EdgeViewConnectionState.Unconnected -> {
-				nodeView.location = newEdgeView.polyline.getFirstPoint()
-				connectToDestination(splittedEdgeView, nodeView, null, true)
-			}
-		}
+		nodeView.location = splitLocation
+		connectToDestination(splittedEdgeView, nodeView, null)
 
 		graphView.add(tail)
-		connectToOrigin(tail, nodeView, null, true)
+		connectToOrigin(tail, nodeView, null)
 
 		graphView.add(newEdgeView)
 
 		// Connect newEdgeView
 		newEdgeView.net = splittedEdgeView.net
-		when (origSplittedEVConnState) {
-			EdgeViewConnectionState.Input -> {
-				connectToDestination<T>(newEdgeView, nodeView, null)
-				if (destPort != null) {
-					connectToOrigin(newEdgeView, destPort.owner!!, destPort.port)
+
+		when (newEdgeViewEndpointType) {
+			EdgeViewEndpointType.ORIGIN -> {
+				connectToOrigin(newEdgeView, nodeView, null)
+				if (otherNewEdgeViewPortView != null) {
+					connectToDestination(newEdgeView, otherNewEdgeViewPortView.owner!!, otherNewEdgeViewPortView.port)
 				}
 			}
-			EdgeViewConnectionState.Output, EdgeViewConnectionState.Unconnected -> {
-				connectToOrigin<T>(newEdgeView, nodeView, null)
-				if (destPort != null) {
-					connectToDestination(newEdgeView, destPort.owner!!, destPort.port)
+			EdgeViewEndpointType.DESTINATION -> {
+				connectToDestination(newEdgeView, nodeView, null)
+				if (otherNewEdgeViewPortView != null) {
+					connectToOrigin(newEdgeView, otherNewEdgeViewPortView.owner!!, otherNewEdgeViewPortView.port)
 				}
 			}
 		}
@@ -238,37 +212,30 @@ class GraphViewConnectServiceImpl(
 			throw IllegalStateException("Cannot remove NodeView with ${nodeView.getEdgeViews().size}  EdgeViews")
 		}
 
-		val edgeView = nodeView.getEdgeViews()[0].join(nodeView.getEdgeViews()[1]) as EdgeView<T>
-		nodeView.getEdgeViews().forEach { graphView.remove(it) }
+		val nodeEdgeViews = nodeView.getEdgeViews()
+		val joinedEdgeView = nodeEdgeViews[0]
+		val otherEdgeView = nodeEdgeViews[1]
+		joinedEdgeView.join(otherEdgeView) as EdgeView<T>
 
+		graphView.remove(otherEdgeView)
 		graphView.remove(nodeView)
 
-		return edgeView
+		return joinedEdgeView
 	}
 
-	/** ---- [GraphViewConnectServiceImpl] */
-
-	private fun <T : Any> connectToOrigin(edgeView: EdgeView<T>, orig: ConnectableView, port: Port<T>?, layout: Boolean) {
-		LOG.debug("connect EdgeView ${edgeView.id} to Port ${port?.portId} of origin ConnectableView ${orig.id}")
-		checkNotNull(orig)
-		if (port != null) {
-			edgeView.model!!.connect(port)
-		}
-		edgeView.connectToOrigin(orig, port)
-		if (layout) {
-			edgeView.layout.layoutOrigin()
+	private fun <T : Any> connectPortToNet(port: Port<T>?, net: Net<T>) {
+		port?.let {
+			if (!net.isConnectedWith(it)) {
+				net.connect(it)
+			}
 		}
 	}
 
-	private fun <T : Any> connectToDestination(edgeView: EdgeView<T>, dest: ConnectableView, port: Port<T>?, layout: Boolean) {
-		LOG.debug("connect EdgeView ${edgeView.id} to Port ${port?.portId} of destination ConnectableView ${dest.id}")
-		checkNotNull(dest)
-		if (port != null) {
-			edgeView.model!!.connect(port)
-		}
-		edgeView.connectToDestination(dest, port)
-		if (layout) {
-			edgeView.layout.layoutDestination()
+	private fun <T : Any> unconnectPortFromNet(port: Port<T>?, net: Net<T>) {
+		port?.let {
+			if (net.isConnectedWith(it)) {
+				net.unconnect(it)
+			}
 		}
 	}
 }

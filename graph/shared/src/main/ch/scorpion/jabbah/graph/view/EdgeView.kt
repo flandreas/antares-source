@@ -80,9 +80,6 @@ interface EdgeView<T: Any> : NetViewElement<T> {
     /** Holds the [Point2D]s (in absolute coordinates) that define the segments of this [EdgeView].*/
     val polyline: PolylineShape
 
-    /** Indicates the combination of [Port]s an [EdgeView] is connected with.*/
-    val connectionState: EdgeViewConnectionState
-
 	val edgeToPortConnectorSupplier: () -> EdgeToPortConnector
 
     /**
@@ -108,6 +105,9 @@ interface EdgeView<T: Any> : NetViewElement<T> {
 
 	/** Removes the [Point2D] at the given index.*/
 	fun removeSegmentPoint(index: Int): EdgeView<T>
+
+	/** Removes all segment points from this [EdgeView]. */
+	fun clear(): EdgeView<T>
 
 	/**
      * Compacts this [EdgeView] by removing [Point2D]s that are at the same location as their predecessor
@@ -278,25 +278,6 @@ interface EdgeViewLayout : DrawableListener {
 	 */
 	fun adjustDestination(layoutOrigIndex: Int, destDir: Direction? = null, destLocation: Point2D)
 
-}
-
-/**
- * Indicates the combination of [Port]s an [EdgeView] is connected with.
- * Connections to [NodeView] are ignored, because they don't have [Port]s.
- */
-enum class EdgeViewConnectionState {
-    /** None of both ends is connected*/
-    Unconnected,
-    /** One end is connected with an [InputPort], the other end is open.*/
-    Input,
-    /** One end is connected with an [OutputPort], the other end is open.*/
-    Output,
-    /** One end is connected with an [InputPort], the other end is connected with an [OutputPort].*/
-    InputOutput,
-    /** Both ends are connected with [InputPort]s, which can result from deleting a segment leading to a [NodeView].*/
-    InputInput,
-    /** Both ends are connected with [OutputPort]s, which can result from deleting a segment leading to a [NodeView].*/
-    OutputOutput
 }
 
 /**

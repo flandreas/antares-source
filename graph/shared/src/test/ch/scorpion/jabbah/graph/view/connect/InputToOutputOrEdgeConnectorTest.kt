@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.event.ALT_MASK
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -92,6 +93,11 @@ class InputToOutputOrEdgeConnectorTest : AbstractConnectorTest(GraphViewModule.i
 
 		// 3 VerticeViews, 1 NodeView, 3 EdgeViews
 		assertEquals(7, builder.graphView.drawablesCount)
+
+		val ev2 = builder.graphView.getEdgeView(v3.model!!.getInput<Boolean>())!!
+		assertEquals(Point2D(150, 100), ev2.polyline.getPointAt(0))
+		assertEquals(Point2D(150, 200), ev2.polyline.getPointAt(1))
+		assertEquals(Point2D(200, 200), ev2.polyline.getPointAt(2))
 	}
 
 	@Test
