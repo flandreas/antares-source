@@ -114,11 +114,6 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 	/** ---- [Actor] interface */
 
-	override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
-		super.act(signalHandler, data)
-		return notifyActed(signalHandler, data)
-	}
-
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
 		_signal = null

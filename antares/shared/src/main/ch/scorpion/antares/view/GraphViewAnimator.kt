@@ -195,7 +195,7 @@ class GraphViewAnimator(
 		// and start them. If there are no pending net animations, the acted Net belongs to a SubVertice
 		// whose views are not displayed by the GraphView managed by this GraphViewAnimator.
 
-		LOG.trace("Handling SimulationEvent for Net '${net.id}'")
+		LOG.trace("handleNetActed for Net '${net.id}'")
 
 		if (!requireEdgeViewAnimation()) {
 			net.actingVisualized(scheduler, this, data)
@@ -203,6 +203,7 @@ class GraphViewAnimator(
 		}
 
 		netAnimationMap[net]?.forEach {
+			LOG.trace("Starting DigitalEdgeViewNetAnimation for net ${net.id}")
 			val task = it.start()
 			task.addListener(object : AnimationTaskAdapter() {
 				override fun ended(task: AnimationTask) {

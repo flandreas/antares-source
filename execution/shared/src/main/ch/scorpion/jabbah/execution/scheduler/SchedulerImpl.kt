@@ -177,11 +177,15 @@ class SchedulerImpl(
 	override val executionTime: Long get() = relativeTime
 
 	override fun logTrace(clazz: KClass<*>, id: Int, msg: () -> String) {
-		// TEST BEGIN
 		if (LOG.isTraceEnabled()) {
 			LOG.trace("${StringUtils.formatLong(executionTime)} ns [${clazz.simpleName} ($id)]: ${msg.invoke()}")
 		}
-		// TEST
+	}
+
+	private fun logActorTrace(actor: Actor, msg: () -> String) {
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("${StringUtils.formatLong(executionTime)} ns [${System.get().getClass(actor).simpleName} (${actor.id})]: ${msg.invoke()}")
+		}
 	}
 
 	override fun requestActingAfter(actor: Actor, delay: Long, data: ActorData) {
@@ -193,7 +197,7 @@ class SchedulerImpl(
 	}
 
 	override fun actingDone(actor: Actor, data: ActorData?) {
-		logTrace(System.get().getClass(actor), actor.id) { "Acting done" }
+		logActorTrace(actor) { "Acting done" }
 		val slot = queue.peek()
 		if (slot != null) {
 			val request = slot.findRequest(actor)
@@ -215,7 +219,7 @@ class SchedulerImpl(
 			return
 		}
 		if (LOG.isTraceEnabled()) {
-			logTrace(System.get().getClass(actor), actor.id) { "Request to act after ${StringUtils.formatLong(delay)} ns" }
+			logActorTrace(actor) { "Request to act after ${StringUtils.formatLong(delay)} ns" }
 		}
 		if (delay == 0L) {
 			actor.act(this, data)
@@ -288,6 +292,7 @@ class SchedulerImpl(
 	/** Removes the [Slot] at the head of the queue.*/
 	private fun removeSlot(slot: Slot) {
 		if (!queue.isEmpty) {
+			LOG.trace("Remove slot at ${StringUtils.formatLong(slot.relativeTime)}")
 			queue.remove(slot)
 			if (queue.isEmpty) {
 				task.stop()
@@ -364,9 +369,7 @@ class SchedulerImpl(
 		if (isPaused || slot.relativeTime <= relativeTime) {
 			updateRelativeTime(slot.relativeTime)
 			slot.getRequests().filter { it.isActable }.forEach {
-				if (LOG.isTraceEnabled()) {
-					logTrace(System.get().getClass(it.actor), it.actor.id) { "Executing" }
-				}
+				logActorTrace(it.actor) { "Executing" }
 				breakpoint = breakpoint || it.actor.isBreakpoint
 				if (it.actor.act(this@SchedulerImpl, it.actorData)) {
 					it.setDone()
@@ -479,7 +482,7 @@ class SchedulerImpl(
 
 
 		init {
-			requests.add(Request(actor, data))
+			addRequest(Request(actor, data))
 		}
 
 		override fun compareTo(other: Slot): Int = relativeTime.compareTo(other.relativeTime)
@@ -495,7 +498,7 @@ class SchedulerImpl(
 			if (request != null) {
 				request.actorData = data
 			} else {
-				requests.add(Request(actor, data))
+				addRequest(Request(actor, data))
 			}
 		}
 
@@ -509,6 +512,11 @@ class SchedulerImpl(
 		fun print() {
 			LOG.debug("\tSlot at ${StringUtils.formatLong(relativeTime)} ns with ${requests.size} requests, timeFreeze=$timeFreeze")
 			requests.forEach { it.print() }
+		}
+
+		private fun addRequest(request: Request) {
+			logActorTrace(request.actor) { "Add actor to slot ${StringUtils.formatLong(relativeTime)} ns" }
+			requests.add(request)
 		}
 	}
 
@@ -530,6 +538,10 @@ class SchedulerImpl(
 		val isActable: Boolean get() = !isActing && !isDone
 
 		fun setActing() {
+			if (_isActing) {
+				return
+			}
+			logActorTrace(actor) { "Actor starts acting" }
 			_isActing = true
 		}
 
@@ -537,6 +549,7 @@ class SchedulerImpl(
 			if (_isDone) {
 				return
 			}
+			logActorTrace(actor) { "Actor is done " }
 			_isDone = true
 			postSchedulerEvent(actor, SchedulerEvent.Type.DONE)
 		}
