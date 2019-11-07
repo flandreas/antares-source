@@ -44,10 +44,10 @@ class GraphStorableTest {
 		// Assert view connectedness
 		val graphView = clone.graphView
 
-		assertSame((graphView.getWithId(3) as EdgeView<Boolean>).origin as TestVerticeView, graphView.getWithId(1))
-		assertSame((graphView.getWithId(3) as EdgeView<Boolean>).originPort as OutputPort<Boolean>, (graphView.getWithId(1)!!.model as TestVertice).getOutput())
+		assertSame((graphView.getWithId(3) as EdgeView<Boolean>).origin!!.connectableView as TestVerticeView, graphView.getWithId(1))
+		assertSame((graphView.getWithId(3) as EdgeView<Boolean>).origin!!.port as OutputPort<Boolean>, (graphView.getWithId(1)!!.model as TestVertice).getOutput())
 
-		assertSame((graphView.getWithId(3) as EdgeView<Boolean>).destination as TestVerticeView, graphView.getWithId(2))
-		assertSame((graphView.getWithId(3) as EdgeView<Boolean>).destinationPort as InputPort<Boolean>, (graphView.getWithId(2)!!.model as TestVertice).getInput())
+		assertSame((graphView.getWithId(3) as EdgeView<Boolean>).destination!!.connectableView as TestVerticeView, graphView.getWithId(2))
+		assertSame((graphView.getWithId(3) as EdgeView<Boolean>).destination!!.port as InputPort<Boolean>, (graphView.getWithId(2)!!.model as TestVertice).getInput())
 	}
 }

@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.ConnectableView
+import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
 
@@ -20,7 +21,7 @@ class ConnectDestinationCommand(
 ) : AbstractCommand("graph.command.connect", editor) {
 
 	override fun execute() {
-		service.connectToDestination(edgeView as EdgeView<Any>, destConnectableView, destPort as Port<Any>);
+		service.connectToDestination(edgeView as EdgeView<Any>, Connection(destConnectableView, destPort as Port<Any>))
 	}
 
 	override fun undo() {

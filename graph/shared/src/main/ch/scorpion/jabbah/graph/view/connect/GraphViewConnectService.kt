@@ -18,7 +18,7 @@ interface GraphViewConnectService {
 	 * Connects the origin of an existing [EdgeView] with a particular [Port] of a [ConnectableView]
 	 * both on the view and the model layer.
 	 */
-	fun <T : Any> connectToOrigin(edgeView: EdgeView<T>, orig: ConnectableView, port: Port<T>?)
+	fun <T : Any> connectToOrigin(edgeView: EdgeView<T>, connection: Connection<T>)
 
 	/**
 	 * Unconnects an [EdgeView] from its origin [ConnectableView].
@@ -30,7 +30,7 @@ interface GraphViewConnectService {
 	 * Connects the destination of an existing [EdgeView] with a particular [Port] of a
 	 * [ConnectableView] both on the view and the model layer.
 	 */
-	fun <T : Any> connectToDestination(edgeView: EdgeView<T>, dest: ConnectableView, port: Port<T>?)
+	fun <T : Any> connectToDestination(edgeView: EdgeView<T>, connection: Connection<T>)
 
 	/**
 	 * Unconnects an [EdgeView] from its destination [ConnectableView].

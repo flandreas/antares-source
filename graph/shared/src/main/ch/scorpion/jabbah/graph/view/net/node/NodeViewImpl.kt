@@ -86,7 +86,7 @@ open class NodeViewImpl<T : Any>(
 		}
 		val edgeViews = (parent as GraphView<*>).getEdgeViews()
 		return edgeViews
-			.filter { it.origin === this }
+			.filter { it.origin?.connectableView === this }
 			.map { it as EdgeView<T> }
 	}
 
@@ -96,7 +96,7 @@ open class NodeViewImpl<T : Any>(
 		}
 		val edgeViews = (parent as GraphView<*>).getEdgeViews()
 		return edgeViews
-			.filter { it.origin === this || it.destination === this }
+			.filter { it.origin?.connectableView === this || it.destination?.connectableView === this }
 			.map { it as EdgeView<T> }
 	}
 
@@ -114,7 +114,7 @@ open class NodeViewImpl<T : Any>(
 	override fun getIncomingEdgeView(): EdgeView<T>? {
 		val edgeViews = (parent as GraphView<*>).getEdgeViews()
 		return edgeViews
-			.filter { it.destination === this }
+			.filter { it.destination?.connectableView === this }
 			.map { it as EdgeView<T> }
 			.firstOrNull()
 	}
@@ -259,7 +259,7 @@ open class NodeViewImpl<T : Any>(
 		val directions = mutableSetOf<Direction>()
 		for (ev in getEdgeViews()) {
 			if (ev !== excludedEdgeView) {
-				if (ev.origin === this) {
+				if (ev.origin?.connectableView === this) {
 					// Outgoing
 					val segmentDirection = ev.getSegmentDirection(0)
 					if (segmentDirection != null) {

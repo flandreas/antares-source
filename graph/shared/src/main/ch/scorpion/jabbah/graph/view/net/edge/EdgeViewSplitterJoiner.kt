@@ -40,27 +40,23 @@ object EdgeViewSplitterJoiner {
 		tail.layout.isAdjusted = edgeView.layout.isAdjusted
 		tail.isArrow = edgeView.isArrow
 
-		val oldDest = edgeView.destination
-		val oldDestPort = edgeView.destinationPort
+		val oldDestination = edgeView.destination
 
-		edgeView.connectToDestination(null, null)
+		edgeView.unconnectFromDestination()
 
-		if (oldDest != null) {
-			tail.connectToDestination(oldDest, oldDestPort)
+		if (oldDestination != null) {
+			tail.connectToDestination(oldDestination)
 		}
 
 		return tail
 	}
 
 	fun <T: Any> join(edgeView: EdgeView<T>, other: EdgeView<T>): EdgeView<*> {
-		return if (edgeView.polyline.getLastPoint() == other.polyline.getFirstPoint()) {
-			joinOtherHeadWithTail(edgeView, other)
-		} else if (edgeView.polyline.getFirstPoint() == other.polyline.getLastPoint()) {
-			joinOtherTailWithHead(edgeView, other)
-		} else if (edgeView.polyline.getFirstPoint() == other.polyline.getFirstPoint()) {
-			joinOtherHeadWithHead(edgeView, other)
-		} else {
-			throw IllegalArgumentException("joined EdgeView is not adjacent")
+		return when {
+			edgeView.polyline.getLastPoint() == other.polyline.getFirstPoint() -> joinOtherHeadWithTail(edgeView, other)
+			edgeView.polyline.getFirstPoint() == other.polyline.getLastPoint() -> joinOtherTailWithHead(edgeView, other)
+			edgeView.polyline.getFirstPoint() == other.polyline.getFirstPoint() -> joinOtherHeadWithHead(edgeView, other)
+			else -> throw IllegalArgumentException("joined EdgeView is not adjacent")
 		}
 	}
 
@@ -70,11 +66,11 @@ object EdgeViewSplitterJoiner {
 	 * @return `true` if the origin segment has been split and a new [Point2D] has been added
 	 */
 	fun splitOriginSegmentForMove(edgeView: EdgeView<*>): Boolean {
-		if (edgeView.origin == null || edgeView.originPort == null) {
+		if (edgeView.origin?.port == null) {
 			return false
 		}
 
-		val portView = edgeView.origin!!.getPortView(edgeView.originPort!!)
+		val portView = edgeView.origin!!.portView
 		if (portView!!.minSegmentLength == 0) {
 			return false
 		}
@@ -93,11 +89,11 @@ object EdgeViewSplitterJoiner {
 	 * @return `true` if the destination segment has been split and a new [Point2D] has been added
 	 */
 	fun splitDestinationSegmentForMove(edgeView: EdgeView<*>): Boolean {
-		if (edgeView.destination == null || edgeView.destinationPort == null) {
+		if (edgeView.destination?.port == null) {
 			return false
 		}
 
-		val portView = edgeView.destination!!.getPortView(edgeView.destinationPort!!)
+		val portView = edgeView.destination!!.portView
 		if (portView!!.minSegmentLength == 0) {
 			return false
 		}
@@ -118,10 +114,9 @@ object EdgeViewSplitterJoiner {
 		}
 		edgeView.compact()
 		val origin = other.destination
-		val originPort = other.destinationPort
 
 		unconnect(other)
-		edgeView.connectToOrigin(origin, originPort)
+		origin?.let { edgeView.connectToOrigin(it) }
 
 		return edgeView
 	}
@@ -134,10 +129,9 @@ object EdgeViewSplitterJoiner {
 		}
 		edgeView.compact()
 		val destination = other.destination
-		val destinationPort = other.destinationPort
 
 		unconnect(other)
-		edgeView.connectToDestination(destination, destinationPort)
+		destination?.let { edgeView.connectToDestination(it) }
 
 		return edgeView
 	}
@@ -150,20 +144,15 @@ object EdgeViewSplitterJoiner {
 		}
 		edgeView.compact()
 		val origin = other.origin
-		val originPort = other.originPort
 
 		unconnect(other)
-		edgeView.connectToOrigin(origin, originPort)
+		origin?.let { edgeView.connectToOrigin(it) }
 
 		return edgeView
 	}
 
 	private fun <T: Any> unconnect(edgeView: EdgeView<T>) {
-		if (edgeView.origin != null) {
-			edgeView.connectToOrigin(null, null)
-		}
-		if (edgeView.destination != null) {
-			edgeView.connectToDestination(null, null)
-		}
+		edgeView.origin?.let { edgeView.unconnectFromOrigin() }
+		edgeView.destination?.let { edgeView.unconnectFromDestination() }
 	}
 }

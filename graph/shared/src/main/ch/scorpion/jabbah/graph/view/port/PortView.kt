@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.edit.SnappableY
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.io.Storable
@@ -185,5 +186,7 @@ interface PortView<T: Any> : Drawable, Storable, SnappableX, SnappableY, Transpa
 	 * to draw some of its look just the same way as [PortView]s are drawn.
 	 */
 	fun prepareConnectionDrawContext(context: DrawContext)
+
+	fun createConnection(): Connection<T> = Connection(owner!!, port)
 
 }

@@ -39,10 +39,10 @@ abstract class AbstractCreateEdgeViewConnector(
 	}
 
 	protected fun cancel(editor: Editor) {
-		if (edgeView != null) {
-			edgeView?.connectToOrigin(null, null)
-			edgeView?.connectToDestination(null, null)
-			editor.view.drawing.remove(edgeView!!)
+		edgeView?.let {
+			it.unconnectFromOrigin()
+			it.unconnectFromDestination()
+			editor.view.drawing.remove(it)
 			ConnectionPointHighlighter.removePortViewHighlight(editor.view)
 			reset()
 		}

@@ -15,18 +15,18 @@ class TestGraphView(
 	eventBus: EventBus = BaseModule.eventBus
 ) : TestGraph(eventBus) {
 
-    val graphView = GraphViewModule.createGraphView<GraphElementView<*>>()
-    val vv1: TestVerticeView = TestVerticeView(vertice = v1, name = "1")
-    val vv2: TestVerticeView = TestVerticeView(vertice = v2, name = "2")
-    val ev: EdgeView<Boolean> = GraphViewModule.getEdgeViewFactory<Boolean>().createEdgeView(net)
+	val graphView = GraphViewModule.createGraphView<GraphElementView<*>>()
+	val vv1: TestVerticeView = TestVerticeView(vertice = v1, name = "1")
+	val vv2: TestVerticeView = TestVerticeView(vertice = v2, name = "2")
+	val ev: EdgeView<Boolean> = GraphViewModule.getEdgeViewFactory<Boolean>().createEdgeView(net)
 
-    init {
-        vv1.location = Point2D(100, 100)
-        vv2.location = Point2D(200, 100)
-        ev.connectToOrigin(vv1, vv1.model!!.getOutput())
-        ev.connectToDestination(vv2, vv2.model!!.getInput())
+	init {
+		vv1.location = Point2D(100, 100)
+		vv2.location = Point2D(200, 100)
+		ev.connectToOrigin(Connection(vv1, vv1.model!!.getOutput()))
+		ev.connectToDestination(Connection(vv2, vv2.model!!.getInput()))
 
-        graphView.add(vv1).add(vv2).add(ev)
-        ev.layout.layoutOrigin()
-    }
+		graphView.add(vv1).add(vv2).add(ev)
+		ev.layout.layoutOrigin()
+	}
 }

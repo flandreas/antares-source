@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.net.edge
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -164,8 +165,8 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(0, 0))
         ev.addSegmentPoint(Point2D(100, 0))
         graphView.add(ev)
-        ev.connectToOrigin(vv1, vv1.model!!.getOutput())
-        ev.connectToDestination(vv2, vv2.model!!.getOutput())
+        ev.connectToOrigin(Connection(vv1, vv1.model!!.getOutput()))
+        ev.connectToDestination(Connection(vv2, vv2.model!!.getOutput()))
 
         ev.prepareMoveBy(listOf(ev))
         ev.moveBy(0.0, 50.0)
@@ -184,8 +185,8 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(0, 0))
         ev.addSegmentPoint(Point2D(100, 0))
         graphView.add(ev)
-        ev.connectToOrigin(vv1, vv1.model!!.getOutput())
-        ev.connectToDestination(vv2, vv2.model!!.getOutput())
+        ev.connectToOrigin(Connection(vv1, vv1.model!!.getOutput()))
+        ev.connectToDestination(Connection(vv2, vv2.model!!.getOutput()))
 
         ev.prepareMoveBy(listOf(vv1, vv2, ev))
         ev.moveBy(0.0, 50.0)
@@ -202,7 +203,7 @@ class EdgeViewImplTest {
         ev.addSegmentPoint(Point2D(0, 0))
         ev.addSegmentPoint(Point2D(100, 0))
         graphView.add(ev)
-        ev.connectToOrigin(vv1, vv1.model!!.getOutput())
+        ev.connectToOrigin(Connection(vv1, vv1.model!!.getOutput()))
 
         ev.prepareMoveBy(listOf(vv1, ev))
         ev.moveBy(0.0, 50.0)

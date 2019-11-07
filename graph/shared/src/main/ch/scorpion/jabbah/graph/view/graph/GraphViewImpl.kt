@@ -206,7 +206,7 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 	}
 
 	override fun getEdgeView(port: Port<*>): EdgeView<Any>? {
-		return getEdgeViews().firstOrNull { it.originPort == port || it.destinationPort == port }
+		return getEdgeViews().firstOrNull { it.origin?.port === port || it.destination?.port === port }
 	}
 
 	override fun getGraphPortViews(): ImmutableList<GraphPortView<GraphPort<Any>>> {

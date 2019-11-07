@@ -4,12 +4,15 @@ import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.TestVertice
+import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.ORIGIN
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
+
 import kotlin.test.*
 
 /**
@@ -49,8 +52,8 @@ class GraphViewConnectServiceImplTest {
 
 		// View assertions
 		assertTrue(gv.contains(ev))
-		assertSame(vv1, ev.origin as TestVerticeView)
-		assertSame(vv2, ev.destination as TestVerticeView)
+		assertSame(vv1, ev.origin!!.connectableView as TestVerticeView)
+		assertSame(vv2, ev.destination!!.connectableView as TestVerticeView)
 
 		// Assert orthogonal layout
 		assertEquals(4, ev.segmentPointCount)
@@ -86,11 +89,10 @@ class GraphViewConnectServiceImplTest {
 		ev.addSegmentPoint(Point2D(100, 100))
 		ev.addSegmentPoint(Point2D(200, 100))
 		gv.add(ev)
-		service.connectToDestination(ev, vv1, vv1.model!!.getInput())
+		service.connectToDestination(ev, Connection(vv1, vv1.model!!.getInput()))
 
 		service.unconnect(ev)
 		assertNull(ev.destination)
-		assertNull(ev.destinationPort)
 	}
 
 	@Test
@@ -104,12 +106,11 @@ class GraphViewConnectServiceImplTest {
 		ev.addSegmentPoint(Point2D(100, 100))
 		ev.addSegmentPoint(Point2D(200, 100))
 		gv.add(ev)
-		service.connectToOrigin(ev, vv1, vv1.model!!.getOutput())
+		service.connectToOrigin(ev, Connection(vv1, vv1.model!!.getOutput()))
 
 		service.unconnect(ev)
 
 		assertNull(ev.origin)
-		assertNull(ev.originPort)
 	}
 
 	@Test
@@ -136,15 +137,15 @@ class GraphViewConnectServiceImplTest {
 
 		// View assertions
 		assertEquals(7, gv.drawablesCount)
-		assertSame(vv1, ev1.origin as TestVerticeView)
-		assertSame(result.nodeView, ev1.destination)
+		assertSame(vv1, ev1.origin!!.connectableView as TestVerticeView)
+		assertSame(result.nodeView, ev1.destination!!.connectableView)
 		assertEquals(result.nodeView.location, ev1.getSegmentPoint(ev1.segmentPointCount - 1))
 
-		assertSame(result.nodeView, ev2.origin)
+		assertSame(result.nodeView, ev2.origin!!.connectableView)
 		assertNotNull(result.nodeView.parent)
 
-		assertEquals(result.nodeView, result.tailEdgeView.origin)
-		assertSame(vv2, result.tailEdgeView.destination as TestVerticeView)
+		assertEquals(result.nodeView, result.tailEdgeView.origin!!.connectableView)
+		assertSame(vv2, result.tailEdgeView.destination!!.connectableView as TestVerticeView)
 		assertEquals(result.nodeView.location, result.tailEdgeView.getSegmentPoint(0))
 	}
 
@@ -178,15 +179,15 @@ class GraphViewConnectServiceImplTest {
 		// View assertions
 		assertEquals(7, gv.drawablesCount)
 
-		assertSame(result.nodeView, ev1.destination)
-		assertSame(vv1, ev1.origin as TestVerticeView)
+		assertSame(result.nodeView, ev1.destination!!.connectableView)
+		assertSame(vv1, ev1.origin!!.connectableView as TestVerticeView)
 		assertEquals(result.nodeView.location, ev1.polyline.getLastPoint())
 
-		assertSame(vv3, ev2.destination as TestVerticeView)
-		assertSame(result.nodeView, ev2.origin)
+		assertSame(vv3, ev2.destination!!.connectableView as TestVerticeView)
+		assertSame(result.nodeView, ev2.origin!!.connectableView)
 
-		assertSame(result.nodeView, result.tailEdgeView.origin)
-		assertSame(vv2, result.tailEdgeView.destination as TestVerticeView)
+		assertSame(result.nodeView, result.tailEdgeView.origin!!.connectableView)
+		assertSame(vv2, result.tailEdgeView.destination!!.connectableView as TestVerticeView)
 		assertEquals(result.nodeView.location, result.tailEdgeView.polyline.getFirstPoint())
 	}
 
@@ -199,7 +200,7 @@ class GraphViewConnectServiceImplTest {
 		ev.addSegmentPoint(Point2D(100, 100))
 		ev.addSegmentPoint(Point2D(200, 100))
 		gv.add(ev)
-		service.connectToOrigin(ev, vv, vv.model!!.getOutput())
+		service.connectToOrigin(ev, Connection(vv, vv.model!!.getOutput()))
 
 		val newEv = edgeViewFactory.createEdgeView(ev.model!!)
 		newEv.addSegmentPoint(Point2D(150, 100))
@@ -213,9 +214,9 @@ class GraphViewConnectServiceImplTest {
 		// View assertion
 		assertEquals(5, gv.drawablesCount)
 
-		assertSame(vv, ev.origin)
-		assertSame(result.nodeView, ev.destination)
-		assertSame(result.nodeView, result.tailEdgeView.origin)
+		assertSame(vv, ev.origin!!.connectableView)
+		assertSame(result.nodeView, ev.destination!!.connectableView)
+		assertSame(result.nodeView, result.tailEdgeView.origin!!.connectableView)
 	}
 
 	/** Regression test for a bug that occurred on 02.10.17.*/
@@ -266,7 +267,7 @@ class GraphViewConnectServiceImplTest {
 		gv.add(ev2)
 		ev2.addSegmentPoint(Point2D(150, 100))
 		val result = splitToInput(ev1, ev2, vv3)
-		ev2.connectToOrigin(null, null)
+		ev2.unconnectFromOrigin()
 
 		val remainingEV = service.removeNodeView(gv, result.nodeView)
 
@@ -276,8 +277,8 @@ class GraphViewConnectServiceImplTest {
 		// View assertions
 		assertEquals(0, result.nodeView.getOutgoingEdgeViews().size)
 		assertFalse(gv.contains(result.nodeView))
-		assertSame(vv1, remainingEV.origin)
-		assertSame(vv2, remainingEV.destination)
+		assertSame(vv1, remainingEV.origin!!.connectableView)
+		assertSame(vv2, remainingEV.destination!!.connectableView)
 	}
 
 	private fun splitToInput(

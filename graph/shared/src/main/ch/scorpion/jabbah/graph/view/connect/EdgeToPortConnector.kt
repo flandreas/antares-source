@@ -11,11 +11,7 @@ import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseRele
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.model.Net
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.EdgeViewSnapLocatorResult
-import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
@@ -144,10 +140,7 @@ class EdgeToPortConnector(
 
 	private fun completeConnecting(context: EditInputEventContext) {
 		if (targetPortView != null) {
-			connectService.connectToDestination(
-				edgeView!!,
-				targetPortView!!.owner!!,
-				targetPortView!!.port as Port<Any>)
+			connectService.connectToDestination(edgeView!!, targetPortView!!.createConnection() as Connection<Any>)
 		}
 
 		context.editor.commandManager.register(createSplitEdgeViewCommand(context.editor))

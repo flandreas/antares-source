@@ -1,9 +1,12 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
-import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventContext
@@ -81,7 +84,8 @@ open class EdgeViewImpl<T : Any>(
 	/** ---- [Any] */
 
 	override fun toString(): String {
-		return "${super.toString()} origin=${origin?.id ?: "null"} dest=${destination?.id ?: "null"}"
+		return "${super.toString()} origin=${origin?.connectableView?.id
+			?: "null"} dest=${destination?.connectableView?.id ?: "null"}"
 	}
 
 	/** ---- [EdgeView] interface */
@@ -90,13 +94,11 @@ open class EdgeViewImpl<T : Any>(
 
 	override var polyline: PolylineShape = DrawModule.polylineShapeFactory.invoke(null)
 
-	override var origin: ConnectableView? = null
+	final override var origin: Connection<T>? = null
+		private set
 
-	override var originPort: Port<T>? = null
-
-	override var destination: ConnectableView? = null
-
-	override var destinationPort: Port<T>? = null
+	final override var destination: Connection<T>? = null
+		private set
 
 	override val originEndpointView: EdgeEndpointView = EdgeEndpointView(this, origEndpointConnectorSupplier, styleProvider)
 
@@ -120,11 +122,11 @@ open class EdgeViewImpl<T : Any>(
 		}
 
 	override fun getConnectableView(port: Port<T>): ConnectableView? {
-		if (port == originPort) {
-			return origin
+		if (port === origin?.port) {
+			return origin?.connectableView
 		}
-		if (port == destinationPort) {
-			return destination
+		if (port === destination?.port) {
+			return destination?.connectableView
 		}
 		return null
 	}
@@ -191,47 +193,51 @@ open class EdgeViewImpl<T : Any>(
 		}
 	}
 
-	override fun connectToOrigin(origin: ConnectableView?, port: Port<T>?) {
-		checkArgument(port == null || origin != null)
-		if (this.origin != null) {
-			this.origin?.removeDrawableListener(layout)
-			this.origin?.handleUnconnect(this, originPort)
+	override fun unconnectFromOrigin() {
+		origin?.let {
+			it.connectableView.removeDrawableListener(layout)
+			it.connectableView.handleUnconnect(this, it.port)
 		}
-		this.origin = origin
-		this.originPort = port
-		if (this.origin != null) {
-			this.origin?.addDrawableListener(layout)
-			origin?.handleConnect(this, port)
-		}
+		origin = null
+	}
 
+	override fun connectToOrigin(connection: Connection<T>) {
+		unconnectFromOrigin()
+		origin = connection
+		origin!!.let {
+			it.connectableView.addDrawableListener(layout)
+			it.connectableView.handleConnect(this, it.port)
+		}
 		updateEndpointViews()
 		styling.updateBoundingBox()
 	}
 
-	override fun connectToDestination(destination: ConnectableView?, port: Port<T>?) {
-		checkArgument(port == null || destination != null)
-
-		if (this.destination != null) {
-			this.destination?.removeDrawableListener(layout)
-			this.destination?.handleUnconnect(this, destinationPort)
+	override fun unconnectFromDestination() {
+		destination?.let {
+			it.connectableView.removeDrawableListener(layout)
+			it.connectableView.handleUnconnect(this, it.port)
 		}
-		this.destination = destination
-		this.destinationPort = port
-		if (this.destination != null) {
-			this.destination?.addDrawableListener(layout)
-			destination?.handleConnect(this, port)
+		destination = null
+	}
+
+	override fun connectToDestination(connection: Connection<T>) {
+		unconnectFromDestination()
+		destination = connection
+		destination!!.let {
+			it.connectableView.addDrawableListener(layout)
+			it.connectableView.handleConnect(this, it.port)
 		}
 		updateEndpointViews()
 		styling.updateBoundingBox()
 	}
 
 	override fun calculateMaximumNetLength(reverse: Boolean): Double {
-		val cv = if (reverse) origin else destination
+		val cv = if (reverse) origin?.connectableView else destination?.connectableView
 		if (cv != null && cv is NodeView<*>) {
 			var maxSubnetLength = 0.0
 			cv.getEdgeViews().forEach {
 				if (it !== this) {
-					val subnetLength = it.calculateMaximumNetLength(cv === it.destination)
+					val subnetLength = it.calculateMaximumNetLength(cv === it.destination?.connectableView)
 					if (subnetLength > maxSubnetLength) {
 						maxSubnetLength = subnetLength
 					}
@@ -309,9 +315,9 @@ open class EdgeViewImpl<T : Any>(
 		var newDestNodePoint: Point2D? = null
 
 		if (index == 0) {
-			if (origin is NodeView<*>) {
+			if (origin?.connectableView is NodeView<*>) {
 				newOrigNodePoint = Point2D(polyline.getPointAt(index)).add(dx, dy)
-				if ((origin as NodeView<*>).anyEdgeViewContainsPoint(newOrigNodePoint.x, newOrigNodePoint.y, this)) {
+				if ((origin?.connectableView as NodeView<*>).anyEdgeViewContainsPoint(newOrigNodePoint.x, newOrigNodePoint.y, this)) {
 					polyline.setPointAt(0, newOrigNodePoint.x, newOrigNodePoint.y)
 				} else {
 					newOrigNodePoint = null
@@ -336,8 +342,8 @@ open class EdgeViewImpl<T : Any>(
 		}
 
 		if (index == polyline.pointsCount - 2) {
-			if (destination is NodeView<*>) {
-				val nodeView = destination as NodeView<*>
+			if (destination?.connectableView is NodeView<*>) {
+				val nodeView = destination?.connectableView as NodeView<*>
 				newDestNodePoint = Point2D(polyline.getPointAt(index + 1)).add(dx, dy)
 				if (nodeView.anyEdgeViewContainsPoint(newDestNodePoint.x, newDestNodePoint.y, this)) {
 					polyline.setPointAt(index + 1, newDestNodePoint.x, newDestNodePoint.y)
@@ -370,10 +376,10 @@ open class EdgeViewImpl<T : Any>(
 		layout.suspendDestinationLayout = true
 
 		if (newOrigNodePoint != null) {
-			(origin as NodeView<*>).location = Point2D(newOrigNodePoint.x, newOrigNodePoint.y)
+			(origin?.connectableView as NodeView<*>).location = Point2D(newOrigNodePoint.x, newOrigNodePoint.y)
 		}
 		if (newDestNodePoint != null) {
-			(destination as NodeView<*>).location = Point2D(newDestNodePoint.x, newDestNodePoint.y)
+			(destination?.connectableView as NodeView<*>).location = Point2D(newDestNodePoint.x, newDestNodePoint.y)
 		}
 
 		val center = polyline.getCenterOfSegment(index)
@@ -430,8 +436,8 @@ open class EdgeViewImpl<T : Any>(
 		get() = polyline.getFirstPoint()
 
 	override fun prepareMoveBy(components: Collection<Locatable>) {
-		val originIfExistsMoves = origin == null || components.contains(origin as Locatable)
-		val destIfExistsMoves = destination == null || components.contains(destination as Locatable)
+		val originIfExistsMoves = origin == null || components.contains(origin!!.connectableView as Locatable)
+		val destIfExistsMoves = destination == null || components.contains(destination!!.connectableView as Locatable)
 		val thisMoves = originIfExistsMoves && destIfExistsMoves
 
 		layout.suspendOriginLayout = originIfExistsMoves && thisMoves
@@ -497,8 +503,8 @@ open class EdgeViewImpl<T : Any>(
 		invalidate()
 		styling = netView!!.style.createEdgeViewStyling(styleProvider, this)
 		styling.updateBoundingBox()
-		origin?.handleEdgeViewWidthChanged(this)
-		destination?.handleEdgeViewWidthChanged(this)
+		origin?.connectableView?.handleEdgeViewWidthChanged(this)
+		destination?.connectableView?.handleEdgeViewWidthChanged(this)
 		invalidate()
 		validate()
 	}
@@ -511,24 +517,27 @@ open class EdgeViewImpl<T : Any>(
 		if (isArrow) {
 			writer.writeBoolean("arrow", true)
 		}
-		if (origin != null) {
-			writer.writeInt("orig", writer.provideIdentity(origin!!))
-			if (originPort != null) {
-				writer.writeInt("origPort", originPort!!.portId)
-				if (originPort!!.portType.isOutput) {
+
+		origin?.let {
+			writer.writeInt("orig", writer.provideIdentity(it.connectableView))
+			if (it.port != null) {
+				writer.writeInt("origPort", it.port.portId)
+				if (it.port.portType.isOutput) {
 					writer.writeBoolean("origPortOutput", true)
 				}
 			}
 		}
-		if (destination != null) {
-			writer.writeInt("dest", writer.provideIdentity(destination!!))
-			if (destinationPort != null) {
-				writer.writeInt("destPort", destinationPort!!.portId)
-				if (destinationPort!!.portType.isOutput) {
+
+		destination?.let {
+			writer.writeInt("dest", writer.provideIdentity(it.connectableView))
+			if (it.port != null) {
+				writer.writeInt("destPort", it.port.portId)
+				if (it.port.portType.isOutput) {
 					writer.writeBoolean("destPortOutput", true)
 				}
 			}
 		}
+
 		writer.writeBoolean("adjusted", layout.isAdjusted)
 		writer.writePoints("shape", "polylineShape", "points", polyline.getPoints(0, polyline.pointsCount))
 	}
@@ -592,9 +601,9 @@ open class EdgeViewImpl<T : Any>(
 
 			if (cv.isConnectable) {
 				if ("orig" == reference.name) {
-					connectToOrigin(cv, port as Port<T>?)
+					connectToOrigin(Connection(cv, port as Port<T>?))
 				} else {
-					connectToDestination(cv, port as Port<T>?)
+					connectToDestination(Connection(cv, port as Port<T>?))
 				}
 			}
 		}
@@ -630,22 +639,13 @@ open class EdgeViewImpl<T : Any>(
 	 * Check whether the origin segment is larger than its required minimum length.
 	 * @return `true` if larger than its minimum length
 	 */
-	private fun checkOriginSegmentLength(): Boolean {
-		if (origin == null || originPort == null) {
-			return true
-		}
-		return polyline.getSegmentLength(0) >= origin!!.getPortView(originPort!!)!!.minSegmentLength
-	}
+	private fun checkOriginSegmentLength(): Boolean =
+		origin?.port == null || polyline.getSegmentLength(0) >= origin!!.portView!!.minSegmentLength
 
 	/**
 	 * Check whether the destination segment is larger than its required minimum length.
 	 * @return `true` if larger than its minimum length
 	 */
-	private fun checkDestinationSegmentLength(): Boolean {
-		if (destination == null || destinationPort == null) {
-			return true
-		}
-		val portView = destination!!.getPortView(destinationPort!!)
-		return polyline.getSegmentLength(polyline.pointsCount - 2) >= portView!!.minSegmentLength
-	}
+	private fun checkDestinationSegmentLength(): Boolean =
+		destination?.port == null || polyline.getSegmentLength(polyline.pointsCount - 2) >= destination!!.portView!!.minSegmentLength
 }

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -29,7 +30,7 @@ class OutputToInputConnector(
 	}
 
 	override fun connectEdgeViewToStartPort() {
-		edgeView!!.connectToOrigin(startPortView!!.owner, startPortView!!.port as Port<Any>)
+		edgeView!!.connectToOrigin(Connection(startPortView!!.owner!!, startPortView!!.port as Port<Any>))
 		// Adapt to PortView that might has reduced its length
 		edgeView!!.layout.layoutOrigin()
 	}

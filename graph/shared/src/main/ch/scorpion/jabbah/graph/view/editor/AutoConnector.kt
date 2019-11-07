@@ -3,13 +3,13 @@ package ch.scorpion.jabbah.graph.view.editor
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.MouseAdapter
 import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.DropEvent
 import ch.scorpion.jabbah.edit.select.DragEvent
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -119,10 +119,10 @@ class AutoConnector(
                     verticeView!!.getPortViews().forEach {
                         val p = it.owner!!.getPortConnectionPoint(it.port)
                         if (ev.origin == null && it.port.portType.isOutput && p == ev.originEndpointView.location) {
-                           connectService.connectToOrigin<Any>(ev, it.owner!!, it.port as Port<Any>)
+                           connectService.connectToOrigin(ev, it.createConnection() as Connection<Any>)
                         }
                         if (ev.destination == null && it.port.portType.isInput && p == ev.destinationEndpointView.location) {
-                            connectService.connectToDestination<Any>(ev, it.owner!!, it.port as Port<Any>)
+                            connectService.connectToDestination(ev, it.createConnection() as Connection<Any>)
                         }
                     }
                 }

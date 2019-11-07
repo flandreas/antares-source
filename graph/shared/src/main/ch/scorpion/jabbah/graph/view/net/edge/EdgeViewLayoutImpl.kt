@@ -37,10 +37,10 @@ class EdgeViewLayoutImpl(
 			return
 		}
 		LOG.debug("VerticeView updated")
-		if (event.source == edgeView.origin && !suspendOriginLayout) {
+		if (event.source == edgeView.origin?.connectableView && !suspendOriginLayout) {
 			layoutOrigin()
 		}
-		if (event.source == edgeView.destination && !suspendDestinationLayout) {
+		if (event.source == edgeView.destination?.connectableView && !suspendDestinationLayout) {
 			layoutDestination()
 		}
 	}
@@ -65,7 +65,7 @@ class EdgeViewLayoutImpl(
 		}
 
 	override fun updateAdjusted() {
-		isAdjusted = if (edgeView.origin is NodeView<*> || edgeView.destination is NodeView<*>) {
+		isAdjusted = if (edgeView.origin?.connectableView is NodeView<*> || edgeView.destination?.connectableView is NodeView<*>) {
 			isAdjusted && edgeView.polyline.pointsCount > 2
 		} else {
 			isAdjusted && edgeView.polyline.pointsCount > 3
@@ -193,7 +193,7 @@ class EdgeViewLayoutImpl(
 
 	private fun getLayoutOriginPoint(): Point2D? {
 		if (edgeView.origin != null) {
-			return edgeView.origin!!.getPortConnectionPoint(edgeView.originPort)
+			return edgeView.origin!!.portConnectionPoint
 		}
 		if (edgeView.polyline.pointsCount > 0) {
 			return Point2D(edgeView.polyline.getPointAt(0))
@@ -203,14 +203,14 @@ class EdgeViewLayoutImpl(
 
 	private fun getOriginDirections(refPoint: Point2D): Set<Direction> {
 		if (edgeView.origin != null) {
-			return edgeView.origin!!.getPortConnectionLayoutDirections(edgeView, edgeView.originPort, refPoint)
+			return edgeView.origin!!.getPortConnectionLayoutDirections(edgeView, refPoint)
 		}
 		return setOf(Direction.EAST)
 	}
 
 	private fun getLayoutDestinationPoint(): Point2D? {
 		if (edgeView.destination != null) {
-			return edgeView.destination!!.getPortConnectionPoint(edgeView.destinationPort)
+			return edgeView.destination!!.portConnectionPoint
 		}
 		if (edgeView.polyline.pointsCount >= 2) {
 			return Point2D(edgeView.polyline.getPointAt(edgeView.polyline.pointsCount - 1))
@@ -220,7 +220,7 @@ class EdgeViewLayoutImpl(
 
 	private fun getDestinationDirections(refPoint: Point2D): Set<Direction> {
 		if (edgeView.destination != null) {
-			return Direction.oppositeSet(edgeView.destination!!.getPortConnectionLayoutDirections(edgeView, edgeView.destinationPort, refPoint))
+			return Direction.oppositeSet(edgeView.destination!!.getPortConnectionLayoutDirections(edgeView, refPoint))
 		}
 		return Direction.ALL
 	}

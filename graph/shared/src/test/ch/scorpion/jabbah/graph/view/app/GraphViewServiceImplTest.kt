@@ -26,9 +26,9 @@ class GraphViewServiceImplTest {
 
 	private val service = GraphViewServiceImpl()
 	private val builder = GraphViewBuilder<Boolean>()
-	private val vv1= builder.addVerticeView(TestVerticeView(loc = Point2D(100, 100)))
-	private val vv2= builder.addVerticeView(TestVerticeView(loc = Point2D(200, 100)))
-	private val vv3= builder.addVerticeView(TestVerticeView(loc = Point2D(200, 200)))
+	private val vv1 = builder.addVerticeView(TestVerticeView(loc = Point2D(100, 100)))
+	private val vv2 = builder.addVerticeView(TestVerticeView(loc = Point2D(200, 100)))
+	private val vv3 = builder.addVerticeView(TestVerticeView(loc = Point2D(200, 200)))
 	private lateinit var ev: EdgeView<Boolean>
 	private lateinit var split: SplitEdgeViewResult<Boolean>
 
@@ -40,13 +40,13 @@ class GraphViewServiceImplTest {
 		service.delete(listOf(split.newEdgeView), DrawingViewMockBuilder().withDrawing(builder.graphView).build())
 		EditModule.commandManager.undo()
 
-		assertEquals(3, (split.newEdgeView.origin as NodeView<Boolean>).getEdgeViews().size)
+		assertEquals(3, (split.newEdgeView.origin?.connectableView as NodeView<Boolean>).getEdgeViews().size)
 		assertEquals(3, getNodeView().getEdgeViews().size)
-		assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.origin == vv1 })
-		assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.destination == vv2 })
-		assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.destination == vv3 })
-		assertEquals(Point2D(150, 100), getNodeView().getEdgeViews().first { it.destination == vv2 }.getSegmentPoint(0))
-		assertEquals(Point2D(200, 100), getNodeView().getEdgeViews().first { it.destination == vv2 }.getSegmentPoint(1))
+		assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.origin!!.connectableView === vv1 })
+		assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.destination!!.connectableView === vv2 })
+		assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.destination!!.connectableView === vv3 })
+		assertEquals(Point2D(150, 100), getNodeView().getEdgeViews().first { it.destination!!.connectableView === vv2 }.getSegmentPoint(0))
+		assertEquals(Point2D(200, 100), getNodeView().getEdgeViews().first { it.destination!!.connectableView === vv2 }.getSegmentPoint(1))
 	}
 
 	@Test
@@ -59,9 +59,9 @@ class GraphViewServiceImplTest {
 
 		assertEquals(3, getNodeView().getEdgeViews().size)
 		assertEquals(Point2D(150, 100), getNodeView().location)
-		assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.origin == vv1 })
-		assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.origin == vv2 })
-		assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.destination == vv3 })
+		assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.origin!!.connectableView === vv1 })
+		assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.origin!!.connectableView === vv2 })
+		assertNotNull(getNodeView().getEdgeViews().firstOrNull { it.destination!!.connectableView === vv3 })
 	}
 
 	@Test

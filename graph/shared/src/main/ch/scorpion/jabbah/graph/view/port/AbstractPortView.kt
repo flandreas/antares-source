@@ -180,9 +180,9 @@ abstract class AbstractPortView<T : Any>(
 		length = unconnectedLength
 		if (edgeView != null) {
 			val connectionPoint = owner!!.getPortConnectionPoint(port)
-			if (edgeView.originPort === port) {
+			if (edgeView.origin?.port === port) {
 				edgeView.moveOriginEndPoint(connectionPoint.x, connectionPoint.y)
-			} else if (edgeView.destinationPort === port) {
+			} else if (edgeView.destination?.port === port) {
 				edgeView.moveDestinationEndPoint(connectionPoint.x, connectionPoint.y)
 			}
 		}

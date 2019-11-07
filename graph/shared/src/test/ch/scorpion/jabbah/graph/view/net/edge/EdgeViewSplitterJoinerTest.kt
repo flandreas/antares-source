@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.TestVertice
+import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -74,10 +74,10 @@ class EdgeViewSplitterJoinerTest {
 
 		val tail = EdgeViewSplitterJoiner.split(ev, 0, Point2D(50, 0)) { edgeViewFactory.createEdgeView(it)}
 
-		assertSame(vv1.model!!.getOutput(), ev.originPort)
-		assertNull(ev.destinationPort)
-		assertSame(vv2.model!!.getInput(), tail.destinationPort)
-		assertNull(tail.originPort)
+		assertSame(vv1.model!!.getOutput(), ev.origin!!.port)
+		assertNull(ev.destination?.port)
+		assertSame(vv2.model!!.getInput(), tail.destination?.port)
+		assertNull(tail.origin?.port)
 	}
 
 	@Test
@@ -89,10 +89,10 @@ class EdgeViewSplitterJoinerTest {
 
 		val tail = EdgeViewSplitterJoiner.split(ev, 0, Point2D(50, 0)) { edgeViewFactory.createEdgeView(it)}
 
-		assertSame(vv1.model!!.getOutput(), ev.originPort)
-		assertNull(ev.destinationPort)
-		assertSame(vv2.model!!.getInput(), tail.destinationPort)
-		assertNull(tail.originPort)
+		assertSame(vv1.model!!.getOutput(), ev.origin?.port)
+		assertNull(ev.destination?.port)
+		assertSame(vv2.model!!.getInput(), tail.destination?.port)
+		assertNull(tail.origin?.port)
 	}
 
 	@Test
@@ -108,7 +108,7 @@ class EdgeViewSplitterJoinerTest {
 		gv.add(ev2)
 
 		val vv = TestVerticeView()
-		ev2.connectToDestination(vv, vv.model!!.getInput())
+		ev2.connectToDestination(Connection(vv, vv.model!!.getInput()))
 
 		EdgeViewSplitterJoiner.join(ev1, ev2)
 
@@ -116,7 +116,7 @@ class EdgeViewSplitterJoinerTest {
 		kotlin.test.assertEquals(Point2D(0, 0), ev1.getSegmentPoint(0))
 		kotlin.test.assertEquals(Point2D(200, 0), ev1.getSegmentPoint(1))
 
-		kotlin.test.assertEquals(ev1.destination as TestVerticeView, vv)
+		kotlin.test.assertEquals(ev1.destination!!.connectableView as TestVerticeView, vv)
 		kotlin.test.assertNull(ev2.destination)
 	}
 
@@ -133,7 +133,7 @@ class EdgeViewSplitterJoinerTest {
 		gv.add(ev2)
 
 		val vv = TestVerticeView()
-		ev1.connectToOrigin(vv, vv.model!!.getOutput())
+		ev1.connectToOrigin(Connection(vv, vv.model!!.getOutput()))
 
 		EdgeViewSplitterJoiner.join(ev2, ev1)
 
@@ -141,7 +141,7 @@ class EdgeViewSplitterJoinerTest {
 		kotlin.test.assertEquals(Point2D(0, 0), ev2.getSegmentPoint(0))
 		kotlin.test.assertEquals(Point2D(200, 0), ev2.getSegmentPoint(1))
 
-		kotlin.test.assertEquals(vv, ev2.origin as TestVerticeView)
+		kotlin.test.assertEquals(vv, ev2.origin!!.connectableView as TestVerticeView)
 		kotlin.test.assertNull(ev1.origin)
 	}
 
@@ -158,10 +158,10 @@ class EdgeViewSplitterJoinerTest {
 		gv.add(ev2)
 
 		val vv1 = TestVerticeView()
-		ev1.connectToDestination(vv1, vv1.model!!.getOutput())
+		ev1.connectToDestination(Connection(vv1, vv1.model!!.getOutput()))
 
 		val vv2 = TestVerticeView()
-		ev2.connectToDestination(vv2, vv2.model!!.getOutput())
+		ev2.connectToDestination(Connection(vv2, vv2.model!!.getOutput()))
 
 		EdgeViewSplitterJoiner.join(ev1, ev2)
 
@@ -169,7 +169,7 @@ class EdgeViewSplitterJoinerTest {
 		kotlin.test.assertEquals(Point2D(-100, 0), ev1.getSegmentPoint(0))
 		kotlin.test.assertEquals(Point2D(100, 0), ev1.getSegmentPoint(1))
 
-		kotlin.test.assertEquals(vv2, ev1.origin as TestVerticeView)
-		kotlin.test.assertEquals(vv1, ev1.destination as TestVerticeView)
+		kotlin.test.assertEquals(vv2, ev1.origin!!.connectableView as TestVerticeView)
+		kotlin.test.assertEquals(vv1, ev1.destination!!.connectableView as TestVerticeView)
 	}
 }

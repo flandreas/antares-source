@@ -50,7 +50,7 @@ open class GraphViewBuilder<T : Any>(
 		edgeView.addSegmentPoint(Point2D.ZERO)
 		edgeView.addSegmentPoint(Point2D.ZERO)
 		graphView.add(edgeView)
-		GraphViewModule.graphViewConnectService.connectToOrigin(edgeView, from, from.vertice.getOutput())
+		GraphViewModule.graphViewConnectService.connectToOrigin(edgeView, Connection(from, from.vertice.getOutput()))
 		edgeView.moveDestinationEndPoint(toLocation.x, toLocation.y)
 		return edgeView
 	}
@@ -60,7 +60,7 @@ open class GraphViewBuilder<T : Any>(
 		edgeView.addSegmentPoint(Point2D.ZERO)
 		edgeView.addSegmentPoint(Point2D.ZERO)
 		graphView.add(edgeView)
-		GraphViewModule.graphViewConnectService.connectToDestination(edgeView, to, to.vertice.getInput())
+		GraphViewModule.graphViewConnectService.connectToDestination(edgeView, Connection(to, to.vertice.getInput()))
 		edgeView.moveOriginEndPoint(fromLocation.x, fromLocation.y)
 		return edgeView
 	}

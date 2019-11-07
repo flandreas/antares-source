@@ -108,7 +108,7 @@ class DigitalEdgeViewNetAnimation(
 	private fun setupEdgeAnimation(predecessor: DigitalEdgeView?, edgeView: DigitalEdgeView, originConnectable: ConnectableView) {
 		LOG.trace("Setup EdgeView animation for output of ${originConnectable::class.simpleName}")
 
-		val isReverse = originConnectable === edgeView.destination
+		val isReverse = originConnectable === edgeView.destination?.connectableView
 		val animationView = DigitalEdgeAnimationView(
 			edgeView,
 			startEdgeView.model!!.signalBuffer as DigitalSignal,
@@ -162,12 +162,12 @@ class DigitalEdgeViewNetAnimation(
 			val animationView = task.target as DigitalEdgeAnimationView
 
 			if (animationView.reverseDirection) {
-				if (animationView.edgeView.origin is NodeView<*>) {
-					processNode(animationView.edgeView, animationView.edgeView.origin as NodeView<*>)
+				if (animationView.edgeView.origin?.connectableView is NodeView<*>) {
+					processNode(animationView.edgeView, animationView.edgeView.origin!!.connectableView as NodeView<*>)
 				}
 			} else {
-				if (animationView.edgeView.destination is NodeView<*>) {
-					processNode(animationView.edgeView, animationView.edgeView.destination as NodeView<*>)
+				if (animationView.edgeView.destination?.connectableView is NodeView<*>) {
+					processNode(animationView.edgeView, animationView.edgeView.destination!!.connectableView as NodeView<*>)
 				}
 			}
 

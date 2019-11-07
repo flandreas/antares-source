@@ -68,13 +68,13 @@ class DigitalEdgeAnimationView(
 
 		if (edgeView.netView!!.style == NetViewStyle.LINE) {
 			if (reverseDirection) {
-				if (edgeView.origin is NodeView<*>) {
+				if (edgeView.origin?.connectableView is NodeView<*>) {
 					artificialNodeView = DigitalNodeView(styleProvider, ExecutionModule.currentSystemSpeedCategory,
 						DummyNet(signal), NetViewStyle.LINE)
 					artificialNodeView!!.location = edgeView.getSegmentPoint(0)
 				}
 			} else {
-				if (edgeView.destination is NodeView<*>) {
+				if (edgeView.destination?.connectableView is NodeView<*>) {
 					artificialNodeView = DigitalNodeView(styleProvider, ExecutionModule.currentSystemSpeedCategory,
 						DummyNet(signal), NetViewStyle.LINE)
 					artificialNodeView!!.location = edgeView.getSegmentPoint(edgeView.segmentPointCount - 1)

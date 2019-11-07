@@ -59,14 +59,14 @@ class SplitEdgeViewCommandTest {
 		assertSame(testGraphView.net, testGraphView.v1.getOutput<Boolean>().net)
 
 		// View assertions
-		val nodeView = newEdgeView.origin as NodeView<Boolean>
-		assertSame(testGraphView.vv1, testGraphView.ev.origin as TestVerticeView)
-		assertSame(nodeView, testGraphView.ev.destination as NodeView<Boolean>)
+		val nodeView = newEdgeView.origin?.connectableView as NodeView<Boolean>
+		assertSame(testGraphView.vv1, testGraphView.ev.origin?.connectableView as TestVerticeView)
+		assertSame(nodeView, testGraphView.ev.destination?.connectableView as NodeView<Boolean>)
 		assertEquals(nodeView.location, testGraphView.ev.getSegmentPoint(testGraphView.ev.segmentPointCount - 1))
 
 		val ev = nodeView.getOutgoingEdgeViews()[1]
-		assertSame(nodeView, ev.origin as NodeView<Boolean>)
-		assertSame(testGraphView.vv2, ev.destination as TestVerticeView)
+		assertSame(nodeView, ev.origin?.connectableView as NodeView<Boolean>)
+		assertSame(testGraphView.vv2, ev.destination?.connectableView as TestVerticeView)
 		assertEquals(nodeView.location, ev.getSegmentPoint(0))
 	}
 }

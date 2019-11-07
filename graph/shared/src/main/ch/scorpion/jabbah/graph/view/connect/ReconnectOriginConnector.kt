@@ -9,8 +9,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.view.ConnectableView
+import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
@@ -20,17 +19,13 @@ class ReconnectOriginConnector(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractReconnectConnector(EdgeViewEndpointType.ORIGIN, connectService, eventBus) {
 
-	/** The [ConnectableView] to which the origin of the [EdgeView] was previously connected. */
-	private var origin: ConnectableView? = null
-
-	/** The [Port] to which the origin of the [EdgeView] was previously connected. */
-	private var originPort: Port<Any>? = null
+	/** The old origin [Connection] of the [EdgeView]. */
+	private var oldOrigin: Connection<Any>? = null
 
 	override fun beginDragging(context: EditInputEventContext) {
 		super.beginDragging(context)
 
-		origin = edgeView!!.origin
-		originPort = edgeView!!.originPort as Port<Any>
+		oldOrigin = edgeView!!.origin
 		pressLocation = context.location
 
 		connectService.unconnectFromOrigin(edgeView!!)
@@ -43,36 +38,33 @@ class ReconnectOriginConnector(
 	}
 
 	override fun completeDragConnecting(context: EditInputEventContext) {
-		val newConnectableView = targetPortView?.owner
-		val newPort = targetPortView?.port as Port<Any>?
+		val newConnection = targetPortView?.createConnection() as Connection<Any>?
 
-		if (newConnectableView != null) {
-			connectService.connectToOrigin(edgeView!! as EdgeView<Any>, newConnectableView, newPort)
+		if (newConnection != null) {
+			connectService.connectToOrigin(edgeView!!, newConnection)
 		}
 
 		context.editor.commandManager.beginTransaction(
 			command = ReconnectOriginCommand(
 				editor = context.editor,
 				service = connectService,
-				edgeView = edgeView!! as EdgeView<Any>,
-				oldConnectableView = origin!!,
-				oldPort = originPort!!,
+				edgeView = edgeView!!,
+				oldConnection = oldOrigin!!,
 				newPoint = context.location,
-				newConnectableView = newConnectableView,
-				newPort = newPort
+				newConnection = newConnection
 			),
 			register = true)
 
 		if (pressLocation.distance(context.x, context.y) < MIN_DRAG_DISTANCE) {
 			context.editor.commandManager.rollbackTransaction()
-			eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = origin as Component, messageKey = "graph.reconnect.abort.msg"))
+			eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = oldOrigin!!.connectableView as Component, messageKey = "graph.reconnect.abort.msg"))
 		} else {
 			context.editor.commandManager.commitTransaction()
 		}
 	}
 
 	override fun cancel(editor: Editor) {
-		connectService.connectToOrigin(edgeView!!, origin!!, originPort)
+		connectService.connectToOrigin(edgeView!!, oldOrigin!!)
 	}
 }
 
@@ -80,26 +72,24 @@ private class ReconnectOriginCommand(
 	editor: Editor,
 	private val service: GraphViewConnectService,
 	private val edgeView: EdgeView<Any>,
-	private val oldConnectableView: ConnectableView,
-	private val oldPort: Port<Any>,
+	private val oldConnection: Connection<Any>,
 	private val newPoint: Point2D,
-	private val newConnectableView: ConnectableView?,
-	private val newPort: Port<Any>?
+	private val newConnection: Connection<Any>?
 ) : AbstractCommand("graph.command.reconnect", editor) {
 
 	override fun execute() {
 		service.unconnectFromOrigin(edgeView)
-		if (newConnectableView != null) {
-			service.connectToOrigin(edgeView, newConnectableView, newPort)
+		if (newConnection != null) {
+			service.connectToOrigin(edgeView, newConnection)
 		} else {
 			edgeView.moveOriginEndPoint(newPoint.x, newPoint.y)
 		}
 	}
 
 	override fun undo() {
-		if (newConnectableView != null) {
+		if (newConnection != null) {
 			service.unconnectFromOrigin(edgeView)
 		}
-		service.connectToOrigin(edgeView, oldConnectableView, oldPort)
+		service.connectToOrigin(edgeView, oldConnection)
 	}
 }

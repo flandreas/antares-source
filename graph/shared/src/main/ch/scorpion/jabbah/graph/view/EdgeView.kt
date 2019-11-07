@@ -14,6 +14,23 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
+import ch.scorpion.jabbah.graph.view.port.PortView
+
+/**
+ * Represents the connection of an [EdgeView] with a [ConnectableView] and one of its [Port] (if any).
+ */
+data class Connection<T : Any>(
+	val connectableView: ConnectableView,
+	val port: Port<T>? = null
+) {
+
+	val portView: PortView<T>? get() = port?.let { connectableView.getPortView(it) }
+
+	val portConnectionPoint : Point2D get() = connectableView.getPortConnectionPoint(port)
+
+	fun getPortConnectionLayoutDirections(edgeView: EdgeView<*>, refPoint: Point2D): Set<Direction> =
+		connectableView.getPortConnectionLayoutDirections(edgeView, port, refPoint)
+}
 
 /**
  * An [EdgeView] is a part of a [NetView] that connects a [Port] of an origin [VerticeView]
@@ -38,17 +55,11 @@ interface EdgeView<T: Any> : NetViewElement<T> {
 		const val edgeCornerDistance: Int = 15
 	}
 
-	/** The [ConnectableView] from which this [EdgeView] originates.*/
-    var origin: ConnectableView?
+	/** The [Connection] at the origin of this [EdgeView] (i.e. at the [Polyline]'s first point). */
+	val origin: Connection<T>?
 
-    /** The [Port] of the model of [origin] where this [EdgeView] originates.*/
-    var originPort: Port<T>?
-
-    /** The [ConnectableView] that is the destination of this [EdgeView].*/
-    var destination: ConnectableView?
-
-    /** The [Port] of the model of [destination] that is the destination of [EdgeView].*/
-    var destinationPort: Port<T>?
+	/** The [Connection] at the destination of this [EdgeView] (i.e. at the [Polyline]'s last point). */
+	val destination: Connection<T>?
 
     /** Returns the number of segment points of this [EdgeView].*/
     val segmentPointCount: Int
@@ -121,18 +132,18 @@ interface EdgeView<T: Any> : NetViewElement<T> {
     /**
      * Connects this [EdgeView] to the [Port] of the origin [ConnectableView].
      * Note that this method does **NOT** establish the connection on the model layer.
-     * @param origin the [ConnectableView] from which this [EdgeView] originates, or `null` to
-     * disconnect this [EdgeView] from its former origin [ConnectableView].
      */
-    fun connectToOrigin(origin: ConnectableView?, port: Port<T>?)
+    fun connectToOrigin(connection: Connection<T>)
+
+	fun unconnectFromOrigin()
 
     /**
      * Connects this [EdgeView] to the [Port] of the destination [ConnectableView].
      * Note that this method does **NOT** establish the connection on the model layer.
-     * @param destination the [ConnectableView] that is the destination of this [EdgeView], or `null`
-     * to disconnect this [EdgeView] fro its former destination [ConnectableView].
      */
-    fun connectToDestination(destination: ConnectableView?, port: Port<T>?)
+    fun connectToDestination(connection: Connection<T>)
+
+	fun unconnectFromDestination()
 
     /** Moves the point with the specified index to a new location. */
     fun movePoint(index: Int, x: Double, y: Double)

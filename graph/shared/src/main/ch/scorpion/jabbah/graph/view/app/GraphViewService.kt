@@ -63,10 +63,10 @@ open class GraphViewServiceImpl(
 	private fun unconnectDeletedVerticeView(verticeView: VerticeView<*>, graphView: GraphView<*>) {
 		LOG.debug("unconnectDeletedVerticeView for verticeView ${verticeView.id}")
 		graphView.getEdgeViews()
-			.filter { ev -> ev.origin === verticeView }
+			.filter { ev -> ev.origin?.connectableView === verticeView }
 			.forEach { ev -> commandManager.execute(UnconnectEdgeViewOriginCommand(connectService, ev)) }
 		graphView.getEdgeViews()
-			.filter { ev -> ev.destination === verticeView }
+			.filter { ev -> ev.destination?.connectableView === verticeView }
 			.forEach { ev -> commandManager.execute(UnconnectEdgeViewDestinationCommand(connectService, ev)) }
 	}
 
@@ -93,10 +93,8 @@ private class UnconnectEdgeViewCommand(
 	private val edgeView: EdgeView<Any>
 ) : AbstractCommand("graph.command.unconnectEdgeView", null) {
 
-	private val origPortView: PortView<Any>? =
-		if (edgeView.originPort != null) edgeView.origin!!.getPortView(edgeView.originPort!!) else null
-	private val destPortView: PortView<Any>? =
-		if (edgeView.destinationPort != null) edgeView.destination!!.getPortView(edgeView.destinationPort!!) else null
+	private val origin = edgeView.origin
+	private val destination = edgeView.destination
 
 	private lateinit var joinResults: Pair<JoinEdgeViewsResult<Any>?>
 
@@ -106,9 +104,7 @@ private class UnconnectEdgeViewCommand(
 
 	override fun undo() {
 		if (joinResults.first == null) {
-			if (origPortView != null) {
-				connectService.connectToOrigin(edgeView, origPortView.owner!!, origPortView.port)
-			}
+			origin?.let { connectService.connectToOrigin(edgeView, it) }
 		} else {
 			connectService.split(
 				graphView,
@@ -121,9 +117,7 @@ private class UnconnectEdgeViewCommand(
 		}
 
 		if (joinResults.second == null) {
-			if (destPortView != null) {
-				connectService.connectToDestination(edgeView, destPortView.owner!!, destPortView.port)
-			}
+			destination?. let { connectService.connectToDestination(edgeView, destination) }
 		} else {
 			connectService.split(
 				graphView,
@@ -142,15 +136,14 @@ private class UnconnectEdgeViewOriginCommand(
 	private val edgeView: EdgeView<Any>
 ) : AbstractCommand("graph.command.unconnectEdgeViewOrigin", null) {
 
-	private val connectableView = edgeView.origin
-	private val port = edgeView.originPort
+	private val connection = edgeView.origin!!
 
 	override fun execute() {
 		connectService.unconnectEdgeViewOrigin(edgeView)
 	}
 
 	override fun undo() {
-		connectService.connectToOrigin(edgeView, connectableView!!, port)
+		connectService.connectToOrigin(edgeView, connection)
 	}
 }
 
@@ -159,14 +152,13 @@ private class UnconnectEdgeViewDestinationCommand(
 	private val edgeView: EdgeView<Any>
 ) : AbstractCommand("graph.command.unconnectEdgeViewDestination", null) {
 
-	private val connectableView = edgeView.destination
-	private val port = edgeView.destinationPort
+	private val connection = edgeView.destination!!
 
 	override fun execute() {
 		connectService.unconnectEdgeViewDestination(edgeView)
 	}
 
 	override fun undo() {
-		connectService.connectToDestination(edgeView, connectableView!!, port)
+		connectService.connectToDestination(edgeView, connection)
 	}
 }
