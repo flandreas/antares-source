@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.ActorListener
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 
 /**
  * Organizes consecutive animations of bits flowing through a net of [DigitalEdgeView]s.
@@ -31,13 +32,13 @@ import ch.scorpion.jabbah.execution.actor.ActorListener
  * When the [DigitalEdgeAnimationView] runs into a [DigitalNodeView], the animation is split into an new, individual
  * animation for every outgoing [DigitalEdgeView]. The speed of these individual animations is controlled so that
  * all animations end at the same time, even if some of them have to travel along a shorter path than others.
- * Therefore, animations on longer paths travel faster, while animations on shorter path travel slower.
+ * Therefore, animations on longer paths travel faster, while those on shorter paths travel slower.
  */
 class DigitalEdgeViewNetAnimation(
 	private val actorListener: ActorListener,
 	private val actorData: ActorData,
 	val startEdgeView: DigitalEdgeView,
-	val originPort: DigitalPort,
+	val startPort: DigitalPort,
 	val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
 	val animator: Animator = AnimationModule.animator,
 	val scheduler: Scheduler = ExecutionModule.scheduler,
@@ -80,7 +81,7 @@ class DigitalEdgeViewNetAnimation(
 	private val animationSplitter = AnimationSplitter()
 
 	init {
-		setupEdgeAnimation(null, startEdgeView, startEdgeView.getConnectableView(originPort)!!)
+		setupEdgeAnimation(null, startEdgeView, startEdgeView.getConnection(startPort)!!.connectableView)
 	}
 
 	/**
@@ -105,17 +106,19 @@ class DigitalEdgeViewNetAnimation(
 			.forEach { setupEdgeAnimation(predecessor, it, nodeView) }
 	}
 
-	private fun setupEdgeAnimation(predecessor: DigitalEdgeView?, edgeView: DigitalEdgeView, originConnectable: ConnectableView) {
-		LOG.trace("Setup EdgeView animation for output of ${originConnectable::class.simpleName}")
+	private fun setupEdgeAnimation(predecessor: DigitalEdgeView?, edgeView: DigitalEdgeView, startConnectable: ConnectableView) {
+		LOG.trace("Setup EdgeView animation for output of ${startConnectable::class.simpleName}")
 
-		val isReverse = originConnectable === edgeView.destination?.connectableView
+		val isReverse = edgeView.getConnectionEndpointType(startConnectable) != EdgeViewEndpointType.ORIGIN
 		val animationView = DigitalEdgeAnimationView(
 			edgeView,
 			startEdgeView.model!!.signalBuffer as DigitalSignal,
-			originPort.signalRepresentation,
+			startPort.signalRepresentation,
 			isReverse,
 			styleProvider
 		)
+		animationView.location = if (isReverse) edgeView.polyline.getLastPoint() else edgeView.polyline.getFirstPoint()
+
 		val predecessorInfo: AnimationInfo? = if (predecessor != null) predecessorMap[predecessor] else null
 
 		val sequence: Sequence<Point2D> = if (isReverse) {
@@ -137,12 +140,6 @@ class DigitalEdgeViewNetAnimation(
 			remainingLength = sequence.size,
 			visitedLength = oldVisitedLength + edgeView.polyline.length
 		)
-
-		if (isReverse) {
-			animationView.location = edgeView.getSegmentPoint(edgeView.segmentPointCount - 1)
-		} else {
-			animationView.location = edgeView.getSegmentPoint(0)
-		}
 
 		drawingView.animationContainer.add(animationView)
 		animationView.validate()

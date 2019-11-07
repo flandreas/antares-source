@@ -145,7 +145,7 @@ class GraphViewAnimator(
 		}
 	}
 
-	private fun handleNetActingRequested(net: Net<*>/*, changedPort: DigitalPort*/, actorData: GraphActorData) {
+	private fun handleNetActingRequested(net: Net<*>, actorData: GraphActorData) {
 		// The acting of a Net has been requested, because an Output of a Vertice has asserted
 		// a signal onto the net (which is still buffered in the Net and not yet forwarded).
 		// Setup a animation of the signal that will flow along the corresponding EdgeView,
@@ -153,7 +153,7 @@ class GraphViewAnimator(
 
 		LOG.trace("handleNetActingRequested for Net '${net.id}'")
 
-		val  changedPort: DigitalPort = actorData.changedPort as DigitalPort
+		val changedPort: DigitalPort = actorData.changedPort as DigitalPort
 
 		if (!requireEdgeViewAnimation()) {
 			return
@@ -174,7 +174,7 @@ class GraphViewAnimator(
 			actorListener = this,
 			actorData = actorData,
 			startEdgeView = edgeView,
-			originPort = changedPort,
+			startPort = changedPort,
 			drawingView = drawingView,
 			animator = animator,
 			scheduler = scheduler,
@@ -182,7 +182,7 @@ class GraphViewAnimator(
 		))
 
 		EditModule.attentionDrawerFactory.invoke().drawAttentionTo(
-			edgeView.polyline.getFirstPoint(),
+			edgeView.getConnectionEndpointType(edgeView.getConnection(changedPort)!!)!!.getLocation(edgeView),
 			drawingView,
 			animator
 		)
@@ -193,7 +193,7 @@ class GraphViewAnimator(
 	private fun handleNetActed(net: Net<*>, data: ActorData) {
 		// The simulation of a Net has been scheduled by the Scheduler. Lookup all pending net animations
 		// and start them. If there are no pending net animations, the acted Net belongs to a SubVertice
-		// whose views are not displayed by the GraphView managed by this SimulationDriver.
+		// whose views are not displayed by the GraphView managed by this GraphViewAnimator.
 
 		LOG.trace("Handling SimulationEvent for Net '${net.id}'")
 

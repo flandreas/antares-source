@@ -14,7 +14,7 @@ interface GraphActorData : ActorData {
 	 */
 	val changedPort: Port<*>?
 
-	/** Determines whether the signal change occured on an input.*/
+	/** Determines whether the signal change occurred on an input.*/
 	val isInput: Boolean
 
 	/** Returns the current signal of a particular [Port] at the beginning of an execution step.*/

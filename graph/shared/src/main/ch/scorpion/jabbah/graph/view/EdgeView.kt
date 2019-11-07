@@ -9,10 +9,7 @@ import ch.scorpion.jabbah.draw.polyline.PolylineShape
 import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
-import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
-import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
-import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
-import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
+import ch.scorpion.jabbah.graph.view.net.edge.*
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 
@@ -94,10 +91,18 @@ interface EdgeView<T: Any> : NetViewElement<T> {
 	val edgeToPortConnectorSupplier: () -> EdgeToPortConnector
 
     /**
-     * Returns the [ConnectableView] that corresponds with the specified [Port], which can be either the
-     * [origin] or the [destination] [ConnectableView].
+     * Returns the [Connection] that corresponds with the specified [Port], which can be either the
+     * [origin] or the [destination] [Connection].
      */
-    fun getConnectableView(port: Port<T>): ConnectableView?
+    fun getConnection(port: Port<T>): Connection<T>?
+
+	/**
+	 * Returns the [EdgeViewEndpointType] that represents the specified [Connection], or `null` if
+	 * neither [origin] nor [destination] equals [connection].
+	 */
+	fun getConnectionEndpointType(connection: Connection<*>): EdgeViewEndpointType?
+
+	fun getConnectionEndpointType(connectableView: ConnectableView): EdgeViewEndpointType?
 
     /** Returns the start [Point2D] of the segment with the specified index.*/
     fun getSegmentPoint(index: Int): Point2D

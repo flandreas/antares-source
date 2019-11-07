@@ -28,6 +28,7 @@ import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.*
 import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -121,14 +122,30 @@ open class EdgeViewImpl<T : Any>(
 			update()
 		}
 
-	override fun getConnectableView(port: Port<T>): ConnectableView? {
+	override fun getConnection(port: Port<T>): Connection<T>? {
 		if (port === origin?.port) {
-			return origin?.connectableView
+			return origin
 		}
 		if (port === destination?.port) {
-			return destination?.connectableView
+			return destination
 		}
 		return null
+	}
+
+	override fun getConnectionEndpointType(connection: Connection<*>): EdgeViewEndpointType? {
+		return when(connection) {
+			origin -> ORIGIN
+			destination -> DESTINATION
+			else -> null
+		}
+	}
+
+	override fun getConnectionEndpointType(connectableView: ConnectableView): EdgeViewEndpointType? {
+		return when(connectableView) {
+			origin?.connectableView -> ORIGIN
+			destination?.connectableView -> DESTINATION
+			else -> null
+		}
 	}
 
 	override fun getSegmentPoint(index: Int): Point2D {
