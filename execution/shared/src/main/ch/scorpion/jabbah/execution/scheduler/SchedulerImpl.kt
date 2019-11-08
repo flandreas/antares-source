@@ -2,23 +2,23 @@ package ch.scorpion.jabbah.execution.scheduler
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.PriorityQueue
-import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.ActionListener
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.time.*
+import ch.scorpion.jabbah.base.time.ControlledTimeService
+import ch.scorpion.jabbah.base.time.TimeService
+import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
-import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
-import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationState.*
+import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationState.ACTIVE
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationState.PASSIVE
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
-import kotlin.math.max
 import kotlin.math.min
 import kotlin.reflect.KClass
 
@@ -27,28 +27,24 @@ import kotlin.reflect.KClass
  */
 class SchedulerImpl(
 	private val timeService: TimeService = BaseModule.timeService,
-	timer: Timer = System.get().createTimer(),
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val noiseGeneratorHolder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
-	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory
+	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
+	private val task: SchedulerTask = TimedSchedulerTask(System.get().createTimer(), eventBus, currentSystemSpeedCategory)
 ) : Scheduler {
 
 	companion object {
+
 		/** The custom name [String] of the limit [SystemSpeedCategory] in [Properties] for sending [SchedulerEvent]s.*/
 		const val PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT = "execution.scheduler.eventSystemSpeedLimit"
 
 		private val LOG by logger(SchedulerImpl::class)
 		private const val SETTING_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
 		private const val SETTING_STOP_ON_ISSUE = "execution.scheduler.stopOnIssue"
-
-		private const val SLOWDOWN_FACTOR = 0.5
 	}
 
 	/** The queue of pending [Slot]s ordered by ascending execution time.*/
 	private val queue = PriorityQueue<Slot>()
-
-	/** The object that is repeatedly called by the specified [Timer] in order to perform execution steps.*/
-	private val task = Task(timer)
 
 	/** Determines whether this [Scheduler] is active or not.*/
 	private var activationState: SchedulerActivationState = PASSIVE
@@ -65,7 +61,8 @@ class SchedulerImpl(
 	private var realStartTime: Long = 0
 
 	init {
-		eventBus.register(SystemSpeedEvent::class) { task.adaptToSystemSpeed() }
+		task.bind(this)
+
 		eventBus.register(IssueCollectorEvent::class) {
 			if (isActive && isStopOnIssue && it.issue != null) {
 				System.get().invokeLater {
@@ -83,7 +80,7 @@ class SchedulerImpl(
 
 	override val numberOfRemainingSlots: Int get() = queue.size
 
-	override val timerInterval: Int get() = task.timerInterval
+	override val isQueueEmpty: Boolean get() = queue.isEmpty
 
 	override var isActive: Boolean
 		get() = activationState == ACTIVE
@@ -147,17 +144,17 @@ class SchedulerImpl(
 			throw IllegalStateException("cannot step when not paused")
 		}
 		do {
-			val result = executionStep()
+			val result = execute()
 		} while (result.recalculated && !result.breakpoint)
 	}
 
 	override fun proceedTo(time: Long) {
 		LOG.trace("Proceed to ${StringUtils.formatLong(time)}")
 		while (!queue.isEmpty && executionTime < time) {
-			executionStep()
+			execute()
 		}
 		// Repeat because time freezing slots update relative time at the end of executionStep
-		executionStep()
+		execute()
 	}
 
 	override fun printSchedule() {
@@ -258,7 +255,7 @@ class SchedulerImpl(
 				}
 			}
 			timeService.setTimeNanos(slot.relativeTime)
-			executionStep()
+			execute()
 		}
 	}
 
@@ -343,16 +340,8 @@ class SchedulerImpl(
 
 	private fun getRelativeRealTime(): Long = timeService.nowNanos() - realStartTime
 
-	private fun getNextExecutableSlot(): Slot? {
-		val slot = queue.peek()
-		if (slot == null || !slot.isExecutable) {
-			return null
-		}
-		return slot
-	}
-
 	/** Executes all [Request]s of the next executable [Slot].*/
-	private fun executionStep(): ExecutionStepResult {
+	override fun execute(): ExecutionStepResult {
 
 		val optionalSlot = queue.peek()
 		if (optionalSlot == null) {
@@ -404,66 +393,6 @@ class SchedulerImpl(
 		postSchedulerStateEvent()
 		return ExecutionStepResult(recalculated, breakpoint)
 	}
-
-	/** Repeatedly called by the [Timer] in order to perform an execution step.*/
-	private inner class Task(private val timer: Timer) : ActionListener {
-
-		val timerInterval: Int get() = timer.interval
-
-		init {
-			timer.initialize(calculateTimerInterval()) { actionPerformed(it) }
-		}
-
-		/**
-		 * Called by the [Timer] that drives this [Task].
-		 *
-		 * Due to the types in the interface of a [Timer], the interval of a [Timer] can't be smaller than 1 ms.
-		 * If the system should run at maximum speed, this interval is too long. We therefore perform more than
-		 * one execution step at a single timer tick.
-		 */
-		override fun actionPerformed(event: ActionEvent) {
-			if (currentSystemSpeedCategory.systemSpeed.isMaximum) {
-				val beginTime = System.get().currentTimeMillis()
-				while (!queue.isEmpty && System.get().currentTimeMillis() - beginTime < 20) {
-					executionStep()
-				}
-			} else {
-				var count = 0
-				while (count < 10 && executionStep().recalculated) {
-					count++
-				}
-			}
-		}
-
-		fun adaptToSystemSpeed() {
-			timer.interval = calculateTimerInterval()
-		}
-
-		private fun calculateTimerInterval(): Int {
-			val interval = max(1.0, SLOWDOWN_FACTOR * (SystemSpeed.MAX_SPEED - currentSystemSpeedCategory.systemSpeed.speed)).toInt()
-			LOG.debug("interval = $interval")
-			return interval
-		}
-
-		fun startIfNeeded() {
-			if (!isPaused && !queue.isEmpty && !timer.isRunning()) {
-				LOG.trace("Starting timer")
-				timer.start()
-			}
-		}
-
-		fun stop() {
-			LOG.trace("Stopping timer")
-			timer.stop()
-		}
-	}
-
-	/**
-	 * Represents the result of a single execution step performed by [Task].
-	 * @property recalculated `true`if at least one [Actor] has been recalculated
-	 * @property breakpoint TODO Documentation
-	 */
-	private data class ExecutionStepResult(val recalculated: Boolean, val breakpoint: Boolean)
 
 	/**
 	 * A [Slot] is an entry in the queue of the [Scheduler] and contains all [Request]s of [Actor]s

@@ -20,6 +20,8 @@ interface Scheduler : SignalHandler {
 
     var isPaused: Boolean
 
+	val isQueueEmpty: Boolean
+
     /** Determines whether this [Scheduler] stops execution when an [Issue] occurs while executing. */
     var isStopOnIssue: Boolean
 
@@ -32,10 +34,11 @@ interface Scheduler : SignalHandler {
 	 */
 	var isSimulationTimeStatusEnabled: Boolean
 
-	/** The time (in milliseconds) between two ticks of the [Timer] that drives this [Scheduler].*/
-	val timerInterval: Int
-
+	/** Performs a single execution step until the next breakpoint. */
     fun step()
+
+	/** Repeatedly called by a [SchedulerTask] to drive the execution. */
+	fun execute(): ExecutionStepResult
 
     /**
      * Proceed executing scheduling requests until there are no more left, or until the specified execution time has
@@ -47,6 +50,13 @@ interface Scheduler : SignalHandler {
     /** Prints the pending scheduling request to the INFO log. Should only be used on explicit demand when debugging. */
     fun printSchedule()
 }
+
+/**
+ * Represents the result of a single execution step performed by a [Scheduler].
+ * @property recalculated `true`if at least one [Actor] has been recalculated
+ * @property breakpoint TODO Documentation
+ */
+data class ExecutionStepResult(val recalculated: Boolean, val breakpoint: Boolean)
 
 /** Posted by a [Scheduler] during execution phase.*/
 class SchedulerEvent(val type: Type, val scheduler: Scheduler, val actor: Actor) {

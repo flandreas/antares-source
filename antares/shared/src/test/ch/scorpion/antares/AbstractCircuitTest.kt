@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
+import ch.scorpion.jabbah.execution.scheduler.TimedSchedulerTask
 import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -37,6 +38,7 @@ abstract class AbstractCircuitTest {
 	protected lateinit var timeService: ControlledTimeService
 	protected lateinit var timer: Timer
 	protected lateinit var scheduler: SchedulerImpl
+	protected lateinit var task: TimedSchedulerTask
 
 	@BeforeTest
 	open fun setup() {
@@ -44,7 +46,8 @@ abstract class AbstractCircuitTest {
 		eventBus = BaseModule.eventBus
 		timeService = ControlledTimeService()
 		timer = ControlledTimer(timeService)
-		scheduler = SchedulerImpl(timeService, timer, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()))
+		task = TimedSchedulerTask(ControlledTimer(timeService))
+		scheduler = SchedulerImpl(timeService, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()), task = task)
 	}
 
 	abstract fun getCircuitView(): GraphView<GraphElementView<*>>
@@ -87,12 +90,11 @@ abstract class AbstractCircuitTest {
 	 */
 	protected fun proceedFrozenTimeToMillis(time: Long) {
 		timeService.setTimeMillis(time)
-		timeService.setTimeMillis(time + scheduler.timerInterval + 1)
+		timeService.setTimeMillis(time + timer.interval + 1)
 	}
 
 	protected fun proceedFrozenTimeToNanos(time: Long) {
 		timeService.setTimeMillis(time / MILLION)
-		timeService.setTimeMillis((time + scheduler.timerInterval + 1) / MILLION)
+		timeService.setTimeMillis((time + timer.interval + 1) / MILLION)
 	}
-
 }

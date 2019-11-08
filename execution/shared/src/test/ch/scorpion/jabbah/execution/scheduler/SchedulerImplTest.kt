@@ -42,9 +42,9 @@ class SchedulerImplTest {
 	    timeService = ControlledTimeService()
         scheduler = SchedulerImpl(
             timeService,
-            ControlledTimer(timeService),
             eventBus,
-            NoiseGeneratorHolder(NoNoiseGenerator(), eventBus)
+	        NoiseGeneratorHolder(NoNoiseGenerator(), eventBus),
+	        task = TimedSchedulerTask(ControlledTimer(timeService))
         )
     }
 

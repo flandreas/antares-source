@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.base.time
 
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.ActionListener
 import ch.scorpion.jabbah.base.event.ActionListenerJvm
 
 /**
@@ -25,24 +24,9 @@ class RealTimeTimerJvm : Timer {
         timer = javax.swing.Timer(interval, ActionListenerJvm(handler))
     }
 
-    override fun start() {
-        if (timer == null) {
-            throw IllegalStateException("not yet initialized")
-        }
-        timer!!.start()
-    }
+    override fun start() = timer?.start() ?: throw IllegalStateException("not yet initialized")
 
-    override fun stop() {
-        if (timer == null) {
-            throw IllegalStateException("not yet initialized")
-        }
-        timer!!.stop()
-    }
+    override fun stop() = timer?.stop() ?: throw IllegalStateException("not yet initialized")
 
-    override fun isRunning(): Boolean {
-        if (timer == null) {
-            throw IllegalStateException("not yet initialized")
-        }
-        return timer!!.isRunning
-    }
+    override fun isRunning(): Boolean = timer?.isRunning ?: throw IllegalStateException("not yet initialized")
 }
