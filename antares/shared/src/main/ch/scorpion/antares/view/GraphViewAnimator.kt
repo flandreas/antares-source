@@ -151,7 +151,7 @@ class GraphViewAnimator(
 		// Setup a animation of the signal that will flow along the corresponding EdgeView,
 		// if requested by current settings.
 
-		LOG.trace("handleNetActingRequested for Net '${net.id}'")
+		scheduler.logActorTrace(net) { "handleNetActingRequested"}
 
 		val changedPort: DigitalPort = actorData.changedPort as DigitalPort
 
@@ -187,7 +187,7 @@ class GraphViewAnimator(
 			animator
 		)
 
-		LOG.trace("Registered EdgeView animation for EdgeView '${edgeView.id}'")
+		scheduler.logActorTrace(edgeView.model!!) { "Registered EdgeView animation for EdgeView '${edgeView.id}'" }
 	}
 
 	private fun handleNetActed(net: Net<*>, data: ActorData) {
@@ -195,7 +195,7 @@ class GraphViewAnimator(
 		// and start them. If there are no pending net animations, the acted Net belongs to a SubVertice
 		// whose views are not displayed by the GraphView managed by this GraphViewAnimator.
 
-		LOG.trace("handleNetActed for Net '${net.id}'")
+		scheduler.logActorTrace(net) { "handleNetActed" }
 
 		if (!requireEdgeViewAnimation()) {
 			net.actingVisualized(scheduler, this, data)
@@ -203,7 +203,7 @@ class GraphViewAnimator(
 		}
 
 		netAnimationMap[net]?.forEach {
-			LOG.trace("Starting DigitalEdgeViewNetAnimation for net ${net.id}")
+			scheduler.logActorTrace(net) { "Staring DigitalEdgeViewNetAnimation" }
 			val task = it.start()
 			task.addListener(object : AnimationTaskAdapter() {
 				override fun ended(task: AnimationTask) {
@@ -214,14 +214,12 @@ class GraphViewAnimator(
 	}
 
 	private fun handleGraphElementActingRequested(graphElement: GraphElement) {
-		LOG.trace("handleGraphElementActingRequested for GraphElement '${graphElement.id}'")
+		scheduler.logActorTrace(graphElement) { "handleGraphElementActingRequested" }
 
 		if (!requireVerticeGlowAnimation()) {
-			LOG.trace("VerticeView doesn't require glow animation")
 			return
 		}
 		if (graphElement.propagationDelay == 0L) {
-			LOG.trace("VerticeView would require glow animation, but propDelay is 0")
 			return
 		}
 
@@ -248,7 +246,7 @@ class GraphViewAnimator(
 	}
 
 	private fun handleGraphElementActed(graphElement: GraphElement) {
-		LOG.trace("handleGraphElementActed for GraphElement '${graphElement.id}'")
+		scheduler.logActorTrace(graphElement) { "handleGraphElementActed" }
 		if (!requireVerticeGlowAnimation()) {
 			return
 		}

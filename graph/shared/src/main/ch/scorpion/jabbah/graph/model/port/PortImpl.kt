@@ -187,7 +187,7 @@ open class PortImpl<T : Any>(
 			if (isOutputUndefined) {
 				withdrawSignal(signal, signalHandler, withDelay)
 			} else {
-				signalHandler.logTrace(System.get().getClass(this), portId) { "forwarding signal $signal into net '${net!!.id}'" }
+				signalHandler.logActorTrace(net!!) { "forwarding signal $signal into net" }
 				net!!.setSignal(signal, this, signalHandler, withDelay)
 			}
 			return

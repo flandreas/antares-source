@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationState.*
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import kotlin.math.max
@@ -50,13 +51,15 @@ class SchedulerImpl(
 	private val task = Task(timer)
 
 	/** Determines whether this [Scheduler] is active or not.*/
-	private var activationState: SchedulerActivationState = SchedulerActivationState.PASSIVE
+	private var activationState: SchedulerActivationState = PASSIVE
 
 	/** Determines whether this [Scheduler] is currently running or paused (single step mode).*/
 	private var runningState: SchedulerRunningState = SchedulerRunningState.RUNNING
 
 	/** The relative time [in ns] since execution has been started. */
 	private var relativeTime: Long = 0
+
+	private val formattedRelativeTime: String get() = StringUtils.formatLong(relativeTime)
 
 	/** Holds the absolute real time in nanoseconds of when the execution has been started.*/
 	private var realStartTime: Long = 0
@@ -83,7 +86,7 @@ class SchedulerImpl(
 	override val timerInterval: Int get() = task.timerInterval
 
 	override var isActive: Boolean
-		get() = activationState == SchedulerActivationState.ACTIVE
+		get() = activationState == ACTIVE
 		set(value) {
 			if (value == isActive) {
 				return
@@ -158,7 +161,7 @@ class SchedulerImpl(
 	}
 
 	override fun printSchedule() {
-		LOG.info("Scheduling queue at ${StringUtils.formatLong(relativeTime)} ns")
+		LOG.info("Scheduling queue at $formattedRelativeTime ns")
 		queue.elements().forEach { it.print() }
 	}
 
@@ -182,8 +185,8 @@ class SchedulerImpl(
 		}
 	}
 
-	private fun logActorTrace(actor: Actor, msg: () -> String) {
-		if (LOG.isTraceEnabled()) {
+	override fun logActorTrace(actor: Actor, msg: () -> String) {
+		if (LOG.isTraceEnabled() && actor.id == 56) {
 			LOG.trace("${StringUtils.formatLong(executionTime)} ns [${System.get().getClass(actor).simpleName} (${actor.id})]: ${msg.invoke()}")
 		}
 	}
@@ -285,14 +288,14 @@ class SchedulerImpl(
 	}
 
 	private fun addSlot(slot: Slot) {
-		LOG.trace("Add slot at ${StringUtils.formatLong(slot.relativeTime)}")
+		LOG.trace("Add slot ${StringUtils.formatLong(slot.relativeTime)}")
 		queue.add(slot)
 	}
 
 	/** Removes the [Slot] at the head of the queue.*/
 	private fun removeSlot(slot: Slot) {
 		if (!queue.isEmpty) {
-			LOG.trace("Remove slot at ${StringUtils.formatLong(slot.relativeTime)}")
+			LOG.trace("Remove slot ${StringUtils.formatLong(slot.relativeTime)}")
 			queue.remove(slot)
 			if (queue.isEmpty) {
 				task.stop()
@@ -307,7 +310,7 @@ class SchedulerImpl(
 
 	/** Resets the [Scheduler].*/
 	private fun reset() {
-		updateRelativeTime(0)
+		relativeTime = 0
 		queue.clear()
 	}
 
@@ -315,7 +318,7 @@ class SchedulerImpl(
 		LOG.debug("Scheduler started")
 		reset()
 		realStartTime = timeService.nowNanos()
-		activationState = SchedulerActivationState.ACTIVE
+		activationState = ACTIVE
 		eventBus.post(SchedulerActivationStateEvent(this))
 		task.startIfNeeded()
 	}
@@ -323,13 +326,19 @@ class SchedulerImpl(
 	private fun stop() {
 		LOG.debug("Scheduler stopped")
 		task.stop()
-		activationState = SchedulerActivationState.PASSIVE
+		activationState = PASSIVE
 		eventBus.post(SchedulerActivationStateEvent(this))
 		reset()
 	}
 
 	private fun updateRelativeTime(relativeTime: Long) {
-		this.relativeTime = relativeTime
+		if (relativeTime < this.relativeTime) {
+			LOG.error("--- ERROR: time is running backwards from $formattedRelativeTime to ${StringUtils.formatLong(relativeTime)}")
+		}
+		if (relativeTime > this.relativeTime) {
+			this.relativeTime = relativeTime
+			LOG.trace("${StringUtils.formatLong(executionTime)} ns Updated relative time")
+		}
 	}
 
 	private fun getRelativeRealTime(): Long = timeService.nowNanos() - realStartTime
@@ -344,7 +353,8 @@ class SchedulerImpl(
 
 	/** Executes all [Request]s of the next executable [Slot].*/
 	private fun executionStep(): ExecutionStepResult {
-		val optionalSlot = getNextExecutableSlot()
+
+		val optionalSlot = queue.peek()
 		if (optionalSlot == null) {
 			updateRelativeTime(getRelativeRealTime())
 			return ExecutionStepResult(recalculated = false, breakpoint = false)
@@ -352,11 +362,17 @@ class SchedulerImpl(
 
 		val slot: Slot = optionalSlot
 
-		LOG.trace("Execution step at $relativeTime ns, queue size is ${queue.size}")
+		if (!slot.isExecutable) {
+			updateRelativeTime(slot.relativeTime)
+			// TODO Can we pause the Timer here?
+			return ExecutionStepResult(recalculated = false, breakpoint = false)
+		}
+
+		LOG.trace("Execution step at $formattedRelativeTime ns, queue size is ${queue.size}")
 
 		// Resynchronize relative time with real time
 		if (!slot.timeFreeze) {
-			updateRelativeTime(getRelativeRealTime())
+			updateRelativeTime(min(slot.relativeTime, getRelativeRealTime()))
 		}
 
 		var recalculated = false

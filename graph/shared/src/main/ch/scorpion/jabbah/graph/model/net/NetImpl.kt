@@ -123,6 +123,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	override fun actingDone(signalHandler: SignalHandler, data: ActorData?) {
 		super.actingDone(signalHandler, data)
 		_signal = (data as GraphActorData).getSignal(1)
+		signalBuffer = _signal
 		stateChanged()
 		ports
 			.filter { it.portType.isInput && it != data.changedPort }

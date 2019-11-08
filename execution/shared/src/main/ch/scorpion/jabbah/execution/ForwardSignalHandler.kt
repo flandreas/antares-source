@@ -22,6 +22,10 @@ class ForwardSignalHandler : SignalHandler {
 		// empty
 	}
 
+	override fun logActorTrace(actor: Actor, msg: () -> String) {
+		// empty
+	}
+
 	override fun requestActingAfter(actor: Actor, delay: Long, data: ActorData) {
 		actor.act(this, data)
 	}

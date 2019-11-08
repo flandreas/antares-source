@@ -22,6 +22,9 @@ interface SignalHandler {
     /** Creates a trace log entry for tracing signal propagation. This allows central trace enabling/disabling.*/
     fun logTrace(clazz: KClass<*>, id: Int, msg: () -> String)
 
+	/** Creates a trace log entry for tracing signal propagation. This allows central trace enabling/disabling.*/
+	fun logActorTrace(actor: Actor, msg: () -> String)
+
     /**
      * Asks this [SignalHandler] to recalculate the specified [Actor] after a given delay.
      *

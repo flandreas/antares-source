@@ -47,8 +47,6 @@ class DigitalEdgeViewNetAnimation(
 
 	companion object {
 
-		private val LOG by logger(DigitalEdgeViewNetAnimation::class)
-
 		// Note that the effective duration of an Animation already depends on [SystemSpeed] as implemented by [Animator].
 		// Additionally, as a [DigitalEdgeViewNetAnimation] is only used for [SystemSpeedCategory.Use],
 		// (which is defined below 33% of maximum [SystemSpeed]), the duration here represents 3 times the effective time.
@@ -107,8 +105,6 @@ class DigitalEdgeViewNetAnimation(
 	}
 
 	private fun setupEdgeAnimation(predecessor: DigitalEdgeView?, edgeView: DigitalEdgeView, startConnectable: ConnectableView) {
-		LOG.trace("Setup EdgeView animation for output of ${startConnectable::class.simpleName}")
-
 		val isReverse = edgeView.getConnectionEndpointType(startConnectable) != EdgeViewEndpointType.ORIGIN
 		val animationView = DigitalEdgeAnimationView(
 			edgeView,
