@@ -17,7 +17,7 @@ class NoiseMenu(
         noiseGenerators: List<NoiseGenerator>,
         holder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
         eventBus: EventBus = BaseModule.eventBus
-) : JMenu(Translations.getString("simulation.menu.noise")) {
+) : JMenu(Translations.getString("execution.menu.noise")) {
 
     init {
         val buttonGroup = ButtonGroup()

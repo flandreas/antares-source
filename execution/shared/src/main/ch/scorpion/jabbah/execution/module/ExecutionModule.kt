@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.execution.module
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
@@ -9,6 +11,8 @@ import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.noise.RandomNoiseGenerator
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
+import ch.scorpion.jabbah.execution.scheduler.SchedulerTask
+import ch.scorpion.jabbah.execution.scheduler.TimedSchedulerTask
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 
@@ -17,22 +21,25 @@ import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
  */
 object ExecutionModule : AbstractModule() {
 
-    val noNoiseGenerator = NoNoiseGenerator()
+	val noNoiseGenerator = NoNoiseGenerator()
 
-    val randomNoiseGenerator = RandomNoiseGenerator()
+	val randomNoiseGenerator = RandomNoiseGenerator()
 
-    val noiseGeneratorHolder: NoiseGeneratorHolder by lazy { NoiseGeneratorHolder(noNoiseGenerator) }
+	val noiseGeneratorHolder: NoiseGeneratorHolder by lazy { NoiseGeneratorHolder(noNoiseGenerator) }
 
-    val scheduler: Scheduler by lazy { SchedulerImpl() }
+	var schedulerTaskFactory: (EventBus) -> SchedulerTask = { TimedSchedulerTask() }
 
-    val currentSystemSpeedCategory: CurrentSystemSpeedCategory by lazy { CurrentSystemSpeedCategory() }
+	val scheduler: Scheduler by lazy { SchedulerImpl() }
 
-    val issueCollector: IssueCollector = IssueCollector(eventBus = BaseModule.eventBus, clearOnExecutionStart = true)
+	val currentSystemSpeedCategory: CurrentSystemSpeedCategory by lazy { CurrentSystemSpeedCategory() }
 
-    override fun initialize() {
-        BaseModule.require()
-	    fillProperties(BaseModule.properties)
-    }
+	val issueCollector: IssueCollector = IssueCollector(eventBus = BaseModule.eventBus, clearOnExecutionStart = true)
+
+	override fun initialize() {
+		BaseModule.require()
+		fillProperties(BaseModule.properties)
+		Translations.addBundle("jabbah-execution")
+	}
 
 	private fun fillProperties(properties: Properties) {
 		properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)

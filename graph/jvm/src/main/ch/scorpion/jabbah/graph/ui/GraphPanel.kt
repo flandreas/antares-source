@@ -317,7 +317,7 @@ class GraphPanel(
 		modeToggleButton.text = null
 		modeToggleButton.hideActionText = true
 		modeToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/powerOff-24.png"))
-		modeToggleButton.toolTipText = Translations.getString("simulation.action.execute.name")
+		modeToggleButton.toolTipText = Translations.getString("execution.action.execute.name")
 
 		val executionAction = PauseExecutionAction(scheduler, eventBus)
 		val pauseToggleButton = JToggleButton(ActionWrapperSwing(executionAction))

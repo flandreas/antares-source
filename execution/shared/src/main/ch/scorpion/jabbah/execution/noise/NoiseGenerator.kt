@@ -23,14 +23,14 @@ interface NoiseGenerator {
 
 abstract class AbstractNoiseGenerator(override val nameKey: String) : NoiseGenerator
 
-class NoNoiseGenerator : AbstractNoiseGenerator("simulator.noiseGenerator.none") {
+class NoNoiseGenerator : AbstractNoiseGenerator("execution.noiseGenerator.none") {
 
 	override fun noise(bound: Int): Int {
 		return 0
 	}
 }
 
-class RandomNoiseGenerator : AbstractNoiseGenerator("simulator.noiseGenerator.random") {
+class RandomNoiseGenerator : AbstractNoiseGenerator("execution.noiseGenerator.random") {
 
 	override fun noise(bound: Int): Int {
 		return Random.nextInt(0, bound)

@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 /** An [Action] for toggling the [ApplicationMode] of a [GraphPanel]. */
 class ToggleApplicationModeAction(
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractAction("simulation.action.execute") {
+) : AbstractAction("execution.action.execute") {
 
 	init {
 		eventBus.register(ApplicationModeEvent::class) { updateState() }
@@ -31,11 +31,11 @@ class ToggleApplicationModeAction(
 	private fun updateState() {
 		when (GraphViewModule.applicationModeHolder.currentMode) {
 			ApplicationMode.EDIT -> {
-				description = Translations.getString("simulation.action.start.desc")
+				description = Translations.getString("execution.action.start.desc")
 				selected = false
 			}
 			ApplicationMode.EXECUTE, ApplicationMode.EXEC_USECASE -> {
-				description = Translations.getString("simulation.action.stop.desc")
+				description = Translations.getString("execution.action.stop.desc")
 				selected = true
 			}
 		}

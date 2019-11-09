@@ -22,8 +22,7 @@ import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
-import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
+import ch.scorpion.jabbah.execution.scheduler.*
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.UndefinedApplicationModeHolder
@@ -106,6 +105,12 @@ object GraphViewModule : AbstractModule() {
 
 	val currentGraphViewAnimationType: CurrentGraphViewAnimationType by lazy { CurrentGraphViewAnimationType() }
 
+	val manualSchedulerTask = ManualSchedulerTask()
+
+	val timedSchedulerTask = TimedSchedulerTask()
+
+	val switchableSchedulerTask = SwitchableSchedulerTask(listOf(timedSchedulerTask, manualSchedulerTask))
+
 	override fun initialize() {
 		EditModule.require()
 		AppModule.require()
@@ -121,6 +126,14 @@ object GraphViewModule : AbstractModule() {
 
 		ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptModule.scriptEngineProvider.invoke()) }
 		EditModule.drawingService = graphViewService
+
+		ExecutionModule.schedulerTaskFactory = {
+			if (AppModule.userHolder.user.isDeveloper) {
+				switchableSchedulerTask
+			} else {
+				timedSchedulerTask
+			}
+		}
 
 		BaseModule.eventBus.register(SchedulerActivationStateEvent::class) { EditModule.commandManager.active = !it.scheduler.isActive }
 	}

@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.graph.view.GraphViewAnimationType
 class GraphViewAnimationAction(
         private val currentGraphViewAnimationType: CurrentGraphViewAnimationType,
         eventBus: EventBus = BaseModule.eventBus
-) : AbstractAction("simulator.action.simulationDriver.animation") {
+) : AbstractAction("execution.action.simulationDriver.animation") {
 
     init {
         eventBus.register(CurrentGraphAnimationTypeEvent::class, { updateState() })

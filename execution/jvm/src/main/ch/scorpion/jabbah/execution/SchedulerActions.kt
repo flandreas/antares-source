@@ -17,7 +17,7 @@ abstract class AbstractSchedulerAction(name: String) : AbstractAction(name)
 class PauseExecutionAction(
 	val scheduler: Scheduler,
 	eventBus: EventBus
-) : AbstractSchedulerAction("simulator.action.pause") {
+) : AbstractSchedulerAction("execution.action.pause") {
 
 	init {
 		eventBus.register(SchedulerRunningStateEvent::class) { updateState() }
@@ -37,7 +37,7 @@ class PauseExecutionAction(
 class StepExecutionAction(
 	val scheduler: Scheduler = ExecutionModule.scheduler,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractSchedulerAction("simulator.action.step") {
+) : AbstractSchedulerAction("execution.action.step") {
 
 	init {
 		eventBus.register(SchedulerRunningStateEvent::class) { updateEnabledness(scheduler.numberOfRemainingSlots) }
@@ -59,7 +59,7 @@ class StepExecutionAction(
 class ExecutionDepthAction(
 	val scheduler: Scheduler = ExecutionModule.scheduler,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractSchedulerAction("simulator.action.deepSimulation") {
+) : AbstractSchedulerAction("execution.action.deepSimulation") {
 
 	init {
 		eventBus.register(SchedulerActivationStateEvent::class) { updateState() }
@@ -81,7 +81,7 @@ class ExecutionDepthAction(
 class StopOnIssueAction(
 	private val scheduler: Scheduler = ExecutionModule.scheduler,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractSchedulerAction("simulator.action.stopOnIssue") {
+) : AbstractSchedulerAction("execution.action.stopOnIssue") {
 
 	init {
 		eventBus.register(StopOnIssueEvent::class) { updateState() }
@@ -102,7 +102,7 @@ class StopOnIssueAction(
 class SimulationTimeStatusEnabledAction(
 	private val scheduler: Scheduler = ExecutionModule.scheduler,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractSchedulerAction("simulator.action.enableSimulationTimeStatus") {
+) : AbstractSchedulerAction("execution.action.enableSimulationTimeStatus") {
 
 	init {
 		eventBus.register(SimulationTimeStatusEnabledEvent::class) { updateState() }
@@ -120,7 +120,7 @@ class SimulationTimeStatusEnabledAction(
 
 class PrintScheduleAction(
 	private val scheduler: Scheduler = ExecutionModule.scheduler
-) : AbstractSchedulerAction("simulator.action.print") {
+) : AbstractSchedulerAction("execution.action.print") {
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		scheduler.printSchedule()

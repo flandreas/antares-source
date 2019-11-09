@@ -30,7 +30,7 @@ class SchedulerImpl(
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val noiseGeneratorHolder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
-	private val task: SchedulerTask = TimedSchedulerTask(System.get().createTimer(), eventBus, currentSystemSpeedCategory)
+	private val task: SchedulerTask = ExecutionModule.schedulerTaskFactory.invoke(eventBus)
 ) : Scheduler {
 
 	companion object {
