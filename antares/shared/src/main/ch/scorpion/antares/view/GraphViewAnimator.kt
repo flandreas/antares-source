@@ -40,6 +40,9 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 /**
  * Performs animations of [GraphElementView] execution and signal flow across [EdgeView]s.
  *
+ * [GraphViewAnimator] registers itself as [ActorListener] on an [GraphElement]s of the current [Graph].
+ * Since this happens only for visible [GraphView]s,
+ *
  * A [GraphViewAnimator] is active if either the current [GraphViewAnimationType] is [GraphViewAnimationType.Animation],
  * which requires signal flow animation, or if the [Scheduler]'s [SchedulerRunningState] is [SchedulerRunningState.PAUSED],
  * which requires [TransparentAnimation] of executing [GraphElement]s.

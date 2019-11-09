@@ -34,16 +34,15 @@ class ActorSupport(private val actor: Actor) {
         notifyActingRequested(signalHandler, data)
     }
 
-    fun notifyActed(signalHandler: SignalHandler, data: ActorData): Boolean {
+    fun notifyActed(signalHandler: SignalHandler, data: ActorData) {
         if (entries != null && entries!!.isNotEmpty()) {
             entries?.forEach {
                 it.value.isPending = true
                 it.key.acted(actor, signalHandler, data)
             }
-            return false
+        } else {
+	        signalHandler.actingDone(actor, data)
         }
-        actor.actingDone(signalHandler, data)
-        return true
     }
 
     fun actingVisualized(signalHandler: SignalHandler, l: ActorListener, data: ActorData?) {

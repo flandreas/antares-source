@@ -53,10 +53,8 @@ interface Actor {
 	 *
 	 * @param signalHandler the [SignalHandler] to be used to pass along to other [Actor]s.
 	 * @param data the [ActorData] this [Actor] has provided when calling [SignalHandler.requestActingAfter].
-	 * @return `true` if execution has been completed, `false` if this [Actor] has more to do
-	 *         and will call [SignalHandler.actingDone] after completion.
 	 */
-	fun act(signalHandler: SignalHandler, data: ActorData): Boolean
+	fun act(signalHandler: SignalHandler, data: ActorData)
 
 	/**
 	 * Called by a registered [ActorListener] after it has done its execution visualization.
@@ -134,9 +132,9 @@ open class ActorImpl(
 
 	}
 
-	override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
+	override fun act(signalHandler: SignalHandler, data: ActorData) {
 		_state = ActorState.Acting
-		return actorSupport.notifyActed(signalHandler, data)
+		actorSupport.notifyActed(signalHandler, data)
 	}
 
 	override fun actingVisualized(signalHandler: SignalHandler, l: ActorListener, data: ActorData?) {
@@ -164,7 +162,7 @@ open class ActorImpl(
 		actorSupport.requestActingTimeFreeze(signalHandler, data)
 	}
 
-	fun notifyActed(signalHandler: SignalHandler, data: ActorData): Boolean {
-		return actorSupport.notifyActed(signalHandler, data)
+	fun notifyActed(signalHandler: SignalHandler, data: ActorData) {
+		actorSupport.notifyActed(signalHandler, data)
 	}
 }

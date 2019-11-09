@@ -183,7 +183,7 @@ class SchedulerImpl(
 	}
 
 	override fun logActorTrace(actor: Actor, msg: () -> String) {
-		if (LOG.isTraceEnabled() && actor.id == 56) {
+		if (LOG.isTraceEnabled()) {
 			LOG.trace("${StringUtils.formatLong(executionTime)} ns [${System.get().getClass(actor).simpleName} (${actor.id})]: ${msg.invoke()}")
 		}
 	}
@@ -376,11 +376,7 @@ class SchedulerImpl(
 			slot.getRequests().filter { it.isActable }.forEach {
 				logActorTrace(it.actor) { "Executing" }
 				breakpoint = breakpoint || it.actor.isBreakpoint
-				if (it.actor.act(this@SchedulerImpl, it.actorData)) {
-					it.setDone()
-				} else {
-					it.setActing()
-				}
+				it.act()
 			}
 
 			if (slot.isDone) {
@@ -482,12 +478,12 @@ class SchedulerImpl(
 
 		val isActable: Boolean get() = !isActing && !isDone
 
-		fun setActing() {
-			if (_isActing) {
-				return
+		fun act() {
+			if (!_isActing) {
+				logActorTrace(actor) { "Actor starts acting" }
+				_isActing = true
+				actor.act(this@SchedulerImpl, actorData)
 			}
-			logActorTrace(actor) { "Actor starts acting" }
-			_isActing = true
 		}
 
 		fun setDone() {
@@ -499,9 +495,9 @@ class SchedulerImpl(
 			postSchedulerEvent(actor, SchedulerEvent.Type.DONE)
 		}
 
-		/** Prints this [Request] to the DEBUG log.*/
+		/** Prints this [Request] to the INFO log.*/
 		fun print() {
-			LOG.debug("\t\tRequest for ${actor::class.simpleName} with ID ${actor.id}, isActing=$_isActing, isDone=$_isDone")
+			LOG.info("\t\tRequest for ${actor::class.simpleName} with ID ${actor.id}, isActing=$_isActing, isDone=$_isDone")
 		}
 	}
 }

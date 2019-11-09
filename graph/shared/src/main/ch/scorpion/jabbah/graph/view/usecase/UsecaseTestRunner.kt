@@ -77,7 +77,7 @@ class UsecaseTestRunner(
 		scheduler.requestActingAfter(UsecaseTestActor(_usecase!!, condition), delay(time), SimpleActorData(description))
 	}
 
-	private fun delay(time: Long) : Long {
+	private fun delay(time: Long): Long {
 		return time - scheduler.executionTime
 	}
 
@@ -85,7 +85,7 @@ class UsecaseTestRunner(
 		private val usecase: Usecase,
 		private val condition: () -> Boolean
 	) : ActorImpl() {
-		override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
+		override fun act(signalHandler: SignalHandler, data: ActorData) {
 			if (!condition.invoke()) {
 				LOG.debug("Test '${usecase.name.value}' failed")
 				rememberTestFailure(data.dataToString())
@@ -93,12 +93,12 @@ class UsecaseTestRunner(
 					throw UsecaseTestFailureException(usecase)
 				}
 			}
-			return super.act(signalHandler, data)
+			super.act(signalHandler, data)
 		}
 	}
 
 	private inner class FinishTestActor : ActorImpl() {
-		override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
+		override fun act(signalHandler: SignalHandler, data: ActorData) {
 			scheduler.isActive = false
 			if (nextUsecases.isEmpty()) {
 				if (issues.isEmpty()) {
@@ -110,7 +110,6 @@ class UsecaseTestRunner(
 			} else {
 				runNext()
 			}
-			return true
 		}
 	}
 

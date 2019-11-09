@@ -12,30 +12,30 @@ import ch.scorpion.jabbah.graph.model.OutputPort
  * whenever a signal has arrived on one of the [Vertice]' [InputPort]s.
  * @param <T> the type of [CalculatingVertice] that this [VerticeCalculator] calculates.
  */
-interface VerticeCalculator<in T: Vertice> {
+interface VerticeCalculator<in T : Vertice> {
 
-    /** Calculates and sets the [OutputPort]s of a [Vertice]. */
-    fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler)
+	/** Calculates and sets the [OutputPort]s of a [Vertice]. */
+	fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler)
 }
 
 /** An empty implementation of the [VerticeCalculator] interface that does nothing.*/
 object EmptyVerticeCalculator : VerticeCalculator<CalculatingVertice> {
 
-    override fun calculate(vertice: CalculatingVertice, data: GraphActorData, signalHandler: SignalHandler) {
-        // empty
-    }
+	override fun calculate(vertice: CalculatingVertice, data: GraphActorData, signalHandler: SignalHandler) {
+		// empty
+	}
 }
 
 open class CalculatingVertice(
-    baseResourceKey: String,
-    private val calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
-    name: String? = null
+	baseResourceKey: String,
+	private val calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
+	name: String? = null
 ) : AbstractVertice(baseResourceKey, name) {
 
-    override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
-        (calculator as VerticeCalculator<CalculatingVertice>).calculate(this, data as GraphActorData, signalHandler)
-        getOutputs().forEach { it.flush(signalHandler) }
-        stateChanged(signalHandler)
-        return super.act(signalHandler, data)
-    }
+	override fun act(signalHandler: SignalHandler, data: ActorData) {
+		(calculator as VerticeCalculator<CalculatingVertice>).calculate(this, data as GraphActorData, signalHandler)
+		getOutputs().forEach { it.flush(signalHandler) }
+		stateChanged(signalHandler)
+		super.act(signalHandler, data)
+	}
 }

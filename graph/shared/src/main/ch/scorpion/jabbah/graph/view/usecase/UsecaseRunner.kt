@@ -74,9 +74,9 @@ class UsecaseRunner(
 	}
 
 	private class UsecaseActor(private val action: () -> Unit) : ActorImpl() {
-		override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
+		override fun act(signalHandler: SignalHandler, data: ActorData) {
 			action.invoke()
-			return super.act(signalHandler, data)
+			super.act(signalHandler, data)
 		}
 	}
 
@@ -89,11 +89,11 @@ class UsecaseRunner(
 
 		private var currentValue = firstValue
 
-		override fun act(signalHandler: SignalHandler, data: ActorData): Boolean {
+		override fun act(signalHandler: SignalHandler, data: ActorData) {
 			toggleCurrentValue()
 			input.setIncomingSignal(currentValue, signalHandler)
 			signalHandler.requestActingAfter(this, period / 2, SimpleActorData())
-			return super.act(signalHandler, data)
+			super.act(signalHandler, data)
 		}
 
 		private fun toggleCurrentValue() {
