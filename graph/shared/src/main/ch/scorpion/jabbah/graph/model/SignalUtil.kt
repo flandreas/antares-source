@@ -15,9 +15,6 @@ object SignalUtil {
         if (a == null && b == null) {
             return true;
         }
-        if (a != null) {
-            return a.equals(b)
-        }
         return b == a
     }
 }

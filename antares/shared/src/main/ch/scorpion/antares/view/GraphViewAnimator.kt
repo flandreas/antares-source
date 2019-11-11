@@ -206,7 +206,7 @@ class GraphViewAnimator(
 		}
 
 		netAnimationMap[net]?.forEach {
-			scheduler.logActorTrace(net) { "Staring DigitalEdgeViewNetAnimation" }
+			scheduler.logActorTrace(net) { "Starting DigitalEdgeViewNetAnimation" }
 			val task = it.start()
 			task.addListener(object : AnimationTaskAdapter() {
 				override fun ended(task: AnimationTask) {
@@ -261,10 +261,12 @@ class GraphViewAnimator(
 	}
 
 	private fun registerAnimation(net: Net<*>, animation: DigitalEdgeViewNetAnimation) {
+		scheduler.logActorTrace(net) { "register net animation" }
 		netAnimationMap.getOrPut(net) { mutableListOf() }.add(animation)
 	}
 
 	private fun unregisterAnimation(net: Net<*>, animation: DigitalEdgeViewNetAnimation) {
+		scheduler.logActorTrace(net) { "unregister net animation" }
 		netAnimationMap[net]?.remove(animation)
 	}
 

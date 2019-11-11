@@ -101,7 +101,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	}
 
 	override fun setSignal(signal: T?, origin: OutputPort<T>, signalHandler: SignalHandler, withDelay: Boolean) {
-		if (!SignalUtil.equals(_signal, signal)) {
+		if (!SignalUtil.equals(signalBuffer, signal)) {
 			signalBuffer = signal
 			val data = NetActorData(signal, origin, true)
 			if (withDelay) {
