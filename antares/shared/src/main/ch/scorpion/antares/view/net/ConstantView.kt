@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
@@ -83,13 +82,8 @@ class ConstantView(
 	/** ---- [AbstractVerticeView] */
 
 	override fun drawImpl(context: DrawContext) {
-		if (shadow) {
-			DropShadow.draw(context, transparency) {
-				context.g.fillRect(xInt, yInt, width.toInt(), height.toInt())
-			}
-		}
+		// The current look doesn't have a background and therefore doesn't need a shadow
 		super.drawImpl(context)
-		//drawBody(context)
 		drawNumberView(context, false)
 	}
 
