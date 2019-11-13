@@ -1,52 +1,68 @@
 package ch.scorpion.jabbah.draw.polyline
 
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.draw.graphics.Stroke
 
 /**
  * A special [LineTerminator] representing an arrow head.
  * The location of the [LineTerminator] is at the end of the [Polyline] to which it is connected.
  */
 class ArrowHead(
-    val width: Int,
-    val length: Int,
-    val compactness: Float,
-    val filled: Boolean
+    width: Int = DEFAULT_WIDTH,
+    length: Int = DEFAULT_LENGTH,
+    compactness: Float = DEFAULT_COMPACTNESS,
+    val filled: Boolean = DEFAULT_FILLED,
+    bidirectional: Boolean = DEFAULT_BIDIRECTIONAL
 ) : AbstractDrawable(), LineTerminator {
-
-    constructor(): this(DEF_WIDTH, DEF_LENGTH, DEF_COMPACTNESS, DEF_FILLED)
 
     companion object {
 
         /** The default width. */
-        val DEF_WIDTH = 4
+        private const val DEFAULT_WIDTH = 4
 
         /** The default length. */
-        val DEF_LENGTH = 10
+        private const val DEFAULT_LENGTH = 10
 
         /** The default compactness. */
-        val DEF_COMPACTNESS = 1.0f
+        private const val DEFAULT_COMPACTNESS = 1.0f
 
         /** The default 'filled' attribute. */
-        val DEF_FILLED = true
+        private const val DEFAULT_FILLED = true
 
-        val TRANSFORM = System.SYSTEM!!.createAffineTransform()
+	    private const val DEFAULT_BIDIRECTIONAL = false
+
+	    /** The gap between the two bidirectional arrow heads. */
+	    private const val GAP = 4
+
+	    private val TRANSFORM = System.SYSTEM!!.createAffineTransform()
+
+	    private val STROKE = Stroke(1.0f)
+
+	    fun createDefault(): ArrowHead = ArrowHead()
+
+	    fun createBidirectionalDefault(): ArrowHead = ArrowHead(bidirectional = true)
     }
 
-    val LOG by logger(ArrowHead::class)
 
     /** Holds the location of the arrow head peek.*/
     private var location = Point2D.ZERO
 
-    /** Holds the location at which the attached [Polyline] segment should end.*/
-    private var lineEnd = Point2D.ZERO
-
     /** Holds the rotation angle in radians.*/
     private var rotation: Double = 0.0
 
-    private val shape: Path = createShape()
+	/** Holds the location at which the attached [Polyline] segment should end. This is relevant if [filled] is `false`.*/
+	override var lineEnd = Point2D.ZERO
+		private set
+
+	private val shape: Path = if (bidirectional) {
+	    createBidirectionalShape(width, length, compactness)
+    } else {
+	    createUnidirectionalShape(width, length, compactness)
+    }
 
     /** ---- [Drawable] */
 
@@ -54,10 +70,13 @@ class ArrowHead(
         get() = shape.boundingBox
 
     override fun draw(context: DrawContext) {
+	    val oldStroke = context.g.stroke
+	    context.g.stroke = STROKE
         context.g.draw(shape)
         if (filled) {
             context.g.fill(shape)
         }
+	    context.g.stroke = oldStroke
     }
 
     override fun contains(x: Double, y: Double): Boolean {
@@ -66,7 +85,7 @@ class ArrowHead(
 
     /** ---- [LineTerminator] */
 
-    override fun setLocation(location: Point2D) {
+	override fun setLocation(location: Point2D) {
         invalidate()
         setLocationImpl(location.x, location.y)
         invalidate()
@@ -86,10 +105,6 @@ class ArrowHead(
         update()
     }
 
-    override fun getLineEnd(): Point2D {
-        return lineEnd
-    }
-
     /** ---- [ArrowHead] */
 
     private fun setLocationImpl(x: Double, y: Double) {
@@ -99,20 +114,57 @@ class ArrowHead(
         lineEnd = TRANSFORM.transform(lineEnd)
     }
 
-    private fun createShape(): Path {
+    private fun createUnidirectionalShape(width: Int, length: Int, compactness: Float): Path {
         val path = System.SYSTEM!!.createPath()
+
         path.moveTo(0, 0)
         path.lineTo(-length, -width)
-        if (compactness == 1.0f) {
-            path.lineTo(-length, width)
-            lineEnd = Point2D(-length, 0)
-        } else {
-            val innerLength = length * compactness
-            path.lineTo(-innerLength.toDouble(), 0.0)
-            path.lineTo(-length, width)
-            lineEnd = Point2D(-innerLength.toDouble(), 0.0)
-        }
+	    lineEnd = if (compactness == 1.0f) {
+		    path.lineTo(-length, width)
+		    Point2D(-length, 0)
+	    } else {
+		    val innerLength = length * compactness
+		    path.lineTo(-innerLength, 0.0f)
+		    path.lineTo(-length, width)
+		    Point2D(-innerLength.toDouble(), 0.0)
+	    }
+
         path.close()
         return path
     }
+
+	private fun createBidirectionalShape(width: Int, length: Int, compactness: Float): Path {
+		val path = System.SYSTEM!!.createPath()
+		val innerLength = length * compactness
+
+		path.moveTo(0, 0)
+		path.lineTo(-length, -width)
+
+		if (compactness == 1.0f) {
+			path.lineTo(-length, 0)
+			path.lineTo(-length - GAP, 0)
+		} else {
+			path.lineTo(-innerLength, 0.0f)
+			path.lineTo(-length - GAP - (length - innerLength), 0.0f)
+		}
+
+		path.lineTo(-length - GAP, -width)
+		path.lineTo(-length - GAP - length, 0)
+		path.lineTo(-length - GAP, width)
+
+		if (compactness == 1.0f) {
+			path.lineTo(-length - GAP, 0)
+			path.lineTo(-length, 0)
+		} else {
+			path.lineTo(-length - GAP - (length - innerLength), 0.0f)
+			path.lineTo(-innerLength, 0.0f)
+		}
+
+		path.lineTo(-length, width)
+
+		lineEnd = Point2D(-2 * length - GAP, 0)
+
+		path.close()
+		return path
+	}
 }

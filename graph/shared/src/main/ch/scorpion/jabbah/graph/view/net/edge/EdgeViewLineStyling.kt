@@ -38,9 +38,8 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 			edgeView.destination!!.connectableView.draw(context)
 		}
 
-		if (edgeView.polyline.endLineTerminator != null) {
-			edgeView.polyline.endLineTerminator!!.draw(context)
-		}
+		edgeView.polyline.beginLineTerminator?.draw(context)
+		edgeView.polyline.endLineTerminator?.draw(context)
 	}
 
 	override fun updateBoundingBox() {

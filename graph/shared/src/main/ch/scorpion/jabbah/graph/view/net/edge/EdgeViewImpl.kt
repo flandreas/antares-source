@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
+import ch.scorpion.jabbah.draw.polyline.LineTerminator
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -22,6 +23,7 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
@@ -96,10 +98,28 @@ open class EdgeViewImpl<T : Any>(
 	override var polyline: PolylineShape = DrawModule.polylineShapeFactory.invoke(null)
 
 	final override var origin: Connection<T>? = null
-		private set
+		private set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				updateBeginLineTerminator()
+				styling.updateBoundingBox()
+				invalidate()
+				update()
+			}
+		}
 
 	final override var destination: Connection<T>? = null
-		private set
+		private set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				updateEndLineTerminator()
+				styling.updateBoundingBox()
+				invalidate()
+				update()
+			}
+		}
 
 	override val originEndpointView: EdgeEndpointView = EdgeEndpointView(this, origEndpointConnectorSupplier, styleProvider)
 
@@ -116,11 +136,36 @@ open class EdgeViewImpl<T : Any>(
 			}
 			invalidate()
 			field = value
-			polyline.endLineTerminator = if (value) ArrowHead() else null
+			updateBeginLineTerminator()
+			updateEndLineTerminator()
 			styling.updateBoundingBox()
 			invalidate()
 			update()
 		}
+
+	private fun updateBeginLineTerminator() {
+		var lineTerminator: LineTerminator? = null
+		if (isArrow) {
+			lineTerminator = when(origin?.port?.portType) {
+				PortType.INPUT -> ArrowHead.createDefault()
+				PortType.INOUT -> ArrowHead.createBidirectionalDefault()
+				else -> null
+			}
+		}
+		polyline.beginLineTerminator = lineTerminator
+	}
+
+	private fun updateEndLineTerminator() {
+		var lineTerminator: LineTerminator? = null
+		if (isArrow) {
+			lineTerminator = when(destination?.port?.portType) {
+				PortType.INPUT -> ArrowHead.createDefault()
+				PortType.INOUT -> ArrowHead.createBidirectionalDefault()
+				else -> null
+			}
+		}
+		polyline.endLineTerminator = lineTerminator
+	}
 
 	override fun getConnection(port: Port<T>): Connection<T>? {
 		if (port === origin?.port) {
