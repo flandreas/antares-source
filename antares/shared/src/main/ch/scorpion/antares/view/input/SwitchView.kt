@@ -46,7 +46,6 @@ private interface SwitchViewFace {
 	fun drawEdited(context: DrawContext)
 
 	fun drawExecuted(context: DrawContext)
-
 }
 
 /**
@@ -354,7 +353,7 @@ class SwitchView(
 
 	private fun drawEnabled(context: DrawContext) {
 		if (!model!!.enabled) {
-			context.g.color = Themes.get<AntaresTheme>().background.color.backgroundColor.withAlpha(192)
+			context.g.color = Look.disabledColor()
 			context.g.fillRect(xInt, yInt, widthInt, heightInt)
 		}
 	}
@@ -388,6 +387,8 @@ class SwitchView(
 		return (SIZE * Math.max(1.0, Math.ceil(requiredSpace / SIZE))).toInt()
 	}
 
+	/** A [SwitchViewFace] that draws the hexadecimal value of the current state bit. */
+	@Suppress("unused")
 	private inner class DigitalFace : SwitchViewFace {
 
 		override fun drawEdited(context: DrawContext) {
@@ -413,6 +414,7 @@ class SwitchView(
 		}
 	}
 
+	/** A [SwitchViewFace] that draws an open or closed analog switch symbol. */
 	private inner class AnalogFace : SwitchViewFace {
 
 		override fun drawEdited(context: DrawContext) {

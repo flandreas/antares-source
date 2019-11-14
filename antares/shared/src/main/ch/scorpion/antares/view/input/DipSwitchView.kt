@@ -62,7 +62,7 @@ class DipSwitchView(
 	/** Contains the individual [BitView]s, starting with the lowest priority [Bit] at index 0.*/
 	private val bitViews = mutableListOf<BitView>()
 
-	/** The index of [bitViews] that has the focus, or `null` if none has the foucs.*/
+	/** The index of [bitViews] that has the focus, or `null` if none has the focus.*/
 	private var focusIndex: Int? = null
 
 	private val actorInteractionHandler = InteractionHandler()
@@ -151,7 +151,7 @@ class DipSwitchView(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		invalidate()
-		for ((i,view) in bitViews.withIndex()) {
+		for ((i, view) in bitViews.withIndex()) {
 			view.bit = model!!.value.bitAt(i)
 		}
 		label.text = StringUtils.orEmpty(model!!.name)
@@ -183,10 +183,12 @@ class DipSwitchView(
 		drawStroke(context, bounds, context.choose(color).foregroundColor, stroke)
 		bitViews.forEach {
 			it.draw(context)
-			bitLabelFlyweight.location = Point2D(it.bounds.centerX, it.bounds.minY - 2)
-			bitLabelFlyweight.text = it.index.toString()
-			bitLabelFlyweight.color = context.choose(color).textColor
-			bitLabelFlyweight.draw(context)
+			with(bitLabelFlyweight) {
+				location = Point2D(it.bounds.centerX, it.bounds.minY - 2)
+				text = it.index.toString()
+				color = context.choose(this@DipSwitchView.color).textColor
+				draw(context)
+			}
 		}
 
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
@@ -199,7 +201,7 @@ class DipSwitchView(
 
 	private fun drawEnabled(context: DrawContext) {
 		if (!model!!.enabled) {
-			context.g.color = Themes.get<AntaresTheme>().background.color.backgroundColor.withAlpha(192)
+			context.g.color = Look.disabledColor()
 			context.g.fillRect(xInt, yInt, widthInt, heightInt)
 		}
 	}
@@ -300,7 +302,7 @@ class DipSwitchView(
 	}
 
 	private val upperLeftBoundsEdge: Point2D
-		get() = when(orientation) {
+		get() = when (orientation) {
 			Direction.WEST -> Point2D(getOutput().length.toDouble(), -calculateHeight() / 2)
 			Direction.SOUTH -> Point2D(-calculateWidth() / 2, -getOutput().length.toDouble() - calculateHeight())
 			Direction.EAST -> Point2D(-getOutput().length.toDouble() - calculateWidth(), -calculateHeight() / 2)
@@ -352,7 +354,7 @@ class DipSwitchView(
 	private fun updateLabel() {
 		label.text = StringUtils.orEmpty(model!!.name)
 		label.alignment = Alignment.forOrientation(orientation)
-		label.location = when(orientation) {
+		label.location = when (orientation) {
 			Direction.EAST -> Point2D(-getOutput().length - bounds.width - LABEL_DIST, 0.0)
 			Direction.NORTH -> Point2D(0.0, getOutput().length + bounds.height + LABEL_DIST)
 			Direction.WEST -> Point2D(getOutput().length + bounds.width + LABEL_DIST, 0.0)

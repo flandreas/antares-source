@@ -1,11 +1,14 @@
 package ch.scorpion.antares.view
 
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
+import ch.scorpion.jabbah.draw.style.Themes
 
 object Look {
 
@@ -38,5 +41,13 @@ object Look {
 
 	fun scaleToDoubleGrid(value: Int): Int {
 		return 2 * GRID * Math.ceil(value.toDouble() / 2 / GRID).toInt()
+	}
+
+	/**
+	 * Returns the color of the rectangle drawn over [Vertice]s to indicate that they are disabled,
+	 * i.e. while they are being recalculated and not able to receive user input.
+	 */
+	fun disabledColor(): Color {
+		return Themes.get<AntaresTheme>().background.color.backgroundColor.withAlpha(192)
 	}
 }
