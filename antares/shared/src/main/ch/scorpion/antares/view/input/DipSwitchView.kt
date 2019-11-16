@@ -57,6 +57,10 @@ class DipSwitchView(
 		private const val CASE_INSET = Look.SCALE
 		private const val BIT_LABEL_HEIGHT = 10
 		private const val LABEL_DIST = Look.SCALE
+
+		private const val KNOB_HEIGHT = 5.0 * Look.SCALE
+		private const val KNOB_WIDTH = 2.0 * Look.SCALE
+		private const val KNOB_INSET = 2
 	}
 
 	/** Contains the individual [BitView]s, starting with the lowest priority [Bit] at index 0.*/
@@ -179,14 +183,14 @@ class DipSwitchView(
 			}
 		}
 		super.drawImpl(context)
-		drawFill(context, bounds, if (context.useContextColors) context.choose(color).backgroundColor else propertiesBackgroundColor)
-		drawStroke(context, bounds, context.choose(color).foregroundColor, stroke)
+		drawFill(context, bounds, transparent.applyTo(if (context.useContextColors) context.choose(color).backgroundColor else propertiesBackgroundColor))
+		drawStroke(context, bounds, transparent.applyTo(context.choose(color).foregroundColor), stroke)
 		bitViews.forEach {
 			it.draw(context)
 			with(bitLabelFlyweight) {
 				location = Point2D(it.bounds.centerX, it.bounds.minY - 2)
 				text = it.index.toString()
-				color = context.choose(this@DipSwitchView.color).textColor
+				color = transparent.applyTo(context.choose(this@DipSwitchView.color).textColor)
 				draw(context)
 			}
 		}
@@ -316,7 +320,7 @@ class DipSwitchView(
 		bitViews.clear()
 		val maxIndex = model!!.bitWidth.width - 1
 		for (index in 0..maxIndex) {
-			val xx = x + (maxIndex - index) * BitView.WIDTH + CASE_INSET
+			val xx = x + (maxIndex - index) * KNOB_WIDTH + CASE_INSET
 			val yy = y + BIT_LABEL_HEIGHT + CASE_INSET
 			bitViews.add(BitView(index, xx, yy, styleProvider))
 		}
@@ -328,11 +332,11 @@ class DipSwitchView(
 	}
 
 	private fun calculateWidth(): Double {
-		return model!!.bitWidth.width * BitView.WIDTH + 2 * CASE_INSET
+		return model!!.bitWidth.width * KNOB_WIDTH + 2 * CASE_INSET
 	}
 
 	private fun calculateHeight(): Double {
-		return BitView.HEIGHT + BIT_LABEL_HEIGHT + 2 * CASE_INSET
+		return KNOB_HEIGHT + BIT_LABEL_HEIGHT + 2 * CASE_INSET
 	}
 
 	/**
@@ -418,18 +422,12 @@ class DipSwitchView(
 	 * @param x the x coordinate of the upper-left corner
 	 * @param y the y coordinate of the upper-left corner
 	 */
-	private class BitView(
+	private inner class BitView(
 		val index: Int,
 		x: Double,
 		y: Double,
 		private val styleProvider: StyleProvider
-	) : AbstractRectangle(x, y, WIDTH, HEIGHT) {
-
-		companion object {
-			const val HEIGHT = 5.0 * Look.SCALE
-			const val WIDTH = 2.0 * Look.SCALE
-			private const val KNOB_INSET = 2
-		}
+	) : AbstractRectangle(x, y, KNOB_WIDTH, KNOB_HEIGHT) {
 
 		/** Contains the value this [BitView] displays.*/
 		var bit: Bit = Bit.False
@@ -442,10 +440,10 @@ class DipSwitchView(
 		override val lineWidth: Double get() = 0.0
 
 		override fun draw(context: DrawContext) {
-			context.g.color = context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor
+			context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor)
 			context.g.fillRect(x, y, width, height)
 
-			context.g.color = context.choose(styleProvider.getStyle(StyleType.FIGURE).color).foregroundColor
+			context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.FIGURE).color).foregroundColor)
 			context.g.stroke = styleProvider.getStyle(GraphStyleType.ANNOTATION).stroke
 			context.g.drawRect(x, y, width, height)
 
@@ -454,7 +452,7 @@ class DipSwitchView(
 			} else {
 				y + height / 2
 			}
-			context.g.color = context.choose(bit.color).foregroundColor
+			context.g.color = transparent.applyTo(context.choose(bit.color).foregroundColor)
 
 			context.g.fillRect(
 				x + KNOB_INSET,
@@ -468,9 +466,9 @@ class DipSwitchView(
 		}
 
 		private fun drawFocus(context: DrawContext) {
-			context.g.color = Themes.get<AntaresTheme>().focus.color.foregroundColor
+			context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)
 			context.g.stroke = Themes.get<AntaresTheme>().focus.stroke
-			context.g.drawRect(x + 1, y + 1, WIDTH - 2, HEIGHT - 2)
+			context.g.drawRect(x + 1, y + 1, KNOB_WIDTH - 2, KNOB_HEIGHT - 2)
 		}
 	}
 }
