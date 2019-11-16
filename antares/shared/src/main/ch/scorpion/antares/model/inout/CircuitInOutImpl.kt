@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.SignalUtil.differ
 import ch.scorpion.jabbah.graph.model.vertice.AbstractGraphPort
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -26,13 +27,20 @@ class CircuitInOutImpl(
 	val eventBus: EventBus = BaseModule.eventBus,
 	name: String? = null,
 	portType: PortType = PortType.INPUT
-) : AbstractGraphPort<DigitalSignal>("library.element.CircuitInOut", DigitalPortImpl(portType.reverse()), name, CALCULATOR), CircuitInOut {
+) : AbstractGraphPort<DigitalSignal>(
+	baseResourceKey = "library.element.CircuitInOut",
+	port = DigitalPortImpl(portType.reverse()),
+	name = name,
+	calculator = CALCULATOR
+), CircuitInOut {
 
 	companion object {
-
 		val CALCULATOR = object : VerticeCalculator<CircuitInOutImpl> {
 			override fun calculate(vertice: CircuitInOutImpl, data: GraphActorData, signalHandler: SignalHandler) {
-				vertice.setOutgoingSignal(data.getSignal(1)!!, signalHandler, data.changedPort == null)
+				with(vertice) {
+					setOutgoingSignal(data.getSignal(1)!!, signalHandler, data.changedPort == null)
+					enabled = true
+				}
 			}
 		}
 	}
@@ -58,9 +66,11 @@ class CircuitInOutImpl(
 	override var subGraphInputPort: SubGraphInputPort<DigitalSignal>? = null
 
 	override fun setIncomingSignal(signal: DigitalSignal?, signalHandler: SignalHandler) {
-		this.signal = signal
-		stateChanged()
-		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, this.signal))
+		if (enabled && differ(this.signal, signal)) {
+			this.signal = signal
+			enabled = false
+			requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, this.signal))
+		}
 	}
 
 	/** ---- [GraphOutput] */
@@ -75,7 +85,11 @@ class CircuitInOutImpl(
 
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
-		resetExecutionState(signalHandler)
+		signal = getDigitalPort().defaultDigitalSignal
+		if (portType.isInput) {
+			requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(getOutput<DigitalSignal>(), signal))
+		}
+		stateChanged(signalHandler)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
@@ -150,9 +164,7 @@ class CircuitInOutImpl(
 
 	/** ---- [CircuitInOutImpl] */
 
-	private fun getDigitalPort(): DigitalPort {
-		return getPort<DigitalPort>() as DigitalPort
-	}
+	private fun getDigitalPort(): DigitalPort = getPort<DigitalPort>() as DigitalPort
 
 	private fun setOutgoingSignal(signal: DigitalSignal, signalHandler: SignalHandler, fromOutside: Boolean) {
 		this.signal = signal

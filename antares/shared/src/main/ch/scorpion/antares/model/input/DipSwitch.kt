@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
-import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
+import ch.scorpion.jabbah.graph.model.vertice.AbstractInteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -25,7 +25,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class DipSwitch(
 	bitWidth: BitWidth = BitWidth.BW_4
-) : InteractableVertice("library.element.DipSwitch", CALCULATOR) {
+) : AbstractInteractableVertice("library.element.DipSwitch", CALCULATOR) {
 
 	companion object {
 		val CALCULATOR = object : VerticeCalculator<DipSwitch> {
@@ -60,6 +60,8 @@ class DipSwitch(
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
 		value = Word.allOf(bitWidth, Bit.False)
+		enabled = false
+		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, value))
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {

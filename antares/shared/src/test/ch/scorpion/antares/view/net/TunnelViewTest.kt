@@ -37,7 +37,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 		startSimulation(1100L)
 		proceedToMillis(2200L)
 
-		assertEquals(Word.of(false), sender.model!!.getInOrOutSignal() as Word)
+		assertEquals(Word.of(false), sender.model!!.getIncomingSignal() as Word)
 	}
 
 	@Test

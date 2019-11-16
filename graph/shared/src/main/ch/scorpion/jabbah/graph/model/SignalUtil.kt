@@ -17,4 +17,6 @@ object SignalUtil {
         }
         return b == a
     }
+
+	fun differ(a: Any?, b: Any?): Boolean = !SignalUtil.equals(a, b)
 }

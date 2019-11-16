@@ -246,26 +246,29 @@ class CircuitInOutView(
 
 	fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color?, stroke: Stroke) {
 		val translation = getArrowPathTranslation()
-		context.g.translate(translation.x, translation.y)
 
-		if (shadow) {
-			DropShadow.draw(context, transparency) {
-				if (backgroundColor != null) {
-					context.g.fill(arrowPath!!.path)
+		with(context.g) {
+			translate(translation.x, translation.y)
+
+			if (shadow) {
+				DropShadow.draw(context, transparency) {
+					if (backgroundColor != null) {
+						fill(arrowPath!!.path)
+					}
+					draw(arrowPath!!.path)
 				}
-				context.g.draw(arrowPath!!.path)
 			}
-		}
 
-		if (backgroundColor != null) {
-			context.g.color = backgroundColor
-			context.g.fill(arrowPath!!.path)
-		}
-		context.g.stroke = stroke
-		context.g.color = foregroundColor
-		context.g.draw(arrowPath!!.path)
+			if (backgroundColor != null) {
+				color = backgroundColor
+				fill(arrowPath!!.path)
+			}
+			this.stroke = this@CircuitInOutView.stroke
+			color = foregroundColor
+			draw(arrowPath!!.path)
 
-		context.g.translate(-translation.x, -translation.y)
+			translate(-translation.x, -translation.y)
+		}
 	}
 
 	private fun drawEdited(context: DrawContext, color: Color, backgroundColor: Color?) {
@@ -299,7 +302,15 @@ class CircuitInOutView(
 		val translation = getArrowPathTranslation()
 		context.g.translate(translation.x, translation.y)
 		numberView!!.draw(context)
+		drawDisabled(context)
 		context.g.translate(-translation.x, -translation.y)
+	}
+
+	private fun drawDisabled(context: DrawContext) {
+		if (model!!.disabled) {
+			context.g.color = Look.disabledColor()
+			context.g.fill(arrowPath!!.path)
+		}
 	}
 
 	/** ---- [Component] */
@@ -353,14 +364,13 @@ class CircuitInOutView(
 	 * @return the vector relative to this {@link VerticeView}'s origin
 	 */
 	private fun getArrowPathTranslation(): Point2D {
-		val translation = when (model!!.portType) {
+		return when (model!!.portType) {
 			PortType.INPUT -> orientation.multiply(-getOutput().unconnectedLength.toDouble())
 			PortType.INOUT,
 			PortType.OUTPUT -> Point2D(arrowPath!!.tailLocation)
 				.multiply(-1.0)
 				.add(orientation.multiply(getInput().unconnectedLength.toDouble()))
 		}
-		return translation
 	}
 
 	/**

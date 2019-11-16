@@ -11,18 +11,20 @@ import ch.scorpion.jabbah.graph.model.Vertice
  * An abstract base implementation of [GraphPort] that mainly posts a [GraphPortNameChanged] event
  * when the name has been changed.
  */
-abstract class AbstractGraphPort<T: Any>(
+abstract class AbstractGraphPort<T : Any>(
 	baseResourceKey: String,
 	port: Port<T>,
 	name: String? = null,
 	calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : CalculatingVertice(baseResourceKey, calculator, name), GraphPort<T> {
+) : AbstractInteractableVertice(baseResourceKey, calculator, name), GraphPort<T> {
 
 	init {
-		propagationDelay = 0
+		propagationDelay = 1
 		addPort(port)
 	}
+
+	override val storePropagationDelay: Boolean get() = false
 
 	/** ---- [Vertice] interface */
 

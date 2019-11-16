@@ -172,7 +172,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		val usecase = UsecaseImpl("SetInput", "circuit.setInputAt(10000, 2, \"1\");")
 		val runner = UsecaseRunner(usecase, view.drawing, scheduler)
 		runner.run()
-		proceedToNanos(10_000)
+		proceedToNanos(10_001)
 		assertFalse(switch.model!!.isOn)
 		assertEquals(Word.of(true), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
 	}

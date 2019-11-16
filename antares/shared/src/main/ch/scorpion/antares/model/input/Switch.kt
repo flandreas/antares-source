@@ -7,17 +7,23 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
-import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
+import ch.scorpion.jabbah.graph.model.vertice.AbstractInteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
 /**
  * Represents an interactive switch that can toggle between two states.
  */
-class Switch : InteractableVertice("library.element.Switch", CALCULATOR) {
+class Switch : AbstractInteractableVertice("library.element.Switch", CALCULATOR) {
 
     var isOn: Boolean = false
         private set
 
+	/**
+	 * Used to support view implementations with a non-toggle behaviour, i.e. switches that change ton "on" when
+	 * the user clicks the mouse button, and to "off" when he releases the mouse button. Since the change to "off"
+	 * would be missed because the [Switch] is not enabled at that time, it is remembered in this flag and applied
+	 * when the [Switch] has been scheduled the next time for calculation.
+	 */
 	private var delayedOff: Boolean = false
 
     init {

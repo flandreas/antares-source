@@ -20,6 +20,8 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement {
 	/** Holds all registered [GraphElementListener]s */
 	private var listeners: MutableList<GraphElementListener>? = null
 
+	protected open val storePropagationDelay: Boolean get() = true
+
 	/** ---- [GraphElement] interface */
 
 	override var id: Int = 0
@@ -63,12 +65,16 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement {
 
 	override fun write(writer: StoreWriter) {
 		writer.writeInt("id", id)
-		writer.writeLong("delay", propagationDelay)
+		if (storePropagationDelay) {
+			writer.writeLong("delay", propagationDelay)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		id = reader.readInt("id")
-		propagationDelay = reader.readLong("delay")
+		if (storePropagationDelay) {
+			propagationDelay = reader.readLong("delay")
+		}
 		// Add an artificial resolution request so that views can request to be resolved AFTER this model
 		reader.requestResolution(this, Reference(name = "modelId"))
 	}

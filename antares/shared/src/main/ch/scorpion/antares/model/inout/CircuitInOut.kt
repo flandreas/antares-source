@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 
 /**
  * A [Vertice] that can feed a [DigitalSignal] into a circuit [Graph] and forward it to the outside of a [Graph].
@@ -16,7 +17,7 @@ import ch.scorpion.jabbah.graph.model.PortType
  * On a conceptual level, a [CircuitInOut] can be seen as a [Port] of an entire [Graph], although it
  * is a [Vertice] that contains a [Port] with a particular [PortType].
  */
-interface CircuitInOut : Vertice, BidirectionalGraphPort<DigitalSignal>, DigitalSignalSource {
+interface CircuitInOut : InteractableVertice, BidirectionalGraphPort<DigitalSignal>, DigitalSignalSource {
 
     /**
      * Determines whether this [CircuitInOut] belongs to a top-level [Graph]. Manually setting the input

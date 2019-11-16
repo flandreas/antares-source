@@ -26,10 +26,10 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 	/** ---- [NetImpl] */
 
 	override val signal: DigitalSignal?
-		get() = super.signal ?: Word.allOf(bitWidth, Bit.False)
+		get() = super.signal ?: Word.allOf(bitWidth, Bit.Undefined)
 
 	override var signalBuffer: DigitalSignal?
-		get() = super.signalBuffer ?: Word.allOf(bitWidth, Bit.False)
+		get() = super.signalBuffer ?: Word.allOf(bitWidth, Bit.Undefined)
 		set(value) {
 			super.signalBuffer = value
 		}

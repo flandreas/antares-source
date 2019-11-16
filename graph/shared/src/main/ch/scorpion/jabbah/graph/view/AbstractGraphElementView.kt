@@ -16,126 +16,128 @@ import ch.scorpion.jabbah.graph.model.*
  * @param T the type of the model [GraphElement]
  */
 abstract class AbstractGraphElementView<T : GraphElement>(
-    styleProvider: StyleProvider,
-    styleType: StyleType,
-    model: T?
+	styleProvider: StyleProvider,
+	styleType: StyleType,
+	model: T?
 ) : AbstractComponent(styleProvider, styleType), GraphElementView<T> {
 
-    companion object {
-        val STORABLE_MODEL_ID = "modelId"
-    }
+	companion object {
+		const val STORABLE_MODEL_ID = "modelId"
+	}
 
-    private val LOG by logger(AbstractGraphElementView::class)
+	private val LOG by logger(AbstractGraphElementView::class)
 
-    /** Listens for changes of the model [GraphElement] and updates this view accordingly.*/
-    private val modelListener = ModelListener()
+	/** Listens for changes of the model [GraphElement] and updates this view accordingly.*/
+	private val modelListener = ModelListener()
 
-    /** Determines whether this [AbstractGraphElementView] is currently resolving persistent references.*/
-    protected var isResolving: Boolean = false
-        private set
+	/** Determines whether this [AbstractGraphElementView] is currently resolving persistent references.*/
+	protected var isResolving: Boolean = false
+		private set
 
-    /** ---- [GraphElementView] interface */
+	/** ---- [GraphElementView] interface */
 
-    override var model: T? = model
-        set(value) {
-            val oldModel = field
-            field = value
-            modelExchanged(oldModel)
-        }
+	override var model: T? = model
+		set(value) {
+			val oldModel = field
+			field = value
+			modelExchanged(oldModel)
+		}
 
-    init {
-        model?.addGraphElementListener(modelListener)
-    }
+	init {
+		model?.addGraphElementListener(modelListener)
+	}
 
-    override fun dispose() {
-        model?.removeGraphElementListener(modelListener)
-    }
+	override fun dispose() {
+		model?.removeGraphElementListener(modelListener)
+	}
 
-    /** ---- UI related properties */
+	/** ---- UI related properties */
 
-    var propagationDelay: Long
-        get() = model?.propagationDelay ?: 0
-        set(value) { model?.propagationDelay = value}
+	var propagationDelay: Long
+		get() = model?.propagationDelay ?: 0
+		set(value) {
+			model?.propagationDelay = value
+		}
 
-    /** ---- [Storable] interface */
+	/** ---- [Storable] interface */
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        if (model != null) {
-            writer.writeInt(STORABLE_MODEL_ID, writer.provideIdentity(model!!))
-        }
-    }
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		if (model != null) {
+			writer.writeInt(STORABLE_MODEL_ID, writer.provideIdentity(model!!))
+		}
+	}
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        if (reader.hasAttribute(STORABLE_MODEL_ID)) {
-            reader.requestResolution(this, Reference(
-                    name = STORABLE_MODEL_ID,
-                    referenceId = reader.readInt(STORABLE_MODEL_ID),
-                    resolveAfter = listOf(reader.readInt(STORABLE_MODEL_ID))
-            ))
-        }
-    }
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute(STORABLE_MODEL_ID)) {
+			reader.requestResolution(this, Reference(
+				name = STORABLE_MODEL_ID,
+				referenceId = reader.readInt(STORABLE_MODEL_ID),
+				resolveAfter = listOf(reader.readInt(STORABLE_MODEL_ID))
+			))
+		}
+	}
 
-    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-        isResolving = true
-        super.resolve(reference, referenceResolver)
-        if(STORABLE_MODEL_ID == reference.name) {
-            val storable = referenceResolver.getStorable(reference.referenceId)
-            if (storable is GraphElement) {
-                model = storable as T
-                LOG.debug("resolve ${model?.id}")
-            }
-        }
-        isResolving = false
-    }
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+		isResolving = true
+		super.resolve(reference, referenceResolver)
+		if (STORABLE_MODEL_ID == reference.name) {
+			val storable = referenceResolver.getStorable(reference.referenceId)
+			if (storable is GraphElement) {
+				model = storable as T
+				LOG.debug("resolve ${model?.id}")
+			}
+		}
+		isResolving = false
+	}
 
-    override fun bind(graph: Graph) {
-        // empty
-    }
+	override fun bind(graph: Graph) {
+		// empty
+	}
 
-    /** ---- [Component] interface */
+	/** ---- [Component] interface */
 
-    override val fixStyleType: Boolean get() = true
+	override val fixStyleType: Boolean get() = true
 
-    /** ---- [AbstractGraphElementView] */
+	/** ---- [AbstractGraphElementView] */
 
-    /**
-     * Called by this class whenever the underlying model [GraphElement] has been exchanged, for example during
-     * deserialising from persistent store (which must use the default constructor).
-     * @param oldModel the former [GraphElement] model instance.
-     */
-    protected open fun modelExchanged(oldModel: T?) {
-        oldModel?.removeGraphElementListener(modelListener)
-        model?.addGraphElementListener(modelListener)
-    }
+	/**
+	 * Called by this class whenever the underlying model [GraphElement] has been exchanged, for example during
+	 * deserialising from persistent store (which must use the default constructor).
+	 * @param oldModel the former [GraphElement] model instance.
+	 */
+	protected open fun modelExchanged(oldModel: T?) {
+		oldModel?.removeGraphElementListener(modelListener)
+		model?.addGraphElementListener(modelListener)
+	}
 
-    protected open fun handleStateChanged(event: GraphElementEvent) {
-        invalidate()
-        // TODO This leads to a repainting of the entire GraphView.
-        // It should be sufficient to repaint the GraphView after a complete execution cycle
-        validate()
-    }
+	protected open fun handleStateChanged(event: GraphElementEvent) {
+		invalidate()
+		// TODO This leads to a repainting of the entire GraphView.
+		// It should be sufficient to repaint the GraphView after a complete execution cycle
+		validate()
+	}
 
-    protected open fun handleExecutionStarted(signalHandler: SignalHandler) {
-        // empty
-    }
+	protected open fun handleExecutionStarted(signalHandler: SignalHandler) {
+		// empty
+	}
 
-    protected open fun handleExecutionStopped(signalHandler: SignalHandler) {
-        // empty
-    }
+	protected open fun handleExecutionStopped(signalHandler: SignalHandler) {
+		// empty
+	}
 
-    private inner class ModelListener : GraphElementAdapter() {
-        override fun stateChanged(e: GraphElementEvent) {
-            handleStateChanged(e)
-        }
+	private inner class ModelListener : GraphElementAdapter() {
+		override fun stateChanged(e: GraphElementEvent) {
+			handleStateChanged(e)
+		}
 
-        override fun executionStarted(signalHandler: SignalHandler) {
-            handleExecutionStarted(signalHandler)
-        }
+		override fun executionStarted(signalHandler: SignalHandler) {
+			handleExecutionStarted(signalHandler)
+		}
 
-        override fun executionStopped(signalHandler: SignalHandler) {
-            handleExecutionStopped(signalHandler)
-        }
-    }
+		override fun executionStopped(signalHandler: SignalHandler) {
+			handleExecutionStopped(signalHandler)
+		}
+	}
 }
