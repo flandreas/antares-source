@@ -25,18 +25,18 @@ class ComponentSnapper(
 
     companion object {
 
-        /** The name of the [Color] property in [DrawProperties] for the highlight color.  */
-        val PROP_SNAP_HIGHLIGHT_COLOR = "edit.snap.highlight.color"
-
-        /** The name of the [Stroke] property in [DrawProperties] for the highlight stroke.  */
-        val PROP_SNAP_HIGHLIGHT_STROKE = "edit.snap.highlight.stroke"
-
-        /** The name of the [Boolean] property in the [DrawProperties] for the enabled property. */
-        private val SETTING_ENABLED = "edit.componentSnap.enabled"
-
         private val LOG by logger(ComponentSnapper::class)
 
-        private val GRAVITY = 15.0
+        /** The name of the [Color] property in [DrawProperties] for the highlight color.  */
+        const val PROP_SNAP_HIGHLIGHT_COLOR = "edit.snap.highlight.color"
+
+        /** The name of the [Stroke] property in [DrawProperties] for the highlight stroke.  */
+        const val PROP_SNAP_HIGHLIGHT_STROKE = "edit.snap.highlight.stroke"
+
+        /** The name of the [Boolean] property in the [DrawProperties] for the enabled property. */
+        private const val SETTING_ENABLED = "edit.componentSnap.enabled"
+
+        private const val GRAVITY = 15.0
 
         private val EMPTY_BBOX = Rectangle2D()
     }
@@ -61,7 +61,7 @@ class ComponentSnapper(
         return false
     }
 
-    /** ---- {@link Snapper} interface */
+    /** ---- [Snapper] interface */
 
     override var snapEnabled: Boolean
         get() = super.snapEnabled

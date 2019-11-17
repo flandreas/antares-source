@@ -30,73 +30,73 @@ import javax.swing.JTextPane
  * A [JPanel] that provides a preview of the [LibraryElement] that is currently selected in a [LibraryTreeView].
  */
 class LibraryPreviewPanel(
-    eventBus: EventBus,
-    private val libraryTreeView: LibraryTreeView
+	eventBus: EventBus,
+	private val libraryTreeView: LibraryTreeView
 ) : JPanel() {
 
-    companion object {
-	    private val LOG by logger(LibraryPreviewPanel::class)
-        private val BACKGROUND_COLOR = Color.WHITE
-    }
+	companion object {
+		private val LOG by logger(LibraryPreviewPanel::class)
+		private val BACKGROUND_COLOR = Color.WHITE
+	}
 
-    init {
-        eventBus.register(CurrentSavableEvent::class) { updateWithSelectedItem() }
-    }
+	init {
+		eventBus.register(CurrentSavableEvent::class) { updateWithSelectedItem() }
+	}
 
-    @Suppress("unused")
-    constructor(libraryTreeView: LibraryTreeView): this(BaseModule.eventBus, libraryTreeView)
+	@Suppress("unused")
+	constructor(libraryTreeView: LibraryTreeView) : this(BaseModule.eventBus, libraryTreeView)
 
-    /** Maps a [LibraryElement] to the instantiated [Component] to be displayed as preview.*/
-    private val map: MutableMap<LibraryElement, Component> = mutableMapOf()
+	/** Maps a [LibraryElement] to the instantiated [Component] to be displayed as preview.*/
+	private val map: MutableMap<LibraryElement, Component> = mutableMapOf()
 
-    private val componentDisplay = ComponentDisplay()
+	private val componentDisplay = ComponentDisplay()
 
-    private val descriptionArea = JTextPane()
+	private val descriptionArea = JTextPane()
 
-    /** Stores the preview [Component] of the currently selected [LibraryElement]. */
-    private var selection: Component? = null
+	/** Stores the preview [Component] of the currently selected [LibraryElement]. */
+	private var selection: Component? = null
 
-    init {
-        descriptionArea.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true)
-        descriptionArea.contentType = "text/html"
-        descriptionArea.isEditable = false
-        descriptionArea.preferredSize = Dimension(150, 50)
-        descriptionArea.background = BACKGROUND_COLOR
+	init {
+		descriptionArea.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true)
+		descriptionArea.contentType = "text/html"
+		descriptionArea.isEditable = false
+		descriptionArea.preferredSize = Dimension(150, 50)
+		descriptionArea.background = BACKGROUND_COLOR
 
-        eventBus.register(LibrarySelectionChangedEvent::class) { handleLibrarySelectionChanged(it) }
-	    eventBus.register(LibraryItemUpdatedEvent::class) { map.remove(it.item) }
-	    eventBus.register(PreferencesChangedEvent::class) { componentDisplay.repaint() }
+		eventBus.register(LibrarySelectionChangedEvent::class) { handleLibrarySelectionChanged(it) }
+		eventBus.register(LibraryItemUpdatedEvent::class) { map.remove(it.item) }
+		eventBus.register(PreferencesChangedEvent::class) { componentDisplay.repaint() }
 
-	    buildUI()
+		buildUI()
 
-        addComponentListener(object : ComponentAdapter() {
-            override fun componentResized(e: ComponentEvent?) {
-                componentDisplay.updateLayout()
-            }
-        })
-    }
+		addComponentListener(object : ComponentAdapter() {
+			override fun componentResized(e: ComponentEvent?) {
+				componentDisplay.updateLayout()
+			}
+		})
+	}
 
-    fun addDrawableDrawer(drawableDrawer: DrawableDrawer<Component>) {
-        componentDisplay.addDrawableDrawer(drawableDrawer)
-    }
+	fun addDrawableDrawer(drawableDrawer: DrawableDrawer<Component>) {
+		componentDisplay.addDrawableDrawer(drawableDrawer)
+	}
 
-    private fun buildUI() {
-        background = BACKGROUND_COLOR
-        layout = BorderLayout()
-        border = BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.LIGHT_GRAY),
-            BorderFactory.createEmptyBorder(10, 10, 10, 10))
-        descriptionArea.border = BorderFactory.createEmptyBorder(0, 10, 0, 0)
-        add(componentDisplay, BorderLayout.WEST)
-        add(descriptionArea, BorderLayout.CENTER)
-    }
+	private fun buildUI() {
+		background = BACKGROUND_COLOR
+		layout = BorderLayout()
+		border = BorderFactory.createCompoundBorder(
+			BorderFactory.createLineBorder(Color.LIGHT_GRAY),
+			BorderFactory.createEmptyBorder(10, 10, 10, 10))
+		descriptionArea.border = BorderFactory.createEmptyBorder(0, 10, 0, 0)
+		add(componentDisplay, BorderLayout.WEST)
+		add(descriptionArea, BorderLayout.CENTER)
+	}
 
-    private fun handleLibrarySelectionChanged(e: LibrarySelectionChangedEvent) {
-        if (e.libraryTreeView !== this.libraryTreeView) {
-            return
-        }
+	private fun handleLibrarySelectionChanged(e: LibrarySelectionChangedEvent) {
+		if (e.libraryTreeView !== this.libraryTreeView) {
+			return
+		}
 		updateWithSelectedItem()
-    }
+	}
 
 	private fun updateWithSelectedItem() {
 		val selectedItem = libraryTreeView.getSelectedItem()
@@ -112,8 +112,8 @@ class LibraryPreviewPanel(
 		repaint()
 	}
 
-    private fun updateSelection(libraryElement: LibraryElement?) {
-        if (libraryElement == null) {
+	private fun updateSelection(libraryElement: LibraryElement?) {
+		if (libraryElement == null) {
 			selection = null
 			descriptionArea.text = null
 			return
@@ -125,80 +125,80 @@ class LibraryPreviewPanel(
 			return
 		}
 
-        InvocationHandler.invoke(Runnable {
-            val c = libraryElement.getNewInstance<GraphElement>()
-	        map[libraryElement] = c
-            updateSelectionImpl(c)
-        })
-    }
+		InvocationHandler.invoke(Runnable {
+			val c = libraryElement.getNewInstance<GraphElement>()
+			map[libraryElement] = c
+			updateSelectionImpl(c)
+		})
+	}
 
-    private fun updateSelectionImpl(component: Component) {
-        selection = component
-        selection!!.styleProvider = Themes.uiStyleProvider
-        componentDisplay.updateLayout()
-	    descriptionArea.text = System.get().buildToolTipText(selection!!.type, (selection as VerticeView<*>).shortDescription, true)
-    }
+	private fun updateSelectionImpl(component: Component) {
+		selection = component
+		selection!!.styleProvider = Themes.uiStyleProvider
+		componentDisplay.updateLayout()
+		descriptionArea.text = System.get().buildToolTipText(selection!!.type, (selection as VerticeView<*>).shortDescription, true)
+	}
 
-    /** Displays the graphical preview of the selected {@link Component}. */
-    private inner class ComponentDisplay : JPanel() {
+	/** Displays the graphical preview of the selected [Component]. */
+	private inner class ComponentDisplay : JPanel() {
 
-        private var drawableDrawer: DrawableDrawer<Component> = DefaultDrawableDrawer()
-        private var scale: Double = 1.0
+		private var drawableDrawer: DrawableDrawer<Component> = DefaultDrawableDrawer()
+		private var scale: Double = 1.0
 
-        init {
-            background = BACKGROUND_COLOR
-            preferredSize = Dimension(75, 150)
-        }
+		init {
+			background = BACKGROUND_COLOR
+			preferredSize = Dimension(75, 150)
+		}
 
-        fun addDrawableDrawer(drawableDrawer: DrawableDrawer<Component>) {
-            drawableDrawer.successor = this.drawableDrawer
-            this.drawableDrawer = drawableDrawer
-        }
+		fun addDrawableDrawer(drawableDrawer: DrawableDrawer<Component>) {
+			drawableDrawer.successor = this.drawableDrawer
+			this.drawableDrawer = drawableDrawer
+		}
 
-        override fun paintComponent(g: Graphics) {
-            val g2 = g as Graphics2D
-            super.paintComponent(g)
+		override fun paintComponent(g: Graphics) {
+			val g2 = g as Graphics2D
+			super.paintComponent(g)
 
-            g2.setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON)
+			g2.setRenderingHint(
+				RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON)
 
-            if (scale != 1.0) {
-                g2.scale(scale, scale)
-            }
+			if (scale != 1.0) {
+				g2.scale(scale, scale)
+			}
 
-            if (selection != null) {
-                drawableDrawer.process(DrawContext(Graphics2DJvm(g2), GraphApplicationContext()), selection!!)
-            }
+			if (selection != null) {
+				drawableDrawer.process(DrawContext(Graphics2DJvm(g2), GraphApplicationContext()), selection!!)
+			}
 
-            if (scale != 1.0) {
-                g2.scale(1 / scale, 1 / scale)
-            }
-        }
+			if (scale != 1.0) {
+				g2.scale(1 / scale, 1 / scale)
+			}
+		}
 
-        fun updateLayout() {
-            if (selection == null) {
-                return
-            }
+		fun updateLayout() {
+			if (selection == null) {
+				return
+			}
 
-            selection!!.location = Point2D(0, 0)
-            val bbox = selection!!.boundingBox
+			selection!!.location = Point2D(0, 0)
+			val bbox = selection!!.boundingBox
 
-            val fx = this.width / bbox.width
-            val fy = this.height / bbox.height
+			val fx = this.width / bbox.width
+			val fy = this.height / bbox.height
 
-            scale = 1.0
-            if (fx < 1 || fy < 1) {
-                scale = Math.min(fx, fy)
-            }
+			scale = 1.0
+			if (fx < 1 || fy < 1) {
+				scale = Math.min(fx, fy)
+			}
 
-            // Horizontally centered
-            val dx = (this.width.toDouble() - bbox.width * scale) / 2 - bbox.x
-            // Vertically top aligned
-            val dy = -bbox.y
+			// Horizontally centered
+			val dx = (this.width.toDouble() - bbox.width * scale) / 2 - bbox.x
+			// Vertically top aligned
+			val dy = -bbox.y
 
-            selection!!.moveBy(dx, dy)
-            repaint()
-        }
-    }
+			selection!!.moveBy(dx, dy)
+			repaint()
+		}
+	}
 }

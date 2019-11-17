@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.view.port.PortView
 
 /**
@@ -15,38 +17,38 @@ import ch.scorpion.jabbah.graph.view.port.PortView
  */
 interface VerticeView<T : Vertice> : GraphElementView<T>, ConnectableView, ActorView {
 
-    val vertice: Vertice get() = model as T
+	val vertice: Vertice get() = model as T
 
-    /**
-     * Returns a short description that explains the purpose of this {@link Vertice}.
-     * Example: "Inverts the signal arriving at its single input isPort and provides the inverted signal at its single output"
-     * @return a translated short description of this [VerticeView]
-     */
-    val shortDescription: String?
+	/**
+	 * Returns a short description that explains the purpose of this [Vertice].
+	 * Example: "Inverts the signal arriving at its single input isPort and provides the inverted signal at its single output"
+	 * @return a translated short description of this [VerticeView]
+	 */
+	val shortDescription: String?
 
-    /** Returns the number of [PortView]s of this [VerticeView].*/
-    val portViewCount: Int
+	/** Returns the number of [PortView]s of this [VerticeView].*/
+	val portViewCount: Int
 
-    /** Determines whether this [VerticeView] shows its [PortView]s or not.*/
-    var isShowPortViews: Boolean
+	/** Determines whether this [VerticeView] shows its [PortView]s or not.*/
+	var isShowPortViews: Boolean
 
-    /** Adds the specified [PortView] to this [VerticeView]. */
-    fun addPortView(portView: PortView<*>)
+	/** Adds the specified [PortView] to this [VerticeView]. */
+	fun addPortView(portView: PortView<*>)
 
-    /** Removes the specified [PortView] from this [VerticeView]. */
-    fun removePortView(portView: PortView<*>)
+	/** Removes the specified [PortView] from this [VerticeView]. */
+	fun removePortView(portView: PortView<*>)
 
-    /** Returns the [PortView]s of this [VerticeView].*/
-    fun getPortViews(): ImmutableList<PortView<*>>
+	/** Returns the [PortView]s of this [VerticeView].*/
+	fun getPortViews(): ImmutableList<PortView<*>>
 
-    /** Returns the [PortView] that contains the specified absolute location, also respecting the label of the [PortView].*/
-    fun getPortViewAt(x: Double, y: Double): PortView<*>?
+	/** Returns the [PortView] that contains the specified absolute location, also respecting the label of the [PortView].*/
+	fun getPortViewAt(x: Double, y: Double): PortView<*>?
 
-    /**
-     * Returns the [PortView] whose connection point is at the specified absolute location.
-     * @return the [PortView] at `(x, y)`, if any.
-     */
-    fun getPortViewAtConnectionPoint(x: Double, y: Double): PortView<*>?
+	/**
+	 * Returns the [PortView] whose connection point is at the specified absolute location.
+	 * @return the [PortView] at `(x, y)`, if any.
+	 */
+	fun getPortViewAtConnectionPoint(x: Double, y: Double): PortView<*>?
 
 	fun getPortViewAtConnectionPoint(p: Point2D): PortView<*>? = getPortViewAtConnectionPoint(p.x, p.y)
 

@@ -20,8 +20,8 @@ import ch.scorpion.jabbah.draw.view.TooltipHandler
  * Child [GraphView]s are generally NOT editable, and therefore the following responsibilities must be covered by
  * this [GraphViewDisplayHandler], which are covered by the [Editor] in case of a root [GraphView]:
  *
- * - Display the tooltip of the {@link GraphElementView} at the current mouse location
- * - Dive into a {@link SubGraphVerticeView} when the user double clicks on it
+ * - Display the tooltip of the [GraphElementView] at the current mouse location
+ * - Dive into a [SubGraphVerticeView] when the user double clicks on it
  */
 class GraphViewDisplayHandler(
 	private val view: DrawingView<GraphView<GraphElementView<*>>>,

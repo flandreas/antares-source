@@ -52,7 +52,7 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
 	/**
 	 * Asks this [View] to initialize itself after it has been laid out and become visible for the first time.
-	 * Implementing classes should at least apply their default {@link ZoomStrategy}.
+	 * Implementing classes should at least apply their default [ZoomStrategy].
 	 */
 	fun initialize()
 
@@ -100,7 +100,7 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 	/**
 	 * Draws this [View] onto the specified graphics context.
 	 *
-	 * Since classes that implement this {@link View} interface will setup themselves to get notified when it is
+	 * Since classes that implement this [View] interface will setup themselves to get notified when it is
 	 * necessary to redraw parts or all of a drawing, this method is typically called by [ViewPainter]s that
 	 * repaint the view on behalf of [View]s.
 	 *

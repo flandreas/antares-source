@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.logger
 
 
 /**
- * A wrapper for a property of a bean that can be used with property editors, and that issues a {@link Command}
+ * A wrapper for a property of a bean that can be used with property editors, and that issues a [Command]
  * @param <V> the type of the value
  */
 class PropertyImpl<V>(

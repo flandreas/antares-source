@@ -44,7 +44,7 @@ interface Vertice : GraphElement, Describable {
     /**
      * Notifies this [Vertice] that one of its [OutputPort]s has changed its signal.
      *
-     * This is mainly relevant if this [Vertice] contains a sub {@link Graph} whose output signals are forwarded
+     * This is mainly relevant if this [Vertice] contains a sub [Graph] whose output signals are forwarded
      * to the [OutputPort]s of this [Vertice], in which case this [Vertice] should inform its listeners
      * that its state has changed.
      */

@@ -24,7 +24,7 @@ interface ViewManager {
 }
 
 /**
- * Posted by a [ViewManager] when the active {@link View} has changed.
+ * Posted by a [ViewManager] when the active [View] has changed.
  */
 data class ActiveViewChangedEvent(
 	val viewManager: ViewManager,

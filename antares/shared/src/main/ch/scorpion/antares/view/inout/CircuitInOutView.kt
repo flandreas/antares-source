@@ -43,6 +43,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
@@ -369,8 +370,8 @@ class CircuitInOutView(
 	/** ---- [CircuitInOutView] */
 
 	/**
-	 * Returns the translation vector to be applied to the {@link ArrowPath} for drawing and bounding box calculation.
-	 * @return the vector relative to this {@link VerticeView}'s origin
+	 * Returns the translation vector to be applied to the [ArrowPath] for drawing and bounding box calculation.
+	 * @return the vector relative to this [VerticeView]'s origin
 	 */
 	private fun getArrowPathTranslation(): Point2D {
 		return when (model!!.portType) {
@@ -383,8 +384,7 @@ class CircuitInOutView(
 	}
 
 	/**
-	 * Creates the {@link DigitalPortView} of this {@link AbstractCircuitInOutView}.
-	 * @return the created {@link DigitalPortView}.
+	 * Creates the [DigitalPortView] of this [CircuitInOut].
 	 */
 	private fun createPortView(template: PortView<DigitalSignal>?): DigitalPortView {
 		when (model!!.portType) {
@@ -414,8 +414,8 @@ class CircuitInOutView(
 	}
 
 	/**
-	 * Updates the text, the location and the alignments of the external {@link Label} depending on the current
-	 * orientation of this {@link AbstractCircuitInOutView}.
+	 * Updates the text, the location and the alignments of the external [Label] depending on the current
+	 * orientation of this [CircuitInOutView]}.
 	 */
 	private fun updateLabel() {
 		when (model!!.portType) {

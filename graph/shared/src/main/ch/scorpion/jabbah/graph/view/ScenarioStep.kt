@@ -28,7 +28,7 @@ interface ScenarioStep : Namable, Describable, Storable {
 	val highlightIdsAsInt: List<Int>
 
 	/**
-	 * Returns the condition that determines whether this {@link ScenarioStep} is triggered depending on the current state
+	 * Returns the condition that determines whether this [ScenarioStep] is triggered depending on the current state
 	 * of a [DrawingView] and its GraphView.
 	 *
 	 * A [ScenarioStep] will only trigger if its owning [Scenario] also triggers, which is controlled by

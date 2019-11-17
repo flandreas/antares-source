@@ -125,7 +125,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		val p = rotateBack(x, y)
 		return portViews.firstOrNull {
 			it.contains(p.x - location.x, p.y - location.y)
-			|| it.containsConnectionPoint(p.x - location.x, p.y - location.y)
+				|| it.containsConnectionPoint(p.x - location.x, p.y - location.y)
 		}
 	}
 
@@ -412,7 +412,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 	 *
 	 * This method translates the [Graphics2D] context to the location of this [VerticeView] and also
 	 * rotates it to the current [Rotation].
-	 * @param context the {@link DrawContext} to be used for drawing
+	 * @param context the [DrawContext] to be used for drawing
 	 * @param drawer the code that effectively draws content within the prepared translation and rotation context.
 	 */
 	fun draw(context: DrawContext, drawer: (DrawContext) -> Unit) {

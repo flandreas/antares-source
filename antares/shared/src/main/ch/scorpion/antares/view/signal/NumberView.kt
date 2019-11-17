@@ -80,7 +80,7 @@ class NumberView(
 
 	/** ---- [NumberView] */
 
-	/** Returns the number of {@link DigitView} that this {@link NumberView} displays.*/
+	/** Returns the number of [DigitView] that this [NumberView] displays.*/
 	val digitCount: Int get() = digitViews.size
 
 	fun clear() {

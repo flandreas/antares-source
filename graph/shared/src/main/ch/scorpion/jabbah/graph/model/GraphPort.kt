@@ -13,34 +13,34 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
  *
  * @param T the type of signal handled by this [GraphPort]
  */
-interface GraphPort<out T: Any> : Vertice {
+interface GraphPort<out T : Any> : Vertice {
 
-    /** The current signal of this [GraphPort].*/
-    val signal: T?
+	/** The current signal of this [GraphPort].*/
+	val signal: T?
 
-    /**
-     * The [PortType] of the single [Port] of this [GraphPort]. Can be changed to support scenarios where the
-     * user can choose whether a [Port] is an input or an output, or both.
-     */
-    var portType: PortType
+	/**
+	 * The [PortType] of the single [Port] of this [GraphPort]. Can be changed to support scenarios where the
+	 * user can choose whether a [Port] is an input or an output, or both.
+	 */
+	var portType: PortType
 
-    /** Corresponds with [Port.description] of the single [Port] of this [GraphPort].*/
-    var portDescription: Description
-        get() {
-            val port: Port<T> = getPort()
-            return port.description
-        }
-        set(value) {
-            val port: Port<T> = getPort()
-            port.description.translation = value.translation
-        }
+	/** Corresponds with [Port.description] of the single [Port] of this [GraphPort].*/
+	var portDescription: Description
+		get() {
+			val port: Port<T> = getPort()
+			return port.description
+		}
+		set(value) {
+			val port: Port<T> = getPort()
+			port.description.translation = value.translation
+		}
 }
 
 /** Gets posted on [EventBus] when the name of a [GraphPort] changes.*/
-data class GraphPortNameChanged<out T: Any>(
-    val graphPort: GraphPort<T>,
-    val oldName: String?,
-    val newName: String?
+data class GraphPortNameChanged<out T : Any>(
+	val graphPort: GraphPort<T>,
+	val oldName: String?,
+	val newName: String?
 )
 
 /**
@@ -48,21 +48,21 @@ data class GraphPortNameChanged<out T: Any>(
  * The name of a [GraphInput] must be unique within a [Graph], because the name is used to bind
  * [InputPort]s from outside to this [GraphInput]
  *
- * @param T the type of signal that this {@link GraphInput} forwards.
+ * @param T the type of signal that this [GraphInput] forwards.
  */
-interface GraphInput<T: Any> : GraphPort<T> {
+interface GraphInput<T : Any> : GraphPort<T> {
 
-    /**
-     * Holds the [SubGraphInputPort] that forwards signal to this [GraphInput]. That [SubGraphInputPort]
-     * belongs to the surrounding [Graph] of this [GraphInput]. The reference to it is not used
-     * for signal propagation, but only for determining whether this [GraphInput] belongs to a top-level
-     * [Graph] or to a [SubGraphVertice]. If it belongs to a [SubGraphVertice], it is not allowed to
-     * change the signal manually. `null` for top-level [Graph]s. Not set before binding.
-     */
-    var subGraphInputPort: SubGraphInputPort<T>?
+	/**
+	 * Holds the [SubGraphInputPort] that forwards signal to this [GraphInput]. That [SubGraphInputPort]
+	 * belongs to the surrounding [Graph] of this [GraphInput]. The reference to it is not used
+	 * for signal propagation, but only for determining whether this [GraphInput] belongs to a top-level
+	 * [Graph] or to a [SubGraphVertice]. If it belongs to a [SubGraphVertice], it is not allowed to
+	 * change the signal manually. `null` for top-level [Graph]s. Not set before binding.
+	 */
+	var subGraphInputPort: SubGraphInputPort<T>?
 
-    /** Sets the signal to be forwarded into the [Graph] that owns this [GraphInput].*/
-    fun setIncomingSignal(signal: T?, signalHandler: SignalHandler)
+	/** Sets the signal to be forwarded into the [Graph] that owns this [GraphInput].*/
+	fun setIncomingSignal(signal: T?, signalHandler: SignalHandler)
 }
 
 /**
@@ -71,24 +71,24 @@ interface GraphInput<T: Any> : GraphPort<T> {
  * [OutputPort]s from outside to this [GraphOutput]
  * @param T the type of signal that this [GraphOutput] forwards.
  */
-interface GraphOutput<T: Any> : GraphPort<T> {
+interface GraphOutput<T : Any> : GraphPort<T> {
 
-    /**
-     * Sets the [SubGraphOutputPort] to which this [GraphOutput] forwards signals while execution.
-     * Not set before binding.
-     */
-    fun setSubGraphOutputPort(port: SubGraphOutputPort<T>)
+	/**
+	 * Sets the [SubGraphOutputPort] to which this [GraphOutput] forwards signals while execution.
+	 * Not set before binding.
+	 */
+	fun setSubGraphOutputPort(port: SubGraphOutputPort<T>)
 }
 
-interface SubGraphPort<T: Any> : Port<T>, Storable
+interface SubGraphPort<T : Any> : Port<T>, Storable
 
-interface SubGraphInputPort<T: Any> : InputPort<T>, SubGraphPort<T> {
+interface SubGraphInputPort<T : Any> : InputPort<T>, SubGraphPort<T> {
 
-    /** Binds this [SubGraphInputPort] to the [GraphInput] of the sub [Graph] to which it will forward signals.*/
-    var graphInput: GraphInput<T>?
+	/** Binds this [SubGraphInputPort] to the [GraphInput] of the sub [Graph] to which it will forward signals.*/
+	var graphInput: GraphInput<T>?
 }
 
-interface SubGraphOutputPort<T: Any> : OutputPort<T>, SubGraphPort<T> {
+interface SubGraphOutputPort<T : Any> : OutputPort<T>, SubGraphPort<T> {
 
-    fun propagateSignal(signal: T, signalHandler: SignalHandler)
+	fun propagateSignal(signal: T, signalHandler: SignalHandler)
 }

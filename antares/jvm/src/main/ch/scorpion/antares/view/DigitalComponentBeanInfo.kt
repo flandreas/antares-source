@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view
 
+import java.beans.BeanInfo
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
@@ -7,7 +8,7 @@ import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
 
 /**
- * Base class for implementing {@link BeanInfo}s for {@link DigitalComponentView}s.
+ * Base class for implementing [BeanInfo]s for [DigitalComponentView]s.
  */
 open class DigitalComponentBeanInfo<T : DigitalComponentView<*>> : VerticeViewBeanInfo<T>() {
 

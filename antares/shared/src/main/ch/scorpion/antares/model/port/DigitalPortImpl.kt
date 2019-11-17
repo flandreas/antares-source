@@ -93,7 +93,7 @@ open class DigitalPortImpl(
 	}
 
 	/**
-	 * Explicitly set default {@link Bit}. If not set, [defaultDigitalSignal] calculates the default signal based
+	 * Explicitly set default [Bit]. If not set, [defaultDigitalSignal] calculates the default signal based
 	 * on the [PortType].
 	 */
 	private var defaultBit: Bit? = null

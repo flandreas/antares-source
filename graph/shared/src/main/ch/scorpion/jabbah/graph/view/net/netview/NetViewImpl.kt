@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.io.*
 
 /**
  * A standard implementation of the [NetView] interface.
- * @param T the type of signal that the {@link Net} forwards.
+ * @param T the type of signal that the [Net] forwards.
  */
 class NetViewImpl<T: Any>(
     override var net: Net<T> = NetImpl()

@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.memory
 
 /**
- * Fills the gaps in the [MemoryCell] address space iterated by the {@link Iterator} which is returned by
+ * Fills the gaps in the [MemoryCell] address space iterated by the [Iterator] which is returned by
  * [Memory] with zero value [MemoryCell]s. This is used to turn the fragmented and segmented memory space into
  * a continuous stream of [MemoryCell]s, independent of their values.
  *

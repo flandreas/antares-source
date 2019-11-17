@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Snapper
+import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -24,36 +25,36 @@ import ch.scorpion.jabbah.io.Storable
  */
 interface GraphView<T : GraphElementView<*>> : Drawing<T> {
 
-    /** The [Graph] that this [GraphView] displays. Only `null` during deserialization.*/
-    var graph: Graph?
+	/** The [Graph] that this [GraphView] displays. Only `null` during deserialization.*/
+	var graph: Graph?
 
-    /**
-     * Holds the [Snapper] to be used by all automatic layout activity being done on [GraphElementView]s
-     * displayed by this {@link GraphView}.
-     */
-    var snapper: Snapper?
+	/**
+	 * Holds the [Snapper] to be used by all automatic layout activity being done on [GraphElementView]s
+	 * displayed by this [GraphView].
+	 */
+	var snapper: Snapper?
 
-    /** Returns the [Scenarios] that are defined for this [GraphView].*/
-    val scenarios: Scenarios
+	/** Returns the [Scenarios] that are defined for this [GraphView].*/
+	val scenarios: Scenarios
 
 	/** Returns the [Usecases] that are defined for this [GraphView].*/
 	val usecases: Usecases
 
-    /** The current [Scenario] of this [GraphView], if any. Posts a [ScenarioEvent] if changed.*/
-    var currentScenario: Scenario?
+	/** The current [Scenario] of this [GraphView], if any. Posts a [ScenarioEvent] if changed.*/
+	var currentScenario: Scenario?
 
-    /** The current [ScenarioStep] of this [GraphView], if any. Posts a [ScenarioStepEvent] if changed.*/
-    var currentScenarioStep: ScenarioStep?
+	/** The current [ScenarioStep] of this [GraphView], if any. Posts a [ScenarioStepEvent] if changed.*/
+	var currentScenarioStep: ScenarioStep?
 
-    /**
-     * Asks this [GraphView] to make sure that all its [GraphElementView]s are properly bound to their models.
-     *
-     * This method is automatically called typically before simulation is started and is needed because [GraphView]s
-     * can contain [SubGraphVerticeView]s that might depend on model information of the referenced sub
-     * [SubGraph], which is not available before [Graph] binding. Note however that this method should **not** bind
-     * [Graph] models in terms of [Graph.bind]; this is the responsibility of other classes.
-     */
-    fun bind()
+	/**
+	 * Asks this [GraphView] to make sure that all its [GraphElementView]s are properly bound to their models.
+	 *
+	 * This method is automatically called typically before simulation is started and is needed because [GraphView]s
+	 * can contain [SubGraphVerticeView]s that might depend on model information of the referenced sub
+	 * [Graph], which is not available before [Graph] binding. Note however that this method should **not** bind
+	 * [Graph] models in terms of [Graph.bind]; this is the responsibility of other classes.
+	 */
+	fun bind()
 
 	/**
 	 * Checks for design errors in the [Graph] and posts an [Issue] on this [GraphView]'s [EventBus] for every
@@ -64,44 +65,44 @@ interface GraphView<T : GraphElementView<*>> : Drawing<T> {
 	fun checkDesign(): Boolean
 
 	/**
-     * Creates a clone of this [GraphView] that is connected with another model instance, and **not**
-     * with the [Graph] of this [GraphView].
-     *
-     * @param model the [Graph] with which the created clone is connected. Must have the same structure like this
-     *      [GraphView]'s model.
-     *
-     * @param storableCreator the [StorableCreator] to be used for creating the [Storable]s, or nothing
-     *      if the default [StorableCreator] is to be used.
-     * @return a clone of this [GraphView] that is connected with [model]
-     */
-    fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator = IOModule.storableCreator): GraphView<T>
+	 * Creates a clone of this [GraphView] that is connected with another model instance, and **not**
+	 * with the [Graph] of this [GraphView].
+	 *
+	 * @param model the [Graph] with which the created clone is connected. Must have the same structure like this
+	 *      [GraphView]'s model.
+	 *
+	 * @param storableCreator the [StorableCreator] to be used for creating the [Storable]s, or nothing
+	 *      if the default [StorableCreator] is to be used.
+	 * @return a clone of this [GraphView] that is connected with [model]
+	 */
+	fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator = IOModule.storableCreator): GraphView<T>
 
 	fun getVerticeViews(): ImmutableList<VerticeView<Vertice>>
 
-    /** Returns all [EdgeViews] that this [GraphView] contains.*/
-    fun getEdgeViews(): ImmutableList<EdgeView<Any>>
+	/** Returns all [EdgeView]s that this [GraphView] contains.*/
+	fun getEdgeViews(): ImmutableList<EdgeView<Any>>
 
-    /** Returns the [EdgeView] that is connected with the specified [Port], if any.*/
-    fun getEdgeView(port: Port<*>): EdgeView<Any>?
+	/** Returns the [EdgeView] that is connected with the specified [Port], if any.*/
+	fun getEdgeView(port: Port<*>): EdgeView<Any>?
 
-    /** Returns all [GraphPortView]s that this [GraphView] contains.*/
-    fun getGraphPortViews(): ImmutableList<GraphPortView<GraphPort<Any>>>
+	/** Returns all [GraphPortView]s that this [GraphView] contains.*/
+	fun getGraphPortViews(): ImmutableList<GraphPortView<GraphPort<Any>>>
 
-    /** Returns the [GraphPortView] of the [GraphPort] with the specified name, if any.*/
-    fun getGraphPortView(portName: String): GraphPortView<GraphPort<Any>>?
+	/** Returns the [GraphPortView] of the [GraphPort] with the specified name, if any.*/
+	fun getGraphPortView(portName: String): GraphPortView<GraphPort<Any>>?
 
-    fun getControlViewSources(): ImmutableList<ControlViewSource<Vertice>>
+	fun getControlViewSources(): ImmutableList<ControlViewSource<Vertice>>
 
-    /** Returns the [ControlViewSource] with the specified ID, if any.*/
-    fun getControlViewSource(controlId: String): ControlViewSource<Vertice>?
+	/** Returns the [ControlViewSource] with the specified ID, if any.*/
+	fun getControlViewSource(controlId: String): ControlViewSource<Vertice>?
 
-    /** Returns all [GraphElementView]s of a particular [GraphElement].*/
-    fun getElementViews(element: GraphElement): ImmutableList<GraphElementView<*>>
+	/** Returns all [GraphElementView]s of a particular [GraphElement].*/
+	fun getElementViews(element: GraphElement): ImmutableList<GraphElementView<*>>
 
 	/** Returns all [SubGraphVerticeView] that this [GraphView] contains.*/
 	fun getSubGraphVerticeViews(): ImmutableList<SubGraphVerticeView<SubGraphVertice>>
 
-    // TODO Add Scenario methods
+	// TODO Add Scenario methods
 }
 
 /**

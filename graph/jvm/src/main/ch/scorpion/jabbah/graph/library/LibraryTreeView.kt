@@ -28,7 +28,7 @@ data class LibrarySelectionChangedEvent(val libraryTreeView: LibraryTreeView)
 /**
  * Displays the current [Project] and the current [Library] as a tree.
  *
- * Instances of this class post the following events on the {@link T2Bus}:
+ * Instances of this class post the following events on the [EventBus]:
  * - A [LibrarySelectionChangedEvent] when the user selects a tree item
  */
 class LibraryTreeView(
@@ -85,7 +85,7 @@ class LibraryTreeView(
 			}
 		}
 
-	private val libraryItemAddedHandler: EventHandler<LibraryItemAddedEvent> = { handle(it)}
+	private val libraryItemAddedHandler: EventHandler<LibraryItemAddedEvent> = { handle(it) }
 
 	private val libraryItemRemovedHandler: EventHandler<LibraryItemRemovedEvent> = { handle(it) }
 
@@ -95,7 +95,7 @@ class LibraryTreeView(
 
 	private val libraryItemDirectoryRenamedHandler: EventHandler<LibraryDirectoryRenamedEvent> = { handle(it) }
 
-	private val applicationModeHandler: EventHandler<ApplicationModeEvent> =  { dragEnabled = it.applicationMode.isEdit() }
+	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { dragEnabled = it.applicationMode.isEdit() }
 
 	private val currentSavableHandler: EventHandler<CurrentSavableEvent> = { handle(it) }
 

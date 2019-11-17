@@ -14,53 +14,53 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 /**
  * Base view implementation for [AbstractDigitalGate] views.
  *
- * Must be declared public in order to support {@link ComponentPropertyPanel} property access.
+ * Must be declared public in order to support [ComponentPropertyPanel property access.
  * @param T the type of gate model displayed by this view.
  */
 abstract class AbstractDigitalGateView<T : AbstractDigitalGate>(
-    styleProvider: StyleProvider,
-    text: String,
-    vertice: T
+	styleProvider: StyleProvider,
+	text: String,
+	vertice: T
 ) : BoxGateView<T>(styleProvider, text, vertice) {
 
-    var chosenInputCount: InputCount
-        get() = model!!.chosenInputCount
-        set(value) {
-            invalidate()
-            model!!.chosenInputCount = value
-            modelExchanged(model)
-        }
+	var chosenInputCount: InputCount
+		get() = model!!.chosenInputCount
+		set(value) {
+			invalidate()
+			model!!.chosenInputCount = value
+			modelExchanged(model)
+		}
 
-    var outputPortName: String?
-        get() = model!!.getOutput<DigitalSignal>().name
-        set(value) {
-            invalidate()
-            model!!.getOutput<DigitalSignal>().name = value
-            invalidate()
-        }
+	var outputPortName: String?
+		get() = model!!.getOutput<DigitalSignal>().name
+		set(value) {
+			invalidate()
+			model!!.getOutput<DigitalSignal>().name = value
+			invalidate()
+		}
 
-    /** ---- [AbstractVerticeView] */
+	/** ---- [AbstractVerticeView] */
 
-    override fun modelExchanged(oldModel: T?) {
-        super.modelExchanged(oldModel)
+	override fun modelExchanged(oldModel: T?) {
+		super.modelExchanged(oldModel)
 
-	    for ((index, inputPort) in model!!.getInputs().withIndex()) {
-            addPortView(createInputPortView(inputPort as Port<DigitalSignal>, index))
-        }
-        addPortView(DigitalPortView(
-            styleProvider = styleProvider,
-            port = model!!.getOutput(),
-            direction = Direction.EAST,
-            portLabelPosition = PortLabelPosition.EXTERNAL))
-        updateLayout()
-    }
+		for ((index, inputPort) in model!!.getInputs().withIndex()) {
+			addPortView(createInputPortView(inputPort as Port<DigitalSignal>, index))
+		}
+		addPortView(DigitalPortView(
+			styleProvider = styleProvider,
+			port = model!!.getOutput(),
+			direction = Direction.EAST,
+			portLabelPosition = PortLabelPosition.EXTERNAL))
+		updateLayout()
+	}
 
-    /** ---- [AbstractDigitalGateView] */
+	/** ---- [AbstractDigitalGateView] */
 
-    protected open fun createInputPortView(inputPort: Port<DigitalSignal>, index: Int): PortView<*> {
-        return DigitalPortView(
-            styleProvider = styleProvider,
-            port = inputPort,
-            direction = Direction.WEST)
-    }
+	protected open fun createInputPortView(inputPort: Port<DigitalSignal>, index: Int): PortView<*> {
+		return DigitalPortView(
+			styleProvider = styleProvider,
+			port = inputPort,
+			direction = Direction.WEST)
+	}
 }

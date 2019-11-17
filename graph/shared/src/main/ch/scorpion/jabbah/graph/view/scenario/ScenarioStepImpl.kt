@@ -41,7 +41,7 @@ class ScenarioStepImpl(
 	/** The JavaScript expressions to be executed when this [ScenarioStep] is activated. */
 	private var onEntryScript: String? = null
 
-	/** The JavaScript expressions to be executed when this {@link ScenarioStep} is passivated. */
+	/** The JavaScript expressions to be executed when this [ScenarioStep] is passivated. */
 	private var onExitScript: String? = null
 
 	/** Caches the parsed highlight IDs of `highlightIds' as [Int].*/

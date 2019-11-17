@@ -116,7 +116,7 @@ class NavigationStack<T : GraphView<GraphElementView<*>>>(val eventBus: EventBus
 }
 
 /**
- * Posted by {@link NavigationStack} whenever its head has changed.
+ * Posted by [NavigationStack] whenever its head has changed.
  * @property isExpansion `true` if the [NavigationStack] has been expanded, `false` if it has been reduced
  * @property navigationStack the [NavigationStack] where this [NavigationStackEvent] comes from
  * @property entries the list of [NavigationStackEntry] that have been added (in case of an expansion) or removed

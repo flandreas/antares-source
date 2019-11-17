@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.graph.view.EdgeView
 
 /**
- * Moves the destination end point of an {@link EdgeView}.
+ * Moves the destination end point of an [EdgeView].
  */
 class MoveDestinationEndpointCommand(
 	editor: Editor,

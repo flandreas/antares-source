@@ -29,7 +29,7 @@ interface Scenario : Namable, Describable, Storable {
 	fun dispose()
 
 	/**
-	 * Returns the condition that determines whether this {@link Scenario} is triggered depending on the current state
+	 * Returns the condition that determines whether this [Scenario] is triggered depending on the current state
 	 * of a [DrawingView] and its GraphView.
 	 */
 	val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean

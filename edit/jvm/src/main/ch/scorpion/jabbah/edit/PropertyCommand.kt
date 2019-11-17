@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 
 /**
- * A {@link Command} that reflects the undoable change of an {@link Object}'s property.
+ * A [Command] that reflects the undoable change of an object's property.
  * @param V the type of the property's value
  */
 class PropertyCommand<V>(
