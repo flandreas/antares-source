@@ -352,7 +352,7 @@ class SwitchView(
 	}
 
 	private fun drawDisabled(context: DrawContext) {
-		if (model!!.disabled) {
+		if (model!!.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true) {
 			context.g.color = Look.disabledColor()
 			context.g.fillRect(xInt, yInt, widthInt, heightInt)
 		}

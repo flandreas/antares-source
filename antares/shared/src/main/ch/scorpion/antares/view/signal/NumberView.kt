@@ -22,7 +22,8 @@ import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 class NumberView(
 	representation: DigitalSignalRepresentation,
 	bitWidth: BitWidth,
-	drawDigitBorder: Boolean = true
+	drawDigitBorder: Boolean = true,
+	drawBox: Boolean = true
 ) : AbstractRectangle(), Transparent {
 
 	companion object {
@@ -41,7 +42,7 @@ class NumberView(
 		private set
 
 	init {
-		buildUI(representation, bitWidth, drawDigitBorder)
+		buildUI(representation, bitWidth, drawDigitBorder, drawBox)
 	}
 
 	/** ---- [Transparent] */
@@ -69,7 +70,7 @@ class NumberView(
 			digitView.draw(context, isOn)
 		}
 		if (context.useContextColors) {
-			context.g.color = context.color!!.textColor
+			context.g.color = transparent.applyTo(context.color!!.textColor)
 		}
 		for (label in byteIndexLabels) {
 			label.draw(context)
@@ -141,7 +142,12 @@ class NumberView(
 		}
 	}
 
-	private fun buildUI(representation: DigitalSignalRepresentation, bitWidth: BitWidth, drawDigitBorder: Boolean) {
+	private fun buildUI(
+		representation: DigitalSignalRepresentation,
+		bitWidth: BitWidth,
+		drawDigitBorder: Boolean,
+		drawBox: Boolean
+	) {
 		val bounds = Rectangle2D(0, 0, 0, 0)
 		var x = 0.0
 		var y = 0.0
@@ -153,7 +159,7 @@ class NumberView(
 
 		val max = Math.max(1, digitViewCount) - 1
 		for (i in max downTo 0) {
-			val digitView = DigitView(representation, i, x, y, drawDigitBorder)
+			val digitView = DigitView(representation, i, x, y, drawDigitBorder, drawBox)
 			digitViews.add(0, digitView)
 			x += digitView.width.toInt()
 

@@ -30,7 +30,8 @@ class DigitView(
     val index: Int,
     x: Double,
     y: Double,
-    private val drawBorder: Boolean = true
+    private val drawBorder: Boolean = true,
+    private val drawBox: Boolean = true
 ) : AbstractRectangle(x, y, WIDTH.toDouble(), HEIGHT.toDouble()), Transparent {
 
     companion object {
@@ -90,8 +91,10 @@ class DigitView(
 		val oldStroke = context.g.stroke
 
         if (isOn) {
-            context.g.color = transparent.applyTo(signalDigit.getColor().foregroundColor)
-            context.g.fillRect(xInt + 1, yInt, WIDTH - 2, HEIGHT - 1)
+	        if (drawBox) {
+		        context.g.color = transparent.applyTo(signalDigit.getColor().foregroundColor)
+		        context.g.fillRect(xInt + 1, yInt, WIDTH - 2, HEIGHT - 1)
+	        }
         } else {
             if (drawBorder) {
                 context.g.color = transparent.applyTo(context.choose(Themes.get<AntaresTheme>().annotation.color).foregroundColor)
@@ -115,7 +118,7 @@ class DigitView(
     }
 
     private fun drawFocus(context: DrawContext) {
-        context.g.color = Themes.get<AntaresTheme>().focus.color.foregroundColor
+        context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)
         context.g.stroke = Themes.get<AntaresTheme>().focus.stroke
         context.g.drawRect(xInt, yInt - 1, WIDTH, HEIGHT + 1)
     }

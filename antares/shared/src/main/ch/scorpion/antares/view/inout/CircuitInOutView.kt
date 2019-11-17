@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.Stroke
@@ -146,6 +147,15 @@ class CircuitInOutView(
 			model!!.getPort<DigitalSignal>().description.translation = value.translation
 		}
 
+	/** ---- [Transparent] */
+
+	override var transparency: Int
+		get() = super.transparency
+		set(value) {
+			super.transparency = value
+			numberView?.transparency = value
+		}
+
 	/** ---- [GraphPortView] */
 
 	override val iconPath: String
@@ -246,29 +256,26 @@ class CircuitInOutView(
 
 	fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color?, stroke: Stroke) {
 		val translation = getArrowPathTranslation()
+		context.g.translate(translation.x, translation.y)
 
-		with(context.g) {
-			translate(translation.x, translation.y)
-
-			if (shadow) {
-				DropShadow.draw(context, transparency) {
-					if (backgroundColor != null) {
-						fill(arrowPath!!.path)
-					}
-					draw(arrowPath!!.path)
+		if (shadow) {
+			DropShadow.draw(context, transparency) {
+				if (backgroundColor != null) {
+					context.g.fill(arrowPath!!.path)
 				}
+				context.g.draw(arrowPath!!.path)
 			}
-
-			if (backgroundColor != null) {
-				color = backgroundColor
-				fill(arrowPath!!.path)
-			}
-			this.stroke = this@CircuitInOutView.stroke
-			color = foregroundColor
-			draw(arrowPath!!.path)
-
-			translate(-translation.x, -translation.y)
 		}
+
+		if (backgroundColor != null) {
+			context.g.color = backgroundColor
+			context.g.fill(arrowPath!!.path)
+		}
+		context.g.stroke = stroke
+		context.g.color = foregroundColor
+		context.g.draw(arrowPath!!.path)
+
+		context.g.translate(-translation.x, -translation.y)
 	}
 
 	private fun drawEdited(context: DrawContext, color: Color, backgroundColor: Color?) {
@@ -292,11 +299,13 @@ class CircuitInOutView(
 
 	private fun drawSimulated(context: DrawContext) {
 		if (model!!.signal!!.getBitWidth().width > 1) {
-			drawEdited(context, model!!.signal!!.getColor().foregroundColor, propertiesBackgroundColor)
+			drawEdited(context,
+				transparent.applyTo(model!!.signal!!.getColor().foregroundColor),
+				transparent.applyTo(propertiesBackgroundColor))
 		} else {
 			drawEdited(context,
-				model!!.signal!!.getColor().backgroundColor,
-				model!!.signal!!.getColor().foregroundColor)
+				transparent.applyTo(model!!.signal!!.getColor().backgroundColor),
+				transparent.applyTo(model!!.signal!!.getColor().foregroundColor))
 		}
 
 		val translation = getArrowPathTranslation()
@@ -307,7 +316,7 @@ class CircuitInOutView(
 	}
 
 	private fun drawDisabled(context: DrawContext) {
-		if (model!!.disabled) {
+		if (model!!.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true) {
 			context.g.color = Look.disabledColor()
 			context.g.fill(arrowPath!!.path)
 		}
@@ -462,7 +471,7 @@ class CircuitInOutView(
 		invalidate()
 		isFocusable = model!!.portType.isInput
 
-		numberView = NumberView(signalRepresentation, bitWidth)
+		numberView = NumberView(signalRepresentation, bitWidth, drawBox = bitWidth.width > 1)
 		numberView!!.setSignal(model!!.signal!!)
 
 		arrowPath = ArrowPath.Companion.Builder(
