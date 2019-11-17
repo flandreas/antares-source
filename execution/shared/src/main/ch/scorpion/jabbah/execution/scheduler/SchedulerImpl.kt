@@ -277,7 +277,7 @@ class SchedulerImpl(
 	}
 
 	private fun publishSimulationTimeStatus() {
-		Status.set(StatusType.Small, "$relativeTime ns")
+		Status.set(StatusType.Small, "${StringUtils.formatLong(relativeTime)} ns")
 	}
 
 	private fun clearSimulationTimeStatus() {

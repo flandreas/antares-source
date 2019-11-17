@@ -18,14 +18,14 @@ class StatusBar(
 ) : JPanel() {
 
 	private val largeLabel = JLabel(" ")
-	private val smallLabel = JLabel(" ")
+	private val smallLabel = JLabel(" ", null, JLabel.TRAILING)
 
 	init {
 		eventBus.register(StatusEvent::class) { handle(it) }
 
 		buildUI()
 
-		smallLabel.preferredSize = Dimension(100, smallLabel.preferredSize.height)
+		smallLabel.preferredSize = Dimension(200, smallLabel.preferredSize.height)
 
 		SwingUtilities.invokeLater {
 			largeLabel.text = Status.get(StatusType.Large)
