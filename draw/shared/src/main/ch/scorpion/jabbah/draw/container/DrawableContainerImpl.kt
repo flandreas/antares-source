@@ -136,16 +136,18 @@ open class DrawableContainerImpl<T : Drawable>(
 		children.add(index, drawable)
 		drawable.handleAdded(this)
 
-		val drawableBBox = drawable.boundingBox
-		if (drawablesCount == 1) {
-			boundingBox.setFrame(drawableBBox)
-		} else {
-			boundingBox.add(drawableBBox)
+		if (drawable.visible) {
+			val drawableBBox = drawable.boundingBox
+			if (drawablesCount == 1) {
+				boundingBox.setFrame(drawableBBox)
+			} else {
+				boundingBox.add(drawableBBox)
+			}
+
+			invalidate(drawableBBox)
+			update()
+
 		}
-
-		invalidate(drawableBBox)
-		update()
-
 		notifyDrawableAdded(drawable)
 		return this
 	}
@@ -275,11 +277,9 @@ open class DrawableContainerImpl<T : Drawable>(
 	 * all contained [Drawable]'s.
 	 */
 	protected fun updateBoundingBox() {
-		if (!children.isEmpty()) {
-			boundingBox.setFrame(children[0].boundingBox)
-		} else {
-			boundingBox.setFrame(0.0, 0.0, 0.0, 0.0)
-		}
-		children.forEach { boundingBox.add(it.boundingBox) }
+		children.firstOrNull { it.visible }
+			?.let { boundingBox.setFrame(it.boundingBox) }
+			?: boundingBox.setFrame(0.0, 0.0, 0.0, 0.0)
+		children.filter { it.visible }.forEach { boundingBox.add(it.boundingBox) }
 	}
 }

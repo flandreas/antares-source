@@ -33,5 +33,10 @@ class DrawableMockBuilder {
         return this
     }
 
+	fun boundingBox(rect: Rectangle2D): DrawableMockBuilder {
+		every { drawable.boundingBox } returns rect
+		return this
+	}
+
     fun build() = drawable
 }

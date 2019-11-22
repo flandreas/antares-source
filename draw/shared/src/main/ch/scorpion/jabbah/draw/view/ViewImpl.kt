@@ -129,7 +129,7 @@ open class ViewImpl<C : InputEventContext>(
 
 	private fun calculateCombinedBoundingBox(): Rectangle2D {
 		val bbox = Rectangle2D()
-		drawables.forEach { bbox.add(it.boundingBox) }
+		drawables.filter { it.visible }.forEach { bbox.add(it.boundingBox) }
 		return bbox
 	}
 

@@ -41,6 +41,7 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
+/** Defines the visual, exchangeable appearance of a [SwitchView]. */
 private interface SwitchViewFace {
 
 	fun drawEdited(context: DrawContext)
@@ -60,9 +61,9 @@ class SwitchView(
 
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.SwitchView.iconPath"
-		private const val SIZE = 4 * Look.SCALE
+		private const val SIZE = 4 * SCALE
 		private const val BORDER_WIDTH = 3
-		private const val LABEL_DIST = Look.SCALE
+		private const val LABEL_DIST = SCALE
 		private const val LABEL_INSET = 4.0
 	}
 
