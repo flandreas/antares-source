@@ -17,31 +17,35 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /** An [Action] for toggling the visibility of the currently active [DrawingView]'s [GraphView].*/
 class OscilloscopeAction(
-        viewManager: ViewManager = DrawViewModule.viewManager,
-        eventBus: EventBus = BaseModule.eventBus,
-        private val service: OscilloscopeViewService = GraphViewModule.oscilloscopeViewService
+	viewManager: ViewManager = DrawViewModule.viewManager,
+	eventBus: EventBus = BaseModule.eventBus,
+	private val service: OscilloscopeViewService = GraphViewModule.oscilloscopeViewService
 ) : AbstractViewAction("graph.action.oscilloscope", eventBus, viewManager) {
 
-    init {
-        eventBus.register(OscilloscopeDisplayEvent::class, { updateState() })
-    }
+	init {
+		eventBus.register(OscilloscopeDisplayEvent::class) { updateState() }
+	}
 
-    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-        val view = viewManager.activeView
-        if (view is DrawingView<*>) {
-            val graphView = ((viewManager.activeView as DrawingView<*>).drawing) as GraphView<GraphElementView<*>>
-            service.displayOscilloscope(selected, graphView)
-        }
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		val view = viewManager.activeView
+		if (view is DrawingView<*>) {
+			val graphView = ((viewManager.activeView as DrawingView<*>).drawing) as GraphView<GraphElementView<*>>
+			if (selected) {
+				service.displayOscilloscope(graphView)
+			} else {
+				service.hideOscilloscope(graphView)
+			}
+		}
+	}
 
-    override fun activeViewChanged(oldView: View<out InputEventContext>?, newView: View<out InputEventContext>?) {
-        super.activeViewChanged(oldView, newView)
-        updateState()
-    }
+	override fun activeViewChanged(oldView: View<out InputEventContext>?, newView: View<out InputEventContext>?) {
+		super.activeViewChanged(oldView, newView)
+		updateState()
+	}
 
-    private fun updateState() {
-            selected = viewManager.activeView is DrawingView<*>
-                    && (viewManager.activeView as DrawingView<*>).drawing is GraphView<*>
-                    && service.isOscilloscopeDisplayed((viewManager.activeView as DrawingView<*>).drawing as GraphView<GraphElementView<*>>)
-    }
+	private fun updateState() {
+		selected = viewManager.activeView is DrawingView<*>
+			&& (viewManager.activeView as DrawingView<*>).drawing is GraphView<*>
+			&& service.isOscilloscopeDisplayed((viewManager.activeView as DrawingView<*>).drawing as GraphView<GraphElementView<*>>)
+	}
 }

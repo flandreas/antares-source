@@ -37,6 +37,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 	}
 
 	init {
+		visible = false
 		modelExchanged(null)
 		setBounds(
 			-CONN_POINT_SIZE, -OscilloscopeProbeViewDrawable.SIZE,

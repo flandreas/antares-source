@@ -97,6 +97,7 @@ class OscilloscopeView(
 	private val actorHandler = ActorHandler()
 
 	init {
+		visible = false
 		preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
 		container.add(scaleRow)
 		adjustSize()
