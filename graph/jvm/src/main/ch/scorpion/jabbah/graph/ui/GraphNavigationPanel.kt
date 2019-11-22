@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.FocusPanel
@@ -161,7 +162,7 @@ class GraphNavigationPanel(
 		extension.dispose(this)
 	}
 
-	override fun addContextColorBorder(color: CompositeColor) {
+	override fun addContextColorBorder(color: Color) {
 		mainPanel.removeAll()
 		mainPanel.add(headerPanel, BorderLayout.NORTH)
 		val borderPanel = JPanel(BorderLayout())

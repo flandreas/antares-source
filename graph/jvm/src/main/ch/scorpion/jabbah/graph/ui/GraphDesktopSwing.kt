@@ -42,7 +42,7 @@ interface GraphDesktopItem {
 
 data class GraphDesktopItemCloseRequest(val item: GraphDesktopItem)
 
-abstract class AbstractGraphDesktopItemPanel() : JPanel(), GraphDesktopItem {
+abstract class AbstractGraphDesktopItemPanel : JPanel(), GraphDesktopItem {
 
 	companion object {
 		private const val BORDER_THICKNESS = 5
@@ -55,9 +55,9 @@ abstract class AbstractGraphDesktopItemPanel() : JPanel(), GraphDesktopItem {
 			}
 
 			when {
-				field == null -> addContextColorBorder(value!!)
+				field == null -> addContextColorBorder(value!!.foregroundColor)
 				value == null -> removeContextColorBorder()
-				else -> addContextColorBorder(value)
+				else -> addContextColorBorder(value.foregroundColor)
 			}
 
 			field = value
@@ -65,12 +65,12 @@ abstract class AbstractGraphDesktopItemPanel() : JPanel(), GraphDesktopItem {
 			repaint()
 		}
 
-	protected abstract fun addContextColorBorder(color: CompositeColor)
+	protected abstract fun addContextColorBorder(color: ch.scorpion.jabbah.draw.graphics.Color)
 
 	protected abstract fun removeContextColorBorder()
 
-	protected fun createContextColorBorder(contextColor: CompositeColor): Border =
-		BorderFactory.createLineBorder(Graphics2DJvm.toAwtColor(contextColor.backgroundColor), BORDER_THICKNESS, true)
+	protected fun createContextColorBorder(contextColor: ch.scorpion.jabbah.draw.graphics.Color): Border =
+		BorderFactory.createLineBorder(Graphics2DJvm.toAwtColor(contextColor), BORDER_THICKNESS, true)
 }
 
 class GraphDesktopItemHeaderPanel(

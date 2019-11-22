@@ -86,7 +86,7 @@ class BelowSmHighlighter(
 	override fun unhighlightAll() {
 		val list = mutableListOf<Component>()
 		list.addAll(highlights.keys)
-		if (!list.isEmpty()) {
+		if (list.isNotEmpty()) {
 			list.forEach { unhighlightImpl(it) }
 			content.highlightContainer.validate()
 			postHighlightChangedEvent(list, false)

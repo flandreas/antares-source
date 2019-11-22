@@ -26,10 +26,10 @@ class BoundingBoxBelowSelectionModel(
 
 	companion object {
 		/** The number of pixels to add to the [Component]'s bounding box at each side. */
-		private val OUTSET = 10
+		private const val OUTSET = 10
 
 		/** The arc size of the rounded rectangle.*/
-		private val ARC_SIZE = 15
+		private const val ARC_SIZE = 15
 	}
 
 	private var bounds = Rectangle2D()
@@ -50,7 +50,7 @@ class BoundingBoxBelowSelectionModel(
 
 	override fun draw(context: DrawContext) {
 		val oldColor = context.g.color
-		context.g.color = color.backgroundColor
+		context.g.color = color.foregroundColor
 
 		context.g.fillRoundRect(
 			bounds.x.toInt(),

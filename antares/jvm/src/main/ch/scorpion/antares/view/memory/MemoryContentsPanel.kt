@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.memory.MemoryDump
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.DrawingView
@@ -63,7 +64,7 @@ class MemoryContentGraphDesktopItem(
 
 	override fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<*>? = null
 
-	override fun addContextColorBorder(color: CompositeColor) {
+	override fun addContextColorBorder(color: Color) {
 		memoryContentPanel.border = createContextColorBorder(color)
 	}
 

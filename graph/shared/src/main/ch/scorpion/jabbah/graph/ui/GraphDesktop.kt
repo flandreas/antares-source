@@ -46,16 +46,6 @@ interface GraphDesktop {
 	fun closeAll(establishSingleView: Boolean)
 }
 
-/**
- * Maintains an association between a [VerticeView] and the [GraphDesktopItem] that has been opened
- * in a [GraphDesktop], along with the [CompositeColor] that is used as a visual reference.
- */
-data class Association(
-	val sourceItem: GraphDesktopItem,
-	val ref: VerticeView<*>,
-	val item: GraphDesktopItem,
-	val refColor: CompositeColor)
-
 class GraphDesktopController(
 	private val viewManager: ViewManager = DrawViewModule.viewManager,
 	private val scheduler: Scheduler = ExecutionModule.scheduler,
@@ -64,6 +54,10 @@ class GraphDesktopController(
 
 	companion object {
 		private val LOG by logger(GraphDesktopController::class)
+
+		private fun displayedReferenceColor(referenceColor: CompositeColor): CompositeColor {
+			return referenceColor.exchange()
+		}
 	}
 
 	var view: GraphDesktop
@@ -129,12 +123,13 @@ class GraphDesktopController(
 
 		itemContaining(vv)?.let {
 			val refColor = referenceColorSequence.next()
-			val newItem = itemFactory.invoke(refColor)
+			val displayedColor = displayedReferenceColor(refColor)
+			val newItem = itemFactory.invoke(displayedColor)
 			associations.add(Association(it, vv, newItem, refColor))
 
 			view.addGraphDesktopItem(newItem)
 
-			it.drawingView?.highlighter?.highlight(vv, refColor)
+			it.drawingView?.highlighter?.highlight(vv, displayedColor)
 			it.drawingView?.repaint()
 		} ?: LOG.error("VerticeView to be opened not found in open panels")
 	}
@@ -164,11 +159,15 @@ class GraphDesktopController(
 		associations.clear()
 		associations.addAll(newAssociations)
 		associations.forEach { assoc ->
-			assoc.item.contextColor = assoc.refColor
-			event.replacements.forEach { assoc.item.drawingView?.highlighter?.replaceColor(it.oldColor, it.newColor) }
+			assoc.item.contextColor = displayedReferenceColor(assoc.refColor)
+			event.replacements.forEach {
+				assoc.item.drawingView?.highlighter?.replaceColor(
+					displayedReferenceColor(it.oldColor),
+					displayedReferenceColor(it.newColor))
+			}
 		}
 		event.replacements.forEach {
-			view.mainDesktopItem.drawingView?.highlighter?.replaceColor(it.oldColor, it.newColor)
+			view.mainDesktopItem.drawingView?.highlighter?.replaceColor(displayedReferenceColor(it.oldColor), displayedReferenceColor(it.newColor))
 		}
 	}
 
@@ -244,4 +243,14 @@ class GraphDesktopController(
 			}
 		}
 	}
+
+	/**
+	 * Maintains an association between a [VerticeView] and the [GraphDesktopItem] that has been opened
+	 * in a [GraphDesktop], along with the [CompositeColor] that is used as a visual reference.
+	 */
+	data class Association(
+		val sourceItem: GraphDesktopItem,
+		val ref: VerticeView<*>,
+		val item: GraphDesktopItem,
+		val refColor: CompositeColor)
 }
