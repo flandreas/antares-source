@@ -64,13 +64,13 @@ interface SelectionManager {
     fun isSelected(component: Component): Boolean
 
 	/**
-	 * Selects the next [Component] of a [Drawing], or the first one if none is yet selected.
+	 * Selects the next visible [Component] of a [Drawing], or the first one if none is yet selected.
 	 * Does nothing if the [Drawing] is empty.
 	 */
 	fun selectNext()
 
 	/**
-	 * Selects the previous [Component] of a [Drawing], or the last one if none is yet selected.
+	 * Selects the previous visible [Component] of a [Drawing], or the last one if none is yet selected.
 	 * Does nothing if the [Drawing] is empty.
 	 */
 	fun selectPrevious()

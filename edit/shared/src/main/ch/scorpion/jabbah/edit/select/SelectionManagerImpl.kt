@@ -20,92 +20,90 @@ class SelectionManagerImpl(
 ) : SelectionManager {
 
 	companion object {
-        private val LOG by logger(SelectionManagerImpl::class)
+		private val LOG by logger(SelectionManagerImpl::class)
 	}
 
-    private val selectionMap: MutableMap<Component,SelectionModel<Component>> = mutableMapOf()
+	private val selectionMap: MutableMap<Component, SelectionModel<Component>> = mutableMapOf()
 
-    /** ---- [SelectionManager] interface */
+	/** ---- [SelectionManager] interface */
 
-    override val selection: Collection<Component> get() = selectionMap.keys.toList()
+	override val selection: Collection<Component> get() = selectionMap.keys.toList()
 
 	override fun dispose() {
 		// empty
 	}
 
 	override fun select(component: Component) {
-        if (!isSelected(component)) {
-            selectImpl(component)
-            content.drawing.validate()
-            postSelectionChanged(listOf(component), selected = true)
-        }
-    }
+		if (canSelect(component)) {
+			selectImpl(component)
+			content.drawing.validate()
+			postSelectionChanged(listOf(component), selected = true)
+		}
+	}
 
-    override fun select(components: Collection<Component>) {
-        val newSelections = mutableListOf<Component>()
-        for (c in components) {
-            if (!isSelected(c)) {
-                selectImpl(c)
-                newSelections.add(c)
-            }
-        }
-        if (!newSelections.isEmpty()) {
-            postSelectionChanged(newSelections, selected = true)
-	        content.drawing.validate()
-        }
-    }
+	override fun select(components: Collection<Component>) {
+		val newSelections = mutableListOf<Component>()
+		for (c in components) {
+			if (canSelect(c)) {
+				selectImpl(c)
+				newSelections.add(c)
+			}
+		}
+		if (newSelections.isNotEmpty()) {
+			postSelectionChanged(newSelections, selected = true)
+			content.drawing.validate()
+		}
+	}
 
-    override fun selectAll() {
-        val list = mutableListOf<Component>()
-        for (c in content.drawing.getDrawables()) {
-            if (!isSelected(c)) {
-                selectImpl(c)
-                list.add(c)
-            }
-        }
-        if (!list.isEmpty()) {
-            postSelectionChanged(list, selected = true)
-	        content.drawing.validate()
-        }
-    }
+	override fun selectAll() {
+		val list = mutableListOf<Component>()
+		content.drawing.getDrawables { canSelect(it) }.forEach {
+			selectImpl(it)
+			list.add(it)
+		}
+		if (list.isNotEmpty()) {
+			postSelectionChanged(list, selected = true)
+			content.drawing.validate()
+		}
+	}
 
-    override fun deselect(component: Component) {
-        if (isSelected(component)) {
-            deselectImpl(component)
-	        content.drawing.validate()
-            postSelectionChanged(listOf(component), selected = false)
-        }
-    }
+	override fun deselect(component: Component) {
+		if (isSelected(component)) {
+			deselectImpl(component)
+			content.drawing.validate()
+			postSelectionChanged(listOf(component), selected = false)
+		}
+	}
 
-    override fun deselect(components: Collection<Component>) {
-        val list = mutableListOf<Component>()
-        for (c in components) {
-            if (isSelected(c)) {
-                deselectImpl(c)
-                list.add(c)
-            }
-        }
-        if (!list.isEmpty()) {
-            postSelectionChanged(list, selected = false)
-	        content.drawing.validate()
-        }
-    }
+	override fun deselect(components: Collection<Component>) {
+		val list = mutableListOf<Component>()
+		for (c in components) {
+			if (isSelected(c)) {
+				deselectImpl(c)
+				list.add(c)
+			}
+		}
+		if (list.isNotEmpty()) {
+			postSelectionChanged(list, selected = false)
+			content.drawing.validate()
+		}
+	}
 
-    override fun deselectAll() {
-        val list = mutableListOf<Component>()
-        for (c in selectionMap.keys.toList()) {
-            deselectImpl(c)
-            list.add(c)
-        }
-        if (!list.isEmpty()) {
-            postSelectionChanged(list, selected = false)
-	        content.drawing.validate()
-        }
-    }
+	override fun deselectAll() {
+		val list = mutableListOf<Component>()
+		for (c in selectionMap.keys.toList()) {
+			deselectImpl(c)
+			list.add(c)
+		}
+		if (list.isNotEmpty()) {
+			postSelectionChanged(list, selected = false)
+			content.drawing.validate()
+		}
+	}
 
-    override fun isSelected(component: Component): Boolean {
-        return selectionMap.containsKey(component)
-    }
+	override fun isSelected(component: Component): Boolean {
+		return selectionMap.containsKey(component)
+	}
 
 	override fun selectNext() {
 		nextSelection()?.let {
@@ -115,16 +113,22 @@ class SelectionManagerImpl(
 	}
 
 	private fun nextSelection(): Component? {
-		val currentSelection: Component? = selection.firstOrNull()
-		return if (currentSelection == null) {
-			if (content.drawing.drawablesCount > 0) {
-				content.drawing.get(0)
-			} else {
-				null
+		if (content.drawing.drawablesCount == 0) {
+			return null
+		}
+
+		val currentIndex = selection.firstOrNull()?.let { content.drawing.getStackingOrderPosition(it) }
+		var nextIndex = currentIndex
+		while (true) {
+			nextIndex = nextIndex?.let { (it + 1).rem(content.drawing.drawablesCount) } ?: 0
+			if (nextIndex == currentIndex) {
+				return null
 			}
-		} else {
-			val index = content.drawing.getStackingOrderPosition(currentSelection)
-			content.drawing.get((index + 1).rem(content.drawing.drawablesCount))
+			val nextComponent = content.drawing.get(nextIndex)
+			if (canSelect(nextComponent)) {
+				return nextComponent
+			}
+
 		}
 	}
 
@@ -136,55 +140,64 @@ class SelectionManagerImpl(
 	}
 
 	private fun previousSelection(): Component? {
-		val currentSelection: Component? = selection.firstOrNull()
-		return if (currentSelection == null) {
-			if (content.drawing.drawablesCount > 0) {
-				content.drawing.get(content.drawing.drawablesCount - 1)
+		if (content.drawing.drawablesCount == 0) {
+			return null
+		}
+
+		val currentIndex = selection.firstOrNull()?.let { content.drawing.getStackingOrderPosition(it) }
+		var prevIndex = currentIndex ?: content.drawing.drawablesCount - 1
+		while (true) {
+			prevIndex = if (prevIndex > 0) {
+				prevIndex - 1
 			} else {
-				null
+				content.drawing.drawablesCount - 1
 			}
-		} else {
-			val index = content.drawing.getStackingOrderPosition(currentSelection)
-			if (index > 0) {
-				content.drawing.get(index - 1)
-			} else {
-				content.drawing.get(content.drawing.drawablesCount - 1)
+			if (prevIndex == currentIndex) {
+				return null
+			}
+			val prevComponent = content.drawing.get(prevIndex)
+			if (canSelect(prevComponent)) {
+				return prevComponent
 			}
 		}
 	}
 
-    /** ---- [SelectionManagerImpl] */
+	/** ---- [SelectionManagerImpl] */
 
-    private fun postSelectionChanged(components: Collection<Component>, selected: Boolean) {
-        eventBus.post(SelectionChangeEvent(content.drawingView, components, selected))
-    }
+	private fun canSelect(component: Component): Boolean {
+		return component.visible && !isSelected(component)
+	}
 
-    /** Selects the specified [Component] without posting an event.*/
-    private fun selectImpl(component: Component) {
-        var strategy = content.drawingView.getComponentSelectionDrawingStrategy(component)
-        var selectionModel = selectionModelProvider.provideFor(component, strategy)
-        if (selectionModel == null && component.preferredSelectionDrawingStrategy != null) {
-            strategy = component.preferredSelectionDrawingStrategy!!
-            selectionModel = selectionModelProvider.provideFor(component, strategy)
-        }
-        if (selectionModel == null) {
-            LOG.error("SelectionManagerImpl: No suitable SelectionModel found for " +
-                "${System.SYSTEM!!.getClassName(component.selectableComponent)} and strategy $strategy")
-            return
-        }
-        content.addSelectionModel(selectionModel, strategy)
-	    selectionMap[component] = selectionModel
-        selectionModel.notifyAdded(content.drawingView)
-    }
+	private fun postSelectionChanged(components: Collection<Component>, selected: Boolean) {
+		eventBus.post(SelectionChangeEvent(content.drawingView, components, selected))
+	}
 
-    /** Deselects the specified [Component] without posting an event.*/
-    private fun deselectImpl(component: Component) {
-        val selectionModel = selectionMap[component]
-        if (selectionModel != null) {
-            selectionMap.remove(component)
-            content.removeSelectionModel(selectionModel)
-            selectionModelProvider.release(selectionModel)
-            selectionModel.notifyRemoved(content.drawingView)
-        }
-    }
+	/** Selects the specified [Component] without posting an event.*/
+	private fun selectImpl(component: Component) {
+		var strategy = content.drawingView.getComponentSelectionDrawingStrategy(component)
+		var selectionModel = selectionModelProvider.provideFor(component, strategy)
+		if (selectionModel == null && component.preferredSelectionDrawingStrategy != null) {
+			strategy = component.preferredSelectionDrawingStrategy!!
+			selectionModel = selectionModelProvider.provideFor(component, strategy)
+		}
+		if (selectionModel == null) {
+			LOG.error("SelectionManagerImpl: No suitable SelectionModel found for " +
+				"${System.SYSTEM!!.getClassName(component.selectableComponent)} and strategy $strategy")
+			return
+		}
+		content.addSelectionModel(selectionModel, strategy)
+		selectionMap[component] = selectionModel
+		selectionModel.notifyAdded(content.drawingView)
+	}
+
+	/** Deselects the specified [Component] without posting an event.*/
+	private fun deselectImpl(component: Component) {
+		val selectionModel = selectionMap[component]
+		if (selectionModel != null) {
+			selectionMap.remove(component)
+			content.removeSelectionModel(selectionModel)
+			selectionModelProvider.release(selectionModel)
+			selectionModel.notifyRemoved(content.drawingView)
+		}
+	}
 }
