@@ -4,9 +4,9 @@ antares.pref
 antares.log
 build/
 out/
-doc/model.mdj
-doc/model-img/
-doc/graffle-img
+doc/model/model.mdj
+doc/model/model-img/
+doc/model/graffle-img
 antares-web/node_modules
 antares/projects
 .DS_Store

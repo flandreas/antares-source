@@ -1,0 +1,33 @@
+== Begriffe
+
+Dieses Dokument definiert im Sinne einer "Ubiquitous Language (DDD)" alle wichtigen, nicht trivialen Begriffe, und nennt den entsprechenden Begriff in deutscher Sprache
+
+Die erste Version dieser Begriffsliste konzentriert sich auf Begriffe, die in der Benutzerschnittstelle und der Benutzerdokumentation vorkommen. Wenn immer möglich sollen im Programmcode dieselben Begriffe verwendet werden, obwohl es vorkommen kann, dass im Programmcode Unterschiede gemacht werden, die für die Benutzerschnittstelle nicht relevant sind.
+
+Die Liste ist alphabetisch aufsteigend nach dem englischen Begriff sortiert.
+
+=== Liste
+
+Antares (Antares):: Lernplatform für digitale Schaltungen.
+Author (Autor):: Der Benutzer, dem ein Projekt oder eine Bibliothek gehört und der sie als einziger bearbeiten kann.
+Bundle (Bündel):: Ein exportiertes Projekt, das auch die referenzierte Bibliothek enthält.
+Circuit (Schaltung):: Die darstellbare Form einer digitalen Schaltung in `antares`.
+Contents (Inhalt):: Der Teil des Explorers, der einen Baum mit allen Komponeten des geöffneten Projektes und der verwendeten Bibliothek enthält.
+Component (Komponente):: Bestandteil einer Schaltung. Eine Komponente ist entweder elementar oder eine Teilschaltung.
+Desktop (Werkbank):: Enthält das geöffnete Projekt und die referenzierte Bibliothek.
+Developer Mode (Entwicklermodus):: `Antares` kann im Entwicklermodus gestartet werden, um Zugriff auf bestimmte Funktionen zu erhalten, die vor allem der Fehlersuche dienen.
+Elementary Component (Elementare Komponente):: Eine Komponente, die keine innere Schaltung enthält.
+Explorer (Explorer):: Die Seitenleiste, die das geöffnete Projekt und die verwendete Bibliothek sowie Voransicht und Eigenschaftenansicht enthält
+Folder (Verzeichnis):: Eine rekursive Gliederungsstruktur in Projekten und Bibliotheken.
+Graph (Graph):: Generischer Begriff in `graph` für speicherbare Objekte. Statt diesem Begriff sollte im UI von Applikation der ensprechende konkrete Begriff verwendet werden, also z.B. "Circuit" in `antares`.
+Library (Bibliothek):: Enthält Schaltungen, die in Projekten referenziert werden können. Bibliotheken sind entweder vordefiniert oder benutzerdefiniert. Bibliotheken können nur durch ihren Autor verändert werden. Ein Projekt kann nur Schaltungen aus einer einzigen Bibiothek referenzieren
+Navigation Bar (Navigationsleiste):: Bestandteil einer Ansicht, die das Navigieren im Teilschaltungs-Baum ermöglicht.
+Preferences (Einstellungen):: TODO.
+Project (Projekt):: Eine durch den Benutzer erstellte Menge von zusammengehörenden Schaltungen.
+Recent (Zuletzt geöffnet):: Ermöglicht es, zuletzt geöffnete Schaltungen erneut zu öffnen
+Subcircuit (Teilschaltung):: Eine Komponente, die eine innere Schaltung enthält und damit rekursive Schaltungsstrukturen ermöglicht.
+Toolbar (Werkzeugleiste):: Enthält Werkzeuge
+User (Benutzer):: Die Person, die die Applikation gestartet hat. Im Moment wird lediglich zwischen "Entwickler" und "Jedermann" unterschieden. In Zukunft wird es identifizierbare Benutzer und einen Anmelde-Dialog geben.
+User Language (Benutzersprache):: Die Sprache, in welcher der Benutzer die Texte der Benutzerschnittstelle angezeigt wünscht.
+View (Ansicht):: Zeigt eine einzelne Schaltung innerhalb der Workbench an und enthält eine Navigationsleiste.
+Workbench (Arbeitsfläche):: Enthält die Ansichten von Schaltungen. Ordnet mehrere offenen Ansichten zweispaltig dar, wobei die rechte Spalte aus mehreren vertikal angeordneten Ansichten bestehen kann.
