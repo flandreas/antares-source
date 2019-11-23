@@ -37,6 +37,19 @@ In einer ersten Iteration werden alle Features aufgezählt. Danach werden die Fe
 ** Neue Bibliothek anlegen (mit Bibliothek als Vorlage)
 ** Bibliothek bearbeiten (Komponenten aus anderen Bibiotheken übernehmen)
 
+* Navigation
+** Zoomen
+*** Manuelles Zoomen mit Scrollbewegung (Mausrad, Trackpad)
+*** Zoom +, Zoom - (Schrittweite in Settings)
+*** Originalgrösse
+*** Zentrieren (aktuelle Grösse und in Mitte ausrichten)
+*** Anpassen (Zentrieren und an Grösse der Ansicht anpassen)
+** Ausschnitt verschieben (Maus: Drag mittlere Taste, Trackpad: ALT + Scrollgeste)
+** Teilschaltung in neuer Unteransicht öffen: Popup-Menu oder ALT + Doppelklick auf Teilschaltungs-Symbol
+** Eintauchen: Doppelklick auf Teilschaltungs-Symbol. Mit CMD + Doppelklick wird die Eintauch-Animation weggelassen
+** Auftauchen: Klick auf die gewünschte Stufe der Navigationsleiste. Mit CMD + Klick wird die Auftauch-Animation weggelassen
+
+
 
 
 

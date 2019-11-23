@@ -16,15 +16,21 @@ Component (Komponente):: Bestandteil einer Schaltung. Eine Komponente ist entwed
 Desktop (Werkbank):: Enthält das geöffnete Projekt und die referenzierte Bibliothek.
 Developer Mode (Entwicklermodus):: `Antares` kann im Entwicklermodus gestartet werden, um Zugriff auf bestimmte Funktionen zu erhalten, die vor allem der Fehlersuche dienen.
 Elementary Component (Elementare Komponente):: Eine Komponente, die keine innere Schaltung enthält.
+Emmerge (Auftauchen):: Nach Eintauchen in eine Teilschaltung in derselben Ansicht wieder zu äusseren Schaltungen zurückkehren.
 Explorer (Explorer):: Die Seitenleiste, die das geöffnete Projekt und die verwendete Bibliothek sowie Voransicht und Eigenschaftenansicht enthält
 Folder (Verzeichnis):: Eine rekursive Gliederungsstruktur in Projekten und Bibliotheken.
 Graph (Graph):: Generischer Begriff in `graph` für speicherbare Objekte. Statt diesem Begriff sollte im UI von Applikation der ensprechende konkrete Begriff verwendet werden, also z.B. "Circuit" in `antares`.
+Immerge (Eintauchen):: Innerhalb derselben View in eine Teilschaltung eintauchen. Die Tiefe wird in der Navigationsleiste angezeigt.
 Library (Bibliothek):: Enthält Schaltungen, die in Projekten referenziert werden können. Bibliotheken sind entweder vordefiniert oder benutzerdefiniert. Bibliotheken können nur durch ihren Autor verändert werden. Ein Projekt kann nur Schaltungen aus einer einzigen Bibiothek referenzieren
+Main View (Hauptansicht):: Die View, welche die Schaltung enthält, die bearbeitet und für die die Simulation gestartet werden kann. Deren Name wird in der Titelzeile des Fensters angezeigt
 Navigation Bar (Navigationsleiste):: Bestandteil einer Ansicht, die das Navigieren im Teilschaltungs-Baum ermöglicht.
 Preferences (Einstellungen):: TODO.
 Project (Projekt):: Eine durch den Benutzer erstellte Menge von zusammengehörenden Schaltungen.
 Recent (Zuletzt geöffnet):: Ermöglicht es, zuletzt geöffnete Schaltungen erneut zu öffnen
 Subcircuit (Teilschaltung):: Eine Komponente, die eine innere Schaltung enthält und damit rekursive Schaltungsstrukturen ermöglicht.
+Subview (Unteransicht):: Eine Ansicht, welche eine geöffnete Teilschaltung anzeigt. Kann nicht bearbeitet werden. Während der Simulation können Werte von Eingängen nicht verändert werden.
+Symbol (Symbol):: Die Aussenansicht einer Teilschaltung, die bei der Verwendung der Teilschaltung in einer übergeordneten Schaltung verwendet wird.
+Symbol Editor (Symboleditor):: Der Editor, mit der das Symbol einer Teilschaltung bearbeitet werden kann.
 Toolbar (Werkzeugleiste):: Enthält Werkzeuge
 User (Benutzer):: Die Person, die die Applikation gestartet hat. Im Moment wird lediglich zwischen "Entwickler" und "Jedermann" unterschieden. In Zukunft wird es identifizierbare Benutzer und einen Anmelde-Dialog geben.
 User Language (Benutzersprache):: Die Sprache, in welcher der Benutzer die Texte der Benutzerschnittstelle angezeigt wünscht.

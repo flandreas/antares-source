@@ -19,7 +19,7 @@ open class GraphContextMenuProvider(
 	companion object {
 		private val cutAction = ActionWrapperSwing(CutAction())
 		private val copyAction = ActionWrapperSwing(CopyAction())
-		private val openGraphAction = OpenGraphNavigationPanelAction()
+		private val openGraphAction by lazy { OpenGraphNavigationPanelAction() }
 		private val editSubGraphAction = ActionWrapperSwing(EditSubGraphVerticeViewAction())
 		private val resetSubGraphAction = ActionWrapperSwing(ResetSubGraphVerticeViewAction())
 	}
