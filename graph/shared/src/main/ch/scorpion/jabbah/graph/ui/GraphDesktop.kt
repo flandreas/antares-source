@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -47,6 +48,7 @@ interface GraphDesktop {
 }
 
 class GraphDesktopController(
+	private val application: Application,
 	private val viewManager: ViewManager = DrawViewModule.viewManager,
 	private val scheduler: Scheduler = ExecutionModule.scheduler,
 	private val eventBus: EventBus = BaseModule.eventBus
@@ -178,10 +180,14 @@ class GraphDesktopController(
 
 	private fun closeItem(item: GraphDesktopItem) {
 		LOG.debug(("Close single GraphDesktopItem"))
-		deassociate(item)
-		item.dispose()
-		item.drawingView?.let { viewManager.unregisterView(it) }
-		view.closeItem(item)
+		if (item === view.mainDesktopItem) {
+			application.close()
+		} else {
+			deassociate(item)
+			item.dispose()
+			item.drawingView?.let { viewManager.unregisterView(it) }
+			view.closeItem(item)
+		}
 	}
 
 	private fun closeAll(establishSingleView: Boolean) {

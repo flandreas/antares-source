@@ -35,7 +35,7 @@ class GraphFrameSwing(
 
 	private val toolbarPanel: JPanel = JPanel()
 
-	val graphPanel = GraphPanel(GraphViewModule.graphEditorFactory.invoke(eventBus), viewManager = viewManager)
+	val graphPanel = GraphPanel(GraphViewModule.graphEditorFactory.invoke(eventBus), viewManager = viewManager, application = application)
 
 	private val containerPanel = ContainerPanel(GraphViewModule.containerEditorFactory.invoke(eventBus), viewManager)
 

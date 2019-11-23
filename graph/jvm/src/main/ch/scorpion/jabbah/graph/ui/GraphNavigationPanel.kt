@@ -82,7 +82,7 @@ class GraphNavigationPanel(
 
 	private val navigationStackView = NavigationStackViewSwing(navigationStackViewController)
 
-	private val headerPanel = GraphDesktopItemHeaderPanel(this, navigationStackView, eventBus, allowClose = !isRoot)
+	private val headerPanel = GraphDesktopItemHeaderPanel(this, navigationStackView, eventBus, allowClose = true)
 
 	private val layeredPane = JLayeredPane()
 

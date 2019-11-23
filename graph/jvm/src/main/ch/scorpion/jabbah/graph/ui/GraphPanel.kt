@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.*
@@ -70,6 +71,7 @@ class GraphPanel(
 	val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val viewManager: ViewManager,
 	var scheduler: Scheduler = ExecutionModule.scheduler,
+	application: Application,
 	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel(), ApplicationModeHolder {
 
@@ -78,12 +80,12 @@ class GraphPanel(
 		private const val DEF_SIDEBAR_SIZE = 200
 	}
 
-	/** Allows to edit and execute the currently open GraphView.*/
+	/** Allows editing and execute the currently open GraphView.*/
 	private val graphEditPanel: GraphEditPanel = GraphEditPanel(editor, scheduler, viewManager, propertySheetFactory, eventBus)
 
-	val desktopController = GraphDesktopController()
+	val desktopController = GraphDesktopController(application)
 
-	/** Allows to open multiple Graphs.*/
+	/** Allows opening multiple Graphs.*/
 	val desktop: GraphDesktopSwing = GraphDesktopSwing(graphEditPanel)
 
 	/** Displays the properties of the currently selected component in [graphEditPanel].*/
@@ -108,7 +110,7 @@ class GraphPanel(
 	private val explorerSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
 	/**
-	 * Allows to show and hide the Explorer. If not initialy opened, the event system turns crazy and lags while processing
+	 * Allows showing and hiding the Explorer. If not initially opened, the event system turns crazy and lags while processing
 	 * drag events in the DrawingView (BUG still not explained).
 	 */
 	private val leftSidebarPane = SidebarSplitPane(

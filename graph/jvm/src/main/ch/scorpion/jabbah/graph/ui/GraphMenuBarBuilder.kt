@@ -55,7 +55,6 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(GraphInfoAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(PreferencesAction())))
 		menu.addSeparator()
-		menu.add(JMenuItem(ActionWrapperSwing(CloseFileAction(frame.application))))
 		menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))
 	}
 
