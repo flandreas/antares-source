@@ -17,14 +17,14 @@ import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
 
-/** Provides in-depth information about the currently open [Graph].*/
-class GraphInfoAction(
+/** Provides in-depth statistical information about the currently open [Graph].*/
+class GraphStatisticsAction(
 	viewManager: ViewManager = DrawViewModule.viewManager
-) : AbstractViewAction("graph.action.info", viewManager = viewManager) {
+) : AbstractViewAction("graph.action.statistics", viewManager = viewManager) {
 
 	override fun execute(event: ActionEvent) {
 		val graphView = (viewManager.activeView as DrawingView<*>).drawing as GraphView<*>
-		GraphInfoPanel.showAsDialog(title = Translations.getString("graph.action.info.name"), graph = graphView.graph!!)
+		GraphInfoPanel.showAsDialog(title = Translations.getString("graph.action.statistics.name"), graph = graphView.graph!!)
 	}
 }
 

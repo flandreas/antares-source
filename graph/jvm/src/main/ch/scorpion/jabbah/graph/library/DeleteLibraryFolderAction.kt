@@ -23,8 +23,7 @@ class DeleteLibraryFolderAction(
 				Frame.getFrames()[0],
 				Translations.getString("graph.action.deleteLibraryDirectory.question", libraryTreeView!!.getSelectedItem()!!),
 				name,
-				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)
-		{
+				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 			val library = libraryItem!!.library!!
 			library.libraryService.removeLibraryItem(libraryItem.library!!, libraryItem, folderOfSelectedItem as LibraryDirectory)
 		}

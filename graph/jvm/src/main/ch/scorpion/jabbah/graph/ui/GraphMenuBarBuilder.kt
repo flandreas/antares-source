@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.MenuBarBuilder
 import ch.scorpion.jabbah.app.action.AboutAction
-import ch.scorpion.jabbah.app.action.CloseFileAction
 import ch.scorpion.jabbah.app.action.QuitApplicationAction
 import ch.scorpion.jabbah.app.action.SaveFileAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
@@ -52,7 +51,7 @@ open class GraphMenuBarBuilder(
 		menu.add(openRecentMenu)
 		menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(frame.application))))
 		menu.addSeparator()
-		menu.add(JMenuItem(ActionWrapperSwing(GraphInfoAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(GraphStatisticsAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(PreferencesAction())))
 		menu.addSeparator()
 		menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))
@@ -89,9 +88,9 @@ open class GraphMenuBarBuilder(
 	}
 
 	protected open fun fillLibraryMenu(menu: JMenu): JMenu {
-		menu.add(JMenuItem(ActionWrapperSwing(AddLibraryFolderAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(NewGraphAction())))
-		menu.add(JMenuItem(ActionWrapperSwing(EditContainerLibraryElementAction(frame.application, eventBus))))
+		menu.add(JMenuItem(ActionWrapperSwing(AddLibraryFolderAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(OpenContainerLibraryElementAction(frame.application, eventBus))))
 		menu.add(JMenuItem(ActionWrapperSwing(DeleteLibraryElementAction(eventBus))))
 		menu.add(JMenuItem(ActionWrapperSwing(DuplicateGraphAction())))
 		return menu

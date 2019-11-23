@@ -12,7 +12,6 @@ Antares (Antares):: Lernplatform für digitale Schaltungen.
 Author (Autor):: Der Benutzer, dem ein Projekt oder eine Bibliothek gehört und der sie als einziger bearbeiten kann.
 Bundle (Bündel):: Ein exportiertes Projekt, das auch die referenzierte Bibliothek enthält.
 Circuit (Schaltung):: Die darstellbare Form einer digitalen Schaltung in `antares`.
-Contents (Inhalt):: Der Teil des Explorers, der einen Baum mit allen Komponeten des geöffneten Projektes und der verwendeten Bibliothek enthält.
 Component (Komponente):: Bestandteil einer Schaltung. Eine Komponente ist entweder elementar oder eine Teilschaltung.
 Desktop (Werkbank):: Enthält das geöffnete Projekt und die referenzierte Bibliothek.
 Developer Mode (Entwicklermodus):: `Antares` kann im Entwicklermodus gestartet werden, um Zugriff auf bestimmte Funktionen zu erhalten, die vor allem der Fehlersuche dienen.
