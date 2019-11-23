@@ -1,4 +1,16 @@
-apply plugin: 'kotlin'
+plugins {
+    id 'kotlin'
+    id 'application'
+}
+
+application {
+    mainClassName = 'ch.scorpion.antares.AntaresSwing'
+    applicationDefaultJvmArgs = ['-Duser.language=de',  '-Xdock:name=Antares']
+}
+
+run {
+    args = ['-d', '/Users/andreas/Documents/scorpion2/jabbah/antares', '-developer']
+}
 
 sourceSets {
     main.kotlin.srcDirs += 'shared/src/main'
