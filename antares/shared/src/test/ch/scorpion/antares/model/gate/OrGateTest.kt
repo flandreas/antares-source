@@ -64,14 +64,14 @@ class OrCalculatorTest {
     }
 
     @Test
-    fun shouldBeUndefinedWithAllUndefined() {
+    fun shouldBeErrorWithAllUndefined() {
         val inputA = vertice.getInput<DigitalSignal>("a")
         inputA.setIncomingSignal(Word.of(Bit.Undefined), signalHandler)
         val inputB = vertice.getInput<DigitalSignal>("b")
         inputB.setIncomingSignal(Word.of(Bit.Undefined), signalHandler)
 
         val output = vertice.getOutput<DigitalSignal>()
-        assertEquals(Bit.Undefined, output.getOutgoingSignal()!!.bitAt(0))
+        assertEquals(Bit.Error, output.getOutgoingSignal()!!.bitAt(0))
     }
 
     @Test

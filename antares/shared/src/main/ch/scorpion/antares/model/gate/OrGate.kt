@@ -21,14 +21,14 @@ class OrCalculator<T: Vertice> : VerticeCalculator<T> {
 
         for (port in vertice.getInputs()) {
             val signal = data.getSignal<DigitalSignal>(port.portId)!!
-            allUndefined = allUndefined && signal.bitAt(0) == Bit.Undefined
+            allUndefined = allUndefined && !signal.bitAt(0).isDefined
             if (signal.bitAt(0) == Bit.True) {
                 outputPort.setOutgoingSignalBuffered(Word.of(true), signalHandler)
                 return
             }
         }
         if (allUndefined) {
-            outputPort.setOutgoingSignalBuffered(Word.of(Bit.Undefined), signalHandler)
+            outputPort.setOutgoingSignalBuffered(Word.of(Bit.Error), signalHandler)
         } else {
             outputPort.setOutgoingSignalBuffered(Word.of(false), signalHandler)
         }
