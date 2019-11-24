@@ -24,6 +24,16 @@ interface LibraryDictionary {
 	/** Returns the names of the stored [Libraries][Library].*/
 	fun getLibraryNames(): ImmutableList<String>
 
+	/** Adds the specified [Library] to this [LibraryDictionary]*/
+	fun add(library: Library)
+
+	/** Removes the [Library] with the specified name from this [LibraryDictionary]. */
+	fun remove(name: String)
+
+	fun rename(library: Library, newName: String)
+
+	fun update(library: Library, properties: LibraryProperties)
+
 	/** Returns all [LibraryDirectoryEntries][LibraryDictionaryEntry] of this [LibraryDictionary].*/
 	fun getEntries(): ImmutableList<LibraryDictionaryEntry>
 
@@ -48,6 +58,22 @@ class UnimplementedLibraryDictionary : LibraryDictionary {
 	}
 
 	override fun getLibraryNames(): ImmutableList<String> {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun add(library: Library) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun remove(name: String) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun rename(library: Library, newName: String) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun update(library: Library, properties: LibraryProperties) {
 		throw UnsupportedOperationException("not implemented")
 	}
 

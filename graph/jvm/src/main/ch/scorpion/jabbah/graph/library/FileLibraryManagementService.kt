@@ -34,6 +34,7 @@ class FileLibraryManagementService(
 	/** ---- [LibraryManagementService] interface */
 
 	override fun exists(name: String): Boolean {
+		// TODO Ask LibraryDirectory
 		return Files.exists(FileSystems.getDefault().getPath(directoryPath, name))
 	}
 
@@ -60,6 +61,7 @@ class FileLibraryManagementService(
 		}
 
 		library.bindLibraryItems()
+		libraryDictionary.add(library)
 		eventBus.post(LibraryCreatedEvent(library))
 		return library
 	}
@@ -71,12 +73,16 @@ class FileLibraryManagementService(
 		val library = libraryHolder.library
 		LOG.debug("FileLibraryManagementService: updating library '${library.name}'")
 
+		// TODO The following will be simpler once UUID is used in file names instead of the name
+
 		if (library.name != properties.name) {
 			libraryService.renameLibrary(library, properties.name)
+			libraryDictionary.rename(library, properties.name)
 		}
 
 		library.properties = properties
 		libraryService.storeLibrary(library)
+		libraryDictionary.update(library, properties)
 		eventBus.post(LibraryPropertiesEvent(library, properties))
 	}
 
@@ -112,6 +118,7 @@ class FileLibraryManagementService(
 			throw IllegalArgumentException("illegal attempt to delete the currently open library '$name'")
 		}
 		libraryService.deleteLibrary(name)
+		libraryDictionary.remove(name)
 	}
 
 	override fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {

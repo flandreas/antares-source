@@ -19,6 +19,8 @@ object ProjectModule : AbstractModule() {
 		persistenceService = projectLibraryPersistenceService)
 	}
 
+	var projectDictionary: LibraryDictionary = UnimplementedLibraryDictionary()
+
 	var projectManagementService: ProjectManagementService = UnimplementedProjectManagementService()
 
 	val projectFactory: (String) -> Project = { ProjectImpl(name = it, libraryService = projectLibraryService.invoke(), descriptionKey = "project.project.name") }

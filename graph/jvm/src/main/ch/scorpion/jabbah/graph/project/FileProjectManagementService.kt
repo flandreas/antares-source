@@ -31,6 +31,7 @@ class FileProjectManagementService(
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val libraryDictionary: LibraryDictionary = LibraryModule.libraryDictionary,
+	private val projectDictionary: LibraryDictionary = ProjectModule.projectDictionary,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ProjectManagementService {
 
@@ -47,16 +48,12 @@ class FileProjectManagementService(
 	override val currentProject: Project? get() = projectHolder.project
 
 	override fun exists(projectName: String): Boolean {
-		val path = FileSystems.getDefault().getPath(directoryPath, projectName)
-		return Files.exists(path)
+		// TODO Ask LibraryDirectory
+		return Files.exists(FileSystems.getDefault().getPath(directoryPath, projectName))
 	}
 
 	override fun getProjectNames(): ImmutableList<String> {
-		return ImmutableList(Files.list(Paths.get(directoryPath))
-			.filter { Files.isDirectory(it) }
-			.map { it.fileName.toString() }
-			.sorted()
-			.collect(Collectors.toList()))
+		return projectDictionary.getLibraryNames()
 	}
 
 	override fun load(projectName: String): Project {
@@ -75,6 +72,7 @@ class FileProjectManagementService(
 		project.description = properties.description
 		project.importedLibrary = libraryHolder.library.uuid
 		libraryService.storeLibrary(project)
+		projectDictionary.add(project)
 
 		val metaGraph = MetaGraph()
 		metaGraph.graph.model!!.name.value = Translations.getString(newMetaGraphNameTranslationKey)
@@ -93,12 +91,16 @@ class FileProjectManagementService(
 		val project = projectHolder.project!!
 		LOG.debug("FileProjectManagementService: updating project '${project.name}'")
 
+		// TODO The following will be simpler once UUID is used in file names instead of the name
+
 		if (project.name != properties.name) {
 			libraryService.renameLibrary(project, properties.name)
+			projectDictionary.rename(project, properties.name)
 		}
 
 		project.properties = properties
 		libraryService.storeLibrary(project)
+		projectDictionary.update(project, properties)
 		eventBus.post(LibraryPropertiesEvent(project, properties))
 	}
 
@@ -156,7 +158,8 @@ class FileProjectManagementService(
 	}
 
 	private fun deleteImpl(projectName: String) {
-		FileUtils.forceDelete(FileSystems.getDefault().getPath(directoryPath, projectName).toFile())
+		libraryService.deleteLibrary(projectName)
+		projectDictionary.remove(projectName)
 	}
 
 	override fun close() {

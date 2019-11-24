@@ -46,7 +46,7 @@ class BitTest {
 	@Test
 	fun shouldConvertToBinaryString() {
 		assertEquals("?", Bit.Undefined.toBinaryString())
-		assertEquals("E", Bit.Error.toBinaryString())
+		assertEquals("X", Bit.Error.toBinaryString())
 		assertEquals("0", Bit.of(0).toBinaryString())
 		assertEquals("1", Bit.of(1).toBinaryString())
 	}
@@ -54,7 +54,7 @@ class BitTest {
 	@Test
 	fun shouldConvertToHexString() {
 		assertEquals("?", Bit.Undefined.toHexString())
-		assertEquals("E", Bit.Error.toHexString())
+		assertEquals("X", Bit.Error.toHexString())
 		assertEquals("0", Bit.False.toHexString())
 		assertEquals("1", Bit.True.toHexString())
 	}

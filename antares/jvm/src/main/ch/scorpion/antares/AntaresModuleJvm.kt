@@ -80,6 +80,11 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 			metaGraphFileExtension = app.fileExtension,
 			libraryFileName = app.libraryFileName
 		)
+		ProjectModule.projectDictionary = FileLibraryDictionary(
+			directoryPath = app.projectsDirectoryPath.toString()
+		)
+		ProjectModule.projectDictionary.load()
+
 		ProjectModule.projectManagementService = FileProjectManagementService(
 			directoryPath = app.projectsDirectoryPath.toString(),
 			newMetaGraphNameTranslationKey = "graph.name.unknown"
