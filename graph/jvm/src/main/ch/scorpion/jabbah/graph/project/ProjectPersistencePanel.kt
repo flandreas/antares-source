@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
+import ch.scorpion.jabbah.graph.library.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.graph.library.LibraryPropertiesPanel
 import ch.scorpion.jabbah.graph.project.ProjectImportResult.*
@@ -46,7 +47,7 @@ class ProjectPersistencePanel(
 
 		private val LOG by logger(ProjectPersistencePanel::class)
 
-		private val EXPORT_FILE_EXTENSION = "zip"
+		private const val EXPORT_FILE_EXTENSION = "zip"
 
 		fun showAsDialog(parent: JFrame) {
 			val dialog = JDialog(parent, true)
@@ -68,16 +69,17 @@ class ProjectPersistencePanel(
 		}
 	}
 
-	private val projectNameList = JList<String>(loadProjectNames())
-	private val currentProjectFont = projectNameList.font.deriveFont(Font.BOLD)
+	private val projectsList = JList(loadProjects())
+	private val selectedProject: LibraryDictionaryEntry? get() = projectsList.selectedValue
+	private val currentProjectFont = projectsList.font.deriveFont(Font.BOLD)
 	private val openAction = OpenAction()
 	private val deleteAction = DeleteAction()
 	private val exportAction = ExportAction()
 	private val importAction = ImportAction()
 
 	init {
-		projectNameList.addListSelectionListener { updateActions() }
-		projectNameList.addMouseListener(object : MouseAdapter() {
+		projectsList.addListSelectionListener { updateActions() }
+		projectsList.addMouseListener(object : MouseAdapter() {
 			override fun mouseClicked(e: MouseEvent?) {
 				if (e!!.clickCount == 2) {
 					openAction.execute(ActionWrapperSwing.toJabbaActionEvent(e))
@@ -89,9 +91,9 @@ class ProjectPersistencePanel(
 	}
 
 	private fun updateActions() {
-		openAction.enabled = !projectNameList.isSelectionEmpty && projectNameList.selectedValue != projectHolder.p?.name
-		deleteAction.enabled = !projectNameList.isSelectionEmpty
-		exportAction.enabled = !projectNameList.isSelectionEmpty
+		openAction.enabled = selectedProject?.uuid != projectHolder.p?.uuid
+		deleteAction.enabled = !projectsList.isSelectionEmpty
+		exportAction.enabled = !projectsList.isSelectionEmpty
 		importAction.enabled = true
 	}
 
@@ -99,7 +101,7 @@ class ProjectPersistencePanel(
 		layout = BorderLayout()
 		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
-		val scrollPane = JScrollPane(projectNameList)
+		val scrollPane = JScrollPane(projectsList)
 		scrollPane.preferredSize = Dimension(300, 400)
 		add(scrollPane, BorderLayout.CENTER)
 
@@ -116,34 +118,35 @@ class ProjectPersistencePanel(
 
 		add(buttonPanel, BorderLayout.SOUTH)
 
-		projectNameList.cellRenderer = ProjectListRenderer()
+		projectsList.cellRenderer = ProjectListRenderer()
 	}
 
 	private fun createButton(action: Action): JButton {
 		return JButton(ActionWrapperSwing(action))
 	}
 
-	private fun loadProjectNames(): ListModel<String> {
-		val list = DefaultListModel<String>()
-		managementService.getProjectNames().forEach { list.addElement(it) }
+	private fun loadProjects(): ListModel<LibraryDictionaryEntry> {
+		val list = DefaultListModel<LibraryDictionaryEntry>()
+		managementService
+			.getProjectDirectoryEntries()
+			.sortedBy { it.name }
+			.forEach { list.addElement(it) }
 		return list
 	}
 
-	private fun refreshProjectNames() {
-		projectNameList.model = loadProjectNames()
+	private fun refreshProjects() {
+		projectsList.model = loadProjects()
 	}
-
-	private val selectedProjectName: String? get() = projectNameList.selectedValue
 
 	private inner class ProjectListRenderer : DefaultListCellRenderer() {
 
 		override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
 			val renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
-			val name = value as String
-			if (name == projectHolder.project?.name) {
+			val project = value as LibraryDictionaryEntry
+			if (project.uuid == projectHolder.project?.uuid) {
 				renderer.font = currentProjectFont
 			} else {
-				renderer.font = projectNameList.font
+				renderer.font = projectsList.font
 			}
 			return renderer
 		}
@@ -151,10 +154,12 @@ class ProjectPersistencePanel(
 
 	private inner class OpenAction : AbstractAction("project.dialog.open.action") {
 		override fun execute(event: ActionEvent) {
-			LOG.debug("ProjectPersistencePanel: open project '$selectedProjectName'")
-			InvocationHandler.invoke {
-				managementService.open(projectNameList.selectedValue)
-				closeHandler.invoke()
+			selectedProject?.let {
+				LOG.debug(" open project '${it.uuid}'")
+				InvocationHandler.invoke {
+					managementService.open(it.uuid)
+					closeHandler.invoke()
+				}
 			}
 		}
 	}
@@ -167,7 +172,7 @@ class ProjectPersistencePanel(
 
 	private inner class NewAction : AbstractAction("project.dialog.new.action") {
 		override fun execute(event: ActionEvent) {
-			LOG.debug("ProjectPersistencePanel: new project")
+			LOG.debug("new project")
 			var properties: LibraryProperties?
 			while (true) {
 				properties = LibraryPropertiesPanel.showAsDialog(title = Translations.getString("project.dialog.new.dialog.title"))
@@ -199,7 +204,7 @@ class ProjectPersistencePanel(
 				}
 			}
 
-			LOG.debug("ProjectPersistencePanel: creating new project '${properties!!.name}'")
+			LOG.debug("creating new project '${properties!!.name}'")
 			managementService.open(managementService.create(properties))
 			closeHandler.invoke()
 		}
@@ -207,32 +212,36 @@ class ProjectPersistencePanel(
 
 	private inner class DeleteAction : AbstractAction("project.dialog.delete.action") {
 		override fun execute(event: ActionEvent) {
-			if (JOptionPane.showConfirmDialog(
-					this@ProjectPersistencePanel,
-					Translations.getString("project.dialog.delete.confirm.msg", selectedProjectName!!),
-					Translations.getString("project.dialog.delete.action.name"),
-					JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
-			) {
-				managementService.delete(selectedProjectName!!)
-				refreshProjectNames()
+			selectedProject?.let {
+				if (JOptionPane.showConfirmDialog(
+						this@ProjectPersistencePanel,
+						Translations.getString("project.dialog.delete.confirm.msg", it.name),
+						Translations.getString("project.dialog.delete.action.name"),
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
+				) {
+					managementService.delete(it.uuid)
+					refreshProjects()
+				}
 			}
 		}
 	}
 
 	private inner class ExportAction : AbstractAction("project.dialog.export.action") {
 		override fun execute(event: ActionEvent) {
-			val fileChooser = JFileChooser()
-			fileChooser.dialogTitle = name
-			fileChooser.selectedFile = File("$selectedProjectName.$EXPORT_FILE_EXTENSION")
-			if (fileChooser.showSaveDialog(this@ProjectPersistencePanel) == JFileChooser.APPROVE_OPTION) {
-				managementService.export(selectedProjectName!!, fileChooser.selectedFile.absolutePath)
-				JOptionPane.showConfirmDialog(
-					Frame.getFrames()[0],
-					Translations.getString("project.dialog.export.success.msg", selectedProjectName!!),
-					name,
-					JOptionPane.DEFAULT_OPTION,
-					JOptionPane.INFORMATION_MESSAGE)
+			selectedProject?.let {
+				val fileChooser = JFileChooser()
+				fileChooser.dialogTitle = name
+				fileChooser.selectedFile = File("${it.uuid}.$EXPORT_FILE_EXTENSION")
+				if (fileChooser.showSaveDialog(this@ProjectPersistencePanel) == JFileChooser.APPROVE_OPTION) {
+					managementService.export(it.uuid, fileChooser.selectedFile.absolutePath)
+					JOptionPane.showConfirmDialog(
+						Frame.getFrames()[0],
+						Translations.getString("project.dialog.export.success.msg", it.name),
+						name,
+						JOptionPane.DEFAULT_OPTION,
+						JOptionPane.INFORMATION_MESSAGE)
+				}
 			}
 		}
 	}
@@ -249,7 +258,7 @@ class ProjectPersistencePanel(
 
 		private fun import(path: String) {
 			val name = FilenameUtils.getBaseName(path)
-			when(managementService.import(path)) {
+			when (managementService.import(path)) {
 				Success -> handleSuccessfulImport(name)
 				NameAlreadyExists -> handleImportNameAlreadyExists(name)
 				Invalid -> handleInvalidImportFile(name)
@@ -268,7 +277,7 @@ class ProjectPersistencePanel(
 				name,
 				JOptionPane.DEFAULT_OPTION,
 				JOptionPane.INFORMATION_MESSAGE)
-			refreshProjectNames()
+			refreshProjects()
 		}
 
 		fun handleImportNameAlreadyExists(projectName: String) {

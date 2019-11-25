@@ -29,17 +29,15 @@ class FileLibraryDictionary(
 
 	override val size: Int get() = entries.size
 	
-	override fun contains(uuid: UUID): Boolean =
-		entries.contains(uuid)
+	override fun contains(uuid: UUID): Boolean = entries.contains(uuid)
 	
-	override fun getLibraryNames(): ImmutableList<String> =
-		entries.values.map { it.name }.sorted().toImmutableList()
+	override fun getLibraryNames(): ImmutableList<String> = entries.values.map { it.name }.sorted().toImmutableList()
 
-	override fun getEntries(): ImmutableList<LibraryDictionaryEntry> {
-		return entries.values.toList().toImmutableList()
-	}
+	override fun getEntries(): ImmutableList<LibraryDictionaryEntry> = entries.values.toList().toImmutableList()
 
 	override fun getUUIDofName(name: String): UUID = getEntryByName(name).uuid
+
+	override fun existsName(name: String): Boolean = entries.values.any { it.name == name }
 
 	override fun getNameOfUUID(uuid: UUID): String {
 		val entry = entries[uuid]
@@ -77,8 +75,8 @@ class FileLibraryDictionary(
 		}
 	}
 
-	override fun remove(name: String) {
-		entries.remove(getUUIDofName(name))
+	override fun remove(uuid: UUID) {
+		entries.remove(uuid)
 		store()
 	}
 

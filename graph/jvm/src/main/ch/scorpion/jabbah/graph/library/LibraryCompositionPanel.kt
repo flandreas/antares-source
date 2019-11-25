@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.BusyHandler
@@ -76,11 +77,13 @@ class LibraryCompositionPanel(
 
 	private val removeAction = RemoveAction()
 
-	private val sourceLibraries = JComboBox<String>()
+	private val sourceLibraries = JComboBox<LibraryDictionaryEntry>()
 
 	private val isSourceElementSelected: Boolean get() = sourceLibraryTree.getSelectedItem() is LibraryElement
 
 	private val isDestinationFolderSelected: Boolean get() = destinationLibraryTree.getSelectedItem() is LibraryDirectory
+
+	private val selectedSourceLibraryUuid: UUID get() = (sourceLibraries.selectedItem as LibraryDictionaryEntry).uuid
 
 	private val librarySelectionListener = TreeSelectionListener {
 		copyAction.enabled = isSourceElementSelected && isDestinationFolderSelected
@@ -91,7 +94,7 @@ class LibraryCompositionPanel(
 		fillSourceLibraries()
 
 		// TODO With showWorkshopNode = false, Tree is empty after current Library has been changed?
-		sourceLibraryTree =  LibraryTreeView(library = getSelectedSourceLibrary(), project = null, eventBus = eventBus, showWorkspaceNode = true)
+		sourceLibraryTree = LibraryTreeView(library = getSelectedSourceLibrary(), project = null, eventBus = eventBus, showWorkspaceNode = true)
 		sourceLibraries.addActionListener {
 			sourceLibraryTree.library = getSelectedSourceLibrary()
 		}
@@ -111,18 +114,15 @@ class LibraryCompositionPanel(
 		destinationLibraryTree.dispose()
 	}
 
-	private fun getSelectedSourceLibraryName(): String {
-		return sourceLibraries.selectedItem as String
-	}
-
 	private fun getSelectedSourceLibrary(): Library {
-		return libraryManagementService.loadLibrary(getSelectedSourceLibraryName())
+		return libraryManagementService.loadLibrary(selectedSourceLibraryUuid)
 	}
 
 	private fun fillSourceLibraries() {
 		libraryManagementService
-			.getLibraryNames()
-			.filter { it != destinationLibrary.name }
+			.getLibraryDirectoryEntries()
+			.filter { it.uuid != destinationLibrary.uuid }
+			.sortedBy { it.name }
 			.forEach { sourceLibraries.addItem(it) }
 	}
 
@@ -215,12 +215,12 @@ class LibraryCompositionPanel(
 		override fun execute(event: ActionEvent) {
 			val sourceElement = sourceLibraryTree.getSelectedItem() as LibraryElement
 			if (sourceElement is ContainerLibraryElement && !libraryManagementService.canCopyContainerLibraryElement(sourceElement, destinationLibrary)) {
-				if(JOptionPane.showConfirmDialog(
-					this@LibraryCompositionPanel,
-					Translations.getString("library.composition.copy.incomplete.msg"),
-					description,
-					JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION
+				if (JOptionPane.showConfirmDialog(
+						this@LibraryCompositionPanel,
+						Translations.getString("library.composition.copy.incomplete.msg"),
+						description,
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION
 				) {
 					return
 				}

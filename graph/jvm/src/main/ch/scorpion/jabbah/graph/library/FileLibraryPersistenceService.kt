@@ -1,13 +1,12 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.io.ElectricXmlReader
 import ch.scorpion.jabbah.io.ElectricXmlWriter
 import ch.scorpion.jabbah.io.StoreXmlReader
 import ch.scorpion.jabbah.io.StoreXmlWriter
-import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.logger
 import org.apache.commons.io.FileUtils
 import java.io.*
 import java.nio.file.FileSystems
@@ -24,175 +23,163 @@ import java.util.zip.ZipOutputStream
  * @property directoryPath the absolute path of the file system directory where the libraries are located
  */
 class FileLibraryPersistenceService(
-    private val directoryPath: String,
-    private val metaGraphFileExtension: String = "cir",
-    private val libraryFileName: String = "library.lib"
+	private val directoryPath: String,
+	private val metaGraphFileExtension: String = "cir",
+	private val libraryFileName: String = "library.lib"
 ) : LibraryPersistenceService {
 
-    companion object {
-        private val LOG by logger(FileLibraryPersistenceService::class)
-    }
-
-    /** ---- [LibraryPersistenceService] */
-
-    override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
-        LOG.debug("load MetaGraph '$uuid'")
-        val filePath = buildMetaGraphFilePath(library.name, uuid)
-        FileInputStream(filePath).use {
-            try {
-                val storeReader = StoreXmlReader(ElectricXmlReader(it))
-                return storeReader.readStorable() as MetaGraph
-            } catch (e: FileNotFoundException) {
-                LOG.error("Library file '$filePath' not found")
-                throw LibraryPersistenceServiceException()
-            } catch (e: Throwable) {
-                LOG.error("Error while loading MetaGraph file from '$filePath': ${e.message}")
-                throw LibraryPersistenceServiceException()
-            }
-        }
-    }
-
-    override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
-        LOG.debug("store MetaGraph '${metaGraph.uuid}'")
-	    ensureLibraryDirectory(library.name)
-	    val filePath = buildMetaGraphFilePath(library.name, metaGraph.uuid)
-        FileOutputStream(filePath).use {
-            try {
-                val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
-                storeWriter.writeStorable(metaGraph)
-            } catch (e: Throwable) {
-                LOG.error("Error while storing library file to '$filePath': ${e.message}")
-                throw e
-            }
-        }
-    }
-
-    override fun deleteContainerLibraryElement(library: Library, uuid: UUID) {
-        LOG.debug("delete MetaGraph '$uuid'")
-        File(buildMetaGraphFilePath(library.name, uuid)).delete()
-    }
-
-    override fun loadLibrary(name: String): Library {
-	    val path = buildLibraryFilePath(name)
-        LOG.debug("Loading library from $path")
-        FileInputStream(path).use {
-            try {
-                val storeReader = StoreXmlReader(ElectricXmlReader(it))
-	            return storeReader.readStorable() as Library
-            } catch (e: Throwable) {
-                LOG.error("Error while loading library file '$path': ${e.message}")
-                throw e
-            }
-        }
-    }
-
-    override fun storeLibrary(library: Library) {
-	    ensureLibraryDirectory(library.name)
-        val path = buildLibraryFilePath(library.name)
-        try {
-            FileOutputStream(path).use {
-                try {
-                    val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
-                    storeWriter.writeStorable(library)
-                } catch (e: Throwable) {
-                    LOG.error("Error while storing library file '$path': ${e.message}")
-                    throw e
-                }
-            }
-        } catch (e: Throwable) {
-            LOG.error("Error while opening library file '$path': ${e.message}")
-            throw e
-        }
-    }
-
-	override fun deleteLibrary(name: String) {
-		LOG.debug("deleteLibrary $name")
-		FileUtils.deleteDirectory(File(buildLibraryDirectoryPath(name)))
+	companion object {
+		private val LOG by logger(FileLibraryPersistenceService::class)
 	}
 
-	override fun duplicateLibrary(library: Library, newName: String) {
-		LOG.debug("duplicateLibrary ${library.name}")
+	/** ---- [LibraryPersistenceService] */
+
+	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
+		LOG.debug("load MetaGraph '$uuid'")
+		val filePath = buildMetaGraphFilePath(library.uuid, uuid)
+		FileInputStream(filePath).use {
+			try {
+				val storeReader = StoreXmlReader(ElectricXmlReader(it))
+				return storeReader.readStorable() as MetaGraph
+			} catch (e: FileNotFoundException) {
+				LOG.error("Library file '$filePath' not found")
+				throw LibraryPersistenceServiceException()
+			} catch (e: Throwable) {
+				LOG.error("Error while loading MetaGraph file from '$filePath': ${e.message}")
+				throw LibraryPersistenceServiceException()
+			}
+		}
+	}
+
+	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
+		LOG.debug("store MetaGraph '${metaGraph.uuid}'")
+		ensureLibraryDirectory(library.uuid)
+		val filePath = buildMetaGraphFilePath(library.uuid, metaGraph.uuid)
+		FileOutputStream(filePath).use {
+			try {
+				val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
+				storeWriter.writeStorable(metaGraph)
+			} catch (e: Throwable) {
+				LOG.error("Error while storing library file to '$filePath': ${e.message}")
+				throw e
+			}
+		}
+	}
+
+	override fun deleteContainerLibraryElement(library: Library, uuid: UUID) {
+		LOG.debug("delete MetaGraph '$uuid'")
+		File(buildMetaGraphFilePath(library.uuid, uuid)).delete()
+	}
+
+	override fun loadLibrary(uuid: UUID): Library {
+		val path = buildLibraryFilePath(uuid)
+		LOG.debug("Loading library from $path")
+		FileInputStream(path).use {
+			try {
+				val storeReader = StoreXmlReader(ElectricXmlReader(it))
+				return storeReader.readStorable() as Library
+			} catch (e: Throwable) {
+				LOG.error("Error while loading library file '$path': ${e.message}")
+				throw e
+			}
+		}
+	}
+
+	override fun storeLibrary(library: Library) {
+		ensureLibraryDirectory(library.uuid)
+		val path = buildLibraryFilePath(library.uuid)
+		try {
+			FileOutputStream(path).use {
+				try {
+					val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
+					storeWriter.writeStorable(library)
+				} catch (e: Throwable) {
+					LOG.error("Error while storing library file '$path': ${e.message}")
+					throw e
+				}
+			}
+		} catch (e: Throwable) {
+			LOG.error("Error while opening library file '$path': ${e.message}")
+			throw e
+		}
+	}
+
+	override fun deleteLibrary(uuid: UUID) {
+		LOG.debug("deleteLibrary $uuid")
+		FileUtils.deleteDirectory(File(buildLibraryDirectoryPath(uuid)))
+	}
+
+	override fun duplicateLibrary(library: Library, newUuid: UUID) {
+		LOG.debug("duplicateLibrary ${library.uuid}")
 		FileUtils.copyDirectory(
-			File(buildLibraryDirectoryPath(library.name)),
-			File(buildLibraryDirectoryPath(newName))
+			File(buildLibraryDirectoryPath(library.uuid)),
+			File(buildLibraryDirectoryPath(newUuid))
 		)
 	}
 
-    override fun exportLibrary(name: String, outputPath: String) {
-        LOG.debug("Exporting library to $outputPath")
-        FileOutputStream(outputPath).use { output ->
-            ZipOutputStream(output).use {
-                val fileToZip = File(buildLibraryDirectoryPath(name))
-                zipFile(fileToZip, fileToZip.name, it)
-            }
-        }
-    }
+	override fun exportLibrary(uuid: UUID, outputPath: String) {
+		LOG.debug("Exporting library to $outputPath")
+		FileOutputStream(outputPath).use { output ->
+			ZipOutputStream(output).use {
+				val fileToZip = File(buildLibraryDirectoryPath(uuid))
+				zipFile(fileToZip, fileToZip.name, it)
+			}
+		}
+	}
 
-	override fun importLibrary(name: String, inputPath: String) {
-		LOG.debug("Importing library '$name' from $inputPath")
-		Files.createDirectory(Paths.get(buildLibraryDirectoryPath(name)))
-		FileInputStream(inputPath).use {input ->
+	override fun importLibrary(uuid: UUID, inputPath: String) {
+		LOG.debug("Importing library '$uuid' from $inputPath")
+		Files.createDirectory(Paths.get(buildLibraryDirectoryPath(uuid)))
+		FileInputStream(inputPath).use { input ->
 			ZipInputStream(input).use {
 				unzipFile(Paths.get(directoryPath), it)
 			}
 		}
 	}
 
-	override fun renameLibrary(library: Library, newName: String) {
-		LOG.debug("renameLibrary '${library.name}' to '$newName'")
-		val oldPath = FileSystems.getDefault().getPath(directoryPath, library.name)
-		if (!Files.exists(oldPath)) {
-			throw IllegalArgumentException("No directory found for library ${library.name}")
-		}
-		val newPath = FileSystems.getDefault().getPath(directoryPath, newName)
-		Files.move(oldPath, newPath)
+	/** ---- [FileLibraryPersistenceService] */
+
+	private fun buildLibraryDirectoryPath(uuid: UUID): String {
+		return FileSystems.getDefault().getPath(directoryPath, uuid.toString()).toString()
 	}
 
-    /** ---- [FileLibraryPersistenceService] */
+	private fun buildMetaGraphFilePath(libraryUUID: UUID, metaGraphUuid: UUID): String {
+		return FileSystems.getDefault().getPath(directoryPath, libraryUUID.toString(), "$metaGraphUuid.$metaGraphFileExtension").toString()
+	}
 
-    private fun buildLibraryDirectoryPath(libraryName: String): String {
-	    return FileSystems.getDefault().getPath(directoryPath, libraryName).toString()
-    }
+	private fun buildLibraryFilePath(uuid: UUID): String {
+		return FileSystems.getDefault().getPath(directoryPath, uuid.toString(), libraryFileName).toString()
+	}
 
-    private fun buildMetaGraphFilePath(libraryName: String, uuid: UUID): String {
-	    return FileSystems.getDefault().getPath(directoryPath, libraryName, "$uuid.$metaGraphFileExtension").toString()
-    }
-
-    private fun buildLibraryFilePath(libraryName: String): String {
-		return FileSystems.getDefault().getPath(directoryPath, libraryName, libraryFileName).toString()
-    }
-
-	private fun ensureLibraryDirectory(libraryName: String) {
-		val path = FileSystems.getDefault().getPath(directoryPath, libraryName)
+	private fun ensureLibraryDirectory(uuid: UUID) {
+		val path = FileSystems.getDefault().getPath(directoryPath, uuid.toString())
 		if (!Files.exists(path)) {
 			Files.createDirectory(path)
 		}
 	}
 
-    private fun zipFile(file: File, fileName: String, zipOut: ZipOutputStream) {
-        if (file.isHidden) {
-            return
-        }
-        LOG.debug(".. zipping $fileName")
-        if (file.isDirectory) {
-            for (childFile in file.listFiles()) {
-                zipFile(childFile, "$fileName/${childFile.name}", zipOut)
-            }
-            return
-        }
-        FileInputStream(file).use {
-            val zipEntry = ZipEntry(fileName)
-            zipOut.putNextEntry(zipEntry)
-            val buffer = ByteArray(1024) { 0 }
-	        var length: Int
-	        do {
-                length = it.read(buffer)
-                if (length > 0) {
-                    zipOut.write(buffer, 0, length)
-                }
-            } while (length > 0)
-        }
-    }
+	private fun zipFile(file: File, fileName: String, zipOut: ZipOutputStream) {
+		if (file.isHidden) {
+			return
+		}
+		LOG.debug(".. zipping $fileName")
+		if (file.isDirectory) {
+			file.listFiles()?.forEach { zipFile(it, "$fileName/${it.name}", zipOut) }
+		} else {
+			FileInputStream(file).use {
+				val zipEntry = ZipEntry(fileName)
+				zipOut.putNextEntry(zipEntry)
+				val buffer = ByteArray(1024) { 0 }
+				var length: Int
+				do {
+					length = it.read(buffer)
+					if (length > 0) {
+						zipOut.write(buffer, 0, length)
+					}
+				} while (length > 0)
+			}
+		}
+	}
 
 	private fun unzipFile(destDir: Path, zipIn: ZipInputStream) {
 		val buffer = ByteArray(1024) { 0 }

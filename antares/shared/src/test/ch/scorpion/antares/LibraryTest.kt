@@ -103,11 +103,11 @@ class LibraryTest {
 	fun shouldExportLibrary() {
 		TestLibraryBuilder().addCustomNot(LibraryModule.libraryHolder.library)
 		val file = File.createTempFile("library", ".zip")
-		LibraryModule.libraryPersistenceService.exportLibrary(LibraryModule.libraryHolder.library.name, file.absolutePath)
+		LibraryModule.libraryPersistenceService.exportLibrary(LibraryModule.libraryHolder.library.uuid, file.absolutePath)
 	}
 
 	private fun storeAndLoad(library: LibraryImpl, service: LibraryService): Library {
 		service.storeLibrary(library)
-		return LibraryModule.libraryService.invoke().loadLibrary("test")
+		return LibraryModule.libraryService.invoke().loadLibrary(library.uuid)
 	}
 }

@@ -9,74 +9,57 @@ import ch.scorpion.jabbah.base.UUID
 interface LibraryPersistenceService {
 
 	/** Loads the entire [MetaGraph] with the specified [UUID].*/
-    fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph
+	fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph
 
-    fun storeMetaGraph(library: Library, metaGraph: MetaGraph)
+	fun storeMetaGraph(library: Library, metaGraph: MetaGraph)
 
-    fun deleteContainerLibraryElement(library: Library, uuid: UUID)
+	fun deleteContainerLibraryElement(library: Library, uuid: UUID)
 
-	fun loadLibrary(name: String): Library
+	fun loadLibrary(uuid: UUID): Library
 
-    fun storeLibrary(library: Library)
+	fun storeLibrary(library: Library)
 
-	fun deleteLibrary(name: String)
+	fun deleteLibrary(uuid: UUID)
 
-	/** Duplicates the specified [Library] and stores the duplicate with the given new name.*/
-	fun duplicateLibrary(library: Library, newName: String)
+	/** Duplicates the specified [Library] and stores the duplicate with the given new [UUID].*/
+	fun duplicateLibrary(library: Library, newUuid: UUID)
 
-	/** Stores the renaming of a [Library].*/
-	fun renameLibrary(library: Library, newName: String)
+	/** Imports a [Library] contained in a ZIP file at `inputPath` and stores it as new [Library] with the given [UUID].*/
+	fun importLibrary(uuid: UUID, inputPath: String)
 
-	/** Imports a [Library] contained in a ZIP file at `inputPath` and stores it as new [Library] with the given name.*/
-	fun importLibrary(name: String, inputPath: String)
-
-	/** Exports the [Library] with the specified name into a ZIP file and stores it at `outputPath'. */
-    fun exportLibrary(name: String, outputPath: String)
+	/** Exports the [Library] with the specified [UUID] into a ZIP file and stores it at `outputPath'. */
+	fun exportLibrary(uuid: UUID, outputPath: String)
 }
 
 /** Null pattern.*/
-class UnimplementedLibraryPersistenceService : LibraryPersistenceService{
+class UnimplementedLibraryPersistenceService : LibraryPersistenceService {
 
-	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-    override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-    override fun deleteContainerLibraryElement(library: Library, uuid: UUID) {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-	override fun loadLibrary(name: String): Library {
+	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph =
 		throw UnsupportedOperationException("not implemented")
-	}
 
-	override fun storeLibrary(library: Library) {
-        throw UnsupportedOperationException("not implemented")
-    }
-
-	override fun deleteLibrary(name: String) {
+	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph): Unit =
 		throw UnsupportedOperationException("not implemented")
-	}
 
-	override fun duplicateLibrary(library: Library, newName: String) {
+	override fun deleteContainerLibraryElement(library: Library, uuid: UUID): Unit =
 		throw UnsupportedOperationException("not implemented")
-	}
 
-	override fun renameLibrary(library: Library, newName: String) {
+	override fun loadLibrary(uuid: UUID): Library =
 		throw UnsupportedOperationException("not implemented")
-	}
 
-	override fun importLibrary(name: String, inputPath: String) {
+	override fun storeLibrary(library: Library): Unit =
 		throw UnsupportedOperationException("not implemented")
-	}
 
-    override fun exportLibrary(name: String, outputPath: String) {
-        throw UnsupportedOperationException("not implemented")
-    }
+	override fun deleteLibrary(uuid: UUID): Unit =
+		throw UnsupportedOperationException("not implemented")
 
+	override fun duplicateLibrary(library: Library, newUuid: UUID): Unit =
+		throw UnsupportedOperationException("not implemented")
+
+	override fun importLibrary(uuid: UUID, inputPath: String): Unit =
+		throw UnsupportedOperationException("not implemented")
+
+	override fun exportLibrary(uuid: UUID, outputPath: String): Unit =
+		throw UnsupportedOperationException("not implemented")
 }
 
-class LibraryPersistenceServiceException(msg: String? = null): Throwable(msg)
+class LibraryPersistenceServiceException(msg: String? = null) : Throwable(msg)

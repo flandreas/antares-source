@@ -10,12 +10,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
-import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
-import java.nio.file.FileSystems
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.util.stream.Collectors
 
 /**
  * A [ProjectManagementService] that uses the local file system to store [Project]s.
@@ -47,27 +42,22 @@ class FileProjectManagementService(
 
 	override val currentProject: Project? get() = projectHolder.project
 
-	override fun exists(projectName: String): Boolean {
-		// TODO Ask LibraryDirectory
-		return Files.exists(FileSystems.getDefault().getPath(directoryPath, projectName))
-	}
+	override fun exists(projectName: String): Boolean =
+		projectDictionary.existsName(projectName)
 
-	override fun getProjectNames(): ImmutableList<String> {
-		return projectDictionary.getLibraryNames()
-	}
+	override fun getProjectNames(): ImmutableList<String> =
+		projectDictionary.getLibraryNames()
 
-	override fun load(projectName: String): Project {
-		if (!exists(projectName)) {
-			throw IllegalArgumentException("project name '$projectName' doesn't exists")
-		}
-		return libraryService.loadLibrary(projectName) as Project
-	}
+	override fun getProjectDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> =
+		projectDictionary.getEntries()
+
+	override fun load(uuid: UUID): Project = libraryService.loadLibrary(uuid) as Project
 
 	override fun create(properties: LibraryProperties): Project {
 		if (exists(properties.name)) {
 			throw IllegalArgumentException("project name '${properties.name}' already exists")
 		}
-		LOG.debug("FileProjectManagementService: creating new project '${properties.name}'")
+		LOG.debug("creating new project '${properties.name}'")
 		val project = projectFactory.invoke(properties.name)
 		project.description = properties.description
 		project.importedLibrary = libraryHolder.library.uuid
@@ -82,18 +72,16 @@ class FileProjectManagementService(
 	}
 
 	override fun update(properties: LibraryProperties) {
-		if (exists(properties.name)) {
-			throw IllegalArgumentException("project name '${properties.name}' already exists")
-		}
 		if (projectHolder.project == null) {
 			throw IllegalStateException("cannot update properties, no project open")
 		}
 		val project = projectHolder.project!!
-		LOG.debug("FileProjectManagementService: updating project '${project.name}'")
-
-		// TODO The following will be simpler once UUID is used in file names instead of the name
+		LOG.debug("updating project '${project.name}'")
 
 		if (project.name != properties.name) {
+			if (exists(properties.name)) {
+				throw IllegalArgumentException("project name '${properties.name}' already exists")
+			}
 			libraryService.renameLibrary(project, properties.name)
 			projectDictionary.rename(project, properties.name)
 		}
@@ -104,11 +92,7 @@ class FileProjectManagementService(
 		eventBus.post(LibraryPropertiesEvent(project, properties))
 	}
 
-	override fun open(projectName: String): Project {
-		val project = load(projectName)
-		open(project)
-		return project
-	}
+	override fun open(uuid: UUID): Project = load(uuid).also { open(it) }
 
 	override fun open(project: Project) {
 		eventBus.postVetoable(
@@ -120,8 +104,8 @@ class FileProjectManagementService(
 		)
 	}
 
-	override fun open(projectName: String, containerLibraryElement: UUID) {
-		val project = load(projectName)
+	override fun open(uuid: UUID, containerLibraryElement: UUID) {
+		val project = load(uuid)
 		eventBus.postVetoable(
 			event = OpenProjectRequest(project),
 			undoEvent = OpenProjectRequest(projectHolder.project),
@@ -132,7 +116,7 @@ class FileProjectManagementService(
 	}
 
 	private fun openImpl(project: Project, elementUUID: UUID?) {
-		LOG.debug("FileProjectManagementService: open project '${project.name}'")
+		LOG.debug("open project ${project.uuid}")
 		openLibraryForProjectIfNecessary(project)
 		projectHolder.p = project
 		if (elementUUID != null) {
@@ -149,17 +133,17 @@ class FileProjectManagementService(
 		}
 	}
 
-	override fun delete(projectName: String) {
-		if (projectHolder.project != null && projectHolder.project!!.name == projectName) {
-			closeImpl { deleteImpl(projectName) }
+	override fun delete(uuid: UUID) {
+		if (projectHolder.project?.uuid == uuid) {
+			closeImpl { deleteImpl(uuid) }
 		} else {
-			deleteImpl(projectName)
+			deleteImpl(uuid)
 		}
 	}
 
-	private fun deleteImpl(projectName: String) {
-		libraryService.deleteLibrary(projectName)
-		projectDictionary.remove(projectName)
+	private fun deleteImpl(uuid: UUID) {
+		libraryService.deleteLibrary(uuid)
+		projectDictionary.remove(uuid)
 	}
 
 	override fun close() {
@@ -180,19 +164,24 @@ class FileProjectManagementService(
 		}
 	}
 
-	override fun export(name: String, outputPath: String) {
-		libraryService.exportLibrary(name, outputPath)
+	override fun export(uuid: UUID, outputPath: String) {
+		libraryService.exportLibrary(uuid, outputPath)
 	}
 
 	override fun import(inputPath: String): ProjectImportResult {
-		val name = FilenameUtils.getBaseName(inputPath)
-		if (exists(name)) {
+		val uuid = UUID(FilenameUtils.getBaseName(inputPath))
+
+		val library = libraryService.importLibrary(uuid, inputPath) ?: return ProjectImportResult.Invalid
+
+		if (exists(library.name)) {
+			LOG.debug("Name of imported project already exists")
+			libraryService.purgeLibrary(uuid)
 			return ProjectImportResult.NameAlreadyExists
 		}
 
-		val library = libraryService.importLibrary(name, inputPath) ?: return ProjectImportResult.Invalid
 		if (!libraryDictionary.contains((library as Project).uuid)) {
-			libraryService.purgeLibrary(name)
+			LOG.debug("Library for imported project doesn't exist")
+			libraryService.purgeLibrary(uuid)
 			return ProjectImportResult.StaleLibraryReference
 		}
 

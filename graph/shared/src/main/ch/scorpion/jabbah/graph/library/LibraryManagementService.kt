@@ -24,9 +24,6 @@ data class LibraryCreatedEvent(val library: Library)
  */
 interface LibraryManagementService {
 
-	/** Returns the name of the default [Library] which is one of those provided by the system, not by the user.*/
-	val defaultLibraryName: String
-
 	/** Returns the names of the stored [Libraries][Library].*/
 	fun getLibraryNames(): ImmutableList<String>
 
@@ -36,19 +33,19 @@ interface LibraryManagementService {
 	/** Determines whether [name] already exists as the name of a stored [Library].*/
 	fun exists(name: String): Boolean
 
-	/** Loads the [Library] with the specified name from persistent store.*/
-	fun loadLibrary(name: String): Library
+	/** Loads the [Library] with the specified [UUID] from persistent store.*/
+	fun loadLibrary(uuid: UUID): Library
 
 	/**
 	 * Creates a new default [Library] with the given name and stores it in persistent store.
 	 * Posts a [LibraryCreatedEvent] on [EventBus].
 	 * @param properties the initial properties of the new [Library]
-	 * @param templateLibraryName the name of the [Libary] to be copied as a template.
+	 * @param templateLibraryUuid the [UUID] of the [Libary] to be copied as a template.
 	 *      If `null`, an empty [Library] is created.
 	 * @return the created [Library]
 	 * @throws IllegalArgumentException if a [Library] with name [name] already exists
 	 */
-	fun create(properties: LibraryProperties, templateLibraryName: String?): Library
+	fun create(properties: LibraryProperties, templateLibraryUuid: UUID?): Library
 
 	/**
 	 * Updates the currently open [Library] with the specified properties and stores it in persistent store.
@@ -60,12 +57,6 @@ interface LibraryManagementService {
 	fun update(properties: LibraryProperties)
 
 	/**
-	 * Loads and opens the [Library] with the specified name, while closing a currently open project.
-	 * @throws IllegalArgumentException if a [Library] with name [name] doesn't exist
-	 */
-	fun open(name: String): Library
-
-	/**
 	 * Loads and opens the [Library] with the specified [UUID], while closing a currently open project.
 	 * @throws IllegalArgumentException if a [Library] with [UUID] [uuid] doesn't exist
 	 */
@@ -75,10 +66,10 @@ interface LibraryManagementService {
 	fun open(library: Library)
 
 	/**
-	 * Deletes the [Library] with the specified name.
+	 * Deletes the [Library] with the specified [UUID].
 	 * @throws IllegalArgumentException if the [Library] is currently open
 	 */
-	fun delete(name: String)
+	fun delete(uuid: UUID)
 
 	fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean
 
@@ -92,8 +83,6 @@ interface LibraryManagementService {
 /** Null pattern.*/
 class UnimplementedLibraryManagementService : LibraryManagementService {
 
-	override val defaultLibraryName: String get() = TODO("not implemented")
-
 	override fun getLibraryNames(): ImmutableList<String> {
 		throw UnsupportedOperationException("not implemented")
 	}
@@ -106,19 +95,15 @@ class UnimplementedLibraryManagementService : LibraryManagementService {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun loadLibrary(name: String): Library {
+	override fun loadLibrary(uuid: UUID): Library {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun create(properties: LibraryProperties, templateLibraryName: String?): Library {
+	override fun create(properties: LibraryProperties, templateLibraryUuid: UUID?): Library {
 		throw UnsupportedOperationException("not implemented")
 	}
 
 	override fun update(properties: LibraryProperties) {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun open(name: String): Library {
 		throw UnsupportedOperationException("not implemented")
 	}
 
@@ -130,7 +115,7 @@ class UnimplementedLibraryManagementService : LibraryManagementService {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun delete(name: String) {
+	override fun delete(uuid: UUID) {
 		throw UnsupportedOperationException("not implemented")
 	}
 

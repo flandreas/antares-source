@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.library.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.graph.library.LibraryPropertiesEvent
 
@@ -32,14 +33,16 @@ interface ProjectManagementService {
 	/** Returns the names of all stored projects.*/
 	fun getProjectNames(): ImmutableList<String>
 
+	fun getProjectDirectoryEntries(): ImmutableList<LibraryDictionaryEntry>
+
 	/** Determines whether [projectName] already exists as the name of a stored project.*/
 	fun exists(projectName: String): Boolean
 
 	/**
-	 * Loads the [Project] with the specified name.
-	 * @throws IllegalArgumentException if a project with name [projectName] doesn't exist
+	 * Loads the [Project] with the specified [UUID].
+	 * @throws IllegalArgumentException if a project with name [uuid] doesn't exist
 	 */
-	fun load(projectName: String): Project
+	fun load(uuid: UUID): Project
 
 	/**
 	 * Creates a new [Project] with the given name and stores it in persistent store.
@@ -60,23 +63,23 @@ interface ProjectManagementService {
 
 	/**
 	 * Loads and opens the [Project] with the specified name, and opens its default [ContainerLibraryElement].
-	 * @throws IllegalArgumentException if a project with name [projectName] doesn't exist
+	 * @throws IllegalArgumentException if a project with name [uuid] doesn't exist
 	 */
-	fun open(projectName: String): Project
+	fun open(uuid: UUID): Project
 
 	/** Opens the specified [Project] and its default [ContainerLibraryElement].*/
 	fun open(project: Project)
 
 	/** Opens the specified [Project] and [ContainerLibraryElement].*/
-	fun open(projectName: String, containerLibraryElement: UUID)
+	fun open(uuid: UUID, containerLibraryElement: UUID)
 
 	/** Deletes the [Project] with the specified name.*/
-	fun delete(projectName: String)
+	fun delete(uuid: UUID)
 
 	/** Closes the currently open [Project].*/
 	fun close()
 
-	fun export(name: String, outputPath: String)
+	fun export(uuid: UUID, outputPath: String)
 
 	fun import(inputPath: String): ProjectImportResult
 }
@@ -91,53 +94,46 @@ enum class ProjectImportResult {
 /** Null pattern */
 class UnimplementedProjectManagementService : ProjectManagementService {
 
-	override val currentProject: Project? get() = throw UnsupportedOperationException("not implemented")
+	override val currentProject: Project? get() =
+		throw NotImplementedError()
 
-	override fun getProjectNames(): ImmutableList<String> {
-		throw UnsupportedOperationException("not implemented")
+	override fun getProjectNames(): ImmutableList<String> =
+		throw NotImplementedError()
+
+	override fun getProjectDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> {
+		throw NotImplementedError()
 	}
 
-	override fun exists(projectName: String): Boolean {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun exists(projectName: String): Boolean =
+		throw NotImplementedError()
 
-	override fun load(projectName: String): Project {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun load(uuid: UUID): Project =
+		throw NotImplementedError()
 
-	override fun create(properties: LibraryProperties): Project {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun create(properties: LibraryProperties): Project =
+		throw NotImplementedError()
 
-	override fun update(properties: LibraryProperties) {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun update(properties: LibraryProperties): Unit =
+		throw NotImplementedError()
 
-	override fun open(projectName: String): Project {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun open(uuid: UUID): Project =
+		throw NotImplementedError()
 
-	override fun open(project: Project) {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun open(project: Project): Unit =
+		throw NotImplementedError()
 
-	override fun open(projectName: String, containerLibraryElement: UUID) {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun open(uuid: UUID, containerLibraryElement: UUID): Unit =
+		throw NotImplementedError()
 
-	override fun delete(projectName: String) {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun delete(uuid: UUID): Unit =
+		throw NotImplementedError()
 
-	override fun close() {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun close(): Unit =
+		throw NotImplementedError()
 
-	override fun export(name: String, outputPath: String) {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun export(uuid: UUID, outputPath: String): Unit =
+		throw NotImplementedError()
 
-	override fun import(inputPath: String): ProjectImportResult {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun import(inputPath: String): ProjectImportResult =
+		throw NotImplementedError()
 }

@@ -25,15 +25,16 @@ import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
-import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerEditor
-import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.library.FileLibraryDictionary
+import ch.scorpion.jabbah.graph.library.FileLibraryManagementService
+import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.FileProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.editor.GraphEditor
-import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
@@ -70,10 +71,7 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		)
 		LibraryModule.libraryDictionary.load()
 
-		LibraryModule.libraryManagementService = FileLibraryManagementService(
-			defaultLibraryName = "Standard",
-			directoryPath = app.libraryDirectoryPath.toString()
-		)
+		LibraryModule.libraryManagementService = FileLibraryManagementService()
 
 		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(
 			directoryPath = app.projectsDirectoryPath.toString(),

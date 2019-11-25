@@ -8,7 +8,7 @@ import kotlin.test.assertTrue
 
 
 /** Unit tests for [LibraryServiceImpl].*/
-class LibraryServiceImplTest {
+class LibraryServiceTest {
 
 	companion object {
 		init {
@@ -17,7 +17,7 @@ class LibraryServiceImplTest {
 	}
 
 	private val libraryPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
-	private val service: LibraryService = LibraryServiceImpl(persistenceService = libraryPersistenceService, libraryAccessor = { libraryBuilder.library })
+	private val service: LibraryService = LibraryService(persistenceService = libraryPersistenceService, libraryAccessor = { libraryBuilder.library })
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
 	private val library: Library get() = libraryBuilder.library
 

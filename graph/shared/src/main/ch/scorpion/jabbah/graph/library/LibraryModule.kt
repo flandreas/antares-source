@@ -11,11 +11,11 @@ object LibraryModule : AbstractModule() {
 
 	var libraryFactory: LibraryFactory = UnimplementedLibraryFactory()
 
-    var libraryHolder: LibraryHolder = LibraryHolder()
+	var libraryHolder: LibraryHolder = LibraryHolder()
 
-    var libraryPersistenceService: LibraryPersistenceService = UnimplementedLibraryPersistenceService()
+	var libraryPersistenceService: LibraryPersistenceService = UnimplementedLibraryPersistenceService()
 
-	var libraryService: () -> LibraryService = { LibraryServiceImpl() }
+	var libraryService: () -> LibraryService = { LibraryService() }
 
 	var baseLibraryElementRepository: BaseLibraryElementRepository = BaseLibraryElementRepository()
 
@@ -23,16 +23,16 @@ object LibraryModule : AbstractModule() {
 
 	var libraryManagementService: LibraryManagementService = UnimplementedLibraryManagementService()
 
-    override fun initialize() {
-        configureTypeMap(IOModule.typeMap)
-    }
+	override fun initialize() {
+		configureTypeMap(IOModule.typeMap)
+	}
 
-    private fun configureTypeMap(typeMap: TypeMap) {
-	    typeMap.register("library", LibraryImpl::class)
-        typeMap.register("baseLibraryElement", BaseLibraryElement::class)
-        typeMap.register("libraryFolder", LibraryFolder::class)
-        typeMap.register("containerLibraryElement", ContainerLibraryElement::class)
-	    typeMap.register("libraryDictionary", FileLibraryDictionary::class)
-	    typeMap.register("libraryDictionaryEntry", LibraryDictionaryEntry::class)
-    }
+	private fun configureTypeMap(typeMap: TypeMap) {
+		typeMap.register("library", LibraryImpl::class)
+		typeMap.register("baseLibraryElement", BaseLibraryElement::class)
+		typeMap.register("libraryFolder", LibraryFolder::class)
+		typeMap.register("containerLibraryElement", ContainerLibraryElement::class)
+		typeMap.register("libraryDictionary", FileLibraryDictionary::class)
+		typeMap.register("libraryDictionaryEntry", LibraryDictionaryEntry::class)
+	}
 }

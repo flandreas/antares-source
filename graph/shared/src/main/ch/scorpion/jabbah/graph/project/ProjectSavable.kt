@@ -32,7 +32,7 @@ class ProjectSavable(
 	override val readOnly: Boolean get() = false
 
 	override fun open(application: Application): Boolean {
-		projectManagementService.open(project.name, element.uuid)
+		projectManagementService.open(project.uuid, element.uuid)
 		return true
 	}
 

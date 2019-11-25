@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.uifx.GraphUIFx
-import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.Storable
 import javafx.event.EventHandler
 import javafx.scene.Scene
@@ -22,7 +21,8 @@ import org.apache.commons.cli.Options
 class AntaresFx : javafx.application.Application() {
 
 	companion object {
-		@JvmStatic fun main(args: Array<String>) {
+		@JvmStatic
+		fun main(args: Array<String>) {
 			BaseModuleJvm.useJavaFx = true
 			BaseModuleJvm.require()
 			AppModule.require()
@@ -56,7 +56,7 @@ class AntaresFx : javafx.application.Application() {
 		init {
 			AntaresModuleJvm(this).require()
 
-			LibraryModule.libraryHolder.l = LibraryModule.libraryService.invoke().loadLibrary(LibraryModule.libraryHolder.library.name)
+			LibraryModule.libraryHolder.l = LibraryModule.libraryService.invoke().loadLibrary(LibraryModule.libraryHolder.library.uuid)
 			AntaresThemes.install()
 
 			ui = GraphUIFx(this, AntaresMenuBarBuilderFx(this))

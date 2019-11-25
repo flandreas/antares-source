@@ -11,6 +11,7 @@ import ch.scorpion.antares.view.memory.OpenMemoryContentsRequest
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
@@ -56,7 +57,7 @@ class AntaresSwing(
 		fun main(args: Array<String>) {
 			System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS")
 			//System.setProperty("apple.laf.useScreenMenuBar", "true")
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name","Antares")
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Antares")
 			UiUtil.setUIFont(FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size))
 			BaseModuleJvm.require()
 			AntaresSwing(args).start()
@@ -125,11 +126,12 @@ class AntaresSwing(
 
 	/** ---- [AbstractApplication] */
 
-	override val aboutInfo: AboutInfo get() = AboutInfo(
-		iconPath = "/$iconPath",
-		name = displayName,
-		claim = "Digital Circuit Learning Platform",
-		version = "0.1")
+	override val aboutInfo: AboutInfo
+		get() = AboutInfo(
+			iconPath = "/$iconPath",
+			name = displayName,
+			claim = "Digital Circuit Learning Platform",
+			version = "0.1")
 
 	/** ---- [AbstractDesktopApplication] */
 
@@ -141,7 +143,7 @@ class AntaresSwing(
 
 	override fun init() {
 		AntaresModuleJvm(this).require()
-		LibraryModule.libraryHolder.l = LibraryModule.libraryService.invoke().loadLibrary("Standard")
+		LibraryModule.libraryHolder.l = LibraryModule.libraryService.invoke().loadLibrary(UUID("6707f981-110d-4629-a0bf-c35a4688025c"))
 		AntaresThemes.install()
 		super.init()
 	}
@@ -177,10 +179,10 @@ class AntaresSwing(
 		return frame
 	}
 
-	/** Implements [DesktopApplication.openFrom] by interpreting `identification` as a project name.*/
+	/** Implements [DesktopApplication.openFrom] by interpreting `identification` as a project [UUID].*/
 	override fun openFrom(identification: String): Boolean {
 		InvocationHandler.invoke(Runnable {
-			ProjectModule.projectManagementService.open(identification)
+			ProjectModule.projectManagementService.open(UUID(identification))
 		})
 		return true
 	}
@@ -188,7 +190,7 @@ class AntaresSwing(
 	override fun handleShutdown() {
 		super.handleShutdown()
 		if (savable is ProjectSavable) {
-			BaseModule.settings.set(PROP_APPLICATION_PROJECT, (savable as ProjectSavable).project.name)
+			BaseModule.settings.set(PROP_APPLICATION_PROJECT, (savable as ProjectSavable).project.uuid.toString())
 		} else if (savable != null) {
 			BaseModule.settings.remove(PROP_APPLICATION_PROJECT)
 		}

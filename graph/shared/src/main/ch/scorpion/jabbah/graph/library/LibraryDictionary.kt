@@ -15,6 +15,9 @@ interface LibraryDictionary {
 	/** Returns the number of mappings in this [LibraryDictionary].*/
 	val size: Int
 
+	/** Checks whether this [LibraryDictionary] contains a [Library] with the given name. */
+	fun existsName(name: String): Boolean
+
 	/** Loads the contents of this [LibraryDictionary] from persistent storage.*/
 	fun load()
 
@@ -27,8 +30,8 @@ interface LibraryDictionary {
 	/** Adds the specified [Library] to this [LibraryDictionary]*/
 	fun add(library: Library)
 
-	/** Removes the [Library] with the specified name from this [LibraryDictionary]. */
-	fun remove(name: String)
+	/** Removes the [Library] with the specified [UUID] from this [LibraryDictionary]. */
+	fun remove(uuid: UUID)
 
 	fun rename(library: Library, newName: String)
 
@@ -49,44 +52,37 @@ class UnimplementedLibraryDictionary : LibraryDictionary {
 
 	override val size: Int get() = 0
 
-	override fun load() {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun load(): Unit = throw NotImplementedError()
 
-	override fun contains(uuid: UUID): Boolean {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun contains(uuid: UUID): Boolean =
+		throw NotImplementedError()
 
-	override fun getLibraryNames(): ImmutableList<String> {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun getLibraryNames(): ImmutableList<String> =
+		throw NotImplementedError()
 
-	override fun add(library: Library) {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun add(library: Library): Unit =
+		throw NotImplementedError()
 
-	override fun remove(name: String) {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun remove(uuid: UUID): Unit =
+		throw NotImplementedError()
 
-	override fun rename(library: Library, newName: String) {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun rename(library: Library, newName: String): Unit =
+		throw NotImplementedError()
 
-	override fun update(library: Library, properties: LibraryProperties) {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun update(library: Library, properties: LibraryProperties): Unit =
+		throw NotImplementedError()
 
-	override fun getEntries(): ImmutableList<LibraryDictionaryEntry> {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun getEntries(): ImmutableList<LibraryDictionaryEntry> =
+		throw NotImplementedError()
 
-	override fun getUUIDofName(name: String): UUID {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun getUUIDofName(name: String): UUID =
+		throw NotImplementedError()
 
-	override fun getNameOfUUID(uuid: UUID): String {
-		throw UnsupportedOperationException("not implemented")
+	override fun getNameOfUUID(uuid: UUID): String =
+		throw NotImplementedError()
+
+	override fun existsName(name: String): Boolean {
+		throw NotImplementedError()
 	}
 }
 

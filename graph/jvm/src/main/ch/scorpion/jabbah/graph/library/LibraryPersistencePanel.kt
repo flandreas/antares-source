@@ -60,12 +60,12 @@ class LibraryPersistencePanel(
 		}
 	}
 
-	private val libraryDictionaryEntries = JList<LibraryDictionaryEntry>(loadLibraryDirectoryEntries())
+	private val libraryDictionaryEntries = JList(loadLibraryDirectoryEntries())
 	private val currentLibraryFont = libraryDictionaryEntries.font.deriveFont(Font.BOLD)
 	private val openAction = OpenAction()
 	private val deleteAction = DeleteAction()
 
-	private val selectedLibraryName: String? get() = libraryDictionaryEntries.selectedValue.name
+	private val selectedLibrary: LibraryDictionaryEntry? get() = libraryDictionaryEntries.selectedValue
 
 	init {
 		libraryDictionaryEntries.addListSelectionListener { updateActions() }
@@ -114,20 +114,22 @@ class LibraryPersistencePanel(
 	private fun updateActions() {
 		openAction.enabled =
 			!libraryDictionaryEntries.isSelectionEmpty
-			&& libraryDictionaryEntries.selectedValue.name != libraryHolder.l?.name
+			&& libraryDictionaryEntries.selectedValue.uuid != libraryHolder.l?.uuid
 
 		deleteAction.enabled =
 			!libraryDictionaryEntries.isSelectionEmpty
-			&& libraryDictionaryEntries.selectedValue.name != libraryHolder.l?.name
+			&& libraryDictionaryEntries.selectedValue.uuid != libraryHolder.l?.uuid
 			&& !isReadonly(libraryDictionaryEntries.selectedValue)
 	}
 
 	private inner class OpenAction : AbstractAction("library.dialog.open.action") {
 		override fun execute(event: ActionEvent) {
-			LOG.debug("LibraryPersistencePanel: open library '$selectedLibraryName'")
-			InvocationHandler.invoke {
-				service.open(selectedLibraryName!!)
-				closeHandler.invoke()
+			selectedLibrary?.let {
+				LOG.debug("open library '${it.uuid}'")
+				InvocationHandler.invoke {
+					service.open(it.uuid)
+					closeHandler.invoke()
+				}
 			}
 		}
 	}
@@ -140,12 +142,11 @@ class LibraryPersistencePanel(
 
 	private inner class NewAction : AbstractAction("library.dialog.new.action") {
 		override fun execute(event: ActionEvent) {
-			LOG.debug("LibraryPersistencePanel: new library")
+			LOG.debug("new library")
 
 			var info: CreateLibraryPanel.CreateLibraryInfo
 			while(true) {
-				info = CreateLibraryPanel.showAsDialog(service = service)
-					?: return
+				info = CreateLibraryPanel.showAsDialog(service = service) ?: return
 
 				if (StringUtils.isBlank(info.libraryName)) {
 					if (JOptionPane.showConfirmDialog(
@@ -172,9 +173,9 @@ class LibraryPersistencePanel(
 				}
 			}
 
-			LOG.debug("LibraryPersistencePanel: creating new library '${info.libraryName}'")
+			LOG.debug("creating new library '${info.libraryName}'")
 			InvocationHandler.invoke {
-				service.open(service.create(LibraryProperties(info.libraryName), info.templateName))
+				service.open(service.create(LibraryProperties(info.libraryName), info.templateUuid))
 				closeHandler.invoke()
 			}
 		}
@@ -182,22 +183,24 @@ class LibraryPersistencePanel(
 
 	private inner class DeleteAction : AbstractAction("library.dialog.delete.action") {
 		override fun execute(event: ActionEvent) {
-			val libraryName = selectedLibraryName!!
+			//val libraryName = selectedLibraryName!!
 
-			if (JOptionPane.showConfirmDialog(
-				this@LibraryPersistencePanel,
-				Translations.getString("library.dialog.delete.confirmation.msg", libraryName),
-				Translations.getString("library.dialog.delete.title"),
-				JOptionPane.OK_CANCEL_OPTION,
-				JOptionPane.WARNING_MESSAGE) == JOptionPane.CANCEL_OPTION
-			) {
-				return
-			}
+			selectedLibrary?.let {
+				if (JOptionPane.showConfirmDialog(
+					this@LibraryPersistencePanel,
+					Translations.getString("library.dialog.delete.confirmation.msg", it.name),
+					Translations.getString("library.dialog.delete.title"),
+					JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.WARNING_MESSAGE) == JOptionPane.CANCEL_OPTION
+				) {
+					return
+				}
 
-			LOG.debug("LibraryPersistencePanel: delete library $libraryName")
-			InvocationHandler.invoke {
-				service.delete(libraryName)
-				closeHandler.invoke()
+				LOG.debug("delete library ${it.uuid}")
+				InvocationHandler.invoke {
+					service.delete(it.uuid)
+					closeHandler.invoke()
+				}
 			}
 		}
 	}

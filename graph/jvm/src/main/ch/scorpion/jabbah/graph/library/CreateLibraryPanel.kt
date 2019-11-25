@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.swing.EGBL
 import java.awt.Component
 import java.awt.Frame
@@ -19,7 +20,7 @@ class CreateLibraryPanel(
 	service: LibraryManagementService = LibraryModule.libraryManagementService
 ) : JPanel() {
 
-	data class CreateLibraryInfo(val libraryName: String, val templateName: String?)
+	data class CreateLibraryInfo(val libraryName: String, val templateUuid: UUID?)
 
 	companion object {
 
@@ -35,8 +36,8 @@ class CreateLibraryPanel(
 					Translations.getString("library.dialog.new.name.dialog.title"),
 					JOptionPane.OK_CANCEL_OPTION,
 					JOptionPane.PLAIN_MESSAGE)
-			) {
-				JOptionPane.OK_OPTION -> CreateLibraryInfo(panel.nameField.text, panel.getSelectedTemplateName())
+				) {
+				JOptionPane.OK_OPTION -> CreateLibraryInfo(panel.nameField.text, panel.selectedTemplate!!.uuid)
 				else -> null
 			}
 		}
@@ -44,26 +45,27 @@ class CreateLibraryPanel(
 
 	private val nameField = JTextField()
 
-	private val templateComboBox = JComboBox<String>()
+	private val templateComboBox = JComboBox<LibraryDictionaryEntry>()
+
+	private val selectedTemplate: LibraryDictionaryEntry? get() = templateComboBox.selectedItem as LibraryDictionaryEntry?
 
 	init {
 		setupTemplateComboBox(service)
 		buildEGBLLayout()
 
 		nameField.addAncestorListener(object : AncestorListener {
-			override fun ancestorAdded(event: AncestorEvent?) { nameField.requestFocusInWindow() }
+			override fun ancestorAdded(event: AncestorEvent?) {
+				nameField.requestFocusInWindow()
+			}
+
 			override fun ancestorMoved(event: AncestorEvent?) {}
 			override fun ancestorRemoved(event: AncestorEvent?) {}
 		})
 	}
 
-	private fun getSelectedTemplateName(): String? {
-		return templateComboBox.selectedItem as String?
-	}
-
 	private fun setupTemplateComboBox(service: LibraryManagementService) {
 		templateComboBox.addItem(null)
-		service.getLibraryNames().forEach { templateComboBox.addItem(it) }
+		service.getLibraryDirectoryEntries().forEach { templateComboBox.addItem(it) }
 		templateComboBox.renderer = LibraryNameRenderer()
 	}
 
@@ -74,11 +76,11 @@ class CreateLibraryPanel(
 		EGBL.add(
 			this,
 			JLabel(Translations.getString("library.property.name.name") + ":"),
-			0, 0,	// x, y
-			1, 1,	// width, height
-			0.0, 0.0,	// weightX, weightY
-			EGBL.WEST,	// anchor
-			EGBL.NONE,	// fill
+			0, 0,    // x, y
+			1, 1,    // width, height
+			0.0, 0.0,    // weightX, weightY
+			EGBL.WEST,    // anchor
+			EGBL.NONE,    // fill
 			0, inset, 0, 0
 		)
 
@@ -87,22 +89,22 @@ class CreateLibraryPanel(
 		EGBL.add(
 			this,
 			nameField,
-			1, 0,	// x, y
-			EGBL.REMAINDER, 1,	// width, height
-			0.0, 0.0,	// weightX, weightY
-			EGBL.WEST,	// anchor
-			EGBL.NONE,	// fill
+			1, 0,    // x, y
+			EGBL.REMAINDER, 1,    // width, height
+			0.0, 0.0,    // weightX, weightY
+			EGBL.WEST,    // anchor
+			EGBL.NONE,    // fill
 			0, 10, 0, inset
 		)
 
 		EGBL.add(
 			this,
 			JLabel(Translations.getString("library.dialog.new.template.label") + ":"),
-			0, 1,	// x, y
-			1, 1,	// width, height
-			0.0, 0.0,	// weightX, weightY
-			EGBL.WEST,	// anchor
-			EGBL.NONE,	// fill
+			0, 1,    // x, y
+			1, 1,    // width, height
+			0.0, 0.0,    // weightX, weightY
+			EGBL.WEST,    // anchor
+			EGBL.NONE,    // fill
 			0, inset, 0, 0
 		)
 
@@ -110,11 +112,11 @@ class CreateLibraryPanel(
 		EGBL.add(
 			this,
 			templateComboBox,
-			1, 1,	// x, y
-			EGBL.REMAINDER, 1,	// width, height
-			0.0, 0.0,	// weightX, weightY
-			EGBL.WEST,	// anchor
-			EGBL.NONE,	// fill
+			1, 1,    // x, y
+			EGBL.REMAINDER, 1,    // width, height
+			0.0, 0.0,    // weightX, weightY
+			EGBL.WEST,    // anchor
+			EGBL.NONE,    // fill
 			0, 10, 0, inset
 		)
 
