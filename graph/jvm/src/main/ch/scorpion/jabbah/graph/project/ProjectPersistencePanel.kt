@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
-import ch.scorpion.jabbah.graph.library.LibraryDictionaryEntry
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.graph.library.LibraryPropertiesPanel
 import ch.scorpion.jabbah.graph.project.ProjectImportResult.*

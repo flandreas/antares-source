@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.graph.library.dictionary.*
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 
@@ -19,7 +20,7 @@ object LibraryModule : AbstractModule() {
 
 	var baseLibraryElementRepository: BaseLibraryElementRepository = BaseLibraryElementRepository()
 
-	var libraryDictionary: LibraryDictionary = UnimplementedLibraryDictionary()
+	var libraryDictionaryService: LibraryDictionaryService = LibraryDictionaryService(UnimplementedLibraryDictionaryPersistenceService())
 
 	var libraryManagementService: LibraryManagementService = UnimplementedLibraryManagementService()
 
@@ -32,7 +33,7 @@ object LibraryModule : AbstractModule() {
 		typeMap.register("baseLibraryElement", BaseLibraryElement::class)
 		typeMap.register("libraryFolder", LibraryFolder::class)
 		typeMap.register("containerLibraryElement", ContainerLibraryElement::class)
-		typeMap.register("libraryDictionary", FileLibraryDictionary::class)
+		typeMap.register("libraryDictionary", LibraryDictionary::class)
 		typeMap.register("libraryDictionaryEntry", LibraryDictionaryEntry::class)
 	}
 }

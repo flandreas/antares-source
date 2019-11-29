@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame

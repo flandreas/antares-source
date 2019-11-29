@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
+import ch.scorpion.jabbah.graph.library.dictionary.UnimplementedLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 
@@ -20,7 +22,7 @@ object ProjectModule : AbstractModule() {
 			persistenceService = projectLibraryPersistenceService)
 	}
 
-	var projectDictionary: LibraryDictionary = UnimplementedLibraryDictionary()
+	var projectDictionaryService: LibraryDictionaryService = LibraryDictionaryService(UnimplementedLibraryDictionaryPersistenceService())
 
 	var projectManagementService: ProjectManagementService = UnimplementedProjectManagementService()
 

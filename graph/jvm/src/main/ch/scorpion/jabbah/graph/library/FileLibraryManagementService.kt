@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 
@@ -17,7 +19,7 @@ class FileLibraryManagementService(
 	private val libraryFactory: LibraryFactory = LibraryModule.libraryFactory,
 	private val libraryService: LibraryService = LibraryModule.libraryService.invoke(),
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	private val libraryDictionary: LibraryDictionary = LibraryModule.libraryDictionary,
+	private val dictionaryService: LibraryDictionaryService = LibraryModule.libraryDictionaryService,
 	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : LibraryManagementService {
@@ -28,15 +30,11 @@ class FileLibraryManagementService(
 
 	/** ---- [LibraryManagementService] interface */
 
-	override fun exists(name: String): Boolean = libraryDictionary.existsName(name)
+	override fun exists(name: String): Boolean = dictionaryService.existsName(name)
 
-	override fun getLibraryNames(): ImmutableList<String> {
-		return libraryDictionary.getLibraryNames()
-	}
+	override fun getLibraryNames(): ImmutableList<String> = dictionaryService.getNames()
 
-	override fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> {
-		return libraryDictionary.getEntries()
-	}
+	override fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> = dictionaryService.getEntries()
 
 	override fun create(properties: LibraryProperties, templateLibraryUuid: UUID?): Library {
 		if (exists(properties.name)) {
@@ -53,7 +51,7 @@ class FileLibraryManagementService(
 		}
 
 		library.bindLibraryItems()
-		libraryDictionary.add(library)
+		dictionaryService.add(library)
 		eventBus.post(LibraryCreatedEvent(library))
 		return library
 	}
@@ -67,12 +65,12 @@ class FileLibraryManagementService(
 				throw IllegalArgumentException("Library name '${properties.name}' already exists")
 			}
 			libraryService.renameLibrary(library, properties.name)
-			libraryDictionary.rename(library, properties.name)
+			dictionaryService.rename(library, properties.name)
 		}
 
 		library.properties = properties
 		libraryService.storeLibrary(library)
-		libraryDictionary.update(library, properties)
+		dictionaryService.update(library, properties)
 		eventBus.post(LibraryPropertiesEvent(library, properties))
 	}
 
@@ -98,7 +96,7 @@ class FileLibraryManagementService(
 			throw IllegalArgumentException("illegal attempt to delete the currently open library $uuid")
 		}
 		libraryService.deleteLibrary(uuid)
-		libraryDictionary.remove(uuid)
+		dictionaryService.remove(uuid)
 	}
 
 	override fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {

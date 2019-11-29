@@ -27,10 +27,11 @@ import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerEditor
-import ch.scorpion.jabbah.graph.library.FileLibraryDictionary
 import ch.scorpion.jabbah.graph.library.FileLibraryManagementService
 import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.FileProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
@@ -66,22 +67,20 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		)
 		LibraryModule.libraryFactory = AntaresLibraryFactory()
 
-		LibraryModule.libraryDictionary = FileLibraryDictionary(
-			directoryPath = app.libraryDirectoryPath.toString()
-		)
-		LibraryModule.libraryDictionary.load()
+		LibraryModule.libraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(
+			app.libraryDirectoryPath.toString()))
 
 		LibraryModule.libraryManagementService = FileLibraryManagementService()
+
+		ProjectModule.projectDictionaryService = LibraryDictionaryService((FileLibraryDictionaryPersistenceService(
+			app.projectsDirectoryPath.toString())))
 
 		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(
 			directoryPath = app.projectsDirectoryPath.toString(),
 			metaGraphFileExtension = app.fileExtension,
 			libraryFileName = app.libraryFileName
 		)
-		ProjectModule.projectDictionary = FileLibraryDictionary(
-			directoryPath = app.projectsDirectoryPath.toString()
-		)
-		ProjectModule.projectDictionary.load()
+
 
 		ProjectModule.projectManagementService = FileProjectManagementService(
 			directoryPath = app.projectsDirectoryPath.toString(),

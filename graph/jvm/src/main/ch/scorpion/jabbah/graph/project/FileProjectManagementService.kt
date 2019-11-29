@@ -10,6 +10,8 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import org.apache.commons.io.FilenameUtils
 
 /**
@@ -25,8 +27,8 @@ class FileProjectManagementService(
 	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name",
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	private val libraryDictionary: LibraryDictionary = LibraryModule.libraryDictionary,
-	private val projectDictionary: LibraryDictionary = ProjectModule.projectDictionary,
+	private val libraryDictionaryService: LibraryDictionaryService = LibraryModule.libraryDictionaryService,
+	private val projectDictionaryService: LibraryDictionaryService = ProjectModule.projectDictionaryService,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ProjectManagementService {
 
@@ -43,13 +45,13 @@ class FileProjectManagementService(
 	override val currentProject: Project? get() = projectHolder.project
 
 	override fun exists(projectName: String): Boolean =
-		projectDictionary.existsName(projectName)
+		projectDictionaryService.existsName(projectName)
 
 	override fun getProjectNames(): ImmutableList<String> =
-		projectDictionary.getLibraryNames()
+		projectDictionaryService.getNames()
 
 	override fun getProjectDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> =
-		projectDictionary.getEntries()
+		projectDictionaryService.getEntries()
 
 	override fun load(uuid: UUID): Project = libraryService.loadLibrary(uuid) as Project
 
@@ -62,7 +64,7 @@ class FileProjectManagementService(
 		project.description = properties.description
 		project.importedLibrary = libraryHolder.library.uuid
 		libraryService.storeLibrary(project)
-		projectDictionary.add(project)
+		projectDictionaryService.add(project)
 
 		val metaGraph = MetaGraph()
 		metaGraph.graph.model!!.name.value = Translations.getString(newMetaGraphNameTranslationKey)
@@ -83,12 +85,12 @@ class FileProjectManagementService(
 				throw IllegalArgumentException("project name '${properties.name}' already exists")
 			}
 			libraryService.renameLibrary(project, properties.name)
-			projectDictionary.rename(project, properties.name)
+			projectDictionaryService.rename(project, properties.name)
 		}
 
 		project.properties = properties
 		libraryService.storeLibrary(project)
-		projectDictionary.update(project, properties)
+		projectDictionaryService.update(project, properties)
 		eventBus.post(LibraryPropertiesEvent(project, properties))
 	}
 
@@ -143,7 +145,7 @@ class FileProjectManagementService(
 
 	private fun deleteImpl(uuid: UUID) {
 		libraryService.deleteLibrary(uuid)
-		projectDictionary.remove(uuid)
+		projectDictionaryService.remove(uuid)
 	}
 
 	override fun close() {
@@ -179,7 +181,7 @@ class FileProjectManagementService(
 			return ProjectImportResult.NameAlreadyExists
 		}
 
-		if (!libraryDictionary.contains((library as Project).uuid)) {
+		if (!libraryDictionaryService.contains((library as Project).uuid)) {
 			LOG.debug("Library for imported project doesn't exist")
 			libraryService.purgeLibrary(uuid)
 			return ProjectImportResult.StaleLibraryReference

@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 
 /**
  * Posted on [EventBus] when a [Library] is to be opened and is to replace the currently open [Library].

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.swing.EGBL
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import java.awt.Component
 import java.awt.Frame
 import javax.swing.*
