@@ -21,6 +21,8 @@ interface Library : LibraryDirectory, MetaGraphRepository {
 	/** Contains a short description describing the purpose of this [Library].*/
 	var description: String?
 
+	var isSystem: Boolean
+
 	/**
 	 * The [UUID] of the [User] that is the author (and therefore owner) of this [Library].
 	 * A [Library] and its elements can only be edited by the author of the [Library].

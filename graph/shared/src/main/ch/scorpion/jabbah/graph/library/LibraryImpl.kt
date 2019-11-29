@@ -40,6 +40,8 @@ open class LibraryImpl(
 
 	override var description: String? = properties.description
 
+	override var isSystem: Boolean = false
+
 	override var author: UUID = userHolder.user.uuid
 
 	override var defaultElementUUID: UUID? = null
