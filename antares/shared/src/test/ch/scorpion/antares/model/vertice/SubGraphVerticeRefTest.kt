@@ -2,10 +2,7 @@ package ch.scorpion.antares.model.vertice
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestLibraryBuilder
-import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
-import ch.scorpion.jabbah.graph.library.LibraryElement
-import ch.scorpion.jabbah.graph.library.LibraryImpl
-import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.io.IOModule
 import java.io.File
@@ -28,7 +25,8 @@ class SubGraphVerticeRefTest {
 	fun setup() {
 		val file = File.createTempFile("library", ".lib")
 		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
-		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService.invoke())
+		LibraryModule.libraryService = LibraryService()
+		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService)
 	}
 
 	@Test

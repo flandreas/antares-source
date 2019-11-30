@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.io.IOModule
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,39 +21,40 @@ import kotlin.test.assertNotSame
  */
 class StoreTest {
 
-    companion object {
-	    init {
-	    	AntaresTestRule.configure()
-	    }
-    }
+	companion object {
+		init {
+			AntaresTestRule.configure()
+		}
+	}
 
-    @BeforeTest
-    fun setup() {
-        val file = File.createTempFile("library", ".lib")
-        LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parent)
-        LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService.invoke())
-    }
+	@BeforeTest
+	fun setup() {
+		val file = File.createTempFile("library", ".lib")
+		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parent)
+		LibraryModule.libraryService = LibraryService()
+		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService)
+	}
 
-    @Test
-    fun shouldBeStorable() {
-        val testCircuit = TestCircuit()
-        testCircuit.orGateView.location = Point2D(50, 100)
+	@Test
+	fun shouldBeStorable() {
+		val testCircuit = TestCircuit()
+		testCircuit.orGateView.location = Point2D(50, 100)
 
-        val storable = GraphStorable(testCircuit.circuitView)
-        val clone = IOModule.storableClonerProvider.invoke().cloneUsingCreator(storable, IOModule.storableCreator) as GraphStorable
-        val orGateView = clone.graphView.getWithId(2) as OrGateView
+		val storable = GraphStorable(testCircuit.circuitView)
+		val clone = IOModule.storableClonerProvider.invoke().cloneUsingCreator(storable, IOModule.storableCreator) as GraphStorable
+		val orGateView = clone.graphView.getWithId(2) as OrGateView
 
-        assertEquals(3, orGateView.model!!.inputCount)
+		assertEquals(3, orGateView.model!!.inputCount)
 
-        var portViewCount = 0
-        for (portView in orGateView.getPortViews()) {
-            portViewCount++
-        }
-        assertEquals(4, portViewCount)
-        assertEquals(Point2D(50, 100), orGateView.location)
-        assertEquals(6.0 * Look.SCALE, orGateView.bounds.width)
-        assertEquals(8.0 * Look.SCALE, orGateView.bounds.height)
+		var portViewCount = 0
+		for (portView in orGateView.getPortViews()) {
+			portViewCount++
+		}
+		assertEquals(4, portViewCount)
+		assertEquals(Point2D(50, 100), orGateView.location)
+		assertEquals(6.0 * Look.SCALE, orGateView.bounds.width)
+		assertEquals(8.0 * Look.SCALE, orGateView.bounds.height)
 
-        assertNotSame(testCircuit.wire.boundingBox as Rectangle2D, Rectangle2D())
-    }
+		assertNotSame(testCircuit.wire.boundingBox as Rectangle2D, Rectangle2D())
+	}
 }

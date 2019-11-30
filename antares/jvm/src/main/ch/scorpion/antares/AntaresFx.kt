@@ -56,7 +56,7 @@ class AntaresFx : javafx.application.Application() {
 		init {
 			AntaresModuleJvm(this).require()
 
-			LibraryModule.libraryHolder.l = LibraryModule.libraryService.invoke().loadLibrary(LibraryModule.libraryHolder.library.uuid)
+			LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(LibraryModule.libraryHolder.library.uuid)
 			AntaresThemes.install()
 
 			ui = GraphUIFx(this, AntaresMenuBarBuilderFx(this))

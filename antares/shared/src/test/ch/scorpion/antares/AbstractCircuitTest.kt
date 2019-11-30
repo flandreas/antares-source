@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.execution.scheduler.TimedSchedulerTask
 import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.IOModule
@@ -55,6 +56,7 @@ abstract class AbstractCircuitTest {
 	protected fun setupLibrary() {
 		val file = File.createTempFile("library", ".lib")
 		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
+		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl("testLib")
 	}
 

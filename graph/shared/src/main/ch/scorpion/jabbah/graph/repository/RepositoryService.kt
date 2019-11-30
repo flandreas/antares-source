@@ -35,7 +35,7 @@ class LibraryDependencyException(val subGraphVertice: SubGraphVertice) : Throwab
 
 /** Standard implementation of the [RepositoryService] interface.*/
 class RepositoryServiceImpl(
-	private val libraryService: LibraryService = LibraryModule.libraryService.invoke(),
+	private val libraryService: LibraryService = LibraryModule.libraryService,
 	private val projectLibraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
 	private val commandManager: CommandManager = EditModule.commandManager
 ) : RepositoryService {

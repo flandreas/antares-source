@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 class TestLibraryBuilder(
 	private val portFactory: PortFactory = GraphModelModule.portFactory,
 	private val portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
-	private val libraryService: LibraryService = LibraryModule.libraryService.invoke()
+	private val libraryService: LibraryService = LibraryModule.libraryService
 ) {
 
 	companion object {

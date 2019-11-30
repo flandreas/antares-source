@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.graph.library.*
 class AntaresLibraryFactory : LibraryFactory {
 
 	override fun createEmptyLibrary(properties: LibraryProperties): Library {
-		return LibraryImpl(properties, libraryService = LibraryModule.libraryService.invoke())
+		return LibraryImpl(properties, libraryService = LibraryModule.libraryService)
 	}
 
 	override fun createBaseLibrary(properties: LibraryProperties): Library {

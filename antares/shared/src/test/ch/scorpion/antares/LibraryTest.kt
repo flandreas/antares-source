@@ -32,13 +32,14 @@ class LibraryTest {
 		val dir = Files.createTempDirectory("library")
 		val file = File.createTempFile("library", ".lib", dir.toFile())
 		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parent)
-		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService.invoke())
+		LibraryModule.libraryService = LibraryService(persistenceService = LibraryModule.libraryPersistenceService)
+		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService)
 	}
 
 	@Test
 	fun shouldStoreAndLoadLibraryWithSubGraph() {
 		val customNot = TestLibraryBuilder().addCustomNot(LibraryModule.libraryHolder.library)
-		val restoredLibrary = storeAndLoad(LibraryModule.libraryHolder.library as LibraryImpl, LibraryModule.libraryService.invoke())
+		val restoredLibrary = storeAndLoad(LibraryModule.libraryHolder.library as LibraryImpl, LibraryModule.libraryService)
 		assertNotSame(libraryHolder.library, restoredLibrary)
 		LibraryModule.libraryHolder.l = restoredLibrary
 		restoredLibrary.getMetaGraph(customNot.uuid)
@@ -65,7 +66,7 @@ class LibraryTest {
 		val customNot = TestLibraryBuilder().addCustomNot(libraryHolder.library)
 		val customNand = TestLibraryBuilder().addCustomNand(libraryHolder.library)
 
-		val restoredLibrary = storeAndLoad(libraryHolder.library as LibraryImpl, LibraryModule.libraryService.invoke())
+		val restoredLibrary = storeAndLoad(libraryHolder.library as LibraryImpl, LibraryModule.libraryService)
 		LibraryModule.libraryHolder.l = restoredLibrary
 
 		restoredLibrary.getMetaGraph(customNot.uuid)
@@ -108,6 +109,6 @@ class LibraryTest {
 
 	private fun storeAndLoad(library: LibraryImpl, service: LibraryService): Library {
 		service.storeLibrary(library)
-		return LibraryModule.libraryService.invoke().loadLibrary(library.uuid)
+		return LibraryModule.libraryService.loadLibrary(library.uuid)
 	}
 }

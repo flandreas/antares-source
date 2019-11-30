@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.io.*
  */
 open class LibraryImpl(
 	properties: LibraryProperties = LibraryProperties(""),
-	override val libraryService: LibraryService = LibraryModule.libraryService.invoke(),
+	override val libraryService: LibraryService = LibraryModule.libraryService,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val descriptionKey: String = "library.library.name",
 	userHolder: UserHolder = AppModule.userHolder
@@ -26,11 +26,11 @@ open class LibraryImpl(
 
 	constructor(
 		name: String = "",
-		libraryService: LibraryService = LibraryModule.libraryService.invoke(),
+		libraryService: LibraryService = LibraryModule.libraryService,
 		storableCreator: StorableCreator = IOModule.storableCreator,
 		descriptionKey: String = "library.library.name",
 		userHolder: UserHolder = AppModule.userHolder
-	): this(LibraryProperties(name), libraryService, storableCreator, descriptionKey, userHolder)
+	) : this(LibraryProperties(name), libraryService, storableCreator, descriptionKey, userHolder)
 
 	companion object {
 		private val LOG by logger(LibraryImpl::class)

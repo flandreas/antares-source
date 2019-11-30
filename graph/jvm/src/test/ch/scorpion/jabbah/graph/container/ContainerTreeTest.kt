@@ -4,10 +4,7 @@ import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
-import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
-import ch.scorpion.jabbah.graph.library.LibraryElement
-import ch.scorpion.jabbah.graph.library.LibraryImpl
-import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -50,7 +47,8 @@ class ContainerTreeTest {
 		val file = File.createTempFile("library", ".lib")
 		TestTranslationsBuilder().withAnyKey()
 		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
-		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService.invoke())
+		LibraryModule.libraryService = LibraryService()
+		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService)
 		GraphModelModule.portFactory = TestPortFactory()
 		GraphViewModule.portViewFactory = TestPortViewFactory()
 	}

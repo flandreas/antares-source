@@ -13,28 +13,28 @@ import ch.scorpion.jabbah.graph.MetaGraph
  * Saves the edited [MetaGraph] of a [ContainerLibraryElement] in the containing [LibraryDirectory].
  */
 class LibrarySavable(
-    element: ContainerLibraryElement,
-    val library: Library = LibraryModule.libraryHolder.library,
-    val service: LibraryService = LibraryModule.libraryService.invoke(),
-    private val userHolder: UserHolder = AppModule.userHolder,
-    private val eventBus: EventBus = BaseModule.eventBus
+	element: ContainerLibraryElement,
+	val library: Library = LibraryModule.libraryHolder.library,
+	val service: LibraryService = LibraryModule.libraryService,
+	private val userHolder: UserHolder = AppModule.userHolder,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibrarySavable(element, service) {
 
 	/** ---- [Savable] */
 
-    override val description: String get() = "${Translations.getString("library.savable.prefix")} \"${element.name}\""
+	override val description: String get() = "${Translations.getString("library.savable.prefix")} \"${element.name}\""
 
 	override val readOnly: Boolean get() = library.author != userHolder.user.uuid
 
-    override fun open(application: Application): Boolean {
-        eventBus.post(OpenContainerLibraryElementRequest(element))
-	    return true
-    }
+	override fun open(application: Application): Boolean {
+		eventBus.post(OpenContainerLibraryElementRequest(element))
+		return true
+	}
 
-    override fun save(application: Application): Boolean {
-	    service.updateContainerLibraryElement(library, element)
-        return true
-    }
+	override fun save(application: Application): Boolean {
+		service.updateContainerLibraryElement(library, element)
+		return true
+	}
 
 	/** ---- [Any] */
 

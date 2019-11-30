@@ -16,7 +16,7 @@ object LibraryModule : AbstractModule() {
 
 	var libraryPersistenceService: LibraryPersistenceService = UnimplementedLibraryPersistenceService()
 
-	var libraryService: () -> LibraryService = { LibraryService() }
+	var libraryService: LibraryService = LibraryService()
 
 	var baseLibraryElementRepository: BaseLibraryElementRepository = BaseLibraryElementRepository()
 

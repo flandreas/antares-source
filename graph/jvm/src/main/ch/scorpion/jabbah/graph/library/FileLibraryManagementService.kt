@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.io.StorableCloner
  */
 class FileLibraryManagementService(
 	private val libraryFactory: LibraryFactory = LibraryModule.libraryFactory,
-	private val libraryService: LibraryService = LibraryModule.libraryService.invoke(),
+	private val libraryService: LibraryService = LibraryModule.libraryService,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val dictionaryService: LibraryDictionaryService = LibraryModule.libraryDictionaryService,
 	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),

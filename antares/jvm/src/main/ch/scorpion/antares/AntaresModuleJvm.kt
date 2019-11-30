@@ -30,6 +30,7 @@ import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.library.FileLibraryManagementService
 import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
@@ -66,6 +67,7 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 			libraryFileName = app.libraryFileName
 		)
 		LibraryModule.libraryFactory = AntaresLibraryFactory()
+		LibraryModule.libraryService = LibraryService()
 
 		LibraryModule.libraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(
 			app.libraryDirectoryPath.toString()))

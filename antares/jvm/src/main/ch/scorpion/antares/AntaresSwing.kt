@@ -143,7 +143,8 @@ class AntaresSwing(
 
 	override fun init() {
 		AntaresModuleJvm(this).require()
-		LibraryModule.libraryHolder.l = LibraryModule.libraryService.invoke().loadLibrary(UUID("6707f981-110d-4629-a0bf-c35a4688025c"))
+		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
+			UUID("6707f981-110d-4629-a0bf-c35a4688025c"))
 		AntaresThemes.install()
 		super.init()
 	}
