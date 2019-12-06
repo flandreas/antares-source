@@ -101,11 +101,8 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 			libraryFileName = app.libraryFileName
 		)
 
-
 		ProjectModule.projectManagementService = ProjectManagementService(
-			directoryPath = app.projectsDirectoryPath,
-			newMetaGraphNameTranslationKey = "graph.name.unknown"
-		)
+			newMetaGraphNameTranslationKey = "graph.name.unknown")
 
 		configureTypeMap(IOModule.typeMap)
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)

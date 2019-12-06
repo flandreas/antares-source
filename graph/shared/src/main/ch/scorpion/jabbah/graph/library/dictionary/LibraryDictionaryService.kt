@@ -18,6 +18,9 @@ class LibraryDictionaryService(
 
 	private val dictionary: LibraryDictionary by lazy { persistenceService.load() }
 
+	/** Determines whether the directory for storing the [LibraryDictionary] already exists.*/
+	val directoryExists: Boolean get() = persistenceService.directoryExists
+
 	fun getNames(): ImmutableList<String> {
 		return dictionary.getLibraryNames()
 	}

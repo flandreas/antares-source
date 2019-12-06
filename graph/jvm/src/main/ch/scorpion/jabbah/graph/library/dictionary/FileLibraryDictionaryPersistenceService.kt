@@ -89,10 +89,11 @@ class FileLibraryDictionaryPersistenceService(
 		}
 	}
 
+	override val directoryExists: Boolean get() = Files.exists(Paths.get(directoryPath))
+
 	private fun ensureLibraryDirectory() {
-		val path = Paths.get(directoryPath)
-		if (!Files.exists(path)) {
-			Files.createDirectory(path)
+		if (!directoryExists) {
+			Files.createDirectory(Paths.get(directoryPath))
 		}
 	}
 }
@@ -126,6 +127,8 @@ class ResourceLibraryDictionaryPersistenceService(
 	override fun store(dictionary: LibraryDictionary) {
 		throw UnsupportedOperationException("Storing system libraries as resources is not supported.")
 	}
+
+	override val directoryExists: Boolean get() = true
 
 	private fun createInputStream(): InputStream =
 		ResourceLibraryDictionaryPersistenceService::class.java.getResourceAsStream(path)

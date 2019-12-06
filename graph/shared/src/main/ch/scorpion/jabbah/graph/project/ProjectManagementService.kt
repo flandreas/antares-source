@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionary
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import org.apache.commons.io.FilenameUtils
@@ -37,7 +38,6 @@ data class CloseProjectRequest (val project: Project)
 
 /** Provides methods for managing the set of a user's [Project]s, including open and closing [Project]s. */
 class ProjectManagementService(
-	private val directoryPath: String,
 	private val projectFactory: (String) -> Project = ProjectModule.projectFactory,
 	private val libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
 	private val libraryManagementService: LibraryManagementService = LibraryModule.libraryManagementService,
@@ -57,18 +57,15 @@ class ProjectManagementService(
 		eventBus.register(CurrentLibraryEvent::class) { close() }
 	}
 
-	/** ---- [ProjectManagementService] interface */
-
 	/** Returns the currently open [Project], if any.*/
 	val currentProject: Project? get() = projectHolder.project
+
+	/** Determines whether the directory for storing the project [LibraryDictionary] already exists.*/
+	val directoryExists: Boolean get() = projectDictionaryService.directoryExists
 
 	/** Determines whether [projectName] already exists as the name of a stored project.*/
 	fun exists(projectName: String): Boolean =
 		projectDictionaryService.existsName(projectName)
-
-	/** Returns the names of all stored projects.*/
-	fun getProjectNames(): ImmutableList<String> =
-		projectDictionaryService.getNames()
 
 	fun getProjectDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> =
 		projectDictionaryService.getEntries()
@@ -85,22 +82,31 @@ class ProjectManagementService(
 	 * @throws IllegalArgumentException if [properties] are not consistent, e.g. if a [Project]
 	 * with the specified name already exists
 	 */
-	fun create(properties: LibraryProperties): Project {
+	fun create(properties: LibraryProperties, library: UUID = libraryHolder.library.uuid): Project {
 		if (exists(properties.name)) {
 			throw IllegalArgumentException("project name '${properties.name}' already exists")
 		}
 		LOG.debug("creating new project '${properties.name}'")
-		val project = projectFactory.invoke(properties.name)
-		project.description = properties.description
-		project.importedLibrary = libraryHolder.library.uuid
-		libraryService.storeLibrary(project)
-		projectDictionaryService.add(project)
 
 		val metaGraph = MetaGraph()
 		metaGraph.graph.model!!.name.value = Translations.getString(newMetaGraphNameTranslationKey)
+
+		val project = projectFactory.invoke(properties.name)
+		project.description = properties.description
+		project.importedLibrary = library
+		project.defaultElementUUID = metaGraph.uuid
+
+		libraryService.storeLibrary(project)
+		projectDictionaryService.add(project)
+
 		libraryService.addContainerLibraryElement(project, metaGraph, project)
 
 		return project
+	}
+
+	/** Creates and stores a new [Project], which can be used when the user starts the application the very first time.*/
+	fun createHelloProject(library: UUID): Project {
+		return create(LibraryProperties(Translations.getString("project.hello.name")), library)
 	}
 
 	/**

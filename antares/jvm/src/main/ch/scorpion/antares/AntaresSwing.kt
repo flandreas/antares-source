@@ -54,6 +54,7 @@ class AntaresSwing(
 	companion object {
 
 		private const val PROP_APPLICATION_PROJECT = "application.project"
+		private val DEF_LIBRARY_UUID = UUID("6707f981-110d-4629-a0bf-c35a4688025c")
 
 		@JvmStatic
 		fun main(args: Array<String>) {
@@ -149,9 +150,7 @@ class AntaresSwing(
 
 	override fun init() {
 		AntaresModuleJvm(this).require()
-		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
-			UUID("6707f981-110d-4629-a0bf-c35a4688025c"),
-			isSystem = true)
+		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(DEF_LIBRARY_UUID, isSystem = true)
 		AntaresThemes.install()
 		super.init()
 	}
@@ -237,6 +236,13 @@ class AntaresSwing(
 		val projectName = BaseModule.settings.getString(PROP_APPLICATION_PROJECT, "")
 		if (StringUtils.isNotEmpty(projectName)) {
 			openFrom(projectName)
+			return
+		}
+
+		if (!ProjectModule.projectManagementService.directoryExists) {
+			ProjectModule.projectManagementService
+				.createHelloProject(DEF_LIBRARY_UUID)
+				.also { openFrom(it.uuid.toString()) }
 			return
 		}
 
