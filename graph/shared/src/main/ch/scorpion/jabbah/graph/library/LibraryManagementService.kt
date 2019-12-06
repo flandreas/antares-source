@@ -2,10 +2,17 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
+import ch.scorpion.jabbah.io.IOModule
+import ch.scorpion.jabbah.io.StorableCloner
+
 
 /**
  * Posted on [EventBus] when a [Library] is to be opened and is to replace the currently open [Library].
@@ -23,27 +30,65 @@ data class LibraryCreatedEvent(val library: Library)
 /**
  * Provides methods for managing multiple [Libraries][Library].
  */
-interface LibraryManagementService {
+class LibraryManagementService(
+	private val libraryFactory: LibraryFactory = LibraryModule.libraryFactory,
+	private val libraryService: LibraryService = LibraryModule.libraryService,
+	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+	private val userDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
+	private val systemDictionaryService: LibraryDictionaryService = LibraryModule.systemLibraryDictionaryService,
+	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
+	private val eventBus: EventBus = BaseModule.eventBus
+) {
 
-	/** Returns all [LibraryDictionaryEntries][LibraryDictionaryEntry].*/
-	fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry>
+	companion object {
+		private val LOG by logger(LibraryManagementService::class)
+	}
+
+	private fun isSystemLibrary(uuid: UUID): Boolean {
+		return systemDictionaryService.contains(uuid)
+	}
+
+	/** ---- [LibraryManagementService] interface */
 
 	/** Determines whether [name] already exists as the name of a stored [Library].*/
-	fun exists(name: String): Boolean
+	fun exists(name: String): Boolean = userDictionaryService.existsName(name) || systemDictionaryService.existsName(name)
 
-	/** Loads the [Library] with the specified [UUID] from persistent store.*/
-	fun loadLibrary(uuid: UUID): Library
+	/** Returns all [LibraryDictionaryEntries][LibraryDictionaryEntry].*/
+	fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> {
+		return listOf(
+			userDictionaryService.getEntries(),
+			systemDictionaryService.getEntries()
+		).flatten().toImmutableList()
+	}
 
 	/**
 	 * Creates a new user [Library] with the given name and stores it in persistent store.
 	 * Posts a [LibraryCreatedEvent] on [EventBus].
 	 * @param properties the initial properties of the new [Library]
-	 * @param templateLibraryUuid the [UUID] of the [Libary] to be copied as a template.
+	 * @param templateLibraryUuid the [UUID] of the [Library] to be copied as a template.
 	 *      If `null`, an empty [Library] is created.
 	 * @return the created [Library]
-	 * @throws IllegalArgumentException if a [Library] with name [name] already exists
+	 * @throws IllegalArgumentException if a [Library] with the name in [properties] already exists
 	 */
-	fun create(properties: LibraryProperties, templateLibraryUuid: UUID?): Library
+	fun create(properties: LibraryProperties, templateLibraryUuid: UUID?): Library {
+		if (exists(properties.name)) {
+			throw IllegalArgumentException("library name '${properties.name}' already exists")
+		}
+		LOG.debug("creating new library '${properties.name}' with template $templateLibraryUuid")
+
+		val library = if (templateLibraryUuid == null) {
+			val library = libraryFactory.createEmptyLibrary(properties)
+			libraryService.storeLibrary(library)
+			library
+		} else {
+			libraryService.duplicateLibrary(loadLibrary(templateLibraryUuid), properties.name)
+		}
+
+		library.bindLibraryItems()
+		userDictionaryService.add(library)
+		eventBus.post(LibraryCreatedEvent(library))
+		return library
+	}
 
 	/**
 	 * Updates the currently open [Library] with the specified properties and stores it in persistent store.
@@ -52,72 +97,85 @@ interface LibraryManagementService {
 	 * @throws IllegalStateException if no [Library] is currently open
 	 * Posts [LibraryPropertiesEvent] on this [LibraryManagementService]'s [EventBus].
 	 */
-	fun update(properties: LibraryProperties)
+	fun update(properties: LibraryProperties) {
+		val library = libraryHolder.library
+		LOG.debug("updating library ${library.uuid}")
+
+		if (library.name != properties.name) {
+			if (exists(properties.name)) {
+				throw IllegalArgumentException("Library name '${properties.name}' already exists")
+			}
+			libraryService.renameLibrary(library, properties.name)
+			userDictionaryService.rename(library, properties.name)
+		}
+
+		library.properties = properties
+		libraryService.storeLibrary(library)
+		userDictionaryService.update(library, properties)
+		eventBus.post(LibraryPropertiesEvent(library, properties))
+	}
+
+	/** Loads the [Library] with the specified [UUID] from persistent store.*/
+	fun loadLibrary(uuid: UUID): Library =
+		libraryService.loadLibrary(uuid, isSystemLibrary(uuid))
 
 	/**
 	 * Loads and opens the [Library] with the specified [UUID], while closing a currently open project.
 	 * @throws IllegalArgumentException if a [Library] with [UUID] [uuid] doesn't exist
 	 */
-	fun open(uuid: UUID): Library
+	fun open(uuid: UUID): Library =
+		libraryService.loadLibrary(uuid, isSystemLibrary(uuid)).also { open(it) }
 
 	/** Opens the specified [Library], while closing a currently open project*/
-	fun open(library: Library)
+	fun open(library: Library) {
+		LOG.debug("open library ${library.uuid}")
+		eventBus.postVetoable(
+			event = OpenLibraryRequest(library),
+			undoEvent = OpenLibraryRequest(libraryHolder.library),
+			thenHandler = {
+				libraryHolder.l = library
+			}
+		)
+	}
 
 	/**
 	 * Deletes the [Library] with the specified [UUID].
 	 * @throws IllegalArgumentException if the [Library] is currently open
 	 */
-	fun delete(uuid: UUID)
+	fun delete(uuid: UUID) {
+		if (libraryHolder.library.uuid == uuid) {
+			throw IllegalArgumentException("illegal attempt to delete the currently open library $uuid")
+		}
+		libraryService.deleteLibrary(uuid)
+		userDictionaryService.remove(uuid)
+	}
 
-	fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean
+	fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {
+		libraryService.loadMetaGraph(element.library!!, element)
+		return destination.containsAllRecursivelyReferencedBy(element.metaGraph!!.graph.model!!)
+	}
 
 	/**
 	 * Copies the specified [LibraryElement] from its [Library] to the destination [LibraryDirectory],
 	 * which can also be part of another [Library].
 	 */
-	fun copyLibraryElement(element: LibraryElement, destination: LibraryDirectory)
-}
-
-/** Null pattern.*/
-class UnimplementedLibraryManagementService : LibraryManagementService {
-
-	override fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> {
-		throw UnsupportedOperationException("not implemented")
+	fun copyLibraryElement(element: LibraryElement, destination: LibraryDirectory) {
+		LOG.debug("copy LibraryElement ${element.name}")
+		when (element) {
+			is BaseLibraryElement -> copyBaseElement(element, destination)
+			is ContainerLibraryElement -> copyContainerLibraryElement(element, destination)
+			else -> throw IllegalArgumentException("unsupported LibraryElement type ${element::class}")
+		}
 	}
 
-	override fun exists(name: String): Boolean {
-		throw UnsupportedOperationException("not implemented")
+	private fun copyBaseElement(element: BaseLibraryElement, destination: LibraryDirectory) {
+		val clone = storableCloner.clone(element) as BaseLibraryElement
+		libraryService.addLibraryItem(destination.library!!, clone, destination, null)
 	}
 
-	override fun loadLibrary(uuid: UUID): Library {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun create(properties: LibraryProperties, templateLibraryUuid: UUID?): Library {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun update(properties: LibraryProperties) {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun open(uuid: UUID): Library {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun open(library: Library) {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun delete(uuid: UUID) {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun copyLibraryElement(element: LibraryElement, destination: LibraryDirectory) {
-		throw UnsupportedOperationException("not implemented")
+	private fun copyContainerLibraryElement(element: ContainerLibraryElement, destination: LibraryDirectory) {
+		libraryService.loadMetaGraph(element.library!!, element)
+		val clone = storableCloner.clone(element.metaGraph!!) as MetaGraph
+		libraryService.addContainerLibraryElement(destination.library!!, clone, destination, null)
 	}
 }

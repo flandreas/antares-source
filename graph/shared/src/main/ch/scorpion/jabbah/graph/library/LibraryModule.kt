@@ -26,7 +26,7 @@ object LibraryModule : AbstractModule() {
 
 	var systemLibraryDictionaryService: LibraryDictionaryService = LibraryDictionaryService(UnimplementedLibraryDictionaryPersistenceService())
 
-	var libraryManagementService: LibraryManagementService = UnimplementedLibraryManagementService()
+	lateinit var libraryManagementService: LibraryManagementService
 
 	override fun initialize() {
 		configureTypeMap(IOModule.typeMap)

@@ -76,7 +76,7 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 
 		LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(ResourceLibraryDictionaryPersistenceService())
 
-		LibraryModule.libraryManagementService = FileLibraryManagementService()
+		LibraryModule.libraryManagementService = LibraryManagementService()
 
 		ProjectModule.projectDictionaryService = LibraryDictionaryService((FileLibraryDictionaryPersistenceService(
 			app.projectsDirectoryPath.toString())))

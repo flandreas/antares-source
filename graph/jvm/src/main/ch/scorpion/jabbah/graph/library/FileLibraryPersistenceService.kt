@@ -57,7 +57,7 @@ class FileLibraryPersistenceService(
 	override fun duplicateLibrary(library: Library, newUuid: UUID) {
 		LOG.debug("duplicateLibrary ${library.uuid}")
 		val sourceDirectory = if (library.isSystem) {
-			File(FileLibraryManagementService::class.java.getResource(buildResourceLibraryDirectoryPath(library.uuid)).toURI()).absolutePath
+			File(FileLibraryPersistenceService::class.java.getResource(buildResourceLibraryDirectoryPath(library.uuid)).toURI()).absolutePath
 		} else {
 			buildLibraryDirectoryPath(library.uuid)
 		}
