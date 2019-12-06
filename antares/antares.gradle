@@ -11,7 +11,7 @@ application {
 }
 
 run {
-    args = ['-d', '/Users/andreas/Documents/scorpion2/jabbah/antares', '-developer']
+    args = ["-d", "${System.properties['user.home']}${File.separator}antares-dev", "-developer"]
 }
 
 sourceSets {
