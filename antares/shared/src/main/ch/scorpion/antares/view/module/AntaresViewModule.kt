@@ -181,7 +181,7 @@ object AntaresViewModule : AbstractModule() {
 
 		properties.set(AndGateView.PROP_DATA_FLOW_ENABLED, true)
 
-		properties.set(LightColor.PROP_DEFAULT_LIGHT_COLOR, LightColor.RED)
+		properties.set(LightColor.PROP_DEFAULT_LIGHT_COLOR, LightColor.RED.customName)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {
