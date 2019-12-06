@@ -11,6 +11,8 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Paths
 
 
 abstract class AbstractFileLibraryDictionaryPersistenceService : LibraryDictionaryPersistenceService {
@@ -43,7 +45,7 @@ abstract class AbstractFileLibraryDictionaryPersistenceService : LibraryDictiona
  * @param dictionaryFileName the name of the file
  */
 class FileLibraryDictionaryPersistenceService(
-	directoryPath: String,
+	private val directoryPath: String,
 	dictionaryFileName: String = DEF_DICTIONARY_FILE_NAME
 ) : AbstractFileLibraryDictionaryPersistenceService() {
 
@@ -51,31 +53,46 @@ class FileLibraryDictionaryPersistenceService(
 		private val LOG by logger(FileLibraryDictionaryPersistenceService::class)
 	}
 
-	private val path: String = FileSystems.getDefault().getPath(directoryPath, dictionaryFileName).toString()
+	private val filePath: String = FileSystems.getDefault().getPath(directoryPath, dictionaryFileName).toString()
 
 	override fun createInputStream(): InputStream {
 		try {
-			return FileInputStream(path)
+			return FileInputStream(filePath)
 		} catch (e: Throwable) {
-			LOG.error("error while loading dictionary file $path: ${e.message}")
+			LOG.error("error while loading dictionary file $filePath: ${e.message}")
 			throw e
 		}
 	}
 
+	override fun load(): LibraryDictionary {
+		if (!Files.exists(Paths.get(directoryPath))) {
+			return LibraryDictionary()
+		}
+		return super.load()
+	}
+
 	override fun store(dictionary: LibraryDictionary) {
 		try {
-			FileOutputStream(path).use {
+			ensureLibraryDirectory()
+			FileOutputStream(filePath).use {
 				try {
 					LOG.debug("storing entries")
 					val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
 					storeWriter.writeStorable(dictionary)
 				} catch (e: Throwable) {
-					LOG.error("error while storing dictionary file $path: ${e.message}")
+					LOG.error("error while storing dictionary file $filePath: ${e.message}")
 					throw e
 				}
 			}
 		} catch (e: Throwable) {
-			LOG.error("error while accessing dictionary file $path: ${e.message}")
+			LOG.error("error while accessing dictionary file $filePath: ${e.message}")
+		}
+	}
+
+	private fun ensureLibraryDirectory() {
+		val path = Paths.get(directoryPath)
+		if (!Files.exists(path)) {
+			Files.createDirectory(path)
 		}
 	}
 }

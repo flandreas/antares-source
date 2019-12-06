@@ -298,6 +298,7 @@ class LibraryService(
 		val newLibrary = userLibraryPersister.loadLibrary(newUuid)
 		newLibrary.uuid = newUuid
 		newLibrary.name = newName
+		newLibrary.isSystem = false
 		storeLibrary(newLibrary)
 		return newLibrary
 	}
