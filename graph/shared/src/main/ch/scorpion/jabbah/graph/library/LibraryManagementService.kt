@@ -25,9 +25,6 @@ data class LibraryCreatedEvent(val library: Library)
  */
 interface LibraryManagementService {
 
-	/** Returns the names of the stored [Libraries][Library].*/
-	fun getLibraryNames(): ImmutableList<String>
-
 	/** Returns all [LibraryDictionaryEntries][LibraryDictionaryEntry].*/
 	fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry>
 
@@ -38,7 +35,7 @@ interface LibraryManagementService {
 	fun loadLibrary(uuid: UUID): Library
 
 	/**
-	 * Creates a new default [Library] with the given name and stores it in persistent store.
+	 * Creates a new user [Library] with the given name and stores it in persistent store.
 	 * Posts a [LibraryCreatedEvent] on [EventBus].
 	 * @param properties the initial properties of the new [Library]
 	 * @param templateLibraryUuid the [UUID] of the [Libary] to be copied as a template.
@@ -83,10 +80,6 @@ interface LibraryManagementService {
 
 /** Null pattern.*/
 class UnimplementedLibraryManagementService : LibraryManagementService {
-
-	override fun getLibraryNames(): ImmutableList<String> {
-		throw UnsupportedOperationException("not implemented")
-	}
 
 	override fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> {
 		throw UnsupportedOperationException("not implemented")

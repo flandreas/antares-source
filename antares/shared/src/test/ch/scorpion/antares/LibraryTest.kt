@@ -31,8 +31,8 @@ class LibraryTest {
 	fun setup() {
 		val dir = Files.createTempDirectory("library")
 		val file = File.createTempFile("library", ".lib", dir.toFile())
-		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parent)
-		LibraryModule.libraryService = LibraryService(persistenceService = LibraryModule.libraryPersistenceService)
+		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(file.parent)
+		LibraryModule.libraryService = LibraryService(userLibraryPersister = LibraryModule.userLibraryPersistenceService)
 		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService)
 	}
 
@@ -104,11 +104,11 @@ class LibraryTest {
 	fun shouldExportLibrary() {
 		TestLibraryBuilder().addCustomNot(LibraryModule.libraryHolder.library)
 		val file = File.createTempFile("library", ".zip")
-		LibraryModule.libraryPersistenceService.exportLibrary(LibraryModule.libraryHolder.library.uuid, file.absolutePath)
+		LibraryModule.userLibraryPersistenceService.exportLibrary(LibraryModule.libraryHolder.library.uuid, file.absolutePath)
 	}
 
 	private fun storeAndLoad(library: LibraryImpl, service: LibraryService): Library {
 		service.storeLibrary(library)
-		return LibraryModule.libraryService.loadLibrary(library.uuid)
+		return LibraryModule.libraryService.loadLibrary(library.uuid, isSystem = false)
 	}
 }

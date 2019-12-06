@@ -55,7 +55,7 @@ abstract class AbstractCircuitTest {
 
 	protected fun setupLibrary() {
 		val file = File.createTempFile("library", ".lib")
-		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
+		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
 		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl("testLib")
 	}

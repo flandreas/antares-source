@@ -27,7 +27,7 @@ class FileProjectManagementService(
 	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name",
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	private val libraryDictionaryService: LibraryDictionaryService = LibraryModule.libraryDictionaryService,
+	private val libraryDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
 	private val projectDictionaryService: LibraryDictionaryService = ProjectModule.projectDictionaryService,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ProjectManagementService {
@@ -53,7 +53,7 @@ class FileProjectManagementService(
 	override fun getProjectDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> =
 		projectDictionaryService.getEntries()
 
-	override fun load(uuid: UUID): Project = libraryService.loadLibrary(uuid) as Project
+	override fun load(uuid: UUID): Project = libraryService.loadLibrary(uuid, isSystem = false) as Project
 
 	override fun create(properties: LibraryProperties): Project {
 		if (exists(properties.name)) {

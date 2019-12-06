@@ -46,7 +46,7 @@ class ContainerTreeTest {
 	fun setup() {
 		val file = File.createTempFile("library", ".lib")
 		TestTranslationsBuilder().withAnyKey()
-		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
+		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
 		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService)
 		GraphModelModule.portFactory = TestPortFactory()

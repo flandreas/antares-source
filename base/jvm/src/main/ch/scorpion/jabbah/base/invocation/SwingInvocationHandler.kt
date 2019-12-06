@@ -18,12 +18,8 @@ class SwingInvocationHandler : InvocationHandler() {
             try {
                 doRun.run()
             } catch (e: Throwable) {
-                val developerMode = false
-                if (developerMode) {
-                    ErrorHandler.exception(e)
-                } else {
-                    LOG.error("Error in invocation handler: ${e.message}")
-                }
+                LOG.error("Error in invocation handler: ${e.message}")
+	            ErrorHandler.exception(e)
             } finally {
                 BusyHandler.decrement()
             }
@@ -36,12 +32,8 @@ class SwingInvocationHandler : InvocationHandler() {
 			try {
 				runnable.invoke()
 			} catch (e: Throwable) {
-				val developerMode = false
-				if (developerMode) {
-					ErrorHandler.exception(e)
-				} else {
-					LOG.error("Error in invocation handler: ${e.message}")
-				}
+				LOG.error("Error in invocation handler: ${e.message}")
+				ErrorHandler.exception(e)
 			} finally {
 				BusyHandler.decrement()
 			}

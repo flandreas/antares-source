@@ -56,13 +56,14 @@ class FileLibraryPersistenceService(
 
 	override fun duplicateLibrary(library: Library, newUuid: UUID) {
 		LOG.debug("duplicateLibrary ${library.uuid}")
-		val sourcePath = if (library.isSystem) {
-			buildResourceLibraryDirectoryPath(library.uuid)
+		val sourceDirectory = if (library.isSystem) {
+			File(FileLibraryManagementService::class.java.getResource(buildResourceLibraryDirectoryPath(library.uuid)).toURI()).absolutePath
 		} else {
-			buildLibraryDirectoryPath(library.uuid).toString()
+			buildLibraryDirectoryPath(library.uuid)
 		}
+
 		FileUtils.copyDirectory(
-			File(sourcePath),
+			File(sourceDirectory),
 			File(buildLibraryDirectoryPath(newUuid))
 		)
 	}
@@ -265,16 +266,16 @@ class ResourceLibraryPersistenceService(
 	}
 
 	override fun createMetaGraphInputStream(libraryUuid: UUID, metaGraphUuid: UUID): InputStream =
-		javaClass.getResourceAsStream(buildMetaGraphFilePath(libraryUuid, metaGraphUuid))
+		ResourceLibraryPersistenceService::class.java.getResourceAsStream(buildMetaGraphFilePath(libraryUuid, metaGraphUuid))
 
 	override fun createMetaGraphOutputStream(libraryUuid: UUID, metaGraphUuid: UUID): OutputStream =
-		FileOutputStream(File(javaClass.getResource(buildMetaGraphFilePath(libraryUuid, metaGraphUuid)).toURI()))
+		FileOutputStream(File(ResourceLibraryPersistenceService::class.java.getResource(buildMetaGraphFilePath(libraryUuid, metaGraphUuid)).toURI()))
 
 	override fun createLibraryFileInputStream(libraryUuid: UUID): InputStream =
-		javaClass.getResourceAsStream(buildLibraryFilePath(libraryUuid))
+		ResourceLibraryPersistenceService::class.java.getResourceAsStream(buildLibraryFilePath(libraryUuid))
 
 	override fun createLibraryFileOutputStream(libraryUuid: UUID): OutputStream =
-		FileOutputStream(File(javaClass.getResource(buildLibraryFilePath(libraryUuid)).toURI()))
+		FileOutputStream(File(ResourceLibraryPersistenceService::class.java.getResource(buildLibraryFilePath(libraryUuid)).toURI()))
 
 	/** ---- [ResourceLibraryPersistenceService] */
 
@@ -282,7 +283,7 @@ class ResourceLibraryPersistenceService(
 		"${buildResourceLibraryDirectoryPath(libraryUuid)}/$metaGraphUuid.$metaGraphFileExtension"
 
 	private fun buildLibraryFilePath(libraryUuid: UUID): String =
-		"${buildResourceLibraryDirectoryPath(libraryUuid)}$libraryFileName"
+		"${buildResourceLibraryDirectoryPath(libraryUuid)}/$libraryFileName"
 }
 
 /**
@@ -294,7 +295,7 @@ abstract class AbstractFileLibraryPersistenceService : LibraryPersistenceService
 		private val LOG by logger(AbstractFileLibraryPersistenceService::class)
 		const val RESOURCE_PATH = "/libraries"
 		const val DEF_META_GRAPH_FILE_EXTENSION = "cir"
-		const val DEF_LIBRARY_FILE_NAME = "library.lib"
+		const val DEF_LIBRARY_FILE_NAME = "library.xml"
 	}
 
 	protected abstract fun ensureLibraryDirectory(libraryUuid: UUID)

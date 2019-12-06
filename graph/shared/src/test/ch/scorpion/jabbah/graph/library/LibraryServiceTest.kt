@@ -17,7 +17,7 @@ class LibraryServiceTest {
 	}
 
 	private val libraryPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
-	private val service: LibraryService = LibraryService(persistenceService = libraryPersistenceService, libraryAccessor = { libraryBuilder.library })
+	private val service: LibraryService = LibraryService(userLibraryPersister = libraryPersistenceService, libraryAccessor = { libraryBuilder.library })
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
 	private val library: Library get() = libraryBuilder.library
 

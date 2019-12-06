@@ -27,12 +27,10 @@ import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerEditor
-import ch.scorpion.jabbah.graph.library.FileLibraryManagementService
-import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
-import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.library.LibraryService
+import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
+import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.FileProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
@@ -61,16 +59,22 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		GraphModuleJvm.require()
 		AntaresViewModule.require()
 
-		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(
+		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(
 			directoryPath = app.libraryDirectoryPath.toString(),
+			metaGraphFileExtension = app.fileExtension,
+			libraryFileName = app.libraryFileName
+		)
+		LibraryModule.systemLibraryPersisterService = ResourceLibraryPersistenceService(
 			metaGraphFileExtension = app.fileExtension,
 			libraryFileName = app.libraryFileName
 		)
 		LibraryModule.libraryFactory = AntaresLibraryFactory()
 		LibraryModule.libraryService = LibraryService()
 
-		LibraryModule.libraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(
+		LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(
 			app.libraryDirectoryPath.toString()))
+
+		LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(ResourceLibraryDictionaryPersistenceService())
 
 		LibraryModule.libraryManagementService = FileLibraryManagementService()
 

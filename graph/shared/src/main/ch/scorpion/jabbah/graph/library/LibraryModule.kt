@@ -14,13 +14,17 @@ object LibraryModule : AbstractModule() {
 
 	var libraryHolder: LibraryHolder = LibraryHolder()
 
-	var libraryPersistenceService: LibraryPersistenceService = UnimplementedLibraryPersistenceService()
+	var userLibraryPersistenceService: LibraryPersistenceService = UnimplementedLibraryPersistenceService()
+
+	var systemLibraryPersisterService: LibraryPersistenceService = UnimplementedLibraryPersistenceService()
 
 	var libraryService: LibraryService = LibraryService()
 
 	var baseLibraryElementRepository: BaseLibraryElementRepository = BaseLibraryElementRepository()
 
-	var libraryDictionaryService: LibraryDictionaryService = LibraryDictionaryService(UnimplementedLibraryDictionaryPersistenceService())
+	var userLibraryDictionaryService: LibraryDictionaryService = LibraryDictionaryService(UnimplementedLibraryDictionaryPersistenceService())
+
+	var systemLibraryDictionaryService: LibraryDictionaryService = LibraryDictionaryService(UnimplementedLibraryDictionaryPersistenceService())
 
 	var libraryManagementService: LibraryManagementService = UnimplementedLibraryManagementService()
 

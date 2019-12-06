@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
@@ -19,7 +20,8 @@ class FileLibraryManagementService(
 	private val libraryFactory: LibraryFactory = LibraryModule.libraryFactory,
 	private val libraryService: LibraryService = LibraryModule.libraryService,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	private val dictionaryService: LibraryDictionaryService = LibraryModule.libraryDictionaryService,
+	private val userDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
+	private val systemDictionaryService: LibraryDictionaryService = LibraryModule.systemLibraryDictionaryService,
 	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : LibraryManagementService {
@@ -28,13 +30,20 @@ class FileLibraryManagementService(
 		private val LOG by logger(FileLibraryManagementService::class)
 	}
 
+	private fun isSystemLibrary(uuid: UUID): Boolean {
+		return systemDictionaryService.contains(uuid)
+	}
+
 	/** ---- [LibraryManagementService] interface */
 
-	override fun exists(name: String): Boolean = dictionaryService.existsName(name)
+	override fun exists(name: String): Boolean = userDictionaryService.existsName(name) || systemDictionaryService.existsName(name)
 
-	override fun getLibraryNames(): ImmutableList<String> = dictionaryService.getNames()
-
-	override fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> = dictionaryService.getEntries()
+	override fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> {
+		return listOf(
+			userDictionaryService.getEntries(),
+			systemDictionaryService.getEntries()
+		).flatten().toImmutableList()
+	}
 
 	override fun create(properties: LibraryProperties, templateLibraryUuid: UUID?): Library {
 		if (exists(properties.name)) {
@@ -51,7 +60,7 @@ class FileLibraryManagementService(
 		}
 
 		library.bindLibraryItems()
-		dictionaryService.add(library)
+		userDictionaryService.add(library)
 		eventBus.post(LibraryCreatedEvent(library))
 		return library
 	}
@@ -65,20 +74,20 @@ class FileLibraryManagementService(
 				throw IllegalArgumentException("Library name '${properties.name}' already exists")
 			}
 			libraryService.renameLibrary(library, properties.name)
-			dictionaryService.rename(library, properties.name)
+			userDictionaryService.rename(library, properties.name)
 		}
 
 		library.properties = properties
 		libraryService.storeLibrary(library)
-		dictionaryService.update(library, properties)
+		userDictionaryService.update(library, properties)
 		eventBus.post(LibraryPropertiesEvent(library, properties))
 	}
 
 	override fun loadLibrary(uuid: UUID): Library =
-		libraryService.loadLibrary(uuid)
+		libraryService.loadLibrary(uuid, isSystemLibrary(uuid))
 
 	override fun open(uuid: UUID): Library =
-		libraryService.loadLibrary(uuid).also { open(it) }
+		libraryService.loadLibrary(uuid, isSystemLibrary(uuid)).also { open(it) }
 
 	override fun open(library: Library) {
 		LOG.debug("FileLibraryManagementService: open library ${library.uuid}")
@@ -96,7 +105,7 @@ class FileLibraryManagementService(
 			throw IllegalArgumentException("illegal attempt to delete the currently open library $uuid")
 		}
 		libraryService.deleteLibrary(uuid)
-		dictionaryService.remove(uuid)
+		userDictionaryService.remove(uuid)
 	}
 
 	override fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {

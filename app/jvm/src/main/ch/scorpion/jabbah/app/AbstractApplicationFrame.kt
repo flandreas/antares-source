@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.invocation.ErrorHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Editor
 import java.awt.BorderLayout
@@ -21,6 +22,7 @@ abstract class AbstractApplicationFrame(
     abstract val editor: Editor
 
     init {
+	    ErrorHandler.initialize(this)
         defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
         title = application.displayName
 

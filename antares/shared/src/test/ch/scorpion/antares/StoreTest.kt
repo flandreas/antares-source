@@ -30,7 +30,7 @@ class StoreTest {
 	@BeforeTest
 	fun setup() {
 		val file = File.createTempFile("library", ".lib")
-		LibraryModule.libraryPersistenceService = FileLibraryPersistenceService(file.parent)
+		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(file.parent)
 		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService)
 	}

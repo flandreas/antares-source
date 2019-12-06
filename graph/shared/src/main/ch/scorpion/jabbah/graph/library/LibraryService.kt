@@ -60,7 +60,8 @@ data class LibraryDirectoryRenamedEvent(
  */
 class LibraryService(
 	private val libraryAccessor: () -> Library? = { LibraryModule.libraryHolder.library },
-	private val persistenceService: LibraryPersistenceService = LibraryModule.libraryPersistenceService,
+	private val userLibraryPersister: LibraryPersistenceService = LibraryModule.userLibraryPersistenceService,
+	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersisterService,
 	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus
@@ -75,11 +76,14 @@ class LibraryService(
 	/** Returns the current [Library].*/
 	val currentLibrary: Library? get() = libraryAccessor.invoke()
 
+	private fun persister(system: Boolean): LibraryPersistenceService =
+		if (system) systemLibraryPersister else userLibraryPersister
+
 	/** Loads the [Library] with the specified [UUID] from persistent store.*/
-	fun loadLibrary(uuid: UUID): Library {
+	fun loadLibrary(uuid: UUID, isSystem: Boolean): Library {
 		try {
 			LOG.debug("Loading Library $uuid")
-			val library = persistenceService.loadLibrary(uuid)
+			val library = persister(isSystem).loadLibrary(uuid)
 			library.bindLibraryItems()
 			return library
 		} catch (e: LibraryPersistenceServiceException) {
@@ -90,28 +94,28 @@ class LibraryService(
 	/** Stores the specified [Library] in persistent store.*/
 	fun storeLibrary(library: Library) {
 		LOG.debug("Storing Library ${library.uuid}")
-		persistenceService.storeLibrary(library)
+		persister(library.isSystem).storeLibrary(library)
 	}
 
 	/**
-	 * Deletes a [Library] persistently.
+	 * Deletes a user [Library] persistently.
 	 *
 	 * Posts a [LibraryDeletedEvent] on this [LibraryService]'s [EventBus].
 	 * @throws IllegalArgumentException if a [Library] with the specified [UUID] doesn't exist
 	 */
 	fun deleteLibrary(uuid: UUID) {
 		LOG.debug("Deleting Library $uuid")
-		persistenceService.deleteLibrary(uuid)
+		userLibraryPersister.deleteLibrary(uuid)
 		eventBus.post(LibraryDeletedEvent(uuid))
 	}
 
 	/**
-	 * Silently deletes any resources related with a [Library].
+	 * Silently deletes any resources related with a user [Library].
 	 * This is primarily used by higher-level services after importing an invalid [Library].
 	 */
 	fun purgeLibrary(uuid: UUID) {
 		LOG.debug("Purging Library $uuid")
-		persistenceService.deleteLibrary(uuid)
+		userLibraryPersister.deleteLibrary(uuid)
 	}
 
 	/** Renames a [Library] and makes the change persistent.*/
@@ -148,7 +152,7 @@ class LibraryService(
 		LOG.debug("Removing LibraryItem '${item.name}'")
 		if (directory.remove(item)) {
 			if (item is ContainerLibraryElement) {
-				persistenceService.deleteContainerLibraryElement(library, item.uuid)
+				persister(library.isSystem).deleteContainerLibraryElement(library, item.uuid)
 				if (library.defaultElementUUID == item.uuid) {
 					library.defaultElementUUID = null
 				}
@@ -284,14 +288,14 @@ class LibraryService(
 	}
 
 	/**
-	 * Duplicates the specified [Library] and stores the duplicate with the given new name.
-	 * @return the created duplicate [Library]
+	 * Duplicates the specified user [Library] and stores the duplicate with the given new name.
+	 * @return the created duplicate user [Library]
 	 */
 	fun duplicateLibrary(library: Library, newName: String): Library {
 		LOG.debug("Duplicate Library ${library.uuid} to new name $newName")
 		val newUuid = System.get().createUUID()
-		persistenceService.duplicateLibrary(library, newUuid)
-		val newLibrary = persistenceService.loadLibrary(newUuid)
+		userLibraryPersister.duplicateLibrary(library, newUuid)
+		val newLibrary = userLibraryPersister.loadLibrary(newUuid)
 		newLibrary.uuid = newUuid
 		newLibrary.name = newName
 		storeLibrary(newLibrary)
@@ -299,12 +303,12 @@ class LibraryService(
 	}
 
 	/**
-	 * Exports the [Library] with the specified [UUID] by storing its entire contents at an output path.
+	 * Exports the user [Library] with the specified [UUID] by storing its entire contents at an output path.
 	 * Note that this wouldn't work in a client/server setup, which would require the exported data to be
 	 * transferred to the client to be stored there. This is up to a future extension.
 	 */
 	fun exportLibrary(uuid: UUID, outputPath: String) {
-		persistenceService.exportLibrary(uuid, outputPath)
+		userLibraryPersister.exportLibrary(uuid, outputPath)
 	}
 
 	/**
@@ -314,11 +318,11 @@ class LibraryService(
 	 * @return the imported [Library], or `null` if the [Library] is invalid
 	 */
 	fun importLibrary(uuid: UUID, inputPath: String): Library? {
-		persistenceService.importLibrary(uuid, inputPath)
+		userLibraryPersister.importLibrary(uuid, inputPath)
 		return try {
-			loadLibrary(uuid)
+			loadLibrary(uuid, isSystem = false)
 		} catch (e: Throwable) {
-			persistenceService.deleteLibrary(uuid)
+			userLibraryPersister.deleteLibrary(uuid)
 			null
 		}
 	}
@@ -328,9 +332,9 @@ class LibraryService(
 		if (doClone) {
 			val clone = storableCloner.cloneUsingCreator(metaGraph, storableCreator) as MetaGraph
 			element.updateMetaGraph(clone)
-			persistenceService.storeMetaGraph(library, clone)
+			persister(library.isSystem).storeMetaGraph(library, clone)
 		} else {
-			persistenceService.storeMetaGraph(library, metaGraph)
+			persister(library.isSystem).storeMetaGraph(library, metaGraph)
 		}
 	}
 
@@ -344,7 +348,7 @@ class LibraryService(
 
 	private fun ensureMetaGraph(library: Library, element: ContainerLibraryElement, loadAlways: Boolean = false) {
 		if (loadAlways || element.metaGraph == null) {
-			element.updateMetaGraph(persistenceService.loadMetaGraph(library, element.uuid))
+			element.updateMetaGraph(persister(library.isSystem).loadMetaGraph(library, element.uuid))
 			LOG.debug("LibraryServiceImpl: Loaded MetaGraph '${element.metaGraph!!.name}' ${element.uuid}")
 		}
 	}
