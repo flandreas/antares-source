@@ -1,14 +1,25 @@
 package ch.scorpion.jabbah.graph.project
 
-import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.exception.IllegalStateException
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
-import ch.scorpion.jabbah.graph.library.LibraryProperties
-import ch.scorpion.jabbah.graph.library.LibraryPropertiesEvent
+import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
+import org.apache.commons.io.FilenameUtils
+
+enum class ProjectImportResult {
+	Success,
+	NameAlreadyExists,
+	Invalid,
+	StaleLibraryReference
+}
 
 /**
  * Posted on [EventBus] when a [Project] is to be opened and is to replace the currently open [Project], if any.
@@ -25,24 +36,48 @@ data class OpenProjectRequest (val project: Project?)
 data class CloseProjectRequest (val project: Project)
 
 /** Provides methods for managing the set of a user's [Project]s, including open and closing [Project]s. */
-interface ProjectManagementService {
+class ProjectManagementService(
+	private val directoryPath: String,
+	private val projectFactory: (String) -> Project = ProjectModule.projectFactory,
+	private val libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
+	private val libraryManagementService: LibraryManagementService = LibraryModule.libraryManagementService,
+	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name",
+	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
+	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+	private val libraryDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
+	private val projectDictionaryService: LibraryDictionaryService = ProjectModule.projectDictionaryService,
+	private val eventBus: EventBus = BaseModule.eventBus
+) {
+
+	companion object {
+		private val LOG by logger(ProjectManagementService::class)
+	}
+
+	init {
+		eventBus.register(CurrentLibraryEvent::class) { close() }
+	}
+
+	/** ---- [ProjectManagementService] interface */
 
 	/** Returns the currently open [Project], if any.*/
-	val currentProject: Project?
-
-	/** Returns the names of all stored projects.*/
-	fun getProjectNames(): ImmutableList<String>
-
-	fun getProjectDirectoryEntries(): ImmutableList<LibraryDictionaryEntry>
+	val currentProject: Project? get() = projectHolder.project
 
 	/** Determines whether [projectName] already exists as the name of a stored project.*/
-	fun exists(projectName: String): Boolean
+	fun exists(projectName: String): Boolean =
+		projectDictionaryService.existsName(projectName)
+
+	/** Returns the names of all stored projects.*/
+	fun getProjectNames(): ImmutableList<String> =
+		projectDictionaryService.getNames()
+
+	fun getProjectDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> =
+		projectDictionaryService.getEntries()
 
 	/**
 	 * Loads the [Project] with the specified [UUID].
 	 * @throws IllegalArgumentException if a project with name [uuid] doesn't exist
 	 */
-	fun load(uuid: UUID): Project
+	fun load(uuid: UUID): Project = libraryService.loadLibrary(uuid, isSystem = false) as Project
 
 	/**
 	 * Creates a new [Project] with the given name and stores it in persistent store.
@@ -50,7 +85,23 @@ interface ProjectManagementService {
 	 * @throws IllegalArgumentException if [properties] are not consistent, e.g. if a [Project]
 	 * with the specified name already exists
 	 */
-	fun create(properties: LibraryProperties): Project
+	fun create(properties: LibraryProperties): Project {
+		if (exists(properties.name)) {
+			throw IllegalArgumentException("project name '${properties.name}' already exists")
+		}
+		LOG.debug("creating new project '${properties.name}'")
+		val project = projectFactory.invoke(properties.name)
+		project.description = properties.description
+		project.importedLibrary = libraryHolder.library.uuid
+		libraryService.storeLibrary(project)
+		projectDictionaryService.add(project)
+
+		val metaGraph = MetaGraph()
+		metaGraph.graph.model!!.name.value = Translations.getString(newMetaGraphNameTranslationKey)
+		libraryService.addContainerLibraryElement(project, metaGraph, project)
+
+		return project
+	}
 
 	/**
 	 * Updates the currently open [Project] with the specified properties and stores it in persistent store.
@@ -59,81 +110,128 @@ interface ProjectManagementService {
 	 * @throws IllegalStateException if no [Project] is currently open
 	 * Posts [LibraryPropertiesEvent] on this [ProjectManagementService]'s [EventBus].
 	 */
-	fun update(properties: LibraryProperties)
+	fun update(properties: LibraryProperties) {
+		if (projectHolder.project == null) {
+			throw IllegalStateException("cannot update properties, no project open")
+		}
+		val project = projectHolder.project!!
+		LOG.debug("updating project '${project.name}'")
+
+		if (project.name != properties.name) {
+			if (exists(properties.name)) {
+				throw IllegalArgumentException("project name '${properties.name}' already exists")
+			}
+			libraryService.renameLibrary(project, properties.name)
+			projectDictionaryService.rename(project, properties.name)
+		}
+
+		project.properties = properties
+		libraryService.storeLibrary(project)
+		projectDictionaryService.update(project, properties)
+		eventBus.post(LibraryPropertiesEvent(project, properties))
+	}
 
 	/**
 	 * Loads and opens the [Project] with the specified name, and opens its default [ContainerLibraryElement].
 	 * @throws IllegalArgumentException if a project with name [uuid] doesn't exist
 	 */
-	fun open(uuid: UUID): Project
+	fun open(uuid: UUID): Project = load(uuid).also { open(it) }
 
 	/** Opens the specified [Project] and its default [ContainerLibraryElement].*/
-	fun open(project: Project)
-
-	/** Opens the specified [Project] and [ContainerLibraryElement].*/
-	fun open(uuid: UUID, containerLibraryElement: UUID)
-
-	/** Deletes the [Project] with the specified name.*/
-	fun delete(uuid: UUID)
-
-	/** Closes the currently open [Project].*/
-	fun close()
-
-	fun export(uuid: UUID, outputPath: String)
-
-	fun import(inputPath: String): ProjectImportResult
-}
-
-enum class ProjectImportResult {
-	Success,
-	NameAlreadyExists,
-	Invalid,
-	StaleLibraryReference
-}
-
-/** Null pattern */
-class UnimplementedProjectManagementService : ProjectManagementService {
-
-	override val currentProject: Project? get() =
-		throw NotImplementedError()
-
-	override fun getProjectNames(): ImmutableList<String> =
-		throw NotImplementedError()
-
-	override fun getProjectDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> {
-		throw NotImplementedError()
+	fun open(project: Project) {
+		eventBus.postVetoable(
+			event = OpenProjectRequest(project),
+			undoEvent = OpenProjectRequest(projectHolder.project),
+			thenHandler = {
+				openImpl(project, project.defaultElementUUID)
+			}
+		)
 	}
 
-	override fun exists(projectName: String): Boolean =
-		throw NotImplementedError()
+	/** Opens the specified [Project] and [ContainerLibraryElement].*/
+	fun open(uuid: UUID, containerLibraryElement: UUID) {
+		val project = load(uuid)
+		eventBus.postVetoable(
+			event = OpenProjectRequest(project),
+			undoEvent = OpenProjectRequest(projectHolder.project),
+			thenHandler = {
+				openImpl(project, containerLibraryElement)
+			}
+		)
+	}
 
-	override fun load(uuid: UUID): Project =
-		throw NotImplementedError()
+	private fun openImpl(project: Project, elementUUID: UUID?) {
+		LOG.debug("open project ${project.uuid}")
+		openLibraryForProjectIfNecessary(project)
+		projectHolder.p = project
+		if (elementUUID != null) {
+			val element = project.getContainerLibraryElement(elementUUID)
+			if (element != null) {
+				eventBus.post(OpenContainerLibraryElementRequest(element))
+			}
+		}
+	}
 
-	override fun create(properties: LibraryProperties): Project =
-		throw NotImplementedError()
+	private fun openLibraryForProjectIfNecessary(project: Project) {
+		if (project.importedLibrary != libraryHolder.library.uuid) {
+			libraryManagementService.open(project.importedLibrary!!)
+		}
+	}
 
-	override fun update(properties: LibraryProperties): Unit =
-		throw NotImplementedError()
+	/** Deletes the [Project] with the specified name.*/
+	fun delete(uuid: UUID) {
+		if (projectHolder.project?.uuid == uuid) {
+			closeImpl { deleteImpl(uuid) }
+		} else {
+			deleteImpl(uuid)
+		}
+	}
 
-	override fun open(uuid: UUID): Project =
-		throw NotImplementedError()
+	private fun deleteImpl(uuid: UUID) {
+		libraryService.deleteLibrary(uuid)
+		projectDictionaryService.remove(uuid)
+	}
 
-	override fun open(project: Project): Unit =
-		throw NotImplementedError()
+	/** Closes the currently open [Project].*/
+	fun close() {
+		closeImpl {}
+	}
 
-	override fun open(uuid: UUID, containerLibraryElement: UUID): Unit =
-		throw NotImplementedError()
+	private fun closeImpl(additionalThenHandler: () -> Unit) {
+		val project = projectHolder.project
+		if (project != null) {
+			eventBus.postVetoable(
+				event = CloseProjectRequest(project),
+				undoEvent = OpenProjectRequest(project),
+				thenHandler = {
+					projectHolder.p = null
+					additionalThenHandler.invoke()
+				}
+			)
+		}
+	}
 
-	override fun delete(uuid: UUID): Unit =
-		throw NotImplementedError()
+	fun export(uuid: UUID, outputPath: String) {
+		libraryService.exportLibrary(uuid, outputPath)
+	}
 
-	override fun close(): Unit =
-		throw NotImplementedError()
+	fun import(inputPath: String): ProjectImportResult {
+		val uuid = UUID(FilenameUtils.getBaseName(inputPath))
 
-	override fun export(uuid: UUID, outputPath: String): Unit =
-		throw NotImplementedError()
+		val library = libraryService.importLibrary(uuid, inputPath) ?: return ProjectImportResult.Invalid
 
-	override fun import(inputPath: String): ProjectImportResult =
-		throw NotImplementedError()
+		if (exists(library.name)) {
+			LOG.debug("Name of imported project already exists")
+			libraryService.purgeLibrary(uuid)
+			return ProjectImportResult.NameAlreadyExists
+		}
+
+		if (!libraryDictionaryService.contains((library as Project).uuid)) {
+			LOG.debug("Library for imported project doesn't exist")
+			libraryService.purgeLibrary(uuid)
+			return ProjectImportResult.StaleLibraryReference
+		}
+
+		return ProjectImportResult.Success
+	}
 }

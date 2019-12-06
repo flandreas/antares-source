@@ -125,7 +125,7 @@ abstract class AbstractDesktopApplicationSwing(
 
 	/**
 	 * Opens the [Savable] to be initially available when the application starts.
-	 * This implementation used the command line argument, or opens a new file if no command line argument is available.
+	 * This implementation uses the command line argument, or opens a new file if no command line argument is available.
 	 */
 	protected open fun openInitialSavable() {
 		if (commandLine.argList.size == 0) {

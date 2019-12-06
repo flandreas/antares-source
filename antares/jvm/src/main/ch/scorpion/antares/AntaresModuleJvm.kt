@@ -32,7 +32,7 @@ import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersiste
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
-import ch.scorpion.jabbah.graph.project.FileProjectManagementService
+import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.editor.GraphEditor
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -102,7 +102,7 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		)
 
 
-		ProjectModule.projectManagementService = FileProjectManagementService(
+		ProjectModule.projectManagementService = ProjectManagementService(
 			directoryPath = app.projectsDirectoryPath,
 			newMetaGraphNameTranslationKey = "graph.name.unknown"
 		)
