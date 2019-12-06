@@ -45,7 +45,7 @@ class FileLibraryPersistenceService(
 	override fun loadLibrary(uuid: UUID): Library {
 		LOG.debug("load Library $uuid")
 		return createLibraryFileInputStream(uuid).use {
-			loadLibrary(uuid, it).also { library -> library.isSystem = false }
+			loadLibrary(uuid, it)
 		}
 	}
 
@@ -232,7 +232,7 @@ class ResourceLibraryPersistenceService(
 	override fun loadLibrary(uuid: UUID): Library {
 		LOG.debug("load Library $uuid")
 		return createLibraryFileInputStream(uuid).use {
-			loadLibrary(uuid, it).also { library -> library.isSystem = true }
+			loadLibrary(uuid, it)
 		}
 	}
 

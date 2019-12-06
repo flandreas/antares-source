@@ -60,36 +60,50 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		AntaresViewModule.require()
 
 		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(
-			directoryPath = app.libraryDirectoryPath.toString(),
+			directoryPath = app.userLibraryDirectoryPath,
 			metaGraphFileExtension = app.fileExtension,
 			libraryFileName = app.libraryFileName
 		)
-		LibraryModule.systemLibraryPersisterService = ResourceLibraryPersistenceService(
-			metaGraphFileExtension = app.fileExtension,
-			libraryFileName = app.libraryFileName
-		)
+		LibraryModule.systemLibraryPersisterService = if (app.systemLibraryDirectoryPath != null) {
+			FileLibraryPersistenceService(
+				directoryPath = app.systemLibraryDirectoryPath!!,
+				metaGraphFileExtension = app.fileExtension,
+				libraryFileName = app.libraryFileName
+			)
+		} else {
+			ResourceLibraryPersistenceService(
+				metaGraphFileExtension = app.fileExtension,
+				libraryFileName = app.libraryFileName
+			)
+		}
+
+
 		LibraryModule.libraryFactory = AntaresLibraryFactory()
 		LibraryModule.libraryService = LibraryService()
 
 		LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService(
-			app.libraryDirectoryPath.toString()))
+			app.userLibraryDirectoryPath))
 
-		LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(ResourceLibraryDictionaryPersistenceService())
+		LibraryModule.systemLibraryDictionaryService = if (app.systemLibraryDirectoryPath != null) {
+			LibraryDictionaryService(FileLibraryDictionaryPersistenceService(app.systemLibraryDirectoryPath!!))
+		} else {
+			LibraryDictionaryService(ResourceLibraryDictionaryPersistenceService())
+		}
 
 		LibraryModule.libraryManagementService = LibraryManagementService()
 
 		ProjectModule.projectDictionaryService = LibraryDictionaryService((FileLibraryDictionaryPersistenceService(
-			app.projectsDirectoryPath.toString())))
+			app.projectsDirectoryPath)))
 
 		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService(
-			directoryPath = app.projectsDirectoryPath.toString(),
+			directoryPath = app.projectsDirectoryPath,
 			metaGraphFileExtension = app.fileExtension,
 			libraryFileName = app.libraryFileName
 		)
 
 
 		ProjectModule.projectManagementService = FileProjectManagementService(
-			directoryPath = app.projectsDirectoryPath.toString(),
+			directoryPath = app.projectsDirectoryPath,
 			newMetaGraphNameTranslationKey = "graph.name.unknown"
 		)
 

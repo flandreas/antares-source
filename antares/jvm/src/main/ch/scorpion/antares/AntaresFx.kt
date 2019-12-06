@@ -75,6 +75,10 @@ class AntaresFx : javafx.application.Application() {
 			shutdown()
 		}
 
+		/** ---- [Antares] */
+		override var systemLibraryDirectoryPath: String? = null
+			private set
+
 		/** ---- [Application] */
 
 		// TODO

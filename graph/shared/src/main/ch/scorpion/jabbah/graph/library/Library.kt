@@ -21,6 +21,9 @@ interface Library : LibraryDirectory, MetaGraphRepository {
 	/** Contains a short description describing the purpose of this [Library].*/
 	var description: String?
 
+	/**
+	 * Determines whether this [Library] is system build-in and can only be edited by the developer.
+	 */
 	var isSystem: Boolean
 
 	/**

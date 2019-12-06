@@ -172,6 +172,9 @@ open class LibraryImpl(
 		if (StringUtils.isNotEmpty(description)) {
 			writer.writeString("desc", description!!)
 		}
+		if (isSystem) {
+			writer.writeBoolean("system", isSystem)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -182,6 +185,9 @@ open class LibraryImpl(
 		uuid = System.get().createUUID(reader.readString("uuid"))
 		author = System.get().createUUID(reader.readString("author"))
 		description = reader.readOptionalString("desc")
+		if (reader.hasAttribute("system")) {
+			isSystem = reader.readBoolean("system")
+		}
 	}
 
 	override fun getStorableChildren(): Iterator<Storable> {

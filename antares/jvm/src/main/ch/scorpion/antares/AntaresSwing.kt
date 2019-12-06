@@ -34,6 +34,8 @@ import org.apache.commons.cli.Options
 import java.awt.Frame
 import java.awt.Image
 import java.awt.Toolkit
+import java.nio.file.Files
+import java.nio.file.Paths
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import javax.swing.plaf.FontUIResource
@@ -124,6 +126,10 @@ class AntaresSwing(
 		}
 	}
 
+	/** ---- [Antares] */
+	override var systemLibraryDirectoryPath: String? = null
+		private set
+
 	/** ---- [AbstractApplication] */
 
 	override val aboutInfo: AboutInfo
@@ -152,10 +158,18 @@ class AntaresSwing(
 
 	override fun defineOptions(options: Options) {
 		super.defineOptions(options)
+
 		options.addOption(Option.builder("t")
 			.required(false)
 			.longOpt("theme")
 			.desc("Theme")
+			.hasArg()
+			.build())
+
+		options.addOption(Option.builder("l")
+			.required(false)
+			.longOpt("syslib")
+			.desc("System library location")
 			.hasArg()
 			.build())
 	}
@@ -165,6 +179,22 @@ class AntaresSwing(
 		if (commandLine.hasOption("t")) {
 			Themes.setCurrent(commandLine.getOptionValue("t"))
 		}
+		if (commandLine.hasOption("l")) {
+			consumeSystemLibraryDirectoryPath(commandLine.getOptionValue("l"))
+		}
+	}
+
+	private fun consumeSystemLibraryDirectoryPath(path: String) {
+		if (Files.notExists(Paths.get(path))) {
+			println("System library directory $path not found")
+			JOptionPane.showConfirmDialog(
+				mainFrame,
+				Translations.getString("application.fileNotFound.text", commandLine.argList[0]),
+				Translations.getString("application.fileNotFound.title"),
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.ERROR_MESSAGE)
+		}
+		systemLibraryDirectoryPath = path
 	}
 
 	override fun createMenuBarBuilder(): MenuBarBuilder {
