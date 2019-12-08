@@ -16,7 +16,8 @@ interface DesktopApplication : Application {
 	/** Returns the file name extension to be used for application data files handled by this [Application].*/
 	val fileExtension: String
 
-	val homeDirectoryPath: Path
+	/** The [Path] to the user's data directory, i.e. the directory where the user's data is stored.*/
+	val userDataDirectoryPath: Path
 
 	fun saveTo(identification: String)
 

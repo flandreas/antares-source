@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
@@ -51,6 +52,8 @@ class AntaresSwing(
 	private val viewManager: ViewManager = DrawViewModule.viewManager
 ) : AbstractDesktopApplicationSwing(args, eventBus), Antares {
 
+	private val LOG by logger(AntaresSwing::class)
+
 	companion object {
 
 		private const val PROP_APPLICATION_PROJECT = "application.project"
@@ -59,14 +62,13 @@ class AntaresSwing(
 		@JvmStatic
 		fun main(args: Array<String>) {
 			System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS")
-			//System.setProperty("apple.laf.useScreenMenuBar", "true")
+			System.setProperty("apple.laf.useScreenMenuBar", "true")
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Antares")
 			UiUtil.setUIFont(FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size))
 			BaseModuleJvm.require()
 			AntaresSwing(args).start()
 		}
 	}
-
 	private val iconPath = "img/Logo64.png"
 
 	init {
@@ -128,6 +130,7 @@ class AntaresSwing(
 	}
 
 	/** ---- [Antares] */
+
 	override var systemLibraryDirectoryPath: String? = null
 		private set
 
@@ -153,6 +156,10 @@ class AntaresSwing(
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(DEF_LIBRARY_UUID, isSystem = true)
 		AntaresThemes.install()
 		super.init()
+
+		systemLibraryDirectoryPath?.let {
+			LOG.info("Using system libraries in $systemLibraryDirectoryPath")
+		}
 	}
 
 	override fun defineOptions(options: Options) {
@@ -186,13 +193,9 @@ class AntaresSwing(
 	private fun consumeSystemLibraryDirectoryPath(path: String) {
 		if (Files.notExists(Paths.get(path))) {
 			println("System library directory $path not found")
-			JOptionPane.showConfirmDialog(
-				mainFrame,
-				Translations.getString("application.fileNotFound.text", commandLine.argList[0]),
-				Translations.getString("application.fileNotFound.title"),
-				JOptionPane.DEFAULT_OPTION,
-				JOptionPane.ERROR_MESSAGE)
+			return
 		}
+
 		systemLibraryDirectoryPath = path
 	}
 

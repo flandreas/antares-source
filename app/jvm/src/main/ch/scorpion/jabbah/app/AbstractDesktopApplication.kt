@@ -18,12 +18,14 @@ import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import org.apache.commons.cli.*
+import org.apache.commons.lang3.SystemUtils
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.Files
+import kotlin.system.exitProcess
 
 /** Abstract base implementation of the [DesktopApplication] interface. */
 abstract class AbstractDesktopApplication(
@@ -34,20 +36,9 @@ abstract class AbstractDesktopApplication(
 	// Must not be in companion object due to Module and LogSystem bootstrapping order
 	private val LOG by logger(AbstractDesktopApplication::class)
 
-	protected val commandLine: CommandLine by lazy {
-		val options = Options()
-		defineOptions(options)
-		var cmdLine: CommandLine? = null
-		try {
-			cmdLine = DefaultParser().parse(options, args)!!
-			consumeCommandLine(cmdLine)
-		} catch (x: ParseException) {
-			LOG.error("Error while parsing options: ${x.message}")
-			HelpFormatter().printHelp(displayName, options)
-			System.exit(1)
-		}
-		cmdLine!!
-	}
+	protected val commandLine: CommandLine = readCommandLine(args)
+
+	override val userDataDirectoryPath: Path = determineUserDataDirectoryPath()
 
 	override val mostRecentSavables: SavableHistory = SavableHistory()
 
@@ -77,13 +68,6 @@ abstract class AbstractDesktopApplication(
 	}
 
 	/** ---- [DesktopApplication] */
-
-	override val homeDirectoryPath: Path
-		get() = if (commandLine.hasOption("d")) {
-			FileSystems.getDefault().getPath(commandLine.getOptionValue("d"))
-		} else {
-			FileSystems.getDefault().getPath(System.getProperty("user.home"), systemName)
-		}
 
 	override fun quit() {
 		if (canReplaceSavable("file.action.quit.name")) {
@@ -157,7 +141,7 @@ abstract class AbstractDesktopApplication(
 		shutdownUI()
 		storePreferences()
 		storeSettings()
-		System.exit(0)
+		exitProcess(0)
 	}
 
 	/**
@@ -195,17 +179,51 @@ abstract class AbstractDesktopApplication(
 		}
 	}
 
+	private fun readCommandLine(args: Array<String>): CommandLine {
+		val options = Options()
+		defineOptions(options)
+		var cmdLine: CommandLine? = null
+		try {
+			cmdLine = DefaultParser().parse(options, args)!!
+			consumeCommandLine(cmdLine)
+		} catch (x: ParseException) {
+			LOG.error("Error while parsing options: ${x.message}")
+			HelpFormatter().printHelp(displayName, options)
+			exitProcess(1)
+		}
+		return cmdLine
+	}
+
+	private fun determineUserDataDirectoryPath(): Path {
+		val path = if (commandLine.hasOption("d")) {
+			FileSystems.getDefault().getPath(commandLine.getOptionValue("d"))
+		} else {
+			FileSystems.getDefault().getPath(getDefaultUserDataDirectory(), systemName)
+		}
+		LOG.info("Using user data directory ${path.toAbsolutePath()}")
+		return path
+	}
+
+	private fun getDefaultUserDataDirectory(): String {
+		return when {
+			SystemUtils.IS_OS_MAC -> System.getProperty("user.home") + "/Library/Application Support"
+			SystemUtils.IS_OS_WINDOWS -> System.getenv("APPDATA")
+			SystemUtils.IS_OS_UNIX -> System.getProperty("user.home")
+			else -> System.getProperty("user.dir")
+		}
+	}
+
 	private fun getSettingsPath(): Path {
-		return FileSystems.getDefault().getPath(homeDirectoryPath.toString(), "$systemName.ini")
+		return FileSystems.getDefault().getPath(userDataDirectoryPath.toString(), "$systemName.ini")
 	}
 
 	private fun getPreferencesPath(): Path {
-		return FileSystems.getDefault().getPath(homeDirectoryPath.toString(), "$systemName.pref")
+		return FileSystems.getDefault().getPath(userDataDirectoryPath.toString(), "$systemName.pref")
 	}
 
-	/** Ensures that the application home directory exists by creating it if it doesn't. */
-	private fun ensureHomeDirectory() {
-		val path = homeDirectoryPath
+	/** Ensures that the user's data directory for this application exists by creating it if it doesn't. */
+	private fun ensureUserDataDirectory() {
+		val path = userDataDirectoryPath
 		if (Files.notExists(path)) {
 			LOG.debug("Creating home directory '$path'")
 			Files.createDirectories(path)
@@ -235,7 +253,7 @@ abstract class AbstractDesktopApplication(
 	protected fun storeSettings() {
 		val path = getSettingsPath()
 		LOG.debug("Storing settings in $path")
-		ensureHomeDirectory()
+		ensureUserDataDirectory()
 		FileOutputStream(path.toString()).use {
 			try {
 				val properties = java.util.Properties()
@@ -273,7 +291,7 @@ abstract class AbstractDesktopApplication(
 	protected fun storePreferences() {
 		val path = getPreferencesPath()
 		LOG.debug("Storing preferences in $path")
-		ensureHomeDirectory()
+		ensureUserDataDirectory()
 		FileOutputStream(path.toString()).use {
 			try {
 				val preferences = java.util.Properties()

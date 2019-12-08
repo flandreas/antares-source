@@ -8,7 +8,7 @@ interface Antares : DesktopApplication {
 
 	companion object {
 		private const val DISPLAY_NAME = "Antares"
-		private const val SYSTEM_NAME = "antares"
+		private const val SYSTEM_NAME = "Antares"
 		private const val FILE_EXTENSION_NAME = "cir"
 		private const val DEFAULT_LIB_DIRECTORY = "libraries"
 		private const val DEFAULT_PROJECT_DIRECTORY = "projects"
@@ -25,9 +25,9 @@ interface Antares : DesktopApplication {
 
 	/** ---- [Antares] */
 
-	val projectsDirectoryPath: String get() = FileSystems.getDefault().getPath(homeDirectoryPath.toString(), DEFAULT_PROJECT_DIRECTORY).toString()
+	val projectsDirectoryPath: String get() = FileSystems.getDefault().getPath(userDataDirectoryPath.toString(), DEFAULT_PROJECT_DIRECTORY).toString()
 
-	val userLibraryDirectoryPath: String get() = FileSystems.getDefault().getPath(homeDirectoryPath.toString(), DEFAULT_LIB_DIRECTORY).toString()
+	val userLibraryDirectoryPath: String get() = FileSystems.getDefault().getPath(userDataDirectoryPath.toString(), DEFAULT_LIB_DIRECTORY).toString()
 
 	/**
 	 * Returns the optional path to the file system directory where the system [Libraries][Library] are stored.
