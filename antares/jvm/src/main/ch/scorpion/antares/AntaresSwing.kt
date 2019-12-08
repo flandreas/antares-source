@@ -32,6 +32,7 @@ import ch.scorpion.jabbah.io.Storable
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
+import org.apache.commons.io.IOUtils
 import java.awt.Frame
 import java.awt.Image
 import java.awt.Toolkit
@@ -166,7 +167,9 @@ class AntaresSwing(
 			iconPath = "/$iconPath",
 			name = displayName,
 			claim = "Digital Circuit Learning Platform",
-			version = "0.1")
+			version = readVersion())
+
+	private fun readVersion(): String = IOUtils.toString(this.javaClass.getResourceAsStream("/version.txt"), "UTF-8")
 
 	/** ---- [AbstractDesktopApplication] */
 

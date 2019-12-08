@@ -48,6 +48,8 @@ dependencies {
 }
 
 task deploy(type: Exec, dependsOn: [assemble]) {
+
+    def version = file('shared/rsc/version.txt').text.trim()
     def nativeType
     if (System.properties['os.name'].toLowerCase().contains('windows'))
         nativeType = 'msi'
@@ -62,13 +64,13 @@ task deploy(type: Exec, dependsOn: [assemble]) {
             '-deploy',
             '-nosign',
             '-native', nativeType,
-            '-outdir', "${buildDir}/distribution",
+            '-outdir', "${buildDir}/distributions",
             '-outfile', project.name,
             '-name', 'Antares',
             '-appclass', "ch.scorpion.antares.AntaresSwing",
             '-srcdir', "build/libs",
             '-srcfiles', "antares-all.jar",
-            '-BappVersion=0.1',
+            "-BappVersion=${version}",
             '-Bicon=jvm/rsc/antares.icns'
     ]
 }
