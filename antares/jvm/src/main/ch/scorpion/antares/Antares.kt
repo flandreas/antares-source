@@ -7,8 +7,8 @@ import java.nio.file.FileSystems
 interface Antares : DesktopApplication {
 
 	companion object {
+		const val SYSTEM_NAME = "Antares"
 		private const val DISPLAY_NAME = "Antares"
-		private const val SYSTEM_NAME = "Antares"
 		private const val FILE_EXTENSION_NAME = "cir"
 		private const val DEFAULT_LIB_DIRECTORY = "libraries"
 		private const val DEFAULT_PROJECT_DIRECTORY = "projects"

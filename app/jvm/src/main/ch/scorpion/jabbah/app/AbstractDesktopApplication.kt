@@ -7,38 +7,93 @@ import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.ElectricXmlReader
-import ch.scorpion.jabbah.io.ElectricXmlWriter
-import ch.scorpion.jabbah.io.StoreXmlReader
-import ch.scorpion.jabbah.io.StoreXmlWriter
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.io.*
 import org.apache.commons.cli.*
 import org.apache.commons.lang3.SystemUtils
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.nio.file.FileSystems
-import java.nio.file.Path
 import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.system.exitProcess
 
 /** Abstract base implementation of the [DesktopApplication] interface. */
 abstract class AbstractDesktopApplication(
-	args: Array<String>,
+	protected val commandLine: CommandLine,
 	eventBus: EventBus
 ) : AbstractApplication(eventBus), DesktopApplication {
+
+	companion object {
+
+		/**
+		 * The name of [System] property than contains the absolute user data directory path.
+		 * Set during start-up and used by the log4j configuration in order to write the log file
+		 * in the user's data directory.
+		 */
+		private const val PROP_USER_DATA_DIRECTORY = "user.dataDirectory"
+
+		/** Defines the command line argument [Options] for this [DesktopApplication].*/
+		fun defineOptions(options: Options): Options {
+			options.addOption(Option.builder("d")
+				.required(false)
+				.longOpt("directory")
+				.desc("Home directory")
+				.hasArg()
+				.build())
+
+			options.addOption(Option.builder("dev")
+				.required(false)
+				.longOpt("developer")
+				.desc("Run in developer mode")
+				.hasArg(false)
+				.build())
+
+			return options
+		}
+
+		fun parseCommandLine(args: Array<String>, options: Options, programName: String): CommandLine {
+			var cmdLine: CommandLine? = null
+			try {
+				cmdLine = DefaultParser().parse(options, args)!!
+			} catch (x: ParseException) {
+				System.err.println("Error while parsing options: ${x.message}")
+				HelpFormatter().printHelp(programName, options)
+				exitProcess(1)
+			}
+			return cmdLine
+		}
+
+		fun determineUserDataDirectoryPath(commandLine: CommandLine, systemName: String): Path {
+			val path = if (commandLine.hasOption("d")) {
+				FileSystems.getDefault().getPath(commandLine.getOptionValue("d"))
+			} else {
+				FileSystems.getDefault().getPath(getDefaultUserDataDirectory(), systemName)
+			}
+			val absolutePath = path.toAbsolutePath().toString()
+			System.setProperty(PROP_USER_DATA_DIRECTORY, absolutePath)
+			return path
+		}
+
+		private fun getDefaultUserDataDirectory(): String {
+			return when {
+				SystemUtils.IS_OS_MAC -> System.getProperty("user.home") + "/Library/Application Support"
+				SystemUtils.IS_OS_WINDOWS -> System.getenv("APPDATA")
+				SystemUtils.IS_OS_UNIX -> System.getProperty("user.home")
+				else -> System.getProperty("user.dir")
+			}
+		}
+	}
 
 	// Must not be in companion object due to Module and LogSystem bootstrapping order
 	private val LOG by logger(AbstractDesktopApplication::class)
 
-	protected val commandLine: CommandLine = readCommandLine(args)
-
-	override val userDataDirectoryPath: Path = determineUserDataDirectoryPath()
+	override val userDataDirectoryPath: Path = determineUserDataDirectoryPath(commandLine, systemName)
 
 	override val mostRecentSavables: SavableHistory = SavableHistory()
 
@@ -52,6 +107,8 @@ abstract class AbstractDesktopApplication(
 		}
 
 	init {
+		LOG.info(("Using user data dictionary $userDataDirectoryPath"))
+		consumeCommandLine(commandLine)
 		loadSettings()
 	}
 
@@ -145,27 +202,6 @@ abstract class AbstractDesktopApplication(
 	}
 
 	/**
-	 * Defines the command line argument [Options] for this [DesktopApplication].
-	 * This implementation defines an option for the 'home directory'. Subclasses can overwrite this method
-	 * to add additional options, or to replace it with others.
-	 */
-	protected open fun defineOptions(options: Options) {
-		options.addOption(Option.builder("d")
-			.required(false)
-			.longOpt("directory")
-			.desc("Home directory")
-			.hasArg()
-			.build())
-
-		options.addOption(Option.builder("dev")
-			.required(false)
-			.longOpt("developer")
-			.desc("Run in developer mode")
-			.hasArg(false)
-			.build())
-	}
-
-	/**
 	 * Called by this [AbstractDesktopApplication] after the options have been parsed.
 	 * This implementation does nothing. Subclasses can overwrite this method in order to consume and use
 	 * the provided [Options].
@@ -176,40 +212,6 @@ abstract class AbstractDesktopApplication(
 			User.developer()
 		} else {
 			User.anybody()
-		}
-	}
-
-	private fun readCommandLine(args: Array<String>): CommandLine {
-		val options = Options()
-		defineOptions(options)
-		var cmdLine: CommandLine? = null
-		try {
-			cmdLine = DefaultParser().parse(options, args)!!
-			consumeCommandLine(cmdLine)
-		} catch (x: ParseException) {
-			LOG.error("Error while parsing options: ${x.message}")
-			HelpFormatter().printHelp(displayName, options)
-			exitProcess(1)
-		}
-		return cmdLine
-	}
-
-	private fun determineUserDataDirectoryPath(): Path {
-		val path = if (commandLine.hasOption("d")) {
-			FileSystems.getDefault().getPath(commandLine.getOptionValue("d"))
-		} else {
-			FileSystems.getDefault().getPath(getDefaultUserDataDirectory(), systemName)
-		}
-		LOG.info("Using user data directory ${path.toAbsolutePath()}")
-		return path
-	}
-
-	private fun getDefaultUserDataDirectory(): String {
-		return when {
-			SystemUtils.IS_OS_MAC -> System.getProperty("user.home") + "/Library/Application Support"
-			SystemUtils.IS_OS_WINDOWS -> System.getenv("APPDATA")
-			SystemUtils.IS_OS_UNIX -> System.getProperty("user.home")
-			else -> System.getProperty("user.dir")
 		}
 	}
 

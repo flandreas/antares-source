@@ -47,10 +47,10 @@ import javax.swing.plaf.FontUIResource
  * implemented using Swing classes.
  */
 class AntaresSwing(
-	args: Array<String>,
+	commandLine: CommandLine,
 	eventBus: EventBus = BaseModule.eventBus,
 	private val viewManager: ViewManager = DrawViewModule.viewManager
-) : AbstractDesktopApplicationSwing(args, eventBus), Antares {
+) : AbstractDesktopApplicationSwing(commandLine, eventBus), Antares {
 
 	private val LOG by logger(AntaresSwing::class)
 
@@ -59,14 +59,39 @@ class AntaresSwing(
 		private const val PROP_APPLICATION_PROJECT = "application.project"
 		private val DEF_LIBRARY_UUID = UUID("6707f981-110d-4629-a0bf-c35a4688025c")
 
+		fun defineOptions(options: Options): Options {
+			AbstractDesktopApplication.defineOptions(options)
+
+			options.addOption(Option.builder("t")
+				.required(false)
+				.longOpt("theme")
+				.desc("Theme")
+				.hasArg()
+				.build())
+
+			options.addOption(Option.builder("l")
+				.required(false)
+				.longOpt("syslib")
+				.desc("System library location")
+				.hasArg()
+				.build())
+
+			return options
+		}
+
+
 		@JvmStatic
 		fun main(args: Array<String>) {
 			System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS")
 			System.setProperty("apple.laf.useScreenMenuBar", "true")
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Antares")
 			UiUtil.setUIFont(FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size))
+
+			val commandLine = parseCommandLine(args, defineOptions(Options()), Antares.SYSTEM_NAME)
+			determineUserDataDirectoryPath(commandLine, Antares.SYSTEM_NAME)
+
 			BaseModuleJvm.require()
-			AntaresSwing(args).start()
+			AntaresSwing(commandLine).start()
 		}
 	}
 	private val iconPath = "img/Logo64.png"
@@ -160,24 +185,6 @@ class AntaresSwing(
 		systemLibraryDirectoryPath?.let {
 			LOG.info("Using system libraries in $systemLibraryDirectoryPath")
 		}
-	}
-
-	override fun defineOptions(options: Options) {
-		super.defineOptions(options)
-
-		options.addOption(Option.builder("t")
-			.required(false)
-			.longOpt("theme")
-			.desc("Theme")
-			.hasArg()
-			.build())
-
-		options.addOption(Option.builder("l")
-			.required(false)
-			.longOpt("syslib")
-			.desc("System library location")
-			.hasArg()
-			.build())
 	}
 
 	override fun consumeCommandLine(commandLine: CommandLine) {

@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import org.apache.commons.cli.CommandLine
 import java.awt.Image
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
@@ -27,9 +28,9 @@ import javax.swing.SwingUtilities
 import javax.swing.filechooser.FileFilter
 
 abstract class AbstractDesktopApplicationSwing(
-	args: Array<String>,
+	commandLine: CommandLine,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractDesktopApplication(args, eventBus) {
+) : AbstractDesktopApplication(commandLine, eventBus) {
 
 	protected lateinit var mainFrame: AbstractApplicationFrame
 
