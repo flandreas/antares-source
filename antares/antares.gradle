@@ -46,3 +46,29 @@ dependencies {
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testImplementation "io.mockk:mockk:$mockk_version"
 }
+
+task deploy(type: Exec, dependsOn: [assemble]) {
+    def nativeType
+    if (System.properties['os.name'].toLowerCase().contains('windows'))
+        nativeType = 'msi'
+    if (System.properties['os.name'].toLowerCase().contains('mac'))
+        nativeType = 'pkg'
+    if (System.properties['os.name'].toLowerCase().contains('linux'))
+        nativeType = 'rpm'
+
+    workingDir project.projectDir
+    commandLine = [
+            'javapackager',
+            '-deploy',
+            '-nosign',
+            '-native', nativeType,
+            '-outdir', "${buildDir}/distribution",
+            '-outfile', project.name,
+            '-name', 'Antares',
+            '-appclass', "ch.scorpion.antares.AntaresSwing",
+            '-srcdir', "build/libs",
+            '-srcfiles', "antares-all.jar",
+            '-BappVersion=0.1',
+            '-Bicon=jvm/rsc/antares.icns'
+    ]
+}
