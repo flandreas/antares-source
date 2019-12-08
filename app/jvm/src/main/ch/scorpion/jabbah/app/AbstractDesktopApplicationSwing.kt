@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.preferences.PreferencesDialogPanel
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.view.CanvasJvm
@@ -26,6 +27,8 @@ import javax.swing.JFileChooser
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import javax.swing.filechooser.FileFilter
+import com.apple.eawt.Application
+import org.apache.commons.lang3.SystemUtils
 
 abstract class AbstractDesktopApplicationSwing(
 	commandLine: CommandLine,
@@ -39,6 +42,9 @@ abstract class AbstractDesktopApplicationSwing(
 	override val applicationDataChanged: Boolean get() = mainFrame.applicationDataChanged
 
 	override fun start() {
+		if (SystemUtils.IS_OS_MAC) {
+			installMacOSHandlers()
+		}
 		SwingUtilities.invokeLater {
 			init()
 			mainFrame.addWindowListener(object : WindowAdapter() {
@@ -86,11 +92,13 @@ abstract class AbstractDesktopApplicationSwing(
 
 	override fun init() {
 		super.init()
+
 		mainFrame = createMainFrame()
 		mainFrame.jMenuBar = createMenuBarBuilder().menuBar
+
 		DrawViewModule.viewManager.activeView = mainFrame.editor.view
 		BusyHandler.register(mainFrame, null)
-		installTaskbarIcon()
+
 		SwingUtilities.invokeLater {
 			openInitialSavable()
 		}
@@ -165,7 +173,27 @@ abstract class AbstractDesktopApplicationSwing(
 		return SimpleApplicationFrame(this, editor, emptyList())
 	}
 
-	private fun installTaskbarIcon() {
-		//Taskbar.getTaskbar().iconImage = taskbarIcon
+	private fun installMacOSHandlers() {
+		installMacOSAboutHandler()
+		installMacOSQuitHandler()
+		installMacOSPreferencesHandler()
+	}
+
+	private fun installMacOSAboutHandler() {
+		Application.getApplication().setAboutHandler {
+			AboutPanel.showAsDialog(this)
+		}
+	}
+
+	private fun installMacOSQuitHandler() {
+		Application.getApplication().setQuitHandler {
+			_, _ -> this.quit()
+		}
+	}
+
+	private fun installMacOSPreferencesHandler() {
+		Application.getApplication().setPreferencesHandler {
+			PreferencesDialogPanel.showAsDialog(mainFrame)
+		}
 	}
 }

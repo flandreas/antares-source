@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.preferences.PreferencesAction
 import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.edit.app.*
+import org.apache.commons.lang3.SystemUtils
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JFrame
 import javax.swing.JMenu
@@ -49,18 +50,22 @@ open class MenuBarBuilder(
     }
 
     protected open fun fillFileMenu(menu: JMenu) {
-	    menu.add(JMenuItem(ActionWrapperSwing(AboutAction(frame.application))))
-	    menu.addSeparator()
+	    if (!SystemUtils.IS_OS_MAC) {
+		    menu.add(JMenuItem(ActionWrapperSwing(AboutAction(frame.application))))
+		    menu.addSeparator()
+	    }
 	    menu.add(JMenuItem(ActionWrapperSwing(NewFileAction(frame.application))))
 	    menu.add(JMenuItem(ActionWrapperSwing(OpenFileAction(frame.application))))
         menu.add(openRecentMenu)
         menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(frame.application))))
 	    menu.add(JMenuItem(ActionWrapperSwing(SaveFileAsAction(frame.application))))
-	    menu.addSeparator()
-	    menu.add(JMenuItem(ActionWrapperSwing(PreferencesAction())))
-        menu.addSeparator()
         menu.add(JMenuItem(ActionWrapperSwing(CloseFileAction(frame.application))))
-        menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))
+	    if (!SystemUtils.IS_OS_MAC) {
+		    menu.addSeparator()
+		    menu.add(JMenuItem(ActionWrapperSwing(PreferencesAction())))
+	        menu.addSeparator()
+		    menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))
+	    }
     }
 
     protected open fun fillEditMenu(menu: JMenu) {

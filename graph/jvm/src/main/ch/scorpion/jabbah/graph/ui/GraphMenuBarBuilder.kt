@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.usecase.*
+import org.apache.commons.lang3.SystemUtils
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JMenu
 import javax.swing.JMenuBar
@@ -44,17 +45,21 @@ open class GraphMenuBarBuilder(
 	}
 
 	override fun fillFileMenu(menu: JMenu) {
-		menu.add(JMenuItem(ActionWrapperSwing(AboutAction(frame.application))))
-		menu.addSeparator()
+		if (!SystemUtils.IS_OS_MAC) {
+			menu.add(JMenuItem(ActionWrapperSwing(AboutAction(frame.application))))
+			menu.addSeparator()
+		}
 		menu.add(JMenuItem(ActionWrapperSwing(ShowProjectsDialogAction(frame))))
 		menu.add(JMenuItem(ActionWrapperSwing(ShowLibrariesDialogAction(frame))))
 		menu.add(openRecentMenu)
 		menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(frame.application))))
 		menu.addSeparator()
 		menu.add(JMenuItem(ActionWrapperSwing(GraphStatisticsAction())))
-		menu.add(JMenuItem(ActionWrapperSwing(PreferencesAction())))
-		menu.addSeparator()
-		menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))
+		if (!SystemUtils.IS_OS_MAC) {
+			menu.add(JMenuItem(ActionWrapperSwing(PreferencesAction())))
+			menu.addSeparator()
+			menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))
+		}
 	}
 
 	override fun fillEditMenu(menu: JMenu) {
