@@ -179,7 +179,7 @@ class DynamicTreeNode(
 	 * @return the children of the receiver as an enumeration.
 	 */
 	protected fun primGetChildren(): Enumeration<TreeNode> {
-		return super.children()
+		return super.children() as Enumeration<TreeNode>
 	}
 
 	@Synchronized

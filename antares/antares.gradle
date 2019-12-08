@@ -5,6 +5,15 @@ plugins {
     id 'java'
 }
 
+repositories {
+    flatDir {
+        dirs '../lib'
+    }
+
+    mavenCentral()
+    jcenter()
+}
+
 application {
     mainClassName = 'ch.scorpion.antares.AntaresSwing'
     applicationDefaultJvmArgs = ['-Duser.language=de',  '-Xdock:name=Antares']
@@ -22,12 +31,6 @@ sourceSets {
     test.kotlin.srcDirs += 'shared/src/test'
     test.resources.srcDirs += 'shared/rsc'
     test.kotlin.srcDirs += 'jvm/src/test'
-}
-
-repositories {
-    flatDir {
-        dirs '../lib'
-    }
 }
 
 dependencies {

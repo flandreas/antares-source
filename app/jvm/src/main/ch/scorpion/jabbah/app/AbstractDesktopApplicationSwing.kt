@@ -18,7 +18,6 @@ import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import java.awt.Image
-import java.awt.Taskbar
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.io.File
@@ -166,6 +165,6 @@ abstract class AbstractDesktopApplicationSwing(
 	}
 
 	private fun installTaskbarIcon() {
-		Taskbar.getTaskbar().iconImage = taskbarIcon
+		//Taskbar.getTaskbar().iconImage = taskbarIcon
 	}
 }

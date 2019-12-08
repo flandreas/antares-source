@@ -22,7 +22,7 @@ apply plugin: 'org.asciidoctor.convert'
 allprojects {
 	repositories {
 		mavenCentral()
-	}
+    }
 }
 
 asciidoctor {

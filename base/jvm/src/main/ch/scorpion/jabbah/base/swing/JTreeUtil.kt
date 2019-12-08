@@ -43,11 +43,20 @@ object JTreeUtil {
 	}
 
 	fun expandAll(node: TreeNode) {
-		for (child in node.children().iterator()) {
+		val children = node.children()
+		while (children.hasMoreElements()) {
+			val child = children.nextElement() as TreeNode
+			if (child.childCount > 0) {
+				JTreeUtil.expandAll(child)
+			}
+		}
+		/*
+		for (child in node.children()) {
 			if (child.childCount > 0) {
 				expandAll(child)
 			}
 		}
+		*/
 	}
 
 	fun expandAll(tree: JTree) {
