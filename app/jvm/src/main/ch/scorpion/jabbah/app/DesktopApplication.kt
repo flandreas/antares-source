@@ -31,5 +31,7 @@ interface DesktopApplication : Application {
 	 */
 	fun openFrom(identification: String): Boolean
 
+	fun exportLogfile(destinationPath: String)
+
 	fun quit()
 }

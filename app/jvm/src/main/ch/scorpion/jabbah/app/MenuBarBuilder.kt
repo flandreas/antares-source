@@ -60,8 +60,9 @@ open class MenuBarBuilder(
         menu.add(JMenuItem(ActionWrapperSwing(SaveFileAction(frame.application))))
 	    menu.add(JMenuItem(ActionWrapperSwing(SaveFileAsAction(frame.application))))
         menu.add(JMenuItem(ActionWrapperSwing(CloseFileAction(frame.application))))
+	    menu.addSeparator()
+	    menu.add(JMenuItem(ActionWrapperSwing(ExportLogfileAction(frame.application))))
 	    if (!SystemUtils.IS_OS_MAC) {
-		    menu.addSeparator()
 		    menu.add(JMenuItem(ActionWrapperSwing(PreferencesAction())))
 	        menu.addSeparator()
 		    menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))

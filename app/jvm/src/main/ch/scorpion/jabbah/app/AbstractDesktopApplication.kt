@@ -5,8 +5,10 @@ import ch.scorpion.jabbah.app.user.User
 import ch.scorpion.jabbah.base.LOG_SYSTEM
 import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
@@ -15,12 +17,15 @@ import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.io.*
 import org.apache.commons.cli.*
 import org.apache.commons.lang3.SystemUtils
+import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
+import java.util.zip.ZipOutputStream
 import kotlin.system.exitProcess
 
 /** Abstract base implementation of the [DesktopApplication] interface. */
@@ -32,11 +37,18 @@ abstract class AbstractDesktopApplication(
 	companion object {
 
 		/**
-		 * The name of [System] property than contains the absolute user data directory path.
+		 * The name of the [System] property than contains the absolute user data directory path.
 		 * Set during start-up and used by the log4j configuration in order to write the log file
 		 * in the user's data directory.
 		 */
 		private const val PROP_USER_DATA_DIRECTORY = "user.dataDirectory"
+
+		/**
+		 * The name of the [System] property that contains the log file name.
+		 * Set during start-up and used by the log4j configuration as well as the [Action] for exporting
+		 * the log file.
+		 */
+		private const val PROP_LOGFILE_NAME = "system.logFile"
 
 		/** Defines the command line argument [Options] for this [DesktopApplication].*/
 		fun defineOptions(options: Options): Options {
@@ -93,6 +105,8 @@ abstract class AbstractDesktopApplication(
 	// Must not be in companion object due to Module and LogSystem bootstrapping order
 	private val LOG by logger(AbstractDesktopApplication::class)
 
+	private val logfileName: String get() = "$systemName.log"
+
 	override val userDataDirectoryPath: Path = determineUserDataDirectoryPath(commandLine, systemName)
 
 	override val mostRecentSavables: SavableHistory = SavableHistory()
@@ -108,6 +122,7 @@ abstract class AbstractDesktopApplication(
 
 	init {
 		LOG.info(("Using user data dictionary $userDataDirectoryPath"))
+		System.setProperty(PROP_LOGFILE_NAME, logfileName)
 		consumeCommandLine(commandLine)
 		loadSettings()
 	}
@@ -178,6 +193,16 @@ abstract class AbstractDesktopApplication(
 			}
 		}
 		return false
+	}
+
+	override fun exportLogfile(destinationPath: String) {
+		LOG.debug("Exporting log file to $destinationPath")
+		FileOutputStream(destinationPath).use {output ->
+			ZipOutputStream(output).use {
+				val fileToZip = File(Paths.get(userDataDirectoryPath.toAbsolutePath().toString(), logfileName).toUri())
+				ZipUtil.zipFile(fileToZip, fileToZip.name, it)
+			}
+		}
 	}
 
 	/** ---- [AbstractDesktopApplication] */
