@@ -142,7 +142,7 @@ object AntaresViewModule : AbstractModule() {
 	}
 
 	private fun customizeProperties(properties: Properties) {
-		properties.set(Look.PROP_FILL_BASIC_COMPONENTS, false)
+		properties.set(Look.PROP_FILL_BASIC_COMPONENTS, true)
 		Look.initialize(BaseModule.eventBus)
 
 		properties.set(Style.PROP_FOREGROUND_COLOR, Themes.get<GraphTheme>().vertice.color.foregroundColor)

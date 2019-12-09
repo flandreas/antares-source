@@ -44,11 +44,11 @@ abstract class AbstractDesktopApplication(
 		private const val PROP_USER_DATA_DIRECTORY = "user.dataDirectory"
 
 		/**
-		 * The name of the [System] property that contains the log file name.
+		 * The name of the [System] property that contains the absolute path of the log file.
 		 * Set during start-up and used by the log4j configuration as well as the [Action] for exporting
 		 * the log file.
 		 */
-		private const val PROP_LOGFILE_NAME = "system.logFile"
+		private const val PROP_LOGFILE_PATH = "system.logFile"
 
 		/** Defines the command line argument [Options] for this [DesktopApplication].*/
 		fun defineOptions(options: Options): Options {
@@ -89,6 +89,7 @@ abstract class AbstractDesktopApplication(
 			}
 			val absolutePath = path.toAbsolutePath().toString()
 			System.setProperty(PROP_USER_DATA_DIRECTORY, absolutePath)
+			System.setProperty(PROP_LOGFILE_PATH, Paths.get(absolutePath, calculateLogfileName(systemName)).toString())
 			return path
 		}
 
@@ -100,12 +101,14 @@ abstract class AbstractDesktopApplication(
 				else -> System.getProperty("user.dir")
 			}
 		}
+
+		private fun calculateLogfileName(systemName: String): String = "$systemName.log"
 	}
 
 	// Must not be in companion object due to Module and LogSystem bootstrapping order
 	private val LOG by logger(AbstractDesktopApplication::class)
 
-	private val logfileName: String get() = "$systemName.log"
+	private val logfileName: String get() = calculateLogfileName(systemName)
 
 	override val userDataDirectoryPath: Path = determineUserDataDirectoryPath(commandLine, systemName)
 
@@ -122,7 +125,6 @@ abstract class AbstractDesktopApplication(
 
 	init {
 		LOG.info(("Using user data dictionary $userDataDirectoryPath"))
-		System.setProperty(PROP_LOGFILE_NAME, logfileName)
 		consumeCommandLine(commandLine)
 		loadSettings()
 	}

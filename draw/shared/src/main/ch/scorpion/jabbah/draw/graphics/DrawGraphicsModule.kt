@@ -44,7 +44,7 @@ object DrawGraphicsModule : AbstractModule() {
     /** ---- [DrawGraphicsModule] */
 
     private fun fillProperties(properties: Properties) {
-	    properties.set(DropShadow.PROP_SHADOW, true)
+	    properties.set(DropShadow.PROP_SHADOW, false)
 	    properties.set(DropShadow.PROP_OFFSET, 2)
     }
 

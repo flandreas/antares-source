@@ -28,7 +28,7 @@ class SidebarSplitPane(
 		/** The name in [Settings] (extending `propertyBaseName`) of the index of the open sidebar mainContent.*/
 		private const val OPEN_INDEX = "openIndex"
 
-		private const val DEF_SIDEBAR_SIZE = 200
+		private const val DEF_SIDEBAR_SIZE = 250
 
 		private fun getSplitPaneOrientation(location: SidebarPane.Location): Int {
 			return when (location) {

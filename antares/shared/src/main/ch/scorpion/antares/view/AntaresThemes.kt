@@ -50,7 +50,7 @@ object AntaresThemes {
 	private val TOOLTIP_STROKE = Stroke(1.0f)
 
 	fun install() {
-		Themes.register(blackAndWhite(), winter(), crt())
+		Themes.register(winter(), blackAndWhite(), crt())
 	}
 
 	private fun winter(): Theme {
