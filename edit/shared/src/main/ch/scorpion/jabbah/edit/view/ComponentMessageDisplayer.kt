@@ -29,6 +29,7 @@ import ch.scorpion.jabbah.edit.style.EditStyleType
  */
 class ComponentMessageDisplayer<T : Drawing<Component>>(
 	private val drawingView: DrawingView<T>,
+	private val displayGlobalMessages: Boolean,
 	private val eventBus: EventBus,
 	private val animator: Animator
 ) {
@@ -55,6 +56,10 @@ class ComponentMessageDisplayer<T : Drawing<Component>>(
 		if (msg.source != null && !drawingView.drawing.contains(msg.source)) {
 			return
 		}
+		if (msg.source == null &&!displayGlobalMessages) {
+			return
+		}
+
 		val text = Translations.getString(msg.messageKey)
 		val messageView = FlexibleTextView(
 			text = text,

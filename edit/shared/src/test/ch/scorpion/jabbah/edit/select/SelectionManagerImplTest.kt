@@ -31,6 +31,7 @@ class SelectionManagerImplTest {
 			drawing,
 			it,
 			{ AffineTransformJvm() },
+			true,
 			EditSelectModule.selectionManagerFactory,
 			EditHighlightModule.highlighterFactory,
 			BaseModule.eventBus,

@@ -33,6 +33,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
     drawing: T,
     canvas: Canvas,
     transformFactory: () -> AffineTransform = { System.get().createAffineTransform() },
+    displayGlobalMessages: Boolean = false,
     private val selectionManagerFactory: SelectionManagerFactory = EditSelectModule.selectionManagerFactory,
     private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,
     eventBus: EventBus = BaseModule.eventBus,
@@ -44,7 +45,8 @@ class DrawingViewImpl<T: Drawing<Component>>(
     private var drawableDrawer: DrawableDrawer<Component> = DrawingDrawer()
 
     /** Displays [ComponentMessage]s from [Component]s of the current [Drawing]. */
-    private val componentMessageDisplayer = ComponentMessageDisplayer(this, eventBus, animator)
+    private val componentMessageDisplayer = ComponentMessageDisplayer(
+	    drawingView = this, displayGlobalMessages = displayGlobalMessages, eventBus = eventBus, animator = animator)
 
 	private val preferenceChangeHandler: (PreferencesChangedEvent) -> Unit = {
 		invalidate()

@@ -18,8 +18,11 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
+import ch.scorpion.jabbah.edit.view.ComponentMessageDisplayer
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
@@ -43,7 +46,10 @@ import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCreator
-import java.awt.*
+import java.awt.BorderLayout
+import java.awt.Container
+import java.awt.Dimension
+import java.awt.LayoutManager
 import javax.swing.JComponent
 import javax.swing.JLayeredPane
 import javax.swing.JPanel
@@ -113,6 +119,9 @@ class GraphNavigationPanel(
 
 	private val extension = extensionFactory.invoke(this)
 
+	private val globalMessageDisplayer: ComponentMessageDisplayer<Drawing<Component>>? =
+		if (isRoot) ComponentMessageDisplayer(drawingView as DrawingView<Drawing<Component>>, true, eventBus, animator) else null
+
 	val showsNavigationRoot: Boolean get() = navigationStackViewController.navigationStack.size == 1
 
 	init {
@@ -148,6 +157,7 @@ class GraphNavigationPanel(
 		graphViewUsecaseExecutionHandler.dispose()
 
 		scenarioDetector?.dispose()
+		globalMessageDisplayer?.dispose()
 
 		eventBus.unregister(OpenSubGraphRequest::class, openSubGraphRequestHandler)
 		eventBus.unregister(NavigationStackEvent::class, navigationStackEventHandler)
@@ -186,7 +196,6 @@ class GraphNavigationPanel(
 		scenarioDetector?.dispose()
 		scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus, currentSystemSpeedCategory)
 		UiUtil.invokeLater(Runnable { drawingView.navigator.fitMaxNormal() })
-
 	}
 
 	private fun getRootEntry(): NavigationStackEntry<GraphView<GraphElementView<*>>> =
@@ -427,11 +436,11 @@ class GraphNavigationPanel(
 
 		override fun minimumLayoutSize(parent: Container?): Dimension = Dimension()
 
-		override fun addLayoutComponent(name: String?, comp: Component?) {
+		override fun addLayoutComponent(name: String?, comp: java.awt.Component?) {
 			// empty
 		}
 
-		override fun removeLayoutComponent(comp: Component?) {
+		override fun removeLayoutComponent(comp: java.awt.Component?) {
 			// empty
 		}
 	}
