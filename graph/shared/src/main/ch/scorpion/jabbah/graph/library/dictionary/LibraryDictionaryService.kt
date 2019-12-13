@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library.dictionary
 
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryProperties
@@ -25,7 +26,7 @@ class LibraryDictionaryService(
 		return dictionary.getLibraryNames()
 	}
 
-	fun existsName(name: String): Boolean = dictionary.existsName(name)
+	fun existsName(name: TranslatableText, except: UUID? = null): Boolean = dictionary.existsName(name, except)
 
 	fun contains(uuid: UUID): Boolean = dictionary.contains(uuid)
 
@@ -36,7 +37,7 @@ class LibraryDictionaryService(
 		store()
 	}
 
-	fun rename(library: Library, newName: String) {
+	fun rename(library: Library, newName: TranslatableText) {
 		dictionary.rename(library, newName)
 		store()
 	}

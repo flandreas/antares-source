@@ -1,13 +1,14 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.collection.Stack
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 
 /** A builder that helps to setup a [LibraryImpl] to be used for testing.*/
 class LibraryBuilder(
 	name: String,
 	libraryService: LibraryService,
-	library: Library = LibraryImpl(name = name, libraryService = libraryService)
+	library: Library = LibraryImpl(name = TranslatableText(name), libraryService = libraryService)
 ) {
 
 	val library: Library = library
@@ -25,7 +26,7 @@ class LibraryBuilder(
 
 	/** Creates a new [LibraryDirectory] in the current one and makes it the new current one.*/
 	fun addDirectory(name: String): LibraryBuilder {
-		val directory =library.libraryService.addFolder(library, name, stack.peek())
+		val directory =library.libraryService.addFolder(library, TranslatableText(name), stack.peek())
 		stack.push(directory)
 		return this
 	}

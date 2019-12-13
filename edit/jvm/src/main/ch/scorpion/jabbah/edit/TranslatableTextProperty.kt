@@ -2,11 +2,13 @@ package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.TranslatableTextPanel
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import java.awt.Color
 import java.awt.Component
+import java.awt.Frame
 import javax.swing.*
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.text.JTextComponent
@@ -60,7 +62,8 @@ class TranslatableTextPropertyRenderer(
 
 class TranslatableTextPropertyEditor(
 	private val propertyName: String,
-	private val multiline: (TranslatableText) -> Boolean = { _ -> false }
+	private val multiline: (TranslatableText) -> Boolean = { _ -> false },
+	rows: Int = 4
 ) : AbstractPropertyEditor() {
 
 	private val textComponent: JTextComponent
@@ -70,7 +73,7 @@ class TranslatableTextPropertyEditor(
 	init {
 		if (multiline.invoke(text)) {
 			textComponent = JTextArea()
-			textComponent.rows = 4
+			textComponent.rows = rows
 			textComponent.lineWrap = true
 			textComponent.isEditable = true
 			textComponent.border = null
@@ -101,19 +104,23 @@ class TranslatableTextPropertyEditor(
 		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
 
 		if (textComponent is JTextArea) {
-			val scrollPane = JScrollPane(textComponent)
-			scrollPane.alignmentY = Component.TOP_ALIGNMENT
-			scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-			scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
-			panel.add(scrollPane)
+			val scroll = UiUtil.decorateTextArea(textComponent)
+			textComponent.columns = 20
+			scroll.border = null
+			textComponent.border = UIManager.getBorder("TextField.border")
+			panel.add(scroll)
 		} else {
+			textComponent.alignmentY = Component.CENTER_ALIGNMENT
 			panel.add(textComponent)
 		}
 
-		button.alignmentY = Component.TOP_ALIGNMENT
-		button.icon = ImageIcon(TextPropertyEditor::class.java.getResource("/img/openInPopup-16.png"))
+		panel.border = textComponent.border
+		textComponent.border = null
+
+		button.alignmentY = Component.CENTER_ALIGNMENT
+		button.icon = ImageIcon(TextPropertyEditor::class.java.getResource("/img/translation-16.png"))
 		button.border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
-		button.toolTipText = Translations.getString("edit.action.editText.tooltip")
+		button.toolTipText = Translations.getString("edit.action.translateText.tooltip")
 		button.addActionListener { showDialog() }
 		panel.add(button)
 
@@ -122,6 +129,7 @@ class TranslatableTextPropertyEditor(
 
 	private fun showDialog() {
 		val newText = TranslatableTextPanel.showAsDialog(
+			parent = SwingUtilities.getWindowAncestor(button),
 			title = propertyName,
 			text = text,
 			textFieldRows = if (multiline.invoke(text)) 4 else 1

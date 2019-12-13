@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.project
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.Library
@@ -24,16 +25,21 @@ interface Project : Library {
 }
 
 class ProjectImpl(
-	name: String = "",
+	name: TranslatableText = TranslatableText(),
+	description: TranslatableText = TranslatableText(),
 	libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
 	storableCreator: StorableCreator = IOModule.storableCreator,
-	descriptionKey: String = "project.project.name"
+	objectTypeKey: String = "project.project.name"
 ) : LibraryImpl(
 	name = name,
+	description = description,
 	libraryService = libraryService,
 	storableCreator = storableCreator,
-	descriptionKey = descriptionKey
+	objectTypeKey = objectTypeKey
 ), Project {
+
+	constructor(name: String, description: String, libraryService: LibraryService)
+		: this(TranslatableText(name), TranslatableText(description), libraryService)
 
 	override var importedLibrary: UUID? = null
 

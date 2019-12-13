@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
@@ -50,8 +51,9 @@ class LibraryManagementService(
 
 	/** ---- [LibraryManagementService] interface */
 
-	/** Determines whether [name] already exists as the name of a stored [Library].*/
-	fun exists(name: String): Boolean = userDictionaryService.existsName(name) || systemDictionaryService.existsName(name)
+	/** Determines whether [name] already exists as the name of a stored [Library] in any language.*/
+	fun exists(name: TranslatableText, except: UUID? = null): Boolean
+		= userDictionaryService.existsName(name, except) || systemDictionaryService.existsName(name, except)
 
 	/** Returns all [LibraryDictionaryEntries][LibraryDictionaryEntry].*/
 	fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> {
@@ -72,9 +74,9 @@ class LibraryManagementService(
 	 */
 	fun create(properties: LibraryProperties, templateLibraryUuid: UUID?): Library {
 		if (exists(properties.name)) {
-			throw IllegalArgumentException("library name '${properties.name}' already exists")
+			throw IllegalArgumentException("library name '${properties.name.getTranslation()}' already exists")
 		}
-		LOG.debug("creating new library '${properties.name}' with template $templateLibraryUuid")
+		LOG.debug("creating new library '${properties.name.getTranslation()}' with template $templateLibraryUuid")
 
 		val library = if (templateLibraryUuid == null) {
 			val library = libraryFactory.createEmptyLibrary(properties)
@@ -101,9 +103,9 @@ class LibraryManagementService(
 		val library = libraryHolder.library
 		LOG.debug("updating library ${library.uuid}")
 
-		if (library.name != properties.name) {
-			if (exists(properties.name)) {
-				throw IllegalArgumentException("Library name '${properties.name}' already exists")
+		if (library.name.translation != properties.name) {
+			if (exists(properties.name, except = library.uuid)) {
+				throw IllegalArgumentException("Library name '${properties.name.getTranslation()}' already exists")
 			}
 			libraryService.renameLibrary(library, properties.name)
 			userDictionaryService.rename(library, properties.name)

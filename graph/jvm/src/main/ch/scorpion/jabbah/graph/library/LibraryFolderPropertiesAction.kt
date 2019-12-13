@@ -21,7 +21,7 @@ class LibraryFolderPropertiesAction(
 		while (true) {
 			text = TranslatableTextPanel.showAsDialog(
 				title = title,
-				text = selectedFolder.translatableName,
+				text = selectedFolder.name.translation,
 				textFieldColumns = 10)
 			if (text == null) {
 				return

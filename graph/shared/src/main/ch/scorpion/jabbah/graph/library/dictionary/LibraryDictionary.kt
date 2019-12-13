@@ -5,8 +5,11 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
+import ch.scorpion.jabbah.edit.model.text.description.Namable
+import ch.scorpion.jabbah.edit.model.text.description.NamableImpl
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.io.*
@@ -16,10 +19,6 @@ import ch.scorpion.jabbah.io.*
 * avoiding the need to read all [Libraries][Library] from persistent store to do this mapping.
 */
 class LibraryDictionary : Storable {
-
-	companion object {
-		private val LOG by logger(LibraryDictionary::class)
-	}
 
 	/** Maps a [UUID] of a [LibraryDictionaryEntry] to its [LibraryDictionaryEntry].*/
 	private val entries = mutableMapOf<UUID, LibraryDictionaryEntry>()
@@ -31,26 +30,31 @@ class LibraryDictionary : Storable {
 	fun contains(uuid: UUID): Boolean = entries.contains(uuid)
 
 	/** Returns the names of the stored [Libraries][Library].*/
-	fun getLibraryNames(): ImmutableList<String> = entries.values.map { it.name }.sorted().toImmutableList()
+	fun getLibraryNames(): ImmutableList<String> = entries.values.map { it.name.value }.sorted().toImmutableList()
 
 	/** Returns all [LibraryDirectoryEntries][LibraryDictionaryEntry] of this [LibraryDictionary].*/
 	fun getEntries(): ImmutableList<LibraryDictionaryEntry> = entries.values.toList().toImmutableList()
 
 	/** Returns the [UUID] of the [Library] with the specified name.*/
-	fun getUUIDofName(name: String): UUID = getEntryByName(name).uuid
+	//fun getUUIDofName(name: String): UUID = getEntryByName(name).uuid
 
-	/** Checks whether this [LibraryDictionary] contains a [Library] with the given name. */
-	fun existsName(name: String): Boolean = entries.values.any { it.name == name }
+	/** Checks whether this [LibraryDictionary] contains a [Library] with the given name in any language. */
+	fun existsName(name: TranslatableText, except: UUID?): Boolean =
+		entries.values
+			.filter { except == null || it.uuid != except }
+			.any { it.name.translation.isAnyEqualOf(name) }
 
 	/** Returns the name of the [Library] with the specified [UUID].*/
-	fun getNameOfUUID(uuid: UUID): String {
+	/*
+	fun getNameOfUUID(uuid: UUID): TranslatableText {
 		val entry = entries[uuid]
 		if (entry == null) {
 			LOG.error("requesting name of non-existing library with UUID $uuid")
 			throw IllegalArgumentException()
 		}
-		return entry.name
+		return entry.name.translation
 	}
+	*/
 
 	/** Adds the specified [Library] to this [LibraryDictionary]*/
 	fun add(library: Library) {
@@ -64,9 +68,9 @@ class LibraryDictionary : Storable {
 		entries.remove(uuid)
 	}
 
-	fun rename(library: Library, newName: String) {
-		if (entries[library.uuid]!!.name != newName) {
-			entries[library.uuid]!!.name = newName
+	fun rename(library: Library, newName: TranslatableText) {
+		if (entries[library.uuid]!!.name.translation != newName) {
+			entries[library.uuid]!!.name.translation = newName
 		}
 	}
 
@@ -74,14 +78,16 @@ class LibraryDictionary : Storable {
 		entries[library.uuid]!!.updateFrom(properties)
 	}
 
+	/*
 	private fun getEntryByName(name: String): LibraryDictionaryEntry {
-		val entry = entries.values.firstOrNull { it.name == name }
+		val entry = entries.values.firstOrNull { it.name.value == name }
 		if (entry == null) {
 			LOG.error("requesting entry of non-existing library with name $name")
 			throw IllegalArgumentException()
 		}
 		return entry
 	}
+	*/
 
 	/** ---- [Storable] interface */
 
@@ -111,27 +117,29 @@ class LibraryDictionary : Storable {
  * Represents an individual entry in [LibraryDictionary].
  * Contains information redundant to [Library] for faster access.
  */
-data class LibraryDictionaryEntry(
+class LibraryDictionaryEntry(
 	var uuid: UUID = System.get().createUUID(),
-	var name: String = "",
+	initialName: TranslatableText = TranslatableText(),
 	var author: UUID = System.get().createUUID(),
-	var description: String? = null
-) : Storable {
+	var initialDescription: TranslatableText = TranslatableText(),
+	private val namable: NamableImpl = NamableImpl(initialName),
+	private val describable: Describable = DescribableImpl(initialDescription)
+) : Storable, Namable by namable, Describable by describable {
 
 	companion object {
 		fun forLibrary(library: Library): LibraryDictionaryEntry {
 			return LibraryDictionaryEntry(
 				uuid = library.uuid,
-				name = library.name,
+				initialName = library.name.translation,
 				author = library.author,
-				description = library.description
+				initialDescription = library.description.translation
 			)
 		}
 	}
 
 	/** ---- [Any] */
 
-	override fun toString(): String = name
+	override fun toString(): String = name.translation.getTranslation()
 
 	/** ---- [Storable] interface */
 
@@ -143,21 +151,21 @@ data class LibraryDictionaryEntry(
 
 	override fun write(writer: StoreWriter) {
 		writer.writeString("uuid", uuid.toString())
-		writer.writeString("name", name)
+		name.write("name", writer)
 		writer.writeString("author", author.toString())
-		writer.writeOptionalString("desc", description)
+		description.write("desc", writer)
 	}
 
 	override fun read(reader: StoreReader) {
 		uuid = System.get().createUUID(reader.readString("uuid"))
-		name = reader.readString("name")
+		name.read("name", reader)
 		author = System.get().createUUID(reader.readString("author"))
-		description = reader.readOptionalString("desc")
+		description.read("desd", reader)
 	}
 
 	/** ---- [LibraryDictionaryEntry] */
 
 	fun updateFrom(properties: LibraryProperties) {
-		description = properties.description
+		description.translation = properties.description
 	}
 }

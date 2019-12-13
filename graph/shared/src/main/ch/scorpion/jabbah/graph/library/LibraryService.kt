@@ -45,13 +45,13 @@ data class LibraryDeletedEvent(val uuid: UUID)
 /** Posted on [EventBus] when a [Library] has been renamed.*/
 data class LibraryRenamedEvent(
 	val library: Library,
-	val oldName: String
+	val oldName: TranslatableText
 )
 
 /** Posted on [EventBus] when a [LibraryDirectory] has been renamed*/
 data class LibraryDirectoryRenamedEvent(
 	val directory: LibraryDirectory,
-	val oldName: String
+	val oldName: TranslatableText
 )
 
 /**
@@ -81,14 +81,10 @@ class LibraryService(
 
 	/** Loads the [Library] with the specified [UUID] from persistent store.*/
 	fun loadLibrary(uuid: UUID, isSystem: Boolean): Library {
-		try {
-			LOG.debug("Loading Library $uuid")
-			val library = persister(isSystem).loadLibrary(uuid)
-			library.bindLibraryItems()
-			return library
-		} catch (e: LibraryPersistenceServiceException) {
-			throw IllegalArgumentException("library $uuid not found")
-		}
+		LOG.debug("Loading Library $uuid")
+		val library = persister(isSystem).loadLibrary(uuid)
+		library.bindLibraryItems()
+		return library
 	}
 
 	/** Stores the specified [Library] in persistent store.*/
@@ -119,10 +115,10 @@ class LibraryService(
 	}
 
 	/** Renames a [Library] and makes the change persistent.*/
-	fun renameLibrary(library: Library, newName: String) {
+	fun renameLibrary(library: Library, newName: TranslatableText) {
 		LOG.debug("Renaming Library ${library.uuid} to '$newName'")
-		val oldName = library.name
-		library.name = newName
+		val oldName = library.name.translation
+		library.name.translation = newName
 		storeLibrary(library)
 		eventBus.post(LibraryRenamedEvent(library, oldName))
 	}
@@ -174,7 +170,7 @@ class LibraryService(
 	 * Posts a [LibraryItemAddedEvent] on this [LibraryService]'s [EventBus].
 	 * @return the created [LibraryDirectory]
 	 */
-	fun addFolder(library: Library, name: String, directory: LibraryDirectory): LibraryDirectory {
+	fun addFolder(library: Library, name: TranslatableText, directory: LibraryDirectory): LibraryDirectory {
 		LOG.debug("Adding new Folder '$name'")
 		val folder = LibraryFolder(name)
 		addLibraryItem(library, folder, directory)
@@ -200,8 +196,8 @@ class LibraryService(
 	 */
 	fun renameDirectory(directory: LibraryDirectory, newName: TranslatableText) {
 		LOG.debug("Renaming LibraryDirectory")
-		val oldName = directory.name
-		directory.translatableName = newName
+		val oldName = directory.name.translation
+		directory.name.translation = newName
 		storeLibrary(directory.library!!)
 		eventBus.post(LibraryDirectoryRenamedEvent(directory, oldName))
 	}
@@ -228,10 +224,10 @@ class LibraryService(
 	fun updateContainerLibraryElement(library: Library, element: ContainerLibraryElement) {
 		LOG.debug("Updating ContainerLibraryElement")
 		element.metaGraph?.let {
-			val nameChanged = it.translatableName != element.translatableName
+			val nameChanged = it.translatableName != element.name.translation
 			storeContainerLibraryElement(library, it, element, doClone = false)
 			if (nameChanged) {
-				element.translatableName = it.translatableName
+				element.name.translation = it.translatableName
 				storeLibrary(library)
 			}
 			eventBus.post(LibraryItemUpdatedEvent(library, element))
@@ -291,13 +287,13 @@ class LibraryService(
 	 * Duplicates the specified user [Library] and stores the duplicate with the given new name.
 	 * @return the created duplicate user [Library]
 	 */
-	fun duplicateLibrary(library: Library, newName: String): Library {
+	fun duplicateLibrary(library: Library, newName: TranslatableText): Library {
 		LOG.debug("Duplicate Library ${library.uuid} to new name $newName")
 		val newUuid = System.get().createUUID()
 		userLibraryPersister.duplicateLibrary(library, newUuid)
 		val newLibrary = userLibraryPersister.loadLibrary(newUuid)
 		newLibrary.uuid = newUuid
-		newLibrary.name = newName
+		newLibrary.name.translation = newName
 		newLibrary.isSystem = false
 		storeLibrary(newLibrary)
 		return newLibrary
@@ -342,7 +338,7 @@ class LibraryService(
 	private fun createContainerLibraryElement(metaGraph: MetaGraph): ContainerLibraryElement {
 		return ContainerLibraryElement(
 			uuid = metaGraph.uuid,
-			name = metaGraph.name,
+			initialName = metaGraph.translatableName,
 			iconPath = null,
 			eventBus = eventBus)
 	}

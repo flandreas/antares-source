@@ -123,7 +123,7 @@ class LibraryCompositionPanel(
 		libraryManagementService
 			.getLibraryDirectoryEntries()
 			.filter { it.uuid != destinationLibrary.uuid }
-			.sortedBy { it.name }
+			.sortedBy { it.name.value }
 			.forEach { sourceLibraries.addItem(it) }
 	}
 

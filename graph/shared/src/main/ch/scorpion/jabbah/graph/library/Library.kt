@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.app.user.User
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 
@@ -13,13 +15,10 @@ import ch.scorpion.jabbah.graph.model.Graph
  *
  * Note that the name of the [Library] is maintained as the name of its root [LibraryDirectory].
  */
-interface Library : LibraryDirectory, MetaGraphRepository {
+interface Library : LibraryDirectory, MetaGraphRepository, Describable {
 
 	/** The universal unique ID of this [Library]. Used for referencing this [Library] from projects.*/
 	var uuid: UUID
-
-	/** Contains a short description describing the purpose of this [Library].*/
-	var description: String?
 
 	/**
 	 * Determines whether this [Library] is system build-in and can only be edited by the developer.
@@ -79,7 +78,10 @@ interface Library : LibraryDirectory, MetaGraphRepository {
  * Represents those properties of a [Library] that can be provided by the user when creating a [Library],
  * or that can be updated by the user on an existing [Library].
  */
-data class LibraryProperties(val name: String, val description: String? = null)
+data class LibraryProperties(
+	val name: TranslatableText = TranslatableText(),
+	val description: TranslatableText = TranslatableText()
+)
 
 /**
  * Posted by domain services on [EventBus] when the entire [LibraryProperties] have been changed.

@@ -3,13 +3,13 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.swing.EGBL
+import ch.scorpion.jabbah.edit.TranslatableTextPropertyEditor
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import java.awt.Component
+import java.awt.Dimension
 import java.awt.Frame
 import javax.swing.*
-import javax.swing.JPanel
-import java.awt.Dimension
-import javax.swing.JTextField
 import javax.swing.event.AncestorEvent
 import javax.swing.event.AncestorListener
 
@@ -21,7 +21,7 @@ class CreateLibraryPanel(
 	service: LibraryManagementService = LibraryModule.libraryManagementService
 ) : JPanel() {
 
-	data class CreateLibraryInfo(val libraryName: String, val templateUuid: UUID?)
+	data class CreateLibraryInfo(val name: TranslatableText, val templateUuid: UUID?)
 
 	companion object {
 
@@ -38,13 +38,15 @@ class CreateLibraryPanel(
 					JOptionPane.OK_CANCEL_OPTION,
 					JOptionPane.PLAIN_MESSAGE)
 				) {
-				JOptionPane.OK_OPTION -> CreateLibraryInfo(panel.nameField.text, panel.selectedTemplate!!.uuid)
+				JOptionPane.OK_OPTION -> CreateLibraryInfo(panel.nameField.value as TranslatableText, panel.selectedTemplate!!.uuid)
 				else -> null
 			}
 		}
 	}
 
-	private val nameField = JTextField()
+	private val nameLabel = Translations.getString("library.property.name.name")
+
+	private val nameField = TranslatableTextPropertyEditor(nameLabel)
 
 	private val templateComboBox = JComboBox<LibraryDictionaryEntry>()
 
@@ -54,9 +56,9 @@ class CreateLibraryPanel(
 		setupTemplateComboBox(service)
 		buildEGBLLayout()
 
-		nameField.addAncestorListener(object : AncestorListener {
+		(nameField.customEditor as JComponent).addAncestorListener(object : AncestorListener {
 			override fun ancestorAdded(event: AncestorEvent?) {
-				nameField.requestFocusInWindow()
+				nameField.customEditor.requestFocusInWindow()
 			}
 
 			override fun ancestorMoved(event: AncestorEvent?) {}
@@ -76,7 +78,7 @@ class CreateLibraryPanel(
 
 		EGBL.add(
 			this,
-			JLabel(Translations.getString("library.property.name.name") + ":"),
+			JLabel("$nameLabel:"),
 			0, 0,    // x, y
 			1, 1,    // width, height
 			0.0, 0.0,    // weightX, weightY
@@ -85,27 +87,27 @@ class CreateLibraryPanel(
 			0, inset, 0, 0
 		)
 
-		nameField.preferredSize = Dimension(200, nameField.preferredSize.height)
-		nameField.minimumSize = Dimension(200, nameField.preferredSize.height)
+		nameField.customEditor.preferredSize = Dimension(200, nameField.customEditor.preferredSize.height)
+		nameField.customEditor.minimumSize = Dimension(200, nameField.customEditor.preferredSize.height)
 		EGBL.add(
 			this,
-			nameField,
-			1, 0,    // x, y
-			EGBL.REMAINDER, 1,    // width, height
-			0.0, 0.0,    // weightX, weightY
-			EGBL.WEST,    // anchor
-			EGBL.NONE,    // fill
+			nameField.customEditor,
+			1, 0,
+			EGBL.REMAINDER, 1,
+			0.0, 0.0,
+			EGBL.WEST,
+			EGBL.NONE,
 			0, 10, 0, inset
 		)
 
 		EGBL.add(
 			this,
 			JLabel(Translations.getString("library.dialog.new.template.label") + ":"),
-			0, 1,    // x, y
-			1, 1,    // width, height
-			0.0, 0.0,    // weightX, weightY
-			EGBL.WEST,    // anchor
-			EGBL.NONE,    // fill
+			0, 1,
+			1, 1,
+			0.0, 0.0,
+			EGBL.WEST,
+			EGBL.NONE,
 			0, inset, 0, 0
 		)
 
@@ -125,11 +127,11 @@ class CreateLibraryPanel(
 		EGBL.add(
 			this,
 			filler,
-			10, 10, // x, y
-			EGBL.REMAINDER, EGBL.REMAINDER, // width, height
-			1.0, 1.0, // weightX, weightY
-			EGBL.NORTHWEST, // anchor
-			EGBL.BOTH    // fill
+			10, 10,
+			EGBL.REMAINDER, EGBL.REMAINDER,
+			1.0, 1.0,
+			EGBL.NORTHWEST,
+			EGBL.BOTH
 		)
 	}
 

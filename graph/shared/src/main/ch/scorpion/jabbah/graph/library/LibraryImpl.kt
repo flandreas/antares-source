@@ -4,11 +4,14 @@ import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.app.user.UserHolder
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
 import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 import ch.scorpion.jabbah.io.*
@@ -17,28 +20,33 @@ import ch.scorpion.jabbah.io.*
  * Standard implementation of the [Library] interface.
  */
 open class LibraryImpl(
-	properties: LibraryProperties = LibraryProperties(""),
+	properties: LibraryProperties = LibraryProperties(),
 	override val libraryService: LibraryService = LibraryModule.libraryService,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
-	private val descriptionKey: String = "library.library.name",
+	private val objectTypeKey: String = "library.library.name",
+	private val describable: Describable = DescribableImpl(),
 	userHolder: UserHolder = AppModule.userHolder
-) : Library, LibraryDirectory {
+) : Library, LibraryDirectory, Describable by describable {
 
 	constructor(
-		name: String = "",
+		name: TranslatableText = TranslatableText(),
 		libraryService: LibraryService = LibraryModule.libraryService,
 		storableCreator: StorableCreator = IOModule.storableCreator,
-		descriptionKey: String = "library.library.name",
+		objectTypeKey: String = "library.library.name",
+		description: TranslatableText = TranslatableText(),
 		userHolder: UserHolder = AppModule.userHolder
-	) : this(LibraryProperties(name), libraryService, storableCreator, descriptionKey, userHolder)
+	) : this(LibraryProperties(name, description), libraryService, storableCreator, objectTypeKey, DescribableImpl(), userHolder)
+
+	constructor(
+		name: String,
+		libraryService: LibraryService = LibraryModule.libraryService
+	) : this(TranslatableText(name), libraryService)
 
 	companion object {
 		private val LOG by logger(LibraryImpl::class)
 	}
 
 	override var uuid: UUID = System.get().createUUID()
-
-	override var description: String? = properties.description
 
 	override var isSystem: Boolean = false
 
@@ -49,6 +57,7 @@ open class LibraryImpl(
 	private var libraryFolder: LibraryFolder = LibraryFolder(properties.name)
 
 	init {
+		description.translation = properties.description
 		libraryFolder.bindTo(this)
 	}
 
@@ -59,16 +68,10 @@ open class LibraryImpl(
 	/** ---- [Any] */
 
 	override fun toString(): String {
-		return "${Translations.getString(descriptionKey)} \"$name\""
+		return "${Translations.getString(objectTypeKey)} \"${name.value}\""
 	}
 
 	/** ---- [LibraryDirectory] */
-
-	override var translatableName: TranslatableText
-		get() = libraryFolder.translatableName
-		set(value) {
-			libraryFolder.translatableName = value
-		}
 
 	override val size: Int get() = libraryFolder.size
 
@@ -100,11 +103,8 @@ open class LibraryImpl(
 
 	override val isFixed: Boolean get() = libraryFolder.isFixed
 
-	override var name: String
+	override val name: Name
 		get() = libraryFolder.name
-		set(value) {
-			libraryFolder.name = value
-		}
 
 	override val iconPath: String? get() = libraryFolder.iconPath
 
@@ -169,9 +169,7 @@ open class LibraryImpl(
 		writer.writeStorable("folder", libraryFolder)
 		writer.writeString("uuid", uuid.toString())
 		writer.writeString("author", author.toString())
-		if (StringUtils.isNotEmpty(description)) {
-			writer.writeString("desc", description!!)
-		}
+		description.write("desc", writer)
 		if (isSystem) {
 			writer.writeBoolean("system", isSystem)
 		}
@@ -184,7 +182,7 @@ open class LibraryImpl(
 		libraryFolder = reader.readStorable("folder") as LibraryFolder
 		uuid = System.get().createUUID(reader.readString("uuid"))
 		author = System.get().createUUID(reader.readString("author"))
-		description = reader.readOptionalString("desc")
+		description.read("desc", reader)
 		if (reader.hasAttribute("system")) {
 			isSystem = reader.readBoolean("system")
 		}
@@ -201,10 +199,10 @@ open class LibraryImpl(
 	/** ---- [Library] interface */
 
 	override var properties: LibraryProperties
-		get() = LibraryProperties(name, description)
+		get() = LibraryProperties(name.translation, description.translation)
 		set(value) {
-			name = value.name
-			description = value.description
+			name.translation = value.name
+			description.translation = value.description
 		}
 
 	override fun replaceContentsWith(libraryFolder: LibraryFolder) {

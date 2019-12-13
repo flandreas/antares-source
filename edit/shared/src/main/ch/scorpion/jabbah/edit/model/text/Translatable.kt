@@ -116,6 +116,10 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 
 	val isEmpty: Boolean get() = translations.isEmpty()
 
+	fun isAnyEqualOf(other: TranslatableText): Boolean {
+		return other.translations.any { getOptionalTranslation(it.key) == it.value.text }
+	}
+
 	/** Creates a new [TranslatableText] by adding the specified translation for the current system language.*/
 	fun withTranslation(text: String): TranslatableText {
 		return withTranslation(System.get().currentLanguage(), text)

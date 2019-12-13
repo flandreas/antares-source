@@ -3,6 +3,10 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.EGBL
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.edit.TranslatableTextPropertyEditor
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import java.awt.Component
+import java.awt.Dimension
 import java.awt.Frame
 import javax.swing.*
 
@@ -11,7 +15,7 @@ class LibraryPropertiesPanel(properties: LibraryProperties? = null) : JPanel() {
 
 	companion object {
 		fun showAsDialog(
-			parent: Frame = Frame.getFrames()[0],
+			parent: Component = Frame.getFrames()[0],
 			title: String,
 			properties: LibraryProperties? = null
 		): LibraryProperties? {
@@ -24,21 +28,25 @@ class LibraryPropertiesPanel(properties: LibraryProperties? = null) : JPanel() {
 					JOptionPane.OK_CANCEL_OPTION,
 					JOptionPane.PLAIN_MESSAGE)
 			) {
-				JOptionPane.OK_OPTION -> LibraryProperties(panel.nameField.text, panel.descField.text)
+				JOptionPane.OK_OPTION -> LibraryProperties(
+					panel.nameField.value as TranslatableText,
+					panel.descField.value as TranslatableText)
 				else -> null
 			}
 		}
 	}
 
-	private val nameField = JTextField()
-
-	private val descField = JTextArea()
+	private val nameLabel = Translations.getString("library.property.name.name")
+	private val descLabel = Translations.getString("library.property.desc.name")
+	private val nameField = TranslatableTextPropertyEditor(nameLabel)
+	private val descField = TranslatableTextPropertyEditor(descLabel, multiline = { true}, rows = 8)
 
 	init {
+		preferredSize = Dimension(400, 150)
 		buildUI()
 		properties?.let {
-			nameField.text = it.name
-			descField.text = it.description
+			nameField.value = it.name
+			descField.value = it.description
 		}
 	}
 
@@ -48,47 +56,45 @@ class LibraryPropertiesPanel(properties: LibraryProperties? = null) : JPanel() {
 
 		EGBL.add(
 			this,
-			JLabel(Translations.getString("library.property.name.name") + ":"),
-			0, 0,	// x, y
-			1, 1,	// width, height
-			0.0, 0.0,	// weightX, weightY
-			EGBL.WEST,	// anchor
-			EGBL.NONE,	// fill
+			JLabel("$nameLabel:"),
+			0, 0,
+			1, 1,
+			0.0, 0.0,
+			EGBL.WEST,
+			EGBL.NONE,
 			0, inset, 0, 0
 		)
 
 		EGBL.add(
 			this,
-			nameField,
-			1, 0,	// x, y
-			EGBL.REMAINDER, 1,	// width, height
-			0.0, 0.0,	// weightX, weightY
-			EGBL.WEST,	// anchor
-			EGBL.HORIZONTAL,	// fill
+			nameField.customEditor,
+			1, 0,
+			EGBL.REMAINDER, 1,
+			0.0, 0.0,
+			EGBL.WEST,
+			EGBL.HORIZONTAL,
 			0, inset, 0, 0
 		)
 
 		EGBL.add(
 			this,
-			JLabel(Translations.getString("library.property.desc.name") + ":"),
-			0, 1,	// x, y
-			1, 1,	// width, height
-			0.0, 0.0,	// weightX, weightY
-			EGBL.WEST,	// anchor
-			EGBL.NONE,	// fill
+			JLabel("$descLabel:"),
+			0, 1,
+			1, 1,
+			0.0, 0.0,
+			EGBL.WEST,
+			EGBL.NONE,
 			0, inset, 0, 0
 		)
 
-		descField.rows = 4
-		descField.columns = 20
 		EGBL.add(
 			this,
-			UiUtil.decorateTextArea(descField),
-			1, 1,	// x, y
-			EGBL.REMAINDER, 1,	// width, height
-			0.0, 0.0,	// weightX, weightY
-			EGBL.WEST,	// anchor
-			EGBL.HORIZONTAL,	// fill
+			descField.customEditor,
+			1, 1,
+			EGBL.REMAINDER, 1,
+			0.0, 0.0,
+			EGBL.WEST,
+			EGBL.HORIZONTAL,
 			0, inset, 0, 0
 		)
 
@@ -96,11 +102,11 @@ class LibraryPropertiesPanel(properties: LibraryProperties? = null) : JPanel() {
 		EGBL.add(
 			this,
 			filler,
-			10, 10, // x, y
-			EGBL.REMAINDER, EGBL.REMAINDER, // width, height
-			1.0, 1.0, // weightX, weightY
-			EGBL.NORTHWEST, // anchor
-			EGBL.BOTH    // fill
+			10, 10,
+			EGBL.REMAINDER, EGBL.REMAINDER,
+			1.0, 1.0,
+			EGBL.NORTHWEST,
+			EGBL.BOTH
 		)
 	}
 }

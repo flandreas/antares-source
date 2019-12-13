@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.UnimplementedLibraryDictionaryPersistenceService
@@ -26,7 +27,7 @@ object ProjectModule : AbstractModule() {
 
 	lateinit var projectManagementService: ProjectManagementService
 
-	val projectFactory: (String) -> Project = { ProjectImpl(name = it, libraryService = projectLibraryService.invoke(), descriptionKey = "project.project.name") }
+	val projectFactory: (TranslatableText) -> Project = { ProjectImpl(name = it, libraryService = projectLibraryService.invoke(), objectTypeKey = "project.project.name") }
 
 	override fun initialize() {
 		configureTypeMap(IOModule.typeMap)

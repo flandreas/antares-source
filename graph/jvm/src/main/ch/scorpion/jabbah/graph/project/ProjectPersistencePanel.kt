@@ -129,7 +129,7 @@ class ProjectPersistencePanel(
 		val list = DefaultListModel<LibraryDictionaryEntry>()
 		managementService
 			.getProjectDirectoryEntries()
-			.sortedBy { it.name }
+			.sortedBy { it.name.value }
 			.forEach { list.addElement(it) }
 		return list
 	}
@@ -175,11 +175,13 @@ class ProjectPersistencePanel(
 			LOG.debug("new project")
 			var properties: LibraryProperties?
 			while (true) {
-				properties = LibraryPropertiesPanel.showAsDialog(title = Translations.getString("project.dialog.new.dialog.title"))
+				properties = LibraryPropertiesPanel.showAsDialog(
+					parent = this@ProjectPersistencePanel,
+					title = Translations.getString("project.dialog.new.dialog.title"))
 				if (properties == null) {
 					return
 				}
-				if (StringUtils.isBlank(properties.name)) {
+				if (StringUtils.isBlank(properties.name.getTranslation())) {
 					if (JOptionPane.showConfirmDialog(
 							this@ProjectPersistencePanel,
 							Translations.getString("project.emptyName.msg"),
@@ -192,7 +194,7 @@ class ProjectPersistencePanel(
 				} else if (managementService.exists(properties.name)) {
 					if (JOptionPane.showConfirmDialog(
 							this@ProjectPersistencePanel,
-							Translations.getString("project.duplicate.msg", properties.name),
+							Translations.getString("project.duplicate.msg", properties.name.getTranslation()),
 							Translations.getString("project.dialog.new.name.dialog.title"),
 							JOptionPane.OK_CANCEL_OPTION,
 							JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
@@ -204,7 +206,7 @@ class ProjectPersistencePanel(
 				}
 			}
 
-			LOG.debug("creating new project '${properties!!.name}'")
+			LOG.debug("creating new project '${properties!!.name.getTranslation()}'")
 			managementService.open(managementService.create(properties))
 			closeHandler.invoke()
 		}

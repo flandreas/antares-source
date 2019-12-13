@@ -83,7 +83,7 @@ class LibraryPaneFx(
 					list.children.add(LibraryElementNode(component).node)
 				}
 			}
-			val pane= TitledPane(directory.name, list)
+			val pane = TitledPane(directory.name.value, list)
 			pane.isExpanded = false
 			nodes.add(pane)
 		}
@@ -132,7 +132,7 @@ class LibraryElementNode(
 		_node = HBox()
 		_node.alignment = Pos.CENTER_LEFT
 		_node.spacing = 10.0
-		_node.padding = Insets(3.0, 0.0,3.0, 0.0)
+		_node.padding = Insets(3.0, 0.0, 3.0, 0.0)
 
 		_node.children.addAll(canvas, label)
 	}

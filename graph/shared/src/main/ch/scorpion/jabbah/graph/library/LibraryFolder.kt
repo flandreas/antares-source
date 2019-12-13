@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
@@ -12,38 +11,20 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.io.*
 
 class LibraryFolder(
-	name: String? = null,
+	initialName: TranslatableText = TranslatableText(),
 	iconPath: String? = null,
 	val eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryItem(iconPath), LibraryDirectory {
+) : AbstractLibraryItem(initialName, iconPath), LibraryDirectory {
+
+	constructor(initialName: String): this(TranslatableText(initialName))
 
 	private val items: MutableList<LibraryItem> = mutableListOf()
 
-	override var translatableName = TranslatableText()
-
 	var defaultElementUUID: UUID? = null
-
-	/** ---- [Any] */
-
-	override fun toString(): String {
-		return name
-	}
 
 	/** ---- [AbstractLibraryItem] */
 
 	override val isFixed: Boolean get() = false
-
-	override var name: String
-		get() = translatableName.getTranslation()
-		set(value) {
-			if (StringUtils.isNotEmpty(value)) {
-				translatableName = translatableName.withTranslation(value)
-			}
-		}
-
-	init {
-		this.name = StringUtils.orEmpty(name)
-	}
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
@@ -67,8 +48,7 @@ class LibraryFolder(
 	override var storableId: Int = 0
 
 	override fun write(writer: StoreWriter) {
-		writer.writeStorables("name", translatableName.allTranslations())
-
+		name.write("name", writer)
 		if (defaultElementUUID != null) {
 			writer.writeString("defaultElement", defaultElementUUID.toString())
 		}
@@ -76,14 +56,7 @@ class LibraryFolder(
 	}
 
 	override fun read(reader: StoreReader) {
-		if (reader.hasAttribute("name")) {
-			// backward compatibility
-			name = reader.readString("name")
-		}
-		if (reader.hasElement("name")) {
-			translatableName = TranslatableText(reader.readStorables("name"))
-		}
-
+		name.read("name", reader)
 		if (reader.hasAttribute("defaultElement")) {
 			defaultElementUUID = UUID(reader.readString("defaultElement"))
 		}
@@ -141,7 +114,7 @@ class LibraryFolder(
 	}
 
 	override fun get(name: String): LibraryItem? {
-		return items.firstOrNull { it.name == name }
+		return items.firstOrNull { it.name.value == name }
 	}
 
 	override fun getItems(): ImmutableList<LibraryItem> {
@@ -195,7 +168,7 @@ class LibraryFolder(
 		var result: LibraryItem? = null
 
 		override fun visitEnter(node: Any): Boolean {
-			if (result == null && node is LibraryItem && node.name == name) {
+			if (result == null && node is LibraryItem && node.name.value == name) {
 				result = node
 				return false
 			}

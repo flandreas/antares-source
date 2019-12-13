@@ -10,7 +10,10 @@ import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
-import java.awt.*
+import java.awt.BorderLayout
+import java.awt.Component
+import java.awt.Dimension
+import java.awt.Font
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.event.WindowAdapter
@@ -149,7 +152,7 @@ class LibraryPersistencePanel(
 			while(true) {
 				info = CreateLibraryPanel.showAsDialog(service = service) ?: return
 
-				if (StringUtils.isBlank(info.libraryName)) {
+				if (StringUtils.isBlank(info.name.getTranslation())) {
 					if (JOptionPane.showConfirmDialog(
 						this@LibraryPersistencePanel,
 						Translations.getString("library.emptyName.msg"),
@@ -159,10 +162,10 @@ class LibraryPersistencePanel(
 					) {
 						return
 					}
-				} else if (service.exists(info.libraryName)) {
+				} else if (service.exists(info.name)) {
 					if (JOptionPane.showConfirmDialog(
 						this@LibraryPersistencePanel,
-						Translations.getString("library.duplicate.msg", info.libraryName),
+						Translations.getString("library.duplicate.msg", info.name.getTranslation()),
 						Translations.getString("library.dialog.new.name.dialog.title"),
 						JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
@@ -174,9 +177,9 @@ class LibraryPersistencePanel(
 				}
 			}
 
-			LOG.debug("creating new library '${info.libraryName}'")
+			LOG.debug("creating new library '${info.name.getTranslation()}'")
 			InvocationHandler.invoke {
-				service.open(service.create(LibraryProperties(info.libraryName), info.templateUuid))
+				service.open(service.create(LibraryProperties(info.name), info.templateUuid))
 				closeHandler.invoke()
 			}
 		}

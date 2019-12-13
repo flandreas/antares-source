@@ -138,6 +138,19 @@ class TranslatableTextTest {
 		assertNull(TranslatableText().getOptionalTranslation())
 		assertEquals("Tree", TranslatableText(English, "Tree").getOptionalTranslation())
 	}
+
+	@Test
+	fun shouldDetectAnyEqualTranslation() {
+		var text = TranslatableText()
+			.withTranslation(German, "Baum")
+			.withTranslation(English, "Tree")
+
+		assertTrue(text.isAnyEqualOf(TranslatableText().withTranslation(German, "Baum")))
+		assertFalse(text.isAnyEqualOf(TranslatableText().withTranslation(English, "True")))
+		assertFalse(text.isAnyEqualOf(TranslatableText().withTranslation(German, "Apfel")))
+		assertFalse(text.isAnyEqualOf(TranslatableText()))
+		assertFalse(TranslatableText().isAnyEqualOf(TranslatableText().withTranslation(German, "Baum")))
+	}
 }
 
 class ClassUsingTranslatable(text: TranslatableText? = null) : Storable {

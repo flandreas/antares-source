@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import java.awt.Frame
 import javax.swing.JOptionPane
 
@@ -28,7 +29,7 @@ class AddLibraryFolderAction(
         }
 
         val directory = libraryTreeView!!.getSelectedItem() as LibraryDirectory
-	    directory.library!!.libraryService.addFolder(directory.library!!, name, directory)
+	    directory.library!!.libraryService.addFolder(directory.library!!, TranslatableText(name), directory)
     }
 
 	override fun calculateEnabledness(): Boolean {

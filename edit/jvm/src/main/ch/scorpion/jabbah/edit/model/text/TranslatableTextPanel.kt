@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.swing.EGBL
 import ch.scorpion.jabbah.base.swing.UiUtil
+import java.awt.Component
 import java.awt.Frame
 import javax.swing.*
 import javax.swing.text.JTextComponent
@@ -28,7 +29,7 @@ class TranslatableTextPanel(
 		 * @return the edited [TranslatableText], or `null` if the dialog has been cancelled by the user
 		 */
 		fun showAsDialog(
-			parent: Frame = Frame.getFrames()[0],
+			parent: Component = Frame.getFrames()[0],
 			title: String,
 			text: TranslatableText,
 			textFieldRows: Int = 1,
@@ -122,7 +123,7 @@ class TranslatableTextPanel(
 
 		EGBL.add(
 			this,
-			JLabel("$textName ($currentLanguage):"),
+			JLabel("$currentLanguage:"),
 			0, 0,    // x, y
 			1, 1,    // width, height
 			0.0, 0.0,    // weightX, weightY
@@ -145,7 +146,7 @@ class TranslatableTextPanel(
 		if (needsAlternativeLangText) {
 			EGBL.add(
 				this,
-				JLabel("$textName ($alternativeLanguage):"),
+				JLabel("$alternativeLanguage:"),
 				0, 1,    // x, y
 				1, 1,    // width, height
 				0.0, 0.0,    // weightX, weightY

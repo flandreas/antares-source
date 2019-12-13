@@ -30,17 +30,14 @@ data class OpenContainerLibraryElementRequest(val element: ContainerLibraryEleme
  */
 class ContainerLibraryElement(
 	var uuid: UUID = UUID("undefined"),
-	name: String = "",
+	initialName: TranslatableText = TranslatableText(),
 	iconPath: String? = null,
 	val eventBus: EventBus = BaseModule.eventBus
-) : LibraryElement(iconPath) {
+) : LibraryElement(initialName, iconPath) {
 
 	companion object {
 		val LOG by logger(ContainerLibraryElement::class)
 	}
-
-	/** Contains the translations of the property [name].*/
-	var translatableName: TranslatableText = TranslatableText(name)
 
 	/** Lazily initialized instance of the referenced [MetaGraph]. */
 	var metaGraph: MetaGraph? = null
@@ -53,14 +50,6 @@ class ContainerLibraryElement(
 
 	/** ---- [LibraryItem] */
 
-	override var name: String
-		get() = translatableName.getTranslation()
-		set(value) {
-			if (StringUtils.isNotEmpty(value)) {
-				translatableName = translatableName.withTranslation(value)
-			}
-		}
-
 	override val isFixed: Boolean get() = false
 
 	override fun dispose() {
@@ -72,17 +61,17 @@ class ContainerLibraryElement(
 
 	override fun write(writer: StoreWriter) {
 		writer.writeString("uuid", uuid.toString())
-		writer.writeStorables("name", translatableName.allTranslations())
+		name.write("name", writer)
 	}
 
 	override fun read(reader: StoreReader) {
 		uuid = UUID(reader.readString("uuid"))
 		if (reader.hasAttribute("name")) {
 			// backward compatibility
-			name = reader.readString("name")
+			name.translation = TranslatableText(reader.readString("name"))
 		}
 		if (reader.hasElement("name")) {
-			translatableName = TranslatableText(reader.readStorables("name"))
+			name.read("name", reader)
 		}
 	}
 
@@ -114,7 +103,7 @@ class ContainerLibraryElement(
 
 	fun updateMetaGraph(metaGraph: MetaGraph) {
 		uuid = metaGraph.uuid
-		translatableName = metaGraph.translatableName
+		name.translation = metaGraph.translatableName
 		this.metaGraph = metaGraph
 	}
 }

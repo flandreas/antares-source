@@ -27,7 +27,8 @@ class RepositoryServiceImplTest {
 
 	private val projectPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
 	private val projectLibraryService: LibraryService = LibraryService(libraryAccessor = { projectBuilder.library }, userLibraryPersister = projectPersistenceService)
-	private val projectBuilder = LibraryBuilder(name = "Project", libraryService = projectLibraryService, library = ProjectImpl("Project", projectLibraryService))
+	private val projectBuilder = LibraryBuilder(name = "Project", libraryService = projectLibraryService,
+		library = ProjectImpl("Project", "", projectLibraryService))
 
 	private val service = RepositoryServiceImpl(libraryService = libraryService, projectLibraryService = projectLibraryService)
 

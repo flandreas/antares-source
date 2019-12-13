@@ -2,12 +2,13 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.io.Storable
 
 /**
  * Represents an item in a [Library].
  */
-interface LibraryItem : Storable {
+interface LibraryItem : Storable, Namable {
 
     val library: Library?
 
@@ -16,12 +17,6 @@ interface LibraryItem : Storable {
      * Fixed [LibraryItem]s are provided by the application and cannot be changed or deleted by the user.
      */
     val isFixed: Boolean
-
-    /**
-     * Returns the name of this [LibraryItem] to be displayed in the graphical representation of the [LibraryItem].
-     * The interpretation of this name depends on the concrete type of classes that implement [LibraryItem].
-     */
-    val name: String
 
     /**
      * Returns the path of an icon that represents this [LibraryItem] and is suitable to be displayed in a

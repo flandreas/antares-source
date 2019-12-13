@@ -22,6 +22,7 @@ data class DescribableImpl(override val description: Description = Description()
 	constructor(eventBus: EventBus): this(Description(eventBus = eventBus))
 	constructor(changeHandler: ((Description, TranslatableText) -> Unit)): this(Description(changeHandler = changeHandler))
 	constructor(translation: Translation): this(Description(translation))
+	constructor(value: TranslatableText, eventBus: EventBus? = null): this(Description(value, eventBus))
 }
 
 class Description(

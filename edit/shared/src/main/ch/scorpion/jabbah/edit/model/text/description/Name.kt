@@ -19,15 +19,18 @@ interface Namable {
 /** A standard implementation of the [Namable] interface. */
 data class NamableImpl(override val name: Name) : Namable {
 	constructor(value: String, eventBus: EventBus? = null): this(Name(value, eventBus))
+	constructor(value: TranslatableText, eventBus: EventBus? = null): this(Name(value, eventBus))
 }
 
 /**
  * Represents a name that can be determined and translated by the user.
  */
 class Name(
-	value: String = "",
+	text: TranslatableText = TranslatableText(),
 	private val eventBus: EventBus? = null
 ) {
+
+	constructor(value: String = "", eventBus: EventBus? = null): this(TranslatableText(value), eventBus)
 
 	/** The displayable name in the current system [Language]. */
 	var value: String
@@ -39,7 +42,7 @@ class Name(
 		}
 
 	/** Contains translations of [value] .*/
-	var translation: TranslatableText = TranslatableText(value)
+	var translation: TranslatableText = text
 		set(value) {
 			if (field != value) {
 				val oldValue = field

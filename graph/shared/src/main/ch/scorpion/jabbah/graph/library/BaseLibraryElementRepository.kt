@@ -23,35 +23,35 @@ class BaseLibraryElementRepository(
 	private val entries = mutableMapOf<String,Entry>()
 
 	fun register(entry: Entry) {
-		if (entries[entry.name] != null) {
-			LOG.warn("BaseLibraryElementRepository: entry with name '${entry.name}' already present, will be replaced")
+		if (entries[entry.id] != null) {
+			LOG.warn("entry with ID '${entry.id}' already present, will be replaced")
 		}
-		entries[entry.name] = entry
+		entries[entry.id] = entry
 	}
 
 	fun register(
-		name: String,
+		id: String,
 		translationKey: String,
 		iconPath: String?,
 		clazz: KClass<out GraphElementView<*>>
 	) {
-		register(Entry(name, translationKey, iconPath, clazz))
+		register(Entry(id, translationKey, iconPath, clazz))
 	}
 
 	fun register(
-		name: String,
+		id: String,
 		translationKey: String,
 		iconPath: String?,
 		supplier: ((StorableCreator) -> GraphElementView<out GraphElement>)
 	) {
-		register(Entry(name, translationKey, iconPath, null, supplier))
+		register(Entry(id, translationKey, iconPath, null, supplier))
 	}
 
-	fun <T : GraphElement> getNewInstance(name: String): GraphElementView<T> {
-		val entry = entries[name]
+	fun <T : GraphElement> getNewInstance(id: String): GraphElementView<T> {
+		val entry = entries[id]
 		if (entry == null) {
-			LOG.error("BaseLibraryElementRepository: attempt to create instance for unknown name $name")
-			throw IllegalArgumentException("unknown entry name $name")
+			LOG.error("attempt to create instance for unknown ID $id")
+			throw IllegalArgumentException("unknown entry ID $id")
 		}
 		if (entry.supplier != null) {
 			return entry.supplier.invoke(storableCreator) as GraphElementView<T>
@@ -59,16 +59,16 @@ class BaseLibraryElementRepository(
 		return storableCreator.create(entry.clazz!!) as GraphElementView<T>
 	}
 
-	fun getIconPath(name: String): String? {
-		return entries[name]?.iconPath
+	fun getIconPath(id: String): String? {
+		return entries[id]?.iconPath
 	}
 
-	fun getTranslationKey(name: String): String? {
-		return entries[name]?.translationKey
+	fun getTranslationKey(id: String): String? {
+		return entries[id]?.translationKey
 	}
 
 	data class Entry(
-		val name: String,
+		val id: String,
 		val translationKey: String,
 		val iconPath: String?,
 		val clazz: KClass<out GraphElementView<*>>?,

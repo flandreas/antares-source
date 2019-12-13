@@ -1,4 +1,8 @@
 <library _id='0' uuid='6707f981-110d-4629-a0bf-c35a4688025c' author='5ecf330b-e395-4e17-88b0-0883834b384a' system="true">
+  <desc>
+    <translation lang='en' text='Contains build-in components and some commonly used subcircuits'/>
+    <translation lang='de' text='Enhält alle eingebauten Komponenten sowie einige gebräuchliche Teilschaltungen'/>
+  </desc>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -12,11 +16,11 @@
             <translation lang='de' text='Netz'/>
           </name>
           <items>
-            <baseLibraryElement _id='3' name='Constant'/>
-            <baseLibraryElement _id='4' name='Splitter'/>
-            <baseLibraryElement _id='5' name='Concentrator'/>
-            <baseLibraryElement _id='6' name='Probe'/>
-            <baseLibraryElement _id='7' name='Tunnel'/>
+            <baseLibraryElement _id='3' id='Constant'/>
+            <baseLibraryElement _id='4' id='Splitter'/>
+            <baseLibraryElement _id='5' id='Concentrator'/>
+            <baseLibraryElement _id='6' id='Probe'/>
+            <baseLibraryElement _id='7' id='Tunnel'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='8'>
@@ -25,16 +29,16 @@
             <translation lang='de' text='Logische Gatter'/>
           </name>
           <items>
-            <baseLibraryElement _id='9' name='AND'/>
-            <baseLibraryElement _id='10' name='OR'/>
-            <baseLibraryElement _id='11' name='NOT'/>
-            <baseLibraryElement _id='12' name='NAND'/>
-            <baseLibraryElement _id='13' name='NOR'/>
-            <baseLibraryElement _id='14' name='XOR'/>
-            <baseLibraryElement _id='15' name='XNOR'/>
-            <baseLibraryElement _id='16' name='Buffer'/>
-            <baseLibraryElement _id='17' name='TriStateBuffer'/>
-            <baseLibraryElement _id='18' name='Delay'/>
+            <baseLibraryElement _id='9' id='AND'/>
+            <baseLibraryElement _id='10' id='OR'/>
+            <baseLibraryElement _id='11' id='NOT'/>
+            <baseLibraryElement _id='12' id='NAND'/>
+            <baseLibraryElement _id='13' id='NOR'/>
+            <baseLibraryElement _id='14' id='XOR'/>
+            <baseLibraryElement _id='15' id='XNOR'/>
+            <baseLibraryElement _id='16' id='Buffer'/>
+            <baseLibraryElement _id='17' id='TriStateBuffer'/>
+            <baseLibraryElement _id='18' id='Delay'/>
             <containerLibraryElement _id='19' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5'>
               <name>
                 <translation lang='en' text='Pulse Generator'/>
@@ -55,11 +59,11 @@
             <translation lang='de' text='Eingabe'/>
           </name>
           <items>
-            <baseLibraryElement _id='22' name='Input'/>
-            <baseLibraryElement _id='23' name='Switch'/>
-            <baseLibraryElement _id='24' name='DipSwitch'/>
-            <baseLibraryElement _id='25' name='Clock'/>
-            <baseLibraryElement _id='83' name='Keyboard'/>
+            <baseLibraryElement _id='22' id='Input'/>
+            <baseLibraryElement _id='23' id='Switch'/>
+            <baseLibraryElement _id='24' id='DipSwitch'/>
+            <baseLibraryElement _id='25' id='Clock'/>
+            <baseLibraryElement _id='83' id='Keyboard'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='26'>
@@ -68,12 +72,12 @@
             <translation lang='de' text='Ausgabe'/>
           </name>
           <items>
-            <baseLibraryElement _id='27' name='Output'/>
-            <baseLibraryElement _id='28' name='LED'/>
-            <baseLibraryElement _id='29' name='RgbLED'/>
-            <baseLibraryElement _id='30' name='SevenSegmentDisplay'/>
-            <baseLibraryElement _id='31' name='LEDMatrix'/>
-            <baseLibraryElement _id='84' name='Terminal'/>
+            <baseLibraryElement _id='27' id='Output'/>
+            <baseLibraryElement _id='28' id='LED'/>
+            <baseLibraryElement _id='29' id='RgbLED'/>
+            <baseLibraryElement _id='30' id='SevenSegmentDisplay'/>
+            <baseLibraryElement _id='31' id='LEDMatrix'/>
+            <baseLibraryElement _id='84' id='Terminal'/>
             <containerLibraryElement _id='32' uuid='8cb1ea46-2a0d-4a1d-87af-02487049a050'>
               <name>
                 <translation lang='en' text='8x8 LED Matrix with Ctrl'/>
@@ -88,8 +92,8 @@
             <translation lang='de' text='Speicher'/>
           </name>
           <items>
-            <baseLibraryElement _id='34' name='ROM'/>
-            <baseLibraryElement _id='35' name='RAM'/>
+            <baseLibraryElement _id='34' id='ROM'/>
+            <baseLibraryElement _id='35' id='RAM'/>
             <containerLibraryElement _id='36' uuid='e802fb9c-82dc-4196-b266-79fa023fb12e'>
               <name>
                 <translation lang='en' text='Register 4 Bit'/>
@@ -134,7 +138,7 @@
             <translation lang='de' text='Arithmetik'/>
           </name>
           <items>
-            <baseLibraryElement _id='43' name='Random'/>
+            <baseLibraryElement _id='43' id='Random'/>
             <containerLibraryElement _id='44'uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'>
               <name>
                 <translation lang='en' text='Half Adder'/>

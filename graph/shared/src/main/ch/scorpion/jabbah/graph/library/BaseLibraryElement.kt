@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.io.Storable
@@ -10,43 +12,48 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * A [LibraryElement] that represents a basic, non-composed [GraphElementView].
+ *
  * [LibraryElement] supports two different ways to decide which [GraphElementView] will be instantiated:
  * - Provide a [StorableCreator] to be used for instantiation, and the class of the [GraphElementView] to be instantiated
  * - Provide a supplier that knows how to instantiate the [GraphElementView]. Use this method if you need to
  * change the created [GraphElementView] after instantiation.
  * The supplier takes precedence over the [StorableCreator].
  *
- * @property name the name of an entry in [BaseLibraryElementRepository] containing the referenced [GraphElementView].
+ * @property id the ID of an entry in [BaseLibraryElementRepository] containing the referenced [GraphElementView].
  * @property repository the [BaseLibraryElementRepository] that contains the [GraphElementView] referenced by [name].
  */
 class BaseLibraryElement(
-	override var name: String = "",
+	private var id: String = "",
 	private val repository: BaseLibraryElementRepository = LibraryModule.baseLibraryElementRepository
 ) : LibraryElement() {
 
+	/** ---- [Namable] interface */
+
+	override val name: Name get() = Name(TranslatableText(Translations.getString("${repository.getTranslationKey(id)!!}.name")))
+
+	/** ---- [LibraryItem] */
+
     override val isFixed: Boolean get() = true
 
-	override val iconPath: String? get() = repository.getIconPath(name)
+	override val iconPath: String? get() = repository.getIconPath(id)
 
     /** ---- [Any] */
 
-    override fun toString(): String {
-	    return Translations.getString("${repository.getTranslationKey(name)!!}.name")
-    }
+    override fun toString(): String = name.value
 
     /** ---- [Storable] interface */
 
     override fun write(writer: StoreWriter) {
-        writer.writeString("name", name)
+        writer.writeString("id", id)
     }
 
     override fun read(reader: StoreReader) {
-        name = reader.readString("name")
+        id = reader.readString("id")
     }
 
     /** ---- [LibraryElement] */
 
     override fun <T : GraphElement> getNewInstance(): GraphElementView<T> {
-	    return repository.getNewInstance(name)
+	    return repository.getNewInstance(id)
     }
 }
