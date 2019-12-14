@@ -13,6 +13,7 @@ import javax.swing.BorderFactory
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTable
+import kotlin.math.max
 
 
 /**
@@ -123,7 +124,7 @@ abstract class AbstractPropertyPanel(
 
 				for (column in 0 until table.columnCount) {
 					val comp = table.prepareRenderer(table.getCellRenderer(row, column), row, column)
-					rowHeight = Math.max(rowHeight, comp.preferredSize.height)
+					rowHeight = max(rowHeight, comp.preferredSize.height)
 				}
 
 				table.setRowHeight(row, rowHeight)

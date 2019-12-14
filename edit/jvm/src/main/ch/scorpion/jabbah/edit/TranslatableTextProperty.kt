@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableTextPanel
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import java.awt.Color
 import java.awt.Component
+import java.awt.Dimension
 import java.awt.Frame
 import javax.swing.*
 import javax.swing.table.DefaultTableCellRenderer
@@ -27,7 +28,9 @@ class TranslatableTextPropertyRenderer(
 			textComponent.wrapStyleWord = true
 			textComponent.isEditable = false
 		} else {
-			textComponent = null
+			textComponent = JTextField()
+			textComponent.preferredSize = Dimension(100, 22)
+			textComponent.border = null
 		}
 	}
 
