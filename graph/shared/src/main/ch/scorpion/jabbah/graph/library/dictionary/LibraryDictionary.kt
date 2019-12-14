@@ -35,26 +35,11 @@ class LibraryDictionary : Storable {
 	/** Returns all [LibraryDirectoryEntries][LibraryDictionaryEntry] of this [LibraryDictionary].*/
 	fun getEntries(): ImmutableList<LibraryDictionaryEntry> = entries.values.toList().toImmutableList()
 
-	/** Returns the [UUID] of the [Library] with the specified name.*/
-	//fun getUUIDofName(name: String): UUID = getEntryByName(name).uuid
-
 	/** Checks whether this [LibraryDictionary] contains a [Library] with the given name in any language. */
 	fun existsName(name: TranslatableText, except: UUID?): Boolean =
 		entries.values
 			.filter { except == null || it.uuid != except }
 			.any { it.name.translation.isAnyEqualOf(name) }
-
-	/** Returns the name of the [Library] with the specified [UUID].*/
-	/*
-	fun getNameOfUUID(uuid: UUID): TranslatableText {
-		val entry = entries[uuid]
-		if (entry == null) {
-			LOG.error("requesting name of non-existing library with UUID $uuid")
-			throw IllegalArgumentException()
-		}
-		return entry.name.translation
-	}
-	*/
 
 	/** Adds the specified [Library] to this [LibraryDictionary]*/
 	fun add(library: Library) {
@@ -77,17 +62,6 @@ class LibraryDictionary : Storable {
 	fun update(library: Library, properties: LibraryProperties) {
 		entries[library.uuid]!!.updateFrom(properties)
 	}
-
-	/*
-	private fun getEntryByName(name: String): LibraryDictionaryEntry {
-		val entry = entries.values.firstOrNull { it.name.value == name }
-		if (entry == null) {
-			LOG.error("requesting entry of non-existing library with name $name")
-			throw IllegalArgumentException()
-		}
-		return entry
-	}
-	*/
 
 	/** ---- [Storable] interface */
 
@@ -160,7 +134,7 @@ class LibraryDictionaryEntry(
 		uuid = System.get().createUUID(reader.readString("uuid"))
 		name.read("name", reader)
 		author = System.get().createUUID(reader.readString("author"))
-		description.read("desd", reader)
+		description.read("desc", reader)
 	}
 
 	/** ---- [LibraryDictionaryEntry] */

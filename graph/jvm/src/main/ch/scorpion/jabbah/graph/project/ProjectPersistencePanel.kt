@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.graph.library.LibraryPropertiesPanel
@@ -70,6 +71,7 @@ class ProjectPersistencePanel(
 	}
 
 	private val projectsList = JList(loadProjects())
+	private val descriptionTextArea = JTextArea()
 	private val selectedProject: LibraryDictionaryEntry? get() = projectsList.selectedValue
 	private val currentProjectFont = projectsList.font.deriveFont(Font.BOLD)
 	private val openAction = OpenAction()
@@ -78,7 +80,10 @@ class ProjectPersistencePanel(
 	private val importAction = ImportAction()
 
 	init {
-		projectsList.addListSelectionListener { updateActions() }
+		projectsList.addListSelectionListener {
+			updateDescription()
+			updateActions()
+		}
 		projectsList.addMouseListener(object : MouseAdapter() {
 			override fun mouseClicked(e: MouseEvent?) {
 				if (e!!.clickCount == 2) {
@@ -97,13 +102,27 @@ class ProjectPersistencePanel(
 		importAction.enabled = true
 	}
 
+	private fun updateDescription() {
+		descriptionTextArea.text = selectedProject?.description?.value ?: ""
+	}
+
 	private fun buildUI() {
-		layout = BorderLayout()
+		layout = BorderLayout(10, 10)
 		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
+		descriptionTextArea.lineWrap = true
+		descriptionTextArea.wrapStyleWord = true
+		descriptionTextArea.background = background
+		descriptionTextArea.isEditable = false
+		descriptionTextArea.rows = 6
+		val descriptionScroll = UiUtil.decorateTextArea(descriptionTextArea)
+		descriptionScroll.background = background
+
 		val scrollPane = JScrollPane(projectsList)
-		scrollPane.preferredSize = Dimension(300, 400)
-		add(scrollPane, BorderLayout.CENTER)
+		scrollPane.preferredSize = Dimension(300, 300)
+		add(scrollPane, BorderLayout.NORTH)
+
+		add(descriptionScroll, BorderLayout.CENTER)
 
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)

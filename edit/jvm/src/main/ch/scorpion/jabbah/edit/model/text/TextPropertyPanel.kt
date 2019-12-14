@@ -39,6 +39,8 @@ class TextPropertyPanel(text: String) : JPanel() {
 	init {
 		textField.wrapStyleWord = true
 		textField.lineWrap = true
+		textField.wrapStyleWord = true
+
 		buildUI()
 	}
 

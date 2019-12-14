@@ -24,6 +24,7 @@ class TranslatableTextPropertyRenderer(
 			textComponent = JTextArea()
 			textComponent.rows = 4
 			textComponent.lineWrap = true
+			textComponent.wrapStyleWord = true
 			textComponent.isEditable = false
 		} else {
 			textComponent = null
@@ -75,6 +76,7 @@ class TranslatableTextPropertyEditor(
 			textComponent = JTextArea()
 			textComponent.rows = rows
 			textComponent.lineWrap = true
+			textComponent.wrapStyleWord = true
 			textComponent.isEditable = true
 			textComponent.border = null
 		} else {

@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import java.awt.BorderLayout
@@ -65,6 +66,7 @@ class LibraryPersistencePanel(
 	}
 
 	private val libraryDictionaryEntries = JList(loadLibraryDirectoryEntries())
+	private val descriptionTextArea = JTextArea()
 	private val currentLibraryFont = libraryDictionaryEntries.font.deriveFont(Font.BOLD)
 	private val openAction = OpenAction()
 	private val deleteAction = DeleteAction()
@@ -72,7 +74,10 @@ class LibraryPersistencePanel(
 	private val selectedLibrary: LibraryDictionaryEntry? get() = libraryDictionaryEntries.selectedValue
 
 	init {
-		libraryDictionaryEntries.addListSelectionListener { updateActions() }
+		libraryDictionaryEntries.addListSelectionListener {
+			updateDescription()
+			updateActions()
+		}
 		libraryDictionaryEntries.addMouseListener(object: MouseAdapter() {
 			override fun mouseClicked(e: MouseEvent?) {
 				if (e!!.clickCount == 2) {
@@ -86,11 +91,21 @@ class LibraryPersistencePanel(
 
 	private fun buildUI() {
 		layout = BorderLayout(0, 10)
-		preferredSize = Dimension(400, 400)
 		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
+		descriptionTextArea.lineWrap = true
+		descriptionTextArea.wrapStyleWord = true
+		descriptionTextArea.background = background
+		descriptionTextArea.isEditable = false
+		descriptionTextArea.rows = 6
+		val descriptionScroll = UiUtil.decorateTextArea(descriptionTextArea)
+		descriptionScroll.background = background
+
 		val scrollPane = JScrollPane(libraryDictionaryEntries)
-		add(scrollPane, BorderLayout.CENTER)
+		scrollPane.preferredSize = Dimension(300, 300)
+		add(scrollPane, BorderLayout.NORTH)
+
+		add(descriptionScroll, BorderLayout.CENTER)
 
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
@@ -124,6 +139,10 @@ class LibraryPersistencePanel(
 			!libraryDictionaryEntries.isSelectionEmpty
 			&& libraryDictionaryEntries.selectedValue.uuid != libraryHolder.l?.uuid
 			&& !isReadonly(libraryDictionaryEntries.selectedValue)
+	}
+
+	private fun updateDescription() {
+		descriptionTextArea.text = selectedLibrary?.description?.value ?: ""
 	}
 
 	private inner class OpenAction : AbstractAction("library.dialog.open.action") {
