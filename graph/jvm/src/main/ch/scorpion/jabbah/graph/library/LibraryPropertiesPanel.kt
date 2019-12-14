@@ -2,13 +2,14 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.EGBL
-import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.TranslatableTextPropertyEditor
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Frame
-import javax.swing.*
+import javax.swing.JLabel
+import javax.swing.JOptionPane
+import javax.swing.JPanel
 
 /** A [JPanel] for editing the properties of a [Library].*/
 class LibraryPropertiesPanel(properties: LibraryProperties? = null) : JPanel() {
