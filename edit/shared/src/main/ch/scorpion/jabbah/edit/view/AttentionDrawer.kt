@@ -28,7 +28,8 @@ interface AttentionDrawer {
 }
 
 class AttentionDrawerImpl(
-	private val properties: Properties = BaseModule.properties
+	private val properties: Properties = BaseModule.properties,
+	private val color: Color = properties.get(AttentionDrawer.PROP_COLOR)
 ) : AttentionDrawer {
 
 	companion object {
@@ -44,7 +45,7 @@ class AttentionDrawerImpl(
 
 	override fun drawAttentionTo(location: Point2D, view: DrawingView<*>, animator: Animator) {
 		val maxRadius = properties.getFloat(PROP_MAX_RADIUS).toDouble()
-		val ring = GrowingRing(location, maxRadius)
+		val ring = GrowingRing(location, maxRadius, color)
 		val animation = animator.schedule(
 			target = ring,
 			consumer = { ring.radius = it },
@@ -63,12 +64,11 @@ class AttentionDrawerImpl(
 
 	private inner class GrowingRing(
 		center: Point2D,
-		private val maxRadius: Double
+		private val maxRadius: Double,
+		private val color: Color
 	) : AbstractRectangularUnzoomable(maxRadius, center) {
 
 		override val lineWidth: Double get() = STROKE.width.toDouble()
-
-		private val color = properties.get<Color>(AttentionDrawer.PROP_COLOR)
 
 		var radius: Double = 0.0
 			set(value) {

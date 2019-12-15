@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.module
 
 import ch.scorpion.antares.model.module.AntaresModelModule
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.script.AntaresScriptGateway
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.DigitalGraphView
@@ -37,6 +38,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.*
 import ch.scorpion.jabbah.edit.snap.ComponentSnapper
 import ch.scorpion.jabbah.edit.style.EditStyleType
+import ch.scorpion.jabbah.edit.view.AttentionDrawerImpl
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.container.OriginIndicator
@@ -108,6 +110,14 @@ object AntaresViewModule : AbstractModule() {
 			drawingView
 		}
 		EditModule.drawingService = DigitalGraphViewService()
+
+		EditModule.attentionDrawerFactory = { signal ->
+			if (signal is DigitalSignal) {
+				AttentionDrawerImpl(color = signal.getColor().foregroundColor)
+			} else {
+				AttentionDrawerImpl()
+			}
+		}
 
 		GraphViewModule.graphViewFactory = { DigitalGraphView<GraphElementView<GraphElement>>(it ?: Translations.getString("graph.name.unknown")) }
 		GraphViewModule.graphViewService = EditModule.drawingService as GraphViewService

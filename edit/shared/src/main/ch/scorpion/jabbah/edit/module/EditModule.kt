@@ -52,9 +52,9 @@ object EditModule : AbstractModule() {
 
     /**
      * Creates an [AttentionDrawer] that produces an animation for drawing the attention
-     * of the user to a particular location.
+     * of the user to a particular location. The optional argument represents the  object requiring attention.
      */
-    val attentionDrawerFactory: () -> AttentionDrawer = { AttentionDrawerImpl() }
+    var attentionDrawerFactory: (Any?) -> AttentionDrawer = { AttentionDrawerImpl() }
 
     var drawingService: DrawingService = DrawingServiceImpl()
 

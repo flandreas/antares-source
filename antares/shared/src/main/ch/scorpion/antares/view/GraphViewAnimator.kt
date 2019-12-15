@@ -163,6 +163,7 @@ class GraphViewAnimator(
 		}
 
 		val edgeView = drawingView.drawing.getEdgeView(changedPort) as DigitalEdgeView
+		val signal = edgeView.model!!.signalBuffer
 
 		// Creating the DigitalEdgeViewNetAnimation will make it visible in the View, but the animation
 		// is not started yet. The outgoing DigitalEdgeAnimationView waits at the OutputPortView
@@ -184,7 +185,7 @@ class GraphViewAnimator(
 			styleProvider = styleProvider
 		))
 
-		EditModule.attentionDrawerFactory.invoke().drawAttentionTo(
+		EditModule.attentionDrawerFactory.invoke(signal).drawAttentionTo(
 			edgeView.getConnectionEndpointType(edgeView.getConnection(changedPort)!!)!!.getLocation(edgeView),
 			drawingView,
 			animator
