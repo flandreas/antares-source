@@ -27,7 +27,7 @@ class ProjectSavable(
 
 	/** ---- [Savable] */
 
-	override val description: String get() = "${Translations.getString("project.savable.prefix")} \"${element.name}\""
+	override val description: String get() = "${Translations.getString("project.savable.prefix")} \"${element.name.value}\""
 
 	override val readOnly: Boolean get() = false
 
