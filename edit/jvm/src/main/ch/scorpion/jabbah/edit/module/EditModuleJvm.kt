@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.StyleTypeEditor
-import ch.scorpion.jabbah.draw.style.StyleTypeEditorFx
 import ch.scorpion.jabbah.draw.style.StyleTypeRenderer
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.Size
@@ -36,77 +35,70 @@ object EditModuleJvm : AbstractModule() {
 
 	val propertyRendererRegistry = DynamicPropertyRendererRegistry()
 
-    val propertyEditorRegistry = DynamicPropertyEditorRegistry()
+	val propertyEditorRegistry = DynamicPropertyEditorRegistry()
 
-	val propertyEditorRegistryFx = PropertyEditorRegistryFx()
+	var propertySheetPanelFactory: PropertySheetPanelFactory = PropertySheetPanelFactoryImpl(
+		propertyRendererRegistry, propertyEditorRegistry)
 
-    var propertySheetPanelFactory: PropertySheetPanelFactory = PropertySheetPanelFactoryImpl(
-            propertyRendererRegistry, propertyEditorRegistry)
+	override fun initialize() {
+		DrawModuleJvm.require()
+		IOModuleJvm.require()
 
-    override fun initialize() {
-        DrawModuleJvm.require()
-        IOModuleJvm.require()
+		registerTypes(IOModule.typeMap)
 
-        registerTypes(IOModule.typeMap)
+		EditModule.require()
 
-        EditModule.require()
-	    EditModule.copyPasteUtility = CopyPasteUtilityFx()
+		DrawModuleJvm.contextMenuProvider = EditContextMenuProvider()
 
-	    DrawModuleJvm.contextMenuProvider = EditContextMenuProvider()
+		configurePropertyRenderer(propertyRendererRegistry)
+		configurePropertyEditors(propertyEditorRegistry)
 
-        configurePropertyRenderer(propertyRendererRegistry)
-        configurePropertyEditors(propertyEditorRegistry)
+		registerSelectionModels()
 
-	    registerPropertyEditorsFx(propertyEditorRegistryFx)
-	    registerSelectionModels()
-
-	    buildPreferencesTree(BaseModuleJvm.preferencesTree)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
-		registry.registerRenderer(Direction::class.java, EnumRenderer::class.java)
-        registry.registerRenderer(PredefinedColor::class.java, PredefinedColorRenderer::class.java)
-	    registry.registerRenderer(PredefinedStroke::class.java, PredefinedStrokeRenderer::class.java)
-        registry.registerRenderer(Size::class.java, EnumRenderer::class.java)
-        registry.registerRenderer(StyleType::class.java, StyleTypeRenderer::class.java)
-        registry.registerRenderer(VerticalAlignment::class.java, EnumRenderer::class.java)
-        registry.registerRenderer(TextProperty::class.java, TextPropertyRenderer::class.java)
-	    registry.register(TranslatableText::class.java) { TranslatableTextPropertyRenderer((it as PropertyImpl<TranslatableText>).filter)}
-}
-
-    @Suppress("UNCHECKED_CAST")
-    private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
-        registry.registerEditor(Direction::class.java, DirectionEditor::class.java)
-        registry.registerEditor(Size::class.java, SizeEditor::class.java)
-        registry.registerEditor(StyleType::class.java, StyleTypeEditor::class.java)
-        registry.registerEditor(VerticalAlignment::class.java, VerticalAlignmentEditor::class.java)
-        registry.register(PredefinedColor::class.java) { PredefinedColorEditor(PredefinedColorRepository) }
-	    registry.register(PredefinedStroke::class.java) { PredefinedStrokeEditor(PredefinedStrokeRepository) }
-	    registry.register(TextProperty::class.java) { TextPropertyEditor(
-		    propertyName = (it as PropertyImpl<TranslatableText>).displayName)
-	    }
-	    registry.register(TranslatableText::class.java) { TranslatableTextPropertyEditor(
-		    propertyName = (it as PropertyImpl<TranslatableText>).displayName,
-		    multiline = it.filter)
-	    }
-    }
-
-	private fun registerPropertyEditorsFx(registry: PropertyEditorRegistryFx) {
-		registry.register(StyleType::class.java, StyleTypeEditorFx::class.java)
-		registry.register(PredefinedColor::class.java, PredefinedColorEditorFx::class.java)
+		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 	}
 
-    private fun registerTypes(typeMap: TypeMap) {
-        typeMap.register("text", TextComponent::class)
-    }
+	@Suppress("UNCHECKED_CAST")
+	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
+		registry.registerRenderer(Direction::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(PredefinedColor::class.java, PredefinedColorRenderer::class.java)
+		registry.registerRenderer(PredefinedStroke::class.java, PredefinedStrokeRenderer::class.java)
+		registry.registerRenderer(Size::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(StyleType::class.java, StyleTypeRenderer::class.java)
+		registry.registerRenderer(VerticalAlignment::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(TextProperty::class.java, TextPropertyRenderer::class.java)
+		registry.register(TranslatableText::class.java) { TranslatableTextPropertyRenderer((it as PropertyImpl<TranslatableText>).filter) }
+	}
 
-    private fun registerSelectionModels() {
-	    EditSelectModule.selectionModelFactory.register(
-		    SelectionDrawingStrategy.REPLACE,
-		    TextComponentJvm::class.simpleName!!
-	    ) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent, drawStrategy = RectangularReplaceSelectionModel.DrawStrategy.COMPONENT) }
-    }
+	@Suppress("UNCHECKED_CAST")
+	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
+		registry.registerEditor(Direction::class.java, DirectionEditor::class.java)
+		registry.registerEditor(Size::class.java, SizeEditor::class.java)
+		registry.registerEditor(StyleType::class.java, StyleTypeEditor::class.java)
+		registry.registerEditor(VerticalAlignment::class.java, VerticalAlignmentEditor::class.java)
+		registry.register(PredefinedColor::class.java) { PredefinedColorEditor(PredefinedColorRepository) }
+		registry.register(PredefinedStroke::class.java) { PredefinedStrokeEditor(PredefinedStrokeRepository) }
+		registry.register(TextProperty::class.java) {
+			TextPropertyEditor(
+				propertyName = (it as PropertyImpl<TranslatableText>).displayName)
+		}
+		registry.register(TranslatableText::class.java) {
+			TranslatableTextPropertyEditor(
+				propertyName = (it as PropertyImpl<TranslatableText>).displayName,
+				multiline = it.filter)
+		}
+	}
+
+	private fun registerTypes(typeMap: TypeMap) {
+		typeMap.register("text", TextComponent::class)
+	}
+
+	private fun registerSelectionModels() {
+		EditSelectModule.selectionModelFactory.register(
+			SelectionDrawingStrategy.REPLACE,
+			TextComponentJvm::class.simpleName!!
+		) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent, drawStrategy = RectangularReplaceSelectionModel.DrawStrategy.COMPONENT) }
+	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
 		root.add(PreferenceGroup(PREF_TREE_EDITOR))

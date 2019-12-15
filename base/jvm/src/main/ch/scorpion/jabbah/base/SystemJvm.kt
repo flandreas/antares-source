@@ -1,102 +1,75 @@
 package ch.scorpion.jabbah.base
 
-import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.base.geom.AffineTransform
+import ch.scorpion.jabbah.base.geom.AffineTransformJvm
+import ch.scorpion.jabbah.base.geom.Path
+import ch.scorpion.jabbah.base.geom.Path2DJvm
 import ch.scorpion.jabbah.base.time.RealTimeTimerJvm
 import ch.scorpion.jabbah.base.time.Timer
-import javafx.application.Platform
 import javax.swing.SwingUtilities
 import kotlin.reflect.KClass
 
 /** Implements the [System] interface on the Java virtual machine platform.*/
-class SystemJvm(private val useJavaFX: Boolean = false) : System {
+class SystemJvm : System {
 
-    /** ---- [System] interface */
-    
-    override fun createTimer(): Timer {
-        return RealTimeTimerJvm()
-    }
+	/** ---- [System] interface */
 
-    override fun currentTimeMillis(): Long {
-        return java.lang.System.currentTimeMillis()
-    }
+	override fun createTimer(): Timer = RealTimeTimerJvm()
 
-    override fun getClassName(obj: Any): String {
-        return obj.javaClass.simpleName
-    }
+	override fun currentTimeMillis(): Long = java.lang.System.currentTimeMillis()
 
-    override fun getClass(obj: Any): KClass<Any> {
-        return obj.javaClass.kotlin
-    }
+	override fun getClassName(obj: Any): String = obj.javaClass.simpleName
 
-    override fun <T : Any> instantiate(clazz: KClass<T>): T {
-        return clazz.java.getDeclaredConstructor().newInstance()
-    }
-    
-    override fun createAffineTransform(): AffineTransform {
-        if (useJavaFX) {
-            return AffineTransformFx()
-        }
-        return AffineTransformJvm()
-    }
-    
-    override fun createPath(): Path {
-        if (useJavaFX) {
-            return Path2DFx()
-        }
-        return Path2DJvm()
-    }
+	override fun getClass(obj: Any): KClass<Any> = obj.javaClass.kotlin
 
-    override fun createUUID(uuid: String?): UUID {
-        if (uuid == null) {
-            return UUID(java.util.UUID.randomUUID().toString())
-        }
-        return UUID(uuid)
-    }
+	override fun <T : Any> instantiate(clazz: KClass<T>): T = clazz.java.getDeclaredConstructor().newInstance()
 
-    override fun buildToolTipText(title: String?, text: String?, endWithPeriod: Boolean): String? {
-        val sb = StringBuilder()
+	override fun createAffineTransform(): AffineTransform = AffineTransformJvm()
 
-        if (title == null || "" == title) {
-            return null
-        }
+	override fun createPath(): Path = Path2DJvm()
 
-        val hasText = !(text == null || "" == text)
+	override fun createUUID(uuid: String?): UUID {
+		if (uuid == null) {
+			return UUID(java.util.UUID.randomUUID().toString())
+		}
+		return UUID(uuid)
+	}
 
-        sb.append("<html>")
+	override fun buildToolTipText(title: String?, text: String?, endWithPeriod: Boolean): String? {
+		val sb = StringBuilder()
 
-        sb.append("<strong>")
+		if (title == null || "" == title) {
+			return null
+		}
 
-        sb.append(title)
-        if (hasText) {
-            sb.append(":&nbsp;")
-        }
-        sb.append("</strong>")
+		val hasText = !(text == null || "" == text)
 
-        if (hasText) {
-            sb.append(text)
-	        if (endWithPeriod && !text!!.endsWith(".")) {
-		        sb.append('.')
-	        }
-        }
+		sb.append("<html>")
 
-        sb.append("</html>")
-        return sb.toString()
-    }
+		sb.append("<strong>")
 
-    override fun invokeLater(invocable: () -> Unit) {
-        if (useJavaFX) {
-            Platform.runLater(invocable)
-        } else {
-            SwingUtilities.invokeLater { invocable.invoke() }
-        }
-    }
+		sb.append(title)
+		if (hasText) {
+			sb.append(":&nbsp;")
+		}
+		sb.append("</strong>")
 
-    override fun getActionAcceleratorKey(baseName: String): String {
-        if (useJavaFX) {
-            return "$baseName.accelerator.fx"
-        }
-        return "$baseName.accelerator"
-    }
+		if (hasText) {
+			sb.append(text)
+			if (endWithPeriod && !text!!.endsWith(".")) {
+				sb.append('.')
+			}
+		}
+
+		sb.append("</html>")
+		return sb.toString()
+	}
+
+	override fun invokeLater(invocable: () -> Unit) {
+		SwingUtilities.invokeLater { invocable.invoke() }
+	}
+
+	override fun getActionAcceleratorKey(baseName: String): String = "$baseName.accelerator"
 
 	override fun currentLanguage(): Language {
 		val code = java.lang.System.getProperty("user.language")
