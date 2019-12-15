@@ -396,15 +396,21 @@ abstract class AbstractVerticeView<T : Vertice>(
 	 * this method.
 	 */
 	protected open fun drawImpl(context: DrawContext, drawPortViews: Boolean) {
+		val oldStylable = context.stylable
+		context.stylable = this
 		if (drawPortViews) {
 			portViews.forEach { it.draw(context) }
 		}
+		context.stylable = oldStylable
 	}
 
 	private fun drawImpl(context: DrawContext, drawPortViews: Boolean, beforeBorder: Boolean) {
+		val oldStylable = context.stylable
+		context.stylable = this
 		if (drawPortViews) {
 			portViews.forEach { if (beforeBorder) it.drawBelowOwner(context) else it.drawAboveOwner(context) }
 		}
+		context.stylable = oldStylable
 	}
 
 	/**

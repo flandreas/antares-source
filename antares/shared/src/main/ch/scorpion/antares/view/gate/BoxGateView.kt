@@ -46,11 +46,11 @@ open class BoxGateView<T : Vertice>(
 		LARGE_CENTERED {
 			override fun updateLabel(box: BoxGateView<*>) {
 				box.label?.let {
-					box.label.font = box.font
-					box.label.ownerRotation = box.rotation
-					box.label.horizontalAlignment = HorizontalAlignment.CENTER
-					box.label.verticalAlignment = VerticalAlignment.CENTER
-					box.label.location = when (box.rotation) {
+					it.font = box.font
+					it.ownerRotation = box.rotation
+					it.horizontalAlignment = HorizontalAlignment.CENTER
+					it.verticalAlignment = VerticalAlignment.CENTER
+					it.location = when (box.rotation) {
 						Rotation.R0 -> Point2D(box.x + box.width / 2, box.y + box.height / 3)
 						Rotation.R180 -> Point2D(box.x + box.width / 2, box.y + 2 * box.height / 3)
 						Rotation.R90 -> Point2D(box.x + 2 * box.width / 3, box.y + box.height / 2)
@@ -63,11 +63,11 @@ open class BoxGateView<T : Vertice>(
 		SMALL_UPPER_LEFT {
 			override fun updateLabel(box: BoxGateView<*>) {
 				box.label?.let {
-					box.label.font = box.font.deriveFont((box.font.size * FONT_SIZE_FACTOR).toInt())
-					box.label.ownerRotation = box.rotation
-					box.label.horizontalAlignment = HorizontalAlignment.RIGHT
-					box.label.verticalAlignment = VerticalAlignment.TOP
-					box.label.location = Point2D(box.bounds.maxX - SMALL_LABEL_INSET, box.bounds.minY + SMALL_LABEL_INSET)
+					it.font = box.font.deriveFont((box.font.size * FONT_SIZE_FACTOR).toInt())
+					it.ownerRotation = box.rotation
+					it.horizontalAlignment = HorizontalAlignment.RIGHT
+					it.verticalAlignment = VerticalAlignment.TOP
+					it.location = Point2D(box.bounds.maxX - SMALL_LABEL_INSET, box.bounds.minY + SMALL_LABEL_INSET)
 				}
 			}
 		};
@@ -121,12 +121,7 @@ open class BoxGateView<T : Vertice>(
 	/** ---- [Drawable] interface */
 
 	override fun drawImpl(context: DrawContext) {
-		val oldStylable = context.stylable
-
-		context.stylable = this
-		//super.drawImpl(context)
 		drawImplBeforeBorder(context)
-		context.stylable = oldStylable
 
 		val oldColor = context.g.color
 		if (context.useContextColors) {
@@ -135,10 +130,7 @@ open class BoxGateView<T : Vertice>(
 			drawShape(context, transparent.applyTo(foregroundColor), transparent.applyTo(propertiesBackgroundColor), stroke)
 		}
 
-		context.stylable = this
 		drawImplAfterBorder(context)
-		context.stylable = oldStylable
-
 		context.g.color = oldColor
 	}
 

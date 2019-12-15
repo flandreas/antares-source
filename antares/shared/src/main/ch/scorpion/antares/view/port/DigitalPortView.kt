@@ -215,7 +215,7 @@ class DigitalPortView(
 			context.g.color = transparent.applyTo(if (portLabelPosition == PortLabelPosition.EXTERNAL) {
 				context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).textColor
 			} else {
-				context.choose(styleProvider.getStyle(GraphStyleType.ANNOTATION).color).textColor
+				context.choose(context.styleColor(styleProvider.getStyle(StyleType.FIGURE).color)).textColor
 			})
 			portLabel?.draw(context)
 		}

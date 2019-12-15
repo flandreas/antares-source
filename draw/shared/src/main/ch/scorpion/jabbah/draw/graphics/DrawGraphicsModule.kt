@@ -12,13 +12,13 @@ object DrawGraphicsModule : AbstractModule() {
 
     val WHITE = CompositeColor(backgroundColor = Color.WHITE, foregroundColor = Color.BLACK)
     val BLACK = CompositeColor(backgroundColor = Color.BLACK, foregroundColor = Color.WHITE)
-    val GRAY = CompositeColor(backgroundColor = Color(227, 227, 227), foregroundColor = Color(114, 114, 114), textColor = Color.BLACK)
-    val RED = CompositeColor(backgroundColor = Color(248, 170, 145), foregroundColor = Color(236, 35, 46), textColor = Color.BLACK)
-    val BLUE = CompositeColor(backgroundColor = Color(185, 223, 245), foregroundColor = Color(72, 186, 233), textColor = Color.BLACK)
-    val GREEN = CompositeColor(backgroundColor = Color(198, 226, 184), foregroundColor = Color(115, 191, 91), textColor = Color.BLACK)
-    val YELLOW = CompositeColor(backgroundColor = Color(251, 245, 183), foregroundColor = Color(254, 209, 58), textColor = Color.BLACK)
-    val VIOLET = CompositeColor(backgroundColor = Color(211, 207, 231), foregroundColor = Color(91, 84, 161), textColor = Color.BLACK)
-    val PINK = CompositeColor(backgroundColor = Color(250, 214, 223), foregroundColor = Color(234, 34, 123), textColor = Color.BLACK)
+    val GRAY = CompositeColor(backgroundColor = Color(227, 227, 227), foregroundColor = Color(114, 114, 114))
+    val RED = CompositeColor(backgroundColor = Color(248, 170, 145), foregroundColor = Color(236, 35, 46))
+    val BLUE = CompositeColor(backgroundColor = Color(185, 223, 245), foregroundColor = Color(72, 186, 233))
+    val GREEN = CompositeColor(backgroundColor = Color(198, 226, 184), foregroundColor = Color(115, 191, 91))
+    val YELLOW = CompositeColor(backgroundColor = Color(251, 245, 183), foregroundColor = Color(254, 209, 58))
+    val VIOLET = CompositeColor(backgroundColor = Color(211, 207, 231), foregroundColor = Color(91, 84, 161))
+    val PINK = CompositeColor(backgroundColor = Color(250, 214, 223), foregroundColor = Color(234, 34, 123))
 
 	private val dottedArray = floatArrayOf(1f, 5f)
 
