@@ -30,138 +30,140 @@ class FlexibleTextView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractStyledDrawable(styleType, styleProvider), Transparent, Unzoomable, Locatable {
 
-    private companion object {
+	private companion object {
 
-        private val LOG by logger(FlexibleTextView::class)
+		private val LOG by logger(FlexibleTextView::class)
 
-        /** The default width of a [FlexibleTextView] if none is specified upon construction.*/
-        private const val DEFAULT_WIDTH = 200
+		/** The default width of a [FlexibleTextView] if none is specified upon construction.*/
+		private const val DEFAULT_WIDTH = 200
 
-        /** The horizontal inset between the surrounding rectangle and the text.  */
-        private const val INSET_X = 10
+		/** The horizontal inset between the surrounding rectangle and the text.  */
+		private const val INSET_X = 10
 
-        /** The vertical inset between the surrounding rectangle and the text.  */
-        private const val INSET_Y = 10
-    }
+		/** The vertical inset between the surrounding rectangle and the text.  */
+		private const val INSET_Y = 10
+	}
 
-    private val multilineText = MultilineText(text, font, width.toDouble())
+	private val multilineText = MultilineText(text, font, width.toDouble())
 
-    /** The shape representing the overall box (including insets) in model coordinates, but excluding stroke widths.*/
-    private val shape = Rectangle2D()
+	/** The shape representing the overall box (including insets) in model coordinates, but excluding stroke widths.*/
+	private val shape = Rectangle2D()
 
-    /** ---- [Locatable] */
+	/** ---- [Locatable] */
 
-    /** Represents the location of the anchor position in model coordinates. */
-    override var location: Point2D = anchor
-        set(value) {
-            invalidate()
-	        field = value
-            updateGeometry()
-            invalidate()
-            update()
-        }
+	/** Represents the location of the anchor position in model coordinates. */
+	override var location: Point2D = anchor
+		set(value) {
+			invalidate()
+			field = value
+			updateGeometry()
+			invalidate()
+			update()
+		}
 
-    /** ---- [Drawable] */
+	/** ---- [Drawable] */
 
-    override val boundingBox: RectangularShape
-        get() {
-            if (isUnzoomable) {
-                val p = calculateBoxCorner(location, 1 / zoomPan!!.zoomFactor)
-                return Rectangle2D(
-                        p.x - stroke.width,
-                        p.y - stroke.width,
-                        shape.width / zoomPan!!.zoomFactor + 2 * stroke.width,
-                        shape.height / zoomPan!!.zoomFactor + 2 * stroke.width
-                )
-            }
-            return Rectangle2D(
-                    shape.x - stroke.width,
-                    shape.y - stroke.width,
-                    shape.width + 2 * stroke.width,
-                    shape.height + 2 * stroke.width)
-        }
+	override val boundingBox: RectangularShape
+		get() {
+			if (isUnzoomable) {
+				val p = calculateBoxCorner(location, 1 / zoomPan!!.zoomFactor)
+				return Rectangle2D(
+					p.x - stroke.width,
+					p.y - stroke.width,
+					shape.width / zoomPan!!.zoomFactor + 2 * stroke.width,
+					shape.height / zoomPan!!.zoomFactor + 2 * stroke.width
+				)
+			}
+			return Rectangle2D(
+				shape.x - stroke.width,
+				shape.y - stroke.width,
+				shape.width + 2 * stroke.width,
+				shape.height + 2 * stroke.width)
+		}
 
-    override fun draw(context: DrawContext) {
-        LOG.debug("FlexibleTextView: draw")
-        val r = if (isUnzoomable) getViewRectangle() else shape
-        context.g.color = transparent.applyTo(backgroundColor)
-        context.g.fillRoundRect(r.x.toInt(), r.y.toInt(), r.width.toInt(), r.height.toInt(), 20, 20)
-        context.g.color = transparent.applyTo(foregroundColor)
-        context.g.stroke = stroke
-        context.g.drawRoundRect(r.x.toInt(), r.y.toInt(), r.width.toInt(), r.height.toInt(), 20, 20)
+	override fun draw(context: DrawContext) {
+		LOG.debug("FlexibleTextView: draw")
+		val r = if (isUnzoomable) getViewRectangle() else shape
+		context.g.color = transparent.applyTo(backgroundColor)
+		context.g.fillRoundRect(r.x.toInt(), r.y.toInt(), r.width.toInt(), r.height.toInt(), 20, 20)
+		context.g.color = transparent.applyTo(foregroundColor)
+		context.g.stroke = stroke
+		context.g.drawRoundRect(r.x.toInt(), r.y.toInt(), r.width.toInt(), r.height.toInt(), 20, 20)
 
-        context.g.font = font
-        context.g.color = transparent.applyTo(textColor)
+		context.g.font = font
+		context.g.color = transparent.applyTo(textColor)
 
-        context.g.translate(r.x + INSET_X, r.y + INSET_Y)
-        multilineText.draw(context)
-        context.g.translate(-(r.x + INSET_X), -(r.y + INSET_Y))
+		context.g.translate(r.x + INSET_X, r.y + INSET_Y)
+		multilineText.draw(context)
+		context.g.translate(-(r.x + INSET_X), -(r.y + INSET_Y))
 
-    }
+	}
 
-    override fun contains(x: Double, y: Double): Boolean = shape.contains(x, y)
+	override fun contains(x: Double, y: Double): Boolean = shape.contains(x, y)
 
-    /** ---- [Unzoomable] interface */
+	/** ---- [Unzoomable] interface */
 
-    override var zoomPan: ZoomPan? = ZoomPan()
-        set(value) {
-            if (field == value) {
-                return
-            }
-            invalidate()
-            field = value
-            updateGeometry()
-            invalidate()
-            update()
-        }
+	override var zoomPan: ZoomPan? = ZoomPan()
+		set(value) {
+			if (field == value) {
+				return
+			}
+			invalidate()
+			field = value
+			updateGeometry()
+			invalidate()
+			update()
+		}
 
-    /** ---- [Transparent] interface */
+	/** ---- [Transparent] interface */
 
-    private val transparent = TransparentImpl(this)
+	private val transparent = TransparentImpl(this)
 
-    override var transparency: Int
-        get() = transparent.transparency
-        set(value) { transparent.transparency = value }
+	override var transparency: Int
+		get() = transparent.transparency
+		set(value) {
+			transparent.transparency = value
+		}
 
-    /** ---- [FlexibleTextView] */
+	/** ---- [FlexibleTextView] */
 
-    init {
-        updateGeometry()
-    }
+	init {
+		updateGeometry()
+	}
 
-    /** Calculates the geometry of this [FlexibleTextView] in model coordinates and stores it in [shape]. */
-    private fun updateGeometry() {
-        val boxCorner = calculateBoxCorner(location, 1.0)
-        shape.setFrame(boxCorner.x, boxCorner.y, boxWidth, boxHeight)
-    }
+	/** Calculates the geometry of this [FlexibleTextView] in model coordinates and stores it in [shape]. */
+	private fun updateGeometry() {
+		val boxCorner = calculateBoxCorner(location, 1.0)
+		shape.setFrame(boxCorner.x, boxCorner.y, boxWidth, boxHeight)
+	}
 
-    /** Calculates the upper-left corner of the surrounding box in view coordinates.*/
-    private fun calculateBoxCorner(anchor: Point2D, f: Double): Point2D {
-        return when(direction) {
-            Direction.NORTH -> {
-                Point2D(anchor.x - (width / 2 + INSET_X) * f, anchor.y - (multilineText.height + 2 * INSET_Y) * f)
-            }
-            Direction.SOUTH -> {
-                Point2D(anchor.x - (width / 2 + INSET_X) * f, anchor.y)
-            }
-            Direction.WEST -> {
-                Point2D(anchor.x - boxWidth * f,anchor.y - boxHeight / 2 * f)
-            }
-            Direction.EAST -> {
-                Point2D(anchor.x, anchor.y - boxHeight / 2 * f)
-            }
-        }
-    }
+	/** Calculates the upper-left corner of the surrounding box in view coordinates.*/
+	private fun calculateBoxCorner(anchor: Point2D, f: Double): Point2D {
+		return when (direction) {
+			Direction.NORTH -> {
+				Point2D(anchor.x - (width / 2 + INSET_X) * f, anchor.y - (multilineText.height + 2 * INSET_Y) * f)
+			}
+			Direction.SOUTH -> {
+				Point2D(anchor.x - (width / 2 + INSET_X) * f, anchor.y)
+			}
+			Direction.WEST -> {
+				Point2D(anchor.x - boxWidth * f, anchor.y - boxHeight / 2 * f)
+			}
+			Direction.EAST -> {
+				Point2D(anchor.x, anchor.y - boxHeight / 2 * f)
+			}
+		}
+	}
 
-    /** Transform [shape] to view coordinates using the current [zoomPan]. */
-    private fun getViewRectangle(): Rectangle2D {
-        val anchorView = zoomPan!!.transform.modelToView(location)
-        val p = calculateBoxCorner(anchorView, 1.0)
-        return Rectangle2D(p.x, p.y, shape.width, shape.height)
-    }
+	/** Transform [shape] to view coordinates using the current [zoomPan]. */
+	private fun getViewRectangle(): Rectangle2D {
+		val anchorView = zoomPan!!.transform.modelToView(location)
+		val p = calculateBoxCorner(anchorView, 1.0)
+		return Rectangle2D(p.x, p.y, shape.width, shape.height)
+	}
 
-    private val boxWidth: Double get() = width + 2.0 * INSET_X
+	private val boxWidth: Double get() = width + 2.0 * INSET_X
 
-    private val boxHeight: Double get() = multilineText.height + 2.0 * INSET_Y
+	private val boxHeight: Double get() = multilineText.height + 2.0 * INSET_Y
 
 }

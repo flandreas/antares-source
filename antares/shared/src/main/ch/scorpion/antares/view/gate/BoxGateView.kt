@@ -3,24 +3,25 @@ package ch.scorpion.antares.view.gate
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
-import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
-import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
+import kotlin.math.max
 
 /**
  * A box-like [VerticeView] that automatically adjusts its size according to its [DigitalPortView]s, and
@@ -197,11 +198,11 @@ open class BoxGateView<T : Vertice>(
 		val westPins = getPortViewsOfDirection(Direction.WEST)
 		val southPins = getPortViewsOfDirection(Direction.SOUTH)
 
-		val vPinCount = Math.max(northPins.size, southPins.size)
-		val boxWidth = Math.max(2 * PIN_INSET + Math.max(0, (vPinCount - 1)) * portDistance(vPinCount), MIN_WIDTH)
+		val vPinCount = max(northPins.size, southPins.size)
+		val boxWidth = max(2 * PIN_INSET + max(0, (vPinCount - 1)) * portDistance(vPinCount), MIN_WIDTH)
 
-		val hPinCount = Math.max(westPins.size, eastPins.size)
-		val boxHeight = Math.max(2 * PIN_INSET + Math.max(0, (hPinCount - 1)) * portDistance(hPinCount), MIN_HEIGHT)
+		val hPinCount = max(westPins.size, eastPins.size)
+		val boxHeight = max(2 * PIN_INSET + max(0, (hPinCount - 1)) * portDistance(hPinCount), MIN_HEIGHT)
 
 		// Layout PortViews relative to the upper left corner of the box
 

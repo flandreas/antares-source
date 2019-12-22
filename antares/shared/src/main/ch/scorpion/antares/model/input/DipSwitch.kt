@@ -28,7 +28,10 @@ class DipSwitch(
 ) : AbstractInteractableVertice("library.element.DipSwitch", CALCULATOR) {
 
 	companion object {
-		val CALCULATOR = object : VerticeCalculator<DipSwitch> {
+
+		private val CALCULATOR = Calculator()
+
+		private class Calculator : VerticeCalculator<DipSwitch> {
 			override fun calculate(vertice: DipSwitch, data: GraphActorData, signalHandler: SignalHandler) {
 				val output = vertice.getOutput<DigitalSignal>()
 				output.setOutgoingSignalBuffered(data.getSignal(1), signalHandler)

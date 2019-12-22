@@ -16,13 +16,9 @@ import kotlin.reflect.KClass
  *      }
  */
 
-interface LogSystem {
+expect object LogSystem {
 
-	companion object {
-
-		/** The name of the [String] property in [Properties] representing the current log level.*/
-		const val PROP_LOG_LEVEL = "base.logLevel"
-	}
+	val PROP_LOG_LEVEL: String
 
 	/** The root log level of this [LogSystem].*/
 	var level: LogLevel
@@ -31,9 +27,7 @@ interface LogSystem {
     fun getLogger(clazz: KClass<out Any>): Lazy<Logger>
 }
 
-var LOG_SYSTEM: LogSystem? = null
-
-interface Logger {
+expect class Logger {
     fun info(msg: String)
     fun warn(msg: String)
     fun error(msg: String)
@@ -52,8 +46,47 @@ enum class LogLevel {
 }
 
 fun <T: Any> logger(origin: KClass<T>): Lazy<Logger> {
-    return LOG_SYSTEM!!.getLogger(origin)
+    return LogSystem.getLogger(origin)
 }
 
+/*
+/** Used for compiling and running tests for 'common' code.*/
+private class CommonLogger : Logger {
 
+	override fun info(msg: String) {
+		println("INFO: $msg")
+	}
 
+	override fun warn(msg: String) {
+		println("WARN: $msg")
+	}
+
+	override fun error(msg: String) {
+		println("ERROR: $msg")
+	}
+
+	override fun debug(msg: String) {
+		println("DEBUG: $msg")
+	}
+
+	override fun trace(msg: String) {
+		println("TRACE: $msg")
+	}
+
+	override fun isDebugEnabled(): Boolean = false
+
+	override fun isTraceEnabled(): Boolean = false
+}
+
+/** Used for compiling and running tests for 'common' code.*/
+class CommonLogSystem : LogSystem {
+
+	private val logger = lazy { CommonLogger() }
+
+	override var level: LogLevel = LogLevel.Info
+
+	override fun getLogger(clazz: KClass<out Any>): Lazy<Logger> {
+		return logger
+	}
+}
+*/

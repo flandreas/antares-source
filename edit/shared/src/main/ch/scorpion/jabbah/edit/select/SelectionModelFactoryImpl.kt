@@ -11,33 +11,33 @@ import ch.scorpion.jabbah.base.logger
  */
 class SelectionModelFactoryImpl : SelectionModelFactory {
 
-    private val LOG by logger(SelectionModelFactoryImpl::class)
+	companion object {
+		private val LOG by logger(SelectionModelFactoryImpl::class)
+	}
 
-    /** Contains the registered [Entries][Entry] for a particular [SelectionDrawingStrategy].*/
-    private val registry: MutableMap<SelectionDrawingStrategy, MutableList<Entry>> = mutableMapOf()
+	/** Contains the registered [Entries][Entry] for a particular [SelectionDrawingStrategy].*/
+	private val registry: MutableMap<SelectionDrawingStrategy, MutableList<Entry>> = mutableMapOf()
 
-    /** ---- [SelectionModelFactory] interface */
+	/** ---- [SelectionModelFactory] interface */
 
-    override fun create(component: Component, strategy: SelectionDrawingStrategy): SelectionModel<Component>? {
-        val entries = registry.get(strategy)
-        if (entries != null) {
-            val entry = entries
-                .filter { it.componentClassName == System.SYSTEM!!.getClassName(component.selectableComponent) }
-                .firstOrNull()
-            if (entry != null) {
-                return entry.factory.invoke(component.selectableComponent)
-            }
-        }
-        LOG.debug("No suitable SelectionModel found for ${System.SYSTEM!!.getClassName(component.selectableComponent)}")
-        return null
-    }
+	override fun create(component: Component, strategy: SelectionDrawingStrategy): SelectionModel<Component>? {
+		val entries = registry[strategy]
+		if (entries != null) {
+			val entry = entries.firstOrNull { it.componentClassName == System.getClassName(component.selectableComponent) }
+			if (entry != null) {
+				return entry.factory.invoke(component.selectableComponent)
+			}
+		}
+		LOG.debug("No suitable SelectionModel found for ${System.getClassName(component.selectableComponent)}")
+		return null
+	}
 
-    override fun register(strategy: SelectionDrawingStrategy, componentClassName: String, factory: (Component) -> SelectionModel<Component>) {
-        registry.getOrPut(strategy, { mutableListOf()}).add(Entry(componentClassName, factory))
-    }
+	override fun register(strategy: SelectionDrawingStrategy, componentClassName: String, factory: (Component) -> SelectionModel<Component>) {
+		registry.getOrPut(strategy, { mutableListOf() }).add(Entry(componentClassName, factory))
+	}
 
-    /** ----  [SelectionModelFactoryImpl] */
+	/** ----  [SelectionModelFactoryImpl] */
 
-    private data class Entry(val componentClassName: String, val factory: (Component) -> SelectionModel<Component>)
+	private data class Entry(val componentClassName: String, val factory: (Component) -> SelectionModel<Component>)
 
 }

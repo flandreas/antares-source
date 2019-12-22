@@ -35,7 +35,9 @@ class CircuitInOutImpl(
 ), CircuitInOut {
 
 	companion object {
-		val CALCULATOR = object : VerticeCalculator<CircuitInOutImpl> {
+		private val CALCULATOR = Calculator()
+
+		private class Calculator : VerticeCalculator<CircuitInOutImpl> {
 			override fun calculate(vertice: CircuitInOutImpl, data: GraphActorData, signalHandler: SignalHandler) {
 				with(vertice) {
 					setOutgoingSignal(data.getSignal(1)!!, signalHandler, data.changedPort == null)

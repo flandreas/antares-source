@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
 import ch.scorpion.jabbah.graph.script.GraphScriptGateway
-import ch.scorpion.jabbah.graph.script.ScriptEngineJvm
+import ch.scorpion.jabbah.graph.script.ScriptEngine
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.ui.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
@@ -29,8 +29,7 @@ object GraphModuleJvm : AbstractModule() {
 
 		DrawModuleJvm.require()
 
-		ScriptModule.scriptEngineProvider = { ScriptEngineJvm() }
-		ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptModule.scriptEngineProvider.invoke()) }
+		ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptEngine(BaseModule.eventBus)) }
 		ScriptModule.require()
 		ExecutionModule.require()
 

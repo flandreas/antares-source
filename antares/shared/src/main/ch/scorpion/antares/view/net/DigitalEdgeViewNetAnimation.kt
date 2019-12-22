@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
+import kotlin.math.min
 
 /**
  * Organizes consecutive animations of bits flowing through a net of [DigitalEdgeView]s.
@@ -54,7 +55,7 @@ class DigitalEdgeViewNetAnimation(
 
 		/** Returns 1 for maximum speed, 0 for halted.*/
 		fun normalizedSpeed(speed: Int): Double {
-			return Math.min(speed, SystemSpeedCategory.Explore.speedRange.last) / SystemSpeedCategory.Explore.speedRange.last.toDouble()
+			return min(speed, SystemSpeedCategory.Explore.speedRange.last) / SystemSpeedCategory.Explore.speedRange.last.toDouble()
 		}
 	}
 

@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.base
 
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -10,7 +10,7 @@ class ThousandsTest {
 
 	@BeforeTest
 	fun setup() {
-		BaseModuleJvm.require()
+		BaseModule.require()
 	}
 
 	@Test

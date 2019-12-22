@@ -23,10 +23,7 @@ class GraphViewImplTest {
 		}
 	}
 
-	private val graphView: GraphView<GraphElementView<*>> = GraphViewImpl(
-		GraphImpl(),
-		IOModule.storableClonerProvider.invoke(),
-		BaseModule.eventBus)
+	private val graphView: GraphView<GraphElementView<*>> = GraphViewImpl(GraphImpl(), BaseModule.eventBus)
 
 	@Test
 	fun shouldAddToModel() {

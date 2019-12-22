@@ -165,7 +165,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 				// If vertice has a DesignError, we assume that it is a SubGraphVerticeRef with a broken reference,
 				// and we can't connect this Net that Vertice
 				if (vertice.designError == null) {
-					LOG.error("Couldn't resolve Port $portId of Vertice ${System.get().getClassName(vertice)} with storableID ${vertice.storableId}")
+					LOG.error("Couldn't resolve Port $portId of Vertice ${System.getClassName(vertice)} with storableID ${vertice.storableId}")
 				}
 			}
 		}

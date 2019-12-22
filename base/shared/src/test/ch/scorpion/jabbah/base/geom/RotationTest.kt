@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.base.geom
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.*
 
 /** Unit tests for [Rotation].*/
@@ -9,7 +9,7 @@ class RotationTest {
 
     @BeforeTest
     fun setup() {
-        BaseModuleJvm.require()
+        BaseModule.require()
     }
 
     @Test
@@ -17,9 +17,9 @@ class RotationTest {
         assertSame(Rotation.R180, Rotation.withName("180"))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun shouldNotRetrieveByUnknownName() {
-        Rotation.withName("720")
+	    assertFailsWith<IllegalArgumentException> { Rotation.withName("720") }
     }
 
     @Test

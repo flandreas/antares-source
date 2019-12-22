@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.draw.module
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
 import ch.scorpion.jabbah.base.preferences.FloatPreference
@@ -15,7 +14,6 @@ import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.draw.view.ContextMenuProvider
 import ch.scorpion.jabbah.draw.view.TooltipManager
 import ch.scorpion.jabbah.draw.view.ZoomPanController
-import java.awt.font.FontRenderContext
 import javax.swing.JPopupMenu
 
 /**
@@ -35,10 +33,6 @@ object DrawModuleJvm : AbstractModule() {
 
     override fun initialize() {
         BaseModuleJvm.require()
-
-        DrawModule.polylineShapeFactory = ::PolylineShapeJvm
-
-        DrawModule.textRenderInfoFactory = TextRenderInfoFactoryJvm()
 
         DrawModule.imageLoader = { ImageJvm(it) }
 
@@ -99,19 +93,4 @@ object DrawModuleJvm : AbstractModule() {
 			nameKey = "draw.preference.TooltipManager.delay"
 		))
 	}
-}
-
-private class TextRenderInfoFactoryJvm : TextRenderInfoFactory {
-
-    override fun measureSingleLineText(text: String, font: Font): TextRenderInfo {
-        val awtFont = java.awt.Font(font.family.javaName, Graphics2DJvm.fromFontStyle(font), font.size)
-        val context = FontRenderContext(awtFont.transform, true, true)
-        val rect = awtFont.getStringBounds(text, context)
-        val lm = awtFont.getLineMetrics(text, context)
-        return TextRenderInfo(Rectangle2D(rect.x, rect.y, rect.width, rect.height), lm.ascent.toDouble())
-    }
-
-    override fun measureHtmlText(text: String, font: Font, width: Int): TextRenderInfo {
-        return Graphics2DJvm.measureHtmlText(text, Graphics2DJvm.toAwtFont(font), width)
-    }
 }

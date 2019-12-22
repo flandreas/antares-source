@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.base
 
 
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.NoSuchElementException
 
 /**
@@ -133,7 +134,6 @@ open class Properties {
 	}
 }
 
-
 open class PropertiesProxy(protected val target: Properties) : Properties() {
 
 	override fun getOptionalEntry(name: String): Entry? {
@@ -210,3 +210,6 @@ class Settings {
         return values[name]
     }
 }
+
+/** Posted on the system [EventBus] when the [Preference]s in the system [Properties] have changed.*/
+data class PreferencesChangedEvent(val properties: Properties)

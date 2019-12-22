@@ -47,7 +47,7 @@ abstract class AbstractAction(
 	companion object {
 		protected fun translatedName(baseName: String): String = Translations.getString("$baseName.name")
 		protected fun translatedDesc(baseName: String): String? = Translations.getOptionalString("$baseName.desc")
-		protected fun translatedAccelerator(baseName: String): String? = Translations.getOptionalString(System.SYSTEM!!.getActionAcceleratorKey(baseName))
+		protected fun translatedAccelerator(baseName: String): String? = Translations.getOptionalString(System.getActionAcceleratorKey(baseName))
 	}
 
 	constructor(baseName: String) : this(

@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import kotlin.math.max
 
 /**
  * Displays a digital number with individual [DigitView]s.
@@ -157,7 +158,7 @@ class NumberView(
 			x = (4.0 / representation.bits()) * DigitView.WIDTH + NIBBLE_GAP
 		}
 
-		val max = Math.max(1, digitViewCount) - 1
+		val max = max(1, digitViewCount) - 1
 		for (i in max downTo 0) {
 			val digitView = DigitView(representation, i, x, y, drawDigitBorder, drawBox)
 			digitViews.add(0, digitView)

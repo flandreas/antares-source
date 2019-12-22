@@ -9,10 +9,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.draw.graphics.Font
-import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -22,6 +19,8 @@ import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * A [Drawable] that displays the contents of a [Addressable].
@@ -137,7 +136,7 @@ class AddressableContentsView(
 
 	override fun draw(context: DrawContext) {
 		var y: Double = location.y + 0.5 * rowHeight
-		(firstAddress..Math.min(firstAddress + rowsCount * effectiveColumnCount - 1, addressable.maxAddress) step effectiveColumnCount).forEach {
+		(firstAddress..min(firstAddress + rowsCount * effectiveColumnCount - 1, addressable.maxAddress) step effectiveColumnCount).forEach {
 			drawRow(it, y, context)
 			y += rowHeight
 		}
@@ -158,9 +157,9 @@ class AddressableContentsView(
 
 	/** ---- [AddressableContentsView] */
 
-	private val addressDigitCount = Math.max(1, addressable.addressWidth.width / 4)
+	private val addressDigitCount = max(1, addressable.addressWidth.width / 4)
 
-	private val dataDigitCount = Math.max(1, addressable.dataWidth.width / 4)
+	private val dataDigitCount = max(1, addressable.dataWidth.width / 4)
 
 	private val effectiveColumnCount: Int get() = if (showDisassembler) 1 else columnsCount
 
@@ -172,11 +171,11 @@ class AddressableContentsView(
 		}
 
 	fun updateGeometry() {
-		addressColumnWidth = DrawModule.textRenderInfoFactory.measureSingleLineText("0".repeat(addressDigitCount), font).textBounds.width.toInt()
-		dataColumnWidth = DrawModule.textRenderInfoFactory.measureSingleLineText("0".repeat(dataDigitCount), font).textBounds.width.toInt()
-		rowHeight = DrawModule.textRenderInfoFactory.measureSingleLineText("0", font).textBounds.height.toInt() + 5
+		addressColumnWidth = TextRenderInfoFactory.measureSingleLineText("0".repeat(addressDigitCount), font).textBounds.width.toInt()
+		dataColumnWidth = TextRenderInfoFactory.measureSingleLineText("0".repeat(dataDigitCount), font).textBounds.width.toInt()
+		rowHeight = TextRenderInfoFactory.measureSingleLineText("0", font).textBounds.height.toInt() + 5
 		disassemblyColumnWidth = if (showDisassembler) {
-			DrawModule.textRenderInfoFactory.measureSingleLineText("0".repeat(addressable.disassemblyWidth), font).textBounds.width.toInt()
+			TextRenderInfoFactory.measureSingleLineText("0".repeat(addressable.disassemblyWidth), font).textBounds.width.toInt()
 		} else {
 			0
 		}
@@ -244,6 +243,6 @@ class AddressableContentsView(
 	private fun calculateFirstAddress(): Int {
 		val blockSize = rowsCount * columnsCount
 		val currentBlock = addressable.currentAddress / blockSize
-		return Math.max(0, currentBlock * blockSize)
+		return max(0, currentBlock * blockSize)
 	}
 }

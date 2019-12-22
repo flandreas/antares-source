@@ -96,7 +96,7 @@ class ArrowBubble(
 	private fun createPath(): Path = if (isBelow) createBelowPath() else createAbovePath()
 
 	private fun createBelowPath(): Path {
-		return System.get().createPath()
+		return System.createPath()
 			.moveTo(0, 0)
 			.lineTo(TIP_WIDTH / 2, TIP_HEIGHT)
 			.lineTo(rightWidth - ARC_SIZE, TIP_HEIGHT)
@@ -112,7 +112,7 @@ class ArrowBubble(
 	}
 
 	private fun createAbovePath(): Path {
-		return System.get().createPath()
+		return System.createPath()
 			.moveTo(0, 0)
 			.lineTo(-TIP_WIDTH / 2, -TIP_HEIGHT)
 			.lineTo(-LEFT_WIDTH + ARC_SIZE, -TIP_HEIGHT)

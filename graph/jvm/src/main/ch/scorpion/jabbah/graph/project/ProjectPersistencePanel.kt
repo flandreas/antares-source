@@ -279,7 +279,8 @@ class ProjectPersistencePanel(
 
 		private fun import(path: String) {
 			val name = FilenameUtils.getBaseName(path)
-			when (managementService.import(path)) {
+			val uuid = UUID(name)
+			when (managementService.import(uuid, path)) {
 				Success -> handleSuccessfulImport(name)
 				NameAlreadyExists -> handleImportNameAlreadyExists(name)
 				Invalid -> handleInvalidImportFile(name)

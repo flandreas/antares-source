@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.library
 
-import org.junit.Test
 import kotlin.test.*
 
 /** Unit tests for [LibraryFolder]. */

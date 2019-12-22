@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.TestVertice
@@ -32,7 +32,7 @@ class GraphViewConnectServiceImplTest {
 
 	@BeforeTest
 	fun setup() {
-		TestTranslationsBuilder().withAnyKey()
+		Translations.withAnyKey()
 	}
 
 	@Test

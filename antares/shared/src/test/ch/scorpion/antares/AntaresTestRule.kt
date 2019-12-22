@@ -4,20 +4,21 @@ import ch.scorpion.antares.view.AntaresThemes
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.app.user.User
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.graph.module.GraphModuleJvm
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /**
  * Basic setup of unit test in the [ch.scorpion.antares] package.
  */
 object AntaresTestRule {
 
-    fun configure() {
-	    BaseModuleJvm.require()
-	    AppModule.userHolder.u = User.developer()
-        GraphModuleJvm.require()
-        AntaresViewModule.require()
-        AntaresThemes.install()
-	    TestTranslationsBuilder().withAnyKey()
-    }
+	fun configure() {
+		BaseModule.require()
+		AppModule.userHolder.u = User.developer()
+		GraphViewModule.require()
+		AntaresViewModule.require()
+		AntaresThemes.install()
+		Translations.withAnyKey()
+	}
 }

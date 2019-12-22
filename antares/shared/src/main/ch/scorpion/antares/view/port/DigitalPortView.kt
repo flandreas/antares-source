@@ -37,6 +37,7 @@ import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.ReferenceResolver
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
+import kotlin.math.min
 
 /**
  * A view representation of a [DigitalPort], either input or output.
@@ -60,17 +61,17 @@ class DigitalPortView(
 		const val LOGIC_SIZE = (2 * Look.SCALE / 1.7f).toInt()
 		const val INTERNAL_ANNOTATION_SIZE = (LOGIC_SIZE * 1.25).toInt()
 
-		val EDGE_TRIGGER_PATH: Path = System.get().createPath()
+		val EDGE_TRIGGER_PATH: Path = System.createPath()
 			.moveTo(0.0, -INTERNAL_ANNOTATION_SIZE / 2.0)
 			.lineTo(-INTERNAL_ANNOTATION_SIZE, 0)
 			.lineTo(0, INTERNAL_ANNOTATION_SIZE / 2)
 
-		val MASTER_SLAVE_PATH: Path = System.get().createPath()
+		val MASTER_SLAVE_PATH: Path = System.createPath()
 			.moveTo(-INTERNAL_ANNOTATION_SIZE, -INTERNAL_ANNOTATION_SIZE / 2 + 1)
 			.lineTo(-INTERNAL_ANNOTATION_SIZE / 2, -INTERNAL_ANNOTATION_SIZE / 2 + 1)
 			.lineTo(-INTERNAL_ANNOTATION_SIZE / 2, INTERNAL_ANNOTATION_SIZE / 2 - 1)
 
-		val TRI_STATE_PATH: Path = System.get().createPath()
+		val TRI_STATE_PATH: Path = System.createPath()
 			.moveTo(-INTERNAL_ANNOTATION_SIZE, -INTERNAL_ANNOTATION_SIZE / 2 + 1)
 			.lineTo(-3, -INTERNAL_ANNOTATION_SIZE / 2 + 1)
 			.lineTo(-INTERNAL_ANNOTATION_SIZE / 2 - 1.5, INTERNAL_ANNOTATION_SIZE / 2 - 1.0)
@@ -444,8 +445,8 @@ class DigitalPortView(
 			val y1 = 0
 			val y2 = LOGIC_SIZE * direction.dy + LOGIC_SIZE * direction.next().dy
 
-			var logicX = Math.min(x1, x2)
-			var logicY = Math.min(y1, y2)
+			var logicX = min(x1, x2)
+			var logicY = min(y1, y2)
 
 			logicX += LOGIC_SIZE * direction.previous().dx / 2
 			logicY += LOGIC_SIZE * direction.previous().dy / 2

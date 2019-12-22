@@ -28,8 +28,12 @@ class Probe(
 ) : CalculatingVertice("library.element.Probe", CALCULATOR), DigitalSignalSource {
 
 	companion object {
-		val LOG by logger(Probe::class)
-		val CALCULATOR = object : VerticeCalculator<Probe> {
+
+		private val LOG by logger(Probe::class)
+
+		private val CALCULATOR = Calculator()
+
+		private class Calculator : VerticeCalculator<Probe> {
 			override fun calculate(vertice: Probe, data: GraphActorData, signalHandler: SignalHandler) {
 				if (vertice.isLogging) {
 					LOG.info("${signalHandler.executionTime} Probe '${vertice.name}': ${data.getSignal<DigitalSignal>(1)}")

@@ -23,6 +23,7 @@ import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.min
 
 /**
  * A view of an [AndGate].
@@ -72,7 +73,7 @@ class AndGateView(
 	override fun modelExchanged(oldModel: AndGate?) {
 		super.modelExchanged(oldModel)
 		if (model != null) {
-			dataPort = InputPortNumber.withId(Math.min(dataPort.id, model!!.chosenInputCount.count))
+			dataPort = InputPortNumber.withId(min(dataPort.id, model!!.chosenInputCount.count))
 		}
 	}
 

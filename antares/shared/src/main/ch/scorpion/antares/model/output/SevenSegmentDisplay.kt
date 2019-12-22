@@ -9,40 +9,43 @@ import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
 
 class SevenSegmentDisplay(
-        portScheme: SevenSegmentDisplayScheme = SevenSegmentDisplayScheme.COMBINED
+	portScheme: SevenSegmentDisplayScheme = SevenSegmentDisplayScheme.COMBINED
 ) : CalculatingVertice("library.element.SevenSegmentDisplay", CALCULATOR) {
 
-    companion object {
-        val CALCULATOR = object : VerticeCalculator<SevenSegmentDisplay> {
-            override fun calculate(vertice: SevenSegmentDisplay, data: GraphActorData, signalHandler: SignalHandler) {
-                vertice.stateChanged()
-            }
-        }
-    }
+	companion object {
 
-    var portScheme: SevenSegmentDisplayScheme = portScheme
-        set(value) {
-            if (value != field) {
-                field = value
-                clearPorts()
-                field.createPorts(this)
-                stateChanged()
-            }
-        }
+		private val CALCULATOR = Calculator()
 
-    init {
-        portScheme.createPorts(this)
-    }
+		private class Calculator : VerticeCalculator<SevenSegmentDisplay> {
+			override fun calculate(vertice: SevenSegmentDisplay, data: GraphActorData, signalHandler: SignalHandler) {
+				vertice.stateChanged()
+			}
+		}
+	}
 
-    /** ---- [Storable] interface */
+	var portScheme: SevenSegmentDisplayScheme = portScheme
+		set(value) {
+			if (value != field) {
+				field = value
+				clearPorts()
+				field.createPorts(this)
+				stateChanged()
+			}
+		}
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        writer.writeString("portScheme", portScheme.customName)
-    }
+	init {
+		portScheme.createPorts(this)
+	}
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        portScheme = SevenSegmentDisplayScheme.withName(reader.readString("portScheme"))
-    }
+	/** ---- [Storable] interface */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeString("portScheme", portScheme.customName)
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		portScheme = SevenSegmentDisplayScheme.withName(reader.readString("portScheme"))
+	}
 }

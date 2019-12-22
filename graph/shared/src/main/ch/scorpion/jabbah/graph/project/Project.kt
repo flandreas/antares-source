@@ -9,11 +9,7 @@ import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryService
-import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StorableCreator
-import ch.scorpion.jabbah.io.StoreReader
-import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.*
 
 interface Project : Library {
 
@@ -48,7 +44,7 @@ class ProjectImpl(
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("import")) {
-			importedLibrary = System.get().createUUID(reader.readString("import"))
+			importedLibrary = System.createUUID(reader.readString("import"))
 		}
 	}
 

@@ -75,22 +75,24 @@ class RepositoryServiceImplTest {
 		assertEquals(2, directory.indexOf(project.getRecursively("Element") as ContainerLibraryElement))
 	}
 
-	@Test(expected = LibraryDependencyException::class)
+	@Test
 	fun shouldNotMoveProjectDependenciesToLibrary() {
-		projectBuilder.addContainerLibraryElement("ReferencedVertice")
-		val referencedVertice = projectBuilder.library.get("ReferencedVertice") as ContainerLibraryElement
-		val graphViewBuilder = GraphViewBuilder<Boolean>()
-		graphViewBuilder.reference(referencedVertice.uuid)
-		val referencingMetaGraph = MetaGraph(GraphStorable(graphViewBuilder.graphView), ContainerDrawing())
-		referencingMetaGraph.graph.model!!.name.value = "ReferencingVertice"
-		projectBuilder.addContainerLibraryElement(referencingMetaGraph)
+		assertFailsWith<LibraryDependencyException> {
+			projectBuilder.addContainerLibraryElement("ReferencedVertice")
+			val referencedVertice = projectBuilder.library.get("ReferencedVertice") as ContainerLibraryElement
+			val graphViewBuilder = GraphViewBuilder<Boolean>()
+			graphViewBuilder.reference(referencedVertice.uuid)
+			val referencingMetaGraph = MetaGraph(GraphStorable(graphViewBuilder.graphView), ContainerDrawing())
+			referencingMetaGraph.graph.model!!.name.value = "ReferencingVertice"
+			projectBuilder.addContainerLibraryElement(referencingMetaGraph)
 
-		try {
-			service.move(projectBuilder.library.get("ReferencingVertice") as ContainerLibraryElement, libraryBuilder.library as LibraryDirectory)
-		} catch (e: LibraryDependencyException) {
-			assertNotNull(projectBuilder.library.get("ReferencingVertice") as ContainerLibraryElement?)
-			assertNull(libraryBuilder.library.get("ReferencingVertice") as ContainerLibraryElement?)
-			throw e
+			try {
+				service.move(projectBuilder.library.get("ReferencingVertice") as ContainerLibraryElement, libraryBuilder.library as LibraryDirectory)
+			} catch (e: LibraryDependencyException) {
+				assertNotNull(projectBuilder.library.get("ReferencingVertice") as ContainerLibraryElement?)
+				assertNull(libraryBuilder.library.get("ReferencingVertice") as ContainerLibraryElement?)
+				throw e
+			}
 		}
 	}
 

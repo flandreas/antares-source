@@ -44,7 +44,7 @@ class ClockView(
 		private val KNOB: KnobView by lazy { KnobView(unit = "µs") }
 
 		private fun createIconPath(): Path {
-			return System.get().createPath()
+			return System.createPath()
 				.moveTo(-SEG_X * 1.5, SEG_Y_HALF)
 				.lineTo(-SEG_X * 0.6, SEG_Y_HALF)
 				.lineTo(-SEG_X * 0.6, -SEG_Y_HALF)
@@ -181,7 +181,7 @@ class ClockView(
 		private fun startTimerIfNeeded(view: DrawingView<*>) {
 			if (timer == null) {
 				LOG.debug("starting timer")
-				timer = System.get().createTimer()
+				timer = System.createTimer()
 				timer!!.initialize(timerDelay) { display(view) }
 				timer!!.start()
 			}

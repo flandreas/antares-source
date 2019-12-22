@@ -30,7 +30,9 @@ class Random(
 		private val CLOCK_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.random.clockPort.desc"))
 		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.random.dataPort.desc"))
 
-		private val CALCULATOR = object : VerticeCalculator<Random> {
+		private val CALCULATOR = Calculator()
+
+		private class Calculator : VerticeCalculator<Random> {
 			override fun calculate(vertice: Random, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.getSignal<DigitalSignal>(1)!!.bitAt(0) == Bit.True) {
 					vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(

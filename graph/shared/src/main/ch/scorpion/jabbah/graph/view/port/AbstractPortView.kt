@@ -17,8 +17,6 @@ import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
-import java.lang.StringBuilder
-
 
 /**
  * A [PortView] that draws a line that points to one of the four [Direction]s.
@@ -153,7 +151,7 @@ abstract class AbstractPortView<T : Any>(
 			content.append("<p/>")
 			content.append("<b>$CURRENT_VALUE_TEXT</b>: $valueText")
 		}
-		val text = System.get().buildToolTipText(buildToolTipTitle(), content.toString())
+		val text = System.buildToolTipText(buildToolTipTitle(), content.toString())
 		return if (StringUtils.isNotBlank(text)) Tooltip(text!!, owner!!.getPortConnectionPoint(port)) else null
 	}
 
@@ -243,7 +241,7 @@ abstract class AbstractPortView<T : Any>(
 	}
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? {
-		val text = System.get().buildToolTipText(buildToolTipTitle(), buildToolTipContent())
+		val text = System.buildToolTipText(buildToolTipTitle(), buildToolTipContent())
 		return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, owner!!.getPortConnectionPoint(port)) else null
 	}
 

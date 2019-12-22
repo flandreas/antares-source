@@ -18,6 +18,6 @@ abstract class AbstractApplicationAction(
 	) : this(
 		Translations.getString("$baseName.name"),
 		Translations.getOptionalString("$baseName.desc"),
-		Translations.getOptionalString(System.SYSTEM!!.getActionAcceleratorKey(baseName)),
+		Translations.getOptionalString(System.getActionAcceleratorKey(baseName)),
 		application)
 }

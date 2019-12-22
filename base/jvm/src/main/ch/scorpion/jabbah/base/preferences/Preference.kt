@@ -9,8 +9,6 @@ import javax.swing.JFormattedTextField
 import javax.swing.JTextField
 import javax.swing.text.NumberFormatter
 
-/** Posted on the system [EventBus] when the [Preference]s in the system [Properties] have changed.*/
-data class PreferencesChangedEvent(val properties: Properties)
 
 class PreferenceGroup(
 	private val nameKey: String
@@ -28,7 +26,7 @@ class PreferenceGroup(
 
 	val preferences: Iterator<Preference> get() = _preferences.iterator()
 
-	/** Returns the displayable, translated name of this [PropertyGroup].*/
+	/** Returns the displayable, translated name of this [PreferenceGroup].*/
 	val name: String get() = Translations.getString(nameKey)
 
 	override fun toString(): String = name

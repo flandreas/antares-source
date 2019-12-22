@@ -68,7 +68,7 @@ class ReferenceResolverImpl : ReferenceResolver {
 					try {
 						storable.resolve(reference, referenceResolver)
 					} catch (e: Throwable) {
-						LOG.error("error while resolving class '${System.get().getClassName(storable)}' with storableID '${storable.storableId}': ${e.message}")
+						LOG.error("error while resolving class '${System.getClassName(storable)}' with storableID '${storable.storableId}': ${e.message}")
 						throw e
 					}
 				}

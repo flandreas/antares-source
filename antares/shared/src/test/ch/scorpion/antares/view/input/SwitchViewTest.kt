@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContextImpl
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.Assert.*
 import kotlin.test.Test
 
 class SwitchViewTest {

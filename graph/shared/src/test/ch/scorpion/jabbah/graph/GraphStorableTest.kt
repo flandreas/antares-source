@@ -1,12 +1,12 @@
 package ch.scorpion.jabbah.graph
 
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.io.IOModule
+import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.*
 
 
@@ -21,7 +21,6 @@ class GraphStorableTest {
 
 	@BeforeTest
 	fun setup() {
-		TestTranslationsBuilder().withAnyKey()
 		IOModule.typeMap.register("testVertice", TestVertice::class)
 		IOModule.typeMap.register("testVerticeView", TestVerticeView::class)
 	}
@@ -30,7 +29,7 @@ class GraphStorableTest {
 	fun shouldBeStorable() {
 		val testGraph = TestGraphView()
 		val orig = GraphStorable(testGraph.graphView)
-		val clone: GraphStorable = IOModule.storableClonerProvider.invoke().cloneUsingCreator(orig, IOModule.storableCreator) as GraphStorable
+		val clone: GraphStorable = StorableCloner.cloneUsingCreator(orig, IOModule.storableCreator) as GraphStorable
 
 		// Assert model connectedness
 		val graph: Graph = clone.graphView.graph!!

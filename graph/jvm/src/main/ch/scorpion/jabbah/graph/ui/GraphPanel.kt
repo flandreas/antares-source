@@ -409,10 +409,3 @@ class GraphPanel(
 		}
 	}
 }
-
-/** Posted on [EventBus] when the currently (one and only) edited root [GraphView] changes. */
-class EditedGraphViewEvent(
-	val applicationModeHolder: ApplicationModeHolder,
-	val oldGraphView: GraphView<GraphElementView<*>>?,
-	val newGraphView: GraphView<GraphElementView<*>>?
-)

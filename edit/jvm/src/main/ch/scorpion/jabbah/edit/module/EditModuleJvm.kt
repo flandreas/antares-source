@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.StyleTypeEditor
 import ch.scorpion.jabbah.draw.style.StyleTypeRenderer
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.app.CopyPasteUtilitySwing
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.SizeEditor
 import ch.scorpion.jabbah.edit.model.VerticalAlignmentEditor
@@ -46,6 +47,7 @@ object EditModuleJvm : AbstractModule() {
 
 		registerTypes(IOModule.typeMap)
 
+		EditModule.copyPasteUtility = CopyPasteUtilitySwing
 		EditModule.require()
 
 		DrawModuleJvm.contextMenuProvider = EditContextMenuProvider()

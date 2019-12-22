@@ -28,12 +28,12 @@ class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
 	/** If set, indicates that the entire [View] is dirty, in which case [dirtyRegion] is overwritten.*/
 	private var dirtyView: Boolean = false
 
-	private val timer: Timer = System.get().createTimer()
+	private val timer: Timer = System.createTimer()
 
 	init {
 		timer.initialize(1000 / REPAINT_FREQUENCY) {
 			timer.stop()
-			System.SYSTEM!!.invokeLater {
+			System.invokeLater {
 				repaintDirtyRegion()
 			}
 		}

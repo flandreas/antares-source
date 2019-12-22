@@ -7,6 +7,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -17,119 +18,121 @@ class CommandManagerImplTest {
 		EditTestRule.configure()
 	}
 
-    private val cmdManager = CommandManagerImpl()
+	private val cmdManager = CommandManagerImpl()
 
-    @Test(expected = IllegalStateException::class)
-    fun shouldNotCommitInexistentTransaction() {
-        cmdManager.commitTransaction()
-    }
+	@Test
+	fun shouldNotCommitInexistentTransaction() {
+		assertFailsWith<IllegalStateException> {
+			cmdManager.commitTransaction()
+		}
+	}
 
-    @Test
-    fun shouldAutoCommitExecute() {
-        val cmd = command()
-        cmdManager.execute(cmd)
-        verify { cmd.execute() }
-        assertTrue(cmdManager.canUndo())
-    }
+	@Test
+	fun shouldAutoCommitExecute() {
+		val cmd = command()
+		cmdManager.execute(cmd)
+		verify { cmd.execute() }
+		assertTrue(cmdManager.canUndo())
+	}
 
-    @Test
-    fun shouldAutoCommitRegister() {
-        val cmd = command()
-        cmdManager.register(cmd)
-        verify(exactly = 0) { cmd.execute() }
-	    assertTrue(cmdManager.canUndo())
-    }
+	@Test
+	fun shouldAutoCommitRegister() {
+		val cmd = command()
+		cmdManager.register(cmd)
+		verify(exactly = 0) { cmd.execute() }
+		assertTrue(cmdManager.canUndo())
+	}
 
-    @Test
-    fun shouldDoSingleTransaction() {
-        val cmd = command()
-        cmdManager.beginTransaction(cmd)
-        cmdManager.commitTransaction()
-        verify { cmd.execute() }
-	    assertTrue(cmdManager.canUndo())
-    }
+	@Test
+	fun shouldDoSingleTransaction() {
+		val cmd = command()
+		cmdManager.beginTransaction(cmd)
+		cmdManager.commitTransaction()
+		verify { cmd.execute() }
+		assertTrue(cmdManager.canUndo())
+	}
 
-    @Test
-    fun shouldExecuteCommandInExistingTransaction() {
-        val cmd1 = command()
-        val cmd2 = command()
-        cmdManager.beginTransaction(cmd1)
-        cmdManager.execute(cmd2)
-        cmdManager.commitTransaction()
-        verify { cmd1.execute() }
-        verify { cmd2.execute() }
-	    assertTrue(cmdManager.canUndo())
-    }
+	@Test
+	fun shouldExecuteCommandInExistingTransaction() {
+		val cmd1 = command()
+		val cmd2 = command()
+		cmdManager.beginTransaction(cmd1)
+		cmdManager.execute(cmd2)
+		cmdManager.commitTransaction()
+		verify { cmd1.execute() }
+		verify { cmd2.execute() }
+		assertTrue(cmdManager.canUndo())
+	}
 
-    @Test
-    fun shouldNotCommitInnerTransaction() {
-        val cmd1 = command()
-        val cmd2 = command()
-        cmdManager.beginTransaction(cmd1)
-        cmdManager.beginTransaction(cmd2)
-        cmdManager.commitTransaction()
-        verify { cmd1.execute() }
-        verify { cmd2.execute() }
-	    assertFalse(cmdManager.canUndo())
-    }
+	@Test
+	fun shouldNotCommitInnerTransaction() {
+		val cmd1 = command()
+		val cmd2 = command()
+		cmdManager.beginTransaction(cmd1)
+		cmdManager.beginTransaction(cmd2)
+		cmdManager.commitTransaction()
+		verify { cmd1.execute() }
+		verify { cmd2.execute() }
+		assertFalse(cmdManager.canUndo())
+	}
 
-    @Test
-    fun shouldCommitOuterTransation() {
-        val cmd1 = command()
-        val cmd2 = command()
-        cmdManager.beginTransaction(cmd1)
-        cmdManager.beginTransaction(cmd2)
-        cmdManager.commitTransaction()
-        cmdManager.commitTransaction()
-        verify { cmd1.execute() }
-        verify { cmd2.execute() }
-	    assertTrue(cmdManager.canUndo())
-    }
+	@Test
+	fun shouldCommitOuterTransation() {
+		val cmd1 = command()
+		val cmd2 = command()
+		cmdManager.beginTransaction(cmd1)
+		cmdManager.beginTransaction(cmd2)
+		cmdManager.commitTransaction()
+		cmdManager.commitTransaction()
+		verify { cmd1.execute() }
+		verify { cmd2.execute() }
+		assertTrue(cmdManager.canUndo())
+	}
 
-    @Test
-    fun shouldUndo() {
-        val cmdA = command("A")
-        val cmdB = command("B")
-        cmdManager.beginTransaction(cmdA)
-        cmdManager.execute(cmdB)
-        cmdManager.commitTransaction()
+	@Test
+	fun shouldUndo() {
+		val cmdA = command("A")
+		val cmdB = command("B")
+		cmdManager.beginTransaction(cmdA)
+		cmdManager.execute(cmdB)
+		cmdManager.commitTransaction()
 
-        cmdManager.undo()
+		cmdManager.undo()
 
-        verify { cmdB.undo() }
-        verify { cmdA.undo() }
-        assertFalse(cmdManager.canUndo())
-	    assertTrue(cmdManager.canRedo())
-    }
+		verify { cmdB.undo() }
+		verify { cmdA.undo() }
+		assertFalse(cmdManager.canUndo())
+		assertTrue(cmdManager.canRedo())
+	}
 
-    @Test
-    fun shouldRedo() {
-        val cmdA = command("A")
-        val cmdB = command("B")
-        cmdManager.beginTransaction(cmdA)
-        cmdManager.execute(cmdB)
-        cmdManager.commitTransaction()
-        cmdManager.undo()
+	@Test
+	fun shouldRedo() {
+		val cmdA = command("A")
+		val cmdB = command("B")
+		cmdManager.beginTransaction(cmdA)
+		cmdManager.execute(cmdB)
+		cmdManager.commitTransaction()
+		cmdManager.undo()
 
-        cmdManager.redo()
+		cmdManager.redo()
 
-        verify(exactly = 2) { cmdA.execute() }
-        verify(exactly = 2) { cmdB.execute() }
-        assertTrue(cmdManager.canUndo())
-        assertFalse(cmdManager.canRedo())
-    }
+		verify(exactly = 2) { cmdA.execute() }
+		verify(exactly = 2) { cmdB.execute() }
+		assertTrue(cmdManager.canUndo())
+		assertFalse(cmdManager.canRedo())
+	}
 
-    @Test
-    fun shouldReset() {
-        val cmd = command("A")
-        cmdManager.beginTransaction(cmd)
-        cmdManager.commitTransaction()
+	@Test
+	fun shouldReset() {
+		val cmd = command("A")
+		cmdManager.beginTransaction(cmd)
+		cmdManager.commitTransaction()
 
-        cmdManager.reset()
+		cmdManager.reset()
 
-	    assertFalse(cmdManager.canUndo())
-	    assertFalse(cmdManager.canRedo())
-    }
+		assertFalse(cmdManager.canUndo())
+		assertFalse(cmdManager.canRedo())
+	}
 
 	/** ---- Checkpoints */
 
@@ -169,9 +172,9 @@ class CommandManagerImplTest {
 
 	/** ---- Helper methods */
 
-    private fun command(desc: String = "Cmd"): Command {
-        val command = mockk<Command>(relaxed = true)
-        every { command.getDescription() } returns desc
-        return command
-    }
+	private fun command(desc: String = "Cmd"): Command {
+		val command = mockk<Command>(relaxed = true)
+		every { command.getDescription() } returns desc
+		return command
+	}
 }

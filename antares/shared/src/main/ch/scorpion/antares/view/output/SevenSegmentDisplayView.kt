@@ -287,7 +287,7 @@ class SevenSegmentDisplayView(
 		val segHalfWidth: Float = 0.25f * factor * Look.SCALE
 		val segInset: Float = 1f * factor
 		val dotSize: Int = (4 * factor).toInt()
-		val path = System.get().createPath()
+		val path = System.createPath()
 			.moveTo(segInset, 0f)
 			.lineTo(segInset + segHalfWidth, -segHalfWidth)
 			.lineTo(segLength - segHalfWidth - segInset, -segHalfWidth)

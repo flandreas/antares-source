@@ -20,8 +20,7 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.execution.actor.ActorView
-import kotlin.math.PI
-import kotlin.math.pow
+import kotlin.math.*
 
 /**
  * A circular knob used for interactively changing a value while execution.
@@ -49,7 +48,7 @@ class KnobView(
 		private val INNER_COLOR = Color(32, 32, 32, 128)
 
 		private const val TRIANGLE_SIZE = 10
-		private val TRIANGLE_PATH = System.get().createPath()
+		private val TRIANGLE_PATH = System.createPath()
 			.moveTo(0, 0)
 			.lineTo(-TRIANGLE_SIZE, TRIANGLE_SIZE / 2)
 			.lineTo(-TRIANGLE_SIZE, -TRIANGLE_SIZE / 2)
@@ -126,8 +125,8 @@ class KnobView(
 		for (number in 1..9) {
 			val angle = ONE_ANGLE - (number - 1) * ANGLE_PER_DIGIT
 			scaleLabel.location = Point2D(
-				SCALE_SIZE / 2 * Math.cos(angle),
-				-SCALE_SIZE / 2 * Math.sin(angle))
+				SCALE_SIZE / 2 * cos(angle),
+				-SCALE_SIZE / 2 * sin(angle))
 			scaleLabel.text = number.toString()
 			scaleLabel.draw(context)
 		}
@@ -220,7 +219,7 @@ class KnobModel(initialValue: Long = 0) : PropertyOwner<Long>() {
 	 */
 	var value: Long = initialValue
 		set(value) {
-			val effectiveNewValue = Math.max(1L, value)
+			val effectiveNewValue = max(1L, value)
 			if (field != effectiveNewValue) {
 				val oldValue = field
 				field = effectiveNewValue
@@ -232,7 +231,7 @@ class KnobModel(initialValue: Long = 0) : PropertyOwner<Long>() {
 	 * The current value with all digits except the most significant digits set to zero.
 	 * Example: The base value of 12_345 is 10_000.
 	 */
-	private val baseValue: Double get() = 10.0.pow(Math.log10(value.toDouble()).toLong().toDouble())
+	private val baseValue: Double get() = 10.0.pow(log10(value.toDouble()).toLong().toDouble())
 
 	fun incrementAngleTo(newAngle: Double): Long {
 		var currentBaseValue = baseValue

@@ -14,8 +14,6 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import ch.scorpion.jabbah.io.IOModule
-import ch.scorpion.jabbah.io.StorableCloner
 import javax.swing.Action
 
 /**
@@ -26,8 +24,7 @@ class EditSubGraphVerticeViewAction(
 	private val eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	private val commandManager: CommandManager = EditModule.commandManager,
-	private val metaGraphRepository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
-	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke()
+	private val metaGraphRepository: MetaGraphRepository = GraphModelModule.metaGraphRepository
 ) : AbstractSelectionAwareAction("graph.action.editSubGraphVerticeView", eventBus, viewManager) {
 
 	companion object {
@@ -62,12 +59,11 @@ class EditSubGraphVerticeViewAction(
 		})
 
 		if (EditSubGraphVerticeViewPanel.showAsDialog(
-			metaGraphRepository = metaGraphRepository,
-			containerPanel = containerPanel,
-			subGraphVerticeView = editedVerticeView,
-			storableCloner = storableCloner,
-			commandManager = commandManager
-		)) {
+				metaGraphRepository = metaGraphRepository,
+				containerPanel = containerPanel,
+				subGraphVerticeView = editedVerticeView,
+				commandManager = commandManager
+			)) {
 			// User has pressed "OK"
 			commandManager.execute(EditSubGraphVerticeViewCommand(editedVerticeView, containerPanel.editor.drawing as ContainerDrawing))
 		}

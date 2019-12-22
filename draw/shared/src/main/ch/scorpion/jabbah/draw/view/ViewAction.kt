@@ -29,7 +29,9 @@ abstract class AbstractViewAction(
 		eventBus.register(ActiveViewChangedEvent::class) { activeViewChanged(it.oldView, it.newView) }
 	}
 
-	private val viewPropertyListener = object : PropertyChangeListener<Any> {
+	private val viewPropertyListener = ViewPropertyListener()
+
+	private inner class ViewPropertyListener : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 			if (View.PROP_USER_ZOOM_ENABLED == e.name) {
 				updateEnabled()

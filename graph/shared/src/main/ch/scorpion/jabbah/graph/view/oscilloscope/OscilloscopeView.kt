@@ -40,6 +40,9 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.round
 
 class OscilloscopeView(
 	private val service: OscilloscopeViewService = GraphViewModule.oscilloscopeViewService,
@@ -304,7 +307,7 @@ class OscilloscopeView(
 				context.g.drawLine(x1, y - 3, x1, y + 3)
 				context.g.drawLine(x2, y - 3, x2, y + 3)
 
-				label.text = "${Math.round(deltaTime / timelineScale)} ns"
+				label.text = "${round(deltaTime / timelineScale)} ns"
 				label.draw(context)
 			}
 		}
@@ -435,7 +438,7 @@ class OscilloscopeView(
 			if (scaleRow.contains(newLocation)) {
 				val dist = startLocation.subtract(newLocation).x
 				LOG.debug("actor mouseDragged, dx = $dist")
-				timelineScale = Math.max(0.1, startScale + Math.floor(10 * dist / 50) / 10)
+				timelineScale = max(0.1, startScale + floor(10 * dist / 50) / 10)
 				return this
 			}
 			return null

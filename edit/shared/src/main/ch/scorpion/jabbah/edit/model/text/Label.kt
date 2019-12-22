@@ -1,15 +1,16 @@
 package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Font
+import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 
 
@@ -171,15 +172,15 @@ class Label(
 		/** Keeps the label text always horizontal.*/
 		KEEP_HORIZONTAL {
 			override fun beforeDraw(context: DrawContext, label: Label) {
-				context.g.translate(label.bounds.centerX , label.bounds.centerY)
+				context.g.translate(label.bounds.centerX, label.bounds.centerY)
 				context.g.rotate(-label.ownerRotation.angle)
-				context.g.translate(-label.bounds.centerX , -label.bounds.centerY)
+				context.g.translate(-label.bounds.centerX, -label.bounds.centerY)
 			}
 
 			override fun afterDraw(context: DrawContext, label: Label) {
-				context.g.translate(label.bounds.centerX , label.bounds.centerY)
+				context.g.translate(label.bounds.centerX, label.bounds.centerY)
 				context.g.rotate(label.ownerRotation.angle)
-				context.g.translate(-label.bounds.centerX , -label.bounds.centerY)
+				context.g.translate(-label.bounds.centerX, -label.bounds.centerY)
 			}
 		};
 
@@ -248,7 +249,7 @@ class Label(
 	/** ---- [Label] */
 
 	private fun updateGeometry() {
-		val textRenderInfo = DrawModule.textRenderInfoFactory.measureSingleLineText(displayableText, font)
+		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(displayableText, font)
 
 		bounds.setFrame(
 			location.x + horizontalAlignment.getX(textRenderInfo.textBounds) - BOUNDS_INSET,

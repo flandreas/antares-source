@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
@@ -14,11 +13,13 @@ import ch.scorpion.jabbah.draw.graphics.ReferenceColorEvent
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.project.CurrentProjectEvent
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -40,12 +41,35 @@ interface GraphDesktop {
 		scheduler: Scheduler
 	): GraphDesktopItem
 
+	fun invoke(handler: () -> Unit)
+
 	fun addGraphDesktopItem(item: GraphDesktopItem)
 
 	fun closeItem(item: GraphDesktopItem)
 
 	fun closeAll(establishSingleView: Boolean)
 }
+
+/** Displays the contents of a [VerticeView] within a separate [GraphDesktop] view.*/
+interface GraphDesktopItem {
+
+	val drawingView: DrawingView<GraphView<GraphElementView<*>>>?
+
+	var contextColor: CompositeColor?
+
+	fun dispose()
+
+	fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<*>?
+}
+
+data class GraphDesktopItemCloseRequest(val item: GraphDesktopItem)
+
+/** Posted on [EventBus] when the currently (one and only) edited root [GraphView] changes. */
+class EditedGraphViewEvent(
+	val applicationModeHolder: ApplicationModeHolder,
+	val oldGraphView: GraphView<GraphElementView<*>>?,
+	val newGraphView: GraphView<GraphElementView<*>>?
+)
 
 class GraphDesktopController(
 	private val application: Application,
@@ -151,7 +175,7 @@ class GraphDesktopController(
 
 	private fun handle(request: OpenSubGraphRequest) {
 		if (request.newView) {
-			InvocationHandler.invoke { openSubGraphVerticeView(request.subGraphVerticeView) }
+			_view?.invoke { openSubGraphVerticeView(request.subGraphVerticeView) }
 		}
 	}
 

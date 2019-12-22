@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.draw.style
 
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawTestRule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -22,7 +22,7 @@ class StyleRepositoryTest {
 
     @BeforeTest
     fun setup() {
-        BaseModuleJvm.require()
+        BaseModule.require()
         StyleRepository.INSTANCE.clear()
     }
 

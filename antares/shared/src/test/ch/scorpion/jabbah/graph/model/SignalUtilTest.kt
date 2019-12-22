@@ -1,7 +1,8 @@
 package ch.scorpion.jabbah.graph.model
 
-import org.junit.Assert.*
 import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class SignalUtilTest {
 

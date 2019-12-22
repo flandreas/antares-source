@@ -2,10 +2,10 @@ package ch.scorpion.jabbah.graph.view.app
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder

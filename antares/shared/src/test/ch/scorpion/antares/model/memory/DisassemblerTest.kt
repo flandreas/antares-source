@@ -1,6 +1,6 @@
 package ch.scorpion.antares.model.memory
 
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -42,7 +42,7 @@ class DisassemblerTest {
 
 	@BeforeTest
 	fun setup() {
-		BaseModuleJvm.require()
+		BaseModule.require()
 	}
 
 	@Test

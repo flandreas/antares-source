@@ -11,6 +11,7 @@ import java.awt.BorderLayout
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import javax.swing.JFrame
+import kotlin.system.exitProcess
 
 /**
  * A sample application showing [ch.scorpion.jabbah.edit] capabilities on the JVM target.
@@ -26,7 +27,7 @@ class HelloEditJvm : JFrame() {
             val helloEdit = HelloEditJvm()
             helloEdit.addWindowListener(object : WindowAdapter() {
                 override fun windowClosing(e: WindowEvent?) {
-                    System.exit(0)
+                    exitProcess(0)
                 }
             })
             helloEdit.isVisible = true

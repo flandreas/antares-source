@@ -27,7 +27,7 @@ class OscilloscopeProbeViewDrawable(
 		val F = 7.0
 		val SIZE = 5 * F
 
-		private val PATH = System.get().createPath()
+		private val PATH = System.createPath()
 			.moveTo(0.0, SIZE)
 			.lineTo(1 * F, 2 * F)
 			.curveTo(2.0 * F, -3 * F, 8 * F, 3.0 * F, 3 * F, 4 * F)

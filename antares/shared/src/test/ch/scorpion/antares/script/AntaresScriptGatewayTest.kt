@@ -207,7 +207,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		proceedToNanos(20_000)
 	}
 
-	@Test(expected = UsecaseTestFailureException::class)
+	@Test
 	fun shouldFailToAssertLedOn() {
 		val usecase = UsecaseImpl(
 			"AssertLedOn",
@@ -216,7 +216,9 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, throwFailureException = true)
 		runner.run()
 
-		proceedToNanos(20_000)
+		assertFailsWith<UsecaseTestFailureException> {
+			proceedToNanos(20_000)
+		}
 	}
 
 	@Test
@@ -231,7 +233,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		proceedToNanos(20_000)
 	}
 
-	@Test(expected = UsecaseTestFailureException::class)
+	@Test
 	fun shouldFailToAssertLedOff() {
 		val usecase = UsecaseImpl(
 			"AssertLedOn",
@@ -240,7 +242,9 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, throwFailureException = true)
 		runner.run()
 
-		proceedToNanos(20_000)
+		assertFailsWith<UsecaseTestFailureException> {
+			proceedToNanos(20_000)
+		}
 	}
 
 	@Test
@@ -255,7 +259,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		proceedToNanos(20_000)
 	}
 
-	@Test(expected = UsecaseTestFailureException::class)
+	@Test
 	fun shouldFailToAssertOutput() {
 		val usecase = UsecaseImpl(
 			"AssertOutputSet",
@@ -264,7 +268,9 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		val runner = UsecaseTestRunner(listOf(usecase), circuitView, scheduler, throwFailureException = true)
 		runner.run()
 
-		proceedToNanos(20_000)
+		assertFailsWith<UsecaseTestFailureException> {
+			proceedToNanos(20_000)
+		}
 	}
 
 	/** ---- [AntaresScriptGateway] */

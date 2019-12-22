@@ -5,17 +5,8 @@ import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.base.geom.Path
 import kotlin.reflect.KClass
 
-interface System {
+expect object System {
 
-    companion object {
-        var SYSTEM: System? = null
-
-        // Used for calling in constructors of classes (Bug in JS-Kotlin 1.0)
-        fun get(): System {
-            return SYSTEM!!
-        }
-    }
-    
     /** Returns the current system time in milliseconds.*/
     fun currentTimeMillis(): Long
 
@@ -54,5 +45,4 @@ interface System {
 	 * this method returns the default language as of [Language.DEFAULT].
 	 */
 	fun currentLanguage(): Language
-
 }

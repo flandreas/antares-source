@@ -12,10 +12,10 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
 import ch.scorpion.jabbah.draw.polyline.LineTerminator
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
+import ch.scorpion.jabbah.draw.polyline.PolylineShapeFactory
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.*
@@ -30,7 +30,8 @@ import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.*
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.DESTINATION
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.ORIGIN
 import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -95,7 +96,7 @@ open class EdgeViewImpl<T : Any>(
 
 	override val layout: EdgeViewLayout = EdgeViewLayoutImpl(this)
 
-	override var polyline: PolylineShape = DrawModule.polylineShapeFactory.invoke(null)
+	override var polyline: PolylineShape = PolylineShapeFactory.create(null)
 
 	final override var origin: Connection<T>? = null
 		private set(value) {
@@ -146,7 +147,7 @@ open class EdgeViewImpl<T : Any>(
 	private fun updateBeginLineTerminator() {
 		var lineTerminator: LineTerminator? = null
 		if (isArrow) {
-			lineTerminator = when(origin?.port?.portType) {
+			lineTerminator = when (origin?.port?.portType) {
 				PortType.INPUT -> ArrowHead.createDefault()
 				PortType.INOUT -> ArrowHead.createBidirectionalDefault()
 				else -> null
@@ -158,7 +159,7 @@ open class EdgeViewImpl<T : Any>(
 	private fun updateEndLineTerminator() {
 		var lineTerminator: LineTerminator? = null
 		if (isArrow) {
-			lineTerminator = when(destination?.port?.portType) {
+			lineTerminator = when (destination?.port?.portType) {
 				PortType.INPUT -> ArrowHead.createDefault()
 				PortType.INOUT -> ArrowHead.createBidirectionalDefault()
 				else -> null
@@ -178,7 +179,7 @@ open class EdgeViewImpl<T : Any>(
 	}
 
 	override fun getConnectionEndpointType(connection: Connection<*>): EdgeViewEndpointType? {
-		return when(connection) {
+		return when (connection) {
 			origin -> ORIGIN
 			destination -> DESTINATION
 			else -> null
@@ -186,7 +187,7 @@ open class EdgeViewImpl<T : Any>(
 	}
 
 	override fun getConnectionEndpointType(connectableView: ConnectableView): EdgeViewEndpointType? {
-		return when(connectableView) {
+		return when (connectableView) {
 			origin?.connectableView -> ORIGIN
 			destination?.connectableView -> DESTINATION
 			else -> null
@@ -643,7 +644,7 @@ open class EdgeViewImpl<T : Any>(
 				additionalInfo = ref))
 		}
 
-		polyline = DrawModule.polylineShapeFactory.invoke(reader.readPoints("shape", "polylineShape", "points"))
+		polyline = PolylineShapeFactory.create(reader.readPoints("shape", "polylineShape", "points"))
 
 		if (reader.hasAttribute("arrow")) {
 			isArrow = reader.readBoolean("arrow")

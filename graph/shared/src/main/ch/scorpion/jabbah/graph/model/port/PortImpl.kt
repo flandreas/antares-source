@@ -176,7 +176,7 @@ open class PortImpl<T : Any>(
 		}
 
 		if (net!!.inconsistent) {
-			signalHandler.logTrace(System.get().getClass(this), portId) { "inconsistent net signal $signal" }
+			signalHandler.logTrace(System.getClass(this), portId) { "inconsistent net signal $signal" }
 			LOG.debug("Inconsistent net signal $signal from port $portId in ${owner?.id}")
 			net!!.executionError = InconsistentNetError()
 			return
@@ -195,7 +195,7 @@ open class PortImpl<T : Any>(
 
 		// Net has become consistent and has to recover from execution error
 		if (!isOutputUndefined) {
-			signalHandler.logTrace(System.get().getClass(this), portId) { "recover net by forwarding defined signal $signal into net '${net!!.id}'" }
+			signalHandler.logTrace(System.getClass(this), portId) { "recover net by forwarding defined signal $signal into net '${net!!.id}'" }
 			net!!.executionError = null
 			net!!.setSignal(signal, this, signalHandler, withDelay)
 			return
@@ -209,11 +209,11 @@ open class PortImpl<T : Any>(
 	private fun withdrawSignal(signal: T?, signalHandler: SignalHandler, withDelay: Boolean) {
 		val consistentPort = net!!.getConsistentSignalPort()
 		if (consistentPort != null) {
-			signalHandler.logTrace(System.get().getClass(this), portId) { "withdrawing signal by re-asserting signal of consistent Port" }
+			signalHandler.logTrace(System.getClass(this), portId) { "withdrawing signal by re-asserting signal of consistent Port" }
 			net!!.executionError = null
 			consistentPort.flush(signalHandler)
 		} else {
-			signalHandler.logTrace(System.get().getClass(this), portId) { "forwarding undefined signal into net '${net!!.id}'" }
+			signalHandler.logTrace(System.getClass(this), portId) { "forwarding undefined signal into net '${net!!.id}'" }
 			net!!.executionError = null
 			net!!.setSignal(signal, this, signalHandler, withDelay)
 		}

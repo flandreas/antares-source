@@ -10,13 +10,13 @@ import ch.scorpion.jabbah.base.module.BaseModule
  */
 object AnimationModule : AbstractModule() {
 
-    var animator: Animator = AnimatorImpl(System.get().createTimer())
+	var animator: Animator = AnimatorImpl(System.createTimer())
 
-    override fun initialize() {
-        configureProperties(BaseModule.properties)
-    }
+	override fun initialize() {
+		configureProperties(BaseModule.properties)
+	}
 
-    private fun configureProperties(@Suppress("UNUSED_PARAMETER") properties: Properties) {
-        // empty
-    }
+	private fun configureProperties(@Suppress("UNUSED_PARAMETER") properties: Properties) {
+		// empty
+	}
 }

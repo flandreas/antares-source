@@ -26,7 +26,7 @@ class DynamicTreeNode(
 		private set
 
 	/** The tree node temporarily used as child node while initializing. */
-	protected val initializerTreeNode: TreeNode by lazy { initializer.createInitializerTreeNode(this) }
+	private val initializerTreeNode: TreeNode by lazy { initializer.createInitializerTreeNode(this) }
 
 	/** Check if this node has been initialized. */
 	val isInitialized: Boolean get() = state == INITIALIZED
@@ -36,14 +36,14 @@ class DynamicTreeNode(
 	 * Does not take the dynamic state of the node into account!
 	 * @return `true` if the receiver is a leaf.
 	 */
-	protected val primIsLeaf get() = super.isLeaf()
+	private val primIsLeaf get() = super.isLeaf()
 
 	/**
 	 * Primitive to return the number of child nodes of the receiver.
 	 * Does not take the dynamic state of the node into account!
 	 * @return the number of child nodes of the receiver.
 	 */
-	protected val primChildCount: Int get() = super.getChildCount()
+	private val primChildCount: Int get() = super.getChildCount()
 
 	init {
 		this.state = if (hasChildren) UNINITIALIZED else INITIALIZED
@@ -102,7 +102,6 @@ class DynamicTreeNode(
 	 *
 	 * Actual modification is performed on dispatch thread.
 	 * @param values the values of the children to add.
-	 * @since 5.10.0
 	 */
 	@Synchronized
 	override fun addChildren(values: Array<DynamicTreeNodeValue>) {
@@ -142,7 +141,7 @@ class DynamicTreeNode(
 		notifier.notifyNodeChanged(this)
 	}
 
-	protected fun initialize() {
+	private fun initialize() {
 		if (this.state != UNINITIALIZED) {
 			return;
 		}
@@ -154,7 +153,7 @@ class DynamicTreeNode(
 	 * Primitive to perform the actual dynamic tree node initialization.
 	 * Actual initialization is performed on dispatch thread.
 	 */
-	protected fun primInitialize() {
+	private fun primInitialize() {
 		if (UiUtil.eventQueueInvoker.invoke { primInitialize() }) {
 			return
 		}
@@ -169,7 +168,7 @@ class DynamicTreeNode(
 	 * @return the child node at the specified index.
 	 * @throws ArrayIndexOutOfBoundsException if there is no child at this index.
 	 */
-	protected fun primGetChildAt(index: Int): TreeNode {
+	private fun primGetChildAt(index: Int): TreeNode {
 		return super.getChildAt(index)
 	}
 
@@ -178,7 +177,7 @@ class DynamicTreeNode(
 	 * Does not take the dynamic state of the node into account!
 	 * @return the children of the receiver as an enumeration.
 	 */
-	protected fun primGetChildren(): Enumeration<TreeNode> {
+	private fun primGetChildren(): Enumeration<TreeNode> {
 		return super.children() as Enumeration<TreeNode>
 	}
 

@@ -115,7 +115,7 @@ open class DrawTheme(
 	companion object {
 		const val DEF_NAME = "default"
 		const val DEF_SUPPORTS_WHITE_BACKGROUND = true
-		val DEF_BACKGROUND = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
+		val DEF_BACKGROUND = BasicStyle(CompositeColor(Color(240, 240, 240), Color.WHITE, Color.BLACK))
 		val DEF_FIGURE = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
 		val DEF_TOOLTIP = BasicStyle(CompositeColor(foregroundColor = Color(249, 214, 54),
 			backgroundColor = Color(255, 253, 219), textColor = Color.BLACK))

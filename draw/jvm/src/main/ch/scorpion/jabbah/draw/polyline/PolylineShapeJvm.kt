@@ -8,6 +8,11 @@ import java.awt.geom.Point2D
 import java.awt.geom.Rectangle2D
 import java.util.*
 
+actual object PolylineShapeFactory {
+
+	actual fun create(points: List<ch.scorpion.jabbah.base.geom.Point2D>?): PolylineShape = PolylineShapeJvm(points)
+
+}
 /**
  * Adapts [PolylineShape] to the [java.awt.Shape] interface.
  */

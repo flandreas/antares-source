@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.max
 
 
 /**
@@ -31,7 +32,9 @@ class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
 		private val CHIP_SELECT_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.rom.chipSelectPort.desc"))
 		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.rom.dataPort.desc"))
 
-		val CALCULATOR = object : VerticeCalculator<ROM> {
+		val CALCULATOR = Calculator()
+
+		class Calculator : VerticeCalculator<ROM> {
 			override fun calculate(vertice: ROM, data: GraphActorData, signalHandler: SignalHandler) {
 				if (vertice.getChipSelectInput().getIncomingSignal() == Word.of(true)) {
 					val address = vertice.getAddressInput().getIncomingSignal()
@@ -149,13 +152,11 @@ class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
 	/** ---- [ROM]  */
 
 	fun setAddressWidth(bitWidth: BitWidth) {
-		checkNotNull(bitWidth)
 		getAddressInput().bitWidth = bitWidth
 		stateChanged()
 	}
 
 	fun setDataWidth(bitWidth: BitWidth) {
-		checkNotNull(bitWidth)
 		getDataOutput().bitWidth = bitWidth
 		stateChanged()
 	}
@@ -205,6 +206,6 @@ class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
 		val value = BitOperation.longToHex(memory.read(address)).padStart(dataWidth.width / 4, '0')
 		val d = disassembler.disassemble(value)
 		disassembly[address] = d
-		_disassemblyWidth = Math.max(_disassemblyWidth, disassembly[address]!!.length)
+		_disassemblyWidth = max(_disassemblyWidth, disassembly[address]!!.length)
 	}
 }

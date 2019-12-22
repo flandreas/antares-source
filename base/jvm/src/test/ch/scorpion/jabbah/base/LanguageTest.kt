@@ -10,8 +10,6 @@ class LanguageTest {
 
 	@BeforeTest
 	fun setup() {
-		LOG_SYSTEM = LogSystemJVM()
-		Translations = TranslationsJvm()
 		Locale.setDefault(Locale("en", "US"))
 		Translations.addBundle("jabbah-base")
 	}

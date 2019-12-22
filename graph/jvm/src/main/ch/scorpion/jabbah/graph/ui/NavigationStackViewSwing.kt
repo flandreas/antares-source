@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
@@ -137,14 +138,14 @@ class NavigationStackViewSwing(
 	}
 
 	private fun createElement(entry: NavigationStackEntry<GraphView<GraphElementView<*>>>, first: Boolean, last: Boolean): Element {
-		val textRenderInfo = DrawModule.textRenderInfoFactory.measureSingleLineText(entry.graphName!!.value, DrawModule.properties.getFont(PROP_FONT))
+		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(entry.graphName!!.value, DrawModule.properties.getFont(PROP_FONT))
 		val textLength = textRenderInfo.textBounds.width
 		return Element(entry, if (first) createFirstPath(textLength) else createNonFirstPath(textLength), last)
 	}
 
 	private fun createFirstPath(textLength: Double): Path {
 		val baseLength = 2.0 * TEXT_INSET + textLength
-		val path = System.get().createPath()
+		val path = System.createPath()
 		path.moveTo(0, 0)
 		path.lineTo(baseLength, 0.0)
 		path.lineTo(baseLength + HEIGHT / 2.0, HEIGHT / 2.0)
@@ -157,7 +158,7 @@ class NavigationStackViewSwing(
 
 	private fun createNonFirstPath(textLength: Double): Path {
 		val baseLength = 2 * TEXT_INSET + textLength
-		val path = System.get().createPath()
+		val path = System.createPath()
 		path.moveTo(0, 0)
 		path.lineTo(HEIGHT / 2.0 + baseLength, 0.0)
 		path.lineTo(HEIGHT + baseLength, HEIGHT / 2.0)

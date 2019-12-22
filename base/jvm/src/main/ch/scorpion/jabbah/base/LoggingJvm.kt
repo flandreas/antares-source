@@ -1,11 +1,10 @@
 package ch.scorpion.jabbah.base
 
 import ch.scorpion.jabbah.base.LogLevel.*
-import ch.scorpion.jabbah.base.LogSystem.Companion.PROP_LOG_LEVEL
+import ch.scorpion.jabbah.base.LogSystem.PROP_LOG_LEVEL
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.preferences.AbstractPreference
-import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.preferences.PreferencesPanel
 import org.apache.log4j.Logger.*
 import org.slf4j.LoggerFactory
@@ -17,15 +16,15 @@ import kotlin.reflect.full.companionObject
 /**
  * Bridges the logging system to slf4j.
  */
-class LogSystemJVM : LogSystem {
+actual object LogSystem {
 
-	companion object {
-		private val LOG: Logger = LoggerJvm(LoggerFactory.getLogger(LogSystemJVM::class.simpleName))
-	}
+	private val LOG: Logger = Logger(LoggerFactory.getLogger(LogSystem::class.simpleName))
 
 	private val propertyValue: LogLevel get() = valueOf(BaseModule.properties.getString(PROP_LOG_LEVEL))
 
-	override var level: LogLevel
+	actual val PROP_LOG_LEVEL = "base.logLevel"
+
+	actual var level: LogLevel
 		get() = propertyValue
 		set(value) {
 			if (value != fromLog4jLevel(getRootLogger().level)) {
@@ -35,8 +34,8 @@ class LogSystemJVM : LogSystem {
 			}
 		}
 
-	override fun getLogger(clazz: KClass<out Any>): Lazy<Logger> {
-		return lazy { LoggerJvm(LoggerFactory.getLogger(unwrapCompanionClass(clazz.java).name)) }
+	actual fun getLogger(clazz: KClass<out Any>): Lazy<Logger> {
+		return lazy { Logger(LoggerFactory.getLogger(unwrapCompanionClass(clazz.java).name)) }
 	}
 
 	/** Unwrap companion class to enclosing class given a Java class.*/
@@ -70,73 +69,71 @@ class LogSystemJVM : LogSystem {
 	}
 }
 
-class LoggerJvm(private val slf4jLogger: org.slf4j.Logger) : Logger {
+actual class Logger(private val slf4jLogger: org.slf4j.Logger) {
 
-	companion object {
-		private val FQCN = LoggerJvm::class.java.name
-	}
+	private val fqcn = Logger::class.java.name
 
-	override fun info(msg: String) {
+	actual fun info(msg: String) {
 		if (slf4jLogger is LocationAwareLogger) {
-			slf4jLogger.log(null, FQCN, LocationAwareLogger.INFO_INT, msg, null, null)
+			slf4jLogger.log(null, fqcn, LocationAwareLogger.INFO_INT, msg, null, null)
 		} else {
 			slf4jLogger.info(msg)
 		}
 	}
 
-	override fun warn(msg: String) {
+	actual fun warn(msg: String) {
 		if (slf4jLogger is LocationAwareLogger) {
-			slf4jLogger.log(null, FQCN, LocationAwareLogger.WARN_INT, msg, null, null)
+			slf4jLogger.log(null, fqcn, LocationAwareLogger.WARN_INT, msg, null, null)
 		} else {
 			slf4jLogger.warn(msg)
 		}
 	}
 
-	override fun error(msg: String) {
+	actual fun error(msg: String) {
 		if (slf4jLogger is LocationAwareLogger) {
-			slf4jLogger.log(null, FQCN, LocationAwareLogger.ERROR_INT, msg, null, null)
+			slf4jLogger.log(null, fqcn, LocationAwareLogger.ERROR_INT, msg, null, null)
 		} else {
 			slf4jLogger.error(msg)
 		}
 	}
 
-	override fun debug(msg: String) {
+	actual fun debug(msg: String) {
 		if (slf4jLogger is LocationAwareLogger) {
-			slf4jLogger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, msg, null, null)
+			slf4jLogger.log(null, fqcn, LocationAwareLogger.DEBUG_INT, msg, null, null)
 		} else {
 			slf4jLogger.debug(msg)
 		}
 	}
 
-	override fun trace(msg: String) {
+	actual fun trace(msg: String) {
 		if (slf4jLogger is LocationAwareLogger) {
-			slf4jLogger.log(null, FQCN, LocationAwareLogger.TRACE_INT, msg, null, null)
+			slf4jLogger.log(null, fqcn, LocationAwareLogger.TRACE_INT, msg, null, null)
 		} else {
 			slf4jLogger.trace(msg)
 		}
 	}
 
-	override fun isTraceEnabled(): Boolean = slf4jLogger.isTraceEnabled
+	actual fun isTraceEnabled(): Boolean = slf4jLogger.isTraceEnabled
 
-	override fun isDebugEnabled(): Boolean = slf4jLogger.isDebugEnabled
+	actual fun isDebugEnabled(): Boolean = slf4jLogger.isDebugEnabled
 }
 
 class LogLevelPreference(
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractPreference(id = LogSystem.PROP_LOG_LEVEL, nameKey = "base.preferences.logLevel") {
+) : AbstractPreference(id = PROP_LOG_LEVEL, nameKey = "base.preferences.logLevel") {
 
 	private val editor = JComboBox<LogLevel>()
 
-	private val value: LogLevel get() = LogLevel.valueOf(panel!!.preferences.getString(id))
+	private val value: LogLevel get() = valueOf(panel!!.preferences.getString(id))
 
 	init {
-		LogLevel.values().forEach { editor.addItem(it) }
+		values().forEach { editor.addItem(it) }
 		editor.addActionListener {
 			if (panel != null) {
 				panel?.preferences?.customize(id, (editor.selectedItem as LogLevel).name)
 			}
 		}
-		eventBus.register(PreferencesChangedEvent::class) { LOG_SYSTEM?.level = valueOf(BaseModule.properties.getString(PROP_LOG_LEVEL)) }
+		eventBus.register(PreferencesChangedEvent::class) { LogSystem.level = valueOf(BaseModule.properties.getString(PROP_LOG_LEVEL)) }
 	}
 
 	override fun addToPanel(panel: PreferencesPanel) {
@@ -147,5 +144,4 @@ class LogLevelPreference(
 	override fun load() {
 		editor.selectedItem = value
 	}
-
 }

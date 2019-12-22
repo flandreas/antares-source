@@ -35,7 +35,7 @@ class StoreXmlWriter(
 	/** ---- [StoreWriter] */
 
 	override fun writeStorable(storable: Storable) {
-		val type = typeMap.getTypeName(System.get().getClass(storable))
+		val type = typeMap.getTypeName(System.getClass(storable))
 
 		if (xmlWriter.isRoot()) {
 			StorableHierarchy.collect(storable) { identityProvider.register(it) }

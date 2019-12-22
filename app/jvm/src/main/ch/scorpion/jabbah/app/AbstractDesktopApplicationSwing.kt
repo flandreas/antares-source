@@ -113,14 +113,14 @@ abstract class AbstractDesktopApplicationSwing(
 			return true
 		}
 
-		val answer =JOptionPane.showConfirmDialog(
+		val answer = JOptionPane.showConfirmDialog(
 			mainFrame,
 			Translations.getString("application.unsavedData.question"),
 			Translations.getString(actionKey),
 			JOptionPane.YES_NO_CANCEL_OPTION,
 			JOptionPane.QUESTION_MESSAGE)
 
-		return when(answer) {
+		return when (answer) {
 			JOptionPane.NO_OPTION -> {
 				savable = null
 				true
@@ -141,7 +141,7 @@ abstract class AbstractDesktopApplicationSwing(
 		} else {
 			try {
 				openFrom(commandLine.argList[0])
-			} catch(e: IllegalArgumentException) {
+			} catch (e: IllegalArgumentException) {
 				JOptionPane.showConfirmDialog(
 					mainFrame,
 					Translations.getString("application.fileNotFound.text", commandLine.argList[0]),
@@ -186,8 +186,8 @@ abstract class AbstractDesktopApplicationSwing(
 	}
 
 	private fun installMacOSQuitHandler() {
-		Application.getApplication().setQuitHandler {
-			_, _ -> this.quit()
+		Application.getApplication().setQuitHandler { _, _ ->
+			this.quit()
 		}
 	}
 

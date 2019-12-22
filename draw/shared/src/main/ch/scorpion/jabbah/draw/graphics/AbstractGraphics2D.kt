@@ -17,6 +17,9 @@ abstract class AbstractGraphics2D : Graphics2D {
 
 	/** ---- [Graphics2D] */
 
+	override var rotationAngle: Double = 0.0
+		protected set
+
 	override fun draw(shape: Shape) {
 		when (shape) {
 			is Rectangle2D -> drawRect(shape)

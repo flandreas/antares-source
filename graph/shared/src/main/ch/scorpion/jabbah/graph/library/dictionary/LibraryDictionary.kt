@@ -15,9 +15,9 @@ import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.io.*
 
 /**
-* Maintains all [Libraries][Library] of an installation/user by mapping [Library] names to their [UUID],
-* avoiding the need to read all [Libraries][Library] from persistent store to do this mapping.
-*/
+ * Maintains all [Libraries][Library] of an installation/user by mapping [Library] names to their [UUID],
+ * avoiding the need to read all [Libraries][Library] from persistent store to do this mapping.
+ */
 class LibraryDictionary : Storable {
 
 	/** Maps a [UUID] of a [LibraryDictionaryEntry] to its [LibraryDictionaryEntry].*/
@@ -92,9 +92,9 @@ class LibraryDictionary : Storable {
  * Contains information redundant to [Library] for faster access.
  */
 class LibraryDictionaryEntry(
-	var uuid: UUID = System.get().createUUID(),
+	var uuid: UUID = System.createUUID(),
 	initialName: TranslatableText = TranslatableText(),
-	var author: UUID = System.get().createUUID(),
+	var author: UUID = System.createUUID(),
 	var initialDescription: TranslatableText = TranslatableText(),
 	private val namable: NamableImpl = NamableImpl(initialName),
 	private val describable: Describable = DescribableImpl(initialDescription)
@@ -119,7 +119,7 @@ class LibraryDictionaryEntry(
 
 	override var storableId: Int = 0
 
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {}
 
 	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
 
@@ -131,9 +131,9 @@ class LibraryDictionaryEntry(
 	}
 
 	override fun read(reader: StoreReader) {
-		uuid = System.get().createUUID(reader.readString("uuid"))
+		uuid = System.createUUID(reader.readString("uuid"))
 		name.read("name", reader)
-		author = System.get().createUUID(reader.readString("author"))
+		author = System.createUUID(reader.readString("author"))
 		description.read("desc", reader)
 	}
 

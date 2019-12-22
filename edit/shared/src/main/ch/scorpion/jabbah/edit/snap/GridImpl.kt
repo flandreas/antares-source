@@ -1,11 +1,11 @@
 package ch.scorpion.jabbah.edit.snap
 
+import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.View
@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.Grid.Companion.PROP_SNAP_ENABLED
+import kotlin.math.floor
 
 /**
  * A standard, simple implementation of a grid that defines a two dimensional array of points that are used for snapping
@@ -23,14 +24,14 @@ import ch.scorpion.jabbah.edit.Grid.Companion.PROP_SNAP_ENABLED
  * points falls below a certain minimum distance because of zooming, [GridImpl] doesn't draw these points any more.
  */
 class GridImpl(
-    private val styleProvider: StyleProvider = StyleRepository.INSTANCE,
-    chosenDistance: Double? = null,
-    chosenPaintFactor: Int? = null,
-    private val eventBus: EventBus = BaseModule.eventBus
+	private val styleProvider: StyleProvider = StyleRepository.INSTANCE,
+	chosenDistance: Double? = null,
+	chosenPaintFactor: Int? = null,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSnapper(BaseModule.settings.getBoolean(PROP_SNAP_ENABLED, true)), Grid {
 
 	companion object {
-        private val LOG by logger(GridImpl::class)
+		private val LOG by logger(GridImpl::class)
 	}
 
 	/**
@@ -42,17 +43,17 @@ class GridImpl(
 	private val configuredGridPainter get() = GridPainterRegistry.get(BaseModule.properties.getString(Grid.PROP_GRID_PAINTER)).invoke(styleProvider)
 
 	/** The object that actually paints the grid dots.*/
-    override var gridPainter: GridPainter = configuredGridPainter
-        set(value) {
-	        if (field != value) {
-		        invalidate()
-		        field = value
-		        BaseModule.properties.set(Grid.PROP_GRID_PAINTER, field.name)
-		        updateGridPainterProperties()
-		        invalidate()
-		        validate()
-	        }
-        }
+	override var gridPainter: GridPainter = configuredGridPainter
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				BaseModule.properties.set(Grid.PROP_GRID_PAINTER, field.name)
+				updateGridPainterProperties()
+				invalidate()
+				validate()
+			}
+		}
 
 	override var paintFactor: Int
 		get() = chosenPaintFactor ?: BaseModule.properties.getInt(Grid.PROP_GRID_DEFAULT_PAINT_FACTOR)
@@ -89,90 +90,90 @@ class GridImpl(
 		eventBus.unregister(PreferencesChangedEvent::class, preferencesHandler)
 	}
 
-    /** ---- [Grid] interface */
+	/** ---- [Grid] interface */
 
-    override var view: View<EditInputEventContext>? = null
-        set(value) {
-            if (value == null) {
-                throw IllegalArgumentException("view must not be null")
-            }
-            field = value
-            zoomPan = field!!.zoomPan
-        }
+	override var view: View<EditInputEventContext>? = null
+		set(value) {
+			if (value == null) {
+				throw IllegalArgumentException("view must not be null")
+			}
+			field = value
+			zoomPan = field!!.zoomPan
+		}
 
-    override var zoomPan: ZoomPan? = null
-        set(value) {
-            LOG.debug("Set Grid ZoomPan to $value")
-            field = value
-            invalidate()
-            updateGridPainterProperties()
-            invalidate()
-        }
+	override var zoomPan: ZoomPan? = null
+		set(value) {
+			LOG.debug("Set Grid ZoomPan to $value")
+			field = value
+			invalidate()
+			updateGridPainterProperties()
+			invalidate()
+		}
 
-    /** ---- [Drawable] */
+	/** ---- [Drawable] */
 
-    override val boundingBox: Rectangle2D
-        get() {
-            if (view == null) {
-                return Rectangle2D()
-            }
-            return Rectangle2D(0.0, 0.0, view!!.width.toDouble(), view!!.height.toDouble())
-        }
+	override val boundingBox: Rectangle2D
+		get() {
+			if (view == null) {
+				return Rectangle2D()
+			}
+			return Rectangle2D(0.0, 0.0, view!!.width.toDouble(), view!!.height.toDouble())
+		}
 
-    override fun contains(x: Double, y: Double): Boolean = true
+	override fun contains(x: Double, y: Double): Boolean = true
 
-    override fun draw(context: DrawContext) {
-        if (zoomPan!!.zoomFactor * distance * paintFactor < BaseModule.properties.getInt(Grid.PROP_GRID_MIN_DISTANCE)) {
-            // Don't paint the grid if it is too dense
-            return
-        }
-        if (context.g.supportClipping) {
-            context.g.getClipBounds(clipBuffer)
-            gridPainter.paint(context, clipBuffer)
-        } else {
-            if (view != null) {
-                gridPainter.paint(context, Rectangle2D(0, 0, view!!.width, view!!.height))
-            }
-        }
-    }
+	override fun draw(context: DrawContext) {
+		if (zoomPan!!.zoomFactor * distance * paintFactor < BaseModule.properties.getInt(Grid.PROP_GRID_MIN_DISTANCE)) {
+			// Don't paint the grid if it is too dense
+			return
+		}
+		if (context.g.supportClipping) {
+			context.g.getClipBounds(clipBuffer)
+			gridPainter.paint(context, clipBuffer)
+		} else {
+			if (view != null) {
+				gridPainter.paint(context, Rectangle2D(0, 0, view!!.width, view!!.height))
+			}
+		}
+	}
 
 
-    /** ---- [AbstractSnapper] */
+	/** ---- [AbstractSnapper] */
 
-    override var snapEnabled: Boolean
-	    get() = super.snapEnabled
-	    set(value) {
-		    if (value != snapEnabled) {
-			    super.snapEnabled = value
-			    BaseModule.settings.set(PROP_SNAP_ENABLED, value)
-		    }
-	    }
+	override var snapEnabled: Boolean
+		get() = super.snapEnabled
+		set(value) {
+			if (value != snapEnabled) {
+				super.snapEnabled = value
+				BaseModule.settings.set(PROP_SNAP_ENABLED, value)
+			}
+		}
 
 	override fun doSnapX(initSnappableX: SnappableX, initDx: Double): Double = snapValue(initSnappableX.x + initDx)
 
-    override fun doSnapY(initSnappableY: SnappableY, initDy: Double): Double = snapValue(initSnappableY.y + initDy)
+	override fun doSnapY(initSnappableY: SnappableY, initDy: Double): Double = snapValue(initSnappableY.y + initDy)
 
-    /** ---- [GridImpl] */
+	/** ---- [GridImpl] */
 
-    /**
-     * Snaps the specified number by calculating the minimum of the distances from the floor or ceiling grid point.
-     * @param d the number to be snapped
-     * @return the snapped number, which is a multiple of the current distance of the grid points
-     */
-    private fun snapValue(d: Double): Double {
-        val q = d / distance
-        val floor = Math.floor(q)
-        val ceil = floor + 1
+	/**
+	 * Snaps the specified number by calculating the minimum of the distances from the floor or ceiling grid point.
+	 * @param d the number to be snapped
+	 * @return the snapped number, which is a multiple of the current distance of the grid points
+	 */
+	private fun snapValue(d: Double): Double {
+		val q = d / distance
+		val floor = floor(q)
+		val ceil = floor + 1
 
-        if (q - floor < ceil - q) {
-            return floor * distance
-        }
-        return ceil * distance
-    }
+		if (q - floor < ceil - q) {
+			return floor * distance
+		}
+		return ceil * distance
+	}
 
-    private fun updateGridPainterProperties() {
-        gridPainter.distanceX = distance * paintFactor
-        gridPainter.distanceY = distance * paintFactor
-        gridPainter.zoomPan = zoomPan
-    }
+	private fun updateGridPainterProperties() {
+		gridPainter.distanceX = distance * paintFactor
+		gridPainter.distanceY = distance * paintFactor
+		gridPainter.zoomPan = zoomPan
+	}
 }

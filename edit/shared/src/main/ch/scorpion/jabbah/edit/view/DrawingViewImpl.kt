@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.view
 
 import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.animation.Animator
+import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
@@ -20,7 +21,6 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 import ch.scorpion.jabbah.draw.view.InvalidatableViewPainter
 
 /**
@@ -32,7 +32,7 @@ import ch.scorpion.jabbah.draw.view.InvalidatableViewPainter
 class DrawingViewImpl<T: Drawing<Component>>(
     drawing: T,
     canvas: Canvas,
-    transformFactory: () -> AffineTransform = { System.get().createAffineTransform() },
+    transformFactory: () -> AffineTransform = { System.createAffineTransform() },
     displayGlobalMessages: Boolean = false,
     private val selectionManagerFactory: SelectionManagerFactory = EditSelectModule.selectionManagerFactory,
     private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,

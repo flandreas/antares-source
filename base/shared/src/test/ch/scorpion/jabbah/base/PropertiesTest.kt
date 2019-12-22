@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.base
 
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.*
 
 /**
@@ -8,24 +8,24 @@ import kotlin.test.*
  */
 class PropertiesTest {
 
-    @BeforeTest
-    fun setup() {
-        BaseModuleJvm.require()
-    }
-
-    @Test
-    fun shouldGetPredefined() {
-        val properties = Properties()
-        properties.set("name", "ABC")
-        assertEquals("ABC", properties.getString("name"))
-    }
+	@BeforeTest
+	fun setup() {
+		BaseModule.require()
+	}
 
 	@Test
-    fun shouldGetObject() {
+	fun shouldGetPredefined() {
+		val properties = Properties()
+		properties.set("name", "ABC")
+		assertEquals("ABC", properties.getString("name"))
+	}
+
+	@Test
+	fun shouldGetObject() {
 		val properties = Properties()
 		properties.set("myObject", SomeObject(1, 2))
-		assertEquals(SomeObject(1, 2), properties.get<SomeObject>("myObject"))
-    }
+		assertEquals(SomeObject(1, 2), properties.get("myObject"))
+	}
 
 	@Test
 	fun shouldCustomizeInt() {

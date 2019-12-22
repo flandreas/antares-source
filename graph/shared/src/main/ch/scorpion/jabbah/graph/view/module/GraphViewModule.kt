@@ -31,6 +31,7 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.GraphScriptGateway
+import ch.scorpion.jabbah.graph.script.ScriptEngine
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.app.GraphViewService
@@ -66,12 +67,14 @@ import ch.scorpion.jabbah.io.TypeMap
  */
 object GraphViewModule : AbstractModule() {
 
-	var graphViewFactory: (name: String?) -> GraphView<*> = { GraphViewImpl<GraphElementView<GraphElement>>(it ?: Translations.getString("graph.name.unknown")) }
+	var graphViewFactory: (name: String?) -> GraphView<*> = {
+		GraphViewImpl<GraphElementView<GraphElement>>(it ?: Translations.getString("graph.name.unknown"))
+	}
 
 	/** Must be specified by higher application layers.*/
 	var portViewFactory: PortViewFactory = UndefinedPortViewFactory()
 
-	var graphEditorFactory: (EventBus) -> GraphEditor = { throw UnsupportedOperationException("GraphEditor factory not configured")}
+	var graphEditorFactory: (EventBus) -> GraphEditor = { throw UnsupportedOperationException("GraphEditor factory not configured") }
 
 	var containerEditorFactory: (EventBus) -> ContainerEditor = { throw UnsupportedOperationException("ContainerEditor factory not configured") }
 
@@ -124,7 +127,7 @@ object GraphViewModule : AbstractModule() {
 		configureSelectionModels(EditSelectModule.selectionModelFactory)
 		configureHighlightModels(EditHighlightModule.highlightModelFactory)
 
-		ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptModule.scriptEngineProvider.invoke()) }
+		ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptEngine(BaseModule.eventBus)) }
 		EditModule.drawingService = graphViewService
 
 		ExecutionModule.schedulerTaskFactory = {
@@ -176,7 +179,7 @@ object GraphViewModule : AbstractModule() {
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
-		factory.register(SelectionDrawingStrategy.REPLACE, EdgeViewImpl::class.simpleName!!, { EdgeViewReplaceSelectionModel(it as EdgeView<*>) })
+		factory.register(SelectionDrawingStrategy.REPLACE, EdgeViewImpl::class.simpleName!!) { EdgeViewReplaceSelectionModel(it as EdgeView<*>) }
 		factory.register(SelectionDrawingStrategy.REPLACE, SubGraphVerticeViewImpl::class.simpleName!!) { SubGraphVerticeViewImplSelectionModel(it as SubGraphVerticeViewImpl, EditSelectModule.selectionModelProvider) }
 		factory.register(SelectionDrawingStrategy.REPLACE, OriginIndicator::class.simpleName!!) { OriginIndicatorSelectionModel(it as OriginIndicator) }
 		factory.register(SelectionDrawingStrategy.REPLACE, PortViewComponent::class.simpleName!!) { SelectedColorSelectionModel(it) }
@@ -228,14 +231,13 @@ object GraphViewModule : AbstractModule() {
 	}
 
 	fun <T : GraphElementView<*>> createGraphView(graph: Graph): GraphView<T> {
-		return GraphViewImpl(graph, IOModule.storableClonerProvider.invoke(), BaseModule.eventBus)
+		return GraphViewImpl(graph, BaseModule.eventBus)
 	}
 
 	fun createContainerDrawing(name: String = Translations.getString("graph.name.unknown")): ContainerDrawing {
 		return ContainerDrawing(
 			name,
 			IOModule.storableCreator,
-			IOModule.storableClonerProvider.invoke(),
 			BaseModule.eventBus,
 			ScriptModule.scriptGateway,
 			GraphModelModule.metaGraphRepository,

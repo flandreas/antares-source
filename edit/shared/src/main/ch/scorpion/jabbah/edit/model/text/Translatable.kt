@@ -1,10 +1,6 @@
 package ch.scorpion.jabbah.edit.model.text
 
-import ch.scorpion.jabbah.base.Language
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.checkArgument
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.io.*
@@ -21,7 +17,7 @@ class Translation(
 	companion object {
 
 		fun ofStaticKey(key: String): Translation {
-			return Translation(System.get().currentLanguage(), Translations.getString(key))
+			return Translation(System.currentLanguage(), Translations.getString(key))
 		}
 	}
 
@@ -45,7 +41,7 @@ class Translation(
 		text = reader.readString("text")
 	}
 
-	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {}
 
 	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
 
@@ -84,9 +80,9 @@ class Translation(
  */
 class TranslatableText(translations: Collection<Translation>? = null) {
 
-	constructor(text: String): this(System.get().currentLanguage(), text)
-	constructor(translation: Translation): this(listOf(translation))
-	constructor(language: Language, text: String): this(listOf(Translation(language, text)))
+	constructor(text: String) : this(System.currentLanguage(), text)
+	constructor(translation: Translation) : this(listOf(translation))
+	constructor(language: Language, text: String) : this(listOf(Translation(language, text)))
 
 	private val translations: MutableMap<Language, Translation> = mutableMapOf()
 
@@ -122,7 +118,7 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 
 	/** Creates a new [TranslatableText] by adding the specified translation for the current system language.*/
 	fun withTranslation(text: String): TranslatableText {
-		return withTranslation(System.get().currentLanguage(), text)
+		return withTranslation(System.currentLanguage(), text)
 	}
 
 	/** Creates a new [TranslatableText] by adding the specified translation for a particular [Language].*/
@@ -135,7 +131,7 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 
 	/** Creates a new [TranslatableText] by removing the translation for the current system language.*/
 	fun withoutTranslation(): TranslatableText {
-		return withoutTranslation(System.get().currentLanguage())
+		return withoutTranslation(System.currentLanguage())
 	}
 
 	/** Creates a new [TranslatableText] by removing the text in the specified [Language].*/
@@ -147,11 +143,11 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 
 	/** Returns the translation in the current system language.*/
 	fun getTranslation(): String {
-		return getTranslation(System.get().currentLanguage())
+		return getTranslation(System.currentLanguage())
 	}
 
 	fun getOptionalTranslation(): String? {
-		return getOptionalTranslation(System.get().currentLanguage())
+		return getOptionalTranslation(System.currentLanguage())
 	}
 
 	/** Returns the translation in the specified [Language].*/
@@ -178,7 +174,7 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 	 * Determines whether this [TranslatableText] contains at least a translation for the default [Language].
 	 * or the [System] language.
 	 */
-	fun hasDefaultOrSystemLanguage(): Boolean = hasTranslation(Language.DEFAULT) || hasTranslation(System.get().currentLanguage())
+	fun hasDefaultOrSystemLanguage(): Boolean = hasTranslation(Language.DEFAULT) || hasTranslation(System.currentLanguage())
 
 	/** Returns the [Language] also used in [getOptionalTranslation] if neither translation for the System nor the default [Language] is available.*/
 	fun getFirstLanguage(): Language? = translations.values.firstOrNull()?.language

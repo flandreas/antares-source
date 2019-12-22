@@ -19,14 +19,16 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 /**
  * A light emitting [Vertice] whose RGB value is determined by the 24-bit input, where each of the three 8-bit values
  * represents the corresponding color value.
- .*/
+.*/
 class RgbLED() : CalculatingVertice("library.element.RgbLED", CALCULATOR) {
 
 	companion object {
 		private val DEFAULT_COLOR = Color(60, 0, 0)
 		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.rgbLed.dataPort.desc"))
 
-		private val CALCULATOR = object : VerticeCalculator<RgbLED> {
+		private val CALCULATOR = Calculator()
+
+		private class Calculator : VerticeCalculator<RgbLED> {
 			override fun calculate(vertice: RgbLED, data: GraphActorData, signalHandler: SignalHandler) {
 				vertice.updateColor(data.getSignal<DigitalSignal>(1) as Word)
 			}

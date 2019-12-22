@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
+import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.draw.ZoomStrategyType
 import ch.scorpion.jabbah.edit.Component

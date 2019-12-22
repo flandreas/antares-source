@@ -1,9 +1,12 @@
 package ch.scorpion.jabbah.graph.script
 
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
+
 /**
  * An interface to the scripting engine provided by the target platform.
  */
-interface ScriptEngine {
+expect class ScriptEngine(eventBus: EventBus = BaseModule.eventBus) {
 
     /** Evaluates (executes) the specified javascript. Primarily used for defining functions.*/
     fun eval(script: Script)

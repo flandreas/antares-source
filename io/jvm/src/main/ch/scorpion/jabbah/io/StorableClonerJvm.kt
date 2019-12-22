@@ -7,35 +7,31 @@ import java.io.ByteArrayOutputStream
 /**
  * A [StorableCloner] implementation for the JVM target.
  */
-class StorableClonerJvm(val typeMap: TypeMap = IOModule.typeMap) : StorableCloner {
+actual object StorableCloner {
 
-	companion object {
-		private val LOG by logger(StorableClonerJvm::class)
-	}
+	private val LOG by logger(StorableCloner::class)
 
-	/** ---- [StorableCloner] interface */
-
-	override fun serialize(storable: Storable): String {
+	actual fun serialize(storable: Storable): String {
 		return serializeImpl(storable, GlobalIdentityCreator())
 	}
 
-	override fun deserialize(s: String): Storable {
+	actual fun deserialize(s: String): Storable {
 		return deserializeImpl(s, IOModule.storableCreator, ReferenceResolverImpl())
 	}
 
-	override fun clone(storable: Storable): Storable {
+	actual fun clone(storable: Storable): Storable {
 		return clone(storable, GlobalIdentityCreator(), IOModule.storableCreator, ReferenceResolverImpl())
 	}
 
-	override fun clonePreservingIdentities(storable: Storable, storableCreator: StorableCreator): Storable {
+	actual fun clonePreservingIdentities(storable: Storable, storableCreator: StorableCreator): Storable {
 		return clone(storable, GlobalIdentityReflector(), storableCreator, ReferenceResolverImpl())
 	}
 
-	override fun cloneUsingCreator(storable: Storable, storableCreator: StorableCreator): Storable {
+	actual fun cloneUsingCreator(storable: Storable, storableCreator: StorableCreator): Storable {
 		return clone(storable, GlobalIdentityCreator(), storableCreator, ReferenceResolverImpl())
 	}
 
-	override fun clone(
+	actual fun clone(
 		storable: Storable,
 		identityProvider: GlobalIdentityProvider,
 		storableCreator: StorableCreator,
@@ -51,19 +47,17 @@ class StorableClonerJvm(val typeMap: TypeMap = IOModule.typeMap) : StorableClone
 		}
 	}
 
-	/** ---- [StorableClonerJvm] */
-
 	private fun serializeImpl(storable: Storable, identityProvider: GlobalIdentityProvider): String {
 		val buffer = ByteArrayOutputStream()
 		val xmlWriter = ElectricXmlWriter(buffer)
-		val writer = StoreXmlWriter(xmlWriter, typeMap, identityProvider)
+		val writer = StoreXmlWriter(xmlWriter, IOModule.typeMap, identityProvider)
 		writer.writeStorable(storable)
 		return buffer.toString()
 	}
 
 	private fun deserializeImpl(s: String, storableCreator: StorableCreator, referenceResolver: ReferenceResolver): Storable {
 		val xmlReader = ElectricXmlReader(ByteArrayInputStream(s.toByteArray()))
-		val reader = StoreXmlReader(xmlReader, typeMap, storableCreator, referenceResolver)
+		val reader = StoreXmlReader(xmlReader, IOModule.typeMap, storableCreator, referenceResolver)
 		return reader.readStorable()
 	}
 }

@@ -4,13 +4,11 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RoundRectangle2D
-import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.MultilineText
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
-import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
-import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -27,8 +25,7 @@ class SimpleTextComponent(
         text: String = "",
         location: Point2D = Point2D.ZERO,
         styleType: StyleType = StyleType.FIGURE,
-        styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-        private val textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory
+        styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangularComponent(
         styleType = styleType,
         styleProvider = styleProvider,
@@ -129,6 +126,6 @@ class SimpleTextComponent(
     }
 
     private fun updateMultilineText() {
-        multilineText = MultilineText(text, font, (width.toInt() - 2 * INSET_X).toDouble(), Point2D.ZERO, textRenderInfoFactory)
+        multilineText = MultilineText(text, font, (width.toInt() - 2 * INSET_X).toDouble(), Point2D.ZERO)
     }
 }

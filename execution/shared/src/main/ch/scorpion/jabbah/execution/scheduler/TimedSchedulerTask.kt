@@ -15,7 +15,7 @@ import kotlin.math.max
 
 /** A [SchedulerTask] that is driven by a [Timer]. */
 class TimedSchedulerTask(
-	private val timer: Timer = System.get().createTimer(),
+	private val timer: Timer = System.createTimer(),
 	eventBus: EventBus = BaseModule.eventBus,
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory
 ) : AbstractSchedulerTask("execution.task.timed"), ActionListener {
@@ -61,8 +61,8 @@ class TimedSchedulerTask(
 	 */
 	override fun actionPerformed(event: ActionEvent) {
 		if (currentSystemSpeedCategory.systemSpeed.isMaximum) {
-			val beginTime = System.get().currentTimeMillis()
-			while (!scheduler.isQueueEmpty && System.get().currentTimeMillis() - beginTime < 20) {
+			val beginTime = System.currentTimeMillis()
+			while (!scheduler.isQueueEmpty && System.currentTimeMillis() - beginTime < 20) {
 				scheduler.execute()
 			}
 		} else {

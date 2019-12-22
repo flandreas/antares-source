@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import io.mockk.*
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -58,7 +58,7 @@ class EdgeViewSnapLocatorTest {
 	fun shouldSnapToGridOnEdgeView() {
 		val grid = mockk<Snapper>()
 		val result = slot<SnapResult>()
-		every { grid.snap(any(), any(), capture(result))} answers {
+		every { grid.snap(any(), any(), capture(result)) } answers {
 			result.captured.x = 55.0
 			result.captured.y = 0.0
 			Unit

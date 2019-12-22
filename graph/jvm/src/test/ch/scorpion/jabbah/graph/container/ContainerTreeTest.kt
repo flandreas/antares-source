@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.container
 
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -46,7 +45,6 @@ class ContainerTreeTest {
 	@BeforeTest
 	fun setup() {
 		val file = File.createTempFile("library", ".lib")
-		TestTranslationsBuilder().withAnyKey()
 		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService(file.parentFile.absolutePath)
 		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"), libraryService = LibraryModule.libraryService)

@@ -1,19 +1,17 @@
 package ch.scorpion.jabbah.edit.highlight
 
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularBelowSelectionModel
 import ch.scorpion.jabbah.edit.select.BoundingBoxBelowSelectionModel
 import ch.scorpion.jabbah.edit.view.DrawingViewContentImpl
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
-import org.junit.Assert.*
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class BelowSmHighlighterTest {
 
@@ -48,7 +46,7 @@ class BelowSmHighlighterTest {
 		val slot = slot<AbstractRectangularComponent>()
 		every { selectionModelProvider.provideFor(component = capture(slot), strategy = SelectionDrawingStrategy.BELOW )} answers { RectangularBelowSelectionModel(slot.captured)}
 		*/
-		every { selectionModelProvider.provideFor(any(), any())} answers { hightlight }
+		every { selectionModelProvider.provideFor(any(), any()) } answers { hightlight }
 	}
 
 	@Test

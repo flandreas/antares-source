@@ -31,7 +31,10 @@ class Constant(
 	}
 
 	companion object {
-		val CALCULATOR = object : VerticeCalculator<Constant> {
+
+		private val CALCULATOR = Calculator()
+
+		private class Calculator : VerticeCalculator<Constant> {
 			override fun calculate(vertice: Constant, data: GraphActorData, signalHandler: SignalHandler) {
 				vertice.getOutput<DigitalSignal>().setOutgoingSignal(data.getSignal(1), signalHandler)
 			}

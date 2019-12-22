@@ -23,7 +23,7 @@ import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestRunner
  * Gateway for executing Javascript code related with [ch.scorpion.antares].
  */
 class AntaresScriptGateway(
-	private val engine: ScriptEngine = ScriptModule.scriptEngineProvider.invoke(),
+	private val engine: ScriptEngine = ScriptEngine(),
 	eventBus: EventBus = BaseModule.eventBus
 ) : ScriptGateway {
 

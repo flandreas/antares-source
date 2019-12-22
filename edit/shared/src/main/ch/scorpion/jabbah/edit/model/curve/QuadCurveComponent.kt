@@ -19,7 +19,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 class QuadCurveComponent(points: List<Point2D>) : AbstractComponent(), Transparent {
 
-	constructor(): this(DEFAULT_POINTS)
+	constructor() : this(DEFAULT_POINTS)
 
 	companion object {
 		private val DEFAULT_POINTS = listOf<Point2D>(
@@ -59,7 +59,9 @@ class QuadCurveComponent(points: List<Point2D>) : AbstractComponent(), Transpare
 
 	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
 		get() = SelectionDrawingStrategy.ABOVE
-		set(value) {super.preferredSelectionDrawingStrategy = value}
+		set(value) {
+			super.preferredSelectionDrawingStrategy = value
+		}
 
 
 	override var location: Point2D
@@ -92,7 +94,9 @@ class QuadCurveComponent(points: List<Point2D>) : AbstractComponent(), Transpare
 
 	override var transparency: Int
 		get() = transparent.transparency
-		set(value) { transparent.transparency = value }
+		set(value) {
+			transparent.transparency = value
+		}
 
 	/** ---- [Storable] interface */
 
@@ -142,7 +146,7 @@ class QuadCurveComponent(points: List<Point2D>) : AbstractComponent(), Transpare
 
 	private fun updatePath() {
 		checkState(points.size == 3)
-		path = System.SYSTEM!!.createPath()
+		path = System.createPath()
 		path.moveTo(points[0].x, points[0].y)
 		path.quadTo(points[1].x, points[1].y, points[2].x, points[2].y)
 	}

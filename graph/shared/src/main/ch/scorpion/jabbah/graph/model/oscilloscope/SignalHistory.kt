@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.model.oscilloscope
 
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.graph.model.Graph
+import kotlin.math.min
 
 /**
  * A single entry in a [SignalHistory] that represents a signal value at a particular time.
@@ -89,7 +90,7 @@ class SignalHistoryImpl<T : Any> : SignalHistory<T> {
 		checkArgument(list.isEmpty() || list.last().time <= entry.time)
 		if (list.isEmpty() || list.last().signal != entry.signal) {
 			if (!list.isEmpty()) {
-				_minDelay = Math.min(minDelay, entry.time - list.last().time)
+				_minDelay = min(minDelay, entry.time - list.last().time)
 			}
 			list.add(entry)
 		}

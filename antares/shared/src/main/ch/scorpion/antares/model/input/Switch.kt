@@ -15,8 +15,8 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
  */
 class Switch : AbstractInteractableVertice("library.element.Switch", CALCULATOR) {
 
-    var isOn: Boolean = false
-        private set
+	var isOn: Boolean = false
+		private set
 
 	/**
 	 * Used to support view implementations with a non-toggle behaviour, i.e. switches that change ton "on" when
@@ -26,55 +26,58 @@ class Switch : AbstractInteractableVertice("library.element.Switch", CALCULATOR)
 	 */
 	private var delayedOff: Boolean = false
 
-    init {
-        addPort(DigitalPortImpl.createOutput())
-        propagationDelay = 1000
-    }
+	init {
+		addPort(DigitalPortImpl.createOutput())
+		propagationDelay = 1000
+	}
 
-    companion object {
-        val CALCULATOR = object : VerticeCalculator<Switch> {
-            override fun calculate(vertice: Switch, data: GraphActorData, signalHandler: SignalHandler) {
-                val output = vertice.getOutput<DigitalSignal>()
-                output.setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
+	companion object {
 
-	            if (vertice.delayedOff) {
-		            vertice.delayedOff = false
-		            vertice.setState(signalHandler, false)
-	            } else {
-		            vertice.enabled = true
-	            }
-            }
-        }
-    }
+		private val CALCULATOR = Calculator()
 
-    /** ---- [Actor] interface */
+		private class Calculator : VerticeCalculator<Switch> {
+			override fun calculate(vertice: Switch, data: GraphActorData, signalHandler: SignalHandler) {
+				val output = vertice.getOutput<DigitalSignal>()
+				output.setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
 
-    override fun executionStarted(signalHandler: SignalHandler) {
-        super.executionStarted(signalHandler)
-	    setState(signalHandler, false)
-    }
+				if (vertice.delayedOff) {
+					vertice.delayedOff = false
+					vertice.setState(signalHandler, false)
+				} else {
+					vertice.enabled = true
+				}
+			}
+		}
+	}
 
-    override fun executionStopped(signalHandler: SignalHandler) {
-        super.executionStopped(signalHandler)
-        isOn = false
-	    enabled = true
-    }
+	/** ---- [Actor] interface */
 
-    /** ---- [Switch] */
+	override fun executionStarted(signalHandler: SignalHandler) {
+		super.executionStarted(signalHandler)
+		setState(signalHandler, false)
+	}
 
-    fun toggle(signalHandler: SignalHandler) {
-	    if (isOn) {
-		    off(signalHandler)
-	    } else {
-		    on(signalHandler)
-	    }
-    }
+	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
+		isOn = false
+		enabled = true
+	}
 
-    fun on(signalHandler: SignalHandler) {
-	    if (enabled && !isOn) {
-		    setState(signalHandler, true)
-	    }
-    }
+	/** ---- [Switch] */
+
+	fun toggle(signalHandler: SignalHandler) {
+		if (isOn) {
+			off(signalHandler)
+		} else {
+			on(signalHandler)
+		}
+	}
+
+	fun on(signalHandler: SignalHandler) {
+		if (enabled && !isOn) {
+			setState(signalHandler, true)
+		}
+	}
 
 	fun off(signalHandler: SignalHandler) {
 		if (isOn) {

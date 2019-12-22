@@ -1,12 +1,12 @@
 package ch.scorpion.jabbah.execution.scheduler
 
 import ch.scorpion.jabbah.base.MILLION
-import ch.scorpion.jabbah.execution.ExecutionTestRule
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
 import ch.scorpion.jabbah.execution.ExecutionError
+import ch.scorpion.jabbah.execution.ExecutionTestRule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.*
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
@@ -15,11 +15,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 /**
  * Unit tests for [SchedulerImpl].
@@ -111,18 +107,22 @@ class SchedulerImplTest {
 
 	/** ---- Stepping tests */
 
-	@Test(expected = IllegalStateException::class)
+	@Test
 	fun shouldNotAllowStepWhenNotActive() {
-		scheduler.isPaused = true
-		scheduler.isActive = false
-		scheduler.step()
+		assertFailsWith<IllegalStateException> {
+			scheduler.isPaused = true
+			scheduler.isActive = false
+			scheduler.step()
+		}
 	}
 
-	@Test(expected = IllegalStateException::class)
+	@Test
 	fun shouldNotAllowStepWhenNotPaused() {
-		scheduler.isPaused = false
-		scheduler.isActive = true
-		scheduler.step()
+		assertFailsWith<IllegalStateException> {
+			scheduler.isPaused = false
+			scheduler.isActive = true
+			scheduler.step()
+		}
 	}
 
 	@Test
@@ -245,7 +245,7 @@ class SchedulerImplTest {
 
 	private fun createActor(isBreakpoint: Boolean = true): Actor {
 		val actor = spyk<ActorImpl>()
-		every { actor.isBreakpoint} returns isBreakpoint
+		every { actor.isBreakpoint } returns isBreakpoint
 		return actor
 	}
 

@@ -32,7 +32,7 @@ class BrokenReferenceView(
 		private const val EXPECTED_VERTICAL_INSET = 7.0
 
 		val NAME = TranslatableText(listOf(
-			Translation(System.get().currentLanguage(), Translations.getString("graph.element.brokenRef.name"))
+			Translation(System.currentLanguage(), Translations.getString("graph.element.brokenRef.name"))
 		))
 	}
 
@@ -47,7 +47,7 @@ class BrokenReferenceView(
 	private val textColor: Color get() = styleProvider.getStyle(StyleType.FIGURE).color.textColor
 
 	val label: Label = Label(
-		text ="?",
+		text = "?",
 		font = font,
 		color = textColor,
 		location = Point2D(bounds.centerX, bounds.centerY),

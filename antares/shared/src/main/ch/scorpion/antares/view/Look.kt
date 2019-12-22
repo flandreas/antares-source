@@ -3,12 +3,13 @@ package ch.scorpion.antares.view
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
+import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
 import ch.scorpion.jabbah.draw.style.Themes
+import kotlin.math.ceil
 
 object Look {
 
@@ -36,11 +37,11 @@ object Look {
 	}
 
 	fun scaleToGrid(value: Int): Int {
-		return GRID * Math.ceil(value.toDouble() / GRID).toInt()
+		return GRID * ceil(value.toDouble() / GRID).toInt()
 	}
 
 	fun scaleToDoubleGrid(value: Int): Int {
-		return 2 * GRID * Math.ceil(value.toDouble() / 2 / GRID).toInt()
+		return 2 * GRID * ceil(value.toDouble() / 2 / GRID).toInt()
 	}
 
 	/**

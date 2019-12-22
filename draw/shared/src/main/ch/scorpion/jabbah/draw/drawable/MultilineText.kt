@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Font
+import ch.scorpion.jabbah.draw.graphics.TextMeasurer
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 
@@ -17,72 +18,72 @@ import ch.scorpion.jabbah.draw.module.DrawModule
  * @property location the upper-left corner of the surrounding box relative to the owner's coordinate system
  */
 class MultilineText(
-        private val text: String,
-        private val font: Font,
-        private val maxWidth: Double,
-        override var location: Point2D = Point2D.ZERO,
-        textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory,
-        private val asHtml: Boolean = false
+	private val text: String,
+	private val font: Font,
+	private val maxWidth: Double,
+	override var location: Point2D = Point2D.ZERO,
+	private val asHtml: Boolean = false,
+	textMeasurer: TextMeasurer = TextRenderInfoFactory
 ) : AbstractRectangle(), Locatable {
 
-    companion object {
-        const val LINE_DIST = 5.0
-    }
+	companion object {
+		const val LINE_DIST = 5.0
+	}
 
-    private val lines = mutableListOf<String>()
+	private val lines = mutableListOf<String>()
 
-    private val ascent: Int
+	private val ascent: Int
 
-    private val lineHeight: Double = font.size + LINE_DIST
+	private val lineHeight: Double = font.size + LINE_DIST
 
-    init {
-        var lAscent = 0
+	init {
+		var lAscent = 0
 
-        for (car in text.split('\n')) {
-            var line = ""
-            for (word in car.split(' ')) {
-                val testLine = "$line$word "
-                val textRenderInfo = textRenderInfoFactory.measureSingleLineText(testLine, font)
-                val testWidth = textRenderInfo.textBounds.width
-                lAscent = textRenderInfo.ascent.toInt()
+		for (car in text.split('\n')) {
+			var line = ""
+			for (word in car.split(' ')) {
+				val testLine = "$line$word "
+				val textRenderInfo = textMeasurer.measureSingleLineText(testLine, font)
+				val testWidth = textRenderInfo.textBounds.width
+				lAscent = textRenderInfo.ascent.toInt()
 
-	            line = if (testWidth > maxWidth) {
-		            lines.add(line)
-		            "$word "
-	            } else {
-		            testLine
-	            }
-            }
+				line = if (testWidth > maxWidth) {
+					lines.add(line)
+					"$word "
+				} else {
+					testLine
+				}
+			}
 
-            lines.add(line)
-        }
+			lines.add(line)
+		}
 
-        ascent = lAscent
+		ascent = lAscent
 
-        setBounds(location.x, location.y, maxWidth, lines.size * lineHeight)
-    }
+		setBounds(location.x, location.y, maxWidth, lines.size * lineHeight)
+	}
 
-    /** ---- [RectangularDrawable] */
+	/** ---- [RectangularDrawable] */
 
-    override val lineWidth: Double get() = 0.0
+	override val lineWidth: Double get() = 0.0
 
-    /** ----- [Drawable] interface */
+	/** ----- [Drawable] interface */
 
-    override fun draw(context: DrawContext) {
-        if (asHtml) {
-            context.g.drawText(text, xInt, yInt, widthInt)
-        } else {
-            var yy = location.y + ascent
-            for (line in lines) {
-                context.g.drawString(line, location.x.toInt(), yy.toInt())
-                yy += lineHeight
-            }
-        }
+	override fun draw(context: DrawContext) {
+		if (asHtml) {
+			context.g.drawText(text, xInt, yInt, widthInt)
+		} else {
+			var yy = location.y + ascent
+			for (line in lines) {
+				context.g.drawString(line, location.x.toInt(), yy.toInt())
+				yy += lineHeight
+			}
+		}
 
-	    DrawModule.drawDebugBoundingBox(this, context.g)
-    }
+		DrawModule.drawDebugBoundingBox(this, context.g)
+	}
 
-    override fun contains(x: Double, y: Double): Boolean {
-        return boundingBox.contains(x, y)
-    }
+	override fun contains(x: Double, y: Double): Boolean {
+		return boundingBox.contains(x, y)
+	}
 }

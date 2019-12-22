@@ -1,10 +1,10 @@
 package ch.scorpion.antares.view.inout
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.graph.view.VerticeView
 
 
@@ -29,7 +29,7 @@ class ArrowPath(
 		const val ARROW_SIZE = 14.0
 
 		class Builder(val orientation: Direction, val contentDimension: Dimension2D) {
-			private var path = System.get().createPath()
+			private var path = System.createPath()
 			private var contentLocation: Point2D = Point2D.ZERO
 			private var tailLocation: Point2D = Point2D.ZERO
 

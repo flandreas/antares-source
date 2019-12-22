@@ -5,7 +5,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
-import java.util.regex.Pattern
+import kotlin.math.max
 
 /**
  * Represents a dump of a [Memory] in a single format consisting of a sequence of hexadecimal number, one for each
@@ -26,10 +26,10 @@ object MemoryDump {
 	private const val COMMENT_DELIMITER = ':'
 
 	/** The regular expression for separating individual cells.*/
-	private val cellSeparationRegex = Pattern.compile("(?<!\\\\)$CELL_DELIMITER|\n")
+	private val cellSeparationRegex = Regex("(?<!\\\\)$CELL_DELIMITER|\n")
 
 	/** The regular expression for separating cell value and optional cell comment.*/
-	private val cellTokenSeparationRegex = Pattern.compile("(?<!\\\\)$COMMENT_DELIMITER")
+	private val cellTokenSeparationRegex = Regex("(?<!\\\\)$COMMENT_DELIMITER")
 
 	/**
 	 * Writes the contents of the specified [Memory] into a new [String].
@@ -37,7 +37,7 @@ object MemoryDump {
 	fun write(memory: Memory, bitWidth: BitWidth): String {
 		val builder = StringBuilder()
 		val mask = BitOperation.power(bitWidth.width.toByte()) - 1L
-		val length = Math.max(2, bitWidth.width / 4)
+		val length = max(2, bitWidth.width / 4)
 
 		val cellIter = ZeroFiller(memory.getNonZeroCells())
 		while (cellIter.hasNext()) {

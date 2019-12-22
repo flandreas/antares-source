@@ -12,13 +12,12 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
-import ch.scorpion.jabbah.graph.container.ContainerPanel
 import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * The main UI element of a graph [Application] that allows to switch between
  * a [GraphDesktop] (for editing the inside view of the main [GraphView] and
- * a [ContainerPanel] (for editing the outside view of the main [GraphView]).
+ * a ContainerPanel (for editing the outside view of the main [GraphView]).
  */
 interface GraphFrame {
 
@@ -103,7 +102,9 @@ class GraphFrameController(
 		view.containerView.removePropertyChangeListener(zoomEventHandler)
 	}
 
-	private val zoomEventHandler = object : PropertyChangeListener<Any> {
+	private val zoomEventHandler = ZoomEventHandler()
+
+	private inner class ZoomEventHandler: PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 			if (e.name == View.PROP_ZOOM_PAN && properties.getBoolean(PROP_AUTO_SWITCH)) {
 				if (e.source === view.desktopView && view.desktopViewShowsNavigationRoot) {

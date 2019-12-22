@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.base.geom
 import ch.scorpion.jabbah.base.PI_2
 import ch.scorpion.jabbah.base.PI_4
 import ch.scorpion.jabbah.base.TWO_PI
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.math.PI
 import kotlin.test.*
 
@@ -12,7 +12,7 @@ class GeometryTest {
 
 	@BeforeTest
 	fun setup() {
-		BaseModuleJvm.require()
+		BaseModule.require()
 	}
 
 	@Test

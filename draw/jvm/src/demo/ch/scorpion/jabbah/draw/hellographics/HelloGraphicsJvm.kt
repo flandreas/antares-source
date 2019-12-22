@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.view.ViewImpl
 import ch.scorpion.jabbah.base.geom.AffineTransformJvm
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import kotlin.system.exitProcess
 
 /**
  * A sample application showing [ch.scorpion.jabbah.draw] capabilities on the JVM target.
@@ -27,12 +28,12 @@ class HelloGraphicsJvm : JFrame() {
 
             helloGraphics.addWindowListener(object : WindowAdapter() {
                 override fun windowOpened(e: WindowEvent?) {
-                    val timer = ch.scorpion.jabbah.base.System.SYSTEM!!.createTimer()
-                    timer.initialize(10, { model.animateBall(canvas)})
-                    timer.start()
+                    val timer = ch.scorpion.jabbah.base.System.createTimer()
+                    timer.initialize(10) { model.animateBall(canvas)}
+	                timer.start()
                 }
                 override fun windowClosing(e: WindowEvent?) {
-                    System.exit(0)
+                    exitProcess(0)
                 }
             })
             helloGraphics.isVisible = true

@@ -13,8 +13,6 @@ object IOModule : AbstractModule() {
     
     var storableCreator: StorableCreator = SystemStorableCreator()
     
-    var storableClonerProvider: () -> StorableCloner = { throw UnsupportedOperationException() }
-
     override fun initialize() {
         BaseModule.require()
     }

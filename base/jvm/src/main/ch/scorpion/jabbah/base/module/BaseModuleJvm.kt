@@ -18,10 +18,6 @@ object BaseModuleJvm : AbstractModule() {
 	override fun initialize() {
 		defineKeyCodes()
 
-		System.SYSTEM = SystemJvm()
-		LOG_SYSTEM = LogSystemJVM()
-		Translations = TranslationsJvm()
-
 		BaseModule.timeService = RealTimeServiceJvm()
 		BaseModule.require()
 

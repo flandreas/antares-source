@@ -112,7 +112,7 @@ class BelowSmHighlighter(
 		LOG.debug("Highlight component '${c.id}'")
 		val highlight = highlightModelProvider.provideFor(c, SelectionDrawingStrategy.BELOW)
 		if (highlight == null) {
-			LOG.error("No suitable highlight SelectionModel found for ${System.get().getClassName(c)}")
+			LOG.error("No suitable highlight SelectionModel found for ${System.getClassName(c)}")
 			return
 		}
 		if (color != null) {

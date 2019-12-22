@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
-import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 
 
@@ -37,7 +36,6 @@ class LibraryManagementService(
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val userDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
 	private val systemDictionaryService: LibraryDictionaryService = LibraryModule.systemLibraryDictionaryService,
-	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
@@ -171,13 +169,13 @@ class LibraryManagementService(
 	}
 
 	private fun copyBaseElement(element: BaseLibraryElement, destination: LibraryDirectory) {
-		val clone = storableCloner.clone(element) as BaseLibraryElement
+		val clone = StorableCloner.clone(element) as BaseLibraryElement
 		libraryService.addLibraryItem(destination.library!!, clone, destination, null)
 	}
 
 	private fun copyContainerLibraryElement(element: ContainerLibraryElement, destination: LibraryDirectory) {
 		libraryService.loadMetaGraph(element.library!!, element)
-		val clone = storableCloner.clone(element.metaGraph!!) as MetaGraph
+		val clone = StorableCloner.clone(element.metaGraph!!) as MetaGraph
 		libraryService.addContainerLibraryElement(destination.library!!, clone, destination, null)
 	}
 }

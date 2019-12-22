@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.draw.DrawableAdapter
 import ch.scorpion.jabbah.draw.DrawableEvent
-import ch.scorpion.jabbah.draw.style.StyleProviderMockBuilder
+import ch.scorpion.jabbah.edit.StyleProviderMockBuilder
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

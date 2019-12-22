@@ -4,12 +4,12 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.ArrowBubble
 import ch.scorpion.jabbah.draw.drawable.MultilineText
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
+import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -168,13 +168,7 @@ object TooltipManager {
 	private lateinit var timer: Timer
 
 	/** Listens for [ZoomPan] changes in [View] for which a [TooltipView] is displayed in order to dispose it.*/
-	private val zoomPanListener = object : PropertyChangeListener<Any> {
-		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-			if (e.source == textTooltip?.view) {
-				disposeTooltip()
-			}
-		}
-	}
+	private var zoomPanListener: PropertyChangeListener<Any>? = null
 
 	var eventBus: EventBus = BaseModule.eventBus
 		set(value) {
@@ -196,7 +190,7 @@ object TooltipManager {
 	}
 
 	private fun initTimer() {
-		timer = System.get().createTimer()
+		timer = System.createTimer()
 		timer.initialize(BaseModule.properties.getInt(PROP_DELAY)) { displayImpl() }
 	}
 
@@ -241,7 +235,11 @@ object TooltipManager {
 				it.view.overlayContainer.add(explanationTooltip!!.arrowBubble)
 			}
 			it.view.overlayContainer.validate()
-			it.view.addPropertyChangeListener(zoomPanListener)
+			zoomPanListener = it.view.addPropertyChangeListener {
+				if (it.source == textTooltip?.view) {
+					disposeTooltip()
+				}
+			}
 			request = null
 			timer.stop()
 		}
@@ -252,13 +250,13 @@ object TooltipManager {
 		textTooltip?.let {
 			it.view.overlayContainer.remove(it.arrowBubble)
 			it.view.overlayContainer.validate()
-			it.view.removePropertyChangeListener(zoomPanListener)
+			zoomPanListener?.let { listener -> it.view.removePropertyChangeListener(listener) }
 			textTooltip = null
 		}
 		explanationTooltip?.let {
 			it.view.overlayContainer.remove(it.arrowBubble)
 			it.view.overlayContainer.validate()
-			it.view.removePropertyChangeListener(zoomPanListener)
+			zoomPanListener?.let { listener -> it.view.removePropertyChangeListener(listener) }
 			explanationTooltip = null
 		}
 		textTooltip = null
@@ -267,7 +265,7 @@ object TooltipManager {
 
 	private fun createTextArrowBubble(tooltip: Tooltip, view: View<*>): ArrowBubble {
 		val font = styleProvider.getStyle(StyleType.TOOLTIP).font
-		val textRenderInfo = DrawModule.textRenderInfoFactory.measureHtmlText(tooltip.text, font, WIDTH)
+		val textRenderInfo = TextRenderInfoFactory.measureHtmlText(tooltip.text, font, WIDTH)
 		val width = max(MIN_WIDTH, textRenderInfo.textBounds.width.toInt()).toDouble()
 
 		val multilineText = MultilineText(text = tooltip.text, font = font, maxWidth = width, asHtml = true)

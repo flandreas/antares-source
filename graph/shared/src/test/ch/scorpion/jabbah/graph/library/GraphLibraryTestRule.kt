@@ -2,37 +2,20 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.app.user.User
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.graph.module.GraphModuleJvm
-import ch.scorpion.jabbah.io.IOModuleJvm
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.io.IOModule
 
 /**
  * Basic setup of unit tests in the [ch.scorpion.jabbah.graph.library] package.
  */
 object GraphLibraryTestRule {
 
-	/*
-	override fun apply(statement: Statement?, p1: Description?): Statement {
-		return object : Statement() {
-			override fun evaluate() {
-				configure()
-				try {
-					statement!!.evaluate()
-				} finally {
-					// empty
-				}
-			}
-		}
-	}
-	*/
-
 	fun configure() {
-		BaseModuleJvm.require()
-		IOModuleJvm.require()
+		BaseModule.require()
+		IOModule.require()
 		LibraryModule.require()
-		GraphModuleJvm.require()
-		TestTranslationsBuilder().withAnyKey()
+		Translations.withAnyKey()
 		AppModule.userHolder.u = User.developer()
 	}
 }

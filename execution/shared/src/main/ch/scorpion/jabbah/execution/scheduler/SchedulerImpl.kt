@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.TimeService
-import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
@@ -65,7 +64,7 @@ class SchedulerImpl(
 
 		eventBus.register(IssueCollectorEvent::class) {
 			if (isActive && isStopOnIssue && it.issue != null) {
-				System.get().invokeLater {
+				System.invokeLater {
 					isActive = false
 					LOG.debug("execution stopped due to Issue '${it.issue.name}'")
 					eventBus.post(ExecutionStoppedOnIssueEvent(this))
@@ -184,7 +183,7 @@ class SchedulerImpl(
 
 	override fun logActorTrace(actor: Actor, msg: () -> String) {
 		if (LOG.isTraceEnabled()) {
-			LOG.trace("${StringUtils.formatLong(executionTime)} ns [${System.get().getClass(actor).simpleName} (${actor.id})]: ${msg.invoke()}")
+			LOG.trace("${StringUtils.formatLong(executionTime)} ns [${System.getClass(actor).simpleName} (${actor.id})]: ${msg.invoke()}")
 		}
 	}
 

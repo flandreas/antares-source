@@ -10,32 +10,32 @@ import javax.swing.SwingUtilities
 import kotlin.reflect.KClass
 
 /** Implements the [System] interface on the Java virtual machine platform.*/
-class SystemJvm : System {
+actual object System {
 
 	/** ---- [System] interface */
 
-	override fun createTimer(): Timer = RealTimeTimerJvm()
+	actual fun createTimer(): Timer = RealTimeTimerJvm()
 
-	override fun currentTimeMillis(): Long = java.lang.System.currentTimeMillis()
+	actual fun currentTimeMillis(): Long = java.lang.System.currentTimeMillis()
 
-	override fun getClassName(obj: Any): String = obj.javaClass.simpleName
+	actual fun getClassName(obj: Any): String = obj.javaClass.simpleName
 
-	override fun getClass(obj: Any): KClass<Any> = obj.javaClass.kotlin
+	actual fun getClass(obj: Any): KClass<Any> = obj.javaClass.kotlin
 
-	override fun <T : Any> instantiate(clazz: KClass<T>): T = clazz.java.getDeclaredConstructor().newInstance()
+	actual fun <T : Any> instantiate(clazz: KClass<T>): T = clazz.java.getDeclaredConstructor().newInstance()
 
-	override fun createAffineTransform(): AffineTransform = AffineTransformJvm()
+	actual fun createAffineTransform(): AffineTransform = AffineTransformJvm()
 
-	override fun createPath(): Path = Path2DJvm()
+	actual fun createPath(): Path = Path2DJvm()
 
-	override fun createUUID(uuid: String?): UUID {
+	actual fun createUUID(uuid: String?): UUID {
 		if (uuid == null) {
 			return UUID(java.util.UUID.randomUUID().toString())
 		}
 		return UUID(uuid)
 	}
 
-	override fun buildToolTipText(title: String?, text: String?, endWithPeriod: Boolean): String? {
+	actual fun buildToolTipText(title: String?, text: String?, endWithPeriod: Boolean): String? {
 		val sb = StringBuilder()
 
 		if (title == null || "" == title) {
@@ -65,13 +65,13 @@ class SystemJvm : System {
 		return sb.toString()
 	}
 
-	override fun invokeLater(invocable: () -> Unit) {
+	actual fun invokeLater(invocable: () -> Unit) {
 		SwingUtilities.invokeLater { invocable.invoke() }
 	}
 
-	override fun getActionAcceleratorKey(baseName: String): String = "$baseName.accelerator"
+	actual fun getActionAcceleratorKey(baseName: String): String = "$baseName.accelerator"
 
-	override fun currentLanguage(): Language {
+	actual fun currentLanguage(): Language {
 		val code = java.lang.System.getProperty("user.language")
 		if (Language.supports(code)) {
 			return Language.withCode(code)

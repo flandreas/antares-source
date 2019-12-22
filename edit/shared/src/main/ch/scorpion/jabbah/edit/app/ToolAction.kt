@@ -16,13 +16,7 @@ class ToolAction(
 	imagePath: String?
 ) : AbstractAction(baseName) {
 
-	private val editorListener = object : PropertyChangeListener<Any> {
-		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-			if (e.name == Editor.PROP_CURRENT_TOOL) {
-				selected = editor.currentTool == tool
-			}
-		}
-	}
+	private val editorListener = EditorListener()
 
 	init {
 		selected = tool == editor.currentTool
@@ -36,5 +30,13 @@ class ToolAction(
 
 	fun dispose() {
 		editor.removePropertyChangeListener(editorListener)
+	}
+
+	private inner class EditorListener : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			if (e.name == Editor.PROP_CURRENT_TOOL) {
+				selected = editor.currentTool == tool
+			}
+		}
 	}
 }

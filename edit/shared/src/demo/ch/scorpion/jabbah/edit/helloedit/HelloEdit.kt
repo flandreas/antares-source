@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
-import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
 
 /** Builds a [Drawing] filled with some demo [Component]s. */
 fun buildDrawing(): Drawing<Component> {

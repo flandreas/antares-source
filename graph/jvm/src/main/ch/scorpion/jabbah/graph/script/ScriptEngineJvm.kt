@@ -12,18 +12,16 @@ import javax.script.ScriptException
 /**
  * Implements [ScriptEngine] using the JVM "nashorn" engine.
  */
-class ScriptEngineJvm(
-	private val eventBus: EventBus = BaseModule.eventBus
-) : ScriptEngine {
+actual class ScriptEngine actual constructor(private val eventBus: EventBus) {
 
 	companion object {
-		private val LOG by logger(ScriptEngineJvm::class)
+		private val LOG by logger(ScriptEngine::class)
 	}
 
 	private val engine = ScriptEngineManager().getEngineByName("nashorn")
 	private var lastScript: Script? = null
 
-	override fun eval(script: Script) {
+	actual fun eval(script: Script) {
 		lastScript = script
 		try {
 			engine.eval(script.code)
@@ -36,7 +34,7 @@ class ScriptEngineJvm(
 		}
 	}
 
-	override fun invoke(name: String, errorHandler: ScriptErrorHandler?, vararg args: Any): Any? {
+	actual fun invoke(name: String, errorHandler: ScriptErrorHandler?, vararg args: Any): Any? {
 		return try {
 			(engine as Invocable).invokeFunction(name, *args)
 		} catch (e: ScriptException) {

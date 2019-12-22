@@ -182,7 +182,7 @@ class SelectionManagerImpl(
 		}
 		if (selectionModel == null) {
 			LOG.error("SelectionManagerImpl: No suitable SelectionModel found for " +
-				"${System.SYSTEM!!.getClassName(component.selectableComponent)} and strategy $strategy")
+				"${System.getClassName(component.selectableComponent)} and strategy $strategy")
 			return
 		}
 		content.addSelectionModel(selectionModel, strategy)

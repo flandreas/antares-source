@@ -8,7 +8,6 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
@@ -37,6 +36,7 @@ import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.*
+import kotlin.math.max
 
 
 /**
@@ -377,7 +377,7 @@ class RAMView(
 
 	private fun calculateWidth(): Int {
 		return if (showContents) {
-			Math.max(ROMView.MIN_WIDTH, when (rotation) {
+			max(ROMView.MIN_WIDTH, when (rotation) {
 				Rotation.R0, Rotation.R180 -> (contentsView.width + 2 * ROMView.HORIZONTAL_CONTENTS_INSET).toInt()
 				Rotation.R90, Rotation.R270 -> (contentsView.height + 2 * ROMView.HORIZONTAL_CONTENTS_INSET).toInt()
 			})
@@ -388,7 +388,7 @@ class RAMView(
 
 	private fun calculateHeight(): Int {
 		return if (showContents) {
-			Math.max(ROMView.MIN_HEIGHT, when (rotation) {
+			max(ROMView.MIN_HEIGHT, when (rotation) {
 				Rotation.R0, Rotation.R180 -> (contentsView.height + 2 * ROMView.VERTICAL_CONTENTS_INSET).toInt()
 				Rotation.R90, Rotation.R270 -> (contentsView.width + 2 * ROMView.VERTICAL_CONTENTS_INSET).toInt()
 			})

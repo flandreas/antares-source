@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.base.state
 
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.exception.IllegalStateException
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.*
 import io.mockk.mockk
 import io.mockk.verify
@@ -12,7 +12,7 @@ class StateMachineTest {
 
 	@BeforeTest
 	fun setup() {
-		BaseModuleJvm.require()
+		BaseModule.require()
 	}
 
 	private val entryA = mockk<Action<String>>(relaxed = true)

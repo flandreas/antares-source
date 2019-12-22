@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.preferences.PreferencesChangedEvent
+import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -136,7 +136,7 @@ class LibraryPreviewPanel(
 		selection = component
 		selection!!.styleProvider = Themes.uiStyleProvider
 		componentDisplay.updateLayout()
-		descriptionArea.text = System.get().buildToolTipText(selection!!.type, (selection as VerticeView<*>).shortDescription, true)
+		descriptionArea.text = System.buildToolTipText(selection!!.type, (selection as VerticeView<*>).shortDescription, true)
 	}
 
 	/** Displays the graphical preview of the selected [Component]. */

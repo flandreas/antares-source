@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
@@ -27,20 +28,6 @@ import java.awt.GridLayout
 import javax.swing.*
 import javax.swing.border.Border
 import kotlin.math.max
-
-/** Displays the contents of a [VerticeView] within a separate [GraphDesktop] view.*/
-interface GraphDesktopItem {
-
-	val drawingView: DrawingView<GraphView<GraphElementView<*>>>?
-
-	var contextColor: CompositeColor?
-
-	fun dispose()
-
-	fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<*>?
-}
-
-data class GraphDesktopItemCloseRequest(val item: GraphDesktopItem)
 
 abstract class AbstractGraphDesktopItemPanel : JPanel(), GraphDesktopItem {
 
@@ -137,6 +124,10 @@ class GraphDesktopSwing(
 
 	fun dispose() {
 		graphEditPanel.dispose()
+	}
+
+	override fun invoke(handler: () -> Unit) {
+		InvocationHandler.invoke(handler)
 	}
 
 	/** ---- [GraphDesktop] */

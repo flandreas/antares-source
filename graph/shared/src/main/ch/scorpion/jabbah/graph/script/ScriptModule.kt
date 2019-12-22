@@ -8,8 +8,6 @@ import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
  */
 object ScriptModule : AbstractModule() {
 
-    var scriptEngineProvider: () -> ScriptEngine = { throw UnsupportedOperationException("ScriptEngine not configured") }
-
     var scriptGatewayProvider: () -> ScriptGateway = { throw UnsupportedOperationException("ScriptGateway not configured") }
 
     private var _scriptGateway: ScriptGateway? = null

@@ -1,9 +1,9 @@
 package ch.scorpion.jabbah.edit.tool
 
-import ch.scorpion.jabbah.base.event.EventTestUtil
 import ch.scorpion.jabbah.base.event.InputEvent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.EventTestUtil
 import ch.scorpion.jabbah.edit.Tool
 
 /** Test utility for sending [InputEvent]s to a [Tool] under test.*/

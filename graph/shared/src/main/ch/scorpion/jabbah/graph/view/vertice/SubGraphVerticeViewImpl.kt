@@ -48,7 +48,6 @@ import ch.scorpion.jabbah.io.*
 class SubGraphVerticeViewImpl(
 	graphElement: SubGraphVerticeRef? = null,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
 	private val eventBus: EventBus = BaseModule.eventBus,
@@ -445,7 +444,7 @@ class SubGraphVerticeViewImpl(
 
 	private fun getLibraryContainerDrawing(): ContainerDrawing {
 		val libraryGraph = repository.getMetaGraph(subGraphVertice!!.graphUUID!!)
-		return storableCloner.clonePreservingIdentities(libraryGraph.containerDrawing, storableCreator) as ContainerDrawing
+		return StorableCloner.clonePreservingIdentities(libraryGraph.containerDrawing, storableCreator) as ContainerDrawing
 	}
 
 	private fun updateBoxes() {

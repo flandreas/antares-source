@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.EdgeViewLayout
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
+import kotlin.math.max
 import kotlin.math.min
 
 class EdgeViewLayoutImpl(
@@ -128,7 +129,7 @@ class EdgeViewLayoutImpl(
 			layoutAll(null, direction)
 			return
 		}
-		val origPointIndex = Math.max(0, edgeView.polyline.pointsCount - 3)
+		val origPointIndex = max(0, edgeView.polyline.pointsCount - 3)
 		layoutDestinationImpl(origPointIndex, direction, getLayoutDestinationPoint(), compact = true)
 		updateAdjusted()
 	}

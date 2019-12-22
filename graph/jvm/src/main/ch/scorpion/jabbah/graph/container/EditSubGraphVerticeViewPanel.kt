@@ -32,9 +32,8 @@ import javax.swing.*
  */
 class EditSubGraphVerticeViewPanel(
 	private val metaGraphRepository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
-    private val containerPanel: ContainerPanel,
-    private val subGraphVerticeView: SubGraphVerticeView<*>,
-    private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
+	private val containerPanel: ContainerPanel,
+	private val subGraphVerticeView: SubGraphVerticeView<*>,
 	private val commandManager: CommandManager = EditModule.commandManager,
 	private val closeHandler: (Boolean) -> Unit
 ) : JPanel() {
@@ -52,7 +51,6 @@ class EditSubGraphVerticeViewPanel(
 			metaGraphRepository: MetaGraphRepository,
 			containerPanel: ContainerPanel,
 			subGraphVerticeView: SubGraphVerticeView<*>,
-			storableCloner: StorableCloner,
 			commandManager: CommandManager
 		): Boolean {
 			val dialog = JDialog(parent, true)
@@ -64,9 +62,9 @@ class EditSubGraphVerticeViewPanel(
 			dialog.contentPane.add(EditSubGraphVerticeViewPanel(
 				metaGraphRepository,
 				containerPanel,
-				subGraphVerticeView,
-				storableCloner
-			) { okPressed = it
+				subGraphVerticeView
+			) {
+				okPressed = it
 				dialog.isVisible = false
 				dialog.dispose()
 			})
@@ -129,32 +127,32 @@ class EditSubGraphVerticeViewPanel(
 		}
 	}
 
-    init {
-        buildUI()
-    }
+	init {
+		buildUI()
+	}
 
-    fun initialize() {
-        containerPanel.initialize()
-    }
+	fun initialize() {
+		containerPanel.initialize()
+	}
 
-    private fun buildUI() {
-        layout = BorderLayout()
+	private fun buildUI() {
+		layout = BorderLayout()
 
-        fill()
+		fill()
 
-        containerPanel.preferredSize = Dimension(1000, 800)
+		containerPanel.preferredSize = Dimension(1000, 800)
 
-	    add(createToolBarPanel(), BorderLayout.NORTH)
-        add(containerPanel, BorderLayout.CENTER)
-	    add(createButtonPanel(), BorderLayout.SOUTH)
-    }
+		add(createToolBarPanel(), BorderLayout.NORTH)
+		add(containerPanel, BorderLayout.CENTER)
+		add(createButtonPanel(), BorderLayout.SOUTH)
+	}
 
-    private fun fill() {
-        val libraryGraph = metaGraphRepository.getMetaGraph(subGraphVerticeView.subGraphVertice!!.graphUUID!!)
-        containerPanel.setData(
-	        libraryGraph.graph.graphView,
-            storableCloner.clone(subGraphVerticeView.getEditableContainerDrawing()) as ContainerDrawing)
-    }
+	private fun fill() {
+		val libraryGraph = metaGraphRepository.getMetaGraph(subGraphVerticeView.subGraphVertice!!.graphUUID!!)
+		containerPanel.setData(
+			libraryGraph.graph.graphView,
+			StorableCloner.clone(subGraphVerticeView.getEditableContainerDrawing()) as ContainerDrawing)
+	}
 
 	private fun createToolBarPanel(): JPanel {
 		val toolbarPanel = JPanel()

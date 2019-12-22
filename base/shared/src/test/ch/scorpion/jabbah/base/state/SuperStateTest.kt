@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.base.state
 
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.module.BaseModule
 import io.mockk.mockk
 import io.mockk.verify
 import kotlin.test.*
@@ -9,7 +9,7 @@ class SuperStateTest {
 
 	@BeforeTest
 	fun setup() {
-		BaseModuleJvm.require()
+		BaseModule.require()
 	}
 
 	private val entrySuperstate = mockk<Action<String>>(relaxed = true)

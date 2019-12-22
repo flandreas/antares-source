@@ -62,7 +62,6 @@ class LibraryService(
 	private val libraryAccessor: () -> Library? = { LibraryModule.libraryHolder.library },
 	private val userLibraryPersister: LibraryPersistenceService = LibraryModule.userLibraryPersistenceService,
 	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersisterService,
-	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
@@ -277,7 +276,7 @@ class LibraryService(
 
 	fun duplicateContainerLibraryElement(directory: LibraryDirectory, element: ContainerLibraryElement, newName: String): ContainerLibraryElement {
 		LOG.debug("Duplicate ContainerLibraryElement")
-		val duplicate = storableCloner.clone(element.metaGraph!!) as MetaGraph
+		val duplicate = StorableCloner.clone(element.metaGraph!!) as MetaGraph
 		duplicate.graph.model!!.initializeUUID()
 		duplicate.graph.model!!.name.value = newName
 		return addContainerLibraryElement(directory.library!!, duplicate, directory)
@@ -289,7 +288,7 @@ class LibraryService(
 	 */
 	fun duplicateLibrary(library: Library, newName: TranslatableText): Library {
 		LOG.debug("Duplicate Library ${library.uuid} to new name $newName")
-		val newUuid = System.get().createUUID()
+		val newUuid = System.createUUID()
 		userLibraryPersister.duplicateLibrary(library, newUuid)
 		val newLibrary = userLibraryPersister.loadLibrary(newUuid)
 		newLibrary.uuid = newUuid
@@ -327,7 +326,7 @@ class LibraryService(
 	private fun storeContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement, doClone: Boolean) {
 		LOG.debug("LibraryServiceImpl: Storing MetaGraph")
 		if (doClone) {
-			val clone = storableCloner.cloneUsingCreator(metaGraph, storableCreator) as MetaGraph
+			val clone = StorableCloner.cloneUsingCreator(metaGraph, storableCreator) as MetaGraph
 			element.updateMetaGraph(clone)
 			persister(library.isSystem).storeMetaGraph(library, clone)
 		} else {

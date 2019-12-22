@@ -36,37 +36,37 @@ import ch.scorpion.jabbah.graph.view.ControlViewSource
  * A view of a [Probe].
  */
 class ProbeView(
-    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    probe: Probe = Probe(),
-    private val eventBus: EventBus = BaseModule.eventBus
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	probe: Probe = Probe(),
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractNumberViewComponent<Probe>(styleProvider, probe, Direction.EAST), ControlViewSource<Probe> {
 
-    companion object {
-        const val PROP_ICON_PATH = "ch.scorpion.antares.view.net.ProbeView.iconPath"
-	    private const val LABEL_DIST = Look.SCALE
-        private val TRIANGLE_PATH = System.get().createPath()
-            .moveTo(0, 0)
-            .lineTo(0, 5)
-            .lineTo(8, 0)
-            .lineTo(0, -5)
-            .close()
-    }
+	companion object {
+		const val PROP_ICON_PATH = "ch.scorpion.antares.view.net.ProbeView.iconPath"
+		private const val LABEL_DIST = Look.SCALE
+		private val TRIANGLE_PATH = System.createPath()
+			.moveTo(0, 0)
+			.lineTo(0, 5)
+			.lineTo(8, 0)
+			.lineTo(0, -5)
+			.close()
+	}
 
 	private val label = Label(
 		font = font,
 		text = probe.name)
 
 	init {
-        modelExchanged(null)
-    }
+		modelExchanged(null)
+	}
 
 
-    override fun modelExchanged(oldModel: Probe?) {
-        super.modelExchanged(oldModel)
-	    updatePortViews()
+	override fun modelExchanged(oldModel: Probe?) {
+		super.modelExchanged(oldModel)
+		updatePortViews()
 		updateView()
-	    updateLabel()
-    }
+		updateLabel()
+	}
 
 	private fun updatePortViews() {
 		clearPortViews()
@@ -95,18 +95,18 @@ class ProbeView(
 
 	/** ---- UI properties */
 
-    var hasOutput: Boolean
-        get() = model!!.hasOutput
-        set(value) {
-            if (value == hasOutput) {
-                return
-            }
+	var hasOutput: Boolean
+		get() = model!!.hasOutput
+		set(value) {
+			if (value == hasOutput) {
+				return
+			}
 
-            invalidate()
-	        model!!.hasOutput = value
-            updatePortViews()
-            updateView()
-        }
+			invalidate()
+			model!!.hasOutput = value
+			updatePortViews()
+			updateView()
+		}
 
 	var name: String?
 		get() = model!!.name
@@ -138,16 +138,16 @@ class ProbeView(
 
 	/** ---- [AbstractNumberViewComponent] */
 
-    override var bitWidth: BitWidth
-        get() = model!!.bitWidth
-        set(value) {
-            if (value != bitWidth) {
-	            clear()
-                model!!.bitWidth = value
-                updateView()
-	            postControlViewSourceChangeEvent(eventBus)
-            }
-        }
+	override var bitWidth: BitWidth
+		get() = model!!.bitWidth
+		set(value) {
+			if (value != bitWidth) {
+				clear()
+				model!!.bitWidth = value
+				updateView()
+				postControlViewSourceChangeEvent(eventBus)
+			}
+		}
 
 	override var signalRepresentation: DigitalSignalRepresentation
 		get() = super.signalRepresentation
@@ -158,103 +158,103 @@ class ProbeView(
 			}
 		}
 
-    override val signal: DigitalSignal get() = model!!.signal!!
+	override val signal: DigitalSignal get() = model!!.signal!!
 
-    override val upperLeftBoundsEdge: Point2D
-        get() = when(orientation) {
-            Direction.EAST -> Point2D(DigitalPortView.LENGTH.toDouble(), -numberView!!.height / 2 - insets)
-            Direction.NORTH -> Point2D(-numberView!!.width / 2 - insets, -DigitalPortView.LENGTH - numberView!!.height - 2 * insets)
-            Direction.SOUTH -> Point2D(-numberView!!.width / 2  - insets, DigitalPortView.LENGTH.toDouble())
-            Direction.WEST -> Point2D(-DigitalPortView.LENGTH - numberView!!.width - 2 * insets, -numberView!!.height / 2 - insets)
-        }
+	override val upperLeftBoundsEdge: Point2D
+		get() = when (orientation) {
+			Direction.EAST -> Point2D(DigitalPortView.LENGTH.toDouble(), -numberView!!.height / 2 - insets)
+			Direction.NORTH -> Point2D(-numberView!!.width / 2 - insets, -DigitalPortView.LENGTH - numberView!!.height - 2 * insets)
+			Direction.SOUTH -> Point2D(-numberView!!.width / 2 - insets, DigitalPortView.LENGTH.toDouble())
+			Direction.WEST -> Point2D(-DigitalPortView.LENGTH - numberView!!.width - 2 * insets, -numberView!!.height / 2 - insets)
+		}
 
-    override fun updateViewImpl() {
-        getInput().direction = orientation.opposite()
-        getInput().setLocation(DigitalPortView.LENGTH * orientation.dx, DigitalPortView.LENGTH * orientation.dy)
-	    if (hasOutput) {
-		    getOutput().direction = orientation
-		    when(orientation) {
-			    Direction.EAST -> getOutput().setLocation(2 * DigitalPortView.LENGTH + numberView!!.width , 0.0)
-			    Direction.NORTH -> getOutput().setLocation(0.0, -2 * DigitalPortView.LENGTH - numberView!!.height )
-			    Direction.WEST -> getOutput().setLocation(-2 * DigitalPortView.LENGTH - numberView!!.width, 0.0)
-			    Direction.SOUTH -> getOutput().setLocation(0.0, 2 * DigitalPortView.LENGTH + numberView!!.height)
-		    }
-	    }
-	    updateLabelPosition()
-    }
+	override fun updateViewImpl() {
+		getInput().direction = orientation.opposite()
+		getInput().setLocation(DigitalPortView.LENGTH * orientation.dx, DigitalPortView.LENGTH * orientation.dy)
+		if (hasOutput) {
+			getOutput().direction = orientation
+			when (orientation) {
+				Direction.EAST -> getOutput().setLocation(2 * DigitalPortView.LENGTH + numberView!!.width, 0.0)
+				Direction.NORTH -> getOutput().setLocation(0.0, -2 * DigitalPortView.LENGTH - numberView!!.height)
+				Direction.WEST -> getOutput().setLocation(-2 * DigitalPortView.LENGTH - numberView!!.width, 0.0)
+				Direction.SOUTH -> getOutput().setLocation(0.0, 2 * DigitalPortView.LENGTH + numberView!!.height)
+			}
+		}
+		updateLabelPosition()
+	}
 
-    /** ---- [ControlViewSource] */
+	/** ---- [ControlViewSource] */
 
-    override val controlId: String get() = "probe:$id"
+	override val controlId: String get() = "probe:$id"
 
-    override val controlName: String get() = if (StringUtils.isBlank(name)) "$type (ID:$id)" else "$type $name"
+	override val controlName: String get() = if (StringUtils.isBlank(name)) "$type (ID:$id)" else "$type $name"
 
-    override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
+	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
-    override fun createControlView(): ControlView<Probe> {
-        val controlView = DigitalSignalSourceControlView(styleProvider, controlId, signalRepresentation, model)
-        controlView.location = Point2D(0, 0)
-        return controlView
-    }
+	override fun createControlView(): ControlView<Probe> {
+		val controlView = DigitalSignalSourceControlView(styleProvider, controlId, signalRepresentation, model)
+		controlView.location = Point2D(0, 0)
+		return controlView
+	}
 
 
-    /** ---- [AbstractDrawable] */
+	/** ---- [AbstractDrawable] */
 
-    override fun drawImpl(context: DrawContext) {
-	    if (shadow) {
-		    DropShadow.draw(context, transparency) {
-			    context.g.fillRoundRect(xInt, yInt, width.toInt(), height.toInt(), 10, 10)
-		    }
-	    }
-        super.drawImpl(context)
-        if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-            drawSimulated(context)
-        } else {
-            drawEdited(context)
-        }
-    }
+	override fun drawImpl(context: DrawContext) {
+		if (shadow) {
+			DropShadow.draw(context, transparency) {
+				context.g.fillRoundRect(xInt, yInt, width.toInt(), height.toInt(), 10, 10)
+			}
+		}
+		super.drawImpl(context)
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			drawSimulated(context)
+		} else {
+			drawEdited(context)
+		}
+	}
 
-    /** ---- [ProbeView] */
+	/** ---- [ProbeView] */
 
-    private fun drawSimulated(context: DrawContext) {
-        drawEdited(context)
-        drawNumberView(context, true)
-    }
+	private fun drawSimulated(context: DrawContext) {
+		drawEdited(context)
+		drawNumberView(context, true)
+	}
 
-    private fun drawEdited(context: DrawContext) {
-        if (context.useContextColors) {
-            drawEdited(context, context.color!!.foregroundColor, context.color!!.backgroundColor, context.color!!.textColor)
-        } else {
-            drawEdited(context, foregroundColor, propertiesBackgroundColor, styleProvider.getStyle(StyleType.BACKGROUND).color.textColor)
-        }
-    }
+	private fun drawEdited(context: DrawContext) {
+		if (context.useContextColors) {
+			drawEdited(context, context.color!!.foregroundColor, context.color!!.backgroundColor, context.color!!.textColor)
+		} else {
+			drawEdited(context, foregroundColor, propertiesBackgroundColor, styleProvider.getStyle(StyleType.BACKGROUND).color.textColor)
+		}
+	}
 
-    private fun drawEdited(context: DrawContext, lineColor: Color, fillColor: Color?, textColor: Color) {
-        val oldStroke = context.g.stroke
-        val oldColor = context.g.color
+	private fun drawEdited(context: DrawContext, lineColor: Color, fillColor: Color?, textColor: Color) {
+		val oldStroke = context.g.stroke
+		val oldColor = context.g.color
 
-        if (fillColor != null) {
-            context.g.color = fillColor
-            context.g.fillRoundRect(xInt, yInt, width.toInt(), height.toInt(), 10, 10)
-        }
-        context.g.stroke = stroke
-        context.g.color = lineColor
-        context.g.drawRoundRect(xInt, yInt, width.toInt(), height.toInt(), 10, 10)
+		if (fillColor != null) {
+			context.g.color = fillColor
+			context.g.fillRoundRect(xInt, yInt, width.toInt(), height.toInt(), 10, 10)
+		}
+		context.g.stroke = stroke
+		context.g.color = lineColor
+		context.g.drawRoundRect(xInt, yInt, width.toInt(), height.toInt(), 10, 10)
 
-	    if (hasOutput) {
-	        context.g.translate(getOutput().locationX, getOutput().locationY)
-	        context.g.rotate(orientation.rotation.angle)
-	        context.g.fill(TRIANGLE_PATH)
-	        context.g.rotate(-orientation.rotation.angle)
-	        context.g.translate(-getOutput().locationX, -getOutput().locationY)
-        }
+		if (hasOutput) {
+			context.g.translate(getOutput().locationX, getOutput().locationY)
+			context.g.rotate(orientation.rotation.angle)
+			context.g.fill(TRIANGLE_PATH)
+			context.g.rotate(-orientation.rotation.angle)
+			context.g.translate(-getOutput().locationX, -getOutput().locationY)
+		}
 
-	    context.g.color = textColor
-	    label.draw(context)
+		context.g.color = textColor
+		label.draw(context)
 
-        context.g.color = oldColor
-        context.g.stroke = oldStroke
-    }
+		context.g.color = oldColor
+		context.g.stroke = oldStroke
+	}
 
 	private fun updateLabel() {
 		label.text = StringUtils.orEmpty(name)
@@ -270,7 +270,7 @@ class ProbeView(
 	}
 
 	private fun updateLabelPositionWithoutOutput() {
-		label.location = when(orientation) {
+		label.location = when (orientation) {
 			Direction.EAST -> Point2D(DigitalPortView.LENGTH + width + LABEL_DIST, 0.0)
 			Direction.NORTH -> Point2D(0.0, -(DigitalPortView.LENGTH + height + LABEL_DIST))
 			Direction.WEST -> Point2D(-(DigitalPortView.LENGTH + width + LABEL_DIST), 0.0)

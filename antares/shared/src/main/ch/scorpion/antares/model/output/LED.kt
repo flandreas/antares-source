@@ -16,31 +16,34 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
  */
 class LED() : CalculatingVertice("library.element.LED", CALCULATOR) {
 
-    companion object {
-        val CALCULATOR = object : VerticeCalculator<LED> {
-            override fun calculate(vertice: LED, data: GraphActorData, signalHandler: SignalHandler) {
-                vertice.isOn = (data.getSignal<DigitalSignal>(1) as Word).bitAt(0) == Bit.True
-            }
-        }
-    }
+	companion object {
 
-    var isOn: Boolean = false
-        set(value) {
-            if (field != value) {
-                field = value
-                stateChanged()
-            }
-        }
+		private val CALCULATOR = Calculator()
 
-    init {
-        addPort(DigitalPortImpl.createInput())
-        propagationDelay = 0
-    }
+		private class Calculator : VerticeCalculator<LED> {
+			override fun calculate(vertice: LED, data: GraphActorData, signalHandler: SignalHandler) {
+				vertice.isOn = (data.getSignal<DigitalSignal>(1) as Word).bitAt(0) == Bit.True
+			}
+		}
+	}
 
-    /** ---- [Actor] */
+	var isOn: Boolean = false
+		set(value) {
+			if (field != value) {
+				field = value
+				stateChanged()
+			}
+		}
 
-    override fun executionStopped(signalHandler: SignalHandler) {
-        super.executionStopped(signalHandler)
-        isOn = false
-    }
+	init {
+		addPort(DigitalPortImpl.createInput())
+		propagationDelay = 0
+	}
+
+	/** ---- [Actor] */
+
+	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
+		isOn = false
+	}
 }

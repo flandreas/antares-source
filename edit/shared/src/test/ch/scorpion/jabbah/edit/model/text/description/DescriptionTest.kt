@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.edit.model.text.description
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.module.EditModuleJvm
+import ch.scorpion.jabbah.edit.module.EditModule
 import io.mockk.mockk
 import io.mockk.verify
 import kotlin.test.Test
@@ -13,7 +13,7 @@ class DescriptionTest {
 
 	@BeforeTest
 	fun setup() {
-		EditModuleJvm.require()
+		EditModule.require()
 	}
 
 	@Test

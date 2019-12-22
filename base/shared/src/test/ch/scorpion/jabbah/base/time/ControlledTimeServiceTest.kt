@@ -3,9 +3,10 @@ package ch.scorpion.jabbah.base.time
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 /** Unit tests for [ControlledTimeService].*/
 class ControlledTimeServiceTest {
@@ -14,7 +15,7 @@ class ControlledTimeServiceTest {
     var event: PropertyChangeEvent<Long>? = null
 
     init {
-        BaseModuleJvm.require()
+        BaseModule.require()
         service = ControlledTimeService()
         service.addPropertyChangeListener(object : PropertyChangeListener<Long> {
             override fun propertyChanged(e: PropertyChangeEvent<Long>) {
@@ -29,9 +30,11 @@ class ControlledTimeServiceTest {
         assertEquals(100, service.nowMillis())
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun shouldRejectPast() {
-        service.setTimeMillis(100)
-        service.setTimeMillis(50)
+	    assertFailsWith<IllegalArgumentException> {
+	        service.setTimeMillis(100)
+	        service.setTimeMillis(50)
+	    }
     }
 }

@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.GridPainter
+import kotlin.math.ceil
+import kotlin.math.floor
 
 /**
  * Paints a horizontal and a vertical line through each grid point.
@@ -35,12 +37,12 @@ class LineGridPainter(private val styleProvider: StyleProvider) : GridPainter {
 		val dy = distanceY * zoomPan!!.zoomFactor
 
 		val low: Point2D = zoomPan!!.transform.modelToView(Point2D(
-			distanceX * Math.floor(zoomPan!!.transform.viewToModelX(rect.x) / distanceX),
-			distanceY * Math.floor(zoomPan!!.transform.viewToModelY(rect.y) / distanceY)))
+			distanceX * floor(zoomPan!!.transform.viewToModelX(rect.x) / distanceX),
+			distanceY * floor(zoomPan!!.transform.viewToModelY(rect.y) / distanceY)))
 
 		val high: Point2D = zoomPan!!.transform.modelToView(Point2D(
-			distanceX * Math.ceil(zoomPan!!.transform.viewToModelX(rect.maxX) / distanceX),
-			distanceY * Math.ceil(zoomPan!!.transform.viewToModelY(rect.maxY) / distanceY)))
+			distanceX * ceil(zoomPan!!.transform.viewToModelX(rect.maxX) / distanceX),
+			distanceY * ceil(zoomPan!!.transform.viewToModelY(rect.maxY) / distanceY)))
 
 		var x = low.x
 		while (x <= high.x) {
@@ -49,7 +51,7 @@ class LineGridPainter(private val styleProvider: StyleProvider) : GridPainter {
 		}
 
 		var y = low.y
-		while ( y <= high.y) {
+		while (y <= high.y) {
 			context.g.drawLine(low.x, y, high.x, y)
 			y += dy
 		}

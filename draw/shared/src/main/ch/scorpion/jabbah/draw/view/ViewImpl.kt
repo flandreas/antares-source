@@ -187,6 +187,10 @@ open class ViewImpl<C : InputEventContext>(
 		changeSupport.add(l)
 	}
 
+	override fun addPropertyChangeListener(l: (PropertyChangeEvent<Any>) -> Unit): PropertyChangeListener<Any> {
+		return changeSupport.add(l)
+	}
+
 	override fun removePropertyChangeListener(l: PropertyChangeListener<Any>) {
 		changeSupport.remove(l)
 	}

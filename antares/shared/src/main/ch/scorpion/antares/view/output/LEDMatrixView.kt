@@ -29,6 +29,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.ceil
 
 /**
  * A view of a [LEDMatrix].
@@ -271,13 +272,13 @@ class LEDMatrixView(
 					context.g.fillRect(
 						x.toInt(),
 						y.toInt(),
-						Math.ceil(DOT_SIZE * factor).toInt(),
-						Math.ceil(DOT_SIZE * factor).toInt())
+						ceil(DOT_SIZE * factor).toInt(),
+						ceil(DOT_SIZE * factor).toInt())
 					context.g.drawRect(
 						x.toInt(),
 						y.toInt(),
-						Math.ceil(DOT_SIZE * factor).toInt(),
-						Math.ceil(DOT_SIZE * factor).toInt())
+						ceil(DOT_SIZE * factor).toInt(),
+						ceil(DOT_SIZE * factor).toInt())
 				}
 
 				if (isDebug) {

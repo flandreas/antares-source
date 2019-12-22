@@ -54,7 +54,7 @@ class TranslatableTextPanel(
 
 	private val alternativeLangTextField: JTextComponent
 
-	private val currentLanguage: Language = System.get().currentLanguage()
+	private val currentLanguage: Language = System.currentLanguage()
 
 	private val isNonDefaultLanguage: Boolean = currentLanguage != Language.DEFAULT
 

@@ -16,7 +16,6 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
-import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -40,6 +39,8 @@ import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.ceil
+import kotlin.math.max
 
 /** Defines the visual, exchangeable appearance of a [SwitchView]. */
 private interface SwitchViewFace {
@@ -55,7 +56,6 @@ private interface SwitchViewFace {
 class SwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Switch = Switch(),
-	private val textRenderInfoFactory: TextRenderInfoFactory = DrawModule.textRenderInfoFactory,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : DigitalComponentView<Switch>(styleProvider, model), ControlView<Switch>, ControlViewSource<Switch> {
 
@@ -383,9 +383,9 @@ class SwitchView(
 		if (labelPosition != VerticeLabelPosition.INTERNAL || StringUtils.isEmpty(model!!.name)) {
 			return SIZE
 		}
-		val tri = textRenderInfoFactory.measureSingleLineText(model!!.name!!, font)
+		val tri = TextRenderInfoFactory.measureSingleLineText(model!!.name!!, font)
 		val requiredSpace = tri.textBounds.width + 2 * LABEL_INSET
-		return (SIZE * Math.max(1.0, Math.ceil(requiredSpace / SIZE))).toInt()
+		return (SIZE * max(1.0, ceil(requiredSpace / SIZE))).toInt()
 	}
 
 	/** A [SwitchViewFace] that draws the hexadecimal value of the current state bit. */

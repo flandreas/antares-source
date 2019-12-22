@@ -3,14 +3,17 @@ package ch.scorpion.jabbah.edit.model.rectangle
 import ch.scorpion.jabbah.base.Status
 import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.event.MouseEvent
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.Tool
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.editor.AddCommand
-import ch.scorpion.jabbah.edit.model.AbstractComponentTool
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.Tool
+import ch.scorpion.jabbah.edit.editor.AddCommand
+import ch.scorpion.jabbah.edit.model.AbstractComponentTool
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.properties.Delegates
 
 @Suppress("unused")
@@ -81,16 +84,16 @@ class RectangleTool<T : RectangularComponent>(
 		var height = y + offset.y - anchorLocation.y
 
 		if (e.isShiftDown) {
-			val size = Math.max(width, height)
+			val size = max(width, height)
 			width = size
 			height = size
 		}
 
 		instance.setFrame(
-			Math.min(anchorLocation.x, anchorLocation.x + width),
-			Math.min(anchorLocation.y, anchorLocation.y + height),
-			Math.abs(width),
-			Math.abs(height)
+			min(anchorLocation.x, anchorLocation.x + width),
+			min(anchorLocation.y, anchorLocation.y + height),
+			abs(width),
+			abs(height)
 		)
 
 		instance.validate()

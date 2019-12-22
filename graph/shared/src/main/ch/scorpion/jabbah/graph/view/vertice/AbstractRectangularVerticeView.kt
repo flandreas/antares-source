@@ -36,10 +36,6 @@ import ch.scorpion.jabbah.io.StoreWriter
  * corner of a rectangular box.
  *
  * @param T the type of the model [Vertice] that this [AbstractRectangularVerticeView] displays
- * @param x the x-coordinate of the upper-left rectangle corner, relative to [location]
- * @param y the y-coordinate of the upper-left rectangle corner, relative to [location]
- * @param w the width of the rectangle
- * @param h the height of the rectangle
  */
 abstract class AbstractRectangularVerticeView<T : Vertice>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -47,6 +43,12 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 	rectangle: RectangularShape
 ) : AbstractVerticeView<T>(styleProvider, model), RectangularDrawable {
 
+	/**
+	 * @param x the x-coordinate of the upper-left rectangle corner, relative to [location]
+	 * @param y the y-coordinate of the upper-left rectangle corner, relative to [location]
+	 * @param w the width of the rectangle
+	 * @param h the height of the rectangle
+	 */
 	constructor(
 		styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 		model: T?,
@@ -66,7 +68,9 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 	private val containsBox = Rectangle2D()
 
 	/** Listens for geometry updates on [PortView]s and initiates bounding box recalculation.*/
-	private val portViewUpdateListener = object : DrawableAdapter() {
+	private val portViewUpdateListener = PortViewUpdateListener()
+
+	private inner class PortViewUpdateListener : DrawableAdapter() {
 		override fun drawableUpdated(event: DrawableEvent) {
 			updateBoxes()
 		}

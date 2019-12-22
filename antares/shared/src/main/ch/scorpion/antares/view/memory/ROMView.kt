@@ -37,6 +37,7 @@ import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.*
+import kotlin.math.max
 
 
 /**
@@ -364,7 +365,7 @@ class ROMView(
 
 	private fun calculateWidth(): Int {
 		return if (showContents) {
-			Math.max(MIN_WIDTH, when (rotation) {
+			max(MIN_WIDTH, when (rotation) {
 				Rotation.R0, Rotation.R180 -> (contentsView.width + 2 * HORIZONTAL_CONTENTS_INSET).toInt()
 				Rotation.R90, Rotation.R270 -> (contentsView.height + 2 * HORIZONTAL_CONTENTS_INSET).toInt()
 			})
@@ -375,7 +376,7 @@ class ROMView(
 
 	private fun calculateHeight(): Int {
 		return if (showContents) {
-			Math.max(MIN_HEIGHT, when (rotation) {
+			max(MIN_HEIGHT, when (rotation) {
 				Rotation.R0, Rotation.R180 -> (contentsView.height + 2 * VERTICAL_CONTENTS_INSET).toInt()
 				Rotation.R90, Rotation.R270 -> (contentsView.width + 2 * VERTICAL_CONTENTS_INSET).toInt()
 			})

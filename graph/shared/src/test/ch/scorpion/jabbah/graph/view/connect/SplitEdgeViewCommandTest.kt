@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.graph.view.connect
 
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
-import ch.scorpion.jabbah.edit.editor.TestEditorBuilder
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.graph.TestEditorBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -31,7 +31,7 @@ class SplitEdgeViewCommandTest {
 
 	@BeforeTest
 	fun setup() {
-		TestTranslationsBuilder().withAnyKey()
+		Translations.withAnyKey()
 		testGraphView = TestGraphView()
 	}
 

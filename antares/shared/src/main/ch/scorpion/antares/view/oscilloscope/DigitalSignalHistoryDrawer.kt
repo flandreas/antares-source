@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
+import kotlin.math.max
 
 class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHistoryDrawer {
 
@@ -88,7 +89,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 		if (gridSignalHistory != null) {
 			// Draw vertical grid lines
 			for (entry in gridSignalHistory!!.getReverseEntriesUntil(0)) {
-				val x = Math.max(rightBorder - timeline!!.getX(entry.time), bounds.minX)
+				val x = max(rightBorder - timeline!!.getX(entry.time), bounds.minX)
 				if (x <= bounds.minX) {
 					break
 				}
@@ -133,7 +134,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 			if (lastEntry == null) {
 				// Right border
 				lastPoint = Point2D(x, y)
-				val effNextX = Math.max(x, bounds.minX)
+				val effNextX = max(x, bounds.minX)
 
 				if (singleBit) {
 					drawSingleBitRightBorder(context, effNextX, y)
@@ -152,7 +153,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 			} else {
 				val nextX = x
 				val nextY = y
-				val effNextX = Math.max(nextX, bounds.minX)
+				val effNextX = max(nextX, bounds.minX)
 
 				if (singleBit) {
 					drawSingleBitSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)

@@ -46,7 +46,7 @@ open class LibraryImpl(
 		private val LOG by logger(LibraryImpl::class)
 	}
 
-	override var uuid: UUID = System.get().createUUID()
+	override var uuid: UUID = System.createUUID()
 
 	override var isSystem: Boolean = false
 
@@ -180,8 +180,8 @@ open class LibraryImpl(
 			defaultElementUUID = UUID(reader.readString("defaultElement"))
 		}
 		libraryFolder = reader.readStorable("folder") as LibraryFolder
-		uuid = System.get().createUUID(reader.readString("uuid"))
-		author = System.get().createUUID(reader.readString("author"))
+		uuid = System.createUUID(reader.readString("uuid"))
+		author = System.createUUID(reader.readString("author"))
 		description.read("desc", reader)
 		if (reader.hasAttribute("system")) {
 			isSystem = reader.readBoolean("system")

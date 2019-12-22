@@ -3,6 +3,8 @@ package ch.scorpion.antares.model.signal
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.Themes
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * A [Word] is the default [DigitalSignal] implementation consisting of multiple [Bit]s.
@@ -128,7 +130,7 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 
 	override fun toHexString(): String {
 		val sb = StringBuilder()
-		for (i in Math.max(0, bits.size / 4 - 1) downTo 0) {
+		for (i in max(0, bits.size / 4 - 1) downTo 0) {
 			val nibble: Long? = getSubwordValue(BitWidth.BW_4, i)
 			if (nibble == null) {
 				sb.append("?")
@@ -224,7 +226,7 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 
 	fun getSubwordValue(subwordWidth: BitWidth, index: Int): Long? {
 		var sum: Long = 0
-		var digit = Math.min(bitWidth.width, subwordWidth.width) - 1
+		var digit = min(bitWidth.width, subwordWidth.width) - 1
 		for (i in index * subwordWidth.width + digit downTo index * subwordWidth.width) {
 			if (!bits[i].isDefined) {
 				return null
@@ -251,7 +253,7 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 		val minBitIndex = index * subword.bitWidth.width
 		var subwordIndex = 0
 		if (minBitIndex < this.bitWidth.width) {
-			for (resultIndex in minBitIndex..Math.min(bitWidth.width - 1, minBitIndex + subword.bitWidth.width - 1)) {
+			for (resultIndex in minBitIndex..min(bitWidth.width - 1, minBitIndex + subword.bitWidth.width - 1)) {
 				resultBits[resultIndex] = subword.bitAt(subwordIndex++)
 			}
 		}

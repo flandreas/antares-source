@@ -1,15 +1,16 @@
 package ch.scorpion.jabbah.edit.snap
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.MouseAdapter
 import ch.scorpion.jabbah.base.event.MouseEvent
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.drawable.Unzoomable
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.editor.DropEvent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.drawable.Unzoomable
+import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.editor.DropEvent
 
 /**
  * Standard implementation of the [SnapManager] interface.
@@ -55,7 +56,7 @@ class SnapManagerImpl(val editor: Editor, eventBus: EventBus) : SnapManager {
 
 	override fun addSnapper(snapper: Snapper) {
 		if (!snappers.contains(snapper)) {
-			LOG.debug("adding snapper '${ch.scorpion.jabbah.base.System.SYSTEM!!.getClassName(snapper)}'")
+			LOG.debug("adding snapper '${System.getClassName(snapper)}'")
 			snappers.add(snapper)
 		}
 	}

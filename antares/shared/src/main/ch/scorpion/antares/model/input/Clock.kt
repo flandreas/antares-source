@@ -17,66 +17,69 @@ import ch.scorpion.jabbah.io.Storable
  */
 class Clock : AbstractDigitalGate("library.element.Clock", CALCULATOR, InputCount.ZERO) {
 
-    companion object {
-        val CALCULATOR = object : VerticeCalculator<Clock> {
-            override fun calculate(vertice: Clock, data: GraphActorData, signalHandler: SignalHandler) {
-                vertice.setOn(signalHandler, !vertice.isOn)
-            }
-        }
-    }
+	companion object {
 
-    var isOn: Boolean = false
-        private set
+		private val CALCULATOR = Calculator()
 
-    var isEnabled: Boolean = true
-        set(value) {
-            if (field != value) {
-                field = value
-                stateChanged()
-            }
-        }
+		private class Calculator : VerticeCalculator<Clock> {
+			override fun calculate(vertice: Clock, data: GraphActorData, signalHandler: SignalHandler) {
+				vertice.setOn(signalHandler, !vertice.isOn)
+			}
+		}
+	}
 
-    init {
-        propagationDelay = 1_000_000_000
-    }
+	var isOn: Boolean = false
+		private set
 
-    /** ---- [AbstractDigitalGate] */
+	var isEnabled: Boolean = true
+		set(value) {
+			if (field != value) {
+				field = value
+				stateChanged()
+			}
+		}
 
-    override val minInputCount: InputCount get() = InputCount.ZERO
+	init {
+		propagationDelay = 1_000_000_000
+	}
 
-    override val maxInputCount: InputCount get() = InputCount.ZERO
+	/** ---- [AbstractDigitalGate] */
 
-    /** ---- [Storable] interface */
+	override val minInputCount: InputCount get() = InputCount.ZERO
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        if (!isEnabled) {
-            writer.writeBoolean("enabled", false)
-        }
-    }
+	override val maxInputCount: InputCount get() = InputCount.ZERO
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        if (reader.hasAttribute("enabled")) {
-            isEnabled = reader.readBoolean("enabled")
-        }
-    }
+	/** ---- [Storable] interface */
 
-    /** ---- [Actor] interface */
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		if (!isEnabled) {
+			writer.writeBoolean("enabled", false)
+		}
+	}
 
-    override fun executionStarted(signalHandler: SignalHandler) {
-        super.executionStarted(signalHandler)
-        setOn(signalHandler, false)
-    }
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute("enabled")) {
+			isEnabled = reader.readBoolean("enabled")
+		}
+	}
 
-    /** ---- [Clock] */
+	/** ---- [Actor] interface */
 
-    fun setOn(signalHandler: SignalHandler, on: Boolean) {
-        this.isOn = on
-        getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(this.isOn), signalHandler)
-        stateChanged()
-        if (isEnabled) {
-            requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
-        }
-    }
+	override fun executionStarted(signalHandler: SignalHandler) {
+		super.executionStarted(signalHandler)
+		setOn(signalHandler, false)
+	}
+
+	/** ---- [Clock] */
+
+	fun setOn(signalHandler: SignalHandler, on: Boolean) {
+		this.isOn = on
+		getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(this.isOn), signalHandler)
+		stateChanged()
+		if (isEnabled) {
+			requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+		}
+	}
 }

@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
+import kotlin.math.abs
 
 /**
  * [SymbolStyle] represents international standards for drawing digital gates.
@@ -82,7 +83,7 @@ enum class SymbolStyle(val customName: String) {
 			if (inputCount == 2) {
 				return (2 * Look.SCALE * 0.35).toInt()
 			}
-			val distanceFromMiddle = Math.abs((inputCount - 1) / 2.0 - index)
+			val distanceFromMiddle = abs((inputCount - 1) / 2.0 - index)
 			return when {
 				distanceFromMiddle == 0.0 -> (2 * Look.SCALE * 0.15).toInt()
 				distanceFromMiddle <= 0.5 -> (2 * Look.SCALE * 0.2).toInt()
@@ -109,7 +110,7 @@ enum class SymbolStyle(val customName: String) {
 			throw IllegalArgumentException("Unknown SymbolStyle $customName")
 		}
 
-		val AND_PATH = System.get().createPath()
+		val AND_PATH = System.createPath()
 			.moveTo(0, Look.SCALE)
 			.lineTo(3 * Look.SCALE, Look.SCALE)
 			.quadTo(6 * Look.SCALE, Look.SCALE, 6 * Look.SCALE, 4 * Look.SCALE)
@@ -117,7 +118,7 @@ enum class SymbolStyle(val customName: String) {
 			.lineTo(0, 7 * Look.SCALE)
 			.close()
 
-		val OR_PATH = System.get().createPath()
+		val OR_PATH = System.createPath()
 			.moveTo(-Look.SCALE, Look.SCALE)
 			.lineTo(Look.SCALE, Look.SCALE)
 			.quadTo(4 * Look.SCALE, Look.SCALE, 6 * Look.SCALE, 4 * Look.SCALE)
@@ -126,11 +127,11 @@ enum class SymbolStyle(val customName: String) {
 			.quadTo(0.5 * Look.SCALE, 4.0 * Look.SCALE, -Look.SCALE.toDouble(), Look.SCALE.toDouble())
 			.close()
 
-		private val EXCLUSIVE_PATH = System.get().createPath()
+		private val EXCLUSIVE_PATH = System.createPath()
 			.moveTo(-Look.SCALE - EXCLUSIVE_OFFSET, 7 * Look.SCALE.toDouble())
 			.quadTo(0.5 * Look.SCALE - EXCLUSIVE_OFFSET, 4.0 * Look.SCALE, -Look.SCALE - EXCLUSIVE_OFFSET, Look.SCALE.toDouble())
 
-		val NOT_PATH = System.get().createPath()
+		val NOT_PATH = System.createPath()
 			.moveTo(0, Look.SCALE)
 			.lineTo(6 * Look.SCALE, 4 * Look.SCALE)
 			.lineTo(0, 7 * Look.SCALE)

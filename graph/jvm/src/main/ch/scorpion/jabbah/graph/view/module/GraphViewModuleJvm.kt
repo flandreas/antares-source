@@ -24,7 +24,6 @@ import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.script.ScriptEngineJvm
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.ui.*
 import ch.scorpion.jabbah.graph.view.*
@@ -43,7 +42,6 @@ object GraphViewModuleJvm : AbstractModule() {
 		IOModuleJvm.require()
 		DrawModuleJvm.require()
 		GraphViewModule.require()
-		ScriptModule.scriptEngineProvider = { ScriptEngineJvm() }
 
 		fillProperties(BaseModule.properties)
 		configureSelectionModels(EditSelectModule.selectionModelFactory)

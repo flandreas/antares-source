@@ -11,7 +11,7 @@ object EventTestUtil {
 		return MouseEventImpl(type = MouseEventType.MOVED, x = x, y = y, modifiers = modifiers)
 	}
 
-	fun dragMouseTo(p: Point2D, modifiers: Int = 0): MouseEvent = EventTestUtil.dragMouseTo(p.x.toInt(), p.y.toInt(), modifiers)
+	fun dragMouseTo(p: Point2D, modifiers: Int = 0): MouseEvent = dragMouseTo(p.x.toInt(), p.y.toInt(), modifiers)
 
 	fun dragMouseTo(x: Int, y: Int, modifiers: Int = 0): MouseEvent {
 		return MouseEventImpl(type = MouseEventType.DRAGGED, button = Button.BUTTON1, x = x, y = y, modifiers = modifiers)

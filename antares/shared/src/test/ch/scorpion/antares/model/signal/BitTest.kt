@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.signal
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 /**
  * Unit tests for [Bit].
@@ -15,9 +16,11 @@ class BitTest {
 		assertEquals(0, Bit.of(false).numericalValue)
 	}
 
-	@Test(expected = KotlinNullPointerException::class)
+	@Test
 	fun shouldNotGetUndefinedValue() {
-		Bit.Undefined.numericalValue
+		assertFailsWith<NullPointerException> {
+			Bit.Undefined.numericalValue
+		}
 	}
 
 	@Test
@@ -32,9 +35,11 @@ class BitTest {
 		assertEquals(Bit.True, Bit.of(1))
 	}
 
-	@Test(expected = IllegalArgumentException::class)
+	@Test
 	fun shouldRejectInvalidInteger() {
-		Bit.of(2)
+		assertFailsWith<IllegalArgumentException> {
+			Bit.of(2)
+		}
 	}
 
 	@Test

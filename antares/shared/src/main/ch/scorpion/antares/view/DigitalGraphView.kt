@@ -9,16 +9,17 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
-import ch.scorpion.jabbah.io.*
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 class DigitalGraphView<T : GraphElementView<*>>(
 	graph: DigitalGraph?,
-	storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	eventBus: EventBus = BaseModule.eventBus
-) : GraphViewImpl<T>(graph, storableCloner, eventBus) {
+) : GraphViewImpl<T>(graph, eventBus) {
 
-	constructor(): this(Translations.getString("graph.name.unknown"))
-	constructor(name: String): this(GraphModelModule.graphFactory.invoke(name) as DigitalGraph)
+	constructor() : this(Translations.getString("graph.name.unknown"))
+	constructor(name: String) : this(GraphModelModule.graphFactory.invoke(name) as DigitalGraph)
 
 	/**
 	 * The [LightColor] to be used when adding [LightEmitter]s to this [DigitalGraphView],
@@ -30,7 +31,7 @@ class DigitalGraphView<T : GraphElementView<*>>(
 			if (field != value) {
 				field = value
 				if (!isReading) {
-					System.get().invokeLater { eventBus.post(DefaultLightColorEvent(this)) }
+					System.invokeLater { eventBus.post(DefaultLightColorEvent(this)) }
 				}
 			}
 		}

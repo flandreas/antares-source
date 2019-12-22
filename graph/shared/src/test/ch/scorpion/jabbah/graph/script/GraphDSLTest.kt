@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.script
 
-import ch.scorpion.jabbah.base.TestTranslationsBuilder
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Graph
@@ -19,46 +19,47 @@ import kotlin.test.assertTrue
  */
 class GraphDSLTest {
 
-    companion object {
-	    init {
-	    	GraphViewTestRule.configure()
-	    }
-    }
+	companion object {
+		init {
+			Translations.withAnyKey()
+			GraphViewTestRule.configure()
+		}
+	}
 
-    private val gateway: ScriptGateway
-    private val view = mockk<DrawingView<GraphView<GraphElementView<*>>>>(relaxed = true)
-    private var graphView: TestGraphView
-    private val signalHandler = mockk<SignalHandler>(relaxed = true)
+	private val gateway: ScriptGateway
+	private val view = mockk<DrawingView<GraphView<GraphElementView<*>>>>(relaxed = true)
+	private var graphView: TestGraphView
+	private val signalHandler = mockk<SignalHandler>(relaxed = true)
 
-    init {
-        ScriptModule.resetScriptGateway()
-        gateway = ScriptModule.scriptGateway
-        TestTranslationsBuilder().withAnyKey()
-        graphView = TestGraphView()
-        every { view.drawing } returns graphView.graphView
-    }
+	init {
+		ScriptModule.resetScriptGateway()
+		gateway = ScriptModule.scriptGateway
+		Translations.withAnyKey()
+		graphView = TestGraphView()
+		every { view.drawing } returns graphView.graphView
+	}
 
-    @Test
-    fun test() {
-        ScriptModule.scriptEngineProvider.invoke().eval(Script(code = "print('Hello World from Nashorn')", origin="Test"))
-    }
+	@Test
+	fun test() {
+		ScriptEngine().eval(Script(code = "print('Hello World from Nashorn')", origin = "Test"))
+	}
 
-    @Test
-    fun shouldAccessGraphName() {
-        val result = gateway.exec(Script(code ="return graph.name()", origin = "Test"), view) as String
-        assertEquals("AnyString", result)
-    }
+	@Test
+	fun shouldAccessGraphName() {
+		val result = gateway.exec(Script(code = "return graph.name()", origin = "Test"), view) as String
+		assertEquals("Ohne Namen", result)
+	}
 
-    @Test
-    fun shouldAccessGraphElement() {
-        val result = gateway.exec(Script(code ="return graph.elem(1).id()", origin = "Test"), view) as Int
-        assertEquals(1, result)
-    }
+	@Test
+	fun shouldAccessGraphElement() {
+		val result = gateway.exec(Script(code = "return graph.elem(1).id()", origin = "Test"), view) as Int
+		assertEquals(1, result)
+	}
 
-    @Test
-    fun shouldAccessOutputValue() {
-        graphView.v1.getOutput<Boolean>().setOutgoingSignal(true, signalHandler)
-        val result = gateway.exec(Script(code ="return graph.elem(1).output()", origin = "Test"), view) as Boolean
-        assertTrue(result)
-    }
+	@Test
+	fun shouldAccessOutputValue() {
+		graphView.v1.getOutput<Boolean>().setOutgoingSignal(true, signalHandler)
+		val result = gateway.exec(Script(code = "return graph.elem(1).output()", origin = "Test"), view) as Boolean
+		assertTrue(result)
+	}
 }

@@ -5,9 +5,9 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import io.mockk.verify
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ReconnectDestinationConnectorTest : AbstractConnectorTest(GraphViewModule.reconnectDestinationConnector) {

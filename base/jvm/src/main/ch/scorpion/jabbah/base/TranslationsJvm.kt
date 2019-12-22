@@ -4,25 +4,28 @@ import java.text.MessageFormat
 import java.util.*
 
 /**
- * Implements [TranslationsClass] using [PropertyResourceBundle]s.
+ * Implements [Translations] using [PropertyResourceBundle]s.
  */
-open class TranslationsJvm : TranslationsClass() {
+actual object Translations {
 
-    val LOG by logger(TranslationsJvm::class)
+    val LOG by logger(Translations::class)
 
-    override fun getString(key: String, vararg params: Any): String {
-        return MessageFormat.format(getString(key, optional = false), *params)
-    }
+	private var withAllKeys = false
 
-    override fun getOptionalString(key: String): String? {
-        return getString(key, optional = true)
-    }
+	actual fun withAnyKey() {
+		withAllKeys = true
+	}
 
-    override fun addBundle(name: String) {
+    actual fun getString(key: String, vararg params: Any): String =
+	    MessageFormat.format(getString(key, optional = false), *params)
+
+	actual fun getOptionalString(key: String): String? = getString(key, optional = true)
+
+	actual fun addBundle(name: String) {
         addBundle(ResourceBundle.getBundle(name))
     }
 
-    /** ---- [TranslationsJvm] */
+    /** ---- [Translations] */
 
     private val bundles: MutableList<ResourceBundle> = mutableListOf<ResourceBundle>()
 
@@ -44,7 +47,12 @@ open class TranslationsJvm : TranslationsClass() {
         if (optional) {
             return null
         }
+
+	    if (withAllKeys) {
+			return key
+	    }
+
         LOG.debug("Missing translation '$key'")
-        throw MissingResourceException("Missing translation", TranslationsJvm::class.java.name, key)
+        throw MissingResourceException("Missing translation", Translations::class.java.name, key)
     }
 }

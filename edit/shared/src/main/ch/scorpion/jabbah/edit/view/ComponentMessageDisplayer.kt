@@ -3,15 +3,9 @@ package ch.scorpion.jabbah.edit.view
 import ch.scorpion.jabbah.animation.AnimationTask
 import ch.scorpion.jabbah.animation.AnimationTaskAdapter
 import ch.scorpion.jabbah.animation.Animator
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.draw.drawable.Transparent
-import ch.scorpion.jabbah.draw.drawable.TransparentAnimation
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
@@ -19,10 +13,17 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.drawable.FlexibleTextView
+import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.drawable.TransparentAnimation
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.style.EditStyleType
+import kotlin.math.abs
 
 /**
  * Displays [ComponentMessage]s in a [DrawingView].
@@ -56,7 +57,7 @@ class ComponentMessageDisplayer<T : Drawing<Component>>(
 		if (msg.source != null && !drawingView.drawing.contains(msg.source)) {
 			return
 		}
-		if (msg.source == null &&!displayGlobalMessages) {
+		if (msg.source == null && !displayGlobalMessages) {
 			return
 		}
 
@@ -103,13 +104,13 @@ class ComponentMessageDisplayer<T : Drawing<Component>>(
 		val maxYView = locationView.y + bbox.height
 
 		val dx = when {
-			minXView - MAKE_VISIBLE_INSET < 0 -> Math.abs(minXView - MAKE_VISIBLE_INSET)
+			minXView - MAKE_VISIBLE_INSET < 0 -> abs(minXView - MAKE_VISIBLE_INSET)
 			maxXView + MAKE_VISIBLE_INSET > drawingView.width -> -(maxXView + MAKE_VISIBLE_INSET - drawingView.width)
 			else -> 0.0
 		}
 
 		val dy = when {
-			minYView - MAKE_VISIBLE_INSET < 0 -> Math.abs(minYView - MAKE_VISIBLE_INSET)
+			minYView - MAKE_VISIBLE_INSET < 0 -> abs(minYView - MAKE_VISIBLE_INSET)
 			maxYView + MAKE_VISIBLE_INSET > drawingView.height -> -(maxYView + MAKE_VISIBLE_INSET - drawingView.height)
 			else -> 0.0
 		}
@@ -142,7 +143,7 @@ class ComponentMessageDisplayer<T : Drawing<Component>>(
 			})
 			animator.schedule(fadeOutAnimation)
 
-			val timer = System.get().createTimer()
+			val timer = System.createTimer()
 			timer.initialize(2000) {
 				LOG.debug("start fade out animation")
 				fadeOutAnimation.start()

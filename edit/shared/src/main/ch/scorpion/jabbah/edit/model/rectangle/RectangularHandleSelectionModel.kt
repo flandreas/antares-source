@@ -2,15 +2,20 @@ package ch.scorpion.jabbah.edit.model.rectangle
 
 import ch.scorpion.jabbah.base.Status
 import ch.scorpion.jabbah.base.StatusType
-import ch.scorpion.jabbah.edit.select.AbstractHandleSelectionModel
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.SelectionModel
+import ch.scorpion.jabbah.edit.select.AbstractHandleSelectionModel
 import ch.scorpion.jabbah.edit.select.Handle
 import ch.scorpion.jabbah.edit.select.RectangularHandle
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.draw.graphics.Cursor
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * A [SelectionModel] consisting of [Handle]s to be used for selecting and manipulating a [RectangularComponent].
@@ -106,8 +111,8 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			val bounds = component.shape
-			val x = Math.min(context.x, bounds.maxX)
-			val y = Math.min(context.y, bounds.maxY)
+			val x = min(context.x, bounds.maxX)
+			val y = min(context.y, bounds.maxY)
 			component.setFrame(
 				x,
 				y,
@@ -127,7 +132,7 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			val bounds = component.shape
-			val y = Math.min(context.y, bounds.maxY)
+			val y = min(context.y, bounds.maxY)
 			component.setFrame(
 				bounds.x,
 				y,
@@ -147,8 +152,8 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			val bounds = component.shape
-			val x = Math.max(context.x, bounds.x)
-			val y = Math.min(context.y, bounds.maxY)
+			val x = max(context.x, bounds.x)
+			val y = min(context.y, bounds.maxY)
 			component.setFrame(
 				bounds.x,
 				y,
@@ -168,7 +173,7 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			val bounds = component.shape
-			val x = Math.max(context.x, bounds.x)
+			val x = max(context.x, bounds.x)
 			component.setFrame(
 				bounds.x,
 				bounds.y,
@@ -188,8 +193,8 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			val bounds = component.shape
-			val x = Math.max(context.x, bounds.x)
-			val y = Math.max(context.y, bounds.y)
+			val x = max(context.x, bounds.x)
+			val y = max(context.y, bounds.y)
 			component.setFrame(
 				bounds.x,
 				bounds.y,
@@ -209,7 +214,7 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			val bounds = component.shape
-			val y = Math.max(context.y, bounds.y)
+			val y = max(context.y, bounds.y)
 			component.setFrame(
 				bounds.x,
 				bounds.y,
@@ -229,8 +234,8 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			val bounds = component.shape
-			val x = Math.min(context.x, bounds.maxX)
-			val y = Math.max(context.y, bounds.y)
+			val x = min(context.x, bounds.maxX)
+			val y = max(context.y, bounds.y)
 			component.setFrame(
 				x,
 				bounds.y,
@@ -250,7 +255,7 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			val bounds = component.shape
-			val x = Math.min(context.x, bounds.maxX)
+			val x = min(context.x, bounds.maxX)
 			component.setFrame(
 				x,
 				bounds.y,

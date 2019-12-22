@@ -2,7 +2,7 @@ package ch.scorpion.antares.model.signal
 
 import ch.scorpion.antares.view.AntaresThemes
 import ch.scorpion.antares.view.style.AntaresTheme
-import ch.scorpion.jabbah.draw.module.DrawModuleJvm
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.Themes
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,7 +15,7 @@ class WordTest {
 
 	companion object {
 		init {
-			DrawModuleJvm.require()
+			DrawModule.require()
 			AntaresThemes.install()
 		}
 	}

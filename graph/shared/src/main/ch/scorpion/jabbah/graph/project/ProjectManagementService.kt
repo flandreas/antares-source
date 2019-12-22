@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionary
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
-import org.apache.commons.io.FilenameUtils
 
 enum class ProjectImportResult {
 	Success,
@@ -222,9 +221,7 @@ class ProjectManagementService(
 		libraryService.exportLibrary(uuid, outputPath)
 	}
 
-	fun import(inputPath: String): ProjectImportResult {
-		val uuid = UUID(FilenameUtils.getBaseName(inputPath))
-
+	fun import(uuid: UUID, inputPath: String): ProjectImportResult {
 		val library = libraryService.importLibrary(uuid, inputPath) ?: return ProjectImportResult.Invalid
 
 		if (exists(library.name.translation)) {

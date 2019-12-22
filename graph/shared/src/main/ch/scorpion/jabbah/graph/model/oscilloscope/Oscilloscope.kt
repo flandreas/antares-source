@@ -13,6 +13,8 @@ import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * A [Vertice] that collects signals from multiple [OscilloscopeProbeVertice]s.
@@ -112,7 +114,7 @@ class Oscilloscope(
 	}
 
 	private fun updateMaxTime(now: Long) {
-		maxTime = Math.max(maxTime, now)
+		maxTime = max(maxTime, now)
 		LOG.debug("maxTime = $maxTime")
 	}
 
@@ -121,13 +123,13 @@ class Oscilloscope(
 			.filter { it.size > 0 && it.last().time != now }
 			.minBy { now - it.last().time }
 		if (minSignalHistory != null) {
-			minDiffTime = Math.min(minDiffTime, now - minSignalHistory.last().time)
+			minDiffTime = min(minDiffTime, now - minSignalHistory.last().time)
 		}
 		LOG.debug("minDiffTime = $minDiffTime")
 	}
 
 	private fun updateOverallMinDelay(minDelay: Long) {
-		overallMinDelay = Math.min(overallMinDelay, minDelay)
+		overallMinDelay = min(overallMinDelay, minDelay)
 		LOG.debug("overallMinDelay = $overallMinDelay")
 	}
 }

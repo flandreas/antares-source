@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.exception.IllegalStateException
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
@@ -19,36 +20,33 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.execution.issue.IssueImpl
+import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.graph.GraphReferenceResolver
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.view.*
-import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
-import ch.scorpion.jabbah.graph.view.scenario.ScenariosImpl
-import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.execution.issue.IssueImpl
-import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
-import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.InputToOutputOrEdgeConnector
 import ch.scorpion.jabbah.graph.view.connect.OutputToInputConnector
 import ch.scorpion.jabbah.graph.view.connect.ReconnectDestinationConnector
 import ch.scorpion.jabbah.graph.view.connect.ReconnectOriginConnector
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
+import ch.scorpion.jabbah.graph.view.scenario.ScenariosImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecasesImpl
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import ch.scorpion.jabbah.io.*
 
 /**
  * A standard implementation of the [GraphView] interface.
  */
 open class GraphViewImpl<T : GraphElementView<*>>(
 	override var graph: Graph?,
-	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke(),
 	protected val eventBus: EventBus = BaseModule.eventBus
 ) : DrawingImpl<T>(), GraphView<T> {
 
@@ -184,7 +182,7 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 
 	override fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator): GraphView<T> {
 		LOG.trace("clone '${model.name}'for existing model")
-		val clone = storableCloner.clone(
+		val clone = StorableCloner.clone(
 			this,
 			GlobalIdentityReflector(),
 			storableCreator,

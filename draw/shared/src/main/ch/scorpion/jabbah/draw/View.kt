@@ -153,6 +153,8 @@ interface View<C : InputEventContext> : ViewToModelTransform {
 
 	fun addPropertyChangeListener(l: PropertyChangeListener<Any>)
 
+	fun addPropertyChangeListener(l: (PropertyChangeEvent<Any>) -> Unit): PropertyChangeListener<Any>
+
 	fun removePropertyChangeListener(l: PropertyChangeListener<Any>)
 
 	fun addMouseListener(l: MouseListener)

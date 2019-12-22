@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.io
 
 import ch.scorpion.jabbah.base.collection.EmptyIterator
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.BeforeTest
@@ -15,7 +15,7 @@ class ReferenceResolverImplTest {
 
 	@BeforeTest
 	fun setup() {
-		BaseModuleJvm.require()
+		BaseModule.require()
 	}
 
     @Test

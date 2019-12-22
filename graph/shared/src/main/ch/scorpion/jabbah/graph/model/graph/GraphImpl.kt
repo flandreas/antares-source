@@ -53,7 +53,7 @@ open class GraphImpl(
 
 	/** ---- [Graph] interface */
 
-	override var uuid: UUID = System.get().createUUID()
+	override var uuid: UUID = System.createUUID()
 
 	override var propagationDelay: Long? = null
 
@@ -86,7 +86,7 @@ open class GraphImpl(
 			.map { it as GraphPort<*> })
 
 	override fun initializeUUID() {
-		uuid = System.get().createUUID()
+		uuid = System.createUUID()
 	}
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {

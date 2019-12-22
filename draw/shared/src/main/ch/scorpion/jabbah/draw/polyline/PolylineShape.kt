@@ -11,6 +11,12 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2D
  */
 interface PolylineShape : Polyline, Shape
 
+expect object PolylineShapeFactory {
+
+	/** Creates a [PolylineShape] for the specified [Point2D]s.*/
+	fun create(points: List<Point2D>?): PolylineShape
+}
+
 /**
  * An implementation of the [PolylineShape] interface
  * @property points the points of which this [Polyline] consists

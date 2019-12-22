@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import io.mockk.mockk
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue

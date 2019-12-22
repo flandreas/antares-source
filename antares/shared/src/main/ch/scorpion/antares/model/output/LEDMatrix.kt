@@ -29,170 +29,172 @@ import ch.scorpion.jabbah.graph.model.PortType
  * address the matrix rows, with the least significant [Bit] identifying the bottom row.
  */
 class LEDMatrix(
-        columnWidth: BitWidth = LEDMatrix.DEF_COLUMN_WIDTH,
-        rowWidth: BitWidth = LEDMatrix.DEF_ROW_WIDTH
+	columnWidth: BitWidth = LEDMatrix.DEF_COLUMN_WIDTH,
+	rowWidth: BitWidth = LEDMatrix.DEF_ROW_WIDTH
 ) : CalculatingVertice("library.element.LEDMatrix", CALCULATOR) {
 
-    companion object {
+	companion object {
 
-	    private val LOG by logger(LEDMatrix::class)
+		private val LOG by logger(LEDMatrix::class)
 
-        const val COLUMN_PORT_NAME = "C"
-        const val ROW_PORT_NAME = "R"
-        private val DEF_COLUMN_WIDTH = BitWidth.BW_8
-        private val DEF_ROW_WIDTH = BitWidth.BW_8
-        private const val DEF_AFTERGLOW = 10L
+		const val COLUMN_PORT_NAME = "C"
+		const val ROW_PORT_NAME = "R"
+		private val DEF_COLUMN_WIDTH = BitWidth.BW_8
+		private val DEF_ROW_WIDTH = BitWidth.BW_8
+		private const val DEF_AFTERGLOW = 10L
 
-	    private val COLUMNS_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ledMatrix.columnsPort.desc"))
-	    private val ROWS_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ledMatrix.rowsPort.desc"))
+		private val COLUMNS_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ledMatrix.columnsPort.desc"))
+		private val ROWS_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ledMatrix.rowsPort.desc"))
 
-        private val CALCULATOR = object : VerticeCalculator<LEDMatrix> {
-            override fun calculate(vertice: LEDMatrix, data: GraphActorData, signalHandler: SignalHandler) {
-                vertice.updateBuffer(data.changedPort != null, signalHandler)
-            }
-        }
-    }
+		private val CALCULATOR = Calculator()
 
-    init {
-	    addPort(DigitalPortImpl(portType = PortType.INPUT, name = COLUMN_PORT_NAME, bitWidth = columnWidth, describable = COLUMNS_PORT_DESC))
-	    addPort(DigitalPortImpl(portType = PortType.INPUT, name = ROW_PORT_NAME, bitWidth = rowWidth, describable = ROWS_PORT_DESC))
-    }
+		private class Calculator : VerticeCalculator<LEDMatrix> {
+			override fun calculate(vertice: LEDMatrix, data: GraphActorData, signalHandler: SignalHandler) {
+				vertice.updateBuffer(data.changedPort != null, signalHandler)
+			}
+		}
+	}
 
-    val columnPort: DigitalPort
-        get() = getInput<DigitalSignal>(COLUMN_PORT_NAME) as DigitalPort
+	init {
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = COLUMN_PORT_NAME, bitWidth = columnWidth, describable = COLUMNS_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ROW_PORT_NAME, bitWidth = rowWidth, describable = ROWS_PORT_DESC))
+	}
 
-    var columnWidth: BitWidth
-        get() = columnPort.bitWidth
-        set(value) {
-            columnPort.bitWidth = value
-            stateChanged()
-        }
+	val columnPort: DigitalPort
+		get() = getInput<DigitalSignal>(COLUMN_PORT_NAME) as DigitalPort
 
-    val rowPort: DigitalPort
-        get() = getInput<DigitalSignal>(ROW_PORT_NAME) as DigitalPort
+	var columnWidth: BitWidth
+		get() = columnPort.bitWidth
+		set(value) {
+			columnPort.bitWidth = value
+			stateChanged()
+		}
 
-    var rowWidth: BitWidth
-        get() = rowPort.bitWidth
-        set(value) {
-            rowPort.bitWidth = value
-            stateChanged()
-        }
+	val rowPort: DigitalPort
+		get() = getInput<DigitalSignal>(ROW_PORT_NAME) as DigitalPort
 
-    /** The duration (in ms) the LED dots still glow after they are not addressed any more. */
-    var afterglowDuration: Long = DEF_AFTERGLOW
+	var rowWidth: BitWidth
+		get() = rowPort.bitWidth
+		set(value) {
+			rowPort.bitWidth = value
+			stateChanged()
+		}
 
-    /** ---- [Storable] */
+	/** The duration (in ms) the LED dots still glow after they are not addressed any more. */
+	var afterglowDuration: Long = DEF_AFTERGLOW
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        writer.writeString("columnWidth", columnWidth.customName)
-        writer.writeString("rowWidth", rowWidth.customName)
-        writer.writeLong("afterglow", afterglowDuration)
-    }
+	/** ---- [Storable] */
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        columnWidth = BitWidth.withName(reader.readString("columnWidth"))
-        rowWidth = BitWidth.withName(reader.readString("rowWidth"))
-        if (reader.hasAttribute("afterglow")) {
-            afterglowDuration = reader.readLong("afterglow")
-        }
-    }
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeString("columnWidth", columnWidth.customName)
+		writer.writeString("rowWidth", rowWidth.customName)
+		writer.writeLong("afterglow", afterglowDuration)
+	}
 
-    /** ---- [Actor] */
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		columnWidth = BitWidth.withName(reader.readString("columnWidth"))
+		rowWidth = BitWidth.withName(reader.readString("rowWidth"))
+		if (reader.hasAttribute("afterglow")) {
+			afterglowDuration = reader.readLong("afterglow")
+		}
+	}
 
-    override fun executionStarted(signalHandler: SignalHandler) {
-        super.executionStarted(signalHandler)
-        clear()
-    }
+	/** ---- [Actor] */
 
-    override fun executionStopped(signalHandler: SignalHandler) {
-        super.executionStopped(signalHandler)
-        clear()
-    }
+	override fun executionStarted(signalHandler: SignalHandler) {
+		super.executionStarted(signalHandler)
+		clear()
+	}
 
-    /** ---- [LEDMatrix] */
+	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
+		clear()
+	}
 
-    /**
-     * Buffers the time until which a single dot will glow.
-     * Maps the column index to a map that maps the row index to the time when
-     * glowing of this point will fade. Column 0 is the rightmost column, row 0 is the
-     * bottommost row.
-     */
-    private val buffer: MutableMap<Int, MutableMap<Int, Long>> = mutableMapOf()
+	/** ---- [LEDMatrix] */
 
-    /** Determines whether the dot at the specified coordinate is currently on or not.*/
-    fun isOn(columnIndex: Int, rowIndex: Int): Boolean {
-        return getCellTime(columnIndex, rowIndex) != null
-    }
+	/**
+	 * Buffers the time until which a single dot will glow.
+	 * Maps the column index to a map that maps the row index to the time when
+	 * glowing of this point will fade. Column 0 is the rightmost column, row 0 is the
+	 * bottommost row.
+	 */
+	private val buffer: MutableMap<Int, MutableMap<Int, Long>> = mutableMapOf()
 
-    fun clear() {
-        buffer.clear()
-    }
+	/** Determines whether the dot at the specified coordinate is currently on or not.*/
+	fun isOn(columnIndex: Int, rowIndex: Int): Boolean {
+		return getCellTime(columnIndex, rowIndex) != null
+	}
 
-    /** Updates the internal buffer after any [InputPort] has changed.*/
-    private fun updateBuffer(portChanged: Boolean, signalHandler: SignalHandler) {
-        LOG.debug("LEDMatrix on ${signalHandler.executionTime}: updateBuffer with portChanged=$portChanged")
+	fun clear() {
+		buffer.clear()
+	}
 
-        val time = signalHandler.executionTime + afterglowDuration * 1_000_000
-        val rowValue = rowPort.getIncomingSignal() as Word
+	/** Updates the internal buffer after any [InputPort] has changed.*/
+	private fun updateBuffer(portChanged: Boolean, signalHandler: SignalHandler) {
+		LOG.debug("LEDMatrix on ${signalHandler.executionTime}: updateBuffer with portChanged=$portChanged")
 
-        var anyChanged = false
-        var anySwitchedOff = false
-        for ((columnIndex, columnBit) in (columnPort.getIncomingSignal() as Word).bits.withIndex()) {
-            for ((rowIndex, rowBit) in rowValue.bits.withIndex()) {
-                val cellTime = getCellTime(columnIndex, rowIndex)
-                val oldValue = cellTime == Long.MAX_VALUE
-                val newValue = rowBit.isSet && columnBit.isSet
-                if (portChanged) {
-                    val switchedOff = !newValue && oldValue
-                    anyChanged = anyChanged || newValue != oldValue
-                    anySwitchedOff = anySwitchedOff || switchedOff
-                    if (newValue) {
-                        LOG.debug("LEDMatrix: switched on at $columnIndex,$rowIndex")
-                        glowUntil(columnIndex, rowIndex, Long.MAX_VALUE)
-                    } else if (switchedOff){
-                        LOG.debug("LEDMatrix: switched off at $columnIndex,$rowIndex, afterglowing until $time")
-                        glowUntil(columnIndex, rowIndex, time)
-                    }
-                } else {
-                    if (cellTime != null && cellTime <= signalHandler.executionTime) {
-                        LOG.debug("LEDMatrix: end afterglowing of $columnIndex,$rowIndex")
-                        buffer[columnIndex]!!.remove(rowIndex)
-                        anyChanged = true
-                    }
-                }
-            }
-        }
-        if (anyChanged) {
-            stateChanged(signalHandler)
-        }
-        if (anySwitchedOff) {
-            LOG.debug("LEDMatrix: Request switch-off at ${signalHandler.executionTime + afterglowDuration * 1_000_000} ns")
-            signalHandler.requestActingAfter(this, afterglowDuration * 1_000_000, createActorData(null))
-        }
-    }
+		val time = signalHandler.executionTime + afterglowDuration * 1_000_000
+		val rowValue = rowPort.getIncomingSignal() as Word
 
-    /**
-     * Returns the time until the cell at the specified location will glow, or `null` if it doesn't glow at all.
-     * Indexes start with 0.
-     */
-    private fun getCellTime(columnIndex: Int, rowIndex: Int): Long? {
-        val column = buffer[columnIndex] ?: return null
-        return column[rowIndex]
-    }
+		var anyChanged = false
+		var anySwitchedOff = false
+		for ((columnIndex, columnBit) in (columnPort.getIncomingSignal() as Word).bits.withIndex()) {
+			for ((rowIndex, rowBit) in rowValue.bits.withIndex()) {
+				val cellTime = getCellTime(columnIndex, rowIndex)
+				val oldValue = cellTime == Long.MAX_VALUE
+				val newValue = rowBit.isSet && columnBit.isSet
+				if (portChanged) {
+					val switchedOff = !newValue && oldValue
+					anyChanged = anyChanged || newValue != oldValue
+					anySwitchedOff = anySwitchedOff || switchedOff
+					if (newValue) {
+						LOG.debug("LEDMatrix: switched on at $columnIndex,$rowIndex")
+						glowUntil(columnIndex, rowIndex, Long.MAX_VALUE)
+					} else if (switchedOff) {
+						LOG.debug("LEDMatrix: switched off at $columnIndex,$rowIndex, afterglowing until $time")
+						glowUntil(columnIndex, rowIndex, time)
+					}
+				} else {
+					if (cellTime != null && cellTime <= signalHandler.executionTime) {
+						LOG.debug("LEDMatrix: end afterglowing of $columnIndex,$rowIndex")
+						buffer[columnIndex]!!.remove(rowIndex)
+						anyChanged = true
+					}
+				}
+			}
+		}
+		if (anyChanged) {
+			stateChanged(signalHandler)
+		}
+		if (anySwitchedOff) {
+			LOG.debug("LEDMatrix: Request switch-off at ${signalHandler.executionTime + afterglowDuration * 1_000_000} ns")
+			signalHandler.requestActingAfter(this, afterglowDuration * 1_000_000, createActorData(null))
+		}
+	}
 
-    private fun ensureColumn(columnIndex: Int): MutableMap<Int,Long> {
-        var column = buffer[columnIndex]
-        if (column == null) {
-            column = mutableMapOf()
-            buffer[columnIndex] = column
-        }
-        return column
-    }
+	/**
+	 * Returns the time until the cell at the specified location will glow, or `null` if it doesn't glow at all.
+	 * Indexes start with 0.
+	 */
+	private fun getCellTime(columnIndex: Int, rowIndex: Int): Long? {
+		val column = buffer[columnIndex] ?: return null
+		return column[rowIndex]
+	}
 
-    /** Updates the specified matrix dot with the simulation time at which glowing will fade */
-    private fun glowUntil(columnIndex: Int, rowIndex: Int, time: Long) {
-        ensureColumn(columnIndex)[rowIndex] = time
-    }
+	private fun ensureColumn(columnIndex: Int): MutableMap<Int, Long> {
+		var column = buffer[columnIndex]
+		if (column == null) {
+			column = mutableMapOf()
+			buffer[columnIndex] = column
+		}
+		return column
+	}
+
+	/** Updates the specified matrix dot with the simulation time at which glowing will fade */
+	private fun glowUntil(columnIndex: Int, rowIndex: Int, time: Long) {
+		ensureColumn(columnIndex)[rowIndex] = time
+	}
 }

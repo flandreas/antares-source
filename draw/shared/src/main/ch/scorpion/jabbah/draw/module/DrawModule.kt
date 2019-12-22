@@ -6,18 +6,12 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.preferences.BooleanPreference
-import ch.scorpion.jabbah.base.preferences.FloatPreference
-import ch.scorpion.jabbah.base.preferences.IntPreference
-import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ZoomPanController
 
 /**
  * Module definitions for the [ch.scorpion.jabbah.draw] package.
@@ -32,24 +26,6 @@ object DrawModule : AbstractModule() {
 	val DEBUG_STROKE = Stroke(0.5f)
 
 	var properties: DrawProperties = DrawProperties(BaseModule.properties)
-
-    /**
-     * Creates a [PolylineShape] for the specified [Point2D]s. Must be implemented platform-specifically.
-     */
-    var polylineShapeFactory: (List<Point2D>?) -> PolylineShape = { throw UnsupportedOperationException() }
-
-    /**
-     * Creates a [TextRenderInfo] for a particular text [String] and the [Font] to be used for rendering.
-     * Must be implemented platform-specifically.
-     */
-    var textRenderInfoFactory: TextRenderInfoFactory = object : TextRenderInfoFactory {
-        override fun measureHtmlText(text: String, font: Font, width: Int): TextRenderInfo {
-            throw UnsupportedOperationException("not implemented")
-        }
-        override fun measureSingleLineText(text: String, font: Font): TextRenderInfo {
-            throw UnsupportedOperationException("not implemented")
-        }
-    }
 
     /** Loads an [Image] from the specified path. Must be implemented platform-specifically. */
     var imageLoader: ImageLoader = { throw UnsupportedOperationException() }

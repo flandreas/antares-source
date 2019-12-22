@@ -9,14 +9,14 @@ import ch.scorpion.jabbah.base.System
  */
 interface StorableCreator {
 
-    /** Creates an instance of a [Storable] for the specified class.*/
-    fun create(clazz: KClass<out Storable>): Storable
+	/** Creates an instance of a [Storable] for the specified class.*/
+	fun create(clazz: KClass<out Storable>): Storable
 }
 
 /** A [StorableCreator] that uses the [System] class to create the instance.*/
 class SystemStorableCreator : StorableCreator {
 
-    override fun create(clazz: KClass<out Storable>): Storable {
-        return System.get().instantiate(clazz)
-    }
+	override fun create(clazz: KClass<out Storable>): Storable {
+		return System.instantiate(clazz)
+	}
 }

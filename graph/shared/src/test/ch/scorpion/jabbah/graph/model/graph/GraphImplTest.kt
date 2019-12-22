@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphOutputImpl
 import ch.scorpion.jabbah.io.IOModule
+import ch.scorpion.jabbah.io.StorableCloner
 import io.mockk.mockk
 import kotlin.test.*
 
@@ -44,7 +45,7 @@ class GraphImplTest {
 	@Test
 	fun shouldBeStorable() {
 		val testGraph = TestGraph(eventBus = mockk(relaxed = true))
-			val clone = IOModule . storableClonerProvider . invoke ().clone(testGraph.graph) as Graph
+		val clone = StorableCloner.clone(testGraph.graph) as Graph
 
 		val v1: Vertice = clone.withId(1)!! as Vertice
 		val v2: Vertice = clone.withId(2)!! as Vertice

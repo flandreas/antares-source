@@ -1,9 +1,8 @@
 package ch.scorpion.jabbah.graph.library
 
 import io.mockk.mockk
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
-
 
 /** Unit tests for [LibraryImpl].*/
 class LibraryImplTest {

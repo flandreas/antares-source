@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
-import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -20,7 +19,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
  * A standard [Drawable] implementation of a [Polyline].
  */
 class PolylineDrawable constructor(
-	val shape: PolylineShape = DrawModule.polylineShapeFactory.invoke(null),
+	val shape: PolylineShape = PolylineShapeFactory.create(null),
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractStyledDrawable(styleType, styleProvider), Polyline, Locatable, Transparent {

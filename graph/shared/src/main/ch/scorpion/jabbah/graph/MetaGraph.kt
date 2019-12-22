@@ -52,12 +52,14 @@ class CombinedMetaGraphRepository(
 
 	/** Returns the entire [MetaGraph] with the specified [UUID], including the view representations. */
 	override fun getMetaGraph(uuid: UUID): MetaGraph {
-		return LibraryModule.libraryHolder.library.getOptionalMetaGraph(uuid) ?: ProjectModule.projectHolder.project!!.getMetaGraph(uuid)
+		return LibraryModule.libraryHolder.library.getOptionalMetaGraph(uuid)
+			?: ProjectModule.projectHolder.project!!.getMetaGraph(uuid)
 	}
 
 	/** Returns the entire [MetaGraph] with the specified [UUID] if it exists, or `null` otherwise. */
 	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? {
-		return LibraryModule.libraryHolder.library.getOptionalMetaGraph(uuid) ?: ProjectModule.projectHolder.project!!.getOptionalMetaGraph(uuid)
+		return LibraryModule.libraryHolder.library.getOptionalMetaGraph(uuid)
+			?: ProjectModule.projectHolder.project!!.getOptionalMetaGraph(uuid)
 	}
 
 	/** Checks whether a [MetaGraph] with [uuid] exists in this [MetaGraphRepository]. */
@@ -84,11 +86,10 @@ class CombinedMetaGraphRepository(
 class MetaGraph(
 	graph: GraphStorable,
 	containerDrawing: ContainerDrawing,
-	private val eventBus: EventBus = BaseModule.eventBus,
-	private val storableCloner: StorableCloner = IOModule.storableClonerProvider.invoke()
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : Storable {
 
-	constructor(): this(
+	constructor() : this(
 		GraphStorable(Translations.getString("graph.name.unknown")),
 		ContainerDrawing(Translations.getString("graph.name.unknown"))
 	)
@@ -102,25 +103,25 @@ class MetaGraph(
 		}
 	}
 
-    var graph: GraphStorable = graph
-        private set(value) {
-	        if (field !== value) {
-		        field.dispose()
-		        field = value
-	        }
-        }
+	var graph: GraphStorable = graph
+		private set(value) {
+			if (field !== value) {
+				field.dispose()
+				field = value
+			}
+		}
 
-    var containerDrawing: ContainerDrawing = containerDrawing
-        private set(value) {
-	        if (field !== value) {
-		        field.dispose()
-		        field = value
-	        }
-        }
+	var containerDrawing: ContainerDrawing = containerDrawing
+		private set(value) {
+			if (field !== value) {
+				field.dispose()
+				field = value
+			}
+		}
 
-    val name: String get() = graph.model!!.name.value
+	val name: String get() = graph.model!!.name.value
 
-    val uuid: UUID get() = graph.model!!.uuid
+	val uuid: UUID get() = graph.model!!.uuid
 
 	val translatableName: TranslatableText get() = graph.model!!.name.translation
 
@@ -132,12 +133,12 @@ class MetaGraph(
 		handle(it)
 	}
 
-    init {
-	    eventBus.register(NameChangedEvent::class, graphNameHandler)
-	    eventBus.register(DescriptionChangedEvent::class, graphDescHandler)
-        containerDrawing.model.graphUUID = uuid
-        containerDrawing.initialize()
-    }
+	init {
+		eventBus.register(NameChangedEvent::class, graphNameHandler)
+		eventBus.register(DescriptionChangedEvent::class, graphDescHandler)
+		containerDrawing.model.graphUUID = uuid
+		containerDrawing.initialize()
+	}
 
 	fun dispose() {
 		eventBus.unregister(NameChangedEvent::class, graphNameHandler)
@@ -146,69 +147,69 @@ class MetaGraph(
 		containerDrawing.dispose()
 	}
 
-    /** ---- [Storable] interface */
+	/** ---- [Storable] interface */
 
-    override var storableId: Int = 0
+	override var storableId: Int = 0
 
-    override fun write(writer: StoreWriter) {
-        writer.writeStorable("graph", graph)
-        writer.writeStorable("container", containerDrawing)
-    }
+	override fun write(writer: StoreWriter) {
+		writer.writeStorable("graph", graph)
+		writer.writeStorable("container", containerDrawing)
+	}
 
-    override fun read(reader: StoreReader) {
-        val aGraph = reader.readStorable("graph") as GraphStorable
-        reader.requestResolution(this, Reference(
-                name = "graph",
-                referenceId = aGraph.storableId,
-                additionalInfo = aGraph,
-                resolveAfter = listOf(aGraph.storableId)))
+	override fun read(reader: StoreReader) {
+		val aGraph = reader.readStorable("graph") as GraphStorable
+		reader.requestResolution(this, Reference(
+			name = "graph",
+			referenceId = aGraph.storableId,
+			additionalInfo = aGraph,
+			resolveAfter = listOf(aGraph.storableId)))
 
-        val aContainerDrawing = reader.readStorable("container") as ContainerDrawing
-        reader.requestResolution(this, Reference(
-                name = "container",
-                referenceId = aContainerDrawing.storableId,
-                additionalInfo = aContainerDrawing,
-                resolveAfter = listOf(aContainerDrawing.storableId, aGraph.storableId)))
-    }
+		val aContainerDrawing = reader.readStorable("container") as ContainerDrawing
+		reader.requestResolution(this, Reference(
+			name = "container",
+			referenceId = aContainerDrawing.storableId,
+			additionalInfo = aContainerDrawing,
+			resolveAfter = listOf(aContainerDrawing.storableId, aGraph.storableId)))
+	}
 
-    override fun getStorableChildren(): Iterator<Storable> {
-        return listOf(graph, containerDrawing).iterator()
-    }
+	override fun getStorableChildren(): Iterator<Storable> {
+		return listOf(graph, containerDrawing).iterator()
+	}
 
-    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
-        if (reference.name == "graph") {
-            graph = reference.additionalInfo as GraphStorable
-        }
-        if (reference.name == "container") {
-            containerDrawing = reference.additionalInfo as ContainerDrawing
-            containerDrawing.completeFromGraph(graph.model!!)
-        }
-    }
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+		if (reference.name == "graph") {
+			graph = reference.additionalInfo as GraphStorable
+		}
+		if (reference.name == "container") {
+			containerDrawing = reference.additionalInfo as ContainerDrawing
+			containerDrawing.completeFromGraph(graph.model!!)
+		}
+	}
 
 	override fun resolutionDone() {
 		super.resolutionDone()
 		copyGraphDataFromContainerModel(graph.model!!)
 	}
 
-    /** ---- [MetaGraph] */
+	/** ---- [MetaGraph] */
 
-    fun cloneGraphModel(storableCreator: StorableCreator): Graph {
-	    val clone = storableCloner.clonePreservingIdentities(graph.model!!, storableCreator) as Graph
-	    copyGraphDataFromContainerModel(clone)
-	    return clone
-    }
+	fun cloneGraphModel(storableCreator: StorableCreator): Graph {
+		val clone = StorableCloner.clonePreservingIdentities(graph.model!!, storableCreator) as Graph
+		copyGraphDataFromContainerModel(clone)
+		return clone
+	}
 
-    fun accept(visitor: HierarchyVisitor): Boolean {
-        if (visitor.visitEnter(this)) {
-            if (!graph.accept(visitor)) {
-                return visitor.visitLeave(this)
-            }
-            if (!containerDrawing.accept(visitor)) {
-                return visitor.visitLeave(this)
-            }
-        }
-        return visitor.visitLeave(this)
-    }
+	fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			if (!graph.accept(visitor)) {
+				return visitor.visitLeave(this)
+			}
+			if (!containerDrawing.accept(visitor)) {
+				return visitor.visitLeave(this)
+			}
+		}
+		return visitor.visitLeave(this)
+	}
 
 	private fun handle(event: NameChangedEvent) {
 		if (event.name === graph.model?.name) {
@@ -225,7 +226,7 @@ class MetaGraph(
 	private fun copyGraphDataFromContainerModel(graph: Graph) {
 		graph.uuid = containerDrawing.model.graphUUID!!
 		graph.name.translation = containerDrawing.model.translatableName
-		graph.description.translation =containerDrawing.model.description.translation
+		graph.description.translation = containerDrawing.model.description.translation
 
 	}
 }

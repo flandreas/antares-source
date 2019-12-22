@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.base
 
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.*
 
 /** Unit tests for [Settings].*/
@@ -10,7 +10,7 @@ class SettingsTest {
 
     @BeforeTest
     fun setup() {
-        BaseModuleJvm.require()
+        BaseModule.require()
     }
 
     @Test
@@ -36,9 +36,9 @@ class SettingsTest {
 	fun shouldStoreIntegers() {
 		settings.set("list", listOf(4, 18, -3))
 		val ints = settings.getIntegers("list")
-		assertEquals(4, ints.get(0))
-		assertEquals(18, ints.get(1))
-		assertEquals(-3, ints.get(2))
+		assertEquals(4, ints[0])
+		assertEquals(18, ints[1])
+		assertEquals(-3, ints[2])
 	}
 
 	@Test

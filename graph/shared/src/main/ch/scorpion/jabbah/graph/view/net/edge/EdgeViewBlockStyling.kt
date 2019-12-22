@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
-import ch.scorpion.jabbah.base.System.Companion.SYSTEM
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -10,6 +10,8 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
+import kotlin.math.max
+import kotlin.math.min
 
 /** Draws an [EdgeView] in [NetViewStyle.BLOCK]. */
 class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
@@ -22,9 +24,9 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
 		const val REVERSE_ARROW_LENGTH = 4
 		const val DOUBLE_ARROW_LENGTH = ARROW_LENGTH + ARROW_DIST + REVERSE_ARROW_LENGTH
 
-		val ARROW_PATH = buildSingleArrowPath(SYSTEM!!.createPath().moveTo(-ARROW_LENGTH, -HALF_WIDTH))
+		val ARROW_PATH = buildSingleArrowPath(System.createPath().moveTo(-ARROW_LENGTH, -HALF_WIDTH))
 
-		val DOUBLE_ARROW_PATH = buildDoubleArrowPath(SYSTEM!!.createPath().moveTo(-DOUBLE_ARROW_LENGTH, -HALF_WIDTH))
+		val DOUBLE_ARROW_PATH = buildDoubleArrowPath(System.createPath().moveTo(-DOUBLE_ARROW_LENGTH, -HALF_WIDTH))
 
 		private fun buildSingleArrowPath(path: Path): Path {
 			path
@@ -66,10 +68,10 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
 		context.g.color = context.color!!.backgroundColor
 		draw(object : Consumer {
 			override fun consume(beginL: Point2D, beginR: Point2D, endR: Point2D, endL: Point2D) {
-				val minX = Math.min(Math.min(beginL.x, beginR.x), Math.min(endL.x, endR.x))
-				val minY = Math.min(Math.min(beginL.y, beginR.y), Math.min(endL.y, endR.y))
-				val maxX = Math.max(Math.max(beginL.x, beginR.x), Math.max(endL.x, endR.x))
-				val maxY = Math.max(Math.max(beginL.y, beginR.y), Math.max(endL.y, endR.y))
+				val minX = min(min(beginL.x, beginR.x), min(endL.x, endR.x))
+				val minY = min(min(beginL.y, beginR.y), min(endL.y, endR.y))
+				val maxX = max(max(beginL.x, beginR.x), max(endL.x, endR.x))
+				val maxY = max(max(beginL.y, beginR.y), max(endL.y, endR.y))
 
 				context.g.fillRect(minX.toInt(), minY.toInt(), (maxX - minX).toInt(), (maxY - minY).toInt())
 

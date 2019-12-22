@@ -15,10 +15,13 @@ import ch.scorpion.jabbah.base.geom.RoundRectangle2D
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
+import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import kotlin.math.ceil
+import kotlin.math.max
 
 /**
  * A graphical, circular representation of a [DigitalSignal].
@@ -41,9 +44,9 @@ class DigitalSignalView(
 		}
 
 		fun calcWidth(bitWidth: BitWidth, representation: DigitalSignalRepresentation): Double {
-			val digitCount = Math.max(1, bitWidth.width / representation.bits())
-			val textRenderInfo = DrawModule.textRenderInfoFactory.measureSingleLineText("0".repeat(digitCount), FONT)
-			return Math.ceil(textRenderInfo.textBounds.width).toInt() + 2.0 * H_INSET
+			val digitCount = max(1, bitWidth.width / representation.bits())
+			val textRenderInfo = TextRenderInfoFactory.measureSingleLineText("0".repeat(digitCount), FONT)
+			return ceil(textRenderInfo.textBounds.width).toInt() + 2.0 * H_INSET
 		}
 	}
 

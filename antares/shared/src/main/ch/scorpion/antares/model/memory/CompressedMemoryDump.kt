@@ -3,7 +3,7 @@ package ch.scorpion.antares.model.memory
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.StringUtils
-import java.util.regex.Pattern
+import kotlin.math.max
 
 
 /**
@@ -20,7 +20,7 @@ object CompressedMemoryDump {
 	private const val COMMENT_DELIMITER = ':'
 
 	/** The regular expression for separating individual cells.*/
-	private val cellSeparationRegex = Pattern.compile("(?<!\\\\)$CELL_DELIMITER|\n")
+	private val cellSeparationRegex = Regex("(?<!\\\\)$CELL_DELIMITER|\n")
 
 	/**
 	 * Writes a dump of a [Memory] to a new [String].
@@ -28,7 +28,7 @@ object CompressedMemoryDump {
 	fun write(memory: Memory, bitWidth: BitWidth): String {
 		val builder = StringBuilder()
 		val mask: Long = BitOperation.power(bitWidth.width.toByte()) - 1L
-		val length = Math.max(2, bitWidth.width / 4)
+		val length = max(2, bitWidth.width / 4)
 
 		val cellIter = ZeroFiller(memory.getNonZeroCells())
 		if (!cellIter.hasNext()) {

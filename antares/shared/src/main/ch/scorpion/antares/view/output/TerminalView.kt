@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.FontFamily
-import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -29,6 +29,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.round
 
 /** A view representation of a [Terminal].*/
 class TerminalView(
@@ -78,15 +79,16 @@ class TerminalView(
 		modelExchanged(null)
 	}
 
-	private val sizeFactor: Float get() = when(size) {
-		Size.SMALL -> 0.75f
-		Size.MEDIUM -> 1f
-		Size.LARGE -> 1.5f
-	}
+	private val sizeFactor: Float
+		get() = when (size) {
+			Size.SMALL -> 0.75f
+			Size.MEDIUM -> 1f
+			Size.LARGE -> 1.5f
+		}
 
-	private val textFont get() = font.deriveFont(FontFamily.MONOSPACED).deriveFont(Math.round(font.size * sizeFactor))
+	private val textFont get() = font.deriveFont(FontFamily.MONOSPACED).deriveFont(round(font.size * sizeFactor).toInt())
 
-	private val textRenderInfo get() = DrawModule.textRenderInfoFactory.measureSingleLineText("A", textFont)
+	private val textRenderInfo get() = TextRenderInfoFactory.measureSingleLineText("A", textFont)
 
 	private val cellHeight get() = textRenderInfo.textBounds.height
 
@@ -94,7 +96,7 @@ class TerminalView(
 
 	private val calculatedWidth get() = BORDER_WIDTH + SCREEN_H_INSET + columnsCount * cellWidth + SCREEN_H_INSET + BORDER_WIDTH
 
-	private val calculatedHeight get() =  BORDER_WIDTH + rowsCount * cellHeight + BORDER_WIDTH
+	private val calculatedHeight get() = BORDER_WIDTH + rowsCount * cellHeight + BORDER_WIDTH
 
 	/** ---- UI properties */
 

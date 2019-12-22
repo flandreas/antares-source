@@ -19,7 +19,7 @@ import kotlin.test.assertEquals
  * Integration tests for Antares components (built using graph module) and the execution module.
  * Tests a simple circuit consisting of a [SwitchView] directly connected to an [LEDView].
  */
-class SimpleExecutionIntegrationTest : AbstractCircuitTest() {
+class SimpleExecutionIntegrationTest : AbstractJvmCircuitTest() {
 
 	private lateinit var circuitView: GraphView<GraphElementView<*>>
 	private lateinit var edgeView: EdgeView<*>
