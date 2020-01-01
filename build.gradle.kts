@@ -1,8 +1,10 @@
+import org.asciidoctor.gradle.AsciidoctorTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 plugins {
 	kotlin("multiplatform") version "1.3.61" apply false
 	id("net.akehurst.kotlin.kt2ts") version("1.5.0") apply false
+	id("org.asciidoctor.convert") version "1.5.9.2"
 }
 
 allprojects {
@@ -117,32 +119,9 @@ subprojects {
 	}
 }
 
-/*
-buildscript {
-
-	val kotlinVersion: String by extra
-
-	repositories {
-		jcenter()
-	}
-
-	dependencies {
-		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-	}
-
-	allprojects {
-
-		repositories {
-			mavenCentral()
-			jcenter()
-			flatDir {
-				dirs("../lib")
-			}
-		}
-	}
-
-	tasks.register<Delete>("clean") {
-		delete(rootProject.buildDir)
+tasks {
+	"asciidoctor"(AsciidoctorTask::class) {
+		sourceDir = file("doc/user-manual/german")
+		outputDir = file("build/doc/user-manual-german")
 	}
 }
-*/
