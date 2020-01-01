@@ -51,7 +51,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 		}
 
 	/** Displays the current signal. Dynamically created and initialized.*/
-	protected var numberView: NumberView? = null
+	protected lateinit var numberView: NumberView
 		private set
 
 	/** ---- [Storable] interface */
@@ -79,7 +79,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 	override val rotatable: Boolean get() = false
 
 	override fun handleStateChanged(event: GraphElementEvent) {
-		numberView!!.setSignal(signal)
+		numberView.setSignal(signal)
 		super.handleStateChanged(event)
 	}
 
@@ -89,7 +89,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 		get() = super.transparency
 		set(value) {
 			super.transparency = value
-			numberView!!.transparency = value
+			numberView.transparency = value
 		}
 
 	/** ---- [AbstractNumberViewComponent] */
@@ -104,23 +104,23 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 	protected open val insets: Int get() = DEFAULT_INSETS
 
 	protected fun drawNumberView(context: DrawContext, isOn: Boolean) {
-		numberView?.draw(context, isOn)
+		numberView.draw(context, isOn)
 	}
 
 	protected fun updateView() {
 		invalidate()
 
 		numberView = NumberView(signalRepresentation, bitWidth, drawDigitBorder)
-		numberView!!.setSignal(signal)
+		numberView.setSignal(signal)
 
 		val upperLeftBoundsEdge = upperLeftBoundsEdge
 		setBounds(
 			upperLeftBoundsEdge.x, upperLeftBoundsEdge.y,
-			numberView!!.width + 2 * insets, numberView!!.height + 2 * insets)
+			numberView.width + 2 * insets, numberView.height + 2 * insets)
 
-		numberView!!.setBounds(
+		numberView.setBounds(
 			xInt + insets, yInt + insets,
-			numberView!!.widthInt, numberView!!.heightInt)
+			numberView.widthInt, numberView.heightInt)
 
 		updateViewImpl()
 
@@ -136,6 +136,6 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 	}
 
 	protected fun clear() {
-		numberView?.clear()
+		numberView.clear()
 	}
 }

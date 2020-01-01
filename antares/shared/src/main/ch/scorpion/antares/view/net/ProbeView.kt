@@ -162,10 +162,10 @@ class ProbeView(
 
 	override val upperLeftBoundsEdge: Point2D
 		get() = when (orientation) {
-			Direction.EAST -> Point2D(DigitalPortView.LENGTH.toDouble(), -numberView!!.height / 2 - insets)
-			Direction.NORTH -> Point2D(-numberView!!.width / 2 - insets, -DigitalPortView.LENGTH - numberView!!.height - 2 * insets)
-			Direction.SOUTH -> Point2D(-numberView!!.width / 2 - insets, DigitalPortView.LENGTH.toDouble())
-			Direction.WEST -> Point2D(-DigitalPortView.LENGTH - numberView!!.width - 2 * insets, -numberView!!.height / 2 - insets)
+			Direction.EAST -> Point2D(DigitalPortView.LENGTH.toDouble(), -numberView.height / 2 - insets)
+			Direction.NORTH -> Point2D(-numberView.width / 2 - insets, -DigitalPortView.LENGTH - numberView.height - 2 * insets)
+			Direction.SOUTH -> Point2D(-numberView.width / 2 - insets, DigitalPortView.LENGTH.toDouble())
+			Direction.WEST -> Point2D(-DigitalPortView.LENGTH - numberView.width - 2 * insets, -numberView.height / 2 - insets)
 		}
 
 	override fun updateViewImpl() {
@@ -174,10 +174,10 @@ class ProbeView(
 		if (hasOutput) {
 			getOutput().direction = orientation
 			when (orientation) {
-				Direction.EAST -> getOutput().setLocation(2 * DigitalPortView.LENGTH + numberView!!.width, 0.0)
-				Direction.NORTH -> getOutput().setLocation(0.0, -2 * DigitalPortView.LENGTH - numberView!!.height)
-				Direction.WEST -> getOutput().setLocation(-2 * DigitalPortView.LENGTH - numberView!!.width, 0.0)
-				Direction.SOUTH -> getOutput().setLocation(0.0, 2 * DigitalPortView.LENGTH + numberView!!.height)
+				Direction.EAST -> getOutput().setLocation(2 * DigitalPortView.LENGTH + numberView.width, 0.0)
+				Direction.NORTH -> getOutput().setLocation(0.0, -2 * DigitalPortView.LENGTH - numberView.height)
+				Direction.WEST -> getOutput().setLocation(-2 * DigitalPortView.LENGTH - numberView.width, 0.0)
+				Direction.SOUTH -> getOutput().setLocation(0.0, 2 * DigitalPortView.LENGTH + numberView.height)
 			}
 		}
 		updateLabelPosition()

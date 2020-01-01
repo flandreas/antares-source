@@ -66,10 +66,10 @@ class ConstantView(
 
 	override val upperLeftBoundsEdge: Point2D
 		get() = when (orientation) {
-			Direction.WEST -> Point2D(getOutput().length.toDouble(), -numberView!!.height / 2 - insets)
-			Direction.SOUTH -> Point2D(-numberView!!.width / 2 - insets, -getOutput().length - numberView!!.height - 2 * insets)
-			Direction.NORTH -> Point2D(-numberView!!.width / 2 - insets, getOutput().length.toDouble())
-			Direction.EAST -> Point2D(-getOutput().length - numberView!!.width - 2 * insets, -numberView!!.height / 2 - insets)
+			Direction.WEST -> Point2D(getOutput().length.toDouble(), -numberView.height / 2 - insets)
+			Direction.SOUTH -> Point2D(-numberView.width / 2 - insets, -getOutput().length - numberView.height - 2 * insets)
+			Direction.NORTH -> Point2D(-numberView.width / 2 - insets, getOutput().length.toDouble())
+			Direction.EAST -> Point2D(-getOutput().length - numberView.width - 2 * insets, -numberView.height / 2 - insets)
 		}
 
 	override fun updateViewImpl() {
