@@ -210,7 +210,7 @@ class ContainerDrawing(
 				val portView = comp.portView as PortView<Any>
 				view.addPortView(portView)
 				try {
-					portView.port = view.model!!.getPort(portView.port.name!!)
+					portView.port = view.model.getPort(portView.port.name!!)
 				} catch (e: NoSuchElementException) {
 					LOG.error("SubGraphPort '${portView.port.name}' not found when filling SubGraphVerticeView for '${view.subGraphVertice!!.graphUUID}'")
 					throw e

@@ -37,10 +37,10 @@ class SubGraphVerticeRefTest {
 		// Create a new instance of the custom NOT circuit in the Library
 		val customNOT = (LibraryModule.libraryHolder.library.get(TestLibraryBuilder.CUSTOM_NOT) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
 
-		customNOT.model!!.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		customNOT.model.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 
-		val libraryGraph = LibraryModule.libraryHolder.library.getMetaGraph(customNOT.model!!.graphUUID!!).graph.model!!
-		val customGraph = customNOT.model!!.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		val libraryGraph = LibraryModule.libraryHolder.library.getMetaGraph(customNOT.model.graphUUID!!).graph.model!!
+		val customGraph = customNOT.model.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 
 		for (i in 1..5) {
 			assertEquals(libraryGraph.withId(i)!!.storableId, customGraph.withId(i)!!.storableId)
@@ -58,10 +58,10 @@ class SubGraphVerticeRefTest {
 		// Create a new instance of the custom NAND circuit
 		val customNAND = (LibraryModule.libraryHolder.library.get(TestLibraryBuilder.CUSTOM_NAND) as LibraryElement).getNewInstance<SubGraphVerticeRef>()
 
-		customNAND.model!!.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		customNAND.model.bind(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 
-		val libraryGraph = LibraryModule.libraryHolder.library.getMetaGraph(customNAND.model!!.graphUUID!!).graph.model!!
-		val customGraph = customNAND.model!!.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator)
+		val libraryGraph = LibraryModule.libraryHolder.library.getMetaGraph(customNAND.model.graphUUID!!).graph.model!!
+		val customGraph = customNAND.model.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator)
 
 		for (i in 1..6) {
 			assertEquals(libraryGraph.withId(i)!!.storableId, customGraph.withId(i)!!.storableId)

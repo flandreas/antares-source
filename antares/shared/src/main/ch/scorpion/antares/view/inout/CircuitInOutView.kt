@@ -75,8 +75,8 @@ class CircuitInOutView(
 	var signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY
 		set(value) {
 			field = value
-			if (model!!.portType.isInput) {
-				(model!!.getOutput<DigitalSignal>() as DigitalPort).signalRepresentation = value
+			if (model.portType.isInput) {
+				(model.getOutput<DigitalSignal>() as DigitalPort).signalRepresentation = value
 			}
 			updateView()
 		}
@@ -121,31 +121,31 @@ class CircuitInOutView(
 	/** ----  UI properties */
 
 	var name: String?
-		get() = model!!.name
+		get() = model.name
 		set(value) {
-			model!!.name = value
+			model.name = value
 		}
 
 	var bitWidth: BitWidth
-		get() = model!!.bitWidth
+		get() = model.bitWidth
 		set(value) {
 			invalidate()
-			model!!.bitWidth = value
+			model.bitWidth = value
 			updateView()
 		}
 
 	var portType: PortType
-		get() = model!!.portType
+		get() = model.portType
 		set(value) {
 			invalidate()
-			model!!.portType = value
+			model.portType = value
 			updateView()
 		}
 
 	var description: Description
-		get() = model!!.getPort<DigitalSignal>().description
+		get() = model.getPort<DigitalSignal>().description
 		set(value) {
-			model!!.getPort<DigitalSignal>().description.translation = value.translation
+			model.getPort<DigitalSignal>().description.translation = value.translation
 		}
 
 	/** ---- [Transparent] */
@@ -169,7 +169,7 @@ class CircuitInOutView(
 	/** ---- [ActorView] */
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
-		if (model!!.portType.isInput) {
+		if (model.portType.isInput) {
 			return actorInteractionHandler
 		}
 		return null
@@ -205,7 +205,7 @@ class CircuitInOutView(
 
 	override val controlId: String? get() = "circuitInOut:$id"
 
-	override val controlName: String get() = "$type ${model!!.name}"
+	override val controlName: String get() = "$type ${model.name}"
 
 	override fun createControlView(): ControlView<CircuitInOut> {
 		val controlView = DigitalSignalSourceControlView(styleProvider, controlId, signalRepresentation, model, controlName)
@@ -299,14 +299,14 @@ class CircuitInOutView(
 	}
 
 	private fun drawSimulated(context: DrawContext) {
-		if (model!!.signal!!.getBitWidth().width > 1) {
+		if (model.signal!!.getBitWidth().width > 1) {
 			drawEdited(context,
-				transparent.applyTo(model!!.signal!!.getColor().foregroundColor),
+				transparent.applyTo(model.signal!!.getColor().foregroundColor),
 				transparent.applyTo(propertiesBackgroundColor))
 		} else {
 			drawEdited(context,
-				transparent.applyTo(model!!.signal!!.getColor().backgroundColor),
-				transparent.applyTo(model!!.signal!!.getColor().foregroundColor))
+				transparent.applyTo(model.signal!!.getColor().backgroundColor),
+				transparent.applyTo(model.signal!!.getColor().foregroundColor))
 		}
 
 		val translation = getArrowPathTranslation()
@@ -317,7 +317,7 @@ class CircuitInOutView(
 	}
 
 	private fun drawDisabled(context: DrawContext) {
-		if (model!!.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true) {
+		if (model.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true) {
 			context.g.color = Look.disabledColor()
 			context.g.fill(arrowPath!!.path)
 		}
@@ -361,7 +361,7 @@ class CircuitInOutView(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		invalidate()
-		numberView!!.setSignal(model!!.signal!!)
+		numberView!!.setSignal(model.signal!!)
 		label.text = StringUtils.orEmpty(name)
 		updateBoundingBox()
 		super.handleStateChanged(event)
@@ -374,7 +374,7 @@ class CircuitInOutView(
 	 * @return the vector relative to this [VerticeView]'s origin
 	 */
 	private fun getArrowPathTranslation(): Point2D {
-		return when (model!!.portType) {
+		return when (model.portType) {
 			PortType.INPUT -> orientation.multiply(-getOutput().unconnectedLength.toDouble())
 			PortType.INOUT,
 			PortType.OUTPUT -> Point2D(arrowPath!!.tailLocation)
@@ -387,11 +387,11 @@ class CircuitInOutView(
 	 * Creates the [DigitalPortView] of this [CircuitInOut].
 	 */
 	private fun createPortView(template: PortView<DigitalSignal>?): DigitalPortView {
-		when (model!!.portType) {
+		when (model.portType) {
 			PortType.INPUT -> {
 				val portView = DigitalPortView(
 					styleProvider = styleProvider,
-					port = model!!.getPort(),
+					port = model.getPort(),
 					direction = orientation,
 					length = template?.length)
 				portView.setLocation(
@@ -402,7 +402,7 @@ class CircuitInOutView(
 			PortType.INOUT, PortType.OUTPUT -> {
 				val portView = DigitalPortView(
 					styleProvider = styleProvider,
-					port = model!!.getInput(),
+					port = model.getInput(),
 					direction = orientation.opposite(),
 					length = template?.length)
 				portView.setLocation(
@@ -418,7 +418,7 @@ class CircuitInOutView(
 	 * orientation of this [CircuitInOutView]}.
 	 */
 	private fun updateLabel() {
-		when (model!!.portType) {
+		when (model.portType) {
 			PortType.INOUT -> updateOutputLabel()
 			PortType.INPUT -> updateInputLabel()
 			PortType.OUTPUT -> updateOutputLabel()
@@ -469,10 +469,10 @@ class CircuitInOutView(
 
 	private fun updateView() {
 		invalidate()
-		isFocusable = model!!.portType.isInput
+		isFocusable = model.portType.isInput
 
 		numberView = NumberView(signalRepresentation, bitWidth, drawBox = bitWidth.width > 1)
-		numberView!!.setSignal(model!!.signal!!)
+		numberView!!.setSignal(model.signal!!)
 
 		arrowPath = ArrowPath.Companion.Builder(
 			orientation = orientation,
@@ -483,7 +483,7 @@ class CircuitInOutView(
 			arrowPath!!.contentLocation.x, arrowPath!!.contentLocation.y,
 			numberView!!.bounds.width, numberView!!.bounds.height)
 
-		val portView = getPortView(model!!.getPort<DigitalSignal>())
+		val portView = getPortView(model.getPort<DigitalSignal>())
 		clearPortViews()
 		addPortView(createPortView(portView))
 
@@ -522,14 +522,14 @@ class CircuitInOutView(
 	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
 
 		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (model!!.isToplevel) {
+			if (model.isToplevel) {
 				return super.mouseMoved(context)
 			}
 			return null
 		}
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (!model!!.isToplevel) {
+			if (!model.isToplevel) {
 				eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
 				return null
 			}
@@ -555,7 +555,7 @@ class CircuitInOutView(
 			if (digitIndex != null) {
 				if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
 					// Toggle the binary digit
-					var signal = model!!.signal as Word?
+					var signal = model.signal as Word?
 					if (signal == null) {
 						signal = Word.allOf(bitWidth, Bit.Undefined)
 					}
@@ -564,7 +564,7 @@ class CircuitInOutView(
 						bit = Bit.False
 					}
 
-					model!!.setIncomingSignal(signal.withBit(digitIndex, bit.not()), signalHandler)
+					model.setIncomingSignal(signal.withBit(digitIndex, bit.not()), signalHandler)
 				} else if (numberView!!.focusIndex == digitIndex) {
 					eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = this@CircuitInOutView, messageKey = "antares.msg.HexInputManipulation"))
 				}
@@ -591,14 +591,14 @@ class CircuitInOutView(
 					validate()
 				} else if (context.keyEvent!!.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
 					if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
-						val newWord = (model!!.signal as Word).flip(numberView!!.focusIndex!!)
-						model!!.setIncomingSignal(newWord, context.signalHandler)
+						val newWord = (model.signal as Word).flip(numberView!!.focusIndex!!)
+						model.setIncomingSignal(newWord, context.signalHandler)
 					}
 				} else {
 					val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bits()), context.keyEvent!!.key.toChar())
 					if (digitWord != null && checkTopLevelKey()) {
-						val newWord = (model!!.signal as Word).withSubwordValue(digitWord, numberView!!.focusIndex!!)
-						model!!.setIncomingSignal(newWord, context.signalHandler)
+						val newWord = (model.signal as Word).withSubwordValue(digitWord, numberView!!.focusIndex!!)
+						model.setIncomingSignal(newWord, context.signalHandler)
 						numberView!!.transferFocusRight()
 					}
 				}
@@ -607,7 +607,7 @@ class CircuitInOutView(
 		}
 
 		private fun checkTopLevelKey(): Boolean {
-			if (!model!!.isToplevel) {
+			if (!model.isToplevel) {
 				eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
 				return false
 			}

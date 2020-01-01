@@ -1,15 +1,15 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -22,10 +22,10 @@ import ch.scorpion.jabbah.io.StoreWriter
  * because the wrapped [Component] is changed during the lifetime of this wrapper (due to deserialization),
  * which is not yet supported by Kotlin's built-in delegation.
  */
-class GraphElementViewWrapper<T : GraphElement>(
+class GraphElementViewWrapper(
     component: Component? = null,
     styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : AbstractGraphElementView<T>(styleProvider, GraphStyleType.VERTICE, null) {
+) : AbstractGraphElementView<GraphElementViewWrapper.DummyGraphElement>(styleProvider, GraphStyleType.VERTICE, DummyGraphElement(component)) {
 
     val component: Component? get() = _component
 
@@ -119,4 +119,13 @@ class GraphElementViewWrapper<T : GraphElement>(
         set(value) {
             super.preferredSelectionDrawingStrategy = value
         }
+
+	/** ---- [GraphElementViewWrapper] */
+
+	class DummyGraphElement(private val component: Component?) : AbstractGraphElement() {
+
+		override val type: String?
+			get() = component?.type
+
+	}
 }

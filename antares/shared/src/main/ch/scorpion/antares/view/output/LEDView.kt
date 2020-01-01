@@ -46,7 +46,7 @@ class LEDView(
         get() {
             // Don't use GraphElementView#getId() as part of the controlId, because that one might be changed
             // when ControlViews (event as part of a wrapping Component) are added to a Drawing
-            return "led:${model!!.id}"
+            return "led:${model.id}"
         }
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<LED>) {
@@ -59,7 +59,7 @@ class LEDView(
 	/** ---- [ControlViewSource] */
 
     override fun createControlView(): ControlView<LED> {
-        val clone = LEDView(styleProvider, model!!, lightColor)
+        val clone = LEDView(styleProvider, model, lightColor)
         clone.isShowPortViews = false
         clone.location = Point2D(0, 0)
         return clone
@@ -84,7 +84,7 @@ class LEDView(
 
 
     override fun getBulbColor(): Color {
-        if (model!!.isOn) {
+        if (model.isOn) {
             return lightColor.onColor
         }
         return lightColor.offColor

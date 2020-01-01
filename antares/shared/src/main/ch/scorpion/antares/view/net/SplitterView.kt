@@ -47,11 +47,11 @@ class SplitterView(
         }
 
     var bitWidth: BitWidth
-        get() = model!!.bitWidth
+        get() = model.bitWidth
         set(value) {
             if (value != bitWidth) {
                 invalidate()
-                model!!.bitWidth = value
+                model.bitWidth = value
                 modelExchanged(model)
                 invalidate()
                 update()
@@ -59,11 +59,11 @@ class SplitterView(
         }
 
     var branchCount: BranchCount
-        get() = model!!.branchCount
+        get() = model.branchCount
         set(value) {
             if (value != branchCount) {
                 invalidate()
-                model!!.branchCount = value
+                model.branchCount = value
                 modelExchanged(model)
                 invalidate()
                 update()
@@ -77,11 +77,11 @@ class SplitterView(
     override fun modelExchanged(oldModel: Splitter?) {
         super.modelExchanged(oldModel)
 
-		val height = 2 * PORT_INSET + PORT_DISTANCE * (model!!.outputCount - 1)
+		val height = 2 * PORT_INSET + PORT_DISTANCE * (model.outputCount - 1)
 
 		val inputPortView = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getInput(),
+			port = model.getInput(),
 			direction = Direction.WEST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			x = 0,
@@ -94,7 +94,7 @@ class SplitterView(
 		val dy = if (handedness == Handedness.RIGHT) -PORT_DISTANCE else +PORT_DISTANCE
 		var y = if (handedness == Handedness.RIGHT) height / 2 - PORT_INSET else -height / 2 + PORT_INSET
 
-		for (output in model!!.getOutputs()) {
+		for (output in model.getOutputs()) {
 			val opv = DigitalPortView(
 				styleProvider = styleProvider,
 				port = output as Port<DigitalSignal>,

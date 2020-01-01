@@ -53,7 +53,7 @@ class TunnelView(
 		super.modelExchanged(oldModel)
 		val portView = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getPort(),
+			port = model.getPort(),
 			direction = Direction.WEST)
 		portView.setLocation(portView.length.toDouble(), 0.0)
 		addPortView(portView)
@@ -64,17 +64,17 @@ class TunnelView(
 	/** ---- UI properties */
 
 	var name: String?
-		get() = model!!.name
+		get() = model.name
 		set(value) {
-			model!!.name = value
+			model.name = value
 			updateLabel()
 		}
 
 	var bitWidth: BitWidth
-		get() = model!!.bitWidth
+		get() = model.bitWidth
 		set(value) {
 			invalidate()
-			model!!.bitWidth = value
+			model.bitWidth = value
 			invalidate()
 		}
 
@@ -108,7 +108,7 @@ class TunnelView(
 		super.drawImpl(context)
 
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			context.g.color = model!!.getInOrOutSignal().getColor().foregroundColor
+			context.g.color = model.getInOrOutSignal().getColor().foregroundColor
 		}
 
 		// Draw tunnel entry

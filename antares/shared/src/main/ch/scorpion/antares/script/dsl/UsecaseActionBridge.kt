@@ -33,10 +33,10 @@ class UsecaseActionBridge(
 		LOG.debug("pressButton $buttonId at $time")
 		getButton(buttonId)?.let { button ->
 			runner.executeAt(time) {
-				button.model!!.toggle(scheduler)
+				button.model.toggle(scheduler)
 				if (!button.toggle) {
 					// TODO BUG: This should not happen before visualization of first toggle has completed!
-					runner.executeAt(time + button.model!!.propagationDelay) { button.model!!.toggle(scheduler)}
+					runner.executeAt(time + button.model.propagationDelay) { button.model.toggle(scheduler)}
 				}
 			}
 		}
@@ -46,7 +46,7 @@ class UsecaseActionBridge(
 	fun setInputAt(time: Long, inputId: Int, hexValue: String) {
 		LOG.debug("setInput of $inputId to '$hexValue' at $time")
 		getInput(inputId)?.let {component ->
-			runner.executeAt(time) { component.model!!.setIncomingSignal(Word.of(component.model!!.bitWidth, hexValue), scheduler) }
+			runner.executeAt(time) { component.model.setIncomingSignal(Word.of(component.model.bitWidth, hexValue), scheduler) }
 		}
 	}
 
@@ -59,9 +59,9 @@ class UsecaseActionBridge(
 		getInput(inputId)?.let { component ->
 			clockApplications.add(inputId)
 			runner.applyOscillation(
-				component.model!!,
-				Word.falseValue(component.model!!.bitWidth),
-				Word.trueValue(component.model!!.bitWidth),
+				component.model,
+				Word.falseValue(component.model.bitWidth),
+				Word.trueValue(component.model.bitWidth),
 				period)
 		}
 	}

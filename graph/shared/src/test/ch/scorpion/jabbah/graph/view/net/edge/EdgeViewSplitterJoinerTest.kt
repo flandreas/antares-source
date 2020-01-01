@@ -74,9 +74,9 @@ class EdgeViewSplitterJoinerTest {
 
 		val tail = EdgeViewSplitterJoiner.split(ev, 0, Point2D(50, 0)) { edgeViewFactory.createEdgeView(it) }
 
-		assertSame(vv1.model!!.getOutput(), ev.origin!!.port)
+		assertSame(vv1.model.getOutput(), ev.origin!!.port)
 		assertNull(ev.destination?.port)
-		assertSame(vv2.model!!.getInput(), tail.destination?.port)
+		assertSame(vv2.model.getInput(), tail.destination?.port)
 		assertNull(tail.origin?.port)
 	}
 
@@ -89,9 +89,9 @@ class EdgeViewSplitterJoinerTest {
 
 		val tail = EdgeViewSplitterJoiner.split(ev, 0, Point2D(50, 0)) { edgeViewFactory.createEdgeView(it) }
 
-		assertSame(vv1.model!!.getOutput(), ev.origin?.port)
+		assertSame(vv1.model.getOutput(), ev.origin?.port)
 		assertNull(ev.destination?.port)
-		assertSame(vv2.model!!.getInput(), tail.destination?.port)
+		assertSame(vv2.model.getInput(), tail.destination?.port)
 		assertNull(tail.origin?.port)
 	}
 
@@ -102,13 +102,13 @@ class EdgeViewSplitterJoinerTest {
 		ev1.addSegmentPoint(Point2D(100, 0))
 		gv.add(ev1)
 
-		val ev2 = edgeViewFactory.createEdgeView(ev1.model!!)
+		val ev2 = edgeViewFactory.createEdgeView(ev1.model)
 		ev2.addSegmentPoint(Point2D(100, 0))
 		ev2.addSegmentPoint(Point2D(200, 0))
 		gv.add(ev2)
 
 		val vv = TestVerticeView()
-		ev2.connectToDestination(Connection(vv, vv.model!!.getInput()))
+		ev2.connectToDestination(Connection(vv, vv.model.getInput()))
 
 		EdgeViewSplitterJoiner.join(ev1, ev2)
 
@@ -127,13 +127,13 @@ class EdgeViewSplitterJoinerTest {
 		ev1.addSegmentPoint(Point2D(100, 0))
 		gv.add(ev1)
 
-		val ev2 = edgeViewFactory.createEdgeView(ev1.model!!)
+		val ev2 = edgeViewFactory.createEdgeView(ev1.model)
 		ev2.addSegmentPoint(Point2D(100, 0))
 		ev2.addSegmentPoint(Point2D(200, 0))
 		gv.add(ev2)
 
 		val vv = TestVerticeView()
-		ev1.connectToOrigin(Connection(vv, vv.model!!.getOutput()))
+		ev1.connectToOrigin(Connection(vv, vv.model.getOutput()))
 
 		EdgeViewSplitterJoiner.join(ev2, ev1)
 
@@ -152,16 +152,16 @@ class EdgeViewSplitterJoinerTest {
 		ev1.addSegmentPoint(Point2D(100, 0))
 		gv.add(ev1)
 
-		val ev2 = edgeViewFactory.createEdgeView(ev1.model!!)
+		val ev2 = edgeViewFactory.createEdgeView(ev1.model)
 		ev2.addSegmentPoint(Point2D(0, 0))
 		ev2.addSegmentPoint(Point2D(-100, 0))
 		gv.add(ev2)
 
 		val vv1 = TestVerticeView()
-		ev1.connectToDestination(Connection(vv1, vv1.model!!.getOutput()))
+		ev1.connectToDestination(Connection(vv1, vv1.model.getOutput()))
 
 		val vv2 = TestVerticeView()
-		ev2.connectToDestination(Connection(vv2, vv2.model!!.getOutput()))
+		ev2.connectToDestination(Connection(vv2, vv2.model.getOutput()))
 
 		EdgeViewSplitterJoiner.join(ev1, ev2)
 

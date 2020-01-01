@@ -224,7 +224,7 @@ class ContainerTreeTest {
 		// The following event is normally posted by GraphEditor
 		BaseModule.eventBus.post(GraphPortViewEvent(GraphPortViewEvent.Type.ADD, portView as GraphPortView<*>))
 
-		portView.model!!.name = "newName"
+		portView.model.name = "newName"
 
 		assertPortViewName(setup.containerTree, "newName")
 	}
@@ -306,7 +306,7 @@ class ContainerTreeTest {
 		 */
 		fun addPortViewComponent(graphPortName: String = "I1"): Setup {
 			val graphPortView = graphViewBuilder.graphView.getGraphPortView(graphPortName)
-			containerDrawing.add(createPortViewComponent(graphPortView!!.model!!))
+			containerDrawing.add(createPortViewComponent(graphPortView!!.model))
 			JTreeUtil.expandAll(containerTree.model.treeModel.root as TreeNode)
 			return this
 		}

@@ -22,10 +22,10 @@ class SplitterViewBeanInfo : DigitalComponentBeanInfo<SplitterView>() {
     override fun addProperties(bean: SplitterView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-        val connected = bean.model!!.isConnected
+        val connected = bean.model.isConnected
 
         bitWidth.bind(editor, { bean.bitWidth }, {bean.bitWidth = it!! }, !connected)
-        branchCount.bind(editor, { bean.branchCount }, { bean.branchCount = it!! }, !connected, { bean.model!!.supportedBranchCounts.contains(it)} )
+        branchCount.bind(editor, { bean.branchCount }, { bean.branchCount = it!! }, !connected, { bean.model.supportedBranchCounts.contains(it)} )
         handedness.bind(editor, { bean.handedness }, { bean.handedness = it!! }, !connected)
 
         properties.add(bitWidth)

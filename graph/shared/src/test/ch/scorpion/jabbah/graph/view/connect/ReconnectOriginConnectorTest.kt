@@ -37,9 +37,9 @@ class ReconnectOriginConnectorTest : AbstractConnectorTest(GraphViewModule.recon
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 
 		releaseMouseAt(120, 200)
-		assertFalse(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v3.model!!.getOutput()))
-		assertEquals(v3.getPortConnectionPoint(v3.model!!.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
+		assertFalse(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(draggedEdgeView.model.isConnectedWith(v3.model.getOutput()))
+		assertEquals(v3.getPortConnectionPoint(v3.model.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
 	}
 
 	@Test
@@ -51,9 +51,9 @@ class ReconnectOriginConnectorTest : AbstractConnectorTest(GraphViewModule.recon
 
 		editor.commandManager.undo()
 
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertFalse(draggedEdgeView.model!!.isConnectedWith(v3.model!!.getOutput()))
-		assertEquals(v1.getPortConnectionPoint(v1.model!!.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
+		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
+		assertFalse(draggedEdgeView.model.isConnectedWith(v3.model.getOutput()))
+		assertEquals(v1.getPortConnectionPoint(v1.model.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
 	}
 
 	@Test
@@ -63,7 +63,7 @@ class ReconnectOriginConnectorTest : AbstractConnectorTest(GraphViewModule.recon
 		dragMouseTo(150, 200)
 		releaseMouseAt(150, 200)
 
-		assertFalse(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
+		assertFalse(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
 		assertEquals(Point2D(150, 200), draggedEdgeView.originEndpointView.location)
 	}
 
@@ -76,8 +76,8 @@ class ReconnectOriginConnectorTest : AbstractConnectorTest(GraphViewModule.recon
 
 		editor.commandManager.undo()
 
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertEquals(v1.getPortConnectionPoint(v1.model!!.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
+		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
+		assertEquals(v1.getPortConnectionPoint(v1.model.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
 	}
 
 	@Test
@@ -88,7 +88,7 @@ class ReconnectOriginConnectorTest : AbstractConnectorTest(GraphViewModule.recon
 
 		pressEscape()
 
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertEquals(v1.getPortConnectionPoint(v1.model!!.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
+		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
+		assertEquals(v1.getPortConnectionPoint(v1.model.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
 	}
 }

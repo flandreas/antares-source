@@ -29,13 +29,13 @@ class RgbLEDView(
 		get() {
 			// Don't use GraphElementView#getId() as part of the controlId, because that one might be changed
 			// when ControlViews (event as part of a wrapping Component) are added to a Drawing
-			return "rgbLED:${model!!.id}"
+			return "rgbLED:${model.id}"
 		}
 
 	/** ---- [ControlViewSource] */
 
 	override fun createControlView(): ControlView<RgbLED> {
-		val clone = RgbLEDView(styleProvider, model!!)
+		val clone = RgbLEDView(styleProvider, model)
 		clone.isShowPortViews = false
 		clone.location = Point2D(0, 0)
 		return clone
@@ -45,7 +45,7 @@ class RgbLEDView(
 
 	/** ---- [RgbLEDView] */
 
-	override fun getBulbColor(): Color = model!!.color
+	override fun getBulbColor(): Color = model.color
 
 	override fun drawBulb(context: DrawContext) {
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {

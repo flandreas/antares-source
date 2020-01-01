@@ -78,11 +78,11 @@ class KeyboardView(
 	/** ---- UI properties */
 
 	var bufferSize: Int
-		get() = model!!.bufferSize
+		get() = model.bufferSize
 		set(value) {
-			if (value != model!!.bufferSize) {
+			if (value != model.bufferSize) {
 				invalidate()
-				model!!.bufferSize = value
+				model.bufferSize = value
 				invalidate()
 			}
 		}
@@ -94,7 +94,7 @@ class KeyboardView(
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
-			port = (model as Keyboard).clockInput,
+			port = model.clockInput,
 			direction = Direction.EAST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			x = WIDTH + DigitalPortView.LENGTH,
@@ -102,7 +102,7 @@ class KeyboardView(
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
-			port = (model as Keyboard).readEnableInput,
+			port = model.readEnableInput,
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			x = WIDTH + DigitalPortView.LENGTH - 2 * Look.SCALE,
@@ -110,7 +110,7 @@ class KeyboardView(
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
-			port = (model as Keyboard).clearInput,
+			port = model.clearInput,
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			x = WIDTH + DigitalPortView.LENGTH - 5 * Look.SCALE,
@@ -118,7 +118,7 @@ class KeyboardView(
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
-			port = (model as Keyboard).dataOutput,
+			port = model.dataOutput,
 			direction = Direction.WEST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			showBitWidthAnnotation = false,
@@ -142,7 +142,7 @@ class KeyboardView(
 
 	private fun buildDisplayedText(): String {
 		val builder = StringBuilder()
-		model?.getBytes()?.forEach { builder.append(KeyHandler.displayKey(it.toInt())) }
+		model.getBytes().forEach { builder.append(KeyHandler.displayKey(it.toInt())) }
 		return builder.toString()
 	}
 
@@ -154,14 +154,14 @@ class KeyboardView(
 
 	/** ---- [ControlViewSource] */
 
-	override val controlId: String get() = "keyboard:" + model!!.id
+	override val controlId: String get() = "keyboard:" + model.id
 
 	override val controlName: String get() = super.controlName
 
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
 	override fun createControlView(): ControlView<Keyboard> {
-		val clone = KeyboardView(styleProvider, model!!)
+		val clone = KeyboardView(styleProvider, model)
 		clone.isShowPortViews = false
 		clone.location = Point2D.ZERO
 		copyControlViewProperties(this, clone)
@@ -221,7 +221,7 @@ class KeyboardView(
 		context.g.color = context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor
 		context.g.fillRect(x + INSET, y + INSET, width - INSET - RIGHT_INSET, height - 2 * INSET)
 
-		if (model!!.isFull) {
+		if (model.isFull) {
 			context.g.color = transparent.applyTo(Themes.get<GraphTheme>().error.foregroundColor)
 		} else {
 			context.g.color = context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).foregroundColor
@@ -261,7 +261,7 @@ class KeyboardView(
 			val keyChar = context.keyEvent!!.keyChar
 			LOG.debug("keyPressed '$keyChar'")
 			if (KeyHandler.acceptKey(keyChar)) {
-				model!!.enter(keyChar.toByte(), context.signalHandler)
+				model.enter(keyChar.toByte(), context.signalHandler)
 			} else {
 				LOG.debug("reject character '$keyChar'")
 			}

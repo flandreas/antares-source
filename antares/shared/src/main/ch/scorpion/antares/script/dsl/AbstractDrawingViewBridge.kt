@@ -43,8 +43,8 @@ abstract class AbstractDrawingViewBridge(
 
 	protected fun getInput(inputId: Int): CircuitInOutView? {
 		getComponent(inputId, CircuitInOutView::class,Translations.getString("library.element.CircuitInOut.name"))?.let { input ->
-			if (!input.model!!.portType.isInput) {
-				LOG.debug("\"expecting input CircuitInOutView, but PortType is ${input.model!!.portType}")
+			if (!input.model.portType.isInput) {
+				LOG.debug("\"expecting input CircuitInOutView, but PortType is ${input.model.portType}")
 				postTypeIssue(inputId, Translations.getString("library.element.CircuitInOut.name"), Translations.getString("graph.property.portType.output"))
 				return null
 			}
@@ -54,8 +54,8 @@ abstract class AbstractDrawingViewBridge(
 
 	protected fun getOutput(outputId: Int): CircuitInOutView? {
 		getComponent(outputId, CircuitInOutView::class,Translations.getString("library.element.CircuitInOut.name"))?.let { output ->
-			if (!output.model!!.portType.isOutput) {
-				LOG.debug("\"expecting output CircuitInOutView, but PortType is ${output.model!!.portType}")
+			if (!output.model.portType.isOutput) {
+				LOG.debug("\"expecting output CircuitInOutView, but PortType is ${output.model.portType}")
 				postTypeIssue(outputId, Translations.getString("library.element.CircuitInOut.name"), Translations.getString("graph.property.portType.input"))
 				return null
 			}

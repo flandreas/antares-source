@@ -46,7 +46,7 @@ import ch.scorpion.jabbah.io.*
  * A standard implementation of the [SubGraphVerticeView] interface.
  */
 class SubGraphVerticeViewImpl(
-	graphElement: SubGraphVerticeRef? = null,
+	graphElement: SubGraphVerticeRef = SubGraphVerticeRef(),
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
@@ -139,9 +139,9 @@ class SubGraphVerticeViewImpl(
 		}
 
 	var descriptionProperty: TextProperty
-		get() = model!!.descriptionProperty
+		get() = model.descriptionProperty
 		set(value) {
-			model!!.descriptionProperty = value
+			model.descriptionProperty = value
 		}
 
 	/** ---- [Transparent] */
@@ -250,13 +250,13 @@ class SubGraphVerticeViewImpl(
 
 		if (STORABLE_MODEL_ID == reference.name) {
 			if (customizedContainerDrawing == null) {
-				val graph = repository.getOptionalMetaGraph(model!!.graphUUID!!)
+				val graph = repository.getOptionalMetaGraph(model.graphUUID!!)
 				if (graph != null) {
 					fillFromContainerDrawing(graph.containerDrawing)
-					model!!.shortDescription = graph.graph.model!!.description.value
+					model.shortDescription = graph.graph.model!!.description.value
 				}
 			}
-			if (model!!.designError != null) {
+			if (model.designError != null) {
 				fillDesignErrorRepresentation()
 			}
 		}
@@ -272,10 +272,10 @@ class SubGraphVerticeViewImpl(
 		// Make sure that SubGraphVerticeView is filled from ContainerDrawing AFTER the PortViewComponents
 		// in the ContainerDrawings have resolved their model SubCircuitPort. We cannot make more sure than doing
 		// it after all resolutions have been done.
-		if (customizedContainerDrawing != null && model!!.designError == null) {
-			val graph = repository.getMetaGraph(model!!.graphUUID!!)
+		if (customizedContainerDrawing != null && model.designError == null) {
+			val graph = repository.getMetaGraph(model.graphUUID!!)
 			fillFromContainerDrawing(customizedContainerDrawing!!)
-			model!!.shortDescription = graph.graph.model!!.description.value
+			model.shortDescription = graph.graph.model!!.description.value
 		}
 	}
 
@@ -308,7 +308,7 @@ class SubGraphVerticeViewImpl(
 
 	override fun bind(graph: Graph) {
 		super.bind(graph)
-		if (model!!.designError == null) {
+		if (model.designError == null) {
 			val innerGraph = getGraph()
 			getControlViewComponents().forEach { it.bindToGraph(innerGraph, repository, storableCreator) }
 		}

@@ -109,7 +109,7 @@ class DigitalEdgeViewNetAnimation(
 		val isReverse = edgeView.getConnectionEndpointType(startConnectable) != EdgeViewEndpointType.ORIGIN
 		val animationView = DigitalEdgeAnimationView(
 			edgeView,
-			startEdgeView.model!!.signalBuffer as DigitalSignal,
+			startEdgeView.model.signalBuffer as DigitalSignal,
 			startPort.signalRepresentation,
 			isReverse,
 			styleProvider
@@ -170,7 +170,7 @@ class DigitalEdgeViewNetAnimation(
 			predecessorMap.remove(animationView.edgeView)
 
 			if (predecessorMap.isEmpty()) {
-				startEdgeView.model!!.actingVisualized(scheduler, actorListener, actorData)
+				startEdgeView.model.actingVisualized(scheduler, actorListener, actorData)
 				for (terminatedAnimationView in terminatedAnimationViews) {
 					drawingView.animationContainer.remove(terminatedAnimationView)
 				}

@@ -95,33 +95,31 @@ class ROMView(
 
 		val addressPV = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getAddressInput(),
+			port = model.getAddressInput(),
 			direction = Direction.WEST)
 		addressPV.setLocation(addressPV.length, 0)
 		addPortView(addressPV)
 
 		val csPV = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getChipSelectInput(),
+			port = model.getChipSelectInput(),
 			direction = Direction.SOUTH)
 		csPV.setLocation(csPV.length + MIN_WIDTH / 2, MIN_HEIGHT / 2)
 		addPortView(csPV)
 
 		val dataPV = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getDataOutput(),
+			port = model.getDataOutput(),
 			direction = Direction.EAST)
 		dataPV.setLocation(dataPV.length + MIN_WIDTH, 0)
 		addPortView(dataPV)
 
-		if (model != null) {
-			label.text = buildLabelText()
-			contentsView = AddressableContentsView(
-				addressable = model!!,
-				rowsCount = contentRowsCount,
-				columnsCount = contentColumnsCount,
-				showDisassembler = showDisassembler)
-		}
+		label.text = buildLabelText()
+		contentsView = AddressableContentsView(
+			addressable = model,
+			rowsCount = contentRowsCount,
+			columnsCount = contentColumnsCount,
+			showDisassembler = showDisassembler)
 	}
 
 	init {
@@ -132,19 +130,19 @@ class ROMView(
 	/** ---- UI properties */
 
 	var addressWidth: BitWidth
-		get() = model!!.addressWidth
+		get() = model.addressWidth
 		set(value) {
 			invalidate()
-			model!!.setAddressWidth(value)
+			model.setAddressWidth(value)
 			invalidate()
 			validate()
 		}
 
 	var dataWidth: BitWidth
-		get() = model!!.dataWidth
+		get() = model.dataWidth
 		set(value) {
 			invalidate()
-			model!!.setDataWidth(value)
+			model.setDataWidth(value)
 			invalidate()
 			validate()
 		}
@@ -179,9 +177,9 @@ class ROMView(
 		}
 
 	var disassemblerConfig: TextProperty
-		get() = TextProperty(model!!.disassemblerConfig)
+		get() = TextProperty(model.disassemblerConfig)
 		set(value) {
-			model!!.disassemblerConfig = value.text!!
+			model.disassemblerConfig = value.text!!
 		}
 
 	var showDisassembler: Boolean
@@ -330,7 +328,7 @@ class ROMView(
 		invalidate()
 		contentsView.updateGeometry()
 
-		val addressPV = getPortView(model!!.getAddressInput())!!
+		val addressPV = getPortView(model.getAddressInput())!!
 		val x = addressPV.unconnectedLength
 
 		val totalHeight = Look.scaleToDoubleGrid(calculateHeight())
@@ -344,10 +342,10 @@ class ROMView(
 
 		addressPV.setLocation(addressPV.unconnectedLength, 0)
 
-		val dataPV = getPortView(model!!.getDataOutput())!!
+		val dataPV = getPortView(model.getDataOutput())!!
 		dataPV.setLocation(dataPV.unconnectedLength + width, 0.0)
 
-		getPortView(model!!.getChipSelectInput())!!.setLocation(x + width / 2, height / 2)
+		getPortView(model.getChipSelectInput())!!.setLocation(x + width / 2, height / 2)
 
 		invalidate()
 
@@ -390,7 +388,7 @@ class ROMView(
 	}
 
 	private fun requestOpenMemoryContents(readonly: Boolean, newDesktopView: Boolean) {
-		eventBus.post(OpenMemoryContentsRequest(this, label.text, model!!.memory, model!!, readonly, newDesktopView))
+		eventBus.post(OpenMemoryContentsRequest(this, label.text, model.memory, model, readonly, newDesktopView))
 	}
 
 	private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {

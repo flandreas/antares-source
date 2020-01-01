@@ -45,7 +45,7 @@ class StoreTest {
 		val clone = StorableCloner.cloneUsingCreator(storable, IOModule.storableCreator) as GraphStorable
 		val orGateView = clone.graphView.getWithId(2) as OrGateView
 
-		assertEquals(3, orGateView.model!!.inputCount)
+		assertEquals(3, orGateView.model.inputCount)
 
 		var portViewCount = 0
 		for (portView in orGateView.getPortViews()) {

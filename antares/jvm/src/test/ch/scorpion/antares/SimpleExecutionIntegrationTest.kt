@@ -36,15 +36,15 @@ class SimpleExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		setupLibrary()
 
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
-		builder.addVerticeView(switchView).model!!.addActorListener(actorListener)
-		builder.addVerticeView(ledView).model!!.addActorListener(actorListener)
+		builder.addVerticeView(switchView).model.addActorListener(actorListener)
+		builder.addVerticeView(ledView).model.addActorListener(actorListener)
 		edgeView = builder.connect(switchView, ledView)
-		edgeView.model!!.addActorListener(actorListener)
+		edgeView.model.addActorListener(actorListener)
 
 		// Note that SchedulerImpl uses a timer interval of 10 ms when running at full speed,
 		// thus the distance of two time samples must be more than 10 ms to be recognizable by the test
-		switchView.model!!.propagationDelay = 1000 * MILLION
-		edgeView.model!!.propagationDelay = 100 * MILLION
+		switchView.model.propagationDelay = 1000 * MILLION
+		edgeView.model.propagationDelay = 100 * MILLION
 
 		circuitView = builder.build()
 	}
@@ -53,26 +53,26 @@ class SimpleExecutionIntegrationTest : AbstractJvmCircuitTest() {
 	@Ignore
 	fun shouldRunThrough() {
 		startSimulation()
-		assertEquals(ActorState.Waiting, switchView.model!!.state)
+		assertEquals(ActorState.Waiting, switchView.model.state)
 
 		proceedToNanos(1000 * MILLION)
-		assertEquals(ActorState.Acting, switchView.model!!.state)
-		assertEquals(ActorState.Waiting, edgeView.model!!.state)
+		assertEquals(ActorState.Acting, switchView.model.state)
+		assertEquals(ActorState.Waiting, edgeView.model.state)
 		assertEquals(2, scheduler.numberOfRemainingSlots)
 
-		switchView.model!!.actingVisualized(scheduler, actorListener)
-		assertEquals(ActorState.Idle, switchView.model!!.state)
-		assertEquals(ActorState.Waiting, edgeView.model!!.state)
+		switchView.model.actingVisualized(scheduler, actorListener)
+		assertEquals(ActorState.Idle, switchView.model.state)
+		assertEquals(ActorState.Waiting, edgeView.model.state)
 
 		// EdgeView uses frozen time
 		proceedFrozenTimeToNanos(1100 * MILLION)
 		scheduler.printSchedule()
-		assertEquals(ActorState.Acting, edgeView.model!!.state)
+		assertEquals(ActorState.Acting, edgeView.model.state)
 		assertEquals(1, scheduler.numberOfRemainingSlots)
 
-		edgeView.model!!.actingVisualized(scheduler, actorListener)
-		ledView.model!!.actingVisualized(scheduler, actorListener, ledView.model!!.createActorData(ledView.model!!.getInput<DigitalSignal>()))
-		assertEquals(ActorState.Idle, edgeView.model!!.state)
-		assertEquals(ActorState.Idle, ledView.model!!.state)
+		edgeView.model.actingVisualized(scheduler, actorListener)
+		ledView.model.actingVisualized(scheduler, actorListener, ledView.model.createActorData(ledView.model.getInput<DigitalSignal>()))
+		assertEquals(ActorState.Idle, edgeView.model.state)
+		assertEquals(ActorState.Idle, ledView.model.state)
 	}
 }

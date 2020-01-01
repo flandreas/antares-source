@@ -101,22 +101,22 @@ class TerminalView(
 	/** ---- UI properties */
 
 	var rowsCount: Int
-		get() = model!!.rowsCount
+		get() = model.rowsCount
 		set(value) {
 			if (value != rowsCount) {
 				invalidate()
-				model!!.rowsCount = value
+				model.rowsCount = value
 				updateGeometry()
 				invalidate()
 			}
 		}
 
 	var columnsCount: Int
-		get() = model!!.columnsCount
+		get() = model.columnsCount
 		set(value) {
 			if (value != columnsCount) {
 				invalidate()
-				model!!.columnsCount = value
+				model.columnsCount = value
 				updateGeometry()
 				invalidate()
 			}
@@ -145,7 +145,7 @@ class TerminalView(
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.clockInput,
+			port = model.clockInput,
 			direction = Direction.WEST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			x = DigitalPortView.LENGTH,
@@ -153,7 +153,7 @@ class TerminalView(
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.dataInput,
+			port = model.dataInput,
 			direction = Direction.WEST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			showBitWidthAnnotation = false,
@@ -162,7 +162,7 @@ class TerminalView(
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.writeEnableInput,
+			port = model.writeEnableInput,
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			x = DigitalPortView.LENGTH + 3 * Look.SCALE,
@@ -170,7 +170,7 @@ class TerminalView(
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.clearInput,
+			port = model.clearInput,
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			x = DigitalPortView.LENGTH + 7 * Look.SCALE,
@@ -237,8 +237,8 @@ class TerminalView(
 			context.g.color = lightColor?.onColor ?: Themes.get<AntaresTheme>().screen.textColor
 
 			var y = rectangle.minY.toInt() + BORDER_WIDTH + textRenderInfo.ascent
-			for (row in 0 until model!!.displayedRowsCount) {
-				context.g.drawString(rowToString(model!!.getRow(row)), BORDER_WIDTH + rectangle.minX.toInt() + SCREEN_H_INSET, y.toInt())
+			for (row in 0 until model.displayedRowsCount) {
+				context.g.drawString(rowToString(model.getRow(row)), BORDER_WIDTH + rectangle.minX.toInt() + SCREEN_H_INSET, y.toInt())
 				y += cellHeight
 			}
 		}
@@ -254,12 +254,12 @@ class TerminalView(
 
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
-	override val controlId: String get() = "terminal:" + model!!.id
+	override val controlId: String get() = "terminal:" + model.id
 
 	override val controlName: String get() = super.controlName
 
 	override fun createControlView(): ControlView<Terminal> {
-		val clone = TerminalView(styleProvider, model!!)
+		val clone = TerminalView(styleProvider, model)
 		clone.isShowPortViews = false
 		clone.location = Point2D.ZERO
 		copyControlViewProperties(this, clone)

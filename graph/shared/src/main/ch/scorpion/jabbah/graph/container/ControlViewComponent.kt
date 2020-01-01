@@ -48,7 +48,7 @@ class ControlViewComponent(
 	var controlModelLink: DeepVerticeLink
 		private set
 
-	var controlView: ControlView<Vertice>? = null
+	lateinit var controlView: ControlView<Vertice>
 
     private var drawableOwner: DrawableOwner? = null
 
@@ -59,7 +59,7 @@ class ControlViewComponent(
 	    if (source != null) {
 		    controlView = source.createControlView()
 		    controlView!!.id = source.id
-		    controlModelLink = baseLink.append(controlView!!.model!!.id)
+		    controlModelLink = baseLink.append(controlView!!.model.id)
 		    drawableOwner = DrawableOwner(this, controlView!!)
 	    } else {
 		    controlModelLink = DeepVerticeLink.EMPTY
@@ -74,7 +74,7 @@ class ControlViewComponent(
 
 	/** ---- [GraphElementView] interface */
 
-	override val model: Vertice? get() = controlView?.model
+	override val model: Vertice get() = controlView?.model
 
 	override fun bind(graph: Graph) {
 		// empty

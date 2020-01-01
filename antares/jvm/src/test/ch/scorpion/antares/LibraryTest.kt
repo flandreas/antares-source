@@ -53,12 +53,12 @@ class LibraryTest {
 		val item = libraryHolder.library.get(TestLibraryBuilder.CUSTOM_NOT) as LibraryElement
 		val vvr = item.getNewInstance<SubGraphVertice>() as SubGraphVerticeView
 
-		assertEquals(TestLibraryBuilder.CUSTOM_NOT, vvr.model!!.name)
-		assertEquals("I1", vvr.model!!.getInput<DigitalSignal>().name)
-		assertEquals("O1", vvr.model!!.getOutput<DigitalSignal>().name)
+		assertEquals(TestLibraryBuilder.CUSTOM_NOT, vvr.model.name)
+		assertEquals("I1", vvr.model.getInput<DigitalSignal>().name)
+		assertEquals("O1", vvr.model.getOutput<DigitalSignal>().name)
 
 		for (portView in vvr.getPortViews()) {
-			assertSame(portView.port as Port<DigitalSignal>, vvr.model!!.getPort(portView.port.name!!))
+			assertSame(portView.port as Port<DigitalSignal>, vvr.model.getPort(portView.port.name!!))
 		}
 	}
 
@@ -76,13 +76,13 @@ class LibraryTest {
 		val nandItem = restoredLibrary.get(TestLibraryBuilder.CUSTOM_NAND) as LibraryElement
 		val vvr = nandItem.getNewInstance<SubGraphVertice>() as SubGraphVerticeView
 
-		assertEquals(TestLibraryBuilder.CUSTOM_NAND, vvr.model!!.name)
-		assertEquals("I1", vvr.model!!.getInput<DigitalSignal>(1).name)
-		assertEquals("I2", vvr.model!!.getInput<DigitalSignal>(2).name)
-		assertEquals("O1", vvr.model!!.getOutput<DigitalSignal>().name)
+		assertEquals(TestLibraryBuilder.CUSTOM_NAND, vvr.model.name)
+		assertEquals("I1", vvr.model.getInput<DigitalSignal>(1).name)
+		assertEquals("I2", vvr.model.getInput<DigitalSignal>(2).name)
+		assertEquals("O1", vvr.model.getOutput<DigitalSignal>().name)
 
 		for (portView in vvr.getPortViews()) {
-			assertSame(portView.port as Port<DigitalSignal>, vvr.model!!.getPort(portView.port.name!!))
+			assertSame(portView.port as Port<DigitalSignal>, vvr.model.getPort(portView.port.name!!))
 		}
 	}
 

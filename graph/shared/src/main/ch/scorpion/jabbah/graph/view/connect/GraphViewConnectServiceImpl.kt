@@ -28,7 +28,7 @@ class GraphViewConnectServiceImpl(
 
 	override fun <T : Any> connectToOrigin(edgeView: EdgeView<T>, connection: Connection<T>) {
 		LOG.debug("connect EdgeView ${edgeView.id} to Port ${connection.port?.portId} of origin ConnectableView ${connection.connectableView.id}")
-		connectPortToNet(connection.port, edgeView.model!!)
+		connectPortToNet(connection.port, edgeView.model)
 		edgeView.connectToOrigin(connection)
 		edgeView.layout.layoutOrigin()
 	}
@@ -39,7 +39,7 @@ class GraphViewConnectServiceImpl(
 		if (edgeView.origin?.connectableView is NodeView<*>) {
 			origNodeView = edgeView.origin?.connectableView as NodeView<T>
 		}
-		unconnectPortFromNet(edgeView.origin?.port, edgeView.model!!)
+		unconnectPortFromNet(edgeView.origin?.port, edgeView.model)
 		edgeView.unconnectFromOrigin()
 
 		if (origNodeView != null && origNodeView.getEdgeViews().size == 2) {
@@ -59,7 +59,7 @@ class GraphViewConnectServiceImpl(
 
 	override fun <T : Any> connectToDestination(edgeView: EdgeView<T>, connection: Connection<T>) {
 		LOG.debug("connect EdgeView ${edgeView.id} to Port ${connection.port?.portId} of destination ConnectableView ${connection.connectableView.id}")
-		connectPortToNet(connection.port, edgeView.model!!)
+		connectPortToNet(connection.port, edgeView.model)
 		edgeView.connectToDestination(connection)
 		edgeView.layout.layoutDestination()
 	}
@@ -70,7 +70,7 @@ class GraphViewConnectServiceImpl(
 		if (edgeView.destination?.connectableView is NodeView<*>) {
 			destNodeView = edgeView.destination!!.connectableView as NodeView<T>
 		}
-		unconnectPortFromNet(edgeView.destination?.port, edgeView.model!!)
+		unconnectPortFromNet(edgeView.destination?.port, edgeView.model)
 		edgeView.unconnectFromDestination()
 
 		if (destNodeView != null && destNodeView.getEdgeViews().size == 2) {
@@ -109,15 +109,15 @@ class GraphViewConnectServiceImpl(
 	}
 
 	override fun unconnectEdgeViewOrigin(edgeView: EdgeView<Any>) {
-		if (edgeView.model != null && edgeView.origin?.port != null) {
-			edgeView.model!!.unconnect(edgeView.origin!!.port!!)
+		if (edgeView.origin?.port != null) {
+			edgeView.model.unconnect(edgeView.origin!!.port!!)
 			edgeView.unconnectFromOrigin()
 		}
 	}
 
 	override fun unconnectEdgeViewDestination(edgeView: EdgeView<Any>) {
-		if (edgeView.model != null && edgeView.destination?.port != null) {
-			edgeView.model!!.unconnect(edgeView.destination!!.port!!)
+		if (edgeView.destination?.port != null) {
+			edgeView.model.unconnect(edgeView.destination!!.port!!)
 			edgeView.unconnectFromDestination()
 		}
 	}

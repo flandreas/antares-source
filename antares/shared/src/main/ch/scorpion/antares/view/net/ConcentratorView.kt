@@ -49,11 +49,11 @@ class ConcentratorView(
         }
 
     var bitWidth: BitWidth
-        get() = model!!.bitWidth
+        get() = model.bitWidth
         set(value) {
             if (value != bitWidth) {
                 invalidate()
-                model!!.bitWidth = value
+                model.bitWidth = value
                 modelExchanged(model)
                 invalidate()
                 update()
@@ -61,11 +61,11 @@ class ConcentratorView(
         }
 
     var branchCount: BranchCount
-        get() = model!!.branchCount
+        get() = model.branchCount
         set(value) {
             if (value != branchCount) {
                 invalidate()
-                model!!.branchCount = value
+                model.branchCount = value
                 modelExchanged(model)
                 invalidate()
                 update()
@@ -73,9 +73,9 @@ class ConcentratorView(
         }
 
     var signalRepresentation: DigitalSignalRepresentation
-        get() = (model!!.getOutput<DigitalSignal>() as DigitalPort).signalRepresentation
+        get() = (model.getOutput<DigitalSignal>() as DigitalPort).signalRepresentation
         set(value) {
-            (model!!.getOutput<DigitalSignal>() as DigitalPort).signalRepresentation = value
+            (model.getOutput<DigitalSignal>() as DigitalPort).signalRepresentation = value
         }
 
     init {
@@ -85,11 +85,11 @@ class ConcentratorView(
     override fun modelExchanged(oldModel: Concentrator?) {
         super.modelExchanged(oldModel)
 
-        val height = 2 * PORT_INSET + PORT_DISTANCE * (model!!.inputCount - 1)
+        val height = 2 * PORT_INSET + PORT_DISTANCE * (model.inputCount - 1)
 
         val outputPortView = DigitalPortView(
                 styleProvider = styleProvider,
-                port = model!!.getOutput(),
+                port = model.getOutput(),
                 direction = Direction.EAST,
                 portLabelPosition = PortLabelPosition.EXTERNAL,
                 x = 0,
@@ -102,7 +102,7 @@ class ConcentratorView(
         val dy = if (handedness == Handedness.LEFT) -PORT_DISTANCE else +PORT_DISTANCE
         var y = if (handedness == Handedness.LEFT) height / 2 - PORT_INSET else -height / 2 + PORT_INSET
 
-        for (input in model!!.getInputs()) {
+        for (input in model.getInputs()) {
             val ipv = DigitalPortView(
                     styleProvider = styleProvider,
                     port = input as Port<DigitalSignal>,

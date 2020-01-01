@@ -130,7 +130,7 @@ class SwitchView(
 		super.modelExchanged(oldModel)
 		val portView = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getOutput(),
+			port = model.getOutput(),
 			direction = Direction.EAST)
 		portView.setLocation(-portView.length.toDouble(), 0.0)
 		addPortView(portView)
@@ -140,10 +140,10 @@ class SwitchView(
 	/** ---- UI properties */
 
 	var name: String?
-		get() = model!!.name
+		get() = model.name
 		set(value) {
-			if (value != model!!.name) {
-				model!!.name = value
+			if (value != model.name) {
+				model.name = value
 				updateLabels()
 				validate()
 				postControlViewSourceChangeEvent(eventBus)
@@ -222,7 +222,7 @@ class SwitchView(
 		if (labelPosition != VerticeLabelPosition.INTERNAL) {
 			context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
 		} else {
-			context.g.color = if (model!!.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor
+			context.g.color = if (model.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor
 		}
 		if (labelPosition == VerticeLabelPosition.EXTERNAL) {
 			externalLabel.draw(context)
@@ -278,7 +278,7 @@ class SwitchView(
 		get() {
 			// Don't use GraphElementView#getId() as part of the controlId, because that one might be changed
 			// when ControlViews (event as part of a wrapping Component) are added to a Drawing
-			return "switch:" + model!!.id
+			return "switch:" + model.id
 		}
 
 	override val controlName: String get() = super.controlName
@@ -286,7 +286,7 @@ class SwitchView(
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
 	override fun createControlView(): ControlView<Switch> {
-		val clone = SwitchView(styleProvider, model!!)
+		val clone = SwitchView(styleProvider, model)
 		clone.isShowPortViews = false
 		clone.location = Point2D.ZERO
 		copyControlViewProperties(this, clone)
@@ -338,7 +338,7 @@ class SwitchView(
 	}
 
 	private fun drawSignalBackground(context: DrawContext) {
-		context.g.color = transparent.applyTo(Bit.of(model!!.isOn).color.foregroundColor)
+		context.g.color = transparent.applyTo(Bit.of(model.isOn).color.foregroundColor)
 		context.g.fillRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
 			widthInt - 2 * BORDER_WIDTH, heightInt - 2 * BORDER_WIDTH)
 	}
@@ -353,7 +353,7 @@ class SwitchView(
 	}
 
 	private fun drawDisabled(context: DrawContext) {
-		if (model!!.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true) {
+		if (model.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true) {
 			context.g.color = Look.disabledColor()
 			context.g.fillRect(xInt, yInt, widthInt, heightInt)
 		}
@@ -380,10 +380,10 @@ class SwitchView(
 	 * externalLabel when drawn with the current font.
 	 */
 	private fun calculateWidth(): Int {
-		if (labelPosition != VerticeLabelPosition.INTERNAL || StringUtils.isEmpty(model!!.name)) {
+		if (labelPosition != VerticeLabelPosition.INTERNAL || StringUtils.isEmpty(model.name)) {
 			return SIZE
 		}
-		val tri = TextRenderInfoFactory.measureSingleLineText(model!!.name!!, font)
+		val tri = TextRenderInfoFactory.measureSingleLineText(model.name!!, font)
 		val requiredSpace = tri.textBounds.width + 2 * LABEL_INSET
 		return (SIZE * max(1.0, ceil(requiredSpace / SIZE))).toInt()
 	}
@@ -405,11 +405,11 @@ class SwitchView(
 		private fun drawContent(context: DrawContext) {
 			drawSignalBackground(context)
 
-			internalLabel.color = transparent.applyTo(if (model!!.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
+			internalLabel.color = transparent.applyTo(if (model.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
 			if (labelPosition == VerticeLabelPosition.INTERNAL) {
-				internalLabel.text = StringUtils.orEmpty(model!!.name)
+				internalLabel.text = StringUtils.orEmpty(model.name)
 			} else {
-				internalLabel.text = Bit.of(model!!.isOn).toHexString()
+				internalLabel.text = Bit.of(model.isOn).toHexString()
 			}
 			internalLabel.draw(context)
 		}
@@ -426,13 +426,13 @@ class SwitchView(
 
 		override fun drawExecuted(context: DrawContext) {
 			drawSignalBackground(context)
-			context.g.color = transparent.applyTo(if (model!!.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
+			context.g.color = transparent.applyTo(if (model.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
 			drawContent(context)
 		}
 
 		private fun drawContent(context: DrawContext) {
 			if (labelPosition == VerticeLabelPosition.INTERNAL) {
-				internalLabel.text = StringUtils.orEmpty(model!!.name)
+				internalLabel.text = StringUtils.orEmpty(model.name)
 				internalLabel.draw(context)
 			} else {
 				drawSymbol(context)
@@ -455,7 +455,7 @@ class SwitchView(
 		}
 
 		private fun drawPushButtonSymbol(context: DrawContext) {
-			if (model!!.isOn) {
+			if (model.isOn) {
 				context.g.drawLine(
 					-DigitalPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE,
 					-DigitalPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE)
@@ -473,7 +473,7 @@ class SwitchView(
 		}
 
 		private fun drawToggleSymbol(context: DrawContext) {
-			if (model!!.isOn) {
+			if (model.isOn) {
 				context.g.drawLine(
 					-DigitalPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE,
 					-DigitalPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE)
@@ -490,7 +490,7 @@ class SwitchView(
 		private var keyDown = false
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			model!!.toggle(context.signalHandler)
+			model.toggle(context.signalHandler)
 			context.mouseEvent?.consume()
 			requestFocus()
 			return this
@@ -502,7 +502,7 @@ class SwitchView(
 
 		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!toggle) {
-				model!!.toggle(context.signalHandler)
+				model.toggle(context.signalHandler)
 				context.mouseEvent?.consume()
 			}
 			return null
@@ -555,17 +555,17 @@ class SwitchView(
 		}
 
 		private fun switchOn(context: ActorInteractionContext) {
-			model!!.on(context.signalHandler)
+			model.on(context.signalHandler)
 			context.keyEvent?.consume()
 		}
 
 		private fun switchOff(context: ActorInteractionContext) {
-			model!!.off(context.signalHandler)
+			model.off(context.signalHandler)
 			context.keyEvent?.consume()
 		}
 
 		private fun toggle(context: ActorInteractionContext) {
-			model!!.toggle(context.signalHandler)
+			model.toggle(context.signalHandler)
 			context.keyEvent?.consume()
 		}
 	}

@@ -110,7 +110,7 @@ class OscilloscopeView(
 
 	override fun modelExchanged(oldModel: Oscilloscope?) {
 		super.modelExchanged(oldModel)
-		timeline = OscilloscopeViewTimeline(timelineScale, model!!, MIN_SIGNAL_WIDTH)
+		timeline = OscilloscopeViewTimeline(timelineScale, model, MIN_SIGNAL_WIDTH)
 	}
 
 	/** ---- [Drawable] */
@@ -186,8 +186,8 @@ class OscilloscopeView(
 
 	override fun resolutionDone() {
 		super.resolutionDone()
-		for (i in 1..model!!.portsCount) {
-			addPortView(GenericPortView<Any>(model!!.getPort(i.toString())))
+		for (i in 1..model.portsCount) {
+			addPortView(GenericPortView<Any>(model.getPort(i.toString())))
 			addRowView(i)
 		}
 		scaleRow.updateAddButtonState()
@@ -206,7 +206,7 @@ class OscilloscopeView(
 		val newRowNumber = rows.size + 1
 
 		val port = portFactory.createOscilloscopeProbePort<Any>(newRowNumber.toString())
-		model!!.addPort(port)
+		model.addPort(port)
 		addPortView(GenericPortView(port))
 
 		invalidate()
@@ -223,10 +223,10 @@ class OscilloscopeView(
 		refColorSequence.free(row.color)
 		findProbeViewInDrawing(row.rowNumber)?.let { (parent as DrawableContainer<Component>).remove(it) }
 
-		val port = model!!.getPort<Any>(rowNumber.toString())
+		val port = model.getPort<Any>(rowNumber.toString())
 		val portView = getPortView(port)
 		removePortView(portView!!)
-		model!!.removePort(port)
+		model.removePort(port)
 
 		rearrangeFromRowNumber(rowNumber)
 		adjustSize()
@@ -261,7 +261,7 @@ class OscilloscopeView(
 		for (i in rowNumber - 1 until rows.size) {
 			rows[i].location = Point2D(rows[i].location.x, rows[i].location.y - factory.rowHeight)
 			rows[i].rowNumber = i + 1
-			model!!.getPort<Any>((i + 2).toString()).name = (i + 1).toString()
+			model.getPort<Any>((i + 2).toString()).name = (i + 1).toString()
 		}
 		scaleRow.updateLocation()
 		scaleRow.updateAddButtonState()
@@ -289,10 +289,10 @@ class OscilloscopeView(
 			if (!context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 				return
 			}
-			val deltaTime = when (model!!.portsCount) {
+			val deltaTime = when (model.portsCount) {
 				0 -> 0
-				1 -> model!!.getSignalHistory("1")!!.minDelay
-				else -> model!!.minDiffTime
+				1 -> model.getSignalHistory("1")!!.minDelay
+				else -> model.minDiffTime
 			}
 			if (deltaTime > 0) {
 				val length = timeline.getDx(deltaTime) / timelineScale
@@ -387,8 +387,8 @@ class OscilloscopeView(
 
 		fun bindDrawer() {
 			drawer.bind(
-				model!!.getSignalHistory(rowNumber.toString())!!,
-				model!!.getSignalHistory("1"),
+				model.getSignalHistory(rowNumber.toString())!!,
+				model.getSignalHistory("1"),
 				timeline,
 				color
 			)

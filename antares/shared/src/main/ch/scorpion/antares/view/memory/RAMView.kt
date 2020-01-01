@@ -87,22 +87,22 @@ class RAMView(
 
 		val addressPV = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getAddressInput(),
+			port = model.getAddressInput(),
 			direction = Direction.WEST)
 		addressPV.setLocation(addressPV.length, 0)
 		addPortView(addressPV)
 
 		val dataPV = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getDataPort(),
+			port = model.getDataPort(),
 			direction = Direction.EAST)
 		dataPV.setLocation(dataPV.length + WIDTH, 0)
 		addPortView(dataPV)
 
-		if (model!!.hasClock) {
+		if (model.hasClock) {
 			val clockPV = DigitalPortView(
 				styleProvider = styleProvider,
-				port = model!!.getClockInput()!!,
+				port = model.getClockInput()!!,
 				direction = Direction.SOUTH)
 			clockPV.setLocation(clockPV.length + CLOCK_PORT_X_FACTOR * Look.GRID, HEIGHT / 2)
 			addPortView(clockPV)
@@ -110,33 +110,31 @@ class RAMView(
 
 		val csPV = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getChipSelectInput(),
+			port = model.getChipSelectInput(),
 			direction = Direction.SOUTH)
 		csPV.setLocation(csPV.length + CS_PORT_X_FACTOR * Look.GRID, HEIGHT / 2)
 		addPortView(csPV)
 
 		val writePV = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getWriteInput(),
+			port = model.getWriteInput(),
 			direction = Direction.SOUTH)
 		writePV.setLocation(writePV.length + WRITE_PORT_X_FACTOR * Look.GRID, HEIGHT / 2)
 		addPortView(writePV)
 
 		val clearPV = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getClearInput(),
+			port = model.getClearInput(),
 			direction = Direction.SOUTH)
 		clearPV.setLocation(clearPV.length + CLEAR_PORT_X_FACTOR * Look.GRID, HEIGHT / 2)
 		addPortView(clearPV)
 
-		if (model != null) {
-			label.text = buildLabelText()
-			contentsView = AddressableContentsView(
-				addressable = model!!,
-				rowsCount = contentRowsCount,
-				columnsCount = contentColumnsCount,
-				showDisassembler = false)
-		}
+		label.text = buildLabelText()
+		contentsView = AddressableContentsView(
+			addressable = model,
+			rowsCount = contentRowsCount,
+			columnsCount = contentColumnsCount,
+			showDisassembler = false)
 	}
 
 	init {
@@ -147,27 +145,27 @@ class RAMView(
 	/** ---- UI properties */
 
 	var addressWidth: BitWidth
-		get() = model!!.addressWidth
+		get() = model.addressWidth
 		set(value) {
 			invalidate()
-			model!!.setAddressWidth(value)
+			model.setAddressWidth(value)
 			invalidate()
 			validate()
 		}
 
 	var dataWidth: BitWidth
-		get() = model!!.dataWidth
+		get() = model.dataWidth
 		set(value) {
 			invalidate()
-			model!!.setDataWidth(value)
+			model.setDataWidth(value)
 			invalidate()
 			validate()
 		}
 	var hasClock: Boolean
-		get() = model!!.hasClock
+		get() = model.hasClock
 		set(value) {
 			invalidate()
-			model!!.hasClock = value
+			model.hasClock = value
 			modelExchanged(model)
 			invalidate()
 			validate()
@@ -259,7 +257,7 @@ class RAMView(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		label.text = if (text == null) buildLabelText() else text!!
-		if (model!!.getChipSelectInput().getIncomingSignal() == Word.of(true)) {
+		if (model.getChipSelectInput().getIncomingSignal() == Word.of(true)) {
 			if (ExecutionModule.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe) {
 				contentsView.handleCurrentAddressChanged()
 			}
@@ -337,7 +335,7 @@ class RAMView(
 		invalidate()
 		contentsView.updateGeometry()
 
-		val addressPV = getPortView(model!!.getAddressInput())!!
+		val addressPV = getPortView(model.getAddressInput())!!
 		val x = addressPV.unconnectedLength
 
 		val totalHeight = Look.scaleToDoubleGrid(calculateHeight())
@@ -351,15 +349,15 @@ class RAMView(
 
 		addressPV.setLocation(addressPV.unconnectedLength, 0)
 
-		val dataPV = getPortView(model!!.getDataPort())!!
+		val dataPV = getPortView(model.getDataPort())!!
 		dataPV.setLocation(dataPV.unconnectedLength + width, 0.0)
 
-		if (model!!.hasClock) {
-			getPortView(model!!.getClockInput()!!)!!.setLocation(x + CLOCK_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
+		if (model.hasClock) {
+			getPortView(model.getClockInput()!!)!!.setLocation(x + CLOCK_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
 		}
-		getPortView(model!!.getChipSelectInput())!!.setLocation(x + CS_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
-		getPortView(model!!.getWriteInput())!!.setLocation(x + WRITE_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
-		getPortView(model!!.getClearInput())!!.setLocation(x + CLEAR_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
+		getPortView(model.getChipSelectInput())!!.setLocation(x + CS_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
+		getPortView(model.getWriteInput())!!.setLocation(x + WRITE_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
+		getPortView(model.getClearInput())!!.setLocation(x + CLEAR_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
 
 		invalidate()
 
@@ -402,7 +400,7 @@ class RAMView(
 	}
 
 	private fun requestOpenMemoryContents(readonly: Boolean, newDesktopView: Boolean) {
-		eventBus.post(OpenMemoryContentsRequest(this, label.text, model!!.memory, model!!, readonly, newDesktopView))
+		eventBus.post(OpenMemoryContentsRequest(this, label.text, model.memory, model, readonly, newDesktopView))
 	}
 
 	private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {

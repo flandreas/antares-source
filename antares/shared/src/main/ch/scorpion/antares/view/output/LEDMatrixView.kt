@@ -94,35 +94,35 @@ class LEDMatrixView(
 	/** ---- UI controllable properties */
 
 	var columnWidth: BitWidth
-		get() = model!!.columnWidth
+		get() = model.columnWidth
 		set(value) {
 			if (value != columnWidth) {
-				model!!.columnWidth = value
+				model.columnWidth = value
 				modelExchanged(model)
 				postControlViewSourceChangeEvent(eventBus)
 			}
 		}
 
 	var rowWidth: BitWidth
-		get() = model!!.rowWidth
+		get() = model.rowWidth
 		set(value) {
 			if (value != rowWidth) {
-				model!!.rowWidth = value
+				model.rowWidth = value
 				modelExchanged(model)
 				postControlViewSourceChangeEvent(eventBus)
 			}
 		}
 
 	var afterglowDuration: Long
-		get() = model!!.afterglowDuration
+		get() = model.afterglowDuration
 		set(value) {
-			model!!.afterglowDuration = value
+			model.afterglowDuration = value
 		}
 
 	/** ---- [ControlView] */
 
 	override val controlId: String?
-		get() = "ledMatrix:${model!!.id}"
+		get() = "ledMatrix:${model.id}"
 
 	override fun bindToModel(model: LEDMatrix) {
 		this.model = model
@@ -154,7 +154,7 @@ class LEDMatrixView(
 	}
 
 	private fun copyControlViewProperties(source: LEDMatrixView, dest: LEDMatrixView) {
-		dest.model!!.name = source.model!!.name
+		dest.model.name = source.model.name
 		dest.lightColor = source.lightColor
 		dest.isCircleDots = source.isCircleDots
 		dest.size = source.size
@@ -169,7 +169,7 @@ class LEDMatrixView(
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
 	override fun createControlView(): ControlView<LEDMatrix> {
-		val clone = LEDMatrixView(styleProvider, model!!, lightColor)
+		val clone = LEDMatrixView(styleProvider, model, lightColor)
 		clone.isShowPortViews = false
 		clone.isDebug = false
 		copyControlViewProperties(this, clone)
@@ -184,7 +184,7 @@ class LEDMatrixView(
 
 		val columnPort = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getInput(LEDMatrix.COLUMN_PORT_NAME),
+			port = model.getInput(LEDMatrix.COLUMN_PORT_NAME),
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			x = calculateColumnPortPos().x.toInt(),
@@ -194,7 +194,7 @@ class LEDMatrixView(
 
 		val rowPort = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getInput(LEDMatrix.ROW_PORT_NAME),
+			port = model.getInput(LEDMatrix.ROW_PORT_NAME),
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			x = calculateRowPortPos().x.toInt(),
@@ -253,10 +253,10 @@ class LEDMatrixView(
 		context.g.fillRect(0, 0, width.toInt(), height.toInt())
 
 		var x = width - inset - DOT_SIZE * factor
-		for (column in 0 until model!!.columnWidth.width) {
+		for (column in 0 until model.columnWidth.width) {
 			var y = height - inset - DOT_SIZE * factor
-			for (row in 0 until model!!.rowWidth.width) {
-				if (model!!.isOn(column, row)) {
+			for (row in 0 until model.rowWidth.width) {
+				if (model.isOn(column, row)) {
 					context.g.color = lightColor.onColor
 				} else {
 					context.g.color = lightColor.offColor
@@ -282,7 +282,7 @@ class LEDMatrixView(
 				}
 
 				if (isDebug) {
-					if ((model!!.columnPort.getIncomingSignal() as Word).bitAt(column).isSet) {
+					if ((model.columnPort.getIncomingSignal() as Word).bitAt(column).isSet) {
 						context.g.color = DEBUG_COLUMN_COLOR
 						context.g.drawRect(
 							x.toInt() + 1,
@@ -291,7 +291,7 @@ class LEDMatrixView(
 							(DOT_SIZE * factor).toInt() - 2)
 					}
 
-					if ((model!!.rowPort.getIncomingSignal() as Word).bitAt(row).isSet) {
+					if ((model.rowPort.getIncomingSignal() as Word).bitAt(row).isSet) {
 						context.g.color = DEBUG_ROW_COLOR
 						context.g.drawRect(
 							x.toInt() + 1,
@@ -321,9 +321,9 @@ class LEDMatrixView(
 		}
 	}
 
-	private fun calculateWidth() = model!!.columnWidth.width * DOT_SIZE * factor + 2 * inset
+	private fun calculateWidth() = model.columnWidth.width * DOT_SIZE * factor + 2 * inset
 
-	private fun calculateHeight() = model!!.rowWidth.width * DOT_SIZE * factor + 2 * inset
+	private fun calculateHeight() = model.rowWidth.width * DOT_SIZE * factor + 2 * inset
 
 	private fun calculateColumnPortPos() = Point2D(calculateWidth() / 2 - 2 * Look.SCALE, calculateHeight())
 
@@ -335,8 +335,8 @@ class LEDMatrixView(
 		width = calculateWidth()
 		height = calculateHeight()
 
-		getPortView(model!!.columnPort)!!.location = calculateColumnPortPos()
-		getPortView(model!!.rowPort)!!.location = calculateRowPortPos()
+		getPortView(model.columnPort)!!.location = calculateColumnPortPos()
+		getPortView(model.rowPort)!!.location = calculateRowPortPos()
 		//modelExchanged(model)
 
 		invalidate()

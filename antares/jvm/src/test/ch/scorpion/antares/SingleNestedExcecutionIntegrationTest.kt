@@ -53,29 +53,29 @@ class SingleNestedExcecutionIntegrationTest : AbstractJvmCircuitTest() {
 			as SubGraphVerticeView<out SubGraphVertice>
 
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
-		builder.addVerticeView(nop).model!!.addActorListener(actorListener)
-		builder.addVerticeView(switchView).model!!.addActorListener(actorListener)
-		builder.addVerticeView(ledView).model!!.addActorListener(actorListener)
+		builder.addVerticeView(nop).model.addActorListener(actorListener)
+		builder.addVerticeView(switchView).model.addActorListener(actorListener)
+		builder.addVerticeView(ledView).model.addActorListener(actorListener)
 		edgeView1 = builder.connect(switchView, nop)
-		edgeView1.model!!.addActorListener(actorListener)
+		edgeView1.model.addActorListener(actorListener)
 		edgeView2 = builder.connect(nop, ledView)
-		edgeView2.model!!.addActorListener(actorListener)
+		edgeView2.model.addActorListener(actorListener)
 
 		// Note that SchedulerImpl uses a timer interval of 10 ms when running at full speed,
 		// thus the distance of two time samples must be more than 10 ms to be recognizable by the test
-		switchView.model!!.propagationDelay = 1000 * MILLION
-		edgeView1.model!!.propagationDelay = 100 * MILLION
-		edgeView2.model!!.propagationDelay = 100 * MILLION
-		nop.model!!.propagationDelay = 300 * MILLION
+		switchView.model.propagationDelay = 1000 * MILLION
+		edgeView1.model.propagationDelay = 100 * MILLION
+		edgeView2.model.propagationDelay = 100 * MILLION
+		nop.model.propagationDelay = 300 * MILLION
 
 		// Set propagation delay of input CircuitInOut
-		input = nop.model!!.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator).withId(1) as CircuitInOut
+		input = nop.model.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator).withId(1) as CircuitInOut
 		input.propagationDelay = 100 * MILLION
 		// Set propagation delay of output CircuitInOut
-		output = nop.model!!.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator).withId(2) as CircuitInOut
+		output = nop.model.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator).withId(2) as CircuitInOut
 		output.propagationDelay = 100 * MILLION
 		// Set propagation delay of Net
-		innerNet = nop.model!!.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator).withId(3) as Net<DigitalSignal>
+		innerNet = nop.model.getGraph(LibraryModule.libraryHolder.library, IOModule.storableCreator).withId(3) as Net<DigitalSignal>
 		innerNet.propagationDelay = 100 * MILLION
 
 		circuitView = builder.build()
@@ -89,23 +89,23 @@ class SingleNestedExcecutionIntegrationTest : AbstractJvmCircuitTest() {
 		assertEquals(0, scheduler.numberOfRemainingSlots)
 		scheduler.isPaused = false
 
-		switchView.model!!.on(scheduler)
+		switchView.model.on(scheduler)
 		// 2_400 Switch
-		assertEquals(ActorState.Waiting, switchView.model!!.state)
+		assertEquals(ActorState.Waiting, switchView.model.state)
 
 		proceedToNanos(2_400 * MILLION)
-		assertEquals(ActorState.Acting, switchView.model!!.state)
-		switchView.model!!.actingVisualized(scheduler, actorListener)
+		assertEquals(ActorState.Acting, switchView.model.state)
+		switchView.model.actingVisualized(scheduler, actorListener)
 		// 2_500 DigitalNet between Switch and NOP
-		assertEquals(ActorState.Idle, switchView.model!!.state)
-		assertEquals(ActorState.Waiting, edgeView1.model!!.state)
+		assertEquals(ActorState.Idle, switchView.model.state)
+		assertEquals(ActorState.Waiting, edgeView1.model.state)
 
 		proceedFrozenTimeToNanos(2_500 * MILLION)
-		assertEquals(ActorState.Acting, edgeView1.model!!.state)
-		edgeView1.model!!.actingVisualized(scheduler, actorListener)
+		assertEquals(ActorState.Acting, edgeView1.model.state)
+		edgeView1.model.actingVisualized(scheduler, actorListener)
 		// 2_600 CircuitInOut "I1"
 		// 2_800 NOP for stopping to glow
-		assertEquals(ActorState.Idle, edgeView1.model!!.state)
+		assertEquals(ActorState.Idle, edgeView1.model.state)
 		assertEquals(ActorState.Waiting, input.state)
 		assertEquals(ActorState.Waiting, nop.subGraphVertice!!.state)
 
@@ -126,15 +126,15 @@ class SingleNestedExcecutionIntegrationTest : AbstractJvmCircuitTest() {
 		assertEquals(ActorState.Waiting, nop.subGraphVertice!!.state)
 
 		proceedToNanos(2_800 * MILLION)
-		nop.model!!.actingVisualized(scheduler, actorListener)
+		nop.model.actingVisualized(scheduler, actorListener)
 		// 2_900 DigitalNet between NOP and LED
 		assertEquals(ActorState.Idle, output.state)
 		assertEquals(ActorState.Idle, nop.subGraphVertice!!.state)
-		assertEquals(ActorState.Waiting, edgeView2.model!!.state)
+		assertEquals(ActorState.Waiting, edgeView2.model.state)
 
 		proceedFrozenTimeToNanos(2_900 * MILLION)
 		// LED has a propagation delay of 0 and does react directly to input changes
-		edgeView2.model!!.actingVisualized(scheduler, actorListener)
+		edgeView2.model.actingVisualized(scheduler, actorListener)
 		assertEquals(0, scheduler.numberOfRemainingSlots)
 	}
 }

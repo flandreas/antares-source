@@ -135,9 +135,9 @@ object GateMnemonic {
 	private fun drawSerial(gateView: DigitalComponentView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean) {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
-		val signal1 = gateView.model!!.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
-		val signal2 = gateView.model!!.getInput<DigitalSignal>(2).getIncomingSignal()!!.bitAt(0)
-		val signalOut = gateView.model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!
+		val signal1 = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
+		val signal2 = gateView.model.getInput<DigitalSignal>(2).getIncomingSignal()!!.bitAt(0)
+		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!
 
 		// Internal connection
 		context.g.font = FONT
@@ -191,9 +191,9 @@ object GateMnemonic {
 	private fun drawParallelTwice(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color, invert: Boolean) {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
-		val signal1 = gateView.model!!.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
-		val signal2 = gateView.model!!.getInput<DigitalSignal>(2).getIncomingSignal()!!.bitAt(0)
-		val signalOut = gateView.model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
+		val signal1 = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
+		val signal2 = gateView.model.getInput<DigitalSignal>(2).getIncomingSignal()!!.bitAt(0)
+		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
 
 		val yu = s(3.0)
 		val yl = s(5.0)
@@ -275,9 +275,9 @@ object GateMnemonic {
 	private fun drawParallel(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean) {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
-		val signal1 = gateView.model!!.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
-		val signal2 = gateView.model!!.getInput<DigitalSignal>(2).getIncomingSignal()!!.bitAt(0)
-		val signalOut = gateView.model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!
+		val signal1 = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
+		val signal2 = gateView.model.getInput<DigitalSignal>(2).getIncomingSignal()!!.bitAt(0)
+		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!
 
 		val color1 = if (isExec) signal1.invert(invert1).color.foregroundColor else foreground
 		val color2 = if (isExec) signal2.invert(invert2).color.foregroundColor else foreground
@@ -342,8 +342,8 @@ object GateMnemonic {
 	private fun drawInverter(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color) {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
-		val signal = gateView.model!!.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
-		val signalOut = gateView.model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
+		val signal = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
+		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
 
 		val yu = s(3.0)
 
@@ -376,7 +376,7 @@ object GateMnemonic {
 	private fun drawBufferImpl(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color) {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
-		val signal = gateView.model!!.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
+		val signal = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
 		val portX = (gateView.getPortViews()[0].connectionPoint.x - gateView.x)
 		context.g.stroke = LINE_STROKE
 		context.g.color = transparent(gateView, if (isExec) signal.color.foregroundColor else foreground)
@@ -386,9 +386,9 @@ object GateMnemonic {
 	private fun drawTriStateRight(gateView: TriStateBufferGateView, context: DrawContext, foreground: Color) {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
-		val signal = gateView.model!!.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
-		val control = gateView.model!!.getInput<DigitalSignal>(2).getIncomingSignal()!!.bitAt(0)
-		val signalOut = gateView.model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
+		val signal = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
+		val control = gateView.model.getInput<DigitalSignal>(2).getIncomingSignal()!!.bitAt(0)
+		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
 
 		// Internal connection
 		context.g.font = FONT
@@ -417,9 +417,9 @@ object GateMnemonic {
 	private fun drawTriStateLeft(gateView: TriStateBufferGateView, context: DrawContext, foreground: Color) {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
-		val signal = gateView.model!!.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
-		val control = gateView.model!!.getInput<DigitalSignal>(2).getIncomingSignal()!!.bitAt(0)
-		val signalOut = gateView.model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
+		val signal = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
+		val control = gateView.model.getInput<DigitalSignal>(2).getIncomingSignal()!!.bitAt(0)
+		val signalOut = gateView.model.getOutput<DigitalSignal>().getOutgoingSignal()!!.bitAt(0)
 
 		// Internal connection
 		context.g.font = FONT
@@ -458,7 +458,7 @@ object GateMnemonic {
 	 * coordinate system origin if drawing is required.
 	 */
 	private fun begin(gateView: DigitalComponentView<*>, context: DrawContext): Boolean {
-		if (gateView.model!!.inputCount <= 2
+		if (gateView.model.inputCount <= 2
 			&& isDisplayableFor(context.g.transform)
 			&& isDisplayableFor(context.castedAppContext<GraphApplicationContext>()!!.mode)
 		) {

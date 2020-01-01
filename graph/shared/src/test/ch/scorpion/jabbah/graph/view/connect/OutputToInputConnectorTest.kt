@@ -30,8 +30,8 @@ class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputT
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 
 		releaseMouseAt(190, 100)
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v2.model!!.getInput()))
+		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(draggedEdgeView.model.isConnectedWith(v2.model.getInput()))
 	}
 
 	@Test
@@ -44,8 +44,8 @@ class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputT
 		editor.commandManager.undo()
 
 		assertTrue(builder.graphView.getEdgeViews().isEmpty())
-		assertFalse(v1.model!!.getOutput<Boolean>().isConnected)
-		assertFalse(v2.model!!.getInput<Boolean>().isConnected)
+		assertFalse(v1.model.getOutput<Boolean>().isConnected)
+		assertFalse(v2.model.getInput<Boolean>().isConnected)
 	}
 
 	@Test
@@ -55,8 +55,8 @@ class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputT
 		dragMouseTo(150, 100)
 		releaseMouseAt(150, 100)
 
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertFalse(v2.model!!.getInput<Boolean>().isConnected)
+		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
+		assertFalse(v2.model.getInput<Boolean>().isConnected)
 	}
 
 	@Test
@@ -69,8 +69,8 @@ class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputT
 		editor.commandManager.undo()
 
 		assertTrue(builder.graphView.getEdgeViews().isEmpty())
-		assertFalse(v1.model!!.getOutput<Boolean>().isConnected)
-		assertFalse(v2.model!!.getInput<Boolean>().isConnected)
+		assertFalse(v1.model.getOutput<Boolean>().isConnected)
+		assertFalse(v2.model.getInput<Boolean>().isConnected)
 	}
 
 	@Test
@@ -82,8 +82,8 @@ class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputT
 		pressEscape()
 
 		assertTrue(builder.graphView.getEdgeViews().isEmpty())
-		assertFalse(v1.model!!.getOutput<Boolean>().isConnected)
-		assertFalse(v2.model!!.getInput<Boolean>().isConnected)
+		assertFalse(v1.model.getOutput<Boolean>().isConnected)
+		assertFalse(v2.model.getInput<Boolean>().isConnected)
 	}
 
 	@Test
@@ -95,8 +95,8 @@ class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputT
 		pressEscape()
 
 		assertTrue(builder.graphView.getEdgeViews().isEmpty())
-		assertFalse(v1.model!!.getOutput<Boolean>().isConnected)
-		assertFalse(v2.model!!.getInput<Boolean>().isConnected)
+		assertFalse(v1.model.getOutput<Boolean>().isConnected)
+		assertFalse(v2.model.getInput<Boolean>().isConnected)
 	}
 
 	@Test
@@ -117,8 +117,8 @@ class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputT
 		assertEquals(6, draggedEdgeView.segmentPointCount)
 
 		clickMouseAt(190, 100)
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v2.model!!.getInput()))
+		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(draggedEdgeView.model.isConnectedWith(v2.model.getInput()))
 	}
 
 	@Test

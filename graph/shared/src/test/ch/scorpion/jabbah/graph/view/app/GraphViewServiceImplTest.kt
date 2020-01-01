@@ -94,7 +94,7 @@ class GraphViewServiceImplTest {
 	fun shouldAddWrapperWhenAddingNonGraphElementView() {
 		service.add(RectangleComponent(), DrawingViewMockBuilder().withDrawing(builder.graphView).build())
 
-		assertTrue(builder.graphView.get(0) is GraphElementViewWrapper<*>)
+		assertTrue(builder.graphView.get(0) is GraphElementViewWrapper)
 	}
 
 	@Test
@@ -102,7 +102,7 @@ class GraphViewServiceImplTest {
 		val drawing = DrawingImpl<Component>()
 		service.add(RectangleComponent(), DrawingViewMockBuilder().withDrawing(drawing).build())
 
-		assertFalse(drawing.get(0) is GraphElementViewWrapper<*>)
+		assertFalse(drawing.get(0) is GraphElementViewWrapper)
 	}
 
 	private fun getNodeView(): NodeView<*> {

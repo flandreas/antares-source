@@ -49,7 +49,7 @@ class AbstractRectangularVerticeViewTest {
 	fun testNoOffsetWithPorts() {
 		val rectangle = TestRectangleView()
 		rectangle.setBounds(0.0, 0.0, 100.0, 50.0)
-		val portView = TestPortView<Boolean>(rectangle.model!!.getInput(), Direction.WEST, PortLabelPosition.INTERNAL, 20)
+		val portView = TestPortView<Boolean>(rectangle.model.getInput(), Direction.WEST, PortLabelPosition.INTERNAL, 20)
 		portView.setLocation(0.0, 25.0)
 		rectangle.addPortView(portView)
 
@@ -86,7 +86,7 @@ class AbstractRectangularVerticeViewTest {
 		val rectangle = TestRectangleView()
 		rectangle.setBounds(0.0, 0.0, 100.0, 50.0)
 		rectangle.location = Point2D(-20, 25)
-		val portView = TestPortView<Boolean>(rectangle.model!!.getInput(), Direction.WEST, PortLabelPosition.INTERNAL, 20)
+		val portView = TestPortView<Boolean>(rectangle.model.getInput(), Direction.WEST, PortLabelPosition.INTERNAL, 20)
 		portView.setLocation(0.0, 25.0)
 		rectangle.addPortView(portView)
 

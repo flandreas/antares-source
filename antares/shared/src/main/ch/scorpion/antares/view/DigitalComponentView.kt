@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
  */
 open class DigitalComponentView<T : Vertice>(
     styleProvider: StyleProvider,
-    model: T?
+    model: T
 ) : AbstractRectangularVerticeView<T>(styleProvider, model) {
 
     companion object {

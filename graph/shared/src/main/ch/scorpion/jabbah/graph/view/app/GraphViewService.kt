@@ -8,12 +8,10 @@ import ch.scorpion.jabbah.edit.app.DrawingService
 import ch.scorpion.jabbah.edit.app.DrawingServiceImpl
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.connect.JoinEdgeViewsResult
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.port.PortView
 
 /**
  * An application service for [GraphView] that enhances the domain services with undo/redo functionality
@@ -38,7 +36,7 @@ open class GraphViewServiceImpl(
 		if (drawingView.drawing !is GraphView<*> || component is GraphElementView<*>) {
 			super.add(component, drawingView)
 		} else {
-			super.add(GraphElementViewWrapper<GraphElement>(component), drawingView)
+			super.add(GraphElementViewWrapper(component), drawingView)
 		}
 	}
 
@@ -75,10 +73,10 @@ open class GraphViewServiceImpl(
 		commandManager.execute(UnconnectEdgeViewCommand(connectService, graphView, edgeView))
 	}
 
-	private fun getWrapperOf(component: Component, drawing: Drawing<Component>): GraphElementViewWrapper<*>? {
+	private fun getWrapperOf(component: Component, drawing: Drawing<Component>): GraphElementViewWrapper? {
 		return drawing.getDrawables()
-			.filter { it is GraphElementViewWrapper<*> && it.component === component }
-			.map { it as GraphElementViewWrapper<*> }
+			.filter { it is GraphElementViewWrapper && it.component === component }
+			.map { it as GraphElementViewWrapper }
 			.firstOrNull()
 	}
 

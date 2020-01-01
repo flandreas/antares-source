@@ -53,14 +53,14 @@ class TriStateBufferGateView(
 
 		val inputPortView = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getInput(),
+			port = model.getInput(),
 			direction = Direction.WEST)
 		inputPortView.setLocation(inputPortView.unconnectedLength.toDouble(), 0.0)
 		addPortView(inputPortView)
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getOutput(),
+			port = model.getOutput(),
 			direction = Direction.EAST,
 			x = inputPortView.unconnectedLength + bounds.width.toInt(),
 			y = 0))
@@ -68,7 +68,7 @@ class TriStateBufferGateView(
 		val controlPorViewOffset = (DigitalPortView.LENGTH * 0.75).toInt()
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getInput(2),
+			port = model.getInput(2),
 			direction = getDirectionOfHandedness(),
 			portLabelPosition = PortLabelPosition.HIDE,
 			x = (inputPortView.unconnectedLength + bounds.width / 2).toInt(),
@@ -117,15 +117,15 @@ class TriStateBufferGateView(
 	/** ---- [TriStateBufferGateView] */
 
 	var enableLogic: Logic
-		get() = model!!.enableLogic
+		get() = model.enableLogic
 		set(value) {
-			model!!.enableLogic = value
+			model.enableLogic = value
 		}
 
 	var bitWidth: BitWidth
-		get() = model!!.bitWidth
+		get() = model.bitWidth
 		set(value) {
-			model!!.bitWidth = value
+			model.bitWidth = value
 		}
 
 	private fun getDirectionOfHandedness(): Direction {

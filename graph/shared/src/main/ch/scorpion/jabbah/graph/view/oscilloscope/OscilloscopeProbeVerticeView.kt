@@ -27,7 +27,7 @@ import ch.scorpion.jabbah.io.*
 class OscilloscopeProbeVerticeView<T : Any>(
 	rowNumber: Int = 1,
 	color: CompositeColor = CompositeColor(),
-	model: OscilloscopeProbeVertice<T>? = OscilloscopeProbeVertice(name = rowNumber.toString()),
+	model: OscilloscopeProbeVertice<T> = OscilloscopeProbeVertice(name = rowNumber.toString()),
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangularVerticeView<OscilloscopeProbeVertice<T>>(styleProvider, model) {
 
@@ -45,10 +45,10 @@ class OscilloscopeProbeVerticeView<T : Any>(
 	}
 
 	var rowNumber: Int
-		get() = model!!.getPort<Any>().name!!.toInt()
+		get() = model.getPort<Any>().name!!.toInt()
 		set(value) {
 			invalidate()
-			model!!.getPort<T>().name = value.toString()
+			model.getPort<T>().name = value.toString()
 			drawable.rowNumber = value
 			validate()
 		}
@@ -112,13 +112,13 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 	override fun modelExchanged(oldModel: OscilloscopeProbeVertice<T>?) {
 		super.modelExchanged(oldModel)
-		addPortView(GenericPortView<T>(model!!.getInput(), 0, 0, Direction.SOUTH))
+		addPortView(GenericPortView<T>(model.getInput(), 0, 0, Direction.SOUTH))
 	}
 
 	override fun drawImpl(context: DrawContext, drawPortViews: Boolean) {
 		super.drawImpl(context, drawPortViews)
 		drawable.draw(context)
-		if (model!!.isConnected) {
+		if (model.isConnected) {
 			val connPoint = connectionPoint().subtract(location)
 			context.g.color = context.choose(drawable.color).foregroundColor
 			context.g.fillOval(
@@ -140,7 +140,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 	/** Returns the connection point at the tip of the drop shape in absolute coordinates.*/
 	private fun connectionPoint(): Point2D {
-		return getPortConnectionPoint(model!!.getPort<Any>())
+		return getPortConnectionPoint(model.getPort<Any>())
 	}
 
 	private inner class Handler : InputEventHandlerAdapter<EditInputEventContext>() {
@@ -187,10 +187,10 @@ class OscilloscopeProbeVerticeView<T : Any>(
 			invalidate()
 			val newEdgeView = findEdgeView(context) as EdgeView<T>?
 			if (edgeView != null && edgeView !== newEdgeView) {
-				edgeView!!.model!!.unconnect(model!!.getPort<T>())
+				edgeView!!.model.unconnect(model.getPort<T>())
 			}
 			if (newEdgeView != null && newEdgeView !== edgeView) {
-				newEdgeView.model!!.connect(model!!.getPort())
+				newEdgeView.model.connect(model.getPort())
 			}
 			edgeView = newEdgeView
 

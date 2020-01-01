@@ -66,15 +66,15 @@ class ClockView(
 
 	/** Contains the period of this [ClockView] in microseconds.*/
 	var period: Long
-		get() = model!!.propagationDelay / 1_000
+		get() = model.propagationDelay / 1_000
 		set(value) {
-			model!!.propagationDelay = value * 1_000
+			model.propagationDelay = value * 1_000
 		}
 
 	var isEnabled: Boolean
-		get() = model!!.isEnabled
+		get() = model.isEnabled
 		set(value) {
-			model!!.isEnabled = value
+			model.isEnabled = value
 		}
 
 	/** Determines whether the [KnobView] can be displayed during simulation for changing the propagation delay.*/
@@ -170,9 +170,9 @@ class ClockView(
 		private fun display(view: DrawingView<*>) {
 			stopTimer()
 
-			KNOB.valueChangeHandler = { model!!.propagationDelay = it * 1000 }
+			KNOB.valueChangeHandler = { model.propagationDelay = it * 1000 }
 			KNOB.location = Point2D(boundingBox.center.subtract(Point2D(KnobView.OUTER_SIZE / 2, KnobView.OUTER_SIZE / 2)))
-			KNOB.value = model!!.propagationDelay / 1000
+			KNOB.value = model.propagationDelay / 1000
 			showPropagationDelayKnob(view)
 		}
 

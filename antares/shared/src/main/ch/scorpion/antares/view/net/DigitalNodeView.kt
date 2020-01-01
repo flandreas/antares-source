@@ -34,8 +34,8 @@ class DigitalNodeView(
 		val oldCompositeColor = context.color
 
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && showNetState()) {
-			if (!model!!.isError) {
-				context.color = model!!.signal!!.getColor()
+			if (!model.isError) {
+				context.color = model.signal!!.getColor()
 			}
 		} else {
 			context.color = context.choose(color)

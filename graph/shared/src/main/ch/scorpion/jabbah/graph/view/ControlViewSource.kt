@@ -40,10 +40,10 @@ interface ControlViewSource<T : Vertice> : VerticeView<T> {
 
     /** Returns a translated text that identifies this [ControlViewSource] to the user.*/
     val controlName: String get() {
-	    if (StringUtils.isEmpty(model!!.name)) {
+	    if (StringUtils.isEmpty(model.name)) {
 		    return "$type ($id)"
 	    }
-	    return "$type \"${model!!.name}\""
+	    return "$type \"${model.name}\""
     }
 
     /** Returns the path of the icon that identifies this [ControlViewSource] graphically. */

@@ -26,12 +26,12 @@ class TestControlVerticeView(
 
 	override fun modelExchanged(oldModel: TestControlVertice?) {
 		super.modelExchanged(oldModel)
-		addPortView(TestPortView(model!!.getInput<Boolean>(), Direction.WEST, PortLabelPosition.INTERNAL, 0))
+		addPortView(TestPortView(model.getInput<Boolean>(), Direction.WEST, PortLabelPosition.INTERNAL, 0))
 	}
 
 	/** ---- [ControlView] */
 
-	override val controlId: String? get() = "$type \"${model!!.name}\""
+	override val controlId: String? get() = "$type \"${model.name}\""
 
 	override fun bindToModel(model: TestControlVertice) {
 		this.model = model
@@ -52,6 +52,6 @@ class TestControlVerticeView(
 	override val iconPath: String get() = "not used"
 
 	override fun createControlView(): ControlView<TestControlVertice> {
-		return TestControlVerticeView(model!!, styleProvider)
+		return TestControlVerticeView(model, styleProvider)
 	}
 }

@@ -11,8 +11,8 @@ import ch.scorpion.jabbah.graph.model.GraphElement
  */
 interface GraphElementView<T : GraphElement> : Component {
 
-    /** The model [GraphElement] that this [GraphElementView] displays. Can only be `null` during deserialization.*/
-    val model: T?
+    /** The model [GraphElement] that this [GraphElementView] displays.  */
+    val model: T
 
     /**
      * Called by the [GraphView] which contains this [GraphElementView] when the [GraphView] is built for a

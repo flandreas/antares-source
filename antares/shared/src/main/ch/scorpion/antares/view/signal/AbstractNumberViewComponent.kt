@@ -24,7 +24,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 abstract class AbstractNumberViewComponent<T : Vertice>(
 	styleProvider: StyleProvider,
-	model: T?,
+	model: T,
 	orientation: Direction,
 	signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY,
 	private val drawDigitBorder: Boolean = true

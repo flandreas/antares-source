@@ -23,7 +23,7 @@ class SevenSegmentDisplayViewBeanInfo : AbstractBeanInfo<SevenSegmentDisplayView
     override fun addProperties(bean: SevenSegmentDisplayView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-        val connected = bean.model!!.isConnected
+        val connected = bean.model.isConnected
 
 		name.bind(editor, { bean.name }, { bean.name = it })
 		lightColor.bind(editor, { bean.lightColor }, {bean.lightColor = it!! })

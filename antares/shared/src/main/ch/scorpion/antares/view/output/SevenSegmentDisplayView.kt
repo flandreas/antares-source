@@ -92,10 +92,10 @@ class SevenSegmentDisplayView(
 	override fun modelExchanged(oldModel: SevenSegmentDisplay?) {
 		super.modelExchanged(oldModel)
 
-		if (model!!.portScheme == SevenSegmentDisplayScheme.COMBINED) {
+		if (model.portScheme == SevenSegmentDisplayScheme.COMBINED) {
 			val dot = DigitalPortView(
 				styleProvider = styleProvider,
-				port = model!!.getInput("s"),
+				port = model.getInput("s"),
 				direction = Direction.SOUTH,
 				portLabelPosition = PortLabelPosition.EXTERNAL,
 				x = geom.scaledFactor,
@@ -104,7 +104,7 @@ class SevenSegmentDisplayView(
 			addPortView(dot)
 			addPortView(DigitalPortView(
 				styleProvider = styleProvider,
-				port = model!!.getInput("p"),
+				port = model.getInput("p"),
 				direction = Direction.SOUTH,
 				portLabelPosition = PortLabelPosition.EXTERNAL,
 				x = geom.width - geom.scaledFactor,
@@ -113,7 +113,7 @@ class SevenSegmentDisplayView(
 			for (i in 1..4) {
 				addPortView(DigitalPortView(
 					styleProvider = styleProvider,
-					port = model!!.getInput(i),
+					port = model.getInput(i),
 					direction = Direction.NORTH,
 					portLabelPosition = PortLabelPosition.EXTERNAL,
 					x = geom.scaledFactor * i,
@@ -122,7 +122,7 @@ class SevenSegmentDisplayView(
 			for (i in 5..8) {
 				addPortView(DigitalPortView(
 					styleProvider = styleProvider,
-					port = model!!.getInput(i),
+					port = model.getInput(i),
 					direction = Direction.SOUTH,
 					portLabelPosition = PortLabelPosition.EXTERNAL,
 					x = geom.scaledFactor * (i - 4),
@@ -134,11 +134,11 @@ class SevenSegmentDisplayView(
 	/** ---- UI properties */
 
 	var portScheme: SevenSegmentDisplayScheme
-		get() = model!!.portScheme
+		get() = model.portScheme
 		set(value) {
 			if (value != portScheme) {
 				invalidate()
-				model!!.portScheme = value
+				model.portScheme = value
 				modelExchanged(model)
 				invalidate()
 				validate()
@@ -146,10 +146,10 @@ class SevenSegmentDisplayView(
 		}
 
 	var name: String?
-		get() = model!!.name
+		get() = model.name
 		set(value) {
 			if (value != name) {
-				model!!.name = value
+				model.name = value
 				postControlViewSourceChangeEvent(eventBus)
 			}
 		}
@@ -170,7 +170,7 @@ class SevenSegmentDisplayView(
 
 	/** ---- [ControlView] */
 
-	override val controlId: String? get() = "7seg:" + model!!.id
+	override val controlId: String? get() = "7seg:" + model.id
 
 	override fun bindToModel(model: SevenSegmentDisplay) {
 		this.model = model
@@ -200,7 +200,7 @@ class SevenSegmentDisplayView(
 	}
 
 	private fun copyControlViewProperties(source: SevenSegmentDisplayView, dest: SevenSegmentDisplayView) {
-		dest.model!!.name = source.model!!.name
+		dest.model.name = source.model.name
 		dest.lightColor = source.lightColor
 		dest.size = source.size
 	}
@@ -212,7 +212,7 @@ class SevenSegmentDisplayView(
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
 	override fun createControlView(): ControlView<SevenSegmentDisplay> {
-		val clone = SevenSegmentDisplayView(styleProvider, model!!, lightColor)
+		val clone = SevenSegmentDisplayView(styleProvider, model, lightColor)
 		clone.isShowPortViews = false
 		clone.location = Point2D(0, 0)
 		return clone
@@ -239,35 +239,35 @@ class SevenSegmentDisplayView(
 		context.g.color = Themes.get<AntaresTheme>().screen.backgroundColor
 		context.g.fillRect(0, 0, geom.width, geom.height)
 
-		drawHorizontalSegment(context.g, model!!.portScheme.inputValueOf(model!!, "a"),
+		drawHorizontalSegment(context.g, model.portScheme.inputValueOf(model, "a"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			geom.scaledFactor + geom.segHalfWidth)
 
-		drawVerticalSegment(context.g, model!!.portScheme.inputValueOf(model!!, "b"),
+		drawVerticalSegment(context.g, model.portScheme.inputValueOf(model, "b"),
 			0.5f * geom.scaledFactor + geom.segLength + geom.segHalfWidth,
 			geom.scaledFactor + geom.segHalfWidth)
 
-		drawVerticalSegment(context.g, model!!.portScheme.inputValueOf(model!!, "c"),
+		drawVerticalSegment(context.g, model.portScheme.inputValueOf(model, "c"),
 			0.5f * geom.scaledFactor + geom.segLength + geom.segHalfWidth,
 			4 * geom.scaledFactor + geom.segHalfWidth)
 
-		drawHorizontalSegment(context.g, model!!.portScheme.inputValueOf(model!!, "d"),
+		drawHorizontalSegment(context.g, model.portScheme.inputValueOf(model, "d"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			7 * geom.scaledFactor + geom.segHalfWidth)
 
-		drawVerticalSegment(context.g, model!!.portScheme.inputValueOf(model!!, "e"),
+		drawVerticalSegment(context.g, model.portScheme.inputValueOf(model, "e"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			4 * geom.scaledFactor + geom.segHalfWidth)
 
-		drawVerticalSegment(context.g, model!!.portScheme.inputValueOf(model!!, "f"),
+		drawVerticalSegment(context.g, model.portScheme.inputValueOf(model, "f"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			1 * geom.scaledFactor + geom.segHalfWidth)
 
-		drawHorizontalSegment(context.g, model!!.portScheme.inputValueOf(model!!, "g"),
+		drawHorizontalSegment(context.g, model.portScheme.inputValueOf(model, "g"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,
 			4 * geom.scaledFactor + geom.segHalfWidth)
 
-		drawDot(context.g, model!!.portScheme.inputValueOf(model!!, "p"),
+		drawDot(context.g, model.portScheme.inputValueOf(model, "p"),
 			0.5f * geom.scaledFactor + geom.segLength + geom.scaledFactor,
 			7 * geom.scaledFactor + geom.segHalfWidth)
 	}

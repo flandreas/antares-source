@@ -23,8 +23,8 @@ class TestGraphView(
 	init {
 		vv1.location = Point2D(100, 100)
 		vv2.location = Point2D(200, 100)
-		ev.connectToOrigin(Connection(vv1, vv1.model!!.getOutput()))
-		ev.connectToDestination(Connection(vv2, vv2.model!!.getInput()))
+		ev.connectToOrigin(Connection(vv1, vv1.model.getOutput()))
+		ev.connectToDestination(Connection(vv2, vv2.model.getInput()))
 
 		graphView.add(vv1).add(vv2).add(ev)
 		ev.layout.layoutOrigin()

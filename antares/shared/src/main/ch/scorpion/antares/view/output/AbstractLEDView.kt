@@ -45,10 +45,10 @@ abstract class AbstractLEDView<T: Vertice>(
 		font = font)
 
 	var name: String?
-		get() = model!!.name
+		get() = model.name
 		set(value) {
 			if (value != name) {
-				model!!.name = value
+				model.name = value
 				updateLabel()
 				postControlViewSourceChangeEvent(eventBus)
 			}
@@ -63,7 +63,7 @@ abstract class AbstractLEDView<T: Vertice>(
 		super.modelExchanged(oldModel)
 		val portView = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getInput(),
+			port = model.getInput(),
 			direction = Direction.WEST)
 		portView.setLocation(portView.unconnectedLength, 0)
 		addPortView(portView)

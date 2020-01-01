@@ -37,9 +37,9 @@ class EdgeToPortConnectorTest : AbstractConnectorTest(GraphViewModule.edgeToPort
 
 		releaseMouseAt(190, 200)
 
-		assertTrue(ev.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertTrue(ev.model!!.isConnectedWith(v2.model!!.getInput()))
-		assertTrue(ev.model!!.isConnectedWith(v3.model!!.getInput()))
+		assertTrue(ev.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(ev.model.isConnectedWith(v2.model.getInput()))
+		assertTrue(ev.model.isConnectedWith(v3.model.getInput()))
 
 		// 3 VerticeViews, 1 NodeView, 3 EdgeViews
 		kotlin.test.assertEquals(7, builder.graphView.drawablesCount)
@@ -54,9 +54,9 @@ class EdgeToPortConnectorTest : AbstractConnectorTest(GraphViewModule.edgeToPort
 
 		editor.commandManager.undo()
 
-		assertTrue(ev.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertTrue(ev.model!!.isConnectedWith(v2.model!!.getInput()))
-		assertFalse(ev.model!!.isConnectedWith(v3.model!!.getInput()))
+		assertTrue(ev.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(ev.model.isConnectedWith(v2.model.getInput()))
+		assertFalse(ev.model.isConnectedWith(v3.model.getInput()))
 
 		// 3 VerticeViews, 1 EdgeView
 		assertEquals(4, builder.graphView.drawablesCount)
@@ -69,8 +69,8 @@ class EdgeToPortConnectorTest : AbstractConnectorTest(GraphViewModule.edgeToPort
 		dragMouseTo(150, 200)
 		releaseMouseAt(150, 200)
 
-		assertTrue(ev.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertTrue(ev.model!!.isConnectedWith(v2.model!!.getInput()))
+		assertTrue(ev.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(ev.model.isConnectedWith(v2.model.getInput()))
 
 		// 3 VerticeViews, 3 EdgeView, 1 NodeView
 		assertEquals(7, builder.graphView.drawablesCount)
@@ -85,8 +85,8 @@ class EdgeToPortConnectorTest : AbstractConnectorTest(GraphViewModule.edgeToPort
 
 		editor.commandManager.undo()
 
-		assertTrue(ev.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertTrue(ev.model!!.isConnectedWith(v2.model!!.getInput()))
+		assertTrue(ev.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(ev.model.isConnectedWith(v2.model.getInput()))
 
 		// 3 VerticeViews, 1
 		assertEquals(4, builder.graphView.drawablesCount)

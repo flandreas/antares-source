@@ -26,7 +26,7 @@ class UsecaseTestBridge(
 		getOutput(id)?.let { component ->
 			runner.assert(
 				time, {
-					val value = component.model!!.getInput<DigitalSignal>().getIncomingSignal()
+					val value = component.model.getInput<DigitalSignal>().getIncomingSignal()
 					value!!.toHexString() == hexValue },
 				"Expected value of output $id to be '$hexValue'")
 		}

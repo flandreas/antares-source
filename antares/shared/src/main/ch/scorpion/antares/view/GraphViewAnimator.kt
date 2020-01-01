@@ -163,7 +163,7 @@ class GraphViewAnimator(
 		}
 
 		val edgeView = drawingView.drawing.getEdgeView(changedPort) as DigitalEdgeView
-		val signal = edgeView.model!!.signalBuffer
+		val signal = edgeView.model.signalBuffer
 
 		// Creating the DigitalEdgeViewNetAnimation will make it visible in the View, but the animation
 		// is not started yet. The outgoing DigitalEdgeAnimationView waits at the OutputPortView
@@ -191,7 +191,7 @@ class GraphViewAnimator(
 			animator
 		)
 
-		scheduler.logActorTrace(edgeView.model!!) { "Registered EdgeView animation for EdgeView '${edgeView.id}'" }
+		scheduler.logActorTrace(edgeView.model) { "Registered EdgeView animation for EdgeView '${edgeView.id}'" }
 	}
 
 	private fun handleNetActed(net: Net<*>, data: ActorData) {
@@ -319,13 +319,13 @@ class GraphViewAnimator(
 
 		override fun drawableAdded(event: DrawableContainerEvent<GraphElementView<*>>) {
 			if (event.child is GraphElementView<*>) {
-				(event.child as GraphElementView<*>).model!!.addActorListener(this@GraphViewAnimator)
+				(event.child as GraphElementView<*>).model.addActorListener(this@GraphViewAnimator)
 			}
 		}
 
 		override fun drawableRemoved(event: DrawableContainerEvent<GraphElementView<*>>) {
 			if (event.child is GraphElementView<*>) {
-				(event.child as GraphElementView<*>).model!!.removeActorListener(this@GraphViewAnimator)
+				(event.child as GraphElementView<*>).model.removeActorListener(this@GraphViewAnimator)
 			}
 		}
 	}

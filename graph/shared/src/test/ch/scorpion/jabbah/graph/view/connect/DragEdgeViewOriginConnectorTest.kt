@@ -37,8 +37,8 @@ class DragEdgeViewOriginConnectorTest : AbstractConnectorTest(GraphViewModule.dr
 		kotlin.test.assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 
 		releaseMouseAt(130, 100)
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertEquals(v1.getPortConnectionPoint(v1.model!!.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
+		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
+		assertEquals(v1.getPortConnectionPoint(v1.model.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
 	}
 
 	@Test
@@ -50,7 +50,7 @@ class DragEdgeViewOriginConnectorTest : AbstractConnectorTest(GraphViewModule.dr
 
 		editor.commandManager.undo()
 
-		assertFalse(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
+		assertFalse(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
 		assertEquals(Point2D(150, 100), draggedEdgeView.originEndpointView.location)
 	}
 
@@ -61,7 +61,7 @@ class DragEdgeViewOriginConnectorTest : AbstractConnectorTest(GraphViewModule.dr
 		dragMouseTo(145, 100)
 		releaseMouseAt(145, 100)
 
-		assertEquals(1, draggedEdgeView.model!!.portsCount)
+		assertEquals(1, draggedEdgeView.model.portsCount)
 		assertEquals(Point2D(145, 100), draggedEdgeView.originEndpointView.location)
 	}
 
@@ -74,7 +74,7 @@ class DragEdgeViewOriginConnectorTest : AbstractConnectorTest(GraphViewModule.dr
 
 		editor.commandManager.undo()
 
-		assertEquals(1, draggedEdgeView.model!!.portsCount)
+		assertEquals(1, draggedEdgeView.model.portsCount)
 		assertEquals(Point2D(150, 100), draggedEdgeView.originEndpointView.location)
 	}
 }

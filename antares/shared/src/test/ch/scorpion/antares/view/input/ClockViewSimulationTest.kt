@@ -33,19 +33,19 @@ class ClockViewSimulationTest : AbstractCircuitTest() {
 	fun test() {
 		startSimulation()
 
-		assertEquals(Word.of(false), clockView.model!!.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
-		assertFalse(ledView.model!!.isOn)
+		assertEquals(Word.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
+		assertFalse(ledView.model.isOn)
 
 		proceedToMillis(50L)
-		assertEquals(Word.of(true), clockView.model!!.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
+		assertEquals(Word.of(true), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
 
 		proceedToMillis(51L)
-		assertTrue(ledView.model!!.isOn)
+		assertTrue(ledView.model.isOn)
 
 		proceedToMillis(100L)
-		assertEquals(Word.of(false), clockView.model!!.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
+		assertEquals(Word.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
 
 		proceedToMillis(101L)
-		assertFalse(ledView.model!!.isOn)
+		assertFalse(ledView.model.isOn)
 	}
 }

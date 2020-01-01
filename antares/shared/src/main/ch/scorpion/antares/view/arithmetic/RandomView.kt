@@ -28,10 +28,10 @@ class RandomView(
 	/** ---- UI properties */
 
 	var bitWidth: BitWidth
-		get() = model!!.bitWidth
+		get() = model.bitWidth
 		set(value) {
 			if (value != bitWidth) {
-				model!!.bitWidth = value
+				model.bitWidth = value
 			}
 		}
 

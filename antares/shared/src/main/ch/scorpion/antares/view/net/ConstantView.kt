@@ -37,7 +37,7 @@ class ConstantView(
 		super.modelExchanged(oldModel)
 		val portView = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getOutput(),
+			port = model.getOutput(),
 			direction = Direction.EAST)
 		addPortView(portView)
 		updateView()
@@ -46,23 +46,23 @@ class ConstantView(
 	/** ---- UI properties */
 
 	var value: Long
-		get() = model!!.value.getValue()
+		get() = model.value.getValue()
 		set(newValue) {
-			model!!.value = Word.of(bitWidth, newValue)
+			model.value = Word.of(bitWidth, newValue)
 		}
 
 	/** ---- [AbstractNumberViewComponent] */
 
 	override var bitWidth: BitWidth
-		get() = model!!.bitWidth
+		get() = model.bitWidth
 		set(value) {
 			invalidate()
 			clear()
-			model!!.bitWidth = value
+			model.bitWidth = value
 			updateView()
 		}
 
-	override val signal: DigitalSignal get() = model!!.value
+	override val signal: DigitalSignal get() = model.value
 
 	override val upperLeftBoundsEdge: Point2D
 		get() = when (orientation) {

@@ -94,7 +94,7 @@ class DipSwitchView(
 			}
 		}
 
-	private val bitsCount: Int get() = model!!.bitWidth.width
+	private val bitsCount: Int get() = model.bitWidth.width
 
 	init {
 		isFocusable = true
@@ -105,7 +105,7 @@ class DipSwitchView(
 		super.modelExchanged(oldModel)
 		val portView = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getOutput())
+			port = model.getOutput())
 		addPortView(portView)
 		updateView()
 	}
@@ -113,18 +113,18 @@ class DipSwitchView(
 	/** ---- UI properties */
 
 	var name: String?
-		get() = model!!.name
+		get() = model.name
 		set(value) {
-			model!!.name = value
+			model.name = value
 		}
 
 	var bitWidth: BitWidth
-		get() = model!!.bitWidth
+		get() = model.bitWidth
 		set(value) {
 			if (value != bitWidth) {
 				invalidate()
 				clear()
-				model!!.bitWidth = value
+				model.bitWidth = value
 				updateView()
 				invalidate()
 				validate()
@@ -156,9 +156,9 @@ class DipSwitchView(
 	override fun handleStateChanged(event: GraphElementEvent) {
 		invalidate()
 		for ((i, view) in bitViews.withIndex()) {
-			view.bit = model!!.value.bitAt(i)
+			view.bit = model.value.bitAt(i)
 		}
-		label.text = StringUtils.orEmpty(model!!.name)
+		label.text = StringUtils.orEmpty(model.name)
 		super.handleStateChanged(event)
 	}
 
@@ -204,7 +204,7 @@ class DipSwitchView(
 	}
 
 	private fun drawDisabled(context: DrawContext) {
-		if (model!!.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true) {
+		if (model.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true) {
 			context.g.color = Look.disabledColor()
 			context.g.fillRect(xInt, yInt, widthInt, heightInt)
 		}
@@ -252,14 +252,14 @@ class DipSwitchView(
 
 	/** ---- [ControlViewSource] */
 
-	override val controlId: String get() = "dipSwitch:" + model!!.id
+	override val controlId: String get() = "dipSwitch:" + model.id
 
 	override val controlName: String get() = super.controlName
 
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
 	override fun createControlView(): ControlView<DipSwitch> {
-		val clone = DipSwitchView(styleProvider, model!!, orientation)
+		val clone = DipSwitchView(styleProvider, model, orientation)
 		clone.isShowPortViews = false
 		clone.location = Point2D.ZERO
 		copyControlViewProperties(this, clone)
@@ -318,7 +318,7 @@ class DipSwitchView(
 		setBounds(edge.x, edge.y, calculateWidth(), calculateHeight())
 
 		bitViews.clear()
-		val maxIndex = model!!.bitWidth.width - 1
+		val maxIndex = model.bitWidth.width - 1
 		for (index in 0..maxIndex) {
 			val xx = x + (maxIndex - index) * KNOB_WIDTH + CASE_INSET
 			val yy = y + BIT_LABEL_HEIGHT + CASE_INSET
@@ -332,7 +332,7 @@ class DipSwitchView(
 	}
 
 	private fun calculateWidth(): Double {
-		return model!!.bitWidth.width * KNOB_WIDTH + 2 * CASE_INSET
+		return model.bitWidth.width * KNOB_WIDTH + 2 * CASE_INSET
 	}
 
 	private fun calculateHeight(): Double {
@@ -356,7 +356,7 @@ class DipSwitchView(
 	 * on the orientation of this [DipSwitchView].
 	 */
 	private fun updateLabel() {
-		label.text = StringUtils.orEmpty(model!!.name)
+		label.text = StringUtils.orEmpty(model.name)
 		label.alignment = Alignment.forOrientation(orientation)
 		label.location = when (orientation) {
 			Direction.EAST -> Point2D(-getOutput().length - bounds.width - LABEL_DIST, 0.0)
@@ -383,16 +383,16 @@ class DipSwitchView(
 		}
 
 		private fun toggleImpl(index: Int, signalHandler: SignalHandler) {
-			var signal = model!!.value as Word?
+			var signal = model.value as Word?
 			if (signal == null) {
-				signal = Word.allOf(model!!.bitWidth, Bit.Undefined)
+				signal = Word.allOf(model.bitWidth, Bit.Undefined)
 			}
 			var bit = signal.bitAt(index)
 			if (!bit.isDefined) {
 				bit = Bit.False
 			}
 			bit = bit.not()
-			model!!.setBit(index, bit, signalHandler)
+			model.setBit(index, bit, signalHandler)
 		}
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
@@ -403,11 +403,11 @@ class DipSwitchView(
 					context.keyEvent!!.key == KeyEvent.VK_RIGHT -> transferFocusRight()
 					context.keyEvent!!.key == KeyEvent.VK_ENTER -> toggleImpl(focusIndex!!, context.signalHandler)
 					context.keyEvent!!.key == KeyEvent.VK_0 -> {
-						model!!.setBit(focusIndex!!, Bit.False, context.signalHandler)
+						model.setBit(focusIndex!!, Bit.False, context.signalHandler)
 						transferFocusRight()
 					}
 					context.keyEvent!!.key == KeyEvent.VK_1 -> {
-						model!!.setBit(focusIndex!!, Bit.True, context.signalHandler)
+						model.setBit(focusIndex!!, Bit.True, context.signalHandler)
 						transferFocusRight()
 					}
 				}

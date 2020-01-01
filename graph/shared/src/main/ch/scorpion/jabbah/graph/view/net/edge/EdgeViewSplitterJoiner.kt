@@ -17,7 +17,7 @@ object EdgeViewSplitterJoiner {
 		edgeViewCreator: (Net<T>) -> EdgeView<T>
 	): EdgeView<T> {
 
-		val tail = edgeViewCreator.invoke(edgeView.model!!)
+		val tail = edgeViewCreator.invoke(edgeView.model)
 		tail.clear()
 
 		if (edgeView.isArrow) {

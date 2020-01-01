@@ -47,7 +47,7 @@ import ch.scorpion.jabbah.io.Storable
  */
 abstract class AbstractVerticeView<T : Vertice>(
 	styleProvider: StyleProvider,
-	model: T?
+	model: T
 ) : AbstractGraphElementView<T>(styleProvider, GraphStyleType.VERTICE, model), VerticeView<T>, Transparent {
 
 	companion object {
@@ -78,16 +78,16 @@ abstract class AbstractVerticeView<T : Vertice>(
 	/** ---- UI properties */
 
 	var customDescription: Description
-		get() = model!!.description
+		get() = model.description
 		set(value) {
-			model!!.description.translation = value.translation
+			model.description.translation = value.translation
 		}
 
 	/** ---- [VerticeView] interface */
 
-	private val staticDescription: String? get() = Translations.getOptionalString("${model!!.baseResourceKey}.desc")
+	private val staticDescription: String? get() = Translations.getOptionalString("${model.baseResourceKey}.desc")
 
-	override val shortDescription: String? get() = model?.description?.value ?: staticDescription
+	override val shortDescription: String? get() = model.description.value ?: staticDescription
 
 	override var isShowPortViews: Boolean = true
 		set(value) {
@@ -134,10 +134,10 @@ abstract class AbstractVerticeView<T : Vertice>(
 	}
 
 	override fun getPort(portId: Int): Port<*>? {
-		if (model!!.designError != null) {
+		if (model.designError != null) {
 			return null
 		}
-		return model!!.getPort<Any>(portId)
+		return model.getPort<Any>(portId)
 	}
 
 	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?) {
@@ -161,12 +161,12 @@ abstract class AbstractVerticeView<T : Vertice>(
 	}
 
 	override fun handleEdgeViewWidthChanged(edgeView: EdgeView<*>) {
-		getNetPortViews(edgeView.model!!).forEach { it.edgeViewWidth = edgeView.width }
+		getNetPortViews(edgeView.model).forEach { it.edgeViewWidth = edgeView.width }
 	}
 
 	override fun drawDataFlow(inputName: String, outputName: String, context: DrawContext) {
-		val inputPortView = getPortView(model!!.getInput<T>(inputName))!!
-		val outputPortView = getPortView(model!!.getOutput<T>(outputName))!!
+		val inputPortView = getPortView(model.getInput<T>(inputName))!!
+		val outputPortView = getPortView(model.getOutput<T>(outputName))!!
 
 		inputPortView.prepareConnectionDrawContext(context)
 
@@ -175,7 +175,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	/** ---- [ConnectableView] */
 
-	override val isConnectable: Boolean get() = model!!.designError == null
+	override val isConnectable: Boolean get() = model.designError == null
 
 	override fun getPortConnectionPoint(port: Port<*>?): Point2D {
 		return rotate(getPortView(port!!)!!.connectionPoint.add(location))
@@ -205,7 +205,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		get() {
 			val list = mutableListOf<SnappableX>()
 			list.add(SnappableXCoordinate(location.x))
-			model!!.getPorts()
+			model.getPorts()
 				.filter { !it.isConnected }
 				.forEach { list.add(getPortView(it)!!) }
 			return list.toTypedArray()
@@ -215,7 +215,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		get() {
 			val list = mutableListOf<SnappableY>()
 			list.add(SnappableYCoordinate(location.y))
-			model!!.getPorts()
+			model.getPorts()
 				.filter { !it.isConnected }
 				.forEach { list.add(getPortView(it)!!) }
 			return list.toTypedArray()
@@ -264,7 +264,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	/** ---- [Component] interface */
 
-	override val type: String? get() = model?.type
+	override val type: String? get() = model.type
 
 	override val rotatable: Boolean get() = true
 
@@ -324,7 +324,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 	 * @throws NoSuchElementException if not exists
 	 */
 	protected fun getInput(): PortView<*> {
-		return getPortView(model!!.getInput<Any>())!!
+		return getPortView(model.getInput<Any>())!!
 	}
 
 	/**
@@ -332,7 +332,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 	 * @throws NoSuchElementException if not exists
 	 */
 	protected fun getOutput(): PortView<*> {
-		return getPortView(model!!.getOutput<Any>())!!
+		return getPortView(model.getOutput<Any>())!!
 	}
 
 	/** Returns the [PortView]s that point to the specified [Direction].*/
@@ -445,7 +445,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 	}
 
 	private fun isExecutionInfoDrawn(requiredBySystemSpeed: Boolean, isPausing: Boolean): Boolean {
-		return requiredBySystemSpeed && model != null && model!!.waiting && isPausing
+		return requiredBySystemSpeed && model.waiting && isPausing
 	}
 
 	/**

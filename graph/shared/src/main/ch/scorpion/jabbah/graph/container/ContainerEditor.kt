@@ -41,7 +41,7 @@ open class ContainerEditor(
 
 		eventBus.register(GraphPortViewEvent::class) {
 			if (it.type == GraphPortViewEvent.Type.REMOVE) {
-				removePortViewComponent(it.graphPortView.model!!.name!!)
+				removePortViewComponent(it.graphPortView.model.name!!)
 			}
 		}
 

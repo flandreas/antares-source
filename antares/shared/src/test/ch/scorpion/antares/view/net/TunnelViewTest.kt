@@ -37,18 +37,18 @@ class TunnelViewTest : AbstractCircuitTest() {
 		startSimulation(1100L)
 		proceedToMillis(2200L)
 
-		assertEquals(Word.of(false), sender.model!!.getIncomingSignal() as Word)
+		assertEquals(Word.of(false), sender.model.getIncomingSignal() as Word)
 	}
 
 	@Test
 	fun shouldForwardSignal() {
 		startSimulation(1100L)
 
-		switchView.model!!.toggle(scheduler)
+		switchView.model.toggle(scheduler)
 		proceedToMillis(2200L)
 
-		assertEquals(Word.of(true), sender.model!!.getInOrOutSignal() as Word)
-		assertEquals(Word.of(true), receiver.model!!.getInOrOutSignal() as Word)
+		assertEquals(Word.of(true), sender.model.getInOrOutSignal() as Word)
+		assertEquals(Word.of(true), receiver.model.getInOrOutSignal() as Word)
 	}
 
 	@Test
@@ -56,11 +56,11 @@ class TunnelViewTest : AbstractCircuitTest() {
 		val receiver2 = builder.addVerticeView(TunnelView("A"))
 
 		startSimulation(1100L)
-		switchView.model!!.toggle(scheduler)
+		switchView.model.toggle(scheduler)
 		proceedToMillis(2200L)
 
-		assertEquals(Word.of(true), receiver.model!!.getInOrOutSignal() as Word)
-		assertEquals(Word.of(true), receiver2.model!!.getInOrOutSignal() as Word)
+		assertEquals(Word.of(true), receiver.model.getInOrOutSignal() as Word)
+		assertEquals(Word.of(true), receiver2.model.getInOrOutSignal() as Word)
 	}
 
 	@Test
@@ -68,10 +68,10 @@ class TunnelViewTest : AbstractCircuitTest() {
 		val tunnelB = builder.addVerticeView(TunnelView("B"))
 
 		startSimulation(1100L)
-		switchView.model!!.toggle(scheduler)
+		switchView.model.toggle(scheduler)
 		proceedToMillis(2200L)
 
-		assertEquals(Word.of(true), receiver.model!!.getInOrOutSignal() as Word)
-		assertEquals(Word.undefined(BitWidth.BW_1), tunnelB.model!!.getInOrOutSignal() as Word)
+		assertEquals(Word.of(true), receiver.model.getInOrOutSignal() as Word)
+		assertEquals(Word.undefined(BitWidth.BW_1), tunnelB.model.getInOrOutSignal() as Word)
 	}
 }

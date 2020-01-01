@@ -22,11 +22,11 @@ class DelayGateView(
     }
 
     var delay: Long
-        get() = model!!.delay
+        get() = model.delay
         set(value) {
 	        if (delay != value) {
 		        invalidate()
-		        model!!.delay = value
+		        model.delay = value
 		        updateText()
 		        validate()
 	        }

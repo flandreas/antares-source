@@ -79,7 +79,7 @@ enum class SymbolStyle(val customName: String) {
 		override fun getOrShapeConnectedPortViewLength(gate: BoxGateView<*>, index: Int): Int {
 			// Heuristic to adapt to the curved shape of OR-like shapes
 
-			val inputCount = gate.model!!.inputCount
+			val inputCount = gate.model.inputCount
 			if (inputCount == 2) {
 				return (2 * Look.SCALE * 0.35).toInt()
 			}

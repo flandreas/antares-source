@@ -8,18 +8,19 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Storable
 
 class DigitalSignalSourceControlView<T : DigitalSignalSource>(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     override var controlId: String? = null,
     signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY,
-    model: T? = null,
+    model: T = DummySignalSource() as T,
     name: String? = null
 ) : AbstractNumberViewComponent<T>(styleProvider, model, Direction.EAST, signalRepresentation), ControlView<T> {
 
@@ -33,9 +34,7 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 
     override fun modelExchanged(oldModel: T?) {
         super.modelExchanged(oldModel)
-        if (model != null) {
-            updateView()
-        }
+        updateView()
     }
 
     /** ---- [Storable] */
@@ -73,10 +72,10 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 
     override val controlName: String
 	    get() {
-		    if (StringUtils.isEmpty(model!!.name)) {
-			    return "${model!!.type} ($id)"
+		    if (StringUtils.isEmpty(model.name)) {
+			    return "${model.type} ($id)"
 		    }
-		    return "${model!!.type} \"${model!!.name}\""
+		    return "${model.type} \"${model.name}\""
 	    }
 
 	override fun bindToModel(model: T) {
@@ -102,42 +101,36 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 	}
 
 	private fun copyControlViewProperties(source: AbstractNumberViewComponent<*>, dest: DigitalSignalSourceControlView<*>) {
-		dest.name = source.model!!.name
+		dest.name = source.model.name
 		dest.bitWidth = source.bitWidth
 		dest.signalRepresentation = source.signalRepresentation
 	}
 
     /** ---- [AbstractNumberViewComponent] */
 
-    /** The [BitWidth] to be used as long as this [DigitalSignalSourceControlView] is still unbound. */
-    private var _bitWidth: BitWidth = BitWidth.BW_1
-
     override var bitWidth: BitWidth
-        get() {
-            if (model == null) {
-                return _bitWidth
-            }
-            return model!!.bitWidth
-        }
+        get() = model.bitWidth
         set(value) {
-            if (model == null) {
-                _bitWidth = value
-            } else {
-                model!!.bitWidth = value
-            }
+            model.bitWidth = value
             updateView()
         }
 
-    override val signal: DigitalSignal
-        get() {
-            if (model == null) {
-                return Word.allOf(bitWidth, Bit.False)
-            }
-            return model!!.signal!!
-        }
+    override val signal: DigitalSignal get() = model.signal!!
 
     override val upperLeftBoundsEdge: Point2D
         get() = Point2D(0.0, -numberView!!.height / 2 - insets)
 
     override val insets: Int get() = 4
+
+	/** ---- [DigitalSignalSourceControlView] */
+
+	/** Used as placeholder of the mandatory [DigitalSignalSource] until it is set by [bindToModel].*/
+	private class DummySignalSource : AbstractVertice("library.element.SignalSource"), DigitalSignalSource {
+		override var bitWidth: BitWidth = BitWidth.BW_1
+		override var signal: DigitalSignal? get() = Word.falseValue(bitWidth)
+			set(value) {
+				// empty
+			}
+	}
+
 }

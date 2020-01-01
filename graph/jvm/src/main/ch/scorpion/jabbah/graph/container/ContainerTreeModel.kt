@@ -64,7 +64,7 @@ class ContainerTreeModel(
 	 */
 	fun addGraphPortView(graphPortView: GraphPortView<*>) {
 		val item = ContainerTreePortItem(graphPortView) {
-			portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(graphPortView.model!!)))
+			portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(graphPortView.model)))
 		}
 		portsNode.add(DefaultMutableTreeNode(item))
 		treeModel.nodesWereInserted(portsNode, intArrayOf(portsNode.childCount - 1))
@@ -94,7 +94,7 @@ class ContainerTreeModel(
 	 */
 	private fun fillGraphPortViews(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
 		graphView.getGraphPortViews()
-			.filter { containerDrawing.getPortViewComponent(it.model!!.name!!) == null }
+			.filter { containerDrawing.getPortViewComponent(it.model.name!!) == null }
 			.forEach { addGraphPortView(it) }
 	}
 
@@ -122,7 +122,7 @@ class ContainerTreeModel(
 	fun addControlNodes(item: ControlsFolderTreeItem, receiver: DynamicReceiver) {
 		receiver.addChildren(
 			item.graphView.getControlViewSources()
-				.filter { containerDrawing.getControlViewComponent(item.link.append(it.model!!.id)) == null }
+				.filter { containerDrawing.getControlViewComponent(item.link.append(it.model.id)) == null }
 				.map { createControlViewNode(it, item.link) })
 	}
 
@@ -203,7 +203,7 @@ class ContainerTreeModel(
 	private fun createControlViewNode(source: ControlViewSource<Vertice>, baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY): MutableTreeNode {
 		return DefaultMutableTreeNode(ContainerTreeControlItem(
 			source.controlId!!,
-			source.model!!.id,
+			source.model.id,
 			source.controlName,
 			{ ControlViewComponent(styleProvider, source, baseLink) },
 			source.iconPath))
@@ -238,13 +238,13 @@ class ContainerTreeModel(
 	fun addSubGraphVerticeNodes(item: SubGraphsFolderItem, receiver: DynamicReceiver) {
 		receiver.addChildren(
 			item.graphView.getSubGraphVerticeViews()
-				.map { createSubGraphVerticeViewTreeNode(it, item.link.append(it.model!!.id)) })
+				.map { createSubGraphVerticeViewTreeNode(it, item.link.append(it.model.id)) })
 	}
 
 	/** Adds the specified [SubGraphVerticeView] to the [TreeNode] with the top-level [SubGraphsFolderItem]. */
 	fun addSubGraphVerticeView(vv: SubGraphVerticeView<SubGraphVertice>) {
 		if (subGraphsNode.isInitialized) {
-			subGraphsNode.add(createSubGraphVerticeViewTreeNode(vv, DeepVerticeLink(vv.model!!.id)))
+			subGraphsNode.add(createSubGraphVerticeViewTreeNode(vv, DeepVerticeLink(vv.model.id)))
 		}
 	}
 
@@ -301,10 +301,10 @@ class ContainerTreePortItem(
 	factory: () -> Component
 ) : DraggableTreeItem(ContainerTreeItemType.Port, factory, graphPortView.iconPath) {
 
-	val portName: String get() = graphPortView.model!!.name!!
+	val portName: String get() = graphPortView.model.name!!
 
 	override fun getDescription(): String {
-		return "${graphPortView.model!!.portType} ${graphPortView.model!!.name!!}"
+		return "${graphPortView.model.portType} ${graphPortView.model.name!!}"
 	}
 }
 

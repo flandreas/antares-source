@@ -151,7 +151,7 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		val runner = UsecaseRunner(usecase, view.drawing, scheduler)
 		runner.run()
 		proceedToNanos(10_000)
-		assertTrue(switch.model!!.isOn)
+		assertTrue(switch.model.isOn)
 	}
 
 	@Test
@@ -161,10 +161,10 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		val runner = UsecaseRunner(usecase, view.drawing, scheduler)
 		runner.run()
 		proceedToNanos(10_000)
-		assertTrue(switch.model!!.isOn)
+		assertTrue(switch.model.isOn)
 
 		proceedToNanos(20_000)
-		assertFalse(switch.model!!.isOn)
+		assertFalse(switch.model.isOn)
 	}
 
 	@Test
@@ -173,8 +173,8 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		val runner = UsecaseRunner(usecase, view.drawing, scheduler)
 		runner.run()
 		proceedToNanos(10_001)
-		assertFalse(switch.model!!.isOn)
-		assertEquals(Word.of(true), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertFalse(switch.model.isOn)
+		assertEquals(Word.of(true), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
 	}
 
 	@Test
@@ -184,13 +184,13 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		runner.run()
 
 		proceedToNanos(10_000)
-		assertEquals(Word.of(false), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(Word.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
 
 		proceedToNanos(10_500)
-		assertEquals(Word.of(true), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(Word.of(true), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
 
 		proceedToNanos(11_000)
-		assertEquals(Word.of(false), input.model!!.getOutput<DigitalSignal>().getOutgoingSignal())
+		assertEquals(Word.of(false), input.model.getOutput<DigitalSignal>().getOutgoingSignal())
 	}
 
 	/** ---- [UsecaseTestBridge] */

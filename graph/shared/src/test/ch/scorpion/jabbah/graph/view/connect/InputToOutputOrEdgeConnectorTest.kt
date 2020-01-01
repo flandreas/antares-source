@@ -34,8 +34,8 @@ class InputToOutputOrEdgeConnectorTest : AbstractConnectorTest(GraphViewModule.i
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 
 		releaseMouseAt(110, 100)
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v2.model!!.getInput()))
+		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(draggedEdgeView.model.isConnectedWith(v2.model.getInput()))
 	}
 
 	@Test
@@ -48,8 +48,8 @@ class InputToOutputOrEdgeConnectorTest : AbstractConnectorTest(GraphViewModule.i
 		editor.commandManager.undo()
 
 		assertTrue(builder.graphView.getEdgeViews().isEmpty())
-		assertFalse(v1.model!!.getOutput<Boolean>().isConnected)
-		assertFalse(v2.model!!.getInput<Boolean>().isConnected)
+		assertFalse(v1.model.getOutput<Boolean>().isConnected)
+		assertFalse(v2.model.getInput<Boolean>().isConnected)
 	}
 
 	@Test
@@ -59,8 +59,8 @@ class InputToOutputOrEdgeConnectorTest : AbstractConnectorTest(GraphViewModule.i
 		dragMouseTo(150, 100)
 		releaseMouseAt(150, 100)
 
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v2.model!!.getInput()))
-		assertFalse(v1.model!!.getOutput<Boolean>().isConnected)
+		assertTrue(draggedEdgeView.model.isConnectedWith(v2.model.getInput()))
+		assertFalse(v1.model.getOutput<Boolean>().isConnected)
 	}
 
 	@Test
@@ -73,8 +73,8 @@ class InputToOutputOrEdgeConnectorTest : AbstractConnectorTest(GraphViewModule.i
 		editor.commandManager.undo()
 
 		assertTrue(builder.graphView.getEdgeViews().isEmpty())
-		assertFalse(v1.model!!.getOutput<Boolean>().isConnected)
-		assertFalse(v2.model!!.getInput<Boolean>().isConnected)
+		assertFalse(v1.model.getOutput<Boolean>().isConnected)
+		assertFalse(v2.model.getInput<Boolean>().isConnected)
 	}
 
 	@Test
@@ -87,14 +87,14 @@ class InputToOutputOrEdgeConnectorTest : AbstractConnectorTest(GraphViewModule.i
 		dragMouseTo(150, 100)
 		releaseMouseAt(150, 100)
 
-		assertTrue(ev.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertTrue(ev.model!!.isConnectedWith(v2.model!!.getInput()))
-		assertTrue(ev.model!!.isConnectedWith(v3.model!!.getInput()))
+		assertTrue(ev.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(ev.model.isConnectedWith(v2.model.getInput()))
+		assertTrue(ev.model.isConnectedWith(v3.model.getInput()))
 
 		// 3 VerticeViews, 1 NodeView, 3 EdgeViews
 		assertEquals(7, builder.graphView.drawablesCount)
 
-		val ev2 = builder.graphView.getEdgeView(v3.model!!.getInput<Boolean>())!!
+		val ev2 = builder.graphView.getEdgeView(v3.model.getInput<Boolean>())!!
 		assertEquals(Point2D(150, 100), ev2.polyline.getPointAt(0))
 		assertEquals(Point2D(150, 200), ev2.polyline.getPointAt(1))
 		assertEquals(Point2D(200, 200), ev2.polyline.getPointAt(2))
@@ -112,9 +112,9 @@ class InputToOutputOrEdgeConnectorTest : AbstractConnectorTest(GraphViewModule.i
 
 		editor.commandManager.undo()
 
-		assertTrue(ev.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertTrue(ev.model!!.isConnectedWith(v2.model!!.getInput()))
-		assertFalse(ev.model!!.isConnectedWith(v3.model!!.getInput()))
+		assertTrue(ev.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(ev.model.isConnectedWith(v2.model.getInput()))
+		assertFalse(ev.model.isConnectedWith(v3.model.getInput()))
 
 		// 3 VerticeViews, 1 EdgeView
 		assertEquals(4, builder.graphView.drawablesCount)
@@ -138,8 +138,8 @@ class InputToOutputOrEdgeConnectorTest : AbstractConnectorTest(GraphViewModule.i
 		assertEquals(6, draggedEdgeView.segmentPointCount)
 
 		clickMouseAt(130, 100)
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertTrue(draggedEdgeView.model!!.isConnectedWith(v2.model!!.getInput()))
+		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(draggedEdgeView.model.isConnectedWith(v2.model.getInput()))
 	}
 
 	@Test
@@ -174,9 +174,9 @@ class InputToOutputOrEdgeConnectorTest : AbstractConnectorTest(GraphViewModule.i
 		mouseMoveTo(150, 100)
 		clickMouseAt(150, 100)
 
-		assertTrue(ev.model!!.isConnectedWith(v1.model!!.getOutput()))
-		assertTrue(ev.model!!.isConnectedWith(v2.model!!.getInput()))
-		assertTrue(ev.model!!.isConnectedWith(v3.model!!.getInput()))
+		assertTrue(ev.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(ev.model.isConnectedWith(v2.model.getInput()))
+		assertTrue(ev.model.isConnectedWith(v3.model.getInput()))
 
 		// 3 VerticeViews, 1 NodeView, 3 EdgeViews
 		assertEquals(7, builder.graphView.drawablesCount)

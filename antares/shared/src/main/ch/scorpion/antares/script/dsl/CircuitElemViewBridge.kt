@@ -10,7 +10,7 @@ class CircuitElementViewBridge(
 	private val verticeView: VerticeView<*>,
 	signalHandler: SignalHandler?,
 	private val drawContext: DrawContext? = null
-) : CircuitElemModelBridge(verticeView.model!!, signalHandler, null, null) {
+) : CircuitElemModelBridge(verticeView.model, signalHandler, null, null) {
 
 	/** Returns the ID of the circuit element view.*/
 	override fun id(): Int = verticeView.id

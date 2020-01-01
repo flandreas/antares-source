@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.graph.model.*
 abstract class AbstractGraphElementView<T : GraphElement>(
 	styleProvider: StyleProvider,
 	styleType: StyleType,
-	model: T?
+	model: T
 ) : AbstractComponent(styleProvider, styleType), GraphElementView<T> {
 
 	companion object {
@@ -36,7 +36,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 
 	/** ---- [GraphElementView] interface */
 
-	override var model: T? = model
+	override var model: T = model
 		set(value) {
 			val oldModel = field
 			field = value
@@ -44,28 +44,26 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 		}
 
 	init {
-		model?.addGraphElementListener(modelListener)
+		model.addGraphElementListener(modelListener)
 	}
 
 	override fun dispose() {
-		model?.removeGraphElementListener(modelListener)
+		model.removeGraphElementListener(modelListener)
 	}
 
 	/** ---- UI related properties */
 
 	var propagationDelay: Long
-		get() = model?.propagationDelay ?: 0
+		get() = model.propagationDelay ?: 0
 		set(value) {
-			model?.propagationDelay = value
+			model.propagationDelay = value
 		}
 
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		if (model != null) {
-			writer.writeInt(STORABLE_MODEL_ID, writer.provideIdentity(model!!))
-		}
+		writer.writeInt(STORABLE_MODEL_ID, writer.provideIdentity(model))
 	}
 
 	override fun read(reader: StoreReader) {
@@ -86,7 +84,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 			val storable = referenceResolver.getStorable(reference.referenceId)
 			if (storable is GraphElement) {
 				model = storable as T
-				LOG.debug("resolve ${model?.id}")
+				LOG.debug("resolve ${model.id}")
 			}
 		}
 		isResolving = false
@@ -109,7 +107,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 	 */
 	protected open fun modelExchanged(oldModel: T?) {
 		oldModel?.removeGraphElementListener(modelListener)
-		model?.addGraphElementListener(modelListener)
+		model.addGraphElementListener(modelListener)
 	}
 
 	protected open fun handleStateChanged(event: GraphElementEvent) {

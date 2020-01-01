@@ -165,14 +165,14 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 	}
 
 	override fun checkDesign(): Boolean {
-		val issues = getDrawables { it.model?.designError != null }
+		val issues = getDrawables { it.model.designError != null }
 			.groupBy { it.model }
 			.map { it.value.first() }
 			.map {
 				IssueImpl(
 					severity = IssueSeverity.Error,
 					name = Translations.getString("graph.designError.name"),
-					description = it.model!!.designError?.description,
+					description = it.model.designError?.description,
 					origin = "${it.type} (${it.id})",
 					context = null)
 			}
@@ -220,7 +220,7 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 	}
 
 	override fun getGraphPortView(portName: String): GraphPortView<GraphPort<Any>>? {
-		return getDrawable { it is GraphPortView<*> && it.model!!.name == portName } as GraphPortView<GraphPort<Any>>?
+		return getDrawable { it is GraphPortView<*> && it.model.name == portName } as GraphPortView<GraphPort<Any>>?
 	}
 
 	override fun getControlViewSource(controlId: String): ControlViewSource<Vertice>? {
@@ -337,9 +337,7 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 	override fun add(drawable: T, index: Int): DrawableContainer<T> {
 		if (!contains(drawable)) {
 			if (!readingFromStore) {
-				if (drawable.model != null) {
-					graph?.add(drawable.model!!)
-				}
+				graph?.add(drawable.model)
 			}
 			if (drawable is NetViewElement<*>) {
 				addNetViewElement(drawable as NetViewElement<Any>)
@@ -352,8 +350,8 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 	/** Overridden in order to remove the [GraphElement] from the [Graph] that this [GraphView] displays.*/
 	override fun remove(drawable: T): DrawableContainer<T> {
 		if (graph != null) {
-			if (drawable.model != null && getElementViews(drawable.model!!).size == 1) {
-				graph!!.remove(drawable.model!!)
+			if (getElementViews(drawable.model).size == 1) {
+				graph!!.remove(drawable.model)
 			}
 			if (drawable is NetViewElement<*>) {
 				removeNetViewElement(drawable as NetViewElement<Any>)

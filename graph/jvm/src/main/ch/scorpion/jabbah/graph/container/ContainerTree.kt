@@ -60,7 +60,7 @@ class ContainerTree(
 	private val graphPortViewEventHandler: EventHandler<GraphPortViewEvent> = {
 		when(it.type) {
 			GraphPortViewEvent.Type.ADD -> model.addGraphPortView(it.graphPortView)
-			GraphPortViewEvent.Type.REMOVE -> model.removeGraphPortView(it.graphPortView.model!!.name!!)
+			GraphPortViewEvent.Type.REMOVE -> model.removeGraphPortView(it.graphPortView.model.name!!)
 		}
 	}
 

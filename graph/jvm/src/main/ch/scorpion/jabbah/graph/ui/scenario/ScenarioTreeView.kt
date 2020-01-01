@@ -155,7 +155,7 @@ class ScenarioTreeView(
 		}
 
 	/** Casts the generic model property to [ScenarioTreeModel]. */
-	private val scenarioTreeModel: ScenarioTreeModel get() = model!! as ScenarioTreeModel
+	private val scenarioTreeModel: ScenarioTreeModel get() = model as ScenarioTreeModel
 
 	/** Setup the popup menu according to the currently selected [TreeNode]' user object.*/
 	private fun setupPopupMenu(newSelectionPath: TreePath?) {

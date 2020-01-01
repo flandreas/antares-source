@@ -352,15 +352,15 @@ class GraphPanel(
 		toolbar.addSeparator()
 
 		toolbar.addTool(editor.currentTool, "/img/pointer.gif", Translations.getString("edit.tool.select"))
-		toolbar.addTool(RectangleTool(editor, { RectangleComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
+		toolbar.addTool(RectangleTool(editor, { RectangleComponent() }, { GraphElementViewWrapper(it) }),
 			"/img/rectangle.png", Translations.getString("edit.component.rectangle"))
-		toolbar.addTool(RectangleTool(editor, { EllipseComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
+		toolbar.addTool(RectangleTool(editor, { EllipseComponent() }, { GraphElementViewWrapper(it) }),
 			"/img/ellipse.png", Translations.getString("edit.component.ellipse"))
-		toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
+		toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper(it) }),
 			"/img/polyline.gif", Translations.getString("edit.component.polyline"))
-		toolbar.addTool(QuadCurveTool(editor, { QuadCurveComponent() }, { GraphElementViewWrapper<Vertice>(it) }),
+		toolbar.addTool(QuadCurveTool(editor, { QuadCurveComponent() }, { GraphElementViewWrapper(it) }),
 			"/img/curve-20.png", Translations.getString("edit.component.quadraticCurve"))
-		toolbar.addTool(TextTool(editor, { TextComponentJvm("Text") }, { GraphElementViewWrapper<Vertice>(it) }),
+		toolbar.addTool(TextTool(editor, { TextComponentJvm("Text") }, { GraphElementViewWrapper(it) }),
 			"/img/text.gif", Translations.getString("edit.component.text"))
 
 		return toolbar

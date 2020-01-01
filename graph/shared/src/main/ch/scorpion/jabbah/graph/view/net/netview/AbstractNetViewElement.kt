@@ -25,7 +25,7 @@ abstract class AbstractNetViewElement<T: Any>(
 	    get() = model
 	    set(value) {
 		    if (model !== value) {
-			    model = value
+			    model = value!!
 		    }
 	    }
 

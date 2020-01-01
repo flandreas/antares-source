@@ -27,7 +27,7 @@ class XnorGateView(
     }
 
     override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
-        return if (model!!.inputCount == 2) {
+        return if (model.inputCount == 2) {
             EXPLANATION.explanation.vertice = model
             EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
             EXPLANATION

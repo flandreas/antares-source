@@ -73,14 +73,14 @@ class ProbeView(
 
 		val inputPortView = DigitalPortView(
 			styleProvider = styleProvider,
-			port = model!!.getInput(),
+			port = model.getInput(),
 			direction = Direction.WEST)
 		addPortView(inputPortView)
 
 		if (hasOutput) {
 			val outputPort = DigitalPortView(
 				styleProvider = styleProvider,
-				port = model!!.getOutput(),
+				port = model.getOutput(),
 				direction = Direction.EAST)
 			addPortView(outputPort)
 		}
@@ -96,34 +96,34 @@ class ProbeView(
 	/** ---- UI properties */
 
 	var hasOutput: Boolean
-		get() = model!!.hasOutput
+		get() = model.hasOutput
 		set(value) {
 			if (value == hasOutput) {
 				return
 			}
 
 			invalidate()
-			model!!.hasOutput = value
+			model.hasOutput = value
 			updatePortViews()
 			updateView()
 		}
 
 	var name: String?
-		get() = model!!.name
+		get() = model.name
 		set(value) {
-			if (model!!.name != value) {
-				model!!.name = value
+			if (model.name != value) {
+				model.name = value
 				postControlViewSourceChangeEvent(eventBus)
 			}
 		}
 
 	var isLogging: Boolean
-		get() = model!!.isLogging
+		get() = model.isLogging
 		set(value) {
 			if (value == isLogging) {
 				return
 			}
-			model!!.isLogging = value
+			model.isLogging = value
 		}
 
 	/** ---- [AbstractDrawable] */
@@ -139,11 +139,11 @@ class ProbeView(
 	/** ---- [AbstractNumberViewComponent] */
 
 	override var bitWidth: BitWidth
-		get() = model!!.bitWidth
+		get() = model.bitWidth
 		set(value) {
 			if (value != bitWidth) {
 				clear()
-				model!!.bitWidth = value
+				model.bitWidth = value
 				updateView()
 				postControlViewSourceChangeEvent(eventBus)
 			}
@@ -158,7 +158,7 @@ class ProbeView(
 			}
 		}
 
-	override val signal: DigitalSignal get() = model!!.signal!!
+	override val signal: DigitalSignal get() = model.signal!!
 
 	override val upperLeftBoundsEdge: Point2D
 		get() = when (orientation) {
@@ -262,7 +262,7 @@ class ProbeView(
 	}
 
 	private fun updateLabelPosition() {
-		if (model!!.hasOutput) {
+		if (model.hasOutput) {
 			updateLabelPositionWithOutput()
 		} else {
 			updateLabelPositionWithoutOutput()

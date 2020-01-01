@@ -25,9 +25,9 @@ class BufferGateView(
     }
 
     var bitWidth: BitWidth
-        get() = model!!.bitWidth
+        get() = model.bitWidth
         set(value) {
-            model?.bitWidth = value
+            model.bitWidth = value
         }
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {

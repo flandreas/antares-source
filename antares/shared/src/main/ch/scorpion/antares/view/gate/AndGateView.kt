@@ -48,7 +48,7 @@ class AndGateView(
 			if (field == value) {
 				return
 			}
-			checkArgument(value.id <= model!!.chosenInputCount.count, "InputPortNumber must not be larger than InputCount")
+			checkArgument(value.id <= model.chosenInputCount.count, "InputPortNumber must not be larger than InputCount")
 			invalidate()
 			field = value
 			labelStyle = if (dataPort == InputPortNumber.NONE) LabelStyle.LARGE_CENTERED else LabelStyle.SMALL_UPPER_LEFT
@@ -63,7 +63,7 @@ class AndGateView(
 	}
 
 	override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
-		return if (model!!.inputCount == 2) {
+		return if (model.inputCount == 2) {
 			EXPLANATION.explanation.vertice = model
 			EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
 			EXPLANATION
@@ -72,9 +72,7 @@ class AndGateView(
 
 	override fun modelExchanged(oldModel: AndGate?) {
 		super.modelExchanged(oldModel)
-		if (model != null) {
-			dataPort = InputPortNumber.withId(min(dataPort.id, model!!.chosenInputCount.count))
-		}
+		dataPort = InputPortNumber.withId(min(dataPort.id, model.chosenInputCount.count))
 	}
 
 	override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
@@ -105,12 +103,12 @@ class AndGateView(
 	/** ---- [AndGateView] */
 
 	private fun drawDataFlow(context: DrawContext) {
-		val dataPortView = getPortView(model!!.getInput<DigitalSignal>(dataPort.id))!!
-		val outputPortView = getPortView(model!!.getOutput<DigitalSignal>())!!
+		val dataPortView = getPortView(model.getInput<DigitalSignal>(dataPort.id))!!
+		val outputPortView = getPortView(model.getOutput<DigitalSignal>())!!
 		val appContext = context.castedAppContext<GraphApplicationContext>()!!
 
 		if (appContext.mode.isExecute()) {
-			val controlState = model!!.calculate { it.portId != dataPort.id }
+			val controlState = model.calculate { it.portId != dataPort.id }
 			if (controlState.isSet) {
 				context.g.stroke = createClosedDataPathStroke()
 			} else {
@@ -122,7 +120,7 @@ class AndGateView(
 		}
 
 		if (appContext.isExecute && showNetState(appContext.systemSpeedCategory.systemSpeedCategory)) {
-			context.g.color = model!!.getOutput<DigitalSignal>().getOutgoingSignal()!!.getColor().foregroundColor
+			context.g.color = model.getOutput<DigitalSignal>().getOutgoingSignal()!!.getColor().foregroundColor
 		} else {
 			context.g.color = context.choose(Themes.get<GraphTheme>().edge.color).foregroundColor
 		}

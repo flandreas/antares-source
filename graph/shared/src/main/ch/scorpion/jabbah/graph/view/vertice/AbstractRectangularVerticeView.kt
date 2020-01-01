@@ -39,7 +39,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 abstract class AbstractRectangularVerticeView<T : Vertice>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: T?,
+	model: T,
 	rectangle: RectangularShape
 ) : AbstractVerticeView<T>(styleProvider, model), RectangularDrawable {
 
@@ -51,7 +51,7 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 	 */
 	constructor(
 		styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-		model: T?,
+		model: T,
 		x: Double = 0.0,
 		y: Double = 0.0,
 		w: Double = 0.0,
