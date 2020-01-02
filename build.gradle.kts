@@ -108,6 +108,9 @@ subprojects {
 				val deployResources by creating(Copy::class) {
 					from(listOf(commonMain.resources, jvmMain.resources)) {
 						include("**/*.properties")
+						include("**/libraries/*")
+						include("**/img/*")
+						include("**/version.txt")
 					}
 					into("${buildDir.absolutePath}/classes/kotlin/jvm/main")
 				}

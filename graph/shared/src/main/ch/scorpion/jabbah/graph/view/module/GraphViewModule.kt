@@ -172,6 +172,7 @@ object GraphViewModule : AbstractModule() {
 		properties.set(ConnectionPointHighlightCircle.PROP_COLOR, Themes.get<EditTheme>().selection.color.foregroundColor)
 		properties.set(OriginIndicator.PROP_COLOR, Color.BLUE)
 		properties.set(OriginIndicator.PROP_SELECTION_COLOR, Color.RED)
+		properties.set(GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE, GraphViewAnimationType.Animation.customName)
 
 		properties.set(ScenarioDetector.PROP_LIMIT_SYSTEM_SPEED_CATEGORY, SystemSpeedCategory.Observe.customName)
 		properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)

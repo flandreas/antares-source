@@ -13,22 +13,21 @@ import ch.scorpion.jabbah.graph.view.GraphViewAnimationType
  * An [Action] for activating or deactivating [GraphView] animation by changing [CurrentGraphViewAnimationType].
  */
 class GraphViewAnimationAction(
-        private val currentGraphViewAnimationType: CurrentGraphViewAnimationType,
-        eventBus: EventBus = BaseModule.eventBus
+	private val currentGraphViewAnimationType: CurrentGraphViewAnimationType,
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("execution.action.simulationDriver.animation") {
 
-    init {
-        eventBus.register(CurrentGraphAnimationTypeEvent::class, { updateState() })
-        updateState()
-    }
+	init {
+		eventBus.register(CurrentGraphAnimationTypeEvent::class) { updateState() }
+		updateState()
+	}
 
-    private fun updateState() {
-        selected =currentGraphViewAnimationType.graphViewAnimationType == GraphViewAnimationType.Animation
-    }
+	private fun updateState() {
+		selected = currentGraphViewAnimationType.graphViewAnimationType == GraphViewAnimationType.Animation
+	}
 
-    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-        currentGraphViewAnimationType.graphViewAnimationType = if (selected)
-            GraphViewAnimationType.Animation else GraphViewAnimationType.None
-    }
-
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		currentGraphViewAnimationType.graphViewAnimationType = if (selected)
+			GraphViewAnimationType.Animation else GraphViewAnimationType.None
+	}
 }

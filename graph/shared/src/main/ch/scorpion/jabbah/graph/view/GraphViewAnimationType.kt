@@ -2,17 +2,19 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.Properties
 
 enum class GraphViewAnimationType(val customName: String) {
 	None("none"),
 	Animation("animation");
 
 	companion object {
-		/** The name of the [GraphViewAnimationType] property in [Properties]. */
+
+		/** The name of the [String] property in [Properties] containing the name of [GraphViewAnimationType]. */
 		const val PROP_GRAPH_VIEW_ANIMATION_TYPE = "graph.view.graphViewAnimationType"
 
 		fun withName(customName: String): GraphViewAnimationType {
-			return GraphViewAnimationType.values().firstOrNull { it.customName == customName }
+			return values().firstOrNull { it.customName == customName }
 				?: throw IllegalArgumentException("unknown type '$customName'")
 		}
 	}
@@ -25,15 +27,15 @@ class CurrentGraphViewAnimationType(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
-	constructor() : this(GraphViewAnimationType.withName(BaseModule.settings.getString(
-		GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE, GraphViewAnimationType.None.customName)))
+	constructor() : this(GraphViewAnimationType.withName(BaseModule.properties.getString(
+		GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE)))
 
 	var graphViewAnimationType: GraphViewAnimationType = initGraphViewAnimationType
 		set(value) {
 			if (field == value) {
 				return
 			}
-			BaseModule.settings.set(GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE, value.customName)
+			BaseModule.properties.customize(GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE, value.customName)
 			field = value
 			eventBus.post(CurrentGraphAnimationTypeEvent(field))
 		}
