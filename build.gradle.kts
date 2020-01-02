@@ -123,8 +123,16 @@ subprojects {
 }
 
 tasks {
+	register("copyImages", Copy::class) {
+		from("doc/user-manual") {
+		include("**/*.png")
+		}
+		into("build/doc/user-manual/html5")
+	}
+
 	"asciidoctor"(AsciidoctorTask::class) {
-		sourceDir = file("doc/user-manual/german")
-		outputDir = file("build/doc/user-manual-german")
+		dependsOn(getByName("copyImages"))
+		sourceDir = file("doc/user-manual")
+		outputDir = file("build/doc/user-manual")
 	}
 }
