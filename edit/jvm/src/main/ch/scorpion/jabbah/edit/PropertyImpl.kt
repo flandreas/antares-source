@@ -33,8 +33,8 @@ class PropertyImpl<V>(
     }
 
     fun bind(editor: Editor, getter: () -> V?, setter: ((V?) -> Unit)?, editable: Boolean, filter: ((V) -> Boolean)? = null, optional: Boolean = false): PropertyImpl<V> {
-        this.editor = checkNotNull(editor)
-        this.getter = checkNotNull(getter)
+        this.editor = editor
+        this.getter = getter
         this.setter = setter
         this.editable = editable
         if (filter != null) {
@@ -90,8 +90,9 @@ class PropertyImpl<V>(
                 setter!!.invoke(newValue)
 	            editor!!.commandManager.commitTransaction()
             } catch (t: Throwable) {
-                LOG.error("PropertyImpl: Error in invoking bean setter: ${t.message}")
+                LOG.error("Error in invoking bean setter: ${t.message}")
                 editor!!.commandManager.rollbackTransaction()
+	            throw t
             }
         }
     }

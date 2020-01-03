@@ -39,7 +39,7 @@ open class GraphImpl(
 	private val graphPortNameChangedHandler: EventHandler<GraphPortNameChanged<Any>> = {
 		LOG.debug("handling GraphPortNameChanged")
 		if (it.newName != null && contains(it.graphPort) && existsGraphPortNameExcluding(it.newName, it.graphPort)) {
-			throw VetoException()
+			throw VetoException(Translations.getString("graph.port.nameAlreadyExists.msg"))
 		}
 	}
 

@@ -128,17 +128,17 @@ class AntaresSwing(
 		}
 		eventBus.register(OpenProjectRequest::class) {
 			if (!canReplaceSavable("project.action.open.name")) {
-				throw VetoException()
+				throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
 			}
 		}
 		eventBus.register(OpenLibraryRequest::class) {
 			if (!canReplaceSavable("library.action.open.name")) {
-				throw VetoException()
+				throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
 			}
 		}
 		eventBus.register(CloseProjectRequest::class) {
 			if (savable is ProjectSavable && (savable as ProjectSavable).project == it.project && !canReplaceSavable("project.action.close.name")) {
-				throw VetoException()
+				throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
 			}
 		}
 		eventBus.register(CurrentLibraryEvent::class) {

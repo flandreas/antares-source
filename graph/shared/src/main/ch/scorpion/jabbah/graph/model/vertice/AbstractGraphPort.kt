@@ -1,11 +1,10 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
+import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.GraphPort
-import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.*
 
 /**
  * An abstract base implementation of [GraphPort] that mainly posts a [GraphPortNameChanged] event
@@ -17,7 +16,20 @@ abstract class AbstractGraphPort<T : Any>(
 	name: String? = null,
 	calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractInteractableVertice(baseResourceKey, calculator, name), GraphPort<T> {
+) : AbstractInteractableVertice(baseResourceKey, calculator, defaultName(name, port.portType)), GraphPort<T> {
+
+	companion object {
+		private fun defaultName(name: String?, portType: PortType): String {
+			if (StringUtils.isNotEmpty(name)) {
+				return name!!
+			}
+			return when(portType) {
+				PortType.INPUT -> "I"
+				PortType.OUTPUT -> "O"
+				PortType.INOUT -> "IO"
+			}
+		}
+	}
 
 	init {
 		propagationDelay = 1
@@ -32,6 +44,9 @@ abstract class AbstractGraphPort<T : Any>(
 		get() = super.name
 		set(value) {
 			if (super.name != value) {
+				if (StringUtils.isEmpty(value)) {
+					throw IllegalArgumentException(Translations.getString("graph.port.nameMustNotBeEmpty.msg"))
+				}
 				val oldName = super.name
 				super.name = value
 				stateChanged()
@@ -41,7 +56,7 @@ abstract class AbstractGraphPort<T : Any>(
 					elseHandler = {
 						super.name = oldName
 						stateChanged()
-						// TODO Post an application error event that can be displayed to the user as an info
+						throw IllegalArgumentException(it.message)
 					}
 				)
 			}

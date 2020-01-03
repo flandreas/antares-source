@@ -6,13 +6,12 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.swing.UiUtil
 import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.Container
 import java.beans.PropertyDescriptor
-import javax.swing.BorderFactory
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.JTable
+import javax.swing.*
 import kotlin.math.max
 
 
@@ -34,8 +33,18 @@ abstract class AbstractPropertyPanel(
 	/** Displays the title that identifies the selected [Component].*/
 	private val label: JLabel
 
+	private val messageTextArea: JTextArea
+
+	private val messageTextScroll: JScrollPane
+
 	/** The object whose properties are currently being edited.*/
 	private var propertyObject: Any? = null
+
+	private val propertyStorer: java.beans.PropertyChangeListener = object : java.beans.PropertyChangeListener {
+		override fun propertyChange(evt: java.beans.PropertyChangeEvent?) {
+			storeProperties()
+		}
+	}
 
 	init {
 		editor.addPropertyChangeListener(object : PropertyChangeListener<Any> {
@@ -49,12 +58,23 @@ abstract class AbstractPropertyPanel(
 				}
 			}
 		})
-		sheet.addPropertySheetChangeListener {
-			storeProperties()
-		}
+		sheet.addPropertySheetChangeListener(propertyStorer)
 
 		label = JLabel()
 		label.border = BorderFactory.createEmptyBorder(2, 2, 2, 2)
+
+		messageTextArea = JTextArea()
+		messageTextArea.rows = 3
+		messageTextArea.isEditable = false
+		messageTextArea.foreground = Color.RED
+		messageTextArea.background = background
+		messageTextArea.wrapStyleWord = true
+		messageTextArea.lineWrap = true
+		messageTextArea.border = null
+
+		messageTextScroll = UiUtil.decorateTextArea(messageTextArea)
+		messageTextScroll.border = BorderFactory.createEmptyBorder(2, 4, 2, 4)
+		messageTextScroll.background = background
 
 		layout = BorderLayout()
 		add(label, BorderLayout.NORTH)
@@ -76,16 +96,42 @@ abstract class AbstractPropertyPanel(
 		sheet.table?.cellEditor?.stopCellEditing()
 		sheet.setProperties(arrayOf<PropertyDescriptor>())
 		propertyObject = null
+		hideMessage()
 		updateLabel()
+	}
+
+	protected fun showMessage(message: String) {
+		messageTextArea.text = message
+		add(messageTextScroll, BorderLayout.SOUTH)
+		invalidate()
+		revalidate()
+		repaint()
+	}
+
+	protected fun hideMessage() {
+		messageTextArea.text = ""
+		remove(messageTextScroll)
+		revalidate()
+		repaint()
 	}
 
 	private fun storeProperties() {
 		if (propertyObject != null) {
-			sheet.writeToObject(propertyObject)
-			editor.view.drawing.validate()
-			// Read back object to account for calculated properties
-			sheet.readFromObject(propertyObject)
+			try {
+				sheet.writeToObject(propertyObject)
+				editor.view.drawing.validate()
+				hideMessage()
+			} catch (e: Throwable) {
+				e.message?.let { showMessage(it) }
+			}
+			readBackCalculatedProperties()
 		}
+	}
+
+	private fun readBackCalculatedProperties() {
+		sheet.removePropertySheetChangeListener(propertyStorer)
+		sheet.readFromObject(propertyObject)
+		sheet.addPropertySheetChangeListener(propertyStorer)
 	}
 
 	protected fun loadProperties(bean: Any) {

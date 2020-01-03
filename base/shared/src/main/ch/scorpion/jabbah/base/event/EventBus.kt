@@ -5,7 +5,11 @@ import kotlin.reflect.KClass
 typealias EventHandler<T> = (T) -> Unit
 typealias VetoHandler<T> = (T) -> Unit
 
-class VetoException: Throwable()
+/**
+ * Represents a veto for a particular action.
+ * @param msg an internationalized message to be displayed, if necessary.
+ */
+class VetoException(msg: String): Throwable(msg)
 
 /**
  * A central event dispatcher according to the whiteboard pattern.
@@ -32,7 +36,7 @@ interface EventBus {
      * @param thenHandler the code to be executed if no veto occurred
      * @param elseHandler the code to be executed if a veto occurred
      */
-    fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any> = {}, elseHandler: VetoHandler<Any> = {})
+    fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any> = {}, elseHandler: VetoHandler<VetoException> = {})
 }
 
 class EventBusImpl : EventBus {
@@ -62,7 +66,7 @@ class EventBusImpl : EventBus {
         registrations[event::class.simpleName]?.toList()?.forEach { it.invoke(event) }
     }
 
-    override fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any>, elseHandler: VetoHandler<Any>) {
+    override fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any>, elseHandler: VetoHandler<VetoException>) {
         val successHandlers = mutableListOf<EventHandler<Any>>()
         try {
             registrations[event::class.simpleName]?.forEach {
@@ -72,7 +76,7 @@ class EventBusImpl : EventBus {
 	        thenHandler.invoke(event)
         } catch (x: VetoException) {
             successHandlers.forEach {it.invoke(undoEvent)}
-            elseHandler.invoke(event)
+            elseHandler.invoke(x)
         }
     }
 
