@@ -29,6 +29,7 @@
             <translation lang='de' text='Logische Gatter'/>
           </name>
           <items>
+            <baseLibraryElement _id='18' id='AND'/>
             <baseLibraryElement _id='9' id='OR'/>
             <baseLibraryElement _id='10' id='NOT'/>
             <baseLibraryElement _id='11' id='NAND'/>
@@ -38,7 +39,6 @@
             <baseLibraryElement _id='15' id='Buffer'/>
             <baseLibraryElement _id='16' id='TriStateBuffer'/>
             <baseLibraryElement _id='17' id='Delay'/>
-            <baseLibraryElement _id='18' id='AND'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='19'>
@@ -47,10 +47,10 @@
             <translation lang='de' text='Eingabe'/>
           </name>
           <items>
+            <baseLibraryElement _id='23' id='Input'/>
             <baseLibraryElement _id='20' id='Switch'/>
             <baseLibraryElement _id='21' id='DipSwitch'/>
             <baseLibraryElement _id='22' id='Clock'/>
-            <baseLibraryElement _id='23' id='Input'/>
             <baseLibraryElement _id='35' id='Keyboard'/>
           </items>
         </libraryFolder>
@@ -60,11 +60,11 @@
             <translation lang='de' text='Ausgabe'/>
           </name>
           <items>
+            <baseLibraryElement _id='29' id='Output'/>
             <baseLibraryElement _id='25' id='LED'/>
             <baseLibraryElement _id='26' id='RgbLED'/>
             <baseLibraryElement _id='27' id='SevenSegmentDisplay'/>
             <baseLibraryElement _id='28' id='LEDMatrix'/>
-            <baseLibraryElement _id='29' id='Output'/>
             <baseLibraryElement _id='36' id='Terminal'/>
           </items>
         </libraryFolder>

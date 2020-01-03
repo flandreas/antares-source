@@ -10,9 +10,11 @@ Die Liste ist alphabetisch aufsteigend nach dem englischen Begriff sortiert.
 
 Antares (Antares):: Lernplatform für digitale Schaltungen.
 Author (Autor):: Der Benutzer, dem ein Projekt oder eine Bibliothek gehört und der sie als einziger bearbeiten kann.
+Bit Width (Bit-Breite):: Die Anzahl von Bits, die an einem Anschluss oder in einem Leitungsbündel gleichzeitig übertragen werden können.
 Bundle (Bündel):: Ein exportiertes Projekt, das auch die referenzierte Bibliothek enthält.
 Circuit (Schaltung):: Die darstellbare Form einer digitalen Schaltung in `antares`.
 Component (Komponente):: Bestandteil einer Schaltung. Eine Komponente ist entweder elementar oder eine Teilschaltung.
+Description Popup (Beschreibungs-Popup):: Wird über einer Komponente angezeigt, nachdem sich die Maus eine gewisse Zeit über der Komponente befunden hat. Enthält den Namen der Komponente sowie eine Beschreibung. Die Beschreibung ist entweder die Standardbeschreibung (durch den Typ der Komponente vorgegeben) oder eine Spezial-Beschreibung, die der Autor für diese Komponenten-Instanz erfasst hat und die den Zweck dieser Komponente in der Schaltung erläutern kann.
 Desktop (Werkbank):: Enthält das geöffnete Projekt und die referenzierte Bibliothek.
 Developer Mode (Entwicklermodus):: `Antares` kann im Entwicklermodus gestartet werden, um Zugriff auf bestimmte Funktionen zu erhalten, die vor allem der Fehlersuche dienen.
 Elementary Component (Elementare Komponente):: Eine Komponente, die keine innere Schaltung enthält.
@@ -24,18 +26,22 @@ Immerge (Eintauchen):: Innerhalb derselben View in eine Teilschaltung eintauchen
 Library (Bibliothek):: Enthält Schaltungen, die in Projekten referenziert werden können. Bibliotheken sind entweder vordefiniert oder benutzerdefiniert. Bibliotheken können nur durch ihren Autor verändert werden. Ein Projekt kann nur Schaltungen aus einer einzigen Bibiothek referenzieren
 Main View (Hauptansicht):: Die View, welche die Schaltung enthält, die bearbeitet und für welche die Simulation gestartet werden kann. Deren Name wird in der Titelzeile des Fensters angezeigt
 Navigation Bar (Navigationsleiste):: Bestandteil einer Ansicht, die das Navigieren im Teilschaltungs-Baum ermöglicht.
+Port (Anschluss):: Ein Anschluss ist entweder ein Eingang, ein Ausgang, oder beides gleichzeitig. Er wird in Teilschaltunge verwendet, um Signale von der umgebenden Schaltung zu übernehmen (Eingang) oder an sie weiterzugeben (Ausgang).
 Preferences (Einstellungen):: TODO.
 Preview (Vorschau):: Zeigt den Namen, das Symbol und eine kurze Beschreibung der im Explorer ausgewählten Schaltung an.
 Properties (Eigenschaften):: Zeigt die Eigenschaften der in der Hauptansicht ausgewählten Komponente an. Gewisse Eigenschaften können durch den Benutzer verändert werden, andere sind nicht veränderbar.
 Project (Projekt):: Eine durch den Benutzer erstellte Menge von zusammengehörenden Schaltungen.
 Recent (Zuletzt geöffnet):: Ermöglicht es, zuletzt geöffnete Schaltungen erneut zu öffnen
+Style (Stil):: Ein Stil ist ein Name für eine Menge von grafischen Eigenschaften, die einer Komponente gegeben werden können. Beispiel: "Figur" oder "Annotation".
 Subcircuit (Teilschaltung):: Eine Komponente, die eine innere Schaltung enthält und damit rekursive Schaltungsstrukturen ermöglicht.
 Subview (Unteransicht):: Eine Ansicht, welche eine geöffnete Teilschaltung anzeigt. Kann nicht bearbeitet werden. Während der Simulation können Werte von Eingängen nicht verändert werden.
 Symbol (Symbol):: Die Aussenansicht einer Teilschaltung, die bei der Verwendung der Teilschaltung in einer übergeordneten Schaltung verwendet wird.
 Symbol Editor (Symboleditor):: Der Editor, mit der das Symbol einer Teilschaltung bearbeitet werden kann.
+Theme (Thema):: Eine Menge von Stilen und anderen grafischen Eigenschaften, die das Aussehen von Graphen beeinflussen.
 Toolbar (Werkzeugleiste):: Enthält Werkzeuge
 User (Benutzer):: Die Person, die die Applikation gestartet hat. Im Moment wird lediglich zwischen "Entwickler" und "Jedermann" unterschieden. In Zukunft wird es identifizierbare Benutzer und einen Anmelde-Dialog geben.
 User Language (Benutzersprache):: Die Sprache, in welcher der Benutzer die Texte der Benutzerschnittstelle angezeigt wünscht.
 View (Ansicht):: Zeigt eine einzelne Schaltung innerhalb der Workbench an und enthält eine Navigationsleiste.
 Workbench (Arbeitsfläche):: Enthält die Ansichten von Schaltungen. Ordnet mehrere offenen Ansichten zweispaltig dar, wobei die rechte Spalte aus mehreren vertikal angeordneten Ansichten bestehen kann.
 Wire (Leitung):: Eine Leitung ist eine Verbindung zwischen Komponenten, über die Signale von einer Komponente zur verbundenen Komponente fliessen können.
+Wire Bundle (Leitungsbündel):: Eine Leitung, die aus mehreren schmaleren Leitungen besteht

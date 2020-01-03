@@ -4,6 +4,11 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.*
 
+/**
+ * A [Theme] is a collection of [Style]s and other graphical properties that define the look of
+ * graphical objects. An application using the `draw` framework has a collection of [Theme]s
+ * from which the user can choose one to be the current one.
+ */
 interface Theme {
 
 	/** The displayable name of this [Theme]. This name is not translated to the user's language.*/
@@ -24,9 +29,12 @@ interface Theme {
 	fun activateIn(styleRepository: StyleRepository, styleOnly: Boolean)
 }
 
+/** Contains all available [Theme]s. */
 object Themes {
 
+	// TODO Bug: Wrong package name
 	private const val PROP_THEME = "ch.scorpion.antares.view.theme"
+
 	private val themes = mutableListOf<Theme>(DrawTheme())
 
 	private var uiTheme: Theme = themes[0]

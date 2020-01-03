@@ -9,9 +9,11 @@ Antares ist...
 == Grundlagen
 
 * <<first-steps/first-steps.adoc#, Erste Schritte>>
-* <<projects.adoc#, Projekte>>
-* <<libraries.adoc#, Bibliotheken>>
+* <<base-library/base-library.adoc#, Bibliothek-Referenz>>
+* <<projects/projects.adoc#, Projekte>>
+* <<libraries/libraries.adoc#, Bibliotheken>>
+* <<description/description.adoc#, Beschreibungen und Erläuterungen>>
 
 == Fortgeschrittene Techniken
 
-TODO
+* <<styles/styles.adoc#, Stile und Themen>>
