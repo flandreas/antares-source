@@ -1,0 +1,31 @@
+=== image:../../img/base-library/led-matrix.png[LED-Matrix] LED-Matrix
+
+==== Aussehen
+
+image:../../img/base-library/led-matrix-sample.png[Beispiel 7-Segment, 50%]
+
+==== Verhalten
+
+TODO
+
+==== Anschlüsse
+
+C:: TODO
+
+R:: TODO
+
+==== Attribute
+
+LED-Farbe:: Die Farbe der LEDs. Das Menü bietet alle in Antares implementieren Licht-Farben zur Auswahl an.
+
+Grösse:: Die LED-Matrix kann in den drei Grössen "gross", "mittel" und "klein" angezeigt werden.
+
+Anzahl Spalten:: TODO
+
+Anzahl Zeilen:: TODO
+
+Nachleuchtdauer (ms):: TODO
+
+Leuchtpunkt als Kreis:: TODO
+
+Debug:: TODO

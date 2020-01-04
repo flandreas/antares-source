@@ -43,7 +43,7 @@ Farbe:: Normalerweise wird die Farbe, in der eine Komponente gezeichnet wird, vo
 
 #### Eingabe
 
-* image:../../img/base-library/input.png[Eingang] <<input.adoc#, Eingang>>
+* image:../../img/base-library/input.png[Eingang] <<port.adoc#, Eingang>>
 * image:../../img/base-library/switch.png[Schalter] <<switch.adoc#, Schalter>>
 * image:../../img/base-library/dip-switch.png[DIP-Schalter] <<dip-switch.adoc#, DIP-Schalter>>
 * image:../../img/base-library/clock.png[Taktgeber] <<clock.adoc#, Taktgeber>>
@@ -51,7 +51,7 @@ Farbe:: Normalerweise wird die Farbe, in der eine Komponente gezeichnet wird, vo
 
 #### Ausgabe
 
-* image:../../img/base-library/output.png[Ausgang] <<output.adoc#, Ausgang>>
+* image:../../img/base-library/output.png[Ausgang] <<port.adoc#, Ausgang>>
 * image:../../img/base-library/led.png[LED] <<led.adoc#, LED>>
 * image:../../img/base-library/rgb-led.png[RGB-LED] <<rgb-led.adoc#, RGB-LED>>
 * image:../../img/base-library/7segment.png[7-Segment-Anzeige] <<7segment.adoc#, 7-Segment-Anzeige>>

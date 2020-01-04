@@ -6,11 +6,11 @@ image:../../img/base-library/pin.png[Beispiel Port, 75%]
 
 ==== Verhalten
 
-Ein Anschluss ist entweder ein Eingang, ein Ausgang, oder Eingang/Ausgang, je nach Wert des Attributs "Anschluss-Typ". Anschlüsse werden grafisch als Pfeile dargestellt, wobei die Lage der Pfeilspitze in Bezug auf den Anschluss der Anschluss-Komponente anzeigt, ob es sich um einen Eingang oder einen Ausgang handelt. Bei einem Eingang befindet die Pfeilspitze beim Anschluss, bei einem Ausgang befindet sie sich an der gegenüberliegenden Seite des Anschlusses.
+Ein Anschluss ist entweder ein Eingang, ein Ausgang, oder ein Eingang/Ausgang, je nach Wert des Attributs "Anschluss-Typ". Anschlüsse werden grafisch als Pfeile dargestellt, wobei die Lage der Pfeilspitze in Bezug auf den Anschluss der Anschluss-Komponente anzeigt, ob es sich um einen Eingang oder einen Ausgang handelt. Bei einem Eingang befindet die Pfeilspitze beim Anschluss, bei einem Ausgang befindet sie sich an der gegenüberliegenden Seite des Anschlusses.
 
 Anschlüsse zeigen während der Simulation das aktuelle Signal an. Je nach Wert der Attribute "Anzahl Bits" und "Repräsentation" sind dazu unterschiedlich viele Ziffern nötig. Antares ordnet die Ziffern in Blöcken zu 4 Ziffern übereinander an, wobei niederwertige Ziffern unten/links und höherwertige Ziffern oben/rechts stehen.
 
-Während der Simulation können Eingänge wie ein Schalter benützt werden, allerdings nur dann, wenn sie Teil der Hauptschaltungen sind, d.h. der äusserten Schaltung. Würde Antares erlauben, dass der Benutzer das Signal eines Eingangs einer Teilschaltung ändert, käme es zu einem Konflikt mit dem Signal, das von der umgebenden Schaltung an den Eingang übergeben wird.
+Während der Simulation können Eingänge wie ein Schalter benützt werden, allerdings nur dann, wenn sie Teil der Hauptschaltungen sind, d.h. der äussersten Schaltung. Würde Antares erlauben, dass der Benutzer das Signal eines Eingangs einer Teilschaltung ändert, käme es zu einem Konflikt mit dem Signal, das von der umgebenden Schaltung an den Eingang übergeben wird.
 
 ==== Anschlüsse
 
@@ -18,12 +18,12 @@ Eine Anschluss-Komponente hat nur einen Anschluss, dessen Bit-Breite durch das A
 
 ==== Attribute
 
-Name:: TODO
+Name:: Der Name der Anschluss-Komponente, der auf der gegenüberliegenden Seite des Anschlusses angezeigt wird. Antares verwendet den Namen, um die Anschlüsse eines Teilschaltungs-Symbol mit den Anschlüssen der Teilschaltung zu verbinden. Aus diesem Grund darf der Name nicht leer sein, und er muss innerhalb der Teilschaltung eindeutig sein. Aus demselben Grund kann der Name auch nicht in mehrere Sprachen übersetzt werden.
 
-Anschluss-Typ:: TODO
+Anschluss-Typ:: Definiert, ob der Anschluss ein Eingang, ein Ausgang oder sowohl ein Eingang als auch ein Ausgang ist.
 
-Anzahl Bits:: TODO
+Anzahl Bits:: Die Anzahl Bits, die über diesen Anschluss gleichzeitig übertragen werden können.
 
-Repräsentation:: TODO
+Repräsentation:: Bestimmt, ob der Wert des aktuellen Signals binär oder hexadezimal dargestellt wird.
 
-Umschalten:: TODO
+Umschalten:: Definiert das Verhalten dieses Anschlusses, wenn es vom Benutzer während der Simulation als Schalter benutzt wird. Ist dieses Attribut gesetzt, bleibt der Anschluss in seinem Zustand, wenn die Maustaste losgelassen wird.
