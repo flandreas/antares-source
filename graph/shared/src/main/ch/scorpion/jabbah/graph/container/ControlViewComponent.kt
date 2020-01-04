@@ -58,9 +58,9 @@ class ControlViewComponent(
     init {
 	    if (source != null) {
 		    controlView = source.createControlView()
-		    controlView!!.id = source.id
-		    controlModelLink = baseLink.append(controlView!!.model.id)
-		    drawableOwner = DrawableOwner(this, controlView!!)
+		    controlView.id = source.id
+		    controlModelLink = baseLink.append(controlView.model.id)
+		    drawableOwner = DrawableOwner(this, controlView)
 	    } else {
 		    controlModelLink = DeepVerticeLink.EMPTY
 	    }
@@ -69,12 +69,12 @@ class ControlViewComponent(
 	/** ---- [Transparent] interface */
 
 	override var transparency: Int
-		get() = controlView!!.transparency
-		set(value) { controlView!!.transparency = value }
+		get() = controlView.transparency
+		set(value) { controlView.transparency = value }
 
 	/** ---- [GraphElementView] interface */
 
-	override val model: Vertice get() = controlView?.model
+	override val model: Vertice get() = controlView.model
 
 	override fun bind(graph: Graph) {
 		// empty
@@ -84,9 +84,9 @@ class ControlViewComponent(
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeStorable("controlView", controlView!!)
+        writer.writeStorable("controlView", controlView)
 	    writer.writeString("controlModelId", controlModelLink.toStoreFormat())
-	    controlView?.writeModelProperties(writer)
+	    controlView.writeModelProperties(writer)
     }
 
     override fun read(reader: StoreReader) {
@@ -95,20 +95,20 @@ class ControlViewComponent(
             drawableOwner!!.dispose()
         }
         controlView = reader.readStorable("controlView") as ControlView<Vertice>
-        drawableOwner = DrawableOwner(this, controlView!!)
+        drawableOwner = DrawableOwner(this, controlView)
 	    controlModelLink = DeepVerticeLink.fromStoreFormat(reader.readString("controlModelId"))
-	    controlView?.readModelProperties(reader)
+	    controlView.readModelProperties(reader)
         super.read(reader)
-        controlView!!.isShowPortViews = false
+        controlView.isShowPortViews = false
     }
 
     override fun getStorableChildren(): Iterator<Storable> {
-        return listOf(controlView!!).iterator()
+        return listOf(controlView).iterator()
     }
 
     /** ---- [Drawable] */
 
-    override val boundingBox: RectangularShape get() = controlView!!.boundingBox
+    override val boundingBox: RectangularShape get() = controlView.boundingBox
 
 	override val canMirror: Boolean get() = true
 
@@ -116,7 +116,7 @@ class ControlViewComponent(
 	    if (brokenView != null) {
 		    brokenView!!.draw(context)
 	    } else {
-		    controlView!!.draw(context)
+		    controlView.draw(context)
 	    }
     }
 
@@ -134,41 +134,41 @@ class ControlViewComponent(
 		update()
 	}
 
-    override fun contains(x: Double, y: Double): Boolean = controlView!!.contains(x, y)
+    override fun contains(x: Double, y: Double): Boolean = controlView.contains(x, y)
 
     /** ---- [Locatable] */
 
     override var location: Point2D
-        get() = controlView!!.location
-        set(value) {controlView!!.location = value}
+        get() = controlView.location
+        set(value) {controlView.location = value}
 
     /** ---- [Component] interface */
 
-    override val type: String? get() = controlView!!.type
+    override val type: String? get() = controlView.type
 
-    override val selectableComponent: Component get() = controlView!!
+    override val selectableComponent: Component get() = controlView
 
     override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
-        get() = controlView!!.preferredSelectionDrawingStrategy
+        get() = controlView.preferredSelectionDrawingStrategy
         set(value) {
             super.preferredSelectionDrawingStrategy = value
         }
 
     /** ---- [ActorView] */
 
-    override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? = controlView!!.getActorInteractionHandler(context)
+    override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? = controlView.getActorInteractionHandler(context)
 
-    override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = controlView!!.getExecutionTooltip(x, y)
+    override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = controlView.getExecutionTooltip(x, y)
 
     /** ---- [ControlViewComponent] */
 
     fun bindToGraph(graph: Graph, repository: MetaGraphRepository, storableCreator: StorableCreator) {
 	    try {
 		    val vertice = controlModelLink.getLinkedVertice(graph, repository, storableCreator)
-		    controlView!!.bindToModel(vertice)
+		    controlView.bindToModel(vertice)
 	    } catch (e: IllegalArgumentException) {
 		    invalidate()
-		    brokenView = BrokenDeepLinkView(styleProvider, controlView!!.boundingBox)
+		    brokenView = BrokenDeepLinkView(styleProvider, controlView.boundingBox)
 		    invalidate()
 		    update()
 	    }

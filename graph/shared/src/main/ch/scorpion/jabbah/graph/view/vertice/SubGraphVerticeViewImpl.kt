@@ -85,9 +85,7 @@ class SubGraphVerticeViewImpl(
 		}
 
 	init {
-		if (graphElement != null) {
-			modelExchanged(null)
-		}
+		modelExchanged(null)
 	}
 
 	/** ---- UI properties */
@@ -150,7 +148,7 @@ class SubGraphVerticeViewImpl(
 		get() = super.transparency
 		set(value) {
 			super.transparency = value
-			drawables.filter { it is Transparent }.map { it as Transparent }.forEach { it.transparency = value }
+			drawables.filterIsInstance<Transparent>().forEach { it.transparency = value }
 		}
 
 	/** ---- [Stylable] */
@@ -160,7 +158,7 @@ class SubGraphVerticeViewImpl(
 		set(value) {
 			if (super.styleProvider != value) {
 				super.styleProvider = value
-				drawables.filter { it is Stylable }.map { it as Stylable }.forEach { it.styleProvider = value }
+				drawables.filterIsInstance<Stylable>().forEach { it.styleProvider = value }
 			}
 		}
 
@@ -177,7 +175,7 @@ class SubGraphVerticeViewImpl(
 	override fun drawImpl(context: DrawContext) {
 		drawables.forEach { it.draw(context) }
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && StringUtils.isNotEmpty(drawExecScript)) {
-			scriptGateway.exec(Script(code = drawExecScript!!, origin = "Container ${model?.getGraphIfPresent()?.name}", context = "drawExecScript"), this, context)
+			scriptGateway.exec(Script(code = drawExecScript!!, origin = "Container ${model.getGraphIfPresent()?.name}", context = "drawExecScript"), this, context)
 		}
 		super.drawImpl(context)
 	}
@@ -234,9 +232,6 @@ class SubGraphVerticeViewImpl(
 		}
 		if (reader.hasElement("container")) {
 			customizedContainerDrawing = reader.readStorable("container") as ContainerDrawing
-			// TEST BEGIN
-			customizedContainerDrawing!!.areSubGraphPortsConsistent()
-			// TEST END
 			reader.requestResolution(this, Reference(
 				name = "container",
 				referenceId = customizedContainerDrawing!!.storableId,
@@ -316,9 +311,9 @@ class SubGraphVerticeViewImpl(
 
 	/** ---- [AbstractVerticeView] */
 
-	override val type: String? get() = model?.name
+	override val type: String? get() = model.name
 
-	override val shortDescription: String? get() = model?.shortDescription
+	override val shortDescription: String? get() = model.shortDescription
 
 	override fun addPortView(portView: PortView<*>) {
 		mirrorIfNecessary(portView)
@@ -410,7 +405,7 @@ class SubGraphVerticeViewImpl(
 	/** ---- [SubGraphVerticeViewImpl] */
 
 	fun getControlViewComponents(): ImmutableList<ControlViewComponent> {
-		return drawables.filter { it is ControlViewComponent }.map { it as ControlViewComponent }.toImmutableList()
+		return drawables.filterIsInstance<ControlViewComponent>().map { it }.toImmutableList()
 	}
 
 	private fun getGraph(): Graph {
@@ -418,7 +413,7 @@ class SubGraphVerticeViewImpl(
 	}
 
 	private fun getLabelComponent(): LabelComponent? {
-		return drawables.filter { it is LabelComponent }.map { it as LabelComponent }.firstOrNull()
+		return drawables.filterIsInstance<LabelComponent>().map { it }.firstOrNull()
 	}
 
 	private fun fillFromContainerDrawing(containerDrawing: ContainerDrawing) {

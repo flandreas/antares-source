@@ -144,25 +144,23 @@ class LEDMatrix(
 		for ((columnIndex, columnBit) in (columnPort.getIncomingSignal() as Word).bits.withIndex()) {
 			for ((rowIndex, rowBit) in rowValue.bits.withIndex()) {
 				val cellTime = getCellTime(columnIndex, rowIndex)
-				val oldValue = cellTime == Long.MAX_VALUE
-				val newValue = rowBit.isSet && columnBit.isSet
+				val hasOldValue = cellTime == Long.MAX_VALUE
+				val isNewValue = rowBit.isSet && columnBit.isSet
 				if (portChanged) {
-					val switchedOff = !newValue && oldValue
-					anyChanged = anyChanged || newValue != oldValue
+					val switchedOff = !isNewValue && hasOldValue
+					anyChanged = anyChanged || isNewValue != hasOldValue
 					anySwitchedOff = anySwitchedOff || switchedOff
-					if (newValue) {
+					if (isNewValue) {
 						LOG.debug("LEDMatrix: switched on at $columnIndex,$rowIndex")
 						glowUntil(columnIndex, rowIndex, Long.MAX_VALUE)
 					} else if (switchedOff) {
 						LOG.debug("LEDMatrix: switched off at $columnIndex,$rowIndex, afterglowing until $time")
 						glowUntil(columnIndex, rowIndex, time)
 					}
-				} else {
-					if (cellTime != null && cellTime <= signalHandler.executionTime) {
-						LOG.debug("LEDMatrix: end afterglowing of $columnIndex,$rowIndex")
-						buffer[columnIndex]!!.remove(rowIndex)
-						anyChanged = true
-					}
+				}
+				if (hasExpired(cellTime, signalHandler.executionTime)) {
+					fadeOut(columnIndex, rowIndex)
+					anyChanged = true
 				}
 			}
 		}
@@ -173,6 +171,13 @@ class LEDMatrix(
 			LOG.debug("LEDMatrix: Request switch-off at ${signalHandler.executionTime + afterglowDuration * 1_000_000} ns")
 			signalHandler.requestActingAfter(this, afterglowDuration * 1_000_000, createActorData(null))
 		}
+	}
+
+	private fun hasExpired(cellTime: Long?, currentTime: Long): Boolean = cellTime != null && cellTime <= currentTime
+
+	private fun fadeOut(columnIndex: Int, rowIndex: Int) {
+		LOG.debug("LEDMatrix: end afterglowing of $columnIndex,$rowIndex")
+		buffer[columnIndex]!!.remove(rowIndex)
 	}
 
 	/**
