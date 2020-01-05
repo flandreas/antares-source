@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.module
 
+import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.script.AntaresScriptGateway
@@ -312,23 +313,19 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(BUFFER, "library.element.Buffer", "/img/buffer.png", BufferGateView::class)
 		repository.register(TRISTATE_BUFFER, "library.element.TriStateBuffer", "/img/tristate-buffer.png", TriStateBufferGateView::class)
 		repository.register(DELAY, "library.element.Delay", "/img/delay.png", DelayGateView::class)
-
 		repository.register(INPUT, "library.element.CircuitInput", "/img/input.png") {
-			val view = it.create(CircuitInOutView::class) as CircuitInOutView
-			view.portType = PortType.INPUT
-			view
+			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.INPUT))
 		}
+
 		repository.register(SWITCH, "library.element.Switch", "/img/switch.png", SwitchView::class)
 		repository.register(DIP_SWITCH, "library.element.DipSwitch", "/img/dip-switch.png", DipSwitchView::class)
 		repository.register(CLOCK, "library.element.Clock", "/img/clock.png", ClockView::class)
 		repository.register(KEYBOARD, "library.element.Keyboard", "/img/keyboard.png", KeyboardView::class)
 		repository.register(TERMINAL, "library.element.Terminal", "/img/terminal.png", TerminalView::class)
-
 		repository.register(OUTPUT, "library.element.CircuitOutput", "/img/output.png") {
-			val view = it.create(CircuitInOutView::class) as CircuitInOutView
-			view.portType = PortType.OUTPUT
-			view
+			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.OUTPUT))
 		}
+
 		repository.register(LED, "library.element.RgbLED", "/img/rgb-led.png", RgbLEDView::class)
 		repository.register(RGB_LED, "library.element.LED", "/img/led.png", LEDView::class)
 		repository.register(SEVEN_SEGMENT_DISPLAY, "library.element.SevenSegmentDisplay", "/img/7segment.png", SevenSegmentDisplayView::class)
