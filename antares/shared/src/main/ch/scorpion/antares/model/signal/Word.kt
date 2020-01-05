@@ -85,7 +85,7 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 			}
 		}
 
-		/** Returns a [Word] that represents the specified value as a binary word of th specified width.*/
+		/** Returns a [Word] that represents the specified value as a binary word of the specified width.*/
 		fun of(bitWidth: BitWidth, value: Long?): Word {
 			if (value == null) {
 				return undefined(bitWidth)
@@ -107,7 +107,7 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 			if (hexValue.all { it == Bit.UNDEFINED_CHAR }) {
 				return undefined(bitWidth)
 			}
-			return Word.of(bitWidth, BitOperation.hexToLong(hexValue))
+			return of(bitWidth, BitOperation.hexToLong(hexValue))
 		}
 
 		/** Creates a list with all the same [Bit]s of the length as defined by the specified [BitWidth].*/
@@ -183,7 +183,7 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 	}
 
 	override fun getSubword(subwordWidth: BitWidth, index: Int): Word {
-		return Word.of(subwordWidth, getSubwordValue(subwordWidth, index))
+		return of(subwordWidth, getSubwordValue(subwordWidth, index))
 	}
 
 	override fun toInt(): Int? {
@@ -262,5 +262,13 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 
 	fun containsUndefinedBit(): Boolean {
 		return bits.any { it == Bit.Undefined }
+	}
+
+	/**
+	 * Creates a copy of this [Word]'s value and expands or reduces it to the specified [BitWidth].
+	 * Expanding is done by adding zeros to the left, while reducing is done by truncating high order numbers.
+	 */
+	fun ofWidth(bitWidth: BitWidth): Word {
+		return of(bitWidth, getValue())
 	}
 }

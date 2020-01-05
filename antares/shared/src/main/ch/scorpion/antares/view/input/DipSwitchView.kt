@@ -131,6 +131,16 @@ class DipSwitchView(
 			}
 		}
 
+	var initialValue: Long
+		get() = model.initialValue.getValue()
+		set(value) {
+			if (value != initialValue) {
+				model.initialValue = Word.of(bitWidth, value)
+				invalidate()
+				validate()
+			}
+		}
+
 	/** ---- [Component] */
 
 	override val rotatable: Boolean get() = false
@@ -322,7 +332,7 @@ class DipSwitchView(
 		for (index in 0..maxIndex) {
 			val xx = x + (maxIndex - index) * KNOB_WIDTH + CASE_INSET
 			val yy = y + BIT_LABEL_HEIGHT + CASE_INSET
-			bitViews.add(BitView(index, xx, yy, styleProvider))
+			bitViews.add(BitView(index, model.value.bitAt(index), xx, yy, styleProvider))
 		}
 
 		getOutput().direction = orientation
@@ -398,15 +408,15 @@ class DipSwitchView(
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			LOG.debug("DipSwitchView: keyPressed '${context.keyEvent!!.key.toChar()}'")
 			if (focusIndex != null) {
-				when {
-					context.keyEvent!!.key == KeyEvent.VK_LEFT -> transferFocusLeft()
-					context.keyEvent!!.key == KeyEvent.VK_RIGHT -> transferFocusRight()
-					context.keyEvent!!.key == KeyEvent.VK_ENTER -> toggleImpl(focusIndex!!, context.signalHandler)
-					context.keyEvent!!.key == KeyEvent.VK_0 -> {
+				when (context.keyEvent!!.key) {
+					KeyEvent.VK_LEFT -> transferFocusLeft()
+					KeyEvent.VK_RIGHT -> transferFocusRight()
+					KeyEvent.VK_ENTER -> toggleImpl(focusIndex!!, context.signalHandler)
+					KeyEvent.VK_0 -> {
 						model.setBit(focusIndex!!, Bit.False, context.signalHandler)
 						transferFocusRight()
 					}
-					context.keyEvent!!.key == KeyEvent.VK_1 -> {
+					KeyEvent.VK_1 -> {
 						model.setBit(focusIndex!!, Bit.True, context.signalHandler)
 						transferFocusRight()
 					}
@@ -419,18 +429,17 @@ class DipSwitchView(
 	/**
 	 * Displays a single [Bit] as a small switch.
 	 * @property index the index (starting with 0) of the displayed [Bit] within a [Word]
+	 * @param bit Contains the value this [BitView] displays
 	 * @param x the x coordinate of the upper-left corner
 	 * @param y the y coordinate of the upper-left corner
 	 */
 	private inner class BitView(
 		val index: Int,
+		var bit: Bit = Bit.False,
 		x: Double,
 		y: Double,
 		private val styleProvider: StyleProvider
 	) : AbstractRectangle(x, y, KNOB_WIDTH, KNOB_HEIGHT) {
-
-		/** Contains the value this [BitView] displays.*/
-		var bit: Bit = Bit.False
 
 		/** Controls whether this [BitView] has the focus and should draw a focus border.*/
 		var hasFocus: Boolean = false
@@ -452,7 +461,12 @@ class DipSwitchView(
 			} else {
 				y + height / 2
 			}
-			context.g.color = transparent.applyTo(context.choose(bit.color).foregroundColor)
+
+			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				context.g.color = transparent.applyTo(context.choose(bit.color).foregroundColor)
+			} else {
+				context.g.color = context.choose(color).foregroundColor
+			}
 
 			context.g.fillRect(
 				x + KNOB_INSET,

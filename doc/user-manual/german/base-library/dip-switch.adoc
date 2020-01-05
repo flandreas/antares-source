@@ -1,0 +1,24 @@
+=== image:../../img/base-library/dip-switch.png[DIP-Schalter] DIP-Schalter
+
+==== Aussehen
+
+image:../../img/base-library/dip-switch-sample.png[Beispiel DIP-Schalter, 50%]
+
+==== Verhalten
+
+TODO
+
+==== Anschlüsse
+
+TODO
+
+==== Attribute
+
+Ausrichtung:: TODO
+
+Name:: TODO
+
+Anzahl Bits:: TODO
+
+Initialer Wert:: TODO
+

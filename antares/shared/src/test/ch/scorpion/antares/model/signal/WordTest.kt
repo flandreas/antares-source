@@ -27,7 +27,7 @@ class WordTest {
 	}
 
 	@Test
-	fun shoudBeEqual() {
+	fun shouldBeEqual() {
 		assertEquals(Word.of(true), Word.of(true))
 		assertEquals(Word.of(BitWidth.BW_4, 7L), Word.of(BitWidth.BW_4, 7L))
 	}
@@ -129,5 +129,19 @@ class WordTest {
 	@Test
 	fun shouldFlipBit() {
 		assertEquals(Word.of(BitWidth.BW_4, 4), Word.of(BitWidth.BW_4, 12L).flip(3) as Word)
+	}
+
+	@Test
+	fun shouldExpandToWidth() {
+		val expandedWord = Word.of(BitWidth.BW_4, 1L).ofWidth(BitWidth.BW_8)
+		assertEquals(1, expandedWord.getValue())
+		assertEquals(BitWidth.BW_8, expandedWord.getBitWidth())
+	}
+
+	@Test
+	fun shouldReduceToWidth() {
+		val reducedWord = Word.of(BitWidth.BW_8, 1L).ofWidth(BitWidth.BW_4)
+		assertEquals(1, reducedWord.getValue())
+		assertEquals(BitWidth.BW_4, reducedWord.getBitWidth())
 	}
 }

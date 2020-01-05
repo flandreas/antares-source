@@ -45,14 +45,31 @@ class DipSwitch(
 		propagationDelay = 1000
 	}
 
+	/** The value to be set as current value when the simulation is started. */
+	var initialValue: Word = Word.allOf(bitWidth, Bit.False)
+		set(value) {
+			if (field != value) {
+				field = value
+				this.value = value
+				stateChanged()
+			}
+		}
+
+	/** The current value of this [DipSwitch]. */
 	var value: Word = Word.allOf(bitWidth, Bit.False)
-		private set
+		private set(value) {
+			if (field != value) {
+				field = value
+				stateChanged()
+			}
+		}
 
 	var bitWidth: BitWidth
 		get() = getDigitalPort().bitWidth
 		set(value) {
 			if (value != bitWidth) {
 				getDigitalPort().bitWidth = value
+				initialValue = initialValue.ofWidth(value)
 				this.value = Word.allOf(bitWidth, Bit.False)
 				stateChanged()
 			}
@@ -62,15 +79,16 @@ class DipSwitch(
 
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
-		value = Word.allOf(bitWidth, Bit.False)
+		value = initialValue
 		enabled = false
 		requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, value))
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
-		value = Word.allOf(bitWidth, Bit.False)
+		value = initialValue
 		enabled = true
+		stateChanged()
 	}
 
 	/** ---- [Storable] */
@@ -78,11 +96,17 @@ class DipSwitch(
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+		if (reader.hasAttribute("initialValue")) {
+			initialValue = Word.of(bitWidth, reader.readLong("initialValue"))
+		}
 	}
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeInt("bitWidth", bitWidth.width)
+		if (initialValue != Word.allOf(bitWidth, Bit.False)) {
+			writer.writeLong("initialValue", initialValue.getValue())
+		}
 	}
 
 	/** ---- [DipSwitch] */
