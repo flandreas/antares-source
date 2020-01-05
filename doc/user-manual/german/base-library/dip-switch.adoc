@@ -2,23 +2,30 @@
 
 ==== Aussehen
 
-image:../../img/base-library/dip-switch-sample.png[Beispiel DIP-Schalter, 50%]
+image:../../img/base-library/dip-switch-sample.png[Beispiel DIP-Schalter, 30%]
 
 ==== Verhalten
 
-TODO
+Der DIP-Schalter fasst kleine Schalter für jeweils 1 Bit zu einer gemeinsamen Komponente zusammen. Die Anzahl kleiner Schalter wird vom Attribut "Anzahl Bits" bestimmt.
+
+Der DIP-Schalter hat das Attribut "Initialer Wert", der in der Schaltung gespeichert und beim Start der Simulation als aktueller Wert des DIP-Schalters verwendet wird.
+
+Die einzelnen Schalter verhalten sich wie die Komponente "Schalter", d.h. das Umschalten eines einzelnen Schalters während der Simulation wird erst wirksam, nachdem die konfigurierte Verzögerungs-Zeit verstrichen ist. Bis dahin wird der DIP-Schalter als "inaktiv" dargestellt und nimmt keine Benutzereingaben entgegen.
+
+Beim Drücken des einzelnen Schalters mit der Maus erhält der DIP-Schalter den Tastatur-Fokus, der durch ein dünnes blaues gesticheltes Rechteck um den einzelnen Schalter dargestellt wird. Wenn ein Schalter den Tastatur-Fokus besitzt, kann der auch mit der ENTER-Taste sowie mit den Tasten "0" und "1" betätigt werden. Zudem kann mit Pfeil-Tasten "links" und "rechts" zwischen den einzelnen Schaltern navigiert werden. Beim Betätigen eines einzelnen Schalters über die Tastatur erhält automatisch der nächste Schalter den Tastaturfokus, wodurch der ganze DIP-Switch einfach über die Tastatur eingestellt werden kann.
 
 ==== Anschlüsse
 
-TODO
+Ein DIP-Schalter hat nur einen einzigen Ausgang der im Attribut "Anzahl Bits" konfigurierten Bit-Breite.
+
 
 ==== Attribute
 
-Ausrichtung:: TODO
+Ausrichtung:: Die Himmelsrichtig, in die der Anschluss zeigt.
 
-Name:: TODO
+Name:: Der optionale Name des DIP-Schalters, der gegenüber des Anschlusses dargestellt wird.
 
-Anzahl Bits:: TODO
+Anzahl Bits:: Die Anzahl Bits, die der DIP-Schalter am Ausgang erzeugt, und entsprechend auch die Anzahl einzelner Schalter, die dargestellt werden.
 
-Initialer Wert:: TODO
+Initialer Wert:: Der Wert, der beim Start der Simulation als Einstellung des DIP-Schalters verwendet wird. Wenn der eingegebene Wert grösser ist, als durch die aktuelle "Anzahl Bits" unterstützt wird, werden nur die niedrigwertigsten Bits des eingegebene Wertes verwendet.
 
