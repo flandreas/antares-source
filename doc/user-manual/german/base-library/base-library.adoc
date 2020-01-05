@@ -56,7 +56,7 @@ Farbe:: Normalerweise wird die Farbe, in der eine Komponente gezeichnet wird, vo
 * image:../../img/base-library/rgb-led.png[RGB-LED] <<rgb-led.adoc#, RGB-LED>>
 * image:../../img/base-library/7segment.png[7-Segment-Anzeige] <<7segment.adoc#, 7-Segment-Anzeige>>
 * image:../../img/base-library/led-matrix.png[LED-Matrix] <<led-matrix.adoc#, LED-Matrix>>
-* image:../../img/base-library/terminal.png[Terminal] <<Terminal>>
+* image:../../img/base-library/terminal.png[Terminal] <<terminal.adoc#, Terminal>>
 
 #### Speicher
 

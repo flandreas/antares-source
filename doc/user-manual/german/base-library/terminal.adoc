@@ -6,18 +6,30 @@ image:../../img/base-library/terminal-sample.png[Beispiel Terminal, 50%]
 
 ==== Verhalten
 
-TODO
+Diese Komponente implementiert ein sehr einfaches Text-Terminal. Sie erhält am Eingang "D" eine Sequenz von ASCII-Zeichen und gibt jedes darstellbare Zeichen aus. Wenn die aktuelle Zeile voll ist, fährt das Terminal auf der nächsten Zeile fort, wobei der ganze Terminalinhalt nach oben verschoben wird, falls die letzte verfügbare Zeile gefüllt worden ist.
+
+Das Terminal unterstützt die folgenden Kontrollzeichen:
+
+* *Backspace (ASCII-Code 8)*: Löscht das letzte Zeichen der aktuelle Zeile.
+* *Linefeed (ASCII-Code 10)*: Beginnt eine neue Zeile, wobei nötigenfalls der aktuelle Terminalinhalt eine Zeile nach oben gescrollt wird.
+* *Formfeed (ASCII-Code 12)*: Löscht den Terminalinhalt.
 
 ==== Anschlüsse
 
-TODO
+D:: "Data" - Enhält den ASCII-Code des nächsten darzustellenden Zeichens.
+
+CLK:: "Clock" - Falls "EN" nicht "0" ist, wird bei steigender Flanke von "CLK" das nächste Zeichen übernommen.
+
+EN:: "Enable" - Muss den Wert "1" haben, damit das Terminal Zeichen übernimmt. Signale an den Eingängen "D" und "CLK" werden ignoriert, wenn "EN" den Wert "0" hat.
+
+CLR:: "Clear" - Mit dem Wert "1" wird der Terminalinhalt gelöscht.
 
 ==== Attribute
 
-Anzahl Zeilen:: TODO
+Anzahl Zeilen:: Die Anzahl Zeilen, die das Terminal darstellen kann.
 
-Anzahl Spalten:: TODO
+Anzahl Spalten:: Die Anzahl Spalten, die das Terminal darstellen kann. Dies ist gleichbedeutend mit der Anzahl Zeichen pro Zeile.
 
-Grösse:: TODO
+Grösse:: Das Terminal kann in den drei Grössen "gross", "mittel" und "klein" angezeigt werden.
 
-Text-Farbe:: TODO
+Text-Farbe:: Die Farbe, in welcher der Text dargestellt wird. Das Menü bietet alle in Antares implementieren Licht-Farben zur Auswahl an.
