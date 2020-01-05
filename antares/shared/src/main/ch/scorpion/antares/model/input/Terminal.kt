@@ -40,6 +40,10 @@ class Terminal(
 
 		private const val BACKSPACE = 8.toChar()
 		private const val LINEFEED = 10.toChar()
+		private const val FORM_FEED = 12.toChar()
+
+		private const val MIN_PRINTABLE_CHAR = 0x20
+		private const val MAX_PRINTABLE_CHAR = 0x7E
 
 		private val CLOCK_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.terminal.clockPort.desc"))
 		private val CLEAR_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.terminal.clearPort.desc"))
@@ -116,10 +120,11 @@ class Terminal(
 
 	fun getRow(index: Int): TerminalRow = displayedRows[index]
 
-	private fun consumeDataInput() {
+	private fun consumeDataInput(signalHandler: SignalHandler) {
 		if (isWriteEnabled) {
 			(dataInput.getIncomingSignal() as DigitalSignal).toInt()?.let {
 				addCharacter(it.toChar())
+				stateChanged(signalHandler)
 			}
 		}
 	}
@@ -127,13 +132,14 @@ class Terminal(
 	private fun addCharacter(character: Char) {
 		when(character) {
 			BACKSPACE -> backspace()
-			LINEFEED -> linefeed()
-			else -> add(character)
+			LINEFEED -> lineFeed()
+			FORM_FEED -> formFeed()
+			else -> addPrintableCharacter(character)
 		}
 
 	}
 
-	private fun linefeed() {
+	private fun lineFeed() {
 		if (displayedRows.size == rowsCount) {
 			displayedRows.removeAt(0)
 		}
@@ -146,12 +152,21 @@ class Terminal(
 		}
 	}
 
-	private fun add(character: Char) {
-		if (displayedRows.isEmpty() || displayedRows.last().size == columnsCount) {
-			linefeed()
-		}
-		displayedRows.last().add(character)
+	private fun formFeed() {
+		displayedRows.clear()
 	}
+
+	private fun addPrintableCharacter(character: Char) {
+		if (isPrintable(character)) {
+			if (displayedRows.isEmpty() || displayedRows.last().size == columnsCount) {
+				lineFeed()
+			}
+			displayedRows.last().add(character)
+		}
+	}
+
+	private fun isPrintable(character: Char): Boolean =
+		character.toInt() in MIN_PRINTABLE_CHAR..MAX_PRINTABLE_CHAR
 
 	private fun clear(signalHandler: SignalHandler? = null) {
 		displayedRows.clear()
@@ -163,7 +178,7 @@ class Terminal(
 			when (data.changedPort) {
 				vertice.clockInput -> {
 					if (vertice.clockInput.getIncomingSignal() == Word.of(true)) {
-						vertice.consumeDataInput()
+						vertice.consumeDataInput(signalHandler)
 					}
 				}
 				vertice.clearInput -> {

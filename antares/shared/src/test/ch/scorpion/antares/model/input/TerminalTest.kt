@@ -13,6 +13,7 @@ class TerminalTest {
 	companion object {
 		private const val BACKSPACE = 8.toChar()
 		private const val NEWLINE = 10.toChar()
+		private const val FORM_FEED = 12.toChar()
 
 		init {
 			AntaresTestRule.configure()
@@ -59,6 +60,14 @@ class TerminalTest {
 	}
 
 	@Test
+	fun shouldHandleFormFeed() {
+		enterEnabled('A')
+		enterEnabled(FORM_FEED)
+
+		assertEquals(0, terminal.displayedRowsCount)
+	}
+
+	@Test
 	fun shouldBreakAtEndOfLine() {
 		val terminal = Terminal(columnsCount = 1)
 		enterEnabled(terminal, 'A')
@@ -85,6 +94,13 @@ class TerminalTest {
 		enterEnabled('A')
 		terminal.clearInput.setIncomingSignal(Word.of(true), signalHandler)
 		terminal.act(signalHandler, terminal.createActorData(terminal.clearInput))
+
+		assertEquals(0, terminal.displayedRowsCount)
+	}
+
+	@Test
+	fun shouldIgnoreNonSupportedCharacter() {
+		enterEnabled(0.toChar())
 
 		assertEquals(0, terminal.displayedRowsCount)
 	}

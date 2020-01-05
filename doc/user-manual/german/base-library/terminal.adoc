@@ -1,0 +1,23 @@
+=== image:../../img/base-library/terminal.png[Terminal] Terminal
+
+==== Aussehen
+
+image:../../img/base-library/terminal-sample.png[Beispiel Terminal, 50%]
+
+==== Verhalten
+
+TODO
+
+==== Anschlüsse
+
+TODO
+
+==== Attribute
+
+Anzahl Zeilen:: TODO
+
+Anzahl Spalten:: TODO
+
+Grösse:: TODO
+
+Text-Farbe:: TODO

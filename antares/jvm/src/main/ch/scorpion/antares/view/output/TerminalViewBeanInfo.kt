@@ -13,7 +13,7 @@ class TerminalViewBeanInfo : VerticeViewBeanInfo<TerminalView>() {
 		private val rowsCount = PropertyImpl("element.property.Terminal.rowsCount", Int::class.java)
 		private val columnsCount = PropertyImpl("element.property.Terminal.columnsCount", Int::class.java)
 		private val size = PropertyImpl("edit.property.size", Size::class.java)
-		private val lightColor = PropertyImpl("element.property.LEDColor", LightColor::class.java)
+		private val lightColor = PropertyImpl("element.property.Terminal.textColor", LightColor::class.java)
 	}
 
 	override fun addProperties(bean: TerminalView, editor: Editor, properties: MutableList<Property>) {
