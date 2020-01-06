@@ -21,7 +21,7 @@ Ein DIP-Schalter hat nur einen einzigen Ausgang der im Attribut "Anzahl Bits" ko
 
 ==== Attribute
 
-Ausrichtung:: Die Himmelsrichtig, in die der Anschluss zeigt.
+Ausrichtung:: Die Himmelsrichtung, in die der Anschluss zeigt.
 
 Name:: Der optionale Name des DIP-Schalters, der gegenüber des Anschlusses dargestellt wird.
 

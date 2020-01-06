@@ -1,0 +1,23 @@
+=== image:../../img/base-library/clock.png[Taktgeber] Taktgeber
+
+==== Aussehen
+
+image:../../img/base-library/clock-sample.png[Beispiel LED, 50%]
+
+==== Verhalten
+
+TODO
+
+==== Anschlüsse
+
+TODO
+
+==== Attribute
+
+Ausrichtung:: TODO
+
+Periode:: TODO
+
+Aktiv:: TODO
+
+Periode während Simulation ändern:: TODO

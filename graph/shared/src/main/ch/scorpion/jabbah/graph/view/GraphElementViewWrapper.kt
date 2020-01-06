@@ -25,7 +25,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 class GraphElementViewWrapper(
     component: Component? = null,
     styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : AbstractGraphElementView<GraphElementViewWrapper.DummyGraphElement>(styleProvider, GraphStyleType.VERTICE, DummyGraphElement(component)) {
+) : AbstractGraphElementView<GraphElementWrapper>(styleProvider, GraphStyleType.VERTICE, GraphElementWrapper(component)) {
 
     val component: Component? get() = _component
 
@@ -119,13 +119,9 @@ class GraphElementViewWrapper(
         set(value) {
             super.preferredSelectionDrawingStrategy = value
         }
+}
 
-	/** ---- [GraphElementViewWrapper] */
+class GraphElementWrapper(private val component: Component? = null) : AbstractGraphElement() {
 
-	class DummyGraphElement(private val component: Component?) : AbstractGraphElement() {
-
-		override val type: String?
-			get() = component?.type
-
-	}
+	override val type: String? get() = component?.type
 }

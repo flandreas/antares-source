@@ -143,6 +143,7 @@ object GraphViewModule : AbstractModule() {
 
 	private fun configureTypeMap(typeMap: TypeMap) {
 		typeMap.register("graphElement", GraphElementViewWrapper::class)
+		typeMap.register("graphElementWrapper", GraphElementWrapper::class)
 		typeMap.register("graphView", GraphViewImpl::class)
 		typeMap.register("netView", NetViewImpl::class)
 		typeMap.register("edgeView", EdgeViewImpl::class)
