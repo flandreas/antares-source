@@ -93,7 +93,7 @@ object EditModule : AbstractModule() {
     }
 
 	private fun fillProperties(properties: Properties) {
-		properties.set(AttentionDrawer.PROP_COLOR, Color.RED)
+		properties.set(AttentionDrawer.PROP_COLOR, Color.ORANGE)
 		properties.set(AttentionDrawerImpl.PROP_DURATION, 500.0f)
 		properties.set(AttentionDrawerImpl.PROP_MAX_RADIUS, 30.0f)
 	}

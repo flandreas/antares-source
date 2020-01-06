@@ -13,7 +13,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
 import ch.scorpion.jabbah.draw.view.ViewManager
@@ -48,7 +47,6 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryPanel
-import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseSelector
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
@@ -390,7 +388,7 @@ class GraphPanel(
 	private class StepButton(iconPath: String, private val action: Action) : JPanel() {
 
 		private val button = JButton(ActionWrapperSwing(action))
-		private val color = Graphics2DJvm.toAwtColor(BaseModule.properties.get<Color>(AttentionDrawer.PROP_COLOR))
+		private val color = Graphics2DJvm.toAwtColor(BaseModule.properties.get(AttentionDrawer.PROP_COLOR))
 
 		init {
 			button.text = null
