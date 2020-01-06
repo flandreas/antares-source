@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.graph.model.port.PortImpl
  * A standard implementation of the [GraphOutput] interface whose [PortType] cannot be changed.
  */
 class GraphOutputImpl<T : Any>(
-	inputPort: InputPort<T> = PortImpl(PortType.OUTPUT),
+	inputPort: InputPort<T> = PortImpl(PortType.INPUT),
 	name: String? = null,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractGraphPort<T>("graph.element.output", port = inputPort, name = name, calculator = GraphOutputImplCalculator, eventBus = eventBus), GraphOutput<T> {

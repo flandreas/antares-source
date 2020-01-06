@@ -189,7 +189,9 @@ class GraphImplTest {
 		val in2 = GraphInputImpl(PortImpl.createOutput(Boolean::class), "I2", eventBus)
 		testGraph.add(in2)
 
-		in2.name = "I1"
+		assertFailsWith(IllegalArgumentException::class) {
+			in2.name = "I1"
+		}
 
 		assertEquals("I2", in2.name)
 	}

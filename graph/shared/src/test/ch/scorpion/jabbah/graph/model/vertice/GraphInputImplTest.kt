@@ -16,7 +16,7 @@ class GraphInputImplTest {
 	@Test
 	fun shouldApplyDefaultName() {
 		val input = GraphInputImpl<Boolean>()
-		assertEquals("I", input.name)
+		assertEquals("I1", input.name)
 	}
 
 	@Test
