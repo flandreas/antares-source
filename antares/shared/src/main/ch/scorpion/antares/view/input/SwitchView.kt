@@ -440,6 +440,10 @@ class SwitchView(
 		}
 
 		private fun drawSymbol(context: DrawContext) {
+			context.g.translate(-DigitalPortView.LENGTH - SIZE / 2.0, 0.0)
+			context.g.rotate(rotation.inverse().angle)
+			context.g.translate(DigitalPortView.LENGTH + SIZE / 2.0, 0.0)
+
 			drawCircles(context)
 			context.g.stroke = styleProvider.getStyle(GraphStyleType.ANNOTATION).stroke
 			if (toggle) {
@@ -447,6 +451,10 @@ class SwitchView(
 			} else {
 				drawPushButtonSymbol(context)
 			}
+
+			context.g.translate(-DigitalPortView.LENGTH - SIZE / 2.0, 0.0)
+			context.g.rotate(rotation.angle)
+			context.g.translate(DigitalPortView.LENGTH + SIZE / 2.0, 0.0)
 		}
 
 		private fun drawCircles(context: DrawContext) {
