@@ -8,6 +8,7 @@ import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.base.geom.*
@@ -35,6 +36,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
+import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -323,6 +325,22 @@ class SwitchView(
 		dest.labelPosition = source.labelPosition
 		dest.toggle = source.toggle
 	}
+
+	/** ---- [AbstractVerticeView] */
+
+	override val staticDescription: String?
+		get() = if (toggle) {
+			Translations.getOptionalString("library.element.Toggle.desc")
+		} else {
+			Translations.getOptionalString("library.element.Switch.desc")
+		}
+
+	override val type: String?
+		get() = if (toggle) {
+			Translations.getOptionalString("library.element.Toggle.name")
+		} else {
+			Translations.getOptionalString("library.element.Switch.name")
+		}
 
 	/** ---- [SwitchView] */
 

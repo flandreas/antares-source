@@ -317,7 +317,7 @@ object AntaresViewModule : AbstractModule() {
 			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.INPUT))
 		}
 
-		repository.register(SWITCH, "library.element.Switch", "/img/switch.png", SwitchView::class)
+		repository.register(SWITCH, "library.element.Toggle", "/img/switch.png", SwitchView::class)
 		repository.register(DIP_SWITCH, "library.element.DipSwitch", "/img/dip-switch.png", DipSwitchView::class)
 		repository.register(CLOCK, "library.element.Clock", "/img/clock.png", ClockView::class)
 		repository.register(KEYBOARD, "library.element.Keyboard", "/img/keyboard.png", KeyboardView::class)

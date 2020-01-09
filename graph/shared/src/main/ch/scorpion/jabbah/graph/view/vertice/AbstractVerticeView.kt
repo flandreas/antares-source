@@ -85,7 +85,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	/** ---- [VerticeView] interface */
 
-	private val staticDescription: String? get() = Translations.getOptionalString("${model.baseResourceKey}.desc")
+	protected open val staticDescription: String? get() = Translations.getOptionalString("${model.baseResourceKey}.desc")
 
 	override val shortDescription: String? get() = model.description.value ?: staticDescription
 

@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 /**
  * Represents an interactive switch that can toggle between two states.
  */
-class Switch : AbstractInteractableVertice("library.element.Switch", CALCULATOR) {
+class Switch : AbstractInteractableVertice("library.element.Toggle", CALCULATOR) {
 
 	var isOn: Boolean = false
 		private set
