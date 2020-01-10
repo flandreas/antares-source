@@ -20,8 +20,8 @@ Der Taktgeber hat einen einzigen 1-Bit-Ausgang, an dem das periodisch wechselnde
 
 Ausrichtung:: Die Himmelsrichtung, in die der Anschluss zeigt.
 
-Periode:: Die Periode in Mikrosekunden.
+Periode:: Die Periode in Mikrosekunden. Die Periode ist die Zeit, die verstreicht, bis der Taktgeber wieder dasselbe Signal ausgibt. Bei einer Periode von 1'000 µs ist der Ausgang für 500 µs auf "1" und für 500 µs auf "0".
 
-Aktiv:: TODO
+Aktiv:: Wenn das Attribut "Aktiv" nicht gesetzt ist, bleibt der Ausgang während der Simulation immer auf "0".
 
-Periode während Simulation ändern:: TODO
+Periode während Simulation ändern:: Der Drehknopf, mit dem die Periode während der Simulation durch den Benutzer geändert werden kann, wird nur angezeigt, wenn dieses Attribut gesetzt ist.
