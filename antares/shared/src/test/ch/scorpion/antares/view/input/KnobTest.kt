@@ -3,8 +3,11 @@ package ch.scorpion.antares.view.input
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.jabbah.base.PI_2
 import ch.scorpion.jabbah.base.TWO_PI
+import ch.scorpion.jabbah.base.event.Button
+import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContextImpl
+import io.mockk.every
 import io.mockk.mockk
 import kotlin.math.PI
 import kotlin.test.Test
@@ -54,8 +57,7 @@ class KnobViewTest {
 
 	@Test
 	fun shouldSingleDragQuarterClockwise() {
-		val model = KnobModel(100)
-		val view = KnobView(model = model)
+		val view = KnobView(KnobModel(100))
 		pressMouseAt(view, 0.0, -200.0)
 
 		dragMouseTo(view, 200.0, 0.0)
@@ -65,8 +67,7 @@ class KnobViewTest {
 
 	@Test
 	fun shouldIncrementalDragQuarterClockwise() {
-		val model = KnobModel(100)
-		val view = KnobView(model = model)
+		val view = KnobView(KnobModel(100))
 		pressMouseAt(view, 0.0, -200.0)
 
 		dragMouseTo(view, 200.0, -200.0)
@@ -77,13 +78,22 @@ class KnobViewTest {
 
 	@Test
 	fun shouldStartDragAnywhere() {
-		val model = KnobModel(100)
-		val view = KnobView(model = model)
+		val view = KnobView(KnobModel(100))
 		pressMouseAt(view, 200.0, 0.0)
 
 		dragMouseTo(view, 0.0, 200.0)
 
 		assertEquals(100L + 900 / 4, view.value)
+	}
+
+	@Test
+	fun shouldApplyDefaultValueOnDoubleClick() {
+		val view = KnobView(KnobModel(100))
+		view.value = 1_000
+
+		doubleClickAt(view, 0.0, 0.0)
+
+		assertEquals(100, view.value)
 	}
 
 	private fun pressMouseAt(knobView: KnobView, x: Double, y: Double) {
@@ -96,11 +106,19 @@ class KnobViewTest {
 		knobView.getActorInteractionHandler(context)?.mouseDragged(context)
 	}
 
-	private fun contextFor(x: Double, y: Double): ActorInteractionContext {
+	private fun doubleClickAt(knobView: KnobView, x: Double, y: Double) {
+		val context = contextFor(x, y, clickCount = 2)
+		knobView.getActorInteractionHandler(context)?.mousePressed(context)
+	}
+
+	private fun contextFor(x: Double, y: Double, clickCount: Int = 0): ActorInteractionContext {
+		val mouseEvent = mockk<MouseEvent>()
+		every { mouseEvent.clickCount } returns clickCount
+		every { mouseEvent.button} returns Button.BUTTON1
 		return ActorInteractionContextImpl(
 			signalHandler = mockk(),
 			view = mockk(),
-			mouseEvent = mockk(),
+			mouseEvent = mouseEvent,
 			keyEvent = mockk(),
 			x = x,
 			y = y)

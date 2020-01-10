@@ -170,9 +170,11 @@ class ClockView(
 		private fun display(view: DrawingView<*>) {
 			stopTimer()
 
-			KNOB.valueChangeHandler = { model.propagationDelay = it * 1000 }
+			KNOB.valueChangeHandler = { model.propagationDelay = it * 1_000 }
 			KNOB.location = Point2D(boundingBox.center.subtract(Point2D(KnobView.OUTER_SIZE / 2, KnobView.OUTER_SIZE / 2)))
-			KNOB.value = model.propagationDelay / 1000
+			KNOB.value = model.propagationDelay / 1_000
+			KNOB.defaultValue = KNOB.value
+
 			showPropagationDelayKnob(view)
 		}
 
@@ -195,5 +197,4 @@ class ClockView(
 			}
 		}
 	}
-
 }

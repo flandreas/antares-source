@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyOwner
@@ -33,8 +34,8 @@ import kotlin.math.*
 class KnobView(
 	private val model: KnobModel = KnobModel(initialValue = 0),
 	private val unit: String = "",
-	var valueChangeHandler: (Long) -> Unit = {},
-	location: Point2D = Point2D.ZERO
+	location: Point2D = Point2D.ZERO,
+	var valueChangeHandler: (Long) -> Unit = {}
 ) : AbstractRectangle(location.x - OUTER_SIZE / 2, location.y - OUTER_SIZE / 2, OUTER_SIZE, OUTER_SIZE), ActorView {
 
 	companion object {
@@ -66,6 +67,12 @@ class KnobView(
 		set(value) {
 			model.value = value
 		}
+
+	/**
+	 * The value to be set in [value] when the user double-clicks this [KnobView].
+	 * Initialized with the [KnobModel]'s initial value upon construction.
+	 */
+	var defaultValue: Long = model.value
 
 	private val handler = Handler()
 
@@ -167,9 +174,18 @@ class KnobView(
 		}
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
+			if (context.mouseEvent?.button != Button.BUTTON1) {
+				return this
+			}
+			if (context.mouseEvent?.clickCount == 2) {
+				value = defaultValue
+				return this
+			}
+
 			pressedModelAngle = model.asAngle
 			oldAngle = Geometry.angle(boundingBox.center, Point2D(context.x, context.y))
 			pressedAngle = Geometry.angle(boundingBox.center, Point2D(context.x, context.y))
+
 			return this
 		}
 
