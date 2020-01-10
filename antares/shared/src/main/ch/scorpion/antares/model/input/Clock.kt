@@ -23,7 +23,9 @@ class Clock : AbstractDigitalGate("library.element.Clock", CALCULATOR, InputCoun
 
 		private class Calculator : VerticeCalculator<Clock> {
 			override fun calculate(vertice: Clock, data: GraphActorData, signalHandler: SignalHandler) {
-				vertice.setOn(signalHandler, !vertice.isOn)
+				if (vertice.isEnabled) {
+					vertice.setOn(signalHandler, !vertice.isOn)
+				}
 			}
 		}
 	}

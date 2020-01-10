@@ -58,4 +58,14 @@ class ClockViewSimulationTest : AbstractCircuitTest() {
 
 		assertEquals(100 * 1_000, clockView.period)
 	}
+
+	@Test
+	fun inactiveClockShouldNotProduceHighSignal() {
+		clockView.isEnabled = false
+		startSimulation()
+
+		proceedToMillis(50L)
+
+		assertEquals(Word.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
+	}
 }
