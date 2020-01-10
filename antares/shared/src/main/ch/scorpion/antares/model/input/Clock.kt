@@ -39,6 +39,9 @@ class Clock : AbstractDigitalGate("library.element.Clock", CALCULATOR, InputCoun
 			}
 		}
 
+	/** Used for restoring [propagationDelay] after the simulation has ended. */
+	private var propagationDelayBuffer: Long = 0
+
 	init {
 		propagationDelay = 1_000_000_000
 	}
@@ -68,8 +71,14 @@ class Clock : AbstractDigitalGate("library.element.Clock", CALCULATOR, InputCoun
 	/** ---- [Actor] interface */
 
 	override fun executionStarted(signalHandler: SignalHandler) {
+		propagationDelayBuffer = propagationDelay
 		super.executionStarted(signalHandler)
 		setOn(signalHandler, false)
+	}
+
+	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
+		propagationDelay = propagationDelayBuffer
 	}
 
 	/** ---- [Clock] */

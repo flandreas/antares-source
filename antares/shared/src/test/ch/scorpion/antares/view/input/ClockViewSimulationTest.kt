@@ -30,7 +30,7 @@ class ClockViewSimulationTest : AbstractCircuitTest() {
 	}
 
 	@Test
-	fun test() {
+	fun shouldPeriodicallyChangeOutput() {
 		startSimulation()
 
 		assertEquals(Word.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal() as Word)
@@ -47,5 +47,15 @@ class ClockViewSimulationTest : AbstractCircuitTest() {
 
 		proceedToMillis(101L)
 		assertFalse(ledView.model.isOn)
+	}
+
+	@Test
+	fun shouldResetPropagationDelayAfterSimulation() {
+		startSimulation()
+		clockView.period = 200 * 1_000
+
+		stopSimulation()
+
+		assertEquals(100 * 1_000, clockView.period)
 	}
 }

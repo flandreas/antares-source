@@ -6,17 +6,21 @@ image:../../img/base-library/clock-sample.png[Beispiel LED, 50%]
 
 ==== Verhalten
 
-TODO
+Der Taktgeber erzeugt an seinem Ausgang ein 1-Bit-Signal, dessen Wert periodisch zwischen den Werten "0" und "1" hin und her wechselt. Die Periode kann im Attribut "Periode" gesetzt werden.
+
+Wenn die Maus während der Simulation über dem Taktgeber verweilt, zeigt Antares nach einer gewissen Zeit einen Drehknopf an, mit dem die Periode während der Simulation verändert werden kann. Klicke auf dem Drehknopf und bewege die Maus bei gedrückter Maustaste links oder rechts herum, um die Periode zu ändern. Der Drehknopf hat ein logarithmisches Verhalten: Eine vollständige Umdrehung des Drehknopfs verändert die Periode um den Faktor 10 *an der höchsten Dezimalstelle*. Ist z.B. die aktuelle Periode 1'000, hat sie nach einer vollständigen Umdrehung im Uhrzeigersinn den Wert 10'000. Damit können sowohl kleine als auch grosse Werte einfach eingestellt werden.
+
+Ein während der Simulation veränderter Wert der Periode bleibt nicht erhalten; die Periode wird nach Ende der Simulation auf den im Attribut "Periode" konfigurierten Wert zurückgestellt.
 
 ==== Anschlüsse
 
-TODO
+Der Taktgeber hat einen einzigen 1-Bit-Ausgang, an dem das periodisch wechselnde Signal ausgegeben wird.
 
 ==== Attribute
 
-Ausrichtung:: TODO
+Ausrichtung:: Die Himmelsrichtung, in die der Anschluss zeigt.
 
-Periode:: TODO
+Periode:: Die Periode in Mikrosekunden.
 
 Aktiv:: TODO
 
