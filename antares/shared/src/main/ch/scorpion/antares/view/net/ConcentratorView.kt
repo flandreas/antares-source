@@ -73,9 +73,9 @@ class ConcentratorView(
         }
 
     var signalRepresentation: DigitalSignalRepresentation
-        get() = (model.getOutput<DigitalSignal>() as DigitalPort).signalRepresentation
+        get() = model.signalRepresentation
         set(value) {
-            (model.getOutput<DigitalSignal>() as DigitalPort).signalRepresentation = value
+            model.signalRepresentation = value
         }
 
     init {

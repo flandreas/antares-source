@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.Splitter
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
@@ -70,7 +71,13 @@ class SplitterView(
             }
         }
 
-    init {
+	var signalRepresentation: DigitalSignalRepresentation
+		get() = model.signalRepresentation
+		set(value) {
+			model.signalRepresentation = value
+		}
+
+	init {
         modelExchanged(null)
     }
 

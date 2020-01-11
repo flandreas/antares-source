@@ -21,7 +21,6 @@ class ConcentratorViewBeanInfo : DigitalComponentBeanInfo<ConcentratorView>() {
         private val branchCount = PropertyImpl("element.property.branchCount", BranchCount::class.java)
         private val handedness = PropertyImpl("element.property.Splitter.handedness", Handedness::class.java)
         private val signalRep = PropertyImpl("element.property.DigitalSignalRepresentation", DigitalSignalRepresentation::class.java)
-
     }
 
     override fun addProperties(bean: ConcentratorView, editor: Editor, properties: MutableList<Property>) {

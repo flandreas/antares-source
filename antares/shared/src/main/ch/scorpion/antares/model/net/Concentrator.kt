@@ -1,10 +1,13 @@
 package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.Logic
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -35,27 +38,43 @@ class Concentrator(
 		}
 	}
 
-	private var _bitWidth: BitWidth = bitWidth
-	var bitWidth: BitWidth
-		get() = _bitWidth
+	var bitWidth: BitWidth = bitWidth
 		set(value) {
-			if (_bitWidth != value) {
-				setSplitting(value, BranchCount.forBitWidth(value).first())
+			if (field != value) {
+				// calling setConcentration() would cause infinite recursion
+				field = value
+				branchCount = BranchCount.forBitWidth(value).first()
+				updatePorts()
 			}
 		}
-	private var _branchCount: BranchCount = branchCount
-	var branchCount: BranchCount
-		get() = _branchCount
+
+	var branchCount: BranchCount = branchCount
 		set(value) {
-			if (_branchCount != value) {
-				setSplitting(bitWidth, value)
+			if (field != value) {
+				// calling setConcentration() would cause infinite recursion
+				if (isConcentrationSupported(bitWidth, value)) {
+					field = value
+					updatePorts()
+				}
+			}
+		}
+
+	var signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY
+		set(value) {
+			if (field != value) {
+				field = value
+				(getOutput<DigitalSignal>() as DigitalPort).signalRepresentation = field
 			}
 		}
 
 	val supportedBranchCounts: List<BranchCount> get() = BranchCount.forBitWidth(bitWidth)
 
 	init {
-		setSplitting(bitWidth, branchCount)
+		if (isConcentrationSupported(bitWidth, branchCount)) {
+			setConcentration(bitWidth, branchCount)
+		} else {
+			throw IllegalArgumentException("Concentration with bitWidth $bitWidth and branchCount $branchCount not supported")
+		}
 	}
 
 	/** ---- [Storable] */
@@ -64,38 +83,47 @@ class Concentrator(
 		super.write(writer)
 		writer.writeInt("bitWidth", bitWidth.width)
 		writer.writeInt("branchCount", branchCount.count)
+		writer.writeString("representation", signalRepresentation.customName)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		setSplitting(BitWidth.of(reader.readInt("bitWidth")), BranchCount.withCount(reader.readInt("branchCount")))
+		if (reader.hasAttribute("representation")) {
+			// Legacy file support: in new files, 'representation' is always there
+			signalRepresentation = DigitalSignalRepresentation.withName(reader.readString("representation"))
+		}
+		setConcentration(BitWidth.of(reader.readInt("bitWidth")), BranchCount.withCount(reader.readInt("branchCount")))
 	}
 
 	/** ---- [Concentrator] */
 
-	private fun setSplitting(bitWidth: BitWidth, branchCount: BranchCount) {
+	private fun isConcentrationSupported(bitWidth: BitWidth, branchCount: BranchCount): Boolean {
 		if (branchCount < BranchCount.BC_2 || branchCount.count > bitWidth.width) {
-			return
+			return false
 		}
 		if (!BranchCount.forBitWidth(bitWidth).contains(branchCount)) {
-			return
+			return false
 		}
-		_bitWidth = bitWidth
-		_branchCount = branchCount
-		updateSplitting()
+		return true
 	}
 
-	private fun updateSplitting() {
+	private fun setConcentration(bitWidth: BitWidth, branchCount: BranchCount) {
+		if (!isConcentrationSupported(bitWidth, branchCount)) {
+			return
+		}
+		this.bitWidth = bitWidth
+		this.branchCount = branchCount
+
+		updatePorts()
+	}
+
+	private fun updatePorts() {
 		clearPorts()
-		addPort(DigitalPortImpl.createOutput(Logic.POSITIVE, null, this.bitWidth))
+		addPort(DigitalPortImpl.createOutput(Logic.POSITIVE, null, bitWidth, signalRepresentation))
+
 		val portBitWidth = bitWidth.width / branchCount.count
 		for (i in 0 until bitWidth.width step portBitWidth) {
-			val label = i.toString()
-			// Code disabled: Show only the start index of the bit range
-			// if (portBitWidth > 1) {
-			// label = label + "-" + Integer.toString(i + portBitWidth - 1);
-			// }
-			addPort(DigitalPortImpl.createInput(Logic.POSITIVE, label, BitWidth.of(portBitWidth)))
+			addPort(DigitalPortImpl.createInput(Logic.POSITIVE, i.toString(), BitWidth.of(portBitWidth)))
 		}
 	}
 }
