@@ -14,25 +14,39 @@ import kotlin.math.max
  * Consists of a complete list of cells separated by blanks or newlines. The address of the cell values is
  * implicitly given by the cell's position. An optional cell comment is separated from the cell data value
  * using a colon.
+ *
+ * The current code doesn't write a [MemoryDumpFileVersion] into the dump. This wont be necessary
+ * before the first format change is invented. Dumps without a version info will forever be
+ * regarded as [MemoryDumpVersionType.Default] of version number 0.1.
  */
 object MemoryDump {
 
 	private val LOG by logger(MemoryDump::class)
 
+	/** The file format version supported by the current code.*/
+	@Suppress("unused")
+	private const val CURRENT_VERSION = 0.1
+
 	/** The character for delimiting individual cells.*/
 	private const val CELL_DELIMITER = ' '
 
 	/** The character for delimiting cell value and optional cell comment.*/
-	private const val COMMENT_DELIMITER = ':'
+	private const val CELL_COMMENT_DELIMITER = ':'
+
+	/**
+	 * The character for starting a line comment. Must be the first character of the line.
+	 * All subsequent characters of the same line are ignored.
+	 */
+	const val LINE_COMMENT_CHAR = '#'
 
 	/** The regular expression for separating individual cells.*/
 	private val cellSeparationRegex = Regex("(?<!\\\\)$CELL_DELIMITER|\n")
 
 	/** The regular expression for separating cell value and optional cell comment.*/
-	private val cellTokenSeparationRegex = Regex("(?<!\\\\)$COMMENT_DELIMITER")
+	private val cellTokenSeparationRegex = Regex("(?<!\\\\)$CELL_COMMENT_DELIMITER")
 
 	/**
-	 * Writes the contents of the specified [Memory] into a new [String].
+	 * Writes the contents of the specified [Memory] into a new [String] in [MemoryDumpVersionType.Default] format.
 	 */
 	fun write(memory: Memory, bitWidth: BitWidth): String {
 		val builder = StringBuilder()
@@ -44,7 +58,7 @@ object MemoryDump {
 			val cell = cellIter.next()
 			writePaddedHex(cell.value, mask, length, builder)
 			if (StringUtils.isNotEmpty(cell.comment)) {
-				builder.append(COMMENT_DELIMITER)
+				builder.append(CELL_COMMENT_DELIMITER)
 				writeEscapedComment(cell.comment!!, builder)
 			}
 			if (cellIter.hasNext()) {
@@ -58,12 +72,32 @@ object MemoryDump {
 	 * Reads the dump from the specified [String] into a [Memory].
 	 */
 	fun read(memory: Memory, dump: String) {
+		val version = MemoryDumpFileVersion.extractFrom(dump)
+
+		return if (version?.type == MemoryDumpVersionType.Newline) {
+			readNewLineFormat(memory, dump)
+		} else {
+			readStandardFormat(memory, dump)
+		}
+	}
+
+	private fun removeCommentLines(dump: String): String {
+		val result = StringBuilder()
+		for (line in dump.split('\n')) {
+			if (!line.startsWith(LINE_COMMENT_CHAR)) {
+				result.append(line).append('\n')
+			}
+		}
+		return result.toString()
+	}
+
+	private fun readStandardFormat(memory: Memory, dump: String) {
 		memory.clear()
-		for ((address, cell) in dump.split(cellSeparationRegex).withIndex()) {
+		for ((address, cell) in removeCommentLines(dump).split(cellSeparationRegex).withIndex()) {
 			val cellTokens = cell.split(cellTokenSeparationRegex)
 			when (cellTokens.size) {
 				1 -> memory.write(address, BitOperation.hexToLong(cellTokens[0]))
-				2 -> memory.writeCommentedValue(address, BitOperation.hexToLong(cellTokens[0]), readEscapedComment(cellTokens[1]))
+				2 -> memory.writeCommentedValue(address, BitOperation.hexToLong(cellTokens[0]), readEscapedCellComment(cellTokens[1]))
 				else -> {
 					LOG.error("illegal syntax at address $address in cell $cell")
 					throw IllegalArgumentException("Illegal syntax in MemoryDump")
@@ -72,11 +106,11 @@ object MemoryDump {
 		}
 	}
 
-	fun readNewlineSeparated(memory: Memory, dump: String) {
+	private fun readNewLineFormat(memory: Memory, dump: String) {
 		memory.clear()
 		var address = 0
-		for (line in dump.split('\n')) {
-			val commentDelimiterIndex = line.indexOf(COMMENT_DELIMITER)
+		for (line in removeCommentLines(dump).split('\n')) {
+			val commentDelimiterIndex = line.indexOf(CELL_COMMENT_DELIMITER)
 			val comment: String?
 			val value: Long
 			if (commentDelimiterIndex == -1) {
@@ -98,13 +132,60 @@ object MemoryDump {
 	private fun writeEscapedComment(comment: String, builder: StringBuilder) {
 		builder.append(
 			comment
-				.replace(COMMENT_DELIMITER.toString(), "\\$COMMENT_DELIMITER")
+				.replace(CELL_COMMENT_DELIMITER.toString(), "\\$CELL_COMMENT_DELIMITER")
 				.replace(CELL_DELIMITER.toString(), "\\$CELL_DELIMITER"))
 	}
 
-	private fun readEscapedComment(comment: String): String {
+	private fun readEscapedCellComment(comment: String): String {
 		return comment
-			.replace("\\$COMMENT_DELIMITER", COMMENT_DELIMITER.toString())
+			.replace("\\$CELL_COMMENT_DELIMITER", CELL_COMMENT_DELIMITER.toString())
 			.replace("\\$CELL_DELIMITER", CELL_DELIMITER.toString())
+	}
+}
+
+enum class MemoryDumpVersionType(val identifier: String) {
+	Default("amd-df"),
+	Newline("amd-nl");
+
+	companion object {
+		fun of(dump: String): MemoryDumpVersionType {
+			return if (Newline.canRecognize(dump)) {
+				Newline
+			} else {
+				Default
+			}
+		}
+	}
+
+	fun canRecognize(dump: String): Boolean {
+		return dump.startsWith(identifier, ignoreCase = true)
+	}
+}
+
+data class MemoryDumpFileVersion(
+	val type: MemoryDumpVersionType,
+	val number: String
+) {
+	companion object {
+
+		private const val LENGTH = 11
+		private val regex = """${MemoryDump.LINE_COMMENT_CHAR}(amd-df|amd-nl)-(.*)""".toRegex()
+
+		fun extractFrom(dump: String): MemoryDumpFileVersion? {
+			if (dump.length < LENGTH) {
+				return null
+			}
+
+			val version = dump.substring(0 until LENGTH)
+			val result = regex.matchEntire(version)
+
+			if (result == null || result.groupValues.size != 3) {
+				return null
+			}
+
+			return MemoryDumpFileVersion(
+				MemoryDumpVersionType.of(result.groupValues[1]),
+				result.groupValues[2])
+		}
 	}
 }

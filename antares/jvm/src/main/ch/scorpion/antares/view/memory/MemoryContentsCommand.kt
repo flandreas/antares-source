@@ -27,7 +27,7 @@ class MemoryContentsCommand(
 	override fun execute() {
 		oldContents = MemoryDump.write(memory, bitWidth)
 		try {
-			MemoryDump.readNewlineSeparated(memory, String(Files.readAllBytes(Paths.get(filePath))))
+			MemoryDump.read(memory, String(Files.readAllBytes(Paths.get(filePath))))
 		} catch (e: Throwable) {
 			LOG.error("Error while reading memory from file '$filePath'")
 			throw e

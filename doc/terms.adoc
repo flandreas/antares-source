@@ -11,6 +11,7 @@ Die Liste ist alphabetisch aufsteigend nach dem englischen Begriff sortiert.
 Antares (Antares):: Lernplatform für digitale Schaltungen.
 Author (Autor):: Der Benutzer, dem ein Projekt oder eine Bibliothek gehört und der sie als einziger bearbeiten kann.
 Bit Width (Bit-Breite):: Die Anzahl von Bits, die an einem Anschluss oder in einem Leitungsbündel gleichzeitig übertragen werden können.
+Bidirectional (Bidirektional):: Signalrichtung an einem Anschluss, der gleichzeitig Eingang und Ausgang ist.
 Bundle (Bündel):: Ein exportiertes Projekt, das auch die referenzierte Bibliothek enthält.
 Circuit (Schaltung):: Die darstellbare Form einer digitalen Schaltung in `antares`.
 Component (Komponente):: Bestandteil einer Schaltung. Eine Komponente ist entweder elementar oder eine Teilschaltung.
@@ -22,10 +23,12 @@ Emmerge (Auftauchen):: Nach Eintauchen in eine Teilschaltung in derselben Ansich
 Explorer (Explorer):: Die Seitenleiste, die das geöffnete Projekt und die verwendete Bibliothek sowie Voransicht und Eigenschaftenansicht enthält
 Folder (Verzeichnis):: Eine rekursive Gliederungsstruktur in Projekten und Bibliotheken.
 Graph (Graph):: Generischer Begriff in `graph` für speicherbare Objekte. Statt diesem Begriff sollte im UI von Applikation der ensprechende konkrete Begriff verwendet werden, also z.B. "Circuit" in `antares`.
+Input (Eingang):: Typ von Anschluss, der Daten entgegennehmen kann.
 Immerge (Eintauchen):: Innerhalb derselben View in eine Teilschaltung eintauchen. Die Tiefe wird in der Navigationsleiste angezeigt.
 Library (Bibliothek):: Enthält Schaltungen, die in Projekten referenziert werden können. Bibliotheken sind entweder vordefiniert oder benutzerdefiniert. Bibliotheken können nur durch ihren Autor verändert werden. Ein Projekt kann nur Schaltungen aus einer einzigen Bibiothek referenzieren
 Main View (Hauptansicht):: Die View, welche die Schaltung enthält, die bearbeitet und für welche die Simulation gestartet werden kann. Deren Name wird in der Titelzeile des Fensters angezeigt
 Navigation Bar (Navigationsleiste):: Bestandteil einer Ansicht, die das Navigieren im Teilschaltungs-Baum ermöglicht.
+Output (Ausgang):: Typ von Anschluss, der Daten ausgeben kann.
 Port (Anschluss):: Ein Anschluss ist entweder ein Eingang, ein Ausgang, oder beides gleichzeitig. Er wird in Teilschaltunge verwendet, um Signale von der umgebenden Schaltung zu übernehmen (Eingang) oder an sie weiterzugeben (Ausgang).
 Preferences (Einstellungen):: TODO.
 Preview (Vorschau):: Zeigt den Namen, das Symbol und eine kurze Beschreibung der im Explorer ausgewählten Schaltung an.
@@ -40,6 +43,7 @@ Symbol Editor (Symboleditor):: Der Editor, mit der das Symbol einer Teilschaltun
 Theme (Thema):: Eine Menge von Stilen und anderen grafischen Eigenschaften, die das Aussehen von Graphen beeinflussen.
 Toolbar (Werkzeugleiste):: Enthält Werkzeuge
 User (Benutzer):: Die Person, die die Applikation gestartet hat. Im Moment wird lediglich zwischen "Entwickler" und "Jedermann" unterschieden. In Zukunft wird es identifizierbare Benutzer und einen Anmelde-Dialog geben.
+Undefined (Undefiniert):: Digitaler Signalwert, der von einem bidirektionalen Anschluss ausgegeben werden kann und auf analoger Ebene auch als "hochohmig" bezeichnet wird.
 User Language (Benutzersprache):: Die Sprache, in welcher der Benutzer die Texte der Benutzerschnittstelle angezeigt wünscht.
 View (Ansicht):: Zeigt eine einzelne Schaltung innerhalb der Workbench an und enthält eine Navigationsleiste.
 Workbench (Arbeitsfläche):: Enthält die Ansichten von Schaltungen. Ordnet mehrere offenen Ansichten zweispaltig dar, wobei die rechte Spalte aus mehreren vertikal angeordneten Ansichten bestehen kann.

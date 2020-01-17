@@ -16,7 +16,48 @@ class MemoryDumpTest {
 	    }
     }
 
-    /** ---- Write 8 bit tests */
+	/** ---- File version tests */
+
+	@Test
+	fun shouldReadDataInNewlineVersion() {
+		val data = """
+			|#amd-nl-0.1
+			|40:Comment 1
+			|F7
+			|0A:Comment 2
+		""".trimMargin()
+
+		val memory = Memory()
+
+		MemoryDump.read(memory, data)
+
+		assertEquals("40".toLong(16), memory.read(0))
+		assertEquals("Comment 1", memory.readComment(0))
+		assertEquals("F7".toLong(16), memory.read(1))
+		assertEquals("0A".toLong(16), memory.read(2))
+		assertEquals("Comment 2", memory.readComment(2))
+	}
+
+	@Test
+	fun shouldReadDataInDefaultVersion() {
+		val data = """
+			|#amd-df-0.1
+			|40:Comment\ 1 F7 0A:Comment\ 2
+		""".trimMargin()
+
+		val memory = Memory()
+
+		MemoryDump.read(memory, data)
+
+		assertEquals("40".toLong(16), memory.read(0))
+		assertEquals("Comment 1", memory.readComment(0))
+		assertEquals("F7".toLong(16), memory.read(1))
+		assertEquals("0A".toLong(16), memory.read(2))
+		assertEquals("Comment 2", memory.readComment(2))
+	}
+
+
+	/** ---- Write 8 bit tests */
 
     @Test
     fun shouldWriteEmptyData() {
@@ -89,7 +130,7 @@ class MemoryDumpTest {
 	fun shouldReadMultipleAddressesPerLine() {
 		val memory = Memory()
 
-		MemoryDump.readNewlineSeparated(memory, "00 01 02 03\n04 05 06 07")
+		MemoryDump.read(memory, "00 01 02 03\n04 05 06 07")
 
 		for (index in 0..7) {
 			assertEquals(index, memory.read(index).toInt())
@@ -126,7 +167,18 @@ class MemoryDumpTest {
 	/** ---- Comment tests */
 
 	@Test
-	fun shouldWriteComment() {
+	fun shouldSkipLineComment() {
+		val memory = Memory()
+
+		MemoryDump.read(memory, "00 01 02 03\n# Comment\n04 05 06 07")
+
+		for (index in 0..7) {
+			assertEquals(index, memory.read(index).toInt())
+		}
+	}
+
+	@Test
+	fun shouldWriteCellComment() {
 		val memory = Memory()
 		memory.write(0, 4)
 		memory.writeCommentedValue(1, 255, "Comment1")
@@ -136,7 +188,7 @@ class MemoryDumpTest {
 	}
 
 	@Test
-	fun shouldReadComment() {
+	fun shouldReadCellComment() {
 		val memory = Memory()
 
 		MemoryDump.read(memory, "04 FF:Comment1 08")
@@ -148,7 +200,7 @@ class MemoryDumpTest {
 	}
 
 	@Test
-	fun shouldWriteEscapedComment() {
+	fun shouldWriteEscapedCellComment() {
 		val memory = Memory()
 		memory.write(0, 4)
 		memory.writeCommentedValue(1, 255, "Bla:Blu Bli")
@@ -158,7 +210,7 @@ class MemoryDumpTest {
 	}
 
 	@Test
-	fun shouldReadEscapedComment() {
+	fun shouldReadEscapedCellComment() {
 		val memory = Memory()
 
 		MemoryDump.read(memory, "04 FF:Bla\\:Blu\\ Bli 08")
@@ -172,6 +224,7 @@ class MemoryDumpTest {
 	@Test
 	fun shouldReadExtendedExample() {
 		val data = """
+			|#amd-nl-0.1
 			|7000:Initialize I at 0800
 			|1800
 			|7065:Initialize L at 0801
@@ -196,7 +249,7 @@ class MemoryDumpTest {
 
 		val memory = Memory()
 
-		MemoryDump.readNewlineSeparated(memory, data)
+		MemoryDump.read(memory, data)
 
 		assertEquals("7000".toLong(16), memory.read(0))
 		assertEquals("Initialize I at 0800", memory.readComment(0))
