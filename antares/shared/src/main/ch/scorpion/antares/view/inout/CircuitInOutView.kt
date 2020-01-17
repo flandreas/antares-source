@@ -594,6 +594,11 @@ class CircuitInOutView(
 						val newWord = (model.signal as Word).flip(numberView!!.focusIndex!!)
 						model.setIncomingSignal(newWord, context.signalHandler)
 					}
+				} else if (context.keyEvent!!.key == KeyEvent.VK_DELETE && portType == PortType.INOUT && checkTopLevelKey()) {
+					val undefined = Word.undefined(BitWidth.of(signalRepresentation.bits()))
+					val newWord = (model.signal as Word).withSubwordValue(undefined, numberView!!.focusIndex!!)
+					model.setIncomingSignal(newWord, context.signalHandler)
+					numberView!!.transferFocusRight()
 				} else {
 					val digitWord = signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bits()), context.keyEvent!!.key.toChar())
 					if (digitWord != null && checkTopLevelKey()) {

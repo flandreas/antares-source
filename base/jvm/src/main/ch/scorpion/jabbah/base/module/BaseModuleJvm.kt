@@ -36,6 +36,7 @@ object BaseModuleJvm : AbstractModule() {
 		KeyEvent.VK_ESCAPE = java.awt.event.KeyEvent.VK_ESCAPE
 		KeyEvent.VK_ALT = java.awt.event.KeyEvent.VK_ALT
 		KeyEvent.VK_ENTER = java.awt.event.KeyEvent.VK_ENTER
+		KeyEvent.VK_DELETE = java.awt.event.KeyEvent.VK_DELETE
 		KeyEvent.VK_0 = java.awt.event.KeyEvent.VK_0
 		KeyEvent.VK_1 = java.awt.event.KeyEvent.VK_1
 	}
