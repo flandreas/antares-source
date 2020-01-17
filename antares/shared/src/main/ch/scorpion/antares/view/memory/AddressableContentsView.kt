@@ -1,16 +1,15 @@
 package ch.scorpion.antares.view.memory
 
-import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.antares.model.memory.Addressable
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.draw.graphics.*
-import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -40,23 +39,17 @@ class AddressableContentsView(
 ) : AbstractRectangle() {
 
 	companion object {
-		private val DEFAULT_ROWS_COUNT = 4
-		private val DEFAULT_COLUMNS_COUNT = 1
-		private val DEFAULT_SHOW_DISASSEMBLER = false
-		private val MAX_ROWS_COUNT = 10
-		private val MAX_COLUMNS_COUNT = 16
-		private val HORIZONTAL_INSET = 5
-		private val COL_DIST = 5
+		private const val DEFAULT_ROWS_COUNT = 4
+		private const val DEFAULT_COLUMNS_COUNT = 1
+		private const val DEFAULT_SHOW_DISASSEMBLER = false
+		private const val MAX_ROWS_COUNT = 10
+		private const val MAX_COLUMNS_COUNT = 16
+		private const val HORIZONTAL_INSET = 5
+		private const val COL_DIST = 5
 		private val STROKE: Stroke = Stroke(0.5f)
 	}
 
 	private val font: Font = Look.ADDRESSABLE_CONTENTS_FONT
-
-	private val dataTextColorCurrent: Color get() = styleProvider.getStyle(styleType).color.backgroundColor
-
-	private val backgroundColorCurrent: Color get() = styleProvider.getStyle(styleType).color.foregroundColor
-
-	private val borderColor: CompositeColor get() = styleProvider.getStyle(styleType).color
 
 	/** A flyweight used to draw the address.*/
 	private val addressLabel = Label(
@@ -142,7 +135,7 @@ class AddressableContentsView(
 		}
 
 		context.g.stroke = STROKE
-		context.g.color = context.choose(borderColor).foregroundColor
+		context.g.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).foregroundColor
 		context.g.drawRect(
 			bounds.x + HORIZONTAL_INSET + addressColumnWidth + COL_DIST / 2.0,
 			bounds.y,
@@ -201,7 +194,7 @@ class AddressableContentsView(
 		context.g.font = font
 
 		// Draw address
-		context.g.color = context.choose(styleProvider.getStyle(styleType).color).disabledTextColor
+		addressLabel.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).disabledTextColor
 		addressLabel.text = BitOperation.longToHexPadded(address.toLong(), addressable.addressWidth)
 		addressLabel.location = Point2D(x, y)
 		addressLabel.draw(context)
@@ -211,15 +204,15 @@ class AddressableContentsView(
 		(address until address + effectiveColumnCount).forEach { cellAddress ->
 			val isCurrent = cellAddress == addressable.currentAddress && context.castedAppContext<GraphApplicationContext>()!!.isExecute
 			if (isCurrent) {
-				context.g.color = backgroundColorCurrent
+				context.g.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).foregroundColor
 				context.g.fillRect(
 					x - COL_DIST / 2 - 0.5,
 					y - rowHeight / 2,
 					dataColumnWidth.toDouble() + COL_DIST,
 					rowHeight.toDouble())
-				context.g.color = dataTextColorCurrent
+				dataLabel.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).backgroundColor
 			} else {
-				context.g.color = context.choose(styleProvider.getStyle(styleType).color).textColor
+				dataLabel.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).textColor
 			}
 
 			dataLabel.text = BitOperation.longToHexPadded(addressable.dataAt(cellAddress), addressable.dataWidth)
@@ -230,7 +223,7 @@ class AddressableContentsView(
 		}
 
 		if (showDisassembler) {
-			context.g.color = context.choose(styleProvider.getStyle(styleType).color).textColor
+			dataLabel.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).textColor
 			dataLabel.text = addressable.disassemblyAt(address)
 			dataLabel.location = Point2D(x, y)
 			dataLabel.draw(context)

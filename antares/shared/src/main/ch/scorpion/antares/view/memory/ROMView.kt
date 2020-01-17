@@ -7,7 +7,6 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
@@ -16,7 +15,6 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -259,14 +257,6 @@ class ROMView(
 	}
 
 	override fun drawImpl(context: DrawContext) {
-		if (context.useContextColors) {
-			drawImpl(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
-		} else {
-			drawImpl(context, foregroundColor, propertiesBackgroundColor)
-		}
-	}
-
-	private fun drawImpl(context: DrawContext, lineColor: Color, fillColor: Color?) {
 		val oldColor = context.g.color
 		val oldStroke = context.g.stroke
 
@@ -276,18 +266,17 @@ class ROMView(
 			}
 		}
 
-		if (fillColor != null) {
-			context.g.color = fillColor
-			context.g.fill(bounds)
-		}
+		context.g.color = context.choose(color).backgroundColor
+		context.g.fill(bounds)
 
-		context.g.color = lineColor
+		context.g.color = context.choose(color).foregroundColor
 		context.g.stroke = stroke
 		context.g.draw(bounds)
 
 		label.draw(context)
 
 		if (requireDrawContents(context)) {
+			context.stylable = this
 			context.g.translate(contentsView.x, contentsView.y)
 			context.g.rotate(rotation.inverse().angle)
 			context.g.translate(-contentsView.x, -contentsView.y)
@@ -295,6 +284,7 @@ class ROMView(
 			context.g.translate(contentsView.x, contentsView.y)
 			context.g.rotate(-rotation.inverse().angle)
 			context.g.translate(-contentsView.x, -contentsView.y)
+			context.stylable = null
 		}
 
 		context.g.color = oldColor

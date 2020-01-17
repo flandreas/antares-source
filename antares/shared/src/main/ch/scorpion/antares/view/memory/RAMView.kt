@@ -266,14 +266,6 @@ class RAMView(
 	}
 
 	override fun drawImpl(context: DrawContext) {
-		if (context.useContextColors) {
-			drawImpl(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
-		} else {
-			drawImpl(context, foregroundColor, propertiesBackgroundColor)
-		}
-	}
-
-	private fun drawImpl(context: DrawContext, lineColor: Color, fillColor: Color?) {
 		val oldColor = context.g.color
 		val oldStroke = context.g.stroke
 
@@ -283,18 +275,17 @@ class RAMView(
 			}
 		}
 
-		if (fillColor != null) {
-			context.g.color = fillColor
-			context.g.fill(bounds)
-		}
+		context.g.color = context.choose(color).backgroundColor
+		context.g.fill(bounds)
 
-		context.g.color = lineColor
+		context.g.color = context.choose(color).foregroundColor
 		context.g.stroke = stroke
 		context.g.draw(bounds)
 
 		label.draw(context)
 
 		if (requireDrawContents(context)) {
+			context.stylable = this
 			context.g.translate(contentsView.x, contentsView.y)
 			context.g.rotate(rotation.inverse().angle)
 			context.g.translate(-contentsView.x, -contentsView.y)
@@ -302,6 +293,7 @@ class RAMView(
 			context.g.translate(contentsView.x, contentsView.y)
 			context.g.rotate(-rotation.inverse().angle)
 			context.g.translate(-contentsView.x, -contentsView.y)
+			context.stylable = null
 		}
 
 		context.g.color = oldColor
