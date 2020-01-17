@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 /**
  * Unit tests for [NotCalculator].
  */
-class NotCalculatorText {
+class NotCalculatorTest {
 
     companion object {
 	    init {

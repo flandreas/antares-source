@@ -21,9 +21,8 @@ class NotCalculator<T : Vertice> : VerticeCalculator<T> {
     override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
         val outputPort = vertice.getOutput<DigitalSignal>()
         val signal = data.getSignal<DigitalSignal>(1)!!
-        val bit = signal.bitAt(0)
 
-        val result = when (bit) {
+	    val result = when (val bit = signal.bitAt(0)) {
             Bit.Error -> Bit.Error
             Bit.Undefined -> Bit.Undefined
             else -> bit.not()

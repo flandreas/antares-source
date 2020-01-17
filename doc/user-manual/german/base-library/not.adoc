@@ -1,0 +1,29 @@
+=== image:../../img/base-library/not.png[Nicht] Nicht-Gatter
+
+==== Aussehen
+
+image:../../img/base-library/not-sample.png[Beispiel Nicht-Gatter, 50%]
+
+==== Verhalten
+
+Das Nicht-Gatter invertiert das 1-Bit-Signal am Eingang und gibt es am Ausgang aus.
+
+.Wahrheitstabelle
+[%header,cols=2*, width="40%"]
+|===
+|In|Out
+|0|1
+|1|0
+|===
+
+Wenn der Eingang offen gelassen wird, hat der Ausgang immer den Wert "1". Ist der Eingang explizit "undefiniert", d.h. er erhält ein Signal von einem bidirektionalen Ausgang, ist der Ausgang ebenfalls "undefiniert".
+
+
+==== Anschlüsse
+
+Eingang:: Der Eingang des Nicht-Gatters.
+Ausgang:: Der Ausgang des Nicht-Gatters, der das invertierte Signal des Eingangs ausgibt.
+
+==== Attribute
+
+Ausrichtung:: Die Himmelsrichtung, in die der Ausgang zeigt.
