@@ -20,6 +20,7 @@ Desktop (Werkbank):: Enthält das geöffnete Projekt und die referenzierte Bibli
 Developer Mode (Entwicklermodus):: `Antares` kann im Entwicklermodus gestartet werden, um Zugriff auf bestimmte Funktionen zu erhalten, die vor allem der Fehlersuche dienen.
 Elementary Component (Elementare Komponente):: Eine Komponente, die keine innere Schaltung enthält.
 Emmerge (Auftauchen):: Nach Eintauchen in eine Teilschaltung in derselben Ansicht wieder zu äusseren Schaltungen zurückkehren.
+Error (Error):: Digitaler Signalwert, der einen Fehlerzustand anzeigt.
 Explorer (Explorer):: Die Seitenleiste, die das geöffnete Projekt und die verwendete Bibliothek sowie Voransicht und Eigenschaftenansicht enthält
 Folder (Verzeichnis):: Eine rekursive Gliederungsstruktur in Projekten und Bibliotheken.
 Graph (Graph):: Generischer Begriff in `graph` für speicherbare Objekte. Statt diesem Begriff sollte im UI von Applikation der ensprechende konkrete Begriff verwendet werden, also z.B. "Circuit" in `antares`.
@@ -36,6 +37,7 @@ Properties (Eigenschaften):: Zeigt die Eigenschaften der in der Hauptansicht aus
 Project (Projekt):: Eine durch den Benutzer erstellte Menge von zusammengehörenden Schaltungen.
 Recent (Zuletzt geöffnet):: Ermöglicht es, zuletzt geöffnete Schaltungen erneut zu öffnen
 Style (Stil):: Ein Stil ist ein Name für eine Menge von grafischen Eigenschaften, die einer Komponente gegeben werden können. Beispiel: "Figur" oder "Annotation".
+Signal (Signal):: Synonym von "Wert", wobei "Signal" den Schwerpunkt eher auf der Dynamik hat: Signale sind Werte, die unterwegs sind. Es kann auch der Begriff "Signal value (Signalwert)" verwendet werden, wenn der Schwerpunkt nicht bekannt ist.
 Subcircuit (Teilschaltung):: Eine Komponente, die eine innere Schaltung enthält und damit rekursive Schaltungsstrukturen ermöglicht.
 Subview (Unteransicht):: Eine Ansicht, welche eine geöffnete Teilschaltung anzeigt. Kann nicht bearbeitet werden. Während der Simulation können Werte von Eingängen nicht verändert werden.
 Symbol (Symbol):: Die Aussenansicht einer Teilschaltung, die bei der Verwendung der Teilschaltung in einer übergeordneten Schaltung verwendet wird.
@@ -43,8 +45,10 @@ Symbol Editor (Symboleditor):: Der Editor, mit der das Symbol einer Teilschaltun
 Theme (Thema):: Eine Menge von Stilen und anderen grafischen Eigenschaften, die das Aussehen von Graphen beeinflussen.
 Toolbar (Werkzeugleiste):: Enthält Werkzeuge
 User (Benutzer):: Die Person, die die Applikation gestartet hat. Im Moment wird lediglich zwischen "Entwickler" und "Jedermann" unterschieden. In Zukunft wird es identifizierbare Benutzer und einen Anmelde-Dialog geben.
+Unconnected (Unverbunden):: Ein Anschluss ist unverbunden, wenn er nicht mit einer Leitung verbunden ist. Unverbundene Anschlüsse haben immer den Wert "0".
 Undefined (Undefiniert):: Digitaler Signalwert, der von einem bidirektionalen Anschluss ausgegeben werden kann und auf analoger Ebene auch als "hochohmig" bezeichnet wird.
 User Language (Benutzersprache):: Die Sprache, in welcher der Benutzer die Texte der Benutzerschnittstelle angezeigt wünscht.
+Value (Wert):: Der Wert, der an einem Eingang anliegt oder an einem Ausgang ausgegeben wird.
 View (Ansicht):: Zeigt eine einzelne Schaltung innerhalb der Workbench an und enthält eine Navigationsleiste.
 Workbench (Arbeitsfläche):: Enthält die Ansichten von Schaltungen. Ordnet mehrere offenen Ansichten zweispaltig dar, wobei die rechte Spalte aus mehreren vertikal angeordneten Ansichten bestehen kann.
 Wire (Leitung):: Eine Leitung ist eine Verbindung zwischen Komponenten, über die Signale von einer Komponente zur verbundenen Komponente fliessen können.

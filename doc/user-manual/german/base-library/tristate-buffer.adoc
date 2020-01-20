@@ -1,0 +1,62 @@
+=== image:../../img/base-library/tristate-buffer.png[Tri-State Puffer] Tri-State Puffer
+
+==== Aussehen
+
+image:../../img/base-library/tristate-buffer-sample.png[Beispiel Tri-State Puffer, 50%]
+
+==== Verhalten
+
+Der Tri-State Puffer ist ein Puffer, der zusätzlich zum Dateneingang einen Kontrolleingang hat. Wenn der Kontrolleingang aktiv ist, wird das Signal vom Eingang unverändert an den Ausgang weitergegeben. Ist der Kontrolleingang nicht aktiv, ist der Ausgang undefiniert/hochohmig.
+
+Tri-State Puffer werden verwendet, wenn der Ausgang mehrerer Komponenten auf einer Leitung zusammengefasst werden soll. In diesem Fall wird der Ausgang dieser Komponenten über einen Tri-State Puffer geführt, wobei mittels Kontrolleingang nur derjenige Tri-State Puffer aktiv geschalten wird, dessen Leitung das gewünschte Signal führt.
+
+Der Kontrolleingang des Tri-State Puffers kann mit dem Attribut "Logik" auf "Positiv" oder "Negativ" gesetzt werden.
+
+Unverbundene Eingänge haben immer den Wert "0".
+
+.Wahrheitstabelle "Positive Logik"
+[%header,cols=5*, width="40%"]
+|===
+||EN=0|EN=1|EN=Z|EN=X
+|**0**|Z|0|Z|X
+|**1**|Z|1|Z|X
+|**Z/X**|Z|Z/X|Z|X
+|===
+
+.Wahrheitstabelle "Negative Logik"
+[%header,cols=5*, width="40%"]
+|===
+||EN=0|EN=1|EN=Z|EN=X
+|**0**|0|Z|Z|X
+|**1**|1|Z|Z|X
+|**Z/X**|Z/X|Z|Z|X
+|===
+
+
+(Z: Undefiniert/hochohmig, X: Error)
+
+=== Mnemonics
+
+Die logischen Gatter von Antares können ihre Funktion mit sog. "Mnemonics" veranschaulichen. Siehe dazu das Kapitel <<../description/description.adoc, Beschreibungen und Erläuterungen>>. Unten ist das Mnemonic des Tri-State Puffers dargestellt.
+
+image:../../img/base-library/tristate-buffer-mnemonic.png[Mnemonic Tri-State Puffer, 50%]
+
+==== Anschlüsse
+
+Dateineingang:: Der Eingang des Puffers.
+
+EN:: "Enable" - Kontrolleingang TODO
+
+Ausgang:: TODO
+
+==== Attribute
+
+Ausrichtung:: Die Himmelsrichtung, in die der Ausgang zeigt.
+
+Logik:: TODO
+
+Anzahl Bits:: TODO
+
+Ausrichtung Kontrolleingang:: TODO
+
+

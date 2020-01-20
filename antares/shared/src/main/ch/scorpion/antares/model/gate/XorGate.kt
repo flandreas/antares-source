@@ -13,34 +13,37 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 /**
  * Performs a logical "XOR" function with the current input signals of a [Vertice].
  */
-class XorCalculator<T: Vertice> : VerticeCalculator<T> {
-    override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
-        val outputPort = vertice.getOutput<DigitalSignal>()
-        var allTrue = true
-        var allFalse = true
+class XorCalculator<T : Vertice> : VerticeCalculator<T> {
 
-        for (port in vertice.getInputs()) {
-            val signal = data.getSignal<DigitalSignal>(port.portId)!!
-            allTrue = allTrue && signal.bitAt(0) == Bit.True
-            allFalse = allFalse && signal.bitAt(0) == Bit.False
-            if (signal.bitAt(0) == Bit.Undefined) {
-                outputPort.setOutgoingSignalBuffered(Word.of(Bit.Undefined), signalHandler)
-                return
-            }
-        }
-        outputPort.setOutgoingSignalBuffered(Word.of(!allFalse && !allTrue), signalHandler)
-    }
+	companion object {
+		fun calculate(vertice: Vertice, data: GraphActorData): Bit {
+			var trueCount = 0
+			for (port in vertice.getInputs()) {
+				@Suppress("NON_EXHAUSTIVE_WHEN")
+				when (data.getSignal<DigitalSignal>(port.portId)!!.bitAt(0)) {
+					Bit.True -> trueCount++
+					Bit.Error -> return Bit.Error
+					Bit.Undefined -> return Bit.Error
+				}
+			}
+			return Bit.of(trueCount == 1)
+		}
+	}
+
+	override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
+		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(calculate(vertice, data)), signalHandler)
+	}
 }
 
 class XorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate("library.element.XorGate", CALCULATOR, inputCount) {
 
-    companion object {
-        val CALCULATOR = XorCalculator<XorGate>()
+	companion object {
+		val CALCULATOR = XorCalculator<XorGate>()
 
-        val TRUTH_TABLE = TruthTableModel(2, 1)
-                .define(intArrayOf(0, 0), 0)
-                .define(intArrayOf(0, 1), 1)
-                .define(intArrayOf(1, 0), 1)
-                .define(intArrayOf(1, 1), 0)
-    }
+		val TRUTH_TABLE = TruthTableModel(2, 1)
+			.define(intArrayOf(0, 0), 0)
+			.define(intArrayOf(0, 1), 1)
+			.define(intArrayOf(1, 0), 1)
+			.define(intArrayOf(1, 1), 0)
+	}
 }

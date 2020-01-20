@@ -17,42 +17,32 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
  * Performs a logical "NOR" function with the current input signals of a [Vertice].
  */
 class NorCalculator<T : Vertice> : VerticeCalculator<T> {
-    override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
-        val outputPort = vertice.getOutput<DigitalSignal>()
-        var hasUndefined = false
 
-        for (port in vertice.getInputs()) {
-            val signal = data.getSignal<DigitalSignal>(port.portId)!!
-            if (signal.bitAt(0) == Bit.True) {
-                outputPort.setOutgoingSignalBuffered(Word.of(Bit.False), signalHandler)
-                return
-            } else if (signal.bitAt(0) == Bit.Undefined) {
-                hasUndefined = true
-            }
-        }
+	companion object {
+		fun calculate(vertice: Vertice, data: GraphActorData): Bit {
+			return OrCalculator.calculate(vertice, data).invert()
+		}
+	}
 
-        if (hasUndefined) {
-            outputPort.setOutgoingSignalBuffered(Word.of(Bit.Undefined), signalHandler)
-        } else {
-            outputPort.setOutgoingSignalBuffered(Word.of(Bit.True), signalHandler)
-        }
-    }
+	override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
+		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(calculate(vertice, data)), signalHandler)
+	}
 }
 
 class NorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate("library.element.NorGate", CALCULATOR, inputCount) {
 
-    companion object {
-        val CALCULATOR = NorCalculator<NorGate>()
+	companion object {
+		val CALCULATOR = NorCalculator<NorGate>()
 
-        val TRUTH_TABLE = TruthTableModel(2, 1)
-                .define(intArrayOf(0, 0), 1)
-                .define(intArrayOf(0, 1), 0)
-                .define(intArrayOf(1, 0), 0)
-                .define(intArrayOf(1, 1), 0)
-    }
+		val TRUTH_TABLE = TruthTableModel(2, 1)
+			.define(intArrayOf(0, 0), 1)
+			.define(intArrayOf(0, 1), 0)
+			.define(intArrayOf(1, 0), 0)
+			.define(intArrayOf(1, 1), 0)
+	}
 
-    override fun createOutputPort(): OutputPort<DigitalSignal> {
-        return DigitalPortImpl.createOutput(Logic.NEGATIVE)
-    }
+	override fun createOutputPort(): OutputPort<DigitalSignal> {
+		return DigitalPortImpl.createOutput(Logic.NEGATIVE)
+	}
 }
 

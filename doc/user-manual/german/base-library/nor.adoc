@@ -1,0 +1,43 @@
+=== image:../../img/base-library/nor.png[Nicht-Oder] Nicht-Oder-Gatter
+
+==== Aussehen
+
+image:../../img/base-library/nor-sample.png[Beispiel Nicht-Oder-Gatter, 50%]
+
+==== Verhalten
+
+Das Nicht-Oder-Gatter gibt am Ausgang das Resultat der NOR-Verknüpfung der 1-Bit-Signale am Eingang aus. Der Ausgang hat nur dann den Wert "1", wenn alle Eingänge den Wert "0" haben.
+
+Unverbundene Eingänge haben immer den Wert "0".
+
+.Wahrheitstabelle
+[%header,cols=5*, width="40%"]
+|===
+||0|1|Z|X
+|**0**|1|0|X|X
+|**1**|0|0|0|0
+|**Z**|X|0|X|X
+|**X**|X|0|X|X
+|===
+
+(Z: Undefiniert/hochohmig, X: Error)
+
+=== Mnemonics
+
+Die logischen Gatter von Antares können ihre Funktion mit sog. "Mnemonics" veranschaulichen. Siehe dazu das Kapitel <<../description/description.adoc, Beschreibungen und Erläuterungen>>. Unten ist das Mnemonic des Nicht-Oder-Gatters dargestellt.
+
+image:../../img/base-library/nor-mnemonic.png[Beispiel Mnemonic, 50%]
+
+==== Anschlüsse
+
+Eingänge:: Die 1-Bit-Eingänge des Nicht-Oder-Gatters. Ihre Anzahl wird durch das Attribut "Anzahl Eingänge" bestimmt.
+
+Ausgang:: Der 1-Bit-Ausgang des Nicht-Oder-Gatters. Gibt den Wert der berechneten NOR-Funktion aus.
+
+==== Attribute
+
+Ausrichtung:: Die Himmelsrichtung, in die der Ausgang zeigt.
+
+Anzahl Eingänge:: Bestimmt, wieviele Eingänge das Nicht-Oder-Gatter hat. Zur Verfügung stehen 2 bis max. 8 Eingänge. Wenn das Nicht-Oder-Gatter bereits mit Leitungen verbunden ist, kann dieses Attribut nicht geändert werden.
+
+Name des Ausgangs:: Der optionale Name, der neben dem Ausgang dargestellt wird. Dies kann nützlich sein, wenn sich das Nicht-Oder-Gatter das Ende einer komplexen kombinatorischen Schaltung bildet und der logische Ausdruck angegeben werden soll, der durch das Nicht-Oder-Gatter produziert wird.

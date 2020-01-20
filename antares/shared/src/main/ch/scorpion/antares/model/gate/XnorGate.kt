@@ -18,38 +18,30 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
  */
 class XnorCalculator<T : Vertice> : VerticeCalculator<T> {
 
-    override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
-        val outputPort = vertice.getOutput<DigitalSignal>()
-        var allTrue = true
-        var allFalse = true
+	companion object {
+		fun calculate(vertice: Vertice, data: GraphActorData): Bit {
+			return XorCalculator.calculate(vertice, data).not()
+		}
+	}
 
-        for (port in vertice.getInputs()) {
-            val signal = data.getSignal<DigitalSignal>(port.portId)!!
-            allTrue = allTrue && signal.bitAt(0) == Bit.True
-            allFalse = allFalse && signal.bitAt(0) == Bit.False
-            if (signal.bitAt(0) == Bit.Undefined) {
-                outputPort.setOutgoingSignalBuffered(Word.of(Bit.Undefined), signalHandler)
-                return
-            }
-        }
-
-        outputPort.setOutgoingSignalBuffered(Word.of(allFalse || allTrue), signalHandler)
-    }
+	override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
+		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(calculate(vertice, data)), signalHandler)
+	}
 }
 
 class XnorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate("library.element.XnorGate", CALCULATOR, inputCount) {
 
-    companion object {
-        val CALCULATOR = XnorCalculator<XnorGate>()
+	companion object {
+		val CALCULATOR = XnorCalculator<XnorGate>()
 
-        val TRUTH_TABLE = TruthTableModel(2, 1)
-                .define(intArrayOf(0, 0), 1)
-                .define(intArrayOf(0, 1), 0)
-                .define(intArrayOf(1, 0), 0)
-                .define(intArrayOf(1, 1), 1)
-    }
+		val TRUTH_TABLE = TruthTableModel(2, 1)
+			.define(intArrayOf(0, 0), 1)
+			.define(intArrayOf(0, 1), 0)
+			.define(intArrayOf(1, 0), 0)
+			.define(intArrayOf(1, 1), 1)
+	}
 
-    override fun createOutputPort(): OutputPort<DigitalSignal> {
-        return DigitalPortImpl.createOutput(Logic.NEGATIVE)
-    }
+	override fun createOutputPort(): OutputPort<DigitalSignal> {
+		return DigitalPortImpl.createOutput(Logic.NEGATIVE)
+	}
 }

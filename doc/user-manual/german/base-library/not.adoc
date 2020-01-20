@@ -8,16 +8,25 @@ image:../../img/base-library/not-sample.png[Beispiel Nicht-Gatter, 50%]
 
 Das Nicht-Gatter invertiert das 1-Bit-Signal am Eingang und gibt es am Ausgang aus.
 
+Unverbundene Eingänge haben immer den Wert "0".
+
 .Wahrheitstabelle
 [%header,cols=2*, width="40%"]
 |===
 |In|Out
-|0|1
-|1|0
+|**0**|1
+|**1**|0
+|**Z**|Z
+|**X**|X
 |===
 
-Wenn der Eingang offen gelassen wird, hat der Ausgang immer den Wert "1". Ist der Eingang explizit "undefiniert", d.h. er erhält ein Signal von einem bidirektionalen Ausgang, ist der Ausgang ebenfalls "undefiniert".
+(Z: Undefiniert/hochohmig, X: Error)
 
+=== Mnemonics
+
+Die logischen Gatter von Antares können ihre Funktion mit sog. "Mnemonics" veranschaulichen. Siehe dazu das Kapitel <<../description/description.adoc, Beschreibungen und Erläuterungen>>. Unten ist das Mnemonic des Nicht-Gatters dargestellt.
+
+image:../../img/base-library/not-mnemonic.png[Beispiel Mnemonic, 50%]
 
 ==== Anschlüsse
 

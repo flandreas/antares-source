@@ -6,9 +6,20 @@ image:../../img/base-library/and-sample.png[Beispiel Und-Gatter, 50%]
 
 ==== Verhalten
 
-Das Und-Gatter gibt am Ausgang das Resultat der Und-Verknüpfung der 1-Bi-Signale am Eingang aus. Der Ausgang hat nur dann den Wert "1", wenn alle Eingänge den Wert "1" haben.
+Das Und-Gatter gibt am Ausgang das Resultat der AND-Verknüpfung der 1-Bit-Signale am Eingang aus. Der Ausgang hat nur dann den Wert "1", wenn alle Eingänge den Wert "1" haben.
 
-Unverbundene Eingänge haben immer den Wert "0". Wenn einer der Eingänge explizit "undefiniert" ist, ist der Ausgang 0, wenn mind. einer der Eingänge den Wert "0" hat, ansonsten hat der Ausgang den Wert "Error". Wenn irgendeiner der Eingänge den Wert "Error" hat, hat der Ausgang ebenfalls den Wert "Error".
+Unverbundene Eingänge haben immer den Wert "0".
+
+.Wahrheitstabelle
+[%header,cols=4*, width="40%"]
+|===
+||0|1|Z/X
+|**0**|0|0|0
+|**1**|0|1|X
+|**Z/X**|0|X|X
+|===
+
+(Z: Undefiniert/hochohmig, X: Error)
 
 ==== Daten-Pfad
 

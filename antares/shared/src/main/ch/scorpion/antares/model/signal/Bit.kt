@@ -17,7 +17,7 @@ enum class Bit(private val value: Int?) {
 	True(1);
 
 	companion object {
-		const val UNDEFINED_CHAR = '?'
+		const val UNDEFINED_CHAR = 'Z'
 		const val ERROR_CHAR = 'X'
 
 		fun of(value: Int): Bit {

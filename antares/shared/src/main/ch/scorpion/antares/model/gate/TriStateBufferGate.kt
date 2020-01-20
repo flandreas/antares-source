@@ -3,9 +3,12 @@ package ch.scorpion.antares.model.gate
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
+import ch.scorpion.antares.model.signal.Bit.Error
+import ch.scorpion.antares.model.signal.Bit.Undefined
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -14,18 +17,23 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.base.logger
 
 class TriStateBufferCalculator : VerticeCalculator<TriStateBufferGate> {
 
-    override fun calculate(vertice: TriStateBufferGate, data: GraphActorData, signalHandler: SignalHandler) {
-        val isEnabled = data.getSignal<DigitalSignal>(2)!!
-        if (vertice.enableLogic.evaluate(isEnabled.bitAt(0).isSet)) {
-            vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
-        } else {
-            vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.undefined(vertice.bitWidth), signalHandler)
-        }
-    }
+	override fun calculate(vertice: TriStateBufferGate, data: GraphActorData, signalHandler: SignalHandler) {
+		val control = data.getSignal<DigitalSignal>(2)!!.bitAt(0)
+		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(
+			when (control) {
+				Undefined -> Word.undefined(vertice.bitWidth)
+				Error -> Word.error(vertice.bitWidth)
+				else -> if (vertice.enableLogic.evaluate(control.isSet)) {
+					data.getSignal(1)!!
+				} else {
+					Word.undefined(vertice.bitWidth)
+				}
+			},
+			signalHandler)
+	}
 }
 
 class TriStateBufferGate(
