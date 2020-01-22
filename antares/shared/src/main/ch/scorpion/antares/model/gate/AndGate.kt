@@ -21,9 +21,8 @@ class AndCalculator<T : Vertice> : VerticeCalculator<T> {
 		 * @param portFilter used for calculation of AND gate data path feature
 		 */
 		fun calculate(vertice: Vertice, data: GraphActorData, portFilter: (InputPort<*>) -> Boolean = { true }): Bit {
-			var undefined = false
 			var error = false
-
+			var undefined = false
 			for (port in vertice.getInputs().filter { portFilter(it) }) {
 				@Suppress("NON_EXHAUSTIVE_WHEN")
 				when (data.getSignal<DigitalSignal>(port.portId)!!.bitAt(0)) {
@@ -33,11 +32,14 @@ class AndCalculator<T : Vertice> : VerticeCalculator<T> {
 				}
 			}
 
-			if (undefined || error) {
+			if (error) {
 				return Error
 			}
+			if (undefined) {
+				return False
+			}
 
-			return Bit.of(true)
+			return True
 		}
 	}
 

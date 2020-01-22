@@ -18,7 +18,7 @@ class NorCalculatorTest : AbstractGateCalculatorTest(NorCalculator()) {
 	fun shouldFulfillTruthTable() {
 		assertTwoInput(Bit.False, Bit.False, Bit.True)
 		assertTwoInput(Bit.False, Bit.True, Bit.False)
-		assertTwoInput(Bit.False, Bit.Undefined, Bit.Error)
+		assertTwoInput(Bit.False, Bit.Undefined, Bit.True)
 		assertTwoInput(Bit.False, Bit.Error, Bit.Error)
 
 		assertTwoInput(Bit.True, Bit.False, Bit.False)
@@ -26,9 +26,9 @@ class NorCalculatorTest : AbstractGateCalculatorTest(NorCalculator()) {
 		assertTwoInput(Bit.True, Bit.Undefined, Bit.False)
 		assertTwoInput(Bit.True, Bit.Error, Bit.False)
 
-		assertTwoInput(Bit.Undefined, Bit.False, Bit.Error)
+		assertTwoInput(Bit.Undefined, Bit.False, Bit.True)
 		assertTwoInput(Bit.Undefined, Bit.True, Bit.False)
-		assertTwoInput(Bit.Undefined, Bit.Undefined, Bit.Error)
+		assertTwoInput(Bit.Undefined, Bit.Undefined, Bit.True)
 		assertTwoInput(Bit.Undefined, Bit.Error, Bit.Error)
 
 		assertTwoInput(Bit.Error, Bit.False, Bit.Error)

@@ -6,17 +6,18 @@ image:../../img/base-library/or-sample.png[Beispiel Oder-Gatter, 50%]
 
 ==== Verhalten
 
-Das Oder-Gatter gibt am Ausgang das Resultat der OR-Verknüpfung der 1-Bit-Signale am Eingang aus. Der Ausgang hat nur dann den Wert "0", wenn alle Eingänge den Wert "0" haben.
+Das Oder-Gatter gibt am Ausgang das Resultat der OR-Verknüpfung der 1-Bit-Signale am Eingang aus. Der Ausgang hat nur dann den Wert "1", wenn mindestens einer der Eingänge den Wert "1" hat.
 
 Unverbundene Eingänge haben immer den Wert "0".
 
 .Wahrheitstabelle
-[%header,cols=4*, width="40%"]
+[%header,cols=5*, width="40%"]
 |===
-||0|1|Z/X
-|**0**|0|1|X
-|**1**|1|1|1
-|**Z/X**|X|1|X
+||0|1|Z|X
+|**0**|0|1|0|X
+|**1**|1|1|1|1
+|**Z**|0|1|0|X
+|**X**|X|1|X|X
 |===
 
 (Z: Undefiniert/hochohmig, X: Error)

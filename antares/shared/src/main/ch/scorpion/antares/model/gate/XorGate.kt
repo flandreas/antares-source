@@ -18,14 +18,25 @@ class XorCalculator<T : Vertice> : VerticeCalculator<T> {
 	companion object {
 		fun calculate(vertice: Vertice, data: GraphActorData): Bit {
 			var trueCount = 0
+			var error = false
+			var undefined = false
+
 			for (port in vertice.getInputs()) {
 				@Suppress("NON_EXHAUSTIVE_WHEN")
 				when (data.getSignal<DigitalSignal>(port.portId)!!.bitAt(0)) {
 					Bit.True -> trueCount++
-					Bit.Error -> return Bit.Error
-					Bit.Undefined -> return Bit.Error
+					Bit.Error -> error = true
+					Bit.Undefined -> undefined = true
 				}
 			}
+
+			if (error) {
+				return Bit.Error
+			}
+			if (undefined) {
+				return Bit.False
+			}
+
 			return Bit.of(trueCount == 1)
 		}
 	}

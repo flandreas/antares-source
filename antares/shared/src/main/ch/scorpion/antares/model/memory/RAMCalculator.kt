@@ -31,7 +31,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
         }
 
         if (data.changedPort === ram.getChipSelectInput()) {
-            if (ram.getChipSelectInput().getIncomingSignal() == Word.of(false)) {
+            if (ram.getChipSelectInput().getIncomingSignal() != Word.of(true)) {
                 undefinedOutput(ram, signalHandler)
                 return
             }
@@ -75,7 +75,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
             read(ram, signalHandler)
         }
 
-        if (ram.getChipSelectInput().getIncomingSignal() == Word.of(false)) {
+        if (ram.getChipSelectInput().getIncomingSignal() != Word.of(true)) {
             undefinedOutput(ram, signalHandler)
             return
         }

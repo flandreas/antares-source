@@ -11,12 +11,13 @@ Das Und-Gatter gibt am Ausgang das Resultat der AND-Verknüpfung der 1-Bit-Signa
 Unverbundene Eingänge haben immer den Wert "0".
 
 .Wahrheitstabelle
-[%header,cols=4*, width="40%"]
+[%header,cols=5*, width="40%"]
 |===
-||0|1|Z/X
-|**0**|0|0|0
-|**1**|0|1|X
-|**Z/X**|0|X|X
+||0|1|Z|X
+|**0**|0|0|0|0
+|**1**|0|1|0|X
+|**Z**|0|0|0|X
+|**X**|0|X|X|X
 |===
 
 (Z: Undefiniert/hochohmig, X: Error)

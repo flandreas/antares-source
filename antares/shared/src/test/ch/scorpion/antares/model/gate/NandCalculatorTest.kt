@@ -22,12 +22,12 @@ class NandCalculatorTest : AbstractGateCalculatorTest(NandCalculator()) {
 
 		assertTwoInput(True, False, True)
 		assertTwoInput(True, True, False)
-		assertTwoInput(True, Undefined, Error)
+		assertTwoInput(True, Undefined, True)
 		assertTwoInput(True, Error, Error)
 
 		assertTwoInput(Undefined, False, True)
-		assertTwoInput(Undefined, True, Error)
-		assertTwoInput(Undefined, Undefined, Error)
+		assertTwoInput(Undefined, True, True)
+		assertTwoInput(Undefined, Undefined, True)
 		assertTwoInput(Undefined, Error, Error)
 
 		assertTwoInput(Error, False, True)

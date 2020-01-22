@@ -22,12 +22,12 @@ class AndCalculatorTest : AbstractGateCalculatorTest(AndCalculator()){
 
 		assertTwoInput(True, False, False)
 		assertTwoInput(True, True, True)
-		assertTwoInput(True, Undefined, Error)
+		assertTwoInput(True, Undefined, False)
 		assertTwoInput(True, Error, Error)
 
 		assertTwoInput(Undefined, False, False)
-		assertTwoInput(Undefined, True, Error)
-		assertTwoInput(Undefined, Undefined, Error)
+		assertTwoInput(Undefined, True, False)
+		assertTwoInput(Undefined, Undefined, False)
 		assertTwoInput(Undefined, Error, Error)
 
 		assertTwoInput(Error, False, False)

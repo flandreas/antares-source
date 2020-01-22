@@ -17,17 +17,17 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 	fun shouldFulfillTruthTable() {
 		assertTwoInput(False, False, True)
 		assertTwoInput(False, True, False)
-		assertTwoInput(False, Undefined, Error)
+		assertTwoInput(False, Undefined, True)
 		assertTwoInput(False, Error, Error)
 
 		assertTwoInput(True, False, False)
 		assertTwoInput(True, True, True)
-		assertTwoInput(True, Undefined, Error)
+		assertTwoInput(True, Undefined, True)
 		assertTwoInput(True, Error, Error)
 
-		assertTwoInput(Undefined, False, Error)
-		assertTwoInput(Undefined, True, Error)
-		assertTwoInput(Undefined, Undefined, Error)
+		assertTwoInput(Undefined, False, True)
+		assertTwoInput(Undefined, True, True)
+		assertTwoInput(Undefined, Undefined, True)
 		assertTwoInput(Undefined, Error, Error)
 
 		assertTwoInput(Error, False, Error)

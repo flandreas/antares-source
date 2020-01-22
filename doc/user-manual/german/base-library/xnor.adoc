@@ -11,12 +11,13 @@ Das XNOR (Nicht-Exklusiv-Oder) gibt am Ausgang das Resultat der XNOR-Verknüpfun
 Unverbundene Eingänge haben immer den Wert "0".
 
 .Wahrheitstabelle
-[%header,cols=4*, width="40%"]
+[%header,cols=5*, width="40%"]
 |===
-||1|0|Z/X
-|**0**|1|0|X
-|**1**|1|0|X
-|**Z/X**|X|X|X
+||0|1|Z|X
+|**0**|1|0|1|X
+|**1**|0|1|1|X
+|**Z**|1|1|1|X
+|**X**|X|X|X|X
 |===
 
 (Z: Undefiniert/hochohmig, X: Error)

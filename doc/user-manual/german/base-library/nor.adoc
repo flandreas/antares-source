@@ -14,12 +14,11 @@ Unverbundene Eingänge haben immer den Wert "0".
 [%header,cols=5*, width="40%"]
 |===
 ||0|1|Z|X
-|**0**|1|0|X|X
+|**0**|1|0|1|X
 |**1**|0|0|0|0
-|**Z**|X|0|X|X
+|**Z**|1|0|1|X
 |**X**|X|0|X|X
 |===
-
 (Z: Undefiniert/hochohmig, X: Error)
 
 === Mnemonics

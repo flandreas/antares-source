@@ -28,8 +28,11 @@ class OrCalculator<T : Vertice> : VerticeCalculator<T> {
 				}
 			}
 
-			if (undefined || error) {
+			if (error) {
 				return Bit.Error
+			}
+			if (undefined) {
+				return Bit.False
 			}
 
 			return Bit.of(false)
