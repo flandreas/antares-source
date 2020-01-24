@@ -193,6 +193,16 @@ class MetaGraph(
 
 	/** ---- [MetaGraph] */
 
+	fun duplicate(newName: TranslatableText): MetaGraph {
+		val duplicate = StorableCloner.clone(this) as MetaGraph
+
+		duplicate.containerDrawing.model.graphUUID = ch.scorpion.jabbah.base.System.createUUID()
+		duplicate.containerDrawing.model.translatableName = newName
+		copyGraphDataFromContainerModel(duplicate.graph.model!!)
+
+		return duplicate
+	}
+
 	fun cloneGraphModel(storableCreator: StorableCreator): Graph {
 		val clone = StorableCloner.clonePreservingIdentities(graph.model!!, storableCreator) as Graph
 		copyGraphDataFromContainerModel(clone)

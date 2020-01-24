@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -60,12 +59,6 @@ interface Graph : Namable, Describable, Storable {
 	fun dispose()
 
     fun accept(visitor: HierarchyVisitor): Boolean
-
-	/**
-	 * Initializes the property [uuid] of this [Graph] by creating a new one.
-	 * This is only needed when creating a copy or clone of this [Graph] that needs to receive its own identity.
-	 */
-	fun initializeUUID()
 
     /**
      * Adds the specified [GraphElement] to this [Graph].

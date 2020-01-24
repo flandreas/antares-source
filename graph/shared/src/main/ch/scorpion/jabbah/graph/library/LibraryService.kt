@@ -274,11 +274,9 @@ class LibraryService(
 		throw IllegalStateException()
 	}
 
-	fun duplicateContainerLibraryElement(directory: LibraryDirectory, element: ContainerLibraryElement, newName: String): ContainerLibraryElement {
+	fun duplicateContainerLibraryElement(directory: LibraryDirectory, element: ContainerLibraryElement, newName: TranslatableText): ContainerLibraryElement {
 		LOG.debug("Duplicate ContainerLibraryElement")
-		val duplicate = StorableCloner.clone(element.metaGraph!!) as MetaGraph
-		duplicate.graph.model!!.initializeUUID()
-		duplicate.graph.model!!.name.value = newName
+		val duplicate = element.metaGraph!!.duplicate(newName)
 		return addContainerLibraryElement(directory.library!!, duplicate, directory)
 	}
 

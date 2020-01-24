@@ -85,10 +85,6 @@ open class GraphImpl(
 			.filter { it is GraphPort<*> }
 			.map { it as GraphPort<*> })
 
-	override fun initializeUUID() {
-		uuid = System.createUUID()
-	}
-
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
 			for (e in _elements) {

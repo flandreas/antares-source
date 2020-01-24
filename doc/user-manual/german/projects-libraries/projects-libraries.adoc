@@ -1,12 +1,10 @@
 == Projekte und Bibliotheken
 
-=== Einführung
-
 Projekte und Bibliotheken sind beides Arten, wie mehrere Schaltungen zusammengefasst und mit einem Namen versehen werden können. Intern sind sie sehr ähnlich umgesetzt, und die meisten Aktionen, die Du als Benützer ausführen kannst, stehen sowohl für Projekte als auch für Bibliotheken zur Verfügung.
 
 Der Unterschied zwischen Projekten und Bibliotheken besteht darin, dass Schaltungen aus Bibliotheken in Projekten wiederverwendet werden können, während dies bei Projekten nicht möglich ist: Projekte können nicht in anderen Projekten verwendet werden. Bibliotheken sind deshalb das, was ihr Name sagt: Eine Menge von Schaltungen, die in mehreren Projekten verwendet werden können.
 
-==== Bibliotheken
+=== Bibliotheken
 
 Antares enthält standardmässig zwei Bibliotheken: Die Basis-Bibliothek und die Standard-Bibliothek. Beide Bibliotheken können durch Dich als Benutzer nicht geändert werden. Du kannst ihre Schaltungen in eigenen Projekten verwenden, Du kannst ihre Schaltungen öffnen, ausführen und analysieren, aber Du kannst sie nicht ändern, und Du kannst diesen vorgegebenen Bibliotheken keine weiteren Schaltungen hinzufügen. Dies ist so, weil Deine Änderungen sonst durch einen neueren Release von Antares überschrieben werden würden.
 
@@ -16,11 +14,11 @@ Die **Standard-Bibliothek** enthält ebenfalls alle in Antares ausprogrammierten
 
 Die Wahl der in der Standard-Bibliothek vorhandenen Teilschaltungen wurde weitgehend durch die Entwicklung der Beispiel-Schaltung "Mikrocomputer (Tannenbaum)" bestimmt, derjenigen Schaltung, die bei Design und Entwicklung von Antares bisher eine richtungsweisende Rolle gespielt hat. In zukünftigen Versionen von Antares werden wahrscheinlich weitere Teilschaltungen zur Standard-Biblothek hinzugefügt werden.
 
-Das wichtigste beim Thema "Bibliotheken" aber ist, dass Du selber  Bibliotheken zusammenstellen kannst, die Deinen eigenen Bedürfnissen entsprechen. Dabei lernst Du nicht nur viel über die Funktionsweise von Antares, sondern Du kannst die Features "Beschreibungen und Erläuterungen" einsetzen, um Deine Bibliothek-Teilschaltungen zu erklären. Insbesondere wenn Du ein Lehrer oder ein Autor bist, solltest Du die Entwicklung Deiner eigenen Bibliothek - nachdem Du erste tiefere Erfahrungen mit Antares gesammelt hast - unbedingt ins Auge fassen.
+Das wichtigste beim Thema "Bibliotheken" aber ist, dass Du selber  Bibliotheken zusammenstellen kannst, die Deinen eigenen Bedürfnissen entsprechen. Dabei lernst Du nicht nur viel über die Funktionsweise von Antares, sondern Du kannst die Features "Beschreibungen und Erläuterungen" einsetzen, um Deine Bibliothek-Teilschaltungen zu erklären. Insbesondere wenn Du ein Lehrer oder ein Autor bist, solltest Du die Entwicklung Deiner eigenen Bibliothek - nachdem Du erste tiefere Erfahrungen mit Antares gesammelt hast - unbedingt in Betracht ziehen.
 
 Im Kapitel <<libraries.adoc#, Bibliotheken>> erfährst Du, wie Du mit Bibliotheken arbeitest und eigene Bibliotheken erstellst.
 
-==== Projekte
+=== Projekte
 
 Projekte fassen Schaltungen zusammen, die Du für ein bestimmtes Projekt benötigst und die zusammen eine Funktion erfüllen. Projekte basieren immer auf genau einer Bibliothek, die Du beim Anlegen des Projekts auswählst. So basiert das Beispiel-Projekt "Mikrocomputer (Tannenbaum)" auf der Standard-Bibliothek und enthält Schaltungen wie "CPU", "Address-Dekodierer" und "ALU 16-Bit".
 
@@ -28,4 +26,16 @@ Im Kapitel <<projects.adoc#, Projekte>> erfährst Du, wie Du mit Projekten arbei
 
 === Werkbank
 
-TODO
+Die <<workbench.adoc#, Werkbank>> ist derjenige Teil der Antares-Oberfläche, der das geöffnete Projekt sowie die verwendete Bibliothek anzeigt und Dir ermöglicht, deren Schaltungen zu benützen und neue Schaltungen zu erzeugen.
+
+=== Speicherung
+
+Wenn Antares zum ersten Mal gestartet wird, legt es ein Arbeitsverzeichnis mit Namen "Antares" an und benützt dieses Verzeichnis, um Deine Projekte und Deine eigenen Bibliotheken zu speichern.
+
+Der Ort dieses Arbeitsverzeichnisses ist abhängig vom Betriebssystem. Auf macOS befindet sich das Verzeichnis am folgenden Ort, wobei `{userName}` Dein Benutzername ist:
+
+ /Users/{userName}/Library/Application Support/Antares
+
+Wenn Du eine einzelne Schaltung bearbeitest, musst Du Deine Änderungen explizit speichern, d.h. Du solltest regelmässig die Aktion "Speichern" ausführen. Solange solche Änderungen nicht gespeichert sind, können sie mit dem Undo-System rückgängig gemacht werden.
+
+Änderungen an der Struktur von Projekten und Bibliotheken hingegen werden immer automatisch gespeichert. Wenn Du z.B. ein Verzeichnis in einem Projekt löschst, verschwindet dieses Verzeichnis aus der Werkbank, und die neue Projektstruktur wird sofort im Arbeitsverzeichnis von Antares gesichert. Da solche Aktionen nicht rückgängig gemacht werden können, fragt Dich Antares vor dem Ausführen solcher Aktionen nach einer Bestätigung.

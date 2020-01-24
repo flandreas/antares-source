@@ -1,18 +1,17 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import io.mockk.mockk
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 
-/** Unit tests for [LibraryServiceImpl].*/
+/** Unit tests for [LibraryService].*/
 class LibraryServiceTest {
 
 	companion object {
 		init {
-			GraphLibraryTestRule.configure()
+			GraphViewTestRule.configure()
 		}
 	}
 
@@ -55,5 +54,16 @@ class LibraryServiceTest {
 		assertEquals(0, folder.indexOf(library.getRecursively("Elem2")!!))
 		assertEquals(1, folder.indexOf(library.getRecursively("Elem3")!!))
 		assertEquals(2, folder.indexOf(library.getRecursively("Elem1")!!))
+	}
+
+	@Test
+	fun shouldDuplicate() {
+		libraryBuilder.addContainerLibraryElement("Element")
+		val orig = library.get("Element") as ContainerLibraryElement
+
+		val duplicate = service.duplicateContainerLibraryElement(library, orig, TranslatableText("NewName"))
+
+		assertNotEquals(orig.uuid, duplicate.uuid)
+		assertEquals("NewName", duplicate.name.value)
 	}
 }

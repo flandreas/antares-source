@@ -1,10 +1,12 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import java.awt.Frame
 import javax.swing.JOptionPane
@@ -19,17 +21,16 @@ class DuplicateGraphAction(
 
 	override fun execute(event: ActionEvent) {
 		val element = selectedItem as ContainerLibraryElement
-		var newGraphName = "Copy of ${element.name}"
 
-		newGraphName = JOptionPane.showInputDialog(
+		val newGraphName = JOptionPane.showInputDialog(
 			Frame.getFrames()[0],
 			Translations.getString("library.action.newGraph.question"),
 			name,
 			JOptionPane.QUESTION_MESSAGE,
 			null,
 			null,
-			newGraphName
-		) as String
+			Translations.getString("library.action.duplicateGraph.newName", element.name.value)
+		) as String?
 
 		if (StringUtils.isEmpty(newGraphName)) {
 			return
@@ -37,8 +38,10 @@ class DuplicateGraphAction(
 
 		val library = element.library
 
-		val duplicate = library!!.libraryService.duplicateContainerLibraryElement(folderOfSelectedItem!!, element, newGraphName)
-		eventBus.post(OpenContainerLibraryElementRequest(duplicate))
+		val duplicate = library!!.libraryService.duplicateContainerLibraryElement(folderOfSelectedItem!!, element, TranslatableText(newGraphName!!))
+		System.invokeLater {
+			eventBus.post(OpenContainerLibraryElementRequest(duplicate))
+		}
 	}
 
 	override fun calculateEnabledness(): Boolean {
