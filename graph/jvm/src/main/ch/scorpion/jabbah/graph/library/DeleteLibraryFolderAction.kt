@@ -10,18 +10,19 @@ import javax.swing.JOptionPane
 
 /** An [Action] for deleting the currently selected [LibraryDirectory].*/
 class DeleteLibraryFolderAction(
+	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryFolderAction("graph.action.deleteLibraryDirectory", eventBus) {
+) : AbstractLibraryFolderAction("graph.action.deleteLibraryDirectory", libraryTreeView, eventBus) {
 
 	override fun calculateEnabledness(): Boolean {
 		return super.calculateEnabledness() && (selectedItem as LibraryDirectory).isEmpty() && isLibraryOwnedByUser
 	}
 
 	override fun execute(event: ActionEvent) {
-		val libraryItem = libraryTreeView!!.getSelectedItem()
+		val libraryItem = libraryTreeView.getSelectedItem()
 		if (JOptionPane.showConfirmDialog(
 				Frame.getFrames()[0],
-				Translations.getString("graph.action.deleteLibraryDirectory.question", libraryTreeView!!.getSelectedItem()!!),
+				Translations.getString("graph.action.deleteLibraryDirectory.question", libraryTreeView.getSelectedItem()!!),
 				name,
 				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 			val library = libraryItem!!.library!!

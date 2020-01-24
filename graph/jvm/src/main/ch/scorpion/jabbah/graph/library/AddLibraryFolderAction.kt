@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -13,24 +14,25 @@ import javax.swing.JOptionPane
  * the currently selected [LibraryDirectory].
  */
 class AddLibraryFolderAction(
-    eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryFolderAction("library.action.addFolder", eventBus) {
+	libraryTreeView: LibraryTreeView,
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractLibraryFolderAction("library.action.addFolder", libraryTreeView, eventBus) {
 
-    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-        val name = JOptionPane.showInputDialog(
-	        Frame.getFrames()[0],
-            Translations.getString("library.action.addFolder.question"),
-	        name,
-            JOptionPane.QUESTION_MESSAGE
-        )
+	override fun execute(event: ActionEvent) {
+		val name = JOptionPane.showInputDialog(
+			Frame.getFrames()[0],
+			Translations.getString("library.action.addFolder.question"),
+			name,
+			JOptionPane.QUESTION_MESSAGE
+		)
 
-        if (StringUtils.isEmpty(name)) {
-            return
-        }
+		if (StringUtils.isEmpty(name)) {
+			return
+		}
 
-        val directory = libraryTreeView!!.getSelectedItem() as LibraryDirectory
-	    directory.library!!.libraryService.addFolder(directory.library!!, TranslatableText(name), directory)
-    }
+		val directory = libraryTreeView.getSelectedItem() as LibraryDirectory
+		directory.library!!.libraryService.addFolder(directory.library!!, TranslatableText(name), directory)
+	}
 
 	override fun calculateEnabledness(): Boolean {
 		return isLibraryOwnedByUser && super.calculateEnabledness()

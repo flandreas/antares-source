@@ -12,25 +12,24 @@ import javax.swing.tree.DefaultMutableTreeNode
  */
 abstract class AbstractLibraryAction(
 	actionBaseName: String,
+	protected val libraryTreeView: LibraryTreeView,
 	eventBus: EventBus
 ) : AbstractApplicationModeEditAction(actionBaseName, eventBus = eventBus) {
 
-	protected var libraryTreeView: LibraryTreeView? = null
-		private set
+	protected val selectedItem: LibraryItem? get() = libraryTreeView.getSelectedItem()
 
-	protected val selectedItem: LibraryItem? get() = libraryTreeView?.getSelectedItem()
-
-	protected val folderOfSelectedItem: LibraryDirectory? get() =
-		(libraryTreeView!!.selectionPath.parentPath.lastPathComponent as DefaultMutableTreeNode).userObject as LibraryDirectory?
+	protected val folderOfSelectedItem: LibraryDirectory?
+		get() = (libraryTreeView.selectionPath?.parentPath?.lastPathComponent as DefaultMutableTreeNode?)?.userObject as LibraryDirectory?
 
 	/** The selectedItem might be `null` during boot-strap.*/
 	protected val isLibraryOwnedByUser: Boolean get() = selectedItem == null || AppModule.userHolder.user.uuid == selectedItem?.library?.author
 
 	init {
 		eventBus.register(LibrarySelectionChangedEvent::class) {
-			libraryTreeView = it.libraryTreeView
-			updateEnabledness()
-			handleSelectionChanged()
+			if (it.libraryTreeView === libraryTreeView) {
+				updateEnabledness()
+				handleSelectionChanged()
+			}
 		}
 	}
 
@@ -47,8 +46,9 @@ abstract class AbstractLibraryAction(
 /** An [Action] that is only enabled if the selected item is a [LibraryDirectory].*/
 abstract class AbstractLibraryFolderAction(
 	actionBaseName: String,
+	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus
-) : AbstractLibraryAction(actionBaseName, eventBus) {
+) : AbstractLibraryAction(actionBaseName, libraryTreeView, eventBus) {
 
 	val selectedFolder: LibraryDirectory get() = selectedItem as LibraryDirectory
 
@@ -58,8 +58,9 @@ abstract class AbstractLibraryFolderAction(
 /** An [Action] that is only enabled if the selected item is a [ContainerLibraryElement].*/
 abstract class AbstractContainerLibraryElementAction(
 	actionBaseName: String,
+	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus
-) : AbstractLibraryAction(actionBaseName, eventBus) {
+) : AbstractLibraryAction(actionBaseName, libraryTreeView, eventBus) {
 
 	override fun calculateEnabledness(): Boolean = selectedItem is ContainerLibraryElement
 }
@@ -67,8 +68,9 @@ abstract class AbstractContainerLibraryElementAction(
 /** An [Action] that is only enabled if the selected item is a [BaseLibraryElement].*/
 abstract class AbstractBaseLibraryElementAction(
 	actionBaseName: String,
+	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus
-) : AbstractLibraryAction(actionBaseName, eventBus) {
+) : AbstractLibraryAction(actionBaseName, libraryTreeView, eventBus) {
 
 	override fun calculateEnabledness(): Boolean = selectedItem is BaseLibraryElement
 }

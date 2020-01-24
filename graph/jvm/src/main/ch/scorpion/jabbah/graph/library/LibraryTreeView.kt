@@ -126,14 +126,14 @@ class LibraryTreeView(
 		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
 		eventBus.register(OpenContainerLibraryElementRequest::class, openContainerLibraryElementRequestHandler)
 
-		val expandAllAction = ExpandAllAction()
-		val collapseAllAction = CollapseAllAction()
-		val addLibraryFolderAction = AddLibraryFolderAction()
-		val newGraphAction = NewGraphAction()
-		val deleteLibraryFolderAction = DeleteLibraryFolderAction()
-		val deleteLibraryElementAction = DeleteLibraryElementAction()
-		val editLibraryAction = EditLibraryAction()
-		val libraryFolderPropertiesAction = LibraryFolderPropertiesAction()
+		val expandAllAction = ExpandAllAction(this)
+		val collapseAllAction = CollapseAllAction(this)
+		val addLibraryFolderAction = AddLibraryFolderAction(this)
+		val newGraphAction = NewGraphAction(this)
+		val deleteLibraryFolderAction = DeleteLibraryFolderAction(this)
+		val deleteLibraryElementAction = DeleteLibraryElementAction(this)
+		val editLibraryAction = EditLibraryAction(this)
+		val libraryFolderPropertiesAction = LibraryFolderPropertiesAction(this)
 
 		desktopPopupMenu.add(ActionWrapperSwing(expandAllAction))
 		desktopPopupMenu.add(ActionWrapperSwing(collapseAllAction))
@@ -166,8 +166,8 @@ class LibraryTreeView(
 		libraryRootMenu.add(ActionWrapperSwing(LibraryPropertiesAction()))
 
 		containerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
-		containerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(DefaultContainerLibraryElementAction())))
-		containerPopupMenu.add(ActionWrapperSwing(DuplicateGraphAction()))
+		containerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(DefaultContainerLibraryElementAction(this))))
+		containerPopupMenu.add(ActionWrapperSwing(DuplicateGraphAction(this)))
 
 		basePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 

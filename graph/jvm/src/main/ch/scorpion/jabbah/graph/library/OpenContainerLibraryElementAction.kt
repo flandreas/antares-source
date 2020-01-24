@@ -13,8 +13,9 @@ import ch.scorpion.jabbah.edit.model.ComponentMessageType
  */
 class OpenContainerLibraryElementAction(
 	private val application: DesktopApplication,
+	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus
-) : AbstractContainerLibraryElementAction("graph.action.openContainerLibraryElement", eventBus) {
+) : AbstractContainerLibraryElementAction("graph.action.openContainerLibraryElement", libraryTreeView, eventBus) {
 
 	init {
 		eventBus.register(OpenContainerLibraryElementRequest::class) {
@@ -38,7 +39,7 @@ class OpenContainerLibraryElementAction(
 	 * Opens the currently selected [ContainerLibraryElement] as the current [Savable] in the application.
 	 */
 	private fun openAsSavable() {
-		openAsSavable(libraryTreeView!!.getSelectedItem() as ContainerLibraryElement)
+		openAsSavable(libraryTreeView.getSelectedItem() as ContainerLibraryElement)
 	}
 
 	private fun openAsSavable(element: ContainerLibraryElement) {

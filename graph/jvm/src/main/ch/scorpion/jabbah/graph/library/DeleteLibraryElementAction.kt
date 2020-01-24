@@ -11,21 +11,21 @@ import javax.swing.JOptionPane
  * An [Action] for deleting the currently selected [LibraryElement].
  */
 class DeleteLibraryElementAction(
-    eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryAction("graph.action.deleteLibraryElement", eventBus) {
+	libraryTreeView: LibraryTreeView,
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractLibraryAction("graph.action.deleteLibraryElement", libraryTreeView, eventBus) {
 
-    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-	    val libraryItem = libraryTreeView!!.getSelectedItem()
-	    if (JOptionPane.showConfirmDialog(
-		    Frame.getFrames()[0],
-		    Translations.getString("graph.action.deleteLibraryElement.question", libraryTreeView!!.getSelectedItem()!!),
-		    name,
-		    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)
-	    {
-		    val library = libraryItem!!.library!!
-		    library.libraryService.removeLibraryItem(libraryItem.library!!, libraryItem, folderOfSelectedItem as LibraryDirectory)
-	    }
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		val libraryItem = libraryTreeView.getSelectedItem()
+		if (JOptionPane.showConfirmDialog(
+				Frame.getFrames()[0],
+				Translations.getString("graph.action.deleteLibraryElement.question", libraryTreeView.getSelectedItem()!!),
+				name,
+				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+			val library = libraryItem!!.library!!
+			library.libraryService.removeLibraryItem(libraryItem.library!!, libraryItem, folderOfSelectedItem as LibraryDirectory)
+		}
+	}
 
 	override fun calculateEnabledness(): Boolean {
 		return isLibraryOwnedByUser && (selectedItem is BaseLibraryElement || selectedItem is ContainerLibraryElement)

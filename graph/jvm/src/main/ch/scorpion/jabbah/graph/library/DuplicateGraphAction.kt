@@ -16,8 +16,9 @@ import javax.swing.JOptionPane
  * that contains the source [MetaGraph].
  */
 class DuplicateGraphAction(
+	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractContainerLibraryElementAction("library.action.duplicateGraph", eventBus) {
+) : AbstractContainerLibraryElementAction("library.action.duplicateGraph", libraryTreeView, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		val element = selectedItem as ContainerLibraryElement

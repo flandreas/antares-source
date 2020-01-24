@@ -10,11 +10,12 @@ import ch.scorpion.jabbah.base.module.BaseModule
  * opened when the [Library] is loaded.
  */
 class DefaultContainerLibraryElementAction(
+	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractContainerLibraryElementAction("library.action.setDefaultElement", eventBus) {
+) : AbstractContainerLibraryElementAction("library.action.setDefaultElement", libraryTreeView, eventBus) {
 
 	override fun execute(event: ActionEvent) {
-		val elem = libraryTreeView!!.getSelectedItem() as ContainerLibraryElement
+		val elem = libraryTreeView.getSelectedItem() as ContainerLibraryElement
 		val library = elem.library!!
 		if (selected) {
 			library.libraryService.setDefaultElement(library, elem.uuid)
@@ -24,8 +25,8 @@ class DefaultContainerLibraryElementAction(
 	}
 
 	override fun handleSelectionChanged() {
-		selected = if (libraryTreeView!!.getSelectedItem() is ContainerLibraryElement) {
-			val elem = libraryTreeView!!.getSelectedItem() as ContainerLibraryElement
+		selected = if (libraryTreeView.getSelectedItem() is ContainerLibraryElement) {
+			val elem = libraryTreeView.getSelectedItem() as ContainerLibraryElement
 			elem.library?.defaultElementUUID == elem.uuid
 		} else {
 			false

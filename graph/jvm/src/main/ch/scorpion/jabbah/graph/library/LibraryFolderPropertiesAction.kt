@@ -17,8 +17,9 @@ import javax.swing.JPanel
 
 /** An [Action] for editing the properties of a [LibraryFolder], which is currently only its translatable name.*/
 class LibraryFolderPropertiesAction(
+	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryFolderAction("library.action.editFolderProperties", eventBus) {
+) : AbstractLibraryFolderAction("library.action.editFolderProperties", libraryTreeView, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		val title = Translations.getString("library.action.editFolderProperties.name")
@@ -32,11 +33,11 @@ class LibraryFolderPropertiesAction(
 			}
 			if (!text.hasDefaultOrSystemLanguage()) {
 				if (JOptionPane.showConfirmDialog(
-					Frame.getFrames()[0],
-					Translations.getString("base.translation.incomplete.msg"),
-					title,
-					JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
+						Frame.getFrames()[0],
+						Translations.getString("base.translation.incomplete.msg"),
+						title,
+						JOptionPane.OK_CANCEL_OPTION,
+						JOptionPane.ERROR_MESSAGE) == JOptionPane.CANCEL_OPTION
 				) {
 					return
 				}
