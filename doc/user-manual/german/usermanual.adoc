@@ -10,8 +10,9 @@ Antares ist...
 
 * <<first-steps/first-steps.adoc#, Erste Schritte>>
 * <<base-library/base-library.adoc#, Bibliothek-Referenz>>
-* <<projects/projects.adoc#, Projekte>>
-* <<libraries/libraries.adoc#, Bibliotheken>>
+* <<projects-libraries/projects-libraries.adoc#, Projekte und Bibliotheken>>
+* <<subcircuits/subcircuits.adoc#, Teilschaltungen>>
+* <<simulation/simulation.adoc#, Simulation>>
 * <<description/description.adoc#, Beschreibungen und Erläuterungen>>
 
 == Fortgeschrittene Techniken

@@ -11,10 +11,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
-import java.awt.BorderLayout
-import java.awt.Component
-import java.awt.Dimension
-import java.awt.Font
+import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.event.WindowAdapter
@@ -164,16 +161,20 @@ class LibraryPersistencePanel(
 	}
 
 	private inner class NewAction : AbstractAction("library.dialog.new.action") {
+
 		override fun execute(event: ActionEvent) {
 			LOG.debug("new library")
 
+			val parent = SwingUtilities.windowForComponent(this@LibraryPersistencePanel)
 			var info: CreateLibraryPanel.CreateLibraryInfo
+
 			while(true) {
-				info = CreateLibraryPanel.showAsDialog(service = service) ?: return
+				info = CreateLibraryPanel.showAsDialog(parent = parent, service = service) ?: return
+
 
 				if (StringUtils.isBlank(info.name.getTranslation())) {
 					if (JOptionPane.showConfirmDialog(
-						this@LibraryPersistencePanel,
+						parent,
 						Translations.getString("library.emptyName.msg"),
 						Translations.getString("library.dialog.new.name.dialog.title"),
 						JOptionPane.OK_CANCEL_OPTION,
@@ -183,7 +184,7 @@ class LibraryPersistencePanel(
 					}
 				} else if (service.exists(info.name)) {
 					if (JOptionPane.showConfirmDialog(
-						this@LibraryPersistencePanel,
+						parent,
 						Translations.getString("library.duplicate.msg", info.name.getTranslation()),
 						Translations.getString("library.dialog.new.name.dialog.title"),
 						JOptionPane.OK_CANCEL_OPTION,
@@ -205,12 +206,11 @@ class LibraryPersistencePanel(
 	}
 
 	private inner class DeleteAction : AbstractAction("library.dialog.delete.action") {
-		override fun execute(event: ActionEvent) {
-			//val libraryName = selectedLibraryName!!
 
+		override fun execute(event: ActionEvent) {
 			selectedLibrary?.let {
 				if (JOptionPane.showConfirmDialog(
-					this@LibraryPersistencePanel,
+					SwingUtilities.windowForComponent(this@LibraryPersistencePanel),
 					Translations.getString("library.dialog.delete.confirmation.msg", it.name),
 					Translations.getString("library.dialog.delete.title"),
 					JOptionPane.OK_CANCEL_OPTION,

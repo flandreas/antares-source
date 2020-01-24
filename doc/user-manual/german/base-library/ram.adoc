@@ -6,7 +6,7 @@ image:../../img/base-library/ram-sample.png[Beispiel RAM, 75%]
 
 ==== Verhalten
 
-Das RAM ist eine <<memory.adoc, Speicher>>-Komponente, deren Daten durch die verwendende Schaltung während der Simulation gelesen und geschrieben werden können.
+Das RAM ist eine <<memory.adoc#, Speicher>>-Komponente, deren Daten durch die verwendende Schaltung während der Simulation gelesen und geschrieben werden können.
 
 Die Inhalte der Speicherzellen der RAM-Komponente können über einen bidirektionalen Datenanschluss synchron gelesen und geschrieben werden.
 

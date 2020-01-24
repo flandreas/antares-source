@@ -26,7 +26,7 @@ class CreateLibraryPanel(
 	companion object {
 
 		fun showAsDialog(
-			parent: Frame = Frame.getFrames()[0],
+			parent: Component = Frame.getFrames()[0],
 			service: LibraryManagementService
 		): CreateLibraryInfo? {
 			val panel = CreateLibraryPanel(service)

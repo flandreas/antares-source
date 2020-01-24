@@ -1,0 +1,31 @@
+== Projekte und Bibliotheken
+
+=== Einführung
+
+Projekte und Bibliotheken sind beides Arten, wie mehrere Schaltungen zusammengefasst und mit einem Namen versehen werden können. Intern sind sie sehr ähnlich umgesetzt, und die meisten Aktionen, die Du als Benützer ausführen kannst, stehen sowohl für Projekte als auch für Bibliotheken zur Verfügung.
+
+Der Unterschied zwischen Projekten und Bibliotheken besteht darin, dass Schaltungen aus Bibliotheken in Projekten wiederverwendet werden können, während dies bei Projekten nicht möglich ist: Projekte können nicht in anderen Projekten verwendet werden. Bibliotheken sind deshalb das, was ihr Name sagt: Eine Menge von Schaltungen, die in mehreren Projekten verwendet werden können.
+
+==== Bibliotheken
+
+Antares enthält standardmässig zwei Bibliotheken: Die Basis-Bibliothek und die Standard-Bibliothek. Beide Bibliotheken können durch Dich als Benutzer nicht geändert werden. Du kannst ihre Schaltungen in eigenen Projekten verwenden, Du kannst ihre Schaltungen öffnen, ausführen und analysieren, aber Du kannst sie nicht ändern, und Du kannst diesen vorgegebenen Bibliotheken keine weiteren Schaltungen hinzufügen. Dies ist so, weil Deine Änderungen sonst durch einen neueren Release von Antares überschrieben werden würden.
+
+Die **Basis-Bibliothek** enthält ausschliesslich die in Antares ausprogrammierten Basis-Komponenten wie logische Gatter, LED's, Schalter usw. In der <<../base-library/base-library.adoc#, Bibliothek-Referenz>> findest Du eine Beschreibung dieser Basis-Komponenten. Du kannst die Basis-Bibliothek verwenden, um darauf basierend Projekte mit einfachen Schaltungen zu erstellen. Die Basis-Bibliothek kann auch als Grundlage verwendet werden, um eigene Bibliotheken zu erstellen.
+
+Die **Standard-Bibliothek** enthält ebenfalls alle in Antares ausprogrammierten Basis-Komponenten. Zusätzlich beinhaltet sie wichtige, häufig verwendete Teilschaltungen wie Flip-Flops, Register und Multiplexer, die Du in eigenen Projekten verwenden kannst.
+
+Die Wahl der in der Standard-Bibliothek vorhandenen Teilschaltungen wurde weitgehend durch die Entwicklung der Beispiel-Schaltung "Mikrocomputer (Tannenbaum)" bestimmt, derjenigen Schaltung, die bei Design und Entwicklung von Antares bisher eine richtungsweisende Rolle gespielt hat. In zukünftigen Versionen von Antares werden wahrscheinlich weitere Teilschaltungen zur Standard-Biblothek hinzugefügt werden.
+
+Das wichtigste beim Thema "Bibliotheken" aber ist, dass Du selber  Bibliotheken zusammenstellen kannst, die Deinen eigenen Bedürfnissen entsprechen. Dabei lernst Du nicht nur viel über die Funktionsweise von Antares, sondern Du kannst die Features "Beschreibungen und Erläuterungen" einsetzen, um Deine Bibliothek-Teilschaltungen zu erklären. Insbesondere wenn Du ein Lehrer oder ein Autor bist, solltest Du die Entwicklung Deiner eigenen Bibliothek - nachdem Du erste tiefere Erfahrungen mit Antares gesammelt hast - unbedingt ins Auge fassen.
+
+Im Kapitel <<libraries.adoc#, Bibliotheken>> erfährst Du, wie Du mit Bibliotheken arbeitest und eigene Bibliotheken erstellst.
+
+==== Projekte
+
+Projekte fassen Schaltungen zusammen, die Du für ein bestimmtes Projekt benötigst und die zusammen eine Funktion erfüllen. Projekte basieren immer auf genau einer Bibliothek, die Du beim Anlegen des Projekts auswählst. So basiert das Beispiel-Projekt "Mikrocomputer (Tannenbaum)" auf der Standard-Bibliothek und enthält Schaltungen wie "CPU", "Address-Dekodierer" und "ALU 16-Bit".
+
+Im Kapitel <<projects.adoc#, Projekte>> erfährst Du, wie Du mit Projekten arbeitest und eigene Projekte erstellst.
+
+=== Werkbank
+
+TODO
