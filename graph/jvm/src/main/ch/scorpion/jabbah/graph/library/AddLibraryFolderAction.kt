@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import java.awt.Frame
 import javax.swing.JOptionPane
+import javax.swing.SwingUtilities
 
 /**
  * Asks the user for the name of the new [LibraryDirectory] and adds a new [LibraryDirectory] as a child of
@@ -20,7 +21,7 @@ class AddLibraryFolderAction(
 
 	override fun execute(event: ActionEvent) {
 		val name = JOptionPane.showInputDialog(
-			Frame.getFrames()[0],
+			SwingUtilities.getWindowAncestor(libraryTreeView),
 			Translations.getString("library.action.addFolder.question"),
 			name,
 			JOptionPane.QUESTION_MESSAGE

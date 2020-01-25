@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import java.awt.Frame
 import javax.swing.JOptionPane
+import javax.swing.SwingUtilities
 
 /**
  * Creates a new [ContainerLibraryElement] with a duplicate of a [MetaGraph] as a child of the [LibraryDirectory]
@@ -24,7 +25,7 @@ class DuplicateGraphAction(
 		val element = selectedItem as ContainerLibraryElement
 
 		val newGraphName = JOptionPane.showInputDialog(
-			Frame.getFrames()[0],
+			SwingUtilities.getWindowAncestor(libraryTreeView),
 			Translations.getString("library.action.newGraph.question"),
 			name,
 			JOptionPane.QUESTION_MESSAGE,

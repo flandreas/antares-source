@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import java.awt.Frame
 import javax.swing.JOptionPane
+import javax.swing.SwingUtilities
 
 /**
  * Creates a new [ContainerLibraryElement] with an empty [MetaGraph] as a child of the currently selected [LibraryDirectory].
@@ -18,7 +19,7 @@ class NewGraphAction(
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 	    val name = JOptionPane.showInputDialog(
-		    Frame.getFrames()[0],
+		    SwingUtilities.getWindowAncestor(libraryTreeView),
 		    Translations.getString("library.action.newGraph.question"),
 		    name,
 		    JOptionPane.QUESTION_MESSAGE

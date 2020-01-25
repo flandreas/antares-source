@@ -10,10 +10,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Frame
-import javax.swing.Action
-import javax.swing.JLabel
-import javax.swing.JOptionPane
-import javax.swing.JPanel
+import javax.swing.*
 
 /** An [Action] for editing the properties of a [LibraryFolder], which is currently only its translatable name.*/
 class LibraryFolderPropertiesAction(
@@ -33,7 +30,7 @@ class LibraryFolderPropertiesAction(
 			}
 			if (!text.hasDefaultOrSystemLanguage()) {
 				if (JOptionPane.showConfirmDialog(
-						Frame.getFrames()[0],
+						SwingUtilities.getWindowAncestor(libraryTreeView),
 						Translations.getString("base.translation.incomplete.msg"),
 						title,
 						JOptionPane.OK_CANCEL_OPTION,

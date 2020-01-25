@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import java.awt.Frame
 import javax.swing.JOptionPane
+import javax.swing.SwingUtilities
 
 /** An [Action] for deleting the currently selected [LibraryDirectory].*/
 class DeleteLibraryFolderAction(
@@ -21,7 +22,7 @@ class DeleteLibraryFolderAction(
 	override fun execute(event: ActionEvent) {
 		val libraryItem = libraryTreeView.getSelectedItem()
 		if (JOptionPane.showConfirmDialog(
-				Frame.getFrames()[0],
+				SwingUtilities.getWindowAncestor(libraryTreeView),
 				Translations.getString("graph.action.deleteLibraryDirectory.question", libraryTreeView.getSelectedItem()!!),
 				name,
 				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
