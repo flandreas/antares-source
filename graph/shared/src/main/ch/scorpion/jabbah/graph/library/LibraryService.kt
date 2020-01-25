@@ -285,7 +285,7 @@ class LibraryService(
 	 * @return the created duplicate user [Library]
 	 */
 	fun duplicateLibrary(library: Library, newName: TranslatableText): Library {
-		LOG.debug("Duplicate Library ${library.uuid} to new name $newName")
+		LOG.debug("Duplicate Library ${library.uuid} to new name '${newName.getTranslation()}'")
 		val newUuid = System.createUUID()
 		userLibraryPersister.duplicateLibrary(library, newUuid)
 		val newLibrary = userLibraryPersister.loadLibrary(newUuid)

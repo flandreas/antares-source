@@ -23,7 +23,7 @@ class InteractiveErrorHandler : ErrorHandler() {
     }
 
     override fun exceptionImpl(x: Throwable) {
-        LOG.error("Unexpected error: $x")
+        LOG.error("Unexpected error: $x", x)
 
         if (frame != null) {
             if (LOG.isDebugEnabled()) {
