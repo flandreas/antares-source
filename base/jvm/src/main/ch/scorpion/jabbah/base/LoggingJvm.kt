@@ -89,9 +89,9 @@ actual class Logger(private val slf4jLogger: org.slf4j.Logger) {
 		}
 	}
 
-	actual fun error(msg: String) {
+	actual fun error(msg: String, t: Throwable?) {
 		if (slf4jLogger is LocationAwareLogger) {
-			slf4jLogger.log(null, fqcn, LocationAwareLogger.ERROR_INT, msg, null, null)
+			slf4jLogger.log(null, fqcn, LocationAwareLogger.ERROR_INT, msg, null, t)
 		} else {
 			slf4jLogger.error(msg)
 		}

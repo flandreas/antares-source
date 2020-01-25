@@ -21,7 +21,7 @@ actual object LogSystem {
 
 actual class Logger(private var localLevel: LogLevel? = null) {
 
-	actual fun error(msg: String) {
+	actual fun error(msg: String, t: Throwable?) {
 		if (level().ordinal >= Error.ordinal) {
 			console.error(msg)
 		}

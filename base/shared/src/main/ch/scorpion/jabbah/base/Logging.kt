@@ -30,7 +30,7 @@ expect object LogSystem {
 expect class Logger {
     fun info(msg: String)
     fun warn(msg: String)
-    fun error(msg: String)
+    fun error(msg: String, t: Throwable? = null)
     fun debug(msg: String)
     fun trace(msg: String)
     fun isDebugEnabled(): Boolean
@@ -48,45 +48,3 @@ enum class LogLevel {
 fun <T: Any> logger(origin: KClass<T>): Lazy<Logger> {
     return LogSystem.getLogger(origin)
 }
-
-/*
-/** Used for compiling and running tests for 'common' code.*/
-private class CommonLogger : Logger {
-
-	override fun info(msg: String) {
-		println("INFO: $msg")
-	}
-
-	override fun warn(msg: String) {
-		println("WARN: $msg")
-	}
-
-	override fun error(msg: String) {
-		println("ERROR: $msg")
-	}
-
-	override fun debug(msg: String) {
-		println("DEBUG: $msg")
-	}
-
-	override fun trace(msg: String) {
-		println("TRACE: $msg")
-	}
-
-	override fun isDebugEnabled(): Boolean = false
-
-	override fun isTraceEnabled(): Boolean = false
-}
-
-/** Used for compiling and running tests for 'common' code.*/
-class CommonLogSystem : LogSystem {
-
-	private val logger = lazy { CommonLogger() }
-
-	override var level: LogLevel = LogLevel.Info
-
-	override fun getLogger(clazz: KClass<out Any>): Lazy<Logger> {
-		return logger
-	}
-}
-*/

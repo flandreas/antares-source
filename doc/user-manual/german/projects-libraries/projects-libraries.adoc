@@ -1,5 +1,7 @@
 == Projekte und Bibliotheken
 
+=== Übersicht
+
 Projekte und Bibliotheken sind beides Arten, wie mehrere Schaltungen zusammengefasst und mit einem Namen versehen werden können. Intern sind sie sehr ähnlich umgesetzt, und die meisten Aktionen, die Du als Benützer ausführen kannst, stehen sowohl für Projekte als auch für Bibliotheken zur Verfügung.
 
 Der Unterschied zwischen Projekten und Bibliotheken besteht darin, dass Schaltungen aus Bibliotheken in Projekten wiederverwendet werden können, während dies bei Projekten nicht möglich ist: Projekte können nicht in anderen Projekten verwendet werden. Bibliotheken sind deshalb das, was ihr Name sagt: Eine Menge von Schaltungen, die in mehreren Projekten verwendet werden können.

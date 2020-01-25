@@ -55,9 +55,10 @@ class AntaresSwing(
 	private val viewManager: ViewManager = DrawViewModule.viewManager
 ) : AbstractDesktopApplicationSwing(commandLine, eventBus), Antares {
 
-	private val LOG by logger(AntaresSwing::class)
 
 	companion object {
+
+		private val LOG by lazy { logger(AntaresSwing::class) }
 
 		private const val PROP_APPLICATION_PROJECT = "application.project"
 		private val DEF_LIBRARY_UUID = UUID("6707f981-110d-4629-a0bf-c35a4688025c")
@@ -85,6 +86,9 @@ class AntaresSwing(
 
 		@JvmStatic
 		fun main(args: Array<String>) {
+
+			Thread.setDefaultUncaughtExceptionHandler { t, e ->  LOG.value.error("Unhandled exception", e)}
+
 			System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS")
 			System.setProperty("apple.laf.useScreenMenuBar", "true")
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", Antares.SYSTEM_NAME)
@@ -193,7 +197,7 @@ class AntaresSwing(
 		super.init()
 
 		systemLibraryDirectoryPath?.let {
-			LOG.info("Using system libraries in $systemLibraryDirectoryPath")
+			LOG.value.info("Using system libraries in $systemLibraryDirectoryPath")
 		}
 	}
 
