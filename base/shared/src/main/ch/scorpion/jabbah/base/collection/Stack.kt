@@ -31,6 +31,10 @@ class Stack<T> {
         return items.last()
     }
 
+	fun optionalPeek(): T? {
+		return if (empty) null else items.last()
+	}
+
     fun clear() {
         items.clear()
     }

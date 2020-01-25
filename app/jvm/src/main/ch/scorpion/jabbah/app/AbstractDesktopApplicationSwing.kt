@@ -114,7 +114,7 @@ abstract class AbstractDesktopApplicationSwing(
 		}
 
 		val answer = JOptionPane.showConfirmDialog(
-			mainFrame,
+			SwingUtilities.getWindowAncestor(BusyHandler.topLevel()?.rootPane) ?: mainFrame,
 			Translations.getString("application.unsavedData.question"),
 			Translations.getString(actionKey),
 			JOptionPane.YES_NO_CANCEL_OPTION,

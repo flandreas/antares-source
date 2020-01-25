@@ -4,7 +4,7 @@ Die Werkbank ist derjenige Teil der Antares-Oberfläche, der das geöffnete Proj
 
 Das untenstehende Beispiel zeigt das geöffnete Projekt "Mikrocomputer (Tannenbaum)", das auf der Bibliothek "Standard" beruht.
 
-image::../../img/projects-libraries/workbench-sample.png[Werkbank,300,align="center"]
+image::workbench-sample.png[Werkbank,300,align="center"]
 
 In diesem Kapitel wird die Eigenschaften und Möglichkeiten der Werkbank beschrieben, die für darin geöffnete Projekte und Bibliotheken gleichermassen gelten. Die speziellen Eigenschaften von <<projects.adoc#, Projekten>> und <<libraries.adoc#, Bibliotheken>> werden in den entsprechenden Kapiteln erklärt.
 
