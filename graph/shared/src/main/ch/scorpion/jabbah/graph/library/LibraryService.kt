@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.module.AppModule
+import ch.scorpion.jabbah.app.user.UserHolder
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
@@ -63,7 +65,8 @@ class LibraryService(
 	private val userLibraryPersister: LibraryPersistenceService = LibraryModule.userLibraryPersistenceService,
 	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersisterService,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
-	private val eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val userHolder: UserHolder = AppModule.userHolder
 ) {
 
 	companion object {
@@ -292,6 +295,7 @@ class LibraryService(
 		newLibrary.uuid = newUuid
 		newLibrary.name.translation = newName
 		newLibrary.isSystem = false
+		newLibrary.author = userHolder.user.uuid
 		storeLibrary(newLibrary)
 		return newLibrary
 	}
