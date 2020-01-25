@@ -71,7 +71,12 @@ class LibraryCompositionPanel(
 
 	private val sourceLibraryTree: LibraryTreeView
 
-	private val destinationLibraryTree = LibraryTreeView(library = destinationLibrary, project = null, eventBus = eventBus, showWorkspaceNode = false)
+	private val destinationLibraryTree = LibraryTreeView(
+		type = LibraryTreeViewType.CompositionDestination,
+		library = destinationLibrary,
+		project = null,
+		eventBus = eventBus,
+		showWorkspaceNode = false)
 
 	private val copyAction = CopyAction()
 
@@ -96,7 +101,13 @@ class LibraryCompositionPanel(
 		fillSourceLibraries()
 
 		// TODO With showWorkshopNode = false, Tree is empty after current Library has been changed?
-		sourceLibraryTree = LibraryTreeView(library = getSelectedSourceLibrary(), project = null, eventBus = eventBus, showWorkspaceNode = true)
+		sourceLibraryTree = LibraryTreeView(
+			type = LibraryTreeViewType.CompositionSource,
+			library = getSelectedSourceLibrary(),
+			project = null,
+			eventBus = eventBus,
+			showWorkspaceNode = true)
+
 		sourceLibraries.addActionListener {
 			sourceLibraryTree.library = getSelectedSourceLibrary()
 		}

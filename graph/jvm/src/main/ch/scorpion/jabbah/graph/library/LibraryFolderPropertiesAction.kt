@@ -23,6 +23,7 @@ class LibraryFolderPropertiesAction(
 		var text: TranslatableText?
 		while (true) {
 			text = LibraryFolderPropertiesPanel.showAsDialog(
+				parent = SwingUtilities.getWindowAncestor(libraryTreeView),
 				title = title,
 				name = selectedFolder.name.translation)
 			if (text == null) {

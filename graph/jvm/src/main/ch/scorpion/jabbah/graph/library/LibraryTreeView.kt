@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -12,9 +11,7 @@ import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.JTreeUtil.findTreeNode
 import ch.scorpion.jabbah.base.swing.JTreeUtil.getPath
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
-import ch.scorpion.jabbah.graph.project.CloseProjectAction
 import ch.scorpion.jabbah.graph.project.Project
-import ch.scorpion.jabbah.graph.project.ProjectPropertiesAction
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import java.awt.Component
 import java.awt.font.TextAttribute
@@ -32,6 +29,7 @@ data class LibrarySelectionChangedEvent(val libraryTreeView: LibraryTreeView)
  * - A [LibrarySelectionChangedEvent] when the user selects a tree item
  */
 class LibraryTreeView(
+	type: LibraryTreeViewType,
 	library: Library,
 	project: Project? = null,
 	private val eventBus: EventBus = BaseModule.eventBus,
@@ -64,17 +62,7 @@ class LibraryTreeView(
 			}
 		}
 
-	private val desktopPopupMenu = JPopupMenu()
-
-	private val directoryPopupMenu = JPopupMenu()
-
-	private val containerPopupMenu = JPopupMenu()
-
-	private val projectRootMenu = JPopupMenu()
-
-	private val libraryRootMenu = JPopupMenu()
-
-	private val basePopupMenu = JPopupMenu()
+	private val controller = LibraryTreeViewController(this, type)
 
 	private var currentSavable: Savable? = null
 		set(value) {
@@ -126,51 +114,6 @@ class LibraryTreeView(
 		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
 		eventBus.register(OpenContainerLibraryElementRequest::class, openContainerLibraryElementRequestHandler)
 
-		val expandAllAction = ExpandAllAction(this)
-		val collapseAllAction = CollapseAllAction(this)
-		val addLibraryFolderAction = AddLibraryFolderAction(this)
-		val newGraphAction = NewGraphAction(this)
-		val deleteLibraryFolderAction = DeleteLibraryFolderAction(this)
-		val deleteLibraryElementAction = DeleteLibraryElementAction(this)
-		val editLibraryAction = EditLibraryAction(this)
-		val libraryFolderPropertiesAction = LibraryFolderPropertiesAction(this)
-
-		desktopPopupMenu.add(ActionWrapperSwing(expandAllAction))
-		desktopPopupMenu.add(ActionWrapperSwing(collapseAllAction))
-
-		projectRootMenu.add(ActionWrapperSwing(expandAllAction))
-		projectRootMenu.add(ActionWrapperSwing(collapseAllAction))
-		projectRootMenu.addSeparator()
-		projectRootMenu.add(ActionWrapperSwing(newGraphAction))
-		projectRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
-		projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
-		projectRootMenu.addSeparator()
-		projectRootMenu.add(ActionWrapperSwing(ProjectPropertiesAction()))
-
-		directoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
-		directoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
-		directoryPopupMenu.addSeparator()
-		directoryPopupMenu.add(ActionWrapperSwing(newGraphAction))
-		directoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
-		directoryPopupMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
-		directoryPopupMenu.add(ActionWrapperSwing(libraryFolderPropertiesAction))
-
-		libraryRootMenu.add(ActionWrapperSwing(expandAllAction))
-		libraryRootMenu.add(ActionWrapperSwing(collapseAllAction))
-		libraryRootMenu.addSeparator()
-		libraryRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
-		libraryRootMenu.add(ActionWrapperSwing(newGraphAction))
-		libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
-		libraryRootMenu.addSeparator()
-		libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
-		libraryRootMenu.add(ActionWrapperSwing(LibraryPropertiesAction()))
-
-		containerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
-		containerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(DefaultContainerLibraryElementAction(this))))
-		containerPopupMenu.add(ActionWrapperSwing(DuplicateGraphAction(this)))
-
-		basePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
-
 		expandRow(0)
 	}
 
@@ -201,16 +144,7 @@ class LibraryTreeView(
 			componentPopupMenu = null
 			return
 		}
-		componentPopupMenu = when ((newSelectionPath.lastPathComponent as DefaultMutableTreeNode).userObject) {
-			is Project -> projectRootMenu
-			is Library -> libraryRootMenu
-			is LibraryFolder -> directoryPopupMenu
-			is LibraryDirectory -> directoryPopupMenu
-			is ContainerLibraryElement -> containerPopupMenu
-			is BaseLibraryElement -> basePopupMenu
-			is String -> desktopPopupMenu
-			else -> null
-		}
+		componentPopupMenu = controller.getPopupMenu(newSelectionPath.lastPathComponent as DefaultMutableTreeNode)
 	}
 
 	private fun handle(event: CurrentSavableEvent) {
