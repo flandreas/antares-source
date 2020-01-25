@@ -80,10 +80,6 @@ class LibraryCompositionPanel(
 
 	private val copyAction = CopyAction()
 
-	private val addAction = AddAction()
-
-	private val removeAction = RemoveAction()
-
 	private val sourceLibraries = JComboBox<LibraryDictionaryEntry>()
 
 	private val isSourceElementSelected: Boolean get() = sourceLibraryTree.getSelectedItem() is LibraryElement
@@ -94,7 +90,6 @@ class LibraryCompositionPanel(
 
 	private val librarySelectionListener = TreeSelectionListener {
 		copyAction.enabled = isSourceElementSelected && isDestinationFolderSelected
-		addAction.enabled = isDestinationFolderSelected
 	}
 
 	init {
@@ -116,8 +111,6 @@ class LibraryCompositionPanel(
 		destinationLibraryTree.addTreeSelectionListener(librarySelectionListener)
 
 		copyAction.enabled = false
-		addAction.enabled = false
-		removeAction.enabled = false
 
 		buildUI()
 	}
@@ -170,11 +163,11 @@ class LibraryCompositionPanel(
 		copyButton.text = null
 		copyButton.icon = ImageIcon(LibraryCompositionPanel::class.java.getResource("/img/right-18.png"))
 
-		val addButton = JButton(ActionWrapperSwing(addAction))
+		val addButton = JButton(ActionWrapperSwing(destinationLibraryTree.controller.addLibraryFolderAction))
 		addButton.text = null
 		addButton.icon = ImageIcon(LibraryCompositionPanel::class.java.getResource("/img/plus-18.png"))
 
-		val removeButton = JButton(ActionWrapperSwing(removeAction))
+		val removeButton = JButton(ActionWrapperSwing(destinationLibraryTree.controller.deleteLibraryFolderAction))
 		removeButton.text = null
 		removeButton.icon = ImageIcon(LibraryCompositionPanel::class.java.getResource("/img/minus-18.png"))
 

@@ -62,7 +62,7 @@ class LibraryTreeView(
 			}
 		}
 
-	private val controller = LibraryTreeViewController(this, type)
+	val controller = LibraryTreeViewController(this, type)
 
 	private var currentSavable: Savable? = null
 		set(value) {

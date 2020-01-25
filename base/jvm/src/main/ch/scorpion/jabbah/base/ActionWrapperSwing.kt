@@ -11,7 +11,7 @@ import javax.swing.KeyStroke
  * Create an instance of this class for every [Action] to be wrapped and use it when creating menu items
  * or buttons. No need for subclassing.
  */
-class ActionWrapperSwing(private val action: ch.scorpion.jabbah.base.Action) : javax.swing.AbstractAction() {
+class ActionWrapperSwing(private val action: Action) : javax.swing.AbstractAction() {
 
 	companion object {
 		fun toJabbahActionEvent(e: ActionEvent): ch.scorpion.jabbah.base.event.ActionEvent =

@@ -25,6 +25,7 @@ abstract class AbstractLibraryAction(
 	protected val isLibraryOwnedByUser: Boolean get() = selectedItem == null || AppModule.userHolder.user.uuid == selectedItem?.library?.author
 
 	init {
+		enabled = false
 		eventBus.register(LibrarySelectionChangedEvent::class) {
 			if (it.libraryTreeView === libraryTreeView) {
 				updateEnabledness()

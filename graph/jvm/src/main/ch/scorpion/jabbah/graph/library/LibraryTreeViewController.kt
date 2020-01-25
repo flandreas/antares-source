@@ -16,11 +16,12 @@ enum class LibraryTreeViewType {
 
 class LibraryTreeViewController(private val view: LibraryTreeView, type: LibraryTreeViewType) {
 
+	val addLibraryFolderAction = AddLibraryFolderAction(view)
+	val deleteLibraryFolderAction = DeleteLibraryFolderAction(view)
+
 	private val expandAllAction = ExpandAllAction(view)
 	private val collapseAllAction = CollapseAllAction(view)
-	private val addLibraryFolderAction = AddLibraryFolderAction(view)
 	private val newGraphAction = NewGraphAction(view)
-	private val deleteLibraryFolderAction = DeleteLibraryFolderAction(view)
 	private val deleteLibraryElementAction = DeleteLibraryElementAction(view)
 	private val editLibraryAction = EditLibraryAction(view)
 	private val libraryFolderPropertiesAction = LibraryFolderPropertiesAction(view)
