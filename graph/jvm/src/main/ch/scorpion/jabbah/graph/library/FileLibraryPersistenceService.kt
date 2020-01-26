@@ -36,7 +36,7 @@ class FileLibraryPersistenceService(
 
 	/** ---- [LibraryPersistenceService] */
 
-	override fun deleteContainerLibraryElement(library: Library, uuid: UUID) {
+	override fun deleteMetaGraph(library: Library, uuid: UUID) {
 		LOG.debug("delete MetaGraph $uuid in Library ${library.uuid}")
 		File(buildMetaGraphFilePath(library.uuid, uuid)).delete()
 	}
@@ -50,7 +50,7 @@ class FileLibraryPersistenceService(
 
 	override fun deleteLibrary(uuid: UUID) {
 		LOG.debug("delete Library $uuid")
-		FileUtils.deleteDirectory(File(buildLibraryDirectoryPath(uuid).toString()))
+		FileUtils.deleteDirectory(File(buildLibraryDirectoryPath(uuid)))
 	}
 
 	override fun duplicateLibrary(library: Library, newUuid: UUID) {
@@ -164,7 +164,7 @@ class ResourceLibraryPersistenceService(
 
 	/** ---- [LibraryPersistenceService] */
 
-	override fun deleteContainerLibraryElement(library: Library, uuid: UUID) {
+	override fun deleteMetaGraph(library: Library, uuid: UUID) {
 		LOG.debug("delete MetaGraph $uuid in Library ${library.uuid}")
 		File(buildMetaGraphFilePath(library.uuid, uuid)).delete()
 	}

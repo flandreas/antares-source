@@ -34,7 +34,7 @@ class RestLibraryPersistenceService : LibraryPersistenceService {
         throw UnsupportedOperationException("not implemented")
     }
 
-    override fun deleteContainerLibraryElement(library: Library, uuid: UUID) {
+    override fun deleteMetaGraph(library: Library, uuid: UUID) {
         throw UnsupportedOperationException("not implemented")
     }
 

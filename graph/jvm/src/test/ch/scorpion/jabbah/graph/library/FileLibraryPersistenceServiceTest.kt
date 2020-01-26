@@ -1,0 +1,118 @@
+package ch.scorpion.jabbah.graph.library
+
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.port.TestPortFactory
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.port.TestPortViewFactory
+import java.nio.file.*
+import kotlin.test.*
+
+class FileLibraryPersistenceServiceTest {
+
+	companion object {
+		init {
+			GraphViewTestRule.configure()
+		}
+	}
+
+	private val directory = Files.createTempDirectory(null)
+	private val persistenceService = FileLibraryPersistenceService(directory.toAbsolutePath().toString())
+
+	@BeforeTest
+	fun setup() {
+		LibraryModule.userLibraryPersistenceService = persistenceService
+		LibraryModule.libraryService = LibraryService()
+		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"), libraryService = LibraryModule.libraryService)
+		GraphModelModule.portFactory = TestPortFactory()
+		GraphViewModule.portViewFactory = TestPortViewFactory()
+	}
+
+	@Test
+	fun shouldStoreMetaGraph() {
+		val metaGraph = MetaGraph()
+
+		persistenceService.storeMetaGraph(LibraryModule.libraryHolder.library, metaGraph)
+
+		assertTrue(Files.exists(metaGraphPath(metaGraph)))
+	}
+
+	@Test
+	fun shouldLoadMetaGraph() {
+		val origMetaGraph = MetaGraph()
+		persistenceService.storeMetaGraph(LibraryModule.libraryHolder.library, origMetaGraph)
+
+		val loadedMetaGraph = persistenceService.loadMetaGraph(LibraryModule.libraryHolder.library, origMetaGraph.uuid)
+
+		assertEquals(origMetaGraph.uuid, loadedMetaGraph.uuid)
+	}
+
+	@Test
+	fun shouldDeleteMetaGraph() {
+		val origMetaGraph = MetaGraph()
+		persistenceService.storeMetaGraph(LibraryModule.libraryHolder.library, origMetaGraph)
+
+		persistenceService.deleteMetaGraph(LibraryModule.libraryHolder.library, origMetaGraph.uuid)
+
+		assertFalse(Files.exists(metaGraphPath(origMetaGraph)))
+	}
+
+	@Test
+	fun shouldStoreLibrary() {
+		persistenceService.storeLibrary(LibraryModule.libraryHolder.library)
+
+		assertTrue(Files.exists(libraryFilePath()))
+	}
+
+	@Test
+	fun shouldLoadLibrary() {
+		persistenceService.storeLibrary(LibraryModule.libraryHolder.library)
+
+		val loadedLibrary = persistenceService.loadLibrary(LibraryModule.libraryHolder.library.uuid)
+
+		assertEquals(LibraryModule.libraryHolder.library.uuid, loadedLibrary.uuid)
+	}
+
+	@Test
+	fun shouldDeleteLibrary() {
+		val origMetaGraph = MetaGraph()
+		persistenceService.storeMetaGraph(LibraryModule.libraryHolder.library, origMetaGraph)
+		persistenceService.storeLibrary(LibraryModule.libraryHolder.library)
+
+		persistenceService.deleteLibrary(LibraryModule.libraryHolder.library.uuid)
+
+		assertFalse(Files.exists(libraryDirPath()))
+		assertFalse(Files.exists(metaGraphPath(origMetaGraph)))
+	}
+
+	@Test
+	fun shouldDuplicateLibrary() {
+		val metaGraph = MetaGraph()
+		persistenceService.storeMetaGraph(LibraryModule.libraryHolder.library, metaGraph)
+		persistenceService.storeLibrary(LibraryModule.libraryHolder.library)
+		val newUUID = System.createUUID()
+
+		persistenceService.duplicateLibrary(LibraryModule.libraryHolder.library, newUUID)
+
+		// original files
+		assertTrue(Files.exists(libraryFilePath()))
+		assertTrue(Files.exists(metaGraphPath(metaGraph)))
+
+		// new files
+		assertTrue(Files.exists(libraryFilePath(newUUID)))
+		assertTrue(Files.exists(metaGraphPath(metaGraph, newUUID)))
+	}
+
+	private fun libraryDirPath(libraryUUID: UUID = LibraryModule.libraryHolder.library.uuid): Path =
+		FileSystems.getDefault().getPath(directory.toAbsolutePath().toString(), libraryUUID.toString())
+
+	private fun libraryFilePath(libraryUUID: UUID = LibraryModule.libraryHolder.library.uuid): Path =
+		FileSystems.getDefault().getPath(directory.toAbsolutePath().toString(), libraryUUID.toString(), "library.xml")
+
+	private fun metaGraphPath(metaGraph: MetaGraph, libraryUUID: UUID = LibraryModule.libraryHolder.library.uuid): Path =
+		FileSystems.getDefault().getPath(directory.toAbsolutePath().toString(), libraryUUID.toString(), "${metaGraph.uuid}.cir")
+}

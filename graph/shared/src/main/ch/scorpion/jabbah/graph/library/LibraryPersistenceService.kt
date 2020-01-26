@@ -13,7 +13,7 @@ interface LibraryPersistenceService {
 
 	fun storeMetaGraph(library: Library, metaGraph: MetaGraph)
 
-	fun deleteContainerLibraryElement(library: Library, uuid: UUID)
+	fun deleteMetaGraph(library: Library, uuid: UUID)
 
 	fun loadLibrary(uuid: UUID): Library
 
@@ -40,7 +40,7 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService {
 	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph): Unit =
 		throw UnsupportedOperationException("not implemented")
 
-	override fun deleteContainerLibraryElement(library: Library, uuid: UUID): Unit =
+	override fun deleteMetaGraph(library: Library, uuid: UUID): Unit =
 		throw UnsupportedOperationException("not implemented")
 
 	override fun loadLibrary(uuid: UUID): Library =

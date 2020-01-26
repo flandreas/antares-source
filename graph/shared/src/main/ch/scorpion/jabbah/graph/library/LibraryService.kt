@@ -150,7 +150,7 @@ class LibraryService(
 		LOG.debug("Removing LibraryItem '${item.name}'")
 		if (directory.remove(item)) {
 			if (item is ContainerLibraryElement) {
-				persister(library.isSystem).deleteContainerLibraryElement(library, item.uuid)
+				persister(library.isSystem).deleteMetaGraph(library, item.uuid)
 				if (library.defaultElementUUID == item.uuid) {
 					library.defaultElementUUID = null
 				}

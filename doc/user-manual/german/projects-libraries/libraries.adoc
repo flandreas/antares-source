@@ -1,6 +1,6 @@
 === Bibliotheken
 
-In diesem Kaptitel wird erklärt, wie Du eigene Bibliotheken anlegen kannst.
+In diesem Kapitel lernst Du, wie Du eigene Bibliotheken anlegen kannst. Die Grundlagen von Bibliotheken sind in <<projects-libraries.adoc#, "Projekte und Bibliotheken">> erklärt.
 
 ==== Bibliotheken verwalten
 
