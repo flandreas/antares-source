@@ -182,7 +182,7 @@ class LibraryPersistencePanel(
 					) {
 						return
 					}
-				} else if (service.exists(info.name)) {
+				} else if (service.existsName(info.name)) {
 					if (JOptionPane.showConfirmDialog(
 						parent,
 						Translations.getString("library.duplicate.msg", info.name.getTranslation()),

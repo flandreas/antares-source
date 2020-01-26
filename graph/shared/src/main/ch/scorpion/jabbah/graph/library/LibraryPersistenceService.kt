@@ -24,8 +24,12 @@ interface LibraryPersistenceService {
 	/** Duplicates the specified [Library] and stores the duplicate with the given new [UUID].*/
 	fun duplicateLibrary(library: Library, newUuid: UUID)
 
-	/** Imports a [Library] contained in a ZIP file at `inputPath` and stores it as new [Library] with the given [UUID].*/
-	fun importLibrary(uuid: UUID, inputPath: String)
+	/**
+	 * Imports a [Library] contained in a ZIP file at `inputPath` and stores it as new [Library] with the [UUID] contained in the file.
+	 * @return the [UUID] of the imported [Library]
+	 * @throws IllegalStateException if a [Library] with the same [UUID] already exists
+	 * */
+	fun importLibrary(inputPath: String): UUID
 
 	/** Exports the [Library] with the specified [UUID] into a ZIP file and stores it at `outputPath'. */
 	fun exportLibrary(uuid: UUID, outputPath: String)
@@ -55,8 +59,9 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService {
 	override fun duplicateLibrary(library: Library, newUuid: UUID): Unit =
 		throw UnsupportedOperationException("not implemented")
 
-	override fun importLibrary(uuid: UUID, inputPath: String): Unit =
+	override fun importLibrary(inputPath: String):UUID {
 		throw UnsupportedOperationException("not implemented")
+	}
 
 	override fun exportLibrary(uuid: UUID, outputPath: String): Unit =
 		throw UnsupportedOperationException("not implemented")

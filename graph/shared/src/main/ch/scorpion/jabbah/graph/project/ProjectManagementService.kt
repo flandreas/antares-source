@@ -44,7 +44,6 @@ class ProjectManagementService(
 	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name",
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	private val libraryDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
 	private val projectDictionaryService: LibraryDictionaryService = ProjectModule.projectDictionaryService,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
@@ -221,20 +220,22 @@ class ProjectManagementService(
 		libraryService.exportLibrary(uuid, outputPath)
 	}
 
-	fun import(uuid: UUID, inputPath: String): ProjectImportResult {
-		val library = libraryService.importLibrary(uuid, inputPath) ?: return ProjectImportResult.Invalid
+	fun import(inputPath: String): ProjectImportResult {
+		val library = libraryService.importLibrary(inputPath) ?: return ProjectImportResult.Invalid
 
 		if (exists(library.name.translation)) {
 			LOG.debug("Name of imported project already exists")
-			libraryService.purgeLibrary(uuid)
+			libraryService.purgeLibrary(library.uuid)
 			return ProjectImportResult.NameAlreadyExists
 		}
 
-		if (!libraryDictionaryService.contains((library as Project).uuid)) {
+		if (!libraryManagementService.contains((library as Project).importedLibrary!!)) {
 			LOG.debug("Library for imported project doesn't exist")
-			libraryService.purgeLibrary(uuid)
+			libraryService.purgeLibrary(library.uuid)
 			return ProjectImportResult.StaleLibraryReference
 		}
+
+		projectDictionaryService.add(library)
 
 		return ProjectImportResult.Success
 	}

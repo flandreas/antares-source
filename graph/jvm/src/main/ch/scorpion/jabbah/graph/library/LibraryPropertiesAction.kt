@@ -73,7 +73,7 @@ class LibraryPropertiesAction(
 	override fun duplicateMessage(newName: String): String = Translations.getString("library.duplicate.msg", newName)
 
 	override fun exists(newName: TranslatableText): Boolean {
-		return managementService.exists(newName, except = libraryHolder.library.uuid)
+		return managementService.existsName(newName, except = libraryHolder.library.uuid)
 	}
 
 	override fun update(properties: LibraryProperties) {

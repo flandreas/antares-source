@@ -107,6 +107,21 @@ class FileLibraryPersistenceServiceTest {
 		assertTrue(Files.exists(metaGraphPath(metaGraph, newUUID)))
 	}
 
+	@Test
+	fun shouldImportLibraryWithArbitraryFilename() {
+		val zipFile = Files.createTempFile(null, ".zip")
+		val metaGraph = MetaGraph()
+		persistenceService.storeMetaGraph(LibraryModule.libraryHolder.library, metaGraph)
+		persistenceService.storeLibrary(LibraryModule.libraryHolder.library)
+
+		persistenceService.exportLibrary(LibraryModule.libraryHolder.library.uuid, zipFile.toAbsolutePath().toString())
+		persistenceService.deleteLibrary(LibraryModule.libraryHolder.library.uuid)
+		persistenceService.importLibrary(zipFile.toAbsolutePath().toString())
+
+		assertTrue(Files.exists(libraryFilePath()))
+		assertTrue(Files.exists(metaGraphPath(metaGraph)))
+	}
+
 	private fun libraryDirPath(libraryUUID: UUID = LibraryModule.libraryHolder.library.uuid): Path =
 		FileSystems.getDefault().getPath(directory.toAbsolutePath().toString(), libraryUUID.toString())
 

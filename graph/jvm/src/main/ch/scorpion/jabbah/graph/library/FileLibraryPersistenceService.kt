@@ -77,14 +77,50 @@ class FileLibraryPersistenceService(
 		}
 	}
 
-	override fun importLibrary(uuid: UUID, inputPath: String) {
-		LOG.debug("Importing library '$uuid' from $inputPath")
-		Files.createDirectory(Paths.get(buildLibraryDirectoryPath(uuid)))
+	override fun importLibrary(inputPath: String): UUID {
+		LOG.debug("Importing library from $inputPath")
+
+
+		// Import and unzip file to incubation directory
+		val incubationDirPath = Files.createTempDirectory(null)
 		FileInputStream(inputPath).use { input ->
 			ZipInputStream(input).use {
-				ZipUtil.unzipFile(Paths.get(directoryPath), it)
+				ZipUtil.unzipFile(incubationDirPath, it)
 			}
 		}
+
+		// Check created directory structure
+		val incubationDir = incubationDirPath.toFile()
+		val incubationFiles = incubationDir.listFiles()
+		if (incubationFiles == null || incubationFiles.size != 1) {
+			val msg = "Expected 1 file in zip file, but found ${incubationFiles?.size}"
+			LOG.debug(msg)
+			throw IllegalArgumentException(msg)
+		}
+
+		// Load incubating Library
+		val libraryFilePath = buildLibraryFilePath(incubationDirPath.toAbsolutePath().toString(), incubationFiles[0].name)
+		val library = createLibraryFileInputStream(libraryFilePath).use {
+			try {
+				loadLibrary(it)
+			} catch (e: Exception) {
+				LOG.debug("Could not read library file, possibly not an Antares library")
+				throw IllegalArgumentException("Could not read library file", e)
+			}
+		}
+
+		// Check if UUID already exists
+		val newDirectory = Paths.get(buildLibraryDirectoryPath(library.uuid))
+		if (Files.exists(newDirectory)) {
+			val msg = "Library ${library.uuid} already exists"
+			LOG.debug(msg)
+			throw IllegalStateException(msg)
+		}
+
+		// Rename directory to UUID of imported Library
+		incubationFiles[0].renameTo(newDirectory.toFile())
+
+		return library.uuid
 	}
 
 	/** ---- [AbstractFileLibraryPersistenceService] */
@@ -116,8 +152,10 @@ class FileLibraryPersistenceService(
 		}
 	}
 
-	override fun createLibraryFileInputStream(libraryUuid: UUID): InputStream {
-		val path = buildLibraryFilePath(libraryUuid)
+	override fun createLibraryFileInputStream(libraryUuid: UUID): InputStream =
+		createLibraryFileInputStream(buildLibraryFilePath(libraryUuid))
+
+	private fun createLibraryFileInputStream(path: String): InputStream {
 		try {
 			return FileInputStream(path)
 		} catch (e: FileNotFoundException) {
@@ -141,8 +179,10 @@ class FileLibraryPersistenceService(
 	private fun buildMetaGraphFilePath(libraryUUID: UUID, metaGraphUuid: UUID): String =
 		FileSystems.getDefault().getPath(directoryPath, libraryUUID.toString(), "$metaGraphUuid.$metaGraphFileExtension").toString()
 
-	private fun buildLibraryFilePath(libraryUuid: UUID): String =
-		FileSystems.getDefault().getPath(directoryPath, libraryUuid.toString(), libraryFileName).toString()
+	private fun buildLibraryFilePath(libraryUuid: UUID): String = buildLibraryFilePath(directoryPath, libraryUuid.toString())
+
+	private fun buildLibraryFilePath(directoryPath: String, libraryDirName: String): String =
+		FileSystems.getDefault().getPath(directoryPath, libraryDirName, libraryFileName).toString()
 
 	private fun buildLibraryDirectoryPath(libraryUuid: UUID): String =
 		FileSystems.getDefault().getPath(directoryPath, libraryUuid.toString()).toString()
@@ -191,7 +231,7 @@ class ResourceLibraryPersistenceService(
 		throw UnsupportedOperationException("Exporting system libraries is not supported")
 	}
 
-	override fun importLibrary(uuid: UUID, inputPath: String) {
+	override fun importLibrary(inputPath: String): UUID {
 		// This is not supported for system Libraries
 		throw UnsupportedOperationException("Importing system libraries is not supported")
 	}
@@ -294,13 +334,15 @@ abstract class AbstractFileLibraryPersistenceService : LibraryPersistenceService
 
 	protected fun loadLibrary(uuid: UUID, inputStream: InputStream): Library {
 		try {
-			val storeReader = StoreXmlReader(ElectricXmlReader(inputStream))
-			return storeReader.readStorable() as Library
+			return loadLibrary(inputStream)
 		} catch (e: Throwable) {
 			LOG.error("Error while loading Library $uuid: ${e.message}")
 			throw LibraryPersistenceServiceException(e.message)
 		}
 	}
+
+	protected fun loadLibrary(inputStream: InputStream): Library =
+		StoreXmlReader(ElectricXmlReader(inputStream)).readStorable() as Library
 
 	protected fun buildResourceLibraryDirectoryPath(libraryUuid: UUID): String =
 		"$RESOURCE_PATH/$libraryUuid"

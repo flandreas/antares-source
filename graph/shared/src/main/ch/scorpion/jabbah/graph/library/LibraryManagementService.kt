@@ -47,11 +47,13 @@ class LibraryManagementService(
 		return systemDictionaryService.contains(uuid)
 	}
 
-	/** ---- [LibraryManagementService] interface */
-
 	/** Determines whether [name] already exists as the name of a stored [Library] in any language.*/
-	fun exists(name: TranslatableText, except: UUID? = null): Boolean
+	fun existsName(name: TranslatableText, except: UUID? = null): Boolean
 		= userDictionaryService.existsName(name, except) || systemDictionaryService.existsName(name, except)
+
+	/** Determines whether [uuid] exists as the [UUID] of either a user or a system [Library]. */
+	fun contains(uuid: UUID): Boolean
+		= userDictionaryService.contains(uuid) || systemDictionaryService.contains(uuid)
 
 	/** Returns all [LibraryDictionaryEntries][LibraryDictionaryEntry].*/
 	fun getLibraryDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> {
@@ -71,7 +73,7 @@ class LibraryManagementService(
 	 * @throws IllegalArgumentException if a [Library] with the name in [properties] already exists
 	 */
 	fun create(properties: LibraryProperties, templateLibraryUuid: UUID?): Library {
-		if (exists(properties.name)) {
+		if (existsName(properties.name)) {
 			throw IllegalArgumentException("library name '${properties.name.getTranslation()}' already exists")
 		}
 		LOG.debug("creating new library '${properties.name.getTranslation()}' with template $templateLibraryUuid")
@@ -102,7 +104,7 @@ class LibraryManagementService(
 		LOG.debug("updating library ${library.uuid}")
 
 		if (library.name.translation != properties.name) {
-			if (exists(properties.name, except = library.uuid)) {
+			if (existsName(properties.name, except = library.uuid)) {
 				throw IllegalArgumentException("Library name '${properties.name.getTranslation()}' already exists")
 			}
 			libraryService.renameLibrary(library, properties.name)

@@ -236,7 +236,7 @@ class ProjectPersistencePanel(
 			selectedProject?.let {
 				if (JOptionPane.showConfirmDialog(
 						this@ProjectPersistencePanel,
-						Translations.getString("project.dialog.delete.confirm.msg", it.name),
+						Translations.getString("project.dialog.delete.confirm.msg", it.name.value),
 						Translations.getString("project.dialog.delete.action.name"),
 						JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
@@ -253,12 +253,12 @@ class ProjectPersistencePanel(
 			selectedProject?.let {
 				val fileChooser = JFileChooser()
 				fileChooser.dialogTitle = name
-				fileChooser.selectedFile = File("${it.uuid}.$EXPORT_FILE_EXTENSION")
+				fileChooser.selectedFile = File("${it.name.value}.$EXPORT_FILE_EXTENSION")
 				if (fileChooser.showSaveDialog(this@ProjectPersistencePanel) == JFileChooser.APPROVE_OPTION) {
 					managementService.export(it.uuid, fileChooser.selectedFile.absolutePath)
 					JOptionPane.showConfirmDialog(
-						Frame.getFrames()[0],
-						Translations.getString("project.dialog.export.success.msg", it.name),
+						this@ProjectPersistencePanel,
+						Translations.getString("project.dialog.export.success.msg", it.name.value),
 						name,
 						JOptionPane.DEFAULT_OPTION,
 						JOptionPane.INFORMATION_MESSAGE)
@@ -279,8 +279,7 @@ class ProjectPersistencePanel(
 
 		private fun import(path: String) {
 			val name = FilenameUtils.getBaseName(path)
-			val uuid = UUID(name)
-			when (managementService.import(uuid, path)) {
+			when (managementService.import(path)) {
 				Success -> handleSuccessfulImport(name)
 				NameAlreadyExists -> handleImportNameAlreadyExists(name)
 				Invalid -> handleInvalidImportFile(name)
@@ -294,7 +293,7 @@ class ProjectPersistencePanel(
 
 		fun handleSuccessfulImport(projectName: String) {
 			JOptionPane.showConfirmDialog(
-				Frame.getFrames()[0],
+				this@ProjectPersistencePanel,
 				Translations.getString("project.dialog.import.success.msg", projectName),
 				name,
 				JOptionPane.DEFAULT_OPTION,
@@ -304,7 +303,7 @@ class ProjectPersistencePanel(
 
 		fun handleImportNameAlreadyExists(projectName: String) {
 			JOptionPane.showConfirmDialog(
-				Frame.getFrames()[0],
+				this@ProjectPersistencePanel,
 				Translations.getString("project.dialog.import.alreadyExists.msg", projectName),
 				name,
 				JOptionPane.DEFAULT_OPTION,
@@ -313,7 +312,7 @@ class ProjectPersistencePanel(
 
 		fun handleInvalidImportFile(projectName: String) {
 			JOptionPane.showConfirmDialog(
-				Frame.getFrames()[0],
+				this@ProjectPersistencePanel,
 				Translations.getString("project.dialog.import.invalid.msg", projectName),
 				name,
 				JOptionPane.DEFAULT_OPTION,
@@ -322,7 +321,7 @@ class ProjectPersistencePanel(
 
 		fun handleStaleLibraryReference(projectName: String) {
 			JOptionPane.showConfirmDialog(
-				Frame.getFrames()[0],
+				this@ProjectPersistencePanel,
 				Translations.getString("project.dialog.import.staleLibraryReference.msg", projectName),
 				name,
 				JOptionPane.DEFAULT_OPTION,

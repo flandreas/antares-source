@@ -5,7 +5,9 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
+import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
@@ -18,8 +20,15 @@ object ZipUtil {
 		if (file.isHidden) {
 			return
 		}
-		LOG.debug(".. zipping $fileName")
+		LOG.info("zipping $fileName")
 		if (file.isDirectory) {
+			if (fileName.endsWith("/")) {
+				zipOut.putNextEntry(ZipEntry(fileName))
+				zipOut.closeEntry()
+			} else {
+				zipOut.putNextEntry(ZipEntry("$fileName/"))
+				zipOut.closeEntry()
+			}
 			file.listFiles()?.forEach { zipFile(it, "$fileName/${it.name}", zipOut) }
 		} else {
 			FileInputStream(file).use {
@@ -29,10 +38,10 @@ object ZipUtil {
 				var length: Int
 				do {
 					length = it.read(buffer)
-					if (length > 0) {
+					if (length >= 0) {
 						zipOut.write(buffer, 0, length)
 					}
-				} while (length > 0)
+				} while (length >= 0)
 			}
 		}
 	}
@@ -41,16 +50,22 @@ object ZipUtil {
 		val buffer = ByteArray(1024) { 0 }
 		var zipEntry = zipIn.nextEntry
 		while (zipEntry != null) {
-			val newFile = newFile(destDir.toFile(), zipEntry)
-			FileOutputStream(newFile).use {
-				var length: Int
-				do {
-					length = zipIn.read(buffer)
-					if (length > 0) {
-						it.write(buffer, 0, length)
-					}
+			if (zipEntry.isDirectory) {
+				val dirPath = Paths.get(destDir.toAbsolutePath().toString(), zipEntry.name)
+				LOG.info("creating directory $dirPath")
+				Files.createDirectory(dirPath).toFile()
+			} else {
+				val newFile = newFile(destDir.toFile(), zipEntry)
+				FileOutputStream(newFile).use {
+					var length: Int
+					do {
+						length = zipIn.read(buffer)
+						if (length > 0) {
+							it.write(buffer, 0, length)
+						}
 
-				} while (length > 0)
+					} while (length > 0)
+				}
 			}
 			zipEntry = zipIn.nextEntry
 		}
@@ -62,7 +77,8 @@ object ZipUtil {
 	 * See https://www.baeldung.com/java-compress-and-uncompress.
 	 */
 	private fun newFile(destDir: File, zipEntry: ZipEntry): File {
-		val destFile = File(destDir, zipEntry.name)
+		val destFile = Files.createFile(Paths.get(destDir.absolutePath, zipEntry.name)).toFile()
+		LOG.info("unzipping to ${destFile.absolutePath}")
 		val destDirPath = destDir.canonicalPath
 		val destFilePath = destFile.canonicalPath
 

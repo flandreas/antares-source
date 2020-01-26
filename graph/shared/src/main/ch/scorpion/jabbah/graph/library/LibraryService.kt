@@ -315,8 +315,8 @@ class LibraryService(
 	 * transferred to the server to be stored there. This is up to a future extension.
 	 * @return the imported [Library], or `null` if the [Library] is invalid
 	 */
-	fun importLibrary(uuid: UUID, inputPath: String): Library? {
-		userLibraryPersister.importLibrary(uuid, inputPath)
+	fun importLibrary(inputPath: String): Library? {
+		val uuid = userLibraryPersister.importLibrary(inputPath)
 		return try {
 			loadLibrary(uuid, isSystem = false)
 		} catch (e: Throwable) {

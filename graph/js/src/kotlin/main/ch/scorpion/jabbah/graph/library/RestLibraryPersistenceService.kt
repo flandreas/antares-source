@@ -64,7 +64,7 @@ class RestLibraryPersistenceService : LibraryPersistenceService {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun importLibrary(uuid: UUID, inputPath: String) {
+	override fun importLibrary(inputPath: String): UUID {
 		throw UnsupportedOperationException("not implemented")
 	}
 
