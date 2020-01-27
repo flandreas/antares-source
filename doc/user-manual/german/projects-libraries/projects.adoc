@@ -8,16 +8,21 @@ In diesem Kapitel lernst Du, wie Du Deine eigenen Projekte verwalten kannst. Die
 
 image::projects-sample.png[Projekte,500,align="center"]
 
-Öffnen:: Öffnet das ausfgewählte Projekt. Falls eine der Schaltungen des Projektes mit "Beim Laden öffnen" gekennzeichnet ist, wird diese Schaltung automatisch geöffnet.
+Öffnen:: Öffnet das ausgewählte Projekt. Falls eine der Schaltungen des Projektes mit "Beim Laden öffnen" gekennzeichnet ist, wird diese Schaltung automatisch geöffnet.
 
-Neu:: Erzeugt ein neues Projekt und öffnet es. Das neue Projekt enthält per Default eine Schaltung mit dem Namen "Neue Schaltung". Das neue Projekt basiert auf der Bibliothek, die zu diesem Zeitpunkt der Werkbank geöffnet ist.
+Neu:: Erzeugt ein neues Projekt und öffnet es. Dabei stellt Antares sicher, dass der Name des neuen Projekts (in der aktuellen Sprache) noch nicht vorhanden ist. Das neue Projekt enthält per Default eine Schaltung mit dem Namen "Neue Schaltung". Das neue Projekt basiert auf der Bibliothek, die zu diesem Zeitpunkt der Werkbank geöffnet ist.
 NOTE: In einer zukünftigen Version von Antares wird man beim Erzeugen des Projektes die Bibliothek auswählen können, auf der das neue Projekt basieren soll.
 
-Löschen:: Löscht das ausgewählte Projekt. Diese Aktion kann nicht rückgängig gemcht werden.
+Löschen:: Löscht das ausgewählte Projekt. Diese Aktion kann nicht rückgängig gemacht werden.
 
-Export:: TODO
+Export:: Exportiert das ausgewählte Projekt in eine ZIP-Datei. Die erzeugte ZIP-Datei enthält nur das Projekt; wenn das exporierte Projekt auf einer benutzerdefinierten Bibliothek basiert, kann das Projekt nur wieder in derselben Antares-Installation importiert werden, da diese Bibliothek in anderen Installationen nicht vorhanden ist und es noch keine Möglichkeit gibt, Bibliotheken zu exportieren.
+NOTE: In einer zukünftigen Version wird es die Möglichkeit geben, Projekte zusammen mit einer benutzerdefinierten Bibliothek als sog. "Bundle" zu exportieren und in einer anderen Antares-Installation wieder zu importieren.
 
-Import:: TODO
+Import:: Importiert ein Projekt aus einer ZIP-Datei. Dabei können die folgenden Situationen auftreten, bei denen der Import fehlschlägt:
+[horizontal]
+Ungültig:: Die importierte ZIP-Datei ist ungültig, d.h. sie wurde wahrscheinlich nicht durch einen Export aus Antares erzeugt.
+Name existiert bereits:: Da der Name einer Bibliothek eindeutig sein muss, weist Antares den Import einer Bibliothek mit bereits vorhandenem Namen zurück.
+Unbekannte Bibliothek:: Das zu importierende Projekt referenziert eine Bibliothek, die in dieser Antares-Installation nicht vorhanden ist.
 
 ==== Eigenschaften ändern
 
