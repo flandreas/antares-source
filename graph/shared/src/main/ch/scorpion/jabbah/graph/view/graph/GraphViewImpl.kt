@@ -19,7 +19,7 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.edit.model.DrawingImpl
-import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
@@ -93,12 +93,6 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 			graph!!.name.translation = value
 		}
 
-	var shortDescription: TextProperty
-		get() = TextProperty(graph!!.description.value)
-		set(value) {
-			graph!!.description.value = value.text
-		}
-
 	var translatableShortDescription: TranslatableText
 		get() = graph!!.description.translation
 		set(value) {
@@ -111,10 +105,10 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 			graph!!.propagationDelay = value
 		}
 
-	var script: TextProperty
-		get() = TextProperty(graph!!.script)
+	var script: ScriptProperty
+		get() = ScriptProperty(graph!!.script)
 		set(value) {
-			graph!!.script = value.text
+			graph!!.script = value.script
 		}
 
 	/** ---- [GraphView] interface */

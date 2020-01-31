@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.graph.view.usecase
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.collection.EmptyIterator
-import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.edit.model.text.description.Namable
@@ -18,16 +18,16 @@ class UsecaseImpl(
 	private val describable: Describable = DescribableImpl()
 ) : Usecase, Namable by namable, Describable by describable {
 
-	var executionScriptProperty: TextProperty
-		get() = TextProperty(executionScript)
+	var executionScriptProperty: ScriptProperty
+		get() = ScriptProperty(executionScript)
 		set(value) {
-			executionScript = value.text!!
+			executionScript = value.script!!
 		}
 
-	var testScriptProperty: TextProperty
-		get() = TextProperty(testScript)
+	var testScriptProperty: ScriptProperty
+		get() = ScriptProperty(testScript)
 		set(value) {
-			testScript = value.text!!
+			testScript = value.script!!
 		}
 
 	/** ---- [Any] */

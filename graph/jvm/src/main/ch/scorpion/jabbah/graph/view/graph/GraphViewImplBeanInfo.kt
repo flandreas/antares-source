@@ -4,7 +4,7 @@ import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
-import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 
 
@@ -18,7 +18,7 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl<*>> : AbstractBeanInfo<T>()
         private val name = PropertyImpl("graph.property.GraphViewImpl", TranslatableText::class.java)
         private val propDelay = PropertyImpl("element.property.propagationDelay", Long::class.java)
         private val shortDesc = PropertyImpl("graph.property.GraphViewImpl.shortDescription", TranslatableText::class.java)
-        private val script = PropertyImpl("graph.property.GraphViewImpl.script", TextProperty::class.java)
+        private val script = PropertyImpl("graph.property.GraphViewImpl.script", ScriptProperty::class.java)
     }
 
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {

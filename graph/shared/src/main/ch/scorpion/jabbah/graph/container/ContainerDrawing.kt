@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
-import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
@@ -56,7 +56,8 @@ class ContainerDrawing(
 	var model: SubGraphVertice = SubGraphVerticeImpl(name)
 		private set
 
-	var execDrawScript: TextProperty = TextProperty()
+	/** Contains the script code that customized the visual look while execution mode.*/
+	var execDrawScript = ScriptProperty()
 
 	/** ---- [Any] */
 
@@ -94,14 +95,14 @@ class ContainerDrawing(
 		super.write(writer)
 		writer.writeStorable("model", model)
 		if (execDrawScript.isNotEmpty()) {
-			writer.writeString("execDrawScript", execDrawScript.text!!)
+			writer.writeString("execDrawScript", execDrawScript.script!!)
 		}
 	}
 
 	override fun read(reader: StoreReader) {
 		model = reader.readStorable("model") as SubGraphVertice
 		if (reader.hasAttribute("execDrawScript")) {
-			execDrawScript = TextProperty(reader.readString("execDrawScript"))
+			execDrawScript = ScriptProperty(reader.readString("execDrawScript"))
 		}
 		super.read(reader)
 	}
@@ -202,7 +203,7 @@ class ContainerDrawing(
 		val clonedDrawing = StorableCloner.cloneUsingCreator(this, storableCreator) as ContainerDrawing
 		val origin = clonedDrawing.getOriginIndicator().location
 
-		view.drawExecScript = execDrawScript.text
+		view.drawExecScript = execDrawScript.script
 
 		for (comp in clonedDrawing.getDrawables()) {
 			comp.location = Point2D(comp.location.x - origin.x, comp.location.y - origin.y)

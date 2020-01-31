@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.edit.model.text.description.Namable
@@ -53,22 +53,22 @@ class ScenarioStepImpl(
 
 	/** ---- UI editable properties */
 
-	var conditionProperty: TextProperty
-		get() = TextProperty(conditionScript)
+	var conditionProperty: ScriptProperty
+		get() = ScriptProperty(conditionScript)
 		set(value) {
-			conditionScript = value.text
+			conditionScript = value.script
 		}
 
-	var onEntryProperty: TextProperty
-		get() = TextProperty(onEntryScript)
+	var onEntryProperty: ScriptProperty
+		get() = ScriptProperty(onEntryScript)
 		set(value) {
-			onEntryScript = value.text
+			onEntryScript = value.script
 		}
 
-	var onExitProperty: TextProperty
-		get() = TextProperty(onExitScript)
+	var onExitProperty: ScriptProperty
+		get() = ScriptProperty(onExitScript)
 		set(value) {
-			onExitScript = value.text
+			onExitScript = value.script
 		}
 
 	/** ---- [ScenarioStep] interface */

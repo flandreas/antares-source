@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.container
 import ch.scorpion.jabbah.edit.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
-import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import com.l2fprod.common.propertysheet.Property
 import java.beans.BeanInfo
 
@@ -11,7 +11,7 @@ import java.beans.BeanInfo
 class ContainerDrawingBeanInfo : AbstractBeanInfo<ContainerDrawing>() {
 
 	companion object {
-		private val execDrawScript = PropertyImpl("graph.property.GraphViewImpl.script", TextProperty::class.java)
+		private val execDrawScript = PropertyImpl("graph.property.ContainerDrawing.execDrawScript", ScriptProperty::class.java)
 	}
 
 	override fun addProperties(bean: ContainerDrawing, editor: Editor, properties: MutableList<Property>) {

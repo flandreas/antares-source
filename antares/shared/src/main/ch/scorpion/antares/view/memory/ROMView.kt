@@ -19,10 +19,7 @@ import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.TextProperty
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -174,10 +171,10 @@ class ROMView(
 			}
 		}
 
-	var disassemblerConfig: TextProperty
-		get() = TextProperty(model.disassemblerConfig)
+	var disassemblerConfig: ScriptProperty
+		get() = ScriptProperty(model.disassemblerConfig)
 		set(value) {
-			model.disassemblerConfig = value.text!!
+			model.disassemblerConfig = value.script!!
 		}
 
 	var showDisassembler: Boolean

@@ -41,6 +41,8 @@ class TextPropertyEditor(private val propertyName: String) : AbstractPropertyEdi
 
 		// Holds the single [JDialog] instance across all [TextPropertyEditor] instances.
 		private var dialog: JDialog? = null
+
+		const val ICON_PATH = "/img/openInPopup-20.png"
 	}
 
 	private val editorTextArea: JTextArea = JTextArea()
@@ -77,7 +79,7 @@ class TextPropertyEditor(private val propertyName: String) : AbstractPropertyEdi
 
 		button.isEnabled = dialog == null
 		button.alignmentY = Component.TOP_ALIGNMENT
-		button.icon = ImageIcon(TextPropertyEditor::class.java.getResource("/img/openInPopup-20.png"))
+		button.icon = ImageIcon(TextPropertyEditor::class.java.getResource(ICON_PATH))
 		button.border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
 		button.toolTipText = Translations.getString("edit.action.editText.tooltip")
 		button.addActionListener { showDialog() }

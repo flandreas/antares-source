@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.edit.model.text.description.Namable
@@ -31,10 +31,10 @@ class ScenarioImpl(
 
 	private var isLoading: Boolean = false
 
-	var conditionProperty: TextProperty
-		get() = TextProperty(conditionScript)
+	var conditionProperty: ScriptProperty
+		get() = ScriptProperty(conditionScript)
 		set(value) {
-			conditionScript = value.text!!
+			conditionScript = value.script!!
 		}
 
 	/** ---- [Any] */

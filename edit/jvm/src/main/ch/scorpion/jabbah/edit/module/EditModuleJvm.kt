@@ -69,6 +69,7 @@ object EditModuleJvm : AbstractModule() {
 		registry.registerRenderer(StyleType::class.java, StyleTypeRenderer::class.java)
 		registry.registerRenderer(VerticalAlignment::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(TextProperty::class.java, TextPropertyRenderer::class.java)
+		registry.registerRenderer(ScriptProperty::class.java, ScriptPropertyRenderer::class.java)
 		registry.register(TranslatableText::class.java) { TranslatableTextPropertyRenderer((it as PropertyImpl<TranslatableText>).filter) }
 	}
 
@@ -83,6 +84,10 @@ object EditModuleJvm : AbstractModule() {
 		registry.register(TextProperty::class.java) {
 			TextPropertyEditor(
 				propertyName = (it as PropertyImpl<TranslatableText>).displayName)
+		}
+		registry.register(ScriptProperty::class.java) {
+			ScriptPropertyEditor(
+				propertyName = (it as PropertyImpl<String>).displayName)
 		}
 		registry.register(TranslatableText::class.java) {
 			TranslatableTextPropertyEditor(

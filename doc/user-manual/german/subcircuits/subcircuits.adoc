@@ -14,6 +14,24 @@ TODO
 
 TODO
 
+==== Eigenschaften von Anschlüssen
+
+TODO
+
+Ausrichtung:: TODO
+
+Position Bezeichnung:: TODO
+
+Anzahl Bits anzeigen:: TODO
+
+Logik:: TODO
+
+Seuerung:: TODO
+
+==== Zeichnungswerkzeuge
+
+==== Steuerelemente
+
 === Eigenschaften von Schaltungen
 
 TODO
@@ -25,6 +43,8 @@ Verzögerung:: TODO
 Beschreibung:: TODO
 
 Skript:: TODO
+
+=== Verwendung in Schaltungen
 
 === Navigation in Teilschaltungen
 
