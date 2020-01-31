@@ -137,7 +137,7 @@ class ContainerTreeModel(
 		if (treeNode != null && (treeNode.getChildAt(0) as DynamicTreeNode).isInitialized) {
 			val subGraphVerticeView = (treeNode as DefaultMutableTreeNode).userObject as SubGraphVerticeViewFolderItem
 			val innerFolder = treeNode.getChildAt(0) as DynamicTreeNode
-			val source = subGraphVerticeView.graphView.getControlViewSource(comp.controlView!!.controlId!!)
+			val source = subGraphVerticeView.graphView.getControlViewSource(comp.controlView.controlId!!)
 			innerFolder.add(createControlViewNode(source!!, comp.controlModelLink.withoutLast()))
 			treeModel.nodesWereInserted(innerFolder, intArrayOf(innerFolder.childCount - 1))
 		}
@@ -146,8 +146,6 @@ class ContainerTreeModel(
 	fun updateControlViewSource(source: ControlViewSource<Vertice>) {
 		val index = findControlViewSourceIndex(source.controlId!!)
 		if (index != null) {
-			val child = controlsNode.getChildAt(index)
-			((child as DefaultMutableTreeNode).userObject as ContainerTreeControlItem).controlName = source.controlName
 			treeModel.nodesChanged(controlsNode, intArrayOf(index))
 		}
 	}
@@ -202,9 +200,7 @@ class ContainerTreeModel(
 	 */
 	private fun createControlViewNode(source: ControlViewSource<Vertice>, baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY): MutableTreeNode {
 		return DefaultMutableTreeNode(ContainerTreeControlItem(
-			source.controlId!!,
-			source.model.id,
-			source.controlName,
+			source,
 			{ ControlViewComponent(styleProvider, source, baseLink) },
 			source.iconPath))
 	}
@@ -309,12 +305,14 @@ class ContainerTreePortItem(
 }
 
 private class ContainerTreeControlItem(
-	val controlViewId: String,
-	val controlModelId: Int,
-	var controlName: String,
+	private val source: ControlViewSource<Vertice>,
 	factory: () -> Component,
 	iconPath: String
 )  : DraggableTreeItem(ContainerTreeItemType.Control, factory, iconPath) {
+
+	val controlViewId: String get() = source.controlId!!
+	val controlModelId: Int get() = source.model.id
+	val controlName: String get() = source.controlName
 
 	override fun getDescription(): String = controlName
 }

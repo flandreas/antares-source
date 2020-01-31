@@ -1,3 +1,32 @@
 == Teilschaltungen
 
+=== Einführung.
+
+TODO Was sind Teilschaltungen? Wozu werden sie benötigt? Jede Schaltung kann als Teilschaltung verwendet werden.
+
+TODO Ein "running example"?
+
+=== Eingänge und Ausgänge
+
 TODO
+
+=== Symboleditor
+
+TODO
+
+=== Eigenschaften von Schaltungen
+
+TODO
+
+Name:: TODO
+
+Verzögerung:: TODO
+
+Beschreibung:: TODO
+
+Skript:: TODO
+
+=== Navigation in Teilschaltungen
+
+TODO Bereits in "Erste Schritte" beschrieben
+
