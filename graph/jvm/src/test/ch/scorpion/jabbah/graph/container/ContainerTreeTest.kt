@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.container
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.graph.GraphUITestRule
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.GraphElement
@@ -38,7 +39,7 @@ class ContainerTreeTest {
 		}
 
 		init {
-			GraphViewTestRule.configure()
+			GraphUITestRule.configure()
 		}
 	}
 

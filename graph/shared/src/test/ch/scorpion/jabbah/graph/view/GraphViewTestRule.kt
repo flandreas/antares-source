@@ -38,13 +38,6 @@ object GraphViewTestRule {
 		IOModule.typeMap.register("portViewComponent", PortViewComponent::class)
 		IOModule.typeMap.register("subGraphPortImpl", SubGraphPortImpl::class)
 
-		/*
-		InvocationHandler.implementation = SynchronousInvocationHandler()
-		UiUtil.eventQueueInvoker = {
-			false
-		}
-		*/
-
 		AppModule.userHolder.u = User.developer()
 	}
 }
