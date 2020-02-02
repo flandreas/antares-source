@@ -38,10 +38,15 @@ open class EditTheme(
 ) {
 
 	companion object {
+		// Red
+		val DEF_ERROR_MESSAGE_COLOR = CompositeColor(foregroundColor = Color(237, 76, 48), backgroundColor = Color(251, 225, 216), textColor = Color.BLACK)
+		// Blue
+		val DEF_INFO_MESSAGE_COLOR = CompositeColor(backgroundColor = Color(198, 226, 184), foregroundColor = Color(115, 191, 91), textColor = Color.BLACK)
+
 		val DEF_SELECTION = BasicStyle(CompositeColor(Color.ORANGE, Color.WHITE, Color.ORANGE))
 		val DEF_HIGHLIGHT = BasicStyle(CompositeColor(Color.YELLOW, Color.YELLOW, Color.BLACK))
-		val DEF_MESSAGE_ERROR = BasicStyle(CompositeColor(foregroundColor = Color(252, 205, 90), backgroundColor = Color(255, 255, 223), textColor = Color.BLACK))
-		val DEF_MESSAGE_INFO = BasicStyle(CompositeColor(backgroundColor = Color(198, 226, 184), foregroundColor = Color(115, 191, 91), textColor = Color.BLACK))
+		val DEF_MESSAGE_ERROR = BasicStyle(DEF_ERROR_MESSAGE_COLOR)
+		val DEF_MESSAGE_INFO = BasicStyle(DEF_INFO_MESSAGE_COLOR)
 	}
 
 	override fun activateIn(styleRepository: StyleRepository, styleOnly: Boolean) {
