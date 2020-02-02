@@ -133,7 +133,8 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
 	private fun draw(consumer: Consumer) {
 		for (i in 0..edgeView.segmentPointCount - 2) {
 
-			val dir = edgeView.getSegmentDirection(i)!!
+			val dir = edgeView.getSegmentDirection(i) ?: return
+
 			var incomingTurn = Turn.NONE
 			var outgoingTurn = Turn.NONE
 
@@ -155,27 +156,31 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
 			when (incomingTurn) {
 				Turn.AROUND,
 					// fallthrough
-				Turn.NONE -> if (originArrowOverallLength > 0) {
-					beginL = Point2D(
-						begin.x + dir.next().dx * HALF_WIDTH + dir.dx * originArrowOverallLength,
-						begin.y + dir.next().dy * HALF_WIDTH + dir.dy * originArrowOverallLength)
-					beginR = Point2D(
-						begin.x + dir.previous().dx * HALF_WIDTH + dir.dx * originArrowOverallLength,
-						begin.y + dir.previous().dy * HALF_WIDTH + dir.dy * originArrowOverallLength)
-				} else if (edgeView.origin?.connectableView is NodeView<*>) {
-					beginL = Point2D(
-						begin.x + (dir.next().dx + dir.dx) * HALF_WIDTH,
-						begin.y + (dir.next().dy + dir.dy) * HALF_WIDTH)
-					beginR = Point2D(
-						begin.x + (dir.previous().dx + dir.dx) * HALF_WIDTH,
-						begin.y + (dir.previous().dy + dir.dy) * HALF_WIDTH)
-				} else {
-					beginL = Point2D(
-						begin.x + dir.next().dx * HALF_WIDTH,
-						begin.y + dir.next().dy * HALF_WIDTH)
-					beginR = Point2D(
-						begin.x + dir.previous().dx * HALF_WIDTH,
-						begin.y + dir.previous().dy * HALF_WIDTH)
+				Turn.NONE -> when {
+					originArrowOverallLength > 0 -> {
+						beginL = Point2D(
+							begin.x + dir.next().dx * HALF_WIDTH + dir.dx * originArrowOverallLength,
+							begin.y + dir.next().dy * HALF_WIDTH + dir.dy * originArrowOverallLength)
+						beginR = Point2D(
+							begin.x + dir.previous().dx * HALF_WIDTH + dir.dx * originArrowOverallLength,
+							begin.y + dir.previous().dy * HALF_WIDTH + dir.dy * originArrowOverallLength)
+					}
+					edgeView.origin?.connectableView is NodeView<*> -> {
+						beginL = Point2D(
+							begin.x + (dir.next().dx + dir.dx) * HALF_WIDTH,
+							begin.y + (dir.next().dy + dir.dy) * HALF_WIDTH)
+						beginR = Point2D(
+							begin.x + (dir.previous().dx + dir.dx) * HALF_WIDTH,
+							begin.y + (dir.previous().dy + dir.dy) * HALF_WIDTH)
+					}
+					else -> {
+						beginL = Point2D(
+							begin.x + dir.next().dx * HALF_WIDTH,
+							begin.y + dir.next().dy * HALF_WIDTH)
+						beginR = Point2D(
+							begin.x + dir.previous().dx * HALF_WIDTH,
+							begin.y + dir.previous().dy * HALF_WIDTH)
+					}
 				}
 				Turn.LEFT -> {
 					beginL = Point2D(
@@ -206,27 +211,31 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
 			when (outgoingTurn) {
 				Turn.AROUND,
 					// fallthrough
-				Turn.NONE -> if (destinationArrowOverallLength > 0) {
-					endL = Point2D(
-						end.x + dir.next().dx * HALF_WIDTH - dir.dx * destinationArrowOverallLength,
-						end.y + dir.next().dy * HALF_WIDTH - dir.dy * destinationArrowOverallLength)
-					endR = Point2D(
-						end.x + dir.previous().dx * HALF_WIDTH - dir.dx * destinationArrowOverallLength,
-						end.y + dir.previous().dy * HALF_WIDTH - dir.dy * destinationArrowOverallLength)
-				} else if (edgeView.destination?.connectableView is NodeView<*>) {
-					endL = Point2D(
-						end.x + (dir.next().dx + dir.opposite().dx) * HALF_WIDTH,
-						end.y + (dir.next().dy + dir.opposite().dy) * HALF_WIDTH)
-					endR = Point2D(
-						end.x + (dir.previous().dx + dir.opposite().dx) * HALF_WIDTH,
-						end.y + (dir.previous().dy + dir.opposite().dy) * HALF_WIDTH)
-				} else {
-					endL = Point2D(
-						end.x + dir.next().dx * HALF_WIDTH,
-						end.y + dir.next().dy * HALF_WIDTH)
-					endR = Point2D(
-						end.x + dir.previous().dx * HALF_WIDTH,
-						end.y + dir.previous().dy * HALF_WIDTH)
+				Turn.NONE -> when {
+					destinationArrowOverallLength > 0 -> {
+						endL = Point2D(
+							end.x + dir.next().dx * HALF_WIDTH - dir.dx * destinationArrowOverallLength,
+							end.y + dir.next().dy * HALF_WIDTH - dir.dy * destinationArrowOverallLength)
+						endR = Point2D(
+							end.x + dir.previous().dx * HALF_WIDTH - dir.dx * destinationArrowOverallLength,
+							end.y + dir.previous().dy * HALF_WIDTH - dir.dy * destinationArrowOverallLength)
+					}
+					edgeView.destination?.connectableView is NodeView<*> -> {
+						endL = Point2D(
+							end.x + (dir.next().dx + dir.opposite().dx) * HALF_WIDTH,
+							end.y + (dir.next().dy + dir.opposite().dy) * HALF_WIDTH)
+						endR = Point2D(
+							end.x + (dir.previous().dx + dir.opposite().dx) * HALF_WIDTH,
+							end.y + (dir.previous().dy + dir.opposite().dy) * HALF_WIDTH)
+					}
+					else -> {
+						endL = Point2D(
+							end.x + dir.next().dx * HALF_WIDTH,
+							end.y + dir.next().dy * HALF_WIDTH)
+						endR = Point2D(
+							end.x + dir.previous().dx * HALF_WIDTH,
+							end.y + dir.previous().dy * HALF_WIDTH)
+					}
 				}
 				Turn.LEFT -> {
 					endL = Point2D(
@@ -254,10 +263,9 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
 
 	private fun drawArrow(context: DrawContext, endpointType: EdgeViewEndpointType, fill: Boolean) {
 		val location = endpointType.getLocation(edgeView)
-		var angle = 0.0
-		when (endpointType) {
-			EdgeViewEndpointType.ORIGIN -> angle = endpointType.getDirection(edgeView)!!.opposite().rotation.angle
-			EdgeViewEndpointType.DESTINATION -> angle = endpointType.getDirection(edgeView)!!.rotation.angle
+		val angle = when (endpointType) {
+			EdgeViewEndpointType.ORIGIN -> endpointType.getDirection(edgeView)!!.opposite().rotation.angle
+			EdgeViewEndpointType.DESTINATION -> endpointType.getDirection(edgeView)!!.rotation.angle
 		}
 
 		context.g.translate(location.x, location.y)
