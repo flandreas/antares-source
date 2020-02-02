@@ -55,6 +55,12 @@ abstract class AbstractAction(
 		translatedDesc(baseName),
 		translatedAccelerator(baseName))
 
+	protected fun setBaseName(baseName: String) {
+		name = translatedName(baseName)
+		description = translatedDesc(baseName)
+		accelerator = translatedAccelerator(baseName)
+	}
+
 	override var name: String by Delegates.observable(name) { _, old, new -> changeSupport.fire(Action.PROP_NAME, old, new) }
 
 	override var description: String? by Delegates.observable(description) { _, old, new -> changeSupport.fire(Action.PROP_DESCRIPTION, old, new) }
