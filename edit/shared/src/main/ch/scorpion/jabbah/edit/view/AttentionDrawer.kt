@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Ring2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangularUnzoomable
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -54,12 +56,16 @@ class AttentionDrawerImpl(
 		)
 		animation.addListener(object : AnimationTaskAdapter() {
 			override fun ended(task: AnimationTask) {
-				view.ghostContainer.remove(ring)
-				view.ghostContainer.validate()
+				container(view).remove(ring)
+				container(view).validate()
 			}
 		})
-		view.ghostContainer.add(ring)
+		container(view).add(ring)
 		animation.start()
+	}
+
+	private fun container(view: DrawingView<*>): DrawableContainer<Drawable> {
+		return view.animationContainer
 	}
 
 	private inner class GrowingRing(

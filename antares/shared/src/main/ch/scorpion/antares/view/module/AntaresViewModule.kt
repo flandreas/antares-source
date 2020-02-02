@@ -114,7 +114,7 @@ object AntaresViewModule : AbstractModule() {
 
 		EditModule.attentionDrawerFactory = { signal ->
 			if (signal is DigitalSignal) {
-				AttentionDrawerImpl(color = signal.getColor().foregroundColor)
+				AttentionDrawerImpl(color = Themes.get<GraphTheme>().selection.color.foregroundColor)
 			} else {
 				AttentionDrawerImpl()
 			}
