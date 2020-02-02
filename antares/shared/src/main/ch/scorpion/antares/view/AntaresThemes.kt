@@ -41,7 +41,10 @@ object AntaresThemes {
 
 	private val ZERO = CompositeColor(foregroundColor = Color(0, 115, 15), backgroundColor = Color.BLACK, textColor = Color.WHITE)
 	private val ONE = CompositeColor(foregroundColor = Color(0, 255, 0), backgroundColor = Color(0, 115, 15), textColor = Color.BLACK)
-	private val UNDEFINED = CompositeColor(foregroundColor = Color(40, 125, 249), backgroundColor = Color.BLACK, textColor = Color.WHITE)
+	private val UNDEFINED_FOREGROUND = Color(40, 125, 249)
+	private val UNDEFINED_BACKGROUND = Color(219, 232, 248)
+	private val UNDEFINED_TEXT = Color.WHITE
+	//private val UNDEFINED = CompositeColor(foregroundColor = UNDEFINED_FOREGROUND, backgroundColor = Color.YELLOW, textColor = UNDEFINED_TEXT)
 	private val ERROR = CompositeColor(foregroundColor = Color.RED, backgroundColor = Color(255, 214, 214), textColor = Color.WHITE)
 
 	private val INFO = CompositeColor(backgroundColor = Color(198, 226, 184), foregroundColor = Color(115, 191, 91), textColor = Color.BLACK)
@@ -127,7 +130,11 @@ object AntaresThemes {
 					backgroundColor = Color.WHITE)),
 			zero = ZERO,
 			one = ONE,
-			undefined = UNDEFINED,
+			undefined = CompositeColor(
+				foregroundColor = UNDEFINED_FOREGROUND,
+				backgroundColor = UNDEFINED_BACKGROUND,
+				textColor = UNDEFINED_TEXT
+			),
 			wordZero = CompositeColor(
 				foregroundColor = Color.BLACK,
 				backgroundColor = Color(232, 232, 232),
@@ -266,7 +273,11 @@ object AntaresThemes {
 					backgroundColor = Color.BLACK)),
 			zero = ZERO.withBackground(ZERO.foregroundColor),
 			one = ONE,
-			undefined = UNDEFINED,
+			undefined = CompositeColor(
+				foregroundColor = UNDEFINED_FOREGROUND,
+				backgroundColor = veryDarkGreen,
+				textColor = UNDEFINED_TEXT
+			),
 			wordZero = CompositeColor(
 				foregroundColor = ZERO.foregroundColor,
 				backgroundColor = veryDarkGreen,
@@ -358,7 +369,11 @@ object AntaresThemes {
 					backgroundColor = Color.WHITE)),
 			zero = ZERO,
 			one = ONE,
-			undefined = UNDEFINED,
+			undefined = CompositeColor(
+				foregroundColor = UNDEFINED_FOREGROUND,
+				backgroundColor = UNDEFINED_BACKGROUND,
+				textColor = UNDEFINED_TEXT
+			),
 			wordZero = CompositeColor(
 				foregroundColor = Color.BLACK,
 				backgroundColor = Color(232, 232, 232),
