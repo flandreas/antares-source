@@ -11,6 +11,7 @@ Antares ist...
 * <<first-steps/first-steps.adoc#, Erste Schritte>>
 * <<base-library/base-library.adoc#, Bibliothek-Referenz>>
 * <<projects-libraries/projects-libraries.adoc#, Projekte und Bibliotheken>>
+* <<circuits/circuits.adoc#, Schaltungen bearbeiten>>
 * <<subcircuits/subcircuits.adoc#, Teilschaltungen>>
 * <<simulation/simulation.adoc#, Simulation>>
 * <<description/description.adoc#, Beschreibungen und Erläuterungen>>

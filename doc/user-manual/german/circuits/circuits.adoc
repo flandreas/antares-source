@@ -1,0 +1,48 @@
+== Schaltungen bearbeiten
+
+TODO
+
+=== Zu bearbeitende Schaltung auswählen
+
+TODO
+
+=== Schaltungseigenschaften
+
+TODO
+
+=== Komponenten hinzufügen
+
+Aus der Werkbank ziehen. Copy/Paste.
+
+=== Komponenten verbinden
+
+TODO
+
+Details in <<wires.adoc#, Leitungen>>.
+
+=== Komponenteneigenschaften
+
+TODO
+
+=== Zeichnungswerkzeuge
+
+Selektion, Rechteck, Ellipse, Polylinie, Kurve, Text.
+
+=== Symbol editieren
+
+Warum braucht es das überhaupt?
+
+* Tannenbaum-CPU: MPC ist ein Standard-8-Bit-Register, das den Output-Value als Control anzeigt und den Clock-Eingang rechts statt links hat.
+
+* Dito für A-Latch und B-Latch (Output-Value als Control, Clock-Eingang rechts)
+
+* A-MUX: Keine Port-Labels, Select-Eingang rechts
+
+=== Ausrichtung
+
+Ausrichten am Raster, Ausrichten an Komponenten.
+
+=== Ansicht wählen
+
+Zoom, Pan etc.
+
