@@ -23,3 +23,7 @@ Antares ist...
 == Fortgeschrittene Techniken
 
 * <<styles/styles.adoc#, Stile und Themen>>
+* <<scripting/scripting.adoc#, Skripting>>
+* <<scenarios/scenarios.adoc#, Szenarien>>
+* <<usecases/usecases.adoc#, Anwendungsfälle>>
+* <<oscilloscope/oscilloscope.adoc#, Oszilloskop>>

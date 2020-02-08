@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.container
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicInitializer
@@ -297,10 +298,10 @@ class ContainerTreePortItem(
 	factory: () -> Component
 ) : DraggableTreeItem(ContainerTreeItemType.Port, factory, graphPortView.iconPath) {
 
-	val portName: String get() = graphPortView.model.name!!
+	val portName: String get() = StringUtils.replaceNegation(graphPortView.model.name!!)
 
 	override fun getDescription(): String {
-		return "${graphPortView.model.portType} ${graphPortView.model.name!!}"
+		return "${graphPortView.model.portType} $portName"
 	}
 }
 
@@ -312,7 +313,7 @@ private class ContainerTreeControlItem(
 
 	val controlViewId: String get() = source.controlId!!
 	val controlModelId: Int get() = source.model.id
-	val controlName: String get() = source.controlName
+	val controlName: String get() = StringUtils.replaceNegation(source.controlName)
 
 	override fun getDescription(): String = controlName
 }
