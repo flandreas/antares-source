@@ -125,7 +125,7 @@ Dadurch wird es möglich, die Tastatur-Schaltung als interaktive Komponente folg
 
 image::../../img/subcircuits/keyboard-usage.png[, 600, align="center"]
 
-Beachte, wie der Benützer die Tastatur-Schaltung während der Simulation wie eine ausprogrammierte Basis-Komponente verwenden kann. Sie zeigt ihre Schalter mit ihren aktuellen Zustand an und erlaubt es es dem Benutzer, die Schalter mit der Maus zu klicken.
+Beachte, wie der Benützer die Tastatur-Schaltung während der Simulation wie eine ausprogrammierte Basis-Komponente verwenden kann. Sie zeigt ihre Schalter mit ihren aktuellen Zuständen an und erlaubt es dem Benutzer, die Schalter mit der Maus zu klicken.
 
 Wenn man diese Anwendungsidee noch weiter denkt, kann man sich vorstellen, in einem Projekt eine spezielle Schaltung aufzunehmen, deren Symbol alle interaktiven Elemente sämtlicher Teilschaltungen enthält. Damit kann diese spezielle Schaltung wie als "Front Panel" eines komplexen Schaltung eingesetzt werden; öffnet man diese Schaltung, sieht man nur noch die interaktiven Elemente des Systems, also die Schalter, LEDs oder 7-Segment-Anzeigen.
 
