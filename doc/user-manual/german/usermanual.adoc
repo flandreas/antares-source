@@ -9,9 +9,12 @@ Antares ist...
 == Grundlagen
 
 * <<first-steps/first-steps.adoc#, Erste Schritte>>
-* <<base-library/base-library.adoc#, Bibliothek-Referenz>>
 * <<projects-libraries/projects-libraries.adoc#, Projekte und Bibliotheken>>
-* <<circuits/circuits.adoc#, Schaltungen bearbeiten>>
+** <<projects-libraries/libraries.adoc#, Bibliotheken>>
+** <<projects-libraries/projects.adoc#, Projekte>>
+** <<projects-libraries/workbench.adoc#, Werkbank>>
+** <<base-library/base-library.adoc#, Bibliothek-Referenz>>
+* <<circuits/circuits.adoc#, Schaltungen>>
 * <<subcircuits/subcircuits.adoc#, Teilschaltungen>>
 * <<simulation/simulation.adoc#, Simulation>>
 * <<description/description.adoc#, Beschreibungen und Erläuterungen>>
