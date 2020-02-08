@@ -15,7 +15,8 @@ Antares ist...
 ** <<projects-libraries/workbench.adoc#, Werkbank>>
 ** <<base-library/base-library.adoc#, Bibliothek-Referenz>>
 * <<circuits/circuits.adoc#, Schaltungen>>
-* <<subcircuits/subcircuits.adoc#, Teilschaltungen>>
+** <<circuits/wires.adoc#, Leitungen>>
+** <<subcircuits/subcircuits.adoc#, Teilschaltungen>>
 * <<simulation/simulation.adoc#, Simulation>>
 * <<description/description.adoc#, Beschreibungen und Erläuterungen>>
 
