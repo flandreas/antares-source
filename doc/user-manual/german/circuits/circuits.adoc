@@ -46,7 +46,7 @@ Name:: In diesem Attribut kann ein kurzer Name der Schaltung in allen unterstüt
 
 Beschreibung:: Dieses Attribut dient dazu, eine längere Beschreibung der Schaltung zu erfassen, die in der Vorschau des Explorers sowie bei Verwendung als Teilschaltung in anderen Schaltungen im Beschreibungs-Popup dargestellt wird.
 
-Verzögerung:: In diesem optionalen Attribut kann die Zeitdauer angegeben werden, die bei der Verarbeitung eines Eingangssignals bis zum Erscheinen eines geänderten Ausgangssignals verstreicht. Sie wird verwendet, um die Darstellung des Verarbeitungszustandes einer Teilschaltung während der <<../simulation/simulation.adoc#, Simulation>> zu steuern.
+Laufzeit:: In diesem optionalen Attribut kann die Zeitdauer angegeben werden, die bei der Verarbeitung eines Eingangssignals bis zum Erscheinen eines geänderten Ausgangssignals verstreicht. Sie wird verwendet, um die Darstellung des Verarbeitungszustandes einer Teilschaltung während der <<../simulation/simulation.adoc#, Simulation>> zu steuern.
 
 Funktion:: In diesem Attribut kann das Script angegeben werden, das Antares für diese Komponente während der Simulation ausführt, falls die Simulation im Modus <<../simulation/simulation.adoc#, "Flache Simulation">> betrieben wird. Dies ist eine fortgeschrittene Technik; Details zu Scripting siehe das Kapitel <<../scripting/circuit-scripting.adoc#, "Scripting in Schaltungen">>.
 

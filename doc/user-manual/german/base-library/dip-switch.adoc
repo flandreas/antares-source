@@ -10,7 +10,7 @@ Der DIP-Schalter fasst kleine Schalter für jeweils 1 Bit zu einer gemeinsamen K
 
 Der DIP-Schalter hat das Attribut "Initialer Wert", der in der Schaltung gespeichert und beim Start der Simulation als aktueller Wert des DIP-Schalters verwendet wird.
 
-Die einzelnen Schalter verhalten sich wie die Komponente "Schalter", d.h. das Umschalten eines einzelnen Schalters während der Simulation wird erst wirksam, nachdem die konfigurierte Verzögerungs-Zeit verstrichen ist. Bis dahin wird der DIP-Schalter als "inaktiv" dargestellt und nimmt keine Benutzereingaben entgegen.
+Die einzelnen Schalter verhalten sich wie die Komponente "Schalter", d.h. das Umschalten eines einzelnen Schalters während der Simulation wird erst wirksam, nachdem die konfigurierte Laufzeit verstrichen ist. Bis dahin wird der DIP-Schalter als "inaktiv" dargestellt und nimmt keine Benutzereingaben entgegen.
 
 Beim Drücken des einzelnen Schalters mit der Maus erhält der DIP-Schalter den Tastatur-Fokus, der durch ein dünnes blaues gesticheltes Rechteck um den einzelnen Schalter dargestellt wird. Wenn ein Schalter den Tastatur-Fokus besitzt, kann der auch mit der ENTER-Taste sowie mit den Tasten "0" und "1" betätigt werden. Zudem kann mit Pfeil-Tasten "links" und "rechts" zwischen den einzelnen Schaltern navigiert werden. Beim Betätigen eines einzelnen Schalters über die Tastatur erhält automatisch der nächste Schalter den Tastaturfokus, wodurch der ganze DIP-Switch einfach über die Tastatur eingestellt werden kann.
 

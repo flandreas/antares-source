@@ -10,7 +10,7 @@ Diese Komponente implementiert einen Schalter, den der Benutzer mit der linken M
 
 Beim Drücken des Schalters mit der Maus erhält der Schalter den Tastatur-Fokus, der durch ein dünnes blaues gesticheltes Rechteck dargestellt wird. Wenn ein Schalter den Tastatur-Fokus besitzt, kann der auch mit der ENTER-Taste sowie mit den Tasten "0" und "1" betätigt werden.
 
-Ein gedrückter Schalter erzeugt nicht sofort ein Signal am Ausgang, sondern erst nach Ablauf der eingestellten Verzögerungszeit, die standardmässig auf 1'000 ns eingestellt ist. Bis diese Verzögerungszeit abgelaufen ist, nimmt der Schalter keine weiteren Eingaben entgegen. Dies wird ersichtlich, wenn die Simulation im Einzelschritt-Modus ausgeführt wird: Der Schalter wird bis zum Ablauf der Verzögerungszeit als "inaktiv" (mit grauer Fläche überlagert) dargestellt.
+Ein gedrückter Schalter erzeugt nicht sofort ein Signal am Ausgang, sondern erst nach Ablauf der eingestellten Laufzeit, die standardmässig auf 1'000 ns eingestellt ist. Bis diese Laufzeit abgelaufen ist, nimmt der Schalter keine weiteren Eingaben entgegen. Dies wird ersichtlich, wenn die Simulation im Einzelschritt-Modus ausgeführt wird: Der Schalter wird bis zum Ablauf der Verzögerungszeit als "inaktiv" (mit grauer Fläche überlagert) dargestellt.
 
 ==== Anschlüsse
 

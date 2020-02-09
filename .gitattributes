@@ -3,3 +3,4 @@ doc/user-manual/img/base-library/*.png filter=lfs diff=lfs merge=lfs -text
 doc/user-manual/german/projects-libraries/*.png filter=lfs diff=lfs merge=lfs -text
 /doc/user-manual/img/circuits/*.png filter=lfs diff=lfs merge=lfs -text
 /doc/user-manual/img/subcircuits/*.png filter=lfs diff=lfs merge=lfs -text
+doc/usermanual/img/simulation/*.png filter=lfs diff=lfs merge=lfs -text

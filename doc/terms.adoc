@@ -33,6 +33,7 @@ Output (Ausgang):: Typ von Anschluss, der Daten ausgeben kann.
 Port (Anschluss):: Ein Anschluss ist entweder ein Eingang, ein Ausgang, oder beides gleichzeitig. Er wird in Teilschaltunge verwendet, um Signale von der umgebenden Schaltung zu übernehmen (Eingang) oder an sie weiterzugeben (Ausgang).
 Preferences (Einstellungen):: TODO.
 Preview (Vorschau):: Zeigt den Namen, das Symbol und eine kurze Beschreibung der im Explorer ausgewählten Schaltung an.
+Propagation Delay (Laufzeit):: Die Laufzeit von Signalen von einem Eingang zu einem Ausgang einer Basiskomponente oder Teilschaltung.
 Properties (Eigenschaften):: Zeigt die Eigenschaften der in der Hauptansicht ausgewählten Komponente an. Gewisse Eigenschaften können durch den Benutzer verändert werden, andere sind nicht veränderbar.
 Project (Projekt):: Eine durch den Benutzer erstellte Menge von zusammengehörenden Schaltungen.
 Recent (Zuletzt geöffnet):: Ermöglicht es, zuletzt geöffnete Schaltungen erneut zu öffnen

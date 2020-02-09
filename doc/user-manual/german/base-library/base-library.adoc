@@ -12,7 +12,7 @@ ID:: Die Identifikationsnummer der Komponente, die innerhalb der Schaltung einde
 
 Beschreibung:: In diesem Feld kann eine mehrsprachige Beschreibung eingegeben werden, die den Zweck dieser Komponenten innerhalb der Schaltung beschreibt. Falls vorhanden, wird sie im Beschreibungs-Popup statt der Standardbeschreibung der Komponente angezeigt. Siehe das Kapitel <<../description/description.adoc#, Beschreibungen und Erläuterungen>> für mehr Details.
 
-Verzögerung:: Die Zeit in ns, die bei der Simulation verstreicht, bis ein geändertes Signal am Eingang einer Komponente verarbeitet worden ist, z.B. durch Erzeugen eines geänderten Signals an einem Ausgang der Komponente, oder wie im Fall der LED durch eine andere Darstellung der Komponente.
+Laufzeit:: Die Zeit in ns, die bei der Simulation verstreicht, bis ein geändertes Signal am Eingang einer Komponente verarbeitet worden ist, z.B. durch Erzeugen eines geänderten Signals an einem Ausgang der Komponente, oder wie im Fall der LED durch eine andere Darstellung der Komponente.
 
 Schatten:: Mit diesem Attribute wird gesteuert, ob diese bestimmte Komponente mit einem Schatten dargestellt werden soll. Schatten werden grundsätzlich nur dann dargestellt, wenn sie in den Einstellungen von Antares aktiviert worden sind. Falls Schatten in den Einstellungen aktiviert sind, kann die Darstellung für diese Komponente verhindert werden.
 

@@ -8,7 +8,7 @@ image:../../img/base-library/rom-sample.png[Beispiel ROM, 75%]
 
 Das ROM ist eine <<memory.adoc#, Speicher>>-Komponente, deren Daten durch den Autor der Schaltung aus einem File geladen werden können und die danach Bestandteil der gespeicherten Schaltung sind, die das ROM enthält. Während der Ausführung der Simulation können die gespeicherten Daten nicht geändert werden.
 
-Wenn der CS-Eingang des ROM während der Simulation den Wert "1" hat, können die Daten an einer bestimmten Speicheradresse durch Anlegen der Adresse am Eingang "A" ausgelesen werden. Die an dieser Adresse gespeicherten Daten stehen nach Ablauf der Verzögerung (Propagation Delay) am Ausgang D zur Verfügung.
+Wenn der CS-Eingang des ROM während der Simulation den Wert "1" hat, können die Daten an einer bestimmten Speicheradresse durch Anlegen der Adresse am Eingang "A" ausgelesen werden. Die an dieser Adresse gespeicherten Daten stehen nach Ablauf der Laufzeit (Propagation Delay) am Ausgang D zur Verfügung.
 
 ==== Disassembler
 
