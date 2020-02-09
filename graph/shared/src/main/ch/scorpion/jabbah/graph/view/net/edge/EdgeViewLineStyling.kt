@@ -19,6 +19,8 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 
 	override val boundingBox: Rectangle2D = Rectangle2D()
 
+	override val isArea: Boolean get() = false
+
 	override fun draw(context: DrawContext) {
 		context.g.color = context.color!!.foregroundColor
 		context.g.draw(edgeView.polyline)

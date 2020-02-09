@@ -3,9 +3,12 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.model.net.DigitalNet
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
@@ -50,7 +53,12 @@ class DigitalEdgeView(
 
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && showNetState()) {
 			if (!model.isError) {
-				context.color = model.signal!!.getColor()
+				val signalColor = model.signal!!.getColor()
+				context.color = if (styling.isArea) {
+					CompositeColor(signalColor.foregroundColor, Themes.get<AntaresTheme>().word.backgroundColor)
+				} else {
+					signalColor
+				}
 			}
 		} else {
 			context.color = context.choose(color)

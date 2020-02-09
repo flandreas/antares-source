@@ -83,7 +83,8 @@ open class EdgeViewImpl<T : Any>(
 
 	// TODO How to initialize EdgeViewStyling when new EdgeViews are created while interacting with Tools?
 	// The proper styling should be derived from adjacent EdgeViews.
-	private var styling: EdgeViewStyling = NetViewStyle.LINE.createEdgeViewStyling(styleProvider, this)
+	protected var styling: EdgeViewStyling = NetViewStyle.LINE.createEdgeViewStyling(styleProvider, this)
+		private set
 
 	/** ---- [Any] */
 

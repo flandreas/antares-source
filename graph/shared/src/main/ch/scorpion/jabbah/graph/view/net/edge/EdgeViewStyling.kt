@@ -17,6 +17,9 @@ interface EdgeViewStyling {
 
     val boundingBox: Rectangle2D
 
+	/** Returns `true` is this [EdgeViewStyling] draws large or wide areas, which is used for determining background colors. */
+	val isArea: Boolean
+
     /**
      * Draws this [EdgeViewStyling].
      * This method expects that the caller passes the [CompositeColor] to be used for drawing in the provided

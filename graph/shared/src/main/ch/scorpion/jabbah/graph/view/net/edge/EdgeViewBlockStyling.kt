@@ -60,6 +60,8 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
 
 	override val boundingBox: Rectangle2D = Rectangle2D()
 
+	override val isArea: Boolean get() = true
+
 	override fun draw(context: DrawContext) {
 		val oldColor = context.g.color
 		val oldStroke = context.g.stroke
