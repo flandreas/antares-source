@@ -376,10 +376,10 @@ class CircuitInOutView(
 	private fun getArrowPathTranslation(): Point2D {
 		return when (model.portType) {
 			PortType.INPUT -> orientation.multiply(-getOutput().unconnectedLength.toDouble())
-			PortType.INOUT,
-			PortType.OUTPUT -> Point2D(arrowPath!!.tailLocation)
-				.multiply(-1.0)
-				.add(orientation.multiply(getInput().unconnectedLength.toDouble()))
+			PortType.INOUT, PortType.OUTPUT ->
+				Point2D(arrowPath!!.tailLocation)
+					.multiply(-1.0)
+					.add(orientation.multiply(getInput().unconnectedLength.toDouble()))
 		}
 	}
 
@@ -393,6 +393,7 @@ class CircuitInOutView(
 					styleProvider = styleProvider,
 					port = model.getPort(),
 					direction = orientation,
+					unconnectedLength = template?.unconnectedLength  ?: DigitalPortView.LENGTH,
 					length = template?.length)
 				portView.setLocation(
 					-portView.unconnectedLength * orientation.dx,
@@ -404,6 +405,7 @@ class CircuitInOutView(
 					styleProvider = styleProvider,
 					port = model.getInput(),
 					direction = orientation.opposite(),
+					unconnectedLength = template?.unconnectedLength  ?: DigitalPortView.LENGTH,
 					length = template?.length)
 				portView.setLocation(
 					portView.unconnectedLength * orientation.dx,

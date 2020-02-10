@@ -14,7 +14,7 @@ class GenericPortView<T : Any>(
 	direction: Direction = Direction.SOUTH,
 	portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
 	connectable: Boolean = false
-) : AbstractPortView<T>(port, x, y, direction, portLabelPosition, 0, connectable) {
+) : AbstractPortView<T>(port, x, y, direction, portLabelPosition, 0, 0, connectable) {
 
 	override var transparency: Int = Transparent.FULLY_OPAQUE
 

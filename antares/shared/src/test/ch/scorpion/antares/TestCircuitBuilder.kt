@@ -66,7 +66,7 @@ class TestCircuitBuilder(
         return graphView
     }
 
-	private fun addInput(name: String? = null): CircuitInOutView {
+	fun addInput(name: String? = null): CircuitInOutView {
 		val inout = CircuitInOutView(styleProvider, CircuitInOutImpl(eventBus, name, PortType.INPUT), eventBus)
 		graphView.add(inout)
 		return inout

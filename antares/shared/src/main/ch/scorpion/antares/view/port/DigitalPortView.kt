@@ -50,9 +50,10 @@ class DigitalPortView(
 	direction: Direction = Direction.EAST,
 	portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
 	length: Int? = null,
+	unconnectedLength: Int = length ?: LENGTH,
 	var predefinedConnectedLength: Int? = null,
 	showBitWidthAnnotation: Boolean = true
-) : AbstractPortView<DigitalSignal>(port, x, y, direction, portLabelPosition, length ?: LENGTH) {
+) : AbstractPortView<DigitalSignal>(port, x, y, direction, portLabelPosition, unconnectedLength, length ?: LENGTH) {
 
 	companion object {
 		const val LENGTH: Int = 2 * Look.SCALE
