@@ -29,6 +29,7 @@ abstract class AbstractPortView<T : Any>(
 	direction: Direction,
 	open var portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL,
 	unconnectedLength: Int,
+	length: Int = unconnectedLength,
 	override val connectable: Boolean = true
 ) : AbstractDrawable(), PortView<T>, Storable {
 
@@ -48,7 +49,7 @@ abstract class AbstractPortView<T : Any>(
 			update()
 		}
 
-	override var length: Int = unconnectedLength
+	override var length: Int = length
 		set(value) {
 			field = value
 			LOG.debug("AbstractPortView: setting length to '$value'")

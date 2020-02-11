@@ -39,7 +39,8 @@ open class NodeViewImpl<T : Any>(
 ) : AbstractNetViewElement<T>(styleProvider, currentSystemSpeedCategory, net), NodeView<T> {
 
 	/** Can be `null`during deserialization.*/
-	private var styling: NodeViewStyling? = null
+	protected var styling: NodeViewStyling = NetViewStyle.LINE.createNodeViewStyling(styleProvider, this)
+		private set
 
 	init {
 		if (netViewStyle != null) {
@@ -60,7 +61,7 @@ open class NodeViewImpl<T : Any>(
 	override fun handleNetViewStyleChanged() {
 		invalidate()
 		styling = netView!!.style.createNodeViewStyling(styleProvider, this)
-		styling!!.updateBoundingBox()
+		styling.updateBoundingBox()
 		invalidate()
 		validate()
 	}
@@ -129,14 +130,7 @@ open class NodeViewImpl<T : Any>(
 
 	/** ---- [Drawable] interface */
 
-	override val boundingBox: Rectangle2D get() = styling?.boundingBox ?: Rectangle2D()
-
-	override fun invalidate() {
-		if (styling != null) {
-			// Don't do invalidation while bootstraping.
-			super.invalidate()
-		}
-	}
+	override val boundingBox: Rectangle2D get() = styling.boundingBox
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
@@ -151,7 +145,7 @@ open class NodeViewImpl<T : Any>(
 	}
 
 	override fun draw(context: DrawContext) {
-		styling?.draw(context)
+		styling.draw(context)
 	}
 
 	override fun contains(x: Double, y: Double): Boolean {
@@ -173,7 +167,7 @@ open class NodeViewImpl<T : Any>(
 	override fun resolutionDone() {
 		super<AbstractNetViewElement>.resolutionDone()
 		invalidate()
-		styling?.updateBoundingBox()
+		styling.updateBoundingBox()
 	}
 
 	/** ---- [ConnectableView] */

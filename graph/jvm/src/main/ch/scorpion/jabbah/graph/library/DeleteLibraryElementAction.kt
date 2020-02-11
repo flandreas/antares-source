@@ -18,13 +18,21 @@ class DeleteLibraryElementAction(
 	companion object {
 		private const val BASE_RESOURCE_NAME = "graph.action.deleteBaseElement"
 		private const val CONTAINER_RESOURCE_NAME = "graph.action.deleteContainerElement"
+		private const val DIRECTORY_RESOURCE_NAME = "graph.action.deleteLibraryDirectory"
+	}
+
+	private val baseName: String get() = when (selectedItem) {
+		is BaseLibraryElement -> BASE_RESOURCE_NAME
+		is ContainerLibraryElement -> CONTAINER_RESOURCE_NAME
+		is LibraryDirectory -> DIRECTORY_RESOURCE_NAME
+		else -> throw IllegalStateException()
 	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		val libraryItem = libraryTreeView.getSelectedItem()
 		if (JOptionPane.showConfirmDialog(
 				SwingUtilities.getWindowAncestor(libraryTreeView),
-				Translations.getString("graph.action.deleteLibraryElement.question", libraryTreeView.getSelectedItem()!!),
+				Translations.getString("$baseName.question", libraryTreeView.getSelectedItem()!!),
 				name,
 				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 			val library = libraryItem!!.library!!
@@ -37,9 +45,6 @@ class DeleteLibraryElementAction(
 	}
 
 	override fun handleSelectionChanged() {
-		when (selectedItem) {
-			is BaseLibraryElement -> setBaseName(BASE_RESOURCE_NAME)
-			is ContainerLibraryElement -> setBaseName(CONTAINER_RESOURCE_NAME)
-		}
+		setBaseName(baseName)
 	}
 }

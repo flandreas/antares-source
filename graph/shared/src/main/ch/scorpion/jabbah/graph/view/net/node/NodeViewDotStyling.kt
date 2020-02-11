@@ -16,6 +16,8 @@ class NodeViewDotStyling(private val nodeView: NodeView<*>) : NodeViewStyling {
 
 	override val boundingBox: Rectangle2D = Rectangle2D()
 
+	override val isArea: Boolean get() = false
+
 	override fun updateBoundingBox() {
 		boundingBox.setFrame(
 			nodeView.location.x - HALF_SIZE, nodeView.location.y - HALF_SIZE,

@@ -3,10 +3,14 @@ package ch.scorpion.jabbah.graph.view.net.node
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
 
 interface NodeViewStyling {
 
 	val boundingBox: Rectangle2D
+
+	/** Returns `true` is this [EdgeViewStyling] draws large or wide areas, which is used for determining background colors. */
+	val isArea: Boolean
 
 	fun updateBoundingBox()
 
