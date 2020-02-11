@@ -25,7 +25,7 @@ class DeleteLibraryElementAction(
 		is BaseLibraryElement -> BASE_RESOURCE_NAME
 		is ContainerLibraryElement -> CONTAINER_RESOURCE_NAME
 		is LibraryDirectory -> DIRECTORY_RESOURCE_NAME
-		else -> throw IllegalStateException()
+		else -> BASE_RESOURCE_NAME
 	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
