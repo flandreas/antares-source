@@ -51,6 +51,7 @@ class GraphInfoPanel(graph: Graph) : JPanel() {
 
 	init {
 		buildUI()
+		textArea.text = Translations.getString("graph.action.statistics.calculating")
 		InvocationHandler.invoke {
 			textArea.text = GraphElementCollector().collect(graph)
 		}
