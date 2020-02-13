@@ -131,6 +131,8 @@ interface PortView<T : Any> : Drawable, Storable, SnappableX, SnappableY, Transp
 	 */
 	fun containsConnectionPoint(x: Double, y: Double): Boolean
 
+	fun containsConnectionPoint(p: Point2D): Boolean = containsConnectionPoint(p.x, p.y)
+
 	/** Sets the name of the [Port] that this [PortView] displays.*/
 	fun setPortName(name: String)
 

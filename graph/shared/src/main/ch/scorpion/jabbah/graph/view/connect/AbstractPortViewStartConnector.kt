@@ -77,9 +77,9 @@ abstract class AbstractPortViewStartConnector(
 			state("insideStartDrag") {
 				onEntry { displayPortViewHighlight(it!!) }
 				onExit { removePortViewHighlight(it!!) }
-				stayIf { mouseMoved(it) && insideStartPortView(it.location) }
+				stayIf { mouseMoved(it) && insideCurrentPortView(it.location) }
 				transitTo("sense") {
-					given { mouseMoved(it) && !insideStartPortView(it.location) }
+					given { mouseMoved(it) && !insideCurrentPortView(it.location) }
 				}
 				transitTo("insideStartAdjust") {
 					given { altPressed(it) }
@@ -98,9 +98,9 @@ abstract class AbstractPortViewStartConnector(
 			state("insideStartAdjust") {
 				onEntry { displayAlternativePortViewHighlight(it!!) }
 				onExit { removePortViewHighlight(it!!) }
-				stayIf { mouseMoved(it) && insideStartPortView(it.location) }
+				stayIf { mouseMoved(it) && insideCurrentPortView(it.location) }
 				transitTo("sense") {
-					given { mouseMoved(it) && !insideStartPortView(it.location) }
+					given { mouseMoved(it) && !insideCurrentPortView(it.location) }
 				}
 				transitTo("insideStartDrag") {
 					given { altReleased(it) }
@@ -305,14 +305,16 @@ abstract class AbstractPortViewStartConnector(
 
 	private fun insideStartPortView(location: Point2D): Boolean {
 		val pv = startVerticeView!!.getPortViewAtConnectionPoint(location)
-		if (pv != null && !pv.port.isConnected && portTypeCond.invoke(pv.port.portType)) {
-			startPortView = pv
-		}
-		else {
-			startPortView = null
+		startPortView = if (pv != null && !pv.port.isConnected && portTypeCond.invoke(pv.port.portType)) {
+			pv
+		} else {
+			null
 		}
 		return startPortView != null
 	}
+
+	private fun insideCurrentPortView(location: Point2D): Boolean =
+		startVerticeView!!.getPortViewAtConnectionPoint(location) === startPortView
 
 	private fun displayPortViewHighlight(context: EditInputEventContext, alternativeView: Boolean = false) {
 		displayPortViewHighlight(context, startVerticeView!!.getPortConnectionPoint(startPortView!!.port), alternativeView)
@@ -334,7 +336,7 @@ abstract class AbstractPortViewStartConnector(
 
 	private fun beginConnecting(context: EditInputEventContext) {
 		createEdgeView(context.drawingView(), startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
-		edgeView!!.model!!.connect(startPortView!!.port as Port<Any>)
+		edgeView!!.model.connect(startPortView!!.port as Port<Any>)
 		connectEdgeViewToStartPort()
 	}
 
