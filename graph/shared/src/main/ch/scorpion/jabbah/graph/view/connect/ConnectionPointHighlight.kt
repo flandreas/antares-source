@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.DrawProperties
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangularUnzoomable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
@@ -40,7 +42,7 @@ object ConnectionPointHighlighter {
 			portViewHighlight = DrawModule.properties.get<ConnectionPointHighlight>(PortView.PROP_HIGHLIGHT)
 			portViewHighlight!!.location = location
 			portViewHighlight!!.alternativeView = alternativeView
-			view.ghostContainer.add(portViewHighlight!!)
+			getHighlightContainer(view).add(portViewHighlight!!)
 		} else {
 			portViewHighlight!!.location = location
 		}
@@ -51,11 +53,13 @@ object ConnectionPointHighlighter {
 	fun removePortViewHighlight(view: DrawingView<*>) {
 		if (portViewHighlight != null) {
 			LOG.trace("removePortViewHighlight")
-			view.ghostContainer.remove(portViewHighlight!!)
-			view.ghostContainer.validate()
+			getHighlightContainer(view).remove(portViewHighlight!!)
+			getHighlightContainer(view).validate()
 			portViewHighlight = null
 		}
 	}
+
+	private fun getHighlightContainer(view: DrawingView<*>): DrawableContainer<Drawable> = view.animationContainer
 }
 
 /**
@@ -67,10 +71,9 @@ class ConnectionPointHighlightCircle : AbstractRectangularUnzoomable(SIZE_HALF),
 		/** The name of the [Color] property in [DrawProperties] */
 		const val PROP_COLOR = "graph.view.isPort.highlight.color"
 		const val SIZE_HALF = 6.0
-		val STROKE = Stroke()
 	}
 
-	override val lineWidth: Double get() = STROKE.width.toDouble()
+	override val lineWidth: Double get() = 0.0
 
 	override var alternativeView: Boolean = false
 		set(value) {
@@ -93,13 +96,11 @@ class ConnectionPointHighlightCircle : AbstractRectangularUnzoomable(SIZE_HALF),
 
 	private fun drawNormalView(context: DrawContext) {
 		val rect = getViewRectangle()
-		context.g.drawOval(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
 		context.g.fillOval(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
 	}
 
 	private fun drawAlternativeView(context: DrawContext) {
 		val rect = getViewRectangle()
-		context.g.drawRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
 		context.g.fillRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
 	}
 }
