@@ -30,7 +30,7 @@ class EdgeToPortConnector(
 	/** The index of the segment in [branchedEdgeView] at which splitting takes place.*/
 	private var branchedSegmentIndex: Int? = null
 
-	private var splitResult: SplitEdgeViewResult<*>? = null
+	private var splitCommand: Command? = null
 
 	override val handler = StateMachineInputEventHandler(
 
@@ -56,7 +56,7 @@ class EdgeToPortConnector(
 				transitTo("drag") {
 					given { mousePressed(it) }
 					onTransit {
-						beginConnecting(it!!.drawingView())
+						beginConnecting(it!!)
 						removePortViewHighlight(it)
 					}
 				}
@@ -125,17 +125,17 @@ class EdgeToPortConnector(
 		return result
 	}
 
-	private fun beginConnecting(view: DrawingView<Drawing<Component>>) {
-		createEdgeView(view, Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.model as Net<Any>)
-		ConnectionPointHighlighter.removePortViewHighlight(view)
+	private fun beginConnecting(context: EditInputEventContext) {
+		createEdgeView(context.drawingView(), Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.model as Net<Any>)
+		removePortViewHighlight(context)
+		splitCommand = createSplitEdgeViewCommand(context.editor)
+		splitCommand!!.execute()
+	}
 
-		splitResult = connectService.split(
-			view.drawing as GraphView<GraphElementView<*>>,
-			branchedEdgeView!! as EdgeView<Any>,
-			branchedSegmentIndex!!,
-			edgeView!!,
-			EdgeViewEndpointType.ORIGIN,
-			null)
+	override fun cancel(editor: Editor) {
+		splitCommand?.undo()
+		ConnectionPointHighlighter.removePortViewHighlight(editor.view)
+		reset()
 	}
 
 	private fun completeConnecting(context: EditInputEventContext) {
@@ -143,7 +143,8 @@ class EdgeToPortConnector(
 			connectService.connectToDestination(edgeView!!, targetPortView!!.createConnection() as Connection<Any>)
 		}
 
-		context.editor.commandManager.register(createSplitEdgeViewCommand(context.editor))
+		context.editor.commandManager.register(splitCommand!!)
+		splitCommand = null
 	}
 
 	private fun createSplitEdgeViewCommand(editor: Editor): Command {
@@ -156,6 +157,6 @@ class EdgeToPortConnector(
 			newEdgeView = edgeView!!,
 			newEdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,
 			targetPortView = targetPortView,
-			nodeView = splitResult!!.nodeView)
+			nodeView = null)
 	}
 }

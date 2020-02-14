@@ -41,6 +41,8 @@ class SplitEdgeViewCommand(
 	}
 
 	override fun registered() {
-		result = SplitEdgeViewResult(newEdgeView = newEdgeView as EdgeView<Any>, nodeView = nodeView as NodeView<Any>, tailEdgeView = newEdgeView)
+		if (result == null) {
+			result = SplitEdgeViewResult(newEdgeView = newEdgeView as EdgeView<Any>, nodeView = nodeView as NodeView<Any>, tailEdgeView = newEdgeView)
+		}
 	}
 }

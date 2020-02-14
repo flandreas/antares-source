@@ -38,7 +38,7 @@ abstract class AbstractCreateEdgeViewConnector(
 		view.selectionManager.select(edgeView!!)
 	}
 
-	protected fun cancel(editor: Editor) {
+	protected open fun cancel(editor: Editor) {
 		edgeView?.let {
 			it.unconnectFromOrigin()
 			it.unconnectFromDestination()
