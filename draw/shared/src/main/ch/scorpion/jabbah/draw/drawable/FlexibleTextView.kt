@@ -35,7 +35,7 @@ class FlexibleTextView(
 		private val LOG by logger(FlexibleTextView::class)
 
 		/** The default width of a [FlexibleTextView] if none is specified upon construction.*/
-		private const val DEFAULT_WIDTH = 300
+		private const val DEFAULT_WIDTH = 200
 
 		/** The horizontal inset between the surrounding rectangle and the text.  */
 		private const val INSET_X = 10

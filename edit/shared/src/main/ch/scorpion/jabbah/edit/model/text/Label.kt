@@ -29,7 +29,7 @@ class Label(
 	horizontalAlignment: HorizontalAlignment = DEFAULT_HORIZONTAL_ALIGNMENT,
 	verticalAlignment: VerticalAlignment = DEFAULT_VERTICAL_ALIGNMENT,
 	location: Point2D = Point2D.ZERO,
-	rotationDisplayStrategy: RotationDisplayStrategy = Label.RotationDisplayStrategy.IGNORE,
+	rotationDisplayStrategy: RotationDisplayStrategy = RotationDisplayStrategy.IGNORE,
 	val rotation: Rotation = Rotation.R0,
 	ownerRotation: Rotation = Rotation.R0
 ) : AbstractDrawable() {

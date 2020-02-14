@@ -79,6 +79,7 @@ class ROMView(
 	private val label = Label(
 		font = font,
 		text = buildLabelText(),
+		rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF,
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.CENTER
 	)
@@ -240,6 +241,7 @@ class ROMView(
 
 	override fun rotationChanged(newRotation: Rotation) {
 		super.rotationChanged(newRotation)
+		label.ownerRotation = rotation
 		updateGeometry()
 	}
 

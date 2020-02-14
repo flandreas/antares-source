@@ -76,6 +76,7 @@ class RAMView(
 	private val label = Label(
 		font = font,
 		text = buildLabelText(),
+		rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF,
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.CENTER,
 		location = Point2D(x + width / 2, y + LABEL_VERTICAL_FACTOR * height))
@@ -250,6 +251,7 @@ class RAMView(
 
 	override fun rotationChanged(newRotation: Rotation) {
 		super.rotationChanged(newRotation)
+		label.ownerRotation = rotation
 		updateGeometry()
 	}
 
