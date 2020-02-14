@@ -73,4 +73,31 @@ Antares stellt deshalb eine solche Teilschaltung in einem "verschleierten" Zusta
 
 === Simulations-Algorithmus
 
-TODO
+Der Algorithmus von Antares für die Simulation von Schaltungen ist normalerweise nicht etwas, das Du in allen Einzelheiten verstehen musst, um Antares zu verwenden. Deshalb werden in diesem Abschnitt lediglich die Grundlagen erklärt.
+
+==== Signalwerte
+
+Die Simulation von Antares verwendet Signale mit vier möglichen Werten "0", "1", "Undefiniert" (hochohmig)" und "Fehler".
+
+Andere Simulationen verwenden weitere Signale wie z.B. "0/1 (ansteigende Flanke)" und "1/0 (absteigende Flanke)". Für solche erweiterten Modelle hat sich in Antares bis jetzt noch kein Bedarf gezeigt.
+
+==== Laufzeit
+
+Die Simulation verwendet die Laufzeit, die für jede Komponente und jede Leitung definiert ist. Dies ist die Zeit (in Nanosekunden), die eine Komponente braucht, um ein geändertes Eingangssignal zu verarbeiten und ein entsprechendes Signal an einem oder mehreren Ausgängen zu erzeugen.
+
+Der Simulations-Algorithmus funktioniert ereignisbasiert. Immer wenn eine Komponente eine Änderung eines Eingangswertes feststellt, entsteht im Simulation ein neuer Eintrag in einer Ereignis-Liste (Event Queue), der zur Ausführung nach Ablauf der Laufzeit der Komponente vorgesehen ist. Nachdem diese Zeit verstrichen ist, fordert der Simulator die Komponente auf, den Wert ihrer Ausgägne neu zu berechnen. Für diese Berechnung verwendet die Komponente die Signale, die **zu diesem Zeitpunkt** an ihren Eingängen vorliegen.
+
+==== Einschalt-Verhalten
+
+Antares enthält noch keinen Mechanismus, mit dem das Einschaltverhalten vom Schaltungen und Komponenten beeinflusst werden kann. Beim Starten der Simulation wird jede Komponente aufgefordert, ihre Ausgänge neu zu berechnen. Dabei wird ebenfalls die Laufzeit berücksichtigt. Wenn zum Zeitpunkt der Berechnung noch kein Signal von anderen Komponenten an den Eingängen eingetroffen ist, ist es der Komponente überlassen, wie sie beim Start damit umgehen will. Die meisten Komponenten setzen dann die Eingänge initial auf den Wert 0, was dazu führt, dass ein unverbundenes Und-Gatter beim Start den Ausgangswert 0 und ein unverbundenes Nicht-Gatter den Ausgangswert 1 hat.
+
+Dieses Verhalten muss beim Entwurf von sequentiellen Schaltungen berücksichtigt werden. Ohne weitere Massnahmen führt die Funktionsweise des Simulations-Algorithmus und das Einschalt-Verhalten von Antares dazu, dass ein SR-Latch mit Nicht-Oder-Gattern beim Einschalten einen illegalen Zustand einnimmt.
+
+image::../../img/simulation/sr-latch.png[Leitungsfarben, 400,align="center"]
+
+Reale Latches zeigen dieses Verhalten nicht, da geringfügige Laufzeit-Unterschiede der einzelnen Gatter dazu führen, dass die Schaltung beim Einschalten in einen stabilen und korrekten Zustand kippen.
+
+In Antares gibt es zwei Ansätze, in der Simulation dasselbe Verhalten wie bei realen Schaltungen zu erreichen.
+
+* **Unterschiedliche Laufzeiten**: Im obenstehenden Beispiel haben beide Nicht-Oder-Gatter dieselbe Lauzeit, z.B. 10 ns. Wenn für die beiden Gatter unterschiedliche Laufzeiten definiert werden (z.B. 8 ns für das obere Gatter und 11 ns für das untere Gatter), kippt die Schaltung beim Start in einen stabilen, korrekten Zustand. Die Latches und Flipflops der Standard-Bibliothek von Antares sind nach diesem Ansatz aufgebaut.
+* **Rauschen**: Mit der Menü-Option menu:Simulation[Rauschen, Zufälliges Rauschen] kann der Simulator angewiesen werden, die Laufzeiten der Komponenten um einen zufälligen Wert zu verändern. Mit dieser Option nimmt obenstehendes SR-Latch beim Start der Simulation (evtl. nach einer kurzen Einschwing-Phase) einen korrekten Zustand ein, selbst wenn beide Gatter dieselbe Laufzeit konfiguriert haben.
