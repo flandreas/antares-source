@@ -24,7 +24,7 @@ class ScenarioStepImplBeanInfo : AbstractBeanInfo<ScenarioStepImpl>() {
 	override fun addProperties(bean: ScenarioStepImpl, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		name.bind(editor, { bean.name.translation }, { bean.name.translation = it!! })
+		name.bind(editor, { bean.name.translation }, { bean.name.translation = it!! }, true, { false })
 		description.bind(editor, { bean.description.translation }, { bean.description.translation = it!! })
 		condition.bind(editor, { bean.conditionProperty }, { bean.conditionProperty = it!! })
 		highlightIds.bind(editor, { bean.highlightIds }, { bean.highlightIds = it })

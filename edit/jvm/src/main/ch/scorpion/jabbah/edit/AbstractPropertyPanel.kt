@@ -168,6 +168,9 @@ abstract class AbstractPropertyPanel(
 			for (row in 0 until table.rowCount) {
 				var rowHeight = table.rowHeight
 
+				val label = table.getCellRenderer(row, 0) as JLabel
+				label.verticalAlignment = JLabel.TOP
+
 				for (column in 0 until table.columnCount) {
 					val comp = table.prepareRenderer(table.getCellRenderer(row, column), row, column)
 					rowHeight = max(rowHeight, comp.preferredSize.height)
