@@ -71,6 +71,8 @@ class GraphEditPanel(
 
 	fun dispose() {
 		sidebarSplitPane.dispose()
+		scenarioPanel.dispose()
+		usecasePanel.dispose()
 	}
 
 	fun setGraphView(newGraphView: GraphView<GraphElementView<*>>) {

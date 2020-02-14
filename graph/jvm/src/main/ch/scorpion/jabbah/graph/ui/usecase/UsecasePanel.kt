@@ -11,6 +11,7 @@ import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.JPanel
 import javax.swing.JScrollPane
+import javax.swing.JSplitPane
 
 class UsecasePanel(
 	editor: Editor,
@@ -18,7 +19,10 @@ class UsecasePanel(
 	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel() {
 
+	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+
 	private val treeView = UsecaseTreeView(eventBus)
+
 	private val propertyPanel = UsecasePropertyPanel(editor, sheetFactory, eventBus)
 
 	var graphView: GraphView<*> = editor.drawing as GraphView<*>
@@ -37,6 +41,9 @@ class UsecasePanel(
 
 		buildUI()
 	}
+	fun dispose() {
+		BaseModule.settings.set("usecasePanel.splitPos", splitPane.dividerLocation)
+	}
 
 	fun clearSelection() {
 		treeView.selectionModel.clearSelection()
@@ -44,12 +51,18 @@ class UsecasePanel(
 
 	private fun buildUI() {
 		layout = BorderLayout()
+
 		val treeViewScrollPane = JScrollPane(
 			treeView,
 			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
-		add(treeViewScrollPane, BorderLayout.CENTER)
-		add(propertyPanel, BorderLayout.SOUTH)
+
+		splitPane.border = null
+		splitPane.add(treeViewScrollPane)
+		splitPane.add(propertyPanel)
+		splitPane.dividerLocation = BaseModule.settings.getInt("usecasePanel.splitPos", 400)
+
+		add(splitPane, BorderLayout.CENTER)
 	}
 }
 
