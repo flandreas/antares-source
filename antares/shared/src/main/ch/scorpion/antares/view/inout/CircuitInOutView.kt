@@ -593,8 +593,7 @@ class CircuitInOutView(
 					validate()
 				} else if (context.keyEvent!!.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
 					if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
-						val newWord = (model.signal as Word).flip(numberView!!.focusIndex!!)
-						model.setIncomingSignal(newWord, context.signalHandler)
+						toggleFocusBitWithEnter(context.signalHandler)
 					}
 				} else if (context.keyEvent!!.key == KeyEvent.VK_DELETE && portType == PortType.INOUT && checkTopLevelKey()) {
 					val undefined = Word.undefined(BitWidth.of(signalRepresentation.bits()))
@@ -611,6 +610,24 @@ class CircuitInOutView(
 				}
 			}
 			return null
+		}
+
+		override fun keyReleased(context: ActorInteractionContext): ActorInteractionHandler? {
+			if (toggle) {
+				return null
+			}
+			if (numberView!!.focusIndex != null) {
+				if (context.keyEvent!!.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
+					toggleFocusBitWithEnter(context.signalHandler)
+				}
+			}
+			return null
+		}
+
+		private fun toggleFocusBitWithEnter(signalHandler: SignalHandler) {
+			val newWord = (model.signal as Word).flip(numberView!!.focusIndex!!)
+			model.setIncomingSignal(newWord, signalHandler)
+
 		}
 
 		private fun checkTopLevelKey(): Boolean {
