@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.graph.project.CloseProjectAction
+import ch.scorpion.jabbah.graph.project.DefaultContainerLibraryElementAction
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.project.ProjectPropertiesAction
 import javax.swing.JCheckBoxMenuItem
@@ -28,8 +29,9 @@ class LibraryTreeViewController(private val view: LibraryTreeView, type: Library
 
 	private val desktopPopupMenu = JPopupMenu()
 	private val directoryPopupMenu = JPopupMenu()
-	private val containerPopupMenu = JPopupMenu()
+	private val projectContainerPopupMenu = JPopupMenu()
 	private val projectRootMenu = JPopupMenu()
+	private val libraryContainerPopupMenu = JPopupMenu()
 	private val libraryRootMenu = JPopupMenu()
 	private val basePopupMenu = JPopupMenu()
 
@@ -43,7 +45,13 @@ class LibraryTreeViewController(private val view: LibraryTreeView, type: Library
 			is Library -> libraryRootMenu
 			is LibraryFolder -> directoryPopupMenu
 			is LibraryDirectory -> directoryPopupMenu
-			is ContainerLibraryElement -> containerPopupMenu
+			is ContainerLibraryElement -> {
+				if ((treeNode.userObject as ContainerLibraryElement).library is Project) {
+					projectContainerPopupMenu
+				} else {
+					libraryContainerPopupMenu
+				}
+			}
 			is BaseLibraryElement -> basePopupMenu
 			is String -> desktopPopupMenu
 			else -> null
@@ -89,9 +97,12 @@ class LibraryTreeViewController(private val view: LibraryTreeView, type: Library
 		libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
 		libraryRootMenu.add(ActionWrapperSwing(LibraryPropertiesAction()))
 
-		containerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
-		containerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(DefaultContainerLibraryElementAction(view))))
-		containerPopupMenu.add(ActionWrapperSwing(DuplicateGraphAction(view)))
+		projectContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
+		projectContainerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(DefaultContainerLibraryElementAction(view))))
+		projectContainerPopupMenu.add(ActionWrapperSwing(DuplicateGraphAction(view)))
+
+		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(DuplicateGraphAction(view)))
 
 		basePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 	}
@@ -131,7 +142,7 @@ class LibraryTreeViewController(private val view: LibraryTreeView, type: Library
 		libraryRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 		libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
 
-		containerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 
 		basePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 	}

@@ -1,13 +1,16 @@
-package ch.scorpion.jabbah.graph.library
+package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.library.LibraryTreeView
 
 /**
  * An [Action] for marking a [ContainerLibraryElement] as the default one, i.e. the one to be
- * opened when the [Library] is loaded.
+ * opened when the [Project] is loaded.
  */
 class DefaultContainerLibraryElementAction(
 	libraryTreeView: LibraryTreeView,
