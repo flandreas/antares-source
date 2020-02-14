@@ -26,6 +26,9 @@ class ToggleApplicationModeAction(
 				ApplicationMode.EDIT
 			else
 				ApplicationMode.EXECUTE)
+
+		// A Graph design problem might have prohibited execution
+		updateState()
 	}
 
 	private fun updateState() {
