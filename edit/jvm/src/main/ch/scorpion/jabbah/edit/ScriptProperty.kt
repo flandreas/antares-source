@@ -16,11 +16,19 @@ class ScriptPropertyRenderer : DefaultTableCellRenderer() {
 
 	companion object {
 		val LABEL_TEXT = Translations.getString("edit.property.script.name")
+
+		fun getText(property: ScriptProperty): String {
+			return if (property.isEmpty()) {
+				""
+			} else {
+				LABEL_TEXT
+			}
+		}
 	}
 
 	override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
 		val label = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
-		label.text = LABEL_TEXT
+		label.text = Companion.getText(value as ScriptProperty)
 		return label
 	}
 }
@@ -40,7 +48,7 @@ class ScriptPropertyEditor(private val propertyName: String) : AbstractPropertyE
 		private val FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
 	}
 
-	private val label = JLabel(ScriptPropertyRenderer.LABEL_TEXT)
+	private val label = JLabel()
 	private val button = JButton()
 	private var script: ScriptProperty = ScriptProperty()
 
@@ -56,6 +64,7 @@ class ScriptPropertyEditor(private val propertyName: String) : AbstractPropertyE
 	override fun setValue(value: Any?) {
 		LOG.debug("set value $value")
 		script = value as ScriptProperty
+		label.text = ScriptPropertyRenderer.getText(script)
 	}
 
 	private fun buildUI() {
