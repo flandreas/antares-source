@@ -15,6 +15,10 @@ data class CompositeColor(
 	val textColor: Color = foregroundColor
 ) {
 
+	companion object {
+		private const val BACKGROUND_DERIVATION_FACTOR = 1 / 12f
+	}
+
 	val disabledTextColor: Color
 		get() = Color(
 			ceil((backgroundColor.red + textColor.red) / 2.0).toInt(),
@@ -41,5 +45,22 @@ data class CompositeColor(
 	fun withAlpha(alpha: Int): CompositeColor = CompositeColor(foregroundColor.withAlpha(alpha), backgroundColor.withAlpha(alpha), textColor.withAlpha(alpha))
 
 	fun withForegroundLikeBackground(): CompositeColor = CompositeColor(backgroundColor, backgroundColor, textColor)
+
+	fun deriveBackgroundTowardsForegroundColor(): CompositeColor {
+		return CompositeColor(
+			foregroundColor = foregroundColor,
+			backgroundColor = backgroundColor.between(foregroundColor, BACKGROUND_DERIVATION_FACTOR),
+			textColor = textColor
+		)
+	}
+
+	fun deriveBackgroundTowardsTextColor(): CompositeColor {
+		return CompositeColor(
+			foregroundColor = foregroundColor,
+			backgroundColor = backgroundColor.between(textColor, BACKGROUND_DERIVATION_FACTOR),
+			textColor = textColor
+		)
+	}
+
 
 }

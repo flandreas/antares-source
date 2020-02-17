@@ -10,9 +10,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
@@ -84,7 +82,17 @@ class ConstantView(
 	override fun drawImpl(context: DrawContext) {
 		// The current look doesn't have a background and therefore doesn't need a shadow
 		super.drawImpl(context)
+		drawSimpleBackground(context)
 		drawNumberView(context, false)
+	}
+
+	private fun drawSimpleBackground(context: DrawContext) {
+		val oldColor = context.g.color
+		val color = Themes.get<DrawTheme>().background.color.deriveBackgroundTowardsTextColor()
+		val d = 0
+		context.g.color = context.choose(color).backgroundColor
+		context.g.fillRect(xInt - d, yInt - d, widthInt - 2 * d, heightInt - 2 * d)
+		context.g.color = oldColor
 	}
 
 	private fun drawBody(context: DrawContext) {

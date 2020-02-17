@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.draw.graphics
 
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.round
 
 /**
  * Represents a color with RGB and alpha channel values.
@@ -41,11 +42,12 @@ data class Color(val red: Int, val green: Int, val blue: Int, val alpha: Int) {
 			min((blue / FACTOR).toInt(), 255))
 	}
 
-	fun between(other: Color): Color {
+	fun between(other: Color, factor: Float = 0.5f): Color {
 		return Color(
-			(red + other.red) / 2,
-			(green + other.green) / 2,
-			(blue + other.blue) / 2)
+			round((red + (other.red - red) * factor)).toInt().coerceIn(0..255),
+			round((green + (other.green - green) * factor)).toInt().coerceIn(0..255),
+			round((blue + (other.blue - blue) * factor)).toInt().coerceIn(0..255)
+		)
 	}
 
 	/** Returns a new [Color] with the same RGB values as this [Color], but with the specified alpha value.*/
