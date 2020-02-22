@@ -57,4 +57,7 @@ Je nach Skripting-Anwendungen verwendet Antares verschiedene Wrapper-Funktionen 
 
 === Skripting-Anwendungen
 
-TODO
+Die verschiedenen Anwendungen von Skripting werden in eigenen Kapiteln beschrieben.
+
+* <<circuit-scripting.adoc#, Skriting in Schaltungen>>
+* <<scenario-scripting.adoc#, Skripting in Szenarien>>

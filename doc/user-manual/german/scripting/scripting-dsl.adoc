@@ -18,7 +18,7 @@ Used in all `Scenario` use cases. The statements in the table below are accessib
 circuit.name();
 ----
 
-`input(<Name>)`:: Returns the signal of the `GraphInput` with the specified name as as string.
+`input(<Name>)`:: Returns the signal of the `GraphInput` with the specified name as as hex string.
 +
 .Example
 [source,javascript]
@@ -26,7 +26,7 @@ circuit.name();
 return circuit.input("I") == "1";
 ----
 
-`output(<Name>)`:: Returns the signal of the `GraphOutput` with the specified name as a string.
+`output(<Name>)`:: Returns the signal of the `GraphOutput` with the specified name as a hex string.
 +
 .Example
 [source,javascript]
@@ -81,7 +81,7 @@ below are accessible as functions of the object `elem`.
 val id = elem.id();
 ----
 
-`input()`:: Returns the signal of the first (or one and only) `InputPort` as a string.
+`input()`:: Returns the signal of the first (or one and only) `InputPort` as a hex string.
 +
 .Example
 [source,javascript]
@@ -91,7 +91,7 @@ if (elem.input() == "1") {
 }
 ----
 
-`input(<name:String>)`:: Returns the signal of the `InputPort` with the specified name as a string.
+`input(<name:String>)`:: Returns the signal of the `InputPort` with the specified name as a hex string.
 +
 .Example
 [source,javascript]
@@ -101,7 +101,7 @@ if (elem.input("CLK") == "0") {
 }
 ----
 
-`input(<ID:Int>)`:: Returns the signal of the `InputPort` with the specified ID as a string.
+`input(<ID:Int>)`:: Returns the signal of the `InputPort` with the specified ID as a hex string.
 +
 .Example
 [source,javascript]
@@ -141,7 +141,7 @@ if (elem.portRaised("C")) {
 }
 ----
 
-`output()`:: Returns the signal of the first (or one and only) `OutputPort` as a string.
+`output()`:: Returns the signal of the first (or one and only) `OutputPort` as a hex string.
 +
 .Example
 [source,javascript]
@@ -151,7 +151,7 @@ if (elem.output() == "1") {
 }
 ----
 
-`output(<ID:Int>)`:: Returns the signal of the `OutputPort` with the specified ID as a string.
+`output(<ID:Int>)`:: Returns the signal of the `OutputPort` with the specified ID as a hex string.
 +
 .Example
 [source,javascript]
