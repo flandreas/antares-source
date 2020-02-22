@@ -56,6 +56,18 @@ class ContainerPanel(
 
 	private val applicationDataEventHandler: (ApplicationDataEvent) -> Unit = { handle(it) }
 
+	var active: Boolean = false
+		set(value) {
+			if (field != value) {
+				field = value
+				// Update the UI of the JTree in order to recalculate the width of the TreeRenderer's JLabels,
+				// which are obviously cached by the JTree's UIManager. The tree nodes display the names of domain object,
+				// and these names might have been changed while the ContainerPanel wasn't active
+				treeView.updateUI()
+				editor.active = value
+			}
+		}
+
 	init {
 		eventBus.register(ApplicationDataEvent::class, applicationDataEventHandler)
 
@@ -79,14 +91,6 @@ class ContainerPanel(
 	fun createToolbars(separator: Boolean = true): ImmutableList<ToolBar> = listOf(
 		createToolbar(editor, separator),
 		createSettingsToolBar()).toImmutableList()
-
-	/** Notifies this [ContainerPanel] that is has been activated and that it is now visible.*/
-	fun activated() {
-		// Update the UI of the JTree in order to recalculate the width of the TreeRenderer's JLabels,
-		// which are obviously cached by the JTree's UIManager. The tree nodes display the names of domain object,
-		// and these names might have been changed while the ContainerPanel wasn't active
-		treeView.updateUI()
-	}
 
 	/**
 	 * Sets the data to be displayed by this [ContainerPanel].

@@ -55,7 +55,7 @@ class EditSubGraphVerticeViewAction(
 
 		UiUtil.invokeLater(Runnable {
 			containerPanel.editor.view.navigator.fitMaxNormal()
-			containerPanel.activated()
+			containerPanel.active = true
 		})
 
 		if (EditSubGraphVerticeViewPanel.showAsDialog(

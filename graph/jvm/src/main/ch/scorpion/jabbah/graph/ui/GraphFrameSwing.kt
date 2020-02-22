@@ -79,6 +79,7 @@ class GraphFrameSwing(
 
 			displayedView = GraphFrame.DisplayedView.Desktop
 			viewManager.activeView = graphPanel.editor.view
+			containerPanel.active = false
 			eventBus.post(GraphFrameEvent(this, displayedView))
 		}
 	}
@@ -102,7 +103,7 @@ class GraphFrameSwing(
 
 			displayedView = GraphFrame.DisplayedView.Container
 			viewManager.activeView = containerPanel.editor.view
-			containerPanel.activated()
+			containerPanel.active = true
 			eventBus.post(GraphFrameEvent(this, displayedView))
 		}
 	}
