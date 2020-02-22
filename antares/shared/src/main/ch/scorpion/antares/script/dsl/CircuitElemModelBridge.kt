@@ -3,7 +3,6 @@ package ch.scorpion.antares.script.dsl
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.script.AntaresScriptGateway
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -37,11 +36,11 @@ open class CircuitElemModelBridge(
 
 	/** Returns the input signal at the first (or one and only) [InputPort] of this circuit element as a [Word].*/
 	@Suppress("unused")
-	fun inputWort(): Word = vertice.getInput<DigitalSignal>().getIncomingSignal() as Word
+	fun inputWord(): Word = Word(vertice.getInput<DigitalSignal>().getIncomingSignal() as ch.scorpion.antares.model.signal.Word)
 
 	/** Returns the input signal at the [InputPort] with the specified name as a [Word].*/
 	@Suppress("unused")
-	fun inputWord(name: String): Word = vertice.getInput<DigitalSignal>(name).getIncomingSignal() as Word
+	fun inputWord(name: String): Word = Word(vertice.getInput<DigitalSignal>(name).getIncomingSignal() as ch.scorpion.antares.model.signal.Word)
 
 	/** Returns the input signal at the [InputPort] with the specified ID as a [String].*/
 	fun input(id: Int): String = vertice.getInput<DigitalSignal>(id).getIncomingSignal().toString()
@@ -58,15 +57,15 @@ open class CircuitElemModelBridge(
 
 	/** Returns the output signal of the first (or one and only) [OutputPort] as a [Word].*/
 	@Suppress("unused")
-	fun outputWord(): Word = vertice.getOutput<DigitalSignal>().getOutgoingSignal() as Word
+	fun outputWord(): Word = Word(vertice.getOutput<DigitalSignal>().getOutgoingSignal() as ch.scorpion.antares.model.signal.Word)
 
 	/** Returns the output signal at the [OutputPort] with the specified ID as a [Word].*/
 	@Suppress("unused")
-	fun outputWord(id: Int): Word = vertice.getOutput<DigitalSignal>(id).getOutgoingSignal() as Word
+	fun outputWord(id: Int): Word = Word(vertice.getOutput<DigitalSignal>(id).getOutgoingSignal() as ch.scorpion.antares.model.signal.Word)
 
 	/** Returns the output signal at the [OutputPort] with the specified name as a [Word].*/
 	@Suppress("unused")
-	fun outputWord(name: String): Word = vertice.getOutput<DigitalSignal>(name).getOutgoingSignal() as Word
+	fun outputWord(name: String): Word = Word(vertice.getOutput<DigitalSignal>(name).getOutgoingSignal() as ch.scorpion.antares.model.signal.Word)
 
 	/** Sets the output signal of the first (or one and only) [OutputPort] to the specified hex value.*/
 	@Suppress("unused")
@@ -87,41 +86,41 @@ open class CircuitElemModelBridge(
 
 	@Suppress("unused")
 	fun setOutputWord(word: Word) {
-		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(word, signalHandler!!)
+		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(word.word, signalHandler!!)
 	}
 
 	@Suppress("unused")
 	fun setOutputWord(name: String, word: Word) {
-		vertice.getOutput<DigitalSignal>(name).setOutgoingSignalBuffered(word, signalHandler!!)
+		vertice.getOutput<DigitalSignal>(name).setOutgoingSignalBuffered(word.word, signalHandler!!)
 	}
 
 	@Suppress("unused")
 	fun setOutputWord(id: Int, word: Word) {
 		val outputPort = vertice.getOutput<DigitalSignal>(id) as DigitalPort
-		outputPort.setOutgoingSignalBuffered(word, signalHandler!!)
+		outputPort.setOutgoingSignalBuffered(word.word, signalHandler!!)
 	}
 
 	/** Sets the output signal of the first (or one and only) [OutputPort] to the specified boolean value.*/
 	@Suppress("unused")
 	fun setOutputBit(bit: Boolean) {
-		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(Word.of(bit), signalHandler!!);
+		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(ch.scorpion.antares.model.signal.Word.of(bit), signalHandler!!);
 	}
 
 	@Suppress("unused")
 	fun setOutputBit(name: String, bit: Boolean) {
 		val outputPort = vertice.getOutput<DigitalSignal>(name) as DigitalPort
-		outputPort.setOutgoingSignalBuffered(Word.of(bit), signalHandler!!)
+		outputPort.setOutgoingSignalBuffered(ch.scorpion.antares.model.signal.Word.of(bit), signalHandler!!)
 	}
 
 	/** Checks whether any [Bit] in the specified [Word] is undefined.*/
 	@Suppress("unused")
 	fun anyBitUndefined(word: Word): Boolean {
-		return word.containsUndefinedBit()
+		return word.word.containsUndefinedBit()
 	}
 
 	private fun setOutput(port: OutputPort<DigitalSignal>, hexValue: String) {
 		val digitalPort = port as DigitalPort
-		val signal = Word.of(digitalPort.bitWidth, hexValue)
+		val signal = ch.scorpion.antares.model.signal.Word.of(digitalPort.bitWidth, hexValue)
 		digitalPort.setOutgoingSignalBuffered(signal, signalHandler!!)
 	}
 }

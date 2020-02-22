@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.scenario
 
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.DrawingView
@@ -85,9 +86,19 @@ class ScenarioStepImpl(
 
 	override val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
 		get() = { v, sg ->
-			if (StringUtils.isNotEmpty(conditionScript)) sg.condition(
-				Script(code = conditionScript!!, origin = "ScenarioStep '$name'", context = "condition"), v) else false
+			if (StringUtils.isNotEmpty(conditionScript)) {
+				sg.condition(wrappedConditionScript, v)
+			}
+			else  {
+				false
+			}
 		}
+
+	private val wrappedConditionScript: Script get() =
+		Script(
+			code = conditionScript!!,
+			origin = "${Translations.getString("scenarioStep.issueOrigin.name")} '$name'",
+			context = Translations.getString("graph.property.scenario.condition.name"))
 
 	override fun dispose() {
 		// empty
@@ -97,23 +108,35 @@ class ScenarioStepImpl(
 		if (StringUtils.isNotEmpty(onEntryScript)) {
 			try {
 				LOG.debug("Activate ScenarioStep '$name'")
-				scriptGateway.exec(Script(code = onEntryScript!!, origin = "ScenarioStep '$name'", context = "onEntry"), view)
+				scriptGateway.exec(wrappedOnEntryScript, view)
 			} catch (e: Throwable) {
 				LOG.error("Error in onEntry script of ScenarioStep '$name'")
 			}
 		}
 	}
 
+	private val wrappedOnEntryScript: Script get() =
+		Script(
+			code = onEntryScript!!,
+			origin = "${Translations.getString("scenarioStep.issueOrigin.name")} '$name'",
+			context = Translations.getString("graph.property.scenario.onEntry.name"))
+
 	override fun passivate(view: DrawingView<GraphView<GraphElementView<*>>>) {
 		if (StringUtils.isNotEmpty(onExitScript)) {
 			try {
 				LOG.debug("Passivate ScenarioStep '$name'")
-				scriptGateway.exec(Script(code = onExitScript!!, origin = "ScenarioStep '$name'", context = "onExit"), view)
+				scriptGateway.exec(wrappendOnExitScript, view)
 			} catch (e: Throwable) {
 				LOG.error("Error in onExit script of ScenarioStep '$name'")
 			}
 		}
 	}
+
+	private val wrappendOnExitScript: Script get() =
+		Script(
+			code = onExitScript!!,
+			origin = "${Translations.getString("scenarioStep.issueOrigin.name")} '$name'",
+			context = Translations.getString("graph.property.scenario.onExit.name"))
 
 	override val highlightIdsAsInt: List<Int>
 		get() {

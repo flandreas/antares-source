@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.scenario
 
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.edit.DrawingView
@@ -53,7 +54,16 @@ class ScenarioImpl(
 	}
 
 	override val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
-		get() = { v, sg -> sg.condition(Script(code = conditionScript, origin = "Scenario '$name'", context = "Condition"), v) }
+		get() = { view, sg ->
+			sg.condition(
+				Script(
+					code = conditionScript,
+					origin = "${Translations.getString("scenario.issueOrigin.name")} '$name'",
+					context = Translations.getString("graph.property.scenario.condition.name")
+				),
+				view
+			)
+		}
 
 	override fun getScenarioSteps(): ImmutableList<ScenarioStep> = steps.toImmutableList()
 

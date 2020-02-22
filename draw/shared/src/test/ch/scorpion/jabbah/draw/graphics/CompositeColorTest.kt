@@ -14,11 +14,11 @@ class CompositeColorTest {
 
 	@Test
 	fun shouldDeriveBackgroundTowardsForegroundColor() {
-		assertEquals(Color(32, 32, 32), CompositeColor(Color.WHITE, Color.BLACK).deriveBackgroundTowardsForegroundColor().backgroundColor)
+		assertEquals(Color(21, 21, 21), CompositeColor(Color.WHITE, Color.BLACK).deriveBackgroundTowardsForegroundColor().backgroundColor)
 	}
 
 	@Test
 	fun shouldDeriveBackgroundTowardsTextColor() {
-		assertEquals(Color(32, 32, 32), CompositeColor(Color.WHITE, Color.BLACK, Color.WHITE).deriveBackgroundTowardsTextColor().backgroundColor)
+		assertEquals(Color(21, 21, 21), CompositeColor(Color.WHITE, Color.BLACK, Color.WHITE).deriveBackgroundTowardsTextColor().backgroundColor)
 	}
 }

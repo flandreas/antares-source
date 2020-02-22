@@ -32,6 +32,8 @@ class Name(
 
 	constructor(value: String = "", eventBus: EventBus? = null): this(TranslatableText(value), eventBus)
 
+	override fun toString(): String = value
+
 	/** The displayable name in the current system [Language]. */
 	var value: String
 		get() = translation.getTranslation()

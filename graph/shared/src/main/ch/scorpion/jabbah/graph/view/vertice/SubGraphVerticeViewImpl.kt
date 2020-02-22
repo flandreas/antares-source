@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ConcatIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
@@ -175,10 +176,16 @@ class SubGraphVerticeViewImpl(
 	override fun drawImpl(context: DrawContext) {
 		drawables.forEach { it.draw(context) }
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && StringUtils.isNotEmpty(drawExecScript)) {
-			scriptGateway.exec(Script(code = drawExecScript!!, origin = "Container ${model.getGraphIfPresent()?.name}", context = "drawExecScript"), this, context)
+			scriptGateway.exec(wrappedDrawExecScript, this, context)
 		}
 		super.drawImpl(context)
 	}
+
+	private val wrappedDrawExecScript: Script get() =
+		Script(
+			code = drawExecScript!!,
+			origin = Translations.getString("graph.property.ContainerDrawing", StringUtils.orElse(model.name, "?")),
+			context = Translations.getString("graph.property.ContainerDrawing.execDrawScript.name"))
 
 	fun drawWithDrawableDrawer(context: DrawContext, drawableDrawer: (Drawable) -> Unit) {
 		draw(context) {

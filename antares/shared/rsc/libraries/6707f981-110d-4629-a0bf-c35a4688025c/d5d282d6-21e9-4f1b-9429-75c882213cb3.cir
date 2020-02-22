@@ -13,7 +13,7 @@ if (elem.inputBit(&quot;S2&quot;)) {
 	input += 4;
 }
 
-elem.setOutputBit(elem.inputWord(&quot;I&quot;).bitAt(input).isSet());'>
+elem.setOutputBit(elem.inputWord(&quot;I&quot;).bitAt(input));'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='0' name='4-1 Multiplexer' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'/>
             <subGraphVerticeRef _id='4' id='2' delay='0' name='4-1 Multiplexer' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'/>

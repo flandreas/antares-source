@@ -38,9 +38,16 @@ class SubGraphVerticeRef(
 		val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
 			override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.isInput && !vertice.isDeepExecution(signalHandler)) {
-					vertice.scriptGateway.exec(Script(code = vertice.getGraphIfPresent()!!.script!!, origin = "SubGraph '${vertice.name}'", context = "Logic"), vertice, data, signalHandler)
+					vertice.scriptGateway.exec(wrappedScript(vertice), vertice, data, signalHandler)
 				}
 			}
+		}
+
+		private fun wrappedScript(vertice: SubGraphVerticeRef): Script {
+			return Script(
+				code = vertice.getGraphIfPresent()!!.script!!,
+				origin = "${Translations.getString("library.element.SubGraphVerticeRef.name")} '${vertice.name}'",
+				context = Translations.getString("graph.property.GraphViewImpl.script.name"))
 		}
 
 		val LOG by logger(SubGraphVerticeRef::class)
