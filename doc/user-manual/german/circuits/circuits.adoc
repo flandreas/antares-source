@@ -48,7 +48,7 @@ Beschreibung:: Dieses Attribut dient dazu, eine längere Beschreibung der Schalt
 
 Laufzeit:: In diesem optionalen Attribut kann die Zeitdauer angegeben werden, die bei der Verarbeitung eines Eingangssignals bis zum Erscheinen eines geänderten Ausgangssignals verstreicht. Sie wird verwendet, um die Darstellung des Verarbeitungszustandes einer Teilschaltung während der <<../simulation/simulation.adoc#, Simulation>> zu steuern.
 
-Funktion:: In diesem Attribut kann das Script angegeben werden, das Antares für diese Komponente während der Simulation ausführt, falls die Simulation im Modus <<../simulation/simulation.adoc#, "Flache Simulation">> betrieben wird. Dies ist eine fortgeschrittene Technik; Details zu Scripting siehe das Kapitel <<../scripting/circuit-scripting.adoc#, "Scripting in Schaltungen">>.
+Funktion:: In diesem Attribut kann das Script angegeben werden, das Antares für diese Komponente während der Simulation ausführt, falls die Simulation im Modus <<../simulation/simulation.adoc#, "Flache Simulation">> betrieben wird. Dies ist eine fortgeschrittene Technik; Details zu Scripting siehe das Kapitel <<circuit-scripting.adoc#, "Scripting in Schaltungen">>.
 
 Default-Lichtfarbe:: Die Lichtfarbe, die in dieser Schaltung alle Komponenten per Default erhalten sollen, die leuchten können (LED, 7-Segment-Anzeige). Wenn Du den Wert dieses Attributs änderst, während die Schaltung bereits leuchtende Komponenten enthält, fragt Dich Antares, ob die neue Lichtfarbe bei diesen Komponenten angewendet werden soll. Mit dieser Option können z.B. alle roten LED's und 7-Segment-Anzeigen mit einer einzigen Aktion auf gelb umgestellt werden.
 

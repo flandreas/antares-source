@@ -6,9 +6,18 @@ WARNING: The Antares Scripting DSL is in experimental state and will probably be
 
 TIP: The explanation of the Antares scripting DSL functions is still quite short. Please see the Antares Standard Library for lots of examples on how to use these functions.
 
+=== Inhalt
+
+* <<CircuitViewBridge>>: Access to the circuit
+* <<CircuitElemModelBridge>>: Access to the model of a circuit element
+* <<CircuitElemViewBridge>>: Access to the symbol of a circuit element
+* <<Word>>: Access to a digital data word
+* <<UsecaseActionBridge>>: Register use case action statements
+* <<UsecaseTestBridge>>:: Register use case test assertions
+
 === CircuitViewBridge
 
-Used in all `Scenario` use cases. The statements in the table below are accessible as functions of the object `circuit`.
+Used in all `Scenario` use cases. The statements below are accessible as functions of the object `circuit`.
 
 `name()`:: Returns the name of the circuit model as a string.
 +
@@ -339,3 +348,65 @@ elem.setOutputWord(
   elem.inputWord("A").and(elem.inputWord("B"))
 );
 ----
+
+=== UsecaseActionBridge
+
+Used in use case action scripts. The statements below are accessible as functions of the object `circuit`.
+
+`pressButtonAt(<time:Long>, <id:Int>)`:: Presses the button with ID `id` at simulation time `time`.
++
+.Example
+[source,javascript]
+----
+circuit.pressButtonAt(10000, 1);
+----
+
+`setInputAt(<time:Long>, <inputId:Int>, <hexValue: String>)`:: Sets the value of the input with ID `inputId` at simulation time `time` as a hexadecimal value `hexValue`.
++
+.Example
+[source,javascript]
+----
+circuit.setInputAt(10000, 6, "1");
+----
+
+`applyClock(<inputId:Int>, <period:Long>)`:: Applies a clock signal with period `period` (nanoseconds) to the input with ID `inputId`.
++
+.Example
+[source,javascript]
+----
+circuit.applyClock(6, 1000000000);
+----
+
+`pauseAt(<time:Long>)`:: Activate single step simulation mode at simulation time `time` (nanoseconds). This can be used to quickly go through the initialization phase of a circuit and the switch to single step simulation before an "interesting" part of circuit execution is entered that can only be and understood by single stepping.
++
+.Example
+[source,javascript]
+----
+circuit.applyClock(87, 91000);
+circuit.setInputAt(23062, 46, "0800");
+circuit.setInputAt(134948, 46, "1234");
+circuit.pauseAt(172544);
+----
+
+=== UsecaseTestBridge
+
+Used in use case tet scripts. The statements below are accessible as functions of the object `circuit`.
+
+`asssertLedOnAt(<time:Long>, <id:Int>)`:: Asserts that the LED with ID `id` is on at simulation time `time`.
++
+.Example
+[source,javascript]
+----
+circuit.assertLedOnAt(20000, 2);
+----
+
+`asssertLedOffAt(<time:Long>, <id:Int>)`:: Asserts that the LED with ID `id` is off at simulation time `time`.
++
+.Example
+[source,javascript]
+----
+circuit.assertLedOffAt(20000, 2);
+----
+
+`assertOutputAt(<time:Long>, <id:Int>, <hexValue:String>)`:: Assert that the output component with ID `id` has the hex value `hexValue` at simulation time `time`.
+

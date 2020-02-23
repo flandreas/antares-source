@@ -61,7 +61,7 @@ Es ist eines der wichtigsten Ziele von Antares, dem Benützer zu ermöglichen, a
 
 Dieser Ansatz hat den Nachteil, dass grosse Schaltungen aus sehr vielen Basiskomponenten bestehen, wenn für die Simulation alle Teilschaltungen soweit expadiert werden, bis nur noch Basiskomponenten verwendet werden. So enthält z.B. der Mikrocomputer im Beispielprojekt "Mikrocomputer (Tannenbaum)" über 2'000 elementare Logik-Gatter und über 5'000 Leitungen.
 
-Die Simulation solcher grossen Schaltungen benötigt viel Zeit. Nun besteht in Antares die Möglichkeit, für eine Teilschaltung ein <<../scripting/circuit-scripting.adoc#, Ausführungs-Skript>> zu definieren, das die Logik der Teilschaltung enthält und während der Simulation statt der inneren Schaltung ausgeführt wird.
+Die Simulation solcher grossen Schaltungen benötigt viel Zeit. Nun besteht in Antares die Möglichkeit, für eine Teilschaltung ein <<../circuits/circuit-scripting.adoc#, Ausführungs-Skript>> zu definieren, das die Logik der Teilschaltung enthält und während der Simulation statt der inneren Schaltung ausgeführt wird.
 
 Mit dem Menü menu:Simulation[Tiefe Simulation] kannst Du wählen, ob Antares die Ausführungsskripts von Teilschaltungen anwendet oder nicht. "Tiefe Simulation" bedeutet, dass die Ausführungsskripts nicht angewendet werden und Antares die volle Tiefe der Schaltung simuliert. Das Gegenteil wird "Flache Simulation" genannt: Teilschaltungen werden nur so tief simuliert, bis eine Teilschaltung ein Ausführungsskript enthält.
 

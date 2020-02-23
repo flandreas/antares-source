@@ -71,7 +71,7 @@ Bedingung:: Das Skript mit der Bedingung, die erfüllt sein muss, damit dieses S
 return circuit.input("S") == "1" && circuit.input("R") == "0";
 ----
 
-==== Eigenschaften von Szenario-Schritten
+==== Attribute von Szenario-Schritten
 
 Name:: Der Name des Szenario-Schrittes, der in alle unterstützten Sprachen übersetzt werden kann. Er wird in der aktuellen Version von Antares nur zur Anzeige im Baum verwendet.
 
