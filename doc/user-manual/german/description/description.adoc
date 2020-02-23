@@ -2,11 +2,4 @@
 
 TODO
 
-=== Annotationen an Texten
-
-TODO Wie kann der Inverter-Overscore erzeugt werden?
-
-=== Gatter-Mnemonics
-
-TODO Beschreiben, wie Mnemonics verwendet werden können
 
