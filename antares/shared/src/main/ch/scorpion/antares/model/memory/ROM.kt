@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -20,9 +21,13 @@ import kotlin.math.max
 /**
  * A read-only memory whose address width and data width can be specified.
  */
-class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
+class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
 	companion object {
+
+		private const val BASE_RESOURCE_KEY = "library.element.ROM"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		const val ADDRESS_PORT_NAME = "A"
 		const val CHIP_SELECT_PORT_NAME = "CS"
@@ -51,6 +56,9 @@ class ROM : CalculatingVertice("library.element.ROM", CALCULATOR), Addressable {
 			}
 		}
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	val memory = Memory()
 

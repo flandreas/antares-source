@@ -22,10 +22,9 @@ import ch.scorpion.jabbah.graph.model.Vertice
  * of [InputPort]s can be chosen by the user up to a certain limit.
  */
 abstract class AbstractDigitalGate(
-	baseResourceKey: String,
     calculator: VerticeCalculator<*>,
     inputCount: InputCount
-) : CalculatingVertice(baseResourceKey, calculator) {
+) : CalculatingVertice(calculator) {
 
     companion object {
         val LOG by logger(AbstractDigitalGate::class)

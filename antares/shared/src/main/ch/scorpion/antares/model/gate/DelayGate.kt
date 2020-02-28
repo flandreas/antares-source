@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -17,17 +18,24 @@ class DelayGateCalculator : VerticeCalculator<DelayGate> {
     }
 }
 
-class DelayGate : AbstractDigitalGate("library.element.Delay", CALCULATOR, InputCount.ONE) {
+class DelayGate : AbstractDigitalGate(CALCULATOR, InputCount.ONE) {
 
     companion object {
-        val CALCULATOR = DelayGateCalculator()
+	    private const val BASE_RESOURCE_KEY = "library.element.Delay"
+	    private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+	    private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+
+	    val CALCULATOR = DelayGateCalculator()
     }
 
     init {
         propagationDelay = 20
     }
 
-    /** The delay in nanoseconds.*/
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
+
+	/** The delay in nanoseconds.*/
     var delay: Long
         get() = propagationDelay
         set(value) {

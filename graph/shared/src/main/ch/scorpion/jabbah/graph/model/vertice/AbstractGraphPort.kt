@@ -11,19 +11,18 @@ import ch.scorpion.jabbah.graph.model.*
  * when the name has been changed.
  */
 abstract class AbstractGraphPort<T : Any>(
-	baseResourceKey: String,
 	port: Port<T>,
 	name: String? = null,
 	calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractInteractableVertice(baseResourceKey, calculator, defaultName(name, port.portType.reverse())), GraphPort<T> {
+) : AbstractInteractableVertice(calculator, defaultName(name, port.portType.reverse())), GraphPort<T> {
 
 	companion object {
 		private fun defaultName(name: String?, portType: PortType): String {
 			if (StringUtils.isNotEmpty(name)) {
 				return name!!
 			}
-			return when(portType) {
+			return when (portType) {
 				PortType.INPUT -> "I1"
 				PortType.OUTPUT -> "O1"
 				PortType.INOUT -> "IO1"

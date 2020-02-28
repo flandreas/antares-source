@@ -21,11 +21,11 @@ import ch.scorpion.jabbah.io.StoreWriter
  *
  * The location of this [GroupComponent] is defined as the upper left corner of the combined bounding box.
  */
-class GroupComponent(components: List<Component>) : AbstractComponent() {
+class GroupComponent(components: List<Component> = listOf()) : AbstractComponent() {
 
-	/** Parameterless constructor used for deserialization.*/
-	@Suppress("unused")
-	constructor(): this(listOf<Component>())
+	companion object {
+		private val TYPE = Translations.getString("edit.component.group")
+	}
 
 	private val _components = mutableListOf<Component>()
 
@@ -40,7 +40,7 @@ class GroupComponent(components: List<Component>) : AbstractComponent() {
 
 	/** ---- [Component] */
 
-	override val type: String? get() = Translations.getString("edit.component.group")
+	override val type: String get() = TYPE
 
 	/** ---- [Locatable] */
 
@@ -92,7 +92,7 @@ class GroupComponent(components: List<Component>) : AbstractComponent() {
 	/** ---- [GroupComponent] */
 
 	private fun updateBoundingBox() {
-		if (!components.isEmpty()) {
+		if (components.isNotEmpty()) {
 			_boundingBox.setFrame(components[0].boundingBox)
 			for (i in 1 until components.size) {
 				_boundingBox.add(components[i].boundingBox)

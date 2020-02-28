@@ -6,19 +6,20 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.actor.Actor
-import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
-import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.io.StoreReader
-import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
+import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * A matrix of light emitting dots with a row and column addressing input, designed
@@ -29,13 +30,17 @@ import ch.scorpion.jabbah.graph.model.PortType
  * address the matrix rows, with the least significant [Bit] identifying the bottom row.
  */
 class LEDMatrix(
-	columnWidth: BitWidth = LEDMatrix.DEF_COLUMN_WIDTH,
-	rowWidth: BitWidth = LEDMatrix.DEF_ROW_WIDTH
-) : CalculatingVertice("library.element.LEDMatrix", CALCULATOR) {
+	columnWidth: BitWidth = DEF_COLUMN_WIDTH,
+	rowWidth: BitWidth = DEF_ROW_WIDTH
+) : CalculatingVertice(CALCULATOR) {
 
 	companion object {
 
 		private val LOG by logger(LEDMatrix::class)
+
+		private const val BASE_RESOURCE_KEY = "library.element.LEDMatrix"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		const val COLUMN_PORT_NAME = "C"
 		const val ROW_PORT_NAME = "R"
@@ -59,6 +64,9 @@ class LEDMatrix(
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = COLUMN_PORT_NAME, bitWidth = columnWidth, describable = COLUMNS_PORT_DESC))
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ROW_PORT_NAME, bitWidth = rowWidth, describable = ROWS_PORT_DESC))
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	val columnPort: DigitalPort
 		get() = getInput<DigitalSignal>(COLUMN_PORT_NAME) as DigitalPort

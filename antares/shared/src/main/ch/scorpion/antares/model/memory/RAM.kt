@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -23,9 +24,14 @@ import ch.scorpion.jabbah.io.StoreWriter
  * The content of a [RAM] is cleared when execution is started, which is why a [RAM] is not editable
  * in edit mode.
  */
-class RAM(hasClock: Boolean = true) : CalculatingVertice("library.element.RAM", RAMCalculator()), Addressable {
+class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addressable {
 
 	companion object {
+
+		private const val BASE_RESOURCE_KEY = "library.element.RAM"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+
 		private const val ADDRESS_PORT_NAME = "A"
 		private const val CHIP_SELECT_PORT_NAME = "CS"
 		private const val DATA_PORT_NAME = "D"
@@ -40,6 +46,9 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice("library.element.RAM", 
 		private val CLEAR_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.clearPort.desc"))
 		private val CLOCK_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.clockPort.desc"))
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	val memory = Memory()
 
@@ -149,13 +158,11 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice("library.element.RAM", 
 	/** ---- [RAM] */
 
 	fun setAddressWidth(bitWidth: BitWidth) {
-		checkNotNull(bitWidth)
 		getAddressInput().bitWidth = bitWidth
 		stateChanged()
 	}
 
 	fun setDataWidth(bitWidth: BitWidth) {
-		checkNotNull(bitWidth)
 		getDataPort().bitWidth = bitWidth
 		stateChanged()
 	}

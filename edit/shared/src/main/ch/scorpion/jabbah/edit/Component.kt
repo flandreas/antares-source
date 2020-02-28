@@ -32,7 +32,9 @@ interface Component : Locatable, Snappable, Storable, Stylable {
 	 *
 	 * Example: "Rectangle"
 	 */
-	val type: String?
+	val type: String
+
+	val typeDesc: String?
 
 	/**
 	 * Determines whether this [Component]'s [StyleType] is determined by the implementing class and cannot be

@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.Translation
@@ -16,9 +17,9 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * Represents a device that allows the user to press keys, which are translated to the corresponding
@@ -29,10 +30,14 @@ import ch.scorpion.jabbah.io.StoreReader
  */
 class Keyboard(
 	bufferSize: Int = DEFAULT_BUFFER_SIZE
-) : CalculatingVertice("library.element.Keyboard", KeyboardCalculator()) {
+) : CalculatingVertice(KeyboardCalculator()) {
 
 	companion object {
 		private val LOG by logger(Keyboard::class)
+
+		private const val BASE_RESOURCE_KEY = "library.element.Keyboard"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private const val DEFAULT_BUFFER_SIZE = 8
 
@@ -48,6 +53,9 @@ class Keyboard(
 		private val CLOCK_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.keyboard.clockPort.desc"))
 		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.keyboard.dataPort.desc"))
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	private val buffer: MutableList<Byte> by lazy { mutableListOf<Byte>() }
 

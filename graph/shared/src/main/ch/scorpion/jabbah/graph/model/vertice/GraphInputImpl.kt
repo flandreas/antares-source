@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
@@ -18,7 +19,16 @@ class GraphInputImpl<T: Any>(
 	outputPort: OutputPort<T> = PortImpl(PortType.OUTPUT),
 	name: String? = null,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractGraphPort<T>("graph.element.input", port = outputPort, name = name, eventBus = eventBus), GraphInput<T> {
+) : AbstractGraphPort<T>(port = outputPort, name = name, eventBus = eventBus), GraphInput<T> {
+
+	companion object {
+		private const val baseResourceKey = "graph.element.input"
+		private val type = Translations.getString("$baseResourceKey.name")
+		private val typeDesc = Translations.getString("$baseResourceKey.desc")
+	}
+
+	override val type: String get() = GraphInputImpl.type
+	override val typeDesc: String? get() = GraphInputImpl.typeDesc
 
     /** ---- [GraphPort] interface */
 

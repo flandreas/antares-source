@@ -22,110 +22,112 @@ import ch.scorpion.jabbah.io.StoreWriter
  * A simple, non-editable [TextComponent] that uses a [MultilineText] for text rendering.
  */
 class SimpleTextComponent(
-        text: String = "",
-        location: Point2D = Point2D.ZERO,
-        styleType: StyleType = StyleType.FIGURE,
-        styleProvider: StyleProvider = DrawStyleModule.styleProvider
+	text: String = "",
+	location: Point2D = Point2D.ZERO,
+	styleType: StyleType = StyleType.FIGURE,
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangularComponent(
-        styleType = styleType,
-        styleProvider = styleProvider,
-        shape = Rectangle2D(location.x, location.y, 100.0, 50.0)
+	styleType = styleType,
+	styleProvider = styleProvider,
+	shape = Rectangle2D(location.x, location.y, 100.0, 50.0)
 ), TextComponent, Transparent {
 
-    private companion object {
+	private companion object {
 
-        /** The horizontal inset between the bounding box and the text.  */
-        private const val INSET_X = 10
+		private val TYPE = Translations.getString("edit.component.text")
 
-        /** The vertical inset between the bounding box and the text.  */
-        private const val INSET_Y = 10
-    }
+		/** The horizontal inset between the bounding box and the text.  */
+		private const val INSET_X = 10
 
-    /** ---- [Transparent] interface */
+		/** The vertical inset between the bounding box and the text.  */
+		private const val INSET_Y = 10
+	}
 
-    private val transparent = TransparentImpl(this)
+	/** ---- [Transparent] interface */
 
-    override var transparency: Int
-        get() = transparent.transparency
-        set(value) {
-            transparent.transparency = value
-        }
+	private val transparent = TransparentImpl(this)
 
-    /** ---- [Storable] interface */
+	override var transparency: Int
+		get() = transparent.transparency
+		set(value) {
+			transparent.transparency = value
+		}
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        writer.writeString("text", text)
-    }
+	/** ---- [Storable] interface */
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        text = reader.readString("text")
-    }
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeString("text", text)
+	}
 
-    /** ---- [Component] interface */
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		text = reader.readString("text")
+	}
 
-    override val type: String? get() = Translations.getString("edit.component.text")
+	/** ---- [Component] interface */
 
-    /** ---- [TextComponent] interface */
+	override val type: String get() = TYPE
 
-    override var text: String = text
-        set(value) {
-            invalidate()
-            field = value
-            updateMultilineText()
-            invalidate()
-            validate()
-        }
+	/** ---- [TextComponent] interface */
 
-    /** ---- [Drawable] */
+	override var text: String = text
+		set(value) {
+			invalidate()
+			field = value
+			updateMultilineText()
+			invalidate()
+			validate()
+		}
 
-    override fun contains(x: Double, y: Double): Boolean {
-        return super<AbstractRectangularComponent>.contains(x, y)
-    }
+	/** ---- [Drawable] */
 
-    override fun contains(p: Point2D): Boolean {
-        return super<AbstractRectangularComponent>.contains(p)
-    }
+	override fun contains(x: Double, y: Double): Boolean {
+		return super<AbstractRectangularComponent>.contains(x, y)
+	}
 
-    override fun draw(context: DrawContext) {
-        decorator.drawBackground(this, context)
+	override fun contains(p: Point2D): Boolean {
+		return super<AbstractRectangularComponent>.contains(p)
+	}
 
-        context.g.font = font
-        context.g.color = textColor
+	override fun draw(context: DrawContext) {
+		decorator.drawBackground(this, context)
 
-        // TODO: Implement clipping in JavaScript platform
-        // val b = shape
-        // val oldClip = context.g.getClipBounds()
-        //(context.g as Graphics2DJvm).g.setClip(b.x.toInt(), b.y.toInt(), b.width.toInt(), b.height.toInt())
-        context.g.translate(x + INSET_X, y + INSET_Y)
-        multilineText.draw(context)
-        context.g.translate(-(x + INSET_X), -(y + INSET_Y))
-        //(context.g as Graphics2DJvm).g.setClip(oldClip.x.toInt(), oldClip.y.toInt(), oldClip.width.toInt(), oldClip.height.toInt())
+		context.g.font = font
+		context.g.color = textColor
 
-        decorator.drawForeground(this, context)
-    }
+		// TODO: Implement clipping in JavaScript platform
+		// val b = shape
+		// val oldClip = context.g.getClipBounds()
+		//(context.g as Graphics2DJvm).g.setClip(b.x.toInt(), b.y.toInt(), b.width.toInt(), b.height.toInt())
+		context.g.translate(x + INSET_X, y + INSET_Y)
+		multilineText.draw(context)
+		context.g.translate(-(x + INSET_X), -(y + INSET_Y))
+		//(context.g as Graphics2DJvm).g.setClip(oldClip.x.toInt(), oldClip.y.toInt(), oldClip.width.toInt(), oldClip.height.toInt())
 
-    override fun update() {
-        updateMultilineText()
-        super.update()
-    }
+		decorator.drawForeground(this, context)
+	}
 
-    /** ---- [SimpleTextComponent] */
+	override fun update() {
+		updateMultilineText()
+		super.update()
+	}
 
-    private var multilineText = MultilineText(text, font, (width.toInt() - 2 * INSET_X).toDouble())
+	/** ---- [SimpleTextComponent] */
 
-    private var decorator: TextComponentDecorator = RectangularShapeTextComponentDecorator(
-            shape = RoundRectangle2D(0.0, 0.0, 0.0, 0.0, 20.0, 20.0),
-            stylable = this,
-            transparent = transparent
-    )
+	private var multilineText = MultilineText(text, font, (width.toInt() - 2 * INSET_X).toDouble())
 
-    init {
-        updateMultilineText()
-    }
+	private var decorator: TextComponentDecorator = RectangularShapeTextComponentDecorator(
+		shape = RoundRectangle2D(0.0, 0.0, 0.0, 0.0, 20.0, 20.0),
+		stylable = this,
+		transparent = transparent
+	)
 
-    private fun updateMultilineText() {
-        multilineText = MultilineText(text, font, (width.toInt() - 2 * INSET_X).toDouble(), Point2D.ZERO)
-    }
+	init {
+		updateMultilineText()
+	}
+
+	private fun updateMultilineText() {
+		multilineText = MultilineText(text, font, (width.toInt() - 2 * INSET_X).toDouble(), Point2D.ZERO)
+	}
 }

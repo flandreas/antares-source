@@ -28,11 +28,16 @@ import ch.scorpion.jabbah.io.StoreWriter
 class SubGraphVerticeImpl(
 	name: String = Translations.getString("graph.name.unknown"),
 	private val describable: Describable = DescribableImpl()
-) : AbstractVertice("graph.element.container", name), SubGraphVertice, Describable by describable {
+) : AbstractVertice(name), SubGraphVertice, Describable by describable {
 
 	companion object {
 		private val LOG by logger(SubGraphVerticeImpl::class)
+		private const val baseResourceKey = "graph.element.container"
+		private val type = Translations.getString("$baseResourceKey.name")
 	}
+
+	override val type: String get() = SubGraphVerticeImpl.type
+	override val typeDesc: String? get() = null
 
 	/* ---- [SubGraphVertice] */
 

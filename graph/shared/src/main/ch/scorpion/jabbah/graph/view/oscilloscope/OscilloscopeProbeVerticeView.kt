@@ -33,6 +33,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 	companion object {
 		private val LOG by logger(OscilloscopeProbeVerticeView::class)
+		private val TYPE = ""
 		private const val CONN_POINT_SIZE = 4.0
 	}
 
@@ -70,7 +71,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 	/** ---- [Component] interface */
 
-	override val type: String? get() = null
+	override val type: String get() = TYPE
 
 	/** ---- [Drawable] interface */
 

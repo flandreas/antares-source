@@ -36,6 +36,7 @@ class LabelComponent(
 ) : AbstractRectangularComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider), TextComponent, Transparent {
 
 	companion object {
+		private val TYPE = Translations.getString("edit.component.label")
 		const val DEFAULT_TEXT = "text"
 		val DEFAULT_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 14)
 	}
@@ -108,7 +109,7 @@ class LabelComponent(
 
 	/** ---- [Component] */
 
-	override val type: String? get() = Translations.getString("edit.component.label")
+	override val type: String = TYPE
 
 	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
 		get() = SelectionDrawingStrategy.REPLACE

@@ -4,20 +4,25 @@ import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.gate.AbstractDigitalGate
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Storable
 
 /**
  * A digital component that produces a periodically changing [DigitalSignal].
  */
-class Clock : AbstractDigitalGate("library.element.Clock", CALCULATOR, InputCount.ZERO) {
+class Clock : AbstractDigitalGate(CALCULATOR, InputCount.ZERO) {
 
 	companion object {
+
+		private const val BASE_RESOURCE_KEY = "library.element.Clock"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private val CALCULATOR = Calculator()
 
@@ -29,6 +34,9 @@ class Clock : AbstractDigitalGate("library.element.Clock", CALCULATOR, InputCoun
 			}
 		}
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	var isOn: Boolean = false
 		private set

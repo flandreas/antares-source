@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.model.signal.DigitalSignalUtil
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -28,13 +29,25 @@ class CircuitInOutImpl(
 	name: String? = null,
 	portType: PortType = PortType.INPUT
 ) : AbstractGraphPort<DigitalSignal>(
-	baseResourceKey = "library.element.CircuitInOut",
 	port = DigitalPortImpl(portType.reverse()),
 	name = name,
 	calculator = CALCULATOR
 ), CircuitInOut {
 
 	companion object {
+
+		private const val INPUT_BASE_RESOURCE_KEY = "library.element.CircuitInput"
+		private val INPUT_TYPE = Translations.getString("$INPUT_BASE_RESOURCE_KEY.name")
+		private val INPUT_TYPE_DESC = Translations.getOptionalString("$INPUT_BASE_RESOURCE_KEY.desc")
+
+		private const val OUTPUT_BASE_RESOURCE_KEY = "library.element.CircuitOutput"
+		private val OUTPUT_TYPE = Translations.getString("$OUTPUT_BASE_RESOURCE_KEY.name")
+		private val OUTPUT_TYPE_DESC = Translations.getOptionalString("$OUTPUT_BASE_RESOURCE_KEY.desc")
+
+		private const val INOUT_BASE_RESOURCE_KEY = "library.element.CircuitInOut"
+		private val INOUT_TYPE = Translations.getString("$INOUT_BASE_RESOURCE_KEY.name")
+		private val INOUT_TYPE_DESC = Translations.getOptionalString("$INOUT_BASE_RESOURCE_KEY.desc")
+
 		private val CALCULATOR = Calculator()
 
 		private class Calculator : VerticeCalculator<CircuitInOutImpl> {
@@ -48,6 +61,22 @@ class CircuitInOutImpl(
 	}
 
 	private var readingFromStore = false
+
+	/** ---- [GraphElement] */
+
+	override val type: String
+		get() = when (portType) {
+			PortType.INOUT -> INOUT_TYPE
+			PortType.INPUT -> INPUT_TYPE
+			PortType.OUTPUT -> OUTPUT_TYPE
+		}
+
+	override val typeDesc: String?
+		get() = when (portType) {
+			PortType.INOUT -> INOUT_TYPE_DESC
+			PortType.INPUT -> INPUT_TYPE_DESC
+			PortType.OUTPUT -> OUTPUT_TYPE_DESC
+		}
 
 	/** ---- [GraphPort] interface */
 

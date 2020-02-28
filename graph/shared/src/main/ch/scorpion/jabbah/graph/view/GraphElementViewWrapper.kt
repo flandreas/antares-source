@@ -73,7 +73,9 @@ class GraphElementViewWrapper(
 
     override val boundingBox: RectangularShape get() = _component!!.boundingBox
 
-    override val type: String? get() = _component!!.type
+    override val type: String get() = _component!!.type
+
+	override val typeDesc: String? get() = _component!!.typeDesc
 
     override var visible: Boolean
         get() = _component!!.visible
@@ -123,5 +125,7 @@ class GraphElementViewWrapper(
 
 class GraphElementWrapper(private val component: Component? = null) : AbstractGraphElement() {
 
-	override val type: String? get() = component?.type
+	override val type: String get() = component?.type ?: "unknown"
+	override val typeDesc: String?
+		get() = component?.typeDesc ?: "unknown"
 }

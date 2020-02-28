@@ -318,7 +318,7 @@ class SubGraphVerticeViewImpl(
 
 	/** ---- [AbstractVerticeView] */
 
-	override val type: String? get() = model.name
+	override val type: String get() = model.name ?: ""
 
 	override val shortDescription: String? get() = model.shortDescription
 

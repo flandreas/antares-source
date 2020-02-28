@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.oscilloscope
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -23,10 +24,11 @@ import kotlin.math.min
  */
 class Oscilloscope(
 	private val portFactory: PortFactory = GraphModelModule.portFactory
-) : AbstractVertice("graph.component.oscilloscope") {
+) : AbstractVertice() {
 
 	companion object {
 		private val LOG by logger(Oscilloscope::class)
+		private val type = Translations.getString("graph.component.oscilloscope")
 	}
 
 	/** Maps a probe row number (starting with "1") to its [SignalHistory].*/
@@ -50,6 +52,9 @@ class Oscilloscope(
 		private set
 
 	/** ---- [AbstractVertice] */
+
+	override val type: String get() = Oscilloscope.type
+	override val typeDesc: String get() = ""
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
 		storeSignal(input, signalHandler)

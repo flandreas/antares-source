@@ -1,10 +1,10 @@
 package ch.scorpion.antares.model.output
 
-import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
@@ -20,9 +20,13 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
  * A light emitting [Vertice] whose RGB value is determined by the 24-bit input, where each of the three 8-bit values
  * represents the corresponding color value.
 .*/
-class RgbLED() : CalculatingVertice("library.element.RgbLED", CALCULATOR) {
+class RgbLED : CalculatingVertice(CALCULATOR) {
 
 	companion object {
+		private const val BASE_RESOURCE_KEY = "library.element.RgbLED"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+
 		private val DEFAULT_COLOR = Color(60, 0, 0)
 		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.rgbLed.dataPort.desc"))
 
@@ -34,6 +38,9 @@ class RgbLED() : CalculatingVertice("library.element.RgbLED", CALCULATOR) {
 			}
 		}
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	var color: Color = Color.BLACK
 		private set(value) {

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.oscilloscope
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.InputPort
@@ -19,7 +20,11 @@ import ch.scorpion.jabbah.io.StoreWriter
 class OscilloscopeProbeVertice<T : Any>(
 	name: String? = null,
 	portFactory: PortFactory = GraphModelModule.portFactory
-) : AbstractVertice("graph.component.oscilloscope.port") {
+) : AbstractVertice() {
+
+	companion object {
+		private val type = Translations.getString("graph.component.oscilloscope.port")
+	}
 
 	init {
 		val port = portFactory.createPort<T>(PortType.INPUT)
@@ -28,6 +33,9 @@ class OscilloscopeProbeVertice<T : Any>(
 	}
 
 	/** ---- [Vertice] interface */
+
+	override val type: String get() = OscilloscopeProbeVertice.type
+	override val typeDesc: String? get() = null
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
 		stateChanged(signalHandler)

@@ -36,41 +36,43 @@ import ch.scorpion.jabbah.io.StorableCreator
  * A [Component] that wraps a [ControlView] in order to allow deferred reference to a [SubGraphVerticeView]'s model.
  */
 class ControlViewComponent(
-    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    source: ControlViewSource<Vertice>? = null,
-    baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	source: ControlViewSource<Vertice>? = null,
+	baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY
 ) : AbstractComponent(styleProvider), GraphElementView<Vertice>, ActorView, Transparent {
 
 	/**
-     * The ID of the model displayed by [controlView]. This ID is made persistent and is used to resolve the link
-     * to the model when the underlying [Graph] gets bound.
-     */
+	 * The ID of the model displayed by [controlView]. This ID is made persistent and is used to resolve the link
+	 * to the model when the underlying [Graph] gets bound.
+	 */
 	var controlModelLink: DeepVerticeLink
 		private set
 
 	lateinit var controlView: ControlView<Vertice>
 
-    private var drawableOwner: DrawableOwner? = null
+	private var drawableOwner: DrawableOwner? = null
 
 	/** Will be displayed instead of [controlView] if [controlModelLink] is broken, which isn't detected before [bindToGraph] is called.*/
 	private var brokenView: BrokenDeepLinkView? = null
 
-    init {
-	    if (source != null) {
-		    controlView = source.createControlView()
-		    controlView.id = source.id
-		    controlModelLink = baseLink.append(controlView.model.id)
-		    drawableOwner = DrawableOwner(this, controlView)
-	    } else {
-		    controlModelLink = DeepVerticeLink.EMPTY
-	    }
-    }
+	init {
+		if (source != null) {
+			controlView = source.createControlView()
+			controlView.id = source.id
+			controlModelLink = baseLink.append(controlView.model.id)
+			drawableOwner = DrawableOwner(this, controlView)
+		} else {
+			controlModelLink = DeepVerticeLink.EMPTY
+		}
+	}
 
 	/** ---- [Transparent] interface */
 
 	override var transparency: Int
 		get() = controlView.transparency
-		set(value) { controlView.transparency = value }
+		set(value) {
+			controlView.transparency = value
+		}
 
 	/** ---- [GraphElementView] interface */
 
@@ -80,45 +82,45 @@ class ControlViewComponent(
 		// empty
 	}
 
-    /** ---- [Storable] interface */
+	/** ---- [Storable] interface */
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        writer.writeStorable("controlView", controlView)
-	    writer.writeString("controlModelId", controlModelLink.toStoreFormat())
-	    controlView.writeModelProperties(writer)
-    }
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeStorable("controlView", controlView)
+		writer.writeString("controlModelId", controlModelLink.toStoreFormat())
+		controlView.writeModelProperties(writer)
+	}
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        if (drawableOwner != null) {
-            drawableOwner!!.dispose()
-        }
-        controlView = reader.readStorable("controlView") as ControlView<Vertice>
-        drawableOwner = DrawableOwner(this, controlView)
-	    controlModelLink = DeepVerticeLink.fromStoreFormat(reader.readString("controlModelId"))
-	    controlView.readModelProperties(reader)
-        super.read(reader)
-        controlView.isShowPortViews = false
-    }
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (drawableOwner != null) {
+			drawableOwner!!.dispose()
+		}
+		controlView = reader.readStorable("controlView") as ControlView<Vertice>
+		drawableOwner = DrawableOwner(this, controlView)
+		controlModelLink = DeepVerticeLink.fromStoreFormat(reader.readString("controlModelId"))
+		controlView.readModelProperties(reader)
+		super.read(reader)
+		controlView.isShowPortViews = false
+	}
 
-    override fun getStorableChildren(): Iterator<Storable> {
-        return listOf(controlView).iterator()
-    }
+	override fun getStorableChildren(): Iterator<Storable> {
+		return listOf(controlView).iterator()
+	}
 
-    /** ---- [Drawable] */
+	/** ---- [Drawable] */
 
-    override val boundingBox: RectangularShape get() = controlView.boundingBox
+	override val boundingBox: RectangularShape get() = controlView.boundingBox
 
 	override val canMirror: Boolean get() = true
 
-    override fun draw(context: DrawContext) {
-	    if (brokenView != null) {
-		    brokenView!!.draw(context)
-	    } else {
-		    controlView.draw(context)
-	    }
-    }
+	override fun draw(context: DrawContext) {
+		if (brokenView != null) {
+			brokenView!!.draw(context)
+		} else {
+			controlView.draw(context)
+		}
+	}
 
 	override fun mirrorHorizontally(x: Double) {
 		invalidate()
@@ -134,45 +136,47 @@ class ControlViewComponent(
 		update()
 	}
 
-    override fun contains(x: Double, y: Double): Boolean = controlView.contains(x, y)
+	override fun contains(x: Double, y: Double): Boolean = controlView.contains(x, y)
 
-    /** ---- [Locatable] */
+	/** ---- [Locatable] */
 
-    override var location: Point2D
-        get() = controlView.location
-        set(value) {controlView.location = value}
+	override var location: Point2D
+		get() = controlView.location
+		set(value) {
+			controlView.location = value
+		}
 
-    /** ---- [Component] interface */
+	/** ---- [Component] interface */
 
-    override val type: String? get() = controlView.type
+	override val type: String get() = controlView.type
 
-    override val selectableComponent: Component get() = controlView
+	override val selectableComponent: Component get() = controlView
 
-    override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
-        get() = controlView.preferredSelectionDrawingStrategy
-        set(value) {
-            super.preferredSelectionDrawingStrategy = value
-        }
+	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
+		get() = controlView.preferredSelectionDrawingStrategy
+		set(value) {
+			super.preferredSelectionDrawingStrategy = value
+		}
 
-    /** ---- [ActorView] */
+	/** ---- [ActorView] */
 
-    override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? = controlView.getActorInteractionHandler(context)
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? = controlView.getActorInteractionHandler(context)
 
-    override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = controlView.getExecutionTooltip(x, y)
+	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = controlView.getExecutionTooltip(x, y)
 
-    /** ---- [ControlViewComponent] */
+	/** ---- [ControlViewComponent] */
 
-    fun bindToGraph(graph: Graph, repository: MetaGraphRepository, storableCreator: StorableCreator) {
-	    try {
-		    val vertice = controlModelLink.getLinkedVertice(graph, repository, storableCreator)
-		    controlView.bindToModel(vertice)
-	    } catch (e: IllegalArgumentException) {
-		    invalidate()
-		    brokenView = BrokenDeepLinkView(styleProvider, controlView.boundingBox)
-		    invalidate()
-		    update()
-	    }
-    }
+	fun bindToGraph(graph: Graph, repository: MetaGraphRepository, storableCreator: StorableCreator) {
+		try {
+			val vertice = controlModelLink.getLinkedVertice(graph, repository, storableCreator)
+			controlView.bindToModel(vertice)
+		} catch (e: IllegalArgumentException) {
+			invalidate()
+			brokenView = BrokenDeepLinkView(styleProvider, controlView.boundingBox)
+			invalidate()
+			update()
+		}
+	}
 
 	/** A [Drawable] to be displayed when the [DeepVerticeLink] of the [ControlView] is broken.*/
 	private class BrokenDeepLinkView(
@@ -189,7 +193,7 @@ class ControlViewComponent(
 		private val color: CompositeColor = Themes.get<GraphTheme>().error
 
 		private val label: Label = Label(
-			text ="?",
+			text = "?",
 			font = style.font,
 			color = style.color.textColor,
 			location = Point2D(bounds.centerX, bounds.centerY)

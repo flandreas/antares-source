@@ -36,5 +36,8 @@ class AbstractVerticeTest {
 		assertEquals("B", vertice.getOutput<Boolean>(2).name)
 	}
 
-	private class MyVertice : AbstractVertice("graph.property.label")
+	private class MyVertice : AbstractVertice("graph.property.label") {
+		override val type: String get() = "MyVertice"
+		override val typeDesc: String? get() = null
+	}
 }

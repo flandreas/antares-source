@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -25,9 +26,13 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class DipSwitch(
 	bitWidth: BitWidth = BitWidth.BW_4
-) : AbstractInteractableVertice("library.element.DipSwitch", CALCULATOR) {
+) : AbstractInteractableVertice(CALCULATOR) {
 
 	companion object {
+
+		private const val BASE_RESOURCE_KEY = "library.element.DipSwitch"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private val CALCULATOR = Calculator()
 
@@ -44,6 +49,9 @@ class DipSwitch(
 		addPort(DigitalPortImpl.createOutput(Logic.POSITIVE, null, bitWidth))
 		propagationDelay = 1000
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	/** The value to be set as current value when the simulation is started. */
 	var initialValue: Word = Word.allOf(bitWidth, Bit.False)

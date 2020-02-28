@@ -21,68 +21,76 @@ import ch.scorpion.jabbah.io.StoreWriter
 /**
  * A [Component] that wraps a [PortView] in order to allow the user to manipulate it.
  */
-open class PortViewComponent<T: Any>(
-    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    var portView: PortView<T>? = null
+open class PortViewComponent<T : Any>(
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	var portView: PortView<T>? = null
 ) : AbstractComponent(styleProvider) {
 
-    val port: Port<T> get() = portView!!.port
+	companion object {
+		private val TYPE = Translations.getString("graph.component.port")
+	}
 
-    var drawableOwner: DrawableOwner? = null
+	val port: Port<T> get() = portView!!.port
 
-    init {
-        preferredSelectionDrawingStrategy = SelectionDrawingStrategy.REPLACE
-        if (portView != null) {
-            drawableOwner = DrawableOwner(this, portView!!)
-        }
-    }
+	var drawableOwner: DrawableOwner? = null
 
-    /** ---- Manually delegated properties */
+	init {
+		preferredSelectionDrawingStrategy = SelectionDrawingStrategy.REPLACE
+		if (portView != null) {
+			drawableOwner = DrawableOwner(this, portView!!)
+		}
+	}
 
-    var direction: Direction
-        get() = portView!!.direction
-        set(value) { portView!!.direction = value }
+	/** ---- Manually delegated properties */
 
-    /** ---- [Component] */
+	var direction: Direction
+		get() = portView!!.direction
+		set(value) {
+			portView!!.direction = value
+		}
 
-    override val type: String? get() = Translations.getString("graph.component.port")
+	/** ---- [Component] */
 
-    /** ---- [Storable] interface */
+	override val type: String get() = TYPE
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        writer.writeStorable("portView", portView!!)
-    }
+	/** ---- [Storable] interface */
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        if (drawableOwner != null) {
-            drawableOwner!!.dispose()
-        }
-        portView = reader.readStorable("portView") as PortView<T>
-        drawableOwner = DrawableOwner(this, portView!!)
-    }
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeStorable("portView", portView!!)
+	}
 
-    override fun getStorableChildren(): Iterator<Storable> {
-        return listOf(portView!!).iterator()
-    }
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (drawableOwner != null) {
+			drawableOwner!!.dispose()
+		}
+		portView = reader.readStorable("portView") as PortView<T>
+		drawableOwner = DrawableOwner(this, portView!!)
+	}
 
-    /** ---- [Drawable] */
+	override fun getStorableChildren(): Iterator<Storable> {
+		return listOf(portView!!).iterator()
+	}
 
-    override val boundingBox: RectangularShape
-        get() = portView!!.boundingBox
+	/** ---- [Drawable] */
 
-    override fun draw(context: DrawContext) {
-        portView!!.draw(context)
-    }
+	override val boundingBox: RectangularShape
+		get() = portView!!.boundingBox
 
-    override fun contains(x: Double, y: Double): Boolean {
-        return portView!!.contains(x, y)
-    }
+	override fun draw(context: DrawContext) {
+		portView!!.draw(context)
+	}
 
-    /** ---- [Locatable] */
+	override fun contains(x: Double, y: Double): Boolean {
+		return portView!!.contains(x, y)
+	}
 
-    override var location: Point2D
-        get() = portView!!.location
-        set(value) {portView!!.location = value}
+	/** ---- [Locatable] */
+
+	override var location: Point2D
+		get() = portView!!.location
+		set(value) {
+			portView!!.location = value
+		}
 }

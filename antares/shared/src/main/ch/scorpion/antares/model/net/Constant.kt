@@ -6,24 +6,25 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Storable
 
 /**
  * A [Vertice] that produces a configurable constant [DigitalSignal] at its single output.
  */
 class Constant(
 	value: Word = Word.of(Bit.False)
-) : CalculatingVertice("library.element.Constant", CALCULATOR) {
+) : CalculatingVertice(CALCULATOR) {
 
 	init {
 		addPort(DigitalPortImpl(portType = PortType.OUTPUT, bitWidth = value.getBitWidth()))
@@ -31,6 +32,10 @@ class Constant(
 	}
 
 	companion object {
+
+		private const val BASE_RESOURCE_KEY = "library.element.Constant"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private val CALCULATOR = Calculator()
 
@@ -40,6 +45,9 @@ class Constant(
 			}
 		}
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	var value: Word = value
 		set(value) {

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -15,9 +16,19 @@ class GraphOutputImpl<T : Any>(
 	inputPort: InputPort<T> = PortImpl(PortType.INPUT),
 	name: String? = null,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractGraphPort<T>("graph.element.output", port = inputPort, name = name, calculator = GraphOutputImplCalculator, eventBus = eventBus), GraphOutput<T> {
+) : AbstractGraphPort<T>(port = inputPort, name = name, calculator = GraphOutputImplCalculator, eventBus = eventBus), GraphOutput<T> {
+
+	companion object {
+		private const val baseResourceKey = "graph.element.output"
+		private val type = Translations.getString("$baseResourceKey.name")
+		private val typeDesc = Translations.getOptionalString("$baseResourceKey.desc")
+
+	}
 
 	private var subGraphOutputPort: SubGraphOutputPort<T>? = null
+
+	override val type: String get() = GraphOutputImpl.type
+	override val typeDesc: String? get() = GraphOutputImpl.typeDesc
 
 	/** ---- [GraphPort] interface */
 

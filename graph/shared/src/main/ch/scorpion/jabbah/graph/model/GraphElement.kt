@@ -17,16 +17,21 @@ interface GraphElement : Storable, Actor {
     override var id: Int
 
 	/**
-	 * Holds a short translated description of the type of this [GraphElement].
+	 * Returns a short translated type name of this [GraphElement].
 	 *
-	 * The type of a [GraphElement] describes the "kind" or the nature of a [GraphElement]. This is in contrast to
-	 * the name of a [GraphElement], which is often provided by the user and can serve to distinguish two
-	 * [GraphElement]s of the same type. Typically, the type is not persistent, but provided by concrete
-	 * implementation of the [GraphElement] interface. Note that this type description should be internationalized.
+	 * The type of a [GraphElement] names the "kind" or the nature of a [GraphElement].
+	 * Typically, the type is not persistent, but provided by concrete implementation of the [GraphElement] interface.
 	 *
 	 * Example: "AND Gate"
 	 */
-	val type: String?
+	val type: String
+
+	/**
+	 * Returns a longer translated description of [type].
+	 *
+	 * Example: "An AND gate is a component that performs a logical "AND" operation on all input values."
+	 */
+	val typeDesc: String?
 
 	/**
      * Determines whether this [GraphElement] is currently in an error state, which can be caused by either a

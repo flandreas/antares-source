@@ -17,7 +17,6 @@ import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
  * An abstract base implementation of the [Vertice] interface.
  */
 abstract class AbstractVertice(
-	override val baseResourceKey: String,
 	name: String? = null,
 	private val describable: Describable = DescribableImpl()
 ) : AbstractGraphElement(), Vertice, Describable by describable {
@@ -34,10 +33,6 @@ abstract class AbstractVertice(
 	private val ports = mutableListOf<Port<*>>()
 
 	open var shortDescription: String? = null
-
-	/** ---- [GraphElement] interface */
-
-	override val type: String? = Translations.getString("$baseResourceKey.name")
 
 	/** ---- [Vertice] interface */
 

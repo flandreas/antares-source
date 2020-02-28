@@ -23,6 +23,10 @@ class PolylineComponent(
 	val polyline: PolylineDrawable = PolylineDrawable()
 ) : AbstractComponent(polyline), Polyline by polyline, Transparent {
 
+	companion object {
+		private val TYPE = Translations.getString("edit.component.polyline")
+	}
+
 	init {
 		DrawableOwner(this, polyline)
 	}
@@ -69,8 +73,7 @@ class PolylineComponent(
 
 	/** ---- [Component] interface */
 
-	override val type: String?
-		get() = Translations.getString("edit.component.polyline")
+	override val type: String get() = TYPE
 
 	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
 		get() = SelectionDrawingStrategy.ABOVE

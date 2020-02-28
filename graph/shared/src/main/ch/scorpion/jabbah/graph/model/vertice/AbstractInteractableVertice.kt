@@ -17,10 +17,9 @@ interface InteractableVertice : Vertice {
 }
 
 abstract class AbstractInteractableVertice(
-	baseResourceKey: String,
 	calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
 	name: String? = null
-) : CalculatingVertice(baseResourceKey, calculator, name), InteractableVertice {
+) : CalculatingVertice(calculator, name), InteractableVertice {
 
 	override var enabled: Boolean = true
 		protected set(value) {

@@ -62,6 +62,14 @@ class SwitchView(
 ) : DigitalComponentView<Switch>(styleProvider, model), ControlView<Switch>, ControlViewSource<Switch> {
 
 	companion object {
+		private const val TOGGLE_BASE_RESOURCE_KEY = "library.element.Toggle"
+		private val TOGGLE_TYPE = Translations.getString("$TOGGLE_BASE_RESOURCE_KEY.name")
+		private val TOGGLE_TYPE_DESC = Translations.getOptionalString("$TOGGLE_BASE_RESOURCE_KEY.desc")
+
+		private const val SWITCH_BASE_RESOURCE_KEY = "library.element.Switch"
+		private val SWITCH_TYPE = Translations.getString("$SWITCH_BASE_RESOURCE_KEY.name")
+		private val SWITCH_TYPE_DESC = Translations.getOptionalString("$SWITCH_BASE_RESOURCE_KEY.desc")
+
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.SwitchView.iconPath"
 		private const val SIZE = 4 * SCALE
 		private const val BORDER_WIDTH = 3
@@ -330,16 +338,23 @@ class SwitchView(
 
 	override val staticDescription: String?
 		get() = if (toggle) {
-			Translations.getOptionalString("library.element.Toggle.desc")
+			TOGGLE_TYPE_DESC
 		} else {
-			Translations.getOptionalString("library.element.Switch.desc")
+			SWITCH_TYPE_DESC
 		}
 
-	override val type: String?
+	override val type: String
 		get() = if (toggle) {
-			Translations.getOptionalString("library.element.Toggle.name")
+			TOGGLE_TYPE
 		} else {
-			Translations.getOptionalString("library.element.Switch.name")
+			SWITCH_TYPE
+		}
+
+	override val typeDesc: String?
+		get() = if (toggle) {
+			TOGGLE_TYPE_DESC
+		} else {
+			SWITCH_TYPE_DESC
 		}
 
 	/** ---- [SwitchView] */

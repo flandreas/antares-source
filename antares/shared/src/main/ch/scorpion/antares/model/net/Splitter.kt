@@ -7,15 +7,16 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Storable
 
 /**
  * Splits a multi-bit [Net] into multiple [Net]s with smaller [BitWidth].
@@ -23,9 +24,13 @@ import ch.scorpion.jabbah.io.Storable
 class Splitter(
 	bitWidth: BitWidth = BitWidth.BW_8,
 	branchCount: BranchCount = BranchCount.BC_4
-) : CalculatingVertice("library.element.Splitter", CALCULATOR) {
+) : CalculatingVertice(CALCULATOR) {
 
 	companion object {
+
+		private const val BASE_RESOURCE_KEY = "library.element.Splitter"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private val CALCULATOR = Calculator()
 
@@ -43,6 +48,9 @@ class Splitter(
 			}
 		}
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	var bitWidth: BitWidth = bitWidth
 		set(value) {

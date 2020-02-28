@@ -60,6 +60,8 @@ open class TextComponentJvm(
 
 		private val LOG by logger(TextComponentJvm::class)
 
+		private val TYPE = Translations.getString("edit.component.text")
+
 		/** The horizontal inset between the bounding box and the text.  */
 		private const val INSET_X = 10
 
@@ -216,7 +218,7 @@ open class TextComponentJvm(
 
 	/** ---- [Component] interface */
 
-	override val type: String? get() = Translations.getString("edit.component.text")
+	override val type: String get() = TYPE
 
 	/** ---- [TextComponent] */
 

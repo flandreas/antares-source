@@ -26,11 +26,10 @@ object EmptyVerticeCalculator : VerticeCalculator<CalculatingVertice> {
 	}
 }
 
-open class CalculatingVertice(
-	baseResourceKey: String,
+abstract class CalculatingVertice(
 	private val calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
 	name: String? = null
-) : AbstractVertice(baseResourceKey, name) {
+) : AbstractVertice(name) {
 
 	override fun act(signalHandler: SignalHandler, data: ActorData) {
 		(calculator as VerticeCalculator<CalculatingVertice>).calculate(this, data as GraphActorData, signalHandler)

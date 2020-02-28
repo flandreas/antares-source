@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.model.truthtable.TruthTableModel
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -46,9 +47,13 @@ class XorCalculator<T : Vertice> : VerticeCalculator<T> {
 	}
 }
 
-class XorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate("library.element.XorGate", CALCULATOR, inputCount) {
+class XorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate(CALCULATOR, inputCount) {
 
 	companion object {
+		private const val BASE_RESOURCE_KEY = "library.element.XorGate"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+
 		val CALCULATOR = XorCalculator<XorGate>()
 
 		val TRUTH_TABLE = TruthTableModel(2, 1)
@@ -57,4 +62,8 @@ class XorGate(inputCount: InputCount = InputCount.TWO) : AbstractDigitalGate("li
 			.define(intArrayOf(1, 0), 1)
 			.define(intArrayOf(1, 1), 0)
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
+
 }

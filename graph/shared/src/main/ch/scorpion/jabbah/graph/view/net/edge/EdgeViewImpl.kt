@@ -51,7 +51,8 @@ open class EdgeViewImpl<T : Any>(
 ) : AbstractNetViewElement<T>(styleProvider, currentSystemSpeedCategory, net), EdgeView<T> {
 
 	private companion object {
-		val LOG by logger(EdgeViewImpl::class)
+		private val LOG by logger(EdgeViewImpl::class)
+		private val TYPE = Translations.getString("graph.component.edge")
 	}
 
 	constructor(
@@ -683,7 +684,7 @@ open class EdgeViewImpl<T : Any>(
 
 	/** ---- [Component] interface */
 
-	override val type: String? get() = Translations.getString("graph.component.edge")
+	override val type: String get() = TYPE
 
 	/** ---- [EdgeViewImpl] */
 

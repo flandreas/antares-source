@@ -9,7 +9,6 @@ import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.signal.DigitalSignalSourceControlView
 import ch.scorpion.antares.view.signal.NumberView
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Dimension2D
@@ -43,11 +42,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
-import ch.scorpion.jabbah.graph.view.ControlView
-import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.graph.view.GraphPortView
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
@@ -328,23 +323,12 @@ class CircuitInOutView(
 	/** Not rotatable, because orientation [Direction] is explicitly set. */
 	override val rotatable: Boolean get() = false
 
-	override val type: String?
-		get() = when (portType) {
-			PortType.INOUT -> Translations.getOptionalString("library.element.CircuitInOut.name")
-			PortType.INPUT -> Translations.getOptionalString("library.element.CircuitInput.name")
-			PortType.OUTPUT -> Translations.getOptionalString("library.element.CircuitOutput.name")
-		}
-
 	override val shortDescription: String?
 		get() {
 			if (StringUtils.isNotEmpty(description.value)) {
 				return description.value
 			}
-			return when (portType) {
-				PortType.INOUT -> Translations.getOptionalString("library.element.CircuitInOut.desc")
-				PortType.INPUT -> Translations.getOptionalString("library.element.CircuitInput.desc")
-				PortType.OUTPUT -> Translations.getOptionalString("library.element.CircuitOutput.desc")
-			}
+			return model.typeDesc
 		}
 
 	override fun focusGained() {

@@ -24,8 +24,6 @@ interface Vertice : GraphElement, Describable {
      */
     var name: String?
 
-	val baseResourceKey: String
-
     /** The overall number of [Port]s this [Vertice] contains, independent of the [PortType].*/
     val portsCount: Int
 

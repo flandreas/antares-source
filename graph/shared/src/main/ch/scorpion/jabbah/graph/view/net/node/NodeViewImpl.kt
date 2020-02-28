@@ -38,6 +38,10 @@ open class NodeViewImpl<T : Any>(
 	netViewStyle: NetViewStyle? = null
 ) : AbstractNetViewElement<T>(styleProvider, currentSystemSpeedCategory, net), NodeView<T> {
 
+	companion object {
+		private const val TYPE = "Node"
+	}
+
 	/** Can be `null`during deserialization.*/
 	protected var styling: NodeViewStyling = NetViewStyle.LINE.createNodeViewStyling(styleProvider, this)
 		private set
@@ -122,9 +126,7 @@ open class NodeViewImpl<T : Any>(
 
 	/** ---- [Component] */
 
-	override val type: String?
-		// Will not be selectable any more
-		get() = null
+	override val type: String get() = TYPE
 
 	override val deletable: Boolean get() = false
 

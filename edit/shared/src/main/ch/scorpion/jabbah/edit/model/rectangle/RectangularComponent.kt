@@ -262,9 +262,13 @@ open class RectangleComponent(
 	shape: Rectangle2D = Rectangle2D(0.0, 0.0, 0.0, 0.0)
 ) : RectangularComponent(styleType, styleProvider, shape) {
 
+	companion object {
+		private val TYPE = Translations.getString("edit.component.rectangle")
+	}
+
 	constructor(x: Double, y: Double, w: Double, h: Double) : this(shape = Rectangle2D(x, y, w, h))
 
-	override val type: String? get() = Translations.getString("edit.component.rectangle")
+	override val type: String get() = TYPE
 }
 
 class RoundRectangleComponent(
@@ -273,9 +277,13 @@ class RoundRectangleComponent(
 	shape: RoundRectangle2D = RoundRectangle2D(0.0, 0.0, 0.0, 0.0, 10.0, 10.0)
 ) : RectangularComponent(styleType, styleProvider, shape) {
 
+	companion object {
+		private val TYPE = Translations.getString("edit.component.roundrect")
+	}
+
 	constructor(x: Double, y: Double, w: Double, h: Double, arcW: Double, arcH: Double) : this(shape = RoundRectangle2D(x, y, w, h, arcW, arcH))
 
-	override val type: String? get() = Translations.getString("edit.component.roundrect")
+	override val type: String get() = TYPE
 }
 
 
@@ -285,7 +293,11 @@ class EllipseComponent(
 	shape: Ellipse2D = Ellipse2D(0.0, 0.0, 0.0, 0.0)
 ) : RectangularComponent(styleType, styleProvider, shape) {
 
+	companion object {
+		private val TYPE = Translations.getString("edit.component.ellipse")
+	}
+
 	constructor(x: Double, y: Double, w: Double, h: Double) : this(shape = Ellipse2D(x, y, w, h))
 
-	override val type: String? get() = Translations.getString("edit.component.ellipse")
+	override val type: String = TYPE
 }

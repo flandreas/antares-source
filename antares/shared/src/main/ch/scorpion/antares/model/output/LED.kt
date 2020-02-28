@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -14,9 +15,13 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 /**
  * A light emitting [Vertice] that turns on with [Bit.True].
  */
-class LED() : CalculatingVertice("library.element.LED", CALCULATOR) {
+class LED() : CalculatingVertice(CALCULATOR) {
 
 	companion object {
+
+		private const val BASE_RESOURCE_KEY = "library.element.LED"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private val CALCULATOR = Calculator()
 
@@ -26,6 +31,9 @@ class LED() : CalculatingVertice("library.element.LED", CALCULATOR) {
 			}
 		}
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	var isOn: Boolean = false
 		set(value) {

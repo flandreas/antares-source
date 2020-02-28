@@ -1,18 +1,23 @@
 package ch.scorpion.antares.model.output
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Storable
 
 class SevenSegmentDisplay(
 	portScheme: SevenSegmentDisplayScheme = SevenSegmentDisplayScheme.COMBINED
-) : CalculatingVertice("library.element.SevenSegmentDisplay", CALCULATOR) {
+) : CalculatingVertice(CALCULATOR) {
 
 	companion object {
+
+		private const val BASE_RESOURCE_KEY = "library.element.SevenSegmentDisplay"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private val CALCULATOR = Calculator()
 
@@ -22,6 +27,9 @@ class SevenSegmentDisplay(
 			}
 		}
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	var portScheme: SevenSegmentDisplayScheme = portScheme
 		set(value) {

@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -16,41 +17,48 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class BufferCalculator<T : Vertice> : VerticeCalculator<T> {
 
-    override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
-        vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
-    }
+	override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
+		vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
+	}
 }
 
-class BufferGate(bitWidth: BitWidth = BitWidth.BW_1) : AbstractDigitalGate("library.element.Buffer", CALCULATOR, InputCount.ONE) {
+class BufferGate(bitWidth: BitWidth = BitWidth.BW_1) : AbstractDigitalGate(CALCULATOR, InputCount.ONE) {
 
-    companion object {
-        val CALCULATOR = BufferCalculator<BufferGate>()
-    }
+	companion object {
+		private const val BASE_RESOURCE_KEY = "library.element.Buffer"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
-    var bitWidth: BitWidth = bitWidth
-        set(value) {
-            if (field != value) {
-                field = value
-                (getInput<DigitalSignal>() as DigitalPort).bitWidth = value
-                (getOutput<DigitalSignal>() as DigitalPort).bitWidth = value
-                stateChanged()
-            }
-        }
+		val CALCULATOR = BufferCalculator<BufferGate>()
+	}
 
-    override val minInputCount: InputCount get() = InputCount.ONE
-    override val maxInputCount: InputCount get() = InputCount.ONE
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        writer.writeInt("bitWidth", bitWidth.width)
-    }
+	var bitWidth: BitWidth = bitWidth
+		set(value) {
+			if (field != value) {
+				field = value
+				(getInput<DigitalSignal>() as DigitalPort).bitWidth = value
+				(getOutput<DigitalSignal>() as DigitalPort).bitWidth = value
+				stateChanged()
+			}
+		}
 
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        if (reader.hasAttribute("bitWidth")) {
-            bitWidth = BitWidth.of(reader.readInt("bitWidth"))
-        }
-    }
+	override val minInputCount: InputCount get() = InputCount.ONE
+	override val maxInputCount: InputCount get() = InputCount.ONE
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeInt("bitWidth", bitWidth.width)
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute("bitWidth")) {
+			bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+		}
+	}
 }
 
 

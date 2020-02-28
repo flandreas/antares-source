@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
  * A [Vertice] implementation to be used in [ch.scorpion.jabbah.graph] integration tests.
  * [TestControlVertice] uses [Boolean] signals and has a single [InputPort].
  */
-class TestControlVertice : CalculatingVertice("graph.property.label", CALCULATOR) {
+class TestControlVertice : CalculatingVertice(CALCULATOR) {
 
 	companion object {
 		private val CALCULATOR = object : VerticeCalculator<TestControlVertice> {
@@ -30,4 +30,7 @@ class TestControlVertice : CalculatingVertice("graph.property.label", CALCULATOR
 		propagationDelay = 0
 		addPort(PortImpl.createInput(Boolean::class))
 	}
+
+	override val type: String get() = "Test"
+	override val typeDesc: String? get() = null
 }

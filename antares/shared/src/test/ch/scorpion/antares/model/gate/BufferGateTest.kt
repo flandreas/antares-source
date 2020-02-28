@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.TestCalculatingVertice
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -22,7 +23,7 @@ class BufferCalculatorTest {
 	}
 
 	private val signalHandler = ForwardSignalHandler()
-	private val vertice = CalculatingVertice("Buffer", BufferCalculator<CalculatingVertice>())
+	private val vertice = TestCalculatingVertice(BufferCalculator())
 
 	init {
 		vertice.addPort(DigitalPortImpl.createInput())

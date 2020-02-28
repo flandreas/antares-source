@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.Translation
@@ -25,10 +26,14 @@ typealias TerminalRow = MutableList<Char>
 class Terminal(
 	rowsCount: Int = DEFAULT_ROWS_COUNT,
 	columnsCount: Int = DEFAULT_COLUMNS_COUNT
-) : CalculatingVertice("library.element.Terminal", TerminalCalculator()) {
+) : CalculatingVertice(TerminalCalculator()) {
 
 	companion object {
 		private val LOG by logger(Keyboard::class)
+
+		private const val BASE_RESOURCE_KEY = "library.element.Terminal"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private const val DEFAULT_ROWS_COUNT = 24
 		private const val DEFAULT_COLUMNS_COUNT = 40
@@ -50,6 +55,9 @@ class Terminal(
 		private val ENABLE_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.terminal.enablePort.desc"))
 		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.terminal.dataPort.desc"))
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	var rowsCount: Int = rowsCount
 		set(value) {

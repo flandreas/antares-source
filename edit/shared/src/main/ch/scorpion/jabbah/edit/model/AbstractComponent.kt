@@ -26,6 +26,8 @@ abstract class AbstractComponent(
 
 	override var id: Int = 0
 
+	override val typeDesc: String? get() = null
+
 	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy? = null
 
 	override var rotation: Rotation = Rotation.R0

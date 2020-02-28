@@ -21,6 +21,9 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 	companion object {
 		private val LOG by logger(NetImpl::class)
+		private const val baseResourceKey = "graph.styleType.edge"
+		private val type = Translations.getString("$baseResourceKey.name")
+		private val typeDesc = null
 	}
 
 	/** Internal representation of the [ports] property.*/
@@ -28,7 +31,8 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 	/** ---- [GraphElement] interface */
 
-	override val type: String? get() = Translations.getString("graph.styleType.edge.name")
+	override val type: String get() = NetImpl.type
+	override val typeDesc: String? get() = NetImpl.typeDesc
 
 	/** ---- [Net] interface */
 

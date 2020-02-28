@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
  */
 class TestVertice(
 	inOut: Boolean = false
-) : CalculatingVertice("graph.property.label", CALCULATOR) {
+) : CalculatingVertice(CALCULATOR) {
 
     companion object {
         val CALCULATOR = object : VerticeCalculator<TestVertice> {
@@ -22,6 +22,9 @@ class TestVertice(
             }
         }
     }
+
+	override val type: String get() = "Test"
+	override val typeDesc: String? get() = null
 
     init {
         addPort(PortImpl.createInput(Boolean::class))

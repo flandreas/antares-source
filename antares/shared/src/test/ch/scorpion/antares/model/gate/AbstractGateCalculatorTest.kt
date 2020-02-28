@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.gate
 
+import ch.scorpion.antares.model.TestCalculatingVertice
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -13,7 +14,7 @@ abstract class AbstractGateCalculatorTest(
 	calculator: VerticeCalculator<CalculatingVertice>
 ) {
 
-	private val gate = CalculatingVertice("And", calculator)
+	private val gate = TestCalculatingVertice(calculator)
 	private val signalHandler = ForwardSignalHandler()
 
 	init {

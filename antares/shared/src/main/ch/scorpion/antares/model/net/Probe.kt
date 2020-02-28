@@ -6,18 +6,19 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalSource
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.LogEvent
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.model.LogEvent
 
 /**
  * Displays the value of a [DigitalSignal] within a circuit.
@@ -25,11 +26,15 @@ import ch.scorpion.jabbah.graph.model.LogEvent
 class Probe(
 	hasOutput: Boolean = false,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : CalculatingVertice("library.element.Probe", CALCULATOR), DigitalSignalSource {
+) : CalculatingVertice(CALCULATOR), DigitalSignalSource {
 
 	companion object {
 
 		private val LOG by logger(Probe::class)
+
+		private const val BASE_RESOURCE_KEY = "library.element.Probe"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private val CALCULATOR = Calculator()
 
@@ -43,6 +48,9 @@ class Probe(
 			}
 		}
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	private fun sendLogEvent(data: GraphActorData, time: Long) {
 		eventBus.post(LogEvent(

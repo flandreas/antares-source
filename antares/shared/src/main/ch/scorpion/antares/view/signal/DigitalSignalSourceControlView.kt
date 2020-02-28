@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.signal
 
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
@@ -125,7 +126,17 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 	/** ---- [DigitalSignalSourceControlView] */
 
 	/** Used as placeholder of the mandatory [DigitalSignalSource] until it is set by [bindToModel].*/
-	private class DummySignalSource : AbstractVertice("library.element.SignalSource"), DigitalSignalSource {
+	private class DummySignalSource : AbstractVertice(), DigitalSignalSource {
+
+		companion object {
+			private const val BASE_RESOURCE_KEY = "library.element.SignalSource"
+			private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+			private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+		}
+
+		override val type: String get() = TYPE
+		override val typeDesc: String? get() = TYPE_DESC
+
 		override var bitWidth: BitWidth = BitWidth.BW_1
 		override var signal: DigitalSignal? get() = Word.falseValue(bitWidth)
 			set(value) {

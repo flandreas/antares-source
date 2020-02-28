@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Tooltip
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.Button
@@ -85,7 +84,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	/** ---- [VerticeView] interface */
 
-	protected open val staticDescription: String? get() = Translations.getOptionalString("${model.baseResourceKey}.desc")
+	protected open val staticDescription: String? get() = model.typeDesc
 
 	override val shortDescription: String? get() = model.description.value ?: staticDescription
 
@@ -267,7 +266,9 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	/** ---- [Component] interface */
 
-	override val type: String? get() = model.type
+	override val type: String get() = model.type
+
+	override val typeDesc: String? get() = model.typeDesc
 
 	override val rotatable: Boolean get() = true
 

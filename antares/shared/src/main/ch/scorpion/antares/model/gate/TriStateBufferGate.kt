@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.signal.Bit.Undefined
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -39,11 +40,16 @@ class TriStateBufferCalculator : VerticeCalculator<TriStateBufferGate> {
 class TriStateBufferGate(
     bitWidth: BitWidth = BitWidth.BW_1,
     enableLogic: Logic = Logic.POSITIVE
-) : CalculatingVertice("library.element.TriStateBuffer", CALCULATOR) {
+) : CalculatingVertice(CALCULATOR) {
 
     companion object {
-        val LOG by logger(TriStateBufferGate::class)
-        const val ENABLE_PORT_NAME = "EN"
+        private val LOG by logger(TriStateBufferGate::class)
+
+	    private const val BASE_RESOURCE_KEY = "library.element.TriStateBuffer"
+	    private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+	    private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+
+	    const val ENABLE_PORT_NAME = "EN"
         val CALCULATOR = TriStateBufferCalculator()
     }
 
@@ -55,7 +61,10 @@ class TriStateBufferGate(
         addPort(DigitalPortImpl.createTriStateOutput(Logic.POSITIVE, null, bitWidth))
     }
 
-    var bitWidth: BitWidth = bitWidth
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
+
+	var bitWidth: BitWidth = bitWidth
         set(value) {
             if (field != value) {
                 field = value

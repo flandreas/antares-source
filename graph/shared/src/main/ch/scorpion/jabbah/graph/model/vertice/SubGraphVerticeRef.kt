@@ -31,9 +31,13 @@ class SubGraphVerticeRef(
 	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
 	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
 	private val describable: Describable = DescribableImpl()
-) : CalculatingVertice("library.element.SubGraphVerticeRef", CALCULATOR), SubGraphVertice, Describable by describable {
+) : CalculatingVertice(CALCULATOR), SubGraphVertice, Describable by describable {
 
 	companion object {
+
+		private const val baseResourceKey = "library.element.SubGraphVerticeRef"
+		private val type = Translations.getString("$baseResourceKey.name")
+		private val typeDesc = null
 
 		val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
 			override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
@@ -46,7 +50,7 @@ class SubGraphVerticeRef(
 		private fun wrappedScript(vertice: SubGraphVerticeRef): Script {
 			return Script(
 				code = vertice.getGraphIfPresent()!!.script!!,
-				origin = "${Translations.getString("library.element.SubGraphVerticeRef.name")} '${vertice.name}'",
+				origin = "$type '${vertice.name}'",
 				context = Translations.getString("graph.property.GraphViewImpl.script.name"))
 		}
 
@@ -84,6 +88,9 @@ class SubGraphVerticeRef(
 	var descriptionProperty: TextProperty = TextProperty()
 
 	/** ---- [GraphElement] interface */
+
+	override val type: String get() = SubGraphVerticeRef.type
+	override val typeDesc: String? get() = SubGraphVerticeRef.typeDesc
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {

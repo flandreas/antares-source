@@ -17,11 +17,10 @@ import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-class QuadCurveComponent(points: List<Point2D>) : AbstractComponent(), Transparent {
-
-	constructor() : this(DEFAULT_POINTS)
+class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractComponent(), Transparent {
 
 	companion object {
+		private val type = Translations.getString("edit.component.quadraticCurve")
 		private val DEFAULT_POINTS = listOf<Point2D>(
 			Point2D(0, 0),
 			Point2D(100, 100),
@@ -55,7 +54,7 @@ class QuadCurveComponent(points: List<Point2D>) : AbstractComponent(), Transpare
 			setPointsImpl(value)
 		}
 
-	override val type: String? get() = Translations.getString("edit.component.quadraticCurve")
+	override val type: String get() = QuadCurveComponent.type
 
 	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
 		get() = SelectionDrawingStrategy.ABOVE

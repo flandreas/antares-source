@@ -6,20 +6,17 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.GraphActorDataImpl
-import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.graph.model.Net
-import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.base.logger
 
 /**
  * A [Tunnel] forwards a signal to other [Tunnel]s with the same name without the
@@ -30,11 +27,15 @@ import ch.scorpion.jabbah.base.logger
  */
 class Tunnel(
 	name: String? = null
-) : CalculatingVertice("library.element.Tunnel", CALCULATOR) {
+) : CalculatingVertice(CALCULATOR) {
 
 	companion object {
 
 		private val LOG by logger(Tunnel::class)
+
+		private const val BASE_RESOURCE_KEY = "library.element.Tunnel"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private val CALCULATOR = Calculator()
 
@@ -51,6 +52,9 @@ class Tunnel(
 		this.name = name
 		addPort(DigitalPortImpl.createInOut())
 	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	var bitWidth: BitWidth
 		get() = (getOutput<DigitalSignal>() as DigitalPort).bitWidth
