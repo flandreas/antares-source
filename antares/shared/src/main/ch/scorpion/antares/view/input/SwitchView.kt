@@ -336,13 +336,6 @@ class SwitchView(
 
 	/** ---- [AbstractVerticeView] */
 
-	override val staticDescription: String?
-		get() = if (toggle) {
-			TOGGLE_TYPE_DESC
-		} else {
-			SWITCH_TYPE_DESC
-		}
-
 	override val type: String
 		get() = if (toggle) {
 			TOGGLE_TYPE
