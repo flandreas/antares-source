@@ -81,8 +81,6 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	/** ---- [VerticeView] interface */
 
-	override val shortDescription: String? get() = model.description.value ?: model.typeDesc
-
 	override var isShowPortViews: Boolean = true
 		set(value) {
 			if (value == field) {

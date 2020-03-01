@@ -323,14 +323,6 @@ class CircuitInOutView(
 	/** Not rotatable, because orientation [Direction] is explicitly set. */
 	override val rotatable: Boolean get() = false
 
-	override val shortDescription: String?
-		get() {
-			if (StringUtils.isNotEmpty(description.value)) {
-				return description.value
-			}
-			return model.typeDesc
-		}
-
 	override fun focusGained() {
 		numberView!!.focusGained()
 		super.focusGained()

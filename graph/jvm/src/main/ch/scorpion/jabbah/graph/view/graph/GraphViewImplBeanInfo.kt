@@ -17,7 +17,7 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl<*>> : AbstractBeanInfo<T>()
     companion object {
         private val name = PropertyImpl("graph.property.GraphViewImpl", TranslatableText::class.java)
         private val propDelay = PropertyImpl("element.property.propagationDelay", Long::class.java)
-        private val shortDesc = PropertyImpl("graph.property.GraphViewImpl.shortDescription", TranslatableText::class.java)
+        private val description = PropertyImpl("graph.property.GraphViewImpl.shortDescription", TranslatableText::class.java)
         private val script = PropertyImpl("graph.property.GraphViewImpl.script", ScriptProperty::class.java)
     }
 
@@ -26,12 +26,12 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl<*>> : AbstractBeanInfo<T>()
 
         name.bind(editor, { bean.translatableName }, { bean.translatableName = it!! }, true, { false })
 		propDelay.bind(editor, { bean.propagationDelay }, { bean.propagationDelay = it })
-		shortDesc.bind(editor, { bean.translatableShortDescription }, { bean.translatableShortDescription = it!! }, true, { true })
+		description.bind(editor, { bean.description }, { bean.description = it!! }, true, { true })
 		script.bind(editor, { bean.script }, { bean.script = it!! })
 
 		properties.add(name)
 		properties.add(propDelay)
-		properties.add(shortDesc)
+		properties.add(description)
 		properties.add(script)
     }
 }

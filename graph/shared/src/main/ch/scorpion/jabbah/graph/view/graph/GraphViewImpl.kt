@@ -93,7 +93,7 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 			graph!!.name.translation = value
 		}
 
-	var translatableShortDescription: TranslatableText
+	var description: TranslatableText
 		get() = graph!!.description.translation
 		set(value) {
 			graph!!.description.translation = value
