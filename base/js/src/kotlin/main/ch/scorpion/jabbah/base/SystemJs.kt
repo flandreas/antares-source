@@ -54,7 +54,7 @@ actual object System {
 		return Path2DJs()
 	}
 
-	actual fun buildToolTipText(title: String?, text: String?, endWithPeriod: Boolean): String? {
+	actual fun buildToolTipText(title: String?, text: String?, subText: String?, endWithPeriod: Boolean): String? {
 		// TODO Improve formatting
 		val sb = StringBuilder("")
 		if (StringUtils.isNotEmpty(title)) {
@@ -63,6 +63,12 @@ actual object System {
 		}
 		if (StringUtils.isNotEmpty(text)) {
 			sb.append(text)
+		}
+		if (StringUtils.isNotEmpty(subText)) {
+			if (sb.isNotEmpty()) {
+				sb.append("\n\n")
+				sb.append(subText)
+			}
 		}
 		return sb.toString()
 	}

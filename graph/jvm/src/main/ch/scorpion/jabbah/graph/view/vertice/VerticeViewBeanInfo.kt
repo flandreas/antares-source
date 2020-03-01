@@ -14,7 +14,7 @@ open class VerticeViewBeanInfo<T : AbstractVerticeView<*>> : ComponentBeanInfo<T
 	companion object {
 		private val propDelay = PropertyImpl("element.property.propagationDelay", Long::class.java)
 		private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
-		private val customDescription = PropertyImpl("edit.property.description", TranslatableText::class.java)
+		private val description = PropertyImpl("edit.property.description", TranslatableText::class.java)
 		private val shadow = PropertyImpl("edit.property.shadow", Boolean::class.java)
 	}
 
@@ -24,7 +24,7 @@ open class VerticeViewBeanInfo<T : AbstractVerticeView<*>> : ComponentBeanInfo<T
 		propDelay.bind(editor, { bean.propagationDelay }, { bean.propagationDelay = it!! })
 		color.bind(editor, { bean.customColor }, { bean.customColor = it })
 		shadow.bind(editor, { bean.shadow }, { bean.customShadow = it!! })
-		customDescription.bind(editor, { bean.customDescription.translation }, { bean.customDescription.translation = it!! })
+		description.bind(editor, { bean.description.translation }, { bean.description.translation = it!! })
 
 		if (isShowPropagationDelay) {
 			properties.add(propDelay)
@@ -33,7 +33,7 @@ open class VerticeViewBeanInfo<T : AbstractVerticeView<*>> : ComponentBeanInfo<T
 		if (isShowColor) {
 			properties.add(color)
 		}
-		properties.add(customDescription)
+		properties.add(description)
 	}
 
 	protected open var isShowPropagationDelay: Boolean = true

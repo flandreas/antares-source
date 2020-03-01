@@ -16,6 +16,9 @@ class TestVertice(
 ) : CalculatingVertice(CALCULATOR) {
 
     companion object {
+	    const val TYPE = "Test"
+	    const val TYPE_DESC = "TestDescription"
+
         val CALCULATOR = object : VerticeCalculator<TestVertice> {
             override fun calculate(vertice: TestVertice, data: GraphActorData, signalHandler: SignalHandler) {
                 vertice.getOutput<Boolean>().setOutgoingSignalBuffered(data.getSignal(1), signalHandler)
@@ -23,8 +26,8 @@ class TestVertice(
         }
     }
 
-	override val type: String get() = "Test"
-	override val typeDesc: String? get() = null
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
     init {
         addPort(PortImpl.createInput(Boolean::class))

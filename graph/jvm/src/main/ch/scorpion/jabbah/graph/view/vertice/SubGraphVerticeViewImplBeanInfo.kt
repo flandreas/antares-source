@@ -1,12 +1,11 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.base.geom.Direction
-import com.l2fprod.common.propertysheet.Property
-import ch.scorpion.jabbah.edit.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.PropertyImpl
-import ch.scorpion.jabbah.edit.model.text.TextProperty
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
 class SubGraphVerticeViewImplBeanInfo : ComponentBeanInfo<SubGraphVerticeViewImpl>() {
@@ -17,7 +16,7 @@ class SubGraphVerticeViewImplBeanInfo : ComponentBeanInfo<SubGraphVerticeViewImp
         private val mirrorH = PropertyImpl("graph.property.mirrorHorizontally", Boolean::class.java)
         private val mirrorV = PropertyImpl("graph.property.mirrorVertically", Boolean::class.java)
         private val label = PropertyImpl("graph.property.label", String::class.java)
-	    private val description = PropertyImpl("edit.property.description", TextProperty::class.java)
+	    private val description = PropertyImpl("edit.property.description", TranslatableText::class.java)
     }
 
     override fun addProperties(bean: SubGraphVerticeViewImpl, editor: Editor, properties: MutableList<Property>) {
@@ -28,7 +27,7 @@ class SubGraphVerticeViewImplBeanInfo : ComponentBeanInfo<SubGraphVerticeViewImp
 		mirrorH.bind(editor, { bean.isHorizontallyMirrored }, { bean.isHorizontallyMirrored = it!!})
 		mirrorV.bind(editor, { bean.isVerticallyMirrored }, { bean.isVerticallyMirrored = it!!})
 		label.bind(editor, { bean.label }, { bean.label = it })
-	    description.bind(editor, { bean.descriptionProperty }, { bean.descriptionProperty = it!! })
+	    description.bind(editor, { bean.description.translation }, { bean.description.translation = it!! })
 
         properties.add(propDelay)
 	    properties.add(orientation)

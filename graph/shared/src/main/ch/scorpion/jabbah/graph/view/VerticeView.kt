@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.InputPort
@@ -13,9 +14,10 @@ import ch.scorpion.jabbah.graph.view.port.PortView
  * Represents a graphical representation of a [Vertice].
  * After completion of construction, a [VerticeView] must have at least one [PortView], because features
  * like snapping try to determine connection points, which are derived from [PortView].
+ *
  * @param T the type of [Vertice] that this [VerticeView] graphically represents.
  */
-interface VerticeView<T : Vertice> : GraphElementView<T>, ConnectableView, ActorView {
+interface VerticeView<T : Vertice> : GraphElementView<T>, Describable, ConnectableView, ActorView {
 
 	val vertice: Vertice get() = model as T
 

@@ -23,6 +23,7 @@ import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -47,7 +48,7 @@ import ch.scorpion.jabbah.io.Storable
 abstract class AbstractVerticeView<T : Vertice>(
 	styleProvider: StyleProvider,
 	model: T
-) : AbstractGraphElementView<T>(styleProvider, GraphStyleType.VERTICE, model), VerticeView<T>, Transparent {
+) : AbstractGraphElementView<T>(styleProvider, GraphStyleType.VERTICE, model), VerticeView<T>, Describable, Transparent {
 
 	companion object {
 		private fun cannotOpenMsg(c: Component) {
@@ -74,13 +75,9 @@ abstract class AbstractVerticeView<T : Vertice>(
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.BOTTOM)
 
-	/** ---- UI properties */
+	/** ---- [Describable] */
 
-	var customDescription: Description
-		get() = model.description
-		set(value) {
-			model.description.translation = value.translation
-		}
+	override val description: Description get() = model.description
 
 	/** ---- [VerticeView] interface */
 
@@ -243,7 +240,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		if (portView != null) {
 			return portView.getTooltip(x, y)
 		}
-		val text = buildToolTipText(type, shortDescription)
+		val text = buildToolTipText(type, typeDesc, description.value)
 		return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, plainBoundingBox.centerX, plainBoundingBox.maxY) else null
 	}
 
@@ -304,7 +301,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		if (portTooltip != null) {
 			return portTooltip
 		}
-		val text = buildToolTipText(type, shortDescription)
+		val text = buildToolTipText(type, typeDesc, description.value)
 		return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, plainBoundingBox.centerX, plainBoundingBox.maxY) else null
 	}
 

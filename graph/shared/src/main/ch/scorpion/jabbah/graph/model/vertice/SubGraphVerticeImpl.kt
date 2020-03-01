@@ -26,9 +26,8 @@ import ch.scorpion.jabbah.io.StoreWriter
  * Extends [AbstractVertice] for its [Port] management functionality.
  */
 class SubGraphVerticeImpl(
-	name: String = Translations.getString("graph.name.unknown"),
-	private val describable: Describable = DescribableImpl()
-) : AbstractVertice(name), SubGraphVertice, Describable by describable {
+	name: String = Translations.getString("graph.name.unknown")
+) : AbstractVertice(name), SubGraphVertice {
 
 	companion object {
 		private val LOG by logger(SubGraphVerticeImpl::class)
@@ -45,14 +44,6 @@ class SubGraphVerticeImpl(
 	override var graphUUID: UUID? = null
 
 	override var translatableName = TranslatableText(name)
-
-	override var shortDescription: String?
-		get() = describable.description.value
-		set(value) {
-			if (StringUtils.isNotBlank(value)) {
-				describable.description.translation = describable.description.translation.withTranslation(value!!)
-			}
-		}
 
 	override fun getGraphIfPresent(): Graph? {
 		return null

@@ -31,16 +31,14 @@ class TestLibraryBuilder(
 		val customComp = CompositeTestGraphViewBuilder(INNER_CUSTOM_COMP).buildInnerCustomComponent()
 		val containerDrawing = createContainerDrawing(customComp)
 		val metaGraph = MetaGraph(GraphStorable(customComp), containerDrawing)
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
-		return metaGraph
+		return libraryService.addContainerLibraryElement(library, metaGraph, library).metaGraph!!
 	}
 
 	fun addOuterCustomComponent(library: Library): MetaGraph {
 		val outerComp = CompositeTestGraphViewBuilder(OUTER_CUSTOM_COMP).buildOuterCustomComponent(createSubGraphVerticeView(INNER_CUSTOM_COMP, library))
 		val containerDrawing = createContainerDrawing(outerComp)
 		val metaGraph = MetaGraph(GraphStorable(outerComp), containerDrawing)
-		libraryService.addContainerLibraryElement(library, metaGraph, library)
-		return metaGraph
+		return libraryService.addContainerLibraryElement(library, metaGraph, library).metaGraph!!
 	}
 
 	private fun createSubGraphVerticeView(name: String, libraryDirectory: LibraryDirectory): SubGraphVerticeViewImpl {

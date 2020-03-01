@@ -19,13 +19,15 @@ import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Stylable
+import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
-import ch.scorpion.jabbah.edit.model.text.TextProperty
-import ch.scorpion.jabbah.execution.actor.*
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -135,12 +137,6 @@ class SubGraphVerticeViewImpl(
 		get() = Direction.of(rotation)
 		set(value) {
 			rotation = value.rotation
-		}
-
-	var descriptionProperty: TextProperty
-		get() = model.descriptionProperty
-		set(value) {
-			model.descriptionProperty = value
 		}
 
 	/** ---- [Transparent] */
@@ -255,7 +251,6 @@ class SubGraphVerticeViewImpl(
 				val graph = repository.getOptionalMetaGraph(model.graphUUID!!)
 				if (graph != null) {
 					fillFromContainerDrawing(graph.containerDrawing)
-					model.shortDescription = graph.graph.model!!.description.value
 				}
 			}
 			if (model.designError != null) {
@@ -277,7 +272,6 @@ class SubGraphVerticeViewImpl(
 		if (customizedContainerDrawing != null && model.designError == null) {
 			val graph = repository.getMetaGraph(model.graphUUID!!)
 			fillFromContainerDrawing(customizedContainerDrawing!!)
-			model.shortDescription = graph.graph.model!!.description.value
 		}
 	}
 
@@ -317,10 +311,6 @@ class SubGraphVerticeViewImpl(
 	}
 
 	/** ---- [AbstractVerticeView] */
-
-	override val type: String get() = model.name ?: ""
-
-	override val shortDescription: String? get() = model.shortDescription
 
 	override fun addPortView(portView: PortView<*>) {
 		mirrorIfNecessary(portView)

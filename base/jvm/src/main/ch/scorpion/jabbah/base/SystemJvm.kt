@@ -35,14 +35,15 @@ actual object System {
 		return UUID(uuid)
 	}
 
-	actual fun buildToolTipText(title: String?, text: String?, endWithPeriod: Boolean): String? {
+	actual fun buildToolTipText(title: String?, text: String?, subText: String?, endWithPeriod: Boolean): String? {
 		val sb = StringBuilder()
 
 		if (title == null || "" == title) {
 			return null
 		}
 
-		val hasText = !(text == null || "" == text)
+		val hasText = StringUtils.isNotEmpty(text)
+		val hasSubText = StringUtils.isNotEmpty(subText)
 
 		sb.append("<html>")
 
@@ -57,6 +58,16 @@ actual object System {
 		if (hasText) {
 			sb.append(text)
 			if (endWithPeriod && !text!!.endsWith(".")) {
+				sb.append('.')
+			}
+		}
+
+		if (hasSubText) {
+			if (sb.isNotEmpty()) {
+				sb.append("<br><br>")
+			}
+			sb.append(subText)
+			if (endWithPeriod && !subText!!.endsWith(".")) {
 				sb.append('.')
 			}
 		}

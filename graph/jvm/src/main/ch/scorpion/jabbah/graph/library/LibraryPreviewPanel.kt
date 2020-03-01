@@ -1,22 +1,21 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.CurrentSavableEvent
+import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.model.GraphElement
 import java.awt.*
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -24,6 +23,7 @@ import javax.swing.BorderFactory
 import javax.swing.JEditorPane
 import javax.swing.JPanel
 import javax.swing.JTextPane
+import kotlin.math.min
 
 
 /**
@@ -136,7 +136,7 @@ class LibraryPreviewPanel(
 		selection = component
 		selection!!.styleProvider = Themes.uiStyleProvider
 		componentDisplay.updateLayout()
-		descriptionArea.text = System.buildToolTipText(selection!!.type, (selection as VerticeView<*>).shortDescription, true)
+		descriptionArea.text = System.buildToolTipText(selection!!.type, selection!!.typeDesc, null, true)
 	}
 
 	/** Displays the graphical preview of the selected [Component]. */
@@ -189,7 +189,7 @@ class LibraryPreviewPanel(
 
 			scale = 1.0
 			if (fx < 1 || fy < 1) {
-				scale = Math.min(fx, fy)
+				scale = min(fx, fy)
 			}
 
 			// Horizontally centered

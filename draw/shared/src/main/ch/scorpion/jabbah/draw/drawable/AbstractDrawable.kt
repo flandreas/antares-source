@@ -1,14 +1,14 @@
 package ch.scorpion.jabbah.draw.drawable
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
-import ch.scorpion.jabbah.draw.*
-import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.geom.Shape
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
+import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.base.geom.Shape
+import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Stroke
 
 /**
  * An abstract base implementation of the [Drawable] interface.
@@ -67,7 +67,7 @@ abstract class AbstractDrawable : Drawable {
 
 	override fun invalidate(region: RectangularShape) {
 		parent?.handleDrawableInvalidated(this, region)
-		if (!listeners.isEmpty()) {
+		if (listeners.isNotEmpty()) {
 			val event = DrawableEvent(this, region)
 			listeners.forEach { it.drawableInvalidated(event) }
 		}
@@ -106,7 +106,7 @@ abstract class AbstractDrawable : Drawable {
 	 */
 	protected open fun update() {
 		parent?.handleDrawableUpdated(this)
-		if (!listeners.isEmpty()) {
+		if (listeners.isNotEmpty()) {
 			val event = DrawableEvent(this)
 			listeners.forEach { it.drawableUpdated(event) }
 		}
@@ -118,7 +118,7 @@ abstract class AbstractDrawable : Drawable {
 	 */
 	protected open fun requestRedraw() {
 		parent?.handleDrawableRequestRedraw(this)
-		if (!listeners.isEmpty()) {
+		if (listeners.isNotEmpty()) {
 			val event = DrawableEvent(this)
 			listeners.forEach { it.drawableRequestRedraw(event) }
 		}
@@ -141,8 +141,8 @@ abstract class AbstractDrawable : Drawable {
 		}
 	}
 
-	protected fun buildToolTipText(title: String?, text: String?): String? {
-		return System.buildToolTipText(title, text, true)
+	protected fun buildToolTipText(title: String?, text: String?, subText: String?): String? {
+		return System.buildToolTipText(title, text, subText, true)
 	}
 
 	/**

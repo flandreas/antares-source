@@ -3,10 +3,7 @@ package ch.scorpion.jabbah.graph.model.vertice
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
-import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.model.text.description.Describable
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -29,15 +26,12 @@ import ch.scorpion.jabbah.io.StoreWriter
 class SubGraphVerticeRef(
 	graphUUID: UUID? = null,
 	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
-	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
-	private val describable: Describable = DescribableImpl()
-) : CalculatingVertice(CALCULATOR), SubGraphVertice, Describable by describable {
+	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway
+) : CalculatingVertice(CALCULATOR), SubGraphVertice {
 
 	companion object {
 
-		private const val baseResourceKey = "library.element.SubGraphVerticeRef"
-		private val type = Translations.getString("$baseResourceKey.name")
-		private val typeDesc = null
+		private val LOG by logger(SubGraphVerticeRef::class)
 
 		val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
 			override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
@@ -50,11 +44,9 @@ class SubGraphVerticeRef(
 		private fun wrappedScript(vertice: SubGraphVerticeRef): Script {
 			return Script(
 				code = vertice.getGraphIfPresent()!!.script!!,
-				origin = "$type '${vertice.name}'",
+				origin = "${vertice.type} '${vertice.name}'",
 				context = Translations.getString("graph.property.GraphViewImpl.script.name"))
 		}
-
-		val LOG by logger(SubGraphVerticeRef::class)
 
 		/** Creates a new [SubGraphVerticeRef] using the data in the specified [SubGraphVertice].*/
 		fun fromSubGraphVertice(
@@ -63,9 +55,6 @@ class SubGraphVerticeRef(
 			scriptGateway: ScriptGateway
 		): SubGraphVerticeRef {
 			val verticeRef = SubGraphVerticeRef(null, repository, scriptGateway)
-			verticeRef.graphUUID = subGraphVertice.graphUUID
-			verticeRef.translatableName = subGraphVertice.translatableName
-			verticeRef.description.translation = subGraphVertice.description.translation
 			verticeRef.fillFrom(subGraphVertice)
 			return verticeRef
 		}
@@ -80,17 +69,12 @@ class SubGraphVerticeRef(
 
 	override val designError: DesignError? get() = _designError
 
-	/**
-	 * Represents a short description that is valid for this very instance of [SubGraphVerticeRef].
-	 * Generally, the description of a [SubGraphVerticeRef] is the short description of the referenced [Graph].
-	 * The property [descriptionProperty] is used to overrride [shortDescription] with a more specific value.
-	 */
-	var descriptionProperty: TextProperty = TextProperty()
-
 	/** ---- [GraphElement] interface */
 
-	override val type: String get() = SubGraphVerticeRef.type
-	override val typeDesc: String? get() = SubGraphVerticeRef.typeDesc
+	override lateinit var type: String
+
+	private var _typeDesc: String? = null
+	override val typeDesc: String? get() = _typeDesc
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
@@ -131,18 +115,15 @@ class SubGraphVerticeRef(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeString("uuid", graphUUID!!.id)
-		descriptionProperty.text?.let { writer.writeString("desc", descriptionProperty.text!!) }
 	}
 
 	override fun read(reader: StoreReader) {
 		graphUUID = UUID(reader.readString("uuid"))
-		descriptionProperty = TextProperty(reader.readOptionalString("desc"))
 
 		val metaGraph = repository.getOptionalMetaGraph(graphUUID!!)
 		if (metaGraph != null) {
 			name = metaGraph.name
 			translatableName = metaGraph.containerDrawing.model.translatableName
-			description.translation = metaGraph.containerDrawing.model.description.translation
 			fillFrom(metaGraph.containerDrawing.createSubGraphVertice())
 
 			super.read(reader)
@@ -179,18 +160,6 @@ class SubGraphVerticeRef(
 	}
 
 	/** ---- [AbstractVertice] */
-
-	override var shortDescription: String?
-		get() {
-			if (descriptionProperty.isNotEmpty()) {
-				return descriptionProperty.text
-			} else {
-				return describable.description.value ?: super.shortDescription
-			}
-		}
-		set(value) {
-			super.shortDescription = value
-		}
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
 		if (isDeepExecution(signalHandler)) {
@@ -243,8 +212,13 @@ class SubGraphVerticeRef(
 
 	/** ---- [SubGraphVerticeRef] */
 
-	private fun fillFrom(model: SubGraphVertice) {
-		for (port in model.getPorts()) {
+	private fun fillFrom(subGraphVertice: SubGraphVertice) {
+		graphUUID = subGraphVertice.graphUUID
+
+		type = subGraphVertice.translatableName.getTranslation()
+		_typeDesc = subGraphVertice.description.value
+
+		for (port in subGraphVertice.getPorts()) {
 			addPort(port, port.portId)
 		}
 	}

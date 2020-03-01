@@ -137,7 +137,7 @@ class CircuitInOutView(
 			updateView()
 		}
 
-	var description: Description
+	override var description: Description
 		get() = model.getPort<DigitalSignal>().description
 		set(value) {
 			model.getPort<DigitalSignal>().description.translation = value.translation

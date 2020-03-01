@@ -152,7 +152,7 @@ abstract class AbstractPortView<T : Any>(
 			content.append("<p/>")
 			content.append("<b>$CURRENT_VALUE_TEXT</b>: $valueText")
 		}
-		val text = System.buildToolTipText(buildToolTipTitle(), content.toString())
+		val text = System.buildToolTipText(buildToolTipTitle(), content.toString(), null)
 		return if (StringUtils.isNotBlank(text)) Tooltip(text!!, owner!!.getPortConnectionPoint(port)) else null
 	}
 
@@ -242,7 +242,7 @@ abstract class AbstractPortView<T : Any>(
 	}
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? {
-		val text = System.buildToolTipText(buildToolTipTitle(), buildToolTipContent())
+		val text = System.buildToolTipText(buildToolTipTitle(), buildToolTipContent(), null)
 		return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, owner!!.getPortConnectionPoint(port)) else null
 	}
 

@@ -19,12 +19,6 @@ class GraphStorableTest {
 		}
 	}
 
-	@BeforeTest
-	fun setup() {
-		IOModule.typeMap.register("testVertice", TestVertice::class)
-		IOModule.typeMap.register("testVerticeView", TestVerticeView::class)
-	}
-
 	@Test
 	fun shouldBeStorable() {
 		val testGraph = TestGraphView()

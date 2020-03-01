@@ -32,8 +32,6 @@ abstract class AbstractVertice(
 	/** Contains all [Port]s of this [Vertice].*/
 	private val ports = mutableListOf<Port<*>>()
 
-	open var shortDescription: String? = null
-
 	/** ---- [Vertice] interface */
 
 	override var name: String? = name
