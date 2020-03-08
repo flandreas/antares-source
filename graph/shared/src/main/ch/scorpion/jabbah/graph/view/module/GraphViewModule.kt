@@ -181,22 +181,22 @@ object GraphViewModule : AbstractModule() {
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
-		factory.register(SelectionDrawingStrategy.REPLACE, EdgeViewImpl::class.simpleName!!) { EdgeViewReplaceSelectionModel(it as EdgeView<*>) }
-		factory.register(SelectionDrawingStrategy.REPLACE, SubGraphVerticeViewImpl::class.simpleName!!) { SubGraphVerticeViewImplSelectionModel(it as SubGraphVerticeViewImpl, EditSelectModule.selectionModelProvider) }
-		factory.register(SelectionDrawingStrategy.REPLACE, OriginIndicator::class.simpleName!!) { OriginIndicatorSelectionModel(it as OriginIndicator) }
-		factory.register(SelectionDrawingStrategy.REPLACE, PortViewComponent::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, ControlViewComponent::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, OscilloscopeProbeVerticeView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, EdgeViewImpl::class) { EdgeViewReplaceSelectionModel(it as EdgeView<*>) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SubGraphVerticeViewImpl::class) { SubGraphVerticeViewImplSelectionModel(it as SubGraphVerticeViewImpl, EditSelectModule.selectionModelProvider) }
+		factory.register(SelectionDrawingStrategy.REPLACE, OriginIndicator::class) { OriginIndicatorSelectionModel(it as OriginIndicator) }
+		factory.register(SelectionDrawingStrategy.REPLACE, PortViewComponent::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ControlViewComponent::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, OscilloscopeProbeVerticeView::class) { SelectedColorSelectionModel(it) }
 
-		factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class.simpleName!!) { EdgeViewBelowSelectionModel(it as EdgeView<*>) }
-		factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class.simpleName!!) { BoundingBoxBelowSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class.simpleName!!) { BoundingBoxBelowSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class) { EdgeViewBelowSelectionModel(it as EdgeView<*>) }
+		factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class) { BoundingBoxBelowSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class) { BoundingBoxBelowSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
-		factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class.simpleName!!) { EdgeViewBelowSelectionModel(it as EdgeView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class.simpleName!!) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class.simpleName!!) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class) { EdgeViewBelowSelectionModel(it as EdgeView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
 	}
 
 	private var edgeViewFactoryImpl: EdgeViewFactory<Any> = EdgeViewFactoryImpl(

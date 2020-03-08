@@ -34,6 +34,8 @@ actual object System {
 		return RealTimeTimerJs()
 	}
 
+	actual fun getClassName(clazz: KClass<*>): String = clazz.simpleName!!
+
 	actual fun getClassName(obj: Any): String {
 		return obj::class.simpleName!!
 	}

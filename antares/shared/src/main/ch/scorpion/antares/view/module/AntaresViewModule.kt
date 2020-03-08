@@ -236,64 +236,64 @@ object AntaresViewModule : AbstractModule() {
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
-		factory.register(SelectionDrawingStrategy.REPLACE, DigitalNodeView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, DigitalPortViewComponent::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, DigitalSignalSourceControlView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DigitalNodeView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DigitalPortViewComponent::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DigitalSignalSourceControlView::class) { SelectedColorSelectionModel(it) }
 
-		factory.register(SelectionDrawingStrategy.REPLACE, LabelComponent::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, DigitalEdgeView::class.simpleName!!) { EdgeViewReplaceSelectionModel(it as EdgeView<*>) }
+		factory.register(SelectionDrawingStrategy.REPLACE, LabelComponent::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DigitalEdgeView::class) { EdgeViewReplaceSelectionModel(it as EdgeView<*>) }
 
-		factory.register(SelectionDrawingStrategy.REPLACE, SplitterView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, ConcentratorView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, ProbeView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, ConstantView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, TunnelView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SplitterView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ConcentratorView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ProbeView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ConstantView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, TunnelView::class) { SelectedColorSelectionModel(it) }
 
-		factory.register(SelectionDrawingStrategy.REPLACE, AndGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, OrGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, NotGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, NandGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, NorGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, XorGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, XnorGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, BufferGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, TriStateBufferGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, DelayGateView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AndGateView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, OrGateView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, NotGateView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, NandGateView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, NorGateView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, XorGateView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, XnorGateView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, BufferGateView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, TriStateBufferGateView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DelayGateView::class) { SelectedColorSelectionModel(it) }
 
-		factory.register(SelectionDrawingStrategy.REPLACE, SwitchView::class.simpleName!!) { SwitchViewSelectionModel(it as SwitchView) }
-		factory.register(SelectionDrawingStrategy.REPLACE, DipSwitchView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, CircuitInOutView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, KeyboardView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, TerminalView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SwitchView::class) { SwitchViewSelectionModel(it as SwitchView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DipSwitchView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, CircuitInOutView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, KeyboardView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, TerminalView::class) { SelectedColorSelectionModel(it) }
 
-		factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class.simpleName!!) { LEDViewSelectionModel(it as LEDView) }
-		factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class.simpleName!!) { LEDViewSelectionModel(it as RgbLEDView) }
-		factory.register(SelectionDrawingStrategy.REPLACE, SevenSegmentDisplayView::class.simpleName!!) { SevenSegmentDisplayViewSelectionModel(it as SevenSegmentDisplayView) }
-		factory.register(SelectionDrawingStrategy.REPLACE, LEDMatrixView::class.simpleName!!) { LEDMatrixViewSelectionModel(it as LEDMatrixView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class) { LEDViewSelectionModel(it as LEDView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class) { LEDViewSelectionModel(it as RgbLEDView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SevenSegmentDisplayView::class) { SevenSegmentDisplayViewSelectionModel(it as SevenSegmentDisplayView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, LEDMatrixView::class) { LEDMatrixViewSelectionModel(it as LEDMatrixView) }
 
-		factory.register(SelectionDrawingStrategy.REPLACE, ROMView::class.simpleName!!) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, RAMView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ROMView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, RAMView::class) { SelectedColorSelectionModel(it) }
 
-		factory.register(SelectionDrawingStrategy.REPLACE, RandomView::class.simpleName!!) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, RandomView::class) { SelectedColorSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
-		factory.register(SelectionDrawingStrategy.BELOW, DigitalEdgeView::class.simpleName!!) { EdgeViewBelowSelectionModel(component = it as EdgeView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, DigitalEdgeView::class) { EdgeViewBelowSelectionModel(component = it as EdgeView<*>, styleType = EditStyleType.HIGHLIGHT) }
 
-		factory.register(SelectionDrawingStrategy.BELOW, AndGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, OrGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, NotGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, NandGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, NorGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, XorGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, XnorGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, BufferGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, TriStateBufferGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, DelayGateView::class.simpleName!!) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, AndGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, OrGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, NotGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, NandGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, NorGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, XorGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, XnorGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, BufferGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, TriStateBufferGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, DelayGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
 
-		factory.register(SelectionDrawingStrategy.BELOW, RAMView::class.simpleName!!) { BoundingBoxBelowSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.BELOW, ROMView::class.simpleName!!) { BoundingBoxBelowSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.BELOW, RAMView::class) { BoundingBoxBelowSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.BELOW, ROMView::class) { BoundingBoxBelowSelectionModel(it) }
 	}
 
 	private fun registerBaseLibraryElements(repository: BaseLibraryElementRepository) {

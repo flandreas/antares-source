@@ -12,7 +12,7 @@ object EditModuleQuadCurveModule : AbstractModule() {
 	override fun initialize() {
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.ABOVE,
-			QuadCurveComponent::class.simpleName!!
+			QuadCurveComponent::class
 		) { QuadCurveReplaceSelectionModel(it as QuadCurveComponent) }
 	}
 }

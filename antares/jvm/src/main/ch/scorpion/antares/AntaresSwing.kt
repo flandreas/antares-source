@@ -87,7 +87,11 @@ class AntaresSwing(
 		@JvmStatic
 		fun main(args: Array<String>) {
 
-			Thread.setDefaultUncaughtExceptionHandler { t, e ->  LOG.value.error("Unhandled exception", e)}
+			Thread.setDefaultUncaughtExceptionHandler { _, e ->
+				println("Unhandled exception: ${e.message}")
+				e.printStackTrace()
+				LOG.value.error("Unhandled exception", e)
+			}
 
 			System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS")
 			System.setProperty("apple.laf.useScreenMenuBar", "true")

@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.usecase
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.collection.EmptyIterator
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
@@ -16,7 +17,7 @@ class UsecaseImpl(
 	override var testScript: String? = null,
 	private val namable: Namable = NamableImpl(name),
 	private val describable: Describable = DescribableImpl()
-) : Usecase, Namable by namable, Describable by describable {
+) : Usecase, Namable by namable, Describable by describable, Bean {
 
 	var executionScriptProperty: ScriptProperty
 		get() = ScriptProperty(executionScript)

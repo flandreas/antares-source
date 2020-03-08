@@ -28,7 +28,7 @@ class ComponentPropertyPanel(
 
     override fun getDescription(bean: Any): String {
         if (bean is Component) {
-            return bean.type!!
+            return bean.type
         }
         return bean.toString()
     }

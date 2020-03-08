@@ -12,7 +12,7 @@ object EditModelPolylineModule : AbstractModule() {
 	override fun initialize() {
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.ABOVE,
-			PolylineComponent::class.simpleName!!
+			PolylineComponent::class
 		) { PolylineReplaceSelectionModel(it as PolylineComponent) }
 	}
 }

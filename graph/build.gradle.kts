@@ -10,13 +10,13 @@ kotlin {
 
 		val commonMain by getting {
 			dependencies {
-				implementation(project(":base"))
-				implementation(project(":io"))
-				implementation(project(":animation"))
-				implementation(project(":draw"))
-				implementation(project(":edit"))
-				implementation(project(":app"))
-				implementation(project(":execution"))
+				api(project(":base"))
+				api(project(":io"))
+				api(project(":animation"))
+				api(project(":draw"))
+				api(project(":edit"))
+				api(project(":app"))
+				api(project(":execution"))
 			}
 		}
 

@@ -18,7 +18,9 @@ actual object System {
 
 	actual fun currentTimeMillis(): Long = java.lang.System.currentTimeMillis()
 
-	actual fun getClassName(obj: Any): String = obj.javaClass.simpleName
+	actual fun getClassName(clazz: KClass<*>): String = clazz.qualifiedName!!
+
+	actual fun getClassName(obj: Any): String = obj.javaClass.name
 
 	actual fun getClass(obj: Any): KClass<Any> = obj.javaClass.kotlin
 

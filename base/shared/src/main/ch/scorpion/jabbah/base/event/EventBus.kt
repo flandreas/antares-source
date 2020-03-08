@@ -39,23 +39,27 @@ interface EventBus {
     fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any> = {}, elseHandler: VetoHandler<VetoException> = {})
 }
 
-class EventBusImpl : EventBus {
+abstract class AbstractEventBus : EventBus {
 
     /** Maps event simple class names to all handlers that have been registered for that event class.*/
     private val registrations: MutableMap<String, MutableList<EventHandler<Any>>> = mutableMapOf()
+
+	abstract fun <T: Any> getEventClassName(eventClass: KClass<out T>): String
+
+	abstract fun getEventClassName(event: Any): String
 
     /** ---- [EventBus] interface */
 
     override fun <T: Any> register(eventClass: KClass<out T>, handler: EventHandler<T>) {
         @Suppress("UNCHECKED_CAST")
         registrations
-	        .getOrPut(eventClass.simpleName!!) { mutableListOf()}
+	        .getOrPut(getEventClassName(eventClass)) { mutableListOf()}
 	        .add(handler as (Any) -> Unit)
     }
 
     override fun <T : Any> unregister(eventClass: KClass<out T>, handler: EventHandler<T>) {
 	    @Suppress("UNCHECKED_CAST")
-        unregister(eventClass.simpleName!!, handler as EventHandler<Any>)
+        unregister(getEventClassName(eventClass), handler as EventHandler<Any>)
     }
 
     override fun unregister(handler: EventHandler<*>) {
@@ -63,13 +67,13 @@ class EventBusImpl : EventBus {
     }
 
     override fun post(event: Any) {
-        registrations[event::class.simpleName]?.toList()?.forEach { it.invoke(event) }
+        registrations[getEventClassName(event)]?.toList()?.forEach { it.invoke(event) }
     }
 
     override fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any>, elseHandler: VetoHandler<VetoException>) {
         val successHandlers = mutableListOf<EventHandler<Any>>()
         try {
-            registrations[event::class.simpleName]?.forEach {
+            registrations[getEventClassName(event)]?.forEach {
                 it.invoke(event)
                 successHandlers.add(it)
             }
@@ -86,3 +90,5 @@ class EventBusImpl : EventBus {
         registrations[eventClassName]?.remove(handler)
     }
 }
+
+expect class EventBusImpl() : EventBus

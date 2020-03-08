@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.container.DrawableContainerInputEventHandler
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Snapper
@@ -48,7 +49,7 @@ import ch.scorpion.jabbah.io.*
 open class GraphViewImpl<T : GraphElementView<*>>(
 	override var graph: Graph?,
 	protected val eventBus: EventBus = BaseModule.eventBus
-) : DrawingImpl<T>(), GraphView<T> {
+) : DrawingImpl<T>(), GraphView<T>, Bean {
 
 	constructor() : this(Translations.getString("graph.name.unknown"))
 	constructor(name: String) : this(GraphModelModule.graphFactory.invoke(name))

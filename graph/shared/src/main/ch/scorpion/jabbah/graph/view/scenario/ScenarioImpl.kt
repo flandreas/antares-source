@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.Describable
@@ -26,7 +27,7 @@ class ScenarioImpl(
 	private var conditionScript: String = "",
 	private val namable: NamableImpl = NamableImpl(initialName),
 	private val describable: Describable = DescribableImpl()
-) : Scenario, Namable by namable, Describable by describable {
+) : Scenario, Namable by namable, Describable by describable, Bean {
 
 	private val steps: MutableList<ScenarioStep> by lazy { mutableListOf<ScenarioStep>() }
 

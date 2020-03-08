@@ -103,7 +103,7 @@ object EditModuleJvm : AbstractModule() {
 	private fun registerSelectionModels() {
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.REPLACE,
-			TextComponentJvm::class.simpleName!!
+			TextComponentJvm::class
 		) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent, drawStrategy = RectangularReplaceSelectionModel.DrawStrategy.COMPONENT) }
 	}
 

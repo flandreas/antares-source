@@ -12,47 +12,47 @@ object EditModelRectangleModule : AbstractModule() {
 	override fun initialize() {
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.BELOW,
-			RectangleComponent::class.simpleName!!
+			RectangleComponent::class
 		) { RectangularBelowSelectionModel(it as AbstractRectangularComponent) }
 
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.ABOVE,
-			RectangleComponent::class.simpleName!!
+			RectangleComponent::class
 		) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
 
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.REPLACE,
-			RectangleComponent::class.simpleName!!
+			RectangleComponent::class
 		) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
 
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.BELOW,
-			EllipseComponent::class.simpleName!!
+			EllipseComponent::class
 		) { RectangularBelowSelectionModel(it as AbstractRectangularComponent) }
 
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.ABOVE,
-			EllipseComponent::class.simpleName!!
+			EllipseComponent::class
 		) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
 
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.REPLACE,
-			EllipseComponent::class.simpleName!!
+			EllipseComponent::class
 		) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
 
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.BELOW,
-			RoundRectangleComponent::class.simpleName!!
+			RoundRectangleComponent::class
 		) { RectangularBelowSelectionModel(it as AbstractRectangularComponent) }
 
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.ABOVE,
-			RoundRectangleComponent::class.simpleName!!
+			RoundRectangleComponent::class
 		) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
 
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.REPLACE,
-			RoundRectangleComponent::class.simpleName!!
+			RoundRectangleComponent::class
 		) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
 	}
 }

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.Describable
@@ -27,7 +28,7 @@ class ScenarioStepImpl(
 	private val namable: NamableImpl = NamableImpl(initialName),
 	private val describable: DescribableImpl = DescribableImpl()
 
-) : ScenarioStep, Namable by namable, Describable by describable {
+) : ScenarioStep, Namable by namable, Describable by describable, Bean {
 
 	@Suppress("unused")
 	constructor() : this(ScriptModule.scriptGateway, "")

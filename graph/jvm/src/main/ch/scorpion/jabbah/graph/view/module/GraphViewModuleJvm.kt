@@ -86,7 +86,7 @@ object GraphViewModuleJvm : AbstractModule() {
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
-		factory.register(SelectionDrawingStrategy.ABOVE, TextComponentJvm::class.simpleName!!) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
+		factory.register(SelectionDrawingStrategy.ABOVE, TextComponentJvm::class) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

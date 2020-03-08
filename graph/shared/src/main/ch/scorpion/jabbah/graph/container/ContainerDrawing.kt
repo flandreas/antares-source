@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.model.DrawingImpl
@@ -47,7 +48,7 @@ class ContainerDrawing(
 	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
 	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : DrawingImpl<Component>() {
+) : DrawingImpl<Component>(), Bean {
 
 	companion object {
 		private val LOG by logger(ContainerDrawing::class)

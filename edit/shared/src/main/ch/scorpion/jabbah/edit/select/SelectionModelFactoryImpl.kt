@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.SelectionModel
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
+import kotlin.reflect.KClass
 
 /**
  * A standard implementation of the [SelectionModelFactory] interface.
@@ -32,8 +33,8 @@ class SelectionModelFactoryImpl : SelectionModelFactory {
 		return null
 	}
 
-	override fun register(strategy: SelectionDrawingStrategy, componentClassName: String, factory: (Component) -> SelectionModel<Component>) {
-		registry.getOrPut(strategy, { mutableListOf() }).add(Entry(componentClassName, factory))
+	override fun register(strategy: SelectionDrawingStrategy, componentClass: KClass<*>, factory: (Component) -> SelectionModel<Component>) {
+		registry.getOrPut(strategy, { mutableListOf() }).add(Entry(System.getClassName(componentClass), factory))
 	}
 
 	/** ----  [SelectionModelFactoryImpl] */

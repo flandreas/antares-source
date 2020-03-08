@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.Grid
-import ch.scorpion.jabbah.edit.GridPainter
 import ch.scorpion.jabbah.edit.GridPainterRegistry
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
@@ -25,17 +24,17 @@ object EditModelTextModule : AbstractModule() {
 
         EditSelectModule.selectionModelFactory.register(
             SelectionDrawingStrategy.ABOVE,
-            TextComponent::class.simpleName!!)
+            TextComponent::class)
         { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
 
 	    EditSelectModule.selectionModelFactory.register(
             SelectionDrawingStrategy.ABOVE,
-            SimpleTextComponent::class.simpleName!!)
+            SimpleTextComponent::class)
 	    { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
 
 	    EditSelectModule.selectionModelFactory.register(
             SelectionDrawingStrategy.REPLACE,
-            SimpleTextComponent::class.simpleName!!)
+            SimpleTextComponent::class)
 	    { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
 
 	    fillProperties(DrawModule.properties)

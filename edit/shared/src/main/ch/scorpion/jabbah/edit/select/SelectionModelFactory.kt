@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.select
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.SelectionModel
+import kotlin.reflect.KClass
 
 /**
  * A factory for creating [SelectionModel]s.
@@ -23,5 +24,5 @@ interface SelectionModelFactory {
      * be created. Unfortunately, the JavaScript compiler of Kotlin currently doesn't support more
      * reflection functionality that retrieving the simple name of a class.
      */
-    fun register(strategy: SelectionDrawingStrategy, componentClassName: String, factory: (Component) -> SelectionModel<Component>)
+    fun register(strategy: SelectionDrawingStrategy, componentClass: KClass<*>, factory: (Component) -> SelectionModel<Component>)
 }

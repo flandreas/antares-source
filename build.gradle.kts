@@ -1,6 +1,15 @@
 import org.asciidoctor.gradle.AsciidoctorTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath("net.sf.proguard:proguard-gradle:6.2.2")
+	}
+}
+
 plugins {
 	kotlin("multiplatform") version "1.3.61" apply false
 	id("net.akehurst.kotlin.kt2ts") version("1.5.0") apply false

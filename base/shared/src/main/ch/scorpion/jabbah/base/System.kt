@@ -13,7 +13,9 @@ expect object System {
     /** Creates a new [Timer].*/
     fun createTimer(): Timer
 
-    /** Returns the simple class name of an object.*/
+	fun getClassName(clazz: KClass<*>): String
+
+    /** Returns the class name of an object.*/
     fun getClassName(obj: Any): String
 
     fun getClass(obj: Any): KClass<Any>
