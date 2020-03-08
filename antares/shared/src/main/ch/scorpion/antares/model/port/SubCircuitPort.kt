@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphInput
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.SubGraphInputPort
@@ -18,7 +19,7 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.io.*
 
 /**
- * TODO Code duplication with [SubGraphPortImpl].
+ * TODO Code duplication with SubGraphPortImpl.
  */
 class SubCircuitPort(
 	portType: PortType = PortType.INPUT,
@@ -66,7 +67,7 @@ class SubCircuitPort(
 		writer.writeString("type", portType.customName)
 		writer.writeString("representation", signalRepresentation.customName)
 		if (outputAnnotation != OutputAnnotation.NONE) {
-			writer.writeString("outputAnnotation", outputAnnotation!!.customName)
+			writer.writeString("outputAnnotation", outputAnnotation.customName)
 		}
 	}
 

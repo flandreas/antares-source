@@ -169,7 +169,7 @@ class ContainerDrawing(
 
 	@Deprecated("Use querying with DeepVerticeLink")
 	fun getControlViewComponent(controlId: String): ControlViewComponent? {
-		return getControlViewComponents().firstOrNull { it.controlView!!.controlId == controlId }
+		return getControlViewComponents().firstOrNull { it.controlView.controlId == controlId }
 	}
 
 	fun getControlViewComponent(link: DeepVerticeLink): ControlViewComponent? {

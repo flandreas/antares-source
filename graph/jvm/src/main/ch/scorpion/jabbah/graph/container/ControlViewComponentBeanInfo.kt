@@ -7,6 +7,7 @@ import com.l2fprod.common.propertysheet.Property
 import java.beans.BeanInfo
 
 /** A [BeanInfo] for [ControlViewComponent].*/
+@Suppress("unused")
 class ControlViewComponentBeanInfo : AbstractBeanInfo<ControlViewComponent>() {
 
 	companion object {
@@ -16,7 +17,7 @@ class ControlViewComponentBeanInfo : AbstractBeanInfo<ControlViewComponent>() {
 	override fun addProperties(bean: ControlViewComponent, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		id.bind(editor, { bean.controlView!!.controlName }, null, false)
+		id.bind(editor, { bean.controlView.controlName }, null, false)
 
 		properties.add(id)
 	}

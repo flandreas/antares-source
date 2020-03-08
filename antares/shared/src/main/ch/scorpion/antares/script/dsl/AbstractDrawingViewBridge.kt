@@ -42,7 +42,7 @@ abstract class AbstractDrawingViewBridge(
 	}
 
 	protected fun getInput(inputId: Int): CircuitInOutView? {
-		getComponent(inputId, CircuitInOutView::class,Translations.getString("library.element.CircuitInOut.name"))?.let { input ->
+		getComponent(inputId, CircuitInOutView::class, Translations.getString("library.element.CircuitInOut.name"))?.let { input ->
 			if (!input.model.portType.isInput) {
 				LOG.debug("\"expecting input CircuitInOutView, but PortType is ${input.model.portType}")
 				postTypeIssue(inputId, Translations.getString("library.element.CircuitInOut.name"), Translations.getString("graph.property.portType.output"))
@@ -53,7 +53,7 @@ abstract class AbstractDrawingViewBridge(
 	}
 
 	protected fun getOutput(outputId: Int): CircuitInOutView? {
-		getComponent(outputId, CircuitInOutView::class,Translations.getString("library.element.CircuitInOut.name"))?.let { output ->
+		getComponent(outputId, CircuitInOutView::class, Translations.getString("library.element.CircuitInOut.name"))?.let { output ->
 			if (!output.model.portType.isOutput) {
 				LOG.debug("\"expecting output CircuitInOutView, but PortType is ${output.model.portType}")
 				postTypeIssue(outputId, Translations.getString("library.element.CircuitInOut.name"), Translations.getString("graph.property.portType.input"))
@@ -64,10 +64,10 @@ abstract class AbstractDrawingViewBridge(
 	}
 
 	protected fun <T : Component> getComponent(id: Int, clazz: KClass<T>, translatedClassName: String): T? {
-		getComponent(id)?.let {component ->
+		getComponent(id)?.let { component ->
 			if (component::class != clazz) {
 				LOG.debug("expecting ${clazz.simpleName}, but component with ID $id is of type ${component::class.simpleName}")
-				postTypeIssue(id, translatedClassName, component.type!!)
+				postTypeIssue(id, translatedClassName, component.type)
 				return null
 			}
 			return component as T?

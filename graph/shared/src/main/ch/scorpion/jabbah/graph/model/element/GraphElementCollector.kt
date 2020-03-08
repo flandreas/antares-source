@@ -69,8 +69,8 @@ class GraphElementCollector(
 		}
 
 		override fun visit(node: Any): Boolean {
-			if (node is GraphElement && node.type != null) {
-				count(node.type!!)
+			if (node is GraphElement) {
+				count(node.type)
 			}
 			return true
 		}

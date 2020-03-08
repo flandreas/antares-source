@@ -111,9 +111,7 @@ open class NodeViewImpl<T : Any>(
 			return inEv
 		}
 
-		return getOutgoingEdgeViews()
-			.filter { it.getSegmentDirection(0)!! == direction }
-			.firstOrNull()
+		return getOutgoingEdgeViews().firstOrNull { it.getSegmentDirection(0)!! == direction }
 	}
 
 	override fun getIncomingEdgeView(): EdgeView<T>? {
@@ -243,9 +241,7 @@ open class NodeViewImpl<T : Any>(
 
 	private fun updateGeometry() {
 		invalidate()
-		if (styling != null) {
-			styling?.updateBoundingBox()
-		}
+		styling.updateBoundingBox()
 		invalidate()
 		update()
 	}

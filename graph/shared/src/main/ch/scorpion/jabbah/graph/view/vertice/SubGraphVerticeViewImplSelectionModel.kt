@@ -15,47 +15,48 @@ import ch.scorpion.jabbah.graph.view.ControlView
  * A [SelectionModel] for [SubGraphVerticeViewImpl] that draws its [ControlView]s using their [SelectionModel]s.
  */
 class SubGraphVerticeViewImplSelectionModel(
-    model: SubGraphVerticeViewImpl,
-    private val provider: SelectionModelProvider
+	model: SubGraphVerticeViewImpl,
+	private val provider: SelectionModelProvider
 ) : AbstractSelectionModel<SubGraphVerticeViewImpl>(model) {
 
-    private val selectionModels = mutableMapOf<ControlViewComponent, SelectionModel<Component>>()
+	private val selectionModels = mutableMapOf<ControlViewComponent, SelectionModel<Component>>()
 
-    /** ---- [Drawable] */
+	/** ---- [Drawable] */
 
-    override fun dispose() {
-	    super.dispose()
-	    clearSelectionModels()
-    }
+	override fun dispose() {
+		super.dispose()
+		clearSelectionModels()
+	}
 
 	override fun draw(context: DrawContext) {
-        val oldUseContextColors = context.useContextColors
+		val oldUseContextColors = context.useContextColors
 
-        context.useContextColors = true
-        context.g.color = context.selectionColor!!.foregroundColor
-        context.color = context.selectionColor
-        component.drawWithDrawableDrawer(context) {
-	        if (it is ControlViewComponent) {
-		        selectionModels[it]!!.draw(context)
-	        } else {
-		        it.draw(context)
-	        }
-        }
+		context.useContextColors = true
+		context.g.color = context.selectionColor!!.foregroundColor
+		context.color = context.selectionColor
+		component.drawWithDrawableDrawer(context) {
+			if (it is ControlViewComponent) {
+				selectionModels[it]!!.draw(context)
+			} else {
+				it.draw(context)
+			}
+		}
 
-	    context.useContextColors = oldUseContextColors
-    }
+		context.useContextColors = oldUseContextColors
+	}
 
-    override val boundingBox: RectangularShape get() = component.boundingBox
+	override val boundingBox: RectangularShape get() = component.boundingBox
 
-    override fun contains(x: Double, y: Double): Boolean = component.contains(x, y)
+	override fun contains(x: Double, y: Double): Boolean = component.contains(x, y)
 
-    /** ---- [AbstractSelectionModel] */
+	/** ---- [AbstractSelectionModel] */
 
-    override fun componentUpdated() { clearSelectionModels()
-        component.getControlViewComponents().forEach {
-	        selectionModels[it] = provider.provideFor(it.controlView!!, SelectionDrawingStrategy.REPLACE)!!
-        }
-    }
+	override fun componentUpdated() {
+		clearSelectionModels()
+		component.getControlViewComponents().forEach {
+			selectionModels[it] = provider.provideFor(it.controlView, SelectionDrawingStrategy.REPLACE)!!
+		}
+	}
 
 	/** ---- [SubGraphVerticeViewImplSelectionModel] */
 
