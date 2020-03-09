@@ -35,13 +35,13 @@ Ein Testfall besteht aus einem eigenen Skript, das typischerweise Zustände der 
 
 Anwendungsfälle der geöffneten Schaltung werden in der aufklappbaren Seitenleiste "Anwendungsfälle" am rechten Rand des Antares-Fensters konfiguriert.
 
-Die Seitenleiste enhält einen Baum mit allen Anwendungsfällen (Oval-Icon). Wenn Du einen Knoten im Baum auswählst, werden im Eigenschaftenfenster darunter die Attribute des Anwendungsfalls angezeigt und zur Änderung angeboten.
+Die Seitenleiste enhält einen Baum mit allen Anwendungsfällen (Oval-Icon). Wenn du einen Knoten im Baum auswählst, werden im Eigenschaftenfenster darunter die Attribute des Anwendungsfalls angezeigt und zur Änderung angeboten.
 
 image::usecases-panel.png[Beispiel-Anwendungsfälle, 500,align="center"]
 
 ==== Aktionen
 
-Um Anwendungsfälle hinzuzufügen oder zu löschen, wählst Du einen Knoten im Baum aus und führst eine Aktion des Hauptmenüs oder des Kontextmenüs (rechte Maustaste) aus.
+Um Anwendungsfälle hinzuzufügen oder zu löschen, wählst du einen Knoten im Baum aus und führst eine Aktion des Hauptmenüs oder des Kontextmenüs (rechte Maustaste) aus.
 
 Neuer Anwendungsfall:: Kontextmenü auf dem Schaltungs-Knoten. Nach Eingabe des Namens des neuen Anwendungsfalls (in der aktuellen Sprache) wird er im Baum hinzugefügt.
 

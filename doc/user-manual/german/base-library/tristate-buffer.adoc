@@ -2,7 +2,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/tristate-buffer-sample.png[Beispiel Tri-State Puffer, 50%]
+image:../../img/base-library/tristate-buffer-sample.png[Beispiel Tri-State Puffer, 300]
 
 ==== Verhalten
 
@@ -12,7 +12,7 @@ Tri-State Puffer werden verwendet, wenn der Ausgang mehrerer Komponenten auf ein
 
 Der Kontrolleingang des Tri-State Puffers kann mit dem Attribut "Logik" auf "Positiv" oder "Negativ" gesetzt werden.
 
-Unverbundene Eingänge haben immer den Wert "0".
+Unverbundene Eingänge haben immer den Wert 0.
 
 .Wahrheitstabelle "Positive Logik"
 [%header,cols=5*, width="40%"]
@@ -39,24 +39,28 @@ Unverbundene Eingänge haben immer den Wert "0".
 
 Die logischen Gatter von Antares können ihre Funktion mit sog. "Mnemonics" veranschaulichen. Siehe dazu das Kapitel <<../description/description.adoc, Beschreibungen und Erläuterungen>>. Unten ist das Mnemonic des Tri-State Puffers dargestellt.
 
-image:../../img/base-library/tristate-buffer-mnemonic.png[Mnemonic Tri-State Puffer, 50%]
+image:../../img/base-library/tristate-buffer-mnemonic.png[Mnemonic Tri-State Puffer, 300]
 
 ==== Anschlüsse
 
-Dateineingang:: Der Eingang des Puffers.
+Dateineingang:: Der Eingang des Puffers. Die Anzahl Bits wird durch das Attribut "Anzahl Bits" bestimmt.
 
-EN:: "Enable" - Kontrolleingang TODO
+EN:: "Enable" - 1-Bit-Kontrolleingang. Ein aktiver Wert führt dazu, dass alle Bits des Dateneingangs unverändert am Ausgang ausgegeben werden. Bei inaktivem Wert wird am Ausgang ein n-Bit-Wert ausgegeben, dessen n Bits alle undefiniert sind. Was als aktiver Wert gilt, wird vom Attribut "Logik" bestimmt.
 
-Ausgang:: TODO
+Ausgang:: Der Ausgang des Puffers. Die Anzahl Bits wird durch das Attribut "Anzahl Bits" bestimmt.
 
 ==== Attribute
 
 Ausrichtung:: Die Himmelsrichtung, in die der Ausgang zeigt.
 
-Logik:: TODO
+Logik:: Bestimmt die Logik des Kontrolleingangs EN.
+* **Positiv**: Der Eingang EN ist beim Wert 1 aktiv.
+* **Negativ**: Der Eingang EN ist beim Wert 0 aktiv.
 
-Anzahl Bits:: TODO
+Anzahl Bits:: Die Anzahl Bits des Dateneingangs und des Ausgangs.
 
-Ausrichtung Kontrolleingang:: TODO
+Ausrichtung Kontrolleingang:: Bestimmt, auf welcher Seite des Puffers der Kontrolleingang EN dargestellt wird.
+* **Rechts**: Der Kontrolleingang wird von der Datenflussrichtung aus gesehen rechts dargestellt.
+* **Links**: Der Kontrolleingang wird von der Datenflussrichtung aus gesehen links dargestellt.
 
 

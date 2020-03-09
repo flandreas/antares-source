@@ -35,6 +35,6 @@ Auffächerung:: Bestimmt die Anzahl der Eingänge. Die Bit-Breite jedes Eingangs
 Position Bit 0:: Mit Hilfe dieses Attributs kann die Position der Eingänge innerhalb des Verteilers bestimmt werden.
 
 * **Rechts**: Der Eingang, der das Bit 0 führt, liegt aus Sicht des am Ausgang ausgehenden Signals auf der rechten Seite des Konzentrierers.
-* **Links**: Der Eingang, der das Bit 0 führt, liegt aus Sicht des am Ausgang ausgehenden Signals auf der linken Seite des Verteilers.
+* **Links**: Der Eingang, der das Bit 0 führt, liegt aus Sicht des am Ausgang ausgehenden Signals auf der linken Seite des Konzentrierers.
 
 Repräsentation:: Die Art, in der der Wert des Ausgangssignals repräsentiert wird, die z.B. bei der Signalflussanimation verwendet wird. Zur Verfügung stehen binäre und hexadezimale Repräsentation.

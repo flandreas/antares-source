@@ -6,7 +6,7 @@ image:../../img/base-library/probe-sample.png[Beispiel LED, 50%]
 
 ==== Verhalten
 
-Die Sonde wird verwendet, um einen Signalwert an einem bestimmten Punkt in der Schaltung darzustellen. Wenn das Attribut "Loggin" gesetzt ist, werden die Signalwerte zusätzlich im Fenster "Log" von Antares gesammelt und zusammen mit dem Zeitpunkt, an dem das Signal aufgetreten ist, dargestellt. Dies kann z.B. bei der Fehlersuche hilfreich sein.
+Die Sonde wird verwendet, um einen Signalwert an einem bestimmten Punkt in der Schaltung darzustellen. Wenn das Attribut "Logging" gesetzt ist, werden die Signalwerte zusätzlich im Fenster "Log" von Antares gesammelt und zusammen mit dem Zeitpunkt, an dem das Signal aufgetreten ist, dargestellt. Dies kann z.B. bei der Fehlersuche hilfreich sein.
 
 ==== Anschlüsse
 
@@ -20,7 +20,7 @@ Name:: Der Name der Sonde, der am entgegengesetzten Ort des Einganges (resp. obe
 
 Ausrichtung:: Die Himmelsrichtung, in die die Sonde zeigt.
 
-Anzahl Bits:: Die Bitbreite des Eingangs.
+Anzahl Bits:: Die Bitbreite des Eingangs (und des Ausgangs, falls vorhanden).
 
 Repräsentation:: Die Art, in der Signalwert repräsentiert wird. Zur Verfügung stehen binäre und hexadezimale Repräsentation.
 

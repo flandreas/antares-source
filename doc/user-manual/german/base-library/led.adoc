@@ -2,11 +2,11 @@
 
 ==== Aussehen
 
-image:../../img/base-library/led-sample.png[Beispiel LED, 50%]
+image:../../img/base-library/led-sample.png[Beispiel LED, 300]
 
 ==== Verhalten
 
-Zeigt den Wert am Eingang an, indem der Leuchtkörper der LED in Abhängigkeit der Farbe der LED entsprechend dargestellt wird. Bei einer "1" am Eingang wird die LED hell gezeichnet, bei einer "0" dunkel.
+Zeigt den Wert am Eingang an, indem der Leuchtkörper der LED in Abhängigkeit der Farbe der LED entsprechend dargestellt wird. Bei einer 1 am Eingang wird die LED hell gezeichnet, bei einer 0 dunkel.
 
 ==== Anschlüsse
 

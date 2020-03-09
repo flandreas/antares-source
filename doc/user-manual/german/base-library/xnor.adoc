@@ -2,13 +2,13 @@
 
 ==== Aussehen
 
-image:../../img/base-library/xnor-sample.png[Beispiel XNOR-Gatter, 50%]
+image:../../img/base-library/xnor-sample.png[Beispiel XNOR-Gatter, 300]
 
 ==== Verhalten
 
-Das XNOR (Nicht-Exklusiv-Oder) gibt am Ausgang das Resultat der XNOR-Verknüpfung der 1-Bit-Signale am Eingang aus. Der Ausgang hat nur dann den Wert "1", wenn nicht genau ein Eingang den Wert "1" hat. Bei einem XNOR-Gatter mit zwei Eingängen bedeutet das, dass der Ausgang "1" ist, wenn die beiden Eingänge denselben Wert haben.
+Das XNOR (Nicht-Exklusiv-Oder) gibt am Ausgang das Resultat der XNOR-Verknüpfung der 1-Bit-Signale am Eingang aus. Der Ausgang hat nur dann den Wert 1, wenn nicht genau ein Eingang den Wert 1 hat. Bei einem XNOR-Gatter mit zwei Eingängen bedeutet das, dass der Ausgang 1 ist, wenn die beiden Eingänge denselben Wert haben.
 
-Unverbundene Eingänge haben immer den Wert "0".
+Unverbundene Eingänge haben immer den Wert 0.
 
 .Wahrheitstabelle
 [%header,cols=5*, width="40%"]
@@ -26,7 +26,7 @@ Unverbundene Eingänge haben immer den Wert "0".
 
 Die logischen Gatter von Antares können ihre Funktion mit sog. "Mnemonics" veranschaulichen. Siehe dazu das Kapitel <<../description/description.adoc, Beschreibungen und Erläuterungen>>. Unten ist das Mnemonic des XNOR-Gatters dargestellt.
 
-image:../../img/base-library/xor-mnemonic.png[Beispiel Mnemonic, 50%]
+image:../../img/base-library/xor-mnemonic.png[Beispiel Mnemonic, 300]
 
 ==== Anschlüsse
 

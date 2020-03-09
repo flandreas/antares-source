@@ -2,13 +2,13 @@
 
 ==== Aussehen
 
-image:../../img/base-library/nand-sample.png[Beispiel Nicht-Und-Gatter, 50%]
+image:../../img/base-library/nand-sample.png[Beispiel Nicht-Und-Gatter, 300]
 
 ==== Verhalten
 
-Das Nicht-Und-Gatter gibt am Ausgang das Resultat der NAND-Verknüpfung der 1-Bit-Signale am Eingang aus. Der Ausgang hat nur dann den Wert "0", wenn alle Eingänge den Wert "1" haben.
+Das Nicht-Und-Gatter gibt am Ausgang das Resultat der NAND-Verknüpfung der 1-Bit-Signale am Eingang aus. Der Ausgang hat nur dann den Wert 0, wenn alle Eingänge den Wert 1 haben.
 
-Unverbundene Eingänge haben immer den Wert "0".
+Unverbundene Eingänge haben immer den Wert 0.
 
 .Wahrheitstabelle
 [%header,cols=5*, width="40%"]
@@ -26,7 +26,7 @@ Unverbundene Eingänge haben immer den Wert "0".
 
 Die logischen Gatter von Antares können ihre Funktion mit sog. "Mnemonics" veranschaulichen. Siehe dazu das Kapitel <<../description/description.adoc, Beschreibungen und Erläuterungen>>. Unten ist das Mnemonic des Nicht-Und-Gatters dargestellt.
 
-image:../../img/base-library/nand-mnemonic.png[Beispiel Mnemonic, 50%]
+image:../../img/base-library/nand-mnemonic.png[Beispiel Mnemonic, 300]
 
 ==== Anschlüsse
 

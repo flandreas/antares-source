@@ -1,8 +1,9 @@
 === image:../../img/base-library/dip-switch.png[DIP-Schalter] DIP-Schalter
+:experimental:
 
 ==== Aussehen
 
-image:../../img/base-library/dip-switch-sample.png[Beispiel DIP-Schalter, 30%]
+image:../../img/base-library/dip-switch-sample.png[Beispiel DIP-Schalter, 200]
 
 ==== Verhalten
 
@@ -12,11 +13,11 @@ Der DIP-Schalter hat das Attribut "Initialer Wert", der in der Schaltung gespeic
 
 Die einzelnen Schalter verhalten sich wie die Komponente "Schalter", d.h. das Umschalten eines einzelnen Schalters während der Simulation wird erst wirksam, nachdem die konfigurierte Laufzeit verstrichen ist. Bis dahin wird der DIP-Schalter als "inaktiv" dargestellt und nimmt keine Benutzereingaben entgegen.
 
-Beim Drücken des einzelnen Schalters mit der Maus erhält der DIP-Schalter den Tastatur-Fokus, der durch ein dünnes blaues gesticheltes Rechteck um den einzelnen Schalter dargestellt wird. Wenn ein Schalter den Tastatur-Fokus besitzt, kann der auch mit der ENTER-Taste sowie mit den Tasten "0" und "1" betätigt werden. Zudem kann mit Pfeil-Tasten "links" und "rechts" zwischen den einzelnen Schaltern navigiert werden. Beim Betätigen eines einzelnen Schalters über die Tastatur erhält automatisch der nächste Schalter den Tastaturfokus, wodurch der ganze DIP-Switch einfach über die Tastatur eingestellt werden kann.
+Beim Drücken des einzelnen Schalters mit der Maus erhält der DIP-Schalter den Tastatur-Fokus, der durch ein dünnes blaues gesticheltes Rechteck um den einzelnen Schalter dargestellt wird. Wenn ein Schalter den Tastatur-Fokus besitzt, kann er auch mit der kbd:[Enter]-Taste sowie mit den Tasten kbd:[0] und kbd:[1] betätigt werden. Zudem kann mit den Pfeil-Tasten kbd:[<-] und kbd:[->] zwischen den einzelnen Schaltern hin und her navigiert werden. Beim Betätigen eines einzelnen Schalters über die Tastatur erhält automatisch der nächste Schalter den Tastaturfokus, wodurch der ganze DIP-Schalter einfach über die Tastatur eingestellt werden kann.
 
 ==== Anschlüsse
 
-Ein DIP-Schalter hat nur einen einzigen Ausgang der im Attribut "Anzahl Bits" konfigurierten Bit-Breite.
+Ein DIP-Schalter hat nur einen einzigen Ausgang mit der im Attribut "Anzahl Bits" konfigurierten Bit-Breite.
 
 
 ==== Attribute

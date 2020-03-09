@@ -2,27 +2,27 @@
 
 ==== Aussehen
 
-image:../../img/base-library/terminal-sample.png[Beispiel Terminal, 50%]
+image:../../img/base-library/terminal-sample.png[Beispiel Terminal, 400]
 
 ==== Verhalten
 
-Diese Komponente implementiert ein sehr einfaches Text-Terminal. Sie erhält am Eingang "D" eine Sequenz von ASCII-Zeichen und gibt jedes darstellbare Zeichen aus. Wenn die aktuelle Zeile voll ist, fährt das Terminal auf der nächsten Zeile fort, wobei der ganze Terminalinhalt nach oben verschoben wird, falls die letzte verfügbare Zeile gefüllt worden ist.
+Diese Komponente implementiert ein sehr einfaches Text-Terminal. Sie erhält am Eingang "D" eine Sequenz von ASCII-Zeichen, die sie zeilenweise darstellt. Wenn die aktuelle Zeile voll ist, fährt das Terminal auf der nächsten Zeile fort, wobei der ganze Terminal-Inhalt nach oben verschoben wird, nachdem die letzte verfügbare Zeile gefüllt worden ist.
 
 Das Terminal unterstützt die folgenden Kontrollzeichen:
 
 * *Backspace (ASCII-Code 8)*: Löscht das letzte Zeichen der aktuelle Zeile.
-* *Linefeed (ASCII-Code 10)*: Beginnt eine neue Zeile, wobei nötigenfalls der aktuelle Terminalinhalt eine Zeile nach oben gescrollt wird.
-* *Formfeed (ASCII-Code 12)*: Löscht den Terminalinhalt.
+* *Linefeed (ASCII-Code 10)*: Beginnt eine neue Zeile, wobei nötigenfalls der aktuelle Terminal-Inhalt eine Zeile nach oben gescrollt wird.
+* *Formfeed (ASCII-Code 12)*: Löscht den gesamten Terminal-Inhalt.
 
 ==== Anschlüsse
 
 D:: "Data" - Enhält den ASCII-Code des nächsten darzustellenden Zeichens.
 
-CLK:: "Clock" - Falls "EN" nicht "0" ist, wird bei steigender Flanke von "CLK" das nächste Zeichen übernommen.
+CLK:: "Clock" - Falls "EN" 1 ist, wird bei steigender Flanke von "CLK" das nächste Zeichen übernommen.
 
-EN:: "Enable" - Muss den Wert "1" haben, damit das Terminal Zeichen übernimmt. Signale an den Eingängen "D" und "CLK" werden ignoriert, wenn "EN" den Wert "0" hat.
+EN:: "Enable" - Muss den Wert 1 haben, damit das Terminal Zeichen übernimmt. Signale an den Eingängen "D" und "CLK" werden ignoriert, wenn "EN" den Wert 0 hat.
 
-CLR:: "Clear" - Mit dem Wert "1" wird der Terminalinhalt gelöscht.
+CLR:: "Clear" - Mit dem Wert 1 wird der Terminalinhalt asynchron gelöscht.
 
 ==== Attribute
 

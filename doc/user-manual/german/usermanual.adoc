@@ -4,7 +4,11 @@
 
 Willkommen zu Antares!
 
-Antares ist...
+Antares ist eine Lernplatform für digitale Schaltungen. Neben Zeichnen und Simulieren von digitalen Schaltungen legt Antares einen besonderen Wert darauf, Mittel zur Verfügung zu stellen, mit deren Hilfe die Funktionsweise von Schaltungen besser verstanden werden kann.
+
+Wenn du Antares zum ersten Mal benützt, findest du im Kapitel <<first-steps/first-steps.adoc#, "Erste Schritte">> eine einfach verständliche Einführung in Antares. Die übrigen Kapitel im Teil "Grundlagen" vertiefen wichtige Themen wie den Umgang mit Projekten und Bibliotheken.
+
+Der Teil "Fortgeschrittene Techniken" behandelt Themen, die eher für ambitionierte Anwender wie Lehrer oder Autoren von Schulungsunterlagen von Interesse sind.
 
 == Grundlagen
 
@@ -18,11 +22,11 @@ Antares ist...
 ** <<circuits/wires.adoc#, Leitungen>>
 ** <<subcircuits/subcircuits.adoc#, Teilschaltungen>>
 * <<simulation/simulation.adoc#, Simulation>>
+* <<styles/styles.adoc#, Stile und Themen>>
 * <<description/description.adoc#, Beschreibungen und Erläuterungen>>
 
 == Fortgeschrittene Techniken
 
-* <<styles/styles.adoc#, Stile und Themen>>
 * <<scripting/scripting.adoc#, Skripting>>
 * <<scenarios/scenarios.adoc#, Szenarien>>
 * <<usecases/usecases.adoc#, Anwendungsfälle>>

@@ -19,7 +19,7 @@ Antares verfolgt das Ziel, Schaltungen ästhetisch ansprechend darzustellen. Um 
 
 Mit der Bündelung von grafischen Eigenschaften wird es einfacher, innerhalb einer einzelnen Schaltung und über mehrere Schaltungen hinweg eine gewisse grafische Konsistenz zu erreichen.
 
-Das wichtigste Beispiel der Bündelung von grafischen Eigenschaften in Antares ist die **Farbe**. Die Farbe "Grün" ist in Antares nicht einfach nur ein bestimmter RGB-Wert wie z.B. "(0,255,0)", sondern sie besteht aus drei unterschiedlichen RRB-Werten für Vordergrundfarbe, Hintergrundfarbe und Textfarbe.  In Programmcode von Antares wird eine solche Farbe als "Zusammengesetzte Farbe (Composite Color)" bezeichnet.
+Das wichtigste Beispiel der Bündelung von grafischen Eigenschaften in Antares ist die **Farbe**. Die Farbe "Grün" ist in Antares nicht einfach nur ein bestimmter RGB-Wert wie z.B. "(0,255,0)", sondern sie besteht aus drei unterschiedlichen RGB-Werten für Vordergrundfarbe, Hintergrundfarbe und Textfarbe.  In Programmcode von Antares wird eine solche Farbe als "Zusammengesetzte Farbe (Composite Color)" bezeichnet.
 
 Die Farbkomponenten einer zusammengesetzten Farbe sind aufeinander abgestimmt. Die Vordergrundfarbe, mit der z.B. der Rand eines grünen Rechtecks gezeichnet wird, ist immer noch grün, aber deutlich dunkler als der grüne Hintergrund. Das gleiche gilt für die Textfarbe, die ebenfalls grün ist, aber einen Ton hat, der sich genügend gut vom Hintergrund abhebt.
 
@@ -55,7 +55,7 @@ Wenn du im Schaltungseditor eine Komponente selektierst, kannst du anschliessend
 
 image::style-properties.png[Stile, 350,align="center"]
 
-TIP: Das Beispiel zeigt die Attribute eines Rechtecks. Bei anderen Komponenten kann das Eigenschaftenfenster anders aussehen.
+NOTE: Das Beispiel zeigt die Attribute eines Rechtecks. Bei anderen Komponenten kann das Eigenschaftenfenster anders aussehen.
 
 Stil:: In diesem Attribut bestimmst du den Stil, den die Komponente hat.
 
@@ -65,7 +65,7 @@ Linien-Stil:: In diesem Attribut kannst du den Linien-Stil der Komponente setzen
 
 Je nach Typ der selektierten Komponente können weitere grafische Eigenschaften wie "Ausgefüllt", "Rand" und "Schatten" eingestellt werden.
 
-TIP: Das Attribut "Schatten" hat nur eine Wirkung, wenn die Darstellung von Schatten in den Einstellungen von Antares grundsätzlich aktivert ist.
+NOTE: Das Attribut "Schatten" hat nur eine Wirkung, wenn die Darstellung von Schatten in den Einstellungen von Antares grundsätzlich aktivert ist.
 
 === Themen
 

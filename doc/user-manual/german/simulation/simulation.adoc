@@ -14,15 +14,15 @@ image:../../img/simulation/PauseOff-24.png[Pause] Aktiviert den Einzelschrittmod
 
 image:../../img/simulation/Resume-24.png[Fortsetzen] Führt den nächsten Einzelschritt aus (kbd:[Ctrl + Space]). Ist nur aktiv, wenn der Einzelschrittmodus aktiviert ist. Die Schaltfläche wird mit einem orangen Rahmen dargestellt, wenn ein Einzelschritt möglich ist.
 
-Mit dem Schieberegler kann die Simulationsgeschwindigkeit gesteuert werden. Die Simulationsgeschwindigkeit ist in drei Bereiche aufgeteilt, deren Name als Tooltip angezeigt wird, wenn Du die Maus über den Regler bewegst. Je weiter links sich der Regler befindet, desto langsamer wird die Simulation ausgeführt, und desto mehr Unterstützunginformationen werden während der Simulation angezeigt.
+Mit dem Schieberegler kann die Simulationsgeschwindigkeit gesteuert werden. Die Simulationsgeschwindigkeit ist in drei Bereiche aufgeteilt, deren Name als Tooltip angezeigt wird, wenn du  die Maus über den Regler bewegst. Je weiter links sich der Regler befindet, desto langsamer wird die Simulation ausgeführt, und desto mehr Unterstützunginformationen werden während der Simulation angezeigt.
 
 Die Geschwindigkeitsbereiche haben die folgenden Namen:
 
-Verwenden:: Dieser Bereich wird vor allem eingesetzt, um eine Schaltung zu vewenden, ohne weitere Details über die Funktionsweise angezeigt zu erhalten. Wenn Du z.B. eine Mikroprozessorschaltung fertig entwickelt hast und in ihr Maschinenprogramme ausführts, deren Ergebnisse zu sehen willst, wirst Du den Regler ganz nach rechts stellen, damit die Simulation so schnell wie möglich ausgeführt wird.
+Verwenden:: Dieser Bereich wird vor allem eingesetzt, um eine Schaltung zu vewenden, ohne weitere Details über die Funktionsweise angezeigt zu erhalten. Wenn du  z.B. eine Mikroprozessorschaltung fertig entwickelt hast und in ihr Maschinenprogramme ausführts, deren Ergebnisse zu sehen willst, wirst du  den Regler ganz nach rechts stellen, damit die Simulation so schnell wie möglich ausgeführt wird.
 
 Beobachten:: In diesem Bereich werden Unterstützungsinformationen angezeigt, die während der Entwicklung einer Schaltung von Nutzen sein können, ohne dass die Simulation deshalb sehr viel langsamer ausgeführt wird.
 
-Erforschen:: In diesem Bereich werden alle vorhandenen Unterstützunginformation angezeigt, sofern sie in den Einstellung aktiviert sind. Insbesondere die Signalflussanimationen (sofern aktiviert), die in diesem Bereich verwendet werden, verlangsamen die Simulation so sehr, dass Du diesem Bereich vor allem bei Demonstationen oder Schulungen benützen wirst.
+Erforschen:: In diesem Bereich werden alle vorhandenen Unterstützunginformation angezeigt, sofern sie in den Einstellung aktiviert sind. Insbesondere die Signalflussanimationen (sofern aktiviert), die in diesem Bereich verwendet werden, verlangsamen die Simulation so sehr, dass du  diesem Bereich vor allem bei Demonstationen oder Schulungen benützen wirst.
 
 Die folgende Tabelle zeigt, welche Unterstützungsinformationen in welchem Bereich zur Anwendung kommen.
 
@@ -47,11 +47,11 @@ Antares verwendet während der Simulation unterschiedliche Farben, um die versch
 image::../../img/simulation/wire-colors.png[Leitungsfarben, 700,align="center"]
 
 * **Blau**: Die Leitung führt ein Signal mit Wert "undefiniert". Dies kommt vor, wenn keine Komponente ein Signal an die Leitung abgibt, weil sie entweder nicht an eine Komponete angeschlossen ist oder weil ein angeschlossener Tri-State-Puffer ein undefiniertes Signal ausgibt.
-* **Dunkelgrün**: Die Leitung führt ein 1-Bit-Signal mit dem Wert "0".
-* **Hellgrün**: Die Leitung führt ein 1-Bit-Signal mit dem Wert "1".
+* **Dunkelgrün**: Die Leitung führt ein 1-Bit-Signal mit dem Wert 0.
+* **Hellgrün**: Die Leitung führt ein 1-Bit-Signal mit dem Wert 1.
 * **Rot**: Die Leitung ein Signal, in dem mind. ein Bit den Wert "Error" hat. Dies kann vorkommen, wenn mehrere Komponenten unterschiedliche Signale an dieselbe Leitung abgeben.
-* **Schwarz**: Die Leitung führt ein Signal mit mehreren Bits, die alle den Wert "0" haben.
-* **Grau**: Die Leitung führt ein Signal mit mehreren Bits, von denen mind. eines den Wert "1" hat.
+* **Schwarz**: Die Leitung führt ein Signal mit mehreren Bits, die alle den Wert 0 haben.
+* **Grau**: Die Leitung führt ein Signal mit mehreren Bits, von denen mind. eines den Wert 1 hat.
 
 NOTE: Farben werden in Antares von <<../styles/styles.adoc#, "Themen">> definiert. Die aktuell in Antares enthaltenen Themen verwenden alle die obenstehenden Farben. Es ist jedoch nicht ausgeschlossen, dass in Zukunft weitere Themen dazukommen (oder Benutzer eigene Themen definieren können), die andere Farben verwenden.
 
@@ -63,21 +63,21 @@ Dieser Ansatz hat den Nachteil, dass grosse Schaltungen aus sehr vielen Basiskom
 
 Die Simulation solcher grossen Schaltungen benötigt viel Zeit. Nun besteht in Antares die Möglichkeit, für eine Teilschaltung ein <<../circuits/circuit-scripting.adoc#, Ausführungs-Skript>> zu definieren, das die Logik der Teilschaltung enthält und während der Simulation statt der inneren Schaltung ausgeführt wird.
 
-Mit dem Menü menu:Simulation[Tiefe Simulation] kannst Du wählen, ob Antares die Ausführungsskripts von Teilschaltungen anwendet oder nicht. "Tiefe Simulation" bedeutet, dass die Ausführungsskripts nicht angewendet werden und Antares die volle Tiefe der Schaltung simuliert. Das Gegenteil wird "Flache Simulation" genannt: Teilschaltungen werden nur so tief simuliert, bis eine Teilschaltung ein Ausführungsskript enthält.
+Mit dem Menü menu:Simulation[Tiefe Simulation] kannst du  wählen, ob Antares die Ausführungsskripts von Teilschaltungen anwendet oder nicht. "Tiefe Simulation" bedeutet, dass die Ausführungsskripts nicht angewendet werden und Antares die volle Tiefe der Schaltung simuliert. Das Gegenteil wird "Flache Simulation" genannt: Teilschaltungen werden nur so tief simuliert, bis eine Teilschaltung ein Ausführungsskript enthält.
 
-Eine flache Simulation bringt eine wichtige Einschränkung mit sich: Öffnest Du während einer flachen Simulation eine Teilschaltung, die ein Ausführungsskript enthält, kann Antares zwar den Inhalt der Teilschaltung anzeigen, aber überhaupt nichts über den Zustand der einzelnen Komponenten und Leitungen dieser Teilschaltung aussagen.
+Eine flache Simulation bringt eine wichtige Einschränkung mit sich: Öffnest du  während einer flachen Simulation eine Teilschaltung, die ein Ausführungsskript enthält, kann Antares zwar den Inhalt der Teilschaltung anzeigen, aber überhaupt nichts über den Zustand der einzelnen Komponenten und Leitungen dieser Teilschaltung aussagen.
 
 image::../../img/simulation/simulation-depth.png[Leitungsfarben, 700,align="center"]
 
-Antares stellt deshalb eine solche Teilschaltung in einem "verschleierten" Zustand dar. Im Bild oben wurde einer der Halbaddierer in einer eigenen Ansicht geöffnet. Antares stellt den geöffneten Halbaddierer mit einem grauen Schleier dar. Würde die Teilschaltung eine weitere Teilschaltung enthalten, könntest Du diese zwar ebenfalls öffnen oder in sie abtauchen, doch sie würde ebenfalls verschleiert dargestellt.
+Antares stellt deshalb eine solche Teilschaltung in einem "verschleierten" Zustand dar. Im Bild oben wurde einer der Halbaddierer in einer eigenen Ansicht geöffnet. Antares stellt den geöffneten Halbaddierer mit einem grauen Schleier dar. Würde die Teilschaltung eine weitere Teilschaltung enthalten, könntest du  diese zwar ebenfalls öffnen oder in sie abtauchen, doch sie würde ebenfalls verschleiert dargestellt.
 
 === Simulations-Algorithmus
 
-Der Algorithmus von Antares für die Simulation von Schaltungen ist normalerweise nicht etwas, das Du in allen Einzelheiten verstehen musst, um Antares zu verwenden. Deshalb werden in diesem Abschnitt lediglich die Grundlagen erklärt.
+Der Algorithmus von Antares für die Simulation von Schaltungen ist normalerweise nicht etwas, das du  in allen Einzelheiten verstehen musst, um Antares zu verwenden. Deshalb werden in diesem Abschnitt lediglich die Grundlagen erklärt.
 
 ==== Signalwerte
 
-Die Simulation von Antares verwendet Signale mit vier möglichen Werten "0", "1", "Undefiniert" (hochohmig)" und "Fehler".
+Die Simulation von Antares verwendet Signale mit vier möglichen Werten 0, 1, "Undefiniert" (hochohmig)" und "Fehler".
 
 Andere Simulationen verwenden weitere Signale wie z.B. "0/1 (ansteigende Flanke)" und "1/0 (absteigende Flanke)". Für solche erweiterten Modelle hat sich in Antares bis jetzt noch kein Bedarf gezeigt.
 

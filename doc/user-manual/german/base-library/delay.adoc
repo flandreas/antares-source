@@ -2,7 +2,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/delay-sample.png[Beispiel Verzögerungsglied, 50%]
+image:../../img/base-library/delay-sample.png[Beispiel Verzögerungsglied, 150]
 
 ==== Verhalten
 

@@ -46,7 +46,7 @@ Symbol Editor (Symboleditor):: Der Editor, mit der das Symbol einer Teilschaltun
 Theme (Thema):: Eine Menge von Stilen und anderen grafischen Eigenschaften, die das Aussehen von Graphen beeinflussen.
 Toolbar (Werkzeugleiste):: Enthält Werkzeuge
 User (Benutzer):: Die Person, die die Applikation gestartet hat. Im Moment wird lediglich zwischen "Entwickler" und "Jedermann" unterschieden. In Zukunft wird es identifizierbare Benutzer und einen Anmelde-Dialog geben.
-Unconnected (Unverbunden):: Ein Anschluss ist unverbunden, wenn er nicht mit einer Leitung verbunden ist. Unverbundene Anschlüsse haben immer den Wert "0".
+Unconnected (Unverbunden):: Ein Anschluss ist unverbunden, wenn er nicht mit einer Leitung verbunden ist. Unverbundene Anschlüsse haben immer den Wert 0.
 Undefined (Undefiniert):: Digitaler Signalwert, der von einem bidirektionalen Anschluss ausgegeben werden kann und auf analoger Ebene auch als "hochohmig" bezeichnet wird.
 User Language (Benutzersprache):: Die Sprache, in welcher der Benutzer die Texte der Benutzerschnittstelle angezeigt wünscht.
 Value (Wert):: Der Wert, der an einem Eingang anliegt oder an einem Ausgang ausgegeben wird.

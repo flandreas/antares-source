@@ -18,7 +18,7 @@ Im obenstehenden Beispiel enthält die Eigenschaft "Funktion" ein Skript. Dies w
 
 image::../../img/scripting/scripting-editor.png[Skript-Editor, 500, align=center]
 
-In diesem Fenster schreibst du dein Skript als JavaScript-Code. Mit der Schaltfläche "OK" wird das aktuelle Skript im Attribut gespeichert, in dem du den Skript-Editor geöffnet hast.
+In diesem Fenster schreibst du dein Skript als JavaScript-Code. Mit der Schaltfläche btn:[OK] wird das aktuelle Skript im Attribut gespeichert, in dem du den Skript-Editor geöffnet hast.
 
 Wenn du in einem Skript einen Programmierfehler gemacht hast (was vorkommen kann), wird Antares dies während der Simulation - je nach Art des Skripts früher oder später - feststellen und die Simulation abbrechen. In der Ansicht "Probleme", die am unteren Rand des Hauptfensters eingeblendet werden kann, wechselt die Farbe des Icons zu rot, und die Tabelle in der Ansicht enthält einen neuen Eintrag, der dir Informationen zum aufgetretenen Fehler gibt.
 

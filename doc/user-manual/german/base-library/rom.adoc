@@ -2,17 +2,17 @@
 
 ==== Aussehen
 
-image:../../img/base-library/rom-sample.png[Beispiel ROM, 75%]
+image:../../img/base-library/rom-sample.png[Beispiel ROM, 600]
 
 ==== Verhalten
 
 Das ROM ist eine <<memory.adoc#, Speicher>>-Komponente, deren Daten durch den Autor der Schaltung aus einem File geladen werden können und die danach Bestandteil der gespeicherten Schaltung sind, die das ROM enthält. Während der Ausführung der Simulation können die gespeicherten Daten nicht geändert werden.
 
-Wenn der CS-Eingang des ROM während der Simulation den Wert "1" hat, können die Daten an einer bestimmten Speicheradresse durch Anlegen der Adresse am Eingang "A" ausgelesen werden. Die an dieser Adresse gespeicherten Daten stehen nach Ablauf der Laufzeit (Propagation Delay) am Ausgang D zur Verfügung.
+Wenn der CS-Eingang des ROM während der Simulation den Wert 1 hat, können die Daten an einer bestimmten Speicheradresse durch Anlegen der Adresse am Eingang "A" ausgelesen werden. Die an dieser Adresse gespeicherten Daten stehen nach Ablauf der Laufzeit (Propagation Delay) am Ausgang D zur Verfügung.
 
 ==== Disassembler
 
-Die ROM-Komponente bietet die Möglichkeit, die Werte von Speicherzellen bei der Anzeige in eine lesbare Form zu übersetzen. Ein typisches Beispiel ist Maschinencode eines Mikrocomputers, dessem einzelne Maschinenbefehle in die entsprechenden Assembler-Befehle übersetzt werden soll, ein Vorgang, den man "Disassemblieren" nennt.
+Die ROM-Komponente bietet die Möglichkeit, die Werte von Speicherzellen bei der Anzeige in eine lesbare Form zu übersetzen. Ein typisches Beispiel ist Maschinencode eines Mikrocomputers, dessen einzelne Maschinenbefehle in die entsprechenden Assembler-Befehle übersetzt werden sollen, ein Vorgang, den man "Disassemblieren" nennt.
 
 Die ROM-Komponete verwendet dafür eine Liste von https://de.wikipedia.org/wiki/Regulärer_Ausdruck[regulären Ausdrücke], die der Autor der Schaltung als Attribut der ROM-Komponente speichern kann. Wenn der Wert einer Speicherzelle angezeigt werden soll, sucht Antares nach dem ersten regulären Ausdruck, der vom Wert der Speicherzelle erfüllt wird, und stellt das Ergebnis des regulären Ausdrucks dar. Das Ergebnis kann Referenzen auf sog. "Capture groups" beinhalten, um auf Teile des Speicherzellen-Inhalts zuzugreifen.
 
@@ -54,13 +54,13 @@ FF([A-F0-9]{2})=HALT
 
 Die Konfiguration mit obenstehendem Beispiels führt zu folgender Anzeige im Symbol der ROM-Komponente, die ein Maschinenprogramm für die Tannenbaum-CPU enthält, das alle Zahlen zwischen 1 und 100 addiert (nur Ausschnitt dargestellt).
 
-image:../../img/base-library/disassembler.png[Disassembler, 50%]
+image:../../img/base-library/disassembler.png[Disassembler, 300, align="center"]
 
 ==== Anschlüsse
 
 A:: Eingang "Address": Bestimmt die Adresse der Speicherzelle, deren Daten ausgelesen werden sollen.
 
-CS:: Eingang "Chip Select": Die ROM-Komponente gibt nur dann Daten am Ausgang "D" aus, wenn dieser Eingang den Wert "1" hat. Mit Wert "0" ist der Ausgang "D" undefiniert.
+CS:: Eingang "Chip Select": Die ROM-Komponente gibt nur dann Daten am Ausgang "D" aus, wenn dieser Eingang den Wert 1 hat. Mit Wert 0 ist der Ausgang "D" undefiniert.
 
 D:: Ausgang "Data": Gibt die Daten der Speicherzelle aus, die mit Eingang "A" adressiert wird.
 

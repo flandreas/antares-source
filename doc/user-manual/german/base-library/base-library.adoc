@@ -2,17 +2,17 @@
 
 In diesem Kapitel werden alle elementaren Bibliothek-Komponenten beschrieben, die fest in Antares eingebaut und ausprogrammiert sind. Diese Komponenten sind sowohl in der Bibliothek "Basis" als auch der Biblothek "Standard" enthalten.
 
-Im Vergleich mit anderen Tools mag es so erscheinen, als ob das eher wenig Komponenten sind. Die Philosopie von Antares unterscheidet sich diesbezüglich aber von derjenigen anderer Tools: Bei Antares soll der Benützer bei möglichst vielen Komponenten deren Innenleben erforschen können. Aus diesem Grund enthält Antares z.B. keine ausprogrammierten Flipflops, Volladdierer oder Multiplexer; diese sind in Antares als modellierte Teilschaltungen in der Standard-Bibliothek enthalten und können vom Benützer jederzeit als Teilschaltung geöffnet und während der Simulation in ihrer Funktionsweise beobachtet werden.
+Im Vergleich mit anderen Tools mag es so erscheinen, als ob das eher wenig Komponenten sind. Die Philosophie von Antares unterscheidet sich diesbezüglich von derjenigen anderer Tools: Bei Antares soll der Benützer bei möglichst vielen Komponenten deren Innenleben erforschen können. Aus diesem Grund enthält Antares z.B. keine ausprogrammierten Flipflops, Volladdierer oder Multiplexer; diese sind in Antares als modellierte Teilschaltungen in der Standard-Bibliothek enthalten und können vom Benützer jederzeit als Teilschaltung geöffnet und während der Simulation in ihrer Funktionsweise beobachtet werden.
 
 ### Gemeinsame Attribute
 
-Attribute, die nur für eine bestimmte Komponente gelten, oder die je nach Komponente eine unterschiedliche Bedeutung haben, werden in der Beschreibung der jeweiligen Komponente erläutert. In diesem Kapitel werden Attribute genannt, die für alle Komponenten gleichermassen gelten.
+Attribute, die nur für eine bestimmte Komponente gelten, oder die je nach Komponente eine unterschiedliche Bedeutung haben, werden in der Beschreibung der jeweiligen Komponente erläutert. In diesem Kapitel werden Attribute beschrieben, die für alle Komponenten gleichermassen gelten.
 
 ID:: Die Identifikationsnummer der Komponente, die innerhalb der Schaltung eindeutig ist, in der sich die Komponente befindet. Sie wird vor allem für Scripting-Anwendungen benutzt.
 
-Beschreibung:: In diesem Feld kann eine mehrsprachige Beschreibung eingegeben werden, die den Zweck dieser Komponenten innerhalb der Schaltung beschreibt. Falls vorhanden, wird sie im Beschreibungs-Popup statt der Standardbeschreibung der Komponente angezeigt. Siehe das Kapitel <<../description/description.adoc#, Beschreibungen und Erläuterungen>> für mehr Details.
+Beschreibung:: In diesem Feld Attribut kann eine mehrsprachige Beschreibung eingegeben werden, die den Zweck dieser Komponenten innerhalb der Schaltung beschreibt. Falls vorhanden, wird sie im Beschreibungs-Popup statt der Standardbeschreibung der Komponente angezeigt. Siehe das Kapitel <<../description/description.adoc#, Beschreibungen und Erläuterungen>> für mehr Details.
 
-Laufzeit:: Die Zeit in ns, die bei der Simulation verstreicht, bis ein geändertes Signal am Eingang einer Komponente verarbeitet worden ist, z.B. durch Erzeugen eines geänderten Signals an einem Ausgang der Komponente, oder wie im Fall der LED durch eine andere Darstellung der Komponente.
+Laufzeit:: Die Zeit in Nanosekunden, die bei der Simulation verstreicht, bis ein geändertes Signal am Eingang einer Komponente verarbeitet worden ist, z.B. durch Erzeugen eines geänderten Signals an einem Ausgang der Komponente, oder wie im Fall der LED durch eine andere Darstellung der Komponente.
 
 Schatten:: Mit diesem Attribute wird gesteuert, ob diese bestimmte Komponente mit einem Schatten dargestellt werden soll. Schatten werden grundsätzlich nur dann dargestellt, wenn sie in den Einstellungen von Antares aktiviert worden sind. Falls Schatten in den Einstellungen aktiviert sind, kann die Darstellung für diese Komponente verhindert werden.
 

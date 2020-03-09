@@ -10,7 +10,7 @@ Systeme dieser Art kommen oft in technischen Anwendungen vor, z.B. bei digitalen
 
 image::../../graffle-img/execution-model.svg[width=500]
 
-Das simulierte Modell kann in Form einer "View" graphisch dargestellt werden, damit der Benutzer den Ablauf der Simulation verfolgen kann, z.B. um zu lernen, wie das System funktioniert. Eine View eines Modellkomponete könnte z.B. eine andere Farbe annehmen, während ihre Modellkomponente am Arbeiten ist. Eine Animation könnte zeigen, wie ein Signal von einer Komponente zur nächsten Komponente fliesst.
+Das simulierte Modell kann in Form einer "View" grafisch dargestellt werden, damit der Benutzer den Ablauf der Simulation verfolgen kann, z.B. um zu lernen, wie das System funktioniert. Eine View eines Modellkomponete könnte z.B. eine andere Farbe annehmen, während ihre Modellkomponente am Arbeiten ist. Eine Animation könnte zeigen, wie ein Signal von einer Komponente zur nächsten Komponente fliesst.
 
 Ein entscheidener Aspekt der Simulation eines solchen Systems ist die zeitliche Steuerung. Bei der Modellierung des Systems will man die effektiv benötigen Ausführungszeiten angeben, z.B. 24 Stunden für die Produktion eines Autos in einer Fabrik und 3 Tage für den Transport des produzierten Autos in das Empfängerland. Bei der Simulation dieses Systems soll der Benutzer aber nicht 24 Stunden warten müssen, bis das Signal, welches das produzierte Auto repräsentiert, die Fabrik-Modellkomponente verlässt. Wenn aber verschiedene Modellkomponenten unterschiedliche Produktionszeiten haben, soll für den Benutzer ersichtlich sein, dass deren Produkte nicht zur selben Zeit bei den nachfolgenden Komponenten eintreffen.
 

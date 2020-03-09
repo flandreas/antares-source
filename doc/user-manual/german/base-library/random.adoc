@@ -2,22 +2,20 @@
 
 ==== Aussehen
 
-image:../../img/base-library/random-sample.png[Beispiel Zufallsgenerator, 50%]
+image:../../img/base-library/random-sample.png[Beispiel Zufallsgenerator, 350]
 
 ==== Verhalten
 
-Die Konstante gibt an ihrem Ausgang konstant den konfigurierten Wert aus.
+Der Zufallsgenerator generiert mit jeder steigenden Flanke des Takteingangs eine neue Zufallszahl.
 
 ==== Anschlüsse
 
-Die Konstante hat nur einen Ausgang, dessen Bitbreite im Attribut "Anzahl Bits" konfiguriert werden kann.
+Eingang:: Der Takteingang. Mit steigender Flanke wird eine neue Zufallszahl generiert.
+
+Ausgang:: Ein n-Bit-Ausgang, der die zuletzt generierte Zufallszahl ausgibt.
 
 ==== Attribute
 
-Ausrichtung:: Die Himmelsrichtung, in die der Anschluss zeigt.
+Ausrichtung:: Die Himmelsrichtung, in die der Ausgang zeigt.
 
-Anzahl Bits:: Die Anzahl Bits, aus denen das ausgegebene Signal besteht. Wenn dieses Attribut so verändert wird, dass die Anzahl Bits nicht mehr ausreichen, um den eingestellten Wert im Attribut "Wert (dezimal)" darzustellen, wird der Wert entsprechend abgeschnitten.
-
-Repräsentation:: Die Art, in der der Wert des Ausgangssignals bei der Darstellung repräsentiert wird.
-
-Wert (dezimal):: Der Wert (in dezimaler Schreibweise), der am Ausgang der Konstante ausgegeben wird.
+Anzahl Bits:: Die Anzahl Bits, aus denen die generierte Zufallszahl besteht.

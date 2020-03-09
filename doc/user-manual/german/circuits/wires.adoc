@@ -1,31 +1,32 @@
 === Leitungen
+:experimental:
 
 Leitungen sind Schaltungselemente, mit denen Anschlüsse von Komponenten verbunden werden können, damit während der
 Simulation der Schaltung Signale zwischen den Komponenten fliessen können.
 
 image::../../img/circuits/wires-sample.png[Leitungen,300,align="center"]
 
-Anders als vergleichbare Tools erzeugt Antares nicht selbstständig einen Kontakt zwischen einer Leitung und einem Anschluss, wenn sie sich an der gleichen Stelle befinden; ein Kontakt muss immer explizit durch den Benutzer hergestellt werden. Damit Du unverbundene Leitungen auf den ersten Blick erkennst, stellt Antares unverbundene Leitungsenden mit einem kleinen Kreis dar.
+Anders als vergleichbare Tools erzeugt Antares nicht selbstständig einen Kontakt zwischen einer Leitung und einem Anschluss, wenn sie sich an der gleichen Stelle befinden; ein Kontakt muss immer explizit durch den Benutzer hergestellt werden. Damit du unverbundene Leitungen auf den ersten Blick erkennst, stellt Antares unverbundene Leitungsenden mit einem kleinen Kreis dar.
 
 ==== Leitungen erzeugen
 
-Um die Erzeugung einer neuen Leitung zu beginnen, bewegst Du die Maus über einen Anschluss einer Komponente oder eine bereits vorhandene Leitung. Antares zeigt Dir dann mit einem kleinen orangen Kreis an, dass Du an dieser Stelle eine neue Leitung beginnen kannst.
+Um das Erzeugen einer neuen Leitung zu beginnen, bewegst du die Maus über einen Anschluss einer Komponente oder eine bereits vorhandene Leitung. Antares zeigt dir dann mit einem kleinen orangen Kreis an, dass du an dieser Stelle eine neue Leitung beginnen kannst.
 
-Drücke dann die linke Maustaste und halte sie gedrückt, während Du die Maus zum gewünschten Ziel der Leitung bewegst. Antares erzeugt dabei automatisch ein rechtwinkliges Layout der entstehenden Leitung.
+Drücke dann die linke Maustaste und halte sie gedrückt, während du die Maus zum gewünschten Ziel der Leitung bewegst. Antares erzeugt dabei automatisch ein rechtwinkliges Layout der entstehenden Leitung.
 
-Je nach Typ des Anschlusses, an dem Du die Leitung beginnst, sind die folgenden Ziele von Leitungen möglich:
+Je nach Typ des Anschlusses, an dem du die Leitung beginnst, sind die folgenden Ziele von Leitungen möglich:
 
 Ausgang zu Eingang:: Bewege die Maus mit gedrückter linker Maustaste zum Eingang einer Komponente.
 
 Eingang zu Ausgang oder Leitung:: Bewege die Maus mit gedrückter Maustaste zum Eingang einer Komponete oder zu einer bereits vorhandenen Leitung.
 
-Leitung zu Eingang:: Um eine neue Leitung auf einer bereits bestehenden Leitung zu beginnen (Abzweigung), bewegst Du die Maus über die bestehende Leitung und drückst die ALT-Taste. Halte die ALT-Taste während dem Ziehen gedrückt.
+Leitung zu Eingang:: Um eine neue Leitung auf einer bereits bestehenden Leitung zu beginnen (Abzweigung), bewegst du die Maus über die bestehende Leitung und drückst die kbd:[Alt]-Taste. Halte die kbd:[Alt]-Taste während dem Ziehen gedrückt.
 
 TIP: Bidirektionale Anschlüsse sind gleichzeitig Eingang als auch Ausgang und können entsprechend auf beide Arten verbunden werden.
 
-Zusätzlich zu diesen Möglichkeiten kannst Du in allen Fällen eine Leitung mit unverbundenem Ende erzeugen, indem Du die Maustaste über dem Hintergrund der Schaltung loslässt.
+Zusätzlich zu diesen Möglichkeiten kannst du in allen Fällen eine Leitung mit unverbundenem Ende erzeugen, indem du die Maustaste über dem Hintergrund der Schaltung loslässt.
 
-Standardmässig erzeugt Antares während der Erzeugung der Leitung selbstständig ein rechtwinkliges Layout. Um das Layout der entstehenden Leitung zu beeinflussen, drückst Du bei der Bestimmung des Startortes die ALT-Taste. Antares zeigt dann statt des orangen Kreises ein oranges Quadrat an. Danach kannst Du die Zwischenpunkte der enstehenden Leitung durch Klicks mit der linken Maustaste bestimmen. Dabei muss beim Bewegen der Maus die Maustaste nicht mehr gedrückt gehalten werden.
+Standardmässig erzeugt Antares während der Erzeugung der Leitung selbstständig ein rechtwinkliges Layout. Um das Layout der entstehenden Leitung zu beeinflussen, drückst du bei der Bestimmung des Startortes die kbd:[Alt]-Taste. Antares zeigt dann statt des orangen Kreises ein oranges Quadrat an. Danach kannst du die Zwischenpunkte der entstehenden Leitung durch Klicks mit der linken Maustaste bestimmen. Dabei muss beim Bewegen der Maus die Maustaste nicht mehr gedrückt gehalten werden.
 
 ==== Leitungsbündel
 
@@ -33,9 +34,9 @@ Leitungsbündel sind Leitungen, die gleichzeitig mehrere Bits übertragen könne
 
 image::../../img/circuits/inconsistent-net.png[Inkonsistentes Netz,400,align="center"]
 
-Dies ist ein Fehler im Design der Schaltung, den Antares dadurch anzeigt, dass die betreffende Leitung rot gezeichnet wird; wenn Du in diesem Zustand die Maus über die rote Leitung bewegst, zeigt ein Popup die Ursache des Fehlers an.
+Dies ist ein Fehler im Design der Schaltung, den Antares dadurch anzeigt, dass die betreffende Leitung rot gezeichnet wird; wenn du in diesem Zustand die Maus über die rote Leitung bewegst, zeigt ein Popup die Ursache des Fehlers an.
 
-Schaltungen mit Design-Fehlern können nicht simuliert werden; bevor die Simulation gestartet werden kann, muss der Design-Fehler behoben werden. Im obenstehenden Beispiel muss Ausgang "O2" die Bitbreite "1" haben.
+Schaltungen mit Design-Fehlern können nicht simuliert werden; bevor die Simulation gestartet werden kann, muss der Design-Fehler behoben werden. Im obenstehenden Beispiel muss Ausgang "O2" die Bitbreite 1 haben.
 
 ==== Leitungen umhängen
 
@@ -53,11 +54,11 @@ In diesem Fall kann man das alte Gatter löschen, wodurch drei Leitungen mit jew
 
 ==== Darstellung von Leitungen
 
-Standardmässig wird die Darstellung von Leitungen nur durch die Bitbreite der verbundenen Anschlüsse beeinflusst. Leitungen, die Anschlüsse der Bitbreite "1" verbinden, werden mit einer schmalen Linie dargestellt, während Leitungsbündel mit einer breiteren Linie dargestellt werden.
+Standardmässig wird die Darstellung von Leitungen nur durch die Bitbreite der verbundenen Anschlüsse beeinflusst. Leitungen, die Anschlüsse der Bitbreite 1 verbinden, werden mit einer schmalen Linie dargestellt, während Leitungsbündel mit einer breiteren Linie dargestellt werden.
 
 image::../../img/circuits/wire-styles.png[Leitungs-Stile,600,align="center"]
 
-Antares stellt mehrere Möglichkeiten zur Verfügung, mit denen Du die Darstellung von Leitungen zusätzlich beeinflussen kannst. Selektiere dazu die Leitung und wähle die entsprechenden Eigenschaften im Eigenschaften-Fenster aus.
+Antares stellt mehrere Möglichkeiten zur Verfügung, mit denen du die Darstellung von Leitungen zusätzlich beeinflussen kannst. Selektiere dazu die Leitung und wähle die entsprechenden Eigenschaften im Eigenschaften-Fenster aus.
 
 Pfeil:: Wähle diese Eigenschaft, wenn am Ende der Leitung eine Pfeilspitze dargestellt werden soll, falls die Leitung an einem Eingang oder einem bidirektionalen Anschluss endet.
 
@@ -79,6 +80,6 @@ Keines:: Bei diesem Layout führt Antares aussen an den beiden Enden keine Anpas
  +
 Bei diesem Layout können die einzelnen Zwischenpunkte verschoben werden. Selektiere dazu die Leitung, woraufhin Antares kleine leere Rechtecke an den Zwischenpunkten anzeigt. Verschiebe diese Zwischenpunkte mit gedrückt gehaltener linker Maustaste.
 
-Gerade:: Bei diesem Layout wird eine gerade Verbindung zwischen Anfangs- und Endpunkt der Leitung gezeichnet. Dieses Layout aus Gründen der Vollständigkeit vorhanden, wird aber in digitalen Schaltungen eher selten verwendet. +
+Gerade:: Bei diesem Layout wird eine gerade Verbindung zwischen Anfangs- und Endpunkt der Leitung gezeichnet. Dieses Layout aus Gründen der Vollständigkeit vorhanden, wird aber in digitalen Schaltungen eher nicht verwendet. +
  +
 Bei diesem Layout kann die Geometrie der Leitung nicht beinflusst werden.

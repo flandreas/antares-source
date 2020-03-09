@@ -2,11 +2,11 @@
 
 ==== Aussehen
 
-image:../../img/base-library/clock-sample.png[Beispiel LED, 50%]
+image:../../img/base-library/clock-sample.png[Beispiel LED, 400]
 
 ==== Verhalten
 
-Der Taktgeber erzeugt an seinem Ausgang ein 1-Bit-Signal, dessen Wert periodisch zwischen den Werten "0" und "1" hin und her wechselt. Die Periode kann im Attribut "Periode" gesetzt werden.
+Der Taktgeber erzeugt an seinem Ausgang ein 1-Bit-Signal, dessen Wert periodisch zwischen den Werten 0 und 1 hin und her wechselt. Die Periode kann im Attribut "Periode" gesetzt werden.
 
 Wenn die Maus während der Simulation über dem Taktgeber verweilt, zeigt Antares nach einer gewissen Zeit einen Drehknopf an, mit dem die Periode während der Simulation verändert werden kann. Klicke auf dem Drehknopf und bewege die Maus bei gedrückter Maustaste links oder rechts herum, um die Periode zu ändern. Der Drehknopf hat ein logarithmisches Verhalten: Eine vollständige Umdrehung des Drehknopfs verändert die Periode um den Faktor 10 *an der höchsten Dezimalstelle*. Ist z.B. die aktuelle Periode 1'000, hat sie nach einer vollständigen Umdrehung im Uhrzeigersinn den Wert 10'000. Damit können sowohl kleine als auch grosse Werte einfach eingestellt werden.
 
@@ -20,8 +20,8 @@ Der Taktgeber hat einen einzigen 1-Bit-Ausgang, an dem das periodisch wechselnde
 
 Ausrichtung:: Die Himmelsrichtung, in die der Anschluss zeigt.
 
-Periode:: Die Periode in Mikrosekunden. Die Periode ist die Zeit, die verstreicht, bis der Taktgeber wieder dasselbe Signal ausgibt. Bei einer Periode von 1'000 µs ist der Ausgang für 500 µs auf "1" und für 500 µs auf "0".
+Periode:: Die Periode in Mikrosekunden. Die Periode ist die Zeit, die verstreicht, bis der Taktgeber wieder dasselbe Signal ausgibt. Bei einer Periode von 1'000 µs ist der Ausgang für 500 µs auf 1 und für 500 µs auf 0.
 
-Aktiv:: Wenn das Attribut "Aktiv" nicht gesetzt ist, bleibt der Ausgang während der Simulation immer auf "0".
+Aktiv:: Wenn das Attribut "Aktiv" nicht gesetzt ist, bleibt der Ausgang während der Simulation immer auf 0.
 
 Periode während Simulation ändern:: Der Drehknopf, mit dem die Periode während der Simulation durch den Benutzer geändert werden kann, wird nur angezeigt, wenn dieses Attribut gesetzt ist.
