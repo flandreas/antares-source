@@ -13,7 +13,7 @@ function execVertice(elem) {
 }
 ----
 
-Der Funktions-Parameter `elem` ist ein Objekt vom Typ <<scripting-dsl.adoc#, `CircuitElemModelBridge`>>.
+Der Funktions-Parameter `elem` ist ein Objekt vom Typ <<../scripting/scripting-dsl.adoc#, `CircuitElemModelBridge`>>.
 
 ==== Beispiele
 
@@ -83,7 +83,7 @@ function execVerticeView(elem) {
 }
 ----
 
-Der Funktions-Parameter `elem` ist ein Objekt vom Typ <<scripting-dsl.adoc#, `CircuitElemViewBridge`>>.
+Der Funktions-Parameter `elem` ist ein Objekt vom Typ <<../scripting/scripting-dsl.adoc#, `CircuitElemViewBridge`>>.
 
 ==== Beispiele
 
