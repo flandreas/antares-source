@@ -103,23 +103,43 @@ tasks {
 		main = "ch.scorpion.antares.AntaresSwing"
 	}
 
-	val deploy by creating(Exec::class) {
+	val distributeMac by creating(Exec::class) {
 		dependsOn(obfuscate)
 
 		val version = file("shared/rsc/version.txt").readText().trim()
-		val nativeType = when {
-			System.getProperty("os.name").toLowerCase().contains("windows") -> "msi"
-			System.getProperty("os.name").toLowerCase().contains("mac") -> "pkg"
-			System.getProperty("os.name").toLowerCase().contains("linux") -> "rpm"
-			else -> throw IllegalStateException("unknown system")
-		}
 
 		workingDir = projectDir
+
+		// macOS
 		commandLine(
 			"javapackager",
 			"-deploy",
 			"-nosign",
-			"-native", nativeType,
+			"-native", "pkg",
+			"-outdir", "${buildDir}/distributions",
+			"-outfile", project.name,
+			"-name", "Antares",
+			"-appclass", "ch.scorpion.antares.AntaresSwing",
+			"-srcdir", "${buildDir}/libs",
+			"-srcfiles", "antares-${version_project}-obfuscated.jar",
+			"-BappVersion=${version}",
+			"-Bicon=jvm/rsc/antares.icns"
+		)
+	}
+
+	val distributeWindows by creating(Exec::class) {
+		dependsOn(obfuscate)
+
+		val version = file("shared/rsc/version.txt").readText().trim()
+
+		workingDir = projectDir
+
+		// Windows
+		commandLine(
+			"javapackager",
+			"-deploy",
+			"-nosign",
+			"-native", "msi",
 			"-outdir", "${buildDir}/distributions",
 			"-outfile", project.name,
 			"-name", "Antares",
