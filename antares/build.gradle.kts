@@ -70,10 +70,12 @@ tasks {
 		libraryjars("$gradleUserHome/caches/modules-2/files-2.1/log4j/log4j/1.2.17/5af35056b4d257e4b64b9e8069c0746e8b08629f/log4j-1.2.17.jar")
 		libraryjars("$gradleUserHome/caches/modules-2/files-2.1/org.slf4j/slf4j-log4j12/1.7.21/7238b064d1aba20da2ac03217d700d91e02460fa/slf4j-log4j12-1.7.21.jar")
 		libraryjars("$gradleUserHome/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.21/139535a69a4239db087de9bab0bee568bf8e0b70/slf4j-api-1.7.21.jar")
+		libraryjars("$gradleUserHome/caches/modules-2/files-2.1/com.formdev/flatlaf/0.27/71392cc71b040b4fbc5b83927b99ae39ebab6acc/flatlaf-0.27.jar")
 
 		keep("class kotlin.** { *; }")
 		keep("class org.apache.** { *; }")
 		keep("class com.l2fprod.** { *; }")
+		keep("class com.formdev.** { *; }")
 
 		// Logging using reflection
 		keep("enum ch.scorpion.jabbah.base.LogLevel { *; }")

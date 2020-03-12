@@ -19,6 +19,7 @@ object AntaresThemes {
 	private val SELECTION_COLOR = Color.ORANGE
 
 	private val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 15)
+	private val TOOLTIP_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 13)
 	private val EXPLANATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 12)
 
 	private val ANNOTATION_STROKE = Stroke(1.0f)
@@ -79,7 +80,8 @@ object AntaresThemes {
 				shadow = true),
 			tooltip = BasicStyle(
 				color = TOOLTIP,
-				stroke = TOOLTIP_STROKE),
+				stroke = TOOLTIP_STROKE,
+				font = TOOLTIP_FONT),
 			highlight = BasicStyle(
 				color = highlightColor,
 				font = FONT,
@@ -228,7 +230,8 @@ object AntaresThemes {
 				shadow = true),
 			tooltip = BasicStyle(
 				color = explanationColor,
-				stroke = TOOLTIP_STROKE
+				stroke = TOOLTIP_STROKE,
+				font = TOOLTIP_FONT
 			),
 			shadow = CompositeColor(shadow, shadow),
 			vertice = BasicStyle(
@@ -322,6 +325,11 @@ object AntaresThemes {
 				stroke = BOX_STROKE,
 				font = FONT,
 				shadow = true),
+			tooltip = BasicStyle(
+				color = TOOLTIP,
+				stroke = TOOLTIP_STROKE,
+				font = TOOLTIP_FONT
+			),
 			highlight = BasicStyle(
 				color = highlightColor,
 				font = FONT,

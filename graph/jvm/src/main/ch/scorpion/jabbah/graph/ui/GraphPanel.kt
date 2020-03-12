@@ -54,6 +54,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.*
+import javax.swing.border.CompoundBorder
 
 
 /**
@@ -102,7 +103,7 @@ class GraphPanel(
 	val toolbars: List<ToolBar> = listOf(
 		createExecutionToolBar(),
 		drawingToolBar,
-		settingsToolBar)
+		settingsToolBar).onEach { it.isFloatable = false }
 
 	/** The "Explorer" contains [libraryPanel] and [propertyPanel].*/
 	private val explorerSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
@@ -325,7 +326,7 @@ class GraphPanel(
 		pauseToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/PauseOff-24.png"))
 		pauseToggleButton.toolTipText = executionAction.name
 
-		val stepButton = StepButton("/img/Resume-24.png", StepExecutionAction(scheduler, eventBus))
+		//val stepButton = StepButton("/img/Resume-24.png", StepExecutionAction(scheduler, eventBus))
 
 		val speedSlider = SystemSpeedSlider()
 		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
@@ -338,11 +339,33 @@ class GraphPanel(
 		mainToolBar.addSeparator()
 		mainToolBar.add(modeToggleButton)
 		mainToolBar.add(pauseToggleButton)
-		mainToolBar.add(stepButton)
+		mainToolBar.add(createStepButton(StepExecutionAction(scheduler, eventBus)))
 		mainToolBar.add(speedSlider)
 		mainToolBar.add(usecaseSelector)
 
 		return mainToolBar
+	}
+
+	private fun createStepButton(action: Action): JToggleButton {
+		val inactiveIcon = ImageIcon(GraphPanel::class.java.getResource("/img/Resume-24.png"))
+		val activeIcon = ImageIcon(GraphPanel::class.java.getResource("/img/Resume-active-24.png"))
+		val button = JToggleButton(ActionWrapperSwing(action))
+		button.text = null
+		button.icon = inactiveIcon
+
+		action.addPropertyChangeListener(object : PropertyChangeListener<Any> {
+			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+				if (e.name == Action.PROP_ENABLED) {
+					button.icon = if (action.enabled) {
+						activeIcon
+					} else {
+						inactiveIcon
+					}
+				}
+			}
+		})
+
+		return button
 	}
 
 	private fun createDrawingToolBar(): ToolBar {
@@ -387,7 +410,7 @@ class GraphPanel(
 
 	private class StepButton(iconPath: String, private val action: Action) : JPanel() {
 
-		private val button = JButton(ActionWrapperSwing(action))
+		private val button = JToggleButton(ActionWrapperSwing(action))
 		private val color = Graphics2DJvm.toAwtColor(BaseModule.properties.get(AttentionDrawer.PROP_COLOR))
 
 		init {

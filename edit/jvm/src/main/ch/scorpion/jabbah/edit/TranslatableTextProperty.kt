@@ -9,7 +9,6 @@ import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
-import java.awt.Frame
 import javax.swing.*
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.text.JTextComponent
@@ -26,7 +25,7 @@ class TranslatableTextPropertyRenderer(
 			textComponent.rows = 4
 			textComponent.lineWrap = true
 			textComponent.wrapStyleWord = true
-			textComponent.isEditable = false
+			textComponent.isEnabled = false
 		} else {
 			textComponent = JTextField()
 			textComponent.preferredSize = Dimension(100, 22)
@@ -50,6 +49,7 @@ class TranslatableTextPropertyRenderer(
 				textComponent.foreground = table.foreground
 				textComponent.background = table.background
 			}
+
 			textComponent.font = table.font
 			return textComponent
 		} else {

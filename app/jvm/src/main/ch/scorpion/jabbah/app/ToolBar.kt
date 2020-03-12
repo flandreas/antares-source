@@ -11,24 +11,16 @@ import javax.swing.*
 /**
  * Contains a list of [JButton]s that allows the user to select an [Editor]'s current [Tool].
  */
-class ToolBar(val editor: Editor? = null) : JPanel() {
+class ToolBar(val editor: Editor? = null) : JToolBar() {
 
 	companion object {
 		private const val SEPARATOR_WIDTH = 15
 	}
 
-	var isFloatable: Boolean = false
-
-	var isRollover: Boolean = false
-
 	private val toolGroup = ButtonGroup()
 
 	init {
 		layout = BoxLayout(this, BoxLayout.X_AXIS)
-	}
-
-	fun addSeparator() {
-		add(Box.createHorizontalStrut(SEPARATOR_WIDTH))
 	}
 
 	fun addTool(tool: Tool, imgPath: String, tooltipText: String) {

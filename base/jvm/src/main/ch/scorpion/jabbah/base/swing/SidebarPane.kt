@@ -174,7 +174,7 @@ class SidebarPane(
 
 		private fun fillHeaderPanel() {
 			headerPanel.layout = BoxLayout(headerPanel, BoxLayout.X_AXIS)
-			headerPanel.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
+			headerPanel.border = BorderFactory.createEmptyBorder(2, 5, 2, 5)
 			headerPanel.add(titleLabel)
 			headerPanel.add(Box.createGlue())
 			headerPanel.background = UiUtil.getBackgroundDivertColor(this@SidebarPane)
