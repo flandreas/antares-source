@@ -90,6 +90,7 @@ subprojects {
 					implementation("org.apache.commons:commons-lang3:$commonsLang3Version")
 					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
 					implementation("mind:exml:7.0.0")
+					implementation("com.formdev:flatlaf:0.27")
 				}
 			}
 			val jvmTest by getting {

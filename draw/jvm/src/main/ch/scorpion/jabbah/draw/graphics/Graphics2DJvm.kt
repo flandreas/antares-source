@@ -120,7 +120,6 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
     init {
         TEXT_PAINTER.contentType = "text/html"
-        //TEXT_PAINTER.editorKit = HTMLEditorKit()
         TEXT_PAINTER.isOpaque = false
         TEXT_PAINTER.border = BorderFactory.createEmptyBorder(1, 1, 1, 1)
     }

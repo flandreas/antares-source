@@ -30,6 +30,7 @@ import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.Storable
 import com.apple.eawt.Application
+import com.formdev.flatlaf.FlatLightLaf
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
@@ -96,6 +97,8 @@ class AntaresSwing(
 			System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS")
 			System.setProperty("apple.laf.useScreenMenuBar", "true")
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", Antares.SYSTEM_NAME)
+
+			FlatLightLaf.install()
 			UiUtil.setUIFont(FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size))
 
 			val commandLine = parseCommandLine(args, defineOptions(Options()), Antares.SYSTEM_NAME)
