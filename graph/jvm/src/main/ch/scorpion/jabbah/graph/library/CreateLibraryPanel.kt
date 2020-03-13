@@ -38,7 +38,7 @@ class CreateLibraryPanel(
 					JOptionPane.OK_CANCEL_OPTION,
 					JOptionPane.PLAIN_MESSAGE)
 				) {
-				JOptionPane.OK_OPTION -> CreateLibraryInfo(panel.nameField.value as TranslatableText, panel.selectedTemplate!!.uuid)
+				JOptionPane.OK_OPTION -> CreateLibraryInfo(panel.nameField.value as TranslatableText, panel.selectedTemplate?.uuid)
 				else -> null
 			}
 		}

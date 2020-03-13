@@ -15,7 +15,7 @@ Nach Selektion einer Bibliothek wird unterhalb der Tabelle die Beschreibung der 
 
 btn:[Öffnen]:: Öffnet die ausgewählte Bibliothek. Diese Aktion ist sinnvoll, wenn anschliessend ein neues Projekt basierend auf der ausgewählten Bibliothek angelegt werden soll.
 
-btn:[Neu]:: Erzeugt eine neue Bibliothek. Neben dem Namen der neuen Bibliothek kann eine bereits vorhandene Bibliothek als Vorlage verwendet werden. Alle Elemente der Vorlage werden in die neue Bibliothek kopiert; die neue Bibliothek hat nachher keine Verbindung mehr mit der Vorlage. Wähle als Vorlage die Basis-Bibliothek, wenn du von Grund auf eine neue, reichhaltige Bibliothek erstellen willst. Du kannst später mit der Aktion "Bibliothek bearbeiten" (siehe unten) zusätzliche Elemente aus anderen Bibliotheken zu deiner neuen Biblothek hinzufügen.
+btn:[Neu]:: Erzeugt eine neue Bibliothek. Neben dem Namen der neuen Bibliothek kann eine bereits vorhandene Bibliothek als Vorlage verwendet werden. Alle Elemente der Vorlage werden in die neue Bibliothek kopiert; die neue Bibliothek hat nachher keine Verbindung mehr mit der Vorlage. Wähle als Vorlage die Basis-Bibliothek, wenn du von Grund auf eine neue, reichhaltige Bibliothek erstellen willst. Du kannst später mit der Aktion menu:Bibliothek bearbeiten[] (siehe unten) zusätzliche Elemente aus anderen Bibliotheken zu deiner neuen Biblothek hinzufügen.
 
 btn:[Löschen]:: Löscht die ausgewählte Bibliothek. Diese Aktion kann nicht rückgängig gemacht werden. Wenn du Projekte hast, die auf der gelöschten Bibliothek basieren, werden diese Projekte nicht mehr verwendet werden können.
 
