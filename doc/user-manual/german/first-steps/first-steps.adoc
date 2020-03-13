@@ -45,7 +45,7 @@ Die Wahrheitstabelle der XOR-Funktion sieht folgendermassen aus:
 
 Aus der Literatur wissen wir, dass die XOR-Funktion folgendermassen aus Und-Gattern, Oder-Gattern und Invertern aufgebaut werden kann.
 
-image::xor.png[XOR, 50%]
+image::../../img/first-steps/xor.png[XOR, 300]
 
 Als erstes fügst du die logischen Gatter zur Schaltung hinzu. Dazu öffnest du in der Werkbank das Verzeichnis "Logische Gatter" in der Bibliotek "Standard", klickst mit der Maus auf das Und-Gatter, und ziehst das Und-Gatter in den Zeichnungsbereich der Hauptansicht (Drag&Drop). Auf dieselbe Weise fügst du das Oder-Gatter und die Inverter hinzu, die du ebenfalls im Verzeichnis "Logische Gatter" findest.
 
@@ -53,13 +53,13 @@ Sobald du eine Komponente zur Schaltung hinzugefügt hast, wird das Selektionswe
 
 TIP: Antares unterstützt Copy/Paste. Statt wie beim Inverter dieselbe Komponente mehrfach von der Bibliothek in die Schaltung zu ziehen, kannst du den zuerst hinzugefügten Inverter auch auswählen und mit kbd:[Cmd+C] / kbd:[Cmd+V] (macOS) oder kbd:[Ctrl+C] / kbd:[Ctrl+V] (Windows) kopieren.
 
-image::gates.png[Gatter]
+image::gates.png[Gatter, 700, align="center"]
 
 Als nächstes fügt du die Eingänge und den Ausgang hinzu. Den Eingang findest du in der Bibliothek im Verzeichnis "Eingabe", den Ausgang im Verzeichnis "Ausgabe". Ziehe sie wie vorher bei den logischen Gattern per Drag&Drop in die Schaltung.
 
-Antares vergibt für neu hinzugefügte Eingänge und Ausgänge automatisch einen fortlaufenden Namen der Form "I1", "I2" usw. Um den Namen zu ändern, wählst du den Ausgang aus, gibst im Eigenschaftenfenster im Feld "Name" den neuen Namen "O" ein und schliesst die Eingabe mit Enter ab. Auf die gleiche Weise änderst du die Namen der Eingänge zu "A" und "B".
+Antares vergibt für neu hinzugefügte Eingänge und Ausgänge automatisch einen fortlaufenden Namen der Form "I1", "I2" usw. Um den Namen zu ändern, wählst du den Ausgang aus, gibst im Eigenschaftenfenster im Feld "Name" den neuen Namen "O" ein und schliesst die Eingabe mit kbd:[Enter] ab. Auf die gleiche Weise änderst du die Namen der Eingänge zu "A" und "B".
 
-image::inout.png[Eingänge und Ausgänge]
+image::inout.png[Eingänge und Ausgänge, 700, align="center"]
 
 NOTE: Du fragst Dich vielleicht, warum wir statt den Eingängen und dem Ausgang nicht Schalter und eine LED verwenden. Wir wollen aber ein XOR-Gatter bauen, das als Komponente in anderen Schaltungen wiederverwendet werden kann. Um dabei Signale von der umgebenden Schaltung übernehmen und Resultate an sie zurückgeben zu können, müssen Eingangs- und Ausgangs-Komponenten verwendet werden. Du wirst aber im Abschnitt "Schaltung simulieren" sehen, dass auch Eingänge wie Schalter benützt werden können, und dass Ausgänge ebenso wie LEDs während der Simulation das aktuelle Signal anzeigen können.
 
@@ -69,13 +69,13 @@ Von den Eingängen A und B führen jeweils zwei Leitungen zu unterschiedlichen K
 
 Während du beim Erstellen einer Leitung die Maus ziehst, erzeugt Antares automatisch ein Layout der entstehenden Leitung. Nach dem Erstellen der Leitung kannst du das Layout anpassen, indem du auf ein Leitungssegment klickst und es mit gedrückt gehaltener Maustaste verschiebst.
 
-image::connections.png[Verbindungen]
+image::connections.png[Leitungen, 700, align="center"]
 
 NOTE: Antares erlaubt es auch, nicht-orthogonale Leitungen zu erstellen oder das Layout während dem Erstellen der Leitung durch Klicks mit der Maus selber zu gestalten. Diese Features werden in späteren Kapiteln erklärt.
 
 Herzliche Gratulation! Du hast deine erste eigene Antares-Schaltung erstellt. Speichere sie nun durch Drücken von kbd:[Cmd+S] (macOS) resp. kbd:[Ctrl+S] (Windows) oder durch Auswählen des Menüs menu:Datei[Speichern]. Deine XOR-Schaltung ist nun im Projekt "Mein erstes Projekt" in der Schaltung "Neue Schaltung" gespeichert.
 
-Als letztes passt du nun noch den Namen der Schaltung im Eigenschaften-Fenster an. Stelle sicher, dass keine Komponente in der Schaltung ausgewählt ist, damit die Eigenschaften der ganzen Schaltung und nicht diejenigen der ausgewählten Komponente angezeigt werden. Klicke dazu auf den Hintergrund der Schaltung. Das Eigenschaften-Fenster zeigt nun den Titel "Eigenschaften von 'Neue Schaltung'" an. Trage im Feld "Namen" den Wert "XOR" ein und schliesse die Eingabe mit Enter ab. Speichere die Schaltung erneut. In der Werkbank wird nun der neue Name der Schaltung angezeigt.
+Als letztes passt du nun noch den Namen der Schaltung im Eigenschaften-Fenster an. Stelle sicher, dass keine Komponente in der Schaltung ausgewählt ist, damit die Eigenschaften der ganzen Schaltung und nicht diejenigen der ausgewählten Komponente angezeigt werden. Klicke dazu auf den Hintergrund der Schaltung. Das Eigenschaften-Fenster zeigt nun den Titel "Eigenschaften von 'Neue Schaltung'" an. Trage im Feld "Namen" den Wert "XOR" ein und schliesse die Eingabe mit kbd:[Enter] ab. Speichere die Schaltung erneut. In der Werkbank wird nun der neue Name der Schaltung angezeigt.
 
 NOTE: Vielleicht ist dir im Feld "Namen" das Weltkugel-Symbol aufgefallen. Es deutet auf das Internationalisierungs-Feature von Antares hin, mit dem sämtliche Namen und Texte in allen unterstützen Sprachen eingegeben werden können. Dieses Feature wird in späteren Kapiteln erklärt.
 
@@ -93,11 +93,11 @@ Du stellst fest, dass sich die Farben der Eingänge, der Leitungen und des Ausga
 
 Klicke nun mit der linken Maustaste auf einen Eingang und beobachte, wie sich die Schaltung verhält. Probiere alle möglichen Wertkombinationen der beiden Eingänge aus und überprüfe, ob der Ausgang wirklich nur genau dann den Wert 1 hat, wenn die beiden Eingänge unterschiedliche Werte haben.
 
-image::simulation.png[Simulation]
+image::simulation.png[Simulation, 700, align="center"]
 
 Eine Spezialität von Antares ist die Möglichkeit, den Signalfluss in einer Schaltung als Animation darzustellen. Verschiebe im Schieberegler der Simulationswerkzeuge den Knopf in den linken der drei Bereiche. Der Tooltip des Schiebereglers zeigt danach den Text "Simulationsgeschwindigkeit: Erforschen" an.
 
-image::simulationTool.png[Simulationswerkzeug, 60%]
+image::simulationTool.png[Simulationswerkzeug, 700, align="center"]
 
 Wenn du nun wieder durch Klicken mit der Maus den Wert eines Eingangs veränderst, siehst du, wie Antares den Fluss von Signalen durch die Schaltung hindurch animiert.
 
@@ -121,7 +121,7 @@ Symbole werden im Symboleditor erstellt. Verwende die beiden Knöpfe in den Ansi
 
 Der Symboleditor enthält im linken Teil einen Baum, der die Elemente anbietet, die du zum Symbol hinzufügen kannst, und im rechten Teil die Zeichnungsfläche, in der das Symbol der Schaltung erstellt wird. Für diese Einführung verwendest du aus dem Baum lediglich die Elemente im Verzeichnis "Anschlüsse". Die Elemente in den Verzeichnissen "Steuerelemente" und "Teilschaltungen" repräsentieren fortgeschrittene Konzepte, die in späteren Kapiteln des Benutzerhandbuchs erklärt werden.
 
-image::symboleditor.png[Symboleditor]
+image::symboleditor.png[Symboleditor, 700, align="center"]
 
 Um eine Schaltung als Teilschaltung in einer höherwertigen Schaltung zu verwenden, müssen mindestens die Eingänge und Ausgänge der Schaltung zum Symbol hinzugefügt werden. Das Verzeichnis "Anschlüsse" des Baums im linken Teil enthält die beiden Eingänge "A" und "B" sowie den Ausgang "O".
 
@@ -147,7 +147,7 @@ Im Projekt der Werkbank erscheint die neue, leere Schaltung "Verwendung der XOR-
 
 Wenn du nun die Simulation startest und die Schalter betätigst, siehst du, wie Antares deine XOR-Komponente innerhalb einer umgebenden Schaltung simuliert.
 
-image::component-usage.png[Verwendete Komponente]
+image::component-usage.png[Verwendete Komponente, 700, align="center"]
 
 === Navigation in Teilschaltungen
 
@@ -155,7 +155,7 @@ Im abschliessenden Schritt dieser Einführung erfährst du, wie du mit Antares i
 
 Antares bietet die Möglichkeit, in jede Teilschaltung einer Schaltung "abzutauchen", um ihren Inhalt anzusehen. Dies funkioniert sowohl im Bearbeitungsmodus als auch im Simulationsmodus. Öffne dazu deine Schaltung "Verwendung der XOR-Komponente", starte die Simulation, und führe einen Doppelklick mit der linken Maustaste auf der Komponente "XOR" aus. Antares führt nun eine Animation aus, die den Inhalt der Hauptansicht durch die innere Schaltung ersetzt. Die aktuelle "Abtauch-Tiefe" wird in der Navigationsleiste dargestellt.
 
-image::navigation-bar.png[Navigationsleiste, 75%]
+image::navigation-bar.png[Navigationsleiste, 500, align="center"]
 
 Die Navigationsleiste zeigt den Pfad beginnend mit der Hauptschaltung bis zur aktuell angezeigten Teilschaltung an. Um wieder zur Hauptschaltung zurückzukehren, klickst du mir der linken Maustaste auf das Pfad-Element "Verwendung der XOR-Komponente". Antares führt nun wieder eine Animation aus, die den Inhalt der Hauptansicht durch die äussere Schaltung ersetzt.
 
