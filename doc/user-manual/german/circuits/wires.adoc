@@ -4,7 +4,7 @@
 Leitungen sind Schaltungselemente, mit denen Anschlüsse von Komponenten verbunden werden können, damit während der
 Simulation der Schaltung Signale zwischen den Komponenten fliessen können.
 
-image::../../img/circuits/wires-sample.png[Leitungen,300,align="center"]
+image::../../img/circuits/wires-sample.png[Leitungen,250,align="center"]
 
 Anders als vergleichbare Tools erzeugt Antares nicht selbstständig einen Kontakt zwischen einer Leitung und einem Anschluss, wenn sie sich an der gleichen Stelle befinden; ein Kontakt muss immer explizit durch den Benutzer hergestellt werden. Damit du unverbundene Leitungen auf den ersten Blick erkennst, stellt Antares unverbundene Leitungsenden mit einem kleinen Kreis dar.
 
@@ -32,7 +32,7 @@ Standardmässig erzeugt Antares während der Erzeugung der Leitung selbstständi
 
 Leitungsbündel sind Leitungen, die gleichzeitig mehrere Bits übertragen können. Dabei muss die Anzahl Bits einer Leitung nicht explizit angegeben werden, sondern sie wird von den Anschlüssen übernommen, mit denen die Leitung verbunden ist. Da Anschlüsse von Komponenten unterschiedliche Bitbreiten haben können, kann es dabei zu einer Inkonsistenz kommen, denn Antares verlangt, dass ein Netz von Leitungen ausschliesslich mit Anschlüssen derselben Bitbreite verbunden ist.
 
-image::../../img/circuits/inconsistent-net.png[Inkonsistentes Netz,400,align="center"]
+image::inconsistent-net.png[Inkonsistentes Netz,400,align="center"]
 
 Dies ist ein Fehler im Design der Schaltung, den Antares dadurch anzeigt, dass die betreffende Leitung rot gezeichnet wird; wenn du in diesem Zustand die Maus über die rote Leitung bewegst, zeigt ein Popup die Ursache des Fehlers an.
 
@@ -48,7 +48,7 @@ Bewege dazu die Maus über den Anschluss, mit dem die Leitung verbunden ist. Ant
 
 Antares bietet die Möglichkeit, die Anschlüsse von Komponenten automatisch mit offenen Enden von bestehenden Leitungen zu verbinden. Dies ist z.B. dann nützlich, wenn man die Anschlüsse eines logischen Gatters bereits verbunden hat, bevor man merkt, dass man einen anderen Typ von Gatter benötigt.
 
-image::../../img/circuits/auto-connect.png[Automatisches Verbinden,400,align="center"]
+image::../../img/circuits/auto-connect.png[Automatisches Verbinden,300,align="center"]
 
 In diesem Fall kann man das alte Gatter löschen, wodurch drei Leitungen mit jeweils einem offenen Ende entstehen (siehe Beispiel oben). Nun kann man ein anderes Gatter in die Schaltung ziehen und über die Stelle bewegen, an der sich das alte Gatter zuvor befunden hat. Antares stellt diese Situation fest und zeigt mit orangen Kreisen an, dass die Anschlüsse der Komponente automatisch verbunden werden, wenn man die Maus an dieser Position loslässt.
 

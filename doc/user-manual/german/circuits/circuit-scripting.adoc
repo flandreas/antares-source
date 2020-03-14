@@ -50,7 +50,7 @@ Da `elem.input()` eine Hex-String zurückgibt, muss dieser mit `parseInt()` zur 
 
 ===== 2-4 Dekodierer
 
-Dieses Beispiel zeigt die Ausführungs-Logik eines 2-4-Dekodierers mit zwei 1-Bit-Dateneingängen "I1" und "I2", einem Enable-Eingang "EN" (Enable) sowie 4 Datenausgängen "O0" .. "O3". Der Dekodierer. Der Dekodierer wählt einen der 4 Datenausgänge anhand des 2-Bit-Wertes an den beiden Dateneingänge aus, falls "EN" gesetzt ist.
+Dieses Beispiel zeigt die Ausführungs-Logik eines 2-4-Dekodierers mit zwei 1-Bit-Dateneingängen "I0" und "I1", einem Enable-Eingang "EN" (Enable) sowie 4 Datenausgängen "O0" .. "O3". Der Dekodierer. Der Dekodierer wählt einen der 4 Datenausgänge anhand des 2-Bit-Wertes an den beiden Dateneingänge aus, falls "EN" gesetzt ist.
 
 [source,javascript]
 ----
