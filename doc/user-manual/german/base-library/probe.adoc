@@ -2,7 +2,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/probe-sample.png[Beispiel LED, 50%]
+image:../../img/base-library/probe-sample.png[Beispiel Sonde, 300]
 
 ==== Verhalten
 

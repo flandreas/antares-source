@@ -1,0 +1,38 @@
+=== image:../../img/base-library/not.png[NOT] NOT Gate
+
+==== Appearance
+
+image:../../img/base-library/not-sample.png[Example NOT, 300]
+
+==== Behavior
+
+The NOT gate inverts the 1-bit signal at the input and outputs it at the output.
+
+Unconnected inputs always have the value 0.
+
+.truth table
+[%header,cols=2*, width="40%"]
+|===
+|In|Out
+|**0**|1
+|**1**|0
+|**Z**|Z
+|**X**|X
+|===
+
+(Z: Undefined/High impedance, X: Error)
+
+=== Mnemonics
+
+The logical gates of Antares can illustrate their function with so-called "mnemonics". See the chapter <<../description/description.adoc, Descriptions and explanations>>. The mnemonic of the NOT gate is shown below.
+
+image:../../img/base-library/not-mnemonic.png[Example Mnemonic, 300]
+
+==== Pins
+
+Input:: The 1-bit input of the NOT gate.
+Output:: The 1-bit-output of the NOT gate, which outputs the inverted signal of the input.
+
+==== Attributes
+
+Orientation:: The direction in which the output points.

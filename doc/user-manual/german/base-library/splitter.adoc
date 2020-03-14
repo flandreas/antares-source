@@ -2,7 +2,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/splitter-sample.png[Beispiel Verteiler, 50%]
+image:../../img/base-library/splitter-sample.png[Beispiel Verteiler, 300]
 
 ==== Verhalten
 

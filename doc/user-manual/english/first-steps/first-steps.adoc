@@ -69,7 +69,7 @@ From the inputs A and B, two wires each lead to different components. To create 
 
 When you drag the mouse while creating a wire, Antares automatically creates a layout of the resulting wire. After creating the wire, you can adjust the layout by clicking on a wire segment and dragging it while holding down the mouse button.
 
-image::wires.png[connections, 700, align="center"]
+image::wires.png[wires, 700, align="center"]
 
 NOTE: Antares also allows you to create non-orthogonal wires or to design the layout yourself by clicking with the mouse while creating the wire. These features will be explained in later chapters.
 

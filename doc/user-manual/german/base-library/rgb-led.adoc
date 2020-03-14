@@ -10,7 +10,7 @@ Die Farbe, in der die RGB-LED leuchtet, wird vom 24-Bit-Wert bestimmt, der am Ei
 
 ==== Anschlüsse
 
-Eine LED hat nur einen einzigen Eingang der Bit-Breite 24. Die höchstwertigen 8 Bits enthalten den Wert des roten Farbkanals, die mittleren 8 Bit enthalten den Wert des grünen Farbkanals, und die tiefstwertigen 8 Bits enthalten den Wert des blauen Farbkanals.
+Eine RGB-LED hat nur einen einzigen Eingang der Bit-Breite 24. Die höchstwertigen 8 Bits enthalten den Wert des roten Farbkanals, die mittleren 8 Bit enthalten den Wert des grünen Farbkanals, und die tiefstwertigen 8 Bits enthalten den Wert des blauen Farbkanals.
 
 ==== Attribute
 

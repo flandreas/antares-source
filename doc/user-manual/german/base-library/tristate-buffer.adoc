@@ -2,7 +2,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/tristate-buffer-sample.png[Beispiel Tri-State Puffer, 300]
+image:../../img/base-library/tristate-buffer-sample.png[Beispiel Tri-State Puffer, 200]
 
 ==== Verhalten
 
@@ -39,7 +39,7 @@ Unverbundene Eingänge haben immer den Wert 0.
 
 Die logischen Gatter von Antares können ihre Funktion mit sog. "Mnemonics" veranschaulichen. Siehe dazu das Kapitel <<../description/description.adoc, Beschreibungen und Erläuterungen>>. Unten ist das Mnemonic des Tri-State Puffers dargestellt.
 
-image:../../img/base-library/tristate-buffer-mnemonic.png[Mnemonic Tri-State Puffer, 300]
+image:../../img/base-library/tristate-buffer-mnemonic.png[Mnemonic Tri-State Puffer, 200]
 
 ==== Anschlüsse
 

@@ -2,7 +2,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/keyboard-sample.png[Beispiel Tastatur, 400]
+image:../../img/base-library/keyboard-sample.png[Beispiel Tastatur, 350]
 
 ==== Verhalten
 

@@ -2,7 +2,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/clock-sample.png[Beispiel LED, 400]
+image:clock-sample.png[Beispiel LED, 400]
 
 ==== Verhalten
 

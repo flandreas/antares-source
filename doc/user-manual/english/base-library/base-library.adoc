@@ -1,0 +1,68 @@
+== Base Library
+
+This chapter describes all elementary library components that are built into Antares and programmed into it. These components are included in both the "Basic" and the "Standard" library.
+
+Compared to other tools, it may seem that these are rather few components. The philosophy of Antares differs from that of other tools in this respect: With Antares, the user should be able to explore the inner workings of as many components as possible. For this reason, Antares does not contain any programmed flip-flops, full adders or multiplexers; these are included in Antares as modeled sub-circuits in the standard library and can be opened by the user at any time as a sub-circuit and their functionality can be observed during the simulation.
+
+=== Common Attributes
+
+Attributes that only apply to a specific component, or that have a different meaning depending on the component, are explained in the description of the respective component. This chapter describes attributes that apply equally to all components.
+
+ID:: The identification number of the component which is unique within the circuit in which the component is located. It is mainly used for scripting applications.
+
+Description:: In this field Attribute a multilingual description can be entered which describes the purpose of these components within the circuit. If available, it is displayed in the description popup instead of the standard description of the component. See chapter <<../description/description.adoc#, Descriptions and Explanations>> for more details.
+
+Propagation Delay:: The time in nanoseconds that elapses during simulation until a changed signal at the input of a component has been processed, e.g. by generating a changed signal at an output of the component, or, as in the case of the LED, by a different representation of the component.
+
+Shadows:: This attribute controls whether this particular component is to be displayed with a shadow. Shadows are only displayed if they have been activated in the Antares settings. If shadows are activated in the settings, you can prevent this component from being displayed.
+
+Color:: Normally, the color in which a component is drawn is determined by its style. The attribute "Color" can be used to override the color for a specific component. This can be used, for example, to identify all components of a circuit that perform a similar function with the same color. See chapter <<../styles/styles.adoc#, Styles and Topics>> for more details.
+
+=== Components
+
+==== Net
+
+* image:../../img/base-library/splitter.png[Splitter] <<splitter.adoc#, Splitter>>
+* image:../../img/base-library/concentrator.png[Combiner] <<combiner.adoc#, Combiner>>
+* image:../../img/base-library/probe.png[Probe] <<probe.adoc#, Probe>>
+* image:../../img/base-library/tunnel.png[Tunnel] <<tunnel.adoc#, Tunnel>>
+* image:../../img/base-library/constant.png[Constant] <<constant.adoc#, Constant>>
+
+==== Logical Gates
+
+* image:../../img/base-library/and.png[AND] <<and.adoc#, Und>>
+* image:../../img/base-library/or.png[OR] <<or.adoc#, Oder>>
+* image:../../img/base-library/nor.png[NOT] <<not.adoc#, Nicht>>
+* image:../../img/base-library/nand.png[NAND] <<nand.adoc#, Nicht-Und>>
+* image:../../img/base-library/nor.png[NOR] <<nor.adoc#, Nicht-Oder>>
+* image:../../img/base-library/xor.png[Exculsive OR (XOR)] <<xor.adoc#, XOR>>
+* image:../../img/base-library/xor.png[Exclusive OR (XNOR)] <<xnor.adoc#, XNOR>>
+* image:../../img/base-library/buffer.png[Buffer] <<buffer.adoc#, Buffer>>
+* image:../../img/base-library/tristate-buffer.png[Tri-State Puffer] <<tristate-buffer.adoc#, Tri-State Buffer>>
+* image:../../img/base-library/delay.png[Delay] <<delay.adoc#, Delay>>
+
+==== Input
+
+* image:../../img/base-library/input.png[Circuit Input] <<port.adoc#, Circuit Input>>
+* image:../../img/base-library/switch.png[Switch] <<switch.adoc#, Switch>>
+* image:../../img/base-library/dip-switch.png[DIP Switch] <<dip-switch.adoc#, DIP Switch>>
+* image:../../img/base-library/clock.png[Clock] <<clock.adoc#, Clock>>
+* image:../../img/base-library/keyboard.png[Keyboard] <<keyboard.adoc#, Keyboard>>
+
+==== Output
+
+* image:../../img/base-library/output.png[Circuit Output] <<port.adoc#, Circuit Output>>
+* image:../../img/base-library/led.png[LED] <<led.adoc#, LED>>
+* image:../../img/base-library/rgb-led.png[RGB-LED] <<rgb-led.adoc#, RGB-LED>>
+* image:../../img/base-library/7segment.png[7-Segment-Display] <<7segment.adoc#, 7-Segment-Display>>
+* image:../../img/base-library/led-matrix.png[LED-Matrix] <<led-matrix.adoc#, LED-Matrix>>
+* image:../../img/base-library/terminal.png[Terminal] <<terminal.adoc#, Terminal>>
+
+==== Memory
+
+* image:../../img/base-library/ram.png[RAM] <<ram.adoc#, RAM>>
+* image:../../img/base-library/rom.png[ROM] <<rom.adoc#, ROM>>
+
+==== Arithmetic
+
+* image:../../img/base-library/random.png[Random] <<random.adoc#, Random>>

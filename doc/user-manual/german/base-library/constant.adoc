@@ -2,7 +2,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/constant-sample.png[Beispiel Konstante, 50%]
+image:../../img/base-library/constant-sample.png[Beispiel Konstante, 400]
 
 ==== Verhalten
 

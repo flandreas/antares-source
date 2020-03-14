@@ -2,7 +2,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/led-matrix-sample.png[Beispiel 7-Segment, 50%]
+image:../../img/base-library/led-matrix-sample.png[Beispiel 7-Segment, 300]
 
 ==== Verhalten
 
@@ -12,7 +12,7 @@ Um alle Leuchtpunkte einer 32x32-Matrix einzeln adressieren zu können, müsse d
 
 Beispiel: Bei einer 4x4-LED-Matrix, deren C-Anschluss den Wert 0011 und deren R-Anschluss den Wert 0001 hat, leuchten die beiden linken Punkte in der untersten Zeile.
 
-image::../../img/base-library/led-matrix-sample4x4.png[Beispiel 4x4, 50%]
+image::../../img/base-library/led-matrix-sample4x4.png[Beispiel 4x4, 250]
 
 Dieses Beispiel zeigt, dass mit diesem Adressierungsmodus natürlich nicht ohne weiteres alle Punkte einzeln adressiert werden können. Um dies trotzdem zu ermöglichen, wird die LED-Matrix zusammen mit einer Multiplexing-Schaltung betrieben, bei der die Nachleuchtdauer von LEDs ausgenutzt wird. Die Standard-Bibliothek von Antares enthält im Verzeichnis "Ausgabe" die Schaltung "8x8 LED-Matrix mit Ctrl", die zeigt, wie eine solche Multiplexing-Schaltung funktioniert.
 

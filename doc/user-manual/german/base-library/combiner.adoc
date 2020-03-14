@@ -2,7 +2,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/concentrator-sample.png[Beispiel Konzentrierer, 50%]
+image:../../img/base-library/combiner-sample.png[Beispiel Konzentrierer, 50%]
 
 ==== Verhalten
 
@@ -32,7 +32,7 @@ Anzahl Bits:: Bestimmt die Bit-Breite des Ausgangs.
 
 Auffächerung:: Bestimmt die Anzahl der Eingänge. Die Bit-Breite jedes Eingangs wird durch die Formel "Anzahl Bits" / "Auffächerung" definiert.
 
-Position Bit 0:: Mit Hilfe dieses Attributs kann die Position der Eingänge innerhalb des Verteilers bestimmt werden.
+Position Bit 0:: Mit Hilfe dieses Attributs kann die Position der Eingänge innerhalb des Konzentierers bestimmt werden.
 
 * **Rechts**: Der Eingang, der das Bit 0 führt, liegt aus Sicht des am Ausgang ausgehenden Signals auf der rechten Seite des Konzentrierers.
 * **Links**: Der Eingang, der das Bit 0 führt, liegt aus Sicht des am Ausgang ausgehenden Signals auf der linken Seite des Konzentrierers.

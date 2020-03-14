@@ -1,10 +1,10 @@
-## Bibliothek-Referenz
+== Bibliothek-Referenz
 
 In diesem Kapitel werden alle elementaren Bibliothek-Komponenten beschrieben, die fest in Antares eingebaut und ausprogrammiert sind. Diese Komponenten sind sowohl in der Bibliothek "Basis" als auch der Biblothek "Standard" enthalten.
 
 Im Vergleich mit anderen Tools mag es so erscheinen, als ob das eher wenig Komponenten sind. Die Philosophie von Antares unterscheidet sich diesbezüglich von derjenigen anderer Tools: Bei Antares soll der Benützer bei möglichst vielen Komponenten deren Innenleben erforschen können. Aus diesem Grund enthält Antares z.B. keine ausprogrammierten Flipflops, Volladdierer oder Multiplexer; diese sind in Antares als modellierte Teilschaltungen in der Standard-Bibliothek enthalten und können vom Benützer jederzeit als Teilschaltung geöffnet und während der Simulation in ihrer Funktionsweise beobachtet werden.
 
-### Gemeinsame Attribute
+=== Gemeinsame Attribute
 
 Attribute, die nur für eine bestimmte Komponente gelten, oder die je nach Komponente eine unterschiedliche Bedeutung haben, werden in der Beschreibung der jeweiligen Komponente erläutert. In diesem Kapitel werden Attribute beschrieben, die für alle Komponenten gleichermassen gelten.
 
@@ -18,17 +18,17 @@ Schatten:: Mit diesem Attribute wird gesteuert, ob diese bestimmte Komponente mi
 
 Farbe:: Normalerweise wird die Farbe, in der eine Komponente gezeichnet wird, von ihrem Stil bestimmt. Mit dem Attribut "Farbe" kann die Farbe für eine bestimmte Komponente übersteuert werden. Dies kann z.B. eingesetzt werden, um alle Komponenten einer Schaltung, die eine ähnliche Funktion wahrnehmen, durch dieselbe Farbe zu kennzeichnen. Siehe das Kapitel <<../styles/styles.adoc#, Stile und Themen>> für mehr Details.
 
-### Komponenten
+=== Komponenten
 
-#### Netz
+==== Netz
 
 * image:../../img/base-library/splitter.png[Verteiler] <<splitter.adoc#, Verteiler>>
-* image:../../img/base-library/concentrator.png[Konzentrierer] <<concentrator.adoc#, Konzentrierer>>
+* image:../../img/base-library/concentrator.png[Konzentrierer] <<combiner.adoc#, Konzentrierer>>
 * image:../../img/base-library/probe.png[Sonde] <<probe.adoc#, Sonde>>
 * image:../../img/base-library/tunnel.png[Tunnel] <<tunnel.adoc#, Tunnel>>
 * image:../../img/base-library/constant.png[Konstante] <<constant.adoc#, Konstante>>
 
-#### Logische Gatter
+==== Logische Gatter
 
 * image:../../img/base-library/and.png[Und] <<and.adoc#, Und>>
 * image:../../img/base-library/or.png[Oder] <<or.adoc#, Oder>>
@@ -41,7 +41,7 @@ Farbe:: Normalerweise wird die Farbe, in der eine Komponente gezeichnet wird, vo
 * image:../../img/base-library/tristate-buffer.png[Tri-State Puffer] <<tristate-buffer.adoc#, Tri-State Puffer>>
 * image:../../img/base-library/delay.png[Verzögerungsglied] <<delay.adoc#, Verzögerungsglied>>
 
-#### Eingabe
+==== Eingabe
 
 * image:../../img/base-library/input.png[Eingang] <<port.adoc#, Eingang>>
 * image:../../img/base-library/switch.png[Schalter] <<switch.adoc#, Schalter>>
@@ -49,7 +49,7 @@ Farbe:: Normalerweise wird die Farbe, in der eine Komponente gezeichnet wird, vo
 * image:../../img/base-library/clock.png[Taktgeber] <<clock.adoc#, Taktgeber>>
 * image:../../img/base-library/keyboard.png[Tastatur] <<keyboard.adoc#, Tastatur>>
 
-#### Ausgabe
+==== Ausgabe
 
 * image:../../img/base-library/output.png[Ausgang] <<port.adoc#, Ausgang>>
 * image:../../img/base-library/led.png[LED] <<led.adoc#, LED>>
@@ -58,11 +58,11 @@ Farbe:: Normalerweise wird die Farbe, in der eine Komponente gezeichnet wird, vo
 * image:../../img/base-library/led-matrix.png[LED-Matrix] <<led-matrix.adoc#, LED-Matrix>>
 * image:../../img/base-library/terminal.png[Terminal] <<terminal.adoc#, Terminal>>
 
-#### Speicher
+==== Speicher
 
 * image:../../img/base-library/ram.png[RAM] <<ram.adoc#, RAM>>
 * image:../../img/base-library/rom.png[ROM] <<rom.adoc#, ROM>>
 
-#### Arithmetik
+==== Arithmetik
 
 * image:../../img/base-library/random.png[Zufallsgenerator] <<random.adoc#, Zufallsgenerator>>

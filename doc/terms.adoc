@@ -30,7 +30,8 @@ Library (Bibliothek):: Enthält Schaltungen, die in Projekten referenziert werde
 Main View (Hauptansicht):: Die View, welche die Schaltung enthält, die bearbeitet und für welche die Simulation gestartet werden kann. Deren Name wird in der Titelzeile des Fensters angezeigt
 Navigation Bar (Navigationsleiste):: Bestandteil einer Ansicht, die das Navigieren im Teilschaltungs-Baum ermöglicht.
 Output (Ausgang):: Typ von Anschluss, der Daten ausgeben kann.
-Port (Anschluss):: Ein Anschluss ist entweder ein Eingang, ein Ausgang, oder beides gleichzeitig. Er wird in Teilschaltunge verwendet, um Signale von der umgebenden Schaltung zu übernehmen (Eingang) oder an sie weiterzugeben (Ausgang).
+Pin (Anschluss):: Nur bei Antares: Ein Anschluss, der im Symbol der Schaltung angezeigt wird.
+Port (Anschluss):: Ein Anschluss ist entweder ein Eingang, ein Ausgang, oder beides gleichzeitig. Er wird in Teilschaltungen verwendet, um Signale von der umgebenden Schaltung zu übernehmen (Eingang) oder an sie weiterzugeben (Ausgang). Bestandteil einer Schaltung. Wenn das äussere Symbol gemeint ist, wird "Pin" verwendet.
 Preferences (Einstellungen):: TODO.
 Preview (Vorschau):: Zeigt den Namen, das Symbol und eine kurze Beschreibung der im Explorer ausgewählten Schaltung an.
 Propagation Delay (Laufzeit):: Die Laufzeit von Signalen von einem Eingang zu einem Ausgang einer Basiskomponente oder Teilschaltung.

@@ -2,7 +2,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/rom-sample.png[Beispiel ROM, 600]
+image:../../img/base-library/rom-sample.png[Beispiel ROM, 500]
 
 ==== Verhalten
 

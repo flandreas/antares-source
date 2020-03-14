@@ -2,7 +2,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/random-sample.png[Beispiel Zufallsgenerator, 350]
+image:../../img/base-library/random-sample.png[Beispiel Zufallsgenerator, 300]
 
 ==== Verhalten
 

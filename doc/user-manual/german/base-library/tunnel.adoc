@@ -2,7 +2,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/tunnel-sample.png[Beispiel Tunnel, 50%]
+image:../../img/base-library/tunnel-sample.png[Beispiel Tunnel, 400]
 
 ==== Verhalten
 

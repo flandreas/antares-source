@@ -3,7 +3,7 @@
 
 ==== Aussehen
 
-image:../../img/base-library/dip-switch-sample.png[Beispiel DIP-Schalter, 200]
+image:../../img/base-library/dip-switch-sample.png[Beispiel DIP-Schalter, 150]
 
 ==== Verhalten
 
