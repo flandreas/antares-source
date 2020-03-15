@@ -12,17 +12,17 @@ CAUTION: Antares wird irgendwann im Browser ausführbar sein und z.B. ermöglich
 
 Skripts werden als Attribute von selektierten Objekten im Eigenschaften-Fenster erfasst.
 
-image::../../img/scripting/script-attribute.png[Skript-Eigenschaft, 300]
+image::script-attribute.png[Skript-Eigenschaft, 300]
 
 Im obenstehenden Beispiel enthält die Eigenschaft "Funktion" ein Skript. Dies wird durch den Text "[Script]" angezeigt. Wäre kein Skript vorhanden, wäre der Text leer. Wenn Du in das Feld klickts, zeigt Antares eine Schaltfläche an, mit dem der Skript-Editor geöffnet werden kann. In der aktuellen Version von Antares ist der Skript-Editor ein einfaches mehrzeiliges Textfeld ohne besondere Eigenschaften wie Syntax-Highlighting oder ähnliches.
 
-image::../../img/scripting/scripting-editor.png[Skript-Editor, 500, align=center]
+image::scripting-editor.png[Skript-Editor, 500, align=center]
 
 In diesem Fenster schreibst du dein Skript als JavaScript-Code. Mit der Schaltfläche btn:[OK] wird das aktuelle Skript im Attribut gespeichert, in dem du den Skript-Editor geöffnet hast.
 
 Wenn du in einem Skript einen Programmierfehler gemacht hast (was vorkommen kann), wird Antares dies während der Simulation - je nach Art des Skripts früher oder später - feststellen und die Simulation abbrechen. In der Ansicht "Probleme", die am unteren Rand des Hauptfensters eingeblendet werden kann, wechselt die Farbe des Icons zu rot, und die Tabelle in der Ansicht enthält einen neuen Eintrag, der dir Informationen zum aufgetretenen Fehler gibt.
 
-image::../../img/scripting/scripting-error.png[Skript-Editor, 700, align=center]
+image::scripting-error.png[Skript-Error, 700, align=center]
 
 Die Einträge in der Tabelle haben die folgenden Attribute:
 
