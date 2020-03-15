@@ -49,7 +49,7 @@ Anwendungsfall löschen:: Kontextmenü auf dem Anwendungsfall-Knoten. Nach einer
 
 Ausführen:: Kontextmenü auf dem Anwendungsfall-Knoten. Startet die Ausführung des Anwendungsfalls.
 
-Test ausführen:: Kontextmenü auf dem Anwendungsfall-Knoten, das nur aktiv ist, falls für den ausgewählten Anwendungsfall ein Testfall vorhanden ist. Führt den Anwendungsfall sowie das Testfall-Skrit aus.
+Test ausführen:: Kontextmenü auf dem Anwendungsfall-Knoten, das nur aktiv ist, falls für den ausgewählten Anwendungsfall ein Testfall vorhanden ist. Führt den Anwendungsfall sowie das Testfall-Skript aus.
 
 Alle Tests ausführen:: Kontextmenü auf dem Schaltungs-Knoten. Führt die Tests aller Anwendungsfälle aus.
 
