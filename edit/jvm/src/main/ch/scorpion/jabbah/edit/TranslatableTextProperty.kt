@@ -137,7 +137,8 @@ class TranslatableTextPropertyEditor(
 			parent = SwingUtilities.getWindowAncestor(button),
 			title = propertyName,
 			text = text,
-			textFieldRows = if (multiline.invoke(text)) 4 else 1
+			textFieldRows = if (multiline.invoke(text)) 8 else 1,
+			textFieldColumns = 40
 		)
 		newText?.let { value = it }
 	}

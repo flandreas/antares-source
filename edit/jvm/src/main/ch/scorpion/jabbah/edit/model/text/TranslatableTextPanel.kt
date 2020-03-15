@@ -103,6 +103,14 @@ class TranslatableTextPanel(
 		}
 
 		buildUI()
+
+		// Due to a strange behaviour of JTextArea, longs texts that would need the JScrollPane to display the
+		// scrollbar result in tiny JTextArea heights.
+		// See https://stackoverflow.com/questions/455753/jtextarea-very-small-size-with-long-text.
+		revalidate()
+		currentLangTextField.size = currentLangTextField.preferredSize
+		alternativeLangTextField.size = alternativeLangTextField.preferredSize
+		revalidate()
 	}
 
 	private val text: TranslatableText
