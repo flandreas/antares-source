@@ -60,6 +60,8 @@ abstract class AbstractPropertyPanel(
 		})
 		sheet.addPropertySheetChangeListener(propertyStorer)
 
+		getTable().setShowGrid(true)
+
 		label = JLabel()
 		label.border = BorderFactory.createEmptyBorder(2, 2, 2, 2)
 
