@@ -132,9 +132,9 @@ class TranslatableTextPanel(
 			0, 0,    // x, y
 			1, 1,    // width, height
 			0.0, 0.0,    // weightX, weightY
-			EGBL.WEST,    // anchor
+			EGBL.NORTHWEST,    // anchor
 			EGBL.NONE,    // fill
-			0, inset, 0, 0
+			currentLangTextField.insets.top, inset, 0, 0
 		)
 
 		EGBL.add(
@@ -143,7 +143,7 @@ class TranslatableTextPanel(
 			1, 0,    // x, y
 			EGBL.REMAINDER, 1,    // width, height
 			0.0, 0.0,    // weightX, weightY
-			EGBL.WEST,    // anchor
+			EGBL.NORTHWEST,    // anchor
 			EGBL.HORIZONTAL,    // fill
 			0, inset, 0, 0
 		)
@@ -155,9 +155,9 @@ class TranslatableTextPanel(
 				0, 1,    // x, y
 				1, 1,    // width, height
 				0.0, 0.0,    // weightX, weightY
-				EGBL.WEST,    // anchor
+				EGBL.NORTHWEST,    // anchor
 				EGBL.NONE,    // fill
-				inset, inset, 0, 0
+				alternativeLangTextField.insets.top + inset, inset, 0, 0
 			)
 
 			EGBL.add(
@@ -166,7 +166,7 @@ class TranslatableTextPanel(
 				1, 1,    // x, y
 				EGBL.REMAINDER, 1,    // width, height
 				0.0, 0.0,    // weightX, weightY
-				EGBL.WEST,    // anchor
+				EGBL.NORTHWEST,    // anchor
 				EGBL.HORIZONTAL,    // fill
 				inset, inset, 0, 0
 			)
