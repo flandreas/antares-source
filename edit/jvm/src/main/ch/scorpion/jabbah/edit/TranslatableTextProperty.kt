@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.swing.EGBL
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.TranslatableTextPanel
@@ -17,7 +18,7 @@ class TranslatableTextPropertyRenderer(
 	multiline: (TranslatableText) -> Boolean = { _ -> false }
 ) : DefaultTableCellRenderer() {
 
-	private val textComponent: JTextComponent?
+	private val textComponent: JTextComponent
 
 	init {
 		if (multiline.invoke(TranslatableText())) {
@@ -26,41 +27,31 @@ class TranslatableTextPropertyRenderer(
 			textComponent.lineWrap = true
 			textComponent.wrapStyleWord = true
 			textComponent.isEnabled = false
+			textComponent.border = null
 		} else {
 			textComponent = JTextField()
-			textComponent.preferredSize = Dimension(100, 22)
+			textComponent.preferredSize = Dimension(70, 22)
 			textComponent.border = null
 		}
 	}
 
 	override fun getTableCellRendererComponent(table: JTable, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
-		if (textComponent != null) {
-			if (value is String) {
-				textComponent.text = value
+		if (value is String) {
+			textComponent.text = value
 
-			} else if (value is TranslatableText) {
-				textComponent.text = value.getOptionalTranslation()
-			}
-
-			if (isSelected) {
-				textComponent.foreground = table.selectionForeground
-				textComponent.background = table.selectionBackground
-			} else {
-				textComponent.foreground = table.foreground
-				textComponent.background = table.background
-			}
-
-			textComponent.font = table.font
-			return textComponent
-		} else {
-			if (value is String) {
-				text = value
-
-			} else if (value is TranslatableText) {
-				text = value.getOptionalTranslation()
-			}
-			return this
+		} else if (value is TranslatableText) {
+			textComponent.text = value.getOptionalTranslation()
 		}
+
+		if (isSelected) {
+			textComponent.foreground = table.selectionForeground
+			textComponent.background = table.selectionBackground
+		} else {
+			textComponent.foreground = table.foreground
+			textComponent.background = table.background
+		}
+
+		return textComponent
 	}
 }
 
@@ -71,7 +62,6 @@ class TranslatableTextPropertyEditor(
 ) : AbstractPropertyEditor() {
 
 	private val textComponent: JTextComponent
-	private val button = JButton()
 	private var text: TranslatableText = TranslatableText()
 
 	init {
@@ -81,7 +71,6 @@ class TranslatableTextPropertyEditor(
 			textComponent.lineWrap = true
 			textComponent.wrapStyleWord = true
 			textComponent.isEditable = true
-			textComponent.border = null
 		} else {
 			textComponent = JTextField()
 		}
@@ -106,35 +95,77 @@ class TranslatableTextPropertyEditor(
 	private fun buildUI() {
 		val panel = JPanel()
 		panel.background = Color.WHITE
-		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
+
+		panel.layout = EGBL.getLayout()
+
+		val button = createButton()
 
 		if (textComponent is JTextArea) {
 			val scroll = UiUtil.decorateTextArea(textComponent)
 			textComponent.columns = 20
-			scroll.border = null
 			textComponent.border = UIManager.getBorder("TextField.border")
-			panel.add(scroll)
+
+			EGBL.add(
+				panel,
+				scroll,
+				0, 0,
+				1, 1,
+				1.0, 1.0,
+				EGBL.NORTHWEST,
+				EGBL.BOTH,
+				0, 0, 0, 0
+			)
+
+			EGBL.add(
+				panel,
+				button,
+				1, 0,
+				EGBL.REMAINDER, 1,
+				0.0, 0.0,
+				EGBL.NORTHWEST,
+				EGBL.NONE,
+				0, 0, 0, 0
+			)
 		} else {
-			textComponent.alignmentY = Component.CENTER_ALIGNMENT
-			panel.add(textComponent)
+
+			EGBL.add(
+				panel,
+				textComponent,
+				0, 0,
+				1, 1,
+				1.0, 1.0,
+				EGBL.WEST,
+				EGBL.BOTH,
+				0, 0, 0, 0
+			)
+
+			EGBL.add(
+				panel,
+				button,
+				1, 0,
+				EGBL.REMAINDER, 1,
+				0.0, 0.0,
+				EGBL.WEST,
+				EGBL.NONE,
+				0, 0, 0, 0
+			)
 		}
-
-		panel.border = textComponent.border
-		textComponent.border = null
-
-		button.alignmentY = Component.CENTER_ALIGNMENT
-		button.icon = ImageIcon(TextPropertyEditor::class.java.getResource("/img/translation-16.png"))
-		button.border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
-		button.toolTipText = Translations.getString("edit.action.translateText.tooltip")
-		button.addActionListener { showDialog() }
-		panel.add(button)
 
 		editor = panel
 	}
 
+	private fun createButton(): JButton {
+		val button = JButton()
+		button.icon = ImageIcon(TextPropertyEditor::class.java.getResource("/img/translation-16.png"))
+		button.border = BorderFactory.createEmptyBorder(0, 2, 0, 2)
+		button.toolTipText = Translations.getString("edit.action.translateText.tooltip")
+		button.addActionListener { showDialog() }
+		return button
+	}
+
 	private fun showDialog() {
 		val newText = TranslatableTextPanel.showAsDialog(
-			parent = SwingUtilities.getWindowAncestor(button),
+			parent = SwingUtilities.getWindowAncestor(textComponent),
 			title = propertyName,
 			text = text,
 			textFieldRows = if (multiline.invoke(text)) 8 else 1,
