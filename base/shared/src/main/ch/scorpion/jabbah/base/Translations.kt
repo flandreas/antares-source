@@ -12,21 +12,21 @@ expect object Translations {
 	/** Returns the key if no value is found. Primarily used for testing.*/
 	fun withAnyKey()
 
-    /**
-     * Adds the resource bundle with the specified name.
-     */
-    fun addBundle(name: String): Unit
+	/**
+	 * Adds the resource bundle with the specified name.
+	 */
+	fun addBundle(name: String)
 
-    /**
-     * Retrieves the translation with the specified key and substitutes variables with the provided parameters.
-     * @throws MissingResourceException if no translation for [key] was found
-     */
-    fun getString(key: String, vararg params: Any): String
+	/**
+	 * Retrieves the translation with the specified key and substitutes variables with the provided parameters.
+	 * @throws MissingResourceException if no translation for [key] was found
+	 */
+	fun getString(key: String, vararg params: Any): String
 
-    /**
-     * Retrieves the translation with the specified key, or returns `null` if it doesn't exist.
-     */
-    fun getOptionalString(key: String): String?
+	/**
+	 * Retrieves the translation with the specified key, or returns `null` if it doesn't exist.
+	 */
+	fun getOptionalString(key: String): String?
 }
 
 /**
@@ -50,7 +50,7 @@ enum class Language(val code: String) {
 		}
 
 		private fun getLanguage(code: String): Language? {
-			for (lang in Language.values()) {
+			for (lang in values()) {
 				if (lang.code == code) {
 					return lang
 				}
@@ -59,7 +59,11 @@ enum class Language(val code: String) {
 		}
 	}
 
-	override fun toString(): String = when(this) {
+	val isDefault: Boolean get() = this === DEFAULT
+
+	val isNonDefault: Boolean get() = this !== DEFAULT
+
+	override fun toString(): String = when (this) {
 		English -> Translations.getString("base.language.en.name")
 		German -> Translations.getString("base.language.de.name")
 	}

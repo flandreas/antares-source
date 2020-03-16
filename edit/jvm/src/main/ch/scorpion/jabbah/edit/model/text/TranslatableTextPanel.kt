@@ -16,7 +16,6 @@ import javax.swing.text.JTextComponent
  * is used.
  */
 class TranslatableTextPanel(
-	private val textName: String,
 	text: TranslatableText,
 	textFieldRows: Int = 1,
 	textFieldColumns: Int = 25
@@ -35,7 +34,7 @@ class TranslatableTextPanel(
 			textFieldRows: Int = 1,
 			textFieldColumns: Int = 25
 		): TranslatableText? {
-			val panel = TranslatableTextPanel(title, text, textFieldRows, textFieldColumns)
+			val panel = TranslatableTextPanel(text, textFieldRows, textFieldColumns)
 			return when (
 				JOptionPane.showConfirmDialog(
 					parent,
@@ -50,15 +49,13 @@ class TranslatableTextPanel(
 		}
 	}
 
-	private val currentLangTextField: JTextComponent
+	val currentLangTextField: JTextComponent
 
-	private val alternativeLangTextField: JTextComponent
+	val alternativeLangTextField: JTextComponent
 
 	private val currentLanguage: Language = System.currentLanguage()
 
-	private val isNonDefaultLanguage: Boolean = currentLanguage != Language.DEFAULT
-
-	private val needsAlternativeLangText: Boolean = isNonDefaultLanguage || !text.hasDefaultOrSystemLanguage()
+	private val needsAlternativeLangText: Boolean = currentLanguage.isNonDefault || (!text.hasDefaultOrSystemLanguage() && !text.isEmpty)
 
 	private val alternativeLanguage: Language?
 
