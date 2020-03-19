@@ -121,7 +121,7 @@ class GraphViewExecutionHandler(
 		}
 
 		override fun mouseDragged(e: MouseEvent) {
-			if (e.button !== Button.BUTTON1) {
+			if (!e.isLeftButtonDown) {
 				return
 			}
 
@@ -144,7 +144,7 @@ class GraphViewExecutionHandler(
 		}
 
 		override fun mouseReleased(e: MouseEvent) {
-			if (e.button !== Button.BUTTON1) {
+			if (!e.isLeftButtonDown) {
 				return
 			}
 

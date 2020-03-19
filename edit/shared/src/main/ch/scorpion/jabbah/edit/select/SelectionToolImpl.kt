@@ -160,7 +160,8 @@ class SelectionToolImpl(
 	}
 
 	override fun mouseDragged(e: MouseEvent, x: Double, y: Double) {
-		if (e.button != Button.BUTTON1) {
+		if (!e.isLeftButtonDown) {
+			LOG.debug("Drag wit other than button 1: ${e.button.name}")
 			return
 		}
 

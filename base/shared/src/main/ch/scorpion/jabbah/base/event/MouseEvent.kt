@@ -24,6 +24,9 @@ interface MouseEvent : InputEvent {
     val clickCount: Int
     val wheelRotation: Int
     val location: Point2D get() = Point2D(x.toDouble(), y.toDouble())
+	val isLeftButtonDown: Boolean
+	val isMiddleButtonDown: Boolean
+	val isRightButtonDown: Boolean
 }
 
 /**
@@ -51,6 +54,12 @@ data class MouseEventImpl(
 	override fun isConsumed(): Boolean = consumed
 
 	override fun toString(): String = "Mouse.$type at $x,$y"
+
+	override val isLeftButtonDown: Boolean get() = button == Button.BUTTON1
+
+	override val isMiddleButtonDown: Boolean get() = button == Button.BUTTON2
+
+	override val isRightButtonDown: Boolean get() = button == Button.BUTTON3
 }
 
 

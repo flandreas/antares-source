@@ -231,6 +231,12 @@ private class MouseEventJvm(
 
 	override val wheelRotation: Int get() = (event as? AwtMouseWheelEvent)?.wheelRotation ?: 0
 
+	override val isLeftButtonDown: Boolean get() = SwingUtilities.isLeftMouseButton(event)
+
+	override val isMiddleButtonDown: Boolean get() = SwingUtilities.isMiddleMouseButton(event)
+
+	override val isRightButtonDown: Boolean get() = SwingUtilities.isRightMouseButton(event)
+
 	override fun consume() {
 		event.consume()
 	}

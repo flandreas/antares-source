@@ -255,6 +255,12 @@ private class MouseEventJs(
 
 	override fun isConsumed(): Boolean = event.defaultPrevented
 
+	override val isLeftButtonDown: Boolean get() = button == Button.BUTTON1
+
+	override val isMiddleButtonDown: Boolean get() = button == Button.BUTTON2
+
+	override val isRightButtonDown: Boolean get() = button == Button.BUTTON3
+
 	private fun convertEventType(): MouseEventType {
 		// TODO Implement properly
 		return MouseEventType.MOVED

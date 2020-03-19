@@ -103,10 +103,10 @@ class ZoomPanController(val view: View<*>) {
 		}
 
 		override fun mouseDragged(e: MouseEvent) {
-			if (e.button != Button.BUTTON3) {
+			if (e.isLeftButtonDown || e.isMiddleButtonDown) {
 				autoPanning.activate()
 			}
-			if (e.button != Button.BUTTON2) {
+			if (!e.isMiddleButtonDown) {
 				return
 			}
 			pan(e.location)
@@ -184,7 +184,7 @@ class ZoomPanController(val view: View<*>) {
 		}
 
 		private fun pan() {
-			val dir = if (event.button == Button.BUTTON1) 1 else -1
+			val dir = if (event.isLeftButtonDown) 1 else -1
 			val panDirection = panDirection(event.location).multiply(dir * AUTOPAN_SIZE.toDouble())
 			view.navigator.panBy(panDirection.x.toInt(), panDirection.y.toInt())
 			view.dispatchEvent(event)
