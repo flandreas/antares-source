@@ -184,7 +184,7 @@ class AntaresSwing(
 		get() = AboutInfo(
 			iconPath = "/$iconPath",
 			name = displayName,
-			claim = "Digital Circuit Learning Platform",
+			claim = Translations.getString("antares.claim"),
 			version = readVersion())
 
 	private fun readVersion(): String = IOUtils.toString(this.javaClass.getResourceAsStream("/version.txt"), "UTF-8")
