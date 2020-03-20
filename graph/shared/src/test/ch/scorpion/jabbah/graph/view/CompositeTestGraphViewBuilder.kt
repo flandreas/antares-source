@@ -1,7 +1,14 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.graph.GraphStorable
+import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.port.PortFactory
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.port.PortViewFactory
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
@@ -11,7 +18,9 @@ import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
  * Used [TestVerticeView] and [TestControlVerticeView] components.
  */
 class CompositeTestGraphViewBuilder(
-	private val graphName: String
+	private val graphName: String,
+	private val portFactory: PortFactory = GraphModelModule.portFactory,
+	private val portViewFactory: PortViewFactory = GraphViewModule.portViewFactory
 ) : GraphViewBuilder<Boolean>() {
 
 	/**
@@ -39,6 +48,10 @@ class CompositeTestGraphViewBuilder(
 		return graphView
 	}
 
+	fun buildMetaGraph(graphView: GraphView<*>): MetaGraph {
+		return MetaGraph(GraphStorable(graphView), createContainerDrawing(graphView))
+	}
+
 	private fun addInput(name: String = "I"): TestGraphPortView {
 		val input = TestGraphPortView.input(name)
 		graphView.add(input)
@@ -49,5 +62,23 @@ class CompositeTestGraphViewBuilder(
 		val output = TestGraphPortView.output(name)
 		graphView.add(output)
 		return output
+	}
+
+	private fun createContainerDrawing(graphView: GraphView<*>): ContainerDrawing {
+		val containerDrawing = GraphViewModule.createContainerDrawing()
+
+		containerDrawing.model.graphUUID = graphView.graph!!.uuid
+		containerDrawing.model.graphName.translation = graphView.graph!!.name.translation
+
+		for (circuitInput in graphView.graph!!.graphInputs) {
+			containerDrawing.add(
+				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitInput))))
+		}
+		for (circuitOutput in graphView.graph!!.graphOutputs) {
+			containerDrawing.add(
+				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitOutput))))
+		}
+
+		return containerDrawing
 	}
 }

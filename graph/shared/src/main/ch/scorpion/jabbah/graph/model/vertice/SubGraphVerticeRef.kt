@@ -45,7 +45,7 @@ class SubGraphVerticeRef(
 		private fun wrappedScript(vertice: SubGraphVerticeRef): Script {
 			return Script(
 				code = vertice.getGraphIfPresent()!!.script!!,
-				origin = "${vertice.type} '${vertice.name}'",
+				origin = vertice.type,
 				context = Translations.getString("graph.property.GraphViewImpl.script.name"))
 		}
 

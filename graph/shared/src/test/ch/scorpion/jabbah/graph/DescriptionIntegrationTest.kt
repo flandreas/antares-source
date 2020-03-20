@@ -30,8 +30,6 @@ class DescriptionIntegrationTest {
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
 		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
-		GraphModelModule.portFactory = TestPortFactory()
-		GraphViewModule.portViewFactory = TestPortViewFactory()
 	}
 
 	@Test

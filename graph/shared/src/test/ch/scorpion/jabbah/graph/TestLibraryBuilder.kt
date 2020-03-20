@@ -28,38 +28,24 @@ class TestLibraryBuilder(
 	 * @return the created [MetaGraph] that contains the created custom component
 	 */
 	fun addInnerCustomComponent(library: Library): MetaGraph {
-		val customComp = CompositeTestGraphViewBuilder(INNER_CUSTOM_COMP).buildInnerCustomComponent()
-		val containerDrawing = createContainerDrawing(customComp)
-		val metaGraph = MetaGraph(GraphStorable(customComp), containerDrawing)
-		return libraryService.addContainerLibraryElement(library, metaGraph, library).metaGraph!!
+		val builder = CompositeTestGraphViewBuilder(INNER_CUSTOM_COMP, portFactory, portViewFactory)
+		return libraryService.addContainerLibraryElement(
+			library,
+			builder.buildMetaGraph(builder.buildInnerCustomComponent()),
+			library
+		).metaGraph!!
 	}
 
 	fun addOuterCustomComponent(library: Library): MetaGraph {
-		val outerComp = CompositeTestGraphViewBuilder(OUTER_CUSTOM_COMP).buildOuterCustomComponent(createSubGraphVerticeView(INNER_CUSTOM_COMP, library))
-		val containerDrawing = createContainerDrawing(outerComp)
-		val metaGraph = MetaGraph(GraphStorable(outerComp), containerDrawing)
-		return libraryService.addContainerLibraryElement(library, metaGraph, library).metaGraph!!
+		val builder = CompositeTestGraphViewBuilder(OUTER_CUSTOM_COMP, portFactory, portViewFactory)
+		return libraryService.addContainerLibraryElement(
+			library,
+			builder.buildMetaGraph(builder.buildOuterCustomComponent(createSubGraphVerticeView(INNER_CUSTOM_COMP, library))),
+			library
+		).metaGraph!!
 	}
 
 	private fun createSubGraphVerticeView(name: String, libraryDirectory: LibraryDirectory): SubGraphVerticeViewImpl {
 		return (libraryDirectory.get(name) as LibraryElement).getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeViewImpl
-	}
-
-	private fun createContainerDrawing(graphView: GraphView<*>): ContainerDrawing {
-		val containerDrawing = GraphViewModule.createContainerDrawing()
-
-		containerDrawing.model.graphUUID = graphView.graph!!.uuid
-		containerDrawing.model.graphName.translation = graphView.graph!!.name.translation
-
-		for (circuitInput in graphView.graph!!.graphInputs) {
-			containerDrawing.add(
-				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitInput))))
-		}
-		for (circuitOutput in graphView.graph!!.graphOutputs) {
-			containerDrawing.add(
-				portViewFactory.createPortViewComponent(portViewFactory.createPortView(portFactory.createSubGraphPort(circuitOutput))))
-		}
-
-		return containerDrawing
 	}
 }

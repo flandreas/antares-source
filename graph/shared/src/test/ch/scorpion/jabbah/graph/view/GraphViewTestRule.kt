@@ -7,11 +7,14 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.TestControlVertice
 import ch.scorpion.jabbah.graph.model.TestVertice
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.port.SubGraphPortImpl
+import ch.scorpion.jabbah.graph.model.port.TestPortFactory
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphOutputImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.TestPortView
+import ch.scorpion.jabbah.graph.view.port.TestPortViewFactory
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.io.IOModule
@@ -39,5 +42,8 @@ object GraphViewTestRule {
 		IOModule.typeMap.register("subGraphPortImpl", SubGraphPortImpl::class)
 
 		AppModule.userHolder.u = User.developer()
+
+		GraphModelModule.portFactory = TestPortFactory()
+		GraphViewModule.portViewFactory = TestPortViewFactory()
 	}
 }
