@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.DescriptionChangedEvent
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
@@ -197,7 +198,7 @@ class MetaGraph(
 		val duplicate = StorableCloner.clone(this) as MetaGraph
 
 		duplicate.containerDrawing.model.graphUUID = ch.scorpion.jabbah.base.System.createUUID()
-		duplicate.containerDrawing.model.translatableName = newName
+		duplicate.containerDrawing.model.graphName = Name(newName)
 		copyGraphDataFromContainerModel(duplicate.graph.model!!)
 
 		return duplicate
@@ -223,7 +224,7 @@ class MetaGraph(
 
 	private fun handle(event: NameChangedEvent) {
 		if (event.name === graph.model?.name) {
-			containerDrawing.model.translatableName = event.name.translation
+			containerDrawing.model.graphName = Name(event.name.translation)
 		}
 	}
 
@@ -235,7 +236,7 @@ class MetaGraph(
 
 	private fun copyGraphDataFromContainerModel(graph: Graph) {
 		graph.uuid = containerDrawing.model.graphUUID!!
-		graph.name.translation = containerDrawing.model.translatableName
+		graph.name.translation = containerDrawing.model.graphName.translation
 		graph.description.translation = containerDrawing.model.description.translation
 
 	}

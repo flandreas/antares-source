@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -83,22 +84,11 @@ class SubGraphVerticeRef(
 		return visitor.visitLeave(this)
 	}
 
-	/** ---- [AbstractVertice] */
-
-	/** Represents the [translatableName] in the current system [Language].*/
-	override var name: String?
-		get() = translatableName.getTranslation()
-		set(value) {
-			if (StringUtils.isNotEmpty(value)) {
-				translatableName = translatableName.withTranslation(value!!)
-			}
-		}
-
 	/** ---- [SubGraphVertice] */
 
 	override var graphUUID: UUID? = graphUUID
 
-	override var translatableName: TranslatableText = TranslatableText()
+	override var graphName: Name = Name(TranslatableText())
 
 	override fun <T : Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler) {
 		LOG.trace("SubGraphVerticeRef: propagateOutput for Output '${outputPort.name}'")
@@ -123,7 +113,7 @@ class SubGraphVerticeRef(
 		val metaGraph = repository.getOptionalMetaGraph(graphUUID!!)
 		if (metaGraph != null) {
 			name = metaGraph.name
-			translatableName = metaGraph.containerDrawing.model.translatableName
+			graphName = metaGraph.containerDrawing.model.graphName
 			fillFrom(metaGraph.containerDrawing.createSubGraphVertice())
 
 			super.read(reader)
@@ -134,7 +124,7 @@ class SubGraphVerticeRef(
 		} else {
 			// Broken reference to library component
 			LOG.warn("SubGraphVerticeRef: broken reference $graphUUID")
-			translatableName = BrokenReferenceView.NAME
+			graphName = Name(BrokenReferenceView.NAME)
 			super.read(reader)
 			_designError = DesignError("Broken reference")
 
@@ -181,15 +171,19 @@ class SubGraphVerticeRef(
 	override fun bind(repository: MetaGraphRepository, storableCreator: StorableCreator) {
 		super.bind(repository, storableCreator)
 		if (!hasDesignError) {
-			graph = getGraph(repository, storableCreator)
-			graph!!.bind(repository, storableCreator)
+			ensureGraph(storableCreator).bind(repository, storableCreator)
 		}
 	}
 
 	override fun getGraph(repository: MetaGraphRepository, storableCreator: StorableCreator): Graph {
+		return ensureGraph(storableCreator)
+	}
+
+	private fun ensureGraph(storableCreator: StorableCreator): Graph {
 		if (graph != null) {
 			return graph!!
 		}
+
 		val subGraph = repository.getMetaGraph(graphUUID!!)
 		graph = subGraph.cloneGraphModel(storableCreator)
 
@@ -215,7 +209,7 @@ class SubGraphVerticeRef(
 	private fun fillFrom(subGraphVertice: SubGraphVertice) {
 		graphUUID = subGraphVertice.graphUUID
 
-		type = subGraphVertice.translatableName.getTranslation()
+		type = subGraphVertice.graphName.value
 		_typeDesc = subGraphVertice.description.value
 
 		for (port in subGraphVertice.getPorts()) {

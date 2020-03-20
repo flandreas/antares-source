@@ -5,8 +5,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.model.text.description.Describable
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -43,7 +42,7 @@ class SubGraphVerticeImpl(
 	/** Used when [SubGraphVerticeRef]s are created from this [SubGraphVerticeImpl].*/
 	override var graphUUID: UUID? = null
 
-	override var translatableName = TranslatableText(name)
+	override var graphName = Name(TranslatableText(name))
 
 	override fun getGraphIfPresent(): Graph? {
 		return null
@@ -59,12 +58,12 @@ class SubGraphVerticeImpl(
 
 	/** ---- [AbstractVertice] */
 
-	/** Represents the [translatableName] in the current system [Language].*/
+	/** Represents the [graphName] in the current system [Language].*/
 	override var name: String?
-		get() = translatableName.getTranslation()
+		get() = graphName.value
 		set(value) {
 			if (StringUtils.isNotEmpty(value)) {
-				translatableName = translatableName.withTranslation(value!!)
+				graphName.translation.withTranslation(value!!)
 			}
 		}
 
@@ -75,7 +74,7 @@ class SubGraphVerticeImpl(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeString("uuid", graphUUID.toString())
-		writer.writeStorables("name", translatableName.allTranslations())
+		graphName.write("name", writer)
 		description.write("desc", writer)
 		writer.writeStorables("ports", getSubGraphPorts().iterator())
 	}
@@ -89,7 +88,7 @@ class SubGraphVerticeImpl(
 			name = reader.readString("name")
 		}
 		if (reader.hasElement("name")) {
-			translatableName = TranslatableText(reader.readStorables("name"))
+			graphName.read("name", reader)
 		}
 		description.read("desc", reader)
 

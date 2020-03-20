@@ -49,7 +49,7 @@ class TestLibraryBuilder(
 		val containerDrawing = GraphViewModule.createContainerDrawing()
 
 		containerDrawing.model.graphUUID = graphView.graph!!.uuid
-		containerDrawing.model.name = graphView.graph!!.name.value
+		containerDrawing.model.graphName.translation = graphView.graph!!.name.translation
 
 		for (circuitInput in graphView.graph!!.graphInputs) {
 			containerDrawing.add(

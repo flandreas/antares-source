@@ -27,7 +27,7 @@ class MetaGraphTest {
 		val name = "Some Name"
 		val metaGraph = MetaGraph()
 		metaGraph.containerDrawing.model.graphUUID = uuid
-		metaGraph.containerDrawing.model.name = name
+		metaGraph.containerDrawing.model.graphName.value = name
 
 		val clone = StorableCloner.clone(metaGraph) as MetaGraph
 

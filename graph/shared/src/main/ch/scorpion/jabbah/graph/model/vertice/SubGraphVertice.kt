@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.*
@@ -23,7 +23,7 @@ interface SubGraphVertice : Vertice, Describable {
     var graphUUID: UUID?
 
 	/** Contains the displayable name of the [Graph] represented by this [SubGraphVertice] as various translations.*/
-	var translatableName: TranslatableText
+	var graphName: Name
 
     /**
      * Returns the [Graph] that this [SubGraphVertice] contains, if already present.
