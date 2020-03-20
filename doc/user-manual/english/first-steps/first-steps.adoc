@@ -87,7 +87,7 @@ Size and region of the display can also be controlled via the menu and the key s
 
 === Execute circuit
 
-With Antares, digital circuits can not only be drawn, but also executed. Press the button with the interrupted circle symbol in the simulation tools to start the simulation.
+With Antares, digital circuits can not only be drawn, but also executed. Press the button with the arrow symbol in the simulation tools to start the simulation.
 
 You will notice that the colors of the inputs, the wires and the output have changed. With the default settings Antares uses a dark green color to represent signal 0 and a light green color for signal 1. In addition, inputs and outputs also display the current signal as text.
 
@@ -111,7 +111,7 @@ Observe:: This is the category that is active by default. In this category, the 
 
 Use:: In this category the simulation is executed fastest. The wires do not represent the signal by their color, and no animations are applied. This category is typically used to simulate complex circuits such as entire microprocessors that should execute a machine program as quickly as possible.
 
-The circuit cannot be edited in simulation mode. Press the button with the interrupted circle symbol in the simulation tools to return to the edit mode.
+The circuit cannot be edited in simulation mode. Press the button with the arrow symbol in the simulation tools to return to the edit mode.
 
 === Create symbol
 

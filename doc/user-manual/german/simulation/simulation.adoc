@@ -8,11 +8,11 @@ Die Simulation von Antares wird über die Simulations-Werkzeuge in der Werkzeugl
 
 image::../../img/simulation/simulation-tools.png[Simulations-Werkzeuge, 300]
 
-image:../../img/simulation/powerOff-24.png[Start] Mit dieser Schaltfläche (kbd:[Ctrl + R]) kann die Simulation gestartet und gestoppt werden.
+image:../../img/simulation/play24.png[Start] Mit dieser Schaltfläche (kbd:[Ctrl + R]) kann die Simulation gestartet und gestoppt werden.
 
-image:../../img/simulation/PauseOff-24.png[Pause] Aktiviert den Einzelschrittmodus der Simulation.
+image:../../img/simulation/pause24.png[Pause] Aktiviert den Einzelschrittmodus der Simulation.
 
-image:../../img/simulation/Resume-24.png[Fortsetzen] Führt den nächsten Einzelschritt aus (kbd:[Ctrl + Space]). Ist nur aktiv, wenn der Einzelschrittmodus aktiviert ist. Die Schaltfläche wird mit einem orangen Rahmen dargestellt, wenn ein Einzelschritt möglich ist.
+image:../../img/simulation/resume24.png[Fortsetzen] Führt den nächsten Einzelschritt aus (kbd:[Ctrl + Space]). Ist nur aktiv, wenn der Einzelschrittmodus aktiviert ist. Die Schaltfläche wird mit einem orangen Rahmen dargestellt, wenn ein Einzelschritt möglich ist.
 
 Mit dem Schieberegler kann die Simulationsgeschwindigkeit gesteuert werden. Die Simulationsgeschwindigkeit ist in drei Bereiche aufgeteilt, deren Name als Tooltip angezeigt wird, wenn du  die Maus über den Regler bewegst. Je weiter links sich der Regler befindet, desto langsamer wird die Simulation ausgeführt, und desto mehr Unterstützunginformationen werden während der Simulation angezeigt.
 
