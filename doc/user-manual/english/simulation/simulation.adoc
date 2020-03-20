@@ -8,11 +8,11 @@ The simulation of Antares is controlled by the simulation tools in the toolbar. 
 
 image::../../img/simulation/simulation-tools.png[Simulation Tools, 300]
 
-image:../../img/simulation/powerOff-24.png[Start] With this button (kbd:[Ctrl + R]) the simulation can be started and stopped.
+image:../../img/simulation/play24.png[Start] With this button (kbd:[Ctrl + R]) the simulation can be started and stopped.
 
-image:../../img/simulation/PauseOff-24.png[Pause] Activates the single step mode of the simulation.
+image:../../img/simulation/pause24.png[Pause] Activates the single step mode of the simulation.
 
-image:../../img/simulation/Resume-24.png[Continue] Executes the next single step (kbd:[Ctrl + Space]). Is only active if the single step mode is activated. The button is displayed with an orange frame if a single step is possible.
+image:../../img/simulation/resume24.png[Continue] Executes the next single step (kbd:[Ctrl + Space]). Is only active if the single step mode is activated. The button is displayed with an orange frame if a single step is possible.
 
 With the slider the simulation speed can be controlled. The simulation speed is divided into three areas whose name is displayed as a tooltip when you move the mouse over the slider. The further to the left the slider is, the slower the simulation is executed and the more support information is displayed during the simulation.
 

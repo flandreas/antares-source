@@ -54,7 +54,6 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.*
-import javax.swing.border.CompoundBorder
 
 
 /**
@@ -317,13 +316,13 @@ class GraphPanel(
 		val modeToggleButton = JToggleButton(modeToggleAction)
 		modeToggleButton.text = null
 		modeToggleButton.hideActionText = true
-		modeToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/powerOff-24.png"))
+		modeToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/play24.png"))
 		modeToggleButton.toolTipText = Translations.getString("execution.action.execute.name")
 
 		val executionAction = PauseExecutionAction(scheduler, eventBus)
 		val pauseToggleButton = JToggleButton(ActionWrapperSwing(executionAction))
 		pauseToggleButton.text = null
-		pauseToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/PauseOff-24.png"))
+		pauseToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/pause24.png"))
 		pauseToggleButton.toolTipText = executionAction.name
 
 		//val stepButton = StepButton("/img/Resume-24.png", StepExecutionAction(scheduler, eventBus))
@@ -346,10 +345,10 @@ class GraphPanel(
 		return mainToolBar
 	}
 
-	private fun createStepButton(action: Action): JToggleButton {
-		val inactiveIcon = ImageIcon(GraphPanel::class.java.getResource("/img/Resume-24.png"))
-		val activeIcon = ImageIcon(GraphPanel::class.java.getResource("/img/Resume-active-24.png"))
-		val button = JToggleButton(ActionWrapperSwing(action))
+	private fun createStepButton(action: Action): JButton {
+		val inactiveIcon = ImageIcon(GraphPanel::class.java.getResource("/img/resume24.png"))
+		val activeIcon = ImageIcon(GraphPanel::class.java.getResource("/img/resume-active-24.png"))
+		val button = JButton(ActionWrapperSwing(action))
 		button.text = null
 		button.icon = inactiveIcon
 

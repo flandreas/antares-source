@@ -87,7 +87,7 @@ Grösse und Ausschnitt der Anzeige kann auch über das Menu und die Tastatus ges
 
 === Schaltung ausführen
 
-Mit Antares können digitale Schaltungen nicht nur gezeichnet, sondern auch ausgeführt werden. Drücke in den Simulationswerkzeugen auf den Knopf mit dem unterbrochenen Kreissymbol, um die Simulation zu starten.
+Mit Antares können digitale Schaltungen nicht nur gezeichnet, sondern auch ausgeführt werden. Drücke in den Simulationswerkzeugen auf den Knopf mit dem Pfeil, um die Simulation zu starten.
 
 Du stellst fest, dass sich die Farben der Eingänge, der Leitungen und des Ausgangs verändert haben. Mit den Standardeinstellungen verwendet Antares eine dunkelgrüne Farbe, um das Signal 0 darzustellen, und eine hellgrüne Farbe für das Signal 1. Zudem zeigen Eingänge und Ausgänge das aktuelle Signal auch als Text an.
 
@@ -111,7 +111,7 @@ Beobachten:: Diese Kategorie ist per Default aktiv. In ihr stellen die Leitungen
 
 Verwenden:: In dieser Kategorie wird die Simulation am schnellsten ausgeführt. Die Leitungen stellen das Signal nicht dar, und es werden auch keine Animationen ausgeführt. Diese Kategorie wird typischerweise eingesetzt, um komplexe Schaltungen wie z.B. ganze Mikroprozessoren, die gerade ein Maschinenprogramm ausführen, möglichst schnell zu simulieren.
 
-Im Simulationsmodus kann die Schaltung nicht bearbeitet werden. Drücke in den Simulationswerkzeugen auf den Knopf mit dem unterbrochenen Kreissymbol, um zurück in den Bearbeitungsmodus zu gelangen.
+Im Simulationsmodus kann die Schaltung nicht bearbeitet werden. Drücke in den Simulationswerkzeugen auf den Knopf mit Pfeil, um zurück in den Bearbeitungsmodus zu gelangen.
 
 === Symbol erstellen
 
