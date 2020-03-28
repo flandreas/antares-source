@@ -7,6 +7,9 @@ import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 enum class DigitalSignalRepresentation(val customName: String) {
 
     BINARY("binary") {
+	    override val prefix: String get() = "0b"
+	    override val base: Int get() = 2
+	    override val suffix: String get() = "b"
         override fun bits(): Int = 1
         override fun represent(signal: DigitalSignal): String = signal.toBinaryString()
         override fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal = signal.getSubword(BitWidth.BW_1, index)
@@ -14,6 +17,9 @@ enum class DigitalSignalRepresentation(val customName: String) {
     },
 
     HEXADECIMAL("hex") {
+	    override val prefix: String get() = "0x"
+	    override val base: Int get() = 16
+	    override val suffix: String get() = "h"
         override fun bits(): Int = 4
         override fun represent(signal: DigitalSignal): String = signal.toHexString()
         override fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal = signal.getSubword(BitWidth.BW_4, index)
@@ -30,6 +36,12 @@ enum class DigitalSignalRepresentation(val customName: String) {
             throw IllegalArgumentException("unknown DigitalSignalRepresentation $customName")
         }
     }
+
+	abstract val prefix: String
+
+	abstract val base: Int
+
+	abstract val suffix: String
 
     /** Returns the number of [Bit]s needed to represent a single digit.*/
     abstract fun bits(): Int
