@@ -1,14 +1,15 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.Constant
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignalNotation
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.jabbah.base.PreferencesChangedEvent
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.Stroke
@@ -28,7 +29,8 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 class ConstantView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: Constant = Constant()
+	model: Constant = Constant(),
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : DigitalComponentView<Constant>(styleProvider, model) {
 
 	companion object {
@@ -66,8 +68,17 @@ class ConstantView(
 		location = Point2D(-DigitalPortView.LENGTH - HORIZONTAL_INSET, 0)
 	)
 
+	private val preferencesChangedHandler: EventHandler<PreferencesChangedEvent> = {
+		updateView()
+	}
+
 	init {
 		modelExchanged(null)
+		eventBus.register(PreferencesChangedEvent::class, preferencesChangedHandler)
+	}
+
+	override fun dispose() {
+		eventBus.unregister(preferencesChangedHandler)
 	}
 
 	/** ---- [AbstractVerticeView] */
@@ -181,8 +192,8 @@ class ConstantView(
 
 		getOutput().direction = orientation
 		getOutput().setLocation(
-			getOutput().length * -getOutput().direction.dx,
-			getOutput().length * -getOutput().direction.dy)
+			getOutput().unconnectedLength * -getOutput().direction.dx,
+			getOutput().unconnectedLength * -getOutput().direction.dy)
 
 		invalidate()
 		update()
@@ -190,8 +201,7 @@ class ConstantView(
 	}
 
 	private fun updateLabel() {
-		// TODO Make notation configurable in application settings
-		label.text = DigitalSignalNotation.BASE_SUBSCRIPT.notate(model.value, signalRepresentation)
+		label.text = CurrentDigitalSignalNotation.notation.notate(model.value, signalRepresentation)
 		label.alignment = Alignment.forOrientation(orientation)
 		label.location = labelLocation
 	}

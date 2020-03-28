@@ -102,7 +102,7 @@ enum class SymbolStyle(val customName: String) {
 		private const val EXCLUSIVE_OFFSET = 6.0
 
 		fun withName(customName: String): SymbolStyle {
-			for (symbolStyle in SymbolStyle.values()) {
+			for (symbolStyle in values()) {
 				if (symbolStyle.customName == customName) {
 					return symbolStyle
 				}

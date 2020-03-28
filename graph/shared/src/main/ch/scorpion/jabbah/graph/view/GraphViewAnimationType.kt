@@ -15,7 +15,7 @@ enum class GraphViewAnimationType(val customName: String) {
 
 		fun withName(customName: String): GraphViewAnimationType {
 			return values().firstOrNull { it.customName == customName }
-				?: throw IllegalArgumentException("unknown type '$customName'")
+				?: throw IllegalArgumentException("unknown GraphViewAnimationType '$customName'")
 		}
 	}
 }

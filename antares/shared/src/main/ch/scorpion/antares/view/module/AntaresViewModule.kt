@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.module
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalNotation
 import ch.scorpion.antares.script.AntaresScriptGateway
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.DigitalGraphView
@@ -193,6 +194,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(AndGateView.PROP_DATA_FLOW_ENABLED, true)
 
 		properties.set(LightColor.PROP_DEFAULT_LIGHT_COLOR, LightColor.RED.customName)
+		properties.set(DigitalSignalNotation.PROP_DIGITAL_SIGNAL_NOTATION, DigitalSignalNotation.BASE_SUBSCRIPT.customName)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

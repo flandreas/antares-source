@@ -12,6 +12,7 @@ import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
+import ch.scorpion.antares.view.signal.DigitalSignalNotationPreference
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
@@ -175,5 +176,6 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		))
 
 		root.getGroup(PREF_TREE_CIRCUIT).add(LightColorPreference())
+		root.getGroup(PREF_TREE_CIRCUIT).add(DigitalSignalNotationPreference())
 	}
 }
