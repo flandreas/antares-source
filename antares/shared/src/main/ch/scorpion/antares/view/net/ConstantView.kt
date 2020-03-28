@@ -101,7 +101,7 @@ class ConstantView(
 
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
-				context.g.fillRect(xInt, yInt, TunnelView.SIZE, TunnelView.SIZE)
+				context.g.fillRect(xInt, yInt, widthInt, heightInt)
 			}
 		}
 
