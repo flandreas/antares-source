@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Path2DJvm
 import ch.scorpion.jabbah.base.time.RealTimeTimerJvm
 import ch.scorpion.jabbah.base.time.Timer
+import org.apache.commons.lang3.SystemUtils
 import javax.swing.SwingUtilities
 import kotlin.reflect.KClass
 
@@ -82,7 +83,12 @@ actual object System {
 		SwingUtilities.invokeLater { invocable.invoke() }
 	}
 
-	actual fun getActionAcceleratorKey(baseName: String): String = "$baseName.accelerator"
+	actual fun getActionAcceleratorKey(baseName: String): String =
+		if (SystemUtils.IS_OS_MAC) {
+			"$baseName.accelerator.osx"
+		} else {
+			"$baseName.accelerator"
+		}
 
 	actual fun currentLanguage(): Language {
 		val code = java.lang.System.getProperty("user.language")
