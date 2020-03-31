@@ -364,6 +364,8 @@ class SwitchView(
 	}
 
 	private fun drawSignalBackground(context: DrawContext) {
+		context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().background.color.backgroundColor)
+		context.g.fillRect(xInt, yInt, widthInt, heightInt)
 		context.g.color = transparent.applyTo(Bit.of(model.isOn).color.foregroundColor)
 		context.g.fillRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
 			widthInt - 2 * BORDER_WIDTH, heightInt - 2 * BORDER_WIDTH)
