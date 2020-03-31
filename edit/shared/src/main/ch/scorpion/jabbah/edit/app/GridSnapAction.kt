@@ -19,6 +19,8 @@ class GridSnapAction(private val editor: Editor) : AbstractAction("edit.action.g
 			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 				if (e.name == Editor.PROP_GRID_SNAP) {
 					updateState()
+				} else if (e.name == Editor.PROP_ACTIVE) {
+					enabled = editor.active
 				}
 			}
 		})
