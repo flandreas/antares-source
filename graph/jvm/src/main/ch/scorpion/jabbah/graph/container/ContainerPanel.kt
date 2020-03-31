@@ -88,9 +88,13 @@ class ContainerPanel(
 		editor.view.applicationContext = GraphApplicationContext()
 	}
 
-	fun createToolbars(separator: Boolean = true): ImmutableList<ToolBar> = listOf(
-		createToolbar(editor, separator),
-		createSettingsToolBar()).toImmutableList()
+	fun createToolbars(separator: Boolean = true): ImmutableList<ToolBar> {
+		val toolbars = listOf(
+			createToolbar(editor, separator),
+			createSettingsToolBar()).toImmutableList()
+		toolbars.forEach { it.isFloatable = false }
+		return toolbars
+	}
 
 	/**
 	 * Sets the data to be displayed by this [ContainerPanel].
