@@ -24,6 +24,7 @@ class StateMachineTest {
 	private fun buildStateMachine(behaviour: UnhandledEventBehaviour = Strict): StateMachine<String> {
 
 		return stateMachine(behaviour) {
+			ignoreEvent { it == "ignored"}
 
 			state("A") {
 				onEntry(entryA)
@@ -118,6 +119,16 @@ class StateMachineTest {
 		val handled = sm.handle("unsupported")
 
 		assertFalse(handled)
+		assertEquals("A", sm.currentState.name)
+	}
+
+	@Test
+	fun shouldStayInStateWithIgnoredEvent() {
+		val sm = buildStateMachine(Unhandled).start()
+
+		val handled = sm.handle("ignored")
+
+		assertTrue(handled)
 		assertEquals("A", sm.currentState.name)
 	}
 }

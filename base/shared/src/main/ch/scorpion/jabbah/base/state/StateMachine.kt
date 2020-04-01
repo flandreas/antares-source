@@ -55,6 +55,12 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 	private val states = mutableListOf<State<T>>()
 
 	/**
+	 * Designate events to be ignored. These [Condition]s are only evaluated if none of the current
+	 * [State]'s [Transition] has fired.
+	 */
+	private val ignoreEventConditions = mutableListOf<Condition<T>>()
+
+	/**
 	 * The [State] whose [Transitions][Transition] receive incoming events.
 	 * Typically not used by clients, but only by testing code.
 	 */
@@ -96,6 +102,11 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 			return true
 		}
 
+		if (ignoreEventConditions.any { it.invoke(event) }) {
+			LOG.debug("Explicitly ignored event $event")
+			return true
+		}
+
 		LOG.debug("Unhandled event $event")
 		return behaviour.behave(event as Any)
 	}
@@ -122,6 +133,11 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 	}
 
 	/** ---- DSL methods */
+
+	/** DSL method for registering conditions for ignored events. */
+	fun ignoreEvent(condition: Condition<T>) {
+		ignoreEventConditions.add(condition)
+	}
 
 	/** DSL method for registering a new [State]. */
 	fun state(name: String, init: (State<T>.() -> Unit)? = null): State<T> {
