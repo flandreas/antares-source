@@ -92,8 +92,11 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 	 * by the current [State]
 	 */
 	fun handle(event: T): Boolean {
+		LOG.debug("Handle event $event")
+
 		val transition = currentState.match(event)
 		if (transition != null) {
+			LOG.debug("Transferring to state '${transition.destinationStateName}'")
 			transferAlong(transition, event)
 			return true
 		}

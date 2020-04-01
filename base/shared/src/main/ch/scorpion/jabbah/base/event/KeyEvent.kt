@@ -16,37 +16,40 @@ interface KeyEvent : InputEvent {
 
     companion object {
 
-        /** The following key codes are target specific and must be set in the setup of the corresponding Target system.*/
+        /**
+         * The following key codes are target specific and must be set in the setup of the corresponding Target system.
+         * The codes given here are completely arbitrary and only used for testing of 'common' code.
+         */
 
         /** Key code of the non-numpad left arrow key */
-        var VK_LEFT = 0x00
+        var VK_LEFT = 0x01
 
         /** Key code of the non-numpad right arrow key. */
-        var VK_RIGHT = 0x00
+        var VK_RIGHT = 0x02
 
 	    /** Key code of the non-numpad up arrow key. */
-	    var VK_UP = 0x00
+	    var VK_UP = 0x03
 
 	    /** Key code of the non-numpad down arrow key. */
-	    var VK_DOWN = 0x00
+	    var VK_DOWN = 0x04
 
         /** Key code of the escape key.*/
-        var VK_ESCAPE = 0x00
+        var VK_ESCAPE = 0x05
 
 	    /** Key code of the ENTER key.*/
-        var VK_ENTER = 0x00
+        var VK_ENTER = 0x06
 
 	    /** Key code of the ALT key.*/
-	    var VK_ALT = 0x00
+	    var VK_ALT = 0x07
 
 	    /** Key code of the DELETE key.*/
-	    var VK_DELETE = 0x00
+	    var VK_DELETE = 0x08
 
 	    /** Key code for the 0 key.*/
-	    var VK_0 = 0x00
+	    var VK_0 = 0x09
 
 	    /** Key code for the 1 key.*/
-	    var VK_1 = 0x00
+	    var VK_1 = 0x0A
     }
 }
 

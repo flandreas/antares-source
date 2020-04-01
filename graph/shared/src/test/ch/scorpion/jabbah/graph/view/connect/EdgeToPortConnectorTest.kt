@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.event.ALT_MASK
+import ch.scorpion.jabbah.base.state.StateMachine
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -42,7 +43,41 @@ class EdgeToPortConnectorTest : AbstractConnectorTest(GraphViewModule.edgeToPort
 		assertTrue(ev.model.isConnectedWith(v3.model.getInput()))
 
 		// 3 VerticeViews, 1 NodeView, 3 EdgeViews
-		kotlin.test.assertEquals(7, builder.graphView.drawablesCount)
+		assertEquals(7, builder.graphView.drawablesCount)
+	}
+
+	/**
+	 * There are systems (Windows generally?) that generate multiple key pressed events when moving/dragging
+	 * the mouse while the key is being hold. Since [EdgeToPortConnector] is initiated by pressing the ALT key,
+	 * the ALT key is typically still pressed while the StateMachine is already active. Make sure that
+	 * [EdgeToPortConnector]'s [StateMachine]
+	 */
+	@Test
+	fun shouldConnectWithInterferingKeyPressedEvents() {
+		mouseMoveTo(150, 100, modifiers = ALT_MASK)
+		pressAlt()
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+		verify { view.setCursor(Cursor.CROSSHAIR) }
+
+		pressMouseAt(150, 100)
+		pressAlt()
+		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
+
+		dragMouseTo(150, 200)
+
+		dragMouseTo(190, 200)
+		pressAlt()
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+
+		releaseMouseAt(190, 200)
+		pressAlt()
+
+		assertTrue(ev.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(ev.model.isConnectedWith(v2.model.getInput()))
+		assertTrue(ev.model.isConnectedWith(v3.model.getInput()))
+
+		// 3 VerticeViews, 1 NodeView, 3 EdgeViews
+		assertEquals(7, builder.graphView.drawablesCount)
 	}
 
 	@Test

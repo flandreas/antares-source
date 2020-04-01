@@ -54,8 +54,16 @@ abstract class AbstractConnectorTest(
 		connector.handler.mouseReleased(context(MouseEventType.RELEASED, x, y))
 	}
 
+	protected fun pressKey(keyCode: Int) {
+		connector.handler.keyPressed(context(KeyEventType.PRESSED, keyCode))
+	}
+
 	protected fun pressEscape() {
-		connector.handler.keyPressed(context(KeyEventType.PRESSED, KeyEvent.VK_ESCAPE))
+		pressKey(KeyEvent.VK_ESCAPE)
+	}
+
+	protected fun pressAlt() {
+		pressKey(KeyEvent.VK_ALT)
 	}
 
 	protected fun context(type: MouseEventType, x: Int, y: Int, modifiers: Int = 0): EditInputEventContext {

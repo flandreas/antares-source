@@ -36,6 +36,8 @@ class EdgeToPortConnector(
 
 		stateMachine<EditInputEventContext>(Unhandled) {
 
+			ignoreEvent { it.keyEvent != null }
+
 			state("sense") {
 				onEntry { it?.view?.setCursor(Cursor.DEFAULT) }
 				transitTo("insideEdge") {
@@ -50,7 +52,7 @@ class EdgeToPortConnector(
 					onTransit { displayPortViewHighlight(it!!, snap(it)!!.location) }
 				}
 				transitTo("sense") {
-					given { snap(it) == null }
+					given { mouseMoved(it) && snap(it) == null }
 					onTransit { removePortViewHighlight(it!!) }
 				}
 				transitTo("drag") {
