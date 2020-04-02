@@ -138,4 +138,20 @@ class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputT
 		pressEscape()
 		assertTrue(builder.graphView.getEdgeViews().isEmpty())
 	}
+
+	@Test
+	fun shouldEndAdjustOpenWithDoubleClick() {
+		mouseMoveTo(130, 100)
+		clickMouseAt(130, 100, modifiers = ALT_MASK)
+
+		mouseMoveTo(150, 200)
+		clickMouseAt(150, 200)
+
+		mouseMoveTo(170, 200)
+		doubleClickMouseAt(170, 200)
+
+		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
+		assertNull(draggedEdgeView.destination)
+		assertTrue(editor.commandManager.canUndo())
+	}
 }

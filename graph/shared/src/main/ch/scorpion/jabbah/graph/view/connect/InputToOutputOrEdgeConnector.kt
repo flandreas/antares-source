@@ -35,7 +35,7 @@ class InputToOutputOrEdgeConnector(
 		edgeView!!.layout.layoutDestination()
 	}
 
-	override fun completeConnectingToEndPort(context: EditInputEventContext) {
+	override fun completeConnectingToEndPortOrOpen(context: EditInputEventContext) {
 		context.drawingView().drawing.remove(edgeView!!)
 
 		context.editor.commandManager.execute(

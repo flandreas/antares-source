@@ -10,10 +10,12 @@ import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.altPresse
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.altReleased
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.keyReleased
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseClicked
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDoubleClicked
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDragged
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mousePressed
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseReleased
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseSingleClicked
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.model.Port
@@ -173,7 +175,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("connected") {
 						onEntry {
-							completeConnectingToEndPort(it!!)
+							completeConnectingToEndPortOrOpen(it!!)
 							reset()
 						}
 					}
@@ -209,8 +211,11 @@ abstract class AbstractPortViewStartConnector(
 						stayIf({ mouseMoved(it) }) {
 							onTransit { moveAdjustedPoint(it!!) }
 						}
-						stayIf({ mouseClicked(it) }) {
+						stayIf({ mouseSingleClicked(it) }) {
 							onTransit { addAdjustedPoint(it!!) }
+						}
+						transitTo("connected") {
+							given { mouseDoubleClicked(it) }
 						}
 						transitTo("cancelled") {
 							given { escapePressed(it) && isLastUndo() }
@@ -255,7 +260,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state("connected") {
 						onEntry {
-							completeConnectingToEndPort(it!!)
+							completeConnectingToEndPortOrOpen(it!!)
 							endAdjustment(it)
 							reset()
 						}
@@ -282,7 +287,7 @@ abstract class AbstractPortViewStartConnector(
 
 	protected abstract fun connectEdgeViewToStartPort()
 
-	protected abstract fun completeConnectingToEndPort(context: EditInputEventContext)
+	protected abstract fun completeConnectingToEndPortOrOpen(context: EditInputEventContext)
 
 	protected abstract fun createAdjustment(): EdgeViewAdjustmentView
 

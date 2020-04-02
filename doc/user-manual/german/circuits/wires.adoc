@@ -26,7 +26,7 @@ TIP: Bidirektionale Anschlüsse sind gleichzeitig Eingang als auch Ausgang und k
 
 Zusätzlich zu diesen Möglichkeiten kannst du in allen Fällen eine Leitung mit unverbundenem Ende erzeugen, indem du die Maustaste über dem Hintergrund der Schaltung loslässt.
 
-Standardmässig erzeugt Antares während der Erzeugung der Leitung selbstständig ein rechtwinkliges Layout. Um das Layout der entstehenden Leitung zu beeinflussen, drückst du bei der Bestimmung des Startortes die kbd:[Alt]-Taste. Antares zeigt dann statt des orangen Kreises ein oranges Quadrat an. Danach kannst du die Zwischenpunkte der entstehenden Leitung durch Klicks mit der linken Maustaste bestimmen. Dabei muss beim Bewegen der Maus die Maustaste nicht mehr gedrückt gehalten werden.
+Standardmässig erzeugt Antares während der Erzeugung der Leitung selbstständig ein rechtwinkliges Layout. Um das Layout der entstehenden Leitung zu beeinflussen, drückst du bei der Bestimmung des Startortes die kbd:[Alt]-Taste. Antares zeigt dann statt des orangen Kreises ein oranges Quadrat an. Danach kannst du die Zwischenpunkte der entstehenden Leitung durch Klicks mit der linken Maustaste bestimmen. Dabei muss beim Bewegen der Maus die Maustaste nicht mehr gedrückt gehalten werden. Mit der kbd:[ESC]-Taste kann der zuletzt gesetzte Zwischenpunkt wieder gelöscht werden. Mit Einfachklick auf einem Eingang oder mit einem Doppelklick auf dem Hintergrund wird die Erzeugung der Leitung abgeschlossen.
 
 ==== Leitungsbündel
 

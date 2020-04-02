@@ -87,6 +87,8 @@ class StateMachineInputEventHandler<T : InputEventContext>(
 		val mouseDragged: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.DRAGGED }
 		val mouseReleased: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.RELEASED }
 		val mouseClicked: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.CLICKED }
+		val mouseSingleClicked: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.CLICKED && it.mouseEvent.clickCount != 2 }
+		val mouseDoubleClicked: (InputEventContext) -> Boolean = { it.mouseEvent?.type == MouseEventType.CLICKED && it.mouseEvent.clickCount == 2 }
 
 		val keyReleased: (InputEventContext) -> Boolean = { it.keyEvent?.type == KeyEventType.RELEASED }
 		val escapePressed: (InputEventContext) -> Boolean = { it.keyEvent?.type == KeyEventType.PRESSED && it.keyEvent.key == KeyEvent.VK_ESCAPE}

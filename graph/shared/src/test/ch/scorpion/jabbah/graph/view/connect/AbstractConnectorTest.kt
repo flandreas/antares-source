@@ -46,6 +46,10 @@ abstract class AbstractConnectorTest(
 		connector.handler.mouseClicked(context(MouseEventType.CLICKED, x, y, modifiers))
 	}
 
+	protected fun doubleClickMouseAt(x: Int, y: Int, modifiers: Int = 0) {
+		connector.handler.mouseClicked(context(MouseEventType.CLICKED, x, y, modifiers, 2))
+	}
+
 	protected fun dragMouseTo(x: Int, y: Int) {
 		connector.handler.mouseDragged(context(MouseEventType.DRAGGED, x, y))
 	}
@@ -66,8 +70,12 @@ abstract class AbstractConnectorTest(
 		pressKey(KeyEvent.VK_ALT)
 	}
 
-	protected fun context(type: MouseEventType, x: Int, y: Int, modifiers: Int = 0): EditInputEventContext {
-		return EditInputEventContext(editor, mouseEvent = MouseEventImpl(type, x = x, y = y, modifiers = modifiers), x = x.toDouble(), y = y.toDouble())
+	protected fun context(type: MouseEventType, x: Int, y: Int, modifiers: Int = 0, clickCount: Int = 1): EditInputEventContext {
+		return EditInputEventContext(
+			editor = editor,
+			mouseEvent = MouseEventImpl(type, x = x, y = y, modifiers = modifiers, clickCount = clickCount),
+			x = x.toDouble(),
+			y = y.toDouble())
 	}
 
 	protected fun context(type: KeyEventType, keyCode: Int): EditInputEventContext {
