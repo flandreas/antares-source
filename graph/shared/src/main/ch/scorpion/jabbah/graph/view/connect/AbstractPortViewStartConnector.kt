@@ -66,6 +66,9 @@ abstract class AbstractPortViewStartConnector(
 
 		stateMachine<EditInputEventContext>(Unhandled) {
 
+			// Avoid interference of keyPressed events due to ALT key used to activate "adjust" mode
+			ignoreEvent { it.keyEvent != null }
+
 			state("sense") {
 				onEntry { it?.view?.setCursor(Cursor.DEFAULT) }
 				transitTo("insideStartDrag") {
