@@ -7,6 +7,7 @@ val slf4jVersion: String by extra
 val commonsIoVersion: String by extra
 val commonsLang3Version: String by extra
 val l2fprodVersion: String by extra
+val macOS_jpackage_home: String by extra
 
 plugins {
 	id("com.github.johnrengelman.shadow") version "5.1.0"
@@ -32,7 +33,6 @@ kotlin {
 		val jvmMain by getting {
 			dependencies {
 				implementation("commons-cli:commons-cli:1.3.1")
-				implementation("com.apple:AppleJavaExtensions:1.5.4")
 			}
 		}
 	}
@@ -58,9 +58,7 @@ tasks {
 		injars("$buildDir/libs/antares-${version_project}-all.jar")
 		outjars("$buildDir/libs/antares-${version_project}-obfuscated.jar")
 
-		libraryjars("$javaHome/lib/rt.jar")
-		libraryjars("$javaHome/lib/jce.jar")
-		libraryjars("$javaHome/lib/jfxrt.jar")
+		libraryjars("$javaHome/jmods")
 
 		libraryjars("/Users/andreas/Documents/scorpion2/jabbah/lib/l2fprod-common-all-7.3.jar")
 		libraryjars("$projectDir/../lib/exml-7.0.0.jar")
@@ -114,20 +112,15 @@ tasks {
 
 		workingDir = projectDir
 
-		// macOS
 		commandLine(
-			"javapackager",
-			"-deploy",
-			"-nosign",
-			"-native", "pkg",
-			"-outdir", "${buildDir}/distributions",
-			"-outfile", project.name,
-			"-name", "Antares",
-			"-appclass", "ch.scorpion.antares.AntaresSwing",
-			"-srcdir", "${buildDir}/libs",
-			"-srcfiles", "antares-${version_project}-obfuscated.jar",
-			"-BappVersion=${version}",
-			"-Bicon=jvm/rsc/antares.icns"
+			"${macOS_jpackage_home}/bin/jpackage",
+			"--name", "Antares",
+			"--input", "${buildDir}/libs",
+			"--dest", "${buildDir}/distributions",
+			"--main-jar", "antares-${version_project}-obfuscated.jar",
+			"--app-version", "${version}",
+			"--icon", "jvm/rsc/antares.icns",
+			"--type", "pkg"
 		)
 	}
 
@@ -138,7 +131,7 @@ tasks {
 
 		workingDir = projectDir
 
-		// Windows
+		/*
 		commandLine(
 			"javapackager",
 			"-deploy",
@@ -152,6 +145,18 @@ tasks {
 			"-srcfiles", "antares-${version_project}-obfuscated.jar",
 			"-BappVersion=${version}",
 			"-Bicon=jvm/rsc/antares.icns"
+		)
+		*/
+
+		commandLine(
+			"${macOS_jpackage_home}/bin/jpackage",
+			"--name", "Antares",
+			"--input", "${buildDir}/libs",
+			"--dest", "${buildDir}/distributions",
+			"--main-jar", "antares-${version_project}-obfuscated.jar",
+			"--app-version", "${version}",
+			"--icon", "jvm/rsc/antares.icns",
+			"--type", "msi"
 		)
 	}
 }

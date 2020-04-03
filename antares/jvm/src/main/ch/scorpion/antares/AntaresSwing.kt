@@ -29,16 +29,12 @@ import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.Storable
-import com.apple.eawt.Application
 import com.formdev.flatlaf.FlatLightLaf
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang3.SystemUtils
-import java.awt.Frame
-import java.awt.Image
-import java.awt.Toolkit
+import java.awt.*
 import java.nio.file.Files
 import java.nio.file.Paths
 import javax.swing.JOptionPane
@@ -112,9 +108,7 @@ class AntaresSwing(
 
 	init {
 
-		if (SystemUtils.IS_OS_MAC) {
-			Application.getApplication().dockIconImage = Toolkit.getDefaultToolkit().getImage(AntaresSwing::class.java.classLoader.getResource("img/Logo64.png"))
-		}
+		Taskbar.getTaskbar().iconImage = Toolkit.getDefaultToolkit().getImage(AntaresSwing::class.java.classLoader.getResource("img/Logo64.png"))
 
 		eventBus.register(OpenMemoryContentsRequest::class) { request ->
 			if (request.newDesktopView) {

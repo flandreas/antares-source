@@ -27,8 +27,8 @@ import javax.swing.JFileChooser
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import javax.swing.filechooser.FileFilter
-import com.apple.eawt.Application
 import org.apache.commons.lang3.SystemUtils
+import java.awt.Desktop
 
 abstract class AbstractDesktopApplicationSwing(
 	commandLine: CommandLine,
@@ -180,19 +180,19 @@ abstract class AbstractDesktopApplicationSwing(
 	}
 
 	private fun installMacOSAboutHandler() {
-		Application.getApplication().setAboutHandler {
+		Desktop.getDesktop().setAboutHandler {
 			AboutPanel.showAsDialog(this)
 		}
 	}
 
 	private fun installMacOSQuitHandler() {
-		Application.getApplication().setQuitHandler { _, _ ->
+		Desktop.getDesktop().setQuitHandler { _, _ ->
 			this.quit()
 		}
 	}
 
 	private fun installMacOSPreferencesHandler() {
-		Application.getApplication().setPreferencesHandler {
+		Desktop.getDesktop().setPreferencesHandler {
 			PreferencesDialogPanel.showAsDialog(mainFrame)
 		}
 	}

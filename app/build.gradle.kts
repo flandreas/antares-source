@@ -21,7 +21,6 @@ kotlin {
 		val jvmMain by getting {
 			dependencies {
 				implementation("commons-cli:commons-cli:1.3.1")
-				implementation("com.apple:AppleJavaExtensions:1.5.4")
 			}
 		}
 	}
