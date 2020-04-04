@@ -8,6 +8,7 @@ val commonsIoVersion: String by extra
 val commonsLang3Version: String by extra
 val l2fprodVersion: String by extra
 val macOS_jpackage_home: String by extra
+val win_jpackage_home: String by extra
 
 plugins {
 	id("com.github.johnrengelman.shadow") version "5.1.0"
@@ -131,32 +132,16 @@ tasks {
 
 		workingDir = projectDir
 
-		/*
 		commandLine(
-			"javapackager",
-			"-deploy",
-			"-nosign",
-			"-native", "msi",
-			"-outdir", "${buildDir}/distributions",
-			"-outfile", project.name,
-			"-name", "Antares",
-			"-appclass", "ch.scorpion.antares.AntaresSwing",
-			"-srcdir", "${buildDir}/libs",
-			"-srcfiles", "antares-${version_project}-obfuscated.jar",
-			"-BappVersion=${version}",
-			"-Bicon=jvm/rsc/antares.icns"
-		)
-		*/
-
-		commandLine(
-			"${macOS_jpackage_home}/bin/jpackage",
+			"${win_jpackage_home}\\bin\\jpackage",
 			"--name", "Antares",
-			"--input", "${buildDir}/libs",
-			"--dest", "${buildDir}/distributions",
+			"--input", "${buildDir}\\libs",
+			"--dest", "${buildDir}\\distributions",
 			"--main-jar", "antares-${version_project}-obfuscated.jar",
-			"--app-version", "${version}",
-			"--icon", "jvm/rsc/antares.icns",
-			"--type", "msi"
+			"--app-version", "0.1.0",
+			"--icon", "jvm\\rsc\\antares.ico",
+			"--type", "msi",
+			"--win-shortcut"
 		)
 	}
 }
