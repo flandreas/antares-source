@@ -30,7 +30,7 @@ Commit and push to remote repository.
 
 Tag the release and push it to the remote repository:
 
-* `git tag -a v<version> -m "my version <version>""`
+* `git tag -a v<version> -m "my version <version>"`
 * `git push origin --tags`
 
 ### Build Packages
@@ -42,6 +42,12 @@ Tag the release and push it to the remote repository:
    store it in a save place. You will need it for un-obfuscating stack traces from bug reports.
 * On a windows machine (after pulling changes from remote repository)
   * `gradlew clean :antares:distributeWindows`
+  * Collect the Windows package `build/antares/distributions/Antares-<version>.msi`
+
+### Build User Manual
+
+* `gradlew asciidoctor`
+* Create a ZIP file of all directories in `build/doc/usermanual/html5`
  
 ## Deploying
  
