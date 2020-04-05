@@ -119,7 +119,7 @@ tasks {
 			"--input", "${buildDir}/libs",
 			"--dest", "${buildDir}/distributions",
 			"--main-jar", "antares-${version_project}-obfuscated.jar",
-			"--app-version", "${version}",
+			"--app-version", "$version",
 			"--icon", "jvm/rsc/antares.icns",
 			"--type", "pkg"
 		)
@@ -138,7 +138,7 @@ tasks {
 			"--input", "${buildDir}\\libs",
 			"--dest", "${buildDir}\\distributions",
 			"--main-jar", "antares-${version_project}-obfuscated.jar",
-			"--app-version", "0.1.0",
+			"--app-version", "$version",
 			"--icon", "jvm\\rsc\\antares.ico",
 			"--type", "msi",
 			"--win-shortcut"
