@@ -1,18 +1,20 @@
-=== image:../../img/base-library/constant.png[Constant] Constant
+= image:user-manual/base-library/constant.png[Constant] Constant
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/base-library/constant
 
-==== Appearance
+== Appearance
 
-image:../../img/base-library/constant-sample.png[Example constant, 400]
+image:user-manual/base-library/constant-sample.png[Example constant, 400]
 
-==== Behavior
+== Behavior
 
 The constant constantly outputs the configured value at its output.
 
-==== Pins
+== Pins
 
 The constant has only one output whose bit width can be configured in the attribute "Bit Width".
 
-==== Attributes
+== Attributes
 
 Orientation:: The direction in which the output points.
 

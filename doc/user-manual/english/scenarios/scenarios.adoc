@@ -1,6 +1,8 @@
-== Scenarios
+= Scenarios
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/scenarios/scenarios
 
-=== Introduction
+== Introduction
 
 Scenarios are a feature of Antares that allows additional information to be displayed during the simulation of a circuit, which helps to better understand how the circuit works.
 
@@ -11,9 +13,9 @@ Currently the following types of additional information are supported:
 
 The following example shows the circuit "SR Latch" from the standard library during execution of the simulation after the user clicked on the input "S" while the latch was reset. Note the two text boxes with explanations displayed above and below the circuit and the highlighting of the lines coming from the upper OR gate.
 
-image::scenarios-sample.png[Example scenarios, 500,align="center"]
+image::user-manual/scenarios/scenarios-sample-en.png[Example scenarios, 500,align="center"]
 
-=== Concept
+== Concept
 
 As the author of a circuit, you can define scenarios yourself, which in turn consist of scenario steps. For scenarios and scenario steps you define the conditions under which they are activated. These conditions are, for example, current output signals from components of the circuit. Antares constantly checks during the simulation whether one of these conditions has occurred, and if so, activates the relevant scenario and/or scenario step. The activation causes the additional information you have defined for this scenario or scenario step to be displayed.
 
@@ -30,19 +32,19 @@ The explanation text of an active scenario is displayed in a text box above the 
 
 Scenarios and their scenario steps are always saved together with the open circuit.
 
-=== Configuration
+== Configuration
 
 Scenarios of the open circuit are configured in the "Scenarios" sidebar on the right side of the Antares window.
 
 The sidebar contains a tree with all scenarios (gear icon) and their scenario steps (footprint icon). When you select a node in the tree, the attributes of the object are displayed in the properties view below it and offered for modification.
 
-image::scenario-panel.png[Scenario configuration, 300,align="center"]
+image::user-manual/scenarios/scenario-panel-en.png[Scenario configuration, 300,align="center"]
 
 Selecting a scenario or a scenario step in the tree also causes its descriptions and highlights to be displayed in the open circuit even in edit mode. This helps you to check, for example, whether the IDs of components to be highlighted are set correctly.
 
 TIP: Select the topmost node in the tree (in the example "SR Latch") to make the descriptions and highlights disappear.
 
-==== Actions
+=== Actions
 
 To add or delete scenarios or scenario steps, select a node in the tree and perform an action from the main menu or the context menu (right mouse button).
 
@@ -56,14 +58,14 @@ Delete Scenario Step:: Context menu on the scenario step node. After a confirmat
 
 Move Scenario Step:: You can use drag & drop to change the sequence of scenarios or scenario steps.
 
-==== Properties of scenarios
+=== Properties of scenarios
 
 Name:: The name of the scenario, which can be translated into all supported languages. In the current version of Antares, it is only used for display in the tree.
 
 Description:: The description of the scenario, which can be translated into all supported languages. It is displayed during simulation in a text box above the circuit as long as the scenario is active.
 
 Condition:: The script with the condition that must be fulfilled for this scenario to be activated. If several scenarios fulfill their condition at the same time, Antares will only activate the first of these scenarios.
-See <<../scripting/scripting.adoc#, Scripting>> for details on scripting.  +
+See <<{{site.basedir}}/user-manual/english/scripting/scripting.adoc#, Scripting>> for details on scripting.  +
 +
 .Example
 [source,javascript]
@@ -71,14 +73,14 @@ See <<../scripting/scripting.adoc#, Scripting>> for details on scripting.  +
 return circuit.input("S") == "1" && circuit.input("R") == "0";
 ----
 
-==== Attributes of scenario steps
+=== Attributes of scenario steps
 
 Name:: The name of the scenario step, which can be translated into all supported languages. It is only used in the current version of Antares for display in the tree.
 
 Description:: The description of the scenario step, which can be translated into all supported languages. It will be displayed in a text box below the circuit during the simulation, as long as the scenario step is active.
 
 Condition:: The script with the condition that must be fulfilled in order for this scenario to be recognized. If several scenario steps of the active scenario fulfilled their condition at the same time, Antares will activate only the first of these scenario steps. A scenario step can only be activated if the scenario it is part of is active.
-See <<../scripting/scripting.adoc#, Scripting>> for details on scripting.  +
+See <<{{site.basedir}}/user-manual/english/scripting/scripting.adoc#, Scripting>> for details on scripting.  +
 +
 .Example
 [source,javascript]

@@ -1,10 +1,12 @@
-=== image:../../img/base-library/input.png[Input] image:../../img/base-library/output.png[Output] Port
+= image:user-manual/base-library/input.png[Input] image:user-manual/base-library/output.png[Output] Port
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/base-library/port
 
-==== Appearance
+== Appearance
 
-image:../../img/base-library/pin.png[Example port, 500]
+image:user-manual/base-library/pin.png[Example port, 500]
 
-==== Behavior
+== Behavior
 
 A port is either an input, an output, or an input/output, depending on the value of the "Port Type" attribute. Ports are represented graphically as arrows, with the position of the arrowhead relative to the component's pin indicating whether it is an input or an output. In the case of an input, the arrowhead is located at the pin, in the case of an output, it is located on the opposite side of the pin.
 
@@ -12,11 +14,11 @@ Ports show the current signal during simulation. Depending on the value of the a
 
 During the simulation, inputs can be used like a switch, but only if they are part of the main circuits, i.e. the outermost circuit. If Antares would allow the user to change the signal of an input of a subcircuit, there would be a conflict with the signal passed to the input by the surrounding circuit.
 
-==== Pins
+== Pins
 
 A port component has only one pin, the bit width of which is determined by the attribute "Bit Width".
 
-==== Attributes
+== Attributes
 
 Name:: The name of the port displayed on the opposite side of the pin. Antares uses the name to connect the pins of a subcircuit symbol to the ports of the subcircuit. For this reason the name must not be empty, and it must be unique within the subcircuit. For the same reason the name cannot be translated into multiple languages (at least in the current version of Antares).
 

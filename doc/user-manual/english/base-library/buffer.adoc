@@ -1,10 +1,12 @@
-=== image:../../img/base-library/buffer.png[buffer] Buffer
+= image:user-manual/base-library/buffer.png[buffer] Buffer
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/base-library/buffer
 
-==== Appearance
+== Appearance
 
-image:../../img/base-library/not-sample.png[Example buffer, 300]
+image:user-manual/base-library/not-sample.png[Example buffer, 300]
 
-==== Behavior
+== Behavior
 
 A buffer outputs the signal of the input unchanged at the output.
 
@@ -24,16 +26,16 @@ Unconnected inputs always have the value 0.
 
 === Mnemonics
 
-The logical gates of Antares can illustrate their function with so-called "mnemonics". See the chapter <<../description/description.adoc, Descriptions and explanations>>. The mnemonic of the buffer is shown below.
+The logical gates of Antares can illustrate their function with so-called "mnemonics". See the chapter <<{{site.basedir}}/user-manual/english/description/description.adoc#, Descriptions and explanations>>. The mnemonic of the buffer is shown below.
 
-image:../../img/base-library/buffer-mnemonic.png[Example buffer, 300]
+image:user-manual/base-library/buffer-mnemonic.png[Example buffer, 300]
 
-==== Pins
+== Pins
 
 Input:: The input to the buffer.
 Output:: The output of the buffer, which outputs the unchanged signal of the input.
 
-==== Attributes
+== Attributes
 
 Orientation:: The direction in which the output points.
 

@@ -1,11 +1,12 @@
-=== image:../../img/base-library/dip-switch.png[DIP switches] DIP Switch
-:experimental:
+= image:user-manual/base-library/dip-switch.png[DIP switches] DIP Switch
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/base-library/dip-switch
 
-==== Appearance
+== Appearance
 
-image:../../img/base-library/dip-switch-sample.png[Example DIP Switch, 150].
+image:user-manual/base-library/dip-switch-sample.png[Example DIP Switch, 150].
 
-==== Behavior
+== Behavior
 
 The DIP switch combines small switches for 1 bit each to a common component. The number of small switches is determined by the attribute "Bit Width".
 
@@ -15,12 +16,12 @@ The individual switches behave like the "Switch" component, i.e. the switching o
 
 When pressing the individual switch with the mouse, the DIP switch receives the keyboard focus, which is represented by a thin blue dotted rectangle around the individual switch. If a switch has the keyboard focus, it can also be operated with the kbd:[Enter] key as well as with the keys kbd:[0] and kbd:[1]. In addition, the arrow keys kbd:[<-] and kbd:[->] can be used to navigate back and forth between the individual switches. When a single switch is operated via the keyboard, the next switch automatically receives the keyboard focus, so the whole DIP switch can be easily adjusted via the keyboard.
 
-==== Pins
+== Pins
 
 A DIP switch has only one output with the bit width configured in the attribute "Bit Width".
 
 
-==== Attributes
+== Attributes
 
 Orientation:: The direction in which the output points.
 

@@ -1,33 +1,9 @@
-= User Manual
-
-== Introduction
-
-Welcome to Antares!
+= Welcome to Antares!
+include::../page-variables.txt[]
+:page-permalink: /user-manual/english/usermanual
 
 Antares is a learning platform for digital circuits. In addition to drawing and simulating digital circuits, Antares places particular emphasis on providing tools to help students better understand how circuits work.
 
-If you are using Antares for the first time, you will find an easy to understand introduction to Antares in the chapter <<first-steps/first-steps.adoc#, "First Steps">>. The other chapters in the "Basics" section cover important topics such as using projects and libraries.
+If you are using Antares for the first time, you will find an easy to understand introduction to Antares in the chapter <<{{site.basedir}}/user-manual/english/first-steps/first-steps.adoc#, "First Steps">>. The other chapters in the "Basics" section cover important topics such as using projects and libraries.
 
 The part "Advanced Techniques" covers topics that are more interesting for ambitious users like teachers or authors of training material.
-
-== Basics
-
-* <<first-steps/first-steps.adoc#, First Steps>>
-* <<projects-libraries/projects-libraries.adoc#, Projects and Libraries>>
-** <<projects-libraries/libraries.adoc#, Libraries>>
-** <<projects-libraries/projects.adoc#, Projects>>
-** <<projects-libraries/workbench.adoc#, Workbench>>
-** <<base-library/base-library.adoc#, Library Reference>>
-* <<circuits/circuits.adoc#, Circuits>>
-** <<circuits/wires.adoc#, Wires>>
-** <<subcircuits/subcircuits.adoc#, Subcircuits>>
-* <<simulation/simulation.adoc#, Simulation>>
-* <<styles/styles.adoc#, Styles and Themes>>
-* <<description/description.adoc#, Descriptions and Explanations>>
-
-== Advances Techniques
-
-* <<scripting/scripting.adoc#, Scripting>>
-* <<scenarios/scenarios.adoc#, Scenarios>>
-* <<usecases/usecases.adoc#, Use Cases>>
-* <<oscilloscope/oscilloscope.adoc#, Oscilloscop>>

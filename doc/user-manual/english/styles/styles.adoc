@@ -1,5 +1,6 @@
-== Styles and Themes
-:experimental:
+= Styles and Themes
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/styles/styles
 
 When displaying graphical objects, Antares - like any other graphical application - uses some graphical properties that influence the display. These properties are essentially the following:
 
@@ -7,7 +8,7 @@ When displaying graphical objects, Antares - like any other graphical applicatio
 * Character set (font)
 * Line type (Stroke)
 
-image::../../img/styles/styles-sample.png[Styles, 500,align="center"]
+image::user-manual/styles/styles-sample.png[Styles, 500,align="center"]
 
 Antares pursues the goal of presenting circuits in an aesthetically pleasing way. To achieve this goal, Antares uses - among other things - the following means:
 
@@ -15,7 +16,7 @@ Antares pursues the goal of presenting circuits in an aesthetically pleasing way
 * Styles
 * Topics
 
-=== Bundling of graphical properties
+== Bundling of graphical properties
 
 By bundling graphical properties, it becomes easier to achieve a certain graphical consistency within a single circuit and across multiple circuits.
 
@@ -27,7 +28,7 @@ So, in Antares, when you give a graphic object the color "green", you set the co
 
 The available composite colors are predefined by Antares. In the current version of Antares, there is no way to change these colors or add more colors.
 
-=== Styles
+== Styles
 
 A style in Antares is a set of graphical properties that are available under a specific name. When such a style is "applied" to a graphical object, the graphical object automatically receives all graphical properties of that style.
 
@@ -53,7 +54,7 @@ TIP: Antares internally uses many other styles such as "background", "selection"
 
 If you select a component in the circuit editor, you can then determine the style of the component in the properties view and also influence certain graphical properties.
 
-image::style-properties.png[styles, 350,align="center"]
+image::user-manual/styles/style-properties-en.png[styles, 350,align="center"]
 
 NOTE: The example shows the properties of a rectangle. For other components the properties view may look different.
 
@@ -67,7 +68,7 @@ Depending on the type of the selected component, further graphic properties such
 
 NOTE: The "Shadow" attribute only has an effect if the display of shadows is basically activated in Antares settings.
 
-=== Themes
+== Themes
 
 In Antares, a "theme" is a set of styles with specific values, all of which are grouped under a specific name. Not only styles that are available to you as a user for application to components are considered, but also "internal" styles like "selection" or "background".
 
@@ -77,12 +78,12 @@ The following three themes are available in the current version of Antares.
 
 Winter:: This is the default theme of Antares. It mainly uses blue figures on a white background.
 +
-image::winter-theme-sample.png[Styles, 400,align="center"]
+image::user-manual/styles/winter-theme-sample-en.png[Styles, 400,align="center"]
 
 Black & White:: An alternative theme similar to "Winter" but without the blue colour.
 +
-image::bw-theme-sample.png[Styles, 400,align="center"]
+image::user-manual/styles/bw-theme-sample-en.png[Styles, 400,align="center"]
 
 CRT :: An experimental "Dark Theme" which aims to explore the possibilities and limitations of themes. The name "CRT" is a reminiscence of times in the past when computers still had monochrome terminals.
 +
-image::crt-theme-sample.png[Styles, 400,align="center"]
+image::user-manual/styles/crt-theme-sample-en.png[Styles, 400,align="center"]

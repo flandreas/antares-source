@@ -1,10 +1,12 @@
-=== image:../../img/base-library/tristate-buffer.png[Tri-State Buffer] Tri-State Buffer
+= image:user-manual/base-library/tristate-buffer.png[Tri-State Buffer] Tri-State Buffer
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/base-library/tristate-buffer
 
-==== appearance
+== Appearance
 
-image:../../img/base-library/tristate-buffer-sample.png[Example Tri-State Buffer, 200]
+image:user-manual/base-library/tristate-buffer-sample.png[Example Tri-State Buffer, 200]
 
-==== Behavior
+== Behavior
 
 The tri-state buffer is a buffer that has a control input in addition to the data input. If the control input is active, the signal from the input is passed on unchanged to the output. If the control input is not active, the output is undefined/high impedance.
 
@@ -36,11 +38,11 @@ Unconnected inputs always have the value 0.
 
 === Mnemonics
 
-The logical gates of Antares can illustrate their function with so-called "mnemonics". See the chapter <<../description/description.adoc, Descriptions and explanations>>. The mnemonic of the tri-state buffer is shown below.
+The logical gates of Antares can illustrate their function with so-called "mnemonics". See the chapter <<{{site.basedir}}/user-manual/english/description/description.adoc#, Descriptions and explanations>>. The mnemonic of the tri-state buffer is shown below.
 
-image:../../img/base-library/tristate-buffer-mnemonic.png[Mnemonic Tri-State Buffer, 200]
+image:user-manual/base-library/tristate-buffer-mnemonic.png[Mnemonic Tri-State Buffer, 200]
 
-==== Pins
+== Pins
 
 Data input:: The buffer's input. The number of bits is determined by the attribute "Bit Width".
 
@@ -48,7 +50,7 @@ EN:: "Enable" - 1-bit control input. An active value results in all bits of the 
 
 Output:: The output of the buffer. The number of bits is determined by the attribute "Bit Width".
 
-==== Attributes
+== Attributes
 
 Orientation:: The direction in which the output points.
 

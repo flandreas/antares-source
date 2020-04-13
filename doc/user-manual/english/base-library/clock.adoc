@@ -1,10 +1,12 @@
-=== image:../../img/base-library/clock.png[Clock] Clock
+= image:user-manual/base-library/clock.png[Clock] Clock
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/base-library/clock
 
-==== Appearance
+== Appearance
 
-image:clock-sample.png[Example LED, 400]
+image:user-manual/base-library/clock-sample-en.png[Example LED, 400]
 
-==== Behavior
+== Behavior
 
 The clock generator generates a 1-bit signal at its output, the value of which changes periodically back and forth between the values 0 and 1. The period can be set in the attribute "Period".
 
@@ -12,11 +14,11 @@ If the mouse stays over the clock generator during simulation, Antares will disp
 
 A value of the period changed during the simulation is not retained; the period is reset to the value configured in the attribute "Period" at the end of the simulation.
 
-==== Pins
+== Pins
 
 The clock has a single 1-bit output where the periodically changing signal is output.
 
-==== Attributes
+== Attributes
 
 Orientation:: The direction in which the output points.
 

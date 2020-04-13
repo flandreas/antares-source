@@ -1,18 +1,19 @@
-== Simulation
-:experimental:
+= Simulation
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/simulation/simulation
 :icons: font
 
-=== Simulation Tools
+== Simulation Tools
 
 The simulation of Antares is controlled by the simulation tools in the toolbar. The most important actions can also be performed using the keyboard or menus.
 
-image::../../img/simulation/simulation-tools.png[Simulation Tools, 300]
+image::user-manual/simulation/simulation-tools.png[Simulation Tools, 300]
 
-image:../../img/simulation/play24.png[Start] With this button (kbd:[Ctrl + R]) the simulation can be started and stopped.
+image:user-manual/simulation/play24.png[Start] With this button (kbd:[Ctrl + R]) the simulation can be started and stopped.
 
-image:../../img/simulation/pause24.png[Pause] Activates the single step mode of the simulation.
+image:user-manual/simulation/pause24.png[Pause] Activates the single step mode of the simulation.
 
-image:../../img/simulation/resume24.png[Continue] Executes the next single step (kbd:[Ctrl + Space]). Is only active if the single step mode is activated. The button is displayed with an orange frame if a single step is possible.
+image:user-manual/simulation/resume24.png[Continue] Executes the next single step (kbd:[Ctrl + Space]). Is only active if the single step mode is activated. The button is displayed with an orange frame if a single step is possible.
 
 With the slider the simulation speed can be controlled. The simulation speed is divided into three areas whose name is displayed as a tooltip when you move the mouse over the slider. The further to the left the slider is, the slower the simulation is executed and the more support information is displayed during the simulation.
 
@@ -31,20 +32,20 @@ The following table shows which support information is used in which area.
 |Information|Explore|Observe|Use
 |Active components|icon:check[]|icon:check[]|icon:check[]
 |Execution Animation|(icon:check[])|(icon:check[])|(icon:check[])
-|<<../scenarios/scenarios.adoc#, scenarios>>|(icon:check[])|(icon:check[])|(icon:check[])
+|<<{{site.basedir}}/user-manual/english/scenarios/scenarios.adoc#, scenarios>>|(icon:check[])|(icon:check[])|(icon:check[])
 |colored lines|icon:check[]|icon:check[]|
-|<<../description/description.adoc#, Mnemonics>>|icon:check[]|icon:check[]|
-|<<../base-library/memory.adoc#, ROM/RAM>>-memory contents|icon:check[]|icon:check[]|
+|<<{{site.basedir}}/user-manual/english/description/description.adoc#, Mnemonics>>|icon:check[]|icon:check[]|
+|<<{{site.basedir}}/user-manual/english/base-library/memory.adoc#, ROM/RAM>>-memory contents|icon:check[]|icon:check[]|
 |Display Execution Delay|(icon:check[])||
 |Signal flow animation|icon:check[]||
 |===
 (icon:check[]) Only in single step mode
 
-=== Signal colors
+== Signal colors
 
 Antares uses different colors during the simulation to represent the different values of signals or the states of wires and pins. The following circuit illustrates the colors used, where the wires on the left have the wire style "Line" and the wires on the right have the wire style "Block".
 
-image::../../img/simulation/wire-colors.png[wire colors, 700,align="center"]
+image::user-manual/simulation/wire-colors.png[wire colors, 700,align="center"]
 
 * **Blue** The wire carries a signal with value "undefined". This occurs if no component is sending a signal to the wire, either because it is not connected to a component or because a connected tri-state buffer is sending an undefined signal.
 * **Dark green**: The wire carries a 1-bit signal with the value 0.
@@ -53,47 +54,47 @@ image::../../img/simulation/wire-colors.png[wire colors, 700,align="center"]
 * **Black**: The wire carries a signal with several bits which all have the value 0.
 * **Gray**: The wire carries a signal with several bits, at least one of which has the value 1.
 
-NOTE: Colors are defined in Antares by <<../styles/styles.adoc#, "Themes">>. The themes currently contained in Antares all use the above colors. However, it is not excluded that in the future more themes will be added (or users may define their own themes) that use other colors.
+NOTE: Colors are defined in Antares by <<{{site.basedir}}/user-manual/english/styles/styles.adoc#, "Themes">>. The themes currently contained in Antares all use the above colors. However, it is not excluded that in the future more themes will be added (or users may define their own themes) that use other colors.
 
-=== Simulation depth
+== Simulation depth
 
 One of the most important goals of Antares is to enable the user to explore all the components of a circuit in order to understand its operation as deeply and thoroughly as possible. For this reason, the basic library contains rather few programmed components. Instead, standard components like flip-flops or registers are available as complete sub-circuits in the standard library, which the user can open and observe during circuit design and simulation.
 
 The disadvantage of this approach is that large circuits consist of many basic components if all subcircuits are expanded for the simulation until only basic components are used. For example, the microcomputer in the example project "Microcomputer (Tannenbaum)" contains over 2'000 elementary logic gates and over 5'000 wires.
 
-The simulation of such large circuits takes a lot of time. Now Antares offers the possibility to define a <<../circuits/circuit-scripting.adoc#, Execution script>> for a subcircuit, which contains the logic of the subcircuit and is executed during the simulation instead of the inner circuit.
+The simulation of such large circuits takes a lot of time. Now Antares offers the possibility to define a <<{{site.basedir}}/user-manual/english/circuits/circuit-scripting.adoc#, Execution script>> for a subcircuit, which contains the logic of the subcircuit and is executed during the simulation instead of the inner circuit.
 
 With the menu menu:Simulation[Deep Simulation] you can choose whether Antares applies the execution scripts of sub-circuits or not. "Deep Simulation" means that the execution scripts are not applied and Antares simulates the full depth of the circuit. The opposite is called "Flat Simulation": Subcircuits are simulated only as deep as the depth of the circuit until a subcircuit contains an execution script.
 
 A flat simulation has one important limitation: If you open a subcircuit containing an execution script during a shallow simulation, Antares can display the contents of the subcircuit, but it cannot tell you anything about the state of the components and wires of that subcircuit.
 
-image::../../img/simulation/simulation-depth.png[wire colors, 700,align="center"]
+image::user-manual/simulation/simulation-depth.png[wire colors, 700,align="center"]
 
 Antares therefore represents such a partial circuit in a "disguised" state. In the picture above, one of the half adders has been opened in a separate view. Antares shows the opened half adder with a grey overlay. If the partial circuit would contain another partial circuit, you could also open it or dive into it, but it would also be shown in a disguised state.
 
-=== Simulation algorithm
+== Simulation algorithm
 
 Antares' algorithm for simulating circuits is usually not something you need to understand in detail to use Antares. Therefore, this section only explains the basics.
 
-==== Signal values
+=== Signal values
 
 The simulation of Antares uses signals with four possible values 0, 1, "Undefined" (high impedance)" and "Error".
 
 Other simulations use other signals such as "0/1 (rising edge)" and "1/0 (falling edge)". So far, Antares has not shown any need for such extended models.
 
-==== Runtime
+=== Runtime
 
 The simulation uses the runtime defined for each component and each line. This is the time (in nanoseconds) a component needs to process a changed input signal and generate a corresponding signal at one or more outputs.
 
 The simulation algorithm is event-based. Whenever a component detects a change in an input value, a new entry in an event list (event queue) is created in the simulation, which is intended to be executed after the runtime of the component has expired. After this time has elapsed, the simulator prompts the component to recalculate the value of its outputs. For this calculation, the component uses the signals that ** exist at its inputs at this time**.
 
-==== Switch-on behaviour
+=== Switch-on behaviour
 
 Antares does not yet contain a mechanism by which the switch-on behaviour can be influenced by the circuits and components. When starting the simulation, each component is requested to recalculate its outputs. The running time is also taken into account. If at the time of calculation no signal from other components has arrived at the inputs, it is up to the component to decide how to deal with this at the start. Most components then initially set the inputs to the value 0, which results in an unconnected AND gate having the output value 0 at startup and an unconnected NOT gate having the output value 1.
 
 This behavior must be considered when designing sequential circuits. Without further action, the way the simulation algorithm works and the power-on behavior of Antares will cause an SR latch with NOR gates to assume an illegal state at power-on.
 
-image::../../img/simulation/sr-latch.png[Line colors, 400,align="center"]
+image::user-manual/simulation/sr-latch.png[Line colors, 400,align="center"]
 
 Real latches do not show this behaviour, because slight differences in the propagation delay of the individual gates cause the circuit to settle into a stable and correct state when switched on.
 

@@ -1,10 +1,12 @@
-=== image:../../img/base-library/keyboard.png[keyboard] Keyboard
+= image:user-manual/base-library/keyboard.png[keyboard] Keyboard
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/base-library/keyboard
 
-==== Appearance
+== Appearance
 
-image:../../img/base-library/keyboard-sample.png[Example keyboard, 350]
+image:user-manual/base-library/keyboard-sample.png[Example keyboard, 350]
 
-==== Behavior
+== Behavior
 
 This component allows the circuit to accept characters that you enter via your computer keyboard (as long as they can be interpreted as 7-bit ASCII code).
 
@@ -16,7 +18,7 @@ The component is asynchronous in that the first character entered is immediately
 
 When the buffer is full, Antares indicates this with a red rectangle around the input field; Antares then ignores any further characters entered.
 
-==== Pins
+== Pins
 
 CLK:: Input "Clock" - On rising edge the next character is output at D if EN is set.
 
@@ -28,6 +30,6 @@ D:: Output "Data" - The first character of the buffer is output at this 8-bit ou
 
 AV:: Output "Available" - 1 indicates that at least 1 character is contained in the buffer. Goes to 0 when the buffer is empty.
 
-==== Attributes
+== Attributes
 
 Buffer size :: The number of characters the buffer can store.

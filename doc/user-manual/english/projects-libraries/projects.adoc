@@ -1,13 +1,14 @@
-=== Projects
-:experimental:
+= Projects
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/projects-libraries/projects
 
-In this chapter you will learn how to manage your own projects. The basics of projects are explained in <<projects-libraries.adoc#, "Projects and Libraries">>.
+In this chapter you will learn how to manage your own projects. The basics of projects are explained in <<{{site.basedir}}/user-manual/english/projects-libraries/projects-libraries.adoc#, "Projects and Libraries">>.
 
-==== manage projects
+== Manage projects
 
 The main menu menu:File[Projects...] takes you to the Antares project management.
 
-image::projects-sample.png[Projects,500,align="center"]
+image::user-manual/projects-libraries/projects-sample-en.png[Projects,500,align="center"]
 
 btn:[Open]:: Opens the selected project. If one of the circuits of the project is marked with "Open on load", this circuit is opened automatically.
 

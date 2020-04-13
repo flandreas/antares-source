@@ -1,10 +1,12 @@
-=== image:../../img/base-library/and.png[And] AND Gate
+= image:user-manual/base-library/and.png[And] AND Gate
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/base-library/and
 
-==== Appearance
+== Appearance
 
-image:../../img/base-library/and-sample.png[Example AND gate, 300, align="left"]
+image:user-manual/base-library/and-sample.png[Example AND gate, 300, align="left"]
 
-==== Behavior
+== Behavior
 
 The AND gate outputs the result of the AND-gating of the 1-bit signals at the input. The output has the value 1 only if all inputs have the value 1.
 
@@ -22,7 +24,7 @@ Unconnected inputs always have the value 0.
 
 (Z: Undefined/High impedance, X: Error)
 
-==== Data path
+== Data path
 
 And gates are often used in data path circuits in which one of several data paths is selected by means of control inputs. And gates with n+1 inputs are used, where n is the number of bits required to select the data path.
 
@@ -30,21 +32,21 @@ The AND gate offers the possibility to visualize the data path. If the attribute
 
 The following example shows the use of data paths in the "4-1 Multiplexer" circuit of the standard Antares library.
 
-image:../../img/base-library/and-path-sample.png[Example AND-path, 75%]
+image:user-manual/base-library/and-path-sample.png[Example AND-path, 75%]
 
 === Mnemonics
 
-The logical gates of Antares can illustrate their function with so-called "mnemonics". See the chapter <<../description/description.adoc, Descriptions and explanations>>. The mnemonic of the AND gate is shown below.
+The logical gates of Antares can illustrate their function with so-called "mnemonics". See the chapter <<{{site.basedir}}/user-manual/english/description/description.adoc#, Descriptions and explanations>>. The mnemonic of the AND gate is shown below.
 
-image:../../img/base-library/and-mnemonic.png[Example Mnemonic, 300]
+image:user-manual/base-library/and-mnemonic.png[Example Mnemonic, 300]
 
-==== Pins
+== Pins
 
 Inputs:: The one-bit inputs of the AND gate. Their number is determined by the attribute "Number of inputs".
 
 Output:: The 1-bit output of the AND gate. Outputs the value of the calculated AND function.
 
-==== Attributes
+== Attributes
 
 Orientation:: The direction in which the output points.
 

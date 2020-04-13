@@ -1,10 +1,12 @@
-=== image:../../img/base-library/terminal.png[Terminal] Terminal
+= image:user-manual/base-library/terminal.png[Terminal] Terminal
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/base-library/terminal
 
-==== appearance
+== Appearance
 
-image:../../img/base-library/terminal-sample.png[Example Terminal, 400]
+image:user-manual/base-library/terminal-sample.png[Example Terminal, 400]
 
-==== Behavior
+== Behavior
 
 This component implements a very simple text terminal. It receives a sequence of ASCII characters at input "D", which it displays line by line. When the current line is full, the terminal continues on the next line, moving the whole terminal content upwards after the last available line has been filled.
 
@@ -14,7 +16,7 @@ The terminal supports the following control characters:
 * *Linefeed (ASCII code 10)*: Starts a new line, scrolling the current terminal content up one line if necessary.
 * *Form feed (ASCII code 12)*: Deletes the entire terminal content.
 
-==== Pins
+== Pins
 
 D:: "Data" - Contains the ASCII code of the next character to be displayed.
 
@@ -24,7 +26,7 @@ EN:: "Enable" - Must have the value 1 for the terminal to accept characters. Sig
 
 CLR:: "Clear" - With the value 1, the terminal content is deleted asynchronously.
 
-==== Attributes
+== Attributes
 
 Number of rows:: The number of rows the terminal can display.
 

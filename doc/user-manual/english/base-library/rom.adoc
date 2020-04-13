@@ -1,16 +1,18 @@
-=== image:../../img/base-library/rom.png[ROM] ROM
+= image:user-manual/base-library/rom.png[ROM] ROM
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/base-library/rom
 
-==== Appearance
+== Appearance
 
-image:../../img/base-library/rom-sample.png[Example ROM, 500]
+image:user-manual/base-library/rom-sample.png[Example ROM, 500]
 
-==== Behavior
+== Behavior
 
 The ROM is a <<memory.adoc#, memory>> component whose data can be loaded from a file by the author of the circuit and which is then part of the stored circuit containing the ROM. During the execution of the simulation the stored data cannot be changed.
 
 If the CS input of the ROM has the value 1 during simulation, the data at a specific memory address can be read out by applying the address at input "A". The data stored at this address will be available at output D after the propagation delay has expired.
 
-==== Disassembler
+== Disassembler
 
 The ROM component offers the possibility to translate the values of memory cells into a readable form when they are displayed. A typical example is machine code of a microcomputer whose individual machine instructions are to be translated into the corresponding assembler instructions, a process called "disassembling".
 
@@ -54,9 +56,9 @@ FF([A-F0-9]{2})=HALT
 
 The configuration with the example above leads to the following display in the symbol of the ROM component, which contains a machine program for the Tannenbaum CPU that adds up all numbers between 1 and 100 (only a section is shown).
 
-image:../../img/base-library/disassembler.png[Disassembler, 300, align="center"]
+image:user-manual/base-library/disassembler.png[Disassembler, 300, align="center"]
 
-==== Pins
+== Pins
 
 A:: Input "Address": Determines the address of the memory cell whose data is to be read out.
 
@@ -64,9 +66,9 @@ CS:: Input "Chip Select": The ROM component only outputs data at output "D" if t
 
 D:: Output "Data": Outputs the data of the memory cell addressed with input "A".
 
-==== Attributes
+== Attributes
 
-See the chapter <<memory.adoc#, Memory>> for a description of the general memory attributes. This section only describes the special attributes of the ROM component.
+See the chapter <<{{site.basedir}}/user-manual/english/base-library/memory.adoc#, Memory>> for a description of the general memory attributes. This section only describes the special attributes of the ROM component.
 
 Show Disassembler:: Only displayed if the attribute "Show contents" is selected. If the attribute "Show Disassembler" is set, the memory values are disassembled according to the "Disassembler configuration" and the result is displayed additionally.
 

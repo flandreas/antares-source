@@ -1,18 +1,20 @@
-=== image:../../img/base-library/led.png[LED] LED
+= image:user-manual/base-library/led.png[LED] LED
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/base-library/led
 
-==== Appearance
+== Appearance
 
-image:../../img/base-library/led-sample.png[Example LED, 300]
+image:user-manual/base-library/led-sample.png[Example LED, 300]
 
-==== Behavior
+== Behavior
 
 Indicates the value at the input by displaying the LED's luminous body according to the color of the LED. A 1 at the input results in a bright LED, a 0 results in a dark LED.
 
-==== Pins
+== Pins
 
 An LED has only one single input of bit width 1.
 
-==== Attributes
+== Attributes
 
 Orientation:: The direction in which the light is pointing.
 

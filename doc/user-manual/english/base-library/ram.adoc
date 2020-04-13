@@ -1,12 +1,14 @@
-=== image:../../img/base-library/ram.png[RAM] RAM
+= image:user-manual/base-library/ram.png[RAM] RAM
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/base-library/ram
 
-==== Appearance
+== Appearance
 
-image:../../img/base-library/ram-sample.png[Example RAM, 600]
+image:user-manual/base-library/ram-sample.png[Example RAM, 600]
 
-==== Behavior
+== Behavior
 
-The RAM is a <<memory.adoc#, memory>> component whose data can be read and written by the using circuit during simulation.
+The RAM is a <<{{site.basedir}}/user-manual/english/base-library/memory.adoc#, memory>> component whose data can be read and written by the using circuit during simulation.
 
 The contents of the memory cells of the RAM component can be read and written synchronously via a bidirectional data pin.
 
@@ -16,7 +18,7 @@ Synchronous:: With this interface the RAM contains the clock input "CLK". If the
 
 Asynchronous:: With this interface the RAM does not contain a clock input. If input "WR" has the value 1, the data present at input "D" are read each time they change.
 
-==== Pins
+== Pins
 
 A:: Input "Address": Determines the address of the memory cell whose data is to be read or written.
 
@@ -30,7 +32,7 @@ WR:: Input "Write": With the value 1 data can be written into the RAM.
 
 CLR:: Input "Clear": Asynchronous input at which a value of 1 causes all memory cells to be reset to the value 0, independent of the other inputs.
 
-==== Attributes
+== Attributes
 
 See the chapter <<memory.adoc#, Memory>> for a description of the general memory attributes. In this section only the special attributes of the RAM component are described.
 
