@@ -1,12 +1,13 @@
-== Antares Scripting DSL
-:experimental:
+= Antares Scripting DSL
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/scripting/scripting-dsl
 :icons: font
 
 WARNING: The Antares Scripting DSL is in experimental state and will probably be subject of change. As long as the DSL is experimental, there is no guarantee that your scripts won't break when executed in future versions of Antares.
 
 TIP: The explanation of the Antares scripting DSL functions is still quite short. Please see the Antares Standard Library for lots of examples on how to use these functions.
 
-=== Inhalt
+== Inhalt
 
 * <<CircuitViewBridge>>: Access to the circuit
 * <<CircuitElemModelBridge>>: Access to the model of a circuit element
@@ -15,7 +16,7 @@ TIP: The explanation of the Antares scripting DSL functions is still quite short
 * <<UsecaseActionBridge>>: Register use case action statements
 * <<UsecaseTestBridge>>:: Register use case test assertions
 
-=== CircuitViewBridge
+== CircuitViewBridge
 
 Used in all `Scenario` use cases. The statements below are accessible as functions of the object `circuit`.
 
@@ -77,7 +78,7 @@ circuit.highlight(3,7,8);
 circuit.unhighlight();
 ----
 
-=== CircuitElemModelBridge
+== CircuitElemModelBridge
 
 Used when executing a `GraphElement` during simulation without "deep simulation" mode. The statements in the table
 below are accessible as functions of the object `elem`.
@@ -272,7 +273,7 @@ if (!elem.anyBitUndefined(d)) {
 }
 ----
 
-=== CircuitElemViewBridge
+== CircuitElemViewBridge
 
 Used as a sub-element of `CircuitViewBridge`. Note that `CircuitElemViewBridge` is an extension of
 `CircuitElemModelBridge` and therefore supports all functions of `CircuitElementModelBridge` as well.
@@ -297,7 +298,7 @@ if (elem.inputBit("S")) {
 }
 ----
 
-=== Word
+== Word
 
 Some functions return a `Word` as a signal value. A `Word` is an array of boolean values; the size of the array depends on the bit width of the port that produces the `Word`. Note that `Word` is immutable.
 
@@ -349,7 +350,7 @@ elem.setOutputWord(
 );
 ----
 
-=== UsecaseActionBridge
+== UsecaseActionBridge
 
 Used in use case action scripts. The statements below are accessible as functions of the object `circuit`.
 
@@ -388,11 +389,11 @@ circuit.setInputAt(134948, 46, "1234");
 circuit.pauseAt(172544);
 ----
 
-=== UsecaseTestBridge
+== UsecaseTestBridge
 
 Used in use case tet scripts. The statements below are accessible as functions of the object `circuit`.
 
-`asssertLedOnAt(<time:Long>, <id:Int>)`:: Asserts that the LED with ID `id` is on at simulation time `time`.
+`assertLedOnAt(<time:Long>, <id:Int>)`:: Asserts that the LED with ID `id` is on at simulation time `time`.
 +
 .Example
 [source,javascript]
@@ -400,7 +401,7 @@ Used in use case tet scripts. The statements below are accessible as functions o
 circuit.assertLedOnAt(20000, 2);
 ----
 
-`asssertLedOffAt(<time:Long>, <id:Int>)`:: Asserts that the LED with ID `id` is off at simulation time `time`.
+`assertLedOffAt(<time:Long>, <id:Int>)`:: Asserts that the LED with ID `id` is off at simulation time `time`.
 +
 .Example
 [source,javascript]
