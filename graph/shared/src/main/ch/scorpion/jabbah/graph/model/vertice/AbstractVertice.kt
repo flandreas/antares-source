@@ -83,6 +83,10 @@ abstract class AbstractVertice(
 		return ports[0] as Port<T>
 	}
 
+	override fun hasPort(name: String?): Boolean {
+		return ports.any { name != null && it.name == name}
+	}
+
 	override fun getPorts(): ImmutableList<Port<*>> {
 		return ImmutableList(ports)
 	}
@@ -185,16 +189,11 @@ abstract class AbstractVertice(
 	}
 
 	protected fun <T : Any> addPort(port: Port<T>, portId: Int) {
-		checkArgument(!ports.contains(port), "isPort already contained")
-		checkArgument(!hasPort(port.name), "isPort with name '${port.name}' already contained")
+		checkArgument(!ports.contains(port), "Port already contained")
+		checkArgument(!hasPort(port.name), "Port with name '${port.name}' already contained")
 		ports.add(port)
 		port.portId = portId
 		port.owner = this
-	}
-
-	/** Checks whether this [AbstractVertice] has a [Port] with the specified name.*/
-	private fun hasPort(name: String?): Boolean {
-		return ports.find { name != null && it.name == name } != null
 	}
 
 	private fun dataToString(): String {

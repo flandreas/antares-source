@@ -68,6 +68,11 @@ open class PortImpl<T : Any>(
 			if (value == field) {
 				return
 			}
+			if (owner != null && value != null) {
+				if (owner!!.hasPort(value)) {
+					throw IllegalArgumentException("Port name $value not unique in Vertice")
+				}
+			}
 			val oldValue = field
 			field = value
 			changeSupport.fire(PROP_NAME, oldValue, field)

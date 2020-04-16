@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.base.exception.IllegalStateException
 fun checkArgument(cond: Boolean, msg: String? = null) {
     if (!cond) {
         if (msg != null) {
-            throw IllegalArgumentException("Illegal argument: ${msg}")
+            throw IllegalArgumentException("Illegal argument: $msg")
         }
         throw IllegalArgumentException("Illegal argument")
     }
@@ -19,7 +19,7 @@ fun checkArgument(cond: Boolean, msg: String? = null) {
 fun checkState(cond: Boolean, msg: String? = null) {
     if (!cond) {
         if (msg != null) {
-            throw IllegalStateException("Illegal state: ${msg}")
+            throw IllegalStateException("Illegal state: $msg")
         }
         throw IllegalStateException("Illegal state")
     }

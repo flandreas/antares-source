@@ -69,6 +69,9 @@ interface Vertice : GraphElement, Describable {
      */
     fun <T: Any> getPort(name: String): Port<T>
 
+	/** Determines whether this [Vertice] has a [Port] with the given name.*/
+	fun hasPort(name: String?): Boolean
+
     /**
      * Returns the [Port] with the specified ID.
      * @param id the ID of the [Port], with 1 identifying the first [Port]
