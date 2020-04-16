@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
  * with a surrounding [Graph] by forwarding or receiving signals to/from it.
  * Implementations of [GraphPort] will typically have either a single [InputPort] or a single [OutputPort].
  *
+ * The name of a [GraphPort] must not be empty.
+ *
  * @param T the type of signal handled by this [GraphPort]
  */
 interface GraphPort<out T : Any> : Vertice {

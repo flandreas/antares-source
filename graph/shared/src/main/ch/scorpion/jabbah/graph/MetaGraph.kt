@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
@@ -134,9 +135,14 @@ class MetaGraph(
 		handle(it)
 	}
 
+	private val graphPortNameHandler: EventHandler<GraphPortNameChanged<*>> = {
+		handle(it)
+	}
+
 	init {
 		eventBus.register(NameChangedEvent::class, graphNameHandler)
 		eventBus.register(DescriptionChangedEvent::class, graphDescHandler)
+		eventBus.register(GraphPortNameChanged::class, graphPortNameHandler)
 		containerDrawing.model.graphUUID = uuid
 		containerDrawing.initialize()
 	}
@@ -144,6 +150,7 @@ class MetaGraph(
 	fun dispose() {
 		eventBus.unregister(NameChangedEvent::class, graphNameHandler)
 		eventBus.unregister(DescriptionChangedEvent::class, graphDescHandler)
+		eventBus.unregister(GraphPortNameChanged::class, graphPortNameHandler)
 		graph.dispose()
 		containerDrawing.dispose()
 	}
@@ -231,6 +238,13 @@ class MetaGraph(
 	private fun handle(event: DescriptionChangedEvent) {
 		if (event.description == graph.model?.description) {
 			containerDrawing.model.description.translation = event.description.translation
+		}
+	}
+
+	private fun handle(event: GraphPortNameChanged<*>) {
+		if (graph.graphView.graph!!.contains(event.graphPort)) {
+			val port = containerDrawing.model.getPort<Any>(event.oldName!!)
+			port.name = event.newName
 		}
 	}
 

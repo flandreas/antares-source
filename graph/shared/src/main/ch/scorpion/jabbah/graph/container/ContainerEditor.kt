@@ -45,15 +45,6 @@ open class ContainerEditor(
 			}
 		}
 
-		eventBus.register(GraphPortNameChanged::class) {
-			if (StringUtils.isNotEmpty(it.oldName)) {
-				val pvc = getContainerDrawing().getPortViewComponent(it.oldName!!)
-				if (pvc != null) {
-					pvc.portView!!.setPortName(it.newName!!)
-				}
-			}
-		}
-
 		eventBus.register(ControlViewSourceEvent::class) {
 			when (it.type) {
 				ControlViewSourceEvent.Type.CHANGE -> {

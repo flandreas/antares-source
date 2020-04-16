@@ -1,7 +1,16 @@
 package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.graph.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.container.PortViewComponent
+import ch.scorpion.jabbah.graph.model.GraphPort
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
+import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.TestGraphPortView
+import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,5 +42,44 @@ class MetaGraphTest {
 
 		assertEquals(uuid, clone.uuid)
 		assertEquals(name, clone.name)
+	}
+
+	@Test
+	fun shouldUpdateContainerGraphPortName() {
+		val graphView = GraphViewImpl<GraphElementView<GraphPort<Boolean>>>()
+		val graphPortView = TestGraphPortView(model = GraphInputImpl(name = "A"))
+		val metaGraph = MetaGraph(GraphStorable(graphView), ContainerDrawing())
+		graphView.add(graphPortView)
+		metaGraph.containerDrawing.add(createPortViewComponent(graphPortView.model))
+
+		graphPortView.model.name = "B"
+
+		assertEquals("B", metaGraph.containerDrawing.model.getPort<Boolean>().name)
+	}
+
+	@Test
+	fun shouldNotUpdateForeignContainerGraphPortName() {
+		val graphView = GraphViewImpl<GraphElementView<GraphPort<Boolean>>>()
+		val graphPortView = TestGraphPortView(model = GraphInputImpl(name = "A"))
+		val metaGraph = MetaGraph(GraphStorable(graphView), ContainerDrawing())
+		graphView.add(graphPortView)
+		metaGraph.containerDrawing.add(createPortViewComponent(graphPortView.model))
+
+		val graphView2 = GraphViewImpl<GraphElementView<GraphPort<Boolean>>>()
+		val graphPortView2 = TestGraphPortView(model = GraphInputImpl(name = "A"))
+		val metaGraph2 = MetaGraph(GraphStorable(graphView2), ContainerDrawing())
+		graphView2.add(graphPortView2)
+		metaGraph2.containerDrawing.add(createPortViewComponent(graphPortView.model))
+
+		graphPortView.model.name = "B"
+
+		assertEquals("B", metaGraph.containerDrawing.model.getPort<Boolean>().name)
+		assertEquals("A", metaGraph2.containerDrawing.model.getPort<Boolean>().name)
+	}
+
+	private fun createPortViewComponent(graphPort: GraphPort<*>): PortViewComponent<*> {
+		return GraphViewModule.portViewFactory.createPortViewComponent(
+			GraphViewModule.portViewFactory.createPortView(
+				GraphModelModule.portFactory.createSubGraphPort(graphPort)))
 	}
 }
