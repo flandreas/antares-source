@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
@@ -19,10 +20,8 @@ import ch.scorpion.jabbah.graph.model.GraphElement
 import java.awt.*
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
-import javax.swing.BorderFactory
-import javax.swing.JEditorPane
-import javax.swing.JPanel
-import javax.swing.JTextPane
+import java.io.FileNotFoundException
+import javax.swing.*
 import kotlin.math.min
 
 
@@ -126,10 +125,27 @@ class LibraryPreviewPanel(
 		}
 
 		InvocationHandler.invoke(Runnable {
-			val c = libraryElement.getNewInstance<GraphElement>()
-			map[libraryElement] = c
-			updateSelectionImpl(c)
+			try {
+				val c = libraryElement.getNewInstance<GraphElement>()
+				map[libraryElement] = c
+				updateSelectionImpl(c)
+			} catch (e: Throwable) {
+				handleLoadError(e)
+			}
 		})
+	}
+
+	private fun handleLoadError(e: Throwable) {
+		val msgKey = when(e) {
+			is FileNotFoundException -> "graph.action.load.error.fileNotFound.desc"
+			else -> "graph.action.load.error.general.desc"
+		}
+		JOptionPane.showConfirmDialog(
+			JFrame.getFrames()[0],
+			Translations.getString(msgKey),
+			Translations.getString("graph.preview.name"),
+			JOptionPane.DEFAULT_OPTION,
+			JOptionPane.ERROR_MESSAGE)
 	}
 
 	private fun updateSelectionImpl(component: Component) {
