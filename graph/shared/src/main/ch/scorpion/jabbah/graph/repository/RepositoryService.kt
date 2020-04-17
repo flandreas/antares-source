@@ -76,8 +76,9 @@ class RepositoryServiceImpl(
 		if (origDir == destDir) {
 			origService.move(origService.currentLibrary!!, elem, destPos)
 		} else {
-			destService.addContainerLibraryElement(destService.currentLibrary!!, elem.metaGraph!!, destDir, destPos)
+			val metaGraph = elem.metaGraph!!
 			origService.removeLibraryItem(origService.currentLibrary!!, elem, origDir)
+			destService.addContainerLibraryElement(destService.currentLibrary!!, metaGraph, destDir, destPos)
 		}
 	}
 

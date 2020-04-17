@@ -20,11 +20,13 @@ class RepositoryServiceImplTest {
 		}
 	}
 
-	private val libraryPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
+	//private val libraryPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
+	private val libraryPersistenceService = MemoryLibraryPersistenceService()
 	private val libraryService: LibraryService = LibraryService(libraryAccessor = { libraryBuilder.library }, userLibraryPersister = libraryPersistenceService)
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = libraryService)
 
-	private val projectPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
+	//private val projectPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
+	private val projectPersistenceService = MemoryLibraryPersistenceService()
 	private val projectLibraryService: LibraryService = LibraryService(libraryAccessor = { projectBuilder.library }, userLibraryPersister = projectPersistenceService)
 	private val projectBuilder = LibraryBuilder(name = "Project", libraryService = projectLibraryService,
 		library = ProjectImpl("Project", "", projectLibraryService))
@@ -72,6 +74,25 @@ class RepositoryServiceImplTest {
 		assertEquals(0, directory.indexOf(project.getRecursively("Element2") as ContainerLibraryElement))
 		assertEquals(1, directory.indexOf(project.getRecursively("Element3") as ContainerLibraryElement))
 		assertEquals(2, directory.indexOf(project.getRecursively("Element") as ContainerLibraryElement))
+	}
+
+	@Test
+	fun shouldMoveToAnotherDirectory() {
+		val project = projectBuilder
+			.addContainerLibraryElement("Element")
+			.addDirectory("ProjectDirectory")
+			.library
+
+		service.move(
+			project.getRecursively("Element") as ContainerLibraryElement,
+			project.getRecursively("ProjectDirectory") as LibraryDirectory
+		)
+
+		val directory = project.getRecursively("ProjectDirectory") as LibraryDirectory
+		val element = project.getRecursively("Element") as ContainerLibraryElement
+		projectLibraryService.loadMetaGraph(project, element)
+		assertEquals(0, directory.indexOf(element))
+		assertNotNull(projectLibraryService.getMetaGraph(project, element))
 	}
 
 	@Test
