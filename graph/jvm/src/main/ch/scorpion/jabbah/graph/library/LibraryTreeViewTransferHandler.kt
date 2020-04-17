@@ -32,9 +32,9 @@ class LibraryTreeViewTransferHandler(
 
 	/** ---- [TransferHandler] */
 
-	override fun getSourceActions(c: JComponent): Int = TransferHandler.COPY
+	override fun getSourceActions(c: JComponent): Int = COPY
 
-	override fun canImport(support: TransferHandler.TransferSupport): Boolean {
+	override fun canImport(support: TransferSupport): Boolean {
 		if (!support.isDataFlavorSupported(GraphElementViewTransferable.FLAVOR)) {
 			return false
 		}
@@ -65,9 +65,12 @@ class LibraryTreeViewTransferHandler(
 		return GraphElementViewTransferable.of(newInstance, libraryElement)
 	}
 
-	override fun importData(support: TransferHandler.TransferSupport): Boolean {
+	override fun importData(support: TransferSupport): Boolean {
 		getLibraryDropLocation(support)?.let {
 			val elem = extractTransferElement(support) as ContainerLibraryElement
+			if (!shouldMove(elem.toString(), it.directory.name.value)) {
+				return false
+			}
 			return try {
 				InvocationHandler.invoke { repositoryService.move(elem, it.directory, it.index) }
 				true
@@ -75,7 +78,7 @@ class LibraryTreeViewTransferHandler(
 				JOptionPane.showConfirmDialog(
 					Frame.getFrames()[0],
 					Translations.getString("repository.move.dependencyError.msg", e.subGraphVertice.name!!),
-					Translations.getString("repository.move.name"),
+					Translations.getString("repository.move.action.name"),
 					JOptionPane.DEFAULT_OPTION,
 					JOptionPane.ERROR_MESSAGE)
 				false
@@ -85,7 +88,16 @@ class LibraryTreeViewTransferHandler(
 		return false
 	}
 
-	private fun getLibraryDropLocation(support: TransferHandler.TransferSupport): LibraryDropLocation? {
+	private fun shouldMove(name: String, destination: String): Boolean {
+		return JOptionPane.showConfirmDialog(
+			Frame.getFrames()[0],
+			Translations.getString("repository.move.action.question", name, destination),
+			Translations.getString("repository.move.action.name"),
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
+	}
+
+	private fun getLibraryDropLocation(support: TransferSupport): LibraryDropLocation? {
 		val dropLocation = support.dropLocation as JTree.DropLocation
 		return dropLocation.path?.let {
 			val item = (it.lastPathComponent as DefaultMutableTreeNode).userObject
@@ -98,7 +110,7 @@ class LibraryTreeViewTransferHandler(
 		}
 	}
 
-	private fun extractTransferElement(support: TransferHandler.TransferSupport): LibraryElement {
+	private fun extractTransferElement(support: TransferSupport): LibraryElement {
 		val data = support.transferable.getTransferData(GraphElementViewTransferable.FLAVOR) as GraphElementViewTransferableData
 		return data.libraryElement
 	}

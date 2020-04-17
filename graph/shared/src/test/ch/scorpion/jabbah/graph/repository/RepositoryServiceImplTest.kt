@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.repository
 
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -94,42 +93,5 @@ class RepositoryServiceImplTest {
 				throw e
 			}
 		}
-	}
-
-	@Test
-	fun shouldUndoMove() {
-		val project = projectBuilder
-			.addDirectory("ProjectDirectory")
-			.addContainerLibraryElement("Element")
-			.library
-		val library = libraryBuilder
-			.addDirectory("Directory")
-			.library
-		service.move(project.getRecursively("Element") as ContainerLibraryElement, library.getRecursively("Directory") as LibraryDirectory)
-
-		EditModule.commandManager.undo()
-
-		assertNotNull(project.getRecursively("Element"))
-		assertTrue((project.getRecursively("ProjectDirectory") as LibraryDirectory).contains(project.getRecursively("Element") as LibraryItem))
-		assertNull(library.getRecursively("Element"))
-	}
-
-	@Test
-	fun shouldRedoMove() {
-		val project = projectBuilder
-			.addDirectory("ProjectDirectory")
-			.addContainerLibraryElement("Element")
-			.library
-		val library = libraryBuilder
-			.addDirectory("Directory")
-			.library
-		service.move(project.getRecursively("Element") as ContainerLibraryElement, library.getRecursively("Directory") as LibraryDirectory)
-
-		EditModule.commandManager.undo()
-		EditModule.commandManager.redo()
-
-		assertNull(project.getRecursively("Element"))
-		assertNotNull(library.getRecursively("Element"))
-		assertTrue((library.getRecursively("Directory") as LibraryDirectory).contains(library.getRecursively("Element") as LibraryItem))
 	}
 }

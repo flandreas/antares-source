@@ -2,14 +2,11 @@ package ch.scorpion.jabbah.graph.repository
 
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.CommandManager
-import ch.scorpion.jabbah.edit.command.AbstractCommand
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
-import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.Project
+import ch.scorpion.jabbah.graph.project.ProjectModule
 
 /**
  * A service for managing the repository, which is the combination of the [Project] and the [Library].
@@ -36,8 +33,7 @@ class LibraryDependencyException(val subGraphVertice: SubGraphVertice) : Throwab
 /** Standard implementation of the [RepositoryService] interface.*/
 class RepositoryServiceImpl(
 	private val libraryService: LibraryService = LibraryModule.libraryService,
-	private val projectLibraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
-	private val commandManager: CommandManager = EditModule.commandManager
+	private val projectLibraryService: LibraryService = ProjectModule.projectLibraryService.invoke()
 ) : RepositoryService {
 
 	companion object {
@@ -64,15 +60,25 @@ class RepositoryServiceImpl(
 			newIndex = index - 1
 		}
 
-		commandManager.beginTransaction(MoveRepositoryItemCommand(
-			origService = origService,
-			destService = destService,
-			elem = elem,
-			origDir = origDir,
-			destDir = destination,
-			destPos = newIndex ?: destination.size
-		))
-		commandManager.commitTransaction()
+		moveImpl(origService, destService, elem, origDir, destination,newIndex ?: destination.size)
+	}
+
+	/** ---- [RepositoryServiceImpl] */
+
+	private fun moveImpl(
+		origService: LibraryService,
+		destService: LibraryService,
+		elem: ContainerLibraryElement,
+		origDir: LibraryDirectory,
+		destDir: LibraryDirectory,
+		destPos: Int
+	) {
+		if (origDir == destDir) {
+			origService.move(origService.currentLibrary!!, elem, destPos)
+		} else {
+			destService.addContainerLibraryElement(destService.currentLibrary!!, elem.metaGraph!!, destDir, destPos)
+			origService.removeLibraryItem(origService.currentLibrary!!, elem, origDir)
+		}
 	}
 
 	/**
@@ -81,8 +87,7 @@ class RepositoryServiceImpl(
 	 */
 	private fun checkLibraryDependency(elem: ContainerLibraryElement) {
 		val projectSubGraphVertice = elem.metaGraph!!.graph.model!!.elements
-			.filter { it is SubGraphVertice }
-			.map { it as SubGraphVertice }
+			.filterIsInstance<SubGraphVertice>()
 			.firstOrNull { projectLibraryService.currentLibrary!!.containsMetaGraph(it.graphUUID!!) }
 		if (projectSubGraphVertice != null) {
 			throw LibraryDependencyException(projectSubGraphVertice)
@@ -91,8 +96,6 @@ class RepositoryServiceImpl(
 
 	private fun isMoveFromProjectToLibrary(elem: ContainerLibraryElement, destination: LibraryDirectory): Boolean =
 		elem.library === projectLibraryService.currentLibrary && destination.library === libraryService.currentLibrary
-
-	/** ---- [RepositoryServiceImpl] */
 
 	/**
 	 * Returns the [LibraryService] to be used for accessing the [Library] that currently
@@ -110,37 +113,5 @@ class RepositoryServiceImpl(
 			return projectLibraryService
 		}
 		throw IllegalStateException("neither current Library nor current Project own item")
-	}
-}
-
-class MoveRepositoryItemCommand(
-	private val origService: LibraryService,
-	private val destService: LibraryService,
-	private var elem: ContainerLibraryElement,
-	private val origDir: LibraryDirectory,
-	private val destDir: LibraryDirectory,
-	private val destPos: Int
-) : AbstractCommand(descriptionKey = "repository.move.name", changesApplicationData = false) {
-
-	private val origPos = origDir.indexOf(elem)
-
-	override fun execute() {
-		if (origDir == destDir) {
-			origService.move(origService.currentLibrary!!, elem, destPos)
-		} else {
-			val newElem = destService.addContainerLibraryElement(destService.currentLibrary!!, elem.metaGraph!!, destDir, destPos)
-			origService.removeLibraryItem(origService.currentLibrary!!, elem, origDir)
-			elem = newElem
-		}
-	}
-
-	override fun undo() {
-		if (origDir == destDir) {
-			origService.move(origService.currentLibrary!!, elem, origPos)
-		} else {
-			val newElem = origService.addContainerLibraryElement(origService.currentLibrary!!, elem.metaGraph!!, origDir, origPos)
-			destService.removeLibraryItem(destService.currentLibrary!!, elem, destDir)
-			elem = newElem
-		}
 	}
 }
