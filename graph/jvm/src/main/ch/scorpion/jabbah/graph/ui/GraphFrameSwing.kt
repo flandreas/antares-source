@@ -120,7 +120,7 @@ class GraphFrameSwing(
 
 	/** The application data has changed if there are undoable [Command]s in the [CommandManager].*/
 	override val applicationDataChanged: Boolean
-		get() = graphPanel.editor.commandManager.applicationDataChanged
+		get() = graphPanel.editor.commandManager.canUndo()
 
 	/** ---- [GraphFrameSwing] */
 

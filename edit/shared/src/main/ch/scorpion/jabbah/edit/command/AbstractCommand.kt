@@ -9,8 +9,7 @@ import ch.scorpion.jabbah.edit.Editor
  */
 abstract class AbstractCommand(
     descriptionKey: String,
-    val editor: Editor? = null,
-    override val changesApplicationData: Boolean = true
+    val editor: Editor? = null
 ) : Command {
 
     private val _description = Translations.getString(descriptionKey)

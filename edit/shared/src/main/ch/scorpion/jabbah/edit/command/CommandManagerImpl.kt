@@ -32,7 +32,7 @@ class CommandManagerImpl(
 		var level: Int = 0
 	}
 
-	private val states = Stack<State>();
+	private val states = Stack<State>()
 
 	private val state: State get() = states.peek()
 
@@ -49,9 +49,6 @@ class CommandManagerImpl(
 				eventBus.post(CommandManagerActiveEvent(this))
 			}
 		}
-
-	override val applicationDataChanged: Boolean
-		get() = state.undoStack.items.reversed().firstOrNull { it.changesApplicationData } != null
 
 	override fun beginTransaction(command: Command, register: Boolean) {
 		if (state.transaction == null) {
@@ -191,8 +188,6 @@ class CommandManagerImpl(
 		private val commands = mutableListOf<Command>()
 
 		val headCommand: Command get() = commands.first()
-
-		val changesApplicationData: Boolean get() = commands.find { it.changesApplicationData } != null
 
 		fun add(command: Command) {
 			commands.add(command)
