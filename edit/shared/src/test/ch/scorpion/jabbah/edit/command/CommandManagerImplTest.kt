@@ -20,8 +20,10 @@ class CommandManagerImplTest {
 
 	private val cmdManager = CommandManagerImpl()
 
+	/** ---- Transactions */
+
 	@Test
-	fun shouldNotCommitInexistentTransaction() {
+	fun shouldNotCommitNotExistingTransaction() {
 		assertFailsWith<IllegalStateException> {
 			cmdManager.commitTransaction()
 		}
@@ -77,7 +79,7 @@ class CommandManagerImplTest {
 	}
 
 	@Test
-	fun shouldCommitOuterTransation() {
+	fun shouldCommitOuterTransaction() {
 		val cmd1 = command()
 		val cmd2 = command()
 		cmdManager.beginTransaction(cmd1)
@@ -88,6 +90,8 @@ class CommandManagerImplTest {
 		verify { cmd2.execute() }
 		assertTrue(cmdManager.canUndo())
 	}
+
+	/** ---- Simple undo/redo */
 
 	@Test
 	fun shouldUndo() {

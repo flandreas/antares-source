@@ -172,6 +172,14 @@ class CommandManagerImpl(
 		eventBus.post(CommandEvent(this))
 	}
 
+	override fun commitCheckpoint() {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun rollbackCheckpoint() {
+		throw UnsupportedOperationException("not implemented")
+	}
+
 	override fun closeCheckpoint() {
 		if (states.size < 2) {
 			throw IllegalStateException("no checkpoint to close")

@@ -19,6 +19,14 @@ data class CommandManagerActiveEvent(val commandManager: CommandManager)
  *
  * A [CommandManager] resets its state after the current application data have been saved.
  *
+ * [CommandManager] provides "nested transactions" which mainly represent combined [Command]s. When a transaction
+ * is started, all subsequently executed or registered [Command]s are stored as children of the the first [Command]
+ * until the transaction is either committed or rollbacked. Such [Command]s count in terms of "undo/redo" only as
+ * a single [Command]. This can be used for complex application logic, where a single user action can result in
+ * multiple [Command]s. If no transaction has been began explicitly, execution or registration starts an
+ * implicit transaction, which gets immediately auto-committed. During a transaction, undo/redo is not possible,
+ * i.e. transaction can only be used while processing a single user action.
+ *
  * [CommandManager] uses the concept of "checkpoints" for stacking [CommandManager] states. Consider an
  * application that uses a single [CommandManager] or an [Editor]. This application consists of a modal dialog,
  * in which the user performs some undoable actions. If the user closes this dialog using "Cancel" (and confirming
@@ -128,4 +136,8 @@ interface CommandManager {
 	 * @throws IllegalStateException if no checkpoint has been opened
 	 */
 	fun closeCheckpoint()
+
+	fun commitCheckpoint()
+
+	fun rollbackCheckpoint()
 }
