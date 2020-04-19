@@ -214,10 +214,18 @@ class SelectionToolImpl(
 		if (movedReferenceComponent != null) {
 			if (moveStartLocation != movedReferenceComponent?.location) {
 				try {
+					/*
 					editor.commandManager.register(MoveCommand(
 						editor,
 						editor.view.selectionManager.selection,
 						movedReferenceComponent!!.location.subtract(moveStartLocation)))
+					*/
+
+					editor.commandManager.register(MoveCommandSerializable(
+						editor,
+						editor.view.selectionManager.selection.map { it.id }.toList(),
+						movedReferenceComponent!!.location.subtract(moveStartLocation)))
+
 				} catch (e: Throwable) {
 					LOG.error("SelectionToolImpl.mouseReleased(): error '${e.message}'")
 					editor.commandManager.rollbackTransaction()
@@ -281,9 +289,17 @@ class SelectionToolImpl(
 	}
 
 	private fun moveBy(event: KeyEvent) {
+		/*
 		editor.commandManager.execute(MoveCommand(
 			editor,
 			editor.view.selectionManager.selection,
+			getKeyMoveDirection(event).toPoint2D().multiply(editor.view.grid.distance)
+		))
+		*/
+
+		editor.commandManager.execute(MoveCommandSerializable(
+			editor,
+			editor.view.selectionManager.selection.map { it.id }.toList(),
 			getKeyMoveDirection(event).toPoint2D().multiply(editor.view.grid.distance)
 		))
 	}

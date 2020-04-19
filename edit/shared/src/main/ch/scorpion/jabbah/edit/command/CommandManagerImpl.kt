@@ -50,6 +50,10 @@ class CommandManagerImpl(
 			}
 		}
 
+	override fun bindDataHolder(dataHolder: UndoableDataHolder) {
+		throw UnsupportedOperationException("not implemented")
+	}
+
 	override fun beginTransaction(command: Command, register: Boolean) {
 		if (state.transaction == null) {
 			state.transaction = CommandTransaction()

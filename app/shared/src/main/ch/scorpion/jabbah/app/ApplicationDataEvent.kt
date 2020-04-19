@@ -1,17 +1,29 @@
 package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.io.Storable
 
 /**
  * The data being held by an [Application] and possibly being edited by the user.
  */
-data class ApplicationData(
-	var content: Storable,
-	val savable: Savable
+class ApplicationData(
+	content: Storable,
+	val savable: Savable,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) {
+
+	var content: Storable = content
+		set(value) {
+			if (field !== value) {
+				val oldContent = field
+				field = value
+				eventBus.post(ApplicationDataContentEvent(this, oldContent))
+			}
+		}
+
 	fun withSavable(savable: Savable): ApplicationData {
-		return ApplicationData(content, savable)
+		return ApplicationData(content, savable, eventBus)
 	}
 }
 
@@ -22,6 +34,11 @@ data class ApplicationDataEvent(
 	val application: Application,
 	val oldData: ApplicationData?,
 	val newData: ApplicationData?
+)
+
+data class ApplicationDataContentEvent(
+	val data: ApplicationData,
+	val oldContent: Storable
 )
 
 /**

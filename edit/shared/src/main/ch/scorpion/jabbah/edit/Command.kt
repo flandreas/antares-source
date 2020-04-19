@@ -1,6 +1,28 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.draw.View
+
+/**
+ * Optionally enhances [Command] with an undo operation.
+ * This can be implemented by [Command]s with a simple, straight-forward execute logic that is easy to undo.
+ * If a [Command] implements [Undoable], [CommandManager] implementations that use snapshots can omit
+ * applying snapshots and replaying long lists of [Command]s in favour of performance.
+ */
+interface Undoable {
+
+	/**
+	 * Determines whether this [Undoable] can undo an operation. While this will be `true` for most
+	 * [Undoable] implementations, composite [Command]s will have to ask all their children as well.
+	 */
+	val canUndo: Boolean get() = true
+
+	/**
+	 * An operation that undoes some other operation.
+	 * TODO Rename to "undo" once [Command.undo] has been removed.
+	 */
+	fun undo1()
+}
+
 /**
  * A [Command] encapsulates a change of a [Drawing]'s state in order to make the change undoable and
  * redoable.

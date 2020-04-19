@@ -180,7 +180,7 @@ abstract class AbstractDesktopApplication(
 					return try {
 						val storeReader = StoreXmlReader(ElectricXmlReader(it))
 						val drawing: Storable = storeReader.readStorable()
-						data = ApplicationData(drawing, FileSavable.withPath(identification))
+						data = ApplicationData(drawing, FileSavable.withPath(identification), eventBus)
 						true
 					} catch (e: Throwable) {
 						LOG.error("Error while opening '$identification': ${e.cause}")

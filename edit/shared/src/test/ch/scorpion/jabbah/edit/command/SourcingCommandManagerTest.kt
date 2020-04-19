@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.edit.EditTestRule
+import ch.scorpion.jabbah.edit.Undoable
+import ch.scorpion.jabbah.edit.UndoableDataHolder
 import ch.scorpion.jabbah.io.*
 import kotlin.test.*
 
@@ -19,9 +21,13 @@ class SourcingCommandManagerTest {
 	}
 
 	private var application = Application()
-	private var cmdManager = SourcingCommandManager(application)
+	private var cmdManager = SourcingCommandManager()
 
-	/** ---- Initialization tests */
+	init {
+		cmdManager.bindDataHolder(application)
+	}
+
+	/** ---- Initialization and querying tests */
 
 	@Test
 	fun shouldNotCreateSnapshotWithoutData() {
@@ -30,14 +36,29 @@ class SourcingCommandManagerTest {
 	}
 
 	@Test
-	fun shouldResetOnConstruction() {
+	fun shouldResetWhenBindingDataHolder() {
 		assertEquals(1, cmdManager.snapshotCount)
 	}
 
 	@Test
 	fun shouldCreateSnapshotOnReset() {
+		cmdManager.reset()
 		assertEquals(1, cmdManager.snapshotCount)
 		assertEquals(0, cmdManager.redoSnapshotCount)
+	}
+
+	@Test
+	fun shouldGetUndoDescription() {
+		cmdManager.execute(AppendCommand("a"))
+		assertEquals("anyDescription", cmdManager.getUndoDescription())
+	}
+
+	@Test
+	fun shouldGetRedoDescription() {
+		cmdManager.execute(AppendCommand("a"))
+		cmdManager.undo()
+
+		assertEquals("anyDescription", cmdManager.getRedoDescription())
 	}
 
 	/** ---- Simple undo/redo tests */
@@ -76,7 +97,8 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldCreateAdditionalSnapshot() {
-		cmdManager = SourcingCommandManager(application, maxCommandCountPerSnapshot = 2)
+		cmdManager = SourcingCommandManager(maxCommandCountPerSnapshot = 2)
+		cmdManager.bindDataHolder(application)
 
 		cmdManager.execute(AppendCommand("a"))
 		cmdManager.execute(AppendCommand("b"))
@@ -87,7 +109,8 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldUndoWithAdditionalSnapshot() {
-		cmdManager = SourcingCommandManager(application, maxCommandCountPerSnapshot = 2)
+		cmdManager = SourcingCommandManager(maxCommandCountPerSnapshot = 2)
+		cmdManager.bindDataHolder(application)
 
 		cmdManager.execute(AppendCommand("a"))
 		cmdManager.execute(AppendCommand("b"))
@@ -108,7 +131,8 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldRedoWithAdditionalSnapshot() {
-		cmdManager = SourcingCommandManager(application, maxCommandCountPerSnapshot = 2)
+		cmdManager = SourcingCommandManager(maxCommandCountPerSnapshot = 2)
+		cmdManager.bindDataHolder(application)
 
 		cmdManager.execute(AppendCommand("a"))
 		cmdManager.execute(AppendCommand("b"))
@@ -132,20 +156,6 @@ class SourcingCommandManagerTest {
 	}
 
 	@Test
-	fun shouldGetUndoDescription() {
-		cmdManager.execute(AppendCommand("a"))
-		assertEquals("anyDescription", cmdManager.getUndoDescription())
-	}
-
-	@Test
-	fun shouldGetRedoDescription() {
-		cmdManager.execute(AppendCommand("a"))
-		cmdManager.undo()
-
-		assertEquals("anyDescription", cmdManager.getRedoDescription())
-	}
-
-	@Test
 	fun shouldNotExecuteRegister() {
 		application.mandatoryData.append("a")
 
@@ -153,6 +163,26 @@ class SourcingCommandManagerTest {
 
 		assertEquals("a", application.mandatoryData.value)
 		assertTrue(cmdManager.canUndo())
+	}
+
+	@Test
+	fun shouldUseSnapshotForNonUndoableCommand() {
+		val oldData = application.data
+		cmdManager.execute(AppendCommand("abc"))
+
+		cmdManager.undo()
+
+		assertNotSame(oldData, application.data)
+	}
+
+	@Test
+	fun shouldNotUseSnapshotForUndoableCommand() {
+		val oldData = application.data
+		cmdManager.execute(UndoableAppendCommand("abc"))
+
+		cmdManager.undo()
+
+		assertSame(oldData, application.data)
 	}
 
 	/** ---- Transaction tests */
@@ -306,6 +336,24 @@ class SourcingCommandManagerTest {
 			throw UnsupportedOperationException("not implemented")
 		}
 	}
+
+	private inner class UndoableAppendCommand(
+		private val s: String
+	) : AbstractCommand("anyDescription"), Undoable {
+
+		override fun execute() {
+			application.mandatoryData.append(s)
+		}
+
+		override fun undo() {
+			// This will not be needed any more
+			throw UnsupportedOperationException("not implemented")
+		}
+
+		override fun undo1() {
+			application.mandatoryData.dropLast(s.length)
+		}
+	}
 }
 
 class StorableString(value: String = "") : Storable {
@@ -315,6 +363,10 @@ class StorableString(value: String = "") : Storable {
 
 	fun append(s: String) {
 		value = "$value$s"
+	}
+
+	fun dropLast(charCount: Int) {
+		value = value.dropLast(charCount)
 	}
 
 	override var storableId: Int = 0

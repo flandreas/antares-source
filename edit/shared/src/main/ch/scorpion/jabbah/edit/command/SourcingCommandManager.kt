@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.command
 
+import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
@@ -8,14 +9,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCloner
-
-interface UndoableDataHolder {
-
-	fun getUndoableState(): Storable?
-
-	fun setUndoableState(state: Storable)
-
-}
 
 /**
  * A [CommandManager] implementation that uses "command sourcing".
@@ -32,7 +25,6 @@ interface UndoableDataHolder {
  * state during complex editing operations, and [register] a corresponding [Command] afterwards.
  */
 class SourcingCommandManager(
-	private val undoableDataHolder: UndoableDataHolder,
 	private val maxCommandCountPerSnapshot: Int = DEF_MAX_COMMAND_COUNT_PER_SNAPSHOT,
 	override val eventBus: EventBus = BaseModule.eventBus
 ) : CommandManager {
@@ -47,12 +39,10 @@ class SourcingCommandManager(
 	private var transaction: Transaction? = null
 	private var transactionLevel: Int = 0
 
+	private lateinit var undoableDataHolder: UndoableDataHolder
+
 	val snapshotCount: Int get() = snapshots.size
 	val redoSnapshotCount: Int get() = redoSnapshots.size
-
-	init {
-		reset()
-	}
 
 	/** ---- [CommandManager] interface */
 
@@ -63,6 +53,11 @@ class SourcingCommandManager(
 				eventBus.post(CommandManagerActiveEvent(this))
 			}
 		}
+
+	override fun bindDataHolder(dataHolder: UndoableDataHolder) {
+		undoableDataHolder = dataHolder
+		reset()
+	}
 
 	override fun canUndo(): Boolean {
 		return transactionLevel == 0 && !snapshots.empty && snapshots.peek().canUndo
@@ -234,8 +229,14 @@ class SourcingCommandManager(
 		}
 
 		fun undo() {
-			redoStack.push(undoStack.pop())
-			replayFromSnapshot()
+			val transaction = undoStack.pop()
+			redoStack.push(transaction)
+
+			if (transaction.canUndo) {
+				transaction.undo()
+			} else {
+				replayFromSnapshot()
+			}
 		}
 
 		fun redo() {
@@ -246,7 +247,11 @@ class SourcingCommandManager(
 
 		private fun replayFromSnapshot() {
 			undoableDataHolder.setUndoableState(StorableCloner.clone(data))
-			undoStack.items.forEach { it.execute() }
+
+			undoStack.items.forEach {
+				LOG.debug(".. replaying transaction ${it.headCommand.getDescription()}")
+				it.execute()
+			}
 		}
 	}
 
@@ -254,15 +259,24 @@ class SourcingCommandManager(
 		private val commands = mutableListOf<Command>()
 		val headCommand: Command get() = commands.first()
 
+		val canUndo: Boolean get() = commands.all { it is Undoable && it.canUndo }
+
 		fun add(command: Command) {
 			commands.add(command)
-			command.addedToTransaction()
 		}
 
 		fun execute() {
 			for (c in commands) {
 				c.execute()
 				c.validate()
+			}
+		}
+
+		fun undo() {
+			checkState(canUndo, "Cannot undo Transaction")
+			commands.reversed().forEach {
+				(it as Undoable).undo1()
+				it.validate()
 			}
 		}
 	}
@@ -277,13 +291,17 @@ class SourcingCommandManager(
 	private class TransactionCommand(
 		descriptionKey: String,
 		private val drawingView: DrawingView<*>? = null
-	) : AbstractCommand(descriptionKey, null) {
+	) : AbstractCommand(descriptionKey, null), Undoable {
 
 		override fun execute() {
 			// empty
 		}
 
 		override fun undo() {
+			// empty
+		}
+
+		override fun undo1() {
 			// empty
 		}
 

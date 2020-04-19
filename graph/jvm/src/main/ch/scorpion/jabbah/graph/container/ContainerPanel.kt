@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.container
 
+import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.ActionWrapperSwing
@@ -8,6 +9,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.*
@@ -58,6 +60,8 @@ class ContainerPanel(
 
 	private val applicationDataEventHandler: (ApplicationDataEvent) -> Unit = { handle(it) }
 
+	private val applicationDataContentEventHandler : (ApplicationDataContentEvent) -> Unit = { handle (it)}
+
 	var active: Boolean = false
 		set(value) {
 			if (field != value) {
@@ -72,6 +76,7 @@ class ContainerPanel(
 
 	init {
 		eventBus.register(ApplicationDataEvent::class, applicationDataEventHandler)
+		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentEventHandler)
 
 		propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
@@ -82,7 +87,8 @@ class ContainerPanel(
 	}
 
 	fun dispose() {
-		eventBus.unregister(ApplicationDataEvent::class, applicationDataEventHandler)
+		eventBus.unregister(applicationDataEventHandler)
+		eventBus.unregister(applicationDataEventHandler)
 	}
 
 	fun initialize() {
@@ -103,8 +109,16 @@ class ContainerPanel(
 	 * @param graphView the main [GraphView] in the editable main panel
 	 * @param containerDrawing the [ContainerDrawing] that represents the outer view of `graphView`
 	 */
-	fun setData(graphView: GraphView, containerDrawing: ContainerDrawing) {
+	fun setData(graphView: GraphView, containerDrawing: ContainerDrawing, applyZoomStrategy: Boolean = true) {
+		val oldZoomStrategy = editor.view.defaultZoomStrategy
+		if (!applyZoomStrategy) {
+			editor.view.defaultZoomStrategy = ZoomStrategy.NONE
+		}
 		editor.view.drawing = containerDrawing
+		if (!applyZoomStrategy) {
+			editor.view.defaultZoomStrategy = oldZoomStrategy
+		}
+
 		treeView.update(graphView, containerDrawing)
 	}
 
@@ -179,5 +193,11 @@ class ContainerPanel(
 			setData(metaGraph.graph.graphView, editedContainerDrawing!!)
 		}
 		updateEditability()
+	}
+
+	private fun handle(event: ApplicationDataContentEvent) {
+		val metaGraph = event.data.content as MetaGraph
+		editedContainerDrawing = metaGraph.containerDrawing
+		setData(metaGraph.graph.graphView, editedContainerDrawing!!, applyZoomStrategy = false)
 	}
 }

@@ -3,8 +3,8 @@ package ch.scorpion.jabbah.graph.view
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.edit.UndoableDataHolder
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
+import ch.scorpion.jabbah.io.Storable
 
 /**
  * Provides a convenient API for building [GraphView]s that contain connected [VerticeView]s.
@@ -22,10 +23,19 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
  */
 open class GraphViewBuilder<T : Any>(
 	name: String = Translations.getString("graph.name.unknown")
-) {
+) : UndoableDataHolder {
 
-	val graph: Graph = GraphModelModule.graphFactory.invoke(name)
-	val graphView: GraphView = GraphViewModule.createGraphView(graph)
+	var graphView: GraphView = GraphViewModule.createGraphView(GraphModelModule.graphFactory.invoke(name))
+		private set
+	val graph: Graph get() = graphView.graph!!
+
+	override fun getUndoableState(): Storable? {
+		return graphView
+	}
+
+	override fun setUndoableState(state: Storable) {
+		graphView = state as GraphView
+	}
 
 	fun build(): GraphView {
 		return graphView

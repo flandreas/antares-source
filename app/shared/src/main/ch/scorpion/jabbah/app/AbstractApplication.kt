@@ -3,8 +3,10 @@ package ch.scorpion.jabbah.app
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.UndoableDataHolder
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.io.Storable
 
 /**
@@ -12,13 +14,14 @@ import ch.scorpion.jabbah.io.Storable
  */
 abstract class AbstractApplication(
     protected val eventBus: EventBus
-) : Application {
+) : Application, UndoableDataHolder {
 
 	companion object {
 		private val LOG by lazy { logger(AbstractApplication::class) }
 	}
 
     init {
+	    EditModule.commandManager.bindDataHolder(this)
         configureCustomModules()
 	    eventBus.register(CloseApplicationDataRequest::class) { close() }
     }
@@ -46,7 +49,7 @@ abstract class AbstractApplication(
 
     override fun newFile() {
         if (canReplaceSavable("file.action.new.name")) {
-	        data = ApplicationData(createNewApplicationData(), createNewSavable())
+	        data = ApplicationData(createNewApplicationData(), createNewSavable(), eventBus)
         }
     }
 
@@ -73,6 +76,14 @@ abstract class AbstractApplication(
 
 	override fun showAboutInfo() {
 		LOG.value.info("${aboutInfo.name} Version ${aboutInfo.version}")
+	}
+
+	/** ---- [UndoableDataHolder] interface */
+
+	override fun getUndoableState(): Storable? = data?.content
+
+	override fun setUndoableState(state: Storable) {
+		data!!.content = state
 	}
 
     /** ---- [AbstractApplication] */

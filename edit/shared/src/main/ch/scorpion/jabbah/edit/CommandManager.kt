@@ -3,12 +3,20 @@ package ch.scorpion.jabbah.edit
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalStateException
+import ch.scorpion.jabbah.io.Storable
 
 /** Posted by a [CommandManager] on its [EventBus] whenever a [Command] has been registered, done or undone.*/
 data class CommandEvent(val commandManager: CommandManager)
 
 /** Posted by a [CommandManager] on its [EventBus] whenever its 'active' state has changed.*/
 data class CommandManagerActiveEvent(val commandManager: CommandManager)
+
+interface UndoableDataHolder {
+
+	fun getUndoableState(): Storable?
+
+	fun setUndoableState(state: Storable)
+}
 
 /**
  * Manages a list of [Command]s that can be played back and forth to support undoability and redoablity of these
@@ -45,6 +53,8 @@ interface CommandManager {
 
     /** The [EventBus] used by this [CommandManager].*/
     val eventBus: EventBus
+
+	fun bindDataHolder(dataHolder: UndoableDataHolder)
 
     /**
      * Begins a new transaction with the specified [Command] as its head, and executes or registers the [Command]

@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.time.SystemSpeedEvent
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.Themes
@@ -190,12 +191,19 @@ class GraphNavigationPanel(
 	/** ---- [GraphNavigationPanel] */
 
 	/** Initializes the [NavigationStackViewSwing] with a root [DrawingViewContent].*/
-	fun setRootGraphView(graphView: GraphView) {
+	fun setRootGraphView(graphView: GraphView, applyZoomStrategy: Boolean = true) {
+		val oldZoomStrategy = drawingView.defaultZoomStrategy
+		if (!applyZoomStrategy) {
+			drawingView.defaultZoomStrategy = ZoomStrategy.NONE
+		}
 		drawingView.drawing = graphView
+		if (!applyZoomStrategy) {
+			drawingView.defaultZoomStrategy = oldZoomStrategy
+		}
+
 		navigationStackViewController.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)
 		scenarioDetector?.dispose()
 		scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus, currentSystemSpeedCategory)
-		UiUtil.invokeLater(Runnable { drawingView.navigator.fitMaxNormal() })
 	}
 
 	private fun getRootEntry(): NavigationStackEntry<GraphView> =

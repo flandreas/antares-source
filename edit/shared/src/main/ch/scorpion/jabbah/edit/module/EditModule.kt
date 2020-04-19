@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.edit.DrawingViewFactory
 import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.app.DrawingAppServiceImpl
 import ch.scorpion.jabbah.edit.command.CommandManagerImpl
+import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.DrawingImpl
@@ -46,7 +47,7 @@ import ch.scorpion.jabbah.io.TypeMap
  */
 object EditModule : AbstractModule() {
 
-    var commandManager: CommandManager = CommandManagerImpl()
+    var commandManager: CommandManager = SourcingCommandManager()
 
 	var drawingViewFactory: DrawingViewFactory<Drawing<Component>> = { drawing, canvas -> DrawingViewImpl(drawing, canvas) }
 

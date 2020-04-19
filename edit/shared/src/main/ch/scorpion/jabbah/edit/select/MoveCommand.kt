@@ -27,3 +27,21 @@ class MoveCommand(
         components.forEach { it.completeMoveBy() }
     }
 }
+
+class MoveCommandSerializable(
+	editor: Editor,
+	val componentIds: Collection<Int>,
+	val offset: Point2D
+) : AbstractCommand("edit.command.move", editor) {
+
+	override fun execute() {
+		val components = componentIds.map { editor!!.drawing.getWithId(it)!! }.toList()
+		components.forEach { it.prepareMoveBy(components) }
+		components.forEach { it.moveBy(offset.x, offset.y) }
+		components.forEach { it.completeMoveBy() }
+	}
+
+	override fun undo() {
+		throw UnsupportedOperationException("not implemented")
+	}
+}

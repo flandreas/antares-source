@@ -27,6 +27,10 @@ enum class ZoomStrategyType {
     /** Zooms the [View] to a particular zoom factor. */
     VALUE {
         override fun apply(navigator: ViewNavigator, zoomFactor: Double?) = navigator.panCenter(zoomFactor ?: 1.0)
+    },
+
+    NONE {
+	    override fun apply(navigator: ViewNavigator, zoomFactor: Double?) { }
     };
 
     abstract fun apply(navigator: ViewNavigator, zoomFactor: Double?)

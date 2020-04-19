@@ -27,6 +27,10 @@ abstract class AbstractConnectorTest(
 	protected val v1 = builder.addVerticeView(createEastOutputVerticeView(100, 100))
 	protected val v2 = builder.addVerticeView(createEastOutputVerticeView(200, 100))
 
+	init {
+		editor.commandManager.bindDataHolder(builder)
+	}
+
 	private fun drawingViewMock(): DrawingView<Drawing<Component>> {
 		val view = mockk<DrawingView<Drawing<Component>>>(relaxed = true)
 		every { view.drawing } returns builder.graphView as Drawing<Component>

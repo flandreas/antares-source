@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.*
@@ -148,21 +149,22 @@ class GraphPanel(
 		logPanel,
 		listOf(ClearLogPanelAction(logPanel)))
 
-	var rootGraphView: GraphView? = editor.drawing as GraphView?
-		private set(value) {
-			if (field !== value) {
-				val oldValue = field
-				field = value
-				if (value != null) {
-					graphEditPanel.setGraphView(value)
-					value.snapper = editor.view.grid
-				}
-				eventBus.post(EditedGraphViewEvent(this, oldValue, value))
-				updateEditability()
-			}
-		}
+	private var rootGraphView: GraphView? = editor.drawing as GraphView?
 
 	val showsNavigationRoot: Boolean get() = graphEditPanel.graphNavigationPanel.showsNavigationRoot
+
+	private fun updateRootGraphView(graphView: GraphView?, applyZoomStrategy: Boolean) {
+		if (rootGraphView != graphView) {
+			val oldValue = rootGraphView
+			rootGraphView = graphView
+			rootGraphView?.let {
+				graphEditPanel.setGraphView(it, applyZoomStrategy)
+				it.snapper = editor.view.grid
+			}
+			eventBus.post(EditedGraphViewEvent(this, oldValue, rootGraphView))
+			updateEditability()
+		}
+	}
 
 	init {
 
@@ -172,7 +174,17 @@ class GraphPanel(
 		propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
 		eventBus.register(ApplicationDataEvent::class) {
-			rootGraphView = (it.newData?.content as MetaGraph?)?.graph?.graphView
+			updateRootGraphView(
+				graphView = (it.newData?.content as MetaGraph?)?.graph?.graphView as GraphView?,
+				applyZoomStrategy = true
+			)
+		}
+
+		eventBus.register(ApplicationDataContentEvent::class) {
+			updateRootGraphView(
+				graphView = (it.data.content as MetaGraph?)?.graph?.graphView as GraphView?,
+				applyZoomStrategy = false
+			)
 		}
 
 		eventBus.register(ActiveViewChangedEvent::class) {
