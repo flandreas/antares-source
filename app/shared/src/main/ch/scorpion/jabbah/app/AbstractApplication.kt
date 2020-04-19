@@ -25,18 +25,16 @@ abstract class AbstractApplication(
 
     /** ---- [Application] interface */
 
-    override var applicationData: Storable? = null
-    set(value) {
-        val oldField = field
-        field = value
-        eventBus.post(ApplicationDataEvent(this, oldField, field))
-    }
+    override var data: ApplicationData? = null
+	    set(value) {
+		    if (field !== value) {
+			    val oldField = field
+			    field = value
+			    eventBus.post(ApplicationDataEvent(this, oldField, field))
+			    eventBus.post(CurrentSavableEvent(this, field?.savable))
+		    }
+	    }
 
-    override var savable: Savable? = null
-        set(value) {
-            field = value
-            eventBus.post(CurrentSavableEvent(this, field))
-        }
 
 	override val aboutInfo: AboutInfo get() = AboutInfo(
 		iconPath = null,
@@ -48,32 +46,28 @@ abstract class AbstractApplication(
 
     override fun newFile() {
         if (canReplaceSavable("file.action.new.name")) {
-            applicationData = createNewApplicationData()
-            savable = createNewSavable()
+	        data = ApplicationData(createNewApplicationData(), createNewSavable())
         }
     }
 
-    override fun open(storable: Storable, savable: Savable) {
+    override fun open(data: ApplicationData) {
         if (canReplaceSavable("file.action.open.name")) {
-            applicationData = storable
-            this.savable = savable
+            this.data = data
         }
     }
 
     override fun save() {
-        if (savable == null) {
+        if (data == null) {
             throw IllegalStateException("No Savable available")
         }
-        savable?.save(this)
-        // Re-set property in order to post CurrentSavableEvent
-        savable = savable
+        data!!.savable.save(this)
+	    eventBus.post(CurrentSavableEvent(this, data!!.savable))
 	    eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "application.data.saved.msg"))
     }
 
     override fun close() {
 	    if (canReplaceSavable("file.action.close.name")) {
-		    applicationData = null
-		    savable = null
+		    data = null
 	    }
     }
 

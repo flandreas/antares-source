@@ -34,7 +34,7 @@ open class MenuBarBuilder(
         fillViewMenu(viewMenu)
         fillMenuBar(menuBar)
 
-        eventBus.register(SavableHistoryEvent::class, { updateOpenRecentMenu() })
+        eventBus.register(SavableHistoryEvent::class) { updateOpenRecentMenu() }
 	    eventBus.register(CurrentSavableEvent::class) {
 		    // Make a [Savable] that has just been closed visible in the menu
 		    if (it.savable == null) {
@@ -105,7 +105,7 @@ open class MenuBarBuilder(
     private fun updateOpenRecentMenu() {
         openRecentMenu.removeAll()
         frame.application.mostRecentSavables.savables.forEach {
-            if (it != frame.application.savable) {
+            if (it != frame.application.data?.savable) {
 	            openRecentMenu.add(JMenuItem(ActionWrapperSwing(OpenRecentFileAction(it, frame.application))))
             }
         }

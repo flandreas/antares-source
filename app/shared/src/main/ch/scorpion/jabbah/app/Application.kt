@@ -18,11 +18,7 @@ interface Application {
      */
     val systemName: String get() = displayName
 
-    /** Holds the current [Savable].*/
-    var savable: Savable?
-
-    /** Holds the currently open application data.*/
-    var applicationData: Storable?
+	var data: ApplicationData?
 
     /** Determines whether the current application data has been changed.*/
     val applicationDataChanged: Boolean
@@ -37,22 +33,22 @@ interface Application {
      */
     fun start()
 
-	/** Creates a new [applicationData] object and resets the current [Savable].*/
+	/** Creates a new [ApplicationData] object and resets the current [Savable].*/
     fun newFile()
 
-	/** Saves the current [applicationData] at the location indicated by [savable].*/
+	/** Saves the current [ApplicationData] at the location indicated by its [Savable].*/
     fun save()
 
-	/** Asks the user to define a [Savable] and uses it to save the current [applicationData].*/
+	/** Asks the user to define a [Savable] and uses it to save the current [ApplicationData] content.*/
 	fun saveAs(): Boolean
 
-	/** Registers the specified [Storable] as current [applicationData] and the specified [Savable] as current [savable].*/
-	fun open(storable: Storable, savable: Savable)
+	/** Registers the specified [ApplicationData] as the current one.*/
+	fun open(data: ApplicationData)
 
 	/** Asks the user to choose a [Savable] and opens it.*/
 	fun open()
 
-	/** Closes the current [applicationData]. */
+	/** Closes the current [ApplicationData]. */
 	fun close()
 
 	fun showAboutInfo()

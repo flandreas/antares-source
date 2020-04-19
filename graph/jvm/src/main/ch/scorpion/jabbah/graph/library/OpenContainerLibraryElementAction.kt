@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.Action
@@ -54,7 +55,7 @@ class OpenContainerLibraryElementAction(
 		try {
 			val library = element.library!!
 			library.libraryService.loadMetaGraph(library, element)
-			application.open(element.metaGraph!!, library.createSavable(element))
+			application.open(ApplicationData(element.metaGraph!!, library.createSavable(element)))
 		} catch (e: Throwable) {
 			LOG.error("Error while loading ${element.uuid}: ${e.message}")
 			JOptionPane.showConfirmDialog(

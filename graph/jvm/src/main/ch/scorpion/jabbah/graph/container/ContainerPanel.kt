@@ -172,7 +172,7 @@ class ContainerPanel(
 			if (event.oldData == null) {
 				add(mainSplitPane)
 			}
-			val metaGraph = event.newData as MetaGraph
+			val metaGraph = event.newData!!.content as MetaGraph
 			editedContainerDrawing = metaGraph.containerDrawing
 			setData(metaGraph.graph.graphView, editedContainerDrawing!!)
 		}

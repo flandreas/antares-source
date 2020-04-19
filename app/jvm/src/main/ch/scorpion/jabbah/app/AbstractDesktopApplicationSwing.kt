@@ -61,9 +61,9 @@ abstract class AbstractDesktopApplicationSwing(
 		fileChooser.isAcceptAllFileFilterUsed = true
 		fileChooser.isFileHidingEnabled = true
 		fileChooser.fileFilter = createFileFilter()
-		if (savable is FileSavable) {
-			if (!(savable as FileSavable).filePath.isNullOrEmpty()) {
-				fileChooser.selectedFile = File((savable as FileSavable).filePath)
+		if (data!!.savable is FileSavable) {
+			if (!(data!!.savable as FileSavable).filePath.isNullOrEmpty()) {
+				fileChooser.selectedFile = File((data!!.savable as FileSavable).filePath)
 			}
 		}
 
@@ -122,11 +122,10 @@ abstract class AbstractDesktopApplicationSwing(
 
 		return when (answer) {
 			JOptionPane.NO_OPTION -> {
-				savable = null
 				true
 			}
 			JOptionPane.CANCEL_OPTION -> false
-			JOptionPane.YES_OPTION -> savable?.save(this) ?: true
+			JOptionPane.YES_OPTION -> data?.savable?.save(this) ?: true
 			else -> throw IllegalStateException("unsupported answer")
 		}
 	}

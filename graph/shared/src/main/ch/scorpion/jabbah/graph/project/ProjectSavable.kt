@@ -38,7 +38,7 @@ class ProjectSavable(
 
 	override fun save(application: Application): Boolean {
 		libraryService.updateContainerLibraryElement(project, element)
-		application.savable = this
+		application.data = application.data!!.withSavable(this)
 		return true
 	}
 }

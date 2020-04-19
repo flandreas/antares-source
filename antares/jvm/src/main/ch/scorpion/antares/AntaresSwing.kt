@@ -145,7 +145,7 @@ class AntaresSwing(
 			}
 		}
 		eventBus.register(CloseProjectRequest::class) {
-			if (savable is ProjectSavable && (savable as ProjectSavable).project == it.project && !canReplaceSavable("project.action.close.name")) {
+			if (data?.savable is ProjectSavable && (data!!.savable as ProjectSavable).project == it.project && !canReplaceSavable("project.action.close.name")) {
 				throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
 			}
 		}
@@ -158,7 +158,7 @@ class AntaresSwing(
 		}
 
 		eventBus.register(LibraryItemRemovedEvent::class) {
-			if (it.item is ContainerLibraryElement && (it.item as ContainerLibraryElement).metaGraph == applicationData) {
+			if (it.item is ContainerLibraryElement && (it.item as ContainerLibraryElement).metaGraph == data!!.content) {
 				SwingUtilities.invokeLater { close() }
 			}
 		}
@@ -248,9 +248,9 @@ class AntaresSwing(
 
 	override fun handleShutdown() {
 		super.handleShutdown()
-		if (savable is ProjectSavable) {
-			BaseModule.settings.set(PROP_APPLICATION_PROJECT, (savable as ProjectSavable).project.uuid.toString())
-		} else if (savable != null) {
+		if (data?.savable is ProjectSavable) {
+			BaseModule.settings.set(PROP_APPLICATION_PROJECT, (data!!.savable as ProjectSavable).project.uuid.toString())
+		} else if (data?.savable != null) {
 			BaseModule.settings.remove(PROP_APPLICATION_PROJECT)
 		}
 	}

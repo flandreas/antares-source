@@ -37,7 +37,7 @@ data class FileSavable(val filePath: String?) : Savable {
             return sb.toString()
         }
 
-    override val defined: Boolean get() = filePath != null && !filePath.isEmpty()
+    override val defined: Boolean get() = filePath != null && filePath.isNotEmpty()
 
     override val supportsMostRecent: Boolean get() = true
 

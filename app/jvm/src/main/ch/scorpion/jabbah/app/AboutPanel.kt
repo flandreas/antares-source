@@ -22,7 +22,6 @@ class AboutPanel(info: AboutInfo) : JPanel() {
 			dialog.title = "${Translations.getString("application.action.about.name")} ${info.name}"
 			dialog.contentPane.add(panel)
 			dialog.isResizable = false
-			//dialog.size = Dimension(400, 400)
 			dialog.pack()
 			dialog.setLocationRelativeTo(parent)
 			dialog.isVisible = true

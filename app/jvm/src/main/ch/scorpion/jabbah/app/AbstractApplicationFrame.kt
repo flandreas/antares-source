@@ -26,9 +26,9 @@ abstract class AbstractApplicationFrame(
         defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
         title = application.displayName
 
-        eventBus.register(CurrentSavableEvent::class, {updateTitle()})
+        eventBus.register(CurrentSavableEvent::class) { updateTitle() }
 
-        setBounds(
+	    setBounds(
             BaseModule.settings.getInt("application.frame.x", 100),
             BaseModule.settings.getInt("application.frame.y", 100),
             BaseModule.settings.getInt("application.frame.w", 1200),
@@ -70,8 +70,8 @@ abstract class AbstractApplicationFrame(
     }
 
     private fun updateTitle() {
-        title = if (application.savable != null) {
-            "${application.displayName} - ${application.savable?.description ?: ""}"
+        title = if (application.data != null) {
+            "${application.displayName} - ${application.data!!.savable.description}"
         } else {
             application.displayName
         }

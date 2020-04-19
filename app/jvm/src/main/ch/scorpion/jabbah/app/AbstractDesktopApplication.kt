@@ -70,15 +70,13 @@ abstract class AbstractDesktopApplication(
 		}
 
 		fun parseCommandLine(args: Array<String>, options: Options, programName: String): CommandLine {
-			var cmdLine: CommandLine? = null
 			try {
-				cmdLine = DefaultParser().parse(options, args)!!
+				return DefaultParser().parse(options, args)!!
 			} catch (x: ParseException) {
 				System.err.println("Error while parsing options: ${x.message}")
 				HelpFormatter().printHelp(programName, options)
 				exitProcess(1)
 			}
-			return cmdLine
 		}
 
 		fun determineUserDataDirectoryPath(commandLine: CommandLine, systemName: String): Path {
@@ -114,12 +112,12 @@ abstract class AbstractDesktopApplication(
 
 	override val mostRecentSavables: SavableHistory = SavableHistory()
 
-	override var savable: Savable?
-		get() = super.savable
+	override var data: ApplicationData?
+		get() = super.data
 		set(value) {
-			super.savable = value
-			if (value != null && value.supportsMostRecent && value.defined) {
-				mostRecentSavables.register(value)
+			super.data = value
+			if (value != null && value.savable.supportsMostRecent && value.savable.defined) {
+				mostRecentSavables.register(value.savable)
 			}
 		}
 
@@ -154,18 +152,18 @@ abstract class AbstractDesktopApplication(
 	 * and by storing the current [Storable] in a file at that path.
 	 */
 	override fun saveTo(identification: String) {
-		var lFilePath = identification
-		if (!lFilePath.endsWith(fileExtension)) {
-			lFilePath = "$lFilePath.$fileExtension"
+		var filePath = identification
+		if (!filePath.endsWith(fileExtension)) {
+			filePath = "$filePath.$fileExtension"
 		}
-		FileOutputStream(lFilePath).use {
+		FileOutputStream(filePath).use {
 			try {
 				val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
-				storeWriter.writeStorable(applicationData!!)
-				savable = FileSavable.withPath(lFilePath)
+				storeWriter.writeStorable(data!!.content)
+				data = data!!.withSavable(FileSavable.withPath(filePath))
 				eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "application.data.saved.msg"))
 			} catch (e: Throwable) {
-				LOG.error("Error while saving '$lFilePath': ${e.message}")
+				LOG.error("Error while saving '$filePath': ${e.message}")
 			}
 		}
 	}
@@ -182,8 +180,7 @@ abstract class AbstractDesktopApplication(
 					return try {
 						val storeReader = StoreXmlReader(ElectricXmlReader(it))
 						val drawing = storeReader.readStorable()
-						applicationData = drawing
-						savable = FileSavable.withPath(identification)
+						data = ApplicationData(drawing, FileSavable.withPath(identification))
 						true
 					} catch (e: Throwable) {
 						LOG.error("Error while opening '$identification': ${e.cause}")

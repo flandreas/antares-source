@@ -22,12 +22,12 @@ class SaveFileAction(
 
     init {
         enabled = false
-        eventBus.register(CommandEvent::class, {update()})
-        eventBus.register(CurrentSavableEvent::class, {update()})
+        eventBus.register(CommandEvent::class) { update() }
+	    eventBus.register(CurrentSavableEvent::class) { update() }
     }
 
 	override fun execute(event: ActionEvent) {
-		if (application.savable != null && application.savable!!.defined) {
+		if (application.data?.savable != null && application.data!!.savable.defined) {
 			application.save()
 		} else {
 			application.saveAs()
@@ -35,6 +35,6 @@ class SaveFileAction(
 	}
 
     private fun update() {
-        enabled = application.savable == null || !application.savable!!.defined || commandManager.canUndo()
+        enabled = application.data == null || !application.data!!.savable.defined || commandManager.canUndo()
     }
 }
