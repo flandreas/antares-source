@@ -14,7 +14,7 @@ TIP: The explanation of the Antares scripting DSL functions is still quite short
 * <<CircuitElemViewBridge>>: Access to the symbol of a circuit element
 * <<Word>>: Access to a digital data word
 * <<UsecaseActionBridge>>: Register use case action statements
-* <<UsecaseTestBridge>>:: Register use case test assertions
+* <<UsecaseTestBridge>: Register use case test assertions
 
 == CircuitViewBridge
 
