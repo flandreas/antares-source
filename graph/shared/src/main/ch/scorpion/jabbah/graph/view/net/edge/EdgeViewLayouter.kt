@@ -16,6 +16,6 @@ interface EdgeViewLayouter {
      * for finding the best layout solution.
      * @return the resulting [Point2D]s
      */
-    fun layout(edgeView: EdgeView<*>?, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D>
+    fun layout(edgeView: EdgeView<*>?, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D>
 
 }

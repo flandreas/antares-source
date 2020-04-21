@@ -21,7 +21,7 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 
 	/** ---- [EdgeViewLayouter] */
 
-	override fun layout(edgeView: EdgeView<*>?, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
+	override fun layout(edgeView: EdgeView<*>?, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
 		if (begin.point == end.point) {
 			return listOf(begin.point, end.point)
 		}

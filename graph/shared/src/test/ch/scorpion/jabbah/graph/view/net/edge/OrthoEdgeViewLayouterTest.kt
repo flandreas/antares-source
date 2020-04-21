@@ -21,7 +21,7 @@ class OrthoEdgeViewLayouterTest {
 		}
 	}
 
-	private lateinit var graphView: GraphView<*>
+	private lateinit var graphView: GraphView
 
 	@BeforeTest
 	fun setup() {

@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 abstract class AbstractGraphViewExecutionHandler(
-	protected val view: DrawingView<GraphView<GraphElementView<*>>>,
+	protected val view: DrawingView<GraphView>,
 	protected val eventBus: EventBus = BaseModule.eventBus,
 	applicationMode: ApplicationMode
 ) {
@@ -43,7 +43,7 @@ abstract class AbstractGraphViewExecutionHandler(
 
 	protected abstract fun createKeyHandler(): KeyAdapter
 
-	protected abstract  val activationCondition: Boolean
+	protected abstract val activationCondition: Boolean
 
 	open fun dispose() {
 		eventBus.unregister(ApplicationModeEvent::class, modeEventHandler)

@@ -48,7 +48,6 @@ import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryPanel
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseSelector
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
@@ -147,7 +146,7 @@ class GraphPanel(
 		logPanel,
 		listOf(ClearLogPanelAction(logPanel)))
 
-	var rootGraphView: GraphView<GraphElementView<*>>? = editor.drawing as GraphView<GraphElementView<*>>?
+	var rootGraphView: GraphView? = editor.drawing as GraphView?
 		private set(value) {
 			if (field !== value) {
 				val oldValue = field
@@ -171,7 +170,7 @@ class GraphPanel(
 		propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
 		eventBus.register(ApplicationDataEvent::class) {
-			rootGraphView = (it.newData?.content as MetaGraph?)?.graph?.graphView as GraphView<GraphElementView<*>>?
+			rootGraphView = (it.newData?.content as MetaGraph?)?.graph?.graphView
 		}
 
 		eventBus.register(ActiveViewChangedEvent::class) {
@@ -289,7 +288,7 @@ class GraphPanel(
 			}
 			ApplicationMode.EXECUTE, ApplicationMode.EXEC_USECASE -> {
 				issuesPanel.clear()
-				if ((editor.drawing as GraphView<*>).checkDesign()) {
+				if ((editor.drawing as GraphView).checkDesign()) {
 					currentMode = mode
 					graphEditPanel.graphNavigationPanel.deselectAll()
 					InvocationHandler.invoke(Runnable {

@@ -23,7 +23,7 @@ import ch.scorpion.jabbah.io.Storable
  *
  * @param T the type of [GraphElementView] that this [GraphView] contains and displays.
  */
-interface GraphView<T : GraphElementView<*>> : Drawing<T> {
+interface GraphView : Drawing<GraphElementView<*>> {
 
 	/** The [Graph] that this [GraphView] displays. Only `null` during deserialization.*/
 	var graph: Graph?
@@ -75,7 +75,7 @@ interface GraphView<T : GraphElementView<*>> : Drawing<T> {
 	 *      if the default [StorableCreator] is to be used.
 	 * @return a clone of this [GraphView] that is connected with [model]
 	 */
-	fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator = IOModule.storableCreator): GraphView<T>
+	fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator = IOModule.storableCreator): GraphView
 
 	fun getVerticeViews(): ImmutableList<VerticeView<Vertice>>
 
@@ -109,4 +109,4 @@ interface GraphView<T : GraphElementView<*>> : Drawing<T> {
  * Posted on the [EventBus] of a [GraphView] when its [OscilloscopeView] changes its visibility.
  * TODO Delete, not needed any more
  */
-data class OscilloscopeDisplayedEvent(val graphView: GraphView<*>)
+data class OscilloscopeDisplayedEvent(val graphView: GraphView)

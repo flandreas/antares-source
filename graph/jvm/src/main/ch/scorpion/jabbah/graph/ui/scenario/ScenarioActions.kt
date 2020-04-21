@@ -28,8 +28,8 @@ abstract class AbstractScenarioAction(
 ) : AbstractAction(baseName) {
 
 	private var currentSavable: Savable? = null
-	protected var editedGraphView: GraphView<*>? = null
-	protected var graphView: GraphView<*>? = null
+	protected var editedGraphView: GraphView? = null
+	protected var graphView: GraphView? = null
 	protected var scenario: Scenario? = null
 	protected var scenarioStep: ScenarioStep? = null
 

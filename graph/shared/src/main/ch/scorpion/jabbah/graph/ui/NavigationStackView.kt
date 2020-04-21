@@ -15,13 +15,13 @@ interface NavigationStackView {
 }
 
 interface NavigationStackViewActions {
-	val navigationStack: NavigationStack<GraphView<GraphElementView<*>>>
+	val navigationStack: NavigationStack<GraphView>
 }
 
 class NavigationStackViewController(
 	initView: NavigationStackView? = null,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	override val navigationStack: NavigationStack<GraphView<GraphElementView<*>>> = NavigationStack(eventBus)
+	override val navigationStack: NavigationStack<GraphView> = NavigationStack(eventBus)
 ) : NavigationStackViewActions {
 
 	private var _view: NavigationStackView? = initView

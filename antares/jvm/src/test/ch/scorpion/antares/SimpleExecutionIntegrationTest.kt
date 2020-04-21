@@ -21,13 +21,13 @@ import kotlin.test.assertEquals
  */
 class SimpleExecutionIntegrationTest : AbstractJvmCircuitTest() {
 
-	private lateinit var circuitView: GraphView<GraphElementView<*>>
+	private lateinit var circuitView: GraphView
 	private lateinit var edgeView: EdgeView<*>
 	private val switchView = SwitchView()
 	private val ledView = LEDView()
 	private val actorListener = mockk<ActorListener>(relaxed = true)
 
-	override fun getCircuitView(): GraphView<GraphElementView<*>> {
+	override fun getCircuitView(): GraphView {
 		return circuitView
 	}
 

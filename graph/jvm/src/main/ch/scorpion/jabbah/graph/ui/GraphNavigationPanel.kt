@@ -62,7 +62,7 @@ import javax.swing.SwingUtilities
  */
 class GraphNavigationPanel(
 	private val isRoot: Boolean,
-	override val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+	override val drawingView: DrawingView<GraphView>,
 	private val viewManager: ViewManager,
 	contextBorderColor: CompositeColor? = null,
 	private val scheduler: Scheduler = ExecutionModule.scheduler,
@@ -190,7 +190,7 @@ class GraphNavigationPanel(
 	/** ---- [GraphNavigationPanel] */
 
 	/** Initializes the [NavigationStackViewSwing] with a root [DrawingViewContent].*/
-	fun setRootGraphView(graphView: GraphView<GraphElementView<*>>) {
+	fun setRootGraphView(graphView: GraphView) {
 		drawingView.drawing = graphView
 		navigationStackViewController.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)
 		scenarioDetector?.dispose()
@@ -198,7 +198,7 @@ class GraphNavigationPanel(
 		UiUtil.invokeLater(Runnable { drawingView.navigator.fitMaxNormal() })
 	}
 
-	private fun getRootEntry(): NavigationStackEntry<GraphView<GraphElementView<*>>> =
+	private fun getRootEntry(): NavigationStackEntry<GraphView> =
 		navigationStackViewController.navigationStack.rootEntry!!
 
 	@Suppress("unused")
@@ -228,7 +228,7 @@ class GraphNavigationPanel(
 	}
 
 	/** Finds the first [DrawingViewContent] in the navigation stack that fulfills the specified condition, if any.*/
-	override fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<*>? =
+	override fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>? =
 		navigationStackViewController.navigationStack.find(condition)
 
 
@@ -273,7 +273,7 @@ class GraphNavigationPanel(
 			descender = {
 				navigationStackViewController.navigationStack.push(NavigationStackEntry(
 					subGraphVerticeView = vv,
-					content = drawingView.createContent(vv.createSubGraphView() as GraphView<GraphElementView<*>>)))
+					content = drawingView.createContent(vv.createSubGraphView())))
 			},
 			terminator = {
 				navigationStackView.isEnabled = true
@@ -286,7 +286,7 @@ class GraphNavigationPanel(
 		SwingUtilities.invokeLater {
 			navigationStackViewController.navigationStack.push(NavigationStackEntry(
 				subGraphVerticeView = vv,
-				content = drawingView.createContent(vv.createSubGraphView() as GraphView<GraphElementView<*>>)))
+				content = drawingView.createContent(vv.createSubGraphView())))
 			UiUtil.invokeLater(Runnable { drawingView.navigator.fitMaxNormal() })
 		}
 	}
@@ -320,7 +320,7 @@ class GraphNavigationPanel(
 			endZoomFactor = 1.0,
 			ascender = {
 				drawingView.content = if (entries.size > 1) {
-					entries[entries.size - 2].content as DrawingViewContent<GraphView<GraphElementView<*>>>
+					entries[entries.size - 2].content as DrawingViewContent<GraphView>
 				} else {
 					navigationStackViewController.navigationStack.peek().content
 				}

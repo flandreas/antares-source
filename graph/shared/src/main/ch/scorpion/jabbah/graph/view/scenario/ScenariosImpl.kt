@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.io.*
  * A standard implementation of the [Scenarios] interface.
  */
 class ScenariosImpl(
-	override var graphView: GraphView<*>? = null,
+	override var graphView: GraphView? = null,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : Scenarios {
 

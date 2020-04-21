@@ -24,7 +24,7 @@ import ch.scorpion.jabbah.draw.view.TooltipHandler
  * - Dive into a [SubGraphVerticeView] when the user double clicks on it
  */
 class GraphViewDisplayHandler(
-	private val view: DrawingView<GraphView<GraphElementView<*>>>,
+	private val view: DrawingView<GraphView>,
 	private val scheduler: Scheduler,
 	eventBus: EventBus
 ) {

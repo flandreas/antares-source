@@ -11,11 +11,11 @@ import kotlin.test.*
 
 class ClockViewSimulationTest : AbstractCircuitTest() {
 
-	private lateinit var circuitView: GraphView<GraphElementView<*>>
+	private lateinit var circuitView: GraphView
 	private lateinit var clockView: ClockView
 	private lateinit var ledView: LEDView
 
-	override fun getCircuitView(): GraphView<GraphElementView<*>> {
+	override fun getCircuitView(): GraphView {
 		return circuitView
 	}
 

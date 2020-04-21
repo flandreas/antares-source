@@ -26,14 +26,14 @@ class TestCircuitBuilder(
 ) : GraphViewBuilder<DigitalSignal>(graphName) {
 
 	/** Builds a [GraphView] that contains only an input and an output, i.e. that perform a "no operation".*/
-	fun buildNOP(propagationDelay: Long = 0): GraphView<GraphElementView<out GraphElement>> {
+	fun buildNOP(propagationDelay: Long = 0): GraphView {
 		connect(addInput("I"), addOutput("O"))
 		graph.propagationDelay = propagationDelay
 		return graphView
 	}
 
 	/** Build a "no operation" [GraphView] that contains the specified inner "no operation" [SubGraphVerticeView].*/
-	fun buildOuterNOP(nop: SubGraphVerticeView<*>, propagationDelay: Long = 0): GraphView<GraphElementView<*>> {
+	fun buildOuterNOP(nop: SubGraphVerticeView<*>, propagationDelay: Long = 0): GraphView {
 		graphView.add(nop)
 		connect(addInput("A"), nop)
 		connect(nop, addOutput("B"))
@@ -44,7 +44,7 @@ class TestCircuitBuilder(
     /**
      * Builds a [GraphView] that contains a [NotGateView] along with [CircuitInOutView] for input and output.
      */
-    fun buildCustomNot(): GraphView<GraphElementView<out GraphElement>> {
+    fun buildCustomNot(): GraphView {
         val not = addVerticeView(NotGateView())
         connect(addInput(), not)
         connect(not, addOutput())
@@ -54,7 +54,7 @@ class TestCircuitBuilder(
     /**
      * Builds a [GraphView] that consists of a elementary [AndGateView] and the provided custom "Not" gate view.
      */
-    fun buildCustomNAND(notView: SubGraphVerticeView<*>): GraphView<GraphElementView<*>> {
+    fun buildCustomNAND(notView: SubGraphVerticeView<*>): GraphView {
         graphView.add(notView)
         val andView = addVerticeView(AndGateView())
 

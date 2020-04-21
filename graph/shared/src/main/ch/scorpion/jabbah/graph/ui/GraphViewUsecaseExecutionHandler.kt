@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.view.Usecase
  * Handles input events on a [GraphView] while a [Usecase] is being executed.
  */
 class GraphViewUsecaseExecutionHandler(
-	view: DrawingView<GraphView<GraphElementView<*>>>,
+	view: DrawingView<GraphView>,
 	private val scheduler: Scheduler = ExecutionModule.scheduler,
 	eventBus: EventBus = BaseModule.eventBus,
 	applicationMode: ApplicationMode

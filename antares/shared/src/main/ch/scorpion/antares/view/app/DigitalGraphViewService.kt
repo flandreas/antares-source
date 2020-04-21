@@ -27,12 +27,12 @@ class DigitalGraphViewService(
 
 	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>) {
 		if (component is LightEmitter) {
-			component.lightColor = determineLightColor(drawingView.drawing as DigitalGraphView<*>)
+			component.lightColor = determineLightColor(drawingView.drawing as DigitalGraphView)
 		}
 		super.add(component, drawingView)
 	}
 
-	fun replaceLightColor(graphView: DigitalGraphView<*>) {
+	fun replaceLightColor(graphView: DigitalGraphView) {
 		graphView.defaultLightColor?.let { defaultLightColor ->
 			LOG.info("Replace LightColor")
 			graphView
@@ -42,7 +42,7 @@ class DigitalGraphViewService(
 		}
 	}
 
-	private fun determineLightColor(graphView: DigitalGraphView<*>): LightColor {
+	private fun determineLightColor(graphView: DigitalGraphView): LightColor {
 		return graphView.defaultLightColor
 			?: LightColor.withName(properties.getString(LightColor.PROP_DEFAULT_LIGHT_COLOR))
 	}

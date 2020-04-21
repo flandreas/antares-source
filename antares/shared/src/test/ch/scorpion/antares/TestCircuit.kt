@@ -16,7 +16,7 @@ class TestCircuit {
     val orGateView: OrGateView
     val wire: EdgeView<DigitalSignal>
 
-    val circuitView: GraphView<GraphElementView<*>>
+    val circuitView: GraphView
         get() = builder.graphView
 
     init {

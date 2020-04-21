@@ -29,7 +29,7 @@ import kotlin.test.assertEquals
  */
 class SingleNestedExcecutionIntegrationTest : AbstractJvmCircuitTest() {
 
-	private lateinit var circuitView: GraphView<GraphElementView<*>>
+	private lateinit var circuitView: GraphView
 	private lateinit var edgeView1: EdgeView<*>
 	private lateinit var edgeView2: EdgeView<*>
 	private lateinit var nop: SubGraphVerticeView<out SubGraphVertice>
@@ -40,7 +40,7 @@ class SingleNestedExcecutionIntegrationTest : AbstractJvmCircuitTest() {
 	private val ledView = LEDView()
 	private val actorListener = mockk<ActorListener>(relaxed = true)
 
-	override fun getCircuitView(): GraphView<GraphElementView<*>> {
+	override fun getCircuitView(): GraphView {
 		return circuitView
 	}
 

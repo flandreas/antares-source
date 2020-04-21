@@ -19,7 +19,7 @@ import ch.scorpion.jabbah.graph.view.port.PortView
  */
 interface VerticeView<T : Vertice> : GraphElementView<T>, Describable, ConnectableView, ActorView {
 
-	val vertice: Vertice get() = model as T
+	val vertice: Vertice get() = model
 
 	/** Returns the number of [PortView]s of this [VerticeView].*/
 	val portViewCount: Int

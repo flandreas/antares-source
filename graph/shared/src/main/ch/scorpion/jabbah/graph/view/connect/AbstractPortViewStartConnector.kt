@@ -124,7 +124,7 @@ abstract class AbstractPortViewStartConnector(
 				stateMachine(Unhandled) {
 
 					state("drag") {
-						stayIf({ mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) && (!allowEdgeViewAsTarget || !insideTargetEdgeView(it))} ) {
+						stayIf({ mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) && (!allowEdgeViewAsTarget || !insideTargetEdgeView(it)) }) {
 							onTransit { moveEdgeViewEndpoint(it!!) }
 						}
 						transitTo("insideTargetPortView") {
@@ -349,7 +349,7 @@ abstract class AbstractPortViewStartConnector(
 	}
 
 	private fun insideTargetEdgeView(context: EditInputEventContext): Boolean {
-		val destDrawable = context.drawingView().drawing.getDrawable { it !== edgeView && it.contains(context.location)}
+		val destDrawable = context.drawingView().drawing.getDrawable { it !== edgeView && it.contains(context.location) }
 		if (destDrawable == null || destDrawable !is EdgeView<*>) {
 			clearTargetEdgeView()
 			return false
@@ -433,7 +433,7 @@ abstract class AbstractPortViewStartConnector(
 			SplitEdgeViewCommand(
 				editor = context.editor,
 				connectService = connectService,
-				graphView = context.editor.drawing as GraphView<GraphElementView<*>>,
+				graphView = context.editor.drawing as GraphView,
 				origEdgeView = targetEdgeView!!,
 				segmentIndex = targetEdgeViewSegmentIndex!!,
 				newEdgeView = edgeView!!,

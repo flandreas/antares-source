@@ -68,7 +68,7 @@ class TestLibraryBuilder(
 		return (libraryDirectory.get(name) as LibraryElement).getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeViewImpl
 	}
 
-	private fun createContainerDrawing(circuitView: GraphView<*>): ContainerDrawing {
+	private fun createContainerDrawing(circuitView: GraphView): ContainerDrawing {
 		val containerDrawing = GraphViewModule.createContainerDrawing(circuitView.graph!!.name.value)
 
 		containerDrawing.model.graphUUID = circuitView.graph!!.uuid

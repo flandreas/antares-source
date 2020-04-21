@@ -42,7 +42,7 @@ class KeyboardView(
 	styleProvider,
 	model,
 	x = DigitalPortView.LENGTH.toDouble(),
-	y = - HEIGHT / 2.0
+	y = -HEIGHT / 2.0
 ), ControlView<Keyboard>, ControlViewSource<Keyboard> {
 
 	companion object {
@@ -59,7 +59,7 @@ class KeyboardView(
 	private val actorInteractionHandler = InteractionHandler()
 
 	private val label = Label(
-		text ="Test",
+		text = "Test",
 		font = font.deriveFont(FontFamily.MONOSPACED),
 		color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor,
 		horizontalAlignment = HorizontalAlignment.LEFT,
@@ -127,7 +127,7 @@ class KeyboardView(
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
-			port = (model as Keyboard).availableData,
+			port = model.availableData,
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
 			x = DigitalPortView.LENGTH + 2 * Look.SCALE,
@@ -285,7 +285,7 @@ class KeyboardView(
 		}
 
 		fun displayKey(keyChar: Int): String {
-			return when(keyChar) {
+			return when (keyChar) {
 				in MIN_CHAR..MAX_CHAR -> keyChar.toChar().toString()
 				BACKSPACE -> "\\b"
 				TAB -> "\\t"

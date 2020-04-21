@@ -103,7 +103,7 @@ class EdgeViewLayoutImpl(
 			val list = mutableListOf<Point2D>()
 			list.addAll(type.layout(
 				edgeView,
-				edgeView.parent as GraphView<*>,
+				edgeView.parent as GraphView,
 				LayoutBoundary(
 					point = origLocation,
 					directions = originDirs,
@@ -147,7 +147,7 @@ class EdgeViewLayoutImpl(
 			val list = mutableListOf<Point2D>()
 			list.addAll(type.layout(
 				edgeView,
-				edgeView.parent as GraphView<*>,
+				edgeView.parent as GraphView,
 				LayoutBoundary(
 					point = origLocation,
 					directions = origDir?.let { setOf(origDir) } ?: Direction.ALL,
@@ -177,7 +177,7 @@ class EdgeViewLayoutImpl(
 
 			val laidOutPoints = type.layout(
 				edgeView,
-				edgeView.parent as GraphView<*>,
+				edgeView.parent as GraphView,
 				LayoutBoundary(
 					point = originPoint,
 					directions = originDirs,

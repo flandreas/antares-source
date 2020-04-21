@@ -46,7 +46,7 @@ class MetaGraphTest {
 
 	@Test
 	fun shouldUpdateContainerGraphPortName() {
-		val graphView = GraphViewImpl<GraphElementView<GraphPort<Boolean>>>()
+		val graphView = GraphViewImpl()
 		val graphPortView = TestGraphPortView(model = GraphInputImpl(name = "A"))
 		val metaGraph = MetaGraph(GraphStorable(graphView), ContainerDrawing())
 		graphView.add(graphPortView)
@@ -59,13 +59,13 @@ class MetaGraphTest {
 
 	@Test
 	fun shouldNotUpdateForeignContainerGraphPortName() {
-		val graphView = GraphViewImpl<GraphElementView<GraphPort<Boolean>>>()
+		val graphView = GraphViewImpl()
 		val graphPortView = TestGraphPortView(model = GraphInputImpl(name = "A"))
 		val metaGraph = MetaGraph(GraphStorable(graphView), ContainerDrawing())
 		graphView.add(graphPortView)
 		metaGraph.containerDrawing.add(createPortViewComponent(graphPortView.model))
 
-		val graphView2 = GraphViewImpl<GraphElementView<GraphPort<Boolean>>>()
+		val graphView2 = GraphViewImpl()
 		val graphPortView2 = TestGraphPortView(model = GraphInputImpl(name = "A"))
 		val metaGraph2 = MetaGraph(GraphStorable(graphView2), ContainerDrawing())
 		graphView2.add(graphPortView2)

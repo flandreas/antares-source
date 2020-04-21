@@ -53,13 +53,13 @@ interface GraphDesktop {
 /** Displays the contents of a [VerticeView] within a separate [GraphDesktop] view.*/
 interface GraphDesktopItem {
 
-	val drawingView: DrawingView<GraphView<GraphElementView<*>>>?
+	val drawingView: DrawingView<GraphView>?
 
 	var contextColor: CompositeColor?
 
 	fun dispose()
 
-	fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<*>?
+	fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>?
 }
 
 data class GraphDesktopItemCloseRequest(val item: GraphDesktopItem)
@@ -67,8 +67,8 @@ data class GraphDesktopItemCloseRequest(val item: GraphDesktopItem)
 /** Posted on [EventBus] when the currently (one and only) edited root [GraphView] changes. */
 class EditedGraphViewEvent(
 	val applicationModeHolder: ApplicationModeHolder,
-	val oldGraphView: GraphView<GraphElementView<*>>?,
-	val newGraphView: GraphView<GraphElementView<*>>?
+	val oldGraphView: GraphView?,
+	val newGraphView: GraphView?
 )
 
 class GraphDesktopController(

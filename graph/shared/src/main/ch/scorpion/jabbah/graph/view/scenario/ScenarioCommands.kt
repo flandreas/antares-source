@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.graph.view.ScenarioStep
  * Adds a [Scenario] to a [Graph].
  */
 class AddScenarioCommand(
-	private val graphView: GraphView<*>,
+	private val graphView: GraphView,
 	private val scenario: Scenario
 ) : AbstractCommand("scenario.command.scenario.add", null) {
 
@@ -25,7 +25,7 @@ class AddScenarioCommand(
 
 /** Deletes a [Scenario] from a [Graph].*/
 class DeleteScenarioCommand(
-	private val graphView: GraphView<*>,
+	private val graphView: GraphView,
 	private val scenario: Scenario
 ) : AbstractCommand("scenario.command.scenario.delete", null) {
 
@@ -42,7 +42,7 @@ class DeleteScenarioCommand(
 
 /** Adds a [ScenarioStep] to a [Scenario].*/
 class AddScenarioStepCommand(
-	private val graphView: GraphView<*>,
+	private val graphView: GraphView,
 	private val scenario: Scenario,
 	private val scenarioStep: ScenarioStep
 ) : AbstractCommand("scenario.command.scenarioStep.add") {
@@ -58,7 +58,7 @@ class AddScenarioStepCommand(
 
 /** Deletes a [ScenarioStep] from its [Scenario].*/
 class DeleteScenarioStepCommand(
-	private val graphView: GraphView<*>,
+	private val graphView: GraphView,
 	private val scenario: Scenario,
 	private val scenarioStep: ScenarioStep
 ) : AbstractCommand("scenario.command.scenarioStep.delete") {
@@ -76,7 +76,7 @@ class DeleteScenarioStepCommand(
 
 /** Moves a [ScenarioStep] within its [Scenario], i.e. changes the position in the ordered list.*/
 class MoveScenarioStepCommand(
-	private val graphView: GraphView<*>,
+	private val graphView: GraphView,
 	private val scenario: Scenario,
 	private val scenarioStep: ScenarioStep,
 	private val newIndex: Int

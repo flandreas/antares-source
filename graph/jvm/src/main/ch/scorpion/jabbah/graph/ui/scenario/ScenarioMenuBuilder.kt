@@ -8,7 +8,7 @@ import javax.swing.JMenu
 import javax.swing.JMenuItem
 
 /**
- * Utility class for building menues related with [Scenario]s and [ScenarioStep]s.
+ * Utility class for building menus related with [Scenario]s and [ScenarioStep]s.
  */
 object ScenarioMenuBuilder {
 
@@ -16,7 +16,7 @@ object ScenarioMenuBuilder {
 	 * Builds a [JMenuItem] for every [Scenario] of the specified [GraphView]
 	 * @param actionBuilder builds the [Action] for a particular [Scenario].
 	 */
-	fun buildScenarioMenu(graphView: GraphView<*>, actionBuilder: (Scenario) -> Action): List<JMenuItem> {
+	fun buildScenarioMenu(graphView: GraphView, actionBuilder: (Scenario) -> Action): List<JMenuItem> {
 		val list = mutableListOf<JMenuItem>()
 		for (scenario in graphView.scenarios.getScenarios()) {
 			list.add(JMenuItem(actionBuilder.invoke(scenario)))
@@ -33,7 +33,7 @@ object ScenarioMenuBuilder {
 	 * @return a structure with a [JMenuItem] for every [ScenarioStep] of a [GraphView], grouped by a
 	 *         [JMenu] for the corresponding [Scenario].
 	 */
-	fun buildScenarioStepMenu(graphView: GraphView<*>, actionBuilder: (ScenarioStep) -> Action): List<JMenuItem> {
+	fun buildScenarioStepMenu(graphView: GraphView, actionBuilder: (ScenarioStep) -> Action): List<JMenuItem> {
 		val list = mutableListOf<JMenuItem>()
 		for (scenario in graphView.scenarios.getScenarios()) {
 			if (scenario.stepCount > 0) {

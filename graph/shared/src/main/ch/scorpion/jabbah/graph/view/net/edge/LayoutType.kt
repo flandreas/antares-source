@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEventHandler) {
 
 	STRAIGHT("straight", EdgeViewInputEventHandler()) {
-		override fun layout(edgeView: EdgeView<*>, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
+		override fun layout(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
 			return StraightEdgeViewLayouter.layout(edgeView, graphView, begin, end)
 		}
 
@@ -25,13 +25,13 @@ enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEv
 	},
 
 	ORTHOGONAL("ortho", DragEdgeSegmentHandler()) {
-		override fun layout(edgeView: EdgeView<*>, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
+		override fun layout(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
 			return OrthoEdgeViewLayouter.layout(edgeView, graphView, begin, end)
 		}
 	},
 
 	NONE("none", DragEdgePointHandler()) {
-		override fun layout(edgeView: EdgeView<*>, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
+		override fun layout(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
 			return NoneEdgeViewLayouter.layout(edgeView, graphView, begin, end)
 		}
 	};
@@ -90,7 +90,7 @@ enum class LayoutType(val customName: String, inputEventHandler: EdgeViewInputEv
 		return alternative.invoke()
 	}
 
-	abstract fun layout(edgeView: EdgeView<*>, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D>
+	abstract fun layout(edgeView: EdgeView<*>, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D>
 
 	override fun toString(): String {
 		return when (this) {

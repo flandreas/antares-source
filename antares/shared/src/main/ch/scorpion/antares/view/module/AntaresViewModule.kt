@@ -121,7 +121,7 @@ object AntaresViewModule : AbstractModule() {
 			}
 		}
 
-		GraphViewModule.graphViewFactory = { DigitalGraphView<GraphElementView<GraphElement>>(it ?: Translations.getString("graph.name.unknown")) }
+		GraphViewModule.graphViewFactory = { DigitalGraphView(it ?: Translations.getString("graph.name.unknown")) }
 		GraphViewModule.graphViewService = EditModule.drawingService as GraphViewService
 		GraphViewModule.portViewFactory = DigitalPortViewFactory(DrawStyleModule.styleProvider)
 		GraphViewModule.oscilloscopeViewFactory = DigitalOscilloscopeViewFactory()

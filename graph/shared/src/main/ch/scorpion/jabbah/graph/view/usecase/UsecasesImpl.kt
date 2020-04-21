@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.io.*
 
 /** A standard implementation of the [Usecases] interface.*/
 class UsecasesImpl(
-	override var graphView: GraphView<*>? = null,
+	override var graphView: GraphView? = null,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : Usecases {
 

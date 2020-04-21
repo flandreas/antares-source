@@ -13,7 +13,6 @@ import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.NamableImpl
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.ScenarioStep
@@ -54,7 +53,7 @@ class ScenarioImpl(
 		steps.clear()
 	}
 
-	override val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
+	override val condition: (DrawingView<GraphView>, ScriptGateway) -> Boolean
 		get() = { view, sg ->
 			sg.condition(
 				Script(

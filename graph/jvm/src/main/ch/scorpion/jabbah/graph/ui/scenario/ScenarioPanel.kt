@@ -24,38 +24,38 @@ import javax.swing.JSplitPane
  * [EventBus].
  */
 class ScenarioPanel(
-    editor: Editor,
-    private val eventBus: EventBus = BaseModule.eventBus,
-    sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
+	editor: Editor,
+	private val eventBus: EventBus = BaseModule.eventBus,
+	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel() {
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-    private val treeView = ScenarioTreeView(eventBus)
+	private val treeView = ScenarioTreeView(eventBus)
 
-    private val propertyPanel = ScenarioPropertyPanel(editor, sheetFactory, eventBus)
+	private val propertyPanel = ScenarioPropertyPanel(editor, sheetFactory, eventBus)
 
-    var graphView: GraphView<*> = editor.drawing as GraphView<*>
-        set(value) {
-            field = value
-            treeView.graphView = value
-        }
+	var graphView: GraphView = editor.drawing as GraphView
+		set(value) {
+			field = value
+			treeView.graphView = value
+		}
 
 
-    init {
-        treeView.addTreeSelectionListener {
-            val scenario = treeView.selectedScenario
-            val scenarioStep = treeView.selectedScenarioStep
-            graphView.currentScenario = scenario
-            graphView.currentScenarioStep = scenarioStep
-            eventBus.post(ScenarioSelectionEvent(graphView, scenario, scenarioStep))
+	init {
+		treeView.addTreeSelectionListener {
+			val scenario = treeView.selectedScenario
+			val scenarioStep = treeView.selectedScenarioStep
+			graphView.currentScenario = scenario
+			graphView.currentScenarioStep = scenarioStep
+			eventBus.post(ScenarioSelectionEvent(graphView, scenario, scenarioStep))
 
-        }
-        treeView.preferredSize = Dimension(300, treeView.preferredSize.height)
-        propertyPanel.preferredSize = Dimension(300, propertyPanel.preferredSize.height)
+		}
+		treeView.preferredSize = Dimension(300, treeView.preferredSize.height)
+		propertyPanel.preferredSize = Dimension(300, propertyPanel.preferredSize.height)
 
-        buildUI()
-    }
+		buildUI()
+	}
 
 	fun dispose() {
 		BaseModule.settings.set("scenarioPanel.splitPos", splitPane.dividerLocation)
@@ -65,24 +65,24 @@ class ScenarioPanel(
 		treeView.selectionModel.clearSelection()
 	}
 
-    private fun buildUI() {
-        layout = BorderLayout()
+	private fun buildUI() {
+		layout = BorderLayout()
 
-        val treeViewScrollPane = JScrollPane(
-            treeView,
-            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+		val treeViewScrollPane = JScrollPane(
+			treeView,
+			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
 
-	    splitPane.border = null
-	    splitPane.add(treeViewScrollPane)
-	    splitPane.add(propertyPanel)
-	    splitPane.dividerLocation = BaseModule.settings.getInt("scenarioPanel.splitPos", 400)
+		splitPane.border = null
+		splitPane.add(treeViewScrollPane)
+		splitPane.add(propertyPanel)
+		splitPane.dividerLocation = BaseModule.settings.getInt("scenarioPanel.splitPos", 400)
 
-	    add(splitPane, BorderLayout.CENTER)
-    }
+		add(splitPane, BorderLayout.CENTER)
+	}
 }
 
 data class ScenarioSelectionEvent(
-    val graphView: GraphView<*>,
-    val scenario: Scenario?,
-    val scenarioStep: ScenarioStep?)
+	val graphView: GraphView,
+	val scenario: Scenario?,
+	val scenarioStep: ScenarioStep?)

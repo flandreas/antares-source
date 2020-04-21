@@ -80,7 +80,7 @@ interface GraphViewConnectService {
 	 * @param verticeView the [VerticeView] to be unconnected
 	 * @param graphView the [GraphView] that contains the [VerticeView] as well as the connected [EdgeView]s
 	 */
-	fun unconnect(graphView: GraphView<out GraphElementView<*>>, verticeView: VerticeView<*>)
+	fun unconnect(graphView: GraphView, verticeView: VerticeView<*>)
 
 	/**
 	 * Creates a new [EdgeView] in the specified [GraphView] and connects it with the first
@@ -88,7 +88,7 @@ interface GraphViewConnectService {
 	 * [VerticeView], and layouts the [EdgeView].
 	 */
 	fun <T : Any> addConnection(
-		graphView: GraphView<GraphElementView<*>>,
+		graphView: GraphView,
 		orig: VerticeView<*>,
 		dest: VerticeView<*>
 	): EdgeView<T>
@@ -99,7 +99,7 @@ interface GraphViewConnectService {
 	 * [VerticeView], adds it to the [GraphView], and layouts the [EdgeView].
 	 */
 	fun <T : Any> addConnection(
-		graphView: GraphView<GraphElementView<*>>,
+		graphView: GraphView,
 		origOutput: PortView<T>,
 		destInput: PortView<T>
 	): EdgeView<T>
@@ -113,7 +113,7 @@ interface GraphViewConnectService {
 	 * @param otherNewEdgeViewPortView the [PortView] to connect the end of [newEdgeView] that is not connected to the [NodeView]
 	 */
 	fun <T : Any> split(
-		graphView: GraphView<GraphElementView<*>>,
+		graphView: GraphView,
 		splittedEdgeView: EdgeView<T>,
 		splitSegmentIndex: Int,
 		newEdgeView: EdgeView<T>,
@@ -127,7 +127,7 @@ interface GraphViewConnectService {
 	 * @return the remaining [EdgeView]
 	 * @throws IllegalStateException if `nodeView` doesn't have exactly two outgoing [EdgeView].
 	 */
-	fun <T : Any> removeNodeView(graphView: GraphView<GraphElementView<*>>, nodeView: NodeView<T>): EdgeView<T>
+	fun <T : Any> removeNodeView(graphView: GraphView, nodeView: NodeView<T>): EdgeView<T>
 }
 
 /** Represents the result of splitting an [EdgeView].*/

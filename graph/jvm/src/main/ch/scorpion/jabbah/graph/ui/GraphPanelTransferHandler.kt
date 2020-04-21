@@ -58,7 +58,7 @@ class GraphPanelTransferHandler(
 	    }
 
         val dropVertice = dropComponent.model as SubGraphVertice?
-	    val targetUUID = (editor.drawing as GraphView<*>).graph!!.uuid
+	    val targetUUID = (editor.drawing as GraphView).graph!!.uuid
 
         if (repository.graphContainsRecursively(dropVertice!!.graphUUID!!, targetUUID)) {
             LOG.debug("Prevent dropping '${dropVertice.name}' in order to prevent Graph cycle")

@@ -14,7 +14,7 @@ interface Usecases : Storable {
 	 * Can be `null` in order to be instantiated by deserialization. Uses for sending events when adding or
 	 * removing [Usecase]s.
 	 */
-	var graphView: GraphView<*>?
+	var graphView: GraphView?
 
 	val isEmpty: Boolean
 
@@ -56,5 +56,5 @@ interface Usecases : Storable {
 
 }
 
-data class UsecaseAddedEvent(val graphView: GraphView<*>, val usecase: Usecase)
-data class UsecaseRemovedEvent(val graphView: GraphView<*>, val usecase: Usecase)
+data class UsecaseAddedEvent(val graphView: GraphView, val usecase: Usecase)
+data class UsecaseRemovedEvent(val graphView: GraphView, val usecase: Usecase)

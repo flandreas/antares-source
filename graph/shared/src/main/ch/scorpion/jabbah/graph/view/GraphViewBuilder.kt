@@ -25,9 +25,9 @@ open class GraphViewBuilder<T : Any>(
 ) {
 
 	val graph: Graph = GraphModelModule.graphFactory.invoke(name)
-	val graphView: GraphView<GraphElementView<out GraphElement>> = GraphViewModule.createGraphView(graph)
+	val graphView: GraphView = GraphViewModule.createGraphView(graph)
 
-	fun build(): GraphView<GraphElementView<out GraphElement>> {
+	fun build(): GraphView {
 		return graphView
 	}
 

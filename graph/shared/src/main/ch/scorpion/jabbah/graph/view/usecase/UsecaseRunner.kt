@@ -28,7 +28,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
  */
 class UsecaseRunner(
 	private val usecase: Usecase,
-	val graphView: GraphView<*>,
+	val graphView: GraphView,
 	private val scheduler: Scheduler,
 	private val gateway: ScriptGateway = ScriptModule.scriptGateway
 ) {

@@ -26,7 +26,7 @@ class UsecaseSelector(
 	eventBus: EventBus = BaseModule.eventBus
 ) : JComboBox<Usecase>() {
 
-	private var graphView: GraphView<GraphElementView<*>>? = null
+	private var graphView: GraphView? = null
 
 	init {
 		eventBus.register(EditedGraphViewEvent::class) { handle(it) }

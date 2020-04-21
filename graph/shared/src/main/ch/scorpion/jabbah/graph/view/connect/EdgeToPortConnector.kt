@@ -153,7 +153,7 @@ class EdgeToPortConnector(
 		return SplitEdgeViewCommand(
 			editor = editor,
 			connectService = connectService,
-			graphView = editor.view.drawing as GraphView<GraphElementView<*>>,
+			graphView = editor.view.drawing as GraphView,
 			origEdgeView = branchedEdgeView!!,
 			segmentIndex = branchedSegmentIndex!!,
 			newEdgeView = edgeView!!,

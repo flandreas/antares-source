@@ -24,7 +24,7 @@ class GraphScriptGateway(private val engine: ScriptEngine) : ScriptGateway {
 		private const val VERTICE_WRAPPER = "function execVertice(vertice, data, signalHandler) {\$BODY}"
 	}
 
-	override fun exec(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Any? {
+	override fun exec(script: Script, view: DrawingView<GraphView>): Any? {
 		engine.eval(script.copy(code = GRAPH_WRAPPER.replaceFirst("\$BODY", script.code)))
 		return engine.invoke("execGraph", null, GraphViewBridge(view))
 	}
@@ -39,7 +39,7 @@ class GraphScriptGateway(private val engine: ScriptEngine) : ScriptGateway {
 		engine.invoke("execVertice", null, VerticeBridge(vertice, signalHandler))
 	}
 
-	override fun condition(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Boolean {
+	override fun condition(script: Script, view: DrawingView<GraphView>): Boolean {
 		return exec(script, view) as Boolean
 	}
 

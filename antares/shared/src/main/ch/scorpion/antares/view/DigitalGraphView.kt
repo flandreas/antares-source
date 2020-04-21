@@ -7,16 +7,15 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-class DigitalGraphView<T : GraphElementView<*>>(
+class DigitalGraphView(
 	graph: DigitalGraph?,
 	eventBus: EventBus = BaseModule.eventBus
-) : GraphViewImpl<T>(graph, eventBus) {
+) : GraphViewImpl(graph, eventBus) {
 
 	constructor() : this(Translations.getString("graph.name.unknown"))
 	constructor(name: String) : this(GraphModelModule.graphFactory.invoke(name) as DigitalGraph)
@@ -56,4 +55,4 @@ class DigitalGraphView<T : GraphElementView<*>>(
 }
 
 /** Posted on [EventBus] when the default [LightColor] of a [DigitalGraphView] as changed by the user.*/
-data class DefaultLightColorEvent(val graphView: DigitalGraphView<*>)
+data class DefaultLightColorEvent(val graphView: DigitalGraphView)

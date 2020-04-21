@@ -32,7 +32,7 @@ interface Scenario : Namable, Describable, Storable {
 	 * Returns the condition that determines whether this [Scenario] is triggered depending on the current state
 	 * of a [DrawingView] and its GraphView.
 	 */
-	val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
+	val condition: (DrawingView<GraphView>, ScriptGateway) -> Boolean
 
 	/** Returns the [ScenarioStep]s of this [Scenario].*/
 	fun getScenarioSteps(): ImmutableList<ScenarioStep>
@@ -60,4 +60,4 @@ interface Scenario : Namable, Describable, Storable {
  * Signals that a particular [Scenario] has been detected in a [GraphView].
  * The [Scenario] is `null`if the [Scenario] cannot be determined any more.
  */
-data class ScenarioEvent(val graphView: GraphView<*>, val scenario: Scenario?)
+data class ScenarioEvent(val graphView: GraphView, val scenario: Scenario?)

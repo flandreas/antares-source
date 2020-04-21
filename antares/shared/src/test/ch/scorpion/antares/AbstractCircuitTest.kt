@@ -47,7 +47,7 @@ abstract class AbstractCircuitTest {
 		scheduler = SchedulerImpl(timeService, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()), task = task)
 	}
 
-	abstract fun getCircuitView(): GraphView<GraphElementView<*>>
+	abstract fun getCircuitView(): GraphView
 
 	protected fun startSimulation(proceedTo: Long = 0) {
 		scheduler.isActive = true

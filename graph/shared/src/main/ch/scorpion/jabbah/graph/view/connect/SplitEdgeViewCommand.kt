@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 class SplitEdgeViewCommand(
 	editor: Editor,
 	private val connectService: GraphViewConnectService,
-	private val graphView: GraphView<GraphElementView<*>>,
+	private val graphView: GraphView,
 	private var origEdgeView: EdgeView<*>,
 	private val segmentIndex: Int,
 	private val newEdgeView: EdgeView<*>,

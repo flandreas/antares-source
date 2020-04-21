@@ -55,14 +55,14 @@ class MemoryContentGraphDesktopItem(
 
 	/** ---- [GraphDesktopItem] */
 
-	override val drawingView: DrawingView<GraphView<GraphElementView<*>>>?
+	override val drawingView: DrawingView<GraphView>?
 		get() = null
 
 	override fun dispose() {
 		memoryContentPanel.dispose()
 	}
 
-	override fun findContent(condition: (DrawingViewContent<GraphView<GraphElementView<*>>>) -> Boolean): DrawingViewContent<*>? = null
+	override fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>? = null
 
 	override fun addContextColorBorder(color: Color) {
 		memoryContentPanel.border = createContextColorBorder(color)

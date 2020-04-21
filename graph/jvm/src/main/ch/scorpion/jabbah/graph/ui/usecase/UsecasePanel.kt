@@ -25,7 +25,7 @@ class UsecasePanel(
 
 	private val propertyPanel = UsecasePropertyPanel(editor, sheetFactory, eventBus)
 
-	var graphView: GraphView<*> = editor.drawing as GraphView<*>
+	var graphView: GraphView = editor.drawing as GraphView
 		set(value) {
 			field = value
 			treeView.graphView = value
@@ -41,6 +41,7 @@ class UsecasePanel(
 
 		buildUI()
 	}
+
 	fun dispose() {
 		BaseModule.settings.set("usecasePanel.splitPos", splitPane.dividerLocation)
 	}
@@ -67,6 +68,6 @@ class UsecasePanel(
 }
 
 data class UsecaseSelectionEvent(
-	val graphView: GraphView<*>,
+	val graphView: GraphView,
 	val usecase: Usecase?
 )

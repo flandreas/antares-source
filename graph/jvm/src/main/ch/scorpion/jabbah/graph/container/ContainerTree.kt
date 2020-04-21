@@ -44,7 +44,7 @@ class ContainerTree(
 	portFactory: PortFactory = GraphModelModule.portFactory,
 	portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	private val mainGraphView: GraphView<*>,
+	private val mainGraphView: GraphView,
 	private val containerDrawing: ContainerDrawing,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : DynamicInitializer {

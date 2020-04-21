@@ -23,120 +23,120 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
  * Does only respond if a single [VerticeView] is being dragged.
  */
 class AutoConnector(
-    private val editor: Editor,
-    private val connectService: GraphViewConnectService,
-    eventBus: EventBus
+	private val editor: Editor,
+	private val connectService: GraphViewConnectService,
+	eventBus: EventBus
 ) {
 
-    constructor(editor: Editor): this(editor, GraphViewModule.graphViewConnectService, BaseModule.eventBus)
+	constructor(editor: Editor) : this(editor, GraphViewModule.graphViewConnectService, BaseModule.eventBus)
 
-    /** Used for highlighting the current possible connection points.*/
-    private val highlight = AutoConnectorHighlight()
+	/** Used for highlighting the current possible connection points.*/
+	private val highlight = AutoConnectorHighlight()
 
-    /** Determines whether [highlight] is currently displayed or not.*/
-    private var isHighlightDisplayed = false
+	/** Determines whether [highlight] is currently displayed or not.*/
+	private var isHighlightDisplayed = false
 
-    /** The [VerticeView] that is currently being dragged around, if any.*/
-    private var verticeView: VerticeView<*>? = null
+	/** The [VerticeView] that is currently being dragged around, if any.*/
+	private var verticeView: VerticeView<*>? = null
 
-    /** Contains the [Point2D]s where a connection is currently possible.*/
-    private val points = mutableListOf<Point2D>()
+	/** Contains the [Point2D]s where a connection is currently possible.*/
+	private val points = mutableListOf<Point2D>()
 
-    init {
-        eventBus.register(DragEvent::class, { handleDragEvent(it) })
-        eventBus.register(DropEvent::class, { handleDropEvent(it) })
+	init {
+		eventBus.register(DragEvent::class, { handleDragEvent(it) })
+		eventBus.register(DropEvent::class, { handleDropEvent(it) })
 
-        editor.view.addMouseListener(object: MouseAdapter() {
-            override fun mouseReleased(e: MouseEvent) {
-                if (verticeView != null) {
-                    removeHighlight()
-                    connectPorts()
-                    verticeView = null
-                }
-            }
-        })
-    }
+		editor.view.addMouseListener(object : MouseAdapter() {
+			override fun mouseReleased(e: MouseEvent) {
+				if (verticeView != null) {
+					removeHighlight()
+					connectPorts()
+					verticeView = null
+				}
+			}
+		})
+	}
 
-    /** ---- [AutoConnector] */
+	/** ---- [AutoConnector] */
 
-    private fun handleDragEvent(event: DragEvent) {
-        if (event.editor != editor) {
-            return
-        }
-        if (event.components.size != 1) {
-            return
-        }
-        if (event.components.first() !is VerticeView<*>) {
-            return
-        }
+	private fun handleDragEvent(event: DragEvent) {
+		if (event.editor != editor) {
+			return
+		}
+		if (event.components.size != 1) {
+			return
+		}
+		if (event.components.first() !is VerticeView<*>) {
+			return
+		}
 
-        verticeView = event.components.first() as VerticeView<*>
+		verticeView = event.components.first() as VerticeView<*>
 
-        matchPoints()
+		matchPoints()
 
-        if (points.size > 0) {
-            if (!isHighlightDisplayed) {
-                highlight.setPoints(points)
-                addHighlight()
-            }
-        } else {
-            if (isHighlightDisplayed) {
-                removeHighlight()
-            }
-        }
-    }
+		if (points.size > 0) {
+			if (!isHighlightDisplayed) {
+				highlight.setPoints(points)
+				addHighlight()
+			}
+		} else {
+			if (isHighlightDisplayed) {
+				removeHighlight()
+			}
+		}
+	}
 
-    private fun handleDropEvent(event: DropEvent) {
-        removeHighlight()
-        connectPorts()
-    }
+	private fun handleDropEvent(event: DropEvent) {
+		removeHighlight()
+		connectPorts()
+	}
 
-    /**
-     * Fills the connection point locations of all [PortView]s of the current [VerticeView] that match
-     * an [EdgeView] endpoint into [points].
-     */
-    private fun matchPoints() {
-        points.clear()
-        (editor.drawing as GraphView<*>).getEdgeViews()
-                .filter { it.origin == null || it.destination == null }
-                .forEach { ev ->
-                    verticeView!!.getPortViews().forEach {
-                        val p = it.owner!!.getPortConnectionPoint(it.port)
-                        if (ev.origin == null && it.port.portType.isOutput && p == ev.originEndpointView.location) {
-                            points.add(p)
-                        }
-                        if (ev.destination == null && it.port.portType.isInput && p == ev.destinationEndpointView.location) {
-                            points.add(p)
-                        }
-                    }
-                }
-    }
+	/**
+	 * Fills the connection point locations of all [PortView]s of the current [VerticeView] that match
+	 * an [EdgeView] endpoint into [points].
+	 */
+	private fun matchPoints() {
+		points.clear()
+		(editor.drawing as GraphView).getEdgeViews()
+			.filter { it.origin == null || it.destination == null }
+			.forEach { ev ->
+				verticeView!!.getPortViews().forEach {
+					val p = it.owner!!.getPortConnectionPoint(it.port)
+					if (ev.origin == null && it.port.portType.isOutput && p == ev.originEndpointView.location) {
+						points.add(p)
+					}
+					if (ev.destination == null && it.port.portType.isInput && p == ev.destinationEndpointView.location) {
+						points.add(p)
+					}
+				}
+			}
+	}
 
-    private fun connectPorts() {
-        (editor.drawing as GraphView<*>).getEdgeViews()
-                .filter { it.origin == null || it.destination == null }
-                .forEach { ev ->
-                    verticeView!!.getPortViews().forEach {
-                        val p = it.owner!!.getPortConnectionPoint(it.port)
-                        if (ev.origin == null && it.port.portType.isOutput && p == ev.originEndpointView.location) {
-                           connectService.connectToOrigin(ev, it.createConnection() as Connection<Any>)
-                        }
-                        if (ev.destination == null && it.port.portType.isInput && p == ev.destinationEndpointView.location) {
-                            connectService.connectToDestination(ev, it.createConnection() as Connection<Any>)
-                        }
-                    }
-                }
-    }
+	private fun connectPorts() {
+		(editor.drawing as GraphView).getEdgeViews()
+			.filter { it.origin == null || it.destination == null }
+			.forEach { ev ->
+				verticeView!!.getPortViews().forEach {
+					val p = it.owner!!.getPortConnectionPoint(it.port)
+					if (ev.origin == null && it.port.portType.isOutput && p == ev.originEndpointView.location) {
+						connectService.connectToOrigin(ev, it.createConnection() as Connection<Any>)
+					}
+					if (ev.destination == null && it.port.portType.isInput && p == ev.destinationEndpointView.location) {
+						connectService.connectToDestination(ev, it.createConnection() as Connection<Any>)
+					}
+				}
+			}
+	}
 
-    private fun addHighlight() {
-        editor.view.ghostContainer.add(highlight)
-        highlight.validate()
-        isHighlightDisplayed = true
-    }
+	private fun addHighlight() {
+		editor.view.ghostContainer.add(highlight)
+		highlight.validate()
+		isHighlightDisplayed = true
+	}
 
-    private fun removeHighlight() {
-        editor.view.ghostContainer.remove(highlight)
-        editor.drawing.validate()
-        isHighlightDisplayed = false
-    }
+	private fun removeHighlight() {
+		editor.view.ghostContainer.remove(highlight)
+		editor.drawing.validate()
+		isHighlightDisplayed = false
+	}
 }

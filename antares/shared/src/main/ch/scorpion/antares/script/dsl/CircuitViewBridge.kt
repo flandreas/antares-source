@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.VerticeView
 
 open class CircuitViewBridge(
-	private val view: DrawingView<GraphView<GraphElementView<*>>>,
+	private val view: DrawingView<GraphView>,
 	private val signalHandler: SignalHandler?
 ) {
 

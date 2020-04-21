@@ -33,7 +33,7 @@ open class GraphViewServiceImpl(
 	/** ---- [DrawingService] interface */
 
 	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>) {
-		if (drawingView.drawing !is GraphView<*> || component is GraphElementView<*>) {
+		if (drawingView.drawing !is GraphView || component is GraphElementView<*>) {
 			super.add(component, drawingView)
 		} else {
 			super.add(GraphElementViewWrapper(component), drawingView)
@@ -46,9 +46,9 @@ open class GraphViewServiceImpl(
 
 		for (component in components) {
 			if (component is VerticeView<*>) {
-				unconnectDeletedVerticeView(component, drawingView.drawing as GraphView<*>)
+				unconnectDeletedVerticeView(component, drawingView.drawing as GraphView)
 			} else if (component is EdgeView<*>) {
-				unconnectDeletedEdgeView(component as EdgeView<Any>, drawingView.drawing as GraphView<GraphElementView<*>>)
+				unconnectDeletedEdgeView(component as EdgeView<Any>, drawingView.drawing as GraphView)
 			}
 		}
 
@@ -58,7 +58,7 @@ open class GraphViewServiceImpl(
 
 	/** ---- [GraphViewServiceImpl] */
 
-	private fun unconnectDeletedVerticeView(verticeView: VerticeView<*>, graphView: GraphView<*>) {
+	private fun unconnectDeletedVerticeView(verticeView: VerticeView<*>, graphView: GraphView) {
 		LOG.debug("unconnectDeletedVerticeView for verticeView ${verticeView.id}")
 		graphView.getEdgeViews()
 			.filter { ev -> ev.origin?.connectableView === verticeView }
@@ -68,7 +68,7 @@ open class GraphViewServiceImpl(
 			.forEach { ev -> commandManager.execute(UnconnectEdgeViewDestinationCommand(connectService, ev)) }
 	}
 
-	private fun unconnectDeletedEdgeView(edgeView: EdgeView<Any>, graphView: GraphView<GraphElementView<*>>) {
+	private fun unconnectDeletedEdgeView(edgeView: EdgeView<Any>, graphView: GraphView) {
 		LOG.debug("unconnectDeletedEdgeView for verticeView ${edgeView.id}")
 		commandManager.execute(UnconnectEdgeViewCommand(connectService, graphView, edgeView))
 	}
@@ -87,7 +87,7 @@ open class GraphViewServiceImpl(
 
 private class UnconnectEdgeViewCommand(
 	private val connectService: GraphViewConnectService,
-	private val graphView: GraphView<GraphElementView<*>>,
+	private val graphView: GraphView,
 	private val edgeView: EdgeView<Any>
 ) : AbstractCommand("graph.command.unconnectEdgeView", null) {
 
@@ -115,7 +115,7 @@ private class UnconnectEdgeViewCommand(
 		}
 
 		if (joinResults.second == null) {
-			destination?. let { connectService.connectToDestination(edgeView, destination) }
+			destination?.let { connectService.connectToDestination(edgeView, destination) }
 		} else {
 			connectService.split(
 				graphView,

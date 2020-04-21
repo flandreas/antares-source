@@ -93,7 +93,7 @@ object CopyPasteUtilitySwing : CopyPasteUtility {
                     typeMap,
                     GlobalIdentityCreator()
                 ) { c -> c !is GraphElementView<*> || components.contains(c) }
-	            val graphStorable = GraphStorable(drawing as GraphView<*>)
+	            val graphStorable = GraphStorable(drawing as GraphView)
                 writer.writeStorable(graphStorable)
 
                 Toolkit.getDefaultToolkit().systemClipboard.setContents(
@@ -139,7 +139,7 @@ object CopyPasteUtilitySwing : CopyPasteUtility {
                 if (copy is GraphStorable) {
                     val components = mutableListOf<Component>()
                     for (cv in copy.graphView.backToFrontIterator()) {
-                        if (cv is VerticeView) {
+                        if (cv is VerticeView<*>) {
                             strip(cv, copy.graphView)
                         }
                         if (pastedAnchorComponent == null && origAnchorComponent!!.location == cv.location) {
@@ -161,7 +161,7 @@ object CopyPasteUtilitySwing : CopyPasteUtility {
      * Disconnects all [Port]s of a [Vertice] from [Net]s that don't have a
      * corresponding [EdgeView] in the specified [GraphView].
      */
-    private fun strip(verticeView: VerticeView<*>, graphView: GraphView<*>) {
+    private fun strip(verticeView: VerticeView<*>, graphView: GraphView) {
         for (pv in verticeView.getPortViews()) {
             if (pv.port.net != null) {
                 val edgeViews = graphView.getElementViews(pv.port.net!!)

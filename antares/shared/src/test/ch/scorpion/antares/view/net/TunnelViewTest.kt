@@ -15,12 +15,12 @@ import kotlin.test.assertEquals
 class TunnelViewTest : AbstractCircuitTest() {
 
 	private lateinit var builder: TestCircuitBuilder
-	private lateinit var circuitView: GraphView<GraphElementView<*>>
+	private lateinit var circuitView: GraphView
 	private lateinit var switchView: SwitchView
 	private lateinit var sender: TunnelView
 	private lateinit var receiver: TunnelView
 
-	override fun getCircuitView(): GraphView<GraphElementView<*>> = circuitView
+	override fun getCircuitView(): GraphView = circuitView
 
 	@BeforeTest
 	fun setupCircuit() {

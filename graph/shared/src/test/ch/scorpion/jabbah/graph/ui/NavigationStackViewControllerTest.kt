@@ -38,10 +38,10 @@ class NavigationStackViewControllerTest {
 		verify(exactly = 2) { view.update() }
 	}
 
-	private fun entry(name: String): NavigationStackEntry<GraphView<GraphElementView<*>>> {
-		val content = mockk<DrawingViewContent<GraphView<GraphElementView<*>>>>()
-		val entry = mockk<NavigationStackEntry<GraphView<GraphElementView<*>>>>()
-		every { entry.graphName  } returns Name(name)
+	private fun entry(name: String): NavigationStackEntry<GraphView> {
+		val content = mockk<DrawingViewContent<GraphView>>()
+		val entry = mockk<NavigationStackEntry<GraphView>>()
+		every { entry.graphName } returns Name(name)
 		every { entry.content } returns content
 		return entry
 	}

@@ -89,7 +89,7 @@ open class NodeViewImpl<T : Any>(
 		if (parent == null) {
 			return emptyList()
 		}
-		val edgeViews = (parent as GraphView<*>).getEdgeViews()
+		val edgeViews = (parent as GraphView).getEdgeViews()
 		return edgeViews
 			.filter { it.origin?.connectableView === this }
 			.map { it as EdgeView<T> }
@@ -99,7 +99,7 @@ open class NodeViewImpl<T : Any>(
 		if (parent == null) {
 			return emptyList()
 		}
-		val edgeViews = (parent as GraphView<*>).getEdgeViews()
+		val edgeViews = (parent as GraphView).getEdgeViews()
 		return edgeViews
 			.filter { it.origin?.connectableView === this || it.destination?.connectableView === this }
 			.map { it as EdgeView<T> }
@@ -115,7 +115,7 @@ open class NodeViewImpl<T : Any>(
 	}
 
 	override fun getIncomingEdgeView(): EdgeView<T>? {
-		val edgeViews = (parent as GraphView<*>).getEdgeViews()
+		val edgeViews = (parent as GraphView).getEdgeViews()
 		return edgeViews
 			.filter { it.destination?.connectableView === this }
 			.map { it as EdgeView<T> }

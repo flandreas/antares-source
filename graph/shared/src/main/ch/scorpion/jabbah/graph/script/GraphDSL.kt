@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
  * Defines a kind of DSL.
  */
 
-class GraphViewBridge(private val view: DrawingView<GraphView<GraphElementView<*>>>) {
+class GraphViewBridge(private val view: DrawingView<GraphView>) {
 
 	/** Returns the name of the [Graph] of this [GraphView].*/
 	fun name(): String = view.drawing.graph!!.name.value

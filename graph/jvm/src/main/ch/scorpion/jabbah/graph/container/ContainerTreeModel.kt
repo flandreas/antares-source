@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.view.ControlView
@@ -20,7 +21,6 @@ import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.GraphPortView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.view.port.PortViewFactory
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.tree.DefaultMutableTreeNode
@@ -33,7 +33,7 @@ class ContainerTreeModel(
 	private val portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val initializer: DynamicInitializer,
-	graphView: GraphView<*>,
+	graphView: GraphView,
 	private val containerDrawing: ContainerDrawing
 ) {
 
@@ -93,7 +93,7 @@ class ContainerTreeModel(
 	/**
 	 * Adds all toplevel [GraphPortView]s that are not contained in the [ContainerDrawing] to the [TreeModel].
 	 */
-	private fun fillGraphPortViews(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
+	private fun fillGraphPortViews(graphView: GraphView, containerDrawing: ContainerDrawing) {
 		graphView.getGraphPortViews()
 			.filter { containerDrawing.getPortViewComponent(it.model.name!!) == null }
 			.forEach { addGraphPortView(it) }
@@ -188,7 +188,7 @@ class ContainerTreeModel(
 	/**
 	 * Adds all toplevel [ControlViewSource]s that are not contained in the [ContainerDrawing] to the [TreeModel].
 	 */
-	private fun fillControlViewSources(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
+	private fun fillControlViewSources(graphView: GraphView, containerDrawing: ContainerDrawing) {
 		graphView.getControlViewSources()
 			.filter { containerDrawing.getControlViewComponent(it.controlId!!) == null }
 			.forEach { addControlViewSource(it) }
@@ -309,7 +309,7 @@ private class ContainerTreeControlItem(
 	private val source: ControlViewSource<Vertice>,
 	factory: () -> Component,
 	iconPath: String
-)  : DraggableTreeItem(ContainerTreeItemType.Control, factory, iconPath) {
+) : DraggableTreeItem(ContainerTreeItemType.Control, factory, iconPath) {
 
 	val controlViewId: String get() = source.controlId!!
 	val controlModelId: Int get() = source.model.id
@@ -341,7 +341,7 @@ private class ContainerTreeFolderItem(
  * @property graphView the [GraphView] whose [SubGraphVerticeView] are contained in the tree node
  */
 class SubGraphsFolderItem(
-	val graphView: GraphView<*>,
+	val graphView: GraphView,
 	val link: DeepVerticeLink
 ) : AbstractContainerTreeItem(ContainerTreeItemType.SubGraphs) {
 
@@ -353,7 +353,7 @@ class SubGraphsFolderItem(
  * @property subGraphVerticeView the [SubGraphVerticeView] whose referenced [GraphView] can be opened by the tree node
  */
 class SubGraphVerticeViewFolderItem(
-	val graphView: GraphView<*>,
+	val graphView: GraphView,
 	val subGraphVerticeView: SubGraphVerticeView<SubGraphVertice>,
 	val link: DeepVerticeLink
 ) : AbstractContainerTreeItem(ContainerTreeItemType.SubGraph) {
@@ -362,7 +362,7 @@ class SubGraphVerticeViewFolderItem(
 }
 
 class ControlsFolderTreeItem(
-	val graphView: GraphView<*>,
+	val graphView: GraphView,
 	val link: DeepVerticeLink
 ) : AbstractContainerTreeItem(ContainerTreeItemType.Controls) {
 

@@ -48,7 +48,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
  * which requires [TransparentAnimation] of executing [GraphElement]s.
  */
 class GraphViewAnimator(
-	private val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+	private val drawingView: DrawingView<GraphView>,
 	private val scheduler: Scheduler = ExecutionModule.scheduler,
 	private val animator: Animator = AnimationModule.animator,
 	private val systemSpeedCategory: CurrentSystemSpeedCategory = ExecutionModule.currentSystemSpeedCategory,
@@ -119,7 +119,7 @@ class GraphViewAnimator(
 		drawingView.addPropertyChangeListener(object : PropertyChangeListener<Any> {
 			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 				if (isActive && e.name == DrawingView.PROP_DRAWING) {
-					handleGraphViewChanged(e.oldValue as GraphView<GraphElementView<*>>, e.newValue as GraphView<GraphElementView<*>>)
+					handleGraphViewChanged(e.oldValue as GraphView, e.newValue as GraphView)
 				}
 			}
 		})
@@ -154,7 +154,7 @@ class GraphViewAnimator(
 		// Setup a animation of the signal that will flow along the corresponding EdgeView,
 		// if requested by current settings.
 
-		scheduler.logActorTrace(net) { "handleNetActingRequested"}
+		scheduler.logActorTrace(net) { "handleNetActingRequested" }
 
 		val changedPort: DigitalPort = actorData.changedPort as DigitalPort
 
@@ -292,7 +292,7 @@ class GraphViewAnimator(
 		eventBus.unregister(SystemSpeedCategoryEvent::class, systemSpeedCategoryHandler)
 	}
 
-	private fun handleGraphViewChanged(oldGraphView: GraphView<GraphElementView<*>>?, newGraphView: GraphView<GraphElementView<*>>?) {
+	private fun handleGraphViewChanged(oldGraphView: GraphView?, newGraphView: GraphView?) {
 		if (oldGraphView != null) {
 			oldGraphView.removeDrawableContainerListener(graphViewListener)
 			unregisterActorListener(oldGraphView.graph!!)

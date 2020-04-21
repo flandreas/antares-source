@@ -5,15 +5,13 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeProbeVerticeView
+import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 
 /**
  * Application-level services related with [OscilloscopeView].
@@ -29,7 +27,7 @@ interface OscilloscopeViewService {
 	 * That property is not explicitly stored in [GraphView]. It is rather controlled by
 	 * the visibility property of [OscilloscopeView] and the corresponding [OscilloscopeProbeVerticeView]s.
 	 */
-	fun isOscilloscopeDisplayed(graphView: GraphView<GraphElementView<*>>): Boolean
+	fun isOscilloscopeDisplayed(graphView: GraphView): Boolean
 
 	/**
 	 * Displays the [OscilloscopeView] in the specified [GraphView].
@@ -37,13 +35,13 @@ interface OscilloscopeViewService {
 	 * and no one exists yet, and positions it just below the bounding box of the [GraphView]'s contents. Posts an
 	 * [OscilloscopeDisplayEvent] on [EventBus] if displaying of the [OscilloscopeView] has been changed.
 	 */
-	fun displayOscilloscope(graphView: GraphView<GraphElementView<*>>)
+	fun displayOscilloscope(graphView: GraphView)
 
 	/**
 	 * Hides the [OscilloscopeView] in the specified [GraphView].
 	 * Does nothing if it is not displayed. Posts an [OscilloscopeDisplayEvent] on [EventBus].
 	 */
-	fun hideOscilloscope(graphView: GraphView<GraphElementView<*>>)
+	fun hideOscilloscope(graphView: GraphView)
 
 	/** Adds a new row at the end of the specified [OscilloscopeView]*/
 	fun addRow(oscilloscopeView: OscilloscopeView)
@@ -57,7 +55,7 @@ interface OscilloscopeViewService {
  * Posted by [OscilloscopeViewService] on [EventBus] when the displaying of [OscilloscopeView] has changed
  * in a particular [GraphView].
  */
-data class OscilloscopeDisplayEvent(val graphView: GraphView<*>)
+data class OscilloscopeDisplayEvent(val graphView: GraphView)
 
 /**
  * An application service dealing with [OscilloscopeView].
@@ -76,17 +74,17 @@ class OscilloscopeViewServiceImpl(
 
 	/** ---- [OscilloscopeViewService] */
 
-	override fun isOscilloscopeDisplayed(graphView: GraphView<GraphElementView<*>>): Boolean {
+	override fun isOscilloscopeDisplayed(graphView: GraphView): Boolean {
 		val ov = findOscilloscopeView(graphView)
 		return ov != null && ov.visible
 	}
 
-	override fun displayOscilloscope(graphView: GraphView<GraphElementView<*>>) {
+	override fun displayOscilloscope(graphView: GraphView) {
 		val existed = findOscilloscopeView(graphView) != null
 		displayOscilloscopeImpl(!existed, graphView)
 	}
 
-	override fun hideOscilloscope(graphView: GraphView<GraphElementView<*>>) {
+	override fun hideOscilloscope(graphView: GraphView) {
 		val existed = findOscilloscopeView(graphView) != null
 		hideOscilloscopeImpl(!existed, graphView)
 	}
@@ -101,21 +99,21 @@ class OscilloscopeViewServiceImpl(
 
 	/** ---- [OscilloscopeViewServiceImpl] */
 
-	private fun findOscilloscopeView(graphView: GraphView<GraphElementView<*>>): OscilloscopeView? {
+	private fun findOscilloscopeView(graphView: GraphView): OscilloscopeView? {
 		return graphView.getDrawable { it is OscilloscopeView } as OscilloscopeView?
 	}
 
-	private fun findProbeViews(graphView: GraphView<GraphElementView<*>>): ImmutableList<Component> {
+	private fun findProbeViews(graphView: GraphView): ImmutableList<Component> {
 		return graphView.getDrawables { it is OscilloscopeProbeVerticeView<*> }
 	}
 
 	/** Positions [OscilloscopeView] right beneath [GraphView]'s bounding box.*/
-	private fun positionOscilloscope(ov: OscilloscopeView, graphView: GraphView<GraphElementView<*>>) {
+	private fun positionOscilloscope(ov: OscilloscopeView, graphView: GraphView) {
 		val bbox = graphView.boundingBox
 		ov.location = Point2D(bbox.centerX - ov.width / 2, bbox.maxY + DISTANCE)
 	}
 
-	private fun displayOscilloscopeImpl(create: Boolean, graphView: GraphView<GraphElementView<*>>) {
+	private fun displayOscilloscopeImpl(create: Boolean, graphView: GraphView) {
 		if (create) {
 			LOG.debug("OscilloscopeViewService: display Oscilloscope by creating")
 			val ov = OscilloscopeView()
@@ -129,7 +127,7 @@ class OscilloscopeViewServiceImpl(
 		eventBus.post(OscilloscopeDisplayEvent(graphView))
 	}
 
-	private fun hideOscilloscopeImpl(delete: Boolean, graphView: GraphView<GraphElementView<*>>) {
+	private fun hideOscilloscopeImpl(delete: Boolean, graphView: GraphView) {
 		if (delete) {
 			LOG.debug("OscilloscopeViewService: hide Oscilloscope by deleting")
 			graphView.remove(findOscilloscopeView(graphView)!!)

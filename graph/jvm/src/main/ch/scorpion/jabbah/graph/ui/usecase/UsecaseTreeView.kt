@@ -76,7 +76,7 @@ class UsecaseTreeView(
 	}
 
 	/** Holds the [GraphView] whose [Usecase]s are displayed by this [UsecaseTreeView].*/
-	var graphView: GraphView<*>? = null
+	var graphView: GraphView? = null
 		set(value) {
 			if (field != value) {
 				field = value
@@ -104,13 +104,13 @@ class UsecaseTreeView(
 		}
 
 		componentPopupMenu = when ((newSelectionPath.lastPathComponent as DefaultMutableTreeNode).userObject) {
-			is GraphView<*> -> graphViewPopupMenu
+			is GraphView -> graphViewPopupMenu
 			is Usecase -> usecasePopupMenu
 			else -> null
 		}
 	}
 
-	private class UsecaseTreeModel(graphView: GraphView<*>) : DefaultTreeModel(DefaultMutableTreeNode(graphView)) {
+	private class UsecaseTreeModel(graphView: GraphView) : DefaultTreeModel(DefaultMutableTreeNode(graphView)) {
 
 		private val graphViewNode: DefaultMutableTreeNode get() = root as DefaultMutableTreeNode
 
@@ -175,7 +175,7 @@ class UsecaseTreeView(
 					component.icon = usecaseIcon
 					component.disabledIcon = usecaseIcon
 				}
-				is GraphView<*> -> {
+				is GraphView -> {
 					component.icon = elementIcon
 					component.disabledIcon = elementIcon
 				}

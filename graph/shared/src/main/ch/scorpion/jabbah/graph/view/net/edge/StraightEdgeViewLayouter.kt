@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
  */
 object StraightEdgeViewLayouter : EdgeViewLayouter {
 
-	override fun layout(edgeView: EdgeView<*>?, graphView: GraphView<*>, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
+	override fun layout(edgeView: EdgeView<*>?, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
 		val list = mutableListOf<Point2D>()
 		list.add(begin.point)
 		list.add(end.point)

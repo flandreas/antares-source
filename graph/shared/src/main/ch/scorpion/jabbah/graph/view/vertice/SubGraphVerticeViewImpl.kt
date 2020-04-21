@@ -177,11 +177,12 @@ class SubGraphVerticeViewImpl(
 		super.drawImpl(context)
 	}
 
-	private val wrappedDrawExecScript: Script get() =
-		Script(
-			code = drawExecScript!!,
-			origin = Translations.getString("graph.property.ContainerDrawing", StringUtils.orElse(model.name, "?")),
-			context = Translations.getString("graph.property.ContainerDrawing.execDrawScript.name"))
+	private val wrappedDrawExecScript: Script
+		get() =
+			Script(
+				code = drawExecScript!!,
+				origin = Translations.getString("graph.property.ContainerDrawing", StringUtils.orElse(model.name, "?")),
+				context = Translations.getString("graph.property.ContainerDrawing.execDrawScript.name"))
 
 	fun drawWithDrawableDrawer(context: DrawContext, drawableDrawer: (Drawable) -> Unit) {
 		draw(context) {
@@ -344,11 +345,11 @@ class SubGraphVerticeViewImpl(
 		containsBox.add(drawable.boundingBox)
 	}
 
-	override fun createSubGraphView(): GraphView<GraphElementView<SubGraphVerticeRef>> {
+	override fun createSubGraphView(): GraphView {
 		val libraryGraph = repository.getMetaGraph(subGraphVertice!!.graphUUID!!)
 		val graphView = libraryGraph.graph.graphView.cloneForExistingModel(getGraph(), storableCreator)
 		graphView.bind()
-		return graphView as GraphView<GraphElementView<SubGraphVerticeRef>>
+		return graphView
 	}
 
 	override fun getEditableContainerDrawing(): ContainerDrawing {

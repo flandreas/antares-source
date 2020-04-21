@@ -18,29 +18,29 @@ import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestRunner
  */
 interface ScriptGateway {
 
-    /**
-     * Executes a javascript [script] based on the current state of a [DrawingView].
-     * @param script the script to be executed.
-     * @param view the [DrawingView] that represents the execution context.
-     * @return the object that is returned by the script
-     */
-    fun exec(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Any?
+	/**
+	 * Executes a javascript [script] based on the current state of a [DrawingView].
+	 * @param script the script to be executed.
+	 * @param view the [DrawingView] that represents the execution context.
+	 * @return the object that is returned by the script
+	 */
+	fun exec(script: Script, view: DrawingView<GraphView>): Any?
 
 	/**
 	 * Executes a javascript [script] based on the current state of a [VerticeView].
 	 */
 	fun exec(script: Script, verticeView: VerticeView<*>, drawContext: DrawContext)
 
-    /** Executes a javascript [script] based on the the current state of a [Vertice].*/
-    fun exec(script: Script, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler)
+	/** Executes a javascript [script] based on the the current state of a [Vertice].*/
+	fun exec(script: Script, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler)
 
-    /**
-     * Evaluates a javascript condition based on the current state of a [DrawingView].
-     * @param script the javascript string to be executed.
-     * @param view the [DrawingView] representing the evaluation context.
-     * @return `true` if the condition could be satisfied
-     */
-    fun condition(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Boolean
+	/**
+	 * Evaluates a javascript condition based on the current state of a [DrawingView].
+	 * @param script the javascript string to be executed.
+	 * @param view the [DrawingView] representing the evaluation context.
+	 * @return `true` if the condition could be satisfied
+	 */
+	fun condition(script: Script, view: DrawingView<GraphView>): Boolean
 
 	fun usecaseAction(script: Script, runner: UsecaseRunner, scheduler: Scheduler)
 

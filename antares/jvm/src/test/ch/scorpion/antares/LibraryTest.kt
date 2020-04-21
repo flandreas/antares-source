@@ -94,7 +94,7 @@ class LibraryTest {
 		val nandItem = libraryHolder.library.get(TestLibraryBuilder.CUSTOM_NAND) as LibraryElement
 		val vvr = nandItem.getNewInstance<SubGraphVertice>() as SubGraphVerticeView
 
-		val circuitView = GraphViewImpl<GraphElementView<*>>()
+		val circuitView = GraphViewImpl()
 		circuitView.add(vvr)
 
 		var graphStorable = GraphStorable(circuitView)

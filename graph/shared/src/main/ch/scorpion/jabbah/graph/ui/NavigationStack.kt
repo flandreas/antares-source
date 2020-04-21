@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
-data class NavigationStackEntry<T : GraphView<GraphElementView<*>>>(
+data class NavigationStackEntry<T : GraphView>(
 	val subGraphVerticeView: SubGraphVerticeView<*>? = null,
 	val content: DrawingViewContent<T>
 ) {
@@ -27,7 +27,7 @@ data class NavigationStackEntry<T : GraphView<GraphElementView<*>>>(
  * [Drawing]s.
  * Posts a [NavigationStackEvent] whenever the head [DrawingViewContent] has changed.
  */
-class NavigationStack<T : GraphView<GraphElementView<*>>>(val eventBus: EventBus = BaseModule.eventBus) {
+class NavigationStack<T : GraphView>(val eventBus: EventBus = BaseModule.eventBus) {
 
 	/**
 	 * Holds the [NavigationStackEntries][NavigationStackEntry] that make up the stack. The last element is the stack head.

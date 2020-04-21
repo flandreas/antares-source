@@ -23,7 +23,7 @@ class GraphViewImplTest {
 		}
 	}
 
-	private val graphView: GraphView<GraphElementView<*>> = GraphViewImpl(GraphImpl(), BaseModule.eventBus)
+	private val graphView: GraphView = GraphViewImpl(GraphImpl(), BaseModule.eventBus)
 
 	@Test
 	fun shouldAddToModel() {

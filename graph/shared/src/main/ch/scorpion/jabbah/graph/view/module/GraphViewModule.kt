@@ -28,7 +28,6 @@ import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.UndefinedApplicationModeHolder
 import ch.scorpion.jabbah.graph.container.*
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.GraphScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptEngine
@@ -67,8 +66,8 @@ import ch.scorpion.jabbah.io.TypeMap
  */
 object GraphViewModule : AbstractModule() {
 
-	var graphViewFactory: (name: String?) -> GraphView<*> = {
-		GraphViewImpl<GraphElementView<GraphElement>>(it ?: Translations.getString("graph.name.unknown"))
+	var graphViewFactory: (name: String?) -> GraphView = {
+		GraphViewImpl(it ?: Translations.getString("graph.name.unknown"))
 	}
 
 	/** Must be specified by higher application layers.*/
@@ -228,11 +227,11 @@ object GraphViewModule : AbstractModule() {
 		nodeViewFactory = factory as NodeViewFactory<Any>
 	}
 
-	fun <T : GraphElementView<*>> createGraphView(name: String = Translations.getString("graph.name.unknown")): GraphView<T> {
+	fun createGraphView(name: String = Translations.getString("graph.name.unknown")): GraphView {
 		return createGraphView(GraphModelModule.graphFactory.invoke(name))
 	}
 
-	fun <T : GraphElementView<*>> createGraphView(graph: Graph): GraphView<T> {
+	fun createGraphView(graph: Graph): GraphView {
 		return GraphViewImpl(graph, BaseModule.eventBus)
 	}
 

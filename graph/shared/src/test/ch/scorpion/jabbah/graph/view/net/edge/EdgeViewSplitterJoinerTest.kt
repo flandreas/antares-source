@@ -22,7 +22,7 @@ class EdgeViewSplitterJoinerTest {
 
 	private val service = GraphViewModule.graphViewConnectService
 	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory<Boolean>()
-	private val gv = GraphViewModule.createGraphView<GraphElementView<*>>()
+	private val gv = GraphViewModule.createGraphView()
 
 	@Test
 	fun shouldSplitInMiddleOfSegment() {

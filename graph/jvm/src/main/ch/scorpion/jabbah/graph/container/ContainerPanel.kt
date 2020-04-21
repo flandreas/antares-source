@@ -101,7 +101,7 @@ class ContainerPanel(
 	 * @param graphView the main [GraphView] in the editable main panel
 	 * @param containerDrawing the [ContainerDrawing] that represents the outer view of `graphView`
 	 */
-	fun setData(graphView: GraphView<*>, containerDrawing: ContainerDrawing) {
+	fun setData(graphView: GraphView, containerDrawing: ContainerDrawing) {
 		editor.view.drawing = containerDrawing
 		treeView.update(graphView, containerDrawing)
 	}

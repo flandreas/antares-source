@@ -35,7 +35,7 @@ class GraphEditPanel(
 
 	val graphNavigationPanel = GraphNavigationPanel(
 		isRoot = true,
-		drawingView = editor.view as DrawingView<GraphView<GraphElementView<*>>>,
+		drawingView = editor.view as DrawingView<GraphView>,
 		viewManager = viewManager,
 		contextBorderColor = null,
 		scheduler = scheduler
@@ -75,7 +75,7 @@ class GraphEditPanel(
 		usecasePanel.dispose()
 	}
 
-	fun setGraphView(newGraphView: GraphView<GraphElementView<*>>) {
+	fun setGraphView(newGraphView: GraphView) {
 		graphNavigationPanel.setRootGraphView(newGraphView)
 		scenarioPanel.graphView = newGraphView
 		usecasePanel.graphView = newGraphView

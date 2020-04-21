@@ -46,10 +46,10 @@ import ch.scorpion.jabbah.io.*
 /**
  * A standard implementation of the [GraphView] interface.
  */
-open class GraphViewImpl<T : GraphElementView<*>>(
+open class GraphViewImpl(
 	override var graph: Graph?,
 	protected val eventBus: EventBus = BaseModule.eventBus
-) : DrawingImpl<T>(), GraphView<T>, Bean {
+) : DrawingImpl<GraphElementView<*>>(), GraphView, Bean {
 
 	constructor() : this(Translations.getString("graph.name.unknown"))
 	constructor(name: String) : this(GraphModelModule.graphFactory.invoke(name))
@@ -175,7 +175,7 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 		return issues.isEmpty()
 	}
 
-	override fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator): GraphView<T> {
+	override fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator): GraphView {
 		LOG.trace("clone '${model.name}'for existing model")
 		val clone = StorableCloner.clone(
 			this,
@@ -185,7 +185,7 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 				GraphReferenceResolver(model),
 				ReferenceResolverImpl()
 			)
-		) as GraphViewImpl<T>
+		) as GraphViewImpl
 		clone.graph = model
 		return clone
 	}
@@ -314,22 +314,22 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 	 * can never be drawn above [VerticeView]s, but it's more important that [RectangleComponent]s can be used
 	 * as subsystem boundaries, which are always drawn above all other [GraphElementView]s.
 	 */
-	override fun drawablesInDrawingOrder(): ImmutableList<T> {
-		val drawables = mutableListOf<T>()
+	override fun drawablesInDrawingOrder(): ImmutableList<GraphElementView<*>> {
+		val drawables = mutableListOf<GraphElementView<*>>()
 		drawables.addAll(super.drawablesInDrawingOrder().filter { it !is VerticeView<*> })
 		drawables.addAll(super.drawablesInDrawingOrder().filter { it is VerticeView<*> })
 		return drawables.toImmutableList()
 	}
 
-	override fun provideInputEventHandler(): DrawableContainerInputEventHandler<T, InputEventContext> {
+	override fun provideInputEventHandler(): DrawableContainerInputEventHandler<GraphElementView<*>, InputEventContext> {
 		if (inputEventHandler == null) {
-			inputEventHandler = GraphViewInputEventHandler<T>()
+			inputEventHandler = GraphViewInputEventHandler<GraphElementView<*>>()
 		}
-		return inputEventHandler as DrawableContainerInputEventHandler<T, InputEventContext>
+		return inputEventHandler as DrawableContainerInputEventHandler<GraphElementView<*>, InputEventContext>
 	}
 
 	/** Overridden in order to add the [GraphElement] to the [Graph] that this [GraphView] displays.*/
-	override fun add(drawable: T, index: Int): DrawableContainer<T> {
+	override fun add(drawable: GraphElementView<*>, index: Int): DrawableContainer<GraphElementView<*>> {
 		if (!contains(drawable)) {
 			if (!readingFromStore) {
 				graph?.add(drawable.model)
@@ -343,7 +343,7 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 	}
 
 	/** Overridden in order to remove the [GraphElement] from the [Graph] that this [GraphView] displays.*/
-	override fun remove(drawable: T): DrawableContainer<T> {
+	override fun remove(drawable: GraphElementView<*>): DrawableContainer<GraphElementView<*>> {
 		if (graph != null) {
 			if (getElementViews(drawable.model).size == 1) {
 				graph!!.remove(drawable.model)
@@ -355,7 +355,7 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 		return super.remove(drawable)
 	}
 
-	override fun clear(): DrawableContainer<T> {
+	override fun clear(): DrawableContainer<GraphElementView<*>> {
 		super.clear()
 		if (graph != null) {
 			// graph should only be `null` during deserialization
@@ -421,7 +421,7 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 					if (portView.port.portType.isOutput) {
 						if (portView.port.isConnected) {
 							LOG.debug("delegating mouseMoved to ReconnectOriginConnector")
-							reconnectOriginConnector.useFor((container as GraphView<T>).getEdgeView(portView.port)!!)
+							reconnectOriginConnector.useFor((container as GraphView).getEdgeView(portView.port)!!)
 							target = reconnectOriginConnector.handler
 						} else {
 							LOG.debug("delegating mouseMoved to OutputToInputConnector")
@@ -431,7 +431,7 @@ open class GraphViewImpl<T : GraphElementView<*>>(
 					} else if (portView.port.portType.isInput) {
 						if (portView.port.isConnected) {
 							LOG.debug("delegating mouseMoved to ReconnectDestinationConnector")
-							reconnectDestinationConnector.useFor((container as GraphView<T>).getEdgeView(portView.port)!!)
+							reconnectDestinationConnector.useFor((container as GraphView).getEdgeView(portView.port)!!)
 							target = reconnectDestinationConnector.handler
 						} else {
 							LOG.debug("delegating mouseMoved to InputToOutputOrEdgeConnector")

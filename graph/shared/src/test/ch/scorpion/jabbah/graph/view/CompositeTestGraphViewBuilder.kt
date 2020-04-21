@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
-import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -27,11 +26,11 @@ class CompositeTestGraphViewBuilder(
 	 * Builds a [GraphView] that contains a [TestVerticeView] and a [TestControlVerticeView],
 	 * along with two [TestGraphPortView]s for input and output.
 	 */
-	fun buildInnerCustomComponent(): GraphView<GraphElementView<out GraphElement>> {
+	fun buildInnerCustomComponent(): GraphView {
 		val comp = addVerticeView(TestVerticeView())
 		val control = addVerticeView(TestControlVerticeView())
 		connect(addInput(), comp)
-		split(connect(comp, addOutput()),0, Point2D.ZERO, control)
+		split(connect(comp, addOutput()), 0, Point2D.ZERO, control)
 		graph.name.value = graphName
 		return graphView
 	}
@@ -40,7 +39,7 @@ class CompositeTestGraphViewBuilder(
 	 * Builds a [GraphView] that contains an inner component as built by [buildInnerCustomComponent],
 	 * along with two [TestGraphPortView]s for input and output.
 	 */
-	fun buildOuterCustomComponent(innerComp: SubGraphVerticeView<*>): GraphView<GraphElementView<out GraphElement>> {
+	fun buildOuterCustomComponent(innerComp: SubGraphVerticeView<*>): GraphView {
 		graphView.add(innerComp)
 		connect(addInput(), innerComp)
 		connect(innerComp, addOutput())
@@ -48,7 +47,7 @@ class CompositeTestGraphViewBuilder(
 		return graphView
 	}
 
-	fun buildMetaGraph(graphView: GraphView<*>): MetaGraph {
+	fun buildMetaGraph(graphView: GraphView): MetaGraph {
 		return MetaGraph(GraphStorable(graphView), createContainerDrawing(graphView))
 	}
 
@@ -64,7 +63,7 @@ class CompositeTestGraphViewBuilder(
 		return output
 	}
 
-	private fun createContainerDrawing(graphView: GraphView<*>): ContainerDrawing {
+	private fun createContainerDrawing(graphView: GraphView): ContainerDrawing {
 		val containerDrawing = GraphViewModule.createContainerDrawing()
 
 		containerDrawing.model.graphUUID = graphView.graph!!.uuid

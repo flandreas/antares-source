@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.reflect.KClass
 
 abstract class AbstractDrawingViewBridge(
-	protected val graphView: GraphView<*>,
+	protected val graphView: GraphView,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val origin: String,
 	private val context: String?

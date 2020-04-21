@@ -191,7 +191,7 @@ class GraphDesktopSwing(
 			val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>, it)
 			drawingView
 		}
-		val drawingView = graphCanvas.view as DrawingView<GraphView<GraphElementView<*>>>
+		val drawingView = graphCanvas.view as DrawingView<GraphView>
 		return GraphNavigationPanel(
 			isRoot = false,
 			drawingView = drawingView,

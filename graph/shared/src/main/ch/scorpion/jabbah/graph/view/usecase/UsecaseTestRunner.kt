@@ -25,7 +25,7 @@ import kotlin.math.max
 
 class UsecaseTestRunner(
 	usecases: List<Usecase>,
-	val graphView: GraphView<*>,
+	val graphView: GraphView,
 	private val scheduler: Scheduler,
 	private val gateway: ScriptGateway = ScriptModule.scriptGateway,
 	private val eventBus: EventBus = BaseModule.eventBus,

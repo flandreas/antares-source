@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.Dimension
 import java.awt.Graphics
@@ -133,11 +132,11 @@ class NavigationStackViewSwing(
 	/** ---- [NavigationStackViewSwing] */
 
 	/** Executes the specified handler for each [DrawingViewContent] of this [NavigationStack].*/
-	fun forEach(action: (NavigationStackEntry<GraphView<GraphElementView<*>>>) -> Unit) {
+	fun forEach(action: (NavigationStackEntry<GraphView>) -> Unit) {
 		elements.forEach { action.invoke(it.entry) }
 	}
 
-	private fun createElement(entry: NavigationStackEntry<GraphView<GraphElementView<*>>>, first: Boolean, last: Boolean): Element {
+	private fun createElement(entry: NavigationStackEntry<GraphView>, first: Boolean, last: Boolean): Element {
 		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(entry.graphName!!.value, DrawModule.properties.getFont(PROP_FONT))
 		val textLength = textRenderInfo.textBounds.width
 		return Element(entry, if (first) createFirstPath(textLength) else createNonFirstPath(textLength), last)
@@ -171,7 +170,7 @@ class NavigationStackViewSwing(
 
 	/** An element of a [NavigationStackViewSwing] representing a single [DrawingViewContent].*/
 	private inner class Element(
-		val entry: NavigationStackEntry<GraphView<GraphElementView<*>>>,
+		val entry: NavigationStackEntry<GraphView>,
 		val path: Path,
 		val isHead: Boolean
 	) {

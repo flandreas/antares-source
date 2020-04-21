@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.edit.model.text.description.NamableImpl
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 import ch.scorpion.jabbah.io.*
@@ -85,27 +84,27 @@ class ScenarioStepImpl(
 			}
 		}
 
-	override val condition: (DrawingView<GraphView<GraphElementView<*>>>, ScriptGateway) -> Boolean
+	override val condition: (DrawingView<GraphView>, ScriptGateway) -> Boolean
 		get() = { v, sg ->
 			if (StringUtils.isNotEmpty(conditionScript)) {
 				sg.condition(wrappedConditionScript, v)
-			}
-			else  {
+			} else {
 				false
 			}
 		}
 
-	private val wrappedConditionScript: Script get() =
-		Script(
-			code = conditionScript!!,
-			origin = "${Translations.getString("scenarioStep.issueOrigin.name")} '$name'",
-			context = Translations.getString("graph.property.scenario.condition.name"))
+	private val wrappedConditionScript: Script
+		get() =
+			Script(
+				code = conditionScript!!,
+				origin = "${Translations.getString("scenarioStep.issueOrigin.name")} '$name'",
+				context = Translations.getString("graph.property.scenario.condition.name"))
 
 	override fun dispose() {
 		// empty
 	}
 
-	override fun activate(view: DrawingView<GraphView<GraphElementView<*>>>) {
+	override fun activate(view: DrawingView<GraphView>) {
 		if (StringUtils.isNotEmpty(onEntryScript)) {
 			try {
 				LOG.debug("Activate ScenarioStep '$name'")
@@ -116,13 +115,14 @@ class ScenarioStepImpl(
 		}
 	}
 
-	private val wrappedOnEntryScript: Script get() =
-		Script(
-			code = onEntryScript!!,
-			origin = "${Translations.getString("scenarioStep.issueOrigin.name")} '$name'",
-			context = Translations.getString("graph.property.scenario.onEntry.name"))
+	private val wrappedOnEntryScript: Script
+		get() =
+			Script(
+				code = onEntryScript!!,
+				origin = "${Translations.getString("scenarioStep.issueOrigin.name")} '$name'",
+				context = Translations.getString("graph.property.scenario.onEntry.name"))
 
-	override fun passivate(view: DrawingView<GraphView<GraphElementView<*>>>) {
+	override fun passivate(view: DrawingView<GraphView>) {
 		if (StringUtils.isNotEmpty(onExitScript)) {
 			try {
 				LOG.debug("Passivate ScenarioStep '$name'")
@@ -133,11 +133,12 @@ class ScenarioStepImpl(
 		}
 	}
 
-	private val wrappendOnExitScript: Script get() =
-		Script(
-			code = onExitScript!!,
-			origin = "${Translations.getString("scenarioStep.issueOrigin.name")} '$name'",
-			context = Translations.getString("graph.property.scenario.onExit.name"))
+	private val wrappendOnExitScript: Script
+		get() =
+			Script(
+				code = onExitScript!!,
+				origin = "${Translations.getString("scenarioStep.issueOrigin.name")} '$name'",
+				context = Translations.getString("graph.property.scenario.onExit.name"))
 
 	override val highlightIdsAsInt: List<Int>
 		get() {

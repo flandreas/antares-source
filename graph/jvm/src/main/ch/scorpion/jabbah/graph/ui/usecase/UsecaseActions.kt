@@ -26,7 +26,7 @@ abstract class AbstractUsecaseAction(
 ) : AbstractAction(baseName) {
 
 	private var currentSavable: Savable? = null
-	protected var graphView: GraphView<*>? = null
+	protected var graphView: GraphView? = null
 	protected var usecase: Usecase? = null
 
 	init {

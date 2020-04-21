@@ -29,7 +29,7 @@ class OscilloscopeAction(
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		val view = viewManager.activeView
 		if (view is DrawingView<*>) {
-			val graphView = ((viewManager.activeView as DrawingView<*>).drawing) as GraphView<GraphElementView<*>>
+			val graphView = ((viewManager.activeView as DrawingView<*>).drawing) as GraphView
 			if (selected) {
 				service.displayOscilloscope(graphView)
 			} else {
@@ -45,7 +45,7 @@ class OscilloscopeAction(
 
 	private fun updateState() {
 		selected = viewManager.activeView is DrawingView<*>
-			&& (viewManager.activeView as DrawingView<*>).drawing is GraphView<*>
-			&& service.isOscilloscopeDisplayed((viewManager.activeView as DrawingView<*>).drawing as GraphView<GraphElementView<*>>)
+			&& (viewManager.activeView as DrawingView<*>).drawing is GraphView
+			&& service.isOscilloscopeDisplayed((viewManager.activeView as DrawingView<*>).drawing as GraphView)
 	}
 }

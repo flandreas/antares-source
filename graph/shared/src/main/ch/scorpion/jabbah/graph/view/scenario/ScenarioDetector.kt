@@ -6,24 +6,22 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.execution.scheduler.*
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphElement
-import ch.scorpion.jabbah.graph.script.ScriptGateway
-import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.Scenario
-import ch.scorpion.jabbah.graph.view.ScenarioEvent
-import ch.scorpion.jabbah.graph.view.ScenarioStep
-import ch.scorpion.jabbah.graph.view.ScenarioStepEvent
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.drawable.FlexibleTextView
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.execution.scheduler.SchedulerEvent
+import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningState
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategoryEvent
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.script.ScriptGateway
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 /**
@@ -35,7 +33,7 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
  * [SchedulerRunningState.PAUSED], that is if the executing is stepping.
  */
 class ScenarioDetector(
-	private val view: DrawingView<GraphView<GraphElementView<*>>>,
+	private val view: DrawingView<GraphView>,
 	private val scheduler: Scheduler,
 	private val scriptGateway: ScriptGateway,
 	private val eventBus: EventBus,

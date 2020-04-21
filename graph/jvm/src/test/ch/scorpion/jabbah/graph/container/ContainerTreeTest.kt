@@ -240,7 +240,7 @@ class ContainerTreeTest {
 		private var _containerTree: ContainerTree? = null
 		private val toplevelControlViewSource = TestControlVerticeView()
 
-		val graphView: GraphView<GraphElementView<out GraphElement>> get() = graphViewBuilder.graphView
+		val graphView: GraphView get() = graphViewBuilder.graphView
 		val containerDrawing = ContainerDrawing()
 		val containerTree: ContainerTree get() = _containerTree!!
 

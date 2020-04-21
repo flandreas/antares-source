@@ -27,7 +27,7 @@ class GraphDSLTest {
 	}
 
 	private val gateway: ScriptGateway
-	private val view = mockk<DrawingView<GraphView<GraphElementView<*>>>>(relaxed = true)
+	private val view = mockk<DrawingView<GraphView>>(relaxed = true)
 	private var graphView: TestGraphView
 	private val signalHandler = mockk<SignalHandler>(relaxed = true)
 

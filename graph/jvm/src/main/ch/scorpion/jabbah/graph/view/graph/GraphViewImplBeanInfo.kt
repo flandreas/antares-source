@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
  * A [BeanInfo] for [GraphViewImpl].
  */
 @Suppress("unused")
-open class GraphViewImplBeanInfo<in T: GraphViewImpl<*>> : AbstractBeanInfo<T>() {
+open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
 
     companion object {
         private val name = PropertyImpl("graph.property.GraphViewImpl", TranslatableText::class.java)

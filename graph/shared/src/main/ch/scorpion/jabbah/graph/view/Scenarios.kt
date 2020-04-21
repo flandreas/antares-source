@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 interface Scenarios : Storable {
 
 	/** Can be `null` in order to be instantiated by deserialization. */
-	var graphView: GraphView<*>?
+	var graphView: GraphView?
 
 	val isEmpty: Boolean
 
@@ -53,9 +53,9 @@ interface Scenarios : Storable {
 	fun indexOfStep(scenario: Scenario, step: ScenarioStep): Int
 }
 
-data class ScenarioAddedEvent(val graphView: GraphView<*>, val scenario: Scenario)
-data class ScenarioRemovedEvent(val graphView: GraphView<*>, val scenario: Scenario)
+data class ScenarioAddedEvent(val graphView: GraphView, val scenario: Scenario)
+data class ScenarioRemovedEvent(val graphView: GraphView, val scenario: Scenario)
 
-data class ScenarioStepAddedEvent(val graphView: GraphView<*>, val scenario: Scenario, val scenarioStep: ScenarioStep)
-data class ScenarioStepRemovedEvent(val graphView: GraphView<*>, val scenario: Scenario, val scenarioStep: ScenarioStep)
-data class ScenarioStepMovedEvent(val graphView: GraphView<*>, val scenario: Scenario, val scenarioStep: ScenarioStep, val index: Int)
+data class ScenarioStepAddedEvent(val graphView: GraphView, val scenario: Scenario, val scenarioStep: ScenarioStep)
+data class ScenarioStepRemovedEvent(val graphView: GraphView, val scenario: Scenario, val scenarioStep: ScenarioStep)
+data class ScenarioStepMovedEvent(val graphView: GraphView, val scenario: Scenario, val scenarioStep: ScenarioStep, val index: Int)

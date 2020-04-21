@@ -118,7 +118,7 @@ class ScenarioTreeView(
 	}
 
 	/** Holds the [GraphView] whose [Graph] is the source of the [Scenario] tree.*/
-	var graphView: GraphView<*>? = null
+	var graphView: GraphView? = null
 		set(value) {
 			if (field != value) {
 				field = value
@@ -165,7 +165,7 @@ class ScenarioTreeView(
 		}
 
 		componentPopupMenu = when ((newSelectionPath.lastPathComponent as DefaultMutableTreeNode).userObject) {
-			is GraphView<*> -> graphViewPopupMenu
+			is GraphView -> graphViewPopupMenu
 			is Scenario -> scenarioPopupMenu
 			is ScenarioStep -> scenarioStepPopupMenu
 			else -> null
@@ -248,7 +248,7 @@ class ScenarioTreeView(
 	}
 
 	/** Extends [DefaultTreeModel] to add custom model manipulation methods. */
-	private class ScenarioTreeModel(graphView: GraphView<*>) : DefaultTreeModel(DefaultMutableTreeNode(graphView)) {
+	private class ScenarioTreeModel(graphView: GraphView) : DefaultTreeModel(DefaultMutableTreeNode(graphView)) {
 
 		private val graphViewNode: DefaultMutableTreeNode get() = root as DefaultMutableTreeNode
 
@@ -372,7 +372,7 @@ class ScenarioTreeView(
 					component.icon = stepIcon
 					component.disabledIcon = stepIcon
 				}
-				is GraphView<*> -> {
+				is GraphView -> {
 					component.icon = elementIcon
 					component.disabledIcon = elementIcon
 				}

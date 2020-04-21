@@ -51,9 +51,9 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 		}
 	}
 
-	private lateinit var circuitView: GraphView<GraphElementView<*>>
+	private lateinit var circuitView: GraphView
 
-	private lateinit var view: DrawingView<GraphView<GraphElementView<*>>>
+	private lateinit var view: DrawingView<GraphView>
 
 	private lateinit var switch: SwitchView
 
@@ -94,13 +94,13 @@ class AntaresScriptGatewayTest : AbstractCircuitTest() {
 			canvas = canvas,
 			transformFactory = { AffineTransformImpl() },
 			viewPainterFactory = { SimpleViewPainter(it) }
-		) as DrawingView<GraphView<GraphElementView<*>>>
+		) as DrawingView<GraphView>
 
 		every { canvas.view } returns view
 		every { canvas.dimension } returns Dimension2D(100, 100)
 	}
 
-	override fun getCircuitView(): GraphView<GraphElementView<*>> = circuitView
+	override fun getCircuitView(): GraphView = circuitView
 
 	/** ---- [CircuitViewBridge] */
 

@@ -40,7 +40,7 @@ class DigitalEdgeViewNetAnimation(
 	private val actorData: ActorData,
 	val startEdgeView: DigitalEdgeView,
 	val startPort: DigitalPort,
-	val drawingView: DrawingView<GraphView<GraphElementView<*>>>,
+	val drawingView: DrawingView<GraphView>,
 	val animator: Animator = AnimationModule.animator,
 	val scheduler: Scheduler = ExecutionModule.scheduler,
 	val styleProvider: StyleProvider = DrawStyleModule.styleProvider

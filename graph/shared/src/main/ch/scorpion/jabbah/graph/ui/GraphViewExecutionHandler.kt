@@ -38,7 +38,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  * itself when not in execution mode.
  */
 class GraphViewExecutionHandler(
-	view: DrawingView<GraphView<GraphElementView<*>>>,
+	view: DrawingView<GraphView>,
 	private val scheduler: Scheduler = ExecutionModule.scheduler,
 	eventBus: EventBus = BaseModule.eventBus,
 	applicationMode: ApplicationMode

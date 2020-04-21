@@ -44,7 +44,7 @@ class AntaresScriptGateway(
 
 	/** ---- [ScriptGateway] interface */
 
-	override fun exec(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Any? {
+	override fun exec(script: Script, view: DrawingView<GraphView>): Any? {
 		engine.eval(script.copy(code = GRAPH_WRAPPER.replaceFirst("\$BODY", script.code)))
 		return engine.invoke("execGraph", null, CircuitViewBridge(view, null))
 	}
@@ -59,7 +59,7 @@ class AntaresScriptGateway(
 		engine.invoke("execVertice", null, CircuitElemModelBridge(vertice, signalHandler, data, store))
 	}
 
-	override fun condition(script: Script, view: DrawingView<GraphView<GraphElementView<*>>>): Boolean {
+	override fun condition(script: Script, view: DrawingView<GraphView>): Boolean {
 		if (StringUtils.isEmpty(script.code)) {
 			return false
 		}
