@@ -130,12 +130,11 @@ class EdgeToPortConnector(
 	private fun beginConnecting(context: EditInputEventContext) {
 		createEdgeView(context.drawingView(), Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.model as Net<Any>)
 		removePortViewHighlight(context)
-		splitCommand = createSplitEdgeViewCommand(context.editor)
-		splitCommand!!.execute()
+		context.editor.commandManager.beginTransaction(createSplitEdgeViewCommand(context.editor))
 	}
 
 	override fun cancel(editor: Editor) {
-		splitCommand?.undo()
+		editor.commandManager.rollbackTransaction()
 		ConnectionPointHighlighter.removePortViewHighlight(editor.view)
 		reset()
 	}
@@ -145,7 +144,8 @@ class EdgeToPortConnector(
 			connectService.connectToDestination(edgeView!!, targetPortView!!.createConnection() as Connection<Any>)
 		}
 
-		context.editor.commandManager.register(splitCommand!!)
+		context.editor.commandManager.commitTransaction()
+
 		splitCommand = null
 	}
 

@@ -33,8 +33,6 @@ interface Command {
      * This method is called by the [CommandManager] to reset the effect of a previous undo action. But it can
      * also be called by the code that created this [Command], thus avoiding duplicate code for changing the state
      * of the [Drawing].
-     *
-     * [Command] should call the [.execute] method of its child (if any) prior to executing its own logic.
      */
     fun execute()
 
@@ -47,8 +45,7 @@ interface Command {
     /**
      * Undoes the change of an [Drawing]'s state that is associated with this [Command].
      *
-     * This method is called by the [CommandManager]> to perform an undo action. [Command] should call the
-     * [.undo] method of its child (if any) prior to executing its own logic.
+     * This method is called by the [CommandManager] to perform an undo action.
      */
     fun undo()
 
