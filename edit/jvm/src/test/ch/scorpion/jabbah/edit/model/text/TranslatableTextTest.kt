@@ -99,7 +99,7 @@ class TranslatableTextTest {
 		typeMap.register("translation", Translation::class)
 		IOModule.typeMap = typeMap
 
-		val clone = StorableCloner.clone(obj) as ClassUsingTranslatable
+		val clone = StorableCloner.clone(obj)
 
 		assertEquals("Meer", clone.attribute.getTranslation(German))
 		assertEquals("Sea", clone.attribute.getTranslation(English))

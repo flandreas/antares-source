@@ -13,17 +13,17 @@ interface StoreReader {
 
     fun hasElement(name: String): Boolean
 
-    fun getStorable(id: Int): Storable
+    fun <T: Storable> getStorable(id: Int): T
 
     /** Reads the toplevel [Storable].*/
-    fun readStorable(): Storable
+    fun <T: Storable> readStorable(): T
 
     /**
      * Reads the next [Storable] with the specified name.
      * @param name the name of the [Storable].
      * @return the read [Storable]
      */
-    fun readStorable(name: String): Storable
+    fun <T: Storable> readStorable(name: String): T
 
 	/**
 	 * Reads the next [Storable] at the specified path of names.

@@ -33,7 +33,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 	companion object {
 		private val LOG by logger(OscilloscopeProbeVerticeView::class)
-		private val TYPE = ""
+		private const val TYPE = ""
 		private const val CONN_POINT_SIZE = 4.0
 	}
 
@@ -105,7 +105,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		super.resolve(reference, referenceResolver)
 		if (reference.name == "edgeView") {
-			edgeView = referenceResolver.getStorable(reference.referenceId) as EdgeView<T>
+			edgeView = referenceResolver.getStorable(reference.referenceId)!!
 		}
 	}
 

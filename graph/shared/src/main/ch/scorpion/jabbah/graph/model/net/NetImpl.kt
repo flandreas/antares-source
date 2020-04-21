@@ -140,7 +140,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		val portRefs = _ports.map { PortRef(it) }.sortedBy { it.verticeId }
-		if (!portRefs.isEmpty()) {
+		if (portRefs.isNotEmpty()) {
 			writer.writeStorables("ports", portRefs.iterator())
 		}
 	}
@@ -159,7 +159,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		super.resolve(reference, referenceResolver)
 		if (reference.name == "portRef") {
-			val vertice = referenceResolver.getStorable(reference.referenceId) as Vertice
+			val vertice: Vertice = referenceResolver.getStorable(reference.referenceId)!!
 			val portId = (reference.additionalInfo as PortRef<T>).portId
 			try {
 				val port = vertice.getPort<T>(portId)

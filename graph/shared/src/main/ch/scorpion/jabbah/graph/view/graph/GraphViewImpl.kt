@@ -185,7 +185,7 @@ open class GraphViewImpl(
 				GraphReferenceResolver(model),
 				ReferenceResolverImpl()
 			)
-		) as GraphViewImpl
+		)
 		clone.graph = model
 		return clone
 	}

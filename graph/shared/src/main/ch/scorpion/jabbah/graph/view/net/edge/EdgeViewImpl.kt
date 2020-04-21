@@ -658,7 +658,7 @@ open class EdgeViewImpl<T : Any>(
 
 		if ("orig" == reference.name || "dest" == reference.name) {
 			val ref = reference.additionalInfo as VerticeViewRef
-			val cv = referenceResolver.getStorable(ref.verticeViewId) as ConnectableView
+			val cv: ConnectableView = referenceResolver.getStorable(ref.verticeViewId)!!
 			var port: Port<*>? = null
 			if (ref.portId != null) {
 				port = cv.getPort(ref.portId)

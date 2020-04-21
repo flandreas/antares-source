@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model.graph
 
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.ReferenceResolver
 import ch.scorpion.jabbah.io.Storable
@@ -14,8 +15,8 @@ class GraphReferenceResolver(val graph: Graph) : ReferenceResolver {
         throw UnsupportedOperationException("inappropriate method call")
     }
 
-    override fun getStorable(globalId: Int): Storable? {
-        return graph.withStorableId(globalId)
+    override fun <T: Storable> getStorable(globalId: Int): T? {
+        return graph.withStorableId<GraphElement>(globalId) as T?
     }
 
     override fun requestResolution(requester: Storable, reference: Reference) {

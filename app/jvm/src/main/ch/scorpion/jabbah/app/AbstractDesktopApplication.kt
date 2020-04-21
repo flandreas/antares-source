@@ -179,7 +179,7 @@ abstract class AbstractDesktopApplication(
 				FileInputStream(identification).use {
 					return try {
 						val storeReader = StoreXmlReader(ElectricXmlReader(it))
-						val drawing = storeReader.readStorable()
+						val drawing: Storable = storeReader.readStorable()
 						data = ApplicationData(drawing, FileSavable.withPath(identification))
 						true
 					} catch (e: Throwable) {

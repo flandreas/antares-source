@@ -9,7 +9,7 @@ class ReferenceResolverProxy(
         backend.addStorable(globalId, storable)
     }
 
-    override fun getStorable(globalId: Int): Storable? {
+    override fun <T: Storable> getStorable(globalId: Int): T? {
         return proxy.getStorable(globalId) ?: backend.getStorable(globalId)
     }
 

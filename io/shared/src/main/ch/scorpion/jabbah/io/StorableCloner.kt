@@ -10,16 +10,16 @@ expect object StorableCloner {
 
 	fun deserialize(s: String): Storable
 
-	fun clone(storable: Storable): Storable
+	fun <T: Storable> clone(storable: T): T
 
-	fun clonePreservingIdentities(storable: Storable, storableCreator: StorableCreator): Storable
+	fun <T: Storable> clonePreservingIdentities(storable: T, storableCreator: StorableCreator): T
 
-	fun cloneUsingCreator(storable: Storable, storableCreator: StorableCreator): Storable
+	fun <T: Storable> cloneUsingCreator(storable: T, storableCreator: StorableCreator): T
 
-	fun clone(
-		storable: Storable,
+	fun <T: Storable> clone(
+		storable: T,
 		identityProvider: GlobalIdentityProvider,
 		storableCreator: StorableCreator,
 		referenceResolver: ReferenceResolver
-	): Storable
+	): T
 }

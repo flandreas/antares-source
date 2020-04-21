@@ -72,7 +72,7 @@ class NetViewImpl<T: Any>(
             // Consider insisting on net != null and fixing the files (which have probably been created by a but in an old version)
             val newNet = referenceResolver.getStorable(reference.referenceId) as Net<T>?
             if (newNet != null) {
-                net = referenceResolver.getStorable(reference.referenceId) as Net<T>
+                net = referenceResolver.getStorable<Net<T>>(reference.referenceId)!!
             }
         }
     }

@@ -139,8 +139,8 @@ open class GraphImpl(
 		return _elements.firstOrNull { it.id == id }
 	}
 
-	override fun withStorableId(storableId: Int): GraphElement? {
-		return _elements.firstOrNull { it.storableId == storableId }
+	override fun <T: GraphElement> withStorableId(storableId: Int): T? {
+		return _elements.firstOrNull { it.storableId == storableId } as T?
 	}
 
 	override fun executionStarted(signalHandler: SignalHandler) {

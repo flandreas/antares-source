@@ -15,11 +15,11 @@ class MemoryLibraryPersistenceService(
 	private val map = mutableMapOf<UUID, MetaGraph>()
 
 	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
-		return StorableCloner.clone(map[uuid]!!) as MetaGraph
+		return StorableCloner.clone(map[uuid]!!)
 	}
 
 	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
-		map[metaGraph.uuid] = StorableCloner.clone(metaGraph) as MetaGraph
+		map[metaGraph.uuid] = StorableCloner.clone(metaGraph)
 	}
 
 	override fun deleteMetaGraph(library: Library, uuid: UUID) {

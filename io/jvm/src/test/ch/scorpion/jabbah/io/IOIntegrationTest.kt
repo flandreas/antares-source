@@ -169,7 +169,7 @@ class IOIntegrationTest {
 
         override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
             if (reference.name == "referencedB") {
-                referencedB = referenceResolver.getStorable(reference.referenceId) as B
+                referencedB = referenceResolver.getStorable(reference.referenceId)
             }
         }
 

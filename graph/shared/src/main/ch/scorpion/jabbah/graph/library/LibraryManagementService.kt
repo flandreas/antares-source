@@ -171,13 +171,13 @@ class LibraryManagementService(
 	}
 
 	private fun copyBaseElement(element: BaseLibraryElement, destination: LibraryDirectory) {
-		val clone = StorableCloner.clone(element) as BaseLibraryElement
+		val clone = StorableCloner.clone(element)
 		libraryService.addLibraryItem(destination.library!!, clone, destination, null)
 	}
 
 	private fun copyContainerLibraryElement(element: ContainerLibraryElement, destination: LibraryDirectory) {
 		libraryService.loadMetaGraph(element.library!!, element)
-		val clone = StorableCloner.clone(element.metaGraph!!) as MetaGraph
+		val clone = StorableCloner.clone(element.metaGraph!!)
 		libraryService.addContainerLibraryElement(destination.library!!, clone, destination, null)
 	}
 }

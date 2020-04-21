@@ -147,7 +147,7 @@ abstract class AbstractPortView<T : Any>(
 				"$INPUT_TEXT:${p.getIncomingSignal()}, $OUTPUT_TEXT:${p.getOutgoingSignal()}"
 			}
 		}
-		var content = StringBuilder(buildToolTipContent())
+		val content = StringBuilder(buildToolTipContent())
 		if (StringUtils.isNotEmpty(valueText)) {
 			content.append("<p/>")
 			content.append("<b>$CURRENT_VALUE_TEXT</b>: $valueText")
@@ -275,7 +275,7 @@ abstract class AbstractPortView<T : Any>(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		if (reference.name == "portRef") {
 			port.removePropertyChangeListener(portListener)
-			_port = referenceResolver.getStorable(reference.referenceId) as Port<T>
+			_port = referenceResolver.getStorable<Storable>(reference.referenceId)!! as Port<T>
 			port.addPropertyChangeListener(portListener)
 		}
 	}

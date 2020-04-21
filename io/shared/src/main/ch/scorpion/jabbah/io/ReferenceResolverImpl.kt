@@ -35,9 +35,9 @@ class ReferenceResolverImpl : ReferenceResolver {
 		map[globalId] = storable
 	}
 
-	override fun getStorable(globalId: Int): Storable? {
+	override fun <T: Storable> getStorable(globalId: Int): T? {
 		LOG.trace("getStorable for id $globalId")
-		return map[globalId]
+		return map[globalId] as T?
 	}
 
 	override fun requestResolution(requester: Storable, reference: Reference) {
@@ -95,7 +95,7 @@ class ReferenceResolverImpl : ReferenceResolver {
 		for (references in resolutionRequestMap.values) {
 			for (reference in references) {
 				reference.resolveAfter?.forEach {
-					val storable = getStorable(it)
+					val storable: Storable? = getStorable(it)
 					if (storable != null && !resolutionRequestList.contains(storable)) {
 						set.add(storable)
 					}
@@ -124,7 +124,7 @@ class ReferenceResolverImpl : ReferenceResolver {
 		for (storable in resolutionRequestMap.keys) {
 			for (reference in resolutionRequestMap[storable]!!) {
 				reference.resolveAfter?.forEach {
-					val predecessor = getStorable(it)
+					val predecessor: Storable? = getStorable(it)
 					if (predecessor != null) {
 						graph.addEdge(predecessor, storable)
 					}

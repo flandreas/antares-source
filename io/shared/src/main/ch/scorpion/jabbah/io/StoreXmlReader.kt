@@ -49,8 +49,8 @@ class StoreXmlReader(
 		return xmlReader.hasElement(name)
 	}
 
-	override fun getStorable(id: Int): Storable {
-		val storable = referenceResolver.getStorable(id)
+	override fun <T: Storable> getStorable(id: Int): T {
+		val storable: T? = referenceResolver.getStorable(id)
 		if (storable == null) {
 			LOG.error("no Storable with id '$id' found")
 			throw IllegalArgumentException()
@@ -58,13 +58,13 @@ class StoreXmlReader(
 		return storable
 	}
 
-	override fun readStorable(): Storable {
-		val storable = readStorableImpl()
+	override fun <T: Storable> readStorable(): T {
+		val storable: T = readStorableImpl()
 		referenceResolver.resolveReferences()
 		return storable
 	}
 
-	override fun readStorable(name: String): Storable {
+	override fun <T: Storable> readStorable(name: String): T {
 		if (!xmlReader.hasElement(name)) {
 			LOG.error("no element in '${xmlReader.getName()}' with name '$name'")
 			throw IllegalArgumentException()
@@ -72,7 +72,7 @@ class StoreXmlReader(
 		xmlReader.descend(name)
 		xmlReader.descend() // a named Storable has only one element inside its name element
 
-		val storable = readStorableImpl()
+		val storable: T = readStorableImpl()
 
 		xmlReader.ascend()
 		xmlReader.ascend()
@@ -89,7 +89,7 @@ class StoreXmlReader(
 			xmlReader.descend() // a named Storable has only one element inside its name element
 		}
 
-		val storable = readStorableImpl()
+		val storable: T = readStorableImpl()
 
 		names.forEach { _ ->
 			xmlReader.ascend()
@@ -98,7 +98,7 @@ class StoreXmlReader(
 
 		// Accept a ClassCastException if cast fails
 		@Suppress("UNCHECKED_CAST")
-		return storable as T
+		return storable
 	}
 
 	override fun <T : Storable> readStorables(name: String): List<T> {
@@ -110,8 +110,6 @@ class StoreXmlReader(
 		for (i in 1..xmlReader.getElementsCount()) {
 			xmlReader.descend(i)
 
-			// Accept a ClassCastException if cast fails
-			@Suppress("UNCHECKED_CAST")
 			storables.add(readStorableImpl() as T)
 
 			xmlReader.ascend()
@@ -187,11 +185,14 @@ class StoreXmlReader(
 
 	/** ---- [StoreXmlReader] */
 
-	private fun readStorableImpl(): Storable {
+	private fun <T: Storable> readStorableImpl(): T {
 		val storable = instantiate(xmlReader.getName())
 		readGlobalId()?.let { referenceResolver.addStorable(it, storable) }
 		storable.read(this)
-		return storable
+
+		// Accept a ClassCastException if cast fails
+		@Suppress("UNCHECKED_CAST")
+		return storable as T
 	}
 
 	private fun instantiate(typeName: String): Storable {

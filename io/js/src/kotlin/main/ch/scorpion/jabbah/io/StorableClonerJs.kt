@@ -21,19 +21,19 @@ actual object StorableCloner {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	actual fun clone(storable: Storable): Storable {
+	actual fun <T: Storable> clone(storable: T): T {
 		return clone(storable, GlobalIdentityCreator(), IOModule.storableCreator, ReferenceResolverImpl())
 	}
 
-	actual fun clonePreservingIdentities(storable: Storable, storableCreator: StorableCreator): Storable {
+	actual fun <T: Storable> clonePreservingIdentities(storable: T, storableCreator: StorableCreator): T {
 		return clone(storable, GlobalIdentityReflector(), storableCreator, ReferenceResolverImpl())
 	}
 
-	actual fun cloneUsingCreator(storable: Storable, storableCreator: StorableCreator): Storable {
+	actual fun <T: Storable> cloneUsingCreator(storable: T, storableCreator: StorableCreator): T {
 		return clone(storable, GlobalIdentityCreator(), storableCreator, ReferenceResolverImpl())
 	}
 
-	actual fun clone(storable: Storable, identityProvider: GlobalIdentityProvider, storableCreator: StorableCreator, referenceResolver: ReferenceResolver): Storable {
+	actual fun <T: Storable> clone(storable: T, identityProvider: GlobalIdentityProvider, storableCreator: StorableCreator, referenceResolver: ReferenceResolver): T {
 		try {
 			var buffer: String? = null
 			val xmlWriter = DomXmlWriter { buffer = it }
@@ -44,7 +44,7 @@ actual object StorableCloner {
 
 			val xmlReader = DomXmlReader(buffer!!)
 			val reader = StoreXmlReader(xmlReader, IOModule.typeMap, storableCreator, referenceResolver)
-			return reader.readStorable()
+			return reader.readStorable() as T
 		} catch (x: Throwable) {
 			LOG.error("Error while cloning Storable: ${x.message}")
 			throw x

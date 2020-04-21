@@ -84,7 +84,7 @@ interface Graph : Namable, Describable, Storable {
     fun withId(id: Int): GraphElement?
 
     /** Returns the [GraphElement] with the specified [Storable] ID.*/
-    fun withStorableId(storableId: Int): GraphElement?
+    fun <T: GraphElement> withStorableId(storableId: Int): T?
 
     /** Called by the execution environment after the execution has been started.*/
     fun executionStarted(signalHandler: SignalHandler)

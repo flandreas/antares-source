@@ -3,13 +3,10 @@ package ch.scorpion.jabbah.graph.view
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.model.AbstractComponent
-import ch.scorpion.jabbah.io.StoreReader
-import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Reference
-import ch.scorpion.jabbah.io.ReferenceResolver
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.io.*
 
 /**
  * Abstract base implementation of the [GraphElementView] interface.
@@ -81,7 +78,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 		isResolving = true
 		super.resolve(reference, referenceResolver)
 		if (STORABLE_MODEL_ID == reference.name) {
-			val storable = referenceResolver.getStorable(reference.referenceId)
+			val storable: Storable? = referenceResolver.getStorable(reference.referenceId)
 			if (storable is GraphElement) {
 				model = storable as T
 				LOG.debug("resolve ${model.id}")

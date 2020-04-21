@@ -437,7 +437,7 @@ class SubGraphVerticeViewImpl(
 
 	private fun getLibraryContainerDrawing(): ContainerDrawing {
 		val libraryGraph = repository.getMetaGraph(subGraphVertice!!.graphUUID!!)
-		return StorableCloner.clonePreservingIdentities(libraryGraph.containerDrawing, storableCreator) as ContainerDrawing
+		return StorableCloner.clonePreservingIdentities(libraryGraph.containerDrawing, storableCreator)
 	}
 
 	private fun updateBoxes() {

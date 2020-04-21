@@ -1,26 +1,29 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.editor.PasteCommand
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.app.CopyPasteUtility
+import ch.scorpion.jabbah.edit.app.DeleteAction
+import ch.scorpion.jabbah.edit.editor.PasteCommand
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.GraphStorable
-import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.io.*
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.edit.app.CopyPasteUtility
-import ch.scorpion.jabbah.edit.app.DeleteAction
-import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.io.*
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
@@ -126,7 +129,7 @@ object CopyPasteUtilitySwing : CopyPasteUtility {
             try {
                 val xmlReader = ElectricXmlReader(it)
                 val reader = StoreXmlReader(xmlReader, typeMap, storableCreator)
-                val copy = reader.readStorable()
+                val copy: Storable = reader.readStorable()
                 val dislocation: Point2D = if (pastedAnchorComponent != null) {
                     pasteCount++
                     pastedAnchorComponent!!.location.subtract(origAnchorComponent!!.location).multiply(pasteCount.toDouble())

@@ -98,7 +98,7 @@ class LibraryTest {
 		circuitView.add(vvr)
 
 		var graphStorable = GraphStorable(circuitView)
-		graphStorable = StorableCloner.cloneUsingCreator(graphStorable, IOModule.storableCreator) as GraphStorable
+		graphStorable = StorableCloner.cloneUsingCreator(graphStorable, IOModule.storableCreator)
 	}
 
 	@Test

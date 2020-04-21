@@ -23,7 +23,7 @@ class GraphStorableTest {
 	fun shouldBeStorable() {
 		val testGraph = TestGraphView()
 		val orig = GraphStorable(testGraph.graphView)
-		val clone: GraphStorable = StorableCloner.cloneUsingCreator(orig, IOModule.storableCreator) as GraphStorable
+		val clone: GraphStorable = StorableCloner.cloneUsingCreator(orig, IOModule.storableCreator)
 
 		// Assert model connectedness
 		val graph: Graph = clone.graphView.graph!!

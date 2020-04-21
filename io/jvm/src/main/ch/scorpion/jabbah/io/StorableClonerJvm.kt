@@ -19,24 +19,24 @@ actual object StorableCloner {
 		return deserializeImpl(s, IOModule.storableCreator, ReferenceResolverImpl())
 	}
 
-	actual fun clone(storable: Storable): Storable {
+	actual fun <T: Storable> clone(storable: T): T {
 		return clone(storable, GlobalIdentityCreator(), IOModule.storableCreator, ReferenceResolverImpl())
 	}
 
-	actual fun clonePreservingIdentities(storable: Storable, storableCreator: StorableCreator): Storable {
+	actual fun <T: Storable> clonePreservingIdentities(storable: T, storableCreator: StorableCreator): T {
 		return clone(storable, GlobalIdentityReflector(), storableCreator, ReferenceResolverImpl())
 	}
 
-	actual fun cloneUsingCreator(storable: Storable, storableCreator: StorableCreator): Storable {
+	actual fun <T: Storable> cloneUsingCreator(storable: T, storableCreator: StorableCreator): T {
 		return clone(storable, GlobalIdentityCreator(), storableCreator, ReferenceResolverImpl())
 	}
 
-	actual fun clone(
-		storable: Storable,
+	actual fun <T: Storable> clone(
+		storable: T,
 		identityProvider: GlobalIdentityProvider,
 		storableCreator: StorableCreator,
 		referenceResolver: ReferenceResolver
-	): Storable {
+	): T {
 		try {
 			val data = serializeImpl(storable, identityProvider)
 			LOG.debug(data)
@@ -47,7 +47,7 @@ actual object StorableCloner {
 		}
 	}
 
-	private fun serializeImpl(storable: Storable, identityProvider: GlobalIdentityProvider): String {
+	private fun <T: Storable> serializeImpl(storable: T, identityProvider: GlobalIdentityProvider): String {
 		val buffer = ByteArrayOutputStream()
 		val xmlWriter = ElectricXmlWriter(buffer)
 		val writer = StoreXmlWriter(xmlWriter, IOModule.typeMap, identityProvider)
@@ -55,9 +55,9 @@ actual object StorableCloner {
 		return buffer.toString()
 	}
 
-	private fun deserializeImpl(s: String, storableCreator: StorableCreator, referenceResolver: ReferenceResolver): Storable {
+	private fun <T: Storable> deserializeImpl(s: String, storableCreator: StorableCreator, referenceResolver: ReferenceResolver): T {
 		val xmlReader = ElectricXmlReader(ByteArrayInputStream(s.toByteArray()))
 		val reader = StoreXmlReader(xmlReader, IOModule.typeMap, storableCreator, referenceResolver)
-		return reader.readStorable()
+		return reader.readStorable() as T
 	}
 }

@@ -21,7 +21,7 @@ interface ReferenceResolver {
      * @param globalId the ID under which the Storable has previously been registered by [.addStorable].
      * @return the [Storable] with global ID `globalId`, or `null` if not found.
      */
-    fun getStorable(globalId: Int): Storable?
+    fun <T: Storable> getStorable(globalId: Int): T?
 
     /**
      * Registers a request of a [Storable] to call him with [Storable.resolve]

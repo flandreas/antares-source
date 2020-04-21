@@ -151,7 +151,7 @@ class EditSubGraphVerticeViewPanel(
 		val libraryGraph = metaGraphRepository.getMetaGraph(subGraphVerticeView.subGraphVertice!!.graphUUID!!)
 		containerPanel.setData(
 			libraryGraph.graph.graphView,
-			StorableCloner.clone(subGraphVerticeView.getEditableContainerDrawing()) as ContainerDrawing)
+			StorableCloner.clone(subGraphVerticeView.getEditableContainerDrawing()))
 	}
 
 	private fun createToolBarPanel(): JPanel {

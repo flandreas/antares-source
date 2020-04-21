@@ -328,7 +328,7 @@ class LibraryService(
 	private fun storeContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement, doClone: Boolean) {
 		LOG.debug("LibraryServiceImpl: Storing MetaGraph")
 		if (doClone) {
-			val clone = StorableCloner.cloneUsingCreator(metaGraph, storableCreator) as MetaGraph
+			val clone = StorableCloner.cloneUsingCreator(metaGraph, storableCreator)
 			element.updateMetaGraph(clone)
 			persister(library.isSystem).storeMetaGraph(library, clone)
 		} else {

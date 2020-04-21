@@ -185,7 +185,7 @@ class ContainerDrawing(
 
 	/** Creates a copy of the [SubGraphVertice] model of this [ContainerDrawing].*/
 	fun createSubGraphVertice(): SubGraphVertice {
-		val subGraphVertice = StorableCloner.cloneUsingCreator(this.model, storableCreator) as SubGraphVertice
+		val subGraphVertice = StorableCloner.cloneUsingCreator(this.model, storableCreator)
 		// The port descriptions are NOT copied when cloning, because they are not part of the persistent state
 		// the Container's SubGraphVertice (see documentation of completeFromGraph()). Therefore, copy them now.
 		subGraphVertice.getPorts().forEach {
@@ -201,7 +201,7 @@ class ContainerDrawing(
 	fun fillSubGraphVerticeView(view: SubGraphVerticeView<SubGraphVerticeRef>) {
 		LOG.debug("filling SubGraphVerticeViewRef name:${model.name} storableId:${model.storableId}, uuid:${model.graphUUID}")
 
-		val clonedDrawing = StorableCloner.cloneUsingCreator(this, storableCreator) as ContainerDrawing
+		val clonedDrawing = StorableCloner.cloneUsingCreator(this, storableCreator)
 		val origin = clonedDrawing.getOriginIndicator().location
 
 		view.drawExecScript = execDrawScript.script
