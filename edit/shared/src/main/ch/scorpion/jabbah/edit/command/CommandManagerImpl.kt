@@ -196,7 +196,6 @@ class CommandManagerImpl(
 
 		fun add(command: Command) {
 			commands.add(command)
-			command.addedToTransaction()
 		}
 
 		fun execute() {

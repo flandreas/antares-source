@@ -23,10 +23,6 @@ abstract class AbstractCommand(
         editor?.drawing?.validate()
     }
 
-    override fun addedToTransaction() {
-        // empty
-    }
-
     override fun registered() {
         // empty
     }

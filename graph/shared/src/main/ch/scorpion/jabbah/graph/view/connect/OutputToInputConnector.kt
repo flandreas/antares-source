@@ -38,15 +38,27 @@ class OutputToInputConnector(
 	override fun completeConnectingToEndPortOrOpen(context: EditInputEventContext) {
 		context.drawingView().drawing.remove(edgeView!!)
 
+		val connectOriginCommand = if (startPortView != null) {
+			ConnectOriginCommand(context.editor, connectService, edgeView!!, startPortView!!.owner!!, startPortView!!.port)
+		} else {
+			null
+		}
+
+		val connectDestinationCommand = if (targetPortView != null) {
+			ConnectDestinationCommand(context.editor, connectService, edgeView!!, targetPortView!!.owner!!, targetPortView!!.port)
+		} else {
+			null
+		}
+
 		context.editor.commandManager.execute(
 			ConnectCommand(
-				editor = context.editor,
-				connectService = connectService,
-				edgeView = edgeView!!,
-				origConnectableView = startPortView!!.owner,
-				origPort = startPortView!!.port,
-				destConnectableView = targetPortView?.owner,
-				destPort = targetPortView?.port))
+				context.editor,
+				edgeView!!,
+				connectOriginCommand,
+				connectDestinationCommand
+			)
+		)
+
 		context.drawingView().selectionManager.select(edgeView!!)
 	}
 }

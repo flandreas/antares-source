@@ -28,13 +28,6 @@ interface Command {
     fun getDescription(): String
 
     /**
-     * Called by the [CommandManager] after this [Command] has been added to a command transaction.
-     * This method is called independent of whether this [Command] is executed or just registered.
-     * Concrete [Command]s can implement this method to add additional [Command]s to the current transaction.
-     */
-    fun addedToTransaction()
-
-    /**
      * Executes the change of a [Drawing]'s state that is associated with this [Command].
      *
      * This method is called by the [CommandManager] to reset the effect of a previous undo action. But it can
