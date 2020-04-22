@@ -22,15 +22,12 @@ import ch.scorpion.jabbah.io.*
  * Standard implementation of the [ScenarioStep] interface.
  */
 class ScenarioStepImpl(
-	private val scriptGateway: ScriptGateway,
-	initialName: String,
+	private val scriptGateway: ScriptGateway = ScriptModule.scriptGateway,
+	initialName: String = "",
 	private val namable: NamableImpl = NamableImpl(initialName),
 	private val describable: DescribableImpl = DescribableImpl()
 
 ) : ScenarioStep, Namable by namable, Describable by describable, Bean {
-
-	@Suppress("unused")
-	constructor() : this(ScriptModule.scriptGateway, "")
 
 	companion object {
 		private val LOG by logger(ScenarioStepImpl::class)

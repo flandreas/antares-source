@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui.usecase
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Editor
@@ -14,6 +15,7 @@ import javax.swing.JScrollPane
 import javax.swing.JSplitPane
 
 class UsecasePanel(
+	application: Application,
 	editor: Editor,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
@@ -21,7 +23,7 @@ class UsecasePanel(
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-	private val treeView = UsecaseTreeView(eventBus)
+	private val treeView = UsecaseTreeView(application, eventBus)
 
 	private val propertyPanel = UsecasePropertyPanel(editor, sheetFactory, eventBus)
 

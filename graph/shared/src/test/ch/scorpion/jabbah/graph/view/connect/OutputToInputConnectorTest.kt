@@ -1,13 +1,16 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.event.ALT_MASK
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import io.mockk.verify
 import kotlin.test.*
 
-class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputToInputConnector) {
+class OutputToInputConnectorTest
+	: AbstractInputEventHandlerTest(GraphViewModule.outputToInputConnector.handler) {
 
 	companion object {
 		init {
@@ -30,47 +33,89 @@ class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputT
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 
 		releaseMouseAt(190, 100)
-		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
-		assertTrue(draggedEdgeView.model.isConnectedWith(v2.model.getInput()))
+
+		assertConnected()
+	}
+
+	private fun assertConnected() {
+		val newEv = builder.graphView.getEdgeViews().first()
+		val newV1 = builder.graphView.getVerticeView("v1")!!
+		val newV2 = builder.graphView.getVerticeView("v2")!!
+
+		assertTrue(newEv.model.isConnectedWith(newV1.model.getOutput()))
+		assertTrue(newEv.model.isConnectedWith(newV2.model.getInput()))
 	}
 
 	@Test
 	fun shouldUndoConnect() {
+		connect()
+
+		editor.commandManager.undo()
+
+		assertTrue(builder.graphView.getEdgeViews().isEmpty())
+	}
+
+	private fun connect() {
 		mouseMoveTo(130, 100)
 		pressMouseAt(130, 100)
 		dragMouseTo(190, 100)
 		releaseMouseAt(190, 100)
+	}
+
+	@Test
+	fun shouldRedoConnect() {
+		connect()
 
 		editor.commandManager.undo()
+		editor.commandManager.redo()
 
-		assertTrue(builder.graphView.getEdgeViews().isEmpty())
-		assertFalse(v1.model.getOutput<Boolean>().isConnected)
-		assertFalse(v2.model.getInput<Boolean>().isConnected)
+		assertConnected()
 	}
 
 	@Test
 	fun shouldConnectOpenEnded() {
+		connectOpenEnded()
+
+		assertConnectOpenEnded()
+	}
+
+	private fun assertConnectOpenEnded() {
+		val newEv = builder.graphView.getEdgeViews().first()
+		val newV1 = builder.graphView.getVerticeView("v1")!!
+		val newV2 = builder.graphView.getVerticeView("v2")!!
+
+		assertTrue(newEv.model.isConnectedWith(newV1.model.getOutput()))
+		assertFalse(newV2.model.getInput<Boolean>().isConnected)
+	}
+
+	private fun connectOpenEnded() {
 		mouseMoveTo(130, 100)
 		pressMouseAt(130, 100)
 		dragMouseTo(150, 100)
 		releaseMouseAt(150, 100)
-
-		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
-		assertFalse(v2.model.getInput<Boolean>().isConnected)
 	}
 
 	@Test
 	fun shouldUndoConnectOpenEnded() {
-		mouseMoveTo(130, 100)
-		pressMouseAt(130, 100)
-		dragMouseTo(150, 100)
-		releaseMouseAt(150, 100)
+		connectOpenEnded()
 
 		editor.commandManager.undo()
 
+		assertUnconnected()
+	}
+
+	private fun assertUnconnected() {
 		assertTrue(builder.graphView.getEdgeViews().isEmpty())
-		assertFalse(v1.model.getOutput<Boolean>().isConnected)
-		assertFalse(v2.model.getInput<Boolean>().isConnected)
+	}
+
+	@Test
+	fun shouldRedoConnectOpenEnded() {
+		connectOpenEnded()
+
+		editor.commandManager.undo()
+		editor.commandManager.redo()
+
+		assertConnectOpenEnded()
 	}
 
 	@Test
@@ -101,6 +146,13 @@ class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputT
 
 	@Test
 	fun shouldAdjustDestination() {
+		connectAdjusted()
+
+		assertConnected()
+		assertAdjustedConnectionGeometry()
+	}
+
+	private fun connectAdjusted() {
 		mouseMoveTo(130, 100)
 		clickMouseAt(130, 100, modifiers = ALT_MASK)
 
@@ -117,12 +169,45 @@ class OutputToInputConnectorTest : AbstractConnectorTest(GraphViewModule.outputT
 		assertEquals(6, draggedEdgeView.segmentPointCount)
 
 		clickMouseAt(190, 100)
-		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
-		assertTrue(draggedEdgeView.model.isConnectedWith(v2.model.getInput()))
+	}
+
+	private fun assertAdjustedConnectionGeometry() {
+		val newEv = builder.graphView.getEdgeViews().first()
+
+		assertEquals(
+			listOf(
+				Point2D(120, 100),
+				Point2D(150, 100),
+				Point2D(150, 200),
+				Point2D(170, 200),
+				Point2D(170, 100),
+				Point2D(200, 100)),
+			newEv.polyline.getPoints(0, newEv.segmentPointCount)
+		)
 	}
 
 	@Test
-	fun shouldUndoAdjustWithEscapePressed() {
+	fun shouldUndoAdjustDestination() {
+		connectAdjusted()
+
+		editor.commandManager.undo()
+
+		assertUnconnected()
+	}
+
+	@Test
+	fun shouldRedoAdjustDestination() {
+		connectAdjusted()
+
+		editor.commandManager.undo()
+		editor.commandManager.redo()
+
+		assertConnected()
+		assertAdjustedConnectionGeometry()
+	}
+
+	@Test
+	fun shouldCancelAdjustWithEscapePressed() {
 		mouseMoveTo(130, 100)
 		clickMouseAt(130, 100, modifiers = ALT_MASK)
 

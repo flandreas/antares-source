@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import io.mockk.every
 import io.mockk.mockk
 
@@ -11,15 +13,16 @@ import io.mockk.mockk
 class TestEditorBuilder {
 
 	val editor: Editor = mockk(relaxed = true)
-	private val view: DrawingView<Drawing<Component>> = mockk(relaxed = true)
+	private val view: DrawingView<GraphView> = mockk(relaxed = true)
 
 	init {
-		every { editor.view } returns view
+		withDrawing(GraphViewImpl())
+		every { editor.view } returns view as DrawingView<Drawing<Component>>
 	}
 
-	fun withDrawing(drawing: Drawing<Component>): TestEditorBuilder {
-		every { editor.drawing } returns drawing
-		every { view.drawing } returns drawing
+	fun withDrawing(graphView: GraphView): TestEditorBuilder {
+		every { editor.drawing } returns (graphView as Drawing<Component>)
+		every { view.drawing } returns graphView
 		return this
 	}
 

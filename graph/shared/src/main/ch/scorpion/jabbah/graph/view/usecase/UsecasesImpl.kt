@@ -54,6 +54,10 @@ class UsecasesImpl(
 		eventBus.post(UsecaseRemovedEvent(graphView!!, usecase))
 	}
 
+	override fun remove(usecaseId: Int) {
+		remove(get(usecaseId))
+	}
+
 	override fun indexOfUsecase(usecase: Usecase): Int = usecases.indexOf(usecase)
 
 	override fun withTests(): List<Usecase> = usecases.filter { it.hasTest }

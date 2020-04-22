@@ -110,20 +110,20 @@ open class GraphMenuBarBuilder(
 	}
 
 	protected open fun fillScenariosMenu(menu: JMenu): JMenu {
-		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioAction())))
-		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioStepAction())))
-		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioAction())))
-		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioStepAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioAction(frame.application))))
+		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioStepAction(frame.application))))
+		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioAction(frame.application))))
+		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioStepAction(frame.application))))
 		return menu
 	}
 
 	protected open fun fillUsecasesMenu(menu: JMenu): JMenu {
-		menu.add(JMenuItem(ActionWrapperSwing(AddUsecaseAction())))
-		menu.add(JMenuItem(ActionWrapperSwing(DeleteUsecaseAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(AddUsecaseAction(frame.application))))
+		menu.add(JMenuItem(ActionWrapperSwing(DeleteUsecaseAction(frame.application))))
 		menu.addSeparator()
-		menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction())))
-		menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction())))
-		menu.add(JMenuItem(ActionWrapperSwing(RunAllTestsAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction(frame.application))))
+		menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction(frame.application))))
+		menu.add(JMenuItem(ActionWrapperSwing(RunAllTestsAction(frame.application))))
 		return menu
 	}
 }

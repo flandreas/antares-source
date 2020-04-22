@@ -1,12 +1,11 @@
 package ch.scorpion.jabbah.graph.ui.usecase
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
-import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -22,8 +21,8 @@ import javax.swing.tree.*
 
 /** Displays the tree of [Usecase]s of a [GraphView].*/
 class UsecaseTreeView(
-	eventBus: EventBus = BaseModule.eventBus,
-	private val commandManager: CommandManager = EditModule.commandManager
+	private val application: Application,
+	eventBus: EventBus = BaseModule.eventBus
 ) : JTree() {
 
 	/** The [JPopupMenu] to be displayed for the [GraphView] node.*/
@@ -65,14 +64,14 @@ class UsecaseTreeView(
 			}
 		}
 
-		graphViewPopupMenu.add(ActionWrapperSwing(AddUsecaseAction()))
+		graphViewPopupMenu.add(ActionWrapperSwing(AddUsecaseAction(application)))
 		graphViewPopupMenu.addSeparator()
-		graphViewPopupMenu.add(ActionWrapperSwing(RunAllTestsAction()))
+		graphViewPopupMenu.add(ActionWrapperSwing(RunAllTestsAction(application)))
 
-		usecasePopupMenu.add(ActionWrapperSwing(DeleteUsecaseAction()))
+		usecasePopupMenu.add(ActionWrapperSwing(DeleteUsecaseAction(application)))
 		usecasePopupMenu.addSeparator()
-		usecasePopupMenu.add(ActionWrapperSwing(RunUsecaseAction()))
-		usecasePopupMenu.add(ActionWrapperSwing(RunSingleUsecaseTestAction()))
+		usecasePopupMenu.add(ActionWrapperSwing(RunUsecaseAction(application)))
+		usecasePopupMenu.add(ActionWrapperSwing(RunSingleUsecaseTestAction(application)))
 	}
 
 	/** Holds the [GraphView] whose [Usecase]s are displayed by this [UsecaseTreeView].*/

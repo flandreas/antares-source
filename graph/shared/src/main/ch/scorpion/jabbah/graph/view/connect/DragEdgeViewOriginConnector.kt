@@ -24,7 +24,7 @@ class DragEdgeViewOriginConnector(
 	private fun createMoveCommand(context: EditInputEventContext): Command {
 		return MoveOriginEndpointCommand(
 			editor = context.editor,
-			edgeView = edgeView!!,
+			edgeViewId = edgeView!!.id,
 			oldLocation = oldLocation,
 			newLocation = edgeView!!.originEndpointView.location)
 	}
@@ -33,9 +33,9 @@ class DragEdgeViewOriginConnector(
 		return ConnectOriginCommand(
 			editor = context.editor,
 			service = connectService,
-			edgeView = edgeView!!,
-			origConnectableView = targetPortView!!.owner!!,
-			origPort = targetPortView!!.port)
+			edgeViewId = edgeView!!.id,
+			origConnectableViewId = targetPortView!!.owner!!.id,
+			origPortId = targetPortView!!.port.portId)
 	}
 
 	override fun cancel(editor: Editor) {

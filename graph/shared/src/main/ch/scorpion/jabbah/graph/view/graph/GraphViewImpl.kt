@@ -38,6 +38,7 @@ import ch.scorpion.jabbah.graph.view.connect.ReconnectOriginConnector
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
+import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.scenario.ScenariosImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecasesImpl
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -71,6 +72,7 @@ open class GraphViewImpl(
 	private val netViewMap: MutableMap<Net<Any>, NetView<Any>> = mutableMapOf()
 
 	init {
+		LOG.debug("Create GraphViewImpl ${hashCode().toString(16)}")
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationObserver)
 	}
 
@@ -188,6 +190,10 @@ open class GraphViewImpl(
 		)
 		clone.graph = model
 		return clone
+	}
+
+	override fun getVerticeView(name: String): VerticeView<*>? {
+		return getDrawables { it is VerticeView<*> && it.model.name == name }.firstOrNull() as VerticeView<*>?
 	}
 
 	override fun getVerticeViews(): ImmutableList<VerticeView<Vertice>> {

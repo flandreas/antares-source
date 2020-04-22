@@ -50,6 +50,8 @@ interface Usecases : Storable {
 	 */
 	fun remove(usecase: Usecase)
 
+	fun remove(usecaseId: Int)
+
 	/** Returns the index of the specified [Usecase] (starting with 0) in this [Usecases].*/
 	fun indexOfUsecase(usecase: Usecase): Int
 

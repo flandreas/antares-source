@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -11,7 +12,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ReconnectOriginConnectorTest : AbstractConnectorTest(GraphViewModule.reconnectOriginConnector) {
+class ReconnectOriginConnectorTest
+	: AbstractInputEventHandlerTest(GraphViewModule.reconnectOriginConnector.handler) {
 
 	companion object {
 		init {
@@ -19,11 +21,17 @@ class ReconnectOriginConnectorTest : AbstractConnectorTest(GraphViewModule.recon
 		}
 	}
 
-	private val ev: EdgeView<Boolean> = GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
-	private val v3 = builder.addVerticeView(createEastOutputVerticeView(100, 200))
+	private val ev: EdgeView<Boolean> = GraphViewModule.graphViewConnectService.addConnection(builder.graphView, v1, v2)
+	private val v3 = builder.addVerticeView(createEastOutputVerticeView("v3", 100, 200))
 
 	@Test
 	fun shouldReconnect() {
+		reconnect()
+
+		assertReconnected()
+	}
+
+	private fun reconnect() {
 		mouseMoveTo(115, 100)
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 		verify { view.setCursor(Cursor.CROSSHAIR) }
@@ -33,51 +41,94 @@ class ReconnectOriginConnectorTest : AbstractConnectorTest(GraphViewModule.recon
 
 		dragMouseTo(150, 100)
 
-		dragMouseTo(120, 200)
+		dragMouseTo(130, 200)
 		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
 
-		releaseMouseAt(120, 200)
-		assertFalse(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
-		assertTrue(draggedEdgeView.model.isConnectedWith(v3.model.getOutput()))
-		assertEquals(v3.getPortConnectionPoint(v3.model.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
+		releaseMouseAt(130, 200)
+	}
+
+	private fun assertReconnected() {
+		val newEv = builder.graphView.getEdgeViews().first()
+		val newV1 = builder.graphView.getVerticeView("v1")!!
+		val newV3 = builder.graphView.getVerticeView("v3")!!
+
+		assertFalse(newEv.model.isConnectedWith(newV1.model.getOutput()))
+		assertTrue(newEv.model.isConnectedWith(newV3.model.getOutput()))
+		assertEquals(newV3.getPortConnectionPoint(newV3.model.getOutput<Boolean>()), newEv.originEndpointView.location)
 	}
 
 	@Test
 	fun shouldUndoReconnect() {
-		mouseMoveTo(115, 100)
-		pressMouseAt(115, 100)
-		dragMouseTo(120, 200)
-		releaseMouseAt(120, 200)
+		editor.commandManager.reset()
+		reconnect()
 
 		editor.commandManager.undo()
 
-		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
-		assertFalse(draggedEdgeView.model.isConnectedWith(v3.model.getOutput()))
-		assertEquals(v1.getPortConnectionPoint(v1.model.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
+		assertOriginal()
+	}
+
+	private fun assertOriginal() {
+		val newEv = builder.graphView.getEdgeViews().first()
+		val newV1 = builder.graphView.getVerticeView("v1")!!
+		val newV3 = builder.graphView.getVerticeView("v3")!!
+
+		assertTrue(newEv.model.isConnectedWith(newV1.model.getOutput()))
+		assertFalse(newEv.model.isConnectedWith(newV3.model.getOutput()))
+		assertEquals(newV1.getPortConnectionPoint(newV1.model.getOutput<Boolean>()), newEv.originEndpointView.location)
+	}
+
+	@Test
+	fun shouldRedoReconnect() {
+		editor.commandManager.reset()
+		reconnect()
+
+		editor.commandManager.undo()
+		editor.commandManager.redo()
+
+		assertReconnected()
 	}
 
 	@Test
 	fun shouldReconnectOpenEnded() {
+		reconnectOpenEnded()
+
+		assertReconnectedOpenEnded()
+	}
+
+	private fun reconnectOpenEnded() {
 		mouseMoveTo(115, 100)
 		pressMouseAt(115, 100)
 		dragMouseTo(150, 200)
 		releaseMouseAt(150, 200)
+	}
 
-		assertFalse(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
-		assertEquals(Point2D(150, 200), draggedEdgeView.originEndpointView.location)
+	private fun assertReconnectedOpenEnded() {
+		val newEv = builder.graphView.getEdgeViews().first()
+		val newV1 = builder.graphView.getVerticeView("v1")!!
+
+		assertFalse(newEv.model.isConnectedWith(newV1.model.getOutput()))
+		assertEquals(Point2D(150, 200), newEv.originEndpointView.location)
 	}
 
 	@Test
 	fun shouldUndoReconnectOpenEnded() {
-		mouseMoveTo(115, 100)
-		pressMouseAt(115, 100)
-		dragMouseTo(150, 200)
-		releaseMouseAt(150, 200)
+		editor.commandManager.reset()
+		reconnectOpenEnded()
 
 		editor.commandManager.undo()
 
-		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
-		assertEquals(v1.getPortConnectionPoint(v1.model.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
+		assertOriginal()
+	}
+
+	@Test
+	fun shouldRedoReconnectOpenEnded() {
+		editor.commandManager.reset()
+		reconnectOpenEnded()
+
+		editor.commandManager.undo()
+		editor.commandManager.redo()
+
+		assertReconnectedOpenEnded()
 	}
 
 	@Test
@@ -88,7 +139,6 @@ class ReconnectOriginConnectorTest : AbstractConnectorTest(GraphViewModule.recon
 
 		pressEscape()
 
-		assertTrue(draggedEdgeView.model.isConnectedWith(v1.model.getOutput()))
-		assertEquals(v1.getPortConnectionPoint(v1.model.getOutput<Boolean>()), draggedEdgeView.originEndpointView.location)
+		assertOriginal()
 	}
 }

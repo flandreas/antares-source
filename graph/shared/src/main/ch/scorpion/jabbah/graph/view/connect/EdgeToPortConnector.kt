@@ -129,8 +129,13 @@ class EdgeToPortConnector(
 
 	private fun beginConnecting(context: EditInputEventContext) {
 		createEdgeView(context.drawingView(), Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.model as Net<Any>)
+		context.drawingView().drawing.remove(edgeView!!)
 		removePortViewHighlight(context)
-		context.editor.commandManager.beginTransaction(createSplitEdgeViewCommand(context.editor))
+
+		val command = createSplitEdgeViewCommand(context.editor)
+		context.editor.commandManager.beginTransaction(command)
+
+		edgeView = command.addedNewEdgeView
 	}
 
 	override fun cancel(editor: Editor) {
@@ -141,7 +146,9 @@ class EdgeToPortConnector(
 
 	private fun completeConnecting(context: EditInputEventContext) {
 		if (targetPortView != null) {
-			connectService.connectToDestination(edgeView!!, targetPortView!!.createConnection() as Connection<Any>)
+			context.editor.commandManager.execute(createConnectDestinationCommand(context.editor))
+		} else {
+			context.editor.commandManager.register(createMoveDestinationCommand(context.editor))
 		}
 
 		context.editor.commandManager.commitTransaction()
@@ -149,16 +156,32 @@ class EdgeToPortConnector(
 		splitCommand = null
 	}
 
-	private fun createSplitEdgeViewCommand(editor: Editor): Command {
+	private fun createSplitEdgeViewCommand(editor: Editor): SplitEdgeViewCommand {
 		return SplitEdgeViewCommand(
 			editor = editor,
 			connectService = connectService,
-			graphView = editor.view.drawing as GraphView,
-			origEdgeView = branchedEdgeView!!,
+			splitEdgeViewId = branchedEdgeView!!.id,
 			segmentIndex = branchedSegmentIndex!!,
 			newEdgeView = edgeView!!,
 			newEdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,
-			targetPortView = targetPortView,
-			nodeView = null)
+			targetConnectableViewId = null,
+			targetPortId = null)
+	}
+
+	private fun createConnectDestinationCommand(editor: Editor): Command {
+		return ConnectDestinationCommand(
+			editor = editor,
+			service = connectService,
+			edgeViewId = edgeView!!.id,
+			destConnectableViewId = targetPortView!!.owner!!.id,
+			destPortId = targetPortView!!.port.portId)
+	}
+
+	private fun createMoveDestinationCommand(editor: Editor): Command {
+		return MoveDestinationEndpointCommand(
+			editor = editor,
+			edgeViewId = edgeView!!.id,
+			oldLocation = edgeView!!.polyline.getFirstPoint(),
+			newLocation = edgeView!!.polyline.getLastPoint())
 	}
 }

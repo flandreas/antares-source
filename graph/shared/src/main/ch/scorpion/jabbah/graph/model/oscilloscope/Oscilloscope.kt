@@ -28,7 +28,7 @@ class Oscilloscope(
 
 	companion object {
 		private val LOG by logger(Oscilloscope::class)
-		private val type = Translations.getString("graph.component.oscilloscope")
+		private val type = Translations.getString("graph.component.oscilloscope.name")
 	}
 
 	/** Maps a probe row number (starting with "1") to its [SignalHistory].*/

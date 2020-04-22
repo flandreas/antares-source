@@ -9,9 +9,10 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
-import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.Connection
+import ch.scorpion.jabbah.graph.view.ConnectionReference
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 
@@ -49,10 +50,10 @@ class ReconnectDestinationConnector(
 			command = ReconnectDestinationCommand(
 				editor = context.editor,
 				service = connectService,
-				edgeView = edgeView!!,
+				edgeViewId = edgeView!!.id,
 				oldConnection = oldDestination!!,
 				newPoint = context.location,
-				newConnection = newConnection
+				newConnectionRef = newConnection?.asReference
 			),
 			register = true)
 
@@ -72,25 +73,30 @@ class ReconnectDestinationConnector(
 private class ReconnectDestinationCommand(
 	editor: Editor,
 	private val service: GraphViewConnectService,
-	private val edgeView: EdgeView<Any>,
+	private val edgeViewId: Int,
 	private val oldConnection: Connection<Any>,
 	private val newPoint: Point2D,
-	private val newConnection: Connection<Any>?
+	private val newConnectionRef: ConnectionReference?
 ) : AbstractCommand("graph.command.reconnect", editor) {
+
+	private val edgeView: EdgeView<*> get() = editor!!.drawing.getWithId(edgeViewId) as EdgeView<*>
 
 	override fun execute() {
 		service.unconnectFromDestination(edgeView)
-		if (newConnection != null) {
-			service.connectToDestination(edgeView, newConnection)
+		if (newConnectionRef != null) {
+			service.connectToDestination(edgeView, newConnectionRef.getConnection(editor!!.drawing as GraphView))
 		} else {
 			edgeView.moveDestinationEndPoint(newPoint.x, newPoint.y)
 		}
 	}
 
 	override fun undo() {
+		// TODO Remove
+		/*
 		if (newConnection != null) {
 			service.unconnectFromDestination(edgeView)
 		}
 		service.connectToDestination(edgeView, oldConnection)
+	 */
 	}
 }

@@ -10,7 +10,9 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.view.Connection
+import ch.scorpion.jabbah.graph.view.ConnectionReference
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 
@@ -48,10 +50,9 @@ class ReconnectOriginConnector(
 			command = ReconnectOriginCommand(
 				editor = context.editor,
 				service = connectService,
-				edgeView = edgeView!!,
-				oldConnection = oldOrigin!!,
+				edgeViewId = edgeView!!.id,
 				newPoint = context.location,
-				newConnection = newConnection
+				newConnectionRef = newConnection?.asReference
 			),
 			register = true)
 
@@ -71,25 +72,29 @@ class ReconnectOriginConnector(
 private class ReconnectOriginCommand(
 	editor: Editor,
 	private val service: GraphViewConnectService,
-	private val edgeView: EdgeView<Any>,
-	private val oldConnection: Connection<Any>,
+	private val edgeViewId: Int,
 	private val newPoint: Point2D,
-	private val newConnection: Connection<Any>?
+	private val newConnectionRef: ConnectionReference?
 ) : AbstractCommand("graph.command.reconnect", editor) {
+
+	private val edgeView: EdgeView<*> get() = editor!!.drawing.getWithId(edgeViewId) as EdgeView<*>
 
 	override fun execute() {
 		service.unconnectFromOrigin(edgeView)
-		if (newConnection != null) {
-			service.connectToOrigin(edgeView, newConnection)
+		if (newConnectionRef != null) {
+			service.connectToOrigin(edgeView, newConnectionRef.getConnection(editor!!.drawing as GraphView))
 		} else {
 			edgeView.moveOriginEndPoint(newPoint.x, newPoint.y)
 		}
 	}
 
 	override fun undo() {
+		// TODO Remove
+		/*
 		if (newConnection != null) {
 			service.unconnectFromOrigin(edgeView)
 		}
 		service.connectToOrigin(edgeView, oldConnection)
+		*/
 	}
 }

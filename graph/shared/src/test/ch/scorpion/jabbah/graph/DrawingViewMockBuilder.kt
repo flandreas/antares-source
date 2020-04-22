@@ -11,7 +11,7 @@ import io.mockk.mockk
  */
 class DrawingViewMockBuilder {
 
-	private val drawingView = mockk<DrawingView<Drawing<*>>>()
+	private val drawingView = mockk<DrawingView<Drawing<*>>>(relaxed = true)
 	private val selectionManager = mockk<SelectionManager>(relaxed = true)
 	private val grid = mockk<Grid>(relaxed = true)
 

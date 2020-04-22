@@ -25,8 +25,22 @@ data class Connection<T : Any>(
 
 	val portConnectionPoint : Point2D get() = connectableView.getPortConnectionPoint(port)
 
+	val asReference: ConnectionReference get() = ConnectionReference(connectableView.id, port?.portId)
+
 	fun getPortConnectionLayoutDirections(edgeView: EdgeView<*>, refPoint: Point2D): Set<Direction> =
 		connectableView.getPortConnectionLayoutDirections(edgeView, port, refPoint)
+}
+
+data class ConnectionReference(
+	val connectableViewId: Int,
+	val portId: Int?
+) {
+
+	fun <T: Any> getConnection(graphView: GraphView): Connection<T> {
+		val connectableView = graphView.getWithId(connectableViewId) as ConnectableView
+		val port = portId?.let { connectableView.getPort(it) }
+		return Connection(connectableView, port) as Connection<T>
+	}
 }
 
 /**

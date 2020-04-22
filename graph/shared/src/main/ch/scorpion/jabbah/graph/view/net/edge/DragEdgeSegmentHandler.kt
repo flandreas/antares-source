@@ -25,7 +25,8 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 	/** ---- [InputEventHandler] */
 
 	override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-		LOG.debug("DragEdgeSegmentHandler: mouseMoved")
+		LOG.debug("mouseMoved")
+
 		val segment = edgeView!!.polyline.findSegment(context.x, context.y)
 		if (segment != null) {
 			updateCursor(segment, context)
@@ -38,7 +39,7 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 	private fun updateCursor(segmentIndex: Int?, context: EditInputEventContext) {
 		if (segmentIndex != null) {
 			val direction = edgeView!!.getSegmentDirection(segmentIndex)
-			LOG.debug("DragEdgeSegmentHandler: direction is $direction")
+			LOG.debug("direction is $direction")
 			when (direction) {
 				Direction.EAST, Direction.WEST -> context.view.setCursor(Cursor.N_RESIZE)
 				Direction.SOUTH, Direction.NORTH -> context.view.setCursor(Cursor.W_RESIZE)
@@ -81,7 +82,7 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 	override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 		LOG.trace("mouseReleased at " + Point2D(context.x, context.y))
 		if (totalOffset != 0.0) {
-			context.editor.commandManager.register(MoveSegmentCommand(context.editor, edgeView!!, segmentIndex!!, totalOffset))
+			context.editor.commandManager.register(MoveSegmentCommand(context.editor, edgeView!!.id, segmentIndex!!, totalOffset))
 		}
 		return null
 	}

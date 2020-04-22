@@ -52,13 +52,14 @@ open class DrawingAppServiceImpl(
 ) : DrawingAppService {
 
 	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>) {
-		commandManager.execute(AddCommand(drawingView, component))
+		val command = AddCommand(drawingView, component)
+		commandManager.execute(command)
 		drawingView.selectionManager.deselectAll()
-		drawingView.selectionManager.select(component)
+		drawingView.selectionManager.select(drawingView.drawing.getWithId(command.addedComponentId)!!)
 	}
 
 	override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String?) {
-		commandManager.execute(DeleteCommand(drawingView, components))
+		commandManager.execute(DeleteCommand(drawingView, components.map { it.id }))
 	}
 
 	override fun group(components: List<Component>, drawingView: DrawingView<Drawing<Component>>) {

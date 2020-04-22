@@ -55,6 +55,10 @@ class ScenariosImpl(
 		eventBus.post(ScenarioRemovedEvent(graphView!!, scenario))
 	}
 
+	override fun remove(scenarioId: Int) {
+		remove(get(scenarioId))
+	}
+
 	override fun addStep(scenario: Scenario, step: ScenarioStep) {
 		addStep(scenario, step, scenario.stepCount)
 	}
@@ -69,14 +73,28 @@ class ScenariosImpl(
 		eventBus.post(ScenarioStepRemovedEvent(graphView!!, scenario, step))
 	}
 
-	override fun moveStep(scenario: Scenario, step: ScenarioStep, index: Int) {
+	override fun removeStep(scenarioId: Int, stepId: Int) {
+		val scenario = get(scenarioId)
+		removeStep(scenario, scenario.getStep(stepId))
+	}
+
+	override fun moveStep(scenarioId: Int, stepId: Int, index: Int) {
+		val scenario = get(scenarioId)
+		val step = scenario.getStep(stepId)
 		scenario.moveStep(step, index)
 		eventBus.post(ScenarioStepMovedEvent(graphView!!, scenario, step, index))
 	}
 
 	override fun indexOfScenario(scenario: Scenario): Int = scenarios.indexOf(scenario)
 
+	override fun indexOfScenario(scenarioId: Int): Int = indexOfScenario(get(scenarioId))
+
 	override fun indexOfStep(scenario: Scenario, step: ScenarioStep): Int = scenario.indexOf(step)
+
+	override fun indexOfStep(scenarioId: Int, scenarioStepId: Int): Int {
+		val scenario = get(scenarioId)
+		return indexOfStep(scenario, scenario.getStep(scenarioStepId))
+	}
 
 	/** ---- [Storable] interface */
 

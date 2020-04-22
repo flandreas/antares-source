@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -25,6 +26,7 @@ import javax.swing.JPanel
  * to display a [ScenarioPanel] and a [UsecasePanel].
  */
 class GraphEditPanel(
+	application: Application,
 	editor: Editor,
 	scheduler: Scheduler,
 	viewManager: ViewManager,
@@ -40,9 +42,9 @@ class GraphEditPanel(
 		scheduler = scheduler
 	)
 
-	private val scenarioPanel = ScenarioPanel(editor, eventBus, propertySheetFactory)
+	private val scenarioPanel = ScenarioPanel(application, editor, eventBus, propertySheetFactory)
 
-	private val usecasePanel = UsecasePanel(editor, eventBus, propertySheetFactory)
+	private val usecasePanel = UsecasePanel(application, editor, eventBus, propertySheetFactory)
 
 	private val sidebarSplitPane = SidebarSplitPane(
 		location = SidebarPane.Location.Right,

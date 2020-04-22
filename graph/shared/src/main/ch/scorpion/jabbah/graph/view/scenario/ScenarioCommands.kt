@@ -1,94 +1,128 @@
 package ch.scorpion.jabbah.graph.view.scenario
 
+import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.command.AbstractCommand
-import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.ScenarioStep
+import ch.scorpion.jabbah.io.StorableCloner
 
 /**
- * Adds a [Scenario] to a [Graph].
+ * Adds a clone of a [Scenario] to a [GraphView].
  */
 class AddScenarioCommand(
-	private val graphView: GraphView,
+	private val application: Application,
 	private val scenario: Scenario
-) : AbstractCommand("scenario.command.scenario.add", null) {
+) : AbstractCommand("scenario.command.scenario.add", null), Undoable {
+
+	private val graphView: GraphView get() = (application.data!!.content as MetaGraph).graph.graphView
+	var addedScenarioId: Int = 0
+		private set
 
 	override fun execute() {
-		graphView.scenarios.add(scenario)
+		val clone = StorableCloner.clone(scenario)
+		graphView.scenarios.add(clone)
+		addedScenarioId = clone.id
 	}
 
 	override fun undo() {
-		graphView.scenarios.remove(scenario)
+		// TODO Remove
+		// graphView.scenarios.remove(scenario)
+	}
+
+	override fun undo1() {
+		graphView.scenarios.remove(addedScenarioId)
 	}
 }
 
-/** Deletes a [Scenario] from a [Graph].*/
+/**
+ * Deletes a [Scenario] from a [GraphView].
+ * By intention not [Undoable] to avoid the need to store a clone.
+ */
 class DeleteScenarioCommand(
-	private val graphView: GraphView,
-	private val scenario: Scenario
+	private val application: Application,
+	private val scenarioId: Int
 ) : AbstractCommand("scenario.command.scenario.delete", null) {
 
-	private val index = graphView.scenarios.indexOfScenario(scenario)
+	private val graphView: GraphView get() = (application.data!!.content as MetaGraph).graph.graphView
 
 	override fun execute() {
-		graphView.scenarios.remove(scenario)
+		graphView.scenarios.remove(scenarioId)
 	}
 
 	override fun undo() {
-		graphView.scenarios.add(scenario, index)
+		// TODO Remove
+		//graphView.scenarios.add(scenario, index)
 	}
 }
 
 /** Adds a [ScenarioStep] to a [Scenario].*/
 class AddScenarioStepCommand(
-	private val graphView: GraphView,
-	private val scenario: Scenario,
+	private val application: Application,
+	private val scenarioId: Int,
 	private val scenarioStep: ScenarioStep
-) : AbstractCommand("scenario.command.scenarioStep.add") {
+) : AbstractCommand("scenario.command.scenarioStep.add"), Undoable {
+
+	private val graphView: GraphView get() = (application.data!!.content as MetaGraph).graph.graphView
+	var addedScenarioStepId: Int = 0
+		private set
 
 	override fun execute() {
-		graphView.scenarios.addStep(scenario, scenarioStep)
+		val clone = StorableCloner.clone(scenarioStep)
+		graphView.scenarios.addStep(graphView.scenarios.get(scenarioId), clone)
+		addedScenarioStepId = clone.id
 	}
 
 	override fun undo() {
-		graphView.scenarios.removeStep(scenario, scenarioStep)
+		// TODO Remove
+		// graphView.scenarios.removeStep(scenario, scenarioStep)
+	}
+
+	override fun undo1() {
+		graphView.scenarios.removeStep(scenarioId, addedScenarioStepId)
 	}
 }
 
-/** Deletes a [ScenarioStep] from its [Scenario].*/
+/**
+ * Deletes a [ScenarioStep] from its [Scenario].
+ * By intention not [Undoable] to avoid the need to store a clone.
+ */
 class DeleteScenarioStepCommand(
-	private val graphView: GraphView,
-	private val scenario: Scenario,
-	private val scenarioStep: ScenarioStep
+	private val application: Application,
+	private val scenarioId: Int,
+	private val scenarioStepId: Int
 ) : AbstractCommand("scenario.command.scenarioStep.delete") {
 
-	private val index = graphView.scenarios.indexOfStep(scenario, scenarioStep)
+	private val graphView: GraphView get() = (application.data!!.content as MetaGraph).graph.graphView
 
 	override fun execute() {
-		graphView.scenarios.removeStep(scenario, scenarioStep)
+		graphView.scenarios.removeStep(scenarioId, scenarioStepId)
 	}
 
 	override fun undo() {
-		graphView.scenarios.addStep(scenario, scenarioStep, index)
+		// TODO Remove
+		//graphView.scenarios.addStep(scenario, scenarioStep, index)
 	}
 }
 
 /** Moves a [ScenarioStep] within its [Scenario], i.e. changes the position in the ordered list.*/
 class MoveScenarioStepCommand(
-	private val graphView: GraphView,
-	private val scenario: Scenario,
-	private val scenarioStep: ScenarioStep,
+	private val application: Application,
+	private val scenarioId: Int,
+	private val scenarioStepId: Int,
 	private val newIndex: Int
 ) : AbstractCommand("scenario.command.scenarioStep.move") {
 
-	private val oldIndex: Int = graphView.scenarios.indexOfStep(scenario, scenarioStep)
+	private val graphView: GraphView get() = (application.data!!.content as MetaGraph).graph.graphView
+	private val oldIndex: Int = graphView.scenarios.indexOfStep(scenarioId, scenarioStepId)
 
 	override fun execute() {
-		graphView.scenarios.moveStep(scenario, scenarioStep, newIndex)
+		graphView.scenarios.moveStep(scenarioId, scenarioStepId, newIndex)
 	}
 
 	override fun undo() {
-		graphView.scenarios.moveStep(scenario, scenarioStep, oldIndex)
+		graphView.scenarios.moveStep(scenarioId, scenarioStepId, oldIndex)
 	}
 }

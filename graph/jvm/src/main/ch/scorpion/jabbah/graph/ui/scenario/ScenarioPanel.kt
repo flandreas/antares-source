@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Editor
@@ -24,6 +25,7 @@ import javax.swing.JSplitPane
  * [EventBus].
  */
 class ScenarioPanel(
+	application: Application,
 	editor: Editor,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
@@ -31,7 +33,7 @@ class ScenarioPanel(
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-	private val treeView = ScenarioTreeView(eventBus)
+	private val treeView = ScenarioTreeView(application)
 
 	private val propertyPanel = ScenarioPropertyPanel(editor, sheetFactory, eventBus)
 

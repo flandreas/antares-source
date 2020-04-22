@@ -1,15 +1,15 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
-import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
 
 /**
- * Supports dragging a segment point of an [EdgeView] when [Layout.NONE] is active.
+ * Supports dragging a segment point of an [EdgeView] when [LayoutType.NONE] is active.
  */
 class DragEdgePointHandler : EdgeViewInputEventHandler() {
 
@@ -69,7 +69,7 @@ class DragEdgePointHandler : EdgeViewInputEventHandler() {
         if (oldLocation != null) {
             val newLocation = edgeView!!.getSegmentPoint(highlight!!.pointIndex!!)
             context.editor.commandManager.register(MoveEdgePointCommand(
-                    context.editor, edgeView!!, highlight!!.pointIndex!!, newLocation.subtract(oldLocation!!)))
+                    context.editor, edgeView!!.id, highlight!!.pointIndex!!, newLocation.subtract(oldLocation!!)))
         }
         oldLocation = null
         return null

@@ -3,9 +3,15 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.DESTINATION
 
+/**
+ * Drags the open destination endpoint of an [EdgeView] to either another open location
+ * or to be connected with a target [PortView].
+ */
 class DragEdgeViewDestinationConnector(
 	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
 ) : AbstractDragEdgeViewEndpointConnector(DESTINATION) {
@@ -24,7 +30,7 @@ class DragEdgeViewDestinationConnector(
 	private fun createMoveCommand(context: EditInputEventContext): Command {
 		return MoveDestinationEndpointCommand(
 			editor = context.editor,
-			edgeView = edgeView!!,
+			edgeViewId = edgeView!!.id,
 			oldLocation = oldLocation,
 			newLocation = edgeView!!.destinationEndpointView.location)
 	}
@@ -33,9 +39,9 @@ class DragEdgeViewDestinationConnector(
 		return ConnectDestinationCommand(
 			editor = context.editor,
 			service = connectService,
-			edgeView = edgeView!!,
-			destConnectableView = targetPortView!!.owner!!,
-			destPort = targetPortView!!.port)
+			edgeViewId = edgeView!!.id,
+			destConnectableViewId = targetPortView!!.owner!!.id,
+			destPortId = targetPortView!!.port.portId)
 	}
 
 	override fun cancel(editor: Editor) {

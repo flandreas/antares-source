@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
+import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCreator
@@ -76,6 +77,8 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	 * @return a clone of this [GraphView] that is connected with [model]
 	 */
 	fun cloneForExistingModel(model: Graph, storableCreator: StorableCreator = IOModule.storableCreator): GraphView
+
+	fun getVerticeView(name: String): VerticeView<*>?
 
 	fun getVerticeViews(): ImmutableList<VerticeView<Vertice>>
 

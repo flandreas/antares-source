@@ -427,19 +427,19 @@ abstract class AbstractPortViewStartConnector(
 	}
 
 	private fun completeConnectingToEdge(context: EditInputEventContext) {
+		connectService.unconnect(edgeView!!)
 		context.drawingView().drawing.remove(edgeView!!)
 
 		context.editor.commandManager.execute(
 			SplitEdgeViewCommand(
 				editor = context.editor,
 				connectService = connectService,
-				graphView = context.editor.drawing as GraphView,
-				origEdgeView = targetEdgeView!!,
+				splitEdgeViewId = targetEdgeView!!.id,
 				segmentIndex = targetEdgeViewSegmentIndex!!,
 				newEdgeView = edgeView!!,
 				newEdgeViewEndpointType = draggedEndpointType,
-				targetPortView = startPortView!!,
-				nodeView = null
+				targetConnectableViewId = startPortView!!.owner!!.id,
+				targetPortId = startPortView!!.port.portId
 			)
 		)
 	}

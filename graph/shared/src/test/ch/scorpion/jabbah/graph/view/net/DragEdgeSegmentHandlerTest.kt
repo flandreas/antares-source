@@ -1,0 +1,77 @@
+package ch.scorpion.jabbah.graph.view.net
+
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.net.edge.DragEdgeSegmentHandler
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewInputEventHandler
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class DragEdgeSegmentHandlerTest : AbstractInputEventHandlerTest(DragEdgeSegmentHandler()) {
+
+	companion object {
+		init {
+			GraphViewTestRule.configure()
+		}
+	}
+
+	private val v3 = builder.addVerticeView(createEastOutputVerticeView("v2", 200, 200))
+
+	init {
+		builder.connect(v1, v3)
+		editor.commandManager.reset()
+		edgeViewInputEventHandler.edgeView = builder.graphView.getEdgeViews().first()
+	}
+
+	private val edgeViewInputEventHandler get() = handler as EdgeViewInputEventHandler
+
+	@Test
+	fun shouldMoveSegment() {
+		moveSegment()
+
+		assertSegmentMoved()
+	}
+
+	private fun moveSegment() {
+		mouseMoveTo(160, 150)
+		pressMouseAt(160, 150)
+		dragMouseTo(190, 150)
+		releaseMouseAt(190, 150)
+	}
+
+	private fun assertSegmentMoved() {
+		val newEv = builder.graphView.getEdgeViews().first()
+		assertEquals(
+			listOf(Point2D(120, 100), Point2D(190, 100), Point2D(190, 200), Point2D(200, 200)),
+			newEv.polyline.getPoints(0, newEv.segmentPointCount)
+		)
+	}
+
+	@Test
+	fun shouldUndoMoveSegment() {
+		moveSegment()
+
+		editor.commandManager.undo()
+
+		assertOriginalEdgeView()
+	}
+
+	private fun assertOriginalEdgeView() {
+		val newEv = builder.graphView.getEdgeViews().first()
+		assertEquals(
+			listOf(Point2D(120, 100), Point2D(160, 100), Point2D(160, 200), Point2D(200, 200)),
+			newEv.polyline.getPoints(0, newEv.segmentPointCount)
+		)
+	}
+
+	@Test
+	fun shouldRedoMoveSegment() {
+		moveSegment()
+
+		editor.commandManager.undo()
+		editor.commandManager.redo()
+
+		assertSegmentMoved()
+	}
+}

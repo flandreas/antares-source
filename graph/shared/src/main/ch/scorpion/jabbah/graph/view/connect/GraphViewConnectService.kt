@@ -114,7 +114,7 @@ interface GraphViewConnectService {
 	 */
 	fun <T : Any> split(
 		graphView: GraphView,
-		splittedEdgeView: EdgeView<T>,
+		splitEdgeView: EdgeView<T>,
 		splitSegmentIndex: Int,
 		newEdgeView: EdgeView<T>,
 		newEdgeViewEndpointType: EdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,

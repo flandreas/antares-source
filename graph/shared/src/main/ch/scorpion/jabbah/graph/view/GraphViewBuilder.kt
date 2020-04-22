@@ -3,7 +3,9 @@ package ch.scorpion.jabbah.graph.view
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.UndoableDataHolder
+import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -25,16 +27,21 @@ open class GraphViewBuilder<T : Any>(
 	name: String = Translations.getString("graph.name.unknown")
 ) : UndoableDataHolder {
 
-	var graphView: GraphView = GraphViewModule.createGraphView(GraphModelModule.graphFactory.invoke(name))
-		private set
+	companion object {
+		private val LOG by logger(GraphViewBuilder::class)
+	}
+
+	private var graphStorable: GraphStorable = GraphStorable(GraphViewModule.createGraphView(GraphModelModule.graphFactory.invoke(name)))
+	val graphView: GraphView get() = graphStorable.graphView
 	val graph: Graph get() = graphView.graph!!
 
 	override fun getUndoableState(): Storable? {
-		return graphView
+		return graphStorable
 	}
 
 	override fun setUndoableState(state: Storable) {
-		graphView = state as GraphView
+		graphStorable = state as GraphStorable
+		LOG.debug("Set undoable state $state with GraphView ${graphView.hashCode().toString(16)}")
 	}
 
 	fun build(): GraphView {

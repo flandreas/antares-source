@@ -55,6 +55,7 @@ class SourcingCommandManager(
 		}
 
 	override fun bindDataHolder(dataHolder: UndoableDataHolder) {
+		LOG.debug("Binding to $dataHolder")
 		undoableDataHolder = dataHolder
 		reset()
 	}
@@ -72,6 +73,7 @@ class SourcingCommandManager(
 		snapshots.clear()
 		redoSnapshots.clear()
 		undoableDataHolder.getUndoableState()?.let { addableSnapshot() }
+		eventBus.post(CommandEvent(this))
 	}
 
 	override fun register(command: Command) {
@@ -214,7 +216,7 @@ class SourcingCommandManager(
 
 	/** ---- [SourcingCommandManager] */
 
-	private inner class Snapshot(val data: Storable) {
+	private inner class Snapshot(private val data: Storable) {
 		val undoStack = Stack<Transaction>()
 		val redoStack = Stack<Transaction>()
 
@@ -246,8 +248,11 @@ class SourcingCommandManager(
 		}
 
 		private fun replayFromSnapshot() {
-			undoableDataHolder.setUndoableState(StorableCloner.clone(data))
+			val clonedData = StorableCloner.clone(data)
+			LOG.debug("Clone snapshot and set as new undoable data $clonedData")
+			undoableDataHolder.setUndoableState(clonedData)
 
+			LOG.debug("Replaying")
 			undoStack.items.forEach {
 				LOG.debug(".. replaying transaction ${it.headCommand.getDescription()}")
 				it.execute()

@@ -42,35 +42,44 @@ open class GraphViewAppServiceImpl(
 
 	override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String?) {
 		LOG.debug("delete ${components.size} components")
+
 		commandManager.beginTransaction(cmdDescriptionKey ?: "edit.command.delete", drawingView)
 
 		for (component in components) {
 			if (component is VerticeView<*>) {
-				unconnectDeletedVerticeView(component, drawingView.drawing as GraphView)
+				unconnectDeletedVerticeView(component, drawingView as DrawingView<GraphView>)
 			} else if (component is EdgeView<*>) {
-				unconnectDeletedEdgeView(component as EdgeView<Any>, drawingView.drawing as GraphView)
+				if (drawingView.drawing.contains(component)) {
+					// Might have been joined away by a previous removal of another EdgeView
+					unconnectDeletedEdgeView(component as EdgeView<Any>, drawingView as DrawingView<GraphView>)
+				}
 			}
 		}
 
-		commandManager.execute(DeleteCommand(drawingView, components.map { possibleWrapper(it, drawingView.drawing) }))
+		commandManager.execute(DeleteCommand(
+			drawingView,
+			components
+				.filter { drawingView.drawing.contains(it) }
+				.map { possibleWrapper(it, drawingView.drawing).id }))
+
 		commandManager.commitTransaction()
 	}
 
 	/** ---- [GraphViewAppServiceImpl] */
 
-	private fun unconnectDeletedVerticeView(verticeView: VerticeView<*>, graphView: GraphView) {
+	private fun unconnectDeletedVerticeView(verticeView: VerticeView<*>, drawingView: DrawingView<GraphView>) {
 		LOG.debug("unconnectDeletedVerticeView for verticeView ${verticeView.id}")
-		graphView.getEdgeViews()
+		drawingView.drawing.getEdgeViews()
 			.filter { ev -> ev.origin?.connectableView === verticeView }
-			.forEach { ev -> commandManager.execute(UnconnectEdgeViewOriginCommand(connectService, ev)) }
-		graphView.getEdgeViews()
+			.forEach { ev -> commandManager.execute(UnconnectEdgeViewOriginCommand(drawingView, connectService, ev.id)) }
+		drawingView.drawing.getEdgeViews()
 			.filter { ev -> ev.destination?.connectableView === verticeView }
-			.forEach { ev -> commandManager.execute(UnconnectEdgeViewDestinationCommand(connectService, ev)) }
+			.forEach { ev -> commandManager.execute(UnconnectEdgeViewDestinationCommand(drawingView, connectService, ev.id)) }
 	}
 
-	private fun unconnectDeletedEdgeView(edgeView: EdgeView<Any>, graphView: GraphView) {
+	private fun unconnectDeletedEdgeView(edgeView: EdgeView<Any>, drawingView: DrawingView<GraphView>) {
 		LOG.debug("unconnectDeletedEdgeView for verticeView ${edgeView.id}")
-		commandManager.execute(UnconnectEdgeViewCommand(connectService, graphView, edgeView))
+		commandManager.execute(UnconnectEdgeViewCommand(drawingView, connectService, edgeView.id))
 	}
 
 	private fun getWrapperOf(component: Component, drawing: Drawing<Component>): GraphElementViewWrapper? {
@@ -86,21 +95,23 @@ open class GraphViewAppServiceImpl(
 }
 
 private class UnconnectEdgeViewCommand(
+	private val drawingView: DrawingView<GraphView>,
 	private val connectService: GraphViewConnectService,
-	private val graphView: GraphView,
-	private val edgeView: EdgeView<Any>
+	private val edgeViewId: Int
 ) : AbstractCommand("graph.command.unconnectEdgeView", null) {
 
-	private val origin = edgeView.origin
-	private val destination = edgeView.destination
+	private val edgeView get() = drawingView.drawing.getWithId(edgeViewId) as EdgeView<Any>
 
-	private lateinit var joinResults: Pair<JoinEdgeViewsResult<Any>?>
+	lateinit var joinResults: Pair<JoinEdgeViewsResult<Any>?>
+		private set
 
 	override fun execute() {
 		joinResults = connectService.unconnect(edgeView)
 	}
 
 	override fun undo() {
+		// TODO Remove
+		/*
 		if (joinResults.first == null) {
 			origin?.let { connectService.connectToOrigin(edgeView, it) }
 		} else {
@@ -126,37 +137,42 @@ private class UnconnectEdgeViewCommand(
 				joinResults.second!!.targetPortView,
 				joinResults.second!!.tailEdgeView)
 		}
+		*/
 	}
 }
 
 private class UnconnectEdgeViewOriginCommand(
+	private val drawingView: DrawingView<GraphView>,
 	private val connectService: GraphViewConnectService,
-	private val edgeView: EdgeView<Any>
+	private val edgeViewId: Int
 ) : AbstractCommand("graph.command.unconnectEdgeViewOrigin", null) {
 
-	private val connection = edgeView.origin!!
+	private val edgeView get() = drawingView.drawing.getWithId(edgeViewId) as EdgeView<Any>
 
 	override fun execute() {
 		connectService.unconnectEdgeViewOrigin(edgeView)
 	}
 
 	override fun undo() {
-		connectService.connectToOrigin(edgeView, connection)
+		// TODO Remove
+		//connectService.connectToOrigin(edgeView, connection)
 	}
 }
 
 private class UnconnectEdgeViewDestinationCommand(
+	private val drawingView: DrawingView<GraphView>,
 	private val connectService: GraphViewConnectService,
-	private val edgeView: EdgeView<Any>
+	private val edgeViewId: Int
 ) : AbstractCommand("graph.command.unconnectEdgeViewDestination", null) {
 
-	private val connection = edgeView.destination!!
+	private val edgeView get() = drawingView.drawing.getWithId(edgeViewId) as EdgeView<Any>
 
 	override fun execute() {
 		connectService.unconnectEdgeViewDestination(edgeView)
 	}
 
 	override fun undo() {
-		connectService.connectToDestination(edgeView, connection)
+		// TODO Remove
+		//connectService.connectToDestination(edgeView, connection)
 	}
 }

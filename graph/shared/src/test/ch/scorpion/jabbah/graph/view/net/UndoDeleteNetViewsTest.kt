@@ -36,6 +36,8 @@ class UndoDeleteNetViewsTest {
 	@BeforeTest
 	fun setup(){
 		builder = GraphViewBuilder()
+		EditModule.commandManager.bindDataHolder(builder)
+
 		every { drawingView.drawing } returns builder.graphView as Drawing<Component>
 		every { drawingView.selectionManager } returns selectionManager
 	}
@@ -47,6 +49,8 @@ class UndoDeleteNetViewsTest {
 		val v3 = builder.addVerticeView(createVerticeView(100, 100, Direction.WEST))
 		val v1v2 = builder.connect(v1, v2)
 		val split = builder.split(v1v2, 0, Point2D(50, 0), v3)
+
+		EditModule.commandManager.reset()
 
 		GraphViewModule.graphViewAppService.delete(builder.graphView.getDrawables().toList(), drawingView)
 		EditModule.commandManager.undo()

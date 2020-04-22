@@ -1,18 +1,18 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
-import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
 import ch.scorpion.jabbah.graph.view.*
-import ch.scorpion.jabbah.graph.view.scenario.MoveScenarioStepCommand
+import ch.scorpion.jabbah.graph.view.app.ScenarioAppService
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import java.awt.Component
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
@@ -28,8 +28,9 @@ import javax.swing.tree.*
  * Supports moving [ScenarioStep]s within the same [Scenario] using drag & drop.
  */
 class ScenarioTreeView(
-	eventBus: EventBus = BaseModule.eventBus,
-	private val commandManager: CommandManager = EditModule.commandManager
+	private val application: Application,
+	private val service: ScenarioAppService = GraphViewModule.scenarioAppService,
+	eventBus: EventBus = BaseModule.eventBus
 ) : JTree() {
 
 	companion object {
@@ -109,12 +110,12 @@ class ScenarioTreeView(
 			}
 		}
 
-		graphViewPopupMenu.add(ActionWrapperSwing(AddScenarioAction()))
+		graphViewPopupMenu.add(ActionWrapperSwing(AddScenarioAction(application)))
 
-		scenarioPopupMenu.add(ActionWrapperSwing(AddScenarioStepAction()))
-		scenarioPopupMenu.add(ActionWrapperSwing(DeleteScenarioAction()))
+		scenarioPopupMenu.add(ActionWrapperSwing(AddScenarioStepAction(application)))
+		scenarioPopupMenu.add(ActionWrapperSwing(DeleteScenarioAction(application)))
 
-		scenarioStepPopupMenu.add(ActionWrapperSwing(DeleteScenarioStepAction()))
+		scenarioStepPopupMenu.add(ActionWrapperSwing(DeleteScenarioStepAction(application)))
 	}
 
 	/** Holds the [GraphView] whose [Graph] is the source of the [Scenario] tree.*/
@@ -228,11 +229,12 @@ class ScenarioTreeView(
 			val scenarioStepNode = support.transferable.getTransferData(ScenarioTransferable.FLAVOR) as DefaultMutableTreeNode
 			val dropLoc = support.dropLocation as JTree.DropLocation
 
-			commandManager.execute(MoveScenarioStepCommand(
-				graphView!!,
-				(dropLoc.path.lastPathComponent as DefaultMutableTreeNode).userObject as Scenario,
-				scenarioStepNode.userObject as ScenarioStep,
-				dropLoc.childIndex))
+			service.moveScenarioStep(
+				application,
+				((dropLoc.path.lastPathComponent as DefaultMutableTreeNode).userObject as Scenario).id,
+				(scenarioStepNode.userObject as ScenarioStep).id,
+				dropLoc.childIndex
+			)
 
 			return true
 		}

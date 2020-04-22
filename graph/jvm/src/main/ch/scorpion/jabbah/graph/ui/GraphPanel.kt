@@ -81,7 +81,7 @@ class GraphPanel(
 	}
 
 	/** Allows editing and execute the currently open GraphView.*/
-	private val graphEditPanel: GraphEditPanel = GraphEditPanel(editor, scheduler, viewManager, propertySheetFactory, eventBus)
+	private val graphEditPanel: GraphEditPanel = GraphEditPanel(application, editor, scheduler, viewManager, propertySheetFactory, eventBus)
 
 	val desktopController = GraphDesktopController(application)
 

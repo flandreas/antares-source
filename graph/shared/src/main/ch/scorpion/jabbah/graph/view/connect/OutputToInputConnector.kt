@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.edit.editor.AddCommand
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
@@ -36,29 +37,45 @@ class OutputToInputConnector(
 	}
 
 	override fun completeConnectingToEndPortOrOpen(context: EditInputEventContext) {
+		connectService.unconnectEdgeViewOrigin(edgeView!!)
 		context.drawingView().drawing.remove(edgeView!!)
 
-		val connectOriginCommand = if (startPortView != null) {
-			ConnectOriginCommand(context.editor, connectService, edgeView!!, startPortView!!.owner!!, startPortView!!.port)
-		} else {
-			null
-		}
+		context.editor.commandManager.beginTransaction("graph.command.connect", context.drawingView())
 
-		val connectDestinationCommand = if (targetPortView != null) {
-			ConnectDestinationCommand(context.editor, connectService, edgeView!!, targetPortView!!.owner!!, targetPortView!!.port)
-		} else {
-			null
-		}
+		val addCommand = AddCommand(context.editor, edgeView!!)
+		context.editor.commandManager.execute(addCommand)
 
 		context.editor.commandManager.execute(
-			ConnectCommand(
+			ConnectOriginCommand(
 				context.editor,
-				edgeView!!,
-				connectOriginCommand,
-				connectDestinationCommand
-			)
+				connectService,
+				addCommand.addedComponentId,
+				startPortView!!.owner!!.id,
+				startPortView!!.port.portId)
 		)
 
-		context.drawingView().selectionManager.select(edgeView!!)
+		if (targetPortView != null) {
+			context.editor.commandManager.execute(
+				ConnectDestinationCommand(
+					context.editor,
+					connectService,
+					addCommand.addedComponentId,
+					targetPortView!!.owner!!.id,
+					targetPortView!!.port.portId)
+			)
+		} else {
+			context.editor.commandManager.execute(
+				MoveDestinationEndpointCommand(
+					context.editor,
+					addCommand.addedComponentId,
+					startPortView!!.location,
+					edgeView!!.polyline.getFirstPoint())
+			)
+		}
+
+		context.editor.commandManager.commitTransaction()
+
+		context.drawingView().selectionManager.select(
+			context.drawingView().drawing.getWithId(addCommand.addedComponentId)!!)
 	}
 }

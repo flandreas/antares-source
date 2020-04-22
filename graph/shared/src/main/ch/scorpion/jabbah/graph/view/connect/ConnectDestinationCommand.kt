@@ -15,16 +15,21 @@ import ch.scorpion.jabbah.graph.view.VerticeView
 class ConnectDestinationCommand(
 	editor: Editor,
 	private val service: GraphViewConnectService,
-	private val edgeView: EdgeView<*>,
-	private val destConnectableView: ConnectableView,
-	private val destPort: Port<*>
+	private val edgeViewId: Int,
+	private val destConnectableViewId: Int,
+	private val destPortId: Int
 ) : AbstractCommand("graph.command.connect", editor) {
+
+	private val edgeView: EdgeView<*> get() = editor!!.drawing.getWithId(edgeViewId) as EdgeView<*>
+	private val destConnectableView get() = editor!!.drawing.getWithId(destConnectableViewId) as ConnectableView
+	private val destPort: Port<*> get() = destConnectableView.getPort(destPortId)!!
 
 	override fun execute() {
 		service.connectToDestination(edgeView as EdgeView<Any>, Connection(destConnectableView, destPort as Port<Any>))
 	}
 
 	override fun undo() {
-		service.unconnectFromDestination(edgeView);
+		// TODO Remove
+		// service.unconnectFromDestination(edgeView);
 	}
 }

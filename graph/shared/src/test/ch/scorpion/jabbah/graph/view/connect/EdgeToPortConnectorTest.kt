@@ -1,17 +1,19 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.event.ALT_MASK
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.state.StateMachine
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import io.mockk.verify
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
-class EdgeToPortConnectorTest : AbstractConnectorTest(GraphViewModule.edgeToPortConnector) {
+class EdgeToPortConnectorTest
+	: AbstractInputEventHandlerTest(GraphViewModule.edgeToPortConnector.handler) {
 
 	companion object {
 		init {
@@ -20,7 +22,12 @@ class EdgeToPortConnectorTest : AbstractConnectorTest(GraphViewModule.edgeToPort
 	}
 
 	private val ev = GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
-	private val v3 = builder.addVerticeView(createEastOutputVerticeView(200, 200))
+	private val v3 = builder.addVerticeView(createEastOutputVerticeView("v3", 200, 200))
+
+	@BeforeTest
+	fun initialize() {
+		editor.commandManager.reset()
+	}
 
 	@Test
 	fun shouldConnectToPortView() {
@@ -38,9 +45,19 @@ class EdgeToPortConnectorTest : AbstractConnectorTest(GraphViewModule.edgeToPort
 
 		releaseMouseAt(190, 200)
 
-		assertTrue(ev.model.isConnectedWith(v1.model.getOutput()))
-		assertTrue(ev.model.isConnectedWith(v2.model.getInput()))
-		assertTrue(ev.model.isConnectedWith(v3.model.getInput()))
+		assertEdgeToPortConnected()
+	}
+
+	private fun assertEdgeToPortConnected() {
+		// Instances have been recreated while replaying from undo snapshot
+		val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<Boolean>
+		val v1 = builder.graphView.getVerticeView("v1")!!
+		val v2 = builder.graphView.getVerticeView("v2")!!
+		val v3 = builder.graphView.getVerticeView("v3")!!
+
+		assertTrue(nodeView.model.isConnectedWith(v1.model.getOutput()))
+		assertTrue(nodeView.model.isConnectedWith(v2.model.getInput()))
+		assertTrue(nodeView.model.isConnectedWith(v3.model.getInput()))
 
 		// 3 VerticeViews, 1 NodeView, 3 EdgeViews
 		assertEquals(7, builder.graphView.drawablesCount)
@@ -89,23 +106,62 @@ class EdgeToPortConnectorTest : AbstractConnectorTest(GraphViewModule.edgeToPort
 
 		editor.commandManager.undo()
 
-		assertTrue(ev.model.isConnectedWith(v1.model.getOutput()))
-		assertTrue(ev.model.isConnectedWith(v2.model.getInput()))
-		assertFalse(ev.model.isConnectedWith(v3.model.getInput()))
+		assertUnconnected()
+	}
+
+	private fun assertUnconnected() {
+		// Instances have been recreated while replaying from undo snapshot
+		val anyEv = builder.graphView.getEdgeViews().first()
+		val newV1 = builder.graphView.getVerticeView("v1")!!
+		val newV2 = builder.graphView.getVerticeView("v2")!!
+		val newV3 = builder.graphView.getVerticeView("v3")!!
+
+		assertTrue(anyEv.model.isConnectedWith(newV1.model.getOutput()))
+		assertTrue(anyEv.model.isConnectedWith(newV2.model.getInput()))
+		assertFalse(anyEv.model.isConnectedWith(newV3.model.getInput()))
 
 		// 3 VerticeViews, 1 EdgeView
 		assertEquals(4, builder.graphView.drawablesCount)
 	}
 
 	@Test
+	fun shouldRedoConnectToPortView() {
+		mouseMoveTo(150, 100, modifiers = ALT_MASK)
+		pressMouseAt(150, 100)
+		dragMouseTo(190, 200)
+		releaseMouseAt(190, 200)
+
+		editor.commandManager.undo()
+		editor.commandManager.redo()
+
+		assertEdgeToPortConnected()
+	}
+
+	@Test
 	fun shouldConnectOpenEnded() {
+		connectOpenEnded()
+
+		assertConnectedOpenEnded()
+	}
+
+	private fun connectOpenEnded() {
 		mouseMoveTo(150, 100, modifiers = ALT_MASK)
 		pressMouseAt(150, 100)
 		dragMouseTo(150, 200)
 		releaseMouseAt(150, 200)
+	}
 
-		assertTrue(ev.model.isConnectedWith(v1.model.getOutput()))
-		assertTrue(ev.model.isConnectedWith(v2.model.getInput()))
+	private fun assertConnectedOpenEnded() {
+		// Instances have been recreated while replaying from undo snapshot
+		val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<Boolean>
+		val newV1 = builder.graphView.getVerticeView("v1")!!
+		val newV2 = builder.graphView.getVerticeView("v2")!!
+		val newV3 = builder.graphView.getVerticeView("v3")!!
+
+		assertTrue(nodeView.model.isConnectedWith(newV1.model.getOutput()))
+		assertTrue(nodeView.model.isConnectedWith(newV2.model.getInput()))
+		assertFalse(nodeView.model.isConnectedWith(newV3.model.getInput()))
+		assertEquals(Point2D(150, 200), nodeView.getEdgeView(Direction.SOUTH)!!.polyline.getLastPoint())
 
 		// 3 VerticeViews, 3 EdgeView, 1 NodeView
 		assertEquals(7, builder.graphView.drawablesCount)
@@ -113,18 +169,21 @@ class EdgeToPortConnectorTest : AbstractConnectorTest(GraphViewModule.edgeToPort
 
 	@Test
 	fun shouldUndoConnectOpenEnded() {
-		mouseMoveTo(150, 100, modifiers = ALT_MASK)
-		pressMouseAt(150, 100)
-		dragMouseTo(150, 200)
-		releaseMouseAt(150, 200)
+		connectOpenEnded()
 
 		editor.commandManager.undo()
 
-		assertTrue(ev.model.isConnectedWith(v1.model.getOutput()))
-		assertTrue(ev.model.isConnectedWith(v2.model.getInput()))
+		assertUnconnected()
+	}
 
-		// 3 VerticeViews, 1
-		assertEquals(4, builder.graphView.drawablesCount)
+	@Test
+	fun shouldRedoConnectOpenEnded() {
+		connectOpenEnded()
+
+		editor.commandManager.undo()
+		editor.commandManager.redo()
+
+		assertConnectedOpenEnded()
 	}
 
 	@Test

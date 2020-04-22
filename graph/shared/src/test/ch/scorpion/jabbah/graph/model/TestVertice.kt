@@ -12,8 +12,9 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
  * @param inOut `true` if the created output [Port] has [PortType.INOUT], `false` if it has [PortType.OUTPUT]
  */
 class TestVertice(
-	inOut: Boolean = false
-) : CalculatingVertice(CALCULATOR) {
+	inOut: Boolean = false,
+	name: String? = null
+) : CalculatingVertice(CALCULATOR, name) {
 
     companion object {
 	    const val TYPE = "Test"

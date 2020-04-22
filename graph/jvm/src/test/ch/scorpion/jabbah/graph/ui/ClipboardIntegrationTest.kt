@@ -3,17 +3,13 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.model.GenericUndoableDataHolder
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.GraphUITestRule
-import ch.scorpion.jabbah.graph.model.TestVertice
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
-import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import ch.scorpion.jabbah.io.IOModule
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotSame
@@ -37,6 +33,8 @@ class ClipboardIntegrationTest {
 			.withDrawing(testGraphView.graphView)
 			.withSelection(testGraphView.vv2)
 			.build()
+
+		GenericUndoableDataHolder(testGraphView.graphView, EditModule.commandManager)
 
 		service.copy(view)
 		service.paste(view)
