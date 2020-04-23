@@ -28,7 +28,7 @@ class ToolAction(
 		editor.currentTool = tool
 	}
 
-	fun dispose() {
+	override fun dispose() {
 		editor.removePropertyChangeListener(editorListener)
 	}
 

@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import javax.swing.Action
 import javax.swing.tree.DefaultMutableTreeNode
@@ -16,6 +17,13 @@ abstract class AbstractLibraryAction(
 	eventBus: EventBus
 ) : AbstractApplicationModeEditAction(actionBaseName, eventBus = eventBus) {
 
+	private val librarySelectionChangeHandler: EventHandler<LibrarySelectionChangedEvent> = {
+		if (it.libraryTreeView === libraryTreeView) {
+			updateEnabledness()
+			handleSelectionChanged()
+		}
+	}
+
 	protected val selectedItem: LibraryItem? get() = libraryTreeView.getSelectedItem()
 
 	protected val folderOfSelectedItem: LibraryDirectory?
@@ -26,12 +34,12 @@ abstract class AbstractLibraryAction(
 
 	init {
 		enabled = false
-		eventBus.register(LibrarySelectionChangedEvent::class) {
-			if (it.libraryTreeView === libraryTreeView) {
-				updateEnabledness()
-				handleSelectionChanged()
-			}
-		}
+		eventBus.register(LibrarySelectionChangedEvent::class, librarySelectionChangeHandler)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(librarySelectionChangeHandler)
 	}
 
 	/**

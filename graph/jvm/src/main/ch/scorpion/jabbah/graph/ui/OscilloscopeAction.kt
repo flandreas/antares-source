@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -19,8 +20,15 @@ class OscilloscopeAction(
 	private val service: OscilloscopeViewService = GraphViewModule.oscilloscopeViewService
 ) : AbstractViewAction("graph.action.oscilloscope", eventBus, viewManager) {
 
+	private val oscilloscopeDisplayHandler: EventHandler<OscilloscopeDisplayEvent> = { updateState() }
+
 	init {
-		eventBus.register(OscilloscopeDisplayEvent::class) { updateState() }
+		eventBus.register(OscilloscopeDisplayEvent::class, oscilloscopeDisplayHandler)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(oscilloscopeDisplayHandler)
 	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.module.BaseModule
 
@@ -53,12 +54,19 @@ class SwitchableSchedulerTask(
 class SchedulerTaskSelectionAction(
 	private val switch: SwitchableSchedulerTask,
 	private val task: SchedulerTask,
-	eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction(task.nameKey) {
 
+	private val switchableSchedulerTaskHandler: EventHandler<SwitchableSchedulerTaskEvent> = { updateState() }
+
 	init {
-		eventBus.register(SwitchableSchedulerTaskEvent::class) { updateState() }
+		eventBus.register(SwitchableSchedulerTaskEvent::class, switchableSchedulerTaskHandler)
 		updateState()
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(switchableSchedulerTaskHandler)
 	}
 
 	override fun execute(event: ActionEvent) {

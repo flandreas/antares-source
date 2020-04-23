@@ -28,6 +28,8 @@ interface Action {
 
 	var imagePath: String?
 
+	fun dispose()
+
 	fun execute(event: ActionEvent)
 
 	fun addPropertyChangeListener(l: PropertyChangeListener<Any>)
@@ -74,6 +76,8 @@ abstract class AbstractAction(
 	override var imagePath: String? by Delegates.observable(imagePath) { _, old, new -> changeSupport.fire(Action.PROP_IMAGE_PATH, old, new) }
 
 	private val changeSupport = PropertyChangeSupport<Any>(this)
+
+	override fun dispose() { }
 
 	override fun addPropertyChangeListener(l: PropertyChangeListener<Any>) {
 		changeSupport.add(l)

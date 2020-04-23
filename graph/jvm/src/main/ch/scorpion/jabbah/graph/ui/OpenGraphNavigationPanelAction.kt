@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  */
 class OpenGraphNavigationPanelAction(
 	viewManager: ViewManager = DrawViewModule.viewManager,
-	private val eventBus: EventBus = BaseModule.eventBus,
+	eventBus: EventBus = BaseModule.eventBus,
 	var subGraphVerticeView: SubGraphVerticeView<*>? = null
 ) : AbstractSelectionAwareAction("graph.action.openSubGraph", eventBus, viewManager) {
 

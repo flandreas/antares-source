@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw.view
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -18,12 +19,19 @@ import ch.scorpion.jabbah.draw.View
  */
 abstract class AbstractViewAction(
 	baseName: String,
-	eventBus: EventBus = BaseModule.eventBus,
+	protected val eventBus: EventBus = BaseModule.eventBus,
 	val viewManager: ViewManager = DrawViewModule.viewManager
 ) : AbstractAction(baseName) {
 
+	private val activeViewHandler: EventHandler<ActiveViewChangedEvent> = {activeViewChanged(it.oldView, it.newView) }
+
 	init {
-		eventBus.register(ActiveViewChangedEvent::class) { activeViewChanged(it.oldView, it.newView) }
+		eventBus.register(ActiveViewChangedEvent::class, activeViewHandler)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(activeViewHandler)
 	}
 
 	private val viewPropertyListener = ViewPropertyListener()

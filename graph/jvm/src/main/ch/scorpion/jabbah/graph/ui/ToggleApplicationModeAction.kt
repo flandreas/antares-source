@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
@@ -14,19 +15,28 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /** An [Action] for toggling the [ApplicationMode] of a [GraphPanel]. */
 class ToggleApplicationModeAction(
-	eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("execution.action.execute") {
 
 	private var applicationData: ApplicationData? = null
 
+	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { updateState() }
+	private val applicationDataHandler: EventHandler<ApplicationDataEvent> = {
+		applicationData = it.newData
+		updateState()
+	}
+
 	init {
-		eventBus.register(ApplicationModeEvent::class) { updateState() }
-		eventBus.register(ApplicationDataEvent::class) {
-			applicationData = it.newData
-			updateState()
-		}
+		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
+		eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
 		selected = false
 		enabled = false
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(applicationModeHandler)
+		eventBus.unregister(applicationDataHandler)
 	}
 
 	override fun execute(event: ActionEvent) {

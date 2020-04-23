@@ -7,26 +7,34 @@ import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
  * An [Action] for setting the [CurrentSymbolStyle] to [CurrentSymbolStyle.AMERICAN].
  */
 class AmericanSymbolStyleAction(
-        val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
-        eventBus: EventBus = BaseModule.eventBus
+	private val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("antares.action.symbolStyle.american") {
 
-    init {
-        eventBus.register(CurrentSymbolStyleChangedEvent::class, { updateState() })
-        updateState()
-    }
+	private val currentSymbolStyleHandler: EventHandler<CurrentSymbolStyleChangedEvent> = { updateState() }
 
-    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-	    currentSymbolStyle.symbolStyle = SymbolStyle.AMERICAN
-    }
+	init {
+		eventBus.register(CurrentSymbolStyleChangedEvent::class, currentSymbolStyleHandler)
+		updateState()
+	}
 
-    private fun updateState() {
-        selected = currentSymbolStyle.symbolStyle == SymbolStyle.AMERICAN
-    }
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(currentSymbolStyleHandler)
+	}
+
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		currentSymbolStyle.symbolStyle = SymbolStyle.AMERICAN
+	}
+
+	private fun updateState() {
+		selected = currentSymbolStyle.symbolStyle == SymbolStyle.AMERICAN
+	}
 }

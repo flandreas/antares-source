@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -22,28 +23,41 @@ import javax.swing.JOptionPane
 abstract class AbstractUsecaseAction(
 	baseName: String,
 	protected val cmdManager: CommandManager = EditModule.commandManager,
-	eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction(baseName) {
 
 	private var currentSavable: Savable? = null
 	protected var graphView: GraphView? = null
 	protected var usecase: Usecase? = null
 
+	private val editedGraphViewHandler: EventHandler<EditedGraphViewEvent> = {
+		graphView = it.newGraphView
+		updateEnabledness()
+	}
+
+	private val usecaseSelectionHandler: EventHandler<UsecaseSelectionEvent> = {
+		graphView = it.graphView
+		usecase = it.usecase
+		updateEnabledness()
+	}
+
+	private val currentSavableHandler: EventHandler<CurrentSavableEvent> = {
+		currentSavable = it.savable
+		updateEnabledness()
+	}
+
 	init {
-		eventBus.register(EditedGraphViewEvent::class) {
-			graphView = it.newGraphView
-			updateEnabledness()
-		}
-		eventBus.register(UsecaseSelectionEvent::class) {
-			graphView = it.graphView
-			usecase = it.usecase
-			updateEnabledness()
-		}
-		eventBus.register(CurrentSavableEvent::class) {
-			currentSavable = it.savable
-			updateEnabledness()
-		}
+		eventBus.register(EditedGraphViewEvent::class, editedGraphViewHandler)
+		eventBus.register(UsecaseSelectionEvent::class, usecaseSelectionHandler)
+		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
 		enabled = false
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(editedGraphViewHandler)
+		eventBus.unregister(usecaseSelectionHandler)
+		eventBus.unregister(currentSavableHandler)
 	}
 
 	protected fun updateEnabledness() {
@@ -58,7 +72,7 @@ abstract class AbstractUsecaseAction(
 /** Asks the user for the name of a new [Usecase] and adds it to the current [GraphView].*/
 class AddUsecaseAction : AbstractUsecaseAction("usecases.action.addUsecase") {
 
-	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+	override fun execute(event: ActionEvent) {
 		val name = JOptionPane.showInputDialog(
 			Frame.getFrames()[0],
 			Translations.getString("usecases.action.addUsecase.question"),
@@ -79,7 +93,7 @@ class AddUsecaseAction : AbstractUsecaseAction("usecases.action.addUsecase") {
 /** Deletes the currently selected [Usecase].*/
 class DeleteUsecaseAction : AbstractUsecaseAction("usecases.action.deleteUsecase") {
 
-	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+	override fun execute(event: ActionEvent) {
 		if (JOptionPane.showConfirmDialog(
 				Frame.getFrames()[0],
 				Translations.getString("usecases.action.deleteUsecase.question", usecase!!.name.value),

@@ -13,17 +13,24 @@ import ch.scorpion.jabbah.edit.Grid
  */
 class GridSnapAction(private val editor: Editor) : AbstractAction("edit.action.grid.snap") {
 
+	private val propertyChangeHandler = object : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			if (e.name == Editor.PROP_GRID_SNAP) {
+				updateState()
+			} else if (e.name == Editor.PROP_ACTIVE) {
+				enabled = editor.active
+			}
+		}
+	}
+
 	init {
 		updateState()
-		editor.addPropertyChangeListener(object : PropertyChangeListener<Any> {
-			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-				if (e.name == Editor.PROP_GRID_SNAP) {
-					updateState()
-				} else if (e.name == Editor.PROP_ACTIVE) {
-					enabled = editor.active
-				}
-			}
-		})
+		editor.addPropertyChangeListener(propertyChangeHandler)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		editor.removePropertyChangeListener(propertyChangeHandler)
 	}
 
 	override fun execute(event: ActionEvent) {

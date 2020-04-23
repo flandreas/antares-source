@@ -19,7 +19,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
  * An [Action] for deleting the selected [Component]s in a [Drawing].
  */
 class DeleteAction(
-	private val eventBus: EventBus = BaseModule.eventBus,
+	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	private val drawingService: DrawingService = EditModule.drawingService
 ) : AbstractSelectionAwareAction("edit.action.delete", eventBus, viewManager) {

@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
@@ -14,6 +15,10 @@ abstract class AbstractApplicationModeEditAction(
 	protected val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction(actionBaseName) {
 
+	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = {
+		applicationMode = it.applicationMode
+	}
+
 	/** Contains the [ApplicationMode] received with the most recent [ApplicationModeEvent].*/
 	protected var applicationMode: ApplicationMode = initialMode
 		set(value) {
@@ -25,9 +30,12 @@ abstract class AbstractApplicationModeEditAction(
 
 	init {
 		enabled = initialMode.isEdit()
-		eventBus.register(ApplicationModeEvent::class) {
-			applicationMode = it.applicationMode
-		}
+		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(applicationModeHandler)
 	}
 
 	protected fun updateEnabledness() {

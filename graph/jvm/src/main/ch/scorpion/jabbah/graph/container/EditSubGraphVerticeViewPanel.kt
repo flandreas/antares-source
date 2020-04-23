@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
@@ -9,14 +10,12 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.*
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.ui.CopyAction
 import ch.scorpion.jabbah.graph.ui.CutAction
 import ch.scorpion.jabbah.graph.ui.PasteAction
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -34,13 +33,13 @@ class EditSubGraphVerticeViewPanel(
 	private val metaGraphRepository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
 	private val containerPanel: ContainerPanel,
 	private val subGraphVerticeView: SubGraphVerticeView<*>,
-	private val commandManager: CommandManager = EditModule.commandManager,
 	private val closeHandler: (Boolean) -> Unit
 ) : JPanel() {
 
 	companion object {
 
 		private val LOG by logger(EditSubGraphVerticeViewPanel::class)
+		private val actions = mutableListOf<Action>()
 
 		/**
 		 * Shows an [EditSubGraphVerticeViewPanel] within a modal dialog.
@@ -57,6 +56,7 @@ class EditSubGraphVerticeViewPanel(
 			var okPressed = false
 			BusyHandler.register(dialog, null)
 
+			actions.clear()
 			dialog.title = Translations.getString("graph.action.editSubGraphVerticeView.name")
 			dialog.rootPane.jMenuBar = createMenuBar()
 			dialog.contentPane.add(EditSubGraphVerticeViewPanel(
@@ -81,6 +81,7 @@ class EditSubGraphVerticeViewPanel(
 				dialog.isVisible = true
 			} finally {
 				commandManager.closeCheckpoint()
+				actions.forEach { it.dispose() }
 			}
 
 			return okPressed
@@ -90,49 +91,50 @@ class EditSubGraphVerticeViewPanel(
 			val menuBar = JMenuBar()
 
 			val editMenu = JMenu(Translations.getString("application.menu.edit"))
-			editMenu.add(JMenuItem(ActionWrapperSwing(UndoAction())))
-			editMenu.add(JMenuItem(ActionWrapperSwing(RedoAction())))
+			editMenu.add(JMenuItem(ActionWrapperSwing(register(UndoAction()))))
+			editMenu.add(JMenuItem(ActionWrapperSwing(register(RedoAction()))))
 			editMenu.addSeparator()
-			editMenu.add(JMenuItem(ActionWrapperSwing(DeleteAction())))
-			editMenu.add(JMenuItem(ActionWrapperSwing(RotateAction())))
-			editMenu.add(JMenuItem(ActionWrapperSwing(GroupComponentsAction())))
-			editMenu.add(JMenuItem(ActionWrapperSwing(UngroupComponentsAction())))
+			editMenu.add(JMenuItem(ActionWrapperSwing(register(DeleteAction()))))
+			editMenu.add(JMenuItem(ActionWrapperSwing(register(RotateAction()))))
+			editMenu.add(JMenuItem(ActionWrapperSwing(register(GroupComponentsAction()))))
+			editMenu.add(JMenuItem(ActionWrapperSwing(register(UngroupComponentsAction()))))
 			editMenu.addSeparator()
-			editMenu.add(JMenuItem(ActionWrapperSwing(SelectAllAction())))
+			editMenu.add(JMenuItem(ActionWrapperSwing(register(SelectAllAction()))))
 			editMenu.addSeparator()
 			val arrangeMenu = JMenu(Translations.getString("edit.action.stackingOrder.name"))
-			arrangeMenu.add(JMenuItem(ActionWrapperSwing(ToFrontAction())))
-			arrangeMenu.add(JMenuItem(ActionWrapperSwing(OneUpAction())))
-			arrangeMenu.add(JMenuItem(ActionWrapperSwing(OneDownAction())))
-			arrangeMenu.add(JMenuItem(ActionWrapperSwing(ToBackAction())))
+			arrangeMenu.add(JMenuItem(ActionWrapperSwing(register(ToFrontAction()))))
+			arrangeMenu.add(JMenuItem(ActionWrapperSwing(register(OneUpAction()))))
+			arrangeMenu.add(JMenuItem(ActionWrapperSwing(register(OneDownAction()))))
+			arrangeMenu.add(JMenuItem(ActionWrapperSwing(register(ToBackAction()))))
 			editMenu.add(arrangeMenu)
 			editMenu.addSeparator()
-			editMenu.add(JMenuItem(ActionWrapperSwing(CutAction())))
-			editMenu.add(JMenuItem(ActionWrapperSwing(CopyAction())))
-			editMenu.add(JMenuItem(ActionWrapperSwing(PasteAction())))
+			editMenu.add(JMenuItem(ActionWrapperSwing(register(CutAction()))))
+			editMenu.add(JMenuItem(ActionWrapperSwing(register(CopyAction()))))
+			editMenu.add(JMenuItem(ActionWrapperSwing(register(PasteAction()))))
 
 			menuBar.add(editMenu)
 
 			val viewMenu = JMenu(Translations.getString("application.menu.view"))
-			viewMenu.add(JMenuItem(ActionWrapperSwing(ZoomInAction())))
-			viewMenu.add(JMenuItem(ActionWrapperSwing(ZoomNormalAction())))
-			viewMenu.add(JMenuItem(ActionWrapperSwing(ZoomOutAction())))
-			viewMenu.add(JMenuItem(ActionWrapperSwing(ZoomCenterAction())))
-			viewMenu.add(JMenuItem(ActionWrapperSwing(ZoomFitAction())))
+			viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomInAction()))))
+			viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomNormalAction()))))
+			viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomOutAction()))))
+			viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomCenterAction()))))
+			viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomFitAction()))))
 			viewMenu.addSeparator()
-			viewMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(GridAction())))
+			viewMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(register(GridAction()))))
 			menuBar.add(viewMenu)
 
 			return menuBar
+		}
+
+		private fun register(action: Action): Action {
+			actions.add(action)
+			return action
 		}
 	}
 
 	init {
 		buildUI()
-	}
-
-	fun initialize() {
-		containerPanel.initialize()
 	}
 
 	private fun buildUI() {

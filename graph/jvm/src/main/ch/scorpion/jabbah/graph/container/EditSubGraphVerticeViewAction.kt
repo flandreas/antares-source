@@ -21,7 +21,7 @@ import javax.swing.Action
  * [ContainerDrawing] using a [ContainerEditor] in a dialog.
  */
 class EditSubGraphVerticeViewAction(
-	private val eventBus: EventBus = BaseModule.eventBus,
+	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	private val commandManager: CommandManager = EditModule.commandManager,
 	private val metaGraphRepository: MetaGraphRepository = GraphModelModule.metaGraphRepository

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.project
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
@@ -11,12 +12,19 @@ import ch.scorpion.jabbah.base.module.BaseModule
 class CloseProjectAction(
 	private val managementService: ProjectManagementService = ProjectModule.projectManagementService,
 	private val projectHolder: ProjectHolder = ProjectModule.projectHolder,
-	eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction("project.action.close") {
 
+	private val currentProjectHandler: EventHandler<CurrentProjectEvent> = { updateEnabledness() }
+
 	init {
-		eventBus.register(CurrentProjectEvent::class) { updateEnabledness() }
+		eventBus.register(CurrentProjectEvent::class, currentProjectHandler)
 		updateEnabledness()
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(currentProjectHandler)
 	}
 
 	private fun updateEnabledness() {

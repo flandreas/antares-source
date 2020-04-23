@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -24,7 +25,7 @@ import javax.swing.JOptionPane
 abstract class AbstractScenarioAction(
 	baseName: String,
 	protected val cmdManager: CommandManager = EditModule.commandManager,
-	eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction(baseName) {
 
 	private var currentSavable: Savable? = null
@@ -33,22 +34,35 @@ abstract class AbstractScenarioAction(
 	protected var scenario: Scenario? = null
 	protected var scenarioStep: ScenarioStep? = null
 
+	private val editedGraphViewHandler: EventHandler<EditedGraphViewEvent> = {
+		editedGraphView = it.newGraphView
+		updateEnabledness()
+	}
+
+	private val scenarioSelectionHandler: EventHandler<ScenarioSelectionEvent> = {
+		graphView = it.graphView
+		scenario = it.scenario
+		scenarioStep = it.scenarioStep
+		updateEnabledness()
+	}
+
+	private val currentSavableHandler: EventHandler<CurrentSavableEvent> = {
+		currentSavable = it.savable
+		updateEnabledness()
+	}
+
 	init {
-		eventBus.register(EditedGraphViewEvent::class) {
-			editedGraphView = it.newGraphView
-			updateEnabledness()
-		}
-		eventBus.register(ScenarioSelectionEvent::class) {
-			graphView = it.graphView
-			scenario = it.scenario
-			scenarioStep = it.scenarioStep
-			updateEnabledness()
-		}
-		eventBus.register(CurrentSavableEvent::class) {
-			currentSavable = it.savable
-			updateEnabledness()
-		}
+		eventBus.register(EditedGraphViewEvent::class, editedGraphViewHandler)
+		eventBus.register(ScenarioSelectionEvent::class, scenarioSelectionHandler)
+		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
 		enabled = false
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(editedGraphViewHandler)
+		eventBus.unregister(scenarioSelectionHandler)
+		eventBus.unregister(currentSavableHandler)
 	}
 
 	protected fun updateEnabledness() {

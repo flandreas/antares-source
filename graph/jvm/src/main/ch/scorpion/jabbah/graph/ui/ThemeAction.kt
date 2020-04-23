@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.Theme
 import ch.scorpion.jabbah.draw.style.ThemeEvent
@@ -11,20 +12,27 @@ import javax.swing.Action
 
 /** An [Action] for setting the given [Theme] as the current one of [Themes].*/
 class ThemeAction(
-        private val theme: Theme,
-        eventBus: EventBus = BaseModule.eventBus
+	private val theme: Theme,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction(name = theme.name, description = null, accelerator = null) {
 
-    init {
-        eventBus.register(ThemeEvent::class, { updateState() })
-        updateState()
-    }
+	private val themeHandler: EventHandler<ThemeEvent> = { updateState() }
 
-    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-	    Themes.setCurrent(theme.name)
-    }
+	init {
+		eventBus.register(ThemeEvent::class, themeHandler)
+		updateState()
+	}
 
-    private fun updateState() {
-        selected = theme === Themes.current
-    }
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(themeHandler)
+	}
+
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		Themes.setCurrent(theme.name)
+	}
+
+	private fun updateState() {
+		selected = theme === Themes.current
+	}
 }
