@@ -27,4 +27,8 @@ abstract class AbstractEditAction(
 			updateEnabled()
 		}
 	}
+
+	override fun calculateEnabled(): Boolean {
+		return super.calculateEnabled() && drawingView?.editable ?: false
+	}
 }
