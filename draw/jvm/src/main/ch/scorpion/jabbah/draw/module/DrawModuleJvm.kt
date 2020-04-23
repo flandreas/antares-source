@@ -8,9 +8,9 @@ import ch.scorpion.jabbah.base.preferences.FloatPreference
 import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.graphics.*
-import ch.scorpion.jabbah.draw.polyline.PolylineShapeJvm
-import ch.scorpion.jabbah.draw.view.AbstractViewAction
+import ch.scorpion.jabbah.draw.graphics.DropShadow
+import ch.scorpion.jabbah.draw.graphics.ImageJvm
+import ch.scorpion.jabbah.draw.view.AbstractZoomPanAction
 import ch.scorpion.jabbah.draw.view.ContextMenuProvider
 import ch.scorpion.jabbah.draw.view.TooltipManager
 import ch.scorpion.jabbah.draw.view.ZoomPanController
@@ -43,7 +43,7 @@ object DrawModuleJvm : AbstractModule() {
     }
 
     private fun fillProperties(properties: Properties) {
-        properties.set(AbstractViewAction.PROP_ZOOM_STEP, 1.5f)
+        properties.set(AbstractZoomPanAction.PROP_ZOOM_STEP, 1.5f)
     }
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
@@ -62,7 +62,7 @@ object DrawModuleJvm : AbstractModule() {
 			maxValue = 10))
 
 		root.getGroup(PREF_TREE_VIEW).add(FloatPreference(
-			id = AbstractViewAction.PROP_ZOOM_STEP,
+			id = AbstractZoomPanAction.PROP_ZOOM_STEP,
 			nameKey = "draw.preferences.ViewAction.zoomStep",
 			minValue = 1.01f))
 

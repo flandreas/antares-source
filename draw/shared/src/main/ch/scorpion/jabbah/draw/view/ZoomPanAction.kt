@@ -1,56 +1,35 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
-import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
 
 /**
- * A base implementation of an [Action] that acts on the currently active [View] in a [ViewManager]
- * and that disables itself if no [View] is active.
+ * A base implementation of a [AbstractViewAction] that lets the user change zoom or pan.
+ * It is only enabled if [View.userZoomEnabled] is `true`.
  */
-abstract class AbstractViewAction(
+abstract class AbstractZoomPanAction(
 	baseName: String,
 	eventBus: EventBus = BaseModule.eventBus,
-	val viewManager: ViewManager = DrawViewModule.viewManager
-) : AbstractAction(baseName) {
+	viewManager: ViewManager = DrawViewModule.viewManager
+) : AbstractViewAction(baseName, eventBus, viewManager) {
 
 	companion object {
 		/** The name of the zoom step [Float] in [Properties]. */
 		const val PROP_ZOOM_STEP = "view.command.zoom.step"
 	}
 
-	init {
-		eventBus.register(ActiveViewChangedEvent::class) { activeViewChanged(it.oldView, it.newView) }
+	override fun calculateEnabled(): Boolean {
+		return super.calculateEnabled() && viewManager.activeView!!.userZoomEnabled
 	}
 
-	private val viewPropertyListener = ViewPropertyListener()
-
-	private inner class ViewPropertyListener : PropertyChangeListener<Any> {
-		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-			if (View.PROP_USER_ZOOM_ENABLED == e.name) {
-				updateEnabled()
-			}
+	override fun handleViewPropertyChanged(e: PropertyChangeEvent<Any>) {
+		super.handleViewPropertyChanged(e)
+		if (View.PROP_USER_ZOOM_ENABLED == e.name) {
+			updateEnabled()
 		}
-	}
-
-	protected open fun activeViewChanged(oldView: View<out InputEventContext>?, newView: View<out InputEventContext>?) {
-		oldView?.removePropertyChangeListener(viewPropertyListener)
-		updateEnabled()
-		newView?.addPropertyChangeListener(viewPropertyListener)
-	}
-
-	protected fun updateEnabled() {
-		enabled = calculateEnabled()
-	}
-
-	protected open fun calculateEnabled(): Boolean {
-		return viewManager.activeView != null && viewManager.activeView!!.userZoomEnabled
 	}
 }
 
@@ -58,7 +37,7 @@ abstract class AbstractViewAction(
 class ZoomNormalAction(
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractViewAction("view.action.zoomNormal", eventBus, viewManager) {
+) : AbstractZoomPanAction("view.action.zoomNormal", eventBus, viewManager) {
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		viewManager.activeView!!.navigator.panCenterDefault()
@@ -69,7 +48,7 @@ class ZoomNormalAction(
 class ZoomInAction(
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractViewAction("view.action.zoomIn", eventBus, viewManager) {
+) : AbstractZoomPanAction("view.action.zoomIn", eventBus, viewManager) {
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		val view = viewManager.activeView!!
@@ -81,11 +60,11 @@ class ZoomInAction(
 class ZoomOutAction(
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractViewAction("view.action.zoomOut", eventBus, viewManager) {
+) : AbstractZoomPanAction("view.action.zoomOut", eventBus, viewManager) {
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		val view = viewManager.activeView!!
-		view.navigator.multiplyZoomFactor(1 / BaseModule.properties.getFloat(AbstractViewAction.PROP_ZOOM_STEP).toDouble())
+		view.navigator.multiplyZoomFactor(1 / BaseModule.properties.getFloat(PROP_ZOOM_STEP).toDouble())
 	}
 }
 
@@ -96,7 +75,7 @@ class ZoomOutAction(
 class ZoomFitAction(
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractViewAction("view.action.zoomFit", eventBus, viewManager) {
+) : AbstractZoomPanAction("view.action.zoomFit", eventBus, viewManager) {
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		viewManager.activeView!!.navigator.fit()
@@ -107,7 +86,7 @@ class ZoomFitAction(
 class ZoomCenterAction(
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractViewAction("view.action.zoomCenter", eventBus, viewManager) {
+) : AbstractZoomPanAction("view.action.zoomCenter", eventBus, viewManager) {
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		val view = viewManager.activeView!!
