@@ -12,11 +12,11 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingViewFactory
-import ch.scorpion.jabbah.edit.app.CopyPasteUtility
-import ch.scorpion.jabbah.edit.app.DrawingService
-import ch.scorpion.jabbah.edit.app.DrawingServiceImpl
+import ch.scorpion.jabbah.edit.app.DrawingAppService
+import ch.scorpion.jabbah.edit.app.DrawingAppServiceImpl
 import ch.scorpion.jabbah.edit.command.CommandManagerImpl
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
+import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.curve.EditModuleQuadCurveModule
 import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
@@ -56,9 +56,9 @@ object EditModule : AbstractModule() {
      */
     var attentionDrawerFactory: (Any?) -> AttentionDrawer = { AttentionDrawerImpl() }
 
-    var drawingService: DrawingService = DrawingServiceImpl()
+    var drawingAppService: DrawingAppService = DrawingAppServiceImpl()
 
-    lateinit var copyPasteUtility: CopyPasteUtility
+	var copyPasteService = CopyPasteService()
 
     override fun initialize() {
         DrawModule.require()

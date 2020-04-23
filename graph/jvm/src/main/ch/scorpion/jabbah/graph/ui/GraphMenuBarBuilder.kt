@@ -11,6 +11,9 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.preferences.PreferencesAction
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.edit.app.CopyAction
+import ch.scorpion.jabbah.edit.app.CutAction
+import ch.scorpion.jabbah.edit.app.PasteAction
 import ch.scorpion.jabbah.execution.ExecutionDepthAction
 import ch.scorpion.jabbah.execution.SimulationTimeStatusEnabledAction
 import ch.scorpion.jabbah.execution.StepExecutionAction

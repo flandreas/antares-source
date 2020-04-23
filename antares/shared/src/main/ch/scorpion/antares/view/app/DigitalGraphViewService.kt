@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.view.app.GraphViewServiceImpl
+import ch.scorpion.jabbah.graph.view.app.GraphViewAppServiceImpl
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
@@ -19,7 +19,7 @@ class DigitalGraphViewService(
 	commandManager: CommandManager = EditModule.commandManager,
 	connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
 	private val properties: Properties = BaseModule.properties
-) : GraphViewServiceImpl(commandManager, connectService) {
+) : GraphViewAppServiceImpl(commandManager, connectService) {
 
 	companion object {
 		private val LOG by logger(DigitalGraphViewService::class)

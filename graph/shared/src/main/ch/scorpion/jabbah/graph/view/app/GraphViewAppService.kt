@@ -4,8 +4,8 @@ import ch.scorpion.jabbah.base.collection.Pair
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.app.DeleteCommand
-import ch.scorpion.jabbah.edit.app.DrawingService
-import ch.scorpion.jabbah.edit.app.DrawingServiceImpl
+import ch.scorpion.jabbah.edit.app.DrawingAppService
+import ch.scorpion.jabbah.edit.app.DrawingAppServiceImpl
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.view.*
@@ -17,20 +17,20 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
  * An application service for [GraphView] that enhances the domain services with undo/redo functionality
  * using [Command]s.
  */
-interface GraphViewService : DrawingService {
+interface GraphViewAppService : DrawingAppService {
 	// TODO More service methods
 }
 
-open class GraphViewServiceImpl(
+open class GraphViewAppServiceImpl(
 	private val commandManager: CommandManager = EditModule.commandManager,
 	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
-) : DrawingServiceImpl(commandManager), GraphViewService {
+) : DrawingAppServiceImpl(commandManager), GraphViewAppService {
 
 	companion object {
-		private val LOG by logger(GraphViewServiceImpl::class)
+		private val LOG by logger(GraphViewAppServiceImpl::class)
 	}
 
-	/** ---- [DrawingService] interface */
+	/** ---- [DrawingAppService] interface */
 
 	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>) {
 		if (drawingView.drawing !is GraphView || component is GraphElementView<*>) {
@@ -56,7 +56,7 @@ open class GraphViewServiceImpl(
 		commandManager.commitTransaction()
 	}
 
-	/** ---- [GraphViewServiceImpl] */
+	/** ---- [GraphViewAppServiceImpl] */
 
 	private fun unconnectDeletedVerticeView(verticeView: VerticeView<*>, graphView: GraphView) {
 		LOG.debug("unconnectDeletedVerticeView for verticeView ${verticeView.id}")

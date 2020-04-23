@@ -21,7 +21,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
 class DeleteAction(
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager = DrawViewModule.viewManager,
-	private val drawingService: DrawingService = EditModule.drawingService
+	private val service: DrawingAppService = EditModule.drawingAppService
 ) : AbstractSelectionAwareAction("edit.action.delete", eventBus, viewManager) {
 
 	companion object {
@@ -37,7 +37,7 @@ class DeleteAction(
 		val selection = drawingView.selectionManager.selection
 		val components = getComponentsToDelete(selection)
 		if (components.isNotEmpty()) {
-			drawingService.delete(
+			service.delete(
 				components,
 				drawingView)
 		}

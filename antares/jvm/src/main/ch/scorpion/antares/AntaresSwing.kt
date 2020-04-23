@@ -165,7 +165,7 @@ class AntaresSwing(
 
 		eventBus.register(DefaultLightColorEvent::class) {
 			if (it.graphView.defaultLightColor != null && shouldReplaceLightColor()) {
-				(GraphViewModule.graphViewService as DigitalGraphViewService).replaceLightColor(it.graphView)
+				(GraphViewModule.graphViewAppService as DigitalGraphViewService).replaceLightColor(it.graphView)
 			}
 		}
 	}

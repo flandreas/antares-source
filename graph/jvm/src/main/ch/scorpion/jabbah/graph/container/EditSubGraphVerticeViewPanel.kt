@@ -1,20 +1,15 @@
 package ch.scorpion.jabbah.graph.container
 
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.BusyHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.*
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.ui.CopyAction
-import ch.scorpion.jabbah.graph.ui.CutAction
-import ch.scorpion.jabbah.graph.ui.PasteAction
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StorableCloner
 import java.awt.BorderLayout

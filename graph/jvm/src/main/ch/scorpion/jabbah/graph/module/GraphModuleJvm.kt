@@ -33,7 +33,6 @@ object GraphModuleJvm : AbstractModule() {
 		ScriptModule.require()
 		ExecutionModule.require()
 
-		EditModule.copyPasteUtility = CopyPasteUtilitySwing
 		EditModuleJvm.require()
 
 		GraphViewModuleJvm.require()

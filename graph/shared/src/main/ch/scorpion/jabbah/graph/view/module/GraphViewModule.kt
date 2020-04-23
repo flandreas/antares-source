@@ -33,8 +33,8 @@ import ch.scorpion.jabbah.graph.script.GraphScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptEngine
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.*
-import ch.scorpion.jabbah.graph.view.app.GraphViewService
-import ch.scorpion.jabbah.graph.view.app.GraphViewServiceImpl
+import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
+import ch.scorpion.jabbah.graph.view.app.GraphViewAppServiceImpl
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewServiceImpl
 import ch.scorpion.jabbah.graph.view.connect.*
@@ -96,7 +96,7 @@ object GraphViewModule : AbstractModule() {
 			{ nodeViewFactory })
 	}
 
-	var graphViewService: GraphViewService = GraphViewServiceImpl(EditModule.commandManager)
+	var graphViewAppService: GraphViewAppService = GraphViewAppServiceImpl(EditModule.commandManager)
 
 	/** Must be specified by higher application layers.*/
 	var oscilloscopeViewFactory: OscilloscopeViewFactory = UndefinedOscilloscopeViewFactory()
@@ -127,7 +127,7 @@ object GraphViewModule : AbstractModule() {
 		configureHighlightModels(EditHighlightModule.highlightModelFactory)
 
 		ScriptModule.scriptGatewayProvider = { GraphScriptGateway(ScriptEngine(BaseModule.eventBus)) }
-		EditModule.drawingService = graphViewService
+		EditModule.drawingAppService = graphViewAppService
 
 		ExecutionModule.schedulerTaskFactory = {
 			if (AppModule.userHolder.user.isDeveloper) {

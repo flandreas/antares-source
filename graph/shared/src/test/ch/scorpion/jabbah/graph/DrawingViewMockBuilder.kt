@@ -26,6 +26,11 @@ class DrawingViewMockBuilder {
 		return this
 	}
 
+	fun withSelection(vararg components: Component): DrawingViewMockBuilder {
+		every { selectionManager.selection } returns components.toList()
+		return this
+	}
+
 	fun <T: Component> build(): DrawingView<Drawing<T>> {
 		return drawingView as DrawingView<Drawing<T>>
 	}

@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.app.CopyAction
+import ch.scorpion.jabbah.edit.app.CutAction
 import ch.scorpion.jabbah.edit.view.EditContextMenuProvider
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.module.ExecutionModule

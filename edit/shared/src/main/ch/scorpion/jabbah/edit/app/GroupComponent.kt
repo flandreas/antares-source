@@ -16,12 +16,12 @@ import ch.scorpion.jabbah.edit.module.EditModule
 class GroupComponentsAction(
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager = DrawViewModule.viewManager,
-	private val drawingService: DrawingService = EditModule.drawingService
+	private val service: DrawingAppService = EditModule.drawingAppService
 ) : AbstractSelectionAwareAction("edit.action.group", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
 		val drawingView = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!
-		drawingService.group(
+		service.group(
 			drawingView.selectionManager.selection.toCollection(mutableListOf()),
 			drawingView)
 	}
@@ -35,12 +35,12 @@ class GroupComponentsAction(
 class UngroupComponentsAction(
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ViewManager = DrawViewModule.viewManager,
-	private val drawingService: DrawingService = EditModule.drawingService
+	private val service: DrawingAppService = EditModule.drawingAppService
 ) : AbstractSelectionAwareAction("edit.action.ungroup", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
 		val drawingView = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!
-		drawingService.ungroup(
+		service.ungroup(
 			singleSelection!!.propertyOwner as GroupComponent,
 			drawingView)
 	}

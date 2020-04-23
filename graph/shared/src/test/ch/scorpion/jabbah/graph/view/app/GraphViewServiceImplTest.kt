@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.*
 
-/** Unit tests for [GraphViewServiceImpl].*/
+/** Unit tests for [GraphViewAppServiceImpl].*/
 class GraphViewServiceImplTest {
 
 	companion object {
@@ -24,7 +24,7 @@ class GraphViewServiceImplTest {
 		}
 	}
 
-	private val service = GraphViewServiceImpl()
+	private val service = GraphViewAppServiceImpl()
 	private val builder = GraphViewBuilder<Boolean>()
 	private val vv1 = builder.addVerticeView(TestVerticeView(loc = Point2D(100, 100)))
 	private val vv2 = builder.addVerticeView(TestVerticeView(loc = Point2D(200, 100)))

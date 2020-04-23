@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.app.DrawingService
+import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.editor.DropEvent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.DragEvent
@@ -27,7 +27,7 @@ open class ComponentTransferHandler(
     protected val editor: Editor,
     private val eventBus: EventBus,
     private val flavour: DataFlavor,
-    private val service: DrawingService = EditModule.drawingService
+    private val service: DrawingAppService = EditModule.drawingAppService
 ) : TransferHandler() {
 
 	companion object {

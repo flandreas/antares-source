@@ -45,12 +45,10 @@ import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.container.OriginIndicator
 import ch.scorpion.jabbah.graph.library.*
-import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.script.ScriptModule
 import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.GraphElementView
-import ch.scorpion.jabbah.graph.view.app.GraphViewService
+import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
 import ch.scorpion.jabbah.graph.view.editor.AutoConnectorHighlight
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.DragEdgePointHighlight
@@ -111,7 +109,7 @@ object AntaresViewModule : AbstractModule() {
 			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
 			drawingView
 		}
-		EditModule.drawingService = DigitalGraphViewService()
+		EditModule.drawingAppService = DigitalGraphViewService()
 
 		EditModule.attentionDrawerFactory = { signal ->
 			if (signal is DigitalSignal) {
@@ -122,7 +120,7 @@ object AntaresViewModule : AbstractModule() {
 		}
 
 		GraphViewModule.graphViewFactory = { DigitalGraphView(it ?: Translations.getString("graph.name.unknown")) }
-		GraphViewModule.graphViewService = EditModule.drawingService as GraphViewService
+		GraphViewModule.graphViewAppService = EditModule.drawingAppService as GraphViewAppService
 		GraphViewModule.portViewFactory = DigitalPortViewFactory(DrawStyleModule.styleProvider)
 		GraphViewModule.oscilloscopeViewFactory = DigitalOscilloscopeViewFactory()
 		val edgeViewFactory = DigitalEdgeViewFactory(

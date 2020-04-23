@@ -1,12 +1,16 @@
 package ch.scorpion.jabbah.edit.app
 
 import ch.scorpion.jabbah.base.checkArgument
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.editor.AddCommand
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.module.EditModule
 
@@ -14,7 +18,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
  * An application service for [Drawing] that enhances the domain services and classes with
  * undo/redo functionality.
  */
-interface DrawingService {
+interface DrawingAppService {
 
 	/** Adds the specified [Component] to a [DrawingView]'s [Drawing].*/
 	fun add(component: Component, drawingView: DrawingView<Drawing<Component>>)
@@ -31,13 +35,21 @@ interface DrawingService {
 
 	/** Replaces the specified [GroupComponent] in the [DrawingView] with its inner [Component]s.*/
 	fun ungroup(component: GroupComponent, drawingView: DrawingView<Drawing<Component>>)
+
+	/** Cuts the [Component]s that are currently selected in [drawingView] to the system clipboard.*/
+	fun cut(drawingView: DrawingView<Drawing<Component>>)
+
+	/** Copies the [Component]s that are currently selected in [drawingView] to the system clipboard.*/
+	fun copy(drawingView: DrawingView<Drawing<Component>>)
+
+	/** Pastes the current contents of the system clipboard into the specified [DrawingView].*/
+	fun paste(drawingView: DrawingView<Drawing<Component>>)
 }
 
-open class DrawingServiceImpl(
-	private val commandManager: CommandManager = EditModule.commandManager
-) : DrawingService {
-
-	/** ---- [DrawingService] interface */
+open class DrawingAppServiceImpl(
+	private val commandManager: CommandManager = EditModule.commandManager,
+	private val eventBus: EventBus = BaseModule.eventBus
+) : DrawingAppService {
 
 	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>) {
 		commandManager.execute(AddCommand(drawingView, component))
@@ -64,5 +76,38 @@ open class DrawingServiceImpl(
 		component.components.asReversed().forEach { commandManager.execute(AddCommand(drawingView, it)) }
 		commandManager.commitTransaction()
 		drawingView.selectionManager.select(component.components)
+	}
+
+	override fun cut(drawingView: DrawingView<Drawing<Component>>) {
+		val components = drawingView.selectionManager.selection
+		val componentsToDelete = components.filter { it.deletable }.toList()
+		if (componentsToDelete.isNotEmpty()) {
+			copy(drawingView)
+			delete(componentsToDelete, drawingView, "edit.command.cut")
+		}
+
+		// Don't do 'components.size != selection.size for checking whether everything has been deleted,
+		// because non-deletable (by user selection!) Components might have been deleted as a side effect
+		// of deleting other Components.
+		if (components.any { drawingView.drawing.contains(it) }) {
+			eventBus.post(ComponentMessage(
+				ComponentMessageType.Info,
+				null,
+				"edit.action.undeletable.msg"
+			))
+		}
+	}
+
+	override fun copy(drawingView: DrawingView<Drawing<Component>>) {
+		commandManager.execute(CopyCommand(drawingView, drawingView.selectionManager.selection.map { it.id }))
+	}
+
+	override fun paste(drawingView: DrawingView<Drawing<Component>>) {
+		Clipboard.getStringContents()?.let {
+			val command = PasteCommand(drawingView, it)
+			commandManager.execute(command)
+			drawingView.selectionManager.deselectAll()
+			drawingView.selectionManager.select(command.components)
+		}
 	}
 }
