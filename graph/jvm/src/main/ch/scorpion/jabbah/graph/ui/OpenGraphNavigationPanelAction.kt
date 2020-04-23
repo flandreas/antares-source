@@ -20,10 +20,14 @@ class OpenGraphNavigationPanelAction(
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		eventBus.post(OpenSubGraphRequest(subGraphVerticeView
-			?: getSingleSelection() as SubGraphVerticeView<*>, newView = true, quickMode = false))
+			?: singleSelection as SubGraphVerticeView<*>, newView = true, quickMode = false))
 	}
 
 	override fun calculateEnabled(): Boolean {
-		return if (subGraphVerticeView != null) true else getSelectionCount() == 1 && getSingleSelection() is SubGraphVerticeView<*>
+		return super.calculateEnabled() && if (subGraphVerticeView != null) {
+			true
+		} else {
+			selectionCount == 1 && singleSelection is SubGraphVerticeView<*>
+		}
 	}
 }

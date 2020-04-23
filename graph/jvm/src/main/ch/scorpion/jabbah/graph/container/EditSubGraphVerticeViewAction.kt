@@ -32,14 +32,14 @@ class EditSubGraphVerticeViewAction(
 	}
 
 	override fun calculateEnabled(): Boolean {
-		return getSelectionCount() == 1 && getSingleSelection() is SubGraphVerticeView<*>
+		return super.calculateEnabled() && selectionCount == 1 && singleSelection is SubGraphVerticeView<*>
 	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		LOG.debug("opening EditSubGraphVerticeViewPanel")
 
-		val editedVerticeView = getSingleSelection() as SubGraphVerticeView<*>
-		getDrawingView()!!.selectionManager.deselect(editedVerticeView)
+		val editedVerticeView = singleSelection as SubGraphVerticeView<*>
+		drawingView!!.selectionManager.deselect(editedVerticeView)
 		editedVerticeView.invalidate()
 
 		val containerPanel = ContainerPanel(
@@ -72,7 +72,7 @@ class EditSubGraphVerticeViewAction(
 		viewManager.activeView = oldActiveView
 
 		editedVerticeView.invalidate()
-		getDrawingView()!!.selectionManager.select(editedVerticeView)
+		drawingView!!.selectionManager.select(editedVerticeView)
 
 		containerPanel.dispose()
 	}

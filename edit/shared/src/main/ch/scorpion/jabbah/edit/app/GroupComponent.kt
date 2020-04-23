@@ -27,7 +27,7 @@ class GroupComponentsAction(
 	}
 
 	override fun calculateEnabled(): Boolean {
-		return getSelectionCount() >= 2
+		return super.calculateEnabled() && selectionCount >= 2
 	}
 }
 
@@ -41,11 +41,11 @@ class UngroupComponentsAction(
 	override fun execute(event: ActionEvent) {
 		val drawingView = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!
 		drawingService.ungroup(
-			getSingleSelection()!!.propertyOwner as GroupComponent,
+			singleSelection!!.propertyOwner as GroupComponent,
 			drawingView)
 	}
 
 	override fun calculateEnabled(): Boolean {
-		return getSelectionCount() == 1 && getSingleSelection()!!.propertyOwner is GroupComponent
+		return super.calculateEnabled() && selectionCount == 1 && singleSelection!!.propertyOwner is GroupComponent
 	}
 }

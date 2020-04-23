@@ -20,7 +20,7 @@ class ToFrontAction(
 
 	override fun execute(event: ActionEvent) {
 		val drawing = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!.drawing
-		cmdManager.execute(ToFrontCommand(drawing, getSelection()))
+		cmdManager.execute(ToFrontCommand(drawing, selection))
 	}
 }
 
@@ -32,7 +32,7 @@ class OneUpAction(
 
 	override fun execute(event: ActionEvent) {
 		val drawing = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!.drawing
-		cmdManager.execute(OneUpCommand(drawing, getSelection()))
+		cmdManager.execute(OneUpCommand(drawing, selection))
 	}
 }
 
@@ -44,7 +44,7 @@ class OneDownAction(
 
 	override fun execute(event: ActionEvent) {
 		val drawing = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!.drawing
-		cmdManager.execute(OneDownCommand(drawing, getSelection()))
+		cmdManager.execute(OneDownCommand(drawing, selection))
 	}
 }
 
@@ -56,7 +56,7 @@ class ToBackAction(
 
 	override fun execute(event: ActionEvent) {
 		val drawing = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!.drawing
-		cmdManager.execute(ToBackCommand(drawing, getSelection()))
+		cmdManager.execute(ToBackCommand(drawing, selection))
 	}
 }
 

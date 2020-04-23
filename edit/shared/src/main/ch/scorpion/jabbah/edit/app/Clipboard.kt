@@ -75,7 +75,7 @@ class PasteAction(
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val typeMap: TypeMap = IOModule.typeMap,
 	private val commandManager: CommandManager = EditModule.commandManager
-) : AbstractViewAction("edit.action.paste", eventBus, viewManager) {
+) : AbstractEditAction("edit.action.paste", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
 		val drawingView = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!

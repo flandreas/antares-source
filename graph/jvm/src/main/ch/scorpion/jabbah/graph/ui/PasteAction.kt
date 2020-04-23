@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.app.AbstractEditAction
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.module.ExecutionModule
@@ -21,25 +22,25 @@ import ch.scorpion.jabbah.io.TypeMap
  * An [Action] for pasting [Component]s from the clipboard into the [Drawing] of the current [DrawingView].
  */
 class PasteAction(
-        eventBus: EventBus = BaseModule.eventBus,
-        viewManager: ViewManager = DrawViewModule.viewManager,
-        private val typeMap: TypeMap = IOModule.typeMap,
-        private val storableCreator: StorableCreator = IOModule.storableCreator,
-        private val cmdManager: CommandManager = EditModule.commandManager,
-        private val scheduler: Scheduler = ExecutionModule.scheduler
-) : AbstractViewAction("edit.action.paste", eventBus, viewManager) {
+	eventBus: EventBus = BaseModule.eventBus,
+	viewManager: ViewManager = DrawViewModule.viewManager,
+	private val typeMap: TypeMap = IOModule.typeMap,
+	private val storableCreator: StorableCreator = IOModule.storableCreator,
+	private val cmdManager: CommandManager = EditModule.commandManager,
+	private val scheduler: Scheduler = ExecutionModule.scheduler
+) : AbstractEditAction("edit.action.paste", eventBus, viewManager) {
 
 	init {
-		eventBus.register(SchedulerActivationStateEvent::class) { updateState() }
-		updateState()
+		eventBus.register(SchedulerActivationStateEvent::class) { updateEnabled() }
+		updateEnabled()
 	}
 
-    override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-        val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
-        CopyPasteUtilitySwing.paste(drawingView, storableCreator, typeMap, cmdManager)
-    }
+	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		val drawingView = viewManager.activeView as DrawingView<Drawing<Component>>
+		CopyPasteUtilitySwing.paste(drawingView, storableCreator, typeMap, cmdManager)
+	}
 
-	private fun updateState() {
-		enabled = !scheduler.isActive
+	override fun calculateEnabled(): Boolean {
+		return super.calculateEnabled() && !scheduler.isActive
 	}
 }

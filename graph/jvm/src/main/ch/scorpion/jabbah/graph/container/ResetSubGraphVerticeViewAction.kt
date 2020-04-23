@@ -27,10 +27,10 @@ class ResetSubGraphVerticeViewAction(
 		private val LOG by logger(ResetSubGraphVerticeViewAction::class)
 	}
 
-	private val subGraphVerticeView: SubGraphVerticeView<*> get() = getSingleSelection() as SubGraphVerticeView<*>
+	private val subGraphVerticeView: SubGraphVerticeView<*> get() = singleSelection as SubGraphVerticeView<*>
 
 	override fun calculateEnabled(): Boolean {
-		return super.calculateEnabled() && getSingleSelection() is SubGraphVerticeView<*> && subGraphVerticeView.hasCustomizedContainerDrawing
+		return super.calculateEnabled() && singleSelection is SubGraphVerticeView<*> && subGraphVerticeView.hasCustomizedContainerDrawing
 	}
 
 	override fun execute(event: ActionEvent) {

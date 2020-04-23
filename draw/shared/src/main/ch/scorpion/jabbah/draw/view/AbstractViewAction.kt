@@ -28,6 +28,8 @@ abstract class AbstractViewAction(
 
 	private val viewPropertyListener = ViewPropertyListener()
 
+	protected val view: View<*>? get() = viewManager.activeView
+
 	private inner class ViewPropertyListener : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 			handleViewPropertyChanged(e)
@@ -38,10 +40,11 @@ abstract class AbstractViewAction(
 		// empty
 	}
 
-	protected open fun activeViewChanged(oldView: View<out InputEventContext>?, newView: View<out InputEventContext>?) {
+	private fun activeViewChanged(oldView: View<out InputEventContext>?, newView: View<out InputEventContext>?) {
 		oldView?.removePropertyChangeListener(viewPropertyListener)
 		updateEnabled()
 		newView?.addPropertyChangeListener(viewPropertyListener)
+		notifyActiveViewChanged()
 	}
 
 	protected fun updateEnabled() {
@@ -50,6 +53,10 @@ abstract class AbstractViewAction(
 
 	protected open fun calculateEnabled(): Boolean {
 		return viewManager.activeView != null
+	}
+
+	protected open fun notifyActiveViewChanged() {
+		// empty
 	}
 }
 

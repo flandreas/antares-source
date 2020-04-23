@@ -3,13 +3,10 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.InputEventContext
-import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeDisplayEvent
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
@@ -38,8 +35,8 @@ class OscilloscopeAction(
 		}
 	}
 
-	override fun activeViewChanged(oldView: View<out InputEventContext>?, newView: View<out InputEventContext>?) {
-		super.activeViewChanged(oldView, newView)
+	override fun notifyActiveViewChanged() {
+		super.notifyActiveViewChanged()
 		updateState()
 	}
 
