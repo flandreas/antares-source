@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.InputCount
 import ch.scorpion.antares.view.gate.AbstractDigitalGateView
 import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
 
 open class DigitalGateViewBeanInfo<T: AbstractDigitalGateView<*>> : DigitalComponentBeanInfo<T>() {
 

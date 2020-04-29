@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.edit
+package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
@@ -28,7 +28,7 @@ class ScriptPropertyRenderer : DefaultTableCellRenderer() {
 
 	override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
 		val label = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
-		label.text = Companion.getText(value as ScriptProperty)
+		label.text = getText(value as ScriptProperty)
 		return label
 	}
 }

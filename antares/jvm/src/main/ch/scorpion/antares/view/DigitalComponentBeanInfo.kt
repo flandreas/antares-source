@@ -3,7 +3,7 @@ package ch.scorpion.antares.view
 import java.beans.BeanInfo
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
 

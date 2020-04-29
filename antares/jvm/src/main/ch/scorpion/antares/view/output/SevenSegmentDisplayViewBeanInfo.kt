@@ -2,9 +2,9 @@ package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import com.l2fprod.common.propertysheet.Property
-import ch.scorpion.jabbah.edit.AbstractBeanInfo
+import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.jabbah.edit.model.Size
 
 

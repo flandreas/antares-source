@@ -1,10 +1,9 @@
 package ch.scorpion.jabbah.edit.view
 
-import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import com.l2fprod.common.propertysheet.Property
 import com.l2fprod.common.propertysheet.PropertyRendererRegistry
 import com.l2fprod.common.swing.renderer.DefaultCellRenderer
-import java.awt.Color
 import javax.swing.table.TableCellRenderer
 
 /**

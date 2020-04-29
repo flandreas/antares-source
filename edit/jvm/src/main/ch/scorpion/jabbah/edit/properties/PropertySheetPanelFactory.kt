@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.edit
+package ch.scorpion.jabbah.edit.properties
 
 import com.l2fprod.common.propertysheet.PropertyEditorRegistry
 import com.l2fprod.common.propertysheet.PropertyRendererRegistry

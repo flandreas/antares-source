@@ -3,9 +3,9 @@ package ch.scorpion.jabbah.graph.ui.scenario
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.edit.AbstractPropertyPanel
+import ch.scorpion.jabbah.edit.properties.AbstractPropertyPanel
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.PropertySheetPanelFactory
+import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.ScenarioStep
 

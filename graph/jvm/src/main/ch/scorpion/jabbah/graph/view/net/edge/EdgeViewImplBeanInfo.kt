@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
-import ch.scorpion.jabbah.edit.ComponentBeanInfo
+import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import com.l2fprod.common.propertysheet.Property
 import java.beans.BeanInfo

@@ -1,5 +1,9 @@
-package ch.scorpion.jabbah.edit
+package ch.scorpion.jabbah.edit.properties
 
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.model.EditProperties
 import com.l2fprod.common.propertysheet.Property
 import java.beans.SimpleBeanInfo
 
@@ -32,12 +36,11 @@ abstract class AbstractBeanInfo<in T> : SimpleBeanInfo() {
 abstract class ComponentBeanInfo<in T: Component> : AbstractBeanInfo<T>() {
 
 	companion object {
-		private val id = PropertyImpl("edit.property.id", Int::class.java)
+		private val id = EditProperties.id()
 	}
 
 	override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		id.bind(editor, {bean.id}, null, false)
-		properties.add(id)
+		properties.add(id.bind(editor, bean.id, editable = false))
 	}
 }

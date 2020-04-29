@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.EGBL
-import ch.scorpion.jabbah.edit.TranslatableTextPropertyEditor
+import ch.scorpion.jabbah.edit.properties.TranslatableTextPropertyEditor
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import java.awt.Component
 import java.awt.Dimension

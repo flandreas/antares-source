@@ -1,15 +1,18 @@
-package ch.scorpion.jabbah.edit
+package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.SelectionChangeEvent
 import javax.swing.JPanel
 
 /**
  * A [JPanel] for editing the properties of the currently selected [Component].
  */
 class ComponentPropertyPanel(
-    editor: Editor,
-    sheetFactory: PropertySheetPanelFactory,
-    eventBus: EventBus
+	editor: Editor,
+	sheetFactory: PropertySheetPanelFactory,
+	eventBus: EventBus
 ) : AbstractPropertyPanel(editor, sheetFactory) {
 
 	var editable: Boolean = true

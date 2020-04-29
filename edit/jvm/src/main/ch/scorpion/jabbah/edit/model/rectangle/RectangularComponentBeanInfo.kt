@@ -1,51 +1,37 @@
 package ch.scorpion.jabbah.edit.model.rectangle
 
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.model.EditProperties
+import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import com.l2fprod.common.propertysheet.Property
 import java.beans.BeanInfo
-import ch.scorpion.jabbah.draw.graphics.PredefinedColor
-import ch.scorpion.jabbah.draw.graphics.PredefinedStroke
-import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.AbstractBeanInfo
-import ch.scorpion.jabbah.edit.ComponentBeanInfo
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.PropertyImpl
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 
 /** A [BeanInfo] for [RectangularComponent]. */
 abstract class RectangularComponentBeanInfo<T: RectangularComponent> : ComponentBeanInfo<T>() {
 
     companion object {
-	    private val filled = PropertyImpl("edit.property.filled", Boolean::class.java)
-        private val stroked = PropertyImpl("edit.property.stroked", Boolean::class.java)
-        private val styleType = PropertyImpl("draw.styleType", StyleType::class.java)
-        private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
-	    private val stroke = PropertyImpl("edit.property.stroke", PredefinedStroke::class.java)
-        private val text = PropertyImpl("edit.property.text", String::class.java)
-        private val alignment = PropertyImpl("edit.property.verticalAlignment", VerticalAlignment::class.java)
-	    private val shadow = PropertyImpl("edit.property.shadow", Boolean::class.java)
+	    private val filled = EditProperties.filled()
+        private val stroked = EditProperties.stroked()
+        private val styleType = EditProperties.styleType()
+        private val color = EditProperties.color()
+	    private val stroke = EditProperties.stroke()
+        private val text = EditProperties.text()
+        private val alignment = EditProperties.verticalAlignment()
+	    private val shadow = EditProperties.shadow()
     }
 
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-        filled.bind(editor, { bean.filled }, { bean.filled = it!! })
-        stroked.bind(editor, { bean.stroked }, { bean.stroked = it!! })
-        styleType.bind(editor, { bean.styleType }, { bean.styleType = it!! })
-        color.bind(editor, { bean.customColor}, { bean.customColor = it })
-	    stroke.bind(editor, { bean.customStroke}, { bean.customStroke = it } )
-        text.bind(editor, { bean.text }, { bean.text = it!!} )
-        alignment.bind(editor, { bean.alignment }, { bean.alignment = it!! })
-	    shadow.bind(editor, { bean.shadow }, { bean.customShadow = it!! })
-
-        properties.add(filled)
-        properties.add(stroked)
-	    properties.add(shadow)
-        properties.add(styleType)
-        properties.add(color)
-	    properties.add(stroke)
-        properties.add(text)
-        properties.add(alignment)
+        properties.add(filled.bind(editor, bean.id))
+        properties.add(stroked.bind(editor, bean.id))
+	    properties.add(shadow.bind(editor, bean.id))
+        properties.add(styleType.bind(editor, bean.id))
+        properties.add(color.bind(editor, bean.id))
+	    properties.add(stroke.bind(editor, bean.id))
+        properties.add(text.bind(editor, bean.id))
+        properties.add(alignment.bind(editor, bean.id))
     }
 }
 

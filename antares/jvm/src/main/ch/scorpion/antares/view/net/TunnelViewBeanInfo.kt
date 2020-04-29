@@ -1,12 +1,10 @@
 package ch.scorpion.antares.view.net
 
-import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
 
 /**
  * A [BeanInfo] for [TunnelView].

@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.edit
+package ch.scorpion.jabbah.edit.properties
 
 import com.l2fprod.common.propertysheet.PropertySheetPanel
 import ch.scorpion.jabbah.base.StringUtils
@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.edit.Editor
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Container

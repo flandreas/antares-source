@@ -7,9 +7,9 @@ import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.antares.view.DigitalGateViewBeanInfo
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.edit.ComponentBeanInfo
+import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")

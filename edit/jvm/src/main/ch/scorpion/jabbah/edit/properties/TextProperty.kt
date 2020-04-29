@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.edit
+package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger

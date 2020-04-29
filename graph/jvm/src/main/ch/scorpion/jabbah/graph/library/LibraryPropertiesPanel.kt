@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.EGBL
-import ch.scorpion.jabbah.edit.TranslatableTextPropertyEditor
+import ch.scorpion.jabbah.edit.properties.TranslatableTextPropertyEditor
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import java.awt.Component
 import java.awt.Dimension
@@ -40,7 +40,7 @@ class LibraryPropertiesPanel(properties: LibraryProperties? = null) : JPanel() {
 	private val nameLabel = Translations.getString("library.property.name.name")
 	private val descLabel = Translations.getString("library.property.desc.name")
 	private val nameField = TranslatableTextPropertyEditor(nameLabel)
-	private val descField = TranslatableTextPropertyEditor(descLabel, multiline = { true}, rows = 8)
+	private val descField = TranslatableTextPropertyEditor(descLabel, multiline = { true }, rows = 8)
 
 	init {
 		preferredSize = Dimension(400, 150)

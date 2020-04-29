@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.Editor

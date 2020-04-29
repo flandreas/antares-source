@@ -1,9 +1,9 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.edit.ComponentBeanInfo
+import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import com.l2fprod.common.propertysheet.Property
 

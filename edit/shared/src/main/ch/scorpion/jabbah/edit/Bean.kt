@@ -7,3 +7,8 @@ package ch.scorpion.jabbah.edit
 interface Bean {
 	// empty
 }
+
+typealias BeanProvider = (Editor, Int?) -> Bean
+
+val componentBeanProvider: BeanProvider = { e, id -> e.drawing.getWithId(id!!)!!.propertyOwner as Component }
+val drawingBeanProvider: BeanProvider = { e, id -> e.drawing }

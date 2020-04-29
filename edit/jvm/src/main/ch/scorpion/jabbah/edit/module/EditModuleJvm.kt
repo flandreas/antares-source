@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.edit.model.VerticalAlignmentEditor
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
 import ch.scorpion.jabbah.edit.model.text.*
+import ch.scorpion.jabbah.edit.properties.*
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.edit.view.EditContextMenuProvider

@@ -2,7 +2,7 @@ package ch.scorpion.antares.view
 
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImplBeanInfo
 import com.l2fprod.common.propertysheet.Property
 

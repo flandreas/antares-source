@@ -1,10 +1,9 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.PropertyImpl
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
-import java.beans.BeanInfo
 
 @Suppress("unused")
 class KeyboardViewBeanInfo : VerticeViewBeanInfo<KeyboardView>() {

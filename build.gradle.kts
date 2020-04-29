@@ -39,6 +39,7 @@ val mockkVersion: String by extra
 val slf4jVersion: String by extra
 val commonsIoVersion: String by extra
 val commonsLang3Version: String by extra
+val commonsBeansVersion: String by extra
 val l2fprodVersion: String by extra
 
 subprojects {
@@ -87,6 +88,7 @@ subprojects {
 					implementation("org.slf4j:slf4j-api:$slf4jVersion")
 					implementation("org.slf4j:slf4j-log4j12:$slf4jVersion")
 					implementation("commons-io:commons-io:$commonsIoVersion")
+					implementation("commons-beanutils:commons-beanutils:$commonsBeansVersion")
 					implementation("org.apache.commons:commons-lang3:$commonsLang3Version")
 					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
 					implementation("mind:exml:7.0.0")
