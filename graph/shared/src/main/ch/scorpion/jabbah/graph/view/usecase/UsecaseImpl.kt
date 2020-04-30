@@ -37,6 +37,8 @@ class UsecaseImpl(
 
 	/** ---- [Usecase] interface */
 
+	override var id: Int = 0
+
 	override fun dispose() {}
 
 	/** ---- [Storable] interface */
@@ -48,6 +50,7 @@ class UsecaseImpl(
 	override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()
 
 	override fun write(writer: StoreWriter) {
+		writer.writeInt("id", id)
 		name.write("name", writer)
 		description.write("desc", writer)
 		writer.writeString("exec", executionScript)
@@ -55,6 +58,10 @@ class UsecaseImpl(
 	}
 
 	override fun read(reader: StoreReader) {
+		// Attribute 'id' was introduced after version 0.1
+		if (reader.hasAttribute("id")) {
+			id = reader.readInt("id")
+		}
 		name.read("name", reader)
 		description.read("desc", reader)
 		executionScript = reader.readString("exec")

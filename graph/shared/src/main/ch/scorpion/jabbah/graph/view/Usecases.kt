@@ -24,6 +24,8 @@ interface Usecases : Storable {
 
 	fun getUsecases(): Iterable<Usecase>
 
+	fun get(id: Int): Usecase
+
 	/**
 	 * Adds a new [Usecase] with the specified name as the last one in this [Usecases].
 	 * Posts a [UsecaseAddedEvent] on this [Usecases]' [EventBus].

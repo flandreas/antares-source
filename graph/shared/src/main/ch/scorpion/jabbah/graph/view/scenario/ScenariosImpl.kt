@@ -14,6 +14,7 @@ class ScenariosImpl(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : Scenarios {
 
+	private var isLoading: Boolean = false
 	private val scenarios: MutableList<Scenario> by lazy { mutableListOf<Scenario>() }
 
 	/** ---- [Scenarios] interface */
@@ -42,8 +43,9 @@ class ScenariosImpl(
 	}
 
 	override fun add(scenario: Scenario, index: Int) {
-		// TODO Ensure name uniqueness
-		scenario.id = scenarios.size + 1
+		if (!isLoading) {
+			scenario.id = getMaxId() + 1
+		}
 		scenarios.add(index, scenario)
 		eventBus.post(ScenarioAddedEvent(graphView!!, scenario))
 	}
@@ -89,10 +91,24 @@ class ScenariosImpl(
 	}
 
     override fun read(reader: StoreReader) {
-	    scenarios.addAll(reader.readStorables("scenarios"))
+	    try {
+		    isLoading = true
+	        scenarios.addAll(reader.readStorables("scenarios"))
+	    } finally {
+	    	isLoading = false
+	    }
 	}
 
 	override fun getStorableChildren(): Iterator<Storable> {
 		return scenarios.iterator()
+	}
+
+	/** ---- [ScenariosImpl] */
+
+	private fun getMaxId(): Int {
+		if (scenarios.size == 0) {
+			return 0
+		}
+		return scenarios.maxBy { it.id }!!.id
 	}
 }

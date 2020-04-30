@@ -76,7 +76,7 @@ class ScenarioImpl(
 	override fun addStep(step: ScenarioStep, index: Int) {
 		if (!steps.contains(step)) {
 			if (!isLoading) {
-				step.id = steps.size + 1
+				step.id = getMaxId() + 1
 			}
 			steps.add(index, step)
 		}
@@ -114,16 +114,28 @@ class ScenarioImpl(
 	}
 
 	override fun read(reader: StoreReader) {
-		isLoading = true
-		id = reader.readInt("id")
-		name.read("name", reader)
-		description.read("desc", reader)
-		conditionScript = reader.readString("condition")
-		for (step in reader.readStorables<ScenarioStep>("steps")) {
-			addStep(step)
+		try {
+			isLoading = true
+			id = reader.readInt("id")
+			name.read("name", reader)
+			description.read("desc", reader)
+			conditionScript = reader.readString("condition")
+			for (step in reader.readStorables<ScenarioStep>("steps")) {
+				addStep(step)
+			}
+		} finally {
+			isLoading = false
 		}
-		isLoading = false
 	}
 
 	override fun getStorableChildren(): Iterator<Storable> = steps.iterator()
+
+	/** ---- [ScenariosImpl] */
+
+	private fun getMaxId(): Int {
+		if (steps.size == 0) {
+			return 0
+		}
+		return steps.maxBy { it.id }!!.id
+	}
 }

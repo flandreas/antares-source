@@ -18,6 +18,9 @@ import ch.scorpion.jabbah.edit.model.text.description.Namable
  */
 interface Usecase : Namable, Describable, Storable {
 
+	/** The identification of this [Usecase] that is unique within a [GraphView]. */
+	var id: Int
+
 	/** The JavaScript script to be executed when this [Usecase] is executed.*/
 	var executionScript: String
 

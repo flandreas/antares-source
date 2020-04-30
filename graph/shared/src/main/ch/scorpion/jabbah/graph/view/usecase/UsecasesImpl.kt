@@ -13,6 +13,7 @@ class UsecasesImpl(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : Usecases {
 
+	private var isLoading: Boolean = false
 	private val usecases: MutableList<Usecase> by lazy { mutableListOf<Usecase>() }
 
 	/** ---- [Usecases] interface */
@@ -28,6 +29,10 @@ class UsecasesImpl(
 		return usecases.toImmutableList()
 	}
 
+	override fun get(id: Int): Usecase {
+		return usecases.first { it.id == id }
+	}
+
 	override fun add(name: String) {
 		add(UsecaseImpl(name))
 	}
@@ -37,7 +42,9 @@ class UsecasesImpl(
 	}
 
 	override fun add(usecase: Usecase, index: Int) {
-		// TODO Ensure name uniqueness
+		if (!isLoading) {
+			usecase.id = getMaxId() + 1
+		}
 		usecases.add(index, usecase)
 		eventBus.post(UsecaseAddedEvent(graphView!!, usecase))
 	}
@@ -64,10 +71,31 @@ class UsecasesImpl(
 	}
 
 	override fun read(reader: StoreReader) {
-		usecases.addAll(reader.readStorables("usecases"))
+		try {
+			isLoading = true
+
+			// Backward compatibility: Usecase.id was introduced after version 0.1
+			reader.readStorables<Usecase>("usecases").forEach {
+				if (it.id == 0) {
+					it.id = getMaxId() + 1
+				}
+				usecases.add(it)
+			}
+		} finally {
+			isLoading = false
+		}
 	}
 
 	override fun getStorableChildren(): Iterator<Storable> {
 		return EmptyIterator()
+	}
+
+	/** ---- [UsecaseImpl] */
+
+	private fun getMaxId(): Int {
+		if (usecases.size == 0) {
+			return 0
+		}
+		return usecases.maxBy { it.id }!!.id
 	}
 }
