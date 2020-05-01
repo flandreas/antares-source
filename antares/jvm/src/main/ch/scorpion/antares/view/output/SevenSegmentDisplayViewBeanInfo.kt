@@ -1,23 +1,22 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
-import com.l2fprod.common.propertysheet.Property
-import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
+import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.EditProperties
+import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
-import ch.scorpion.jabbah.edit.model.Size
+import com.l2fprod.common.propertysheet.Property
 
-
-/**
- * A [BeanInfo] for [SevenSegmentDisplayView].
- */
+@Suppress("unused")
 class SevenSegmentDisplayViewBeanInfo : AbstractBeanInfo<SevenSegmentDisplayView>() {
 
     companion object {
-        private val name = PropertyImpl("element.property", String::class.java)
-        private val lightColor = PropertyImpl("element.property.LEDColor", LightColor::class.java)
-        private val portScheme = PropertyImpl("element.property.SevenSegmentDisplayScheme", SevenSegmentDisplayScheme::class.java)
-        private val size = PropertyImpl("edit.property.size", Size::class.java)
+	    private val name = AntaresProperties.untranslatableName()
+	    private val lightColor = AntaresProperties.lightColor()
+	    private val portScheme = PropertyImpl("portScheme", "element.property.SevenSegmentDisplayScheme", SevenSegmentDisplayScheme::class.java, componentBeanProvider)
+	    private val size = EditProperties.size()
     }
 
     override fun addProperties(bean: SevenSegmentDisplayView, editor: Editor, properties: MutableList<Property>) {
@@ -25,16 +24,9 @@ class SevenSegmentDisplayViewBeanInfo : AbstractBeanInfo<SevenSegmentDisplayView
 
         val connected = bean.model.isConnected
 
-		name.bind(editor, { bean.name }, { bean.name = it })
-		lightColor.bind(editor, { bean.lightColor }, {bean.lightColor = it!! })
-		portScheme.bind(editor, { bean.portScheme }, { bean.portScheme = it!! }, !connected)
-		size.bind(editor, { bean.size }, { bean.size = it!! }, !connected)
-
-		properties.add(name)
-		properties.add(lightColor)
-		if (bean.size == Size.LARGE) {
-			properties.add(portScheme)
-		}
-		properties.add(size)
+	    properties.add(name.bind(editor, bean.id))
+	    properties.add(lightColor.bind(editor, bean.id))
+	    properties.add(portScheme.bind(editor, bean.id, editable = !connected))
+	    properties.add(size.bind(editor, bean.id, editable = !connected))
     }
 }

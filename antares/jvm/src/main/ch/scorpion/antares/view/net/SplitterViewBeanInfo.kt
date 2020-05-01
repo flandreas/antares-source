@@ -1,24 +1,21 @@
 package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.BranchCount
+import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
-import ch.scorpion.antares.view.Handedness
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import com.l2fprod.common.propertysheet.Property
 
-/**
- * A [BeanInfo] for [SplitterView].
- */
+@Suppress("unused")
 class SplitterViewBeanInfo : DigitalComponentBeanInfo<SplitterView>() {
 
     companion object {
-        private val bitWidth = PropertyImpl("element.property.bitWidth", BitWidth::class.java)
-        private val branchCount = PropertyImpl("element.property.branchCount", BranchCount::class.java)
-        private val handedness = PropertyImpl("element.property.Splitter.handedness", Handedness::class.java)
-	    private val signalRep = PropertyImpl("element.property.DigitalSignalRepresentation", DigitalSignalRepresentation::class.java)
+	    private val bitWidth = AntaresProperties.bitWidth()
+	    private val branchCount = PropertyImpl("branchCount", "element.property.branchCount", BranchCount::class.java, componentBeanProvider)
+	    private val handedness = AntaresProperties.handedness(baseKey = "element.property.Splitter.handedness")
+	    private val signalRep = AntaresProperties.signalRepresentation()
     }
 
     override fun addProperties(bean: SplitterView, editor: Editor, properties: MutableList<Property>) {
@@ -26,14 +23,9 @@ class SplitterViewBeanInfo : DigitalComponentBeanInfo<SplitterView>() {
 
         val connected = bean.model.isConnected
 
-        bitWidth.bind(editor, { bean.bitWidth }, {bean.bitWidth = it!! }, !connected)
-        branchCount.bind(editor, { bean.branchCount }, { bean.branchCount = it!! }, !connected, { bean.model.supportedBranchCounts.contains(it)} )
-        handedness.bind(editor, { bean.handedness }, { bean.handedness = it!! }, !connected)
-	    signalRep.bind(editor, { bean.signalRepresentation }, { bean.signalRepresentation = it!! })
-
-        properties.add(bitWidth)
-        properties.add(branchCount)
-        properties.add(handedness)
-	    properties.add(signalRep)
+	    properties.add(bitWidth.bind(editor, bean.id, editable = !connected))
+	    properties.add(branchCount.bind(editor, bean.id, editable = !connected, filter = { bean.model.supportedBranchCounts.contains(it)} ))
+	    properties.add(handedness.bind(editor, bean.id, editable = !connected))
+	    properties.add(signalRep.bind(editor, bean.id))
     }
 }

@@ -1,10 +1,10 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
-import ch.scorpion.jabbah.draw.graphics.PredefinedColor
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.EditProperties
+import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
+import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 import java.beans.BeanInfo
 
@@ -12,31 +12,25 @@ import java.beans.BeanInfo
 open class VerticeViewBeanInfo<T : AbstractVerticeView<*>> : ComponentBeanInfo<T>() {
 
 	companion object {
-		private val propDelay = PropertyImpl("element.property.propagationDelay", Long::class.java)
-		private val color = PropertyImpl("edit.property.color", PredefinedColor::class.java)
-		private val description = PropertyImpl("edit.property.description", TranslatableText::class.java)
-		private val shadow = PropertyImpl("edit.property.shadow", Boolean::class.java)
-	}
-
-	override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
-		super.addProperties(bean, editor, properties)
-
-		propDelay.bind(editor, { bean.propagationDelay }, { bean.propagationDelay = it!! })
-		color.bind(editor, { bean.customColor }, { bean.customColor = it })
-		shadow.bind(editor, { bean.shadow }, { bean.customShadow = it!! })
-		description.bind(editor, { bean.description.translation }, { bean.description.translation = it!! })
-
-		if (isShowPropagationDelay) {
-			properties.add(propDelay)
-		}
-		properties.add(shadow)
-		if (isShowColor) {
-			properties.add(color)
-		}
-		properties.add(description)
+		private val propDelay = GraphProperties.propagationDelay(componentBeanProvider)
+		private val color = EditProperties.color()
+		private val description = EditProperties.description()
+		private val shadow = EditProperties.shadow()
 	}
 
 	protected open var isShowPropagationDelay: Boolean = true
 	protected open var isShowColor: Boolean = true
 
+	override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
+		super.addProperties(bean, editor, properties)
+
+		if (isShowPropagationDelay) {
+			properties.add(propDelay.bind(editor, bean.id))
+		}
+		properties.add(shadow.bind(editor, bean.id))
+		if (isShowColor) {
+			properties.add(color.bind(editor, bean.id))
+		}
+		properties.add(description.bind(editor, bean.id))
+	}
 }

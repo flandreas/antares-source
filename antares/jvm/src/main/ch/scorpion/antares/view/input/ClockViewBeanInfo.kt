@@ -2,32 +2,25 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import com.l2fprod.common.propertysheet.Property
-import java.beans.BeanInfo
 
-/**
- * A [BeanInfo] for [ClockView].
- */
 @Suppress("unused")
 class ClockViewBeanInfo : DigitalComponentBeanInfo<ClockView>() {
 
     companion object {
-        private val period = PropertyImpl("element.property.ClockView.period", Long::class.java)
-        private val enabled = PropertyImpl("element.property.ClockView.enabled", Boolean::class.java)
-	    private val knobEnabled = PropertyImpl("element.property.ClockView.knobEnabled", Boolean::class.java)
+	    private val period = PropertyImpl("period", "element.property.ClockView.period", Long::class.java, componentBeanProvider)
+	    private val enabled = PropertyImpl("enabled", "element.property.ClockView.enabled", Boolean::class.java, componentBeanProvider)
+	    private val knobEnabled = PropertyImpl("knobEnabled", "element.property.ClockView.knobEnabled", Boolean::class.java, componentBeanProvider)
     }
 
     override fun addProperties(bean: ClockView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-        period.bind(editor, { bean.period }) { bean.period = it!! }
-        enabled.bind(editor, { bean.isEnabled }) { bean.isEnabled = it!! }
-	    knobEnabled.bind(editor, { bean.isKnobEnabled }, { bean.isKnobEnabled = it!! })
-
-        properties.add(period)
-        properties.add(enabled)
-	    properties.add(knobEnabled)
+	    properties.add(period.bind(editor, bean.id))
+	    properties.add(enabled.bind(editor, bean.id))
+	    properties.add(knobEnabled.bind(editor, bean.id))
     }
 
     override var isShowPropagationDelay: Boolean

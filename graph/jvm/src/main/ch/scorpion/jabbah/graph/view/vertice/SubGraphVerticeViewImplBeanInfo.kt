@@ -1,41 +1,35 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.EditProperties
+import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
 class SubGraphVerticeViewImplBeanInfo : ComponentBeanInfo<SubGraphVerticeViewImpl>() {
 
     companion object {
-        private val propDelay = PropertyImpl("element.property.propagationDelay", Long::class.java)
-	    private val orientation = PropertyImpl("edit.property.Component.orientation", Direction::class.java)
-        private val mirrorH = PropertyImpl("graph.property.mirrorHorizontally", Boolean::class.java)
-        private val mirrorV = PropertyImpl("graph.property.mirrorVertically", Boolean::class.java)
-        private val label = PropertyImpl("graph.property.label", String::class.java)
-	    private val description = PropertyImpl("edit.property.description", TranslatableText::class.java)
+	    private val propDelay = GraphProperties.propagationDelay()
+	    private val orientation = EditProperties.orientation()
+	    private val mirrorH = PropertyImpl("horizontallyMirrored", "graph.property.mirrorHorizontally", Boolean::class.java, componentBeanProvider)
+	    private val mirrorV = PropertyImpl("verticallyMirrored", "graph.property.mirrorVertically", Boolean::class.java, componentBeanProvider)
+	    private val label = GraphProperties.label()
+	    private val description = EditProperties.description()
     }
 
     override fun addProperties(bean: SubGraphVerticeViewImpl, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-		propDelay.bind(editor, { bean.propagationDelay }, { bean.propagationDelay = it!! })
-	    orientation.bind(editor, {bean.orientation}, {bean.orientation = it!!})
-		mirrorH.bind(editor, { bean.isHorizontallyMirrored }, { bean.isHorizontallyMirrored = it!!})
-		mirrorV.bind(editor, { bean.isVerticallyMirrored }, { bean.isVerticallyMirrored = it!!})
-		label.bind(editor, { bean.label }, { bean.label = it })
-	    description.bind(editor, { bean.description.translation }, { bean.description.translation = it!! })
-
-        properties.add(propDelay)
-	    properties.add(orientation)
-        properties.add(mirrorH)
-        properties.add(mirrorV)
-        if (bean.label != null) {
-            properties.add(label)
-        }
-	    properties.add(description)
+	    properties.add(propDelay.bind(editor, bean.id))
+	    properties.add(orientation.bind(editor, bean.id))
+	    properties.add(mirrorH.bind(editor, bean.id))
+	    properties.add(mirrorV.bind(editor, bean.id))
+	    bean.label?.let {
+	        properties.add(label.bind(editor, bean.id))
+	    }
+	    properties.add(description.bind(editor, bean.id))
     }
 }

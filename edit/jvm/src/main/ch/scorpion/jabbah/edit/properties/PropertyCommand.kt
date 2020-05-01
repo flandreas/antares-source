@@ -16,9 +16,9 @@ class PropertyCommand<V>(
 	editor: Editor,
 	private val propertyBaseKey: String,
 	private val beanProvider: BeanProvider,
-	private val beanId: Int?,
+	private val beanIds: List<Int>,
 	private val newValue: V?,
-	private val getterPropertyName: String,
+	getterPropertyName: String,
 	private val setterPropertyName: String
 ) : AbstractCommand("edit.command.property", editor) {
 
@@ -26,28 +26,46 @@ class PropertyCommand<V>(
 		fun <V> forComponent(
 			editor: Editor,
 			propertyBaseKey: String,
-			beanId: Int?,
+			beanIds: List<Int>,
 			newValue: V?,
 			getterPropertyName: String,
 			setterPropertyName: String
 		) : PropertyCommand<V> {
-			return PropertyCommand(editor, propertyBaseKey, componentBeanProvider, beanId, newValue, getterPropertyName, setterPropertyName)
+			return PropertyCommand(editor, propertyBaseKey, componentBeanProvider, beanIds, newValue, getterPropertyName, setterPropertyName)
 		}
 	}
 
-	private val bean get() = beanProvider.invoke(editor!!, beanId)
+	private val bean get() = beanProvider.invoke(editor!!, beanIds)
 
-	val oldValue: V? = PropertyUtils.getSimpleProperty(bean, getterPropertyName) as V?
+	private fun isNested(name: String): Boolean = name.contains('.')
+
+	private fun getValue(name: String): V? {
+		return if (isNested(name)) {
+			PropertyUtils.getNestedProperty(bean, name) as V?
+		} else {
+			PropertyUtils.getSimpleProperty(bean, name) as V?
+		}
+	}
+
+	private fun setValue(value: V?) {
+		if (isNested(setterPropertyName)) {
+			PropertyUtils.setNestedProperty(bean, setterPropertyName, value)
+		} else {
+			PropertyUtils.setSimpleProperty(bean, setterPropertyName, value)
+		}
+	}
+
+	val oldValue: V? = getValue(getterPropertyName)
 
     override fun getDescription(): String {
         return Translations.getString("$propertyBaseKey.name")
     }
 
     override fun execute() {
-        PropertyUtils.setSimpleProperty(bean, setterPropertyName, newValue)
+	    setValue(newValue)
     }
 
     override fun undo() {
-	    PropertyUtils.setSimpleProperty(bean, setterPropertyName, oldValue)
+	    setValue(oldValue)
     }
 }

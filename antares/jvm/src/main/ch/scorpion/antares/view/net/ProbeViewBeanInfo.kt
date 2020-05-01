@@ -1,39 +1,30 @@
 package ch.scorpion.antares.view.net
 
+import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import com.l2fprod.common.propertysheet.Property
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import com.l2fprod.common.propertysheet.Property
 
-
-/**
- * A [BeanInfo] for [ProbeView].
- */
+@Suppress("unused")
 class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
 
     companion object {
-	    private val name = PropertyImpl("element.property", String::class.java)
-        private val bitWidth = PropertyImpl("element.property.bitWidth", BitWidth::class.java)
-        private val signalRep = PropertyImpl("element.property.DigitalSignalRepresentation", DigitalSignalRepresentation::class.java)
-        private val output = PropertyImpl("element.property.hasOutput", Boolean::class.java)
-	    private val logging = PropertyImpl("element.property.logging", Boolean::class.java)
+	    private val name = AntaresProperties.untranslatableName()
+	    private val bitWidth = AntaresProperties.bitWidth()
+	    private val signalRep = AntaresProperties.signalRepresentation()
+	    private val output = PropertyImpl("hasOutput", "element.property.hasOutput", Boolean::class.java, componentBeanProvider)
+	    private val logging = PropertyImpl("logging", "element.property.logging", Boolean::class.java, componentBeanProvider)
     }
 
     override fun addProperties(bean: ProbeView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    name.bind(editor, { bean.name }, { bean.name = it })
-        bitWidth.bind(editor, { bean.bitWidth }, { bean.bitWidth = it!! })
-        signalRep.bind(editor, { bean.signalRepresentation }, { bean.signalRepresentation = it!! })
-        output.bind(editor, { bean.hasOutput }, { bean.hasOutput = it!! }, !bean.model.isConnected)
-	    logging.bind(editor, { bean.isLogging }, { bean.isLogging = it!! })
-
-	    properties.add(name)
-        properties.add(bitWidth)
-        properties.add(signalRep)
-        properties.add(output)
-	    properties.add(logging)
+	    properties.add(name.bind(editor, bean.id))
+	    properties.add(bitWidth.bind(editor, bean.id))
+	    properties.add(signalRep.bind(editor, bean.id))
+	    properties.add(output.bind(editor, bean.id, editable = !bean.model.isConnected))
+	    properties.add(logging.bind(editor, bean.id))
     }
 }

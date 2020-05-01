@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import com.l2fprod.common.propertysheet.Property
 
@@ -9,12 +10,11 @@ import com.l2fprod.common.propertysheet.Property
 class OscilloscopeViewBeanInfo : ComponentBeanInfo<OscilloscopeView>() {
 
     companion object {
-        private val scale = PropertyImpl("graph.property.oscilloscopeScale", Double::class.java)
+	    private val scale = PropertyImpl("timelineScale", "graph.property.oscilloscopeScale", Double::class.java, componentBeanProvider)
     }
 
     override fun addProperties(bean: OscilloscopeView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
-        scale.bind(editor, { bean.timelineScale}, {bean.timelineScale = it!! })
-        properties.add(scale)
+	    properties.add(scale.bind(editor, bean.id))
     }
 }

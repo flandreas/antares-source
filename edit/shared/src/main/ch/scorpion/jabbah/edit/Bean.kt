@@ -8,7 +8,15 @@ interface Bean {
 	// empty
 }
 
-typealias BeanProvider = (Editor, Int?) -> Bean
+/**
+ * Used by [Command]s to access a bean only by its ID. The provided [List] of IDs represents the chain
+ * from the topmost object in the [Drawing] held by the [Editor], down to the bean that is to be provided,
+ * thereby allowing to reference chains of composed objects.
+ */
+typealias BeanProvider = (Editor, List<Int>) -> Bean
 
-val componentBeanProvider: BeanProvider = { e, id -> e.drawing.getWithId(id!!)!!.propertyOwner as Component }
-val drawingBeanProvider: BeanProvider = { e, id -> e.drawing }
+/** Provides the [Component] of an [Editor]'s [Drawing] with a particular ID. */
+val componentBeanProvider: BeanProvider = { e, ids -> e.drawing.getWithId(ids[0])!!.propertyOwner as Component }
+
+/** Provides the current [Drawing] of an [Editor].*/
+val drawingBeanProvider: BeanProvider = { e, _ -> e.drawing }

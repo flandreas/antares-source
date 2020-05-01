@@ -2,21 +2,20 @@ package ch.scorpion.antares.view
 
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.drawingBeanProvider
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImplBeanInfo
 import com.l2fprod.common.propertysheet.Property
 
+@Suppress("unused")
 class DigitalGraphViewBeanInfo : GraphViewImplBeanInfo<DigitalGraphView>() {
 
 	companion object {
-		private val defaultLightColor = PropertyImpl("element.property.DigitalGraphView.lightColor", LightColor::class.java)
+		private val defaultLightColor = PropertyImpl("defaultLightColor", "element.property.DigitalGraphView.lightColor", LightColor::class.java, drawingBeanProvider)
 	}
 
 	override fun addProperties(bean: DigitalGraphView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-
-		defaultLightColor.bind(editor, { bean.defaultLightColor }, { bean.defaultLightColor = it }, editable = true, optional = true)
-
-		properties.add(defaultLightColor)
+		properties.add(defaultLightColor.bind(editor, listOf(), optional = true))
 	}
 }

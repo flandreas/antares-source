@@ -4,11 +4,11 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.componentBeanProvider
 import com.l2fprod.common.propertysheet.AbstractProperty
 import com.l2fprod.common.propertysheet.Property
 import org.apache.commons.beanutils.PropertyUtils
 
+/** An implementation of a [Property] that created a [PropertyCommand] for every changed property. */
 class PropertyImpl<V>(
 	propertyName: String,
 	private val baseKey: String,
@@ -19,28 +19,24 @@ class PropertyImpl<V>(
 ) : AbstractProperty() {
 
 	companion object {
-
 		private val LOG by logger(PropertyImpl::class)
-
-		fun <V> componentProperty(propertyName: String, baseKey: String, valueClass: Class<V>): PropertyImpl<V> =
-			PropertyImpl(propertyName, baseKey, valueClass, componentBeanProvider)
 	}
 
 	private var editor: Editor? = null
-	private var beanId: Int? = null
-	private var editable: Boolean = false
+	private var beanIds: List<Int> = listOf()
+	private var editable: Boolean = true
 	var filter: (V) -> Boolean = { true }
 	var optional: Boolean = false
 
 	fun bind(
 		editor: Editor,
-		beanId: Int?,
+		beanIds: List<Int>,
 		editable: Boolean = true,
 		filter: ((V) -> Boolean)? = null,
 		optional: Boolean = false
 	): PropertyImpl<V> {
 		this.editor = editor
-		this.beanId = beanId
+		this.beanIds = beanIds
 		this.editable = editable
 		if (filter != null) {
 			this.filter = filter
@@ -49,6 +45,15 @@ class PropertyImpl<V>(
 		return this
 	}
 
+	fun bind(
+		editor: Editor,
+		beanId: Int,
+		editable: Boolean = true,
+		filter: ((V) -> Boolean)? = null,
+		optional: Boolean = false
+	): PropertyImpl<V> {
+		return bind(editor, listOf(beanId), editable, filter, optional)
+	}
 
 	/** ---- [Property] interface */
 
@@ -65,7 +70,11 @@ class PropertyImpl<V>(
 	override fun getShortDescription(): String? = Translations.getOptionalString("$baseKey.desc")
 
 	override fun readFromObject(bean: Any?) {
-		value = PropertyUtils.getSimpleProperty(bean, getterPropertyName)
+		value = if (getterPropertyName.contains('.')) {
+			PropertyUtils.getNestedProperty(bean, getterPropertyName)
+		} else {
+			PropertyUtils.getSimpleProperty(bean, getterPropertyName)
+		}
 	}
 
 	override fun writeToObject(p0: Any?) {
@@ -74,7 +83,7 @@ class PropertyImpl<V>(
 
 	private fun writeToBean() {
 		val newValue = value as V?
-		val command = PropertyCommand<V>(editor!!, baseKey, beanProvider, beanId, newValue, getterPropertyName, setterPropertyName)
+		val command = PropertyCommand<V>(editor!!, baseKey, beanProvider, beanIds, newValue, getterPropertyName, setterPropertyName)
 
 		if (newValue != command.oldValue) {
 			try {

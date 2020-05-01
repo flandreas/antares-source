@@ -1,11 +1,10 @@
 package ch.scorpion.antares.view
 
-import java.beans.BeanInfo
-import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
+import java.beans.BeanInfo
 
 /**
  * Base class for implementing [BeanInfo]s for [DigitalComponentView]s.
@@ -13,12 +12,11 @@ import com.l2fprod.common.propertysheet.Property
 open class DigitalComponentBeanInfo<T : DigitalComponentView<*>> : VerticeViewBeanInfo<T>() {
 
 	companion object {
-		private val orientation = PropertyImpl("edit.property.Component.orientation", Direction::class.java)
+		private val orientation = EditProperties.orientation()
 	}
 
 	override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		orientation.bind(editor, { bean.orientation }, { bean.orientation = it!! })
-		properties.add(orientation)
+		properties.add(orientation.bind(editor, bean.id))
 	}
 }

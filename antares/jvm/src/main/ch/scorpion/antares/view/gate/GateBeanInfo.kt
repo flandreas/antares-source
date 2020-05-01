@@ -2,57 +2,52 @@ package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.InputPortNumber
 import ch.scorpion.antares.model.Logic
-import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.antares.view.DigitalGateViewBeanInfo
-import ch.scorpion.antares.view.Handedness
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.EditProperties
+import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
 class AndGateViewBeanInfo : DigitalGateViewBeanInfo<AndGateView>() {
 	companion object {
-		val dataPort = PropertyImpl("element.property.AndGate.dataPort", InputPortNumber::class.java)
+		val dataPort = PropertyImpl("dataPort", "element.property.AndGate.dataPort", InputPortNumber::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: AndGateView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		dataPort.bind(editor, { bean.dataPort }, { bean.dataPort = it!! }, true, { it.id <= bean.chosenInputCount.count })
-		properties.add(dataPort)
+		properties.add(dataPort.bind(editor, bean.id, filter = { it.id <= bean.chosenInputCount.count }))
 	}
 }
 
 @Suppress("unused")
 class BufferGateViewBeanInfo : DigitalComponentBeanInfo<BufferGateView>() {
 	companion object {
-		val bitWidth = PropertyImpl("element.property.bitWidth", BitWidth::class.java)
+		val bitWidth = AntaresProperties.bitWidth()
 	}
 
 	override fun addProperties(bean: BufferGateView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		bitWidth.bind(editor, { bean.bitWidth }, { bean.bitWidth = it!! })
-		properties.add(bitWidth)
+		properties.add(bitWidth.bind(editor, bean.id))
 	}
 }
 
 @Suppress("unused")
 class DelayGateViewBeanInfo : ComponentBeanInfo<DelayGateView>() {
 	companion object {
-		val delay = PropertyImpl("element.property.DelayGate.delay", Long::class.java)
-		val orientation = PropertyImpl("edit.property.Component.orientation", Direction::class.java)
+		val delay = PropertyImpl("delay", "element.property.DelayGate.delay", Long::class.java, componentBeanProvider)
+		val orientation = EditProperties.orientation()
 	}
 
 	override fun addProperties(bean: DelayGateView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		delay.bind(editor, { bean.delay }, { bean.delay = it!! })
-		orientation.bind(editor, { bean.orientation }, { bean.orientation = it!! })
-
-		properties.add(delay)
-		properties.add(orientation)
+		properties.add(delay.bind(editor, bean.id))
+		properties.add(orientation.bind(editor, bean.id))
 	}
 }
 
@@ -71,21 +66,17 @@ class OrGateViewBeanInfo : DigitalGateViewBeanInfo<OrGateView>()
 @Suppress("unused")
 class TriStateBufferGateViewBeanInfo : DigitalComponentBeanInfo<TriStateBufferGateView>() {
 	companion object {
-		val enableLogic = PropertyImpl("element.property.logic", Logic::class.java)
-		val bitWidth = PropertyImpl("element.property.bitWidth", BitWidth::class.java)
-		val handedness = PropertyImpl("element.property.TriStateBuffer.handedness", Handedness::class.java)
+		val enableLogic = PropertyImpl("enableLogic", "element.property.logic", Logic::class.java, componentBeanProvider)
+		val bitWidth = AntaresProperties.bitWidth()
+		val handedness = AntaresProperties.handedness(baseKey = "element.property.TriStateBuffer.handedness")
 	}
 
 	override fun addProperties(bean: TriStateBufferGateView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		enableLogic.bind(editor, { bean.enableLogic }, { bean.enableLogic = it!! })
-		bitWidth.bind(editor, { bean.bitWidth }, { bean.bitWidth = it!! })
-		handedness.bind(editor, { bean.handedness }, { bean.handedness = it!! })
-
-		properties.add(enableLogic)
-		properties.add(bitWidth)
-		properties.add(handedness)
+		properties.add(enableLogic.bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, bean.id))
+		properties.add(handedness.bind(editor, bean.id))
 	}
 }
 
@@ -93,4 +84,4 @@ class TriStateBufferGateViewBeanInfo : DigitalComponentBeanInfo<TriStateBufferGa
 class XnorGateViewBeanInfo : DigitalGateViewBeanInfo<XnorGateView>()
 
 @Suppress("unused")
-class XorGateViewBeanInfo : DigitalGateViewBeanInfo<XnorGateView>()
+class XorGateViewBeanInfo : DigitalGateViewBeanInfo<XorGateView>()
