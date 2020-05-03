@@ -26,6 +26,11 @@ class OscilloscopeAction(
 		eventBus.register(OscilloscopeDisplayEvent::class, oscilloscopeDisplayHandler)
 	}
 
+	override fun calculateEnabled(): Boolean {
+		// Disable until entire Oscilloscope has been improved
+		return false
+	}
+
 	override fun dispose() {
 		super.dispose()
 		eventBus.unregister(oscilloscopeDisplayHandler)
