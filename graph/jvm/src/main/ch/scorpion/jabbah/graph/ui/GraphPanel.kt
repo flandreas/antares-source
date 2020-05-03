@@ -14,10 +14,11 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
-import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.app.ComponentSnapAction
 import ch.scorpion.jabbah.edit.app.GridSnapAction
 import ch.scorpion.jabbah.edit.model.ComponentMessage
@@ -34,7 +35,6 @@ import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanel
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
-import ch.scorpion.jabbah.edit.view.AttentionDrawer
 import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.execution.issue.Issue
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
@@ -388,15 +388,15 @@ class GraphPanel(
 		toolbar.addSeparator()
 
 		toolbar.addTool(editor.currentTool, "/img/pointer.gif", Translations.getString("edit.tool.select"))
-		toolbar.addTool(RectangleTool(editor, { RectangleComponent() }, { GraphElementViewWrapper(it) }),
+		toolbar.addTool(RectangleTool(editor, factory = { RectangleComponent() }, adder = { GraphElementViewWrapper(it) }),
 			"/img/rectangle.png", Translations.getString("edit.component.rectangle"))
-		toolbar.addTool(RectangleTool(editor, { EllipseComponent() }, { GraphElementViewWrapper(it) }),
+		toolbar.addTool(RectangleTool(editor, factory = { EllipseComponent() }, adder = { GraphElementViewWrapper(it) }),
 			"/img/ellipse.png", Translations.getString("edit.component.ellipse"))
-		toolbar.addTool(PolylineTool(editor, { PolylineComponent() }, { GraphElementViewWrapper(it) }),
+		toolbar.addTool(PolylineTool(editor, factory = { PolylineComponent() }, adder = { GraphElementViewWrapper(it) }),
 			"/img/polyline.gif", Translations.getString("edit.component.polyline"))
-		toolbar.addTool(QuadCurveTool(editor, { QuadCurveComponent() }, { GraphElementViewWrapper(it) }),
+		toolbar.addTool(QuadCurveTool(editor, factory = { QuadCurveComponent() }, adder = { GraphElementViewWrapper(it) }),
 			"/img/curve-20.png", Translations.getString("edit.component.quadraticCurve"))
-		toolbar.addTool(TextTool(editor, { TextComponentJvm("Text") }, { GraphElementViewWrapper(it) }),
+		toolbar.addTool(TextTool(editor,factory =  { TextComponentJvm("Text") }, adder = { GraphElementViewWrapper(it) }),
 			"/img/text.gif", Translations.getString("edit.component.text"))
 
 		return toolbar
@@ -421,27 +421,5 @@ class GraphPanel(
 		toolBar.add(button)
 
 		return toolBar
-	}
-
-	private class StepButton(iconPath: String, private val action: Action) : JPanel() {
-
-		private val button = JToggleButton(ActionWrapperSwing(action))
-		private val color = Graphics2DJvm.toAwtColor(BaseModule.properties.get(AttentionDrawer.PROP_COLOR))
-
-		init {
-			button.text = null
-			button.icon = ImageIcon(GraphPanel::class.java.getResource(iconPath))
-			button.preferredSize = Dimension(40, 40)
-
-			layout = BoxLayout(this, BoxLayout.LINE_AXIS)
-
-			add(button)
-
-			action.addPropertyChangeListener(object : PropertyChangeListener<Any> {
-				override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-					background = if (action.enabled) color else null
-				}
-			})
-		}
 	}
 }

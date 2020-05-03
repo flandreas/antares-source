@@ -147,10 +147,10 @@ class ContainerPanel(
 			toolbar.addSeparator()
 		}
 		toolbar.addTool(editor.currentTool, "/img/pointer.gif", Translations.getString("edit.tool.select"))
-		toolbar.addTool(LabelTool(editor) { LabelComponent() }, "/img/text.gif", Translations.getString("edit.component.label"))
-		toolbar.addTool(RectangleTool(editor) { RectangleComponent() }, "/img/rectangle.png", Translations.getString("edit.component.rectangle"))
-		toolbar.addTool(RectangleTool(editor) { EllipseComponent() }, "/img/ellipse.png", Translations.getString("edit.component.ellipse"))
-		toolbar.addTool(PolylineTool(editor) { PolylineComponent() }, "/img/polyline.gif", Translations.getString("edit.component.polyline"))
+		toolbar.addTool(LabelTool(editor, factory = { LabelComponent() } ), "/img/text.gif", Translations.getString("edit.component.label"))
+		toolbar.addTool(RectangleTool(editor, factory = { RectangleComponent() }), "/img/rectangle.png", Translations.getString("edit.component.rectangle"))
+		toolbar.addTool(RectangleTool(editor, factory = { EllipseComponent() }), "/img/ellipse.png", Translations.getString("edit.component.ellipse"))
+		toolbar.addTool(PolylineTool(editor, factory = { PolylineComponent() }), "/img/polyline.gif", Translations.getString("edit.component.polyline"))
 
 		return toolbar
 	}

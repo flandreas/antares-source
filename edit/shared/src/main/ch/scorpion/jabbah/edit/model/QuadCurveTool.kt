@@ -10,16 +10,18 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Tool
-import ch.scorpion.jabbah.edit.editor.AddCommand
+import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
+import ch.scorpion.jabbah.edit.module.EditModule
 import kotlin.properties.Delegates
 
 /** A [Tool] for interactively creating a [QuadCurveComponent] in a [Drawing].*/
 class QuadCurveTool(
 	editor: Editor,
+	service: DrawingAppService = EditModule.drawingAppService,
 	factory: () -> QuadCurveComponent,
 	adder: (QuadCurveComponent) -> Component = { it }
-) : AbstractComponentTool<QuadCurveComponent>(editor, factory, adder) {
+) : AbstractComponentTool<QuadCurveComponent>(editor, service, factory, adder) {
 
 	/** Holds the instantiated rectangle. Initialized in [mousePressed].*/
 	private var instance by Delegates.notNull<QuadCurveComponent>()
@@ -59,8 +61,7 @@ class QuadCurveTool(
 		}
 
 		if (clickedCount == 3) {
-			editor.commandManager.register(AddCommand(editor, addedComponent))
-			editor.view.selectionManager.select(addedComponent)
+			addComponent(addedComponent)
 			terminateTool()
 		}
 	}
@@ -70,7 +71,7 @@ class QuadCurveTool(
 
 		if (clickedCount > 0) {
 			val offset = editor.snapManager.snap(x, y)
-			var movedPointIndex = when (clickedCount) {
+			val movedPointIndex = when (clickedCount) {
 				1 -> 2
 				2 -> 1
 				else -> throw IllegalArgumentException("")

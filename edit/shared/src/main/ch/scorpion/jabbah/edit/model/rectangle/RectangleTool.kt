@@ -9,8 +9,9 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Tool
-import ch.scorpion.jabbah.edit.editor.AddCommand
+import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.model.AbstractComponentTool
+import ch.scorpion.jabbah.edit.module.EditModule
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -25,14 +26,12 @@ import kotlin.properties.Delegates
  */
 class RectangleTool<T : RectangularComponent>(
 	editor: Editor,
+	service: DrawingAppService = EditModule.drawingAppService,
 	factory: () -> T,
-	adder: (T) -> Component,
-	val defaultWidth: Double,
-	val defaultHeight: Double
-) : AbstractComponentTool<T>(editor, factory, adder) {
-
-	constructor(editor: Editor, factory: () -> T) : this(editor, factory, { it })
-	constructor(editor: Editor, factory: () -> T, adder: (T) -> Component) : this(editor, factory, adder, DEF_WIDTH, DEF_HEIGHT)
+	adder: (T) -> Component = { it },
+	val defaultWidth: Double = DEF_WIDTH,
+	val defaultHeight: Double = DEF_HEIGHT
+) : AbstractComponentTool<T>(editor, service, factory, adder) {
 
 	companion object {
 
@@ -108,8 +107,8 @@ class RectangleTool<T : RectangularComponent>(
 			instance.setFrame(anchorLocation.x, anchorLocation.y, defaultWidth, defaultHeight)
 		}
 
-		editor.view.selectionManager.select(addedComponent)
-		editor.commandManager.execute(AddCommand(editor, addedComponent))
+		addComponent(addedComponent)
+
 		editor.toolDone()
 	}
 

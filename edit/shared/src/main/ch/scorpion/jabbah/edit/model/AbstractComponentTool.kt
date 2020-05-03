@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.edit.model
 
+import ch.scorpion.jabbah.edit.Tool
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.tool.ToolAdapter
 
 /**
@@ -14,6 +16,7 @@ import ch.scorpion.jabbah.edit.tool.ToolAdapter
  */
 abstract class AbstractComponentTool<T: Component> (
     editor: Editor,
+    private val service: DrawingAppService,
     private val factory: () -> T,
     private val adder: (T) -> Component = { it }
 ) : ToolAdapter(editor) {
@@ -25,4 +28,11 @@ abstract class AbstractComponentTool<T: Component> (
     protected fun getAddedComponent(component: T): Component {
         return adder.invoke(component)
     }
+
+	protected fun addComponent(component: Component) {
+		editor.drawing.remove(component)
+		val addedComponent = service.add(component, editor.view)
+		editor.view.selectionManager.deselectAll()
+		editor.view.selectionManager.select(addedComponent)
+	}
 }
