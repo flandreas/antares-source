@@ -136,6 +136,9 @@ class EdgeToPortConnector(
 		context.editor.commandManager.beginTransaction(command)
 
 		edgeView = command.addedNewEdgeView
+
+		context.drawingView().selectionManager.deselectAll()
+		context.drawingView().selectionManager.select(edgeView!!)
 	}
 
 	override fun cancel(editor: Editor) {

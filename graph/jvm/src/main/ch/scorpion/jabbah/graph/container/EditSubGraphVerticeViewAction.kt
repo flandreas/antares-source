@@ -65,7 +65,7 @@ class EditSubGraphVerticeViewAction(
 				commandManager = commandManager
 			)) {
 			// User has pressed "OK"
-			commandManager.execute(EditSubGraphVerticeViewCommand(editedVerticeView, containerPanel.editor.drawing as ContainerDrawing))
+			commandManager.execute(EditSubGraphVerticeViewCommand(drawingView!!, editedVerticeView.id, containerPanel.editor.drawing as ContainerDrawing))
 		}
 
 		viewManager.unregisterView(containerPanel.editor.view)

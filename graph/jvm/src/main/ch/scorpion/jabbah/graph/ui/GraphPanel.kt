@@ -53,6 +53,8 @@ import ch.scorpion.jabbah.graph.library.LibraryPanel
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseSelector
 import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.*
@@ -67,6 +69,7 @@ import javax.swing.*
  */
 class GraphPanel(
 	val editor: Editor,
+	val graphViewAppService: GraphViewAppService = GraphViewModule.graphViewAppService,
 	val eventBus: EventBus = BaseModule.eventBus,
 	val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val viewManager: ViewManager,
@@ -234,7 +237,7 @@ class GraphPanel(
 	}
 
 	private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
-		GraphPanelTransferHandler(editor, eventBus, GraphElementViewTransferable.FLAVOR)
+		GraphPanelTransferHandler(graphViewAppService, editor, eventBus, GraphElementViewTransferable.FLAVOR)
 
 	private fun updateEditability() {
 		val editable = (viewManager.activeView === editor.view && editor.view.editable)

@@ -1,13 +1,16 @@
 package ch.scorpion.jabbah.graph.view.app
 
 import ch.scorpion.jabbah.base.collection.Pair
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.app.DeleteCommand
 import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.app.DrawingAppServiceImpl
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.connect.JoinEdgeViewsResult
@@ -18,7 +21,13 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
  * using [Command]s.
  */
 interface GraphViewAppService : DrawingAppService {
-	// TODO More service methods
+
+	/**
+	 * Add a [GraphElementView] to the [GraphView] in the specified [DrawingView] by creating a new instance using
+	 * [LibraryElement]. This is necessary because [add] creates a clone using [StorableCloner], which doesn't work
+	 * for [GraphElementView] (the model would be cloned).
+	 */
+	fun addGraphElementViewFromLibrary(libraryElement: LibraryElement, location: Point2D, drawingView: DrawingView<GraphView>): Component
 }
 
 open class GraphViewAppServiceImpl(
@@ -32,8 +41,8 @@ open class GraphViewAppServiceImpl(
 
 	/** ---- [DrawingAppService] interface */
 
-	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>) {
-		if (drawingView.drawing !is GraphView || component is GraphElementView<*>) {
+	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>): Component {
+		return if (drawingView.drawing !is GraphView || component is GraphElementView<*>) {
 			super.add(component, drawingView)
 		} else {
 			super.add(GraphElementViewWrapper(component), drawingView)
@@ -63,6 +72,21 @@ open class GraphViewAppServiceImpl(
 				.map { possibleWrapper(it, drawingView.drawing).id }))
 
 		commandManager.commitTransaction()
+	}
+
+	/** ---- [GraphViewAppService] interface */
+
+	override fun addGraphElementViewFromLibrary(libraryElement: LibraryElement, location: Point2D, drawingView: DrawingView<GraphView>): Component {
+		LOG.debug("Add Component from LibraryElement ${libraryElement.name}")
+
+		val command = AddGraphElementViewFromLibraryCommand(drawingView, libraryElement, location)
+		commandManager.execute(command)
+		val component = drawingView.drawing.getWithId(command.addedComponentId) as Component
+
+		drawingView.selectionManager.deselectAll()
+		drawingView.selectionManager.select(component)
+
+		return component
 	}
 
 	/** ---- [GraphViewAppServiceImpl] */

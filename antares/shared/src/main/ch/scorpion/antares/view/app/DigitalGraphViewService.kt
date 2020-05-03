@@ -25,11 +25,11 @@ class DigitalGraphViewService(
 		private val LOG by logger(DigitalGraphViewService::class)
 	}
 
-	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>) {
+	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>): Component {
 		if (component is LightEmitter) {
 			component.lightColor = determineLightColor(drawingView.drawing as DigitalGraphView)
 		}
-		super.add(component, drawingView)
+		return super.add(component, drawingView)
 	}
 
 	fun replaceLightColor(graphView: DigitalGraphView) {

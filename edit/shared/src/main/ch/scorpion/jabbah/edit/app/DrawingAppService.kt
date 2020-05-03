@@ -20,8 +20,11 @@ import ch.scorpion.jabbah.edit.module.EditModule
  */
 interface DrawingAppService {
 
-	/** Adds the specified [Component] to a [DrawingView]'s [Drawing].*/
-	fun add(component: Component, drawingView: DrawingView<Drawing<Component>>)
+	/**
+	 * Adds the specified [Component] to a [DrawingView]'s [Drawing].
+	 * @return the effectively added [Component]. Implementations might clone [component] before adding
+	 */
+	fun add(component: Component, drawingView: DrawingView<Drawing<Component>>): Component
 
 	/**
 	 * Deletes the specified [Component] from its [Drawing].
@@ -51,11 +54,13 @@ open class DrawingAppServiceImpl(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : DrawingAppService {
 
-	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>) {
+	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>): Component {
 		val command = AddCommand(drawingView, component)
 		commandManager.execute(command)
+		val addedComponent = drawingView.drawing.getWithId(command.addedComponentId)!!
 		drawingView.selectionManager.deselectAll()
-		drawingView.selectionManager.select(drawingView.drawing.getWithId(command.addedComponentId)!!)
+		drawingView.selectionManager.select(addedComponent)
+		return addedComponent
 	}
 
 	override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String?) {

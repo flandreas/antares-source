@@ -82,7 +82,7 @@ open class ComponentTransferHandler(
 	                val localTransferable = transferable
                     InvocationHandler.invoke(Runnable {
                         if (dropComponent != null && canImport(dropComponent, localTransferable!!)) {
-                            SwingUtilities.invokeLater { importElement(dropComponent, eventBus) }
+                            SwingUtilities.invokeLater { importElement(dropComponent, localTransferable, eventBus) }
                         }
                         editor.view.setDropComponent(null, null)
 	                    transferable = null
@@ -118,15 +118,19 @@ open class ComponentTransferHandler(
         return true
     }
 
-    private fun importElement(elementView: Component, eventBus: EventBus) {
+    private fun importElement(dropComponent: Component, transferable: Transferable, eventBus: EventBus) {
         LOG.debug("importData")
         try {
-	        service.add(elementView, editor.view)
-            eventBus.post(DropEvent(editor, elementView))
+	        val addedComponent = addComponent(dropComponent, transferable)
+            eventBus.post(DropEvent(editor, addedComponent))
             editor.drawing.validate()
             (editor.view.canvas as JPanel).requestFocusInWindow()
         } catch (e: Exception) {
             LOG.error("Error in importing dropped Component: ${e.message}")
         }
     }
+
+	protected open fun addComponent(dropComponent: Component, transferable: Transferable): Component {
+		return service.add(dropComponent, editor.view)
+	}
 }

@@ -35,6 +35,6 @@ class ResetSubGraphVerticeViewAction(
 
 	override fun execute(event: ActionEvent) {
 		LOG.debug("Resetting custom view of SubGraphVerticeView")
-		commandManager.execute(EditSubGraphVerticeViewCommand(subGraphVerticeView, null))
+		commandManager.execute(EditSubGraphVerticeViewCommand(drawingView!!, subGraphVerticeView.id, null))
 	}
 }
