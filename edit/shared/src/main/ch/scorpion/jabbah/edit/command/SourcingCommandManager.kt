@@ -32,17 +32,31 @@ class SourcingCommandManager(
 	companion object {
 		private val LOG by logger(SourcingCommandManager::class)
 		private const val DEF_MAX_COMMAND_COUNT_PER_SNAPSHOT = 10
+		private const val DEFAULT_STATE_NAME = "default"
 	}
 
-	private val snapshots = Stack<Snapshot>()
-	private val redoSnapshots = Stack<Snapshot>()
-	private var transaction: Transaction? = null
-	private var transactionLevel: Int = 0
+	private class State(val name: String) {
+		val snapshots = Stack<Snapshot>()
+		val redoSnapshots = Stack<Snapshot>()
+		var transaction: Transaction? = null
+		var transactionLevel: Int = 0
+
+		val snapshotCount: Int get() = snapshots.size
+		val redoSnapshotCount: Int get() = redoSnapshots.size
+	}
+
 
 	private lateinit var undoableDataHolder: UndoableDataHolder
 
-	val snapshotCount: Int get() = snapshots.size
-	val redoSnapshotCount: Int get() = redoSnapshots.size
+	private val states = Stack<State>()
+	private val state: State get() = states.peek()
+
+	init {
+		states.push(State(DEFAULT_STATE_NAME))
+	}
+
+	val snapshotCount: Int get() = state.snapshotCount
+	val redoSnapshotCount: Int get() = state.redoSnapshotCount
 
 	/** ---- [CommandManager] interface */
 
@@ -61,39 +75,39 @@ class SourcingCommandManager(
 	}
 
 	override fun canUndo(): Boolean {
-		return transactionLevel == 0 && !snapshots.empty && snapshots.peek().canUndo
+		return state.transactionLevel == 0 && !state.snapshots.empty && state.snapshots.peek().canUndo
 	}
 
 	override fun canRedo(): Boolean {
-		return transactionLevel == 0 && !snapshots.empty && snapshots.peek().canRedo || !redoSnapshots.empty
+		return state.transactionLevel == 0 && !state.snapshots.empty && state.snapshots.peek().canRedo || !state.redoSnapshots.empty
 	}
 
 	override fun reset() {
 		LOG.debug("reset, creating snapshot")
-		snapshots.clear()
-		redoSnapshots.clear()
+		state.snapshots.clear()
+		state.redoSnapshots.clear()
 		undoableDataHolder.getUndoableState()?.let { addableSnapshot() }
 		eventBus.post(CommandEvent(this))
 	}
 
 	override fun register(command: Command) {
 		LOG.debug("Register command '${command.getDescription()}'")
-		if (transaction == null) {
+		if (state.transaction == null) {
 			beginTransaction(command, register = true)
 			commitTransaction()
 		} else {
-			transaction!!.add(command)
+			state.transaction!!.add(command)
 			command.validate()
 		}
 	}
 
 	override fun execute(command: Command) {
 		LOG.debug("Execute command '${command.getDescription()}'")
-		if (transaction == null) {
+		if (state.transaction == null) {
 			beginTransaction(command, register = false)
 			commitTransaction()
 		} else {
-			transaction!!.add(command)
+			state.transaction!!.add(command)
 			command.execute()
 			command.validate()
 		}
@@ -102,7 +116,7 @@ class SourcingCommandManager(
 		if (!canUndo()) {
 			throw IllegalStateException("no undoable command")
 		}
-		val snapshot = snapshots.peek()
+		val snapshot = state.snapshots.peek()
 		LOG.debug("Undo command '${snapshot.undoDescription}'")
 		snapshot.undo()
 
@@ -112,15 +126,15 @@ class SourcingCommandManager(
 	}
 
 	private fun transferUndoneSnapshotIfNecessary(storeForRedo: Boolean) {
-		val snapshot = snapshots.peek()
-		if (snapshot.undoStack.empty && snapshots.size > 1) {
-			snapshots.pop()
+		val snapshot = state.snapshots.peek()
+		if (snapshot.undoStack.empty && state.snapshots.size > 1) {
+			state.snapshots.pop()
 			if (storeForRedo) {
-				redoSnapshots.push(snapshot)
+				state.redoSnapshots.push(snapshot)
 			}
 		}
 
-		if (snapshots.empty) {
+		if (state.snapshots.empty) {
 			addSnapshot()
 		}
 	}
@@ -130,23 +144,23 @@ class SourcingCommandManager(
 			throw IllegalStateException("no redoable command")
 		}
 
-		if (!snapshots.peek().canRedo) {
-			snapshots.push(redoSnapshots.pop())
+		if (!state.snapshots.peek().canRedo) {
+			state.snapshots.push(state.redoSnapshots.pop())
 		}
 
-		LOG.debug("Redo command '${snapshots.peek().redoDescription}'")
-		snapshots.peek().redo()
+		LOG.debug("Redo command '${state.snapshots.peek().redoDescription}'")
+		state.snapshots.peek().redo()
 
 		eventBus.post(CommandEvent(this))
 	}
 
 	override fun beginTransaction(command: Command, register: Boolean) {
-		if (transaction == null) {
-			transaction = Transaction()
-			addableSnapshot().add(transaction!!)
+		if (state.transaction == null) {
+			state.transaction = Transaction()
+			addableSnapshot().add(state.transaction!!)
 		}
-		transactionLevel++
-		transaction?.let {
+		state.transactionLevel++
+		state.transaction?.let {
 			it.add(command)
 			if (register) {
 				command.registered()
@@ -162,44 +176,55 @@ class SourcingCommandManager(
 	}
 
 	override fun commitTransaction() {
-		if (transaction == null) {
+		if (state.transaction == null) {
 			throw IllegalStateException("no transaction to commit")
 		}
-		transactionLevel--
-		if (transactionLevel == 0) {
+		state.transactionLevel--
+		if (state.transactionLevel == 0) {
 			LOG.debug("Commit transaction")
 			eventBus.post(CommandEvent(this))
-			transaction = null
+			state.transaction = null
 		}
 	}
 
 	override fun rollbackTransaction() {
-		if (transaction == null) {
+		if (state.transaction == null) {
 			throw IllegalStateException("no transaction to rollback")
 		}
-		snapshots.peek().undo()
+		state.snapshots.peek().undo()
 		transferUndoneSnapshotIfNecessary(storeForRedo = false)
 
-		transactionLevel = 0
-		transaction = null
+		state.transactionLevel = 0
+		state.transaction = null
 	}
 
 	override fun getUndoDescription(): String? {
 		if (!canUndo()) {
 			return null
 		}
-		return snapshots.peek().undoDescription
+		return state.snapshots.peek().undoDescription
 	}
 
 	override fun getRedoDescription(): String? {
 		if (!canRedo()) {
 			return null
 		}
-		return snapshots.peek().redoDescription
+		return state.snapshots.peek().redoDescription
 	}
 
 	override fun openCheckpoint(name: String) {
-		throw UnsupportedOperationException("not implemented")
+		LOG.debug("Open checkpoint '$name'")
+		states.push(State(name))
+		eventBus.post(CommandEvent(this))
+	}
+
+	override fun closeCheckpoint() {
+		if (states.size < 2) {
+			throw IllegalStateException("no checkpoint to close")
+		}
+		LOG.debug("Close checkpoint ${states.peek().name}")
+		states.pop()
+		eventBus.post(CommandEvent(this))
 	}
 
 	override fun commitCheckpoint() {
@@ -207,10 +232,6 @@ class SourcingCommandManager(
 	}
 
 	override fun rollbackCheckpoint() {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun closeCheckpoint() {
 		throw UnsupportedOperationException("not implemented")
 	}
 
@@ -320,14 +341,14 @@ class SourcingCommandManager(
 	 * the [Snapshot] where a new [Command] can be added.
 	 */
 	private fun addableSnapshot(): Snapshot {
-		if (snapshots.empty || snapshots.peek().undoCommandCount >= maxCommandCountPerSnapshot) {
+		if (state.snapshots.empty || state.snapshots.peek().undoCommandCount >= maxCommandCountPerSnapshot) {
 			addSnapshot()
 		}
-		return snapshots.peek()
+		return state.snapshots.peek()
 	}
 
 	private fun addSnapshot() {
-		snapshots.push(Snapshot(createSnapshotData()))
+		state.snapshots.push(Snapshot(createSnapshotData()))
 	}
 
 	private fun createSnapshotData(): Storable {

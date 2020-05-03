@@ -262,6 +262,64 @@ class SourcingCommandManagerTest {
 
 	/** ---- Checkpoint tests */
 
+	@Test
+	fun shouldNotBeUndoableWithNewCheckpoint() {
+		cmdManager.execute(AppendCommand("a"))
+
+		cmdManager.openCheckpoint("test")
+
+		assertFalse(cmdManager.canUndo())
+	}
+
+	@Test
+	fun shouldBeUndoableAfterOpeningCheckpoint() {
+		cmdManager.execute(AppendCommand("a"))
+
+		cmdManager.openCheckpoint("test")
+		cmdManager.execute(AppendCommand("b"))
+
+		assertTrue(cmdManager.canUndo())
+	}
+
+	@Test
+	fun shouldUndoInCheckpoint() {
+		cmdManager.execute(AppendCommand("a"))
+
+		cmdManager.openCheckpoint("test")
+		cmdManager.execute(AppendCommand("b"))
+
+		cmdManager.undo()
+
+		assertEquals("a", application.mandatoryData.value)
+	}
+
+	@Test
+	fun shouldRedoInCheckpoint() {
+		cmdManager.execute(AppendCommand("a"))
+
+		cmdManager.openCheckpoint("test")
+		cmdManager.execute(AppendCommand("b"))
+		cmdManager.undo()
+
+		cmdManager.redo()
+
+		assertEquals("ab", application.mandatoryData.value)
+
+	}
+
+	@Test
+	fun shouldPurgeCommandsWhenClosingCheckpoint() {
+		cmdManager.execute(AppendCommand("a"))
+
+		cmdManager.openCheckpoint("test")
+		cmdManager.execute(AppendCommand("b"))
+		cmdManager.closeCheckpoint()
+
+		cmdManager.undo()
+
+		assertEquals("", application.mandatoryData.value)
+	}
+
 	/*
 	@Test
 	fun shouldCommitCheckpoint() {
@@ -271,7 +329,7 @@ class SourcingCommandManagerTest {
 
 		cmdManager.commitCheckpoint()
 
-		assertEquals("ab", application.data.value)
+		assertEquals("ab", application.mandatoryData.value)
 	}
 
 	@Test

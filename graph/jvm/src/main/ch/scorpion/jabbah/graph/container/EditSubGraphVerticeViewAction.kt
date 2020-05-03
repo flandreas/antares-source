@@ -39,7 +39,9 @@ class EditSubGraphVerticeViewAction(
 		LOG.debug("opening EditSubGraphVerticeViewPanel")
 
 		val editedVerticeView = singleSelection as SubGraphVerticeView<*>
-		drawingView!!.selectionManager.deselect(editedVerticeView)
+		val editedDrawingView = drawingView
+
+		editedDrawingView!!.selectionManager.deselect(editedVerticeView)
 		editedVerticeView.invalidate()
 
 		val containerPanel = ContainerPanel(
@@ -65,14 +67,14 @@ class EditSubGraphVerticeViewAction(
 				commandManager = commandManager
 			)) {
 			// User has pressed "OK"
-			commandManager.execute(EditSubGraphVerticeViewCommand(drawingView!!, editedVerticeView.id, containerPanel.editor.drawing as ContainerDrawing))
+			commandManager.execute(EditSubGraphVerticeViewCommand(editedDrawingView, editedVerticeView.id, containerPanel.editor.drawing as ContainerDrawing))
 		}
 
 		viewManager.unregisterView(containerPanel.editor.view)
 		viewManager.activeView = oldActiveView
 
 		editedVerticeView.invalidate()
-		drawingView!!.selectionManager.select(editedVerticeView)
+		editedDrawingView.selectionManager.select(editedVerticeView)
 
 		containerPanel.dispose()
 	}
