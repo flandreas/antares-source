@@ -53,24 +53,6 @@ class PasteAction(
 	}
 }
 
-class CopyCommand(
-	private val drawingView: DrawingView<Drawing<Component>>,
-	private val componentIds: Collection<Int>,
-	private val service: CopyPasteService = EditModule.copyPasteService
-) : AbstractCommand("edit.command.copy"), Undoable {
-
-	var oldContent: String? = null
-
-	override fun execute() {
-		oldContent = Clipboard.getStringContents()
-		Clipboard.setStringContents(service.copy(componentIds, drawingView.drawing))
-	}
-
-	override fun undo() {
-		oldContent?.let { Clipboard.setStringContents(it) }
-	}
-}
-
 /**
  * Adds the previously copied [Component]s to a [Drawing].
  */

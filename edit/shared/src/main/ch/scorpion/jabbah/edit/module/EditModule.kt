@@ -56,9 +56,9 @@ object EditModule : AbstractModule() {
      */
     var attentionDrawerFactory: (Any?) -> AttentionDrawer = { AttentionDrawerImpl() }
 
-    var drawingAppService: DrawingAppService = DrawingAppServiceImpl()
-
 	var copyPasteService = CopyPasteService()
+
+    var drawingAppService: DrawingAppService = DrawingAppServiceImpl()
 
     override fun initialize() {
         DrawModule.require()

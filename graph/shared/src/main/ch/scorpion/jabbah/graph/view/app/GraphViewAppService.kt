@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.app.DeleteCommand
 import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.app.DrawingAppServiceImpl
 import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.view.*
@@ -31,9 +32,10 @@ interface GraphViewAppService : DrawingAppService {
 }
 
 open class GraphViewAppServiceImpl(
-	private val commandManager: CommandManager = EditModule.commandManager,
+	copyPasteService: CopyPasteService = EditModule.copyPasteService,
+	commandManager: CommandManager = EditModule.commandManager,
 	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
-) : DrawingAppServiceImpl(commandManager), GraphViewAppService {
+) : DrawingAppServiceImpl(copyPasteService, commandManager), GraphViewAppService {
 
 	companion object {
 		private val LOG by logger(GraphViewAppServiceImpl::class)

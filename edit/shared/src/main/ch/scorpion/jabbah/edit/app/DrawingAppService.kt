@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.editor.AddCommand
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.module.EditModule
 
@@ -50,8 +51,9 @@ interface DrawingAppService {
 }
 
 open class DrawingAppServiceImpl(
-	private val commandManager: CommandManager = EditModule.commandManager,
-	private val eventBus: EventBus = BaseModule.eventBus
+	protected val copyPasteService: CopyPasteService = EditModule.copyPasteService,
+	protected val commandManager: CommandManager = EditModule.commandManager,
+	protected val eventBus: EventBus = BaseModule.eventBus
 ) : DrawingAppService {
 
 	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>): Component {
@@ -105,7 +107,7 @@ open class DrawingAppServiceImpl(
 	}
 
 	override fun copy(drawingView: DrawingView<Drawing<Component>>) {
-		commandManager.execute(CopyCommand(drawingView, drawingView.selectionManager.selection.map { it.id }))
+		Clipboard.setStringContents(copyPasteService.copy(drawingView.selectionManager.selection.map { it.id }, drawingView.drawing))
 	}
 
 	override fun paste(drawingView: DrawingView<Drawing<Component>>) {

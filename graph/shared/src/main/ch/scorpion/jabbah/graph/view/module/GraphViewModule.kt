@@ -93,7 +93,7 @@ object GraphViewModule : AbstractModule() {
 			{ nodeViewFactory })
 	}
 
-	var graphViewAppService: GraphViewAppService = GraphViewAppServiceImpl(EditModule.commandManager)
+	var graphViewAppService: GraphViewAppService = GraphViewAppServiceImpl(EditModule.copyPasteService, EditModule.commandManager)
 
 	/** Must be specified by higher application layers.*/
 	var oscilloscopeViewFactory: OscilloscopeViewFactory = UndefinedOscilloscopeViewFactory()
