@@ -53,12 +53,6 @@ interface Command {
     fun execute()
 
     /**
-     * Notifies this [Command] that it has been registered with a [CommandManager] without execution.
-     * Implementations can update their state in order to prepare for future undo and re-execution if necessary.
-     */
-    fun registered()
-
-    /**
      * Called by the [CommandManager] in order to validate any [View] that displays the changed
      * [Drawing] after [execute] or [undo] has been done.
      */

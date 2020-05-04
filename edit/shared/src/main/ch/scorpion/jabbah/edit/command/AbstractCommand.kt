@@ -21,8 +21,4 @@ abstract class AbstractCommand(
 	override fun validate() {
         editor?.drawing?.validate()
     }
-
-    override fun registered() {
-        // empty
-    }
 }

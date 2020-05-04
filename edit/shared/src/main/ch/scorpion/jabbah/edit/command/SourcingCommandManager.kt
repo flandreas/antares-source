@@ -162,9 +162,7 @@ class SourcingCommandManager(
 		state.transactionLevel++
 		state.transaction?.let {
 			it.add(command)
-			if (register) {
-				command.registered()
-			} else {
+			if (!register) {
 				command.execute()
 				command.validate()
 			}
