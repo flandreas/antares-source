@@ -84,14 +84,15 @@ class SourcingCommandManager(
 
 	override fun reset() {
 		LOG.debug("reset, creating snapshot")
-		state.snapshots.clear()
-		state.redoSnapshots.clear()
+		resetUndo()
+		resetRedo()
 		undoableDataHolder.getUndoableState()?.let { addableSnapshot() }
 		eventBus.post(CommandEvent(this))
 	}
 
 	override fun register(command: Command) {
 		LOG.debug("Register command '${command.getDescription()}'")
+		resetRedo()
 		if (state.transaction == null) {
 			beginTransaction(command, register = true)
 			commitTransaction()
@@ -103,6 +104,7 @@ class SourcingCommandManager(
 
 	override fun execute(command: Command) {
 		LOG.debug("Execute command '${command.getDescription()}'")
+		resetRedo()
 		if (state.transaction == null) {
 			beginTransaction(command, register = false)
 			commitTransaction()
@@ -180,6 +182,7 @@ class SourcingCommandManager(
 		state.transactionLevel--
 		if (state.transactionLevel == 0) {
 			LOG.debug("Commit transaction")
+			resetRedo()
 			eventBus.post(CommandEvent(this))
 			state.transaction = null
 		}
@@ -266,6 +269,10 @@ class SourcingCommandManager(
 			command.execute()
 		}
 
+		fun resetRedo() {
+			redoStack.clear()
+		}
+
 		private fun replayFromSnapshot() {
 			val clonedData = StorableCloner.clone(data)
 			LOG.debug("Clone snapshot and set as new undoable data $clonedData")
@@ -328,6 +335,17 @@ class SourcingCommandManager(
 		override fun validate() {
 			drawingView?.drawing?.validate()
 		}
+	}
+
+	private fun resetUndo() {
+		state.snapshots.clear()
+	}
+
+	private fun resetRedo() {
+		if (!state.snapshots.empty) {
+			state.snapshots.peek().resetRedo()
+		}
+		state.redoSnapshots.clear()
 	}
 
 	/**

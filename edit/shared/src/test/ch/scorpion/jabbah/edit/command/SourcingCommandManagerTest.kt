@@ -185,6 +185,17 @@ class SourcingCommandManagerTest {
 		assertSame(oldData, application.data)
 	}
 
+	@Test
+	fun shouldClearRedoAfterUndoAndExecute() {
+		cmdManager.execute(AppendCommand("a"))
+		cmdManager.execute(AppendCommand("b"))
+		cmdManager.undo()
+
+		cmdManager.execute(AppendCommand("c"))
+
+		assertFalse(cmdManager.canRedo())
+	}
+
 	/** ---- Transaction tests */
 
 	@Test
