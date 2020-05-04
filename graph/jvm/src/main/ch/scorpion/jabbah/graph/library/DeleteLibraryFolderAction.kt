@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities
 class DeleteLibraryFolderAction(
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryFolderAction("graph.action.deleteLibraryDirectory", libraryTreeView, eventBus) {
+) : AbstractLibraryFolderAction("graph.action.deleteLibraryDirectory", true, libraryTreeView, eventBus) {
 
 	override fun calculateEnabledness(): Boolean {
 		return super.calculateEnabledness() && (selectedItem as LibraryDirectory).isEmpty() && isLibraryOwnedByUser

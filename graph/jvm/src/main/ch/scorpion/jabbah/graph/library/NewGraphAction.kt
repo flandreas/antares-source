@@ -15,7 +15,7 @@ import javax.swing.SwingUtilities
 class NewGraphAction(
 	libraryTreeView: LibraryTreeView,
     eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryFolderAction("library.action.newGraph", libraryTreeView, eventBus) {
+) : AbstractLibraryFolderAction("library.action.newGraph", true, libraryTreeView, eventBus) {
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 	    val name = JOptionPane.showInputDialog(
@@ -36,6 +36,6 @@ class NewGraphAction(
     }
 
 	override fun calculateEnabledness(): Boolean {
-		return isLibraryOwnedByUser && super.calculateEnabledness()
+		return super.calculateEnabledness() && isLibraryOwnedByUser
 	}
 }

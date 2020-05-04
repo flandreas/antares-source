@@ -22,14 +22,14 @@ import javax.swing.event.TreeSelectionListener
 class EditLibraryAction(
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryAction("library.composition.action", libraryTreeView, eventBus) {
+) : AbstractLibraryAction("library.composition.action", libraryTreeView, true, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		LibraryCompositionPanel.showAsDialog(libraryTreeView.library, Frame.getFrames()[0], eventBus)
 	}
 
 	override fun calculateEnabledness(): Boolean {
-		return isLibraryOwnedByUser
+		return super.calculateEnabledness() && isLibraryOwnedByUser
 	}
 }
 

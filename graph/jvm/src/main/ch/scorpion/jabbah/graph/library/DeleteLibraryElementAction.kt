@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities
 class DeleteLibraryElementAction(
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryAction(BASE_RESOURCE_NAME, libraryTreeView, eventBus) {
+) : AbstractLibraryAction(BASE_RESOURCE_NAME,  libraryTreeView, true, eventBus) {
 
 	companion object {
 		private const val BASE_RESOURCE_NAME = "graph.action.deleteBaseElement"
@@ -41,7 +41,7 @@ class DeleteLibraryElementAction(
 	}
 
 	override fun calculateEnabledness(): Boolean {
-		return isLibraryOwnedByUser && (selectedItem is BaseLibraryElement || selectedItem is ContainerLibraryElement)
+		return super.calculateEnabledness() && isLibraryOwnedByUser && (selectedItem is BaseLibraryElement || selectedItem is ContainerLibraryElement)
 	}
 
 	override fun handleSelectionChanged() {

@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.graph.library.LibraryTreeView
 class DefaultContainerLibraryElementAction(
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractContainerLibraryElementAction("library.action.setDefaultElement", libraryTreeView, eventBus) {
+) : AbstractContainerLibraryElementAction("library.action.setDefaultElement", true, libraryTreeView, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		val elem = libraryTreeView.getSelectedItem() as ContainerLibraryElement

@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import java.awt.Frame
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 
@@ -17,7 +16,7 @@ import javax.swing.SwingUtilities
 class AddLibraryFolderAction(
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryFolderAction("library.action.addFolder", libraryTreeView, eventBus) {
+) : AbstractLibraryFolderAction("library.action.addFolder", true, libraryTreeView, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		val name = JOptionPane.showInputDialog(
@@ -36,6 +35,6 @@ class AddLibraryFolderAction(
 	}
 
 	override fun calculateEnabledness(): Boolean {
-		return isLibraryOwnedByUser && super.calculateEnabledness()
+		return super.calculateEnabledness() && isLibraryOwnedByUser
 	}
 }

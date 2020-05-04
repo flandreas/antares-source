@@ -10,10 +10,11 @@ import javax.swing.tree.DefaultMutableTreeNode
 class ExpandAllAction(
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryAction("library.action.expandAll", libraryTreeView, eventBus) {
+) : AbstractLibraryAction("library.action.expandAll", libraryTreeView, false, eventBus) {
 
 	override fun calculateEnabledness(): Boolean {
-		return libraryTreeView.selectionPath != null &&
+		return super.calculateEnabledness() &&
+			libraryTreeView.selectionPath != null &&
 			(libraryTreeView.selectionPath?.lastPathComponent as DefaultMutableTreeNode).childCount > 0
 	}
 
@@ -26,10 +27,11 @@ class ExpandAllAction(
 class CollapseAllAction(
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryAction("library.action.collapseAll", libraryTreeView, eventBus) {
+) : AbstractLibraryAction("library.action.collapseAll", libraryTreeView, false, eventBus) {
 
 	override fun calculateEnabledness(): Boolean {
-		return libraryTreeView.selectionPath != null &&
+		return super.calculateEnabledness() &&
+			libraryTreeView.selectionPath != null &&
 			(libraryTreeView.selectionPath?.lastPathComponent as DefaultMutableTreeNode).childCount > 0
 	}
 

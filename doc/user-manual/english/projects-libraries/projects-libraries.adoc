@@ -43,3 +43,5 @@ The location of this working directory depends on the operating system. On macOS
 If you edit a single circuit, you must explicitly save your changes, i.e. you should regularly execute the "Save" action. As long as such changes are not saved, they can be undone using the undo system.
 
 Changes to the structure of projects and libraries, however, are always saved automatically. For example, if you delete a directory in a project, this directory disappears from the workbench and the new project structure is immediately saved in the working directory of Antares. Since such actions cannot be undone, Antares will ask you for confirmation before executing such actions.
+
+NOTE: As of release 0.2, actions on projects and libraries are disabled if the main circuit contains unsaved changes. This is for avoiding inconsistent states when undoing and redoing main circuit changes while project and library states have changed in the meantime.

@@ -19,7 +19,7 @@ import javax.swing.SwingUtilities
 class DuplicateGraphAction(
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractContainerLibraryElementAction("library.action.duplicateGraph", libraryTreeView, eventBus) {
+) : AbstractContainerLibraryElementAction("library.action.duplicateGraph", true, libraryTreeView, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		val element = selectedItem as ContainerLibraryElement
@@ -47,6 +47,6 @@ class DuplicateGraphAction(
 	}
 
 	override fun calculateEnabledness(): Boolean {
-		return isLibraryOwnedByUser && super.calculateEnabledness()
+		return super.calculateEnabledness() && isLibraryOwnedByUser
 	}
 }

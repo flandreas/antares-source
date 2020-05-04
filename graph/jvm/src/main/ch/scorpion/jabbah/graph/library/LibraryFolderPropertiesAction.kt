@@ -16,7 +16,7 @@ import javax.swing.*
 class LibraryFolderPropertiesAction(
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryFolderAction("library.action.editFolderProperties", libraryTreeView, eventBus) {
+) : AbstractLibraryFolderAction("library.action.editFolderProperties", true, libraryTreeView, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		val title = Translations.getString("library.action.editFolderProperties.name")

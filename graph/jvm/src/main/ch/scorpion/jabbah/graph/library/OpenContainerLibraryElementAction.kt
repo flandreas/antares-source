@@ -20,7 +20,7 @@ class OpenContainerLibraryElementAction(
 	private val application: DesktopApplication,
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus
-) : AbstractContainerLibraryElementAction("graph.action.openContainerLibraryElement", libraryTreeView, eventBus) {
+) : AbstractContainerLibraryElementAction("graph.action.openContainerLibraryElement", false, libraryTreeView, eventBus) {
 
 	companion object {
 		private val LOG by logger(OpenContainerLibraryElementAction::class)
@@ -41,7 +41,7 @@ class OpenContainerLibraryElementAction(
 	}
 
 	override fun calculateEnabledness(): Boolean {
-		return isLibraryOwnedByUser && super.calculateEnabledness()
+		return super.calculateEnabledness() && isLibraryOwnedByUser
 	}
 
 	/**
