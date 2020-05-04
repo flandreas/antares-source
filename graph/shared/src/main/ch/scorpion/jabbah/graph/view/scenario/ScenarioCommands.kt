@@ -28,11 +28,6 @@ class AddScenarioCommand(
 	}
 
 	override fun undo() {
-		// TODO Remove
-		// graphView.scenarios.remove(scenario)
-	}
-
-	override fun undo1() {
 		graphView.scenarios.remove(addedScenarioId)
 	}
 }
@@ -50,11 +45,6 @@ class DeleteScenarioCommand(
 
 	override fun execute() {
 		graphView.scenarios.remove(scenarioId)
-	}
-
-	override fun undo() {
-		// TODO Remove
-		//graphView.scenarios.add(scenario, index)
 	}
 }
 
@@ -76,11 +66,6 @@ class AddScenarioStepCommand(
 	}
 
 	override fun undo() {
-		// TODO Remove
-		// graphView.scenarios.removeStep(scenario, scenarioStep)
-	}
-
-	override fun undo1() {
 		graphView.scenarios.removeStep(scenarioId, addedScenarioStepId)
 	}
 }
@@ -100,11 +85,6 @@ class DeleteScenarioStepCommand(
 	override fun execute() {
 		graphView.scenarios.removeStep(scenarioId, scenarioStepId)
 	}
-
-	override fun undo() {
-		// TODO Remove
-		//graphView.scenarios.addStep(scenario, scenarioStep, index)
-	}
 }
 
 /** Moves a [ScenarioStep] within its [Scenario], i.e. changes the position in the ordered list.*/
@@ -113,7 +93,7 @@ class MoveScenarioStepCommand(
 	private val scenarioId: Int,
 	private val scenarioStepId: Int,
 	private val newIndex: Int
-) : AbstractCommand("scenario.command.scenarioStep.move") {
+) : AbstractCommand("scenario.command.scenarioStep.move"), Undoable {
 
 	private val graphView: GraphView get() = (application.data!!.content as MetaGraph).graph.graphView
 	private val oldIndex: Int = graphView.scenarios.indexOfStep(scenarioId, scenarioStepId)

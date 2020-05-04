@@ -21,12 +21,7 @@ class MoveEdgePointCommand(
         edgeView.movePoint(pointIndex, p.x + offset.x, p.y + offset.y)
     }
 
-    override fun undo() {
-        val p = edgeView.getSegmentPoint(pointIndex)
-        edgeView.movePoint(pointIndex, p.x - offset.x, p.y - offset.y)
-    }
-
-	override fun undo1() {
+	override fun undo() {
 		val p = edgeView.getSegmentPoint(pointIndex)
 		edgeView.movePoint(pointIndex, p.x - offset.x, p.y - offset.y)
 	}

@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -141,7 +142,7 @@ class OscilloscopeViewServiceImpl(
 
 	private class AddRowCommand(
 		private val oscilloscopeView: OscilloscopeView
-	) : AbstractCommand("graph.command.addOscilloscopeRow") {
+	) : AbstractCommand("graph.command.addOscilloscopeRow"), Undoable {
 
 		override fun execute() {
 			oscilloscopeView.addRow()
@@ -155,7 +156,7 @@ class OscilloscopeViewServiceImpl(
 	private class RemoveRowCommand(
 		private val index: Int,
 		private val oscilloscopeView: OscilloscopeView
-	) : AbstractCommand("graph.command.removeOscilloscopeRow") {
+	) : AbstractCommand("graph.command.removeOscilloscopeRow"), Undoable {
 
 		override fun execute() {
 			oscilloscopeView.removeRow(index)

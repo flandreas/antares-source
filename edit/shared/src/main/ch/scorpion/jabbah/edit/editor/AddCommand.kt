@@ -23,12 +23,7 @@ class AddCommand(
 	    addedComponentId = clone.id
     }
 
-    override fun undo() {
-	    // TODO RRemove
-        // drawingView.drawing.remove(component)
-    }
-
-	override fun undo1() {
+	override fun undo() {
 		drawingView.drawing.remove(drawingView.drawing.getWithId(addedComponentId) as Component)
 	}
 }

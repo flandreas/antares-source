@@ -164,7 +164,7 @@ abstract class AbstractHandleSelectionModel<T : Component>(
 		 *
 		 * When this method gets called, the focus handle is still set to the [Handle] that has been manipulated.
 		 */
-		protected open fun dragHandleEnd(editor: Editor) {
+		protected open fun dragHandleEnd(context: EditInputEventContext) {
 			// empty
 		}
 
@@ -209,7 +209,7 @@ abstract class AbstractHandleSelectionModel<T : Component>(
 			if (focusHandle == null) {
 				return null
 			}
-			dragHandleEnd(context.editor)
+			dragHandleEnd(context)
 			focusHandle?.getInputEventHandler(context)?.mouseReleased(context)
 			return this
 		}

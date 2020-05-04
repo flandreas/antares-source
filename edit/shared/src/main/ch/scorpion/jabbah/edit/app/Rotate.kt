@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
 
@@ -18,7 +20,7 @@ class RotateAction(
 ) : AbstractSelectionAwareAction("edit.action.rotate", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		commandManager.execute(RotateCommand(singleSelection!!, singleSelection!!.rotation.next()))
+		commandManager.execute(RotateCommand(drawingView!!, singleSelection!!.id, singleSelection!!.rotation.next()))
 	}
 
 	override fun calculateEnabled(): Boolean {
@@ -28,9 +30,12 @@ class RotateAction(
 
 /** Rotates a [Component] by a given angle.*/
 private class RotateCommand(
-	val component: Component,
+	private val drawingView: DrawingView<*>,
+	val componentId: Int,
 	val rotation: Rotation
-) : AbstractCommand("edit.command.rotate", null) {
+) : AbstractCommand("edit.command.rotate", null), Undoable {
+
+	private val component: Component get() = drawingView.drawing.getWithId(componentId) as Component
 
 	override fun execute() {
 		component.rotation = rotation

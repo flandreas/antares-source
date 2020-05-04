@@ -16,8 +16,4 @@ class MoveCommand(
 		components.forEach { it.moveBy(offset.x, offset.y) }
 		components.forEach { it.completeMoveBy() }
 	}
-
-	override fun undo() {
-		throw UnsupportedOperationException("not implemented")
-	}
 }

@@ -60,8 +60,6 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
 
-	val memory = Memory()
-
 	/**
 	 * A newline-separated list of [Disassembler] configurations consisting of operations in the form "regex=op".
 	 */
@@ -94,6 +92,8 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 	}
 
 	/** ---- [Addressable] interface */
+
+	override val memory = Memory()
 
 	override val editableWhileEditingAction: Boolean get() = true
 

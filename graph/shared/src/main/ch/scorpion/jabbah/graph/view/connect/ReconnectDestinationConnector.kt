@@ -89,14 +89,4 @@ private class ReconnectDestinationCommand(
 			edgeView.moveDestinationEndPoint(newPoint.x, newPoint.y)
 		}
 	}
-
-	override fun undo() {
-		// TODO Remove
-		/*
-		if (newConnection != null) {
-			service.unconnectFromDestination(edgeView)
-		}
-		service.connectToDestination(edgeView, oldConnection)
-	 */
-	}
 }

@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.SelectionModel
 import ch.scorpion.jabbah.edit.select.AbstractHandleSelectionModel
 import ch.scorpion.jabbah.edit.select.Handle
@@ -94,10 +93,10 @@ class RectangularHandleSelectionModel(
 			oldBounds = Rectangle2D(component.shape)
 		}
 
-		override fun dragHandleEnd(editor: Editor) {
+		override fun dragHandleEnd(context: EditInputEventContext) {
 			if (oldBounds!! != component.shape) {
-				editor.commandManager.register(
-					ResizeRectangleCommand(editor, component, Rectangle2D(oldBounds!!), Rectangle2D(component.shape)))
+				context.editor.commandManager.register(
+					ResizeRectangleCommand(context.editor, component.id, Rectangle2D(oldBounds!!), Rectangle2D(component.shape)))
 			}
 		}
 	}

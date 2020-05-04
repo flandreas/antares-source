@@ -16,7 +16,6 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -394,7 +393,7 @@ class RAMView(
 	}
 
 	private fun requestOpenMemoryContents(readonly: Boolean, newDesktopView: Boolean) {
-		eventBus.post(OpenMemoryContentsRequest(this, label.text, model.memory, model, readonly, newDesktopView))
+		eventBus.post(OpenMemoryContentsRequest(this, label.text, model, readonly, newDesktopView))
 	}
 
 	private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {

@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.graph.view.VerticeView
 data class OpenMemoryContentsRequest(
 	val verticeView: VerticeView<*>,
 	val name: String,
-    val memory: Memory,
 	val addressable: Addressable,
 	val readonly: Boolean,
 	val newDesktopView: Boolean = false

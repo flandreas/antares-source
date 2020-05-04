@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.graph.model.Vertice
  */
 interface Addressable : Vertice {
 
+	val memory: Memory
+
     /** Returns the current address.*/
     val currentAddress: Int
 

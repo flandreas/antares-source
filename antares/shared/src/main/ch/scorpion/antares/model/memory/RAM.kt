@@ -50,8 +50,6 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
 
-	val memory = Memory()
-
 	/** Determines whether this [RAM] has a clock input. */
 	var hasClock: Boolean = false
 		set(value) {
@@ -84,6 +82,8 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 	}
 
 	/** ---- [Addressable] interface */
+
+	override val memory = Memory()
 
 	override val editableWhileEditingAction: Boolean get() = false
 

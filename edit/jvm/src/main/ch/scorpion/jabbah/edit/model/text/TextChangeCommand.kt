@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 
 /**
@@ -8,10 +9,12 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
  */
 class TextChangeCommand(
     editor: Editor,
-    private val component: TextComponent,
+    private val componentId: Int,
     private val oldText: String,
     private val newText: String
-) : AbstractCommand("edit.command.textChange", editor) {
+) : AbstractCommand("edit.command.textChange", editor), Undoable {
+
+	private val component: TextComponent get() = editor!!.drawing.getWithId(componentId) as TextComponent
 
     override fun execute() {
         component.text = newText

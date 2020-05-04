@@ -73,19 +73,4 @@ class DeleteCommand(
 			.map { drawingView.drawing.getWithId(it)!! }
 			.forEach { drawingView.drawing.remove(it) }
 	}
-
-	override fun undo() {
-		// TODO Delete
-		/**
-		for (c in components) {
-			drawingView.drawing.add(c)
-		}
-		drawingView.selectionManager.select(components)
-		*/
-	}
-
-	override fun validate() {
-		// TODO Delete
-		//drawingView.drawing.validate()
-	}
 }

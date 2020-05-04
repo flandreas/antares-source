@@ -87,14 +87,4 @@ private class ReconnectOriginCommand(
 			edgeView.moveOriginEndPoint(newPoint.x, newPoint.y)
 		}
 	}
-
-	override fun undo() {
-		// TODO Remove
-		/*
-		if (newConnection != null) {
-			service.unconnectFromOrigin(edgeView)
-		}
-		service.connectToOrigin(edgeView, oldConnection)
-		*/
-	}
 }

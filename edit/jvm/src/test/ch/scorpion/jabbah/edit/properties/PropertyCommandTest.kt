@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.Editor
@@ -81,7 +80,7 @@ class PropertyCommandTest {
 		assertEquals("oldName", namable.name.value)
 	}
 
-	private fun createCommand(name: String, baseKey: String, id: Int, newValue: Any): Command {
+	private fun createCommand(name: String, baseKey: String, id: Int, newValue: Any): PropertyCommand<Any> {
 		return PropertyCommand.forComponent(
 			editor = editor,
 			propertyBaseKey = baseKey,

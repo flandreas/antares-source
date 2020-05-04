@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.view.app
 import ch.scorpion.jabbah.base.collection.Pair
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.io.StorableCloner
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.app.DeleteCommand
 import ch.scorpion.jabbah.edit.app.DrawingAppService
@@ -15,6 +14,7 @@ import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.connect.JoinEdgeViewsResult
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.io.StorableCloner
 
 /**
  * An application service for [GraphView] that enhances the domain services with undo/redo functionality
@@ -132,37 +132,6 @@ private class UnconnectEdgeViewCommand(
 	override fun execute() {
 		joinResults = connectService.unconnect(edgeView)
 	}
-
-	override fun undo() {
-		// TODO Remove
-		/*
-		if (joinResults.first == null) {
-			origin?.let { connectService.connectToOrigin(edgeView, it) }
-		} else {
-			connectService.split(
-				graphView,
-				joinResults.first!!.joinedEdgeView,
-				joinResults.first!!.segmentIndex,
-				joinResults.first!!.removedEdgeView,
-				joinResults.first!!.removedEdgeViewEndpointType,
-				joinResults.first!!.targetPortView,
-				joinResults.first!!.tailEdgeView)
-		}
-
-		if (joinResults.second == null) {
-			destination?.let { connectService.connectToDestination(edgeView, destination) }
-		} else {
-			connectService.split(
-				graphView,
-				joinResults.second!!.joinedEdgeView,
-				joinResults.second!!.segmentIndex,
-				joinResults.second!!.removedEdgeView,
-				joinResults.second!!.removedEdgeViewEndpointType,
-				joinResults.second!!.targetPortView,
-				joinResults.second!!.tailEdgeView)
-		}
-		*/
-	}
 }
 
 private class UnconnectEdgeViewOriginCommand(
@@ -176,11 +145,6 @@ private class UnconnectEdgeViewOriginCommand(
 	override fun execute() {
 		connectService.unconnectEdgeViewOrigin(edgeView)
 	}
-
-	override fun undo() {
-		// TODO Remove
-		//connectService.connectToOrigin(edgeView, connection)
-	}
 }
 
 private class UnconnectEdgeViewDestinationCommand(
@@ -193,10 +157,5 @@ private class UnconnectEdgeViewDestinationCommand(
 
 	override fun execute() {
 		connectService.unconnectEdgeViewDestination(edgeView)
-	}
-
-	override fun undo() {
-		// TODO Remove
-		//connectService.connectToDestination(edgeView, connection)
 	}
 }

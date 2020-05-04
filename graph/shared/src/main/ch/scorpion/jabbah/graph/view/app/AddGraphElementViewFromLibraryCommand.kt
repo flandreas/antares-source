@@ -28,11 +28,6 @@ class AddGraphElementViewFromLibraryCommand(
 	}
 
 	override fun undo() {
-		// TODO Remove
-		// throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun undo1() {
 		graphView.remove(graphView.getWithId(addedComponentId) as GraphElementView<*>)
 	}
 }

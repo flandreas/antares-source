@@ -1,9 +1,10 @@
 package ch.scorpion.jabbah.edit.app
 
-import ch.scorpion.jabbah.edit.EditTestRule
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.ComponentMockBuilder
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.DrawingImpl
+import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
+import io.mockk.every
+import io.mockk.mockk
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -13,21 +14,27 @@ import kotlin.test.assertEquals
  */
 class ToFrontCommandTest {
 
-    private val drawing = DrawingImpl<Component>()
-    private val c1 = ComponentMockBuilder().build()
-    private val c2 = ComponentMockBuilder().build()
-    private val c3 = ComponentMockBuilder().build()
-    private val c4 = ComponentMockBuilder().build()
+	companion object {
+		init {
+			EditTestRule.configure()
+		}
+	}
 
-    @BeforeTest
-    fun setup() {
-	    EditTestRule.configure()
-	    drawing.add(c4).add(c3).add(c2).add(c1)
-    }
+    private val drawing = DrawingImpl<Component>()
+	private val drawingView = mockk<DrawingView<Drawing<Component>>>()
+    private val c1 = RectangleComponent()
+    private val c2 = RectangleComponent()
+    private val c3 = RectangleComponent()
+    private val c4 = RectangleComponent()
+
+	init {
+		every { drawingView.drawing } returns drawing
+		drawing.add(c4).add(c3).add(c2).add(c1)
+	}
 
     @Test
     fun shouldExecute() {
-        val command = ToFrontCommand(drawing, setOf(c2, c4))
+        val command = ToFrontCommand(drawingView, setOf(c2.id, c4.id))
         command.execute()
         assertEquals(0, drawing.getStackingOrderPosition(c2))
         assertEquals(1, drawing.getStackingOrderPosition(c4))
@@ -37,7 +44,7 @@ class ToFrontCommandTest {
 
     @Test
     fun shouldUndo() {
-        val command = ToFrontCommand(drawing, setOf(c2, c4))
+        val command = ToFrontCommand(drawingView, setOf(c2.id, c4.id))
         command.execute()
         command.undo()
         assertEquals(0, drawing.getStackingOrderPosition(c1))

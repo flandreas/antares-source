@@ -18,9 +18,4 @@ class EditSubGraphVerticeViewCommand(
 	override fun execute() {
 		verticeView.setEditedContainerDrawing(newDrawing?.let { StorableCloner.clone(it) })
 	}
-
-	override fun undo() {
-		// TODO Delete
-		//verticeView.setEditedContainerDrawing(oldDrawingClone)
-	}
 }

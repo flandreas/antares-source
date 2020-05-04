@@ -18,14 +18,16 @@ interface Undoable {
 
 	/**
 	 * An operation that undoes some other operation.
-	 * TODO Rename to "undo" once [Command.undo] has been removed.
 	 */
-	fun undo1()
+	fun undo()
 }
 
 /**
  * A [Command] encapsulates a change of a [Drawing]'s state in order to make the change undoable and
  * redoable.
+ *
+ * [Command] that want to provide their own (simple!) undo logic can implement the [Undoable] interface,
+ * thereby avoiding the need to replay from snapshots when undoing this [Command]
  */
 interface Command {
 
@@ -55,13 +57,6 @@ interface Command {
      * Implementations can update their state in order to prepare for future undo and re-execution if necessary.
      */
     fun registered()
-
-    /**
-     * Undoes the change of an [Drawing]'s state that is associated with this [Command].
-     *
-     * This method is called by the [CommandManager] to perform an undo action.
-     */
-    fun undo()
 
     /**
      * Called by the [CommandManager] in order to validate any [View] that displays the changed

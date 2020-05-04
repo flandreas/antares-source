@@ -5,10 +5,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.edit.CommandManager
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
 
@@ -19,8 +16,7 @@ class ToFrontAction(
 ) : AbstractSelectionAwareAction("edit.action.stackingOrder.toFront", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val drawing = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!.drawing
-		cmdManager.execute(ToFrontCommand(drawing, selection))
+		cmdManager.execute(ToFrontCommand(drawingView as DrawingView<Drawing<Component>>, selection.map { it.id }))
 	}
 }
 
@@ -31,8 +27,7 @@ class OneUpAction(
 ) : AbstractSelectionAwareAction("edit.action.stackingOrder.oneUp", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val drawing = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!.drawing
-		cmdManager.execute(OneUpCommand(drawing, selection))
+		cmdManager.execute(OneUpCommand(drawingView as DrawingView<Drawing<Component>>, selection.map { it.id }))
 	}
 }
 
@@ -43,8 +38,7 @@ class OneDownAction(
 ) : AbstractSelectionAwareAction("edit.action.stackingOrder.oneDown", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val drawing = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!.drawing
-		cmdManager.execute(OneDownCommand(drawing, selection))
+		cmdManager.execute(OneDownCommand(drawingView as DrawingView<Drawing<Component>>, selection.map { it.id }))
 	}
 }
 
@@ -55,18 +49,21 @@ class ToBackAction(
 ) : AbstractSelectionAwareAction("edit.action.stackingOrder.toBack", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val drawing = viewManager.castedActiveView<DrawingView<Drawing<Component>>>()!!.drawing
-		cmdManager.execute(ToBackCommand(drawing, selection))
+		cmdManager.execute(ToBackCommand(drawingView as DrawingView<Drawing<Component>>, selection.map { it.id }))
 	}
 }
 
 internal abstract class StackingOrderCommand(
 	name: String,
-	protected val drawing: Drawing<Component>
+	protected val drawingView: DrawingView<*>,
+	protected val componentIds: Collection<Int>
 ) : AbstractCommand(name, null) {
 
+	protected val drawing: Drawing<Component> get() = drawingView.drawing as Drawing<Component>
+	protected val components get() = componentIds.map { drawing.getWithId(it) as Component }
+
 	override fun validate() {
-		drawing.validate()
+		drawingView.drawing.validate()
 	}
 }
 
@@ -74,9 +71,9 @@ internal abstract class StackingOrderCommand(
  * Brings a [Collection] of [Component]s to the front of the stacking order.
  */
 internal class ToFrontCommand(
-	drawing: Drawing<Component>,
-	components: Collection<Component>
-) : StackingOrderCommand("edit.action.stackingOrder.toFront.name", drawing) {
+	drawingView: DrawingView<Drawing<Component>>,
+	componentIds: Collection<Int>
+) : StackingOrderCommand("edit.action.stackingOrder.toFront.name", drawingView, componentIds), Undoable {
 
 	private val origStackingOrderPositions = drawing.getStackingOrderPositions(components)
 	private val oldPositions = mutableMapOf<Component, Int>()
@@ -101,9 +98,9 @@ internal class ToFrontCommand(
  * while maintaining their relative orders.
  */
 internal class OneUpCommand(
-	drawing: Drawing<Component>,
-	components: Collection<Component>
-) : StackingOrderCommand("edit.action.stackingOrder.oneUp.name", drawing) {
+	drawingView: DrawingView<Drawing<Component>>,
+	componentIds: Collection<Int>
+) : StackingOrderCommand("edit.action.stackingOrder.oneUp.name", drawingView, componentIds), Undoable {
 
 	private val origStackingOrderPositions = drawing.getStackingOrderPositions(components)
 
@@ -130,9 +127,9 @@ internal class OneUpCommand(
  * while maintaining their relative orders.
  */
 internal class OneDownCommand(
-	drawing: Drawing<Component>,
-	components: Collection<Component>
-) : StackingOrderCommand("edit.action.stackingOrder.oneDown.name", drawing) {
+	drawingView: DrawingView<Drawing<Component>>,
+	componentIds: Collection<Int>
+) : StackingOrderCommand("edit.action.stackingOrder.oneDown.name", drawingView, componentIds), Undoable {
 
 	private val origStackingOrderPositions = drawing.getStackingOrderPositions(components)
 
@@ -160,9 +157,9 @@ internal class OneDownCommand(
  * Brings a [Collection] of [Component]s to the back of the stacking order.
  */
 internal class ToBackCommand(
-	drawing: Drawing<Component>,
-	components: Collection<Component>
-) : StackingOrderCommand("edit.action.stackingOrder.toBack.name", drawing) {
+	drawingView: DrawingView<Drawing<Component>>,
+	componentIds: Collection<Int>
+) : StackingOrderCommand("edit.action.stackingOrder.toBack.name", drawingView, componentIds), Undoable {
 
 	private val origStackingOrderPositions = drawing.getStackingOrderPositions(components)
 	private val oldPositions = mutableMapOf<Component, Int>()

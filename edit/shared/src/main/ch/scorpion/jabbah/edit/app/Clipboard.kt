@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -56,7 +57,7 @@ class CopyCommand(
 	private val drawingView: DrawingView<Drawing<Component>>,
 	private val componentIds: Collection<Int>,
 	private val service: CopyPasteService = EditModule.copyPasteService
-) : AbstractCommand("edit.command.copy") {
+) : AbstractCommand("edit.command.copy"), Undoable {
 
 	var oldContent: String? = null
 
@@ -77,7 +78,7 @@ class PasteCommand(
 	private val drawingView: DrawingView<Drawing<Component>>,
 	private val clipboardContents: String,
 	private val service: CopyPasteService = EditModule.copyPasteService
-) : AbstractCommand("edit.command.paste", null) {
+) : AbstractCommand("edit.command.paste", null), Undoable {
 
 	lateinit var components: Collection<Component>
 

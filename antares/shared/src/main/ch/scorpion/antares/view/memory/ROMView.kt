@@ -377,7 +377,7 @@ class ROMView(
 	}
 
 	private fun requestOpenMemoryContents(readonly: Boolean, newDesktopView: Boolean) {
-		eventBus.post(OpenMemoryContentsRequest(this, label.text, model.memory, model, readonly, newDesktopView))
+		eventBus.post(OpenMemoryContentsRequest(this, label.text, model, readonly, newDesktopView))
 	}
 
 	private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {

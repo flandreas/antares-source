@@ -383,7 +383,7 @@ open class TextComponentJvm(
 			LOG.debug("TextComponent: stop editing")
 			if (oldText != TEXT_EDITOR.text) {
 				editor!!.commandManager.execute(
-					TextChangeCommand(editor!!, this@TextComponentJvm, oldText!!, TEXT_EDITOR.text))
+					TextChangeCommand(editor!!, this@TextComponentJvm.id, oldText!!, TEXT_EDITOR.text))
 			}
 
 			TEXT_EDITOR.document.removeDocumentListener(this)

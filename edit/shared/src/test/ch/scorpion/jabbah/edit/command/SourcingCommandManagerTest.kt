@@ -388,11 +388,6 @@ class SourcingCommandManagerTest {
 		override fun execute() {
 			application.mandatoryData.append(s)
 		}
-
-		override fun undo() {
-			// This will not be needed any more
-			throw UnsupportedOperationException("not implemented")
-		}
 	}
 
 	private inner class UndoableAppendCommand(
@@ -404,11 +399,6 @@ class SourcingCommandManagerTest {
 		}
 
 		override fun undo() {
-			// This will not be needed any more
-			throw UnsupportedOperationException("not implemented")
-		}
-
-		override fun undo1() {
 			application.mandatoryData.dropLast(s.length)
 		}
 	}

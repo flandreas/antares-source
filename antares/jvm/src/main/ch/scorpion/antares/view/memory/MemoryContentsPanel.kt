@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.memory
 import ch.scorpion.antares.model.memory.Addressable
 import ch.scorpion.antares.model.memory.Memory
 import ch.scorpion.antares.model.memory.MemoryDump
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
@@ -17,7 +18,6 @@ import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.ui.AbstractGraphDesktopItemPanel
 import ch.scorpion.jabbah.graph.ui.GraphDesktopItem
 import ch.scorpion.jabbah.graph.ui.GraphDesktopItemHeaderPanel
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import java.awt.BorderLayout
@@ -30,7 +30,7 @@ import javax.swing.*
 
 
 class MemoryContentGraphDesktopItem(
-	memory: Memory,
+	application: Application,
 	addressable: Addressable,
 	title: String,
 	cmdManager: CommandManager = EditModule.commandManager,
@@ -38,7 +38,7 @@ class MemoryContentGraphDesktopItem(
 	contextColor: CompositeColor
 ) : AbstractGraphDesktopItemPanel() {
 
-	private val memoryContentPanel = MemoryContentsPanel(memory, addressable, cmdManager, readonly)
+	private val memoryContentPanel = MemoryContentsPanel(application, addressable, cmdManager, readonly)
 
 	private val headerPanel = GraphDesktopItemHeaderPanel(this, JLabel(title), allowClose = true)
 
@@ -77,7 +77,7 @@ class MemoryContentGraphDesktopItem(
  * Displays the contents of a [Memory].
  */
 class MemoryContentsPanel(
-	private val memory: Memory,
+	private val application: Application,
 	private val addressable: Addressable,
 	private val cmdManager: CommandManager,
 	readonly: Boolean = false,
@@ -91,8 +91,8 @@ class MemoryContentsPanel(
 
 		fun showAsDialog(
 			parent: Frame = Frame.getFrames()[0],
+			application: Application,
 			name: String,
-			memory: Memory,
 			addressable: Addressable,
 			cmdManager: CommandManager,
 			readonly: Boolean
@@ -100,7 +100,7 @@ class MemoryContentsPanel(
 			val editable = GraphViewModule.applicationModeHolder.currentMode.isEdit() && addressable.editableWhileEditingAction
 
 			val dialog = JDialog(parent, true)
-			val contentsPanel = MemoryContentsPanel(memory, addressable, cmdManager, readonly || !editable) {
+			val contentsPanel = MemoryContentsPanel(application, addressable, cmdManager, readonly || !editable) {
 				dialog.isVisible = false
 				it.dispose()
 			}
@@ -163,7 +163,7 @@ class MemoryContentsPanel(
 		override fun actionPerformed(e: ActionEvent?) {
 			val changes = memoryDisplayPanel.changes
 			LOG.debug("User has changed ${changes.size} memory cells")
-			cmdManager.register(MemoryCellChangeCommand(memory, changes))
+			cmdManager.register(MemoryCellChangeCommand(application, addressable.id, changes))
 			closeHandler?.invoke(this@MemoryContentsPanel)
 		}
 	}
@@ -173,7 +173,7 @@ class MemoryContentsPanel(
 			val fileChooser = JFileChooser()
 			if (fileChooser.showOpenDialog(this@MemoryContentsPanel) == JFileChooser.APPROVE_OPTION) {
 				try {
-					cmdManager.execute(MemoryContentsCommand(memory, addressable.dataWidth, fileChooser.selectedFile!!.absolutePath))
+					cmdManager.execute(MemoryContentsCommand(application, addressable.id, addressable.dataWidth, fileChooser.selectedFile!!.absolutePath))
 					memoryDisplayPanel.refresh()
 				} catch (e: IllegalArgumentException) {
 					LOG.error("Invalid data in memory file: ${e.message}")
@@ -198,7 +198,7 @@ class MemoryContentsPanel(
 
 	private inner class ClearAction : AbstractAction(Translations.getString("antares.action.memory.clear.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
-			cmdManager.execute(MemoryClearCommand(addressable, memory, addressable.dataWidth))
+			cmdManager.execute(MemoryClearCommand(application, addressable.id, addressable.dataWidth))
 			memoryDisplayPanel.refresh()
 		}
 	}
@@ -207,7 +207,7 @@ class MemoryContentsPanel(
 		override fun actionPerformed(e: ActionEvent?) {
 			val fileChooser = JFileChooser()
 			if (fileChooser.showSaveDialog(this@MemoryContentsPanel) == JFileChooser.APPROVE_OPTION) {
-				val contents = MemoryDump.write(memory, addressable.dataWidth)
+				val contents = MemoryDump.write(addressable.memory, addressable.dataWidth)
 				try {
 					Files.write(Paths.get(fileChooser.selectedFile.absolutePath), contents.toByteArray())
 				} catch (e: Throwable) {

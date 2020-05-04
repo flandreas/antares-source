@@ -301,7 +301,7 @@ class SourcingCommandManager(
 		fun undo() {
 			checkState(canUndo, "Cannot undo Transaction")
 			commands.reversed().forEach {
-				(it as Undoable).undo1()
+				(it as Undoable).undo()
 				it.validate()
 			}
 		}
@@ -324,10 +324,6 @@ class SourcingCommandManager(
 		}
 
 		override fun undo() {
-			// empty
-		}
-
-		override fun undo1() {
 			// empty
 		}
 

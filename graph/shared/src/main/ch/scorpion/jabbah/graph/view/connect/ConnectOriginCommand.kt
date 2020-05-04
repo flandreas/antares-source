@@ -26,9 +26,4 @@ class ConnectOriginCommand(
 	override fun execute() {
 		service.connectToOrigin(edgeView as EdgeView<Any>, Connection(origConnectableView, origPort as Port<Any>))
 	}
-
-	override fun undo() {
-		// TODO Remove
-		//service.unconnectFromOrigin(edgeView);
-	}
 }

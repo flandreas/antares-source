@@ -23,14 +23,6 @@ class MoveSegmentCommand(
 	}
 
 	override fun undo() {
-		// TODO Delete
-		/*
-		val moveSegmentInfo = edgeView.moveSegment(segmentIndex, -offset)
-		segmentIndex = moveSegmentInfo.segmentIndex
-		*/
-	}
-
-	override fun undo1() {
 		val moveSegmentInfo = edgeView.moveSegment(segmentIndex, -offset)
 		segmentIndex = moveSegmentInfo.segmentIndex
 	}

@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.SelectionModel
 import ch.scorpion.jabbah.edit.select.AbstractHandleSelectionModel
 import ch.scorpion.jabbah.edit.select.Handle
@@ -54,11 +53,11 @@ class QuadCurveHandleSelectionModel(c: QuadCurveComponent) : AbstractHandleSelec
 			oldLocation = Point2D(component.getPointAt(index))
 		}
 
-		override fun dragHandleEnd(editor: Editor) {
+		override fun dragHandleEnd(context: EditInputEventContext) {
 			val index = getIndexOf(focusHandle!!)
 			val newLocation = component.getPointAt(index)
-			editor.commandManager.register(
-				MoveQuadCurvePointCommand(component, editor, index, oldLocation, newLocation))
+			context.editor.commandManager.register(
+				MoveQuadCurvePointCommand(context.editor.view, context.editor, component.id, index, oldLocation, newLocation))
 		}
 	}
 

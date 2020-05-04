@@ -25,11 +25,6 @@ class AddUsecaseCommand(
 	}
 
 	override fun undo() {
-		// TODO Remove
-		// graphView.usecases.remove(usecase)
-	}
-
-	override fun undo1() {
 		graphView.usecases.remove(addedUsecaseId)
 	}
 }
@@ -47,10 +42,5 @@ class DeleteUsecaseCommand(
 
 	override fun execute() {
 		graphView.usecases.remove(usecaseId)
-	}
-
-	override fun undo() {
-		// TODO Remove
-		//graphView.usecases.add(usecase)
 	}
 }

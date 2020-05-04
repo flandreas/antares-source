@@ -55,23 +55,4 @@ class SplitEdgeViewCommand(
 			newEdgeViewEndpointType,
 			targetPortView as PortView<Any>?)
 	}
-
-	override fun undo() {
-		// TODO Remove
-		/*
-		origEdgeView = when (newEdgeViewEndpointType) {
-			EdgeViewEndpointType.ORIGIN -> connectService.unconnect(result!!.newEdgeView).first!!.joinedEdgeView
-			EdgeViewEndpointType.DESTINATION -> connectService.unconnect(result!!.newEdgeView).second!!.joinedEdgeView
-		}
-		graphView.remove(result!!.newEdgeView)
-		*/
-	}
-
-	/*
-	override fun registered() {
-		if (result == null) {
-			result = SplitEdgeViewResult(newEdgeView = newEdgeView as EdgeView<Any>, nodeView = nodeView as NodeView<Any>, tailEdgeView = newEdgeView)
-		}
-	}
-	*/
 }

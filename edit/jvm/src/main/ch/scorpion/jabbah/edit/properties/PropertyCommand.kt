@@ -1,11 +1,8 @@
 package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.edit.BeanProvider
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.command.AbstractCommand
-import ch.scorpion.jabbah.edit.componentBeanProvider
 import org.apache.commons.beanutils.PropertyUtils
 
 /**
@@ -20,7 +17,7 @@ class PropertyCommand<V>(
 	private val newValue: V?,
 	getterPropertyName: String,
 	private val setterPropertyName: String
-) : AbstractCommand("edit.command.property", editor) {
+) : AbstractCommand("edit.command.property", editor), Undoable {
 
 	companion object {
 		fun <V> forComponent(
@@ -65,7 +62,7 @@ class PropertyCommand<V>(
 	    setValue(newValue)
     }
 
-    override fun undo() {
-	    setValue(oldValue)
-    }
+	override fun undo() {
+		setValue(oldValue)
+	}
 }

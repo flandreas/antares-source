@@ -1,17 +1,17 @@
 package ch.scorpion.jabbah.edit.model.polyline
 
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.SelectionModel
-import ch.scorpion.jabbah.edit.select.Handle
-import ch.scorpion.jabbah.edit.select.AbstractHandleSelectionModel
-import ch.scorpion.jabbah.edit.select.RectangularHandle
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.edit.SelectionModel
+import ch.scorpion.jabbah.edit.select.AbstractHandleSelectionModel
+import ch.scorpion.jabbah.edit.select.Handle
+import ch.scorpion.jabbah.edit.select.RectangularHandle
 
 /**
  * A [SelectionModel] consisting of [Handle]s to be used for selecting and shaping a [PolylineComponent].
@@ -68,19 +68,19 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
 	        oldPointsCount = component.pointsCount
         }
 
-        override fun dragHandleEnd(editor: Editor) {
+        override fun dragHandleEnd(context: EditInputEventContext) {
             val index = getIndexOf(focusHandle!!)
             val newLocation = component.getPointAt(index)
 
 	        component.compact()
 
 	        val command = if (component.pointsCount != oldPointsCount) {
-		        JoinPolylinePointsCommand(editor, component, index, oldLocation)
+		        JoinPolylinePointsCommand(context.editor, component.id, index, oldLocation)
 	        } else {
-		        MovePolylinePointCommand(editor, component, index, newLocation)
+		        MovePolylinePointCommand(context.editor, component.id, index, newLocation)
 	        }
 
-	        editor.commandManager.register(command)
+	        context.editor.commandManager.register(command as Command)
         }
 
         /** Adds an additional [Point2D] by double-clicking.*/
@@ -90,7 +90,7 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
                     LOG.debug("Add handle $it")
                     val snap = context.editor.snapManager.snap(context.x, context.y)
                     context.editor.commandManager.execute(
-                        AddPolylinePointCommand(component, context.editor, it + 1, Point2D(snap.x + context.x, snap.y + context.y)))
+                        AddPolylinePointCommand(context.editor, component.id, it + 1, snap.add(context.location)))
                 }
             }
             return null

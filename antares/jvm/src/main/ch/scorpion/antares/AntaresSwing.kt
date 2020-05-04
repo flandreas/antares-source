@@ -117,7 +117,7 @@ class AntaresSwing(
 			if (request.newDesktopView) {
 				(mainFrame as GraphFrameSwing).graphPanel.desktopController.openVerticeView(request.verticeView) {
 					MemoryContentGraphDesktopItem(
-						memory = request.memory,
+						application = this,
 						addressable = request.addressable,
 						title = request.name,
 						cmdManager = mainFrame.editor.commandManager,
@@ -127,8 +127,8 @@ class AntaresSwing(
 			} else {
 				MemoryContentsPanel.showAsDialog(
 					parent = mainFrame,
+					application = this,
 					name = request.name,
-					memory = request.memory,
 					addressable = request.addressable,
 					cmdManager = mainFrame.editor.commandManager,
 					readonly = request.readonly)

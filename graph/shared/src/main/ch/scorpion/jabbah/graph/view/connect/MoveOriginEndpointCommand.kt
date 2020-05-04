@@ -23,11 +23,6 @@ class MoveOriginEndpointCommand(
 	}
 
 	override fun undo() {
-		// TODO Remove
-		//edgeView.moveOriginEndPoint(oldLocation.x, oldLocation.y)
-	}
-
-	override fun undo1() {
 		edgeView.moveOriginEndPoint(oldLocation.x, oldLocation.y)
 	}
 }

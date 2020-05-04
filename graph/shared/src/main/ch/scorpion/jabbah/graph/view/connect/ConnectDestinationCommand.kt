@@ -27,9 +27,4 @@ class ConnectDestinationCommand(
 	override fun execute() {
 		service.connectToDestination(edgeView as EdgeView<Any>, Connection(destConnectableView, destPort as Port<Any>))
 	}
-
-	override fun undo() {
-		// TODO Remove
-		// service.unconnectFromDestination(edgeView);
-	}
 }
