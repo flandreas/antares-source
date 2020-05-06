@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.StyleTypeEditor
 import ch.scorpion.jabbah.draw.style.StyleTypeRenderer
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.SizeEditor
 import ch.scorpion.jabbah.edit.model.VerticalAlignmentEditor
@@ -128,5 +129,11 @@ object EditModuleJvm : AbstractModule() {
 		))
 
 		root.getGroup(PREF_TREE_EDITOR).add(GridPainterPreference())
+
+		root.getGroup(PREF_TREE_EDITOR).add(IntPreference(
+			id = SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT,
+			nameKey = "edit.preferences.CommandManager.maxCmdPerSnapshot",
+			minValue = 5
+		))
 	}
 }

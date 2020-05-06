@@ -96,5 +96,6 @@ object EditModule : AbstractModule() {
 		properties.set(AttentionDrawer.PROP_COLOR, Color.ORANGE)
 		properties.set(AttentionDrawerImpl.PROP_DURATION, 500.0f)
 		properties.set(AttentionDrawerImpl.PROP_MAX_RADIUS, 30.0f)
+		properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 10)
 	}
 }

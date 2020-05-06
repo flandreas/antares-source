@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.command
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.exception.IllegalStateException
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.UndoableDataHolder
@@ -97,7 +98,8 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldCreateAdditionalSnapshot() {
-		cmdManager = SourcingCommandManager(maxCommandCountPerSnapshot = 2)
+		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 2)
+		cmdManager = SourcingCommandManager()
 		cmdManager.bindDataHolder(application)
 
 		cmdManager.execute(AppendCommand("a"))
@@ -109,7 +111,8 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldUndoWithAdditionalSnapshot() {
-		cmdManager = SourcingCommandManager(maxCommandCountPerSnapshot = 2)
+		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 2)
+		cmdManager = SourcingCommandManager()
 		cmdManager.bindDataHolder(application)
 
 		cmdManager.execute(AppendCommand("a"))
@@ -131,7 +134,8 @@ class SourcingCommandManagerTest {
 
 	@Test
 	fun shouldRedoWithAdditionalSnapshot() {
-		cmdManager = SourcingCommandManager(maxCommandCountPerSnapshot = 2)
+		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 2)
+		cmdManager = SourcingCommandManager()
 		cmdManager.bindDataHolder(application)
 
 		cmdManager.execute(AppendCommand("a"))

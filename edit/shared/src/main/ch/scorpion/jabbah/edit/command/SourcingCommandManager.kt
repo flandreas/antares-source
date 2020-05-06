@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.command
 
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.base.event.EventBus
@@ -25,13 +26,13 @@ import ch.scorpion.jabbah.io.StorableCloner
  * state during complex editing operations, and [register] a corresponding [Command] afterwards.
  */
 class SourcingCommandManager(
-	private val maxCommandCountPerSnapshot: Int = DEF_MAX_COMMAND_COUNT_PER_SNAPSHOT,
-	override val eventBus: EventBus = BaseModule.eventBus
+	override val eventBus: EventBus = BaseModule.eventBus,
+	private val properties: Properties = BaseModule.properties
 ) : CommandManager {
 
 	companion object {
 		private val LOG by logger(SourcingCommandManager::class)
-		private const val DEF_MAX_COMMAND_COUNT_PER_SNAPSHOT = 10
+		const val PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT = "edit.commandManager.cmdPerSnapshot"
 		private const val DEFAULT_STATE_NAME = "default"
 	}
 
@@ -45,6 +46,7 @@ class SourcingCommandManager(
 		val redoSnapshotCount: Int get() = redoSnapshots.size
 	}
 
+	private val maxCommandCountPerSnapshot: Int get() = properties.getInt(PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT)
 
 	private lateinit var undoableDataHolder: UndoableDataHolder
 
