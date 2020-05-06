@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.*
 
 /** Unit tests for [GraphViewAppServiceImpl].*/
-class GraphViewServiceImplTest {
+class GraphViewAppServiceImplTest {
 
 	companion object {
 		init {
@@ -108,6 +108,17 @@ class GraphViewServiceImplTest {
 		service.add(RectangleComponent(), DrawingViewMockBuilder().withDrawing(builder.graphView).build())
 
 		assertTrue(builder.graphView.get(0) is GraphElementViewWrapper)
+		assertEquals(4, builder.graphView.drawablesCount)
+	}
+
+	@Test
+	fun shouldUndoAddWrappedComponent() {
+		val component = RectangleComponent()
+		service.add(component, DrawingViewMockBuilder().withDrawing(builder.graphView).build())
+
+		EditModule.commandManager.undo()
+
+		assertEquals(3, builder.graphView.drawablesCount)
 	}
 
 	@Test
@@ -116,6 +127,46 @@ class GraphViewServiceImplTest {
 		service.add(RectangleComponent(), DrawingViewMockBuilder().withDrawing(drawing).build())
 
 		assertFalse(drawing.get(0) is GraphElementViewWrapper)
+	}
+
+	@Test
+	fun shouldDeleteWrappedComponent() {
+		val drawingView: DrawingView<Drawing<Component>> = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
+		val addedComponent = service.add(RectangleComponent(), drawingView)
+
+		service.delete(listOf(addedComponent), drawingView)
+
+		assertEquals(3, builder.graphView.drawablesCount)
+	}
+
+	@Test
+	fun shouldUndoDeleteWrappedComponent() {
+		val drawingView: DrawingView<Drawing<Component>> = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
+		val addedComponent = service.add(RectangleComponent(), drawingView)
+		EditModule.commandManager.reset()
+
+		service.delete(listOf(addedComponent), drawingView)
+
+		EditModule.commandManager.undo()
+
+		assertTrue(builder.graphView.get(0) is GraphElementViewWrapper)
+		assertEquals(4, builder.graphView.drawablesCount)
+	}
+
+	@Test
+	fun shouldRedoDeleteWrappedComponent() {
+		@Test
+		fun shouldUndoDeleteWrappedComponent() {
+			val drawingView: DrawingView<Drawing<Component>> = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
+			val addedComponent = service.add(RectangleComponent(), drawingView)
+			EditModule.commandManager.reset()
+
+			service.delete(listOf(addedComponent), drawingView)
+			EditModule.commandManager.undo()
+			EditModule.commandManager.redo()
+
+			assertEquals(3, builder.graphView.drawablesCount)
+		}
 	}
 
 	private fun getNodeView(): NodeView<*> {
