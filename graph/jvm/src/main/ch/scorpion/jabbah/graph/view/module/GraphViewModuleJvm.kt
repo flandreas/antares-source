@@ -42,6 +42,9 @@ object GraphViewModuleJvm : AbstractModule() {
 	override fun initialize() {
 		IOModuleJvm.require()
 		DrawModuleJvm.require()
+
+		EditModule.copyPasteService = GraphViewCopyPasteService()
+
 		GraphViewModule.require()
 
 		fillProperties(BaseModule.properties)
@@ -49,7 +52,6 @@ object GraphViewModuleJvm : AbstractModule() {
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
 
-		EditModule.copyPasteService = GraphViewCopyPasteService()
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 	}
