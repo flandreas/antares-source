@@ -34,7 +34,7 @@ class MovePolylinePointCommandTest {
 			.addPoint(100, 100)
 			.addPoint(0, 100)
 		drawing.add(component)
-		val cmd = MovePolylinePointCommand(editor, component.id, 0, Point2D(50, 0))
+		val cmd = MovePolylinePointCommand.forNewLocation(editor, component, 0, Point2D(50, 0))
 
 		cmd.execute()
 
@@ -49,7 +49,7 @@ class MovePolylinePointCommandTest {
 			.addPoint(100, 100)
 			.addPoint(0, 100)
 		drawing.add(component)
-		val cmd = MovePolylinePointCommand(editor, component.id, 0, Point2D(50, 0))
+		val cmd = MovePolylinePointCommand.forNewLocation(editor, component, 0, Point2D(50, 0))
 		cmd.execute()
 
 		cmd.undo()

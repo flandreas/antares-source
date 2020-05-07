@@ -21,7 +21,7 @@ class JoinPolylinePointsCommand(
 	private val oldLocation: Point2D
 ) : AbstractCommand("edit.model.polyline.joinPoints",editor), Undoable {
 
-	private val polyline: PolylineComponent get() = editor!!.drawing.getWithId(polylineId) as PolylineComponent
+	private val polyline: PolylineComponent get() = editor!!.drawing.getWithId(polylineId)!!.selectableComponent as PolylineComponent
 
 	override fun execute() {
 		polyline.removePoint(index)

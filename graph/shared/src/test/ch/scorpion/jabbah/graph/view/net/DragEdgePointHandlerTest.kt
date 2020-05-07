@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.net
 
 import ch.scorpion.jabbah.base.event.MouseEventType
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.edit.editor.InputEventDriver
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.net.edge.DragEdgePointHandler
@@ -29,8 +30,9 @@ class DragEdgePointHandlerTest : AbstractInputEventHandlerTest(DragEdgePointHand
 		edgeViewInputEventHandler.edgeView = edgeView
 	}
 
-	override fun mouseMoveTo(x: Int, y: Int, modifiers: Int) {
+	override fun mouseMoveTo(x: Int, y: Int, modifiers: Int): InputEventDriver {
 		handler.mouseMoved(context(MouseEventType.MOVED, x, y, modifiers))
+		return this
 	}
 
 	@Test
