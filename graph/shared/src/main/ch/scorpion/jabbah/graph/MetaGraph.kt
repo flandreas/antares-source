@@ -243,8 +243,7 @@ class MetaGraph(
 
 	private fun handle(event: GraphPortNameChanged<*>) {
 		if (graph.graphView.graph!!.contains(event.graphPort)) {
-			val port = containerDrawing.model.getPort<Any>(event.oldName!!)
-			port.name = event.newName
+			containerDrawing.getPortViewComponent(event.oldName!!)?.let { it.portView!!.setPortName(event.newName!!) }
 		}
 	}
 
