@@ -19,7 +19,7 @@ class MoveQuadCurvePointCommand(
 	val newLocation: Point2D
 ) : AbstractCommand("edit.model.polyline.movePoint", editor), Undoable {
 
-	private val curve: QuadCurveComponent get() = drawingView.drawing.getWithId(curveId) as QuadCurveComponent
+	private val curve: QuadCurveComponent get() = drawingView.drawing.getWithId(curveId)!!.selectableComponent as QuadCurveComponent
 
 	override fun execute() {
 		curve.setPointAt(index, newLocation)
