@@ -17,7 +17,7 @@ class TextPropertyRenderer : TableCellRenderer {
 	init {
 		textArea.rows = 4
 		textArea.lineWrap = true
-		textArea.isEditable = false
+		textArea.isEditable = true
 	}
 
 	override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {

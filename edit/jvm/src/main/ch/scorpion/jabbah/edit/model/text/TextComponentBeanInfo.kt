@@ -50,7 +50,7 @@ class LabelComponentBeanInfo : TextComponentBeanInfo<LabelComponent>(fillAndStro
 class TextComponentJvmBeanInfo : TextComponentBeanInfo<TextComponentJvm>() {
 
 	companion object {
-		private val text = EditProperties.multilineText()
+		private val text = EditProperties.multilineText("textProperty")
 	}
 
 	override fun addProperties(bean: TextComponentJvm, editor: Editor, properties: MutableList<Property>) {
