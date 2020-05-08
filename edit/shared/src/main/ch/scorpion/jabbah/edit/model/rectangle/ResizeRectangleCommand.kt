@@ -17,7 +17,7 @@ class ResizeRectangleCommand(
     val newBounds: Rectangle2D
 ) : AbstractCommand("edit.model.rectangle.resize", editor), Undoable {
 
-	private val rectangle: AbstractRectangularComponent get() = editor!!.drawing.getWithId(rectangleId) as AbstractRectangularComponent
+	private val rectangle: AbstractRectangularComponent get() = editor!!.drawing.getWithId(rectangleId)!!.selectableComponent as AbstractRectangularComponent
 
     override fun execute() {
         rectangle.setFrame(newBounds)
