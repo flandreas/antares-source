@@ -79,12 +79,24 @@ open class DrawingAppServiceImpl(
 	}
 
 	override fun ungroup(component: GroupComponent, drawingView: DrawingView<Drawing<Component>>) {
-		commandManager.beginTransaction("edit.command.ungroup", drawingView)
-		delete(listOf(component), drawingView)
-		component.components.asReversed().forEach { commandManager.execute(AddCommand(drawingView, it)) }
-		commandManager.commitTransaction()
-		drawingView.selectionManager.select(component.components)
+		ungroupImpl(component, component, drawingView)
 	}
+
+	protected fun ungroupImpl(component: GroupComponent, owner: Component, drawingView: DrawingView<Drawing<Component>>) {
+		commandManager.beginTransaction("edit.command.ungroup", drawingView)
+		delete(listOf(owner), drawingView)
+
+		val addedComponentIds = mutableListOf<Int>()
+		component.components.asReversed().forEach {
+			val command = AddCommand(drawingView, it)
+			commandManager.execute(command)
+			addedComponentIds.add(command.addedComponentId)
+		}
+		commandManager.commitTransaction()
+
+		drawingView.selectionManager.select(addedComponentIds.map { drawingView.drawing.getWithId(it) as Component })
+	}
+
 
 	override fun cut(drawingView: DrawingView<Drawing<Component>>) {
 		val components = drawingView.selectionManager.selection

@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.app.DrawingAppServiceImpl
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.model.CopyPasteService
+import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.view.*
@@ -74,6 +75,10 @@ open class GraphViewAppServiceImpl(
 				.map { possibleWrapper(it, drawingView.drawing).id }))
 
 		commandManager.commitTransaction()
+	}
+
+	override fun ungroup(component: GroupComponent, drawingView: DrawingView<Drawing<Component>>) {
+		ungroupImpl(component, possibleWrapper(component, drawingView.drawing), drawingView)
 	}
 
 	/** ---- [GraphViewAppService] interface */
