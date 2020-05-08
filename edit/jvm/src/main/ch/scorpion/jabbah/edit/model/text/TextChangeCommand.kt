@@ -14,7 +14,7 @@ class TextChangeCommand(
     private val newText: String
 ) : AbstractCommand("edit.command.textChange", editor), Undoable {
 
-	private val component: TextComponent get() = editor!!.drawing.getWithId(componentId) as TextComponent
+	private val component: TextComponent get() = editor!!.drawing.getWithId(componentId)!!.propertyOwner as TextComponent
 
     override fun execute() {
         component.text = newText
