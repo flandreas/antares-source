@@ -45,16 +45,12 @@ class TextComponentFactoryJvm : TextComponentFactory {
  * A [Component] that supports inline text editing using JDK classes.
  */
 open class TextComponentJvm(
-	text: String,
-	location: Point2D,
-	styleType: StyleType,
-	styleProvider: StyleProvider
+	text: String = "",
+	location: Point2D = Point2D.ZERO,
+	styleType: StyleType = StyleType.FIGURE,
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangularComponent(styleType = styleType, styleProvider = styleProvider, shape = Rectangle2D(location.x, location.y, 0.0, 0.0)),
 	Transparent, TextComponent {
-
-	constructor(text: String) : this(text = text, location = Point2D.ZERO, styleType = StyleType.FIGURE, styleProvider = DrawStyleModule.styleProvider)
-	@Suppress("unused")
-	constructor() : this("")
 
 	private companion object {
 
@@ -100,6 +96,7 @@ open class TextComponentJvm(
 			TEXT_MEASURER.isOpaque = true
 			TEXT_MEASURER.border = TextFieldBorder()
 			TEXT_MEASURER.isDoubleBuffered = false
+
 			// Explicitly set an arbitrary size to avoid that getPreferredSize()
 			// returns a minimum size. Otherwise, the empty text editor would be sized
 			// to a height of zero pixels. This is needed for JDK 1.3, but apparently not
@@ -144,6 +141,7 @@ open class TextComponentJvm(
 			validate()
 		}
 
+	@Suppress("unused")
 	var textProperty: TextProperty
 		get() = TextProperty(text)
 		set(value) {
@@ -239,9 +237,10 @@ open class TextComponentJvm(
 		setFrame(b.x, b.y, dim.width + 2 * INSET_X, dim.height + 2 * INSET_Y)
 	}
 
-	/** Adjust the size of the currently used text editor. */
+	/** Adjust position and size of the currently used text editor. */
 	private fun adjustTextEditor(editor: Editor) {
 		val bounds = shape
+		LOG.debug("Adjust text editor at $bounds")
 		val orig = editor.view.modelToView(Point2D(bounds.x + INSET_X, bounds.y + INSET_Y))
 		TEXT_EDITOR.setBounds(
 			orig.x.toInt(),
@@ -315,19 +314,23 @@ open class TextComponentJvm(
 		private var editing: Boolean = false
 		private var oldText: String? = null
 
-		/** ----  */
+		/** ---- [InputEventHandler] interface */
 
 		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			return if (editing) this else null
 		}
 
 		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+			if (editing) {
+				stopEditing()
+			}
+			return null
+		}
+
+		override fun mouseClicked(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			if (context.mouseEvent!!.clickCount == 2) {
 				startEditing(context.editor, context.mouseEvent)
 				return this
-			}
-			if (editing) {
-				stopEditing()
 			}
 			return null
 		}
@@ -362,16 +365,7 @@ open class TextComponentJvm(
 			(editor.view.canvas as Container).repaint()
 
 			// request focus and position caret within the text
-			TEXT_EDITOR.dispatchEvent(
-				java.awt.event.MouseEvent(
-					TEXT_EDITOR,
-					java.awt.event.MouseEvent.MOUSE_PRESSED,
-					Date().time,
-					event.modifiers,
-					event.x - TEXT_EDITOR.bounds.getX().toInt(),
-					event.y - TEXT_EDITOR.bounds.getY().toInt(),
-					event.clickCount,
-					false))
+			TEXT_EDITOR.requestFocusInWindow()
 
 			// listen for text changes in order to adjust the editors size
 			TEXT_EDITOR.document.addDocumentListener(this)
