@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.io.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
+import ch.scorpion.jabbah.edit.Cloneable
 
 /**
  * A [PortView] that draws a line that points to one of the four [Direction]s.
@@ -122,6 +123,12 @@ abstract class AbstractPortView<T : Any>(
 
 	init {
 		port.addPropertyChangeListener(portListener)
+	}
+
+	/** ---- [Cloneable] */
+
+	override fun clone(): PortView<T> {
+		return StorableCloner.clone(PortViewStorable(this)).portView!!
 	}
 
 	/** ---- [PortView] interface */

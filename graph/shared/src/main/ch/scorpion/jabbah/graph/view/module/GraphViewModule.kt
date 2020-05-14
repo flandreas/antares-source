@@ -48,6 +48,7 @@ import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeViewFactory
 import ch.scorpion.jabbah.graph.view.oscilloscope.UndefinedOscilloscopeViewFactory
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortViewFactory
+import ch.scorpion.jabbah.graph.view.port.PortViewStorable
 import ch.scorpion.jabbah.graph.view.port.UndefinedPortViewFactory
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
@@ -157,6 +158,7 @@ object GraphViewModule : AbstractModule() {
 		typeMap.register("oscilloscopeView", OscilloscopeView::class)
 		typeMap.register("oscilloscopeProbeView", OscilloscopeProbeVerticeView::class)
 		typeMap.register("verticeViewStorable", VerticeViewStorable::class)
+		typeMap.register("portViewStorable", PortViewStorable::class)
 	}
 
 	private fun configureStyleRepository(repository: StyleRepository) {
