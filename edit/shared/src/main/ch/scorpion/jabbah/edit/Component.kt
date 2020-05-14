@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.io.Storable
  * - [Component]s can be selected
  * - [Component]s can be manipulated by an [Editor]
  */
-interface Component : Locatable, Snappable, Storable, Stylable, Bean {
+interface Component : Locatable, Snappable, Storable, Stylable, Cloneable<Component>, Bean {
 
 	/** Holds an identification being unique within the [ComponentContainer] that contains this [Component].*/
 	var id: Int

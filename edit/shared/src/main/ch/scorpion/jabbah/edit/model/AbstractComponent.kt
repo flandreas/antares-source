@@ -22,6 +22,10 @@ abstract class AbstractComponent(
 		styleType: StyleType = StyleType.FIGURE
 	) : this(StylableImpl(styleType = styleType, styleProvider = styleProvider))
 
+	/** ---- [Cloneable] interface */
+
+	override fun clone(): Component = StorableCloner.clone(this)
+
 	/** ---- [Component] interface */
 
 	override var id: Int = 0

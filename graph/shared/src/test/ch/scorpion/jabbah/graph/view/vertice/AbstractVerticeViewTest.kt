@@ -1,0 +1,24 @@
+package ch.scorpion.jabbah.graph.view.vertice
+
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+/** Unit tests for functionality in [AbstractVerticeView].*/
+class AbstractVerticeViewTest {
+
+	companion object {
+		init {
+			GraphViewTestRule.configure()
+		}
+	}
+
+	@Test
+	fun shouldCloneIncludingModel() {
+		val vv = TestVerticeView("test")
+
+		val clone = vv.clone() as TestVerticeView
+
+		assertEquals("test", clone.model.name)
+	}
+}

@@ -41,6 +41,7 @@ import ch.scorpion.jabbah.graph.view.port.PortView.Companion.PROP_SENSITIVE_AREA
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StorableCloner
 
 /**
  * Abstract base implementation of the [VerticeView] interface.
@@ -74,6 +75,12 @@ abstract class AbstractVerticeView<T : Vertice>(
 		font = font,
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.BOTTOM)
+
+	/** ---- [Storable] interface */
+
+	override fun clone(): Component {
+		return StorableCloner.clone(VerticeViewStorable(this)).verticeView!!
+	}
 
 	/** ---- [Describable] */
 

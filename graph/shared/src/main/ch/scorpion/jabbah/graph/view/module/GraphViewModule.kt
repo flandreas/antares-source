@@ -54,6 +54,7 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImplSelectionModel
+import ch.scorpion.jabbah.graph.view.vertice.VerticeViewStorable
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 
@@ -155,6 +156,7 @@ object GraphViewModule : AbstractModule() {
 		typeMap.register("graphTextComponent", SimpleTextComponent::class)
 		typeMap.register("oscilloscopeView", OscilloscopeView::class)
 		typeMap.register("oscilloscopeProbeView", OscilloscopeProbeVerticeView::class)
+		typeMap.register("verticeViewStorable", VerticeViewStorable::class)
 	}
 
 	private fun configureStyleRepository(repository: StyleRepository) {
