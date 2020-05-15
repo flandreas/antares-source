@@ -9,17 +9,23 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Cloneable
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.port.PortViewFactory
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * A [Component] that wraps a [PortView] in order to allow the user to manipulate it.
+ *
+ * Cloning a subclass instance of [PortViewComponent] always creates the type of instance  that is returned by
+ * [PortViewFactory].
  */
 open class PortViewComponent<T : Any>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -48,6 +54,12 @@ open class PortViewComponent<T : Any>(
 		set(value) {
 			portView!!.direction = value
 		}
+
+	/** ---- [Cloneable] */
+
+	override fun clone(): Component {
+		return GraphViewModule.portViewFactory.createPortViewComponent(portView!!.clone())
+	}
 
 	/** ---- [Component] */
 

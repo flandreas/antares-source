@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.edit.editor
 
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.command.AbstractCommand
-import ch.scorpion.jabbah.io.StorableCloner
 
 /**
  * A [Command] for adding a [Component] to a [Drawing].
@@ -18,7 +17,7 @@ class AddCommand(
 		private set
 
     override fun execute() {
-	    val clone = StorableCloner.clone(component)
+	    val clone = component.clone()
         drawingView.drawing.add(clone)
 	    addedComponentId = clone.id
     }
