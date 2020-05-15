@@ -15,7 +15,8 @@ class PropertyImpl<V>(
 	private val valueClass: Class<V>,
 	private val beanProvider: BeanProvider,
 	private val setterPropertyName: String = propertyName,
-	private val getterPropertyName: String = propertyName
+	private val getterPropertyName: String = propertyName,
+	private var interactive: Boolean = false
 ) : AbstractProperty() {
 
 	companion object {
@@ -23,10 +24,17 @@ class PropertyImpl<V>(
 	}
 
 	private var editor: Editor? = null
+
 	private var beanIds: List<Int> = listOf()
-	private var editable: Boolean = true
+
+	var editable: Boolean = true
+		private set
+
 	var filter: (V) -> Boolean = { true }
+		private set
+
 	var optional: Boolean = false
+		private set
 
 	fun bind(
 		editor: Editor,
@@ -37,7 +45,7 @@ class PropertyImpl<V>(
 	): PropertyImpl<V> {
 		this.editor = editor
 		this.beanIds = beanIds
-		this.editable = editable
+		this.editable = editable && editor.active
 		if (filter != null) {
 			this.filter = filter
 		}
@@ -63,7 +71,7 @@ class PropertyImpl<V>(
 
 	override fun getType(): Class<*> = valueClass
 
-	override fun isEditable(): Boolean = editable
+	override fun isEditable(): Boolean = editable || interactive
 
 	override fun getCategory(): String? = null
 

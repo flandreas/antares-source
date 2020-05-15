@@ -37,7 +37,7 @@ class ScriptPropertyRenderer : DefaultTableCellRenderer() {
  * An editor that provides more space for editing a [ScriptProperty] by using a multi-row [JTextArea].
  * Additionally contains a button to open a non-modal dialog that provides even more space.
  */
-class ScriptPropertyEditor(private val propertyName: String) : AbstractPropertyEditor() {
+class ScriptPropertyEditor(private val propertyName: String, private val editable: Boolean) : AbstractPropertyEditor() {
 
 	companion object {
 		private val LOG by logger(ScriptPropertyEditor::class)
@@ -87,7 +87,7 @@ class ScriptPropertyEditor(private val propertyName: String) : AbstractPropertyE
 	}
 
 	private fun showDialog() {
-		TextPropertyPanel.showAsDialog(title = propertyName, text = script.scriptOrEmpty, font = FONT)?.let {
+		TextPropertyPanel.showAsDialog(title = propertyName, text = script.scriptOrEmpty, font = FONT, editable = editable)?.let {
 			script = ScriptProperty(it)
 		}
 	}

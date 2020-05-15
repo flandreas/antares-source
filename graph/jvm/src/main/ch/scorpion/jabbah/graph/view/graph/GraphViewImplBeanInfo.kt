@@ -1,14 +1,14 @@
 package ch.scorpion.jabbah.graph.view.graph
 
-import com.l2fprod.common.propertysheet.Property
-import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.drawingBeanProvider
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
-import ch.scorpion.jabbah.edit.model.text.ScriptProperty
+import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.jabbah.graph.view.GraphProperties
+import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
 open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
@@ -17,7 +17,7 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
 	    private val name = PropertyImpl("translatableName", "graph.property.GraphViewImpl", TranslatableText::class.java, drawingBeanProvider)
 	    private val propDelay = GraphProperties.propagationDelay(componentBeanProvider)
 		private val description = PropertyImpl("description", "graph.property.GraphViewImpl.shortDescription", TranslatableText::class.java, drawingBeanProvider)
-	    private val script = PropertyImpl("script", "graph.property.GraphViewImpl.script", ScriptProperty::class.java, drawingBeanProvider)
+	    private val script = EditProperties.script("script", "graph.property.GraphViewImpl.script", beanProvider = drawingBeanProvider)
     }
 
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {

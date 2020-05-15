@@ -33,6 +33,7 @@ class TranslatableTextPropertyRenderer(
 			textComponent.preferredSize = Dimension(70, 22)
 			textComponent.border = null
 		}
+		textComponent.isOpaque = true
 	}
 
 	override fun getTableCellRendererComponent(table: JTable, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
@@ -43,13 +44,9 @@ class TranslatableTextPropertyRenderer(
 			textComponent.text = value.getOptionalTranslation()
 		}
 
-		if (isSelected) {
-			textComponent.foreground = table.selectionForeground
-			textComponent.background = table.selectionBackground
-		} else {
-			textComponent.foreground = table.foreground
-			textComponent.background = table.background
-		}
+		val default = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
+		textComponent.foreground = default.foreground
+		textComponent.background = default.background
 
 		return textComponent
 	}
@@ -94,7 +91,6 @@ class TranslatableTextPropertyEditor(
 
 	private fun buildUI() {
 		val panel = JPanel()
-		panel.background = Color.WHITE
 
 		panel.layout = EGBL.getLayout()
 

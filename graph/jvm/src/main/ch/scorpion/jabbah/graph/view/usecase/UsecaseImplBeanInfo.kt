@@ -4,9 +4,7 @@ import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.EditProperties
-import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
-import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.jabbah.graph.view.GraphView
 import com.l2fprod.common.propertysheet.Property
 
@@ -18,8 +16,8 @@ class UsecaseImplBeanInfo : AbstractBeanInfo<UsecaseImpl>() {
 
 		private val name = EditProperties.name(baseKey = "graph.property.usecase.name", beanProvider = usecaseBeanProvider)
 		private val description = EditProperties.description(beanProvider = usecaseBeanProvider)
-		private val execScript = PropertyImpl("executionScriptProperty", "graph.property.usecase.execScript", ScriptProperty::class.java, usecaseBeanProvider)
-		private val testScript = PropertyImpl("testScriptProperty", "graph.property.usecase.testScript", ScriptProperty::class.java, usecaseBeanProvider)
+		private val execScript = EditProperties.script("executionScriptProperty", "graph.property.usecase.execScript", beanProvider = usecaseBeanProvider)
+		private val testScript = EditProperties.script("testScriptProperty", "graph.property.usecase.testScript", beanProvider = usecaseBeanProvider)
 	}
 
 	override fun addProperties(bean: UsecaseImpl, editor: Editor, properties: MutableList<Property>) {

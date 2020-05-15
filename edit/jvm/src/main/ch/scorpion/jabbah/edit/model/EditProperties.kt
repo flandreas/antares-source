@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.draw.graphics.PredefinedStroke
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
@@ -123,5 +124,13 @@ object EditProperties {
 		beanProvider: BeanProvider = componentBeanProvider
 	): PropertyImpl<Size> {
 		return PropertyImpl(name, baseKey, Size::class.java, beanProvider)
+	}
+
+	fun script(
+		name: String,
+		baseKey: String,
+		beanProvider: BeanProvider = componentBeanProvider
+	): PropertyImpl<ScriptProperty> {
+		return PropertyImpl(name, baseKey, ScriptProperty::class.java, beanProvider, interactive = true)
 	}
 }

@@ -33,10 +33,7 @@ class ScenarioPropertyPanel(
 
 		eventBus.register(CurrentSavableEvent::class) {
 			this.currentSavable = it.savable
-			updateEnabledness()
 		}
-
-		updateEnabledness()
 	}
 
 	override fun setupDefaultProperties() {
@@ -51,9 +48,5 @@ class ScenarioPropertyPanel(
 			return bean.name.value
 		}
 		return null
-	}
-
-	private fun updateEnabledness() {
-		getTable().isEnabled = !(currentSavable?.readOnly ?: false)
 	}
 }
