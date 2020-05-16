@@ -12,10 +12,7 @@ import ch.scorpion.jabbah.graph.model.element.GraphElementCollector
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Frame
-import javax.swing.JOptionPane
-import javax.swing.JPanel
-import javax.swing.JScrollPane
-import javax.swing.JTextArea
+import javax.swing.*
 
 /** Provides in-depth statistical information about the currently open [Graph].*/
 class GraphStatisticsAction(
@@ -47,26 +44,48 @@ class GraphInfoPanel(graph: Graph) : JPanel() {
 		}
 	}
 
-	private val textArea = JTextArea()
+	private val deepTextArea = buildTextArea()
+	private val flatTextArea = buildTextArea()
 
 	init {
 		buildUI()
-		textArea.text = Translations.getString("graph.action.statistics.calculating")
+		deepTextArea.text = Translations.getString("graph.action.statistics.calculating")
 		InvocationHandler.invoke {
-			textArea.text = GraphElementCollector().collect(graph)
+			val result = GraphElementCollector().collect(graph)
+			deepTextArea.text = result.deep
+			flatTextArea.text = result.flat
 		}
 	}
 
 	private fun buildUI() {
+
+		layout = BorderLayout()
+
+		val tabPane = JTabbedPane()
+		tabPane.add(Translations.getString("graph.action.statistics.deep"), buildPage(deepTextArea))
+		tabPane.add(Translations.getString("graph.action.statistics.flat"), buildPage(flatTextArea))
+
+		add(tabPane, BorderLayout.CENTER)
+	}
+
+	private fun buildTextArea(): JTextArea {
+		val textArea = JTextArea();
+
 		textArea.columns = 30
 		textArea.rows = 30
 		textArea.isEditable = false
 
-		layout = BorderLayout()
+		return textArea
+	}
+
+	private fun buildPage(textArea: JTextArea): JComponent {
+		val panel = JPanel(BorderLayout())
 
 		val scrollPane = JScrollPane(textArea)
 		scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
 		scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
-		add(scrollPane, BorderLayout.CENTER)
+		panel.add(scrollPane, BorderLayout.CENTER)
+
+		return panel
 	}
 }
