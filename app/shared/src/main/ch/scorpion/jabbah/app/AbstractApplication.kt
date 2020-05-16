@@ -30,12 +30,10 @@ abstract class AbstractApplication(
 
     override var data: ApplicationData? = null
 	    set(value) {
-		    if (field !== value) {
-			    val oldField = field
-			    field = value
-			    eventBus.post(ApplicationDataEvent(this, oldField, field))
-			    eventBus.post(CurrentSavableEvent(this, field?.savable))
-		    }
+		    val oldField = field
+		    field = value
+		    eventBus.post(ApplicationDataEvent(this, oldField, field))
+		    eventBus.post(CurrentSavableEvent(this, field?.savable))
 	    }
 
 
