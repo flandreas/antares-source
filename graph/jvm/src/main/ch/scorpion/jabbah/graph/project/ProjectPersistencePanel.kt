@@ -128,11 +128,16 @@ class ProjectPersistencePanel(
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 
 		buttonPanel.add(createButton(openAction))
+		buttonPanel.add(Box.createHorizontalStrut(2))
 		buttonPanel.add(createButton(NewAction()))
+		buttonPanel.add(Box.createHorizontalStrut(2))
 		buttonPanel.add(createButton(deleteAction))
+		buttonPanel.add(Box.createHorizontalStrut(9))
 		buttonPanel.add(createButton(exportAction))
+		buttonPanel.add(Box.createHorizontalStrut(2))
 		buttonPanel.add(createButton(importAction))
-		buttonPanel.add(Box.createHorizontalGlue())
+		buttonPanel.add(Box.createHorizontalStrut(2))
+		buttonPanel.add(Box.createHorizontalStrut(9))
 		buttonPanel.add(createButton(CancelAction()))
 
 		add(buttonPanel, BorderLayout.SOUTH)

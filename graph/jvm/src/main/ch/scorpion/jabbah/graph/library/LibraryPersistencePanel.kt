@@ -107,8 +107,11 @@ class LibraryPersistencePanel(
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 		buttonPanel.add(JButton(ActionWrapperSwing(openAction)))
+		buttonPanel.add(Box.createHorizontalStrut(2))
 		buttonPanel.add(JButton(ActionWrapperSwing(NewAction())))
+		buttonPanel.add(Box.createHorizontalStrut(2))
 		buttonPanel.add(JButton(ActionWrapperSwing(deleteAction)))
+		buttonPanel.add(Box.createHorizontalStrut(9))
 
 		buttonPanel.add(Box.createHorizontalGlue())
 		buttonPanel.add(JButton(ActionWrapperSwing(CancelAction())))
