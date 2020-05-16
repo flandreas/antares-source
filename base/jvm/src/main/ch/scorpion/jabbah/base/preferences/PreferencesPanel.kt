@@ -12,13 +12,17 @@ class PreferencesPanel(
 	val preferences: Properties
 ) : JPanel() {
 
+	companion object {
+		private const val INSET = 7
+		private const val ROW_GAP = 3
+		private const val LABEL_GAP = 5
+	}
+
 	init {
 		buildUI()
 	}
 
 	private var gridy = 0
-
-	private val inset = 10
 
 	private fun buildUI() {
 		layout = EGBL.getLayout()
@@ -46,6 +50,7 @@ class PreferencesPanel(
 	}
 
 	fun addRow(row: JComponent) {
+		val topInset = if (gridy == 0) INSET else 0
 		EGBL.add(
 			this,
 			row,
@@ -54,12 +59,13 @@ class PreferencesPanel(
 			0.0, 0.0,	// weightX, weightY
 			EGBL.WEST,	// anchor
 			EGBL.NONE,	// fill
-			inset, inset, 0, 0
+			topInset, INSET, ROW_GAP, 0
 		)
 		gridy++
 	}
 
 	fun addLabeledRow(label: String, row: JComponent) {
+		val topInset = if (gridy == 0) INSET else 0
 		EGBL.add(
 			this,
 			JLabel("$label:"),
@@ -68,7 +74,7 @@ class PreferencesPanel(
 			0.0, 0.0,	// weightX, weightY
 			EGBL.WEST,	// anchor
 			EGBL.NONE,	// fill
-			inset, inset, 0, inset
+			topInset, INSET, ROW_GAP, 0
 		)
 
 		EGBL.add(
@@ -79,7 +85,7 @@ class PreferencesPanel(
 			1.0, 0.0,	// weightX, weightY
 			EGBL.WEST,	// anchor
 			EGBL.NONE,	// fill
-			inset, inset, 0, 0
+			topInset, LABEL_GAP, ROW_GAP, 0
 		)
 
 		gridy++
