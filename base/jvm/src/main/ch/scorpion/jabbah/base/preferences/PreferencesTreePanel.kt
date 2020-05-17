@@ -158,10 +158,12 @@ class PreferencesTreePanel(
 		}
 
 		override fun customize(preference: Preference, value: Any) {
-			LOG.debug("customizing property '${preference.id}' with '$value'")
-			needsRestart = needsRestart || preference.needsRestart
-			accumulator.customize(preference.id, value)
-			changed = true
+			if (origPreferences.getOptional<Any>(preference.id) != value) {
+				LOG.debug("customizing property '${preference.id}' with '$value'")
+				changed = true
+				needsRestart = needsRestart || preference.needsRestart
+				accumulator.customize(preference.id, value)
+			}
 		}
 
 		/** Forwards all accumulated preference changes to the original [Properties] and removes them locally.*/
