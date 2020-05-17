@@ -508,7 +508,10 @@ class CircuitInOutView(
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!model.isToplevel) {
-				eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = this@CircuitInOutView, messageKey = "antares.msg.ChildGraphInputManipulation"))
+				eventBus.post(ComponentMessage(
+					type = ComponentMessageType.Error,
+					source = this@CircuitInOutView,
+					messageKey = "antares.msg.ChildGraphInputManipulation"))
 				return null
 			}
 			toggle(context.signalHandler, context.x, context.y)
@@ -532,19 +535,12 @@ class CircuitInOutView(
 			val digitIndex = getDigitIndexAt(x, y)
 			if (digitIndex != null) {
 				if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
-					// Toggle the binary digit
-					var signal = model.signal as Word?
-					if (signal == null) {
-						signal = Word.allOf(bitWidth, Bit.Undefined)
-					}
-					var bit = signal.bitAt(digitIndex)
-					if (!bit.isDefined) {
-						bit = Bit.False
-					}
-
-					model.setIncomingSignal(signal.withBit(digitIndex, bit.not()), signalHandler)
+					model.toggleBit(digitIndex, signalHandler)
 				} else if (numberView!!.focusIndex == digitIndex) {
-					eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = this@CircuitInOutView, messageKey = "antares.msg.HexInputManipulation"))
+					eventBus.post(ComponentMessage(
+						type = ComponentMessageType.Info,
+						source = this@CircuitInOutView,
+						messageKey = "antares.msg.HexInputManipulation"))
 				}
 
 				// Set the focus on the selected digit
@@ -601,9 +597,7 @@ class CircuitInOutView(
 		}
 
 		private fun toggleFocusBitWithEnter(signalHandler: SignalHandler) {
-			val newWord = (model.signal as Word).flip(numberView!!.focusIndex!!)
-			model.setIncomingSignal(newWord, signalHandler)
-
+			model.toggleBit(numberView!!.focusIndex!!, signalHandler)
 		}
 
 		private fun checkTopLevelKey(): Boolean {

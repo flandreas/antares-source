@@ -1,11 +1,9 @@
 package ch.scorpion.antares.model.inout
 
+import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.antares.model.signal.DigitalSignalUtil
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -97,10 +95,14 @@ class CircuitInOutImpl(
 	override var subGraphInputPort: SubGraphInputPort<DigitalSignal>? = null
 
 	override fun setIncomingSignal(signal: DigitalSignal?, signalHandler: SignalHandler) {
+		setIncomingSignal(signal, signalHandler, propagationDelay)
+	}
+
+	private fun setIncomingSignal(signal: DigitalSignal?, signalHandler: SignalHandler, delay: Long) {
 		if (enabled && differ(this.signal, signal)) {
 			this.signal = signal
 			enabled = false
-			requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, this.signal))
+			requestActingAfter(signalHandler, delay, GraphActorDataImpl(null, this.signal))
 		}
 	}
 
@@ -192,6 +194,18 @@ class CircuitInOutImpl(
 				}
 			}
 		}
+
+	override fun toggleBit(index: Int, signalHandler: SignalHandler) {
+		var s = signal as Word?
+		if (s == null) {
+			s = Word.allOf(bitWidth, Bit.Undefined)
+		}
+		var bit = s.bitAt(index)
+		if (!bit.isDefined) {
+			bit = Bit.False
+		}
+		setIncomingSignal(s.withBit(index, bit.not()), signalHandler, Switch.DEF_PROP_DELAY)
+	}
 
 	/** ---- [CircuitInOutImpl] */
 

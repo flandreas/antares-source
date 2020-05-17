@@ -16,24 +16,9 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
  */
 class Switch : AbstractInteractableVertice(CALCULATOR) {
 
-	var isOn: Boolean = false
-		private set
-
-	/**
-	 * Used to support view implementations with a non-toggle behaviour, i.e. switches that change ton "on" when
-	 * the user clicks the mouse button, and to "off" when he releases the mouse button. Since the change to "off"
-	 * would be missed because the [Switch] is not enabled at that time, it is remembered in this flag and applied
-	 * when the [Switch] has been scheduled the next time for calculation.
-	 */
-	private var delayedOff: Boolean = false
-
-	init {
-		addPort(DigitalPortImpl.createOutput())
-		propagationDelay = 1000
-	}
-
 	companion object {
 
+		const val DEF_PROP_DELAY = 1000L
 		private const val BASE_RESOURCE_KEY = "library.element.Toggle"
 		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
@@ -53,6 +38,22 @@ class Switch : AbstractInteractableVertice(CALCULATOR) {
 				}
 			}
 		}
+	}
+
+	var isOn: Boolean = false
+		private set
+
+	/**
+	 * Used to support view implementations with a non-toggle behaviour, i.e. switches that change ton "on" when
+	 * the user clicks the mouse button, and to "off" when he releases the mouse button. Since the change to "off"
+	 * would be missed because the [Switch] is not enabled at that time, it is remembered in this flag and applied
+	 * when the [Switch] has been scheduled the next time for calculation.
+	 */
+	private var delayedOff: Boolean = false
+
+	init {
+		addPort(DigitalPortImpl.createOutput())
+		propagationDelay = DEF_PROP_DELAY
 	}
 
 	override val type: String get() = TYPE
