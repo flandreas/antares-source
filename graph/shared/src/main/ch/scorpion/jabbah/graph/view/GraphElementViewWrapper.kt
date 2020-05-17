@@ -7,8 +7,7 @@ import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.io.Storable
@@ -68,6 +67,12 @@ class GraphElementViewWrapper(
         set(value) {
             _component!!.location = value
         }
+
+	/** ---- [Snappable] interface */
+
+	override val snappableX: Array<SnappableX> get() = _component!!.snappableX
+
+	override val snappableY: Array<SnappableY> get() = _component!!.snappableY
 
     /** ---- [Drawable] */
 
