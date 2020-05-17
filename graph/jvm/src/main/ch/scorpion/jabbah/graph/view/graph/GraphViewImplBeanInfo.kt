@@ -15,7 +15,7 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
 
     companion object {
 	    private val name = PropertyImpl("translatableName", "graph.property.GraphViewImpl", TranslatableText::class.java, drawingBeanProvider)
-	    private val propDelay = GraphProperties.propagationDelay(componentBeanProvider)
+	    private val propDelay = GraphProperties.propagationDelay(drawingBeanProvider)
 		private val description = PropertyImpl("description", "graph.property.GraphViewImpl.shortDescription", TranslatableText::class.java, drawingBeanProvider)
 	    private val script = EditProperties.script("script", "graph.property.GraphViewImpl.script", beanProvider = drawingBeanProvider)
     }
