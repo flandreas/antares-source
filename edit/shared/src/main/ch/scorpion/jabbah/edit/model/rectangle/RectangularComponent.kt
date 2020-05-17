@@ -136,7 +136,7 @@ abstract class RectangularComponent(
 
 	companion object {
 		// The distance between the rectangle border and the text box (if at top or at bottom)
-		private val TEXT_INSET: Int = 10
+		private const val TEXT_INSET: Int = 10
 	}
 
 	constructor(x: Double, y: Double, w: Double, h: Double) : this(shape = Rectangle2D(x, y, w, h))

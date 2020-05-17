@@ -23,7 +23,7 @@ enum class HorizontalAlignment(val customName: String) {
 
     companion object {
         fun withName(name: String): HorizontalAlignment {
-            for (alignment in HorizontalAlignment.values()) {
+            for (alignment in values()) {
                 if (alignment.customName == name) {
                     return alignment
                 }
@@ -42,9 +42,9 @@ enum class HorizontalAlignment(val customName: String) {
     abstract fun getX(baselineRect: Rectangle2D): Double
 
     override fun toString(): String = when (this) {
-        HorizontalAlignment.LEFT -> Translations.getString("edit.property.horizontalAlignment.left.name")
-        HorizontalAlignment.CENTER -> Translations.getString("edit.property.horizontalAlignment.center.name")
-        HorizontalAlignment.RIGHT -> Translations.getString("edit.property.horizontalAlignment.right.name")
+        LEFT -> Translations.getString("edit.property.horizontalAlignment.left.name")
+        CENTER -> Translations.getString("edit.property.horizontalAlignment.center.name")
+        RIGHT -> Translations.getString("edit.property.horizontalAlignment.right.name")
     }
 }
 
@@ -66,7 +66,7 @@ enum class VerticalAlignment(val customName: String) {
 
     companion object {
         fun withName(name: String): VerticalAlignment {
-            for (alignment in VerticalAlignment.values()) {
+            for (alignment in values()) {
                 if (alignment.customName == name) {
                     return alignment
                 }
@@ -85,9 +85,9 @@ enum class VerticalAlignment(val customName: String) {
     internal abstract fun getY(baselineRect: Rectangle2D): Double
 
     override fun toString(): String = when (this) {
-        VerticalAlignment.TOP -> Translations.getString("edit.property.verticalAlignment.top.name")
-        VerticalAlignment.CENTER -> Translations.getString("edit.property.verticalAlignment.center.name")
-        VerticalAlignment.BOTTOM -> Translations.getString("edit.property.verticalAlignment.bottom.name")
+        TOP -> Translations.getString("edit.property.verticalAlignment.top.name")
+        CENTER -> Translations.getString("edit.property.verticalAlignment.center.name")
+        BOTTOM -> Translations.getString("edit.property.verticalAlignment.bottom.name")
     }
 }
 

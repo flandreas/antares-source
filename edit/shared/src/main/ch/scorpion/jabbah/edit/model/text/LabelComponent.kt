@@ -45,13 +45,22 @@ class LabelComponent(
 		DrawableOwner(this, label)
 	}
 
-	/** ---- UI properties */
+	/** ---- [TextComponent] */
 
 	override var text: String
 		get() = label.text
 		set(value) {
 			label.text = value
 			setFrame(label.boundingBox)
+		}
+
+	override var horizontalAlignment: HorizontalAlignment = HorizontalAlignment.CENTER
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				update()
+			}
 		}
 
 	/** ---- [Transparent] interface */

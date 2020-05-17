@@ -6,10 +6,7 @@ import ch.scorpion.jabbah.draw.graphics.PredefinedStroke
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
-import ch.scorpion.jabbah.edit.model.text.ScriptProperty
-import ch.scorpion.jabbah.edit.model.text.TextProperty
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
 
 object EditProperties {
@@ -84,6 +81,14 @@ object EditProperties {
 		beanProvider: BeanProvider = componentBeanProvider
 	): PropertyImpl<VerticalAlignment> {
 		return PropertyImpl(name, baseKey, VerticalAlignment::class.java, beanProvider)
+	}
+
+	fun horizontalAlignment(
+		name: String = "alignment",
+		baseKey: String = "edit.property.horizontalAlignment",
+		beanProvider: BeanProvider = componentBeanProvider
+	): PropertyImpl<HorizontalAlignment> {
+		return PropertyImpl(name, baseKey, HorizontalAlignment::class.java, beanProvider)
 	}
 
 	fun shadow(

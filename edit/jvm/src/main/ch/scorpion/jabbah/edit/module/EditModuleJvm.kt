@@ -12,18 +12,17 @@ import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.StyleTypeEditor
 import ch.scorpion.jabbah.draw.style.StyleTypeRenderer
-import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.Grid
+import ch.scorpion.jabbah.edit.GridPainterPreference
+import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.edit.model.Size
-import ch.scorpion.jabbah.edit.model.SizeEditor
-import ch.scorpion.jabbah.edit.model.VerticalAlignmentEditor
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.properties.*
 import ch.scorpion.jabbah.edit.select.EditSelectModule
-import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
-import ch.scorpion.jabbah.edit.view.EditContextMenuProvider
+import ch.scorpion.jabbah.edit.view.*
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.IOModuleJvm
 import ch.scorpion.jabbah.io.TypeMap
@@ -68,6 +67,7 @@ object EditModuleJvm : AbstractModule() {
 		registry.registerRenderer(Size::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(StyleType::class.java, StyleTypeRenderer::class.java)
 		registry.registerRenderer(VerticalAlignment::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(HorizontalAlignment::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(TextProperty::class.java, TextPropertyRenderer::class.java)
 		registry.registerRenderer(ScriptProperty::class.java, ScriptPropertyRenderer::class.java)
 		registry.register(TranslatableText::class.java) { TranslatableTextPropertyRenderer((it as PropertyImpl<TranslatableText>).filter) }
@@ -79,6 +79,7 @@ object EditModuleJvm : AbstractModule() {
 		registry.registerEditor(Size::class.java, SizeEditor::class.java)
 		registry.registerEditor(StyleType::class.java, StyleTypeEditor::class.java)
 		registry.registerEditor(VerticalAlignment::class.java, VerticalAlignmentEditor::class.java)
+		registry.registerEditor(HorizontalAlignment::class.java, HorizontalAlignmentEditor::class.java)
 		registry.register(PredefinedColor::class.java) { PredefinedColorEditor(PredefinedColorRepository) }
 		registry.register(PredefinedStroke::class.java) { PredefinedStrokeEditor(PredefinedStrokeRepository) }
 		registry.register(TextProperty::class.java) {

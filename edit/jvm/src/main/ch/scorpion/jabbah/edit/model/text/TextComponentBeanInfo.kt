@@ -51,10 +51,12 @@ class TextComponentJvmBeanInfo : TextComponentBeanInfo<TextComponentJvm>() {
 
 	companion object {
 		private val text = EditProperties.multilineText("textProperty")
+		private val horizontalAlignment = EditProperties.horizontalAlignment("horizontalAlignment")
 	}
 
 	override fun addProperties(bean: TextComponentJvm, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 		properties.add(text.bind(editor, bean.id))
+		properties.add(horizontalAlignment.bind(editor, bean.id))
 	}
 }

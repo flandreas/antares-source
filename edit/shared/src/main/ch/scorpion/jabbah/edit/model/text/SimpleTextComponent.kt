@@ -53,6 +53,15 @@ class SimpleTextComponent(
 			transparent.transparency = value
 		}
 
+	override var horizontalAlignment: HorizontalAlignment = HorizontalAlignment.CENTER
+		set(value) {
+			if (value != field) {
+				invalidate()
+				field = value
+				update()
+			}
+		}
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {

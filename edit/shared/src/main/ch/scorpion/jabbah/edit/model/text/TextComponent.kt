@@ -14,6 +14,8 @@ interface TextComponent : Component, RectangularShape {
 
 	var text: String
 
+	var horizontalAlignment: HorizontalAlignment
+
 	// Requested by the compiler due to multiple inheritance problem
 	override fun contains(x: Double, y: Double): Boolean {
 		throw UnsupportedOperationException("not implemented")

@@ -17,6 +17,8 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.SnappableX
+import ch.scorpion.jabbah.edit.SnappableXCoordinate
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -141,6 +143,15 @@ open class TextComponentJvm(
 			validate()
 		}
 
+	override var horizontalAlignment: HorizontalAlignment = HorizontalAlignment.CENTER
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				update()
+			}
+		}
+
 	@Suppress("unused")
 	var textProperty: TextProperty
 		get() = TextProperty(text)
@@ -175,12 +186,29 @@ open class TextComponentJvm(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeString("text", text)
+		if (horizontalAlignment != HorizontalAlignment.CENTER) {
+			writer.writeString("hAlign", horizontalAlignment.customName)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		text = reader.readString("text")
+		if (reader.hasAttribute("hAlign")) {
+			horizontalAlignment = HorizontalAlignment.withName(reader.readString("hAlign"))
+		}
 	}
+
+	/** ---- [SnappableX] */
+
+	override val snappableX: Array<SnappableX>
+		get() = arrayOf(
+			when(horizontalAlignment) {
+				HorizontalAlignment.LEFT -> SnappableXCoordinate(minX)
+				HorizontalAlignment.CENTER -> SnappableXCoordinate(centerX)
+				HorizontalAlignment.RIGHT -> SnappableXCoordinate(maxX)
+			}
+		)
 
 	/** ---- [Drawable] */
 
@@ -264,7 +292,7 @@ open class TextComponentJvm(
 			if (context.useContextColors) context.color!!.textColor else transparent.applyTo(color.textColor)))
 		StyleConstants.setBackground(attr, Graphics2DJvm.toAwtColor(
 			if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(color.backgroundColor)))
-		StyleConstants.setAlignment(attr, StyleConstants.ALIGN_LEFT)
+		StyleConstants.setAlignment(attr, horizontalAlignmentSwing)
 
 		val bounds = shape
 		TEXT_PAINTER.setBounds(
@@ -277,6 +305,13 @@ open class TextComponentJvm(
 		TEXT_PAINTER.setParagraphAttributes(attr, true)
 	}
 
+	private val horizontalAlignmentSwing: Int get() =
+		when(horizontalAlignment) {
+			HorizontalAlignment.LEFT -> StyleConstants.ALIGN_LEFT
+			HorizontalAlignment.CENTER -> StyleConstants.ALIGN_CENTER
+			HorizontalAlignment.RIGHT -> StyleConstants.ALIGN_RIGHT
+		}
+
 	private fun setupTextEditor(zoomFactor: Double) {
 		val attr = SimpleAttributeSet()
 		val awtFont = Graphics2DJvm.toAwtFont(font)
@@ -286,7 +321,7 @@ open class TextComponentJvm(
 		StyleConstants.setBold(attr, awtFont.isBold)
 		StyleConstants.setItalic(attr, awtFont.isItalic)
 		StyleConstants.setForeground(attr, java.awt.Color.BLACK)
-		StyleConstants.setAlignment(attr, StyleConstants.ALIGN_LEFT)
+		StyleConstants.setAlignment(attr, horizontalAlignmentSwing)
 
 		TEXT_EDITOR.text = ""
 		TEXT_EDITOR.setParagraphAttributes(attr, true)
