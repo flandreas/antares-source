@@ -4,11 +4,40 @@
       <model>
         <graph _id='2' script=''>
           <elements>
-            <subGraphVerticeRef _id='3' id='1' delay='0' name='SR-Flipflop' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'/>
-            <subGraphVerticeRef _id='4' id='2' delay='0' name='SR-Flipflop' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'/>
-            <subGraphVerticeRef _id='5' id='3' delay='0' name='SR-Flipflop' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'/>
-            <subGraphVerticeRef _id='6' id='4' delay='0' name='SR-Flipflop' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'/>
-            <circuitInOut _id='7' id='5' delay='0' name='I' desc='Serieller Eingang' type='input' bitWidth='1'/>
+            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'>
+              <desc>
+                <translation lang='de' text='Speichert Bit 0'/>
+                <translation lang='en' text='Stores bit 0'/>
+              </desc>
+            </subGraphVerticeRef>
+            <subGraphVerticeRef _id='4' id='2' delay='0' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'>
+              <desc>
+                <translation lang='de' text='Speichert Bit 1'/>
+                <translation lang='en' text='Stores bit 1'/>
+              </desc>
+            </subGraphVerticeRef>
+            <subGraphVerticeRef _id='5' id='3' delay='0' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'>
+              <desc>
+                <translation lang='de' text='Speichert Bit 2'/>
+                <translation lang='en' text='Stores bit 2'/>
+              </desc>
+            </subGraphVerticeRef>
+            <subGraphVerticeRef _id='6' id='4' delay='0' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'>
+              <desc>
+                <translation lang='de' text='Speichert Bit 3'/>
+                <translation lang='en' text='Stores bit 3'/>
+              </desc>
+            </subGraphVerticeRef>
+            <circuitInOut _id='7' id='5' name='I' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Dateneingang (seriell)'/>
+                <translation lang='en' text='Data input (serial)'/>
+              </desc>
+              <desc>
+                <translation lang='de' text='Dateneingang (seriell)'/>
+                <translation lang='en' text='Data input (serial)'/>
+              </desc>
+            </circuitInOut>
             <notGate _id='8' id='6' delay='20' inputCount='1'/>
             <digitalNet _id='9' id='7' delay='0'>
               <ports>
@@ -23,7 +52,16 @@
                 <netPortRef verticeId='8' portId='1'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='11' id='9' delay='0' name='T' desc='Takteingang' type='input' bitWidth='1'/>
+            <circuitInOut _id='11' id='9' name='T' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Takteingang'/>
+                <translation lang='en' text=' Clock input'/>
+              </desc>
+              <desc>
+                <translation lang='de' text='Takteingang'/>
+                <translation lang='en' text=' Clock input'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='12' id='10' delay='0'>
               <ports>
                 <netPortRef verticeId='3' portId='4'/>
@@ -72,7 +110,16 @@
                 <netPortRef verticeId='6' portId='2'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='19' id='17' delay='0' name='Q' desc='Serieller Ausgang' type='output' bitWidth='1'/>
+            <circuitInOut _id='19' id='17' name='Q' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Datenausgang (seriell)'/>
+                <translation lang='en' text='Data output (serial)'/>
+              </desc>
+              <desc>
+                <translation lang='de' text='Datenausgang (seriell)'/>
+                <translation lang='en' text='Data output (serial)'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='20' id='18' delay='0'>
               <ports>
                 <netPortRef verticeId='6' portId='4'/>
@@ -80,26 +127,62 @@
                 <netPortRef verticeId='24' portId='1'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='21' id='19' delay='0' name='O0' desc='Paraller Ausgang Bit 0' type='output' bitWidth='1'/>
-            <circuitInOut _id='22' id='20' delay='0' name='O1' desc='Paralleler Ausgang Bit 1' type='output' bitWidth='1'/>
-            <circuitInOut _id='23' id='21' delay='0' name='O2' desc='Paralleler Ausgang Bit 2' type='output' bitWidth='1'/>
-            <circuitInOut _id='24' id='22' delay='0' name='O3' desc='Paralleler Ausgang Bit 3' type='output' bitWidth='1'/>
+            <circuitInOut _id='21' id='19' name='O0' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Datenausgang Bit 0 (parallel)'/>
+                <translation lang='en' text='Data output bit 0 (parallel)'/>
+              </desc>
+              <desc>
+                <translation lang='de' text='Datenausgang Bit 0 (parallel)'/>
+                <translation lang='en' text='Data output bit 0 (parallel)'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='22' id='20' name='O1' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Datenausgang Bit 1 (parallel)'/>
+                <translation lang='en' text='Data output bit 1 (parallel)'/>
+              </desc>
+              <desc>
+                <translation lang='de' text='Datenausgang Bit 1 (parallel)'/>
+                <translation lang='en' text='Data output bit 1 (parallel)'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='23' id='21' name='O2' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text=' Datenausgang Bit 2 (parallel)'/>
+                <translation lang='en' text='Data output bit 2 (parallel)'/>
+              </desc>
+              <desc>
+                <translation lang='de' text=' Datenausgang Bit 2 (parallel)'/>
+                <translation lang='en' text='Data output bit 2 (parallel)'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='24' id='22' name='O3' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text=' Datenausgang Bit 3 (parallel)'/>
+                <translation lang='en' text='Data output bit 3 (parallel)'/>
+              </desc>
+              <desc>
+                <translation lang='de' text=' Datenausgang Bit 3 (parallel)'/>
+                <translation lang='en' text='Data output bit 3 (parallel)'/>
+              </desc>
+            </circuitInOut>
           </elements>
         </graph>
       </model>
       <view>
         <graphView _id='25'>
           <netViews>
-            <netView _id='73' modelId='9' style='line'/>
-            <netView _id='74' modelId='10' style='line'/>
-            <netView _id='75' modelId='12' style='line'/>
-            <netView _id='76' modelId='13' style='line'/>
-            <netView _id='77' modelId='14' style='line'/>
-            <netView _id='78' modelId='15' style='line'/>
-            <netView _id='79' modelId='16' style='line'/>
-            <netView _id='80' modelId='17' style='line'/>
-            <netView _id='81' modelId='18' style='line'/>
-            <netView _id='82' modelId='20' style='line'/>
+            <netView _id='74' modelId='9' style='line'/>
+            <netView _id='75' modelId='10' style='line'/>
+            <netView _id='76' modelId='12' style='line'/>
+            <netView _id='77' modelId='13' style='line'/>
+            <netView _id='78' modelId='14' style='line'/>
+            <netView _id='79' modelId='15' style='line'/>
+            <netView _id='80' modelId='16' style='line'/>
+            <netView _id='81' modelId='17' style='line'/>
+            <netView _id='82' modelId='18' style='line'/>
+            <netView _id='83' modelId='20' style='line'/>
           </netViews>
           <components>
             <subGraphVerticeViewRef _id='71' id='1' rot='0' modelId='3' x='70.0' y='-182.0'/>
@@ -194,7 +277,7 @@
             </digitalEdgeView>
             <digitalEdgeView _id='49' id='23' modelId='15' layout='ortho' orig='48' dest='71' destPort='3' adjusted='false'>
               <shape>
-                <polylineShape points='56.0,-56.0 56.0,-154.0 76.0,-154.0'/>
+                <polylineShape points='56.0,-56.0 56.0,-154.0 84.0,-154.0'/>
               </shape>
             </digitalEdgeView>
             <digitalNodeView _id='48' id='24' modelId='15'>
@@ -318,73 +401,77 @@
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='83'>
+    <containerDrawing _id='84'>
       <components>
-        <rectangle _id='100' id='1' style='figure' x='140.0' y='147.0' w='70.0' h='126.0'/>
-        <originIndicator _id='99'>
+        <rectangle _id='101' id='1' style='figure' x='140.0' y='147.0' w='70.0' h='126.0'/>
+        <originIndicator _id='100'>
           <location>
             <point x='126.0' y='168.0'/>
           </location>
         </originIndicator>
-        <digitalPortViewComp _id='97' id='2' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='98' id='2' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='98' x='140.0' y='252.0' dir='west' textPos='internal' portId='102'/>
+            <digitalPortView _id='99' x='140.0' y='252.0' dir='west' textPos='internal' portId='103'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='95' id='3' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='96' id='3' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='96' x='140.0' y='168.0' dir='west' textPos='internal' portId='103'/>
+            <digitalPortView _id='97' x='140.0' y='168.0' dir='west' textPos='internal' portId='104'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='93' id='4' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='94' id='4' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='94' x='210.0' y='168.0' dir='east' textPos='internal' portId='104'/>
+            <digitalPortView _id='95' x='210.0' y='168.0' dir='east' textPos='internal' portId='105'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='91' id='5' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='92' id='5' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='92' x='210.0' y='252.0' dir='east' textPos='internal' portId='105'/>
+            <digitalPortView _id='93' x='210.0' y='252.0' dir='east' textPos='internal' portId='106'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='89' id='6' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='90' id='6' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='90' x='210.0' y='231.0' dir='east' textPos='internal' portId='106'/>
+            <digitalPortView _id='91' x='210.0' y='231.0' dir='east' textPos='internal' portId='107'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='87' id='7' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='88' id='7' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='88' x='210.0' y='210.0' dir='east' textPos='internal' portId='107'/>
+            <digitalPortView _id='89' x='210.0' y='210.0' dir='east' textPos='internal' portId='108'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='85' id='8' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='86' id='8' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='86' x='210.0' y='189.0' dir='east' textPos='internal' portId='108'/>
+            <digitalPortView _id='87' x='210.0' y='189.0' dir='east' textPos='internal' portId='109'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='84' text='SR'>
+        <label _id='85' text='SR'>
           <location>
             <point x='172.8037109375' y='177.244140625'/>
           </location>
         </label>
       </components>
       <model>
-        <subGraphVertice _id='101' id='0' delay='0' uuid='2fa2c8a7-fc2d-4139-8f6b-bd4b07933916'>
+        <subGraphVertice _id='102' id='0' delay='0' uuid='2fa2c8a7-fc2d-4139-8f6b-bd4b07933916'>
+          <desc>
+            <translation lang='de' text='Schieberegister mit 4 Bit und Parallelausgabe. Schiebt die gespeicherten Daten bei ansteigender Taktflanke T eine Position weiter und speichert das Bit von Eingang I an der Position 0.'/>
+            <translation lang='en' text='Shift register with 4 bits and parallel output. Shifts the stored data with a rising edge of T and stored the bit from input I in position 0.'/>
+          </desc>
           <name>
             <translation lang='en' text='Shift Register Parallel-Out 4 Bit'/>
             <translation lang='de' text='Schieberegister Parallel-Out 4-Bit'/>
           </name>
           <desc>
-            <translation lang='en' text='Shift register with 4 bits and parallel output'/>
-            <translation lang='de' text='Schieberegister mit 4 Bit und Parallelausgabe'/>
+            <translation lang='de' text='Schieberegister mit 4 Bit und Parallelausgabe. Schiebt die gespeicherten Daten bei ansteigender Taktflanke T eine Position weiter und speichert das Bit von Eingang I an der Position 0.'/>
+            <translation lang='en' text='Shift register with 4 bits and parallel output. Shifts the stored data with a rising edge of T and stored the bit from input I in position 0.'/>
           </desc>
           <ports>
-            <subCircuitPort _id='102' portId='1' name='T' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
-            <subCircuitPort _id='103' portId='2' name='I' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='104' portId='3' name='Q' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='105' portId='4' name='O0' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='106' portId='5' name='O1' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='107' portId='6' name='O2' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='108' portId='7' name='O3' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='103' portId='1' name='T' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
+            <subCircuitPort _id='104' portId='2' name='I' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='105' portId='3' name='Q' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='106' portId='4' name='O0' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='107' portId='5' name='O1' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='108' portId='6' name='O2' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='109' portId='7' name='O3' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
           </ports>
         </subGraphVertice>
       </model>
