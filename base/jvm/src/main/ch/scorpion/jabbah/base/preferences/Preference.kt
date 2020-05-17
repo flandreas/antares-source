@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.base.preferences
 
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.PropertiesProxy
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import java.text.DecimalFormat
@@ -73,6 +74,13 @@ interface Preference {
 	fun load()
 }
 
+open class Preferences(origProperties: Properties) : PropertiesProxy(origProperties) {
+
+	open fun customize(preference: Preference, value: Any) {
+		customize(preference.id, value)
+	}
+}
+
 abstract class AbstractPreference(
 	override val id: String,
 	private val nameKey: String,
@@ -98,7 +106,7 @@ class BooleanPreference(
 	init {
 		editor.addItemListener {
 			if (editor.isSelected != value) {
-				panel?.preferences?.customize(id, editor.isSelected)
+				panel?.preferences?.customize(this, editor.isSelected)
 			}
 		}
 	}
@@ -134,7 +142,7 @@ class IntPreference(
 		editor.columns = 5
 		editor.addPropertyChangeListener("value") {
 			if (it.oldValue != null && it.oldValue != editor.value) {
-				panel?.preferences?.customize(id, editor.value)
+				panel?.preferences?.customize(this, editor.value)
 			}
 		}
 	}
@@ -168,7 +176,7 @@ class FloatPreference(
 		editor.columns = 5
 		editor.addPropertyChangeListener("value") {
 			if (it.oldValue != null && it.oldValue != editor.value) {
-				panel?.preferences?.customize(id, editor.value)
+				panel?.preferences?.customize(this, editor.value)
 			}
 		}
 	}

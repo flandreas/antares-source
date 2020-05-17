@@ -5,6 +5,13 @@ package ch.scorpion.jabbah.base
  */
 actual object Translations {
 
+	actual var language: Language
+		get() = System.currentLanguage()
+		set(value) {
+			throw NotImplementedError()
+		}
+
+
 	actual fun withAnyKey() {
 		// empty
 	}

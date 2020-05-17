@@ -12,6 +12,14 @@ actual object Translations {
 
 	private var withAllKeys = false
 
+	actual var language: Language
+		get() = System.currentLanguage()
+		set(value) {
+			if (language != value) {
+				handleLanguageChanged(value)
+			}
+		}
+
 	actual fun withAnyKey() {
 		withAllKeys = true
 	}
@@ -22,12 +30,14 @@ actual object Translations {
 	actual fun getOptionalString(key: String): String? = getString(key, optional = true)
 
 	actual fun addBundle(name: String) {
+		bundleNames.add(name)
         addBundle(ResourceBundle.getBundle(name))
     }
 
     /** ---- [Translations] */
 
-    private val bundles: MutableList<ResourceBundle> = mutableListOf<ResourceBundle>()
+    private val bundleNames: MutableList<String> = mutableListOf()
+    private val bundles: MutableList<ResourceBundle> = mutableListOf()
 
     fun addBundle(bundle: ResourceBundle) {
         if (!bundles.contains(bundle)) {
@@ -35,6 +45,7 @@ actual object Translations {
     }
 
     fun clear() {
+	    bundleNames.clear()
         bundles.clear()
     }
 
@@ -55,4 +66,10 @@ actual object Translations {
         LOG.debug("Missing translation '$key'")
         throw MissingResourceException("Missing translation", Translations::class.java.name, key)
     }
+
+	private fun handleLanguageChanged(language: Language) {
+		bundles.clear()
+		Locale.setDefault(Locale(language.code))
+		bundleNames.forEach { addBundle(ResourceBundle.getBundle(it)) }
+	}
 }

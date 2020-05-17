@@ -9,13 +9,10 @@ import ch.scorpion.antares.view.memory.MemoryContentGraphDesktopItem
 import ch.scorpion.antares.view.memory.MemoryContentsPanel
 import ch.scorpion.antares.view.memory.OpenMemoryContentsRequest
 import ch.scorpion.jabbah.app.*
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
@@ -36,6 +33,7 @@ import org.apache.commons.cli.Options
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.SystemUtils
 import java.awt.*
+import java.lang.System
 import java.nio.file.Files
 import java.nio.file.Paths
 import javax.swing.JOptionPane

@@ -19,7 +19,7 @@ class DigitalSignalNotationPreference : AbstractPreference(
 		editor.addItem(DigitalSignalNotation.SUFFIX)
 
 		editor.addActionListener {
-			panel?.preferences?.customize(id, (editor.selectedItem as DigitalSignalNotation).customName)
+			panel?.preferences?.customize(this, (editor.selectedItem as DigitalSignalNotation).customName)
 		}
 	}
 

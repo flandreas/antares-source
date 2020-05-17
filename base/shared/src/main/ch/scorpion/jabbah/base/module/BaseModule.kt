@@ -28,6 +28,7 @@ object BaseModule : AbstractModule() {
     }
 
 	private fun fillProperties(properties: Properties) {
+		properties.set(Language.PROP_LANGUAGE, Language.English.code)
 		properties.set(LogSystem.PROP_LOG_LEVEL, LogLevel.Info.name)
 	}
 }

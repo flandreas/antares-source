@@ -2,14 +2,10 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.app.user.User
-import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.LogLevel
-import ch.scorpion.jabbah.base.LogSystem
-import ch.scorpion.jabbah.base.PreferencesChangedEvent
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.io.ZipUtil
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
@@ -133,6 +129,9 @@ abstract class AbstractDesktopApplication(
 		super.init()
 		loadPreferences()
 		LogSystem.level = LogLevel.valueOf(BaseModule.properties.getString(LogSystem.PROP_LOG_LEVEL))
+		if (Translations.language.code != BaseModule.properties.getString(Language.PROP_LANGUAGE)) {
+			Translations.language = Language.withCode(BaseModule.properties.getString(Language.PROP_LANGUAGE))
+		}
 	}
 
 	override fun createNewSavable(): Savable {

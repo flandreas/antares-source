@@ -66,9 +66,24 @@ class PreferencesTreePanel(
 
 	fun applyChanges() {
 		LOG.debug("applying ${localPreferences.size} changes")
+
+		if (localPreferences.needsRestart) {
+			showRestartRequiredMessage()
+		}
+
 		localPreferences.flush()
 		changed = false
 		eventBus.post(PreferencesChangedEvent(origPreferences))
+	}
+
+	private fun showRestartRequiredMessage() {
+		JOptionPane.showConfirmDialog(
+			this@PreferencesTreePanel,
+			Translations.getOptionalString("base.preferences.restart.msg"),
+			Translations.getString("base.action.apply.name"),
+			JOptionPane.DEFAULT_OPTION,
+			JOptionPane.INFORMATION_MESSAGE
+		)
 	}
 
 	private fun buildUI() {
@@ -130,18 +145,22 @@ class PreferencesTreePanel(
 	 * Intercepts all changes of [Preference]s, stores them locally, and forwards them to the original [Properties] store
 	 * if requested.
 	 */
-	private inner class ChangeInterceptingPreferences : PropertiesProxy(origPreferences) {
+	private inner class ChangeInterceptingPreferences : Preferences(origPreferences) {
 
 		/** Accumulates all changed preferences.*/
 		private val accumulator = Properties()
+
+		var needsRestart: Boolean = false
+			private set
 
 		override fun getOptionalEntry(name: String): Entry? {
 			return accumulator.getOptionalEntry(name) ?: super.getOptionalEntry(name)
 		}
 
-		override fun customize(name: String, value: Any) {
-			LOG.debug("customizing property '$name' with '$value'")
-			accumulator.customize(name, value)
+		override fun customize(preference: Preference, value: Any) {
+			LOG.debug("customizing property '${preference.id}' with '$value'")
+			needsRestart = needsRestart || preference.needsRestart
+			accumulator.customize(preference.id, value)
 			changed = true
 		}
 
@@ -149,6 +168,7 @@ class PreferencesTreePanel(
 		fun flush() {
 			accumulator.copyTo(origPreferences)
 			accumulator.clear()
+			needsRestart = false
 		}
 	}
 }

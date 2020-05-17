@@ -21,7 +21,7 @@ class GridPainterPreference : AbstractPreference(
 		editor.addItem(Type.Dot)
 		editor.addActionListener {
 			if (panel != null) {
-				panel?.preferences?.customize(id, (editor.selectedItem as Type).id)
+				panel?.preferences?.customize(this, (editor.selectedItem as Type).id)
 			}
 		}
 	}

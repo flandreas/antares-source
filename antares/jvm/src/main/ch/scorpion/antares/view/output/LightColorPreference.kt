@@ -20,7 +20,7 @@ class LightColorPreference : AbstractPreference(
 	init {
 		(editor.customEditor as JComboBox<*>).addActionListener {
 			if (panel != null && combobox.selectedItem != null) {
-				panel?.preferences?.customize(id, (combobox.selectedItem as LightColor).customName)
+				panel?.preferences?.customize(this, (combobox.selectedItem as LightColor).customName)
 			}
 		}
 	}

@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.base.exception.MissingResourceException
 @Suppress("UNUSED_PARAMETER")
 expect object Translations {
 
+	var language: Language
+
 	/** Returns the key if no value is found. Primarily used for testing.*/
 	fun withAnyKey()
 
@@ -40,6 +42,7 @@ enum class Language(val code: String) {
 	companion object {
 
 		val DEFAULT: Language = English
+		val PROP_LANGUAGE = "base.language"
 
 		fun withCode(code: String): Language {
 			return getLanguage(code) ?: throw IllegalArgumentException("unknown Language $code")

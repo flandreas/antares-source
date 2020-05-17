@@ -44,6 +44,7 @@ object BaseModuleJvm : AbstractModule() {
 	private fun buildPreferencesTree(root: PreferenceGroup) {
 		root.add(PreferenceGroup(PREF_TREE_GENERAL))
 
+		root.getGroup(PREF_TREE_GENERAL).add(LanguagePreference())
 		root.getGroup(PREF_TREE_GENERAL).add(LogLevelPreference())
 	}
 }

@@ -9,7 +9,7 @@ import javax.swing.JPanel
 /** Displays editors for all [Preference]s of a particular [PreferenceGroup].*/
 class PreferencesPanel(
 	private val group: PreferenceGroup,
-	val preferences: Properties
+	val preferences: Preferences
 ) : JPanel() {
 
 	companion object {
