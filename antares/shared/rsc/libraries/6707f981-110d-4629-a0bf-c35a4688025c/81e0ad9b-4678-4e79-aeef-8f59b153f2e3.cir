@@ -11,8 +11,13 @@ elem.setOutput(&quot;O&quot;, valueOut.toString(&quot;16&quot;));
 elem.setOutputBit(&quot;CO&quot;, co);'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='20' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'/>
-            <circuitInOut _id='4' id='2' delay='0' name='D' type='input' bitWidth='8'/>
-            <splitter _id='5' id='3' delay='0' bitWidth='8' branchCount='8'/>
+            <circuitInOut _id='4' id='2' name='D' type='input' bitWidth='8'>
+              <desc>
+                <translation lang='de' text='8-Bit-Zahl, die inkrementiert werden soll.'/>
+                <translation lang='en' text='The 8-bit number to be incremented'/>
+              </desc>
+            </circuitInOut>
+            <splitter _id='5' id='3' delay='0' bitWidth='8' branchCount='8' representation='binary'/>
             <constant _id='6' id='4' delay='1' bitWidth='1' value='1'/>
             <digitalNet _id='7' id='5' delay='0'>
               <ports>
@@ -87,9 +92,19 @@ elem.setOutputBit(&quot;CO&quot;, co);'>
                 <netPortRef verticeId='15' portId='1'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='25' id='24' delay='0' name='O' type='output' bitWidth='8'/>
-            <concentrator _id='26' id='25' delay='0' bitWidth='8' branchCount='8'/>
-            <circuitInOut _id='27' id='26' delay='0' name='CO' type='output' bitWidth='1'/>
+            <circuitInOut _id='25' id='24' name='O' type='output' bitWidth='8'>
+              <desc>
+                <translation lang='de' text='Resultat der Inkrementierung: O = D + 1'/>
+                <translation lang='en' text='Incrementation result: O = D + 1'/>
+              </desc>
+            </circuitInOut>
+            <concentrator _id='26' id='25' delay='0' bitWidth='8' branchCount='8' representation='binary'/>
+            <circuitInOut _id='27' id='26' name='CO' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Resultierendes Übertrags-Bit. Ist 1, falls D = 255 ist.'/>
+                <translation lang='en' text='Resulting carry bit. Is 1 if D = 255.'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='28' id='27' delay='0'>
               <ports>
                 <netPortRef verticeId='15' portId='4'/>
@@ -192,33 +207,33 @@ elem.setOutputBit(&quot;CO&quot;, co);'>
       <view>
         <graphView _id='44'>
           <netViews>
-            <netView _id='87' modelId='38' style='line'/>
-            <netView _id='88' modelId='22' style='line'/>
-            <netView _id='89' modelId='41' style='line'/>
-            <netView _id='90' modelId='30' style='line'/>
-            <netView _id='91' modelId='19' style='line'/>
-            <netView _id='92' modelId='29' style='line'/>
-            <netView _id='93' modelId='31' style='line'/>
-            <netView _id='94' modelId='36' style='line'/>
-            <netView _id='95' modelId='42' style='line'/>
-            <netView _id='96' modelId='33' style='line'/>
-            <netView _id='97' modelId='21' style='line'/>
-            <netView _id='98' modelId='34' style='line'/>
-            <netView _id='99' modelId='37' style='line'/>
-            <netView _id='100' modelId='23' style='line'/>
-            <netView _id='101' modelId='35' style='line'/>
-            <netView _id='102' modelId='43' style='line'/>
-            <netView _id='103' modelId='28' style='line'/>
-            <netView _id='104' modelId='40' style='line'/>
-            <netView _id='105' modelId='32' style='line'/>
-            <netView _id='106' modelId='20' style='line'/>
-            <netView _id='107' modelId='18' style='line'/>
-            <netView _id='108' modelId='8' style='line'/>
-            <netView _id='109' modelId='16' style='line'/>
-            <netView _id='110' modelId='7' style='line'/>
-            <netView _id='111' modelId='24' style='line'/>
-            <netView _id='112' modelId='17' style='line'/>
-            <netView _id='113' modelId='39' style='line'/>
+            <netView _id='88' modelId='38' style='line'/>
+            <netView _id='89' modelId='22' style='line'/>
+            <netView _id='90' modelId='41' style='line'/>
+            <netView _id='91' modelId='30' style='line'/>
+            <netView _id='92' modelId='19' style='line'/>
+            <netView _id='93' modelId='29' style='line'/>
+            <netView _id='94' modelId='31' style='line'/>
+            <netView _id='95' modelId='36' style='line'/>
+            <netView _id='96' modelId='42' style='line'/>
+            <netView _id='97' modelId='33' style='line'/>
+            <netView _id='98' modelId='21' style='line'/>
+            <netView _id='99' modelId='34' style='line'/>
+            <netView _id='100' modelId='37' style='line'/>
+            <netView _id='101' modelId='23' style='line'/>
+            <netView _id='102' modelId='35' style='line'/>
+            <netView _id='103' modelId='43' style='line'/>
+            <netView _id='104' modelId='28' style='line'/>
+            <netView _id='105' modelId='40' style='line'/>
+            <netView _id='106' modelId='32' style='line'/>
+            <netView _id='107' modelId='20' style='line'/>
+            <netView _id='108' modelId='18' style='line'/>
+            <netView _id='109' modelId='8' style='line'/>
+            <netView _id='110' modelId='16' style='line'/>
+            <netView _id='111' modelId='7' style='line'/>
+            <netView _id='112' modelId='24' style='line'/>
+            <netView _id='113' modelId='17' style='line'/>
+            <netView _id='114' modelId='39' style='line'/>
           </netViews>
           <components>
             <subGraphVerticeViewRef _id='85' id='1' rot='0' modelId='3' x='322.0' y='224.0' label='HA'/>
@@ -228,7 +243,7 @@ elem.setOutputBit(&quot;CO&quot;, co);'>
               </location>
             </circuitInOutView>
             <splitterView _id='83' id='3' rot='0' modelId='5' x='252.0' y='140.0' handedness='right'/>
-            <constantView _id='82' id='4' modelId='6' x='196.0' y='266.0' representation='binary' orientation='east'/>
+            <constantView _id='82' id='4' modelId='6' x='196.0' y='266.0' representation='binary'/>
             <digitalEdgeView _id='81' id='5' modelId='7' layout='ortho' orig='84' origPort='1' origPortOutput='true' dest='83' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='196.0,140.0 266.0,140.0'/>
@@ -388,37 +403,41 @@ elem.setOutputBit(&quot;CO&quot;, co);'>
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='114'>
+    <containerDrawing _id='115'>
       <components>
-        <rectangle _id='123' id='1' style='figure' x='140.0' y='140.0' w='56.0' h='84.0'/>
-        <originIndicator _id='122'>
+        <rectangle _id='124' id='1' style='figure' x='140.0' y='140.0' w='56.0' h='84.0'/>
+        <originIndicator _id='123'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
         </originIndicator>
-        <digitalPortViewComp _id='120' id='3' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='121' id='3' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='121' x='140.0' y='154.0' dir='west' textPos='internal' portId='125'/>
+            <digitalPortView _id='122' x='140.0' y='154.0' dir='west' textPos='internal' portId='126'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='118' id='4' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='119' id='4' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='119' x='196.0' y='154.0' dir='east' textPos='internal' portId='126'/>
+            <digitalPortView _id='120' x='196.0' y='154.0' dir='east' textPos='internal' portId='127'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='116' id='5' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='117' id='5' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='117' x='196.0' y='210.0' dir='east' textPos='internal' portId='127'/>
+            <digitalPortView _id='118' x='196.0' y='210.0' dir='east' textPos='internal' portId='128'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='115' text='+1'>
+        <label _id='116' text='+1'>
           <location>
             <point x='168.0' y='175.0'/>
           </location>
         </label>
       </components>
       <model>
-        <subGraphVertice _id='124' id='0' delay='0' uuid='81e0ad9b-4678-4e79-aeef-8f59b153f2e3'>
+        <subGraphVertice _id='125' id='0' delay='0' uuid='81e0ad9b-4678-4e79-aeef-8f59b153f2e3'>
+          <desc>
+            <translation lang='en' text='Increments an 8-bit number by 1'/>
+            <translation lang='de' text=' Erhöht eine 8-Bit-Zahl um 1'/>
+          </desc>
           <name>
             <translation lang='en' text='Incrementer 8 Bit'/>
             <translation lang='de' text='Inkrementierer 8-Bit'/>
@@ -428,9 +447,9 @@ elem.setOutputBit(&quot;CO&quot;, co);'>
             <translation lang='de' text=' Erhöht eine 8-Bit-Zahl um 1'/>
           </desc>
           <ports>
-            <subCircuitPort _id='125' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='126' portId='2' name='O' logic='positive' bitWidth='8' trigger='level' type='output' representation='hex'/>
-            <subCircuitPort _id='127' portId='3' name='CO' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='126' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='127' portId='2' name='O' logic='positive' bitWidth='8' trigger='level' type='output' representation='hex'/>
+            <subCircuitPort _id='128' portId='3' name='CO' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
           </ports>
         </subGraphVertice>
       </model>

@@ -6,18 +6,46 @@
 var b = parseInt(elem.input(&quot;B&quot;), &quot;16&quot;);
 elem.setOutputBit(&quot;O&quot;, a == b);'>
           <elements>
-            <subGraphVerticeRef _id='3' id='1' delay='0' name='Komparator 4-Bit' uuid='a523d891-bd1a-4b0c-9072-ae6351db6ca7'/>
-            <subGraphVerticeRef _id='4' id='2' delay='0' name='Komparator 4-Bit' uuid='a523d891-bd1a-4b0c-9072-ae6351db6ca7'/>
-            <circuitInOut _id='5' id='3' delay='0' name='A' type='input' bitWidth='8'/>
-            <circuitInOut _id='6' id='4' delay='0' name='B' type='input' bitWidth='8'/>
-            <splitter _id='7' id='5' delay='0' bitWidth='8' branchCount='2'/>
+            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='a523d891-bd1a-4b0c-9072-ae6351db6ca7'>
+              <desc>
+                <translation lang='de' text='Vergleicht Bit 4..7 der beiden Zahlen'/>
+                <translation lang='en' text='Compares bit 4..7 of the two numbers'/>
+              </desc>
+            </subGraphVerticeRef>
+            <subGraphVerticeRef _id='4' id='2' delay='0' uuid='a523d891-bd1a-4b0c-9072-ae6351db6ca7'>
+              <desc>
+                <translation lang='de' text='Vergleicht Bit 0..3 der beiden Zahlen'/>
+                <translation lang='en' text='Compares bit 0..3 of the two numbers'/>
+              </desc>
+            </subGraphVerticeRef>
+            <circuitInOut _id='5' id='3' name='A' type='input' bitWidth='8'>
+              <desc>
+                <translation lang='de' text='Erster zu vergleichender Wert'/>
+                <translation lang='en' text='First value to compare'/>
+              </desc>
+              <desc>
+                <translation lang='de' text='Erste zu vergleichende Zahl'/>
+                <translation lang='en' text='First number to compare'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='6' id='4' name='B' type='input' bitWidth='8'>
+              <desc>
+                <translation lang='de' text='Zweiter zu vergleichender Wert'/>
+                <translation lang='en' text='Second value to compare'/>
+              </desc>
+              <desc>
+                <translation lang='de' text='Zweite zu vergleichende Zahl'/>
+                <translation lang='en' text='Second number to compare'/>
+              </desc>
+            </circuitInOut>
+            <splitter _id='7' id='5' delay='0' bitWidth='8' branchCount='2' representation='binary'/>
             <digitalNet _id='8' id='6' delay='0'>
               <ports>
                 <netPortRef verticeId='7' portId='1'/>
                 <netPortRef verticeId='5' portId='1'/>
               </ports>
             </digitalNet>
-            <splitter _id='9' id='7' delay='0' bitWidth='8' branchCount='2'/>
+            <splitter _id='9' id='7' delay='0' bitWidth='8' branchCount='2' representation='binary'/>
             <digitalNet _id='10' id='8' delay='0'>
               <ports>
                 <netPortRef verticeId='9' portId='1'/>
@@ -48,7 +76,12 @@ elem.setOutputBit(&quot;O&quot;, a == b);'>
                 <netPortRef verticeId='9' portId='3'/>
               </ports>
             </digitalNet>
-            <andGate _id='15' id='13' delay='20' inputCount='2'/>
+            <andGate _id='15' id='13' delay='20' inputCount='2'>
+              <desc>
+                <translation lang='de' text='Das Resultat ist nur 1, wenn sowohl Bit 0..3 als auch Bit 4..7 gleich sind'/>
+                <translation lang='en' text='The result is only 1 if Bit 0..3 as well as Bit 4..7 are the same'/>
+              </desc>
+            </andGate>
             <digitalNet _id='16' id='14' delay='0'>
               <ports>
                 <netPortRef verticeId='3' portId='3'/>
@@ -61,7 +94,16 @@ elem.setOutputBit(&quot;O&quot;, a == b);'>
                 <netPortRef verticeId='15' portId='2'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='18' id='16' delay='0' name='O' type='output' bitWidth='1'/>
+            <circuitInOut _id='18' id='16' name='O' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Resultat = 1, falls A = B'/>
+                <translation lang='en' text='Result = 1, if A = B'/>
+              </desc>
+              <desc>
+                <translation lang='de' text='Resultat = 1, falls A = B'/>
+                <translation lang='en' text='Result = 1, if A = B'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='19' id='17' delay='0'>
               <ports>
                 <netPortRef verticeId='15' portId='3'/>
@@ -74,19 +116,19 @@ elem.setOutputBit(&quot;O&quot;, a == b);'>
       <view>
         <graphView _id='20'>
           <netViews>
-            <netView _id='39' modelId='17' style='line'/>
-            <netView _id='40' modelId='16' style='line'/>
-            <netView _id='41' modelId='14' style='line'/>
-            <netView _id='42' modelId='8' style='line'/>
-            <netView _id='43' modelId='10' style='line'/>
-            <netView _id='44' modelId='12' style='line'/>
-            <netView _id='45' modelId='19' style='line'/>
-            <netView _id='46' modelId='11' style='line'/>
-            <netView _id='47' modelId='13' style='line'/>
+            <netView _id='40' modelId='17' style='line'/>
+            <netView _id='41' modelId='16' style='line'/>
+            <netView _id='42' modelId='14' style='line'/>
+            <netView _id='43' modelId='8' style='line'/>
+            <netView _id='44' modelId='10' style='line'/>
+            <netView _id='45' modelId='12' style='line'/>
+            <netView _id='46' modelId='19' style='line'/>
+            <netView _id='47' modelId='11' style='line'/>
+            <netView _id='48' modelId='13' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='37' id='1' rot='0' modelId='3' x='406.0' y='252.0' mirrorH='false' mirrorV='false'/>
-            <subGraphVerticeViewRef _id='36' id='2' rot='0' modelId='4' x='406.0' y='378.0' mirrorH='false' mirrorV='false'/>
+            <subGraphVerticeViewRef _id='37' id='1' rot='0' modelId='3' x='406.0' y='252.0' label='='/>
+            <subGraphVerticeViewRef _id='36' id='2' rot='0' modelId='4' x='406.0' y='378.0' label='='/>
             <circuitInOutView _id='35' id='3' modelId='5' representation='hex' orientation='east'>
               <location>
                 <point x='259.0' y='259.0'/>
@@ -156,37 +198,41 @@ elem.setOutputBit(&quot;O&quot;, a == b);'>
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='48'>
+    <containerDrawing _id='49'>
       <components>
-        <rectangle _id='57' id='1' style='figure' x='140.0' y='140.0' w='56.0' h='84.0'/>
-        <originIndicator _id='56'>
+        <rectangle _id='58' id='1' style='figure' x='140.0' y='140.0' w='56.0' h='84.0'/>
+        <originIndicator _id='57'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
         </originIndicator>
-        <digitalPortViewComp _id='54' id='3' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='55' id='3' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='55' x='140.0' y='154.0' dir='west' textPos='INTERNAL' portId='59'/>
+            <digitalPortView _id='56' x='140.0' y='154.0' dir='west' textPos='internal' portId='60'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='52' id='4' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='53' id='4' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='53' x='140.0' y='210.0' dir='west' textPos='INTERNAL' portId='60'/>
+            <digitalPortView _id='54' x='140.0' y='210.0' dir='west' textPos='internal' portId='61'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='50' id='5' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='51' id='5' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='51' x='196.0' y='182.0' dir='east' textPos='INTERNAL' portId='61'/>
+            <digitalPortView _id='52' x='196.0' y='182.0' dir='east' textPos='internal' portId='62'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='49' text='='>
+        <label _id='50' text='='>
           <location>
             <point x='168.0' y='168.0'/>
           </location>
         </label>
       </components>
       <model>
-        <subGraphVertice _id='58' id='0' delay='0' uuid='e5954353-6045-4cad-9e43-cb843fd679fc'>
+        <subGraphVertice _id='59' id='0' delay='0' uuid='e5954353-6045-4cad-9e43-cb843fd679fc'>
+          <desc>
+            <translation lang='en' text='Compares two 8-bit values. The output is 1 if both values are equa.'/>
+            <translation lang='de' text='Vergleicht zwei 8-Bit-Zahlen. Der Ausgang ist 1, wenn beide Zahlen gleich sind'/>
+          </desc>
           <name>
             <translation lang='en' text='Comparator 32 Bit'/>
             <translation lang='de' text='Komparator 8-Bit'/>
@@ -196,9 +242,9 @@ elem.setOutputBit(&quot;O&quot;, a == b);'>
             <translation lang='de' text='Vergleicht zwei 8-Bit-Zahlen. Der Ausgang ist 1, wenn beide Zahlen gleich sind'/>
           </desc>
           <ports>
-            <subCircuitPort _id='59' portId='1' name='A' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
-            <subCircuitPort _id='60' portId='2' name='B' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
-            <subCircuitPort _id='61' portId='3' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='60' portId='1' name='A' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='61' portId='2' name='B' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='62' portId='3' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
           </ports>
         </subGraphVertice>
       </model>

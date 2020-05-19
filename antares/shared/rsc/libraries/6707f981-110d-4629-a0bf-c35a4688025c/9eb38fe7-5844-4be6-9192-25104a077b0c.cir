@@ -37,8 +37,18 @@ if (right) {
             <orGate _id='20' id='18' delay='20' inputCount='2'/>
             <orGate _id='21' id='19' delay='20' inputCount='2'/>
             <orGate _id='22' id='20' delay='20' inputCount='2'/>
-            <circuitInOut _id='23' id='21' delay='0' name='CIR' type='input' bitWidth='1'/>
-            <circuitInOut _id='24' id='22' delay='0' name='CIL' type='input' bitWidth='1'/>
+            <circuitInOut _id='23' id='21' name='CIR' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Eingehendes Übertrags-Bit (rechts)'/>
+                <translation lang='en' text='Carry-in (right)'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='24' id='22' name='CIL' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Eingehendes Übertrags-Bit (links)'/>
+                <translation lang='en' text='Carry-in (left)'/>
+              </desc>
+            </circuitInOut>
             <andGate _id='25' id='24' delay='20' inputCount='2'/>
             <andGate _id='26' id='25' delay='20' inputCount='2'/>
             <digitalNet _id='27' id='28' delay='0'>
@@ -73,18 +83,23 @@ if (right) {
               </ports>
             </digitalNet>
             <andGate _id='32' id='33' delay='20' inputCount='2'/>
-            <circuitInOut _id='33' id='34' delay='0' name='F' type='input' bitWidth='1'>
+            <circuitInOut _id='33' id='34' name='F' type='input' bitWidth='1'>
               <desc>
                 <translation lang='de' text='0: Schieben nach links, 1: Schieben nach rechts'/>
                 <translation lang='en' text='0: Shift to left, 1: Shift to right'/>
               </desc>
               <desc>
-                <translation lang='de' text='0: Schieben nach links, 1: Schieben nach rechts'/>
-                <translation lang='en' text='0: Shift to left, 1: Shift to right'/>
+                <translation lang='de' text='Funktion: 0 = Schieben nach links, 1 = Schieben nach rechts'/>
+                <translation lang='en' text='Function: 0 = Shift to left, 1 = Shift to right'/>
               </desc>
             </circuitInOut>
             <notGate _id='34' id='35' delay='20' inputCount='1'/>
-            <circuitInOut _id='35' id='36' delay='0' name='D' type='input' bitWidth='8'/>
+            <circuitInOut _id='35' id='36' name='D' type='input' bitWidth='8'>
+              <desc>
+                <translation lang='de' text='Dateneingang. Die Zahl, die geschoben werden soll.'/>
+                <translation lang='en' text='Data input. The number to be shifted.'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='36' id='37' delay='0'>
               <ports>
                 <netPortRef verticeId='35' portId='1'/>
@@ -127,8 +142,18 @@ if (right) {
                 <netPortRef verticeId='39' portId='3'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='41' id='42' delay='0' name='COR' type='output' bitWidth='1'/>
-            <circuitInOut _id='42' id='43' delay='0' name='COL' type='output' bitWidth='1'/>
+            <circuitInOut _id='41' id='42' name='COR' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Resultierendes Übertragsbits (rechts)'/>
+                <translation lang='en' text='Carry-out (right)'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='42' id='43' name='COL' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Resultierendes Übertragsbit (links)'/>
+                <translation lang='en' text='Carry-out (left)'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='43' id='44' delay='0'>
               <ports>
                 <netPortRef verticeId='32' portId='3'/>
@@ -168,7 +193,12 @@ if (right) {
                 <netPortRef verticeId='26' portId='3'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='51' id='54' delay='0' name='O' type='output' bitWidth='8'/>
+            <circuitInOut _id='51' id='54' name='O' type='output' bitWidth='8'>
+              <desc>
+                <translation lang='de' text='Resultat-Ausgang'/>
+                <translation lang='en' text='Result output'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='52' id='56' delay='0'>
               <ports>
                 <netPortRef verticeId='51' portId='1'/>
@@ -313,8 +343,8 @@ if (right) {
                 <netPortRef verticeId='13' portId='3'/>
               </ports>
             </digitalNet>
-            <splitter _id='75' id='79' delay='0' bitWidth='8' branchCount='8'/>
-            <concentrator _id='76' id='80' delay='0' bitWidth='8' branchCount='8'/>
+            <splitter _id='75' id='79' delay='0' bitWidth='8' branchCount='8' representation='binary'/>
+            <concentrator _id='76' id='80' delay='0' bitWidth='8' branchCount='8' representation='binary'/>
             <digitalNet _id='77' id='81' delay='0'>
               <ports>
                 <netPortRef verticeId='24' portId='1'/>
@@ -1072,16 +1102,16 @@ if (right) {
       <model>
         <subGraphVertice _id='291' id='0' delay='0' uuid='9eb38fe7-5844-4be6-9192-25104a077b0c'>
           <desc>
+            <translation lang='de' text='Schiebt einen 8-Bit-Wert bitweise nach links oder rechts'/>
             <translation lang='en' text='Shifts an 8-bit value bitwise to the left or to the right'/>
-            <translation lang='de' text='Schiebt eine 8-Bit-Wert bitweise nach links oder rechts'/>
           </desc>
           <name>
             <translation lang='en' text='Shifter 8 Bit'/>
             <translation lang='de' text='Shifter 8-Bit'/>
           </name>
           <desc>
+            <translation lang='de' text='Schiebt einen 8-Bit-Wert bitweise nach links oder rechts'/>
             <translation lang='en' text='Shifts an 8-bit value bitwise to the left or to the right'/>
-            <translation lang='de' text='Schiebt eine 8-Bit-Wert bitweise nach links oder rechts'/>
           </desc>
           <ports>
             <subCircuitPort _id='292' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>

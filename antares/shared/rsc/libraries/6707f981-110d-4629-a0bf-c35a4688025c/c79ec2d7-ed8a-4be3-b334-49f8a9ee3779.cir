@@ -29,11 +29,25 @@ if (right) {
                 <translation lang='de' text='Schiebt eine 8-Bit-Wert bitweise nach links oder rechts'/>
               </desc>
             </subGraphVerticeRef>
-            <circuitInOut _id='5' id='3' delay='0' name='D' type='input' bitWidth='16'/>
-            <splitter _id='6' id='4' delay='0' bitWidth='16' branchCount='2'/>
-            <circuitInOut _id='7' id='9' delay='0' name='O' type='output' bitWidth='16'/>
-            <concentrator _id='8' id='10' delay='0' bitWidth='16' branchCount='2'/>
-            <circuitInOut _id='9' id='15' delay='0' name='F' type='input' bitWidth='1'>
+            <circuitInOut _id='5' id='3' name='D' type='input' bitWidth='16'>
+              <desc>
+                <translation lang='de' text='Dateneingang. Die Zahl, die geschoben werden soll.'/>
+                <translation lang='en' text='Data input. The number to be shifted.'/>
+              </desc>
+              <desc>
+                <translation lang='de' text='Dateneingang. Die Zahl, die geschoben werden soll.'/>
+                <translation lang='en' text='Data input. The number to be shifted.'/>
+              </desc>
+            </circuitInOut>
+            <splitter _id='6' id='4' delay='0' bitWidth='16' branchCount='2' representation='binary'/>
+            <circuitInOut _id='7' id='9' name='O' type='output' bitWidth='16'>
+              <desc>
+                <translation lang='de' text='Resultat-Ausgang'/>
+                <translation lang='en' text='Result output'/>
+              </desc>
+            </circuitInOut>
+            <concentrator _id='8' id='10' delay='0' bitWidth='16' branchCount='2' representation='binary'/>
+            <circuitInOut _id='9' id='15' name='F' type='input' bitWidth='1'>
               <desc>
                 <translation lang='de' text='0: Schieben nach links, 1: Schieben nach rechts'/>
                 <translation lang='en' text='0: Schift to left, 1: Shift to right'/>
@@ -50,10 +64,46 @@ if (right) {
                 <netPortRef verticeId='3' portId='4'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='11' id='17' delay='0' name='CIR' type='input' bitWidth='1'/>
-            <circuitInOut _id='12' id='19' delay='0' name='CIL' type='input' bitWidth='1'/>
-            <circuitInOut _id='13' id='21' delay='0' name='COL' type='output' bitWidth='1'/>
-            <circuitInOut _id='14' id='23' delay='0' name='COR' type='output' bitWidth='1'/>
+            <circuitInOut _id='11' id='17' name='CIR' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Eingehendes Übertrags-Bit (rechts)'/>
+                <translation lang='en' text='Carry-in (right)'/>
+              </desc>
+              <desc>
+                <translation lang='de' text='Eingehendes Übertrags-Bit (rechts)'/>
+                <translation lang='en' text='Carry-in (right)'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='12' id='19' name='CIL' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Eingehendes Übertragsbit (links)'/>
+                <translation lang='en' text='Carry-in (left)'/>
+              </desc>
+              <desc>
+                <translation lang='de' text='Eingehendes Übertragsbit (links)'/>
+                <translation lang='en' text='Carry-in (left)'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='13' id='21' name='COL' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Resultierendes Übertrags-Bit (links)'/>
+                <translation lang='en' text='Carry-out (left)'/>
+              </desc>
+              <desc>
+                <translation lang='de' text='Resultierendes Übertrags-Bit (links)'/>
+                <translation lang='en' text='Carry-out (left)'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='14' id='23' name='COR' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Resultierendes Übertrags-Bit (rechts)'/>
+                <translation lang='en' text='Carry-out (right)'/>
+              </desc>
+              <desc>
+                <translation lang='de' text='Resultierendes Übertrags-Bit (rechts)'/>
+                <translation lang='en' text='Carry-out (right)'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='15' id='24' delay='0'>
               <ports>
                 <netPortRef verticeId='11' portId='1'/>
