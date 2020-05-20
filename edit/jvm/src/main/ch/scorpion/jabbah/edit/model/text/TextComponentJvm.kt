@@ -143,7 +143,7 @@ open class TextComponentJvm(
 			validate()
 		}
 
-	override var horizontalAlignment: HorizontalAlignment = HorizontalAlignment.CENTER
+	override var horizontalAlignment: HorizontalAlignment = HorizontalAlignment.LEFT
 		set(value) {
 			if (field != value) {
 				invalidate()
