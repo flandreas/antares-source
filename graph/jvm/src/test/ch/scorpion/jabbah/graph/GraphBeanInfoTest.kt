@@ -36,6 +36,10 @@ class GraphBeanInfoTest {
 
 	private val editor = mockk<Editor>()
 
+	init {
+		every { editor.active } returns true
+	}
+
 	private fun <T: Bean> read(bean: T, beanInfo: AbstractBeanInfo<T>) {
 		beanInfo
 			.getProperties(bean, editor)

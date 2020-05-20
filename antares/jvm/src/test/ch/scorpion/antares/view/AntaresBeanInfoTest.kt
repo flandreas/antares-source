@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
+import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
 
@@ -34,6 +35,10 @@ class AntaresBeanInfoTest {
 	}
 
 	private val editor = mockk<Editor>()
+
+	init {
+		every { editor.active } returns true
+	}
 
 	private fun <T: Component> read(component: T, beanInfo: AbstractBeanInfo<T>) {
 		beanInfo

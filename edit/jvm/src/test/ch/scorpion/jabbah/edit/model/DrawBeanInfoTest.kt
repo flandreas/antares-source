@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.edit.model.polyline.PolylineComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.rectangle.*
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
+import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
 
@@ -26,6 +27,10 @@ class DrawBeanInfoTest {
 	}
 
 	private val editor = mockk<Editor>()
+
+	init {
+		every { editor.active } returns true
+	}
 
 	private fun <T: Component> read(component: T, beanInfo: AbstractBeanInfo<T>) {
 		beanInfo
