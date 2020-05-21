@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.edit.style.EditTheme
  */
 open class RectangularReplaceSelectionModel(
 	component: AbstractRectangularComponent,
-	private val drawStrategy: DrawStrategy = DrawStrategy.COMPONENT
+	private val drawStrategy: DrawStrategy = DrawStrategy.SHAPE
 ) : AbstractSelectedColorWrappingSelectionModel<AbstractRectangularComponent>(component) {
 
 	enum class DrawStrategy {
