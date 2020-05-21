@@ -24,13 +24,16 @@ import ch.scorpion.jabbah.io.StoreWriter
  *
  * [AbstractRectangularComponent] provides a changeable rectangular geometry, but doesn't draw itself.
  * It can be used as a base class for implementing various rectangular [Component]s.
- * [AbstractRectangularComponent] does not contain text.
  */
 abstract class AbstractRectangularComponent(
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	val shape: RectangularShape = Rectangle2D()
 ) : AbstractComponent(styleProvider, styleType), RectangularShape by shape {
+
+	open fun drawText(context: DrawContext) {
+		// empty
+	}
 
 	/** ---- [RectangularShape] */
 
@@ -242,11 +245,15 @@ abstract class RectangularComponent(
 		drawFill(context, shape, fillColor)
 		drawStroke(context, shape, strokeColor, stroke)
 		context.g.color = transparent.applyTo(textColor)
+		drawText(context)
+		context.g.color = oldColor
+	}
+
+	override fun drawText(context: DrawContext) {
 		context.g.translate(x, y)
 		label.font = font
 		label.draw(context)
 		context.g.translate(-x, -y)
-		context.g.color = oldColor
 	}
 
 	/** ---- [AbstractRectangularComponent] */

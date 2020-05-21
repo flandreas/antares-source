@@ -28,6 +28,7 @@ open class RectangularReplaceSelectionModel(
 				context.g.color = Themes.get<EditTheme>().selection.color.foregroundColor
 				context.g.stroke = component.stroke
 				context.g.draw(component.shape)
+				component.drawText(context)
 				context.g.stroke = oldStroke
 			}
 		},
