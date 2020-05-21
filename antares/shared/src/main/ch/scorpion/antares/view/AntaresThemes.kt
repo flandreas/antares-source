@@ -1,12 +1,11 @@
 package ch.scorpion.antares.view
 
-import ch.scorpion.jabbah.draw.style.Theme
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.BasicStyle
 import ch.scorpion.jabbah.draw.style.DrawTheme
+import ch.scorpion.jabbah.draw.style.Theme
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.graph.view.style.EdgeStyle
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
@@ -17,6 +16,7 @@ import ch.scorpion.jabbah.graph.view.style.GraphTheme
 object AntaresThemes {
 
 	private val SELECTION_COLOR = Color.ORANGE
+	private val SELECTION_BACKGROUND_ALPHA = 0
 
 	private val FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 15)
 	private val TOOLTIP_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 13)
@@ -129,7 +129,7 @@ object AntaresThemes {
 				color = CompositeColor(
 					foregroundColor = SELECTION_COLOR,
 					textColor = SELECTION_COLOR,
-					backgroundColor = Color.WHITE)),
+					backgroundColor = Color.WHITE.withAlpha(SELECTION_BACKGROUND_ALPHA))),
 			zero = ZERO,
 			one = ONE,
 			undefined = CompositeColor(
@@ -273,7 +273,7 @@ object AntaresThemes {
 			selection = BasicStyle(
 				CompositeColor(
 					foregroundColor = SELECTION_COLOR,
-					backgroundColor = Color.BLACK)),
+					backgroundColor = Color.BLACK.withAlpha(SELECTION_BACKGROUND_ALPHA))),
 			zero = ZERO.withBackground(ZERO.foregroundColor),
 			one = ONE,
 			undefined = CompositeColor(
@@ -374,7 +374,7 @@ object AntaresThemes {
 				CompositeColor(
 					foregroundColor = SELECTION_COLOR,
 					textColor = SELECTION_COLOR,
-					backgroundColor = Color.WHITE)),
+					backgroundColor = Color.WHITE.withAlpha(SELECTION_BACKGROUND_ALPHA))),
 			zero = ZERO,
 			one = ONE,
 			undefined = CompositeColor(

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw.drawable
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Color
+import kotlin.math.floor
 
 /**
  * A [Drawable] whose transparency can be controlled.
@@ -18,10 +19,11 @@ interface Transparent : Drawable {
         const val FULLY_OPAQUE = 255
 
 	    fun applyTo(transparency: Int, color: Color): Color {
-		    if (color.alpha == transparency) {
+		    if (transparency == FULLY_OPAQUE) {
 			    return color
 		    }
-		    return Color(color, transparency)
+		    val rate = transparency.toFloat() / FULLY_OPAQUE
+		    return color.withAlpha(floor(color.alpha * rate).toInt())
 	    }
     }
 
