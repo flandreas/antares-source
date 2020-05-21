@@ -30,7 +30,7 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : Component
         properties.add(styleType.bind(editor, bean.id))
         properties.add(color.bind(editor, bean.id))
 	    properties.add(stroke.bind(editor, bean.id))
-        properties.add(text.bind(editor, bean.id))
+        properties.add(text.bind(editor, bean.id, filter = { false }))
         properties.add(alignment.bind(editor, bean.id))
     }
 }
