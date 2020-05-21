@@ -6,11 +6,13 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
+import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class SevenSegmentDisplayViewBeanInfo : AbstractBeanInfo<SevenSegmentDisplayView>() {
+class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayView>() {
 
     companion object {
 	    private val name = AntaresProperties.untranslatableName()
@@ -18,6 +20,10 @@ class SevenSegmentDisplayViewBeanInfo : AbstractBeanInfo<SevenSegmentDisplayView
 	    private val portScheme = PropertyImpl("portScheme", "element.property.SevenSegmentDisplayScheme", SevenSegmentDisplayScheme::class.java, componentBeanProvider)
 	    private val size = EditProperties.size()
     }
+
+	init {
+		isShowColor = false
+	}
 
     override fun addProperties(bean: SevenSegmentDisplayView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)

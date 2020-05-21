@@ -7,10 +7,11 @@ import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.ComponentBeanInfo
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
+import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class LEDMatrixViewBeanInfo : ComponentBeanInfo<LEDMatrixView>() {
+class LEDMatrixViewBeanInfo : VerticeViewBeanInfo<LEDMatrixView>() {
 
     companion object {
 	    private val columnWidth = PropertyImpl("columnWidth", "element.property.columns", BitWidth::class.java, componentBeanProvider)
@@ -21,6 +22,10 @@ class LEDMatrixViewBeanInfo : ComponentBeanInfo<LEDMatrixView>() {
 	    private val isCircleDots = PropertyImpl("circleDots", "element.property.LEDMatrix.isCircleDots", Boolean::class.java, componentBeanProvider)
 	    private val isDebug = PropertyImpl("debug", "element.property.isDebug", Boolean::class.java, componentBeanProvider)
     }
+
+	init {
+		isShowColor = false
+	}
 
     override fun addProperties(bean: LEDMatrixView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
