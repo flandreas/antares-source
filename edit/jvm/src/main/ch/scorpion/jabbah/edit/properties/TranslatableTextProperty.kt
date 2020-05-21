@@ -163,7 +163,7 @@ class TranslatableTextPropertyEditor(
 		val newText = TranslatableTextPanel.showAsDialog(
 			parent = SwingUtilities.getWindowAncestor(textComponent),
 			title = propertyName,
-			text = text,
+			text = text.withTranslation(textComponent.text),
 			textFieldRows = if (multiline.invoke(text)) 8 else 1,
 			textFieldColumns = 40
 		)
