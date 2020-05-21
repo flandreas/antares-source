@@ -86,6 +86,7 @@ class OutputToInputConnectorTest
 
 		assertTrue(newEv.model.isConnectedWith(newV1.model.getOutput()))
 		assertFalse(newV2.model.getInput<Boolean>().isConnected)
+		assertEquals(Point2D(150, 100), newEv.destinationEndpointView.location)
 	}
 
 	private fun connectOpenEnded() {

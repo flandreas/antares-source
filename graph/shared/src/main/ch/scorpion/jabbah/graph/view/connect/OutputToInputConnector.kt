@@ -69,7 +69,7 @@ class OutputToInputConnector(
 					context.editor,
 					addCommand.addedComponentId,
 					startPortView!!.location,
-					edgeView!!.polyline.getFirstPoint())
+					edgeView!!.polyline.getLastPoint())
 			)
 		}
 

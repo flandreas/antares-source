@@ -102,6 +102,7 @@ class InputToOutputOrEdgeConnectorTest
 
 		assertFalse(newEv.model.isConnectedWith(v1.model.getOutput()))
 		assertTrue(newEv.model.isConnectedWith(v2.model.getInput()))
+		assertEquals(Point2D(150, 100), newEv.originEndpointView.location)
 	}
 
 	@Test
