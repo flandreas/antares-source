@@ -143,16 +143,20 @@ class MemoryContentsPanel(
 		val buttonPanel = JPanel()
 		buttonPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
-		buttonPanel.add(Box.createHorizontalGlue())
 
 		if (!readonly) {
+			buttonPanel.add(Box.createHorizontalStrut(2))
 			buttonPanel.add(JButton(ImportAction()))
 		}
+
+		buttonPanel.add(Box.createHorizontalStrut(2))
 		buttonPanel.add(JButton(ExportAction()))
 		if (!readonly) {
+			buttonPanel.add(Box.createHorizontalStrut(2))
 			buttonPanel.add(JButton(ClearAction()))
 		}
 		if (closeHandler != null) {
+			buttonPanel.add(Box.createHorizontalGlue())
 			buttonPanel.add(JButton(CloseAction()))
 		}
 
@@ -162,8 +166,10 @@ class MemoryContentsPanel(
 	private inner class CloseAction : AbstractAction(Translations.getString("file.action.close.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
 			val changes = memoryDisplayPanel.changes
-			LOG.debug("User has changed ${changes.size} memory cells")
-			cmdManager.register(MemoryCellChangeCommand(application, addressable.id, changes))
+			if (changes.size > 0) {
+				LOG.debug("User has changed ${changes.size} memory cells")
+				cmdManager.register(MemoryCellChangeCommand(application, addressable.id, changes))
+			}
 			closeHandler?.invoke(this@MemoryContentsPanel)
 		}
 	}
