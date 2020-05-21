@@ -37,12 +37,12 @@ abstract class TextComponentBeanInfo<T : TextComponent>(
 class LabelComponentBeanInfo : TextComponentBeanInfo<LabelComponent>(fillAndStroke = false) {
 
 	companion object {
-		private val text = EditProperties.text()
+		private val text = EditProperties.translatableText()
 	}
 
 	override fun addProperties(bean: LabelComponent, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(text.bind(editor, bean.id))
+		properties.add(text.bind(editor, bean.id, filter = { false }))
 	}
 }
 
@@ -50,13 +50,13 @@ class LabelComponentBeanInfo : TextComponentBeanInfo<LabelComponent>(fillAndStro
 class TextComponentJvmBeanInfo : TextComponentBeanInfo<TextComponentJvm>() {
 
 	companion object {
-		private val text = EditProperties.multilineText("textProperty")
+		private val text = EditProperties.translatableText()
 		private val horizontalAlignment = EditProperties.horizontalAlignment("horizontalAlignment")
 	}
 
 	override fun addProperties(bean: TextComponentJvm, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
-		properties.add(text.bind(editor, bean.id))
+		properties.add(text.bind(editor, bean.id, filter = { true }))
 		properties.add(horizontalAlignment.bind(editor, bean.id))
 	}
 }

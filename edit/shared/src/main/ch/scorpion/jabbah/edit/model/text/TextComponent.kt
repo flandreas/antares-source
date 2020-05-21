@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.edit.Component
  */
 interface TextComponent : Component, RectangularShape {
 
-	var text: String
+	var text: TranslatableText
 
 	var horizontalAlignment: HorizontalAlignment
 
@@ -35,7 +35,7 @@ interface TextComponentFactory {
 	 * @param location the location of the text baseline point
 	 */
 	fun create(
-		text: String,
+		text: TranslatableText,
 		location: Point2D,
 		styleType: StyleType,
 		styleProvider: StyleProvider

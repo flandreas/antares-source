@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
@@ -22,8 +23,8 @@ object GraphProperties {
 		name: String = "label",
 		baseKey: String = "graph.property.label",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<String> {
-		return PropertyImpl(name, baseKey, String::class.java, beanProvider)
+	): PropertyImpl<TranslatableText> {
+		return PropertyImpl(name, baseKey, TranslatableText::class.java, beanProvider)
 	}
 
 	fun verticalLabelPosition(

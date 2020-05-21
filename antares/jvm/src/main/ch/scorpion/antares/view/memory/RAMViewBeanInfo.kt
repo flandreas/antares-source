@@ -27,7 +27,7 @@ class RAMViewBeanInfo : DigitalComponentBeanInfo<RAMView>() {
 
 	    properties.add(addressBitWidth.bind(editor, bean.id))
 	    properties.add(dataBitWidth.bind(editor, bean.id))
-	    properties.add(text.bind(editor, bean.id))
+	    properties.add(text.bind(editor, bean.id, filter = { false }))
 	    properties.add(clock.bind(editor, bean.id))
 	    properties.add(showContents.bind(editor, bean.id))
 	    if (bean.showContents) {

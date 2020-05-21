@@ -28,7 +28,7 @@ class ROMViewBeanInfo : DigitalComponentBeanInfo<ROMView>() {
 
 		properties.add(addressBitWidth.bind(editor, bean.id))
 		properties.add(dataBitWidth.bind(editor, bean.id))
-		properties.add(text.bind(editor, bean.id))
+		properties.add(text.bind(editor, bean.id, filter = { false }))
 		properties.add(showContents.bind(editor, bean.id))
 		if (bean.showContents) {
 			properties.add(contentsColumnsCount.bind(editor, bean.id))

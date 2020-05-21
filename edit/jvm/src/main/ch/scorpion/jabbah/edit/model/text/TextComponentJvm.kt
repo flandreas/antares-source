@@ -27,7 +27,6 @@ import java.awt.BasicStroke
 import java.awt.Component
 import java.awt.Container
 import java.awt.Graphics
-import java.util.*
 import javax.swing.JTextPane
 import javax.swing.border.LineBorder
 import javax.swing.event.DocumentEvent
@@ -38,7 +37,7 @@ import javax.swing.text.StyleConstants
 /** Implements [TextComponentFactory] on the JVM platform. */
 class TextComponentFactoryJvm : TextComponentFactory {
 
-	override fun create(text: String, location: Point2D, styleType: StyleType, styleProvider: StyleProvider): TextComponent {
+	override fun create(text: TranslatableText, location: Point2D, styleType: StyleType, styleProvider: StyleProvider): TextComponent {
 		return TextComponentJvm(text, location, styleType, styleProvider)
 	}
 }
@@ -47,7 +46,7 @@ class TextComponentFactoryJvm : TextComponentFactory {
  * A [Component] that supports inline text editing using JDK classes.
  */
 open class TextComponentJvm(
-	text: String = "",
+	text: TranslatableText = TranslatableText(""),
 	location: Point2D = Point2D.ZERO,
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
@@ -135,12 +134,15 @@ open class TextComponentJvm(
 		}
 	}
 
-	override var text: String = text
+	override var text: TranslatableText = text
 		set(value) {
-			invalidate()
-			field = value
-			invalidate()
-			validate()
+			if (value != field) {
+				invalidate()
+				field = value
+				invalidate()
+				update()
+				validate()
+			}
 		}
 
 	override var horizontalAlignment: HorizontalAlignment = HorizontalAlignment.LEFT
@@ -150,13 +152,6 @@ open class TextComponentJvm(
 				field = value
 				update()
 			}
-		}
-
-	@Suppress("unused")
-	var textProperty: TextProperty
-		get() = TextProperty(text)
-		set(value) {
-			text = value.text ?: ""
 		}
 
 	private val eventHandler = EventHandler()
@@ -185,7 +180,9 @@ open class TextComponentJvm(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeString("text", text)
+		if (!text.isEmpty) {
+			writer.writeStorables("text", text.allTranslations())
+		}
 		if (horizontalAlignment != HorizontalAlignment.CENTER) {
 			writer.writeString("hAlign", horizontalAlignment.customName)
 		}
@@ -193,7 +190,13 @@ open class TextComponentJvm(
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		text = reader.readString("text")
+		if (reader.hasAttribute("text")) {
+			// Backward compatibility
+			text = TranslatableText(reader.readString("text"))
+		}
+		if (reader.hasElement("text")) {
+			text = TranslatableText(reader.readStorables("text"))
+		}
 		if (reader.hasAttribute("hAlign")) {
 			horizontalAlignment = HorizontalAlignment.withName(reader.readString("hAlign"))
 		}
@@ -261,7 +264,7 @@ open class TextComponentJvm(
 		// Note that TextEditTool uses its own adjustment strategy for inline editing,
 		// which does change the position depending on alignment
 		val b = shape
-		val dim = measureText(text, Graphics2DJvm.toAwtFont(font), 1.0)
+		val dim = measureText(text.getTranslation(), Graphics2DJvm.toAwtFont(font), 1.0)
 		setFrame(b.x, b.y, dim.width + 2 * INSET_X, dim.height + 2 * INSET_Y)
 	}
 
@@ -300,7 +303,7 @@ open class TextComponentJvm(
 			bounds.y.toInt() + INSET_Y,
 			bounds.width.toInt() - 2 * INSET_X,
 			Integer.MAX_VALUE)
-		TEXT_PAINTER.text = text
+		TEXT_PAINTER.text = text.getTranslation()
 		TEXT_PAINTER.selectAll()
 		TEXT_PAINTER.setParagraphAttributes(attr, true)
 	}
@@ -325,7 +328,7 @@ open class TextComponentJvm(
 
 		TEXT_EDITOR.text = ""
 		TEXT_EDITOR.setParagraphAttributes(attr, true)
-		TEXT_EDITOR.text = text
+		TEXT_EDITOR.text = text.getTranslation()
 	}
 
 	/**
@@ -347,7 +350,6 @@ open class TextComponentJvm(
 
 		private var editor: Editor? = null
 		private var editing: Boolean = false
-		private var oldText: String? = null
 
 		/** ---- [InputEventHandler] interface */
 
@@ -390,7 +392,6 @@ open class TextComponentJvm(
 			LOG.debug("TextComponent: start editing")
 			this.editor = editor
 			editing = true
-			oldText = text
 
 			setupTextEditor(editor.view.zoomFactor)
 			adjustTextEditor(editor)
@@ -410,9 +411,9 @@ open class TextComponentJvm(
 
 		private fun stopEditing() {
 			LOG.debug("TextComponent: stop editing")
-			if (oldText != TEXT_EDITOR.text) {
+			if (text.getTranslation() != TEXT_EDITOR.text) {
 				editor!!.commandManager.execute(
-					TextChangeCommand(editor!!, this@TextComponentJvm.id, oldText!!, TEXT_EDITOR.text))
+					TextChangeCommand(editor!!, this@TextComponentJvm.id, text, text.withTranslation(TEXT_EDITOR.text)))
 			}
 
 			TEXT_EDITOR.document.removeDocumentListener(this)

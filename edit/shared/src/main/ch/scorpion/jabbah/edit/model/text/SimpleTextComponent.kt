@@ -22,7 +22,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  * A simple, non-editable [TextComponent] that uses a [MultilineText] for text rendering.
  */
 class SimpleTextComponent(
-	text: String = "",
+	text: TranslatableText = TranslatableText(),
 	location: Point2D = Point2D.ZERO,
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
@@ -66,12 +66,20 @@ class SimpleTextComponent(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeString("text", text)
+		if (!text.isEmpty) {
+			writer.writeStorables("text", text.allTranslations())
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		text = reader.readString("text")
+		if (reader.hasAttribute("text")) {
+			// Backward compatibility
+			text = TranslatableText(reader.readString("text"))
+		}
+		if (reader.hasElement("text")) {
+			text = TranslatableText(reader.readStorables("text"))
+		}
 	}
 
 	/** ---- [Component] interface */
@@ -80,13 +88,16 @@ class SimpleTextComponent(
 
 	/** ---- [TextComponent] interface */
 
-	override var text: String = text
+	override var text: TranslatableText = text
 		set(value) {
-			invalidate()
-			field = value
-			updateMultilineText()
-			invalidate()
-			validate()
+			if (field != value) {
+				invalidate()
+				field = value
+				updateMultilineText()
+				invalidate()
+				update()
+				validate()
+			}
 		}
 
 	/** ---- [Drawable] */
@@ -124,7 +135,9 @@ class SimpleTextComponent(
 
 	/** ---- [SimpleTextComponent] */
 
-	private var multilineText = MultilineText(text, font, (width.toInt() - 2 * INSET_X).toDouble())
+	private val displayedText: String get() = if (text.isEmpty) "" else text.getTranslation()
+
+	private var multilineText = MultilineText(displayedText, font, (width.toInt() - 2 * INSET_X).toDouble())
 
 	private var decorator: TextComponentDecorator = RectangularShapeTextComponentDecorator(
 		shape = RoundRectangle2D(0.0, 0.0, 0.0, 0.0, 20.0, 20.0),
@@ -137,6 +150,6 @@ class SimpleTextComponent(
 	}
 
 	private fun updateMultilineText() {
-		multilineText = MultilineText(text, font, (width.toInt() - 2 * INSET_X).toDouble(), Point2D.ZERO)
+		multilineText = MultilineText(displayedText, font, (width.toInt() - 2 * INSET_X).toDouble(), Point2D.ZERO)
 	}
 }

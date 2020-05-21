@@ -10,8 +10,8 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 class TextChangeCommand(
     editor: Editor,
     private val componentId: Int,
-    private val oldText: String,
-    private val newText: String
+    private val oldText: TranslatableText,
+    private val newText: TranslatableText
 ) : AbstractCommand("edit.command.textChange", editor), Undoable {
 
 	private val component: TextComponent get() = editor!!.drawing.getWithId(componentId)!!.propertyOwner as TextComponent

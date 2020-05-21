@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -115,7 +116,7 @@ class SubGraphVerticeViewImpl(
 	 * The text to be used to overwrite the first [LabelComponent], if any. If `null` no overwriting
 	 * takes place. Can also be set to an empty [String] in order to hide the predefined label.
 	 */
-	var label: String? = null
+	var label: TranslatableText? = null
 		get() {
 			val labelComponent = getLabelComponent() ?: return null
 			if (field != null) {
@@ -128,7 +129,7 @@ class SubGraphVerticeViewImpl(
 			if (labelComponent != null) {
 				field = value
 				invalidate()
-				labelComponent.text = field ?: ""
+				field?.let { labelComponent.text = it }
 				invalidate()
 			}
 		}
@@ -204,7 +205,7 @@ class SubGraphVerticeViewImpl(
 			writer.writeBoolean("mirrorV", isVerticallyMirrored)
 		}
 		if (label != null) {
-			writer.writeString("label", label!!)
+			writer.writeStorables("label", label!!.allTranslations())
 		}
 		if (customizedContainerDrawing != null) {
 			writer.writeStorable("container", customizedContainerDrawing!!)
@@ -232,7 +233,11 @@ class SubGraphVerticeViewImpl(
 			))
 		}
 		if (reader.hasAttribute("label")) {
-			label = reader.readString("label")
+			// Backward compatibility
+			label = TranslatableText(reader.readString("label"))
+		}
+		if (reader.hasElement("label")) {
+			label = TranslatableText(reader.readStorables("label"))
 		}
 		if (reader.hasElement("container")) {
 			customizedContainerDrawing = reader.readStorable("container") as ContainerDrawing
@@ -422,8 +427,8 @@ class SubGraphVerticeViewImpl(
 		containerDrawing.fillSubGraphVerticeView(this)
 		reuser.reuse()
 
-		if (StringUtils.isNotEmpty(label)) {
-			getLabelComponent()?.text = label!!
+		label?.let {
+			getLabelComponent()?.text = it
 		}
 
 		updateBoxes()

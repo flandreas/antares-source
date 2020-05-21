@@ -28,7 +28,7 @@ class SubGraphVerticeViewImplBeanInfo : ComponentBeanInfo<SubGraphVerticeViewImp
 	    properties.add(mirrorH.bind(editor, bean.id))
 	    properties.add(mirrorV.bind(editor, bean.id))
 	    bean.label?.let {
-	        properties.add(label.bind(editor, bean.id))
+	        properties.add(label.bind(editor, bean.id, filter = { false }))
 	    }
 	    properties.add(description.bind(editor, bean.id))
     }

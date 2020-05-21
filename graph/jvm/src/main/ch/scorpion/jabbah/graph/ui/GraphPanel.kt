@@ -32,6 +32,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.model.text.TextTool
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanel
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
@@ -396,7 +397,7 @@ class GraphPanel(
 			"/img/polyline.gif", Translations.getString("edit.component.polyline"))
 		toolbar.addTool(QuadCurveTool(editor, factory = { QuadCurveComponent() }, adder = { GraphElementViewWrapper(it) }),
 			"/img/curve-20.png", Translations.getString("edit.component.quadraticCurve"))
-		toolbar.addTool(TextTool(editor,factory =  { TextComponentJvm("Text") }, adder = { GraphElementViewWrapper(it) }),
+		toolbar.addTool(TextTool(editor,factory =  { TextComponentJvm(TranslatableText("Text")) }, adder = { GraphElementViewWrapper(it) }),
 			"/img/text.gif", Translations.getString("edit.component.text"))
 
 		return toolbar

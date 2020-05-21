@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.view.graph
 
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.drawingBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
