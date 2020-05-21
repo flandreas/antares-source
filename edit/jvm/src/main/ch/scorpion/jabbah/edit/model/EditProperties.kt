@@ -67,6 +67,15 @@ object EditProperties {
 		return PropertyImpl(name, baseKey, String::class.java, beanProvider)
 	}
 
+	fun translatableText(
+		name: String = "text",
+		baseKey: String = "edit.property.text",
+		beanProvider: BeanProvider = componentBeanProvider
+	): PropertyImpl<TranslatableText> {
+		return PropertyImpl(name, baseKey, TranslatableText::class.java, beanProvider)
+	}
+
+
 	fun multilineText(
 		name: String = "text",
 		baseKey: String = "edit.property.text",

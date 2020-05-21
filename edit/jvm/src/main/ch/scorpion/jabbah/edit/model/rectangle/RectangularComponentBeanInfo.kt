@@ -16,7 +16,7 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : Component
         private val styleType = EditProperties.styleType()
         private val color = EditProperties.color()
 	    private val stroke = EditProperties.stroke()
-        private val text = EditProperties.text()
+        private val text = EditProperties.translatableText()
         private val alignment = EditProperties.verticalAlignment()
 	    private val shadow = EditProperties.shadow()
     }

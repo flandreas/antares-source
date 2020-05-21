@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.edit.model.rectangle
 
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
@@ -14,6 +13,7 @@ import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -145,15 +145,15 @@ abstract class RectangularComponent(
 
 	/** ---- Editable properties */
 
-	var text: String
-		get() = label.text
+	var text: TranslatableText = TranslatableText()
 		set(value) {
-			if (label.text == value) {
-				return
+			if (field != value) {
+				invalidate()
+				field = value
+				label.text = if (field.isEmpty) "" else field.getTranslation()
+				invalidate()
+				update()
 			}
-			invalidate()
-			label.text = value
-			invalidate()
 		}
 
 	var alignment: VerticalAlignment
@@ -192,9 +192,10 @@ abstract class RectangularComponent(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		if (StringUtils.isNotEmpty(text)) {
-			writer.writeString("text", text)
+		if (!text.isEmpty) {
+			writer.writeStorables("text", text.allTranslations())
 		}
+
 		if (alignment != VerticalAlignment.CENTER) {
 			writer.writeString("vAlign", alignment.customName)
 		}
@@ -203,7 +204,11 @@ abstract class RectangularComponent(
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("text")) {
-			text = reader.readString("text")
+			// Backward compatibility
+			text = TranslatableText(reader.readString("text"))
+		}
+		if (reader.hasElement("text")) {
+			text = TranslatableText(reader.readStorables("text"))
 		}
 		if (reader.hasAttribute("vAlign")) {
 			alignment = VerticalAlignment.withName(reader.readString("vAlign"))
