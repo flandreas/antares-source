@@ -16,7 +16,7 @@ actual object Translations {
 		get() = System.currentLanguage()
 		set(value) {
 			if (language != value) {
-				handleLanguageChanged(value)
+				handleLanguageChanged()
 			}
 		}
 
@@ -67,10 +67,8 @@ actual object Translations {
         throw MissingResourceException("Missing translation", Translations::class.java.name, key)
     }
 
-	private fun handleLanguageChanged(language: Language) {
+	private fun handleLanguageChanged() {
 		bundles.clear()
-		Locale.setDefault(Locale(language.code))
-		java.lang.System.setProperty("user.language", language.code)
 		bundleNames.forEach { addBundle(ResourceBundle.getBundle(it)) }
 	}
 }

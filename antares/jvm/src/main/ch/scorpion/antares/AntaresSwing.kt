@@ -10,6 +10,7 @@ import ch.scorpion.antares.view.memory.MemoryContentsPanel
 import ch.scorpion.antares.view.memory.OpenMemoryContentsRequest
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
@@ -33,9 +34,12 @@ import org.apache.commons.cli.Options
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.SystemUtils
 import java.awt.*
+import java.io.FileInputStream
 import java.lang.System
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.*
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import javax.swing.plaf.FontUIResource
@@ -79,6 +83,20 @@ class AntaresSwing(
 			return options
 		}
 
+		/**
+		 * Read the persistent user language preference and establish it as the default Locale
+		 * as early as possible in the boot-strap phase. This method does not provide the
+		 * preference [Properties] for subsequent usage by the application. This is the duty
+		 * of [AbstractDesktopApplication.loadPreferences].
+		 */
+		private fun establishUserLanguage(userDataDirectoryPath: Path) {
+			val filePath = Paths.get(userDataDirectoryPath.toString(), "${Antares.SYSTEM_NAME}.$PREFERENCES_FILE_EXTENSION")
+			FileInputStream(filePath.toString()).use {
+				val settings = java.util.Properties()
+				settings.load(it)
+				Locale.setDefault(Locale(settings.getProperty(Language.PROP_LANGUAGE)))
+			}
+		}
 
 		@JvmStatic
 		fun main(args: Array<String>) {
@@ -93,11 +111,13 @@ class AntaresSwing(
 			System.setProperty("apple.laf.useScreenMenuBar", "true")
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", Antares.SYSTEM_NAME)
 
+			val commandLine = parseCommandLine(args, defineOptions(Options()), Antares.SYSTEM_NAME)
+			val userDataDirectoryPath = determineUserDataDirectoryPath(commandLine, Antares.SYSTEM_NAME)
+
+			establishUserLanguage(userDataDirectoryPath)
+
 			FlatLightLaf.install()
 			UiUtil.setUIFont(FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size))
-
-			val commandLine = parseCommandLine(args, defineOptions(Options()), Antares.SYSTEM_NAME)
-			determineUserDataDirectoryPath(commandLine, Antares.SYSTEM_NAME)
 
 			BaseModuleJvm.require()
 			AntaresSwing(commandLine).start()

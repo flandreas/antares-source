@@ -46,6 +46,10 @@ abstract class AbstractDesktopApplication(
 		 */
 		private const val PROP_LOGFILE_PATH = "system.logFile"
 
+		const val SETTINGS_FILE_EXTENSION = "ini"
+
+		const val PREFERENCES_FILE_EXTENSION = "pref"
+
 		/** Defines the command line argument [Options] for this [DesktopApplication].*/
 		fun defineOptions(options: Options): Options {
 			options.addOption(Option.builder("d")
@@ -239,11 +243,11 @@ abstract class AbstractDesktopApplication(
 	}
 
 	private fun getSettingsPath(): Path {
-		return FileSystems.getDefault().getPath(userDataDirectoryPath.toString(), "$systemName.ini")
+		return FileSystems.getDefault().getPath(userDataDirectoryPath.toString(), "$systemName.$SETTINGS_FILE_EXTENSION")
 	}
 
 	private fun getPreferencesPath(): Path {
-		return FileSystems.getDefault().getPath(userDataDirectoryPath.toString(), "$systemName.pref")
+		return FileSystems.getDefault().getPath(userDataDirectoryPath.toString(), "$systemName.$PREFERENCES_FILE_EXTENSION")
 	}
 
 	/** Ensures that the user's data directory for this application exists by creating it if it doesn't. */
