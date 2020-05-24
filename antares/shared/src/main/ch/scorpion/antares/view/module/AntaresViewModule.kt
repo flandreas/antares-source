@@ -193,6 +193,7 @@ object AntaresViewModule : AbstractModule() {
 
 		properties.set(LightColor.PROP_DEFAULT_LIGHT_COLOR, LightColor.RED.customName)
 		properties.set(DigitalSignalNotation.PROP_DIGITAL_SIGNAL_NOTATION, DigitalSignalNotation.BASE_SUBSCRIPT.customName)
+		properties.set(TunnelViewFace.PROP_TUNNEL_FACE, TunnelViewFace.ARROW.customName)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

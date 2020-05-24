@@ -5,13 +5,18 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -19,6 +24,121 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+
+enum class TunnelViewFace(val customName: String) {
+
+	TUNNEL("tunnel") {
+
+		override val labelDist: Int get() = Look.SCALE
+
+		override fun drawShadow(view: TunnelView, context: DrawContext) {
+			if (view.shadow) {
+				DropShadow.draw(context, view.transparency) {
+					context.g.fillRect(view.xInt, view.yInt, TunnelView.SIZE, TunnelView.SIZE)
+				}
+			}
+		}
+
+		override fun draw(view: TunnelView, context: DrawContext, background: Color) {
+			context.g.color = if (context.useContextColors) {
+				context.color!!.backgroundColor
+			} else {
+				background
+			}
+			context.g.fillRect(view.xInt, view.yInt, TunnelView.SIZE, TunnelView.SIZE)
+
+			context.g.color = context.choose(view.color).foregroundColor
+			context.g.stroke = view.stroke
+			context.g.drawRect(view.xInt, view.yInt, TunnelView.SIZE, TunnelView.SIZE)
+
+			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				context.g.color = view.model.getInOrOutSignal().getColor().foregroundColor
+			}
+
+			// Draw tunnel entry
+			context.g.translate(view.xInt + TunnelView.SIZE / 2.0, 0.0)
+			context.g.rotate(view.rotation.inverse().angle)
+			context.g.fillOval(-TunnelView.SIZE / 4, -TunnelView.SIZE / 4, TunnelView.SIZE / 2, TunnelView.SIZE / 2)
+			context.g.fillRect(-TunnelView.SIZE / 4, 0, TunnelView.SIZE / 2, TunnelView.SIZE / 4)
+
+			context.g.rotate(-view.rotation.inverse().angle)
+			context.g.translate(-(view.xInt + TunnelView.SIZE / 2.0), 0.0)
+		}
+	},
+
+	ARROW ("arrow") {
+
+		private val path = System.createPath()
+			.moveTo(0, 0)
+			.lineTo(3.0 * 7, - 1.5 * 7)
+			.lineTo(3.0 * 7, 1.5 * 7)
+			.lineTo(0, 0)
+			.close()
+
+		override val labelDist: Int get() = 0
+
+		override fun drawShadow(view: TunnelView, context: DrawContext) {
+			if (view.shadow) {
+				DropShadow.draw(context, view.transparency) {
+					context.g.translate(DigitalPortView.LENGTH.toDouble(), 0.0)
+					context.g.fill(path)
+					context.g.translate(-DigitalPortView.LENGTH.toDouble(), 0.0)
+				}
+			}
+		}
+		override fun draw(view: TunnelView, context: DrawContext, background: Color) {
+			context.g.translate(DigitalPortView.LENGTH.toDouble(), 0.0)
+
+			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				context.g.color = view.model.getInOrOutSignal().getColor().foregroundColor
+			} else {
+				context.g.color = if (context.useContextColors) {
+					context.color!!.backgroundColor
+				} else {
+					background
+				}
+			}
+			context.g.fill(path)
+
+			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				context.g.color = view.model.getInOrOutSignal().getColor().backgroundColor
+			} else {
+				context.g.color = context.choose(view.color).foregroundColor
+			}
+
+			context.g.stroke = view.stroke
+			context.g.draw(path)
+
+			context.g.translate(-DigitalPortView.LENGTH.toDouble(), 0.0)
+		}
+	};
+
+	companion object {
+
+		/** The name of the [String] property in [Properties] designating the [TunnelViewFace]'s custom name.*/
+		const val PROP_TUNNEL_FACE = "ch.scorpion.antares.view.net.tunnelFace"
+
+		fun withName(customName: String): TunnelViewFace {
+			for (tunnelViewFace in values()) {
+				if (tunnelViewFace.customName == customName) {
+					return tunnelViewFace
+				}
+			}
+			throw IllegalArgumentException("Unknown TunnelViewFace '$customName'")
+		}
+	}
+
+	abstract val labelDist: Int
+	abstract fun drawShadow(view: TunnelView, context: DrawContext)
+	abstract fun draw(view: TunnelView, context: DrawContext, background: Color)
+
+	override fun toString(): String {
+		return when(this) {
+			TUNNEL -> Translations.getString("element.tunnelViewFace.tunnel")
+			ARROW -> Translations.getString("element.tunnelViewFace.arrow")
+		}
+	}
+}
 
 /**
  * A view representation of a [Tunnel].
@@ -35,12 +155,12 @@ class TunnelView(
 
 	companion object {
 		const val SIZE = 4 * 7
-		const val LABEL_DIST = Look.SCALE
+		private val face: TunnelViewFace get() = TunnelViewFace.withName(BaseModule.properties.getString(TunnelViewFace.PROP_TUNNEL_FACE))
 	}
 
 	private val label = HorizontalLabel(
 		owner = this,
-		relLocation = Point2D(SIZE / 2 + (DigitalPortView.LENGTH + SIZE / 2) + LABEL_DIST, 0),
+		relLocation = Point2D(SIZE / 2 + (DigitalPortView.LENGTH + SIZE / 2) + face.labelDist, 0),
 		font = font
 	)
 
@@ -87,38 +207,9 @@ class TunnelView(
 	}
 
 	override fun drawImpl(context: DrawContext) {
-		if (shadow) {
-			DropShadow.draw(context, transparency) {
-				context.g.fillRect(xInt, yInt, SIZE, SIZE)
-			}
-		}
-
-		context.g.color = if (context.useContextColors) {
-			context.color!!.backgroundColor
-		} else {
-			propertiesBackgroundColor
-		}
-		context.g.fillRect(xInt, yInt, SIZE, SIZE)
-
-		context.g.color = context.choose(color).foregroundColor
-		context.g.stroke = stroke
-		context.g.drawRect(xInt, yInt, SIZE, SIZE)
-
-		// Draw the PortView above the border
+		face.drawShadow(this, context)
 		super.drawImpl(context)
-
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			context.g.color = model.getInOrOutSignal().getColor().foregroundColor
-		}
-
-		// Draw tunnel entry
-		context.g.translate(xInt + SIZE / 2.0, 0.0)
-		context.g.rotate(rotation.inverse().angle)
-		context.g.fillOval(-SIZE / 4, -SIZE / 4, SIZE / 2, SIZE / 2)
-		context.g.fillRect(-SIZE / 4, 0, SIZE / 2, SIZE / 4)
-
-		context.g.rotate(-rotation.inverse().angle)
-		context.g.translate(-(xInt + SIZE / 2.0), 0.0)
+		face.draw(this, context, propertiesBackgroundColor)
 	}
 
 	override val boundingBox: Rectangle2D

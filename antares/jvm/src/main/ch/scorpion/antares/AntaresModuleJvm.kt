@@ -10,6 +10,7 @@ import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.module.AntaresViewModule
+import ch.scorpion.antares.view.net.TunnelViewFacePreference
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.signal.DigitalSignalNotationPreference
@@ -179,5 +180,6 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 
 		root.getGroup(PREF_TREE_CIRCUIT).add(LightColorPreference())
 		root.getGroup(PREF_TREE_CIRCUIT).add(DigitalSignalNotationPreference())
+		root.getGroup(PREF_TREE_CIRCUIT).add(TunnelViewFacePreference())
 	}
 }
