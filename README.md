@@ -52,3 +52,9 @@ Tag the release and push it to the remote repository:
 ## Deploying
  
 TODO
+
+## Using
+
+### Antares Web
+
+`gradlew :antares:jsBrowserDevelopmentRun --continuous`

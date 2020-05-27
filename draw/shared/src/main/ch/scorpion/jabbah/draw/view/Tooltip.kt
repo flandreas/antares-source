@@ -191,7 +191,9 @@ object TooltipManager {
 
 	private fun initTimer() {
 		timer = System.createTimer()
-		timer.initialize(BaseModule.properties.getInt(PROP_DELAY)) { displayImpl() }
+		// TODO Temporarily use default value until Properties can be loaded in JS platform
+		//timer.initialize(BaseModule.properties.getInt(PROP_DELAY)) { displayImpl() }
+		timer.initialize(BaseModule.properties.getOptional<Int>(PROP_DELAY) ?: 1000) { displayImpl() }
 	}
 
 	private fun handle(event: TooltipEvent) {

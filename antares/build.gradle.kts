@@ -10,6 +10,12 @@ val l2fprodVersion: String by extra
 val macOS_jpackage_home: String by extra
 val win_jpackage_home: String by extra
 
+repositories {
+	maven("https://kotlin.bintray.com/kotlin-js-wrappers/")
+	mavenCentral()
+	jcenter()
+}
+
 plugins {
 	id("com.github.johnrengelman.shadow") version "5.1.0"
 }
@@ -34,6 +40,26 @@ kotlin {
 		val jvmMain by getting {
 			dependencies {
 				implementation("commons-cli:commons-cli:1.3.1")
+			}
+		}
+
+		val jsMain by getting {
+			kotlin.srcDir("js/src/kotlin/main")
+			resources.srcDir("js/rsc")
+
+			dependencies {
+				implementation(kotlin("stdlib-js"))
+
+				//React, React DOM + Wrappers (chapter 3)
+				implementation("org.jetbrains:kotlin-react:16.13.0-pre.94-kotlin-1.3.70")
+				implementation("org.jetbrains:kotlin-react-dom:16.13.0-pre.94-kotlin-1.3.70")
+				implementation(npm("react", "16.13.1"))
+				implementation(npm("react-dom", "16.13.1"))
+
+				implementation(project(":base"))
+				implementation(project(":animation"))
+				implementation(project(":draw"))
+				implementation(project(":edit"))
 			}
 		}
 	}
