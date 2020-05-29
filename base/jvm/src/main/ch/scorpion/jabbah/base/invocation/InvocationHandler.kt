@@ -28,7 +28,7 @@ abstract class InvocationHandler {
 
 }
 
-/** Executes [InvocationHandler] invokables synchronously. Mainly used for testing purposes.*/
+/** Executes [InvocationHandler] invocables synchronously. Mainly used for testing purposes.*/
 class SynchronousInvocationHandler : InvocationHandler() {
 
 	override fun invokeImpl(doRun: Runnable) {

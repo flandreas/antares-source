@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.VetoException
+import ch.scorpion.jabbah.base.invocation.ErrorHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
@@ -105,6 +106,7 @@ class AntaresSwing(
 				println("Unhandled exception: ${e.message}")
 				e.printStackTrace()
 				LOG.value.error("Unhandled exception", e)
+				ErrorHandler.exception(e)
 			}
 
 			System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS")

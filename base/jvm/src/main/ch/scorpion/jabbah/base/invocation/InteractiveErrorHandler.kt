@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base.invocation
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import javax.swing.JFrame
 import javax.swing.JOptionPane
@@ -36,10 +37,17 @@ class InteractiveErrorHandler : ErrorHandler() {
                 val sp = JScrollPane(ta)
                 sp.preferredSize = Dimension(400, 300)
 
-                JOptionPane.showMessageDialog(frame, sp, "Error Alert", JOptionPane.ERROR_MESSAGE)
+                JOptionPane.showMessageDialog(
+	                frame,
+	                sp,
+	                Translations.getString("base.unexpectedError.title"),
+	                JOptionPane.ERROR_MESSAGE)
             } else {
-                val text = "Unexpected Error"
-                JOptionPane.showMessageDialog(frame, text, "Unexpected Error", JOptionPane.ERROR_MESSAGE)
+                JOptionPane.showMessageDialog(
+	                frame,
+	                Translations.getString("base.unexpectedError.text"),
+	                Translations.getString("base.unexpectedError.title"),
+	                JOptionPane.ERROR_MESSAGE)
             }
         }
     }
