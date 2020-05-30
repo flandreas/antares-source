@@ -63,8 +63,8 @@
                 <translation lang='en' text='Data input'/>
               </desc>
               <desc>
-                <translation lang='de' text='Dateineingang'/>
-                <translation lang='en' text='Data input'/>
+                <translation lang='de' text='Dateineingang: Übernimmt die 32-Bit-Daten,  die gespeichert werden sollen.'/>
+                <translation lang='en' text='Data input: Consumes the 32-bit data to be stored.'/>
               </desc>
             </circuitInOut>
             <splitter _id='12' id='10' delay='0' bitWidth='32' branchCount='8' representation='binary'/>
@@ -128,8 +128,8 @@
                 <translation lang='en' text='Clock input'/>
               </desc>
               <desc>
-                <translation lang='de' text='Takteingang (Clock)'/>
-                <translation lang='en' text='Clock input'/>
+                <translation lang='de' text='Takteingang (Clock): Bei ansteigender Flanke werden die Daten an D gespeichert.'/>
+                <translation lang='en' text='Clock input: A rising edge stores the data available at D.'/>
               </desc>
             </circuitInOut>
             <digitalNet _id='23' id='21' delay='0'>
@@ -200,8 +200,8 @@
                 <translation lang='en' text='Data output'/>
               </desc>
               <desc>
-                <translation lang='de' text='Datenausgang'/>
-                <translation lang='en' text='Data output'/>
+                <translation lang='de' text='Datenausgang: Gibt die gespeicherten 32-Bit-Daten aus.'/>
+                <translation lang='en' text='Data output: Outputs the stored 32-bit value.'/>
               </desc>
             </circuitInOut>
             <digitalNet _id='34' id='32' delay='0'>
@@ -237,14 +237,46 @@
             <netView _id='109' modelId='14' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='88' id='1' rot='0' modelId='3' x='560.0' y='140.0' label='REG'/>
-            <subGraphVerticeViewRef _id='87' id='2' rot='0' modelId='4' x='560.0' y='224.0' label='REG'/>
-            <subGraphVerticeViewRef _id='86' id='3' rot='0' modelId='5' x='560.0' y='308.0' label='REG'/>
-            <subGraphVerticeViewRef _id='85' id='4' rot='0' modelId='6' x='560.0' y='392.0' label='REG'/>
-            <subGraphVerticeViewRef _id='84' id='5' rot='0' modelId='7' x='560.0' y='476.0' label='REG'/>
-            <subGraphVerticeViewRef _id='83' id='6' rot='0' modelId='8' x='560.0' y='560.0' label='REG'/>
-            <subGraphVerticeViewRef _id='82' id='7' rot='0' modelId='9' x='560.0' y='644.0' label='REG'/>
-            <subGraphVerticeViewRef _id='81' id='8' rot='0' modelId='10' x='560.0' y='728.0' label='REG'/>
+            <subGraphVerticeViewRef _id='88' id='1' rot='0' modelId='3' x='560.0' y='140.0'>
+              <label>
+                <translation lang='de' text='REG'/>
+              </label>
+            </subGraphVerticeViewRef>
+            <subGraphVerticeViewRef _id='87' id='2' rot='0' modelId='4' x='560.0' y='224.0'>
+              <label>
+                <translation lang='de' text='REG'/>
+              </label>
+            </subGraphVerticeViewRef>
+            <subGraphVerticeViewRef _id='86' id='3' rot='0' modelId='5' x='560.0' y='308.0'>
+              <label>
+                <translation lang='de' text='REG'/>
+              </label>
+            </subGraphVerticeViewRef>
+            <subGraphVerticeViewRef _id='85' id='4' rot='0' modelId='6' x='560.0' y='392.0'>
+              <label>
+                <translation lang='de' text='REG'/>
+              </label>
+            </subGraphVerticeViewRef>
+            <subGraphVerticeViewRef _id='84' id='5' rot='0' modelId='7' x='560.0' y='476.0'>
+              <label>
+                <translation lang='de' text='REG'/>
+              </label>
+            </subGraphVerticeViewRef>
+            <subGraphVerticeViewRef _id='83' id='6' rot='0' modelId='8' x='560.0' y='560.0'>
+              <label>
+                <translation lang='de' text='REG'/>
+              </label>
+            </subGraphVerticeViewRef>
+            <subGraphVerticeViewRef _id='82' id='7' rot='0' modelId='9' x='560.0' y='644.0'>
+              <label>
+                <translation lang='de' text='REG'/>
+              </label>
+            </subGraphVerticeViewRef>
+            <subGraphVerticeViewRef _id='81' id='8' rot='0' modelId='10' x='560.0' y='728.0'>
+              <label>
+                <translation lang='de' text='REG'/>
+              </label>
+            </subGraphVerticeViewRef>
             <circuitInOutView _id='80' id='9' modelId='11' representation='hex' orientation='east'>
               <location>
                 <point x='329.0' y='189.0'/>
@@ -491,7 +523,10 @@
             <digitalPortView _id='113' x='238.0' y='168.0' dir='east' textPos='internal' portId='123'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='111' text='REG'>
+        <label _id='111'>
+          <text>
+            <translation lang='de' text='REG'/>
+          </text>
           <location>
             <point x='189.0' y='161.0'/>
           </location>

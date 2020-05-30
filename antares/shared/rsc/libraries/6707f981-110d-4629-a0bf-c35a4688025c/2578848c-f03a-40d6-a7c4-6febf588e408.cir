@@ -21,8 +21,8 @@
                 <translation lang='en' text='Data input'/>
               </desc>
               <desc>
-                <translation lang='de' text='Dateneingang'/>
-                <translation lang='en' text='Data input'/>
+                <translation lang='de' text='Dateineingang: Übernimmt die16-Bit-Daten,  die gespeichert werden sollen.'/>
+                <translation lang='en' text='Data input: Consumes the 16-bit data to be stored.'/>
               </desc>
             </circuitInOut>
             <subGraphVerticeRef _id='5' id='3' delay='110' uuid='e802fb9c-82dc-4196-b266-79fa023fb12e'>
@@ -56,8 +56,8 @@
                 <translation lang='en' text='Data output'/>
               </desc>
               <desc>
-                <translation lang='de' text='Datenausgang'/>
-                <translation lang='en' text='Data output'/>
+                <translation lang='de' text='Datenausgang: Gibt die gespeicherten 16-Bit-Daten aus.'/>
+                <translation lang='en' text='Data output: Outputs the stored 16-bit value.'/>
               </desc>
             </circuitInOut>
             <concentrator _id='11' id='9' delay='0' bitWidth='16' branchCount='4' representation='binary'/>
@@ -73,8 +73,8 @@
                 <translation lang='en' text='Clock input'/>
               </desc>
               <desc>
-                <translation lang='de' text='Takteingang (Clock)'/>
-                <translation lang='en' text='Clock input'/>
+                <translation lang='de' text='Takteingang (Clock): Bei ansteigender Flanke werden die Daten an D gespeichert.'/>
+                <translation lang='en' text='Clock input: A rising edge stores the data available at D.'/>
               </desc>
             </circuitInOut>
             <digitalNet _id='14' id='12' delay='0'>
@@ -153,15 +153,31 @@
             <netView _id='65' modelId='15' style='line'/>
           </netViews>
           <components>
-            <subGraphVerticeViewRef _id='52' id='1' rot='0' modelId='3' x='378.0' y='126.0' label='REG'/>
+            <subGraphVerticeViewRef _id='52' id='1' rot='0' modelId='3' x='378.0' y='126.0'>
+              <label>
+                <translation lang='de' text='REG'/>
+              </label>
+            </subGraphVerticeViewRef>
             <circuitInOutView _id='51' id='2' modelId='4' representation='hex' orientation='east'>
               <location>
                 <point x='203.0' y='147.0'/>
               </location>
             </circuitInOutView>
-            <subGraphVerticeViewRef _id='50' id='3' rot='0' modelId='5' x='378.0' y='210.0' label='REG'/>
-            <subGraphVerticeViewRef _id='49' id='4' rot='0' modelId='6' x='378.0' y='294.0' label='REG'/>
-            <subGraphVerticeViewRef _id='48' id='5' rot='0' modelId='7' x='378.0' y='378.0' label='REG'/>
+            <subGraphVerticeViewRef _id='50' id='3' rot='0' modelId='5' x='378.0' y='210.0'>
+              <label>
+                <translation lang='de' text='REG'/>
+              </label>
+            </subGraphVerticeViewRef>
+            <subGraphVerticeViewRef _id='49' id='4' rot='0' modelId='6' x='378.0' y='294.0'>
+              <label>
+                <translation lang='de' text='REG'/>
+              </label>
+            </subGraphVerticeViewRef>
+            <subGraphVerticeViewRef _id='48' id='5' rot='0' modelId='7' x='378.0' y='378.0'>
+              <label>
+                <translation lang='de' text='REG'/>
+              </label>
+            </subGraphVerticeViewRef>
             <splitterView _id='47' id='6' rot='0' modelId='8' x='224.0' y='147.0' handedness='left'/>
             <digitalEdgeView _id='46' id='7' modelId='9' layout='ortho' orig='51' origPort='1' origPortOutput='true' dest='47' destPort='1' adjusted='false'>
               <shape>
@@ -303,7 +319,10 @@
             <digitalPortView _id='69' x='238.0' y='168.0' dir='east' textPos='internal' portId='79'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='67' text='REG'>
+        <label _id='67'>
+          <text>
+            <translation lang='de' text='REG'/>
+          </text>
           <location>
             <point x='189.0' y='161.0'/>
           </location>

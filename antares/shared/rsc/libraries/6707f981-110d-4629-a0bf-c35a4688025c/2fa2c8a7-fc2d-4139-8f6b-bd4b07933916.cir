@@ -34,8 +34,8 @@
                 <translation lang='en' text='Data input (serial)'/>
               </desc>
               <desc>
-                <translation lang='de' text='Dateneingang (seriell)'/>
-                <translation lang='en' text='Data input (serial)'/>
+                <translation lang='de' text='Dateneingang (seriell). Übernimmt das nächste Bit, das an der ersten Position im Schieberegister gespeichert werden soll.'/>
+                <translation lang='en' text='Data input (serial). Consumes the next bit to be stored at the first position in the shift register.'/>
               </desc>
             </circuitInOut>
             <notGate _id='8' id='6' delay='20' inputCount='1'/>
@@ -58,8 +58,8 @@
                 <translation lang='en' text=' Clock input'/>
               </desc>
               <desc>
-                <translation lang='de' text='Takteingang'/>
-                <translation lang='en' text=' Clock input'/>
+                <translation lang='de' text='Takteingang: Bei ansteigender Flanke wird das Bit am Eingang I gespeichert.'/>
+                <translation lang='en' text=' Clock input: A rising edge stores the bit available at I.'/>
               </desc>
             </circuitInOut>
             <digitalNet _id='12' id='10' delay='0'>
@@ -116,8 +116,8 @@
                 <translation lang='en' text='Data output (serial)'/>
               </desc>
               <desc>
-                <translation lang='de' text='Datenausgang (seriell)'/>
-                <translation lang='en' text='Data output (serial)'/>
+                <translation lang='de' text='Datenausgang (seriell). Gibt das höchstwertige Bit des gespeicherten Wertes aus.'/>
+                <translation lang='en' text='Data output (serial): Outputs the highest-priority bit of the stored value.'/>
               </desc>
             </circuitInOut>
             <digitalNet _id='20' id='18' delay='0'>
@@ -444,7 +444,10 @@
             <digitalPortView _id='87' x='210.0' y='189.0' dir='east' textPos='internal' portId='109'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='85' text='SR'>
+        <label _id='85'>
+          <text>
+            <translation lang='de' text='SR'/>
+          </text>
           <location>
             <point x='172.8037109375' y='177.244140625'/>
           </location>

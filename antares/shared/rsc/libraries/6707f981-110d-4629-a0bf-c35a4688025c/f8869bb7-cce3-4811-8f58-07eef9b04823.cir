@@ -59,8 +59,8 @@
                 <translation lang='en' text='Data input'/>
               </desc>
               <desc>
-                <translation lang='de' text='Dateineingang'/>
-                <translation lang='en' text='Data input'/>
+                <translation lang='de' text='Dateineingang: Übernimmt die 8-Bit-Daten,  die gespeichert werden sollen.'/>
+                <translation lang='en' text='Data input: Consumes the 8-bit data to be stored.'/>
               </desc>
             </circuitInOut>
             <digitalNet _id='13' id='11' delay='0'>
@@ -123,8 +123,8 @@
                 <translation lang='en' text='Clock input'/>
               </desc>
               <desc>
-                <translation lang='de' text='Takteingang (Clock)'/>
-                <translation lang='en' text='Clock input'/>
+                <translation lang='de' text='Takteingang (Clock): Bei ansteigender Flanke werden die Daten an D gespeichert.'/>
+                <translation lang='en' text='Clock input: A rising edge stores the data available at D.'/>
               </desc>
             </circuitInOut>
             <concentrator _id='23' id='22' delay='0' bitWidth='8' branchCount='8' representation='binary'/>
@@ -134,8 +134,8 @@
                 <translation lang='en' text='Data output'/>
               </desc>
               <desc>
-                <translation lang='de' text='Datenausgang'/>
-                <translation lang='en' text='Data output'/>
+                <translation lang='de' text='Datenausgang: Gibt die gespeicherten 4-Bit-Daten aus.'/>
+                <translation lang='en' text='Data output: Outputs the stored 4-bit value.'/>
               </desc>
             </circuitInOut>
             <digitalNet _id='25' id='24' delay='0'>
@@ -487,7 +487,10 @@
             <digitalPortView _id='114' x='238.0' y='168.0' dir='east' textPos='internal' portId='124'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='112' text='REG'>
+        <label _id='112'>
+          <text>
+            <translation lang='de' text='REG'/>
+          </text>
           <location>
             <point x='189.0' y='161.0'/>
           </location>
