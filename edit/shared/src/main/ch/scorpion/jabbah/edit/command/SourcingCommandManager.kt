@@ -230,14 +230,6 @@ class SourcingCommandManager(
 		eventBus.post(CommandEvent(this))
 	}
 
-	override fun commitCheckpoint() {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun rollbackCheckpoint() {
-		throw UnsupportedOperationException("not implemented")
-	}
-
 	/** ---- [SourcingCommandManager] */
 
 	private inner class Snapshot(private val data: Storable) {

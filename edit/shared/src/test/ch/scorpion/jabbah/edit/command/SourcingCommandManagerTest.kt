@@ -335,49 +335,47 @@ class SourcingCommandManagerTest {
 		assertEquals("", application.mandatoryData.value)
 	}
 
-	/*
 	@Test
-	fun shouldCommitCheckpoint() {
+	fun shouldUseCheckpoint() {
 		cmdManager.execute(AppendCommand("a"))
+
 		cmdManager.openCheckpoint("test")
 		cmdManager.execute(AppendCommand("b"))
+		cmdManager.execute(AppendCommand("c"))
+		cmdManager.closeCheckpoint()
 
-		cmdManager.commitCheckpoint()
+		// The data in Application has changed since checkpoint, but checkpoint command are thrown away when
+		// closing a checkpoint, therefore register a Command for the accumulated changes since the checkpoint
+		cmdManager.register(AppendCommand("bc"))
 
+		assertEquals("abc", application.mandatoryData.value)
+	}
+
+	@Test
+	fun shouldUndoAfterOpeningCheckpoint() {
+		cmdManager.execute(AppendCommand("a"))
+
+		cmdManager.openCheckpoint("test")
+		cmdManager.execute(AppendCommand("b"))
+		cmdManager.execute(AppendCommand("c"))
+		cmdManager.undo()
+
+		cmdManager.register(AppendCommand("b"))
 		assertEquals("ab", application.mandatoryData.value)
 	}
 
 	@Test
-	fun shouldRollbackCheckpoint() {
+	fun shouldAbandonCheckpointChanges() {
 		cmdManager.execute(AppendCommand("a"))
+
 		cmdManager.openCheckpoint("test")
 		cmdManager.execute(AppendCommand("b"))
-
-		cmdManager.rollbackCheckpoint()
-
-		assertEquals("a", application.data.value)
-	}
-
-	@Test
-	fun shouldUndoInCheckpoint() {
-		cmdManager.execute(AppendCommand("a"))
-		cmdManager.openCheckpoint("test")
-		cmdManager.execute(AppendCommand("b"))
+		cmdManager.closeCheckpoint()
+		// Abandon checkpoint changes by not registering a corresponding command
 
 		cmdManager.undo()
-
-		assertEquals("a", application.data.value)
-		assertTrue(cmdManager.canUndo())
+		assertEquals("", application.mandatoryData.value)
 	}
-
-	@Test
-	fun shouldNotUndoBeyondCheckpoint() {
-		cmdManager.execute(AppendCommand("a"))
-		cmdManager.openCheckpoint("text")
-
-		assertFalse(cmdManager.canUndo())
-	}
-	*/
 
 	/** ---- Helper classes and methods */
 
