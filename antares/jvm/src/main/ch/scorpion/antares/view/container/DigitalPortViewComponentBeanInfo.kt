@@ -35,6 +35,7 @@ class DigitalPortViewComponentBeanInfo : AbstractBeanInfo<DigitalPortViewCompone
 	    properties.add(direction.bind(editor, bean.id))
 	    properties.add(portLabelPos.bind(editor, bean.id))
 	    properties.add(showBitWidth.bind(editor, bean.id))
+	    properties.add(logic.bind(editor, bean.id))
 	    if (bean.port.portType == PortType.INPUT) {
 		    properties.add(trigger.bind(editor, bean.id))
 	    }
