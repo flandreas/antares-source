@@ -107,12 +107,18 @@ class SourcingCommandManager(
 	override fun execute(command: Command) {
 		LOG.debug("Execute command '${command.getDescription()}'")
 		resetRedo()
+
 		if (state.transaction == null) {
 			beginTransaction(command, register = false)
 			commitTransaction()
 		} else {
 			state.transaction!!.add(command)
-			command.execute()
+			try {
+				command.execute()
+			} catch (e: Exception) {
+				rollbackTransaction()
+				throw e
+			}
 			command.validate()
 		}
 	}
@@ -167,7 +173,12 @@ class SourcingCommandManager(
 		state.transaction?.let {
 			it.add(command)
 			if (!register) {
-				command.execute()
+				try {
+					command.execute()
+				} catch (e: Throwable) {
+					rollbackTransaction()
+					throw  e
+				}
 				command.validate()
 			}
 		}

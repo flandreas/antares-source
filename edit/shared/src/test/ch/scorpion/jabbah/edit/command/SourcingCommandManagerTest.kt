@@ -275,6 +275,33 @@ class SourcingCommandManagerTest {
 		assertFalse(cmdManager.canUndo())
 	}
 
+	@Test
+	fun shouldRollbackOnExceptionInBeginTransaction() {
+		try {
+			cmdManager.beginTransaction(ExceptionCommand())
+		} catch (e: Exception) {
+			// empty
+		}
+
+		cmdManager.execute(AppendCommand("a"))
+
+		assertTrue(cmdManager.canUndo())
+	}
+
+	@Test
+	fun shouldRollbackOnExceptionInExecute() {
+		try {
+			cmdManager.execute(ExceptionCommand())
+		} catch (e: Exception) {
+			// empty
+		}
+
+		cmdManager.execute(AppendCommand("a"))
+
+		assertTrue(cmdManager.canUndo())
+	}
+
+
 	/** ---- Checkpoint tests */
 
 	@Test
@@ -400,6 +427,12 @@ class SourcingCommandManagerTest {
 
 		override fun execute() {
 			application.mandatoryData.append(s)
+		}
+	}
+
+	private inner class ExceptionCommand : AbstractCommand("anyDescription") {
+		override fun execute() {
+			throw RuntimeException("Error")
 		}
 	}
 
