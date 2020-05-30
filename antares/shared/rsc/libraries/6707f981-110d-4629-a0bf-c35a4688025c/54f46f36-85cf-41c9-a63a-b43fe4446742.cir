@@ -237,7 +237,7 @@
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='71' id='0' delay='0' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8'>
+        <subGraphVertice _id='71' id='0' delay='0' uuid='54f46f36-85cf-41c9-a63a-b43fe4446742'>
           <name>
             <translation lang='en' text='SR Flip-Flop (Neg)'/>
             <translation lang='de' text='SR Flipflop (Neg)'/>
