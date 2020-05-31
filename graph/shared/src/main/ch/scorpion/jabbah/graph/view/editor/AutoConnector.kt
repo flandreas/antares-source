@@ -7,8 +7,9 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.editor.EndDragEvent
+import ch.scorpion.jabbah.edit.editor.DragEvent
 import ch.scorpion.jabbah.edit.editor.DropEvent
-import ch.scorpion.jabbah.edit.select.DragEvent
 import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -43,8 +44,9 @@ class AutoConnector(
 	private val points = mutableListOf<Point2D>()
 
 	init {
-		eventBus.register(DragEvent::class, { handleDragEvent(it) })
-		eventBus.register(DropEvent::class, { handleDropEvent(it) })
+		eventBus.register(DragEvent::class) { handleDragEvent(it) }
+		eventBus.register(DropEvent::class) { handleDropEvent() }
+		eventBus.register(EndDragEvent::class) { handleEndDrag() }
 
 		editor.view.addMouseListener(object : MouseAdapter() {
 			override fun mouseReleased(e: MouseEvent) {
@@ -86,9 +88,15 @@ class AutoConnector(
 		}
 	}
 
-	private fun handleDropEvent(event: DropEvent) {
+	private fun handleDropEvent() {
 		removeHighlight()
 		connectPorts()
+		verticeView = null
+	}
+
+	private fun handleEndDrag() {
+		removeHighlight()
+		verticeView = null
 	}
 
 	/**

@@ -97,4 +97,8 @@ actual object System {
 		}
 		return Language.DEFAULT
 	}
+
+	actual fun printStackTrace() {
+		RuntimeException().printStackTrace()
+	}
 }

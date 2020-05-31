@@ -116,6 +116,7 @@ class SourcingCommandManager(
 			try {
 				command.execute()
 			} catch (e: Exception) {
+				LOG.error("Exception in CommandManager.execute", e)
 				rollbackTransaction()
 				throw e
 			}
@@ -176,6 +177,7 @@ class SourcingCommandManager(
 				try {
 					command.execute()
 				} catch (e: Throwable) {
+					LOG.error("Exception in CommandManager.execute", e)
 					rollbackTransaction()
 					throw  e
 				}

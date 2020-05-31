@@ -18,6 +18,8 @@ import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.editor.DragEvent
+import ch.scorpion.jabbah.edit.editor.EndDragEvent
 import ch.scorpion.jabbah.edit.snap.MultiComponentSnappable
 import ch.scorpion.jabbah.edit.tool.ToolAdapter
 
@@ -212,6 +214,7 @@ class SelectionToolImpl(
 		}
 
 		if (movedReferenceComponent != null) {
+			eventBus.post(EndDragEvent(editor))
 			if (moveStartLocation != movedReferenceComponent?.location) {
 				try {
 					editor.commandManager.register(MoveCommand(
@@ -228,7 +231,7 @@ class SelectionToolImpl(
 
 		// Cleanup
 		// TEST BEGIN
-		// Resetting target results in mouseClicked not property working. But can we trust in mouseClicked anyway,
+		// Resetting target results in mouseClicked not properly working. But can we trust in mouseClicked anyway,
 		// because it is only called by the UI if the mouse hasn't been moved between mousePressed and mouseReleased?
 		/*
 		target = null

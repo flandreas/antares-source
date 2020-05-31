@@ -47,4 +47,6 @@ expect object System {
 	 * this method returns the default language as of [Language.DEFAULT].
 	 */
 	fun currentLanguage(): Language
+
+	fun printStackTrace()
 }

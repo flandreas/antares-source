@@ -37,7 +37,7 @@ class OutputToInputConnector(
 	}
 
 	override fun completeConnectingToEndPortOrOpen(context: EditInputEventContext) {
-		connectService.unconnectEdgeViewOrigin(edgeView!!)
+		connectService.unconnect(edgeView!!)
 		context.drawingView().drawing.remove(edgeView!!)
 
 		context.editor.commandManager.beginTransaction("graph.command.connect", context.drawingView())

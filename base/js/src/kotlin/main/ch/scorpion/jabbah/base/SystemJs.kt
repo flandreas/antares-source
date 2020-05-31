@@ -88,4 +88,8 @@ actual object System {
 	actual fun getActionAcceleratorKey(baseName: String): String = "$baseName.accelerator"
 
 	actual fun currentLanguage(): Language = Language.English
+
+	actual fun printStackTrace() {
+		// empty
+	}
 }

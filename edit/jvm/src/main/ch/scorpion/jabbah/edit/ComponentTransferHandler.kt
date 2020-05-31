@@ -5,9 +5,10 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.app.DrawingAppService
+import ch.scorpion.jabbah.edit.editor.EndDragEvent
+import ch.scorpion.jabbah.edit.editor.DragEvent
 import ch.scorpion.jabbah.edit.editor.DropEvent
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.edit.select.DragEvent
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 import java.awt.dnd.DropTarget
@@ -59,6 +60,7 @@ open class ComponentTransferHandler(
             override fun dragExit(dte: DropTargetEvent?) {
                 super.dragExit(dte)
                 editor.view.setDropComponent(null, null)
+	            eventBus.post(EndDragEvent(editor))
             }
 
             override fun dragOver(dtde: DropTargetDragEvent) {
