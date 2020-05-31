@@ -72,6 +72,6 @@ class EdgeEndpointView(
 	/** ---- [EdgeEndpointView] */
 
 	private fun updateGeometry() {
-		bounds.setFrame(location.x - SIZE_HALF - 1, location.y - SIZE_HALF - 1, 2.0 * (SIZE_HALF + 1), 2.0 * (SIZE_HALF + 1))
+		bounds.setFrame(location.x - SIZE_HALF, location.y - SIZE_HALF, 2.0 * SIZE_HALF, 2.0 * SIZE_HALF)
 	}
 }

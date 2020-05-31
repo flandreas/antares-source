@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.graph.view.connect
 
-import ch.scorpion.jabbah.draw.drawable.Locatable
-import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
@@ -9,12 +7,15 @@ import ch.scorpion.jabbah.draw.DrawProperties
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangularUnzoomable
+import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 /**
  * A [Drawable] used to highlight the point where a new connecting [EdgeView] starts or ends when the mouse
@@ -71,9 +72,12 @@ class ConnectionPointHighlightCircle : AbstractRectangularUnzoomable(SIZE_HALF),
 		/** The name of the [Color] property in [DrawProperties] */
 		const val PROP_COLOR = "graph.view.isPort.highlight.color"
 		const val SIZE_HALF = 6.0
+
+		/* Make it slightly wider to ensure it covers [EdgeEndpointView] entirely */
+		val stroke = Stroke(DrawStyleModule.styleProvider.getStyle(GraphStyleType.EDGE).stroke.width + 1)
 	}
 
-	override val lineWidth: Double get() = 0.0
+	override val lineWidth: Double get() = stroke.width.toDouble()
 
 	override var alternativeView: Boolean = false
 		set(value) {
@@ -96,7 +100,9 @@ class ConnectionPointHighlightCircle : AbstractRectangularUnzoomable(SIZE_HALF),
 
 	private fun drawNormalView(context: DrawContext) {
 		val rect = getViewRectangle()
-		context.g.fillOval(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
+		context.g.fillOval(rect.x, rect.y, rect.width, rect.height)
+		context.g.stroke = stroke
+		context.g.drawOval(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
 	}
 
 	private fun drawAlternativeView(context: DrawContext) {
