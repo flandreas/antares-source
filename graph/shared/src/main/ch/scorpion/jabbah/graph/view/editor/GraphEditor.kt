@@ -5,14 +5,14 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceEvent
 import ch.scorpion.jabbah.graph.view.GraphPortView
-import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 /**
@@ -20,15 +20,12 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  */
 class GraphEditor(
     view: DrawingView<Drawing<Component>>,
-    connectService: GraphViewConnectService,
-    private val eventBus: EventBus
+    private val eventBus: EventBus = BaseModule.eventBus
 ) : EditorImpl(view) {
 
-    constructor(view: DrawingView<Drawing<Component>>): this(view, GraphViewModule.graphViewConnectService ,BaseModule.eventBus)
-
-    init {
-        AutoConnector(this, connectService, eventBus)
-    }
+	init {
+		AutoConnector.drawingView = view
+	}
 
     override fun handleComponentAdded(component: Component) {
         if (component is GraphPortView<*>) {

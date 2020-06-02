@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 
-class MoveCommand(
+open class MoveCommand(
 	editor: Editor,
 	val componentIds: Collection<Int>,
 	val offset: Point2D

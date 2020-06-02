@@ -1,25 +1,24 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.Editor
-import java.awt.datatransfer.DataFlavor
-import javax.swing.JOptionPane
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
+import javax.swing.JOptionPane
 
 
 /**
@@ -89,6 +88,6 @@ class GraphPanelTransferHandler(
 
 	override fun addComponent(dropComponent: Component, transferable: Transferable): Component {
 		val data = transferable.getTransferData(GraphElementViewTransferable.FLAVOR) as GraphElementViewTransferableData
-		return service.addGraphElementViewFromLibrary(data.libraryElement, dropComponent.location, editor.view as DrawingView<GraphView>)
+		return service.addGraphElementViewFromLibrary(data.libraryElement, dropComponent.location, editor)
 	}
 }

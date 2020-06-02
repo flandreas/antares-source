@@ -14,12 +14,9 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.editor.DragEvent
-import ch.scorpion.jabbah.edit.editor.EndDragEvent
 import ch.scorpion.jabbah.edit.snap.MultiComponentSnappable
 import ch.scorpion.jabbah.edit.tool.ToolAdapter
 
@@ -195,9 +192,8 @@ class SelectionToolImpl(
 		}
 
 		// Move all selected [Components] by the same snapped offset
-		Locatable.moveLocatables(selection, Point2D(dx + offset.x, dy + offset.y))
+		Movable.dragBy(editor, selection, Point2D(dx + offset.x, dy + offset.y))
 
-		eventBus.post(DragEvent(editor, selection))
 		moveLastLocation = Point2D(x + offset.x, y + offset.y)
 		editor.drawing.validate()
 	}
@@ -214,12 +210,12 @@ class SelectionToolImpl(
 		}
 
 		if (movedReferenceComponent != null) {
-			eventBus.post(EndDragEvent(editor))
+			val selection = editor.view.selectionManager.selection
 			if (moveStartLocation != movedReferenceComponent?.location) {
 				try {
-					editor.commandManager.register(MoveCommand(
+					editor.commandManager.register(Movable.getDragCommand(
 						editor,
-						editor.view.selectionManager.selection.map { it.id }.toList(),
+						selection,
 						movedReferenceComponent!!.location.subtract(moveStartLocation)))
 
 				} catch (e: Throwable) {
@@ -227,6 +223,7 @@ class SelectionToolImpl(
 					editor.commandManager.rollbackTransaction()
 				}
 			}
+			Movable.dragFinished(selection)
 		}
 
 		// Cleanup

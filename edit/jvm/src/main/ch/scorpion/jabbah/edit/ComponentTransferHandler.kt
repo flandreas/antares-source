@@ -5,8 +5,6 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.app.DrawingAppService
-import ch.scorpion.jabbah.edit.editor.EndDragEvent
-import ch.scorpion.jabbah.edit.editor.DragEvent
 import ch.scorpion.jabbah.edit.editor.DropEvent
 import ch.scorpion.jabbah.edit.module.EditModule
 import java.awt.datatransfer.DataFlavor
@@ -59,40 +57,32 @@ open class ComponentTransferHandler(
 
             override fun dragExit(dte: DropTargetEvent?) {
                 super.dragExit(dte)
-                editor.view.setDropComponent(null, null)
-	            eventBus.post(EndDragEvent(editor))
+	            editor.view.dropComponent?.let {
+		            editor.view.setDropComponent(null, null)
+		            Movable.dragFinished(listOf(it))
+	            }
             }
 
             override fun dragOver(dtde: DropTargetDragEvent) {
                 super.dragOver(dtde)
-                try {
-                    val transferData = extractTransferData(dtde.transferable.getTransferData(flavour))
-                    if (transferData is Component) {
-                        setComponent(transferData, Point2D(dtde.location.x, dtde.location.y))
-                        eventBus.post(DragEvent(editor, listOf(transferData)))
-                    }
-                } catch (e: Exception) {
-                    LOG.error("Error in dragOver: ${e.message}")
+                val transferData = extractTransferData(dtde.transferable.getTransferData(flavour))
+                if (transferData is Component) {
+	                setComponent(transferData, Point2D(dtde.location.x, dtde.location.y))
+	                transferData.dragged(editor)
                 }
-
             }
 
             override fun drop(dtde: DropTargetDropEvent) {
                 super.drop(dtde)
-                try {
-                    val dropComponent = editor.view.dropComponent
-	                val localTransferable = transferable
-                    InvocationHandler.invoke(Runnable {
-                        if (dropComponent != null && canImport(dropComponent, localTransferable!!)) {
-                            SwingUtilities.invokeLater { importElement(dropComponent, localTransferable, eventBus) }
-                        }
-                        editor.view.setDropComponent(null, null)
-	                    transferable = null
-                    })
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
+                val dropComponent = editor.view.dropComponent
+                val localTransferable = transferable
+                InvocationHandler.invoke(Runnable {
+                    if (dropComponent != null && canImport(dropComponent, localTransferable!!)) {
+                        SwingUtilities.invokeLater { importElement(dropComponent, localTransferable, eventBus) }
+                    }
+                    editor.view.setDropComponent(null, null)
+                    transferable = null
+                })
             }
 
             private fun setComponent(component: Component, location: Point2D) {

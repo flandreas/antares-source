@@ -1,35 +1,20 @@
 package ch.scorpion.jabbah.graph.view.editor
 
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.MouseAdapter
-import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.editor.EndDragEvent
-import ch.scorpion.jabbah.edit.editor.DragEvent
-import ch.scorpion.jabbah.edit.editor.DropEvent
-import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.connect.ConnectDestinationCommand
+import ch.scorpion.jabbah.graph.view.connect.ConnectOriginCommand
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
-/**
- * Listens for [DragEvent]s that represent [Component] drags by a particular [GraphEditor],
- * and tries to auto-connect [VerticeView]s with open-ended [EdgeView]s.
- *
- * Does only respond if a single [VerticeView] is being dragged.
- */
-class AutoConnector(
-	private val editor: Editor,
-	private val connectService: GraphViewConnectService,
-	eventBus: EventBus
-) {
+object AutoConnector {
 
-	constructor(editor: Editor) : this(editor, GraphViewModule.graphViewConnectService, BaseModule.eventBus)
+	lateinit var drawingView: DrawingView<*>
 
 	/** Used for highlighting the current possible connection points.*/
 	private val highlight = AutoConnectorHighlight()
@@ -37,44 +22,11 @@ class AutoConnector(
 	/** Determines whether [highlight] is currently displayed or not.*/
 	private var isHighlightDisplayed = false
 
-	/** The [VerticeView] that is currently being dragged around, if any.*/
-	private var verticeView: VerticeView<*>? = null
-
 	/** Contains the [Point2D]s where a connection is currently possible.*/
 	private val points = mutableListOf<Point2D>()
 
-	init {
-		eventBus.register(DragEvent::class) { handleDragEvent(it) }
-		eventBus.register(DropEvent::class) { handleDropEvent() }
-		eventBus.register(EndDragEvent::class) { handleEndDrag() }
-
-		editor.view.addMouseListener(object : MouseAdapter() {
-			override fun mouseReleased(e: MouseEvent) {
-				if (verticeView != null) {
-					removeHighlight()
-					connectPorts()
-					verticeView = null
-				}
-			}
-		})
-	}
-
-	/** ---- [AutoConnector] */
-
-	private fun handleDragEvent(event: DragEvent) {
-		if (event.editor != editor) {
-			return
-		}
-		if (event.components.size != 1) {
-			return
-		}
-		if (event.components.first() !is VerticeView<*>) {
-			return
-		}
-
-		verticeView = event.components.first() as VerticeView<*>
-
-		matchPoints()
+	fun handleDragged(editor: Editor, verticeView: VerticeView<*>) {
+		matchPoints(editor.drawing as GraphView, verticeView)
 
 		if (points.size > 0) {
 			if (!isHighlightDisplayed) {
@@ -88,63 +40,64 @@ class AutoConnector(
 		}
 	}
 
-	private fun handleDropEvent() {
+	fun handleDragFinished() {
 		removeHighlight()
-		connectPorts()
-		verticeView = null
 	}
 
-	private fun handleEndDrag() {
-		removeHighlight()
-		verticeView = null
+	fun getAutoConnectCommands(
+		editor: Editor,
+		verticeView: VerticeView<*>,
+		service: GraphViewConnectService = GraphViewModule.graphViewConnectService
+	): Collection<Command> {
+		val commands = mutableListOf<Command>()
+
+		(verticeView.parent as GraphView).getEdgeViews()
+			.filter { it.origin == null || it.destination == null }
+			.forEach { ev ->
+				verticeView.getPortViews().forEach {
+					val p = it.owner!!.getPortConnectionPoint(it.port)
+					if (ev.origin == null && it.port.portType.isOutput && p == ev.originEndpointView.location) {
+						commands.add(ConnectOriginCommand(editor, service, ev.id, verticeView.id, it.port.portId))
+					}
+					if (ev.destination == null && it.port.portType.isInput && p == ev.destinationEndpointView.location) {
+						commands.add(ConnectDestinationCommand(editor, service, ev.id, verticeView.id, it.port.portId))
+					}
+				}
+			}
+
+		return commands
 	}
 
 	/**
 	 * Fills the connection point locations of all [PortView]s of the current [VerticeView] that match
 	 * an [EdgeView] endpoint into [points].
 	 */
-	private fun matchPoints() {
+	private fun matchPoints(graphView: GraphView, verticeView: VerticeView<*>) {
 		points.clear()
-		(editor.drawing as GraphView).getEdgeViews()
+		graphView.getEdgeViews()
 			.filter { it.origin == null || it.destination == null }
 			.forEach { ev ->
-				verticeView!!.getPortViews().forEach {
+				verticeView.getPortViews().forEach {
 					val p = it.owner!!.getPortConnectionPoint(it.port)
 					if (ev.origin == null && it.port.portType.isOutput && p == ev.originEndpointView.location) {
 						points.add(p)
 					}
 					if (ev.destination == null && it.port.portType.isInput && p == ev.destinationEndpointView.location) {
 						points.add(p)
-					}
-				}
-			}
-	}
-
-	private fun connectPorts() {
-		(editor.drawing as GraphView).getEdgeViews()
-			.filter { it.origin == null || it.destination == null }
-			.forEach { ev ->
-				verticeView!!.getPortViews().forEach {
-					val p = it.owner!!.getPortConnectionPoint(it.port)
-					if (ev.origin == null && it.port.portType.isOutput && p == ev.originEndpointView.location) {
-						connectService.connectToOrigin(ev, it.createConnection() as Connection<Any>)
-					}
-					if (ev.destination == null && it.port.portType.isInput && p == ev.destinationEndpointView.location) {
-						connectService.connectToDestination(ev, it.createConnection() as Connection<Any>)
 					}
 				}
 			}
 	}
 
 	private fun addHighlight() {
-		editor.view.ghostContainer.add(highlight)
+		drawingView.animationContainer.add(highlight)
 		highlight.validate()
 		isHighlightDisplayed = true
 	}
 
 	private fun removeHighlight() {
-		editor.view.ghostContainer.remove(highlight)
-		editor.drawing.validate()
+		drawingView.animationContainer.remove(highlight)
+		drawingView.drawing.validate()
 		isHighlightDisplayed = false
 	}
 }

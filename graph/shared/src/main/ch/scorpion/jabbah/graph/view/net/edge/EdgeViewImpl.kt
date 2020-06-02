@@ -1,9 +1,12 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
-import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventContext
@@ -497,7 +500,7 @@ open class EdgeViewImpl<T : Any>(
 		}
 		get() = polyline.getFirstPoint()
 
-	override fun prepareMoveBy(components: Collection<Locatable>) {
+	override fun prepareMoveBy(components: Collection<Movable>) {
 		val originIfExistsMoves = origin == null || components.contains(origin!!.connectableView as Locatable)
 		val destIfExistsMoves = destination == null || components.contains(destination!!.connectableView as Locatable)
 		val thisMoves = originIfExistsMoves && destIfExistsMoves

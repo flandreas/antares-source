@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.Movable
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.connect.AbstractDragEdgeViewEndpointConnector
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType

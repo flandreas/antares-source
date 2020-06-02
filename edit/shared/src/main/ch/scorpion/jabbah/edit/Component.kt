@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.io.Storable
@@ -17,10 +16,10 @@ import ch.scorpion.jabbah.io.Storable
  * - [Component]s can be selected
  * - [Component]s can be manipulated by an [Editor]
  */
-interface Component : Locatable, Snappable, Storable, Stylable, Cloneable<Component>, Bean {
+interface Component : Movable, Snappable, Storable, Stylable, Cloneable<Component>, Bean {
 
 	/** Holds an identification being unique within the [ComponentContainer] that contains this [Component].*/
-	var id: Int
+	override var id: Int
 
 	/**
 	 * Holds a short translated description of the type of this [Component].

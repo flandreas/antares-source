@@ -53,7 +53,7 @@ class ToBackAction(
 	}
 }
 
-internal abstract class StackingOrderCommand(
+abstract class StackingOrderCommand(
 	name: String,
 	protected val drawingView: DrawingView<*>,
 	protected val componentIds: Collection<Int>
@@ -70,7 +70,7 @@ internal abstract class StackingOrderCommand(
 /**
  * Brings a [Collection] of [Component]s to the front of the stacking order.
  */
-internal class ToFrontCommand(
+class ToFrontCommand(
 	drawingView: DrawingView<Drawing<Component>>,
 	componentIds: Collection<Int>
 ) : StackingOrderCommand("edit.action.stackingOrder.toFront.name", drawingView, componentIds), Undoable {
@@ -97,7 +97,7 @@ internal class ToFrontCommand(
  * Brings a [Collection] of [Component]s one level up in the stacking order
  * while maintaining their relative orders.
  */
-internal class OneUpCommand(
+class OneUpCommand(
 	drawingView: DrawingView<Drawing<Component>>,
 	componentIds: Collection<Int>
 ) : StackingOrderCommand("edit.action.stackingOrder.oneUp.name", drawingView, componentIds), Undoable {
@@ -126,7 +126,7 @@ internal class OneUpCommand(
  * Brings a [Collection] of [Component]s one level down in the stacking order
  * while maintaining their relative orders.
  */
-internal class OneDownCommand(
+class OneDownCommand(
 	drawingView: DrawingView<Drawing<Component>>,
 	componentIds: Collection<Int>
 ) : StackingOrderCommand("edit.action.stackingOrder.oneDown.name", drawingView, componentIds), Undoable {
@@ -156,7 +156,7 @@ internal class OneDownCommand(
 /**
  * Brings a [Collection] of [Component]s to the back of the stacking order.
  */
-internal class ToBackCommand(
+class ToBackCommand(
 	drawingView: DrawingView<Drawing<Component>>,
 	componentIds: Collection<Int>
 ) : StackingOrderCommand("edit.action.stackingOrder.toBack.name", drawingView, componentIds), Undoable {

@@ -2,10 +2,10 @@ package ch.scorpion.jabbah.graph.view.graph
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Movable
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.PasteInfo
 import ch.scorpion.jabbah.graph.GraphStorable
@@ -101,7 +101,7 @@ class GraphViewCopyPasteService(
 							pastedAnchorComponent = cv
 						}
 					}
-					Locatable.moveLocatables(components, dislocation)
+					Movable.moveBy(components, dislocation)
 					components.forEach { c -> view.drawing.add(c) }
 
 					if (pastedAnchorComponent != null) {
