@@ -4,7 +4,7 @@
       <model>
         <graph _id='2'>
           <elements>
-            <circuitInOut _id='3' id='2' delay='0' name='C' type='input' bitWidth='1'/>
+            <circuitInOut _id='3' id='2' name='C' type='input' bitWidth='1'/>
             <digitalNet _id='4' id='3' delay='0'>
               <ports>
                 <netPortRef verticeId='3' portId='1'/>
@@ -39,7 +39,7 @@
                 <netPortRef verticeId='25' portId='2'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='10' id='10' delay='0' name='O0' type='output' bitWidth='1'/>
+            <circuitInOut _id='10' id='10' name='O0' type='output' bitWidth='1'/>
             <andGate _id='11' id='12' delay='20' inputCount='2'/>
             <digitalNet _id='12' id='13' delay='0'>
               <ports>
@@ -76,9 +76,9 @@
                 <netPortRef verticeId='25' portId='5'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='18' id='20' delay='0' name='O1' type='output' bitWidth='1'/>
-            <circuitInOut _id='19' id='21' delay='0' name='O2' type='output' bitWidth='1'/>
-            <circuitInOut _id='20' id='22' delay='0' name='O3' type='output' bitWidth='1'/>
+            <circuitInOut _id='18' id='20' name='O1' type='output' bitWidth='1'/>
+            <circuitInOut _id='19' id='21' name='O2' type='output' bitWidth='1'/>
+            <circuitInOut _id='20' id='22' name='O3' type='output' bitWidth='1'/>
             <digitalNet _id='21' id='23' delay='0'>
               <ports>
                 <netPortRef verticeId='20' portId='1'/>
@@ -89,7 +89,7 @@
             <subGraphVerticeRef _id='23' id='25' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
             <subGraphVerticeRef _id='24' id='26' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
             <subGraphVerticeRef _id='25' id='27' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
-            <circuitInOut _id='26' id='28' delay='0' name='CLR' type='input' bitWidth='1'/>
+            <circuitInOut _id='26' id='28' name='CLR' type='input' bitWidth='1'/>
             <digitalNet _id='27' id='29' delay='0'>
               <ports>
                 <netPortRef verticeId='26' portId='1'/>
@@ -105,17 +105,17 @@
       <view>
         <graphView _id='28'>
           <netViews>
-            <netView _id='100' modelId='4' style='line'/>
-            <netView _id='101' modelId='6' style='line'/>
-            <netView _id='102' modelId='8' style='line'/>
-            <netView _id='103' modelId='9' style='line'/>
-            <netView _id='104' modelId='12' style='line'/>
-            <netView _id='105' modelId='13' style='line'/>
-            <netView _id='106' modelId='15' style='line'/>
-            <netView _id='107' modelId='16' style='line'/>
-            <netView _id='108' modelId='17' style='line'/>
-            <netView _id='109' modelId='21' style='line'/>
-            <netView _id='110' modelId='27' style='line'/>
+            <netView _id='101' modelId='4' style='line'/>
+            <netView _id='102' modelId='6' style='line'/>
+            <netView _id='103' modelId='8' style='line'/>
+            <netView _id='104' modelId='9' style='line'/>
+            <netView _id='105' modelId='12' style='line'/>
+            <netView _id='106' modelId='13' style='line'/>
+            <netView _id='107' modelId='15' style='line'/>
+            <netView _id='108' modelId='16' style='line'/>
+            <netView _id='109' modelId='17' style='line'/>
+            <netView _id='110' modelId='21' style='line'/>
+            <netView _id='111' modelId='27' style='line'/>
           </netViews>
           <components>
             <circuitInOutView _id='98' id='2' modelId='3' representation='binary' orientation='east'>
@@ -128,7 +128,7 @@
                 <polylineShape points='-364.0,-56.0 -322.0,-56.0'/>
               </shape>
             </digitalEdgeView>
-            <constantView _id='96' id='4' modelId='5' x='-301.0' y='-112.0' representation='binary' orientation='south'/>
+            <constantView _id='96' id='4' modelId='5' x='-301.0' y='-112.0' representation='binary'/>
             <digitalEdgeView _id='95' id='5' modelId='6' layout='ortho' orig='96' origPort='1' origPortOutput='true' dest='93' adjusted='false'>
               <shape>
                 <polylineShape points='-301.0,-126.0 -301.0,-84.0'/>
@@ -442,57 +442,67 @@
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='111'>
+    <containerDrawing _id='112'>
       <components>
-        <rectangle _id='127' id='1' style='figure' x='140.0' y='140.0' w='70.0' h='140.0'/>
-        <originIndicator _id='126'>
+        <rectangle _id='128' id='1' style='figure' x='140.0' y='140.0' w='70.0' h='140.0'/>
+        <originIndicator _id='127'>
           <location>
             <point x='126.0' y='210.0'/>
           </location>
         </originIndicator>
-        <digitalPortViewComp _id='124' id='2' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='125' id='2' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='125' x='140.0' y='210.0' dir='west' textPos='internal' portId='129'/>
+            <digitalPortView _id='126' x='140.0' y='210.0' dir='west' textPos='internal' portId='130'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='122' id='3' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='123' id='3' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='123' x='210.0' y='182.0' dir='east' textPos='internal' portId='130'/>
+            <digitalPortView _id='124' x='210.0' y='182.0' dir='east' textPos='internal' portId='131'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='120' id='4' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='121' id='4' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='121' x='210.0' y='210.0' dir='east' textPos='internal' portId='131'/>
+            <digitalPortView _id='122' x='210.0' y='210.0' dir='east' textPos='internal' portId='132'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='118' id='5' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='119' id='5' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='119' x='210.0' y='238.0' dir='east' textPos='internal' portId='132'/>
+            <digitalPortView _id='120' x='210.0' y='238.0' dir='east' textPos='internal' portId='133'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='116' id='6' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='117' id='6' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='117' x='210.0' y='266.0' dir='east' textPos='internal' portId='133'/>
+            <digitalPortView _id='118' x='210.0' y='266.0' dir='east' textPos='internal' portId='134'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='115' text='BCD'>
+        <label _id='116'>
+          <text>
+            <translation lang='de' text='BCD'/>
+          </text>
           <location>
             <point x='175.78955078125' y='154.267578125'/>
           </location>
         </label>
-        <label _id='114' text='CTR 8'>
+        <label _id='115'>
+          <text>
+            <translation lang='de' text='CTR 8'/>
+          </text>
           <location>
             <point x='175.3369140625' y='168.0'/>
           </location>
         </label>
-        <digitalPortViewComp _id='112' id='7' style='figure' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='113' id='7' style='figure' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='113' x='175.0' y='280.0' dir='south' textPos='internal' portId='134'/>
+            <digitalPortView _id='114' x='175.0' y='280.0' dir='south' textPos='internal' portId='135'/>
           </portView>
         </digitalPortViewComp>
       </components>
       <model>
-        <subGraphVertice _id='128' id='0' delay='0' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'>
+        <subGraphVertice _id='129' id='0' delay='0' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4'>
+          <desc>
+            <translation lang='en' text='Counts from 0 to 9 and starts over with 0'/>
+            <translation lang='de' text=' Zählt von 0 bis 9 und fängt dann wieder bei 0 an'/>
+          </desc>
           <name>
             <translation lang='en' text='Sync. BCD Counter 4 Bit'/>
             <translation lang='de' text='Synch. BCD-Zähler 4-Bit'/>
@@ -502,12 +512,12 @@
             <translation lang='de' text=' Zählt von 0 bis 9 und fängt dann wieder bei 0 an'/>
           </desc>
           <ports>
-            <subCircuitPort _id='129' portId='1' name='C' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='130' portId='2' name='O0' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='131' portId='3' name='O1' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='132' portId='4' name='O2' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='133' portId='5' name='O3' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='134' portId='6' name='CLR' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='130' portId='1' name='C' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='131' portId='2' name='O0' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='132' portId='3' name='O1' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='133' portId='4' name='O2' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='134' portId='5' name='O3' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='135' portId='6' name='CLR' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
           </ports>
         </subGraphVertice>
       </model>
