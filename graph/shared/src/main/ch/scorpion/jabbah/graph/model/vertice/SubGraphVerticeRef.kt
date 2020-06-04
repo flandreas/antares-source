@@ -37,7 +37,7 @@ class SubGraphVerticeRef(
 		val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
 			override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.isInput && !vertice.isDeepExecution(signalHandler)) {
-					vertice.scriptGateway.runVerticeExecutionScript(vertice.graphUUID!!, vertice, data, signalHandler)
+					vertice.scriptGateway.runVerticeExecutionScript(vertice.graphUUID!!, data, vertice.execParams)
 				}
 			}
 		}
@@ -67,6 +67,8 @@ class SubGraphVerticeRef(
 	private var _designError: DesignError? = null
 
 	private val hasDesignError: Boolean get() = designError != null
+
+	private lateinit var execParams: Any
 
 	override val designError: DesignError? get() = _designError
 
@@ -141,7 +143,7 @@ class SubGraphVerticeRef(
 			} else {
 				// This will define the same script for all SubGraphVerticeRef instances of the same Graph
 				// which is unnecessary, but so be it for the moment
-				scriptGateway.defineVerticeExecutionScript(graphUUID!!, wrappedScript(this))
+				execParams = scriptGateway.defineVerticeExecutionScript(graphUUID!!, wrappedScript(this), this, signalHandler)
 
 				requestActingAfter(signalHandler, propagationDelay, GraphActorDataImpl(null, null, true))
 			}

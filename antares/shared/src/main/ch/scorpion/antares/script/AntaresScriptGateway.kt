@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.script.*
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -46,18 +47,17 @@ class AntaresScriptGateway(
 
 	private fun functionPrefix(uuid: UUID): String = "f_" + uuid.toString().replace('-', '_')
 
-	override fun defineVerticeExecutionScript(uuid: UUID, script: Script) {
+	override fun defineVerticeExecutionScript(uuid: UUID, script: Script, vertice: SubGraphVerticeRef, signalHandler: SignalHandler): Any {
 		engine.eval(script.copy(code = VERTICE_WRAPPER
 			.replaceFirst("\$UUID", functionPrefix(uuid))
 			.replaceFirst("\$BODY", script.code)
 		))
+		return CircuitElemModelBridge(vertice, signalHandler, null, store)
 	}
 
-	override fun runVerticeExecutionScript(uuid: UUID, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler) {
-		engine.invoke(
-			"${functionPrefix(uuid)}_execVertice",
-			null,
-			CircuitElemModelBridge(vertice, signalHandler, data, store))
+	override fun runVerticeExecutionScript(uuid: UUID, data: GraphActorData, params: Any) {
+		(params as CircuitElemModelBridge).data = data
+		engine.invoke("${functionPrefix(uuid)}_execVertice", null, params)
 	}
 
 	override fun exec(script: Script, view: DrawingView<GraphView>): Any? {

@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.graph.model.Vertice
 open class CircuitElemModelBridge(
 	private val vertice: Vertice,
 	private val signalHandler: SignalHandler?,
-	private val data: GraphActorData?,
+	var data: GraphActorData?,
 	@Suppress("unused") private val store: AntaresScriptGateway.Store?
 ) {
 
@@ -24,8 +24,8 @@ open class CircuitElemModelBridge(
 	@Suppress("unused")
 	fun portRaised(name: String): Boolean {
 		return data!!.changedPort != null
-			&& data.changedPort!!.name == name
-			&& data.getSignal<DigitalSignal>(vertice.getInput<DigitalSignal>(name).portId)!!.bitAt(0).isSet
+			&& data!!.changedPort!!.name == name
+			&& data!!.getSignal<DigitalSignal>(vertice.getInput<DigitalSignal>(name).portId)!!.bitAt(0).isSet
 	}
 
 	/** Returns the input signal at the first (or one and only) [InputPort] of this circuit element as a [String].*/

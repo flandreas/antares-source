@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
@@ -24,11 +24,11 @@ class GraphScriptGateway(private val engine: ScriptEngine) : ScriptGateway {
 		private const val VERTICE_WRAPPER = "function execVertice(vertice, data, signalHandler) {\$BODY}"
 	}
 
-	override fun defineVerticeExecutionScript(uuid: UUID, script: Script) {
+	override fun defineVerticeExecutionScript(uuid: UUID, script: Script, vertice: SubGraphVerticeRef, signalHandler: SignalHandler): Any {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun runVerticeExecutionScript(uuid: UUID, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler) {
+	override fun runVerticeExecutionScript(uuid: UUID, data: GraphActorData, params: Any) {
 		throw UnsupportedOperationException("not implemented")
 	}
 

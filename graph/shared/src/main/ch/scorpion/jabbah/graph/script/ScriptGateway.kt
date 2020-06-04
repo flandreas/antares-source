@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
@@ -18,9 +18,17 @@ import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestRunner
  */
 interface ScriptGateway {
 
-	fun defineVerticeExecutionScript(uuid: UUID, script: Script)
+	/**
+	 * Defines the script function to be used when executing a [SubGraphVerticeRef].
+	 * @return the object to be passed in in [runVerticeExecutionScript]
+	 */
+	fun defineVerticeExecutionScript(uuid: UUID, script: Script, vertice: SubGraphVerticeRef, signalHandler: SignalHandler): Any
 
-	fun runVerticeExecutionScript(uuid: UUID, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler)
+	/**
+	 * Runs the script function defined by [defineVerticeExecutionScript]
+	 * @param the parameters returned from [defineVerticeExecutionScript]
+	 */
+	fun runVerticeExecutionScript(uuid: UUID, data: GraphActorData, params: Any)
 
 	/**
 	 * Executes a javascript [script] based on the current state of a [DrawingView].
