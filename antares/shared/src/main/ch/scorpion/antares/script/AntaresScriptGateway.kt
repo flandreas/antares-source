@@ -3,6 +3,7 @@ package ch.scorpion.antares.script
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.script.dsl.*
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
@@ -13,7 +14,6 @@ import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.script.*
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
@@ -30,7 +30,7 @@ class AntaresScriptGateway(
 	companion object {
 		private const val GRAPH_WRAPPER = "function execGraph(circuit) {\$BODY}"
 		private const val VERTICE_VIEW_WRAPPER = "function execVerticeView(elem) {\$BODY}"
-		private const val VERTICE_WRAPPER = "function execVertice(elem, data, signalHandler, store) {\$BODY}"
+		private const val VERTICE_WRAPPER = "function \$UUID_execVertice(elem, data, signalHandler, store) {\$BODY}"
 		private const val USECASE_ACTION_WRAPPER = "function usecaseAction(circuit) {\$BODY}"
 		private const val USECASE_TEST_WRAPPER = "function usecaseTest(circuit) {\$BODY}"
 	}
@@ -44,6 +44,22 @@ class AntaresScriptGateway(
 
 	/** ---- [ScriptGateway] interface */
 
+	private fun functionPrefix(uuid: UUID): String = "f_" + uuid.toString().replace('-', '_')
+
+	override fun defineVerticeExecutionScript(uuid: UUID, script: Script) {
+		engine.eval(script.copy(code = VERTICE_WRAPPER
+			.replaceFirst("\$UUID", functionPrefix(uuid))
+			.replaceFirst("\$BODY", script.code)
+		))
+	}
+
+	override fun runVerticeExecutionScript(uuid: UUID, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler) {
+		engine.invoke(
+			"${functionPrefix(uuid)}_execVertice",
+			null,
+			CircuitElemModelBridge(vertice, signalHandler, data, store))
+	}
+
 	override fun exec(script: Script, view: DrawingView<GraphView>): Any? {
 		engine.eval(script.copy(code = GRAPH_WRAPPER.replaceFirst("\$BODY", script.code)))
 		return engine.invoke("execGraph", null, CircuitViewBridge(view, null))
@@ -52,11 +68,6 @@ class AntaresScriptGateway(
 	override fun exec(script: Script, verticeView: VerticeView<*>, drawContext: DrawContext) {
 		engine.eval(script.copy(code = VERTICE_VIEW_WRAPPER.replaceFirst("\$BODY", script.code)))
 		engine.invoke("execVerticeView", null, CircuitElementViewBridge(verticeView, null, drawContext))
-	}
-
-	override fun exec(script: Script, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler) {
-		engine.eval(script.copy(code = VERTICE_WRAPPER.replaceFirst("\$BODY", script.code)))
-		engine.invoke("execVertice", null, CircuitElemModelBridge(vertice, signalHandler, data, store))
 	}
 
 	override fun condition(script: Script, view: DrawingView<GraphView>): Boolean {

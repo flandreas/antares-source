@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.script
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -7,7 +8,6 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
@@ -17,6 +17,10 @@ import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestRunner
  *  A gateway to [Graph] related functionality implemented as javascripts.
  */
 interface ScriptGateway {
+
+	fun defineVerticeExecutionScript(uuid: UUID, script: Script)
+
+	fun runVerticeExecutionScript(uuid: UUID, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler)
 
 	/**
 	 * Executes a javascript [script] based on the current state of a [DrawingView].
@@ -30,9 +34,6 @@ interface ScriptGateway {
 	 * Executes a javascript [script] based on the current state of a [VerticeView].
 	 */
 	fun exec(script: Script, verticeView: VerticeView<*>, drawContext: DrawContext)
-
-	/** Executes a javascript [script] based on the the current state of a [Vertice].*/
-	fun exec(script: Script, vertice: Vertice, data: GraphActorData, signalHandler: SignalHandler)
 
 	/**
 	 * Evaluates a javascript condition based on the current state of a [DrawingView].

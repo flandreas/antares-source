@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.execution
 
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import kotlin.reflect.KClass
 
 /**
@@ -12,7 +13,7 @@ interface SignalHandler {
 
     /**
      * Determines whether the current execution environment performs deep execution of [Actor],
-     * i.e. whether exectution scripts of nested [Actor]s are ignored.
+     * i.e. whether execution scripts of nested [Actor]s are ignored.
      */
     var isDeepExecution: Boolean
 
@@ -30,7 +31,7 @@ interface SignalHandler {
      *
      * @param actor the [Actor] to be recalculated after `delay` ns
      * @param delay the delay in nanoseconds
-     * @param the [ActorData] to be returned in [Actor.act]
+     * @param data the [ActorData] to be returned in [Actor.act]
      */
     fun requestActingAfter(actor: Actor, delay: Long, data: ActorData)
 
@@ -38,7 +39,7 @@ interface SignalHandler {
      * Asks this [SignalHandler] to recalculate the specified [Actor] as soon as it will call
      * [actingDone], and to avoid to increase the relative execution time in the meantime.
      * @param actor the [Actor] to be recalculated
-     * @param the [ActorData] to be returned in [Actor.act]
+     * @param data the [ActorData] to be returned in [Actor.act]
      */
     fun requestActingTimeFreeze(actor: Actor, data: ActorData)
 
