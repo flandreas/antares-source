@@ -1,19 +1,22 @@
 package ch.scorpion.antares.script.dsl
 
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.script.AntaresScriptGateway
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphInput
 import ch.scorpion.jabbah.graph.model.GraphOutput
-import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.VerticeView
 
 open class CircuitViewBridge(
+	private val script: Script,
 	private val view: DrawingView<GraphView>,
-	private val signalHandler: SignalHandler?
+	private val signalHandler: SignalHandler?,
+	private val store: AntaresScriptGateway.Store
 ) {
 
 	companion object {
@@ -32,7 +35,7 @@ open class CircuitViewBridge(
 	/** Returns the circuit element with the specified ID.*/
 	@Suppress("unused")
 	fun elem(id: Int): CircuitElementViewBridge = CircuitElementViewBridge(
-		view.drawing.getWithId(id)!! as VerticeView, signalHandler)
+		script, view.drawing.getWithId(id)!! as VerticeView, signalHandler, store = store)
 
 	/** Returns the ID of the current [Scenario], or an empty [String] if none is active.*/
 	@Suppress("unused")

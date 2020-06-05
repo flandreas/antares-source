@@ -2,6 +2,8 @@ package ch.scorpion.antares.script.dsl
 
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.BitOperation
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.script.AntaresScriptGateway
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -9,12 +11,14 @@ import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.script.Script
 
 open class CircuitElemModelBridge(
+	val script: Script,
 	private val vertice: Vertice,
 	private val signalHandler: SignalHandler?,
 	var data: GraphActorData?,
-	@Suppress("unused") private val store: AntaresScriptGateway.Store?
+	private val store: AntaresScriptGateway.Store
 ) {
 
 	/** Returns the model ID of this circuit element.*/
@@ -116,6 +120,25 @@ open class CircuitElemModelBridge(
 	@Suppress("unused")
 	fun anyBitUndefined(word: Word): Boolean {
 		return word.word.containsUndefinedBit()
+	}
+
+	@Suppress("unused")
+	fun store(name: String, value: Word) {
+		store.put(vertice, name, value.word)
+	}
+
+	@Suppress("unused")
+	fun load(name: String): Word? = store.get(vertice, name)?.let { Word(it) }
+
+	/** Creates a new [Word] with the specified hexadecimal value.*/
+	@Suppress("unused")
+	fun hexWord(value: String, bitWidth: Int): Word {
+		return Word(ch.scorpion.antares.model.signal.Word.of(BitWidth.of(bitWidth), BitOperation.hexToLong(value)))
+	}
+
+	@Suppress("unused")
+	fun undefinedWord(bitWidth: Int): Word {
+		return Word(ch.scorpion.antares.model.signal.Word.undefined(BitWidth.of(bitWidth)))
 	}
 
 	private fun setOutput(port: OutputPort<DigitalSignal>, hexValue: String) {

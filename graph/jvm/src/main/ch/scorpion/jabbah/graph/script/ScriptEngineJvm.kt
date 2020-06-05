@@ -34,17 +34,17 @@ actual class ScriptEngine actual constructor(private val eventBus: EventBus) {
 		}
 	}
 
-	actual fun invoke(name: String, errorHandler: ScriptErrorHandler?, vararg args: Any): Any? {
+	actual fun invoke(name: String, script: Script?, errorHandler: ScriptErrorHandler?, vararg args: Any): Any? {
 		return try {
 			(engine as Invocable).invokeFunction(name, *args)
 		} catch (e: ScriptException) {
 			LOG.debug("ScriptException while invoking JS function: '${e.message}'")
-			postIssue(lastScript!!, e)
+			postIssue(script ?: lastScript!!, e)
 			null
 		} catch (e: Throwable) {
 			if (errorHandler != null && !errorHandler.errorHandled) {
 				LOG.error("Error while invoking JS function '$name': ${e.message}")
-				LOG.debug("Invoked '$name' for the following script\n: $lastScript")
+				LOG.debug("Invoked '$name' for the following script\n: ${script ?: lastScript}")
 				throw e
 			}
 			return null

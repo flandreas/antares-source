@@ -12,7 +12,7 @@ expect class ScriptEngine(eventBus: EventBus = BaseModule.eventBus) {
     fun eval(script: Script)
 
 	/** Invokes the function with the specified name and provides the given arguments.*/
-    fun invoke(name: String, errorHandler: ScriptErrorHandler? = null, vararg args: Any): Any?
+    fun invoke(name: String, script: Script?, errorHandler: ScriptErrorHandler? = null, vararg args: Any): Any?
 }
 
 interface ScriptErrorHandler {

@@ -52,22 +52,22 @@ class AntaresScriptGateway(
 			.replaceFirst("\$UUID", functionPrefix(uuid))
 			.replaceFirst("\$BODY", script.code)
 		))
-		return CircuitElemModelBridge(vertice, signalHandler, null, store)
+		return CircuitElemModelBridge(script, vertice, signalHandler, null, store)
 	}
 
 	override fun runVerticeExecutionScript(uuid: UUID, data: GraphActorData, params: Any) {
 		(params as CircuitElemModelBridge).data = data
-		engine.invoke("${functionPrefix(uuid)}_execVertice", null, params)
+		engine.invoke("${functionPrefix(uuid)}_execVertice", params.script,null, params)
 	}
 
 	override fun exec(script: Script, view: DrawingView<GraphView>): Any? {
 		engine.eval(script.copy(code = GRAPH_WRAPPER.replaceFirst("\$BODY", script.code)))
-		return engine.invoke("execGraph", null, CircuitViewBridge(view, null))
+		return engine.invoke("execGraph", script,  null, CircuitViewBridge(script, view, null, store))
 	}
 
 	override fun exec(script: Script, verticeView: VerticeView<*>, drawContext: DrawContext) {
 		engine.eval(script.copy(code = VERTICE_VIEW_WRAPPER.replaceFirst("\$BODY", script.code)))
-		engine.invoke("execVerticeView", null, CircuitElementViewBridge(verticeView, null, drawContext))
+		engine.invoke("execVerticeView", script, null, CircuitElementViewBridge(script, verticeView, null, drawContext, store))
 	}
 
 	override fun condition(script: Script, view: DrawingView<GraphView>): Boolean {
@@ -80,13 +80,13 @@ class AntaresScriptGateway(
 	override fun usecaseAction(script: Script, runner: UsecaseRunner, scheduler: Scheduler) {
 		engine.eval(script.copy(code = USECASE_ACTION_WRAPPER.replaceFirst("\$BODY", script.code)))
 		val usecaseBridge = UsecaseActionBridge(runner, scheduler)
-		engine.invoke("usecaseAction", usecaseBridge, usecaseBridge)
+		engine.invoke("usecaseAction", null, usecaseBridge, usecaseBridge)
 	}
 
 	override fun usecaseTest(script: Script, runner: UsecaseTestRunner) {
 		engine.eval(script.copy(code = USECASE_TEST_WRAPPER.replaceFirst("\$BODY", script.code)))
 		val usecaseTestBridge = UsecaseTestBridge(runner)
-		engine.invoke("usecaseTest", usecaseTestBridge, usecaseTestBridge)
+		engine.invoke("usecaseTest", null, usecaseTestBridge, usecaseTestBridge)
 	}
 
 	/** ---- [AntaresScriptGateway] */
@@ -94,17 +94,17 @@ class AntaresScriptGateway(
 	/**
 	 * Allows [Vertice]s to store [Word]s between separate script calls. The [Store] gets reset
 	 * whenever the execution is restarted.
-	 *
-	 * @param context the [Vertice] whose script is currently being executed
 	 */
-	class Store(var context: Vertice? = null) {
+	class Store() {
 
-		private val words = mutableMapOf<Vertice, Word>()
+		private val entries = mutableMapOf<Vertice, MutableMap<String, Word>>()
 
-		fun clear() = words.clear()
+		fun clear() = entries.clear()
 
-		fun put(word: Word) = words.put(context!!, word)
+		fun put(vertice: Vertice, name: String, value: Word) {
+			entries.getOrPut(vertice, { mutableMapOf() })[name] = value
+		}
 
-		fun get(): Word = words[context]!!
+		fun get(vertice: Vertice, name: String): Word? = entries[vertice]?.get(name)
 	}
 }
