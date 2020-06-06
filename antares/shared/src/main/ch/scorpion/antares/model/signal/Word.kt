@@ -271,4 +271,12 @@ data class Word(val bits: List<Bit>) : DigitalSignal {
 	fun ofWidth(bitWidth: BitWidth): Word {
 		return of(bitWidth, getValue())
 	}
+
+	fun shiftLeft(bitCount: Int = 1): Word {
+		return of(bitWidth, getValue().shl(bitCount))
+	}
+
+	fun shiftRight(bitCount: Int = 1): Word {
+		return of(bitWidth, getValue().shr(bitCount))
+	}
 }

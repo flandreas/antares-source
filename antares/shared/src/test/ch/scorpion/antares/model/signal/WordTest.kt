@@ -144,4 +144,16 @@ class WordTest {
 		assertEquals(1, reducedWord.getValue())
 		assertEquals(BitWidth.BW_4, reducedWord.getBitWidth())
 	}
+
+	@Test
+	fun shouldShiftLeft() {
+		assertEquals(Word.of(BitWidth.BW_8, 16L), Word.of(BitWidth.BW_8, 8L).shiftLeft())
+		assertEquals(Word.of(BitWidth.BW_4, 0L), Word.of(BitWidth.BW_4, 8L).shiftLeft())
+	}
+
+	@Test
+	fun shouldSiftRight() {
+		assertEquals(Word.of(BitWidth.BW_8, 4L), Word.of(BitWidth.BW_8, 8L).shiftRight())
+		assertEquals(Word.of(BitWidth.BW_4, 0L), Word.of(BitWidth.BW_4, 1L).shiftRight())
+	}
 }

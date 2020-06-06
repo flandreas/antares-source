@@ -12,4 +12,8 @@ class Word(val word: ch.scorpion.antares.model.signal.Word) {
 	fun not(): Word = Word(word.not() as ch.scorpion.antares.model.signal.Word)
 
 	fun and(other: Word): Word = Word(this.word.and(other.word) as ch.scorpion.antares.model.signal.Word)
+
+	fun shiftLeft(bitCount: Int = 1): Word = Word(word.shiftLeft(bitCount))
+
+	fun shiftRight(bitCount: Int = 1): Word = Word(word.shiftRight(bitCount))
 }

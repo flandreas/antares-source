@@ -388,6 +388,25 @@ elem.setOutputWord(
 );
 ----
 
+`shiftLeft(<bitCount:Int>)`:: Returns a new `Word` whose bits are shifted the specified number of bits to the left.
++
+.Example
+[source,javascript]
+----
+var d = elem.inputWord("D");
+elem.setOutputWord("O", d.shiftLeft(1));
+----
+
+`shiftRight(<bitCount:Int>)`:: Returns a new `Word` whose bits are shifted the specified number of bits to the right.
++
+.Example
+[source,javascript]
+----
+var d = elem.inputWord("D");
+elem.setOutputWord("O", d.shiftRight(1));
+----
+
+
 == UsecaseActionBridge
 
 Used in use case action scripts. The statements below are accessible as functions of the object `circuit`.
