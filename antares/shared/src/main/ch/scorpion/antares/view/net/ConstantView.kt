@@ -140,11 +140,15 @@ class ConstantView(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeString("representation", signalRepresentation.customName)
+		writer.writeString("orientation", orientation.customName)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		signalRepresentation = DigitalSignalRepresentation.withName(reader.readString("representation"))
+		if (reader.hasAttribute("orientation")) {
+			orientation = Direction.withName(reader.readString("orientation"))
+		}
 	}
 
 	/** ---- [Component] */
