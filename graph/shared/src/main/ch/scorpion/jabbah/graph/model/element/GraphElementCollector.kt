@@ -68,6 +68,11 @@ class GraphElementCollector(
 		return builder.toString()
 	}
 
+	private fun getName(ref: SubGraphVerticeRef): String {
+		val name = "[${ref.name}]"
+		return ref.getGraphIfPresent()?.script?.let { "*$name" } ?: name
+	}
+
 	private data class Entry(private val name: String, private var count: Int = 0) : Comparable<Entry> {
 
 		fun increment() {
@@ -87,7 +92,7 @@ class GraphElementCollector(
 
 		override fun visitEnter(node: Any): Boolean {
 			if (node is SubGraphVerticeRef) {
-				countDeep("""[${node.name}]""")
+				countDeep(getName(node))
 			}
 			return true
 		}
@@ -104,7 +109,7 @@ class GraphElementCollector(
 
 		override fun visitEnter(node: Any): Boolean {
 			if (node is SubGraphVerticeRef) {
-				countFlat("""[${node.name}]""")
+				countFlat(getName(node))
 				if (node.getGraphIfPresent()!!.script != null) {
 					return false
 				}
