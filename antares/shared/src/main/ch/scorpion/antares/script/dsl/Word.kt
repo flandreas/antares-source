@@ -1,5 +1,7 @@
 package ch.scorpion.antares.script.dsl
 
+import ch.scorpion.antares.model.signal.BitWidth
+
 /** A DSL wrapper for [ch.scorpion.antares.model.signal.Word].*/
 class Word(val word: ch.scorpion.antares.model.signal.Word) {
 
@@ -16,4 +18,6 @@ class Word(val word: ch.scorpion.antares.model.signal.Word) {
 	fun shiftLeft(bitCount: Int = 1): Word = Word(word.shiftLeft(bitCount))
 
 	fun shiftRight(bitCount: Int = 1): Word = Word(word.shiftRight(bitCount))
+
+	fun subword(index: Int, width: Int): Word = Word(word.getSubword(BitWidth.of(width), index))
 }

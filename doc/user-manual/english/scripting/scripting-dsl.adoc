@@ -406,6 +406,15 @@ var d = elem.inputWord("D");
 elem.setOutputWord("O", d.shiftRight(1));
 ----
 
+`subword(<index:Int>, <width:Int)`:: Returns the subword of the specified bit width, starting at the specified index.
++
+.Example
+[source,javascript]
+----
+var d = elem.inputWord("D");
+// Sets "ADR" to bits 0..7 of "D"
+elem.setOutputWord("ADR", d.subword(0, 8));
+----
 
 == UsecaseActionBridge
 

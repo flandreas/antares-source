@@ -63,8 +63,8 @@
                 <translation lang='en' text='Data input'/>
               </desc>
               <desc>
-                <translation lang='de' text='Dateineingang: Übernimmt die 32-Bit-Daten,  die gespeichert werden sollen.'/>
-                <translation lang='en' text='Data input: Consumes the 32-bit data to be stored.'/>
+                <translation lang='de' text='Dateineingang'/>
+                <translation lang='en' text='Data input'/>
               </desc>
             </circuitInOut>
             <splitter _id='12' id='10' delay='0' bitWidth='32' branchCount='8' representation='binary'/>
@@ -128,8 +128,8 @@
                 <translation lang='en' text='Clock input'/>
               </desc>
               <desc>
-                <translation lang='de' text='Takteingang (Clock): Bei ansteigender Flanke werden die Daten an D gespeichert.'/>
-                <translation lang='en' text='Clock input: A rising edge stores the data available at D.'/>
+                <translation lang='de' text='Takteingang (Clock)'/>
+                <translation lang='en' text='Clock input'/>
               </desc>
             </circuitInOut>
             <digitalNet _id='23' id='21' delay='0'>
@@ -200,8 +200,8 @@
                 <translation lang='en' text='Data output'/>
               </desc>
               <desc>
-                <translation lang='de' text='Datenausgang: Gibt die gespeicherten 32-Bit-Daten aus.'/>
-                <translation lang='en' text='Data output: Outputs the stored 32-bit value.'/>
+                <translation lang='de' text='Datenausgang'/>
+                <translation lang='en' text='Data output'/>
               </desc>
             </circuitInOut>
             <digitalNet _id='34' id='32' delay='0'>
@@ -548,7 +548,7 @@
           </desc>
           <ports>
             <subCircuitPort _id='121' portId='1' name='D' logic='positive' bitWidth='32' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='122' portId='2' name='C' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='122' portId='2' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
             <subCircuitPort _id='123' portId='3' name='O' logic='positive' bitWidth='32' trigger='level' type='output' representation='binary'/>
           </ports>
         </subGraphVertice>
