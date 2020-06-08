@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.TranslatableTextPanel
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
-import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
 import javax.swing.*
@@ -160,10 +159,11 @@ class TranslatableTextPropertyEditor(
 	}
 
 	private fun showDialog() {
+		val currentText = TranslatableText(StringUtils.orEmpty(textComponent.text))
 		val newText = TranslatableTextPanel.showAsDialog(
 			parent = SwingUtilities.getWindowAncestor(textComponent),
 			title = propertyName,
-			text = text.withTranslation(textComponent.text),
+			text = currentText,
 			textFieldRows = if (multiline.invoke(text)) 8 else 1,
 			textFieldColumns = 40
 		)
