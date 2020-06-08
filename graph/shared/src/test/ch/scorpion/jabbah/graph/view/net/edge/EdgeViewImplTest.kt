@@ -143,6 +143,16 @@ class EdgeViewImplTest {
 	}
 
 	@Test
+	fun shouldCalculateSegmentDirectionWithoutSnap() {
+		val ev = edgeViewFactory.createEdgeView()
+		ev.addSegmentPoint(Point2D(-364.0, -308.0))
+		ev.addSegmentPoint(Point2D(-364.0, -294.0))
+		ev.addSegmentPoint(Point2D(-364.5, -294.0))
+
+		assertEquals(Direction.WEST, ev.getSegmentDirection(1))
+	}
+
+	@Test
 	fun shouldFindSegmentWithMinimalArea() {
 		val ev = edgeViewFactory.createEdgeView()
 		ev.addSegmentPoint(Point2D(150, 100))

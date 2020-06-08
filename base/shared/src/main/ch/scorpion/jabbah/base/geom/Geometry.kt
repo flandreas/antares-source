@@ -10,6 +10,17 @@ import kotlin.math.*
  */
 object Geometry {
 
+	/** Considers two values as being equal if their differnce is not larger than [SIGMA]. */
+	fun equal(a: Double, b: Double): Boolean = abs(a - b) <= SIGMA
+
+	/** Enhances [kotlin.math.sign] by considering a value as zero if its absolute value is not larger thatn [SIGMA].*/
+	fun sign(value: Double): Double {
+		if (abs(value) <= SIGMA) {
+			return 0.0
+		}
+		return kotlin.math.sign(value)
+	}
+
 	/** Wraps an angle in radians to the range 0 .. 2*PI.*/
 	fun wrapAngle(angle: Double): Double {
 		if (angle < 0) {
@@ -44,7 +55,7 @@ object Geometry {
             return 0.0
         }
 
-        if (abs(x2 - x1) <= SIGMA) {
+        if (equal(x1, x2)) {
 	        angle = if (fy == 1)
 		        PI_2
 	        else

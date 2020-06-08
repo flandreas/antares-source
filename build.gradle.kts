@@ -98,6 +98,7 @@ subprojects {
 			val jvmTest by getting {
 				kotlin.srcDir("jvm/src/test")
 				dependencies {
+					implementation(kotlin("test"))
 					implementation(kotlin("test-junit"))
 					implementation("io.mockk:mockk:$mockkVersion")
 				}

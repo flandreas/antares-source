@@ -95,4 +95,9 @@ class DirectionTest {
 	fun shouldAvoidRoundingIssues() {
 		assertEquals(Direction.EAST, Direction.of(Point2D(-224.0, -111.999999999), Point2D(10.0, -112.0)))
 	}
+
+	@Test
+	fun shouldAcceptFloats() {
+		assertEquals(Direction.WEST, Direction.of(Point2D(-364.0, -294.0), Point2D(-364.5, -294.0)))
+	}
 }

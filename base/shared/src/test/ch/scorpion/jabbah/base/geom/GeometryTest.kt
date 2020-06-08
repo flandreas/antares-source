@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.base.geom
 
 import ch.scorpion.jabbah.base.PI_2
 import ch.scorpion.jabbah.base.PI_4
+import ch.scorpion.jabbah.base.SIGMA
 import ch.scorpion.jabbah.base.TWO_PI
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.math.PI
@@ -13,6 +14,18 @@ class GeometryTest {
 	@BeforeTest
 	fun setup() {
 		BaseModule.require()
+	}
+
+	@Test
+	fun smallDifferenceShouldBeEqual() {
+		assertTrue(Geometry.equal(5.0, 5.0 + 0.5 * SIGMA))
+		assertTrue(Geometry.equal(0.0, 0.0))
+	}
+
+	@Test
+	fun largeDifferenceShouldNotBeEqual() {
+		assertFalse(Geometry.equal(5.0, 5.0 + 2 * SIGMA))
+		assertFalse(Geometry.equal(1.0, 2.0))
 	}
 
 	@Test
@@ -52,5 +65,13 @@ class GeometryTest {
 	fun shouldBeClockwiseAngleChange() {
 		assertTrue(Geometry.isClockwiseAngleChange(PI_2, 0.0))
 		assertTrue(Geometry.isClockwiseAngleChange(PI_2, 3 * TWO_PI))
+	}
+
+	@Test
+	fun shouldCalculateSign() {
+		assertEquals(0.0, Geometry.sign(0.0))
+		assertEquals(0.0, Geometry.sign(0.5 * SIGMA))
+		assertEquals(1.0, Geometry.sign(2.3))
+		assertEquals(-1.0, Geometry.sign(-5.0))
 	}
 }
