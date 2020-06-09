@@ -7,6 +7,11 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.style.EditTheme
+import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import com.l2fprod.common.swing.renderer.DefaultCellRenderer
 import java.awt.*
 import javax.swing.*
@@ -21,7 +26,8 @@ import javax.swing.text.JTextComponent
  */
 class MemoryDisplayPanel(
 	private val addressable: Addressable,
-	editable: Boolean
+	editable: Boolean,
+	private val scheduler: Scheduler = ExecutionModule.scheduler
 ) : JPanel() {
 
 	companion object {
@@ -82,7 +88,7 @@ class MemoryDisplayPanel(
 		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowHeaderTable.tableHeader)
 
 		table.columnModel.columns.asSequence().forEach {
-			val tableCellRenderer = DefaultTableCellRenderer()
+			val tableCellRenderer = MemoryCellRenderer()
 			tableCellRenderer.horizontalAlignment = memoryDisplayLayout.columnAlignment(it.modelIndex)
 			it.cellRenderer = tableCellRenderer
 
@@ -92,6 +98,24 @@ class MemoryDisplayPanel(
 		}
 
 		table.tableHeader.defaultRenderer = HeaderRenderer(table)
+	}
+
+	private inner class MemoryCellRenderer : DefaultTableCellRenderer() {
+
+		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
+			val component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
+
+			if (scheduler.isActive && memoryDisplayLayout.getCellAddress(row, column) == addressable.currentAddress) {
+				component.background = Graphics2DJvm.toAwtColor(Themes.get<EditTheme>().selection.color.foregroundColor)
+			} else {
+				if (isSelected) {
+					component.background = table!!.selectionBackground
+				} else {
+					component.background = table!!.background
+				}
+			}
+			return component
+		}
 	}
 
 	/** Establishes right-aligned column headers.*/

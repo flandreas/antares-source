@@ -166,7 +166,7 @@ class MemoryContentsPanel(
 	private inner class CloseAction : AbstractAction(Translations.getString("file.action.close.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
 			val changes = memoryDisplayPanel.changes
-			if (changes.size > 0) {
+			if (changes.isNotEmpty()) {
 				LOG.debug("User has changed ${changes.size} memory cells")
 				cmdManager.register(MemoryCellChangeCommand(application, addressable.id, changes))
 			}

@@ -31,7 +31,7 @@ class ROMViewBeanInfo : DigitalComponentBeanInfo<ROMView>() {
 		properties.add(text.bind(editor, bean.id, filter = { false }))
 		properties.add(showContents.bind(editor, bean.id))
 		if (bean.showContents) {
-			properties.add(contentsColumnsCount.bind(editor, bean.id))
+			properties.add(contentsRowCount.bind(editor, bean.id))
 			properties.add(contentsColumnsCount.bind(editor, bean.id))
 			properties.add(disassemblerConfig.bind(editor, bean.id))
 			properties.add(showDisassembler.bind(editor, bean.id))
