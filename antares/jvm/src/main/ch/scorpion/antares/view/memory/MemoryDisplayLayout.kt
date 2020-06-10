@@ -47,7 +47,10 @@ class FixedWidthLayout(
 	}
 
 	override fun getCellAddress(rowIndex: Int, columnIndex: Int): Int {
-		return rowIndex * cellsPerRow + columnIndex
+		return when (cellsPerRow) {
+			1 -> rowIndex
+			else -> rowIndex * cellsPerRow + columnIndex
+		}
 	}
 
 	override fun createTableModel(): TableModel {
