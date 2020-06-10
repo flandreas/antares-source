@@ -157,6 +157,10 @@ private class SingleColumnTableModel(
 	private val commentsColumnName = Translations.getString("antares.memory.layout.comment")
 	private val disassemblyColumnName = Translations.getString("antares.memory.layout.disassembly")
 
+	override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
+		return super.isCellEditable(rowIndex, columnIndex) && columnIndex == 0
+	}
+
 	override fun getColumnCount(): Int {
 		return if (showDisassembly) 3 else 2
 	}

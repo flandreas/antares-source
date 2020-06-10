@@ -93,7 +93,9 @@ class MemoryDisplayPanel(
 			it.cellRenderer = tableCellRenderer
 
 			val textField = JTextField()
+			textField.horizontalAlignment = SwingConstants.RIGHT
 			textField.inputVerifier = HexNumberInputVerifier(addressable.dataWidth)
+			textField.font = table.font
 			it.cellEditor = DefaultCellEditor(textField)
 		}
 
