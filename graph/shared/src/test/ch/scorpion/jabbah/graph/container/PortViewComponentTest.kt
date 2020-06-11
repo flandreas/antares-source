@@ -19,7 +19,7 @@ class PortViewComponentTest {
 	fun shouldClone() {
 		val component = PortViewComponent(portView = TestPortView(SubGraphPortImpl(PortType.OUTPUT, Boolean::class,"test")))
 
-		val clone = component.clone() as PortViewComponent<Boolean>
+		val clone = component.doClone() as PortViewComponent<Boolean>
 
 		assertEquals("test", clone.portView!!.port.name)
 	}

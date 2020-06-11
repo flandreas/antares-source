@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.view.port
 
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.port.SubGraphPortImpl
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import kotlin.test.Test
@@ -20,7 +19,7 @@ class AbstractPortViewTest {
 	fun shouldCloneIncludingModel() {
 		val portView = TestPortView<Boolean>(SubGraphPortImpl(PortType.OUTPUT, name = "test"))
 
-		val clone = portView.clone()
+		val clone = portView.doClone()
 
 		assertEquals("test", clone.port.name)
 	}

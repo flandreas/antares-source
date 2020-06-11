@@ -80,7 +80,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	/** ---- [Storable] interface */
 
-	override fun clone(): Component {
+	override fun doClone(): Component {
 		return StorableCloner.clone(VerticeViewStorable(this)).verticeView!!
 	}
 

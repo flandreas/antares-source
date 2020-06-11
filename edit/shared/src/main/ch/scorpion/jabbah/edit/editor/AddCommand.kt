@@ -17,7 +17,7 @@ class AddCommand(
 		private set
 
     override fun execute() {
-	    val clone = component.clone()
+	    val clone = component.doClone()
         drawingView.drawing.add(clone)
 	    addedComponentId = clone.id
     }

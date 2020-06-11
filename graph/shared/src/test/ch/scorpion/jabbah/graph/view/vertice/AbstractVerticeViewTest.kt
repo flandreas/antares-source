@@ -17,7 +17,7 @@ class AbstractVerticeViewTest {
 	fun shouldCloneIncludingModel() {
 		val vv = TestVerticeView("test")
 
-		val clone = vv.clone() as TestVerticeView
+		val clone = vv.doClone() as TestVerticeView
 
 		assertEquals("test", clone.model.name)
 	}

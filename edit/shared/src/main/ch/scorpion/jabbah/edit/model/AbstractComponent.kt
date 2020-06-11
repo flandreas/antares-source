@@ -24,7 +24,7 @@ abstract class AbstractComponent(
 
 	/** ---- [Cloneable] interface */
 
-	override fun clone(): Component = StorableCloner.clone(this)
+	override fun doClone(): Component = StorableCloner.clone(this)
 
 	/** ---- [Component] interface */
 

@@ -11,6 +11,9 @@ import ch.scorpion.jabbah.io.Storable
  */
 interface Cloneable<T: Any> {
 
-	/** Creates a clone of this object. */
-	fun clone(): T
+	/**
+	 * Creates a clone of this object.
+	 * Intentionally not named `clone` because it seems that ProGuard obfuscator would then confuse it with java.lang.Object.clone().
+	 */
+	fun doClone(): T
 }

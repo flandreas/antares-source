@@ -57,8 +57,8 @@ open class PortViewComponent<T : Any>(
 
 	/** ---- [Cloneable] */
 
-	override fun clone(): Component {
-		return GraphViewModule.portViewFactory.createPortViewComponent(portView!!.clone())
+	override fun doClone(): Component {
+		return GraphViewModule.portViewFactory.createPortViewComponent(portView!!.doClone())
 	}
 
 	/** ---- [Component] */

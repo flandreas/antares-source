@@ -127,7 +127,7 @@ abstract class AbstractPortView<T : Any>(
 
 	/** ---- [Cloneable] */
 
-	override fun clone(): PortView<T> {
+	override fun doClone(): PortView<T> {
 		return StorableCloner.clone(PortViewStorable(this)).portView!!
 	}
 
