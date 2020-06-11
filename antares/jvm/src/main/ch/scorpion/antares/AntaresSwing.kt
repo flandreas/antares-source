@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.invocation.ErrorHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
@@ -95,7 +96,7 @@ class AntaresSwing(
 			FileInputStream(filePath.toString()).use {
 				val settings = java.util.Properties()
 				settings.load(it)
-				Locale.setDefault(Locale(settings.getProperty(Language.PROP_LANGUAGE)))
+				settings.getProperty(Language.PROP_LANGUAGE)?.let { lang -> Locale.setDefault(Locale(lang)) }
 			}
 		}
 
