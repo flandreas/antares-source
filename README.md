@@ -52,3 +52,13 @@ Tag the release and push it to the remote repository:
 ## Deploying
  
 TODO
+
+## Support
+
+### Retracing stack traces
+
+Stacktraces from Antares log files contain obfuscated identifiers. Use ProGuard's `retrace.sh
+` and the mapping file (collected after build) to translate a stack trace (which has been stored
+ in a text file) into readable form.
+ 
+`retrace.sh antares-0.2.0-proguard.map stacktrace.txt`

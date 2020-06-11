@@ -53,6 +53,11 @@ tasks {
 			mutableListOf(kotlin.jvm().compilations.getByName("main").compileDependencyFiles as Configuration)
 	}
 
+	val copySplash by register<Copy>("copySplash") {
+		from(file("$projectDir/shared/rsc/img/splash.png"))
+		into(file("$buildDir/libs"))
+	}
+
 	val obfuscate by creating(proguard.gradle.ProGuardTask::class) {
 		dependsOn(shadowCreate)
 
@@ -66,8 +71,9 @@ tasks {
 
 		val gradleUserHome = project.gradle.gradleUserHomeDir
 
-		libraryjars("$gradleUserHome/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.61/4702105e97f7396ae41b113fdbdc180ec1eb1e36/kotlin-stdlib-1.3.61.jar")
-		libraryjars("$gradleUserHome/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-reflect/1.3.61/2e07c9a84c9e118efb70eede7e579fd663932122/kotlin-reflect-1.3.61.jar")
+		// TODO This is a hack! Make this independent of gradle cache.
+		libraryjars("$gradleUserHome/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.3.72/8032138f12c0180bc4e51fe139d4c52b46db6109/kotlin-stdlib-1.3.72.jar")
+		libraryjars("$gradleUserHome/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-reflect/1.3.72/86613e1a669a701b0c660bfd2af4f82a7ae11fca/kotlin-reflect-1.3.72.jar")
 		libraryjars("$gradleUserHome/caches/modules-2/files-2.1/log4j/log4j/1.2.17/5af35056b4d257e4b64b9e8069c0746e8b08629f/log4j-1.2.17.jar")
 		libraryjars("$gradleUserHome/caches/modules-2/files-2.1/org.slf4j/slf4j-log4j12/1.7.21/7238b064d1aba20da2ac03217d700d91e02460fa/slf4j-log4j12-1.7.21.jar")
 		libraryjars("$gradleUserHome/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.21/139535a69a4239db087de9bab0bee568bf8e0b70/slf4j-api-1.7.21.jar")
@@ -108,6 +114,7 @@ tasks {
 
 	val distributeMac by creating(Exec::class) {
 		dependsOn(obfuscate)
+		dependsOn(copySplash)
 
 		val version = file("shared/rsc/version.txt").readText().trim()
 
@@ -121,6 +128,7 @@ tasks {
 			"--main-jar", "antares-${version_project}-obfuscated.jar",
 			"--app-version", "$version",
 			"--icon", "jvm/rsc/antares.icns",
+			"--java-options", "-splash:\$APPDIR/splash.png",
 			"--type", "pkg"
 		)
 	}
@@ -140,6 +148,7 @@ tasks {
 			"--main-jar", "antares-${version_project}-obfuscated.jar",
 			"--app-version", "$version",
 			"--icon", "jvm\\rsc\\antares.ico",
+			"--java-options", "-splash:\$APPDIR\\splash.png",
 			"--type", "msi",
 			"--win-shortcut"
 		)
