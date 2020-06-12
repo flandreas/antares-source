@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.model.text.description
 
 import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -28,7 +29,7 @@ data class NamableImpl(override val name: Name) : Namable {
 class Name(
 	text: TranslatableText = TranslatableText(),
 	private val eventBus: EventBus? = null
-) {
+) : Bean {
 
 	constructor(value: String = "", eventBus: EventBus? = null): this(TranslatableText(value), eventBus)
 

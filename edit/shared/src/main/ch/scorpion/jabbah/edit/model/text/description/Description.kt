@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.model.text.description
 
 import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.io.StoreReader
@@ -28,7 +29,7 @@ data class DescribableImpl(override val description: Description = Description()
 class Description(
 	translatableText: TranslatableText = TranslatableText(),
 	var changeHandler: ((Description, TranslatableText) -> Unit)? = null
-) {
+) : Bean {
 
 	constructor(
 		translatableText: TranslatableText = TranslatableText(),
