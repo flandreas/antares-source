@@ -135,6 +135,7 @@ tasks {
 
 	val distributeWindows by creating(Exec::class) {
 		dependsOn(obfuscate)
+		dependsOn(copySplash)
 
 		val version = file("shared/rsc/version.txt").readText().trim()
 
@@ -148,7 +149,7 @@ tasks {
 			"--main-jar", "antares-${version_project}.jar",
 			"--app-version", "$version",
 			"--icon", "jvm\\rsc\\antares.ico",
-			"--java-options", "-splash:\$APPDIR\\splash.png",
+			"--java-options", "-splash:\$APPDIR/splash.png",
 			"--type", "msi",
 			"--win-shortcut"
 		)
