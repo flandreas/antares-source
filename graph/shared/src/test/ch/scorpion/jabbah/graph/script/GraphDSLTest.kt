@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.script
 
+import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -34,6 +35,7 @@ class GraphDSLTest {
 	init {
 		ScriptModule.resetScriptGateway()
 		gateway = ScriptModule.scriptGateway
+		Translations.language = Language.German
 		Translations.withAnyKey()
 		graphView = TestGraphView()
 		every { view.drawing } returns graphView.graphView

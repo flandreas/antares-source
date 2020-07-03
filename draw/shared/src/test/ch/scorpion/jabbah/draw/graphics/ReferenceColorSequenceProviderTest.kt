@@ -60,7 +60,7 @@ class ReferenceColorSequenceProviderTest {
 	fun shouldNotifyReplacement() {
 		ReferenceColorSequenceProvider.replaceColors(listOf(WHITE, RED, YELLOW))
 
-		val eventBus = mockk<EventBus>()
+		val eventBus = mockk<EventBus>(relaxed = true)
 		val slot = slot<ReferenceColorEvent>()
 		every { eventBus.post(capture(slot)) } answers { Unit }
 		BaseModule.eventBus = eventBus
