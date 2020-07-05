@@ -55,14 +55,14 @@ tasks {
 
 	val copySplash by register<Copy>("copySplash") {
 		from(file("$projectDir/shared/rsc/img/splash.png"))
-		into(file("$buildDir/distributions"))
+		into(file("$buildDir/package"))
 	}
 
 	val obfuscate by creating(proguard.gradle.ProGuardTask::class) {
 		dependsOn(shadowCreate)
 
 		injars("$buildDir/libs/antares-${version_project}-all.jar")
-		outjars("$buildDir/distributions/antares-${version_project}.jar")
+		outjars("$buildDir/package/antares-${version_project}.jar")
 
 		libraryjars("$javaHome/jmods")
 
@@ -123,7 +123,7 @@ tasks {
 		commandLine(
 			"${macOS_jpackage_home}/bin/jpackage",
 			"--name", "Antares",
-			"--input", "${buildDir}/distributions",
+			"--input", "${buildDir}/package",
 			"--dest", "${buildDir}/distributions",
 			"--main-jar", "antares-${version_project}.jar",
 			"--app-version", "$version",
@@ -144,7 +144,7 @@ tasks {
 		commandLine(
 			"${win_jpackage_home}\\bin\\jpackage",
 			"--name", "Antares",
-			"--input", "${buildDir}\\distributions",
+			"--input", "${buildDir}\\package",
 			"--dest", "${buildDir}\\distributions",
 			"--main-jar", "antares-${version_project}.jar",
 			"--app-version", "$version",
