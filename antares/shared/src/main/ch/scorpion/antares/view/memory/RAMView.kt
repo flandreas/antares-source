@@ -258,7 +258,7 @@ class RAMView(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		label.text = if (text == null) buildLabelText() else text!!
-		if (model.getChipSelectInput().getIncomingSignal() == Word.of(true)) {
+		if (model.isSelected) {
 			if (ExecutionModule.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe) {
 				contentsView.handleCurrentAddressChanged()
 			}

@@ -31,7 +31,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
         }
 
         if (data.changedPort === ram.getChipSelectInput()) {
-            if (ram.getChipSelectInput().getIncomingSignal() != Word.of(true)) {
+	        if (!ram.isSelected) {
                 undefinedOutput(ram, signalHandler)
                 return
             }

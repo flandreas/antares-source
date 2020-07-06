@@ -41,7 +41,7 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 
 		class Calculator : VerticeCalculator<ROM> {
 			override fun calculate(vertice: ROM, data: GraphActorData, signalHandler: SignalHandler) {
-				if (vertice.getChipSelectInput().getIncomingSignal() == Word.of(true)) {
+				if (vertice.isSelected) {
 					val address = vertice.getAddressInput().getIncomingSignal()
 					val addressInt = address!!.toInt()
 					if (addressInt == null) {
@@ -96,6 +96,8 @@ class ROM : CalculatingVertice(CALCULATOR), Addressable {
 	override val memory = Memory()
 
 	override val editableWhileEditingAction: Boolean get() = true
+
+	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == Word.of(true)
 
 	override val currentAddress: Int get() = currentSelectedAddress
 

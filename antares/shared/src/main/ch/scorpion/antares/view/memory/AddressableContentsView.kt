@@ -203,7 +203,7 @@ class AddressableContentsView(
 		x += addressColumnWidth + COL_DIST
 		(address until address + effectiveColumnCount).forEach { cellAddress ->
 			val isCurrent = cellAddress == addressable.currentAddress && context.castedAppContext<GraphApplicationContext>()!!.isExecute
-			if (isCurrent) {
+			if (isCurrent && addressable.isSelected) {
 				context.g.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).foregroundColor
 				context.g.fillRect(
 					x - COL_DIST / 2 - 0.5,

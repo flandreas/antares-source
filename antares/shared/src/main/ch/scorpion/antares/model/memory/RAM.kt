@@ -87,6 +87,8 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 
 	override val editableWhileEditingAction: Boolean get() = false
 
+	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == Word.of(true)
+
 	override val currentAddress: Int get() = currentSelectedAddress
 
 	override val maxAddress: Int get() = getAddressInput().bitWidth.power().toInt() - 1

@@ -33,6 +33,9 @@ interface Addressable : Vertice {
 
 	val editableWhileEditingAction: Boolean
 
+	/** Typically corresponds with the value of a "chip select (CS)" input.*/
+	val isSelected: Boolean
+
 	/** Clears all content in this [Addressable].*/
 	fun clear()
 

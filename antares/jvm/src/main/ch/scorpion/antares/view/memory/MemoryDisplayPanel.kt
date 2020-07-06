@@ -107,7 +107,7 @@ class MemoryDisplayPanel(
 		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
 			val component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
 
-			if (scheduler.isActive && memoryDisplayLayout.getCellAddress(row, column) == addressable.currentAddress) {
+			if (scheduler.isActive && addressable.isSelected && memoryDisplayLayout.getCellAddress(row, column) == addressable.currentAddress) {
 				component.background = Graphics2DJvm.toAwtColor(Themes.get<EditTheme>().selection.color.foregroundColor)
 			} else {
 				if (isSelected) {
