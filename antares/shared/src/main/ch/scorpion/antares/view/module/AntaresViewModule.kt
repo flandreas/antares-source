@@ -14,8 +14,8 @@ import ch.scorpion.antares.view.container.DigitalPortViewComponent
 import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.input.*
-import ch.scorpion.antares.view.memory.RAMView
-import ch.scorpion.antares.view.memory.ROMView
+import ch.scorpion.antares.view.addressable.RAMView
+import ch.scorpion.antares.view.addressable.ROMView
 import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeViewFactory
 import ch.scorpion.antares.view.output.*

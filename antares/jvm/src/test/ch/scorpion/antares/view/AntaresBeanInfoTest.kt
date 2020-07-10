@@ -9,10 +9,10 @@ import ch.scorpion.antares.view.gate.*
 import ch.scorpion.antares.view.inout.CircuitInOutView
 import ch.scorpion.antares.view.inout.CircuitInOutViewBeanInfo
 import ch.scorpion.antares.view.input.*
-import ch.scorpion.antares.view.memory.RAMView
-import ch.scorpion.antares.view.memory.RAMViewBeanInfo
-import ch.scorpion.antares.view.memory.ROMView
-import ch.scorpion.antares.view.memory.ROMViewBeanInfo
+import ch.scorpion.antares.view.addressable.RAMView
+import ch.scorpion.antares.view.addressable.RAMViewBeanInfo
+import ch.scorpion.antares.view.addressable.ROMView
+import ch.scorpion.antares.view.addressable.ROMViewBeanInfo
 import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.output.*
 import ch.scorpion.antares.view.port.DigitalPortView

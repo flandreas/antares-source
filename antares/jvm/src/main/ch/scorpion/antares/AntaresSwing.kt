@@ -5,9 +5,9 @@ import ch.scorpion.antares.view.DefaultLightColorEvent
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.app.DigitalGraphViewService
-import ch.scorpion.antares.view.memory.MemoryContentGraphDesktopItem
-import ch.scorpion.antares.view.memory.MemoryContentsPanel
-import ch.scorpion.antares.view.memory.OpenMemoryContentsRequest
+import ch.scorpion.antares.view.addressable.AddressableContentGraphDesktopItem
+import ch.scorpion.antares.view.addressable.AddressableContentsPanel
+import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.UUID
@@ -137,7 +137,7 @@ class AntaresSwing(
 		eventBus.register(OpenMemoryContentsRequest::class) { request ->
 			if (request.newDesktopView) {
 				(mainFrame as GraphFrameSwing).graphPanel.desktopController.openVerticeView(request.verticeView) {
-					MemoryContentGraphDesktopItem(
+					AddressableContentGraphDesktopItem(
 						application = this,
 						addressable = request.addressable,
 						title = request.name,
@@ -146,7 +146,7 @@ class AntaresSwing(
 						contextColor = it)
 				}
 			} else {
-				MemoryContentsPanel.showAsDialog(
+				AddressableContentsPanel.showAsDialog(
 					parent = mainFrame,
 					application = this,
 					name = request.name,

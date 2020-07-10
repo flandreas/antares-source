@@ -5,8 +5,8 @@ import ch.scorpion.antares.model.arithmetic.Random
 import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
 import ch.scorpion.antares.model.input.*
-import ch.scorpion.antares.model.memory.RAM
-import ch.scorpion.antares.model.memory.ROM
+import ch.scorpion.antares.model.addressable.RAM
+import ch.scorpion.antares.model.addressable.ROM
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.LED
 import ch.scorpion.antares.model.output.LEDMatrix
