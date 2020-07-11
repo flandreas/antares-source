@@ -22,7 +22,7 @@ object Look {
 	const val GRID: Int = 1 * SCALE
 
 	val UI_FONT = FontImpl(FontFamily.DIALOG, FontStyle.PLAIN.value, 11)
-	val INT_PIN_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.8 * SCALE).toInt())
+	val INT_PIN_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.6 * SCALE).toInt())
 	val EXT_PIN_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.5 * SCALE).toInt())
 	val ANNOTATION_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, (1.4 * SCALE).toInt())
 	val ADDRESSABLE_CONTENTS_FONT = FontImpl(FontFamily.MONOSPACED, FontStyle.PLAIN.value, (1.8 * SCALE).toInt())
