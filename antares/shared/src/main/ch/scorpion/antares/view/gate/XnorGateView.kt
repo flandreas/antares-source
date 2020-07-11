@@ -16,26 +16,26 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
  * A view of a [XnorGate].
  */
 class XnorGateView(
-        styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-        currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
-        xnorGate: XnorGate = XnorGate()
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+	xnorGate: XnorGate = XnorGate()
 ) : AbstractOrLikeGateView<XnorGate>(styleProvider, currentSymbolStyle, "=1", xnorGate) {
 
-    companion object {
-        private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
-                TruthTableView(XnorGate.TRUTH_TABLE, null), Point2D.ZERO)
-    }
+	companion object {
+		private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
+			TruthTableView(XnorGate.TRUTH_TABLE, null), Point2D.ZERO)
+	}
 
-    override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
-        return if (model.inputCount == 2) {
-            EXPLANATION.explanation.vertice = model
-            EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
-            EXPLANATION
-        } else null
-    }
+	override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
+		return if (model.inputCount == 2) {
+			EXPLANATION.explanation.vertice = model
+			EXPLANATION.location = Point2D(boundingBox.centerX, boundingBox.minY)
+			EXPLANATION
+		} else null
+	}
 
-    override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-        currentSymbolStyle.symbolStyle.drawXnorGate(this, context, foregroundColor, backgroundColor, stroke)
-        GateMnemonic.drawXnor(this, context, foregroundColor, backgroundColor)
-    }
+	override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		currentSymbolStyle.symbolStyle.drawXnorGate(this, context, foregroundColor, backgroundColor, stroke)
+		GateMnemonic.drawXnor(this, context, foregroundColor, backgroundColor, -currentSymbolStyle.symbolStyle.orShapeConnectedPortViewLength)
+	}
 }

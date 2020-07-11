@@ -2,18 +2,19 @@ package ch.scorpion.antares.view.symbolstyle
 
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.gate.BoxGateView
+import ch.scorpion.antares.view.gate.AbstractOrLikeGateView
+import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.base.geom.Path
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.geom.Path
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
-import kotlin.math.abs
 
 /**
  * [SymbolStyle] represents international standards for drawing digital gates.
@@ -22,6 +23,9 @@ import kotlin.math.abs
 enum class SymbolStyle(val customName: String) {
 
 	EUROPEAN("IEC") {
+
+		override val orShapeConnectedPortViewLength: Int get() = 0
+
 		override fun drawAndGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
 		}
@@ -44,10 +48,6 @@ enum class SymbolStyle(val customName: String) {
 
 		override fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropean(gate, context, foregroundColor, backgroundColor, stroke)
-		}
-
-		override fun getOrShapeConnectedPortViewLength(gate: BoxGateView<*>, index: Int): Int {
-			return 0
 		}
 	},
 
@@ -76,22 +76,7 @@ enum class SymbolStyle(val customName: String) {
 			drawAmerican(gate, NOT_PATH, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun getOrShapeConnectedPortViewLength(gate: BoxGateView<*>, index: Int): Int {
-			// Heuristic to adapt to the curved shape of OR-like shapes
-
-			val inputCount = gate.model.inputCount
-			if (inputCount == 2) {
-				return (2 * Look.SCALE * 0.35).toInt()
-			}
-			val distanceFromMiddle = abs((inputCount - 1) / 2.0 - index)
-			return when {
-				distanceFromMiddle == 0.0 -> (2 * Look.SCALE * 0.15).toInt()
-				distanceFromMiddle <= 0.5 -> (2 * Look.SCALE * 0.2).toInt()
-				distanceFromMiddle == 1.0 -> (2 * Look.SCALE * 0.35).toInt()
-				distanceFromMiddle == 1.5 -> (2 * Look.SCALE * 0.5).toInt()
-				else -> 0
-			}
-		}
+		override val orShapeConnectedPortViewLength: Int get() = (2 * Look.SCALE * 0.35).toInt()
 	};
 
 	companion object {
@@ -180,6 +165,12 @@ enum class SymbolStyle(val customName: String) {
 		}
 	}
 
+	/**
+	 * Returns the length of OR-shaped input [PortView]s, which is used to adjust lines that lead to the [PortView] when using
+	 * roundly shaped borders (especially with american symbol style). Applicable only for [AbstractOrLikeGateView]s with 2 inputs.
+	 */
+	abstract val orShapeConnectedPortViewLength: Int
+
 	abstract fun drawAndGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
 	abstract fun drawOrGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
@@ -191,7 +182,5 @@ enum class SymbolStyle(val customName: String) {
 	abstract fun drawNotGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
 	abstract fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
-
-	abstract fun getOrShapeConnectedPortViewLength(gate: BoxGateView<*>, index: Int): Int
 
 }

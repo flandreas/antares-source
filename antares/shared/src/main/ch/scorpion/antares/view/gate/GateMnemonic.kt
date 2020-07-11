@@ -65,15 +65,15 @@ object GateMnemonic {
 		if (!begin(gateView, context)) {
 			return
 		}
-		drawParallel(gateView, context, foreground, background, invert1 = true, invert2 = true)
+		drawParallel(gateView, context, foreground, background, invert1 = true, invert2 = true, inputOffsetX = 0)
 		end(gateView, context)
 	}
 
-	fun drawOr(gateView: OrGateView, context: DrawContext, foreground: Color, background: Color) {
+	fun drawOr(gateView: OrGateView, context: DrawContext, foreground: Color, background: Color, inputOffsetX: Int) {
 		if (!begin(gateView, context)) {
 			return
 		}
-		drawParallel(gateView, context, foreground, background, invert1 = false, invert2 = false)
+		drawParallel(gateView, context, foreground, background, invert1 = false, invert2 = false, inputOffsetX = inputOffsetX)
 		end(gateView, context)
 	}
 
@@ -85,19 +85,19 @@ object GateMnemonic {
 		end(gateView, context)
 	}
 
-	fun drawXor(gateView: XorGateView, context: DrawContext, foreground: Color, background: Color) {
+	fun drawXor(gateView: XorGateView, context: DrawContext, foreground: Color, background: Color, inputOffsetX: Int) {
 		if (!begin(gateView, context)) {
 			return
 		}
-		drawParallelTwice(gateView, context, foreground, background, invert = false)
+		drawParallelTwice(gateView, context, foreground, background, invert = false, inputOffsetX = inputOffsetX)
 		end(gateView, context)
 	}
 
-	fun drawXnor(gateView: XnorGateView, context: DrawContext, foreground: Color, background: Color) {
+	fun drawXnor(gateView: XnorGateView, context: DrawContext, foreground: Color, background: Color, inputOffsetX: Int) {
 		if (!begin(gateView, context)) {
 			return
 		}
-		drawParallelTwice(gateView, context, foreground, background, invert = true)
+		drawParallelTwice(gateView, context, foreground, background, invert = true, inputOffsetX = inputOffsetX)
 		end(gateView, context)
 	}
 
@@ -188,7 +188,7 @@ object GateMnemonic {
 		context.g.drawLine(s(3.0) + 1, y2, s(4.0) - 1, y2)
 	}
 
-	private fun drawParallelTwice(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color, invert: Boolean) {
+	private fun drawParallelTwice(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color, invert: Boolean, inputOffsetX: Int) {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
 		val signal1 = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
@@ -226,7 +226,7 @@ object GateMnemonic {
 		context.g.color = transparent(gateView, if (isExec) signalOut.color.foregroundColor else foreground)
 		context.g.drawLine(s(4.5), s(4.0), s(6.0), s(4.0))
 
-		val portX = (gateView.getPortViews()[0].connectionPoint.x - gateView.x).toInt()
+		val portX = (gateView.getPortViews()[0].connectionPoint.x + inputOffsetX - gateView.x).toInt()
 
 		// Input 1
 		val y1u = if (signal1.isSet) yu + s(0.5) else yu
@@ -272,7 +272,7 @@ object GateMnemonic {
 		context.g.drawLine(s(3.0) + 1, y2u, s(4.0) - 1, y2u)
 	}
 
-	private fun drawParallel(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean) {
+	private fun drawParallel(gateView: AbstractDigitalGateView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean, inputOffsetX: Int) {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
 		val signal1 = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
@@ -307,7 +307,7 @@ object GateMnemonic {
 		context.g.color = transparent(gateView, if (isExec) signalOut.bitAt(0).color.foregroundColor else foreground)
 		context.g.drawLine(s(4.5), s(4.0), s(6.0), s(4.0))
 
-		val portX = (gateView.getPortViews()[0].connectionPoint.x - gateView.x)
+		val portX = (gateView.getPortViews()[0].connectionPoint.x + inputOffsetX - gateView.x)
 		val y1 = if (invert1) {
 			if (signal1.isSet) yu + s(0.5) else yu
 		} else {
