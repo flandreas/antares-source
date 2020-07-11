@@ -77,6 +77,9 @@ class AndGateView(
 
 	override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 		currentSymbolStyle.symbolStyle.drawAndGate(this, context, foregroundColor, backgroundColor, stroke)
+	}
+
+	override fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
 		if (dataPort != InputPortNumber.NONE && isDataFlowEnabled) {
 			drawDataFlow(context)
 		} else {

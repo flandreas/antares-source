@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.symbolstyle
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.antares.view.gate.AbstractOrLikeGateView
+import ch.scorpion.antares.view.gate.CustomShapeContent
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
@@ -124,7 +125,7 @@ enum class SymbolStyle(val customName: String) {
 			.close()
 
 		private fun drawEuropean(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			gate.drawEuropeanShape(context, foregroundColor, backgroundColor, stroke)
+			gate.drawBoxShape(context, foregroundColor, backgroundColor, stroke)
 		}
 
 		fun drawAmerican(gate: BoxGateView<*>, path: Path, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
@@ -153,6 +154,13 @@ enum class SymbolStyle(val customName: String) {
 
 			context.g.color = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 			context.g.fill(path)
+
+			if (comp is CustomShapeContent) {
+				context.g.translate(-x, -(y + vOffset))
+				comp.drawCustomShapeContent(context, foregroundColor, backgroundColor)
+				context.g.translate(x, y + vOffset)
+			}
+
 			context.g.color = foregroundColor
 			context.g.stroke = stroke
 			context.g.draw(path)

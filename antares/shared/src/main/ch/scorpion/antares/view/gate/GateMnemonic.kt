@@ -164,7 +164,7 @@ object GateMnemonic {
 			if (signal2.isSet) s(4.0) else s(4.5)
 		}
 
-		val portX = gateView.getPortViews()[0].connectionPoint.x - gateView.x
+		val portX = gateView.getPortViews()[0].locationX.toInt() - gateView.x
 
 		val color1 = if (isExec) signal1.invert(invert1).color.foregroundColor else foreground
 		val color2 = if (isExec) signalOut.getColor().foregroundColor else foreground
@@ -226,7 +226,7 @@ object GateMnemonic {
 		context.g.color = transparent(gateView, if (isExec) signalOut.color.foregroundColor else foreground)
 		context.g.drawLine(s(4.5), s(4.0), s(6.0), s(4.0))
 
-		val portX = (gateView.getPortViews()[0].connectionPoint.x + inputOffsetX - gateView.x).toInt()
+		val portX = (gateView.getPortViews()[0].locationX.toInt() + inputOffsetX - gateView.x).toInt()
 
 		// Input 1
 		val y1u = if (signal1.isSet) yu + s(0.5) else yu
@@ -307,7 +307,7 @@ object GateMnemonic {
 		context.g.color = transparent(gateView, if (isExec) signalOut.bitAt(0).color.foregroundColor else foreground)
 		context.g.drawLine(s(4.5), s(4.0), s(6.0), s(4.0))
 
-		val portX = (gateView.getPortViews()[0].connectionPoint.x + inputOffsetX - gateView.x)
+		val portX = (gateView.getPortViews()[0].locationX.toInt() + inputOffsetX - gateView.x)
 		val y1 = if (invert1) {
 			if (signal1.isSet) yu + s(0.5) else yu
 		} else {
@@ -358,7 +358,7 @@ object GateMnemonic {
 		context.g.color = transparent(gateView, if (isExec) signalOut.color.foregroundColor else foreground)
 		context.g.drawLine(s(3.25), s(4.0), s(6.0), s(4.0))
 
-		val portX = (gateView.getPortViews()[0].connectionPoint.x - gateView.x)
+		val portX = (gateView.getPortViews()[0].locationX.toInt() - gateView.x)
 		val y = if (signal.isSet) s(4.5) else s(4.0)
 
 		// Input
@@ -377,7 +377,7 @@ object GateMnemonic {
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute
 
 		val signal = gateView.model.getInput<DigitalSignal>(1).getIncomingSignal()!!.bitAt(0)
-		val portX = (gateView.getPortViews()[0].connectionPoint.x - gateView.x)
+		val portX = (gateView.getPortViews()[0].locationX.toInt() - gateView.x)
 		context.g.stroke = LINE_STROKE
 		context.g.color = transparent(gateView, if (isExec) signal.color.foregroundColor else foreground)
 		context.g.drawLine(portX, s(4.0), s(6.0), s(4.0))

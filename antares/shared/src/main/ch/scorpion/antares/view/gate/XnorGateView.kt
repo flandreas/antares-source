@@ -36,6 +36,9 @@ class XnorGateView(
 
 	override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 		currentSymbolStyle.symbolStyle.drawXnorGate(this, context, foregroundColor, backgroundColor, stroke)
+	}
+
+	override fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
 		GateMnemonic.drawXnor(this, context, foregroundColor, backgroundColor, -currentSymbolStyle.symbolStyle.orShapeConnectedPortViewLength)
 	}
 }

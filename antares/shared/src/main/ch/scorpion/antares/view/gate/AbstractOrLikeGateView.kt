@@ -11,10 +11,10 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
  */
 abstract class AbstractOrLikeGateView<T : AbstractDigitalGate>(
     styleProvider: StyleProvider,
-    val currentSymbolStyle: CurrentSymbolStyle,
+    currentSymbolStyle: CurrentSymbolStyle,
     text: String,
     gate: T
-) : AbstractDigitalGateView<T>(styleProvider, text, gate) {
+) : AbstractLogicGateView<T>(styleProvider, currentSymbolStyle, text, gate) {
 
     init {
         modelExchanged(null)

@@ -40,6 +40,9 @@ class NandGateView(
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
         currentSymbolStyle.symbolStyle.drawAndGate(this, context, foregroundColor, backgroundColor, stroke)
-        GateMnemonic.drawNand(this, context, foregroundColor, backgroundColor)
     }
+
+	override fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
+		GateMnemonic.drawNand(this, context, foregroundColor, backgroundColor)
+	}
 }

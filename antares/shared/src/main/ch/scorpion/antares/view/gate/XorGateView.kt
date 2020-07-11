@@ -36,6 +36,9 @@ class XorGateView(
 
 	override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 		currentSymbolStyle.symbolStyle.drawXorGate(this, context, foregroundColor, backgroundColor, stroke)
+	}
+
+	override fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
 		GateMnemonic.drawXor(this, context, foregroundColor, backgroundColor, -currentSymbolStyle.symbolStyle.orShapeConnectedPortViewLength)
 	}
 }

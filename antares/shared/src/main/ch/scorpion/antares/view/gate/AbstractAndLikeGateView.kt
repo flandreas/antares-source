@@ -10,21 +10,21 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
  *  Basic class for all AND-like gates whose [SymbolStyle.AMERICAN] have an AND-like shape.
  */
 abstract class AbstractAndLikeGateView<T : AbstractDigitalGate>(
-        styleProvider: StyleProvider,
-        val currentSymbolStyle: CurrentSymbolStyle,
-        text: String,
-        gate: T
-) : AbstractDigitalGateView<T>(styleProvider, text, gate) {
+	styleProvider: StyleProvider,
+	currentSymbolStyle: CurrentSymbolStyle,
+	text: String,
+	gate: T
+) : AbstractLogicGateView<T>(styleProvider, currentSymbolStyle, text, gate) {
 
-    override val outsetTop: Int
-        get() = when(currentSymbolStyle.symbolStyle) {
-            SymbolStyle.AMERICAN -> -Look.SCALE
-            SymbolStyle.EUROPEAN -> 0
-        }
+	override val outsetTop: Int
+		get() = when (currentSymbolStyle.symbolStyle) {
+			SymbolStyle.AMERICAN -> -Look.SCALE
+			SymbolStyle.EUROPEAN -> 0
+		}
 
-    override val outsetBottom: Int
-        get() = when(currentSymbolStyle.symbolStyle) {
-            SymbolStyle.AMERICAN -> -Look.SCALE
-            SymbolStyle.EUROPEAN -> 0
-        }
+	override val outsetBottom: Int
+		get() = when (currentSymbolStyle.symbolStyle) {
+			SymbolStyle.AMERICAN -> -Look.SCALE
+			SymbolStyle.EUROPEAN -> 0
+		}
 }

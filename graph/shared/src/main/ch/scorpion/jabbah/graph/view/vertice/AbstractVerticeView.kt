@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -469,6 +470,22 @@ abstract class AbstractVerticeView<T : Vertice>(
 		DrawModule.drawLocatableDebugBoundingBox(this, context)
 
 		context.g.color = oldColor
+	}
+
+	protected fun getApplicableForegroundColor(context: DrawContext): Color {
+		return if (context.useContextColors) {
+			transparent.applyTo(context.color!!.foregroundColor)
+		} else {
+			transparent.applyTo(foregroundColor)
+		}
+	}
+
+	protected fun getApplicableBackgroudColor(context: DrawContext): Color {
+		return if (context.useContextColors) {
+			transparent.applyTo(context.color!!.backgroundColor)
+		} else {
+			transparent.applyTo(backgroundColor)
+		}
 	}
 
 	private fun isExecutionInfoDrawn(requiredBySystemSpeed: Boolean, isPausing: Boolean): Boolean {

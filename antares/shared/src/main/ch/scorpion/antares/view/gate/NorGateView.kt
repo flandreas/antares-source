@@ -36,6 +36,9 @@ class NorGateView(
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
         currentSymbolStyle.symbolStyle.drawOrGate(this, context, foregroundColor, backgroundColor, stroke)
-        GateMnemonic.drawNor(this, context, foregroundColor, backgroundColor)
     }
+
+	override fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
+		GateMnemonic.drawNor(this, context, foregroundColor, backgroundColor)
+	}
 }

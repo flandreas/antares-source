@@ -17,9 +17,9 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
  */
 class NotGateView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+    currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
     notGate: NotGate = NotGate()
-) : AbstractDigitalGateView<NotGate>(styleProvider, "1", notGate) {
+) : AbstractLogicGateView<NotGate>(styleProvider, currentSymbolStyle, "1", notGate) {
 
     companion object {
         private val EXPLANATION: DrawableExplanation<TruthTableView> = DrawableExplanation(
@@ -38,6 +38,9 @@ class NotGateView(
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
         currentSymbolStyle.symbolStyle.drawNotGate(this, context, foregroundColor, backgroundColor, stroke)
-        GateMnemonic.drawNot(this, context, foregroundColor, backgroundColor)
     }
+
+	override fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
+		GateMnemonic.drawNot(this, context, foregroundColor, backgroundColor)
+	}
 }

@@ -28,7 +28,6 @@ class OrGateView(
 
     override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
         currentSymbolStyle.symbolStyle.drawOrGate(this, context, foregroundColor, backgroundColor, stroke)
-        GateMnemonic.drawOr(this, context, foregroundColor, backgroundColor, -currentSymbolStyle.symbolStyle.orShapeConnectedPortViewLength)
     }
 
     override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? {
@@ -38,4 +37,8 @@ class OrGateView(
             EXPLANATION
         } else null
     }
+
+	override fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
+		GateMnemonic.drawOr(this, context, foregroundColor, backgroundColor, -currentSymbolStyle.symbolStyle.orShapeConnectedPortViewLength)
+	}
 }

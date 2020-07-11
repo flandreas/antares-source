@@ -122,27 +122,24 @@ open class BoxGateView<T : Vertice>(
 	/** ---- [Drawable] interface */
 
 	override fun drawImpl(context: DrawContext) {
-		drawImplBeforeBorder(context)
-
 		val oldColor = context.g.color
-		if (context.useContextColors) {
-			drawShape(context, transparent.applyTo(context.color!!.foregroundColor), transparent.applyTo(context.color!!.backgroundColor), stroke)
-		} else {
-			drawShape(context, transparent.applyTo(foregroundColor), transparent.applyTo(propertiesBackgroundColor), stroke)
-		}
 
+		drawImplBeforeBorder(context)
+		drawShape(context, getApplicableForegroundColor(context), getApplicableBackgroudColor(context), stroke)
 		drawImplAfterBorder(context)
+
 		context.g.color = oldColor
 	}
 
 	/**
-	 * Draws the default european shape of this [BoxGateView] within a translated and rotated context.
+	 * Draws the box shape of this [BoxGateView] within a translated and rotated context.
+	 * Can be overwritten to draw non-box like shapes.
 	 */
 	open fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-		drawEuropeanShape(context, foregroundColor, backgroundColor, stroke)
+		drawBoxShape(context, foregroundColor, backgroundColor, stroke)
 	}
 
-	fun drawEuropeanShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+	fun drawBoxShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
 				context.g.fillRect(xInt, yInt, widthInt, heightInt)
@@ -152,8 +149,11 @@ open class BoxGateView<T : Vertice>(
 		context.g.color = backgroundColor
 		context.g.fillRect(xInt, yInt, widthInt, heightInt)
 
-		context.g.color = foregroundColor
+		if (this is CustomShapeContent) {
+			drawCustomShapeContent(context, foregroundColor, backgroundColor)
+		}
 
+		context.g.color = foregroundColor
 		context.g.stroke = stroke
 		context.g.drawRect(xInt, yInt, widthInt, heightInt)
 
