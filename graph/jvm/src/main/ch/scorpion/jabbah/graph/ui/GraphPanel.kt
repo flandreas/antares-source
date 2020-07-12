@@ -87,7 +87,7 @@ class GraphPanel(
 	/** Allows editing and execute the currently open GraphView.*/
 	private val graphEditPanel: GraphEditPanel = GraphEditPanel(application, editor, scheduler, viewManager, propertySheetFactory, eventBus)
 
-	val desktopController = GraphDesktopController(application)
+	val desktopController = GraphDesktopController()
 
 	/** Allows opening multiple Graphs.*/
 	val desktop: GraphDesktopSwing = GraphDesktopSwing(graphEditPanel)
@@ -157,19 +157,6 @@ class GraphPanel(
 
 	val showsNavigationRoot: Boolean get() = graphEditPanel.graphNavigationPanel.showsNavigationRoot
 
-	private fun updateRootGraphView(graphView: GraphView?, applyZoomStrategy: Boolean) {
-		if (rootGraphView != graphView) {
-			val oldValue = rootGraphView
-			rootGraphView = graphView
-			rootGraphView?.let {
-				graphEditPanel.setGraphView(it, applyZoomStrategy)
-				it.snapper = editor.view.grid
-			}
-			eventBus.post(EditedGraphViewEvent(this, oldValue, rootGraphView))
-			updateEditability()
-		}
-	}
-
 	init {
 
 		desktopController.view = desktop
@@ -235,6 +222,25 @@ class GraphPanel(
 		logPanel.dispose()
 		graphEditPanel.dispose()
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
+	}
+
+	private fun updateRootGraphView(graphView: GraphView?, applyZoomStrategy: Boolean) {
+		if (rootGraphView != graphView) {
+			val oldValue = rootGraphView
+
+			desktopController.showMainOnly()
+
+			System.invokeLater {
+				// This will apply the Zoom strategy, which requires that the main Swing UI has already been laid out
+				rootGraphView = graphView
+				rootGraphView?.let {
+					graphEditPanel.setGraphView(it, applyZoomStrategy)
+					it.snapper = editor.view.grid
+				}
+				eventBus.post(EditedGraphViewEvent(this, oldValue, rootGraphView))
+				updateEditability()
+			}
+		}
 	}
 
 	private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =

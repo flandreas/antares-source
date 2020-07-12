@@ -14,12 +14,9 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.BorderLayout
 import java.awt.Color

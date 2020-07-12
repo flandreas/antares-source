@@ -72,7 +72,6 @@ class EditedGraphViewEvent(
 )
 
 class GraphDesktopController(
-	private val application: Application,
 	private val viewManager: ViewManager = DrawViewModule.viewManager,
 	private val scheduler: Scheduler = ExecutionModule.scheduler,
 	private val eventBus: EventBus = BaseModule.eventBus
@@ -105,8 +104,6 @@ class GraphDesktopController(
 
 	private val closeRequestHandler: EventHandler<GraphDesktopItemCloseRequest> = { closeItem(it.item)}
 
-	private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { handle(it) }
-
 	private val openRequestHandler: EventHandler<OpenSubGraphRequest> = { handle(it) }
 
 	/** Replace reference color in all Associations */
@@ -122,7 +119,6 @@ class GraphDesktopController(
 	init {
 		eventBus.register(EditedGraphViewEvent::class, editedGraphViewEventHandler)
 		eventBus.register(GraphDesktopItemCloseRequest::class, closeRequestHandler)
-		eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
 		eventBus.register(OpenSubGraphRequest::class, openRequestHandler)
 		eventBus.register(ReferenceColorEvent::class, referenceColorHandler)
 		eventBus.register(CurrentProjectEvent::class, currentProjectHandler)
@@ -131,13 +127,16 @@ class GraphDesktopController(
 	fun dispose() {
 		eventBus.unregister(EditedGraphViewEvent::class, editedGraphViewEventHandler)
 		eventBus.unregister(GraphDesktopItemCloseRequest::class, closeRequestHandler)
-		eventBus.unregister(ApplicationDataEvent::class, applicationDataHandler)
 		eventBus.unregister(OpenSubGraphRequest::class, openRequestHandler)
 		eventBus.unregister(ReferenceColorEvent::class, referenceColorHandler)
 		eventBus.unregister(CurrentProjectEvent::class, currentProjectHandler)
 	}
 
 	/** ---- [GraphDesktopController] */
+
+	fun showMainOnly() {
+		closeAll(true)
+	}
 
 	fun openVerticeView(vv: VerticeView<*>, itemFactory: (CompositeColor) -> GraphDesktopItem) {
 		LOG.debug("Open VerticeView in new GraphDesktopItem")
@@ -163,10 +162,6 @@ class GraphDesktopController(
 	private fun handle(event: EditedGraphViewEvent) {
 		event.oldGraphView?.removeDrawableContainerListener(removeListener)
 		event.newGraphView?.addDrawableContainerListener(removeListener)
-	}
-
-	private fun handle(event: ApplicationDataEvent) {
-		closeAll(event.newData != null)
 	}
 
 	private fun handle(event: CurrentProjectEvent) {
@@ -205,7 +200,7 @@ class GraphDesktopController(
 	private fun closeItem(item: GraphDesktopItem) {
 		LOG.debug(("Close single GraphDesktopItem"))
 		if (item === view.mainDesktopItem) {
-			application.close()
+			closeAll(false)
 		} else {
 			deassociate(item)
 			item.dispose()
