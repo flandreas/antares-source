@@ -165,17 +165,11 @@ class GraphPanel(
 		propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
 		eventBus.register(ApplicationDataEvent::class) {
-			updateRootGraphView(
-				graphView = (it.newData?.content as MetaGraph?)?.graph?.graphView as GraphView?,
-				applyZoomStrategy = true
-			)
+			setApplicationData((it.newData?.content as MetaGraph?)?.graph?.graphView)
 		}
 
 		eventBus.register(ApplicationDataContentEvent::class) {
-			updateRootGraphView(
-				graphView = (it.data.content as MetaGraph?)?.graph?.graphView as GraphView?,
-				applyZoomStrategy = false
-			)
+			setApplicationDataContent((it.data.content as MetaGraph?)?.graph?.graphView)
 		}
 
 		eventBus.register(ActiveViewChangedEvent::class) {
@@ -224,23 +218,35 @@ class GraphPanel(
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
 	}
 
-	private fun updateRootGraphView(graphView: GraphView?, applyZoomStrategy: Boolean) {
+	private fun setApplicationData(graphView: GraphView?) {
 		if (rootGraphView != graphView) {
-			val oldValue = rootGraphView
-
 			desktopController.showMainOnly()
-
 			System.invokeLater {
 				// This will apply the Zoom strategy, which requires that the main Swing UI has already been laid out
-				rootGraphView = graphView
-				rootGraphView?.let {
-					graphEditPanel.setGraphView(it, applyZoomStrategy)
-					it.snapper = editor.view.grid
-				}
-				eventBus.post(EditedGraphViewEvent(this, oldValue, rootGraphView))
-				updateEditability()
+				setRootGraphView(graphView, applyZoomStrategy = true)
 			}
 		}
+	}
+
+	/**
+	 * This is primarily called when the states is replayed from undoable history, and the undoable commands are
+	 * replayed immediately after the the new [GraphView] has been set, which is why invoking this later would not work.
+	 */
+	private fun setApplicationDataContent(graphView: GraphView?) {
+		if (rootGraphView != graphView) {
+			setRootGraphView(graphView, applyZoomStrategy = false)
+		}
+	}
+
+	private fun setRootGraphView(graphView: GraphView?, applyZoomStrategy: Boolean) {
+		val oldValue = rootGraphView
+		rootGraphView = graphView
+		rootGraphView?.let {
+			graphEditPanel.setGraphView(it, applyZoomStrategy)
+			it.snapper = editor.view.grid
+		}
+		eventBus.post(EditedGraphViewEvent(this, oldValue, rootGraphView))
+		updateEditability()
 	}
 
 	private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
