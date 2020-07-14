@@ -230,10 +230,15 @@ open class TextComponentJvm(
 			decorator.drawBackground(this, context)
 		}
 
+		val oldClip = context.g.getClipBounds()
+		context.g.setClipBounds(x.toInt(), y.toInt(), width.toInt(), height.toInt())
+
 		setupTextPainter(context)
 		context.g.translate(TEXT_PAINTER.x.toDouble(), TEXT_PAINTER.y.toDouble())
 		TEXT_PAINTER.paint((context.g as Graphics2DJvm).g)
 		context.g.translate(-TEXT_PAINTER.x.toDouble(), -TEXT_PAINTER.y.toDouble())
+
+		context.g.setClipBounds(oldClip.x.toInt(), oldClip.y.toInt(), oldClip.width.toInt(), oldClip.height.toInt())
 
 		if (stroked) {
 			decorator.drawForeground(this, context)
