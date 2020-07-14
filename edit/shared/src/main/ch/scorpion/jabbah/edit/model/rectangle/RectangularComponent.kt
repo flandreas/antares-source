@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.AbstractComponent
@@ -220,6 +221,9 @@ abstract class RectangularComponent(
 
 	/** ---- [Drawable] interface */
 
+	override val boundingBox: Rectangle2D
+		get() = super.boundingBox.add(label.boundingBox.moveBy(location)) as Rectangle2D
+
 	override fun draw(context: DrawContext) {
 		if (context.useContextColors) {
 			drawImpl(context, context.color!!.foregroundColor, context.color!!.backgroundColor)
@@ -246,6 +250,9 @@ abstract class RectangularComponent(
 		drawStroke(context, shape, strokeColor, stroke)
 		context.g.color = transparent.applyTo(textColor)
 		drawText(context)
+
+		DrawModule.drawLocatableDebugBoundingBox(this, context)
+
 		context.g.color = oldColor
 	}
 

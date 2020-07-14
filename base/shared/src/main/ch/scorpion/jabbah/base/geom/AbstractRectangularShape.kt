@@ -18,16 +18,16 @@ abstract class AbstractRectangularShape(
     companion object {
 
         /** The bit-mask that indicates that a point lies to the left of this [RectangularShape].*/
-        val OUT_LEFT = 1
+        const val OUT_LEFT = 1
 
         /** The bit-mask that indicates that a point lies above this [RectangularShape].*/
-        val OUT_TOP = 2
+        const val OUT_TOP = 2
 
         /** The bit-mask that indicates that a point lies to the right of this [RectangularShape].*/
-        val OUT_RIGHT = 4
+        const val OUT_RIGHT = 4
 
         /** The bit-mask that indicates that a point lies below this [RectangularShape].*/
-        val OUT_BOTTOM = 8
+        const val OUT_BOTTOM = 8
     }
 
     /** ---- [Shape] interface */
@@ -58,20 +58,28 @@ abstract class AbstractRectangularShape(
      */
     fun outcode(x: Double, y: Double): Int {
         var out = 0
-        if (this.width <= 0) {
-            out = out or (OUT_LEFT or OUT_RIGHT)
-        } else if (x < this.x) {
-            out = out or OUT_LEFT
-        } else if (x > this.x + this.width) {
-            out = out or OUT_RIGHT
-        }
-        if (this.height <= 0) {
-            out = out or (OUT_TOP or OUT_BOTTOM)
-        } else if (y < this.y) {
-            out = out or OUT_TOP
-        } else if (y > this.y + this.height) {
-            out = out or OUT_BOTTOM
-        }
+	    when {
+		    this.width <= 0 -> {
+			    out = out or (OUT_LEFT or OUT_RIGHT)
+		    }
+		    x < this.x -> {
+			    out = out or OUT_LEFT
+		    }
+		    x > this.x + this.width -> {
+			    out = out or OUT_RIGHT
+		    }
+	    }
+	    when {
+		    this.height <= 0 -> {
+			    out = out or (OUT_TOP or OUT_BOTTOM)
+		    }
+		    y < this.y -> {
+			    out = out or OUT_TOP
+		    }
+		    y > this.y + this.height -> {
+			    out = out or OUT_BOTTOM
+		    }
+	    }
         return out
     }
 
