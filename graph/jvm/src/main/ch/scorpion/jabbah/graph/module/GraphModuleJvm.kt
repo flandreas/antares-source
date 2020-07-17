@@ -5,14 +5,16 @@ import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
 import ch.scorpion.jabbah.graph.script.GraphScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptEngine
 import ch.scorpion.jabbah.graph.script.ScriptModule
-import ch.scorpion.jabbah.graph.ui.*
+import ch.scorpion.jabbah.graph.ui.EmptyGraphNavigationPanelExtension
+import ch.scorpion.jabbah.graph.ui.GraphContextMenuProvider
+import ch.scorpion.jabbah.graph.ui.GraphNavigationPanel
+import ch.scorpion.jabbah.graph.ui.GraphNavigationPanelExtension
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 
 /**
@@ -41,6 +43,7 @@ object GraphModuleJvm : AbstractModule() {
 		fillProperties(BaseModule.properties)
 	}
 
+	@Suppress("UNUSED_PARAMETER")
 	private fun fillProperties(properties: Properties) {
 		// empty so far
 	}

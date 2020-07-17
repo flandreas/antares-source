@@ -18,7 +18,7 @@ expect object System {
     /** Returns the class name of an object.*/
     fun getClassName(obj: Any): String
 
-    fun getClass(obj: Any): KClass<Any>
+    fun getClass(obj: Any): KClass<*>
 
     /** Creates an instance of the specified class by calling its parameterless constructor. */
     fun <T: Any> instantiate(clazz: KClass<T>): T

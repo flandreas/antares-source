@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
  * @see https://discuss.kotlinlang.org/t/creating-new-object-using-jsclass/2092
  */
 fun <T : Any> JsClass<T>.newInstance(): T {
-	inline fun callCtor(ctor: dynamic) = js("new ctor()")
+	inline fun callCtor(@Suppress("UNUSED_PARAMETER") ctor: dynamic) = js("new ctor()")
 	return callCtor(asDynamic())
 }
 
@@ -40,8 +40,8 @@ actual object System {
 		return obj::class.simpleName!!
 	}
 
-	actual fun getClass(obj: Any): KClass<Any> {
-		return obj::class as KClass<Any>
+	actual fun getClass(obj: Any): KClass<*> {
+		return obj::class
 	}
 
 	actual fun <T : Any> instantiate(clazz: KClass<T>): T {

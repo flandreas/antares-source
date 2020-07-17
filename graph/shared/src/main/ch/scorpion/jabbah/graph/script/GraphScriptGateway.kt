@@ -21,7 +21,6 @@ class GraphScriptGateway(private val engine: ScriptEngine) : ScriptGateway {
 	companion object {
 		private const val GRAPH_WRAPPER = "function execGraph(graph) {\$BODY}"
 		private const val VERTICE_VIEW_WRAPPER = "function execVerticeView(verticeView) {\$BODY}"
-		private const val VERTICE_WRAPPER = "function execVertice(vertice, data, signalHandler) {\$BODY}"
 	}
 
 	override fun defineVerticeExecutionScript(uuid: UUID, script: Script, vertice: SubGraphVerticeRef, signalHandler: SignalHandler): Any {
@@ -46,7 +45,7 @@ class GraphScriptGateway(private val engine: ScriptEngine) : ScriptGateway {
 		return exec(script, view) as Boolean
 	}
 
-	override fun usecaseAction(script: Script, usecaseRunner: UsecaseRunner, scheduler: Scheduler) {
+	override fun usecaseAction(script: Script, runner: UsecaseRunner, scheduler: Scheduler) {
 		throw UnsupportedOperationException("not implemented")
 	}
 

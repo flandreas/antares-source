@@ -215,7 +215,7 @@ class ScenarioDetector(
 	/** Highlight the [Component]s as required by the specified [ScenarioStep].*/
 	private fun highlightScenarioStep(scenarioStep: ScenarioStep) {
 		highlightIds = scenarioStep.highlightIdsAsInt
-		if (!highlightIds!!.isEmpty()) {
+		if (highlightIds!!.isNotEmpty()) {
 			view.highlighter.highlight(*highlightIds!!.toIntArray())
 		}
 	}
@@ -223,7 +223,7 @@ class ScenarioDetector(
 	/** Removes the highlights that have been added by the current [ScenarioStep].*/
 	private fun unhighlightScenarioStep() {
 		highlightIds?.let {
-			if (!it.isEmpty()) {
+			if (it.isNotEmpty()) {
 				view.highlighter.unhighlight(*it.toIntArray())
 			}
 		}

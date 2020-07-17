@@ -27,7 +27,7 @@ class TypeMapImpl : TypeMap {
 	    return clazz as KClass<T>
     }
 
-    override fun getTypeName(clazz: KClass<Any>): String {
+    override fun getTypeName(clazz: KClass<*>): String {
         return class2Type[clazz] ?: throw NoSuchElementException("TypeMapImpl: class '${clazz.simpleName}' not found")
     }
 }

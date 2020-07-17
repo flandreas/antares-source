@@ -153,27 +153,27 @@ class GraphViewConnectServiceImpl(
 
 	override fun <T : Any> split(
 		graphView: GraphView,
-		splittedEdgeView: EdgeView<T>,
+		splitEdgeView: EdgeView<T>,
 		splitSegmentIndex: Int,
 		newEdgeView: EdgeView<T>,
 		newEdgeViewEndpointType: EdgeViewEndpointType,
 		otherNewEdgeViewPortView: PortView<T>?,
 		tailEdgeView: EdgeView<T>?
 	): SplitEdgeViewResult<T> {
-		LOG.debug("split EdgeView ${splittedEdgeView.id} and connect to Port ${otherNewEdgeViewPortView?.port?.portId} of destination ConnectableView ${otherNewEdgeViewPortView?.owner?.id}")
+		LOG.debug("split EdgeView ${splitEdgeView.id} and connect to Port ${otherNewEdgeViewPortView?.port?.portId} of destination ConnectableView ${otherNewEdgeViewPortView?.owner?.id}")
 
 		val splitLocation = newEdgeViewEndpointType.getLocation(newEdgeView)
-		val nodeView = nodeViewFactorySupplier.invoke().create(splittedEdgeView.model as Net<Any>) as NodeView<T>
+		val nodeView = nodeViewFactorySupplier.invoke().create(splitEdgeView.model as Net<Any>) as NodeView<T>
 		graphView.add(nodeView)
 
 		// Create tail part of EdgeView that is being split
-		val tail = splittedEdgeView.split(
+		val tail = splitEdgeView.split(
 			splitSegmentIndex,
 			splitLocation
 		) { tailEdgeView ?: edgeViewFactorySupplier.invoke().createEdgeView(it as Net<Any>) as EdgeView<T> }
 
 		nodeView.location = splitLocation
-		connectToDestination(splittedEdgeView, Connection(nodeView))
+		connectToDestination(splitEdgeView, Connection(nodeView))
 
 		graphView.add(tail)
 		connectToOrigin(tail, Connection(nodeView))
@@ -181,7 +181,7 @@ class GraphViewConnectServiceImpl(
 		graphView.add(newEdgeView)
 
 		// Connect newEdgeView
-		newEdgeView.net = splittedEdgeView.net
+		newEdgeView.net = splitEdgeView.net
 
 		when (newEdgeViewEndpointType) {
 			EdgeViewEndpointType.ORIGIN -> {

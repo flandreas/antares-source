@@ -96,13 +96,11 @@ class BitWidthAnnotation(
     private fun getHorizontalLabelAlignment(): HorizontalAlignment = when (direction) {
         Direction.WEST, Direction.EAST -> HorizontalAlignment.CENTER
         Direction.NORTH, Direction.SOUTH -> if (centerLabel) HorizontalAlignment.CENTER else HorizontalAlignment.LEFT
-        else -> throw IllegalStateException("unknown Direction $direction")
     }
 
     private fun getVerticalLabelAlignment(): VerticalAlignment = when (direction) {
         Direction.WEST, Direction.EAST -> if (centerLabel) VerticalAlignment.CENTER else VerticalAlignment.TOP
         Direction.NORTH, Direction.SOUTH -> VerticalAlignment.CENTER
-        else -> throw IllegalStateException("unknown Direction $direction")
     }
 
     private fun getLabelLocation(): Point2D {
@@ -112,7 +110,6 @@ class BitWidthAnnotation(
             Direction.EAST -> Point2D(2 * Look.SCALE * LINE_POS_X_FACT, labelEdgeDist)
             Direction.NORTH -> Point2D(labelEdgeDist, -2 * Look.SCALE * LINE_POS_X_FACT)
             Direction.SOUTH -> Point2D(labelEdgeDist, 2 * Look.SCALE * LINE_POS_X_FACT)
-            else -> throw IllegalStateException("unknown Direction $direction")
         }
     }
 
@@ -121,6 +118,5 @@ class BitWidthAnnotation(
         Direction.EAST -> Point2D(LINE_POS_X_FACT * 2 * Look.SCALE + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
         Direction.NORTH -> Point2D(LINE_HEIGHT_HALF, -2 * Look.SCALE * LINE_POS_X_FACT - LINE_WIDTH_HALF)
         Direction.SOUTH -> Point2D(LINE_HEIGHT_HALF, 2 * Look.SCALE * LINE_POS_X_FACT - LINE_WIDTH_HALF)
-        else -> throw IllegalStateException("unknown Direction $direction")
     }
 }

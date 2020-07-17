@@ -23,7 +23,7 @@ actual object System {
 
 	actual fun getClassName(obj: Any): String = obj.javaClass.name
 
-	actual fun getClass(obj: Any): KClass<Any> = obj.javaClass.kotlin
+	actual fun getClass(obj: Any): KClass<*> = obj.javaClass.kotlin
 
 	actual fun <T : Any> instantiate(clazz: KClass<T>): T = clazz.java.getDeclaredConstructor().newInstance()
 

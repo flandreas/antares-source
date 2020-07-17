@@ -188,6 +188,7 @@ class KeyboardView(
 		bufferSize = reader.readInt("bufferSize")
 	}
 
+	@Suppress("UNUSED_PARAMETER")
 	private fun copyControlViewProperties(source: KeyboardView, dest: KeyboardView) {
 		// empty
 	}

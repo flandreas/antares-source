@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
@@ -19,7 +17,6 @@ import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.project.CurrentProjectEvent
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -66,7 +63,6 @@ data class GraphDesktopItemCloseRequest(val item: GraphDesktopItem)
 
 /** Posted on [EventBus] when the currently (one and only) edited root [GraphView] changes. */
 class EditedGraphViewEvent(
-	val applicationModeHolder: ApplicationModeHolder,
 	val oldGraphView: GraphView?,
 	val newGraphView: GraphView?
 )
@@ -164,7 +160,7 @@ class GraphDesktopController(
 		event.newGraphView?.addDrawableContainerListener(removeListener)
 	}
 
-	private fun handle(event: CurrentProjectEvent) {
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: CurrentProjectEvent) {
 		closeAll(false)
 	}
 

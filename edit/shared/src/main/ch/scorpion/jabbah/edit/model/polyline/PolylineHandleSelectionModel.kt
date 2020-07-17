@@ -70,17 +70,16 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
 
         override fun dragHandleEnd(context: EditInputEventContext) {
             val index = getIndexOf(focusHandle!!)
-            val newLocation = component.getPointAt(index)
 
 	        component.compact()
 
-	        val command = if (component.pointsCount != oldPointsCount) {
+	        val command: Command = if (component.pointsCount != oldPointsCount) {
 		        JoinPolylinePointsCommand(context.editor, component.id, index, oldLocation)
 	        } else {
 		        MovePolylinePointCommand.forOldLocation(context.editor, component, index, oldLocation)
 	        }
 
-	        context.editor.commandManager.register(command as Command)
+	        context.editor.commandManager.register(command)
         }
 
         /** Adds an additional [Point2D] by double-clicking.*/

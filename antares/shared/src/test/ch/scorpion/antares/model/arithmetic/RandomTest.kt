@@ -47,7 +47,7 @@ class RandomTest {
 	private class RandomProvider {
 		var nextValue: Long = 0
 
-		fun provide (max: Long): Long {
+		fun provide (@Suppress("UNUSED_PARAMETER") max: Long): Long {
 			return nextValue
 		}
 	}

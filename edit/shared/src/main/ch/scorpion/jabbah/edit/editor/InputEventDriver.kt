@@ -15,7 +15,6 @@ open class InputEventDriver(
 ) {
 
 	protected open fun mouseMoveTo(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
-		val context = context(MouseEventType.MOVED, x, y, modifiers)
 		handler.mouseMoved(context(MouseEventType.MOVED, x, y, modifiers))
 		return this
 	}

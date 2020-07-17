@@ -37,7 +37,6 @@ import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptModule
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.ScenarioEvent
 import ch.scorpion.jabbah.graph.view.Usecase
@@ -375,7 +374,7 @@ class GraphNavigationPanel(
 		}
 	}
 
-	private fun handle(event: SchedulerRunningStateEvent) {
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: SchedulerRunningStateEvent) {
 		propagateApplicationContext()
 	}
 

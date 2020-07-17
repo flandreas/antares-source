@@ -245,7 +245,7 @@ class GraphPanel(
 			graphEditPanel.setGraphView(it, applyZoomStrategy)
 			it.snapper = editor.view.grid
 		}
-		eventBus.post(EditedGraphViewEvent(this, oldValue, rootGraphView))
+		eventBus.post(EditedGraphViewEvent(oldValue, rootGraphView))
 		updateEditability()
 	}
 

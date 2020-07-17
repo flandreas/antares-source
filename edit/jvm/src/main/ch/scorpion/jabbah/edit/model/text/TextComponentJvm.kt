@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -224,8 +223,6 @@ open class TextComponentJvm(
 	}
 
 	override fun draw(context: DrawContext) {
-		val b = shape
-
 		if (filled) {
 			decorator.drawBackground(this, context)
 		}
@@ -371,7 +368,7 @@ open class TextComponentJvm(
 
 		override fun mouseClicked(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			if (context.mouseEvent!!.clickCount == 2) {
-				startEditing(context.editor, context.mouseEvent)
+				startEditing(context.editor)
 				return this
 			}
 			return null
@@ -393,7 +390,7 @@ open class TextComponentJvm(
 
 		/** ---- [EventHandler] */
 
-		private fun startEditing(editor: Editor, event: MouseEvent) {
+		private fun startEditing(editor: Editor) {
 			LOG.debug("TextComponent: start editing")
 			this.editor = editor
 			editing = true

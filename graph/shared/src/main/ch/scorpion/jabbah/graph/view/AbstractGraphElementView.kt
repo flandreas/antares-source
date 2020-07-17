@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -51,7 +52,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 	/** ---- UI related properties */
 
 	var propagationDelay: Long
-		get() = model.propagationDelay ?: 0
+		get() = model.propagationDelay
 		set(value) {
 			model.propagationDelay = value
 		}

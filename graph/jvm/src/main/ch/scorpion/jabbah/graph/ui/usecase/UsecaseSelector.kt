@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.ui.EditedGraphViewEvent
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
@@ -66,7 +65,7 @@ class UsecaseSelector(
 		graphView = event.newGraphView
 	}
 
-	private fun handle(event: SchedulerActivationStateEvent) {
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: SchedulerActivationStateEvent) {
 		updateEnabledness()
 		if (!scheduler.isActive) {
 			selectedIndex = 0

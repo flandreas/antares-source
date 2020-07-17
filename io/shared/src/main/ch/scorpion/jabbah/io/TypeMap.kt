@@ -26,5 +26,5 @@ interface TypeMap {
     fun <T: Any> getClass(type: String): KClass<T>
 
     /** Returns the type name that is associated with the specified class.*/
-    fun getTypeName(clazz: KClass<Any>): String
+    fun getTypeName(clazz: KClass<*>): String
 }

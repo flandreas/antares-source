@@ -383,7 +383,6 @@ class DigitalPortView(
 			Direction.EAST -> HorizontalAlignment.RIGHT
 			Direction.NORTH -> HorizontalAlignment.CENTER
 			Direction.SOUTH -> HorizontalAlignment.CENTER
-			else -> throw IllegalStateException("unknown Direction $direction")
 		}
 
 	private fun getHorizontalExternalLabelAlignment(direction: Direction): HorizontalAlignment =
@@ -392,7 +391,6 @@ class DigitalPortView(
 			Direction.EAST -> HorizontalAlignment.LEFT
 			Direction.NORTH -> HorizontalAlignment.LEFT
 			Direction.SOUTH -> HorizontalAlignment.RIGHT
-			else -> throw IllegalStateException("unknown Direction $direction")
 		}
 
 	private fun getVerticalInternalLabelAlignment(direction: Direction): VerticalAlignment =
@@ -401,7 +399,6 @@ class DigitalPortView(
 			Direction.EAST -> VerticalAlignment.CENTER
 			Direction.NORTH -> VerticalAlignment.TOP
 			Direction.SOUTH -> VerticalAlignment.BOTTOM
-			else -> throw IllegalStateException("unknown Direction $direction")
 		}
 
 	private val centerExternalLabel: Boolean get() = port.isConnected && edgeViewWidth > Look.EXT_PIN_FONT.size
@@ -424,7 +421,6 @@ class DigitalPortView(
 			Direction.EAST -> Point2D(-INT_BORDER_DIST - ia, 0)
 			Direction.NORTH -> Point2D(0, INT_BORDER_DIST + ia)
 			Direction.SOUTH -> Point2D(0, -INT_BORDER_DIST - ia)
-			else -> throw IllegalStateException("unknown Direction $direction")
 		}
 	}
 
@@ -435,7 +431,6 @@ class DigitalPortView(
 			Direction.EAST -> Point2D(EXT_BORDER_DIST + ea, -1)
 			Direction.NORTH -> Point2D(0, -EXT_BORDER_DIST - ea)
 			Direction.SOUTH -> Point2D(0, EXT_BORDER_DIST + ea)
-			else -> throw IllegalStateException("unknown Direction $direction")
 		}
 	}
 

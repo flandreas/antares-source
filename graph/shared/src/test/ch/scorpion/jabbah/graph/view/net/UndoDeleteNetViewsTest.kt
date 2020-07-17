@@ -48,7 +48,7 @@ class UndoDeleteNetViewsTest {
 		val v2 = builder.addVerticeView(createVerticeView(100, 0, Direction.WEST))
 		val v3 = builder.addVerticeView(createVerticeView(100, 100, Direction.WEST))
 		val v1v2 = builder.connect(v1, v2)
-		val split = builder.split(v1v2, 0, Point2D(50, 0), v3)
+		builder.split(v1v2, 0, Point2D(50, 0), v3)
 
 		EditModule.commandManager.reset()
 

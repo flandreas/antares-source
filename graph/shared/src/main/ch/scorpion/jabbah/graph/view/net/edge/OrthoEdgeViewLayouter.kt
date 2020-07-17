@@ -65,17 +65,17 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 	/** Compares two [Solution]s in respect of the original [EdgeView] for which they solve the layout problem.*/
 	private class SolutionEvaluator(private val edgeView: EdgeView<*>?) : Comparator<Solution> {
 
-		override fun compare(s1: Solution, s2: Solution): Int {
+		override fun compare(a: Solution, b: Solution): Int {
 			// First priority: Always prefer non-counter-directive solutions
-			if (s1.isCounterDirective != s2.isCounterDirective) {
+			if (a.isCounterDirective != b.isCounterDirective) {
 				// Workaround for Kotlin Bug KT-19177
 				//return s1.isCounterDirective.compareTo(s2.isCounterDirective)
-				return if (!s1.isCounterDirective && s2.isCounterDirective) -1
-				else if (s1.isCounterDirective && !s2.isCounterDirective) 1 else 0
+				return if (!a.isCounterDirective && b.isCounterDirective) -1
+				else if (a.isCounterDirective && !b.isCounterDirective) 1 else 0
 			}
 
 			// Second priority: Smaller number of points
-			val sizeCompare = s1.polyline.size.compareTo(s2.polyline.size)
+			val sizeCompare = a.polyline.size.compareTo(b.polyline.size)
 			if (sizeCompare != 0) {
 				return sizeCompare
 			}
@@ -83,7 +83,7 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 				return 0
 			}
 			// Third priority: Smaller number of direction differences compared to original EdgeView
-			return countDirectionDiff(s1.polyline).compareTo(countDirectionDiff(s2.polyline))
+			return countDirectionDiff(a.polyline).compareTo(countDirectionDiff(b.polyline))
 		}
 
 		private fun countDirectionDiff(polyline: OrthoPolyline): Int {

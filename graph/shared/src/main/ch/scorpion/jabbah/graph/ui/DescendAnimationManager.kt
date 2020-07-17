@@ -122,7 +122,7 @@ class DescendAnimationManager(val animator: Animator = AnimationModule.animator)
 			override fun ended(task: AnimationTask) {
 				ascender.invoke(subGraphVerticeView)
 				drawingView.navigator.panCenter(OUTER_END_ZOOM_FACTOR)
-				val outerAnimation = createOuterAscendAnimation(drawingView, subGraphVerticeView, endZoomFactor, terminator)
+				val outerAnimation = createOuterAscendAnimation(drawingView, endZoomFactor, terminator)
 				animator.schedule(outerAnimation)
 				outerAnimation.start()
 
@@ -133,7 +133,6 @@ class DescendAnimationManager(val animator: Animator = AnimationModule.animator)
 
 	private fun createOuterAscendAnimation(
 		drawingView: DrawingView<*>,
-		subGraphVerticeView: SubGraphVerticeView<*>,
 		endZoomFactor: Double,
 		terminator: () -> Unit
 	): ZoomPanAnimation {

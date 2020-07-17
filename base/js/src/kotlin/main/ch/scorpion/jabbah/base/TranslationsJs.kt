@@ -7,7 +7,7 @@ actual object Translations {
 
 	actual var language: Language
 		get() = System.currentLanguage()
-		set(value) {
+		set(@Suppress("UNUSED_PARAMETER") value) {
 			throw NotImplementedError()
 		}
 
