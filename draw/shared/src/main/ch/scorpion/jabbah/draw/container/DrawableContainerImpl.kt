@@ -211,7 +211,7 @@ open class DrawableContainerImpl<T : Drawable>(
 		return position
 	}
 
-	override fun setStackingOrderPosition(position: Int, drawable: T) {
+	override fun setStackingOrderPosition(position: Int, drawable: Drawable) {
 		val currentPosition = children.indexOf(drawable)
 		if (currentPosition < 0) {
 			throw NoSuchElementException("drawable not contained")
@@ -222,13 +222,16 @@ open class DrawableContainerImpl<T : Drawable>(
 		if (position == currentPosition) {
 			return
 		}
-		children.remove(drawable)
-		children.add(position, drawable)
+
+		val typedDrawable = children[children.indexOf(drawable)]
+		children.remove(typedDrawable)
+		children.add(position, typedDrawable)
+
 		drawable.invalidate()
 	}
 
-	override fun getStackingOrderPositions(drawables: Collection<T>): List<StackingOrderPosition<T>> {
-		val positions = mutableListOf<StackingOrderPosition<T>>()
+	override fun getStackingOrderPositions(drawables: Collection<Drawable>): List<StackingOrderPosition> {
+		val positions = mutableListOf<StackingOrderPosition>()
 		drawables.forEach { drawable -> positions.add(StackingOrderPosition(getStackingOrderPosition(drawable), drawable)) }
 		positions.sort()
 		return positions

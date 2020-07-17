@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.app
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.*
@@ -16,7 +17,7 @@ class ToFrontAction(
 ) : AbstractSelectionAwareAction("edit.action.stackingOrder.toFront", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		cmdManager.execute(ToFrontCommand(drawingView as DrawingView<Drawing<Component>>, selection.map { it.id }))
+		cmdManager.execute(ToFrontCommand(drawingView!!, selection.map { it.id }))
 	}
 }
 
@@ -27,7 +28,7 @@ class OneUpAction(
 ) : AbstractSelectionAwareAction("edit.action.stackingOrder.oneUp", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		cmdManager.execute(OneUpCommand(drawingView as DrawingView<Drawing<Component>>, selection.map { it.id }))
+		cmdManager.execute(OneUpCommand(drawingView!!, selection.map { it.id }))
 	}
 }
 
@@ -38,7 +39,7 @@ class OneDownAction(
 ) : AbstractSelectionAwareAction("edit.action.stackingOrder.oneDown", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		cmdManager.execute(OneDownCommand(drawingView as DrawingView<Drawing<Component>>, selection.map { it.id }))
+		cmdManager.execute(OneDownCommand(drawingView!!, selection.map { it.id }))
 	}
 }
 
@@ -49,7 +50,7 @@ class ToBackAction(
 ) : AbstractSelectionAwareAction("edit.action.stackingOrder.toBack", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		cmdManager.execute(ToBackCommand(drawingView as DrawingView<Drawing<Component>>, selection.map { it.id }))
+		cmdManager.execute(ToBackCommand(drawingView!!, selection.map { it.id }))
 	}
 }
 
@@ -59,7 +60,7 @@ abstract class StackingOrderCommand(
 	protected val componentIds: Collection<Int>
 ) : AbstractCommand(name, null) {
 
-	protected val drawing: Drawing<Component> get() = drawingView.drawing as Drawing<Component>
+	protected val drawing: Drawing<*> get() = drawingView.drawing
 	protected val components get() = componentIds.map { drawing.getWithId(it) as Component }
 
 	override fun validate() {
@@ -71,12 +72,12 @@ abstract class StackingOrderCommand(
  * Brings a [Collection] of [Component]s to the front of the stacking order.
  */
 class ToFrontCommand(
-	drawingView: DrawingView<Drawing<Component>>,
+	drawingView: DrawingView<*>,
 	componentIds: Collection<Int>
 ) : StackingOrderCommand("edit.action.stackingOrder.toFront.name", drawingView, componentIds), Undoable {
 
 	private val origStackingOrderPositions = drawing.getStackingOrderPositions(components)
-	private val oldPositions = mutableMapOf<Component, Int>()
+	private val oldPositions = mutableMapOf<Drawable, Int>()
 
 	override fun execute() {
 		oldPositions.clear()
@@ -98,7 +99,7 @@ class ToFrontCommand(
  * while maintaining their relative orders.
  */
 class OneUpCommand(
-	drawingView: DrawingView<Drawing<Component>>,
+	drawingView: DrawingView<*>,
 	componentIds: Collection<Int>
 ) : StackingOrderCommand("edit.action.stackingOrder.oneUp.name", drawingView, componentIds), Undoable {
 
@@ -127,7 +128,7 @@ class OneUpCommand(
  * while maintaining their relative orders.
  */
 class OneDownCommand(
-	drawingView: DrawingView<Drawing<Component>>,
+	drawingView: DrawingView<*>,
 	componentIds: Collection<Int>
 ) : StackingOrderCommand("edit.action.stackingOrder.oneDown.name", drawingView, componentIds), Undoable {
 
@@ -157,12 +158,12 @@ class OneDownCommand(
  * Brings a [Collection] of [Component]s to the back of the stacking order.
  */
 class ToBackCommand(
-	drawingView: DrawingView<Drawing<Component>>,
+	drawingView: DrawingView<*>,
 	componentIds: Collection<Int>
 ) : StackingOrderCommand("edit.action.stackingOrder.toBack.name", drawingView, componentIds), Undoable {
 
 	private val origStackingOrderPositions = drawing.getStackingOrderPositions(components)
-	private val oldPositions = mutableMapOf<Component, Int>()
+	private val oldPositions = mutableMapOf<Drawable, Int>()
 
 	override fun execute() {
 		oldPositions.clear()

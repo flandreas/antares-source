@@ -132,14 +132,14 @@ interface DrawableContainer<T : Drawable> : Drawable, Locatable {
      * @throws NoSuchElementException if `drawable`
      * @throws IndexOutOfBoundsException if `position` is not a valid stacking order position
      */
-    fun setStackingOrderPosition(position: Int, drawable: T)
+    fun setStackingOrderPosition(position: Int, drawable: Drawable)
 
     /**
      * Converts a [Collection] of [Drawable]s into a [List] of [StackingOrderPosition]
      * that is ascending sorted by stacking order positions, i.e. starting with the topmost [Drawable] at
      * stacking order position 0.
      */
-    fun getStackingOrderPositions(drawables: Collection<T>): List<StackingOrderPosition<T>>
+    fun getStackingOrderPositions(drawables: Collection<Drawable>): List<StackingOrderPosition>
 
     /**
      * Brings the specified [Drawable]s to the front of the stacking order while maintaining their relative
@@ -154,8 +154,8 @@ interface DrawableContainer<T : Drawable> : Drawable, Locatable {
     fun toBack(drawables: Collection<T>)
 }
 
-data class StackingOrderPosition<T: Drawable>(val position: Int, val drawable: T) : Comparable<StackingOrderPosition<T>> {
-    override fun compareTo(other: StackingOrderPosition<T>): Int {
+data class StackingOrderPosition(val position: Int, val drawable: Drawable) : Comparable<StackingOrderPosition> {
+    override fun compareTo(other: StackingOrderPosition): Int {
         return this.position.compareTo(other.position)
     }
 }
