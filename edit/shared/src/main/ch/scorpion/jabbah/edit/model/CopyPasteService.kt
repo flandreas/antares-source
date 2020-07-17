@@ -16,7 +16,7 @@ open class CopyPasteService {
 		throw NotImplementedError()
 	}
 
-	open fun copy(componentIds: Collection<Int>, drawing: Drawing<Component>): String {
+	open fun copy(componentIds: Collection<Int>, drawing: Drawing<*>): String {
 		throw NotImplementedError()
 	}
 

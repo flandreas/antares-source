@@ -55,7 +55,7 @@ class GraphViewCopyPasteService(
 		pasteCount = max(0, pasteCount - 1)
 	}
 
-	override fun copy(componentIds: Collection<Int>, drawing: Drawing<Component>): String {
+	override fun copy(componentIds: Collection<Int>, drawing: Drawing<*>): String {
 		var contents: String
 		ByteArrayOutputStream().use {
 			try {

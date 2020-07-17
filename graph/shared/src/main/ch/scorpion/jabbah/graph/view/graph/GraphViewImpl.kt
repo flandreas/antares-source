@@ -38,7 +38,6 @@ import ch.scorpion.jabbah.graph.view.connect.ReconnectOriginConnector
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
-import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.scenario.ScenariosImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecasesImpl
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -349,8 +348,8 @@ open class GraphViewImpl(
 	}
 
 	/** Overridden in order to remove the [GraphElement] from the [Graph] that this [GraphView] displays.*/
-	override fun remove(drawable: GraphElementView<*>): DrawableContainer<GraphElementView<*>> {
-		if (graph != null) {
+	override fun remove(drawable: Drawable): DrawableContainer<GraphElementView<*>> {
+		if (graph != null && drawable is GraphElementView<*>) {
 			if (getElementViews(drawable.model).size == 1) {
 				graph!!.remove(drawable.model)
 			}

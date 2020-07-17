@@ -62,7 +62,7 @@ class DeleteAction(
  * TODO How can we preserve the original stacking order of the removed Components?
  */
 class DeleteCommand(
-	val drawingView: DrawingView<Drawing<Component>>,
+	val drawingView: DrawingView<*>,
 	private val componentIds: List<Int>
 ) : AbstractCommand("edit.command.delete", null) {
 

@@ -125,7 +125,7 @@ open class DrawableContainerImpl<T : Drawable>(
 
 	override fun get(index: Int): T = children[index]
 
-	override fun contains(drawable: T): Boolean = children.contains(drawable)
+	override fun contains(drawable: Drawable): Boolean = children.contains(drawable)
 
 	override fun add(drawable: T): DrawableContainer<T> = add(drawable, 0)
 
@@ -152,7 +152,7 @@ open class DrawableContainerImpl<T : Drawable>(
 		return this
 	}
 
-	override fun remove(drawable: T): DrawableContainer<T> {
+	override fun remove(drawable: Drawable): DrawableContainer<T> {
 		removeDrawableImpl(drawable, true)
 		return this
 	}
@@ -256,7 +256,7 @@ open class DrawableContainerImpl<T : Drawable>(
 		containerListeners.forEach { it.drawableAdded(event) }
 	}
 
-	private fun notifyDrawableRemoved(drawable: T) {
+	private fun notifyDrawableRemoved(drawable: Drawable) {
 		val event = DrawableContainerEvent(this, drawable)
 		containerListeners.forEach { it.drawableRemoved(event) }
 	}
@@ -265,7 +265,7 @@ open class DrawableContainerImpl<T : Drawable>(
 	 * Implementation of removing a [Drawable] from this [DrawableContainer] that recalculates the new
 	 * bounding box only after the last removal.
 	 */
-	private fun removeDrawableImpl(drawable: T, last: Boolean) {
+	private fun removeDrawableImpl(drawable: Drawable, last: Boolean) {
 		children.remove(drawable)
 		drawable.handleRemoved(this)
 		if (last) {

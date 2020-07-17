@@ -82,7 +82,7 @@ class ContainerDrawing(
 		return this
 	}
 
-	override fun remove(drawable: Component): DrawableContainer<Component> {
+	override fun remove(drawable: Drawable): DrawableContainer<Component> {
 		super.remove(drawable)
 		if (drawable is PortViewComponent<*>) {
 			model.removePort(drawable.portView!!.port)

@@ -29,7 +29,7 @@ class CutAction(
 ) : AbstractSelectionAwareAction("edit.action.cut", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		service.cut(drawingView!! as DrawingView<Drawing<Component>>)
+		service.cut(drawingView!!)
 	}
 }
 
@@ -40,7 +40,7 @@ class CopyAction(
 ) : AbstractSelectionAwareAction("edit.action.copy", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		service.copy(drawingView!! as DrawingView<Drawing<Component>>)
+		service.copy(drawingView!!)
 	}
 }
 

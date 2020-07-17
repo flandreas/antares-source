@@ -56,7 +56,7 @@ interface DrawableContainer<T : Drawable> : Drawable, Locatable {
     fun get(index: Int): T
 
     /** Determines whether this [DrawableContainer] contains the specified [Drawable].*/
-    fun contains(drawable: T): Boolean
+    fun contains(drawable: Drawable): Boolean
 
     /**
      * Adds the specified [Drawable] to this [DrawableContainer] at the front of the stacking order.
@@ -77,7 +77,7 @@ interface DrawableContainer<T : Drawable> : Drawable, Locatable {
      * Calls [DrawableContainerListener.drawableRemoved] on all registered listeners.
      * @return this [DrawableContainer] to support method chaining
      */
-    fun remove(drawable: T): DrawableContainer<T>
+    fun remove(drawable: Drawable): DrawableContainer<T>
 
     /**
      * Removes all [Drawable]s from this [DrawableContainer].

@@ -52,7 +52,7 @@ open class GraphViewAppServiceImpl(
 		}
 	}
 
-	override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String?) {
+	override fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
 		LOG.debug("delete ${components.size} components")
 
 		commandManager.beginTransaction(cmdDescriptionKey ?: "edit.command.delete", drawingView)
@@ -113,14 +113,14 @@ open class GraphViewAppServiceImpl(
 		commandManager.execute(UnconnectEdgeViewCommand(drawingView, connectService, edgeView.id))
 	}
 
-	private fun getWrapperOf(component: Component, drawing: Drawing<Component>): GraphElementViewWrapper? {
+	private fun getWrapperOf(component: Component, drawing: Drawing<*>): GraphElementViewWrapper? {
 		return drawing.getDrawables()
 			.filter { it is GraphElementViewWrapper && it.component === component }
 			.map { it as GraphElementViewWrapper }
 			.firstOrNull()
 	}
 
-	private fun possibleWrapper(component: Component, drawing: Drawing<Component>): Component {
+	private fun possibleWrapper(component: Component, drawing: Drawing<*>): Component {
 		return getWrapperOf(component, drawing) ?: component
 	}
 }

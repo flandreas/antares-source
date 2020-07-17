@@ -32,7 +32,7 @@ interface DrawingAppService {
 	 * @param cmdDescriptionKey the translation key of the [Command] that makes this operation undoable,
 	 * or `null` to use the default name
 	 */
-	fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String? = null)
+	fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String? = null)
 
 	/** Replaces the specified [Component]s with a newly created [GroupComponent].*/
 	fun group(components: List<Component>, drawingView: DrawingView<Drawing<Component>>)
@@ -41,10 +41,10 @@ interface DrawingAppService {
 	fun ungroup(component: GroupComponent, drawingView: DrawingView<Drawing<Component>>)
 
 	/** Cuts the [Component]s that are currently selected in [drawingView] to the system clipboard.*/
-	fun cut(drawingView: DrawingView<Drawing<Component>>)
+	fun cut(drawingView: DrawingView<*>)
 
 	/** Copies the [Component]s that are currently selected in [drawingView] to the system clipboard.*/
-	fun copy(drawingView: DrawingView<Drawing<Component>>)
+	fun copy(drawingView: DrawingView<*>)
 
 	/** Pastes the current contents of the system clipboard into the specified [DrawingView].*/
 	fun paste(drawingView: DrawingView<Drawing<Component>>)
@@ -65,7 +65,7 @@ open class DrawingAppServiceImpl(
 		return addedComponent
 	}
 
-	override fun delete(components: List<Component>, drawingView: DrawingView<Drawing<Component>>, cmdDescriptionKey: String?) {
+	override fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
 		commandManager.execute(DeleteCommand(drawingView, components.map { it.id }))
 	}
 
@@ -98,7 +98,7 @@ open class DrawingAppServiceImpl(
 	}
 
 
-	override fun cut(drawingView: DrawingView<Drawing<Component>>) {
+	override fun cut(drawingView: DrawingView<*>) {
 		val components = drawingView.selectionManager.selection
 		val componentsToDelete = components.filter { it.deletable }.toList()
 		if (componentsToDelete.isNotEmpty()) {
@@ -118,7 +118,7 @@ open class DrawingAppServiceImpl(
 		}
 	}
 
-	override fun copy(drawingView: DrawingView<Drawing<Component>>) {
+	override fun copy(drawingView: DrawingView<*>) {
 		Clipboard.setStringContents(copyPasteService.copy(drawingView.selectionManager.selection.map { it.id }, drawingView.drawing))
 	}
 

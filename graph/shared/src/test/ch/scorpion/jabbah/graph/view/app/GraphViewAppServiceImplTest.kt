@@ -96,7 +96,7 @@ class GraphViewAppServiceImplTest {
 		builder.split(ev, 0, Point2D(150, 100), vv3)
 		EditModule.commandManager.reset()
 
-		service.delete(builder.graphView.getDrawables().toList(), DrawingViewMockBuilder().withDrawing(builder.graphView).build())
+		service.delete(builder.graphView.getDrawables().toList(), DrawingViewMockBuilder().withDrawing(builder.graphView).build<Component>())
 
 		EditModule.commandManager.undo()
 
