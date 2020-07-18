@@ -30,7 +30,7 @@ interface Port<T : Any> : Describable {
 	/** The ID of this [Port] that is unique within the owning [Vertice].*/
 	var portId: Int
 
-	/** The class of signal this [Port] can handle. Used to support type inference as runtime.*/
+	/** The class of signal this [Port] can handle. Used to support type inference at runtime.*/
 	val signalClass: KClass<T>?
 
 	/**

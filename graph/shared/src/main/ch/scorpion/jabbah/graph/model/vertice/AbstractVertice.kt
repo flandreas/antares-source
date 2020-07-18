@@ -80,6 +80,7 @@ abstract class AbstractVertice(
 	}
 
 	override fun <T : Any> getPort(): Port<T> {
+		@Suppress("UNCHECKED_CAST")
 		return ports[0] as Port<T>
 	}
 
@@ -92,14 +93,17 @@ abstract class AbstractVertice(
 	}
 
 	override fun <T : Any> getPort(name: String): Port<T> {
+		@Suppress("UNCHECKED_CAST")
 		return ports.first { it.name == name } as Port<T>
 	}
 
 	override fun <T : Any> getPort(id: Int): Port<T> {
+		@Suppress("UNCHECKED_CAST")
 		return ports.first { it.portId == id } as Port<T>
 	}
 
 	override fun <T : Any> getInput(): InputPort<T> {
+		@Suppress("UNCHECKED_CAST")
 		return getInputs()[0] as InputPort<T>
 	}
 
@@ -108,14 +112,17 @@ abstract class AbstractVertice(
 	}
 
 	override fun <T : Any> getInput(name: String): InputPort<T> {
+		@Suppress("UNCHECKED_CAST")
 		return getInputs().first { it.name == name } as InputPort<T>
 	}
 
 	override fun <T : Any> getInput(id: Int): InputPort<T> {
+		@Suppress("UNCHECKED_CAST")
 		return getInputs().first { it.portId == id } as InputPort<T>
 	}
 
 	override fun <T : Any> getOutput(): OutputPort<T> {
+		@Suppress("UNCHECKED_CAST")
 		return getOutputs()[0] as OutputPort<T>
 	}
 
@@ -124,10 +131,12 @@ abstract class AbstractVertice(
 	}
 
 	override fun <T : Any> getOutput(name: String): OutputPort<T> {
+		@Suppress("UNCHECKED_CAST")
 		return getOutputs().first { it.name == name } as OutputPort<T>
 	}
 
 	override fun <T : Any> getOutput(id: Int): OutputPort<T> {
+		@Suppress("UNCHECKED_CAST")
 		return getOutputs().first { it.portId == id } as OutputPort<T>
 	}
 

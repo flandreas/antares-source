@@ -15,6 +15,11 @@ import ch.scorpion.jabbah.edit.model.text.description.Describable
  * Note that this description is related to the instance, not the type. The description of the type is typically constant,
  * while two [Vertice]s of the same type can have distinctive instance descriptions, which can be used by the user
  * to be able to distinguish between them.
+ *
+ * This interface contains various generic methods for getting typed [Port]s to support the following usage pattern:
+ * `val signal = vertice.getOutput<Boolean>().getOutgoingSignal()`
+ * Since these methods are public API and access non-public state, they cannot be inlined and reified.
+ * Implementation will therefore have no other choice than suppress or accept 'unchecked cast' warnings.
  */
 interface Vertice : GraphElement, Describable {
 
