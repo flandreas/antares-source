@@ -101,6 +101,7 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 	private inner class ComponentRemoveListener : DrawableContainerAdapter<Component>() {
 		override fun drawableRemoved(event: DrawableContainerEvent<Component>) {
 			if (event.child is Component && selectionManager.isSelected(event.child as Component)) {
+				// Due to Kotlin bug KT-15558, the gradle compiler issues warning "No cast needed"
 				selectionManager.deselect(event.child as Component)
 			}
 		}

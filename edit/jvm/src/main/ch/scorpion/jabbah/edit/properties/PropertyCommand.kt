@@ -36,6 +36,7 @@ class PropertyCommand<V>(
 
 	private fun isNested(name: String): Boolean = name.contains('.')
 
+	@Suppress("UNCHECKED_CAST")
 	private fun getValue(name: String): V? {
 		return if (isNested(name)) {
 			PropertyUtils.getNestedProperty(bean, name) as V?

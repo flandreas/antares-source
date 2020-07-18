@@ -15,8 +15,8 @@ import ch.scorpion.jabbah.base.geom.Point2D
  * Standard implementation of the [Editor] interface.
  */
 open class EditorImpl(
-    override val view: DrawingView<Drawing<Component>>,
-    override val commandManager: CommandManager,
+    final override val view: DrawingView<Drawing<Component>>,
+    final override val commandManager: CommandManager,
     selectionToolFactory: SelectionToolFactory
 ) : Editor{
 
@@ -33,9 +33,9 @@ open class EditorImpl(
 
     /** ---- [Editor] interface */
 
-    override val snapManager: SnapManager = SnapManagerImpl(this)
+    final override val snapManager: SnapManager = SnapManagerImpl(this)
 
-    override var active: Boolean = false
+    final override var active: Boolean = false
         set(value) {
             if (value == field) {
                 return
@@ -68,7 +68,7 @@ open class EditorImpl(
             changeSupport.fire(Editor.PROP_LOCK_TOOL, oldValue, field)
         }
 
-    override var defaultTool: Tool? = null
+    final override var defaultTool: Tool? = null
         set(value) {
             if (value == field) {
                 return
@@ -78,7 +78,7 @@ open class EditorImpl(
             changeSupport.fire(Editor.PROP_DEFAULT_TOOL, oldValue, field)
         }
 
-    override var currentTool: Tool = selectionToolFactory.create(this)
+    final override var currentTool: Tool = selectionToolFactory.create(this)
         set(value) {
             if (value == field) {
                 return
@@ -226,18 +226,20 @@ open class EditorImpl(
      * Listens for added and removed [Component]s in the current [Drawing] in order to
      * call [handleComponentAdded] and [handleComponentRemoved].
      */
-    // TODO KT-14888 (fixed with Kotlin version 1.1-M04
+    // TODO KT-14888 (promised to be fixed with Kotlin version 1.1-M04, but wasn't)
     //private val drawingListener = object : DrawableContainerAdapter<Component>() {
     private val drawingListener = DrawingListener()
     private inner class DrawingListener : DrawableContainerAdapter<Component>() {
         override fun drawableAdded(event: DrawableContainerEvent<Component>) {
             if (event.child is Component) {
+	            // Due to Kotlin bug KT-15558, the gradle compiler issues warning "No cast needed"
                 handleComponentAdded(event.child as Component)
             }
         }
 
         override fun drawableRemoved(event: DrawableContainerEvent<Component>) {
             if (event.child is Component) {
+	            // Due to Kotlin bug KT-15558, the gradle compiler issues warning "No cast needed"
                 handleComponentRemoved(event.child as Component)
             }
         }

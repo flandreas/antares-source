@@ -90,8 +90,10 @@ class PropertyImpl<V>(
 	}
 
 	private fun writeToBean() {
+		@Suppress("UNCHECKED_CAST")
 		val newValue = value as V?
-		val command = PropertyCommand<V>(editor!!, baseKey, beanProvider, beanIds, newValue, getterPropertyName, setterPropertyName)
+
+		val command = PropertyCommand(editor!!, baseKey, beanProvider, beanIds, newValue, getterPropertyName, setterPropertyName)
 
 		if (newValue != command.oldValue) {
 			try {
