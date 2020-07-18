@@ -80,19 +80,19 @@ interface GraphView : Drawing<GraphElementView<*>> {
 
 	fun getVerticeView(name: String): VerticeView<*>?
 
-	fun getVerticeViews(): ImmutableList<VerticeView<Vertice>>
+	fun getVerticeViews(): ImmutableList<VerticeView<*>>
 
 	/** Returns all [EdgeView]s that this [GraphView] contains.*/
-	fun getEdgeViews(): ImmutableList<EdgeView<Any>>
+	fun getEdgeViews(): ImmutableList<EdgeView<*>>
 
 	/** Returns the [EdgeView] that is connected with the specified [Port], if any.*/
-	fun getEdgeView(port: Port<*>): EdgeView<Any>?
+	fun getEdgeView(port: Port<*>): EdgeView<*>?
 
 	/** Returns all [GraphPortView]s that this [GraphView] contains.*/
-	fun getGraphPortViews(): ImmutableList<GraphPortView<GraphPort<Any>>>
+	fun getGraphPortViews(): ImmutableList<GraphPortView<*>>
 
 	/** Returns the [GraphPortView] of the [GraphPort] with the specified name, if any.*/
-	fun getGraphPortView(portName: String): GraphPortView<GraphPort<Any>>?
+	fun getGraphPortView(portName: String): GraphPortView<*>?
 
 	fun getControlViewSources(): ImmutableList<ControlViewSource<Vertice>>
 
@@ -103,7 +103,7 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	fun getElementViews(element: GraphElement): ImmutableList<GraphElementView<*>>
 
 	/** Returns all [SubGraphVerticeView] that this [GraphView] contains.*/
-	fun getSubGraphVerticeViews(): ImmutableList<SubGraphVerticeView<SubGraphVertice>>
+	fun getSubGraphVerticeViews(): ImmutableList<SubGraphVerticeView<*>>
 
 	// TODO Add Scenario methods
 }

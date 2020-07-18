@@ -15,7 +15,6 @@ import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
-import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.GraphPortView
@@ -239,13 +238,13 @@ class ContainerTreeModel(
 	}
 
 	/** Adds the specified [SubGraphVerticeView] to the [TreeNode] with the top-level [SubGraphsFolderItem]. */
-	fun addSubGraphVerticeView(vv: SubGraphVerticeView<SubGraphVertice>) {
+	fun addSubGraphVerticeView(vv: SubGraphVerticeView<*>) {
 		if (subGraphsNode.isInitialized) {
 			subGraphsNode.add(createSubGraphVerticeViewTreeNode(vv, DeepVerticeLink(vv.model.id)))
 		}
 	}
 
-	fun removeSubGraphVerticeView(vv: SubGraphVerticeView<SubGraphVertice>) {
+	fun removeSubGraphVerticeView(vv: SubGraphVerticeView<*>) {
 		if (subGraphsNode.isInitialized) {
 			val index = findSubGraphVerticeViewIndex(vv.id)
 			if (index != null) {
@@ -256,7 +255,7 @@ class ContainerTreeModel(
 		}
 	}
 
-	private fun createSubGraphVerticeViewTreeNode(vv: SubGraphVerticeView<SubGraphVertice>, link: DeepVerticeLink): MutableTreeNode {
+	private fun createSubGraphVerticeViewTreeNode(vv: SubGraphVerticeView<*>, link: DeepVerticeLink): MutableTreeNode {
 		val subGraphView = vv.createSubGraphView()
 		val treeNode = DefaultMutableTreeNode(SubGraphVerticeViewFolderItem(subGraphView, vv, link))
 		treeNode.add(DynamicTreeNode(ControlsFolderTreeItem(subGraphView, link), initializer, treeModel, true))
@@ -354,7 +353,7 @@ class SubGraphsFolderItem(
  */
 class SubGraphVerticeViewFolderItem(
 	val graphView: GraphView,
-	val subGraphVerticeView: SubGraphVerticeView<SubGraphVertice>,
+	val subGraphVerticeView: SubGraphVerticeView<*>,
 	val link: DeepVerticeLink
 ) : AbstractContainerTreeItem(ContainerTreeItemType.SubGraph) {
 

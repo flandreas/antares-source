@@ -84,7 +84,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		stateChanged()
 	}
 
-	override fun isConnectedWith(port: Port<T>): Boolean {
+	override fun isConnectedWith(port: Port<out T>): Boolean {
 		return _ports.contains(port)
 	}
 

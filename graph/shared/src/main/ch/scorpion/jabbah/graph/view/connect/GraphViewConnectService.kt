@@ -55,14 +55,14 @@ interface GraphViewConnectService {
 	 * and from the [ConnectableView] that contains a [PortView] for that [Port].
 	 * Does nothing if not connected.
 	 */
-	fun unconnectEdgeViewOrigin(edgeView: EdgeView<Any>)
+	fun unconnectEdgeViewOrigin(edgeView: EdgeView<*>)
 
 	/**
 	 * Unconnects an [EdgeView] from the destination [Port] to which it is currently connected,
 	 * and from the [ConnectableView] that contains a [PortView] for that [Port].
 	 * Does nothing if not connected.
 	 */
-	fun unconnectEdgeViewDestination(edgeView: EdgeView<Any>)
+	fun unconnectEdgeViewDestination(edgeView: EdgeView<*>)
 
 	/**
 	 * Unconnects an [EdgeView] from both [ConnectableView]s to which it might be connected.

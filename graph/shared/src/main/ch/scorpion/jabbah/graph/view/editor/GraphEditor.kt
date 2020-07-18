@@ -60,7 +60,7 @@ class GraphPortViewEvent(val type: Type, val graphPortView: GraphPortView<*>) {
 }
 
 /** Posted by [GraphEditor] whenever a [SubGraphVerticeView] has been added or removed. */
-class SubGraphVerticeViewEvent(val type: Type, val subGraphVerticeView: SubGraphVerticeView<SubGraphVertice>) {
+class SubGraphVerticeViewEvent(val type: Type, val subGraphVerticeView: SubGraphVerticeView<*>) {
 	enum class Type {
 		ADD, REMOVE
 	}

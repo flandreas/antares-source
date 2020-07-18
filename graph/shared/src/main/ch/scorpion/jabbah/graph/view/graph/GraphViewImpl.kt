@@ -29,7 +29,6 @@ import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.graph.GraphReferenceResolver
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.InputToOutputOrEdgeConnector
 import ch.scorpion.jabbah.graph.view.connect.OutputToInputConnector
@@ -195,40 +194,41 @@ open class GraphViewImpl(
 		return getDrawables { it is VerticeView<*> && it.model.name == name }.firstOrNull() as VerticeView<*>?
 	}
 
-	override fun getVerticeViews(): ImmutableList<VerticeView<Vertice>> {
-		return getDrawables { it is VerticeView<*> } as ImmutableList<VerticeView<Vertice>>
+	override fun getVerticeViews(): ImmutableList<VerticeView<*>> {
+		return getDrawables { it is VerticeView<*> }.map { it as VerticeView<*> }.toImmutableList()
 	}
 
-	override fun getEdgeViews(): ImmutableList<EdgeView<Any>> {
-		return getDrawables { it is EdgeView<*> } as ImmutableList<EdgeView<Any>>
+	override fun getEdgeViews(): ImmutableList<EdgeView<*>> {
+		return getDrawables { it is EdgeView<*> }.map { it as EdgeView<*> }.toImmutableList()
 	}
 
-	override fun getEdgeView(port: Port<*>): EdgeView<Any>? {
+	override fun getEdgeView(port: Port<*>): EdgeView<*>? {
 		return getEdgeViews().firstOrNull { it.origin?.port === port || it.destination?.port === port }
 	}
 
-	override fun getGraphPortViews(): ImmutableList<GraphPortView<GraphPort<Any>>> {
-		return getDrawables { it is GraphPortView<*> } as ImmutableList<GraphPortView<GraphPort<Any>>>
+	override fun getGraphPortView(portName: String): GraphPortView<*>? {
+		return getDrawable { it is GraphPortView<*> && it.model.name == portName } as GraphPortView<*>?
+	}
+
+	override fun getGraphPortViews(): ImmutableList<GraphPortView<*>> {
+		return getDrawables { it is GraphPortView<*> }.map { it as GraphPortView<*> }.toImmutableList()
 	}
 
 	override fun getControlViewSources(): ImmutableList<ControlViewSource<Vertice>> {
+		@Suppress("UNCHECKED_CAST")
 		return getDrawables { it is ControlViewSource<*> } as ImmutableList<ControlViewSource<Vertice>>
+	}
+
+	override fun getControlViewSource(controlId: String): ControlViewSource<Vertice>? {
+		@Suppress("UNCHECKED_CAST")
+		return getDrawable { it is ControlViewSource<*> && it.controlId == controlId } as ControlViewSource<Vertice>?
 	}
 
 	override fun getElementViews(element: GraphElement): ImmutableList<GraphElementView<*>> {
 		return getDrawables { it.model == element }
 	}
-
-	override fun getGraphPortView(portName: String): GraphPortView<GraphPort<Any>>? {
-		return getDrawable { it is GraphPortView<*> && it.model.name == portName } as GraphPortView<GraphPort<Any>>?
-	}
-
-	override fun getControlViewSource(controlId: String): ControlViewSource<Vertice>? {
-		return getDrawable { it is ControlViewSource<*> && it.controlId == controlId } as ControlViewSource<Vertice>?
-	}
-
-	override fun getSubGraphVerticeViews(): ImmutableList<SubGraphVerticeView<SubGraphVertice>> {
-		return getDrawables { it is SubGraphVerticeView<*> } as ImmutableList<SubGraphVerticeView<SubGraphVertice>>
+	override fun getSubGraphVerticeViews(): ImmutableList<SubGraphVerticeView<*>> {
+		return getDrawables { it is SubGraphVerticeView<*> }.map { it as SubGraphVerticeView<*> }.toImmutableList()
 	}
 
 	/** ---- [Storable] interface */

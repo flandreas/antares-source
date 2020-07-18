@@ -35,7 +35,7 @@ interface Net<T: Any> : GraphElement {
     fun unconnect(port: Port<*>)
 
     /** Checks whether the specified [Port] is connected with this [Net].*/
-    fun isConnectedWith(port: Port<T>): Boolean
+    fun isConnectedWith(port: Port<out T>): Boolean
 
     /** Returns the [OutputPort] (if any) that asserts a consistent, defined signal to this [Net]. */
     fun getConsistentSignalPort(): OutputPort<T>?
