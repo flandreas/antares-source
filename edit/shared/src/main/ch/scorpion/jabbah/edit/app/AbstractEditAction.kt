@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 
 /**
@@ -19,7 +21,8 @@ abstract class AbstractEditAction(
 	viewManager: ViewManager = DrawViewModule.viewManager
 ) : AbstractViewAction(baseName, eventBus, viewManager) {
 
-	protected val drawingView: DrawingView<*>? get() = viewManager.activeView as DrawingView<*>?
+	@Suppress("UNCHECKED_CAST")
+	protected val drawingView: DrawingView<Drawing<Component>>? get() = viewManager.activeView as DrawingView<Drawing<Component>>?
 
 	override fun handleViewPropertyChanged(e: PropertyChangeEvent<Any>) {
 		super.handleViewPropertyChanged(e)

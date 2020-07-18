@@ -51,7 +51,7 @@ class PasteAction(
 ) : AbstractEditAction("edit.action.paste", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		service.paste(drawingView!! as DrawingView<Drawing<Component>>)
+		service.paste(drawingView!!)
 	}
 }
 
