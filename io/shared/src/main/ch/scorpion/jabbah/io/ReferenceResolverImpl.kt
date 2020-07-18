@@ -37,6 +37,8 @@ class ReferenceResolverImpl : ReferenceResolver {
 
 	override fun <T: Storable> getStorable(globalId: Int): T? {
 		LOG.trace("getStorable for id $globalId")
+
+		@Suppress("UNCHECKED_CAST")
 		return map[globalId] as T?
 	}
 
