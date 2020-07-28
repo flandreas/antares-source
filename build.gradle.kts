@@ -12,7 +12,7 @@ buildscript {
 
 plugins {
 	kotlin("multiplatform") version "1.3.72" apply false
-	id("net.akehurst.kotlin.kt2ts") version("1.5.0") apply false
+	id("net.akehurst.kotlin.kt2ts") version("1.5.3") apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
 }
 
