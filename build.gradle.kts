@@ -63,7 +63,7 @@ subprojects {
 		}
 
 		js() {
-			//browser()
+			useCommonJs()
 		}
 
 		sourceSets {

@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base
 
+import kotlin.js.JsName
+
 /**
  * [String] utilities.
  */
@@ -12,6 +14,7 @@ object StringUtils {
         return s == null || s.isBlank()
     }
 
+	@JsName("isEmpty")
     fun isEmpty(s: String?): Boolean {
         return s == null || s.isEmpty()
     }
