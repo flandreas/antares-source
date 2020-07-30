@@ -115,9 +115,9 @@ subprojects {
 				}
 			}
 
-			// Workaround for bug https://youtrack.jetbrains.com/issue/KT -24463:
-			// Copy all resource files to the build directory used by IDEA run configuration
 			tasks {
+				// Workaround for bug https://youtrack.jetbrains.com/issue/KT -24463:
+				// Copy all resource files to the build directory used by IDEA run configuration
 				val deployResources by creating(Copy::class) {
 					from(listOf(commonMain.resources, jvmMain.resources)) {
 						include("**/*.properties")
@@ -129,6 +129,13 @@ subprojects {
 				}
 				getByName("jvmMainClasses") {
 					dependsOn(deployResources)
+				}
+
+				getByName("compileKotlinJs") {
+					this as org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
+					kotlinOptions.moduleKind = "commonjs"
+					kotlinOptions.noStdlib = true
+					kotlinOptions.outputFile = "${project.buildDir.path}/classes/kotlin/js/main/jabbah-${project.name}.js"
 				}
 			}
 		}

@@ -6,6 +6,15 @@ val commonsIoVersion: String by extra
 val commonsLang3Version: String by extra
 val l2fprodVersion: String by extra
 
+kt2ts {
+	classPatterns.set(listOf(
+		"ch.scorpion.jabbah.edit.module.EditModuleJs",
+		"ch.scorpion.jabbah.edit.model.DrawingImpl",
+		"ch.scorpion.jabbah.edit.view.DrawingViewImpl",
+		"ch.scorpion.jabbah.edit.editor.EditEditorModule"
+	))
+}
+
 kotlin {
 
 	sourceSets {

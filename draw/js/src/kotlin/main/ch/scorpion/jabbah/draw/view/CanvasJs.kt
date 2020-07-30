@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJs
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.draw.style.StyleType
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
@@ -25,7 +26,7 @@ import kotlin.browser.document
 class CanvasJs(
 	id: String,
 	viewFactory: (Canvas) -> View<out InputEventContext>,
-	styleProvider: StyleProvider
+	styleProvider: StyleProvider = StyleRepository.INSTANCE
 ) : Canvas {
 
 	private val LOG by logger(CanvasJs::class)

@@ -6,6 +6,14 @@ val commonsIoVersion: String by extra
 val commonsLang3Version: String by extra
 val l2fprodVersion: String by extra
 
+kt2ts {
+	classPatterns.set(listOf(
+		"ch.scorpion.jabbah.draw.Canvas",
+		"ch.scorpion.jabbah.draw.View",
+		"ch.scorpion.jabbah.draw.view.CanvasJs"
+	))
+}
+
 kotlin {
 
 	sourceSets {
