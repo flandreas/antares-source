@@ -15,6 +15,8 @@ import {
   CheckboxGroup,
 } from "@chakra-ui/core";
 
+import CanvasTest from "./CanvasTest";
+
 const Header: React.FC = () => {
   const bg = { light: "white", dark: "gray.800" };
   const { colorMode, toggleColorMode } = useColorMode();
@@ -171,7 +173,7 @@ const Layout: React.FC = () => {
             minHeight="calc(100vh - 4rem)"
           >
             <Box>
-              <p>This is content</p>
+              <CanvasTest />
             </Box>
           </Box>
         </Box>
