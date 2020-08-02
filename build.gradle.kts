@@ -4,15 +4,27 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 buildscript {
 	repositories {
 		jcenter()
+		flatDir {
+			dirs("build-lib")
+		}
 	}
 	dependencies {
 		classpath("net.sf.proguard:proguard-gradle:6.2.2")
+
+		// Use patch of kt2ts than contains type for kotlin.collection.Iterator
+		// TODO: Remove once https://github.com/dhakehurst/net.akehurst.kotlin.kt2ts/issues/5 is fixed
+		classpath(files("build-lib/kt2ts-plugin-1.5.99.jar"))
+		classpath("io.github.classgraph:classgraph:4.8.47")
+		classpath("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.13.0")
 	}
 }
 
 plugins {
 	kotlin("multiplatform") version "1.3.72" apply false
-	id("net.akehurst.kotlin.kt2ts") version("1.5.3") apply false
+
+	// Use patch of kt2ts than contains type for kotlin.collection.Iterator
+	// TODO: Remove once https://github.com/dhakehurst/net.akehurst.kotlin.kt2ts/issues/5 is fixed
+	// id("net.akehurst.kotlin.kt2ts") version("1.5.3") apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
 }
 
@@ -44,7 +56,11 @@ val l2fprodVersion: String by extra
 
 subprojects {
 	apply(plugin = "org.jetbrains.kotlin.multiplatform")
-	apply(plugin = "net.akehurst.kotlin.kt2ts")
+
+	// Use patch of kt2ts than contains type for kotlin.collection.Iterator
+	// TODO: Remove once https://github.com/dhakehurst/net.akehurst.kotlin.kt2ts/issues/5 is fixed
+	// apply(plugin = "net.akehurst.kotlin.kt2ts")
+	apply<net.akehurst.kotlin.kt2ts.plugin.gradle.GeneratorPlugin>()
 
 	configure<KotlinMultiplatformExtension> {
 		jvm() {
