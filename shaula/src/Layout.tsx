@@ -16,6 +16,7 @@ import {
 } from "@chakra-ui/core";
 
 import CanvasTest from "./CanvasTest";
+import DrawingToolbar from "./DrawingTollbar";
 
 const Header: React.FC = () => {
   const bg = { light: "white", dark: "gray.800" };
@@ -36,9 +37,7 @@ const Header: React.FC = () => {
     >
       <Box width="full" mx="auto" px={6} pr={[1, 6]} height="100%">
         <Flex size="100%" p={[0, 6]} pl={[0, 4]} align="center" justify="space-between">
-          <Box as="a" d="block" aria-label="daydrink, Back to homepage">
-            <Icon name="attachment" size="20px" />
-          </Box>
+          <DrawingToolbar />
           <InputGroup width="100%" ml={16} mr={16}>
             <InputLeftElement>
               <Icon name="search" color="gray.500" />
