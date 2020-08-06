@@ -15,6 +15,11 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2D
  */
 data class CloseViewRequest(val view: View<*>)
 
+//typealias ViewFactory<C> = (Canvas) -> View<out C>
+interface ViewFactory<T: InputEventContext> {
+	fun create(canvas: Canvas): View<out T>
+}
+
 /**
  * A [View] is a zoomable view that can display a stack of [Drawable]s, which are typically
  * [DrawableContainer]s that represent entire diagrams, of that contain selection or highlight graphics.

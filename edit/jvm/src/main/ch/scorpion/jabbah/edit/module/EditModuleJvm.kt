@@ -27,6 +27,13 @@ import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.IOModuleJvm
 import ch.scorpion.jabbah.io.TypeMap
 
+actual object EditModuleAccess {
+
+	actual fun require() {
+		EditModuleJvm.require()
+	}
+}
+
 /**
  * Setup of the [ch.scorpion.jabbah.edit] module for the JVM target.
  */

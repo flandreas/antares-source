@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.EditSelectModule
+import kotlin.js.JsName
 
 /**
  * Module definitions for the [ch.scorpion.jabbah.edit.editor] module.
@@ -18,6 +19,7 @@ object EditEditorModule : AbstractModule() {
     }
 
     @Suppress("unused")
+    @JsName("createEditor")
     fun createEditor(view: DrawingView<Drawing<Component>>): Editor {
         return EditorImpl(view, EditModule.commandManager, EditSelectModule.selectionToolFactory)
     }

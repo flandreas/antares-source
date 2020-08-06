@@ -6,6 +6,13 @@ import ch.scorpion.jabbah.edit.model.text.TextComponentFactoryJs
 import ch.scorpion.jabbah.io.module.IOModuleJs
 import ch.scorpion.jabbah.module.DrawModuleJs
 
+actual object EditModuleAccess {
+
+	actual fun require() {
+		EditModuleJs.require()
+	}
+}
+
 /**
  * Module definitions for the [ch.scorpion.jabbah.edit] package on the JavaScript platform.
  */

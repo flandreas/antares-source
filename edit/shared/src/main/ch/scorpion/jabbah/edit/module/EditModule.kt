@@ -4,6 +4,10 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.Canvas
+import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.ViewFactory
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.polyline.PolylineShapeImpl
@@ -41,6 +45,10 @@ import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 
+expect object EditModuleAccess {
+	fun require()
+}
+
 /**
  * Module definitions for the [ch.scorpion.jabbah.edit] module.
  */
@@ -70,6 +78,12 @@ object EditModule : AbstractModule() {
         EditSnapModule.require()
         EditSelectModule.require()
         EditEditorModule.require()
+
+	    DrawModule.viewFactory = object : ViewFactory<InputEventContext> {
+		    override fun create(canvas: Canvas): View<out InputEventContext> {
+			    return DrawingViewImpl(DrawingImpl(), canvas)
+		    }
+	    }
 
         Translations.addBundle("jabbah-edit")
         Themes.register(EditTheme())

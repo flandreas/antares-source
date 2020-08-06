@@ -1,10 +1,20 @@
 package ch.scorpion.jabbah.draw
 
 import ch.scorpion.jabbah.base.event.*
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.draw.module.DrawModule
+import kotlin.js.JsName
+
+interface CanvasFactory<T : InputEventContext> {
+	@JsName("create")
+	fun create(
+		id: String,
+		viewFactory: ViewFactory<T> = DrawModule.viewFactory as ViewFactory<T>
+	): Canvas
+}
 
 /**
  * Represents a target-specific rectangular drawing area.

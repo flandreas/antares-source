@@ -4,14 +4,14 @@ import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
-import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.AffineTransformImpl
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.*
-import ch.scorpion.jabbah.draw.polyline.PolylineShape
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.draw.view.ViewImpl
 
 /**
  * Module definitions for the [ch.scorpion.jabbah.draw] package.
@@ -29,6 +29,18 @@ object DrawModule : AbstractModule() {
 
     /** Loads an [Image] from the specified path. Must be implemented platform-specifically. */
     var imageLoader: ImageLoader = { throw UnsupportedOperationException() }
+
+	var viewFactory: ViewFactory<InputEventContext> = object : ViewFactory<InputEventContext> {
+		override fun create(canvas: Canvas): View<out InputEventContext> {
+			return ViewImpl(canvas, { AffineTransformImpl() })
+		}
+	}
+
+	var canvasFactory: CanvasFactory<InputEventContext> = object : CanvasFactory<InputEventContext> {
+		override fun create(id: String, viewFactory: ViewFactory<InputEventContext>): Canvas {
+			throw UnsupportedOperationException("not implemented")
+		}
+	}
 
     override fun initialize() {
         BaseModule.require()

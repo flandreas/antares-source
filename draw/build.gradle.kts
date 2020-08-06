@@ -8,6 +8,7 @@ val l2fprodVersion: String by extra
 
 kt2ts {
 	classPatterns.set(listOf(
+		"ch.scorpion.jabbah.draw.module.DrawModule",
 		"ch.scorpion.jabbah.draw.Canvas",
 		"ch.scorpion.jabbah.draw.View",
 		"ch.scorpion.jabbah.draw.view.CanvasJs"

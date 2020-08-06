@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.ViewFactory
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJs
@@ -25,7 +26,7 @@ import kotlin.browser.document
  */
 class CanvasJs(
 	id: String,
-	viewFactory: (Canvas) -> View<out InputEventContext>,
+	viewFactory: ViewFactory<InputEventContext>,
 	styleProvider: StyleProvider = StyleRepository.INSTANCE
 ) : Canvas {
 
@@ -55,7 +56,7 @@ class CanvasJs(
 		get() = Dimension2D(canvas.width.toDouble(), ctx.canvas.height.toDouble())
 
 	init {
-		view = viewFactory.invoke(this)
+		view = viewFactory.create(this)
 		view.initialize()
 		initalizing = false
 	}
