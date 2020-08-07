@@ -2,7 +2,7 @@ import React from "react";
 import { ChakraProvider, CSSReset } from "@chakra-ui/core";
 import theme from "@chakra-ui/theme";
 
-// import * as base from "jabbah-base";
+import * as base from "jabbah-base";
 
 import Layout from "components/Layout";
 
