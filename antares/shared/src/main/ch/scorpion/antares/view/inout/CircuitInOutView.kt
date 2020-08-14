@@ -70,9 +70,7 @@ class CircuitInOutView(
 	var signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY
 		set(value) {
 			field = value
-			if (model.portType.isInput) {
-				(model.getOutput<DigitalSignal>() as DigitalPort).signalRepresentation = value
-			}
+			model.signalRepresentation = value
 			updateView()
 		}
 
@@ -110,6 +108,7 @@ class CircuitInOutView(
 
 	override fun modelExchanged(oldModel: CircuitInOut?) {
 		super.modelExchanged(oldModel)
+		model.signalRepresentation = signalRepresentation
 		updateView()
 	}
 

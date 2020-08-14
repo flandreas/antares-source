@@ -11,16 +11,13 @@ class PortViewReuser(val verticeView: VerticeView<*>) {
 
     init {
         for (portView in verticeView.getPortViews()) {
-            map.put(portView.port.portId, portView)
+	        map[portView.port.portId] = portView
         }
     }
 
     fun reuse() {
         for (portView in verticeView.getPortViews()) {
-            val oldPortView = map.get(portView.port.portId)
-            if (oldPortView != null) {
-                portView.reuseFrom(oldPortView)
-            }
+	        map[portView.port.portId]?.let { portView.reuseFrom(it) }
         }
     }
 }
