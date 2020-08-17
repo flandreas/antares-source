@@ -11,7 +11,14 @@ kt2ts {
 		"ch.scorpion.jabbah.edit.module.EditModuleAccess",
 		"ch.scorpion.jabbah.edit.model.DrawingImpl",
 		"ch.scorpion.jabbah.edit.view.DrawingViewImpl",
-		"ch.scorpion.jabbah.edit.editor.EditEditorModule"
+		"ch.scorpion.jabbah.edit.editor.EditEditorModule",
+		"ch.scorpion.jabbah.edit.Editor",
+		"ch.scorpion.jabbah.edit.Tool",
+		"ch.scorpion.jabbah.edit.Tool",
+		"ch.scorpion.jabbah.edit.model.rectangle.RectangleTool",
+		"ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent",
+		"ch.scorpion.jabbah.edit.model.AbstractComponentTool",
+		"ch.scorpion.jabbah.edit.tool.ToolAdapter"
 	))
 }
 

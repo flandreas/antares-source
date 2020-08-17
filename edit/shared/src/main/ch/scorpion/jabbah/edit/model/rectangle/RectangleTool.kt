@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.edit.model.AbstractComponentTool
 import ch.scorpion.jabbah.edit.module.EditModule
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.js.JsName
 import kotlin.math.min
 import kotlin.properties.Delegates
 
@@ -44,6 +45,8 @@ class RectangleTool<T : RectangularComponent>(
 		/** The minimal width or height used to determine whether dragging is omitted.*/
 		const val MINIMAL_SIZE = 3
 	}
+	
+	constructor(editor: Editor, factory: () -> T): this(editor, EditModule.drawingAppService, factory)
 
 	/** Holds the instantiated rectangle. Initialized in [mousePressed].*/
 	private var instance by Delegates.notNull<T>()

@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, IconButton, useColorMode } from "@chakra-ui/core";
 import { BsBoundingBoxCircles, BsTextarea } from "react-icons/bs";
 
-import useEditModeStore from "hooks/useEditModeStore";
+import useEditModeStore from "hooks/useEdititModeStore";
 
 const activeBg = { light: "gray.100", dark: "gray.700" };
 

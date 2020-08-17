@@ -285,6 +285,7 @@ open class RectangleComponent(
 		private val TYPE = Translations.getString("edit.component.rectangle")
 	}
 
+	constructor(): this(shape = Rectangle2D(0, 0, 0, 0))
 	constructor(x: Double, y: Double, w: Double, h: Double) : this(shape = Rectangle2D(x, y, w, h))
 
 	override val type: String get() = TYPE

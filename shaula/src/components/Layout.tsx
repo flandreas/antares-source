@@ -3,7 +3,7 @@ import React from "react";
 import Header from "components/Header";
 import GraphPage from "pages/GraphPage";
 import ContainerPage from "pages/ContainerPage";
-import useEditModeStore from "hooks/useEditModeStore";
+import useEditModeStore from "hooks/useEdititModeStore";
 
 const Layout: React.FC = () => {
   const editMode = useEditModeStore((state) => state.editMode);
