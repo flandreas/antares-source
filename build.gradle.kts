@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-	kotlin("multiplatform") version "1.3.72" apply false
+	kotlin("multiplatform") version "1.4.0" apply false
 	id("net.akehurst.kotlin.kt2ts") version("1.5.0") apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
 }
@@ -52,7 +52,10 @@ subprojects {
 			val main by compilations.getting {
 				kotlinOptions {
 					jvmTarget = JavaVersion.VERSION_1_8.toString()
-					freeCompilerArgs = listOf("-Xinline-classes")
+					freeCompilerArgs = listOf(
+						// https://youtrack.jetbrains.com/issue/KT-37435
+						"-Xno-optimized-callable-references",
+						"-Xinline-classes")
 				}
 			}
 			val test by compilations.getting {
@@ -62,15 +65,15 @@ subprojects {
 			}
 		}
 
-		js() {
+		js(IR) {
 			//browser()
+			binaries.executable()
 		}
 
 		sourceSets {
 			val commonMain by getting {
 				kotlin.srcDir("shared/src/main")
 				resources.srcDir("shared/rsc")
-				dependencies { implementation(kotlin("stdlib")) }
 			}
 			val commonTest by getting {
 				kotlin.srcDir("shared/src/test")
@@ -83,7 +86,6 @@ subprojects {
 			val jvmMain by getting {
 				kotlin.srcDir("jvm/src/main")
 				dependencies {
-					implementation(kotlin("stdlib-jdk8"))
 					implementation(kotlin("reflect"))
 					implementation("org.slf4j:slf4j-api:$slf4jVersion")
 					implementation("org.slf4j:slf4j-log4j12:$slf4jVersion")
@@ -105,7 +107,6 @@ subprojects {
 			}
 			val jsMain by getting {
 				kotlin.srcDir("js/src/kotlin/main")
-				dependencies { implementation(kotlin("stdlib-js")) }
 			}
 			val jsTest by getting {
 				kotlin.srcDir("js/src/kotlin/test")

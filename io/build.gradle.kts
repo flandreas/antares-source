@@ -20,7 +20,6 @@ kotlin {
 			resources.srcDir("shared/rsc")
 			dependencies {
 				implementation(project(":base"))
-				implementation(kotlin("stdlib-common"))
 			}
 		}
 
@@ -38,7 +37,6 @@ kotlin {
 		val jvmMain by getting {
 			kotlin.srcDir("jvm/src/main")
 			dependencies {
-				implementation(kotlin("stdlib-jdk8"))
 				implementation(kotlin("reflect"))
 				implementation("org.slf4j:slf4j-api:$slf4jVersion")
 				implementation("org.slf4j:slf4j-log4j12:$slf4jVersion")
@@ -54,13 +52,6 @@ kotlin {
 			dependencies {
 				implementation(kotlin("test-junit"))
 				implementation("io.mockk:mockk:$mockkVersion")
-			}
-		}
-
-		val jsMain by getting {
-			kotlin.srcDir("js/src/kotlin/main")
-			dependencies {
-				implementation(kotlin("stdlib-js"))
 			}
 		}
 
