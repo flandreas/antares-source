@@ -172,6 +172,8 @@ open class TextComponentJvm(
 	)
 
 	init {
+		filled = false
+		stroked = false
 		adjustBounds()
 	}
 

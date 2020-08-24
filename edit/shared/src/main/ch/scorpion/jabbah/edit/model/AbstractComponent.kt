@@ -93,12 +93,8 @@ abstract class AbstractComponent(
 		if (rotatable) {
 			writer.writeString("rot", rotation.customName)
 		}
-		if (!filled) {
-			writer.writeBoolean("filled", filled)
-		}
-		if (!stroked) {
-			writer.writeBoolean("stroked", stroked)
-		}
+		writer.writeBoolean("filled", filled)
+		writer.writeBoolean("stroked", stroked)
 		if (customShadow != null) {
 			writer.writeBoolean("shadow", customShadow!!)
 		}
@@ -121,9 +117,11 @@ abstract class AbstractComponent(
 			customStroke = styleProvider.predefinedStrokeProvider.withId(reader.readString("stroke"))
 		}
 		if (reader.hasAttribute("filled")) {
+			// Legacy support: Older versions didn't store 'filled' if equal to default 'true'
 			filled = reader.readBoolean("filled")
 		}
 		if (reader.hasAttribute("stroked")) {
+			// Legacy support: Older versions didn't store 'stroked' if equal to default 'true'
 			stroked = reader.readBoolean("stroked")
 		}
 		if (reader.hasAttribute("shadow")) {
