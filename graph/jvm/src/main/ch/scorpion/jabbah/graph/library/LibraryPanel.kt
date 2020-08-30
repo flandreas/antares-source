@@ -7,9 +7,12 @@ import ch.scorpion.jabbah.graph.project.CurrentProjectEvent
 import ch.scorpion.jabbah.graph.project.ProjectHolder
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import java.awt.BorderLayout
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JPanel
+import javax.swing.SwingUtilities
 
 /**
  * A combination of a [LibraryTreeView] and a [LibraryPreviewPanel] for the currently open
@@ -33,6 +36,7 @@ class LibraryPanel(
 	    eventBus.register(CurrentProjectEvent::class) { libraryTreeView.project = it.project }
 
 	    libraryTreeView.addMouseListener(DoubleClickListener())
+	    libraryTreeView.addKeyListener(EnterKey())
 
 		buildUI()
     }
@@ -47,6 +51,15 @@ class LibraryPanel(
 		override fun mousePressed(e: MouseEvent) {
 			if (e.clickCount == 2 && libraryTreeView.getSelectedItem() is ContainerLibraryElement) {
 				eventBus.post(OpenContainerLibraryElementRequest(libraryTreeView.getSelectedItem() as ContainerLibraryElement))
+			}
+		}
+	}
+
+	private inner class EnterKey : KeyAdapter() {
+		override fun keyPressed(e: KeyEvent) {
+			if (e.keyCode == KeyEvent.VK_ENTER && libraryTreeView.getSelectedItem() is ContainerLibraryElement) {
+				eventBus.post(OpenContainerLibraryElementRequest(libraryTreeView.getSelectedItem() as ContainerLibraryElement))
+				SwingUtilities.invokeLater { libraryTreeView.requestFocusInWindow() }
 			}
 		}
 	}
