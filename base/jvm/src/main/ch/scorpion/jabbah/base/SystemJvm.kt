@@ -41,22 +41,20 @@ actual object System {
 	actual fun buildToolTipText(title: String?, text: String?, subText: String?, endWithPeriod: Boolean): String? {
 		val sb = StringBuilder()
 
-		if (title == null || "" == title) {
-			return null
-		}
-
 		val hasText = StringUtils.isNotEmpty(text)
 		val hasSubText = StringUtils.isNotEmpty(subText)
 
 		sb.append("<html>")
 
-		sb.append("<strong>")
+		if (StringUtils.isNotBlank(title)) {
+			sb.append("<strong>")
 
-		sb.append(title)
-		if (hasText) {
-			sb.append(":&nbsp;")
+			sb.append(title)
+			if (hasText) {
+				sb.append(":&nbsp;")
+			}
+			sb.append("</strong>")
 		}
-		sb.append("</strong>")
 
 		if (hasText) {
 			sb.append(text)

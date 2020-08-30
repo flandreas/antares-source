@@ -62,6 +62,8 @@ interface RectangularShape : Shape {
 	/** Contains the bottom-right edge of this [RectangularShape].*/
 	val bottomRight: Point2D get() = Point2D(maxX, maxY)
 
+	val bottomCenter: Point2D get() = Point2D(centerX, maxY)
+
     /** Moves this [RectangularShape] by the specified translation vector.*/
     fun moveBy(v: Point2D): RectangularShape {
         setFrame(x + v.x, y + v.y, width, height)

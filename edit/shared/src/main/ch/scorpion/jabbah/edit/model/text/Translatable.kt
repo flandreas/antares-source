@@ -111,6 +111,7 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 	/** ---- [TranslatableText] */
 
 	val isEmpty: Boolean get() = translations.isEmpty()
+	val isNotEmpty: Boolean get() = translations.isNotEmpty()
 
 	fun isAnyEqualOf(other: TranslatableText): Boolean {
 		return other.translations.any { getOptionalTranslation(it.key) == it.value.text }

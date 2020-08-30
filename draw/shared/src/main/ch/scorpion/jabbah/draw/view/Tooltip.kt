@@ -1,7 +1,10 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.Timer
@@ -10,7 +13,6 @@ import ch.scorpion.jabbah.draw.drawable.ArrowBubble
 import ch.scorpion.jabbah.draw.drawable.MultilineText
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
-import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -64,6 +66,8 @@ class TooltipHandler(
 
 	private var lastExplanation: DrawableExplanation<RectangularDrawable>? = null
 
+	private var lastTooltipLocation: Point2D? = null
+
 	/**
 	 * Handles mouse move events in the client of the tooltip system and requests tooltip displaying
 	 * or hiding as appropriate. Called by the client of the tooltip system in its event handling methods
@@ -90,8 +94,8 @@ class TooltipHandler(
 			return
 		}
 
-		if (drawable !== lastTooltipDrawable || tooltip?.text != lastTooltipText || explanation?.explanation !== lastExplanation?.explanation) {
-			setLastTargets(drawable, tooltip?.text, explanation)
+		if (drawable !== lastTooltipDrawable || tooltip?.text != lastTooltipText || explanation?.explanation !== lastExplanation?.explanation || lastTooltipLocation != tooltip?.location) {
+			setLastTargets(drawable, tooltip?.text, explanation, tooltip?.location)
 			eventBus.post(TooltipEvent(drawable, view, tooltip, explanation))
 		}
 	}
@@ -106,13 +110,15 @@ class TooltipHandler(
 		lastTooltipDrawable = null
 		lastTooltipText = null
 		lastExplanation = null
+		lastTooltipLocation = null
 	}
 
-	private fun setLastTargets(drawable: Drawable, tooltipText: String?, explanation: DrawableExplanation<RectangularDrawable>?) {
+	private fun setLastTargets(drawable: Drawable, tooltipText: String?, explanation: DrawableExplanation<RectangularDrawable>?, location: Point2D?) {
 		lastExplanation?.explanation?.dispose()
 		lastTooltipDrawable = drawable
 		lastTooltipText = tooltipText
 		lastExplanation = explanation
+		lastTooltipLocation = location
 	}
 }
 

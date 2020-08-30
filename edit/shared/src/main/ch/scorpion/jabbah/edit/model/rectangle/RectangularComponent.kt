@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.model.rectangle
 
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
@@ -16,6 +17,8 @@ import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -135,8 +138,9 @@ abstract class AbstractRectangularComponent(
 abstract class RectangularComponent(
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	shape: RectangularShape
-) : AbstractRectangularComponent(styleType, styleProvider, shape), Transparent {
+	shape: RectangularShape,
+	private val describable: Describable = DescribableImpl()
+) : AbstractRectangularComponent(styleType, styleProvider, shape), Transparent, Describable by describable {
 
 	companion object {
 		// The distance between the rectangle border and the text box (if at top or at bottom)
@@ -199,10 +203,10 @@ abstract class RectangularComponent(
 		if (!text.isEmpty) {
 			writer.writeStorables("text", text.allTranslations())
 		}
-
 		if (alignment != VerticalAlignment.CENTER) {
 			writer.writeString("vAlign", alignment.customName)
 		}
+		description.write("desc", writer)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -217,6 +221,7 @@ abstract class RectangularComponent(
 		if (reader.hasAttribute("vAlign")) {
 			alignment = VerticalAlignment.withName(reader.readString("vAlign"))
 		}
+		description.read("desc", reader)
 	}
 
 	/** ---- [Drawable] interface */
@@ -261,6 +266,13 @@ abstract class RectangularComponent(
 		label.font = font
 		label.draw(context)
 		context.g.translate(-x, -y)
+	}
+
+	override fun getTooltip(x: Double, y: Double): Tooltip? {
+		if (text.isNotEmpty && label.contains(Point2D(x, y).subtract(location))) {
+			return description.value?.let { Tooltip(buildToolTipText(title = null, text = it, subText = null)!!, label.boundingBox.bottomCenter.add(location)) }
+		}
+		return null
 	}
 
 	/** ---- [AbstractRectangularComponent] */

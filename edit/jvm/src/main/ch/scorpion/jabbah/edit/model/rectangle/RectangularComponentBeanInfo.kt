@@ -19,6 +19,7 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : Component
         private val text = EditProperties.translatableText()
         private val alignment = EditProperties.verticalAlignment()
 	    private val shadow = EditProperties.shadow()
+	    private val description = EditProperties.description()
     }
 
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
@@ -31,6 +32,7 @@ abstract class RectangularComponentBeanInfo<T: RectangularComponent> : Component
         properties.add(color.bind(editor, bean.id))
 	    properties.add(stroke.bind(editor, bean.id))
         properties.add(text.bind(editor, bean.id, filter = { false }))
+	    properties.add(description.bind(editor, bean.id))
         properties.add(alignment.bind(editor, bean.id))
     }
 }
