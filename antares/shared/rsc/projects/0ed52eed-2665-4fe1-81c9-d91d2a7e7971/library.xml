@@ -1,0 +1,28 @@
+<project _id='0' defaultElement='612f70e0-cc4f-4591-91a0-9debd7cb2b3f' uuid='0ed52eed-2665-4fe1-81c9-d91d2a7e7971' author='5ecf330b-e395-4e17-88b0-0883834b384a' import='6707f981-110d-4629-a0bf-c35a4688025c'>
+  <folder>
+    <libraryFolder _id='1'>
+      <name>
+        <translation lang='de' text='Hexadezimale Tastatur'/>
+        <translation lang='en' text='Hexadecimal Keyboard'/>
+      </name>
+      <items>
+        <containerLibraryElement _id='2' uuid='34ce48b1-6601-458d-950c-f2caa7fccdda'>
+          <name>
+            <translation lang='de' text='Tastatur'/>
+            <translation lang='en' text='Keyboard'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='3' uuid='612f70e0-cc4f-4591-91a0-9debd7cb2b3f'>
+          <name>
+            <translation lang='de' text='Tastatur-Anwendung'/>
+            <translation lang='en' text='Keyboard Usage'/>
+          </name>
+        </containerLibraryElement>
+      </items>
+    </libraryFolder>
+  </folder>
+  <desc>
+    <translation lang='de' text='Beispielprojekt, das zeigt, wie &quot;Controls&quot; in Symbolen von Teilschaltungen eingesetzt werden können'/>
+    <translation lang='en' text='Sample project featuring &quot;controls&quot; in symbols of subcircuits'/>
+  </desc>
+</project>

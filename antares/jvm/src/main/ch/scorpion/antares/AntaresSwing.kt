@@ -65,20 +65,31 @@ class AntaresSwing(
 		private const val PROP_APPLICATION_PROJECT = "application.project"
 		private val DEF_LIBRARY_UUID = UUID("6707f981-110d-4629-a0bf-c35a4688025c")
 
+		private const val THEMES_OPTION = "t"
+		private const val SYSTEM_LIB_OPTION = "l"
+		private const val PROJECTS_OPTION = "p"
+
 		fun defineOptions(options: Options): Options {
 			AbstractDesktopApplication.defineOptions(options)
 
-			options.addOption(Option.builder("t")
+			options.addOption(Option.builder(THEMES_OPTION)
 				.required(false)
 				.longOpt("theme")
 				.desc("Theme")
 				.hasArg()
 				.build())
 
-			options.addOption(Option.builder("l")
+			options.addOption(Option.builder(SYSTEM_LIB_OPTION)
 				.required(false)
 				.longOpt("syslib")
 				.desc("System library location")
+				.hasArg()
+				.build())
+
+			options.addOption(Option.builder(PROJECTS_OPTION)
+				.required(false)
+				.longOpt("projects")
+				.desc("Projects location")
 				.hasArg()
 				.build())
 
@@ -193,8 +204,12 @@ class AntaresSwing(
 
 	/** ---- [Antares] */
 
+	private var customProjectsDirectoryPath: String? = null
+
 	override var systemLibraryDirectoryPath: String? = null
 		private set
+
+	override val projectsDirectoryPath: String get() = customProjectsDirectoryPath ?: super.projectsDirectoryPath
 
 	/** ---- [AbstractApplication] */
 
@@ -224,15 +239,22 @@ class AntaresSwing(
 		systemLibraryDirectoryPath?.let {
 			LOG.value.info("Using system libraries in $systemLibraryDirectoryPath")
 		}
+
+		customProjectsDirectoryPath?.let {
+			LOG.value.info("Using custom projects directory $customProjectsDirectoryPath")
+		}
 	}
 
 	override fun consumeCommandLine(commandLine: CommandLine) {
 		super.consumeCommandLine(commandLine)
-		if (commandLine.hasOption("t")) {
-			Themes.setCurrent(commandLine.getOptionValue("t"))
+		if (commandLine.hasOption(THEMES_OPTION)) {
+			Themes.setCurrent(commandLine.getOptionValue(THEMES_OPTION))
 		}
-		if (commandLine.hasOption("l")) {
-			consumeSystemLibraryDirectoryPath(commandLine.getOptionValue("l"))
+		if (commandLine.hasOption(SYSTEM_LIB_OPTION)) {
+			consumeSystemLibraryDirectoryPath(commandLine.getOptionValue(SYSTEM_LIB_OPTION))
+		}
+		if (commandLine.hasOption(PROJECTS_OPTION)) {
+			consumeCustomProjectsDirectoryPath(commandLine.getOptionValue(PROJECTS_OPTION))
 		}
 	}
 
@@ -241,8 +263,15 @@ class AntaresSwing(
 			println("System library directory $path not found")
 			return
 		}
-
 		systemLibraryDirectoryPath = path
+	}
+
+	private fun consumeCustomProjectsDirectoryPath(path: String) {
+		if (Files.notExists(Paths.get(path))) {
+			println("Projects directory $path not found")
+			return
+		}
+		customProjectsDirectoryPath = path
 	}
 
 	override fun createMenuBarBuilder(): MenuBarBuilder {
