@@ -65,6 +65,16 @@ open class PortViewComponent<T : Any>(
 
 	override val type: String get() = TYPE
 
+	override val rotatable: Boolean get() = true
+
+	override fun rotateCounterClockwise() {
+		direction = Direction.of(direction.rotation.next())
+	}
+
+	override fun rotateClockwise() {
+		direction = Direction.of(direction.rotation.previous())
+	}
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
