@@ -26,7 +26,7 @@ class GraphFrameSwing(
 	application: DesktopApplication,
 	private val eventBus: EventBus,
 	val viewManager: ViewManager,
-	actions: GraphFrameActions
+	val actions: GraphFrameActions
 ) : AbstractApplicationFrame(application), GraphFrame {
 
 	private val mainToolBar: ToolBar

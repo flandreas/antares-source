@@ -82,6 +82,9 @@ open class GraphMenuBarBuilder(
 	}
 
 	override fun fillViewMenu(menu: JMenu) {
+		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(graphFrame.actions.viewDesktopAction)))
+		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(graphFrame.actions.viewContainerAction)))
+		menu.addSeparator()
 		super.fillViewMenu(menu)
 		val themesMenu = JMenu(Translations.getString("graph.action.themes.name"))
 		for (theme in Themes.allThemes()) {
