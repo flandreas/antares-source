@@ -143,7 +143,7 @@ class DipSwitchView(
 
 	/** ---- [Component] */
 
-	override val rotatable: Boolean get() = false
+	override val useRotation: Boolean get() = false
 
 	override val boundingBox: Rectangle2D
 		get() {

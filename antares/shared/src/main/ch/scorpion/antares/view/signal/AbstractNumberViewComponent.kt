@@ -76,7 +76,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 			throw UnsupportedOperationException()
 		}
 
-	override val rotatable: Boolean get() = false
+	override val useRotation: Boolean get() = false
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		numberView.setSignal(signal)

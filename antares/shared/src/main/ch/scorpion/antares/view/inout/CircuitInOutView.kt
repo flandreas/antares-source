@@ -11,10 +11,7 @@ import ch.scorpion.antares.view.signal.NumberView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.KeyEvent
-import ch.scorpion.jabbah.base.geom.Dimension2D
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
@@ -319,8 +316,7 @@ class CircuitInOutView(
 
 	/** ---- [Component] */
 
-	/** Not rotatable, because orientation [Direction] is explicitly set. */
-	override val rotatable: Boolean get() = false
+	override val rotatable: Boolean get() = true
 
 	override fun focusGained() {
 		numberView!!.focusGained()
@@ -330,6 +326,14 @@ class CircuitInOutView(
 	override fun focusLost() {
 		numberView!!.focusLost()
 		super.focusLost()
+	}
+
+	override fun rotateCounterClockwise() {
+		orientation = Direction.of(orientation.rotation.next())
+	}
+
+	override fun rotateClockwise() {
+		orientation = Direction.of(orientation.rotation.previous())
 	}
 
 	/** ---- [AbstractGraphElementView] */

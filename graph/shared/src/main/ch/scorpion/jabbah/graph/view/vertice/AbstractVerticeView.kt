@@ -294,7 +294,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	override val typeDesc: String? get() = model.typeDesc
 
-	override val rotatable: Boolean get() = true
+	override val useRotation: Boolean get() = true
 
 	override var rotation: Rotation
 		get() = super.rotation

@@ -4,8 +4,6 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
 import kotlin.math.abs
-import kotlin.math.round
-import kotlin.math.sign
 
 enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotation: Rotation) {
     EAST("east", 1, 0, Rotation.R0),
@@ -15,13 +13,13 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
 
     companion object {
 
-        private val LOG by logger(Direction.Companion::class)
+        private val LOG by logger(Direction::class)
 
         val ALL: Set<Direction> = setOf(EAST, NORTH, WEST, SOUTH)
 
         /** Returns the [Direction] with the specified custom name.*/
         fun withName(name: String): Direction {
-            for (dir in Direction.values()) {
+            for (dir in values()) {
                 if (dir.customName == name) {
                     return dir
                 }
@@ -40,7 +38,7 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
 
 	    /** Returns the [Direction] with the specified x and y offsets, or `null` if not orthogonal.*/
 	    fun optionalOf(dx: Int, dy: Int): Direction? {
-		    for (dir in Direction.values()) {
+		    for (dir in values()) {
 			    if (dir.dx == dx && dir.dy == dy) {
 				    return dir
 			    }
@@ -69,7 +67,7 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
 
         /** Returns the [Direction] that represents the specified [Rotation].*/
         fun of(rotation: Rotation): Direction {
-            for (dir in Direction.values()) {
+            for (dir in values()) {
                 if (dir.rotation === rotation) {
                     return dir
                 }
@@ -93,12 +91,12 @@ enum class Direction(val customName: String, val dx: Int, val dy: Int, val rotat
     }
 
     /** Returns the next counter-clockwise [Direction].*/
-    fun next(): Direction = Direction.values()[(this.ordinal + 1) % 4]
+    fun next(): Direction = values()[(this.ordinal + 1) % 4]
 
-    fun previous(): Direction = Direction.values()[(this.ordinal + 3) % 4]
+    fun previous(): Direction = values()[(this.ordinal + 3) % 4]
 
     /** Returns the opposite of this [Direction].*/
-    fun opposite(): Direction = Direction.values()[(this.ordinal + 2) % 4]
+    fun opposite(): Direction = values()[(this.ordinal + 2) % 4]
 
     /** Returns the result of mirroring this [Direction] horizontally, i.e. mirroring at a vertical axis.*/
     fun mirrorHorizontally(): Direction = when(this) {

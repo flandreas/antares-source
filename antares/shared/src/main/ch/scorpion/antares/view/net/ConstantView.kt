@@ -153,7 +153,7 @@ class ConstantView(
 
 	/** ---- [Component] */
 
-	override val rotatable: Boolean get() = false
+	override val useRotation: Boolean get() = false
 
 	/** ---- [ConstantView] */
 

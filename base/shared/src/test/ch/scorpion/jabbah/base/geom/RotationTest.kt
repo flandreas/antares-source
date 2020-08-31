@@ -30,6 +30,14 @@ class RotationTest {
         assertEquals(Rotation.R0, Rotation.R270.next())
     }
 
+	@Test
+	fun shouldCalculatePreviousRotation() {
+		assertEquals(Rotation.R270, Rotation.R0.previous())
+		assertEquals(Rotation.R0, Rotation.R90.previous())
+		assertEquals(Rotation.R90, Rotation.R180.previous())
+		assertEquals(Rotation.R180, Rotation.R270.previous())
+	}
+
     @Test
     fun shouldCalculateOppositeRotation() {
         assertEquals(Rotation.R180, Rotation.R0.opposite())

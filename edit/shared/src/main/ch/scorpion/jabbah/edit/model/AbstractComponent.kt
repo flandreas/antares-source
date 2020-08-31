@@ -36,7 +36,7 @@ abstract class AbstractComponent(
 
 	override var rotation: Rotation = Rotation.R0
 		set(value) {
-			if (!rotatable) {
+			if (!useRotation) {
 				throw IllegalArgumentException("rotation not supported")
 			}
 			if (value != field) {
@@ -53,13 +53,28 @@ abstract class AbstractComponent(
 	override val selectableComponent: Component get() = this
 
 	/**
-	 * Since rotation behaviour must be implemented by concrete [Component]s, this implementation is
-	 * not rotatable by default. Subclasses that support (and implement) rotation can override this
+	 * Since rotation behaviour must be implemented by concrete [Component]s, this implementation doesn't
+	 * use the [rotation] property by default. Subclasses that support (and implement) rotation can override this
 	 * property to return `true`.
 	 */
-	override val rotatable: Boolean get() = false
+	override val useRotation: Boolean get() = false
+
+	/**
+	 * Since rotation behaviour must be implemented by concrete [Component]s, this implementation returns the
+	 * same value as [useRotation] by default. Subclasses that implement a custom, non [Rotation] property based rotation
+	 * behaviour can override this method to return `true`.
+	 */
+	override val rotatable: Boolean get() = useRotation
 
 	override val deletable: Boolean get() = true
+
+	override fun rotateCounterClockwise() {
+		rotation = rotation.next()
+	}
+
+	override fun rotateClockwise() {
+		rotation = rotation.previous()
+	}
 
 	/** ---- [Snappable] interface */
 
@@ -90,7 +105,7 @@ abstract class AbstractComponent(
 		if (customStroke != null) {
 			writer.writeString("stroke", customStroke!!.identity.id)
 		}
-		if (rotatable) {
+		if (useRotation) {
 			writer.writeString("rot", rotation.customName)
 		}
 		writer.writeBoolean("filled", filled)
@@ -104,7 +119,7 @@ abstract class AbstractComponent(
 		if (reader.hasAttribute("id")) {
 			id = reader.readInt("id")
 		}
-		if (rotatable && reader.hasAttribute("rot")) {
+		if (useRotation && reader.hasAttribute("rot")) {
 			rotation = Rotation.withName(reader.readString("rot"))
 		}
 		if (!fixStyleType && reader.hasAttribute("style")) {

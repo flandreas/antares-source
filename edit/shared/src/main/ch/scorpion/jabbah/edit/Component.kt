@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -53,10 +54,20 @@ interface Component : Movable, Snappable, Storable, Stylable, Cloneable<Componen
 	/** Determines whether this [Component] can be manually deleted from its [ComponentContainer] interactively by the user.*/
 	val deletable: Boolean
 
-	/** Determines whether this [Component] can be rotated.*/
+	/** Determines whether this [Component] uses its [rotation] property.*/
+	val useRotation: Boolean
+
+	/**
+	 * Determines whether this [Component] can be interactively rotated by the user in terms of
+	 * [rotateClockwise] and [rotateCounterClockwise], which doesn't necessarily require [useRotation] to be `true`.
+	 */
 	val rotatable: Boolean
 
-	/** Holds the rotation property of this [Component].*/
+	/**
+	 * Holds the geometrical rotation property of this [Component]. This is automatically accounted for when the [Component]
+	 * is drawn, or when its bounding box is calculated.
+	 * @throws IllegalArgumentException when this property is set although [useRotation] is `false`
+	 */
 	var rotation: Rotation
 
 	/**
@@ -98,4 +109,19 @@ interface Component : Movable, Snappable, Storable, Stylable, Cloneable<Componen
 	 * graphical representation.  This method is typically only called by the [FocusManager].
 	 */
 	fun focusLost()
+
+	/**
+	 * Increases the current [Rotation] of this [Component] counterclockwise by 90 degrees.
+	 * The default implementation of this method will be to adjust the [rotation] property, which
+	 * will lead to an exception if [useRotation] is `false`. However, some [Component] implementation
+	 * might have to adjust their geometry when being rotated, so they will implement a different behaviour
+	 * of rotation, perhaps one that is based more on orientation [Direction] that on [Rotation] angle.
+	 */
+	fun rotateCounterClockwise()
+
+	/**
+	 * Increases the current [Rotation] of this [Component] clockwise by 90 degrees.
+	 * @see [rotateCounterClockwise] for more information.
+	 */
+	fun rotateClockwise()
 }

@@ -20,7 +20,7 @@ class RotateAction(
 ) : AbstractSelectionAwareAction("edit.action.rotate", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		commandManager.execute(RotateCommand(drawingView!!, singleSelection!!.id, singleSelection!!.rotation.next()))
+		commandManager.execute(RotateCounterclockwiseCommand(drawingView!!, singleSelection!!.id))
 	}
 
 	override fun calculateEnabled(): Boolean {
@@ -28,26 +28,23 @@ class RotateAction(
 	}
 }
 
-/** Rotates a [Component] by a given angle.*/
-private class RotateCommand(
+/** Rotates a [Component] to the given [Rotation].*/
+private class RotateCounterclockwiseCommand(
 	private val drawingView: DrawingView<*>,
-	val componentId: Int,
-	val rotation: Rotation
+	val componentId: Int
 ) : AbstractCommand("edit.command.rotate", null), Undoable {
 
 	private val component: Component get() = drawingView.drawing.getWithId(componentId) as Component
 
 	override fun execute() {
-		component.rotation = rotation
+		component.rotateCounterClockwise()
 	}
 
 	override fun undo() {
-		component.rotation = oldRotation
+		component.rotateClockwise()
 	}
 
 	override fun validate() {
 		component.validate()
 	}
-
-	private val oldRotation = component.rotation
 }

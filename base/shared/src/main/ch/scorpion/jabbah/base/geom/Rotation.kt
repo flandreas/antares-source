@@ -38,6 +38,10 @@ enum class Rotation(val customName: String, val angle: Double) {
         return values()[(this.ordinal + 1) % 4]
     }
 
+	fun previous(): Rotation {
+		return values()[(this.ordinal + 3) % 4]
+	}
+
     /** Returns the opposite of this [Rotation].*/
     fun opposite(): Rotation {
         return values()[(this.ordinal + 2) % 4]
