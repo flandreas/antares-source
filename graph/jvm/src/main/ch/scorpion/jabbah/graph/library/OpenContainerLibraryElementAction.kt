@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.Savable
@@ -7,6 +8,7 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import javax.swing.JFrame
@@ -17,9 +19,9 @@ import javax.swing.JOptionPane
  * [LibraryTreeView] for editing.
  */
 class OpenContainerLibraryElementAction(
-	private val application: DesktopApplication,
+	private val application: Application,
 	libraryTreeView: LibraryTreeView,
-	eventBus: EventBus
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContainerLibraryElementAction("graph.action.openContainerLibraryElement", false, libraryTreeView, eventBus) {
 
 	companion object {

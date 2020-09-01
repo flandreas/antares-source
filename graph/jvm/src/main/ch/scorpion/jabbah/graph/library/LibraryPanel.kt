@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.style.ThemeEvent
 import ch.scorpion.jabbah.graph.project.Project
@@ -21,12 +22,13 @@ import javax.swing.SwingUtilities
  * Posts a [OpenContainerLibraryElementRequest] on [EventBus] when the user double clicks on a [ContainerLibraryElement].
  */
 class LibraryPanel(
+	application: Application,
     private val eventBus: EventBus,
     libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
     projectHolder: ProjectHolder = ProjectModule.projectHolder
 ): JPanel() {
 
-    val libraryTreeView = LibraryTreeView(LibraryTreeViewType.Main, libraryHolder.library, projectHolder.project, eventBus)
+    val libraryTreeView = LibraryTreeView(LibraryTreeViewType.Main, application, libraryHolder.library, projectHolder.project, eventBus)
 	private val libraryTreePanel = LibraryTreePanel(libraryTreeView)
     val libraryPreviewPanel = LibraryPreviewPanel(eventBus, libraryTreePanel.libraryTreeView)
 

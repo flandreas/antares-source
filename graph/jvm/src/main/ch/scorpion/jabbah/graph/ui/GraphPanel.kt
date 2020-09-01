@@ -96,7 +96,7 @@ class GraphPanel(
 	private val propertyPanel: ComponentPropertyPanel
 
 	/** Contains UI for selecting components from the current library or the current project.*/
-	val libraryPanel = LibraryPanel(eventBus, libraryHolder)
+	val libraryPanel = LibraryPanel(application, eventBus, libraryHolder)
 
 	private val drawingToolBar = createDrawingToolBar()
 

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
@@ -21,11 +22,12 @@ import javax.swing.event.TreeSelectionListener
 /** An [Action] for editing a [Library] by using [LibraryCompositionPanel].*/
 class EditLibraryAction(
 	libraryTreeView: LibraryTreeView,
+	private val application: Application,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractLibraryAction("library.composition.action", libraryTreeView, true, eventBus) {
 
 	override fun execute(event: ActionEvent) {
-		LibraryCompositionPanel.showAsDialog(libraryTreeView.library, Frame.getFrames()[0], eventBus)
+		LibraryCompositionPanel.showAsDialog(libraryTreeView.library, Frame.getFrames()[0], application, eventBus)
 	}
 
 	override fun calculateEnabledness(): Boolean {
@@ -41,11 +43,12 @@ class LibraryCompositionPanel(
 	private val destinationLibrary: Library,
 	private val libraryManagementService: LibraryManagementService = LibraryModule.libraryManagementService,
 	eventBus: EventBus = BaseModule.eventBus,
+	application: Application,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
 
 	companion object {
-		fun showAsDialog(library: Library, parent: Frame, eventBus: EventBus) {
+		fun showAsDialog(library: Library, parent: Frame, application: Application, eventBus: EventBus) {
 			val dialog = JDialog(parent, true)
 			BusyHandler.register(dialog, null)
 			val panel = LibraryCompositionPanel(
@@ -54,6 +57,7 @@ class LibraryCompositionPanel(
 					dialog.isVisible = false
 					dialog.dispose()
 				},
+				application = application,
 				eventBus = eventBus)
 			dialog.title = Translations.getString("library.composition.title")
 			dialog.contentPane.add(panel)
@@ -73,6 +77,7 @@ class LibraryCompositionPanel(
 
 	private val destinationLibraryTree = LibraryTreeView(
 		type = LibraryTreeViewType.CompositionDestination,
+		application = application,
 		library = destinationLibrary,
 		project = null,
 		eventBus = eventBus,
@@ -98,6 +103,7 @@ class LibraryCompositionPanel(
 		// TODO With showWorkshopNode = false, Tree is empty after current Library has been changed?
 		sourceLibraryTree = LibraryTreeView(
 			type = LibraryTreeViewType.CompositionSource,
+			application = application,
 			library = getSelectedSourceLibrary(),
 			project = null,
 			eventBus = eventBus,

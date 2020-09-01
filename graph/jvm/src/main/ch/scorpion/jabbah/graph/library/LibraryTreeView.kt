@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.StringUtils
@@ -30,6 +31,7 @@ data class LibrarySelectionChangedEvent(val libraryTreeView: LibraryTreeView)
  */
 class LibraryTreeView(
 	type: LibraryTreeViewType,
+	application: Application,
 	library: Library,
 	project: Project? = null,
 	private val eventBus: EventBus = BaseModule.eventBus,
@@ -62,7 +64,7 @@ class LibraryTreeView(
 			}
 		}
 
-	val controller = LibraryTreeViewController(this, type)
+	val controller = LibraryTreeViewController(this, type, application)
 
 	private var currentSavable: Savable? = null
 		set(value) {
