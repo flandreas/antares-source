@@ -1,11 +1,11 @@
 package ch.scorpion.jabbah.graph.model
 
-import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.execution.SignalHandler
 
 /**
  * A [Net] is a [GraphElement] that can forward signals between [Port]s of [Vertice]s
- * @param the type of signals that this [Net] forwards
+ * @param T the type of signals that this [Net] forwards
  */
 interface Net<T: Any> : GraphElement {
 
@@ -25,7 +25,7 @@ interface Net<T: Any> : GraphElement {
      */
     val inconsistent: Boolean
 
-    /** Returns the [Ports] to which this [Net] is connected as an immutable list.*/
+    /** Returns the [Port]s to which this [Net] is connected as an immutable list.*/
     val ports: ImmutableList<Port<T>>
 
     /** Connects the specified [Port] with this [Net].*/
@@ -41,7 +41,7 @@ interface Net<T: Any> : GraphElement {
     fun getConsistentSignalPort(): OutputPort<T>?
 
     /**
-     * Sets the current signal of this [Net] and forwards it to all connected [Ports]s.
+     * Sets the current signal of this [Net] and forwards it to all connected [Port]s.
      * @param signal the signal to set.
      * @param origin the [OutputPort] that sends `signal` into this [Net].
      * @param signalHandler the runtime interface to the execution subsystem.

@@ -17,16 +17,11 @@ import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
  * An abstract base implementation of the [Vertice] interface.
  */
 abstract class AbstractVertice(
-	name: String? = null,
-	private val describable: Describable = DescribableImpl()
-) : AbstractGraphElement(), Vertice, Describable by describable {
+	name: String? = null
+) : AbstractGraphElement(), Vertice {
 
 	companion object {
 		private val LOG by logger(AbstractVertice::class)
-	}
-
-	init {
-		describable.description.changeHandler = { _, _ -> stateChanged() }
 	}
 
 	/** Contains all [Port]s of this [Vertice].*/
@@ -154,7 +149,6 @@ abstract class AbstractVertice(
 		if (storesName && name != null) {
 			writer.writeString("name", name!!)
 		}
-		description.write("desc", writer)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -162,7 +156,6 @@ abstract class AbstractVertice(
 		if (storesName && reader.hasAttribute("name")) {
 			name = reader.readString("name")
 		}
-		description.read("desc", reader)
 	}
 
 	/** ---- [Actor] interface */

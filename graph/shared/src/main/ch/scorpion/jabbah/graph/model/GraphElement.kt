@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.model
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.io.Storable
@@ -11,7 +12,7 @@ import ch.scorpion.jabbah.io.StorableCreator
 /**
  * Represents an element of a [Graph].
  */
-interface GraphElement : Storable, Actor {
+interface GraphElement : Storable, Actor, Describable {
 
     /** Holds the identification of this [GraphElement] being unique within a [Graph]. */
     override var id: Int

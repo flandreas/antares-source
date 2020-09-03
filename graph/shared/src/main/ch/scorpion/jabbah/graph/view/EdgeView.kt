@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.polyline.Polyline
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
 import ch.scorpion.jabbah.edit.Snapper
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
 import ch.scorpion.jabbah.graph.view.net.edge.*
@@ -55,7 +57,7 @@ data class ConnectionReference(
  *
  * TODO Refactor: Extract the read-only part of the [Polyline] interface and let [EdgeView] implement it
  */
-interface EdgeView<T: Any> : NetViewElement<T> {
+interface EdgeView<T: Any> : NetViewElement<T>, Describable {
 
 	companion object {
 
@@ -65,6 +67,8 @@ interface EdgeView<T: Any> : NetViewElement<T> {
 		/** The maximum distance for regarding a snap point as being on a corner of this [EdgeView]. Used for snapping.*/
 		const val edgeCornerDistance: Int = 15
 	}
+
+	override val description: Description get() = model.description
 
 	/** The [Connection] at the origin of this [EdgeView] (i.e. at the [Polyline]'s first point). */
 	val origin: Connection<T>?

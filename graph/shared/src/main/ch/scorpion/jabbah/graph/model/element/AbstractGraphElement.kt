@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.model.element
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.collection.EmptyIterator
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorImpl
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -15,7 +17,13 @@ import ch.scorpion.jabbah.io.*
 /**
  * Abstract base implementation of the [GraphElement] interface.
  */
-abstract class AbstractGraphElement : ActorImpl(), GraphElement {
+abstract class AbstractGraphElement(
+	private val describable: Describable = DescribableImpl()
+) : ActorImpl(), GraphElement, Describable by describable {
+
+	init {
+		describable.description.changeHandler = { _, _ -> stateChanged() }
+	}
 
 	/** Holds all registered [GraphElementListener]s */
 	private var listeners: MutableList<GraphElementListener>? = null
@@ -68,6 +76,7 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement {
 		if (storePropagationDelay) {
 			writer.writeLong("delay", propagationDelay)
 		}
+		description.write("desc", writer)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -75,6 +84,7 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement {
 		if (storePropagationDelay) {
 			propagationDelay = reader.readLong("delay")
 		}
+		description.read("desc", reader)
 		// Add an artificial resolution request so that views can request to be resolved AFTER this model
 		reader.requestResolution(this, Reference(name = "modelId"))
 	}
