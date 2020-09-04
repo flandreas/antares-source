@@ -9,7 +9,10 @@ import ch.scorpion.jabbah.draw.polyline.PolylineShape
 import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
-import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
 import ch.scorpion.jabbah.graph.view.net.edge.*
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -57,7 +60,7 @@ data class ConnectionReference(
  *
  * TODO Refactor: Extract the read-only part of the [Polyline] interface and let [EdgeView] implement it
  */
-interface EdgeView<T: Any> : NetViewElement<T>, Describable {
+interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 
 	companion object {
 

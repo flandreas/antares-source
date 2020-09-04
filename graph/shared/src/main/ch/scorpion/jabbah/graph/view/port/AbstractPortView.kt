@@ -36,10 +36,6 @@ abstract class AbstractPortView<T : Any>(
 
 	companion object {
 		private val LOG by logger(AbstractPortView::class)
-		private val SENS_AREA = BaseModule.properties.getInt(PROP_SENSITIVE_AREA)
-		private val INPUT_TEXT = Translations.getString("graph.property.portType.input")
-		private val OUTPUT_TEXT = Translations.getString("graph.property.portType.output")
-		private val CURRENT_VALUE_TEXT = Translations.getString("graph.portView.currentValue.name")
 	}
 
 	override var location: Point2D = Point2D(x, y)
@@ -151,13 +147,13 @@ abstract class AbstractPortView<T : Any>(
 			PortType.OUTPUT -> (port as OutputPort<*>).getOutgoingSignal().toString()
 			PortType.INOUT -> {
 				val p = port as BidirectionalPort<*>
-				"$INPUT_TEXT:${p.getIncomingSignal()}, $OUTPUT_TEXT:${p.getOutgoingSignal()}"
+				"${Translations.getString("graph.property.portType.input")}:${p.getIncomingSignal()}, ${Translations.getString("graph.property.portType.output")}:${p.getOutgoingSignal()}"
 			}
 		}
 		val content = StringBuilder(buildToolTipContent())
 		if (StringUtils.isNotEmpty(valueText)) {
 			content.append("<p/>")
-			content.append("<b>$CURRENT_VALUE_TEXT</b>: $valueText")
+			content.append("<b>${Translations.getString("graph.currentValue.name")}</b>: $valueText")
 		}
 		val text = System.buildToolTipText(buildToolTipTitle(), content.toString(), null)
 		return if (StringUtils.isNotBlank(text)) Tooltip(text!!, owner!!.getPortConnectionPoint(port)) else null
@@ -170,7 +166,8 @@ abstract class AbstractPortView<T : Any>(
 		update()
 	}
 
-	override fun containsConnectionPoint(x: Double, y: Double): Boolean = connectionPoint.isNear(x, y, SENS_AREA)
+	override fun containsConnectionPoint(x: Double, y: Double): Boolean
+		= connectionPoint.isNear(x, y, BaseModule.properties.getInt(PROP_SENSITIVE_AREA))
 
 	override fun handleConnect(edgeView: EdgeView<T>) {
 		invalidate()

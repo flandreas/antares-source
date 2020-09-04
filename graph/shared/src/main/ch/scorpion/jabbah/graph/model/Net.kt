@@ -12,6 +12,9 @@ interface Net<T: Any> : GraphElement {
     /** The signal of this [Net] after an execution step has been done.*/
     val signal: T?
 
+	/** Returns a displayable description of the [Net]'s current signal.*/
+	val signalDescription: String? get() = signal.toString() ?: ""
+
     /** Buffers the signal during an execution step.*/
     val signalBuffer: T?
 

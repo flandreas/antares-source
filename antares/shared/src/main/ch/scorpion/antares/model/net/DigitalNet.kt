@@ -1,10 +1,7 @@
 package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.port.DigitalPort
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
@@ -56,6 +53,17 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 	}
 
 	/** ---- [Net] */
+
+	override val signalDescription: String? get() {
+		if (signal == null) {
+			return ""
+		}
+		return if (ports.size >= 1) {
+			CurrentDigitalSignalNotation.notation.notate(signal!!, (ports.first() as DigitalPort).signalRepresentation)
+		} else {
+			CurrentDigitalSignalNotation.notation.notate(signal!!, DigitalSignalRepresentation.HEXADECIMAL)
+		}
+	}
 
 	override fun connect(port: Port<DigitalSignal>) {
 		super.connect(port)

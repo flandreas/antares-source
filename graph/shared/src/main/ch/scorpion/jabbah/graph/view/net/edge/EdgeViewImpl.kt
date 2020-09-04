@@ -16,6 +16,9 @@ import ch.scorpion.jabbah.draw.polyline.PolylineShapeFactory
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.model.Net
@@ -33,7 +36,6 @@ import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.io.*
-
 
 /**
  * A standard implementation of the [EdgeView] interface
@@ -89,6 +91,19 @@ open class EdgeViewImpl<T : Any>(
 	override fun toString(): String {
 		return "${super.toString()} origin=${origin?.connectableView?.id
 			?: "null"} dest=${destination?.connectableView?.id ?: "null"}"
+	}
+
+	/** ---- [ActorView] */
+
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? = null
+
+	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
+		val content = StringBuilder(StringUtils.orEmpty(model.description.value))
+		if (content.isNotEmpty()) {
+			content.append("<p/>")
+		}
+		content.append("<b>${Translations.getString("graph.currentValue.name")}</b>: ${model.signalDescription}")
+		return Tooltip(content.toString(), x, y)
 	}
 
 	/** ---- [EdgeView] interface */
