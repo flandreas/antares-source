@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities
 class DeleteLibraryElementAction(
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryAction(BASE_RESOURCE_NAME,  libraryTreeView, true, eventBus) {
+) : AbstractLibraryAction(BASE_RESOURCE_NAME, libraryTreeView, true, eventBus) {
 
 	companion object {
 		private const val BASE_RESOURCE_NAME = "graph.action.deleteBaseElement"
@@ -21,12 +21,13 @@ class DeleteLibraryElementAction(
 		private const val DIRECTORY_RESOURCE_NAME = "graph.action.deleteLibraryDirectory"
 	}
 
-	private val baseName: String get() = when (selectedItem) {
-		is BaseLibraryElement -> BASE_RESOURCE_NAME
-		is ContainerLibraryElement -> CONTAINER_RESOURCE_NAME
-		is LibraryDirectory -> DIRECTORY_RESOURCE_NAME
-		else -> BASE_RESOURCE_NAME
-	}
+	private val baseName: String
+		get() = when (selectedItem) {
+			is BaseLibraryElement -> BASE_RESOURCE_NAME
+			is ContainerLibraryElement -> CONTAINER_RESOURCE_NAME
+			is LibraryDirectory -> DIRECTORY_RESOURCE_NAME
+			else -> BASE_RESOURCE_NAME
+		}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		val libraryItem = libraryTreeView.getSelectedItem()

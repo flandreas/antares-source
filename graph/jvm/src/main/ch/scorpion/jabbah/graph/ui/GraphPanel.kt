@@ -219,7 +219,9 @@ class GraphPanel(
 	}
 
 	private fun setApplicationData(graphView: GraphView?) {
-		if (rootGraphView != graphView) {
+		if (graphView == null) {
+			desktopController.closeAll()
+		} else if (rootGraphView != graphView) {
 			desktopController.showMainOnly()
 			System.invokeLater {
 				// This will apply the Zoom strategy, which requires that the main Swing UI has already been laid out

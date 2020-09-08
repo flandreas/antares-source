@@ -205,7 +205,7 @@ class GraphDesktopController(
 		}
 	}
 
-	private fun closeAll(establishSingleView: Boolean) {
+	fun closeAll(establishSingleView: Boolean = false) {
 		if (establishSingleView) {
 			LOG.debug("Close all child GraphDesktopItems")
 		} else {

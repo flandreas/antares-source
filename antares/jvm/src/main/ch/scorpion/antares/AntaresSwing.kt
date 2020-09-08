@@ -190,7 +190,7 @@ class AntaresSwing(
 		}
 
 		eventBus.register(LibraryItemRemovedEvent::class) {
-			if (it.item is ContainerLibraryElement && (it.item as ContainerLibraryElement).metaGraph == data!!.content) {
+			if (it.item is ContainerLibraryElement && it.item == (data!!.savable as AbstractLibrarySavable).element) {
 				SwingUtilities.invokeLater { close() }
 			}
 		}
