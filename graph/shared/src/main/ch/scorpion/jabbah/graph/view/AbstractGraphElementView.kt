@@ -66,6 +66,10 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
+		readModelId(reader)
+	}
+
+	protected fun readModelId(reader: StoreReader) {
 		if (reader.hasAttribute(STORABLE_MODEL_ID)) {
 			reader.requestResolution(this, Reference(
 				name = STORABLE_MODEL_ID,

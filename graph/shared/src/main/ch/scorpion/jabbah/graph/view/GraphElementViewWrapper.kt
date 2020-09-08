@@ -22,51 +22,53 @@ import ch.scorpion.jabbah.io.StoreWriter
  * which is not yet supported by Kotlin's built-in delegation.
  */
 class GraphElementViewWrapper(
-    component: Component? = null,
-    styleProvider: StyleProvider = DrawStyleModule.styleProvider
+	component: Component? = null,
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractGraphElementView<GraphElementWrapper>(styleProvider, GraphStyleType.VERTICE, GraphElementWrapper(component)) {
 
-    val component: Component? get() = _component
+	val component: Component? get() = _component
 
-    private var drawableOwner: DrawableOwner? = null
+	private var drawableOwner: DrawableOwner? = null
 
-    private var _component: Component? = null
-        set(value) {
-            if (drawableOwner != null) {
-                drawableOwner?.dispose()
-            }
-            field = value
-            if (value != null) {
-                drawableOwner = DrawableOwner(this, value)
-            }
-        }
+	private var _component: Component? = null
+		set(value) {
+			if (drawableOwner != null) {
+				drawableOwner?.dispose()
+			}
+			field = value
+			if (value != null) {
+				drawableOwner = DrawableOwner(this, value)
+			}
+		}
 
-    init {
-        _component = component
-    }
+	init {
+		_component = component
+	}
 
-    /** ---- [Storable] interface */
+	/** ---- [Storable] interface */
 
-    override fun write(writer: StoreWriter) {
-	    writer.writeInt("id", id)
-        writer.writeStorable("component", _component!!)
-    }
+	override fun write(writer: StoreWriter) {
+		writer.writeInt(STORABLE_MODEL_ID, writer.provideIdentity(model))
+		writer.writeInt("id", id)
+		writer.writeStorable("component", _component!!)
+	}
 
-    override fun read(reader: StoreReader) {
-        // don't call super.read() in order not to interfere with the wrapped Component's style
-        _component = reader.readStorable("component") as Component
-	    if (reader.hasAttribute("id")) {
-		    id = reader.readInt("id")
-	    }
-    }
+	override fun read(reader: StoreReader) {
+		// don't call super.read() in order not to interfere with the wrapped Component's style
+		readModelId(reader)
+		_component = reader.readStorable("component") as Component
+		if (reader.hasAttribute("id")) {
+			id = reader.readInt("id")
+		}
+	}
 
-    /** ---- [Locatable] interface */
+	/** ---- [Locatable] interface */
 
-    override var location: Point2D
-        get() = _component!!.location
-        set(value) {
-            _component!!.location = value
-        }
+	override var location: Point2D
+		get() = _component!!.location
+		set(value) {
+			_component!!.location = value
+		}
 
 	/** ---- [Snappable] interface */
 
@@ -74,58 +76,60 @@ class GraphElementViewWrapper(
 
 	override val snappableY: Array<SnappableY> get() = _component!!.snappableY
 
-    /** ---- [Drawable] */
+	/** ---- [Drawable] */
 
-    override val boundingBox: RectangularShape get() = _component!!.boundingBox
+	override val boundingBox: RectangularShape get() = _component!!.boundingBox
 
-    override val type: String get() = _component!!.type
+	override val type: String get() = _component!!.type
 
 	override val typeDesc: String? get() = _component!!.typeDesc
 
-    override var visible: Boolean
-        get() = _component!!.visible
-        set(value) { _component!!.visible = value }
+	override var visible: Boolean
+		get() = _component!!.visible
+		set(value) {
+			_component!!.visible = value
+		}
 
-    override fun draw(context: DrawContext) {
-        _component!!.draw(context)
-    }
+	override fun draw(context: DrawContext) {
+		_component!!.draw(context)
+	}
 
-    override fun contains(x: Double, y: Double): Boolean = _component!!.contains(x, y)
+	override fun contains(x: Double, y: Double): Boolean = _component!!.contains(x, y)
 
-    override fun getTooltip(x: Double, y: Double): Tooltip? = _component!!.getTooltip(x, y)
+	override fun getTooltip(x: Double, y: Double): Tooltip? = _component!!.getTooltip(x, y)
 
-    override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
-            _component!!.getInputEventHandler(context)
+	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
+		_component!!.getInputEventHandler(context)
 
-    override fun <T: Drawable> handleAdded(container: DrawableContainer<T>) {
-        _component!!.handleAdded(container)
-    }
+	override fun <T : Drawable> handleAdded(container: DrawableContainer<T>) {
+		_component!!.handleAdded(container)
+	}
 
-    override fun <T : Drawable> handleRemoved(container: DrawableContainer<T>) {
-        _component!!.handleRemoved(container)
-    }
+	override fun <T : Drawable> handleRemoved(container: DrawableContainer<T>) {
+		_component!!.handleRemoved(container)
+	}
 
-    /** ---- [Component] interface */
+	/** ---- [Component] interface */
 
-    /** Forwards id to Component in order to appear as bean property.*/
-    override var id: Int
-	    get() = super.id
-	    set(value) {
-		    super.id = value
-		    component!!.id = value
-	    }
+	/** Forwards id to Component in order to appear as bean property.*/
+	override var id: Int
+		get() = super.id
+		set(value) {
+			super.id = value
+			component!!.id = value
+		}
 
 	override val selectableComponent: Component get() = _component!!
 
-    override val propertyOwner: Any get() = _component!!.propertyOwner
+	override val propertyOwner: Any get() = _component!!.propertyOwner
 
-    override val beanInfoClassName: String? get() = _component!!.beanInfoClassName
+	override val beanInfoClassName: String? get() = _component!!.beanInfoClassName
 
-    override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
-        get() = _component!!.preferredSelectionDrawingStrategy
-        set(value) {
-            super.preferredSelectionDrawingStrategy = value
-        }
+	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
+		get() = _component!!.preferredSelectionDrawingStrategy
+		set(value) {
+			super.preferredSelectionDrawingStrategy = value
+		}
 }
 
 class GraphElementWrapper(private val component: Component? = null) : AbstractGraphElement() {
