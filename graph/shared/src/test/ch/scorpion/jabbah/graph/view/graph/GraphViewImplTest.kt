@@ -1,14 +1,14 @@
 package ch.scorpion.jabbah.graph.view.graph
 
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import ch.scorpion.jabbah.io.IOModule
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -52,5 +52,17 @@ class GraphViewImplTest {
 
 		assertFalse(graphView.contains(verticeView))
 		assertFalse(graphView.graph!!.contains(verticeView.vertice))
+	}
+
+	@Test
+	fun shouldCreateOnlyOneNetViewPerNet() {
+		val builder = GraphViewBuilder<Boolean>()
+		val v1 = builder.addVerticeView(TestVerticeView(loc = Point2D(100, 100)))
+		val v2 = builder.addVerticeView(TestVerticeView(loc = Point2D(200, 100)))
+		val v3 = builder.addVerticeView(TestVerticeView(loc = Point2D(200, 200)))
+		val origEdgeView = builder.connect(v1, v2)
+		builder.split(origEdgeView, 0, Point2D(150, 100), v3)
+
+		assertEquals(1, (builder.graphView as GraphViewImpl).getNetViewCount(origEdgeView.model))
 	}
 }

@@ -11,8 +11,7 @@ buildscript {
 }
 
 plugins {
-	kotlin("multiplatform") version "1.4.0" apply false
-	id("net.akehurst.kotlin.kt2ts") version("1.5.0") apply false
+	kotlin("multiplatform") version "1.4.10" apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
 }
 
@@ -44,14 +43,13 @@ val l2fprodVersion: String by extra
 
 subprojects {
 	apply(plugin = "org.jetbrains.kotlin.multiplatform")
-	apply(plugin = "net.akehurst.kotlin.kt2ts")
 
 	configure<KotlinMultiplatformExtension> {
 		jvm() {
 			// by default kotlin uses JavaVersion 1.6
 			val main by compilations.getting {
 				kotlinOptions {
-					jvmTarget = JavaVersion.VERSION_1_8.toString()
+					jvmTarget = JavaVersion.VERSION_13.toString()
 					freeCompilerArgs = listOf(
 						// https://youtrack.jetbrains.com/issue/KT-37435
 						"-Xno-optimized-callable-references",
@@ -60,7 +58,7 @@ subprojects {
 			}
 			val test by compilations.getting {
 				kotlinOptions {
-					jvmTarget = JavaVersion.VERSION_1_8.toString()
+					jvmTarget = JavaVersion.VERSION_13.toString()
 				}
 			}
 		}
@@ -78,7 +76,7 @@ subprojects {
 			val commonTest by getting {
 				kotlin.srcDir("shared/src/test")
 				dependencies {
-					implementation(kotlin("test"))
+					implementation(kotlin("test-common"))
 					implementation(kotlin("test-annotations-common"))
 					implementation("io.mockk:mockk-common:$mockkVersion")
 				}

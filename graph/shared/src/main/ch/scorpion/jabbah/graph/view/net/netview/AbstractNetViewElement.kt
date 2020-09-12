@@ -46,7 +46,6 @@ abstract class AbstractNetViewElement<T: Any>(
         }
     }
 
-    protected fun showNetState(): Boolean {
-        return currentSystemSpeedCategory.systemSpeedCategory > SystemSpeedCategory.Use
-    }
+    protected fun showNetState(): Boolean =
+	    currentSystemSpeedCategory.systemSpeedCategory > SystemSpeedCategory.Use
 }

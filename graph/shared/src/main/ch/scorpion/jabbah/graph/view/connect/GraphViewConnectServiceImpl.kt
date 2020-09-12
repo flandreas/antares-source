@@ -178,10 +178,10 @@ class GraphViewConnectServiceImpl(
 		graphView.add(tail)
 		connectToOrigin(tail, Connection(nodeView))
 
-		graphView.add(newEdgeView)
-
 		// Connect newEdgeView
 		newEdgeView.net = splitEdgeView.net
+
+		graphView.add(newEdgeView)
 
 		when (newEdgeViewEndpointType) {
 			EdgeViewEndpointType.ORIGIN -> {

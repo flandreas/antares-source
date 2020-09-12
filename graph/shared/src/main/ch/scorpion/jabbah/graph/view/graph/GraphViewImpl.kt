@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.graph
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ConcatIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
@@ -274,14 +275,16 @@ open class GraphViewImpl(
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		if (reference.name == "netView") {
+			val resolvedNetView = reference.additionalInfo as NetView<Any>
+
 			// If NetViewElements are resolved BEFORE a NetView, a corresponding dummy NetView already
 			// exists in netViewMap and must be replaced by the one just read and resolved, because that one
 			// holds the essential properties.
-			val resolvedNetView = reference.additionalInfo as NetView<Any>
-			val existingNetView = netViewMap[resolvedNetView.net]
-			existingNetView?.getElements()?.forEach {
-				resolvedNetView.add(it)
+			netViewMap[resolvedNetView.net]?.let { existingNetView ->
+				existingNetView.getElements().forEach { resolvedNetView.add(it) }
+				netViewMap.remove(existingNetView.net)
 			}
+
 			addNetView(resolvedNetView)
 		}
 		super.resolve(reference, referenceResolver)
@@ -371,10 +374,18 @@ open class GraphViewImpl(
 
 	/** ---- [GraphViewImpl] */
 
+	/** Only needed for testing.*/
+	fun getNetViewCount(net: Net<*>): Int = netViewMap.filterKeys { it === net }.size
+
 	private fun addNetView(netView: NetView<Any>) {
+		System.printStackTrace()
 		if (!netViewMap.containsKey(netView.net)) {
 			netViewMap[netView.net] = netView
 		}
+	}
+
+	private fun removeNetView(netView: NetView<Any>) {
+		netViewMap.remove(netView.net)
 	}
 
 	private fun addNetViewElement(elem: NetViewElement<Any>) {
@@ -387,11 +398,11 @@ open class GraphViewImpl(
 	}
 
 	private fun removeNetViewElement(elem: NetViewElement<Any>) {
-		val netView = netViewMap[(elem.net)]
+		val netView = netViewMap[elem.net]
 		if (netView != null) {
 			netView.remove(elem)
 			if (netView.isEmpty) {
-				netViewMap.remove(netView.net)
+				removeNetView(netView)
 			}
 		}
 	}

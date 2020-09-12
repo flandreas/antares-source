@@ -1,6 +1,9 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.view.net.node.NodeViewStyling
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 
 /**
  * An element of a [NetView].
