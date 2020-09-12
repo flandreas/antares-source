@@ -378,7 +378,6 @@ open class GraphViewImpl(
 	fun getNetViewCount(net: Net<*>): Int = netViewMap.filterKeys { it === net }.size
 
 	private fun addNetView(netView: NetView<Any>) {
-		System.printStackTrace()
 		if (!netViewMap.containsKey(netView.net)) {
 			netViewMap[netView.net] = netView
 		}
