@@ -188,6 +188,11 @@ class AntaresBeanInfoTest {
 		read(TunnelView(), TunnelViewBeanInfo())
 	}
 
+	@Test
+	fun shouldReadBreakView() {
+		read(BreakView(), BreakViewBeanInfo())
+	}
+
 	// output
 
 	@Test

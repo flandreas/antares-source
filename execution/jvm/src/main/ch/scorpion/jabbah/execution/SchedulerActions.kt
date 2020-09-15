@@ -44,36 +44,30 @@ class PauseExecutionAction(
 	}
 }
 
-/** Performs a single execution step.*/
-class StepExecutionAction(
+/** Resumes execution of a [Scheduler] after it has been suspended by a breakpoint.*/
+class ResumeExecutionAction(
 	val scheduler: Scheduler = ExecutionModule.scheduler,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractSchedulerAction("execution.action.step", eventBus) {
+) : AbstractSchedulerAction("execution.action.resume", eventBus) {
 
-	private val schedulerRunningStateHandler: EventHandler<SchedulerRunningStateEvent> = { updateEnabledness(scheduler.numberOfRemainingSlots) }
-	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = { updateEnabledness(scheduler.numberOfRemainingSlots) }
-	private val schedulerStateHandler: EventHandler<SchedulerStateEvent> = { updateEnabledness(it.numberOfRemainingSlots) }
+	private val handler: EventHandler<BreakpointEvent> = { updateEnabledness() }
 
 	init {
-		eventBus.register(SchedulerRunningStateEvent::class, schedulerRunningStateHandler)
-		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
-		eventBus.register(SchedulerStateEvent::class, schedulerStateHandler)
+		eventBus.register(BreakpointEvent::class, handler)
 		enabled = false
 	}
 
 	override fun dispose() {
 		super.dispose()
-		eventBus.unregister(schedulerRunningStateHandler)
-		eventBus.unregister(schedulerActivationStateHandler)
-		eventBus.unregister(schedulerStateHandler)
+		eventBus.unregister(handler)
 	}
 
 	override fun execute(event: ActionEvent) {
-		scheduler.step()
+		scheduler.resume()
 	}
 
-	private fun updateEnabledness(numberOfRemainingSlots: Int) {
-		enabled = scheduler.isPaused && scheduler.isActive && numberOfRemainingSlots > 0
+	private fun updateEnabledness() {
+		enabled = scheduler.isInBreakpoint
 	}
 }
 
@@ -160,6 +154,32 @@ class SimulationTimeStatusEnabledAction(
 
 	private fun updateState() {
 		selected = scheduler.isSimulationTimeStatusEnabled
+	}
+}
+
+class EnableSoftBreakpointsAction(
+	private val scheduler: Scheduler = ExecutionModule.scheduler,
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractSchedulerAction("execution.action.enableSoftBreakpoints", eventBus) {
+
+	private val handler: EventHandler<EnableSoftBreakpointsEvent> = { updateState() }
+
+	init {
+		updateState()
+		eventBus.register(EnableSoftBreakpointsEvent::class, handler)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(handler)
+	}
+
+	override fun execute(event: ActionEvent) {
+		scheduler.isSoftBreakpointsEnabled = !scheduler.isSoftBreakpointsEnabled
+	}
+
+	private fun updateState() {
+		selected = scheduler.isSoftBreakpointsEnabled
 	}
 }
 

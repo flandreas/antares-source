@@ -14,10 +14,7 @@ import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.app.CopyAction
 import ch.scorpion.jabbah.edit.app.CutAction
 import ch.scorpion.jabbah.edit.app.PasteAction
-import ch.scorpion.jabbah.execution.ExecutionDepthAction
-import ch.scorpion.jabbah.execution.SimulationTimeStatusEnabledAction
-import ch.scorpion.jabbah.execution.StepExecutionAction
-import ch.scorpion.jabbah.execution.StopOnIssueAction
+import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.ShowProjectsDialogAction
@@ -96,10 +93,11 @@ open class GraphMenuBarBuilder(
 
 	protected open fun fillExecutionMenu(menu: JMenu): JMenu {
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ToggleApplicationModeAction())))
-		menu.add(JMenuItem(ActionWrapperSwing(StepExecutionAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(ResumeExecutionAction())))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ExecutionDepthAction())))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(StopOnIssueAction())))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(SimulationTimeStatusEnabledAction())))
+		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(EnableSoftBreakpointsAction())))
 		return menu
 	}
 

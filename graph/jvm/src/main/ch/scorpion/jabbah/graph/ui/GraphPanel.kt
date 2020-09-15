@@ -369,7 +369,7 @@ class GraphPanel(
 		mainToolBar.addSeparator()
 		mainToolBar.add(modeToggleButton)
 		mainToolBar.add(pauseToggleButton)
-		mainToolBar.add(createStepButton(StepExecutionAction(scheduler, eventBus)))
+		mainToolBar.add(createStepButton(ResumeExecutionAction(scheduler, eventBus)))
 		mainToolBar.add(speedSlider)
 		mainToolBar.add(usecaseSelector)
 

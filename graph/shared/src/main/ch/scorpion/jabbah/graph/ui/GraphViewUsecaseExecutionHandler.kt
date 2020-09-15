@@ -3,13 +3,10 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.FocusManager
-import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationMode.EXEC_USECASE
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 
@@ -43,7 +40,7 @@ class GraphViewUsecaseExecutionHandler(
 		override fun keyPressed(e: KeyEvent) {
 			if (e.key == ' '.toInt()) {
 				if (scheduler.isPaused) {
-					scheduler.step()
+					scheduler.resume()
 				}
 			}
 		}

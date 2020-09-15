@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.execution.scheduler
 
-import ch.scorpion.jabbah.base.time.Timer
+import ch.scorpion.jabbah.base.Status
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.issue.Issue
@@ -20,6 +20,8 @@ interface Scheduler : SignalHandler {
 
     var isPaused: Boolean
 
+	val isInBreakpoint: Boolean
+
 	val isQueueEmpty: Boolean
 
     /** Determines whether this [Scheduler] stops execution when an [Issue] occurs while executing. */
@@ -34,8 +36,10 @@ interface Scheduler : SignalHandler {
 	 */
 	var isSimulationTimeStatusEnabled: Boolean
 
-	/** Performs a single execution step until the next breakpoint. */
-    fun step()
+	var isSoftBreakpointsEnabled: Boolean
+
+	/** Resumes simulation after it has been suspended by a breakpoint. */
+	fun resume()
 
 	/** Repeatedly called by a [SchedulerTask] to drive the execution. */
 	fun execute(): ExecutionStepResult
@@ -70,6 +74,9 @@ class SchedulerEvent(val type: Type, val scheduler: Scheduler, val actor: Actor)
     }
 }
 
+/** Posted by an executed system to temporarily suspend execution. */
+class BreakEvent
+
 /** Posted by a [Scheduler] in [SchedulerRunningState.PAUSED] after an execution cycle.*/
 data class SchedulerStateEvent(val numberOfRemainingSlots: Int, val relativeTime: Long)
 
@@ -84,3 +91,9 @@ data class SimulationTimeStatusEnabledEvent(val scheduler: Scheduler)
 
 /** Posted by a [Scheduler] if execution had been stopped due to an [Issue]. */
 data class ExecutionStoppedOnIssueEvent(val scheduler: Scheduler)
+
+/** Posted by a [Scheduler] when its property [Scheduler.isSoftBreakpointsEnabled] has changed.*/
+data class EnableSoftBreakpointsEvent(val scheduler: Scheduler)
+
+/** Posted by a [Scheduler] when its property [Scheduler.isInBreakpoint] has changed.*/
+data class BreakpointEvent(val scheduler: Scheduler)

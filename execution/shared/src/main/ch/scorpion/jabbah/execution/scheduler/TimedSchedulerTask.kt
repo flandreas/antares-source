@@ -35,7 +35,7 @@ class TimedSchedulerTask(
 	/** ---- [SchedulerTask] interface */
 
 	override fun startIfNeeded() {
-		if (!scheduler.isPaused && !scheduler.isQueueEmpty && !timer.isRunning()) {
+		if (!scheduler.isQueueEmpty && !timer.isRunning()) {
 			LOG.trace("Starting timer")
 			timer.start()
 		}
@@ -61,16 +61,27 @@ class TimedSchedulerTask(
 	 */
 	override fun actionPerformed(event: ActionEvent) {
 		if (currentSystemSpeedCategory.systemSpeed.isMaximum) {
-			val beginTime = System.currentTimeMillis()
-			while (!scheduler.isQueueEmpty && System.currentTimeMillis() - beginTime < 20) {
-				scheduler.execute()
-			}
+			executeDuringMilliseconds(20)
 		} else {
-			var count = 0
-			while (count < 10 && scheduler.execute().recalculated) {
-				count++
-			}
+			executeNumberOfSteps(10)
 		}
+	}
+
+	private fun executeDuringMilliseconds(duration: Int) {
+		val beginTime = System.currentTimeMillis()
+		lateinit var result: ExecutionStepResult
+		do {
+			result = scheduler.execute()
+		} while (!result.breakpoint && !scheduler.isQueueEmpty && System.currentTimeMillis() - beginTime < duration)
+	}
+
+	private fun executeNumberOfSteps(number: Int) {
+		var count = 0
+		lateinit var result: ExecutionStepResult
+		do {
+			result = scheduler.execute()
+			count++
+		} while (count < number && !scheduler.isQueueEmpty && !result.breakpoint && result.recalculated)
 	}
 
 	/** ---- [TimedSchedulerTask] */

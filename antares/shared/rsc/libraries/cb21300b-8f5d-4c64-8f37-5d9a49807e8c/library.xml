@@ -21,6 +21,7 @@
             <baseLibraryElement _id='5' id='Probe'/>
             <baseLibraryElement _id='6' id='Tunnel'/>
             <baseLibraryElement _id='7' id='Constant'/>
+            <baseLibraryElement _id='37' id='Break'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='8'>

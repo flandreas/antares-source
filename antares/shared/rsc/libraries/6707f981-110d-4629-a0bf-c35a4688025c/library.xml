@@ -21,6 +21,7 @@
             <baseLibraryElement _id='5' id='Concentrator'/>
             <baseLibraryElement _id='6' id='Probe'/>
             <baseLibraryElement _id='7' id='Tunnel'/>
+            <baseLibraryElement _id='85' id='Break'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='8'>
@@ -139,7 +140,7 @@
           </name>
           <items>
             <baseLibraryElement _id='43' id='Random'/>
-            <containerLibraryElement _id='44'uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'>
+            <containerLibraryElement _id='44' uuid='52255dc4-c010-4f6f-8ea6-9c2c8f5f9a82'>
               <name>
                 <translation lang='en' text='Half Adder'/>
                 <translation lang='de' text='Halbaddierer'/>

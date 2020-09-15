@@ -9,7 +9,12 @@ enum class SchedulerRunningState {
     RUNNING,
 
     /** The [Scheduler] is paused, i.e. in single step mode*/
-    PAUSED
+    PAUSED;
+
+	companion object {
+		fun ofPausedFlag(paused: Boolean): SchedulerRunningState
+			= if (paused) PAUSED else RUNNING
+	}
 }
 
 /** An event being posted on a [Scheduler]'s [EventBus] whenever its [SchedulerRunningState] changes.*/

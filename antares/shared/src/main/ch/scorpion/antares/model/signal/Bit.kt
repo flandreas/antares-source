@@ -47,6 +47,8 @@ enum class Bit(private val value: Int?) {
 	/** Checks whether this [Bit] is set, i.e. whether it has the value `1`.*/
 	val isSet: Boolean get() = value == 1
 
+	val isNotSet: Boolean get() = value == 0
+
 	/**
 	 * Returns the numerical value of this [Bit], i.e. either `0` or `1`.
 	 * This property can only be accessed for defined [Bit]s.

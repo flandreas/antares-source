@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.execution.scheduler
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.PriorityQueue
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.TimeService
@@ -40,6 +39,7 @@ class SchedulerImpl(
 		private val LOG by logger(SchedulerImpl::class)
 		private const val SETTING_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
 		private const val SETTING_STOP_ON_ISSUE = "execution.scheduler.stopOnIssue"
+		private const val SETTING_ENABLE_SOFT_BREAKPOINTS = "execution.scheduler.enableSoftBreakpoints"
 	}
 
 	/** The queue of pending [Slot]s ordered by ascending execution time.*/
@@ -71,6 +71,8 @@ class SchedulerImpl(
 				}
 			}
 		}
+
+		eventBus.register(BreakEvent::class) { hardBreakpointReceived = true }
 	}
 
 	/** ---- [Scheduler] interface */
@@ -101,15 +103,22 @@ class SchedulerImpl(
 			if (value == isPaused) {
 				return
 			}
-			if (value) {
-				runningState = SchedulerRunningState.PAUSED
-				task.stop()
-			} else {
-				runningState = SchedulerRunningState.RUNNING
-				task.startIfNeeded()
-			}
+			runningState = SchedulerRunningState.ofPausedFlag(value)
+			task.startIfNeeded()
 			eventBus.post(SchedulerRunningStateEvent(this))
 		}
+
+	override var isInBreakpoint: Boolean = false
+		private set(value) {
+			if (field == value) {
+				return
+			}
+			field = value
+			LOG.debug("isInBreakpoint is $field")
+			eventBus.post(BreakpointEvent(this))
+		}
+
+	private var hardBreakpointReceived: Boolean = false
 
 	override var isStopOnIssue: Boolean = BaseModule.settings.getBoolean(SETTING_STOP_ON_ISSUE, true)
 		set(value) {
@@ -135,16 +144,24 @@ class SchedulerImpl(
 			eventBus.post(SimulationTimeStatusEnabledEvent(this))
 		}
 
-	override fun step() {
-		if (!isActive) {
-			throw IllegalStateException("cannot step when not active")
+	override var isSoftBreakpointsEnabled: Boolean = BaseModule.settings.getBoolean(SETTING_ENABLE_SOFT_BREAKPOINTS, false)
+		set(value) {
+			if (field == value) {
+				return
+			}
+			field = value
+			BaseModule.settings.set(SETTING_ENABLE_SOFT_BREAKPOINTS, field)
+			eventBus.post(EnableSoftBreakpointsEvent(this))
 		}
-		if (!isPaused) {
-			throw IllegalStateException("cannot step when not paused")
-		}
-		do {
-			val result = execute()
-		} while (result.recalculated && !result.breakpoint)
+
+	override fun resume() {
+		executeImpl(resume = true)
+		hardBreakpointReceived = false
+		task.startIfNeeded()
+	}
+
+	override fun execute(): ExecutionStepResult {
+		return executeImpl(resume = false)
 	}
 
 	override fun proceedTo(time: Long) {
@@ -315,6 +332,7 @@ class SchedulerImpl(
 		reset()
 		realStartTime = timeService.nowNanos()
 		activationState = ACTIVE
+		isInBreakpoint = false
 		eventBus.post(SchedulerActivationStateEvent(this))
 		task.startIfNeeded()
 	}
@@ -339,8 +357,11 @@ class SchedulerImpl(
 
 	private fun getRelativeRealTime(): Long = timeService.nowNanos() - realStartTime
 
-	/** Executes all [Request]s of the next executable [Slot].*/
-	override fun execute(): ExecutionStepResult {
+	/**
+	 * Executes all [Request]s of the next executable [Slot] if not suspended by a breakpoint.
+	 * @param resume `true` if the current breakpoint has already been handled, and the execution is to be resumed
+	 */
+	private fun executeImpl(resume: Boolean): ExecutionStepResult {
 
 		val optionalSlot = queue.peek()
 		if (optionalSlot == null) {
@@ -364,7 +385,6 @@ class SchedulerImpl(
 		}
 
 		var recalculated = false
-		var breakpoint = false
 
 		// When stepping, we don't wait for real time. When not in stepping mode, we wait until
 		// real time has reached the simulation time, so that [Actors] like slow timers have a chance
@@ -372,9 +392,20 @@ class SchedulerImpl(
 
 		if (isPaused || slot.relativeTime <= relativeTime) {
 			updateRelativeTime(slot.relativeTime)
+
+			// Check for a breakpoint. If any of the Actors requests a break, skip the entire
+			// slot and continue only upon the next resume.
+			if (!resume && checkForBreakpoint(slot)) {
+				LOG.debug("Breakpoint detected")
+				task.stop()
+				isInBreakpoint = true
+				return ExecutionStepResult(recalculated = false, breakpoint = true)
+			}
+
+			isInBreakpoint = false
+
 			slot.getRequests().filter { it.isActable }.forEach {
 				logActorTrace(it.actor) { "Executing" }
-				breakpoint = breakpoint || it.actor.isBreakpoint
 				it.act()
 			}
 
@@ -386,7 +417,11 @@ class SchedulerImpl(
 			updateRelativeTime(min(getRelativeRealTime(), slot.relativeTime))
 		}
 		postSchedulerStateEvent()
-		return ExecutionStepResult(recalculated, breakpoint)
+		return ExecutionStepResult(recalculated, false)
+	}
+
+	private fun checkForBreakpoint(slot: Slot): Boolean {
+		return isPaused && (hardBreakpointReceived || isSoftBreakpointsEnabled && slot.getRequests().any { it.isActable && it.actor.isBreakpoint })
 	}
 
 	/**

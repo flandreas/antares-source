@@ -3,7 +3,7 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.DigitalComponentView
-import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.StringUtils
@@ -29,7 +29,7 @@ enum class TunnelViewFace(val customName: String) {
 
 	TUNNEL("tunnel") {
 
-		override val labelDist: Int get() = Look.SCALE
+		override val labelDist: Int get() = SCALE
 
 		override fun drawShadow(view: TunnelView, context: DrawContext) {
 			if (view.shadow) {
@@ -70,8 +70,8 @@ enum class TunnelViewFace(val customName: String) {
 
 		private val path = System.createPath()
 			.moveTo(0, 0)
-			.lineTo(3.0 * 7, - 1.5 * 7)
-			.lineTo(3.0 * 7, 1.5 * 7)
+			.lineTo(3.0 * SCALE, - 1.5 * SCALE)
+			.lineTo(3.0 * SCALE, 1.5 * SCALE)
 			.lineTo(0, 0)
 			.close()
 

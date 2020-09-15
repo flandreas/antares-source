@@ -68,6 +68,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val CONCENTRATOR = "Concentrator"
 	private const val PROBE = "Probe"
 	private const val TUNNEL = "Tunnel"
+	private const val BREAK = "Break"
 
 	private const val AND = "AND"
 	private const val OR = "OR"
@@ -232,6 +233,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("randomView", RandomView::class)
 		typeMap.register("keyboardView", KeyboardView::class)
 		typeMap.register("terminalView", TerminalView::class)
+		typeMap.register("breakView", BreakView::class)
 
 		typeMap.register("graphView", DigitalGraphView::class)
 	}
@@ -249,6 +251,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, ProbeView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ConstantView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, TunnelView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, BreakView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, AndGateView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, OrGateView::class) { SelectedColorSelectionModel(it) }
@@ -303,6 +306,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(CONCENTRATOR, "library.element.Concentrator", "/img/concentrator.png", ConcentratorView::class)
 		repository.register(PROBE, "library.element.Probe", "/img/probe.png", ProbeView::class)
 		repository.register(TUNNEL, "library.element.Tunnel", "/img/tunnel.png", TunnelView::class)
+		repository.register(BREAK, "library.element.Break", "/img/break.png", BreakView::class)
 
 		repository.register(AND, "library.element.AndGate", "/img/and.png", AndGateView::class)
 		repository.register(OR, "library.element.OrGate", "/img/or.png", OrGateView::class)
@@ -345,6 +349,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(CONCENTRATOR), net)
 		addLibraryItem(library, BaseLibraryElement(PROBE), net)
 		addLibraryItem(library, BaseLibraryElement(TUNNEL), net)
+		addLibraryItem(library, BaseLibraryElement(BREAK), net)
 		addLibraryItem(library, net, library)
 
 		val base = LibraryFolder(Translations.getString("library.folder.baseElements"))
