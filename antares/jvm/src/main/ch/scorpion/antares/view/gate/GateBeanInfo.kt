@@ -39,14 +39,16 @@ class BufferGateViewBeanInfo : DigitalComponentBeanInfo<BufferGateView>() {
 @Suppress("unused")
 class DelayGateViewBeanInfo : ComponentBeanInfo<DelayGateView>() {
 	companion object {
-		val delay = PropertyImpl("delay", "element.property.DelayGate.delay", Long::class.java, componentBeanProvider)
-		val orientation = EditProperties.orientation()
+		private val delay = PropertyImpl("delay", "element.property.DelayGate.delay", Long::class.java, componentBeanProvider)
+		private val bitWidth = AntaresProperties.bitWidth()
+		private val orientation = EditProperties.orientation()
 	}
 
 	override fun addProperties(bean: DelayGateView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
 		properties.add(delay.bind(editor, bean.id))
+		properties.add(bitWidth.bind(editor, bean.id))
 		properties.add(orientation.bind(editor, bean.id))
 	}
 }

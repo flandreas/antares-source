@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.gate.DelayGate
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.Thousands
 import ch.scorpion.jabbah.draw.DrawContext
@@ -31,6 +32,16 @@ class DelayGateView(
 		        validate()
 	        }
         }
+
+	var bitWidth: BitWidth
+		get() = model.bitWidth
+		set(value) {
+			if (value != bitWidth) {
+				invalidate()
+				model.bitWidth = value
+				validate()
+			}
+		}
 
     override fun modelExchanged(oldModel: DelayGate?) {
         super.modelExchanged(oldModel)

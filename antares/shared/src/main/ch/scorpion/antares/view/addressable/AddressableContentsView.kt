@@ -34,7 +34,7 @@ class AddressableContentsView(
 	rowsCount: Int = DEFAULT_ROWS_COUNT,
 	columnsCount: Int = DEFAULT_COLUMNS_COUNT,
 	showDisassembler: Boolean = DEFAULT_SHOW_DISASSEMBLER,
-	private val styleType: StyleType = GraphStyleType.ANNOTATION,
+	highlightCurrentCellWhenNotSelected: Boolean = DEFAULT_HIGHLIGHT_CURRENT_CELL_WHEN_NOT_CS,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangle() {
 
@@ -42,6 +42,7 @@ class AddressableContentsView(
 		private const val DEFAULT_ROWS_COUNT = 4
 		private const val DEFAULT_COLUMNS_COUNT = 1
 		private const val DEFAULT_SHOW_DISASSEMBLER = false
+		private const val DEFAULT_HIGHLIGHT_CURRENT_CELL_WHEN_NOT_CS = false
 		private const val MAX_ROWS_COUNT = 10
 		private const val MAX_COLUMNS_COUNT = 16
 		private const val HORIZONTAL_INSET = 5
@@ -118,6 +119,14 @@ class AddressableContentsView(
 				invalidate()
 				field = value
 				updateGeometry()
+			}
+		}
+
+	var highlightCurrentCellWhenNotSelected: Boolean = highlightCurrentCellWhenNotSelected
+		set(value) {
+			if (field != value) {
+				field = value
+				invalidate()
 			}
 		}
 
@@ -203,7 +212,7 @@ class AddressableContentsView(
 		x += addressColumnWidth + COL_DIST
 		(address until address + effectiveColumnCount).forEach { cellAddress ->
 			val isCurrent = cellAddress == addressable.currentAddress && context.castedAppContext<GraphApplicationContext>()!!.isExecute
-			if (isCurrent && addressable.isSelected) {
+			if (isCurrent && (addressable.isSelected || highlightCurrentCellWhenNotSelected)) {
 				context.g.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).foregroundColor
 				context.g.fillRect(
 					x - COL_DIST / 2 - 0.5,

@@ -21,6 +21,7 @@ class ROMViewBeanInfo : DigitalComponentBeanInfo<ROMView>() {
 		private val contentsColumnsCount = PropertyImpl("contentColumnsCount", "element.property.Addressable.columnsCount", Int::class.java, componentBeanProvider)
 		private val disassemblerConfig = EditProperties.script("disassemblerConfig", "element.property.ROM.disassemblerConfig", beanProvider = componentBeanProvider)
 		private val showDisassembler = PropertyImpl("showDisassembler", "element.property.ROM.disassemblerDisplay", Boolean::class.java, componentBeanProvider)
+		private val highlightCurrentCellWhenNotSelected = PropertyImpl("highlightCurrentCellWhenNotSelected", "element.property.ROM.highlightCurrentCellWhenNotSelected", Boolean::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: ROMView, editor: Editor, properties: MutableList<Property>) {
@@ -35,6 +36,7 @@ class ROMViewBeanInfo : DigitalComponentBeanInfo<ROMView>() {
 			properties.add(contentsColumnsCount.bind(editor, bean.id))
 			properties.add(disassemblerConfig.bind(editor, bean.id))
 			properties.add(showDisassembler.bind(editor, bean.id))
+			properties.add(highlightCurrentCellWhenNotSelected.bind(editor, bean.id))
 		}
 	}
 }

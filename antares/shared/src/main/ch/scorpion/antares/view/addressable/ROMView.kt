@@ -115,7 +115,8 @@ class ROMView(
 			addressable = model,
 			rowsCount = contentRowsCount,
 			columnsCount = contentColumnsCount,
-			showDisassembler = showDisassembler)
+			showDisassembler = showDisassembler,
+			highlightCurrentCellWhenNotSelected = highlightCurrentCellWhenNotSelected)
 	}
 
 	init {
@@ -188,6 +189,15 @@ class ROMView(
 			}
 		}
 
+	var highlightCurrentCellWhenNotSelected: Boolean = false
+		set(value) {
+			if (field != value) {
+				field = value
+				contentsView.highlightCurrentCellWhenNotSelected = field
+				validate()
+			}
+		}
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
@@ -201,6 +211,9 @@ class ROMView(
 		writer.writeInt("contentRowsCount", contentRowsCount)
 		writer.writeInt("contentColumnsCount", contentColumnsCount)
 		writer.writeBoolean("showDisassembler", showDisassembler)
+		if (highlightCurrentCellWhenNotSelected) {
+			writer.writeBoolean("highlightCurrentCell", highlightCurrentCellWhenNotSelected)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -225,6 +238,9 @@ class ROMView(
 		}
 		if (reader.hasAttribute("showDisassembler")) {
 			showDisassembler = reader.readBoolean("showDisassembler")
+		}
+		if (reader.hasAttribute("highlightCurrentCell")) {
+			highlightCurrentCellWhenNotSelected = reader.readBoolean("highlightCurrentCell")
 		}
 	}
 

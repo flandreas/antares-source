@@ -1,6 +1,8 @@
 package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.model.InputCount
+import ch.scorpion.antares.model.port.DigitalPort
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -42,16 +44,31 @@ class DelayGate : AbstractDigitalGate(CALCULATOR, InputCount.ONE) {
             propagationDelay = value
         }
 
+	var bitWidth: BitWidth
+		get() = (getInput<DigitalSignal>() as DigitalPort).bitWidth
+		set(value) {
+			if (value != bitWidth) {
+				(getInput<DigitalSignal>() as DigitalPort).bitWidth = value
+				(getOutput<DigitalSignal>() as DigitalPort).bitWidth = value
+				stateChanged()
+			}
+		}
+
     override val minInputCount: InputCount get() = InputCount.ONE
     override val maxInputCount: InputCount get() = InputCount.ONE
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
         writer.writeLong("delay", delay)
+	    writer.writeInt("bitWidth", bitWidth.width)
     }
 
     override fun read(reader: StoreReader) {
         super.read(reader)
         delay = reader.readLong("delay")
+	    if (reader.hasAttribute("bitWidth")) {
+		    // Backward compatibility: Older version didn't have a BitWidth property
+		    bitWidth = BitWidth.of(reader.readInt("bitWidth"))
+	    }
     }
 }
