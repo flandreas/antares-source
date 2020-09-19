@@ -54,6 +54,9 @@ interface Component : Movable, Snappable, Storable, Stylable, Cloneable<Componen
 	/** Determines whether this [Component] can be manually deleted from its [ComponentContainer] interactively by the user.*/
 	val deletable: Boolean
 
+	/** Determines whether this [Component] can be manually copied to the clipboard. */
+	val copyable: Boolean get() = true
+
 	/** Determines whether this [Component] uses its [rotation] property.*/
 	val useRotation: Boolean
 

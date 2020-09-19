@@ -64,7 +64,7 @@ class GraphViewCopyPasteService(
 					xmlWriter,
 					typeMap,
 					GlobalIdentityCreator()
-				) { c -> c !is Component || componentIds.contains(c.id) }
+				) { c -> c !is Component || componentIds.contains(c.id) && c.copyable }
 
 				if (drawing is GraphView) {
 					writer.writeStorable(GraphStorable(drawing))

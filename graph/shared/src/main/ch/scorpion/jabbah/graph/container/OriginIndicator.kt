@@ -76,6 +76,8 @@ class OriginIndicator(
 
 	override val deletable: Boolean get() = false
 
+	override val copyable: Boolean get() = false
+
 	override val type: String get() = TYPE
 
 	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
