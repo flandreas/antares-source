@@ -64,9 +64,13 @@ class GraphViewCopyPasteService(
 					xmlWriter,
 					typeMap,
 					GlobalIdentityCreator()
-				) { c -> c !is GraphElementView<*> || componentIds.contains(c.id) }
-				val graphStorable = GraphStorable(drawing as GraphView)
-				writer.writeStorable(graphStorable)
+				) { c -> c !is Component || componentIds.contains(c.id) }
+
+				if (drawing is GraphView) {
+					writer.writeStorable(GraphStorable(drawing))
+				} else {
+					writer.writeStorable(drawing)
+				}
 
 				contents = String(it.toByteArray())
 
@@ -90,24 +94,29 @@ class GraphViewCopyPasteService(
 				val reader = StoreXmlReader(xmlReader, typeMap, storableCreator)
 				val copy: Storable = reader.readStorable()
 
-				if (copy is GraphStorable) {
-					var pastedAnchorComponent: Component? = null
-					for (cv in copy.graphView.backToFrontIterator()) {
-						if (cv is VerticeView<*>) {
-							strip(cv, copy.graphView)
-						}
-						components.add(cv)
-						if (pastedAnchorComponentId == null && origAnchorComponentId != null && view.drawing.getWithId(origAnchorComponentId!!)!!.location == cv.location) {
-							pastedAnchorComponent = cv
-						}
-					}
-					Movable.moveBy(components, dislocation)
-					components.forEach { c -> view.drawing.add(c) }
+				val componentsIter = when (copy) {
+					is GraphStorable -> copy.graphView.backToFrontIterator()
+					is Drawing<*> -> copy.backToFrontIterator()
+					else -> throw IllegalArgumentException("expecting pasted contents to be of type 'Drawing'")
+				}
 
-					if (pastedAnchorComponent != null) {
-						pastedAnchorComponentId = pastedAnchorComponent.id
+				var pastedAnchorComponent: Component? = null
+				for (cv in componentsIter) {
+					if (cv is VerticeView<*>) {
+						strip(cv, (copy as GraphStorable).graphView)
+					}
+					components.add(cv)
+					if (pastedAnchorComponentId == null && origAnchorComponentId != null && view.drawing.getWithId(origAnchorComponentId!!)!!.location == cv.location) {
+						pastedAnchorComponent = cv
 					}
 				}
+				Movable.moveBy(components, dislocation)
+				components.forEach { c -> view.drawing.add(c) }
+
+				if (pastedAnchorComponent != null) {
+					pastedAnchorComponentId = pastedAnchorComponent.id
+				}
+
 				return components
 			} catch (e: Exception) {
 				LOG.error("Error while reading Components from clipboard: ${e.message}")

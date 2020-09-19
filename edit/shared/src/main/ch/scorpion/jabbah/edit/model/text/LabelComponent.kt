@@ -26,19 +26,25 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class LabelComponent(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	val label: Label = Label(
-		text = DEFAULT_TEXT,
-		font = LabelComponent.DEFAULT_FONT,
-		horizontalAlignment = HorizontalAlignment.CENTER,
-		verticalAlignment = VerticalAlignment.CENTER,
-		location = Point2D.ZERO,
-		rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF)
+	val label: Label = createLabel(DEFAULT_TEXT)
 ) : AbstractRectangularComponent(styleType = StyleType.FIGURE, styleProvider = styleProvider), TextComponent, Transparent {
+
+	constructor(text: String): this(label = createLabel(text))
 
 	companion object {
 		private val TYPE = Translations.getString("edit.component.label")
 		const val DEFAULT_TEXT = "text"
 		val DEFAULT_FONT = FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 14)
+
+		private fun createLabel(text: String): Label {
+			return Label(
+				text = text,
+				font = DEFAULT_FONT,
+				horizontalAlignment = HorizontalAlignment.CENTER,
+				verticalAlignment = VerticalAlignment.CENTER,
+				location = Point2D.ZERO,
+				rotationDisplayStrategy = Label.RotationDisplayStrategy.ROTATE_HALF)
+		}
 	}
 
 	init {
@@ -47,7 +53,7 @@ class LabelComponent(
 
 	/** ---- [TextComponent] */
 
-	override var text: TranslatableText = TranslatableText(DEFAULT_TEXT)
+	override var text: TranslatableText = TranslatableText(label.text)
 		set(value) {
 			if (field != value) {
 				invalidate()
