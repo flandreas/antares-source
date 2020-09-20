@@ -66,6 +66,9 @@ class ProjectManagementService(
 	fun exists(projectName: TranslatableText, except: UUID? = null): Boolean =
 		projectDictionaryService.existsName(projectName, except)
 
+	fun contains(projectUUID: UUID): Boolean =
+		projectDictionaryService.contains(projectUUID)
+
 	fun getProjectDirectoryEntries(): ImmutableList<LibraryDictionaryEntry> =
 		projectDictionaryService.getEntries()
 

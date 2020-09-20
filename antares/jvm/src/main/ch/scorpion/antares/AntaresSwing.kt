@@ -312,7 +312,7 @@ class AntaresSwing(
 		}
 
 		val projectName = BaseModule.settings.getString(PROP_APPLICATION_PROJECT, "")
-		if (StringUtils.isNotEmpty(projectName)) {
+		if (StringUtils.isNotEmpty(projectName) && ProjectModule.projectManagementService.contains(UUID(projectName))) {
 			openFrom(projectName)
 			return
 		}
