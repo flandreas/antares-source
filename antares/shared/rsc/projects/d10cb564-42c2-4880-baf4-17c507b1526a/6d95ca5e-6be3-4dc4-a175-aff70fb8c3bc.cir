@@ -1225,33 +1225,33 @@ circuit.pauseAt(172544);'>
   <container>
     <containerDrawing _id='308'>
       <components>
-        <rectangle _id='337' id='1' style='figure' filled='true' stroked='true' x='112.0' y='70.0' w='168.0' h='196.0'/>
-        <originIndicator _id='336'>
+        <rectangle _id='340' id='1' style='figure' filled='true' stroked='true' x='112.0' y='70.0' w='168.0' h='196.0'/>
+        <originIndicator _id='339'>
           <location>
             <point x='196.0' y='56.0'/>
           </location>
         </originIndicator>
-        <digitalPortViewComp _id='334' id='2' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='337' id='2' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='335' x='196.0' y='266.0' dir='south' textPos='internal' portId='341'/>
+            <digitalPortView _id='338' x='196.0' y='266.0' dir='south' textPos='internal' portId='344'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='332' id='4' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='335' id='4' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='333' x='280.0' y='154.0' dir='east' textPos='internal' portId='342'/>
+            <digitalPortView _id='336' x='280.0' y='154.0' dir='east' textPos='internal' portId='345'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='330' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='333' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='331' x='280.0' y='238.0' dir='east' textPos='internal' portId='343'/>
+            <digitalPortView _id='334' x='280.0' y='238.0' dir='east' textPos='internal' portId='346'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='328' id='6' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='331' id='6' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='329' x='112.0' y='238.0' dir='west' textPos='internal' portId='339'/>
+            <digitalPortView _id='332' x='112.0' y='238.0' dir='west' textPos='internal' portId='342'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='327'>
+        <label _id='330'>
           <text>
             <translation lang='de' text='CPU'/>
           </text>
@@ -1259,32 +1259,32 @@ circuit.pauseAt(172544);'>
             <point x='195.1875' y='99.60546875'/>
           </location>
         </label>
-        <digitalPortViewComp _id='325' id='7' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='328' id='7' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='326' x='196.0' y='70.0' dir='north' textPos='internal' portId='340'/>
+            <digitalPortView _id='329' x='196.0' y='70.0' dir='north' textPos='internal' portId='343'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='323' id='8' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='326' id='8' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='324' x='280.0' y='210.0' dir='east' textPos='internal' portId='344'/>
+            <digitalPortView _id='327' x='280.0' y='210.0' dir='east' textPos='internal' portId='347'/>
           </portView>
         </digitalPortViewComp>
-        <controlViewComponent _id='321' id='9' style='figure' filled='true' stroked='true' controlModelId='23/88'>
+        <controlViewComponent _id='324' id='9' style='figure' filled='true' stroked='true' controlModelId='23/88'>
           <controlView>
-            <digitalSignalSourceCV _id='322' id='0' filled='true' stroked='true' modelId='-1' x='154.0' y='126.0' representation='hex' orientation='east' controlId='probe:151' bitWidth='16'/>
+            <digitalSignalSourceCV _id='325' id='0' filled='true' stroked='true' modelId='-1' x='154.0' y='126.0' representation='hex' orientation='east' controlId='probe:151' bitWidth='16'/>
           </controlView>
         </controlViewComponent>
-        <controlViewComponent _id='319' id='10' style='figure' filled='true' stroked='true' controlModelId='23/89'>
+        <controlViewComponent _id='322' id='10' style='figure' filled='true' stroked='true' controlModelId='23/89'>
           <controlView>
-            <digitalSignalSourceCV _id='320' id='0' filled='true' stroked='true' modelId='-1' x='154.0' y='154.0' representation='hex' orientation='east' controlId='probe:155' bitWidth='16'/>
+            <digitalSignalSourceCV _id='323' id='0' filled='true' stroked='true' modelId='-1' x='154.0' y='154.0' representation='hex' orientation='east' controlId='probe:155' bitWidth='16'/>
           </controlView>
         </controlViewComponent>
-        <controlViewComponent _id='317' id='11' style='figure' filled='true' stroked='true' controlModelId='23/90'>
+        <controlViewComponent _id='320' id='11' style='figure' filled='true' stroked='true' controlModelId='23/90'>
           <controlView>
-            <digitalSignalSourceCV _id='318' id='0' filled='true' stroked='true' modelId='-1' x='154.0' y='182.0' representation='hex' orientation='east' controlId='probe:159' bitWidth='16'/>
+            <digitalSignalSourceCV _id='321' id='0' filled='true' stroked='true' modelId='-1' x='154.0' y='182.0' representation='hex' orientation='east' controlId='probe:159' bitWidth='16'/>
           </controlView>
         </controlViewComponent>
-        <label _id='316'>
+        <label _id='319'>
           <text>
             <translation lang='de' text='PC'/>
           </text>
@@ -1292,7 +1292,7 @@ circuit.pauseAt(172544);'>
             <point x='143.23486328125' y='127.44140625'/>
           </location>
         </label>
-        <label _id='315'>
+        <label _id='318'>
           <text>
             <translation lang='de' text='AC'/>
           </text>
@@ -1300,7 +1300,7 @@ circuit.pauseAt(172544);'>
             <point x='141.5986328125' y='153.732421875'/>
           </location>
         </label>
-        <label _id='314'>
+        <label _id='317'>
           <text>
             <translation lang='de' text='SP'/>
           </text>
@@ -1308,17 +1308,17 @@ circuit.pauseAt(172544);'>
             <point x='144.396484375' y='181.5234375'/>
           </location>
         </label>
-        <digitalPortViewComp _id='312' id='12' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='315' id='12' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='313' x='280.0' y='182.0' dir='east' textPos='internal' portId='345'/>
+            <digitalPortView _id='316' x='280.0' y='182.0' dir='east' textPos='internal' portId='348'/>
           </portView>
         </digitalPortViewComp>
-        <controlViewComponent _id='310' id='13' style='figure' filled='true' stroked='true' controlModelId='2/25' name='Circuit Output Z'>
+        <controlViewComponent _id='313' id='13' style='figure' filled='true' stroked='true' controlModelId='2/25' name='Circuit Output Z'>
           <controlView>
-            <digitalSignalSourceCV _id='311' id='25' filled='true' stroked='true' modelId='-1' x='154.0' y='210.0' representation='binary' orientation='east' controlId='circuitInOut:25' bitWidth='1' name='Circuit Output Z'/>
+            <digitalSignalSourceCV _id='314' id='25' filled='true' stroked='true' modelId='-1' x='154.0' y='210.0' representation='binary' orientation='east' controlId='circuitInOut:25' bitWidth='1' name='Circuit Output Z'/>
           </controlView>
         </controlViewComponent>
-        <label _id='309'>
+        <label _id='312'>
           <text>
             <translation lang='en' text='Z'/>
           </text>
@@ -1326,9 +1326,22 @@ circuit.pauseAt(172544);'>
             <point x='146.8515625' y='209.0234375'/>
           </location>
         </label>
+        <controlViewComponent _id='310' id='14' style='figure' filled='true' stroked='true' controlModelId='2/24' name='Circuit Output N'>
+          <controlView>
+            <digitalSignalSourceCV _id='311' id='24' filled='true' stroked='true' modelId='-1' x='210.0' y='210.0' representation='binary' orientation='east' controlId='circuitInOut:24' bitWidth='1' name='Circuit Output N'/>
+          </controlView>
+        </controlViewComponent>
+        <label _id='309'>
+          <text>
+            <translation lang='en' text='N'/>
+          </text>
+          <location>
+            <point x='204.6318359375' y='208.662109375'/>
+          </location>
+        </label>
       </components>
       <model>
-        <subGraphVertice _id='338' id='0' delay='0' uuid='6d95ca5e-6be3-4dc4-a175-aff70fb8c3bc'>
+        <subGraphVertice _id='341' id='0' delay='0' uuid='6d95ca5e-6be3-4dc4-a175-aff70fb8c3bc'>
           <desc>
             <translation lang='en' text='Central Processing Unit'/>
             <translation lang='de' text='Central Processing Unit'/>
@@ -1342,13 +1355,13 @@ circuit.pauseAt(172544);'>
             <translation lang='de' text='Central Processing Unit'/>
           </desc>
           <ports>
-            <subCircuitPort _id='339' portId='1' name='CLK' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
-            <subCircuitPort _id='340' portId='2' name='D' logic='positive' bitWidth='16' trigger='level' type='inout' representation='hex'/>
-            <subCircuitPort _id='341' portId='3' name='A' logic='positive' bitWidth='12' trigger='level' type='output' representation='hex'/>
-            <subCircuitPort _id='342' portId='4' name='WR' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='343' portId='5' name='RD' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='344' portId='6' name='HALT' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='345' portId='7' name='STEP' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='342' portId='1' name='CLK' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
+            <subCircuitPort _id='343' portId='2' name='D' logic='positive' bitWidth='16' trigger='level' type='inout' representation='hex'/>
+            <subCircuitPort _id='344' portId='3' name='A' logic='positive' bitWidth='12' trigger='level' type='output' representation='hex'/>
+            <subCircuitPort _id='345' portId='4' name='WR' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='346' portId='5' name='RD' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='347' portId='6' name='HALT' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='348' portId='7' name='STEP' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
           </ports>
         </subGraphVertice>
       </model>
