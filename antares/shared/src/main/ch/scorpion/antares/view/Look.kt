@@ -51,4 +51,10 @@ object Look {
 	fun disabledColor(): Color {
 		return Themes.get<AntaresTheme>().background.color.backgroundColor.withAlpha(192)
 	}
+
+	/**
+	 * Returns the color of the rectangle drawn over [ActorViews]s to indicate that they are inactive,
+	 * i.e. while they are displayed during flat simulation as a ControlView in a [SubGraphVerticeView] with a script.
+	 */
+	val inactiveColor: Color get() = disabledColor()
 }

@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.signal
 
+import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.model.signal.Word
@@ -12,6 +13,7 @@ import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.FontFamily
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.FontStyle
@@ -83,16 +85,20 @@ class DigitView(
     /** ---- [AbstractDrawable] */
 
     override fun draw(context: DrawContext) {
-        draw(context, true)
+        draw(context, isOn = true, inactive = false)
     }
 
-    fun draw(context: DrawContext, isOn: Boolean) {
+    fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean) {
         val oldColor = context.g.color
 		val oldStroke = context.g.stroke
 
         if (isOn) {
 	        if (drawBox) {
-		        context.g.color = transparent.applyTo(signalDigit.getColor().foregroundColor)
+		        context.g.color = if (inactive) {
+			        transparent.applyTo(disabledColor.foregroundColor)
+		        } else {
+			        transparent.applyTo(signalDigit.getColor().foregroundColor)
+		        }
 		        context.g.fillRect(xInt + 1, yInt, WIDTH - 2, HEIGHT - 1)
 	        }
         } else {
@@ -108,14 +114,35 @@ class DigitView(
             else -> oldColor
         })
 
-		label.draw(context)
+	    if (isOn && inactive) {
+		    label.draw("-", context)
+	    } else {
+		    label.draw(context)
+	    }
+
         if (hasFocus) {
             drawFocus(context)
         }
 
+	    if (isOn && inactive) {
+		    drawInactive(context)
+	    }
+
 		context.g.color = oldColor
 		context.g.stroke = oldStroke
     }
+
+	private val disabledColor: CompositeColor get() =
+		if (signalDigit.getBitWidth().width > 1) {
+			Themes.get<AntaresTheme>().undefined
+		} else {
+			Bit.Undefined.color
+		}
+
+	private fun drawInactive(context: DrawContext) {
+		context.g.color = Look.inactiveColor
+		context.g.fillRect(xInt + 1, yInt, WIDTH - 2, HEIGHT - 1)
+	}
 
     private fun drawFocus(context: DrawContext) {
         context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)

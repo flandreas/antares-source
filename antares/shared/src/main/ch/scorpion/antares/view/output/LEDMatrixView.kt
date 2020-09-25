@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
@@ -304,6 +305,11 @@ class LEDMatrixView(
 				y -= DOT_SIZE * factor
 			}
 			x -= DOT_SIZE * factor
+		}
+
+		if (model.inactive && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			context.g.color = Look.inactiveColor
+			context.g.fill(bounds)
 		}
 
 		context.g.stroke = oldStroke

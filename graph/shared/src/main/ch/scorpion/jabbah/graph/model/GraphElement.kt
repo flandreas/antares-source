@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorState
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StorableCreator
@@ -43,6 +44,13 @@ interface GraphElement : Storable, Actor, Describable {
 
     /** Holds the current [DesignError] of this [GraphElement], if any. */
     val designError: DesignError?
+
+	/**
+	 * A [GraphElement] is considered inactive if it is part of [Graph] that is being executed
+	 * using "flat execution" and that is contained in a [SubGraphVerticeRef] whose logic is defined by a script.
+	 * Control views of such [GraphElement]s should be rendered in an inactive state in order not to confuse the user.
+	 */
+	val inactive: Boolean get() = state == ActorState.NonExecuting
 
     fun accept(visitor: HierarchyVisitor): Boolean
 

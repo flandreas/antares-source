@@ -104,7 +104,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 	protected open val insets: Int get() = DEFAULT_INSETS
 
 	protected fun drawNumberView(context: DrawContext, isOn: Boolean) {
-		numberView.draw(context, isOn)
+		numberView.draw(context, isOn, inactive = model.inactive)
 	}
 
 	protected fun updateView() {

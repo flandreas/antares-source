@@ -65,18 +65,22 @@ class NumberView(
 		draw(context, true)
 	}
 
-	fun draw(context: DrawContext, isOn: Boolean) {
+	fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean = false) {
 		context.g.translate(x, y)
 		for (digitView in digitViews) {
-			digitView.draw(context, isOn)
+			digitView.draw(context, isOn, inactive)
 		}
+		drawByteIndexLabels(context)
+		context.g.translate(-x, -y)
+	}
+
+	private fun drawByteIndexLabels(context: DrawContext) {
 		if (context.useContextColors) {
 			context.g.color = transparent.applyTo(context.color!!.textColor)
 		}
 		for (label in byteIndexLabels) {
 			label.draw(context)
 		}
-		context.g.translate(-x, -y)
 	}
 
 	/** ---- [NumberView] */

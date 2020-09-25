@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
@@ -121,13 +122,17 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	override fun draw(context: DrawContext) {
 		super.draw(context)
-		context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
-		label.draw(context)
+		drawLabel(context)
 	}
 
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 		drawBody(context)
+	}
+
+	private fun drawLabel(context: DrawContext) {
+		context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
+		label.draw(context)
 	}
 
 	/** ---- [AbstractRectangularVerticeView] */
@@ -184,6 +189,11 @@ abstract class AbstractLEDView<T: Vertice>(
 		context.g.stroke = stroke
 		context.g.fillOval(xInt, yInt, SIZE, SIZE)
 		drawBulb(context)
+
+		if (model.inactive && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			context.g.color = Look.inactiveColor
+			context.g.fillOval(xInt, yInt, SIZE, SIZE)
+		}
 	}
 }
 

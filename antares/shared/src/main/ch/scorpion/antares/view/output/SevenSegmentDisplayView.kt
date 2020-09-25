@@ -31,6 +31,7 @@ import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.graphics.DropShadow
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import kotlin.math.PI
 
 
@@ -270,6 +271,11 @@ class SevenSegmentDisplayView(
 		drawDot(context.g, model.portScheme.inputValueOf(model, "p"),
 			0.5f * geom.scaledFactor + geom.segLength + geom.scaledFactor,
 			7 * geom.scaledFactor + geom.segHalfWidth)
+
+		if (model.inactive && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			context.g.color = Look.inactiveColor
+			context.g.fillRect(0, 0, geom.width, geom.height)
+		}
 	}
 
 	/** ---- [SevenSegmentDisplayView] */

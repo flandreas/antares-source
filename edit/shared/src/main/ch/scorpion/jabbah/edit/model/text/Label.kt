@@ -213,7 +213,15 @@ class Label(
 	}
 
 	override fun draw(context: DrawContext) {
-		if (StringUtils.isBlank(text)) {
+		drawImpl(displayableText, context)
+	}
+
+	fun draw(text: String, context: DrawContext) {
+		drawImpl(text, context)
+	}
+
+	private fun drawImpl(lText: String, context: DrawContext) {
+		if (StringUtils.isBlank(lText)) {
 			return
 		}
 
@@ -235,7 +243,7 @@ class Label(
 		context.g.rotate(rotation.angle)
 		context.g.translate(-location.x, -location.y)
 
-		context.g.drawString(displayableText, baselinePoint.x.toInt(), baselinePoint.y.toInt())
+		context.g.drawString(lText, baselinePoint.x.toInt(), baselinePoint.y.toInt())
 
 		context.g.translate(location.x, location.y)
 		context.g.rotate(-rotation.angle)

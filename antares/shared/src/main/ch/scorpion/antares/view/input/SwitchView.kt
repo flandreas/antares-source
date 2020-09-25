@@ -259,7 +259,10 @@ class SwitchView(
 
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			drawFocus(context)
-			drawDisabled(context)
+
+			if (isDisabledFor(context) || model.inactive) {
+				drawDisabled(context)
+			}
 		}
 		context.g.color = oldColor
 	}
@@ -380,11 +383,12 @@ class SwitchView(
 		}
 	}
 
+	private fun isDisabledFor(context: DrawContext): Boolean =
+		model.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true
+
 	private fun drawDisabled(context: DrawContext) {
-		if (model.disabled && context.castedAppContext<GraphApplicationContext>()?.isPausing == true) {
-			context.g.color = Look.disabledColor()
-			context.g.fillRect(xInt, yInt, widthInt, heightInt)
-		}
+		context.g.color = Look.disabledColor()
+		context.g.fillRect(xInt, yInt, widthInt, heightInt)
 	}
 
 	private fun updateLabels() {
