@@ -341,6 +341,7 @@ class SchedulerImpl(
 		LOG.debug("Scheduler stopped")
 		task.stop()
 		activationState = PASSIVE
+		isInBreakpoint = false
 		eventBus.post(SchedulerActivationStateEvent(this))
 		reset()
 	}
