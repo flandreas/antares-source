@@ -4,10 +4,10 @@ import ch.scorpion.antares.view.AntaresThemes
 import ch.scorpion.antares.view.DefaultLightColorEvent
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.antares.view.addressable.AddressableContentGraphDesktopItem
 import ch.scorpion.antares.view.addressable.AddressableContentsPanel
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
+import ch.scorpion.antares.view.app.DigitalGraphViewService
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.UUID
@@ -15,7 +15,6 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.invocation.ErrorHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
@@ -35,7 +34,10 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.SystemUtils
-import java.awt.*
+import java.awt.Frame
+import java.awt.Image
+import java.awt.Taskbar
+import java.awt.Toolkit
 import java.io.FileInputStream
 import java.lang.System
 import java.nio.file.Files
@@ -130,7 +132,9 @@ class AntaresSwing(
 
 			establishUserLanguage(userDataDirectoryPath)
 
+			//FlatDarkLaf.install()
 			FlatLightLaf.install()
+
 			UiUtil.setUIFont(FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size))
 
 			BaseModuleJvm.require()

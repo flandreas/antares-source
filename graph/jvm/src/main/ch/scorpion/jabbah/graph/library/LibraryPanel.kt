@@ -44,7 +44,7 @@ class LibraryPanel(
     }
 
 	private fun buildUI() {
-		layout = BorderLayout()
+		layout = BorderLayout(0, 8)
 		add(libraryPreviewPanel, BorderLayout.NORTH)
 		add(libraryTreePanel, BorderLayout.CENTER)
 	}

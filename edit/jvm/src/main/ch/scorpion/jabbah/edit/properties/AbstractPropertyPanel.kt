@@ -62,7 +62,6 @@ abstract class AbstractPropertyPanel(
 		sheet.addPropertySheetChangeListener(propertyStorer)
 
 		getTable().setShowGrid(true)
-		getTable().background = Color.WHITE
 
 		label = JLabel()
 		label.border = BorderFactory.createEmptyBorder(2, 2, 2, 2)

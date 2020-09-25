@@ -69,7 +69,7 @@ class ScriptPropertyEditor(private val propertyName: String, private val editabl
 
 	private fun buildUI() {
 		val panel = JPanel()
-		panel.background = Color.WHITE
+		panel.background = UIManager.getColor("Table.background")
 		panel.layout = BorderLayout()
 
 		panel.add(label, BorderLayout.CENTER)

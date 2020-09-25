@@ -35,7 +35,7 @@ class LibraryPreviewPanel(
 
 	companion object {
 		private val LOG by logger(LibraryPreviewPanel::class)
-		private val BACKGROUND_COLOR = Color.WHITE
+		private val BACKGROUND_COLOR = UIManager.getColor("Table.background")
 	}
 
 	init {
@@ -82,9 +82,7 @@ class LibraryPreviewPanel(
 	private fun buildUI() {
 		background = BACKGROUND_COLOR
 		layout = BorderLayout()
-		border = BorderFactory.createCompoundBorder(
-			BorderFactory.createLineBorder(Color.LIGHT_GRAY),
-			BorderFactory.createEmptyBorder(10, 10, 10, 10))
+		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 		descriptionArea.border = BorderFactory.createEmptyBorder(0, 10, 0, 0)
 		add(componentDisplay, BorderLayout.WEST)
 		add(descriptionArea, BorderLayout.CENTER)
