@@ -11,10 +11,10 @@ abstract class ErrorHandler {
 	companion object {
 		private val LOG by logger(Companion::class)
 
-		val implementation: ErrorHandler = InteractiveErrorHandler()
+		val implementation: ErrorHandler = InteractiveErrorHandler
 
-		fun initialize(parentFrame: JFrame) {
-			implementation.initializeImpl(parentFrame)
+		fun initialize(parentFrame: JFrame, isDeveloper: Boolean = false) {
+			implementation.initializeImpl(parentFrame, isDeveloper)
 		}
 
 		fun exception(x: Throwable) {
@@ -22,7 +22,7 @@ abstract class ErrorHandler {
 				implementation.exceptionImpl(x)
 			} else {
 				try {
-					UiUtil.invokeAndWaitThrowing(Runnable { implementation.exceptionImpl(x) })
+					UiUtil.invokeAndWaitThrowing { implementation.exceptionImpl(x) }
 				} catch (e: Exception) {
 					LOG.error("Error: $e")
 				}
@@ -31,7 +31,9 @@ abstract class ErrorHandler {
 		}
 	}
 
-	protected abstract fun initializeImpl(parentFrame: JFrame)
+	/** Initializes this [ErrorHandler] with the parent [JFrame] in which the error dialog is to be shown.*/
+	protected abstract fun initializeImpl(parentFrame: JFrame, isDeveloper: Boolean = false)
 
+	/** Handles the specified [Throwable]. */
 	protected abstract fun exceptionImpl(x: Throwable)
 }

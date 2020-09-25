@@ -11,44 +11,55 @@ import java.io.PrintStream
 import java.io.ByteArrayOutputStream
 
 
-class InteractiveErrorHandler : ErrorHandler() {
+object InteractiveErrorHandler : ErrorHandler() {
 
-	companion object {
-        private val LOG by logger(InteractiveErrorHandler::class)
-	}
+	private val LOG by logger(InteractiveErrorHandler::class)
 
-    private var frame: JFrame? = null
+    private var parentFrame: JFrame? = null
+	private var isDeveloper = false
+	private var isHandling = false
 
-    override fun initializeImpl(parentFrame: JFrame) {
-        this.frame = parentFrame
+    override fun initializeImpl(parentFrame: JFrame, isDeveloper: Boolean) {
+        this.parentFrame = parentFrame
+	    this.isDeveloper = isDeveloper
     }
 
     override fun exceptionImpl(x: Throwable) {
-        LOG.error("Unexpected error: $x", x)
+	    LOG.error("Unexpected error: $x", x)
 
-        if (frame != null) {
-            if (LOG.isDebugEnabled()) {
-                val os = ByteArrayOutputStream()
-                x.printStackTrace(PrintStream(os))
-
-                val ta = JTextArea()
-                ta.text = os.toString()
-
-                val sp = JScrollPane(ta)
-                sp.preferredSize = Dimension(400, 300)
-
-                JOptionPane.showMessageDialog(
-	                frame,
-	                sp,
-	                Translations.getString("base.unexpectedError.title"),
-	                JOptionPane.ERROR_MESSAGE)
+        if (parentFrame != null && !isHandling) {
+	        isHandling = true
+            if (isDeveloper) {
+	            showDeveloperDialog(x)
             } else {
-                JOptionPane.showMessageDialog(
-	                frame,
-	                Translations.getString("base.unexpectedError.text"),
-	                Translations.getString("base.unexpectedError.title"),
-	                JOptionPane.ERROR_MESSAGE)
+                showUserDialog()
             }
+	        isHandling = false
         }
     }
+
+	private fun showDeveloperDialog(x: Throwable) {
+		val os = ByteArrayOutputStream()
+		x.printStackTrace(PrintStream(os))
+
+		val ta = JTextArea()
+		ta.text = os.toString()
+
+		val sp = JScrollPane(ta)
+		sp.preferredSize = Dimension(400, 300)
+
+		JOptionPane.showMessageDialog(
+			parentFrame,
+			sp,
+			Translations.getString("base.unexpectedError.title"),
+			JOptionPane.ERROR_MESSAGE)
+	}
+
+	private fun showUserDialog() {
+		JOptionPane.showMessageDialog(
+			parentFrame,
+			Translations.getString("base.unexpectedError.text"),
+			Translations.getString("base.unexpectedError.title"),
+			JOptionPane.ERROR_MESSAGE)
+	}
 }
