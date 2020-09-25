@@ -4,12 +4,7 @@
       <model>
         <graph _id='2'>
           <elements>
-            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='6d95ca5e-6be3-4dc4-a175-aff70fb8c3bc'>
-              <desc>
-                <translation lang='en' text='Central Processing Unit'/>
-                <translation lang='de' text='Central Processing Unit'/>
-              </desc>
-            </subGraphVerticeRef>
+            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='6d95ca5e-6be3-4dc4-a175-aff70fb8c3bc'/>
             <ram _id='4' id='4' delay='1' addressBitWidth='8' dataBitWidth='16' clock='false'/>
             <rom _id='5' id='5' delay='1' addressBitWidth='8' dataBitWidth='16' content='7000:Initialize\ I\ at\ 0800 1800 7065:Initialize\ L\ at\ 0801 1801 7000:Initialize\ S\ at\ 0802 1802 7001:Initialize\ ONE\ at\ 0803 1803 0801:IF\ (I\ ==\ L)\ THEN\ GOTO\ END 3800 5013 0802:S\ =\ S\ +\ I 2800 1802 1FFE:Output\ S 0800:I\ =\ I\ +\ 1 2803 1800 6008:GOTO\ LOOP FF00:Stop\ program' disassembler='0([A-F0-9]{3})=LODD $1
 1([A-F0-9]{3})=STOD $1
@@ -35,12 +30,7 @@ FA([A-F0-9]{2})=SWAP
 FC([A-F0-9]{2})=INSP $1
 FE([A-F0-9]{2})=DESP $1
 FF([A-F0-9]{2})=HALT'/>
-            <subGraphVerticeRef _id='6' id='6' delay='0' uuid='21648273-25d2-4071-b0cc-f3a75f945ef6'>
-              <desc>
-                <translation lang='en' text='Programmed Input/Output'/>
-                <translation lang='de' text='Programmed Input/Output'/>
-              </desc>
-            </subGraphVerticeRef>
+            <subGraphVerticeRef _id='6' id='6' delay='0' uuid='21648273-25d2-4071-b0cc-f3a75f945ef6'/>
             <subGraphVerticeRef _id='7' id='7' delay='0' uuid='75b0b920-b31c-42aa-8c21-915b0a4619c9'/>
             <digitalNet _id='8' id='11' delay='0'>
               <ports>
