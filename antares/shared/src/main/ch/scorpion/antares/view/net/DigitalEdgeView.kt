@@ -51,17 +51,19 @@ class DigitalEdgeView(
 		val oldColor = context.g.color
 		val oldCompositeColor = context.color
 
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && showNetState()) {
-			if (!model.isError) {
+		context.color = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && showNetState()) {
+			if (model.isError) {
+				Themes.get<AntaresTheme>().error
+			} else {
 				val signalColor = model.signal!!.getColor()
-				context.color = if (styling.isArea) {
+				if (styling.isArea) {
 					CompositeColor(signalColor.foregroundColor, Themes.get<AntaresTheme>().word.backgroundColor)
 				} else {
 					signalColor
 				}
 			}
 		} else {
-			context.color = context.choose(color)
+			context.choose(color)
 		}
 
 		if ((model as DigitalNet).bitWidth.width > 1) {
