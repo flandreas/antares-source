@@ -92,6 +92,7 @@ class TranslatableTextPropertyEditor(
 		val panel = JPanel()
 
 		panel.layout = EGBL.getLayout()
+		panel.background = UIManager.getColor("Table.background")
 
 		val button = createButton()
 
