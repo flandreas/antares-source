@@ -668,6 +668,8 @@ open class EdgeViewImpl<T : Any>(
 		if (reader.hasAttribute("arrow")) {
 			isArrow = reader.readBoolean("arrow")
 		}
+
+		updateEndpointViews()
 	}
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
