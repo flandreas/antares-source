@@ -6,12 +6,8 @@ import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import java.awt.BorderLayout
-import java.awt.Color
 import java.awt.Dimension
-import javax.swing.BorderFactory
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.SwingUtilities
+import javax.swing.*
 
 class StatusBar(
 	eventBus: EventBus = BaseModule.eventBus
@@ -36,12 +32,9 @@ class StatusBar(
 	private fun buildUI() {
 		layout = BorderLayout()
 		border = BorderFactory.createCompoundBorder(
-			BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1),
-			BorderFactory.createEmptyBorder(2, 5, 2, 0)
+			BorderFactory.createLineBorder(UIManager.getColor("Separator.foreground"), 1),
+			BorderFactory.createEmptyBorder(2, 5, 2, 5)
 		)
-
-		largeLabel.foreground = Color.DARK_GRAY
-		smallLabel.foreground = Color.DARK_GRAY
 
 		add(largeLabel, BorderLayout.CENTER)
 		add(smallLabel, BorderLayout.EAST)
