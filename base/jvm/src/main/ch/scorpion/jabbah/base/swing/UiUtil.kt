@@ -7,12 +7,16 @@ import java.awt.EventQueue
 import java.lang.reflect.InvocationTargetException
 import javax.swing.*
 import javax.swing.plaf.FontUIResource
+import kotlin.math.max
+import kotlin.math.min
 
 
 /**
  * Contains various static utility methods.
  */
 object UiUtil {
+
+	private const val DIVERT = 24
 
 	/**
 	 * Invokes the specified invokable on the [EventQueue] an returns immediately.
@@ -88,7 +92,13 @@ object UiUtil {
 
 	fun getBackgroundDivertColor(parent: JComponent): Color = getBackgroundDivertColor(parent.background)
 
-	fun getBackgroundDivertColor(bg: Color): Color = Color(bg.red - 24, bg.green - 24, bg.blue - 24)
+	fun getBackgroundDivertColor(bg: Color): Color {
+		return if (isDark(bg)) {
+			Color(min(255, bg.red + DIVERT), min(255, bg.green + DIVERT), min(255, bg.blue + DIVERT))
+		} else {
+			Color(max(0, bg.red - DIVERT), max(0, bg.green - DIVERT), max(0, bg.blue - DIVERT))
+		}
+	}
 
 	fun getButtonPressColor(parent: JComponent): Color {
 		val bg = parent.background
@@ -103,5 +113,9 @@ object UiUtil {
 		button.toolTipText = action.name
 		RolloverButtonEnabler(button)
 		return button
+	}
+
+	private fun isDark(color: Color): Boolean {
+		return (color.red + color.green + color.blue) / 3 < 128
 	}
 }

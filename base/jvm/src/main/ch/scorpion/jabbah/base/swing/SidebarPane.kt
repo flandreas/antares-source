@@ -209,7 +209,7 @@ class SidebarPane(
 			contentPanel.add(current!!.headerPanel, BorderLayout.NORTH)
 			contentPanel.add(current!!.component, BorderLayout.CENTER)
 
-			current!!.label.background = Color(175, 175, 175)
+			current!!.label.background = UiUtil.getBackgroundDivertColor(this@SidebarPane)
 		}
 		if (changed) {
 			isOpenChangeHandler.invoke()
