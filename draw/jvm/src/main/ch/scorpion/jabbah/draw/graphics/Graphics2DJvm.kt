@@ -56,9 +56,11 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
             return fontStyle
         }
 
-        fun toAwtColor(color: Color): java.awt.Color {
-            return java.awt.Color(color.red, color.green, color.blue, color.alpha)
-        }
+        fun toAwtColor(color: Color): java.awt.Color =
+	        java.awt.Color(color.red, color.green, color.blue, color.alpha)
+
+	    fun fromAwtColor(color: java.awt.Color): Color =
+		    Color(color.red, color.green, color.blue, color.alpha)
 
         fun toAwtFont(font: Font): java.awt.Font {
             return java.awt.Font(font.family.javaName, fromFontStyle(font), font.size)

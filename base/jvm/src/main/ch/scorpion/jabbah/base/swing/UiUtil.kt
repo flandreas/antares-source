@@ -86,10 +86,9 @@ object UiUtil {
 		return scroll
 	}
 
-	fun getBackgroundDivertColor(parent: JComponent): Color {
-		val bg = parent.background
-		return Color(bg.red - 24, bg.green - 24, bg.blue - 24)
-	}
+	fun getBackgroundDivertColor(parent: JComponent): Color = getBackgroundDivertColor(parent.background)
+
+	fun getBackgroundDivertColor(bg: Color): Color = Color(bg.red - 24, bg.green - 24, bg.blue - 24)
 
 	fun getButtonPressColor(parent: JComponent): Color {
 		val bg = parent.background

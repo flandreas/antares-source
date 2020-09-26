@@ -68,13 +68,15 @@ class GraphDesktopItemHeaderPanel(
 		const val PROP_BACKGROUND_COLOR = "graph.ui.GraphDesktopItemHeader.background"
 		const val PREF_HEIGHT = 27
 		const val LEFT_INSET = 10
+
+		val headerBackgroundColor: Color get() = UiUtil.getBackgroundDivertColor(UIManager.getColor("Panel.background"))
 	}
 
 	init {
 		layout = BoxLayout(this, BoxLayout.LINE_AXIS)
 		add(Box.createHorizontalStrut(LEFT_INSET))
 		add(content)
-		background = Graphics2DJvm.toAwtColor(DrawModule.properties.getColor(PROP_BACKGROUND_COLOR))
+		background = headerBackgroundColor
 
 		if (allowClose) {
 			add(Box.createHorizontalGlue())

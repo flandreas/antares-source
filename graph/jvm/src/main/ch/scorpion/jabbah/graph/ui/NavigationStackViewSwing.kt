@@ -22,6 +22,7 @@ import java.awt.event.MouseEvent
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.UIManager
 
 
 /**
@@ -37,24 +38,6 @@ class NavigationStackViewSwing(
 
 		const val PROP_HEAD_FONT = "graph.ui.NavigationStackView.headFont"
 
-		const val PROP_BACKGROUND_COLOR = "graph.ui.NavigationStackView.backgroundColor"
-
-		const val PROP_HOVER_BACKGROUND_COLOR = "graph.ui.NavigationStackView.hoverBackgroundColor"
-
-		const val PROP_HEAD_BACKGROUND_COLOR = "graph.ui.NavigationStackView.headBackgroundColor"
-
-		const val PROP_BORDER_COLOR = "graph.ui.NavigationStackView.borderColor"
-
-		const val PROP_HOVER_BORDER_COLOR = "graph.ui.NavigationStackView.hoverBorderColor"
-
-		const val PROP_HEAD_BORDER_COLOR = "graph.ui.NavigationStackView.headBorderColor"
-
-		const val PROP_TEXT_COLOR = "graph.ui.NavigationStackView.textColor"
-
-		const val PROP_HOVER_TEXT_COLOR = "graph.ui.NavigationStackView.hoverTextColor"
-
-		const val PROP_HEAD_TEXT_COLOR = "graph.ui.NavigationStackView.headTextColor"
-
 		/** Vertical insets between view border and arrow border.*/
 		private const val V_INSETS = 4
 
@@ -67,6 +50,12 @@ class NavigationStackViewSwing(
 		private const val ELEMENT_DISTANCE = 8
 
 		private const val TEXT_INSET = 10
+
+		private val elementBackgroundColor: java.awt.Color get() = UIManager.getColor("Button.background")
+		private val elementBorderColor: java.awt.Color get() = UIManager.getColor("Button.borderColor")
+		private val elementHoverBackground: java.awt.Color get() = UIManager.getColor("Button.toolbar.hoverBackground")
+		private val elementHoverBorderColor: java.awt.Color get() = UIManager.getColor("Button.hoverBorderColor")
+		private val elementTextColor: java.awt.Color get() = UIManager.getColor("Button.foreground")
 	}
 
 	private val elements: MutableList<Element> = mutableListOf()
@@ -75,7 +64,7 @@ class NavigationStackViewSwing(
 
 	init {
 		isEnabled = true
-		background = Graphics2DJvm.toAwtColor(DrawModule.properties.getColor(GraphDesktopItemHeaderPanel.PROP_BACKGROUND_COLOR))
+		background = GraphDesktopItemHeaderPanel.headerBackgroundColor
 		border = BorderFactory.createEmptyBorder(V_INSETS, 0, V_INSETS, H_INSETS)
 		update()
 	}
@@ -178,7 +167,6 @@ class NavigationStackViewSwing(
 		private val label: Label = Label(
 			text = entry.content.drawing.graph!!.name.value,
 			font = DrawModule.properties.getFont(PROP_FONT),
-			color = DrawModule.properties.getColor(PROP_TEXT_COLOR),
 			horizontalAlignment = HorizontalAlignment.CENTER,
 			verticalAlignment = VerticalAlignment.CENTER,
 			location = Point2D(path.boundingBox.centerX, path.boundingBox.centerY))
@@ -190,29 +178,28 @@ class NavigationStackViewSwing(
 		fun draw(g: Graphics2DJvm) {
 			g.g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
 			g.translate(location.x, location.y)
-			if (isHead) {
-				g.color = DrawModule.properties.getColor(PROP_HEAD_BACKGROUND_COLOR)
+			g.g.color = if (isHead) {
+				elementBackgroundColor
 			} else {
-				g.color = if (isHover) DrawModule.properties.getColor(PROP_HOVER_BORDER_COLOR) else DrawModule.properties.getColor(PROP_BACKGROUND_COLOR)
+				if (isHover) elementHoverBackground else elementBackgroundColor
 			}
 			g.fill(path)
 
 			val borderColor: Color? = if (isHead) {
-				DrawModule.properties.getColor(PROP_HEAD_BORDER_COLOR)
+				Graphics2DJvm.fromAwtColor(elementBorderColor)
 			} else {
-				if (isHover) DrawModule.properties.getColor(PROP_HOVER_BORDER_COLOR) else DrawModule.properties.getOptionalColor(PROP_BORDER_COLOR)
+				if (isHover) Graphics2DJvm.fromAwtColor(elementHoverBorderColor) else Graphics2DJvm.fromAwtColor(elementBorderColor)
 			}
 			if (borderColor != null) {
 				g.color = borderColor
 				g.draw(path)
 			}
 
-			if (isHead) {
-				label.font = DrawModule.properties.getFont(PROP_HEAD_FONT)
-				label.color = DrawModule.properties.getColor(PROP_HEAD_TEXT_COLOR)
+			label.color = Graphics2DJvm.fromAwtColor(elementTextColor)
+			label.font = if (isHead) {
+				DrawModule.properties.getFont(PROP_HEAD_FONT)
 			} else {
-				label.font = DrawModule.properties.getFont(PROP_FONT)
-				label.color = if (isHover) DrawModule.properties.getColor(PROP_HOVER_TEXT_COLOR) else DrawModule.properties.getColor(PROP_TEXT_COLOR)
+				DrawModule.properties.getFont(PROP_FONT)
 			}
 			label.draw(DrawContext(g = g))
 			g.translate(-location.x, -location.y)
