@@ -6,11 +6,11 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.SidebarPane.Location
-import java.awt.BorderLayout
-import java.awt.Color
+import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
+import javax.swing.border.AbstractBorder
 
 /**
  * A [JPanel] that stacks multiple collapsed views at the particular [Location], allowing the user to display one of
@@ -139,9 +139,49 @@ class SidebarPane(
 
 	private fun initUI() {
 		contentPanel.layout = BorderLayout()
+		labelPanel.border = SelectionBorder()
 
 		layout = BorderLayout()
 		location.initUI(this, labelPanel, contentPanel)
+	}
+
+	private inner class SelectionBorder(private val halfThickness: Int = 2) : AbstractBorder() {
+
+		private val stroke = BasicStroke((2 * halfThickness).toFloat())
+
+		override fun paintBorder(c: Component, g: Graphics, x: Int, y: Int, width: Int, height: Int) {
+			val g2 = g as Graphics2D
+
+			val oldColor = g2.color
+			val oldStroke = g2.stroke
+
+			g2.color = UIManager.getColor("TabbedPane.disabledUnderlineColor")
+			g2.stroke = stroke
+
+			for (entry in entries) {
+				if (entry === current) {
+					val bounds = entry.label.bounds
+					when (location) {
+						Location.Bottom -> g2.drawLine(bounds.x, halfThickness, bounds.x + bounds.width, halfThickness)
+						Location.Right -> g2.drawLine(halfThickness, bounds.y, halfThickness, bounds.y + bounds.height)
+						Location.Left -> g2.drawLine(width - halfThickness, bounds.y, width - halfThickness, bounds.y + bounds.height)
+					}
+				}
+			}
+
+			g2.color = oldColor
+			g2.stroke = oldStroke
+		}
+
+		override fun getBorderInsets(c: Component, insets: Insets): Insets {
+			when(location) {
+				Location.Bottom -> insets.set(2 * halfThickness, 0, 0, 0)
+				Location.Right -> insets.set(0, 2 * halfThickness, 0, 0)
+				Location.Left -> insets.set(0, 0, 0, 2 * halfThickness)
+			}
+
+			return insets
+		}
 	}
 
 	private inner class Entry(private val content: SidebarPaneContent) : PropertyChangeListener<Any> {
@@ -209,7 +249,7 @@ class SidebarPane(
 			contentPanel.add(current!!.headerPanel, BorderLayout.NORTH)
 			contentPanel.add(current!!.component, BorderLayout.CENTER)
 
-			current!!.label.background = UiUtil.getBackgroundDivertColor(this@SidebarPane)
+			current!!.label.background = background
 		}
 		if (changed) {
 			isOpenChangeHandler.invoke()
