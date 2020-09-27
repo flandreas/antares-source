@@ -42,7 +42,7 @@ enum class Language(val code: String) {
 	companion object {
 
 		val DEFAULT: Language = English
-		val PROP_LANGUAGE = "base.language"
+		const val PROP_LANGUAGE = "base.language"
 
 		fun withCode(code: String): Language {
 			return getLanguage(code) ?: throw IllegalArgumentException("unknown Language $code")

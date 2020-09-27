@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.preferences.BooleanPreference
 import ch.scorpion.jabbah.base.preferences.FloatPreference
 import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
+import ch.scorpion.jabbah.draw.ThemePreference
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.ImageJvm
@@ -50,6 +51,8 @@ object DrawModuleJvm : AbstractModule() {
 		root.add(PreferenceGroup(PREF_TREE_RENDERING))
 		root.add(PreferenceGroup(PREF_TREE_VIEW))
 		root.getGroup(PREF_TREE_VIEW).add(PreferenceGroup(PREF_TREE_VIEW_NAVIGATION))
+
+		root.getGroup(PREF_TREE_RENDERING).add(ThemePreference())
 
 		root.getGroup(PREF_TREE_RENDERING).add(BooleanPreference(
 			id = DropShadow.PROP_SHADOW,

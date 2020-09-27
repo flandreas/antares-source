@@ -18,7 +18,6 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
-import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -28,7 +27,6 @@ import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.Storable
-import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
@@ -68,19 +66,11 @@ class AntaresSwing(
 		private const val PROP_APPLICATION_PROJECT = "application.project"
 		private val DEF_LIBRARY_UUID = UUID("6707f981-110d-4629-a0bf-c35a4688025c")
 
-		private const val THEMES_OPTION = "t"
 		private const val SYSTEM_LIB_OPTION = "l"
 		private const val PROJECTS_OPTION = "p"
 
 		fun defineOptions(options: Options): Options {
 			AbstractDesktopApplication.defineOptions(options)
-
-			options.addOption(Option.builder(THEMES_OPTION)
-				.required(false)
-				.longOpt("theme")
-				.desc("Theme")
-				.hasArg()
-				.build())
 
 			options.addOption(Option.builder(SYSTEM_LIB_OPTION)
 				.required(false)
@@ -238,8 +228,9 @@ class AntaresSwing(
 	override fun init() {
 		AntaresModuleJvm(this).require()
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(DEF_LIBRARY_UUID, isSystem = true)
-		AntaresThemes.install()
 		super.init()
+
+		AntaresThemes.install()
 
 		systemLibraryDirectoryPath?.let {
 			LOG.value.info("Using system libraries in $systemLibraryDirectoryPath")
@@ -252,9 +243,6 @@ class AntaresSwing(
 
 	override fun consumeCommandLine(commandLine: CommandLine) {
 		super.consumeCommandLine(commandLine)
-		if (commandLine.hasOption(THEMES_OPTION)) {
-			Themes.setCurrent(commandLine.getOptionValue(THEMES_OPTION))
-		}
 		if (commandLine.hasOption(SYSTEM_LIB_OPTION)) {
 			consumeSystemLibraryDirectoryPath(commandLine.getOptionValue(SYSTEM_LIB_OPTION))
 		}

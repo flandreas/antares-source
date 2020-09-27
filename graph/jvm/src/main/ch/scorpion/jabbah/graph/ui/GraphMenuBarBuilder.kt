@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.preferences.PreferencesAction
-import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.app.CopyAction
 import ch.scorpion.jabbah.edit.app.CutAction
@@ -83,11 +82,6 @@ open class GraphMenuBarBuilder(
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(graphFrame.actions.viewContainerAction)))
 		menu.addSeparator()
 		super.fillViewMenu(menu)
-		val themesMenu = JMenu(Translations.getString("graph.action.themes.name"))
-		for (theme in Themes.allThemes()) {
-			themesMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(ThemeAction(theme))))
-		}
-		menu.add(themesMenu)
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(OscilloscopeAction(DrawViewModule.viewManager, eventBus))))
 	}
 
