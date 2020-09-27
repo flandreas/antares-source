@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.base.swing
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.UI
 import java.awt.Color
 import java.awt.EventQueue
 import java.lang.reflect.InvocationTargetException
@@ -108,11 +109,21 @@ object UiUtil {
 	fun createToolBarButton(action: Action): JButton {
 		val button = JButton(ActionWrapperSwing(action))
 		button.border = BorderFactory.createEmptyBorder(3, 3, 3, 3)
-		button.icon = ImageIcon(UiUtil::class.java.getResource(action.imagePath))
+		action.imagePath?.let { button.icon = imageIcon(it) }
 		button.text = null
 		button.toolTipText = action.name
 		RolloverButtonEnabler(button)
 		return button
+	}
+
+	fun imageIcon(path: String): ImageIcon {
+		if (UI.isDark) {
+			val darkPath = path.replace(".", "-dark.")
+			try {
+				return ImageIcon(UiUtil::class.java.getResource(darkPath))
+			} catch (t: Throwable) {}
+		}
+		return ImageIcon(UiUtil::class.java.getResource(path))
 	}
 
 	private fun isDark(color: Color): Boolean {

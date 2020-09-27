@@ -63,6 +63,7 @@ object AntaresThemes {
 		val skyBlue = CompositeColor(foregroundColor = Color(69, 113, 180), backgroundColor = Color(220, 237, 250))
 		return AntaresTheme(
 			name = "Winter",
+			dark = false,
 			supportsWhiteBackground = true,
 			background = BasicStyle(
 				color = CompositeColor(
@@ -180,6 +181,7 @@ object AntaresThemes {
 
 		return AntaresTheme(
 			name = "CRT",
+			dark = true,
 			supportsWhiteBackground = false,
 			referenceColors = listOf(
 				// Red
@@ -310,6 +312,7 @@ object AntaresThemes {
 		val figureColor = CompositeColor(foregroundColor = Color.BLACK, backgroundColor = Color.WHITE)
 		return AntaresTheme(
 			name = "Black & White",
+			dark = false,
 			supportsWhiteBackground = true,
 			background = BasicStyle(
 				color = CompositeColor(

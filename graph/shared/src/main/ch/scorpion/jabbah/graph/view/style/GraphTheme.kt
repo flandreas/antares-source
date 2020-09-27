@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.edit.style.EditTheme
  */
 open class GraphTheme(
 	name: String = DEF_NAME,
+	dark: Boolean = DEF_DARK,
 	supportsWhiteBackground: Boolean = DEF_SUPPORTS_WHITE_BACKGROUND,
 	referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
 	referenceColors: List<CompositeColor> = DEF_REF_COLORS,
@@ -35,6 +36,7 @@ open class GraphTheme(
 	val overlay: Color = DEF_OVERLAY
 ) : EditTheme(
 	name,
+	dark,
 	supportsWhiteBackground,
 	referenceColorSequenceProvider,
 	referenceColors,

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.style
 
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.UI
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.*
 
@@ -13,6 +14,9 @@ interface Theme {
 
 	/** The displayable name of this [Theme]. This name is not translated to the user's language.*/
 	val name: String
+
+	/** Determines whether this [Theme] requires a dark UI look & feel.*/
+	val dark: Boolean
 
 	/**
 	 * Determines whether this [Theme] defines colors for objects that can be painted over white background.
@@ -47,18 +51,20 @@ object Themes {
 
 	var current: Theme = themes[0]
 		private set(value) {
-			field = value
-			field.activateIn(DrawStyleModule.styleProvider, styleOnly = false)
-			uiTheme = determineUITheme()
+			if (field !== value) {
+				field = value
+				field.activateIn(DrawStyleModule.styleProvider, styleOnly = false)
+				uiTheme = determineUITheme()
+			}
 		}
 
 	/** The [StyleProvider] that provides the [Style]s to be used for displaying over white UI background.*/
 	val uiStyleProvider: StyleProvider = StyleRepository()
 
 	fun setCurrent(name: String) {
-		current = get(name) ?: throw NoSuchElementException("No theme with name '$name' defined")
+			current = get(name) ?: throw NoSuchElementException("No theme with name '$name' defined")
 		BaseModule.settings.set(PROP_THEME, name)
-		BaseModule.eventBus.post(ThemeEvent(current))
+			BaseModule.eventBus.post(ThemeEvent(current))
 	}
 
 	fun <T : Theme> get(): T {
@@ -110,6 +116,7 @@ data class ThemeEvent(val currentTheme: Theme)
 
 open class DrawTheme(
 	override val name: String = DEF_NAME,
+	override val dark: Boolean = DEF_DARK,
 	override val supportsWhiteBackground: Boolean = DEF_SUPPORTS_WHITE_BACKGROUND,
 	private val referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
 	private val referenceColors: List<CompositeColor> = DEF_REF_COLORS,
@@ -123,6 +130,7 @@ open class DrawTheme(
 	companion object {
 		const val DEF_NAME = "default"
 		const val DEF_SUPPORTS_WHITE_BACKGROUND = true
+		const val DEF_DARK = false
 		val DEF_BACKGROUND = BasicStyle(CompositeColor(Color(240, 240, 240), Color.WHITE, Color.BLACK))
 		val DEF_FIGURE = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
 		val DEF_TOOLTIP = BasicStyle(CompositeColor(foregroundColor = Color(249, 214, 54),

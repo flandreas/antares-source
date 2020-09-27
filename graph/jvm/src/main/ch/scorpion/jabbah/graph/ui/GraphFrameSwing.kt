@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Command
@@ -129,14 +130,14 @@ class GraphFrameSwing(
 		toolbar.isFloatable = false
 
 		val viewDesktopButton = JToggleButton(ActionWrapperSwing(viewDesktopAction))
-		viewDesktopButton.icon = ImageIcon(GraphFrameSwing::class.java.getResource(viewDesktopAction.imagePath))
+		viewDesktopAction.imagePath?.let { viewDesktopButton.icon = UiUtil.imageIcon(it) }
 		viewDesktopButton.text = null
 		viewDesktopButton.toolTipText = viewDesktopAction.name
 		viewDesktopButton.addActionListener(MainToolBarActionListener(viewDesktopButton, GraphFrame.DisplayedView.Desktop))
 		toolbar.add(viewDesktopButton)
 
 		val viewContainerButton = JToggleButton(ActionWrapperSwing(viewContainerAction))
-		viewContainerButton.icon = ImageIcon(GraphFrameSwing::class.java.getResource(viewContainerAction.imagePath))
+		viewContainerAction.imagePath?.let { viewContainerButton.icon = UiUtil.imageIcon(it) }
 		viewContainerButton.text = null
 		viewContainerButton.toolTipText = viewContainerAction.name
 		viewContainerButton.addActionListener(MainToolBarActionListener(viewContainerButton, GraphFrame.DisplayedView.Container))
