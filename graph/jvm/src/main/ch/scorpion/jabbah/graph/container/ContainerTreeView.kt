@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.container
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -55,7 +56,7 @@ open class ContainerTreeView(
 
     private inner class ContainerTreeCellRenderer : DefaultTreeCellRenderer() {
         private val iconCache: MutableMap<String, Icon> = mutableMapOf()
-	    private val folderIcon = ImageIcon(ContainerTreeView::class.java.getResource("/img/folder-20.png"))
+	    private val folderIcon = UiUtil.themedIcon("/img/folder-20.png")
 	    private val subGraphIcon = ContainerLibraryElementIcon()
 
 	    override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): java.awt.Component {

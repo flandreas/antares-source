@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
@@ -13,7 +14,6 @@ import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.UsecaseAddedEvent
 import ch.scorpion.jabbah.graph.view.UsecaseRemovedEvent
 import java.awt.Component
-import javax.swing.ImageIcon
 import javax.swing.JLabel
 import javax.swing.JPopupMenu
 import javax.swing.JTree
@@ -162,7 +162,7 @@ class UsecaseTreeView(
 
 		companion object {
 			private val elementIcon = ContainerLibraryElementIcon()
-			private val usecaseIcon = ImageIcon(UsecaseTreeView::class.java.getResource("/img/usecase-16.png"))
+			private val usecaseIcon = UiUtil.themedIcon("/img/usecase-16.png")
 		}
 
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {

@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
@@ -16,7 +17,6 @@ import ch.scorpion.jabbah.graph.ui.scenario.ScenarioPanel
 import ch.scorpion.jabbah.graph.ui.usecase.UsecasePanel
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
-import javax.swing.ImageIcon
 import javax.swing.JPanel
 
 /**
@@ -53,11 +53,11 @@ class GraphEditPanel(
 		contents = listOf(
 			SidebarPaneContentImpl(
 				Translations.getString("graph.scenarios.title"),
-				ImageIcon(SidebarPane::class.java.getResource("/img/scenarios-16.png")),
+				UiUtil.themedIcon("/img/scenarios-16.png"),
 				scenarioPanel),
 			SidebarPaneContentImpl(
 				Translations.getString("graph.usecases.title"),
-				ImageIcon(SidebarPane::class.java.getResource("/img/usecase-16.png")),
+				UiUtil.themedIcon("/img/usecase-16.png"),
 				usecasePanel)
 		)) {
 		scenarioPanel.clearSelection()

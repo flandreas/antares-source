@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import java.awt.BorderLayout
@@ -167,15 +168,15 @@ class LibraryCompositionPanel(
 
 		val copyButton = JButton(ActionWrapperSwing(copyAction))
 		copyButton.text = null
-		copyButton.icon = ImageIcon(LibraryCompositionPanel::class.java.getResource("/img/right-18.png"))
+		copyButton.icon = UiUtil.themedIcon("/img/right-18.png")
 
 		val addButton = JButton(ActionWrapperSwing(destinationLibraryTree.controller.addLibraryFolderAction))
 		addButton.text = null
-		addButton.icon = ImageIcon(LibraryCompositionPanel::class.java.getResource("/img/plus-18.png"))
+		addButton.icon = UiUtil.themedIcon("/img/plus-18.png")
 
 		val removeButton = JButton(ActionWrapperSwing(destinationLibraryTree.controller.deleteLibraryFolderAction))
 		removeButton.text = null
-		removeButton.icon = ImageIcon(LibraryCompositionPanel::class.java.getResource("/img/minus-18.png"))
+		removeButton.icon = UiUtil.themedIcon("/img/minus-18.png")
 
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()

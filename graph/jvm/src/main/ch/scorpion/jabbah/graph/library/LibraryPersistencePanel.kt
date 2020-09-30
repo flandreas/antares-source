@@ -233,8 +233,8 @@ class LibraryPersistencePanel(
 
 	private inner class LibraryListRenderer : DefaultListCellRenderer() {
 
-		private val lockedIcon = ImageIcon(LibraryPersistencePanel::class.java.getResource("/img/locked-16.png"))
-		private val unlockedIcon = ImageIcon(LibraryPersistencePanel::class.java.getResource("/img/unlocked-16.png"))
+		private val lockedIcon = UiUtil.themedIcon("/img/locked-16.png")
+		private val unlockedIcon = UiUtil.themedIcon("/img/unlocked-16.png")
 
 		override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
 			val renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel

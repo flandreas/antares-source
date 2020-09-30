@@ -64,7 +64,6 @@ object AntaresThemes {
 		return AntaresTheme(
 			name = "Winter",
 			dark = false,
-			supportsWhiteBackground = true,
 			background = BasicStyle(
 				color = CompositeColor(
 					foregroundColor = Color(232, 232, 232),
@@ -159,9 +158,11 @@ object AntaresThemes {
 	}
 
 	private fun crt(): Theme {
+		val backgroundColor = Color(24, 24, 24)
+		val darkSelection = SELECTION_COLOR
 		val mainColor = CompositeColor(
 			foregroundColor = ZERO.foregroundColor,
-			backgroundColor = Color.BLACK
+			backgroundColor = backgroundColor
 		)
 
 		val veryDarkGreen = Color(2, 46, 8)
@@ -182,7 +183,6 @@ object AntaresThemes {
 		return AntaresTheme(
 			name = "CRT",
 			dark = true,
-			supportsWhiteBackground = false,
 			referenceColors = listOf(
 				// Red
 				red.withAlpha(DrawTheme.REF_COLOR_ALPHA),
@@ -218,8 +218,8 @@ object AntaresThemes {
 				stroke = HIGHLIGHT_STROKE),
 			background = BasicStyle(
 				color = CompositeColor(
-					foregroundColor = Color(32, 32, 32),
-					backgroundColor = Color.BLACK,
+					foregroundColor = Color(48, 48, 48),
+					backgroundColor = backgroundColor,
 					textColor = mainColor.foregroundColor),
 				stroke = ANNOTATION_STROKE,
 				font = Look.ANNOTATION_FONT),
@@ -272,8 +272,8 @@ object AntaresThemes {
 				stroke = SUBSYSTEM_STROKE),
 			selection = BasicStyle(
 				CompositeColor(
-					foregroundColor = SELECTION_COLOR,
-					backgroundColor = Color.BLACK)),
+					foregroundColor = darkSelection,
+					backgroundColor = backgroundColor)),
 			zero = ZERO.withBackground(ZERO.foregroundColor),
 			one = ONE,
 			undefined = CompositeColor(
@@ -313,7 +313,6 @@ object AntaresThemes {
 		return AntaresTheme(
 			name = "Black & White",
 			dark = false,
-			supportsWhiteBackground = true,
 			background = BasicStyle(
 				color = CompositeColor(
 					foregroundColor = Color(232, 232, 232),

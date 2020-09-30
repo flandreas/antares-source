@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.edit.select.RubberBand
 open class EditTheme(
 	name: String = DEF_NAME,
 	dark: Boolean = DEF_DARK,
-	supportsWhiteBackground: Boolean = DEF_SUPPORTS_WHITE_BACKGROUND,
 	referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
 	referenceColors: List<CompositeColor> = DEF_REF_COLORS,
 	predefinedColors: List<PredefinedColor> = DEF_PREDEFINED_COLORS,
@@ -29,7 +28,6 @@ open class EditTheme(
 ) : DrawTheme(
 	name,
 	dark,
-	supportsWhiteBackground,
 	referenceColorSequenceProvider,
 	referenceColors,
 	predefinedColors,

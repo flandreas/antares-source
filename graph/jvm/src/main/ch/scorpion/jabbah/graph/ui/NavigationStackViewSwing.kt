@@ -178,6 +178,7 @@ class NavigationStackViewSwing(
 		fun draw(g: Graphics2DJvm) {
 			g.g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
 			g.translate(location.x, location.y)
+
 			g.g.color = if (isHead) {
 				elementBackgroundColor
 			} else {

@@ -130,14 +130,14 @@ class GraphFrameSwing(
 		toolbar.isFloatable = false
 
 		val viewDesktopButton = JToggleButton(ActionWrapperSwing(viewDesktopAction))
-		viewDesktopAction.imagePath?.let { viewDesktopButton.icon = UiUtil.imageIcon(it) }
+		viewDesktopAction.imagePath?.let { viewDesktopButton.icon = UiUtil.themedIcon(it) }
 		viewDesktopButton.text = null
 		viewDesktopButton.toolTipText = viewDesktopAction.name
 		viewDesktopButton.addActionListener(MainToolBarActionListener(viewDesktopButton, GraphFrame.DisplayedView.Desktop))
 		toolbar.add(viewDesktopButton)
 
 		val viewContainerButton = JToggleButton(ActionWrapperSwing(viewContainerAction))
-		viewContainerAction.imagePath?.let { viewContainerButton.icon = UiUtil.imageIcon(it) }
+		viewContainerAction.imagePath?.let { viewContainerButton.icon = UiUtil.themedIcon(it) }
 		viewContainerButton.text = null
 		viewContainerButton.toolTipText = viewContainerAction.name
 		viewContainerButton.addActionListener(MainToolBarActionListener(viewContainerButton, GraphFrame.DisplayedView.Container))

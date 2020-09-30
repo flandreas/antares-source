@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Tool
 import java.awt.event.ActionEvent
@@ -37,7 +38,7 @@ class ToolBar(val editor: Editor? = null) : JToolBar() {
 	}
 
 	private fun createButton(imgPath: String, tooltipText: String): JToggleButton {
-		val button = JToggleButton(ImageIcon(ToolBar::class.java.getResource(imgPath)))
+		val button = JToggleButton(UiUtil.themedIcon(imgPath))
 		button.toolTipText = tooltipText
 		return button
 	}

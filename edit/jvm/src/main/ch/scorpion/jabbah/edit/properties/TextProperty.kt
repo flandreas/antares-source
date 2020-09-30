@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.model.text.TextProperty
 import ch.scorpion.jabbah.edit.model.text.TextPropertyPanel
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
@@ -79,7 +80,7 @@ class TextPropertyEditor(private val propertyName: String) : AbstractPropertyEdi
 
 		button.isEnabled = dialog == null
 		button.alignmentY = Component.TOP_ALIGNMENT
-		button.icon = ImageIcon(TextPropertyEditor::class.java.getResource(ICON_PATH))
+		button.icon = UiUtil.themedIcon(ICON_PATH)
 		button.border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
 		button.toolTipText = Translations.getString("edit.action.editText.tooltip")
 		button.addActionListener { showDialog() }

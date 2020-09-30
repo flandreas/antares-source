@@ -148,7 +148,6 @@ class LibraryPreviewPanel(
 
 	private fun updateSelectionImpl(component: Component) {
 		selection = component
-		selection!!.styleProvider = Themes.uiStyleProvider
 		componentDisplay.updateLayout()
 		descriptionArea.text = System.buildToolTipText(selection!!.type, selection!!.typeDesc, null, true)
 	}

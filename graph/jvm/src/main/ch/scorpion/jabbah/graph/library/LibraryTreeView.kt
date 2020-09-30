@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.JTreeUtil.findTreeNode
 import ch.scorpion.jabbah.base.swing.JTreeUtil.getPath
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.ui.ContainerLibraryElementIcon
@@ -302,10 +303,10 @@ class LibraryTreeView(
 		private val containerLibElemIcon = ContainerLibraryElementIcon()
 		private val currentContainerLibElemIcon = ContainerLibraryElementIcon(current = true)
 		private val defaultElemFont = this@LibraryTreeView.font.deriveFont(mapOf(TextAttribute.UNDERLINE to TextAttribute.UNDERLINE_ON))
-		private val projectIcon = ImageIcon(LibraryTreeView::class.java.getResource("/img/project-24.png"))
-		private val libraryIcon = ImageIcon(LibraryTreeView::class.java.getResource("/img/library-24.png"))
-		private val folderIcon = ImageIcon(LibraryTreeView::class.java.getResource("/img/folder-20.png"))
-		private val desktopIcon = ImageIcon(LibraryTreeView::class.java.getResource("/img/table-20.png"))
+		private val projectIcon = UiUtil.themedIcon("/img/project-24.png")
+		private val libraryIcon = UiUtil.themedIcon("/img/library-24.png")
+		private val folderIcon = UiUtil.themedIcon("/img/folder-20.png")
+		private val desktopIcon = UiUtil.themedIcon("/img/table-20.png")
 
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
 			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
@@ -338,7 +339,7 @@ class LibraryTreeView(
 		}
 
 		private fun getIcon(iconPath: String): Icon {
-			return iconCache.getOrPut(iconPath) { ImageIcon(LibraryTreeView::class.java.getResource(iconPath)) }
+			return iconCache.getOrPut(iconPath) { UiUtil.themedIcon(iconPath) }
 		}
 
 		private fun isCurrentElement(element: ContainerLibraryElement): Boolean {

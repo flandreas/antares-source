@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ViewManager
@@ -28,7 +29,6 @@ import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
-import ch.scorpion.jabbah.graph.ui.GraphPanel
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Color
@@ -146,11 +146,11 @@ class ContainerPanel(
 		if (separator) {
 			toolbar.addSeparator()
 		}
-		toolbar.addTool(editor.currentTool, "/img/pointer.gif", Translations.getString("edit.tool.select"))
-		toolbar.addTool(LabelTool(editor, factory = { LabelComponent() } ), "/img/text.gif", Translations.getString("edit.component.label"))
-		toolbar.addTool(RectangleTool(editor, factory = { RectangleComponent() }), "/img/rectangle.png", Translations.getString("edit.component.rectangle"))
-		toolbar.addTool(RectangleTool(editor, factory = { EllipseComponent() }), "/img/ellipse.png", Translations.getString("edit.component.ellipse"))
-		toolbar.addTool(PolylineTool(editor, factory = { PolylineComponent() }), "/img/polyline.gif", Translations.getString("edit.component.polyline"))
+		toolbar.addTool(editor.currentTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
+		toolbar.addTool(LabelTool(editor, factory = { LabelComponent() } ), "/img/text24.png", Translations.getString("edit.component.label"))
+		toolbar.addTool(RectangleTool(editor, factory = { RectangleComponent() }), "/img/rectangle24.png", Translations.getString("edit.component.rectangle"))
+		toolbar.addTool(RectangleTool(editor, factory = { EllipseComponent() }), "/img/oval24.png", Translations.getString("edit.component.ellipse"))
+		toolbar.addTool(PolylineTool(editor, factory = { PolylineComponent() }), "/img/polyline24.png", Translations.getString("edit.component.polyline"))
 
 		return toolbar
 	}
@@ -162,14 +162,14 @@ class ContainerPanel(
 		val gridButton = JToggleButton(ActionWrapperSwing(GridSnapAction(editor)))
 		gridButton.text = null
 		gridButton.isFocusPainted = false
-		gridButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/snapGrid.gif"))
+		gridButton.icon = UiUtil.themedIcon("/img/grid24.png")
 		gridButton.toolTipText = Translations.getString("edit.action.grid.snap.name")
 		toolBar.add(gridButton)
 
 		val button = JToggleButton(ActionWrapperSwing(ComponentSnapAction(editor)))
 		button.text = null
 		button.isFocusPainted = false
-		button.icon = ImageIcon(GraphPanel::class.java.getResource("/img/snap.gif"))
+		button.icon = UiUtil.themedIcon("/img/snap24.png")
 		button.toolTipText = Translations.getString("edit.tool.align.name")
 		toolBar.add(button)
 

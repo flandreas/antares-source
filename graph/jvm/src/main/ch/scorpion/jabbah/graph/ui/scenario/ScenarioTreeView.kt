@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.Graph
@@ -357,8 +358,8 @@ class ScenarioTreeView(
 
 		companion object {
 			private val elementIcon = ContainerLibraryElementIcon()
-			private val scenarioIcon = ImageIcon(ScenarioTreeView::class.java.getResource("/img/scenario-20.png"))
-			private val stepIcon = ImageIcon(ScenarioTreeView::class.java.getResource("/img/step-20.png"))
+			private val scenarioIcon = UiUtil.themedIcon("/img/scenario-20.png")
+			private val stepIcon = UiUtil.themedIcon("/img/step-20.png")
 		}
 
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {

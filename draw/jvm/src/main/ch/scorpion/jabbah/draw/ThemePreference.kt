@@ -23,7 +23,10 @@ class ThemePreference : AbstractPreference(
 	}
 
 	override fun addToPanel(panel: PreferencesPanel) {
-		Themes.allThemes().forEach { editor.addItem(it) }
+		if (editor.itemCount == 0) {
+			Themes.allThemes().forEach { editor.addItem(it) }
+		}
+
 		this.panel = panel
 		panel.addLabeledRow(name, editor)
 	}

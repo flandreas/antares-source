@@ -17,19 +17,22 @@ class ContainerLibraryElementIcon(private val current: Boolean = false) : Icon {
 	override fun getIconWidth(): Int = 28
 
 	override fun paintIcon(c: Component?, g: Graphics?, x: Int, y: Int) {
-
-		if (current) {
-			g?.color = Graphics2DJvm.toAwtColor(Themes.get<EditTheme>().selection.color.foregroundColor)
-			g?.fillRect(0, 0, iconWidth, iconHeight)
+		g?.color = if (current) {
+			Graphics2DJvm.toAwtColor(Themes.get<GraphTheme>().selection.color.backgroundColor)
+		} else {
+			Graphics2DJvm.toAwtColor(Themes.get<GraphTheme>().vertice.color.backgroundColor)
 		}
-
-		g?.color = Graphics2DJvm.toAwtColor(Themes.getUITheme<GraphTheme>().vertice.color.backgroundColor)
 		g?.fillRect(5, 3, 14, 18)
-		g?.color = Graphics2DJvm.toAwtColor(Themes.getUITheme<GraphTheme>().vertice.color.foregroundColor)
+
+		g?.color = if (current) {
+			Graphics2DJvm.toAwtColor(Themes.get<GraphTheme>().selection.color.foregroundColor)
+		} else {
+			Graphics2DJvm.toAwtColor(Themes.get<GraphTheme>().vertice.color.foregroundColor)
+		}
 		g?.drawRect(5, 3, 14, 18)
 
 		g?.drawLine(5, 8, 1, 8)
 		g?.drawLine(5, 18, 1, 18)
-		g?.drawLine(21, 12, 25, 12)
+		g?.drawLine(20, 12, 25, 12)
 	}
 }

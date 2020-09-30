@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.draw.graphics.*
 open class DrawTheme(
 	override val name: String = DEF_NAME,
 	override val dark: Boolean = DEF_DARK,
-	override val supportsWhiteBackground: Boolean = DEF_SUPPORTS_WHITE_BACKGROUND,
 	private val referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
 	private val referenceColors: List<CompositeColor> = DEF_REF_COLORS,
 	private val predefinedColors: List<PredefinedColor> = DEF_PREDEFINED_COLORS,
@@ -17,7 +16,6 @@ open class DrawTheme(
 
 	companion object {
 		const val DEF_NAME = "default"
-		const val DEF_SUPPORTS_WHITE_BACKGROUND = true
 		const val DEF_DARK = false
 		val DEF_BACKGROUND = BasicStyle(CompositeColor(Color(240, 240, 240), Color.WHITE, Color.BLACK))
 		val DEF_FIGURE = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))

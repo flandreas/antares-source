@@ -109,14 +109,20 @@ object UiUtil {
 	fun createToolBarButton(action: Action): JButton {
 		val button = JButton(ActionWrapperSwing(action))
 		button.border = BorderFactory.createEmptyBorder(3, 3, 3, 3)
-		action.imagePath?.let { button.icon = imageIcon(it) }
+		action.imagePath?.let { button.icon = themedIcon(it) }
 		button.text = null
 		button.toolTipText = action.name
 		RolloverButtonEnabler(button)
 		return button
 	}
 
-	fun imageIcon(path: String): ImageIcon {
+	/**
+	 * Creates an [ImageIcon] from the specified base path, depending on whether the current UI
+	 * has a dark or a light theme. For dark themes, the image file base name is expanded by `-dark`.
+	 * For example, a file name `example.png` is expanded to `example-dark.png` for dark themes.
+	 * If no dark file version is found, the normal version is used (without `-dark` expansion).
+	 */
+	fun themedIcon(path: String): ImageIcon {
 		if (UI.isDark) {
 			val darkPath = path.replace(".", "-dark.")
 			try {

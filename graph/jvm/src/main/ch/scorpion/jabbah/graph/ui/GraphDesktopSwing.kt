@@ -116,7 +116,7 @@ class GraphDesktopSwing(
 		mainSplitPane.border = null
 		sidePanel.layout = GridLayout(0, 1)
 		layout = BorderLayout()
-		background = Color.GRAY.brighter()
+		background = UIManager.getColor("Panel.background").darker()
 
 		add(graphEditPanel)
 	}

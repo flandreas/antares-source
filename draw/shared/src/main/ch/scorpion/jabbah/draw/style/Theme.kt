@@ -16,13 +16,6 @@ interface Theme {
 	val dark: Boolean
 
 	/**
-	 * Determines whether this [Theme] defines colors for objects that can be painted over white background.
-	 * This is relevant when displaying individual figures directly on UI panels, such as trees or component
-	 * preview panels.
-	 */
-	val supportsWhiteBackground: Boolean
-
-	/**
 	 * Notifies this [Theme] that is has become the current one in [Themes].
 	 * Implementations should activateIn themselves by registering all their [Style]s
 	 * with the [StyleRepository].
@@ -33,47 +26,22 @@ interface Theme {
 /** Contains all available [Theme]s. */
 object Themes {
 
-	// TODO Bug: Wrong package name
-	const val PROP_THEME = "ch.scorpion.antares.view.theme"
+	const val PROP_THEME = "draw.style.Theme.name"
 
 	private val themes = mutableListOf<Theme>(DrawTheme())
-
-	private var uiTheme: Theme = themes[0]
-		set(value) {
-			if (field != value) {
-				field = value
-				field.activateIn(uiStyleProvider as StyleRepository, styleOnly = true)
-			}
-		}
 
 	private var current: Theme = themes[0]
 		set(value) {
 			if (field !== value) {
 				field = value
 				field.activateIn(DrawStyleModule.styleProvider, styleOnly = false)
-				uiTheme = determineUITheme()
+				BaseModule.eventBus.post(ThemeEvent(current))
 			}
 		}
-
-	/** The [StyleProvider] that provides the [Style]s to be used for displaying over white UI background.*/
-	val uiStyleProvider: StyleProvider = StyleRepository()
 
 	fun <T : Theme> get(): T {
 		@Suppress("UNCHECKED_CAST")
 		return current as T
-	}
-
-	/** Returns the [Theme] suitable to be displayed over white UI background.*/
-	fun <T : Theme> getUITheme(): T {
-		@Suppress("UNCHECKED_CAST")
-		return uiTheme as T
-	}
-
-	private fun determineUITheme(): Theme {
-		if (current.supportsWhiteBackground) {
-			return current
-		}
-		return themes.firstOrNull { it.supportsWhiteBackground } ?: current
 	}
 
 	fun get(name: String): Theme? {
@@ -97,29 +65,12 @@ object Themes {
 			}
 
 			if (this.themes.map { it.name }.contains(storedThemeName)) {
-				setCurrent(storedThemeName!!)
+				current = get(storedThemeName!!)!!
 			} else {
-				//current = this.themes.first()
-				setCurrent(this.themes.first().name)
+				current = get(this.themes.first().name)!!
+				BaseModule.properties.set(PROP_THEME, current.name)
 			}
-
-			/*
-			val storedThemeName = BaseModule.settings.getString(PROP_THEME, "")
-			if (StringUtils.isNotEmpty(storedThemeName) && this.themes.firstOrNull { it.name == storedThemeName } != null) {
-				setCurrent(storedThemeName)
-			} else {
-				current = this.themes[0]
-			}
-			 */
 		}
-	}
-
-
-	private fun setCurrent(name: String) {
-		current = get(name) ?: throw NoSuchElementException("No theme with name '$name' defined")
-		//BaseModule.properties.customize(PROP_THEME, name)
-		BaseModule.properties.set(PROP_THEME, name)
-		BaseModule.eventBus.post(ThemeEvent(current))
 	}
 
 	fun allThemes(): Iterator<Theme> = themes.iterator()

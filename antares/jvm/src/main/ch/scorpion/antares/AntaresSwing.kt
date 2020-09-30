@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -27,6 +28,7 @@ import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.Storable
+import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
@@ -89,18 +91,40 @@ class AntaresSwing(
 			return options
 		}
 
+		private fun prefetchPreferences(userDataDirectoryPath: Path): java.util.Properties {
+			val filePath = Paths.get(userDataDirectoryPath.toString(), "${Antares.SYSTEM_NAME}.$PREFERENCES_FILE_EXTENSION")
+			FileInputStream(filePath.toString()).use {
+				val settings = java.util.Properties()
+				settings.load(it)
+				return settings
+			}
+		}
+
 		/**
 		 * Read the persistent user language preference and establish it as the default Locale
 		 * as early as possible in the boot-strap phase. This method does not provide the
 		 * preference [Properties] for subsequent usage by the application. This is the duty
 		 * of [AbstractDesktopApplication.loadPreferences].
 		 */
-		private fun establishUserLanguage(userDataDirectoryPath: Path) {
-			val filePath = Paths.get(userDataDirectoryPath.toString(), "${Antares.SYSTEM_NAME}.$PREFERENCES_FILE_EXTENSION")
-			FileInputStream(filePath.toString()).use {
-				val settings = java.util.Properties()
-				settings.load(it)
-				settings.getProperty(Language.PROP_LANGUAGE)?.let { lang -> Locale.setDefault(Locale(lang)) }
+		private fun establishUserLanguage(preferences: java.util.Properties) {
+			preferences.getProperty(Language.PROP_LANGUAGE)?.let { lang -> Locale.setDefault(Locale(lang)) }
+		}
+
+		/**
+		 * Read the dark property before the first UI element is created, which is unfortunately
+		 * already in the Module boot-strap sequence.
+		 */
+		private fun establishTheme(preferences: java.util.Properties) {
+			val name = preferences.getProperty(Themes.PROP_THEME)
+
+			// TODO: Okay, this is a terrible hack. Currently don't know how to access the current Theme
+			// before the Themes have been registered later in the boot-strap sequence.
+			if (name == "CRT") {
+				FlatDarkLaf.install()
+				UI.isDark = true
+			} else {
+				FlatLightLaf.install()
+				UI.isDark = false
 			}
 		}
 
@@ -121,10 +145,9 @@ class AntaresSwing(
 			val commandLine = parseCommandLine(args, defineOptions(Options()), Antares.SYSTEM_NAME)
 			val userDataDirectoryPath = determineUserDataDirectoryPath(commandLine, Antares.SYSTEM_NAME)
 
-			establishUserLanguage(userDataDirectoryPath)
-
-			//FlatDarkLaf.install()
-			FlatLightLaf.install()
+			val preferences = prefetchPreferences(userDataDirectoryPath)
+			establishUserLanguage(preferences)
+			establishTheme(preferences)
 
 			UiUtil.setUIFont(FontUIResource(Look.UI_FONT.family.javaName, Look.UI_FONT.style, Look.UI_FONT.size))
 
@@ -228,6 +251,7 @@ class AntaresSwing(
 	override fun init() {
 		AntaresModuleJvm(this).require()
 		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(DEF_LIBRARY_UUID, isSystem = true)
+
 		super.init()
 
 		AntaresThemes.install()

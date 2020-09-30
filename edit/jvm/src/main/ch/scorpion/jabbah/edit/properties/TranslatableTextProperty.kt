@@ -152,7 +152,7 @@ class TranslatableTextPropertyEditor(
 
 	private fun createButton(): JButton {
 		val button = JButton()
-		button.icon = ImageIcon(TextPropertyEditor::class.java.getResource("/img/translation-16.png"))
+		button.icon = UiUtil.themedIcon("/img/translation-16.png")
 		button.border = BorderFactory.createEmptyBorder(0, 2, 0, 2)
 		button.toolTipText = Translations.getString("edit.action.translateText.tooltip")
 		button.addActionListener { showDialog() }

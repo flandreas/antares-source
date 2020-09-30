@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
@@ -124,7 +125,7 @@ class GraphPanel(
 		providedInitialOpenIndex = 0,
 		contents = listOf(SidebarPaneContentImpl(
 			Translations.getString("graph.explorer.name"),
-			ImageIcon(SidebarPane::class.java.getResource("/img/compass-16.png")),
+			UiUtil.themedIcon("/img/compass-16.png"),
 			explorerSplitPane)
 		))
 
@@ -141,7 +142,7 @@ class GraphPanel(
 
 	private val issuesContent = SidebarPaneContentImpl(
 		Translations.getString("graph.issues.title"),
-		ImageIcon(GraphPanel::class.java.getResource("/img/issue-16.png")),
+		UiUtil.themedIcon("/img/issue-16.png"),
 		issuesPanel,
 		listOf(ClearIssuesPanelAction(issuesPanel)))
 
@@ -149,7 +150,7 @@ class GraphPanel(
 
 	private val logContent = SidebarPaneContentImpl(
 		Translations.getString("graph.log.title"),
-		ImageIcon(GraphPanel::class.java.getResource("/img/log-16.png")),
+		UiUtil.themedIcon("/img/log-16.png"),
 		logPanel,
 		listOf(ClearLogPanelAction(logPanel)))
 
@@ -347,13 +348,13 @@ class GraphPanel(
 		val modeToggleButton = JToggleButton(modeToggleAction)
 		modeToggleButton.text = null
 		modeToggleButton.hideActionText = true
-		modeToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/play24.png"))
+		modeToggleButton.icon = UiUtil.themedIcon("/img/play24.png")
 		modeToggleButton.toolTipText = Translations.getString("execution.action.execute.name")
 
 		val executionAction = PauseExecutionAction(scheduler, eventBus)
 		val pauseToggleButton = JToggleButton(ActionWrapperSwing(executionAction))
 		pauseToggleButton.text = null
-		pauseToggleButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/pause24.png"))
+		pauseToggleButton.icon = UiUtil.themedIcon("/img/pause24.png")
 		pauseToggleButton.toolTipText = executionAction.name
 
 		//val stepButton = StepButton("/img/Resume-24.png", StepExecutionAction(scheduler, eventBus))
@@ -377,7 +378,7 @@ class GraphPanel(
 	}
 
 	private fun createStepButton(action: Action): JButton {
-		val inactiveIcon = ImageIcon(GraphPanel::class.java.getResource("/img/resume24.png"))
+		val inactiveIcon = UiUtil.themedIcon("/img/resume24.png")
 		val activeIcon = ImageIcon(GraphPanel::class.java.getResource("/img/resume-active24.png"))
 		val button = JButton(ActionWrapperSwing(action))
 		button.text = null
@@ -402,17 +403,17 @@ class GraphPanel(
 		val toolbar = ToolBar(editor)
 		toolbar.addSeparator()
 
-		toolbar.addTool(editor.currentTool, "/img/pointer.gif", Translations.getString("edit.tool.select"))
+		toolbar.addTool(editor.currentTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
 		toolbar.addTool(RectangleTool(editor, factory = { RectangleComponent() }, adder = { GraphElementViewWrapper(it) }),
-			"/img/rectangle.png", Translations.getString("edit.component.rectangle"))
+			"/img/rectangle24.png", Translations.getString("edit.component.rectangle"))
 		toolbar.addTool(RectangleTool(editor, factory = { EllipseComponent() }, adder = { GraphElementViewWrapper(it) }),
-			"/img/ellipse.png", Translations.getString("edit.component.ellipse"))
+			"/img/oval24.png", Translations.getString("edit.component.ellipse"))
 		toolbar.addTool(PolylineTool(editor, factory = { PolylineComponent() }, adder = { GraphElementViewWrapper(it) }),
-			"/img/polyline.gif", Translations.getString("edit.component.polyline"))
+			"/img/polyline24.png", Translations.getString("edit.component.polyline"))
 		toolbar.addTool(QuadCurveTool(editor, factory = { QuadCurveComponent() }, adder = { GraphElementViewWrapper(it) }),
-			"/img/curve-20.png", Translations.getString("edit.component.quadraticCurve"))
+			"/img/curve24.png", Translations.getString("edit.component.quadraticCurve"))
 		toolbar.addTool(TextTool(editor,factory =  { TextComponentJvm(TranslatableText("Text")) }, adder = { GraphElementViewWrapper(it) }),
-			"/img/text.gif", Translations.getString("edit.component.text"))
+			"/img/text24.png", Translations.getString("edit.component.text"))
 
 		return toolbar
 	}
@@ -424,14 +425,14 @@ class GraphPanel(
 		val gridButton = JToggleButton(ActionWrapperSwing(GridSnapAction(editor)))
 		gridButton.text = null
 		gridButton.isFocusPainted = false
-		gridButton.icon = ImageIcon(GraphPanel::class.java.getResource("/img/snapGrid.gif"))
+		gridButton.icon = UiUtil.themedIcon("/img/grid24.png")
 		gridButton.toolTipText = Translations.getString("edit.action.grid.snap.name")
 		toolBar.add(gridButton)
 
 		val button = JToggleButton(ActionWrapperSwing(ComponentSnapAction(editor)))
 		button.text = null
 		button.isFocusPainted = false
-		button.icon = ImageIcon(GraphPanel::class.java.getResource("/img/snap.gif"))
+		button.icon = UiUtil.themedIcon("/img/snap24.png")
 		button.toolTipText = Translations.getString("edit.tool.align.name")
 		toolBar.add(button)
 
