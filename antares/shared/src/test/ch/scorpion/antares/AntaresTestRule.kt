@@ -1,6 +1,6 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.view.AntaresThemes
+import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.app.user.User

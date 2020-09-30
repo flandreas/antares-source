@@ -54,4 +54,8 @@ data class Color(val red: Int, val green: Int, val blue: Int, val alpha: Int) {
 	fun withAlpha(alpha: Int): Color {
 		return Color(red, green, blue, alpha)
 	}
+
+	fun greener(): Color {
+		return Color(red, min(green + 8, 255), blue, alpha)
+	}
 }

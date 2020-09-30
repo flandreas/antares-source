@@ -1,6 +1,6 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.view.AntaresThemes
+import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.antares.view.DefaultLightColorEvent
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look

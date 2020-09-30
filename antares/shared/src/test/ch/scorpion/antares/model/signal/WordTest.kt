@@ -1,6 +1,6 @@
 package ch.scorpion.antares.model.signal
 
-import ch.scorpion.antares.view.AntaresThemes
+import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.Themes
