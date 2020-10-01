@@ -100,11 +100,7 @@ enum class TunnelViewFace(val customName: String) {
 			}
 			context.g.fill(path)
 
-			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-				context.g.color = view.model.getInOrOutSignal().getColor().backgroundColor
-			} else {
-				context.g.color = context.choose(view.color).foregroundColor
-			}
+			context.g.color = context.choose(view.color).foregroundColor
 
 			context.g.stroke = view.stroke
 			context.g.draw(path)

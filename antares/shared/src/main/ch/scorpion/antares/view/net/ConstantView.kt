@@ -113,7 +113,7 @@ class ConstantView(
 		context.g.color = context.choose(color).foregroundColor
 		context.g.drawRect(xInt, yInt, widthInt, heightInt)
 
-		label.color = color.textColor
+		label.color = Themes.get<DrawTheme>().figure.color.textColor
 		label.draw(context)
 	}
 

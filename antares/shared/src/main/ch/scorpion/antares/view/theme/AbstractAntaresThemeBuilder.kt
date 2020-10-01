@@ -63,14 +63,16 @@ abstract class AbstractAntaresThemeBuilder(protected val name: String) {
 			backgroundColor = Color.BLACK,
 			textColor = Color.WHITE)
 
+		val BUS_FILL_COLOR = Color(232, 232, 232)
+
 		val WORD_ZERO_COLOR = CompositeColor(
 			foregroundColor = Color.BLACK,
-			backgroundColor = Color(232, 232, 232),
+			backgroundColor = BUS_FILL_COLOR,
 			textColor = Color.WHITE)
 
 		val WORD_COLOR = CompositeColor(
 			foregroundColor = Color.GRAY,
-			backgroundColor = Color(232, 232, 232),
+			backgroundColor = BUS_FILL_COLOR,
 			textColor = Color.WHITE)
 	}
 

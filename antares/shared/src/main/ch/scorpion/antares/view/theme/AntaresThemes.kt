@@ -12,6 +12,7 @@ object AntaresThemes {
 		Themes.register(
 			WinterThemeBuilder.build(),
 			BlackAndWhiteThemeBuilder.build(),
+			DarculaThemeBuilder.build(),
 			CrtThemeBuilder.build())
 	}
 }

@@ -13,11 +13,15 @@ object CrtThemeBuilder : AbstractAntaresDarkThemeBuilder("CRT") {
 		backgroundColor = BACKGROUND_BACKGROUND
 	)
 
-	private val DARK_SELECTION_COLOR = SELECTION_FOREGROUND_COLOR
+	private val BACKGROUND_COLOR = CompositeColor(
+		foregroundColor = BACKGROUND_FOREGROUND,
+		backgroundColor = BACKGROUND_BACKGROUND,
+		textColor = MAIN_COLOR.textColor
+	)
+
+	val SHADOW_COLOR = Color(22, 54, 49)
 
 	private val VERY_DARK_GREEN = Color(2, 46, 8)
-
-	private val EXTREMELY_DARK_GREEN = Color(2, 23, 4)
 
 	private val EXPLANATION_COLOR = CompositeColor(
 		foregroundColor = Color(50, 232, 42),
@@ -85,7 +89,6 @@ object CrtThemeBuilder : AbstractAntaresDarkThemeBuilder("CRT") {
 		backgroundColor = Color(0, 24, 0),
 		textColor = ONE_COLOR.foregroundColor
 	)
-
 
 	override fun build(): AntaresTheme {
 		return AntaresTheme(

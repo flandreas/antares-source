@@ -44,11 +44,10 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 			PredefinedColor(PredefinedColorIdentity.Yellow, YELLOW)
 		)
 
+		val DARK_SELECTION_COLOR = SELECTION_FOREGROUND_COLOR
+
 		val BACKGROUND_BACKGROUND = Color(24, 24, 24)
 		val BACKGROUND_FOREGROUND = Color(32, 32, 32)
-		val BACKGROUND_COLOR = CompositeColor(
-			foregroundColor = BACKGROUND_FOREGROUND,
-			backgroundColor = BACKGROUND_BACKGROUND)
 
 		val HIGHLIGHT_COLOR = Color(102, 61, 0) // dark orange
 
@@ -56,9 +55,5 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 			color = CompositeColor(foregroundColor = HIGHLIGHT_COLOR, backgroundColor = HIGHLIGHT_COLOR),
 			stroke = HIGHLIGHT_STROKE,
 			font = FONT)
-
-		val SHADOW_COLOR = Color(22, 54, 49)
-
 	}
-
 }
