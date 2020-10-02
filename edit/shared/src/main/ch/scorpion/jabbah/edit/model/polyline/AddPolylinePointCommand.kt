@@ -18,7 +18,7 @@ class AddPolylinePointCommand(
     private val location: Point2D
 ) : AbstractCommand("edit.model.polyline.addPoint", editor), Undoable {
 
-	private val polyline: PolylineComponent get() = editor!!.drawing.getWithId(polylineId) as PolylineComponent
+	private val polyline: PolylineComponent get() = editor!!.drawing.getWithId(polylineId)!!.selectableComponent as PolylineComponent
 
     override fun execute() {
         polyline.addPointAt(index, location.x, location.y)

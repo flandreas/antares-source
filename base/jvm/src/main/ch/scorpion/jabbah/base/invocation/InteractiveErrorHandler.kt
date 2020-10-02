@@ -2,13 +2,11 @@ package ch.scorpion.jabbah.base.invocation
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
-import javax.swing.JFrame
-import javax.swing.JOptionPane
 import java.awt.Dimension
-import javax.swing.JScrollPane
-import javax.swing.JTextArea
+import java.awt.Rectangle
 import java.io.PrintStream
 import java.io.ByteArrayOutputStream
+import javax.swing.*
 
 
 object InteractiveErrorHandler : ErrorHandler() {
@@ -43,10 +41,12 @@ object InteractiveErrorHandler : ErrorHandler() {
 		x.printStackTrace(PrintStream(os))
 
 		val ta = JTextArea()
+		ta.isEditable = false
 		ta.text = os.toString()
 
 		val sp = JScrollPane(ta)
 		sp.preferredSize = Dimension(400, 300)
+		ta.caretPosition = 0
 
 		JOptionPane.showMessageDialog(
 			parentFrame,
