@@ -132,9 +132,6 @@ class AntaresSwing(
 		fun main(args: Array<String>) {
 
 			Thread.setDefaultUncaughtExceptionHandler { _, e ->
-				println("Unhandled exception: ${e.message}")
-				e.printStackTrace()
-				LOG.value.error("Unhandled exception", e)
 				ErrorHandler.exception(e)
 			}
 

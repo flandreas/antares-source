@@ -25,7 +25,7 @@ object InteractiveErrorHandler : ErrorHandler() {
     }
 
     override fun exceptionImpl(x: Throwable) {
-	    LOG.error("Unexpected error: $x", x)
+	    LOG.error("Unexpected error: ${x.message}", x)
 
         if (parentFrame != null && !isHandling) {
 	        isHandling = true
