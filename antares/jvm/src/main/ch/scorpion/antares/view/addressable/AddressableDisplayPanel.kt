@@ -12,13 +12,11 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import com.l2fprod.common.swing.renderer.DefaultCellRenderer
 import java.awt.*
 import javax.swing.*
 import javax.swing.event.TableModelEvent
 import javax.swing.event.TableModelListener
 import javax.swing.table.DefaultTableCellRenderer
-import javax.swing.table.TableCellRenderer
 import javax.swing.text.JTextComponent
 
 /**
@@ -98,8 +96,6 @@ class AddressableDisplayPanel(
 			textField.font = table.font
 			it.cellEditor = DefaultCellEditor(textField)
 		}
-
-		table.tableHeader.defaultRenderer = HeaderRenderer(table)
 	}
 
 	private inner class AddressableCellRenderer : DefaultTableCellRenderer() {
@@ -117,24 +113,6 @@ class AddressableDisplayPanel(
 				}
 			}
 			return component
-		}
-	}
-
-	/** Establishes right-aligned column headers.*/
-	private inner class HeaderRenderer(table: JTable) : TableCellRenderer {
-
-		private val renderers: MutableList<DefaultTableCellRenderer> = mutableListOf()
-
-		init {
-			for (column in 0 until table.model.columnCount) {
-				val renderer = DefaultCellRenderer()
-				renderer.horizontalAlignment = addressableDisplayLayout.columnAlignment(column)
-				renderers.add(renderer)
-			}
-		}
-
-		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
-			return renderers[column].getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
 		}
 	}
 
