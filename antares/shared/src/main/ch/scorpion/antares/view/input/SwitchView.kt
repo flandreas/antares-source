@@ -555,17 +555,18 @@ class SwitchView(
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!keyDown) {
+				name?.let {
+					if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
+						toggle(context)
+						keyDown = true
+						return null
+					}
+				}
 				if (isFocusOwner) {
 					when (context.keyEvent?.key) {
 						'0'.toInt() -> switchOff(context)
 						'1'.toInt() -> switchOn(context)
 						'\n'.toInt() -> toggle(context)
-					}
-				} else {
-					name?.let {
-						if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
-							toggle(context)
-						}
 					}
 				}
 				keyDown = true
@@ -576,16 +577,17 @@ class SwitchView(
 		override fun keyReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!toggle) {
 				if (keyDown) {
+					name?.let {
+						if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
+							switchOff(context)
+							keyDown = false
+							return null
+						}
+					}
 					if (isFocusOwner) {
 						when (context.keyEvent?.key) {
 							'1'.toInt() -> switchOff(context)
 							'\n'.toInt() -> switchOff(context)
-						}
-					} else {
-						name?.let {
-							if (it.length == 1 && it[0].toInt() == context.keyEvent?.key) {
-								switchOff(context)
-							}
 						}
 					}
 				}
