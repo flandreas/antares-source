@@ -271,11 +271,8 @@ class SwitchView(
 		context.g.color = context.color!!.foregroundColor
 		draw(context) {
 			super.drawImpl(it)
-			context.g.stroke = stroke
-			context.g.drawRect(xInt, yInt, width.toInt(), SIZE)
-			context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
-			context.g.drawRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-				width.toInt() - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH/*, DIAMETER, DIAMETER*/)
+			drawOuterRectangle(context)
+			drawInnerRectangle(context)
 			if (labelPosition == VerticeLabelPosition.INTERNAL) {
 				internalLabel.draw(context)
 			}
@@ -283,6 +280,17 @@ class SwitchView(
 		if (labelPosition == VerticeLabelPosition.EXTERNAL) {
 			externalLabel.draw(context)
 		}
+	}
+
+	private fun drawOuterRectangle(context: DrawContext) {
+		context.g.stroke = stroke
+		context.g.drawRect(xInt, yInt, width.toInt(), SIZE)
+	}
+
+	private fun drawInnerRectangle(context: DrawContext) {
+		context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
+		context.g.drawRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
+			width.toInt() - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH/*, DIAMETER, DIAMETER*/)
 	}
 
 	/** ---- [ControlViewSource] */
@@ -466,6 +474,7 @@ class SwitchView(
 			if (labelPosition == VerticeLabelPosition.INTERNAL) {
 				internalLabel.text = StringUtils.orEmpty(model.name)
 				internalLabel.draw(context)
+				drawInnerRectangle(context)
 			} else {
 				drawSymbol(context)
 			}
