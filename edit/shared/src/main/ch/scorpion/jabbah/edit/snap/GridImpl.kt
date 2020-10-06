@@ -48,7 +48,6 @@ class GridImpl(
 			if (field != value) {
 				invalidate()
 				field = value
-				BaseModule.properties.set(Grid.PROP_GRID_PAINTER, field.name)
 				updateGridPainterProperties()
 				invalidate()
 				validate()

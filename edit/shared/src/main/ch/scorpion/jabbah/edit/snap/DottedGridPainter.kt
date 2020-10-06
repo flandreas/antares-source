@@ -1,10 +1,10 @@
 package ch.scorpion.jabbah.edit.snap
 
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.GridPainter
@@ -33,7 +33,7 @@ class DottedGridPainter(private val styleProvider: StyleProvider) : GridPainter 
 
 	override fun paint(context: DrawContext, rect: Rectangle2D) {
 		val oldColor = context.g.color
-		context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.foregroundColor.darker().darker()
+		context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.foregroundColor
 
 		val dx = distanceX * zoomPan!!.zoomFactor
 		val dy = distanceY * zoomPan!!.zoomFactor
@@ -50,8 +50,7 @@ class DottedGridPainter(private val styleProvider: StyleProvider) : GridPainter 
 		while (x <= high.x) {
 			var y = low.y
 			while (y <= high.y) {
-				//context.g.drawDot(x.toInt(), y.toInt())
-				context.g.fillRect(x, y, 1.0, 1.0)
+				context.g.drawDot(x.toInt(), y.toInt())
 				y += dy
 			}
 			x += dx

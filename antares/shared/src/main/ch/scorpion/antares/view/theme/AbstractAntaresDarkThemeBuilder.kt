@@ -47,7 +47,7 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 		val DARK_SELECTION_COLOR = SELECTION_FOREGROUND_COLOR
 
 		val BACKGROUND_BACKGROUND = Color(24, 24, 24)
-		val BACKGROUND_FOREGROUND = Color(32, 32, 32)
+		val BACKGROUND_FOREGROUND = Color(36, 36, 36)
 
 		val HIGHLIGHT_COLOR = Color(102, 61, 0) // dark orange
 

@@ -256,7 +256,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     }
 
     override fun drawDot(x: Int, y: Int) {
-        fillRect(x, y, 1, 1)
+        fillRect(x.toDouble(), y.toDouble(), 2.0, 2.0)
     }
 
     override fun drawString(s: String, x: Int, y: Int) {
