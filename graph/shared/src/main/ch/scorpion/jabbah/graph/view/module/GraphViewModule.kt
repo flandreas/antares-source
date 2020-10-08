@@ -182,6 +182,8 @@ object GraphViewModule : AbstractModule() {
 		properties.set(ScenarioDetector.PROP_LIMIT_SYSTEM_SPEED_CATEGORY, SystemSpeedCategory.Observe.customName)
 		properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)
 		properties.set(ContainerEditor.PROP_DEFAULT_ZOOM_FACTOR, 2.0f)
+
+		properties.set(OscilloscopeView.PROP_INDIVIDUAL_PROBE_COLORS, true)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -194,13 +196,13 @@ object GraphViewModule : AbstractModule() {
 
 		factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class) { EdgeViewBelowSelectionModel(it as EdgeView<*>) }
 		factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class) { BoundingBoxBelowSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class) { BoundingBoxBelowSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class) { BoundingBoxBelowSelectionModel(it, outset = 3) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
 		factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class) { EdgeViewBelowSelectionModel(it as EdgeView<*>, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT, outset = 3) }
 	}
 
 	private var edgeViewFactoryImpl: EdgeViewFactory<Any> = EdgeViewFactoryImpl(

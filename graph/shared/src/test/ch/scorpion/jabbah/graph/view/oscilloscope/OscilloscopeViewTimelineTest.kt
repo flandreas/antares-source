@@ -27,7 +27,7 @@ class OscilloscopeViewTimelineTest {
 	fun setup() {
 		signalHandler = SignalHandlerMockBuilder()
 		oscilloscope = Oscilloscope()
-		timeline = OscilloscopeViewTimeline(scale = 1.0, model = oscilloscope, minSignalWidth = 5.0)
+		timeline = OscilloscopeViewTimeline(scale = 1.0, model = oscilloscope)
 	}
 
 	@Test
@@ -36,7 +36,7 @@ class OscilloscopeViewTimelineTest {
 		oscilloscope.executionStarted(signalHandler.build())
 		input("1", 100, true)
 		input("1", 150, false)
-		assertEquals(15.0, timeline.getX(0))
+		assertEquals(7.5, timeline.getX(0))
 	}
 
 	@Test
@@ -45,7 +45,7 @@ class OscilloscopeViewTimelineTest {
 		oscilloscope.executionStarted(signalHandler.build())
 		input("1", 100, true)
 		input("2", 110, true)
-		assertEquals(55.0, timeline.getX(0))
+		assertEquals(5.5, timeline.getX(0))
 	}
 
 	@Test
@@ -54,7 +54,7 @@ class OscilloscopeViewTimelineTest {
 		oscilloscope.executionStarted(signalHandler.build())
 		input("1", 100, true)
 		input("1", 150, false)
-		assertEquals(15.0, timeline.getX(0))
+		assertEquals(7.5, timeline.getX(0))
 	}
 
 	@Test
@@ -65,7 +65,7 @@ class OscilloscopeViewTimelineTest {
 		input("1", 1001, false)
 		input("1", 2002, true)
 		input("2", 2033, false)
-		assertEquals(325.0, timeline.getX(0))
+		assertEquals(101.65, timeline.getX(0))
 	}
 
 	private fun createPorts(portsCount: Int) {

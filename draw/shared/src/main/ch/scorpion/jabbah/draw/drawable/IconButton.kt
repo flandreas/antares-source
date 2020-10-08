@@ -1,114 +1,53 @@
 package ch.scorpion.jabbah.draw.drawable
 
-import ch.scorpion.jabbah.base.Tooltip
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.*
-import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.InputEventHandler
+import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.graphics.Icon
-import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
 
 /**
- * An implementation of a simple button as a [Drawable] that uses an [Icon] for rendering.
+ * Calls the specified action when the user clicks the icon while editing.
  */
-class IconButton(
-        private val icon: Icon,
-        private val action: () -> Unit,
-        location: Point2D = Point2D.ZERO,
-        var tooltipKey: String? = null,
-        private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : AbstractRectangle(location.x, location.y, icon.dim.width, icon.dim.height) {
+open class IconButton<C: InputEventContext>(
+	icon: Icon,
+	private val action: () -> Unit,
+	location: Point2D = Point2D.ZERO,
+	tooltipKey: String? = null,
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider
+) : AbstractIconButton(icon, location, tooltipKey, styleProvider) {
 
-    companion object {
-        private val LOG by logger(IconButton::class)
-        private val STROKE = Stroke(1.5f)
-    }
+	private val handler = createEditInteractionHandler()
 
-    var enabled: Boolean = true
-        set(value) {
-            if (field != value) {
-                field = value
-                invalidate()
-                validate()
-            }
-        }
+	/** ---- [AbstractDrawable] */
 
-    private val handler = Handler()
+	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
+		handler as InputEventHandler<T>
 
-    private var isHovering = false
+	/** ---- [IconButton] */
 
-    /** ---- [RectangularDrawable] */
+	protected open fun createEditInteractionHandler(): InputEventHandler<C> = EditInteractionHandler()
 
-    override val lineWidth: Double get() = STROKE.width.toDouble()
+	protected open inner class EditInteractionHandler : InputEventHandlerAdapter<C>() {
 
-    /** ---- [Drawable] interface */
+		override fun mouseMoved(context: C): InputEventHandler<C>? {
+			return if (keepMouseMoved(context.location)) this else null
+		}
 
-    override fun contains(p: Point2D): Boolean {
-        LOG.debug("IconButton.contains $p")
-        return super.contains(p)
-    }
+		override fun mousePressed(context: C): InputEventHandler<C>? {
+			// avoid involvement of surrounding SelectionTool
+			return this
+		}
 
-    override fun draw(context: DrawContext) {
-        if (isHovering) {
-            // TODO Configurable
-            context.g.color = Color.ORANGE
-        } else if (!enabled) {
-            context.g.color = styleProvider.getStyle(StyleType.FIGURE).color.foregroundColor.withAlpha(128)
-        } else {
-            context.g.color = styleProvider.getStyle(StyleType.FIGURE).color.foregroundColor
-        }
-        context.g.stroke = STROKE
-        icon.draw(context, Point2D(x, y))
-    }
-
-    override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-        return handler
-    }
-
-    override fun update() {
-        isHovering = false
-        super.update()
-    }
-
-    override fun getTooltip(x: Double, y: Double): Tooltip? {
-        if (tooltipKey != null) {
-            return Tooltip(Translations.getString(tooltipKey!!), x, y)
-        }
-        return null
-    }
-
-    /** ---- [IconButton] */
-
-    private inner class Handler : InputEventHandlerAdapter<InputEventContext>() {
-        override fun mouseMoved(context: InputEventContext): InputEventHandler<InputEventContext>? {
-            if (contains(context.x, context.y)) {
-                if (!isHovering && enabled) {
-                    LOG.debug("IconButton: start hover mode")
-                    isHovering = true
-                    invalidate()
-                    validate()
-                }
-                return this
-            }
-
-            if (isHovering) {
-                LOG.debug("IconButton: stop hover mode")
-                isHovering = false
-                invalidate()
-                validate()
-            }
-            return null
-        }
-
-        override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
-            if (enabled) {
-                action.invoke()
-            }
-            return null
-        }
-    }
+		override fun mouseClicked(context: C): InputEventHandler<C>? {
+			if (enabled) {
+				context.mouseEvent?.consume()
+				isHovering = false
+				action.invoke()
+			}
+			return null
+		}
+	}
 }

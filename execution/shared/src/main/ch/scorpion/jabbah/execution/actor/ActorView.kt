@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.execution.actor
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
@@ -28,6 +29,8 @@ interface ActorView {
      * @return the tool tip text of this [ActorView].
      */
     fun getExecutionTooltip(x: Double, y: Double): Tooltip?
+
+	fun getExecutionTooltip(p: Point2D): Tooltip? = getExecutionTooltip(p.x, p.y)
 }
 
 open class ActorInteractionContext(

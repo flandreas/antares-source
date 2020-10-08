@@ -21,12 +21,13 @@ import ch.scorpion.jabbah.edit.style.EditStyleType
 class BoundingBoxBelowSelectionModel(
 	component: Component,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	private val styleType: StyleType = EditStyleType.SELECTION
+	styleType: StyleType = EditStyleType.SELECTION,
+	private val outset: Int = DEF_OUTSET
 ) : AbstractSelectionModel<Component>(component), Colorable {
 
 	companion object {
 		/** The number of pixels to add to the [Component]'s bounding box at each side. */
-		private const val OUTSET = 10
+		private const val DEF_OUTSET = 10
 
 		/** The arc size of the rounded rectangle.*/
 		private const val ARC_SIZE = 15
@@ -68,10 +69,10 @@ class BoundingBoxBelowSelectionModel(
 		invalidate()
 		val bbox = component.boundingBox
 		bounds = Rectangle2D(
-			bbox.x - OUTSET,
-			bbox.y - OUTSET,
-			bbox.width + 2 * OUTSET,
-			bbox.height + 2 * OUTSET)
+			bbox.x - outset,
+			bbox.y - outset,
+			bbox.width + 2 * outset,
+			bbox.height + 2 * outset)
 		invalidate()
 		validate()
 	}

@@ -1,0 +1,43 @@
+package ch.scorpion.jabbah.execution.actor
+
+import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
+import ch.scorpion.jabbah.draw.drawable.AbstractIconButton
+import ch.scorpion.jabbah.draw.graphics.Icon
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleProvider
+
+/**
+ * Base class for implementing buttons whose [handleClicked] method is called when the user clicks
+ * the icon during execution.
+ */
+abstract class AbstractActorIconButton(
+	icon: Icon,
+	location: Point2D = Point2D.ZERO,
+	tooltipKey: String? = null,
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider
+) : AbstractIconButton(icon, location, tooltipKey, styleProvider), ActorView {
+
+	private val actorInteractionHandler = Handler()
+
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? = actorInteractionHandler
+
+	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = getTooltip(x, y)
+
+	protected abstract fun handleClicked(context: ActorInteractionContext)
+
+	private inner class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {
+
+		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? =
+			if (keepMouseMoved(context.location)) this else null
+
+		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+			if (enabled) {
+				isHovering = false
+				handleClicked(context)
+			}
+			return null
+		}
+	}
+}

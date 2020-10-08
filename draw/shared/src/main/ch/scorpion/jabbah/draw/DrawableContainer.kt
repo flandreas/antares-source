@@ -97,13 +97,17 @@ interface DrawableContainer<T : Drawable> : Drawable, Locatable {
      * expressed relative to the environment's coordinate system origin (either a [View] or a parent [DrawableContainer]).
      * If the [Drawable] at the specified location is a [DrawableContainer], this method must **not** return any
      * inner [Drawable] at that location. This method rather returns only direct children.
+     *
+     * TODO: Providing a default value for [predicate] wouldn't compile in JS due to KT-41006 (due for Kotlin 1.4.20).
      */
-    fun getDrawableAt(x: Double, y: Double): T?
+    fun getDrawableAt(x: Double, y: Double, predicate: (T) -> Boolean): T?
+
+	fun getDrawableAt(x: Double, y: Double): T? = getDrawableAt(x, y) { true }
 
 	/** Delegates to [getDrawableAt] using the individual coordinates of the specified [Point2D]. */
-	fun getDrawableAt(location: Point2D): T? = getDrawableAt(location.x, location.y)
+	fun getDrawableAt(location: Point2D): T? = getDrawableAt(location.x, location.y) { true }
 
-    fun getDrawables(): ImmutableList<T>
+	fun getDrawables(): ImmutableList<T>
 
     /** Returns the [Drawable]s that match the specified predicate.*/
     fun getDrawables(predicate: (T) -> Boolean): ImmutableList<T>

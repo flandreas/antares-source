@@ -4,18 +4,16 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.graph.model.GraphElementListener
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
-import ch.scorpion.jabbah.graph.model.GraphElementListener
-import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.port.PortFactory
-import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.math.max
-import kotlin.math.min
 
 /**
  * A [Vertice] that collects signals from multiple [OscilloscopeProbeVertice]s.
@@ -41,16 +39,6 @@ class Oscilloscope(
 	var maxTime: Long = 0
 		private set
 
-	/**
-	 * Holds the minimum non-zero time between two signals in any [SignalHistories][SignalHistory],
-	 * or [Long.MAX_VALUE] if not determined.
-	 */
-	var minDiffTime: Long = Long.MAX_VALUE
-		private set
-
-	var overallMinDelay: Long = Long.MAX_VALUE
-		private set
-
 	/** ---- [AbstractVertice] */
 
 	override val type: String get() = Oscilloscope.type
@@ -71,9 +59,7 @@ class Oscilloscope(
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		for (i in 1..reader.readInt("portsCount")) {
-			val port = portFactory.createPort<Any>(PortType.INPUT)
-			port.name = i.toString()
-			addPort(port)
+			addPort(portFactory.createOscilloscopeProbePort(i.toString()))
 		}
 	}
 
@@ -82,8 +68,6 @@ class Oscilloscope(
 	override fun executionStarted(signalHandler: SignalHandler) {
 		signalHistories.clear()
 		maxTime = 0
-		minDiffTime = Long.MAX_VALUE
-		overallMinDelay = Long.MAX_VALUE
 
 		getPorts().forEach { signalHistories[it.name!!] = SignalHistoryImpl() }
 		super.executionStarted(signalHandler)
@@ -114,27 +98,10 @@ class Oscilloscope(
 		LOG.debug("Oscilloscope ${input.name}: storing signal '$signal' at time ${signalHandler.executionTime}")
 		history.add(SignalHistoryEntry(signal, signalHandler.executionTime))
 		updateMaxTime(signalHandler.executionTime)
-		updateMinDiffTime(signalHandler.executionTime)
-		updateOverallMinDelay(history.minDelay)
 	}
 
 	private fun updateMaxTime(now: Long) {
 		maxTime = max(maxTime, now)
 		LOG.debug("maxTime = $maxTime")
-	}
-
-	private fun updateMinDiffTime(now: Long) {
-		val minSignalHistory = signalHistories.values
-			.filter { it.size > 0 && it.last().time != now }
-			.minBy { now - it.last().time }
-		if (minSignalHistory != null) {
-			minDiffTime = min(minDiffTime, now - minSignalHistory.last().time)
-		}
-		LOG.debug("minDiffTime = $minDiffTime")
-	}
-
-	private fun updateOverallMinDelay(minDelay: Long) {
-		overallMinDelay = min(overallMinDelay, minDelay)
-		LOG.debug("overallMinDelay = $overallMinDelay")
 	}
 }

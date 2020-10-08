@@ -5,9 +5,11 @@ interface SignalHistoryTimeline {
 
     var scale: Double
 
+	val maxTime: Long
+
     /** Returns the distance on the x-axis for displaying a duration of [duration] ns.*/
     fun getDx(duration: Long): Double
 
-    /** Returns the x-coordinate at which a signal that occured at the specified execution time should be drawn.*/
+    /** Returns the x-coordinate at which a signal that occurred at the specified execution time should be drawn.*/
     fun getX(time: Long): Double
 }

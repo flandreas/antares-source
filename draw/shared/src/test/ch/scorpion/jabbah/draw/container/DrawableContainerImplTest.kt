@@ -24,7 +24,7 @@ class DrawableContainerImplTest {
 	fun setup() {
 		BaseModule.require()
 		container = DrawableContainerImpl()
-		context = mockk()
+		context = mockk(relaxed = true)
 	}
 
 	@Test

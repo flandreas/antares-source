@@ -47,7 +47,7 @@ private data class TooltipEvent(
  */
 class TooltipHandler(
 	private val eventBus: EventBus,
-	private val drawableRetriever: (DrawableContainer<*>, Double, Double) -> Drawable? = { c, x, y -> c.getDrawableAt(x, y) },
+	private val drawableRetriever: (DrawableContainer<*>, Double, Double) -> Drawable? = { c, x, y -> c.getDrawableAt(x, y)},
 	private val tooltipAccessor: (Drawable, Double, Double) -> Tooltip? = { d, x, y -> d.getTooltip(x, y) },
 	private val explanationAccessor: (Drawable, Double, Double) -> DrawableExplanation<RectangularDrawable>? = { d, x, y -> d.getExplanation(x, y) }
 ) {

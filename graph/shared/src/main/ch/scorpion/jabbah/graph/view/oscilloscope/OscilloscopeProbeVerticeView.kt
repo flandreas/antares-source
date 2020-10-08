@@ -2,14 +2,15 @@ package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
@@ -33,7 +34,6 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 	companion object {
 		private val LOG by logger(OscilloscopeProbeVerticeView::class)
-		private const val TYPE = ""
 		private const val CONN_POINT_SIZE = 4.0
 	}
 
@@ -41,8 +41,8 @@ class OscilloscopeProbeVerticeView<T : Any>(
 		visible = false
 		modelExchanged(null)
 		setBounds(
-			-CONN_POINT_SIZE, -OscilloscopeProbeViewDrawable.SIZE,
-			OscilloscopeProbeViewDrawable.SIZE + CONN_POINT_SIZE, OscilloscopeProbeViewDrawable.SIZE + CONN_POINT_SIZE)
+			-CONN_POINT_SIZE, -OscilloscopeProbeViewIcon.SIZE,
+			OscilloscopeProbeViewIcon.SIZE + CONN_POINT_SIZE, OscilloscopeProbeViewIcon.SIZE + CONN_POINT_SIZE)
 	}
 
 	var rowNumber: Int
@@ -50,17 +50,17 @@ class OscilloscopeProbeVerticeView<T : Any>(
 		set(value) {
 			invalidate()
 			model.getPort<T>().name = value.toString()
-			drawable.rowNumber = value
+			icon.rowNumber = value
 			validate()
 		}
 
 	var refColor: CompositeColor
-		get() = drawable.color
+		get() = icon.color
 		set(value) {
-			drawable.color = value
+			icon.color = value
 		}
 
-	private val drawable = OscilloscopeProbeViewDrawable(Point2D(0.0, -OscilloscopeProbeViewDrawable.SIZE), rowNumber, color, styleProvider)
+	private val icon = OscilloscopeProbeViewIcon(rowNumber, color, styleProvider)
 
 	/** The [EdgeView] to which this [OscilloscopeProbeVerticeView] is connected.*/
 	private var edgeView: EdgeView<T>? = null
@@ -68,10 +68,6 @@ class OscilloscopeProbeVerticeView<T : Any>(
 	private val handler = Handler()
 
 	private var moveLastLocation = Point2D.ZERO
-
-	/** ---- [Component] interface */
-
-	override val type: String get() = TYPE
 
 	/** ---- [Drawable] interface */
 
@@ -83,7 +79,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 	override fun resolutionDone() {
 		super.resolutionDone()
-		drawable.rowNumber = rowNumber
+		icon.rowNumber = rowNumber
 	}
 
 	override fun write(writer: StoreWriter) {
@@ -109,6 +105,13 @@ class OscilloscopeProbeVerticeView<T : Any>(
 		}
 	}
 
+	/** ---- [Component] */
+
+	override fun rotationChanged(newRotation: Rotation) {
+		super.rotationChanged(newRotation)
+		icon.ownerRotation = rotation
+	}
+
 	/** ---- [AbstractRectangularVerticeView] */
 
 	override fun modelExchanged(oldModel: OscilloscopeProbeVertice<T>?) {
@@ -118,10 +121,10 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 	override fun drawImpl(context: DrawContext, drawPortViews: Boolean) {
 		super.drawImpl(context, drawPortViews)
-		drawable.draw(context)
+		icon.draw(context, Point2D(0.0, -icon.dim.width))
 		if (model.isConnected) {
 			val connPoint = connectionPoint().subtract(location)
-			context.g.color = context.choose(drawable.color).foregroundColor
+			context.g.color = context.choose(icon.color).foregroundColor
 			context.g.fillOval(
 				connPoint.x - CONN_POINT_SIZE,
 				connPoint.y - CONN_POINT_SIZE,

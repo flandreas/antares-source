@@ -30,6 +30,7 @@ import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.graph.GraphViewCopyPasteService
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
+import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
 import ch.scorpion.jabbah.io.IOModuleJvm
@@ -38,6 +39,8 @@ import ch.scorpion.jabbah.io.IOModuleJvm
  * Module definitions for the [ch.scorpion.jabbah.graph] module on the JVM platform.
  */
 object GraphViewModuleJvm : AbstractModule() {
+
+	const val PREF_TREE_OSCILLOSCOPE = "graph.preferences.group.oscilloscope"
 
 	override fun initialize() {
 		IOModuleJvm.require()
@@ -97,6 +100,13 @@ object GraphViewModuleJvm : AbstractModule() {
 		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).add(FloatPreference(
 			id = ContainerEditor.PROP_DEFAULT_ZOOM_FACTOR,
 			nameKey = "graph.preferences.ContainerEditor.defaultZoomFactor"
+		))
+
+		root.add(PreferenceGroup(PREF_TREE_OSCILLOSCOPE))
+		root.getGroup(PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(
+			id = OscilloscopeView.PROP_INDIVIDUAL_PROBE_COLORS,
+			nameKey = "graph.preferences.Oscilloscope.useRefColors",
+			needsRestart = true
 		))
 	}
 }

@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.InputPort
-import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.port.PortFactory
@@ -23,19 +22,19 @@ class OscilloscopeProbeVertice<T : Any>(
 ) : AbstractVertice() {
 
 	companion object {
-		private val type = Translations.getString("graph.component.oscilloscope.port.name")
+		private const val BASE_RESOURCE_KEY = "graph.component.oscilloscope.port"
+		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 	}
 
 	init {
-		val port = portFactory.createPort<T>(PortType.INPUT)
-		port.name = name
 		addPort(portFactory.createOscilloscopeProbePort<T>(name))
 	}
 
 	/** ---- [Vertice] interface */
 
-	override val type: String get() = OscilloscopeProbeVertice.type
-	override val typeDesc: String? get() = null
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
 		stateChanged(signalHandler)

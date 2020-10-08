@@ -4,12 +4,8 @@ import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.InputEventContext
-import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
-import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
+import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.drawable.IconButton
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -23,18 +19,23 @@ class OscilloscopeProbeView(
 	private val color: CompositeColor,
 	private val origLocSource: () -> Point2D,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : AbstractRectangle(location.x, location.y, OscilloscopeProbeViewDrawable.SIZE, OscilloscopeProbeViewDrawable.SIZE) {
+) : IconButton<EditInputEventContext>(
+	icon = OscilloscopeProbeViewIcon(rowNumber, color, styleProvider),
+	action = {},
+	location = location,
+	styleProvider = styleProvider
+) {
 
 	companion object {
 		private val LOG by logger(OscilloscopeProbeView::class)
 	}
 
 	var rowNumber: Int
-		get() = drawable.rowNumber
+		get() = probeIcon.rowNumber
 		set(value) {
-			drawable.rowNumber = value
-			if (vertice != null) {
-				vertice!!.rowNumber = value
+			probeIcon.rowNumber = value
+			if (verticeView != null) {
+				verticeView!!.rowNumber = value
 			}
 		}
 
@@ -43,52 +44,38 @@ class OscilloscopeProbeView(
 	 * Exists during dragging, and when being contained in the [GraphView].
 	 * Can be set by [OscilloscopeView] while reading from persistent store.
 	 */
-	var vertice: OscilloscopeProbeVerticeView<Any>? = null
+	var verticeView: OscilloscopeProbeVerticeView<Any>? = null
 		set(value) {
 			if (field !== value) {
 				field = value
-				verticePresent = false
-				drawable.filled = false
+				verticeViewPresent = false
+				probeIcon.filled = false
 			}
 		}
 
 
-	private val handler = Handler()
+	private val probeIcon get() = icon as OscilloscopeProbeViewIcon
 
-	private var isHovering: Boolean
-		get() = drawable.highlighted
-		set(value) {
-			drawable.highlighted = value
-		}
-
-	private val drawable = OscilloscopeProbeViewDrawable(location, rowNumber, color, styleProvider)
-
-	/** Set to `false` if [vertice] has been dragged into the [GraphView].*/
-	private var verticePresent = true
+	/** Set to `false` if [verticeView] has been dragged into the [GraphView].*/
+	private var verticeViewPresent = true
 
 	/** ---- [Drawable] */
 
-	override fun draw(context: DrawContext) {
-		drawable.draw(context)
-	}
+	override val lineWidth: Double get() = 0.0
 
-	override val lineWidth: Double get() = drawable.lineWidth
+	override fun getTooltip(x: Double, y: Double): Tooltip? =
+		Tooltip(Translations.getString("graph.action.oscilloscope.dragProbe.name"), toAbsoluteLocation(Point2D(x, y)))
 
-	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-		return handler as InputEventHandler<T>
-	}
-
-	override fun getTooltip(x: Double, y: Double): Tooltip? {
-		return Tooltip(Translations.getString("graph.action.oscilloscope.dragProbe.name"), x, y)
-	}
+	override fun createEditInteractionHandler(): InputEventHandler<InputEventContext> =
+		Handler() as InputEventHandler<InputEventContext>
 
 	/** ---- [OscilloscopeProbeView] */
 
 	fun handleProbeViewRemovedFromDrawing() {
 		invalidate()
-		vertice = null
-		verticePresent = true
-		drawable.filled = true
+		verticeView = null
+		verticeViewPresent = true
+		probeIcon.filled = true
 		validate()
 	}
 
@@ -96,44 +83,29 @@ class OscilloscopeProbeView(
 	 * Handles hovering on this [OscilloscopeProbeView] and delegates to the [InputEventHandler] of
 	 * its [OscilloscopeProbeVerticeView] to control dragging into the [GraphView].
 	 */
-	private inner class Handler : InputEventHandlerAdapter<EditInputEventContext>() {
-
-		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-			LOG.debug("OscilloscopeProbeView mouseMoved ${context.x},${context.y}")
-			// TODO Refactoring: Copy/Paste from IconButton. Extract hovering behaviour
-			if (contains(context.x, context.y)) {
-				if (!isHovering) {
-					isHovering = true
-					invalidate()
-					validate()
-				}
-				return this
-			}
-			if (isHovering) {
-				isHovering = false
-				invalidate()
-				validate()
-			}
-			return null
-		}
+	private inner class Handler : EditInteractionHandler() {
 
 		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			LOG.debug("OscilloscopeProbeView pressed ${context.x},${context.y}")
-			if (!verticePresent) {
+			if (!verticeViewPresent) {
 				return null
 			}
 			invalidate()
 
-			drawable.filled = false
-			drawable.highlighted = false
-			verticePresent = false
+			probeIcon.filled = false
+			verticeViewPresent = false
 
-			vertice = OscilloscopeProbeVerticeView(rowNumber = rowNumber, color = color, styleProvider = styleProvider)
-			vertice!!.location = origLocSource.invoke().add(location).add(Point2D(0.0, height))
-			context.editor.drawing.add(vertice!!)
+			verticeView = OscilloscopeProbeVerticeView<Any>(rowNumber = rowNumber, color = color, styleProvider = styleProvider).let {
+				it.location = origLocSource.invoke().add(location).add(Point2D(0.0, height))
+				it.visible = true
+				context.editor.drawing.add(it)
+				it
+			}
+
+			context.mouseEvent!!.consume()
 
 			validate()
-			return vertice!!.getInputEventHandler(context).mousePressed(context)
+			return verticeView!!.getInputEventHandler(context).mousePressed(context)
 		}
 	}
 }

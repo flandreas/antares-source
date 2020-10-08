@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.model.oscilloscope
 
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.graph.model.Graph
-import kotlin.math.min
 
 /**
  * A single entry in a [SignalHistory] that represents a signal value at a particular time.
@@ -19,9 +18,6 @@ interface SignalHistory<out T : Any> {
 
 	/** Returns the number of entries in this [SignalHistory].*/
 	val size: Int
-
-	/** Returns the minimum time delay between any two subsequent entries, [Long.MAX_VALUE] if no entries available.*/
-	val minDelay: Long
 
 	fun last(): SignalHistoryEntry<T>
 
@@ -43,12 +39,7 @@ class SignalHistoryImpl<T : Any> : SignalHistory<T> {
 	/** Holds the entries of this [SignalHistoryImpl], having the newest entry as the last position.*/
 	private val list = mutableListOf<SignalHistoryEntry<T>>()
 
-	/** Backing field of [minDelay] that is always kept up-to-date.*/
-	private var _minDelay: Long = Long.MAX_VALUE
-
 	/** ---- [SignalHistoryImpl] */
-
-	override val minDelay: Long get() = _minDelay
 
 	/** Returns the number of entries in this [SignalHistory].*/
 	override val size: Int get() = list.size
@@ -89,25 +80,15 @@ class SignalHistoryImpl<T : Any> : SignalHistory<T> {
 	fun add(entry: SignalHistoryEntry<T>) {
 		checkArgument(list.isEmpty() || list.last().time <= entry.time)
 		if (list.isEmpty() || list.last().signal != entry.signal) {
-			if (!list.isEmpty()) {
-				_minDelay = min(minDelay, entry.time - list.last().time)
-			}
 			list.add(entry)
 		}
 	}
 
 	/**
 	 * Removes all [SignalHistoryEntries][SignalHistoryEntry] from this [SignalHistory] that are older
-	 * than the specified time. This is only used to avoid memory exhaustion. This method does NOT recalculate
-	 * [minDelay] by intention.
+	 * than the specified time. This is only used to avoid memory exhaustion.
 	 */
 	fun truncate(time: Long) {
 		list.removeAll { it.time < time }
-	}
-
-	private fun recalculateMinDelay() {
-		_minDelay = if (isEmpty) Long.MAX_VALUE else list
-			.mapIndexed { i: Int, e: SignalHistoryEntry<T> -> if (i == 0) Long.MAX_VALUE else e.time - list[i - 1].time }
-			.min()!!
 	}
 }

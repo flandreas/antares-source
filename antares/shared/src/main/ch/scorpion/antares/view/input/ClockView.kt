@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.graph.ui.KnobView
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable

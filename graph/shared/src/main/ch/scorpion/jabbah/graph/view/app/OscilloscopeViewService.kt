@@ -120,6 +120,7 @@ class OscilloscopeViewServiceImpl(
 			val ov = OscilloscopeView()
 			positionOscilloscope(ov, graphView)
 			graphView.add(ov)
+			ov.visible = true
 		} else {
 			LOG.debug("OscilloscopeViewService: display Oscilloscope by making visible")
 			findOscilloscopeView(graphView)!!.visible = true

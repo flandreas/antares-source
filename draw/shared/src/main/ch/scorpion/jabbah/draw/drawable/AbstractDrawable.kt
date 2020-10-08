@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.exception.UnsupportedOperationException
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.Shape
 import ch.scorpion.jabbah.draw.*
@@ -143,6 +144,20 @@ abstract class AbstractDrawable : Drawable {
 
 	protected fun buildToolTipText(title: String?, text: String?, subText: String?): String? {
 		return System.buildToolTipText(title, text, subText, true)
+	}
+
+	/**
+	 * Calculates the absolute (i.e. toplevel) model space coordinate of the specified [Point2D]
+	 * by walking up the [DrawableContainer] hierarchy.
+	 */
+	protected fun toAbsoluteLocation(relativeLocation: Point2D): Point2D {
+		var result = relativeLocation
+		var p: DrawableContainer<*>? = parent
+		while (p != null) {
+			result = result.add(p.location)
+			p = p.parent
+		}
+		return result
 	}
 
 	/**

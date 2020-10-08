@@ -32,10 +32,10 @@ open class DrawableContainerImpl<T : Drawable>(
 	 * Holds the child [Drawable]s that this [DrawableContainer] contains. The topmost [Drawable] is stored
 	 * at the first position of the list.
 	 */
-	private val children: MutableList<T> by lazy { mutableListOf<T>() }
+	private val children: MutableList<T> by lazy { mutableListOf() }
 
 	private val containerListeners: MutableList<DrawableContainerListener<T>>
-		by lazy { mutableListOf<DrawableContainerListener<T>>() }
+		by lazy { mutableListOf() }
 
 	private var drawableDrawer: DrawableDrawer<T> = DefaultDrawableDrawer()
 
@@ -76,10 +76,11 @@ open class DrawableContainerImpl<T : Drawable>(
 					drawableDrawer.process(context, it)
 				}
 			}
-			DrawModule.drawLocatableDebugBoundingBox(this, context)
+			DrawModule.drawDebugBoundingBox(this, context.g)
 			if (useLocation) {
 				context.g.translate(-location.x, -location.y)
 			}
+			DrawModule.drawDebugBoundingBoxLocation(location, context)
 		}
 	}
 
@@ -174,9 +175,9 @@ open class DrawableContainerImpl<T : Drawable>(
 		}
 	}
 
-	override fun getDrawableAt(x: Double, y: Double): T? {
+	override fun getDrawableAt(x: Double, y: Double, predicate: (T) -> Boolean): T? {
 		if (useLocation) {
-			return children.firstOrNull { it.visible && it.contains(Point2D(x, y).subtract(location)) }
+			return children.firstOrNull { it.visible && predicate.invoke(it) && it.contains(Point2D(x, y).subtract(location)) }
 		}
 		return children.firstOrNull { it.visible && it.contains(x, y) }
 	}

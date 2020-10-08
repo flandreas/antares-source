@@ -18,6 +18,7 @@ import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.ROMView
 import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeViewFactory
+import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
 import ch.scorpion.antares.view.output.*
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.port.DigitalPortViewFactory
@@ -195,6 +196,8 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(LightColor.PROP_DEFAULT_LIGHT_COLOR, LightColor.RED.customName)
 		properties.set(DigitalSignalNotation.PROP_DIGITAL_SIGNAL_NOTATION, DigitalSignalNotation.BASE_SUBSCRIPT.customName)
 		properties.set(TunnelViewFace.PROP_TUNNEL_FACE, TunnelViewFace.ARROW.customName)
+
+		properties.set(DigitalSignalHistoryDrawer.PROP_FILL_SIGNAL, true)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

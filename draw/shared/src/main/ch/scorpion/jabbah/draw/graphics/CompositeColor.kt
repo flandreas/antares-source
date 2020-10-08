@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.draw.graphics
 
+import ch.scorpion.jabbah.draw.style.DrawTheme
+import ch.scorpion.jabbah.draw.style.Themes
 import kotlin.math.ceil
 
 /**
@@ -10,8 +12,8 @@ import kotlin.math.ceil
  * @param textColor the [Color] for drawing text above the interior of a graphical object
  */
 data class CompositeColor(
-	val foregroundColor: Color = Color.BLACK,
-	val backgroundColor: Color = Color.WHITE,
+	val foregroundColor: Color = Themes.get<DrawTheme>().figure.color.foregroundColor,
+	val backgroundColor: Color = Themes.get<DrawTheme>().background.color.backgroundColor,
 	val textColor: Color = foregroundColor
 ) {
 

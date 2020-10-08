@@ -1,21 +1,24 @@
 package ch.scorpion.antares.view.oscilloscope
 
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
-import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistory
-import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoryEntry
-import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryDrawer
-import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryTimeline
-import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistory
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoryEntry
+import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryDrawer
+import ch.scorpion.jabbah.graph.view.oscilloscope.SignalHistoryTimeline
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.max
 
@@ -23,19 +26,14 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
 	companion object {
 
-		/** The height of an individual row to be used in [OscilloscopeView].*/
+		/** The height of an individual row.*/
 		const val ROW_HEIGHT: Int = 40
-
-		private val LOG by logger(DigitalSignalHistoryDrawer::class)
 
 		/** The maximum height the signal, i.e. the vertical distance in model coordinates between 0 and 1 signals.*/
 		private const val SIGNAL_HEIGHT = 20.0
 
 		/** The color used for drawing the background.*/
-		private val BACKGROUND_COLOR = Color.BLACK
-
-		/** The color used for drawing the horizontal axis (and the vertical grid lines).*/
-		private val AXIS_COLOR = Color(64, 64, 64)
+		private val BACKGROUND_COLOR get() = Themes.get<AntaresTheme>().screen
 
 		/** The half size of the dot that marks the start of the signal curve, and therefore the current time.*/
 		private const val START_SIZE = 2.0
@@ -43,8 +41,8 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 		/** The horizontal inset used when drawing the arrow head of a multi-bit signal curve.*/
 		private const val MULTIBIT_INSET = 3.0
 
-		/** Determines whether signal curves are filled.*/
-		private const val FILL_SIGNAL = false
+		/** The name of the [Boolean] property in [Properties] that determines whether signal curves are filled.*/
+		const val PROP_FILL_SIGNAL = "DigitalSignalHistoryDrawer.fillSignal"
 	}
 
 	/** The [SignalHistory] drawn by this [DigitalSignalHistoryDrawer].*/
@@ -67,6 +65,8 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 		verticalAlignment = VerticalAlignment.CENTER
 	)
 
+	private val fillSignal: Boolean get() = BaseModule.properties.getBoolean(PROP_FILL_SIGNAL)
+
 	/** ---- [RectangularDrawable] interface*/
 
 	override val lineWidth: Double get() = 0.0
@@ -74,12 +74,12 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 	override fun draw(context: DrawContext) {
 
 		// Draw background
-		context.g.color = BACKGROUND_COLOR
+		context.g.color = BACKGROUND_COLOR.backgroundColor
 		context.g.fill(bounds)
 		context.g.draw(bounds)
 
 		// Draw horizontal axis
-		context.g.color = AXIS_COLOR
+		context.g.color = BACKGROUND_COLOR.foregroundColor
 		context.g.drawLine(rightBorder, baseLineY, bounds.minX, baseLineY)
 
 		if (signalHistory == null || timeline == null || color == null) {
@@ -122,7 +122,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
 	private val rightBorder: Double get() = bounds.maxX - 20
 
-	private val baseLineY: Double get() = bounds.maxY - 10
+	private val baseLineY: Double get() = bounds.maxY - 2
 
 	private fun drawCurve(context: DrawContext) {
 		val singleBit = signalHistory!!.last().signal.getBitWidth().width == 1
@@ -139,12 +139,10 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 				if (singleBit) {
 					drawSingleBitRightBorder(context, effNextX, y)
 				} else {
-					drawMultiBitRightBorder(context, effNextX)
-					// Draw signal value
 					multiBitLabel.text = entry.signal.toHexString()
 					multiBitLabel.horizontalAlignment = HorizontalAlignment.LEFT
 					multiBitLabel.location = Point2D(effNextX + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT / 2)
-					multiBitLabel.draw(context)
+					drawMultiBitRightBorder(context, effNextX)
 				}
 
 				if (x <= bounds.minX) {
@@ -158,12 +156,10 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 				if (singleBit) {
 					drawSingleBitSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
 				} else {
-					drawMultiBitSegment(context, xR = lastPoint.x, xL = effNextX)
-					// Draw signal value
 					multiBitLabel.text = entry.signal.toHexString()
 					multiBitLabel.horizontalAlignment = HorizontalAlignment.CENTER
 					multiBitLabel.location = Point2D(effNextX + (lastPoint.x - effNextX) / 2, baseLineY - SIGNAL_HEIGHT / 2)
-					multiBitLabel.draw(context)
+					drawMultiBitSegment(context, xR = lastPoint.x, xL = effNextX)
 				}
 
 				if (nextX <= bounds.minX) {
@@ -178,58 +174,68 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 	}
 
 	private fun drawSingleBitRightBorder(context: DrawContext, xL: Double, y: Double) {
-		if (FILL_SIGNAL) {
-			context.g.color = color!!.foregroundColor
-			context.g.fillRect(xL, y, rightBorder - xL, baseLineY - y)
+		if (fillSignal) {
 			context.g.color = color!!.backgroundColor
-		} else {
-			context.g.color = color!!.foregroundColor
+			context.g.fillRect(xL, y, rightBorder - xL, baseLineY - y)
 		}
+		context.g.color = color!!.foregroundColor
 		context.g.drawLine(rightBorder, y, xL, y)
 		context.g.fillOval(rightBorder - START_SIZE, y - START_SIZE, 2 * START_SIZE, 2 * START_SIZE)
 	}
 
 	private fun drawMultiBitRightBorder(context: DrawContext, xL: Double) {
-		context.g.color = color!!.foregroundColor
 		if (xL <= rightBorder - START_SIZE - MULTIBIT_INSET) {
-			// Upper and lower line
-			context.g.drawLine(rightBorder, baseLineY - SIGNAL_HEIGHT, xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
-			context.g.drawLine(rightBorder, baseLineY, xL + MULTIBIT_INSET, baseLineY)
+			val path = System.createPath()
+				.moveTo(rightBorder, baseLineY - SIGNAL_HEIGHT)
+				.lineTo(xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
+				.lineTo(xL, baseLineY - SIGNAL_HEIGHT / 2)
+				.lineTo(xL + MULTIBIT_INSET, baseLineY)
+				.lineTo(rightBorder, baseLineY)
 
-			// Left arrow head
-			context.g.drawLine(xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT, xL, baseLineY - SIGNAL_HEIGHT / 2)
-			context.g.drawLine(xL + MULTIBIT_INSET, baseLineY, xL, baseLineY - SIGNAL_HEIGHT / 2)
+			if (fillSignal) {
+				context.g.color = color!!.backgroundColor
+				context.g.fill(path)
+			}
+
+			context.g.color = color!!.foregroundColor
+			context.g.draw(path)
 		}
 
 		context.g.fillOval(rightBorder - START_SIZE, baseLineY - SIGNAL_HEIGHT / 2 - START_SIZE, 2 * START_SIZE, 2 * START_SIZE)
+
+		multiBitLabel.color = if (fillSignal) color!!.textColor else Themes.get<GraphTheme>().annotation.color.textColor
+		multiBitLabel.draw(context)
 	}
 
 	private fun drawSingleBitSegment(context: DrawContext, xR: Double, yR: Double, xL: Double, yL: Double) {
-		if (FILL_SIGNAL) {
-			context.g.color = color!!.foregroundColor
-			context.g.fillRect(xL, yL, xR - xL, baseLineY - yL)
+		if (fillSignal) {
 			context.g.color = color!!.backgroundColor
-		} else {
-			context.g.color = color!!.foregroundColor
+			context.g.fillRect(xL, yL, xR - xL, baseLineY - yL)
 		}
+		context.g.color = color!!.foregroundColor
 		context.g.drawLine(xR, yR, xR, yL)
 		context.g.drawLine(xR, yL, xL, yL)
 	}
 
 	private fun drawMultiBitSegment(context: DrawContext, xR: Double, xL: Double) {
+		val path = System.createPath()
+			.moveTo(xR, baseLineY - SIGNAL_HEIGHT / 2)
+			.lineTo(xR - MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
+			.lineTo(xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
+			.lineTo(xL, baseLineY - SIGNAL_HEIGHT / 2)
+			.lineTo(xL + MULTIBIT_INSET, baseLineY)
+			.lineTo(xR - MULTIBIT_INSET, baseLineY)
+			.close()
+
+		if (fillSignal) {
+			context.g.color = color!!.backgroundColor
+			context.g.fill(path)
+		}
 		context.g.color = color!!.foregroundColor
+		context.g.draw(path)
 
-		// Right arrow head
-		context.g.drawLine(xR, baseLineY - SIGNAL_HEIGHT / 2, xR - MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
-		context.g.drawLine(xR, baseLineY - SIGNAL_HEIGHT / 2, xR - MULTIBIT_INSET, baseLineY)
-
-		// Upper and lower line
-		context.g.drawLine(xR - MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT, xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
-		context.g.drawLine(xR - MULTIBIT_INSET, baseLineY, xL + MULTIBIT_INSET, baseLineY)
-
-		// Left arrow head
-		context.g.drawLine(xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT, xL, baseLineY - SIGNAL_HEIGHT / 2)
-		context.g.drawLine(xL + MULTIBIT_INSET, baseLineY, xL, baseLineY - SIGNAL_HEIGHT / 2)
+		multiBitLabel.color = if (fillSignal) color!!.textColor else Themes.get<GraphTheme>().annotation.color.textColor
+		multiBitLabel.draw(context)
 	}
 
 	private fun signalY(entry: SignalHistoryEntry<DigitalSignal>): Double {

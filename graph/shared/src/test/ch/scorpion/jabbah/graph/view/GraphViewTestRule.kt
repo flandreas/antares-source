@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.graph.model.port.TestPortFactory
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphOutputImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeViewFactoryMockBuilder
 import ch.scorpion.jabbah.graph.view.port.TestPortView
 import ch.scorpion.jabbah.graph.view.port.TestPortViewFactory
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
@@ -45,5 +46,6 @@ object GraphViewTestRule {
 
 		GraphModelModule.portFactory = TestPortFactory()
 		GraphViewModule.portViewFactory = TestPortViewFactory()
+		GraphViewModule.oscilloscopeViewFactory = OscilloscopeViewFactoryMockBuilder().build()
 	}
 }

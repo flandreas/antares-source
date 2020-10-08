@@ -11,6 +11,7 @@ import ch.scorpion.antares.view.container.DigitalContainerTreeView
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.net.TunnelViewFacePreference
+import ch.scorpion.antares.view.oscilloscope.DigitalSignalHistoryDrawer
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.signal.DigitalSignalNotationPreference
@@ -40,6 +41,7 @@ import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.editor.GraphEditor
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 
@@ -181,5 +183,10 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		root.getGroup(PREF_TREE_CIRCUIT).add(LightColorPreference())
 		root.getGroup(PREF_TREE_CIRCUIT).add(DigitalSignalNotationPreference())
 		root.getGroup(PREF_TREE_CIRCUIT).add(TunnelViewFacePreference())
+
+		root.getGroup(GraphViewModuleJvm.PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(
+			id = DigitalSignalHistoryDrawer.PROP_FILL_SIGNAL,
+			nameKey = "antares.preference.DigitalSignalHistory.fill"
+		))
 	}
 }

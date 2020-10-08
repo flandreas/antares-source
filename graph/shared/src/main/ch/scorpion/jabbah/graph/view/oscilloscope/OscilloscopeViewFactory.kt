@@ -10,6 +10,8 @@ interface OscilloscopeViewFactory {
 
     /** Creates a new [SignalHistoryDrawer].*/
     fun createSignalHistoryDrawer(): SignalHistoryDrawer
+
+	fun createSignalHistoryTimelineView(): SignalHistoryTimelineView
 }
 
 class UndefinedOscilloscopeViewFactory : OscilloscopeViewFactory {
@@ -19,4 +21,8 @@ class UndefinedOscilloscopeViewFactory : OscilloscopeViewFactory {
     override fun createSignalHistoryDrawer(): SignalHistoryDrawer {
         throw UnsupportedOperationException("not implemented")
     }
+
+	override fun createSignalHistoryTimelineView(): SignalHistoryTimelineView {
+		throw UnsupportedOperationException("not implemented")
+	}
 }

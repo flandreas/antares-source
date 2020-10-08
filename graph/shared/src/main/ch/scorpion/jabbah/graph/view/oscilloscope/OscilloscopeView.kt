@@ -1,48 +1,43 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
-import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.IconButton
-import ch.scorpion.jabbah.draw.graphics.Icon
-import ch.scorpion.jabbah.draw.graphics.ReferenceColor
-import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
+import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.AbstractActorIconButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
-import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.execution.actor.ActorViewContainer
+import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.port.PortFactory
+import ch.scorpion.jabbah.graph.ui.KnobView
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
-import ch.scorpion.jabbah.graph.view.style.GraphTheme
+import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import kotlin.math.floor
-import kotlin.math.max
-import kotlin.math.round
 
 class OscilloscopeView(
 	private val service: OscilloscopeViewService = GraphViewModule.oscilloscopeViewService,
@@ -50,7 +45,8 @@ class OscilloscopeView(
 	private val factory: OscilloscopeViewFactory = GraphViewModule.oscilloscopeViewFactory,
 	referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
 	model: Oscilloscope = Oscilloscope(),
-	styleProvider: StyleProvider = DrawStyleModule.styleProvider
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractRectangularVerticeView<Oscilloscope>(
 	styleProvider,
 	model,
@@ -61,16 +57,19 @@ class OscilloscopeView(
 ) {
 
 	companion object {
+		/** The name of the [Boolean] property in [Properties] that determines whether to use reference colors for probes.*/
+		const val PROP_INDIVIDUAL_PROBE_COLORS = "OscilloscopeView.individualProbeColors"
+
 		private val LOG by logger(OscilloscopeView::class)
 		private const val WIDTH = 700
 		private const val DEF_HEIGHT = 200
-		private const val TITLE_HEIGHT = 40
+		private const val TITLE_HEIGHT = 15
 		private const val MAX_ROW_NUMBER = 9
 		private const val ROW_INSET = 10
 		private const val ICON_BUTTON_SIZE = 20
-		private const val MIN_SIGNAL_WIDTH = 15.0
-		private const val DISPLAY_X = ROW_INSET + 2 * ICON_BUTTON_SIZE
-		private const val DISPLAY_WIDTH = WIDTH - 2 * ROW_INSET - 2 * ICON_BUTTON_SIZE
+		private val DRAWER_X = 3.0 * ROW_INSET + ICON_BUTTON_SIZE + OscilloscopeProbeViewIcon.SIZE
+		private val DRAWER_W = WIDTH - DRAWER_X - ROW_INSET
+		private val KNOB: KnobView by lazy { KnobView(unit = "x") }
 	}
 
 	var timelineScale: Double
@@ -84,33 +83,54 @@ class OscilloscopeView(
 	/** Returns the number of rows of this [OscilloscopeView].*/
 	val rowsCount: Int get() = rows.size
 
-	private val container = DrawableContainerImpl<Drawable>(useLocation = true)
+	private val container = ActorViewContainer<Drawable>(useLocation = true)
 
-	private val rows = mutableListOf<RowView>()
+	private val rows = mutableListOf<SignalRowView>()
 
-	private val scaleRow = ScaleRow(Point2D.ZERO)
+	private val scaleRow = ScaleRowView(Point2D.ZERO)
 
 	private val refColorSequence = referenceColorSequenceProvider.provide()
 
 	private val removeListener = RemoveListener()
 
 	/** Replaced if model changes when reading from persistent store.*/
-	private var timeline = OscilloscopeViewTimeline(1.0, model, MIN_SIGNAL_WIDTH)
+	private var timeline = OscilloscopeViewTimeline(1.0, model)
 
-	private val actorHandler = ActorHandler()
+	private val applicationModeHandler: (ApplicationModeEvent) -> Unit = { applicationMode = it.applicationMode }
+
+	private  var applicationMode: ApplicationMode = ApplicationMode.EDIT
+		set(value) {
+			if (field != value) {
+				field = value
+				updateSate()
+			}
+		}
 
 	init {
+		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		visible = false
 		preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
 		container.add(scaleRow)
 		adjustSize()
 
 		DrawableOwner(this, container)
+
+		updateSate()
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(applicationModeHandler)
 	}
 
 	override fun modelExchanged(oldModel: Oscilloscope?) {
 		super.modelExchanged(oldModel)
-		timeline = OscilloscopeViewTimeline(timelineScale, model, MIN_SIGNAL_WIDTH)
+		timeline = OscilloscopeViewTimeline(timelineScale, model)
+	}
+
+	private fun updateSate() {
+		rows.forEach { it.updateState() }
+		scaleRow.updateState()
 	}
 
 	/** ---- [Drawable] */
@@ -120,7 +140,7 @@ class OscilloscopeView(
 	}
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? {
-		return container.getTooltip(x, y)
+		return container.getTooltip(x, y) ?: super.getTooltip(x, y)
 	}
 
 	override fun <T : Drawable> handleAdded(container: DrawableContainer<T>) {
@@ -131,6 +151,12 @@ class OscilloscopeView(
 	override fun <T : Drawable> handleRemoved(container: DrawableContainer<T>) {
 		super.handleRemoved(container)
 		container.removeDrawableContainerListener(removeListener as DrawableContainerListener<T>)
+	}
+
+	/** ---- [AbstractVerticeView] */
+
+	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
+		return container.getExecutionTooltip(x, y) ?: super.getExecutionTooltip(x, y)
 	}
 
 	/** ---- [AbstractRectangularVerticeView] */
@@ -149,13 +175,12 @@ class OscilloscopeView(
 		context.g.fill(bounds)
 		context.g.color = context.choose(color).foregroundColor
 		context.g.draw(bounds)
-		context.g.drawString("Oscilloscope", x.toInt() + 10, y.toInt() + 20)
 		context.g.translate(-location.x, -location.y)
 		container.draw(context)
 	}
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
-		return actorHandler
+		return container.getActorInteractionHandler(context)
 	}
 
 	/** ---- [AbstractGraphElementView] */
@@ -163,11 +188,13 @@ class OscilloscopeView(
 	override fun handleExecutionStarted(signalHandler: SignalHandler) {
 		super.handleExecutionStarted(signalHandler)
 		rows.forEach { it.bindDrawer() }
+		scaleRow.bindDrawer()
 	}
 
 	override fun handleExecutionStopped(signalHandler: SignalHandler) {
 		super.handleExecutionStopped(signalHandler)
 		rows.forEach { it.unbindDrawer() }
+		scaleRow.unbindDrawer()
 	}
 
 	/** ---- [Storable] interface */
@@ -187,10 +214,10 @@ class OscilloscopeView(
 	override fun resolutionDone() {
 		super.resolutionDone()
 		for (i in 1..model.portsCount) {
-			addPortView(GenericPortView<Any>(model.getPort(i.toString())))
+			addPortView(GenericPortView(model.getPort(i.toString())))
 			addRowView(i)
 		}
-		scaleRow.updateAddButtonState()
+		scaleRow.updateState()
 		adjustSize()
 
 		parent!!
@@ -211,7 +238,7 @@ class OscilloscopeView(
 
 		invalidate()
 		addRowView(newRowNumber)
-		scaleRow.updateAddButtonState()
+		scaleRow.updateState()
 		adjustSize()
 	}
 
@@ -232,8 +259,8 @@ class OscilloscopeView(
 		adjustSize()
 	}
 
-	/** Finds the [RowView] for the specified row number, if existing.*/
-	private fun findRowView(rowNumber: Int): RowView? {
+	/** Finds the [SignalRowView] for the specified row number, if existing.*/
+	private fun findRowView(rowNumber: Int): SignalRowView? {
 		return rows.firstOrNull { it.rowNumber == rowNumber }
 	}
 
@@ -247,9 +274,15 @@ class OscilloscopeView(
 
 	private fun addRowView(rowNumber: Int) {
 		val y = TITLE_HEIGHT + rows.size * factory.rowHeight
-		val rowView = RowView(rowNumber, Point2D(0, y), refColorSequence.next(), factory)
+		val rowView = SignalRowView(rowNumber, Point2D(0, y), nextProbeColor, factory)
 		rows.add(rowView)
 		container.add(rowView)
+	}
+
+	private val nextProbeColor: CompositeColor get() = if (BaseModule.properties.getBoolean(PROP_INDIVIDUAL_PROBE_COLORS)) {
+		refColorSequence.next()
+	} else {
+		color
 	}
 
 	/**
@@ -264,7 +297,7 @@ class OscilloscopeView(
 			model.getPort<Any>((i + 2).toString()).name = (i + 1).toString()
 		}
 		scaleRow.updateLocation()
-		scaleRow.updateAddButtonState()
+		scaleRow.updateState()
 	}
 
 	private fun findProbeViewInDrawing(rowNumber: Int): OscilloscopeProbeVerticeView<*>? {
@@ -272,101 +305,106 @@ class OscilloscopeView(
 			as OscilloscopeProbeVerticeView<*>?
 	}
 
-	private inner class SimpleScale(shape: RectangularShape) : AbstractRectangle(shape) {
+	private inner class ScaleButton(
+		location: Point2D
+	) : AbstractActorIconButton(
+		icon = KnobIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
+		location = location,
+		tooltipKey = "graph.action.oscilloscope.scale.name",
+	) {
 
-		private val label = Label(
-			text = "Test",
-			font = Themes.get<GraphTheme>().annotation.font,
-			color = color.textColor,
-			horizontalAlignment = HorizontalAlignment.CENTER,
-			verticalAlignment = VerticalAlignment.BOTTOM,
-			location = Point2D(x + width / 2, y + height / 2 - 5)
-		)
+		override fun handleClicked(context: ActorInteractionContext) {
+			showKnob(context.view as DrawingView<*>)
+		}
 
-		override val lineWidth: Double get() = 0.0
+		private fun showKnob(view: DrawingView<*>) {
+			KNOB.valueChangeHandler = {timelineScale = it.toDouble() }
+			KNOB.location = Point2D(boundingBox.center
+				.add(this@OscilloscopeView.location)
+				.add(scaleRow.location)
+				.subtract(Point2D(KnobView.OUTER_SIZE / 2, KnobView.OUTER_SIZE / 2))
+			)
+			KNOB.value = timelineScale.toLong()
+			KNOB.defaultValue = 10
 
-		override fun draw(context: DrawContext) {
-			if (!context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-				return
-			}
-			val deltaTime = when (model.portsCount) {
-				0 -> 0
-				1 -> model.getSignalHistory("1")!!.minDelay
-				else -> model.minDiffTime
-			}
-			if (deltaTime > 0) {
-				val length = timeline.getDx(deltaTime) / timelineScale
-
-				val x1 = x + width / 2 - length / 2
-				val x2 = x + width / 2 + length / 2
-				val y = y + height / 2
-
-				context.g.color = color.foregroundColor
-				context.g.font = font
-				context.g.drawLine(x1, y, x2, y)
-				context.g.drawLine(x1, y - 3, x1, y + 3)
-				context.g.drawLine(x2, y - 3, x2, y + 3)
-
-				label.text = "${round(deltaTime / timelineScale)} ns"
-				label.draw(context)
-			}
+			view.content.animationContainer.add(KNOB)
+			view.content.animationContainer.validate()
 		}
 	}
 
-	private inner class ScaleRow(
+	private inner class ScaleRowView(
 		location: Point2D
-	) : DrawableContainerImpl<Drawable>(location = location, useLocation = true) {
+	) : ActorViewContainer<Drawable>(location = location, useLocation = true) {
 
-		private val addButton = IconButton(
+		private val addButton = IconButton<EditInputEventContext>(
 			icon = AddIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
 			action = { service.addRow(this@OscilloscopeView) },
 			location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2))
 
-		private val scale = SimpleScale(Rectangle2D(DISPLAY_X, 0, DISPLAY_WIDTH, factory.rowHeight))
+
+		private val scaleButton = ScaleButton(
+			location = Point2D(2 * ROW_INSET + ICON_BUTTON_SIZE, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2))
+
+		private val timelineView = factory.createSignalHistoryTimelineView()
 
 		init {
 			add(addButton)
-			add(scale)
+			add(scaleButton)
+
+			timelineView.setBounds(DRAWER_X, 0.0, DRAWER_W, factory.rowHeight.toDouble())
+			add(timelineView)
 		}
 
-		fun updateAddButtonState() {
-			addButton.enabled = rows.size < MAX_ROW_NUMBER
+		fun updateState() {
+			scaleButton.enabled = applicationMode.isExecute()
+			addButton.enabled = applicationMode.isEdit() && rows.size < MAX_ROW_NUMBER
 			addButton.tooltipKey = if (addButton.enabled) "graph.action.oscilloscope.addRow.name" else "graph.action.oscilloscope.addRow.limit"
 		}
 
 		fun updateLocation() {
 			location = Point2D(0, TITLE_HEIGHT + factory.rowHeight * rows.size)
 		}
+
+		fun bindDrawer() {
+			timelineView.bind(
+				model.getSignalHistory("1"),
+				timeline)
+		}
+
+		fun unbindDrawer() {
+			timelineView.bind(null, null)
+		}
 	}
 
 	/**
 	 * @param rowNumber the number of the row, starting with 1
 	 */
-	private inner class RowView(
+	private inner class SignalRowView(
 		rowNumber: Int,
 		location: Point2D,
-		val color: ReferenceColor,
+		val color: CompositeColor,
 		factory: OscilloscopeViewFactory
 	) : DrawableContainerImpl<Drawable>(location = location, useLocation = true) {
 
 		private val drawer = factory.createSignalHistoryDrawer()
 
 		private val probeView = OscilloscopeProbeView(
-			location = Point2D(2.0 * ROW_INSET + ICON_BUTTON_SIZE, factory.rowHeight / 2 - OscilloscopeProbeViewDrawable.SIZE / 2),
+			location = Point2D(2.0 * ROW_INSET + ICON_BUTTON_SIZE, factory.rowHeight / 2 - OscilloscopeProbeViewIcon.SIZE / 2),
 			rowNumber = rowNumber,
-			color = color.onBackground,
+			color = color,
 			origLocSource = { this@OscilloscopeView.location.add(this.location) })
 
+		private val removeButton = IconButton<EditInputEventContext>(
+			icon = RemoveIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
+			tooltipKey = "graph.action.oscilloscope.removeRow.name",
+			location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2),
+			action = { service.removeRow(probeView.rowNumber, this@OscilloscopeView) })
+
 		init {
-			add(IconButton(
-				icon = RemoveIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
-				tooltipKey = "graph.action.oscilloscope.removeRow.name",
-				location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2),
-				action = { service.removeRow(probeView.rowNumber, this@OscilloscopeView) }))
+			add(removeButton)
 			add(probeView)
 
-			val drawerX = 3.0 * ROW_INSET + ICON_BUTTON_SIZE + probeView.width
-			drawer.setBounds(drawerX, 0.0, WIDTH - drawerX - ROW_INSET, factory.rowHeight.toDouble())
+			drawer.setBounds(DRAWER_X, 0.0, DRAWER_W, factory.rowHeight.toDouble())
 			add(drawer)
 		}
 
@@ -376,9 +414,13 @@ class OscilloscopeView(
 				probeView.rowNumber = value
 			}
 
+		fun updateState() {
+			removeButton.enabled = applicationMode.isEdit()
+		}
+
 		fun loadedWith(vertice: OscilloscopeProbeVerticeView<Any>) {
-			probeView.vertice = vertice
-			probeView.vertice!!.refColor = color.onBackground
+			probeView.verticeView = vertice
+			probeView.verticeView!!.refColor = color
 		}
 
 		fun handleProbeViewRemovedFromDrawing() {
@@ -390,12 +432,12 @@ class OscilloscopeView(
 				model.getSignalHistory(rowNumber.toString())!!,
 				model.getSignalHistory("1"),
 				timeline,
-				color.onDark
+				color
 			)
 		}
 
 		fun unbindDrawer() {
-			drawer.bind(null, null, null, color.onBackground)
+			drawer.bind(null, null, null, color)
 		}
 	}
 
@@ -414,82 +456,20 @@ class OscilloscopeView(
 			}
 		}
 	}
-
-	private inner class ActorHandler : ClickableActorInteractionHandlerAdapter() {
-
-		private var startLocation = Point2D.ZERO
-		private var startScale: Double = 1.0
-
-		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (context.mouseEvent!!.clickCount == 2) {
-				timelineScale = 1.0
-			}
-			return null
-		}
-
-		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			startLocation = Point2D(x, y).subtract(container.location)
-			startScale = timelineScale
-			return null
-		}
-
-		override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler? {
-			val newLocation = Point2D(x, y).subtract(container.location)
-			if (scaleRow.contains(newLocation)) {
-				val dist = startLocation.subtract(newLocation).x
-				LOG.debug("actor mouseDragged, dx = $dist")
-				timelineScale = max(0.1, startScale + floor(10 * dist / 50) / 10)
-				return this
-			}
-			return null
-		}
-	}
 }
 
 class OscilloscopeViewTimeline(
 	override var scale: Double,
-	private val model: Oscilloscope,
-	private val minSignalWidth: Double
+	private val model: Oscilloscope
 ) : SignalHistoryTimeline {
 
+	override val maxTime: Long get() = model.maxTime
+
 	override fun getDx(duration: Long): Double {
-		return scale * when (model.portsCount) {
-			0 -> 0.0
-			1 -> duration / model.getSignalHistory("1")!!.minDelay * minSignalWidth
-			else -> {
-				if (model.minDiffTime == Long.MAX_VALUE) {
-					duration / model.overallMinDelay * minSignalWidth
-				} else {
-					duration / model.minDiffTime * minSignalWidth
-				}
-			}
-		}
+		return scale * duration / 20
 	}
 
 	override fun getX(time: Long): Double {
 		return getDx(model.maxTime - time)
-	}
-}
-
-private class AddIcon(override val dim: Dimension2D) : Icon {
-
-	override fun draw(context: DrawContext, location: Point2D) {
-		context.g.drawOval(location.x, location.y, dim.width, dim.height)
-		context.g.drawLine(
-			location.x + dim.width / 3, location.y + dim.height / 2,
-			location.x + 2 * dim.width / 3, location.y + dim.height / 2)
-		context.g.drawLine(
-			location.x + dim.width / 2, location.y + dim.height / 3,
-			location.x + dim.width / 2, location.y + 2 * dim.height / 3)
-	}
-}
-
-private class RemoveIcon(override val dim: Dimension2D) : Icon {
-
-	override fun draw(context: DrawContext, location: Point2D) {
-		context.g.drawOval(location.x, location.y, dim.width, dim.height)
-		context.g.drawLine(
-			location.x + dim.width / 3, location.y + dim.height / 2,
-			location.x + 2 * dim.width / 3, location.y + dim.height / 2)
 	}
 }

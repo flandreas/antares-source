@@ -1,6 +1,5 @@
-package ch.scorpion.antares.view.input
+package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
@@ -22,6 +21,7 @@ import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.*
 
 /**
@@ -177,10 +177,10 @@ class KnobView(
 	private val angle: Double get() = -(ONE_ANGLE - model.asAngle)
 
 	/** Used as a stamp to draw the scale numbers.*/
-	private val scaleLabel = Label(font = Themes.get<AntaresTheme>().explanation.font, text = "")
+	private val scaleLabel = Label(font = Themes.get<GraphTheme>().explanation.font, text = "")
 
 	/** Used to draw the current value in the center of the knob.*/
-	private val valueLabel = Label(font = Themes.get<AntaresTheme>().explanation.font, text = "", color = Color.WHITE)
+	private val valueLabel = Label(font = Themes.get<GraphTheme>().explanation.font, text = "", color = Color.WHITE)
 
 	init {
 		model.addPropertyChangeListener(object : PropertyChangeListener<Long> {

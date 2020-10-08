@@ -1,11 +1,13 @@
 package ch.scorpion.antares.view.input
 
-import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.jabbah.base.PI_2
 import ch.scorpion.jabbah.base.TWO_PI
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
+import ch.scorpion.jabbah.graph.ui.KnobModel
+import ch.scorpion.jabbah.graph.ui.KnobView
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import io.mockk.every
 import io.mockk.mockk
 import kotlin.math.PI
@@ -17,7 +19,7 @@ class KnobModelTest {
 
 	companion object {
 		init {
-			AntaresTestRule.configure()
+			GraphViewTestRule.configure()
 		}
 	}
 
@@ -50,7 +52,7 @@ class KnobViewTest {
 
 	companion object {
 		init {
-			AntaresTestRule.configure()
+			GraphViewTestRule.configure()
 		}
 	}
 
