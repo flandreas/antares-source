@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.edit.EventTestUtil
 import ch.scorpion.jabbah.edit.Tool
 
 /** Test utility for sending [InputEvent]s to a [Tool] under test.*/
-class ToolTestUtil(val tool: Tool, val editor: Editor) {
+class ToolTestUtil(val tool: Tool, private val editor: Editor) {
 
 	fun moveMouseTo(x: Int, y: Int, modifiers: Int = 0) {
 		tool.mouseMoved(EventTestUtil.moveMouseTo(locationView(x, y), modifiers), x.toDouble(), y.toDouble())
