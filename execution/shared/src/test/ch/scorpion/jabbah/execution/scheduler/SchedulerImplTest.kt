@@ -29,7 +29,7 @@ class SchedulerImplTest {
 
 	private val timeService: ControlledTimeService
 	private val eventBus = EventBusImpl()
-	private val scheduler: SchedulerImpl;
+	private val scheduler: SchedulerImpl
 
 	init {
 		ExecutionTestRule.configure()
@@ -108,20 +108,20 @@ class SchedulerImplTest {
 	/** ---- Stepping tests */
 
 	@Test
-	fun shouldNotAllowStepWhenNotActive() {
+	fun shouldNotAllowResumeWhenNotActive() {
 		assertFailsWith<IllegalStateException> {
 			scheduler.isPaused = true
 			scheduler.isActive = false
-			scheduler.step()
+			scheduler.resume()
 		}
 	}
 
 	@Test
-	fun shouldNotAllowStepWhenNotPaused() {
+	fun shouldNotAllowResumeWhenNotPaused() {
 		assertFailsWith<IllegalStateException> {
 			scheduler.isPaused = false
 			scheduler.isActive = true
-			scheduler.step()
+			scheduler.resume()
 		}
 	}
 
@@ -147,12 +147,12 @@ class SchedulerImplTest {
 		scheduler.signalHandler.requestActingAfter(actor2, 200 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
-		scheduler.step()
+		scheduler.resume()
 		verify(exactly = 1) { actor1.act(any(), any()) }
 		verify(exactly = 0) { actor2.act(any(), any()) }
 
 		timeService.setTimeMillis(250)
-		scheduler.step()
+		scheduler.resume()
 		verify(exactly = 1) { actor1.act(any(), any()) }
 		verify(exactly = 1) { actor2.act(any(), any()) }
 	}
@@ -167,12 +167,12 @@ class SchedulerImplTest {
 		scheduler.signalHandler.requestActingAfter(actor2, 200 * MILLION, createActorData())
 
 		timeService.setTimeMillis(50)
-		scheduler.step()
+		scheduler.resume()
 		verify(exactly = 1) { actor1.act(any(), any()) }
 		verify(exactly = 0) { actor2.act(any(), any()) }
 
 		timeService.setTimeMillis(80)
-		scheduler.step()
+		scheduler.resume()
 		verify(exactly = 1) { actor1.act(any(), any()) }
 		verify(exactly = 1) { actor2.act(any(), any()) }
 	}

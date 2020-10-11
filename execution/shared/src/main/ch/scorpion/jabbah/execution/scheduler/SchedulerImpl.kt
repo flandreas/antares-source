@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.execution.scheduler
 
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.collection.PriorityQueue
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -155,6 +156,12 @@ class SchedulerImpl(
 		}
 
 	override fun resume() {
+		if (!isActive) {
+			throw IllegalStateException("cannot resume when not active")
+		}
+		if (!isPaused) {
+			throw IllegalStateException("cannot resume when not paused")
+		}
 		executeImpl(resume = true)
 		hardBreakpointReceived = false
 		task.startIfNeeded()
@@ -363,6 +370,11 @@ class SchedulerImpl(
 	 * @param resume `true` if the current breakpoint has already been handled, and the execution is to be resumed
 	 */
 	private fun executeImpl(resume: Boolean): ExecutionStepResult {
+
+		if (isPaused && !resume) {
+			task.stop()
+			return ExecutionStepResult(recalculated = false, breakpoint = true)
+		}
 
 		val optionalSlot = queue.peek()
 		if (optionalSlot == null) {
