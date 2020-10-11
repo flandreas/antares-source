@@ -55,9 +55,32 @@ abstract class AbstractVerticeView<T : Vertice>(
 ) : AbstractGraphElementView<T>(styleProvider, GraphStyleType.VERTICE, model), VerticeView<T>, Describable, Transparent {
 
 	companion object {
+
 		private fun cannotOpenMsg(c: Component) {
 			BaseModule.eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = c, messageKey = "graph.vertice.cannotOpen.msg"))
 		}
+
+		private object CannotOpenClickHandler : InputEventHandlerAdapter<InputEventContext>() {
+			var component: Component? = null
+			override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
+				if (context.mouseEvent?.button == Button.BUTTON1 && context.mouseEvent?.clickCount == 2) {
+					cannotOpenMsg(component!!)
+				}
+				return null
+			}
+		}
+
+		protected open class CannotOpenActorClickHandler : ActorInteractionHandlerAdapter() {
+			var component: Component? = null
+			override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+				if (context.mouseEvent!!.clickCount == 2) {
+					cannotOpenMsg(component!!)
+				}
+				return null
+			}
+		}
+
+		private val CANNOT_OPEN_ACTOR_CLICK_HANDLER = CannotOpenActorClickHandler()
 	}
 
 	/** Holds the graphical representations of all the model's [Port]s.*/
@@ -278,14 +301,8 @@ abstract class AbstractVerticeView<T : Vertice>(
 	}
 
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-		return object : InputEventHandlerAdapter<InputEventContext>() {
-			override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
-				if (context.mouseEvent?.button == Button.BUTTON1 && context.mouseEvent?.clickCount == 2) {
-					cannotOpenMsg(this@AbstractVerticeView)
-				}
-				return null
-			}
-		}
+		CannotOpenClickHandler.component = this
+		return CannotOpenClickHandler
 	}
 
 	/** ---- [Component] interface */
@@ -314,17 +331,6 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	/** ---- [ActorView] interface */
 
-	protected open inner class DefaultActionInteractionHandler : ActorInteractionHandlerAdapter() {
-		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (context.mouseEvent!!.clickCount == 2) {
-				cannotOpenMsg(this@AbstractVerticeView)
-			}
-			return null
-		}
-	}
-
-	private val _actorInteractionHandler: ActorInteractionHandler by lazy { DefaultActionInteractionHandler() }
-
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
 		val portTooltip = getPortViewAtConnectionPoint(x, y)?.getExecutionTooltip(x, y)
 		if (portTooltip != null) {
@@ -335,7 +341,8 @@ abstract class AbstractVerticeView<T : Vertice>(
 	}
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
-		return _actorInteractionHandler
+		CANNOT_OPEN_ACTOR_CLICK_HANDLER.component = this
+		return CANNOT_OPEN_ACTOR_CLICK_HANDLER
 	}
 
 	/** ---- [AbstractVerticeView] */

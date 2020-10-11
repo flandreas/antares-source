@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
+import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -144,7 +145,7 @@ class ClockView(
 
 	/** ---- [ClockView] */
 
-	private inner class ClockViewActorInteractionHandler : DefaultActionInteractionHandler() {
+	private inner class ClockViewActorInteractionHandler : AbstractVerticeView.Companion.CannotOpenActorClickHandler() {
 		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!isKnobEnabled) {
 				return null
