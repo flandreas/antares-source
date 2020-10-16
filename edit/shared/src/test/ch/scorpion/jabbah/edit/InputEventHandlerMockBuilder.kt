@@ -4,6 +4,11 @@ import ch.scorpion.jabbah.draw.InputEventHandler
 import io.mockk.every
 import io.mockk.mockk
 
+/**
+ * TODO: Copy/Paste from corresponding class in ch.scorpion.jabbah.draw test package
+ * due to missing Kotlin MPP feature KT-35073.
+ */
+
 class InputEventHandlerMockBuilder {
 
 	private val handler = mockk<InputEventHandler<EditInputEventContext>>()

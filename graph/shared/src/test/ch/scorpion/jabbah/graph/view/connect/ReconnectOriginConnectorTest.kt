@@ -37,7 +37,7 @@ class ReconnectOriginConnectorTest
 		verify { view.setCursor(Cursor.CROSSHAIR) }
 
 		pressMouseAt(115, 100)
-		kotlin.test.assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
+		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
 
 		dragMouseTo(150, 100)
 

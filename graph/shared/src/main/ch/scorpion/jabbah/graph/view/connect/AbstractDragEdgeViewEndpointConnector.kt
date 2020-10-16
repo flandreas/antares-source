@@ -123,6 +123,9 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 		handler.sm.start()
 	}
 
+	// For testing
+	val usedFor: EdgeView<*>? get() = this.edgeView
+
 	protected fun getEndpointView(): EdgeEndpointView {
 		return draggedEndpointType.getEndpoint(edgeView!!)
 	}

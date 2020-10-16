@@ -1,0 +1,51 @@
+package ch.scorpion.jabbah.graph.view.graph
+
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
+import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
+import kotlin.test.Test
+import kotlin.test.assertSame
+
+class GraphViewInputEventHandlerTest : AbstractInputEventHandlerTest(InputEventHandlerAdapter()) {
+
+	companion object {
+		init {
+			GraphViewTestRule.configure()
+		}
+	}
+
+	private val verticeView = TestVerticeView(loc = Point2D(100, 100), width = 200)
+
+	init {
+		builder.addVerticeView(verticeView)
+	}
+
+	@Test
+	fun shouldForwardMouseMoveToInputToOutputConnector() {
+		mouseMoveTo(300, 100)
+		assertSame(verticeView, GraphViewModule.outputToInputConnector.usedFor)
+	}
+
+	@Test
+	fun shouldForwardMouseMoveToOutputToInputConnector() {
+		mouseMoveTo(100, 100)
+		assertSame(verticeView, GraphViewModule.inputToOutputOrEdgeConnector.usedFor)
+	}
+
+	@Test
+	fun shouldForwardMouseMoveToReconnectOriginConnector() {
+		val ev = builder.connectOutputOpen(verticeView, Point2D(500, 100))
+		mouseMoveTo(295, 100)
+		assertSame(ev, GraphViewModule.reconnectOriginConnector.usedFor)
+	}
+
+	@Test
+	fun shouldForwardMouseMoveToReconnectDestinationConnetor() {
+		val ev = builder.connectInputOpen(verticeView, Point2D(0, 100))
+		mouseMoveTo(105, 100)
+		assertSame(ev, GraphViewModule.reconnectDestinationConnector.usedFor)
+	}
+}

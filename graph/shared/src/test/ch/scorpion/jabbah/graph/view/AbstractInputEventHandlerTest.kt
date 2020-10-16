@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.editor.InputEventDriver
 import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
+import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 
 /**
@@ -16,9 +17,9 @@ import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
  */
 abstract class AbstractInputEventHandlerTest(
 	handler: InputEventHandler<EditInputEventContext>,
-	protected val viewMock: DrawingViewMockBuilder = DrawingViewMockBuilder()
+	private val viewMock: DrawingViewMockBuilder = DrawingViewMockBuilder()
 ): InputEventDriver(
-	EditEditorModule.createEditor(viewMock.build<Component>()),
+	EditEditorModule.createEditor(viewMock.build()),
 	handler
 ) {
 
@@ -41,12 +42,21 @@ abstract class AbstractInputEventHandlerTest(
 	protected val view get() = viewMock.build<Component>()
 
 	init {
+		GraphViewImpl.inputEventHandler = null
 		editor.commandManager.bindDataHolder(builder)
 	}
 
+	private var target: InputEventHandler<EditInputEventContext>? = null
+
 	override fun mouseMoveTo(x: Int, y: Int, modifiers: Int): InputEventDriver {
 		val context = context(MouseEventType.MOVED, x, y, modifiers)
-		builder.graphView.getInputEventHandler(context).mouseMoved(context)
+
+		if (target != null) {
+			target = target!!.mouseMoved(context)
+		} else {
+			target = builder.graphView.getInputEventHandler(context).mouseMoved(context)
+		}
+
 		return this
 	}
 

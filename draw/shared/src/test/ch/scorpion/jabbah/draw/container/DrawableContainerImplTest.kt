@@ -171,6 +171,15 @@ class DrawableContainerImplTest {
 	}
 
 	@Test
+	fun shouldGetDrawableInLocatedContainer() {
+		val innerContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
+		val rect = TestRectangle(Rectangle2D(20, 20, 10, 10))
+		innerContainer.add(rect)
+
+		assertEquals(rect, innerContainer.getDrawableAt(125.0, 125.0))
+	}
+
+	@Test
 	fun shouldNotContainContainerBackground() {
 		val innerContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
 		innerContainer.add(TestRectangle(Rectangle2D(20, 20, 10, 10)))

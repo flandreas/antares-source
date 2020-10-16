@@ -1,11 +1,9 @@
-package ch.scorpion.jabbah.edit
+package ch.scorpion.jabbah.base.event
 
-import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Point2D
 
 /**
- * TODO: Copy/Paste from corresponding class in ch.scorpion.jabbah.base.event test package
- * due to missing Kotlin MPP feature KT-35073.
+ * Test utility for creating [MouseEvent]s and [KeyEvent]s.
  */
 object EventTestUtil {
 
