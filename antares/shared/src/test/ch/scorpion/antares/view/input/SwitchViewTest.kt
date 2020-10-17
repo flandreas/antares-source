@@ -3,7 +3,6 @@ package ch.scorpion.antares.view.input
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
-import ch.scorpion.jabbah.execution.actor.ActorInteractionContextImpl
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -47,7 +46,7 @@ class SwitchViewTest {
 	}
 
 	private fun contextFor(keyEvent: KeyEvent): ActorInteractionContext {
-		return ActorInteractionContextImpl(
+		return ActorInteractionContext(
 			signalHandler = mockk(relaxed = true),
 			view = mockk(relaxed = true),
 			mouseEvent = mockk(),

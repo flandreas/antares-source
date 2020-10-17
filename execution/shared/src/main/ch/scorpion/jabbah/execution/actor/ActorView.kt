@@ -3,6 +3,9 @@ package ch.scorpion.jabbah.execution.actor
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.InputEventHandler
+import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -13,7 +16,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 interface ActorView {
 
     /**
-     * Returns the [ActorInteractionHandler] that handles user interactions on this [ActorView],
+     * Returns the [InputEventHandler] that handles user interactions on this [ActorView] during execution,
      * or ´null` if this [ActorView] doesn't react to input events during execution.
      */
     fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler?
@@ -27,31 +30,18 @@ interface ActorView {
     fun getExecutionTooltip(x: Double, y: Double): Tooltip?
 }
 
-interface ActorInteractionContext {
-
-	val signalHandler: SignalHandler
-	val view: View<*>
-	val mouseEvent: MouseEvent?
-	val keyEvent: KeyEvent?
-	val x: Double
-	val y: Double
-
-	/** Returns a copy of this [ActorInteractionContext] with other x and y coordinates*/
-	fun withXY(x: Double, y: Double): ActorInteractionContext
-}
-
-class ActorInteractionContextImpl(
-	override val signalHandler: SignalHandler,
-	override val view: View<*>,
-	override val mouseEvent: MouseEvent? = null,
-	override val keyEvent: KeyEvent? = null,
-	override val x: Double = 0.0,
-	override val y: Double = 0.0
-) : ActorInteractionContext {
+open class ActorInteractionContext(
+	val signalHandler: SignalHandler,
+	view: View<*>,
+	mouseEvent: MouseEvent? = null,
+	keyEvent: KeyEvent? = null,
+	x: Double = 0.0,
+	y: Double = 0.0
+) : InputEventContext(view, mouseEvent, keyEvent, x, y) {
 
 	/** Returns a copy of this [ActorInteractionContext] with other x and y coordinates*/
 	override fun withXY(x: Double, y: Double): ActorInteractionContext {
-		return ActorInteractionContextImpl(
+		return ActorInteractionContext(
 			signalHandler = signalHandler,
 			view = view,
 			mouseEvent = this.mouseEvent,
@@ -62,68 +52,13 @@ class ActorInteractionContextImpl(
 	}
 }
 
-/**
- * A part of an [ActorView] that handles input events.
- *
- * All [ActorInteractionHandler] methods return the [ActorInteractionHandler] that should receive the next mouse input
- * (including this handler itself), or `null` if the next recipient cannot be determined.
- */
-interface ActorInteractionHandler {
+typealias ActorInteractionHandler = InputEventHandler<ActorInteractionContext>
 
-    fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler?
-
-    fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler?
-
-    fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler?
-
-    fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler?
-
-    fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler?
-
-    fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler?
-
-	fun keyReleased(context: ActorInteractionContext): ActorInteractionHandler?
-}
-
-open class ActorInteractionHandlerAdapter : ActorInteractionHandler {
-
-    override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
-        return null
-    }
-
-    override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
-	    return null
-    }
-
-    override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler? {
-	    return null
-    }
-
-    override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
-	    return null
-    }
-
-    override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-	    return null
-    }
-
-    override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
-	    return null
-    }
-
-	override fun keyReleased(context: ActorInteractionContext): ActorInteractionHandler? {
-		return null
-	}
-}
-
-/** An [ActorInteractionHandlerAdapter] that displays [Cursor.HAND] in [mouseMoved].*/
-open class ClickableActorInteractionHandlerAdapter : ActorInteractionHandlerAdapter() {
+/** An [InputEventHandler] that displays [Cursor.HAND] in [mouseMoved].*/
+open class ClickableActorInteractionHandlerAdapter : InputEventHandlerAdapter<ActorInteractionContext>() {
 
 	override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 		context.view.setCursor(Cursor.HAND)
 		return null
 	}
 }
-
-@Suppress("unused")
-object EmptyActorInteractionHandler : ActorInteractionHandlerAdapter()

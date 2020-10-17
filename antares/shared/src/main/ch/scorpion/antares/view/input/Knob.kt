@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
+import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
@@ -19,7 +20,6 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.execution.actor.ActorView
 import kotlin.math.*
 
@@ -159,7 +159,7 @@ class KnobView(
 	}
 
 	/** Controls popup and rotation of [KnobView]. */
-	private inner class Handler : ActorInteractionHandlerAdapter() {
+	private inner class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {
 
 		private var pressedModelAngle: Double = 0.0
 		private var pressedAngle: Double = 0.0

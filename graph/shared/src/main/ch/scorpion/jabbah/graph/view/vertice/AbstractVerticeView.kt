@@ -28,7 +28,6 @@ import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.execution.actor.ActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
@@ -70,7 +69,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 			}
 		}
 
-		protected open class CannotOpenActorClickHandler : ActorInteractionHandlerAdapter() {
+		protected open class CannotOpenActorClickHandler : InputEventHandlerAdapter<ActorInteractionContext>() {
 			var component: Component? = null
 			override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
 				if (context.mouseEvent!!.clickCount == 2) {
@@ -359,7 +358,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 	 * @throws NoSuchElementException if not exists
 	 */
 	protected fun getInput(): PortView<*> {
-		return getPortView(model.getInput<Any>())!!
+		return getPortView(model.getInput())!!
 	}
 
 	/**
@@ -367,7 +366,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 	 * @throws NoSuchElementException if not exists
 	 */
 	protected fun getOutput(): PortView<*> {
-		return getPortView(model.getOutput<Any>())!!
+		return getPortView(model.getOutput())!!
 	}
 
 	/** Returns the [PortView]s that point to the specified [Direction].*/

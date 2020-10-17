@@ -2,7 +2,6 @@ package ch.scorpion.antares.view.inout
 
 import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.model.inout.CircuitInOutImpl
-import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.DigitalPortView
@@ -11,11 +10,15 @@ import ch.scorpion.antares.view.signal.NumberView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.KeyEvent
-import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.Color

@@ -3,12 +3,10 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.FocusManager
-import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -48,11 +46,6 @@ class GraphViewExecutionHandler(
 		private val LOG by logger(GraphViewExecutionHandler::class)
 	}
 
-	private val context = ReusableActorInteractionContext(
-		signalHandler = scheduler.signalHandler,
-		view = view
-	)
-
 	/** The target [ActorInteractionHandler] to which the next event is forwarded during complex interactions.*/
 	private var target: ActorInteractionHandler? = null
 
@@ -72,6 +65,7 @@ class GraphViewExecutionHandler(
 		view.removeMouseListener(mouseHandler)
 	}
 
+	// TODO Refactoring: Many commonalities with SelectionToolImpl. Unify!
 	private inner class MouseHandler : MouseAdapter() {
 
 		override fun mouseMoved(e: MouseEvent) {
@@ -180,11 +174,13 @@ class GraphViewExecutionHandler(
 		}
 
 		private fun mouseEventContext(e: MouseEvent, x: Double, y: Double): ActorInteractionContext {
-			context.mouseEvent = e
-			context.keyEvent = null
-			context.x = x
-			context.y = y
-			return context
+			return ActorInteractionContext(
+				signalHandler = scheduler,
+				view = view,
+				mouseEvent = e,
+				x = x,
+				y = y
+			)
 		}
 	}
 
@@ -206,8 +202,8 @@ class GraphViewExecutionHandler(
 			if (FocusManager.focusOwner == null) {
 				view.drawing.getVerticeViews().forEach {
 					it.getActorInteractionHandler(context)?.keyPressed(context)
-					context.keyEvent?.let {
-						if (it.isConsumed()) {
+					context.keyEvent?.let { event ->
+						if (event.isConsumed()) {
 							return
 						}
 					}
@@ -227,8 +223,8 @@ class GraphViewExecutionHandler(
 			if (FocusManager.focusOwner == null) {
 				view.drawing.getVerticeViews().forEach {
 					it.getActorInteractionHandler(context)?.keyReleased(context)
-					context.keyEvent?.let {
-						if (it.isConsumed()) {
+					context.keyEvent?.let { event ->
+						if (event.isConsumed()) {
 							return
 						}
 					}
@@ -237,29 +233,11 @@ class GraphViewExecutionHandler(
 		}
 
 		private fun keyEventContext(e: KeyEvent): ActorInteractionContext {
-			context.mouseEvent = null
-			context.keyEvent = e
-			context.x = 0.0
-			context.y = 0.0
-			return context
-		}
-	}
-
-	/** Used to avoid object creation for every event.*/
-	private inner class ReusableActorInteractionContext(
-		override val signalHandler: SignalHandler,
-		override val view: View<*>,
-		override var mouseEvent: MouseEvent? = null,
-		override var keyEvent: KeyEvent? = null,
-		override var x: Double = 0.0,
-		override var y: Double = 0.0
-	) : ActorInteractionContext {
-
-		/** Returns a copy of this [ActorInteractionContext] with other x and y coordinates*/
-		override fun withXY(x: Double, y: Double): ActorInteractionContext {
-			context.x = x
-			context.y = y
-			return context
+			return ActorInteractionContext(
+				signalHandler = scheduler,
+				view = view,
+				keyEvent = e
+			)
 		}
 	}
 }

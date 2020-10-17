@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.TWO_PI
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
-import ch.scorpion.jabbah.execution.actor.ActorInteractionContextImpl
 import io.mockk.every
 import io.mockk.mockk
 import kotlin.math.PI
@@ -115,12 +114,13 @@ class KnobViewTest {
 		val mouseEvent = mockk<MouseEvent>()
 		every { mouseEvent.clickCount } returns clickCount
 		every { mouseEvent.button} returns Button.BUTTON1
-		return ActorInteractionContextImpl(
+		return ActorInteractionContext(
 			signalHandler = mockk(),
 			view = mockk(),
 			mouseEvent = mouseEvent,
 			keyEvent = mockk(),
 			x = x,
-			y = y)
+			y = y
+		)
 	}
 }
