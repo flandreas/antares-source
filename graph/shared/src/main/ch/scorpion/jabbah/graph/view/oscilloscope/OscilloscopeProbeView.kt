@@ -63,12 +63,15 @@ class OscilloscopeProbeView(
 	override val lineWidth: Double get() = 0.0
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? =
-		Tooltip(Translations.getString("graph.action.oscilloscope.dragProbe.name"), toAbsoluteLocation(Point2D(x, y)))
+		if (verticeViewPresent) createTooltip(x, y) else null
 
 	override fun createEditInteractionHandler(): InputEventHandler<InputEventContext> =
 		Handler() as InputEventHandler<InputEventContext>
 
 	/** ---- [OscilloscopeProbeView] */
+
+	private fun createTooltip(x: Double, y: Double): Tooltip =
+		Tooltip(Translations.getString("graph.action.oscilloscope.dragProbe.name"), toAbsoluteLocation(Point2D(x, y)))
 
 	fun handleProbeViewRemovedFromDrawing() {
 		invalidate()
@@ -83,6 +86,14 @@ class OscilloscopeProbeView(
 	 * its [OscilloscopeProbeVerticeView] to control dragging into the [GraphView].
 	 */
 	private inner class Handler : EditInteractionHandler() {
+
+		override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+			if (!verticeViewPresent) {
+				// don't hover/highlight
+				return null
+			}
+			return super.mouseMoved(context)
+		}
 
 		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			LOG.debug("OscilloscopeProbeView pressed ${context.x},${context.y}")
