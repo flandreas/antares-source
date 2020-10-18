@@ -17,6 +17,7 @@ open class GraphTheme(
 	predefinedColors: List<PredefinedColor> = DEF_PREDEFINED_COLORS,
 	background: Style = DEF_BACKGROUND,
 	figure: Style = DEF_FIGURE,
+	annotation: Style = DEF_ANNOTATION,
 	tooltip: Style = DEF_TOOLTIP,
 	shadow: CompositeColor = DEF_SHADOW,
 	hover: CompositeColor = DEF_HOVER,
@@ -26,7 +27,6 @@ open class GraphTheme(
 	messageError: Style = DEF_MESSAGE_ERROR,
 	val vertice: Style = DEF_VERTICE,
 	val edge: EdgeStyle = DEF_EDGE,
-	val annotation: Style = DEF_ANNOTATION,
 	val explanation: Style = DEF_EXPLANATION,
 	val subsystem: Style = DEF_SUBSYSTEM,
 	val error: CompositeColor = DEF_ERROR,
@@ -39,6 +39,7 @@ open class GraphTheme(
 	predefinedColors,
 	background,
 	figure,
+	annotation,
 	tooltip,
 	shadow,
 	hover,
@@ -51,7 +52,6 @@ open class GraphTheme(
 	companion object {
 		val DEF_VERTICE = BasicStyle()
 		val DEF_EDGE = EdgeStyle()
-		val DEF_ANNOTATION = BasicStyle()
 		val DEF_EXPLANATION = BasicStyle()
 		val DEF_SUBSYSTEM = BasicStyle()
 		val DEF_ERROR = CompositeColor(foregroundColor = Color.RED, backgroundColor = Color(255, 214, 214), textColor = Color.BLACK)
@@ -62,7 +62,6 @@ open class GraphTheme(
 		super.activateIn(styleRepository, styleOnly)
 		styleRepository.registerStyle(GraphStyleType.VERTICE, vertice)
 		styleRepository.registerStyle(GraphStyleType.EDGE, edge)
-		styleRepository.registerStyle(GraphStyleType.ANNOTATION, annotation)
 		styleRepository.registerStyle(GraphStyleType.EXPLANATION, explanation)
 		styleRepository.registerStyle(GraphStyleType.SUBSYSTEM, subsystem)
 

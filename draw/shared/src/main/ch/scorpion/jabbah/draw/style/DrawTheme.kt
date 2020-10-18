@@ -10,6 +10,7 @@ open class DrawTheme(
 	private val predefinedColors: List<PredefinedColor> = DEF_PREDEFINED_COLORS,
 	val background: Style = DEF_BACKGROUND,
 	val figure: Style = DEF_FIGURE,
+	val annotation: Style = DEF_ANNOTATION,
 	val tooltip: Style = DEF_TOOLTIP,
 	val shadow: CompositeColor = DEF_SHADOW,
 	val hover: CompositeColor = DEF_HOVER
@@ -19,7 +20,8 @@ open class DrawTheme(
 		const val DEF_NAME = "default"
 		const val DEF_DARK = false
 		val DEF_BACKGROUND = BasicStyle(CompositeColor(Color(240, 240, 240), Color.WHITE, Color.BLACK))
-		val DEF_FIGURE = BasicStyle(CompositeColor(Color.BLACK, Color.WHITE, Color.BLACK))
+		val DEF_FIGURE = BasicStyle()
+		val DEF_ANNOTATION = BasicStyle(stroke = DEF_FIGURE.stroke.thinner)
 		val DEF_TOOLTIP = BasicStyle(CompositeColor(foregroundColor = Color(249, 214, 54),
 			backgroundColor = Color(255, 253, 219), textColor = Color.BLACK))
 		val DEF_SHADOW = CompositeColor(Color.GRAY, Color.GRAY, Color.GRAY)
@@ -59,6 +61,7 @@ open class DrawTheme(
 		}
 		styleRepository.registerStyle(StyleType.BACKGROUND, background)
 		styleRepository.registerStyle(StyleType.FIGURE, figure)
+		styleRepository.registerStyle(StyleType.ANNOTATION, annotation)
 		styleRepository.registerStyle(StyleType.TOOLTIP, tooltip)
 	}
 }

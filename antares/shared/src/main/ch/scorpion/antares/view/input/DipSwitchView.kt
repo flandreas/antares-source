@@ -39,7 +39,6 @@ import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -73,7 +72,7 @@ class DipSwitchView(
 
 	/** Single instance used as flyweight to draw the index number above [BitView]s.*/
 	private val bitLabelFlyweight = Label(
-		font = styleProvider.getStyle(GraphStyleType.ANNOTATION).font,
+		font = styleProvider.getStyle(StyleType.ANNOTATION).font,
 		text = "",
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.BOTTOM)
@@ -456,7 +455,7 @@ class DipSwitchView(
 			context.g.fillRect(x, y, width, height)
 
 			context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.FIGURE).color).foregroundColor)
-			context.g.stroke = styleProvider.getStyle(GraphStyleType.ANNOTATION).stroke
+			context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 			context.g.drawRect(x, y, width, height)
 
 			val bitY = if (bit.isSet) {

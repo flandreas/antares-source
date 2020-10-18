@@ -205,7 +205,7 @@ class DigitalPortView(
 
 		drawLogic(context)
 
-		context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(GraphStyleType.ANNOTATION).color).foregroundColor)
+		context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.ANNOTATION).color).foregroundColor)
 		if (hasInternalInputAnnotation) {
 			drawInternalInputAnnotation(context)
 		}
@@ -468,7 +468,7 @@ class DigitalPortView(
 	private fun drawInternalInputAnnotation(context: DrawContext) {
 		if (hasInternalInputAnnotation) {
 			val angle = direction.rotation.angle
-			context.g.stroke = styleProvider.getStyle(GraphStyleType.ANNOTATION).stroke
+			context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 			context.g.rotate(angle)
 			context.g.draw(EDGE_TRIGGER_PATH)
 			context.g.rotate(-angle)
@@ -486,7 +486,7 @@ class DigitalPortView(
 	private fun drawInternalOutputAnnotation(context: DrawContext) {
 		if (hasInternalOutputAnnotation) {
 			val angle = direction.rotation.angle
-			context.g.stroke = styleProvider.getStyle(GraphStyleType.ANNOTATION).stroke
+			context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 			context.g.rotate(angle)
 			context.g.draw(getOutputAnnotationPath()!!)
 			context.g.rotate(-angle)

@@ -20,10 +20,9 @@ class OscilloscopeProbeView(
 	private val origLocSource: () -> Point2D,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : IconButton<EditInputEventContext>(
-	icon = OscilloscopeProbeViewIcon(rowNumber, color, styleProvider),
+	icon = OscilloscopeProbeViewIcon(rowNumber, color),
 	action = {},
 	location = location,
-	styleProvider = styleProvider
 ) {
 
 	companion object {

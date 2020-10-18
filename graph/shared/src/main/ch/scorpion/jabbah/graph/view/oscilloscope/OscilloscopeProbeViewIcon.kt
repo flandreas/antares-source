@@ -7,10 +7,9 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Icon
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.DrawTheme
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 /**
  * The graphical figure used in probe views.
@@ -18,7 +17,6 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 class OscilloscopeProbeViewIcon(
 	rowNumber: Int,
 	var color: CompositeColor,
-	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	ownerRotation: Rotation = Rotation.R0
 ) : Icon {
 
@@ -36,7 +34,7 @@ class OscilloscopeProbeViewIcon(
 
 	private val label = Label(
 		text = rowNumber.toString(),
-		font = styleProvider.getStyle(GraphStyleType.VERTICE).font,
+		font = Themes.get<DrawTheme>().annotation.font,
 		location = Point2D(20, 17),
 		rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL
 	)
@@ -71,7 +69,6 @@ class OscilloscopeProbeViewIcon(
 			context.g.fill(PATH)
 		}
 		context.g.color = context.choose(color).foregroundColor
-		context.g.stroke = styleProvider.getStyle(GraphStyleType.ANNOTATION).stroke
 		context.g.draw(PATH)
 		label.draw(context)
 

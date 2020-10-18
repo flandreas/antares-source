@@ -9,7 +9,9 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
-import ch.scorpion.jabbah.draw.graphics.*
+import ch.scorpion.jabbah.draw.graphics.Font
+import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -17,7 +19,6 @@ import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import kotlin.math.max
 import kotlin.math.min
 
@@ -144,7 +145,7 @@ class AddressableContentsView(
 		}
 
 		context.g.stroke = STROKE
-		context.g.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).foregroundColor
+		context.g.color = context.choose(context.styleColor(styleProvider.getStyle(StyleType.ANNOTATION).color)).foregroundColor
 		context.g.drawRect(
 			bounds.x + HORIZONTAL_INSET + addressColumnWidth + COL_DIST / 2.0,
 			bounds.y,
@@ -203,7 +204,7 @@ class AddressableContentsView(
 		context.g.font = font
 
 		// Draw address
-		addressLabel.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).disabledTextColor
+		addressLabel.color = context.choose(context.styleColor(styleProvider.getStyle(StyleType.ANNOTATION).color)).disabledTextColor
 		addressLabel.text = BitOperation.longToHexPadded(address.toLong(), addressable.addressWidth)
 		addressLabel.location = Point2D(x, y)
 		addressLabel.draw(context)
@@ -213,15 +214,15 @@ class AddressableContentsView(
 		(address until address + effectiveColumnCount).forEach { cellAddress ->
 			val isCurrent = cellAddress == addressable.currentAddress && context.castedAppContext<GraphApplicationContext>()!!.isExecute
 			if (isCurrent && (addressable.isSelected || highlightCurrentCellWhenNotSelected)) {
-				context.g.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).foregroundColor
+				context.g.color = context.choose(context.styleColor(styleProvider.getStyle(StyleType.ANNOTATION).color)).foregroundColor
 				context.g.fillRect(
 					x - COL_DIST / 2 - 0.5,
 					y - rowHeight / 2,
 					dataColumnWidth.toDouble() + COL_DIST,
 					rowHeight.toDouble())
-				dataLabel.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).backgroundColor
+				dataLabel.color = context.choose(context.styleColor(styleProvider.getStyle(StyleType.ANNOTATION).color)).backgroundColor
 			} else {
-				dataLabel.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).textColor
+				dataLabel.color = context.choose(context.styleColor(styleProvider.getStyle(StyleType.ANNOTATION).color)).textColor
 			}
 
 			dataLabel.text = BitOperation.longToHexPadded(addressable.dataAt(cellAddress), addressable.dataWidth)
@@ -232,7 +233,7 @@ class AddressableContentsView(
 		}
 
 		if (showDisassembler) {
-			dataLabel.color = context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.ANNOTATION).color)).textColor
+			dataLabel.color = context.choose(context.styleColor(styleProvider.getStyle(StyleType.ANNOTATION).color)).textColor
 			dataLabel.text = addressable.disassemblyAt(address)
 			dataLabel.location = Point2D(x, y)
 			dataLabel.draw(context)

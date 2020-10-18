@@ -486,7 +486,7 @@ class SwitchView(
 			context.g.translate(DigitalPortView.LENGTH + SIZE / 2.0, 0.0)
 
 			drawCircles(context)
-			context.g.stroke = styleProvider.getStyle(GraphStyleType.ANNOTATION).stroke
+			context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 			if (toggle) {
 				drawToggleSymbol(context)
 			} else {

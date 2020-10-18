@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.base.Thousands
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.graph.view.style.GraphStyleType
+import ch.scorpion.jabbah.draw.style.StyleType
 
 /**
  * A view of a [DelayGate].
@@ -57,7 +57,7 @@ class DelayGateView(
         } else {
             context.g.color = foregroundColor
         }
-        context.g.stroke = styleProvider.getStyle(GraphStyleType.ANNOTATION).stroke
+        context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 
         val sizeHalf = 12
         context.g.translate(bounds.centerX, 0.0)

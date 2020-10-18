@@ -8,7 +8,7 @@ import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.graph.view.style.GraphStyleType
+import ch.scorpion.jabbah.draw.style.StyleType
 
 /** A view representation of a [Random].*/
 class RandomView(
@@ -46,7 +46,7 @@ class RandomView(
 		} else {
 			context.g.color = foregroundColor
 		}
-		context.g.stroke = styleProvider.getStyle(GraphStyleType.ANNOTATION).stroke
+		context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 
 		context.g.translate(-(DigitalPortView.LENGTH + bounds.width / 2 + DICE_SIZE / 2), - bounds.height / 3)
 		drawDice(context)

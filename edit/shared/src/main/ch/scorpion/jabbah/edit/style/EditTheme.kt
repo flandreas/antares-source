@@ -16,6 +16,7 @@ open class EditTheme(
 	predefinedColors: List<PredefinedColor> = DEF_PREDEFINED_COLORS,
 	background: Style = DEF_BACKGROUND,
 	figure: Style = DEF_FIGURE,
+	annotation: Style = DEF_ANNOTATION,
 	tooltip: Style = DEF_TOOLTIP,
 	shadow: CompositeColor = DEF_SHADOW,
 	hover: CompositeColor = DEF_HOVER,
@@ -31,6 +32,7 @@ open class EditTheme(
 	predefinedColors,
 	background,
 	figure,
+	annotation,
 	tooltip,
 	shadow,
 	hover

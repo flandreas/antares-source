@@ -7,24 +7,24 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Icon
-import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.*
 
 /**
  * An implementation of a simple button as a [Drawable] that uses an [Icon] for rendering.
  * Provides a hovering behaviour by altering the icon's color while the mouse is located
  * of the icon.
+ *
+ * Uses the properties of [StyleType.ANNOTATION] for drawing.
  */
 abstract class AbstractIconButton(
 	protected val icon: Icon,
 	location: Point2D = Point2D.ZERO,
-	var tooltipKey: String? = null,
-	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	var tooltipKey: String? = null
 ) : AbstractRectangle(location.x, location.y, icon.dim.width, icon.dim.height) {
 
 	companion object {
 		private val LOG by logger(AbstractIconButton::class)
-		private val STROKE = Stroke(1.5f)
+		private val STROKE = Themes.get<DrawTheme>().annotation.stroke
 	}
 
 	var enabled: Boolean = true
@@ -59,7 +59,7 @@ abstract class AbstractIconButton(
 			context.color = Themes.get<DrawTheme>().hover
 		} else if (!enabled) {
 			context.useContextColors = true
-			context.color = styleProvider.getStyle(StyleType.FIGURE).color.withAlpha(128)
+			context.color = Themes.get<DrawTheme>().annotation.color.withAlpha(128)
 		} else {
 			context.useContextColors = false
 		}

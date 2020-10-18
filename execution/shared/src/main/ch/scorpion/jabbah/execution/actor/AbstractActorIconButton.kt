@@ -5,8 +5,6 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.drawable.AbstractIconButton
 import ch.scorpion.jabbah.draw.graphics.Icon
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
 
 /**
  * Base class for implementing buttons whose [handleClicked] method is called when the user clicks
@@ -15,9 +13,8 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 abstract class AbstractActorIconButton(
 	icon: Icon,
 	location: Point2D = Point2D.ZERO,
-	tooltipKey: String? = null,
-	styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : AbstractIconButton(icon, location, tooltipKey, styleProvider), ActorView {
+	tooltipKey: String? = null
+) : AbstractIconButton(icon, location, tooltipKey), ActorView {
 
 	private val actorInteractionHandler = Handler()
 

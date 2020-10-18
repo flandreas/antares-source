@@ -5,8 +5,6 @@ import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.graphics.Icon
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
 
 /**
  * Calls the specified action when the user clicks the icon while editing.
@@ -15,9 +13,8 @@ open class IconButton<C: InputEventContext>(
 	icon: Icon,
 	private val action: () -> Unit,
 	location: Point2D = Point2D.ZERO,
-	tooltipKey: String? = null,
-	styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : AbstractIconButton(icon, location, tooltipKey, styleProvider) {
+	tooltipKey: String? = null
+) : AbstractIconButton(icon, location, tooltipKey) {
 
 	private val handler = createEditInteractionHandler()
 

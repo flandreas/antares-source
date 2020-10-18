@@ -60,7 +60,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 			icon.color = value
 		}
 
-	private val icon = OscilloscopeProbeViewIcon(rowNumber, color, styleProvider)
+	private val icon = OscilloscopeProbeViewIcon(rowNumber, color)
 
 	/** The [EdgeView] to which this [OscilloscopeProbeVerticeView] is connected.*/
 	private var edgeView: EdgeView<T>? = null

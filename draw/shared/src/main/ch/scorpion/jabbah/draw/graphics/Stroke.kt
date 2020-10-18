@@ -15,7 +15,7 @@ enum class LineJoin {
 }
 
 /**
- * An implementation of the [Stroke] interface mainly to be used for targeting the JavaScript platform.
+ * A [Stroke] contains platform-independent definitions of how lines and shapes are rendered.
  */
 data class Stroke(
 	val width: Float = 1.0f,
@@ -48,6 +48,37 @@ data class Stroke(
 				throw IllegalArgumentException("dash lengths all zero")
 			}
 		}
+	}
+
+	val thinner: Stroke get() = this.copy(width = this.width * 0.7f)
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other == null || this::class != other::class) return false
+
+		other as Stroke
+
+		if (width != other.width) return false
+		if (cap != other.cap) return false
+		if (join != other.join) return false
+		if (miterLimit != other.miterLimit) return false
+		if (dash != null) {
+			if (other.dash == null) return false
+			if (!dash.contentEquals(other.dash)) return false
+		} else if (other.dash != null) return false
+		if (dashPhase != other.dashPhase) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = width.hashCode()
+		result = 31 * result + cap.hashCode()
+		result = 31 * result + join.hashCode()
+		result = 31 * result + miterLimit.hashCode()
+		result = 31 * result + (dash?.contentHashCode() ?: 0)
+		result = 31 * result + (dashPhase?.hashCode() ?: 0)
+		return result
 	}
 }
 

@@ -163,7 +163,6 @@ object GraphViewModule : AbstractModule() {
 
 	private fun configureStyleRepository(repository: StyleRepository) {
 		repository.registerStyle(GraphStyleType.VERTICE, BasicStyle())
-		repository.registerStyle(GraphStyleType.ANNOTATION, BasicStyle())
 		repository.registerStyle(GraphStyleType.EDGE, BasicStyle())
 		repository.registerStyle(GraphStyleType.EXPLANATION, BasicStyle())
 		repository.registerStyle(GraphStyleType.SUBSYSTEM, BasicStyle())

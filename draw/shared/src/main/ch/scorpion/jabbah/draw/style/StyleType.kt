@@ -14,9 +14,10 @@ import ch.scorpion.jabbah.base.Translations
 open class StyleType(val name: String, val descriptionKey: String, val isSystem: Boolean = false) {
 
     companion object {
-        val FIGURE: StyleType = StyleType("figure", "draw.styleType.figure.name")
-        val BACKGROUND: StyleType = StyleType("background", "draw.styleType.background.name", true)
-        val TOOLTIP: StyleType = StyleType("tooltip", "draw.styleType.tooltipView.name", true)
+        val FIGURE = StyleType("figure", "draw.styleType.figure.name")
+	    val ANNOTATION = StyleType("annotation", "draw.styleType.annotation.name")
+        val BACKGROUND = StyleType("background", "draw.styleType.background.name", true)
+        val TOOLTIP = StyleType("tooltip", "draw.styleType.tooltipView.name", true)
     }
 
     val description: String get() = Translations.getString(descriptionKey)
