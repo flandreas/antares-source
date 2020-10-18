@@ -41,6 +41,11 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 		/** The horizontal inset used when drawing the arrow head of a multi-bit signal curve.*/
 		private const val MULTIBIT_INSET = 3.0
 
+		private const val BUFFER_END_CIRCLE_COUNT = 3
+		private const val BUFFER_END_CIRCLE_RADIUS = 2.0
+		private const val BUFFER_END_CIRCLE_DIST = 6.0
+		private const val BUFFER_END_WIDTH = BUFFER_END_CIRCLE_COUNT * BUFFER_END_CIRCLE_DIST + 2 * BUFFER_END_CIRCLE_RADIUS
+
 		/** The name of the [Boolean] property in [Properties] that determines whether signal curves are filled.*/
 		const val PROP_FILL_SIGNAL = "DigitalSignalHistoryDrawer.fillSignal"
 	}
@@ -128,13 +133,14 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 		val singleBit = signalHistory!!.last().signal.getBitWidth().width == 1
 		var lastPoint = Point2D.ZERO
 		var lastEntry: SignalHistoryEntry<DigitalSignal>? = null
+		var effNextX: Double = rightBorder
 		for (entry in signalHistory!!.getReverseEntriesUntil(0)) {
 			val x = rightBorder - timeline!!.getX(entry.time)
 			val y = signalY(entry)
 			if (lastEntry == null) {
 				// Right border
 				lastPoint = Point2D(x, y)
-				val effNextX = max(x, bounds.minX)
+				effNextX = max(x, bounds.minX)
 
 				if (singleBit) {
 					drawSingleBitRightBorder(context, effNextX, y)
@@ -151,7 +157,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 			} else {
 				val nextX = x
 				val nextY = y
-				val effNextX = max(nextX, bounds.minX)
+				effNextX = max(nextX, bounds.minX)
 
 				if (singleBit) {
 					drawSingleBitSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
@@ -170,6 +176,23 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 			}
 
 			lastEntry = entry
+		}
+
+		lastEntry?.let {
+			if (signalHistory!!.overflow && effNextX - BUFFER_END_WIDTH > bounds.minX) {
+				drawBufferEnd(context, effNextX)
+			}
+		}
+	}
+
+	private fun drawBufferEnd(context: DrawContext, xL: Double) {
+		val y = baseLineY - SIGNAL_HEIGHT / 2
+		context.g.color = BACKGROUND_COLOR.foregroundColor
+
+		var x = xL
+		for (i in 1..BUFFER_END_CIRCLE_COUNT) {
+			context.g.fillCircle(x, y, BUFFER_END_CIRCLE_RADIUS)
+			x -= BUFFER_END_CIRCLE_DIST
 		}
 	}
 

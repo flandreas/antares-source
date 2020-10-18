@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model.module
 
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
@@ -41,6 +42,7 @@ object GraphModelModule : AbstractModule() {
 		RepositoryModule.require()
 		ScriptModule.require()
 
+		fillProperties(BaseModule.properties)
 		configureTypeMap(IOModule.typeMap)
 
 		Translations.addBundle("jabbah-graph")
@@ -68,5 +70,9 @@ object GraphModelModule : AbstractModule() {
 
 		typeMap.register("usecases", UsecasesImpl::class)
 		typeMap.register("usecase", UsecaseImpl::class)
+	}
+
+	private fun fillProperties(properties: Properties) {
+		properties.set(Oscilloscope.PROP_BUFFER_SIZE, 50)
 	}
 }

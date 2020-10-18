@@ -1,10 +1,10 @@
 package ch.scorpion.jabbah.graph.model.oscilloscope
 
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.SignalHandlerMockBuilder
 import ch.scorpion.jabbah.graph.model.GraphModelTestRule
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.port.PortImpl
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,14 +17,8 @@ class OscilloscopeTest {
 		}
 	}
 
-	private lateinit var signalHandler: SignalHandlerMockBuilder
-	private lateinit var oscilloscope: Oscilloscope
-
-	@BeforeTest
-	fun setup() {
-		signalHandler = SignalHandlerMockBuilder()
-		oscilloscope = Oscilloscope()
-	}
+	private val signalHandler = SignalHandlerMockBuilder()
+	private val oscilloscope = Oscilloscope()
 
 	@Test
 	fun shouldUpdateMaxTime() {
@@ -33,6 +27,18 @@ class OscilloscopeTest {
 		input("1", 100, true)
 		input("1", 200, false)
 		assertEquals(200L, oscilloscope.maxTime)
+	}
+
+	@Test
+	fun shouldTruncateEntries() {
+		BaseModule.properties.customize(Oscilloscope.PROP_BUFFER_SIZE, 2)
+		createPorts(1)
+		oscilloscope.executionStarted(signalHandler.build())
+		input("1", 100, true)
+		input("1", 200, false)
+		input("1", 300, true)
+
+		assertEquals(2, oscilloscope.getSignalHistory("1")!!.size)
 	}
 
 	private fun createPorts(portsCount: Int) {

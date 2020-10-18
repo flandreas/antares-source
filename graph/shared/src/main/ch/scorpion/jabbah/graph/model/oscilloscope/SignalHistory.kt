@@ -16,6 +16,8 @@ interface SignalHistory<out T : Any> {
 
 	val isEmpty: Boolean get() = size == 0
 
+	val overflow: Boolean
+
 	/** Returns the number of entries in this [SignalHistory].*/
 	val size: Int
 
@@ -34,15 +36,20 @@ interface SignalHistory<out T : Any> {
  * [SignalHistoryEntries][SignalHistoryEntry] must be added by clients of this class
  * in ascending time order.
  */
-class SignalHistoryImpl<T : Any> : SignalHistory<T> {
+class SignalHistoryImpl<T : Any>(
+	private val bufferSize: Int
+) : SignalHistory<T> {
 
 	/** Holds the entries of this [SignalHistoryImpl], having the newest entry as the last position.*/
 	private val list = mutableListOf<SignalHistoryEntry<T>>()
 
-	/** ---- [SignalHistoryImpl] */
+	/** ---- [SignalHistory] interface */
 
 	/** Returns the number of entries in this [SignalHistory].*/
 	override val size: Int get() = list.size
+
+	override var overflow: Boolean = bufferSize == 0
+		private set
 
 	/** Iterates the [SignalHistoryEntries][SignalHistoryEntry] since the specified execution time in ascending time order.*/
 	override fun getEntriesSince(startTime: Long): Iterator<SignalHistoryEntry<T>> {
@@ -71,6 +78,7 @@ class SignalHistoryImpl<T : Any> : SignalHistory<T> {
 
 	fun clear() {
 		list.clear()
+		overflow = bufferSize == 0
 	}
 
 	fun add(signal: T, time: Long) {
@@ -80,15 +88,11 @@ class SignalHistoryImpl<T : Any> : SignalHistory<T> {
 	fun add(entry: SignalHistoryEntry<T>) {
 		checkArgument(list.isEmpty() || list.last().time <= entry.time)
 		if (list.isEmpty() || list.last().signal != entry.signal) {
+			if (size == bufferSize) {
+				list.removeAt(0)
+				overflow = true
+			}
 			list.add(entry)
 		}
-	}
-
-	/**
-	 * Removes all [SignalHistoryEntries][SignalHistoryEntry] from this [SignalHistory] that are older
-	 * than the specified time. This is only used to avoid memory exhaustion.
-	 */
-	fun truncate(time: Long) {
-		list.removeAll { it.time < time }
 	}
 }

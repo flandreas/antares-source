@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.graph.model.oscilloscope
 
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphElementListener
@@ -19,6 +21,9 @@ import kotlin.math.max
  * A [Vertice] that collects signals from multiple [OscilloscopeProbeVertice]s.
  * [Oscilloscope] has a variable amount of [InputPort]s. Changes of values at the [InputPort]
  * are not processed through the [SignalHandler], but directly communicated to registered [GraphElementListener]s.
+ *
+ * The maximum number of entries in every [SignalHistory] is confined by the [Properties] entry defined by
+ * [PROP_BUFFER_SIZE].
  */
 class Oscilloscope(
 	private val portFactory: PortFactory = GraphModelModule.portFactory
@@ -26,10 +31,13 @@ class Oscilloscope(
 
 	companion object {
 		private val LOG by logger(Oscilloscope::class)
-		private val type = Translations.getString("graph.component.oscilloscope.name")
+		private val TYPE = Translations.getString("graph.component.oscilloscope.name")
+
+		/** The name of the [Int] property in [Properties] */
+		const val PROP_BUFFER_SIZE = "Oscilloscope.bufferSize"
 	}
 
-	/** Maps a probe row number (starting with "1") to its [SignalHistory].*/
+	/** Maps a probe row number (starting with "1") to its [SignalHistory] defining the max. number of buffered signals.*/
 	private val signalHistories = mutableMapOf<String, SignalHistoryImpl<Any>>()
 
 	/**
@@ -41,7 +49,7 @@ class Oscilloscope(
 
 	/** ---- [AbstractVertice] */
 
-	override val type: String get() = Oscilloscope.type
+	override val type: String get() = TYPE
 	override val typeDesc: String get() = ""
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler) {
@@ -69,7 +77,7 @@ class Oscilloscope(
 		signalHistories.clear()
 		maxTime = 0
 
-		getPorts().forEach { signalHistories[it.name!!] = SignalHistoryImpl() }
+		getPorts().forEach { signalHistories[it.name!!] = SignalHistoryImpl(bufferSize) }
 		super.executionStarted(signalHandler)
 	}
 
@@ -80,16 +88,10 @@ class Oscilloscope(
 
 	/** ---- [Oscilloscope] */
 
+	private val bufferSize: Int get() = BaseModule.properties.getInt(PROP_BUFFER_SIZE)
+
 	fun getSignalHistory(rowNumber: String): SignalHistory<Any>? {
 		return signalHistories[rowNumber]
-	}
-
-	/**
-	 * Removes all entries from all [SignalHistories][SignalHistory] of this [Oscilloscope]
-	 * that are older than the specified time.
-	 */
-	fun truncate(time: Long) {
-		signalHistories.forEach { it.value.truncate(time) }
 	}
 
 	private fun storeSignal(input: InputPort<*>, signalHandler: SignalHandler) {

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
 import ch.scorpion.jabbah.base.preferences.FloatPreference
+import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -25,6 +26,7 @@ import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.ui.*
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.graph.GraphViewCopyPasteService
@@ -103,6 +105,10 @@ object GraphViewModuleJvm : AbstractModule() {
 		))
 
 		root.add(PreferenceGroup(PREF_TREE_OSCILLOSCOPE))
+		root.getGroup(PREF_TREE_OSCILLOSCOPE).add(IntPreference(
+			id = Oscilloscope.PROP_BUFFER_SIZE,
+			nameKey = "graph.preferences.Oscilloscope.bufferSize"
+		))
 		root.getGroup(PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(
 			id = OscilloscopeView.PROP_INDIVIDUAL_PROBE_COLORS,
 			nameKey = "graph.preferences.Oscilloscope.useRefColors",
