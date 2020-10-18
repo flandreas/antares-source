@@ -18,6 +18,7 @@ open class EditTheme(
 	figure: Style = DEF_FIGURE,
 	tooltip: Style = DEF_TOOLTIP,
 	shadow: CompositeColor = DEF_SHADOW,
+	hover: CompositeColor = DEF_HOVER,
 	val selection: Style = DEF_SELECTION,
 	val highlight: Style = DEF_HIGHLIGHT,
 	val messageInfo: Style = DEF_MESSAGE_INFO,
@@ -31,7 +32,8 @@ open class EditTheme(
 	background,
 	figure,
 	tooltip,
-	shadow
+	shadow,
+	hover
 ) {
 
 	companion object {

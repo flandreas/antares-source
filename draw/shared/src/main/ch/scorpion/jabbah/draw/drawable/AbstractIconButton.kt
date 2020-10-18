@@ -4,14 +4,11 @@ import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.*
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Icon
 import ch.scorpion.jabbah.draw.graphics.Stroke
-import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.draw.style.*
 
 /**
  * An implementation of a simple button as a [Drawable] that uses an [Icon] for rendering.
@@ -59,8 +56,7 @@ abstract class AbstractIconButton(
 
 		if (isHovering) {
 			context.useContextColors = true
-			// TODO Configurable
-			context.color = CompositeColor(Color.ORANGE)
+			context.color = Themes.get<DrawTheme>().hover
 		} else if (!enabled) {
 			context.useContextColors = true
 			context.color = styleProvider.getStyle(StyleType.FIGURE).color.withAlpha(128)

@@ -60,6 +60,8 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 		backgroundColor = BUS_FILL_COLOR,
 		textColor = Color.WHITE)
 
+	private val SELECTION_COLOR = CompositeColor(foregroundColor = DARK_SELECTION_COLOR, backgroundColor = MAIN_COLOR.backgroundColor)
+
 	private val BACKGROUND_STYLE = BasicStyle(color = BACKGROUND_COLOR, stroke = ANNOTATION_STROKE, font = FONT)
 
 	private val FIGURE_STYLE = BasicStyle(color = MAIN_COLOR, stroke = BOX_STROKE, font = FONT, shadow = true)
@@ -70,7 +72,7 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 
 	private val ANNOTATION_STYLE = BasicStyle(color = MAIN_COLOR, stroke = ANNOTATION_STROKE, font = ANNOTATION_FONT)
 
-	private val SELECTION_STYLE = BasicStyle(color = CompositeColor(foregroundColor = DARK_SELECTION_COLOR, backgroundColor = MAIN_COLOR.backgroundColor))
+	private val SELECTION_STYLE = BasicStyle(color = SELECTION_COLOR)
 
 	private val TOOLTIP_STYLE = BasicStyle(color = TOOLTIP_COLOR, stroke = TOOLTIP_STROKE, font = TOOLTIP_FONT)
 
@@ -109,7 +111,8 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 			error = ERROR_COLOR,
 			focus = FOCUS_STYLE,
 			screen = SCREEN_COLOR,
-			shadow = CompositeColor(SHADOW_COLOR, SHADOW_COLOR)
+			shadow = CompositeColor(SHADOW_COLOR, SHADOW_COLOR),
+			hover = SELECTION_COLOR
 		)
 	}
 }

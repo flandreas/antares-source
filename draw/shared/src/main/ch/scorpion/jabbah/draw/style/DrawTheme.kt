@@ -11,7 +11,8 @@ open class DrawTheme(
 	val background: Style = DEF_BACKGROUND,
 	val figure: Style = DEF_FIGURE,
 	val tooltip: Style = DEF_TOOLTIP,
-	val shadow: CompositeColor = DEF_SHADOW
+	val shadow: CompositeColor = DEF_SHADOW,
+	val hover: CompositeColor = DEF_HOVER
 ) : Theme {
 
 	companion object {
@@ -22,6 +23,8 @@ open class DrawTheme(
 		val DEF_TOOLTIP = BasicStyle(CompositeColor(foregroundColor = Color(249, 214, 54),
 			backgroundColor = Color(255, 253, 219), textColor = Color.BLACK))
 		val DEF_SHADOW = CompositeColor(Color.GRAY, Color.GRAY, Color.GRAY)
+
+		val DEF_HOVER = CompositeColor(Color.ORANGE, Color.WHITE)
 
 		val DEF_REF_COLORS = listOf(
 			// TODO Do the darker colors need individual design?
