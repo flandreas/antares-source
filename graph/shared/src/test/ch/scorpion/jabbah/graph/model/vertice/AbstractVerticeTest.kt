@@ -1,9 +1,11 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.graph.model.GraphModelTestRule
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 
 /**
@@ -21,8 +23,8 @@ class AbstractVerticeTest {
 
 	@Test
 	fun shouldAccessInputsById() {
-		vertice.addPort(PortImpl.createInput(Boolean::class, "A"))
-		vertice.addPort(PortImpl.createInput(Boolean::class, "B"))
+		vertice.addPort(input("A"))
+		vertice.addPort(input("B"))
 
 		assertEquals("A", vertice.getInput<Boolean>(1).name)
 		assertEquals("B", vertice.getInput<Boolean>(2).name)
@@ -30,8 +32,8 @@ class AbstractVerticeTest {
 
 	@Test
 	fun shouldAccessOutputsById() {
-		vertice.addPort(PortImpl.createOutput(Boolean::class, "A"))
-		vertice.addPort(PortImpl.createOutput(Boolean::class, "B"))
+		vertice.addPort(output("A"))
+		vertice.addPort(output("B"))
 
 		assertEquals("A", vertice.getOutput<Boolean>(1).name)
 		assertEquals("B", vertice.getOutput<Boolean>(2).name)
@@ -39,8 +41,8 @@ class AbstractVerticeTest {
 
 	@Test
 	fun shouldProvideTypedPortAccessorsForGenericSignalAccess() {
-		vertice.addPort(PortImpl.createInput(Boolean::class, "A"))
-		vertice.addPort(PortImpl.createOutput(Boolean::class, "B"))
+		vertice.addPort(input("A"))
+		vertice.addPort(output("B"))
 
 		val signalIn: Boolean? = vertice.getInput<Boolean>("A").getIncomingSignal()
 		assertNull(signalIn)
@@ -51,12 +53,26 @@ class AbstractVerticeTest {
 
 	@Test
 	fun shouldProvidePortWithAnyType() {
-		vertice.addPort(PortImpl.createInput(Boolean::class, "A"))
-		vertice.addPort(PortImpl.createOutput(Boolean::class, "B"))
+		vertice.addPort(input("A"))
+		vertice.addPort(output("B"))
 
 		vertice.getInput<Any>("A")
 		vertice.getOutput<Any>("B")
 	}
+
+	@Test
+	fun shouldKeepPortIdUniqueWhenAddingAfterRemoving() {
+		vertice.addPort(input("A"))
+		vertice.addPort(input("B"))
+		vertice.removePort(vertice.getPort<Boolean>("A"))
+		vertice.addPort(input("C"))
+
+		assertNotEquals(vertice.getPort<Boolean>("B").portId, vertice.getPort<Boolean>("C").portId)
+	}
+
+	private fun input(name: String): Port<Boolean> = PortImpl.createInput(Boolean::class, name)
+
+	private fun output(name: String): Port<Boolean> = PortImpl.createOutput(Boolean::class, name)
 
 	private class MyVertice : AbstractVertice("graph.property.label") {
 		override val type: String get() = "MyVertice"

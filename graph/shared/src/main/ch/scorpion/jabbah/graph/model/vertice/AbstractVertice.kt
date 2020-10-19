@@ -66,7 +66,12 @@ abstract class AbstractVertice(
 	}
 
 	override fun <T : Any> addPort(port: Port<T>) {
-		addPort(port, ports.size + 1)
+		addPort(port, freePortId)
+	}
+
+	private val freePortId: Int get() {
+		// For efficiency reasons don't try to find holes in the sequence
+		return (ports.map { it.portId }.maxOrNull() ?: 0) + 1
 	}
 
 	override fun removePort(port: Port<*>) {
@@ -193,6 +198,7 @@ abstract class AbstractVertice(
 	protected fun <T : Any> addPort(port: Port<T>, portId: Int) {
 		checkArgument(!ports.contains(port), "Port already contained")
 		checkArgument(!hasPort(port.name), "Port with name '${port.name}' already contained")
+		checkArgument(ports.none { it.portId == portId }, "Port with ID $portId already contained")
 		ports.add(port)
 		port.portId = portId
 		port.owner = this
