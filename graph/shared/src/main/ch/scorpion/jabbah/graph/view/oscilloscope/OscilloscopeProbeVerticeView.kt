@@ -26,9 +26,9 @@ import ch.scorpion.jabbah.io.*
  * @param T the type of signal that this [OscilloscopeProbeVerticeView]'s [OscilloscopeProbeVertice] can consume.
  */
 class OscilloscopeProbeVerticeView<T : Any>(
-	rowNumber: Int = 1,
+	name: String = "",
 	color: CompositeColor = CompositeColor(),
-	model: OscilloscopeProbeVertice<T> = OscilloscopeProbeVertice(name = rowNumber.toString()),
+	model: OscilloscopeProbeVertice<T> = OscilloscopeProbeVertice(name),
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangularVerticeView<OscilloscopeProbeVertice<T>>(styleProvider, model) {
 
@@ -45,12 +45,12 @@ class OscilloscopeProbeVerticeView<T : Any>(
 			OscilloscopeProbeViewIcon.SIZE + CONN_POINT_SIZE, OscilloscopeProbeViewIcon.SIZE + CONN_POINT_SIZE)
 	}
 
-	var rowNumber: Int
-		get() = model.getPort<Any>().name!!.toInt()
+	var name: String
+		get() = model.getPort<Any>().name!!
 		set(value) {
 			invalidate()
-			model.getPort<T>().name = value.toString()
-			icon.rowNumber = value
+			model.getPort<T>().name = value
+			icon.name = value
 			validate()
 		}
 
@@ -60,7 +60,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 			icon.color = value
 		}
 
-	private val icon = OscilloscopeProbeViewIcon(rowNumber, color)
+	private val icon = OscilloscopeProbeViewIcon(name, color)
 
 	/** The [EdgeView] to which this [OscilloscopeProbeVerticeView] is connected.*/
 	private var edgeView: EdgeView<T>? = null
@@ -79,7 +79,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 	override fun resolutionDone() {
 		super.resolutionDone()
-		icon.rowNumber = rowNumber
+		icon.name = name
 	}
 
 	override fun write(writer: StoreWriter) {

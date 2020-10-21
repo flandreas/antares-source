@@ -15,12 +15,12 @@ import ch.scorpion.jabbah.graph.view.GraphView
 /** The probe view that is contained in a row of a [OscilloscopeView].*/
 class OscilloscopeProbeView(
 	location: Point2D,
-	rowNumber: Int,
+	name: String,
 	private val color: CompositeColor,
 	private val origLocSource: () -> Point2D,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : IconButton<EditInputEventContext>(
-	icon = OscilloscopeProbeViewIcon(rowNumber, color),
+	icon = OscilloscopeProbeViewIcon(name, color),
 	action = {},
 	location = location,
 ) {
@@ -29,13 +29,11 @@ class OscilloscopeProbeView(
 		private val LOG by logger(OscilloscopeProbeView::class)
 	}
 
-	var rowNumber: Int
-		get() = probeIcon.rowNumber
+	var name: String
+		get() = probeIcon.name
 		set(value) {
-			probeIcon.rowNumber = value
-			if (verticeView != null) {
-				verticeView!!.rowNumber = value
-			}
+			probeIcon.name = value
+			verticeView?.let { it.name = value }
 		}
 
 	/**
@@ -51,7 +49,6 @@ class OscilloscopeProbeView(
 				probeIcon.filled = false
 			}
 		}
-
 
 	private val probeIcon get() = icon as OscilloscopeProbeViewIcon
 
@@ -105,7 +102,7 @@ class OscilloscopeProbeView(
 			probeIcon.filled = false
 			verticeViewPresent = false
 
-			verticeView = OscilloscopeProbeVerticeView<Any>(rowNumber = rowNumber, color = color, styleProvider = styleProvider).let {
+			verticeView = OscilloscopeProbeVerticeView<Any>(name = name, color = color, styleProvider = styleProvider).let {
 				it.location = origLocSource.invoke().add(location).add(Point2D(0.0, height))
 				it.visible = true
 				context.editor.drawing.add(it)

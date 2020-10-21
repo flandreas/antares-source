@@ -33,8 +33,8 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
-import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -214,55 +214,71 @@ class OscilloscopeView(
 
 	override fun resolutionDone() {
 		super.resolutionDone()
-		for (i in 1..model.portsCount) {
-			addPortView(GenericPortView(model.getPort(i.toString())))
-			addRowView(i)
+
+		for (port in model.getPorts()) {
+			addPortView(GenericPortView(port))
+			addRowView(port.name!!)
 		}
+
 		scaleRow.updateState()
 		adjustSize()
 
 		parent!!
-			.getDrawables { it is OscilloscopeProbeVerticeView<*> }
+			.getDrawables{ it is OscilloscopeProbeVerticeView<*> }
 			.map { it as OscilloscopeProbeVerticeView<Any> }
-			.sortedBy { it.rowNumber }
-			.forEach { rows[it.rowNumber - 1].loadedWith(it) }
+			.forEach { rows.find { row -> row.name == it.name }!!.loadedWith(it) }
 	}
 
 	/** ---- [OscilloscopeView] */
 
 	fun addRow() {
-		val newRowNumber = rows.size + 1
+		val name = createRowName()
 
-		val port = portFactory.createOscilloscopeProbePort<Any>(newRowNumber.toString())
+		val port = portFactory.createOscilloscopeProbePort<Any>(name)
 		model.addPort(port)
 		addPortView(GenericPortView(port))
 
 		invalidate()
-		addRowView(newRowNumber)
+		addRowView(name)
 		scaleRow.updateState()
 		adjustSize()
 	}
 
+	private fun createRowName(): String {
+		var nameNumber = rows.size + 1
+		while (rowWithName(nameNumber.toString()) != null) {
+			nameNumber++
+		}
+		return nameNumber.toString()
+	}
+
+	private fun rowWithName(name: String): SignalRowView? = rows.firstOrNull { it.name == name }
+
 	/** Removes the row with the specified rowNumber, starting with 1.*/
-	fun removeRow(rowNumber: Int) {
-		val row = rows[rowNumber - 1]
-		rows.removeAt(rowNumber - 1)
+	fun removeRow(name: String) {
+		val row = rowWithName(name)!!
+		val rowIndex = rows.indexOf(row)
+		rows.remove(row)
 		container.remove(row)
 		refColorSequence.free(row.color)
-		findProbeViewInDrawing(row.rowNumber)?.let { (parent as DrawableContainer<Component>).remove(it) }
+		findProbeViewInDrawing(row.name)?.let { (parent as DrawableContainer<Component>).remove(it) }
 
-		val port = model.getPort<Any>(rowNumber.toString())
+		val port = model.getPort<Any>(name)
 		val portView = getPortView(port)
 		removePortView(portView!!)
 		model.removePort(port)
 
-		rearrangeFromRowNumber(rowNumber)
+		rearrangeFromRowIndex(rowIndex)
 		adjustSize()
 	}
 
-	/** Finds the [SignalRowView] for the specified row number, if existing.*/
-	private fun findRowView(rowNumber: Int): SignalRowView? {
-		return rows.firstOrNull { it.rowNumber == rowNumber }
+	fun removeLastRow() {
+		removeRow(rows.last().name)
+	}
+
+	/** Finds the [SignalRowView] with the specified name, if existing.*/
+	private fun findRowView(name: String): SignalRowView? {
+		return rows.firstOrNull { it.name == name }
 	}
 
 	private fun adjustSize() {
@@ -273,9 +289,9 @@ class OscilloscopeView(
 		update()
 	}
 
-	private fun addRowView(rowNumber: Int) {
+	private fun addRowView(name: String) {
 		val y = TITLE_HEIGHT + rows.size * factory.rowHeight
-		val rowView = SignalRowView(rowNumber, Point2D(0, y), nextProbeColor, factory)
+		val rowView = SignalRowView(name, Point2D(0, y), nextProbeColor, factory)
 		rows.add(rowView)
 		container.add(rowView)
 	}
@@ -287,22 +303,20 @@ class OscilloscopeView(
 	}
 
 	/**
-	 * Rearranges the rows after the row with the specified row number (starting with 1) has been deleted.
+	 * Rearranges the rows after the row with the specified row index (starting with 0) has been deleted.
 	 * For example, if row with number 3 out of 5 has been deleted, the rows with former row number 4 and 5 now
 	 * become row numbers 3 and 4, and their location is updated accordingly.
 	 */
-	private fun rearrangeFromRowNumber(rowNumber: Int) {
-		for (i in rowNumber - 1 until rows.size) {
+	private fun rearrangeFromRowIndex(rowIndex: Int) {
+		for (i in rowIndex until rows.size) {
 			rows[i].location = Point2D(rows[i].location.x, rows[i].location.y - factory.rowHeight)
-			rows[i].rowNumber = i + 1
-			model.getPort<Any>((i + 2).toString()).name = (i + 1).toString()
 		}
 		scaleRow.updateLocation()
 		scaleRow.updateState()
 	}
 
-	private fun findProbeViewInDrawing(rowNumber: Int): OscilloscopeProbeVerticeView<*>? {
-		return parent!!.getDrawable { it is OscilloscopeProbeVerticeView<*> && it.rowNumber == rowNumber }
+	private fun findProbeViewInDrawing(name: String): OscilloscopeProbeVerticeView<*>? {
+		return parent!!.getDrawable { it is OscilloscopeProbeVerticeView<*> && it.name == name }
 			as OscilloscopeProbeVerticeView<*>?
 	}
 
@@ -377,11 +391,8 @@ class OscilloscopeView(
 		}
 	}
 
-	/**
-	 * @param rowNumber the number of the row, starting with 1
-	 */
 	private inner class SignalRowView(
-		rowNumber: Int,
+		name: String,
 		location: Point2D,
 		val color: CompositeColor,
 		factory: OscilloscopeViewFactory
@@ -391,7 +402,7 @@ class OscilloscopeView(
 
 		private val probeView = OscilloscopeProbeView(
 			location = Point2D(2.0 * ROW_INSET + ICON_BUTTON_SIZE, factory.rowHeight / 2 - OscilloscopeProbeViewIcon.SIZE / 2),
-			rowNumber = rowNumber,
+			name = name,
 			color = color,
 			origLocSource = { this@OscilloscopeView.location.add(this.location) })
 
@@ -399,7 +410,7 @@ class OscilloscopeView(
 			icon = RemoveIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
 			tooltipKey = "graph.action.oscilloscope.removeRow.name",
 			location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2),
-			action = { service.removeRow(probeView.rowNumber, this@OscilloscopeView) })
+			action = { service.removeRow(probeView.name, this@OscilloscopeView) })
 
 		init {
 			add(removeButton)
@@ -409,10 +420,10 @@ class OscilloscopeView(
 			add(drawer)
 		}
 
-		var rowNumber: Int
-			get() = probeView.rowNumber
+		var name: String
+			get() = probeView.name
 			set(value) {
-				probeView.rowNumber = value
+				probeView.name = value
 			}
 
 		fun updateState() {
@@ -430,7 +441,7 @@ class OscilloscopeView(
 
 		fun bindDrawer() {
 			drawer.bind(
-				model.getSignalHistory(rowNumber.toString())!!,
+				model.getSignalHistory(name)!!,
 				model.getSignalHistory("1"),
 				timeline,
 				color
@@ -453,7 +464,7 @@ class OscilloscopeView(
 			if (event.child is OscilloscopeProbeVerticeView<*>) {
 				LOG.debug("Removed OscilloscopeProbeView from drawing")
 				val comp = event.child as OscilloscopeProbeVerticeView<*>
-				findRowView(comp.rowNumber)?.handleProbeViewRemovedFromDrawing()
+				findRowView(comp.name)?.handleProbeViewRemovedFromDrawing()
 			}
 		}
 	}

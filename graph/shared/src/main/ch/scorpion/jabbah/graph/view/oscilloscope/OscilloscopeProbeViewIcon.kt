@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.edit.model.text.Label
  * The graphical figure used in probe views.
  */
 class OscilloscopeProbeViewIcon(
-	rowNumber: Int,
+	name: String,
 	var color: CompositeColor,
 	ownerRotation: Rotation = Rotation.R0
 ) : Icon {
@@ -33,7 +33,7 @@ class OscilloscopeProbeViewIcon(
 	}
 
 	private val label = Label(
-		text = rowNumber.toString(),
+		text = name,
 		font = Themes.get<DrawTheme>().annotation.font,
 		location = Point2D(20, 17),
 		rotationDisplayStrategy = Label.RotationDisplayStrategy.KEEP_HORIZONTAL
@@ -41,13 +41,9 @@ class OscilloscopeProbeViewIcon(
 
 	var filled = true
 
-	var rowNumber: Int = rowNumber
-		set(value) {
-			if (field != value) {
-				field = value
-				label.text = field.toString()
-			}
-		}
+	var name: String
+		get() = label.text
+		set(value) { label.text = value }
 
 	var ownerRotation: Rotation = ownerRotation
 		set(value) {

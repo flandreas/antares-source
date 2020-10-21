@@ -48,7 +48,7 @@ interface OscilloscopeViewService {
 	fun addRow(oscilloscopeView: OscilloscopeView)
 
 	/** Removes a row from the specified [OscilloscopeView].*/
-	fun removeRow(index: Int, oscilloscopeView: OscilloscopeView)
+	fun removeRow(name: String, oscilloscopeView: OscilloscopeView)
 
 }
 
@@ -94,8 +94,8 @@ class OscilloscopeViewServiceImpl(
 		commandManager.execute(AddRowCommand(oscilloscopeView))
 	}
 
-	override fun removeRow(index: Int, oscilloscopeView: OscilloscopeView) {
-		commandManager.execute(RemoveRowCommand(index, oscilloscopeView))
+	override fun removeRow(name: String, oscilloscopeView: OscilloscopeView) {
+		commandManager.execute(RemoveRowCommand(name, oscilloscopeView))
 	}
 
 	/** ---- [OscilloscopeViewServiceImpl] */
@@ -150,17 +150,17 @@ class OscilloscopeViewServiceImpl(
 		}
 
 		override fun undo() {
-			oscilloscopeView.removeRow(oscilloscopeView.rowsCount)
+			oscilloscopeView.removeLastRow()
 		}
 	}
 
 	private class RemoveRowCommand(
-		private val index: Int,
+		private val name: String,
 		private val oscilloscopeView: OscilloscopeView
 	) : AbstractCommand("graph.command.removeOscilloscopeRow"), Undoable {
 
 		override fun execute() {
-			oscilloscopeView.removeRow(index)
+			oscilloscopeView.removeRow(name)
 		}
 
 		override fun undo() {
