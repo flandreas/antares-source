@@ -12,7 +12,15 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.GraphView
 
-/** The probe view that is contained in a row of a [OscilloscopeView].*/
+/**
+ * The probe view that is contained in a row of a [OscilloscopeView]. It contains interaction logic
+ * for picking the [OscilloscopeProbeViewIcon] and dragging it as [OscilloscopeProbeVerticeView]
+ * into the [GraphView].
+ *
+ * @param color the color of the [OscilloscopeProbeViewIcon]
+ * @param location the location relative to the [DrawableContainer] containing this [OscilloscopeProbeView]
+ * @param origLocSource returns the location relative to which the new [OscilloscopeProbeVerticeView] is inserted
+ */
 class OscilloscopeProbeView(
 	location: Point2D,
 	name: String,

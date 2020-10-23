@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.draw.graphics.Icon
  */
 open class IconButton<C: InputEventContext>(
 	icon: Icon,
-	private val action: () -> Unit,
+	private val action: (C) -> Unit,
 	location: Point2D = Point2D.ZERO,
 	tooltipKey: String? = null
 ) : AbstractIconButton(icon, location, tooltipKey) {
@@ -42,7 +42,7 @@ open class IconButton<C: InputEventContext>(
 			if (enabled) {
 				context.mouseEvent?.consume()
 				isHovering = false
-				action.invoke()
+				action.invoke(context)
 			}
 			return null
 		}

@@ -98,6 +98,8 @@ class OscilloscopeView(
 
 	private val applicationModeHandler: (ApplicationModeEvent) -> Unit = { applicationMode = it.applicationMode }
 
+	private val probeNameHandler: (OscilloscopeProbeNameEvent) -> Unit = { handle(it) }
+
 	private  var applicationMode: ApplicationMode = ApplicationMode.EDIT
 		set(value) {
 			if (field != value) {
@@ -108,6 +110,8 @@ class OscilloscopeView(
 
 	init {
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
+		eventBus.register(OscilloscopeProbeNameEvent::class, probeNameHandler)
+
 		visible = false
 		preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
 		container.add(scaleRow)
@@ -121,6 +125,7 @@ class OscilloscopeView(
 	override fun dispose() {
 		super.dispose()
 		eventBus.unregister(applicationModeHandler)
+		eventBus.unregister(probeNameHandler)
 	}
 
 	override fun modelExchanged(oldModel: Oscilloscope?) {
@@ -212,8 +217,8 @@ class OscilloscopeView(
 		}
 	}
 
-	override fun resolutionDone() {
-		super.resolutionDone()
+	override fun allResolutionDone() {
+		super.allResolutionDone()
 
 		for (port in model.getPorts()) {
 			addPortView(GenericPortView(port))
@@ -320,6 +325,15 @@ class OscilloscopeView(
 			as OscilloscopeProbeVerticeView<*>?
 	}
 
+	private fun handle(event: OscilloscopeProbeNameEvent) {
+		if (model.hasPort(event.oldName)) {
+			model.getPort<Any>(event.oldName).name = event.newName
+			invalidate()
+			rowWithName(event.oldName)?.name = event.newName
+			validate()
+		}
+	}
+
 	private inner class ScaleButton(
 		location: Point2D
 	) : AbstractActorIconButton(
@@ -353,7 +367,7 @@ class OscilloscopeView(
 
 		private val addButton = IconButton<EditInputEventContext>(
 			icon = AddIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
-			action = { service.addRow(this@OscilloscopeView) },
+			action = { service.addRow(it.drawingView(), this@OscilloscopeView) },
 			location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2))
 
 
@@ -404,13 +418,13 @@ class OscilloscopeView(
 			location = Point2D(2.0 * ROW_INSET + ICON_BUTTON_SIZE, factory.rowHeight / 2 - OscilloscopeProbeViewIcon.SIZE / 2),
 			name = name,
 			color = color,
-			origLocSource = { this@OscilloscopeView.location.add(this.location) })
+			origLocSource = { this@OscilloscopeView.location.add(this@SignalRowView.location) })
 
 		private val removeButton = IconButton<EditInputEventContext>(
 			icon = RemoveIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)),
 			tooltipKey = "graph.action.oscilloscope.removeRow.name",
 			location = Point2D(ROW_INSET, factory.rowHeight / 2 - ICON_BUTTON_SIZE / 2),
-			action = { service.removeRow(probeView.name, this@OscilloscopeView) })
+			action = { service.removeRow(it.drawingView(), probeView.name, this@OscilloscopeView) })
 
 		init {
 			add(removeButton)

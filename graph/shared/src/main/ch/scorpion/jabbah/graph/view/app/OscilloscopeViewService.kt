@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -45,10 +46,10 @@ interface OscilloscopeViewService {
 	fun hideOscilloscope(graphView: GraphView)
 
 	/** Adds a new row at the end of the specified [OscilloscopeView]*/
-	fun addRow(oscilloscopeView: OscilloscopeView)
+	fun addRow(view: DrawingView<*>, oscilloscopeView: OscilloscopeView)
 
 	/** Removes a row from the specified [OscilloscopeView].*/
-	fun removeRow(name: String, oscilloscopeView: OscilloscopeView)
+	fun removeRow(view: DrawingView<*>, name: String, oscilloscopeView: OscilloscopeView)
 
 }
 
@@ -90,12 +91,12 @@ class OscilloscopeViewServiceImpl(
 		hideOscilloscopeImpl(!existed, graphView)
 	}
 
-	override fun addRow(oscilloscopeView: OscilloscopeView) {
-		commandManager.execute(AddRowCommand(oscilloscopeView))
+	override fun addRow(view: DrawingView<*>, oscilloscopeView: OscilloscopeView) {
+		commandManager.execute(AddRowCommand(view, oscilloscopeView.id))
 	}
 
-	override fun removeRow(name: String, oscilloscopeView: OscilloscopeView) {
-		commandManager.execute(RemoveRowCommand(name, oscilloscopeView))
+	override fun removeRow(view: DrawingView<*>, name: String, oscilloscopeView: OscilloscopeView) {
+		commandManager.execute(RemoveRowCommand(view, name, oscilloscopeView.id))
 	}
 
 	/** ---- [OscilloscopeViewServiceImpl] */
@@ -142,8 +143,11 @@ class OscilloscopeViewServiceImpl(
 	}
 
 	private class AddRowCommand(
-		private val oscilloscopeView: OscilloscopeView
+		private val drawingView: DrawingView<*>,
+		private val oscilloscopeViewId: Int
 	) : AbstractCommand("graph.command.addOscilloscopeRow"), Undoable {
+
+		private val oscilloscopeView get() = drawingView.drawing.getWithId(oscilloscopeViewId) as OscilloscopeView
 
 		override fun execute() {
 			oscilloscopeView.addRow()
@@ -155,9 +159,12 @@ class OscilloscopeViewServiceImpl(
 	}
 
 	private class RemoveRowCommand(
+		private val drawingView: DrawingView<*>,
 		private val name: String,
-		private val oscilloscopeView: OscilloscopeView
+		private val oscilloscopeViewId: Int
 	) : AbstractCommand("graph.command.removeOscilloscopeRow"), Undoable {
+
+		private val oscilloscopeView get() = drawingView.drawing.getWithId(oscilloscopeViewId) as OscilloscopeView
 
 		override fun execute() {
 			oscilloscopeView.removeRow(name)

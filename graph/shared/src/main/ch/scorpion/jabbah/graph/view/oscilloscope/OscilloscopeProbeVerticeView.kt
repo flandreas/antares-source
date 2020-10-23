@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
@@ -16,9 +17,15 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlighter
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.io.*
+
+data class OscilloscopeProbeNameEvent(
+	val oldName: String,
+	val newName: String
+)
 
 /**
  * The location of this [OscilloscopeProbeVerticeView] as a [Locatable] is the tip of the bubble shape, which is also
@@ -48,10 +55,14 @@ class OscilloscopeProbeVerticeView<T : Any>(
 	var name: String
 		get() = model.getPort<Any>().name!!
 		set(value) {
-			invalidate()
-			model.getPort<T>().name = value
-			icon.name = value
-			validate()
+			if (name != value) {
+				val oldName = name
+				invalidate()
+				model.getPort<T>().name = value
+				icon.name = value
+				BaseModule.eventBus.post(OscilloscopeProbeNameEvent(oldName, value))
+				validate()
+			}
 		}
 
 	var refColor: CompositeColor
@@ -195,6 +206,10 @@ class OscilloscopeProbeVerticeView<T : Any>(
 			}
 			if (newEdgeView != null && newEdgeView !== edgeView) {
 				newEdgeView.model.connect(model.getPort())
+
+				GraphViewModule.oscilloscopeProbeNameStrategy
+					.getConnectedName(findOscilloscopeView(context).model, newEdgeView)
+					?.let { name = it }
 			}
 			edgeView = newEdgeView
 
@@ -206,6 +221,10 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 		private fun findEdgeView(context: EditInputEventContext): EdgeView<*>? {
 			return context.drawingView().drawing.getDrawable { it.contains(connectionPoint()) && it is EdgeView<*> } as EdgeView<*>?
+		}
+
+		private fun findOscilloscopeView(context: EditInputEventContext): OscilloscopeView {
+			return context.drawingView().drawing.getDrawable { it is OscilloscopeView } as OscilloscopeView
 		}
 	}
 }

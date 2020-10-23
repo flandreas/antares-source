@@ -42,10 +42,7 @@ import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewFactory
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewFactoryImpl
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewImpl
-import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeProbeVerticeView
-import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
-import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeViewFactory
-import ch.scorpion.jabbah.graph.view.oscilloscope.UndefinedOscilloscopeViewFactory
+import ch.scorpion.jabbah.graph.view.oscilloscope.*
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortViewFactory
 import ch.scorpion.jabbah.graph.view.port.PortViewStorable
@@ -101,6 +98,8 @@ object GraphViewModule : AbstractModule() {
 	var oscilloscopeViewFactory: OscilloscopeViewFactory = UndefinedOscilloscopeViewFactory()
 
 	val oscilloscopeViewService: OscilloscopeViewService = OscilloscopeViewServiceImpl(EditModule.commandManager, BaseModule.eventBus)
+
+	var oscilloscopeProbeNameStrategy: OscilloscopeProbeNameStrategy = OscilloscopeProbeNameStrategyImpl()
 
 	val scenarioAppService = ScenarioAppService()
 

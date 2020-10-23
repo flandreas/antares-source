@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model.oscilloscope
 
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -61,13 +62,15 @@ class Oscilloscope(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeInt("portsCount", portsCount)
+		writer.writeString("portNames", StringUtils.fromList(
+			getPorts().map { it.name!! }
+		))
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		for (i in 1..reader.readInt("portsCount")) {
-			addPort(portFactory.createOscilloscopeProbePort(i.toString()))
+		StringUtils.toList(reader.readString("portNames")).forEach {
+			addPort(portFactory.createOscilloscopeProbePort(it))
 		}
 	}
 

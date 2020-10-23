@@ -6,7 +6,12 @@ package ch.scorpion.jabbah.base
 object StringUtils {
 
     private const val NEGATION_SIGN = '!'
+	private const val LIST_SEPARATOR = ','
+	private const val LIST_ESCAPE = '\\'
     const val OVERLINE = '\u0305'
+
+	private const val SPE = '\ufffe'  // unused unicode char in Specials block
+	private const val SPF = '\uffff'  // dito
 
     fun isBlank(s: String?): Boolean {
         return s == null || s.isBlank()
@@ -86,5 +91,43 @@ object StringUtils {
 			}
 		}
 		return result.toString().reversed()
+	}
+
+	/**
+	 * Converts a [List] to a single, comma separated [String], and escapes the separating
+	 * comma as needed.
+	 */
+	fun fromList(list: List<String>): String {
+		return list.joinToString(
+			separator = "$LIST_SEPARATOR"
+		) {
+			it
+				.replace(LIST_ESCAPE.toString(), "$LIST_ESCAPE$LIST_ESCAPE")
+				.replace(LIST_SEPARATOR.toString(), "$LIST_ESCAPE$LIST_SEPARATOR")
+		}
+	}
+
+	/**
+	 * Reverse operation of [fromList].
+	 */
+	fun toList(listString: String): List<String> {
+		if (listString.isEmpty()) {
+			return listOf()
+		}
+
+		var s = listString
+			.replace("$LIST_ESCAPE$LIST_ESCAPE", "$SPE")
+			.replace("$LIST_ESCAPE$LIST_SEPARATOR", "$SPF")
+
+		s = if (s.last() == LIST_ESCAPE) // i.e. 'esc' not escaping anything
+			s.dropLast(1).replace("$LIST_ESCAPE", "") + LIST_ESCAPE
+		else
+			s.replace("$LIST_ESCAPE", "")
+		return s
+			.split(LIST_SEPARATOR)
+			.map { it
+				.replace(SPE, LIST_ESCAPE)
+				.replace(SPF, LIST_SEPARATOR)
+			}
 	}
 }

@@ -2,6 +2,12 @@ package ch.scorpion.jabbah.base
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import ch.scorpion.jabbah.base.StringUtils.countChar
+import ch.scorpion.jabbah.base.StringUtils.endWithPeriod
+import ch.scorpion.jabbah.base.StringUtils.formatLong
+import ch.scorpion.jabbah.base.StringUtils.fromList
+import ch.scorpion.jabbah.base.StringUtils.replaceNegation
+import ch.scorpion.jabbah.base.StringUtils.toList
 
 /**
  * Unit tests for [StringUtils].
@@ -10,34 +16,62 @@ class StringUtilsTest {
 
     @Test
     fun shouldCountChars() {
-        assertEquals(3, StringUtils.countChar("This is a test", ' '))
-        assertEquals(0, StringUtils.countChar("ThisIsATest", ' '))
+        assertEquals(3, countChar("This is a test", ' '))
+        assertEquals(0, countChar("ThisIsATest", ' '))
     }
 
     @Test
     fun shouldReplaceSingleNegation() {
-        assertEquals("Q${StringUtils.OVERLINE}", StringUtils.replaceNegation("!Q"))
-	    assertEquals("AQ${StringUtils.OVERLINE}B", StringUtils.replaceNegation("A!QB"))
+        assertEquals("Q${StringUtils.OVERLINE}", replaceNegation("!Q"))
+	    assertEquals("AQ${StringUtils.OVERLINE}B", replaceNegation("A!QB"))
     }
 
 	@Test
 	fun shouldAddPeriod() {
-		assertEquals("Test.", StringUtils.endWithPeriod("Test"))
+		assertEquals("Test.", endWithPeriod("Test"))
 	}
 
 	@Test
 	fun shouldNotAddPeriodIfAlreadyExisting() {
-		assertEquals("Test.", StringUtils.endWithPeriod("Test."))
+		assertEquals("Test.", endWithPeriod("Test."))
 	}
 
 	@Test
 	fun shouldFormatLong() {
-		assertEquals("123", StringUtils.formatLong(123L))
-		assertEquals("123_456_789", StringUtils.formatLong(123456789L))
+		assertEquals("123", formatLong(123L))
+		assertEquals("123_456_789", formatLong(123456789L))
 	}
 
 	@Test
     fun shouldReplaceBlockNegation() {
-        assertEquals("A\u0305B\u0305", StringUtils.replaceNegation("!(AB)"))
+        assertEquals("A\u0305B\u0305", replaceNegation("!(AB)"))
     }
+
+	@Test
+	fun shouldCreateStringList() {
+		assertEquals("", fromList(listOf("")))
+		assertEquals("A", fromList(listOf("A")))
+		assertEquals("A,B,C", fromList(listOf("A", "B", "C")))
+		assertEquals("A,B\\,Bla,C", fromList(listOf("A", "B,Bla", "C")))
+		assertEquals("A,\\\\,C", fromList(listOf("A", "\\", "C")))
+	}
+
+	@Test
+	fun shouldParseListString() {
+		assertEquals(listOf(), toList(""))
+		assertEquals(listOf("A"), toList("A"))
+		assertEquals(listOf("A", "B", "C"), toList("A,B,C"))
+		assertEquals(listOf("A", "B,Bla", "C"), toList("A,B\\,Bla,C"))
+		assertEquals(listOf("A", "\\", "C"), toList("A,\\\\,C"))
+	}
+
+	@Test
+	fun shouldListAndUnlist() {
+		assertList(listOf("A", "B", "C"))
+		assertList(listOf("A,B\\,Bla,C"))
+	}
+
+	private fun assertList(list: List<String>) {
+		assertEquals(list, toList(fromList(list)))
+	}
 }
