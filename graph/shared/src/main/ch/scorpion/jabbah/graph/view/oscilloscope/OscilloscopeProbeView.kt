@@ -4,7 +4,10 @@ import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
+import ch.scorpion.jabbah.draw.InputEventContext
+import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.drawable.IconButton
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -35,6 +38,9 @@ class OscilloscopeProbeView(
 
 	companion object {
 		private val LOG by logger(OscilloscopeProbeView::class)
+
+		// x,y displacement used at start of dragging to make it recognizable by the user
+		private const val DRAG_DISPLACEMENT = 5.0
 	}
 
 	var name: String
@@ -102,25 +108,37 @@ class OscilloscopeProbeView(
 
 		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			LOG.debug("OscilloscopeProbeView pressed ${context.x},${context.y}")
+
 			if (!verticeViewPresent) {
 				return null
 			}
+
+			startDraggingOfCreatedVerticeView(context).also {
+				verticeView = it
+				return it.getInputEventHandler(context).mouseMoved(context)
+			}
+		}
+
+		private fun startDraggingOfCreatedVerticeView(context: EditInputEventContext): OscilloscopeProbeVerticeView<Any> {
 			invalidate()
 
 			probeIcon.filled = false
+			isHovering = false
 			verticeViewPresent = false
 
-			verticeView = OscilloscopeProbeVerticeView<Any>(name = name, color = color, styleProvider = styleProvider).let {
-				it.location = origLocSource.invoke().add(location).add(Point2D(0.0, height))
+			val vv = OscilloscopeProbeVerticeView<Any>(name = name, color = color, styleProvider = styleProvider).let {
+				it.location = origLocSource.invoke().add(location)
+					.add(Point2D(0.0, height)) // origin is at the tip of the bubble, i.e. the BOTTOM of the icon rectangle
+					.add(Point2D(DRAG_DISPLACEMENT, DRAG_DISPLACEMENT))
 				it.visible = true
 				context.editor.drawing.add(it)
 				it
 			}
 
 			context.mouseEvent!!.consume()
-
 			validate()
-			return verticeView!!.getInputEventHandler(context).mousePressed(context)
+
+			return vv
 		}
 	}
 }
