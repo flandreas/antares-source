@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -165,7 +166,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 					multiBitLabel.text = entry.signal.toHexString()
 					multiBitLabel.horizontalAlignment = HorizontalAlignment.CENTER
 					multiBitLabel.location = Point2D(effNextX + (lastPoint.x - effNextX) / 2, baseLineY - SIGNAL_HEIGHT / 2)
-					drawMultiBitSegment(context, xR = lastPoint.x, xL = effNextX)
+					drawMultiBitSegment(context, xR = lastPoint.x, xL = effNextX, first = false)
 				}
 
 				if (nextX <= bounds.minX) {
@@ -208,20 +209,7 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 
 	private fun drawMultiBitRightBorder(context: DrawContext, xL: Double) {
 		if (xL <= rightBorder - START_SIZE - MULTIBIT_INSET) {
-			val path = System.createPath()
-				.moveTo(rightBorder, baseLineY - SIGNAL_HEIGHT)
-				.lineTo(xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
-				.lineTo(xL, baseLineY - SIGNAL_HEIGHT / 2)
-				.lineTo(xL + MULTIBIT_INSET, baseLineY)
-				.lineTo(rightBorder, baseLineY)
-
-			if (fillSignal) {
-				context.g.color = color!!.backgroundColor
-				context.g.fill(path)
-			}
-
-			context.g.color = color!!.foregroundColor
-			context.g.draw(path)
+			drawMultiBitSegment(context, xR = rightBorder, xL = xL, first = true)
 		}
 
 		context.g.fillOval(rightBorder - START_SIZE, baseLineY - SIGNAL_HEIGHT / 2 - START_SIZE, 2 * START_SIZE, 2 * START_SIZE)
@@ -240,25 +228,57 @@ class DigitalSignalHistoryDrawer : AbstractRectangle(Rectangle2D()), SignalHisto
 		context.g.drawLine(xR, yL, xL, yL)
 	}
 
-	private fun drawMultiBitSegment(context: DrawContext, xR: Double, xL: Double) {
-		val path = System.createPath()
-			.moveTo(xR, baseLineY - SIGNAL_HEIGHT / 2)
-			.lineTo(xR - MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
-			.lineTo(xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
-			.lineTo(xL, baseLineY - SIGNAL_HEIGHT / 2)
-			.lineTo(xL + MULTIBIT_INSET, baseLineY)
-			.lineTo(xR - MULTIBIT_INSET, baseLineY)
-			.close()
-
+	private fun drawMultiBitSegment(context: DrawContext, xR: Double, xL: Double, first: Boolean) {
 		if (fillSignal) {
 			context.g.color = color!!.backgroundColor
-			context.g.fill(path)
+			context.g.fill(multiBitSegmentPath(xR, xL, fill = true, first))
 		}
 		context.g.color = color!!.foregroundColor
-		context.g.draw(path)
+		context.g.draw(multiBitSegmentPath(xR, xL, fill = false, first))
 
 		multiBitLabel.color = if (fillSignal) color!!.textColor else Themes.get<GraphTheme>().annotation.color.textColor
 		multiBitLabel.draw(context)
+	}
+
+	private fun multiBitSegmentPath(xR: Double, xL: Double, fill: Boolean, first: Boolean): Path {
+		val path = System.createPath()
+
+		if (first) {
+			path
+				.moveTo(xR, baseLineY - SIGNAL_HEIGHT)
+		} else {
+			path
+				.moveTo(xR, baseLineY - SIGNAL_HEIGHT / 2)
+				.lineTo(xR - MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
+		}
+
+		if (xL > bounds.minX) {
+			path
+				.lineTo(xL + MULTIBIT_INSET, baseLineY - SIGNAL_HEIGHT)
+				.lineTo(xL, baseLineY - SIGNAL_HEIGHT / 2)
+				.lineTo(xL + MULTIBIT_INSET, baseLineY)
+		} else {
+			path
+				.lineTo(xL, baseLineY - SIGNAL_HEIGHT)
+			if (fill) {
+				path
+					.lineTo(xL, baseLineY)
+			} else {
+				path
+					.moveTo(xL, baseLineY)
+			}
+		}
+
+		if (first) {
+			path
+				.lineTo(xR, baseLineY)
+		} else {
+			path
+				.lineTo(xR - MULTIBIT_INSET, baseLineY)
+				.lineTo(xR, baseLineY - SIGNAL_HEIGHT / 2)
+		}
+
+		return path
 	}
 
 	private fun signalY(entry: SignalHistoryEntry<DigitalSignal>): Double {
