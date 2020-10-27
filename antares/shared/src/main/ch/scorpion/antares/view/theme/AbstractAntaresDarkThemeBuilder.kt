@@ -1,29 +1,25 @@
 package ch.scorpion.antares.view.theme
 
-import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.graphics.*
+import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.BLUE_ON_DARK
+import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.GREEN_ON_DARK
+import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.PINK_ON_DARK
+import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.RED_ON_DARK
+import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.VIOLET_ON_DARK
+import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.YELLOW_ON_DARK
 import ch.scorpion.jabbah.draw.style.BasicStyle
-import ch.scorpion.jabbah.draw.style.DrawTheme
 
 abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresThemeBuilder(name) {
 
 	companion object {
 
-		val RED = CompositeColor(Color(236, 35, 46), Color(120, 3, 7))
-		val BLUE = CompositeColor(Color(72, 186, 233), Color(3, 16, 139))
-		val GREEN = CompositeColor(Color(115, 191, 91), Color(7, 87, 9))
-		val YELLOW = CompositeColor(Color(245, 235, 62), Color(67, 69, 10))
-
 		val REFERENCE_COLORS = listOf(
-			// TODO: Design colors explicitly
-			ReferenceColor(RED),
-			ReferenceColor(BLUE),
-			ReferenceColor(GREEN),
-			ReferenceColor(YELLOW),
-			// Violet
-			ReferenceColor(CompositeColor(Color(125, 108, 171), Color(55, 14, 91))),
-			// Pink
-			ReferenceColor(CompositeColor(Color(188, 126, 179), Color(104, 8, 89))),
+			ReferenceColor(RED_ON_DARK),
+			ReferenceColor(BLUE_ON_DARK),
+			ReferenceColor(GREEN_ON_DARK),
+			ReferenceColor(YELLOW_ON_DARK),
+			ReferenceColor(VIOLET_ON_DARK),
+			ReferenceColor(PINK_ON_DARK),
 			// Blue-Green
 			ReferenceColor(CompositeColor(Color(90, 196, 194), Color(13, 110, 110))),
 			// Yellow-Orange
@@ -35,10 +31,10 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 			PredefinedColor(PredefinedColorIdentity.White, DrawGraphicsModule.WHITE),
 			PredefinedColor(PredefinedColorIdentity.Black, DrawGraphicsModule.BLACK),
 			PredefinedColor(PredefinedColorIdentity.Gray, CompositeColor(foregroundColor = Color(64, 64, 64), backgroundColor = Color(32, 32, 32))),
-			PredefinedColor(PredefinedColorIdentity.Red, RED),
-			PredefinedColor(PredefinedColorIdentity.Blue, BLUE),
-			PredefinedColor(PredefinedColorIdentity.Green, GREEN),
-			PredefinedColor(PredefinedColorIdentity.Yellow, YELLOW)
+			PredefinedColor(PredefinedColorIdentity.Red, RED_ON_DARK),
+			PredefinedColor(PredefinedColorIdentity.Blue, BLUE_ON_DARK),
+			PredefinedColor(PredefinedColorIdentity.Green, GREEN_ON_DARK),
+			PredefinedColor(PredefinedColorIdentity.Yellow, YELLOW_ON_DARK)
 		)
 
 		val DARK_SELECTION_COLOR = SELECTION_FOREGROUND_COLOR

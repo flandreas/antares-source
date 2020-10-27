@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.theme
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule
 import ch.scorpion.jabbah.draw.style.BasicStyle
 import ch.scorpion.jabbah.graph.view.style.EdgeStyle
 
@@ -19,8 +20,8 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 	)
 
 	private val TOOLTIP_COLOR = CompositeColor(
-		foregroundColor = YELLOW.foregroundColor.darker(),
-		backgroundColor = YELLOW.backgroundColor.darker(),
+		foregroundColor = DrawGraphicsModule.YELLOW_ON_DARK.foregroundColor.darker(),
+		backgroundColor = DrawGraphicsModule.YELLOW_ON_DARK.backgroundColor.darker(),
 		textColor = MAIN_COLOR.textColor
 	)
 
@@ -44,9 +45,9 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 
 	private val FOCUS_COLOR = CompositeColor(MAIN_COLOR.foregroundColor)
 
-	private val MESSAGE_ERROR_COLOR = RED
+	private val MESSAGE_ERROR_COLOR = DrawGraphicsModule.RED_ON_DARK
 
-	private val MESSAGE_INFO_COLOR = GREEN
+	private val MESSAGE_INFO_COLOR = DrawGraphicsModule.GREEN_ON_DARK
 
 	private val BUS_FILL_COLOR = Color(48, 48, 48)
 

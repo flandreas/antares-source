@@ -13,7 +13,7 @@ class SignalHistoryImplTest {
 		}
 	}
 
-	private val history = SignalHistoryImpl<Boolean>()
+	private var history = SignalHistoryImpl<Boolean>(100)
 
 	@Test
 	fun shouldNotAddSameSignal() {
@@ -32,10 +32,10 @@ class SignalHistoryImplTest {
 
 	@Test
 	fun shouldTruncate() {
+		history = SignalHistoryImpl<Boolean>(1)
 		history.add(true, 0)
 		history.add(false, 100)
 		history.add(true, 200)
-		history.truncate(200)
 
 		assertEquals(1, history.size)
 		assertEquals(200L, history.lastOrNull()!!.time)

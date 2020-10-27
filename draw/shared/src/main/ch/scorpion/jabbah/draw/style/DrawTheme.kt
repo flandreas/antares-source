@@ -29,13 +29,12 @@ open class DrawTheme(
 		val DEF_HOVER = CompositeColor(Color.ORANGE, Color.WHITE)
 
 		val DEF_REF_COLORS = listOf(
-			// TODO Do the darker colors need individual design?
-			ReferenceColor(DrawGraphicsModule.RED, DrawGraphicsModule.RED.darker()),
-			ReferenceColor(DrawGraphicsModule.BLUE, DrawGraphicsModule.BLUE.darker()),
-			ReferenceColor(DrawGraphicsModule.GREEN, DrawGraphicsModule.GREEN.darker()),
-			ReferenceColor(DrawGraphicsModule.YELLOW, DrawGraphicsModule.YELLOW.darker()),
-			ReferenceColor(DrawGraphicsModule.VIOLET, DrawGraphicsModule.VIOLET.darker()),
-			ReferenceColor(DrawGraphicsModule.PINK, DrawGraphicsModule.PINK.darker()),
+			ReferenceColor(DrawGraphicsModule.RED, DrawGraphicsModule.RED_ON_DARK),
+			ReferenceColor(DrawGraphicsModule.BLUE, DrawGraphicsModule.BLUE_ON_DARK),
+			ReferenceColor(DrawGraphicsModule.GREEN, DrawGraphicsModule.GREEN_ON_DARK),
+			ReferenceColor(DrawGraphicsModule.YELLOW, DrawGraphicsModule.YELLOW_ON_DARK),
+			ReferenceColor(DrawGraphicsModule.VIOLET, DrawGraphicsModule.VIOLET_ON_DARK),
+			ReferenceColor(DrawGraphicsModule.PINK, DrawGraphicsModule.PINK_ON_DARK),
 			ReferenceColor(DrawGraphicsModule.GRAY, DrawGraphicsModule.GRAY.darker()),
 			ReferenceColor(DrawGraphicsModule.WHITE, DrawGraphicsModule.WHITE.darker()),
 			ReferenceColor(DrawGraphicsModule.BLACK, DrawGraphicsModule.BLACK.darker())

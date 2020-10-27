@@ -301,10 +301,10 @@ class OscilloscopeView(
 		container.add(rowView)
 	}
 
-	private val nextProbeColor: CompositeColor get() = if (BaseModule.properties.getBoolean(PROP_INDIVIDUAL_PROBE_COLORS)) {
+	private val nextProbeColor: ReferenceColor get() = if (BaseModule.properties.getBoolean(PROP_INDIVIDUAL_PROBE_COLORS)) {
 		refColorSequence.next()
 	} else {
-		color
+		ReferenceColor(color)
 	}
 
 	/**
@@ -408,7 +408,7 @@ class OscilloscopeView(
 	private inner class SignalRowView(
 		name: String,
 		location: Point2D,
-		val color: CompositeColor,
+		val color: ReferenceColor,
 		factory: OscilloscopeViewFactory
 	) : DrawableContainerImpl<Drawable>(location = location, useLocation = true) {
 
@@ -417,7 +417,7 @@ class OscilloscopeView(
 		private val probeView = OscilloscopeProbeView(
 			location = Point2D(2.0 * ROW_INSET + ICON_BUTTON_SIZE, factory.rowHeight / 2 - OscilloscopeProbeViewIcon.SIZE / 2),
 			name = name,
-			color = color,
+			color = color.onBackground,
 			origLocSource = { this@OscilloscopeView.location.add(this@SignalRowView.location) })
 
 		private val removeButton = IconButton<EditInputEventContext>(
@@ -446,7 +446,7 @@ class OscilloscopeView(
 
 		fun loadedWith(vertice: OscilloscopeProbeVerticeView<Any>) {
 			probeView.verticeView = vertice
-			probeView.verticeView!!.refColor = color
+			probeView.verticeView!!.refColor = color.onBackground
 		}
 
 		fun handleProbeViewRemovedFromDrawing() {
@@ -458,12 +458,12 @@ class OscilloscopeView(
 				model.getSignalHistory(name)!!,
 				model.getSignalHistory("1"),
 				timeline,
-				color
+				color.onDark.withAlpha(164)
 			)
 		}
 
 		fun unbindDrawer() {
-			drawer.bind(null, null, null, color)
+			drawer.bind(null, null, null, color.onDark)
 		}
 	}
 

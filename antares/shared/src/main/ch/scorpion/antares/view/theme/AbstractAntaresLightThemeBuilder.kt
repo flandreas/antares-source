@@ -65,9 +65,10 @@ abstract class AbstractAntaresLightThemeBuilder(name: String) : AbstractAntaresT
 		val FOCUS_STYLE = BasicStyle(color = FOCUS_COLOR, stroke = FOCUS_STROKE)
 
 		val SCREEN_COLOR = CompositeColor(
-			foregroundColor = Color.BLACK,
-			backgroundColor = Color.DARK_GRAY,
-			textColor = Color.WHITE)
+			foregroundColor = Color(67, 67, 67),
+			backgroundColor = Color(33, 33, 33),
+			textColor = Color.LIGHT_GRAY)
+
 	}
 
 	protected fun standardForColor(color: CompositeColor): AntaresTheme {
