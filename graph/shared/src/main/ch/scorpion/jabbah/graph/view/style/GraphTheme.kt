@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.graph.view.style
 
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.draw.graphics.PredefinedColor
-import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
+import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.select.Handle
 import ch.scorpion.jabbah.edit.style.EditTheme
@@ -16,7 +13,7 @@ open class GraphTheme(
 	name: String = DEF_NAME,
 	dark: Boolean = DEF_DARK,
 	referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
-	referenceColors: List<CompositeColor> = DEF_REF_COLORS,
+	referenceColors: List<ReferenceColor> = DEF_REF_COLORS,
 	predefinedColors: List<PredefinedColor> = DEF_PREDEFINED_COLORS,
 	background: Style = DEF_BACKGROUND,
 	figure: Style = DEF_FIGURE,

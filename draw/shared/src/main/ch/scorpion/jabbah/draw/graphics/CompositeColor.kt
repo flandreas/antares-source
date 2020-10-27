@@ -62,5 +62,7 @@ data class CompositeColor(
 		)
 	}
 
-
+	fun darker(): CompositeColor = CompositeColor(
+		foregroundColor.darker(), backgroundColor.darker(), textColor.darker()
+	)
 }

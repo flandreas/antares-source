@@ -5,28 +5,39 @@ import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.Theme
+import ch.scorpion.jabbah.draw.style.StyleType
 
 /**
- * A provider of [ReferenceColorSequence]s that supports replacing reference [CompositeColor]s
+ * A combination of [CompositeColor] used for referencing objects on various backgrounds.
+ * @param onBackground used for drawing on objects of [StyleType.BACKGROUND] (and also [StyleType.FIGURE])
+ * @param onDark used for drawing on any dark objects. The same as [onBackground] per default.
+ */
+data class ReferenceColor(
+	val onBackground: CompositeColor,
+	val onDark: CompositeColor = onBackground
+)
+
+/**
+ * A provider of [ReferenceColorSequence]s that supports replacing [ReferenceColors][ReferenceColor]
  * due to exchanging [Theme]s.
  */
 object ReferenceColorSequenceProvider {
 
 	private val LOG by logger(ReferenceColorSequenceProvider::class)
 
-	private val colors = mutableListOf<CompositeColor>()
+	private val colors = mutableListOf<ReferenceColor>()
 
 	/** Provides a new [ReferenceColorSequence] by creating a new instance with its own color cycle.*/
 	fun provide(): ReferenceColorSequence = FlexibleReferenceColorSequenceImpl()
 
-	/** Replaces all registered reference [CompositeColor]s with the specified ones.*/
-	fun replaceColors(colors: List<CompositeColor>) {
+	/** Replaces all registered [ReferenceColors][ReferenceColor] with the specified ones.*/
+	fun replaceColors(colors: List<ReferenceColor>) {
 		if (colorCount > 0 && colorCount != colors.size) {
-			LOG.error("ReferenceColorSequenceProvider: inconsistent replacement color count old=$colorCount, new=${colors.size}")
+			LOG.error("inconsistent replacement color count old=$colorCount, new=${colors.size}")
 			throw IllegalArgumentException("inconsistent color count")
 		}
 
-		val replacements = (0 until colors.size)
+		val replacements = (colors.indices)
 			.filter { it < colorCount }
 			.map { ReferenceColorReplacement(oldColor = this.colors[it], newColor = colors[it]) }
 		this.colors.clear()
@@ -34,14 +45,14 @@ object ReferenceColorSequenceProvider {
 		BaseModule.eventBus.post(ReferenceColorEvent(replacements))
 	}
 
-	/** Returns the number of registered [CompositeColor]s of this [ReferenceColorSequenceProvider].*/
+	/** Returns the number of registered [ReferenceColors][ReferenceColor] of this [ReferenceColorSequenceProvider].*/
 	val colorCount: Int get() = colors.size
 
-	/** Returns the registered [CompositeColor] with the specified index. */
-	fun getColor(index: Int): CompositeColor = colors[index]
+	/** Returns the registered [ReferenceColor] with the specified index. */
+	fun getColor(index: Int): ReferenceColor = colors[index]
 
-	/** Returns the index of the specified registered reference [CompositeColor], or -1 if not found. */
-	fun indexOf(color: CompositeColor): Int = colors.indexOf(color)
+	/** Returns the index of the specified registered [ReferenceColor], or -1 if not found. */
+	fun indexOf(color: ReferenceColor): Int = colors.indexOf(color)
 
 	/** Removes all registered [CompositeColor] without replacement.*/
 	fun clear() {
@@ -56,26 +67,26 @@ object ReferenceColorSequenceProvider {
  */
 interface ReferenceColorSequence {
 
-	/** Fetches the next reference [CompositeColor] in the sequence. */
-	fun next(): CompositeColor
+	/** Fetches the next [ReferenceColor] in the sequence. */
+	fun next(): ReferenceColor
 
 	/**
-	 * Frees the previously fetched referencing [CompositeColor] when it is not used any more.
-	 * The next call of [next] will again fetch this freed reference [CompositeColor].
+	 * Frees the previously fetched referencing [ReferenceColor] when it is not used any more.
+	 * The next call of [next] will again fetch this freed [ReferenceColor].
 	 */
-	fun free(color: CompositeColor)
+	fun free(color: ReferenceColor)
 }
 
 /**
  * An implementation of [ReferenceColorSequence] that uses a copy of the colors in [ReferenceColorSequenceProvider].
- * This implementation doesn't react to changes of reference [CompositeColor]s when changing the current [Theme].
+ * This implementation doesn't react to changes of [ReferenceColors][ReferenceColor] when changing the current [Theme].
  * @Deprecated Use [FlexibleReferenceColorSequenceImpl] instead
  */
-class ReferenceColorSequenceImpl(private val colors: List<CompositeColor>) : ReferenceColorSequence {
+class ReferenceColorSequenceImpl(private val colors: List<ReferenceColor>) : ReferenceColorSequence {
 
 	private val usages = colors.map { Usage(it, 0) }
 
-	private inner class Usage(val color: CompositeColor, var count: Int) : Comparable<Usage> {
+	private inner class Usage(val color: ReferenceColor, var count: Int) : Comparable<Usage> {
 		override fun compareTo(other: Usage): Int {
 			if (this.count != other.count) {
 				return this.count.compareTo(other.count)
@@ -84,13 +95,13 @@ class ReferenceColorSequenceImpl(private val colors: List<CompositeColor>) : Ref
 		}
 	}
 
-	override fun next(): CompositeColor {
-		val usage = usages.sorted().first()
+	override fun next(): ReferenceColor {
+		val usage = usages.minOrNull()!!
 		usage.count++
 		return usage.color
 	}
 
-	override fun free(color: CompositeColor) {
+	override fun free(color: ReferenceColor) {
 		val usage = usages.find { it.color == color && it.count > 0 } ?: throw IllegalStateException("nothing to free")
 		usage.count--
 	}
@@ -114,27 +125,26 @@ class FlexibleReferenceColorSequenceImpl : ReferenceColorSequence {
 		}
 	}
 
-	override fun next(): CompositeColor {
-		val usage = usages.sorted().first()
+	override fun next(): ReferenceColor {
+		val usage = usages.minOrNull()!!
 		usage.count++
 		return ReferenceColorSequenceProvider.getColor(usage.index)
 	}
 
-	override fun free(color: CompositeColor) {
+	override fun free(color: ReferenceColor) {
 		val index = ReferenceColorSequenceProvider.indexOf(color)
 		val usage = usages.find { it.index == index && it.count > 0 } ?: throw IllegalStateException("nothing to free")
 		usage.count--
 	}
-
 }
 
-/** Represents the replacement of a reference [CompositeColor] to a new one. */
-data class ReferenceColorReplacement(val oldColor: CompositeColor, val newColor: CompositeColor)
+/** Represents the replacement of a [ReferenceColor] to a new one. */
+data class ReferenceColorReplacement(val oldColor: ReferenceColor, val newColor: ReferenceColor)
 
-/** Posted by [ReferenceColorSequenceProvider] when the reference [CompositeColor]s have been replaced.*/
+/** Posted by [ReferenceColorSequenceProvider] when the [ReferenceColors][ReferenceColor] have been replaced.*/
 data class ReferenceColorEvent(val replacements: Collection<ReferenceColorReplacement>) {
 
-	/** Returns the replacement reference [CompositeColor] for the specified old reference [CompositeColor].*/
-	fun getNewColorFor(oldColor: CompositeColor): CompositeColor? =
+	/** Returns the replacement [ReferenceColor] for the specified old [ReferenceColor].*/
+	fun getNewColorFor(oldColor: ReferenceColor): ReferenceColor? =
 		replacements.filter { it.oldColor == oldColor }.map { it.newColor }.firstOrNull()
 }

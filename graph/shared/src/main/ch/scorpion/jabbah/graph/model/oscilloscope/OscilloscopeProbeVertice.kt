@@ -23,7 +23,7 @@ class OscilloscopeProbeVertice<T : Any>(
 ) : AbstractVertice() {
 
 	companion object {
-		private val type = Translations.getString("graph.component.oscilloscope.port")
+		private val type = Translations.getString("graph.component.oscilloscope.port.name")
 	}
 
 	init {

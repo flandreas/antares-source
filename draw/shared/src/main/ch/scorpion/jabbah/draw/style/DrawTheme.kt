@@ -6,7 +6,7 @@ open class DrawTheme(
 	override val name: String = DEF_NAME,
 	override val dark: Boolean = DEF_DARK,
 	private val referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
-	private val referenceColors: List<CompositeColor> = DEF_REF_COLORS,
+	private val referenceColors: List<ReferenceColor> = DEF_REF_COLORS,
 	private val predefinedColors: List<PredefinedColor> = DEF_PREDEFINED_COLORS,
 	val background: Style = DEF_BACKGROUND,
 	val figure: Style = DEF_FIGURE,
@@ -22,18 +22,20 @@ open class DrawTheme(
 		val DEF_TOOLTIP = BasicStyle(CompositeColor(foregroundColor = Color(249, 214, 54),
 			backgroundColor = Color(255, 253, 219), textColor = Color.BLACK))
 		val DEF_SHADOW = CompositeColor(Color.GRAY, Color.GRAY, Color.GRAY)
-		const val REF_COLOR_ALPHA = 144
+
 		val DEF_REF_COLORS = listOf(
-			DrawGraphicsModule.RED.withAlpha(REF_COLOR_ALPHA),
-			DrawGraphicsModule.BLUE.withAlpha(REF_COLOR_ALPHA),
-			DrawGraphicsModule.GREEN.withAlpha(REF_COLOR_ALPHA),
-			DrawGraphicsModule.YELLOW.withAlpha(REF_COLOR_ALPHA),
-			DrawGraphicsModule.VIOLET.withAlpha(REF_COLOR_ALPHA),
-			DrawGraphicsModule.PINK.withAlpha(REF_COLOR_ALPHA),
-			DrawGraphicsModule.GRAY.withAlpha(REF_COLOR_ALPHA),
-			DrawGraphicsModule.WHITE.withAlpha(REF_COLOR_ALPHA),
-			DrawGraphicsModule.BLACK.withAlpha(REF_COLOR_ALPHA)
+			// TODO Do the darker colors need individual design?
+			ReferenceColor(DrawGraphicsModule.RED, DrawGraphicsModule.RED.darker()),
+			ReferenceColor(DrawGraphicsModule.BLUE, DrawGraphicsModule.BLUE.darker()),
+			ReferenceColor(DrawGraphicsModule.GREEN, DrawGraphicsModule.GREEN.darker()),
+			ReferenceColor(DrawGraphicsModule.YELLOW, DrawGraphicsModule.YELLOW.darker()),
+			ReferenceColor(DrawGraphicsModule.VIOLET, DrawGraphicsModule.VIOLET.darker()),
+			ReferenceColor(DrawGraphicsModule.PINK, DrawGraphicsModule.PINK.darker()),
+			ReferenceColor(DrawGraphicsModule.GRAY, DrawGraphicsModule.GRAY.darker()),
+			ReferenceColor(DrawGraphicsModule.WHITE, DrawGraphicsModule.WHITE.darker()),
+			ReferenceColor(DrawGraphicsModule.BLACK, DrawGraphicsModule.BLACK.darker())
 		)
+
 		val DEF_PREDEFINED_COLORS = listOf(
 			PredefinedColor(PredefinedColorIdentity.White, DrawGraphicsModule.WHITE),
 			PredefinedColor(PredefinedColorIdentity.Black, DrawGraphicsModule.BLACK),

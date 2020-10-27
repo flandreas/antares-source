@@ -12,7 +12,7 @@ class AntaresTheme(
 	name: String = DEF_NAME,
 	dark: Boolean = DEF_DARK,
 	referenceColorSequenceProvider: ReferenceColorSequenceProvider = ReferenceColorSequenceProvider,
-	referenceColors: List<CompositeColor> = DEF_REF_COLORS,
+	referenceColors: List<ReferenceColor> = DEF_REF_COLORS,
 	predefinedColors: List<PredefinedColor> = DEF_PREDEFINED_COLORS,
 	background: Style = DEF_BACKGROUND,
 	figure: Style = DEF_FIGURE,

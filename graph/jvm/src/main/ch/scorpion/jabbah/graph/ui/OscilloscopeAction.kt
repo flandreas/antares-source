@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -28,7 +29,8 @@ class OscilloscopeAction(
 
 	override fun calculateEnabled(): Boolean {
 		// Disable until entire Oscilloscope has been improved
-		return false
+		//return false
+		return AppModule.userHolder.user.isDeveloper
 	}
 
 	override fun dispose() {

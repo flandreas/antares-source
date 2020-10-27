@@ -13,13 +13,13 @@ import kotlin.test.assertEquals
 class ReferenceColorSequenceProviderTest {
 
 	companion object {
-		private val WHITE = CompositeColor(Color.WHITE)
-		private val RED = CompositeColor(Color.RED)
-		private val YELLOW = CompositeColor(Color.YELLOW)
+		private val WHITE = ReferenceColor(CompositeColor(Color.WHITE))
+		private val RED = ReferenceColor(CompositeColor(Color.RED))
+		private val YELLOW = ReferenceColor(CompositeColor(Color.YELLOW))
 
-		private val BLUE = CompositeColor(Color.BLUE)
-		private val BLACK = CompositeColor(Color.BLACK)
-		private val GRAY = CompositeColor(Color.GRAY)
+		private val BLUE = ReferenceColor(CompositeColor(Color.BLUE))
+		private val BLACK = ReferenceColor(CompositeColor(Color.BLACK))
+		private val GRAY = ReferenceColor(CompositeColor(Color.GRAY))
 	}
 
 	@BeforeTest

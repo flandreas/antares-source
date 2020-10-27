@@ -15,24 +15,21 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 		val YELLOW = CompositeColor(Color(245, 235, 62), Color(67, 69, 10))
 
 		val REFERENCE_COLORS = listOf(
-			// Red
-			RED.withAlpha(DrawTheme.REF_COLOR_ALPHA),
-			// Blue
-			BLUE.withAlpha(DrawTheme.REF_COLOR_ALPHA),
-			// Green
-			GREEN.withAlpha(DrawTheme.REF_COLOR_ALPHA),
-			// Yellow
-			YELLOW.withAlpha(DrawTheme.REF_COLOR_ALPHA),
+			// TODO: Design colors explicitly
+			ReferenceColor(RED),
+			ReferenceColor(BLUE),
+			ReferenceColor(GREEN),
+			ReferenceColor(YELLOW),
 			// Violet
-			CompositeColor(Color(125, 108, 171), Color(55, 14, 91, DrawTheme.REF_COLOR_ALPHA)),
+			ReferenceColor(CompositeColor(Color(125, 108, 171), Color(55, 14, 91))),
 			// Pink
-			CompositeColor(Color(188, 126, 179), Color(104, 8, 89, DrawTheme.REF_COLOR_ALPHA)),
+			ReferenceColor(CompositeColor(Color(188, 126, 179), Color(104, 8, 89))),
 			// Blue-Green
-			CompositeColor(Color(90, 196, 194), Color(13, 110, 110, DrawTheme.REF_COLOR_ALPHA)),
+			ReferenceColor(CompositeColor(Color(90, 196, 194), Color(13, 110, 110))),
 			// Yellow-Orange
-			CompositeColor(Color(247, 164, 49), Color(152, 103, 22, DrawTheme.REF_COLOR_ALPHA)),
+			ReferenceColor(CompositeColor(Color(247, 164, 49), Color(152, 103, 22))),
 			// Black
-			CompositeColor(Color(234, 234, 234), Color(32, 32, 32, DrawTheme.REF_COLOR_ALPHA)))
+			ReferenceColor(CompositeColor(Color(234, 234, 234), Color(32, 32, 32))))
 
 		val PREDEFINED_COLORS = listOf(
 			PredefinedColor(PredefinedColorIdentity.White, DrawGraphicsModule.WHITE),

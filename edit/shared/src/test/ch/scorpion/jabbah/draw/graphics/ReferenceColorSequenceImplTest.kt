@@ -11,14 +11,14 @@ import kotlin.test.assertFailsWith
 class ReferenceColorSequenceImplTest {
 
 	private val sequence = ReferenceColorSequenceImpl(listOf(
-		CompositeColor(foregroundColor = Color.BLACK),
-		CompositeColor(foregroundColor = Color.WHITE))
+		ReferenceColor(CompositeColor(foregroundColor = Color.BLACK)),
+		ReferenceColor(CompositeColor(foregroundColor = Color.WHITE)))
 	)
 
 	@Test
 	fun shouldFetchNext() {
-		assertEquals(Color.BLACK, sequence.next().foregroundColor)
-		assertEquals(Color.WHITE, sequence.next().foregroundColor)
+		assertEquals(Color.BLACK, sequence.next().onBackground.foregroundColor)
+		assertEquals(Color.WHITE, sequence.next().onBackground.foregroundColor)
 	}
 
 	@Test
@@ -38,7 +38,7 @@ class ReferenceColorSequenceImplTest {
 	@Test
 	fun shouldRefuseToFreeUnfetched() {
 		assertFailsWith<IllegalStateException> {
-			sequence.free(CompositeColor(foregroundColor = Color.BLACK))
+			sequence.free(ReferenceColor(CompositeColor(foregroundColor = Color.BLACK)))
 		}
 	}
 }

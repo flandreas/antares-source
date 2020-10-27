@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.ReferenceColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorEvent
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -75,9 +76,10 @@ class GraphDesktopController(
 
 	companion object {
 		private val LOG by logger(GraphDesktopController::class)
+		private const val REF_COLOR_ALPHA = 144
 
-		private fun displayedReferenceColor(referenceColor: CompositeColor): CompositeColor {
-			return referenceColor.exchange()
+		private fun displayedReferenceColor(referenceColor: ReferenceColor): CompositeColor {
+			return referenceColor.onBackground.exchange().withAlpha(REF_COLOR_ALPHA)
 		}
 	}
 
@@ -222,7 +224,7 @@ class GraphDesktopController(
 	}
 
 	/**
-	 * Deassociate the specified open [GraphNavigationPanel] when it is being closed.
+	 * Deassociate the specified open [GraphDesktopItem] when it is being closed.
 	 * Checks all existing [Association]s for the [DrawingViewContent]s that contains the associating [SubGraphVerticeView],
 	 * and removes that [Association].
 	 */
@@ -246,7 +248,7 @@ class GraphDesktopController(
 	private fun associationOf(item: GraphDesktopItem): Association? =
 		associations.firstOrNull { assoc -> assoc.item == item }
 
-	/** Finds the [GraphNavigationPanel] that contains the specified [VerticeView]. */
+	/** Finds the [GraphDesktopItem] that contains the specified [VerticeView]. */
 	private fun itemContaining(vv: VerticeView<*>): GraphDesktopItem? {
 		if (view.mainDesktopItem.drawingView!!.drawing.contains(vv)) {
 			return view.mainDesktopItem
@@ -267,11 +269,11 @@ class GraphDesktopController(
 
 	/**
 	 * Maintains an association between a [VerticeView] and the [GraphDesktopItem] that has been opened
-	 * in a [GraphDesktop], along with the [CompositeColor] that is used as a visual reference.
+	 * in a [GraphDesktop], along with the [ReferenceColor] that is used as a visual reference.
 	 */
 	data class Association(
 		val sourceItem: GraphDesktopItem,
 		val ref: VerticeView<*>,
 		val item: GraphDesktopItem,
-		val refColor: CompositeColor)
+		val refColor: ReferenceColor)
 }

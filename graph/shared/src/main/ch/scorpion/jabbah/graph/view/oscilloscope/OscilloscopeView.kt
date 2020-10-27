@@ -11,8 +11,8 @@ import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.IconButton
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Icon
+import ch.scorpion.jabbah.draw.graphics.ReferenceColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -345,7 +345,7 @@ class OscilloscopeView(
 	private inner class RowView(
 		rowNumber: Int,
 		location: Point2D,
-		val color: CompositeColor,
+		val color: ReferenceColor,
 		factory: OscilloscopeViewFactory
 	) : DrawableContainerImpl<Drawable>(location = location, useLocation = true) {
 
@@ -354,7 +354,7 @@ class OscilloscopeView(
 		private val probeView = OscilloscopeProbeView(
 			location = Point2D(2.0 * ROW_INSET + ICON_BUTTON_SIZE, factory.rowHeight / 2 - OscilloscopeProbeViewDrawable.SIZE / 2),
 			rowNumber = rowNumber,
-			color = color,
+			color = color.onBackground,
 			origLocSource = { this@OscilloscopeView.location.add(this.location) })
 
 		init {
@@ -378,7 +378,7 @@ class OscilloscopeView(
 
 		fun loadedWith(vertice: OscilloscopeProbeVerticeView<Any>) {
 			probeView.vertice = vertice
-			probeView.vertice!!.refColor = color
+			probeView.vertice!!.refColor = color.onBackground
 		}
 
 		fun handleProbeViewRemovedFromDrawing() {
@@ -390,12 +390,12 @@ class OscilloscopeView(
 				model.getSignalHistory(rowNumber.toString())!!,
 				model.getSignalHistory("1"),
 				timeline,
-				color
+				color.onDark
 			)
 		}
 
 		fun unbindDrawer() {
-			drawer.bind(null, null, null, color)
+			drawer.bind(null, null, null, color.onBackground)
 		}
 	}
 
