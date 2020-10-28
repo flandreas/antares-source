@@ -19,6 +19,21 @@ data class CompositeColor(
 
 	companion object {
 		private const val BACKGROUND_DERIVATION_FACTOR = 1 / 12f
+
+		fun withBrighterText(
+			foregroundColor: Color,
+			backgroundColor: Color
+		): CompositeColor {
+			return CompositeColor(foregroundColor, backgroundColor, foregroundColor.brighter().brighter())
+		}
+
+		fun withDarkerText(
+			foregroundColor: Color,
+			backgroundColor: Color
+		): CompositeColor {
+			return CompositeColor(foregroundColor, backgroundColor, foregroundColor.darker())
+		}
+
 	}
 
 	val disabledTextColor: Color

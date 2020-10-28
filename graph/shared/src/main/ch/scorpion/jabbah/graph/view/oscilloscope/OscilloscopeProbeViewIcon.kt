@@ -66,6 +66,7 @@ class OscilloscopeProbeViewIcon(
 		}
 		context.g.color = context.choose(color).foregroundColor
 		context.g.draw(PATH)
+		context.g.color = context.choose(color).textColor
 		label.draw(context)
 
 		context.g.translate(-location.x, -location.y)
