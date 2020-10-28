@@ -38,7 +38,7 @@ class Oscilloscope(
 		const val PROP_BUFFER_SIZE = "Oscilloscope.bufferSize"
 	}
 
-	/** Maps a probe row number (starting with "1") to its [SignalHistory] defining the max. number of buffered signals.*/
+	/** Maps a probe name to its [SignalHistory] containing then of buffered signals.*/
 	private val signalHistories = mutableMapOf<String, SignalHistoryImpl<Any>>()
 
 	/**
@@ -93,20 +93,18 @@ class Oscilloscope(
 
 	private val bufferSize: Int get() = BaseModule.properties.getInt(PROP_BUFFER_SIZE)
 
-	fun getSignalHistory(rowNumber: String): SignalHistory<Any>? {
-		return signalHistories[rowNumber]
-	}
+	fun getSignalHistory(name: String): SignalHistory<Any>? = signalHistories[name]
 
 	private fun storeSignal(input: InputPort<*>, signalHandler: SignalHandler) {
 		val signal = input.getIncomingSignal()!!
 		val history = signalHistories[input.name!!]!!
-		LOG.debug("Oscilloscope ${input.name}: storing signal '$signal' at time ${signalHandler.executionTime}")
+		LOG.trace("Oscilloscope ${input.name}: storing signal '$signal' at time ${signalHandler.executionTime}")
 		history.add(SignalHistoryEntry(signal, signalHandler.executionTime))
 		updateMaxTime(signalHandler.executionTime)
 	}
 
 	private fun updateMaxTime(now: Long) {
 		maxTime = max(maxTime, now)
-		LOG.debug("maxTime = $maxTime")
+		LOG.trace("maxTime = $maxTime")
 	}
 }
