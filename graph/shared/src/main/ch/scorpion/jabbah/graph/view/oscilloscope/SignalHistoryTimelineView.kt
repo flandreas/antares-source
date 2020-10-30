@@ -16,12 +16,20 @@ import kotlin.math.max
 /** Draws a [SignalHistoryTimeline] as a single row of an [OscilloscopeView].*/
 interface SignalHistoryTimelineView : RectangularDrawable {
 
+	/**
+	 * Binds this [SignalHistoryTimelineView] at start of execution with relevant runtime
+	 * information.
+	 *
+	 * @param gridSignalHistory the [SignalHistory] whose signal changes determine the location
+	 * of the vertical grid lines
+	 */
 	fun bind(
 		gridSignalHistory: SignalHistory<Any>?,
 		timeline: SignalHistoryTimeline?
 	)
 }
 
+/** Draws a ruler-like timeline. */
 class SignalHistoryTimelineViewImpl : AbstractRectangle(), SignalHistoryTimelineView {
 
 	companion object {
