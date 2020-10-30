@@ -160,7 +160,7 @@ class ControlViewComponent(
 
 	/** ---- [ActorView] */
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? = controlView.getActorInteractionHandler(context)
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = controlView.getActorInteractionHandler(context)
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = controlView.getExecutionTooltip(x, y)
 

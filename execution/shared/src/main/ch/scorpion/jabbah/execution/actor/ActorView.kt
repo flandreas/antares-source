@@ -20,7 +20,7 @@ interface ActorView {
      * Returns the [InputEventHandler] that handles user interactions on this [ActorView] during execution,
      * or ´null` if this [ActorView] doesn't react to input events during execution.
      */
-    fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler?
+    fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler
 
     /**
      * Returns a short description of this [ActorView] to be displayed as a tool tip during simulation.

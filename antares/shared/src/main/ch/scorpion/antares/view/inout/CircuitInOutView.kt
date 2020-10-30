@@ -18,7 +18,6 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -162,11 +161,12 @@ class CircuitInOutView(
 
 	/** ---- [ActorView] */
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
-		if (model.portType.isInput) {
-			return actorInteractionHandler
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
+		return if (model.portType.isInput) {
+			actorInteractionHandler
+		} else {
+			super.getActorInteractionHandler(context)
 		}
-		return null
 	}
 
 	/** ---- [Storable] */

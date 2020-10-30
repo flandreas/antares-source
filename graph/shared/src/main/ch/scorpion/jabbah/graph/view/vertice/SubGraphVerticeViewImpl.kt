@@ -375,7 +375,7 @@ class SubGraphVerticeViewImpl(
 
 	/** ---- [ActorView] */
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
 		return executionInteractionHandler
 	}
 
@@ -495,28 +495,23 @@ class SubGraphVerticeViewImpl(
 	private inner class ExecutionInteractionHandler : ClickableActorInteractionHandlerAdapter() {
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			val actorView = getActorViewAt(context.x, context.y)
-			return if (actorView?.getActorInteractionHandler(context) != null) {
-				actorView.getActorInteractionHandler(context)!!.mousePressed(context.withXY(context.x - location.x, context.y - location.y))
-			} else {
-				super.mousePressed(context)
-			}
+			return getActorViewAt(context.x, context.y)
+				?.getActorInteractionHandler(context)
+				?.mousePressed(context.withXY(context.x - location.x, context.y - location.y))
+				?: super.mousePressed(context)
 		}
 
 		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
-			val actorView = getActorViewAt(context.x, context.y)
-			return if (actorView?.getActorInteractionHandler(context) != null) {
-				actorView.getActorInteractionHandler(context)!!.mouseReleased(context.withXY(context.x - location.x, context.y - location.y))
-			} else {
-				super.mouseReleased(context)
-			}
+			return getActorViewAt(context.x, context.y)
+				?.getActorInteractionHandler(context)
+				?.mouseReleased(context.withXY(context.x - location.x, context.y - location.y))
+				?: super.mouseReleased(context)
 		}
 
 		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-			val actorView = getActorViewAt(context.x, context.y)
-			if (actorView?.getActorInteractionHandler(context) != null) {
-				actorView.getActorInteractionHandler(context)!!.mouseClicked(context.withXY(context.x - location.x, context.y - location.y))
-			}
+			getActorViewAt(context.x, context.y)
+				?.getActorInteractionHandler(context)
+				?.mouseClicked(context.withXY(context.x - location.x, context.y - location.y))
 
 			if (!context.mouseEvent!!.isConsumed() && context.mouseEvent!!.clickCount == 2) {
 				requestOpenSubGraph(context.mouseEvent!!)
@@ -527,7 +522,7 @@ class SubGraphVerticeViewImpl(
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			getActorViews().forEach {
-				it.getActorInteractionHandler(context)?.keyPressed(context)
+				it.getActorInteractionHandler(context).keyPressed(context)
 				if (context.keyEvent!!.isConsumed()) {
 					return null
 				}
@@ -537,7 +532,7 @@ class SubGraphVerticeViewImpl(
 
 		override fun keyReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 			getActorViews().forEach {
-				it.getActorInteractionHandler(context)?.keyReleased(context)
+				it.getActorInteractionHandler(context).keyReleased(context)
 				if (context.keyEvent!!.isConsumed()) {
 					return null
 				}

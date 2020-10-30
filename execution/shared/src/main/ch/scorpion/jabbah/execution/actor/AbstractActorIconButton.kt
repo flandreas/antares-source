@@ -18,7 +18,7 @@ abstract class AbstractActorIconButton(
 
 	private val actorInteractionHandler = createActorInteractionHandler()
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? = actorInteractionHandler
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = actorInteractionHandler
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = getTooltip(x, y)
 

@@ -339,7 +339,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		return if (StringUtils.isNotEmpty(text)) Tooltip(text!!, plainBoundingBox.centerX, plainBoundingBox.maxY) else null
 	}
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
 		CANNOT_OPEN_ACTOR_CLICK_HANDLER.component = this
 		return CANNOT_OPEN_ACTOR_CLICK_HANDLER
 	}

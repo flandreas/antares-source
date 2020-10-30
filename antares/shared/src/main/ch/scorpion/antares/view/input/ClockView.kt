@@ -120,7 +120,7 @@ class ClockView(
 		context.g.translate(-dx, -dy)
 	}
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
 		return actorInteractionHandler
 	}
 

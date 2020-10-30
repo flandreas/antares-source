@@ -16,7 +16,7 @@ open class ActorViewContainer<T: Drawable>(
 
 	/** ---- [ActorView] interface */
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
 		handler.useFor(this)
 		return handler
 	}
@@ -41,8 +41,7 @@ open class ActorViewContainer<T: Drawable>(
 
 		override fun handlerOfDrawable(drawable: Drawable, context: ActorInteractionContext): InputEventHandler<ActorInteractionContext> {
 			return if (drawable is ActorView) {
-				// TODO Shouldn't ActorView always return non-null handlers?
-				drawable.getActorInteractionHandler(context)!!
+				drawable.getActorInteractionHandler(context)
 			} else {
 				super.handlerOfDrawable(drawable, context)
 			}

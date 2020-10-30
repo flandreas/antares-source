@@ -251,7 +251,7 @@ class KnobView(
 
 	/** ---- [ActorView] */
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
 		return handler
 	}
 

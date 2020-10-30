@@ -182,7 +182,7 @@ class OscilloscopeView(
 		container.draw(context)
 	}
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
 		return container.getActorInteractionHandler(context)
 	}
 

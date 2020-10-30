@@ -4,10 +4,7 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.InputEventContext
-import ch.scorpion.jabbah.draw.InputEventHandler
+import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
 import ch.scorpion.jabbah.draw.polyline.LineTerminator
@@ -52,6 +49,7 @@ open class EdgeViewImpl<T : Any>(
 	private companion object {
 		private val LOG by logger(EdgeViewImpl::class)
 		private val TYPE = Translations.getString("graph.component.edge")
+		private val NO_OP_ACTOR_HANDLER = InputEventHandlerAdapter<ActorInteractionContext>()
 	}
 
 	constructor(
@@ -95,7 +93,7 @@ open class EdgeViewImpl<T : Any>(
 
 	/** ---- [ActorView] */
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? = null
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = NO_OP_ACTOR_HANDLER
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
 		val content = StringBuilder(StringUtils.orEmpty(model.description.value))

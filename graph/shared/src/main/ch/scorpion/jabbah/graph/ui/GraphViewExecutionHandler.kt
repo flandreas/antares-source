@@ -194,14 +194,14 @@ class GraphViewExecutionHandler(
 
 			// Try to forward KeyEvent to the focus ActorView
 			if (FocusManager.focusOwner is ActorView) {
-				(FocusManager.focusOwner as ActorView).getActorInteractionHandler(context)?.keyPressed(context)
+				(FocusManager.focusOwner as ActorView).getActorInteractionHandler(context).keyPressed(context)
 				return
 			}
 
 			// Try to forward KeyEvent to any ActorView that consumes it
 			if (FocusManager.focusOwner == null) {
 				view.drawing.getVerticeViews().forEach {
-					it.getActorInteractionHandler(context)?.keyPressed(context)
+					it.getActorInteractionHandler(context).keyPressed(context)
 					context.keyEvent?.let { event ->
 						if (event.isConsumed()) {
 							return
@@ -215,14 +215,14 @@ class GraphViewExecutionHandler(
 			val context = keyEventContext(e)
 
 			if (FocusManager.focusOwner is ActorView) {
-				(FocusManager.focusOwner as ActorView).getActorInteractionHandler(context)?.keyReleased(context)
+				(FocusManager.focusOwner as ActorView).getActorInteractionHandler(context).keyReleased(context)
 				return
 			}
 
 			// Try to forward KeyEvent to any ActorView that consumes it
 			if (FocusManager.focusOwner == null) {
 				view.drawing.getVerticeViews().forEach {
-					it.getActorInteractionHandler(context)?.keyReleased(context)
+					it.getActorInteractionHandler(context).keyReleased(context)
 					context.keyEvent?.let { event ->
 						if (event.isConsumed()) {
 							return

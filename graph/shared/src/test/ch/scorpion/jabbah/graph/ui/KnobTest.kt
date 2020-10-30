@@ -99,17 +99,17 @@ class KnobViewTest {
 
 	private fun pressMouseAt(knobView: KnobView, x: Double, y: Double) {
 		val context = contextFor(x, y)
-		knobView.getActorInteractionHandler(context)?.mousePressed(context)
+		knobView.getActorInteractionHandler(context).mousePressed(context)
 	}
 
 	private fun dragMouseTo(knobView: KnobView, x: Double, y: Double) {
 		val context = contextFor(x, y)
-		knobView.getActorInteractionHandler(context)?.mouseDragged(context)
+		knobView.getActorInteractionHandler(context).mouseDragged(context)
 	}
 
 	private fun doubleClickAt(knobView: KnobView, x: Double, y: Double) {
 		val context = contextFor(x, y, clickCount = 2)
-		knobView.getActorInteractionHandler(context)?.mousePressed(context)
+		knobView.getActorInteractionHandler(context).mousePressed(context)
 	}
 
 	private fun contextFor(x: Double, y: Double, clickCount: Int = 0): ActorInteractionContext {
