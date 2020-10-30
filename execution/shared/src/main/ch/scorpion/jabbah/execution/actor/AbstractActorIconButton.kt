@@ -16,7 +16,7 @@ abstract class AbstractActorIconButton(
 	tooltipKey: String? = null
 ) : AbstractIconButton(icon, location, tooltipKey), ActorView {
 
-	private val actorInteractionHandler = Handler()
+	private val actorInteractionHandler = createActorInteractionHandler()
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? = actorInteractionHandler
 
@@ -24,7 +24,9 @@ abstract class AbstractActorIconButton(
 
 	protected abstract fun handleClicked(context: ActorInteractionContext)
 
-	private inner class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {
+	protected open fun createActorInteractionHandler(): InputEventHandlerAdapter<ActorInteractionContext> = Handler()
+
+	protected open inner class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {
 
 		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? =
 			if (keepMouseMoved(context.location)) this else null

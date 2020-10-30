@@ -48,19 +48,33 @@ open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContex
 	}
 
 	private fun onTargetOrContainer(context: C, handler: (InputEventHandler<C>, C) -> InputEventHandler<C>?): InputEventHandler<C>? {
-		val localContext = if (container.location == Point2D.ZERO) {
-			context
-		} else {
-			context.withXY(context.location.subtract(container.location)) as C
-		}
+		val localContext = getLocalContext(context)
 
 		if (target != null) {
 			return mightRemember(handler(target!!, localContext))
 		}
 
-		return container.getDrawableAt(context.location)?.let { drawable ->
+		return getDrawableAt(context.location)?.let { drawable ->
 			mightRemember(handler(handlerOfDrawable(drawable, localContext), localContext))
 		} ?: mightRemember(null)
+	}
+
+	private fun getLocalContext(context: C): C {
+		return if (container.location == Point2D.ZERO) {
+			context
+		} else {
+			context.withXY(context.location.subtract(container.location)) as C
+		}
+	}
+
+	/**
+	 * Returns the [Drawable] of the [DrawableContainer] at the specified location.
+	 * Defaults to the corresponding default method of [DrawableContainer].
+	 * Subclasses might choose to override this method e.g. to restrict the set of possible [Drawable]
+	 * to those of more specific types.
+	 */
+	protected open fun getDrawableAt(location: Point2D): Drawable? {
+		return container.getDrawableAt(location)
 	}
 
 	/**
@@ -69,7 +83,7 @@ open class DrawableContainerInputEventHandler<T : Drawable, C : InputEventContex
 	 * Subclasses might choose to return other, e.g. inner [InputEventHandlers][InputEventHandler],
 	 * inheriting the benefit of remembering the target for coordinate relocation done by this class.
 	 */
-	protected open fun handlerOfDrawable(drawable: Drawable, context: InputEventContext): InputEventHandler<C> {
+	protected open fun handlerOfDrawable(drawable: Drawable, context: C): InputEventHandler<C> {
 		return drawable.getInputEventHandler(context)
 	}
 }

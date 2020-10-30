@@ -44,6 +44,7 @@ object KnobLauncher {
 	private var location: Point2D = Point2D.ZERO
 	private var unit: String = ""
 	private var mouseMovedCondition: ((ActorInteractionContext) -> Boolean)? = null
+	private var displayHandler: (() -> Unit)? = null
 	private var valueChangeHandler: ((Long) -> Unit)? = null
 
 	/**
@@ -55,6 +56,8 @@ object KnobLauncher {
 	 * @param unit the [String] displayed after the value in [KnobView]. Example: µs
 	 * @param mouseMovedCondition the condition that must be `true` during the entire delay time. This is
 	 * typically implemented as [Drawable.contains] regarding the client that requests the [KnobView].
+	 * @param displayHandler the additional code to be executed when the [KnobView] is displayed.
+	 * Allows the client to reset any of its state, e.g. hover highlighting over a button that initiates launching
 	 * @param valueChangeHandler called by this [KnobLauncher] whenever the [KnobView]'s value has changed
 	 */
 	fun launchAfterDelay(
@@ -62,19 +65,22 @@ object KnobLauncher {
 		location: Point2D,
 		unit: String,
 		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
+		displayHandler: () -> Unit = {},
 		valueChangeHandler: (Long) -> Unit
 	): ActorInteractionHandler? {
 		this.initialValue = initialValue
 		this.location = location
 		this.unit = unit
 		this.mouseMovedCondition = mouseMovedCondition
+		this.displayHandler = displayHandler
 		this.valueChangeHandler = valueChangeHandler
+
 		return handler
 	}
 
 	private fun startTimerIfNeeded(view: DrawingView<*>) {
 		if (timer == null) {
-			LOG.debug("starting timer")
+			LOG.debug("starting KnobView timer")
 			timer = System.createTimer()
 			timer!!.initialize(timerDelay) { display(view) }
 			timer!!.start()
@@ -83,7 +89,6 @@ object KnobLauncher {
 
 	private fun stopTimer() {
 		timer?.let {
-			LOG.debug("stopping KnobView timer")
 			it.stop()
 			timer = null
 		}
@@ -102,15 +107,19 @@ object KnobLauncher {
 		view.content.animationContainer.add(knobView)
 		view.content.animationContainer.validate()
 		view.setCursor(Cursor.HAND)
+
+		displayHandler?.invoke()
 	}
 
 	private class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {
 		override fun mouseMoved(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
+			val view = context.view as DrawingView<*>
+
+			if (view.content.animationContainer.contains(knobView)) {
+				return null
+			}
+
 			if (mouseMovedCondition!!.invoke(context)) {
-				val view = context.view as DrawingView<*>
-				if (view.content.animationContainer.contains(knobView)) {
-					return null
-				}
 				startTimerIfNeeded(view)
 				return this
 			}

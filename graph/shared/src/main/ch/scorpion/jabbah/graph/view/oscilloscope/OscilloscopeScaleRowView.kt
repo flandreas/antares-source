@@ -3,14 +3,16 @@ package ch.scorpion.jabbah.graph.view.oscilloscope
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.drawable.IconButton
 import ch.scorpion.jabbah.draw.graphics.AddIcon
 import ch.scorpion.jabbah.draw.graphics.KnobIcon
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.execution.actor.AbstractActorIconButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorViewContainer
+import ch.scorpion.jabbah.graph.ui.KnobLauncher
 import ch.scorpion.jabbah.graph.ui.KnobView
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.DRAWER_W
@@ -81,24 +83,29 @@ class OscilloscopeScaleRowView(
 		tooltipKey = "graph.action.oscilloscope.scale.name",
 	) {
 
-		private val knob: KnobView by lazy { KnobView(unit = "x") }
+		override fun createActorInteractionHandler(): InputEventHandlerAdapter<ActorInteractionContext> = MouseMoveHandler()
 
-		override fun handleClicked(context: ActorInteractionContext) {
-			showKnob(context.view as DrawingView<*>)
-		}
+		override fun handleClicked(context: ActorInteractionContext) { }
 
-		private fun showKnob(view: DrawingView<*>) {
-			knob.valueChangeHandler = { oscilloscopeView.timelineScale = it.toDouble() }
-			knob.location = Point2D(boundingBox.center
-				.add(oscilloscopeView.location)
-				.add(this@OscilloscopeScaleRowView.location)
-				.subtract(Point2D(KnobView.OUTER_SIZE / 2, KnobView.OUTER_SIZE / 2))
-			)
-			knob.value = oscilloscopeView.timelineScale.toLong()
-			knob.defaultValue = 10
+		private inner class MouseMoveHandler : Handler() {
+			override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 
-			view.content.animationContainer.add(knob)
-			view.content.animationContainer.validate()
+				// Hover highlighting
+				if (super.mouseMoved(context) == null) {
+					return null
+				}
+
+				return KnobLauncher.launchAfterDelay(
+					initialValue = oscilloscopeView.timelineScale.toLong(),
+					location = boundingBox.center
+						.add(oscilloscopeView.location)
+						.add(this@OscilloscopeScaleRowView.location),
+					unit = "x",
+					mouseMovedCondition = { keepMouseMoved(it.location) },
+					displayHandler = { isHovering = false },
+					valueChangeHandler = { oscilloscopeView.timelineScale = it.toDouble() }
+				)
+			}
 		}
 	}
 }

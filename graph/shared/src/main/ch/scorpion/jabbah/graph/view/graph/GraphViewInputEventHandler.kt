@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.view.graph
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.container.DrawableContainerInputEventHandler
 import ch.scorpion.jabbah.edit.EditInputEventContext
@@ -33,7 +32,7 @@ class GraphViewInputEventHandler<T : GraphElementView<*>>(
 		private val LOG by logger(GraphViewInputEventHandler::class)
 	}
 
-	override fun handlerOfDrawable(drawable: Drawable, context: InputEventContext): InputEventHandler<EditInputEventContext> {
+	override fun handlerOfDrawable(drawable: Drawable, context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 		if (drawable is VerticeView<*>) {
 			val portView = drawable.getPortViewAtConnectionPoint(context.x, context.y)
 			if (portView != null && portView.connectable) {

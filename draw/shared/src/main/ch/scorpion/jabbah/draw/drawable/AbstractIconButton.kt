@@ -85,14 +85,14 @@ abstract class AbstractIconButton(
 	protected fun keepMouseMoved(mouseLocation: Point2D): Boolean {
 		if (contains(mouseLocation)) {
 			if (!isHovering && enabled) {
-				LOG.debug("IconButton: start hover mode")
+				LOG.debug("start hover mode")
 				isHovering = true
 			}
 			return true
 		}
 
 		if (isHovering) {
-			LOG.debug("IconButton: stop hover mode")
+			LOG.debug("stop hover mode")
 			isHovering = false
 		}
 		return false

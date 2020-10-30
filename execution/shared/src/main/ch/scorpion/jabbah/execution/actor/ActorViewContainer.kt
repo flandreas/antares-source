@@ -3,8 +3,9 @@ package ch.scorpion.jabbah.execution.actor
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
+import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
+import ch.scorpion.jabbah.draw.container.DrawableContainerInputEventHandler
 
 open class ActorViewContainer<T: Drawable>(
 	location: Point2D = Point2D.ZERO,
@@ -13,7 +14,10 @@ open class ActorViewContainer<T: Drawable>(
 
 	private val handler = Handler()
 
+	/** ---- [ActorView] interface */
+
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler? {
+		handler.useFor(this)
 		return handler
 	}
 
@@ -25,50 +29,23 @@ open class ActorViewContainer<T: Drawable>(
 		return getActorViewAt(p)?.getExecutionTooltip(p)
 	}
 
+	/** ---- [ActorViewContainer] */
+
 	private fun getActorViewAt(pos: Point2D): ActorView? {
 		return getDrawableAt(pos.x, pos.y) { it is ActorView } as ActorView?
 	}
 
-	private inner class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {
+	private inner class Handler : DrawableContainerInputEventHandler<T, ActorInteractionContext>() {
 
-		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
-			val actorView = getActorViewAt(context.location)
-			if (actorView != null) {
-				val localContext = localContext(context)
-				return actorView.getActorInteractionHandler(localContext)?.mouseMoved(localContext)
+		override fun getDrawableAt(location: Point2D): Drawable? = getActorViewAt(location) as Drawable?
+
+		override fun handlerOfDrawable(drawable: Drawable, context: ActorInteractionContext): InputEventHandler<ActorInteractionContext> {
+			return if (drawable is ActorView) {
+				// TODO Shouldn't ActorView always return non-null handlers?
+				drawable.getActorInteractionHandler(context)!!
+			} else {
+				super.handlerOfDrawable(drawable, context)
 			}
-			return null
-		}
-
-		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			val actorView = getActorViewAt(context.location)
-			if (actorView != null) {
-				val localContext = localContext(context)
-				return actorView.getActorInteractionHandler(localContext)?.mousePressed(localContext)
-			}
-			return null
-		}
-
-		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
-			val actorView = getActorViewAt(context.location)
-			if (actorView != null) {
-				val localContext = localContext(context)
-				return actorView.getActorInteractionHandler(localContext)?.mouseReleased(localContext)
-			}
-			return null
-		}
-
-		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-			val actorView = getActorViewAt(context.location)
-			if (actorView != null) {
-				val localContext = localContext(context)
-				return actorView.getActorInteractionHandler(localContext)?.mouseClicked(localContext)
-			}
-			return null
-		}
-
-		private fun localContext(c: ActorInteractionContext): ActorInteractionContext {
-			return if (location == Point2D.ZERO) c else c.withXY(c.location.subtract(location)) as ActorInteractionContext
 		}
 	}
 }
