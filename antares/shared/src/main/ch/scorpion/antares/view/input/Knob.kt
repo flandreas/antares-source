@@ -8,14 +8,15 @@ import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyOwner
 import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawableContainer
-import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.time.Timer
+import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.draw.view.TooltipManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
@@ -23,6 +24,102 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import kotlin.math.*
 
+/**
+ * Utility class for launching a [KnobView] for a client component after the mouse pointer has stayed
+ * within the client component during a particular delay time, similar to tooltip delays.
+ */
+object KnobLauncher {
+
+	private val LOG by logger(KnobLauncher::class)
+
+	/** The factor of [TooltipManager.PROP_DELAY] for delaying displaying the [KnobView].*/
+	private const val DELAY_FACTOR = 0.7
+
+	private val timerDelay: Int get() = (DELAY_FACTOR * BaseModule.properties.getInt(TooltipManager.PROP_DELAY)).toInt()
+	private val handler = Handler()
+	private var timer: Timer? = null
+	private val knobView: KnobView by lazy { KnobView() }
+
+	private var initialValue: Long = 0
+	private var location: Point2D = Point2D.ZERO
+	private var unit: String = ""
+	private var mouseMovedCondition: ((ActorInteractionContext) -> Boolean)? = null
+	private var valueChangeHandler: ((Long) -> Unit)? = null
+
+	/**
+	 * Launches a new [KnobView] after the mouse pointer has stayed within the client component for the
+	 * configured delay time.
+	 *
+	 * @param initialValue the initial value to be displayed by the [KnobView]
+	 * @param location the location in global model space where the center of the [KnobView] should be located
+	 * @param unit the [String] displayed after the value in [KnobView]. Example: µs
+	 * @param mouseMovedCondition the condition that must be `true` during the entire delay time. This is
+	 * typically implemented as [Drawable.contains] regarding the client that requests the [KnobView].
+	 * @param valueChangeHandler called by this [KnobLauncher] whenever the [KnobView]'s value has changed
+	 */
+	fun launchAfterDelay(
+		initialValue: Long,
+		location: Point2D,
+		unit: String,
+		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
+		valueChangeHandler: (Long) -> Unit
+	): ActorInteractionHandler? {
+		this.initialValue = initialValue
+		this.location = location
+		this.unit = unit
+		this.mouseMovedCondition = mouseMovedCondition
+		this.valueChangeHandler = valueChangeHandler
+		return handler
+	}
+
+	private fun startTimerIfNeeded(view: DrawingView<*>) {
+		if (timer == null) {
+			LOG.debug("starting timer")
+			timer = System.createTimer()
+			timer!!.initialize(timerDelay) { display(view) }
+			timer!!.start()
+		}
+	}
+
+	private fun stopTimer() {
+		timer?.let {
+			LOG.debug("stopping KnobView timer")
+			it.stop()
+			timer = null
+		}
+	}
+
+	private fun display(view: DrawingView<*>) {
+		stopTimer()
+
+		knobView.valueChangeHandler = { valueChangeHandler!!.invoke(it) }
+		knobView.location = location.subtract(Point2D(KnobView.OUTER_SIZE / 2, KnobView.OUTER_SIZE / 2))
+		knobView.value = initialValue
+		knobView.defaultValue = initialValue
+		knobView.unit = unit
+
+		LOG.debug("show KnobView")
+		view.content.animationContainer.add(knobView)
+		view.content.animationContainer.validate()
+		view.setCursor(Cursor.HAND)
+	}
+
+	private class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {
+		override fun mouseMoved(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
+			if (mouseMovedCondition!!.invoke(context)) {
+				val view = context.view as DrawingView<*>
+				if (view.content.animationContainer.contains(knobView)) {
+					return null
+				}
+				startTimerIfNeeded(view)
+				return this
+			}
+
+			stopTimer()
+			return null
+		}
+	}
+}
 /**
  * A circular knob used for interactively changing a value while execution.
  *
@@ -33,7 +130,7 @@ import kotlin.math.*
  */
 class KnobView(
 	private val model: KnobModel = KnobModel(initialValue = 0),
-	private val unit: String = "",
+	var unit: String = "",
 	location: Point2D = Point2D.ZERO,
 	var valueChangeHandler: (Long) -> Unit = {}
 ) : AbstractRectangle(location.x - OUTER_SIZE / 2, location.y - OUTER_SIZE / 2, OUTER_SIZE, OUTER_SIZE), ActorView {

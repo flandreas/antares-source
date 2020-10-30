@@ -5,17 +5,11 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.gate.AbstractDigitalGateView
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Path
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation.*
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.view.TooltipManager
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
@@ -33,16 +27,9 @@ class ClockView(
 ) : AbstractDigitalGateView<Clock>(styleProvider, "", model) {
 
 	companion object {
-		private val LOG by logger(ClockView::class)
-
 		private const val SEG_X = Look.SCALE.toDouble()
 		private const val SEG_Y_HALF = SEG_X * 3 / 4
 		private val ICON_PATH = createIconPath()
-
-		/** The factor of [TooltipManager.PROP_DELAY] for delaying displaying the [KnobView].*/
-		private const val DELAY_FACTOR = 0.7
-
-		private val KNOB: KnobView by lazy { KnobView(unit = "µs") }
 
 		private fun createIconPath(): Path {
 			return System.createPath()
@@ -56,8 +43,6 @@ class ClockView(
 	}
 
 	private val actorInteractionHandler = ClockViewActorInteractionHandler()
-
-	private var timer: Timer? = null
 
 	init {
 		modelExchanged(null)
@@ -137,65 +122,22 @@ class ClockView(
 		return actorInteractionHandler
 	}
 
-	private fun showPropagationDelayKnob(view: DrawingView<*>) {
-		LOG.debug("show knob")
-		view.content.animationContainer.add(KNOB)
-		view.content.animationContainer.validate()
-	}
-
 	/** ---- [ClockView] */
 
 	private inner class ClockViewActorInteractionHandler : AbstractVerticeView.Companion.CannotOpenActorClickHandler() {
 		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (!isKnobEnabled) {
+
+			if (!isEnabled || !isKnobEnabled) {
 				return null
 			}
 
-			if (!contains(context.x, context.y)) {
-				LOG.debug("doesn't contain mouse location, stopping timer...")
-				stopTimer()
-				return null
-			}
-
-			val view = context.view as DrawingView<*>
-
-			if (view.content.animationContainer.contains(KNOB)) {
-				return null
-			}
-
-			startTimerIfNeeded(view)
-
-			return this
-		}
-
-		private fun display(view: DrawingView<*>) {
-			stopTimer()
-
-			KNOB.valueChangeHandler = { model.propagationDelay = it * 1_000 }
-			KNOB.location = Point2D(boundingBox.center.subtract(Point2D(KnobView.OUTER_SIZE / 2, KnobView.OUTER_SIZE / 2)))
-			KNOB.value = model.propagationDelay / 1_000
-			KNOB.defaultValue = KNOB.value
-
-			showPropagationDelayKnob(view)
-		}
-
-		private val timerDelay: Int get() = (DELAY_FACTOR * BaseModule.properties.getInt(TooltipManager.PROP_DELAY)).toInt()
-
-		private fun startTimerIfNeeded(view: DrawingView<*>) {
-			if (timer == null) {
-				LOG.debug("starting timer")
-				timer = System.createTimer()
-				timer!!.initialize(timerDelay) { display(view) }
-				timer!!.start()
-			}
-		}
-
-		private fun stopTimer() {
-			if (timer != null) {
-				LOG.debug("stopping timer")
-				timer!!.stop()
-				timer = null
-			}
+			return KnobLauncher.launchAfterDelay(
+				initialValue = model.propagationDelay / 1_000,
+				location = boundingBox.center,
+				unit = "µs",
+				mouseMovedCondition = { contains(it.x, it.y) },
+				valueChangeHandler = { model.propagationDelay = it * 1_000 }
+			)
 		}
 	}
 }
