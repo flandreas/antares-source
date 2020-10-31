@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.Authorizer
+import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
@@ -15,8 +17,17 @@ import javax.swing.SwingUtilities
  */
 class AddLibraryFolderAction(
 	libraryTreeView: LibraryTreeView,
+	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryFolderAction("library.action.addFolder", true, libraryTreeView, eventBus) {
+) : AbstractLibraryFolderAction(
+	actionBaseName = "library.action.addFolder",
+	operation = Change,
+	libraryTreeView,
+	eventBus
+) {
+
+	override val operationAuthorized: Boolean
+		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
 	override fun execute(event: ActionEvent) {
 		val name = JOptionPane.showInputDialog(
@@ -32,9 +43,5 @@ class AddLibraryFolderAction(
 
 		val directory = libraryTreeView.getSelectedItem() as LibraryDirectory
 		directory.library!!.libraryService.addFolder(directory.library!!, TranslatableText(name), directory)
-	}
-
-	override fun calculateEnabledness(): Boolean {
-		return super.calculateEnabledness() && isLibraryOwnedByUser
 	}
 }

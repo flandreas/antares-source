@@ -4,11 +4,11 @@ import ch.scorpion.antares.view.GraphViewAnimationAction
 import ch.scorpion.antares.view.gate.AmericanSymbolStyleAction
 import ch.scorpion.antares.view.gate.EuropeanSymbolStyleAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
-import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.draw.view.*
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.execution.NoiseMenu
 import ch.scorpion.jabbah.execution.PrintScheduleAction
 import ch.scorpion.jabbah.execution.module.ExecutionModule
@@ -29,7 +29,7 @@ class AntaresMenuBarBuilder(
 
     override fun fillMenuBar(menuBar: JMenuBar) {
         super.fillMenuBar(menuBar)
-	    if (AppModule.userHolder.user.isDeveloper) {
+	    if (EditAuthModule.userHolder.user.isDeveloper) {
 		    menuBar.add(fillDevelopmentMenu(JMenu(Translations.getString("application.menu.development"))))
 	    }
     }

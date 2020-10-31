@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.app.user
+package ch.scorpion.jabbah.edit.auth
 
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.event.EventBus

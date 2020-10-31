@@ -1,10 +1,10 @@
 package ch.scorpion.jabbah.app
 
-import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.ErrorHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import java.awt.BorderLayout
 import javax.swing.BoxLayout
 import javax.swing.JFrame
@@ -23,7 +23,7 @@ abstract class AbstractApplicationFrame(
     abstract val editor: Editor
 
     init {
-	    ErrorHandler.initialize(this, AppModule.userHolder.user.isDeveloper)
+	    ErrorHandler.initialize(this, EditAuthModule.userHolder.user.isDeveloper)
         defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
         title = application.displayName
 

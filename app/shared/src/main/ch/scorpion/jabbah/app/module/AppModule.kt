@@ -1,20 +1,17 @@
 package ch.scorpion.jabbah.app.module
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.app.user.UserHolder
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.module.EditModule
 
 /**
  * Module definitions for the [ch.scorpion.jabbah.app] module.
  */
 object AppModule : AbstractModule() {
-
-	val userHolder: UserHolder = UserHolder()
 
     override fun initialize() {
         Translations.addBundle("jabbah-app")

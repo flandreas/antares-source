@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.edit.auth.Authorizer
+import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.library.AbstractLibraryPropertiesAction
 import ch.scorpion.jabbah.graph.library.LibraryProperties
@@ -11,6 +13,9 @@ class ProjectPropertiesAction(
 ) : AbstractLibraryPropertiesAction(
 	baseName = "project.action.properties"
 ) {
+
+	override val isEditable: Boolean get() = Authorizer.isCurrentUserAuthorizedTo(Operation.Change, projectHolder.project!!)
+
 	override val currentProperties: LibraryProperties get() = projectHolder.project!!.properties
 
 	override val dialogTitle: String get() = Translations.getString("project.dialog.properties.title", currentProperties.name.getTranslation())

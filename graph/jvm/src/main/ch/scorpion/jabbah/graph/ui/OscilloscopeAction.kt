@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -9,6 +8,7 @@ import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeDisplayEvent
 import ch.scorpion.jabbah.graph.view.app.OscilloscopeViewService
@@ -30,7 +30,7 @@ class OscilloscopeAction(
 	override fun calculateEnabled(): Boolean {
 		// Disable until entire Oscilloscope has been improved
 		//return false
-		return AppModule.userHolder.user.isDeveloper
+		return EditAuthModule.userHolder.user.isDeveloper
 	}
 
 	override fun dispose() {

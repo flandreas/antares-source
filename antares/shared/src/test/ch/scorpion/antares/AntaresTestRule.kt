@@ -2,10 +2,10 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.antares.view.module.AntaresViewModule
-import ch.scorpion.jabbah.app.module.AppModule
-import ch.scorpion.jabbah.app.user.User
+import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /**
@@ -15,7 +15,7 @@ object AntaresTestRule {
 
 	fun configure() {
 		BaseModule.require()
-		AppModule.userHolder.u = User.developer()
+		EditAuthModule.userHolder.u = User.developer
 		GraphViewModule.require()
 		AntaresViewModule.require()
 		AntaresThemes.install()

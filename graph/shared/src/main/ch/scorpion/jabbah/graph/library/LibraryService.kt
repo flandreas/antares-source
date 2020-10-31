@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.module.AppModule
-import ch.scorpion.jabbah.app.user.UserHolder
+import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.io.IOModule
@@ -66,7 +67,7 @@ class LibraryService(
 	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersisterService,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val userHolder: UserHolder = AppModule.userHolder
+	private val userHolder: UserHolder = EditAuthModule.userHolder
 ) {
 
 	companion object {

@@ -54,7 +54,8 @@ class TranslatableTextPropertyRenderer(
 class TranslatableTextPropertyEditor(
 	private val propertyName: String,
 	private val multiline: (TranslatableText) -> Boolean = { _ -> false },
-	rows: Int = 4
+	rows: Int = 4,
+	private val editable: Boolean = true
 ) : AbstractPropertyEditor() {
 
 	private val textComponent: JTextComponent
@@ -66,10 +67,11 @@ class TranslatableTextPropertyEditor(
 			textComponent.rows = rows
 			textComponent.lineWrap = true
 			textComponent.wrapStyleWord = true
-			textComponent.isEditable = true
 		} else {
 			textComponent = JTextField()
 		}
+		textComponent.isEditable = editable
+
 		buildUI()
 	}
 
@@ -166,7 +168,8 @@ class TranslatableTextPropertyEditor(
 			title = propertyName,
 			text = currentText,
 			textFieldRows = if (multiline.invoke(text)) 8 else 1,
-			textFieldColumns = 40
+			textFieldColumns = 40,
+			editable = editable
 		)
 		newText?.let { value = it }
 	}

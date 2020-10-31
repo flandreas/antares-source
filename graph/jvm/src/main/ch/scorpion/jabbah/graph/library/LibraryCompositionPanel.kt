@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import java.awt.BorderLayout
@@ -25,14 +26,15 @@ class EditLibraryAction(
 	libraryTreeView: LibraryTreeView,
 	private val application: Application,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryAction("library.composition.action", libraryTreeView, true, eventBus) {
+) : AbstractLibraryAction(
+	actionBaseName = "library.composition.action",
+	operation = Change,
+	libraryTreeView,
+	eventBus
+) {
 
 	override fun execute(event: ActionEvent) {
 		LibraryCompositionPanel.showAsDialog(libraryTreeView.library, Frame.getFrames()[0], application, eventBus)
-	}
-
-	override fun calculateEnabledness(): Boolean {
-		return super.calculateEnabledness() && isLibraryOwnedByUser
 	}
 }
 

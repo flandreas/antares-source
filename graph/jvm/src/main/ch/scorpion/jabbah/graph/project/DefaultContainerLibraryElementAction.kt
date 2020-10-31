@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.Authorizer
+import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryTreeView
@@ -14,8 +16,17 @@ import ch.scorpion.jabbah.graph.library.LibraryTreeView
  */
 class DefaultContainerLibraryElementAction(
 	libraryTreeView: LibraryTreeView,
+	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractContainerLibraryElementAction("library.action.setDefaultElement", true, libraryTreeView, eventBus) {
+) : AbstractContainerLibraryElementAction(
+	actionBaseName = "library.action.setDefaultElement",
+	operation = Operation.Change,
+	libraryTreeView,
+	eventBus
+) {
+
+	override val operationAuthorized: Boolean
+		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
 	override fun execute(event: ActionEvent) {
 		val elem = libraryTreeView.getSelectedItem() as ContainerLibraryElement
@@ -34,9 +45,5 @@ class DefaultContainerLibraryElementAction(
 		} else {
 			false
 		}
-	}
-
-	override fun calculateEnabledness(): Boolean {
-		return isLibraryOwnedByUser && super.calculateEnabledness()
 	}
 }

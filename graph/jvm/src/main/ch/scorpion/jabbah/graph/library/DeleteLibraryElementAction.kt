@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.Authorizer
+import ch.scorpion.jabbah.edit.auth.Operation
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 
@@ -12,8 +14,14 @@ import javax.swing.SwingUtilities
  */
 class DeleteLibraryElementAction(
 	libraryTreeView: LibraryTreeView,
+	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryAction(BASE_RESOURCE_NAME, libraryTreeView, true, eventBus) {
+) : AbstractLibraryAction(
+	BASE_RESOURCE_NAME,
+	operation = Operation.Change,
+	libraryTreeView,
+	eventBus
+) {
 
 	companion object {
 		private const val BASE_RESOURCE_NAME = "graph.action.deleteBaseElement"
@@ -29,6 +37,9 @@ class DeleteLibraryElementAction(
 			else -> BASE_RESOURCE_NAME
 		}
 
+	override val operationAuthorized: Boolean
+		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
+
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		val libraryItem = libraryTreeView.getSelectedItem()
 		if (JOptionPane.showConfirmDialog(
@@ -42,7 +53,7 @@ class DeleteLibraryElementAction(
 	}
 
 	override fun calculateEnabledness(): Boolean {
-		return super.calculateEnabledness() && isLibraryOwnedByUser && (selectedItem is BaseLibraryElement || selectedItem is ContainerLibraryElement)
+		return super.calculateEnabledness() && (selectedItem is BaseLibraryElement || selectedItem is ContainerLibraryElement)
 	}
 
 	override fun handleSelectionChanged() {

@@ -4,8 +4,9 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.Authorizer
+import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.MetaGraph
-import java.awt.Frame
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 
@@ -14,8 +15,14 @@ import javax.swing.SwingUtilities
  */
 class NewGraphAction(
 	libraryTreeView: LibraryTreeView,
+	private val operationTarget: () -> Any?,
     eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryFolderAction("library.action.newGraph", true, libraryTreeView, eventBus) {
+) : AbstractLibraryFolderAction(
+	actionBaseName = "library.action.newGraph",
+	operation = Operation.Change,
+	libraryTreeView,
+	eventBus
+) {
 
     override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 	    val name = JOptionPane.showInputDialog(
@@ -35,7 +42,6 @@ class NewGraphAction(
 		eventBus.post(OpenContainerLibraryElementRequest(element))
     }
 
-	override fun calculateEnabledness(): Boolean {
-		return super.calculateEnabledness() && isLibraryOwnedByUser
-	}
+	override val operationAuthorized: Boolean
+		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 }

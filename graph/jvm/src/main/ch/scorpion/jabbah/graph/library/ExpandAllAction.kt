@@ -4,13 +4,20 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
+import ch.scorpion.jabbah.edit.auth.Operation.Change
+import ch.scorpion.jabbah.edit.auth.Operation.View
 import javax.swing.tree.DefaultMutableTreeNode
 
 /** Expands all child nodes (recursively) of the selected [LibraryDirectory].*/
 class ExpandAllAction(
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryAction("library.action.expandAll", libraryTreeView, false, eventBus) {
+) : AbstractLibraryAction(
+	actionBaseName = "library.action.expandAll",
+	operation = View,
+	libraryTreeView,
+	eventBus
+) {
 
 	override fun calculateEnabledness(): Boolean {
 		return super.calculateEnabledness() &&
@@ -27,7 +34,12 @@ class ExpandAllAction(
 class CollapseAllAction(
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryAction("library.action.collapseAll", libraryTreeView, false, eventBus) {
+) : AbstractLibraryAction(
+	"library.action.collapseAll",
+	operation = Change,
+	libraryTreeView,
+	eventBus
+) {
 
 	override fun calculateEnabledness(): Boolean {
 		return super.calculateEnabledness() &&

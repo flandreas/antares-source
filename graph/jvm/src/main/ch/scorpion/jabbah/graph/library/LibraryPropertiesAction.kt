@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.edit.auth.Authorizer
+import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import java.awt.Frame
 import javax.swing.Action
@@ -14,6 +16,7 @@ abstract class AbstractLibraryPropertiesAction(
 	baseName: String
 ) : AbstractAction(baseName) {
 
+	protected abstract val isEditable: Boolean
 	protected abstract val currentProperties: LibraryProperties
 	protected abstract val dialogTitle: String
 	protected abstract val emptyMessage: String
@@ -25,7 +28,11 @@ abstract class AbstractLibraryPropertiesAction(
 		var properties: LibraryProperties? = currentProperties
 		val title = dialogTitle
 		while (true) {
-			properties = LibraryPropertiesPanel.showAsDialog(title = title, properties = properties)
+			properties = LibraryPropertiesPanel.showAsDialog(
+				title = title,
+				properties = properties,
+				editable = isEditable
+			)
 			if (properties == null) {
 				return
 			}
@@ -64,6 +71,8 @@ class LibraryPropertiesAction(
 ) : AbstractLibraryPropertiesAction(
 	baseName = "library.action.properties"
 ) {
+	override val isEditable: Boolean get() = Authorizer.isCurrentUserAuthorizedTo(Operation.Change, libraryHolder.library)
+
 	override val currentProperties: LibraryProperties get() = libraryHolder.library.properties
 
 	override val dialogTitle: String get() = Translations.getString("library.dialog.properties.title", currentProperties.name.getTranslation())

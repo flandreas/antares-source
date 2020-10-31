@@ -2,10 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.graph.project.CloseProjectAction
-import ch.scorpion.jabbah.graph.project.DefaultContainerLibraryElementAction
-import ch.scorpion.jabbah.graph.project.Project
-import ch.scorpion.jabbah.graph.project.ProjectPropertiesAction
+import ch.scorpion.jabbah.graph.project.*
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JPopupMenu
 import javax.swing.tree.DefaultMutableTreeNode
@@ -22,24 +19,41 @@ class LibraryTreeViewController(
 	application: Application
 ) {
 
-	val addLibraryFolderAction = AddLibraryFolderAction(view)
-	val deleteLibraryFolderAction = DeleteLibraryFolderAction(view)
+
+	private val libraryOperationTarget: () -> Any = { LibraryModule.libraryHolder.library }
+	private val projectOperationTarget: () -> Any? = { ProjectModule.projectHolder.project }
 
 	private val expandAllAction = ExpandAllAction(view)
 	private val collapseAllAction = CollapseAllAction(view)
-	private val newGraphAction = NewGraphAction(view)
+
+	val addLibraryFolderAction = AddLibraryFolderAction(view, libraryOperationTarget)
+	val deleteLibraryFolderAction = DeleteLibraryFolderAction(view, libraryOperationTarget)
+	private val newLibraryGraphAction = NewGraphAction(view, libraryOperationTarget)
+	private val libraryFolderPropertiesAction = LibraryFolderPropertiesAction(view, libraryOperationTarget)
+	private val deleteLibraryElementAction = DeleteLibraryElementAction(view, libraryOperationTarget)
+	private val duplicateLibraryGraphAction = DuplicateGraphAction(view, libraryOperationTarget)
+
+	private val addProjectFolderAction = AddLibraryFolderAction(view, projectOperationTarget)
+	private val deleteProjectFolderAction = DeleteLibraryFolderAction(view, projectOperationTarget)
+	private val newProjectGraphAction = NewGraphAction(view, operationTarget = projectOperationTarget)
+	private val projectFolderPropertiesAction = LibraryFolderPropertiesAction(view, projectOperationTarget)
+	private val deleteProjectElementAction = DeleteLibraryElementAction(view, projectOperationTarget)
+	private val defaultProjectElementAction = DefaultContainerLibraryElementAction(view, projectOperationTarget)
+	private val duplicateProjectGraphAction = DuplicateGraphAction(view, projectOperationTarget)
+
 	private val openContainerLibraryElementAction = OpenContainerLibraryElementAction(application, view)
-	private val deleteLibraryElementAction = DeleteLibraryElementAction(view)
 	private val editLibraryAction = EditLibraryAction(view, application)
-	private val libraryFolderPropertiesAction = LibraryFolderPropertiesAction(view)
 
 	private val desktopPopupMenu = JPopupMenu()
-	private val directoryPopupMenu = JPopupMenu()
+	private val projectDirectoryPopupMenu = JPopupMenu()
 	private val projectContainerPopupMenu = JPopupMenu()
 	private val projectRootMenu = JPopupMenu()
+	private val projectBasePopupMenu = JPopupMenu()
+
+	private val libraryDirectoryPopupMenu = JPopupMenu()
 	private val libraryContainerPopupMenu = JPopupMenu()
 	private val libraryRootMenu = JPopupMenu()
-	private val basePopupMenu = JPopupMenu()
+	private val libraryBasePopupMenu = JPopupMenu()
 
 	init {
 		fillPopupMenus(type)
@@ -49,8 +63,20 @@ class LibraryTreeViewController(
 		return when (treeNode.userObject) {
 			is Project -> projectRootMenu
 			is Library -> libraryRootMenu
-			is LibraryFolder -> directoryPopupMenu
-			is LibraryDirectory -> directoryPopupMenu
+			is LibraryFolder -> {
+				if ((treeNode.userObject as LibraryFolder).library is Project) {
+					projectDirectoryPopupMenu
+				} else {
+					libraryDirectoryPopupMenu
+				}
+			}
+			is LibraryDirectory -> {
+				if ((treeNode.userObject as LibraryDirectory).library is Project) {
+					projectDirectoryPopupMenu
+				} else {
+					libraryDirectoryPopupMenu
+				}
+			}
 			is ContainerLibraryElement -> {
 				if ((treeNode.userObject as ContainerLibraryElement).library is Project) {
 					projectContainerPopupMenu
@@ -58,7 +84,13 @@ class LibraryTreeViewController(
 					libraryContainerPopupMenu
 				}
 			}
-			is BaseLibraryElement -> basePopupMenu
+			is BaseLibraryElement -> {
+				if ((treeNode.userObject as BaseLibraryElement).library is Project) {
+					projectBasePopupMenu
+				} else {
+					libraryBasePopupMenu
+				}
+			}
 			is String -> desktopPopupMenu
 			else -> null
 		}
@@ -76,43 +108,57 @@ class LibraryTreeViewController(
 		desktopPopupMenu.add(ActionWrapperSwing(expandAllAction))
 		desktopPopupMenu.add(ActionWrapperSwing(collapseAllAction))
 
+		// Project actions
+
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
+		projectDirectoryPopupMenu.addSeparator()
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(newProjectGraphAction))
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(addProjectFolderAction))
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(deleteProjectFolderAction))
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(projectFolderPropertiesAction))
+
 		projectRootMenu.add(ActionWrapperSwing(expandAllAction))
 		projectRootMenu.add(ActionWrapperSwing(collapseAllAction))
 		projectRootMenu.addSeparator()
-		projectRootMenu.add(ActionWrapperSwing(newGraphAction))
-		projectRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
+		projectRootMenu.add(ActionWrapperSwing(newProjectGraphAction))
+		projectRootMenu.add(ActionWrapperSwing(addProjectFolderAction))
 		projectRootMenu.add(ActionWrapperSwing(CloseProjectAction()))
 		projectRootMenu.addSeparator()
 		projectRootMenu.add(ActionWrapperSwing(ProjectPropertiesAction()))
 
-		directoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
-		directoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
-		directoryPopupMenu.addSeparator()
-		directoryPopupMenu.add(ActionWrapperSwing(newGraphAction))
-		directoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
-		directoryPopupMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
-		directoryPopupMenu.add(ActionWrapperSwing(libraryFolderPropertiesAction))
+		projectContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
+		projectContainerPopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))
+		projectContainerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(defaultProjectElementAction)))
+		projectContainerPopupMenu.add(ActionWrapperSwing(duplicateProjectGraphAction))
+
+		projectBasePopupMenu.add(ActionWrapperSwing(deleteProjectElementAction))
+
+		// Library actions
+
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
+		libraryDirectoryPopupMenu.addSeparator()
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newLibraryGraphAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(libraryFolderPropertiesAction))
 
 		libraryRootMenu.add(ActionWrapperSwing(expandAllAction))
 		libraryRootMenu.add(ActionWrapperSwing(collapseAllAction))
 		libraryRootMenu.addSeparator()
 		libraryRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
-		libraryRootMenu.add(ActionWrapperSwing(newGraphAction))
+		libraryRootMenu.add(ActionWrapperSwing(newLibraryGraphAction))
 		libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
 		libraryRootMenu.addSeparator()
 		libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
 		libraryRootMenu.add(ActionWrapperSwing(LibraryPropertiesAction()))
 
-		projectContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
-		projectContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
-		projectContainerPopupMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(DefaultContainerLibraryElementAction(view))))
-		projectContainerPopupMenu.add(ActionWrapperSwing(DuplicateGraphAction(view)))
-
 		libraryContainerPopupMenu.add(ActionWrapperSwing(openContainerLibraryElementAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
-		libraryContainerPopupMenu.add(ActionWrapperSwing(DuplicateGraphAction(view)))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(duplicateLibraryGraphAction))
 
-		basePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
+		libraryBasePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 	}
 
 	private fun fillCompositionSource() {
@@ -122,8 +168,8 @@ class LibraryTreeViewController(
 		projectRootMenu.add(ActionWrapperSwing(expandAllAction))
 		projectRootMenu.add(ActionWrapperSwing(collapseAllAction))
 
-		directoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
-		directoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
 
 		libraryRootMenu.add(ActionWrapperSwing(expandAllAction))
 		libraryRootMenu.add(ActionWrapperSwing(collapseAllAction))
@@ -137,12 +183,12 @@ class LibraryTreeViewController(
 		projectRootMenu.add(ActionWrapperSwing(collapseAllAction))
 		projectRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 
-		directoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
-		directoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
-		directoryPopupMenu.addSeparator()
-		directoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
-		directoryPopupMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
-		directoryPopupMenu.add(ActionWrapperSwing(libraryFolderPropertiesAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(expandAllAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(collapseAllAction))
+		libraryDirectoryPopupMenu.addSeparator()
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(addLibraryFolderAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(libraryFolderPropertiesAction))
 
 		libraryRootMenu.add(ActionWrapperSwing(expandAllAction))
 		libraryRootMenu.add(ActionWrapperSwing(collapseAllAction))
@@ -152,6 +198,6 @@ class LibraryTreeViewController(
 
 		libraryContainerPopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 
-		basePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
+		libraryBasePopupMenu.add(ActionWrapperSwing(deleteLibraryElementAction))
 	}
 }

@@ -241,8 +241,7 @@ open class GraphImpl(
 	}
 
 	private fun getGraphInputOutput(name: String): BidirectionalGraphPort<*>? {
-		val bla = graphInOuts
-		return bla.firstOrNull { it.name == name }
+		return graphInOuts.firstOrNull { it.name == name }
 	}
 
 	/** Creates unique names for [GraphPort]s.*/

@@ -15,7 +15,8 @@ import ch.scorpion.jabbah.edit.app.CutAction
 import ch.scorpion.jabbah.edit.app.PasteAction
 import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
-import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.library.LibraryTreeView
+import ch.scorpion.jabbah.graph.library.ShowLibrariesDialogAction
 import ch.scorpion.jabbah.graph.project.ShowProjectsDialogAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioStepAction
@@ -36,12 +37,11 @@ open class GraphMenuBarBuilder(
 	eventBus: EventBus
 ) : MenuBarBuilder(frame = frame, eventBus = eventBus) {
 
-	protected val graphFrame: GraphFrameSwing get() = frame as GraphFrameSwing
+	private val graphFrame: GraphFrameSwing get() = frame as GraphFrameSwing
 	private val libraryTreeView: LibraryTreeView get() = graphFrame.graphPanel.libraryPanel.libraryTreeView
 
 	override fun fillMenuBar(menuBar: JMenuBar) {
 		super.fillMenuBar(menuBar)
-		menuBar.add(fillLibraryMenu(JMenu(Translations.getString("application.menu.desktop"))))
 		menuBar.add(fillScenariosMenu(JMenu(Translations.getString("application.menu.scenarios"))))
 		menuBar.add(fillUsecasesMenu(JMenu(Translations.getString("application.menu.usecases"))))
 		menuBar.add(fillExecutionMenu(JMenu(Translations.getString("application.menu.simulation"))))
@@ -92,15 +92,6 @@ open class GraphMenuBarBuilder(
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(StopOnIssueAction())))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(SimulationTimeStatusEnabledAction())))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(EnableSoftBreakpointsAction())))
-		return menu
-	}
-
-	protected open fun fillLibraryMenu(menu: JMenu): JMenu {
-		menu.add(JMenuItem(ActionWrapperSwing(NewGraphAction(libraryTreeView))))
-		menu.add(JMenuItem(ActionWrapperSwing(AddLibraryFolderAction(libraryTreeView))))
-		menu.add(JMenuItem(ActionWrapperSwing(OpenContainerLibraryElementAction(frame.application, libraryTreeView, eventBus))))
-		menu.add(JMenuItem(ActionWrapperSwing(DeleteLibraryElementAction(libraryTreeView, eventBus))))
-		menu.add(JMenuItem(ActionWrapperSwing(DuplicateGraphAction(libraryTreeView))))
 		return menu
 	}
 

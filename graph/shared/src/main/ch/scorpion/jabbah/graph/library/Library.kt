@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.app.user.User
+import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.model.text.TranslatableText

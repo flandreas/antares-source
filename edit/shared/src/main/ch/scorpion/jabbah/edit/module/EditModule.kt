@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingViewFactory
 import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.app.DrawingAppServiceImpl
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.CopyPasteService
@@ -70,6 +71,7 @@ object EditModule : AbstractModule() {
         EditSnapModule.require()
         EditSelectModule.require()
         EditEditorModule.require()
+	    EditAuthModule.require()
 
         Translations.addBundle("jabbah-edit")
         Themes.register(EditTheme())

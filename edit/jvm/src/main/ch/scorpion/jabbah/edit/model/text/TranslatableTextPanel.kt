@@ -18,7 +18,8 @@ import javax.swing.text.JTextComponent
 class TranslatableTextPanel(
 	text: TranslatableText,
 	textFieldRows: Int = 1,
-	textFieldColumns: Int = 25
+	textFieldColumns: Int = 25,
+	editable: Boolean = true
 ) : JPanel() {
 
 	companion object {
@@ -32,9 +33,10 @@ class TranslatableTextPanel(
 			title: String,
 			text: TranslatableText,
 			textFieldRows: Int = 1,
-			textFieldColumns: Int = 25
+			textFieldColumns: Int = 25,
+			editable: Boolean = true
 		): TranslatableText? {
-			val panel = TranslatableTextPanel(text, textFieldRows, textFieldColumns)
+			val panel = TranslatableTextPanel(text, textFieldRows, textFieldColumns, editable)
 			return when (
 				JOptionPane.showConfirmDialog(
 					parent,
@@ -71,14 +73,16 @@ class TranslatableTextPanel(
 			currentLangTextField.columns = textFieldColumns
 			currentLangTextField.lineWrap = true
 			currentLangTextField.wrapStyleWord = true
-			currentLangTextField.isEditable = true
+
 			alternativeLangTextField = JTextArea()
 			alternativeLangTextField.rows = textFieldRows
 			alternativeLangTextField.columns = textFieldColumns
 			alternativeLangTextField.lineWrap = true
 			alternativeLangTextField.wrapStyleWord = true
-			alternativeLangTextField.isEditable = true
 		}
+
+		currentLangTextField.isEditable = editable
+		alternativeLangTextField.isEditable = editable
 
 		alternativeLanguage = if (needsAlternativeLangText) {
 			if (!text.hasDefaultOrSystemLanguage()) {

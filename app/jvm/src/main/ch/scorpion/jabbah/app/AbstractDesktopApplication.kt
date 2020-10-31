@@ -1,12 +1,12 @@
 package ch.scorpion.jabbah.app
 
-import ch.scorpion.jabbah.app.module.AppModule
-import ch.scorpion.jabbah.app.user.User
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.io.*
@@ -234,11 +234,11 @@ abstract class AbstractDesktopApplication(
 	 * the provided [Options].
 	 */
 	protected open fun consumeCommandLine(commandLine: CommandLine) {
-		AppModule.userHolder.u = if (commandLine.hasOption("dev")) {
+		EditAuthModule.userHolder.u = if (commandLine.hasOption("dev")) {
 			LOG.info("Starting application in developer mode")
-			User.developer()
+			User.developer
 		} else {
-			User.anybody()
+			User.anybody
 		}
 	}
 

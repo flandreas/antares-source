@@ -12,15 +12,19 @@ import javax.swing.JOptionPane
 import javax.swing.JPanel
 
 /** A [JPanel] for editing the properties of a [Library].*/
-class LibraryPropertiesPanel(properties: LibraryProperties? = null) : JPanel() {
+class LibraryPropertiesPanel(
+	properties: LibraryProperties? = null,
+	editable: Boolean = true
+) : JPanel() {
 
 	companion object {
 		fun showAsDialog(
 			parent: Component = Frame.getFrames()[0],
 			title: String,
-			properties: LibraryProperties? = null
+			properties: LibraryProperties? = null,
+			editable: Boolean = true
 		): LibraryProperties? {
-			val panel = LibraryPropertiesPanel(properties)
+			val panel = LibraryPropertiesPanel(properties, editable)
 			return when (
 				JOptionPane.showConfirmDialog(
 					parent,
@@ -39,12 +43,13 @@ class LibraryPropertiesPanel(properties: LibraryProperties? = null) : JPanel() {
 
 	private val nameLabel = Translations.getString("library.property.name.name")
 	private val descLabel = Translations.getString("library.property.desc.name")
-	private val nameField = TranslatableTextPropertyEditor(nameLabel)
-	private val descField = TranslatableTextPropertyEditor(descLabel, multiline = { true }, rows = 8)
+	private val nameField = TranslatableTextPropertyEditor(nameLabel, editable = editable)
+	private val descField = TranslatableTextPropertyEditor(descLabel, multiline = { true }, rows = 8, editable = editable)
 
 	init {
 		preferredSize = Dimension(400, 150)
 		buildUI()
+
 		properties?.let {
 			nameField.value = it.name
 			descField.value = it.description

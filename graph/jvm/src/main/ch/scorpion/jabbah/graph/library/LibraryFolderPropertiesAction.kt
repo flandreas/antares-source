@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.EGBL
+import ch.scorpion.jabbah.edit.auth.Authorizer
+import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.properties.TranslatableTextPropertyEditor
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import java.awt.Component
@@ -15,8 +17,17 @@ import javax.swing.*
 /** An [Action] for editing the properties of a [LibraryFolder], which is currently only its translatable name.*/
 class LibraryFolderPropertiesAction(
 	libraryTreeView: LibraryTreeView,
+	private val operationTarget: () -> Any?,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryFolderAction("library.action.editFolderProperties", true, libraryTreeView, eventBus) {
+) : AbstractLibraryFolderAction(
+	actionBaseName = "library.action.editFolderProperties",
+	operation = Operation.View,
+	libraryTreeView,
+	eventBus
+) {
+
+	override val operationAuthorized: Boolean
+		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
 	override fun execute(event: ActionEvent) {
 		val title = Translations.getString("library.action.editFolderProperties.name")
@@ -73,11 +84,14 @@ private class LibraryFolderPropertiesPanel(
 	}
 
 	private val nameLabel = Translations.getString("library.property.name.name")
-	private val nameField = TranslatableTextPropertyEditor(nameLabel)
+	private val nameField = TranslatableTextPropertyEditor(
+		nameLabel,
+		editable = Authorizer.isCurrentUserAuthorizedTo(Operation.Change, LibraryModule.libraryHolder.library))
 
 	init {
 		preferredSize = Dimension(300, 100)
 		buildUI()
+
 		nameField.value = name
 	}
 

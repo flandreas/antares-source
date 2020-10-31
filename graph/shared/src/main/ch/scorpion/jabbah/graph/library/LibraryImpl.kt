@@ -1,10 +1,10 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.app.module.AppModule
-import ch.scorpion.jabbah.app.user.UserHolder
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
@@ -25,7 +25,7 @@ open class LibraryImpl(
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val objectTypeKey: String = "library.library.name",
 	private val describable: Describable = DescribableImpl(),
-	userHolder: UserHolder = AppModule.userHolder
+	userHolder: UserHolder = EditAuthModule.userHolder
 ) : Library, LibraryDirectory, Describable by describable {
 
 	constructor(
@@ -34,7 +34,7 @@ open class LibraryImpl(
 		storableCreator: StorableCreator = IOModule.storableCreator,
 		objectTypeKey: String = "library.library.name",
 		description: TranslatableText = TranslatableText(),
-		userHolder: UserHolder = AppModule.userHolder
+		userHolder: UserHolder = EditAuthModule.userHolder
 	) : this(LibraryProperties(name, description), libraryService, storableCreator, objectTypeKey, DescribableImpl(), userHolder)
 
 	constructor(

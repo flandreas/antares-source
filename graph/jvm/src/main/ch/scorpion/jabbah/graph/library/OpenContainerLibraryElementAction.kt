@@ -2,13 +2,13 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationData
-import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import javax.swing.JFrame
@@ -16,13 +16,18 @@ import javax.swing.JOptionPane
 
 /**
  * An [Action] for opening the [ContainerLibraryElement] that is currently selected in the
- * [LibraryTreeView] for editing.
+ * [LibraryTreeView] for viewing. Whether it can be edited is decided by the view that displays it.
  */
 class OpenContainerLibraryElementAction(
 	private val application: Application,
 	libraryTreeView: LibraryTreeView,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractContainerLibraryElementAction("graph.action.openContainerLibraryElement", false, libraryTreeView, eventBus) {
+) : AbstractContainerLibraryElementAction(
+	actionBaseName = "graph.action.openContainerLibraryElement",
+	operation = Operation.View,
+	libraryTreeView,
+	eventBus
+) {
 
 	companion object {
 		private val LOG by logger(OpenContainerLibraryElementAction::class)
@@ -40,10 +45,6 @@ class OpenContainerLibraryElementAction(
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		openAsSavable()
-	}
-
-	override fun calculateEnabledness(): Boolean {
-		return super.calculateEnabledness() && isLibraryOwnedByUser
 	}
 
 	/**

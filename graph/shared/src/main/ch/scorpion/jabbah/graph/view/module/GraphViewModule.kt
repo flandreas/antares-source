@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleRepository
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.text.SimpleTextComponent
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -25,6 +26,7 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.*
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.ApplicationModeHolder
+import ch.scorpion.jabbah.graph.GraphAuthorizations
 import ch.scorpion.jabbah.graph.UndefinedApplicationModeHolder
 import ch.scorpion.jabbah.graph.container.*
 import ch.scorpion.jabbah.graph.model.Graph
@@ -132,7 +134,7 @@ object GraphViewModule : AbstractModule() {
 		EditModule.drawingAppService = graphViewAppService
 
 		ExecutionModule.schedulerTaskFactory = {
-			if (AppModule.userHolder.user.isDeveloper) {
+			if (EditAuthModule.userHolder.user.isDeveloper) {
 				switchableSchedulerTask
 			} else {
 				timedSchedulerTask
@@ -140,6 +142,8 @@ object GraphViewModule : AbstractModule() {
 		}
 
 		BaseModule.eventBus.register(SchedulerActivationStateEvent::class) { EditModule.commandManager.active = !it.scheduler.isActive }
+
+		GraphAuthorizations.define()
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

@@ -29,7 +29,7 @@ interface UndoableDataHolder {
  *
  * [CommandManager] provides "nested transactions" which mainly represent combined [Command]s. When a transaction
  * is started, all subsequently executed or registered [Command]s are stored as children of the the first [Command]
- * until the transaction is either committed or rollbacked. Such [Command]s count in terms of "undo/redo" only as
+ * until the transaction is either committed or rolled back. Such [Command]s count in terms of "undo/redo" only as
  * a single [Command]. This can be used for complex application logic, where a single user action can result in
  * multiple [Command]s. If no transaction has been began explicitly, execution or registration starts an
  * implicit transaction, which gets immediately auto-committed. During a transaction, undo/redo is not possible,
@@ -115,8 +115,8 @@ interface CommandManager {
     fun getRedoDescription(): String?
 
     /**
-     * Undoes the last transaction in the undo stack by calling the [Command.undo] method of all its [Command]
-     * in reverse order.
+     * Undoes the last transaction in the undo stack by calling the [Undoable.undo] method of all its [Command]
+     * in reverse order, if possible.
      *
      * This method validates the [Drawing] on which the undone head [Command] operates.
      * Posts a [CommandEvent] after execution.
