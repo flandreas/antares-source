@@ -2,11 +2,13 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.Operation.Change
+import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.graph.MetaGraph
 
 /**
@@ -24,7 +26,7 @@ class LibrarySavable(
 
 	override val description: String get() = "${Translations.getString("library.savable.prefix")} \"${element.name.value}\""
 
-	override val readOnly: Boolean get() = library.author != userHolder.user.uuid
+	override val editable: Boolean get() = Authorizer.isCurrentUserAuthorizedTo(Change, library)
 
 	override fun open(application: Application): Boolean {
 		eventBus.post(OpenContainerLibraryElementRequest(element))

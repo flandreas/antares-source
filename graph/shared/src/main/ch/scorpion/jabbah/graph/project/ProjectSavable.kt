@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.graph.project
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.edit.auth.Authorizer
+import ch.scorpion.jabbah.edit.auth.Operation.*
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
 
@@ -29,7 +31,7 @@ class ProjectSavable(
 
 	override val description: String get() = "${Translations.getString("project.savable.prefix")} \"${element.name.value}\""
 
-	override val readOnly: Boolean get() = false
+	override val editable: Boolean get() = Authorizer.isCurrentUserAuthorizedTo(Change, project)
 
 	override fun open(application: Application): Boolean {
 		projectManagementService.open(project.uuid, element.uuid)

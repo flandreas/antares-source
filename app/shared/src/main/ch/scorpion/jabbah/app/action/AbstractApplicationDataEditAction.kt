@@ -32,7 +32,6 @@ abstract class AbstractApplicationDataEditAction(
 		enabled = calculateEnabled()
 	}
 
-	protected open fun calculateEnabled(): Boolean {
-		return application.data != null && !application.data!!.savable.readOnly
-	}
+	protected open fun calculateEnabled(): Boolean =
+		application.data != null && application.data!!.savable.editable
 }

@@ -41,7 +41,7 @@ data class FileSavable(val filePath: String?) : Savable {
 
     override val supportsMostRecent: Boolean get() = true
 
-	override val readOnly: Boolean get() = false
+	override val editable: Boolean get() = true
 
     override fun open(application: Application): Boolean {
         val desktopApplication = application as DesktopApplication

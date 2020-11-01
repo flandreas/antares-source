@@ -388,8 +388,11 @@ class GraphNavigationPanel(
 	}
 
 	private fun updateDrawingViewEditability() {
-		drawingView.editable = isRoot && navigationStackViewController.navigationStack.size == 1 && !scheduler.isActive && !(currentSavable?.readOnly
-			?: false)
+		drawingView.editable =
+			isRoot
+			&& navigationStackViewController.navigationStack.size == 1
+			&& !scheduler.isActive
+			&& (currentSavable?.editable ?: false)
 	}
 
 	private fun propagateApplicationContext() {
