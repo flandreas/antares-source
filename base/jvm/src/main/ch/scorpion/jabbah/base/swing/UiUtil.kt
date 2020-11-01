@@ -116,6 +116,8 @@ object UiUtil {
 		return button
 	}
 
+	fun darkImagePath(path: String): String = path.replace(".", "-dark.")
+
 	/**
 	 * Creates an [ImageIcon] from the specified base path, depending on whether the current UI
 	 * has a dark or a light theme. For dark themes, the image file base name is expanded by `-dark`.
@@ -124,9 +126,8 @@ object UiUtil {
 	 */
 	fun themedIcon(path: String): ImageIcon {
 		if (UI.isDark) {
-			val darkPath = path.replace(".", "-dark.")
 			try {
-				return ImageIcon(UiUtil::class.java.getResource(darkPath))
+				return ImageIcon(UiUtil::class.java.getResource(darkImagePath(path)))
 			} catch (t: Throwable) {}
 		}
 		return ImageIcon(UiUtil::class.java.getResource(path))

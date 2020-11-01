@@ -76,8 +76,8 @@ class GraphEditPanel(
 		usecasePanel.dispose()
 	}
 
-	fun setGraphView(newGraphView: GraphView, applyZoomStrategy: Boolean = true) {
-		graphNavigationPanel.setRootGraphView(newGraphView, applyZoomStrategy)
+	fun setGraphView(newGraphView: GraphView, editable: Boolean, applyZoomStrategy: Boolean = true) {
+		graphNavigationPanel.setRootGraphView(newGraphView, editable, applyZoomStrategy)
 		scenarioPanel.graphView = newGraphView
 		usecasePanel.graphView = newGraphView
 	}

@@ -1,13 +1,26 @@
 package ch.scorpion.jabbah.draw.graphics
 
+import ch.scorpion.jabbah.base.UI
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.swing.UiUtil
 import javax.swing.ImageIcon
 
 class ImageJvm(override val path: String) : Image {
 
     companion object {
         private val LOG by logger(ImageJvm::class)
+
+	    fun themedImage(path: String): Image {
+		    if (UI.isDark) {
+			    return try {
+				    ImageJvm(UiUtil.darkImagePath(path))
+			    } catch (t: Throwable) {
+				    ImageJvm(path)
+			    }
+		    }
+		    return ImageJvm(path)
+	    }
     }
 
     val imageIcon: ImageIcon

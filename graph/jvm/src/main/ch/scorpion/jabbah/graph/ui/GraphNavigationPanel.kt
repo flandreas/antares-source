@@ -139,7 +139,7 @@ class GraphNavigationPanel(
 
 		drawingView.editable = drawingView.editable && isRoot
 
-		setRootGraphView(drawingView.drawing)
+		setRootGraphView(drawingView.drawing, true)
 
 		buildUI(contextBorderColor)
 		propagateApplicationContext()
@@ -190,7 +190,7 @@ class GraphNavigationPanel(
 	/** ---- [GraphNavigationPanel] */
 
 	/** Initializes the [NavigationStackViewSwing] with a root [DrawingViewContent].*/
-	fun setRootGraphView(graphView: GraphView, applyZoomStrategy: Boolean = true) {
+	fun setRootGraphView(graphView: GraphView, editable: Boolean, applyZoomStrategy: Boolean = true) {
 		val oldZoomStrategy = drawingView.defaultZoomStrategy
 		if (!applyZoomStrategy) {
 			drawingView.defaultZoomStrategy = ZoomStrategy.NONE
@@ -200,7 +200,9 @@ class GraphNavigationPanel(
 			drawingView.defaultZoomStrategy = oldZoomStrategy
 		}
 
+		navigationStackViewController.view.editable = editable
 		navigationStackViewController.navigationStack.rootEntry = NavigationStackEntry(content = drawingView.content)
+
 		scenarioDetector?.dispose()
 		scenarioDetector = ScenarioDetector(drawingView, scheduler, scriptGateway, eventBus, currentSystemSpeedCategory)
 	}

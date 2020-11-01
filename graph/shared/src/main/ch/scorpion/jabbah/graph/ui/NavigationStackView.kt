@@ -4,13 +4,13 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * A breadcrumb-like view of a [NavigationStack<GraphView>].
  */
 interface NavigationStackView {
+	var editable: Boolean
 	fun update()
 }
 

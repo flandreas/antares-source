@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.graphics.ImageJvm
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.DrawingViewContent
@@ -56,6 +57,8 @@ class NavigationStackViewSwing(
 		private val elementHoverBackground: java.awt.Color get() = UIManager.getColor("Button.toolbar.hoverBackground")
 		private val elementHoverBorderColor: java.awt.Color get() = UIManager.getColor("Button.hoverBorderColor")
 		private val elementTextColor: java.awt.Color get() = UIManager.getColor("Button.foreground")
+
+		private val lockedIcon = ImageJvm.themedImage("/img/locked-16.png")
 	}
 
 	private val elements: MutableList<Element> = mutableListOf()
@@ -70,6 +73,8 @@ class NavigationStackViewSwing(
 	}
 
 	/** ---- [NavigationStackView] */
+
+	override var editable: Boolean = true
 
 	override fun update() {
 		elements.clear()
@@ -126,13 +131,23 @@ class NavigationStackViewSwing(
 	}
 
 	private fun createElement(entry: NavigationStackEntry<GraphView>, first: Boolean, last: Boolean): Element {
-		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(entry.graphName!!.value, DrawModule.properties.getFont(PROP_FONT))
+		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(
+			entry.graphName!!.value, DrawModule.properties.getFont(PROP_FONT))
 		val textLength = textRenderInfo.textBounds.width
-		return Element(entry, if (first) createFirstPath(textLength) else createNonFirstPath(textLength), last)
+		val showLock = first && !editable
+		return Element(
+			entry = entry,
+			path = if (first) createFirstPath(textLength, showLock) else createNonFirstPath(textLength),
+			showLock = showLock,
+			isHead = last)
 	}
 
-	private fun createFirstPath(textLength: Double): Path {
-		val baseLength = 2.0 * TEXT_INSET + textLength
+	private fun createFirstPath(textLength: Double, showLock: Boolean): Path {
+		val baseLength = if (showLock) {
+			3.0 * TEXT_INSET + lockedIcon.width + textLength
+		} else {
+			2.0 * TEXT_INSET + textLength
+		}
 		val path = System.createPath()
 		path.moveTo(0, 0)
 		path.lineTo(baseLength, 0.0)
@@ -161,15 +176,18 @@ class NavigationStackViewSwing(
 	private inner class Element(
 		val entry: NavigationStackEntry<GraphView>,
 		val path: Path,
+		val showLock: Boolean,
 		val isHead: Boolean
 	) {
 
 		private val label: Label = Label(
 			text = entry.content.drawing.graph!!.name.value,
 			font = DrawModule.properties.getFont(PROP_FONT),
-			horizontalAlignment = HorizontalAlignment.CENTER,
+			horizontalAlignment = if (showLock) HorizontalAlignment.LEFT else HorizontalAlignment.CENTER,
 			verticalAlignment = VerticalAlignment.CENTER,
-			location = Point2D(path.boundingBox.centerX, path.boundingBox.centerY))
+			location = Point2D(
+				x = if (showLock) path.boundingBox.minX + TEXT_INSET + lockedIcon.width else path.boundingBox.centerX,
+				y = path.boundingBox.centerY))
 
 		var location: Point2D = Point2D.ZERO
 
@@ -196,6 +214,13 @@ class NavigationStackViewSwing(
 				g.draw(path)
 			}
 
+			if (showLock) {
+				g.drawImage(
+					image = lockedIcon,
+					x = (path.boundingBox.minX + TEXT_INSET / 2).toInt(),
+					y = (path.boundingBox.centerY - lockedIcon.height / 2).toInt())
+			}
+
 			label.color = Graphics2DJvm.fromAwtColor(elementTextColor)
 			label.font = if (isHead) {
 				DrawModule.properties.getFont(PROP_HEAD_FONT)
@@ -203,6 +228,7 @@ class NavigationStackViewSwing(
 				DrawModule.properties.getFont(PROP_FONT)
 			}
 			label.draw(DrawContext(g = g))
+
 			g.translate(-location.x, -location.y)
 		}
 

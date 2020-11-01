@@ -68,14 +68,17 @@ import javax.swing.*
  * It consists of a [LibraryPanel] at the left, a [ComponentPropertyPanel] for editing the properties
  * of the selected [Component] at the center-left, and a [GraphNavigationPanel] for editing the [GraphView]
  * at the center-right.
+ *
+ * Its current root [GraphView] is established by listening for [ApplicationDataEvent] on the specified
+ * [EventBus].
  */
 class GraphPanel(
 	val editor: Editor,
-	val graphViewAppService: GraphViewAppService = GraphViewModule.graphViewAppService,
-	val eventBus: EventBus = BaseModule.eventBus,
-	val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
+	private val graphViewAppService: GraphViewAppService = GraphViewModule.graphViewAppService,
+	private val eventBus: EventBus = BaseModule.eventBus,
+	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	private val viewManager: ViewManager,
-	var scheduler: Scheduler = ExecutionModule.scheduler,
+	private var scheduler: Scheduler = ExecutionModule.scheduler,
 	application: Application,
 	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel(), ApplicationModeHolder {
@@ -91,7 +94,7 @@ class GraphPanel(
 	val desktopController = GraphDesktopController()
 
 	/** Allows opening multiple Graphs.*/
-	val desktop: GraphDesktopSwing = GraphDesktopSwing(graphEditPanel)
+	private val desktop: GraphDesktopSwing = GraphDesktopSwing(graphEditPanel)
 
 	/** Displays the properties of the currently selected component in [graphEditPanel].*/
 	private val propertyPanel: ComponentPropertyPanel
@@ -156,6 +159,8 @@ class GraphPanel(
 
 	private var rootGraphView: GraphView? = editor.drawing as GraphView?
 
+	private var editable: Boolean = true
+
 	val showsNavigationRoot: Boolean get() = graphEditPanel.graphNavigationPanel.showsNavigationRoot
 
 	init {
@@ -166,7 +171,10 @@ class GraphPanel(
 		propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
 
 		eventBus.register(ApplicationDataEvent::class) {
-			setApplicationData((it.newData?.content as MetaGraph?)?.graph?.graphView)
+			editable = it.newData?.savable?.editable ?: false
+			setApplicationData(
+				graphView = (it.newData?.content as MetaGraph?)?.graph?.graphView
+			)
 		}
 
 		eventBus.register(ApplicationDataContentEvent::class) {
@@ -245,7 +253,7 @@ class GraphPanel(
 		val oldValue = rootGraphView
 		rootGraphView = graphView
 		rootGraphView?.let {
-			graphEditPanel.setGraphView(it, applyZoomStrategy)
+			graphEditPanel.setGraphView(it, editable, applyZoomStrategy)
 			it.snapper = editor.view.grid
 		}
 		eventBus.post(EditedGraphViewEvent(oldValue, rootGraphView))
