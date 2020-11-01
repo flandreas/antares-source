@@ -48,7 +48,9 @@ open class ContainerTreeView(
      * Updates the [TreeModel] by comparing data from [GraphView] and [ContainerDrawing].
      *
      */
-    fun update(mainGraphView: GraphView, containerDrawing: ContainerDrawing) {
+    fun update(mainGraphView: GraphView, containerDrawing: ContainerDrawing, editable: Boolean) {
+	    dragEnabled = editable
+
 	    containerTree?.dispose()
 	    containerTree = ContainerTree(portFactory, portViewFactory, styleProvider, mainGraphView, containerDrawing, eventBus)
 	    model = containerTree?.model?.treeModel

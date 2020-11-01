@@ -264,7 +264,9 @@ class GraphPanel(
 		GraphPanelTransferHandler(graphViewAppService, editor, eventBus, GraphElementViewTransferable.FLAVOR)
 
 	private fun updateEditability() {
-		val editable = (viewManager.activeView === editor.view && editor.view.editable)
+		val editable =
+			viewManager.activeView === editor.view
+			&& editor.view.editable
 			&& !scheduler.isActive
 			&& rootGraphView != null
 

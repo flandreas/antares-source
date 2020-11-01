@@ -13,7 +13,9 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.ZoomStrategy
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.ComponentTransferHandler
+import ch.scorpion.jabbah.edit.ComponentTransferable
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.app.ComponentSnapAction
 import ch.scorpion.jabbah.edit.app.GridSnapAction
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
@@ -30,12 +32,15 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.BorderLayout
-import java.awt.Color
 import javax.swing.*
 
 /**
  * A [JPanel] for editing the outside [ContainerDrawing] of a [GraphView].
+ *
+ * The current [ContainerDrawing] is established by listening for [ApplicationDataEvent] on the specified
+ * [EventBus].
  */
 class ContainerPanel(
 	val editor: ContainerEditor,
@@ -62,6 +67,8 @@ class ContainerPanel(
 
 	private val applicationDataContentEventHandler : (ApplicationDataContentEvent) -> Unit = { handle (it)}
 
+	private var editable: Boolean = true
+
 	var active: Boolean = false
 		set(value) {
 			if (field != value) {
@@ -70,7 +77,7 @@ class ContainerPanel(
 				// which are obviously cached by the JTree's UIManager. The tree nodes display the names of domain object,
 				// and these names might have been changed while the ContainerPanel wasn't active
 				treeView.updateUI()
-				editor.active = value
+				editor.active = value && editable
 			}
 		}
 
@@ -105,11 +112,18 @@ class ContainerPanel(
 	}
 
 	/**
-	 * Sets the data to be displayed by this [ContainerPanel].
+	 * Sets the data to be displayed by this [ContainerPanel]. This method is used if this
+	 * [ContainerPanel] is NOT used for the main application data (in which case it's [ContainerDrawing]
+	 * would be indirectly set as of [ApplicationDataEvent]), but in additional / separate context,
+	 * e.g. when editing the symbol of a [SubGraphVerticeView].
+	 *
 	 * @param graphView the main [GraphView] in the editable main panel
 	 * @param containerDrawing the [ContainerDrawing] that represents the outer view of `graphView`
+	 * @param editable `true` if the user is authorized to edit the [ContainerDrawing]
 	 */
-	fun setData(graphView: GraphView, containerDrawing: ContainerDrawing, applyZoomStrategy: Boolean = true) {
+	fun setData(graphView: GraphView, containerDrawing: ContainerDrawing, editable: Boolean, applyZoomStrategy: Boolean = true) {
+		this.editable = editable
+
 		val oldZoomStrategy = editor.view.defaultZoomStrategy
 		if (!applyZoomStrategy) {
 			editor.view.defaultZoomStrategy = ZoomStrategy.NONE
@@ -119,12 +133,11 @@ class ContainerPanel(
 			editor.view.defaultZoomStrategy = oldZoomStrategy
 		}
 
-		treeView.update(graphView, containerDrawing)
+		treeView.update(graphView, containerDrawing, editable)
 	}
 
 	private fun buildUI(viewManager: ViewManager) {
 		layout = BorderLayout()
-		background = Color.GRAY
 
 		val treeViewScrollPanel = JScrollPane(treeView, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
 
@@ -177,12 +190,14 @@ class ContainerPanel(
 	}
 
 	private fun updateEditability() {
-		editor.active = editedContainerDrawing != null
+		editor.active = editable && editedContainerDrawing != null
+		editor.view.editable = editor.active
 	}
 
 	private fun handle(event: ApplicationDataEvent) {
 		if (event.newData == null) {
 			editedContainerDrawing = null
+			editable = false
 			removeAll()
 		} else {
 			if (event.oldData == null) {
@@ -190,7 +205,7 @@ class ContainerPanel(
 			}
 			val metaGraph = event.newData!!.content as MetaGraph
 			editedContainerDrawing = metaGraph.containerDrawing
-			setData(metaGraph.graph.graphView, editedContainerDrawing!!)
+			setData(metaGraph.graph.graphView, editedContainerDrawing!!, event.newData?.savable?.editable ?: false)
 		}
 		updateEditability()
 	}
@@ -198,6 +213,6 @@ class ContainerPanel(
 	private fun handle(event: ApplicationDataContentEvent) {
 		val metaGraph = event.data.content as MetaGraph
 		editedContainerDrawing = metaGraph.containerDrawing
-		setData(metaGraph.graph.graphView, editedContainerDrawing!!, applyZoomStrategy = false)
+		setData(metaGraph.graph.graphView, editedContainerDrawing!!, editable, applyZoomStrategy = false)
 	}
 }
