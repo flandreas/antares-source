@@ -11,7 +11,7 @@ interface Tool : KeyListener {
 
     /**
      * This method is called to initialize the [Tool] when it is set as an [Editor]'s current [Tool].
-     * A typical action on activateIn is to set the mouse pointer to give the user an indication of what this [Tool]
+     * A typical action on activation is to set the mouse pointer to give the user an indication of what this [Tool]
      * does.
      */
     fun activate()

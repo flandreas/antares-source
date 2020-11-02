@@ -413,7 +413,7 @@ class GraphPanel(
 		val toolbar = ToolBar(editor)
 		toolbar.addSeparator()
 
-		toolbar.addTool(editor.currentTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
+		toolbar.addTool(editor.selectionTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
 		toolbar.addTool(RectangleTool(editor, factory = { RectangleComponent() }, adder = { GraphElementViewWrapper(it) }),
 			"/img/rectangle24.png", Translations.getString("edit.component.rectangle"))
 		toolbar.addTool(RectangleTool(editor, factory = { EllipseComponent() }, adder = { GraphElementViewWrapper(it) }),

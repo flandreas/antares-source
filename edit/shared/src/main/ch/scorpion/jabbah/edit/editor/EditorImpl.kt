@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.editor
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
@@ -68,7 +69,7 @@ open class EditorImpl(
             changeSupport.fire(Editor.PROP_LOCK_TOOL, oldValue, field)
         }
 
-    final override var defaultTool: Tool? = null
+    final override var selectionTool = selectionToolFactory.create(this)
         set(value) {
             if (value == field) {
                 return
@@ -78,11 +79,8 @@ open class EditorImpl(
             changeSupport.fire(Editor.PROP_DEFAULT_TOOL, oldValue, field)
         }
 
-    final override var currentTool: Tool = selectionToolFactory.create(this)
+    final override var currentTool: Tool = selectionTool
         set(value) {
-            if (value == field) {
-                return
-            }
             val oldValue = field
             field = value
             field.activate()
@@ -120,8 +118,8 @@ open class EditorImpl(
     }
 
     override fun toolDone() {
-        if (!toolLock && defaultTool != null) {
-            currentTool = defaultTool!!
+        if (!toolLock) {
+            currentTool = selectionTool
         }
     }
 
@@ -246,7 +244,6 @@ open class EditorImpl(
     }
 
     init {
-        defaultTool = currentTool
         snapManager.addSnapper(componentSnapper)
         snapManager.addSnapper(view.grid)
 
@@ -254,5 +251,10 @@ open class EditorImpl(
         view.addPropertyChangeListener(drawingViewListener)
 
         active = true
+
+	    System.invokeLater {
+		    // Invoked later when UI already exists and is able to set its state accordingly
+		    currentTool = selectionTool
+	    }
     }
 }

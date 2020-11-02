@@ -50,8 +50,11 @@ interface Editor {
     /** Holds the current [Tool].*/
     var currentTool: Tool
 
-    /** Holds the default [Tool] that will be activated when the current [Tool] is done and the [toolLock] property is not set.*/
-    var defaultTool: Tool?
+    /**
+     * Holds the [SelectionTool] of this [Editor]
+     * This is also the [Tool] that will be activated when the current [Tool] is done and the [toolLock] property is not set.
+     */
+    var selectionTool: SelectionTool
 
     /** Holds the [SnapManager] that controls snapping on behalf of this [Editor].*/
     val snapManager: SnapManager

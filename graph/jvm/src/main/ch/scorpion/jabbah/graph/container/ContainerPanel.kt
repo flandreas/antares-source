@@ -159,7 +159,7 @@ class ContainerPanel(
 		if (separator) {
 			toolbar.addSeparator()
 		}
-		toolbar.addTool(editor.currentTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
+		toolbar.addTool(editor.selectionTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
 		toolbar.addTool(LabelTool(editor, factory = { LabelComponent() } ), "/img/text24.png", Translations.getString("edit.component.label"))
 		toolbar.addTool(RectangleTool(editor, factory = { RectangleComponent() }), "/img/rectangle24.png", Translations.getString("edit.component.rectangle"))
 		toolbar.addTool(RectangleTool(editor, factory = { EllipseComponent() }), "/img/oval24.png", Translations.getString("edit.component.ellipse"))
