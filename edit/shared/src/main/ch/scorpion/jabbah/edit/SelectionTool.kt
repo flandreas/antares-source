@@ -8,7 +8,7 @@ package ch.scorpion.jabbah.edit
  * for creating and registering appropriate [Command]s when moving [Component]s.
  */
 interface SelectionTool : Tool {
-    // empty
+	override val enabledInInactiveEditor: Boolean get() = true
 }
 
 /** A factory that creates a [SelectionTool] for an [Editor].*/

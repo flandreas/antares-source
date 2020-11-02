@@ -56,7 +56,7 @@ class ToolBar(val editor: Editor? = null) : JToolBar() {
 					button.requestFocus()
 				}
 			} else if (e.name == Editor.PROP_ACTIVE) {
-				button.isEnabled = editor?.active ?: false
+				button.isEnabled = tool.enabledInInactiveEditor || (editor?.active ?: false)
 			}
 		}
 	}

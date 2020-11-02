@@ -15,18 +15,18 @@ class DigitalContainerEditor(
 ) : ContainerEditor(view, eventBus) {
 
     init {
-        eventBus.register(CircuitInOutBitWidthChanged::class, {
-            val portViewComponent = getContainerDrawing().getPortViewComponent(it.circuitInOut.name!!)
-            if (portViewComponent != null) {
-                (portViewComponent.port as DigitalPort).bitWidth = it.newValue
-            }
-        })
+        eventBus.register(CircuitInOutBitWidthChanged::class) {
+	        val portViewComponent = getContainerDrawing().getPortViewComponent(it.circuitInOut.name!!)
+	        if (portViewComponent != null) {
+		        (portViewComponent.port as DigitalPort).bitWidth = it.newValue
+	        }
+        }
 
-        eventBus.register(CircuitInOutSignalRepresentationChanged::class, {
-            val portViewComponent = getContainerDrawing().getPortViewComponent(it.circuitInOut.name!!)
-            if (portViewComponent != null) {
-                (portViewComponent.port as DigitalPort).signalRepresentation = it.newValue
-            }
-        })
+	    eventBus.register(CircuitInOutSignalRepresentationChanged::class) {
+		    val portViewComponent = getContainerDrawing().getPortViewComponent(it.circuitInOut.name!!)
+		    if (portViewComponent != null) {
+			    (portViewComponent.port as DigitalPort).signalRepresentation = it.newValue
+		    }
+	    }
     }
 }

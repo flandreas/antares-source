@@ -9,6 +9,13 @@ import ch.scorpion.jabbah.base.event.MouseEvent
  */
 interface Tool : KeyListener {
 
+	/**
+	 * Determines whether this [Tool] stays enabled (and thus receive events) even when the [Editor] is not active.
+	 * This is typically not the case, but might be useful for tools like [SelectionTool], which is needed to
+	 * inspect objects even when the [Editor] can't allow the user to change the displayed document.
+	 */
+	val enabledInInactiveEditor: Boolean get() = false
+
     /**
      * This method is called to initialize the [Tool] when it is set as an [Editor]'s current [Tool].
      * A typical action on activation is to set the mouse pointer to give the user an indication of what this [Tool]

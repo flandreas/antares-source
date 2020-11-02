@@ -59,6 +59,9 @@ class SelectionToolImpl(
 	}
 
 	override fun keyPressed(e: KeyEvent) {
+		if (!editor.view.editable) {
+			return
+		}
 		LOG.debug("keyPressed")
 		if (target != null) {
 			target = target?.keyPressed(keyEventContext(e))
@@ -70,11 +73,18 @@ class SelectionToolImpl(
 	}
 
 	override fun keyReleased(e: KeyEvent) {
+		if (!editor.view.editable) {
+			return
+		}
 		LOG.debug("keyReleased")
 		target = target?.keyReleased(keyEventContext(e))
 	}
 
 	override fun mouseClicked(e: MouseEvent, x: Double, y: Double) {
+		if (!editor.view.editable) {
+			return
+		}
+
 		LOG.debug("mouseClicked at $x,$y")
 		if (target != null) {
 			target = target?.mouseClicked(mouseEventContext(e, x, y))
@@ -86,6 +96,10 @@ class SelectionToolImpl(
 	}
 
 	override fun mouseMoved(e: MouseEvent, x: Double, y: Double) {
+		if (!editor.view.editable) {
+			return
+		}
+
 		super.mouseMoved(e, x, y)
 
 		if (LOG.isTraceEnabled()) {
@@ -106,6 +120,10 @@ class SelectionToolImpl(
 	}
 
 	override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
+		if (!editor.view.editable) {
+			selectionLogic(e, x, y, allowRubberband = false)
+		}
+
 		tooltipHandler.clear(editor.view)
 
 		if (e.button != Button.BUTTON1) {
@@ -124,7 +142,10 @@ class SelectionToolImpl(
 		// Try to forward event to an interested [Drawable] in the [View]
 		target = editor.view.getInputEventHandler(e).mousePressed(mouseEventContext(e, x, y))
 
-		// Selection logic
+		selectionLogic(e, x, y, allowRubberband = true)
+	}
+
+	private fun selectionLogic(e: MouseEvent, x: Double, y: Double, allowRubberband: Boolean) {
 		val component: Component? = editor.drawing.getDrawableAt(x, y)
 		if (component != null) {
 			if (e.isShiftDown) {
@@ -159,6 +180,10 @@ class SelectionToolImpl(
 	}
 
 	override fun mouseDragged(e: MouseEvent, x: Double, y: Double) {
+		if (!editor.view.editable) {
+			return
+		}
+
 		if (!e.isLeftButtonDown) {
 			LOG.debug("Drag wit other than button 1: ${e.button.name}")
 			return
@@ -199,6 +224,10 @@ class SelectionToolImpl(
 	}
 
 	override fun mouseReleased(e: MouseEvent, x: Double, y: Double) {
+		if (!editor.view.editable) {
+			return
+		}
+
 		if (e.button != Button.BUTTON1) {
 			return
 		}
