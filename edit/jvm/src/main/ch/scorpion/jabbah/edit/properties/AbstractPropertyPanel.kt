@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.Component
 import com.l2fprod.common.propertysheet.PropertySheetPanel
 import java.awt.BorderLayout
 import java.awt.Color
@@ -32,8 +33,9 @@ abstract class AbstractPropertyPanel(
 	private val sheet: PropertySheetPanel = sheetFactory.create()
 
 	/** Displays the title that identifies the selected [Component].*/
-	private val label: JLabel
+	private val title: JLabel
 
+	/** Used for displaying messages such as validation errors.*/
 	private val messageTextArea: JTextArea
 
 	private val messageTextScroll: JScrollPane
@@ -63,8 +65,8 @@ abstract class AbstractPropertyPanel(
 
 		getTable().setShowGrid(true)
 
-		label = JLabel()
-		label.border = BorderFactory.createEmptyBorder(2, 2, 2, 2)
+		title = JLabel()
+		title.border = BorderFactory.createEmptyBorder(2, 2, 2, 2)
 
 		messageTextArea = JTextArea()
 		messageTextArea.rows = 3
@@ -80,7 +82,7 @@ abstract class AbstractPropertyPanel(
 		messageTextScroll.background = background
 
 		layout = BorderLayout()
-		add(label, BorderLayout.NORTH)
+		add(title, BorderLayout.NORTH)
 		add(sheet, BorderLayout.CENTER)
 	}
 
@@ -111,7 +113,7 @@ abstract class AbstractPropertyPanel(
 		repaint()
 	}
 
-	protected fun hideMessage() {
+	private fun hideMessage() {
 		messageTextArea.text = ""
 		remove(messageTextScroll)
 		revalidate()
@@ -192,7 +194,7 @@ abstract class AbstractPropertyPanel(
 
 	private fun updateLabel() {
 		if (propertyObject == null) {
-			label.text = ""
+			title.text = ""
 		} else {
 			val description = getDescription(propertyObject!!)
 			val beanDescription = if (StringUtils.isEmpty(description)) {
@@ -200,7 +202,7 @@ abstract class AbstractPropertyPanel(
 			} else {
 				StringUtils.replaceNegation(description!!)
 			}
-			label.text = Translations.getString("edit.property.bean", beanDescription)
+			title.text = Translations.getString("edit.property.bean", beanDescription)
 		}
 	}
 }

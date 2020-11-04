@@ -48,8 +48,6 @@ class TranslatableTextPropertyRenderer(
 		textComponent.foreground = default.foreground
 		textComponent.background = default.background
 
-		textComponent.isEnabled = table.isEnabled
-
 		return textComponent
 	}
 }

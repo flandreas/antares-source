@@ -271,7 +271,6 @@ class GraphPanel(
 			&& rootGraphView != null
 
 		editor.active = editable
-		propertyPanel.editable = editable
 	}
 
 	private fun buildUI() {
