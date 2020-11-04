@@ -31,6 +31,7 @@ class TranslatableTextPropertyRenderer(
 			textComponent = JTextField()
 			textComponent.preferredSize = Dimension(70, 22)
 			textComponent.border = null
+			textComponent.isEnabled = false
 		}
 		textComponent.isOpaque = true
 	}
@@ -46,6 +47,8 @@ class TranslatableTextPropertyRenderer(
 		val default = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
 		textComponent.foreground = default.foreground
 		textComponent.background = default.background
+
+		textComponent.isEnabled = table.isEnabled
 
 		return textComponent
 	}

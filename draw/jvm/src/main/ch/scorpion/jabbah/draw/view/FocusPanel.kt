@@ -25,8 +25,9 @@ class FocusPanel(
 ) : JPanel() {
 
 	companion object {
-		val focusBorder = BorderFactory.createLineBorder(UIManager.getColor("Focus.color"), 1)!!
-		val nonFocusBorder = BorderFactory.createEmptyBorder(1, 1, 1, 1)!!
+		private const val thickness = 1
+		val focusBorder = BorderFactory.createLineBorder(UIManager.getColor("Component.focusColor"), thickness)!!
+		val nonFocusBorder = BorderFactory.createEmptyBorder(thickness, thickness, thickness, thickness)!!
 	}
 
 	init {
