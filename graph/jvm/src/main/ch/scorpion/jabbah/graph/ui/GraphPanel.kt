@@ -66,7 +66,7 @@ import javax.swing.*
  * A [JPanel] for editing and executing a root [GraphView].
  *
  * It consists of a [LibraryPanel] at the left, a [ComponentPropertyPanel] for editing the properties
- * of the selected [Component] at the center-left, and a [GraphNavigationPanel] for editing the [GraphView]
+ * of the selected [Component] at the center-left, and a [GraphEditPanel] for editing the [GraphView]
  * at the center-right.
  *
  * Its current root [GraphView] is established by listening for [ApplicationDataEvent] on the specified

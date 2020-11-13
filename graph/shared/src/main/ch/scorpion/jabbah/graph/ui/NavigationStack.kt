@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.description.Name
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
@@ -24,7 +23,7 @@ data class NavigationStackEntry<T : GraphView>(
 
 /**
  * Represents the stack of [DrawingViewContent]s the user created while navigation through the hierarchy of
- * [Drawing]s.
+ * [GraphView]s.
  * Posts a [NavigationStackEvent] whenever the head [DrawingViewContent] has changed.
  */
 class NavigationStack<T : GraphView>(val eventBus: EventBus = BaseModule.eventBus) {

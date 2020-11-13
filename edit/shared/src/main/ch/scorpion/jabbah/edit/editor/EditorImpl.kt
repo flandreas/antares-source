@@ -45,8 +45,14 @@ open class EditorImpl(
             field = value
 
             if (field) {
+	            view.addMouseListener(mouseEventDelegator)
+	            view.addMouseMotionListener(mouseEventDelegator)
+	            view.addKeyListener(keyEventDelegator)
 	            currentTool.activate()
             } else {
+	            view.removeMouseListener(mouseEventDelegator)
+	            view.removeMouseMotionListener(mouseEventDelegator)
+	            view.removeKeyListener(keyEventDelegator)
 	            currentTool.deactivate()
             }
             view.autoPanningEnabled = active
@@ -243,10 +249,6 @@ open class EditorImpl(
 
         view.drawing.addDrawableContainerListener(drawingListener)
         view.addPropertyChangeListener(drawingViewListener)
-
-	    view.addMouseListener(mouseEventDelegator)
-	    view.addMouseMotionListener(mouseEventDelegator)
-	    view.addKeyListener(keyEventDelegator)
 
 	    active = true
 
