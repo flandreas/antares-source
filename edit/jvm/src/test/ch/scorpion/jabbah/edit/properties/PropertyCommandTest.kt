@@ -10,10 +10,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
-import ch.scorpion.jabbah.edit.model.text.description.Namable
-import ch.scorpion.jabbah.edit.model.text.description.NamableImpl
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -60,24 +57,24 @@ class PropertyCommandTest {
 
 	@Test
 	fun shouldExecuteNestedProperty() {
-		val namable = NamedComponent("oldName")
-		drawing.add(namable)
-		val cmd = createCommand("name.translation", "edit.property.name", namable.id, TranslatableText("newName"))
+		val component = ComponentWithNestedProperty(NestedProperty("oldName"))
+		drawing.add(component)
+		val cmd = createCommand("property.value", "edit.property.name", component.id, "newName")
 
 		cmd.execute()
 
-		assertEquals("newName", namable.name.value)
+		assertEquals("newName", component.property.value)
 	}
 	@Test
 	fun shouldUndoNestedProperty() {
-		val namable = NamedComponent("oldName")
-		drawing.add(namable)
-		val cmd = createCommand("name.translation", "edit.property.name", namable.id, TranslatableText("newName"))
+		val component = ComponentWithNestedProperty(NestedProperty("oldName"))
+		drawing.add(component)
+		val cmd = createCommand("property.value", "edit.property.name", component.id,"newName")
 
 		cmd.execute()
 		cmd.undo()
 
-		assertEquals("oldName", namable.name.value)
+		assertEquals("oldName", component.property.value)
 	}
 
 	private fun createCommand(name: String, baseKey: String, id: Int, newValue: Any): PropertyCommand<Any> {
@@ -91,17 +88,17 @@ class PropertyCommandTest {
 		)
 	}
 
-	private class NamedComponent(
-		name: String = "initialName",
-		private val namable: Namable = NamableImpl(name)
-	) : AbstractComponent(), Namable by namable {
+	class NestedProperty(value: String) {
+		var value: String = value
+	}
+
+	class ComponentWithNestedProperty(
+		var property: NestedProperty
+	) : AbstractComponent() {
 		override var location: Point2D = Point2D()
 		override val type: String = "type"
 		override val boundingBox: RectangularShape = Rectangle2D()
-
 		override fun draw(context: DrawContext) { }
-
 		override fun contains(x: Double, y: Double): Boolean = false
-
 	}
 }

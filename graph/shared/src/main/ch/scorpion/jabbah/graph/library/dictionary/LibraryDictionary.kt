@@ -6,10 +6,7 @@ import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.model.text.description.Describable
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
-import ch.scorpion.jabbah.edit.model.text.description.Namable
-import ch.scorpion.jabbah.edit.model.text.description.NamableImpl
+import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.library.LibraryProperties
 import ch.scorpion.jabbah.io.*
@@ -55,7 +52,7 @@ class LibraryDictionary : Storable {
 
 	fun rename(library: Library, newName: TranslatableText) {
 		if (entries[library.uuid]!!.name.translation != newName) {
-			entries[library.uuid]!!.name.translation = newName
+			entries[library.uuid]!!.name = Name(newName)
 		}
 	}
 
@@ -95,10 +92,8 @@ class LibraryDictionaryEntry(
 	var uuid: UUID = System.createUUID(),
 	initialName: TranslatableText = TranslatableText(),
 	var author: UUID = System.createUUID(),
-	var initialDescription: TranslatableText = TranslatableText(),
-	private val namable: NamableImpl = NamableImpl(initialName),
-	private val describable: Describable = DescribableImpl(initialDescription)
-) : Storable, Namable by namable, Describable by describable {
+	var initialDescription: TranslatableText = TranslatableText()
+) : Storable, Namable, Describable {
 
 	companion object {
 		fun forLibrary(library: Library): LibraryDictionaryEntry {
@@ -114,6 +109,12 @@ class LibraryDictionaryEntry(
 	/** ---- [Any] */
 
 	override fun toString(): String = name.translation.getTranslation()
+
+	/** ---- [Namable], [Describable] interfaces */
+
+	override var name: Name by observableName(Name(initialName))
+
+	override var description: Description by observableDescription(Description(initialDescription))
 
 	/** ---- [Storable] interface */
 
@@ -132,14 +133,14 @@ class LibraryDictionaryEntry(
 
 	override fun read(reader: StoreReader) {
 		uuid = System.createUUID(reader.readString("uuid"))
-		name.read("name", reader)
+		name = Name.read("name", reader)
+		description = Description.read("desc", reader)
 		author = System.createUUID(reader.readString("author"))
-		description.read("desc", reader)
 	}
 
 	/** ---- [LibraryDictionaryEntry] */
 
 	fun updateFrom(properties: LibraryProperties) {
-		description.translation = properties.description
+		description = Description(properties.description)
 	}
 }

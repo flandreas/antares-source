@@ -1,12 +1,12 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -68,10 +68,10 @@ class ContainerLibraryElement(
 		uuid = UUID(reader.readString("uuid"))
 		if (reader.hasAttribute("name")) {
 			// backward compatibility
-			name.translation = TranslatableText(reader.readString("name"))
+			name = Name(reader.readString("name"))
 		}
 		if (reader.hasElement("name")) {
-			name.read("name", reader)
+			name = Name.read("name", reader)
 		}
 	}
 
@@ -102,7 +102,7 @@ class ContainerLibraryElement(
 
 	fun updateMetaGraph(metaGraph: MetaGraph) {
 		uuid = metaGraph.uuid
-		name.translation = metaGraph.translatableName
+		name = Name(metaGraph.translatableName)
 		this.metaGraph = metaGraph
 	}
 }

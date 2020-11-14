@@ -6,8 +6,8 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -28,7 +28,7 @@ class RgbLED : CalculatingVertice(CALCULATOR) {
 		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
 		private val DEFAULT_COLOR = Color(60, 0, 0)
-		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.rgbLed.dataPort.desc"))
+		private val DATA_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.rgbLed.dataPort.desc"))
 
 		private val CALCULATOR = Calculator()
 
@@ -51,7 +51,7 @@ class RgbLED : CalculatingVertice(CALCULATOR) {
 		}
 
 	init {
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = null, bitWidth = BitWidth.BW_24, describable = DATA_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = null, bitWidth = BitWidth.BW_24, description = DATA_PORT_DESC))
 		propagationDelay = 0
 	}
 

@@ -18,7 +18,8 @@ import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.edit.model.text.description.Describable
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
+import ch.scorpion.jabbah.edit.model.text.description.Description
+import ch.scorpion.jabbah.edit.model.text.description.observableDescription
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -138,9 +139,8 @@ abstract class AbstractRectangularComponent(
 abstract class RectangularComponent(
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	shape: RectangularShape,
-	private val describable: Describable = DescribableImpl()
-) : AbstractRectangularComponent(styleType, styleProvider, shape), Transparent, Describable by describable {
+	shape: RectangularShape
+) : AbstractRectangularComponent(styleType, styleProvider, shape), Transparent, Describable {
 
 	companion object {
 		// The distance between the rectangle border and the text box (if at top or at bottom)
@@ -150,6 +150,8 @@ abstract class RectangularComponent(
 	constructor(x: Double, y: Double, w: Double, h: Double) : this(shape = Rectangle2D(x, y, w, h))
 
 	private val label = Label("", font)
+
+	override var description: Description by observableDescription(Description(""))
 
 	/** ---- Editable properties */
 
@@ -221,7 +223,7 @@ abstract class RectangularComponent(
 		if (reader.hasAttribute("vAlign")) {
 			alignment = VerticalAlignment.withName(reader.readString("vAlign"))
 		}
-		description.read("desc", reader)
+		description = Description.read("desc", reader)
 	}
 
 	/** ---- [Drawable] interface */

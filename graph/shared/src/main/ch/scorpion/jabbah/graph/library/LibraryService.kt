@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.app.module.AppModule
-import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
@@ -11,7 +9,9 @@ import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCloner
@@ -121,7 +121,7 @@ class LibraryService(
 	fun renameLibrary(library: Library, newName: TranslatableText) {
 		LOG.debug("Renaming Library ${library.uuid} to '$newName'")
 		val oldName = library.name.translation
-		library.name.translation = newName
+		library.name = Name(newName)
 		storeLibrary(library)
 		eventBus.post(LibraryRenamedEvent(library, oldName))
 	}
@@ -200,7 +200,7 @@ class LibraryService(
 	fun renameDirectory(directory: LibraryDirectory, newName: TranslatableText) {
 		LOG.debug("Renaming LibraryDirectory")
 		val oldName = directory.name.translation
-		directory.name.translation = newName
+		directory.name = Name(newName)
 		storeLibrary(directory.library!!)
 		eventBus.post(LibraryDirectoryRenamedEvent(directory, oldName))
 	}
@@ -230,7 +230,7 @@ class LibraryService(
 			val nameChanged = it.translatableName != element.name.translation
 			storeContainerLibraryElement(library, it, element, doClone = false)
 			if (nameChanged) {
-				element.name.translation = it.translatableName
+				element.name = Name(it.translatableName)
 				storeLibrary(library)
 			}
 			eventBus.post(LibraryItemUpdatedEvent(library, element))
@@ -294,7 +294,7 @@ class LibraryService(
 		userLibraryPersister.duplicateLibrary(library, newUuid)
 		val newLibrary = userLibraryPersister.loadLibrary(newUuid)
 		newLibrary.uuid = newUuid
-		newLibrary.name.translation = newName
+		newLibrary.name = Name(newName)
 		newLibrary.isSystem = false
 		newLibrary.author = userHolder.user.uuid
 		storeLibrary(newLibrary)

@@ -19,6 +19,8 @@ import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Description
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.execution.issue.IssueImpl
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -76,19 +78,19 @@ open class GraphViewImpl(
 	var name: String
 		get() = graph!!.name.value
 		set(value) {
-			graph!!.name.value = value
+			graph!!.name = Name(value)
 		}
 
 	var translatableName: TranslatableText
 		get() = graph!!.name.translation
 		set(value) {
-			graph!!.name.translation = value
+			graph!!.name = Name(value)
 		}
 
 	var description: TranslatableText
 		get() = graph!!.description.translation
 		set(value) {
-			graph!!.description.translation = value
+			graph!!.description = Description(value)
 		}
 
 	var propagationDelay: Long?

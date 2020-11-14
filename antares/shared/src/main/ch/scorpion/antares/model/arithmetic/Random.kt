@@ -7,8 +7,8 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.InputPort
@@ -32,8 +32,8 @@ class Random(
 		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 
-		private val CLOCK_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.random.clockPort.desc"))
-		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.random.dataPort.desc"))
+		private val CLOCK_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.random.clockPort.desc"))
+		private val DATA_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.random.dataPort.desc"))
 
 		private val CALCULATOR = Calculator()
 
@@ -57,11 +57,11 @@ class Random(
 	override val minInputCount: InputCount get() = InputCount.ONE
 
 	override fun createInputPort(): InputPort<DigitalSignal> {
-		return DigitalPortImpl(portType = PortType.INPUT, trigger = Trigger.EDGE, name = null, describable = CLOCK_PORT_DESC)
+		return DigitalPortImpl(portType = PortType.INPUT, trigger = Trigger.EDGE, name = null, description = CLOCK_PORT_DESC)
 	}
 
 	override fun createOutputPort(): OutputPort<DigitalSignal> {
-		return DigitalPortImpl(portType = PortType.OUTPUT, name = null, bitWidth = BitWidth.BW_8, describable = DATA_PORT_DESC)
+		return DigitalPortImpl(portType = PortType.OUTPUT, name = null, bitWidth = BitWidth.BW_8, description = DATA_PORT_DESC)
 	}
 
 	/** [DigitalSignalSource] interface */

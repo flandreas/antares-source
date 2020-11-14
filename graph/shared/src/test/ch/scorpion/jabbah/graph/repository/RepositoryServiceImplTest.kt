@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.repository
 
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -9,7 +10,6 @@ import ch.scorpion.jabbah.graph.project.ProjectImpl
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import io.mockk.mockk
 import kotlin.test.*
 
 class RepositoryServiceImplTest {
@@ -20,12 +20,10 @@ class RepositoryServiceImplTest {
 		}
 	}
 
-	//private val libraryPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
 	private val libraryPersistenceService = MemoryLibraryPersistenceService()
 	private val libraryService: LibraryService = LibraryService(libraryAccessor = { libraryBuilder.library }, userLibraryPersister = libraryPersistenceService)
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = libraryService)
 
-	//private val projectPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
 	private val projectPersistenceService = MemoryLibraryPersistenceService()
 	private val projectLibraryService: LibraryService = LibraryService(libraryAccessor = { projectBuilder.library }, userLibraryPersister = projectPersistenceService)
 	private val projectBuilder = LibraryBuilder(name = "Project", libraryService = projectLibraryService,
@@ -103,7 +101,7 @@ class RepositoryServiceImplTest {
 			val graphViewBuilder = GraphViewBuilder<Boolean>()
 			graphViewBuilder.reference(referencedVertice.uuid)
 			val referencingMetaGraph = MetaGraph(GraphStorable(graphViewBuilder.graphView), ContainerDrawing())
-			referencingMetaGraph.graph.model!!.name.value = "ReferencingVertice"
+			referencingMetaGraph.graph.model!!.name = Name("ReferencingVertice")
 			projectBuilder.addContainerLibraryElement(referencingMetaGraph)
 
 			try {

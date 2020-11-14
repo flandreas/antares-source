@@ -5,8 +5,8 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 
@@ -35,8 +35,8 @@ enum class SevenSegmentDisplayScheme(val customName: String) {
 
 	COMBINED("combined") {
 		override fun createPorts(display: SevenSegmentDisplay) {
-			display.addPort(DigitalPortImpl(portType = PortType.INPUT, name = "s", bitWidth = BitWidth.BW_8, describable = SEGMENTS_PORT_DESC))
-			display.addPort(DigitalPortImpl(portType = PortType.INPUT, name = "p", describable = POINT_PORT_DESC))
+			display.addPort(DigitalPortImpl(portType = PortType.INPUT, name = "s", bitWidth = BitWidth.BW_8, description = SEGMENTS_PORT_DESC))
+			display.addPort(DigitalPortImpl(portType = PortType.INPUT, name = "p", description = POINT_PORT_DESC))
 		}
 
 		override fun inputValueOf(display: SevenSegmentDisplay, bitName: String): Boolean {
@@ -51,11 +51,11 @@ enum class SevenSegmentDisplayScheme(val customName: String) {
 
 	companion object {
 
-		private val SEGMENTS_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.sevenSegment.segmentsPort.desc"))
-		private val POINT_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.sevenSegment.pointPort.desc"))
+		private val SEGMENTS_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.sevenSegment.segmentsPort.desc"))
+		private val POINT_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.sevenSegment.pointPort.desc"))
 
 		fun withName(customName: String): SevenSegmentDisplayScheme {
-			for (s in SevenSegmentDisplayScheme.values()) {
+			for (s in values()) {
 				if (s.customName == customName) {
 					return s
 				}

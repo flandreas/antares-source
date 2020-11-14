@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -31,7 +32,7 @@ class CompositeTestGraphViewBuilder(
 		val control = addVerticeView(TestControlVerticeView())
 		connect(addInput(), comp)
 		split(connect(comp, addOutput()), 0, Point2D.ZERO, control)
-		graph.name.value = graphName
+		graph.name = Name(graphName)
 		return graphView
 	}
 
@@ -43,7 +44,7 @@ class CompositeTestGraphViewBuilder(
 		graphView.add(innerComp)
 		connect(addInput(), innerComp)
 		connect(innerComp, addOutput())
-		graph.name.value = graphName
+		graph.name = Name(graphName)
 		return graphView
 	}
 
@@ -67,7 +68,7 @@ class CompositeTestGraphViewBuilder(
 		val containerDrawing = GraphViewModule.createContainerDrawing()
 
 		containerDrawing.model.graphUUID = graphView.graph!!.uuid
-		containerDrawing.model.graphName.translation = graphView.graph!!.name.translation
+		containerDrawing.model.graphName = graphView.graph!!.name
 
 		for (circuitInput in graphView.graph!!.graphInputs) {
 			containerDrawing.add(

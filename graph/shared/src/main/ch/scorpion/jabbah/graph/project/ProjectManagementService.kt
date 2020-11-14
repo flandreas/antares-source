@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.base.exception.IllegalStateException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Description
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionary
@@ -91,10 +93,10 @@ class ProjectManagementService(
 		LOG.debug("creating new project '${properties.name.getTranslation()}'")
 
 		val metaGraph = MetaGraph()
-		metaGraph.graph.model!!.name.value = Translations.getString(newMetaGraphNameTranslationKey)
+		metaGraph.graph.model!!.name = Name(Translations.getString(newMetaGraphNameTranslationKey))
 
 		val project = projectFactory.invoke(properties.name)
-		project.description.translation = properties.description
+		project.description = Description(properties.description)
 		project.importedLibrary = library
 		project.defaultElementUUID = metaGraph.uuid
 

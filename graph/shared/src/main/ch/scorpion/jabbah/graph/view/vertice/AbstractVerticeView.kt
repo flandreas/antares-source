@@ -109,7 +109,9 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	/** ---- [Describable] */
 
-	override val description: Description get() = model.description
+	override var description: Description
+		get() = model.description
+		set(value) { model.description = value }
 
 	/** ---- [VerticeView] interface */
 

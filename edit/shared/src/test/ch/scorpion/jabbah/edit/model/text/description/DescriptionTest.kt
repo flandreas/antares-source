@@ -1,13 +1,8 @@
 package ch.scorpion.jabbah.edit.model.text.description
 
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.module.EditModule
-import io.mockk.mockk
-import io.mockk.verify
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.BeforeTest
+import kotlin.test.*
 
 class DescriptionTest {
 
@@ -17,13 +12,51 @@ class DescriptionTest {
 	}
 
 	@Test
-	fun shouldPostEventUponChange() {
-		val eventBus = mockk<EventBus>(relaxed = true)
-		val description = Description(TranslatableText("tree"), eventBus)
+	fun shouldGetDescription() {
+		val describable = TestDescribable("Test")
+		assertEquals("Test", describable.description.value)
+	}
 
-		description.translation = TranslatableText("car")
+	@Test
+	fun shouldSetDescription() {
+		val describable = TestDescribable("Test")
+		describable.description = Description("Changed")
+		assertEquals("Changed", describable.description.value)
+	}
 
-		assertEquals("car", description.value)
-		verify { eventBus.post(any()) }
+	@Test
+	fun shouldPostDescriptionChangedEvent() {
+		val describable = TestDescribable("Test")
+		lateinit var event: DescriptionChangedEvent
+		BaseModule.eventBus.register(DescriptionChangedEvent::class) { event = it }
+
+		describable.description = Description("Changed")
+
+		assertNotNull(event)
+		assertSame(describable, event.owner)
+		assertEquals("Test", event.oldValue.value)
+		assertEquals("Changed", event.description.value)
+	}
+
+	@Test
+	fun shouldInvokeChangeHandler() {
+		val describable = TestDescribable("Test")
+		assertFalse(describable.changed)
+
+		describable.description = Description("Changed")
+
+		assertTrue(describable.changed)
+	}
+
+	private class TestDescribable(
+		description: Description
+	) : Describable {
+
+		var changed: Boolean = false
+			private set
+
+		constructor(initialValue: String): this(Description(initialValue))
+
+		override var description: Description by observableDescription(description) { changed = true }
 	}
 }

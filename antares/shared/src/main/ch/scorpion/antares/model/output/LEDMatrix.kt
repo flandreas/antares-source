@@ -8,8 +8,8 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -48,8 +48,8 @@ class LEDMatrix(
 		private val DEF_ROW_WIDTH = BitWidth.BW_8
 		private const val DEF_AFTERGLOW = 10L
 
-		private val COLUMNS_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ledMatrix.columnsPort.desc"))
-		private val ROWS_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ledMatrix.rowsPort.desc"))
+		private val COLUMNS_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ledMatrix.columnsPort.desc"))
+		private val ROWS_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ledMatrix.rowsPort.desc"))
 
 		private val CALCULATOR = Calculator()
 
@@ -61,8 +61,8 @@ class LEDMatrix(
 	}
 
 	init {
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = COLUMN_PORT_NAME, bitWidth = columnWidth, describable = COLUMNS_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ROW_PORT_NAME, bitWidth = rowWidth, describable = ROWS_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = COLUMN_PORT_NAME, bitWidth = columnWidth, description = COLUMNS_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ROW_PORT_NAME, bitWidth = rowWidth, description = ROWS_PORT_DESC))
 	}
 
 	override val type: String get() = TYPE

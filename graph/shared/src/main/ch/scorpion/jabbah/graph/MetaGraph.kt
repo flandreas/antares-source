@@ -99,7 +99,7 @@ class MetaGraph(
 	companion object {
 		fun withName(name: String): MetaGraph {
 			val metaGraph = MetaGraph()
-			metaGraph.graph.model!!.name.value = name
+			metaGraph.graph.model!!.name = Name(name)
 			metaGraph.containerDrawing.model.name = name
 			return metaGraph
 		}
@@ -204,9 +204,10 @@ class MetaGraph(
 	fun duplicate(newName: TranslatableText): MetaGraph {
 		val duplicate = StorableCloner.clone(this)
 
+		copyGraphDataFromContainerModel(duplicate.graph.model!!)
+
 		duplicate.containerDrawing.model.graphUUID = ch.scorpion.jabbah.base.System.createUUID()
 		duplicate.containerDrawing.model.graphName = Name(newName)
-		copyGraphDataFromContainerModel(duplicate.graph.model!!)
 
 		return duplicate
 	}
@@ -230,14 +231,14 @@ class MetaGraph(
 	}
 
 	private fun handle(event: NameChangedEvent) {
-		if (event.name === graph.model?.name) {
+		if (event.owner === graph.model) {
 			containerDrawing.model.graphName = Name(event.name.translation)
 		}
 	}
 
 	private fun handle(event: DescriptionChangedEvent) {
-		if (event.description == graph.model?.description) {
-			containerDrawing.model.description.translation = event.description.translation
+		if (event.owner === graph.model) {
+			containerDrawing.model.description = event.description
 		}
 	}
 
@@ -249,8 +250,7 @@ class MetaGraph(
 
 	private fun copyGraphDataFromContainerModel(graph: Graph) {
 		graph.uuid = containerDrawing.model.graphUUID!!
-		graph.name.translation = containerDrawing.model.graphName.translation
-		graph.description.translation = containerDrawing.model.description.translation
-
+		graph.name = containerDrawing.model.graphName
+		graph.description = containerDrawing.model.description
 	}
 }

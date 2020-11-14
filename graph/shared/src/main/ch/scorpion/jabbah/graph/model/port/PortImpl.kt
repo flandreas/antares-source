@@ -6,8 +6,10 @@ import ch.scorpion.jabbah.base.checkState
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyChangeSupport
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
+import ch.scorpion.jabbah.edit.model.text.description.Description
+import ch.scorpion.jabbah.edit.model.text.description.observableDescription
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
@@ -23,8 +25,8 @@ open class PortImpl<T : Any>(
 	portType: PortType,
 	override val signalClass: KClass<T>? = null,
 	name: String?,
-	private val describable: Describable = DescribableImpl()
-) : BidirectionalPort<T>, Describable by describable {
+	description: TranslatableText = TranslatableText()
+) : BidirectionalPort<T>, Describable {
 
 	constructor(portType: PortType, signalClass: KClass<T>? = null) : this(portType, signalClass, null)
 
@@ -48,6 +50,8 @@ open class PortImpl<T : Any>(
 	override fun toString(): String {
 		return "PortImpl ${portType.name} '$name'"
 	}
+
+	override var description: Description by observableDescription(Description(description))
 
 	/** ---- [Port] interface */
 

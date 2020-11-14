@@ -39,7 +39,7 @@ class NavigationStackViewController(
 	}
 
 	private val nameChangeHandler: EventHandler<NameChangedEvent> = {
-		if (navigationStack.rootEntry != null && navigationStack.rootEntry!!.graphName === it.name) {
+		if (navigationStack.rootEntry != null && navigationStack.rootEntry!!.content.drawing.graph === it.owner) {
 			view.update()
 		}
 	}

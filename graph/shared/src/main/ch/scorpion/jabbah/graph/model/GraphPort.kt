@@ -34,7 +34,7 @@ interface GraphPort<out T : Any> : Vertice {
 		}
 		set(value) {
 			val port: Port<T> = getPort()
-			port.description.translation = value.translation
+			port.description = value
 		}
 }
 

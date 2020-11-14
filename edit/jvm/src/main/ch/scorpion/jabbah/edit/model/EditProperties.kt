@@ -100,7 +100,7 @@ object EditProperties {
 	}
 
 	fun name(
-		name: String = "name.translation",
+		name: String = "name",
 		baseKey: String = "edit.property.name",
 		beanProvider: BeanProvider = componentBeanProvider
 	): PropertyImpl<TranslatableText> {

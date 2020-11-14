@@ -4,20 +4,15 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.collection.EmptyIterator
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
-import ch.scorpion.jabbah.edit.model.text.description.Describable
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
-import ch.scorpion.jabbah.edit.model.text.description.Namable
-import ch.scorpion.jabbah.edit.model.text.description.NamableImpl
+import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.io.*
 
 class UsecaseImpl(
 	name: String = "",
 	override var executionScript: String = "",
-	override var testScript: String? = null,
-	private val namable: Namable = NamableImpl(name),
-	private val describable: Describable = DescribableImpl()
-) : Usecase, Namable by namable, Describable by describable, Bean {
+	override var testScript: String? = null
+) : Usecase, Namable, Describable, Bean {
 
 	var executionScriptProperty: ScriptProperty
 		get() = ScriptProperty(executionScript)
@@ -34,6 +29,12 @@ class UsecaseImpl(
 	/** ---- [Any] */
 
 	override fun toString(): String = StringUtils.replaceNegation(name.value)
+
+	/** ---- [Namable], [Describable] interfaces */
+
+	override var name: Name by observableName(Name(name))
+
+	override var description: Description by observableDescription(Description(""))
 
 	/** ---- [Usecase] interface */
 
@@ -62,8 +63,8 @@ class UsecaseImpl(
 		if (reader.hasAttribute("id")) {
 			id = reader.readInt("id")
 		}
-		name.read("name", reader)
-		description.read("desc", reader)
+		name = Name.read("name", reader)
+		description = Description.read("desc", reader)
 		executionScript = reader.readString("exec")
 		testScript = reader.readOptionalString("test")
 	}

@@ -138,7 +138,7 @@ class CircuitInOutView(
 	override var description: Description
 		get() = model.getPort<DigitalSignal>().description
 		set(value) {
-			model.getPort<DigitalSignal>().description.translation = value.translation
+			model.getPort<DigitalSignal>().description = value
 		}
 
 	/** ---- [Transparent] */

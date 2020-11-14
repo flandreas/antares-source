@@ -2,7 +2,8 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Namable
-import ch.scorpion.jabbah.edit.model.text.description.NamableImpl
+import ch.scorpion.jabbah.edit.model.text.description.Name
+import ch.scorpion.jabbah.edit.model.text.description.observableName
 
 /**
  * Abstract base implementation of the [LibraryItem] interface
@@ -10,8 +11,9 @@ import ch.scorpion.jabbah.edit.model.text.description.NamableImpl
 abstract class AbstractLibraryItem(
 	initialName: TranslatableText = TranslatableText(),
 	override val iconPath: String? = null,
-	private val namable: NamableImpl = NamableImpl(initialName)
-) : LibraryItem, Namable by namable {
+) : LibraryItem, Namable {
+
+	override var name: Name by observableName(Name(initialName))
 
     private var _library: Library? = null
 

@@ -71,7 +71,9 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 		const val edgeCornerDistance: Int = 15
 	}
 
-	override val description: Description get() = model.description
+	override var description: Description
+		get() = model.description
+		set(value) { model.description = value }
 
 	/** The [Connection] at the origin of this [EdgeView] (i.e. at the [Polyline]'s first point). */
 	val origin: Connection<T>?

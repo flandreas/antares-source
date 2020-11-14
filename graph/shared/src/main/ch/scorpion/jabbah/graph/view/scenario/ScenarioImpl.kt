@@ -7,10 +7,7 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
-import ch.scorpion.jabbah.edit.model.text.description.Describable
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
-import ch.scorpion.jabbah.edit.model.text.description.Namable
-import ch.scorpion.jabbah.edit.model.text.description.NamableImpl
+import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.graph.script.Script
 import ch.scorpion.jabbah.graph.script.ScriptGateway
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -23,12 +20,10 @@ import ch.scorpion.jabbah.io.*
  */
 class ScenarioImpl(
 	initialName: String = "",
-	private var conditionScript: String = "",
-	private val namable: NamableImpl = NamableImpl(initialName),
-	private val describable: Describable = DescribableImpl()
-) : Scenario, Namable by namable, Describable by describable, Bean {
+	private var conditionScript: String = ""
+) : Scenario, Namable, Describable, Bean {
 
-	private val steps: MutableList<ScenarioStep> by lazy { mutableListOf<ScenarioStep>() }
+	private val steps: MutableList<ScenarioStep> by lazy { mutableListOf() }
 
 	private var isLoading: Boolean = false
 
@@ -41,6 +36,12 @@ class ScenarioImpl(
 	/** ---- [Any] */
 
 	override fun toString(): String = StringUtils.replaceNegation(name.value)
+
+	/** ---- [Namable], [Describable] interfaces */
+
+	override var name: Name by observableName(Name(initialName))
+
+	override var description: Description by observableDescription(Description(""))
 
 	/** ---- [Scenario] interface */
 
@@ -117,8 +118,8 @@ class ScenarioImpl(
 		try {
 			isLoading = true
 			id = reader.readInt("id")
-			name.read("name", reader)
-			description.read("desc", reader)
+			name = Name.read("name", reader)
+			description = Description.read("desc", reader)
 			conditionScript = reader.readString("condition")
 			for (step in reader.readStorables<ScenarioStep>("steps")) {
 				addStep(step)

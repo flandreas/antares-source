@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
@@ -24,9 +24,8 @@ open class LibraryImpl(
 	override val libraryService: LibraryService = LibraryModule.libraryService,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	private val objectTypeKey: String = "library.library.name",
-	private val describable: Describable = DescribableImpl(),
 	userHolder: UserHolder = EditAuthModule.userHolder
-) : Library, LibraryDirectory, Describable by describable {
+) : Library, LibraryDirectory, Describable {
 
 	constructor(
 		name: TranslatableText = TranslatableText(),
@@ -35,7 +34,7 @@ open class LibraryImpl(
 		objectTypeKey: String = "library.library.name",
 		description: TranslatableText = TranslatableText(),
 		userHolder: UserHolder = EditAuthModule.userHolder
-	) : this(LibraryProperties(name, description), libraryService, storableCreator, objectTypeKey, DescribableImpl(), userHolder)
+	) : this(LibraryProperties(name, description), libraryService, storableCreator, objectTypeKey, userHolder)
 
 	constructor(
 		name: String,
@@ -56,8 +55,9 @@ open class LibraryImpl(
 
 	private var libraryFolder: LibraryFolder = LibraryFolder(properties.name)
 
+	override var description: Description = Description(properties.description)
+
 	init {
-		description.translation = properties.description
 		libraryFolder.bindTo(this)
 	}
 
@@ -103,8 +103,9 @@ open class LibraryImpl(
 
 	override val isFixed: Boolean get() = libraryFolder.isFixed
 
-	override val name: Name
+	override var name: Name
 		get() = libraryFolder.name
+		set(value) { libraryFolder.name = value }
 
 	override val iconPath: String? get() = libraryFolder.iconPath
 
@@ -182,7 +183,7 @@ open class LibraryImpl(
 		libraryFolder = reader.readStorable("folder") as LibraryFolder
 		uuid = System.createUUID(reader.readString("uuid"))
 		author = System.createUUID(reader.readString("author"))
-		description.read("desc", reader)
+		description = Description.read("desc", reader)
 		if (reader.hasAttribute("system")) {
 			isSystem = reader.readBoolean("system")
 		}
@@ -201,8 +202,8 @@ open class LibraryImpl(
 	override var properties: LibraryProperties
 		get() = LibraryProperties(name.translation, description.translation)
 		set(value) {
-			name.translation = value.name
-			description.translation = value.description
+			name = Name(value.name)
+			description = Description(value.description)
 		}
 
 	override fun replaceContentsWith(libraryFolder: LibraryFolder) {

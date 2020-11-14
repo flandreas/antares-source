@@ -6,10 +6,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.model.text.description.Describable
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
-import ch.scorpion.jabbah.edit.model.text.description.Namable
-import ch.scorpion.jabbah.edit.model.text.description.NamableImpl
+import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.*
@@ -22,10 +19,8 @@ import ch.scorpion.jabbah.io.*
  */
 open class GraphImpl(
 	name: String = Translations.getString("graph.name.unknown"),
-	private val eventBus: EventBus = BaseModule.eventBus,
-	private val namable: Namable = NamableImpl(name, eventBus),
-	private val describable: Describable = DescribableImpl(eventBus)
-) : Graph, Namable by namable, Describable by describable {
+	private val eventBus: EventBus = BaseModule.eventBus
+) : Graph, Namable, Describable {
 
 	companion object {
 		private val LOG by logger(GraphImpl::class)
@@ -50,6 +45,12 @@ open class GraphImpl(
 	override fun dispose() {
 		eventBus.unregister(GraphPortNameChanged::class, graphPortNameChangedHandler)
 	}
+
+	/** ---- [Namable], [Describable] interfaces */
+
+	override var name: Name by observableName(Name(name))
+
+	override var description: Description by observableDescription(Description(""))
 
 	/** ---- [Graph] interface */
 

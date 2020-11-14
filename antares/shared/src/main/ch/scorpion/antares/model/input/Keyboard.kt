@@ -10,8 +10,8 @@ import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.checkArgument
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.*
@@ -47,11 +47,11 @@ class Keyboard(
 		private const val DATA_PORT_NAME = "D"
 		private const val AVAILABLE_PORT_NAME = "AV"
 
-		private val AVAILABLE_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.keyboard.availablePort.desc"))
-		private val CLEAR_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.keyboard.clearPort.desc"))
-		private val ENABLE_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.keyboard.enablePort.desc"))
-		private val CLOCK_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.keyboard.clockPort.desc"))
-		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.keyboard.dataPort.desc"))
+		private val AVAILABLE_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.keyboard.availablePort.desc"))
+		private val CLEAR_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.keyboard.clearPort.desc"))
+		private val ENABLE_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.keyboard.enablePort.desc"))
+		private val CLOCK_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.keyboard.clockPort.desc"))
+		private val DATA_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.keyboard.dataPort.desc"))
 	}
 
 	override val type: String get() = TYPE
@@ -84,11 +84,11 @@ class Keyboard(
 	private val isReadEnabled: Boolean get() = readEnableInput.getIncomingSignal() == Word.of(true)
 
 	init {
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLOCK_PORT_NAME, trigger = Trigger.EDGE, describable = CLOCK_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLEAR_PORT_NAME, describable = CLEAR_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = READ_ENABLE_PORT_NAME, describable = ENABLE_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, describable = DATA_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = AVAILABLE_PORT_NAME, describable = AVAILABLE_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLOCK_PORT_NAME, trigger = Trigger.EDGE, description = CLOCK_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLEAR_PORT_NAME, description = CLEAR_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = READ_ENABLE_PORT_NAME, description = ENABLE_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, description = DATA_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = AVAILABLE_PORT_NAME, description = AVAILABLE_PORT_DESC))
 
 		propagationDelay = 1000
 	}

@@ -29,7 +29,11 @@ class BaseLibraryElement(
 
 	/** ---- [Namable] interface */
 
-	override val name: Name get() = Name(TranslatableText(Translations.getString("${repository.getTranslationKey(id)!!}.name")))
+	override var name: Name
+		get() = Name(TranslatableText(Translations.getString("${repository.getTranslationKey(id)!!}.name")))
+		set(value) {
+			throw UnsupportedOperationException()
+		}
 
 	/** ---- [LibraryItem] */
 

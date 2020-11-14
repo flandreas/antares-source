@@ -1,21 +1,17 @@
 package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.model.port.TestPortFactory
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.port.TestPortViewFactory
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 class DescriptionIntegrationTest {
 
@@ -38,7 +34,7 @@ class DescriptionIntegrationTest {
 
 		assertEquals(TestVertice.TYPE, vv.type)
 		assertEquals(TestVertice.TYPE_DESC, vv.typeDesc)
-		assertNull(vv.description.value)
+		assertEquals("", vv.description.value)
 		assertEquals(
 			"<html><strong>${TestVertice.TYPE}:&nbsp;</strong>${TestVertice.TYPE_DESC}.</html>",
 			tooltipText(vv))
@@ -48,7 +44,7 @@ class DescriptionIntegrationTest {
 	fun verticeViewShouldHaveCustomDescription() {
 		val vv = TestVerticeView(width = 100)
 
-		vv.description.value = "Custom Description"
+		vv.description = Description("Custom Description")
 
 		assertEquals(TestVertice.TYPE_DESC, vv.typeDesc)
 		assertEquals("Custom Description", vv.description.value)
@@ -68,7 +64,7 @@ class DescriptionIntegrationTest {
 
 		assertEquals(TestLibraryBuilder.INNER_CUSTOM_COMP, subGraphVerticeView.type)
 		assertEquals("Graph Description", subGraphVerticeView.typeDesc)
-		assertNull(subGraphVerticeView.description.value)
+		assertEquals("", subGraphVerticeView.description.value)
 		assertEquals(
 			"<html><strong>${TestLibraryBuilder.INNER_CUSTOM_COMP}:&nbsp;</strong>Graph Description.</html>",
 			tooltipText(subGraphVerticeView))
@@ -79,7 +75,7 @@ class DescriptionIntegrationTest {
 		val libraryElement = createMetaGraph("Graph Description")
 
 		val subGraphVerticeView = libraryElement.getNewInstance<Vertice>() as SubGraphVerticeView
-		subGraphVerticeView.description.value = "Custom Description"
+		subGraphVerticeView.description = Description("Custom Description")
 
 		assertEquals(
 			"<html><strong>${TestLibraryBuilder.INNER_CUSTOM_COMP}:&nbsp;</strong>Graph Description."
@@ -94,7 +90,7 @@ class DescriptionIntegrationTest {
 	private fun createMetaGraph(desc: String): ContainerLibraryElement {
 		val library = LibraryModule.libraryHolder.library
 		val metaGraph = TestLibraryBuilder().addInnerCustomComponent(library)
-		metaGraph.graph.model!!.description.value = desc
+		metaGraph.graph.model!!.description = Description(desc)
 		val libraryElement = library.getContainerLibraryElement(metaGraph.uuid)!!
 		LibraryModule.libraryService.updateContainerLibraryElement(library, libraryElement)
 		return libraryElement

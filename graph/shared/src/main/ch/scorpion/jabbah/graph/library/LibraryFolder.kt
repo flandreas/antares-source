@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.io.*
 
 class LibraryFolder(
@@ -56,7 +57,7 @@ class LibraryFolder(
 	}
 
 	override fun read(reader: StoreReader) {
-		name.read("name", reader)
+		name = Name.read("name", reader)
 		if (reader.hasAttribute("defaultElement")) {
 			defaultElementUUID = UUID(reader.readString("defaultElement"))
 		}

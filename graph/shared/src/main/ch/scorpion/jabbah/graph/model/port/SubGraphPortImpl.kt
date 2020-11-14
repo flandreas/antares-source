@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model.port
 
 import ch.scorpion.jabbah.base.collection.EmptyIterator
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphInput
 import ch.scorpion.jabbah.graph.model.PortType
@@ -72,7 +73,7 @@ class SubGraphPortImpl<T: Any>(
     override fun read(reader: StoreReader) {
         name = reader.readString("name")
         portType = PortType.withName(reader.readString("type"))
-	    description.read("desc", reader)
+	    description = Description.read("desc", reader)
     }
 
     override fun getStorableChildren(): Iterator<Storable> = EmptyIterator()

@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
@@ -160,7 +161,7 @@ class CircuitInOutImpl(
 			super.read(reader)
 			portType = PortType.withName(reader.readString("type"))
 			bitWidth = BitWidth.of(reader.readInt("bitWidth"))
-			portDescription.read("desc", reader)
+			portDescription = Description.read("desc", reader)
 		} finally {
 			readingFromStore = false
 		}

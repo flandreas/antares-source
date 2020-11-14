@@ -1,12 +1,12 @@
 package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphPortView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
@@ -26,7 +26,7 @@ class MetaGraphTest {
 	@Test
 	fun shouldUpdateContainerGraphName() {
 		val metaGraph = MetaGraph()
-		metaGraph.graph.model!!.name.value = "Changed Name"
+		metaGraph.graph.model!!.name = Name("Changed Name")
 		assertEquals("Changed Name", metaGraph.containerDrawing.model.name)
 	}
 
@@ -36,9 +36,9 @@ class MetaGraphTest {
 		val name = "Some Name"
 		val metaGraph = MetaGraph()
 		metaGraph.containerDrawing.model.graphUUID = uuid
-		metaGraph.containerDrawing.model.graphName.value = name
+		metaGraph.containerDrawing.model.graphName = Name(name)
 
-		val clone = StorableCloner.clone(metaGraph) as MetaGraph
+		val clone = StorableCloner.clone(metaGraph)
 
 		assertEquals(uuid, clone.uuid)
 		assertEquals(name, clone.name)

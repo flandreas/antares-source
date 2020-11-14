@@ -9,12 +9,11 @@ import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_OUTPUT_ANNOTATI
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_SIGNAL_REPRESENTATION
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_TRIGGER
 import ch.scorpion.antares.model.signal.*
-import ch.scorpion.jabbah.edit.model.text.description.Describable
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 
 /**
@@ -28,8 +27,8 @@ open class DigitalPortImpl(
 	bitWidth: BitWidth = BitWidth.BW_1,
 	signalRepresentation: DigitalSignalRepresentation =
 		if (bitWidth.width > 4) DigitalSignalRepresentation.HEXADECIMAL else DigitalSignalRepresentation.BINARY,
-	describable: Describable = DescribableImpl()
-) : PortImpl<DigitalSignal>(portType, DigitalSignal::class, name, describable), DigitalPort {
+	description: TranslatableText = TranslatableText()
+) : PortImpl<DigitalSignal>(portType, DigitalSignal::class, name, description), DigitalPort {
 
 	companion object {
 

@@ -1,10 +1,9 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.edit.DrawingViewContent
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import io.mockk.every
 import io.mockk.mockk
@@ -19,15 +18,14 @@ class NavigationStackViewControllerTest {
 		}
 	}
 
-	private val eventBus = EventBusImpl()
 	private val view = mockk<NavigationStackView>(relaxed = true)
-	private val controller = NavigationStackViewController(view, eventBus)
+	private val controller = NavigationStackViewController(view)
 
 	@Test
 	fun shouldUpdateOnRootNameChange() {
 		controller.navigationStack.push(entry("Test"))
-		controller.navigationStack.rootEntry!!.graphName!!.translation = TranslatableText("New")
-		verify(exactly = 1) { view.update() }
+		controller.navigationStack.rootEntry!!.content.drawing.graph!!.name = Name("New")
+		verify(exactly = 2) { view.update() }
 	}
 
 	@Test
@@ -38,10 +36,12 @@ class NavigationStackViewControllerTest {
 	}
 
 	private fun entry(name: String): NavigationStackEntry<GraphView> {
+		val graphView = GraphViewBuilder<Boolean>().build()
+		graphView.graph!!.name = Name(name)
+
 		val content = mockk<DrawingViewContent<GraphView>>()
-		val entry = mockk<NavigationStackEntry<GraphView>>()
-		every { entry.graphName } returns Name(name)
-		every { entry.content } returns content
-		return entry
+		every { content.drawing } returns graphView
+
+		return NavigationStackEntry(subGraphVerticeView = null, content)
 	}
 }

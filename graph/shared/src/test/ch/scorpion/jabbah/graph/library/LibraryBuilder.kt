@@ -2,16 +2,16 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
 
 /** A builder that helps to setup a [LibraryImpl] to be used for testing.*/
 class LibraryBuilder(
 	name: String,
 	libraryService: LibraryService,
-	library: Library = LibraryImpl(name = TranslatableText(name), libraryService = libraryService)
+	val library: Library = LibraryImpl(name = TranslatableText(name), libraryService = libraryService)
 ) {
 
-	val library: Library = library
 	private val stack = Stack<LibraryDirectory>()
 
 	init {
@@ -34,7 +34,7 @@ class LibraryBuilder(
 	/** Creates a new [MetaGraph] for a model with the given name and adds it to the current [LibraryDirectory].*/
 	fun addContainerLibraryElement(name: String): LibraryBuilder {
 		val metaGraph = MetaGraph()
-		metaGraph.graph.model!!.name.value = name
+		metaGraph.graph.model!!.name = Name(name)
 		return addContainerLibraryElement(metaGraph)
 	}
 

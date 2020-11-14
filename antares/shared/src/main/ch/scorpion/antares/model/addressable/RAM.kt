@@ -7,8 +7,8 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.PortType
@@ -39,12 +39,12 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 		private const val CLEAR_PORT_NAME = "CLR"
 		private const val CLOCK_PORT_NAME = "CLK"
 
-		private val ADDRESS_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.addressPort.desc"))
-		private val CHIP_SELECT_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.chipSelectPort.desc"))
-		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.dataPort.desc"))
-		private val WRITE_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.writePort.desc"))
-		private val CLEAR_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.clearPort.desc"))
-		private val CLOCK_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.ram.clockPort.desc"))
+		private val ADDRESS_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ram.addressPort.desc"))
+		private val CHIP_SELECT_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ram.chipSelectPort.desc"))
+		private val DATA_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ram.dataPort.desc"))
+		private val WRITE_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ram.writePort.desc"))
+		private val CLEAR_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ram.clearPort.desc"))
+		private val CLOCK_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.ram.clockPort.desc"))
 	}
 
 	override val type: String get() = TYPE
@@ -56,7 +56,7 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 			if (value != field) {
 				field = value
 				if (value) {
-					val clockPort = DigitalPortImpl(portType = PortType.INPUT, name = CLOCK_PORT_NAME, describable = CLOCK_PORT_DESC)
+					val clockPort = DigitalPortImpl(portType = PortType.INPUT, name = CLOCK_PORT_NAME, description = CLOCK_PORT_DESC)
 					clockPort.trigger = Trigger.EDGE
 					addPort(clockPort)
 				} else {
@@ -72,11 +72,11 @@ class RAM(hasClock: Boolean = true) : CalculatingVertice(RAMCalculator()), Addre
 	var currentSelectedAddress: Int = 0
 
 	init {
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ADDRESS_PORT_NAME, bitWidth = BitWidth.BW_8, describable = ADDRESS_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CHIP_SELECT_PORT_NAME, describable = CHIP_SELECT_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = WRITE_PORT_NAME, describable = WRITE_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLEAR_PORT_NAME, describable = CLEAR_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.INOUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, describable = DATA_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ADDRESS_PORT_NAME, bitWidth = BitWidth.BW_8, description = ADDRESS_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CHIP_SELECT_PORT_NAME, description = CHIP_SELECT_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = WRITE_PORT_NAME, description = WRITE_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLEAR_PORT_NAME, description = CLEAR_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INOUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, description = DATA_PORT_DESC))
 
 		this.hasClock = hasClock
 	}

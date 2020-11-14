@@ -106,7 +106,7 @@ class ScenarioTreeView(
 		}
 
 		eventBus.register(NameChangedEvent::class) {
-			if (this.graphView != null && it.name === this.graphView!!.graph?.name) {
+			if (this.graphView != null && it.owner === this.graphView!!.graph) {
 				scenarioTreeModel.updateGraphName()
 			}
 		}

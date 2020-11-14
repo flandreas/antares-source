@@ -59,7 +59,7 @@ class UsecaseTreeView(
 		}
 
 		eventBus.register(NameChangedEvent::class) {
-			if (this.graphView != null && it.name === this.graphView!!.graph?.name) {
+			if (this.graphView != null && it.owner === this.graphView!!.graph) {
 				usecaseTreeModel.updateGraphName()
 			}
 		}

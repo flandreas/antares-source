@@ -8,9 +8,8 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.checkArgument
-import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
-import ch.scorpion.jabbah.edit.model.text.description.DescribableImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.PortType
@@ -29,7 +28,6 @@ class Terminal(
 ) : CalculatingVertice(TerminalCalculator()) {
 
 	companion object {
-		private val LOG by logger(Keyboard::class)
 
 		private const val BASE_RESOURCE_KEY = "library.element.Terminal"
 		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
@@ -50,10 +48,10 @@ class Terminal(
 		private const val MIN_PRINTABLE_CHAR = 0x20
 		private const val MAX_PRINTABLE_CHAR = 0x7E
 
-		private val CLOCK_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.terminal.clockPort.desc"))
-		private val CLEAR_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.terminal.clearPort.desc"))
-		private val ENABLE_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.terminal.enablePort.desc"))
-		private val DATA_PORT_DESC = DescribableImpl(Translation.ofStaticKey("antares.terminal.dataPort.desc"))
+		private val CLOCK_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.terminal.clockPort.desc"))
+		private val CLEAR_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.terminal.clearPort.desc"))
+		private val ENABLE_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.terminal.enablePort.desc"))
+		private val DATA_PORT_DESC = TranslatableText(Translation.ofStaticKey("antares.terminal.dataPort.desc"))
 	}
 
 	override val type: String get() = TYPE
@@ -92,10 +90,10 @@ class Terminal(
 	private val isWriteEnabled: Boolean get() = writeEnableInput.getIncomingSignal() == Word.of(true)
 
 	init {
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLOCK_PORT_NAME, trigger = Trigger.EDGE, describable = CLOCK_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLEAR_PORT_NAME, describable = CLEAR_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = WRITE_ENABLE_PORT_NAME, describable = ENABLE_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, describable = DATA_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLOCK_PORT_NAME, trigger = Trigger.EDGE, description = CLOCK_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CLEAR_PORT_NAME, description = CLEAR_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = WRITE_ENABLE_PORT_NAME, description = ENABLE_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, description = DATA_PORT_DESC))
 
 		propagationDelay = 1
 	}
