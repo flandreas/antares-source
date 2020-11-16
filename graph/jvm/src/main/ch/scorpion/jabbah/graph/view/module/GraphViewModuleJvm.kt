@@ -65,7 +65,6 @@ object GraphViewModuleJvm : AbstractModule() {
 		properties.set(GraphDesktopItemHeaderPanel.PROP_BACKGROUND_COLOR, Color(214, 214, 214))
 		properties.set(NavigationStackViewSwing.PROP_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.PLAIN.value, 11))
 		properties.set(NavigationStackViewSwing.PROP_HEAD_FONT, FontImpl(FontFamily.SANS_SERIF, FontStyle.BOLD.value, 11))
-		properties.set(GraphNavigationPanel.PROP_DIVE_ANIMATION, true)
 		properties.set(GraphFrameController.PROP_AUTO_SWITCH, true)
 	}
 
@@ -92,7 +91,7 @@ object GraphViewModuleJvm : AbstractModule() {
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
 		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(
-			id = GraphNavigationPanel.PROP_DIVE_ANIMATION,
+			id = GraphNavigationViewController.PROP_DIVE_ANIMATION,
 			nameKey = "graph.preferences.GraphNavigationPanel.diveAnimation"
 		))
 		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(

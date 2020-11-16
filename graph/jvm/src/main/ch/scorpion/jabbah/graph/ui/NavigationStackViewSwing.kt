@@ -21,7 +21,6 @@ import java.awt.RenderingHints
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.BorderFactory
-import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.UIManager
 
@@ -30,7 +29,7 @@ import javax.swing.UIManager
  * A [javax.swing] implementation of a [NavigationStackView].
  */
 class NavigationStackViewSwing(
-	val actions: NavigationStackViewActions
+	controller: NavigationStackViewController
 ) : JPanel(), NavigationStackView {
 
 	companion object {
@@ -61,11 +60,14 @@ class NavigationStackViewSwing(
 		private val lockedIcon = ImageJvm.themedImage("/img/locked-16.png")
 	}
 
+	private val navigationStack: NavigationStack<GraphView> = controller.navigationStack
+
 	private val elements: MutableList<Element> = mutableListOf()
 
 	private val hoverListener = HoverListener()
 
 	init {
+		controller.view = this
 		isEnabled = true
 		background = GraphDesktopItemHeaderPanel.headerBackgroundColor
 		border = BorderFactory.createEmptyBorder(V_INSETS, 0, V_INSETS, H_INSETS)
@@ -76,12 +78,25 @@ class NavigationStackViewSwing(
 
 	override var editable: Boolean = true
 
+	override var active: Boolean
+		get() = isEnabled
+		set(value) {
+			super.setEnabled(value)
+			if (value) {
+				addMouseListener(hoverListener)
+				addMouseMotionListener(hoverListener)
+			} else {
+				removeMouseListener(hoverListener)
+				removeMouseMotionListener(hoverListener)
+			}
+		}
+
 	override fun update() {
 		elements.clear()
 
 		// Create new Element object
 		var i = 0
-		val iter = actions.navigationStack.iterator()
+		val iter = navigationStack.iterator()
 		while (iter.hasNext()) {
 			val content = iter.next()
 			elements.add(createElement(content, i == 0, !iter.hasNext()))
@@ -98,19 +113,6 @@ class NavigationStackViewSwing(
 		repaint()
 	}
 
-	/** ---- [JComponent] */
-
-	override fun setEnabled(enabled: Boolean) {
-		super.setEnabled(enabled)
-		if (enabled) {
-			addMouseListener(hoverListener)
-			addMouseMotionListener(hoverListener)
-		} else {
-			removeMouseListener(hoverListener)
-			removeMouseMotionListener(hoverListener)
-		}
-	}
-
 	override fun paintComponent(g: Graphics?) {
 		super.paintComponent(g)
 		val gJvm = Graphics2DJvm(g as Graphics2D)
@@ -124,11 +126,6 @@ class NavigationStackViewSwing(
 	}
 
 	/** ---- [NavigationStackViewSwing] */
-
-	/** Executes the specified handler for each [DrawingViewContent] of this [NavigationStack].*/
-	fun forEach(action: (NavigationStackEntry<GraphView>) -> Unit) {
-		elements.forEach { action.invoke(it.entry) }
-	}
 
 	private fun createElement(entry: NavigationStackEntry<GraphView>, first: Boolean, last: Boolean): Element {
 		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(
@@ -282,7 +279,7 @@ class NavigationStackViewSwing(
 
 		override fun mousePressed(e: MouseEvent) {
 			if (hoveredElement != null) {
-				actions.navigationStack.navigateBackTo(hoveredElement!!.entry, e.isMetaDown)
+				navigationStack.navigateBackTo(hoveredElement!!.entry, e.isMetaDown)
 			}
 		}
 

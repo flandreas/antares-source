@@ -1,0 +1,156 @@
+package ch.scorpion.jabbah.graph.ui
+
+import ch.scorpion.jabbah.app.CurrentSavableEvent
+import ch.scorpion.jabbah.app.Savable
+import ch.scorpion.jabbah.base.event.EventBusImpl
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.time.SystemSpeed
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import ch.scorpion.jabbah.execution.scheduler.SchedulerRunningStateEvent
+import ch.scorpion.jabbah.graph.ApplicationMode
+import ch.scorpion.jabbah.graph.ApplicationModeEvent
+import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.TestLibraryBuilder
+import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.GraphViewBuilder
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import kotlin.test.*
+
+class GraphNavigationViewControllerTest {
+
+	companion object {
+		init {
+			GraphViewTestRule.configure()
+
+			LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
+			LibraryModule.libraryService = LibraryService()
+			LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
+
+		}
+	}
+
+	private val scheduler = mockk<Scheduler>(relaxed = true)
+	private val eventBus = EventBusImpl()
+	private val graphViewBuilder = GraphViewBuilder<Boolean>()
+	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, mockk(relaxed = true), eventBus = eventBus)
+	private val vv = createSubGraphVerticeView()
+	private val controller = GraphNavigationViewController(isRoot = true, drawingView as DrawingView<GraphView>, eventBus = eventBus, scheduler = scheduler)
+
+	init {
+		graphViewBuilder.addVerticeView(vv)
+		controller.view = mockk(relaxed = true)
+		controller.navigationStackViewController.view = mockk(relaxed = true)
+	}
+
+	@Test
+	fun shouldSetRootGraphView() {
+		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
+		assertEquals(1, controller.navigationStack.size)
+		assertSame(graphViewBuilder.graphView, controller.navigationStack.rootEntry!!.content.drawing)
+	}
+
+	@Test
+	fun shouldDescendIntoSubGraphWithoutAnimation() {
+		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
+		eventBus.post(OpenSubGraphRequest(vv, newView = false, quickMode = true))
+		assertEquals(2, controller.navigationStack.size)
+		assertSame(controller.navigationStack.peek().content.drawing, drawingView.drawing)
+	}
+
+	@Test
+	fun shouldAscendFromSubGraphWithoutAnimation() {
+		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
+		eventBus.post(OpenSubGraphRequest(vv, newView = false, quickMode = true))
+
+		controller.navigationStack.navigateBackTo(controller.navigationStack.rootEntry!!, quickMode = true)
+
+		assertEquals(1, controller.navigationStack.size)
+		assertSame(controller.navigationStack.rootEntry!!.content.drawing, drawingView.drawing)
+	}
+
+	@Test
+	fun shouldPropagateContextWithSystemSpeedCategory() {
+		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
+		BaseModule.systemSpeed.speed = SystemSpeed.MAX_SPEED
+
+		assertEquals(ExecutionModule.currentSystemSpeedCategory, (drawingView.applicationContext as GraphApplicationContext).systemSpeedCategory)
+	}
+
+	@Test
+	fun shouldPropagateContextWithApplicationMode() {
+		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
+		eventBus.post(ApplicationModeEvent(ApplicationMode.EXECUTE))
+
+		assertTrue((drawingView.applicationContext as GraphApplicationContext).isExecute)
+	}
+
+	@Test
+	fun shouldPropagateContextWithSchedulerRunningState() {
+		every { scheduler.isActive } returns true
+		every { scheduler.isPaused } returns true
+		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
+
+		eventBus.post(SchedulerRunningStateEvent(scheduler))
+
+		assertTrue((drawingView.applicationContext as GraphApplicationContext).isPausing)
+	}
+
+	@Test
+	fun shouldDisableViewWithNonEditableSavable() {
+		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
+		val savable = mockk<Savable>()
+		every { savable.editable } returns false
+		eventBus.post(CurrentSavableEvent(mockk(), savable))
+
+		assertFalse(drawingView.editable)
+	}
+
+	@Test
+	fun shouldBindOnExecutionStart() {
+		val testVertice = mockk<Vertice>(relaxed = true)
+		val testVerticeView = mockk<VerticeView<Vertice>>(relaxed = true)
+		every { testVerticeView.model } returns testVertice
+		every { scheduler.isActive } returns true
+
+		graphViewBuilder.addVerticeView(testVerticeView)
+		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
+
+		eventBus.post(SchedulerActivationStateEvent(scheduler))
+
+		verify { testVerticeView.bind(eq(graphViewBuilder.graph)) }
+		verify { testVertice.executionStarted(any()) }
+	}
+
+	@Test
+	fun shouldDeselectAllOnExecutionStart() {
+		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
+		drawingView.content.selectionManager.select(vv)
+
+		eventBus.post(ApplicationModeEvent(ApplicationMode.EXECUTE))
+
+		assertFalse(drawingView.content.selectionManager.isSelected(vv))
+	}
+
+	private fun createSubGraphVerticeView(): SubGraphVerticeView<*> {
+		val library = LibraryModule.libraryHolder.library
+		TestLibraryBuilder().addInnerCustomComponent(library)
+		return (library.get(TestLibraryBuilder.INNER_CUSTOM_COMP) as LibraryElement)
+			.getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeView<*>
+	}
+}

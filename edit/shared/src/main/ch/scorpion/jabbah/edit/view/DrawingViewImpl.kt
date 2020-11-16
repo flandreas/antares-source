@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.view.InvalidatableViewPainter
 
 /**
@@ -40,6 +41,10 @@ class DrawingViewImpl<T: Drawing<Component>>(
     animator: Animator = AnimationModule.animator,
     viewPainterFactory: ViewPainterFactory<out EditInputEventContext> = { InvalidatableViewPainter(it) }
 ) : ViewImpl<EditInputEventContext>(canvas, transformFactory, eventBus, viewPainterFactory), DrawingView<T> {
+
+	companion object {
+		private val LOG by logger(DrawingViewImpl::class)
+	}
 
     /** The [DrawableDrawer] used for drawing the [Drawing].*/
     private var drawableDrawer: DrawableDrawer<Component> = DrawingDrawer()
@@ -75,6 +80,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
     override var editable: Boolean = true
         set(value) {
             if (value != field) {
+	            LOG.debug("Setting DrawingView with '$drawing' to editable=$value")
                 field = value
                 showGridIfNeeded()
                 firePropertyChange(PROP_EDITABLE, !field, field)

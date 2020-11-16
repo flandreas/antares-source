@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -47,5 +48,7 @@ object GraphViewTestRule {
 		GraphModelModule.portFactory = TestPortFactory()
 		GraphViewModule.portViewFactory = TestPortViewFactory()
 		GraphViewModule.oscilloscopeViewFactory = OscilloscopeViewFactoryMockBuilder().build()
+
+		System.invoker = { it.invoke() }
 	}
 }

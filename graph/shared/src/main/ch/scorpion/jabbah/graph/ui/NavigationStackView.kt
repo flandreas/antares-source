@@ -10,21 +10,23 @@ import ch.scorpion.jabbah.graph.view.GraphView
  * A breadcrumb-like view of a [NavigationStack<GraphView>].
  */
 interface NavigationStackView {
-	var editable: Boolean
-	fun update()
-}
 
-interface NavigationStackViewActions {
-	val navigationStack: NavigationStack<GraphView>
+	var editable: Boolean
+
+	/** The user can only navigate if the [NavigationStackView] is active. */
+	var active: Boolean
+
+	fun update()
 }
 
 class NavigationStackViewController(
 	initView: NavigationStackView? = null,
-	private val eventBus: EventBus = BaseModule.eventBus,
-	override val navigationStack: NavigationStack<GraphView> = NavigationStack(eventBus)
-) : NavigationStackViewActions {
+	private val eventBus: EventBus = BaseModule.eventBus
+) {
 
 	private var _view: NavigationStackView? = initView
+
+	val navigationStack: NavigationStack<GraphView> = NavigationStack(eventBus)
 
 	var view: NavigationStackView
 		get() = _view!!

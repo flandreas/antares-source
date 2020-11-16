@@ -7,6 +7,12 @@ import kotlin.reflect.KClass
 
 expect object System {
 
+	/**
+	 * Invokes the specified invocable on the system's event queue.
+	 * Can be replaced for testing purposed with an implementation that invokes the invocable immediately.
+	 */
+	var invoker: (() -> Unit) -> Unit
+
     /** Returns the current system time in milliseconds.*/
     fun currentTimeMillis(): Long
 

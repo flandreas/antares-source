@@ -34,6 +34,9 @@ import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.script.GraphScriptGateway
 import ch.scorpion.jabbah.graph.script.ScriptEngine
 import ch.scorpion.jabbah.graph.script.ScriptModule
+import ch.scorpion.jabbah.graph.ui.EmptyGraphNavigationControllerExtension
+import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
+import ch.scorpion.jabbah.graph.ui.GraphNavigationViewControllerExtension
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.app.*
 import ch.scorpion.jabbah.graph.view.connect.*
@@ -117,6 +120,8 @@ object GraphViewModule : AbstractModule() {
 
 	val switchableSchedulerTask = SwitchableSchedulerTask(listOf(timedSchedulerTask, manualSchedulerTask))
 
+	var graphNavigationViewControllerExtension: (GraphNavigationViewController) -> GraphNavigationViewControllerExtension = { EmptyGraphNavigationControllerExtension() }
+
 	override fun initialize() {
 		EditModule.require()
 		AppModule.require()
@@ -180,6 +185,7 @@ object GraphViewModule : AbstractModule() {
 		properties.set(OriginIndicator.PROP_COLOR, Color.BLUE)
 		properties.set(OriginIndicator.PROP_SELECTION_COLOR, Color.RED)
 		properties.set(GraphViewAnimationType.PROP_GRAPH_VIEW_ANIMATION_TYPE, GraphViewAnimationType.Animation.customName)
+		properties.set(GraphNavigationViewController.PROP_DIVE_ANIMATION, true)
 
 		properties.set(ScenarioDetector.PROP_LIMIT_SYSTEM_SPEED_CATEGORY, SystemSpeedCategory.Observe.customName)
 		properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)

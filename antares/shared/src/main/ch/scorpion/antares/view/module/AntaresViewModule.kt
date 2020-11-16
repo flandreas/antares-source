@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalNotation
 import ch.scorpion.antares.script.AntaresScriptGateway
+import ch.scorpion.antares.view.AntaresGraphNavigationViewControllerExtension
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.DigitalGraphView
 import ch.scorpion.antares.view.Look
@@ -139,6 +140,7 @@ object AntaresViewModule : AbstractModule() {
 			DrawStyleModule.styleProvider,
 			ExecutionModule.currentSystemSpeedCategory)
 		)
+		GraphViewModule.graphNavigationViewControllerExtension = { AntaresGraphNavigationViewControllerExtension(it) }
 
 		GraphViewModule.require()
 		AnimationModule.require()

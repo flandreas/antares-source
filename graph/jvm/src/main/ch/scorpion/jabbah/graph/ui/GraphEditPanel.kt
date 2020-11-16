@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioPanel
 import ch.scorpion.jabbah.graph.ui.usecase.UsecasePanel
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -28,19 +27,21 @@ import javax.swing.JPanel
 class GraphEditPanel(
 	application: Application,
 	editor: Editor,
-	scheduler: Scheduler,
 	viewManager: ViewManager,
 	propertySheetFactory: PropertySheetPanelFactory,
 	eventBus: EventBus = BaseModule.eventBus
 ) : JPanel() {
 
-	val graphNavigationPanel = GraphNavigationPanel(
+	private val graphNavigationController = GraphNavigationViewController(
 		isRoot = true,
 		drawingView = editor.view as DrawingView<GraphView>,
+		eventBus = eventBus)
+
+	val graphNavigationPanel = GraphNavigationPanel(
+		controller = graphNavigationController,
+		drawingView = editor.view as DrawingView<GraphView>,
 		viewManager = viewManager,
-		contextBorderColor = null,
-		scheduler = scheduler
-	)
+		contextBorderColor = null)
 
 	private val scenarioPanel = ScenarioPanel(application, editor, eventBus, propertySheetFactory)
 
@@ -68,6 +69,8 @@ class GraphEditPanel(
 
 	init {
 		buildUI()
+
+		setGraphView(editor.drawing as GraphView, true)
 	}
 
 	fun dispose() {
@@ -77,7 +80,7 @@ class GraphEditPanel(
 	}
 
 	fun setGraphView(newGraphView: GraphView, editable: Boolean, applyZoomStrategy: Boolean = true) {
-		graphNavigationPanel.setRootGraphView(newGraphView, editable, applyZoomStrategy)
+		graphNavigationController.setRootGraphView(newGraphView, editable, applyZoomStrategy)
 		scenarioPanel.graphView = newGraphView
 		usecasePanel.graphView = newGraphView
 	}

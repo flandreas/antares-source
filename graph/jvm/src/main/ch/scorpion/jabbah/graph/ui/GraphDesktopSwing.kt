@@ -190,13 +190,19 @@ class GraphDesktopSwing(
 			drawingView
 		}
 		val drawingView = graphCanvas.view as DrawingView<GraphView>
-		return GraphNavigationPanel(
+		val controller = GraphNavigationViewController(
 			isRoot = false,
+			drawingView = drawingView)
+		val graphNavigationPanel = GraphNavigationPanel(
+			controller = controller,
 			drawingView = drawingView,
 			viewManager = viewManager,
-			contextBorderColor = referenceColor,
-			scheduler = scheduler
+			contextBorderColor = referenceColor
 		)
+
+		controller.setRootGraphView(drawingView.drawing, editable = false, applyZoomStrategy = true)
+
+		return graphNavigationPanel
 	}
 
 	/** ---- [GraphDesktopSwing] */

@@ -26,6 +26,8 @@ actual object System {
 
 	/** ---- [System] interface */
 
+	actual var invoker: (() -> Unit) -> Unit = { it.invoke() }
+
 	actual fun currentTimeMillis(): Long {
 		return Date().getTime().toLong()
 	}
@@ -82,7 +84,7 @@ actual object System {
 	}
 
 	actual fun invokeLater(invocable: () -> Unit) {
-		invocable.invoke()
+		invoker.invoke(invocable)
 	}
 
 	actual fun getActionAcceleratorKey(baseName: String): String = "$baseName.accelerator"

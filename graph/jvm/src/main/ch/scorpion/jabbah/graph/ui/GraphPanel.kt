@@ -89,7 +89,7 @@ class GraphPanel(
 	}
 
 	/** Allows editing and execute the currently open GraphView.*/
-	private val graphEditPanel: GraphEditPanel = GraphEditPanel(application, editor, scheduler, viewManager, propertySheetFactory, eventBus)
+	private val graphEditPanel: GraphEditPanel = GraphEditPanel(application, editor, viewManager, propertySheetFactory, eventBus)
 
 	val desktopController = GraphDesktopController()
 
@@ -332,7 +332,6 @@ class GraphPanel(
 				issuesPanel.clear()
 				if ((editor.drawing as GraphView).checkDesign()) {
 					currentMode = mode
-					graphEditPanel.graphNavigationPanel.deselectAll()
 					InvocationHandler.invoke(Runnable {
 						scheduler.isActive = true
 						updateEditability()

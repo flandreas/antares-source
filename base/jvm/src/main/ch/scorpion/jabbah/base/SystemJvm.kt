@@ -15,6 +15,8 @@ actual object System {
 
 	/** ---- [System] interface */
 
+	actual var invoker: (() -> Unit) -> Unit = { invocable -> SwingUtilities.invokeLater { invocable.invoke() } }
+
 	actual fun createTimer(): Timer = RealTimeTimerJvm()
 
 	actual fun currentTimeMillis(): Long = java.lang.System.currentTimeMillis()
@@ -78,7 +80,7 @@ actual object System {
 	}
 
 	actual fun invokeLater(invocable: () -> Unit) {
-		SwingUtilities.invokeLater { invocable.invoke() }
+		invoker.invoke(invocable)
 	}
 
 	actual fun getActionAcceleratorKey(baseName: String): String =
