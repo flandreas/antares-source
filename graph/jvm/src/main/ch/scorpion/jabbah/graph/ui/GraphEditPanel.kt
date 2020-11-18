@@ -77,6 +77,7 @@ class GraphEditPanel(
 		sidebarSplitPane.dispose()
 		scenarioPanel.dispose()
 		usecasePanel.dispose()
+		graphNavigationController.dispose()
 	}
 
 	fun setGraphView(newGraphView: GraphView, editable: Boolean, applyZoomStrategy: Boolean = true) {

@@ -42,11 +42,18 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.StorableCreator
 
+/**
+ * Displays a [GraphView] in a [DrawingView] along with a [NavigationStackView] that allows the user
+ * to navigate within the [GraphView] hierarchy.
+ */
 interface GraphNavigationView {
 
 	fun refresh()
 }
 
+/**
+ * A controller of a [GraphNavigationView].
+ */
 class GraphNavigationViewController(
 	private val isRoot: Boolean,
 	val drawingView: DrawingView<GraphView>,
@@ -61,20 +68,25 @@ class GraphNavigationViewController(
 ) {
 
 	companion object {
+
 		private val LOG by logger(GraphNavigationViewController::class)
 
-		/** The name of the [Boolean] property in [Properties] that controls whether animations are used when opening subgraphs.*/
+		/**
+		 * The name of the [Boolean] property in [Properties] that controls whether animations are used
+		 * when opening [SubGraphVerticeView]s.
+		 */
 		const val PROP_DIVE_ANIMATION = "graph.GraphNavigationPanel.diveAnimation"
 	}
 
+	/** Late initialization by the creator of the controller and the view breaks circular dependency. */
 	lateinit var view: GraphNavigationView
 
 	val navigationStackViewController = NavigationStackViewController(eventBus = eventBus)
+	val navigationStack: NavigationStack<GraphView> get() = navigationStackViewController.navigationStack
+
 	private var currentSavable: Savable? = null
 	private var currentMode: ApplicationMode = if (scheduler.isActive) ApplicationMode.EXECUTE else ApplicationMode.EDIT
 	private var scenarioDetector: ScenarioDetector? = null
-
-	val navigationStack: NavigationStack<GraphView> get() = navigationStackViewController.navigationStack
 
 	private val openSubGraphRequestHandler: (OpenSubGraphRequest) -> Unit = { handle(it) }
 	private val navigationStackEventHandler: (NavigationStackEvent) -> Unit = { handle(it) }
@@ -112,14 +124,6 @@ class GraphNavigationViewController(
 		eventBus.register(SystemSpeedEvent::class, systemSpeedHandler)
 		eventBus.register(ScenarioEvent::class, scenarioEventHandler)
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
-
-		//drawingView.editable = drawingView.editable && isRoot
-
-		/*
-		setRootGraphView(drawingView.drawing, true)
-		propagateApplicationContext()
-		updateDetached()
-		*/
 
 		propagateApplicationContext()
 		updateDetached()

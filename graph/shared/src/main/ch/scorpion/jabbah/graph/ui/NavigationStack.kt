@@ -10,6 +10,13 @@ import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
+/**
+ * An entry in a [NavigationStack] that represents a [DrawingViewContent].
+ *
+ * @property subGraphVerticeView the [SubGraphVerticeView] whose opening lead to this entry
+ * @property content the [DrawingViewContent] to be displayed if this entry is at the "head"
+ * of the [NavigationStack]
+ */
 data class NavigationStackEntry<T : GraphView>(
 	val subGraphVerticeView: SubGraphVerticeView<*>? = null,
 	val content: DrawingViewContent<T>
@@ -22,11 +29,36 @@ data class NavigationStackEntry<T : GraphView>(
 }
 
 /**
- * Represents the stack of [DrawingViewContent]s the user created while navigation through the hierarchy of
- * [GraphView]s.
+ * Posted by [NavigationStack] whenever its head has changed.
+ *
+ * @property isExpansion `true` if the [NavigationStack] has been expanded,`false` if it has been reduced
+ * @property navigationStack the [NavigationStack] where this [NavigationStackEvent] comes from
+ * @property entries the list of [NavigationStackEntry] that have been added (in case of an expansion) or removed
+ *      (in case of a reduction). The last element of the list is current (in case of an expansion) or the former
+ *      (in case of a reduction) head.
+ * @property quickMode `true` if the user wishes that the resulting view changes happen quickly, for example
+ *      without time-consuming animations.
+ */
+data class NavigationStackEvent(
+	val isExpansion: Boolean,
+	val navigationStack: NavigationStack<*>,
+	val entries: List<NavigationStackEntry<*>>,
+	val quickMode: Boolean = false
+)
+
+/**
+ * Represents the stack of [DrawingViewContent]s the user created while navigation
+ * through the hierarchy of [GraphView]s.
+ *
+ * The first [NavigationStackEntry] is called "root entry", while the last one
+ * is called "head". The "head" entry contains the [DrawingViewContent] currently
+ * to be displayed.
+ *
  * Posts a [NavigationStackEvent] whenever the head [DrawingViewContent] has changed.
  */
-class NavigationStack<T : GraphView>(val eventBus: EventBus = BaseModule.eventBus) {
+class NavigationStack<T : GraphView>(
+	val eventBus: EventBus = BaseModule.eventBus
+) {
 
 	/**
 	 * Holds the [NavigationStackEntries][NavigationStackEntry] that make up the stack. The last element is the stack head.
@@ -36,7 +68,6 @@ class NavigationStack<T : GraphView>(val eventBus: EventBus = BaseModule.eventBu
 
 	val size: Int get() = entries.size
 
-	/** Holds the root [NavigationStackEntry].*/
 	var rootEntry: NavigationStackEntry<T>?
 		get() {
 			if (entries.size > 0) {
@@ -64,7 +95,10 @@ class NavigationStack<T : GraphView>(val eventBus: EventBus = BaseModule.eventBu
 		return entries[entries.size - 1]
 	}
 
-	/** Adds the specified [NavigationStackEntry] to the top of this [NavigationStack].*/
+	/**
+	 * Adds the specified [NavigationStackEntry] to the top of this [NavigationStack],
+	 * making it the new "head" entry
+	 .*/
 	fun push(entry: NavigationStackEntry<T>) {
 		entries.add(entry)
 		postNavigationStackEvent(isExpansion = true, entries = mutableListOf(entry))
@@ -80,7 +114,10 @@ class NavigationStack<T : GraphView>(val eventBus: EventBus = BaseModule.eventBu
 		return formerHead
 	}
 
-	/** Navigates back to the specified [NavigationStackEntry]. */
+	/**
+	 * Navigates back to the specified [NavigationStackEntry], which will make it
+	 * the new "head" entry.
+	 */
 	fun navigateBackTo(entry: NavigationStackEntry<T>, quickMode: Boolean = false) {
 		if (!entries.contains(entry)) {
 			throw NoSuchElementException()
@@ -113,20 +150,3 @@ class NavigationStack<T : GraphView>(val eventBus: EventBus = BaseModule.eventBu
 		eventBus.post(NavigationStackEvent(isExpansion, this, entries, quickMode))
 	}
 }
-
-/**
- * Posted by [NavigationStack] whenever its head has changed.
- * @property isExpansion `true` if the [NavigationStack] has been expanded, `false` if it has been reduced
- * @property navigationStack the [NavigationStack] where this [NavigationStackEvent] comes from
- * @property entries the list of [NavigationStackEntry] that have been added (in case of an expansion) or removed
- *      (in case of a reduction). The last element of the list is current (in case of an expansion) or the former
- *      (in case of a reduction) head.
- * @property quickMode `true` if the user wishes that the resulting view changes happen quickly, for example
- *      without time-consuming animations.
- */
-data class NavigationStackEvent(
-	val isExpansion: Boolean,
-	val navigationStack: NavigationStack<*>,
-	val entries: List<NavigationStackEntry<*>>,
-	val quickMode: Boolean = false
-)

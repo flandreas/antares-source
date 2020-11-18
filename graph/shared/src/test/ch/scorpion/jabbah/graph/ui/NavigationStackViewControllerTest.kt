@@ -19,20 +19,24 @@ class NavigationStackViewControllerTest {
 	}
 
 	private val view = mockk<NavigationStackView>(relaxed = true)
-	private val controller = NavigationStackViewController(view)
+	private val controller = NavigationStackViewController()
+
+	init {
+		controller.view = view
+	}
 
 	@Test
 	fun shouldUpdateOnRootNameChange() {
 		controller.navigationStack.push(entry("Test"))
 		controller.navigationStack.rootEntry!!.content.drawing.graph!!.name = Name("New")
-		verify(exactly = 2) { view.update() }
+		verify(exactly = 2) { view.refresh() }
 	}
 
 	@Test
 	fun shouldUpdateOnHeadChange() {
 		controller.navigationStack.push(entry("Test"))
 		controller.navigationStack.push(entry("Test2"))
-		verify(exactly = 2) { view.update() }
+		verify(exactly = 2) { view.refresh() }
 	}
 
 	private fun entry(name: String): NavigationStackEntry<GraphView> {

@@ -71,7 +71,11 @@ class NavigationStackViewSwing(
 		isEnabled = true
 		background = GraphDesktopItemHeaderPanel.headerBackgroundColor
 		border = BorderFactory.createEmptyBorder(V_INSETS, 0, V_INSETS, H_INSETS)
-		update()
+		refresh()
+	}
+
+	override fun dispose() {
+		// empty
 	}
 
 	/** ---- [NavigationStackView] */
@@ -91,7 +95,7 @@ class NavigationStackViewSwing(
 			}
 		}
 
-	override fun update() {
+	override fun refresh() {
 		elements.clear()
 
 		// Create new Element object

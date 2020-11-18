@@ -20,8 +20,7 @@ import javax.swing.JPanel
 
 
 /**
- * Displays a [GraphView] in a [DrawingView] along with a [NavigationStackViewSwing] that allows the user
- * to navigate within the [GraphView] hierarchy.
+ * A [javax.swing] implementation of [GraphNavigationView].
  */
 class GraphNavigationPanel(
 	controller: GraphNavigationViewController,
