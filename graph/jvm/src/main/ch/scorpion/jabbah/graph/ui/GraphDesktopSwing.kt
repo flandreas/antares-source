@@ -130,7 +130,7 @@ class GraphDesktopSwing(
 
 	/** ---- [GraphDesktop] */
 
-	override val mainDesktopItem: GraphDesktopItem get() = graphEditPanel.graphNavigationPanel
+	override val mainDesktopItem: GraphDesktopItem get() = graphEditPanel.graphNavigationView
 
 	override fun addGraphDesktopItem(item: GraphDesktopItem) {
 		if (slaveGraphDesktopItems.isEmpty()) {
@@ -193,7 +193,7 @@ class GraphDesktopSwing(
 		val controller = GraphNavigationViewController(
 			isRoot = false,
 			drawingView = drawingView)
-		val graphNavigationPanel = GraphNavigationPanel(
+		val graphNavigationView = GraphNavigationViewSwing(
 			controller = controller,
 			drawingView = drawingView,
 			viewManager = viewManager,
@@ -202,7 +202,7 @@ class GraphDesktopSwing(
 
 		controller.setRootGraphView(drawingView.drawing, editable = false, applyZoomStrategy = true)
 
-		return graphNavigationPanel
+		return graphNavigationView
 	}
 
 	/** ---- [GraphDesktopSwing] */
@@ -213,13 +213,13 @@ class GraphDesktopSwing(
 		mainSplitPane.remove(mainSplitPane)
 		mainSplitPane.remove(sidePanel)
 		add(graphEditPanel)
-		SwingUtilities.invokeLater { graphEditPanel.graphNavigationPanel.drawingView.requestFocus() }
+		SwingUtilities.invokeLater { graphEditPanel.graphNavigationView.drawingView.requestFocus() }
 	}
 
 	private fun zoomViews(includeMasterView: Boolean) {
 		SwingUtilities.invokeLater {
 			if (includeMasterView) {
-				graphEditPanel.graphNavigationPanel.drawingView.navigator.fitMaxNormal()
+				graphEditPanel.graphNavigationView.drawingView.navigator.fitMaxNormal()
 			}
 			for (item in slaveGraphDesktopItems) {
 				item.drawingView?.navigator?.fitMaxNormal()

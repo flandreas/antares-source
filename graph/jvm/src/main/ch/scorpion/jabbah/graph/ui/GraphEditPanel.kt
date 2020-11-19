@@ -21,7 +21,7 @@ import javax.swing.JPanel
 /**
  * A [JPanel] for editing a root [GraphView].
  *
- * Consists of a [GraphNavigationPanel] at the left side and a [SidebarPane] at the right side that allows
+ * Consists of a [GraphNavigationViewSwing] at the left side and a [SidebarPane] at the right side that allows
  * to display a [ScenarioPanel] and a [UsecasePanel].
  */
 class GraphEditPanel(
@@ -32,13 +32,13 @@ class GraphEditPanel(
 	eventBus: EventBus = BaseModule.eventBus
 ) : JPanel() {
 
-	private val graphNavigationController = GraphNavigationViewController(
+	private val graphNavigationViewController = GraphNavigationViewController(
 		isRoot = true,
 		drawingView = editor.view as DrawingView<GraphView>,
 		eventBus = eventBus)
 
-	val graphNavigationPanel = GraphNavigationPanel(
-		controller = graphNavigationController,
+	val graphNavigationView = GraphNavigationViewSwing(
+		controller = graphNavigationViewController,
 		drawingView = editor.view as DrawingView<GraphView>,
 		viewManager = viewManager,
 		contextBorderColor = null)
@@ -49,7 +49,7 @@ class GraphEditPanel(
 
 	private val sidebarSplitPane = SidebarSplitPane(
 		location = SidebarPane.Location.Right,
-		mainContent = graphNavigationPanel,
+		mainContent = graphNavigationView,
 		settingBaseName = "graphPanel.rightSidebar",
 		contents = listOf(
 			SidebarPaneContentImpl(
@@ -77,11 +77,11 @@ class GraphEditPanel(
 		sidebarSplitPane.dispose()
 		scenarioPanel.dispose()
 		usecasePanel.dispose()
-		graphNavigationController.dispose()
+		graphNavigationViewController.dispose()
 	}
 
 	fun setGraphView(newGraphView: GraphView, editable: Boolean, applyZoomStrategy: Boolean = true) {
-		graphNavigationController.setRootGraphView(newGraphView, editable, applyZoomStrategy)
+		graphNavigationViewController.setRootGraphView(newGraphView, editable, applyZoomStrategy)
 		scenarioPanel.graphView = newGraphView
 		usecasePanel.graphView = newGraphView
 	}

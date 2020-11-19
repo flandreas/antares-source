@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
+import ch.scorpion.jabbah.app.ui.AbstractUIController
+import ch.scorpion.jabbah.app.ui.UIView
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
@@ -46,7 +48,7 @@ import ch.scorpion.jabbah.io.StorableCreator
  * Displays a [GraphView] in a [DrawingView] along with a [NavigationStackView] that allows the user
  * to navigate within the [GraphView] hierarchy.
  */
-interface GraphNavigationView {
+interface GraphNavigationView : UIView {
 
 	fun refresh()
 }
@@ -65,7 +67,7 @@ class GraphNavigationViewController(
 	private val repository: MetaGraphRepository = GraphModelModule.metaGraphRepository,
 	private val storableCreator: StorableCreator = IOModule.storableCreator,
 	extensionFactory: (GraphNavigationViewController) -> GraphNavigationViewControllerExtension = GraphViewModule.graphNavigationViewControllerExtension
-) {
+) : AbstractUIController<GraphNavigationView>() {
 
 	companion object {
 
@@ -77,9 +79,6 @@ class GraphNavigationViewController(
 		 */
 		const val PROP_DIVE_ANIMATION = "graph.GraphNavigationPanel.diveAnimation"
 	}
-
-	/** Late initialization by the creator of the controller and the view breaks circular dependency. */
-	lateinit var view: GraphNavigationView
 
 	val navigationStackViewController = NavigationStackViewController(eventBus = eventBus)
 	val navigationStack: NavigationStack<GraphView> get() = navigationStackViewController.navigationStack
@@ -129,7 +128,9 @@ class GraphNavigationViewController(
 		updateDetached()
 	}
 
-	fun dispose() {
+	override fun dispose() {
+		super.dispose()
+
 		drawingView.dispose()
 		navigationStackViewController.dispose()
 

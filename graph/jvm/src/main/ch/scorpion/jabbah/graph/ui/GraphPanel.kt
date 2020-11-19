@@ -161,7 +161,7 @@ class GraphPanel(
 
 	private var editable: Boolean = true
 
-	val showsNavigationRoot: Boolean get() = graphEditPanel.graphNavigationPanel.showsNavigationRoot
+	val showsNavigationRoot: Boolean get() = graphEditPanel.graphNavigationView.showsNavigationRoot
 
 	init {
 

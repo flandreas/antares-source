@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 /**
- * Opens the currently selected [SubGraphVerticeView] in a new [GraphNavigationPanel]
+ * Opens the currently selected [SubGraphVerticeView] in a new [GraphNavigationViewSwing]
  * in the [GraphDesktop].
  */
 class OpenGraphNavigationPanelAction(

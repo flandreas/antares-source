@@ -22,7 +22,7 @@ import javax.swing.JPanel
 /**
  * A [javax.swing] implementation of [GraphNavigationView].
  */
-class GraphNavigationPanel(
+class GraphNavigationViewSwing(
 	controller: GraphNavigationViewController,
 	override val drawingView: DrawingView<GraphView>,
 	private val viewManager: ViewManager,
@@ -47,6 +47,10 @@ class GraphNavigationPanel(
 		buildUI(contextBorderColor)
 	}
 
+	override fun dispose() {
+		// empty
+	}
+
 	/** ---- [GraphNavigationView] interface */
 
 	override fun refresh() {
@@ -55,10 +59,6 @@ class GraphNavigationPanel(
 	}
 
 	/** ---- [GraphDesktopItem] */
-
-	override fun dispose() {
-		// empty
-	}
 
 	override fun addContextColorBorder(color: Color) {
 		mainPanel.removeAll()
@@ -75,7 +75,7 @@ class GraphNavigationPanel(
 		mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
 	}
 
-	/** ---- [GraphNavigationPanel] */
+	/** ---- [GraphNavigationViewSwing] */
 
 	@Suppress("unused")
 	fun setGlassPaneComponent(component: JComponent) {
@@ -132,12 +132,8 @@ class GraphNavigationPanel(
 
 		override fun minimumLayoutSize(parent: Container?): Dimension = Dimension()
 
-		override fun addLayoutComponent(name: String?, comp: java.awt.Component?) {
-			// empty
-		}
+		override fun addLayoutComponent(name: String?, comp: java.awt.Component?) { }
 
-		override fun removeLayoutComponent(comp: java.awt.Component?) {
-			// empty
-		}
+		override fun removeLayoutComponent(comp: java.awt.Component?) { }
 	}
 }
