@@ -54,8 +54,7 @@ class GraphNavigationViewControllerTest {
 
 	init {
 		graphViewBuilder.addVerticeView(vv)
-		controller.view = mockk(relaxed = true)
-		controller.navigationStackViewController.view = mockk(relaxed = true)
+		GraphNavigationViewMockBuilder(controller)
 	}
 
 	@Test

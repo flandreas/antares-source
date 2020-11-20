@@ -18,12 +18,8 @@ class NavigationStackViewControllerTest {
 		}
 	}
 
-	private val view = mockk<NavigationStackView>(relaxed = true)
 	private val controller = NavigationStackViewController()
-
-	init {
-		controller.view = view
-	}
+	private val view = NavigationStackViewMockBuilder(controller).build()
 
 	@Test
 	fun shouldUpdateOnRootNameChange() {

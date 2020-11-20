@@ -23,7 +23,7 @@ class ScenarioViewControllerTest {
 	private val controller = ScenarioViewController(eventBus)
 
 	init {
-		controller.view = mockk(relaxed = true)
+		ScenarioViewMockBuilder(controller)
 		controller.graphView = graphView
 	}
 

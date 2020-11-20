@@ -66,7 +66,7 @@ import javax.swing.*
  * A [JPanel] for editing and executing a root [GraphView].
  *
  * It consists of a [LibraryPanel] at the left, a [ComponentPropertyPanel] for editing the properties
- * of the selected [Component] at the center-left, and a [GraphEditPanel] for editing the [GraphView]
+ * of the selected [Component] at the center-left, and a [GraphEditViewSwing] for editing the [GraphView]
  * at the center-right.
  *
  * Its current root [GraphView] is established by listening for [ApplicationDataEvent] on the specified
@@ -89,14 +89,15 @@ class GraphPanel(
 	}
 
 	/** Allows editing and execute the currently open GraphView.*/
-	private val graphEditPanel: GraphEditPanel = GraphEditPanel(application, editor, viewManager, propertySheetFactory, eventBus)
+	private val graphEditViewController = GraphEditViewController(editor.view as DrawingView<GraphView>, eventBus)
+	private val graphEditView: GraphEditViewSwing = GraphEditViewSwing(graphEditViewController, application, editor, viewManager, propertySheetFactory, eventBus)
 
 	val desktopController = GraphDesktopController()
 
 	/** Allows opening multiple Graphs.*/
-	private val desktop: GraphDesktopSwing = GraphDesktopSwing(graphEditPanel)
+	private val desktop: GraphDesktopSwing = GraphDesktopSwing(graphEditView)
 
-	/** Displays the properties of the currently selected component in [graphEditPanel].*/
+	/** Displays the properties of the currently selected component in [graphEditView].*/
 	private val propertyPanel: ComponentPropertyPanel
 
 	/** Contains UI for selecting components from the current library or the current project.*/
@@ -161,7 +162,7 @@ class GraphPanel(
 
 	private var editable: Boolean = true
 
-	val showsNavigationRoot: Boolean get() = graphEditPanel.graphNavigationView.showsNavigationRoot
+	val showsNavigationRoot: Boolean get() = graphEditView.graphNavigationView.showsNavigationRoot
 
 	init {
 
@@ -217,13 +218,14 @@ class GraphPanel(
 
 		buildUI()
 		setMode(ApplicationMode.EDIT, true)
+		graphEditViewController.setGraphView(editor.drawing as GraphView, true)
 	}
 
 	fun dispose() {
 		leftSidebarPane.dispose()
 		issuesPanel.dispose()
 		logPanel.dispose()
-		graphEditPanel.dispose()
+		graphEditViewController.dispose()
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
 	}
 
@@ -253,7 +255,7 @@ class GraphPanel(
 		val oldValue = rootGraphView
 		rootGraphView = graphView
 		rootGraphView?.let {
-			graphEditPanel.setGraphView(it, editable, applyZoomStrategy)
+			graphEditViewController.setGraphView(it, editable, applyZoomStrategy)
 			it.snapper = editor.view.grid
 		}
 		eventBus.post(EditedGraphViewEvent(oldValue, rootGraphView))

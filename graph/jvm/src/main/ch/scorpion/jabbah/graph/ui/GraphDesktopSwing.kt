@@ -100,7 +100,7 @@ class GraphDesktopItemHeaderPanel(
 }
 
 class GraphDesktopSwing(
-	private val graphEditPanel: GraphEditPanel
+	private val graphEditPanel: GraphEditViewSwing
 ) : JPanel(), GraphDesktop {
 
 	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
