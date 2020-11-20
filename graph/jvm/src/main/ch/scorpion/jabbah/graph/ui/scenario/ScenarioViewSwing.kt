@@ -4,9 +4,8 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
-import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Scenario
 import ch.scorpion.jabbah.graph.view.ScenarioStep
@@ -17,19 +16,16 @@ import javax.swing.JScrollPane
 import javax.swing.JSplitPane
 
 /**
- * Allows to inspect and manipulate the [Scenario]s and [ScenarioStep]s of a [Graph]
- * by displaying a [ScenarioTreeView] and a [ScenarioPropertyPanel].
- *
- * Updates the [GraphView]'s [Scenario] and [ScenarioStep] whenever the user changes the
- * selection in the [ScenarioTreeView], and posts a [ScenarioSelectionEvent] on the provided
- * [EventBus].
+ * A [javax.swing] implementation of a [ScenarioView] using a [ScenarioTreeView]
+ * for displaying the [Scenario]s and [ScenarioStep]s of a [GraphView].
  */
-class ScenarioPanel(
+class ScenarioViewSwing(
+	controller: ScenarioViewController,
 	application: Application,
 	editor: Editor,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
-) : JPanel() {
+) : JPanel(), ScenarioView {
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
@@ -37,20 +33,20 @@ class ScenarioPanel(
 
 	private val propertyPanel = ScenarioPropertyPanel(editor, sheetFactory, eventBus)
 
-	var graphView: GraphView = editor.drawing as GraphView
+	override var graphView: GraphView? = null
 		set(value) {
 			field = value
 			treeView.graphView = value
 		}
 
-
 	init {
+		controller.view = this
+
 		treeView.addTreeSelectionListener {
-			val scenario = treeView.selectedScenario
-			val scenarioStep = treeView.selectedScenarioStep
-			graphView.currentScenario = scenario
-			graphView.currentScenarioStep = scenarioStep
-			eventBus.post(ScenarioSelectionEvent(graphView, scenario, scenarioStep))
+			eventBus.post(ScenarioSelectionEvent(
+				graphView!!,
+				treeView.selectedScenario,
+				treeView.selectedScenarioStep))
 
 		}
 		treeView.preferredSize = Dimension(300, treeView.preferredSize.height)
@@ -59,7 +55,7 @@ class ScenarioPanel(
 		buildUI()
 	}
 
-	fun dispose() {
+	override fun dispose() {
 		BaseModule.settings.set("scenarioPanel.splitPos", splitPane.dividerLocation)
 	}
 
@@ -83,8 +79,3 @@ class ScenarioPanel(
 		add(splitPane, BorderLayout.CENTER)
 	}
 }
-
-data class ScenarioSelectionEvent(
-	val graphView: GraphView,
-	val scenario: Scenario?,
-	val scenarioStep: ScenarioStep?)

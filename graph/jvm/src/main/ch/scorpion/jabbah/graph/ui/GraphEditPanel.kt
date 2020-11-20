@@ -12,8 +12,10 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
-import ch.scorpion.jabbah.graph.ui.scenario.ScenarioPanel
-import ch.scorpion.jabbah.graph.ui.usecase.UsecasePanel
+import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewController
+import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewSwing
+import ch.scorpion.jabbah.graph.ui.usecase.UsecaseViewController
+import ch.scorpion.jabbah.graph.ui.usecase.UsecaseViewSwing
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -22,7 +24,7 @@ import javax.swing.JPanel
  * A [JPanel] for editing a root [GraphView].
  *
  * Consists of a [GraphNavigationViewSwing] at the left side and a [SidebarPane] at the right side that allows
- * to display a [ScenarioPanel] and a [UsecasePanel].
+ * to display a [ScenarioViewSwing] and a [UsecaseViewSwing].
  */
 class GraphEditPanel(
 	application: Application,
@@ -43,9 +45,11 @@ class GraphEditPanel(
 		viewManager = viewManager,
 		contextBorderColor = null)
 
-	private val scenarioPanel = ScenarioPanel(application, editor, eventBus, propertySheetFactory)
+	private val scenarioViewController = ScenarioViewController(eventBus)
+	private val scenarioView = ScenarioViewSwing(scenarioViewController, application, editor, eventBus, propertySheetFactory)
 
-	private val usecasePanel = UsecasePanel(application, editor, eventBus, propertySheetFactory)
+	private val usecaseViewController = UsecaseViewController(eventBus)
+	private val usecasePanel = UsecaseViewSwing(usecaseViewController, application, editor, eventBus, propertySheetFactory)
 
 	private val sidebarSplitPane = SidebarSplitPane(
 		location = SidebarPane.Location.Right,
@@ -55,13 +59,13 @@ class GraphEditPanel(
 			SidebarPaneContentImpl(
 				Translations.getString("graph.scenarios.title"),
 				UiUtil.themedIcon("/img/scenarios-16.png"),
-				scenarioPanel),
+				scenarioView),
 			SidebarPaneContentImpl(
 				Translations.getString("graph.usecases.title"),
 				UiUtil.themedIcon("/img/usecase-16.png"),
 				usecasePanel)
 		)) {
-		scenarioPanel.clearSelection()
+		scenarioView.clearSelection()
 		usecasePanel.clearSelection()
 		revalidate()
 		repaint()
@@ -75,15 +79,14 @@ class GraphEditPanel(
 
 	fun dispose() {
 		sidebarSplitPane.dispose()
-		scenarioPanel.dispose()
-		usecasePanel.dispose()
 		graphNavigationViewController.dispose()
+		usecaseViewController.dispose()
 	}
 
 	fun setGraphView(newGraphView: GraphView, editable: Boolean, applyZoomStrategy: Boolean = true) {
 		graphNavigationViewController.setRootGraphView(newGraphView, editable, applyZoomStrategy)
-		scenarioPanel.graphView = newGraphView
-		usecasePanel.graphView = newGraphView
+		scenarioViewController.graphView = newGraphView
+		usecaseViewController.graphView = newGraphView
 	}
 
 	private fun buildUI() {
