@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
@@ -14,7 +13,6 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.BorderLayout
@@ -25,7 +23,7 @@ import javax.swing.*
 import javax.swing.border.Border
 import kotlin.math.max
 
-abstract class AbstractGraphDesktopItemPanel : JPanel(), GraphDesktopItem {
+abstract class AbstractGraphDesktopItemPanel : JPanel(), GraphDesktopViewItem {
 
 	companion object {
 		private const val BORDER_THICKNESS = 5
@@ -57,7 +55,7 @@ abstract class AbstractGraphDesktopItemPanel : JPanel(), GraphDesktopItem {
 }
 
 class GraphDesktopItemHeaderPanel(
-	private val graphDesktopItem: GraphDesktopItem,
+	private val graphDesktopViewItem: GraphDesktopViewItem,
 	content: JComponent,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	allowClose: Boolean = true
@@ -94,22 +92,22 @@ class GraphDesktopItemHeaderPanel(
 		}
 
 		override fun execute(event: ActionEvent) {
-			eventBus.post(GraphDesktopItemCloseRequest(graphDesktopItem))
+			eventBus.post(GraphDesktopViewItemCloseRequest(graphDesktopViewItem))
 		}
 	}
 }
 
-class GraphDesktopSwing(
-	private val graphEditPanel: GraphEditViewSwing
-) : JPanel(), GraphDesktop {
+class GraphDesktopViewSwing(
+	private val graphEditView: GraphEditViewSwing
+) : JPanel(), GraphDesktopView {
 
 	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
 	/** The [JPanel] at the right side containing all slave views, if any. */
 	private val sidePanel = JPanel()
 
-	/** Contains all open [GraphDesktopItem]s that are not the main one.*/
-	private val slaveGraphDesktopItems: MutableList<GraphDesktopItem> = mutableListOf()
+	/** Contains all open [GraphDesktopViewItem]s that are not the main one.*/
+	private val slaveGraphDesktopViewItems: MutableList<GraphDesktopViewItem> = mutableListOf()
 
 	init {
 		mainSplitPane.border = null
@@ -117,26 +115,22 @@ class GraphDesktopSwing(
 		layout = BorderLayout()
 		background = UIManager.getColor("Panel.background").darker()
 
-		add(graphEditPanel)
+		add(graphEditView)
 	}
 
-	fun dispose() {
-		graphEditPanel.dispose()
+	override fun dispose() {
+		graphEditView.dispose()
 	}
 
-	override fun invoke(handler: () -> Unit) {
-		InvocationHandler.invoke(handler)
-	}
+	/** ---- [GraphDesktopView] */
 
-	/** ---- [GraphDesktop] */
+	override val mainDesktopViewItem: GraphDesktopViewItem get() = graphEditView.graphNavigationView
 
-	override val mainDesktopItem: GraphDesktopItem get() = graphEditPanel.graphNavigationView
-
-	override fun addGraphDesktopItem(item: GraphDesktopItem) {
-		if (slaveGraphDesktopItems.isEmpty()) {
-			remove(graphEditPanel)
+	override fun addGraphDesktopItem(item: GraphDesktopViewItem) {
+		if (slaveGraphDesktopViewItems.isEmpty()) {
+			remove(graphEditView)
 			sidePanel.add(item as JComponent)
-			mainSplitPane.leftComponent = graphEditPanel
+			mainSplitPane.leftComponent = graphEditView
 			mainSplitPane.rightComponent = sidePanel
 			add(mainSplitPane)
 
@@ -154,13 +148,13 @@ class GraphDesktopSwing(
 			revalidate()
 			zoomViews(false)
 		}
-		slaveGraphDesktopItems.add(item)
+		slaveGraphDesktopViewItems.add(item)
 	}
 
-	override fun closeItem(item: GraphDesktopItem) {
-		slaveGraphDesktopItems.remove(item)
+	override fun closeItem(item: GraphDesktopViewItem) {
+		slaveGraphDesktopViewItems.remove(item)
 		sidePanel.remove(item as JComponent)
-		if (slaveGraphDesktopItems.isEmpty()) {
+		if (slaveGraphDesktopViewItems.isEmpty()) {
 			establishSingleView()
 		}
 		revalidate()
@@ -168,7 +162,7 @@ class GraphDesktopSwing(
 	}
 
 	override fun closeAll(establishSingleView: Boolean) {
-		slaveGraphDesktopItems.clear()
+		slaveGraphDesktopViewItems.clear()
 		sidePanel.removeAll()
 		removeAll()
 		if (establishSingleView) {
@@ -181,9 +175,8 @@ class GraphDesktopSwing(
 	override fun createSubGraphDesktopItem(
 		verticeView: SubGraphVerticeView<*>,
 		referenceColor: CompositeColor,
-		viewManager: ViewManager,
-		scheduler: Scheduler
-	): GraphDesktopItem {
+		viewManager: ViewManager
+	): GraphDesktopViewItem {
 		val subGraphView = verticeView.createSubGraphView()
 		val graphCanvas = CanvasJvm {
 			val drawingView = EditModule.drawingViewFactory.invoke(subGraphView as Drawing<Component>, it)
@@ -205,23 +198,23 @@ class GraphDesktopSwing(
 		return graphNavigationView
 	}
 
-	/** ---- [GraphDesktopSwing] */
+	/** ---- [GraphDesktopViewSwing] */
 
 	/** Establish the UI for displaying only the root [GraphPanel].*/
 	private fun establishSingleView() {
 		remove(mainSplitPane)
 		mainSplitPane.remove(mainSplitPane)
 		mainSplitPane.remove(sidePanel)
-		add(graphEditPanel)
-		SwingUtilities.invokeLater { graphEditPanel.graphNavigationView.drawingView.requestFocus() }
+		add(graphEditView)
+		SwingUtilities.invokeLater { graphEditView.graphNavigationView.drawingView.requestFocus() }
 	}
 
 	private fun zoomViews(includeMasterView: Boolean) {
 		SwingUtilities.invokeLater {
 			if (includeMasterView) {
-				graphEditPanel.graphNavigationView.drawingView.navigator.fitMaxNormal()
+				graphEditView.graphNavigationView.drawingView.navigator.fitMaxNormal()
 			}
-			for (item in slaveGraphDesktopItems) {
+			for (item in slaveGraphDesktopViewItems) {
 				item.drawingView?.navigator?.fitMaxNormal()
 			}
 		}

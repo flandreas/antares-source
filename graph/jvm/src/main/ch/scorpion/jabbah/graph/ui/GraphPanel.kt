@@ -92,10 +92,10 @@ class GraphPanel(
 	private val graphEditViewController = GraphEditViewController(editor.view as DrawingView<GraphView>, eventBus)
 	private val graphEditView: GraphEditViewSwing = GraphEditViewSwing(graphEditViewController, application, editor, viewManager, propertySheetFactory, eventBus)
 
-	val desktopController = GraphDesktopController()
+	val desktopController = GraphDesktopViewController()
 
 	/** Allows opening multiple Graphs.*/
-	private val desktop: GraphDesktopSwing = GraphDesktopSwing(graphEditView)
+	private val desktop: GraphDesktopViewSwing = GraphDesktopViewSwing(graphEditView)
 
 	/** Displays the properties of the currently selected component in [graphEditView].*/
 	private val propertyPanel: ComponentPropertyPanel

@@ -13,12 +13,11 @@ import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.model.GraphElementAdapter
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.ui.GraphDesktop
 import ch.scorpion.jabbah.graph.ui.AbstractGraphDesktopItemPanel
-import ch.scorpion.jabbah.graph.ui.GraphDesktopItem
 import ch.scorpion.jabbah.graph.ui.GraphDesktopItemHeaderPanel
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.ui.GraphDesktopView
+import ch.scorpion.jabbah.graph.ui.GraphDesktopViewItem
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
@@ -28,7 +27,7 @@ import java.nio.file.Paths
 import javax.swing.*
 
 
-/** Wraps a [AddressableContentsPanel] as a [GraphDesktopItem] so it can be added to the [GraphDesktop]. */
+/** Wraps a [AddressableContentsPanel] as a [GraphDesktopViewItem] so it can be added to the [GraphDesktopView]. */
 class AddressableContentGraphDesktopItem(
 	application: Application,
 	addressable: Addressable,
@@ -53,7 +52,7 @@ class AddressableContentGraphDesktopItem(
 		super.contextColor = contextColor
 	}
 
-	/** ---- [GraphDesktopItem] */
+	/** ---- [GraphDesktopViewItem] */
 
 	override val drawingView: DrawingView<GraphView>?
 		get() = null

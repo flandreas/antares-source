@@ -178,8 +178,8 @@ class GraphNavigationViewController(
 	}
 
 	private fun handle(request: CloseViewRequest) {
-		if (request.view === drawingView && view is GraphDesktopItem) {
-			eventBus.post(GraphDesktopItemCloseRequest(view as GraphDesktopItem))
+		if (request.view === drawingView && view is GraphDesktopViewItem) {
+			eventBus.post(GraphDesktopViewItemCloseRequest(view as GraphDesktopViewItem))
 		}
 	}
 
