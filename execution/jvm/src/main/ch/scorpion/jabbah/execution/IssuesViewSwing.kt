@@ -1,15 +1,8 @@
 package ch.scorpion.jabbah.execution
 
-import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.execution.issue.Issue
-import ch.scorpion.jabbah.execution.issue.IssueCollector
-import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
-import ch.scorpion.jabbah.execution.issue.IssueSeverity
-import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.issue.*
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.ImageIcon
@@ -19,16 +12,14 @@ import javax.swing.JTable
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 
-/** Displays the current [Issue]s of an [IssueCollector] as a table.*/
-class IssuesPanel(
-	private val issueCollector: IssueCollector = ExecutionModule.issueCollector,
-	private val eventBus: EventBus = BaseModule.eventBus
-) : JPanel() {
+class IssuesViewSwing(
+	controller: IssuesViewController
+) : JPanel(), IssuesView {
 
 	companion object {
 		private const val SETTING_COLUMN_WIDTHS = "jabbah.execution.issuesPanel.columnWidth"
-		private val WARNING_ICON = ImageIcon(IssuesPanel::class.java.getResource("/img/warning-16.png"))
-		private val ERROR_ICON = ImageIcon(IssuesPanel::class.java.getResource("/img/error-16.png"))
+		private val WARNING_ICON = ImageIcon(IssuesViewSwing::class.java.getResource("/img/warning-16.png"))
+		private val ERROR_ICON = ImageIcon(IssuesViewSwing::class.java.getResource("/img/error-16.png"))
 		private val COLUMN_NAMES = arrayOf(
 			Translations.getString("issue.property.name.name"),
 			Translations.getString("issue.property.origin.name"),
@@ -37,25 +28,20 @@ class IssuesPanel(
 		)
 	}
 
+	private val issueCollector = controller.issueCollector
 	private val table = JTable(IssueTableModel())
 
-	private val issueCollectionEventHandler: EventHandler<IssueCollectorEvent> = {
-		(table.model as IssueTableModel).fireTableDataChanged()
-	}
-
 	init {
-		eventBus.register(IssueCollectorEvent::class, issueCollectionEventHandler)
+		controller.view = this
 		buildUI()
 	}
 
-	fun dispose() {
-		eventBus.unregister(IssueCollectorEvent::class, issueCollectionEventHandler)
+	override fun dispose() {
 		storeColumnsWidths()
 	}
 
-	/** Clears all [Issue]s.*/
-	fun clear() {
-		issueCollector.clear()
+	override fun refresh() {
+		(table.model as IssueTableModel).fireTableDataChanged()
 	}
 
 	private fun buildUI() {
@@ -120,16 +106,5 @@ class IssuesPanel(
 				IssueSeverity.Error -> ERROR_ICON
 			}
 		}
-	}
-}
-
-class ClearIssuesPanelAction(private val issuesPanel: IssuesPanel) : AbstractAction("graph.action.clearIssuesPanel") {
-
-	init {
-		imagePath = "/img/trash-16.png"
-	}
-
-	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-		issuesPanel.clear()
 	}
 }

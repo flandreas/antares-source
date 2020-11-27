@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.app.ui
+package ch.scorpion.jabbah.base.ui
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
@@ -62,9 +62,19 @@ interface UIController<T : UIView> {
 
 abstract class AbstractUIController<T : UIView> : UIController<T> {
 
-	override lateinit var view: T
+	private var _view: T? = null
+
+	override var view: T
+		get() = _view ?: throw IllegalStateException("access to uninitialized view property")
+		set(value) {
+			_view = value
+			onViewInitialized()
+		}
 
 	override fun dispose() {
 		view.dispose()
 	}
+
+	/** Called by this class after [view] has been set.*/
+	protected open fun onViewInitialized() { }
 }

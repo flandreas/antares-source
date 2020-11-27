@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
-import ch.scorpion.jabbah.graph.ui.EditedGraphViewEvent
+import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner

@@ -24,6 +24,7 @@ import javax.swing.*
  * A Java Swing implementation of the [GraphFrame] interface as an [AbstractApplicationFrame].
  */
 class GraphFrameSwing(
+	val controller: GraphFrameController,
 	application: DesktopApplication,
 	private val eventBus: EventBus,
 	val viewManager: ViewManager,
@@ -36,12 +37,14 @@ class GraphFrameSwing(
 
 	private val toolbarPanel: JPanel = JPanel()
 
-	val graphPanel = GraphPanel(GraphViewModule.graphEditorFactory.invoke(eventBus), viewManager = viewManager, application = application)
+	val graphPanel = GraphPanelViewSwing(controller.graphPanelViewController, viewManager = viewManager, application = application)
 
 	private val containerPanel = ContainerPanel(GraphViewModule.containerEditorFactory.invoke(eventBus), viewManager)
 
 	init {
-		GraphViewModule.applicationModeHolder = graphPanel
+		controller.view = this
+
+		GraphViewModule.applicationModeHolder = controller.graphPanelViewController
 
 		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
 		mainToolBar = createMainToolBar(actions.viewDesktopAction, actions.viewContainerAction)
@@ -54,9 +57,9 @@ class GraphFrameSwing(
 	override var displayedView: GraphFrame.DisplayedView = GraphFrame.DisplayedView.Container
 		private set
 
-	override val applicationMode: ApplicationMode get() = graphPanel.currentMode
+	override val applicationMode: ApplicationMode get() = controller.graphPanelViewController.currentMode
 
-	override val desktopView: View<*> get() = graphPanel.editor.view
+	override val desktopView: View<*> get() = editor.view
 
 	override val containerView: View<*> get() = containerPanel.editor.view
 
@@ -76,10 +79,10 @@ class GraphFrameSwing(
 			revalidate()
 			repaint()
 
-			graphPanel.editor.view.initialize()
+			editor.view.initialize()
 
 			displayedView = GraphFrame.DisplayedView.Desktop
-			viewManager.activeView = graphPanel.editor.view
+			viewManager.activeView = editor.view
 			containerPanel.active = false
 			eventBus.post(GraphFrameEvent(this, displayedView))
 		}
@@ -111,7 +114,7 @@ class GraphFrameSwing(
 
 	/** ---- [AbstractApplicationFrame] */
 
-	override val editor: Editor get() = graphPanel.editor
+	override val editor: Editor get() = controller.graphPanelViewController.editor
 
 	override fun dispose() {
 		super.dispose()
@@ -121,7 +124,7 @@ class GraphFrameSwing(
 
 	/** The application data has changed if there are undoable [Command]s in the [CommandManager].*/
 	override val applicationDataChanged: Boolean
-		get() = graphPanel.editor.commandManager.canUndo()
+		get() = editor.commandManager.canUndo()
 
 	/** ---- [GraphFrameSwing] */
 

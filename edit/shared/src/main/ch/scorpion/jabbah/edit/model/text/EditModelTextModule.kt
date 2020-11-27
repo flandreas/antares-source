@@ -18,6 +18,8 @@ import ch.scorpion.jabbah.edit.snap.LineGridPainter
  */
 object EditModelTextModule : AbstractModule() {
 
+	var textComponentFactory: TextComponentFactory = UndefinedTextComponentFactory()
+
     override fun initialize() {
 	    GridPainterRegistry.register(DottedGridPainter.NAME) { s -> DottedGridPainter(s) }
 	    GridPainterRegistry.register(LineGridPainter.NAME) { s -> LineGridPainter(s) }

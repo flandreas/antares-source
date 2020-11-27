@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.base.swing
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.UI
+import ch.scorpion.jabbah.base.ui.UI
 import java.awt.Color
 import java.awt.EventQueue
 import java.lang.reflect.InvocationTargetException

@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.ui
+package ch.scorpion.jabbah.graph.ui.logview
 
 import ch.scorpion.jabbah.graph.model.LogEvent
 import ch.scorpion.jabbah.graph.model.Vertice

@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.ui.AbstractUIController
-import ch.scorpion.jabbah.app.ui.UIView
+import ch.scorpion.jabbah.base.ui.AbstractUIController
+import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.project.CurrentProjectEvent
+import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -29,7 +30,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 /**
  * Displays a main [GraphDesktopViewItem] and multiple additional [GraphDesktopViewItem] that
  * are associated with [VerticeView]s in the main [GraphDesktopViewItem]. A typical implementation
- * might diaplys the main [GraphDesktopViewItem] in a large area at the left side, and additional
+ * might display the main [GraphDesktopViewItem] in a large area at the left side, and additional
  * [GraphDesktopViewItem]s below each other in a area at the right side.
  */
 interface GraphDesktopView : UIView {
@@ -62,12 +63,6 @@ interface GraphDesktopViewItem {
 }
 
 data class GraphDesktopViewItemCloseRequest(val item: GraphDesktopViewItem)
-
-/** Posted on [EventBus] when the currently (one and only) edited root [GraphView] changes. */
-class EditedGraphViewEvent(
-	val oldGraphView: GraphView?,
-	val newGraphView: GraphView?
-)
 
 /**
  * Controls a [GraphDesktopView] and manages additional [GraphDesktopViewItem] displayed when

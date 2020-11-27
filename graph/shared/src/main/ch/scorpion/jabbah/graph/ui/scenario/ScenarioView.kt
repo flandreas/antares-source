@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.app.ui.AbstractUIController
-import ch.scorpion.jabbah.app.ui.UIView
+import ch.scorpion.jabbah.base.ui.AbstractUIController
+import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.view.GraphView

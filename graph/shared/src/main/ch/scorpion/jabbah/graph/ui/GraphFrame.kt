@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.base.ui.AbstractUIController
+import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Properties
@@ -10,16 +12,24 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.draw.view.ViewManager
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.execution.module.ExecutionModule
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
+import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
+import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /**
  * The main UI element of a graph [Application] that allows to switch between
- * a [GraphDesktop] (for editing the inside view of the main [GraphView] and
+ * a [GraphPanelView] (for editing the inside view of the main [GraphView] and
  * a ContainerPanel (for editing the outside view of the main [GraphView]).
  */
-interface GraphFrame {
+interface GraphFrame : UIView {
 
 	enum class DisplayedView {
 		Desktop,
@@ -36,28 +46,30 @@ interface GraphFrame {
 
 	val desktopViewShowsNavigationRoot: Boolean
 
-	fun dispose()
-
 	fun showDesktop()
 
 	fun showContainer()
 }
 
 /** Posted by [GraphFrame] on [EventBus] when [GraphFrame.DisplayedView] has changed.*/
-data class GraphFrameEvent(val graphFrame: GraphFrame, val displayedView: GraphFrame.DisplayedView)
+data class GraphFrameEvent(
+	val graphFrame: GraphFrame,
+	val displayedView: GraphFrame.DisplayedView
+)
 
 /** Defines the part of the controller that is used by the view.*/
 interface GraphFrameActions {
-
 	val viewDesktopAction: Action
-
 	val viewContainerAction: Action
 }
 
 class GraphFrameController(
 	eventBus: EventBus = BaseModule.eventBus,
+	editor: Editor = GraphViewModule.graphEditorFactory.invoke(eventBus),
+	viewManager: ViewManager = DrawViewModule.viewManager,
+	scheduler: Scheduler = ExecutionModule.scheduler,
 	private val properties: Properties = BaseModule.properties
-) : GraphFrameActions {
+) : AbstractUIController<GraphFrame>(), GraphFrameActions {
 
 	companion object {
 
@@ -74,22 +86,17 @@ class GraphFrameController(
 	override val viewDesktopAction: Action = ViewDesktopAction(eventBus)
 	override val viewContainerAction: Action = ViewContainerAction(eventBus)
 
-	private var _view: GraphFrame? = null
+	val graphPanelViewController = GraphPanelViewController(editor, viewManager, scheduler, eventBus)
 
-	/**
-	 * Set by the object that first creates the this [GraphFrameController] and then creates the
-	 * instance of [GraphFrame] that typically needs access to the [Action]s of this [GraphFrameController].
-	 */
-	var view: GraphFrame
-		get() = _view!!
-		set(value) {
-			_view = value
-			registerZoomEventHandlers()
-		}
+	private val zoomEventHandler = ZoomEventHandler()
 
-	fun dispose() {
+	override fun onViewInitialized() {
+		registerZoomEventHandlers()
+	}
+
+	override fun dispose() {
+		super.dispose()
 		unregisterZoomEventHandlers()
-		view.dispose()
 	}
 
 	private fun registerZoomEventHandlers() {
@@ -101,8 +108,6 @@ class GraphFrameController(
 		view.desktopView.removePropertyChangeListener(zoomEventHandler)
 		view.containerView.removePropertyChangeListener(zoomEventHandler)
 	}
-
-	private val zoomEventHandler = ZoomEventHandler()
 
 	private inner class ZoomEventHandler: PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {

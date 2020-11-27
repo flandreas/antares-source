@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
@@ -162,7 +163,7 @@ class AntaresSwing(
 
 		eventBus.register(OpenMemoryContentsRequest::class) { request ->
 			if (request.newDesktopView) {
-				(mainFrame as GraphFrameSwing).graphPanel.desktopController.openVerticeView(request.verticeView) {
+				(mainFrame as GraphFrameSwing).controller.graphPanelViewController.desktopController.openVerticeView(request.verticeView) {
 					AddressableContentGraphDesktopItem(
 						application = this,
 						addressable = request.addressable,
@@ -294,8 +295,7 @@ class AntaresSwing(
 
 	override fun createMainFrame(): AbstractApplicationFrame {
 		val controller = GraphFrameController(eventBus)
-		val frame = GraphFrameSwing(this, eventBus, viewManager, controller)
-		controller.view = frame
+		val frame = GraphFrameSwing(controller, this, eventBus, viewManager, controller)
 
 		frame.graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
 

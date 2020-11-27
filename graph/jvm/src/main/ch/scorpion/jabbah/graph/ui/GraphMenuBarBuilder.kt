@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.graph.container.EditSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.library.ShowLibrariesDialogAction
 import ch.scorpion.jabbah.graph.project.ShowProjectsDialogAction
+import ch.scorpion.jabbah.graph.ui.graphpanel.ToggleApplicationModeAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioAction
@@ -38,7 +39,6 @@ open class GraphMenuBarBuilder(
 ) : MenuBarBuilder(frame = frame, eventBus = eventBus) {
 
 	private val graphFrame: GraphFrameSwing get() = frame as GraphFrameSwing
-	private val libraryTreeView: LibraryTreeView get() = graphFrame.graphPanel.libraryPanel.libraryTreeView
 
 	override fun fillMenuBar(menuBar: JMenuBar) {
 		super.fillMenuBar(menuBar)

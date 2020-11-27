@@ -52,10 +52,11 @@ abstract class AbstractAction(
 		protected fun translatedAccelerator(baseName: String): String? = Translations.getOptionalString(System.getActionAcceleratorKey(baseName))
 	}
 
-	constructor(baseName: String) : this(
+	constructor(baseName: String, imagePath: String? = null) : this(
 		translatedName(baseName),
 		translatedDesc(baseName),
-		translatedAccelerator(baseName))
+		translatedAccelerator(baseName),
+		imagePath = imagePath)
 
 	protected fun setBaseName(baseName: String) {
 		name = translatedName(baseName)

@@ -1,15 +1,10 @@
 package ch.scorpion.jabbah.graph.ui.usecase
 
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.app.ui.AbstractUIController
-import ch.scorpion.jabbah.app.ui.UIView
-import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.ui.scenario.ScenarioSelectionEvent
-import ch.scorpion.jabbah.graph.view.Usecase
+import ch.scorpion.jabbah.base.ui.AbstractUIController
+import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.Scenario
-import ch.scorpion.jabbah.graph.view.ScenarioStep
+import ch.scorpion.jabbah.graph.view.Usecase
 
 /**
  * Posted by [UsecaseView] on its [EventBus] when the user defines the current [Usecase]
@@ -29,9 +24,7 @@ interface UsecaseView : UIView {
 	var graphView: GraphView?
 }
 
-class UsecaseViewController(
-	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractUIController<UsecaseView>() {
+class UsecaseViewController : AbstractUIController<UsecaseView>() {
 
 	/** The [GraphView] whose [Usecase]s. */
 	var graphView: GraphView? = null

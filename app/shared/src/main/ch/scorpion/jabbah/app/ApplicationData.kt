@@ -31,7 +31,6 @@ class ApplicationData(
  * Posted on an [EventBus] when the current application data in an [Application] has changed.
  */
 data class ApplicationDataEvent(
-	val application: Application,
 	val oldData: ApplicationData?,
 	val newData: ApplicationData?
 )

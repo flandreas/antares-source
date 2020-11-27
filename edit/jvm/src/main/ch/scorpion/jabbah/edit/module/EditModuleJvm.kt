@@ -50,6 +50,7 @@ object EditModuleJvm : AbstractModule() {
 		EditModule.require()
 
 		DrawModuleJvm.contextMenuProvider = EditContextMenuProvider()
+		EditModelTextModule.textComponentFactory = TextComponentFactoryJvm()
 
 		configurePropertyRenderer(propertyRendererRegistry)
 		configurePropertyEditors(propertyEditorRegistry)

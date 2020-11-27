@@ -11,9 +11,9 @@ import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.graph.ui.EditedGraphViewEvent
 import ch.scorpion.jabbah.graph.ui.GraphDesktopViewController
 import ch.scorpion.jabbah.graph.ui.GraphDesktopViewItemCloseRequest
+import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule

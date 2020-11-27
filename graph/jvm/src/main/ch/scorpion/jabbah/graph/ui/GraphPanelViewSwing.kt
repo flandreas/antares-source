@@ -1,59 +1,39 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ToolBar
-import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
 import ch.scorpion.jabbah.base.swing.UiUtil
-import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
 import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.app.ComponentSnapAction
-import ch.scorpion.jabbah.edit.app.GridSnapAction
-import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.edit.model.ComponentMessageType
-import ch.scorpion.jabbah.edit.model.QuadCurveTool
-import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
-import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
-import ch.scorpion.jabbah.edit.model.polyline.PolylineTool
-import ch.scorpion.jabbah.edit.model.rectangle.EllipseComponent
-import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
-import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
-import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
-import ch.scorpion.jabbah.edit.model.text.TextTool
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanel
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
-import ch.scorpion.jabbah.execution.*
+import ch.scorpion.jabbah.execution.IssuesViewSwing
+import ch.scorpion.jabbah.execution.PauseExecutionAction
+import ch.scorpion.jabbah.execution.ResumeExecutionAction
+import ch.scorpion.jabbah.execution.SystemSpeedSlider
 import ch.scorpion.jabbah.execution.issue.Issue
-import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
 import ch.scorpion.jabbah.execution.module.ExecutionModule
-import ch.scorpion.jabbah.execution.scheduler.ExecutionStoppedOnIssueEvent
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
-import ch.scorpion.jabbah.graph.ApplicationMode
-import ch.scorpion.jabbah.graph.ApplicationModeEvent
-import ch.scorpion.jabbah.graph.ApplicationModeHolder
-import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryPanel
+import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
+import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseSelector
-import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -72,30 +52,26 @@ import javax.swing.*
  * Its current root [GraphView] is established by listening for [ApplicationDataEvent] on the specified
  * [EventBus].
  */
-class GraphPanel(
-	val editor: Editor,
+class GraphPanelViewSwing(
+	controller: GraphPanelViewController,
 	private val graphViewAppService: GraphViewAppService = GraphViewModule.graphViewAppService,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	private val viewManager: ViewManager,
+	viewManager: ViewManager,
 	private var scheduler: Scheduler = ExecutionModule.scheduler,
 	application: Application,
 	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
-) : JPanel(), ApplicationModeHolder {
+) : JPanel(), GraphPanelView {
 
 	companion object {
-		private val LOG by logger(GraphPanel::class)
 		private const val DEF_SIDEBAR_SIZE = 200
 	}
 
 	/** Allows editing and execute the currently open GraphView.*/
-	private val graphEditViewController = GraphEditViewController(editor.view as DrawingView<GraphView>, eventBus)
-	private val graphEditView: GraphEditViewSwing = GraphEditViewSwing(graphEditViewController, application, editor, viewManager, propertySheetFactory, eventBus)
-
-	val desktopController = GraphDesktopViewController()
+	private val graphEditView: GraphEditViewSwing = GraphEditViewSwing(controller.editViewController, application, controller.editor, viewManager, propertySheetFactory, eventBus)
 
 	/** Allows opening multiple Graphs.*/
-	private val desktop: GraphDesktopViewSwing = GraphDesktopViewSwing(graphEditView)
+	private val desktop: GraphDesktopViewSwing = GraphDesktopViewSwing(controller.desktopController, graphEditView)
 
 	/** Displays the properties of the currently selected component in [graphEditView].*/
 	private val propertyPanel: ComponentPropertyPanel
@@ -103,15 +79,15 @@ class GraphPanel(
 	/** Contains UI for selecting components from the current library or the current project.*/
 	val libraryPanel = LibraryPanel(application, eventBus, libraryHolder)
 
-	private val drawingToolBar = createDrawingToolBar()
+	private val drawingToolBar = createDrawingToolBar(controller)
 
-	private val settingsToolBar = createSettingsToolBar()
+	private val settingsToolBar = createSettingsToolBar(controller)
 
 	/** Contains the errors view.*/
 	private val bottomSidebarPane = SidebarPane(SidebarPane.Location.Bottom) { bottomSidebarPaneChanged() }
 
 	val toolbars: List<ToolBar> = listOf(
-		createExecutionToolBar(),
+		createExecutionToolBar(controller),
 		drawingToolBar,
 		settingsToolBar).onEach { it.isFloatable = false }
 
@@ -138,142 +114,55 @@ class GraphPanel(
 	/** Holds the location of [bottomSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
 	private var bottomSidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.bottomSidebarSplitPos", -1)
 
-	override var currentMode: ApplicationMode = ApplicationMode.EDIT
-		private set
-
 	/** Displays the current [Issue]s. */
-	private val issuesPanel = IssuesPanel()
+	private val issuesPanel = IssuesViewSwing(controller.issuesViewController)
 
 	private val issuesContent = SidebarPaneContentImpl(
 		Translations.getString("graph.issues.title"),
 		UiUtil.themedIcon("/img/issue-16.png"),
 		issuesPanel,
-		listOf(ClearIssuesPanelAction(issuesPanel)))
+		listOf(controller.issuesViewController.clearAction))
 
-	private val logPanel = LogPanel()
+	private val logPanel = LogViewSwing(controller.logViewController)
 
 	private val logContent = SidebarPaneContentImpl(
 		Translations.getString("graph.log.title"),
 		UiUtil.themedIcon("/img/log-16.png"),
 		logPanel,
-		listOf(ClearLogPanelAction(logPanel)))
-
-	private var rootGraphView: GraphView? = editor.drawing as GraphView?
-
-	private var editable: Boolean = true
+		listOf(controller.logViewController.clearAction))
 
 	val showsNavigationRoot: Boolean get() = graphEditView.graphNavigationView.showsNavigationRoot
 
 	init {
+		controller.view = this
 
-		desktopController.view = desktop
+		(controller.editor.view.canvas as JComponent).transferHandler = createTransferHandler(controller.editor, eventBus)
+		propertyPanel = ComponentPropertyPanel(controller.editor, propertySheetFactory, eventBus)
 
-		(editor.view.canvas as JComponent).transferHandler = createTransferHandler(editor, eventBus)
-		propertyPanel = ComponentPropertyPanel(editor, propertySheetFactory, eventBus)
+		buildUI()
+		controller.editViewController.setGraphView(controller.editor.drawing as GraphView, true)
+	}
 
-		eventBus.register(ApplicationDataEvent::class) {
-			editable = it.newData?.savable?.editable ?: false
-			setApplicationData(
-				graphView = (it.newData?.content as MetaGraph?)?.graph?.graphView
-			)
-		}
+	override fun dispose() {
+		leftSidebarPane.dispose()
+		issuesPanel.dispose()
+		logPanel.dispose()
+		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
+	}
 
-		eventBus.register(ApplicationDataContentEvent::class) {
-			setApplicationDataContent((it.data.content as MetaGraph?)?.graph?.graphView)
-		}
-
-		eventBus.register(ActiveViewChangedEvent::class) {
-			updateEditability()
-		}
-
-		eventBus.register(SchedulerActivationStateEvent::class) {
-			if (!it.scheduler.isActive) {
-				setMode(ApplicationMode.EDIT)
-			}
-		}
-
-		eventBus.register(ExecutionStoppedOnIssueEvent::class) {
-			eventBus.post(ComponentMessage(
-				type = ComponentMessageType.Error,
-				source = null,
-				messageKey = "execution.scheduler.stoppedDueToIssue.msg"))
-		}
-
-		editor.view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
-			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-				if (e.name == DrawingView.PROP_EDITABLE) {
-					updateEditability()
-				}
-			}
-		})
-
-		eventBus.register(IssueCollectorEvent::class) {
-			val iconPath = when (it.issueCollector.maximumSeverity) {
+	override var maxIssueSeverity: IssueSeverity? = null
+		set(value) {
+			field = value
+			val iconPath = when (value) {
 				null -> "/img/issue-16.png"
 				IssueSeverity.Warning -> "/img/warning-16.png"
 				IssueSeverity.Error -> "/img/error-16.png"
 			}
-			issuesContent.icon = ImageIcon(GraphPanel::class.java.getResource(iconPath))
+			issuesContent.icon = UiUtil.themedIcon(iconPath)
 		}
-
-		buildUI()
-		setMode(ApplicationMode.EDIT, true)
-		graphEditViewController.setGraphView(editor.drawing as GraphView, true)
-	}
-
-	fun dispose() {
-		leftSidebarPane.dispose()
-		issuesPanel.dispose()
-		logPanel.dispose()
-		graphEditViewController.dispose()
-		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
-	}
-
-	private fun setApplicationData(graphView: GraphView?) {
-		if (graphView == null) {
-			desktopController.closeAll()
-		} else if (rootGraphView != graphView) {
-			desktopController.showMainOnly()
-			System.invokeLater {
-				// This will apply the Zoom strategy, which requires that the main Swing UI has already been laid out
-				setRootGraphView(graphView, applyZoomStrategy = true)
-			}
-		}
-	}
-
-	/**
-	 * This is primarily called when the states is replayed from undoable history, and the undoable commands are
-	 * replayed immediately after the the new [GraphView] has been set, which is why invoking this later would not work.
-	 */
-	private fun setApplicationDataContent(graphView: GraphView?) {
-		if (rootGraphView != graphView) {
-			setRootGraphView(graphView, applyZoomStrategy = false)
-		}
-	}
-
-	private fun setRootGraphView(graphView: GraphView?, applyZoomStrategy: Boolean) {
-		val oldValue = rootGraphView
-		rootGraphView = graphView
-		rootGraphView?.let {
-			graphEditViewController.setGraphView(it, editable, applyZoomStrategy)
-			it.snapper = editor.view.grid
-		}
-		eventBus.post(EditedGraphViewEvent(oldValue, rootGraphView))
-		updateEditability()
-	}
 
 	private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
 		GraphPanelTransferHandler(graphViewAppService, editor, eventBus, GraphElementViewTransferable.FLAVOR)
-
-	private fun updateEditability() {
-		val editable =
-			viewManager.activeView === editor.view
-			&& editor.view.editable
-			&& !scheduler.isActive
-			&& rootGraphView != null
-
-		editor.active = editable
-	}
 
 	private fun buildUI() {
 		layout = BorderLayout()
@@ -316,45 +205,8 @@ class GraphPanel(
 		repaint()
 	}
 
-	private fun setMode(mode: ApplicationMode, init: Boolean, after: () -> Unit = {}) {
-		if (mode == currentMode) {
-			return
-		}
-		when (mode) {
-			ApplicationMode.EDIT -> {
-				currentMode = mode
-				if (!init) {
-					scheduler.isActive = false
-				}
-				updateEditability()
-				eventBus.post(ApplicationModeEvent(currentMode))
-				Status.set(StatusType.Large, Translations.getString("graph.status.edit"))
-			}
-			ApplicationMode.EXECUTE, ApplicationMode.EXEC_USECASE -> {
-				issuesPanel.clear()
-				if ((editor.drawing as GraphView).checkDesign()) {
-					currentMode = mode
-					InvocationHandler.invoke(Runnable {
-						scheduler.isActive = true
-						updateEditability()
-						eventBus.post(ApplicationModeEvent(currentMode))
-						Status.set(StatusType.Large, Translations.getString("graph.status.execute"))
-						after.invoke()
-					})
-				} else {
-					eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = null, messageKey = "graph.designError.msg"))
-					LOG.debug("execution not started due to design errors")
-				}
-			}
-		}
-	}
-
-	override fun setMode(mode: ApplicationMode, after: () -> Unit) {
-		setMode(mode, init = false, after = after)
-	}
-
-	private fun createExecutionToolBar(): ToolBar {
-		val modeToggleAction = ActionWrapperSwing(ToggleApplicationModeAction())
+	private fun createExecutionToolBar(controller: GraphPanelViewController): ToolBar {
+		val modeToggleAction = ActionWrapperSwing(controller.toggleApplicationModeAction)
 		val modeToggleButton = JToggleButton(modeToggleAction)
 		modeToggleButton.text = null
 		modeToggleButton.hideActionText = true
@@ -366,8 +218,6 @@ class GraphPanel(
 		pauseToggleButton.text = null
 		pauseToggleButton.icon = UiUtil.themedIcon("/img/pause24.png")
 		pauseToggleButton.toolTipText = executionAction.name
-
-		//val stepButton = StepButton("/img/Resume-24.png", StepExecutionAction(scheduler, eventBus))
 
 		val speedSlider = SystemSpeedSlider()
 		speedSlider.maximumSize = Dimension(200, speedSlider.maximumSize.height)
@@ -389,7 +239,7 @@ class GraphPanel(
 
 	private fun createStepButton(action: Action): JButton {
 		val inactiveIcon = UiUtil.themedIcon("/img/resume24.png")
-		val activeIcon = ImageIcon(GraphPanel::class.java.getResource("/img/resume-active24.png"))
+		val activeIcon = ImageIcon(GraphPanelViewSwing::class.java.getResource("/img/resume-active24.png"))
 		val button = JButton(ActionWrapperSwing(action))
 		button.text = null
 		button.icon = inactiveIcon
@@ -409,37 +259,32 @@ class GraphPanel(
 		return button
 	}
 
-	private fun createDrawingToolBar(): ToolBar {
-		val toolbar = ToolBar(editor)
+	private fun createDrawingToolBar(controller: GraphPanelViewController): ToolBar {
+		val toolbar = ToolBar(controller.editor)
 		toolbar.addSeparator()
 
-		toolbar.addTool(editor.selectionTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
-		toolbar.addTool(RectangleTool(editor, factory = { RectangleComponent() }, adder = { GraphElementViewWrapper(it) }),
-			"/img/rectangle24.png", Translations.getString("edit.component.rectangle"))
-		toolbar.addTool(RectangleTool(editor, factory = { EllipseComponent() }, adder = { GraphElementViewWrapper(it) }),
-			"/img/oval24.png", Translations.getString("edit.component.ellipse"))
-		toolbar.addTool(PolylineTool(editor, factory = { PolylineComponent() }, adder = { GraphElementViewWrapper(it) }),
-			"/img/polyline24.png", Translations.getString("edit.component.polyline"))
-		toolbar.addTool(QuadCurveTool(editor, factory = { QuadCurveComponent() }, adder = { GraphElementViewWrapper(it) }),
-			"/img/curve24.png", Translations.getString("edit.component.quadraticCurve"))
-		toolbar.addTool(TextTool(editor,factory =  { TextComponentJvm(TranslatableText("Text")) }, adder = { GraphElementViewWrapper(it) }),
-			"/img/text24.png", Translations.getString("edit.component.text"))
+		toolbar.addTool(controller.editor.selectionTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
+		toolbar.addTool(controller.rectangleTool, "/img/rectangle24.png", Translations.getString("edit.component.rectangle"))
+		toolbar.addTool(controller.ellipseTool, "/img/oval24.png", Translations.getString("edit.component.ellipse"))
+		toolbar.addTool(controller.polylineTool, "/img/polyline24.png", Translations.getString("edit.component.polyline"))
+		toolbar.addTool(controller.quadCurveTool, "/img/curve24.png", Translations.getString("edit.component.quadraticCurve"))
+		toolbar.addTool(controller.textTool, "/img/text24.png", Translations.getString("edit.component.text"))
 
 		return toolbar
 	}
 
-	private fun createSettingsToolBar(): ToolBar {
-		val toolBar = ToolBar(editor)
+	private fun createSettingsToolBar(controller: GraphPanelViewController): ToolBar {
+		val toolBar = ToolBar(controller.editor)
 		toolBar.addSeparator()
 
-		val gridButton = JToggleButton(ActionWrapperSwing(GridSnapAction(editor)))
+		val gridButton = JToggleButton(ActionWrapperSwing(controller.gridSnapAction))
 		gridButton.text = null
 		gridButton.isFocusPainted = false
 		gridButton.icon = UiUtil.themedIcon("/img/grid24.png")
 		gridButton.toolTipText = Translations.getString("edit.action.grid.snap.name")
 		toolBar.add(gridButton)
 
-		val button = JToggleButton(ActionWrapperSwing(ComponentSnapAction(editor)))
+		val button = JToggleButton(ActionWrapperSwing(controller.componentSnapAction))
 		button.text = null
 		button.isFocusPainted = false
 		button.icon = UiUtil.themedIcon("/img/snap24.png")

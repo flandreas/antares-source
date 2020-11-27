@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
@@ -36,8 +37,14 @@ interface TextComponentFactory {
 	 */
 	fun create(
 		text: TranslatableText,
-		location: Point2D,
-		styleType: StyleType,
-		styleProvider: StyleProvider
+		location: Point2D = Point2D.ZERO,
+		styleType: StyleType = StyleType.FIGURE,
+		styleProvider: StyleProvider = DrawStyleModule.styleProvider
 	): TextComponent
+}
+
+class UndefinedTextComponentFactory : TextComponentFactory {
+	override fun create(text: TranslatableText, location: Point2D, styleType: StyleType, styleProvider: StyleProvider): TextComponent {
+		throw UnsupportedOperationException("not implemented")
+	}
 }

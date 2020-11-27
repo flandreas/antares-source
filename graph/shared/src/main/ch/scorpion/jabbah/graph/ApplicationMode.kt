@@ -36,9 +36,8 @@ interface ApplicationModeHolder {
 class UndefinedApplicationModeHolder : ApplicationModeHolder {
 
 	override val currentMode: ApplicationMode
-		get() = TODO("not implemented")
+		get() = throw UnsupportedOperationException("not implemented")
 
-	override fun setMode(mode: ApplicationMode, after: () -> Unit) {
+	override fun setMode(mode: ApplicationMode, after: () -> Unit): Unit =
 		throw UnsupportedOperationException("not implemented")
-	}
 }

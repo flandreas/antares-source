@@ -32,7 +32,7 @@ abstract class AbstractApplication(
 	    set(value) {
 		    val oldField = field
 		    field = value
-		    eventBus.post(ApplicationDataEvent(this, oldField, field))
+		    eventBus.post(ApplicationDataEvent(oldField, field))
 		    eventBus.post(CurrentSavableEvent(this, field?.savable))
 	    }
 

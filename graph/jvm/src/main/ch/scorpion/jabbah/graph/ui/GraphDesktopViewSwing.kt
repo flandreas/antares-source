@@ -98,6 +98,7 @@ class GraphDesktopItemHeaderPanel(
 }
 
 class GraphDesktopViewSwing(
+	controller: GraphDesktopViewController,
 	private val graphEditView: GraphEditViewSwing
 ) : JPanel(), GraphDesktopView {
 
@@ -110,6 +111,8 @@ class GraphDesktopViewSwing(
 	private val slaveGraphDesktopViewItems: MutableList<GraphDesktopViewItem> = mutableListOf()
 
 	init {
+		controller.view = this
+
 		mainSplitPane.border = null
 		sidePanel.layout = GridLayout(0, 1)
 		layout = BorderLayout()
@@ -200,7 +203,7 @@ class GraphDesktopViewSwing(
 
 	/** ---- [GraphDesktopViewSwing] */
 
-	/** Establish the UI for displaying only the root [GraphPanel].*/
+	/** Establish the UI for displaying only the root [GraphPanelViewSwing].*/
 	private fun establishSingleView() {
 		remove(mainSplitPane)
 		mainSplitPane.remove(mainSplitPane)

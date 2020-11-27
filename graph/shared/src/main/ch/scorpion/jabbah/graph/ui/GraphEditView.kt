@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.ui.AbstractUIController
-import ch.scorpion.jabbah.app.ui.UIView
+import ch.scorpion.jabbah.base.ui.AbstractUIController
+import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.DrawingView
@@ -26,7 +26,7 @@ class GraphEditViewController(
 
 	val graphNavigationViewController = GraphNavigationViewController(isRoot = true, drawingView)
 	val scenarioViewController = ScenarioViewController(eventBus)
-	val usecaseViewController = UsecaseViewController(eventBus)
+	val usecaseViewController = UsecaseViewController()
 
 	override fun dispose() {
 		super.dispose()
