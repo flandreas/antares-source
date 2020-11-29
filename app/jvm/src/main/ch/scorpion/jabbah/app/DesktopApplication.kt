@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.app
 
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import java.nio.file.Path
 
 /**
@@ -18,18 +17,6 @@ interface DesktopApplication : Application {
 
 	/** The [Path] to the user's data directory, i.e. the directory where the user's data is stored.*/
 	val userDataDirectoryPath: Path
-
-	fun saveTo(identification: String)
-
-	/**
-	 * Opens a [Savable] from the persistent location identified by [identification]. Depending on the
-	 * type of storage management used by the concrete [DesktopApplication] implementation,
-	 * this could be a file system path, a simple name, or anything else.
-	 * @return `true` if the [Savable] has been opened from `identification`, `false` if not, e.g. because
-	 * the user denied to replace unsaved data with the [Savable] to open
-	 * @throws IllegalArgumentException if `identification` doesn't exist
-	 */
-	fun openFrom(identification: String): Boolean
 
 	fun exportLogfile(destinationPath: String)
 

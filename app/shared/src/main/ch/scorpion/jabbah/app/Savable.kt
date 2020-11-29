@@ -18,6 +18,8 @@ interface Savable {
      */
     val defined: Boolean
 
+	val notDefined: Boolean get() = !defined
+
     /** Determines whether this [Savable] can be added to the "Most Recent" file menu.*/
     val supportsMostRecent: Boolean
 
@@ -39,8 +41,16 @@ interface Savable {
      * @param application the [Application] within which this [Savable] is saved.
      * @return `true` if this [Savable] has been saved, `false` if the save process has been aborted by the user
      */
+    @Deprecated("Replaced by method using controller")
     fun save(application: Application): Boolean
+
+	/**
+	 * Saves this [Savable] using the specified [ApplicationDataViewController].
+	 * @param appDataViewController the [ApplicationDataViewController] within which this [Savable] is saved.
+	 * @return `true` if this [Savable] has been saved, `false` if the save process has been aborted by the user
+	 */
+	fun save(appDataViewController: ApplicationDataViewController): Boolean
 }
 
 /** Posted by [Application] when its current [Savable] has changed.*/
-data class CurrentSavableEvent(val application: Application, val savable: Savable?)
+data class CurrentSavableEvent(val savable: Savable?)

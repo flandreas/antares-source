@@ -62,6 +62,9 @@ interface Editor {
     /** Holds the [CommandManager] that manages the [Command]s created by this [Editor].*/
     val commandManager: CommandManager
 
+	/** Determines if the current [drawing] has changed in terms of undo/redo operations. */
+	val dataChanged: Boolean get() = commandManager.canUndo()
+
     fun addPropertyChangeListener(l: PropertyChangeListener<Any>)
 
     fun removePropertyChangeListener(l: PropertyChangeListener<Any>)

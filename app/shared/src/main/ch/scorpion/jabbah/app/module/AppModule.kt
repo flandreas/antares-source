@@ -25,8 +25,10 @@ object AppModule : AbstractModule() {
          * Reset the [CommandManager] whenever the current [Savable] of the [Application] has changed,
          * which is also the case if the [Savable] has been saved.
          */
+	    /*
         EditModule.commandManager.eventBus.register(CurrentSavableEvent::class) {
 	        EditModule.commandManager.reset()
         }
+	    */
     }
 }

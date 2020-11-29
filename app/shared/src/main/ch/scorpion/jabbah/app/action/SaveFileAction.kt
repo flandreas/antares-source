@@ -37,14 +37,18 @@ class SaveFileAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		if (application.data?.savable != null && application.data!!.savable.defined) {
-			application.save()
-		} else {
-			application.saveAs()
+		application.controller.apply {
+			if (data?.savable != null && data!!.savable.defined) {
+				save()
+			} else {
+				saveAs()
+			}
 		}
 	}
 
     private fun update() {
-        enabled = application.data == null || !application.data!!.savable.defined || commandManager.canUndo()
+	    application.controller.apply {
+		    enabled = data == null || !data!!.savable.defined || commandManager.canUndo()
+	    }
     }
 }

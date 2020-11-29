@@ -16,6 +16,6 @@ class CloseFileAction(
 	constructor(application: Application): this(application, DrawViewModule.viewManager)
 
 	override fun execute(event: ActionEvent) {
-		application.close()
+		application.controller.closeData()
 	}
 }

@@ -58,7 +58,7 @@ class OpenContainerLibraryElementAction(
 		try {
 			val library = element.library!!
 			library.libraryService.loadMetaGraph(library, element)
-			application.open(ApplicationData(element.metaGraph!!, library.createSavable(element), eventBus))
+			application.controller.open(ApplicationData(element.metaGraph!!, library.createSavable(element), eventBus))
 		} catch (e: Throwable) {
 			LOG.error("Error while loading ${element.uuid}: ${e.message}")
 			JOptionPane.showConfirmDialog(

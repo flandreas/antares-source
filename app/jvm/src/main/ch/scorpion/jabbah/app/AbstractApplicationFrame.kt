@@ -12,7 +12,8 @@ import javax.swing.JPanel
 import javax.swing.WindowConstants
 
 /**
- * A standard application [JFrame] that contains a [SimpleEditorPanel] in the center of its layout.
+ * A standard application [JFrame] that updates its title when the current [Savable] changes
+ * and stores the its location and size when being closed..
  */
 abstract class AbstractApplicationFrame(
     val application: DesktopApplication,
@@ -71,8 +72,8 @@ abstract class AbstractApplicationFrame(
     }
 
     private fun updateTitle() {
-        title = if (application.data != null) {
-            "${application.displayName} - ${application.data!!.savable.description}"
+        title = if (application.controller.data != null) {
+            "${application.displayName} - ${application.controller.data!!.savable.description}"
         } else {
             application.displayName
         }

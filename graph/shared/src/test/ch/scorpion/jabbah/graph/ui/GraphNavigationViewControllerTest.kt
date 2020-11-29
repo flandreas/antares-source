@@ -114,7 +114,7 @@ class GraphNavigationViewControllerTest {
 		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
 		val savable = mockk<Savable>()
 		every { savable.editable } returns false
-		eventBus.post(CurrentSavableEvent(mockk(), savable))
+		eventBus.post(CurrentSavableEvent(savable))
 
 		assertFalse(drawingView.editable)
 	}

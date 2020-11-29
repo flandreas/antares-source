@@ -64,7 +64,7 @@ class AddScenarioAction(
 			return
 		}
 
-		service.addScenario(application, ScenarioImpl(name))
+		service.addScenario(application.controller, ScenarioImpl(name))
 	}
 
 	override fun calculateEnabled(): Boolean {
@@ -91,7 +91,7 @@ class AddScenarioStepAction(
 		if (StringUtils.isEmpty(name)) {
 			return
 		}
-		service.addScenarioStep(application, scenario!!.id, ScenarioStepImpl(initialName = name))
+		service.addScenarioStep(application.controller, scenario!!.id, ScenarioStepImpl(initialName = name))
 	}
 
 	override fun calculateEnabled(): Boolean {
@@ -114,7 +114,7 @@ class DeleteScenarioAction(
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION)
 		{
-			service.deleteScenario(application, scenario!!.id)
+			service.deleteScenario(application.controller, scenario!!.id)
 		}
 	}
 
@@ -138,7 +138,7 @@ class DeleteScenarioStepAction(
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION)
 		{
-			service.deleteScenarioStep(application, scenario!!.id, scenarioStep!!.id)
+			service.deleteScenarioStep(application.controller, scenario!!.id, scenarioStep!!.id)
 		}
 	}
 

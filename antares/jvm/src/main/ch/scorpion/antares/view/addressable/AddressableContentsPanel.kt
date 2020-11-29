@@ -1,7 +1,10 @@
 package ch.scorpion.antares.view.addressable
 
-import ch.scorpion.antares.model.addressable.*
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.antares.model.addressable.Addressable
+import ch.scorpion.antares.model.addressable.AddressableCellChangeCommand
+import ch.scorpion.antares.model.addressable.AddressableClearCommand
+import ch.scorpion.antares.model.addressable.MemoryDump
+import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
@@ -15,9 +18,9 @@ import ch.scorpion.jabbah.graph.model.GraphElementAdapter
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.ui.AbstractGraphDesktopItemPanel
 import ch.scorpion.jabbah.graph.ui.GraphDesktopItemHeaderPanel
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.ui.GraphDesktopView
 import ch.scorpion.jabbah.graph.ui.GraphDesktopViewItem
+import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
@@ -29,7 +32,7 @@ import javax.swing.*
 
 /** Wraps a [AddressableContentsPanel] as a [GraphDesktopViewItem] so it can be added to the [GraphDesktopView]. */
 class AddressableContentGraphDesktopItem(
-	application: Application,
+	controller: ApplicationDataViewController,
 	addressable: Addressable,
 	title: String,
 	cmdManager: CommandManager = EditModule.commandManager,
@@ -37,7 +40,7 @@ class AddressableContentGraphDesktopItem(
 	contextColor: CompositeColor
 ) : AbstractGraphDesktopItemPanel() {
 
-	private val memoryContentPanel = AddressableContentsPanel(application, addressable, cmdManager, readonly)
+	private val memoryContentPanel = AddressableContentsPanel(controller, addressable, cmdManager, readonly)
 
 	private val headerPanel = GraphDesktopItemHeaderPanel(this, JLabel(title), allowClose = true)
 
@@ -77,7 +80,7 @@ class AddressableContentGraphDesktopItem(
  * exporting and resetting the memory contents..
  */
 class AddressableContentsPanel(
-	private val application: Application,
+	private val controller: ApplicationDataViewController,
 	private val addressable: Addressable,
 	private val cmdManager: CommandManager,
 	readonly: Boolean = false,
@@ -91,14 +94,14 @@ class AddressableContentsPanel(
 
 		fun showAsDialog(
 			parent: Frame = Frame.getFrames()[0],
-			application: Application,
+			controller: ApplicationDataViewController,
 			name: String,
 			addressable: Addressable,
 			cmdManager: CommandManager,
 			readonly: Boolean
 		) {
 			val dialog = JDialog(parent, true)
-			val contentsPanel = AddressableContentsPanel(application, addressable, cmdManager, readonly) {
+			val contentsPanel = AddressableContentsPanel(controller, addressable, cmdManager, readonly) {
 				dialog.isVisible = false
 				it.dispose()
 			}
@@ -166,7 +169,7 @@ class AddressableContentsPanel(
 			val changes = memoryDisplayPanel.changes
 			if (changes.isNotEmpty()) {
 				LOG.debug("User has changed ${changes.size} memory cells")
-				cmdManager.register(AddressableCellChangeCommand(application, addressable.id, changes))
+				cmdManager.register(AddressableCellChangeCommand(controller, addressable.id, changes))
 			}
 			closeHandler?.invoke(this@AddressableContentsPanel)
 		}
@@ -177,7 +180,7 @@ class AddressableContentsPanel(
 			val fileChooser = JFileChooser()
 			if (fileChooser.showOpenDialog(this@AddressableContentsPanel) == JFileChooser.APPROVE_OPTION) {
 				try {
-					cmdManager.execute(AddressableContentsCommand(application, addressable.id, addressable.dataWidth, fileChooser.selectedFile!!.absolutePath))
+					cmdManager.execute(AddressableContentsCommand(controller, addressable.id, addressable.dataWidth, fileChooser.selectedFile!!.absolutePath))
 					memoryDisplayPanel.refresh()
 				} catch (e: IllegalArgumentException) {
 					LOG.error("Invalid data in memory file: ${e.message}")
@@ -202,7 +205,7 @@ class AddressableContentsPanel(
 
 	private inner class ClearAction : AbstractAction(Translations.getString("antares.action.memory.clear.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
-			cmdManager.execute(AddressableClearCommand(application, addressable.id, addressable.dataWidth))
+			cmdManager.execute(AddressableClearCommand(controller, addressable.id, addressable.dataWidth))
 			memoryDisplayPanel.refresh()
 		}
 	}

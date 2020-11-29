@@ -231,7 +231,7 @@ class ScenarioTreeView(
 			val dropLoc = support.dropLocation as JTree.DropLocation
 
 			service.moveScenarioStep(
-				application,
+				application.controller,
 				((dropLoc.path.lastPathComponent as DefaultMutableTreeNode).userObject as Scenario).id,
 				(scenarioStepNode.userObject as ScenarioStep).id,
 				dropLoc.childIndex

@@ -63,13 +63,13 @@ interface GraphFrameActions {
 	val viewContainerAction: Action
 }
 
-class GraphFrameController(
+open class GraphFrameController<T: GraphFrame>(
 	eventBus: EventBus = BaseModule.eventBus,
 	editor: Editor = GraphViewModule.graphEditorFactory.invoke(eventBus),
 	viewManager: ViewManager = DrawViewModule.viewManager,
 	scheduler: Scheduler = ExecutionModule.scheduler,
 	private val properties: Properties = BaseModule.properties
-) : AbstractUIController<GraphFrame>(), GraphFrameActions {
+) : AbstractUIController<T>(), GraphFrameActions {
 
 	companion object {
 

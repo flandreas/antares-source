@@ -1,15 +1,10 @@
 package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
-import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.edit.model.ComponentMessageType
-import ch.scorpion.jabbah.io.*
 import org.apache.commons.cli.*
 import org.apache.commons.lang3.SystemUtils
 import java.io.File
@@ -27,8 +22,8 @@ import kotlin.system.exitProcess
 /** Abstract base implementation of the [DesktopApplication] interface. */
 abstract class AbstractDesktopApplication(
 	protected val commandLine: CommandLine,
-	eventBus: EventBus
-) : AbstractApplication(eventBus), DesktopApplication {
+	controller: ApplicationDataViewController
+) : AbstractApplication(controller), DesktopApplication {
 
 	companion object {
 
@@ -110,17 +105,6 @@ abstract class AbstractDesktopApplication(
 
 	override val userDataDirectoryPath: Path = determineUserDataDirectoryPath(commandLine, systemName)
 
-	override val mostRecentSavables: SavableHistory = SavableHistory()
-
-	override var data: ApplicationData?
-		get() = super.data
-		set(value) {
-			super.data = value
-			if (value != null && value.savable.supportsMostRecent && value.savable.defined) {
-				mostRecentSavables.register(value.savable)
-			}
-		}
-
 	init {
 		LOG.info(("Using user data dictionary $userDataDirectoryPath"))
 		consumeCommandLine(commandLine)
@@ -138,63 +122,12 @@ abstract class AbstractDesktopApplication(
 		}
 	}
 
-	override fun createNewSavable(): Savable {
-		return FileSavable.undefined()
-	}
-
 	/** ---- [DesktopApplication] */
 
 	override fun quit() {
-		if (canReplaceSavable("file.action.quit.name")) {
+		if (controller.canReplaceSavable("file.action.quit.name")) {
 			shutdown()
 		}
-	}
-
-	/**
-	 * Implements [DesktopApplication.saveTo] by interpreting `identification` as a file system path
-	 * and by storing the current [Storable] in a file at that path.
-	 */
-	override fun saveTo(identification: String) {
-		var filePath = identification
-		if (!filePath.endsWith(fileExtension)) {
-			filePath = "$filePath.$fileExtension"
-		}
-		FileOutputStream(filePath).use {
-			try {
-				val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
-				storeWriter.writeStorable(data!!.content)
-				data = data!!.withSavable(FileSavable.withPath(filePath))
-				eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "application.data.saved.msg"))
-			} catch (e: Throwable) {
-				LOG.error("Error while saving '$filePath': ${e.message}")
-			}
-		}
-	}
-
-	/**
-	 * Implements [DesktopApplication.openFrom] by interpreting `identification` as a file system path
-	 * and by reading the single [Storable] contained in the file located at that path.
-	 * @throws FileNotFoundException if the file at path `identification` doesn't exist
-	 */
-	override fun openFrom(identification: String): Boolean {
-		if (canReplaceSavable("file.action.open.name")) {
-			try {
-				FileInputStream(identification).use {
-					return try {
-						val storeReader = StoreXmlReader(ElectricXmlReader(it))
-						val drawing: Storable = storeReader.readStorable()
-						data = ApplicationData(drawing, FileSavable.withPath(identification), eventBus)
-						true
-					} catch (e: Throwable) {
-						LOG.error("Error while opening '$identification': ${e.cause}")
-						false
-					}
-				}
-			} catch (e: FileNotFoundException) {
-				throw IllegalArgumentException()
-			}
-		}
-		return false
 	}
 
 	override fun exportLogfile(destinationPath: String) {
@@ -279,7 +212,7 @@ abstract class AbstractDesktopApplication(
 		}
 	}
 
-	protected fun storeSettings() {
+	private fun storeSettings() {
 		val path = getSettingsPath()
 		LOG.debug("Storing settings in $path")
 		ensureUserDataDirectory()
@@ -307,7 +240,7 @@ abstract class AbstractDesktopApplication(
 					for (key in preferences.keys) {
 						BaseModule.properties.load(key as String, preferences.getProperty(key))
 					}
-					eventBus.post(PreferencesChangedEvent(BaseModule.properties))
+					controller.eventBus.post(PreferencesChangedEvent(BaseModule.properties))
 				} catch (x: Throwable) {
 					LOG.error("Error while loading preferences: ${x.message}")
 				}
@@ -317,7 +250,7 @@ abstract class AbstractDesktopApplication(
 		}
 	}
 
-	protected fun storePreferences() {
+	private fun storePreferences() {
 		val path = getPreferencesPath()
 		LOG.debug("Storing preferences in $path")
 		ensureUserDataDirectory()

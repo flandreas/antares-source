@@ -1,20 +1,15 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.view.theme.AntaresThemes
-import ch.scorpion.antares.view.DefaultLightColorEvent
+import ch.scorpion.antares.view.AntaresDataViewController
+import ch.scorpion.antares.view.AntaresFrameController
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.addressable.AddressableContentGraphDesktopItem
-import ch.scorpion.antares.view.addressable.AddressableContentsPanel
-import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
-import ch.scorpion.antares.view.app.DigitalGraphViewService
+import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.VetoException
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.invocation.ErrorHandler
-import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.UiUtil
@@ -22,13 +17,10 @@ import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.library.*
-import ch.scorpion.jabbah.graph.project.*
-import ch.scorpion.jabbah.graph.ui.GraphFrameController
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.project.ProjectSavable
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.io.Storable
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
 import org.apache.commons.cli.CommandLine
@@ -36,7 +28,6 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.SystemUtils
-import java.awt.Frame
 import java.awt.Image
 import java.awt.Taskbar
 import java.awt.Toolkit
@@ -46,8 +37,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
-import javax.swing.JOptionPane
-import javax.swing.SwingUtilities
 import javax.swing.plaf.FontUIResource
 
 
@@ -57,10 +46,11 @@ import javax.swing.plaf.FontUIResource
  */
 class AntaresSwing(
 	commandLine: CommandLine,
-	eventBus: EventBus = BaseModule.eventBus,
 	private val viewManager: ViewManager = DrawViewModule.viewManager
-) : AbstractDesktopApplicationSwing(commandLine, eventBus), Antares {
-
+) : AbstractDesktopApplicationSwing(
+	commandLine,
+	AntaresDataViewController()
+), Antares {
 
 	companion object {
 
@@ -72,7 +62,7 @@ class AntaresSwing(
 		private const val SYSTEM_LIB_OPTION = "l"
 		private const val PROJECTS_OPTION = "p"
 
-		fun defineOptions(options: Options): Options {
+		private fun defineOptions(options: Options): Options {
 			AbstractDesktopApplication.defineOptions(options)
 
 			options.addOption(Option.builder(SYSTEM_LIB_OPTION)
@@ -156,65 +146,8 @@ class AntaresSwing(
 	private val iconPath = "img/Logo64.png"
 
 	init {
-
 		if (SystemUtils.IS_OS_MAC) {
 			Taskbar.getTaskbar().iconImage = Toolkit.getDefaultToolkit().getImage(AntaresSwing::class.java.classLoader.getResource("img/Logo64.png"))
-		}
-
-		eventBus.register(OpenMemoryContentsRequest::class) { request ->
-			if (request.newDesktopView) {
-				(mainFrame as GraphFrameSwing).controller.graphPanelViewController.desktopController.openVerticeView(request.verticeView) {
-					AddressableContentGraphDesktopItem(
-						application = this,
-						addressable = request.addressable,
-						title = request.name,
-						cmdManager = mainFrame.editor.commandManager,
-						readonly = request.readonly,
-						contextColor = it)
-				}
-			} else {
-				AddressableContentsPanel.showAsDialog(
-					parent = mainFrame,
-					application = this,
-					name = request.name,
-					addressable = request.addressable,
-					cmdManager = mainFrame.editor.commandManager,
-					readonly = request.readonly)
-			}
-		}
-		eventBus.register(OpenProjectRequest::class) {
-			if (!canReplaceSavable("project.action.open.name")) {
-				throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
-			}
-		}
-		eventBus.register(OpenLibraryRequest::class) {
-			if (!canReplaceSavable("library.action.open.name")) {
-				throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
-			}
-		}
-		eventBus.register(CloseProjectRequest::class) {
-			if (data?.savable is ProjectSavable && (data!!.savable as ProjectSavable).project == it.project && !canReplaceSavable("project.action.close.name")) {
-				throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
-			}
-		}
-		eventBus.register(CurrentLibraryEvent::class) {
-			close()
-		}
-
-		eventBus.register(CurrentProjectEvent::class) {
-			close()
-		}
-
-		eventBus.register(LibraryItemRemovedEvent::class) {
-			if (it.item is ContainerLibraryElement && it.item == (data!!.savable as AbstractLibrarySavable).element) {
-				SwingUtilities.invokeLater { close() }
-			}
-		}
-
-		eventBus.register(DefaultLightColorEvent::class) {
-			if (it.graphView.defaultLightColor != null && shouldReplaceLightColor()) {
-				(GraphViewModule.graphViewAppService as DigitalGraphViewService).replaceLightColor(it.graphView)
-			}
 		}
 	}
 
@@ -241,10 +174,6 @@ class AntaresSwing(
 	/** ---- [AbstractDesktopApplication] */
 
 	override val taskbarIcon: Image get() = Toolkit.getDefaultToolkit().getImage(AntaresSwing::class.java.classLoader.getResource(iconPath))
-
-	override fun createNewApplicationData(): Storable {
-		return MetaGraph()
-	}
 
 	override fun init() {
 		AntaresModuleJvm(this).require()
@@ -290,31 +219,23 @@ class AntaresSwing(
 	}
 
 	override fun createMenuBarBuilder(): MenuBarBuilder {
-		return AntaresMenuBarBuilder(mainFrame as GraphFrameSwing, eventBus)
+		return AntaresMenuBarBuilder(mainFrame as GraphFrameSwing, controller.eventBus)
 	}
 
 	override fun createMainFrame(): AbstractApplicationFrame {
-		val controller = GraphFrameController(eventBus)
-		val frame = GraphFrameSwing(controller, this, eventBus, viewManager, controller)
+		val graphFrameController = AntaresFrameController(controller.eventBus)
+		val frame = AntaresFrameSwing(graphFrameController, this, controller.eventBus, viewManager, graphFrameController)
 
 		frame.graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(DigitalComponentViewDrawer())
 
 		return frame
 	}
 
-	/** Implements [DesktopApplication.openFrom] by interpreting `identification` as a project [UUID].*/
-	override fun openFrom(identification: String): Boolean {
-		InvocationHandler.invoke(Runnable {
-			ProjectModule.projectManagementService.open(UUID(identification))
-		})
-		return true
-	}
-
 	override fun handleShutdown() {
 		super.handleShutdown()
-		if (data?.savable is ProjectSavable) {
-			BaseModule.settings.set(PROP_APPLICATION_PROJECT, (data!!.savable as ProjectSavable).project.uuid.toString())
-		} else if (data?.savable != null) {
+		if (controller.data?.savable is ProjectSavable) {
+			BaseModule.settings.set(PROP_APPLICATION_PROJECT, (controller.data!!.savable as ProjectSavable).project.uuid.toString())
+		} else if (controller.data?.savable != null) {
 			BaseModule.settings.remove(PROP_APPLICATION_PROJECT)
 		}
 	}
@@ -325,30 +246,20 @@ class AntaresSwing(
 			return
 		}
 
+		val antaresController = (controller as AntaresDataViewController)
 		val projectName = BaseModule.settings.getString(PROP_APPLICATION_PROJECT, "")
 		if (StringUtils.isNotEmpty(projectName) && ProjectModule.projectManagementService.contains(UUID(projectName))) {
-			openFrom(projectName)
+			antaresController.openProject(UUID(projectName))
 			return
 		}
 
 		if (!ProjectModule.projectManagementService.directoryExists) {
 			ProjectModule.projectManagementService
 				.createHelloProject(DEF_LIBRARY_UUID)
-				.also { openFrom(it.uuid.toString()) }
+				.also { antaresController.openProject(it.uuid) }
 			return
 		}
 
-		close()
-	}
-
-	/** ---- [AntaresSwing] */
-
-	private fun shouldReplaceLightColor(): Boolean {
-		return JOptionPane.showConfirmDialog(
-			Frame.getFrames()[0],
-			Translations.getString("antares.action.replaceLightColor.question"),
-			Translations.getString("antares.action.replaceLightColor.name"),
-			JOptionPane.YES_NO_OPTION,
-			JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
+		antaresController.closeData()
 	}
 }

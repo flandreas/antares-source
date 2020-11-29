@@ -23,8 +23,8 @@ import javax.swing.*
 /**
  * A Java Swing implementation of the [GraphFrame] interface as an [AbstractApplicationFrame].
  */
-class GraphFrameSwing(
-	val controller: GraphFrameController,
+open class GraphFrameSwing(
+	val controller: GraphFrameController<GraphFrame>,
 	application: DesktopApplication,
 	private val eventBus: EventBus,
 	val viewManager: ViewManager,
@@ -55,7 +55,6 @@ class GraphFrameSwing(
 	/** ---- [GraphFrame] */
 
 	override var displayedView: GraphFrame.DisplayedView = GraphFrame.DisplayedView.Container
-		private set
 
 	override val applicationMode: ApplicationMode get() = controller.graphPanelViewController.currentMode
 

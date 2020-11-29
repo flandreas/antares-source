@@ -33,5 +33,5 @@ abstract class AbstractApplicationDataEditAction(
 	}
 
 	protected open fun calculateEnabled(): Boolean =
-		application.data != null && application.data!!.savable.editable
+		application.controller.data != null && application.controller.data!!.savable.editable
 }

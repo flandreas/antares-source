@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.view.scenario
 
-import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.edit.Undoable
+import ch.scorpion.jabbah.edit.UndoableDataHolder
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -13,11 +13,11 @@ import ch.scorpion.jabbah.io.StorableCloner
  * Adds a clone of a [Scenario] to a [GraphView].
  */
 class AddScenarioCommand(
-	private val application: Application,
+	private val dataHolder: UndoableDataHolder,
 	private val scenario: Scenario
 ) : AbstractCommand("scenario.command.scenario.add", null), Undoable {
 
-	private val graphView: GraphView get() = (application.data!!.content as MetaGraph).graph.graphView
+	private val graphView: GraphView get() = (dataHolder.getUndoableState() as MetaGraph).graph.graphView
 	var addedScenarioId: Int = 0
 		private set
 
@@ -37,11 +37,11 @@ class AddScenarioCommand(
  * By intention not [Undoable] to avoid the need to store a clone.
  */
 class DeleteScenarioCommand(
-	private val application: Application,
+	private val dataHolder: UndoableDataHolder,
 	private val scenarioId: Int
 ) : AbstractCommand("scenario.command.scenario.delete", null) {
 
-	private val graphView: GraphView get() = (application.data!!.content as MetaGraph).graph.graphView
+	private val graphView: GraphView get() = (dataHolder.getUndoableState() as MetaGraph).graph.graphView
 
 	override fun execute() {
 		graphView.scenarios.remove(scenarioId)
@@ -50,12 +50,12 @@ class DeleteScenarioCommand(
 
 /** Adds a [ScenarioStep] to a [Scenario].*/
 class AddScenarioStepCommand(
-	private val application: Application,
+	private val dataHolder: UndoableDataHolder,
 	private val scenarioId: Int,
 	private val scenarioStep: ScenarioStep
 ) : AbstractCommand("scenario.command.scenarioStep.add"), Undoable {
 
-	private val graphView: GraphView get() = (application.data!!.content as MetaGraph).graph.graphView
+	private val graphView: GraphView get() = (dataHolder.getUndoableState() as MetaGraph).graph.graphView
 	var addedScenarioStepId: Int = 0
 		private set
 
@@ -75,12 +75,12 @@ class AddScenarioStepCommand(
  * By intention not [Undoable] to avoid the need to store a clone.
  */
 class DeleteScenarioStepCommand(
-	private val application: Application,
+	private val dataHolder: UndoableDataHolder,
 	private val scenarioId: Int,
 	private val scenarioStepId: Int
 ) : AbstractCommand("scenario.command.scenarioStep.delete") {
 
-	private val graphView: GraphView get() = (application.data!!.content as MetaGraph).graph.graphView
+	private val graphView: GraphView get() = (dataHolder.getUndoableState() as MetaGraph).graph.graphView
 
 	override fun execute() {
 		graphView.scenarios.removeStep(scenarioId, scenarioStepId)
@@ -89,13 +89,13 @@ class DeleteScenarioStepCommand(
 
 /** Moves a [ScenarioStep] within its [Scenario], i.e. changes the position in the ordered list.*/
 class MoveScenarioStepCommand(
-	private val application: Application,
+	private val dataHolder: UndoableDataHolder,
 	private val scenarioId: Int,
 	private val scenarioStepId: Int,
 	private val newIndex: Int
 ) : AbstractCommand("scenario.command.scenarioStep.move"), Undoable {
 
-	private val graphView: GraphView get() = (application.data!!.content as MetaGraph).graph.graphView
+	private val graphView: GraphView get() = (dataHolder.getUndoableState() as MetaGraph).graph.graphView
 	private val oldIndex: Int = graphView.scenarios.indexOfStep(scenarioId, scenarioStepId)
 
 	override fun execute() {

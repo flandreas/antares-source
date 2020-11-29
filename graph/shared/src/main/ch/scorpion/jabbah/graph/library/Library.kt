@@ -69,7 +69,7 @@ interface Library : LibraryDirectory, MetaGraphRepository, Describable {
 	 */
 	fun containsAllRecursivelyReferencedBy(graph: Graph): Boolean
 
-	/** Creates an appropriate [Savable] for the specfieid [ContainerLibraryElement].*/
+	/** Creates an appropriate [Savable] for the specified [ContainerLibraryElement].*/
 	fun createSavable(element: ContainerLibraryElement): Savable
 
 }

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -33,7 +34,11 @@ class LibrarySavable(
 		return true
 	}
 
-	override fun save(application: Application): Boolean {
+	override fun save(application: Application): Boolean = saveImpl()
+
+	override fun save(appDataViewController: ApplicationDataViewController): Boolean = saveImpl()
+
+	private fun saveImpl(): Boolean {
 		service.updateContainerLibraryElement(library, element)
 		return true
 	}

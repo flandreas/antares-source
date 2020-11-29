@@ -1,12 +1,16 @@
 package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.auth.Authorizer
-import ch.scorpion.jabbah.edit.auth.Operation.*
+import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.library.AbstractLibrarySavable
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.library.LibraryDirectory
+import ch.scorpion.jabbah.graph.library.LibraryService
 
 /**
  * Saves the edited [MetaGraph] of a [ContainerLibraryElement] in the containing [LibraryDirectory].
@@ -40,7 +44,13 @@ class ProjectSavable(
 
 	override fun save(application: Application): Boolean {
 		libraryService.updateContainerLibraryElement(project, element)
-		application.data = application.data!!.withSavable(this)
+		application.controller.data = application.controller.data!!.withSavable(this)
+		return true
+	}
+
+	override fun save(appDataViewController: ApplicationDataViewController): Boolean {
+		libraryService.updateContainerLibraryElement(project, element)
+		appDataViewController.data = appDataViewController.data!!.withSavable(this)
 		return true
 	}
 }

@@ -44,7 +44,7 @@ abstract class AbstractUsecaseAction(
 		eventBus.unregister(usecaseSelectionHandler)
 	}
 
-	protected val graphView: GraphView get() = (application.data!!.content as MetaGraph).graph.graphView
+	protected val graphView: GraphView get() = (application.controller.data!!.content as MetaGraph).graph.graphView
 }
 
 /** Asks the user for the name of a new [Usecase] and adds it to the current [GraphView].*/

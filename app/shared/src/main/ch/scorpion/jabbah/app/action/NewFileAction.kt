@@ -10,6 +10,6 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 class NewFileAction(application: Application) : AbstractApplicationAction("file.action.new", application) {
 
     override fun execute(event: ActionEvent) {
-	    application.newFile()
+	    application.controller.newData()
     }
 }

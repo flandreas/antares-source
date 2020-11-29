@@ -39,11 +39,3 @@ data class ApplicationDataContentEvent(
 	val data: ApplicationData,
 	val oldContent: Storable
 )
-
-/**
- * A request to close the specified application data [Storable]. The class that centrally manages application state
- * has to decide whether this is possible and allowed, in which case it clears the application state and
- * sends an [ApplicationDataEvent] with an empty `newData` value. All classes that display the current application
- * state then react to that and display an `empty` state.
- */
-data class CloseApplicationDataRequest(val data: Storable)

@@ -104,11 +104,11 @@ open class MenuBarBuilder(
 
     private fun updateOpenRecentMenu() {
         openRecentMenu.removeAll()
-        frame.application.mostRecentSavables.savables.forEach {
-            if (it != frame.application.data?.savable) {
+        frame.application.controller.mostRecentSavables.savables.forEach {
+            if (it != frame.application.controller.data?.savable) {
 	            openRecentMenu.add(JMenuItem(ActionWrapperSwing(OpenRecentFileAction(it, frame.application))))
             }
         }
-        openRecentMenu.isEnabled = frame.application.mostRecentSavables.size > 0
+        openRecentMenu.isEnabled = frame.application.controller.mostRecentSavables.size > 0
     }
 }
