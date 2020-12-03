@@ -239,7 +239,9 @@ class GraphDesktopViewController(
 		}
 
 		view.closeAll(establishSingleView)
-		viewManager.activeView = null
+		if (!establishSingleView) {
+			viewManager.activeView = null
+		}
 	}
 
 	/**

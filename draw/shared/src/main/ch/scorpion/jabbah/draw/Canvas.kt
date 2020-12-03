@@ -20,7 +20,7 @@ interface Canvas {
     /** The background [Color] of this [Canvas].*/
     var backgroundColor: Color
 
-    /** Returns the current location of the mouse pointer.*/
+    /** Returns the current location of the mouse pointer in view space.*/
     val mouseLocation: Point2D
 
     /** Request the event focus from the window system for this [View] in order to receive key events.*/

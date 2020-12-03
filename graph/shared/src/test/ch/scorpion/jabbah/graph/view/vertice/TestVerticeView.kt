@@ -22,8 +22,9 @@ class TestVerticeView(
 	private var inputDirection: Direction = Direction.WEST,
 	private var outputDirection: Direction = Direction.EAST,
 	private var portViewLength: Int? = null,
-	width: Int = 0
-) : AbstractRectangularVerticeView<TestVertice>(styleProvider, vertice, loc.x, loc.y, width.toDouble(), 0.0) {
+	width: Int = 0,
+	height: Int = 0
+) : AbstractRectangularVerticeView<TestVertice>(styleProvider, vertice, loc.x, loc.y, width.toDouble(), height.toDouble()) {
 
 	init {
 		location = loc

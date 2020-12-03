@@ -1,15 +1,17 @@
 package ch.scorpion.jabbah.graph.ui.graphpanel
 
+import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.app.ApplicationDataEvent
-import ch.scorpion.jabbah.base.ui.AbstractUIController
-import ch.scorpion.jabbah.base.ui.UIView
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.ui.AbstractUIController
+import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.view.ActiveViewChangedEvent
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ViewManager
@@ -32,6 +34,7 @@ import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.issue.IssueSeverity
+import ch.scorpion.jabbah.execution.issue.IssuesView
 import ch.scorpion.jabbah.execution.issue.IssuesViewController
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.ExecutionStoppedOnIssueEvent
@@ -41,9 +44,10 @@ import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.ui.GraphDesktopViewController
-import ch.scorpion.jabbah.graph.ui.GraphEditViewController
+import ch.scorpion.jabbah.graph.ui.*
+import ch.scorpion.jabbah.graph.ui.logview.LogView
 import ch.scorpion.jabbah.graph.ui.logview.LogViewController
+import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
 import ch.scorpion.jabbah.graph.view.GraphView
 
@@ -53,12 +57,22 @@ class EditedGraphViewEvent(
 	val newGraphView: GraphView?
 )
 
+/**
+ * A [UIView] for editing and executing a root [GraphView].
+ *
+ * Consists of the following parts:
+ * - Left side: A side bar with a library panel (Preview, Library tree, Properties) and
+ * a properties panel for editing the properties of the selected [GraphElementView].
+ * - Center: A [GraphDesktopView] with a [GraphEditView] and optionally multiple [GraphNavigationView]s
+ * - Bottom: A side bar with a [LogView] and an [IssuesView]
+ */
 interface GraphPanelView : UIView {
 	var maxIssueSeverity: IssueSeverity?
 }
 
 /**
- * Controls a [GraphPanelView] and holds the current [ApplicationMode].
+ * Controls a [GraphPanelView] and holds the current [ApplicationMode], allowing the user
+ * to switch between edit mode and execution mode.
  *
  * Listens for [ApplicationDataEvent]s and extracts the [GraphView] from its [MetaGraph] to
  * be displayed as the main [GraphView]. Posts a [EditedGraphViewEvent] whenever the [GraphView]
@@ -66,6 +80,9 @@ interface GraphPanelView : UIView {
  *
  * Checks the root [GraphView] for design errors when execution is started and displays
  * a [ComponentMessage] if any are found.
+ *
+ * Controls editability of the current [GraphView] depending on the [ApplicationMode]
+ * (no editing while execution) and the editability of the current [ApplicationData]'s [Savable].
  */
 class GraphPanelViewController(
 	val editor: Editor,
@@ -83,7 +100,11 @@ class GraphPanelViewController(
 	val issuesViewController = IssuesViewController(eventBus = eventBus)
 	val logViewController = LogViewController(eventBus)
 
-	var editable: Boolean = true
+	/**
+	 * Captures whether the [Savable] designated the current [GraphView] as 'editable'.
+	 * Only updated when received [ApplicationDataEvent]'s are processed.
+	 */
+	var isSavableEditable: Boolean = true
 		private set
 
 	val gridSnapAction = GridSnapAction(editor)
@@ -99,13 +120,13 @@ class GraphPanelViewController(
 	private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { handle(it) }
 	private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { handle(it) }
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = { handle(it) }
-	private val activeViewChangeHandler: EventHandler<ActiveViewChangedEvent> = { updateEditability() }
+	private val activeViewChangeHandler: EventHandler<ActiveViewChangedEvent> = { updateEditorEditability() }
 	private val issuesCollectorHandler:EventHandler<IssueCollectorEvent> = { handle(it) }
 	private val executionStoppedOnIssueHandler: EventHandler<ExecutionStoppedOnIssueEvent> = { handle(it) }
 	private val editorViewListener = object : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 			if (e.name == DrawingView.PROP_EDITABLE) {
-				updateEditability()
+				updateEditorEditability()
 			}
 		}
 	}
@@ -166,7 +187,7 @@ class GraphPanelViewController(
 		if (!init) {
 			scheduler.isActive = false
 		}
-		updateEditability()
+		updateEditorEditability()
 		eventBus.post(ApplicationModeEvent(currentMode))
 		Status.set(StatusType.Large, Translations.getString("graph.status.edit"))
 	}
@@ -178,7 +199,7 @@ class GraphPanelViewController(
 			currentMode = mode
 			System.invokeLater {
 				scheduler.isActive = true
-				updateEditability()
+				updateEditorEditability()
 				eventBus.post(ApplicationModeEvent(currentMode))
 				Status.set(StatusType.Large, Translations.getString("graph.status.execute"))
 				after.invoke()
@@ -209,7 +230,7 @@ class GraphPanelViewController(
 	}
 
 	private fun handle(event: ApplicationDataEvent) {
-		editable = event.newData?.savable?.editable ?: false
+		isSavableEditable = event.newData?.savable?.editable ?: false
 		setApplicationData((event.newData?.content as MetaGraph?)?.graph?.graphView)
 	}
 
@@ -243,14 +264,14 @@ class GraphPanelViewController(
 	private fun setRootGraphView(graphView: GraphView?, applyZoomStrategy: Boolean) {
 		val oldValue = rootGraphView
 		graphView?.let {
-			editViewController.setGraphView(it, editable, applyZoomStrategy)
+			editViewController.setGraphView(it, isSavableEditable, applyZoomStrategy)
 			it.snapper = editor.view.grid
 		}
 		eventBus.post(EditedGraphViewEvent(oldValue, graphView))
-		updateEditability()
+		updateEditorEditability()
 	}
 
-	private fun updateEditability() {
+	private fun updateEditorEditability() {
 		val editable =
 			viewManager.activeView === editor.view
 				&& editor.view.editable
