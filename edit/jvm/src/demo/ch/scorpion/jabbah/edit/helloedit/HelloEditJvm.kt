@@ -5,8 +5,8 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
-import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import java.awt.BorderLayout
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
@@ -35,9 +35,9 @@ class HelloEditJvm : JFrame() {
         }
     }
 
-    private val canvas = CanvasJvm({ DrawingViewImpl(buildDrawing(), it) })
+	private val canvas = CanvasJvm { EditModule.drawingViewFactory.invoke(buildDrawing(), it) }
 
-    init {
+	init {
 
         EditEditorModule.createEditor(canvas.view as DrawingView<Drawing<Component>>)
 

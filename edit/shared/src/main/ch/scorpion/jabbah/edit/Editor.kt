@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 
@@ -35,7 +36,17 @@ interface Editor {
     /** Holds the [DrawingView] used by the user to edit.*/
     val view: DrawingView<Drawing<Component>>
 
-    /** Determines whether this [Editor] is active.*/
+    /**
+     * Determines whether this [Editor] is active or not. This affect primarily whether events are forwarded
+     * to the current [Tool] or not. An [Editor] is set 'inactive' if interaction with the [Drawing] is completely
+     * controlled by other logic, such as when the [Drawing] is being simulated.
+     *
+     * An [Editor] must not necessarily be deactivated if the [Drawing] is not editable, for example because
+     * the user is not authorized to edit it. It might still be useful to keep the [SelectionTool] enabled
+     * even if the user is only allowed to select [Component]s, for example to inspect their properties.
+     * It is the responsibility of [Action] implementations (and of other logic) to ensure that the user
+     * can't change the [Drawing] if he is not allowed to do so.
+     */
     var active: Boolean
 
     /** Determines whether 'tool lock' is active.*/

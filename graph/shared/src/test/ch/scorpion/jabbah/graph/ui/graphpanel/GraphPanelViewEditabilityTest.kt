@@ -70,7 +70,7 @@ class GraphPanelViewEditabilityTest {
 	@Test
 	fun shouldNotBeEditableWithNonEditableSavable() {
 		establishNonEditableData()
-		assertNonEditableUI(canSelect = false)
+		assertNonEditableUI(canSelect = true)
 	}
 
 	@Test
@@ -96,8 +96,8 @@ class GraphPanelViewEditabilityTest {
 
 	private fun assertNonEditableUI(canSelect: Boolean) {
 		assertFalse(controller.editor.view.editable)
-		assertFalse(controller.editor.active)
-		assertEquals(canSelect, canMoveComponent())
+		assertEquals(canSelect, controller.editor.active)
+		assertEquals(canSelect, canSelectComponent())
 		assertFalse(canMoveComponent())
 	}
 

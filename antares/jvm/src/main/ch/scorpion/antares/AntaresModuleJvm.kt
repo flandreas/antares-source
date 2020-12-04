@@ -23,12 +23,14 @@ import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.view.CanvasJvm
-import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
-import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerEditor
@@ -117,20 +119,13 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 	}
 
 	private fun createGraphEditor(eventBus: EventBus): GraphEditor {
-		val graphCanvas = CanvasJvm {
-			val drawingView = DrawingViewImpl(GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>, it)
-			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
-			drawingView
-		}
+		val graphView = GraphViewModule.graphViewFactory.invoke(null) as Drawing<Component>
+		val graphCanvas = CanvasJvm { EditModule.drawingViewFactory.invoke(graphView, it) }
 		return GraphEditor(graphCanvas.view as DrawingView<Drawing<Component>>)
 	}
 
 	private fun createContainerEditor(eventBus: EventBus): ContainerEditor {
-		val containerCanvas = CanvasJvm {
-			val drawingView = DrawingViewImpl<Drawing<Component>>(ContainerDrawing(), it)
-			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
-			drawingView
-		}
+		val containerCanvas = CanvasJvm { EditModule.drawingViewFactory.invoke(ContainerDrawing(), it) }
 		return DigitalContainerEditor(containerCanvas.view as DrawingView<Drawing<Component>>, eventBus)
 	}
 

@@ -274,7 +274,6 @@ class GraphPanelViewController(
 	private fun updateEditorEditability() {
 		val editable =
 			viewManager.activeView === editor.view
-				&& editor.view.editable
 				&& !scheduler.isActive
 				&& rootGraphView != null
 

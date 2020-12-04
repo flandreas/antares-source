@@ -6,12 +6,16 @@ import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.container.UnzoomableContainer
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.UnzoomableSelectionModel
 
 typealias DrawingViewFactory<T> = (T, Canvas) -> DrawingView<T>
 
 /**
  * Enhances [View] with functionality needed for editing [Drawing]s.
+ *
+ * Clients should not instantiate implementations of [DrawingView] by themselves.
+ * They should rather use [EditModule.drawingViewFactory] for creating [DrawingView] implementations.
  */
 interface DrawingView<T : Drawing<*>> : View<EditInputEventContext> {
 

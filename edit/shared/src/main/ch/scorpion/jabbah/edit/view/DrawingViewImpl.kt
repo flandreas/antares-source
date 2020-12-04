@@ -74,6 +74,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
             val oldDrawing = field.drawing
             replaceContent(value)
             field = value
+	        field.drawing.setDrawableDrawer(drawableDrawer)
             firePropertyChange(DrawingView.PROP_DRAWING, oldDrawing, field.drawing)
         }
 
@@ -102,7 +103,6 @@ class DrawingViewImpl<T: Drawing<Component>>(
         set(value) {
 	        if (value !== content.drawing) {
 		        content = createContent(value)
-		        value.setDrawableDrawer(drawableDrawer)
 		        applyDefaultZoomStrategy()
 	        }
         }

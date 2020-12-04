@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.app
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.preferences.PreferencesDialogPanel
-import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.Component
@@ -12,7 +11,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
-import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.edit.module.EditModule
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.lang3.SystemUtils
 import java.awt.Desktop
@@ -104,7 +103,7 @@ abstract class AbstractDesktopApplicationSwing(
 	}
 
 	protected open fun createMainFrame(): AbstractApplicationFrame {
-		val canvas: Canvas = CanvasJvm { DrawingViewImpl(DrawingImpl(), it) }
+		val canvas = CanvasJvm { EditModule.drawingViewFactory.invoke(DrawingImpl(), it)}
 
 		@Suppress("UNCHECKED_CAST")
 		val editor: Editor = EditEditorModule.createEditor(canvas.view as DrawingView<Drawing<Component>>)

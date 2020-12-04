@@ -19,7 +19,7 @@ open class EditorImpl(
     final override val view: DrawingView<Drawing<Component>>,
     final override val commandManager: CommandManager,
     selectionToolFactory: SelectionToolFactory
-) : Editor{
+) : Editor {
 
     @Suppress("unused")
     constructor(view: DrawingView<Drawing<Component>>): this(view, EditModule.commandManager, EditSelectModule.selectionToolFactory)
