@@ -24,7 +24,7 @@ class GraphEditViewController(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<GraphEditView>() {
 
-	val graphNavigationViewController = GraphNavigationViewController(isRoot = true, drawingView)
+	val graphNavigationViewController = GraphNavigationViewController(isRoot = true, drawingView, eventBus = eventBus)
 	val scenarioViewController = ScenarioViewController(eventBus)
 	val usecaseViewController = UsecaseViewController()
 

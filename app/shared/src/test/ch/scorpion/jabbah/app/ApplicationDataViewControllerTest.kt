@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 
-class ApplicationViewControllerTest {
+class ApplicationDataViewControllerTest {
 
 	companion object {
 		init {
@@ -22,7 +22,7 @@ class ApplicationViewControllerTest {
 	private val storableProvider = NewStorableProvider()
 	private val repositoryBuilder = ApplicationDataRepositoryMockBuilder()
 	private val controller = ApplicationDataViewController(commandManagerMock.build(), storableProvider::provide, repositoryBuilder.build(), eventBus)
-	private val viewMock = ApplicationViewMockBuilder(controller)
+	private val viewMock = ApplicationDataViewMockBuilder(controller)
 	private var applicationDataEvent: ApplicationDataEvent? = null
 	private var currentSavableEvent: CurrentSavableEvent? = null
 

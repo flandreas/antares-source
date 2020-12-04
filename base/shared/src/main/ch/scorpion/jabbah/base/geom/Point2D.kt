@@ -17,6 +17,9 @@ data class Point2D(val x: Double = 0.0, val y: Double = 0.0) {
 
 	override fun toString(): String = "Point2D($x,$y)"
 
+	val xInt: Int get() = x.toInt()
+	val yInt: Int get() = y.toInt()
+
 	/** Returns the square of the distance from this [Point2D] to a specified location.*/
 	fun distanceSq(x: Double, y: Double): Double {
 		val px = x - this.x

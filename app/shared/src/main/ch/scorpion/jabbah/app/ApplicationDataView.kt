@@ -35,6 +35,8 @@ interface ApplicationDataView : UIView {
 /**
  * Contains the part of the [Application] logic that maintains the [ApplicationData] and provides
  * operations for loading and storing.
+ *
+ * Sends [ApplicationDataEvent]s and [CurrentSavableEvent]s when the [ApplicationData] gets set.
  */
 open class ApplicationDataViewController(
 	private val commandManager: CommandManager = EditModule.commandManager,

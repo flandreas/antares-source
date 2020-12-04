@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.app
 import io.mockk.every
 import io.mockk.mockk
 
-class ApplicationViewMockBuilder(controller: ApplicationDataViewController) {
+class ApplicationDataViewMockBuilder(controller: ApplicationDataViewController) {
 
 	private val view = mockk<ApplicationDataView>()
 
@@ -11,17 +11,17 @@ class ApplicationViewMockBuilder(controller: ApplicationDataViewController) {
 		controller.view = view
 	}
 
-	fun withSaveUnchangedDataDecision(decision: SaveUnchangedDataDecision): ApplicationViewMockBuilder {
+	fun withSaveUnchangedDataDecision(decision: SaveUnchangedDataDecision): ApplicationDataViewMockBuilder {
 		every { view.decideSaveChangedData(any()) } returns decision
 		return this
 	}
 
-	fun withSavableForStoring(savable: Savable?): ApplicationViewMockBuilder {
+	fun withSavableForStoring(savable: Savable?): ApplicationDataViewMockBuilder {
 		every { view.defineSavableForStoring(any(), any()) } returns savable
 		return this
 	}
 
-	fun withSavableForLoading(savable: Savable?): ApplicationViewMockBuilder {
+	fun withSavableForLoading(savable: Savable?): ApplicationDataViewMockBuilder {
 		every { view.defineSavableForLoading() } returns savable
 		return this
 	}

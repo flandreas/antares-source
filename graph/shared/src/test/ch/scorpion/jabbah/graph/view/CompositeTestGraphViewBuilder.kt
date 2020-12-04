@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 
 /**
  * Supports building some composite [GraphView]s used for buildings libraries for integration testing.
- * Used [TestVerticeView] and [TestControlVerticeView] components.
+ * Uses [TestVerticeView] and [TestControlVerticeView] components.
  */
 class CompositeTestGraphViewBuilder(
 	private val graphName: String,

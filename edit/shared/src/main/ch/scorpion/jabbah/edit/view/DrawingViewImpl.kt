@@ -79,8 +79,8 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
     override var editable: Boolean = true
         set(value) {
+	        LOG.debug("Setting DrawingView with '$drawing' to editable=$value")
             if (value != field) {
-	            LOG.debug("Setting DrawingView with '$drawing' to editable=$value")
                 field = value
                 showGridIfNeeded()
                 firePropertyChange(PROP_EDITABLE, !field, field)

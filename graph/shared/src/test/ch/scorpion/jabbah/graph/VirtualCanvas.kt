@@ -66,29 +66,96 @@ class VirtualCanvas(
 	/** Event sending API */
 
 	fun moveMouseTo(x: Int, y: Int, modifiers: Int = 0): VirtualCanvas {
-		mouseLocation = toViewCoordinates(x, y)
-		MouseEventImpl(MouseEventType.MOVED, mouseLocation.x.toInt(), mouseLocation.y.toInt(), modifiers).also { event ->
+		moveEvent(x, y, modifiers).also { event ->
 			mouseMotionListeners.forEach { it.mouseMoved(event) }
 		}
 		return this
 	}
 
 	fun pressMouseAt(x: Int, y: Int, modifiers: Int = 0): VirtualCanvas {
-		mouseLocation = toViewCoordinates(x, y)
-		MouseEventImpl(MouseEventType.PRESSED, mouseLocation.x.toInt(), mouseLocation.y.toInt(), modifiers).also { event ->
+		pressEvent(x, y, modifiers).also { event ->
 			mouseListeners.forEach { it.mousePressed(event) }
 		}
 		return this
 	}
 
+	fun dragMouseTo(x: Int, y: Int, modifiers: Int = 0): VirtualCanvas {
+		dragEvent(x, y, modifiers).also { event ->
+			mouseMotionListeners.forEach { it.mouseDragged(event) }
+		}
+		return this
+	}
+
+	fun dragMouse(dx: Int, dy: Int, modifiers: Int = 0): VirtualCanvas =
+		dragMouseTo(mouseLocation.xInt + dx, mouseLocation.yInt + dy, modifiers)
+
+	fun releaseMouseAt(x: Int, y: Int, modifiers: Int = 0): VirtualCanvas {
+		releaseEvent(x, y, modifiers).also { event ->
+			mouseListeners.forEach { it.mouseReleased(event) }
+		}
+		return this
+	}
+
+	fun releaseMouse(modifiers: Int = 0): VirtualCanvas = releaseMouseAt(mouseLocation.xInt, mouseLocation.yInt, modifiers)
 
 	fun clickMouseAt(x: Int, y: Int, modifiers: Int = 0, clickCount: Int = 1): VirtualCanvas {
-		mouseLocation = toViewCoordinates(x, y)
-		MouseEventImpl(MouseEventType.CLICKED, mouseLocation.x.toInt(), mouseLocation.y.toInt(), modifiers, clickCount = clickCount).also { event ->
+		clickEvent(x, y, modifiers, clickCount).also { event ->
 			mouseListeners.forEach { it.mouseClicked(event) }
 		}
 		return this
 	}
+
+	private fun moveEvent(x: Int, y: Int, modifiers: Int): MouseEventImpl {
+		mouseLocation = toViewCoordinates(x, y)
+		return MouseEventImpl(
+			type = MouseEventType.MOVED,
+			button = Button.BUTTON1,
+			x = mouseLocation.x.toInt(),
+			y = mouseLocation.y.toInt(),
+			modifiers = modifiers)
+	}
+
+	private fun pressEvent(x: Int, y: Int, modifiers: Int): MouseEventImpl {
+		mouseLocation = toViewCoordinates(x, y)
+		return MouseEventImpl(
+			type = MouseEventType.PRESSED,
+			button = Button.BUTTON1,
+			x = mouseLocation.x.toInt(),
+			y = mouseLocation.y.toInt(),
+			modifiers = modifiers)
+	}
+
+	private fun dragEvent(x: Int, y: Int, modifiers: Int): MouseEventImpl {
+		mouseLocation = toViewCoordinates(x, y)
+		return MouseEventImpl(
+			type = MouseEventType.DRAGGED,
+			button = Button.BUTTON1,
+			x = mouseLocation.x.toInt(),
+			y = mouseLocation.y.toInt(),
+			modifiers = modifiers)
+	}
+
+	private fun releaseEvent(x: Int, y: Int, modifiers: Int): MouseEventImpl {
+		mouseLocation = toViewCoordinates(x, y)
+		return MouseEventImpl(
+			type = MouseEventType.RELEASED,
+			button = Button.BUTTON1,
+			x = mouseLocation.x.toInt(),
+			y = mouseLocation.y.toInt(),
+			modifiers = modifiers)
+	}
+
+	private fun clickEvent(x: Int, y: Int, modifiers: Int, clickCount: Int = 1): MouseEventImpl {
+		mouseLocation = toViewCoordinates(x, y)
+		return MouseEventImpl(
+			type = MouseEventType.CLICKED,
+			button = Button.BUTTON1,
+			x = mouseLocation.x.toInt(),
+			y = mouseLocation.y.toInt(),
+			modifiers = modifiers,
+			clickCount = clickCount)
+	}
+
 
 	private fun toViewCoordinates(x: Int, y: Int): Point2D {
 		return view.modelToView(Point2D(x, y))

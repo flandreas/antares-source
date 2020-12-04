@@ -122,6 +122,7 @@ class SelectionToolImpl(
 	override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
 		if (!editor.view.editable) {
 			selectionLogic(e, x, y, allowRubberband = false)
+			return
 		}
 
 		tooltipHandler.clear(editor.view)
