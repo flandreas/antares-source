@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.app
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Tool
 import java.awt.event.ActionEvent
@@ -33,6 +34,7 @@ class ToolBar(val editor: Editor? = null) : JToolBar() {
 		button.isEnabled = editor.active
 		button.addActionListener(toolListener)
 		editor.addPropertyChangeListener(toolListener)
+		editor.view.addPropertyChangeListener(toolListener)
 		toolGroup.add(button)
 		add(button)
 	}
@@ -50,14 +52,33 @@ class ToolBar(val editor: Editor? = null) : JToolBar() {
 		}
 
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			when(e.source) {
+				editor -> handleEditorProperty(e)
+				editor?.view -> handleViewProperty(e)
+			}
+		}
+
+		private fun handleEditorProperty(e: PropertyChangeEvent<Any>) {
 			if (e.name == Editor.PROP_CURRENT_TOOL && e.newValue == tool) {
 				if (!button.isSelected) {
 					button.doClick()
 					button.requestFocus()
 				}
 			} else if (e.name == Editor.PROP_ACTIVE) {
-				button.isEnabled = tool.enabledInInactiveEditor || (editor?.active ?: false)
+				updateEnabledness()
 			}
+		}
+
+		private fun handleViewProperty(e: PropertyChangeEvent<Any>) {
+			if (e.name == View.PROP_USER_ZOOM_ENABLED) {
+				updateEnabledness()
+			}
+		}
+
+		private fun updateEnabledness() {
+			button.isEnabled = editor?.let {
+				it.active &&  (it.view.editable || tool.enabledInUneditableView)
+			} ?: false
 		}
 	}
 }
