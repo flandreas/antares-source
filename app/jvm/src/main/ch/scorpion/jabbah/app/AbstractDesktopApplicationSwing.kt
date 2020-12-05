@@ -50,6 +50,8 @@ abstract class AbstractDesktopApplicationSwing(
 	override fun init() {
 		super.init()
 
+		ApplicationDataViewSwing(controller, fileExtension, displayName)
+
 		mainFrame = createMainFrame()
 		mainFrame.jMenuBar = createMenuBarBuilder().menuBar
 
