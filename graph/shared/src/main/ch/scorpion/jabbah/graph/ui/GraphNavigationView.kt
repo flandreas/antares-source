@@ -276,7 +276,10 @@ class GraphNavigationViewController(
 			navigationStackViewController.navigationStack.push(NavigationStackEntry(
 				subGraphVerticeView = vv,
 				content = drawingView.createContent(vv.createSubGraphView())))
-			System.invokeLater { drawingView.navigator.fitMaxNormal() }
+			System.invokeLater {
+				drawingView.navigator.fitMaxNormal()
+				navigationStackViewController.view.active = true
+			}
 		}
 	}
 

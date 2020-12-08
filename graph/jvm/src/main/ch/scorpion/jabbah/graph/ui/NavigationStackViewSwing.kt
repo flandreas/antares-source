@@ -284,6 +284,7 @@ class NavigationStackViewSwing(
 		override fun mousePressed(e: MouseEvent) {
 			if (hoveredElement != null) {
 				navigationStack.navigateBackTo(hoveredElement!!.entry, e.isMetaDown)
+				hoveredElement = null
 			}
 		}
 

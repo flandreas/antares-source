@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Tool
 import java.awt.event.ActionEvent
@@ -70,7 +71,7 @@ class ToolBar(val editor: Editor? = null) : JToolBar() {
 		}
 
 		private fun handleViewProperty(e: PropertyChangeEvent<Any>) {
-			if (e.name == View.PROP_USER_ZOOM_ENABLED) {
+			if (e.name == View.PROP_USER_ZOOM_ENABLED || e.name == DrawingView.PROP_EDITABLE) {
 				updateEnabledness()
 			}
 		}
