@@ -164,9 +164,9 @@
                 <rectangle id='0' style='subsystem' x='-196.0' y='-322.0' w='266.0' h='294.0' text='Master JK' vAlign='top'/>
               </component>
             </graphElement>
-            <graphElement _id='103' id='0'>
+            <graphElement _id='103' id='64'>
               <component>
-                <rectangle id='0' style='subsystem' x='126.0' y='-322.0' w='266.0' h='294.0' text='Slave JK' vAlign='top'/>
+                <rectangle id='64' style='subsystem' x='126.0' y='-322.0' w='266.0' h='294.0' text='Slave JK' vAlign='top'/>
               </component>
             </graphElement>
             <nandGateView _id='102' id='1' rot='0' modelId='3' x='-105.0' y='-266.0'/>
