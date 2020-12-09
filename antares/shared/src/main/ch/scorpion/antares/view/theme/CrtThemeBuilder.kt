@@ -82,8 +82,6 @@ object CrtThemeBuilder : AbstractAntaresDarkThemeBuilder("CRT") {
 
 	private val FOCUS_STYLE = BasicStyle(color = FOCUS_COLOR, stroke = FOCUS_STROKE)
 
-	private val OVERLAY_COLOR = Color(32, 32, 32, 192)
-
 	private val SCREEN_COLOR = CompositeColor(
 		foregroundColor = MAIN_COLOR.foregroundColor,
 		backgroundColor = Color(0, 24, 0),

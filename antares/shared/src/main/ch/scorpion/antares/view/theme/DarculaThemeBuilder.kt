@@ -111,6 +111,7 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 			word = WORD_COLOR,
 			error = ERROR_COLOR,
 			focus = FOCUS_STYLE,
+			overlay = OVERLAY_COLOR,
 			screen = SCREEN_COLOR,
 			shadow = CompositeColor(SHADOW_COLOR, SHADOW_COLOR),
 			hover = SELECTION_COLOR

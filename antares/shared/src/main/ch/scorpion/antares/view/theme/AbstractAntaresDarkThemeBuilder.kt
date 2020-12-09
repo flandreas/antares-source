@@ -48,5 +48,7 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 			color = CompositeColor(foregroundColor = HIGHLIGHT_COLOR, backgroundColor = HIGHLIGHT_COLOR),
 			stroke = HIGHLIGHT_STROKE,
 			font = FONT)
+
+		val OVERLAY_COLOR = Color(32, 32, 32, 192)
 	}
 }
