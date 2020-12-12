@@ -1,24 +1,29 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
-import java.awt.Color
+import ch.scorpion.jabbah.base.event.ActionEvent
 import java.awt.Component
 import java.awt.Frame
 import javax.swing.*
 
 /** Displays [AboutInfo] of the [Application].*/
-class AboutPanel(info: AboutInfo) : JPanel() {
+class AboutPanel(
+	info: AboutInfo,
+	private val closeHandler: () -> Unit
+) : JPanel() {
 
 	companion object {
 
 		private const val INSET = 50
 
 		fun showAsDialog(application: Application) {
-			val info = application.aboutInfo
-			val panel = AboutPanel(info)
 			val parent = Frame.getFrames()[0]
-
 			val dialog = JDialog(parent, true)
+			val info = application.aboutInfo
+			val panel = AboutPanel(info) { dialog.isVisible = false }
+
 			dialog.title = "${Translations.getString("application.action.about.name")} ${info.name}"
 			dialog.contentPane.add(panel)
 			dialog.isResizable = false
@@ -35,13 +40,15 @@ class AboutPanel(info: AboutInfo) : JPanel() {
 	private fun buildUI(info: AboutInfo) {
 		layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
 		border = BorderFactory.createEmptyBorder(INSET, INSET, INSET, INSET)
-		background = Color.WHITE
 
 		if (info.iconPath != null) {
 			addIcon(info.iconPath)
 		}
 
 		addText(info)
+
+		add(Box.createVerticalStrut(30))
+		addCloseButton()
 	}
 
 	private fun addIcon(iconPath: String) {
@@ -54,7 +61,7 @@ class AboutPanel(info: AboutInfo) : JPanel() {
 		addName(info)
 		addClaim(info)
 		addVersion(info)
-		add(Box.createVerticalStrut(50))
+		add(Box.createVerticalStrut(20))
 		addDisclaimer(info)
 	}
 
@@ -71,12 +78,22 @@ class AboutPanel(info: AboutInfo) : JPanel() {
 	}
 
 	private fun addDisclaimer(info: AboutInfo) {
-		addLabel("${info.disclaimer}")
+		addLabel(info.disclaimer)
 	}
 
 	private fun addLabel(formattedText: String) {
 		val label = JLabel("<html>${formattedText}", null, JLabel.CENTER)
 		label.alignmentX = Component.CENTER_ALIGNMENT
 		add(label)
+	}
+
+	private fun addCloseButton() {
+		add(JButton(ActionWrapperSwing(CloseAction())))
+	}
+
+	private inner class CloseAction : AbstractAction("file.action.close") {
+		override fun execute(event: ActionEvent) {
+			closeHandler.invoke()
+		}
 	}
 }
