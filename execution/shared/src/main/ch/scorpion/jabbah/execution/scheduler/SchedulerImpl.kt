@@ -51,6 +51,12 @@ class SchedulerImpl(
 
 	/** Determines whether this [Scheduler] is currently running or paused (single step mode).*/
 	private var runningState: SchedulerRunningState = SchedulerRunningState.RUNNING
+		set(value) {
+			if (field != value) {
+				field = value
+				eventBus.post(SchedulerRunningStateEvent(this))
+			}
+		}
 
 	/** The relative time [in ns] since execution has been started. */
 	private var relativeTime: Long = 0
@@ -106,7 +112,6 @@ class SchedulerImpl(
 			}
 			runningState = SchedulerRunningState.ofPausedFlag(value)
 			task.startIfNeeded()
-			eventBus.post(SchedulerRunningStateEvent(this))
 		}
 
 	override var isInBreakpoint: Boolean = false
@@ -370,12 +375,6 @@ class SchedulerImpl(
 	 * @param resume `true` if the current breakpoint has already been handled, and the execution is to be resumed
 	 */
 	private fun executeImpl(resume: Boolean): ExecutionStepResult {
-
-		if (isPaused && !resume) {
-			task.stop()
-			return ExecutionStepResult(recalculated = false, breakpoint = true)
-		}
-
 		val optionalSlot = queue.peek()
 		if (optionalSlot == null) {
 			updateRelativeTime(getRelativeRealTime())
@@ -409,7 +408,7 @@ class SchedulerImpl(
 			// Check for a breakpoint. If any of the Actors requests a break, skip the entire
 			// slot and continue only upon the next resume.
 			if (!resume && checkForBreakpoint(slot)) {
-				LOG.debug("Breakpoint detected")
+				LOG.debug("Stop task because breakpoint detected")
 				task.stop()
 				isInBreakpoint = true
 				return ExecutionStepResult(recalculated = false, breakpoint = true)

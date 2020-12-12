@@ -30,6 +30,7 @@ class SchedulerImplTest {
 	private val timeService: ControlledTimeService
 	private val eventBus = EventBusImpl()
 	private val scheduler: SchedulerImpl
+	private var breakpointEvent: BreakpointEvent? = null
 
 	init {
 		ExecutionTestRule.configure()
@@ -40,6 +41,7 @@ class SchedulerImplTest {
 			NoiseGeneratorHolder(NoNoiseGenerator(), eventBus),
 			task = TimedSchedulerTask(ControlledTimer(timeService))
 		)
+		eventBus.register(BreakpointEvent::class) { breakpointEvent = it }
 	}
 
 	/** ---- Basics tests */
@@ -126,21 +128,47 @@ class SchedulerImplTest {
 	}
 
 	@Test
-	fun shouldPause() {
+	fun shouldWaitInBreakpoint() {
 		val actor = createActor()
-		scheduler.isActive = true
+		scheduler.isSoftBreakpointsEnabled = true
 		scheduler.isPaused = true
+		scheduler.isActive = true
 		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
 
 		verify(exactly = 0) { actor.act(any(), any()) }
+		assertTrue(scheduler.isInBreakpoint)
+		assertNotNull(breakpointEvent)
 	}
 
 	@Test
-	fun shouldStep() {
+	fun shouldWaitInBreakpointWhenPausedDuringExecution() {
+		val actor = createActor()
+		scheduler.isSoftBreakpointsEnabled = true
+		scheduler.isPaused = false
+		scheduler.isActive = true
+
+		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
+		timeService.setTimeMillis(150)
+		verify(exactly = 1) { actor.act(any(), any()) }
+		assertNull(breakpointEvent)
+
+		scheduler.isPaused = true
+		scheduler.signalHandler.requestActingAfter(actor, 100 * MILLION, createActorData())
+
+		timeService.setTimeMillis(250)
+
+		verify(exactly = 1) { actor.act(any(), any()) }
+		assertTrue(scheduler.isInBreakpoint)
+		assertNotNull(breakpointEvent)
+	}
+
+	@Test
+	fun shouldResume() {
 		val actor1 = createActor()
 		val actor2 = createActor()
+		scheduler.isSoftBreakpointsEnabled = true
 		scheduler.isActive = true
 		scheduler.isPaused = true
 		scheduler.signalHandler.requestActingAfter(actor1, 100 * MILLION, createActorData())
@@ -158,9 +186,10 @@ class SchedulerImplTest {
 	}
 
 	@Test
-	fun shouldNotWaitForRealTimeWhenStepping() {
+	fun shouldNotWaitForRealTimeWhenResuming() {
 		val actor1 = createActor()
 		val actor2 = createActor()
+		scheduler.isSoftBreakpointsEnabled = true
 		scheduler.isActive = true
 		scheduler.isPaused = true
 		scheduler.signalHandler.requestActingAfter(actor1, 100 * MILLION, createActorData())

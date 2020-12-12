@@ -2,24 +2,23 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.jabbah.graph.view.EdgeViewNetAnimation
 import ch.scorpion.jabbah.animation.*
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.drawable.MoveLocatableAnimation
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.drawable.MoveLocatableAnimation
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.execution.actor.ActorData
+import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.ConnectableView
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewPointSequence
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.execution.actor.ActorData
-import ch.scorpion.jabbah.execution.actor.ActorListener
-import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import kotlin.math.min
 
 /**
@@ -44,7 +43,7 @@ class DigitalEdgeViewNetAnimation(
 	val animator: Animator = AnimationModule.animator,
 	val scheduler: Scheduler = ExecutionModule.scheduler,
 	val styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) {
+) : EdgeViewNetAnimation {
 
 	companion object {
 
@@ -88,7 +87,7 @@ class DigitalEdgeViewNetAnimation(
 	 * animation, because if the animation has been spit at a [DigitalNodeView], there are multiple additional tasks.
 	 * It would be better to return nothing and to provide a stop() method that stops all running tasks.
 	 */
-	fun start(): AnimationTask {
+	override fun start(): AnimationTask {
 		val animationInfo = predecessorMap[startEdgeView]!!
 		animationInfo.animationTask!!.start()
 		return animationInfo.animationTask

@@ -117,7 +117,7 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
      * Returns the [Connection] that corresponds with the specified [Port], which can be either the
      * [origin] or the [destination] [Connection].
      */
-    fun getConnection(port: Port<T>): Connection<T>?
+    fun getConnection(port: Port<*>): Connection<T>?
 
 	/**
 	 * Returns the [EdgeViewEndpointType] that represents the specified [Connection], or `null` if

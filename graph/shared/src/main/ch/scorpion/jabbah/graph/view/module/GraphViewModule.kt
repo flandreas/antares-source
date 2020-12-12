@@ -122,6 +122,8 @@ object GraphViewModule : AbstractModule() {
 
 	var graphNavigationViewControllerExtension: (GraphNavigationViewController) -> GraphNavigationViewControllerExtension = { EmptyGraphNavigationControllerExtension() }
 
+	var graphViewExecutionAnimationFactory: GraphViewExecutionAnimationFactory = UndefinedGraphViewExecutionAnimationFactory()
+
 	override fun initialize() {
 		EditModule.require()
 		AppModule.require()

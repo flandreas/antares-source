@@ -180,7 +180,7 @@ open class EdgeViewImpl<T : Any>(
 		polyline.endLineTerminator = lineTerminator
 	}
 
-	override fun getConnection(port: Port<T>): Connection<T>? {
+	override fun getConnection(port: Port<*>): Connection<T>? {
 		if (port === origin?.port) {
 			return origin
 		}

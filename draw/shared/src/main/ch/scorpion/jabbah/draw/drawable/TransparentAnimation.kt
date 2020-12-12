@@ -24,11 +24,14 @@ class TransparentAnimation(
 
 	companion object {
 
+		/** The time in milliseconds for a single color period when glowing.*/
+		private const val DEF_GLOW_PERIOD = 300.0
+
 		/**
 		 * Creates a [TransparentAnimation] that produces a glow effect on the specified [Transparent]
 		 * by oscillating its transparency value by the specified frequency forever.
 		 */
-		fun glow(transparent: Transparent, frequency: Double): TransparentAnimation {
+		fun glow(transparent: Transparent, frequency: Double = DEF_GLOW_PERIOD): TransparentAnimation {
 			return TransparentAnimation(transparent, DoubleRange(Transparent.FULLY_OPAQUE.toDouble(), 16.0, SequenceType.OSCILLATION), frequency)
 		}
 

@@ -33,7 +33,11 @@ interface Actor {
 	 */
 	var propagationDelay: Long
 
-	/** Determines whether this [Actor] acts as breakpoint when [Scheduler] performs a stepwise execution.*/
+	/**
+	 * Decides whether this [Actor] acts as breakpoint when [Scheduler] performs a stepwise execution.
+	 * The typical implementation will return `true` if this [Actor] has registered [ActorListener], because
+	 * this will break an execution only for [Actor] that are observed by a UI.
+	 */
 	val isBreakpoint: Boolean
 
 	/** Adds the specified [ActorListener] to this [Actor].*/
