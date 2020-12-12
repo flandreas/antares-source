@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.theme
 
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.BLUE_ON_DARK
+import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.GRAY_ON_DARK
 import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.GREEN_ON_DARK
 import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.PINK_ON_DARK
 import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.RED_ON_DARK
@@ -30,7 +31,7 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 		val PREDEFINED_COLORS = listOf(
 			PredefinedColor(PredefinedColorIdentity.White, DrawGraphicsModule.WHITE),
 			PredefinedColor(PredefinedColorIdentity.Black, DrawGraphicsModule.BLACK),
-			PredefinedColor(PredefinedColorIdentity.Gray, CompositeColor(foregroundColor = Color(64, 64, 64), backgroundColor = Color(32, 32, 32))),
+			PredefinedColor(PredefinedColorIdentity.Gray, GRAY_ON_DARK),
 			PredefinedColor(PredefinedColorIdentity.Red, RED_ON_DARK),
 			PredefinedColor(PredefinedColorIdentity.Blue, BLUE_ON_DARK),
 			PredefinedColor(PredefinedColorIdentity.Green, GREEN_ON_DARK),
@@ -45,7 +46,7 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 		val HIGHLIGHT_COLOR = Color(102, 61, 0) // dark orange
 
 		val HIGHLIGHT_STYLE = BasicStyle(
-			color = CompositeColor(foregroundColor = HIGHLIGHT_COLOR, backgroundColor = HIGHLIGHT_COLOR),
+			color = CompositeColor(HIGHLIGHT_COLOR, HIGHLIGHT_COLOR),
 			stroke = HIGHLIGHT_STROKE,
 			font = FONT)
 

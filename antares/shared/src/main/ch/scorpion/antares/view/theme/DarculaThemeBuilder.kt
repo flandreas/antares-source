@@ -19,11 +19,7 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 		textColor = MAIN_COLOR.textColor
 	)
 
-	private val TOOLTIP_COLOR = CompositeColor(
-		foregroundColor = DrawGraphicsModule.YELLOW_ON_DARK.foregroundColor.darker(),
-		backgroundColor = DrawGraphicsModule.YELLOW_ON_DARK.backgroundColor.darker(),
-		textColor = MAIN_COLOR.textColor
-	)
+	private val TOOLTIP_COLOR = DrawGraphicsModule.YELLOW_ON_DARK
 
 	val SHADOW_COLOR = MAIN_COLOR.foregroundColor.darker()
 
