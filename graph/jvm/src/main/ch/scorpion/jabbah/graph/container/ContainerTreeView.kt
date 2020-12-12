@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.swing.dynamictree.DynamicTreeModel
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -80,7 +81,7 @@ open class ContainerTreeView(
 
         private fun getIcon(iconPath: String): Icon {
             try {
-                return iconCache.getOrPut(iconPath) { ImageIcon(ContainerTreeView::class.java.getResource(iconPath)) }
+	            return iconCache.getOrPut(iconPath) { UiUtil.themedIcon(iconPath)}
             } catch (e: Exception) {
                 LOG.value.error("Could not load icon $iconPath")
                 throw e
