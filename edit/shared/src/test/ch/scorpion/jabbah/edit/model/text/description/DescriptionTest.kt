@@ -1,7 +1,12 @@
 package ch.scorpion.jabbah.edit.model.text.description
 
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.io.StoreWriter
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import kotlin.test.*
 
 class DescriptionTest {
@@ -46,6 +51,27 @@ class DescriptionTest {
 		describable.description = Description("Changed")
 
 		assertTrue(describable.changed)
+	}
+
+	@Test
+	fun shouldNotWriteEmptyDescription() {
+		val storeWriter = mockk<StoreWriter>(relaxed = true)
+		val describable = TestDescribable("")
+		describable.description.write("desc", storeWriter)
+
+		verify(exactly = 0) { storeWriter.writeStorables(any(), any()) }
+	}
+
+	@Test
+	fun shouldWriteNonEmptyDescription() {
+		val storeWriter = mockk<StoreWriter>(relaxed = true)
+		val slot = slot<Iterator<Translation>>()
+		val describable = TestDescribable("Test")
+
+		describable.description.write("desc", storeWriter)
+
+		verify(exactly = 1) { storeWriter.writeStorables("desc", capture(slot)) }
+		assertEquals("Test", slot.captured.next().text)
 	}
 
 	private class TestDescribable(

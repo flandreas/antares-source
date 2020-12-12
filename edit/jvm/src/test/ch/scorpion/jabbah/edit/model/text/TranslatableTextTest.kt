@@ -133,6 +133,12 @@ class TranslatableTextTest {
 	}
 
 	@Test
+	fun shouldBeEmptyWithEmptyText() {
+		val text = TranslatableText("")
+		assertTrue(text.isEmpty)
+	}
+
+	@Test
 	fun shouldTranslateOptionally() {
 		java.lang.System.setProperty("user.language", "en")
 		assertNull(TranslatableText().getOptionalTranslation())
