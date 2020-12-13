@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.base.module
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.KeyEvent
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.invocation.SwingInvocationHandler
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
 
@@ -18,6 +20,7 @@ object BaseModuleJvm : AbstractModule() {
 	override fun initialize() {
 		defineKeyCodes()
 
+		InvocationHandler.implementation = SwingInvocationHandler()
 		BaseModule.timeService = RealTimeServiceJvm()
 		BaseModule.require()
 

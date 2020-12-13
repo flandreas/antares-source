@@ -13,7 +13,6 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElement
@@ -122,7 +121,7 @@ class LibraryPreviewPanel(
 			return
 		}
 
-		InvocationHandler.invoke(Runnable {
+		InvocationHandler.invoke {
 			try {
 				val c = libraryElement.getNewInstance<GraphElement>()
 				map[libraryElement] = c
@@ -130,7 +129,7 @@ class LibraryPreviewPanel(
 			} catch (e: Throwable) {
 				handleLoadError(e)
 			}
-		})
+		}
 	}
 
 	private fun handleLoadError(e: Throwable) {

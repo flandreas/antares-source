@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.ApplicationMode
 import ch.scorpion.jabbah.graph.ApplicationModeEvent
@@ -44,14 +45,15 @@ class ToggleApplicationModeAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		GraphViewModule.applicationModeHolder.setMode(
-			if (GraphViewModule.applicationModeHolder.currentMode.isExecute())
-				ApplicationMode.EDIT
-			else
-				ApplicationMode.EXECUTE)
-
-		// A Graph design problem might have prohibited execution
-		updateState()
+		if (GraphViewModule.applicationModeHolder.currentMode.isExecute()) {
+			GraphViewModule.applicationModeHolder.setMode(ApplicationMode.EDIT)
+			updateState()
+		} else {
+			InvocationHandler.invoke {
+				GraphViewModule.applicationModeHolder.setMode(ApplicationMode.EXECUTE)
+				updateState()
+			}
+		}
 	}
 
 	private fun updateState() {

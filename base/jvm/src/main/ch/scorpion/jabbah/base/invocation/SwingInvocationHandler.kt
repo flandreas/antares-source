@@ -12,20 +12,6 @@ class SwingInvocationHandler : InvocationHandler() {
         private val LOG by logger(SwingInvocationHandler::class)
 	}
 
-    override fun invokeImpl(doRun: Runnable) {
-        BusyHandler.increment()
-        SwingUtilities.invokeLater {
-            try {
-                doRun.run()
-            } catch (e: Throwable) {
-                LOG.error("Error in invocation handler: ${e.message}")
-	            ErrorHandler.exception(e)
-            } finally {
-                BusyHandler.decrement()
-            }
-        }
-    }
-
 	override fun invokeImpl(runnable: () -> Unit) {
 		BusyHandler.increment()
 		SwingUtilities.invokeLater {

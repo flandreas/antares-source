@@ -76,13 +76,13 @@ open class ComponentTransferHandler(
                 super.drop(dtde)
                 val dropComponent = editor.view.dropComponent
                 val localTransferable = transferable
-                InvocationHandler.invoke(Runnable {
+                InvocationHandler.invoke {
                     if (dropComponent != null && canImport(dropComponent, localTransferable!!)) {
                         SwingUtilities.invokeLater { importElement(dropComponent, localTransferable, eventBus) }
                     }
                     editor.view.setDropComponent(null, null)
                     transferable = null
-                })
+                }
             }
 
             private fun setComponent(component: Component, location: Point2D) {
