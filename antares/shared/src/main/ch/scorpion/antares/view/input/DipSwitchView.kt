@@ -383,7 +383,13 @@ class DipSwitchView(
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			toggle(context.signalHandler, context.x, context.y)
+			context.mouseEvent?.consume()
 			return null
+		}
+
+		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+			context.mouseEvent?.consume()
+			return this
 		}
 
 		private fun toggle(signalHandler: SignalHandler, x: Double, y: Double) {
