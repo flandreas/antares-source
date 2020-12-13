@@ -1,6 +1,5 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.view.AntaresDataViewController
 import ch.scorpion.antares.view.AntaresFrameController
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
 import ch.scorpion.antares.view.Look
@@ -8,7 +7,6 @@ import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.invocation.ErrorHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
@@ -20,6 +18,7 @@ import ch.scorpion.jabbah.draw.view.ViewManager
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.ProjectSavable
+import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
@@ -49,7 +48,7 @@ class AntaresSwing(
 	private val viewManager: ViewManager = DrawViewModule.viewManager
 ) : AbstractDesktopApplicationSwing(
 	commandLine,
-	AntaresDataViewController()
+	GraphDataViewController()
 ), Antares {
 
 	companion object {
@@ -246,20 +245,20 @@ class AntaresSwing(
 			return
 		}
 
-		val antaresController = (controller as AntaresDataViewController)
+		val dataViewController = (controller as GraphDataViewController)
 		val projectName = BaseModule.settings.getString(PROP_APPLICATION_PROJECT, "")
 		if (StringUtils.isNotEmpty(projectName) && ProjectModule.projectManagementService.contains(UUID(projectName))) {
-			antaresController.openProject(UUID(projectName))
+			dataViewController.openProject(UUID(projectName))
 			return
 		}
 
 		if (!ProjectModule.projectManagementService.directoryExists) {
 			ProjectModule.projectManagementService
 				.createHelloProject(DEF_LIBRARY_UUID)
-				.also { antaresController.openProject(it.uuid) }
+				.also { dataViewController.openProject(it.uuid) }
 			return
 		}
 
-		antaresController.closeData()
+		dataViewController.closeData()
 	}
 }

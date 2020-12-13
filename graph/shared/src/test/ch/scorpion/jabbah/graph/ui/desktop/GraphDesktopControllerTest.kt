@@ -66,7 +66,7 @@ class GraphDesktopControllerTest {
 	@Test
 	fun shouldCloseSubGraphOnRequest() {
 		openSubGraph()
-		eventBus.post(GraphDesktopViewItemCloseRequest(controller.additionalDesktopItems.first()))
+		eventBus.post(GraphDesktopViewItemCloseRequest(controller.additionalDesktopItems.first(), false))
 		assertEquals(0, controller.additionalDesktopItems.size)
 	}
 

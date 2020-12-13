@@ -139,9 +139,13 @@ open class ApplicationDataViewController(
 	 */
 	fun closeData() {
 		if (canReplaceSavable("file.action.close.name")) {
-			LOG.debug("Close application data")
-			data = null
+			closeDataAfterConfirmation()
 		}
+	}
+
+	protected fun closeDataAfterConfirmation() {
+		LOG.debug("Close application data")
+		data = null
 	}
 
 	/**

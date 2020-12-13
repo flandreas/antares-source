@@ -1,4 +1,4 @@
-package ch.scorpion.antares.view
+package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.app.DefaultSavable
@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.*
 
-class AntaresDataViewController(
+class GraphDataViewController(
 	commandManager: CommandManager = EditModule.commandManager,
 	eventBus: EventBus = BaseModule.eventBus
 ) : ApplicationDataViewController(
@@ -33,6 +33,8 @@ class AntaresDataViewController(
 	private val openLibraryRequestHandler: EventHandler<OpenLibraryRequest> = { handle(it) }
 	private val currentLibraryEventHandler: EventHandler<CurrentLibraryEvent> = { closeData() }
 	private val libraryItemRemovedHandler: EventHandler<LibraryItemRemovedEvent> = { handle(it) }
+	private val closeQuestionHandler: EventHandler<GraphDesktopViewItemCloseQuestion> = { handle(it) }
+	private val closeRequestHandler: EventHandler<GraphDesktopViewItemCloseRequest> = { handle(it) }
 
 	init {
 		eventBus.register(OpenProjectRequest::class, openProjectRequestHandler)
@@ -41,6 +43,8 @@ class AntaresDataViewController(
 		eventBus.register(OpenLibraryRequest::class, openLibraryRequestHandler)
 		eventBus.register(CurrentLibraryEvent::class, currentLibraryEventHandler)
 		eventBus.register(LibraryItemRemovedEvent::class, libraryItemRemovedHandler)
+		eventBus.register(GraphDesktopViewItemCloseQuestion::class, closeQuestionHandler)
+		eventBus.register(GraphDesktopViewItemCloseRequest::class, closeRequestHandler)
 	}
 
 	override fun dispose() {
@@ -51,6 +55,8 @@ class AntaresDataViewController(
 		eventBus.unregister(openLibraryRequestHandler)
 		eventBus.unregister(currentLibraryEventHandler)
 		eventBus.unregister(libraryItemRemovedHandler)
+		eventBus.unregister(closeQuestionHandler)
+		eventBus.unregister(closeRequestHandler)
 	}
 
 	/** Implements [ApplicationDataViewController.open] by interpreting the [Savable]'s identification as a [Project] [UUID].*/
@@ -86,6 +92,18 @@ class AntaresDataViewController(
 	private fun handle(event: LibraryItemRemovedEvent) {
 		if (event.item is ContainerLibraryElement && event.item == (data!!.savable as AbstractLibrarySavable).element) {
 			System.invokeLater { closeData() }
+		}
+	}
+
+	private fun handle(event: GraphDesktopViewItemCloseQuestion) {
+		if (event.isRoot && !canReplaceSavable("base.action.close.name")) {
+			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
+		}
+	}
+
+	private fun handle(event: GraphDesktopViewItemCloseRequest) {
+		if (event.isRoot) {
+			closeDataAfterConfirmation()
 		}
 	}
 }

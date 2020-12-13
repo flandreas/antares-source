@@ -1,12 +1,13 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.base.ui.AbstractUIController
-import ch.scorpion.jabbah.base.ui.UIView
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.ui.AbstractUIController
+import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
@@ -62,7 +63,26 @@ interface GraphDesktopViewItem {
 	fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>?
 }
 
-data class GraphDesktopViewItemCloseRequest(val item: GraphDesktopViewItem)
+/**
+ * A question request to be used in [EventBus.postTwoPhase] for checking if a [GraphDesktopViewItem]
+ * can safely be closed.
+ */
+data class GraphDesktopViewItemCloseQuestion(
+	val item: GraphDesktopViewItem,
+	val isRoot: Boolean
+)
+
+/**
+ * A request to close a [GraphDesktopViewItem] posted on an [EventBus].
+ * Should always be proceeded by [GraphDesktopViewItemCloseQuestion]
+ *
+ * @param item the [GraphDesktopViewItem] the user has requested to close
+ * @param isRoot `true` if [item] displays data associated with the main [Savable], which the user might have changed
+ */
+data class GraphDesktopViewItemCloseRequest(
+	val item: GraphDesktopViewItem,
+	val isRoot: Boolean
+)
 
 /**
  * Controls a [GraphDesktopView] and manages additional [GraphDesktopViewItem] displayed when

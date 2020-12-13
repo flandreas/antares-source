@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.view.CanvasJvm
@@ -92,7 +93,7 @@ class GraphDesktopItemHeaderPanel(
 		}
 
 		override fun execute(event: ActionEvent) {
-			eventBus.post(GraphDesktopViewItemCloseRequest(graphDesktopViewItem))
+			eventBus.post(CloseViewRequest(graphDesktopViewItem.drawingView!!))
 		}
 	}
 }
