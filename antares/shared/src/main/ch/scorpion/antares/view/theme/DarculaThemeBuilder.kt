@@ -92,6 +92,7 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 			background = BACKGROUND_STYLE,
 			figure = FIGURE_STYLE,
 			tooltip = TOOLTIP_STYLE,
+			highlight = HIGHLIGHT_STYLE,
 			vertice = VERTICE_STYLE,
 			edge = EDGE_STYLE,
 			annotation = ANNOTATION_STYLE,
