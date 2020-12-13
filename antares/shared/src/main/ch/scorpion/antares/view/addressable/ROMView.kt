@@ -37,6 +37,7 @@ import kotlin.math.max
 
 /**
  * A view of a [ROM].
+ * TODO Extract code common with [RAMView] to common base class.
  */
 class ROMView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -265,9 +266,7 @@ class ROMView(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		label.text = if (text == null) buildLabelText() else text!!
-		if (ExecutionModule.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe) {
-			contentsView.handleCurrentAddressChanged()
-		}
+		contentsView.handleCurrentAddressChanged()
 		super.handleStateChanged(event)
 	}
 
@@ -312,6 +311,7 @@ class ROMView(
 	private fun requireDrawContents(context: DrawContext): Boolean {
 		return showContents && (
 			!context.castedAppContext<GraphApplicationContext>()!!.isExecute
+				|| context.castedAppContext<GraphApplicationContext>()!!.isPausing
 				|| ExecutionModule.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe)
 	}
 
