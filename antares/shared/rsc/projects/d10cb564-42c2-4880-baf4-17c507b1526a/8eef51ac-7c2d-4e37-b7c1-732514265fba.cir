@@ -331,27 +331,27 @@ FF([A-F0-9]{2})=HALT'/>
                 <polylineShape points='1022.0,630.0 1022.0,469.0'/>
               </shape>
             </digitalEdgeView>
-            <graphElement _id='36' modelId='-1' id='0'>
+            <graphElement _id='36' modelId='-1' id='76'>
               <component>
-                <text id='0' style='explanation' color='white' filled='false' stroked='false' x='644.0' y='609.0' w='91.0' h='43.0' hAlign='left'>
+                <text id='76' style='explanation' filled='false' stroked='false' x='644.0' y='609.0' w='91.0' h='43.0' hAlign='left'>
                   <text>
                     <translation lang='de' text='Datenbus'/>
                   </text>
                 </text>
               </component>
             </graphElement>
-            <graphElement _id='35' modelId='-1' id='0'>
+            <graphElement _id='35' modelId='-1' id='77'>
               <component>
-                <text id='0' style='explanation' color='white' filled='false' stroked='false' x='651.0' y='28.0' w='84.0' h='35.0' hAlign='left'>
+                <text id='77' style='explanation' filled='false' stroked='false' x='644.0' y='28.0' w='84.0' h='35.0' hAlign='left'>
                   <text>
                     <translation lang='de' text='Adressbus'/>
                   </text>
                 </text>
               </component>
             </graphElement>
-            <graphElement _id='34' modelId='-1' id='0'>
+            <graphElement _id='34' modelId='-1' id='78'>
               <component>
-                <text id='0' style='explanation' color='white' filled='false' stroked='false' x='644.0' y='567.0' w='77.0' h='43.0' hAlign='left'>
+                <text id='78' style='explanation' filled='false' stroked='false' x='630.0' y='567.0' w='105.0' h='43.0' hAlign='left'>
                   <text>
                     <translation lang='de' text='Kontrollbus'/>
                   </text>
