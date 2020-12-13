@@ -101,7 +101,7 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 			messageInfo = MESSAGE_INFO_STYLE,
 			subsystem = SUBSYSTEM_STYLE,
 			selection = SELECTION_STYLE,
-			zero = ZERO_COLOR,
+			zero = DARK_ZERO_COLOR,
 			one = ONE_COLOR,
 			undefined = UNDEFINED_COLOR,
 			wordZero = WORD_ZERO_COLOR,

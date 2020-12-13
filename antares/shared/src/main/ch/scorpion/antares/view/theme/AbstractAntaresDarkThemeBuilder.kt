@@ -52,5 +52,7 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 			font = FONT)
 
 		val OVERLAY_COLOR = Color(32, 32, 32, 192)
+
+		val DARK_ZERO_COLOR = ZERO_COLOR.withBackground(ZERO_COLOR.foregroundColor.darker())
 	}
 }
