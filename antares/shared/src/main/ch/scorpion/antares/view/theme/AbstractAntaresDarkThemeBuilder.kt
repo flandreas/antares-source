@@ -15,18 +15,19 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 	companion object {
 
 		val REFERENCE_COLORS = listOf(
-			ReferenceColor(RED_ON_DARK),
 			ReferenceColor(BLUE_ON_DARK),
-			ReferenceColor(GREEN_ON_DARK),
 			ReferenceColor(YELLOW_ON_DARK),
-			ReferenceColor(VIOLET_ON_DARK),
-			ReferenceColor(PINK_ON_DARK),
+			ReferenceColor(RED_ON_DARK),
+			ReferenceColor(GREEN_ON_DARK),
 			// Blue-Green
 			ReferenceColor(CompositeColor(Color(90, 196, 194), Color(13, 110, 110))),
 			// Yellow-Orange
 			ReferenceColor(CompositeColor(Color(247, 164, 49), Color(152, 103, 22))),
+			ReferenceColor(PINK_ON_DARK),
+			ReferenceColor(VIOLET_ON_DARK),
 			// Black
-			ReferenceColor(CompositeColor(Color(234, 234, 234), Color(32, 32, 32))))
+			ReferenceColor(CompositeColor(Color(234, 234, 234), Color(32, 32, 32)))
+		)
 
 		val PREDEFINED_COLORS = listOf(
 			PredefinedColor(PredefinedColorIdentity.White, DrawGraphicsModule.WHITE),
