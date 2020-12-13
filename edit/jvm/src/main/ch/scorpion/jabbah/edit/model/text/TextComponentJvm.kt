@@ -27,6 +27,7 @@ import java.awt.Component
 import java.awt.Container
 import java.awt.Graphics
 import javax.swing.JTextPane
+import javax.swing.UIManager
 import javax.swing.border.LineBorder
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -327,7 +328,7 @@ open class TextComponentJvm(
 		StyleConstants.setFontSize(attr, (awtFont.size * zoomFactor).toInt())
 		StyleConstants.setBold(attr, awtFont.isBold)
 		StyleConstants.setItalic(attr, awtFont.isItalic)
-		StyleConstants.setForeground(attr, java.awt.Color.BLACK)
+		StyleConstants.setForeground(attr, Graphics2DJvm.toAwtColor(color.textColor))
 		StyleConstants.setAlignment(attr, horizontalAlignmentSwing)
 
 		TEXT_EDITOR.text = ""
