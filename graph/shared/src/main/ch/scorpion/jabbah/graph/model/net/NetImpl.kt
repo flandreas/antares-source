@@ -128,7 +128,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		super.actingDone(signalHandler, data)
 		_signal = (data as GraphActorData).getSignal(1)
 		signalBuffer = _signal
-		stateChanged()
+		stateChanged(signalHandler)
 		ports
 			.filter { it.portType.isInput && it != data.changedPort }
 			.map { it as InputPort }

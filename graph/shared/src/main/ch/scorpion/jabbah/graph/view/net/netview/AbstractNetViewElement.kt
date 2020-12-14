@@ -41,11 +41,11 @@ abstract class AbstractNetViewElement<T: Any>(
         }
 
     override fun handleStateChanged(event: GraphElementEvent) {
-        if (showNetState()) {
+        if (showNetState(event.signalHandler?.isPaused == true)) {
             super.handleStateChanged(event)
         }
     }
 
-    protected fun showNetState(): Boolean =
-	    currentSystemSpeedCategory.systemSpeedCategory > SystemSpeedCategory.Use
+    protected fun showNetState(isPaused: Boolean): Boolean =
+	    isPaused || currentSystemSpeedCategory.systemSpeedCategory > SystemSpeedCategory.Use
 }

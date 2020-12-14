@@ -18,7 +18,7 @@ interface Scheduler : SignalHandler {
 
     var isActive: Boolean
 
-    var isPaused: Boolean
+    override var isPaused: Boolean
 
 	val isInBreakpoint: Boolean
 

@@ -35,8 +35,9 @@ class DigitalNodeView(
 	override fun draw(context: DrawContext) {
 		val oldColor = context.g.color
 		val oldCompositeColor = context.color
+		val graphAppContext = context.castedAppContext<GraphApplicationContext>()!!
 
-		context.color = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && showNetState()) {
+		context.color = if (graphAppContext.isExecute && showNetState(graphAppContext.isPausing)) {
 			if (model.isError) {
 				Themes.get<AntaresTheme>().error
 			} else {

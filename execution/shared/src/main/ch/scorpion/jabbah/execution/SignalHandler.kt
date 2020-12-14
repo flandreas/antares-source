@@ -17,6 +17,11 @@ interface SignalHandler {
      */
     var isDeepExecution: Boolean
 
+	/**
+	 * Determines whether the current execution environment is in single-step mode.
+	 */
+	val isPaused: Boolean
+
     /** Returns the relative execution time, i.e. the relative time in nanoseconds since execution has been started.*/
     val executionTime: Long
 
