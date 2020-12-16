@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
@@ -15,7 +14,6 @@ import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.view.ViewManager
-import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanel
@@ -140,6 +138,8 @@ class GraphPanelViewSwing(
 		leftSidebarPane.dispose()
 		issuesPanel.dispose()
 		logPanel.dispose()
+		propertyPanel.dispose()
+
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
 	}
 

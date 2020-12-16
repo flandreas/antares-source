@@ -2,12 +2,12 @@ package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.UiUtil
-import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Editor
 import com.l2fprod.common.propertysheet.PropertySheetPanel
 import java.awt.BorderLayout
 import java.awt.Color
@@ -49,18 +49,12 @@ abstract class AbstractPropertyPanel(
 		}
 	}
 
+	private val activeEditorListener = setupActiveEditorListener()
+
+	private val drawingListener = setupDrawingListener()
+
 	init {
-		editor.addPropertyChangeListener(object : PropertyChangeListener<Any> {
-			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-				if (e.name == Editor.PROP_ACTIVE) {
-					if (editor.active) {
-						setupDefaultProperties()
-					} else {
-						clearProperties()
-					}
-				}
-			}
-		})
+
 		sheet.addPropertySheetChangeListener(propertyStorer)
 
 		getTable().setShowGrid(true)
@@ -84,6 +78,27 @@ abstract class AbstractPropertyPanel(
 		layout = BorderLayout()
 		add(title, BorderLayout.NORTH)
 		add(sheet, BorderLayout.CENTER)
+	}
+
+	open fun dispose() {
+		editor.removePropertyChangeListener(activeEditorListener)
+		editor.removePropertyChangeListener(drawingListener)
+	}
+
+	private fun setupActiveEditorListener(): PropertyChangeListener<Any> = editor.addPropertyChangeListener { event ->
+		if (event.name == Editor.PROP_ACTIVE) {
+			if (editor.active) {
+				setupDefaultProperties()
+			} else {
+				clearProperties()
+			}
+		}
+	}
+
+	private fun setupDrawingListener(): PropertyChangeListener<Any> = editor.view.addPropertyChangeListener { event ->
+		if (event.name == DrawingView.PROP_DRAWING) {
+			setupDefaultProperties()
+		}
 	}
 
 	/** ---- [AbstractPropertyPanel] */

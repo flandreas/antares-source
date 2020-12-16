@@ -78,7 +78,9 @@ interface Editor {
 
     fun addPropertyChangeListener(l: PropertyChangeListener<Any>)
 
-    fun removePropertyChangeListener(l: PropertyChangeListener<Any>)
+	fun addPropertyChangeListener(l: (PropertyChangeEvent<Any>) -> Unit): PropertyChangeListener<Any>
+
+	fun removePropertyChangeListener(l: PropertyChangeListener<Any>)
 
     /**
      * This method should be called by the current [Tool] when it has finished its activity, for that this

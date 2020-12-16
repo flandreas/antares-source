@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.SelectionChangeEvent
@@ -12,12 +13,19 @@ import javax.swing.JPanel
 class ComponentPropertyPanel(
 	editor: Editor,
 	sheetFactory: PropertySheetPanelFactory,
-	eventBus: EventBus
+	private val eventBus: EventBus
 ) : AbstractPropertyPanel(editor, sheetFactory) {
 
+	private val selectionChangeHandler: EventHandler<SelectionChangeEvent> = { handle(it) }
+
     init {
-        eventBus.register(SelectionChangeEvent::class) { handle(it) }
+        eventBus.register(SelectionChangeEvent::class, selectionChangeHandler)
     }
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(selectionChangeHandler)
+	}
 
     /** ---- [AbstractPropertyPanel] */
 
