@@ -36,6 +36,7 @@ import ch.scorpion.jabbah.edit.Grid
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.*
 import ch.scorpion.jabbah.edit.snap.ComponentSnapper
@@ -336,8 +337,8 @@ object AntaresViewModule : AbstractModule() {
 			CircuitInOutView(model = CircuitInOutImpl(portType = PortType.OUTPUT))
 		}
 
-		repository.register(LED, "library.element.RgbLED", "/img/rgb-led.png", RgbLEDView::class)
-		repository.register(RGB_LED, "library.element.LED", "/img/led.png", LEDView::class)
+		repository.register(LED, "library.element.LED", "/img/led.png", LEDView::class)
+		repository.register(RGB_LED, "library.element.RgbLED", "/img/rgb-led.png", RgbLEDView::class)
 		repository.register(SEVEN_SEGMENT_DISPLAY, "library.element.SevenSegmentDisplay", "/img/7segment.png", SevenSegmentDisplayView::class)
 		repository.register(LED_MATRIX, "library.element.LEDMatrix", "/img/led-matrix.png", LEDMatrixView::class)
 
@@ -348,6 +349,16 @@ object AntaresViewModule : AbstractModule() {
 	}
 
 	fun fillBaseElementLibrary(library: Library) {
+		val fu = LibraryFolder(Translations.getString("library.folder.frequentlyUsed"))
+		addLibraryItem(library, BaseLibraryElement(SWITCH), fu)
+		addLibraryItem(library, BaseLibraryElement(LED), fu)
+		addLibraryItem(library, BaseLibraryElement(INPUT), fu)
+		addLibraryItem(library, BaseLibraryElement(OUTPUT), fu)
+		addLibraryItem(library, BaseLibraryElement(AND), fu)
+		addLibraryItem(library, BaseLibraryElement(OR), fu)
+		addLibraryItem(library, BaseLibraryElement(NOT), fu)
+		addLibraryItem(library, fu, library)
+
 		val net = LibraryFolder(Translations.getString("library.folder.net"))
 		addLibraryItem(library, BaseLibraryElement(CONSTANT), net)
 		addLibraryItem(library, BaseLibraryElement(SPLITTER), net)

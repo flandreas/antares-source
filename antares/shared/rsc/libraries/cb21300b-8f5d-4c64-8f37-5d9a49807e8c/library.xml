@@ -10,6 +10,21 @@
         <translation lang='de' text='Basis'/>
       </name>
       <items>
+          <libraryFolder _id='38'>
+            <name>
+                <translation lang='en' text='Frequently used'/>
+                <translation lang='de' text='Häufig verwendet'/>
+            </name>
+            <items>
+                <baseLibraryElement _id='39' id='Switch'/>
+                <baseLibraryElement _id='40' id='LED'/>
+                <baseLibraryElement _id='41' id='Input'/>
+                <baseLibraryElement _id='42' id='Output'/>
+                <baseLibraryElement _id='43' id='AND'/>
+                <baseLibraryElement _id='44' id='OR'/>
+                <baseLibraryElement _id='45' id='NOT'/>
+            </items>
+          </libraryFolder>
         <libraryFolder _id='2'>
           <name>
             <translation lang='en' text='Net'/>
