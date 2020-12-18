@@ -5,7 +5,6 @@ import ch.scorpion.antares.view.AntaresFrameController
 import ch.scorpion.antares.view.addressable.AddressableContentGraphDesktopItem
 import ch.scorpion.antares.view.addressable.AddressableContentsPanel
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
-import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -25,7 +24,7 @@ class AntaresFrameSwing(
 
 	override fun createMemoryContentsDesktopViewItem(request: OpenMemoryContentsRequest, contextColor: CompositeColor): GraphDesktopViewItem {
 		return AddressableContentGraphDesktopItem(
-			controller = controller as ApplicationDataViewController,
+			controller = application.controller,
 			addressable = request.addressable,
 			title = request.name,
 			cmdManager = controller.graphPanelViewController.editor.commandManager,
@@ -36,7 +35,7 @@ class AntaresFrameSwing(
 	override fun showMemoryContents(request: OpenMemoryContentsRequest) {
 		AddressableContentsPanel.showAsDialog(
 			parent = Frame.getFrames()[0],
-			controller = controller as ApplicationDataViewController,
+			controller = application.controller,
 			name = request.name,
 			addressable = request.addressable,
 			cmdManager = controller.graphPanelViewController.editor.commandManager,

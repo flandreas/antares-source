@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.edit.CommandManager
@@ -100,16 +101,12 @@ class AddressableContentsPanel(
 			cmdManager: CommandManager,
 			readonly: Boolean
 		) {
-			val dialog = JDialog(parent, true)
-			val contentsPanel = AddressableContentsPanel(controller, addressable, cmdManager, readonly) {
-				dialog.isVisible = false
-				it.dispose()
-			}
-			dialog.title = Translations.getString("antares.action.memory.contents.title", name)
-			dialog.contentPane.add(contentsPanel)
-			dialog.pack()
-			dialog.setLocationRelativeTo(parent)
-			dialog.isVisible = true
+			DialogBuilder<AddressableContentsPanel>(parent)
+				.content { dialog -> AddressableContentsPanel(controller, addressable, cmdManager, readonly) { dialog.dispose()} }
+				.title(Translations.getString("antares.action.memory.contents.title", name))
+				.defaultButton { it.closeButton }
+				.resizable()
+				.show()
 		}
 	}
 
@@ -121,6 +118,8 @@ class AddressableContentsPanel(
 			repaint()
 		}
 	}
+
+	var closeButton: JButton? = null
 
 	init {
 		addressable.addGraphElementListener(addressableListener)
@@ -157,8 +156,9 @@ class AddressableContentsPanel(
 			buttonPanel.add(JButton(ClearAction()))
 		}
 		if (closeHandler != null) {
+			closeButton = JButton(CloseAction())
 			buttonPanel.add(Box.createHorizontalGlue())
-			buttonPanel.add(JButton(CloseAction()))
+			buttonPanel.add(closeButton)
 		}
 
 		add(buttonPanel, BorderLayout.SOUTH)

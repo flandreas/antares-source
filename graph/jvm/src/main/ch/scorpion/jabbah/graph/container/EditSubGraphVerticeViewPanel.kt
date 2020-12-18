@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.invocation.BusyHandler
+import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.draw.view.*
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.app.*
@@ -15,8 +15,6 @@ import ch.scorpion.jabbah.io.StorableCloner
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
 import javax.swing.*
 
 
@@ -47,33 +45,24 @@ class EditSubGraphVerticeViewPanel(
 			subGraphVerticeView: SubGraphVerticeView<*>,
 			commandManager: CommandManager
 		): Boolean {
-			val dialog = JDialog(parent, true)
 			var okPressed = false
-			BusyHandler.register(dialog, null)
-
 			actions.clear()
-			dialog.title = Translations.getString("graph.action.editSubGraphVerticeView.name")
-			dialog.rootPane.jMenuBar = createMenuBar()
-			dialog.contentPane.add(EditSubGraphVerticeViewPanel(
-				metaGraphRepository,
-				containerPanel,
-				subGraphVerticeView
-			) {
-				okPressed = it
-				dialog.isVisible = false
-				dialog.dispose()
-			})
-			dialog.pack()
-			dialog.setLocationRelativeTo(parent)
-			dialog.addWindowListener(object : WindowAdapter() {
-				override fun windowClosed(e: WindowEvent?) {
-					BusyHandler.deregister(dialog)
+
+			var dialog = DialogBuilder<EditSubGraphVerticeViewPanel>(parent)
+				.content { dialog ->
+					EditSubGraphVerticeViewPanel(metaGraphRepository, containerPanel, subGraphVerticeView) {
+						okPressed = true
+						dialog.dispose()
+					}
 				}
-			})
+				.title(Translations.getString("graph.action.editSubGraphVerticeView.name"))
+				.defaultButton { it.cancelButton }
+				.menu(createMenuBar())
+				.resizable()
 
 			try {
 				commandManager.openCheckpoint("subgraphContainerView")
-				dialog.isVisible = true
+				dialog.show()
 			} finally {
 				commandManager.closeCheckpoint()
 				actions.forEach { it.dispose() }
@@ -128,6 +117,8 @@ class EditSubGraphVerticeViewPanel(
 		}
 	}
 
+	val cancelButton = JButton(ActionWrapperSwing(CancelAction()))
+
 	init {
 		buildUI()
 	}
@@ -163,8 +154,9 @@ class EditSubGraphVerticeViewPanel(
 		val panel = JPanel()
 		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
 		panel.add(Box.createHorizontalGlue())
-		panel.add(JButton(ActionWrapperSwing(CancelAction())))
 		panel.add(JButton(ActionWrapperSwing(OKAction())))
+		panel.add(Box.createHorizontalStrut(2))
+		panel.add(cancelButton)
 		panel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 		return panel
 	}

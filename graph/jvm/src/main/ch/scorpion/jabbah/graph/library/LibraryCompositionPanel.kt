@@ -7,8 +7,8 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -16,8 +16,6 @@ import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
 import javax.swing.*
 import javax.swing.event.TreeSelectionListener
 
@@ -52,27 +50,14 @@ class LibraryCompositionPanel(
 
 	companion object {
 		fun showAsDialog(library: Library, parent: Frame, application: Application, eventBus: EventBus) {
-			val dialog = JDialog(parent, true)
-			BusyHandler.register(dialog, null)
-			val panel = LibraryCompositionPanel(
-				destinationLibrary = library,
-				closeHandler = {
-					dialog.isVisible = false
+			DialogBuilder<LibraryCompositionPanel>(parent)
+				.title(Translations.getString("library.composition.title"))
+				.content { dialog -> LibraryCompositionPanel(destinationLibrary = library, application = application, eventBus = eventBus) {
 					dialog.dispose()
-				},
-				application = application,
-				eventBus = eventBus)
-			dialog.title = Translations.getString("library.composition.title")
-			dialog.contentPane.add(panel)
-			dialog.pack()
-			dialog.setLocationRelativeTo(parent)
-			dialog.addWindowListener(object : WindowAdapter() {
-				override fun windowClosed(e: WindowEvent?) {
-					panel.dispose()
-					BusyHandler.deregister(dialog)
-				}
-			})
-			dialog.isVisible = true
+				} }
+				.defaultButton { it.closeButton }
+				.resizable()
+				.show()
 		}
 	}
 
@@ -99,6 +84,8 @@ class LibraryCompositionPanel(
 	private val librarySelectionListener = TreeSelectionListener {
 		copyAction.enabled = isSourceElementSelected && isDestinationFolderSelected
 	}
+
+	val closeButton = JButton(ActionWrapperSwing(CancelAction()))
 
 	init {
 		fillSourceLibraries()
@@ -151,7 +138,7 @@ class LibraryCompositionPanel(
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 		buttonPanel.add(Box.createHorizontalGlue())
-		buttonPanel.add(JButton(ActionWrapperSwing(CancelAction())))
+		buttonPanel.add(closeButton)
 		add(buttonPanel, BorderLayout.SOUTH)
 	}
 

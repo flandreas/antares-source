@@ -4,8 +4,8 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.UserHolder
@@ -17,8 +17,6 @@ import java.awt.Dimension
 import java.awt.Font
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
 import javax.swing.*
 
 /** An [Action] that opens a dialog containing [LibraryPersistencePanel].*/
@@ -46,22 +44,12 @@ class LibraryPersistencePanel(
 		private val LOG by logger(LibraryPersistencePanel::class)
 
 		fun showAsDialog(parent: JFrame) {
-			val dialog = JDialog(parent, true)
-			BusyHandler.register(dialog, null)
-			dialog.title = Translations.getString("library.dialog.title")
-			dialog.contentPane.add(LibraryPersistencePanel(closeHandler = {
-				dialog.isVisible = false
-				dialog.dispose()
-			}))
-			dialog.isResizable = false
-			dialog.pack()
-			dialog.setLocationRelativeTo(parent)
-			dialog.addWindowListener(object : WindowAdapter() {
-				override fun windowClosed(e: WindowEvent?) {
-					BusyHandler.deregister(dialog)
-				}
-			})
-			dialog.isVisible = true
+			DialogBuilder<LibraryPersistencePanel>(parent)
+				.content { dialog -> LibraryPersistencePanel(closeHandler = { dialog.dispose() }) }
+				.title(Translations.getString("library.dialog.title"))
+				.defaultButton { it.openButton }
+				.nonResizable()
+				.show()
 		}
 	}
 
@@ -70,6 +58,7 @@ class LibraryPersistencePanel(
 	private val currentLibraryFont = libraryDictionaryEntries.font.deriveFont(Font.BOLD)
 	private val openAction = OpenAction()
 	private val deleteAction = DeleteAction()
+	val openButton = createButton(openAction)
 
 	private val selectedLibrary: LibraryDictionaryEntry? get() = libraryDictionaryEntries.selectedValue
 
@@ -109,18 +98,22 @@ class LibraryPersistencePanel(
 
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
-		buttonPanel.add(JButton(ActionWrapperSwing(openAction)))
+		buttonPanel.add(openButton)
 		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(JButton(ActionWrapperSwing(NewAction())))
+		buttonPanel.add(createButton(NewAction()))
 		buttonPanel.add(Box.createHorizontalStrut(2))
-		buttonPanel.add(JButton(ActionWrapperSwing(deleteAction)))
+		buttonPanel.add(createButton(deleteAction))
 		buttonPanel.add(Box.createHorizontalStrut(9))
 
 		buttonPanel.add(Box.createHorizontalGlue())
-		buttonPanel.add(JButton(ActionWrapperSwing(CancelAction())))
+		buttonPanel.add(createButton(CancelAction()))
 		add(buttonPanel, BorderLayout.SOUTH)
 
 		libraryDictionaryEntries.cellRenderer = LibraryListRenderer()
+	}
+
+	private fun createButton(action: Action): JButton {
+		return JButton(ActionWrapperSwing(action))
 	}
 
 	private fun isReadonly(entry: LibraryDictionaryEntry): Boolean {

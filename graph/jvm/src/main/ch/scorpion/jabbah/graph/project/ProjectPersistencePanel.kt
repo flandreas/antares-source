@@ -4,8 +4,8 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.invocation.BusyHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
@@ -17,8 +17,6 @@ import org.apache.commons.io.FilenameUtils
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
 import java.io.File
 import javax.swing.*
 import javax.swing.filechooser.FileFilter
@@ -51,22 +49,12 @@ class ProjectPersistencePanel(
 		private const val EXPORT_FILE_EXTENSION = "zip"
 
 		fun showAsDialog(parent: JFrame) {
-			val dialog = JDialog(parent, true)
-			BusyHandler.register(dialog, null)
-			dialog.title = Translations.getString("project.dialog.title")
-			dialog.contentPane.add(ProjectPersistencePanel(closeHandler = {
-				dialog.isVisible = false
-				dialog.dispose()
-			}))
-			dialog.isResizable = false
-			dialog.pack()
-			dialog.setLocationRelativeTo(parent)
-			dialog.addWindowListener(object : WindowAdapter() {
-				override fun windowClosed(e: WindowEvent?) {
-					BusyHandler.deregister(dialog)
-				}
-			})
-			dialog.isVisible = true
+			DialogBuilder<ProjectPersistencePanel>(parent)
+				.content { dialog -> ProjectPersistencePanel(closeHandler = { dialog.dispose() }) }
+				.title(Translations.getString("project.dialog.title"))
+				.defaultButton { it.openButton }
+				.nonResizable()
+				.show()
 		}
 	}
 
@@ -78,6 +66,7 @@ class ProjectPersistencePanel(
 	private val deleteAction = DeleteAction()
 	private val exportAction = ExportAction()
 	private val importAction = ImportAction()
+	val openButton = createButton(openAction)
 
 	init {
 		projectsList.addListSelectionListener {
@@ -96,7 +85,7 @@ class ProjectPersistencePanel(
 	}
 
 	private fun updateActions() {
-		openAction.enabled = selectedProject?.uuid != projectHolder.p?.uuid
+		openAction.enabled = selectedProject != null && selectedProject?.uuid != projectHolder.p?.uuid
 		deleteAction.enabled = !projectsList.isSelectionEmpty
 		exportAction.enabled = !projectsList.isSelectionEmpty
 		importAction.enabled = true
@@ -127,7 +116,7 @@ class ProjectPersistencePanel(
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 
-		buttonPanel.add(createButton(openAction))
+		buttonPanel.add(openButton)
 		buttonPanel.add(Box.createHorizontalStrut(2))
 		buttonPanel.add(createButton(NewAction()))
 		buttonPanel.add(Box.createHorizontalStrut(2))

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.swing.DialogBuilder
 import java.awt.Component
 import java.awt.Frame
 import javax.swing.*
@@ -19,19 +20,16 @@ class AboutPanel(
 		private const val INSET = 50
 
 		fun showAsDialog(application: Application) {
-			val parent = Frame.getFrames()[0]
-			val dialog = JDialog(parent, true)
-			val info = application.aboutInfo
-			val panel = AboutPanel(info) { dialog.isVisible = false }
-
-			dialog.title = "${Translations.getString("application.action.about.name")} ${info.name}"
-			dialog.contentPane.add(panel)
-			dialog.isResizable = false
-			dialog.pack()
-			dialog.setLocationRelativeTo(parent)
-			dialog.isVisible = true
+			DialogBuilder<AboutPanel>(Frame.getFrames()[0])
+				.content { dialog -> AboutPanel(application.aboutInfo) { dialog.dispose() } }
+				.defaultButton { it.closeButton }
+				.title("${Translations.getString("application.action.about.name")} ${application.aboutInfo.name}")
+				.nonResizable()
+				.show()
 		}
 	}
+
+	val closeButton = JButton(ActionWrapperSwing(CloseAction()))
 
 	init {
 		buildUI(info)
@@ -39,22 +37,19 @@ class AboutPanel(
 
 	private fun buildUI(info: AboutInfo) {
 		layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
-		border = BorderFactory.createEmptyBorder(INSET, INSET, INSET, INSET)
+		border = BorderFactory.createEmptyBorder(INSET, INSET, 20, INSET)
 
 		if (info.iconPath != null) {
 			addIcon(info.iconPath)
 		}
 
 		addText(info)
-
-		add(Box.createVerticalStrut(30))
+		add(Box.createVerticalStrut(50))
 		addCloseButton()
 	}
 
 	private fun addIcon(iconPath: String) {
-		val label = JLabel(ImageIcon(AboutPanel::class.java.getResource(iconPath)))
-		label.alignmentX = Component.CENTER_ALIGNMENT
-		add(label)
+		add(JLabel(ImageIcon(AboutPanel::class.java.getResource(iconPath))))
 	}
 
 	private fun addText(info: AboutInfo) {
@@ -88,7 +83,7 @@ class AboutPanel(
 	}
 
 	private fun addCloseButton() {
-		add(JButton(ActionWrapperSwing(CloseAction())))
+		add(closeButton)
 	}
 
 	private inner class CloseAction : AbstractAction("file.action.close") {

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.DialogBuilder
 import java.awt.*
 import javax.swing.*
 import javax.swing.tree.DefaultMutableTreeNode
@@ -195,13 +196,13 @@ class PreferencesDialogPanel(
 			parent: Frame = Frame.getFrames()[0],
 			treePanel: PreferencesTreePanel = PreferencesTreePanel()
 		) {
-			val dialog = JDialog(parent, true)
-			dialog.title = Translations.getString("base.preferences.title.name")
-			dialog.contentPane.add(PreferencesDialogPanel(treePanel) { dialog.dispose() })
-			dialog.preferredSize = Dimension(800, 600)
-			dialog.pack()
-			dialog.setLocationRelativeTo(parent)
-			dialog.isVisible = true
+			DialogBuilder<PreferencesDialogPanel>(parent)
+				.content { dialog -> PreferencesDialogPanel(treePanel) { dialog.dispose() } }
+				.defaultButton { it.applyButton }
+				.title(Translations.getString("base.preferences.title.name"))
+				.preferredSize(Dimension(800, 600))
+				.resizable()
+				.show()
 		}
 	}
 
@@ -217,6 +218,8 @@ class PreferencesDialogPanel(
 			treePanel.applyChanges()
 		}
 	}
+
+	val applyButton = JButton(ActionWrapperSwing(applyAction))
 
 	init {
 		applyAction.enabled = false
@@ -236,7 +239,7 @@ class PreferencesDialogPanel(
 
 	private fun buildButtonPanel(): JPanel {
 		val panel = JPanel(FlowLayout(FlowLayout.RIGHT))
-		panel.add(JButton(ActionWrapperSwing(applyAction)))
+		panel.add(applyButton)
 		panel.add(JButton(ActionWrapperSwing(closeAction)))
 		return panel
 	}
