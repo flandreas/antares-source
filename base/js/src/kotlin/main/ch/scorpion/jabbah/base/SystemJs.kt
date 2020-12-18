@@ -91,6 +91,10 @@ actual object System {
 
 	actual fun currentLanguage(): Language = Language.English
 
+	actual fun browse(url: String, actionName: String) {
+		throw NotImplementedError("System.browse() not implemented")
+	}
+
 	actual fun printStackTrace() {
 		// empty
 	}

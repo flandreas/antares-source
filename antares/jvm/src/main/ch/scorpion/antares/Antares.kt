@@ -1,5 +1,6 @@
 package ch.scorpion.antares
 
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.graph.library.Library
 import java.nio.file.FileSystems
@@ -13,7 +14,12 @@ interface Antares : DesktopApplication {
 		private const val DEFAULT_LIB_DIRECTORY = "libraries"
 		private const val DEFAULT_PROJECT_DIRECTORY = "projects"
 		private const val DEFAULT_LIB_FILENAME = "library.xml"
+		private const val DOC_URL = "https://www.antarescircuit.io/user-manual/english/usermanual/"
 	}
+
+	override val documentationUrl: String? get() = DOC_URL
+
+	/** ---- [Application] */
 
 	/** ---- [DesktopApplication] */
 

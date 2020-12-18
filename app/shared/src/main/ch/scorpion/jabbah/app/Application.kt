@@ -21,6 +21,9 @@ interface Application {
 
 	val aboutInfo: AboutInfo
 
+	/** The URL containing the online documentation for this [Application].*/
+	val documentationUrl: String? get() = null
+
     /**
      * Starts this [Application] by initializing it, by loading predefined content, and by displaying its primary view.
      * This method is typically implemented in a platform-specific layer.

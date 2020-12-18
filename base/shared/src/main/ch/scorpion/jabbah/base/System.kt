@@ -54,5 +54,8 @@ expect object System {
 	 */
 	fun currentLanguage(): Language
 
+	/** Opens the specified URL in a browser. */
+	fun browse(url: String, actionName: String)
+
 	fun printStackTrace()
 }

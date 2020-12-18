@@ -26,15 +26,20 @@ open class MenuBarBuilder(
     private val fileMenu = JMenu(Translations.getString("application.menu.file"))
     private val editMenu = JMenu(Translations.getString("application.menu.edit"))
     private val viewMenu = JMenu(Translations.getString("application.menu.view"))
+	private val helpMenu = JMenu(Translations.getString("application.menu.help"))
     protected val openRecentMenu = JMenu(Translations.getString("file.action.openRecent.name"))
 
     init {
         fillFileMenu(fileMenu)
         fillEditMenu(editMenu)
         fillViewMenu(viewMenu)
+	    fillHelpMenu(helpMenu)
         fillMenuBar(menuBar)
 
-        eventBus.register(SavableHistoryEvent::class) { updateOpenRecentMenu() }
+	    // Make sure that "Help" menu is always the last one
+	    menuBar.add(helpMenu)
+
+	    eventBus.register(SavableHistoryEvent::class) { updateOpenRecentMenu() }
 	    eventBus.register(CurrentSavableEvent::class) {
 		    // Make a [Savable] that has just been closed visible in the menu
 		    if (it.savable == null) {
@@ -101,6 +106,10 @@ open class MenuBarBuilder(
         menu.addSeparator()
         menu.add(JCheckBoxMenuItem(ActionWrapperSwing(GridAction())))
     }
+
+	protected open fun fillHelpMenu(menu: JMenu) {
+		menu.add(JMenuItem(ActionWrapperSwing(DocumentationAction(frame.application))))
+	}
 
     private fun updateOpenRecentMenu() {
         openRecentMenu.removeAll()

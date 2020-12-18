@@ -7,6 +7,10 @@ import ch.scorpion.jabbah.base.geom.Path2DJvm
 import ch.scorpion.jabbah.base.time.RealTimeTimerJvm
 import ch.scorpion.jabbah.base.time.Timer
 import org.apache.commons.lang3.SystemUtils
+import java.awt.Desktop
+import java.awt.Frame
+import java.net.URI
+import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import kotlin.reflect.KClass
 
@@ -96,6 +100,19 @@ actual object System {
 			return Language.withCode(code)
 		}
 		return Language.DEFAULT
+	}
+
+	actual fun browse(url: String, actionName: String) {
+		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+			Desktop.getDesktop().browse(URI(url))
+		} else {
+			JOptionPane.showConfirmDialog(
+				Frame.getFrames()[0],
+				Translations.getString("application.cannotOpenUrl.name"),
+				actionName,
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.ERROR_MESSAGE)
+		}
 	}
 
 	actual fun printStackTrace() {
