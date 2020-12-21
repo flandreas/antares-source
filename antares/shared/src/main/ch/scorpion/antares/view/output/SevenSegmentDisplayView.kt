@@ -50,6 +50,7 @@ class SevenSegmentDisplayView(
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.SevenSegmentDisplayView.iconPath"
 		private val DEFAULT_LIGHT_COLOR = LightColor.RED
 		private val DEFAULT_SIZE = Size.MEDIUM
+		private const val DEFAULT_HAS_BORDER = true
 
 		private val geometries = mapOf(
 			Size.SMALL to Geometry(factor = 1f),
@@ -78,6 +79,15 @@ class SevenSegmentDisplayView(
 				updateGeometry()
 				invalidate()
 				postControlViewSourceChangeEvent(eventBus)
+			}
+		}
+
+	var hasBorder: Boolean = DEFAULT_HAS_BORDER
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				invalidate()
 			}
 		}
 
@@ -161,12 +171,19 @@ class SevenSegmentDisplayView(
 		super.write(writer)
 		writer.writeString("lightColor", lightColor.customName)
 		writer.writeString("size", size.customName)
+		writer.writeBoolean("hasBorder", hasBorder)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		lightColor = LightColor.withName(reader.readString("lightColor"))
 		size = Size.withName(reader.readString("size"))
+		hasBorder = if (reader.hasAttribute("hasBorder")) {
+			reader.readBoolean("hasBorder")
+		} else {
+			// Backward compatibility
+			false
+		}
 	}
 
 	/** ---- [ControlView] */
@@ -239,6 +256,12 @@ class SevenSegmentDisplayView(
 
 		context.g.color = Themes.get<AntaresTheme>().screen.backgroundColor
 		context.g.fillRect(0, 0, geom.width, geom.height)
+
+		if (hasBorder) {
+			context.g.stroke = stroke
+			context.g.color = Themes.get<AntaresTheme>().screen.foregroundColor
+			context.g.drawRect(0, 0, geom.width, geom.height)
+		}
 
 		drawHorizontalSegment(context.g, model.portScheme.inputValueOf(model, "a"),
 			0.5f * geom.scaledFactor + geom.segHalfWidth,

@@ -19,6 +19,7 @@ class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayV
 	    private val lightColor = AntaresProperties.lightColor()
 	    private val portScheme = PropertyImpl("portScheme", "element.property.SevenSegmentDisplayScheme", SevenSegmentDisplayScheme::class.java, componentBeanProvider)
 	    private val size = EditProperties.size()
+	    private val hasBorder = PropertyImpl("hasBorder", "element.property.SevenSegmentDisplayView.hasBorder", Boolean::class.java, componentBeanProvider)
     }
 
 	init {
@@ -34,5 +35,6 @@ class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayV
 	    properties.add(lightColor.bind(editor, bean.id))
 	    properties.add(portScheme.bind(editor, bean.id, editable = !connected))
 	    properties.add(size.bind(editor, bean.id, editable = !connected))
+	    properties.add(hasBorder.bind(editor, bean.id))
     }
 }
