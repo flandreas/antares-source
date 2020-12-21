@@ -35,7 +35,6 @@ import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapte
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
 import ch.scorpion.jabbah.io.Storable
@@ -46,6 +45,8 @@ import kotlin.math.max
 
 /** Defines the visual, exchangeable appearance of a [SwitchView]. */
 private interface SwitchViewFace {
+
+	fun drawSelected(context: DrawContext)
 
 	fun drawEdited(context: DrawContext)
 
@@ -271,8 +272,7 @@ class SwitchView(
 		context.g.color = context.color!!.foregroundColor
 		draw(context) {
 			super.drawImpl(it)
-			drawOuterRectangle(context)
-			drawInnerRectangle(context)
+			face.drawSelected(context)
 			if (labelPosition == VerticeLabelPosition.INTERNAL) {
 				internalLabel.draw(context)
 			}
@@ -282,15 +282,15 @@ class SwitchView(
 		}
 	}
 
-	private fun drawOuterRectangle(context: DrawContext) {
-		context.g.stroke = stroke
-		context.g.drawRect(xInt, yInt, width.toInt(), SIZE)
-	}
-
 	private fun drawInnerRectangle(context: DrawContext) {
 		context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
 		context.g.drawRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
 			width.toInt() - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH/*, DIAMETER, DIAMETER*/)
+	}
+
+	private fun drawOuterRectangle(context: DrawContext) {
+		context.g.stroke = stroke
+		context.g.drawRect(xInt, yInt, width.toInt(), SIZE)
 	}
 
 	/** ---- [ControlViewSource] */
@@ -432,6 +432,11 @@ class SwitchView(
 	@Suppress("unused")
 	private inner class DigitalFace : SwitchViewFace {
 
+		override fun drawSelected(context: DrawContext) {
+			drawOuterRectangle(context)
+			drawInnerRectangle(context)
+		}
+
 		override fun drawEdited(context: DrawContext) {
 			drawSignalBackground(context)
 			drawContent(context)
@@ -457,6 +462,11 @@ class SwitchView(
 
 	/** A [SwitchViewFace] that draws an open or closed analog switch symbol. */
 	private inner class AnalogFace : SwitchViewFace {
+
+		override fun drawSelected(context: DrawContext) {
+			drawOuterRectangle(context)
+			drawContent(context)
+		}
 
 		override fun drawEdited(context: DrawContext) {
 			drawBackground(context)
