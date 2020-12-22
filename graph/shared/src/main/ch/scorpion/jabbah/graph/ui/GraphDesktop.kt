@@ -41,6 +41,7 @@ interface GraphDesktopView : UIView {
 	fun createSubGraphDesktopItem(
 		verticeView: SubGraphVerticeView<*>,
 		referenceColor: CompositeColor,
+		isParentDetached: Boolean,
 		viewManager: ViewManager
 	): GraphDesktopViewItem
 
@@ -57,6 +58,8 @@ interface GraphDesktopViewItem {
 	val drawingView: DrawingView<GraphView>?
 
 	var contextColor: CompositeColor?
+
+	val isDetached: Boolean
 
 	fun dispose()
 
@@ -175,7 +178,7 @@ class GraphDesktopViewController(
 	 * @param itemFactory creates the [GraphDesktopViewItem] using the specified [CompositeColor] as reference
 	 * between the [VerticeView] and the [GraphDesktopViewItem]
 	 */
-	fun openVerticeView(vv: VerticeView<*>, itemFactory: (CompositeColor) -> GraphDesktopViewItem) {
+	fun openVerticeView(vv: VerticeView<*>, itemFactory: (CompositeColor, isParentDetached: Boolean) -> GraphDesktopViewItem) {
 		LOG.debug("Open VerticeView in new GraphDesktopItem")
 		val assoc = associations.firstOrNull { it.ref == vv }
 		if (assoc != null) {
@@ -186,7 +189,7 @@ class GraphDesktopViewController(
 		itemContaining(vv)?.let {
 			val refColor = referenceColorSequence.next()
 			val displayedColor = displayedReferenceColor(refColor)
-			val newItem = itemFactory.invoke(displayedColor)
+			val newItem = itemFactory.invoke(displayedColor, it.isDetached)
 			associations.add(Association(it, vv, newItem, refColor))
 
 			view.addGraphDesktopItem(newItem)
@@ -231,7 +234,8 @@ class GraphDesktopViewController(
 
 	private fun openSubGraphVerticeView(verticeView: SubGraphVerticeView<*>) {
 		LOG.debug("Open SubGraphVerticeView in new GraphDesktopItem")
-		openVerticeView(verticeView) { view.createSubGraphDesktopItem(verticeView, it, viewManager)}
+		openVerticeView(verticeView) { color, isParentDetached ->
+			view.createSubGraphDesktopItem(verticeView, color, isParentDetached, viewManager) }
 	}
 
 	private fun closeItem(item: GraphDesktopViewItem) {

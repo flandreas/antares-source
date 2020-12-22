@@ -47,6 +47,8 @@ abstract class AbstractGraphDesktopItemPanel : JPanel(), GraphDesktopViewItem {
 			repaint()
 		}
 
+	override val isDetached: Boolean = false
+
 	protected abstract fun addContextColorBorder(color: ch.scorpion.jabbah.draw.graphics.Color)
 
 	protected abstract fun removeContextColorBorder()
@@ -179,6 +181,7 @@ class GraphDesktopViewSwing(
 	override fun createSubGraphDesktopItem(
 		verticeView: SubGraphVerticeView<*>,
 		referenceColor: CompositeColor,
+		isParentDetached: Boolean,
 		viewManager: ViewManager
 	): GraphDesktopViewItem {
 		val subGraphView = verticeView.createSubGraphView()
@@ -189,6 +192,7 @@ class GraphDesktopViewSwing(
 		val drawingView = graphCanvas.view as DrawingView<GraphView>
 		val controller = GraphNavigationViewController(
 			isRoot = false,
+			isParentDetached = isParentDetached,
 			drawingView = drawingView)
 		val graphNavigationView = GraphNavigationViewSwing(
 			controller = controller,

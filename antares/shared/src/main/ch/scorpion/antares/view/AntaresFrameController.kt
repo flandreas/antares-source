@@ -52,8 +52,8 @@ class AntaresFrameController(
 
 	private fun handle(event: OpenMemoryContentsRequest) {
 		if (event.newDesktopView) {
-			graphPanelViewController.desktopController.openVerticeView(event.verticeView) {
-				view.createMemoryContentsDesktopViewItem(event, it)
+			graphPanelViewController.desktopController.openVerticeView(event.verticeView) { color,_ ->
+				view.createMemoryContentsDesktopViewItem(event, color)
 			}
 		} else {
 			view.showMemoryContents(event)

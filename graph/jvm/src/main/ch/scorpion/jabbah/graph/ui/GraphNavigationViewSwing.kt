@@ -58,7 +58,9 @@ class GraphNavigationViewSwing(
 		revalidate()
 	}
 
-	/** ---- [GraphDesktopItem] */
+	/** ---- [GraphDesktopViewItem] */
+
+	override val isDetached: Boolean = controller.isDetached
 
 	override fun addContextColorBorder(color: Color) {
 		mainPanel.removeAll()
