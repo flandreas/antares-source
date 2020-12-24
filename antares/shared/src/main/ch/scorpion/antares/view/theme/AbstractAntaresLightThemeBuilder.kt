@@ -37,7 +37,12 @@ abstract class AbstractAntaresLightThemeBuilder(name: String) : AbstractAntaresT
 			backgroundColor = Color(232, 232, 232),
 			textColor = Color.BLACK)
 
-		val EDGE_STYLE = EdgeStyle(color = EDGE_COLOR, stroke = EDGE_STROKE, executionStroke = EDGE_EXECUTION_STROKE, busStroke = BUS_STROKE, font = ANNOTATION_FONT)
+		val EDGE_STYLE = EdgeStyle(
+			color = EDGE_COLOR,
+			stroke = EDGE_STROKE,
+			executionStroke = EDGE_EXECUTION_STROKE,
+			busStroke = BUS_STROKE,
+			font = ANNOTATION_FONT)
 
 		val EXPLANATION_COLOR = CompositeColor(
 			foregroundColor = Color.GRAY,

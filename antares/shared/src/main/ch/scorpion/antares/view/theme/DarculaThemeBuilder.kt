@@ -65,7 +65,7 @@ object DarculaThemeBuilder : AbstractAntaresDarkThemeBuilder("Darcula") {
 
 	private val VERTICE_STYLE = BasicStyle(color = MAIN_COLOR, stroke = BOX_STROKE, font = FONT, shadow = true)
 
-	private val EDGE_STYLE = EdgeStyle(color = MAIN_COLOR, stroke = EDGE_STROKE, executionStroke = EDGE_EXECUTION_STROKE, font = ANNOTATION_FONT)
+	private val EDGE_STYLE = EdgeStyle(color = MAIN_COLOR, stroke = EDGE_STROKE, executionStroke = EDGE_EXECUTION_STROKE, busStroke = BUS_STROKE, font = ANNOTATION_FONT)
 
 	private val ANNOTATION_STYLE = BasicStyle(color = MAIN_COLOR, stroke = ANNOTATION_STROKE, font = ANNOTATION_FONT)
 
