@@ -163,15 +163,20 @@ class TranslatableTextPropertyEditor(
 	}
 
 	private fun showDialog() {
-		val currentText = TranslatableText(StringUtils.orEmpty(textComponent.text))
 		val newText = TranslatableTextPanel.showAsDialog(
 			parent = SwingUtilities.getWindowAncestor(textComponent),
 			title = propertyName,
-			text = currentText,
+			text = possiblyEditedText,
 			textFieldRows = if (multiline.invoke(text)) 8 else 1,
 			textFieldColumns = 40,
 			editable = editable
 		)
 		newText?.let { value = it }
+	}
+
+	private val possiblyEditedText: TranslatableText get() = if(StringUtils.isEmpty(textComponent.text)) {
+		text.withoutTranslation()
+	} else {
+		text.withTranslation(textComponent.text)
 	}
 }
