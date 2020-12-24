@@ -297,10 +297,11 @@ class ContainerTreePortItem(
 	factory: () -> Component
 ) : DraggableTreeItem(ContainerTreeItemType.Port, factory, graphPortView.iconPath) {
 
-	val portName: String get() = StringUtils.replaceNegation(graphPortView.model.name!!)
+	val portName: String get() = graphPortView.model.name!!
+	private val portLabel: String get() = StringUtils.replaceNegation(graphPortView.model.name!!)
 
 	override fun getDescription(): String {
-		return "${graphPortView.model.portType} $portName"
+		return "${graphPortView.model.portType} $portLabel"
 	}
 }
 

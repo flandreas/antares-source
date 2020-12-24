@@ -24,7 +24,7 @@ class GraphDesktopViewMockBuilder(controller: GraphDesktopViewController) {
 	}
 
 	fun withCreatedSubGraphDesktopItem(item: GraphDesktopViewItem): GraphDesktopViewMockBuilder {
-		every { view.createSubGraphDesktopItem(any(), capture(referenceColorSlot), any()) } returns item
+		every { view.createSubGraphDesktopItem(any(), capture(referenceColorSlot), any(), any()) } returns item
 		return this
 	}
 
