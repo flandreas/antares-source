@@ -104,7 +104,12 @@
                 <netPortRef verticeId='6' portId='7'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='29' id='27' name='SI' type='input' bitWidth='1'/>
+            <circuitInOut _id='29' id='27' name='SI' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Serieller Dateneingang'/>
+                <translation lang='en' text='Serial data input'/>
+              </desc>
+            </circuitInOut>
             <notGate _id='30' id='28' delay='20' inputCount='1'/>
             <notGate _id='31' id='29' delay='20' inputCount='1'/>
             <digitalNet _id='32' id='30' delay='0'>
@@ -127,10 +132,25 @@
               </ports>
             </digitalNet>
             <notGate _id='35' id='33' delay='20' inputCount='1'/>
-            <circuitInOut _id='36' id='34' name='!(LD)' type='input' bitWidth='1'/>
+            <circuitInOut _id='36' id='34' name='!(LD)' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Lade Daten von PI'/>
+                <translation lang='en' text='Load data from PI'/>
+              </desc>
+            </circuitInOut>
             <norGate _id='37' id='35' delay='20' inputCount='2'/>
-            <circuitInOut _id='38' id='36' name='C' type='input' bitWidth='1'/>
-            <circuitInOut _id='39' id='37' name='CI' type='input' bitWidth='1'/>
+            <circuitInOut _id='38' id='36' name='C' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Takteingang (Clock)'/>
+                <translation lang='en' text='Clock input'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='39' id='37' name='CI' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Sperrung Takteingang'/>
+                <translation lang='en' text='Clock inhibit'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='40' id='38' delay='0'>
               <ports>
                 <netPortRef verticeId='38' portId='1'/>
@@ -171,16 +191,31 @@
                 <netPortRef verticeId='6' portId='2'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='45' id='43' name='PI' type='input' bitWidth='4'/>
+            <circuitInOut _id='45' id='43' name='PI' type='input' bitWidth='4'>
+              <desc>
+                <translation lang='de' text='Paralleler Dateneingang'/>
+                <translation lang='en' text='Parallel data input'/>
+              </desc>
+            </circuitInOut>
             <splitter _id='46' id='44' delay='0' bitWidth='4' branchCount='4' representation='binary'/>
-            <circuitInOut _id='47' id='50' name='O' type='output' bitWidth='1'/>
+            <circuitInOut _id='47' id='50' name='O' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Serieller Datenausgang'/>
+                <translation lang='en' text='Serial data output'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='48' id='51' delay='0'>
               <ports>
                 <netPortRef verticeId='6' portId='4'/>
                 <netPortRef verticeId='47' portId='1'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='49' id='52' name='!O' type='output' bitWidth='1'/>
+            <circuitInOut _id='49' id='52' name='!O' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Invertierter Datenausgang'/>
+                <translation lang='en' text='Inverted data output'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='50' id='53' delay='0'>
               <ports>
                 <netPortRef verticeId='6' portId='5'/>
