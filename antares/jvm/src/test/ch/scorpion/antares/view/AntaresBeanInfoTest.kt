@@ -17,12 +17,13 @@ import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.output.*
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
+import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import org.junit.Test
 
 class AntaresBeanInfoTest {
@@ -34,189 +35,211 @@ class AntaresBeanInfoTest {
 		}
 	}
 
-	private val editor = mockk<Editor>()
+	private val drawing = mockk<Drawing<Component>>(relaxed = true)
+	private val commandManager = mockk<CommandManager>(relaxed = true)
+	private val editor = mockk<Editor>(relaxed = true)
 
 	init {
 		every { editor.active } returns true
+		every { editor.drawing } returns drawing
+		every { editor.commandManager } returns commandManager
+
+		val command = slot<Command>()
+		every { commandManager.beginTransaction(capture(command)) } answers {
+			command.captured.execute()
+			Unit
+		}
 	}
 
-	private fun <T: Component> read(component: T, beanInfo: AbstractBeanInfo<T>) {
+	private fun <T: Component> readWrite(component: T, beanInfo: AbstractBeanInfo<T>) {
+		every { drawing.getWithId(any()) } returns component
 		beanInfo
 			.getProperties(component, editor)
 			.forEach { it.readFromObject(component) }
+
+		beanInfo
+			.getProperties(component, editor)
+			.filter { it.isEditable }
+			.forEach {
+				if (it is PropertyImpl<*>) {
+					it.forceWriteToObject()
+				} else {
+					it.writeToObject(component)
+				}
+			}
 	}
 
 	// arithmetic
 
 	@Test
-	fun shouldReadRandomView() {
-		read(RandomView(), RandomViewBeanInfo())
+	fun shouldReadWriteRandomView() {
+		readWrite(RandomView(), RandomViewBeanInfo())
 	}
 
 	// container
 
 	@Test
-	fun shouldReadDigitalPortViewComponent() {
-		read(DigitalPortViewComponent(portView = DigitalPortView()), DigitalPortViewComponentBeanInfo())
+	fun shouldReadWriteDigitalPortViewComponent() {
+		readWrite(DigitalPortViewComponent(portView = DigitalPortView()), DigitalPortViewComponentBeanInfo())
 	}
 
 	// gate
 
 	@Test
-	fun shouldReadAndGateView() {
-		read(AndGateView(), AndGateViewBeanInfo())
+	fun shouldReadWriteAndGateView() {
+		readWrite(AndGateView(), AndGateViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadBufferGateView() {
-		read(BufferGateView(), BufferGateViewBeanInfo())
+	fun shouldReadWriteBufferGateView() {
+		readWrite(BufferGateView(), BufferGateViewBeanInfo())
 	}
 
 	@Test
 	fun shouldDelayGateView() {
-		read(DelayGateView(), DelayGateViewBeanInfo())
+		readWrite(DelayGateView(), DelayGateViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadNandGateView() {
-		read(NandGateView(), NandGateViewBeanInfo())
+	fun shouldReadWriteNandGateView() {
+		readWrite(NandGateView(), NandGateViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadNorGateView() {
-		read(NorGateView(), NorGateViewBeanInfo())
+	fun shouldReadWriteNorGateView() {
+		readWrite(NorGateView(), NorGateViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadNotGateView() {
-		read(NotGateView(), NotGateViewBeanInfo())
+	fun shouldReadWriteNotGateView() {
+		readWrite(NotGateView(), NotGateViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadOrGateView() {
-		read(OrGateView(), OrGateViewBeanInfo())
+	fun shouldReadWriteOrGateView() {
+		readWrite(OrGateView(), OrGateViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadTriStateBufferGateView() {
-		read(TriStateBufferGateView(), TriStateBufferGateViewBeanInfo())
+	fun shouldReadWriteTriStateBufferGateView() {
+		readWrite(TriStateBufferGateView(), TriStateBufferGateViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadXnorGateView() {
-		read(XnorGateView(), XnorGateViewBeanInfo())
+	fun shouldReadWriteXnorGateView() {
+		readWrite(XnorGateView(), XnorGateViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadXorGateView() {
-		read(XorGateView(), XorGateViewBeanInfo())
+	fun shouldReadWriteXorGateView() {
+		readWrite(XorGateView(), XorGateViewBeanInfo())
 	}
 
 	// inout
 
 	@Test
-	fun shouldReadCircuitInOutView() {
-		read(CircuitInOutView(), CircuitInOutViewBeanInfo())
+	fun shouldReadWriteCircuitInOutView() {
+		readWrite(CircuitInOutView(), CircuitInOutViewBeanInfo())
 	}
 
 	// input
 
 	@Test
-	fun shouldReadClockView() {
-		read(ClockView(), ClockViewBeanInfo())
+	fun shouldReadWriteClockView() {
+		readWrite(ClockView(), ClockViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadDipSwitchView() {
-		read(DipSwitchView(), DipSwitchViewBeanInfo())
+	fun shouldReadWriteDipSwitchView() {
+		readWrite(DipSwitchView(), DipSwitchViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadKeyboardView() {
-		read(KeyboardView(), KeyboardViewBeanInfo())
+	fun shouldReadWriteKeyboardView() {
+		readWrite(KeyboardView(), KeyboardViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadSwitchView() {
-		read(SwitchView(), SwitchViewBeanInfo())
+	fun shouldReadWriteSwitchView() {
+		readWrite(SwitchView(), SwitchViewBeanInfo())
 	}
 
 	// memory
 
 	@Test
-	fun shouldReadROMView() {
-		read(ROMView(), ROMViewBeanInfo())
+	fun shouldReadWriteROMView() {
+		readWrite(ROMView(), ROMViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadRAMView() {
-		read(RAMView(), RAMViewBeanInfo())
+	fun shouldReadWriteRAMView() {
+		readWrite(RAMView(), RAMViewBeanInfo())
 	}
 
 	// net
 
 	@Test
-	fun shouldReadConcentratorView() {
-		read(ConcentratorView(), ConcentratorViewBeanInfo())
+	fun shouldReadWriteConcentratorView() {
+		readWrite(ConcentratorView(), ConcentratorViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadConstantView() {
-		read(ConstantView(), ConstantViewBeanInfo())
+	fun shouldReadWriteConstantView() {
+		readWrite(ConstantView(), ConstantViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadDigitalEdgeView() {
+	fun shouldReadWriteDigitalEdgeView() {
 		val graphView = GraphViewImpl()
 		val component = DigitalEdgeView()
 		graphView.add(component)
-		read(component, DigitalEdgeViewBeanInfo())
+		readWrite(component, DigitalEdgeViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadProbeView() {
-		read(ProbeView(), ProbeViewBeanInfo())
+	fun shouldReadWriteProbeView() {
+		readWrite(ProbeView(), ProbeViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadSplitterView() {
-		read(SplitterView(), SplitterViewBeanInfo())
+	fun shouldReadWriteSplitterView() {
+		readWrite(SplitterView(), SplitterViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadTunnelView() {
-		read(TunnelView(), TunnelViewBeanInfo())
+	fun shouldReadWriteTunnelView() {
+		readWrite(TunnelView(), TunnelViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadBreakView() {
-		read(BreakView(), BreakViewBeanInfo())
+	fun shouldReadWriteBreakView() {
+		readWrite(BreakView(), BreakViewBeanInfo())
 	}
 
 	// output
 
 	@Test
-	fun shouldReadLEDMatrixView() {
-		read(LEDMatrixView(), LEDMatrixViewBeanInfo())
+	fun shouldReadWriteLEDMatrixView() {
+		readWrite(LEDMatrixView(), LEDMatrixViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadLEDView() {
-		read(LEDView(), LEDViewBeanInfo())
+	fun shouldReadWriteLEDView() {
+		readWrite(LEDView(), LEDViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadRgbLEDView() {
-		read(RgbLEDView(), RgbLEDViewBeanInfo())
+	fun shouldReadWriteRgbLEDView() {
+		readWrite(RgbLEDView(), RgbLEDViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadSevenSegmentDisplayView() {
-		read(SevenSegmentDisplayView(), SevenSegmentDisplayViewBeanInfo())
+	fun shouldReadWriteSevenSegmentDisplayView() {
+		readWrite(SevenSegmentDisplayView(), SevenSegmentDisplayViewBeanInfo())
 	}
 
 	@Test
-	fun shouldReadTerminalView() {
-		read(TerminalView(), TerminalViewBeanInfo())
+	fun shouldReadWriteTerminalView() {
+		readWrite(TerminalView(), TerminalViewBeanInfo())
 	}
 }

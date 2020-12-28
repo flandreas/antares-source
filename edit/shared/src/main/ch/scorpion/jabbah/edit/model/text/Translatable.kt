@@ -65,6 +65,59 @@ class Translation(
 		result = 31 * result + text.hashCode()
 		return result
 	}
+
+	override fun toString(): String = "[${language.code}]='$text'"
+}
+
+interface Translatable {
+
+	val isEmpty: Boolean
+	val isNotEmpty: Boolean get() = !isEmpty
+
+	fun getTranslation(): String = getTranslation(System.currentLanguage())
+
+	/** Returns the translation in the specified [Language].*/
+	fun getTranslation(language: Language): String
+
+	/** Creates a new [Translatable] by removing the translation for the current system language.*/
+	fun withoutTranslation(): Translatable = withoutTranslation(System.currentLanguage())
+
+	/** Creates a new [Translatable] by removing the text in the specified [Language].*/
+	fun withoutTranslation(language: Language): Translatable
+
+	/** Creates a new [Translatable] by adding the specified translation for the current system language.*/
+	fun withTranslation(text: String): Translatable =
+		withTranslation(System.currentLanguage(), text)
+
+	/** Creates a new [Translatable] by adding the specified translation for a particular [Language].*/
+	fun withTranslation(language: Language, text: String): Translatable
+
+	fun getOptionalTranslation(): String? = getOptionalTranslation(System.currentLanguage())
+
+	fun getOptionalTranslation(language: Language): String?
+
+
+	/**
+	 * Determines whether this [Translatable] contains at least a translation for the default [Language].
+	 * or the [System] language.
+	 */
+	fun hasDefaultOrSystemLanguage(): Boolean =
+		hasTranslation(Language.DEFAULT) || hasTranslation(System.currentLanguage())
+
+	/**
+	 * Returns the [Language] also used in [getOptionalTranslation] if neither translation for the System
+	 * nor the default [Language] is available.
+	 */
+	fun getFirstLanguage(): Language?
+
+	/** Determines whether this [Translatable] contains a translation in the specified [Language].*/
+	fun hasTranslation(language: Language): Boolean
+
+	/** Returns all registered translations.*/
+	fun allTranslations(): Iterator<Translation>
+
+	fun isAnyEqualOf(other: TranslatableText): Boolean
+
 }
 
 /**
@@ -78,7 +131,7 @@ class Translation(
  *
  * @param translations the [Translation]s to be included in this [TranslatableText].
  */
-class TranslatableText(translations: Collection<Translation>? = null) {
+class TranslatableText(translations: Collection<Translation>? = null) : Translatable {
 
 	constructor(text: String) : this(System.currentLanguage(), text)
 	constructor(translation: Translation) : this(listOf(translation))
@@ -104,80 +157,44 @@ class TranslatableText(translations: Collection<Translation>? = null) {
 		return true
 	}
 
-	override fun hashCode(): Int {
-		return translations.hashCode()
-	}
+	override fun hashCode(): Int = translations.hashCode()
 
-	/** ---- [TranslatableText] */
+	/** ---- [Translatable] */
 
-	val isEmpty: Boolean get() = translations.values.all { it.text.isEmpty() }
-	val isNotEmpty: Boolean get() = !isEmpty
+	override val isEmpty: Boolean get() =
+		translations.values.all { it.text.isEmpty() }
 
-	fun isAnyEqualOf(other: TranslatableText): Boolean {
-		return other.translations.any { getOptionalTranslation(it.key) == it.value.text }
-	}
+	override fun hasTranslation(language: Language): Boolean =
+		translations[language] != null
 
-	/** Creates a new [TranslatableText] by adding the specified translation for the current system language.*/
-	fun withTranslation(text: String): TranslatableText {
-		return withTranslation(System.currentLanguage(), text)
-	}
+	override fun getTranslation(language: Language): String =
+		getOptionalTranslation(language)
+		?: throw IllegalArgumentException("no translation available")
 
-	/** Creates a new [TranslatableText] by adding the specified translation for a particular [Language].*/
-	fun withTranslation(language: Language, text: String): TranslatableText {
+	override fun withTranslation(language: Language, text: String): TranslatableText {
 		checkArgument(StringUtils.isNotBlank(text), "text must not be empty")
 		val values = translations.toMutableMap()
 		values[language] = Translation(language, text)
 		return TranslatableText(values.values)
 	}
 
-	/** Creates a new [TranslatableText] by removing the translation for the current system language.*/
-	fun withoutTranslation(): TranslatableText {
-		return withoutTranslation(System.currentLanguage())
-	}
-
-	/** Creates a new [TranslatableText] by removing the text in the specified [Language].*/
-	fun withoutTranslation(language: Language): TranslatableText {
+	override fun withoutTranslation(language: Language): TranslatableText {
 		val values = translations.toMutableMap()
 		values.remove(language)
 		return TranslatableText(values.values)
 	}
 
-	/** Returns the translation in the current system language.*/
-	fun getTranslation(): String {
-		return getTranslation(System.currentLanguage())
-	}
+	override fun getFirstLanguage(): Language? = translations.values.firstOrNull()?.language
 
-	fun getOptionalTranslation(): String? {
-		return getOptionalTranslation(System.currentLanguage())
-	}
-
-	/** Returns the translation in the specified [Language].*/
-	fun getTranslation(language: Language): String {
-		return getOptionalTranslation(language)
-			?: throw IllegalArgumentException("no translation available")
-	}
-
-	/** Returns the translation in the specified [Language].*/
-	fun getOptionalTranslation(language: Language): String? {
-		return translations[language]?.text
-			?: translations[Language.DEFAULT]?.text
-			?: translations.values.firstOrNull()?.text
-	}
-
-
-	/** Determines whether this [TranslatableText] contains a translation in the specified [Language].*/
-	fun hasTranslation(language: Language): Boolean = translations[language] != null
+	override fun getOptionalTranslation(language: Language): String? =
+		translations[language]?.text
+		?: translations[Language.DEFAULT]?.text
+		?: translations.values.firstOrNull()?.text
 
 	/** Returns all registered translations.*/
-	fun allTranslations(): Iterator<Translation> = translations.values.iterator()
+	override fun allTranslations(): Iterator<Translation> =
+		translations.values.iterator()
 
-	/**
-	 * Determines whether this [TranslatableText] contains at least a translation for the default [Language].
-	 * or the [System] language.
-	 */
-	fun hasDefaultOrSystemLanguage(): Boolean = hasTranslation(Language.DEFAULT) || hasTranslation(System.currentLanguage())
-
-	/** Returns the [Language] also used in [getOptionalTranslation] if neither translation for the System nor the default [Language] is available.*/
-	fun getFirstLanguage(): Language? = translations.values.firstOrNull()?.language
-
+	override fun isAnyEqualOf(other: TranslatableText): Boolean =
+		other.translations.any { getOptionalTranslation(it.key) == it.value.text }
 }

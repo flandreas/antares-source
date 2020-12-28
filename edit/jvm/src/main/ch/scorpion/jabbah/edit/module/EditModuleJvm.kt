@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
 import ch.scorpion.jabbah.edit.model.text.*
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.properties.*
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.view.*
@@ -71,7 +72,8 @@ object EditModuleJvm : AbstractModule() {
 		registry.registerRenderer(HorizontalAlignment::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(TextProperty::class.java, TextPropertyRenderer::class.java)
 		registry.registerRenderer(ScriptProperty::class.java, ScriptPropertyRenderer::class.java)
-		registry.register(TranslatableText::class.java) { TranslatableTextPropertyRenderer((it as PropertyImpl<TranslatableText>).filter) }
+		registry.register(TranslatableText::class.java) { TranslatablePropertyRenderer((it as PropertyImpl<Translatable>).filter) }
+		registry.register(Description::class.java) { TranslatablePropertyRenderer((it as PropertyImpl<Translatable>).filter) }
 	}
 
 	@Suppress("UNCHECKED_CAST")
@@ -93,8 +95,13 @@ object EditModuleJvm : AbstractModule() {
 				editable = it.editable)
 		}
 		registry.register(TranslatableText::class.java) {
-			TranslatableTextPropertyEditor(
-				propertyName = (it as PropertyImpl<TranslatableText>).displayName,
+			TranslatablePropertyEditor(
+				propertyName = (it as PropertyImpl<Translatable>).displayName,
+				multiline = it.filter)
+		}
+		registry.register(Description::class.java) {
+			TranslatablePropertyEditor(
+				propertyName = (it as PropertyImpl<Translatable>).displayName,
 				multiline = it.filter)
 		}
 	}

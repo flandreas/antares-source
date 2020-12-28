@@ -14,7 +14,7 @@ class TranslatableTextPanelTest {
 	@Test
 	fun germanUserShouldEditGermanAndEnglishText() {
 		System.setProperty("user.language", "de")
-		val panel = TranslatableTextPanel(TranslatableText())
+		val panel = TranslatablePanel(TranslatableText())
 
 		assertNotNull(panel.currentLangTextField.parent)
 		assertNotNull(panel.alternativeLangTextField.parent)
@@ -23,7 +23,7 @@ class TranslatableTextPanelTest {
 	@Test
 	fun englishUserShouldOnlyEditEnglishIfAllIsEmpty() {
 		System.setProperty("user.language", "en")
-		val panel = TranslatableTextPanel(TranslatableText())
+		val panel = TranslatablePanel(TranslatableText())
 
 		assertNotNull(panel.currentLangTextField.parent)
 		assertNull(panel.alternativeLangTextField.parent)
@@ -32,7 +32,7 @@ class TranslatableTextPanelTest {
 	@Test
 	fun englishUserShouldOnlyEditEnglishIfEnglishIsNotEmpty() {
 		System.setProperty("user.language", "en")
-		val panel = TranslatableTextPanel(TranslatableText(Language.English, "Tree"))
+		val panel = TranslatablePanel(TranslatableText(Language.English, "Tree"))
 
 		assertNotNull(panel.currentLangTextField.parent)
 		assertNull(panel.alternativeLangTextField.parent)
@@ -41,7 +41,7 @@ class TranslatableTextPanelTest {
 	@Test
 	fun englishUserShouldSeeGermanIfEnglishIsEmpty() {
 		System.setProperty("user.language", "en")
-		val panel = TranslatableTextPanel(TranslatableText(Language.German, "Baum"))
+		val panel = TranslatablePanel(TranslatableText(Language.German, "Baum"))
 
 		assertNotNull(panel.currentLangTextField.parent)
 		assertNotNull(panel.alternativeLangTextField.parent)

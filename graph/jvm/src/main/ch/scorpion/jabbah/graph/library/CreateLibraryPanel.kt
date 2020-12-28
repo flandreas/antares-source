@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.swing.EGBL
-import ch.scorpion.jabbah.edit.properties.TranslatableTextPropertyEditor
+import ch.scorpion.jabbah.edit.properties.TranslatablePropertyEditor
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import java.awt.Component
@@ -46,7 +46,7 @@ class CreateLibraryPanel(
 
 	private val nameLabel = Translations.getString("library.property.name.name")
 
-	private val nameField = TranslatableTextPropertyEditor(nameLabel)
+	private val nameField = TranslatablePropertyEditor(nameLabel)
 
 	private val templateComboBox = JComboBox<LibraryDictionaryEntry>()
 

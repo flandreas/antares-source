@@ -138,6 +138,7 @@ abstract class AbstractPropertyPanel(
 	private fun storeProperties() {
 		if (propertyObject != null) {
 			try {
+				LOG.trace("storeProperties")
 				sheet.writeToObject(propertyObject)
 				editor.view.drawing.validate()
 				hideMessage()

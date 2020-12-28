@@ -89,18 +89,24 @@ class PropertyImpl<V>(
 		writeToBean()
 	}
 
-	private fun writeToBean() {
+	fun forceWriteToObject() {
+		writeToBean(force = true)
+	}
+
+	private fun writeToBean(force: Boolean = false) {
 		@Suppress("UNCHECKED_CAST")
 		val newValue = value as V?
 
 		val command = PropertyCommand(editor!!, baseKey, beanProvider, beanIds, newValue, getterPropertyName, setterPropertyName)
 
-		if (newValue != command.oldValue) {
+		LOG.trace("writeToBean '$name', oldValue=${command.oldValue}, newValue=$newValue")
+
+		if (force || newValue != command.oldValue) {
 			try {
 				editor!!.commandManager.beginTransaction(command)
 				editor!!.commandManager.commitTransaction()
 			} catch (t: Throwable) {
-				LOG.debug("Error in invoking bean setter '$setterPropertyName': ${t.message}")
+				LOG.error("Error in invoking bean setter '$setterPropertyName': ${t.message}")
 				editor!!.commandManager.rollbackTransaction()
 				throw t
 			}

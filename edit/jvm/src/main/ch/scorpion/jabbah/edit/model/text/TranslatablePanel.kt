@@ -11,12 +11,12 @@ import javax.swing.*
 import javax.swing.text.JTextComponent
 
 /**
- * A [JPanel] for editing a [TranslatableText] in the systems current [Language] and the default [Language].
- * If the [TranslatableText] doesn't contain a text for both of these [Language]s, any available [Language]
+ * A [JPanel] for editing a [Translatable] in the systems current [Language] and the default [Language].
+ * If the [Translatable] doesn't contain a text for both of these [Language]s, any available [Language]
  * is used.
  */
-class TranslatableTextPanel(
-	text: TranslatableText,
+class TranslatablePanel(
+	private val initialText: Translatable,
 	textFieldRows: Int = 1,
 	textFieldColumns: Int = 25,
 	editable: Boolean = true
@@ -25,18 +25,18 @@ class TranslatableTextPanel(
 	companion object {
 
 		/**
-		 * Shows [TranslatableTextPanel] as a dialog for editing the specified [TranslatableText]
-		 * @return the edited [TranslatableText], or `null` if the dialog has been cancelled by the user
+		 * Shows [TranslatablePanel] as a dialog for editing the specified [Translatable]
+		 * @return the edited [Translatable], or `null` if the dialog has been cancelled by the user
 		 */
 		fun showAsDialog(
 			parent: Component = Frame.getFrames()[0],
 			title: String,
-			text: TranslatableText,
+			text: Translatable,
 			textFieldRows: Int = 1,
 			textFieldColumns: Int = 25,
 			editable: Boolean = true
-		): TranslatableText? {
-			val panel = TranslatableTextPanel(text, textFieldRows, textFieldColumns, editable)
+		): Translatable? {
+			val panel = TranslatablePanel(text, textFieldRows, textFieldColumns, editable)
 			return when (
 				JOptionPane.showConfirmDialog(
 					parent,
@@ -57,7 +57,7 @@ class TranslatableTextPanel(
 
 	private val currentLanguage: Language = System.currentLanguage()
 
-	private val needsAlternativeLangText: Boolean = currentLanguage.isNonDefault || (!text.hasDefaultOrSystemLanguage() && !text.isEmpty)
+	private val needsAlternativeLangText: Boolean = currentLanguage.isNonDefault || (!initialText.hasDefaultOrSystemLanguage() && !initialText.isEmpty)
 
 	private val alternativeLanguage: Language?
 
@@ -85,8 +85,8 @@ class TranslatableTextPanel(
 		alternativeLangTextField.isEditable = editable
 
 		alternativeLanguage = if (needsAlternativeLangText) {
-			if (!text.hasDefaultOrSystemLanguage()) {
-				text.getFirstLanguage() ?: Language.DEFAULT
+			if (!initialText.hasDefaultOrSystemLanguage()) {
+				initialText.getFirstLanguage() ?: Language.DEFAULT
 			} else {
 				Language.DEFAULT
 			}
@@ -94,12 +94,12 @@ class TranslatableTextPanel(
 			null
 		}
 
-		if (text.hasTranslation(currentLanguage)) {
-			currentLangTextField.text = text.getTranslation(currentLanguage)
+		if (initialText.hasTranslation(currentLanguage)) {
+			currentLangTextField.text = initialText.getTranslation(currentLanguage)
 		}
 		if (needsAlternativeLangText) {
-			if (text.hasTranslation(alternativeLanguage!!)) {
-				alternativeLangTextField.text = text.getTranslation(alternativeLanguage)
+			if (initialText.hasTranslation(alternativeLanguage!!)) {
+				alternativeLangTextField.text = initialText.getTranslation(alternativeLanguage)
 			}
 		}
 
@@ -114,9 +114,9 @@ class TranslatableTextPanel(
 		revalidate()
 	}
 
-	private val text: TranslatableText
+	private val text: Translatable
 		get() {
-			var text = TranslatableText()
+			var text = initialText
 			if (!StringUtils.isBlank(currentLangTextField.text)) {
 				text = text.withTranslation(currentLanguage, currentLangTextField.text)
 			}

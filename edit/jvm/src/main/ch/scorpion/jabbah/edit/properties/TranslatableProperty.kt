@@ -4,8 +4,9 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.EGBL
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.edit.model.text.Translatable
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.model.text.TranslatableTextPanel
+import ch.scorpion.jabbah.edit.model.text.TranslatablePanel
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import java.awt.Component
 import java.awt.Dimension
@@ -13,8 +14,8 @@ import javax.swing.*
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.text.JTextComponent
 
-class TranslatableTextPropertyRenderer(
-	multiline: (TranslatableText) -> Boolean = { _ -> false }
+class TranslatablePropertyRenderer(
+	multiline: (Translatable) -> Boolean = { _ -> false }
 ) : DefaultTableCellRenderer() {
 
 	private val textComponent: JTextComponent
@@ -40,7 +41,7 @@ class TranslatableTextPropertyRenderer(
 		if (value is String) {
 			textComponent.text = value
 
-		} else if (value is TranslatableText) {
+		} else if (value is Translatable) {
 			textComponent.text = value.getOptionalTranslation()
 		}
 
@@ -52,18 +53,18 @@ class TranslatableTextPropertyRenderer(
 	}
 }
 
-class TranslatableTextPropertyEditor(
+class TranslatablePropertyEditor(
 	private val propertyName: String,
-	private val multiline: (TranslatableText) -> Boolean = { _ -> false },
+	private val multiline: (Translatable) -> Boolean = { _ -> false },
 	rows: Int = 4,
 	private val editable: Boolean = true
 ) : AbstractPropertyEditor() {
 
 	private val textComponent: JTextComponent
-	private var text: TranslatableText = TranslatableText()
+	private lateinit var text: Translatable
 
 	init {
-		if (multiline.invoke(text)) {
+		if (multiline.invoke(TranslatableText())) {
 			textComponent = JTextArea()
 			textComponent.rows = rows
 			textComponent.lineWrap = true
@@ -87,7 +88,7 @@ class TranslatableTextPropertyEditor(
 	}
 
 	override fun setValue(value: Any?) {
-		text = value as TranslatableText
+		text = value as Translatable
 		textComponent.text = text.getOptionalTranslation()
 	}
 
@@ -163,7 +164,7 @@ class TranslatableTextPropertyEditor(
 	}
 
 	private fun showDialog() {
-		val newText = TranslatableTextPanel.showAsDialog(
+		val newText = TranslatablePanel.showAsDialog(
 			parent = SwingUtilities.getWindowAncestor(textComponent),
 			title = propertyName,
 			text = possiblyEditedText,
@@ -174,7 +175,7 @@ class TranslatableTextPropertyEditor(
 		newText?.let { value = it }
 	}
 
-	private val possiblyEditedText: TranslatableText get() = if(StringUtils.isEmpty(textComponent.text)) {
+	private val possiblyEditedText: Translatable get() = if(StringUtils.isEmpty(textComponent.text)) {
 		text.withoutTranslation()
 	} else {
 		text.withTranslation(textComponent.text)

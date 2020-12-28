@@ -88,7 +88,7 @@ class SimpleTextComponent(
 
 	/** ---- [TextComponent] interface */
 
-	override var text: TranslatableText = text
+	override var text: Translatable = text
 		set(value) {
 			if (field != value) {
 				invalidate()

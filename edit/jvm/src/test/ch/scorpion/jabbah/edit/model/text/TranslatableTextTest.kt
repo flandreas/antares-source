@@ -40,7 +40,7 @@ class TranslatableTextTest {
 	@Test
 	fun shouldRemoveTranslationForSystemLanguage() {
 		java.lang.System.setProperty("user.language", "de")
-		var text = TranslatableText()
+		var text: Translatable = TranslatableText()
 			.withTranslation(German, "Baum")
 			.withTranslation(English, "Tree")
 

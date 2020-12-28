@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.EGBL
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
-import ch.scorpion.jabbah.edit.properties.TranslatableTextPropertyEditor
+import ch.scorpion.jabbah.edit.properties.TranslatablePropertyEditor
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import java.awt.Component
 import java.awt.Dimension
@@ -84,7 +84,7 @@ private class LibraryFolderPropertiesPanel(
 	}
 
 	private val nameLabel = Translations.getString("library.property.name.name")
-	private val nameField = TranslatableTextPropertyEditor(
+	private val nameField = TranslatablePropertyEditor(
 		nameLabel,
 		editable = Authorizer.isCurrentUserAuthorizedTo(Operation.Change, LibraryModule.libraryHolder.library))
 

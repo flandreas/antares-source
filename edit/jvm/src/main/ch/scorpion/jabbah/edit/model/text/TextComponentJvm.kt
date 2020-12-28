@@ -27,7 +27,6 @@ import java.awt.Component
 import java.awt.Container
 import java.awt.Graphics
 import javax.swing.JTextPane
-import javax.swing.UIManager
 import javax.swing.border.LineBorder
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -134,7 +133,7 @@ open class TextComponentJvm(
 		}
 	}
 
-	override var text: TranslatableText = text
+	override var text: Translatable = text
 		set(value) {
 			if (value != field) {
 				invalidate()

@@ -53,7 +53,7 @@ class LabelComponent(
 
 	/** ---- [TextComponent] */
 
-	override var text: TranslatableText = TranslatableText(label.text)
+	override var text: Translatable = TranslatableText(label.text)
 		set(value) {
 			if (field != value) {
 				invalidate()

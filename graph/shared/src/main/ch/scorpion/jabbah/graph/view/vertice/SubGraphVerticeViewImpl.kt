@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
+import ch.scorpion.jabbah.edit.model.text.Translatable
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -116,7 +117,7 @@ class SubGraphVerticeViewImpl(
 	 * The text to be used to overwrite the first [LabelComponent], if any. If `null` no overwriting
 	 * takes place. Can also be set to an empty [String] in order to hide the predefined label.
 	 */
-	var label: TranslatableText? = null
+	var label: Translatable? = null
 		get() {
 			val labelComponent = getLabelComponent() ?: return null
 			if (field != null) {

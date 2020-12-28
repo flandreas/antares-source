@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.edit.Component
  */
 interface TextComponent : Component, RectangularShape {
 
-	var text: TranslatableText
+	var text: Translatable
 
 	var horizontalAlignment: HorizontalAlignment
 

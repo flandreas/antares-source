@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.text.*
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
 
 object EditProperties {
@@ -108,11 +109,11 @@ object EditProperties {
 	}
 
 	fun description(
-		name: String = "description.translation",
+		name: String = "description",
 		baseKey: String = "edit.property.description",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<TranslatableText> {
-		return PropertyImpl(name, baseKey, TranslatableText::class.java, beanProvider)
+	): PropertyImpl<Description> {
+		return PropertyImpl(name, baseKey, Description::class.java, beanProvider)
 	}
 
 	fun orientation(
