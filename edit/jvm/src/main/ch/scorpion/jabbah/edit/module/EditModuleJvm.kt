@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.model.text.description.Description
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.properties.*
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.view.*
@@ -73,6 +74,7 @@ object EditModuleJvm : AbstractModule() {
 		registry.registerRenderer(TextProperty::class.java, TextPropertyRenderer::class.java)
 		registry.registerRenderer(ScriptProperty::class.java, ScriptPropertyRenderer::class.java)
 		registry.register(TranslatableText::class.java) { TranslatablePropertyRenderer((it as PropertyImpl<Translatable>).filter) }
+		registry.register(Name::class.java) { TranslatablePropertyRenderer() }
 		registry.register(Description::class.java) { TranslatablePropertyRenderer((it as PropertyImpl<Translatable>).filter) }
 	}
 
@@ -99,6 +101,11 @@ object EditModuleJvm : AbstractModule() {
 				propertyName = (it as PropertyImpl<Translatable>).displayName,
 				multiline = it.filter)
 		}
+		registry.register(Name::class.java) {
+			TranslatablePropertyEditor(
+				propertyName = (it as PropertyImpl<Translatable>).displayName)
+		}
+
 		registry.register(Description::class.java) {
 			TranslatablePropertyEditor(
 				propertyName = (it as PropertyImpl<Translatable>).displayName,

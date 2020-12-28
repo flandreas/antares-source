@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.model.text.description.Description
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
 
 object EditProperties {
@@ -104,8 +105,8 @@ object EditProperties {
 		name: String = "name",
 		baseKey: String = "edit.property.name",
 		beanProvider: BeanProvider = componentBeanProvider
-	): PropertyImpl<TranslatableText> {
-		return PropertyImpl(name, baseKey, TranslatableText::class.java, beanProvider)
+	): PropertyImpl<Name> {
+		return PropertyImpl(name, baseKey, Name::class.java, beanProvider)
 	}
 
 	fun description(
