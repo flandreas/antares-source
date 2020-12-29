@@ -17,10 +17,7 @@ import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.model.GraphElementAdapter
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.ui.AbstractGraphDesktopItemPanel
-import ch.scorpion.jabbah.graph.ui.GraphDesktopItemHeaderPanel
-import ch.scorpion.jabbah.graph.ui.GraphDesktopView
-import ch.scorpion.jabbah.graph.ui.GraphDesktopViewItem
+import ch.scorpion.jabbah.graph.ui.*
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -74,6 +71,8 @@ class AddressableContentGraphDesktopItem(
 	override fun removeContextColorBorder() {
 		memoryContentPanel.border = null
 	}
+
+	override fun createCloseRequest(): Any = GraphDesktopViewItemCloseRequest(this, false)
 }
 
 /**

@@ -64,6 +64,8 @@ interface GraphDesktopViewItem {
 	fun dispose()
 
 	fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>?
+
+	fun createCloseRequest(): Any
 }
 
 /**

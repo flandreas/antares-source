@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.view.FocusPanel
@@ -76,6 +77,8 @@ class GraphNavigationViewSwing(
 		mainPanel.add(headerPanel, BorderLayout.NORTH)
 		mainPanel.add(FocusPanel(layeredPane, drawingView, viewManager))
 	}
+
+	override fun createCloseRequest(): Any = CloseViewRequest(drawingView)
 
 	/** ---- [GraphNavigationViewSwing] */
 

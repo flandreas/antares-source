@@ -95,7 +95,7 @@ class GraphDesktopItemHeaderPanel(
 		}
 
 		override fun execute(event: ActionEvent) {
-			eventBus.post(CloseViewRequest(graphDesktopViewItem.drawingView!!))
+			eventBus.post(graphDesktopViewItem.createCloseRequest())
 		}
 	}
 }
