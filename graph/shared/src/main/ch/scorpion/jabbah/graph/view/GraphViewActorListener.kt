@@ -46,13 +46,7 @@ class GraphViewActorListener(
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = { handle(it) }
 
 	/** Listen for exchanges of the current GraphView in order to be an ActorListener on all GraphElements of its Graph */
-	private val addRemoveListener = object : PropertyChangeListener<Any> {
-		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-			if (e.name == DrawingView.PROP_DRAWING) {
-				handleGraphViewChanged(e.oldValue as GraphView, e.newValue as GraphView)
-			}
-		}
-	}
+	private val addRemoveListener = AddRemoveListener()
 
 	init {
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
@@ -104,6 +98,14 @@ class GraphViewActorListener(
 	private fun unregisterActorListener(graph: Graph) {
 		LOG.debug("removing as ActorListener from all GraphElements")
 		graph.elements.forEach { it.removeActorListener(this) }
+	}
+
+	private inner class AddRemoveListener : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			if (e.name == DrawingView.PROP_DRAWING) {
+				handleGraphViewChanged(e.oldValue as GraphView, e.newValue as GraphView)
+			}
+		}
 	}
 
 	/**

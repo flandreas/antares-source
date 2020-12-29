@@ -123,13 +123,7 @@ class GraphPanelViewController(
 	private val activeViewChangeHandler: EventHandler<ActiveViewChangedEvent> = { updateEditorEditability() }
 	private val issuesCollectorHandler:EventHandler<IssueCollectorEvent> = { handle(it) }
 	private val executionStoppedOnIssueHandler: EventHandler<ExecutionStoppedOnIssueEvent> = { handle(it) }
-	private val editorViewListener = object : PropertyChangeListener<Any> {
-		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
-			if (e.name == DrawingView.PROP_EDITABLE) {
-				updateEditorEditability()
-			}
-		}
-	}
+	private val editorViewListener = EditorViewListener()
 
 	private val rootGraphView: GraphView? get() = editViewController.drawingView.drawing
 
@@ -278,5 +272,13 @@ class GraphPanelViewController(
 				&& rootGraphView != null
 
 		editor.active = editable
+	}
+
+	private inner class EditorViewListener : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			if (e.name == DrawingView.PROP_EDITABLE) {
+				updateEditorEditability()
+			}
+		}
 	}
 }
