@@ -76,7 +76,6 @@ class SubGraphVerticeImpl(
 		super.write(writer)
 		writer.writeString("uuid", graphUUID.toString())
 		graphName.write("name", writer)
-		description.write("desc", writer)
 		writer.writeStorables("ports", getSubGraphPorts().iterator())
 	}
 
@@ -91,7 +90,6 @@ class SubGraphVerticeImpl(
 		if (reader.hasElement("name")) {
 			graphName = Name.read("name", reader)
 		}
-		description = Description.read("desc", reader)
 
 		for (port in reader.readStorables<SubGraphPort<Any>>("ports")) {
 			LOG.debug("SubGraphVerticeImpl: reading and adding SubCircuitPort $port")
