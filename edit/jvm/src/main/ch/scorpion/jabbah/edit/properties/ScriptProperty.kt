@@ -2,11 +2,11 @@ package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.TextPropertyPanel
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import java.awt.BorderLayout
-import java.awt.Color
 import java.awt.Component
 import java.awt.Font
 import javax.swing.*
@@ -43,7 +43,7 @@ class ScriptPropertyEditor(private val propertyName: String, private val editabl
 		private val LOG by logger(ScriptPropertyEditor::class)
 
 		// Holds the single [JDialog] instance across all [ScriptPropertyEditor] instances.
-		private var dialog: JDialog? = null
+		//private var dialog: JDialog? = null
 
 		private val FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
 	}
@@ -74,9 +74,8 @@ class ScriptPropertyEditor(private val propertyName: String, private val editabl
 
 		panel.add(label, BorderLayout.CENTER)
 
-		button.isEnabled = dialog == null
 		button.alignmentY = Component.TOP_ALIGNMENT
-		button.icon = ImageIcon(ScriptPropertyEditor::class.java.getResource(TextPropertyEditor.ICON_PATH))
+		button.icon = UiUtil.themedIcon(TextPropertyEditor.ICON_PATH)
 		button.border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
 		button.toolTipText = Translations.getString("edit.action.editScript.tooltip")
 		button.addActionListener { showDialog() }
