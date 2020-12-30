@@ -46,8 +46,9 @@ Tag the release and push it to the remote repository:
 
 ### Build User Manual
 
-* `gradlew asciidoctor`
-* Create a ZIP file of `build/doc/usermanual/html5/english`: english.zip
+The asciidoc source files are copied to the website source and processed there by jekyll.
+
+* Create a ZIP file of `doc/usermanual/english`: english.zip
 * Create a ZIP file of `doc/images/user-manual`: user-manual.zip
  
 ## Deploying
