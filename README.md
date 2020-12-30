@@ -33,7 +33,7 @@ Tag the release and push it to the remote repository:
 * `git tag -a v<version> -m "my version <version>"`
 * `git push origin --tags`
 
-### Build Packages
+### Build Installers
 
 * On a macOS machine
   * `gradlew clean :antares:distributeMac`
@@ -47,11 +47,38 @@ Tag the release and push it to the remote repository:
 ### Build User Manual
 
 * `gradlew asciidoctor`
-* Create a ZIP file of all directories in `build/doc/usermanual/html5`
+* Create a ZIP file of `build/doc/usermanual/html5/english`: english.zip
+* Create a ZIP file of `doc/images/user-manual`: user-manual.zip
  
 ## Deploying
  
-TODO
+Deployment is done by pushing all artifacts to git@github.com:flandreas/antares.git.
+
+### Installers
+
+* Create a new release in the github project, e.g. "Release 0.3.0"
+* Upload the two installers as attachments to the release
+* Save as "draft"
+
+### Web site
+
+#### User Manual
+
+* Unpack english.zip in directory `user-manual`
+* Unpack user-manual.zip in directory `assets/images`
+
+#### Releases page
+
+* Add new release page and list all closed issues
+* Add the new release page in `_data/navigation.yml`
+* Reference the new release packages in `quick-start.md`
+* Reference the new release page in `index.md`
+* New blog page with release announcement
+
+#### Examples
+
+* Export all sample projects from the project dialog in Antares.
+* Copy the zip-files to the corresponding directories in `assets/examples`
 
 ## Support
 
