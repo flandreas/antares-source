@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.edit.Editor
 import com.l2fprod.common.propertysheet.AbstractProperty
 import com.l2fprod.common.propertysheet.Property
 import org.apache.commons.beanutils.PropertyUtils
+import java.lang.reflect.InvocationTargetException
 
 /** An implementation of a [Property] that created a [PropertyCommand] for every changed property. */
 class PropertyImpl<V>(
@@ -105,9 +106,17 @@ class PropertyImpl<V>(
 			try {
 				editor!!.commandManager.beginTransaction(command)
 				editor!!.commandManager.commitTransaction()
+			} catch (t: InvocationTargetException) {
+				LOG.error("Error in invoking bean setter '$setterPropertyName': ${t.targetException.message}")
+				if (editor!!.commandManager.isInTransaction) {
+					editor!!.commandManager.rollbackTransaction()
+				}
+				throw t.targetException
 			} catch (t: Throwable) {
 				LOG.error("Error in invoking bean setter '$setterPropertyName': ${t.message}")
-				editor!!.commandManager.rollbackTransaction()
+				if (editor!!.commandManager.isInTransaction) {
+					editor!!.commandManager.rollbackTransaction()
+				}
 				throw t
 			}
 		}

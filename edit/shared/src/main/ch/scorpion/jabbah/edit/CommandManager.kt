@@ -56,6 +56,8 @@ interface CommandManager {
     /** The [EventBus] used by this [CommandManager].*/
     val eventBus: EventBus
 
+	val isInTransaction: Boolean
+
 	fun bindDataHolder(dataHolder: UndoableDataHolder)
 
     /**

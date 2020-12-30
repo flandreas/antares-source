@@ -70,6 +70,8 @@ class SourcingCommandManager(
 			}
 		}
 
+	override val isInTransaction: Boolean get() = state.transaction != null
+
 	override fun bindDataHolder(dataHolder: UndoableDataHolder) {
 		LOG.debug("Binding to $dataHolder")
 		undoableDataHolder = dataHolder
