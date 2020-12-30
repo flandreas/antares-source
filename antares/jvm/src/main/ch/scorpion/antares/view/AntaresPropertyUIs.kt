@@ -7,11 +7,10 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.jabbah.base.Translations
-import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import ch.scorpion.jabbah.base.swing.ColorIcon
 import ch.scorpion.jabbah.base.swing.EnumRenderer
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import javax.swing.JComboBox
 import javax.swing.JList
 
@@ -24,7 +23,7 @@ open class LightColorRenderer : EnumRenderer<LightColor>() {
 
     override fun setValue(value: LightColor?) {
 	    if (value == null) {
-		    icon.backgroundColor = Graphics2DJvm.toAwtColor(Color.WHITE)
+		    icon.backgroundColor = Graphics2DJvm.toAwtColor(LightColor.getSystemDefault().onColor)
 		    text = Translations.getString("element.color.none")
 	    } else {
 		    icon.backgroundColor = Graphics2DJvm.toAwtColor(value.onColor)

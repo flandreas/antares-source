@@ -8,8 +8,6 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppServiceImpl
@@ -27,11 +25,10 @@ class DigitalGraphViewService(
 		private val LOG by logger(DigitalGraphViewService::class)
 	}
 
-	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>): Component {
+	override fun customizeAddedComponent(component: Component) {
 		if (component is LightEmitter) {
-			component.lightColor = determineLightColor(drawingView.drawing as DigitalGraphView)
+			component.lightColor = determineLightColor(component.parent as DigitalGraphView)
 		}
-		return super.add(component, drawingView)
 	}
 
 	fun replaceLightColor(graphView: DigitalGraphView) {
@@ -44,8 +41,6 @@ class DigitalGraphViewService(
 		}
 	}
 
-	private fun determineLightColor(graphView: DigitalGraphView): LightColor {
-		return graphView.defaultLightColor
-			?: LightColor.withName(properties.getString(LightColor.PROP_DEFAULT_LIGHT_COLOR))
-	}
+	private fun determineLightColor(graphView: DigitalGraphView): LightColor =
+		graphView.defaultLightColor ?: LightColor.getSystemDefault(properties)
 }

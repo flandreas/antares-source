@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.output
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.exception.IllegalArgumentException
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.graph.view.VerticeView
 
@@ -39,6 +40,9 @@ enum class LightColor(val customName: String, val onColor: Color, val offColor: 
             }
             throw IllegalArgumentException("Unknown LightColor '$customName'")
         }
+
+	    fun getSystemDefault(properties: Properties = BaseModule.properties): LightColor =
+		    withName(properties.getString(PROP_DEFAULT_LIGHT_COLOR))
     }
 
     override fun toString(): String {

@@ -8,7 +8,8 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
  */
 class AddCommand(
     private val drawingView: DrawingView<Drawing<in Component>>,
-    val component: Component
+    val component: Component,
+    private val componentCustomizer: (Component) -> Unit = {}
 ) : AbstractCommand("edit.command.add", null), Undoable {
 
     constructor(editor: Editor, component: Component): this(editor.view, component)
@@ -19,6 +20,7 @@ class AddCommand(
     override fun execute() {
 	    val clone = component.doClone()
         drawingView.drawing.add(clone)
+	    componentCustomizer.invoke(clone)
 	    addedComponentId = clone.id
     }
 

@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.app
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.graph.library.LibraryElement
@@ -22,7 +23,8 @@ class AddGraphElementViewFromLibraryCommand(
 	editor: Editor,
 	private val libraryElement: LibraryElement,
 	private val location: Point2D,
-	private val service: GraphViewConnectService = GraphViewModule.graphViewConnectService
+	private val service: GraphViewConnectService = GraphViewModule.graphViewConnectService,
+	private val componentCustomizer: (Component) -> Unit = {}
 ): AbstractCommand("edit.command.add", editor) {
 
 	private val graphView: GraphView get() = editor!!.view.drawing as GraphView
@@ -36,9 +38,11 @@ class AddGraphElementViewFromLibraryCommand(
 		graphElementView.location = location
 		graphView.add(graphElementView)
 		addedComponentId = graphElementView.id
+		val verticeView = graphView.getWithId(addedComponentId) as VerticeView
+
+		componentCustomizer.invoke(verticeView)
 
 		if (connectCommands == null) {
-			val verticeView = graphView.getWithId(addedComponentId) as VerticeView
 			connectCommands = AutoConnector.getAutoConnectCommands(editor!!, verticeView, service)
 			AutoConnector.handleDragFinished()
 		}

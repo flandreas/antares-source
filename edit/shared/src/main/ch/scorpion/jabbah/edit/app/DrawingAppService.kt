@@ -57,12 +57,22 @@ open class DrawingAppServiceImpl(
 ) : DrawingAppService {
 
 	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>): Component {
-		val command = AddCommand(drawingView, component)
+		val command = AddCommand(drawingView, component, componentCustomizer = ::customizeAddedComponent)
 		commandManager.execute(command)
 		val addedComponent = drawingView.drawing.getWithId(command.addedComponentId)!!
 		drawingView.selectionManager.deselectAll()
 		drawingView.selectionManager.select(addedComponent)
 		return addedComponent
+	}
+
+	/**
+	 * Used by method that add [Component]s to a [Drawing] (and the corresponding [Command]s)
+	 * to customize the properties of the [Component] after it has been added to the [Drawing].
+	 * Can for example be used to apply default from the [Drawing] (such as default colors)
+	 * to added [Component]s.
+	 */
+	protected open fun customizeAddedComponent(component: Component) {
+		// empty
 	}
 
 	override fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
@@ -96,7 +106,6 @@ open class DrawingAppServiceImpl(
 
 		drawingView.selectionManager.select(addedComponentIds.map { drawingView.drawing.getWithId(it) as Component })
 	}
-
 
 	override fun cut(drawingView: DrawingView<*>) {
 		val components = drawingView.selectionManager.selection

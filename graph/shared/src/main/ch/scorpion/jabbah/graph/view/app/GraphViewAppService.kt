@@ -86,7 +86,7 @@ open class GraphViewAppServiceImpl(
 	override fun addGraphElementViewFromLibrary(libraryElement: LibraryElement, location: Point2D, editor: Editor): Component {
 		LOG.debug("Add Component from LibraryElement ${libraryElement.name}")
 
-		val command = AddGraphElementViewFromLibraryCommand(editor, libraryElement, location)
+		val command = AddGraphElementViewFromLibraryCommand(editor, libraryElement, location, componentCustomizer = ::customizeAddedComponent)
 		commandManager.execute(command)
 		val component = editor.view.drawing.getWithId(command.addedComponentId) as Component
 
