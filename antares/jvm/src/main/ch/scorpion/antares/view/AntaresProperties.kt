@@ -12,9 +12,6 @@ object AntaresProperties {
 	fun bitWidth(): PropertyImpl<BitWidth> =
 		PropertyImpl("bitWidth", "element.property.bitWidth", BitWidth::class.java, componentBeanProvider)
 
-	fun untranslatableName(name: String = "name"): PropertyImpl<String> =
-		PropertyImpl(name, "edit.property.name", String::class.java, componentBeanProvider)
-
 	fun portType(name: String = "portType"): PropertyImpl<PortType> =
 		PropertyImpl(name, "graph.property.portType", PortType::class.java, componentBeanProvider)
 

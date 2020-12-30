@@ -109,6 +109,9 @@ object EditProperties {
 		return PropertyImpl(name, baseKey, Name::class.java, beanProvider)
 	}
 
+	fun untranslatableName(name: String = "name"): PropertyImpl<String> =
+		PropertyImpl(name, "edit.property.name", String::class.java, componentBeanProvider)
+
 	fun description(
 		name: String = "description",
 		baseKey: String = "edit.property.description",

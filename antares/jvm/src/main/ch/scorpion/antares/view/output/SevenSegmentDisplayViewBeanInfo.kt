@@ -15,7 +15,7 @@ import com.l2fprod.common.propertysheet.Property
 class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayView>() {
 
     companion object {
-	    private val name = AntaresProperties.untranslatableName()
+	    private val name = EditProperties.untranslatableName()
 	    private val lightColor = AntaresProperties.lightColor()
 	    private val portScheme = PropertyImpl("portScheme", "element.property.SevenSegmentDisplayScheme", SevenSegmentDisplayScheme::class.java, componentBeanProvider)
 	    private val size = EditProperties.size()

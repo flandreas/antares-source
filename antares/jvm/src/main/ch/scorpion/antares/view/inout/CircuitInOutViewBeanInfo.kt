@@ -12,7 +12,7 @@ import com.l2fprod.common.propertysheet.Property
 class CircuitInOutViewBeanInfo : ComponentBeanInfo<CircuitInOutView>() {
 
     companion object {
-	    private val name = AntaresProperties.untranslatableName()
+	    private val name = EditProperties.untranslatableName()
 	    private val portType = AntaresProperties.portType()
 	    private val bitWidth = AntaresProperties.bitWidth()
 	    private val orientation = EditProperties.orientation()

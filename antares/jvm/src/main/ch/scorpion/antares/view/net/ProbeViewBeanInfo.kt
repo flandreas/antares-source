@@ -4,6 +4,7 @@ import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.DigitalComponentBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import com.l2fprod.common.propertysheet.Property
 
@@ -11,7 +12,7 @@ import com.l2fprod.common.propertysheet.Property
 class ProbeViewBeanInfo : DigitalComponentBeanInfo<ProbeView>() {
 
     companion object {
-	    private val name = AntaresProperties.untranslatableName()
+	    private val name = EditProperties.untranslatableName()
 	    private val bitWidth = AntaresProperties.bitWidth()
 	    private val signalRep = AntaresProperties.signalRepresentation()
 	    private val output = PropertyImpl("hasOutput", "element.property.hasOutput", Boolean::class.java, componentBeanProvider)

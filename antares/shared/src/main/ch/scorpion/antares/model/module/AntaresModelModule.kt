@@ -15,6 +15,8 @@ import ch.scorpion.antares.model.output.SevenSegmentDisplay
 import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.view.port.DigitalPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
@@ -25,9 +27,14 @@ import ch.scorpion.jabbah.io.TypeMap
 object AntaresModelModule : AbstractModule() {
 
 	override fun initialize() {
+		customizeProperties(BaseModule.properties)
 		configureTypeMap(IOModule.typeMap)
 		GraphModelModule.portFactory = DigitalPortFactory()
 		GraphModelModule.graphFactory = { DigitalGraph(name = it) }
+	}
+
+	private fun customizeProperties(properties: Properties) {
+		properties.set(Switch.PROP_DEFAULT_DELAY, 1_000)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

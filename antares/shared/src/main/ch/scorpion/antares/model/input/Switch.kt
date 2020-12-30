@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -18,7 +19,8 @@ class Switch : AbstractInteractableVertice(CALCULATOR) {
 
 	companion object {
 
-		const val DEF_PROP_DELAY = 1000L
+		const val PROP_DEFAULT_DELAY = "ch.scorpion.antares.model.input.Switch.defaultPropDelay"
+		val DEF_PROP_DELAY = BaseModule.properties.getInt(PROP_DEFAULT_DELAY).toLong()
 		private const val BASE_RESOURCE_KEY = "library.element.Toggle"
 		private val TYPE = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_DESC = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")

@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 
@@ -18,7 +19,7 @@ class DigitalPortViewComponentBeanInfo : AbstractBeanInfo<DigitalPortViewCompone
 
     companion object {
 	    private val id = PropertyImpl("portId", "graph.property.PortId", Int::class.java, componentBeanProvider)
-	    private val name = AntaresProperties.untranslatableName("port.name")
+	    private val name = EditProperties.untranslatableName("port.name")
 	    private val direction = PropertyImpl("direction", "graph.property.direction", Direction::class.java, componentBeanProvider)
 		private val portLabelPos = PropertyImpl("portLabelPosition", "graph.property.PortLabelPosition", PortLabelPosition::class.java, componentBeanProvider)
 	    private val showBitWidth = PropertyImpl("showBitWidthAnnotation", "element.property.DigitalPortViewComponent.showBitWidthAnnotation", Boolean::class.java, componentBeanProvider)

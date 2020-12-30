@@ -1,6 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.model.*
+import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.BitWidth
@@ -19,6 +20,7 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
+import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
@@ -32,7 +34,6 @@ import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.properties.PropertyImpl
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
-import ch.scorpion.jabbah.execution.module.ExecutionModule
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.library.*
@@ -178,6 +179,11 @@ class AntaresModuleJvm(private val app: Antares) : AbstractModule() {
 		root.getGroup(PREF_TREE_CIRCUIT).add(LightColorPreference())
 		root.getGroup(PREF_TREE_CIRCUIT).add(DigitalSignalNotationPreference())
 		root.getGroup(PREF_TREE_CIRCUIT).add(TunnelViewFacePreference())
+
+		root.getGroup(PREF_TREE_CIRCUIT).add(IntPreference(
+			id = Switch.PROP_DEFAULT_DELAY,
+			nameKey = "antares.preference.SwitchPropDelay"
+		))
 
 		root.getGroup(GraphViewModuleJvm.PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(
 			id = DigitalSignalHistoryDrawer.PROP_FILL_SIGNAL,
