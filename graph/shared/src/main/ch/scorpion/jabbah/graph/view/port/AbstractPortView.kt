@@ -306,11 +306,11 @@ abstract class AbstractPortView<T : Any>(
 		// empty
 	}
 
-	protected fun buildToolTipTitle(): String {
+	private fun buildToolTipTitle(): String {
 		return if (StringUtils.isBlank(port.name)) {
 			"${port.portType}"
 		} else {
-			"${port.portType} '${port.name}'"
+			"${port.portType} '${StringUtils.replaceNegation(port.name!!)}'"
 		}
 
 	}
