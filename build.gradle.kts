@@ -42,6 +42,15 @@ val commonsBeansVersion: String by extra
 val l2fprodVersion: String by extra
 
 subprojects {
+
+	// jsBrowserTest doesn't work in JS targets due to open issues with mockk-js
+	// See https://github.com/mockk/mockk/issues/100
+	tasks.whenTaskAdded {
+		if (this.name.contains("jsBrowserTest")) {
+			this.enabled = false
+		}
+	}
+
 	apply(plugin = "org.jetbrains.kotlin.multiplatform")
 
 	configure<KotlinMultiplatformExtension> {
@@ -63,9 +72,8 @@ subprojects {
 			}
 		}
 
-		js(IR) {
-			//browser()
-			binaries.executable()
+		js() {
+			browser()
 		}
 
 		sourceSets {

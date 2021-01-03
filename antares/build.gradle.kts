@@ -10,11 +10,40 @@ val l2fprodVersion: String by extra
 val macOS_jpackage_home: String by extra
 val win_jpackage_home: String by extra
 
+repositories {
+	mavenCentral()
+	jcenter()
+	maven {
+		url = uri("https://dl.bintray.com/kotlin/kotlinx")
+	}
+	maven {
+		url = uri("https://dl.bintray.com/kotlin/kotlin-js-wrappers")
+	}
+}
+
 plugins {
 	id("com.github.johnrengelman.shadow") version "5.1.0"
 }
 
 kotlin {
+
+	js {
+		browser {
+			binaries.executable()
+			webpackTask {
+				cssSupport.enabled = true
+			}
+			runTask {
+				cssSupport.enabled = true
+			}
+			testTask {
+				useKarma {
+					useChromeHeadless()
+					webpackConfig.cssSupport.enabled = true
+				}
+			}
+		}
+	}
 
 	sourceSets {
 
@@ -34,6 +63,22 @@ kotlin {
 		val jvmMain by getting {
 			dependencies {
 				implementation("commons-cli:commons-cli:1.3.1")
+			}
+		}
+
+		val jsMain by getting {
+			kotlin.srcDir("js/src/kotlin/main")
+			resources.srcDir("js/rsc")
+			dependencies {
+				implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.7.2")
+				implementation("org.jetbrains:kotlin-react:16.13.1-pre.110-kotlin-1.4.10")
+				implementation("org.jetbrains:kotlin-react-dom:16.13.1-pre.110-kotlin-1.4.10")
+				implementation("org.jetbrains:kotlin-styled:1.0.0-pre.110-kotlin-1.4.10")
+
+				implementation(project(":base"))
+				implementation(project(":animation"))
+				implementation(project(":draw"))
+				implementation(project(":edit"))
 			}
 		}
 	}

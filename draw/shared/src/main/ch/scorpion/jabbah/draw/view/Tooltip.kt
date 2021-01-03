@@ -171,7 +171,15 @@ object TooltipManager {
 	private var request: TooltipRequest? = null
 
 	/** Used to delay the displaying of a requested textTooltip. */
-	private lateinit var timer: Timer
+	private var _timer: Timer? = null
+
+	private val timer: Timer
+		get() {
+			if (_timer == null) {
+				initTimer()
+			}
+			return _timer!!
+		}
 
 	/** Listens for [ZoomPan] changes in [View] for which a [TooltipView] is displayed in order to dispose it.*/
 	private var zoomPanListener: PropertyChangeListener<Any>? = null
@@ -192,11 +200,10 @@ object TooltipManager {
 	init {
 		eventBus.register(TooltipEvent::class, tooltipEventHandler)
 		eventBus.register(PreferencesChangedEvent::class, preferencesChangeHandler)
-		initTimer()
 	}
 
 	private fun initTimer() {
-		timer = System.createTimer()
+		_timer = System.createTimer()
 		timer.initialize(BaseModule.properties.getInt(PROP_DELAY)) { displayImpl() }
 	}
 
@@ -241,8 +248,8 @@ object TooltipManager {
 				it.view.overlayContainer.add(explanationTooltip!!.arrowBubble)
 			}
 			it.view.overlayContainer.validate()
-			zoomPanListener = it.view.addPropertyChangeListener {
-				if (it.source == textTooltip?.view) {
+			zoomPanListener = it.view.addPropertyChangeListener { event->
+				if (event.source == textTooltip?.view) {
 					disposeTooltip()
 				}
 			}

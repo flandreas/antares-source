@@ -26,7 +26,7 @@ open class Properties {
 
 	val size: Int get() = entries.size
 
-	protected val entries: MutableMap<String,Entry> by lazy { mutableMapOf<String,Entry>() }
+	protected val entries: MutableMap<String,Entry> by lazy { mutableMapOf() }
 
 	fun getKeys(): Iterator<String> {
 		return entries.keys.iterator()
