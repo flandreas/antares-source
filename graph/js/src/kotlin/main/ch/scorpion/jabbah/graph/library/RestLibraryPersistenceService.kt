@@ -10,22 +10,21 @@ import org.w3c.xhr.XMLHttpRequest
 /**
  * An implementation of [LibraryPersistenceService] that calls the REST services of [ch.scorpion.jabbah.graph].
  */
-class RestLibraryPersistenceService : LibraryPersistenceService {
+class RestLibraryPersistenceService(
+	private val baseUrl: String = BASE_URL
+) : LibraryPersistenceService {
 
     companion object {
-        private val BASE_URL = "http://localhost:4567/jabbah-graph"
+        private const val BASE_URL = "http://localhost:4567/jabbah-graph"
     }
 
     /** ---- [LibraryPersistenceService] */
 
     override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
         val request = XMLHttpRequest()
-        request.open("GET", "$BASE_URL/library/graphView/${uuid.id}", async = false)
-        //request.responseType = XMLHttpRequestResponseType.DOCUMENT
+	    val url = "$baseUrl/libraries/${library.uuid.id}/${uuid.id}.cir"
+        request.open("GET", url, async = false)
         request.overrideMimeType("text/xml")
-//        request.onload = {
-//            handleLibraryResponse(library, request.responseXML!!)
-//        }
         request.send()
         return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as MetaGraph
     }

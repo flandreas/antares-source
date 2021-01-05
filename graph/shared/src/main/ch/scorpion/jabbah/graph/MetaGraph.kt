@@ -86,15 +86,10 @@ class CombinedMetaGraphRepository(
  * Combines a [GraphStorable] and a [ContainerDrawing] as a [Storable].
  */
 class MetaGraph(
-	graph: GraphStorable,
-	containerDrawing: ContainerDrawing,
+	graph: GraphStorable = GraphStorable(Translations.getString("graph.name.unknown")),
+	containerDrawing: ContainerDrawing = ContainerDrawing(Translations.getString("graph.name.unknown")),
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : Storable {
-
-	constructor() : this(
-		GraphStorable(Translations.getString("graph.name.unknown")),
-		ContainerDrawing(Translations.getString("graph.name.unknown"))
-	)
 
 	companion object {
 		fun withName(name: String): MetaGraph {
